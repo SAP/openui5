@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
 	"sap/ui/thirdparty/URI",
-	"sap/ui/support/supportRules/ui/models/Documentation"
-], function (BaseController, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI, Documentation) {
+	"sap/ui/support/supportRules/ui/models/Documentation",
+	"sap/ui/VersionInfo"
+], function (BaseController, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI, Documentation, VersionInfo) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.support.supportRules.ui.controllers.Main", {
@@ -63,9 +64,11 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function () {
-			CommunicationBus.publish(channelNames.POST_UI_INFORMATION, {
-				version: sap.ui.getVersionInfo(),
-				location: new URI(jQuery.sap.getModulePath("sap.ui.support"), window.location.origin + window.location.pathname).toString()
+			VersionInfo.load({ library: "sap.ui.core" }).then(function (oCoreLibInfo) {
+				CommunicationBus.publish(channelNames.POST_UI_INFORMATION, {
+					version: oCoreLibInfo,
+					location: new URI(jQuery.sap.getModulePath("sap.ui.support"), window.location.origin + window.location.pathname).toString()
+				});
 			});
 		},
 

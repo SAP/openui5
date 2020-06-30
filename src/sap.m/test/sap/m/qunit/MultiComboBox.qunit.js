@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/m/ComboBoxBase",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/core/SeparatorItem",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/m/library"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -49,7 +50,8 @@ sap.ui.define([
 	ComboBoxBase,
 	containsOrEquals,
 	SeparatorItem,
-	InvisibleText
+	InvisibleText,
+	mLibrary
 ) {
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
@@ -58,6 +60,8 @@ sap.ui.define([
 	var ValueState = coreLibrary.ValueState;
 
 	var nPopoverAnimationTick = 300;
+
+	var TokenizerRenderMode = mLibrary.TokenizerRenderMode;
 
 	createAndAppendDiv("MultiComboBox-content").setAttribute("class", "select-content");
 
@@ -1007,7 +1011,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), []);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1032,7 +1036,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1057,7 +1061,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1082,7 +1086,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), []);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1107,7 +1111,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1132,7 +1136,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1157,7 +1161,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1183,7 +1187,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["dummyKey"]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1208,7 +1212,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1234,7 +1238,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["dummyKey"]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1259,7 +1263,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1284,7 +1288,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), []);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		assert.deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), []);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1517,7 +1521,7 @@ sap.ui.define([
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem1, oItem2], "Should have both items");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 2, "should have two item");
+		assert.strictEqual(oMultiComboBox.getAggregation("tokenizer").getTokens().length, 2, "should have two item");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2791,7 +2795,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ENTER); //onsapenter
 
 		// assertions
-		var aTokens = oMultiComboBox._oTokenizer.getTokens();
+		var aTokens = oMultiComboBox.getAggregation("tokenizer").getTokens();
 		assert.strictEqual(aTokens[0].getKey(), oItem1.getKey());
 		assert.strictEqual(aTokens[1].getKey(), oItem2.getKey());
 		assert.strictEqual(aTokens[2].getKey(), oItem3.getKey());
@@ -2810,7 +2814,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ENTER); //onsapenter
 
 		// assertions
-		aTokens = oMultiComboBox._oTokenizer.getTokens();
+		aTokens = oMultiComboBox.getAggregation("tokenizer").getTokens();
 		assert.strictEqual(aTokens[0].getKey(), oItem3.getKey());
 		assert.strictEqual(aTokens[1].getKey(), oItem2.getKey());
 		assert.strictEqual(aTokens[2].getKey(), oItem1.getKey());
@@ -3148,7 +3152,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.BACKSPACE); // select last token
 
 		// assert
-		assert.strictEqual(document.activeElement, oMultiComboBox._oTokenizer.getTokens()[0].getDomRef(),
+		assert.strictEqual(document.activeElement, oMultiComboBox.getAggregation("tokenizer").getTokens()[0].getDomRef(),
 			"The focus is forwarded to the token.");
 
 		// act
@@ -3188,7 +3192,7 @@ sap.ui.define([
 		// act
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.BACKSPACE); // select last token
 		// assert
-		assert.strictEqual(document.activeElement, oMultiComboBox._oTokenizer.getTokens()[0].getDomRef(),
+		assert.strictEqual(document.activeElement, oMultiComboBox.getAggregation("tokenizer").getTokens()[0].getDomRef(),
 			"The focus is forwarded to the token.");
 
 		// act
@@ -3650,7 +3654,7 @@ sap.ui.define([
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		oMultiComboBox.setSelectedItems([oItem]);
 
-		var oSpy = this.spy(oMultiComboBox._oTokenizer, "scrollToEnd");
+		var oSpy = this.spy(oMultiComboBox.getAggregation("tokenizer"), "scrollToEnd");
 		var oStubSetSelection = sinon.stub(Event.prototype, "getParameters");
 
 		sap.ui.getCore().applyChanges();
@@ -3688,7 +3692,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// act - clicking on control
-		oToken = oMultiComboBox._oTokenizer.getTokens()[0];
+		oToken = oMultiComboBox.getAggregation("tokenizer").getTokens()[0];
 		sap.ui.test.qunit.triggerTouchEvent("tap", oMultiComboBox.getFocusDomRef(), {
 			srcControl: oToken,
 			target: oToken.getFocusDomRef()
@@ -4911,7 +4915,7 @@ sap.ui.define([
 		oMultiComboBox.setSelectedItems([oItem]);
 
 		oHandleTokenFocusStub.withArgs("type", "focusin");
-		oHandleTokenFocusStub.withArgs("target", oMultiComboBox._oTokenizer.getTokens()[0].getDomRef());
+		oHandleTokenFocusStub.withArgs("target", oMultiComboBox.getAggregation("tokenizer").getTokens()[0].getDomRef());
 
 		oMultiComboBox.onfocusin(oFakeEvent);
 
@@ -4974,7 +4978,7 @@ sap.ui.define([
 				]
 			}).placeAt("MultiComboBox-content");
 
-		var oSpy = sinon.spy(oMultiComboBox._oTokenizer, "scrollToEnd");
+		var oSpy = sinon.spy(oMultiComboBox.getAggregation("tokenizer"), "scrollToEnd");
 		oHandleFocusleaveStub = sinon.stub(Event.prototype, "getParameter");
 
 		sap.ui.getCore().applyChanges();
@@ -4983,6 +4987,7 @@ sap.ui.define([
 		oMultiComboBox.onsapfocusleave(oFakeEvent);
 
 		// assert
+		this.clock.tick();
 		assert.ok(oSpy.called, "Tokenizer's scrollToEnd should be called when focus is outside MCB");
 
 		// cleanup
@@ -5072,7 +5077,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oHandleTokensStub.withArgs("type").returns(Tokenizer.TokenChangeType.Removed);
-		oHandleTokensStub.withArgs("token").returns(oMultiComboBox._oTokenizer.getTokens()[0]);
+		oHandleTokensStub.withArgs("token").returns(oMultiComboBox.getAggregation("tokenizer").getTokens()[0]);
 		oMultiComboBox._handleTokenChange(oFakeEvent);
 		this.clock.tick(nPopoverAnimationTick);
 
@@ -5149,7 +5154,7 @@ sap.ui.define([
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
-		oMultiComboBox._oTokenizer.getTokens()[1].focus();
+		oMultiComboBox.getAggregation("tokenizer").getTokens()[1].focus();
 		this.clock.tick(500);
 
 		// act
@@ -5172,7 +5177,7 @@ sap.ui.define([
 					new Item({key: "Item1", text: "Item1"}),
 					new Item({key: "Item2", text: "Item2"})
 				]
-			}), oTokenizer = oMultiComboBox._oTokenizer,
+			}), oTokenizer = oMultiComboBox.getAggregation("tokenizer"),
 				oSpy;
 
 		oMultiComboBox.syncPickerContent();
@@ -5254,6 +5259,37 @@ sap.ui.define([
 		assert.strictEqual(oMultiComboBox.getValue(), "", "The value should be cleared when closing the picker with icon press");
 
 		// clean
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("Opening picker via dropdown icon on mobile devices should not throw error", function(assert) {
+		// Arrange
+		var oDeviceStub = this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		}),
+			aItems = [new Item({key: "Item1", text: "Item1"})],
+			oEventMock = {
+				setMarked: function() {
+					return false;
+				}
+			},
+			oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBox-content");
+
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.onsapshow(oEventMock);
+		this.clock.tick(300);
+
+		// Assert
+		assert.ok(true, "The picker is opening without throwing an error on mobile devices");
+
+		// Act
+		oMultiComboBox.close();
+		this.clock.tick(300);
+
+		// Clean
+		oDeviceStub.restore();
 		oMultiComboBox.destroy();
 	});
 
@@ -5359,7 +5395,7 @@ sap.ui.define([
 			oMultiComboBox = new MultiComboBox({
 				items: [oItem1, oItem2]
 			}),
-			sInvisibleTextId = oMultiComboBox._oTokenizer.getTokensInfoId(),
+			sInvisibleTextId = oMultiComboBox.getAggregation("tokenizer").getTokensInfoId(),
 			oInvisibleText = sap.ui.getCore().byId(sInvisibleTextId);
 
 		oMultiComboBox.placeAt("MultiComboBox-content");
@@ -5408,7 +5444,7 @@ sap.ui.define([
 				oMultiComboBox = new MultiComboBox({
 					items: [oItem1, oItem2]
 				}),
-				sInvisibleTextId = oMultiComboBox._oTokenizer.getTokensInfoId(),
+				sInvisibleTextId = oMultiComboBox.getAggregation("tokenizer").getTokensInfoId(),
 				oInvisibleText = sap.ui.getCore().byId(sInvisibleTextId);
 
 			oMultiComboBox.placeAt("MultiComboBox-content");
@@ -5453,7 +5489,7 @@ sap.ui.define([
 					this.oLastItem
 				]
 			});
-			this.oTokenizer = this.oMultiComboBox._oTokenizer;
+			this.oTokenizer = this.oMultiComboBox.getAggregation("tokenizer");
 			this.oMultiComboBox.placeAt("MultiComboBox-content");
 			sap.ui.getCore().applyChanges();
 		}, afterEach: function() {
@@ -5574,7 +5610,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// act
-		oToken = this.oMultiComboBox._oTokenizer.getTokens()[0];
+		oToken = this.oMultiComboBox.getAggregation("tokenizer").getTokens()[0];
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.HOME);
 		this.clock.tick();
 
@@ -6368,7 +6404,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 1, 'Only one token should be shown');
+		assert.strictEqual(oMultiComboBox.getAggregation("tokenizer").getTokens().length, 1, 'Only one token should be shown');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -6488,7 +6524,7 @@ sap.ui.define([
 		oMCB.open();
 		this.clock.tick();
 
-		aTokens = oMCB._oTokenizer.getTokens();
+		aTokens = oMCB.getAggregation("tokenizer").getTokens();
 		assert.ok(aTokens[0].getDomRef(), "The first token is rendered");
 		assert.ok(aTokens[1].getDomRef(), "The second token is rendered");
 
@@ -6680,6 +6716,8 @@ sap.ui.define([
 
 		//close and open the picker
 		this.oMCB1.onfocusin(oEventMock);
+		sap.ui.getCore().applyChanges();
+
 		// assert
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more label is hidden on focusin.");
 	});
@@ -6689,7 +6727,7 @@ sap.ui.define([
 		var oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator");
 
 		// act
-		this.oMCB1._oTokenizer.getTokens()[2].focus();
+		this.oMCB1.getAggregation("tokenizer").getTokens()[2].focus();
 
 		// assert
 		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more label is not hidden on focusin.");
@@ -6767,12 +6805,13 @@ sap.ui.define([
 				editable: false,
 				items: aItems,
 				selectedItems: ["it1", "it2"]
-			});
+			}),
+			oTokenizer = oMCB.getAggregation("tokenizer");
 
 		oMCB.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
-		oMCB._oTokenizer._oIndicator.click();
+		oTokenizer._oIndicator.click();
 		this.clock.tick(200);
 
 		oReadOnlyPopover = oMCB._getReadOnlyPopover();
@@ -6786,7 +6825,7 @@ sap.ui.define([
 		oMCB.setEditable(true);
 		sap.ui.getCore().applyChanges();
 
-		oMCB._oTokenizer._oIndicator.click();
+		oTokenizer._oIndicator.click();
 		this.clock.tick(1000);
 
 		aEditModeContent = oMCB.getPicker().getContent()[0];
@@ -6802,15 +6841,21 @@ sap.ui.define([
 
 	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function (assert) {
 		//arrange
-		var oMCB = new MultiComboBox();
-		var oTokenizerSpy = this.spy(oMCB._oTokenizer, "_adjustTokensVisibility");
+		var oMCB = new MultiComboBox({
+			items: [
+				new Item({key: "key", text: "text"})
+			],
+			selectedKeys: ["key"]
+		});
+		var oTokenizer = oMCB.getAggregation("tokenizer");
+		var oTokenizerSpy = this.spy(oTokenizer, "_adjustTokensVisibility");
 
 		// act
 		oMCB.placeAt("MultiComboBox-content");
 		this.clock.tick(100);
 
 		// assert
-		assert.ok(oMCB._oTokenizer._getAdjustable(), "the tokenizer is adjustable");
+		assert.strictEqual(oTokenizer.getRenderMode(), TokenizerRenderMode.Narrow, "the tokenizer is in Narrow mode");
 		assert.ok(oTokenizerSpy.called, "tokenizer's _adjustTokensVisibility is called");
 
 		// clean up
@@ -7271,17 +7316,17 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(1000);
 
-		assert.strictEqual(oSyncInput.callCount, 1);
+		assert.strictEqual(oSyncInput.callCount, 2);
 
 		oMultiComboBox.setSelectedKeys(["0"]);
 		this.clock.tick(1000);
 
-		assert.strictEqual(oSyncInput.callCount, 2);
+		assert.strictEqual(oSyncInput.callCount, 3);
 
 		oMultiComboBox.setSelectedKeys([]);
 		this.clock.tick(1000);
 
-		assert.strictEqual(oSyncInput.callCount, 3);
+		assert.strictEqual(oSyncInput.callCount, 4);
 
 		oSyncInput.restore();
 		oMultiComboBox.destroy();
@@ -7945,12 +7990,13 @@ sap.ui.define([
 					new Item({key: "3", text: "3"}),
 					new Item({key: "4", text: "4"})
 				]
-			}).placeAt("MultiComboBox-content");
+			}).placeAt("MultiComboBox-content"),
+			oTokenizer = oMultiComboBox.getAggregation("tokenizer");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, oMultiComboBox.getSelectedItems().length, "Selection should be in sync");
-		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, oMultiComboBox._oTokenizer.getTokens().length, "Selection should be in sync");
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, oTokenizer.getTokens().length, "Selection should be in sync");
 
 		// Act
 		oClone = oMultiComboBox.clone();
@@ -7958,7 +8004,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, oClone.getSelectedKeys().length, "Clones should inherit selections");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, oClone.getSelectedItems().length, "Clones should inherit selections");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, oClone._oTokenizer.getTokens().length, "Clones should inherit selections");
+		assert.strictEqual(oTokenizer.getTokens().length, oClone.getAggregation("tokenizer").getTokens().length, "Clones should inherit selections");
 
 		oMultiComboBox.destroy();
 		oClone.destroy();
@@ -8030,7 +8076,8 @@ sap.ui.define([
 				new Item({key: "3", text: "3"}),
 				new Item({key: "4", text: "4"})
 			]
-		}).placeAt("MultiComboBox-content");
+		}).placeAt("MultiComboBox-content"),
+		oTokenizer = oMultiComboBox.getAggregation("tokenizer");
 		sap.ui.getCore().applyChanges();
 
 		// Act
@@ -8039,7 +8086,7 @@ sap.ui.define([
 
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["2", "3"], "SelectedKeys should be saved");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "selectedItems should be there");
-		assert.strictEqual(oMultiComboBox.getSelectedItems().length, oMultiComboBox._oTokenizer.getTokens().length, "Selected items should be visible as tokens");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, oTokenizer.getTokens().length, "Selected items should be visible as tokens");
 
 		// Act
 		oMultiComboBox.setSelectedKeys([]);
@@ -8047,7 +8094,7 @@ sap.ui.define([
 
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 0, "SelectedKeys should be empty");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 0, "selectedItems should be empty");
-		assert.strictEqual(oMultiComboBox.getSelectedItems().length, oMultiComboBox._oTokenizer.getTokens().length, "Selected items should be removed");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, oTokenizer.getTokens().length, "Selected items should be removed");
 
 		oMultiComboBox.destroy();
 	});
@@ -8113,6 +8160,7 @@ sap.ui.define([
 	QUnit.test("Sync selectedKeys' items before MultiComboBox has been rendered", function (assert) {
 		// Setup
 		var oMultiComboBox = new MultiComboBox(),
+			oTokenizer = oMultiComboBox.getAggregation("tokenizer"),
 			oOnBeforeRenderingSpy = this.spy(oMultiComboBox, "onBeforeRendering");
 
 		oMultiComboBox.addItem(new Item({ key: "A", text: "A" }));
@@ -8134,8 +8182,8 @@ sap.ui.define([
 		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "onBeforeRendering has been called and items should be in sync");
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["A"], "Only the last setter should be applied");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Selected Items association should be in sync");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 1, "Tokens should correspond to the actual selection");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getKey(), "A", "Tokens should correspond to the actual selection");
+		assert.strictEqual(oTokenizer.getTokens().length, 1, "Tokens should correspond to the actual selection");
+		assert.strictEqual(oTokenizer.getTokens()[0].getKey(), "A", "Tokens should correspond to the actual selection");
 
 		// Cleanup
 		oMultiComboBox.destroy();
@@ -8144,6 +8192,7 @@ sap.ui.define([
 	QUnit.test("Sync selectedItems' items before MultiComboBox has been rendered", function (assert) {
 		// Setup
 		var oMultiComboBox = new MultiComboBox(),
+			oTokenizer = oMultiComboBox.getAggregation("tokenizer"),
 			oOnBeforeRenderingSpy = this.spy(oMultiComboBox, "onBeforeRendering"),
 			aItems = [
 				new Item({ key: "A", text: "A" }),
@@ -8170,8 +8219,8 @@ sap.ui.define([
 		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "onBeforeRendering has been called and items should be in sync");
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["A"], "Only the last setter should be applied");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Selected Items association should be in sync");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 1, "Tokens should correspond to the actual selection");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getKey(), "A", "Tokens should correspond to the actual selection");
+		assert.strictEqual(oTokenizer.getTokens().length, 1, "Tokens should correspond to the actual selection");
+		assert.strictEqual(oTokenizer.getTokens()[0].getKey(), "A", "Tokens should correspond to the actual selection");
 
 		// Cleanup
 		oMultiComboBox.destroy();
@@ -8180,6 +8229,7 @@ sap.ui.define([
 	QUnit.test("Sync selectedItems & selectedKeys", function (assert) {
 		// Setup
 		var oMultiComboBox = new MultiComboBox(),
+			oTokenizer = oMultiComboBox.getAggregation("tokenizer"),
 			oOnBeforeRenderingSpy = this.spy(oMultiComboBox, "onBeforeRendering"),
 			aItems = [
 				new Item({ key: "A", text: "A" }),
@@ -8209,8 +8259,8 @@ sap.ui.define([
 		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "onBeforeRendering has been called and items should be in sync");
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["B", "C", "A"], "Only the last setter should be applied");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 3, "Selected Items association should be in sync");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 3, "Tokens should correspond to the actual selection");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getKey(), "B", "Tokens should correspond to the actual selection");
+		assert.strictEqual(oTokenizer.getTokens().length, 3, "Tokens should correspond to the actual selection");
+		assert.strictEqual(oTokenizer.getTokens()[0].getKey(), "B", "Tokens should correspond to the actual selection");
 
 		// Act
 		oMultiComboBox.setSelectedItems([aItems[1]]);
@@ -8220,8 +8270,8 @@ sap.ui.define([
 		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "The MultiComboBox was not invalidated");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Selected Items should be adjusted");
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["B"], "SelectedKeys should be in sync");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 1, "Tokens should correspond to the actual selection");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getKey(), "B", "Tokens should correspond to the actual selection");
+		assert.strictEqual(oTokenizer.getTokens().length, 1, "Tokens should correspond to the actual selection");
+		assert.strictEqual(oTokenizer.getTokens()[0].getKey(), "B", "Tokens should correspond to the actual selection");
 
 		// Act
 		oMultiComboBox.setSelectedKeys(["C", "A"]);
@@ -8231,8 +8281,8 @@ sap.ui.define([
 		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "The MultiComboBox was not invalidated");
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["C", "A"], "SelectedKeys should be adjusted");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "Selected Items should be in sync");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 2, "Tokens should correspond to the actual selection");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getKey(), "C", "Tokens should correspond to the actual selection");
+		assert.strictEqual(oTokenizer.getTokens().length, 2, "Tokens should correspond to the actual selection");
+		assert.strictEqual(oTokenizer.getTokens()[0].getKey(), "C", "Tokens should correspond to the actual selection");
 
 		// Cleanup
 		oMultiComboBox.destroy();
@@ -8252,14 +8302,15 @@ sap.ui.define([
 				new Item({ key: "B", text: "{test>/b}" }),
 				new Item({ key: "C", text: "{test>/c}" })
 			]
-		});
+		}),
+		oTokenizer = oMultiComboBox.getAggregation("tokenizer");
 
 		// Act
 		oMultiComboBox.setSelectedKeys(["A", "B"]);
 
 		// Assert
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getText(), "", "Token text should be empty");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[1].getText(), "", "Token text should be empty");
+		assert.strictEqual(oTokenizer.getTokens()[0].getText(), "", "Token text should be empty");
+		assert.strictEqual(oTokenizer.getTokens()[1].getText(), "", "Token text should be empty");
 
 		// Act
 		oMultiComboBox.setModel(oModel, "test");
@@ -8267,9 +8318,9 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 2, "The MultiComboBox was not invalidated");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getText(), "Test A", "Token text should correspond to the model");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[1].getText(), "Test B", "Token text should correspond to the model");
+		assert.strictEqual(oTokenizer.getTokens().length, 2, "The MultiComboBox was not invalidated");
+		assert.strictEqual(oTokenizer.getTokens()[0].getText(), "Test A", "Token text should correspond to the model");
+		assert.strictEqual(oTokenizer.getTokens()[1].getText(), "Test B", "Token text should correspond to the model");
 
 		// Act
 		oMultiComboBox.getModel("test").setProperty("/a", "A Test");
@@ -8277,8 +8328,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getText(), "A Test", "Token text should be updated");
-		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[1].getText(), "B Test", "Token text should be updated");
+		assert.strictEqual(oTokenizer.getTokens()[0].getText(), "A Test", "Token text should be updated");
+		assert.strictEqual(oTokenizer.getTokens()[1].getText(), "B Test", "Token text should be updated");
 
 		// Cleanup
 		oMultiComboBox.destroy();
@@ -8344,12 +8395,13 @@ sap.ui.define([
 
 	QUnit.test("Token should be truncated initially", function (assert) {
 		// Assert
-		assert.ok(this.oMultiComboBox._oTokenizer.hasOneTruncatedToken(), "Token is truncated initially.");
+		assert.ok(this.oMultiComboBox.getAggregation("tokenizer").hasOneTruncatedToken(), "Token is truncated initially.");
 	});
 
 	QUnit.test("Should set/remove truncation on focusin/focusout", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(this.oMultiComboBox._oTokenizer, "_useCollapsedMode"),
+		var oTokenizer = this.oMultiComboBox.getAggregation("tokenizer"),
+			oSpy = sinon.spy(oTokenizer, "_useCollapsedMode"),
 			oMockEvent = {
 				target: this.oMultiComboBox.getFocusDomRef()
 			};
@@ -8359,15 +8411,15 @@ sap.ui.define([
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
-		assert.ok(oSpy.calledWith(false), "_useCollapsedMode should be called with 'false'.");
-		assert.ok(!this.oMultiComboBox._oTokenizer.hasOneTruncatedToken(), "Truncation was removed from the token");
+		assert.ok(oSpy.calledWith(TokenizerRenderMode.Loose), "_useCollapsedMode should be called with 'Narrow'.");
+		assert.ok(!oTokenizer.hasOneTruncatedToken(), "Truncation was removed from the token");
 
 		// Act
 		this.oMultiComboBox.onsapfocusleave(oMockEvent);
 		this.clock.tick(nPopoverAnimationTick);
 
-		assert.ok(oSpy.calledWith(true), "_useCollapsedMode should be called with 'true'.");
-		assert.ok(this.oMultiComboBox._oTokenizer.hasOneTruncatedToken(), "Truncation was set on the token");
+		assert.ok(oSpy.calledWith(TokenizerRenderMode.Narrow), "_useCollapsedMode should be called with 'Loose'.");
+		assert.ok(oTokenizer.hasOneTruncatedToken(), "Truncation was set on the token");
 	});
 
 	QUnit.test("Should open/close suggestion popover on CTRL + I", function (assert) {
@@ -8392,11 +8444,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should open read only popover on CTRL + I and the token should not be truncated", function (assert) {
+		var oTokenizer = this.oMultiComboBox.getAggregation("tokenizer");
 		// Arrange
 		this.oMultiComboBox.setEditable(false);
 		this.clock.tick();
 
-		assert.ok(this.oMultiComboBox._oTokenizer.hasOneTruncatedToken(), "The token should be truncated");
+		assert.ok(oTokenizer.hasOneTruncatedToken(), "The token should be truncated");
 
 		// Act
 		qutils.triggerKeydown(this.oMultiComboBox, KeyCodes.I, false, false, true); // trigger Control key + I
@@ -8404,7 +8457,7 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(this.oMultiComboBox._getReadOnlyPopover().isOpen(), "Suggestion read only popover should be opened");
-		assert.notOk(this.oMultiComboBox._oTokenizer.hasOneTruncatedToken(), "The token should not be truncated");
+		assert.notOk(oTokenizer.hasOneTruncatedToken(), "The token should not be truncated");
 	});
 
 	QUnit.test("Truncation should stay on token click in read only mode", function (assert) {
@@ -8416,7 +8469,7 @@ sap.ui.define([
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
-		assert.ok(this.oMultiComboBox._oTokenizer.hasOneTruncatedToken(), "The token should be truncated");
+		assert.ok(this.oMultiComboBox.getAggregation("tokenizer").hasOneTruncatedToken(), "The token should be truncated");
 	});
 
 	QUnit.test("Should not create suggestion popover on CTRL + I when the input doesn't have tokens", function (assert) {

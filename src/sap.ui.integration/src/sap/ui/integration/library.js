@@ -30,6 +30,7 @@ sap.ui.define([
 				"sap.ui.integration.Widget",
 				"sap.ui.integration.cards.Header",
 				"sap.ui.integration.cards.NumericHeader",
+				"sap.ui.integration.controls.ListContentItem",
 				"sap.ui.integration.host.HostConfiguration"
 			],
 			elements: [

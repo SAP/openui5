@@ -5,7 +5,6 @@
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:custom="sap.ui.documentation"
-		xmlns:html="http://www.w3.org/1999/xhtml"
 		displayBlock="true"
 		busy="{appView>/busy}"
 		busyIndicatorDelay="{appView>/delay}">
@@ -28,13 +27,13 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</ToggleButton>
-				<html:a href="#" class="sapLogo">
-					<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
-						densityAware="false"
-						height="2rem"
-						alt="UI5 logo"
-						decorative="false"/>
-				</html:a>
+				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
+					densityAware="false"
+					height="2rem"
+					alt="UI5 logo"
+					decorative="false"
+					class="sapLogo"
+					press="onLogoIconPress"/>
 				<core:ExtensionPoint name="customStartLinks" />
 				<Select id="selectHeader"
 						class="sapUiDocumentationSelect menuSelect"
@@ -118,6 +117,7 @@
 								</MenuItem>
 								<MenuItem text="{i18n>APP_INFORMATION_BTN_LICENSE}" key="license" visible="{versionData>/isOpenUI5}"/>
 								<MenuItem text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" key="terms_of_use" visible="{versionData>/isOpenUI5}"/>
+								<MenuItem text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE}" key="settings"/>
 							</items>
 						</Menu>
 					</menu>

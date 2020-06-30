@@ -18,7 +18,7 @@ sap.ui.define([
 				iSelectDialect: function (sDialect) {
 					this.waitFor({
 						matchers: function () {
-							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+							return Opa5.getContext()._getRecorderControls({
 								controlType: "sap.m.Select"
 							});
 						},
@@ -26,7 +26,7 @@ sap.ui.define([
 						success: function () {
 							return this.waitFor({
 								matchers: function () {
-									return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+									return Opa5.getContext()._getRecorderControls({
 										controlType: "sap.ui.core.Item",
 										matchers: new Properties({
 											key: sDialect
@@ -43,7 +43,7 @@ sap.ui.define([
 				iOpenTheSettingsDialog: function () {
 					this.waitFor({
 						matchers: function () {
-							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+							return Opa5.getContext()._getRecorderControls({
 								controlType: "sap.ui.core.Icon",
 								matchers: new Properties({
 									src: "sap-icon://settings"
@@ -63,7 +63,7 @@ sap.ui.define([
 				iSelectSettingCheckBox: function (sLabel, sPreference) {
 					this.waitFor({
 						matchers: function () {
-							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+							return Opa5.getContext()._getRecorderControls({
 								controlType: "sap.m.CheckBox",
 								searchOpenDialogs: true,
 								matchers: new Properties({
@@ -75,7 +75,7 @@ sap.ui.define([
 						success: function () {
 							return this.waitFor({
 								matchers: function () {
-									return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+									return Opa5.getContext()._getRecorderControls({
 										controlType: "sap.m.Button",
 										matchers: new Properties({
 											text: "Close"
@@ -92,7 +92,7 @@ sap.ui.define([
 				iClearSnippets: function () {
 					this.waitFor({
 						matchers: function () {
-							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+							return Opa5.getContext()._getRecorderControls({
 								controlType: "sap.m.Button",
 								properties: {
 									text: "Clear"
@@ -106,7 +106,7 @@ sap.ui.define([
 				iSwitchMultiple: function () {
 					this.waitFor({
 						matchers: function () {
-							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+							return Opa5.getContext()._getRecorderControls({
 								controlType: "sap.m.Switch"
 							});
 						},
@@ -122,7 +122,7 @@ sap.ui.define([
 					var mData = testTreeAPI.getMockData(sId);
 					this.waitFor({
 						matchers: function () {
-							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+							return Opa5.getContext()._getRecorderControls({
 								controlType: "sap.ui.codeeditor.CodeEditor",
 								matchers: [
 									new Properties({
@@ -142,7 +142,7 @@ sap.ui.define([
 					var mData = testTreeAPI.getMockData(sId);
 					this.waitFor({
 						matchers: function () {
-							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+							return Opa5.getContext()._getRecorderControls({
 								controlType: "sap.m.Table",
 								matchers: [
 									new AggregationLengthEquals({
@@ -159,7 +159,7 @@ sap.ui.define([
 							Opa5.assert.ok(true, "Own Properties table is filled");
 							return this.waitFor({
 								matchers: function () {
-									return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+									return Opa5.getContext()._getRecorderControls({
 										controlType: "sap.m.Text",
 										matchers: [
 											new Properties({
@@ -181,7 +181,7 @@ sap.ui.define([
 				iShouldSeeItemProperty: function (sProperty, sValue) {
 					this.waitFor({
 						matchers: function () {
-							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+							return Opa5.getContext()._getRecorderControls({
 								controlType: "sap.m.Text",
 								matchers: new Properties({
 									text: sProperty
@@ -193,7 +193,7 @@ sap.ui.define([
 							// the text can be in either table - own or inherited props
 							this.waitFor({
 								matchers: function () {
-									return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+									return Opa5.getContext()._getRecorderControls({
 										controlType: "sap.m.Table",
 										matchers: new Descendant(aTextWithProperty[0])
 									});
@@ -201,7 +201,7 @@ sap.ui.define([
 								success: function (aTables) {
 									this.waitFor({
 										matchers: function () {
-											return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+											return Opa5.getContext()._getRecorderControls({
 												controlType: "sap.m.Text",
 												matchers: [
 													new Properties({

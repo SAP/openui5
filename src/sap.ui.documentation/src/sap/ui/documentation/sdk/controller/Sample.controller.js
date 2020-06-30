@@ -14,7 +14,8 @@ sap.ui.define([
     "sap/m/Text",
     "sap/ui/core/HTML",
     "sap/m/library",
-    "sap/base/Log"
+    "sap/base/Log",
+	"sap/ui/core/Fragment"
 ], function(
     jQuery,
 	SampleBaseController,
@@ -26,7 +27,8 @@ sap.ui.define([
 	Text,
 	HTML,
 	mobileLibrary,
-	Log
+	Log,
+	Fragment
 ) {
 		"use strict";
 
@@ -146,6 +148,8 @@ sap.ui.define([
 				oModelData.showNewTab = !!oSampleConfig.iframe;
 				oModelData.id = oSample.id;
 				oModelData.name = oSample.name;
+				oModelData.details = oSample.details;
+				oModelData.description = oSample.description;
 
 				if (oSampleConfig) {
 
@@ -234,6 +238,23 @@ sap.ui.define([
 					entityId: this.entityId,
 					sampleId: this.oModel.getProperty("/nextSampleId")
 				});
+			},
+
+			onInfoSample: function (oEvent) {
+				var oButton = oEvent.getSource();
+				if (!this._oPopover) {
+					Fragment.load({
+						name: "sap.ui.documentation.sdk.view.samplesInfo",
+						controller: this
+					}).then(function (oPopover) {
+						// connect popover to the root view of this component (models, lifecycle)
+						this.getView().addDependent(oPopover);
+						this._oPopover = oPopover;
+						this._oPopover.openBy(oButton);
+					}.bind(this));
+				} else {
+					this._oPopover.openBy(oButton);
+				}
 			},
 
 			/**

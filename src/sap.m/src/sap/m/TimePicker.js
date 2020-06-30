@@ -491,14 +491,17 @@ function(
 			this._bValid = true;
 			if (sValue !== "") {
 				//keep the oDate not changed by the 24 hrs
-				oDate = this._parseValue(
-					TimePickerSliders._isHoursValue24(sValue, iIndexOfHH, iIndexOfH) ?
-						TimePickerSliders._replace24HoursWithZero(sValue, iIndexOfHH, iIndexOfH) : sValue, true);
+				oDate = this._parseValue(bThatValue2400 ? TimePickerSliders._replace24HoursWithZero(sValue, iIndexOfHH, iIndexOfH) : sValue, true);
 				if (!oDate) {
 					this._bValid = false;
 				} else {
 					// check if Formatter changed the value (it corrects some wrong inputs or known patterns)
 					sValue = this._formatValue(oDate);
+					// reset the mask as the value might be changed without firing focus out event,
+					// which is unexpected behavior in regards to the MaskEnabler temporary value storage
+					if (this.getMask()) {
+						this._setupMaskVariables();
+					}
 				}
 			}
 			sThatValue = this.getSupport2400() && bThatValue2400 ? "24:" + sValue.replace(/[0-9]/g, "0").slice(0, -3) : sValue;
@@ -1134,10 +1137,6 @@ function(
 			var oDate = this._getSliders().getTimeValues(),
 				sValue = this._formatValue(oDate);
 
-			//if 24 is selected for hours, it should also go to the input after pressing the OK button
-			if (this.getSupport2400()) {
-				sValue = this._getSliders().getValue();
-			}
 			this.updateDomValue(sValue);
 			this._handleInputChange();
 
@@ -1212,9 +1211,8 @@ function(
 
 			//2400 scenario - be sure that the correct value will be set in all cases - when binding,
 			//setting the value by sliders or only via setValue
-			if (this.getSupport2400() && TimePickerSliders._isHoursValue24(this.getValue(), iIndexOfHH, iIndexOfH)
-				&& TimePickerSliders._replaceZeroHoursWith24(sValue, iIndexOfHH, iIndexOfH) === this.getValue()) {
-				sValue = this.getValue();
+			if (this.getSupport2400() && this._getSliders() && this._getSliders()._getHoursSlider().getSelectedValue() === "24") {
+				sValue = TimePickerSliders._replaceZeroHoursWith24(sValue, iIndexOfHH, iIndexOfH);
 			}
 
 			return sValue;

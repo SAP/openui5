@@ -85,3 +85,64 @@
     background: @sapUiContentSearchHighlightColor;
     font-weight: bold;
 }
+
+/* Enables sap.m.IBadge implementations where possible */
+
+.sapMBadge {
+	overflow: visible;
+	position: relative;
+	.sapMBadgeIndicator {
+		position: absolute;
+		top: -0.125rem;
+		right: -0.25rem;
+		z-index: 100;
+		max-width: 100%;
+
+		padding-right: 0.125rem;
+		box-sizing: border-box;
+		height: 100%;
+		&:after {
+			content:  attr(data-badge);
+			padding: 0 0.3125rem;
+			border-radius: 1.125rem;
+			height: 1.125rem;
+			display: block;
+
+			line-height: 1.125rem;
+			font-size: 0.6875rem;
+			font-family: @sapUiFontFamily;
+
+			background-color: @sapAccentColor2;
+			border-color: @sapUiContentBadgeBackground;
+			color: @sapUiShellTextColor;
+
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+			.badgeAccentColorMixin(10);
+		}
+		.sapMBadgeTopLeft& {
+			top: -0.125rem;
+			left: -0.25rem;
+			right: auto;
+		 }
+		.sapMBadgeTopRight& {
+			top: -0.125rem;
+			right: -0.25rem;
+		}
+		.sapMBadgeInline& {
+			left: 0;
+			right: 0;
+			top: 0;
+		}
+	}
+}
+
+.badgeAccentColorMixin(@n, @i: 1) when (@i =< @n) {
+	@value: 'sapAccentColor@{i}';
+
+	.sapMBadgeAccentColor@{i}& {
+		background-color: @@value;
+	}
+	.badgeAccentColorMixin(@n, (@i + 1));
+}

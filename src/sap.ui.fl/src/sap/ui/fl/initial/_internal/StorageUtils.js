@@ -39,6 +39,7 @@ sap.ui.define([
 			KeyUserConnector: "sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 			StaticFileConnector: "sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
 			// Test & Demo Connectors
+			ObjectStorageConnector: "sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
 			JsObjectConnector: "sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 			ObjectPathConnector: "sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
 			LocalStorageConnector: "sap/ui/fl/write/_internal/connectors/LocalStorageConnector",

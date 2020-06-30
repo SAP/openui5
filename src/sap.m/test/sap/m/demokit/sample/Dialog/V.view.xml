@@ -7,32 +7,32 @@
 		<Button
 			text="Dialog"
 			width="230px"
-			press="onDialogPress"
+			press=".onDefaultDialogPress"
 			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Dialog (Fixed Size)"
 			width="230px"
-			press="onDialogWithSizePress"
+			press=".onDialogWithSizePress"
 			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Dialog (Resizable)"
 			width="230px"
-			press="onResizableDialog"
+			press=".onResizableDialogPress"
 			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Dialog (Draggable)"
 			width="230px"
-			press="onDraggableDialog"
+			press=".onDraggableDialogPress"
 			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Dialog with prevent close"
 			width="230px"
-			press="onEscapePreventDialog"
+			press=".onEscapePreventDialogPress"
 			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Dialog with responsive padding"
 			width="230px"
-			press="onResponsivePaddingDialog"
+			press=".onResponsivePaddingDialogPress"
 			class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>

@@ -46,27 +46,23 @@ sap.ui.define([
 	/**
 	 * Creates a new filter bar which holds drop-down menus for filtering. Those drop-down menus are created based on the parameters configuration.
 	 *
-	 * @param {map} mParamsConfig A map of the parameters config - the same that is defined in sap.card/configuration/parameters.
-	 * @param {map} mParamsValues The combined (runtime + manifest) values of the parameters.
+	 * @param {map} mFiltersConfig A map of the parameters config - the same that is defined in sap.card/configuration/parameters.
+	 * @param {map} mFiltersValues The combined (runtime + manifest) values of the parameters.
 	 * @returns {sap.m.HBox} The Filter bar.
 	 */
-	FilterBarFactory.prototype.create = function (mParamsConfig, mParamsValues) {
+	FilterBarFactory.prototype.create = function (mFiltersConfig, mFiltersValues) {
 		var oFilterBar,
 			aSelects = [],
 			sKey,
 			mConfig,
 			sValue;
 
-		for (sKey in mParamsConfig) {
-			mConfig = mParamsConfig[sKey];
-			sValue = mParamsValues[sKey];
-
-			if (!mConfig.filter) {
-				continue;
-			}
+		for (sKey in mFiltersConfig) {
+			mConfig = mFiltersConfig[sKey];
+			sValue = mFiltersValues.get(sKey) || mConfig.value;
 
 			aSelects.push(
-				this._createSelect(sKey, mConfig.filter, sValue)
+				this._createSelect(sKey, mConfig, sValue)
 			);
 		}
 
@@ -98,7 +94,7 @@ sap.ui.define([
 		oSelect.setSelectedKey(sValue);
 
 		oSelect.attachChange(function () {
-			this._oCard.setParameter(sKey, oSelect.getSelectedKey());
+			this._oCard._setFilterValue(sKey, oSelect.getSelectedKey());
 		}.bind(this));
 
 		return oSelect;

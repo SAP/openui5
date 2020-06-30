@@ -12,7 +12,9 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/ui/core/Core",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/MenuItem"
 ],
 function (
 	SearchManager,
@@ -26,7 +28,9 @@ function (
 	Menu,
 	Core,
 	Log,
-	jQuery
+	jQuery,
+	JSONModel,
+	MenuItem
 ) {
 	"use strict";
 
@@ -319,7 +323,7 @@ function (
 		this.oSB._assignControls();
 
 		// Assert
-		assert.strictEqual(this.oSB._oTitleControl, this.oSB._oMegaMenu,
+		assert.strictEqual(this.oSB._oTitleControl, this.oSB._oPrimaryTitle,
 			"Configuration without MenuButton is correctly rendered");
 		assert.strictEqual(this.oSB._oPrimaryTitle !== null, true,  "PrimaryTitle element instance is hold by the control");
 		assert.strictEqual(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oPrimaryTitle ), -1,
@@ -509,7 +513,7 @@ function (
 		// Assert
 		assert.strictEqual(aContent.length, 6, "Expected number of controls added to OverflowToolbar");
 		// Assert
-		assert.strictEqual(aItems.length, 14, "Expected number of controls added to OverflowToolbar");
+		assert.strictEqual(aItems.length, 12, "Expected number of controls added to OverflowToolbar");
 
 		// Assert - Order of controls in aggregation
 		assert.ok(aItems[0] === this.oSB._oNavButton, "Control at index 0 in SB is NavButton");
@@ -524,8 +528,6 @@ function (
 		assert.ok(aItems[9] === this.oSB._oNotifications, "Control at index 10 in SB is Notifications");
 		assert.ok(aItems[10] === oAdditionalButton1, "Control at index 11 in SB is AdditionalButton 1");
 		assert.ok(aItems[11] === oAdditionalButton2, "Control at index 12 in SB is AdditionalButton 2");
-		assert.ok(aItems[12] === this.oSB._oAvatarButton, "Control at index 13 in SB is AvatarButton");
-		assert.ok(aItems[13] === this.oSB._oProductSwitcher, "Control at index 9 in OT is ProductSwitcher");
 
 		// Assert - _aOverflowControls
 		assert.strictEqual(aOverflowControls.length, 6, "Overflow Toolbar has 5 controls in it");
@@ -593,7 +595,7 @@ function (
 		Core.applyChanges();
 
 		// Act
-		document.getElementById(DOM_RENDER_LOCATION).style.width = 300 + "px";
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 320 + "px";
 		this.oSB._oResponsiveHandler._handleResize();
 
 		// Assert
@@ -612,16 +614,22 @@ function (
 
 
 		// Act
-		document.getElementById(DOM_RENDER_LOCATION).style.width = 300 + "px";
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 320 + "px";
 		oControl.setShowMenuButton(false);
 		this.oSB._oResponsiveHandler._handleResize();
 
 		// Assert
 
-		assert.strictEqual(oControl._oHomeIcon.getVisible(), true, "regular mode requirements passed");
+		assert.strictEqual(oControl._oSecondTitle.getVisible(), false, "phone mode requirements passed");
+		this.oSB.setMenu(new Menu({items:[new MenuItem()]}));
+		this.oSB.setHomeIcon("");
+		assert.strictEqual(oControl._oMegaMenu.getText(), oControl.getTitle(), "phone mode requirements passed - if there is a " +
+			"menu configured and no home icon, we show primary title text inside the MenuButton");
 
 		//Cleanup
 		document.getElementById(DOM_RENDER_LOCATION).style.width = 1024 + "px";
+
+
 	});
 
 	// Accessibility related tests
@@ -785,7 +793,7 @@ function (
 	});
 
 	QUnit.test("Avatar attributes", function (assert) {
-		var oAvatar = this.oSB._oAvatarButton,
+		var oAvatar = this.oSB.getProfile(),
 			$oAvatar = oAvatar.$(),
 			sTooltip = this.oRb.getText("SHELLBAR_PROFILE_TOOLTIP");
 
@@ -854,7 +862,7 @@ function (
 
 	QUnit.test("ResponsiveHandler with open search", function (assert) {
 		// Assert
-		assert.strictEqual(_getVisibleControlsCount(this.oSB), 11, "phone mode requirements passed");
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 10, "phone mode requirements passed");
 		assert.strictEqual(this.oSB.hasStyleClass("sapFShellBarFullSearch"), false,
 			"Full width search class list was added to Shell Bar.");
 
@@ -870,7 +878,7 @@ function (
 		this.oSB._oResponsiveHandler._transformToRegularState();
 
 		// Assert
-		assert.strictEqual(_getVisibleControlsCount(this.oSB), 11, "phone mode requirements passed");
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 10, "phone mode requirements passed");
 		assert.strictEqual(this.oSB.hasStyleClass("sapFShellBarFullSearch"), false,
 			"Full width search class list was added to Shell Bar.");
 	});
@@ -918,6 +926,7 @@ function (
 	QUnit.test("Mobile requirements with both configuration - with or without menu button", function (assert) {
 
 		// Act
+		this.oSB.setMenu(new Menu({items:[new MenuItem()]}));
 		this.oSB._oResponsiveHandler._transformToPhoneState();
 		this.oSB.setShowMenuButton(true);
 		this.oSB._oSearch.firePress();
@@ -961,42 +970,44 @@ function (
 
 	QUnit.test("avatarPressed", function (assert) {
 		// Setup
-		var done = assert.async();
+		var done = assert.async(),
+			oAvatar = this.oSB.getProfile();
 
 		assert.expect(2);
 
 		this.oSB.attachAvatarPressed(function(oEvent) {
 			// Assert
 			assert.ok(true, "Event was fired");
-			assert.strictEqual(this.oSB._oAvatarButton.getId(), oEvent.getParameter("avatar").getId(), "Correct parameter was passed");
+			assert.strictEqual(oAvatar.getId(), oEvent.getParameter("avatar").getId(), "Correct parameter was passed");
 
 			// Clean up
 			done();
-		}, this);
+		});
 
 		// Act
-		this.oSB._oAvatarButton.firePress();
+		oAvatar.firePress();
 	});
 
 	QUnit.test("avatar press", function (assert) {
 		// Setup
-		var done = assert.async();
+		var done = assert.async(),
+			oAvatar = this.oSB.getProfile();
 
 		assert.expect(2);
 
-		this.oSB._oAvatarButton.attachPress(function(oEvent) {
+		oAvatar.attachPress(function(oEvent) {
 			var sEventProviderId = oEvent.getSource().getId();
 
 			// Assert
 			assert.ok(true, "Event was fired");
-			assert.strictEqual(this.oSB._oAvatarButton.getId(),	sEventProviderId, "Avatar own event is fired");
+			assert.strictEqual(oAvatar.getId(),	sEventProviderId, "Avatar own event is fired");
 
 			// Clean up
 			done();
-		}, this);
+		});
 
 		// Act
-		this.oSB._oAvatarButton.firePress();
+		oAvatar.firePress();
 	});
 
 
@@ -1286,4 +1297,31 @@ function (
 
 	});
 
+	QUnit.module("Binding", {
+		beforeEach: function () {
+			var oModel = new JSONModel({
+				initials: "KS"
+			});
+
+			this.oSB = new ShellBar();
+			this.oSB.setModel(oModel);
+			this.oSB.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oSB.destroy();
+		}
+	});
+
+	QUnit.test("Profile aggregation", function (assert) {
+		var oAvatar = new Avatar({
+			initials: '{/initials}'
+		});
+
+		this.oSB.setProfile(oAvatar);
+		Core.applyChanges();
+
+		//Assert
+		assert.equal(this.oSB.getProfile().getInitials(), "KS", "Initials are set correctly");
+	});
 });

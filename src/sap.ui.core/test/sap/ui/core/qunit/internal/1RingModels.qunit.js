@@ -43,6 +43,7 @@ sap.ui.require([
 		// "sap/ui/core/qunit/MasterDetail.qunit",
 		"sap/ui/core/qunit/StaticBinding.qunit",
 		"sap/ui/core/qunit/model/Context.qunit",
+		"sap/ui/core/qunit/model/ContextBinding.qunit",
 		"sap/ui/core/qunit/model/Model.qunit",
 
 		// ***************************************************************************************
@@ -54,6 +55,22 @@ sap.ui.require([
 		//TODO: get test running in 1RingModels.qunit; it uses sinon 1
 		// test is contained in /sap.ui.table/test/sap/ui/table/qunit/testsuite.qunit.js
 		// "sap/ui/table/qunit/AnalyticalTable.qunit",
+
+		// ***************************************************************************************
+		// sap.ui.model.ClientModel
+		// ***************************************************************************************
+		"sap/ui/core/qunit/ClientModel.qunit",
+
+		// ***************************************************************************************
+		// sap.ui.model.json.* - tests are contained in testsuite.json.qunit.js
+		// ***************************************************************************************
+		"sap/ui/core/qunit/json/JSONBinding.qunit",
+		"sap/ui/core/qunit/json/JSONListBinding.qunit",
+		//TODO uses a fake service and does not got together with odata4analytics.qunit
+//		"sap/ui/core/qunit/json/JSONModel.qunit",
+		"sap/ui/core/qunit/json/JSONPropertyBinding.qunit",
+		"sap/ui/core/qunit/json/JSONTreeBinding.qunit",
+		"sap/ui/core/qunit/json/JSONTwoWay.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.message.*
@@ -156,7 +173,18 @@ sap.ui.require([
 		// ***************************************************************************************
 		// sap.ui.model.type.* - tests are contained in testsuite.types.qunit.js
 		// ***************************************************************************************
-		"sap/ui/core/qunit/types/Types.qunit"
+		"sap/ui/core/qunit/types/Types.qunit",
+
+		// ***************************************************************************************
+		// sap.ui.model.xml.* - tests are contained in testsuite.xml.qunit.js
+		// ***************************************************************************************
+		"sap/ui/core/qunit/xml/XMLBinding.qunit",
+		"sap/ui/core/qunit/xml/XMLListBinding.qunit",
+		"sap/ui/core/qunit/xml/XMLModel.qunit",
+		"sap/ui/core/qunit/xml/XMLModelNS.qunit",
+		"sap/ui/core/qunit/xml/XMLPropertyBinding.qunit",
+		"sap/ui/core/qunit/xml/XMLTreeBinding.qunit",
+		"sap/ui/core/qunit/xml/XMLTwoWay.qunit"
 	], function () {
 		function start() {
 			Core.detachThemeChanged(start);

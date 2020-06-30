@@ -9,36 +9,36 @@
 				"numberOfProducts": {
 					"value": 2,
 					"type": "integer"
-				},
+				}
+			},
+			"filters": {
 				"category": {
 					"value": "notebooks",
 					"type": "string",
 					"label": "Category",
 					"description": "Filter the products by category.",
-					"filter": {
-						"items":  [
-							{
-								"title": "Flat Screen Monitors",
-								"key": "flat_screens"
-							},
-							{
-								"title": "Notebooks",
-								"key": "notebooks"
-							}
-						]
-					}
+					"items":  [
+						{
+							"title": "Flat Screen Monitors",
+							"key": "flat_screens"
+						},
+						{
+							"title": "Notebooks",
+							"key": "notebooks"
+						}
+					]
 				}
 			}
 		},
 		"data": {
 			"request": {
-				"url": "test-resources/sap/ui/integration/qunit/manifests/items_{{parameters.category}}.json"
+				"url": "test-resources/sap/ui/integration/qunit/manifests/items_{{filters.category}}.json"
 			}
 		},
 		"type": "List",
 		"header": {
 			"title": "Products by category",
-			"subTitle": "Category {{parameters.category}}",
+			"subTitle": "Category {{filters.category}}",
 			"icon": {
 				"src": "sap-icon://product"
 			},

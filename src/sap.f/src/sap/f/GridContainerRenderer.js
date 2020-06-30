@@ -158,6 +158,10 @@ sap.ui.define([ "sap/ui/Device"],
 				aClasses.push("sapFGridContainerInvisiblePlaceholder");
 			}
 
+			if (oControl._hasOwnVisualFocus(oItem)) {
+				aClasses.push("sapFGridContainerItemWrapperNoVisualFocus");
+			}
+
 			return {
 				styles: mStyles,
 				classes: aClasses

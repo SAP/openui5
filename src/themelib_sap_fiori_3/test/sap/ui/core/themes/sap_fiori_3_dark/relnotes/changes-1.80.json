@@ -1,0 +1,66 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "6499fd3bded85507eb8dec09e3fa50df76ff64fa",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Structure fix for accessibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070244871"
+          }
+        ]
+      },
+      {
+        "id": "580651c6f43bf9fa5b9c32df069f92ca186d68c9",
+        "type": "FIX",
+        "text": " \"72\" font: fix Vietnamese characters with misplaced dot below",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002309352020"
+          }
+        ]
+      },
+      {
+        "id": "f2e7c6b1f2c6de405dc39f85d9b01dffff7eb15d",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Focus outline in SAP Quartz HCB/HCW themes adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080195107"
+          }
+        ]
+      },
+      {
+        "id": "d7d2dd9b14b01282d3cd37461f24a2eb474561af",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: TabFilter focus is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070204567"
+          }
+        ]
+      },
+      {
+        "id": "bc1f51e81b6dcb7035022da3cc056ca417dd1440",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Belize theme aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080205466"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080207010"
+          }
+        ]
+      }
+    ]
+  }
+}

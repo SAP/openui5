@@ -24,8 +24,8 @@ sap.ui.define(["sap/ui/Device"],
 				bRenderHeaderContent = bIsHeaderContentVisible || bIsTitleInHeaderContent,
 				bUseIconTabBar = oControl.getUseIconTabBar(),
 				bTitleClickable = oControl.getToggleHeaderOnTitleClick() && oControl.getHeaderTitle() && oControl.getHeaderTitle().supportsToggleHeaderOnTitleClick(),
-				sRootAriaLabelText = oControl._getAriaLabelText("ROOT"),
-				sHeaderAriaLabelText = oControl._getAriaLabelText("HEADER"),
+				sRootAriaLabelText = oControl._getAriaLabelText("ROOT", true),
+				sHeaderAriaLabelText = oControl._getAriaLabelText("HEADER", true),
 				sBackgroundDesign = oControl.getBackgroundDesignAnchorBar(),
 				oLandmarkInfo = oControl.getLandmarkInfo(),
 				sHeaderTag = oControl._getHeaderTag(oLandmarkInfo),
@@ -90,7 +90,7 @@ sap.ui.define(["sap/ui/Device"],
 			}
 
 			// Sticky Header Content
-			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && oControl._bHeaderInTitleArea, "-stickyHeaderContent");
+			this._renderHeaderContentDOM(oRm, oControl, oControl._bHeaderInTitleArea, "-stickyHeaderContent");
 
 			// Sticky anchorBar placeholder
 			oRm.openStart("div", oControl.getId() + "-stickyAnchorBar");
@@ -137,7 +137,7 @@ sap.ui.define(["sap/ui/Device"],
 				.openEnd();
 
 			// Header Content
-			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && !oControl._bHeaderInTitleArea, "-headerContent",  true);
+			this._renderHeaderContentDOM(oRm, oControl, !oControl._bHeaderInTitleArea, "-headerContent",  true);
 
 			// Anchor Bar
 			oRm.openStart("section", oControl.getId() + "-anchorBar");
@@ -184,17 +184,17 @@ sap.ui.define(["sap/ui/Device"],
 			}
 			oRm.close("section");
 
-			oRm.openStart("span", oControl.getId() + "-skipFastGroupAnchor")
-				.class("sapUiPseudoInvisibleText")
-				.openEnd()
-				.close("span");
-
 			// run hook method
 			this.renderFooterContent(oRm, oControl);
 
 			oRm.openStart("div", oControl.getId() + "-spacer")
 				.openEnd()
 				.close("div");
+
+			oRm.openStart("span", oControl.getId() + "-skipFastGroupAnchor")
+				.class("sapUiPseudoInvisibleText")
+				.openEnd()
+				.close("span");
 
 			oRm.close("div"); // END scroll
 

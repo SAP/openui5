@@ -7,13 +7,15 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.IconTabBarBackgroundDesign.IconTabBarBackgroundDesign",
+			"viewName": "sap.m.sample.IconTabBarBackgroundDesign.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
 			},
 			"components": {
 				"sap.m.sample.Table": {}
@@ -29,8 +31,8 @@
 		"config": {
 			"sample": {
 				"files": [
-					"IconTabBarBackgroundDesign.view.xml",
-					"IconTabBarBackgroundDesign.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json"
 				]
 			}

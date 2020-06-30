@@ -1,0 +1,24 @@
+{
+  "@odata.context": "$metadata#SalesDenormalized(ProductName,Forecast)",
+  "@odata.metadataEtag": "W/\"YUSu2I9/FvD7c+fuUIYoe41AgnIMQ6G9rT1QvopTpNk=\"",
+  "value": [
+	{
+	  "@odata.id": null,
+	  "ProductName": "Coffee",
+	  "Forecast@odata.type": "#Decimal",
+	  "Forecast": "6.25"
+	},
+	{
+	  "@odata.id": null,
+	  "ProductName": "Sugar",
+	  "Forecast@odata.type": "#Decimal",
+	  "Forecast": "6.25"
+	},
+	{
+	  "@odata.id": null,
+	  "ProductName": "Paper",
+	  "Forecast@odata.type": "#Decimal",
+	  "Forecast": "12.5"
+	}
+  ]
+}

@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
+/*global describe,it,element,by,takeScreenshot,expect,browser,protractor*/
 
 describe("sap.m.TimePicker", function() {
 	"use strict";
@@ -46,5 +46,23 @@ describe("sap.m.TimePicker", function() {
 
 		//Assert
 		expect(takeScreenshot()).toLookAs("seconds_slider");
+	});
+
+	it("focus in behavior when mask mode is on", function () {
+		var oInnerInput = element(by.id("TP1-inner"));
+
+		//Focus input field
+		oInnerInput.click();
+		//Move the caret one symbol to the right
+		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+		//Remove the first symbol
+		browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+		//Focus out of the input field
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		//Focus input field again
+		oInnerInput.click();
+
+		//Assert
+		expect(takeScreenshot()).toLookAs("input_value_selected");
 	});
 });

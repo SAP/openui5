@@ -7,14 +7,13 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.QuickView.QuickView",
+			"viewName": "sap.m.sample.QuickView.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {},
-				"sap.ui.layout": {},
 				"sap.m": {}
 			}
 		},
@@ -22,8 +21,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"QuickView.view.xml",
-					"QuickView.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"QuickView.fragment.xml",
 					"model/CompanyData.json",
 					"model/EmployeeData.json",

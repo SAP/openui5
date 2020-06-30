@@ -11,7 +11,6 @@ sap.ui.define([
 	"./shellBar/ResponsiveHandler",
 	"./shellBar/Accessibility",
 	"sap/m/BarInPageEnabler",
-	"sap/m/OverflowToolbarLayoutData",
 	"./ShellBarRenderer"
 ],
 function(
@@ -21,8 +20,7 @@ function(
 	AdditionalContentSupport,
 	ResponsiveHandler,
 	Accessibility,
-	BarInPageEnabler,
-	OverflowToolbarLayoutData
+	BarInPageEnabler
 	/*, ShellBarRenderer */
 ) {
 	"use strict";
@@ -265,7 +263,7 @@ function(
 		this.setAggregation("_additionalBox", this._oAdditionalBox);
 
 		this._oToolbarSpacer = this._oFactory.getToolbarSpacer();
-		this._oAvatarButton = null;
+
 		// Init responsive handler
 		this._oResponsiveHandler = new ResponsiveHandler(this);
 
@@ -320,20 +318,7 @@ function(
 			oAvatar.addStyleClass("sapFShellBarProfile");
 		}
 
-		this._oAvatarButton = oAvatar;
-
-		return this;
-	};
-
-	ShellBar.prototype.getProfile = function () {
-		return this._oAvatarButton;
-	};
-
-	ShellBar.prototype.destroyProfile =  function () {
-		this._oAvatarButton.destroy();
-		this._oAvatarButton = null;
-
-		return this;
+		return this.setAggregation("profile", oAvatar);
 	};
 
 	ShellBar.prototype.setHomeIconTooltip = function (sTooltip) {
@@ -553,14 +538,6 @@ function(
 			}
 
 			this._aRightControls.push(this._oOverflowToolbar);
-
-			if (this._oAvatarButton) {
-				this.addControlToCollection(this._oAvatarButton, this._aRightControls);
-			}
-
-			if (this._oProductSwitcher) {
-				this.addControlToCollection(this._oProductSwitcher, this._aRightControls);
-			}
 		}
 
 		this._bLeftBoxUpdateNeeded = false;
@@ -576,15 +553,20 @@ function(
 		// which we will later read in ResponsiveHandler
 		this._oTitleControl = null;
 		//depends on the given configuration we either show MenuButton with MegaMenu, or Title
-		if (this.getShowMenuButton() && this._oPrimaryTitle){
-
-			this.addControlToCollection(this._oPrimaryTitle, this._oAdditionalBox);
-			this._oTitleControl = this._oPrimaryTitle;
+		if (this.getShowMenuButton() ){
+			if (this._oPrimaryTitle) {
+				this.addControlToCollection(this._oPrimaryTitle, this._oAdditionalBox);
+				this._oTitleControl = this._oPrimaryTitle;
+			}
 
 		} else if (this._oMegaMenu) {
-
-			this.addControlToCollection(this._oMegaMenu, this._oAdditionalBox);
-			this._oTitleControl = this._oMegaMenu;
+			if (this._oMegaMenu.getMenu() && this._oMegaMenu.getMenu().getItems().length) {
+				this.addControlToCollection(this._oMegaMenu, this._oAdditionalBox);
+				this._oTitleControl = this._oMegaMenu;
+			} else if (this._oPrimaryTitle) {
+				this.addControlToCollection(this._oPrimaryTitle, this._oAdditionalBox);
+				this._oTitleControl = this._oPrimaryTitle;
+			}
 		}
 
 		if (this._oSecondTitle) {

@@ -107,6 +107,17 @@ sap.ui.define(function() {
 					libs : ["sap.ui.table", "sap.m"]
 				}
 			},
+
+			// *************************************************************************
+			// Tests considering JSONModel and JSONPropertyBinding
+			// *************************************************************************
+			// contained in testsuite.json.qunit.js
+			JSONModel : {
+				// not in 1RingModels.qunit because of fake service usage
+				title : "sap.ui.model.json.JSONModel",
+				module : ["test-resources/sap/ui/core/qunit/json/JSONModel.qunit"]
+			},
+
 			// *************************************************************************
 			// Tests considering messages
 			// *************************************************************************

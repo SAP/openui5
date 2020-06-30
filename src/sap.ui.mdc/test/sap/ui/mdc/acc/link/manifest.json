@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.ui.mdc.acc.link",
+		"_version": "1.0",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"id": "IDView",
+			"type": "XML",
+			"viewName": "sap.ui.mdc.acc.link.LinkAccessibility",
+			"height": "100%",
+			"async": true
+		},
+		"dependencies": {
+			"minUI5Version": "1.70.0",
+			"libs": {
+				"sap.ui.core": {
+					"minVersion": "1.70.0"
+				},
+				"sap.m": {
+					"minVersion": "1.70.0"
+				}
+			},
+			"components": {}
+		}
+	}
+}

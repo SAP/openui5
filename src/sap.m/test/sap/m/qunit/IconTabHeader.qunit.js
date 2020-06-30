@@ -153,4 +153,28 @@ sap.ui.define([
 		oITH.destroy();
 	});
 
+	QUnit.module("properties");
+
+	QUnit.test("ariaTexts", function (assert) {
+		var oITH = createHeaderWithItems(10);
+
+		oITH.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		assert.notOk(oITH.$().attr("aria-label"), "'aria-label' attribute should NOT be set.");
+		assert.notOk(oITH.$("head").attr("aria-describedby"), "'aria-describedby' attribute should NOT be set.");
+
+		oITH.setAriaTexts({
+			headerLabel: "Available spaces",
+			headerDescription: "Select tab to show a space"
+		});
+		Core.applyChanges();
+
+		assert.strictEqual(oITH.$().attr("aria-label"), "Available spaces", "'aria-label' attribute should be set");
+		assert.strictEqual(oITH.$("head").attr("aria-describedby"), oITH._getInvisibleHeadText().getId(), "'aria-describedby' attribute should be set.");
+
+
+		// Clean-up
+		oITH.destroy();
+	});
 });

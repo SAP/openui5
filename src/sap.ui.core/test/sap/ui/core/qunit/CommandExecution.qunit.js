@@ -240,10 +240,28 @@ sap.ui.define([
 	+  '<core:ComponentContainer id="CC" '
 	+  'binding="{odata>/}" >'
 	+  '<core:dependents>'
-	+  '<core:CommandExecution id="CE_SAVE_ITEM" command="Save" enabled="true" execute=".onSave" />'
-	+  '<core:CommandExecution id="CE_EXIT_ITEM" command="Exit" enabled="true" execute=".onExit" />'
+	+  '<core:CommandExecution command="Save" enabled="true" execute=".onSave" />'
+	+  '<core:CommandExecution command="Exit" enabled="true" execute=".onExit" />'
 	+  '</core:dependents>'
 	+  '</core:ComponentContainer>'
+	+  '</mvc:View>';
+
+	var sView3 = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.command.Command" displayBlock="true">'
+	+  '<Panel>'
+	+  '<dependents>'
+	+  '<core:CommandExecution command="Save" enabled="true" execute=".onSave" />'
+	+  '<core:CommandExecution command="Exit" enabled="true" execute=".onExit" />'
+	+  '</dependents>'
+	+  '<Panel headerText="innerButton" id="PANELV31">'
+	+  '<dependents>'
+	+  '<core:CommandExecution command="Save" enabled="true" execute=".onSave" />'
+	+  '<core:CommandExecution command="Exit" enabled="true" execute=".onExit" />'
+	+  '</dependents>'
+	+  '</Panel>'
+	+  '<Panel headerText="innerButton" id="PANELV32">'
+	+  '<mvc:View id="EMBEDDEDVIEW" viewName="my.command.Command2" type="XML"/>'
+	+  '</Panel>'
+	+  '</Panel>'
 	+  '</mvc:View>';
 
 	sap.ui.require.preload({
@@ -253,6 +271,10 @@ sap.ui.define([
 	sap.ui.require.preload({
 		"my/command/Command2.view.xml": sView2
 	},"my/command/Command2-preload");
+
+	sap.ui.require.preload({
+		"my/command/Command3.view.xml": sView3
+	},"my/command/Command3-preload");
 
 	function fnInitControlTree() {
 		oPanel = new Panel();
@@ -865,6 +887,57 @@ sap.ui.define([
 			assert.ok(!Shortcut.isRegistered(oPage, "ctrl+e"), "Shortcut not registered");
 			assert.ok(!Shortcut.isRegistered(oPopover, "ctrl+e"), "Shortcut not registered");
 			assert.ok(Shortcut.isRegistered(oPopover, "ctrl+s"), "Shortcut registered");
+			oComponent.destroy();
+		});
+	});
+
+	QUnit.test("CommandExecution $cmd model propagation", function(assert) {
+		assert.expect(1);
+		var oComponent;
+
+		// load the test component
+		return Component.create({
+			name: "my.command",
+			manifest: false
+		}).then(function(myComponent) {
+			oComponent = myComponent;
+			return oComponent.getRootControl().loaded();
+		}).then(function(oView) {
+			return oComponent.runAsOwner(function() {
+				return XMLView.create({
+					viewName: "my.command.Command3"
+				});
+			});
+		}).then(function(oView){
+			var oPanel = oComponent.getRootControl().byId("PANEL2");
+			oPanel.addContent(oView);
+			assert.ok(true, "must not fail");
+			oComponent.destroy();
+		});
+	});
+
+	QUnit.test("CommandExecution $cmd model propagation - move child", function(assert) {
+		assert.expect(1);
+		var oComponent;
+
+		// load the test component
+		return Component.create({
+			name: "my.command",
+			manifest: false
+		}).then(function(myComponent) {
+			oComponent = myComponent;
+			return oComponent.getRootControl().loaded();
+		}).then(function(oView) {
+			return oComponent.runAsOwner(function() {
+				return XMLView.create({
+					viewName: "my.command.Command3"
+				});
+			});
+		}).then(function(oView){
+			var oView2 = oView.byId("EMBEDDEDVIEW");
+			var oPanel = oView.byId("PANELV31");
+			oPanel.addContent(oView2);
+			assert.ok(true, "must not fail");
 			oComponent.destroy();
 		});
 	});

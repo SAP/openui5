@@ -1557,6 +1557,71 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+[false, true].forEach(function (bUseBatch) {
+	var sTitle = "_loadData: No x-csrf-token in GET requests, bUseBatch=" + bUseBatch;
+
+	QUnit.test(sTitle, function(assert) {
+		var done = assert.async();
+
+		this.oModel.setUseBatch(bUseBatch);
+		this.oModel.oMetadata.loaded().then(function() {
+			var oRequestSpy = sinon.spy(OData, "request");
+
+			this.oModel.refreshSecurityToken();
+			this.oModel._loadData("/Categories", {},
+				function /*fnSuccess*/ () {
+					var oRequest = bUseBatch
+							? oRequestSpy.args[1][0].data.__batchRequests[0]
+							: oRequestSpy.args[1][0];
+
+					assert.ok(oRequestSpy.calledTwice); // token request and GET/$batch
+					assert.strictEqual(oRequest.method, "GET");
+					assert.strictEqual(oRequest.requestUri, bUseBatch
+						? "Categories"
+						: "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories");
+					assert.strictEqual(oRequest.headers["x-csrf-token"], undefined);
+					oRequestSpy.restore();
+					done();
+				}
+			);
+		}.bind(this));
+	});
+});
+
+[false, true].forEach(function (bUseBatch) {
+	var sTitle = "_loadData: x-csrf-token in GET requests if token handling is disabled, bUseBatch="
+			+ bUseBatch;
+
+	QUnit.test(sTitle, function(assert) {
+		var done = assert.async();
+
+		this.oModel.setUseBatch(bUseBatch);
+		this.oModel.setTokenHandlingEnabled(false);
+		fakeService.setCsrfToken("foo");
+		this.oModel.setHeaders({"x-csrf-token" : "foo"});
+		this.oModel.oMetadata.loaded().then(function() {
+			var oRequestSpy = sinon.spy(OData, "request");
+
+			this.oModel._loadData("/Categories", {},
+				function /*fnSuccess*/ () {
+					var oRequest = bUseBatch
+							? oRequestSpy.args[0][0].data.__batchRequests[0]
+							: oRequestSpy.args[0][0];
+
+					assert.ok(oRequestSpy.calledOnce); // only GET/$batch request
+					assert.strictEqual(oRequest.method, "GET");
+					assert.strictEqual(oRequest.requestUri, bUseBatch
+						? "Categories"
+						: "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories");
+					assert.strictEqual(oRequest.headers["x-csrf-token"], "foo");
+					oRequestSpy.restore();
+					done();
+				}
+			);
+		}.bind(this));
+	});
+});
+
 	QUnit.test("Token request for POST requests", function(assert) {
 		var done = assert.async();
 		this.oModel.oMetadata.loaded().then(function() {

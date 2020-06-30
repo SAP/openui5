@@ -1,0 +1,19 @@
+[
+  {
+	"SupplierId": "1234567890.0",
+	"FormattedName": "John Doe",
+	"OrganizationRole": "Research & Development",
+	"Title": "Developer",
+	"CompanyName": "New Economy",
+	"EmailAddressHome": "john.doe@gmx.com",
+	"EmailAddress1": "info@neweconomy.com",
+	"EmailAddress2": "john.doe@neweconomy.com",
+	"FaxNumber": "+001 6101 34869-9",
+	"PhoneNumber": "+001 6101 34869-0",
+	"MobileNumber1": "+0049 175 123456",
+	"MobileNumber2": "+0049 175 123457",
+	"PhoneNumberHome": "+0049 175 9876543",
+	"Photo": "test-resources/sap/ui/documentation/sdk/images/johnDoe.png",
+	"AddressId": "A1"
+  }
+]

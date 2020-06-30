@@ -256,7 +256,8 @@ sap.ui.define([
 					this._oContext.fireEvent("productSwitcherPressed", {button: this._oControls.oProductSwitcher});
 				}.bind(this)
 			})
-			.addStyleClass("sapFShellBarGridButton");
+			.addStyleClass("sapFShellBarGridButton")
+			.addStyleClass("sapFShellBarItem");
 		}
 		return this._oControls.oProductSwitcher;
 	};

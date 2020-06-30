@@ -1,0 +1,51 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "67a166c9f0e287d367ecfb04689f0af404e4c35a",
+        "type": "FIX",
+        "text": " sap.m.ObjectPageLayout: Header Facet Sample fixed under IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080178143"
+          }
+        ]
+      },
+      {
+        "id": "c8d867695965ddcfe5521e48f5b75343e6ea8e50",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix updating selectedSection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080184829"
+          }
+        ]
+      },
+      {
+        "id": "d907341bd3125d29f4b0d9a7783cf56c9b18f677",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed background color of Spacer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080156739"
+          }
+        ]
+      },
+      {
+        "id": "c14be7cb7c2b5e5592dc2ba6e102d9b8e7d74426",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Snapping Dynamic Header is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080138425"
+          }
+        ]
+      }
+    ]
+  }
+}

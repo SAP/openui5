@@ -26,6 +26,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+
 	//add divs for control tests
 	var oTarget1 = document.createElement("div");
 	oTarget1.id = "target1";
@@ -104,7 +106,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.module("Basic functionality", {
+	QUnit.module("sap.ui.model.json.JSONPropertyBinding: Basic functionality", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
 			this.currentTestData = clone(constTestData);
@@ -112,10 +114,12 @@ sap.ui.define([
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
 			sap.ui.getCore().setModel(this.oModel);
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach: function() {
 			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		},
 		createPropertyBindings: function(path, property, context) {
 			// create bindings
@@ -291,7 +295,7 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.module("Async Type", {
+	QUnit.module("sap.ui.model.json.JSONPropertyBinding: Async Type", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
 			this.currentTestData = clone(constTestData);
@@ -299,10 +303,12 @@ sap.ui.define([
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
 			sap.ui.getCore().setModel(this.oModel);
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach: function() {
 			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		},
 		createPropertyBindings: function(path, property, context) {
 			// create bindings
@@ -397,7 +403,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Suspend/Resume", {
+	QUnit.module("sap.ui.model.json.JSONPropertyBinding: Suspend/Resume", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
 			this.currentTestData = clone(constTestData);
@@ -554,7 +560,7 @@ sap.ui.define([
 		oBinding.resume();
 	});
 
-	QUnit.module("PropertyChange event", {
+	QUnit.module("sap.ui.model.json.JSONPropertyBinding: PropertyChange event", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
 			this.currentTestData = clone(constTestData);

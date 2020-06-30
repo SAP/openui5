@@ -846,6 +846,7 @@ sap.ui.define([
 		assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
 		assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
 		assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
+		assert.strictEqual($itbf.text(), "", "icon color text is not set for type 'Default'");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -864,6 +865,8 @@ sap.ui.define([
 			]
 		});
 
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -875,6 +878,7 @@ sap.ui.define([
 		assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
 		assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
 		assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+		assert.strictEqual($itbf.text(), oResourceBundle.getText('ICONTABBAR_ICONCOLOR_POSITIVE'), "icon color text is correct");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -893,6 +897,8 @@ sap.ui.define([
 			]
 		});
 
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -904,6 +910,7 @@ sap.ui.define([
 		assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
 		assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
 		assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+		assert.strictEqual($itbf.text(), oResourceBundle.getText('ICONTABBAR_ICONCOLOR_NEGATIVE'), "icon color text is correct");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -922,6 +929,8 @@ sap.ui.define([
 			]
 		});
 
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -933,6 +942,7 @@ sap.ui.define([
 		assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
 		assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
 		assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
+		assert.strictEqual($itbf.text(), oResourceBundle.getText('ICONTABBAR_ICONCOLOR_NEUTRAL'), "icon color text is correct");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -951,6 +961,8 @@ sap.ui.define([
 			]
 		});
 
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -962,6 +974,7 @@ sap.ui.define([
 		assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
 		assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
 		assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+		assert.strictEqual($itbf.text(), oResourceBundle.getText('ICONTABBAR_ICONCOLOR_CRITICAL'), "icon color text is correct");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -3183,16 +3196,16 @@ sap.ui.define([
 
 	QUnit.test("Overflow button", function(assert) {
 		var oOverflow = this.oIconTabHeader._getOverflow();
-		var oOverflowTrigger = this.oIconTabHeader._getOverflow()._getDragOverDomRef();
-		assert.ok(!oOverflowTrigger.classList.contains("sapMITHDragOver"), "Overflow button has default state");
+		var oOverflowDomRef = oOverflow.getDomRef();
+		assert.ok(!oOverflowDomRef.classList.contains("sapMITHDragOver"), "Overflow button has default state");
 
 		oOverflow._handleOnDragOver({preventDefault: function () {}});
 
-		assert.ok(oOverflowTrigger.classList.contains("sapMITHDragOver"), "Overflow button is in 'drag over' state ");
+		assert.ok(oOverflowDomRef.classList.contains("sapMITHDragOver"), "Overflow button is in 'drag over' state ");
 
 		oOverflow._handleOnDragLeave();
 
-		assert.ok(!oOverflowTrigger.classList.contains("sapMITHDragOver"), "Overflow button has default state");
+		assert.ok(!oOverflowDomRef.classList.contains("sapMITHDragOver"), "Overflow button has default state");
 	});
 
 	QUnit.test("Drag&Drop dropPosition: 'After'", function(assert) {
@@ -3590,16 +3603,16 @@ sap.ui.define([
 
 	QUnit.test("Drag&Drop on Tab with own content and sub items", function(assert) {
 		var oIconTabFilterWithChildren = this.oIconTabHeader.getItems()[0];
-		var oExpandButton = oIconTabFilterWithChildren._getExpandButton();
-		assert.ok(!oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button has default state");
+
+		assert.ok(!oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "The filter has default state");
 
 		oIconTabFilterWithChildren._handleOnDragOver({preventDefault: function () {}});
 
-		assert.ok(oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button is in 'drag over' state ");
+		assert.ok(oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "The filter is in 'drag over' state ");
 
 		oIconTabFilterWithChildren._handleOnDragLeave();
 
-		assert.ok(!oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button has default state");
+		assert.ok(!oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "The filter has default state");
 		assert.ok(!oIconTabFilterWithChildren._oPopover, "There is no popover before long drag over");
 
 		oIconTabFilterWithChildren._handleOnLongDragOver();
@@ -3691,6 +3704,129 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabHeader.getItems()[this.oIconTabHeader.getItems().length - 2].getText(), "child 1", "The item with text 'child 1' is the item before the last");
 		assert.strictEqual(this.oIconTabHeader.getItems()[this.oIconTabHeader.getItems().length - 3].getText(), "Second tab", "The item with text 'Second tab' is the second to last item");
 
+	});
+
+	QUnit.module("Drag&Drop: moving items via keyboard interaction", {
+		beforeEach: function() {
+		this.oIconTabBar = new IconTabBar({
+			enableTabReordering: true,
+			tabNestingViaInteraction: true,
+			items: [
+				new IconTabFilter({
+					id: 'tabReorder1',
+					text: "First tab",
+					count: "3",
+					content: [
+						new Text({ text: "Text 1" })
+					],
+					items: [
+						new IconTabFilter({ id: 'subItem1', text: "child 1", content: new Text({ text: "text 1" }),
+							items: [
+							new IconTabFilter({ id: 'subItem1Level2', text: "child 1.1", content: new Text({ text: "text 1.1" })})
+						]}),
+						new IconTabFilter({  id: 'subItem2',text: "child 2", content: new Text({ text: "text 2" })})
+					]
+				}),
+				new IconTabFilter({
+					id: 'tabReorder2',
+					text: "Second tab",
+					count: "1",
+					content: [
+						new Text({ text: "Text 2" })
+					]
+				}),
+				new IconTabFilter({
+					id: 'tabReorder3',
+					text: "Third tab",
+					count: "Count",
+					content: [
+						new Text({ text: "Text 3" })
+					]
+				})
+			]
+		});
+
+		this.oIconTabBar.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		this.oMockEvent = {
+			getParameter: function(parameter) {
+				switch (parameter) {
+					case "dropPosition" :
+						return "After";
+					case "draggedControl" :
+						return  Core.byId("subItem1");
+					case "droppedControl" :
+						return Core.byId("subItem2");
+				}
+			 }
+		};
+
+		this.returnMockEvent = function(iKeyCode, sId) {
+			var oMockEventTest = {
+				keyCode: iKeyCode,
+				srcControl: Core.byId(sId)
+			};
+
+			return oMockEventTest;
+		};
+		this.itemWithSubItems = this.oIconTabBar.getItems()[0];
+		this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
+
+		},
+		afterEach: function() {
+			this.oIconTabBar.destroy();
+			this.oIconTabHeader.destroy();
+			this.oMockEventOn = null;
+			this.returnMockEvent = null;
+
+		}
+	});
+
+	QUnit.test("Drag&Drop: Moving item with nested items on the strip moves the item and its nested tabs", function(assert) {
+		// Assert
+		assert.strictEqual(this.oIconTabHeader.getItems()[0].getText(), "First tab", 'First tab is "First tab"');
+		assert.strictEqual(this.oIconTabHeader.getItems()[0].getItems().length, 2, 'First tab has two nested items');
+		assert.strictEqual(this.oIconTabHeader.getItems()[1].getText(), "Second tab", 'Second tab is "Second tab"');
+		assert.strictEqual(this.oIconTabHeader.getItems()[1].getItems().length, 0, 'Second tab has no nested items');
+
+		//ACT
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT, this.itemWithSubItems.sId));
+
+		// Assert
+		assert.strictEqual(this.oIconTabHeader.getItems()[0].getText(), "Second tab", 'First tab is "Second tab"');
+		assert.strictEqual(this.oIconTabHeader.getItems()[0].getItems().length, 0, 'First tab has no nested items');
+		assert.strictEqual(this.oIconTabHeader.getItems()[1].getText(), "First tab", 'Second tab is "First tab"');
+		assert.strictEqual(this.oIconTabHeader.getItems()[1].getItems().length, 2, 'Second tab has two nested item');
+	});
+
+	QUnit.test("Drag&Drop: Moving item with nested items via within drop down list moves the item and its nested tabs", function(assert) {
+		// Assert
+		assert.strictEqual(this.itemWithSubItems.getItems()[0].getText(), "child 1", 'First nested item in the first tab is "child 1"');
+		assert.strictEqual(this.itemWithSubItems.getItems()[0].getItems().length, 1, 'First nested item has one sub item');
+		assert.strictEqual(this.itemWithSubItems._getAllSubItems().length, 3, 'First Tab has three sub items');
+		assert.strictEqual(this.itemWithSubItems.getItems()[0].getItems()[0], this.itemWithSubItems._getAllSubItems()[1], 'First nested item on sub level two is at index 1 of all items in the first tab');
+
+		//ACT
+		this.itemWithSubItems._expandButtonPress();
+		this.itemWithSubItems._getSelectList().ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT, this.itemWithSubItems._getSelectList().getItems()[0].sId));
+
+		// Assert
+		assert.strictEqual(this.itemWithSubItems.getItems()[1].getText(), "child 1", 'Second nested item in the first tab is "child 1"');
+		assert.strictEqual(this.itemWithSubItems.getItems()[1].getItems().length, 1, 'First Tab has one nested item1');
+		assert.strictEqual(this.itemWithSubItems.getItems()[1].getItems()[0], this.itemWithSubItems._getAllSubItems()[2], 'First nested item on sub level two is at index 3 of all items in the first tab');
+	});
+
+	QUnit.test("Moving an item over an item with sub items skips the sub items", function(assert) {
+		//Assert
+		assert.strictEqual(this.itemWithSubItems.getItems()[0].getText(), "child 1", 'First nested item in the first tab is "child 1"');
+		assert.strictEqual(this.itemWithSubItems.getItems()[0].getItems()[0].getText(), "child 1.1", 'The nested item on sub level two of the first item in the first tab is "child 1.1"');
+		//ACT
+		this.itemWithSubItems._expandButtonPress();
+		this.itemWithSubItems._getSelectList().ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT, this.itemWithSubItems._getSelectList().getItems()[2].sId));
+		// Assert
+		assert.strictEqual(this.itemWithSubItems.getItems()[0].getText(), "child 2", 'First nested item in the first tab is "child 2"');
+		assert.strictEqual(this.itemWithSubItems.getItems()[1].getItems()[0].getText(), "child 1.1", 'The nested item on sub level two of the second item in the first tab is "child 1.1"');
 	});
 
 	QUnit.module("Sticky Content Support");

@@ -5,7 +5,7 @@
 		height="600px">
 		<QuickViewCard
 			id="quickViewCard"
-			pages="{path : '/pages', templateShareable : true}"
+			pages="{ path : '/pages', templateShareable : true }"
 			navigate=".onNavigate"
 			afterNavigate=".onAfterNavigate">
 			<QuickViewPage
@@ -15,8 +15,11 @@
 				title="{title}"
 				titleUrl="{titleUrl}"
 				description="{description}"
-				groups="{path : 'groups', templateShareable : true}">
-				<QuickViewGroup heading="{heading}" elements="{path : 'elements', templateShareable : true}">
+				groups="{
+					path: 'groups',
+					templateShareable: true
+				}">
+				<QuickViewGroup heading="{heading}" elements="{ path: 'elements', templateShareable: true }">
 					<QuickViewGroupElement
 						label="{label}"
 						value="{value}"
@@ -24,8 +27,7 @@
 						type="{elementType}"
 						pageLinkId="{pageLinkId}"
 						emailSubject="{emailSubject}"
-						target="{target}">
-					</QuickViewGroupElement>
+						target="{target}" />
 				</QuickViewGroup>
 			</QuickViewPage>
 		</QuickViewCard>

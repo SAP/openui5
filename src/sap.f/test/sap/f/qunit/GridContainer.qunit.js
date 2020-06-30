@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"jquery.sap.global",
 	"sap/m/Button",
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/widgets/Card"
@@ -29,7 +28,6 @@ function (
 	Log,
 	qutils,
 	KeyCodes,
-	jQuery,
 	Button,
 	Header,
 	IntegrationCard
@@ -966,7 +964,7 @@ function (
 	});
 
 
-	QUnit.test("Tabbing tough a Card should leave the grid container at last focusable element", function (assert) {
+	QUnit.test("Tabbing tough a tile - focus should leave the grid container", function (assert) {
 
 		// Arrange
 		var oItemWrapperTile = this.oGrid.getDomRef().children[4],
@@ -979,15 +977,13 @@ function (
 		qutils.triggerKeydown(oItemWrapperTile, KeyCodes.TAB, false, false, false);
 
 		// Assert
-		assert.strictEqual(oForwardTabSpy.notCalled, true, "Focus should not leave the GridContainer");
+		assert.ok(oForwardTabSpy.called, "Focus should leave the GridContainer");
 
 		oTile.focus();
 		Core.applyChanges();
-		// Act
-		qutils.triggerKeydown(oTile, KeyCodes.TAB, false, false, false);
 
 		// Assert
-		assert.strictEqual(oForwardTabSpy.called, true, "Focus should leave the GridContainer");
+		assert.strictEqual(document.activeElement, oTile.parentNode, "Focus is moved to the list item.");
 	});
 
 	QUnit.test("Tabbing tough a List Card should leave the grid container at last focusable element", function (assert) {

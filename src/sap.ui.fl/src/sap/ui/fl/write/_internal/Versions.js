@@ -157,7 +157,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.nonNormalizedReference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} mPropertyBag.appVersion - Version of the app
-	 * @returns {Promise<boolean>} Promise resolving with a flag if a discarding took place;
+	 * @returns {Promise<object>} Promise resolving to an object to indicate if a discarding took place on backend side and/or dirtychanges were discarded;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
 	Versions.discardDraft = function(mPropertyBag) {
@@ -172,14 +172,18 @@ sap.ui.define([
 				aVersions.shift();
 				// in case of a existing draft known by the backend;
 				// we remove dirty changes only after successful DELETE request
-				_removeDirtyChanges(mPropertyBag);
-				return true;
+				var bDirtyChangesRemoved = _removeDirtyChanges(mPropertyBag);
+				return {
+					backendChangesDiscarded: true,
+					dirtyChangesDiscarded: bDirtyChangesRemoved
+				};
 			});
 		}
-		// if any kind of discarding took place (DELETE request and/or removing dirty changes);
-		// return true to trigger loadDraftForApplication which clears the flex state
-		var bDirtyChangesDiscarded = _removeDirtyChanges(mPropertyBag);
-		return Promise.resolve(bDirtyChangesDiscarded);
+		var bDirtyChangesRemoved = _removeDirtyChanges(mPropertyBag);
+		return Promise.resolve({
+			backendChangesDiscarded: false,
+			dirtyChangesDiscarded: bDirtyChangesRemoved
+		});
 	};
 
 	return Versions;

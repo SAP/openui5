@@ -7,22 +7,22 @@
 		<Button
 			text="Approve"
 			width="230px"
-			press="onApproveDialog"
+			press=".onApproveDialogPress"
 			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Reject"
 			width="230px"
-			press="onRejectDialog"
+			press=".onRejectDialogPress"
 			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Submit (mandatory note)"
 			width="230px"
-			press="onSubmitDialog"
+			press=".onSubmitDialogPress"
 			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Confirm (optional note)"
 			width="230px"
-			press="onConfirmDialog"
+			press=".onConfirmDialogPress"
 			class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>

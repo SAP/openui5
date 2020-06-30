@@ -1,14 +1,13 @@
-sap.ui.define(['sap/ui/core/UIComponent'],
-	function(UIComponent) {
+sap.ui.define([
+	"sap/ui/core/UIComponent"
+], function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.InputGrouping.Component", {
+	return UIComponent.extend("sap.m.sample.InputGrouping.Component", {
 
-		metadata : {
+		metadata: {
 			manifest: "json"
 		}
+
 	});
-
-	return Component;
-
 });

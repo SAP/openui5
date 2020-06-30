@@ -7,6 +7,9 @@ sap.ui.define([
 	"sap/m/semantic/SemanticButton",
 	"sap/m/semantic/ShareMenu",
 	"sap/m/semantic/ShareMenuPage",
+	"sap/m/semantic/DetailPage",
+	"sap/m/semantic/SendEmailAction",
+	"sap/m/semantic/SendMessageAction",
 	"sap/m/ActionSheet",
 	"sap/m/Button"
 ], function(
@@ -16,12 +19,37 @@ sap.ui.define([
 	SemanticButton,
 	ShareMenu,
 	ShareMenuPage,
+	DetailPage,
+	SendEmailAction,
+	SendMessageAction,
 	ActionSheet,
 	Button
 ) {
 	createAndAppendDiv("qunit-fixture-visible");
 
 
+
+	QUnit.module("Accessibility");
+
+	QUnit.test("Aria attributes", function (assert) {
+		// Arrange
+		var oDetail = new DetailPage("detailPage", {
+				sendEmailAction: new SendEmailAction(),
+				sendMessageAction: new SendMessageAction()
+			}),
+			oMenu = oDetail._getSegmentedShareMenu().getContainer(),
+			oShareMenuBtn = oMenu._getShareMenuButton();
+
+		// Act
+		oDetail.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oShareMenuBtn.$().attr("aria-haspopup"), "menu", "aria-haspopup is as expected");
+
+		// Clean
+		oDetail.destroy();
+	});
 
 	QUnit.module("ShareMenu Control", {
 		beforeEach: function () {

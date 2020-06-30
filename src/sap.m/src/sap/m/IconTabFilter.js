@@ -387,7 +387,7 @@ sap.ui.define([
 			sText = this.getText(),
 			oIcon = this.getIcon(),
 			oIconColor = this.getIconColor(),
-			bShouldReadIconColor = oIconColor === 'Positive' || oIconColor === 'Critical' || oIconColor === 'Negative',
+			bShouldReadIconColor = oIconColor === 'Positive' || oIconColor === 'Critical' || oIconColor === 'Negative' || oIconColor === 'Neutral',
 			bHorizontalDesign = this.getDesign() === IconTabFilterDesign.Horizontal,
 			bTextOnly = oIconTabHeader._bTextOnly,
 			bInLine = oIconTabHeader._bInLine || oIconTabHeader.isInlineMode();
@@ -639,7 +639,7 @@ sap.ui.define([
 
 
 		var sItemId = this.getId(),
-			bShouldReadIconColor = oIconColor == 'Positive' || oIconColor == 'Critical' || oIconColor == 'Negative',
+			bShouldReadIconColor = oIconColor == 'Positive' || oIconColor == 'Critical' || oIconColor == 'Negative' || oIconColor == 'Neutral',
 			aLabelledByIds = [];
 
 		if (!bIconOnly) {
@@ -758,13 +758,10 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabFilter.prototype._prepareDragEventDelegate = function () {
-		var oExpandButton = this._getExpandButton();
 
-		if (this._getIconTabHeader()._isUnselectable(this)) {
-			oExpandButton.removeEventDelegate(this._oDragEventDelegate);
+		if (this.getEnabled()) {
 			this.addEventDelegate(this._oDragEventDelegate, this);
 		} else {
-			oExpandButton.addEventDelegate(this._oDragEventDelegate, this);
 			this.removeEventDelegate(this._oDragEventDelegate);
 		}
 	};
@@ -841,15 +838,12 @@ sap.ui.define([
 		var oSelectList = this._getSelectList();
 
 		this._oPopover.removeAllContent();
-		this._oPopover.addContent(oSelectList);
-		this._oPopover.setInitialFocus(bHasSelectedItem ? oSelectList.getSelectedItem() : oSelectList.getVisibleTabFilters()[0]);
 
-		var oTarget = this;
-		if (!this._getIconTabHeader()._isUnselectable(this)) {
-			oTarget = this._getExpandButton();
+		if (this.getItems().length || this._bIsOverflow) {
+			this._oPopover.addContent(oSelectList);
+			this._oPopover.setInitialFocus(bHasSelectedItem ? oSelectList.getSelectedItem() : oSelectList.getVisibleTabFilters()[0]);
+			this._oPopover.openBy(this);
 		}
-
-		this._oPopover.openBy(oTarget);
 	};
 
 	/**
@@ -939,7 +933,7 @@ sap.ui.define([
 	};
 
 
-	/** Handles onDragOver of the expand button.
+	/** Handles onDragOver.
 	* @private
 	* @param {jQuery.Event} oEvent The jQuery drag over event
 	*/
@@ -947,12 +941,11 @@ sap.ui.define([
 		if (!this._bIsOverflow && !this._getIconTabHeader().getMaxNestingLevel()) {
 			return;
 		}
-
-		this._getDragOverDomRef().classList.add("sapMITHDragOver");
+		this.getDomRef().classList.add("sapMITHDragOver");
 		oEvent.preventDefault(); // allow drop, so that the cursor is correct
 	};
 
-	/** Handles onLongDragOver of the expand button.
+	/** Handles onLongDragOver.
 	* @private
 	*/
 	IconTabFilter.prototype._handleOnLongDragOver = function () {
@@ -968,19 +961,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles onDrop on the expand button.
+	 * Handles onDrop.
 	 * @private
 	 */
 	IconTabFilter.prototype._handleOnDrop = function () {
-		this._getDragOverDomRef().classList.remove("sapMITHDragOver");
+		this.getDomRef().classList.remove("sapMITHDragOver");
 	};
 
 	/**
-	 * Handles onDragLeave on the expand button.
+	 * Handles onDragLeave.
 	 * @private
 	 */
 	IconTabFilter.prototype._handleOnDragLeave = function () {
-		this._getDragOverDomRef().classList.remove("sapMITHDragOver");
+		this.getDomRef().classList.remove("sapMITHDragOver");
 	};
 
 	/**
@@ -1051,17 +1044,6 @@ sap.ui.define([
 	 */
 	IconTabFilter.prototype._getIconTabHeader = function () {
 		return this._getRootTab().getParent();
-	};
-
-	/**
-	 * Returns the correct drop element - button or text.
-	 * @private
-	 */
-	IconTabFilter.prototype._getDragOverDomRef = function () {
-		if (this._getIconTabHeader()._isUnselectable(this)) {
-			return this.getDomRef();
-		}
-		return this.getDomRef().getElementsByClassName("sapMITBFilterExpandBtn")[0];
 	};
 
 	IconTabFilter.prototype.onsapdown = function (oEvent) {

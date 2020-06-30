@@ -27,9 +27,9 @@
 						enabled="{/Enabled}"
 						editable="{/Editable}"
 						forceSelection="false"
-						selectedKey="{/SelectedProduct}"
+						selectedKey="{/SelectedProduct2}"
 						items="{
-							path: '/ProductCollection',
+							path: '/ProductCollection2',
 							sorter: { path: 'Name' }
 						}">
 					<core:Item key="{ProductId}" text="{Name}" />
@@ -51,12 +51,12 @@
 				<ToolbarSpacer/>
 				<Select
 					forceSelection="false"
-					selectedKey="{/SelectedProduct}"
+					selectedKey="{/SelectedProduct3}"
 					type="IconOnly"
 					icon="sap-icon://filter"
 					autoAdjustWidth="true"
 					items="{
-						path: '/ProductCollection',
+						path: '/ProductCollection3',
 						sorter: { path: 'Name' }
 					}">
 					<core:Item key="{ProductId}" text="{Name}" />

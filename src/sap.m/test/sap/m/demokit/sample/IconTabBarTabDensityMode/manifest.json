@@ -7,20 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.IconTabBarTabDensityMode.IconTabBarTabDensityMode",
+			"viewName": "sap.m.sample.IconTabBarTabDensityMode.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
 				"sap.m": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"IconTabBarTabDensityMode.view.xml",
-					"IconTabBarTabDensityMode.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json"
 				]
 			}

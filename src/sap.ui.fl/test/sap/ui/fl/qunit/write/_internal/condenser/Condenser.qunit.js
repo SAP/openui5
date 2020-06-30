@@ -147,16 +147,14 @@ sap.ui.define([
 			UnhideControl.getCondenserInfo = sandbox.stub().callsFake(function(oChange) {
 				return {
 					affectedControl: oChange.getSelector(),
-					type: sap.ui.fl.condenser.ClassificationType.NonIndexRelated,
-					subtype: sap.ui.fl.condenser.ClassificationSubtypes.Reverse,
+					classification: sap.ui.fl.condenser.Classification.Reverse,
 					uniqueKey: "visible"
 				};
 			});
 			AddFields.getCondenserInfo = sandbox.stub().callsFake(function(oChange) {
 				return {
 					affectedControl: oChange.getContent().field.selector,
-					type: sap.ui.fl.condenser.ClassificationType.IndexRelated,
-					subtype: sap.ui.fl.condenser.ClassificationSubtypes.Create,
+					classification: sap.ui.fl.condenser.Classification.Create,
 					targetContainer: oChange.getSelector(),
 					targetAggregation: "groupElements",
 					setTargetIndex: function (oChange, iNewTargetIndex) {
@@ -200,6 +198,10 @@ sap.ui.define([
 			return loadApplyCondenseChanges.call(this, "hideChanges.json", 4, 1, assert).then(function(aRemainingChanges) {
 				assert.equal(aRemainingChanges[0].getChangeType(), HIDE_CHANGE_TYPE, sChangeTypeMsg + HIDE_CHANGE_TYPE);
 			});
+		});
+
+		QUnit.test("hide unhide on the same control and move on another control", function(assert) {
+			return loadApplyCondenseChanges.call(this, "hideUnhideMoveDifferentControls.json", 3, 1, assert);
 		});
 
 		QUnit.test("multiple reveal changes on the same control", function(assert) {

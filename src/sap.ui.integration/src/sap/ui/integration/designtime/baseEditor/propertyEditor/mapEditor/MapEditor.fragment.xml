@@ -8,7 +8,15 @@
 			items="{ path: 'itemsModel>/', templateShareable: false}"
 			visible="{= !!${itemsModel>/}.length }"
 		>
-			<Panel expandable="true" width="auto">
+			<Panel
+				expandable="true"
+				width="auto"
+				expanded="{
+					path: 'itemsModel>',
+					formatter: '._isNewItem',
+					mode: 'OneTime'
+				}"
+			>
 				<headerToolbar>
 					<Toolbar style="Clear">
 						<Title text="{itemsModel>key}" titleStyle="H5" />

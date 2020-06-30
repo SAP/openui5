@@ -87,55 +87,42 @@ sap.ui.define([
 	AppVariantManager.prototype.createAllInlineChanges = function(oAppVariantSpecificData, vSelector) {
 		var sAppVariantId = AppVariantUtils.getId(oAppVariantSpecificData.referenceAppId);
 		var aAllInlineChangeOperations = [];
-		var oPropertyChange;
+		var oPropertyChange = {};
 
 		// create a inline change using a change type 'appdescr_app_setTitle'
-		oPropertyChange = AppVariantUtils.getInlinePropertyChange("title", oAppVariantSpecificData.title);
+		oPropertyChange.content = AppVariantUtils.prepareTextsChange("title", oAppVariantSpecificData.title);
 		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setTitle", vSelector));
 
 		// create a inline change using a change type 'appdescr_app_setSubTitle'
-		oPropertyChange = AppVariantUtils.getInlinePropertyChange("subtitle", oAppVariantSpecificData.subTitle);
+		oPropertyChange.content = AppVariantUtils.prepareTextsChange("subtitle", oAppVariantSpecificData.subTitle);
 		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setSubTitle", vSelector));
 
 		// create a inline change using a change type 'create_app_setDescription'
-		oPropertyChange = AppVariantUtils.getInlinePropertyChange("description", oAppVariantSpecificData.description);
+		oPropertyChange.content = AppVariantUtils.prepareTextsChange("description", oAppVariantSpecificData.description);
 		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setDescription", vSelector));
 
 		// create a inline change using a change type 'appdescr_ui_setIcon'
 		oPropertyChange = AppVariantUtils.getInlineChangeInputIcon(oAppVariantSpecificData.icon);
 		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_ui_setIcon", vSelector));
 
-		// ***********************************************************Inbounds handling******************************************************************
+		/***********************************************************Inbounds handling******************************************************************/
 		var oInboundInfo = AppVariantUtils.getInboundInfo(oAppVariantSpecificData.inbounds);
 		var sCurrentRunningInboundId = oInboundInfo.currentRunningInbound;
-		var bAddNewInboundRequired = oInboundInfo.addNewInboundRequired;
 
 		// If there is no inbound, create a new inbound
-		if (sCurrentRunningInboundId === "customer.savedAsAppVariant" && bAddNewInboundRequired) {
-			oPropertyChange = AppVariantUtils.getInlineChangeCreateInbound(sCurrentRunningInboundId);
+		if (oInboundInfo.addNewInboundRequired) {
 			// create a inline change using a change type 'appdescr_app_addNewInbound'
+			oPropertyChange = AppVariantUtils.prepareAddNewInboundChange(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData);
 			aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_addNewInbound", vSelector));
+
+			// create a inline change using a change type 'appdescr_app_removeAllInboundsExceptOne'
+			oPropertyChange = AppVariantUtils.prepareRemoveAllInboundsExceptOneChange(sCurrentRunningInboundId);
+			aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", vSelector));
+		} else {
+			// create a inline change using a change type 'appdescr_app_changeInbound'
+			oPropertyChange = AppVariantUtils.prepareChangeInboundChange(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData);
+			aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
 		}
-
-		// create a inline change using a change type 'appdescr_app_changeInbound'
-		oPropertyChange = AppVariantUtils.getInlineChangeForInboundPropertySaveAs(sCurrentRunningInboundId, sAppVariantId);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
-
-		// create a inline change using a change type 'appdescr_app_removeAllInboundsExceptOne'
-		oPropertyChange = AppVariantUtils.getInlineChangeRemoveInbounds(sCurrentRunningInboundId);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", vSelector));
-
-		// create a inline change using a change type 'appdescr_app_changeInbound'
-		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, oAppVariantSpecificData.referenceAppId, "title", oAppVariantSpecificData.title);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
-
-		// create a inline change using a change type 'appdescr_app_changeInbound'
-		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, oAppVariantSpecificData.referenceAppId, "subTitle", oAppVariantSpecificData.subTitle);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
-
-		// create a inline change using a change type 'appdescr_app_changeInbound'
-		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, oAppVariantSpecificData.referenceAppId, "icon", oAppVariantSpecificData.icon);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
 
 		return Promise.all(aAllInlineChangeOperations);
 	};

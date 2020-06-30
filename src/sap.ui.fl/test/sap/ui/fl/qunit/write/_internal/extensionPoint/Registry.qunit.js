@@ -313,9 +313,9 @@ sap.ui.define([
 			assert.deepEqual(mExtensionPointInfo3.targetControl, this.oPanel, "then parameter 'targetControl' is correct");
 			assert.equal(mExtensionPointInfo3.aggregationName, "content", "then parameter 'aggregationName' is correct");
 			assert.equal(mExtensionPointInfo3.index, 1, "then parameter 'index' is correct");
-			var sDefaultContentLabel1 = this.oPanel.getContent()[1].getId();
-			var sDefaultContentLabel2 = this.oPanel.getContent()[2].getId();
-			assert.deepEqual(mExtensionPointInfo3.defaultContent, [sDefaultContentLabel1, sDefaultContentLabel2], "then parameter 'defaultAggregation' is correct");
+			var oDefaultContentLabel1 = this.oPanel.getContent()[1];
+			var oDefaultContentLabel2 = this.oPanel.getContent()[2];
+			assert.deepEqual(mExtensionPointInfo3.defaultContent, [oDefaultContentLabel1, oDefaultContentLabel2], "then parameter 'defaultAggregation' is correct");
 		});
 
 		QUnit.test("when calling function 'getExtensionPointInfo' for an extension point with default fragment", function(assert) {
@@ -325,7 +325,7 @@ sap.ui.define([
 			assert.deepEqual(mExtensionPointInfo1.targetControl, this.oHBox, "then parameter 'targetControl' is correct");
 			assert.equal(mExtensionPointInfo1.aggregationName, "items", "then parameter 'aggregationName' is correct");
 			assert.equal(mExtensionPointInfo1.index, 1, "then parameter 'index' is correct");
-			assert.deepEqual(mExtensionPointInfo1.defaultContent, ["myView--defaultFragment--defaultButton"], "then parameter 'defaultAggregation' is correct");
+			assert.deepEqual(mExtensionPointInfo1.defaultContent, [sap.ui.getCore().byId("myView--defaultFragment--defaultButton")], "then parameter 'defaultAggregation' is correct");
 		});
 	});
 

@@ -7,20 +7,21 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.IconTabBarStretchContent.IconTabBar",
+			"viewName": "sap.m.sample.IconTabBarStretchContent.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
 				"sap.m": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"IconTabBar.view.xml",
-					"IconTabBar.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json"
 				]
 			}

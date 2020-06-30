@@ -973,7 +973,7 @@ sap.ui.define([
 				path: "/popoverTitle",
 				model: VariantManagement.INNER_MODEL_NAME
 			},
-			titleAlignment: "Center",
+			titleAlignment: "Auto",
 			contentWidth: "400px",
 			placement: PlacementType.VerticalPreferredBottom,
 			content: [
@@ -1394,13 +1394,14 @@ sap.ui.define([
 			this.oManagementDialog = new Dialog(this.getId() + "-managementdialog", {
 				resizable: true,
 				draggable: true,
-				customHeader: new Bar(this.getId() + "-managementHeader", {
-					contentMiddle: [
-						new Text(this.getId() + "-managementHeaderText", {
-							text: this._oRb.getText("VARIANT_MANAGEMENT_MANAGEDIALOG")
-						})
-					]
-				}),
+//				customHeader: new Bar(this.getId() + "-managementHeader", {
+//					contentMiddle: [
+//						new Text(this.getId() + "-managementHeaderText", {
+//							text: this._oRb.getText("VARIANT_MANAGEMENT_MANAGEDIALOG")
+//						})
+//					]
+//				}),
+				title: this._oRb.getText("VARIANT_MANAGEMENT_MANAGEDIALOG"),
 				beginButton: this.oManagementSave,
 				endButton: this.oManagementCancel,
 				content: [

@@ -212,13 +212,15 @@ sap.ui.define([
 		 * <b>Warning: <code>Date</code> objects will be turned into strings</b>
 		 *
 		 * @param {*} vValue - Any value, including <code>undefined</code>
+		 * @param {function} [fnReplacer] - The replacer function to transform the result, see
+		 *   <code>JSON.stringify</code>
 		 * @returns {*} - A clone
 		 */
-		clone : function clone(vValue) {
+		clone : function clone(vValue, fnReplacer) {
 			return vValue === undefined || vValue === Infinity || vValue === -Infinity
 				|| /*NaN?*/vValue !== vValue // eslint-disable-line no-self-compare
 				? vValue
-				: JSON.parse(JSON.stringify(vValue));
+				: JSON.parse(JSON.stringify(vValue, fnReplacer));
 		},
 
 		/**
@@ -1184,7 +1186,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns a clone of the given value where the private namespace object has been deleted.
+		 * Returns a clone of the given value where all occurrences of the private namespace
+		 * object has been deleted.
 		 *
 		 * @param {any} vValue
 		 *   Any value, including <code>undefined</code>
@@ -1194,12 +1197,12 @@ sap.ui.define([
 		 * @see sap.ui.model.odata.v4.lib._Helper.clone
 		 */
 		publicClone : function (vValue) {
-			var vClone = _Helper.clone(vValue);
-
-			if (vClone) {
-				delete vClone["@$ui5._"];
-			}
-			return vClone;
+			return _Helper.clone(vValue, function (sKey, vValue) {
+				if (sKey !== "@$ui5._") {
+					return vValue;
+				}
+				// return undefined;
+			});
 		},
 
 		/**

@@ -16,7 +16,7 @@
 					<contentMiddle>
 						<Image src="../ui/images/Logo_O_22x22.png" densityAware="false"></Image>
 						<Text text="{/iFrameTitle}" />
-						<c:Icon src="sap-icon://full-screen" press="toggleHide" />
+						<c:Icon src="sap-icon://full-screen" press="toggleMinimize" />
 					</contentMiddle>
 				</Bar>
 				<Bar id="ttStandardHeaderBar" class="sapContrast ttPageBar ttStandardPageBar">
@@ -30,10 +30,12 @@
 					<contentRight>
 						<!-- <c:Icon src="sap-icon://sys-help" tooltip="{i18n>TestRecorder.TitleBar.Documentation.Tooltip}" /> -->
 						<c:Icon src="sap-icon://settings" press="openSettingsDialog" tooltip="{i18n>TestRecorder.TitleBar.Window.Settings.Tooltip}"/>
-						<c:Icon src="sap-icon://minimize" press="toggleHide" tooltip="{i18n>TestRecorder.TitleBar.Window.Minimize.Tooltip}" visible="{/isInIframe}"/>
-						<c:Icon src="sap-icon://minimize" press="dockFrame" tooltip="{i18n>TestRecorder.TitleBar.Window.Dock.Tooltip}" visible="{= !${/isInIframe} }"/>
-						<c:Icon src="sap-icon://down" press="resizeDown" visible="{/isInIframe}"/>
-						<c:Icon src="sap-icon://up" press="resizeUp" visible="{/isInIframe}"/>
+
+						<c:Icon src="sap-icon://minimize" press="toggleMinimize" tooltip="{i18n>TestRecorder.TitleBar.Window.Minimize.Tooltip}" visible="{/isInIframe}" />
+						<c:Icon src="sap-icon://slim-arrow-down" press="dockBottom" tooltip="{i18n>TestRecorder.TitleBar.Window.Dock.Bottom.Tooltip}" />
+						<c:Icon src="sap-icon://slim-arrow-left" press="dockLeft" tooltip="{i18n>TestRecorder.TitleBar.Window.Dock.Left.Tooltip}" />
+						<c:Icon src="sap-icon://slim-arrow-right" press="dockRight" tooltip="{i18n>TestRecorder.TitleBar.Window.Dock.Right.Tooltip}" />
+
 						<c:Icon src="sap-icon://popup-window" press="openWindow" tooltip="{i18n>TestRecorder.TitleBar.Window.New.Tooltip}" visible="{/isInIframe}"/>
 						<c:Icon src="sap-icon://decline" press="close" tooltip="{i18n>TestRecorder.TitleBar.Window.Close.Tooltip}"/>
 					</contentRight>

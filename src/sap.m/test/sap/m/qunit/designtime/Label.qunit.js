@@ -35,6 +35,19 @@ sap.ui.define([
 				};
 			}
 		},
+		previousActions: [
+			{
+				name: "rename",
+				controlId: "label",
+				parameter: function (oView) {
+					return {
+						newValue: 'Intermediate Value',
+						renamedElement: oView.byId("label")
+					};
+				}
+			}
+		],
+		changesAfterCondensing: 1,
 		afterAction: fnConfirmLabelIsRenamedWithNewValue,
 		afterUndo: fnConfirmLabelIsRenamedWithOldValue,
 		afterRedo: fnConfirmLabelIsRenamedWithNewValue
@@ -63,6 +76,26 @@ sap.ui.define([
 				};
 			}
 		},
+		previousActions: [
+			{
+				name: "remove",
+				controlId: "label",
+				parameter: function(oView) {
+					return {
+						removedElement: oView.byId("label")
+					};
+				}
+			},
+			{
+				name: "reveal",
+				controlId: "label",
+				parameter: function() {
+					return {
+					};
+				}
+			}
+		],
+		changesAfterCondensing: 1,
 		afterAction: fnConfirmLabelIsInvisible,
 		afterUndo: fnConfirmLabelIsVisible,
 		afterRedo: fnConfirmLabelIsInvisible
@@ -76,10 +109,30 @@ sap.ui.define([
 		action: {
 			name: "reveal",
 			controlId: "label",
-			parameter: function(oView){
+			parameter: function(){
 				return {};
 			}
 		},
+		previousActions: [
+			{
+				name: "reveal",
+				controlId: "label",
+				parameter: function() {
+					return {
+					};
+				}
+			},
+			{
+				name: "remove",
+				controlId: "label",
+				parameter: function(oView) {
+					return {
+						removedElement: oView.byId("label")
+					};
+				}
+			}
+		],
+		changesAfterCondensing: 1,
 		afterAction: fnConfirmLabelIsVisible,
 		afterUndo: fnConfirmLabelIsInvisible,
 		afterRedo: fnConfirmLabelIsVisible

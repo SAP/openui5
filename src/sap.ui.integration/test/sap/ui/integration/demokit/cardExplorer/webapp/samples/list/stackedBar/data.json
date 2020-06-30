@@ -1,0 +1,29 @@
+{
+	"legend": {
+		"items": {
+			"Notebook13": "Notebook 13",
+			"Notebook17": "Notebook 17"
+		}
+	},
+	"maxOverYears": 700,
+	"Notebooks": [
+		{
+			"Year": 2017,
+			"Category": "Computer system accessories",
+			"Notebook13": 200,
+			"Notebook17": 500
+		},
+		{
+			"Year": 2018,
+			"Category": "Computer system accessories",
+			"Notebook13": 300,
+			"Notebook17": 320
+		},
+		{
+			"Year": 2019,
+			"Category": "Computer system accessories",
+			"Notebook13": 140,
+			"Notebook17": 255
+		}
+	]
+}

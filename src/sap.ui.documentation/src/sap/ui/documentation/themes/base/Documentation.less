@@ -97,6 +97,48 @@
         display: none;
     }
 
+    .lightbox-img-wrapper {
+        cursor: pointer;
+        position: relative;
+        display: inline-block;
+
+        .overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: #f7f7f7;
+            pointer-events: none;
+        }
+
+        &:before {
+            z-index: 2;
+            position: absolute;
+            right: 0;
+            content: "";
+            font-family: sap-icons;
+            color: rgb(0, 143, 211);
+            background-color: rgba(255, 255, 255, 0.75);
+        }
+
+        img {
+            position: relative;
+            z-index: 1;
+            &:hover {
+                opacity: .8;
+            }
+        }
+
+        img.minimized-extrasmall {
+            max-width: 100px;
+        }
+
+        img.minimized-small {
+            max-width: 200px;
+        }
+    }
+
     .imagemap {
         position: relative;
 
@@ -115,10 +157,6 @@
     code {
         font-family: Consolas, Courier, monospace;
         font-size: 0.875rem;
-        background-color: #efecec;
-        border-radius: 3px;
-        padding: .2em .3rem;
-        word-wrap: break-word;
     }
 
     p {
@@ -523,8 +561,11 @@
         padding: 2px 4px;
     }
 
-    span.keyWrap:not(:first-child):before {
-        content: '+';
+    .keys {
+        .keyWrap:not(:first-child):before {
+            content: '+';
+            margin-right: 0.25rem;
+        }
     }
 
     span.menucascade .uicontrol:after {

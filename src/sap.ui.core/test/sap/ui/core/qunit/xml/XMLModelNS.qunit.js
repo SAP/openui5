@@ -16,6 +16,8 @@ sap.ui.define([
 			"<test a:value=\"Namespace a\" b:value=\"Namespace b\" />" +
 		"</teamMembers>";
 
+	QUnit.module("sap.ui.model.XMLModel with namespace");
+
 	QUnit.test("test model namespace same prefix", function(assert) {
 		var oModel = new XMLModel();
 		oModel.setNameSpace("http://tempuri.org/x");

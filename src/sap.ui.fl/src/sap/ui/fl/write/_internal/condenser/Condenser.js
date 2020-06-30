@@ -4,22 +4,28 @@
 
 /* global Map */
 sap.ui.define([
+	"sap/base/util/each",
+	"sap/base/util/isPlainObject",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/ui/fl/write/_internal/condenser/UIReconstruction",
 	"sap/ui/fl/write/_internal/condenser/classifications/LastOneWins",
 	"sap/ui/fl/write/_internal/condenser/classifications/Reverse",
+	"sap/ui/fl/write/_internal/condenser/UIReconstruction",
+	"sap/ui/fl/write/_internal/condenser/Utils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/performance/Measurement"
 ], function(
+	each,
+	isPlainObject,
 	JsControlTreeModifier,
 	Core,
-	Utils,
-	UIReconstruction,
+	ChangesUtils,
 	LastOneWins,
 	Reverse,
+	UIReconstruction,
+	CondenserUtils,
 	Change,
 	FlUtils,
 	Measurement
@@ -43,7 +49,7 @@ sap.ui.define([
 	 *
 	 * @type {{lastOneWins: addLastOneWinsChange, reverse: addReverseChange}}
 	 */
-	var NON_INDEX_RELATED = {
+	var NON_INDEX_RELEVANT = {
 		lastOneWins: LastOneWins,
 		reverse: Reverse
 	};
@@ -56,7 +62,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the 'move' subtype has been added to the data structure before 'create' subtype
 	 */
 	function isCreateAfterMoveSubtype(mSubtypes, oCondenserInfo) {
-		return oCondenserInfo.subtype === sap.ui.fl.condenser.ClassificationSubtypes.Create && mSubtypes.has(sap.ui.fl.condenser.ClassificationSubtypes.Move);
+		return oCondenserInfo.classification === sap.ui.fl.condenser.Classification.Create && mSubtypes[sap.ui.fl.condenser.Classification.Move];
 	}
 
 	/**
@@ -67,48 +73,46 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the 'destroy' subtype has been added to the data structure before 'move' subtype
 	 */
 	function isMoveAfterDestroySubtype(mSubtypes, oCondenserInfo) {
-		return oCondenserInfo.subtype === sap.ui.fl.condenser.ClassificationSubtypes.Move && mSubtypes.has(sap.ui.fl.condenser.ClassificationSubtypes.Destroy);
+		return oCondenserInfo.classification === sap.ui.fl.condenser.Classification.Move && mSubtypes[sap.ui.fl.condenser.Classification.Destroy];
 	}
 
 	/**
 	 * Verify 'destroy' subtype has already been added to the data structure before 'create' subtype
 	 *
-	 * @param {Map} mSubtypes - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
+	 * @param {Map} mClassifications - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
 	 * @param {object} oCondenserInfo - Condenser specific information that is delivered by the change handler
 	 * @returns {boolean} <code>true</code> if the 'move' subtype has been added to the data structure before 'create' subtype
 	 */
-	function isCreateAfterDestroySubtype(mSubtypes, oCondenserInfo) {
-		return oCondenserInfo.subtype === sap.ui.fl.condenser.ClassificationSubtypes.Create && mSubtypes.has(sap.ui.fl.condenser.ClassificationSubtypes.Destroy);
+	function isCreateAfterDestroySubtype(mClassifications, oCondenserInfo) {
+		return oCondenserInfo.classification === sap.ui.fl.condenser.Classification.Create && mClassifications[sap.ui.fl.condenser.Classification.Destroy];
 	}
 
 	/**
 	 * Adds an index-related change to the data structures.
 	 *
-	 * @param {Map} mSubtypes - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
+	 * @param {Map} mClassifications - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
 	 * @param {Map} mUIReconstructions - Map of UI reconstructions that holds key-value pairs. A key is a selector ID of the container. A value is a nested map which contains initial and target UI reconstructions
 	 * @param {object} oCondenserInfo - Condenser specific information that is delivered by the change handler
 	 * @param {sap.ui.fl.Change} oChange - Change instance that will be added to the array
 	 */
-	function addIndexRelatedChange(mSubtypes, mUIReconstructions, oCondenserInfo, oChange) {
+	function addIndexRelatedChange(mClassifications, mUIReconstructions, oCondenserInfo, oChange) {
 		if (
-			!isMoveAfterDestroySubtype(mSubtypes, oCondenserInfo)
-			&& !isCreateAfterDestroySubtype(mSubtypes, oCondenserInfo)
+			!isMoveAfterDestroySubtype(mClassifications, oCondenserInfo)
+			&& !isCreateAfterDestroySubtype(mClassifications, oCondenserInfo)
 		) {
-			var sSubtype = oCondenserInfo.subtype;
-			if (!mSubtypes.has(sSubtype)) {
-				var aChanges = [];
+			var sClassification = oCondenserInfo.classification;
+			if (!mClassifications[sClassification]) {
 				oCondenserInfo.change = oChange;
-				aChanges.push(oCondenserInfo);
-				mSubtypes.set(sSubtype, aChanges);
+				mClassifications[sClassification] = [oCondenserInfo];
 			}
 		}
 
 		if (
-			isCreateAfterMoveSubtype(mSubtypes, oCondenserInfo)
-			|| isCreateAfterDestroySubtype(mSubtypes, oCondenserInfo)
+			isCreateAfterMoveSubtype(mClassifications, oCondenserInfo)
+			|| isCreateAfterDestroySubtype(mClassifications, oCondenserInfo)
 		) {
-			mSubtypes.delete(sap.ui.fl.condenser.ClassificationSubtypes.Move);
-			mSubtypes.delete(sap.ui.fl.condenser.ClassificationSubtypes.Destroy);
+			delete mClassifications[sap.ui.fl.condenser.Classification.Move];
+			delete mClassifications[sap.ui.fl.condenser.Classification.Destroy];
 		}
 
 		UIReconstruction.addChange(mUIReconstructions, oCondenserInfo);
@@ -117,42 +121,42 @@ sap.ui.define([
 	/**
 	 * Adds a classified change to the data structures.
 	 *
-	 * @param {Map} mClassificationTypes - Map of classification types that holds key-value pairs. A key is a unique identifier. A value is a nested map which contains non-index-related and index-related reduced changes
+	 * @param {Map} mTypes - Map of classification types that holds key-value pairs. A key is a unique identifier. A value is a nested map which contains non-index-related and index-related reduced changes
 	 * @param {Map} mUIReconstructions - Map of UI reconstructions that holds key-value pairs. A key is a selector ID of the container. A value is a nested map which contains initial and target UI reconstructions
 	 * @param {sap.ui.fl.Change[]} aIndexRelatedChanges - Array of all index related changes
 	 * @param {Object} oCondenserInfo - Condenser-specific information that is delivered by the change handler
 	 * @param {sap.ui.fl.Change} oChange - Change instance that will be added to the array
 	 */
-	function addClassifiedChange(mClassificationTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange) {
-		if (!mClassificationTypes.has(oCondenserInfo.type)) {
-			mClassificationTypes.set(oCondenserInfo.type, new Map());
+	function addClassifiedChange(mTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange) {
+		if (!mTypes[oCondenserInfo.type]) {
+			mTypes[oCondenserInfo.type] = {};
 		}
-		var mSubtypes = mClassificationTypes.get(oCondenserInfo.type);
+		var mClassifications = mTypes[oCondenserInfo.type];
 
-		if (oCondenserInfo.type === sap.ui.fl.condenser.ClassificationType.NonIndexRelated) {
-			if (!mSubtypes.has(oCondenserInfo.subtype)) {
-				mSubtypes.set(oCondenserInfo.subtype, new Map());
+		if (oCondenserInfo.type === CondenserUtils.NOT_INDEX_RELEVANT) {
+			if (!mClassifications[oCondenserInfo.classification]) {
+				mClassifications[oCondenserInfo.classification] = {};
 			}
-			var mProperties = mSubtypes.get(oCondenserInfo.subtype);
-			NON_INDEX_RELATED[oCondenserInfo.subtype].addToChangesMap(mProperties, oCondenserInfo.uniqueKey, oChange);
+			var mProperties = mClassifications[oCondenserInfo.classification];
+			NON_INDEX_RELEVANT[oCondenserInfo.classification].addToChangesMap(mProperties, oCondenserInfo.uniqueKey, oChange);
 		} else {
 			aIndexRelatedChanges.push(oChange);
-			addIndexRelatedChange(mSubtypes, mUIReconstructions, oCondenserInfo, oChange);
+			addIndexRelatedChange(mClassifications, mUIReconstructions, oCondenserInfo, oChange);
 		}
 	}
 
 	/**
 	 * Adds an unclassified change to the data structure.
 	 *
-	 * @param {Map} mClassificationTypes - Map of change types that holds key-value pairs. A key is a unique identifier. A value is an array object that contains all unclassified changes
+	 * @param {Map} mTypes - Map of change types that holds key-value pairs. A key is a unique identifier. A value is an array object that contains all unclassified changes
 	 * @param {string} sKey - Key of the "unclassified" map that reflects the fact that the delivered change is not classified
 	 * @param {sap.ui.fl.Change} oChange - Change instance
 	 */
-	function addUnclassifiedChange(mClassificationTypes, sKey, oChange) {
-		if (!mClassificationTypes.has(sKey)) {
-			mClassificationTypes.set(sKey, []);
+	function addUnclassifiedChange(mTypes, sKey, oChange) {
+		if (!mTypes[sKey]) {
+			mTypes[sKey] = [];
 		}
-		mClassificationTypes.get(sKey).push(oChange);
+		mTypes[sKey].push(oChange);
 	}
 
 	/**
@@ -171,8 +175,8 @@ sap.ui.define([
 				appComponent: oAppComponent,
 				view: FlUtils.getViewForControl(oControl)
 			};
-			var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
-			return Promise.resolve(Utils.getChangeHandler(oChange, mControl, mPropertyBag))
+			var mControl = ChangesUtils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
+			return Promise.resolve(ChangesUtils.getChangeHandler(oChange, mControl, mPropertyBag))
 			.then(function(oChangeHandler) {
 				if (oChangeHandler && typeof oChangeHandler.getCondenserInfo === "function") {
 					return oChangeHandler.getCondenserInfo(oChange);
@@ -192,12 +196,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.Component} oAppComponent - Application component of the control at runtime
 	 * @returns {Map} Classification types map
 	 */
-	function getClassificationTypesMap(mReducedChanges, oCondenserInfo, oChange, oAppComponent) {
+	function getTypesMap(mReducedChanges, oCondenserInfo, oChange, oAppComponent) {
 		var sAffectedControlId = oCondenserInfo !== undefined ? oCondenserInfo.affectedControl : JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent);
-		if (!mReducedChanges.has(sAffectedControlId)) {
-			mReducedChanges.set(sAffectedControlId, new Map());
+		if (!mReducedChanges[sAffectedControlId]) {
+			mReducedChanges[sAffectedControlId] = {};
 		}
-		return mReducedChanges.get(sAffectedControlId);
+		return mReducedChanges[sAffectedControlId];
 	}
 
 	/**
@@ -205,8 +209,8 @@ sap.ui.define([
 	 *
 	 * 		mReducedChanges: {
 	 * 			"<selectorId>": {
-	 * 				"<classificationType>":
-	 * 					"<subtype>":
+	 * 				"<type>":
+	 * 					"<classification>":
 	 * 						"<uniqueKey>": [<sap.ui.fl.Change>]
 	 * 				...
 	 * 				"nonIndexRelated": {
@@ -254,14 +258,23 @@ sap.ui.define([
 	function addChangeToMap(oAppComponent, mReducedChanges, mUIReconstructions, aIndexRelatedChanges, oChange) {
 		return getCondenserInfoFromChangeHandler(oAppComponent, oChange).then(function(oCondenserInfo) {
 			changeSelectorsToIdsInCondenserInfo(oCondenserInfo, oAppComponent);
-			var mClassificationTypes = getClassificationTypesMap(mReducedChanges, oCondenserInfo, oChange, oAppComponent);
+			var mTypes = getTypesMap(mReducedChanges, oCondenserInfo, oChange, oAppComponent);
 			if (oCondenserInfo !== undefined) {
-				addClassifiedChange(mClassificationTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange);
+				addType(oCondenserInfo);
+				addClassifiedChange(mTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange);
 			} else {
-				addUnclassifiedChange(mClassificationTypes, UNCLASSIFIED, oChange);
-				mReducedChanges.set(UNCLASSIFIED, true);
+				addUnclassifiedChange(mTypes, UNCLASSIFIED, oChange);
+				mReducedChanges[UNCLASSIFIED] = true;
 			}
 		});
+	}
+
+	function addType(oCondenserInfo) {
+		if (NON_INDEX_RELEVANT[oCondenserInfo.classification]) {
+			oCondenserInfo.type = CondenserUtils.NOT_INDEX_RELEVANT;
+		} else {
+			oCondenserInfo.type = CondenserUtils.INDEX_RELEVANT;
+		}
 	}
 
 	function changeSelectorsToIdsInCondenserInfo(oCondenserInfo, oAppComponent) {
@@ -275,19 +288,20 @@ sap.ui.define([
 	/**
 	 * Retrieves an array of changes from the delivered data structure.
 	 *
-	 * TODO: Turn into a proper getter
-	 *
 	 * @param {Map} mObjects - Delivered data structure
 	 * @param {sap.ui.fl.Change[]} aChanges - Array of changes
+	 * @returns {sap.ui.fl.Change[]} All necessary changes in the map of reduced changes
 	 */
 	 function getChanges(mObjects, aChanges) {
-		mObjects.forEach(function(mSubObjects, sKey) {
-			if (NON_INDEX_RELATED[sKey] && NON_INDEX_RELATED[sKey].getChangesFromMap) {
-				NON_INDEX_RELATED[sKey].getChangesFromMap(mObjects, aChanges, sKey);
-			} else if (mSubObjects instanceof Map) {
-				getChanges(mSubObjects, aChanges);
-			} else if (Array.isArray(mSubObjects)) {
-				mSubObjects.forEach(function(oObject) {
+		each(mObjects, function(sKey, vSubObjects) {
+			if (NON_INDEX_RELEVANT[sKey] && NON_INDEX_RELEVANT[sKey].getChangesFromMap) {
+				NON_INDEX_RELEVANT[sKey].getChangesFromMap(mObjects, sKey).forEach(function(oChange) {
+					aChanges.push(oChange);
+				});
+			} else if (isPlainObject(vSubObjects)) {
+				return getChanges(vSubObjects, aChanges);
+			} else if (Array.isArray(vSubObjects)) {
+				vSubObjects.forEach(function(oObject) {
 					if (oObject instanceof Change) {
 						aChanges.push(oObject);
 					} else {
@@ -296,19 +310,17 @@ sap.ui.define([
 				});
 			}
 		});
+		return aChanges;
 	}
 
 	/**
 	 * Retrieves an array of changes from the reduced changes map.
 	 *
 	 * @param {Map} mReducedChanges - Map of reduced changes
-	 * @param {boolean} bUnclassifiedChanges - Indicates if there are unclassified changes
 	 * @returns {sap.ui.fl.Change[]} Array of the reduced changes
 	 */
 	function getAllReducedChanges(mReducedChanges) {
-		var aReducedChanges = [];
-		getChanges(mReducedChanges, aReducedChanges);
-		return aReducedChanges;
+		return getChanges(mReducedChanges, []);
 	}
 
 	/**
@@ -319,17 +331,15 @@ sap.ui.define([
 	 * @returns {object[]} Array of objects that contain condenser-specific information and change instance
 	 */
 	function getCondenserInfos(mReducedChanges, aCondenserInfos) {
-		mReducedChanges.forEach(function(mSubObjects) {
-			if (mSubObjects !== null) {
-				if (mSubObjects instanceof Map) {
-					getCondenserInfos(mSubObjects, aCondenserInfos);
-				} else if (Array.isArray(mSubObjects)) {
-					mSubObjects.forEach(function(oObject) {
-						if (!(oObject instanceof Change)) {
-							aCondenserInfos.push(oObject);
-						}
-					});
-				}
+		each(mReducedChanges, function(sKey, vSubObjects) {
+			if (isPlainObject(vSubObjects)) {
+				getCondenserInfos(vSubObjects, aCondenserInfos);
+			} else if (Array.isArray(vSubObjects)) {
+				vSubObjects.forEach(function(oObject) {
+					if (!(oObject instanceof Change)) {
+						aCondenserInfos.push(oObject);
+					}
+				});
 			}
 		});
 		return aCondenserInfos;
@@ -380,8 +390,8 @@ sap.ui.define([
 	 */
 	Condenser.condense = function(oAppComponent, aChanges) {
 		Measurement.start("Condenser_overall", "Condenser overall - CondenserClass", ["sap.ui.fl", "Condenser"]);
-		var mReducedChanges = new Map();
-		var mUIReconstructions = new Map();
+		var mReducedChanges = {};
+		var mUIReconstructions = {};
 		var aCopyChanges = aChanges.slice(0).reverse();
 		var aAllIndexRelatedChanges = [];
 
@@ -399,11 +409,11 @@ sap.ui.define([
 
 		.then(function() {
 			Measurement.end("Condenser_defineMaps");
-			var bUnclassifiedChanges = mReducedChanges.get(UNCLASSIFIED);
+			var bUnclassifiedChanges = mReducedChanges[UNCLASSIFIED];
 			if (!bUnclassifiedChanges) {
 				UIReconstruction.compareAndUpdate(mReducedChanges, mUIReconstructions);
 			}
-			var aReducedChanges = getAllReducedChanges(mReducedChanges, bUnclassifiedChanges);
+			var aReducedChanges = getAllReducedChanges(mReducedChanges);
 
 			// with unclassified changes no index relevant changes can be reduced
 			if (bUnclassifiedChanges) {

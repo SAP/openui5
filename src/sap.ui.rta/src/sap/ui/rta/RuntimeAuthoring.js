@@ -882,9 +882,9 @@ function(
 		this.fireUndoRedoStackModified();
 	};
 
-	RuntimeAuthoring.prototype._closeToolbar = function() {
-		if (this.getShowToolbars() && this.getToolbar) {
-			return this.getToolbar().hide();
+	RuntimeAuthoring.prototype._checkToolbarAndExecuteFunction = function (sName, vValue) {
+		if (this.getShowToolbars() && this.getToolbar && this.getToolbar()) {
+			return this.getToolbar()[sName](vValue);
 		}
 	};
 
@@ -909,10 +909,11 @@ function(
 	 * @returns {Promise} promise with no parameters
 	 */
 	RuntimeAuthoring.prototype.stop = function(bDontSaveChanges, bSkipRestart) {
+		this._checkToolbarAndExecuteFunction("setBusy", true);
 		return this._handleReloadOnExit(bSkipRestart)
 			.then(function(oReloadInfo) {
 				return ((bDontSaveChanges) ? Promise.resolve() : this._serializeToLrep(this))
-				.then(this._closeToolbar.bind(this))
+				.then(this._checkToolbarAndExecuteFunction.bind(this, "hide"))
 				.then(function() {
 					this.fireStop();
 					if (oReloadInfo.reloadMethod && (oReloadInfo.reloadMethod !== this._RELOAD.NOT_NEEDED)) {
@@ -924,6 +925,7 @@ function(
 			}.bind(this))
 			.catch(fnShowTechnicalError)
 			.then(function () {
+				this._checkToolbarAndExecuteFunction("setBusy", false);
 				this._sStatus = STOPPED;
 				jQuery("body").removeClass("sapUiRtaMode");
 			}.bind(this));

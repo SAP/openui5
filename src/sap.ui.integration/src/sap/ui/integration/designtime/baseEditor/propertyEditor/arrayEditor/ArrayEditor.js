@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_merge",
 	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
 	"sap/ui/integration/designtime/baseEditor/util/unset",
-	"sap/ui/integration/designtime/baseEditor/util/isNil",
+	"sap/base/util/restricted/_isNil",
 	"sap/base/strings/formatMessage",
 	"sap/base/util/isEmptyObject"
 ], function (
@@ -22,7 +22,7 @@ sap.ui.define([
 	_merge,
 	resolveBinding,
 	unset,
-	isNil,
+	_isNil,
 	formatMessage,
 	isEmptyObject
 ) {
@@ -250,7 +250,7 @@ sap.ui.define([
 	ArrayEditor.prototype._isNewItem = function (mArrayItem) {
 		return (mArrayItem && mArrayItem.properties || []).every(function (oArrayItemProperty) {
 			var vValue = oArrayItemProperty.value;
-			return isNil(vValue)
+			return _isNil(vValue)
 				|| Array.isArray(vValue) && vValue.length === 0
 				|| isEmptyObject(vValue);
 		});

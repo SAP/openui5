@@ -1,0 +1,62 @@
+.sapUiMdcBaseField {
+	display: inline-block;
+	box-sizing: border-box;
+}
+
+.sapUiSizeCompact .sapUiMdcBaseFieldIcon>.sapMInputBaseInner {
+	padding-left: 1.525rem;
+}
+
+.sapUiMdcBaseFieldMoreFields > *{
+	padding-left: 0.5rem;
+}
+
+.sapUiMdcBaseFieldMoreFields > *:first-child{
+	padding-left: 0;
+}
+
+// .sapUiMdcBaseFieldFH .sapUiMdcFHButton::before, .sapUiMdcBaseFieldIcon::before {
+// 	width: 1.54rem;
+// 	height: 1.54rem;
+// 	font-family: 'SAP-icons';
+// 	position: absolute;
+// 	text-align: center;
+// 	padding-top: 0.25rem;
+// 	overflow: hidden;
+// 	box-sizing: border-box;
+// }
+
+// .sapUiMdcBaseFieldFH.sapUiMdcBaseField:not(.sapMInputBaseReadonly) .sapUiMdcFHButton:hover::before {
+// 	background-color: @sapUiButtonLiteHoverBackground;
+// }
+
+// .sapUiMdcBaseFieldFH.sapUiMdcBaseField:not(.sapMInputBaseReadonly) .sapUiMdcFHButton:active::before {
+// 	background-color: @sapUiButtonLiteActiveBackground;
+// 	color: @sapUiButtonActiveTextColor;
+// 	outline: 1px dotted @sapUiContentContrastFocusColor;
+// }
+
+// .sapUiMdcFHButton {
+// 	cursor: pointer;
+// 	display: none;
+// 	color: @sapUiContentIconColor;
+// }
+// .sapUiMdcBaseFieldFH .sapUiMdcFHButton {
+// 	display:inline-block;
+// 	position:absolute;
+// }
+
+// .sapUiMdcFHButton::before {
+// 	content: attr(data-sap-ui-fieldhelp) "";
+// 	right: 0;
+// }
+
+.sapUiMdcBaseFieldIcon::before {
+	content: attr(data-sap-ui-icon) "";
+	cursor: default;
+}
+
+.sapUiMdcBaseField .sapMInputBaseReadonlyInner  {
+	border: transparent;
+	background-color: transparent;
+}

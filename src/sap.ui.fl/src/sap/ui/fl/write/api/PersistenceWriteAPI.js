@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/base/Log",
 	"sap/ui/fl/Layer"
@@ -19,6 +20,7 @@ sap.ui.define([
 	FlexCustomData,
 	ChangesController,
 	DescriptorChangeTypes,
+	Condenser,
 	FeaturesAPI,
 	Log,
 	Layer
@@ -265,6 +267,34 @@ sap.ui.define([
 			}
 			// delete from flex persistence map
 			oFlexController.deleteChange(mPropertyBag.change, oAppComponent);
+		},
+
+		/**
+		 * Calls the Condenser with all the passed changes.
+		 * ATTENTION: Only to be used by sap.ui.rta.test
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
+		 * @param {sap.ui.fl.Change[]} mPropertyBag.changes - Array of changes
+		 * @returns {Promise<sap.ui.fl.Change[]>} Resolves with all necessary changes
+
+		 * @private
+	 	 * @ui5-restricted sap.ui.rta.test
+		 */
+		_condense: function(mPropertyBag) {
+			return Promise.resolve().then(function() {
+				if (!mPropertyBag.selector) {
+					throw Error("An invalid selector was passed");
+				}
+				var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+				if (!oAppComponent) {
+					throw Error("Invalid application component for selector");
+				}
+				if (!mPropertyBag.changes || mPropertyBag.changes && !Array.isArray(mPropertyBag.changes)) {
+					throw Error("Invalid array of changes");
+				}
+				return Condenser.condense(oAppComponent, mPropertyBag.changes);
+			});
 		},
 
 		/**

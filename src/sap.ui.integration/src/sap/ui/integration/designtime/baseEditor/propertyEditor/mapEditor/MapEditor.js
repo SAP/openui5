@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/base/util/deepClone",
+	"sap/base/util/deepEqual",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/restricted/_omit",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function (
 	BasePropertyEditor,
 	deepClone,
+	deepEqual,
 	JSONModel,
 	_merge,
 	_omit,
@@ -122,10 +124,7 @@ sap.ui.define([
 
 		_processValue: function(mValue) {
 			return Object.keys(mValue).map(function (sKey) {
-				var mFormattedValue = this.processInputValue(deepClone(mValue[sKey]), sKey);
-				if (!mFormattedValue.type) {
-					mFormattedValue.type = this._mTypes[sKey] || this._getDefaultType(mFormattedValue.value);
-				}
+				var mFormattedValue = this._prepareInputValue(mValue[sKey], sKey);
 				this._mTypes[sKey] = mFormattedValue.type;
 
 				var oItem = {
@@ -135,6 +134,14 @@ sap.ui.define([
 
 				return this.getConfig().includeInvalidEntries !== false || this._isValidItem(oItem, deepClone(mValue[sKey])) ? oItem : undefined;
 			}, this).filter(Boolean);
+		},
+
+		_prepareInputValue: function(oValue, sKey) {
+			var mFormattedValue = this.processInputValue(deepClone(oValue), sKey);
+			if (!mFormattedValue.type) {
+				mFormattedValue.type = this._mTypes[sKey] || this._getDefaultType(mFormattedValue.value);
+			}
+			return mFormattedValue;
 		},
 
 		/**
@@ -249,11 +256,22 @@ sap.ui.define([
 		_onAddElement: function() {
 			var mParams = _merge({}, this.getValue());
 			var sKey = this._getUniqueKey(mParams);
-			mParams[sKey] = this.processOutputValue({
+			mParams[sKey] = this.processOutputValue(this._getItemTemplate());
+			this.setValue(mParams);
+		},
+
+		_getItemTemplate: function() {
+			return {
 				value: "",
 				type: "string"
-			});
-			this.setValue(mParams);
+			};
+		},
+
+		_isNewItem: function(mItem) {
+			return deepEqual(
+				mItem.value,
+				this._prepareInputValue(this.processOutputValue(this._getItemTemplate()))
+			);
 		},
 
 		_getUniqueKey: function(mParams) {

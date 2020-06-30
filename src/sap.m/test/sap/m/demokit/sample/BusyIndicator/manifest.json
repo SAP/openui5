@@ -7,14 +7,14 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.BusyIndicator.view.BusyIndicator",
+			"viewName": "sap.m.sample.BusyIndicator.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {},
 				"sap.ui.core": {},
+				"sap.m": {},
 				"sap.ui.layout": {}
 			}
 		},
@@ -22,7 +22,7 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"view/BusyIndicator.view.xml",
+					"V.view.xml",
 					"manifest.json"
 				]
 			}

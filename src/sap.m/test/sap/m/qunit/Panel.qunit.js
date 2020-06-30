@@ -593,17 +593,17 @@ sap.ui.define([
 		assert.equal($toolbar.css("border-bottom-width"), "0px", "toolbar border should be 0px");
 	});
 
-	QUnit.test("Expandable panel with headerToolbar - toolbar should not have padding-left", function(assert) {
+	QUnit.test("Expandable panel with headerToolbar - toolbar should have padding-left", function(assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
 		sap.ui.getCore().applyChanges();
 
 		var $toolbar = this.oPanel.$().find(".sapMTB");
 
-		assert.equal($toolbar.css("padding-left"), "0px", "toolbar padding-left should be 0px");
+		assert.equal($toolbar.css("padding-left"), "8px", "toolbar padding-left should be 8px");
 	});
 
-	QUnit.test("Expandable panel with headerToolbar - toolbar child should have margin-left: 3rem", function(assert) {
+	QUnit.test("Expandable panel with headerToolbar - toolbar child should have margin-left: 2.5rem", function(assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
 		sap.ui.getCore().applyChanges();
@@ -611,7 +611,7 @@ sap.ui.define([
 		var fontSize = parseInt(jQuery("body").css("font-size"));
 		var $toolbar = this.oPanel.$().find(".sapMTB");
 
-		assert.equal(parseInt($toolbar.css("margin-left")), 3 * fontSize, "toolbar margin-left should be " + (3 * fontSize) + "px");
+		assert.equal(parseInt($toolbar.css("margin-left")), 2.5 * fontSize, "toolbar margin-left should be " + (2.5 * fontSize) + "px");
 	});
 
 	QUnit.test("Expandable panel with headerToolbar - first toolbar child should not have margin-left", function(assert) {
@@ -625,13 +625,13 @@ sap.ui.define([
 		assert.equal($firstToolbarChild.css("margin-left"), "0px", "first toolbar child margin-left should be 0px");
 	});
 
-	QUnit.test("Expandable panel with headerText - headerText should not have padding-left", function(assert) {
+	QUnit.test("Expandable panel with headerText - headerText should have padding-left", function(assert) {
 		this.oPanel.setExpandable(true);
 		sap.ui.getCore().applyChanges();
 
 		var $header = this.oPanel.$().find(".sapMPanelHdr");
 
-		assert.equal($header.css("padding-left"), "0px", "headerText padding-left should be 0px");
+		assert.equal($header.css("padding-left"), "8px", "headerText padding-left should be 8px");
 	});
 
 	QUnit.test("Container Padding Classes", function (assert) {

@@ -2261,6 +2261,70 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("aria-activedescendant attribute should removed on focusleave", function (assert) {
+		var oComboBox = new ComboBox({
+			items: [
+				new Item("focusedItem", {
+					key: "GER",
+					text: "Germany"
+				})
+			]
+		});
+
+		// Arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.open();
+		this.clock.tick();
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), oComboBox.getListItem(oComboBox.getSelectedItem()).getId(), 'The "aria-activedescendant" attribute is set to the focused item');
+
+		// Act
+		oComboBox.getFocusDomRef().blur();
+		this.clock.tick();
+
+		// Assert
+		assert.notOk(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), 'The "aria-activedescendant" attribute is not set after focus out(when the active descendant list item is not focused)');
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+		QUnit.test("aria-activedescendant attribute should not be set if an item is selected but the picker is not opened", function (assert) {
+		var oComboBox = new ComboBox({
+			items: [
+				new Item("focusedItem", {
+					key: "GER",
+					text: "Germany"
+				})
+			]
+		});
+
+		// Arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.focus();
+		this.clock.tick();
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.getCore().applyChanges();
+
+		this.clock.tick(300);
+
+		// Assert
+		assert.notOk(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), 'The "aria-activedescendant" attribute is notif an item is selected but te picker is not opened');
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+
 	QUnit.test("setSelectedKey() on unbindObject call", function (assert) {
 		var oComboBox = new ComboBox({
 			selectedKey: "{value}",
@@ -8135,16 +8199,13 @@ sap.ui.define([
 	QUnit.module("oninput");
 
 	QUnit.test("oninput the ComboBox's picker pop-up should open", function (assert) {
-
 		// system under test
-
-		var oExpectedItem;
 		var oComboBox = new ComboBox({
 			items: [
 				new Item({
 					text: "Egypt"
 				}),
-				oExpectedItem = new Item({
+				new Item({
 					text: "Germany"
 				}),
 				new Item({
@@ -8168,13 +8229,13 @@ sap.ui.define([
 		oComboBox.getFocusDomRef().value = "G";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
-		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// assert
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
 		assert.strictEqual(oComboBox.getVisibleItems().length, 3, "Three items are visible");
-		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId, "The 'aria-activedescendant' attribute is set when the active descendant is rendered and visible");
+		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), null, "The 'aria-activedescendant' attribute is not set if the visual focus is not on the item");
+
 		// cleanup
 		oComboBox.destroy();
 	});
@@ -9046,10 +9107,9 @@ sap.ui.define([
 	QUnit.test("onAfterOpen test case 2", function (assert) {
 
 		// system under test
-		var oExpectedItem;
 		var oComboBox = new ComboBox({
 			items: [
-				oExpectedItem = new Item({
+				new Item({
 					key: "GER",
 					text: "Germany"
 				})
@@ -9065,12 +9125,9 @@ sap.ui.define([
 		// act
 		oComboBox.syncPickerContent();
 		oComboBox.open();
-		sap.ui.getCore().applyChanges();
-
-		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// assert
-		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId, "The 'aria-activedescendant' attribute is set when the active descendant is rendered and visible");
+		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), null, "The 'aria-activedescendant' attribute is not set when a suggested item is not focused");
 
 		oComboBox.destroy();
 	});
@@ -10878,7 +10935,7 @@ sap.ui.define([
 		oCB.destroy();
 	});
 
-	QUnit.test("Changing models resets the selection if item is not there", function (assert) {
+	QUnit.test("Changing models should not resets the selection if item is not there", function (assert) {
 		//Setup
 		var oData = {list: [{id: "1", text: "1"}]},
 			oModel = new JSONModel(oData),
@@ -10914,8 +10971,46 @@ sap.ui.define([
 		this.clock.tick(100);
 
 		//Assert
-		assert.ok(!oComboBox.getSelectedItem(), "No item is currently selected");
-		assert.ok(!oComboBox.getSelectedKey(), "No item is currently selected");
+		assert.ok(oComboBox.getSelectedItem(), "Item remains selected");
+		assert.ok(oComboBox.getSelectedKey(), "selectedKey is not reset");
+
+		//Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("Changing models keeps the value", function (assert) {
+		//Setup
+		var oData = {list: [{id: "1", text: "1"}, {id: "2", text: "2"}]},
+			oModel = new JSONModel(oData),
+			oItemsTemplate = new Item({key: "{id}", text: "{text}"}),
+			oComboBox = new ComboBox({
+				items: {
+					path: "/list",
+					template: oItemsTemplate
+				}
+			});
+
+		//Act
+		oComboBox.setModel(oModel);
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
+
+		//Assert
+		assert.ok(!oComboBox.getSelectedKey(), "There is no selected item.");
+		assert.ok(!oComboBox.getSelectedItem(), "There is no selected key.");
+
+		oComboBox.setValue("test");
+
+		//Act
+		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "33", text: "33"}]);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
+
+		//Assert
+		assert.ok(!oComboBox.getSelectedKey(), "There is no selected item.");
+		assert.ok(!oComboBox.getSelectedItem(), "There is no selected key.");
+		assert.strictEqual(oComboBox.getValue(), "test", "Value is not reset.");
 
 		//Cleanup
 		oComboBox.destroy();

@@ -1,0 +1,136 @@
+<mvc:View displayBlock="true"
+	xmlns:uxap="sap.uxap"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdcf="sap.ui.mdc.field"
+	xmlns:mdcl="sap.ui.mdc.link"
+	xmlns:ui="sap.ui"
+	xmlns:variants="sap.ui.fl.variants"
+	xmlns="sap.m" controllerName="sap.ui.v4demo.controller.BookDetails">
+	<uxap:ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" alwaysShowContentHeader="false" preserveHeaderStateOnScroll="false" headerContentPinnable="true" isChildPage="true" upperCaseAnchorBar="false">
+		<uxap:headerTitle>
+			<uxap:ObjectPageDynamicHeaderTitle>
+				<uxap:expandedHeading>
+					<Title text="Book: {title}" wrapping="true" class="sapUiSmallMarginEnd" />
+				</uxap:expandedHeading>
+				<uxap:snappedHeading>
+					<FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
+						<FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
+							<Title text="Book: {title}" wrapping="true" class="sapUiTinyMarginEnd" />
+						</FlexBox>
+					</FlexBox>
+				</uxap:snappedHeading>
+				<uxap:actions>
+					<ToggleButton text="Edit" type="Emphasized" press="onEditButtonPress" visible="{=!${view>/editMode}}" />
+					<Button text="Delete" type="Transparent" press="onDeleteButtonPress" visible="{=!${view>/editMode}}" />
+					<Button id="save" text="Save" type="Emphasized" visible="{view>/editMode}" press="onSavePress" />
+					<Button id="cancel" text="Cancel" visible="{view>/editMode}" press="onCancelPress" />
+				</uxap:actions>
+			</uxap:ObjectPageDynamicHeaderTitle>
+		</uxap:headerTitle>
+		<uxap:sections>
+			<uxap:ObjectPageSection title="General information">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection>
+						<uxap:blocks>
+							<f:SimpleForm id="detailForm" layout="ResponsiveGridLayout">
+								<f:content>
+									<Label text="ID" />
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id= "fID" value="{ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" />
+									<Label text="Author" />
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fAuthor" value="{author_ID}" fieldHelp="FH1" dataType= "Edm.Int32" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
+										<mdc:dependents>
+											<mdcf:FieldValueHelp title="Author Value Help" id="FH1" noDialog="false" keyPath="ID" descriptionPath="name" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+												<mdcf:filterBar>
+													<mdc:FilterBar liveMode="false">
+														<mdc:filterItems>
+															<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType= "Edm.Int32" valueState= "{$filters>/fieldPath/ID/valueState}" valueStateText= "{$filters>/fieldPath/ID/valueStateText}" />
+															<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" valueState= "{$filters>/fieldPath/name/valueState}" valueStateText= "{$filters>/fieldPath/name/valueStateText}" />
+															<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Date of Birth" dataType= "Edm.Date" maxConditions="-1" conditions= "{$filters>/conditions/dateOfBirth}" valueState= "{$filters>/fieldPath/dateOfBirth/valueState}" valueStateText= "{$filters>/fieldPath/dateOfBirth/valueStateText}" fieldHelp= "FH2">
+																<mdc:dependents>
+																	<mdcf:FieldValueHelp title="Conditions Value Help" id="FH2" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
+																</mdc:dependents>
+															</mdc:FilterField>
+														</mdc:filterItems>
+													</mdc:FilterBar>
+												</mdcf:filterBar>
+												<mdcf:content>
+													<mdcf:FieldValueHelpMTableWrapper>
+														<mdcf:table>
+															<Table items='{path : "/Authors"}' width="30rem">
+																<columns>
+																	<Column width="5rem">
+																		<header>
+																			<Text text="ID" />
+																		</header>
+																	</Column>
+																	<Column>
+																		<header>
+																			<Text text="Name" />
+																		</header>
+																	</Column>
+																	<Column width="5rem">
+																		<header>
+																			<Text text="Date of Birth" />
+																		</header>
+																	</Column>
+																</columns>
+																<items>
+																	<ColumnListItem type="Active">
+																		<cells>
+																			<Text text="{ID}" />
+																			<Text text="{name}" />
+																			<Text text="{dateOfBirth}" />
+																		</cells>
+																	</ColumnListItem>
+																</items>
+															</Table>
+														</mdcf:table>
+													</mdcf:FieldValueHelpMTableWrapper>
+												</mdcf:content>
+											</mdcf:FieldValueHelp>
+										</mdc:dependents>
+									</mdc:Field>
+									<Label text="Title"/>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fTitle" value="{title}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
+										<mdc:fieldInfo>
+											<mdc:Link
+												sourceControl="fTitle"
+												delegate='{ name: "sap/ui/mdc/flp/FlpLinkDelegate", payload: {
+													semanticObjects: ["FakeFlpSemanticObject"],
+													mainSemanticObject: "FakeFlpSemanticObject"
+												} }'></mdc:Link>
+										</mdc:fieldInfo>
+									</mdc:Field>
+									<Label text="Description"/>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fDescr" multipleLines="true" value="{descr}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
+									<Label text="Stock"/>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fStock" value="{stock}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
+									<Label text="Price"/>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fPrice" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" fieldHelp="FVH-Currency" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
+										<mdc:dependents>
+											<mdcf:ListFieldHelp id="FVH-Currency" items="{/Currencies}">
+												<core:ListItem key="{code}" text="{code}" additionalText="{descr}" />
+											</mdcf:ListFieldHelp>
+										</mdc:dependents>
+									</mdc:Field>
+									<Label text="Link" />
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fLink" value="{title}" editMode="Display">
+										<mdc:fieldInfo>
+											<mdc:Link
+												sourceControl="fLink"
+												delegate="{name: 'sap/ui/v4demo/delegate/BooksDetails.Link.delegate'}"></mdc:Link>
+										</mdc:fieldInfo>
+									</mdc:Field>
+								</f:content>
+							</f:SimpleForm>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+		</uxap:sections>
+	</uxap:ObjectPageLayout>
+</mvc:View>

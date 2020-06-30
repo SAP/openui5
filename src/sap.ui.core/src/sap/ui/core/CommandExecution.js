@@ -233,22 +233,19 @@ sap.ui.define([
 					if (!oParent._propagateProperties._sapui_fnOrig) {
 						var fnOriginalPropagate = oParent._propagateProperties;
 						oParent._propagateProperties = function(vName, oObject, oProperties, bUpdateAll, sName, bUpdateListener) {
+							//call orig propagate first, as we need the model for createCommandData
+							fnOriginalPropagate.apply(oParent, arguments);
 							var oActualContext = oParent.getBindingContext("$cmd");
-							if (oActualContext) {
+							// check update of model data for any CommandExecution
+							var oControl = arguments[1];
+							if (oActualContext && oControl.isA("sap.ui.core.CommandExecution")) {
 								var oActualData = oActualContext.getObject();
 								var oOldParentData = Object.getPrototypeOf(oActualData);
 								oParentData = getParentData();
 								if (oOldParentData !== oParentData) {
-									//update all CommandExecutions if parent Context changed
-									var aDependents = this.getDependents();
-									aDependents.forEach(function(oDependent) {
-										if (oDependent.isA("sap.ui.core.CommandExecution")) {
-											that._createCommandData.apply(oDependent, [oParentData]);
-										}
-									});
+									that._createCommandData.apply(oControl, [oParentData]);
 								}
 							}
-							fnOriginalPropagate.apply(oParent, arguments);
 						};
 						oParent._propagateProperties._sapui_fnOrig = fnOriginalPropagate;
 					}

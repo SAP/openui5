@@ -141,7 +141,7 @@ sap.ui.define([
 		// if component's manifest is of type 'application' then only a flex controller and change persistence instances are created.
 		// if component's manifest is of type 'component' then no flex controller and change persistence instances are created. The variant model is fetched from the outer app component and applied on this component type.
 		if (Utils.isApplicationComponent(oComponent)) {
-			var sComponentId = vConfig.id || oComponent.getId();
+			var sComponentId = oComponent.getId();
 			FlexControllerFactory._componentInstantiationPromises[sComponentId] = FlexState.initialize({
 				componentId: sComponentId,
 				asyncHints: vConfig.asyncHints

@@ -17,7 +17,7 @@
 				path: 'groups',
 				templateShareable: true
 			}">
-			<QuickViewGroup heading="{heading}" elements="{ path: 'elements', templateShareable: true}">
+			<QuickViewGroup heading="{heading}" elements="{ path: 'elements', templateShareable: true }">
 				<QuickViewGroupElement
 					label="{label}"
 					value="{value}"

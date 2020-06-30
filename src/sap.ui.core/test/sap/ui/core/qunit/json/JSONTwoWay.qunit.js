@@ -31,7 +31,7 @@ sap.ui.define([
 		return JSON.parse(JSON.stringify(constTestData));
 	}
 
-	QUnit.module("", {
+	QUnit.module("sap.ui.model.json.JSONModel: Binding Modes", {
 		beforeEach: function() {
 			this.aTextFields = null;
 			// Note: some tests modify the model data, therefore we clone it

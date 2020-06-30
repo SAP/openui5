@@ -15,7 +15,7 @@ sap.ui.define([
 	 * Base connector for requesting flexibility data from a back end.
 	 *
 	 * @namespace sap.ui.fl.initial._internal.connectors.BackendConnector
-	 * @implements {sap.ui.fl.interfaces.BaseInitialConnector}
+	 * @implements {sap.ui.fl.interfaces.BaseLoadConnector}
 	 * @since 1.72
 	 * @private
 	 * @ui5-restricted sap.ui.fl.initial._internal.connectors, sap.ui.fl.write._internal.connectors

@@ -1,0 +1,59 @@
+<mvc:View
+	controllerName="sap.m.sample.IconTabBarBackgroundDesign.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form">
+	<Panel class="sapMShellGlobalOuterBackground">
+		<f:SimpleForm
+			labelSpanL="6"
+			labelSpanM="6"
+			editable="true"
+			layout="ResponsiveGridLayout">
+			<Label text="Background Design" />
+			<RadioButtonGroup columns="3" select=".onBackgroundDesignSelect">
+				<RadioButton text="Solid" />
+				<RadioButton text="Transparent" />
+				<RadioButton text="Translucent" />
+			</RadioButtonGroup>
+
+			<Label text="Header Background Design" />
+			<RadioButtonGroup columns="3" select=".onHeaderBackgroundDesignSelect">
+				<RadioButton text="Solid" />
+				<RadioButton text="Transparent" />
+				<RadioButton text="Translucent" />
+			</RadioButtonGroup>
+		</f:SimpleForm>
+
+		<IconTabBar
+			id="idIconTabBar"
+			select=".onFilterSelect"
+			class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter
+					showAll="true"
+					count="{/ProductCollectionStats/Counts/Total}"
+					text="Products"
+					key="All" />
+				<IconTabSeparator />
+				<IconTabFilter
+					icon="sap-icon://begin"
+					iconColor="Positive"
+					count="{/ProductCollectionStats/Counts/Weight/Ok}"
+					text="Ok"
+					key="Ok" />
+				<IconTabFilter
+					icon="sap-icon://compare"
+					iconColor="Critical"
+					count="{/ProductCollectionStats/Counts/Weight/Heavy}"
+					text="Heavy"
+					key="Heavy" />
+				<IconTabFilter
+					icon="sap-icon://inventory"
+					iconColor="Negative"
+					count="{/ProductCollectionStats/Counts/Weight/Overweight}"
+					text="Overweight"
+					key="Overweight" />
+			</items>
+		</IconTabBar>
+	</Panel>
+</mvc:View>

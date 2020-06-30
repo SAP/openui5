@@ -307,7 +307,10 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		};
 
 		/**
-		 * Gets the tooltip of the internal dialog.
+		 * Gets the tooltip of the BusyDialog.
+		 *
+		 * @public
+		 * @return {string|sap.ui.core.TooltipBase} The tooltip of the BusyDialog.
 		 * @override
 		 */
 		BusyDialog.prototype.getTooltip = function () {

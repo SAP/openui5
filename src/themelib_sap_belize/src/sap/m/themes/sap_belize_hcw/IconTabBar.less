@@ -76,23 +76,14 @@
 
 /* Custom focus outline */
 html.sap-desktop {
-
-	.sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBFilterIcon,
-	.sapMITBTextOnly .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText,
-	.sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll,
-	.sapMITHOverflow .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText {
+	.sapMITBTextOnly .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText {
 		&::after {
-			content: "";
-			position: absolute;
-			top: -1px;
-			bottom: -1px;
-			right: -1px;
-			left: -1px;
-			border:  0.125rem dotted @sapUiContentFocusColor;
-			pointer-events: none;
+			top: -0.125rem;
+			bottom: -0.125rem;
+			right: -0.125rem;
+			left: -0.125rem;
 		}
 	}
-
 	.sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll {
 		&::after {
 			top: 0;

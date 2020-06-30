@@ -7,27 +7,27 @@
 		<Button
 			text="Message Dialog"
 			width="230px"
-			press="onMessageDialogPress"
+			press=".onDefaultMessageDialogPress"
 			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Message Dialog (Success)"
 			width="230px"
-			press="onMessageSuccessDialogPress"
+			press=".onSuccessMessageDialogPress"
 			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Message Dialog (Warning)"
 			width="230px"
-			press="onMessageWarningDialogPress"
+			press=".onWarningMessageDialogPress"
 			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Message Dialog (Error)"
 			width="230px"
-			press="onMessageErrorDialogPress"
+			press=".onErrorMessageDialogPress"
 			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Message Dialog (Information)"
 			width="230px"
-			press="onMessageInformationDialogPress"
+			press=".onMessageInformationDialogPress"
 			class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>

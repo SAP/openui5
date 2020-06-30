@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/m/P13nItem",
 	"sap/m/P13nFilterItem",
 	"sap/m/library",
-	"sap/m/P13nOperationsHelper"
+	"sap/m/P13nOperationsHelper",
+	"sap/m/MessageStrip"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -18,7 +19,8 @@ sap.ui.define([
 	P13nItem,
 	P13nFilterItem,
 	mobileLibrary,
-	P13nOperationsHelper
+	P13nOperationsHelper,
+	MessageStrip
 ) {
 	"use strict";
 
@@ -482,4 +484,19 @@ sap.ui.define([
 		oSetEnhancedExcludeOperationsSpy.restore();
 	});
 
+	QUnit.test("set MessageStrip via 'setAggregation' ", function(assert){
+		var oMessageStrip = new MessageStrip({
+			text: "Test Message Strip",
+			type: "Error",
+			showIcon: true
+		});
+
+		this.oFP.setMessageStrip(oMessageStrip);
+
+		this.oFP.onBeforeRendering();
+
+		assert.equal(this.oFP.getAggregation("content")[0].getText(), oMessageStrip.getText(), "Correct MessageStrip has been added to the content area");
+		assert.equal(this.oFP.getAggregation("content")[0].getType(), oMessageStrip.getType(), "Correct MessageStrip has been added to the content area");
+		assert.equal(this.oFP.getAggregation("content")[0].getShowIcon(), oMessageStrip.getShowIcon(), "Correct MessageStrip has been added to the content area");
+	});
 });

@@ -312,6 +312,9 @@ function(
 					},
 					/**
 					 * Determines whether the text in the items wraps on multiple lines when the available width is not enough.
+					 * When the text is truncated (<code>wrapItemsText</code> property is set to <code>false</code>),
+ 					 * the max width of the <code>SelectList</code> is 600px. When <code>wrapItemsText</code> is set to
+ 					 * <code>true</code>, <code>SelectList</code> takes all of the available width.
 					 * @since 1.69
 					 */
 					wrapItemsText: {
@@ -1058,7 +1061,7 @@ function(
 				offsetY: 0,
 				initialFocus: this,
 				bounce: false,
-				ariaLabelledBy: [this.getPickerValueStateContentId(), this._getPickerHiddenLabelId()]
+				ariaLabelledBy: this._getPickerHiddenLabelId()
 			});
 
 			// detect when the scrollbar or an item is pressed
@@ -1119,7 +1122,7 @@ function(
 				oHeader = this._getPickerHeader(),
 				oDialog = new Dialog({
 					stretch: true,
-					ariaLabelledBy: [this.getPickerValueStateContentId(), this._getPickerHiddenLabelId()],
+					ariaLabelledBy: this._getPickerHiddenLabelId(),
 					customHeader: oHeader,
 					beforeOpen: function() {
 						that.updatePickerHeaderTitle();
@@ -1490,7 +1493,9 @@ function(
 			}
 
 			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
+			if (this.isOpen()) {
+				oEvent.setMarked();
+			}
 
 			this.close();
 			this._checkSelectionChange();
@@ -1908,7 +1913,7 @@ function(
 					}, this)
 					.addContent(this.getSimpleFixFlex());
 
-			return oPicker;
+					return oPicker;
 		};
 
 		/**
@@ -1949,7 +1954,6 @@ function(
 
 			this._oList = new SelectList({
 				width: "100%",
-				maxWidth: Device.system.phone ? "100%" : "600px",
 				keyboardNavigationMode: sKeyboardNavigationMode
 			}).addStyleClass(this.getRenderer().CSS_CLASS + "List-CTX")
 			.addEventDelegate({
@@ -1960,7 +1964,7 @@ function(
 			}, this)
 			.attachSelectionChange(this.onSelectionChange, this);
 
-			this._oList.toggleStyleClass("sapMSelectListWrappedItems", this.getWrapItemsText());
+			 this._oList.toggleStyleClass("sapMSelectListWrappedItems", this.getWrapItemsText());
 
 			return this._oList;
 		};
@@ -1974,8 +1978,14 @@ function(
 		 * @public
 		 */
 		Select.prototype.setWrapItemsText = function (bWrap) {
+			var oPicker = this.getPicker();
+
 			if (this._oList) {
 				this._oList.toggleStyleClass("sapMSelectListWrappedItems", bWrap);
+			}
+
+			if (oPicker && this.getPickerType() === "Popover") {
+				oPicker.toggleStyleClass("sapMPickerWrappedItems", bWrap);
 			}
 
 			return this.setProperty("wrapItemsText", bWrap, true);
@@ -2312,6 +2322,17 @@ function(
 			}
 		};
 
+		Select.prototype._updatePickerAriaLabelledBy = function (sValueState) {
+			var oPicker = this.getPicker(),
+				sPickerValueStateContentId = this.getPickerValueStateContentId();
+
+			if (sValueState === ValueState.None) {
+				oPicker.removeAriaLabelledBy(sPickerValueStateContentId);
+			} else {
+				oPicker.addAriaLabelledBy(sPickerValueStateContentId);
+			}
+		};
+
 		Select.prototype.updateAriaLabelledBy = function(sValueState, sOldValueState) {
 			var $this = this.$(),
 				sAttr = $this.attr("aria-labelledby"),
@@ -2635,6 +2656,8 @@ function(
 			if (sValueState === sOldValueState) {
 				return this;
 			}
+
+			this._updatePickerAriaLabelledBy(sValueState);
 
 			var oDomRef = this.getDomRefForValueState();
 

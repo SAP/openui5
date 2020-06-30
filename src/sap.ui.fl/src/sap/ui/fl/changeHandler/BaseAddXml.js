@@ -123,9 +123,10 @@ sap.ui.define([
 			BaseAddXml._throwMissingAttributeError("fragmentPath");
 		}
 
-		var sModuleName = oChangeDefinition.reference.replace(/\./g, "/");
+		//Calculate the moduleName for the fragment
+		var sModuleName = oChangeDefinition.reference.replace(/\.Component/g, "").replace(/\./g, "/");
 		sModuleName += "/changes/";
-		sModuleName += oChangeDefinition.content.fragmentPath.replace(/\.fragment\.xml/g, "");
+		sModuleName += oChangeDefinition.content.fragmentPath;
 		oChange.setModuleName(sModuleName);
 	};
 

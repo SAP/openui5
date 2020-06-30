@@ -3,30 +3,36 @@
  */
 
 sap.ui.define([
-    "sap/ui/thirdparty/jquery",
-    "sap/ui/documentation/sdk/controller/BaseController",
-    "sap/ui/documentation/sdk/controller/util/SearchUtil",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/core/ResizeHandler",
-    "sap/ui/Device",
-    "sap/ui/core/Fragment",
-    "sap/ui/documentation/library",
-    "sap/ui/core/IconPool",
-    "sap/m/MessageBox",
-    "sap/m/library",
-    "sap/base/Log",
-    "sap/base/util/Version",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/documentation/sdk/controller/BaseController",
+	"sap/ui/documentation/sdk/controller/util/SearchUtil",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/Device",
+	"sap/ui/core/Fragment",
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
+	"sap/base/util/UriParameters",
+	"sap/ui/documentation/library",
+	"sap/ui/core/IconPool",
+	"sap/m/MessageBox",
+	"sap/m/library",
+	"sap/base/Log",
+	"sap/base/util/Version",
 	"sap/ui/core/syncStyleClass",
 	"sap/ui/documentation/WebPageTitleUtil",
 	"sap/ui/core/Core"
 ], function(
-    jQuery,
+	jQuery,
 	BaseController,
 	SearchUtil,
 	JSONModel,
 	ResizeHandler,
 	Device,
 	Fragment,
+	Locale,
+	LocaleData,
+	UriParameters,
 	library,
 	IconPool,
 	MessageBox,
@@ -59,7 +65,10 @@ sap.ui.define([
 			ABOUT_TEXT = "about",
 			FEEDBACK_TEXT = "feedback",
 			CHANGE_VERSION_TEXT = "change_version",
-			DEMOKIT_COOKIE_NAME = "dkc";
+			CHANGE_SETTINGS_TEXT = "settings",
+			DEMOKIT_DEFAULT_LANGUAGE = "en",
+			DEMOKIT_COOKIE_NAME = "dkc",
+			DEMOKIT_CONFIGURATION_LANGUAGE = "language";
 
 		// We need to hardcode theme depending height of Toolbar to calculate ScrollContainer
 		// height more precisely on the home page
@@ -84,7 +93,7 @@ sap.ui.define([
 			document.cookie = sCookieName + "=" + sValue + ";" + sExpiresDate + ";path=/";
 		}
 
-		function getCookie(sCookieName) {
+		function getCookieValue(sCookieName) {
 			var aCookies = document.cookie.split(';'),
 				sCookie;
 
@@ -93,7 +102,7 @@ sap.ui.define([
 			for (var i = 0; i < aCookies.length; i++) {
 				sCookie = aCookies[i].trim();
 
-				if (sCookie.indexOf(sCookieName) == 0) {
+				if (sCookie.indexOf(sCookieName) === 0) {
 					return sCookie.substring(sCookieName.length, sCookie.length);
 				}
 			}
@@ -148,6 +157,12 @@ sap.ui.define([
 				this.FEEDBACK_SERVICE_URL = "https://feedback-sapuisofiaprod.hana.ondemand.com:443/api/v2/apps/5bb7d7ff-bab9-477a-a4c7-309fa84dc652/posts";
 
 				// Cache view reference
+				this._oSupportedLangModel = new JSONModel({
+					"langs": this._prepareSupportedLangModelData()
+				});
+
+				this.setModel(this._oSupportedLangModel, "supportedLanguages");
+
 				this._oView = this.getView();
 
 				this.setModel(oViewModel, "appView");
@@ -179,12 +194,20 @@ sap.ui.define([
 
 				this.bus = Core.getEventBus();
 				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
+
+				this._createConfigurationBasedOnURIInput();
+
+				if (getCookieValue(DEMOKIT_COOKIE_NAME) === "1" && this._aConfiguration.length > 0) {
+					this._applyCookiesConfiguration(this._aConfiguration);
+				} else {
+					this._applyDefaultConfiguration(this._aConfiguration);
+				}
 			},
 
 			onBeforeRendering: function() {
 				Device.orientation.detachHandler(this._onOrientationChange, this);
 
-				this._oMessageStrip.setVisible(getCookie(DEMOKIT_COOKIE_NAME) !== "1");
+				this._oMessageStrip.setVisible(getCookieValue(DEMOKIT_COOKIE_NAME) !== "1");
 			},
 
 			onAfterRendering: function() {
@@ -301,11 +324,178 @@ sap.ui.define([
 					this.aboutDialogOpen();
 				} else if (sTargetText === FEEDBACK_TEXT) {
 					this.feedbackDialogOpen();
+				} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
+					this.settingsDialogOpen();
 				} else if (sTargetText === CHANGE_VERSION_TEXT) {
 					this.onChangeVersionButtonPress();
 				} else if (sTarget) {
 					URLHelper.redirect(sTarget, true);
 				}
+			},
+
+			/**
+			 * Creates configuration for the application regarding the URI input.
+			 * @private
+			 */
+			_createConfigurationBasedOnURIInput: function () {
+				var oUriParams = UriParameters.fromQuery(window.location.search);
+				this._aConfiguration = [];
+
+				if (!(oUriParams.has('sap-ui-language') || oUriParams.has('sap-language'))) {
+					this._aConfiguration.push(DEMOKIT_CONFIGURATION_LANGUAGE);
+				}
+			},
+
+			/**
+			 * Applies configuration for the application regarding the default values.
+			 * @private
+			 */
+			_applyDefaultConfiguration: function () {
+				this._aConfiguration.forEach(function(sConf){
+					if (sConf === DEMOKIT_CONFIGURATION_LANGUAGE) {
+						Core.getConfiguration().setLanguage(DEMOKIT_DEFAULT_LANGUAGE);
+					}
+				}, this);
+
+				this._oSupportedLangModel.setProperty("/selectedLang", Core.getConfiguration().getLanguage());
+			},
+
+			/**
+			 * Applies configuration for the application regarding the cookies.
+			 * @private
+			 */
+			_applyCookiesConfiguration: function () {
+				var sCookieValue, sConf, i;
+
+				for (i = 0; i < this._aConfiguration.length; i++) {
+					sConf = this._aConfiguration[i];
+					sCookieValue = getCookieValue(sConf);
+
+					if (sCookieValue !== "") {
+						if (sConf === DEMOKIT_CONFIGURATION_LANGUAGE) {
+							this._setSelectedLanguage(sCookieValue);
+						}
+
+						// If we have available value for the given cookie we remove it from the configuration array.
+						this._aConfiguration.splice(i, 1);
+						i--;
+					}
+				}
+
+				// If we still have configurations which are not set by their cookie values, we apply their default values.
+				if (this._aConfiguration.length > 0) {
+					this._applyDefaultConfiguration();
+				}
+			},
+
+			/*
+			 * Helper for function for preparing the data for the SupportedLangModel.
+			 * @private
+			 * @returns {Array[Object]} Array of objects containg the needed data for the SupportedLangModel
+			 */
+			_prepareSupportedLangModelData: function () {
+				return Core.getConfiguration().getLanguagesDeliveredWithCore().reduce(function(result, sLangAbbreviation) {
+					var langName;
+					if (typeof sLangAbbreviation === "string" && sLangAbbreviation.length > 0) {
+
+						switch (sLangAbbreviation) {
+							case "iw": // Israel
+								// Hebrew
+								langName = new LocaleData(new Locale("he")).getLanguages()["he"];
+								break;
+							case "zh_TW": // Taiwan
+								// Chinese Traditional
+								langName = new LocaleData(new Locale(sLangAbbreviation)).getLanguages()["zh_Hant"];
+								break;
+							case "zh_CN": // People's Republic of China
+								// Chinese Simplified
+								langName = new LocaleData(new Locale(sLangAbbreviation)).getLanguages()["zh_Hans"];
+								break;
+							default:
+								langName = new LocaleData(new Locale(sLangAbbreviation)).getLanguages()[sLangAbbreviation];
+						}
+
+						result.push({
+							"text": typeof langName === 'string' ? langName.charAt(0).toUpperCase() + langName.substring(1) : "Unknown",
+							"key": sLangAbbreviation
+						});
+					}
+
+					return result;
+				}, []);
+			},
+
+			/**
+			 * Sets the selected language code abbreviation
+			 * @param {string} sLanguage language code abbreviation
+			 * @private
+			 */
+			_setSelectedLanguage: function(sLanguage) {
+				this._oSupportedLangModel.setProperty("/selectedLang", sLanguage);
+				Core.getConfiguration().setLanguage(sLanguage);
+				if (getCookieValue(DEMOKIT_COOKIE_NAME) === "1") {
+					setCookie(DEMOKIT_CONFIGURATION_LANGUAGE, sLanguage);
+				}
+			},
+
+			/**
+			 * Gets the selected language code abbreviation
+			 * @private
+			 * @returns {string} sLanguage language code abbreviation
+			 */
+			_getSelectedLanguage: function() {
+				return this._oSupportedLangModel.getProperty("/selectedLang");
+			},
+
+			/**
+			 * Opens the settings dialog
+			 * @public
+			 */
+			settingsDialogOpen: function () {
+				if (!this._oSettingsDialog) {
+					Fragment.load({
+						name: "sap.ui.documentation.sdk.view.globalSettingsDialog",
+						controller: this
+					}).then(function (oDialog) {
+						// connect dialog to the root view of this component (models, lifecycle)
+						this._oView.addDependent(oDialog);
+						this._oSettingsDialog = oDialog;
+						Core.byId("LanguageSelect").setSelectedKey(this._getSelectedLanguage());
+						this._oSettingsDialog.open();
+					}.bind(this));
+				} else {
+					this._oSettingsDialog.open();
+				}
+			},
+
+			/**
+			 * Closes the settings dialog
+			 * @public
+			 */
+			handleCloseAppSettings: function () {
+				this._oSettingsDialog.close();
+			},
+
+			/**
+			 * Saves settings from the settings dialog
+			 * @public
+			 */
+			handleSaveAppSettings: function () {
+				var sLanguage = Core.byId('LanguageSelect').getSelectedKey();
+
+				this._oSettingsDialog.close();
+
+				// handle settings change
+				this._applyAppConfiguration(sLanguage);
+			},
+
+			/**
+			 * Apply content configuration
+			 * @param {string} sLanguage language code abbreviation
+			 * @private
+			 */
+			_applyAppConfiguration: function(sLanguage){
+				this._setSelectedLanguage(sLanguage);
 			},
 
 			aboutDialogOpen: function () {
@@ -449,6 +639,10 @@ sap.ui.define([
 					oBinding = Core.byId("versionList").getBinding("items");
 
 				oBinding.filter([oFilter]);
+			},
+
+			onLogoIconPress: function () {
+				this.oRouter.navTo("welcome", {});
 			},
 
 			onVersionItemPress: function (oEvent) {

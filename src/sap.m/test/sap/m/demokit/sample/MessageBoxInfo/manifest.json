@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.MessageBoxInfo.view.MessageBoxInfo",
+			"viewName": "sap.m.sample.MessageBoxInfo.V",
 			"type": "XML",
 			"async": true
 		},
@@ -21,8 +21,8 @@
 		"config": {
 			"sample": {
 				"files": [
-					"view/MessageBoxInfo.view.xml",
-					"controller/MessageBoxInfo.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json"
 				]
 			}

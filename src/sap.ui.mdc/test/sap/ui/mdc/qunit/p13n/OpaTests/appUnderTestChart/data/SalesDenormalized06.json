@@ -1,0 +1,86 @@
+{
+  "@odata.context": "$metadata#SalesDenormalized(Country,Date,ProductName,Amount,Forecast)",
+  "@odata.metadataEtag": "W/\"YUSu2I9/FvD7c+fuUIYoe41AgnIMQ6G9rT1QvopTpNk=\"",
+  "value": [
+	{
+	  "@odata.id": null,
+	  "Country": "Netherlands",
+	  "Date": "2012-04-01",
+	  "ProductName": "Sugar",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "2",
+	  "Forecast@odata.type": "#Decimal",
+	  "Forecast": "3.125"
+	},
+	{
+	  "@odata.id": null,
+	  "Country": "Netherlands",
+	  "Date": "2012-08-06",
+	  "ProductName": "Paper",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "1",
+	  "Forecast@odata.type": "#Decimal",
+	  "Forecast": "3.125"
+	},
+	{
+	  "@odata.id": null,
+	  "Country": "Netherlands",
+	  "Date": "2012-11-22",
+	  "ProductName": "Paper",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "2",
+	  "Forecast@odata.type": "#Decimal",
+	  "Forecast": "3.125"
+	},
+	{
+	  "@odata.id": null,
+	  "Country": "USA",
+	  "Date": "2012-01-03",
+	  "ProductName": "Coffee",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "8",
+	  "Forecast@odata.type": "#Decimal",
+	  "Forecast": "3.125"
+	},
+	{
+	  "@odata.id": null,
+	  "Country": "USA",
+	  "Date": "2012-01-03",
+	  "ProductName": "Paper",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "1",
+	  "Forecast@odata.type": "#Decimal",
+	  "Forecast": "3.125"
+	},
+	{
+	  "@odata.id": null,
+	  "Country": "USA",
+	  "Date": "2012-04-10",
+	  "ProductName": "Sugar",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "2",
+	  "Forecast@odata.type": "#Decimal",
+	  "Forecast": "3.125"
+	},
+	{
+	  "@odata.id": null,
+	  "Country": "USA",
+	  "Date": "2012-08-07",
+	  "ProductName": "Coffee",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "4",
+	  "Forecast@odata.type": "#Decimal",
+	  "Forecast": "3.125"
+	},
+	{
+	  "@odata.id": null,
+	  "Country": "USA",
+	  "Date": "2012-11-09",
+	  "ProductName": "Paper",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "4",
+	  "Forecast@odata.type": "#Decimal",
+	  "Forecast": "3.125"
+	}
+  ]
+}

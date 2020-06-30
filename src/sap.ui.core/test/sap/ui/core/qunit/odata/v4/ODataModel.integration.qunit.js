@@ -15668,42 +15668,76 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Application tries to read private client-side instance annotations.
+	//
+	// Note: Private annotations of navigation properties are also read protected.
+	// BCP: 2080181343
 	QUnit.test("@$ui5._ is read-protected", function (assert) {
 		var oModel = createTeaBusiModel(),
 			sView = '\
-<FlexBox binding="{/MANAGERS(\'1\')}" id="form">\
+<FlexBox binding="{path: \'/MANAGERS(\\\'1\\\')\', \
+		parameters: {$expand : {Manager_to_Team : true}}}" id="form">\
 	<Text id="predicate" text="{= %{@$ui5._/predicate} }" />\
 	<Text id="id" text="{ID}" />\
+	<FlexBox binding="{Manager_to_Team}" >\
+		<Text id="teamPredicate" text="{= %{@$ui5._/predicate} }" />\
+		<Text id="teamId" text="{Team_Id}" />\
+	</FlexBox>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("MANAGERS('1')", {ID : "1"})
+		function expectFailedToDrillDown(sPrefix) {
+			that.oLogMock.expects("error").withExactArgs("Failed to drill-down into "
+						+ sPrefix + "@$ui5._/predicate, invalid segment: @$ui5._",
+					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/MANAGERS('1')"
+						+ "?$expand=Manager_to_Team",
+					"sap.ui.model.odata.v4.lib._Cache")
+				.thrice(); // binding, getProperty, requestProperty
+		}
+
+		this.expectRequest("MANAGERS('1')?$expand=Manager_to_Team",
+			{
+				ID : "1",
+				Manager_to_Team : {
+					Team_Id : "42"
+				}
+			})
 			.expectChange("predicate", undefined) // binding itself is "code under test"
-			.expectChange("id", "1");
-		this.oLogMock.expects("error").withExactArgs(
-				"Failed to drill-down into @$ui5._/predicate, invalid segment: @$ui5._",
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/MANAGERS('1')",
-				"sap.ui.model.odata.v4.lib._Cache")
-			.thrice(); // binding, getProperty, requestProperty
+			.expectChange("id", "1")
+			.expectChange("teamPredicate", undefined)
+			.expectChange("teamId", "42");
+
+		expectFailedToDrillDown("");
+		expectFailedToDrillDown("Manager_to_Team/");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("form").getBindingContext();
+			var oContext = that.oView.byId("form").getBindingContext(),
+				oManager = oContext.getObject();
 
 			// code under test
-			assert.notOk("@$ui5._" in oContext.getObject());
+			assert.notOk("@$ui5._" in oManager);
+			assert.notOk("@$ui5._" in oManager.Manager_to_Team);
 
 			// code under test
 			assert.strictEqual(oContext.getProperty("@$ui5._/predicate"), undefined);
+			assert.strictEqual(
+				oContext.getProperty("Manager_to_Team/@$ui5._/predicate"),
+				undefined
+			);
 
 			// code under test
-			return oContext.requestProperty("@$ui5._/predicate").then(function (vResult) {
-				assert.strictEqual(vResult, undefined);
+			return  Promise.all([
+					oContext.requestProperty("@$ui5._/predicate"),
+					oContext.requestProperty("Manager_to_Team/@$ui5._/predicate")
+				]).then(function (aResult) {
+					assert.strictEqual(aResult[0], undefined);
+					assert.strictEqual(aResult[1], undefined);
 
-				// code under test
-				return oContext.requestObject().then(function (oParent) {
-					assert.notOk("@$ui5._" in oParent);
+					// code under test
+					return oContext.requestObject().then(function (oParent) {
+						assert.notOk("@$ui5._" in oParent);
+						assert.notOk("@$ui5._" in oParent.Manager_to_Team);
+					});
 				});
-			});
 		});
 	});
 
@@ -25047,7 +25081,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: A property binding with a path using a collection navigation property must not
 	// cause an invalid late property request.
-	QUnit.test("BCP 1970517588: invalid property path", function (assert) {
+	QUnit.test("BCP: 1970517588 - invalid property path", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/TEAMS(\'TEAM_01\')}">\
@@ -26309,6 +26343,133 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Use grouping with a list binding, -then change a group key value dynamically-.
+	// Grouping changes after a refresh, but is not properly reflected with E.C.D.
+	//
+	// BCP: 2080132822
+[
+	undefined,
+	"AGE",
+	function (oContext) {
+		return oContext.getProperty("AGE");
+	}
+].forEach(function (vKey, i) {
+
+	QUnit.test("BCP: 2080132822 - grouping, #" + i, function (assert) {
+		var that = this,
+			oController = {
+				getGroupHeader : function (oGroupInfo) {
+					that.checkValue(assert, oGroupInfo.key, "groupHeader");
+					// Note: no need to really return an instance here
+//					return new CustomListItem({content : [
+//						new Text({text : oGroupInfo.key})
+//					]});
+				}
+			},
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<Table growing="true" id="table" items="{\
+		groupHeaderFactory : \'.getGroupHeader\',\
+		path : \'/EMPLOYEES\',\
+		sorter : {group : true, path : \'AGE\'}\
+	}">\
+	<ColumnListItem>\
+		<Text id="age" text="{AGE}" />\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>';
+		//TODO <Text id="age" text="{AGE}" /> should not be needed for auto-$expand/$select here!
+
+		function checkItems(aItems, aExpectedMetadataNames, aExpectedContent) {
+			assert.deepEqual(aItems.map(function (oItem) {
+				return oItem.getMetadata().getName();
+			}), aExpectedMetadataNames);
+			assert.deepEqual(aItems.map(function (oItem) {
+				return oItem.getTitle
+					? oItem.getTitle() // GroupHeaderListItem
+					: oItem.getCells().map(function (oCell) {
+						return oCell.getText();
+					}).join();
+			}), aExpectedContent);
+		}
+
+		this.expectChange("groupHeader", undefined) // caused by virtual context
+			.expectRequest("EMPLOYEES?$orderby=AGE&$select=AGE,ID,Name&$skip=0&$top=20", {
+				value : [{
+					AGE : 23,
+					ID : "2",
+					Name : "Frederic Fall"
+				}, {
+					AGE : 42,
+					ID : "3",
+					Name : "Jonathan Smith"
+				}, {
+					AGE : 42,
+					ID : "4",
+					Name : "Peter Burke"
+				}]
+			})
+			.expectChange("age", ["23", "42", "42"])
+			.expectChange("groupHeader", 23)
+			.expectChange("groupHeader", 42)
+			.expectChange("name", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+
+		return this.createView(assert, sView, oModel, oController).then(function () {
+			var oItemsBinding;
+
+			oTable = that.oView.byId("table");
+			oItemsBinding = oTable.getBinding("items");
+			checkItems(oTable.getItems(), [
+				"sap.m.GroupHeaderListItem",
+				"sap.m.ColumnListItem",
+				"sap.m.GroupHeaderListItem",
+				"sap.m.ColumnListItem",
+				"sap.m.ColumnListItem"
+			], ["23", "23,Frederic Fall", "42", "42,Jonathan Smith", "42,Peter Burke"]);
+
+			//TODO how could changes to a property affect the list's grouping?
+			// @see v2.ODataListBinding#checkUpdate
+//			oItemsBinding.getCurrentContexts()[0].setProperty("AGE", 42, null);
+
+			// code under test
+			oItemsBinding.enableExtendedChangeDetection(false, vKey);
+
+			that.expectRequest("EMPLOYEES?$orderby=AGE&$select=AGE,ID,Name&$skip=0&$top=20", {
+					value : [{
+						AGE : 42, // surprise!
+						ID : "2",
+						Name : "Frederic Fall"
+					}, {
+						AGE : 42,
+						ID : "3",
+						Name : "Jonathan Smith"
+					}, {
+						AGE : 42,
+						ID : "4",
+						Name : "Peter Burke"
+					}]
+				})
+				.expectChange("age", ["42", "42", "42"]) // Note: no real E.C.D. with grouping
+				.expectChange("groupHeader", 42)
+				.expectChange("name", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+
+			// code under test
+			oItemsBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			checkItems(oTable.getItems(), [
+				"sap.m.GroupHeaderListItem",
+				"sap.m.ColumnListItem",
+				"sap.m.ColumnListItem",
+				"sap.m.ColumnListItem"
+			], ["42", "42,Frederic Fall", "42,Jonathan Smith", "42,Peter Burke"]);
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: create at end w/o $count, but after everything has been read

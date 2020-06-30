@@ -14,15 +14,23 @@
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
 		</landmarkInfo>
+
 		<subHeader>
 			<Bar id="header" class="sapContrast sapContrastPlus">
 				<contentLeft>
 					<Button type="Back" press="onNavBack" tooltip="{i18n>SAMPLE_BACK_BTN_TOOLTIP}" enabled="{= ${/disableNavBack} === undefined }"/>
 				</contentLeft>
 				<contentMiddle>
-					<Title text="{/title}" tooltip="{/title}"/>
+					<Title level="H1" text="{/title}" tooltip="{/title}"/>
 				</contentMiddle>
 				<contentRight>
+					<Button
+							id="infoSample"
+							visible="{=${/details} !== undefined || ${/description} !== undefined}"
+							icon="sap-icon://hint"
+							tooltip="{i18n>SAMPLE_INFO_TOOLTIP}"
+							press="onInfoSample"/>
+
 					<Button id="apiRefButton" text="{i18n>SAMPLE_API_REFERENCE_BTN}" type="Emphasized" press="onAPIRefPress" visible="false"/>
 					<Button
 							id="prevSample"

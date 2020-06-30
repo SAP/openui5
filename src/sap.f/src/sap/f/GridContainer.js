@@ -37,6 +37,15 @@ sap.ui.define([
 	var EDGE_VERSION_WITH_GRID_SUPPORT = 16;
 
 	/**
+	 * For these controls the grid item visual focus should be displayed from the control inside.
+	 */
+	var aOwnVisualFocusControls = [
+		"sap.f.Card",
+		"sap.ui.integration.widgets.Card",
+		"sap.m.GenericTile"
+	];
+
+	/**
 	 * Indicates whether the grid is supported by the browser.
 	 * @private
 	 * @returns {boolean} If native grid is supported by the browser
@@ -336,7 +345,17 @@ sap.ui.define([
 	 * @private
 	 */
 	GridContainer.prototype._onAfterItemRendering = function () {
-		var container = this.getParent();
+
+		var container = this.getParent(),
+			oFocusDomRef;
+
+		if (container._hasOwnVisualFocus(this)) {
+			oFocusDomRef = this.getFocusDomRef();
+
+			// remove the focus DOM ref from the tab chain
+			oFocusDomRef.setAttribute("tabindex", -1);
+			oFocusDomRef.tabIndex = -1;
+		}
 
 		// register resize listener for that item only once
 		if (!container._resizeListeners[this.getId()]) {
@@ -746,7 +765,12 @@ sap.ui.define([
 	 */
 	GridContainer.prototype._resizeItem = function (oEvent) {
 		if (!isGridSupportedByBrowser()) {
-			this._scheduleIEPolyfill();
+			// don't re-arrange the items if currently dragging one of the items from this container in another container
+			if (!this._bDraggingInAnotherContainer) {
+				this._scheduleIEPolyfill();
+			}
+
+			this._bDraggingInAnotherContainer = false;
 			return;
 		}
 
@@ -1077,12 +1101,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Implements polyfill for IE after the item is dragged to another container.
+	 * @private
+	 */
+	GridContainer.prototype._polyfillDraggingInAnotherContainer = function () {
+		this._bDraggingInAnotherContainer = true;
+	};
+
+	/**
 	 * Attaches polyfill methods for drag and drop for IE.
 	 * @private
 	 */
 	GridContainer.prototype._attachDndPolyfill = function () {
 		this.attachEvent("_gridPolyfillAfterDragOver", this._polyfillAfterDragOver, this);
 		this.attachEvent("_gridPolyfillAfterDragEnd", this._polyfillAfterDragEnd, this);
+		this.attachEvent("_gridPolyfillDraggingInAnotherContainer", this._polyfillDraggingInAnotherContainer, this);
 	};
 
 	/**
@@ -1092,6 +1125,7 @@ sap.ui.define([
 	GridContainer.prototype._detachDndPolyfill = function () {
 		this.detachEvent("_gridPolyfillAfterDragOver", this._polyfillAfterDragOver, this);
 		this.detachEvent("_gridPolyfillAfterDragEnd", this._polyfillAfterDragEnd, this);
+		this.detachEvent("_gridPolyfillDraggingInAnotherContainer", this._polyfillDraggingInAnotherContainer, this);
 	};
 
 	/**
@@ -1133,10 +1167,12 @@ sap.ui.define([
 				Tabbables.push(element);
 			}
 		});
+
 		var $Tabbables = jQuery(Tabbables),
 			focusableIndex = $Tabbables.length === 1 ? 0 : $Tabbables.length  - 1;
 
-		if ($Tabbables.control(focusableIndex) && $Tabbables.control(focusableIndex).getId() === oEvent.target.id) {
+		if (focusableIndex === -1 ||
+			($Tabbables.control(focusableIndex) && $Tabbables.control(focusableIndex).getId() === oEvent.target.id)) {
 			this._lastFocusedElement = oEvent.target;
 			this.forwardTab(true);
 		}
@@ -1150,20 +1186,21 @@ sap.ui.define([
 	* @protected
 	*/
 	GridContainer.prototype.onsaptabprevious = function(oEvent) {
-		if (oEvent.target.className !== "sapFGridContainerItemWrapper") {
+
+		if (!oEvent.target.classList.contains("sapFGridContainerItemWrapper")) {
 			this._lastFocusedElement = oEvent.target;
 			return;
 		}
 
 		var sTargetId = oEvent.target.id;
-		if (sTargetId == this.getId("nodata")) {
+		if (sTargetId === this.getId("nodata")) {
 			this.forwardTab(false);
-		} else if (sTargetId == this.getId("trigger")) {
+		} else if (sTargetId === this.getId("trigger")) {
 			this.focusPrevious();
 			oEvent.preventDefault();
 		}
 
-		//SHIFT + TAB out of the GridContainer should focused the last focused grid cell
+		// SHIFT + TAB out of the GridContainer should focused the last focused grid cell
 		this._lastFocusedElement = null;
 		this.forwardTab(false);
 	};
@@ -1171,14 +1208,37 @@ sap.ui.define([
 	/**
 	 * Handles the <code>focusin</code> event.
 	 *
-	 * Handles when it is needed to return focus to c	orrect place
-	 * @param {jQuery.Event} oEvent The event object.
+	 * Handles when it is needed to return focus to correct place
 	 */
-	GridContainer.prototype.onfocusin = function() {
+	GridContainer.prototype.onfocusin = function(oEvent) {
+
+		var $listItem = jQuery(oEvent.target).closest('.sapFGridContainerItemWrapperNoVisualFocus'),
+			oControl,
+			aNavigationDomRefs,
+			lastFocusedIndex;
+
+		if ($listItem.length) {
+			oControl = $listItem.children().eq(0).control()[0];
+
+			// if the list item visual focus is displayed by the currently focused control,
+			// move the focus to the list item
+			if (oControl && oControl.getFocusDomRef() === oEvent.target) {
+				this._lastFocusedElement = null;
+				$listItem.focus();
+				return;
+			}
+		}
+
+		if (oEvent.target.classList.contains("sapFGridContainerItemWrapper")) {
+			this._lastFocusedElement = null;
+		}
+
 		if (this._itemNavigationFocusLeft) {
 			this._itemNavigationFocusLeft = false;
-			var aNavigationDomRefs = this._itemNavigation.getItemDomRefs(),
-				lastFocusedIndex = this._itemNavigation.getFocusedIndex();
+
+			aNavigationDomRefs = this._itemNavigation.getItemDomRefs();
+			lastFocusedIndex = this._itemNavigation.getFocusedIndex();
+
 			if (this._lastFocusedElement) {
 				this._lastFocusedElement.focus();
 			} else {
@@ -1209,7 +1269,6 @@ sap.ui.define([
 		var aItemDomRefs = this._itemNavigation.getItemDomRefs();
 		if (aItemDomRefs.indexOf(oEvent.target) === -1) {
 			oEvent.stopImmediatePropagation(true);
-			return;
 		}
 	};
 
@@ -1224,7 +1283,6 @@ sap.ui.define([
 		var aItemDomRefs = this._itemNavigation.getItemDomRefs();
 		if (aItemDomRefs.indexOf(oEvent.target) === -1) {
 			oEvent.stopImmediatePropagation(true);
-			return;
 		}
 	};
 
@@ -1237,6 +1295,12 @@ sap.ui.define([
 			if (!oEvent.target.classList.contains('sapFGridContainerItemWrapper')) {
 				return;
 			}
+
+			if (sName === "onsapspace") {
+				// prevent page scrolling
+				oEvent.preventDefault();
+			}
+
 			var oItem = jQuery(oEvent.target.firstChild).control()[0],
 				oFocusDomRef = oItem.getFocusDomRef(),
 				oFocusControl = jQuery(oFocusDomRef).control()[0];
@@ -1246,6 +1310,15 @@ sap.ui.define([
 			}
 		};
 	});
+
+	/**
+	 * Returns if the control should display the grid item visual focus.
+	 * @private
+	 * @return {boolean} If the control should display the grid item visual focus
+	 */
+	GridContainer.prototype._hasOwnVisualFocus = function (oControl) {
+		return aOwnVisualFocusControls.indexOf(oControl.getMetadata().getName()) > -1;
+	};
 
 	return GridContainer;
 });

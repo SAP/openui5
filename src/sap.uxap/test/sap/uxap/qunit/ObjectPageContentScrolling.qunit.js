@@ -246,6 +246,43 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		helpers.renderObject(oObjectPage);
 	});
 
+	QUnit.test("no cut-off snap/pin buttons", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			iSnapPosition,
+			iScrollTop,
+			iButtonOffsetTop,
+			oHeader,
+			done = assert.async();
+
+		oObjectPage.setHeaderTitle(oFactory.getDynamicPageTitle());
+
+		oObjectPage.addHeaderContent(new sap.m.Panel({height: "50.2px"}));
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			iSnapPosition = oObjectPage._getSnapPosition().toString();
+			oHeader = oObjectPage._getHeaderContent();
+
+			// assert initial setup (in the context of which the final check is valid)
+			assert.notEqual(getComputedStyle( oHeader.getDomRef()).position, "static", "the header is css-positioned");
+			assert.notEqual(getComputedStyle( oObjectPage._$opWrapper.get(0)).position, "static", "the scroll-container is css-positioned");
+
+			// Act:
+			// scroll just before snap
+			// so that only the bottommost area of the headerContent is visible
+			oObjectPage._scrollTo(iSnapPosition - 5);
+
+			// Check:
+			// obtain the amount of top pixels that are in the overflow (i.e. pixels that are scrolled out of view)
+			iScrollTop = oObjectPage._$opWrapper.scrollTop();
+			// obtain the distance of the expand button from the top of the scrollable content
+			iButtonOffsetTop = oHeader._getCollapseButton().getDomRef().offsetTop + oHeader.getDomRef().offsetTop;
+			assert.ok(iButtonOffsetTop >= iScrollTop, "snap button is not in the overflow");
+			done();
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.module("ObjectPage Content scrolling", {
 		beforeEach: function (assert) {
 			var done = assert.async();

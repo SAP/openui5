@@ -1,18 +1,19 @@
 {
+	"selectedKey": "",
+
 	"navigation": [
 		{
 			"titleI18nKey": "sideContentHome",
 			"icon": "sap-icon://home",
 			"expanded": true,
-			"key": "home",
+			"key": "",
 			"items": []
 		},
 		{
 			"titleI18nKey": "sideContentSettings",
 			"icon": "sap-icon://settings",
 			"expanded": false,
-			"key": "masterSettings"
-		,
+			"key": "masterSettings",
 			"items": []
 		},
 		{

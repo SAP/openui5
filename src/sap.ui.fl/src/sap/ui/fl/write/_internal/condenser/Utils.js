@@ -17,6 +17,8 @@ sap.ui.define([
 	Utils.TARGET_UI = "targetUI";
 	Utils.INITIAL_UI = "initialUI";
 	Utils.PLACEHOLDER = "X";
+	Utils.INDEX_RELEVANT = "indexRelevant";
+	Utils.NOT_INDEX_RELEVANT = "notIndexRelevant";
 
 	/**
 	 * Retrieves the length of the array.
@@ -39,21 +41,21 @@ sap.ui.define([
 	 * @returns {string[]} Array of container element IDs of initial UI reconstruction
 	 */
 	Utils.getInitialUIContainerElementIds = function(mUIReconstructions, sContainerKey, sAggregationName, aContainerElements) {
-		if (!mUIReconstructions.has(sContainerKey)) {
-			mUIReconstructions.set(sContainerKey, new Map());
+		if (!mUIReconstructions[sContainerKey]) {
+			mUIReconstructions[sContainerKey] = {};
 		}
-		var mUIStates = mUIReconstructions.get(sContainerKey);
-		if (!mUIStates.has(sAggregationName)) {
-			mUIStates.set(sAggregationName, new Map());
+		var mUIStates = mUIReconstructions[sContainerKey];
+		if (!mUIStates[sAggregationName]) {
+			mUIStates[sAggregationName] = {};
 		}
-		var mUIAggregationState = mUIStates.get(sAggregationName);
-		if (!mUIAggregationState.has(Utils.TARGET_UI)) {
-			mUIAggregationState.set(Utils.TARGET_UI, aContainerElements);
+		var mUIAggregationState = mUIStates[sAggregationName];
+		if (!mUIAggregationState[Utils.TARGET_UI]) {
+			mUIAggregationState[Utils.TARGET_UI] = aContainerElements;
 		}
-		if (!mUIAggregationState.has(Utils.INITIAL_UI)) {
-			mUIAggregationState.set(Utils.INITIAL_UI, aContainerElements.slice(0));
+		if (!mUIAggregationState[Utils.INITIAL_UI]) {
+			mUIAggregationState[Utils.INITIAL_UI] = aContainerElements.slice(0);
 		}
-		return mUIAggregationState.get(Utils.INITIAL_UI);
+		return mUIAggregationState[Utils.INITIAL_UI];
 	};
 
 	/**

@@ -139,7 +139,7 @@ sap.ui.define([
 		}
 	}
 
-	QUnit.module("Listbinding getContexts", {
+	QUnit.module("sap.ui.model.json.JSONListbinding: getContexts", {
 		beforeEach: function() {
 			setup();
 			createListBinding("/teamMembers", "");
@@ -252,7 +252,7 @@ sap.ui.define([
 		assert.equal(newContexts.diff.length, 2, "Delta information is available");
 	});
 
-	QUnit.module("Listbinding refresh", {
+	QUnit.module("sap.ui.model.json.JSONListbinding: refresh", {
 		beforeEach: function() {
 			setup();
 			createListBinding("/teamMembers", "");
@@ -323,7 +323,7 @@ sap.ui.define([
 		assert.equal(this.oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
 
-	QUnit.module("Listbinding sort", {
+	QUnit.module("sap.ui.model.json.JSONListbinding: sort", {
 		beforeEach: function() {
 			setup();
 		}
@@ -636,7 +636,7 @@ sap.ui.define([
 		assert.ok(attach, "change event fired with sorter");
 	});
 
-	QUnit.module("Listbinding filter", {
+	QUnit.module("sap.ui.model.json.JSONListbinding: filter", {
 		beforeEach: function() {
 			setup();
 			createListBinding("/teamMembers", "");
@@ -989,7 +989,7 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("Listbinding filter case sensitive", {
+	QUnit.module("sap.ui.model.json.JSONListbinding: filter case sensitive", {
 		beforeEach: function() {
 			setup();
 			createListBinding("/caseSensitive", "");
@@ -1038,7 +1038,7 @@ sap.ui.define([
 		assert.strictEqual(oData.firstName, "Peter", "FirstName should be the same");
 	});
 
-	QUnit.module("Unsupported Filters", {
+	QUnit.module("sap.ui.model.json.JSONListbinding: Unsupported Filters", {
 		getErrorWithMessage: function(sFilter) {
 			return new Error("Filter instances contain an unsupported FilterOperator: " + sFilter);
 		}
@@ -1188,7 +1188,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("Listbinding general", {
+	QUnit.module("sap.ui.model.json.JSONListbinding: general", {
 		beforeEach: function() {
 			setup();
 		}
@@ -1355,7 +1355,7 @@ sap.ui.define([
 		oModel.setProperty("/changingArray", [1, 2, 3, 4]);
 	});
 
-	QUnit.module("Listbinding diff calculation", {
+	QUnit.module("sap.ui.model.json.JSONListbinding: diff calculation", {
 		beforeEach: function() {
 			setup();
 			this.oModel = new JSONModel(testData.teamMembers);
@@ -1437,7 +1437,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("Listbinding suspend/resume", {
+	QUnit.module("sap.ui.model.json.JSONListbinding: suspend/resume", {
 		beforeEach: function() {
 			setup();
 			this.oData = testData.teamMembers.slice(0);

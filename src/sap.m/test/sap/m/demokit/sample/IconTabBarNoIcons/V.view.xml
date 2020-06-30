@@ -1,0 +1,21 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<IconTabBar
+		id="idIconTabBarNoIcons"
+		expanded="{device>/isNoPhone}"
+		class="sapUiResponsiveContentPadding">
+		<items>
+			<IconTabFilter text="Info" key="info">
+				<Text text="Info content goes here ..." />
+			</IconTabFilter>
+			<IconTabFilter text="Attachments" key="attachments">
+				<Text text="Attachments go here ..." />
+			</IconTabFilter>
+			<IconTabFilter text="Notes" key="notes">
+				<Text text="Notes go here ..." />
+			</IconTabFilter>
+			<IconTabFilter text="People" key="people">
+				<Text text="People content goes here ..." />
+			</IconTabFilter>
+		</items>
+	</IconTabBar>
+</mvc:View>

@@ -61,7 +61,22 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 					 *
 					 * @since 1.52
 					 */
-					visible : {type : "boolean", group : "Appearance", defaultValue : true}
+					visible : {type : "boolean", group : "Appearance", defaultValue : true},
+
+					/**
+					 * Defines the link target URI. Supports standard hyperlink behavior. If a JavaScript action should be triggered,
+					 * this should not be set, but instead an event handler for the <code>select</code> event should be registered.
+					 */
+					href : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
+
+					/**
+					 * Specifies the browsing context where the linked content will open.
+					 *
+					 * Options are the standard values for window.open() supported by browsers:
+					 * <code>_self</code>, <code>_top</code>, <code>_blank</code>, <code>_parent</code>, <code>_search</code>.
+					 * Alternatively, a frame name can be entered. This property is only used when the <code>href</code> property is set.
+					 */
+					target : {type : "string", group : "Behavior", defaultValue : null}
 				},
 				defaultAggregation: "items",
 				aggregations: {
@@ -215,12 +230,14 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 						key: subItem.getId(),
 						text: subItem.getText(),
 						textDirection: subItem.getTextDirection(),
-						enabled: subItem.getEnabled()
+						enabled: subItem.getEnabled(),
+						href: subItem.getHref(),
+						target: subItem.getTarget()
 					});
 
 					newSubItems.push(popupSubItem);
 
-					if (selectedItem == subItem) {
+					if (selectedItem === subItem) {
 						popupSelectedItem = popupSubItem;
 					}
 				}
@@ -234,6 +251,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				text: this.getText(),
 				enabled: this.getEnabled(),
 				textDirection: this.getTextDirection(),
+				href: this.getHref(),
+				target: this.getTarget(),
 				items: newSubItems
 			});
 
@@ -263,25 +282,40 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 			var item = event.getParameter('item');
 
 			// get the real group item from the cloned one
-			item = sap.ui.getCore().byId(item.getKey());
+			item = Core.byId(item.getKey());
 
 			item._selectItem(event);
 		};
 
 		/**
 		 * Selects this item.
+		 * @param {object} event The Event object
 		 * @private
 		 */
 		NavigationListItem.prototype._selectItem = function (event) {
 
 			var params = {
-				item: this
-			};
+					item: this
+				},
+				navList = this.getNavigationList();
 
 			this.fireSelect(params);
 
-			var navList = this.getNavigationList();
 			navList._selectItem(params);
+
+			this._openUrl();
+		};
+
+		/**
+		 * Opens a url.
+		 * @private
+		 */
+		NavigationListItem.prototype._openUrl = function () {
+			var href = this.getHref();
+
+			if (href) {
+				window.open(href, this.getTarget() || '_self');
+			}
 		};
 
 		/**
@@ -300,7 +334,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				return;
 			}
 
-			var isRtl = sap.ui.getCore().getConfiguration().getRTL();
+			var isRtl = Core.getConfiguration().getRTL();
 
 			//  KeyCodes.MINUS is not returning 189
 			if ((event.shiftKey && event.which == 189) ||
@@ -382,21 +416,26 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 		 */
 		NavigationListItem.prototype.ontap = function (event) {
 
-			if (event.isMarked('subItem') || !this.getEnabled()) {
+			var navList = this.getNavigationList(),
+				source = Core.byId(event.target.id),
+				level = this.getLevel(),
+				parent,
+				list;
+
+			if (event.isMarked('subItem')) {
 				return;
 			}
 
 			event.setMarked('subItem');
-			event.preventDefault();
 
-			var navList = this.getNavigationList();
-			var source = sap.ui.getCore().byId(event.target.id);
-			var level = this.getLevel();
+			if (!this.getEnabled()) {
+				return;
+			}
 
 			// second navigation level
-			if (level == 1) {
+			if (level === 1) {
 
-				var parent = this.getParent();
+				parent = this.getParent();
 
 				if (this.getEnabled() && parent.getEnabled()) {
 					this._selectItem(event);
@@ -406,12 +445,14 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 			}
 
 			// first navigation level
-			if (navList.getExpanded() || this.getItems().length == 0) {
+			if (navList.getExpanded() || !this.getItems().length) {
 
-				if (!source || source.getMetadata().getName() != 'sap.ui.core.Icon' || !source.$().hasClass('sapTntNavLIExpandIcon')) {
+				if (!source || source.getMetadata().getName() !== 'sap.ui.core.Icon' || !source.$().hasClass('sapTntNavLIExpandIcon')) {
 					this._selectItem(event);
 					return;
 				}
+
+				event.preventDefault();
 
 				if (this.getExpanded()) {
 					this.collapse();
@@ -419,7 +460,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 					this.expand();
 				}
 			} else {
-				var list = this.createPopupList();
+				list = this.createPopupList();
 				navList._openPopover(this, list);
 			}
 		};
@@ -452,6 +493,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 			var isListExpanded = control.getExpanded(),
 				isNavListItemExpanded = this.getExpanded(),
 				text = this.getText(),
+				href = this.getHref(),
+				target = this.getTarget(),
 				tooltip,
 				ariaProps = {};
 
@@ -514,6 +557,19 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 			rm.openEnd();
 
+			rm.openStart('a', this.getId() + '-a');
+			rm.attr('tabindex', '-1');
+
+			if (href) {
+				rm.attr('href', href);
+			}
+
+			if (target) {
+				rm.attr('target', target);
+			}
+
+			rm.openEnd();
+
 			this._renderIcon(rm);
 
 			if (control.getExpanded()) {
@@ -524,6 +580,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				this._renderText(rm);
 				rm.renderControl(expandIconControl);
 			}
+
+			rm.close("a");
 
 			rm.close("div");
 		};
@@ -583,6 +641,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 		NavigationListItem.prototype.renderSecondLevelNavItem = function (rm, control) {
 
 			var group = this.getParent(),
+				href = this.getHref(),
+				target = this.getTarget(),
 				isInPopup = control.hasStyleClass("sapTntNavLIPopup"),
 				ariaProps = {
 					role: isInPopup ? 'menuitemradio' : 'treeitem',
@@ -617,7 +677,23 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 			rm.openEnd();
 
+			rm.openStart('a', this.getId() + '-a');
+			rm.attr('tabindex', '-1');
+
+			if (href) {
+				rm.attr('href', href);
+			}
+
+			if (target) {
+				rm.attr('target', target);
+			}
+
+			rm.openEnd();
+
+
 			this._renderText(rm);
+
+			rm.close('a');
 
 			rm.close('li');
 		};

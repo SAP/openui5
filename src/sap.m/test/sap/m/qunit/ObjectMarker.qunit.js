@@ -725,4 +725,39 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.marker._getInnerControl().$().attr("tabindex"), "0", "tabindex is set to '0'");
 	});
+
+	QUnit.test("Icon changing its decorative state", function (assert) {
+		// Arrange
+		var oMarker = new ObjectMarker({
+				type: ObjectMarkerType.Locked
+			}),
+			oIcon = oMarker._getInnerControl()._getIconAggregation();
+
+		oMarker.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMarker.setVisibility(ObjectMarkerVisibility.IconAndText);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oIcon.getDecorative(), "Icon should be decorative if there's additional text");
+
+		// Act
+		oMarker.setVisibility(ObjectMarkerVisibility.IconOnly);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oIcon.getDecorative(), "Icon shouldn't be decorative if there's no additional text");
+
+		// Act
+		oMarker.setVisibility(ObjectMarkerVisibility.IconAndText);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oIcon.getDecorative(), "Icon is back to being decorative");
+
+		// Cleanup
+		oMarker.destroy();
+	});
 });

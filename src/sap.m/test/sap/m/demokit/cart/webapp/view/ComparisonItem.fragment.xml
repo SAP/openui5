@@ -10,7 +10,8 @@
 				<ToolbarSpacer/>
 				<Button
 					icon="sap-icon://sys-cancel"
-					press=".onRemoveComparison"/>
+					press=".onRemoveComparison"
+					tooltip="{i18n>removeFromComparisonTooltip}"/>
 			</Toolbar>
 		</headerToolbar>
 		<HBox class="comparebox">
@@ -20,11 +21,11 @@
 						path : 'PictureUrl',
 						formatter : '.formatter.pictureUrl'
 					}"
-					decorative="true"
+					alt="{i18n>comparisonAlternativeImageText}"
 					densityAware="false"
 					class="sapUiSmallMarginTop"
-					width="80%"
-					height="80%">
+					width="100%"
+					height="100%">
 					<detailBox>
 						<LightBox>
 							<imageContent>

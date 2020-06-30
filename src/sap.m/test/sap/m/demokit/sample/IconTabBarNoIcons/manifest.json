@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.IconTabBarNoIcons.IconTabBar",
+			"viewName": "sap.m.sample.IconTabBarNoIcons.V",
 			"type": "XML",
 			"async": true
 		},
@@ -19,7 +19,7 @@
 		"config": {
 			"sample": {
 				"files": [
-					"IconTabBar.view.xml",
+					"V.view.xml",
 					"manifest.json"
 				]
 			}

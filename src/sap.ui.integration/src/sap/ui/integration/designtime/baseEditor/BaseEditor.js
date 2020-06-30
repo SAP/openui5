@@ -197,6 +197,9 @@ sap.ui.define([
 			this._aCancelHandlers = [];
 			this._oDataModel = this._createDataModel();
 
+			this._bInitFinished = false;
+			this._setReady(false);
+
 			Control.prototype.constructor.apply(this, arguments);
 
 			this._oDataModel.setData(this._prepareData(this.getJson()));
@@ -317,6 +320,9 @@ sap.ui.define([
 	};
 
 	BaseEditor.prototype._reset = function () {
+		this._bInitFinished = false;
+		this._setReady(false);
+
 		this._aCancelHandlers.forEach(function (fnCancel) {
 			fnCancel();
 		});
@@ -348,7 +354,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (mConfig && mConfig.properties) {
+		if (mConfig) {
 			this._oConfigObserver = new ObjectBinding();
 
 			this._loadI18nBundles(mConfig.i18n)
@@ -374,7 +380,7 @@ sap.ui.define([
 						}
 					);
 
-					this._mObservableConfig = this._prepareConfig(mPropertiesConfig);
+					this._mObservableConfig = Object.assign(this._mObservableConfig, this._prepareConfig(mPropertiesConfig));
 					this._oConfigObserver.setObject(this._mObservableConfig);
 
 					this._oConfigObserver.attachChange(function (oEvent) {
@@ -397,10 +403,16 @@ sap.ui.define([
 					}, this);
 
 					// If there is no custom layout, create default
-					if (this.getContent().length === 0) {
+					var aContent = this.getContent();
+					if (
+						aContent.length === 0
+						|| aContent.length === 1 && aContent[0] === this._oRootWrapper
+					) {
+						this.removeAllContent();
 						this._createEditors(this._oConfigObserver.getObject());
 					}
 
+					this._bInitFinished = true;
 					this._checkReady();
 				}.bind(this));
 		}
@@ -510,13 +522,13 @@ sap.ui.define([
 			);
 		}
 
-		var oPropertyEditors = new PropertyEditors({
+		this._oRootWrapper = new PropertyEditors({
 			config: values(mPropertiesConfig),
 			layout: this.getLayout(),
 			layoutConfig: vLayoutConfig
 		});
 
-		this.addContent(oPropertyEditors);
+		this.addContent(this._oRootWrapper);
 
 		return (
 			Promise.all(
@@ -613,6 +625,15 @@ sap.ui.define([
 		}
 	};
 
+	BaseEditor.prototype._setReady = function (bReadyState) {
+		var bPreviousReadyState = this._bIsReady;
+		this._bIsReady = bReadyState;
+		if (bPreviousReadyState !== true && bReadyState === true) {
+			// If the editor was not ready before, fire the ready event
+			this.firePropertyEditorsReady({propertyEditors: this.getPropertyEditorsSync()});
+		}
+	};
+
 	BaseEditor.prototype._checkReady = function () {
 		var aLayoutDependecies = this.getContent().filter(function (oEditor) {
 			return (
@@ -633,14 +654,32 @@ sap.ui.define([
 			this.getPropertyEditorsSync()
 		);
 
-		if (
-			aAsyncDependencies.every(function (oEditor) {
+		var bIsReady = (
+			this._bInitFinished
+			&& aAsyncDependencies.every(function (oEditor) {
 				return oEditor.isReady();
 			})
-		) {
-			// All property editors are ready
-			this.firePropertyEditorsReady({propertyEditors: this.getPropertyEditorsSync()});
-		}
+		);
+		this._setReady(bIsReady);
+	};
+
+	BaseEditor.prototype.isReady = function () {
+		return this._bIsReady;
+	};
+
+	/**
+	 * Wait for the BaseEditor to be ready.
+	 * @returns {Promise} Promise which will resolve once the editor is ready. Resolves immediately if the editor is currently ready.
+	 */
+	BaseEditor.prototype.ready = function () {
+		return new Promise(function (resolve) {
+			if (this.isReady()) {
+				// The editor is already ready, resolve immediately
+				resolve();
+			} else {
+				this.attachEventOnce("propertyEditorsReady", resolve);
+			}
+		}.bind(this));
 	};
 
 	BaseEditor.prototype._createPromise = function (fn) {

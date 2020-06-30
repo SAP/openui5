@@ -1994,7 +1994,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	thisLib.routing = thisLib.routing || {};
 
 	/**
-	 * Enumaration for different HistoryDirections.
+	 * Enumeration for different HistoryDirections.
 	 *
 	 * @enum {string}
 	 * @public
@@ -2003,25 +2003,25 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	thisLib.routing.HistoryDirection = {
 
 		/**
-		 * The page has already been navigated to and it was the successor of the previous page
+		 * The page has already been navigated to and it was the successor of the previous page.
 		 * @public
 		 */
 		Forwards : "Forwards",
 
 		/**
-		 * The page has already been navigated to and it was the precessor of the previous page
+		 * The page has already been navigated to and it was the predecessor of the previous page.
 		 * @public
 		 */
 		Backwards : "Backwards",
 
 		/**
-		 * A new Entry is added to the history
+		 * A new entry is added to the history.
 		 * @public
 		 */
 		NewEntry : "NewEntry",
 
 		/**
-		 * A Navigation took place, but it could be any of the other three states
+		 * A navigation took place, but it could be any of the other three states.
 		 * @public
 		 */
 		Unknown : "Unknown"
@@ -2029,8 +2029,8 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	};
 
 	/**
-	 * Enumeration for different lifecycle behaviors of Components created by the
-	 * ComponentContainer.
+	 * Enumeration for different lifecycle behaviors of components created by the
+	 * <code>ComponentContainer</code>.
 	 *
 	 * @enum {string}
 	 * @public
@@ -2039,25 +2039,25 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	sap.ui.core.ComponentLifecycle =  {
 
 		/**
-		 * Legacy lifecycle means that the ComponentContainer takes care
-		 * to destroy the Component which is associated with the
-		 * ComponentContainer once the ComponentContainer is destroyed but
-		 * not when a new Component is associated.
+		 * Legacy lifecycle means that the <code>ComponentContainer</code> takes care
+		 * to destroy the component which is associated with the
+		 * <code>ComponentContainer</code> once the <code>ComponentContainer</code> is destroyed,
+		 * but not when a new component is associated.
 		 * @public
 		 */
 		Legacy : "Legacy",
 
 		/**
-		 * Application managed lifecycle means that the Application takes care
-		 * to destroy the Components associated with the ComponentContainer.
+		 * Application managed lifecycle means that the application takes care
+		 * to destroy the components associated with the <code>ComponentContainer</code>.
 		 * @public
 		 */
 		Application : "Application",
 
 		/**
-		 * Container managed lifecycle means that the ComponentContainer takes
-		 * care to destroy the Components associated with the ComponentContainer
-		 * once the ComponentContainer is destroyed or a new Component is associated.
+		 * Container managed lifecycle means that the <code>ComponentContainer</code> takes
+		 * care to destroy the components associated with the <code>ComponentContainer</code>
+		 * once the <code>ComponentContainer</code> is destroyed or a new component is associated.
 		 * @public
 		 */
 		Container : "Container"

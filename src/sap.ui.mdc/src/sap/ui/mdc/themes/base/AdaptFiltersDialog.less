@@ -1,0 +1,45 @@
+.sapUiMdcFilterBarBaseAdaptDialog {
+}
+
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapUiMdcBaseField {
+  width: 100%
+}
+
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIB.sapMLIBSelected,
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIB.sapMLIBSelected > td {
+  background-color: transparent;
+}
+
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMListBGTranslucent .sapMLIB.sapMListTblRow.sapUiMdcFilterBarBaseAdaptFiltersDialogMarked,
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMListBGTranslucent .sapMLIB.sapMListTblRow.sapUiMdcFilterBarBaseAdaptFiltersDialogMarked:focus,
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapUiMdcFilterBarBaseAdaptFiltersDialogMarked,
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapUiMdcFilterBarBaseAdaptFiltersDialogMarked:focus {
+  background-color: @sapUiListSelectionBackgroundColor;
+}
+
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIBActive .sapMText,
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIBActive .sapMListTblCell .sapMText {
+  color: @sapUiListTextColor;
+}
+
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIBActive .sapMCbBg,
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIBActive.sapMLIB,
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIBActive.sapMLIB > td {
+  background-color: transparent;
+}
+
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIBActive .sapMCbBg,
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIBActive .sapMCbBg.sapMCbMarkChecked,
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIBActive .sapMCbBg.sapMCbBgDis,
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIBActive .sapMCbBg.sapMCbBgDis.sapMCbMarkChecked {
+  border-color: @sapUiFieldBorderColor;
+}
+
+.sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIBActive .sapMCbBg.sapMCbMarkChecked::before {
+  color: @sapUiSelected;
+}
+
+html.sap-desktop .sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover,
+html.sap-desktop .sapUiMdcFilterBarBaseAdaptFiltersDialog .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover > td {
+  background-color: @sapUiListHoverBackground;
+}

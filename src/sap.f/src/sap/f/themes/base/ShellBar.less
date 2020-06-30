@@ -15,17 +15,18 @@
 	z-index: 1;
 	padding: 0 @_sap_f_ShellBar_PaddingDesktop;
 	display: flex;
+	align-items: center;
 	.sapFShellBarCopilot& {
-		display: block;
+		.sapFShellBarORHB {
+			width: 50%;
+			padding-left: ~"calc(@{_sap_f_ShellBar_CoPilotHalfWidth} + 0.5rem)";
+		}
 		.sapFShellBarOLHB {
 			width: 50%;
 			padding-right: ~"calc(@{_sap_f_ShellBar_CoPilotHalfWidth} + 0.5rem)";
 
 		}
-		.sapFShellBarORHB {
-			width: 50%;
-			padding-left: ~"calc(@{_sap_f_ShellBar_CoPilotHalfWidth} + 0.5rem)";
-		}
+
 	}
 
 	.sapFShellBarOLHB,
@@ -36,8 +37,6 @@
 		vertical-align: top;
 		box-sizing: border-box;
 		align-items: center;
-		flex-shrink: 1;
-		flex-grow: 1;
 		min-width: 1px;
 		max-width: 100%;
 		height: 100%;
@@ -45,12 +44,15 @@
 
 	.sapFShellBarORHB {
 		padding-left: 0.5rem;
-
+		flex-grow: 1;
+		flex-shrink: 1;
 	}
 
 	.sapFShellBarOLHB {
 		padding-right: 0.5rem;
 		max-width: 75%;
+		flex-shrink: 0;
+		flex-grow: 0;
 		.sapFShellBarSearchIsOpen& {
 			max-width: 50%;
 		}
@@ -235,6 +237,7 @@
 
 	.sapFSHMegaMenu .sapMBtnContent {
 		font-weight: bold;
+		max-width: 100%;
 	}
 
 	&.sapFShellBarSizeTablet{
@@ -247,13 +250,14 @@
 			margin-right: 0;
 		}
 		.sapFShellBarORHB {
-			padding-left: ~"@{_sap_f_ShellBar_CoPilotHalfWidth}px";;
+			padding-left: ~"@{_sap_f_ShellBar_CoPilotHalfWidth}";
 		}
 	}
 
 	.sapFShellBarProfile {
 		user-select: none;
 		-ms-user-select: none;
+		margin-left: 0.5rem;
 
 		&::before {
 			content: "";
@@ -312,9 +316,7 @@
 			height: 3rem;
 		}
 		.sapFShellBarProfile {
-			padding-top: 0;
-			height: 2.125rem;
-			margin-top: 0;
+			height: 2rem;
 		}
 
 		.sapFShellBarSearch {

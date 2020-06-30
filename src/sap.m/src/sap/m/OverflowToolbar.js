@@ -260,7 +260,7 @@ sap.ui.define([
 	OverflowToolbar.prototype.onAfterRendering = function () {
 		this._bInvalidatedAndNotRendered = false;
 		// TODO: refactor with addEventDelegate for onAfterRendering for both overflow button and its label
-		this._getOverflowButton().$().attr("aria-haspopup", "true");
+		this._getOverflowButton().$().attr("aria-haspopup", "menu");
 
 		if (this._bContentVisibilityChanged) {
 			this._bControlsInfoCached = false;

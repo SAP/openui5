@@ -1,17 +1,12 @@
-.navigationExamples h2 {
-	margin: 2em 5% 0;
-}
 .navigationExamples .code {
 	margin: 0 5%;
 	font-family: Consolas, Courier, monospace;
 }
-.navigationExamples .ne-flexbox1 {
-	margin: 0.4em 5%;
-	padding: 1em 0;
-	width: auto;
-	min-height: 3em;
+.navigationExamples .ne-flexbox1,
+.navigationExamples .ne-flexbox2 {
+	padding: 0;
 }
-.navigationExamples .ne-flexbox1 li{
+.navigationExamples .ne-flexbox1 li {
 	margin: 0.4em;
 	padding: 0.4em 1.3em;
 	list-style-type: none;
@@ -23,12 +18,7 @@
 .navigationExamples .ne-flexbox1 li:hover {
 	background-color: orange;
 }
-.navigationExamples .ne-flexbox2 {
-	margin: 0.4em 5%;
-	padding: 1em 0;
-	width: auto;
-	min-height: 3em;
-}
+
 .navigationExamples .ne-flexbox2 li {
 	margin: 0.5em;
 	width: 25%;
@@ -55,5 +45,5 @@ html[data-sap-ui-browser='ie11'] .navigationExamples .ne-flexbox2 li:hover {
 .navigationExamples .ne-flexbox2 li a {
 	color: #fff;
 	text-decoration: none;
-	font-size: 0.7em;
+	font-size: 0.875rem;
 }

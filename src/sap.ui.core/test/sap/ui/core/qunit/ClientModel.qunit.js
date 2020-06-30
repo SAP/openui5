@@ -11,7 +11,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	QUnit.module("Unsupported Filter Operators", {
+	QUnit.module("sap.ui.model.ClientModel: Unsupported Filter Operators", {
 		beforeEach: function() {
 			this.oModel = new ClientModel();
 		},
@@ -333,7 +333,7 @@ sap.ui.define([
 		);
 	});
 
-	QUnit.module("Create own model which supports lambda operators", {
+	QUnit.module("sap.ui.model.ClientModel: Create own model which supports lambda operators", {
 		beforeEach: function() {
 			var SomeOwnModel = ClientModel.extend("sap.ui.model.SomeOwnModel", {
 				constructor : function(oData) {

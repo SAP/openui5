@@ -3,44 +3,48 @@ var iOriginalMaxDepth = QUnit.dump.maxDepth;
 QUnit.dump.maxDepth = 10;
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/base/util/merge",
+	"sap/base/util/UriParameters",
+	"sap/base/Log",
+	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/condenser/Condenser",
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/Cache",
 	"sap/ui/fl/ChangePersistence",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
-	"sap/ui/fl/Cache",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/core/Component",
-	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/base/util/merge",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
-	FlexState,
+	merge,
+	UriParameters,
+	Log,
+	Component,
 	DependencyHandler,
+	VariantManagementState,
+	FlexState,
+	StorageUtils,
+	Settings,
+	Condenser,
+	WriteStorage,
+	Cache,
 	ChangePersistence,
+	Change,
+	LayerUtils,
 	Layer,
 	Utils,
-	LayerUtils,
-	Change,
 	Variant,
-	Cache,
-	Settings,
-	WriteStorage,
-	StorageUtils,
-	Component,
-	Log,
 	jQuery,
-	sinon,
-	merge,
-	VariantManagementState
+	sinon
 ) {
 	"use strict";
 
@@ -1574,10 +1578,7 @@ function(
 
 		QUnit.test("Shall not add the same change twice", function(assert) {
 			// possible scenario: change gets saved, then without reload undo and redo gets called. both would add a dirty change
-			var oChangeContent;
-			var aChanges;
-
-			oChangeContent = {
+			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
 				fileType: "change",
@@ -1594,7 +1595,7 @@ function(
 
 			assert.ok(fnAddDirtyChangeSpy.calledWith(oChangeContent), "then addDirtyChange called with the change content");
 			assert.ok(fnAddDirtyChangeSpy.callCount, 2, "addDirtyChange was called twice");
-			aChanges = this.oChangePersistence._aDirtyChanges;
+			var aChanges = this.oChangePersistence._aDirtyChanges;
 			assert.ok(aChanges);
 			assert.strictEqual(aChanges.length, 1);
 			assert.strictEqual(aChanges[0].getId(), oChangeContent.fileName);
@@ -1710,8 +1711,15 @@ function(
 		});
 	});
 
+	function enableURLParameterForCondensing() {
+		sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-xx-condense-changes").returns("true");
+	}
+
 	QUnit.module("sap.ui.fl.ChangePersistence saveChanges", {
 		beforeEach: function() {
+			this.oCondenserStub = sandbox.stub(Condenser, "condense").callsFake(function(oAppComponent, aChanges) {
+				return Promise.resolve(aChanges);
+			});
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			var oBackendResponse = {changes: StorageUtils.getEmptyFlexDataResponse()};
@@ -1737,9 +1745,28 @@ function(
 		}
 	}, function() {
 		QUnit.test("Shall save the dirty changes when adding a new change and return a promise", function(assert) {
-			var oChangeContent;
+			enableURLParameterForCondensing();
+			var oChangeContent = {
+				fileName: "Gizorillus",
+				layer: Layer.VENDOR,
+				fileType: "change",
+				changeType: "addField",
+				selector: {id: "control1"},
+				content: {},
+				originalLanguage: "DE"
+			};
 
-			oChangeContent = {
+			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called with only one change");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall not call condenser when no appcomponent gets passed to saveDirtyChanges", function(assert) {
+			enableURLParameterForCondensing();
+			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
 				fileType: "change",
@@ -1753,13 +1780,76 @@ function(
 
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
 				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called with only one change");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall save the dirty changes when adding two new changes, call the condenser and return a promise", function(assert) {
+			enableURLParameterForCondensing();
+			var oChangeContent = {
+				fileName: "Gizorillus",
+				layer: Layer.VENDOR,
+				fileType: "change",
+				changeType: "addField",
+				selector: {id: "control1"},
+				content: {},
+				originalLanguage: "DE"
+			};
+
+			var oChangeContent1 = {
+				fileName: "Gizorillus1",
+				layer: Layer.VENDOR,
+				fileType: "change",
+				changeType: "addField",
+				selector: {id: "control1"},
+				content: {},
+				originalLanguage: "DE"
+			};
+
+			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
+
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall not call the storage when the condenser returns no change", function(assert) {
+			enableURLParameterForCondensing();
+			var oChangeContent = {
+				fileName: "Gizorillus",
+				layer: Layer.VENDOR,
+				fileType: "change",
+				changeType: "addField",
+				selector: {id: "control1"},
+				content: {},
+				originalLanguage: "DE"
+			};
+
+			var oChangeContent1 = {
+				fileName: "Gizorillus1",
+				layer: Layer.VENDOR,
+				fileType: "change",
+				changeType: "addField",
+				selector: {id: "control1"},
+				content: {},
+				originalLanguage: "DE"
+			};
+
+			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
+			this.oCondenserStub.resolves([]);
+
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				assert.equal(this.oWriteStub.callCount, 0);
+				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+				assert.equal(this.oChangePersistence._aDirtyChanges.length, 0, "both dirty changes were removed from the persistence");
 			}.bind(this));
 		});
 
 		QUnit.test("Shall save the dirty changes for a draft when adding a new change and return a promise", function(assert) {
-			var oChangeContent;
-
-			oChangeContent = {
+			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
 				fileType: "change",
@@ -1778,9 +1868,7 @@ function(
 		});
 
 		QUnit.test("(Save As scenario) Shall save the dirty changes for the created app variant when pressing a 'Save As' button and return a promise", function(assert) {
-			var oChangeContent;
-
-			oChangeContent = {
+			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.CUSTOMER,
 				fileType: "change",

@@ -83,7 +83,7 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/Device'
 			// and the visual focus is on it or the visual focus is on the formatted text value state header
 			if (bFormattedTextHeaderFocused) {
 				oRm.attr("aria-activedescendant", oControl._getFormattedValueStateText().getId());
-			} else if (oSelectedListItem && oSelectedListItem.hasStyleClass("sapMLIBFocused")) {
+			} else if (bOpen && oSelectedListItem && oSelectedListItem.hasStyleClass("sapMLIBFocused") && oControl.getFocusDomRef() === document.activeElement) {
 				oRm.attr("aria-activedescendant", oSelectedListItem.getId());
 			}
 		};

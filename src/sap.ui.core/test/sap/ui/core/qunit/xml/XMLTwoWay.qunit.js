@@ -22,7 +22,7 @@ sap.ui.define([
 	oContentDIV.id = "target1";
 	document.body.appendChild(oContentDIV);
 
-	QUnit.module("", {
+	QUnit.module("sap.ui.model.xml.XMLModel: BindingMode", {
 		beforeEach: function() {
 			this.oModel = new XMLModel();
 			this.oModel.setXML(testData);

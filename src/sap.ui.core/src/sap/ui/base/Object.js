@@ -58,6 +58,7 @@ sap.ui.define(['./Interface', './Metadata', "sap/base/Log"],
 	 * The facade is created on the first call of <code>getInterface</code> and reused for all later calls.
 	 *
 	 * @public
+	 * @returns {sap.ui.base.Object} A facade for this object, with at least the public methods of the class of this.
 	 */
 	BaseObject.prototype.getInterface = function() {
 		// New implementation that avoids the overhead of a dedicated member for the interface

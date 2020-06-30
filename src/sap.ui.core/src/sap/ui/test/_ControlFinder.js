@@ -166,6 +166,17 @@ sap.ui.define([
         return aLogs && aLogs.pop();
     };
 
+    /**
+     * check if a control's representing DOM element is inside the static area
+     * @param {sap.ui.core.Control} oControl the control to check
+     * @return {boolean} true if the control is inside the static area
+     * @private
+     */
+    _ControlFinder._isControlInStaticArea = function (oControl) {
+        var oStaticArea = sap.ui.getCore().getStaticAreaRef();
+        return $.contains(oStaticArea, oControl.getDomRef());
+    };
+
     function _hasExpansions(oOptions) {
         return oOptions.ancestor || oOptions.descendant;
     }

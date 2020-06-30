@@ -378,6 +378,7 @@ sap.ui.define([
 						this._aEditorWrappers = this._aEditorWrappers.filter(function (oEditorWrapper) {
 							return oEditorWrapper !== oObservedWrapper;
 						});
+						this._checkReadyState();
 						break;
 					case 'parent':
 						if (!isTemplate(oObservedWrapper, this)) {
@@ -543,7 +544,10 @@ sap.ui.define([
 	};
 
 	BasePropertyEditor.prototype.getI18nProperty = function(sName) {
-		return this.getModel("i18n").getProperty(sName);
+		if (this.getModel("i18n")) {
+			return this.getModel("i18n").getProperty(sName);
+		}
+		return sName;
 	};
 
 	BasePropertyEditor.prototype.getLabel = function() {

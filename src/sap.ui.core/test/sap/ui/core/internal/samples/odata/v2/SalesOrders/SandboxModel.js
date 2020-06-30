@@ -41,18 +41,25 @@ sap.ui.define([
 				code : "ZUI5TEST/001",
 				message : "Warning: My warning message",
 				severity : "warning"
+			},
+			warningMultiTarget : {
+				code : "ZUI5TEST/007",
+				message : "For a quantity greater than 1 you need an approval reason",
+				severity : "warning"
 			}
 		},
 		oCurrentMessages = {
-			create : function (sTarget, sMessage) {
-				var oMessageData = mMessageKey2MessageData[sMessage];
+			create : function (vTarget, sMessage) {
+				var oMessageData = mMessageKey2MessageData[sMessage],
+					aTargets = Array.isArray(vTarget) ? vTarget : [vTarget];
 				this.oMessage = {
+					additionalTargets : aTargets.slice(1),
 					code : oMessageData.code,
 					details : [],
 					id : sMessage,
 					message : oMessageData.message,
 					severity : oMessageData.severity,
-					target : sTarget
+					target : aTargets[0]
 				};
 				return this;
 			},
@@ -299,6 +306,58 @@ sap.ui.define([
 						return true;
 					},
 					source : "tc1-setUpdated.json"
+				}],
+
+				/* Test Case VIII */
+				"SalesOrderSet('108')" : {
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
+					source : "Messages/TC8/SalesOrderSet.json"
+				},
+				"SalesOrderSet('108')/ToLineItems?$skip=0&$top=4" : [{
+					ifMatch : function (request) {
+						return iTimesSaved === 1;
+					},
+					source : "Messages/TC8/SalesOrderSet-ToLineItems-1.json"
+				}, {
+					ifMatch : function (request) {
+						return iTimesSaved === 2;
+					},
+					source : "Messages/TC8/SalesOrderSet-ToLineItems-2.json"
+				}, {
+					ifMatch : function (request) {
+						return iTimesSaved === 3;
+					},
+					source : "Messages/TC8/SalesOrderSet-ToLineItems-3.json"
+				}, {
+					source : "Messages/TC8/SalesOrderSet-ToLineItems-0.json"
+				}],
+				"MERGE SalesOrderLineItemSet(SalesOrderID='108',ItemPosition='010')" : [{
+					code : 204,
+					ifMatch : function (request) {
+						iTimesSaved++;
+						return true;
+					},
+					message : "no content"
+				}],
+				"SalesOrderSet('108')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
+					headers : {
+						"sap-message" : oCurrentMessages.create([
+							"ToLineItems(SalesOrderID='108',ItemPosition='010')/Quantity",
+							"ToLineItems(SalesOrderID='108',ItemPosition='010')/Note"
+						], "warningMultiTarget").buildString()
+					},
+					ifMatch : function (request) {
+						return iTimesSaved === 2;
+					},
+					source : "Messages/TC8/SalesOrderSet.json"
+				}, {
+					ifMatch : function (request) {
+						return true;
+					},
+					source : "Messages/TC8/SalesOrderSet.json"
 				}]
 			},
 			sFilterBase : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/",

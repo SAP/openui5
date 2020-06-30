@@ -137,6 +137,7 @@ sap.ui.define([
 			"sap.m.TileSizeBehavior",
 			"sap.m.TimePickerMaskMode",
 			"sap.m.TitleAlignment",
+			"sap.m.TokenizerRenderMode",
 			"sap.m.ToolbarDesign",
 			"sap.m.ToolbarStyle",
 			"sap.m.UploadState",
@@ -148,6 +149,7 @@ sap.ui.define([
 		],
 		interfaces: [
 			"sap.m.IBar",
+			"sap.m.IBadge",
 			"sap.m.IBreadcrumbs",
 			"sap.m.IconTab",
 			"sap.m.IScale",
@@ -1684,6 +1686,16 @@ sap.ui.define([
 	 *
 	 * @since 1.22
 	 * @name sap.m.IBar
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Interface for controls which implement the notification badge concept.
+	 *
+	 * @since 1.80
+	 * @name sap.m.IBadge
 	 * @interface
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
@@ -3587,6 +3599,29 @@ sap.ui.define([
 		 */
 		AcceptReject : "AcceptReject"
 
+	};
+
+	/**
+	 * Types of the <code>sap.m.Tokenizer</code> responsive modes.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.80
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.TokenizerRenderMode = {
+
+		/**
+		 * In <code>Loose</code> mode, the <code>sap.m.Tokenizer</code> will show all its tokens, even if this means that scrolling needs to be used.
+		 * @public
+		 */
+		Loose : "Loose",
+
+		/**
+		 * In  <code>Narrow</code> mode, the <code>sap.m.Tokenizer</code> will show as many tokens as its width allows, as well as an n-More indicator with the count of the hidden tokens. The rest tokens will be hidden.
+		 * @public
+		 */
+		Narrow : "Narrow"
 	};
 
 

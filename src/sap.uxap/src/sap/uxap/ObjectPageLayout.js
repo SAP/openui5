@@ -29,7 +29,9 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/events/F6Navigation",
-	"sap/ui/dom/getFirstEditableInput"
+	"sap/ui/dom/getFirstEditableInput",
+	"sap/ui/core/theming/Parameters",
+	'sap/ui/dom/units/Rem'
 ], function(
 	jQuery,
 	ManagedObjectObserver,
@@ -56,7 +58,9 @@ sap.ui.define([
 	merge,
 	KeyCodes,
 	F6Navigation,
-	getFirstEditableInput
+	getFirstEditableInput,
+	Parameters,
+	DomUnitsRem
 ) {
 	"use strict";
 
@@ -602,6 +606,7 @@ sap.ui.define([
 		this.iAnchorBarHeight = 0;                  // original height of the anchorBar
 		this.iFooterHeight = 0;                     // original height of the anchorBar
 		this.iTotalHeaderSize = 0;                  // total size of headerTitle + headerContent
+		this._iHeaderContentPaddingBottom = 0;
 		this._oScrollContainerLastState = {};       // caches the metrics of the scroll container (used to identify scroll caused by change of scrollTop vs. scroll caused by underflow)
 
 		this._iREMSize = parseInt(jQuery("body").css("font-size"));
@@ -1053,6 +1058,8 @@ sap.ui.define([
 			sFooterAriaLabel,
 			iWidth = this._getWidth(this);
 
+		this._bInvalidatedAndNotRerendered = false;
+
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
 
 		this._ensureCorrectParentHeight();
@@ -1415,6 +1422,11 @@ sap.ui.define([
 			this._checkSubSectionVisibilityChange();
 		} else if (this.$().is(":visible")) {
 			this._scrollTo(0, 0);
+
+			if (!this._bInvalidatedAndNotRerendered) {
+				this._sScrolledSectionId = null;
+				this._updateSelectionOnScroll(0);
+			}
 		}
 	};
 
@@ -3210,14 +3222,45 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._getSnapPosition = function() {
+		// the *default* snap position is the headerContent height,
+		// because snapping should occur when the headerContent is just scrolled out of view
 		var iSnapPosition = this.iHeaderContentHeight,
-			iTitleHeightDelta = this.iHeaderTitleHeightStickied - this.iHeaderTitleHeight;
+			iTitleHeightDelta = this._getTitleHeightDelta();
 
-		if (iTitleHeightDelta < ObjectPageLayout.MAX_SNAP_POSITION_OFFSET) {
-			iSnapPosition -= iTitleHeightDelta;
-		}
+		// Adjust the default snap position in order to snap slightly *earlier* in
+		// the following situations:
+		// Either:
+		// 1) <code>iTitleHeightDelta</code> is > 0
+		// => which means the snapped title will have bigger height
+		// => the snapped title [by having a bigger height] will push the content container downwards
+		// [by the same amount of pixels as the value of <code>iTitleHeightDelta</code>]
+		// => we snap earlier to avoid a visual jump;
+		// Or:
+		// (2) the headerContent contains buttons positioned absolutely in the whitespace area of its bottom padding
+		// => we do not want these buttons to be partially hidden as the headerContent is scrolled out of view
+		// => we snap earlier, when almost all of the headerContent is scrolled out of view, but only its bottom padding is still visible
+		// [i.e. offset by the same amount of pixels as the value of <code>this._iHeaderContentPaddingBottom</code>.
+		// Or both (1) and (2):
+		// => we snap earlier to respect both offsets
+		iSnapPosition -= Math.max(iTitleHeightDelta, this._iHeaderContentPaddingBottom);
 
 		return iSnapPosition;
+	};
+
+
+	/**
+	 * Calculates the difference between the snapped and the expanded title height
+	 * @returns {number}
+	 * @private
+	 */
+	ObjectPageLayout.prototype._getTitleHeightDelta = function() {
+		var iTitleHeightDelta = this.iHeaderTitleHeightStickied - this.iHeaderTitleHeight;
+
+		// normalize delta value
+		iTitleHeightDelta = Math.max(iTitleHeightDelta, 0); // ignore negative delta
+		iTitleHeightDelta = Math.min(iTitleHeightDelta, ObjectPageLayout.MAX_SNAP_POSITION_OFFSET); // ignore too big delta
+
+		return iTitleHeightDelta;
 	};
 
 	ObjectPageLayout.prototype._getClosestScrolledSectionId = function (iScrollTop, iPageHeight, bSubSectionsOnly) {
@@ -3437,6 +3480,10 @@ sap.ui.define([
 			this._createHeaderContent();
 		}
 
+		if (this._hasDynamicTitle()) {
+			this._iHeaderContentPaddingBottom = DomUnitsRem.toPx(Parameters.get("_sap_f_DynamicPageHeader_PaddingBottom"));
+		}
+
 		return this;
 	};
 
@@ -3482,6 +3529,8 @@ sap.ui.define([
 	 * @protected
 	 */
 	ObjectPageLayout.prototype.invalidate = function (oOrigin) {
+		this._bInvalidatedAndNotRerendered = true;
+
 		if (this.getUseIconTabBar() && oOrigin && (oOrigin instanceof ObjectPageSection) && !oOrigin.isActive() && this._oSectionInfo[oOrigin.getId()]) {
 			return; // no need to invalidate when an inactive tab is changed
 		}
@@ -3780,8 +3829,12 @@ sap.ui.define([
 				this._moveHeaderToContentArea();
 				this._toggleHeaderTitle(false /* snap */);
 			}
-			this.setProperty("showHeaderContent", bShow);
+
+			this.setProperty("showHeaderContent", bShow, true);
+
 			oHeaderContent = this._getHeaderContent();
+			this.$().toggleClass("sapUxAPObjectPageLayoutNoHeaderContent", !bShow || !oHeaderContent);
+
 			if (oHeaderContent) {
 				oHeaderContent.setProperty("visible", bShow);
 			}
@@ -4566,13 +4619,17 @@ sap.ui.define([
 	};
 
 
-	ObjectPageLayout.prototype._getAriaLabelText = function (sElement) {
+	ObjectPageLayout.prototype._getAriaLabelText = function (sElement, bAddResourceBundleText) {
 		var oHeader = this.getHeaderTitle(),
 			sTitleText = oHeader ? oHeader.getTitleText() : null,
 			sAriaLabelText;
 
 		if (oHeader && sTitleText) {
-			sAriaLabelText = sTitleText + " " + ObjectPageLayout._getLibraryResourceBundle().getText(sElement + "_ARIA_LABEL_WITH_TITLE");
+			sAriaLabelText = sTitleText;
+
+			if (bAddResourceBundleText) {
+				sAriaLabelText += " " + ObjectPageLayout._getLibraryResourceBundle().getText(sElement + "_ARIA_LABEL_WITH_TITLE");
+			}
 		} else {
 			sAriaLabelText = ObjectPageLayout._getLibraryResourceBundle().getText(sElement + "_ARIA_LABEL_WITHOUT_TITLE");
 		}
@@ -4607,10 +4664,10 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._updateAriaLabels = function () {
 		var oLandmarkInfo = this.getLandmarkInfo(),
-			sRootText = this._getAriaLabelText("ROOT"),
-			sHeaderText = this._getAriaLabelText("HEADER"),
-			sNavigationText = this._getAriaLabelText("NAVIGATION"),
-			sToolbarText = this._getAriaLabelText("NAVTOOLBAR"),
+			sRootText = this._getAriaLabelText("ROOT", true),
+			sHeaderText = this._getAriaLabelText("HEADER", true),
+			sNavigationText = this._getAriaLabelText("NAVIGATION", false),
+			sToolbarText = this._getAriaLabelText("NAVTOOLBAR", true),
 			bHeaderLabelSet = oLandmarkInfo && oLandmarkInfo.getHeaderLabel(),
 			bRootLabelSet = oLandmarkInfo && oLandmarkInfo.getRootLabel(),
 			bNavigationLabelSet = oLandmarkInfo && oLandmarkInfo.getNavigationLabel();

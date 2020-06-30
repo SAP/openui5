@@ -77,9 +77,7 @@ function(
 		},
 
 		addDefaultContentToExtensionPointInfo: function (mExtensionPointInfo, aControls) {
-			mExtensionPointInfo.defaultContent = mExtensionPointInfo.defaultContent.concat(aControls.map(function (oControl) {
-				return oControl.getId();
-			}));
+			mExtensionPointInfo.defaultContent = mExtensionPointInfo.defaultContent.concat(aControls);
 		},
 
 		applyExtensionPoint: function(oExtensionPoint) {

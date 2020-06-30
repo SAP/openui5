@@ -38,6 +38,13 @@
 						"$ref": "#/definitions/Configuration.Parameter"
 					}
 				},
+				"filters": {
+					"description": "Map of filters.",
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/Configuration.Filter"
+					}
+				},
 				"destinations": {
 					"description": "Describes what destinations are used by the card.",
 					"type": "object",
@@ -1662,6 +1669,18 @@
 				}
 			]
 		},
+		"Configuration.BasicDataType": {
+			"description": "Basic data types for parameters and filters.",
+			"type": "string",
+			"enum": [
+				"string",
+				"integer",
+				"number",
+				"boolean",
+				"date",
+				"datetime"
+			]
+		},
 		"Configuration.Parameter": {
 			"description": "Represents configuration parameter.",
 			"type": "object",
@@ -1672,15 +1691,7 @@
 				},
 				"type": {
 					"description": "The type of the value for the parameter.",
-					"type": "string",
-					"enum": [
-						"string",
-						"integer",
-						"number",
-						"boolean",
-						"date",
-						"datetime"
-					]
+					"$ref": "#/definitions/Configuration.BasicDataType"
 				},
 				"label": {
 					"description": "Label for the parameter for user-friendly visualization in the design-time editor.",
@@ -1693,26 +1704,38 @@
 				"contextType": {
 					"description": "[Experimental] Represents the context type of the parameter. For example WorkZoneUserId or SuccessFactorsUserId.",
 					"type": "string"
-				},
-				"filter": {
-					"$ref": "#/definitions/Configuration.Parameter.Filter"
 				}
 			}
 		},
-		"Configuration.Parameter.Filter": {
-			"description": "[Experimental] Represents a filter definition for a parameter.",
+		"Configuration.Filter": {
+			"description": "[Experimental] Represents a filter definition.",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
+				"value": {
+					"description": "The value of the filter."
+				},
+				"type": {
+					"description": "The type of the value for the filter.",
+					"$ref": "#/definitions/Configuration.BasicDataType"
+				},
+				"label": {
+					"description": "Label for the filter for user-friendly visualization in the design-time editor.",
+					"type": "string"
+				},
+				"description": {
+					"description": "Description of the filter for user-friendly visualization in the design-time editor.",
+					"type": "string"
+				},
 				"items":  {
 					"type": "array",
 					"items": {
-						"$ref": "#/definitions/Configuration.Parameter.Filter.Item"
+						"$ref": "#/definitions/Configuration.Filter.Item"
 					}
 				}
 			}
 		},
-		"Configuration.Parameter.Filter.Item": {
+		"Configuration.Filter.Item": {
 			"description": "A single filter selection option",
 			"type": "object",
 			"additionalProperties": false,
@@ -1722,7 +1745,7 @@
 					"type": "string"
 				},
 				"key": {
-					"description": "The unique key of the filter option. Mapped to the parameter's value.",
+					"description": "The unique key of the filter option. Mapped to the filter's value.",
 					"type": "string"
 				}
 			}

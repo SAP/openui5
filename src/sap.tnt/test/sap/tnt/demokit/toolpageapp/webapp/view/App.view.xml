@@ -59,7 +59,7 @@
 		<tnt:sideContent>
 			<tnt:SideNavigation
 				expanded="true"
-				itemSelect=".onItemSelect">
+				selectedKey="{side>/selectedKey}">
 				<tnt:NavigationList
 					items="{
 						path: 'side>/navigation',
@@ -73,10 +73,12 @@
 							path: 'side>items',
 							templateShareable: false
 						}"
-						key="{side>key}">
+						key="{side>key}"
+						href="#/{side>key}">
 						<tnt:NavigationListItem
 							text="{path: 'side>titleI18nKey', formatter: '.getBundleText'}"
-							key="{side>key}">
+							key="{side>key}"
+							href="#/{side>key}">
 						</tnt:NavigationListItem>
 					</tnt:NavigationListItem>
 				</tnt:NavigationList>
@@ -89,7 +91,8 @@
 						<tnt:NavigationListItem
 							text="{path: 'side>titleI18nKey', formatter: '.getBundleText'}"
 							icon="{side>icon}"
-							key="{side>key}">
+							key="{side>key}"
+							href="#/{side>key}">
 						</tnt:NavigationListItem>
 					</tnt:NavigationList>
 				</tnt:fixedItem>

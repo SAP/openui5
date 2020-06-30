@@ -1,0 +1,79 @@
+<mvc:View
+	controllerName="sap.m.sample.CarouselWithMorePages.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:cards="sap.f.cards"
+	xmlns:l="sap.ui.layout"
+	height="100%">
+	<Page title="Carousel With customLayout aggregation Sample" class="sapUiResponsiveContentPadding">
+		<Carousel
+			height="auto"
+			pages="{
+				path: 'products>/ProductCollection'
+			}">
+			<customLayout>
+				<CarouselLayout visiblePagesCount="{settings>/pagesCount}" />
+			</customLayout>
+
+			<f:Card>
+				<f:header>
+					<cards:Header
+						title="{products>Name}"
+						subtitle="{products>Status}"
+						iconSrc="{products>ProductPicUrl}"
+						iconDisplayShape="Square" />
+				</f:header>
+				<f:content>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<l:BlockLayout>
+							<l:BlockLayoutRow>
+								<l:BlockLayoutCell title="Main Information" width="1">
+									<HBox class="sapUiTinyMarginBottom">
+										<Label text="Supplier:" />
+									</HBox>
+									<HBox class="sapUiSmallMarginBottom">
+										<Text text="{products>SupplierName}" />
+									</HBox>
+									<HBox class="sapUiTinyMarginBottom">
+										<Label text="Main Category:" />
+									</HBox>
+									<HBox class="sapUiSmallMarginBottom">
+										<Text text="{products>MainCategory}" />
+									</HBox>
+									<HBox class="sapUiTinyMarginBottom">
+										<Label text="Category:" />
+									</HBox>
+									<HBox class="sapUiSmallMarginBottom">
+										<Text text="{products>Category}" />
+									</HBox>
+								</l:BlockLayoutCell>
+
+								<l:BlockLayoutCell title="Specifications" width="1">
+									<HBox class="sapUiTinyMarginBottom">
+										<Label text="Width (cm)" />
+									</HBox>
+									<HBox class="sapUiSmallMarginBottom">
+										<Text text="{products>Width}" />
+									</HBox>
+									<HBox class="sapUiTinyMarginBottom">
+										<Label text="Height (cm)" />
+									</HBox>
+									<HBox class="sapUiSmallMarginBottom">
+										<Text text="{products>Height}" />
+									</HBox>
+									<HBox class="sapUiTinyMarginBottom">
+										<Label text="Weight (kg)" />
+									</HBox>
+									<HBox class="sapUiSmallMarginBottom">
+										<Text text="{products>WeightMeasure}" />
+									</HBox>
+								</l:BlockLayoutCell>
+							</l:BlockLayoutRow>
+						</l:BlockLayout>
+					</l:VerticalLayout>
+				</f:content>
+			</f:Card>
+		</Carousel>
+	</Page>
+</mvc:View>

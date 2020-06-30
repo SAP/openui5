@@ -8202,6 +8202,51 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("onsapenter - marking of event", function (assert) {
+
+			// System under test
+			var oSelect = new Select({
+				items: [
+					new Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new Item({
+						key: "1",
+						text: "item 1"
+					})
+				]
+			}),
+			fnEnterSpy = this.spy(oSelect, "onsapenter");
+
+			// Arrange
+			oSelect.placeAt("content");
+			Core.applyChanges();
+			oSelect.focus();
+
+			// Act
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ENTER);
+
+			// Assert
+			assert.notOk(fnEnterSpy.args[0][0].isMarked(), "The event should not be marked, since the picker is not opened.");
+
+			// Act
+			fnEnterSpy.reset();
+			oSelect.open();
+			this.clock.tick(1000);
+
+			// Act
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ENTER);
+
+			// Assert
+			assert.ok(fnEnterSpy.args[0][0].isMarked(), "The event should be marked, since the picker is opened.");
+
+			// Cleanup
+			fnEnterSpy.restore();
+			oSelect.destroy();
+		});
+
 		QUnit.test("onsapenter when enter key is pressed and the selection has changed", function (assert) {
 
 			// system under test
@@ -9801,7 +9846,46 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// assert
+			assert.strictEqual(oSelect.$().attr("aria-haspopup"), "listbox", "aria-haspopup is correct");
 			assert.ok(oSelect.$().attr("aria-roledescription") !== undefined, "aria-roledescription is correct");
+
+			// clean
+			oSelect.destroy();
+		});
+
+		QUnit.test("Picker aria-labelledby attribute", function (assert) {
+			// arrange
+			var oSelect = new Select(),
+				sPickerValueStateId = oSelect.getPickerValueStateContentId(),
+				oPicker = oSelect.getPicker();
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// assert
+			assert.equal(oPicker.getAriaLabelledBy().indexOf(sPickerValueStateId), -1, "Value state content ID is not added");
+
+			// arrange
+			oSelect.setValueState(ValueState.Success);
+			Core.applyChanges();
+
+			// assert
+			assert.notEqual(oPicker.getAriaLabelledBy().indexOf(sPickerValueStateId), -1, "Value state content ID is added ");
+
+			// clean
+			oSelect.destroy();
+		});
+
+
+		QUnit.test("Picker aria-labelledby attribute initial", function (assert) {
+			// arrange
+			var oSelect = new Select({valueState: ValueState.Success}),
+				sPickerValueStateId = oSelect.getPickerValueStateContentId(),
+				oPicker = oSelect.getPicker();
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// assert
+			assert.notEqual(oPicker.getAriaLabelledBy().indexOf(sPickerValueStateId), -1, "Value state content ID is added ");
 
 			// clean
 			oSelect.destroy();
@@ -10409,31 +10493,33 @@ sap.ui.define([
 
 		QUnit.module("Select list width");
 
-		QUnit.test("it should set select list max width of 600px on desktop", function (assert) {
+		QUnit.test("it should set select list max width of 100% on desktop when wrapItemsText property is true", function (assert) {
 			fnToDesktopMode(); // Enter desktop mode
 
 			// system under test
 			var oSelect = new Select({
-				items: [ new Item({ key: "1", text: "item 1" }) ]
+				items: [ new Item({ key: "1", text: "item 1" }) ],
+				wrapItemsText: true
 			});
 
 			// assert
-			assert.strictEqual(oSelect._oList.getMaxWidth(), "600px", "Select List max width is correct");
+			assert.strictEqual(oSelect._oList.getMaxWidth(), "100%", "Select List max width is correct");
 
 			// cleanup
 			oSelect.destroy();
 		});
 
-		QUnit.test("it should set select list max width of 600px on tablet", function (assert) {
+		QUnit.test("it should set select list max width of 100% on tablet when wrapItemsText property is true", function (assert) {
 			fnToTabletMode(); // Enter tabled mode
 
 			// system under test
 			var oSelect = new Select({
-				items: [ new Item({ key: "1", text: "item 1" }) ]
+				items: [ new Item({ key: "1", text: "item 1" }) ],
+				wrapItemsText: true
 			});
 
 			// assert
-			assert.strictEqual(oSelect._oList.getMaxWidth(), "600px", "Select List max width is correct");
+			assert.strictEqual(oSelect._oList.getMaxWidth(), "100%", "Select List max width is correct");
 
 			// cleanup
 			oSelect.destroy();
@@ -10453,4 +10539,47 @@ sap.ui.define([
 			// cleanup
 			oSelect.destroy();
 		});
+
+		QUnit.test("it should set to select list`s picker class 'sapMPickerWrappedItems' on desktop when wrapItemsText property is true", function (assert) {
+			fnToDesktopMode(); // Enter desktop mode
+
+			// system under test
+			var oSelect = new Select({
+				items: [ new Item({ key: "1", text: "item 1" }) ],
+				wrapItemsText: true
+			});
+
+			//act
+			var oPicker = oSelect.getPicker();
+
+			// assert
+			assert.ok(oPicker.hasStyleClass("sapMPickerWrappedItems"), 'sapMPickerWrappedItems is set ');
+
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+
+		QUnit.test("it should not set to select list`s picker class 'sapMPickerWrappedItems' on phone when wrapItemsText property is true", function (assert) {
+			fnToMobileMode(); // Enter mobile mode
+
+			// system under test
+			var oSelect = new Select({
+				items: [ new Item({ key: "1", text: "item 1" }) ],
+				wrapItemsText: true
+			});
+
+			//act
+			var oPicker = oSelect.getPicker();
+
+			// assert
+			assert.notOk(oPicker.hasStyleClass("sapMPickerWrappedItems"), 'sapMPickerWrappedItems is not set');
+
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+
 	});

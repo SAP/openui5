@@ -41,6 +41,7 @@ OPENUI5_SRV_ACC_RMT_CON=true npm start
 - `OPENUI5_SRV_OPEN=index.html`: Relative path to open after the server is started
 - `OPENUI5_SRV_ACC_RMT_CON=true`: Accept remote connections. By default the server only accepts connections from localhost
 - `OPENUI5_SRV_PORT=9090`: Port to bind on (default: 8080)
+- `OPENUI5_SRV_CSP=true`: Whether UI5 target CSP headers should be set and the reports should be served at `/.ui5/csp/csp-reports.json`
 
 #### Building the OpenUI5 SDK (Demo Kit)
 With the basic setup, there are three npm scripts available that can be executed in the **root directory** of the OpenUI5 project:

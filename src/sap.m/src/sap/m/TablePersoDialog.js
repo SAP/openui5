@@ -5,14 +5,15 @@
 // Provides TablePersoDialog
 sap.ui.define([
 	'./Text',
+	'./Title',
 	'./Label',
-	'./ToolbarSpacer',
 	'./Column',
 	'./Button',
 	'./Dialog',
 	'./ColumnListItem',
 	'./Table',
 	'./Toolbar',
+	'./Bar',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectRegistry',
 	'sap/base/Log',
@@ -29,14 +30,15 @@ sap.ui.define([
 ],
 	function(
 		Text,
+		Title,
 		Label,
-		ToolbarSpacer,
 		Column,
 		Button,
 		Dialog,
 		ColumnListItem,
 		Table,
 		Toolbar,
+		Bar,
 		ManagedObject,
 		ManagedObjectRegistry,
 		Log,
@@ -282,14 +284,12 @@ sap.ui.define([
 			}.bind(this)
 		}).addStyleClass("sapMPersoDialogResetBtn");
 
-		var oHeader = new Toolbar({
-			content: [
-				new Text(this.getId() + "-Dialog-title",{
+		var oHeader = new Bar({
+			contentLeft:
+				new Title(this.getId() + "-Dialog-title",{
 					text: this._oRb.getText("PERSODIALOG_COLUMNS_TITLE")
 				}),
-				new ToolbarSpacer(),
-				this._resetAllButton
-			]
+			contentRight: this._resetAllButton
 		});
 
 		var oSubHeader = new Toolbar(this.getId() + "-toolbar", {
@@ -299,6 +299,7 @@ sap.ui.define([
 		});
 
 		this._oDialog = new Dialog(this.getId() + "-Dialog", {
+			title: this._oRb.getText("PERSODIALOG_COLUMNS_TITLE"),
 			customHeader: oHeader,
 			draggable: true,
 			resizable: true,
@@ -329,6 +330,11 @@ sap.ui.define([
 			}),
 			afterOpen: this._fnAfterDialogOpen
 		}).addStyleClass("sapMPersoDialog");
+
+		this._oDialog.setTitle = function(sTitle) {
+			this.setProperty("title", sTitle);
+			this.getCustomHeader().getContentLeft()[0].setText(sTitle);
+		};
 	};
 
 	TablePersoDialog.prototype._updateMarkedItem = function(){
@@ -628,8 +634,8 @@ sap.ui.define([
 			if (oBar.getContent().length === 1) {
 				// Only search field is displayed, add up- and down
 				// buttons
-				oBar.insertContent(this._oButtonDown, 0);
-				oBar.insertContent(this._oButtonUp, 0);
+				oBar.addContent(this._oButtonDown);
+				oBar.addContent(this._oButtonUp);
 			}
 		} else {
 			oBar.removeContent(this._oButtonUp);

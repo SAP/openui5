@@ -174,7 +174,10 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 		}
 
 		// render no-data if needed
-		if (!bRenderItems && bShowNoData) {
+		// when all the items in the List are hidden via visible="false", then show the noDataText?
+		var bVisibleItems = oControl.getVisibleItems().length > 0;
+
+		if (bShowNoData && (!bRenderItems || !bVisibleItems)) {
 			this.renderNoData(rm, oControl);
 		}
 

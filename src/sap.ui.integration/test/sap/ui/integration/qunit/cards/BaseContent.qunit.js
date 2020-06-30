@@ -2,178 +2,218 @@
 
 sap.ui.define([
 	"sap/m/Text",
-	"sap/ui/integration/cards/BaseContent",
+	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-],
-	function (
-		Text,
-		BaseContent,
-		jquery,
-		Core
-	) {
-		"use strict";
+], function (
+	Text,
+	ContentFactory,
+	jQuery,
+	Core
+) {
+	"use strict";
 
-		var DOM_RENDER_LOCATION = "qunit-fixture";
+	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-		QUnit.module("Compact min height", {
-			beforeEach: function () {
-				this.oText = new Text();
-			},
-			afterEach: function () {
-				this.oText.destroy();
-				this.oText = null;
-				jquery("html").removeClass("sapUiSizeCompact");
-			}
-		});
+	QUnit.module("Compact min height", {
+		before: function () {
+			var oContentFactory = new ContentFactory();
 
-		QUnit.test("List card - min height in compact mode", function (assert) {
-
-			//Arrange
-			jquery("html").addClass("sapUiSizeCompact");
-			this.oText.placeAt(DOM_RENDER_LOCATION);
+			this.getMinHeight = function (sType, oConfiguration, oContent) {
+				return oContentFactory.getClass(sType).getMetadata().getRenderer().getMinHeight(oConfiguration, oContent);
+			};
+		},
+		beforeEach: function () {
+			jQuery("html").addClass("sapUiSizeCompact");
+			this.oFakeContent = new Text();
+			this.oFakeContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oFakeContent.destroy();
+			this.oFakeContent = null;
+			jQuery("html").removeClass("sapUiSizeCompact");
+		},
+		after: function () {
+			this.getMinHeight = null;
+		}
+	});
 
-			var sType = "ListContent",
-				oConfiguration = {maxItems: 7, item: {
-					icon:{}
-				}};
+	QUnit.test("List card - min height in compact mode", function (assert) {
+		//Arrange
+		var sType = "List",
+			oConfiguration = {
+				maxItems: 7,
+				item: {
+					icon: {}
+				}
+			};
 
-			//Assert
-			assert.equal(BaseContent.getMetadata().getRenderer().getMinHeight(sType, oConfiguration, this.oText), "14rem", "Min height in compact must be 14rem" );
+		//Assert
+		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "14rem", "Min height in compact must be 14rem");
+	});
 
-		});
+	QUnit.test("List card - min height in compact mode NO icon or description", function (assert) {
+		//Arrange
+		var sType = "List",
+			oConfiguration = {
+				maxItems: 7,
+				item: {}
+			};
 
-		QUnit.test("List card - min height in compact mode no icon or description", function (assert) {
+		//Assert
+		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "14rem", "Min height in compact must be 14rem");
+	});
 
-			//Arrange
-			jquery("html").addClass("sapUiSizeCompact");
-			this.oText.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			var sType = "ListContent",
-				oConfiguration = {maxItems: 7, item: {}};
-
-			//Assert
-			assert.equal(BaseContent.getMetadata().getRenderer().getMinHeight(sType, oConfiguration, this.oText), "14rem", "Min height in compact must be 14rem" );
-
-		});
-
-		QUnit.test("List card - min height in compact mode with icon or description", function (assert) {
-
-			//Arrange
-			jquery("html").addClass("sapUiSizeCompact");
-			this.oText.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			var sType = "ListContent",
-				oConfiguration = {maxItems: 7, item: {
+	QUnit.test("List card - min height in compact mode with description", function (assert) {
+		//Arrange
+		var sType = "List",
+			oConfiguration = {
+				maxItems: 7,
+				item: {
 					description: {}
-				}};
+				}
+			};
 
-			//Assert
-			assert.equal(BaseContent.getMetadata().getRenderer().getMinHeight(sType, oConfiguration, this.oText), "35rem", "Min height in compact must be 35rem" );
+		//Assert
+		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "35rem", "Min height in compact must be 35rem");
+	});
 
-		});
+	QUnit.test("List card - min height in compact mode with chart", function (assert) {
+		//Arrange
+		var sType = "List",
+			oConfiguration = {
+				maxItems: 7,
+				item: {
+					chart: {}
+				}
+			};
 
-		QUnit.test("Table card - min height in compact mode", function (assert) {
+		//Assert
+		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "35rem", "Min height in compact must be 35rem");
+	});
 
-			//Arrange
-			jquery("html").addClass("sapUiSizeCompact");
-			this.oText.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+	QUnit.test("List card - min height in compact mode with chart and description", function (assert) {
+		//Arrange
+		var sType = "List",
+			oConfiguration = {
+				maxItems: 7,
+				item: {
+					chart: {},
+					description: "description"
+				}
+			};
 
-			var sType = "TableContent",
-				oConfiguration = {maxItems: 7, item: {}};
+		//Assert
+		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "42rem", "Min height in compact must be 42rem");
+	});
 
-			//Assert
-			assert.equal(BaseContent.getMetadata().getRenderer().getMinHeight(sType, oConfiguration, this.oText), "16rem", "Min height in compact must be 16rem" );
+	QUnit.test("Table card - min height in compact mode", function (assert) {
+		//Arrange
+		var sType = "Table",
+			oConfiguration = {
+				maxItems: 7,
+				item: {}
+			};
 
-		});
+		//Assert
+		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "16rem", "Min height in compact must be 16rem");
+	});
 
-		QUnit.test("TimeLine card - min height in compact mode", function (assert) {
+	QUnit.test("TimeLine card - min height in compact mode", function (assert) {
+		//Arrange
+		var sType = "Timeline",
+			oConfiguration = {
+				maxItems: 7,
+				item: {}
+			};
 
-			//Arrange
-			jquery("html").addClass("sapUiSizeCompact");
-			this.oText.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+		//Assert
+		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "28rem", "Min height in compact must be 28rem");
+	});
 
-			var sType = "TimelineContent",
-				oConfiguration = {maxItems: 7, item: {}};
+	QUnit.module("Cozy min height", {
+		before: function () {
+			var oContentFactory = new ContentFactory();
 
-			//Assert
-			assert.equal(BaseContent.getMetadata().getRenderer().getMinHeight(sType, oConfiguration, this.oText), "28rem", "Min height in compact must be 28rem" );
+			this.getMinHeight = function (sType, oConfiguration, oContent) {
+				return oContentFactory.getClass(sType).getMetadata().getRenderer().getMinHeight(oConfiguration, oContent);
+			};
+		},
+		beforeEach: function () {
+			this.oFakeContent = new Text();
+		},
+		afterEach: function () {
+			this.oFakeContent.destroy();
+			this.oFakeContent = null;
+		},
+		after: function () {
+			this.getMinHeight = null;
+		}
+	});
 
-		});
+	QUnit.test("List card - min height in cozy mode", function (assert) {
+		//Arrange
+		var sType = "List",
+			oConfiguration = {
+				maxItems: 7,
+				item: {
+					icon: {}
+				}
+			};
 
-		QUnit.module("Cozy min height", {
-			beforeEach: function () {
-				this.oText = new Text();
-			},
-			afterEach: function () {
-				this.oText.destroy();
-				this.oText = null;
-			}
-		});
+		//Assert
+		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "19.25rem", "Min height in cozy must be 19.25rem");
+	});
 
-		QUnit.test("List card - min height in cozy mode", function (assert) {
+	QUnit.test("List card  - min height in cozy mode no icon or description", function (assert) {
+		//Arrange
+		var sType = "List",
+			oConfiguration = {
+				maxItems: 7,
+				item: {}
+			};
 
-			//Arrange
-			var sType = "ListContent",
-				oConfiguration = {maxItems: 7, item: {
-					icon:{}
-				}};
+		//Assert
+		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "19.25rem", "Min height in cozy must be 19.25rem");
+	});
 
-			//Assert
-			assert.equal(BaseContent.getMetadata().getRenderer().getMinHeight(sType, oConfiguration, this.oText), "19.25rem", "Min height in cozy must be 19.25rem" );
-
-		});
-
-		QUnit.test("List card  - min height in cozy mode no icon or description", function (assert) {
-
-			//Arrange
-			var sType = "ListContent",
-				oConfiguration = {maxItems: 7, item: {}};
-
-			//Assert
-			assert.equal(BaseContent.getMetadata().getRenderer().getMinHeight(sType, oConfiguration, this.oText), "19.25rem", "Min height in cozy must be 19.25rem" );
-
-		});
-
-		QUnit.test("List card - min height in cozy mode with icon or description", function (assert) {
-
-			//Arrange
-			var sType = "ListContent",
-				oConfiguration = {maxItems: 7, item: {
+	QUnit.test("List card - min height in cozy mode with icon or description", function (assert) {
+		//Arrange
+		var sType = "List",
+			oConfiguration = {
+				maxItems: 7,
+				item: {
 					description: {}
-				}};
+				}
+			};
 
-			//Assert
-			assert.equal(BaseContent.getMetadata().getRenderer().getMinHeight(sType, oConfiguration, this.oText), "35rem", "Min height in cozy must be 35rem" );
+		//Assert
+		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "35rem", "Min height in cozy must be 35rem");
+	});
 
-		});
+	QUnit.test("Table card  - min height in cozy mode", function (assert) {
+		//Arrange
+		var sType = "Table",
+			oConfiguration = {
+				maxItems: 7,
+				item: {}
+			};
 
-		QUnit.test("Table card  - min height in cozy mode", function (assert) {
+		//Assert
+		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "22rem", "Min height in cozy must be 22rem");
+	});
 
-			//Arrange
-			var sType = "TableContent",
-				oConfiguration = {maxItems: 7, item: {}};
+	QUnit.test("TimeLine card  - min height in cozy mode", function (assert) {
+		//Arrange
+		var sType = "Timeline",
+			oConfiguration = {
+				maxItems: 7,
+				item: {}
+			};
 
-			//Assert
-			assert.equal(BaseContent.getMetadata().getRenderer().getMinHeight(sType, oConfiguration, this.oText), "22rem", "Min height in cozy must be 22rem" );
+		//Assert
+		assert.equal(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "35rem", "Min height in cozy must be 35rem");
+	});
 
-		});
-
-		QUnit.test("TimeLine card  - min height in cozy mode", function (assert) {
-
-			//Arrange
-			var sType = "TimelineContent",
-				oConfiguration = {maxItems: 7, item: {}};
-
-			//Assert
-			assert.equal(BaseContent.getMetadata().getRenderer().getMinHeight(sType, oConfiguration, this.oText), "35rem", "Min height in cozy must be 35rem" );
-
-		});
-
-	}
-);
+});

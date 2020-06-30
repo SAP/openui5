@@ -1,0 +1,48 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "f52d78dd87b9715ef0258c0bb26135994165916e",
+        "type": "FEATURE",
+        "text": " FieldHelp: add delegate to allow model dependend logic",
+        "references": []
+      },
+      {
+        "id": "e6a534cee03d14387b8e12b10fd5b6fb988c578d",
+        "type": "FIX",
+        "text": " FieldValueHelp: Dialog opens empty, no open event fired",
+        "references": []
+      },
+      {
+        "id": "1a0443b61fc0d77df77e696e2a569f2351f00974",
+        "type": "FIX",
+        "text": " FieldValuedHelp: not all items shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070029445"
+          }
+        ]
+      },
+      {
+        "id": "e6f63107bcc74831fc2f83b0b963ed100cde0f96",
+        "type": "FIX",
+        "text": " FieldBase: Suggestion not opens on first character",
+        "references": []
+      },
+      {
+        "id": "e732f9e6bf7df9ba64b1a92103f7bd72f6329daa",
+        "type": "FIX",
+        "text": " FieldValueHelp: Dialog not open after suggestion",
+        "references": []
+      },
+      {
+        "id": "dd033436c2fdd6aa6090af4d376bdc9bcd8543b8",
+        "type": "FIX",
+        "text": " FilterField: DatePicker - wrong pattern in error message",
+        "references": []
+      }
+    ]
+  }
+}

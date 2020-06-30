@@ -117,6 +117,25 @@ sap.ui.define([
 	});
 
 
+	QUnit.test("Calendar instance is created poroperly", function(assert) {
+		//Prepare
+		var oDTP = new DateTimePicker().placeAt("uiArea1"),
+			oCalendar;
+
+		//Act
+		oDTP._createPopup();
+		oDTP._createPopupContent();
+		oCalendar = oDTP._getCalendar();
+
+		//Assert
+		assert.ok(oDTP._getCalendar()._bPoupupMode, "Popup mode is set");
+		assert.ok(oCalendar.hasListeners("cancel"), "Cancel event listener is added");
+
+		//Clean
+		oDTP.destroy();
+	});
+
+
 	QUnit.module("API");
 
 	QUnit.test("setMinDate/setMaxDate preserve the time part for internal oMinDate/oMaxDate properties", function (assert) {

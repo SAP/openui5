@@ -495,21 +495,23 @@ sap.ui.define([
 
 		QUnit.test("Auto Expand - When a prefilled item is added", function (assert) {
 			var aEditorItems = _getArrayEditorElements(this.oArrayEditor).items;
+			var iLastItemIndex = aEditorItems.length - 1;
 			assert.strictEqual(
-				aEditorItems[1].item.getExpanded(),
+				aEditorItems[iLastItemIndex].item.getExpanded(),
 				false,
 				"Then the item is initially collapsed"
 			);
 		});
 
 		QUnit.test("Auto Expand - When an empty item is added", function (assert) {
-			var oAddButton = _getArrayEditorElements(this.oArrayEditor).addButton;
-			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
+			var oEditorElements = _getArrayEditorElements(this.oArrayEditor);
+			var iLastItemIndex = oEditorElements.items.length - 1;
+			QUnitUtils.triggerEvent("tap", oEditorElements.addButton.getDomRef());
 
 			return this.oArrayEditor.ready().then(function () {
 				var aEditorItems = _getArrayEditorElements(this.oArrayEditor).items;
 				assert.strictEqual(
-					aEditorItems[2].item.getExpanded(),
+					aEditorItems[(iLastItemIndex + 1)].item.getExpanded(),
 					true,
 					"Then the newly added item is expanded"
 				);
@@ -517,19 +519,20 @@ sap.ui.define([
 		});
 
 		QUnit.test("Auto Expand - When an empty item is manually collapsed", function (assert) {
-			var oAddButton = _getArrayEditorElements(this.oArrayEditor).addButton;
-			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
+			var oEditorElements = _getArrayEditorElements(this.oArrayEditor);
+			var iLastItemIndex = oEditorElements.items.length - 1;
+			QUnitUtils.triggerEvent("tap", oEditorElements.addButton.getDomRef());
 
 			return this.oArrayEditor.ready().then(function () {
 				var oEditorElements = _getArrayEditorElements(this.oArrayEditor);
-				oEditorElements.items[2].item.setExpanded(false);
+				oEditorElements.items[iLastItemIndex + 1].item.setExpanded(false);
 
 				// Trigger config change by removing a different element
-				QUnitUtils.triggerEvent("tap", oEditorElements.items[1].deleteButton.getDomRef());
+				QUnitUtils.triggerEvent("tap", oEditorElements.items[iLastItemIndex].deleteButton.getDomRef());
 
 				return this.oArrayEditor.ready().then(function () {
 					assert.strictEqual(
-						_getArrayEditorElements(this.oArrayEditor).items[1].item.getExpanded(),
+						_getArrayEditorElements(this.oArrayEditor).items[iLastItemIndex].item.getExpanded(),
 						false,
 						"Then the item stays collapsed"
 					);
@@ -872,7 +875,6 @@ sap.ui.define([
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function (oEvent) {
 				this.oArrayEditor = oEvent.getSource().getPropertyEditorsByNameSync("cars")[0].getAggregation("propertyEditor");
-				assert.strictEqual(this.oArrayEditor.isReady(), true, "Ready is triggered for empty arrays and nested arrays");
 				fnDone();
 			}, this);
 		},
@@ -880,6 +882,10 @@ sap.ui.define([
 			this.oBaseEditor.destroy();
 		}
 	}, function () {
+		QUnit.test("when the editor is created", function (assert) {
+			assert.strictEqual(this.oArrayEditor.isReady(), true, "then ready is triggered for empty arrays and nested arrays");
+		});
+
 		QUnit.test("when amount of elements reaches maxItems, then the `add` button should be disabled", function (assert) {
 			var oAddButton = _getArrayEditorElements(this.oArrayEditor).addButton;
 			assert.strictEqual(this.oArrayEditor.getValue().length, this.oArrayEditor.getConfig().maxItems);
@@ -898,23 +904,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("when data is set via setJson api on BaseEditor", function (assert) {
-			var fnDone = assert.async();
+			this.oBaseEditor.setJson({
+				cars: [
+					{
+						"vendor": "VW",
+						"year": 2019,
+						"owners": []
+					}
+				]
+			});
 
-			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
+			return this.oBaseEditor.ready().then(function () {
 				var oArrayEditor = this.oBaseEditor.getPropertyEditorsByNameSync("cars")[0].getAggregation("propertyEditor");
 				var oAddButton = _getArrayEditorElements(oArrayEditor).addButton;
 				assert.ok(oArrayEditor.getValue().length < oArrayEditor.getConfig().maxItems);
 				assert.ok(oAddButton.getEnabled(), "then add button is enabled");
-
-				this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-					var oArrayEditor = this.oBaseEditor.getPropertyEditorsByNameSync("cars")[0].getAggregation("propertyEditor");
-					var oAddButton = _getArrayEditorElements(oArrayEditor).addButton;
-
-					assert.strictEqual(this.oArrayEditor.getValue().length, this.oArrayEditor.getConfig().maxItems);
-					assert.notOk(oAddButton.getEnabled(), "then add button is disabled");
-
-					fnDone();
-				}, this);
 
 				this.oBaseEditor.setJson({
 					cars: [
@@ -930,27 +934,44 @@ sap.ui.define([
 						}
 					]
 				});
-			}, this);
 
-			this.oBaseEditor.setJson({
+				return this.oBaseEditor.ready().then(function () {
+					var oArrayEditor = this.oBaseEditor.getPropertyEditorsByNameSync("cars")[0].getAggregation("propertyEditor");
+					var oAddButton = _getArrayEditorElements(oArrayEditor).addButton;
+
+					assert.strictEqual(this.oArrayEditor.getValue().length, this.oArrayEditor.getConfig().maxItems);
+					assert.notOk(oAddButton.getEnabled(), "then add button is disabled");
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("When BaseEditor fires ready", function (assert) {
+			var oJson = {
 				cars: [
 					{
 						"vendor": "VW",
 						"year": 2019,
 						"owners": []
+					},
+					{
+						"vendor": "Audi",
+						"year": 1999,
+						"owners": []
+					},
+					{
+						"vendor": "BMW",
+						"year": 2020,
+						"owners": []
 					}
 				]
-			});
-		});
+			};
+			this.oBaseEditor.setJson(oJson);
 
-		QUnit.test("When BaseEditor fires ready", function (assert) {
-			var fnDone = assert.async();
-
-			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
+			return this.oBaseEditor.ready().then(function () {
 				var oArrayEditor = this.oBaseEditor.getPropertyEditorsByNameSync("cars")[0].getAggregation("propertyEditor");
 				var aWrappers = oArrayEditor._aEditorWrappers;
 
-				assert.strictEqual(aWrappers.length, 2, "Then both wrappers are registered on the array editor");
+				assert.strictEqual(aWrappers.length, oJson.cars.length, "Then all wrappers are registered on the array editor");
 				// Validate the ready state
 				aWrappers.forEach(function (oWrapper, idx) {
 					assert.strictEqual(oWrapper._fnCancelInit, undefined, "Then each wrapper has finished initialization - Wrapper" + idx);
@@ -962,23 +983,7 @@ sap.ui.define([
 						"Then all nested editors are ready - Wrapper" + idx
 					);
 				});
-				fnDone();
-			}, this);
-
-			this.oBaseEditor.setJson({
-				cars: [
-					{
-						"vendor": "VW",
-						"year": 2019,
-						"owners": []
-					},
-					{
-						"vendor": "Audi",
-						"year": 1999,
-						"owners": []
-					}
-				]
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("when editing item in the nested array, then no re-rendering should take place", function (assert) {

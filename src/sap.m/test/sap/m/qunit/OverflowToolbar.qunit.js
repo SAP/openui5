@@ -3074,6 +3074,23 @@ sap.ui.define([
 
 	QUnit.test("Aria attributes - OverflowButton", function (assert) {
 		// arrange
+		var aDefaultContent = [
+				new Button({width: "150px"}),
+				new Button({width: "150px"})
+			],
+			oOverflowTB = createOverflowToolbar({width: '200px'}, aDefaultContent),
+			sExpectedAriaHasPopup = "menu",
+			sActualAriaHasPopup = oOverflowTB._getOverflowButton().$().attr("aria-haspopup");
+
+		// assert
+		assert.strictEqual(sActualAriaHasPopup, sExpectedAriaHasPopup, "aria-haspopup value is as expected");
+
+		// clean
+		oOverflowTB.destroy();
+	});
+
+	QUnit.test("Aria attributes", function (assert) {
+		// arrange
 		var oOverflowTB = createOverflowToolbar(),
 			sExpectedAriaRoleDescription = sap.ui.getCore()
 				.getLibraryResourceBundle("sap.m")

@@ -22,6 +22,7 @@ sap.ui.define([
 	"use strict";
 
 	var MANIFEST_PARAMETERS = "/{SECTION}/configuration/parameters",
+		MANIFEST_FILTERS = "/{SECTION}/configuration/filters",
 		MANIFEST_CONFIGURATION = "/{SECTION}",
 		APP_DATA_SOURCES = "/sap.app/dataSources",
 		REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}|\{i18n>([^\}]+)\}/g;
@@ -69,6 +70,7 @@ sap.ui.define([
 			this._aChanges = aChanges;
 
 			this.PARAMETERS = MANIFEST_PARAMETERS.replace("{SECTION}", sSection);
+			this.FILTERS = MANIFEST_FILTERS.replace("{SECTION}", sSection);
 			this.CONFIGURATION = MANIFEST_CONFIGURATION.replace("{SECTION}", sSection);
 
 			if (oManifestJson) {
@@ -241,7 +243,7 @@ sap.ui.define([
 	 * @private
 	 * @param {Object} oParams Parameters that should be replaced in the manifest.
 	 */
-	Manifest.prototype.processManifest = function (oParams) {
+	Manifest.prototype.processManifest = function () {
 
 		var iCurrentLevel = 0,
 			iMaxLevel = 15,
@@ -249,7 +251,7 @@ sap.ui.define([
 			oUnprocessedJson = jQuery.extend(true, {}, this._oManifest.getRawJson()),
 			oDataSources = this.get(APP_DATA_SOURCES);
 
-		process(oUnprocessedJson, this.oResourceBundle, iCurrentLevel, iMaxLevel, oParams, oDataSources);
+		process(oUnprocessedJson, this.oResourceBundle, iCurrentLevel, iMaxLevel, this._oCombinedParams, oDataSources, this._oCombinedFilters);
 		deepFreeze(oUnprocessedJson);
 
 		this.oJson = oUnprocessedJson;
@@ -295,7 +297,7 @@ sap.ui.define([
 	 */
 	function isProcessable (vValue) {
 		return (typeof vValue === "string")
-			&& (vValue.indexOf("{{parameters.") > -1 || vValue.indexOf("{{dataSources") > -1);
+			&& (vValue.indexOf("{{parameters.") > -1 || vValue.indexOf("{{dataSources") > -1 || vValue.indexOf("{{filters.") > -1);
 	}
 
 	/**
@@ -305,9 +307,10 @@ sap.ui.define([
 	 * @param {string} sPlaceholder The value to process.
 	 * @param {Object} oParam The parameter from the configuration.
 	 * @param {Object} oDataSources The dataSources from the configuration.
+	 * @param {Object} oFilters The filters from the configuration.
 	 * @returns {string} The string with replaced placeholders.
 	 */
-	Manifest._processPlaceholder = function (sPlaceholder, oParam, oDataSources) {
+	Manifest._processPlaceholder = function (sPlaceholder, oParam, oDataSources, oFilters) {
 		var sProcessed = ParameterMap.processPredefinedParameter(sPlaceholder),
 			oValue,
 			sPath;
@@ -323,6 +326,10 @@ sap.ui.define([
 
 		if (oDataSources) {
 			sProcessed = replacePlaceholders(sProcessed, oDataSources, "{{dataSources");
+		}
+
+		if (oFilters) {
+			sProcessed = replacePlaceholders(sProcessed, oFilters, "{{filters");
 		}
 
 		return sProcessed;
@@ -360,7 +367,7 @@ sap.ui.define([
 	 * @param {Object} oParams The parameters to be replaced in the manifest.
 	 * @param {Object} oDataSources The dataSources to be replaced in the manifest.
 	 */
-	function process (oObject, oResourceBundle, iCurrentLevel, iMaxLevel, oParams, oDataSources) {
+	function process (oObject, oResourceBundle, iCurrentLevel, iMaxLevel, oParams, oDataSources, oFilters) {
 		if (iCurrentLevel === iMaxLevel) {
 			return;
 		}
@@ -368,9 +375,9 @@ sap.ui.define([
 		if (Array.isArray(oObject)) {
 			oObject.forEach(function (vItem, iIndex, aArray) {
 				if (typeof vItem === "object") {
-					process(vItem, oResourceBundle, iCurrentLevel + 1, iMaxLevel, oParams, oDataSources);
-				} else if (isProcessable(vItem, oObject, oParams)) {
-					aArray[iIndex] = Manifest._processPlaceholder(vItem, oParams, oDataSources);
+					process(vItem, oResourceBundle, iCurrentLevel + 1, iMaxLevel, oParams, oDataSources, oFilters);
+				} else if (isProcessable(vItem)) {
+					aArray[iIndex] = Manifest._processPlaceholder(vItem, oParams, oDataSources, oFilters);
 				} else if (isTranslatable(vItem) && oResourceBundle) {
 					aArray[iIndex] = oResourceBundle.getText(vItem.substring(2, vItem.length - 2));
 				}
@@ -378,9 +385,9 @@ sap.ui.define([
 		} else {
 			for (var sProp in oObject) {
 				if (typeof oObject[sProp] === "object") {
-					process(oObject[sProp], oResourceBundle, iCurrentLevel + 1, iMaxLevel, oParams, oDataSources);
-				} else if (isProcessable(oObject[sProp], oObject, oParams)) {
-					oObject[sProp] = Manifest._processPlaceholder(oObject[sProp], oParams, oDataSources);
+					process(oObject[sProp], oResourceBundle, iCurrentLevel + 1, iMaxLevel, oParams, oDataSources, oFilters);
+				} else if (isProcessable(oObject[sProp])) {
+					oObject[sProp] = Manifest._processPlaceholder(oObject[sProp], oParams, oDataSources, oFilters);
 				} else if (isTranslatable(oObject[sProp]) && oResourceBundle) {
 					oObject[sProp] = oResourceBundle.getText(oObject[sProp].substring(2, oObject[sProp].length - 2));
 				}
@@ -436,6 +443,36 @@ sap.ui.define([
 	}
 
 	/**
+	 * Applies any filters values to the manifest.
+	 * Replaces {{filters.*}} with the actual value taken from runtime or from the default filter value.
+	 *
+	 * @param {Map} mRuntimeFilters Runtime filters values.
+	 * @private
+	 */
+	Manifest.prototype.processFilters = function (mRuntimeFilters) {
+		if (!this._oManifest) {
+			return;
+		}
+
+		var oManifestFilters = this.get(this.FILTERS),
+			oCombinedFilters = {};
+
+		if (mRuntimeFilters.size && !oManifestFilters) {
+			Log.error("If runtime filters are set, they have to be defined in the manifest configuration as well.");
+			return;
+		}
+
+		jQuery.each(oManifestFilters, function (sKey, oConfig) {
+			var sValue = mRuntimeFilters.get(sKey) || oConfig.value;
+
+			oCombinedFilters[sKey] = sValue;
+		});
+
+		this._oCombinedFilters = oCombinedFilters;
+		this.processManifest();
+	};
+
+	/**
 	 * Processes passed parameters.
 	 *
 	 * @param {Object} oParameters Parameters set in the card trough parameters property.
@@ -453,8 +490,8 @@ sap.ui.define([
 			return;
 		}
 
-		var oParams = this._syncParameters(oParameters, oManifestParams);
-		this.processManifest(oParams);
+		this._oCombinedParams = this._syncParameters(oParameters, oManifestParams);
+		this.processManifest();
 	};
 
 	/**

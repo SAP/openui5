@@ -589,4 +589,51 @@ sap.ui.define([
 		Opa5.emptyQueue().done(done);
 	});
 
+	QUnit.test("Should apply interactable matcher when interactable is true and autoWait is false", function (assert) {
+		var done = assert.async();
+		var oOpa5 = new Opa5();
+
+		this.oButton2.setEnabled(true);
+		this.oButton2.setBusy(true);
+
+		oOpa5.waitFor({
+			controlType: "sap.m.Button",
+			interactable: true,
+			success: function (aButtons) {
+				assert.strictEqual(aButtons.length, 1, "Should include only interactable controls when interactable: true");
+			}
+		});
+
+		Opa5.emptyQueue().done(function () {
+			Opa5.resetConfig();
+			done();
+		});
+	});
+
+	QUnit.test("Should filter by enabled state when interactable is true", function (assert) {
+		var done = assert.async();
+		var oOpa5 = new Opa5();
+
+		oOpa5.waitFor({
+			controlType: "sap.m.Button",
+			interactable: true,
+			success: function (aButtons) {
+				assert.strictEqual(aButtons.length, 1, "Should include only enabled controls when enabled: undefined");
+			}
+		});
+		oOpa5.waitFor({
+			controlType: "sap.m.Button",
+			interactable: true,
+			enabled: false,
+			success: function (aButtons) {
+				assert.strictEqual(aButtons.length, 2, "Should include both enabled and disabled controls when enabled: false");
+			}
+		});
+
+		Opa5.emptyQueue().done(function () {
+			Opa5.resetConfig();
+			done();
+		});
+	});
+
 });

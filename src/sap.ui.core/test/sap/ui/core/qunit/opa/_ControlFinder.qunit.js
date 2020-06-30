@@ -7,10 +7,11 @@ sap.ui.define([
 	"sap/m/SearchField",
 	"sap/m/List",
 	"sap/m/ObjectListItem",
+	"sap/m/Dialog",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/_LogCollector"
-], function ($, _ControlFinder,  mobileLibrary, Button, SearchField, List, ObjectListItem, JSONModel, PropertyStrictEquals, _LogCollector) {
+], function ($, _ControlFinder,  mobileLibrary, Button, SearchField, List, ObjectListItem, Dialog, JSONModel, PropertyStrictEquals, _LogCollector) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -21,6 +22,17 @@ sap.ui.define([
 			this.oButton = new Button("myId", {text : "foo", type: ButtonType.Emphasized});
 			this.oButtonWithSpecialId = new Button("test::button.ID");
 			this.oObjectListItem = new ObjectListItem({title: "testItem", number: 8});
+			this.oDialogButton = new Button({
+				type: ButtonType.Emphasized,
+				text: "Close",
+				press: function () {
+					this.oDialog.close();
+				}.bind(this)
+			});
+			this.oDialog = new Dialog({
+				title: "static area test",
+				beginButton: this.oDialogButton
+			});
 			this.oButton.placeAt("qunit-fixture");
 			this.oButtonWithSpecialId.placeAt("qunit-fixture");
 			this.oObjectListItem.placeAt("qunit-fixture");
@@ -30,6 +42,7 @@ sap.ui.define([
 			this.oButton.destroy();
 			this.oButtonWithSpecialId.destroy();
 			this.oObjectListItem.destroy();
+			this.oDialog.destroy();
 		}
 	});
 
@@ -195,6 +208,16 @@ sap.ui.define([
 		fnStartSpy.restore();
 		fnStopSpy.restore();
 		fnGetSpy.restore();
+	});
+
+	QUnit.test("Should check if control is in static area", function (assert) {
+		assert.ok(!_ControlFinder._isControlInStaticArea(this.oButton), "Should return false for controls outside of static area");
+		assert.ok(!_ControlFinder._isControlInStaticArea(this.oDialogButton), "Should return false for controls in static area that are not rendered");
+		this.oDialog.open();
+		assert.ok(_ControlFinder._isControlInStaticArea(this.oDialogButton), "Should return true for controls in open static area");
+		this.oDialog.destroy();
+		$("#sap-ui-static").remove();
+		assert.ok(!_ControlFinder._isControlInStaticArea(this.oDialogButton), "Should return false if there is no static area");
 	});
 
 	QUnit.module("_ControlFinder - interaction adapters", {

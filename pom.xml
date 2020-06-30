@@ -48,6 +48,7 @@
 		<module>src/sap.tnt</module>
 		<module>src/sap.uxap</module>
 		<module>src/sap.ui.fl</module>
+		<module>src/sap.ui.mdc</module>
 		<module>src/sap.ui.rta</module>
 		<module>src/sap.ui.codeeditor</module>
 		<module>src/sap.ui.support</module>
@@ -159,7 +160,7 @@
 							<goal>jar</goal>
 						</goals>
 						<!-- we use the 'phase' as a substitute for the missing 'skip' property of the jar-plugin           -->
-						<!-- for non-library projects and for all builds other than the nightly build, it is set to 'never' --> 
+						<!-- for non-library projects and for all builds other than the nightly build, it is set to 'never' -->
 						<phase>${effective.npm.package.phase}</phase>
 						<configuration>
 							<classesDirectory>${project.basedir}</classesDirectory>

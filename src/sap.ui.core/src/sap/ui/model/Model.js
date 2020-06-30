@@ -666,6 +666,7 @@ sap.ui.define([
 	 *         sPath the path to where to read the attribute value
 	 * @param {object}
 	 *		   [oContext=null] the context with which the path should be resolved
+	 * @returns {any} Value of the addressed property
 	 * @public
 	 */
 

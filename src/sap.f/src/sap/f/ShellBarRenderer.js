@@ -14,6 +14,7 @@ function() {
 			var oAcc = oControl._oAcc,
 				oRootAttributes = oAcc.getRootAttributes(),
 				sTitle = oControl.getTitle(),
+				oAvatar = oControl.getProfile(),
 				bRenderHiddenTitle = sTitle && !oControl.getShowMenuButton();
 
 			oRm.openStart("div", oControl);
@@ -24,7 +25,6 @@ function() {
 			if (oControl.getShowCopilot()) {
 				oRm.class("sapFShellBarCopilot");
 			}
-
 			oRm.accessibilityState({
 				role: oRootAttributes.role,
 				label: oRootAttributes.label
@@ -62,6 +62,13 @@ function() {
 				oControl._aRightControls.forEach(oRm.renderControl, oRm);
 
 				oRm.close("div");
+			}
+
+			if (oAvatar) {
+				oRm.renderControl(oAvatar);
+			}
+			if (oControl._oProductSwitcher) {
+				oRm.renderControl(oControl._oProductSwitcher);
 			}
 			oRm.close("div");
 		},

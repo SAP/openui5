@@ -333,6 +333,8 @@ sap.ui.define([
 		this.setModel(new JSONModel(), "parameters");
 		this._busyStates = new Map();
 		this._oExtension = null;
+		this._oContentFactory = new ContentFactory(this);
+		this._mFilters = new Map();
 
 		/**
 		 * Facade of the {@link sap.ui.integration.widgets.Card} control.
@@ -397,7 +399,7 @@ sap.ui.define([
 			this.addStyleClass(sConfig.replace(/-/g, "_"));
 		}
 
-		if (this._bApplyManifest || this._bApplyParameters) {
+		if (this._bApplyManifest || this._bApplyParameters || this._bApplyFilters) {
 			this._clearReadyState();
 			this._initReadyState();
 		}
@@ -419,8 +421,15 @@ sap.ui.define([
 			this._applyManifestSettings();
 		}
 
+		if (!this._bApplyManifest && this._bApplyFilters) {
+			this._oCardManifest.processFilters(this._mFilters);
+
+			this._applyManifestSettings();
+		}
+
 		this._bApplyManifest = false;
 		this._bApplyParameters = false;
+		this._bApplyFilters = false;
 	};
 
 	Card.prototype.setManifest = function (vValue) {
@@ -462,6 +471,13 @@ sap.ui.define([
 			this._oDestinations.setHost(this.getHostInstance());
 		}
 
+		return this;
+	};
+
+	Card.prototype._setFilterValue = function (sKey, vValue) {
+		this._mFilters.set(sKey, vValue);
+		this._bApplyFilters = true;
+		this.invalidate();
 		return this;
 	};
 
@@ -519,7 +535,7 @@ sap.ui.define([
 		return new Promise(function (resolve, reject) {
 			sap.ui.require([sFullExtensionPath], function (oExtension) {
 				this._oExtension = oExtension;
-				oExtension.onCardReady(this._oLimitedInterface);
+
 				BindingHelper.addNamespace("extension", {
 					formatters: oExtension.getFormatters()
 				});
@@ -536,6 +552,7 @@ sap.ui.define([
 	 */
 	Card.prototype._applyManifest = function () {
 		var oParameters = this.getParameters(),
+			oFilters = this._mFilters,
 			oCardManifest = this._oCardManifest;
 
 		if (oCardManifest && oCardManifest.getResourceBundle()) {
@@ -543,6 +560,10 @@ sap.ui.define([
 		}
 
 		oCardManifest.processParameters(oParameters);
+
+		oCardManifest.processFilters(oFilters);
+
+		this._prepareToApplyManifestSettings();
 
 		this._applyManifestSettings();
 	};
@@ -630,6 +651,7 @@ sap.ui.define([
 		this._busyStates = null;
 		this._oRb = null;
 		this._oExtension = null;
+		this._oContentFactory = null;
 
 		if (this._ariaText) {
 			this._ariaText.destroy();
@@ -683,6 +705,8 @@ sap.ui.define([
 		this._aReadyPromises = null;
 
 		this._busyStates.clear();
+
+		this._mFilters.clear();
 	};
 
 	/**
@@ -802,12 +826,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Apply all manifest settings after the manifest is fully ready.
-	 * This includes service registration, header and content creation, data requests.
+	 * Initializes internal classes needed for the card, based on the ready manifest.
 	 *
 	 * @private
 	 */
-	Card.prototype._applyManifestSettings = function () {
+	Card.prototype._prepareToApplyManifestSettings = function () {
 		var sAppType = this._oCardManifest.get(MANIFEST_PATHS.APP_TYPE);
 		if (sAppType && sAppType !== "card") {
 			Log.error("sap.app/type entry in manifest is not 'card'");
@@ -822,6 +845,18 @@ sap.ui.define([
 		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations, this._oExtension);
 		this._oLoadingProvider = new LoadingProvider();
 
+		if (this._oExtension) {
+			this._oExtension.onCardReady(this._oLimitedInterface);
+		}
+	};
+
+	/**
+	 * Apply all manifest settings after the manifest is fully ready.
+	 * This includes service registration, header and content creation, data requests.
+	 *
+	 * @private
+	 */
+	Card.prototype._applyManifestSettings = function () {
 		this._applyServiceManifestSettings();
 		this._applyDataManifestSettings();
 		this._applyHeaderManifestSettings();
@@ -1044,11 +1079,11 @@ sap.ui.define([
 	};
 
 	Card.prototype.createFilterBar = function () {
-		var mParameters = this.getManifestEntry("/sap.card/configuration/parameters"),
-			mValues = this.getCombinedParameters(),
+		var mFiltersConfig = this.getManifestEntry("/sap.card/configuration/filters"),
+			mValues = this._mFilters,
 			oFactory = new FilterBarFactory(this);
 
-		return oFactory.create(mParameters, mValues);
+		return oFactory.create(mFiltersConfig, mValues);
 	};
 
 	Card.prototype.getContentManifest = function () {
@@ -1074,11 +1109,9 @@ sap.ui.define([
 	};
 
 	Card.prototype.createContent = function (mContentConfig) {
-		var oContentFactory = new ContentFactory(this);
-
 		mContentConfig.cardManifest = this._oCardManifest;
 
-		return oContentFactory.create(mContentConfig);
+		return this._oContentFactory.create(mContentConfig);
 	};
 
 	/**
@@ -1091,9 +1124,7 @@ sap.ui.define([
 			sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE).toLowerCase();
 		}
 
-		if (sCardType === "analytical") {
-			this.addStyleClass("sapFCardAnalytical");
-		}
+		this.toggleStyleClass("sapFCardAnalytical", sCardType === "analytical");
 	};
 
 	/**
@@ -1183,9 +1214,9 @@ sap.ui.define([
 				if (!this._oCardManifest) {
 					return;
 				}
-				var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
-					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-					sHeight = BaseContent.getMetadata().getRenderer().getMinHeight(sType, oContent, oError);
+				var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
+					oContentManifest = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+					sHeight = this._oContentFactory.getClass(sCardType).getMetadata().getRenderer().getMinHeight(oContentManifest, oError);
 
 				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
 					oError.$().css({ "min-height": sHeight });
@@ -1207,9 +1238,7 @@ sap.ui.define([
 						return;
 					}
 
-					var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
-						oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-						sHeight = BaseContent.getMetadata().getRenderer().getMinHeight(sType, oContent, this._oTemporaryContent);
+					var sHeight = this._oContentFactory.getClass(sCardType).getMetadata().getRenderer().getMinHeight(oContentManifest, this._oTemporaryContent);
 
 					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
 						this._oTemporaryContent.$().css({ "min-height": sHeight });

@@ -48,7 +48,7 @@ sap.ui.define([
 		"</root>";
 
 
-	QUnit.module("TreeBinding", {
+	QUnit.module("sap.ui.model.xml.XMLTreeBinding", {
 		beforeEach: function() {
 			this.oModel = new XMLModel();
 			this.oModel.setXML(testData);

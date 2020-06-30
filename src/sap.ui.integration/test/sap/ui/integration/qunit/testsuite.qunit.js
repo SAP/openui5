@@ -125,6 +125,7 @@ sap.ui.define(function () {
 				]
 			},
 			"CardExtension": {},
+			"CardHostAndExtension": {},
 			"CardHost": {
 				coverage: {
 					only: [
@@ -204,6 +205,7 @@ sap.ui.define(function () {
 			"cards/AdaptiveCard": { },
 			"cards/AnalyticalCard": { },
 			"cards/CalendarCard": { },
+			"cards/ListCard": { },
 			"CardFiltering": {
 				coverage: {
 					only: [
@@ -212,6 +214,9 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"controls/ListContentItem": {},
+			"controls/Microchart": {},
+			"controls/MicrochartLegend": {},
 			"customElements/CustomElements": {
 				ui5: {
 					libs: ["sap.ui.integration"]
@@ -263,6 +268,11 @@ sap.ui.define(function () {
 				},
 				sinon: {
 					version: "edge"
+				}
+			},
+			"util/Destinations": {
+				coverage: {
+					only: ["sap/ui/integration/util/Destinations"]
 				}
 			},
 			"util/ServiceManager": {

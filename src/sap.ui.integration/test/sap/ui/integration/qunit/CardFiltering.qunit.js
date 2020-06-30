@@ -62,7 +62,7 @@ function (
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
-	QUnit.test("Filter items by category parameter", function (assert) {
+	QUnit.test("Filter items by category", function (assert) {
 		// Arrange
 		var done = assert.async(),
 			sCategory = "notebooks",
@@ -71,25 +71,24 @@ function (
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
 
-			var oCombinedParams = this.oCard.getCombinedParameters(),
-				oHeader = this.oCard.getAggregation("_header"),
+			var oHeader = this.oCard.getAggregation("_header"),
 				oListItems = this.oCard.getCardContent().getInnerList().getItems();
 
 			// Assert
-			assert.strictEqual(oCombinedParams.category, sCategory, "The initial value of parameter 'category' is ok.");
-			assert.strictEqual(oHeader.getSubtitle(), "Category " + sCategory, "The initial value of parameter 'category' is ok.");
+			assert.strictEqual(oHeader.getSubtitle(), "Category " + sCategory, "The initial value of 'category' is ok.");
 			assert.strictEqual(oListItems[0].getDescription(), sCategory, "The list items have correct category.");
 
-			assert.strictEqual(oHeader.getStatusText(), sStatus, "The numer of list items is as expected.");
+			assert.strictEqual(oHeader.getStatusText(), sStatus, "The number of list items is as expected.");
 
 			if (sCategory === "flat_screens") {
 				done();
+				return;
 			}
 
 			// Act - change the category to flat_screens
 			sCategory = "flat_screens";
 			sStatus = "2 of 4";
-			this.oCard.setParameter("category", "flat_screens");
+			this.oCard._setFilterValue("category", "flat_screens");
 		}.bind(this));
 
 		// Act

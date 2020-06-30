@@ -7,19 +7,21 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.Label.LabelGroup",
+			"viewName": "sap.m.sample.Label.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"LabelGroup.view.xml",
+					"V.view.xml",
 					"manifest.json"
 				]
 			}

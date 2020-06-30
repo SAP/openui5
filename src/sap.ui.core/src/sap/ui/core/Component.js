@@ -3290,7 +3290,7 @@ sap.ui.define([
 	 * the given ID, then <code>undefined</code> is returned.
 	 *
 	 * @param {sap.ui.core.ID} id ID of the Component to retrieve
-	 * @returns {sap.ui.core.Component} Component with the given ID or <code>undefined</code>
+	 * @returns {sap.ui.core.Component|undefined} Component with the given ID or <code>undefined</code>
 	 * @name sap.ui.core.Component.registry.get
 	 * @function
 	 * @public

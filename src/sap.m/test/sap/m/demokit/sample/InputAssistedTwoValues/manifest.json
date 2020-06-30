@@ -11,15 +11,20 @@
 			"type": "XML",
 			"async": true
 		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
+			}
+		},
 		"config": {
 			"sample": {
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"Dialog.fragment.xml",
 					"manifest.json"
-				],
-				"description": "This example shows how to easily implement an assisted input with two-value suggestions"
+				]
 			}
 		}
 	}

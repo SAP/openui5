@@ -324,7 +324,7 @@ sap.ui.define([
 			getEventDelegates: function(oContext) {
 				return {
 					onAfterRendering: function () {
-						this.$().attr({"aria-haspopup": true});
+						this.$().attr({"aria-haspopup": "listbox"});
 					}.bind(oContext)
 				};
 			},
@@ -351,6 +351,13 @@ sap.ui.define([
 					type: "IconOnly",
 					autoAdjustWidth: true,
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_FILTER")
+				};
+			},
+			getEventDelegates: function(oContext) {
+				return {
+					onAfterRendering: function () {
+						this.$().attr({"aria-haspopup": "listbox"});
+					}.bind(oContext)
 				};
 			},
 			constraints: "IconOnly"
@@ -382,7 +389,7 @@ sap.ui.define([
 			getEventDelegates: function(oContext) {
 				return {
 					onAfterRendering: function () {
-						this.$().attr({"aria-haspopup": true});
+						this.$().attr({"aria-haspopup": "listbox"});
 					}.bind(oContext)
 				};
 			},

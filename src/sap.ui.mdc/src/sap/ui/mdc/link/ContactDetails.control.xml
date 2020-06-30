@@ -1,0 +1,29 @@
+<core:FragmentDefinition xmlns:m="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form">
+
+	<m:VBox items="{path:'$this>/items', templateShareable:false}">
+		<f:SimpleForm id="IDSimpleForm" editable="false" layout="ResponsiveGridLayout">
+
+			<core:Title text="{$this>sectionTitle}"/>
+
+			<m:Label text="" labelFor="IDImage" visible="{= !!${$this>photo}}"/>
+			<m:Image id="IDImage" src="{$this>photo}" decorative="false" width="5rem" height="5rem"
+					 visible="{= !!${$this>photo}}"/>
+
+			<m:Label text="{$this.i18n>info.POPOVER_CONTACT_SECTION_NAME}" labelFor="IDName"
+					 visible="{= !!${$this>formattedName}}"/>
+			<m:Text id="IDName" text="{$this>formattedName}" visible="{= !!${$this>formattedName}}"/>
+
+			<m:Label text="{$this.i18n>info.POPOVER_CONTACT_SECTION_ROLE}" labelFor="IDRole"
+					 visible="{= !!${$this>role}}"/>
+			<m:Text id="IDRole" text="{$this>role}" visible="{= !!${$this>role}}"/>
+
+			<m:Label text="{$this.i18n>info.POPOVER_CONTACT_SECTION_JOBTITLE}" labelFor="IDTitle"
+					 visible="{= !!${$this>title}}"/>
+			<m:Text id="IDTitle" text="{$this>title}" visible="{= !!${$this>title}}"/>
+
+			<m:Label text="{$this.i18n>info.POPOVER_CONTACT_SECTION_DEPARTMENT}" labelFor="IDOrg"
+					 visible="{= !!${$this>org}}"/>
+			<m:Text id="IDOrg" text="{$this>org}" visible="{= !!${$this>org}}"/>
+		</f:SimpleForm>
+	</m:VBox>
+</core:FragmentDefinition>

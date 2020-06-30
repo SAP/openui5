@@ -60,12 +60,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/initial/_internal/connectors/KeyUserConnector"]
 				}
 			},
-			"initial/api/connectors/FileListBaseConnector": {
-				group: "Initial API",
-				coverage: {
-					only: ["sap/ui/fl/initial/api/connectors/FileListBaseConnector"]
-				}
-			},
 			"initial/_internal/Storage": {
 				group: "Initial Internal",
 				ui5: {
@@ -211,6 +205,25 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/controlVariants/URLHandler"]
 				}
 			},
+			"apply/_internal/connectors/ObjectStorageConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
+						"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
+						"sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
+				}
+			},
+			"apply/_internal/connectors/ObjectStorageUtils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"]
+				}
+			},
 			"apply/_internal/controlVariants/Utils": {
 				group: "Apply Internal",
 				coverage: {
@@ -303,6 +316,15 @@ sap.ui.define([
 					resourceroots: {
 						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
 					}
+				}
+			},
+			"apply/api/DelegateMediatorAPI": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/api/DelegateMediatorAPI",
+						"sap/ui/fl/apply/_internal/DelegateMediator"
+					]
 				}
 			},
 			"write/api/ChangesWriteAPI": {
@@ -398,12 +420,6 @@ sap.ui.define([
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/connectors/Utils"]
-				}
-			},
-			"write/_internal/connectors/ObjectStorageUtils": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/write/_internal/connectors/ObjectStorageUtils"]
 				}
 			},
 			"write/_internal/connectors/PersonalizationConnector": {
@@ -509,6 +525,12 @@ sap.ui.define([
 						"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 						"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChange"
 					]
+				}
+			},
+			"write/api/connectors/FileListBaseConnector": {
+				group: "Initial API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/connectors/FileListBaseConnector"]
 				}
 			},
 			"descriptorRelated/internal/Utils": {

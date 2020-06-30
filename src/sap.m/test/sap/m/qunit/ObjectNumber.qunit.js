@@ -228,198 +228,51 @@ sap.ui.define([
 		on7.destroy();
 	});
 
-	QUnit.module("Screen reader support");
+	QUnit.module("Screen reader support", {
+		beforeEach: function () {
+			this.oON = new ObjectNumber({
+				number: 256,
+				unit: "EUR"
+			});
+			this.oONStateId = this.oON.getId() + "-state";
 
-	QUnit.test("Basic rendering - state: None", function(assert) {
-		ariaLabelSetCorrectly(ValueState.None);
-	});
-
-	QUnit.test("Basic rendering - state: Success", function(assert) {
-		ariaLabelSetCorrectly(ValueState.Success);
-	});
-
-	QUnit.test("Basic rendering - state: Warning", function(assert) {
-		ariaLabelSetCorrectly(ValueState.Warning);
-	});
-
-	QUnit.test("Basic rendering - state: Error", function(assert) {
-		ariaLabelSetCorrectly(ValueState.Error);
-	});
-
-	QUnit.test("Value state None (default)", function(assert) {
-
-		// System under test
-		var oObjectNumber = new ObjectNumber({
-			number: 256,
-			unit: "EUR"
-		});
-
-		oObjectNumber.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		assert.strictEqual(oObjectNumber.$("state").length, 0, "No label for the default state.");
-
-		// Clean up
-		oObjectNumber.destroy();
-	});
-
-	QUnit.test("Value state Success", function(assert) {
-
-		// System under test
-		var oObjectNumber = new ObjectNumber({
-			number: 256,
-			unit: "EUR",
-			state: ValueState.Success
-		});
-
-		oObjectNumber.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		var $valueState = oObjectNumber.$("state");
-		assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
-		assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-		assert.strictEqual($valueState.attr("aria-hidden"), "false", "The label has aria-hidden=\"false\".");
-		assert.strictEqual($valueState.html(),
-					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_SUCCESS"),
-					"The text for value state \"Success\" is taken from the message bundle."
-		);
-
-		// Clean up
-		oObjectNumber.destroy();
-	});
-
-	QUnit.test("Value state Warning", function(assert) {
-
-		// System under test
-		var oObjectNumber = new ObjectNumber({
-			number: 256,
-			unit: "EUR",
-			state: ValueState.Warning
-		});
-
-		oObjectNumber.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		var $valueState = oObjectNumber.$("state");
-		assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
-		assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-		assert.strictEqual($valueState.attr("aria-hidden"), "false", "The label has aria-hidden=\"false\".");
-		assert.strictEqual($valueState.html(),
-					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_WARNING"),
-					"The text for value state \"Warning\" is taken from the message bundle."
-		);
-
-		// Clean up
-		oObjectNumber.destroy();
-	});
-
-	QUnit.test("Value state Error", function(assert) {
-
-		var oObjectNumber = new ObjectNumber({
-			number: 256,
-			unit: "EUR",
-			state: ValueState.Error
-		});
-
-		oObjectNumber.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		var $valueState = oObjectNumber.$("state");
-		assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
-		assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-		assert.strictEqual($valueState.attr("aria-hidden"), "false", "The label has aria-hidden=\"false\".");
-		assert.strictEqual($valueState.html(),
-					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
-					"The text for value state \"Error\" is taken from the message bundle."
-		);
-
-		// Clean up
-		oObjectNumber.destroy();
-	});
-
-	QUnit.test("Value state Error set with setState when the state initialy was Warning", function(assert) {
-
-		var oObjectNumber = new ObjectNumber({
-			number: 256,
-			unit: "EUR",
-			state: ValueState.Warning
-		});
-
-		oObjectNumber.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		oRenderSpy = this.spy(oObjectNumber, "invalidate");
-		oObjectNumber.setState(ValueState.Error);
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		var $valueState = oObjectNumber.$("state");
-		assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
-		assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-		assert.strictEqual($valueState.attr("aria-hidden"), "false", "The label has aria-hidden=\"false\".");
-		assert.strictEqual($valueState.text(),
-					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
-					"The text for value state \"Error\" is taken from the message bundle."
-		);
-
-		// Clean up
-		oObjectNumber.destroy();
-	});
-
-	QUnit.test("Value state Error set with setState when the state initialy was None", function(assert) {
-
-		var oRenderSpy,
-			oObjectNumber = new ObjectNumber({
-			number: 256,
-			unit: "EUR"
-		});
-
-		oObjectNumber.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		oRenderSpy = this.spy(oObjectNumber, "invalidate");
-		oObjectNumber.setState(ValueState.Error);
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		var $valueState = oObjectNumber.$("state");
-		assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
-		assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
-		assert.strictEqual($valueState.attr("aria-hidden"), "false", "The label has aria-hidden=\"false\".");
-		assert.strictEqual($valueState.html(),
-					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
-					"The text for value state \"Error\" is taken from the message bundle."
-		);
-		assert.strictEqual(oRenderSpy.callCount, 1, "ObjectNumber was rerendered");
-
-		// Clean up
-		oObjectNumber.destroy();
-		oRenderSpy.restore();
-	});
-
-	function ariaLabelSetCorrectly(labelState){
-		// System under test
-		var oObjectNumber = new ObjectNumber({
-			number: 256,
-			unit: "EUR",
-			state: labelState
-		});
-
-		oObjectNumber.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		if (oObjectNumber.getState() !== ValueState.None) {
-			assert.equal(oObjectNumber.$().attr("aria-describedby"), oObjectNumber.getId() + "-state", "aria-describedby is set correctly.");
-		} else {
-			assert.equal(oObjectNumber.$().attr("aria-describedby"), undefined, "aria-describedby is set correctly.");
+			this.oON.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oON.destroy();
 		}
 
-		// Clean up
-		oObjectNumber.destroy();
-	}
+	});
+
+	QUnit.test("Default ObjectNumber", function (assert) {
+		var oStateElement = document.getElementById(this.oONStateId);
+		assert.notOk(oStateElement, "Additional SPAN for the state isn't created");
+	});
+
+	QUnit.test("ObjectNumber with state (different than 'None')", function (assert) {
+		var oCore = sap.ui.getCore(),
+			sErrorText = oCore.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
+			oStateElement;
+
+		this.oON.setState(ValueState.Error);
+		oCore.applyChanges();
+
+		oStateElement = document.getElementById(this.oONStateId);
+		assert.ok(oStateElement, "A SPAN with the state is created");
+		assert.ok(oStateElement.classList.contains("sapUiPseudoInvisibleText"), "SPAN is pseudo invisible instead of invisible");
+		assert.notOk(oStateElement.getAttribute("aria-hidden"), "There's no aria-hidden attribute on the SPAN");
+		assert.strictEqual(oStateElement.innerHTML, sErrorText, "Control has mapped the correct state text");
+	});
+
+	QUnit.test("ObjectNumber with ariaDescribedBy association", function (assert) {
+		var oDescription = new sap.m.Text({ text: "Description" }),
+			sAriaDescribedByReferences;
+
+		this.oON.addAriaDescribedBy(oDescription);
+		sap.ui.getCore().applyChanges();
+
+		sAriaDescribedByReferences = this.oON.getDomRef().getAttribute("aria-describedby");
+		assert.strictEqual(sAriaDescribedByReferences, oDescription.getId(), "Description's ID is placed in aria-describedby");
+	});
 });

@@ -2001,12 +2001,18 @@ sap.ui.define([
 	 * Applications or frameworks must not use this method to generically read the content of an aggregation.
 	 * Use the concrete method get<i>XYZ</i> for aggregation 'XYZ' instead.
 	 *
-	 * @param {string}
-	 *            sAggregationName the name of the aggregation
-	 * @param {sap.ui.base.ManagedObject | Array}
-	 *			  oDefaultForCreation the object that is used in case the current aggregation is empty
-	 * @type sap.ui.base.ManagedObject|Array
-	 * @return the aggregation array in case of 0..n-aggregations or the managed object or null in case of 0..1-aggregations
+	 * @param {string} sAggregationName
+	 *            Name of the aggregation
+	 * @param {sap.ui.base.ManagedObject | Array} [oDefaultForCreation=null]
+	 *            Object that is used in case the current aggregation is empty. If provided, it must be null for
+	 *            0..1 aggregations or an empty array for 0..n aggregations. If not provided, null is used.
+	 *
+	 *            <b>Note:</b> When an empty array is given and used because the aggregation was not set before,
+	 *            then this array will be used for the aggregation from thereon. Sharing the same empty array
+	 *            between different calls to this method therefore is not possible and will result in
+	 *            inconsistencies.
+	 * @returns {sap.ui.base.ManagedObject|sap.ui.base.ManagedObject[]|null}
+	 *            Aggregation array in case of 0..n-aggregations or the managed object or null in case of 0..1-aggregations
 	 * @protected
 	 */
 	ManagedObject.prototype.getAggregation = function(sAggregationName, oDefaultForCreation) {
@@ -3479,10 +3485,10 @@ sap.ui.define([
 		}
 
 		// set only one formatter function if any
-		// because the formatter gets the context of the element we have to set the context via proxy to ensure compatibility
+		// because the formatter gets the context of the element, we have to set the context via proxy to ensure compatibility
 		// for formatter function which is now called by the property binding
 		// proxy formatter here because "this" is the correct cloned object
-		if (oBindingInfo.formatter) {
+		if (typeof oBindingInfo.formatter === "function") {
 			oBinding.setFormatter(oBindingInfo.formatter.bind(this));
 		}
 
@@ -4609,9 +4615,9 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> A ManagedObject inherits models from the Core only when it is a descendant of a UIArea.
 	 *
-	 * @param {sap.ui.model.Model} oModel the model to be set or <code>null</code> or <code>undefined</code>
+	 * @param {sap.ui.model.Model|null|undefined} oModel Model to be set or <code>null</code> or <code>undefined</code>
 	 * @param {string} [sName=undefined] the name of the model or <code>undefined</code>
-	 * @return {sap.ui.base.ManagedObject} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.base.ManagedObject} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ManagedObject.prototype.setModel = function(oModel, sName) {

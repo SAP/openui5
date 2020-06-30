@@ -8,12 +8,14 @@ sap.ui.define([
 	"sap/m/MultiInput",
 	"sap/ui/base/Event",
 	"sap/ui/Device",
-	"sap/ui/events/KeyCodes"
-], function(QUnitUtils, createAndAppendDiv, Tokenizer, Token, MultiInput, Event, Device, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/m/library"
+], function(QUnitUtils, createAndAppendDiv, Tokenizer, Token, MultiInput, Event, Device, KeyCodes, Library) {
 	createAndAppendDiv("content");
 
 
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		TokenizerRenderMode = Library.TokenizerRenderMode;
 
 
 	QUnit.module("Init", {
@@ -27,16 +29,6 @@ sap.ui.define([
 
 	QUnit.test("test scroll width", function(assert) {
 		assert.strictEqual(this.tokenizer.getScrollWidth(), 0, 'Scroll width should be 0 when control is not rendered');
-	});
-
-	QUnit.test("scrollToStart before tokenizer is rendered", function(assert) {
-		var fnDeactivateScrollSpy = this.spy(this.tokenizer, "_deactivateScrollToEnd");
-
-		// act
-		this.tokenizer.scrollToStart();
-
-		// assert
-		assert.equal(fnDeactivateScrollSpy.callCount, 0, "_deactivateScrollToEnd was not called");
 	});
 
 	QUnit.test("scrollToEnd after tokenizer is rendered", function(assert) {
@@ -323,13 +315,14 @@ sap.ui.define([
 		assert.equal(aSelectedTokens.length, 2, "2 selected tokens");
 		assert.equal(aSelectedTokens[0], token1, "correct selected token1");
 		assert.equal(aSelectedTokens[1], token3, "correct selected token3");
-		assert.equal(this.tokenizer.isAllTokenSelected(), false, "not all tokens are selected");
+		assert.notEqual(aSelectedTokens.length, this.tokenizer.getTokens().length, "not all tokens are selected");
 
 		// act
 		token2.setSelected(true);
+		aSelectedTokens = this.tokenizer.getSelectedTokens();
 
 		// assert
-		assert.equal(this.tokenizer.isAllTokenSelected(), true, "all tokens are selected");
+		assert.equal(aSelectedTokens.length, this.tokenizer.getTokens().length, "all tokens are selected");
 	});
 
 	QUnit.test("test keyboard select all", function(assert) {
@@ -441,6 +434,39 @@ sap.ui.define([
 		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
 	});
 
+	QUnit.test("_getPixelWidth", function(assert) {
+		// Arrange
+		var oToken1 = new Token({text:"Token 1"}),
+			oToken2 = new Token({text:"Token 1"}),
+			sTokenizerWidth,
+			iPaddingLeft;
+
+		// Act
+		this.tokenizer.setTokens([oToken1, oToken2]);
+		sap.ui.getCore().applyChanges();
+		iPaddingLeft = parseInt(this.tokenizer.$().css("padding-left"));
+		sTokenizerWidth = this.tokenizer._getPixelWidth();
+
+		// Assert
+		assert.strictEqual(sTokenizerWidth, this.tokenizer.getDomRef().clientWidth - iPaddingLeft, "When there is no maxWidth set, the client width of the tokenizer should be taken for calculation.");
+
+		// Act
+		this.tokenizer.setMaxWidth("3rem");
+		sap.ui.getCore().applyChanges();
+		sTokenizerWidth = this.tokenizer._getPixelWidth();
+
+		// Assert
+		assert.strictEqual(sTokenizerWidth, this.tokenizer.getDomRef().clientWidth - iPaddingLeft, "When the maxWidth is not set in pixels, the client width of the tokenizer should be taken for calculation.");
+
+		// Act
+		this.tokenizer.setMaxWidth("99px");
+		sap.ui.getCore().applyChanges();
+		sTokenizerWidth = this.tokenizer._getPixelWidth();
+
+		// Assert
+		assert.strictEqual(sTokenizerWidth, 99 - iPaddingLeft, "When the maxWidth is set in pixels, the maxWidth property should be taken for calculation.");
+	});
+
 	QUnit.module("Setters", {
 		beforeEach : function() {
 			this.tokenizer = new Tokenizer();
@@ -466,15 +492,6 @@ sap.ui.define([
 
 		assert.strictEqual(this.tokenizer.getEditable(), false, "The property of the Tokenizer was set.");
 		assert.strictEqual(oToken.getProperty("editableParent"), false, "The editableParent property of the Token was correctly set");
-	});
-
-	QUnit.test("setEditable with one token should call _adjustTokensVisibility method", function () {
-		var oSpy = this.spy(this.tokenizer, "_adjustTokensVisibility");
-
-		this.tokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
-		this.tokenizer.setEditable(false);
-
-		assert.ok(oSpy.calledOnce, "The method was called once.");
 	});
 
 	QUnit.test("setWidth and setPixelWidth", function(assert) {
@@ -515,7 +532,9 @@ sap.ui.define([
 
 	QUnit.test("setMaxWidth in adjustable tokenizer calls _adjustTokensVisibility", function(assert) {
 		var MAX_WIDTH = "300px";
-		this.tokenizer._setAdjustable(true);
+		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
+		this.tokenizer.addToken(new Token({key:"XXX", text: "XXX"}));
+		sap.ui.getCore().applyChanges();
 
 		// act
 		var spy = this.spy(Tokenizer.prototype, "_adjustTokensVisibility");
@@ -524,7 +543,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(spy.called, "tokenizer's _adjustTokensVisibility is called");
+		assert.strictEqual(spy.callCount, 1, "tokenizer's _adjustTokensVisibility was called once");
 
 		spy.restore();
 	});
@@ -536,6 +555,27 @@ sap.ui.define([
 
 		// assert
 		assert.ok(jQuery(this.tokenizer.getDomRef()).hasClass("sapMTokenizerDisabled"), "Tokenizer's dom has class sapMTokenizerDisabled");
+	});
+
+	QUnit.test("setHiddenTokensCount", function(assert) {
+		var oSpy;
+
+		// assert
+		assert.strictEqual(this.tokenizer.getHiddenTokensCount(), 0, "Initially the hidden tokens count is 0");
+		// act
+		this.tokenizer._setHiddenTokensCount(5);
+		// assert
+		assert.strictEqual(this.tokenizer.getHiddenTokensCount(), 5, "The Token's count was correctly set to 5");
+
+		oSpy = sinon.spy(this.tokenizer, "_setHiddenTokensCount");
+		// act
+		try {
+			this.tokenizer._setHiddenTokensCount("x");
+		} catch (e) {
+			// do nothing here
+		}
+		// assert
+		assert.strictEqual(oSpy.threw(), true, "The setter is checking for type match");
 	});
 
 	QUnit.module("Disabled state", {
@@ -567,43 +607,6 @@ sap.ui.define([
 		assert.ok(!oToken.bIsDestroyed, "Token1 is NOT destroyed");
 
 		oFireDeleteSpy.restore();
-	});
-
-	QUnit.module("Scrolling public API", {
-		beforeEach : function() {
-			this.tokenizer = new Tokenizer({
-				width: "200px",
-				tokens : [
-					new Token({ text : "Token 1"}),
-					new Token({ text : "Token 2"}),
-					new Token({ text : "Token 3"})
-				]
-			});
-
-			this.tokenizer.placeAt("content");
-
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function() {
-			this.tokenizer.destroy();
-		}
-	});
-
-	QUnit.test("scrollToStart and scrollToEnd", function(assert) {
-		// assert
-		assert.ok(this.tokenizer._sResizeHandlerId, "Tokenizer has resize handler.");
-
-		// act
-		this.tokenizer.scrollToStart();
-
-		//assert
-		assert.ok(!this.tokenizer._sResizeHandlerId, "Tokenizer's resize handler has been deregistered.");
-
-		// act
-		this.tokenizer.scrollToEnd();
-
-		//assert
-		assert.ok(this.tokenizer._sResizeHandlerId, "Tokenizer has resize handler.");
 	});
 
 	QUnit.module("Keyboard handling", {
@@ -1059,6 +1062,7 @@ sap.ui.define([
 			oTokenizer = new Tokenizer({
 				tokens: [new Token(), new Token(), new Token()]
 			}).placeAt("content");
+		sap.ui.getCore().applyChanges();
 
 		oTokenizer.getTokens()[0].addStyleClass("sapMHiddenToken");
 		sap.ui.getCore().applyChanges();
@@ -1331,7 +1335,7 @@ sap.ui.define([
 			assert.strictEqual(oToken.$().hasClass("sapMHiddenToken"), false, "Token on position " +  iIndex +  " is visible");
 		});
 
-		this.tokenizer._useCollapsedMode(true);
+		this.tokenizer.setRenderMode(sap.m.TokenizerRenderMode.Narrow);
 		sap.ui.getCore().applyChanges();
 
 		aTokens = this.tokenizer.getTokens();
@@ -1345,7 +1349,7 @@ sap.ui.define([
 		assert.ok(oIndicator, true, "N-more label is added.");
 		assert.strictEqual(oIndicator.innerHTML, oRb.getText("MULTIINPUT_SHOW_MORE_TOKENS", iHiddenTokens), "N-more label's text is correct.");
 
-		this.tokenizer._useCollapsedMode(false);
+		this.tokenizer.setRenderMode(TokenizerRenderMode.Loose);
 		sap.ui.getCore().applyChanges();
 
 		aTokens = this.tokenizer.getTokens();
@@ -1368,7 +1372,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// act
-		this.tokenizer._useCollapsedMode(true);
+		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -1398,12 +1402,11 @@ sap.ui.define([
 			]
 		});
 
-		oTokenizer._setAdjustable(true);
 		oTokenizer.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
 		// act
-		oTokenizer._useCollapsedMode(true);
+		oTokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -1593,7 +1596,7 @@ sap.ui.define([
 	QUnit.test("Small container + One long truncated token should call setFirstTokenTruncated with false", function(assert) {
 		// Arrange
 		var oSpy = this.spy(this.tokenizer, 'setFirstTokenTruncated');
-		this.tokenizer._setAdjustable(true);
+		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 		this.tokenizer.getTokens()[0].setTruncated(true);
 
 		// Act
@@ -1652,16 +1655,18 @@ sap.ui.define([
 
 	QUnit.test("Removes token truncation after resize", function(assert) {
 		// Arrange
-		this.tokenizer._setAdjustable(true);
+		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 		this.tokenizer.setFirstTokenTruncated(true);
 
 		// Act
 		this.tokenizer.setMaxWidth("500px");
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), false, "Token's truncation was removed.");
 
 		this.tokenizer.setMaxWidth("100px");
+		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), true, "Token's truncation was set again after resize.");
 	});

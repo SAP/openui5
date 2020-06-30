@@ -19,6 +19,8 @@ sap.ui.define([
 	"./DynamicPageRenderer",
 	"sap/base/Log",
 	"sap/ui/dom/getScrollbarSize",
+	"sap/ui/core/theming/Parameters",
+	'sap/ui/dom/units/Rem',
 	"sap/ui/core/library"
 ], function(
 	library,
@@ -36,6 +38,8 @@ sap.ui.define([
 	DynamicPageRenderer,
 	Log,
 	getScrollbarSize,
+	Parameters,
+	DomUnitsRem,
 	coreLibrary
 ) {
 	"use strict";
@@ -365,6 +369,7 @@ sap.ui.define([
 			}};
 
 		this._setAriaRoleDescription(Core.getLibraryResourceBundle("sap.f").getText(DynamicPage.ARIA_ROLE_DESCRIPTION));
+		this._iHeaderContentPaddingBottom = DomUnitsRem.toPx(Parameters.get("_sap_f_DynamicPageHeader_PaddingBottom"));
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
@@ -450,13 +455,11 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.setHeader = function (oHeader) {
-		var oOldHeader;
+		var oOldHeader = this.getHeader();
 
 		if (oHeader === oOldHeader) {
-			return;
+			return this;
 		}
-
-		oOldHeader = this.getHeader();
 
 		if (oOldHeader) {
 			if (this._oStickyHeaderObserver) {
@@ -596,13 +599,14 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._toggleFooter = function (bShow) {
 		var oFooter = this.getFooter(),
-			bUseAnimations;
+			bUseAnimations, sAnimationMode;
 
 		if (!exists(this.$()) || !exists(oFooter) || !exists(this.$footerWrapper)) {
 			return;
 		}
 
-		bUseAnimations = Core.getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none;
+		sAnimationMode = Core.getConfiguration().getAnimationMode();
+		bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 		this._toggleFooterSpacer(bShow);
 
 		if (bUseAnimations) {
@@ -1064,7 +1068,7 @@ sap.ui.define([
 			iScrollPosition;
 
 		iScrollPosition = this._getScrollPosition();
-		bIsInSnappingHeight = iScrollPosition <= Math.ceil(this._getHeaderHeight()) && !this._bPinned && !this.getPreserveHeaderStateOnScroll();
+		bIsInSnappingHeight = iScrollPosition < Math.ceil(this._getHeaderHeight() - this._iHeaderContentPaddingBottom) && !this._bPinned && !this.getPreserveHeaderStateOnScroll();
 
 		// If the scroll position is 0, the sticky content should be always in the DOM of content provider.
 		// If the scroll position is <= header height and at all we can use the snapping height (bIsInSnappingHeight)
@@ -1120,7 +1124,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._getSnappingHeight = function () {
-			return Math.ceil(this._getHeaderHeight() || this._getTitleHeight());
+			return Math.ceil(this._getHeaderHeight() || this._getTitleHeight()) - this._iHeaderContentPaddingBottom;
 	};
 
 	/**
@@ -1755,7 +1759,7 @@ sap.ui.define([
 			this._cacheTitleDom();
 			this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE);
 			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE, this.$title[0], this._onChildControlsHeightChange.bind(this));
-		} else if (oSourceControl instanceof DynamicPageHeader) {
+		} else if (oSourceControl instanceof DynamicPageHeader && oSourceControl.getDomRef() !== this.$header.get(0)) {
 			this._cacheHeaderDom();
 			this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.HEADER);
 			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.HEADER, this.$header[0], this._onChildControlsHeightChange.bind(this));
@@ -1788,6 +1792,7 @@ sap.ui.define([
 
 		if (oHeader && oEvent.target.id === oHeader.getId()) {
 			this._updateHeaderVisualState();
+			this._adaptScrollPositionOnHeaderChange(oEvent.size.height, oEvent.oldSize.height);
 		}
 	};
 
@@ -1918,6 +1923,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * When the header is in the overflow of the scroll container, it still takes space and whenever its height changes,
+	 * it affects the scroll position of the scrollable content bellow it. Whenever its height increases/decreases,
+	 * the content bellow it is pushed down or up, respectively.
+	 * To avoid a visual jump of the visible content upon change in the header height, we adjust the scroll position
+	 * accordingly, to compensate the increase/decrease of header height.
+	 * @param iNewHeight
+	 * @param iOldHeigh
+	 * @private
+	 */
+	DynamicPage.prototype._adaptScrollPositionOnHeaderChange = function (iNewHeight, iOldHeigh) {
+		var iHeightChange =  iNewHeight - iOldHeigh;
+		// check if the header is in the scroll overflow (i.e. is snapped by being scrolled out of view)
+		if (iHeightChange && !this.getHeaderExpanded() && !this._bHeaderInTitleArea && this._needsVerticalScrollBar()) {
+			this._setScrollPosition(this._getScrollPosition() + iHeightChange);
+		}
+	};
+
+	/**
 	 * Handles the title press event and prevents the collapse/expand, if necessary
 	 * @private
 	 */
@@ -2002,7 +2025,7 @@ sap.ui.define([
 			var bMoveHeaderToContent = this._bHeaderInTitleArea;
 			this._snapHeader(bMoveHeaderToContent, bUserInteraction);
 			if (!bMoveHeaderToContent) {
-				this._setScrollPosition(this._getSnappingHeight());
+				this._setScrollPosition(this._getSnappingHeight() + this._iHeaderContentPaddingBottom);
 			}
 		}
 	};

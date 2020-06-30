@@ -1,0 +1,169 @@
+{
+	"_version": "0.1.0",
+	"sap.app": {
+		"_version": "0.1.0",
+		"id": "sap.ui.v4demo",
+		"type": "application",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"default": {
+				"uri": "/tenant(mdcmanagedbooks)/catalog-test/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"_version": "0.1.0",
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_belize"
+		]
+	},
+	"sap.ui5": {
+		"_version": "1.7.0",
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.v4demo.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "books",
+					"target": [
+						"books"
+					]
+				},
+				{
+					"pattern": "Books/{bookId}",
+					"name": "bookdetails",
+					"target": [
+						"bookdetails"
+					]
+				},
+				{
+					"pattern": "Authors/{authorId}",
+					"name": "authordetails",
+					"target": [
+						"authordetails"
+					]
+				},
+				{
+					"pattern": "Orders/{orderId}",
+					"name": "orderdetails",
+					"target": [
+						"orderdetails"
+					]
+				},
+				{
+					"pattern": "Orders/{orderId}/{orderItemId}",
+					"name": "orderitemdetails",
+					"target": [
+						"orderitemdetails"
+					]
+				},
+				{
+					"pattern": "authors",
+					"name": "authors",
+					"target": [
+						"authors"
+					]
+				},
+				{
+					"pattern": "orders",
+					"name": "orders",
+					"target": [
+						"orders"
+					]
+				}
+			],
+			"targets": {
+				"orders": {
+					"viewId": "orders",
+					"viewName": "Orders"
+				},
+				"bookdetails": {
+					"viewId": "bookdetails",
+					"viewName": "BookDetails"
+				},
+				"authordetails": {
+					"viewId": "authordetails",
+					"viewName": "AuthorDetails"
+				},
+				"orderdetails": {
+					"viewId": "orderdetails",
+					"viewName": "OrderDetails"
+				},
+				"orderitemdetails": {
+					"viewId": "orderitemdetails",
+					"viewName": "OrderItemDetails"
+				},
+				"books": {
+					"viewId": "books",
+					"viewName": "Books"
+				},
+				"authors": {
+					"viewId": "authors",
+					"viewName": "Authors"
+				}
+			}
+		},
+		"rootView": {
+			"viewName": "sap.ui.v4demo.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.70",
+			"libs": {
+				"sap.m": {
+					"lazy": true
+				},
+				"sap.ui.layout": {
+					"lazy": true
+				},
+				"sap.ui.fl": {
+					"lazy": false
+				},
+				"sap.ui.mdc": {
+					"lazy": true
+				}
+			}
+		},
+		"autoPrefixId": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"operationMode": "Server",
+					"synchronizationMode": "None",
+					"updateGroupId": "booksGroup"
+				},
+				"type": "sap.ui.model.odata.v4.ODataModel"
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		}
+	}
+}

@@ -1,0 +1,75 @@
+{
+  "1.72.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "f0a53ae3f8469f28ac74c1b2097e38c2105308a1",
+        "type": "FIX",
+        "text": " FieldHelp: set BindingContext only if changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980425631"
+          }
+        ]
+      },
+      {
+        "id": "0c1790d280dd889b763995f1c6251bed382beb37",
+        "type": "FEATURE",
+        "text": " Field: unit or currency not editable",
+        "references": []
+      },
+      {
+        "id": "7ea641f003c0a7390ca1b1a3173200b263b2e690",
+        "type": "FIX",
+        "text": " FieldValueHelp: do not trigger request if closed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980411343"
+          }
+        ]
+      },
+      {
+        "id": "ff3e0a710e7ad1a1664312e6e1df5d5a990f6646",
+        "type": "FIX",
+        "text": " Panel: hide \u0027More Links\u0027 if there are no items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970436467"
+          }
+        ]
+      },
+      {
+        "id": "5a80f7b10e5c3feb21bb4d522d093b3750d26ead",
+        "type": "FEATURE",
+        "text": " FieldHelp: resume suspended ListBinding only on user action",
+        "references": []
+      },
+      {
+        "id": "ff4981173b9c67409f3f3d7a5bfb641c1500dde8",
+        "type": "FIX",
+        "text": " Field: value not shown in external content control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970494368"
+          }
+        ]
+      },
+      {
+        "id": "f925096d404e967a25b8970e9abcc7ac4e3335f0",
+        "type": "FIX",
+        "text": " Field: wrong value if Delegate not loaded",
+        "references": []
+      },
+      {
+        "id": "b8113782f4c1203e6699101dc1cd2904c7943f7d",
+        "type": "FIX",
+        "text": " mdc.FilterBar: remove unused messages",
+        "references": []
+      }
+    ]
+  }
+}

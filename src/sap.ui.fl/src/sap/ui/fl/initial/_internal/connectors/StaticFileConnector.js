@@ -31,10 +31,10 @@ sap.ui.define([
 	}
 
 	/**
-	 * Connector for requesting flexibility data gereneated as part of the applications build step.
+	 * Connector for requesting flexibility data generated as part of the applications build step.
 	 *
 	 * @namespace sap.ui.fl.initial._internal.connectors.StaticFileConnector
-	 * @implements {sap.ui.fl.interfaces.BaseInitialConnector}
+	 * @implements {sap.ui.fl.interfaces.BaseLoadConnector}
 	 * @since 1.67
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal.Storage

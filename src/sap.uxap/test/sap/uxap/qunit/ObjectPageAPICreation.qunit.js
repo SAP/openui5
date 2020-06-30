@@ -680,11 +680,13 @@ function (
 			oSpy.reset();
 			oObjectPage.setSelectedSection(null);
 
-			oObjectPage.getDomRef().style.display = sOrigDisplay;
-			oObjectPage._onUpdateScreenSize({ // mock resize handler call after size restored
+			setTimeout(function() {
+				oObjectPage.getDomRef().style.display = sOrigDisplay;
+				oObjectPage._onUpdateScreenSize({ // mock resize handler call after size restored
 				size: { width: 1000, height: 1000 },
 				oldSize: { width: 0, height: 0 }
 			});
+
 			setTimeout(function() {
 				// Check: the selection moved to the first visible section
 				oExpected = {
@@ -699,6 +701,9 @@ function (
 				oObjectPage.destroy();
 				done();
 			}, oObjectPage._getDOMCalculationDelay());
+
+		}, 50);
+
 		});
 
 		helpers.renderObject(oObjectPage);
@@ -743,6 +748,50 @@ function (
 
 		helpers.renderObject(oObjectPage);
 	});
+
+
+	QUnit.test("call setSelectedSection(null) when the first visible section is already selected", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oFirstSection = this.oObjectPage.getSections()[0],
+			oSecondSection = this.oObjectPage.getSections()[1],
+			oExpected,
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		// add header content
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
+		oObjectPage.addHeaderContent(oFactory.getHeaderContent());
+
+		oFirstSection.setVisible(false);
+
+		var oDelegate = {
+			onAfterRendering: function () {
+				oObjectPage.removeEventDelegate(oDelegate);
+
+				setTimeout(function() {
+					// Act: change first section to *make it the first visible* AND unset selectedSection
+					oObjectPage.setSelectedSection(null);
+
+					setTimeout(function() {
+						// Check: the selection moved to the first visible section
+						oExpected = {
+							oSelectedSection: oSecondSection,
+							sSelectedTitle: oSecondSection.getSubSections()[0].getTitle() //subsection is promoted
+						};
+						sectionIsSelected(oObjectPage, assert, oExpected);
+						assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expanded");
+						assert.equal(oObjectPage._$opWrapper.scrollTop(), 0, "page is scrolled to top");
+						done();
+					}, 500);
+				}, 500);
+			}
+		};
+
+		oObjectPage.addEventDelegate(oDelegate);
+
+		helpers.renderObject(oObjectPage);
+	});
+
 
 	QUnit.test("scroll to selected section on rerender", function (assert) {
 		var oObjectPage = this.oObjectPage,
@@ -1615,6 +1664,36 @@ function (
 		Core.applyChanges();
 	});
 
+	QUnit.test("test AnchorBar focus section synchronously and immediate after anchor press to prevent loss of focus when header is snapping", function (assert) {
+		assert.expect(1);
+		// Arrange
+		var done = assert.async(),
+			iSectionCount = 3,
+			iSubSectionCount = 1,
+			oPage = helpers.generateObjectPageWithSubSectionContent(oFactory, iSectionCount, iSubSectionCount),
+			oABHelper = oPage._oABHelper,
+			oAnchorBar = oABHelper._getAnchorBar(),
+			oLastSectionButton,
+			oLastSection = oPage.getSections()[iSectionCount - 1],
+			fnOnDomReady = function () {
+				// Arrange
+				oLastSectionButton = oAnchorBar.getContent()[iSectionCount - 1];
+				// Act
+				oLastSectionButton.firePress();
+
+				// Assert
+				assert.strictEqual(document.activeElement, oLastSection.getDomRef(), "Section is focused synchronously");
+
+				// Clean
+				oPage.destroy();
+				done();
+			};
+
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+		oPage.placeAt('qunit-fixture');
+		Core.applyChanges();
+	});
+
 	QUnit.module("ObjectPage API: ObjectPageHeader", {
 		beforeEach: function (assert) {
 			var done = assert.async();
@@ -2153,6 +2232,58 @@ function (
 
 		oObjectPage.addEventDelegate(oDelegate);
 		oObjectPage.placeAt("qunit-fixture");
+	});
+
+	QUnit.test("setShowHeaderContent does not invalidate the objectPage", function (assert) {
+		// Arrange
+		var oObjectPage = new ObjectPageLayout({
+			headerTitle: new ObjectPageDynamicHeaderTitle({
+				backgroundDesign: "Solid"
+			}),
+			headerContent: new Button({
+				text: "Button"
+			}),
+			sections:
+						oFactory.getSection(1, null, [
+							oFactory.getSubSection(1, [oFactory.getBlocks(), oFactory.getBlocks()], null),
+							oFactory.getSubSection(2, [oFactory.getBlocks(), oFactory.getBlocks()], null),
+							oFactory.getSubSection(3, [oFactory.getBlocks(), oFactory.getBlocks()], null),
+							oFactory.getSubSection(4, [oFactory.getBlocks(), oFactory.getBlocks()], null)
+						])
+			}),
+			oObjectPageRenderSpy = sinon.spy(),
+			oAdjustHeaderHeightsSpy,
+			oRequestAdjustLayoutSpy,
+			oHeaderContentRenderSpy,
+			done = assert.async();
+
+		assert.expect(4);
+		helpers.renderObject(oObjectPage);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oObjectPage.addEventDelegate({
+				onAfterRendering: oObjectPageRenderSpy
+			});
+
+			oAdjustHeaderHeightsSpy = sinon.spy(oObjectPage, "_adjustHeaderHeights");
+			oRequestAdjustLayoutSpy = sinon.spy(oObjectPage, "_requestAdjustLayout");
+			oHeaderContentRenderSpy = sinon.spy(oObjectPage._getHeaderContent(), "invalidate");
+
+			// Act
+			oObjectPage.setShowHeaderContent(false);
+
+			setTimeout(function() {
+				// Assert
+				assert.equal(oObjectPageRenderSpy.callCount, 0, "OPL is not rerendered");
+				assert.equal(oHeaderContentRenderSpy.callCount, 1, "headerContent is rerendered");
+				assert.equal(oAdjustHeaderHeightsSpy.callCount, 1, "_adjustHeaderHeights is called once");
+				assert.equal(oRequestAdjustLayoutSpy.callCount, 1, "_requestAdjustLayout is called once");
+
+				// Clean up
+				oObjectPage.destroy();
+				done();
+			}, 500);
+		});
 	});
 
 	QUnit.module("ObjectPage API: Header", {
@@ -3152,6 +3283,39 @@ function (
 
 			// Cleanup
 			oObjectPage.destroy();
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
+	QUnit.test("Snapping Header with ObjectPageDynamicHeaderTitle when expandedHeading has bigger height than snappedHeading",
+	function (assert) {
+
+		// Arrange
+		var oObjectPage = oFactory.getObjectPageLayoutWithOneVisibleSection(),
+			oHeader = oFactory.getObjectPageDynamicHeaderTitle(),
+			fnDone = assert.async();
+
+		assert.expect(1);
+
+		oHeader.setSnappedHeading(new Button({text: "Heading Button"}));
+		oHeader.setExpandedHeading(new Button({text: "Heading Button"}));
+		oObjectPage.setShowAnchorBar(false);
+		oObjectPage.addHeaderContent(new Button());
+		oObjectPage.setHeaderTitle(oFactory.getObjectPageDynamicHeaderTitle());
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// Act - Snap header
+			oObjectPage._handleDynamicTitlePress();
+
+			setTimeout(function() {
+				// Assert
+				assert.strictEqual(oObjectPage._bHeaderExpanded, false, "Header is collapsed");
+
+				// Cleanup
+				oObjectPage.destroy();
+				fnDone();
+			}, 100);
 		});
 
 		helpers.renderObject(oObjectPage);

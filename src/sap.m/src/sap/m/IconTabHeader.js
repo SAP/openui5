@@ -149,7 +149,17 @@ sap.ui.define([
 			 * For compatibility reasons, the default value is <code>Cozy</code>.
 			 * @since 1.56
 			 */
-			tabDensityMode :{type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy}
+			tabDensityMode :{type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy},
+
+			/**
+			 * Specifies optional texts for the screen reader.
+			 *
+			 * The given object can contain the following keys:
+			 * <code>headerLabel</code> - text to serve as a label for the header,
+			 * <code>headerDescription</code> - text to serve as a description for the header.
+			 * @since 1.80
+			 */
+			ariaTexts : {type : "object", group : "Accessibility", defaultValue : null}
 		},
 		aggregations : {
 
@@ -199,7 +209,6 @@ sap.ui.define([
 	IconTabHeader.prototype.init = function () {
 		this._aTabKeys = [];
 		this._oAriaHeadText = null;
-		this._oAriaTexts = {};
 	};
 
 	IconTabHeader.prototype.exit = function () {
@@ -232,7 +241,6 @@ sap.ui.define([
 			this._oAriaHeadText.destroy();
 			this._oAriaHeadText = null;
 		}
-		this._oAriaTexts = null;
 		this._bRtl = null;
 	};
 
@@ -305,13 +313,16 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabHeader.prototype._getInvisibleHeadText = function () {
+
+		var mAriaTexts = this.getAriaTexts() || {};
+
 		if (!this._oAriaHeadText) {
 			this._oAriaHeadText = new InvisibleText({
 				id: this.getId() + "-ariaHeadText"
 			});
 		}
 
-		this._oAriaHeadText.setText(this._oAriaTexts.headerDescription);
+		this._oAriaHeadText.setText(mAriaTexts.headerDescription);
 		return this._oAriaHeadText;
 	};
 
@@ -1174,13 +1185,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * @private
-	 */
-	IconTabHeader.prototype._setAriaTexts = function (oAriaTexts) {
-		this._oAriaTexts = oAriaTexts || {};
-	};
-
 	/* =========================================================== */
 	/*           begin: event handlers                             */
 	/* =========================================================== */
@@ -1270,6 +1274,10 @@ sap.ui.define([
 		}
 
 		IconTabBarDragAndDropUtil.handleDrop(oContext, oEventDropPosition, oDraggedControl._getRealTab(), oDroppedControl, false, allowedNestingLevel);
+
+		if (oDraggedControl._getNestedLevel() > 1) {
+			oDraggedControl._getRootTab()._closePopover();
+		}
 
 		this._setItemsForStrip();
 		this._initItemNavigation();

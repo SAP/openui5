@@ -22,6 +22,8 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/CustomData",
 	"sap/ui/thirdparty/sinon-4"
@@ -47,6 +49,8 @@ sap.ui.define([
 	uid,
 	isEmptyObject,
 	JsControlTreeModifier,
+	JSONModel,
+	DelegateMediatorAPI,
 	ObjectPath,
 	CustomData,
 	sinon
@@ -70,6 +74,15 @@ sap.ui.define([
 			return true;
 		}
 	};
+
+	var TEST_DELEGATE_PATH = "sap/ui/rta/enablement/TestDelegate";
+
+	//ensure a default delegate exists for a model not used anywhere else
+	var SomeModel = JSONModel.extend("sap.ui.rta.qunit.test.Model");
+	DelegateMediatorAPI.registerDefaultDelegate({
+		modelType: SomeModel.getMetadata().getName(),
+		delegate: TEST_DELEGATE_PATH
+	});
 
 	var fnRegisterControlsForChanges = function () {
 		// asynchronous registration. Returns a promise
@@ -224,6 +237,18 @@ sap.ui.define([
 				},
 				sibling: true,
 				msg: "when the control's dt metadata has an add.delegate and NO reveal action"
+			},
+			{
+				dtMetadata: {
+					add: {
+						delegate: {
+							changeType: "foo",
+							supportsDefaultDelegate: true
+						}
+					}
+				},
+				sibling: true,
+				msg: "when the control's dt metadata has an add.delegate with default delegate and NO reveal action"
 			},
 			{
 				dtMetadata: {
@@ -789,6 +814,7 @@ sap.ui.define([
 						jsOnly: undefined,
 						oDataServiceUri: undefined,
 						oDataServiceVersion: undefined,
+						modelType: undefined,
 						runtimeOnly: undefined,
 						selector: {
 							id: oElement.getId(),
@@ -837,6 +863,80 @@ sap.ui.define([
 					}.bind(this));
 			});
 
+			QUnit.test(sPrefix + "when the control's dt metadata has only an add via delegate action and a default delegate is available", function (assert) {
+				var done = assert.async();
+				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(oDummyChangeHandler);
+				sandbox.spy(oDummyChangeHandler, "completeChangeContent");
+				var sChangeType = "addFields";
+				var oElement;
+
+				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
+					var iExpectedIndex = 0;
+					if (test.sibling) {
+						iExpectedIndex = 1;
+						oElement = oElement.getParent();
+					}
+					var oExpectedCommandProperties = {
+						newControlId: "bar_EntityType01_Property03",
+						index: iExpectedIndex,
+						bindingString: "Property03",
+						entityType: "EntityType01",
+						parentId: "bar",
+						propertyName: "Name1",
+						name: "addDelegateProperty",
+						changeType: sChangeType,
+						jsOnly: undefined,
+						oDataServiceUri: undefined,
+						oDataServiceVersion: undefined,
+						modelType: SomeModel.getMetadata().getName(),
+						runtimeOnly: undefined,
+						selector: {
+							id: oElement.getId(),
+							appComponent: oMockedAppComponent,
+							controlType: oElement.getMetadata().getName()
+						}
+					};
+					var oCompositeCommand = oEvent.getParameter("command");
+					var aCommands = oCompositeCommand.getCommands();
+
+					assert.strictEqual(aCommands.length, 1, "then one command was created");
+					assert.ok(oDummyChangeHandler.completeChangeContent.calledOnce, "then addViaDelegate change handler's completeChangeContent() was called");
+
+					var oCommand = aCommands[0];
+					assert.deepEqual(oCommand.mProperties, oExpectedCommandProperties, "then the command was created correctly");
+
+					done();
+				});
+
+				return test.overlay.call(this, {
+					add: {
+						delegate: {
+							changeType: sChangeType,
+							supportsDefaultDelegate: true
+						}
+					}
+				}, test.sibling ? ON_SIBLING : ON_CHILD)
+
+					.then(function (oCreatedOverlay) {
+						oElement = oCreatedOverlay.getElement();
+						return this.oPlugin.showAvailableElements(test.sibling, [oCreatedOverlay])
+							.then(function() {
+								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oCreatedOverlay]), true, "then isEnabled() returns true");
+							}.bind(this));
+					}.bind(this))
+
+					.then(function () {
+						assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 1, "then the analyzer was called once for addViaDelegate elements");
+						assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
+						assert.equal(this.fnGetUnboundODataPropertiesStub.callCount, 0, "then the analyzer was not called for addODataProperty elements");
+						assert.equal(this.fnGetCustomAddItemsSpy.callCount, 0, "then the analyzer was not called for addViaCustom items");
+						assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
+						var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function (oElement, iIndex) {
+							return oElement.label === "delegate" + iIndex;
+						});
+						assert.ok(bValidDialogElements, "then all elements in the dialog are valid");
+					}.bind(this));
+			});
 			QUnit.test(sPrefix + "when the control's dt metadata has addViaDelegate with a valid delegate configured and addODataProperty actions", function (assert) {
 				var done = assert.async();
 				var sChangeType = "addFields";
@@ -905,9 +1005,9 @@ sap.ui.define([
 					.then(function () {
 						assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 0, "then the analyzer was not called for addViaDelegate elements");
 						assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
-						assert.equal(this.fnGetUnboundODataPropertiesStub.callCount, 0, "then the analyzer was called for addODataProperty elements");
+						assert.equal(this.fnGetUnboundODataPropertiesStub.callCount, 1, "then the analyzer was called for addODataProperty elements");
 						assert.equal(this.fnGetCustomAddItemsSpy.callCount, 0, "then the analyzer was not called for addViaCustom items");
-						assertDialogModelLength.call(this, assert, 0, "then no elements are part of the dialog model");
+						assertDialogModelLength.call(this, assert, 3, "then 3 elements are part of the dialog model");
 					}.bind(this));
 			});
 		});
@@ -1911,6 +2011,9 @@ sap.ui.define([
 			content: [this.oControl]
 		});
 
+		//attach a default model used for default delegate determination
+		this.oPseudoPublicParent.setModel(new SomeModel());
+
 		this.oPseudoPublicParent.placeAt('qunit-fixture');
 		sap.ui.getCore().applyChanges();
 
@@ -2014,9 +2117,11 @@ sap.ui.define([
 	}
 
 	function enhanceForAddViaDelegate(mActions) {
-		if (ObjectPath.get(["add", "delegate"], mActions)) {
+		var mAddViaDelegateAction = ObjectPath.get(["add", "delegate"], mActions);
+		if (mAddViaDelegateAction && !mAddViaDelegateAction.supportsDefaultDelegate) {
+			//attach delegate into to the control
 			var oCustomDataValue = {};
-			var sDelegateModulePath = mActions.delegateModulePath || "sap/ui/rta/enablement/TestDelegate";
+			var sDelegateModulePath = mActions.delegateModulePath || TEST_DELEGATE_PATH;
 			oCustomDataValue["sap.ui.fl"] = {
 				delegate: JSON.stringify({
 					name: sDelegateModulePath

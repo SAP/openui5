@@ -131,12 +131,16 @@ sap.ui.define([
 		/*************************************** Lifecycle members ******************************************/
 		DynamicPageHeader.prototype.init = function() {
 			this._bShowCollapseButton = true;
-			this.oInvisibleMessage = InvisibleMessage.getInstance();
+			this._oInvisibleMessage = null;
 		};
 
 		DynamicPageHeader.prototype.onAfterRendering = function () {
 			this._initARIAState();
 			this._initPinButtonARIAState();
+
+			if (!this._oInvisibleMessage) {
+				this._oInvisibleMessage = InvisibleMessage.getInstance();
+			}
 		};
 
 		/*************************************** Private members ******************************************/
@@ -323,7 +327,7 @@ sap.ui.define([
 		 */
 		DynamicPageHeader.prototype._focusCollapseButton = function () {
 			this._getCollapseButton().$().trigger("focus");
-			this.oInvisibleMessage.announce(this._getCollapseButton().getTooltip(), InvisibleMessageMode.Polite);
+			this._oInvisibleMessage.announce(this._getCollapseButton().getTooltip(), InvisibleMessageMode.Polite);
 		};
 
 		/**

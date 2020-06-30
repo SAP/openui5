@@ -1,0 +1,20 @@
+/* =========================================================== */
+/* CSS for control sap.ui.integration.controls/ListContentItem */
+/* Base theme                                                  */
+/* =========================================================== */
+
+@_sap_ui_integration_controls_ListContentItem_ChartHeight: 1rem;
+
+.sapUiIntegrationListContentItem {
+	&.sapUiIntegrationListContentItemWithChart .sapMLIBContent > .sapMSLIDiv {
+		flex-direction: column;
+	}
+
+	&.sapUiIntegrationListContentItemWithChart {
+		height: 5rem;
+	}
+
+	&.sapUiIntegrationListContentItemWithChart.sapMSLIWithDescription {
+		height: 5rem + @_sap_ui_integration_controls_ListContentItem_ChartHeight;
+	}
+}

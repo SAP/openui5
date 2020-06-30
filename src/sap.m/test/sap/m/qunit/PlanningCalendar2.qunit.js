@@ -911,7 +911,7 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(oSetRowsStartDateSpy.callCount, 1, "'_setRowsStartDate()' is called only once");
-		assert.strictEqual(oSetRowsStartDateSpy.getCall(0).args[0].getTime(), new Date(2015, 3, 1).getTime(), "'_setRowsStartDate()' is called with correct parameter");
+		assert.strictEqual(oSetRowsStartDateSpy.getCall(0).args[0].getTime(), new Date(2015, 3, 5).getTime(), "'_setRowsStartDate()' is called with correct parameter");
 	});
 
 	QUnit.test("_setRowsStartDate", function(assert) {

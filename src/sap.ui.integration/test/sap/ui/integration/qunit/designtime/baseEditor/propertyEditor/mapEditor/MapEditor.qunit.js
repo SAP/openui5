@@ -19,6 +19,7 @@ sap.ui.define([
 			items: oEditor.getContent().getItems()[0].getItems().map(function (oItem) {
 				var oNestedEditors = oItem.getContent()[0]._getPropertyEditors();
 				return {
+					item: oItem,
 					key: oNestedEditors[0],
 					type: oNestedEditors[1],
 					value: oNestedEditors[2],
@@ -140,21 +141,19 @@ sap.ui.define([
 
 		QUnit.test("When an element is added to an empty map", function (assert) {
 			var fnDone = assert.async();
+			this.oBaseEditor.setJson({sampleMap: {}});
 
-			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function (oEvent) {
-				this.oMapEditor = oEvent.getParameter("propertyEditors")[0];
-				sap.ui.getCore().applyChanges();
-				this.oAddButton = getMapEditorContent(this.oMapEditor).addButton;
+			this.oBaseEditor.ready().then(function () {
+				var oMapEditor = this.oBaseEditor.getPropertyEditorsByNameSync("sampleMap")[0].getAggregation("propertyEditor");
+				var oAddButton = getMapEditorContent(oMapEditor).addButton;
 
-				this.oMapEditor.attachValueChange(function (oEvent) {
+				oMapEditor.attachValueChange(function (oEvent) {
 					assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 1, "Then editor contains one key");
 					fnDone();
 				});
 
-				QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
-			}, this);
-
-			this.oBaseEditor.setJson({sampleMap: {}});
+				QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
+			}.bind(this));
 		});
 
 		QUnit.test("When an element key is changed to an unique value", function (assert) {
@@ -288,6 +287,50 @@ sap.ui.define([
 				oExpectedItemConfig,
 				"Then configurations for the nested editors are returned"
 			);
+		});
+
+		QUnit.test("Auto Expand - When a prefilled item is added", function (assert) {
+			var iLastItemIndex = this.aItems.length - 1;
+			assert.strictEqual(
+				this.aItems[iLastItemIndex].item.getExpanded(),
+				false,
+				"Then the item is initially collapsed"
+			);
+		});
+
+		QUnit.test("Auto Expand - When an empty item is added", function (assert) {
+			var iLastItemIndex = this.aItems.length - 1;
+			QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
+
+			return this.oMapEditor.ready().then(function () {
+				var aEditorItems = getMapEditorContent(this.oMapEditor).items;
+				assert.strictEqual(
+					aEditorItems[(iLastItemIndex + 1)].item.getExpanded(),
+					true,
+					"Then the newly added item is expanded"
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("Auto Expand - When an empty item is manually collapsed", function (assert) {
+			var iLastItemIndex = this.aItems.length - 1;
+			QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
+
+			return this.oMapEditor.ready().then(function () {
+				var aEditorItems = getMapEditorContent(this.oMapEditor).items;
+				aEditorItems[iLastItemIndex + 1].item.setExpanded(false);
+
+				// Trigger config change by removing a different element
+				QUnitUtils.triggerEvent("tap", aEditorItems[iLastItemIndex].deleteButton.getDomRef());
+
+				return this.oMapEditor.ready().then(function () {
+					assert.strictEqual(
+						getMapEditorContent(this.oMapEditor).items[iLastItemIndex].item.getExpanded(),
+						false,
+						"Then the item stays collapsed"
+					);
+				}.bind(this));
+			}.bind(this));
 		});
 	});
 

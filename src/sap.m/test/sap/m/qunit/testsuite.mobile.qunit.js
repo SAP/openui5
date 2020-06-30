@@ -55,6 +55,11 @@ sap.ui.define([
 					only: ["sap/m/Avatar"]
 				}
 			},
+			BadgeEnabler: {
+				coverage: {
+					only: ["sap/m/BadgeEnabler"]
+				}
+			},
 			Bar: {
 				title: "QUnit Page for sap.m.Bar",
 				sinon: {
@@ -2171,6 +2176,13 @@ sap.ui.define([
 			"semantic/SemanticButton": {
 				title: "Test Page for sap.m.semantic.SemanticButton",
 				_alternativeTitle: "QUnit tests: sap.m.semantic.SemanticButton",
+				sinon: {
+					useFakeTimers: true
+				}
+			},
+			"semantic/SemanticToggleButton": {
+				title: "Test Page for sap.m.semantic.SemanticToggleButton",
+				_alternativeTitle: "QUnit tests: sap.m.semantic.SemanticToggleButton",
 				sinon: {
 					useFakeTimers: true
 				}

@@ -312,8 +312,7 @@ function(
 		var oRevertData = oChange.getRevertData()[0];
 		return {
 			affectedControl: oChangeContent.movedElements[0].selector,
-			type: sap.ui.fl.condenser.ClassificationType.IndexRelated,
-			subtype: sap.ui.fl.condenser.ClassificationSubtypes.Move,
+			classification: sap.ui.fl.condenser.Classification.Move,
 			sourceContainer: oRevertData.sourceParent,
 			targetContainer: oChangeContent.target.selector,
 			sourceIndex: oRevertData.index,

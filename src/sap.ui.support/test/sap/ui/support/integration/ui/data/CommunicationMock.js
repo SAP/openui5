@@ -45,7 +45,8 @@ sap.ui.define([
 					sRuleSet: oRuleSets
 				});
 				CommunicationBus.publish(Channels.POST_APPLICATION_INFORMATION, {
-					// Use deprecated function to ensure this would work for older versions.
+					// Sends info about the application under test
+					// Using deprecated function to ensure this would work for older versions.
 					versionInfo: sap.ui.getVersionInfo()
 				});
 			});

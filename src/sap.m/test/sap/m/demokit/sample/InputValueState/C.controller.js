@@ -1,17 +1,18 @@
-sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller'],
-	function(MessageToast, Controller) {
-		"use strict";
+sap.ui.define([
+	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageToast",
+	"sap/ui/core/Popup"
+], function (Controller, MessageToast, Popup) {
+	"use strict";
 
-		return Controller.extend("sap.m.sample.InputValueState.C", {
+	return Controller.extend("sap.m.sample.InputValueState.C", {
 
-			handleFormattedTextLinkPress: function(oEvent) {
-				oEvent.preventDefault();
-				sap.m.MessageToast.show('You have pressed a link in value state message',
-					{
-						my: sap.ui.core.Popup.Dock.CenterCenter,
-						at: sap.ui.core.Popup.Dock.CenterCenter
-					}
-				);
-			}
-		});
+		onFormattedTextLinkPress: function (oEvent) {
+			oEvent.preventDefault();
+			MessageToast.show('You have pressed a link in value state message', {
+				my: Popup.Dock.CenterCenter,
+				at: Popup.Dock.CenterCenter
+			});
+		}
+	});
 });

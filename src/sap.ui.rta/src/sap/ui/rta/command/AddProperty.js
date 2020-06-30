@@ -46,6 +46,9 @@ sap.ui.define([
 				oDataServiceUri: {
 					type: "string"
 				},
+				modelType: {
+					type: "string"
+				},
 				propertyName: {
 					type: "string"
 				}
@@ -61,7 +64,11 @@ sap.ui.define([
 			newControlId: this.getNewControlId(),
 			bindingPath: this.getBindingString(),
 			parentId: this.getParentId(),
+			//used to connect to default delegate
+			modelType: this.getModelType(),
+			//used to connect to change handler mediator
 			oDataServiceVersion: this.getODataServiceVersion(),
+			//necessary for custom fields support tools
 			oDataInformation: {
 				oDataServiceUri: this.getODataServiceUri(),
 				propertyName: this.getPropertyName(),

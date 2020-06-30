@@ -1,0 +1,17 @@
+<core:FragmentDefinition
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+	xmlns="sap.m" xmlns:core="sap.ui.core">
+	<template:if test="= !{this>content}">
+		<HBox>
+			<Label text="{$this>label}" id="label" />
+			<template:if test="{this>editable}">
+				<template:then>
+					<Input value="{$this>value}" id="control" />
+				</template:then>
+				<template:else>
+					<Text text="{$this>value}" id="control" />
+				</template:else>
+			</template:if>
+		</HBox>
+	</template:if>
+</core:FragmentDefinition>

@@ -3,21 +3,37 @@
  */
 
 sap.ui.define([
+	"sap/base/util/each"
 ], function(
-
+	each
 ) {
 	"use strict";
 
 	return {
+		/**
+		 * Adds a Reverse change to the map with reduced changes.
+		 *
+		 * @param {Map} mProperties - Map with all reduced changes
+		 * @param {string} sUniqueKey - Unique key defined in the condenser information
+		 * @param {sap.ui.fl.Change} oChange - Change instance
+		 */
 		addToChangesMap: function(mProperties, sUniqueKey, oChange) {
-			if (!mProperties.has(sUniqueKey)) {
-				mProperties.set(sUniqueKey, []);
+			if (!mProperties[sUniqueKey]) {
+				mProperties[sUniqueKey] = [];
 			}
-			var aChanges = mProperties.get(sUniqueKey);
-			aChanges.push(oChange);
+			mProperties[sUniqueKey].push(oChange);
 		},
-		getChangesFromMap: function(mObjects, aChanges, sKey) {
-			mObjects.get(sKey).forEach(function(aReverseChanges) {
+
+		/**
+		 * Iterates the changes of classification 'reverse' and returns only the necessary changes.
+		 *
+		 * @param {Map} mObjects - Map with all reduced changes
+		 * @param {string} sUniqueKey - Unique key defined in the condenser information
+		 * @returns {sap.ui.fl.Change[]} All necessary reverse changes
+		 */
+		getChangesFromMap: function(mObjects, sUniqueKey) {
+			var aChanges = [];
+			each(mObjects[sUniqueKey], function(sKey, aReverseChanges) {
 				aReverseChanges.reverse();
 				var oChange;
 				aReverseChanges.forEach(function(oCurrentChange) {
@@ -32,6 +48,7 @@ sap.ui.define([
 					aChanges.push(oChange);
 				}
 			});
+			return aChanges;
 		}
 	};
 });

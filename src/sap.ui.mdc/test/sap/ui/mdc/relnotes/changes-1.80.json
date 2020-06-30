@@ -1,0 +1,13 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "47941147dc6c40cb27d49d6af12c07de6d843dae",
+        "type": "FIX",
+        "text": " mdc.FilterBar: enhance issues indicator",
+        "references": []
+      }
+    ]
+  }
+}

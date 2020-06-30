@@ -32,6 +32,13 @@
 	  }
 	},
 	"type": "AdaptiveCard",
+	"header": {
+		"title": "Submit Details",
+		"subTitle": "Provide more details",
+		"icon": {
+			"src": "sap-icon://account"
+		}
+	},
 	"content": {
 	  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 	  "type": "AdaptiveCard",

@@ -289,11 +289,16 @@ sap.ui.define([
 
 			/**
 			 * Number of rows that are fix on the top. When you use a vertical scrollbar, only the rows which are not fixed, will scroll.
+			 *
+			 * This property is only supported if the <code>rows</code> aggregation is bound to a {@link sap.ui.model.ClientModel client model}.
 			 */
 			fixedRowCount : {type : "int", group : "Appearance", defaultValue : 0},
 
 			/**
 			 * Number of rows that are fix on the bottom. When you use a vertical scrollbar, only the rows which are not fixed, will scroll.
+			 *
+			 * This property is only supported if the <code>rows</code> aggregation is bound to a {@link sap.ui.model.ClientModel client model}.
+			 *
 			 * @since 1.18.7
 			 */
 			fixedBottomRowCount : {type : "int", group : "Appearance", defaultValue : 0},
@@ -2809,7 +2814,7 @@ sap.ui.define([
 				"-webkit-user-select": "none",
 				"user-select": "none"
 			}).
-			bind("selectstart", function(oEvent) {
+			on("selectstart", function(oEvent) {
 				oEvent.preventDefault();
 				return false;
 			});
@@ -2827,7 +2832,7 @@ sap.ui.define([
 				"-webkit-user-select": "",
 				"user-select": ""
 			}).
-			unbind("selectstart");
+			off("selectstart");
 	};
 
 	/**
@@ -3118,8 +3123,13 @@ sap.ui.define([
 	// =============================================================================
 
 	/**
-	 * @inheritDoc
+	 * Retrieves the lead selection index.
+	 *
+	 * @returns {int} Currently Selected Index.
 	 * @throws {Error} If a selection plugin is applied
+	 * @public
+	 * @deprecated As of version 1.69, replaced by {@link sap.ui.table.Table#getSelectedIndices} and
+	 * {@link sap.ui.table.Table#setSelectedIndex}
 	 */
 	Table.prototype.getSelectedIndex = function() {
 		if (this._hasSelectionPlugin()) {

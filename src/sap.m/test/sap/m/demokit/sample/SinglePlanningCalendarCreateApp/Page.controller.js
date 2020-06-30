@@ -525,7 +525,7 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 				oDatePickerEnd = Fragment.byId("dialogFrag", "DPEndDate"),
 				oStartDate = oDatePickerStart.getDateValue(),
 				oEndDate = oDatePickerEnd.getDateValue(),
-				bEndDateBiggerThanStartDate = oEndDate.getTime() <= oStartDate.getTime(),
+				bEndDateBiggerThanStartDate = oEndDate.getTime() < oStartDate.getTime(),
 				bErrorState = oStartDate && oEndDate && bEndDateBiggerThanStartDate;
 
 			this._setDateValueState(oDatePickerStart, bErrorState);

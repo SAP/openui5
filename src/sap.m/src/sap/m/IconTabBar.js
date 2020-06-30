@@ -407,6 +407,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the ariaTexts property.
+	 *
+	 * @public
+	 * @param {object} oAriaTexts New value for ariaTexts.
+	 * @returns {sap.m.IconTabBar} this Reference to this in order to allow method chaining
+	 */
+	IconTabBar.prototype.setAriaTexts = function (oAriaTexts) {
+		// set internal property
+		this.setProperty("ariaTexts", oAriaTexts, true);
+
+		this._getIconTabHeader().setAriaTexts(oAriaTexts);
+
+		return this;
+	};
+
+	/**
 	 * Re-renders only the displayed content of the IconTabBar.
 	 *
 	 * @private
@@ -572,7 +588,6 @@ sap.ui.define([
 		var oITH = this._getIconTabHeader(),
 			$ITH = oITH.$();
 
-		oITH._setAriaTexts(this.getAriaTexts());
 		oITH.setMaxNestingLevel(this.getMaxNestingLevel());
 
 		if (this._bStickyContentSticked && $ITH) {
