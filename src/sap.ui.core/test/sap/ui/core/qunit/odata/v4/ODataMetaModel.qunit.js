@@ -5092,7 +5092,7 @@ sap.ui.define([
 		assert.ok(oSharedModel instanceof ODataModel);
 		assert.deepEqual(oSharedModel.mHeaders, mHeaders);
 		assert.strictEqual(oSharedModel.sServiceUrl, "/Foo/ValueListService/");
-		assert.strictEqual(oSharedModel.getDefaultBindingMode(), BindingMode.OneWay);
+		assert.strictEqual(oSharedModel.bSharedRequests, true);
 		assert.strictEqual(oSharedModel.sOperationMode, OperationMode.Server);
 		assert.strictEqual(oSharedModel.getGroupId(), "$auto");
 		assert.strictEqual(oSharedModel.bAutoExpandSelect, !!bAutoExpandSelect);

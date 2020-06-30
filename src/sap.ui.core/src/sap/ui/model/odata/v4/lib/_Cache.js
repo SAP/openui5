@@ -102,6 +102,9 @@ sap.ui.define([
 		this.iActiveUsages = 1;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
 		this.fnGetOriginalResourcePath = fnGetOriginalResourcePath;
+		// the point in time when the cache became inactive; active caches have Infinity so that
+		// they are always "newer"
+		this.iInactiveSince = Infinity;
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		// a promise with attached properties $count, $resolve existing while DELETEs or POSTs are
 		// being sent
@@ -261,7 +264,7 @@ sap.ui.define([
 	 */
 	Cache.prototype.checkSharedRequest = function () {
 		if (this.bSharedRequest) {
-			throw new Error(this + " has $$sharedRequest, modification is not allowed");
+			throw new Error(this + " is read-only");
 		}
 	};
 
@@ -1184,8 +1187,12 @@ sap.ui.define([
 	Cache.prototype.setActive = function (bActive) {
 		if (bActive) {
 			this.iActiveUsages += 1;
+			this.iInactiveSince = Infinity;
 		} else {
 			this.iActiveUsages -= 1;
+			if (!this.iActiveUsages) {
+				this.iInactiveSince = Date.now();
+			}
 			this.mChangeListeners = {}; // Note: shared caches have no listeners anyway
 		}
 	};
@@ -2421,6 +2428,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyCache.prototype.update = function () {
+		// Note: keep bSharedRequest in mind before implementing this method!
 		throw new Error("Unsupported");
 	};
 
@@ -2439,6 +2447,8 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @param {boolean} [bSharedRequest=false]
+	 *   If this parameter is set, the cache is read-only and modifying calls lead to an exception.
 	 * @param {function} [fnGetOriginalResourcePath]
 	 *   A function that returns the cache's original resource path to be used to build the target
 	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
@@ -2453,9 +2463,9 @@ sap.ui.define([
 	 * @private
 	 */
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			fnGetOriginalResourcePath, bPost, sMetaPath) {
+			bSharedRequest, fnGetOriginalResourcePath, bPost, sMetaPath) {
 		Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			fnGetOriginalResourcePath);
+			fnGetOriginalResourcePath, bSharedRequest);
 
 		this.sMetaPath = sMetaPath || this.sMetaPath; // overrides Cache c'tor
 		this.bPost = bPost;
@@ -2706,7 +2716,7 @@ sap.ui.define([
 	 */
 	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			sDeepResourcePath, bSharedRequest) {
-		var sPath, oSharedCollectionCache, mSharedCollectionCacheByPath;
+		var iCount, aKeys, sPath, oSharedCollectionCache, mSharedCollectionCacheByPath;
 
 		if (bSharedRequest) {
 			sPath = sResourcePath
@@ -2720,6 +2730,22 @@ sap.ui.define([
 			if (oSharedCollectionCache) {
 				oSharedCollectionCache.setActive(true);
 			} else {
+				// remove inactive caches when there are already more than 100 caches in the map
+				aKeys = Object.keys(mSharedCollectionCacheByPath);
+				iCount = aKeys.length;
+				if (iCount > 100) {
+					aKeys.filter(function (sKey) {
+						return !mSharedCollectionCacheByPath[sKey].iActiveUsages;
+					}).sort(function (sKey1, sKey2) {
+						return mSharedCollectionCacheByPath[sKey1].iInactiveSince
+							- mSharedCollectionCacheByPath[sKey2].iInactiveSince;
+					}).every(function (sKey) {
+						delete mSharedCollectionCacheByPath[sKey];
+						iCount -= 1;
+						return iCount > 100;
+					});
+				}
+
 				oSharedCollectionCache = mSharedCollectionCacheByPath[sPath]
 					= new CollectionCache(oRequestor, sResourcePath, mQueryOptions,
 						bSortExpandSelect, sDeepResourcePath, bSharedRequest);
@@ -2773,6 +2799,10 @@ sap.ui.define([
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @param {boolean} [bSharedRequest=false]
+	 *   If this parameter is set, multiple requests for a cache using the same resource path might
+	 *   always return the same, shared cache. This cache is read-only, modifying calls lead to an
+	 *   exception.
 	 * @param {function} [fnGetOriginalResourcePath]
 	 *   A function that returns the cache's original resource path to be used to build the target
 	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
@@ -2789,9 +2819,9 @@ sap.ui.define([
 	 * @public
 	 */
 	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			fnGetOriginalResourcePath, bPost, sMetaPath) {
+			bSharedRequest, fnGetOriginalResourcePath, bPost, sMetaPath) {
 		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			fnGetOriginalResourcePath, bPost, sMetaPath);
+			bSharedRequest, fnGetOriginalResourcePath, bPost, sMetaPath);
 	};
 
 	/**

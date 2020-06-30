@@ -907,6 +907,7 @@ sap.ui.define([
 	 * @returns {object} The query options
 	 *
 	 * @abstract
+	 * @function
 	 * @name sap.ui.model.odata.v4.ODataParentBinding.getQueryOptionsFromParameters
 	 * @private
 	 * @see sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache
@@ -1270,10 +1271,11 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#suspendInternal
 	 */
 	ODataParentBinding.prototype.suspendInternal = function () {
-		// Only if the cache is currently being determined or has not sent a request yet, we have to
-		// fire a change event to trigger a request while resuming.
+		// Only if the cache is currently being determined or has not sent a request yet (except
+		// shared caches), we have to fire a change event to inform the UI while resuming.
 		this.sResumeChangeReason
-			= this.oCache === undefined || this.oCache && !this.oCache.bSentRequest
+			= this.oCache === undefined
+			|| this.oCache && (!this.oCache.bSentRequest || this.oCache.bSharedRequest)
 				? ChangeReason.Change
 				: undefined;
 

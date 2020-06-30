@@ -191,8 +191,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a single cache. Only resource path and query options must be supplied. Uses
-		 * this.oRequestor, does not calculate key predicates, does not sort query options.
+		 * Creates a single cache. Only resource path must be supplied. Uses this.oRequestor, does
+		 * not calculate key predicates, does not sort query options.
 		 *
 		 * @param {string} sResourcePath The resource path
 		 * @param {object} [mQueryOptions] The query options.
@@ -201,8 +201,9 @@ sap.ui.define([
 		 *   The cache
 		 */
 		createSingle : function (sResourcePath, mQueryOptions, bPost) {
-			return _Cache.createSingle(this.oRequestor, sResourcePath, mQueryOptions, undefined,
-				false, bPost);
+			return _Cache.createSingle(this.oRequestor, sResourcePath, mQueryOptions,
+				/*bSortExpandSelect*/false, /*bSharedRequest*/false,
+				/*fnGetOriginalResourcePath*/undefined, bPost);
 		}
 	});
 
@@ -232,6 +233,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.iActiveUsages, 1);
 		assert.deepEqual(oCache.mChangeListeners, {});
 		assert.strictEqual(oCache.fnGetOriginalResourcePath, fnGetOriginalResourcePath);
+		assert.strictEqual(oCache.iInactiveSince, Infinity);
 		assert.deepEqual(oCache.mPatchRequests, {});
 		assert.deepEqual(oCache.mPostRequests, {});
 		assert.strictEqual(oCache.oPendingRequestsPromise, null);
@@ -340,8 +342,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_Cache: single cache with optional meta path", function (assert) {
 		var sMetaPath = "/com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
-			oSingleCache = _Cache.createSingle(this.oRequestor, "TEAMS('42')", undefined, undefined,
-				false, false, sMetaPath);
+			oSingleCache = _Cache.createSingle(this.oRequestor, "TEAMS('42')", {}, false, false,
+				undefined, false, sMetaPath);
 
 		assert.strictEqual(oSingleCache.sMetaPath, sMetaPath);
 		assert.strictEqual(oSingleCache.oPromise, null);
@@ -743,12 +745,30 @@ sap.ui.define([
 
 		assert.strictEqual(oCache.iActiveUsages, 100);
 		assert.strictEqual(oCache.hasPendingChangesForPath("path"), true);
+		assert.strictEqual(oCache.iInactiveSince, Infinity);
 
 		// code under test
 		oCache.setActive(false);
 
 		assert.strictEqual(oCache.iActiveUsages, 99);
 		assert.strictEqual(oCache.hasPendingChangesForPath(), false);
+		assert.strictEqual(oCache.iInactiveSince, Infinity);
+
+		oCache.iActiveUsages = 1;
+
+		this.mock(Date).expects("now").withExactArgs().returns(42);
+
+		// code under test
+		oCache.setActive(false);
+
+		assert.strictEqual(oCache.iActiveUsages, 0);
+		assert.strictEqual(oCache.iInactiveSince, 42);
+
+		// code under test
+		oCache.setActive(true);
+
+		assert.strictEqual(oCache.iActiveUsages, 1);
+		assert.strictEqual(oCache.iInactiveSince, Infinity);
 	});
 
 	//*********************************************************************************************
@@ -764,7 +784,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			oCache.checkSharedRequest();
-		}, new Error(oCache + " has $$sharedRequest, modification is not allowed"));
+		}, new Error(oCache + " is read-only"));
 	});
 
 	//*********************************************************************************************
@@ -921,7 +941,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_SingleCache#drillDown: missing property, no key predicate", function (assert) {
-		var oCache = _Cache.createSingle(this.oRequestor, "Products('42')"),
+		var oCache = this.createSingle("Products('42')"),
 			oData = {},
 			oGroupLock = {};
 
@@ -2828,8 +2848,8 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var sOriginalResourcePath = "OperationImport(...)",
 			sResourcePath = "OperationImport",
-			oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, false,
-				getOriginalResourcePath, false, undefined, true),
+			oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, false, false,
+				getOriginalResourcePath),
 			oData = {
 				messages : [{
 					message : "text"
@@ -3801,27 +3821,29 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache", function (assert) {
-		var oCache;
+[false, true].forEach(function (bSharedRequest) {
+	QUnit.test("CollectionCache: bSharedRequest = " + bSharedRequest, function (assert) {
+		var oCache,
+			mQueryOptions = {};
 
 		this.mock(_Cache.prototype).expects("setQueryOptions")
-			.withExactArgs(sinon.match.same("resource/path"));
-		this.mock(_Cache.prototype).expects("setResourcePath")
-			.withExactArgs("resource/path")
+			.withExactArgs(sinon.match.same(mQueryOptions));
+		this.mock(_Cache.prototype).expects("setResourcePath").withExactArgs("resource/path")
 			.callsFake(function () {
 				assert.notOk(this.bSharedRequest, "must not have been set yet");
 			});
 
 		// code under test
-		oCache = _Cache.create(this.oRequestor, "resource/path", "resource/path",
-			"bSortExpandSelect", "deep/resource/path", "bSharedRequest");
+		oCache = _Cache.create(this.oRequestor, "resource/path", mQueryOptions,
+			"bSortExpandSelect", "deep/resource/path", bSharedRequest);
 
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
 		assert.ok(typeof oCache.fnGetOriginalResourcePath, "function");
 		assert.strictEqual(oCache.fnGetOriginalResourcePath(), "deep/resource/path");
-		assert.strictEqual(oCache.bSharedRequest, "bSharedRequest");
+		assert.strictEqual(oCache.bSharedRequest, bSharedRequest ? true : undefined);
 	});
+});
 
 	//*********************************************************************************************
 	[
@@ -3842,7 +3864,7 @@ sap.ui.define([
 					value : aData.slice(oFixture.index, oFixture.index + oFixture.length)
 				},
 				oPromise,
-				mQueryParams = {},
+				mQueryOptions = {},
 				oReadGroupLock0 = {
 					getUnlockedCopy : function () {},
 					unlock : function () {}
@@ -3870,7 +3892,7 @@ sap.ui.define([
 				.resolves(oMockResult);
 			this.spy(_Helper, "updateExisting");
 
-			oCache = this.createCache(sResourcePath, mQueryParams);
+			oCache = this.createCache(sResourcePath, mQueryOptions);
 			oCacheMock = this.mock(oCache);
 			oCacheMock.expects("fetchTypes").withExactArgs()
 				.returns(SyncPromise.resolve(Promise.resolve(mTypeForMetaPath)));
@@ -6054,16 +6076,16 @@ sap.ui.define([
 				getUnlockedCopy : function () {},
 				unlock : function () {}
 			},
-			mQueryParams = {},
+			mQueryOptions = {},
 			sQueryParams = "?query",
 			sResourcePath = "Employees",
 			oUnlockedCopy = {};
 
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs("/Employees", sinon.match.same(mQueryParams), false, false)
+			.withExactArgs("/Employees", sinon.match.same(mQueryOptions), false, false)
 			.returns(sQueryParams);
 
-		oCache = this.createCache(sResourcePath, mQueryParams, false);
+		oCache = this.createCache(sResourcePath, mQueryOptions, false);
 
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oUnlockedCopy);
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
@@ -6073,7 +6095,7 @@ sap.ui.define([
 			.resolves({value : []});
 
 		// code under test
-		mQueryParams.$select = "foo"; // modification must not affect cache
+		mQueryOptions.$select = "foo"; // modification must not affect cache
 		return oCache.read(0, 5, 0, oGroupLock);
 	});
 
@@ -7467,6 +7489,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("SingleCache", function (assert) {
+		var oCache,
+			fnGetOriginalResourcePath = {},
+			mQueryOptions = {};
+
+		this.mock(_Cache.prototype).expects("setQueryOptions")
+			.withExactArgs(sinon.match.same(mQueryOptions));
+		this.mock(_Cache.prototype).expects("setResourcePath")
+			.withExactArgs("resource/path")
+			.callsFake(function () {
+				assert.notOk(this.bSharedRequest, "must not have been set yet");
+			});
+
+		// code under test
+		oCache = _Cache.createSingle(this.oRequestor, "resource/path", mQueryOptions,
+			"bSortExpandSelect", "bSharedRequest", fnGetOriginalResourcePath, "bPost",
+			"/meta/path");
+
+		assert.strictEqual(oCache.oRequestor, this.oRequestor);
+		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
+		assert.strictEqual(oCache.bSharedRequest, "bSharedRequest");
+		assert.strictEqual(oCache.fnGetOriginalResourcePath, fnGetOriginalResourcePath);
+		assert.strictEqual(oCache.bPost, "bPost");
+		assert.strictEqual(oCache.sMetaPath, "/meta/path");
+		assert.strictEqual(oCache.oPromise, null);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("SingleCache#fetchValue", function (assert) {
 		var oCache,
 			oCacheMock,
@@ -7485,18 +7535,18 @@ sap.ui.define([
 			sMetaPath = "~",
 			oOldPromise,
 			aPromises,
-			mQueryParams = {},
+			mQueryOptions = {},
 			sResourcePath = "Employees('1')",
 			mTypeForMetaPath = {};
 
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs("/Employees", sinon.match.same(mQueryParams), false, true)
+			.withExactArgs("/Employees", sinon.match.same(mQueryOptions), false, true)
 			.returns("?~");
 		this.mock(_Cache.prototype).expects("fetchTypes")
 			.returns(SyncPromise.resolve(Promise.resolve(mTypeForMetaPath)));
 
-		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams, true, undefined,
-			undefined, sMetaPath);
+		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryOptions, true, false,
+			undefined, false, sMetaPath);
 		oCacheMock = this.mock(oCache);
 		assert.strictEqual(oCache.oPromise, null);
 
@@ -7563,7 +7613,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_SingleCache#getValue: drillDown asynchronous", function (assert) {
-		var oCache = _Cache.createSingle(this.oRequestor, "Employees('1')"),
+		var oCache = this.createSingle("Employees('1')"),
 			oData = {};
 
 		oCache.oPromise = SyncPromise.resolve(oData);
@@ -7699,7 +7749,7 @@ sap.ui.define([
 			oCache = this.createSingle(sResourcePath, undefined, true),
 			oGroupLock = {};
 
-		assert.strictEqual(oCache.bSharedRequest, undefined);
+		assert.strictEqual(oCache.bSharedRequest, false);
 
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.oRequestorMock.expects("isActionBodyOptional").never();
@@ -7718,7 +7768,7 @@ sap.ui.define([
 		var oGroupLock = {},
 			sMetaPath = "/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType/$Type",
 			sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
-			oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true, undefined,
+			oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true, false, undefined,
 				true, sMetaPath),
 			oReturnValue = {},
 			mTypes = {};
@@ -8265,15 +8315,15 @@ sap.ui.define([
 			oGroupLock2 = {unlock : function () {}},
 			oListener1 = {},
 			oListener2 = {},
-			mQueryParams = {},
+			mQueryOptions = {},
 			sResourcePath = "Employees('1')",
 			that = this;
 
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs("/Employees", sinon.match.same(mQueryParams), false, undefined)
+			.withExactArgs("/Employees", sinon.match.same(mQueryOptions), false, undefined)
 			.returns("?~");
 
-		oCache = _Cache.createProperty(this.oRequestor, sResourcePath, mQueryParams);
+		oCache = _Cache.createProperty(this.oRequestor, sResourcePath, mQueryOptions);
 		oCacheMock = this.mock(oCache);
 
 		this.mock(oGroupLock1).expects("unlock").never();
@@ -8781,6 +8831,63 @@ sap.ui.define([
 			_Cache.create(this.oRequestor, "resource/path", "mQueryOptions", "bSortExpandSelect",
 				"deep/resource/path", true),
 			oCache);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("create: bSharedRequest, cache size", function (assert) {
+		var i, iTimerValue = 0, mSharedCollectionCacheByPath;
+
+		// avoid that two caches get the same iInactiveSince so that we get a well-defined LRU order
+		this.stub(Date, "now").callsFake(function () {
+			iTimerValue += 1;
+			return iTimerValue;
+		});
+
+		// the first cache is inactive, but remains until the limit is reached
+		_Cache.create(this.oRequestor, "/0", {}, false, undefined, true).setActive(false);
+		for (i = 1; i <= 100; i += 1) {
+			_Cache.create(this.oRequestor, "/" + i, {}, false, undefined, true);
+		}
+		mSharedCollectionCacheByPath = this.oRequestor.$mSharedCollectionCacheByPath;
+		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 101);
+		assert.ok("/0" in this.oRequestor.$mSharedCollectionCacheByPath);
+
+		// code under test - one inactive cache while another one is reused
+		_Cache.create(this.oRequestor, "/42", {}, false, undefined, true);
+
+		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 101,
+			"no change when reusing a cache");
+
+		// code under test
+		_Cache.create(this.oRequestor, "/102", {}, false, undefined, true);
+
+		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 101,
+			"one added, one removed");
+		assert.notOk("/0" in mSharedCollectionCacheByPath);
+
+		// code under test
+		_Cache.create(this.oRequestor, "/0", {}, false, undefined, true);
+
+		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 102,
+			"all caches active, nothing removed");
+
+		mSharedCollectionCacheByPath["/10"].setActive(false);
+		mSharedCollectionCacheByPath["/20"].setActive(false);
+		mSharedCollectionCacheByPath["/30"].setActive(false);
+		mSharedCollectionCacheByPath["/0"].setActive(false);
+		_Cache.create(this.oRequestor, "/103", {}, false, undefined, true);
+
+		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 101);
+		assert.ok("/0" in this.oRequestor.$mSharedCollectionCacheByPath);
+		assert.notOk("/10" in this.oRequestor.$mSharedCollectionCacheByPath);
+		assert.notOk("/20" in this.oRequestor.$mSharedCollectionCacheByPath);
+		assert.ok("/30" in this.oRequestor.$mSharedCollectionCacheByPath);
+
+		// code under test
+		_Cache.create(this.oRequestor, "/104", {}, false, undefined, true);
+
+		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 101);
+		assert.notOk("/30" in mSharedCollectionCacheByPath);
 	});
 });
 //TODO: resetCache if error in update?

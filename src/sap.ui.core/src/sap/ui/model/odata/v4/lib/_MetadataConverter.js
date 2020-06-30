@@ -141,7 +141,8 @@ sap.ui.define([
 	 * Finalizes the conversion after having traversed the XML completely.
 	 *
 	 * @abstract
-	 * @name MetadataConverter#finalize
+	 * @function
+	 * @name sap.ui.model.odata.v4.lib._MetadataConverter#finalize
 	 */
 
 	/**
@@ -540,7 +541,8 @@ sap.ui.define([
 	 * @param {function} [fnProcessor] The processor
 	 *
 	 * @abstract
-	 * @name MetadataConverter#processElement
+	 * @function
+	 * @name sap.ui.model.odata.v4.lib._MetadataConverterMetadataConverter#processElement
 	 */
 
 	/**

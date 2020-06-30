@@ -2208,9 +2208,9 @@ sap.ui.define([
 				httpHeaders : this.oModel.getHttpHeaders(),
 				operationMode : OperationMode.Server,
 				serviceUrl : sUrl,
+				sharedRequests : true,
 				synchronizationMode : "None"
 			});
-			oSharedModel.setDefaultBindingMode(BindingMode.OneWay);
 			mSharedModelByUrl.set(sCacheKey, oSharedModel);
 		}
 		return oSharedModel;
@@ -2926,7 +2926,11 @@ sap.ui.define([
 	 *   additional property "$model" which is the {@link sap.ui.model.odata.v4.ODataModel} instance
 	 *   to read value list data via this mapping; this model is constructed with the HTTP headers
 	 *   obtained via {@link sap.ui.model.odata.v4.ODataModel#getHttpHeaders} from this meta model's
-	 *   data model.
+	 *   data model. Since 1.80.0, unless the value list model is the data model associated with
+	 *   this meta model, the model parameter "sharedRequests" is set automatically, see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}. For the remaining cases, use the
+	 *   binding-specific parameter "$$sharedRequest", see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}.
 	 *
 	 *   For fixed values, only one mapping is expected and the qualifier is ignored. The mapping
 	 *   is available with key "".
