@@ -2929,6 +2929,17 @@ sap.ui.define([
 		assert.equal(aConditions[1] && aConditions[1].values[0], "I3", "condition value");
 		assert.equal(aConditions[1] && aConditions[1].values[1], "Item 3", "condition description");
 
+		iLiveCount = 0;
+		oFieldHelp.getTextForKey.resetHistory();
+		oCondition = Condition.createItemCondition("X");
+		oCondition.validated = ConditionValidated.Validated;
+		oFieldHelp.fireNavigate({ value: undefined, key: "X", condition: oCondition });
+		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
+		aConditions = oCM.getConditions("Name");
+		assert.equal(aConditions.length, 2, "condition in Codition model not changed");
+		assert.equal(oContent._$input.val(), "X", "Field shown value");
+		assert.ok(oFieldHelp.getTextForKey.notCalled, "no request for description triggered");
+
 	});
 
 	QUnit.test("navigation single Field", function(assert) {

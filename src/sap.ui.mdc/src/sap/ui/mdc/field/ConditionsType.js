@@ -51,6 +51,8 @@ sap.ui.define([
 	 * @param {function} [oFormatOptions.asyncParsing] Callback function to tell the <code>Field</code> the parsing is asynchronous.
 	 * @param {object} [oFormatOptions.navigateCondition] Condition of keyboard navigation. If this is filled, no real parsing is needed as the condition has already been determined. Just return it
 	 * @param {object} [oFormatOptions.delegate] Field delegate to handle model-specific logic
+	 * @param {object} [oFormatOptions.payload] Payload of the delegate
+	 * @param {boolean} [oFormatOptions.preventGetDescription] If set, description is not read by <code>formatValue</code> as it is known that no description exist or it might be set later
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.ConditionsType
 	 * @since 1.62.0
