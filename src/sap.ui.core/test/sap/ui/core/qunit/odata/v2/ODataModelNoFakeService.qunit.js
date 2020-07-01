@@ -1307,7 +1307,7 @@ sap.ui.define([
 				"~fnChangeSuccess", "~fnChangeError", "~changeRequestHandle", false)
 			.exactly(bExpandRequest ? 1 : 0);
 		this.mock(oModel).expects("_createBatchRequest")
-			.withExactArgs([{__changeRequests:[sinon.match.same(oRequest)]}])
+			.withExactArgs([{__changeRequests : [sinon.match.same(oRequest)]}])
 			.returns("~oBatchRequest");
 		this.mock(oModel).expects("_submitBatchRequest")
 			.withExactArgs("~oBatchRequest", [[sinon.match.same(oChange)]], "~fnSuccess",
@@ -2185,6 +2185,251 @@ sap.ui.define([
 
 		// code under test
 		fnHandleProcessSuccess("~requestHandle");
+	});
+
+	//*********************************************************************************************
+[{groupId : "~groupId"}, {batchGroupId : "~groupId"}].forEach(function (oGroupFixture, i) {
+	[{
+		oFunctionMetadata : {
+			parameter : [{name : "~name0", type : "~type0"}, {name : "~name1", type : "~type1"}]
+		}
+	}, {
+		oFunctionMetadata : {
+			entitySetPath : "~entitySetPath",
+			parameter : null
+		},
+		$result : {__list : []}
+	}, {
+		oFunctionMetadata : {
+			entitySet : "~entitySet",
+			parameter : null
+		},
+		$result : {__list : []}
+	}, {
+		oFunctionMetadata : {
+			entitySet : "~entitySet",
+			parameter : null,
+			returnType : "~returnType"
+		},
+		$result : {__ref : {}} // single entity
+	}, {
+		oFunctionMetadata : {
+			entitySet : "~entitySet",
+			parameter : null,
+			returnType : "Collection(~returnType)"
+		},
+		$result : {__list : []}
+	}].forEach(function (oFunctionMetadataFixture, j) {
+		[true, false].forEach(function (bInDeferredGroups) {
+	var sTitle = "callFunction: oGroupFixture#" + i + ", oFunctionMetadataFixture#" + j
+			+ ", group in deferred Groups: " + bInDeferredGroups;
+
+	QUnit.test(sTitle, function (assert) {
+		var oContextCreatedPromise,
+			bFunctionHasParameter = oFunctionMetadataFixture.oFunctionMetadata.parameter !== null,
+			oExpectedOData = Object.assign({
+					__metadata : {
+						created : {
+							changeSetId : "~changeSetId",
+							error : "~error",
+							eTag : "~eTag",
+							functionImport : true,
+							groupId : "~groupId",
+							headers : "~mHeaders",
+							key : "~sFunctionName",
+							method : "~method",
+							success : "~success"
+						},
+						uri : sinon.match(function (sUri) {
+							return sUri.startsWith("/service/url/~sFunctionName")
+								&& sUri.match(rTemporaryKey);
+						})
+					}
+				},
+				bFunctionHasParameter
+					? {"~name0" : "~defaultValue0", "~name1" : "foo"}
+					: undefined),
+			oMetadata = {
+				_getFunctionImportMetadata : function () {}
+			},
+			oModel = {
+				mDeferredGroups : bInDeferredGroups ? {"~groupId" : "bar"} : {},
+				mDeferredRequests : "~mDeferredRequests",
+				oMetadata : oMetadata,
+				mRequests : "~mRequests",
+				bUseBatch : "~bUseBatch",
+				sServiceUrl : "/service/url",
+				_addEntity : function () {},
+				_createPropertyValue : function () {},
+				_createRequest : function () {},
+				_createRequestUrlWithNormalizedPath : function () {},
+				_getHeaders : function () {},
+				_getRefreshAfterChange : function () {},
+				_processRequest : function () {},
+				_pushToRequestQueue : function () {},
+				_writePathCache : function () {},
+				getContext : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			fnProcessRequest,
+			oRequest = {},
+			oRequestHandle = {},
+			oResult,
+			oResultingRequest;
+
+		if (oFunctionMetadataFixture.$result) {
+			oExpectedOData.$result = oFunctionMetadataFixture.$result;
+		}
+		oModelMock.expects("_getRefreshAfterChange")
+			.withExactArgs("~refreshAfterChange", "~groupId")
+			.returns("~bRefreshAfterChange");
+		oModelMock.expects("_getHeaders").withExactArgs("~headers").returns("~mHeaders");
+		oModelMock.expects("_processRequest")
+			.withExactArgs(sinon.match.func, "~error")
+			.callsFake(function (fnProcessRequest0) {
+				fnProcessRequest = fnProcessRequest0;
+				return oRequestHandle;
+			});
+
+		// code under test
+		oResult = ODataModel.prototype.callFunction.call(oModel, "/~sFunctionName", {
+			batchGroupId : oGroupFixture.batchGroupId,
+			changeSetId : "~changeSetId",
+			error : "~error",
+			eTag : "~eTag",
+			groupId : oGroupFixture.groupId,
+			headers : "~headers",
+			method : "~method",
+			refreshAfterChange : "~refreshAfterChange",
+			success : "~success",
+			urlParameters : {"~name1" : "foo"}
+		});
+
+		assert.strictEqual(oResult, oRequestHandle);
+		oContextCreatedPromise = oResult.contextCreated();
+		assert.ok(oContextCreatedPromise instanceof Promise);
+
+		this.mock(oMetadata).expects("_getFunctionImportMetadata")
+			.withExactArgs("/~sFunctionName", "~method")
+			.returns(oFunctionMetadataFixture.oFunctionMetadata);
+
+		if (bFunctionHasParameter) {
+			oModelMock.expects("_createPropertyValue")
+				.withExactArgs("~type0")
+				.returns("~defaultValue0");
+			oModelMock.expects("_createPropertyValue")
+				.withExactArgs("~type1")
+				.returns("~defaultValue1");
+			this.oLogMock.expects("warning")
+				.withExactArgs("No value given for parameter '~name0' of function import"
+					+ " '/~sFunctionName'", sinon.match.same(oModel), sClassName);
+			this.mock(ODataUtils).expects("formatValue")
+				.withExactArgs("foo", "~type1")
+				.returns("~value1");
+		} else {
+			oModelMock.expects("_createPropertyValue").never();
+		}
+
+		oModelMock.expects("_addEntity").withExactArgs(oExpectedOData)
+			.returns("~sKey");
+		oModelMock.expects("getContext").withExactArgs("/~sKey").returns("~oContext");
+		oModelMock.expects("_writePathCache").withExactArgs("/~sKey", "/~sKey");
+		this.mock(ODataUtils).expects("_createUrlParamsArray")
+			.withExactArgs({"~name1" : bFunctionHasParameter ? "~value1" : "foo"})
+			.returns("~aUrlParams");
+		oModelMock.expects("_createRequestUrlWithNormalizedPath")
+			.withExactArgs("/~sFunctionName", "~aUrlParams", "~bUseBatch")
+			.returns("~sUrl");
+		oModelMock.expects("_createRequest")
+			.withExactArgs("~sUrl", "/~sFunctionName", "~method", "~mHeaders", undefined, "~eTag",
+				undefined, true)
+			.returns(oRequest);
+		oModelMock.expects("_pushToRequestQueue")
+			.withExactArgs(bInDeferredGroups ? "~mDeferredRequests" : "~mRequests", "~groupId",
+				"~changeSetId", sinon.match.same(oRequest), "~success", "~error", "~requestHandle",
+				"~bRefreshAfterChange");
+
+		// code under test
+		oResultingRequest = fnProcessRequest("~requestHandle");
+
+		assert.strictEqual(oResultingRequest, oRequest);
+		assert.deepEqual(oResultingRequest, {
+			functionMetadata : oFunctionMetadataFixture.oFunctionMetadata,
+			key : "~sKey"
+		});
+
+		return oContextCreatedPromise.then(function (oContext) {
+			assert.strictEqual(oContext, "~oContext");
+		});
+	});
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("callFunction: function name starts not with /", function (assert) {
+		var oModel = {};
+
+		this.oLogMock.expects("fatal")
+			.withExactArgs("callFunction: sFunctionName has to be absolute, but the given"
+				+ " '~sFunctionName' is not absolute", sinon.match.same(oModel), sClassName);
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.callFunction.call(oModel, "~sFunctionName"),
+			undefined);
+
+	});
+
+	//*********************************************************************************************
+	QUnit.test("callFunction: no function metadata; no parameters", function (assert) {
+		var oContextCreatedPromise,
+			oMetadata = {
+				_getFunctionImportMetadata : function () {}
+			},
+			oModel = {
+				oMetadata : oMetadata,
+				_getHeaders : function () {},
+				_getRefreshAfterChange : function () {},
+				_processRequest : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			fnProcessRequest,
+			oRequestHandle = {},
+			oResult;
+
+		oModelMock.expects("_getRefreshAfterChange")
+			.withExactArgs(undefined, undefined)
+			.returns("~bRefreshAfterChange");
+		oModelMock.expects("_getHeaders").withExactArgs(undefined).returns("~mHeaders");
+		oModelMock.expects("_processRequest")
+			.withExactArgs(sinon.match.func, undefined)
+			.callsFake(function (fnProcessRequest0) {
+				fnProcessRequest = fnProcessRequest0;
+				return oRequestHandle;
+			});
+
+		// code under test
+		oResult = ODataModel.prototype.callFunction.call(oModel, "/~sFunctionName");
+
+		assert.strictEqual(oResult, oRequestHandle);
+		oContextCreatedPromise = oResult.contextCreated();
+		assert.ok(oContextCreatedPromise instanceof Promise);
+
+		this.mock(oMetadata).expects("_getFunctionImportMetadata")
+			.withExactArgs("/~sFunctionName", "GET")
+			.returns(undefined);
+		this.oLogMock.expects("error")
+			.withExactArgs("Function '/~sFunctionName' not found in the metadata",
+				sinon.match.same(oModel), sClassName);
+
+		// code under test
+		assert.strictEqual(fnProcessRequest("~requestHandle"), undefined);
+
+		return oContextCreatedPromise.then(function () {
+			assert.ok(false, "created Promise has to be rejected");
+		}, function () {
+			assert.ok(true, "created Promise is rejected");
+		});
 	});
 
 	//*********************************************************************************************
