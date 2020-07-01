@@ -3128,8 +3128,7 @@ sap.ui.define([
 	 * @returns {int} Currently Selected Index.
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
-	 * @deprecated As of version 1.69, replaced by {@link sap.ui.table.Table#getSelectedIndices} and
-	 * {@link sap.ui.table.Table#setSelectedIndex}
+	 * @deprecated As of version 1.69, replaced by {@link sap.ui.table.Table#getSelectedIndices}
 	 */
 	Table.prototype.getSelectedIndex = function() {
 		if (this._hasSelectionPlugin()) {
