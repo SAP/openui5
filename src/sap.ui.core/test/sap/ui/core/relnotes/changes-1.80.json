@@ -131,6 +131,12 @@
             "reference": "2080220914"
           }
         ]
+      },
+      {
+        "id": "9fa35c84522200b3c535aaa1e29d93473a60cc28",
+        "type": "FEATURE",
+        "text": " Opa: add editable property in waitFor",
+        "references": []
       }
     ]
   }
