@@ -649,6 +649,45 @@ sap.ui.define([
 						]
 					},
 					{
+						key: 'badge',
+						target: 'exploreSamples',
+						title: 'Badge',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/badge/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/badge/cardManifest.json',
+								name: 'cardManifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/badge/Badge.view.xml',
+								name: 'Badge.view.xml',
+								key: 'Badge.view.xml'
+							},
+							{
+								url: '/samples/badge/Badge.controller.js',
+								name: 'Badge.controller.js',
+								key: 'Badge.controller.js'
+							},
+							{
+								url: '/samples/badge/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/badge/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
+					},
+					{
 						key: 'htmlConsumption',
 						target: 'exploreSamples',
 						title: 'Consumption in HTML',

@@ -2459,6 +2459,7 @@ sap.ui.define([
 				});
 			},
 			afterEach: function () {
+				// this.sinon.useFakeTimers = false;
 				this.oCard.destroy();
 				this.oCard = null;
 			}
@@ -2475,6 +2476,35 @@ sap.ui.define([
 				// Assert
 				assert.strictEqual(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "10", "Badge indicator is correctly rendered");
 
+				done();
+
+			}.bind(this));
+
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+
+		QUnit.test("Auto hide", function (assert) {
+			var done = assert.async();
+
+			// Arrange
+			this.oCard.attachEventOnce("_ready", function () {
+
+				Core.applyChanges();
+
+				this.clock = sinon.useFakeTimers();
+
+				// Assert
+				assert.ok(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is rendered");
+
+				this.oCard.focus();
+
+				this.clock.tick(4000);
+
+				assert.notOk(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is not rendered");
+
+				this.clock.restore();
 				done();
 
 			}.bind(this));

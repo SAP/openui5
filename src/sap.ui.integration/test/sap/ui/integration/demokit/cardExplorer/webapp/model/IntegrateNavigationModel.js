@@ -38,6 +38,13 @@ sap.ui.define([
 				target: 'integrate',
 				key: 'hostActions'
 			}
+			// ,
+			// {
+			// 	title: 'Badge',
+			// 	icon: 'sap-icon://badge',
+			// 	target: 'integrate',
+			// 	key: 'badge'
+			// }
 		]
 	});
 });

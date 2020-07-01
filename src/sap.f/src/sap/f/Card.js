@@ -20,6 +20,8 @@ sap.ui.define([
 
 	var HeaderPosition = library.cards.HeaderPosition;
 
+	var BADGE_AUTOHIDE_TIME = 3000;
+
 	/**
 	 * Constructor for a new <code>Card</code>.
 	 *
@@ -187,5 +189,28 @@ sap.ui.define([
 	Card.prototype.getFocusDomRef = function () {
 		return this.getCardHeader() ? this.getCardHeader().getDomRef() : this.getDomRef() ;
 	};
+
+	Card.prototype.onfocusin = function () {
+		this._startBadgeHiding();
+	};
+
+	Card.prototype._startBadgeHiding = function () {
+		if (this._iHideBadgeTimeout) {
+			return;
+		}
+
+		this._iHideBadgeTimeout = setTimeout(this._hideBadge.bind(this), BADGE_AUTOHIDE_TIME);
+	};
+
+	Card.prototype._hideBadge = function () {
+
+		var oBadgeCustomData = this.getBadgeCustomData();
+		if (oBadgeCustomData) {
+			oBadgeCustomData.setValue("");
+		}
+
+		this._iHideBadgeTimeout = null;
+	};
+
 	return Card;
 });

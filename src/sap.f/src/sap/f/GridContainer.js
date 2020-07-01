@@ -98,6 +98,17 @@ sap.ui.define([
 	}
 
 	/**
+	 * When the GridContainer list item is focused, the control inside received a virtual focus.
+	 * @private
+	 * @param {sap.ui.core.Control} oControl The control
+	 */
+	function doVirtualFocusin(oControl) {
+		if (oControl.onfocusin) {
+			oControl.onfocusin();
+		}
+	}
+
+	/**
 	 * Constructor for a new <code>sap.f.GridContainer</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
@@ -1240,6 +1251,7 @@ sap.ui.define([
 			if (oControl && oControl.getFocusDomRef() === document.activeElement) {
 				this._lastFocusedElement = null;
 				$listItem.focus();
+				doVirtualFocusin(oControl);
 			}
 		}
 
@@ -1252,21 +1264,24 @@ sap.ui.define([
 	 * Handles when it is needed to return focus to correct place
 	 */
 	GridContainer.prototype.onfocusin = function(oEvent) {
-
 		var $listItem = jQuery(oEvent.target).closest('.sapFGridContainerItemWrapperNoVisualFocus'),
 			oControl,
 			aNavigationDomRefs,
 			lastFocusedIndex;
 
-		if (!this._bIsMouseDown && $listItem.length) {
+		if ($listItem.length) {
 			oControl = $listItem.children().eq(0).control()[0];
 
-			// if the list item visual focus is displayed by the currently focused control,
-			// move the focus to the list item
-			if (oControl && oControl.getFocusDomRef() === oEvent.target) {
-				this._lastFocusedElement = null;
-				$listItem.focus();
-				return;
+			if (oControl) {
+				doVirtualFocusin(oControl);
+
+				// if the list item visual focus is displayed by the currently focused control,
+				// move the focus to the list item
+				if (!this._bIsMouseDown && oControl.getFocusDomRef() === oEvent.target) {
+					this._lastFocusedElement = null;
+					$listItem.focus();
+					return;
+				}
 			}
 		}
 
