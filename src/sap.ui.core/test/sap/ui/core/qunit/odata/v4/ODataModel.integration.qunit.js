@@ -26211,10 +26211,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Multiple absolute list bindings share the same requests in order to avoid redundant
-	// value help requests.
+	// Scenario: A list binding with $$sharedRequests below another list binding.
 	// JIRA: CPOUI5ODATAV4-269
-	QUnit.test("CPOUI5ODATAV4-269: Avoid redundant value help requests", function (assert) {
+	QUnit.test("CPOUI5ODATAV4-269: Nested lists and $$sharedRequest", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
@@ -26226,45 +26225,79 @@ sap.ui.define([
 			<Text id="id" text="{ID}" />\
 		</CustomListItem>\
 	</List>\
-</Table>',
-			that = this;
-
-		// returns the List in the given row of the Table
-		function getList(iRow) {
-			return that.oView.byId("table").getItems()[iRow].getCells()[1];
-		}
+</Table>';
 
 		this.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=100", {
 				value : [
-					{ID : "2", Name : "Frederic Fall"},
-					{ID : "3", Name : "Jonathan Smith"}
+					{ID : "2", Name : "Frederic Fall"}
 				]
 			})
-			.expectChange("name", ["Frederic Fall", "Jonathan Smith"])
+			.expectChange("name", ["Frederic Fall"])
 			.expectRequest("MANAGERS?$select=ID&$skip=0&$top=3", {
 				value : [{ID: "M1"}, {ID: "M2"}, {ID: "M3"}]
 			})
-			.expectChange("id", ["M1", "M2", "M3"])
 			.expectChange("id", ["M1", "M2", "M3"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Multiple absolute list bindings share the same requests in order to avoid redundant
+	// value help requests.
+	// JIRA: CPOUI5ODATAV4-269
+	QUnit.test("CPOUI5ODATAV4-269: Avoid redundant value help requests", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="name1" text="{Name}" />\
+	<List id="list1" growing="true" growingThreshold="3" \
+			items="{parameters : {$$sharedRequest : true}, path: \'/MANAGERS\',\
+			templateShareable: false}">\
+		<CustomListItem>\
+			<Text id="id1" text="{ID}" />\
+		</CustomListItem>\
+	</List>\
+</FlexBox>\
+<FlexBox binding="{/EMPLOYEES(\'2\')}">\
+	<Text id="name2" text="{Name}" />\
+	<List id="list2" growing="true" growingThreshold="3" \
+			items="{parameters : {$$sharedRequest : true}, path: \'/MANAGERS\',\
+			templateShareable: false}">\
+		<CustomListItem>\
+			<Text id="id2" text="{ID}" />\
+		</CustomListItem>\
+	</List>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID,Name", {ID : "1", Name : "Frederic Fall"})
+			.expectChange("name1", "Frederic Fall")
+			.expectRequest("EMPLOYEES('2')?$select=ID,Name", {ID : "2", Name : "Jonathan Smith"})
+			.expectChange("name2", "Jonathan Smith")
+			.expectRequest("MANAGERS?$select=ID&$skip=0&$top=3", {
+				value : [{ID: "M1"}, {ID: "M2"}, {ID: "M3"}]
+			})
+			.expectChange("id1", ["M1", "M2", "M3"])
+			.expectChange("id2", ["M1", "M2", "M3"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("MANAGERS?$select=ID&$orderby=ID desc&$skip=0&$top=3", {
 					value : [{ID: "M9"}, {ID: "M8"}, {ID: "M7"}]
 				})
-				.expectChange("id", ["M9", "M8" , "M7"]);
+				.expectChange("id1", ["M9", "M8" , "M7"]);
 
-			// code under test - sort list binding in 1st row
-			getList(0).getBinding("items").sort(new Sorter("ID", true));
+			// code under test - sort 1st list
+			that.oView.byId("list1").getBinding("items").sort(new Sorter("ID", true));
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("MANAGERS?$select=ID&$skip=3&$top=3", {
 					value : [{ID: "M4"}, {ID: "M5"}, {ID: "M6"}]
 				})
-				.expectChange("id", [,,, "M4", "M5" , "M6"]);
+				.expectChange("id2", [,,, "M4", "M5" , "M6"]);
 
-			// code under test - press "More" button in list binding of 2nd row
-			sap.ui.getCore().byId(getList(1).getId() + "-trigger").firePress();
+			// code under test - press "More" button in 2nd list
+			that.oView.byId("list2-trigger").firePress();
 
 			return that.waitForChanges(assert);
 		});
