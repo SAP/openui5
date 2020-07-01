@@ -241,15 +241,6 @@ sap.ui.define([
 		this._bSearchTriggered = false;
 	};
 
-	/**
-	 * Interface for inner layout creation
-	 */
-	FilterBarBase.prototype._createInnerLayout = function() {
-		this._cLayoutItem = null;
-		this._oFilterBarLayout = null;
-		this.setAggregation("layout", this._oFilterBarLayout, true);
-	};
-
 	//TODO: consider to restructure the approach _createInnerLayout to properties or seperate methods
 	/**
 	 * Interface for inner layout creation, needs to: provide an two variables on the FilterBarBase derivation:
