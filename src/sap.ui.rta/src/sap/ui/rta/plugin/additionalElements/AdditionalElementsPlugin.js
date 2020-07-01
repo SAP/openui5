@@ -983,11 +983,8 @@ sap.ui.define([
 			if (iRevealTargetIndex !== iRevealedSourceIndex || mParents.parent !== oRevealedElement.getParent()) {
 				var oSourceParentOverlay = OverlayRegistry.getOverlay(oRevealedElement) ? OverlayRegistry.getOverlay(oRevealedElement).getParentAggregationOverlay() : mParents.relevantContainerOverlay;
 				var SourceParentDesignTimeMetadata = oSourceParentOverlay.getDesignTimeMetadata();
-				var oMoveAction = SourceParentDesignTimeMetadata.getAction("move", oRevealedElement);
-				var sVariantManagementReference;
-				if (oMoveAction) {
-					sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement));
-				}
+				var sVariantManagementReference = this.getVariantManagementReference(oSourceParentOverlay);
+
 				return this.getCommandFactory().getCommandFor(mParents.relevantContainer, "move", {
 					movedElements : [{
 						element : oRevealedElement,
