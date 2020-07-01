@@ -38,11 +38,15 @@ sap.ui.define([
 			}
 			sModelType = oModel.getMetadata().getName();
 		}
-		return {
-			name: DelegateMediator._mDefaultDelegateItems[sModelType],
-			payload: {}, //default is empty payload
-			modelType: sModelType //only added for default delegate as this has to be stored when creating a change
-		};
+		var sDelegateName = DelegateMediator._mDefaultDelegateItems[sModelType];
+		if (sDelegateName) {
+			//only return a delegate info if a default delegate is found
+			return {
+				name: sDelegateName,
+				payload: {}, //default is empty payload
+				modelType: sModelType //only added for default delegate as this has to be stored when creating a change
+			};
+		}
 	}
 
 	function loadDelegate(oModifier, oControl, mDelegate) {
