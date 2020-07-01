@@ -230,8 +230,8 @@
 		text : "Example without content",
 		labelFor : "st-noContent"
 	});
-	var oDcContentForm = new sap.ui.layout.form.SimpleForm("st-content-form", {
-		maxContainerCols : 2,
+	var oDcContentForm = new sap.ui.layout.Grid("st-content-form", {
+		defaultSpan : "XL4 L4 M6 S12",
 		content : [oNewsSTLbl, oNewsSlideTile, oOneSTLbl, oOneSlideTile, oFeedSTLbl, oFeedSlideTile, oTileNoContLbl, oTileNoContent]
 	});
 
