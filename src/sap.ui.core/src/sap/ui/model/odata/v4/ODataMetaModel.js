@@ -2924,13 +2924,12 @@ sap.ui.define([
 	 *   structured as defined by <code>com.sap.vocabularies.Common.v1.ValueListType</code>;
 	 *   the map entry with key "" represents the mapping without qualifier. Each entry has an
 	 *   additional property "$model" which is the {@link sap.ui.model.odata.v4.ODataModel} instance
-	 *   to read value list data via this mapping; this model is constructed with the HTTP headers
+	 *   to read value list data via this mapping; that model is constructed with the HTTP headers
 	 *   obtained via {@link sap.ui.model.odata.v4.ODataModel#getHttpHeaders} from this meta model's
-	 *   data model. Since 1.80.0, unless the value list model is the data model associated with
-	 *   this meta model, the model parameter "sharedRequests" is set automatically, see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}. For the remaining cases, use the
-	 *   binding-specific parameter "$$sharedRequest", see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}.
+	 *   data model. Since 1.80.0, that model's parameter "sharedRequests" is set automatically (see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}). If the value list model is the data
+	 *   model associated with this meta model, use the binding-specific parameter "$$sharedRequest"
+	 *   instead, see {@link sap.ui.model.odata.v4.ODataModel#bindList}.
 	 *
 	 *   For fixed values, only one mapping is expected and the qualifier is ignored. The mapping
 	 *   is available with key "".
