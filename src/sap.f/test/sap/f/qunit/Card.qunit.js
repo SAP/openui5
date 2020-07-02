@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/f/Card",
 	"sap/f/cards/Header",
 	"sap/f/cards/NumericHeader",
+	"sap/m/BadgeCustomData",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ],
@@ -11,6 +12,7 @@ function (
 	Card,
 	CardHeader,
 	CardNumericHeader,
+	BadgeCustomData,
 	Core,
 	jQuery
 ) {
@@ -150,6 +152,22 @@ function (
 		$header = oCard.getHeader().$();
 		assert.strictEqual($header.attr("role"), "button" , "Header role is correct.");
 		assert.ok($header.hasClass("sapFCardClickable"), "sapFCardClickable class is set");
+
+		oCard.destroy();
+	});
+
+	QUnit.module("Badge");
+
+	QUnit.test("Rendering", function (assert) {
+
+		// Arrange
+		var oCard = createCard(CardHeader);
+
+		oCard.addCustomData(new BadgeCustomData({value: 10}));
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "10", "Badge indicator is correctly rendered");
 
 		oCard.destroy();
 	});

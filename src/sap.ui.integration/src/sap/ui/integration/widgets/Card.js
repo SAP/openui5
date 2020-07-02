@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/formatters/IconFormatter",
-	"sap/ui/integration/util/FilterBarFactory"
+	"sap/ui/integration/util/FilterBarFactory",
+	"sap/m/BadgeEnabler"
 ], function (
 	Interface,
 	jQuery,
@@ -54,7 +55,8 @@ sap.ui.define([
 	ContentFactory,
 	BindingHelper,
 	IconFormatter,
-	FilterBarFactory
+	FilterBarFactory,
+	BadgeEnabler
 ) {
 	"use strict";
 	/* global Map */
@@ -143,7 +145,10 @@ sap.ui.define([
 	var Card = Control.extend("sap.ui.integration.widgets.Card", /** @lends sap.ui.integration.widgets.Card.prototype */ {
 		metadata: {
 			library: "sap.ui.integration",
-			interfaces: ["sap.f.ICard"],
+			interfaces: [
+				"sap.f.ICard",
+				"sap.m.IBadge"
+			],
 			properties: {
 
 				/**
@@ -323,6 +328,8 @@ sap.ui.define([
 		renderer: FCardRenderer
 	});
 
+	BadgeEnabler.call(Card.prototype);
+
 	/**
 	 * Initialization hook.
 	 * @private
@@ -354,6 +361,10 @@ sap.ui.define([
 		this._oLimitedInterface = new Interface(this, [
 			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request"
 		]);
+
+		this.initBadgeEnablement({
+			accentColor: "AccentColor6"
+		});
 	};
 
 	/**

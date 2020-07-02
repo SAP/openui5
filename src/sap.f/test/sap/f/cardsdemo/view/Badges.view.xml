@@ -1,0 +1,46 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:f="sap.f"
+		xmlns:w="sap.ui.integration.widgets"
+		displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Badges"/>
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<content>
+			<f:GridContainer class="sapUiSmallMargin" id="grid1">
+				<f:items>
+					<w:Card manifest="{manifests>/listContent/card13}">
+						<w:customData>
+							<BadgeCustomData value="30940" />
+						</w:customData>
+						<w:layoutData>
+							<f:GridContainerItemLayoutData rows="6" columns="3" />
+						</w:layoutData>
+					</w:Card>
+					<w:Card manifest="{manifests>/listContent/card13}">
+						<w:customData>
+							<BadgeCustomData value="Very long badge title Very long badge title Very long badge title Very long badge title Very long badge title" />
+						</w:customData>
+						<w:layoutData>
+							<f:GridContainerItemLayoutData minRows="6" columns="3" />
+						</w:layoutData>
+					</w:Card>
+					<w:Card manifest="{manifests>/analyticalContent/line}">
+						<w:customData>
+							<BadgeCustomData value="121" />
+						</w:customData>
+						<w:layoutData>
+							<f:GridContainerItemLayoutData columns="4" />
+						</w:layoutData>
+					</w:Card>
+				</f:items>
+			</f:GridContainer>
+		</content>
+	</Page>
+</mvc:View>
