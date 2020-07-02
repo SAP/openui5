@@ -477,7 +477,7 @@ sap.ui.define([
 		// If the total width of all overflow-enabled children changed, fire a private event to notify interested parties
 		if (this._iOldContentSize !== this._iContentSize) {
 			this.fireEvent("_contentSizeChange", {
-				contentSize: this._iContentSize + iLeftPadding + iRightPadding
+				contentSize: this._iContentSize + iLeftPadding + iRightPadding + 1 // Additional 1px to fix Browser rounding issues
 			});
 		}
 	};
