@@ -1414,7 +1414,11 @@ sap.ui.define([
 	Tokenizer.prototype.updateTokens = function () {
 		this.destroyTokens();
 		this.updateAggregation("tokens");
+	};
+
+	Tokenizer.prototype.destroyTokens = function() {
 		this.setFirstTokenTruncated(false);
+		return this.destroyAggregation("tokens");
 	};
 
 	/**

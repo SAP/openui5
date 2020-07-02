@@ -140,6 +140,24 @@ sap.ui.define([
 		assert.strictEqual(oSpy.firstCall.args[0], false, "setFirstTokenTruncated was called with 'false'.");
 	});
 
+	QUnit.test("DestroyTokens should call setFirstTokenTruncated with 'false'", function (assert) {
+		// arrange
+		this.tokenizer.addToken(new Token());
+		sap.ui.getCore().applyChanges();
+		var oSpy = sinon.spy(this.tokenizer, "setFirstTokenTruncated");
+
+		// Act
+		this.tokenizer.destroyTokens();
+
+		// assert
+		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
+		assert.ok(oSpy.calledWith(false), "The setFirstTokenTruncated is called with false value");
+
+		// Cleanup
+		oSpy.restore();
+	});
+
+
 	QUnit.test("updateTokens should call setFirstTokenTruncated with 'false'.", function(assert) {
 		var oSpy = sinon.spy(this.tokenizer, "setFirstTokenTruncated");
 
