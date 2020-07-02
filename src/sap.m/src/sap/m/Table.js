@@ -681,16 +681,25 @@ sap.ui.define([
 			return;
 		}
 
-		return this._selectAllCheckBox || (this._selectAllCheckBox = new CheckBox({
-			id: this.getId("sa"),
-			activeHandling: false
-		}).addStyleClass("sapMLIBSelectM").setParent(this, null, true).attachSelect(function () {
-			if (this._selectAllCheckBox.getSelected()) {
-				this.selectAll(true);
-			} else {
-				this.removeSelections(false, true);
-			}
-		}, this).setTabIndex(-1));
+		if (!this._selectAllCheckBox) {
+			this._selectAllCheckBox = new CheckBox({
+				id: this.getId("sa"),
+				activeHandling: false
+			}).addStyleClass("sapMLIBSelectM").setParent(this, null, true).attachSelect(function () {
+				if (this._selectAllCheckBox.getSelected()) {
+					this.selectAll(true);
+				} else {
+					this.removeSelections(false, true);
+				}
+			}, this).setTabIndex(-1);
+		}
+
+		// prevent disabling of internal controls by the sap.ui.core.EnabledPropagator
+		this._selectAllCheckBox.getEnabled = function() {
+			return true;
+		};
+
+		return this._selectAllCheckBox;
 	};
 
 	/*

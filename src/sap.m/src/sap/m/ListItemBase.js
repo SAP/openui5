@@ -525,6 +525,11 @@ function(
 
 		this._oDeleteControl._bExcludeFromTabChain = true;
 
+		// prevent disabling of internal controls by the sap.ui.core.EnabledPropagator
+		this._oDeleteControl.getEnabled = function() {
+			return true;
+		};
+
 		return this._oDeleteControl;
 	};
 
@@ -557,6 +562,11 @@ function(
 		}, this);
 
 		this._oDetailControl._bExcludeFromTabChain = true;
+
+		// prevent disabling of internal controls by the sap.ui.core.EnabledPropagator
+		this._oDetailControl.getEnabled = function() {
+			return true;
+		};
 
 		return this._oDetailControl;
 	};
@@ -605,6 +615,11 @@ function(
 			this.informList("Select", bSelected);
 		}, this);
 
+		// prevent disabling of internal controls by the sap.ui.core.EnabledPropagator
+		this._oSingleSelectControl.getEnabled = function() {
+			return true;
+		};
+
 		return this._oSingleSelectControl;
 	};
 
@@ -636,6 +651,11 @@ function(
 			this.setSelected(bSelected);
 			this.informList("Select", bSelected);
 		}, this);
+
+		// prevent disabling of internal controls by the sap.ui.core.EnabledPropagator
+		this._oMultiSelectControl.getEnabled = function() {
+			return true;
+		};
 
 		return this._oMultiSelectControl;
 	};
