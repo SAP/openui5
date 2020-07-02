@@ -8,11 +8,16 @@ sap.ui.define([
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/MessageScope",
+	"sap/ui/model/odata/ODataPropertyBinding",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v2/ODataContextBinding",
+	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, coreLibrary, Message, FilterProcessor, Model, MessageScope, ODataUtils,
-		ODataModel, TestUtils) {
+], function (Log, coreLibrary, Message, FilterProcessor, Model, MessageScope, ODataPropertyBinding,
+		ODataUtils, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
+) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -2180,5 +2185,105 @@ sap.ui.define([
 
 		// code under test
 		fnHandleProcessSuccess("~requestHandle");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDeepPathForCanonicalPath", function (assert) {
+		var oModel = {
+				// used by ODataListBinding and ODataTreeBinding
+				checkFilterOperation : function () {},
+				createCustomParams : function () { return {}; }, // used by ODataListBinding
+				resolveDeep : function () {},
+				resolveFromCache : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oContextBinding = new ODataContextBinding(oModel, "path/to/entity", "~oContext0"),
+			oListBinding,
+			oPropertyBinding,
+			oTreeBinding = new ODataTreeBinding(oModel, "path4tree", "~oContext3"),
+			oUnresolvedBinding = new ODataContextBinding(oModel, "path/unbound");
+
+		oModelMock.expects("resolveDeep").withExactArgs("path/to/collection", "~oContext1")
+			.returns("/deep/path/to/collection");
+		this.mock(ODataListBinding.prototype).expects("checkExpandedList").withExactArgs()
+			.returns(false);
+		oListBinding = new ODataListBinding(oModel, "path/to/collection", "~oContext1");
+
+		this.mock(ODataPropertyBinding.prototype).expects("_getValue").withExactArgs()
+			.returns("foo");
+		this.mock(ODataPropertyBinding.prototype).expects("getDataState").withExactArgs()
+			.returns({setValue : function () {/*not relevant*/}});
+		oPropertyBinding = new ODataPropertyBinding(oModel, "path/to/property", "~oContext2");
+
+		oModel.aBindings = [oTreeBinding, oPropertyBinding, oContextBinding, oListBinding,
+			oUnresolvedBinding];
+
+		oModelMock.expects("resolveDeep").withExactArgs("path/to/entity", "~oContext0")
+			.returns("/deep/path/to/entity");
+		oModelMock.expects("resolveFromCache").withExactArgs("/deep/path/to/entity")
+			.returns("/~sCanonicalPath(42)");
+		oModelMock.expects("resolveDeep").withExactArgs("path/to/collection(42)", "~oContext1")
+			.returns("/deep/path/to/collection(42)");
+		oModelMock.expects("resolveFromCache").withExactArgs("/deep/path/to/collection(42)")
+			.returns("/~sCanonicalPath0(42)");
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.getDeepPathForCanonicalPath.call(oModel, "/~sCanonicalPath(42)"),
+			"/deep/path/to/entity");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDeepPathForCanonicalPath: different deep paths", function (assert) {
+		var oModel = {
+				resolveDeep : function () {},
+				resolveFromCache : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oContextBinding0 = new ODataContextBinding(oModel, "path2entity", "~oContext0"),
+			oContextBinding1 = new ODataContextBinding(oModel, "another/path2entity", "~oContext1");
+
+		oModel.aBindings = [oContextBinding0, oContextBinding1];
+
+		oModelMock.expects("resolveDeep").withExactArgs("path2entity", "~oContext0")
+			.returns("/deep/path2entity");
+		oModelMock.expects("resolveFromCache").withExactArgs("/deep/path2entity")
+			.returns("/~sCanonicalPath(42)");
+		oModelMock.expects("resolveDeep").withExactArgs("another/path2entity", "~oContext1")
+			.returns("/deep/another/path2entity");
+		oModelMock.expects("resolveFromCache").withExactArgs("/deep/another/path2entity")
+			.returns("/~sCanonicalPath(42)");
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.getDeepPathForCanonicalPath.call(oModel, "/~sCanonicalPath(42)"),
+			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDeepPathForCanonicalPath: same deep path", function (assert) {
+		var oModel = {
+				resolveDeep : function () {},
+				resolveFromCache : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oContextBinding0 = new ODataContextBinding(oModel, "path2entity", "~oContext0"),
+			oContextBinding1 = new ODataContextBinding(oModel, "another/path2entity", "~oContext1");
+
+		oModel.aBindings = [oContextBinding0, oContextBinding1];
+
+		oModelMock.expects("resolveDeep").withExactArgs("path2entity", "~oContext0")
+			.returns("/same/deep/path2entity");
+		oModelMock.expects("resolveFromCache").withExactArgs("/same/deep/path2entity")
+			.returns("/~sCanonicalPath(42)");
+		oModelMock.expects("resolveDeep").withExactArgs("another/path2entity", "~oContext1")
+			.returns("/same/deep/path2entity");
+		oModelMock.expects("resolveFromCache").withExactArgs("/same/deep/path2entity")
+			.returns("/~sCanonicalPath(42)");
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.getDeepPathForCanonicalPath.call(oModel, "/~sCanonicalPath(42)"),
+			"/same/deep/path2entity");
 	});
 });

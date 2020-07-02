@@ -7236,5 +7236,46 @@ sap.ui.define([
 			.sort(Message.compare);
 	};
 
+	/**
+	 * Returns the deep path for the given canonical path. Only ODataContextBindings and
+	 * ODataListBindings are considered while calculating the deep path.
+	 *
+	 * @param {string} sCanonicalPath
+	 *   The canonical path addressing an entity, for example "/SalesOrderSet('42')"
+	 * @returns {string}
+	 *   The deep path for the given canonical path; <code>undefined</code> if the deep path cannot
+	 *   be determined, which may happen if there are different deep paths referencing the same
+	 *   entity or if there is no binding referencing the entity
+	 * @private
+	 */
+	ODataModel.prototype.getDeepPathForCanonicalPath = function (sCanonicalPath) {
+		var oCurrentBinding, sCurrentCanonicalPath, sCurrentDeepPath, sDeepPath, aFilteredBindings,
+			i, n,
+			sKeyPredicate = sCanonicalPath.slice(sCanonicalPath.indexOf("("));
+
+		aFilteredBindings = this.aBindings.filter(function (oBinding) {
+			return (oBinding instanceof ODataContextBinding || oBinding instanceof ODataListBinding)
+				&& oBinding.isResolved();
+		});
+
+		for (i = 0, n = aFilteredBindings.length; i < n; i += 1) {
+			oCurrentBinding = aFilteredBindings[i];
+			sCurrentDeepPath = this.resolveDeep(oCurrentBinding instanceof ODataListBinding
+					? oCurrentBinding.sPath + sKeyPredicate
+					: oCurrentBinding.sPath,
+				oCurrentBinding.oContext);
+			sCurrentCanonicalPath = this.resolveFromCache(sCurrentDeepPath);
+
+			if (sCurrentCanonicalPath === sCanonicalPath) {
+				if (sDeepPath && sDeepPath !== sCurrentDeepPath) {
+					return undefined; // multiple deep paths for the same canonical path
+				}
+				sDeepPath = sCurrentDeepPath;
+			}
+		}
+
+		return sDeepPath;
+	};
+
 	return ODataModel;
 });
