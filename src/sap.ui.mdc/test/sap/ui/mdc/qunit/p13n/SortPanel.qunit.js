@@ -50,7 +50,7 @@ sap.ui.define([
 		});
 
 		//fire the change event which is being used for the change of sort order
-		this.oSortPanel._oMTable.getItems()[0].getCells()[1].fireChange({selectedItem:this.oSortPanel._oMTable.getItems()[0]});
+		this.oSortPanel._oListControl.getItems()[0].getCells()[1].fireChange({selectedItem:this.oSortPanel._oListControl.getItems()[0]});
 	}.bind(this));
 
 });

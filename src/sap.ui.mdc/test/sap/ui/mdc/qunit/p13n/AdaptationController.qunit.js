@@ -76,7 +76,7 @@ sap.ui.define([
 			assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
 
 			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oMTable;
+			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SelectionPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length, "correct amount of items has been set");
@@ -98,7 +98,7 @@ sap.ui.define([
 			assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
 
 			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oMTable;
+			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SelectionPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length, "correct amount of items has been set");
@@ -140,7 +140,7 @@ sap.ui.define([
 			assert.ok(oP13nControl.isA("sap.m.Dialog"));
 
 			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oMTable;
+			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SelectionPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems().length, 1, "only one item has been created (as only one has been passed as parameter)");
@@ -219,7 +219,7 @@ sap.ui.define([
 			assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
 
 			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oMTable;
+			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SortPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length, "correct amount of items has been set");
@@ -239,7 +239,7 @@ sap.ui.define([
 			assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
 
 			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oMTable;
+			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SortPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 
@@ -407,7 +407,7 @@ sap.ui.define([
 			assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
 
 			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oMTable;
+			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.ChartItemPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length, "correct amount of items has been set");
@@ -491,7 +491,7 @@ sap.ui.define([
 			assert.ok(this.oNonStubAC.bIsDialogOpen,"dialog is open");
 
 			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oMTable;
+			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.AdaptFiltersPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 
@@ -518,7 +518,7 @@ sap.ui.define([
 			assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
 
 			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oMTable;
+			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.AdaptFiltersPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length, "correct amount of items has been set");

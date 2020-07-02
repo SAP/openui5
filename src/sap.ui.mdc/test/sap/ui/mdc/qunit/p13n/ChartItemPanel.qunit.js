@@ -49,7 +49,7 @@ sap.ui.define([
 			done();
 		});
 
-		this.oChartItemPanel._oMTable.getItems()[0].getCells()[2].fireChange({selectedItem:this.oChartItemPanel._oMTable.getItems()[0]});
+		this.oChartItemPanel._oListControl.getItems()[0].getCells()[2].fireChange({selectedItem:this.oChartItemPanel._oListControl.getItems()[0]});
 	}.bind(this));
 
 });
