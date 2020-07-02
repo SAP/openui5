@@ -1187,7 +1187,7 @@ sap.ui.define([
 
 		/**
 		 * Returns a clone of the given value where all occurrences of the private namespace
-		 * object has been deleted.
+		 * object have been deleted.
 		 *
 		 * @param {any} vValue
 		 *   Any value, including <code>undefined</code>
