@@ -5,7 +5,7 @@
 		"applicationVersion" : {
 			"version" : "${version}"
 		},
-		"description" : "{{sap.app.description}}",
+		"description" : "Example for consuming a stateful OData V4 Service",
 		"dataSources" : {
 			"default" : {
 				"uri" : "/sap/opu/odata4/sap/zrc_rap_sticky/srvd/sap/zrc_rap_sticky/0001/",
@@ -16,8 +16,7 @@
 			}
 		},
 		"id" : "sap.ui.core.sample.odata.v4.Sticky",
-		"i18n" : "i18n/i18n.properties",
-		"title" : "{{sap.app.title}}",
+		"title" : "Sticky Service App",
 		"type" : "application"
 	},
 	"sap.ui" : {

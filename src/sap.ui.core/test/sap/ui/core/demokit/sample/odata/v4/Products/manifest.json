@@ -21,7 +21,6 @@
 			}
 		},
 		"id" : "sap.ui.core.sample.odata.v4.Products",
-		"i18n" : "i18n/i18n.properties",
 		"title" : "EPM Products",
 		"type" : "application"
 	},
