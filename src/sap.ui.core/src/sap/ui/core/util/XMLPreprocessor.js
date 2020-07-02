@@ -1579,7 +1579,8 @@ sap.ui.define([
 					error("Missing model '" + sModelName + "' in ", oElement);
 				}
 				oListBinding.enableExtendedChangeDetection();
-				aContexts = oListBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
+				aContexts = oListBinding.getContexts(oBindingInfo.startIndex,
+					oBindingInfo.length || /*no Model#iSizeLimit*/Infinity);
 				if (!oViewInfo.sync && aContexts.dataRequested) {
 					oPromise = new SyncPromise(function (resolve) {
 						oListBinding.attachEventOnce("change", resolve);
