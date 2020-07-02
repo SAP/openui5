@@ -345,7 +345,7 @@ sap.ui.define([
 
 	};
 
-	ListFieldHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters) {
+	ListFieldHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest) {
 
 		if (vValue === null || vValue === undefined) {
 			return null;

@@ -757,8 +757,12 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, oBindingContext) {
-		return _getTextOrKeyDelegateHandler.call(this, true, vKey, oBindingContext, oInParameters, oOutParameters);
+		return _getTextForKey.call(this, vKey, oBindingContext, oInParameters, oOutParameters, false);
 	};
+
+	function _getTextForKey(vKey, oBindingContext, oInParameters, oOutParameters, bNoRequest) {
+		return _getTextOrKeyDelegateHandler.call(this, true, vKey, oBindingContext, oInParameters, oOutParameters, bNoRequest);
+	}
 
 	/**
 	 * Determines the key for a given description.
@@ -779,8 +783,12 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getKeyForText = function(sText, oBindingContext) {
-		return _getTextOrKeyDelegateHandler.call(this, false, sText, oBindingContext);
+		return _getKeyForText.call(this, sText, oBindingContext, false);
 	};
+
+	function _getKeyForText(sText, oBindingContext, bNoRequest) {
+		return _getTextOrKeyDelegateHandler.call(this, false, sText, oBindingContext, undefined, undefined, bNoRequest);
+	}
 
 	/**
 	 * Determines the description for a given key or the key for a given description.
@@ -790,23 +798,38 @@ sap.ui.define([
 	 * When using <code>getKeyForText</code>, <code>oInParamer</code> and </code>oOutParameter</code> are not supported.
 	 *
 	 * @param {any} vValue Key or description
-	 * @param {boolean} bKey If true </code>vValue</code> is handled as key, otherwise as description
+	 * @param {boolean} bKey If <code>true</code> <code>vValue</code> is handled as key, otherwise as description
 	 * @param {sap.ui.model.Context} oBindingContext BindingContext of the checked field. (Inside a table FieldHelp might be connected to a different row.)
 	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.)
 	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.)
+	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key, key for description or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 *
 	 * @protected
 	 * @since 1.77.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FieldHelpBase.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters) {
+	FieldHelpBase.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest) {
 		// to be implements by the concrete FieldHelp
 		if (bKey) {
 			return "";
 		} else {
 			return undefined;
 		}
+	};
+
+	/**
+	 * Defines if the field help supports backend requests to determine key or description
+	 *
+	 * @returns {boolean} Flag if backend requests are supported
+	 *
+	 * @protected
+	 * @since 1.81.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldHelpBase.prototype._isTextOrKeyRequestSupported = function() {
+		// to be implements by the concrete FieldHelp
+		return false;
 	};
 
 	/**
@@ -834,19 +857,43 @@ sap.ui.define([
 	 */
 	FieldHelpBase.prototype.getItemForValue = function(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription) {
 
-		return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, true);
+		return SyncPromise.resolve().then(function() {
+			// first try without backend request
+			return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, true, true);
+		}.bind(this)).then(function(vResult) {
+			if (!vResult && this._isTextOrKeyRequestSupported()) {
+				// try to call with backend request
+				return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, true, false);
+			} else {
+				return vResult;
+			}
+		}.bind(this)).catch(function(oException) {
+			_checkExceptionThown.call(this, oException, !this._isTextOrKeyRequestSupported());
+
+			if (this._isTextOrKeyRequestSupported()) {
+				// try to call with backend request
+				var vResult = _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, true, false);
+
+				if (!vResult) {
+					// nothing found -> throw initial exception
+					throw oException;
+				}
+
+				return vResult;
+			}
+		}.bind(this)).unwrap();
 
 	};
 
-	function _getItemForValue(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, bFirstCheck) {
+	function _getItemForValue(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, bFirstCheck, bNoRequest) {
 
 		return SyncPromise.resolve().then(function() {
 			if (bCheckKeyFirst) {
 				if (bCheckKey) {
-					return this.getTextForKey(vParsedValue, oInParameters, oOutParameters, oBindingContext);
+					return _getTextForKey.call(this, vParsedValue, oBindingContext, oInParameters, oOutParameters, bNoRequest);
 				}
 			} else if (bCheckDescription) {
-				return this.getKeyForText(vValue, oBindingContext);
+				return _getKeyForText.call(this, vValue, oBindingContext, bNoRequest);
 			}
 		}.bind(this)).then(function(vResult) {
 			if (vResult) {
@@ -860,23 +907,15 @@ sap.ui.define([
 					return {key: vResult, description: vValue};
 				}
 			} else if (bFirstCheck && ((bCheckKeyFirst && bCheckDescription) || (!bCheckKeyFirst && bCheckKey))) {
-				return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, !bCheckKeyFirst, bCheckKey, bCheckDescription, false);
+				return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, !bCheckKeyFirst, bCheckKey, bCheckDescription, false, bNoRequest);
 			} else {
 				return undefined; // to have alway undefined, not "", null or false
 			}
 		}.bind(this)).catch(function(oException) {
-			if (oException && !(oException instanceof ParseException) && !(oException instanceof FormatException)) {
-				// unknown error -> just raise it
-				throw oException;
-			}
-
-			if (oException && oException._bNotUnique) { // TODO: better solution?
-				// not unique -> just throw exception
-				throw oException;
-			}
+			_checkExceptionThown.call(this, oException, oException && oException._bSecondCheck);
 
 			if (bFirstCheck && ((bCheckKeyFirst && bCheckDescription) || (!bCheckKeyFirst && bCheckKey))) {
-				var vResult = _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, !bCheckKeyFirst, bCheckKey, bCheckDescription, false);
+				var vResult = _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, !bCheckKeyFirst, bCheckKey, bCheckDescription, false, bNoRequest);
 
 				if (!vResult) {
 					// nothing found -> throw initial exception
@@ -885,9 +924,31 @@ sap.ui.define([
 
 				return vResult;
 			} else {
+				oException._bSecondCheck = true; // prevent to call _getItemForValue again
 				throw oException;
 			}
 		}.bind(this)).unwrap();
+
+	}
+
+	function _checkExceptionThown(oException, bThowImmediately) {
+
+		if (oException) {
+			if (bThowImmediately) {
+				// just thow it
+				throw oException;
+			}
+
+			if (!(oException instanceof ParseException) && !(oException instanceof FormatException)) {
+				// unknown error -> just raise it
+				throw oException;
+			}
+
+			if (oException._bNotUnique) { // TODO: better solution?
+				// not unique -> just throw exception
+				throw oException;
+			}
+		}
 
 	}
 
@@ -1073,7 +1134,7 @@ sap.ui.define([
 	};
 
 	// delegate-handling for getTextForKey and getKeyForText
-	function _getTextOrKeyDelegateHandler(bKey, vValue, oBindingContext, oInParameters, oOutParameters) {
+	function _getTextOrKeyDelegateHandler(bKey, vValue, oBindingContext, oInParameters, oOutParameters, bNoRequest) {
 
 		var sInParameters = JSON.stringify(oInParameters);
 		var sContextPath = oBindingContext && oBindingContext.getPath();
@@ -1111,12 +1172,13 @@ sap.ui.define([
 				this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].inParameters = oInParameters ? merge({}, oInParameters) : undefined;
 				this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].outParameters = oOutParameters ? merge({}, oOutParameters) : undefined;
 				this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].bindingContext = oBindingContext;
+				this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].noRequest = bNoRequest;
 			}.bind(this));
 
 			return this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].promise;
 		}
 
-		return this._getTextOrKey(vValue, bKey, oBindingContext, oInParameters, oOutParameters);
+		return this._getTextOrKey(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest);
 
 	}
 
@@ -1127,18 +1189,7 @@ sap.ui.define([
 			for ( var vValue in this._oTextOrKeyPromises[bKey]) {
 				for ( var sInParameters in this._oTextOrKeyPromises[bKey][vValue]) {
 					for ( var sContextPath in this._oTextOrKeyPromises[bKey][vValue][sInParameters]) {
-						var vMyValue = this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].value;
-						var bMyKey = this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].key;
-						var oInParameters = this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].inParameters;
-						var oOutParameters = this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].outParameters;
-						var oBindingContext = this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].bindingContext;
-						var vResult = this._getTextOrKey(vMyValue, bMyKey, oBindingContext, oInParameters, oOutParameters);
-
-						if (vResult instanceof Promise) {
-							_handlePromise.call(this, vResult, this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].resolve, this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].reject);
-						} else {
-							this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].resolve(vResult);
-						}
+						_getTextAndKeyAfterContentLoaded.call(this, this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath]);
 						delete this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath];
 					}
 				}
@@ -1147,14 +1198,25 @@ sap.ui.define([
 
 	}
 
-	function _handlePromise(oPromise, fnResolve, fnReject) {
+	// own function to not define functions in loop
+	function _getTextAndKeyAfterContentLoaded(oTextOrKeyInfo) {
 
-		// use Function because of context of variables in loop
-		oPromise.then(function(vResult) {
+		var vMyValue = oTextOrKeyInfo.value;
+		var bMyKey = oTextOrKeyInfo.key;
+		var oInParameters = oTextOrKeyInfo.inParameters;
+		var oOutParameters = oTextOrKeyInfo.outParameters;
+		var oBindingContext = oTextOrKeyInfo.bindingContext;
+		var bNoRequest = oTextOrKeyInfo.noRequest;
+		var fnResolve = oTextOrKeyInfo.resolve;
+		var fnReject = oTextOrKeyInfo.reject;
+
+		SyncPromise.resolve().then(function() {
+			return this._getTextOrKey(vMyValue, bMyKey, oBindingContext, oInParameters, oOutParameters, bNoRequest);
+		}.bind(this)).then(function(vResult) {
 			fnResolve(vResult);
 		}).catch(function(oException) {
 			fnReject(oException);
-		});
+		}).unwrap();
 
 	}
 
