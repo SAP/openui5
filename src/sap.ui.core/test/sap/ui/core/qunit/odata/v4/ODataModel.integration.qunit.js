@@ -195,7 +195,8 @@ sap.ui.define([
 			oElement, bHasColumns, i, j, k, aTableElements;
 
 		oDocument = XMLHelper.parse(
-			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
+			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table"'
+			+ ' xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">'
 			+ sViewXML
 			+ '</mvc:View>',
 			"application/xml"
@@ -794,10 +795,12 @@ sap.ui.define([
 		 *   If no model is given, <code>createTeaBusiModel</code> is used.
 		 * @param {object} [oController]
 		 *   An object defining the methods and properties of the controller
+		 * @param {object} [mPreprocessors] A map from the specified preprocessor type (e.g. "xml")
+		 *    to a preprocessor configuration, see {@link sap.ui.core.mvc.View.create}
 		 * @returns {Promise} A promise that is resolved when the view is created and all expected
 		 *   values for controls have been set
 		 */
-		createView : function (assert, sViewXML, oModel, oController) {
+		createView : function (assert, sViewXML, oModel, oController, mPreprocessors) {
 			var fnLockGroup,
 				that = this;
 
@@ -1011,7 +1014,8 @@ sap.ui.define([
 			return View.create({
 				type : "XML",
 				controller : oController && new (Controller.extend(uid(), oController))(),
-				definition : xml(sViewXML)
+				definition : xml(sViewXML),
+				preprocessors : mPreprocessors
 			}).then(function (oView) {
 				Object.keys(that.mChanges).forEach(function (sControlId) {
 					var oControl = oView.byId(sControlId);
@@ -1392,6 +1396,66 @@ sap.ui.define([
 			}
 
 			return this.createView(assert, sView, vModel);
+		});
+	}
+
+	/**
+	 * Test that the template output is as expected.
+	 *
+	 * @param {object} assert The QUnit assert object
+	 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
+	 *    see {@link sap.ui.core.mvc.View.create}
+	 * @param {string} sTemplate The template used to generate the expected view as XML
+	 * @param {string} sView The expected resulting view from templating
+	 * @returns {Promise} A promise that is resolved when the test is done
+	 *
+	 * @private
+	 */
+	function doTestXMLTemplating(assert, oXMLPreprocessorConfig, sTemplate, sView) {
+		var that = this;
+
+		/*
+		 * Remove all namespaces and all spaces before tag ends (..."/>) and all tabs from the
+		 * given XML string.
+		 *
+		 * @param {string} sXml
+		 *   XML string
+		 * @returns {string}
+		 *   Normalized XML string
+		 */
+		function _normalizeXml(sXml) {
+			/*jslint regexp: true*/
+			sXml = sXml
+			// Note: IE > 8 does not add all namespaces at root level, but deeper inside the tree!
+			// Note: Chrome adds all namespaces at root level, but before other attributes!
+				.replace(/ xmlns.*?=\".*?\"/g, "")
+				// Note: browsers differ in whitespace for empty HTML(!) tags
+				.replace(/ \/>/g, '/>')
+				// Replace all tabulators
+				.replace(/\t/g, "");
+			if (Device.browser.msie || Device.browser.edge) {
+				// Microsoft shuffles attribute order; sort multiple attributes alphabetically:
+				// - no escaped quotes in attribute values!
+				// - e.g. <In a="..." b="..."/> or <template:repeat a="..." t:b="...">
+				sXml = sXml.replace(/<[\w:]+( [\w:]+="[^"]*"){2,}(?=\/?>)/g, function (sMatch) {
+					var aParts = sMatch.split(" ");
+					// aParts[0] e.g. "<In" or "<template:repeat"
+					// sMatch does not contain "/>" or ">" at end!
+					return aParts[0] + " " + aParts.slice(1).sort().join(" ");
+				});
+			}
+			return sXml;
+		}
+
+		// allow indents in expectation
+		sView = sView.replace(/\t/g, "");
+
+		return this.createView(assert, sTemplate, undefined, undefined,
+			{xml : oXMLPreprocessorConfig}).then(function () {
+				assert.strictEqual(
+					_normalizeXml(XMLHelper.serialize(that.oView._xContent)),
+					_normalizeXml(XMLHelper.serialize(xml(sView)))
+				);
 		});
 	}
 
@@ -20873,5 +20937,32 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			});
+	});
+
+	//*********************************************************************************************
+	// Scenario: <template:repeat> over more than Model#iSizeLimit (= 100) entries.
+	// BCP: 002075129500002532232020 (253223 / 2020)
+	QUnit.test("BCP: 002075129500002532232020", function (assert) {
+		var oMetaModel = createSpecialCasesModel().getMetaModel(),
+			sTemplate = '\
+<template:repeat list="{meta>/As/$Type/$Key}">\
+	<Text text="{meta>}"/>\
+</template:repeat>',
+			that = this;
+
+		return oMetaModel.requestObject("/As/$Type/$Key").then(function (aKeys) {
+			var i,
+				sView = '';
+
+			// DON'T TRY THIS AT HOME, KIDZ!
+			aKeys.length = 0;
+			for (i = 0; i < 200; i += 1) {
+				aKeys.push("" + i);
+				sView += '<Text text="' + i + '"/>';
+			}
+
+			return doTestXMLTemplating.call(that, assert,
+				{models : {meta : oMetaModel}}, sTemplate, sView);
+		});
 	});
 });

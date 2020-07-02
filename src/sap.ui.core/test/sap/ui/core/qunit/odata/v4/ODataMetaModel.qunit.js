@@ -3881,14 +3881,10 @@ sap.ui.define([
 			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "SALÃRY"]);
 		assertContextPaths(oBinding.getContexts(4, 10), ["EMPLOYEE_2_TEAM", "SALÃRY"]);
 
-		oMetaModel.setSizeLimit(2);
-		assertContextPaths(oBinding.getContexts(), ["ID", "AGE"]);
-
 		oBinding.attachEvent("sort", function () {
 			assert.ok(false, "unexpected sort event");
 		});
 
-		oMetaModel.setSizeLimit(100);
 		oBinding.sort(new Sorter("@sapui.name"));
 		assertContextPaths(oBinding.getContexts(), ["AGE", "EMPLOYEE_2_CONTAINED_S",
 			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "ID", "SALÃRY"]);
