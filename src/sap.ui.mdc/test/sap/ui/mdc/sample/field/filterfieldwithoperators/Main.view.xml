@@ -1,0 +1,464 @@
+<mvc:View
+		controllerName="my.Main"
+		displayBlock="true"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:mdc="sap.ui.mdc"
+		xmlns:mdcTable="sap.ui.mdc.table"
+		xmlns:mdcField="sap.ui.mdc.field"
+		xmlns:c="sap.ui.core"
+		xmlns:ce="sap.ui.codeeditor"
+		xmlns:chart="sap.suite.ui.microchart">
+	<App>
+		<Page title="Filter Field with ConditionModel and FilterOperatorConfig">
+
+	<IconTabBar
+		id="idIconTabBarNoIcons"
+		expanded="true"
+		selectedKey="1"
+		class="sapUiResponsiveContentPadding">
+		<items>
+			<IconTabFilter
+				key="1"
+				text="mdc.FilterFields and m.Table">
+			<l:AlignedFlowLayout>
+
+				<VBox class="sapUiTinyMargin">
+
+					<Label
+						labelFor="basicSearchFF"
+						text="Search (*title,genre*)"
+					/>
+
+					<mdc:FilterField
+						id="basicSearchFF"
+						placeholder="search..."
+						tooltip= "Basic Search"
+						dataType="sap.ui.model.type.String"
+						maxConditions="1"
+						width="100%"
+						conditions="{cm>/conditions/*title,genre*}">
+					</mdc:FilterField>
+
+				</VBox>
+
+				<VBox class="sapUiTinyMargin">
+					<Label
+						labelFor="titleFF"
+						text="Title (String)"
+					/>
+
+					<mdc:FilterField
+						id="titleFF"
+						dataType="sap.ui.model.type.String"
+						dataTypeConstraints="{ maxLength: 10 }"
+						maxConditions="-1"
+						width="100%"
+						placeholder="required field"
+						conditions="{cm>/conditions/title}"
+						required="true"
+						fieldHelp="FVH-title">
+						<mdc:dependents>
+							<mdcField:FieldValueHelp id="FVH-title"
+								filterFields="*title*"
+								keyPath="title"
+								descriptionPath="title"
+								showConditionPanel="true">
+							</mdcField:FieldValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+
+				</VBox>
+
+				<VBox class="sapUiTinyMargin">
+
+					<Label
+						labelFor="ratingFF"
+						text="Rating (float)"
+					/>
+
+					<mdc:FilterField
+						id="ratingFF"
+						dataType="sap.ui.model.type.Float"
+						dataTypeFormatOptions="{ decimals: 2 }"
+						dataTypeConstraints="{ minimum: 0, maximum:10 }"
+						width="100%"
+						conditions="{cm>/conditions/rating}"
+						fieldHelp="FVH-rating">
+						<mdc:dependents>
+							<mdcField:FieldValueHelp id="FVH-rating"
+								filterFields="*rating*"
+								keyPath="rating"
+								descriptionPath="rating"
+								showConditionPanel="true">
+							</mdcField:FieldValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+				</VBox>
+
+				<VBox class="sapUiTinyMargin">
+
+					<Label
+						labelFor="releaseDateFF"
+						text="Release Date (Date)"
+					/>
+
+					<mdc:FilterField
+						id="releaseDateFF"
+						dataType="sap.ui.model.odata.type.Date"
+						dataTypeFormatOptions="{style: 'long'}"
+						delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate'}"
+						width="100%"
+						maxConditions= "-1"
+						conditions="{cm>/conditions/releaseDate}"
+						fieldHelp="FVH-releaseDate">
+						<mdc:dependents>
+							<mdcField:FieldValueHelp id="FVH-releaseDate"
+								filterFields="*releaseDate*"
+								keyPath="releaseDate"
+								descriptionPath="releaseDate"
+								showConditionPanel="true">
+							</mdcField:FieldValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+
+					<!-- <mdc:FilterField id="YearFilterField" conditions="{cm>/conditions/Year}">
+						<m:VBox items="{path:'$filterField>conditions'}">
+							<m:RangeSlider width="700px"
+								max="{$filterField>validRange/1}"
+								min="{$filterField>validRange/0}"
+								value="{path:'$filterField>values/0', type:'sap.ui.model.type.String'}"
+								value2="{path:'$filterField>values/1', type:'sap.ui.model.type.String'}"
+								visible="{= ${$filterField>operator} === 'BT'}"
+							/>
+						</m:VBox>
+					</mdc:FilterField> -->
+				</VBox>
+
+				<VBox class="sapUiTinyMargin">
+
+					<Label
+						labelFor="genreFF"
+						text="Genre (String)"
+					/>
+
+					<mdc:FilterField
+						id="genreFF"
+						dataType="sap.ui.model.type.String"
+						width="100%"
+						maxConditions= "-1"
+						conditions="{cm>/conditions/genre}"
+						display="ValueDescription"
+						fieldHelp="genreFF-VH">
+						<mdc:dependents>
+							<mdcField:FieldValueHelp id="genreFF-VH"
+								filterFields="*text,description*"
+								keyPath="key"
+								descriptionPath="text"
+								showConditionPanel="true">
+								<mdcField:filterBar>
+									<mdc:FilterBar
+										liveMode= "false">
+										<mdc:FilterField
+											id="VHFBTextFF"
+											label= "Text"
+											dataType="sap.ui.model.type.String"
+											width="100%"
+											conditions="{$filters>/conditions/text}">
+										</mdc:FilterField>
+									</mdc:FilterBar>
+								</mdcField:filterBar>
+
+								<mdcField:FieldValueHelpMTableWrapper id="genreFF-VH-W">
+									<Table id="genreTable" items="{/genreValueList}" width="26rem" growing="true" growingScrollToLoad="true">
+										<columns>
+											<Column width="11rem">
+												<Label text="Text"></Label>
+											</Column>
+											<Column>
+												<Label text="Description"></Label>
+											</Column>
+										</columns>
+										<items>
+											<ColumnListItem type="Active">
+												<Text text="{text}" wrapping="false"></Text>
+												<Text text="{description}" wrapping="false"></Text>
+											</ColumnListItem>
+										</items>
+									</Table>
+								</mdcField:FieldValueHelpMTableWrapper>
+							</mdcField:FieldValueHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+				</VBox>
+
+				<VBox class="sapUiTinyMargin">
+
+					<Label
+						labelFor="startTimeFF"
+						text="Start Time"
+					/>
+
+					<mdc:FilterField
+						id="startTimeFF"
+						dataType="sap.ui.model.type.Time"
+						dataTypeFormatOptions="{ style: 'short'}"
+						width="100%"
+						maxConditions="1"
+						conditions="{cm>/conditions/startTime}">
+					</mdc:FilterField>
+				</VBox>
+
+				<VBox class="sapUiTinyMargin">
+
+					<Label
+						labelFor="silentMovieFF"
+						text="silent Movie (Boolean)"
+					/>
+
+					<mdc:FilterField
+						id="silentMovieFF"
+						dataType="sap.ui.model.odata.type.Boolean"
+						width="100%"
+						maxConditions="1"
+						conditions="{cm>/conditions/silentMovie}"
+						display="Value">
+					</mdc:FilterField>
+				</VBox>
+
+				<VBox class="sapUiTinyMargin">
+
+					<Label
+						labelFor="colorTypeFF"
+						text="color Type (fixed Values)"
+					/>
+
+					<mdc:FilterField
+						id="colorTypeFF"
+						dataType="sap.ui.model.type.String"
+						display="DescriptionValue"
+						width="100%"
+						maxConditions="1"
+						conditions="{cm>/conditions/colorType}"
+						fieldHelp="ColorHelp">
+						<mdc:dependents>
+							<mdcField:ListFieldHelp id="ColorHelp" items="{/colorTypeValueList}">
+								<c:ListItem text="{text}" key="{key}" additionalText="{description}"/>
+							</mdcField:ListFieldHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+				</VBox>
+
+				<VBox class="sapUiTinyMargin">
+
+					<Label
+						labelFor="runningTimeFF"
+						text="Running Time (max 1 conditions)"
+					/>
+
+					<mdc:FilterField
+						id="runningTimeFF"
+						dataType="sap.ui.model.type.Integer"
+						width="100%"
+						maxConditions="1"
+						conditions="{cm>/conditions/runningTime}">
+					</mdc:FilterField>
+				</VBox>
+
+				<l:endContent>
+					<CheckBox id="liveupdate" text="Live Update" selected="true"/>
+					<Button text="Go" type="Emphasized" press=".onGo"/>
+				</l:endContent>
+			</l:AlignedFlowLayout>
+
+			<Panel headerText="Visual Filters (Example)" expandable="true" expanded="false">
+
+			<FlexBox width="80rem" height="10rem" alignItems="left">
+				<items>
+					<VBox width="22rem">
+						<OverflowToolbar>
+							<Title text="Genre Donutchart"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://value-help" type="Transparent"/>
+						</OverflowToolbar>
+						<chart:InteractiveDonutChart id="donutChart" displayedSegments="4" selectionChanged="onDonutChartSelectionChanged" segments="{ path:'/genreChartElements', sorter:{ path : 'value', descending: true } }">
+							<chart:segments>
+								<chart:InteractiveDonutChartSegment value="{value}" displayedValue="{displayedValue}" label="{label}" selected="{selected}"/>
+							</chart:segments>
+						</chart:InteractiveDonutChart>
+					</VBox>
+
+					<VBox width="22rem">
+						<OverflowToolbar>
+							<Title text="Genre Barchart"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://value-help" type="Transparent"/>
+						</OverflowToolbar>
+						<chart:InteractiveBarChart id="barChart" labelWidth="25%" displayedBars="4" selectionChanged="onBarChartSelectionChanged"  bars="{ path:'/genreChartElements', sorter:{ path : 'value', descending: false } }">
+							<chart:bars>
+								<chart:InteractiveBarChartBar value="{value}" displayedValue="{displayedValue}" label="{label}" selected="{selected}"/>
+							</chart:bars>
+						</chart:InteractiveBarChart>
+					</VBox>
+
+					<VBox width="22rem">
+						<OverflowToolbar>
+							<Title text="Genre Linechart"/>
+							<mdc:FilterField
+								id="genreFF2"
+								dataType="sap.ui.model.type.String"
+								width="100%"
+								maxConditions= "-1"
+								conditions="{cm>/conditions/genre}"
+								fieldHelp="genreFF-VH">
+							</mdc:FilterField>
+
+							<!-- <ToolbarSpacer />
+							<Button icon="sap-icon://value-help" type="Transparent"/> -->
+						</OverflowToolbar>
+						<chart:InteractiveLineChart id="lineChart" labelWidth="25%" displayedPoints="4" selectionChanged="onLineChartSelectionChanged"  points="{ path:'/genreChartElements', sorter:{ path : 'value', descending: true } }">
+							<chart:points>
+								<chart:InteractiveLineChartPoint value="{value}" displayedValue="{displayedValue}" label="{label}" selected="{selected}"/>
+							</chart:points>
+						</chart:InteractiveLineChart>
+					</VBox>
+				</items>
+			</FlexBox>
+			</Panel>
+			<Toolbar>
+				<Text text="Movies"/>
+			</Toolbar>
+			<Table
+				id="movieTable"
+				items='{ path: "/movies"}'>
+
+				<columns>
+					<Column>
+						<Label text="Title" />
+					</Column>
+					<Column>
+						<Label text="Rating" />
+					</Column>
+					<Column>
+						<Label text="release Date" />
+					</Column>
+					<Column>
+						<Label text="Genre" />
+					</Column>
+					<Column>
+						<Label text="Start Time" />
+					</Column>
+					<Column>
+						<Label text="silent Movie" />
+					</Column>
+					<Column>
+						<Label text="Color Type" />
+					</Column>
+					<Column>
+						<Label text="Running Time" />
+					</Column>
+				</columns>
+
+				<items>
+					<ColumnListItem>
+						<Text text="{title}" />
+						<Text text="{rating}" />
+						<Text text="{path: 'releaseDate', type: 'sap.ui.model.type.Date', constraints: {displayFormat: 'Date', nullable: false}}" />
+						<Text text="{genre}" />
+						<Text text="{path: 'startTime', type: 'sap.ui.model.type.Time', formatOptions: {style: 'short'}}" />
+						<Text text="{silentMovie}" />
+						<Text text="{colorType}" />
+						<Text text="{runningTime}" />
+					</ColumnListItem>
+				</items>
+
+			</Table>
+
+			</IconTabFilter>
+			<IconTabFilter
+				key="2"
+				text="mdc.Filterbar and mdc.Table">
+
+				<mdc:FilterBar
+					liveMode= "true"
+					p13nMode= "Value">
+						<mdc:FilterField
+							id="FBtitleFF"
+							label= "Title (String)"
+							dataType="sap.ui.model.type.String"
+							dataTypeConstraints="{ maxLength: 4 }"
+							maxConditions="2"
+							width="100%"
+							placeholder="required field"
+							conditions="{$filters>/conditions/title}"
+							required="true"
+							fieldHelp="FBFVH-title">
+							<mdc:dependents>
+								<mdcField:FieldValueHelp id="FBFVH-title"
+									filterFields="*title*"
+									keyPath="title"
+									descriptionPath="title"
+									showConditionPanel="true">
+								</mdcField:FieldValueHelp>
+							</mdc:dependents>
+						</mdc:FilterField>
+				</mdc:FilterBar>
+
+				<mdc:Table
+					id="mdcTable"
+					header= "Movies"
+					type= "ResponsiveTable"
+					rows= "{/movies}">
+					<mdc:actions>
+						<Button text= "Test Action"  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType('ResponsiveTable')"/>
+					</mdc:actions>
+					<mdc:columns>
+						<mdcTable:Column id="title" header="Title">
+							<Text text="{title}" />
+						</mdcTable:Column>
+						<mdcTable:Column id="rating" header="Ratging">
+							<Text text="{rating}" />
+						</mdcTable:Column>
+					</mdc:columns>
+				</mdc:Table>
+
+			</IconTabFilter>
+		</items>
+	</IconTabBar>
+
+
+			<Panel headerText="ConditionModel" expandable="true" expanded="false">
+			<HBox>
+				<TextArea id="variant" value="" width="500px" rows="10" />
+				<VBox>
+					<Button text="Save" press="onSaveVariant"></Button>
+					<Button text="Load" press="onLoadVariant"></Button>
+				</VBox>
+			</HBox>
+			</Panel>
+
+			<Panel headerText="AST" expandable="true" expanded="false">
+			<Button text="CM->Expr" press="onConditionModelToExpr"></Button>
+			<Button text="Expr->CM" press="onExprToConditionModel"></Button>
+			<HBox>
+				<VBox>
+					<Text text="Filter Expression:"/>
+					<TextArea id="expert" value="" width="700px" rows="12" liveChange="onExprChange"/>
+				</VBox>
+				<VBox>
+					<Button text="Parse >>>" press="onParseExpr"></Button>
+					<Button text="&lt;&lt;&lt; Format" press="onFormatAst"></Button>
+					<Button text="Validate" press="onValidateAst"></Button>
+				</VBox>
+				<VBox>
+					<!-- <Text id="asterror" text=""/> -->
+					<Text text="AST:"/>
+					<!-- <TextArea id="ast" value="" width="700px" rows="9"/> -->
+					<ce:CodeEditor id="ast" width="700px" height="750px" type="jsoniq" value=""/>
+				</VBox>
+			</HBox>
+			</Panel>
+		</Page>
+	</App>
+</mvc:View>

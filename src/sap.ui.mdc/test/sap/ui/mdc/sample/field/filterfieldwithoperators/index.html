@@ -1,0 +1,290 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta charset="UTF-8">
+
+	<title>FilterField Example</title>
+
+	<script src="../../../shared-config.js"></script>
+	<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.m,sap.ui.layout,sap.ui.mdc" data-sap-ui-compatVersion="edge" data-sap-ui-resourceroots='{"my": "."}'
+		data-sap-ui-xx-bindingSyntax="complex">
+	</script>
+
+	<script>
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require(["sap/ui/model/json/JSONModel"],
+				function(JSONModel) {
+
+					var oModel = new JSONModel();
+					oModel.setSizeLimit(1000);
+					oModel.setData({
+						movies: [{
+							title: "Metropolis",
+							releaseDate: new Date(1927, 1, 1, 0, 0, 0, 0),
+							rating: 5,
+							genre: "drama",
+							silentMovie: true,
+							colorType: "bw",
+							runningTime: 60,
+							startTime: new Date(1970, 0, 1, 20, 15, 0, 0)
+						}, {
+							title: "Die Hard",
+							releaseDate: new Date(1988, 1, 1, 0, 0, 0, 0),
+							rating: 8.2,
+							genre: "action",
+							silentMovie: false,
+							colorType: "c",
+							runningTime: 90,
+							startTime: new Date(1970, 0, 1, 21, 0, 0, 0)
+						}, {
+							title: "Die Hard 2",
+							releaseDate: new Date(1990, 1, 1, 0, 0, 0, 0),
+							rating: 7.1,
+							genre: "action",
+							silentMovie: false,
+							colorType: "c",
+							runningTime: 90,
+							startTime: new Date(1970, 0, 1, 21, 0, 0, 0)
+						}, {
+							title: "Die Hard 3",
+							releaseDate: new Date(1995, 1, 1, 0, 0, 0, 0),
+							rating: 7.6,
+							genre: "action",
+							silentMovie: false,
+							colorType: "c",
+							runningTime: 90,
+							startTime: new Date(1970, 0, 1, 23, 0, 0, 0)
+						}, {
+							title: "Wall-E",
+							releaseDate: new Date(2008, 1, 1, 0, 0, 0, 0),
+							rating: 8.4,
+							genre: "animation",
+							silentMovie: false,
+							colorType: "c",
+							runningTime: 90,
+							startTime: new Date(1970, 0, 1, 19, 30, 0, 0)
+						}, {
+							title: "From Dusk Till Dawn",
+							releaseDate: new Date(1996, 1, 1, 0, 0, 0, 0),
+							rating: 7.3,
+							genre: "action",
+							silentMovie: false,
+							colorType: "c",
+							runningTime: 90,
+							startTime: new Date(1970, 0, 1, 20, 0, 0, 0)
+						}, {
+							title: "Fear and Loathing in Las Vegas",
+							releaseDate: new Date(1998, 1, 1, 0, 0, 0, 0),
+							rating: 7.7,
+							genre: "comedy",
+							silentMovie: false,
+							colorType: "c",
+							runningTime: 90,
+							startTime: new Date(1970, 0, 1, 20, 0, 0, 0)
+						}, {
+							title: "I, Robot",
+							releaseDate: new Date(2004, 1, 1, 0, 0, 0, 0),
+							rating: 7.1,
+							genre: "scifi",
+							silentMovie: false,
+							colorType: "c",
+							runningTime: 120,
+							startTime: new Date(1970, 0, 1, 20, 0, 0, 0)
+						}, {
+							title: "Arrival",
+							releaseDate: new Date(2016, 10, 24, 0, 0, 0, 0),
+							rating: 4,
+							genre: "scifi",
+							silentMovie: false,
+							colorType: "c",
+							runningTime: 78,
+							startTime: new Date(1970, 0, 1, 20, 0, 0, 0)
+						}, {
+							title: "Star Wars 8",
+							releaseDate: new Date(2017, 3, 27, 0, 0, 0, 0),
+							rating: 9,
+							genre: "scifi",
+							genreDesc: "Science Fiction",
+							silentMovie: false,
+							colorType: "c",
+							runningTime: 90,
+							startTime: new Date(1970, 0, 1, 18, 0, 0, 0)
+						}, {
+							title: "Pulp Fiction",
+							releaseDate: new Date(1994, 10, 14, 0, 0, 0, 0),
+							rating: 8.9,
+							genre: "drama",
+							genreDesc: "Drama",
+							silentMovie: false,
+							colorType: "c",
+							runningTime: 90,
+							startTime: new Date(1970, 0, 1, 20, 0, 0, 0)
+						}, {
+							title: "Blade Runner",
+							releaseDate: new Date(1982, 6, 25, 0, 0, 0, 0),
+							rating: 8.2,
+							genre: "",
+							genreDesc: "Science Fiction",
+							silentMovie: false,
+							colorType: "c",
+							runningTime: 102,
+							startTime: new Date(1970, 0, 1, 20, 0, 0, 0)
+						}],
+						genreValueList: [{
+							text: "Action",
+							description: "Movies with Action",
+							key: "action"
+						}, {
+							text: "Animation",
+							description: "Painted Movies",
+							key: "animation"
+						}, {
+							text: "Comedy",
+							description: "Movies which are somewhat funny",
+							key: "comedy"
+						}, {
+							text: "Science Fiction",
+							description: "Movies with stuff that does not exist",
+							key: "scifi"
+						}, {
+							text: "Drama",
+							description: "Drama",
+							key: "drama"
+						}, {
+							text: "Adventure",
+							description: "Adventure",
+							key: "adventure"
+						}, {
+							text: "Crime",
+							description: "Crime",
+							key: "crime"
+						}, {
+							text: "Fantasy",
+							description: "Fantasy",
+							key: "fantasy"
+						}, {
+							text: "Historical",
+							description: "Historical",
+							key: "historical"
+						}, {
+							text: "Historical fiction",
+							description: "Historical fiction",
+							key: "historicalfiction"
+						}, {
+							text: "Horror",
+							description: "Horror",
+							key: "horror"
+						}, {
+							text: "Magical realism",
+							description: "Magical realism",
+							key: "magicalrealism"
+						}, {
+							text: "Mystery",
+							description: "Mystery",
+							key: "mystery"
+						}, {
+							text: "Paranoid",
+							description: "Paranoid",
+							key: "paranoid"
+						}, {
+							text: "Philosophical",
+							description: "Philosophical",
+							key: "philosophical"
+						}, {
+							text: "Political",
+							description: "Political",
+							key: "political"
+						}, {
+							text: "Romance",
+							description: "Romance",
+							key: "romance"
+						}, {
+							text: "Saga",
+							description: "Saga",
+							key: "saga"
+						}, {
+							text: "Satire",
+							description: "Satire",
+							key: "satire"
+						}, {
+							text: "Slice of Life",
+							description: "Slice of Life",
+							key: "sliceoflife"
+						}, {
+							text: "Speculative",
+							description: "Speculative",
+							key: "speculative"
+						}, {
+							text: "Thriller",
+							description: "Thriller",
+							key: "thriller"
+						}, {
+							text: "Urban",
+							description: "Urban",
+							key: "urban"
+						}, {
+							text: "Western",
+							description: "Western",
+							key: "western"
+						}],
+						colorTypeValueList: [{
+							text: "Color",
+							description: "Technicolor",
+							key: "c"
+						}, {
+							text: "B&W",
+							description: "Black & White",
+							key: "bw"
+						}],
+						genreChartElements: []
+					});
+
+
+
+					for (var i = 0; i < 1000; i++) {
+						oModel.oData.genreValueList.push({
+							text: "Comedy" + i,
+							description: "Movies which are somewhat funny",
+							key: "comedy" + i
+						});
+					};
+
+					var chartMap = {};
+					for (var i = 0; i < oModel.oData.movies.length; i++) {
+						var oData = oModel.oData.movies[i];
+						if (chartMap[oData.genre]) {
+							chartMap[oData.genre]++;
+						} else {
+							chartMap[oData.genre] = 1;
+						}
+					};
+					Object.keys(chartMap).forEach(function(map) {
+						oModel.oData.genreChartElements.push({
+							key: map,
+							selected: false,
+							label: map.charAt(0).toUpperCase() + map.slice(1),
+							value: chartMap[map],
+							displayedValue: chartMap[map] // + "%"
+						});
+					});
+
+					// set the model
+					sap.ui.getCore().setModel(oModel);
+
+					sap.ui.xmlview({
+						async: true,
+						viewName: "my.Main"
+					}).placeAt("content");
+				})
+		})
+	</script>
+
+</head>
+
+<body class="sapUiBody sapUiSizeCompact" id="content">
+</body>
+
+</html>

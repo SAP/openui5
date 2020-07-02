@@ -1,0 +1,37 @@
+[
+	{
+		"countryId" : "DE",
+		"regionId": "01",
+		"text": "BW"
+	},
+	{
+		"countryId" : "DE",
+		"regionId": "02",
+		"text": "Bayern"
+	},
+	{
+		"countryId" : "DE",
+		"regionId": "03",
+		"text": "Hessen"
+	},
+	{
+		"countryId" : "FR",
+		"regionId": "01",
+		"text": "Elsass"
+	},
+	{
+		"countryId" : "FR",
+		"regionId": "02",
+		"text": "Bretagne"
+	},
+	{
+		"countryId" : "USA",
+		"regionId": "01",
+		"text": "Kalifornien"
+	},
+	{
+		"countryId" : "USA",
+		"regionId": "02",
+		"text": "Texas"
+	}
+]
