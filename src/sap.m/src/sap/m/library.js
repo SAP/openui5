@@ -789,6 +789,43 @@ sap.ui.define([
 	};
 
 	/**
+	 * Different predefined accessibility types for the {@link sap.m.Button}.
+	 *
+	 * @enum {string}
+	 * @private
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.ButtonAccessibilityType = {
+		/**
+		 * Default type
+		 *
+		 * @private
+		 */
+		Default: "Default",
+
+		/**
+		 * Labelled type
+		 *
+		 * @private
+		 */
+		Labelled: "Labelled",
+
+		/**
+		 * Described type
+		 *
+		 * @private
+		 */
+		Described: "Described",
+
+		/**
+		 * Combined type
+		 *
+		 * @private
+		 */
+		Combined: "Combined"
+	};
+
+	/**
 	 * Carousel arrows align.
 	 *
 	 * @enum {string}

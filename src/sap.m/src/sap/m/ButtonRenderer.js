@@ -16,6 +16,9 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
+	// shortcut for sap.m.ButtonAccessibilityType
+	var ButtonAccessibilityType = library.ButtonAccessibilityType;
+
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -67,28 +70,7 @@ sap.ui.define([
 		}
 
 		//ARIA attributes
-		var mAccProps = {};
-
-		var sTooltipId = oButton.getId() + "-tooltip";
-
-		var sTextId = ButtonRenderer.getButtonTypeAriaLabelId(sType);
-		if (sTextId && sTooltip) {
-			mAccProps["describedby"] = {value: sTooltipId + " " + sTextId, append: true};
-		} else if (sTextId) {
-			mAccProps["describedby"] = {value: sTextId, append: true};
-		} else if (sTooltip) {
-			mAccProps["describedby"] = {value: sTooltipId, append: true};
-		}
-
-		// add reference only to the text content of the button
-		// so it can be read otherwise it causes the issue reported in BCP: 168022332, 1970225991
-		if (oButton._determineSelfReferencePresence()) {
-			mAccProps["labelledby"] = { value: oButton.getId() + "-content", append: true };
-		}
-
-		// prevent rendering of aria-disabled attribute
-		// no matter what state we have in the control
-		mAccProps["disabled"] = null;
+		var mAccProps = ButtonRenderer.generateAccProps(oButton);
 
 		//descendants (e.g. ToggleButton) callback
 		if (this.renderAccessibilityAttributes) {
@@ -243,7 +225,7 @@ sap.ui.define([
 
 		// add tooltip if available
 		if (sTooltip) {
-			oRm.openStart("span", sTooltipId);
+			oRm.openStart("span", oButton.getId() + "-tooltip");
 			oRm.class("sapUiInvisibleText");
 			oRm.openEnd();
 			oRm.text(sTooltip);
@@ -309,6 +291,85 @@ sap.ui.define([
 
 	ButtonRenderer.getButtonTypeAriaLabelId = function(sType) {
 		return InvisibleText.getStaticId("sap.m", mARIATextKeys[sType]);
+	};
+
+	ButtonRenderer.generateAccProps = function (oButton) {
+		var sText = oButton._getText(),
+			mAccProps;
+
+		if (sText) {
+			mAccProps = ButtonRenderer.generateTextButtonAccProps(oButton);
+		} else {
+			mAccProps = ButtonRenderer.generateIconOnlyButtonAccProps(oButton);
+		}
+
+		// prevent rendering of aria-disabled attribute to avoid having
+		// both aria-disabled and disabled at the same time
+		mAccProps["disabled"] = null;
+
+		return mAccProps;
+	};
+
+	ButtonRenderer.generateIconOnlyButtonAccProps = function (oButton) {
+		var sTypeId = ButtonRenderer.getButtonTypeAriaLabelId(oButton.getType()),
+			sTooltip = oButton._getTooltip(),
+			sTooltipId = oButton.getId() + "-tooltip", // Icon-only buttons will always have a tooltip
+			sAccessibilityType = oButton._determineAccessibilityType(),
+			mAccProps = {};
+
+		switch (sAccessibilityType) {
+			case ButtonAccessibilityType.Default:
+				mAccProps["label"] = { value: sTooltip, append: true };
+				break;
+			case ButtonAccessibilityType.Described:
+				mAccProps["label"] = { value: sTooltip, append: true };
+				mAccProps["describedby"] = { value: (sTooltipId + " " + sTypeId).trim(), append: true };
+				break;
+			case ButtonAccessibilityType.Labelled:
+				mAccProps["describedby"] = { value: sTooltipId, append: true };
+				break;
+			case ButtonAccessibilityType.Combined:
+				mAccProps["describedby"] = { value: (sTooltipId + " " + sTypeId).trim(), append: true };
+				break;
+			default:
+				break;
+		}
+
+		return mAccProps;
+	};
+
+	ButtonRenderer.generateTextButtonAccProps = function (oButton) {
+		var sButtonId = oButton.getId(),
+			sTypeId = ButtonRenderer.getButtonTypeAriaLabelId(oButton.getType()),
+			sTooltipId = oButton._getTooltip() ? sButtonId + "-tooltip" : "", // Don't assign if empty (to ease conditions in the switch)
+			sInnerTextId = sButtonId + "-content",
+			sAccessibilityType = oButton._determineAccessibilityType(),
+			bPlaceSelfReference = oButton._determineSelfReferencePresence(),
+			mAccProps = {},
+			sDescription;
+
+		switch (sAccessibilityType) {
+			case ButtonAccessibilityType.Default:
+				sTooltipId && (mAccProps["describedby"] = { value: sTooltipId, append: true });
+				break;
+			case ButtonAccessibilityType.Described:
+				sDescription = (sTooltipId + " " + sTypeId).trim();
+				sDescription && (mAccProps["describedby"] = { value: sDescription, append: true });
+				break;
+			case ButtonAccessibilityType.Labelled:
+				bPlaceSelfReference && (mAccProps["labelledby"] = { value: sInnerTextId, append: true });
+				sTooltipId && (mAccProps["describedby"] = { value: sTooltipId, append: true });
+				break;
+			case ButtonAccessibilityType.Combined:
+				sDescription = (sTooltipId + " " + sTypeId).trim();
+				sDescription && (mAccProps["describedby"] = { value: sDescription, append: true });
+				bPlaceSelfReference && (mAccProps["labelledby"] = { value: sInnerTextId, append: true });
+				break;
+			default:
+				break;
+		}
+
+		return mAccProps;
 	};
 
 	return ButtonRenderer;
