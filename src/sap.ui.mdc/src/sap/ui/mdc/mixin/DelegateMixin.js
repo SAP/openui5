@@ -27,6 +27,14 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 	};
 
 	/**
+	 * @namespace
+	 * @name sap.ui.mdc.mixin
+	 * @private
+	 * @experimental
+	 * @ui5-restricted sap.ui.mdc
+	 */
+
+	/**
 	 * Enhances a given control prototype with consolidated asynchronous handling for delegate modules and their initialization.
 	 *
 	 * The following methods are available:
@@ -62,7 +70,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 	 * @since 1.76.0
 	 * @private
 	 * @experimental
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.mdc
 	*/
 	var DelegateMixin = {};
 
