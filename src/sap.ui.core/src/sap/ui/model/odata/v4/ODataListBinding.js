@@ -337,7 +337,9 @@ sap.ui.define([
 					|| _Helper.deepEqual(this.mParameters.$$aggregation, oOldAggregation))) {
 				return; // unchanged $apply derived from $$aggregation
 			}
-			sChangeReason = ChangeReason.Change;
+			// unless called from updateAnalyticalInfo, use ChangeReason.Filter so that the table
+			// resets completely incl. first visible row
+			sChangeReason = this.bHasAnalyticalInfo ? ChangeReason.Change : ChangeReason.Filter;
 		}
 		if (this.isRootBindingSuspended()) {
 			this.setResumeChangeReason(sChangeReason);
@@ -2662,8 +2664,8 @@ sap.ui.define([
 				oAggregation.group[oColumn.name] = oDetails;
 			}
 		});
-		this.setAggregation(oAggregation);
 		this.bHasAnalyticalInfo = true;
+		this.setAggregation(oAggregation);
 		if (bHasMinMax) {
 			return {
 				measureRangePromise : Promise.resolve(

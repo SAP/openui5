@@ -606,12 +606,12 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
 		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
-			.withExactArgs(ChangeReason.Change);
+			.withExactArgs(ChangeReason.Filter);
 		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
 			.withExactArgs("");
 		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oBinding.oContext));
-		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Change);
+		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Filter);
 
 		// code under test - simulate call from setAggregation
 		oBinding.applyParameters(mParameters, "");
@@ -637,12 +637,12 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
 		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
-			.withExactArgs(ChangeReason.Change);
+			.withExactArgs(ChangeReason.Filter);
 		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
 			.withExactArgs("");
 		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oBinding.oContext));
-		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Change);
+		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Filter);
 
 		// code under test - simulate call from setAggregation
 		oBinding.applyParameters(mParameters, "");
@@ -681,6 +681,43 @@ sap.ui.define([
 			.returns(false);
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
 		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
+			.withExactArgs(ChangeReason.Filter);
+		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
+			.withExactArgs("");
+		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
+			.withExactArgs(sinon.match.same(oBinding.oContext));
+		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Filter);
+
+		// code under test - simulate call from setAggregation
+		oBinding.applyParameters(mParameters, "");
+
+		assert.deepEqual(oBinding.mQueryOptions, {
+			$apply : sApply,
+			$filter : "bar"
+		}, "mQueryOptions");
+		assert.deepEqual(oBinding.mParameters, mParameters);
+		assert.strictEqual(oBinding.mParameters.$$aggregation, oAggregation, "$$aggregation");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("applyParameters: from updateAnalyticalInfo, " + bSuspended, function (assert) {
+		var oAggregation = {
+//				aggregate : {GrossAmount : {subtotals : true}},
+//				groupLevels : ["LifecycleStatus"]
+			},
+			sApply = "A.P.P.L.E.",
+			oBinding = this.bindList("/EMPLOYEES"),
+			mParameters = {
+				$$aggregation : oAggregation
+			};
+
+		oBinding.bHasAnalyticalInfo = true;
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
+		this.mock(this.oModel).expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(mParameters), true).returns({});
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
+		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
 			.withExactArgs(ChangeReason.Change);
 		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
 			.withExactArgs("");
@@ -692,8 +729,7 @@ sap.ui.define([
 		oBinding.applyParameters(mParameters, "");
 
 		assert.deepEqual(oBinding.mQueryOptions, {
-			$apply : sApply,
-			$filter : "bar"
+			$apply : sApply
 		}, "mQueryOptions");
 		assert.deepEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.mParameters.$$aggregation, oAggregation, "$$aggregation");
@@ -5121,7 +5157,10 @@ sap.ui.define([
 					oSetAggregationExpectation;
 
 				oSetAggregationExpectation = this.mock(oBinding).expects("setAggregation")
-					.withExactArgs(oFixture.oTransformedAggregation);
+					.withExactArgs(oFixture.oTransformedAggregation)
+					.callsFake(function () {
+						assert.strictEqual(oBinding.bHasAnalyticalInfo, true);
+					});
 				this.mock(oBinding).expects("getRootBindingResumePromise").withExactArgs()
 					.callsFake(function () {
 						assert.ok(oSetAggregationExpectation.called,
