@@ -4860,7 +4860,6 @@ sap.ui.define([
 		mUrlParams = Object.assign({}, mParameters.urlParameters);
 
 		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
-		mHeaders = this._getHeaders(mHeaders);
 		pContextCreated = new Promise(function(resolve, reject) {
 			fnResolve = resolve;
 			fnReject = reject;
@@ -4904,7 +4903,7 @@ sap.ui.define([
 					eTag : sETag,
 					functionImport : true,
 					groupId : sGroupId,
-					headers : mHeaders,
+					headers : Object.assign({}, mHeaders),
 					key : sFunctionName.substring(1),
 					method : sMethod,
 					success : fnSuccess
@@ -4918,8 +4917,8 @@ sap.ui.define([
 			aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 			sUrl = that._createRequestUrlWithNormalizedPath(sFunctionName, aUrlParams,
 				that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sFunctionName, sMethod, mHeaders, undefined,
-				sETag, undefined, true);
+			oRequest = that._createRequest(sUrl, sFunctionName, sMethod, that._getHeaders(mHeaders),
+				undefined, sETag, undefined, true);
 			oRequest.functionMetadata = oFunctionMetadata;
 			oRequest.key = sKey;
 			mRequests = that.mRequests;

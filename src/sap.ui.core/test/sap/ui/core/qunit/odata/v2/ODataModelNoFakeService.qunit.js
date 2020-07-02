@@ -2227,6 +2227,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oContextCreatedPromise,
 			bFunctionHasParameter = oFunctionMetadataFixture.oFunctionMetadata.parameter !== null,
+			mHeaders = {foo : "bar"},
 			oExpectedOData = Object.assign({
 					__metadata : {
 						created : {
@@ -2235,7 +2236,7 @@ sap.ui.define([
 							eTag : "~eTag",
 							functionImport : true,
 							groupId : "~groupId",
-							headers : "~mHeaders",
+							headers : mHeaders,
 							key : "~sFunctionName",
 							method : "~method",
 							success : "~success"
@@ -2283,7 +2284,9 @@ sap.ui.define([
 		oModelMock.expects("_getRefreshAfterChange")
 			.withExactArgs("~refreshAfterChange", "~groupId")
 			.returns("~bRefreshAfterChange");
-		oModelMock.expects("_getHeaders").withExactArgs("~headers").returns("~mHeaders");
+		oModelMock.expects("_getHeaders")
+			.withExactArgs(sinon.match.same(mHeaders))
+			.returns("~mHeaders");
 		oModelMock.expects("_processRequest")
 			.withExactArgs(sinon.match.func, "~error")
 			.callsFake(function (fnProcessRequest0) {
@@ -2298,7 +2301,7 @@ sap.ui.define([
 			error : "~error",
 			eTag : "~eTag",
 			groupId : oGroupFixture.groupId,
-			headers : "~headers",
+			headers : mHeaders,
 			method : "~method",
 			refreshAfterChange : "~refreshAfterChange",
 			success : "~success",
@@ -2331,7 +2334,11 @@ sap.ui.define([
 		}
 
 		oModelMock.expects("_addEntity").withExactArgs(oExpectedOData)
-			.returns("~sKey");
+			.callsFake(function (oData) {
+				assert.notStrictEqual(oData.__metadata.created.headers, mHeaders);
+
+				return "~sKey";
+			});
 		oModelMock.expects("getContext").withExactArgs("/~sKey").returns("~oContext");
 		oModelMock.expects("_writePathCache").withExactArgs("/~sKey", "/~sKey");
 		this.mock(ODataUtils).expects("_createUrlParamsArray")
@@ -2400,13 +2407,13 @@ sap.ui.define([
 		oModelMock.expects("_getRefreshAfterChange")
 			.withExactArgs(undefined, undefined)
 			.returns("~bRefreshAfterChange");
-		oModelMock.expects("_getHeaders").withExactArgs(undefined).returns("~mHeaders");
 		oModelMock.expects("_processRequest")
 			.withExactArgs(sinon.match.func, undefined)
 			.callsFake(function (fnProcessRequest0) {
 				fnProcessRequest = fnProcessRequest0;
 				return oRequestHandle;
 			});
+		oModelMock.expects("_getHeaders").never();
 
 		// code under test
 		oResult = ODataModel.prototype.callFunction.call(oModel, "/~sFunctionName");
