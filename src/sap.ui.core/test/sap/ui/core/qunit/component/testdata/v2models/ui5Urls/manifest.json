@@ -1,0 +1,105 @@
+{
+
+    "_version": "1.0.0",
+
+    "sap.app": {
+        "_version": "1.0.0",
+        "id": "sap.ui.test.v2models.ui5Urls",
+        "type": "application",
+        "applicationVersion": {
+            "version": "1.0.0"
+        },
+        "i18n": "i18n.properties",
+        "title": "{{title}}",
+        "description": "{{description}}",
+        "dataSources": {
+
+            "OData": {
+                "uri": "ui5://path/to/odata/service",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "2.0",
+                    "annotations": ["annotations1", "annotations2", "annotations3", "annotations4", "annotations5", "annotations6", "annotations7"],
+                    "localMetaDataUri": "/path/to/local/metadata.xml"
+                }
+            },
+
+            "annotations1": {
+                "uri": "/path/to/odata/annotations/1",
+                "type": "ODataAnnotation"
+            },
+
+            "annotations2": {
+                "uri": "ui5://sap/ui/test/v2models/ui5urls/annotations/2",
+                "type": "ODataAnnotation"
+            },
+
+            "annotations3": {
+                "uri": "ui5://another/name/space/annotations/3",
+                "type": "ODataAnnotation"
+            },
+
+            "annotations4": {
+                "uri": "ui5://cool.name.space/annotations/4.xml",
+                "type": "ODataAnnotation"
+            },
+
+            "annotations5": {
+                "uri": "ui5://unkown.name.space/annotations/5.xml",
+                "type": "ODataAnnotation"
+            },
+
+            "annotations6": {
+                "uri": "ui5://another/unkown/name/space/annotations/6.xml",
+                "type": "ODataAnnotation"
+            },
+
+            "annotations7": {
+                "uri": "ui5://this/is/a/resourceRoot/annotations/file7.xml",
+                "type": "ODataAnnotation"
+            }
+        }
+    },
+
+    "sap.ui": {
+        "_version": "1.0.0",
+        "technology": "UI5"
+    },
+
+    "sap.ui5": {
+
+        "_version": "1.0.0",
+
+        "resourceRoots": {
+            "this.is.a.resourceRoot": "./resourceRoots/subfolder"
+        },
+
+        "dependencies": {
+            "minUI5Version": "1.28.0",
+            "libs": {
+                "sap.ui.core": {
+                    "minVersion": "1.28.0"
+                }
+            }
+        },
+
+        "models": {
+            "ODataModel": {
+                "type": "sap.ui.model.odata.v2.ODataModel",
+                "dataSource": "OData",
+                "settings": {
+                    "useBatch": false,
+                    "refreshAfterChange": false
+                }
+            },
+            "OtherODataModel": {
+                "type": "sap.ui.model.odata.v2.ODataModel",
+                "settings": {
+                    "serviceUrl": "ui5://path/to/odata/service",
+                    "useBatch": true,
+                    "refreshAfterChange": true
+                }
+            }
+        }
+    }
+}

@@ -33,9 +33,6 @@ sap.ui.define([
 
 	/*global Promise */
 
-	// Manifest Template RegExp: {{foo}}
-	var rManifestTemplate = /\{\{([^\}\}]+)\}\}/g;
-
 	/**
 	 * Removes the version suffix
 	 *
@@ -201,22 +198,19 @@ sap.ui.define([
 		 * with the values from "sap.app/i18n"
 		 *
 		 * @param {boolean} bAsync true, if the ResourceBundle will be loaded async
+		 * @param {string[]} [aI18nProperties] The array of manifest temnplate strings to replace (if processed already processed from outside this function)
 		 * @return {Promise|undefined} when using the API async it will return a Promise which resolves when the texts have been replaced
 		 */
-		_processI18n: function(bAsync) {
+		_processI18n: function(bAsync, aI18nProperties) {
 
-			// find i18n property paths in the manifest if i18n texts in
-			// the manifest which should be processed
-			var aI18nProperties = [];
-			Manifest.processObject(this._oManifest, function(oObject, sKey, vValue) {
-				var match = vValue.match(rManifestTemplate);
-				if (match) {
-					aI18nProperties.push({
-						object: oObject,
-						key: sKey
-					});
-				}
-			});
+			// if not given from outside (from async Component startup):
+			// find all i18n property paths based on the handlebars placeholder template
+			if (!aI18nProperties) {
+				aI18nProperties = [];
+				this._preprocess({
+					i18nProperties: aI18nProperties
+				});
+			}
 
 			if (aI18nProperties.length > 0) {
 
@@ -226,7 +220,7 @@ sap.ui.define([
 					};
 					for (var i = 0, l = aI18nProperties.length; i < l; i++) {
 						var oProperty = aI18nProperties[i];
-						oProperty.object[oProperty.key] = oProperty.object[oProperty.key].replace(rManifestTemplate, fnReplaceI18nText);
+						oProperty.object[oProperty.key] = oProperty.object[oProperty.key].replace(Manifest._rManifestTemplate, fnReplaceI18nText);
 					}
 				};
 
@@ -620,6 +614,31 @@ sap.ui.define([
 			return Manifest._resolveUriRelativeTo(oUri, sRelativeTo === "manifest" ? this._oManifestBaseUri : this._oBaseUri);
 		},
 
+		/**
+		 * Generic preprocessing function.
+		 * Current features:
+		 *   - resolve "ui5://..." urls.
+		 *   - collect "i18n placeholder properties"
+		 *
+		 * @param {object} args arguments map
+		 * @param {boolean} [args.resolveUI5Urls] whether "ui5://..." URLs should be resolved
+		 * @param {array}  [args.i18nProperties] an array into which all i18n placeholders will be pushed
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.core.Manifest, sap.ui.core.Component
+		 */
+		_preprocess: function(args) {
+			Manifest.processObject(this._oManifest, function(oObject, sKey, sValue) {
+				if (args.resolveUI5Urls && sValue.startsWith("ui5:")) {
+					oObject[sKey] = LoaderExtensions.resolveUI5Url(sValue);
+				} else if (args.i18nProperties && sValue.match(Manifest._rManifestTemplate)) {
+					args.i18nProperties.push({
+						object: oObject,
+						key: sKey
+					});
+				}
+			});
+		},
 
 		/**
 		 * Initializes the manifest which executes checks, define the resource
@@ -640,6 +659,12 @@ sap.ui.define([
 				//    controller. This is a constraint for the resource roots config
 				//    in the manifest!
 				this.defineResourceRoots();
+
+				// resolve "ui5://..." URLs after the resource-rooots have been defined
+				// this way all ui5 URLs can rely on any resource root definition
+				this._preprocess({
+					resolveUI5Urls: true
+				});
 
 				// load the component dependencies (other UI5 libraries)
 				this.loadDependencies();
@@ -729,6 +754,8 @@ sap.ui.define([
 
 	});
 
+	// Manifest Template RegExp: {{foo}}
+	Manifest._rManifestTemplate = /\{\{([^\}\}]+)\}\}/g;
 
 	/**
 	 * Resolves the given URI relative to the given base URI.
