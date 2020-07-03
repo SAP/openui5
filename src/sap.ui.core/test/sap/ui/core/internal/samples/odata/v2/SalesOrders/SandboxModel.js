@@ -42,6 +42,12 @@ sap.ui.define([
 				message : "Success: My success message",
 				severity : "success"
 			},
+			system : {
+				code : "ZUI5TEST/006",
+				message : "System maintenance starts in 2 hours",
+				severity : "warning",
+				transition : true
+			},
 			warning : {
 				code : "ZUI5TEST/001",
 				message : "Warning: My warning message",
@@ -59,7 +65,8 @@ sap.ui.define([
 			 * Adds a new message.
 			 *
 			 * @param {string} sMessage
-			 *   An identifier which gets the message from the MessageKey2MessageData map
+			 *   An identifier which gets the message from the <code>MessageKey2MessageData</code>
+			 *   map
 			 * @param {string|string[]} vTarget
 			 *   The path to the message target
 			 * @returns {object}
@@ -74,8 +81,10 @@ sap.ui.define([
 					id : sMessage,
 					message : oMessageData.message,
 					severity : oMessageData.severity,
-					target : aTargets[0]
+					target : aTargets[0],
+					transition : oMessageData.transition ? true : false
 				});
+
 				return this;
 			},
 			/**
@@ -362,6 +371,43 @@ sap.ui.define([
 				"MERGE SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='050')" :
 					getSaveResponseIncreasingCallCount(),
 
+				/* Test Case V */
+				"SalesOrderSet('105')" : {
+					headers : getMessageHeader(undefined, oCurrentMessages.reset().add("error",
+							"ToLineItems(SalesOrderID='105',ItemPosition='020')/Note")
+						.add("info", "ToLineItems(SalesOrderID='105',ItemPosition='030')/Note")),
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
+					source : "Messages/TC5/SalesOrderSet.json"
+				},
+				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4" : {
+					source : "Messages/TC5/SalesOrderSet-ToLineItems.json"
+				},
+				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=(SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27020%27)%20or%20(SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27030%27)" : {
+					message : getLineItems("Messages/TC5/SalesOrderSet-ToLineItems.json",
+						undefined, 1, 2)
+				},
+				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27020%27" : {
+					message : getLineItems("Messages/TC5/SalesOrderSet-ToLineItems.json",
+						undefined, 1, 1)
+				},
+				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27030%27" : {
+					message : getLineItems("Messages/TC5/SalesOrderSet-ToLineItems.json",
+						undefined, 2, 1)
+				},
+
+				/* Test Case VII */
+				"SalesOrderSet('107')" : {
+					headers : getMessageHeader(undefined,
+						oCurrentMessages.reset().add("system", undefined)),
+					source : "Messages/TC7/SalesOrderSet.json"
+				},
+				"SalesOrderSet('107')/ToLineItems?$skip=0&$top=4" : [{
+					source : "Messages/TC7/SalesOrderSet-ToLineItems.json"
+				}],
+
 				/* Test Case VIII */
 				"SalesOrderSet('108')" : {
 					ifMatch : function (request) {
@@ -494,7 +540,7 @@ sap.ui.define([
 		};
 
 	/**
-	 * Helper function which gets the line items from the response, applies the $skip and $top
+	 * Gets the line items from the response, applies the <code>$skip</code> and <code>$top</code>
 	 * parameters from the url and stores it back in the response.
 	 *
 	 * @param {object[]} aMatch The match array from the matching URL
@@ -548,16 +594,17 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates a response header object containing only a "sap-message" property for the given
-	 * messages.
+	 * Creates a response header object containing only a <code>sap-message</code> property for
+	 * the given messages.
 	 *
 	 * @param {number[]} [aMessageIndices]
-	 *   The indices of messages to be used in the "sap-message" header; if not given, all current
-	 *   messages are used
+	 *   The indices of messages to be used in the <code>sap-message</code> header; if not given,
+	 *   all current messages are used
 	 * @param {object} [oMessageObject=oCurrentMessages]
 	 *   The current oMessageObject
 	 * @returns {object}
-	 *   A response header object containing the "sap-messages" property for the given messages
+	 *   A response header object containing the <code>sap-message</code> property for the given
+	 *   messages
 	 */
 	function getMessageHeader(aMessageIndices, oMessageObject) {
 		oMessageObject = oMessageObject || oCurrentMessages;
@@ -567,8 +614,8 @@ sap.ui.define([
 	}
 
 	/**
-	 * Gets the response object for a MERGE request and increments the current save counter if the
-	 * request matches.
+	 * Gets the response object for a <code>MERGE</code> request and increments the current save
+	 * counter if the request matches.
 	 *
 	 * @returns {object} The response object for a "save" button click
 	 */
