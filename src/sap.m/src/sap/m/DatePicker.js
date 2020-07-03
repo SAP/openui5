@@ -1079,7 +1079,7 @@ sap.ui.define([
 
 	// to be overwritten by DateTimePicker
 	DatePicker.prototype._createPopup = function(){
-		var sArialabelledby,
+		var sLabelId,
 			sLabel;
 
 		if (!this._oPopup) {
@@ -1087,7 +1087,14 @@ sap.ui.define([
 				showCloseButton: false,
 				showArrow: false,
 				showHeader: false,
-				placement: library.PlacementType.VerticalPreferedBottom
+				placement: library.PlacementType.VerticalPreferedBottom,
+				beginButton: new Button({
+					type: library.ButtonType.Emphasized,
+					text: oResourceBundle.getText("DATEPICKER_SELECTION_CONFIRM"),
+					press: this._handleOKButton.bind(this)
+				}),
+				afterOpen: _handleOpen.bind(this),
+				afterClose: _handleClose.bind(this)
 			}).addStyleClass("sapMRPCalendar");
 
 			if (this.getShowFooter()) {
@@ -1095,17 +1102,10 @@ sap.ui.define([
 			}
 
 			this._oPopup._getPopup().setAutoClose(true);
-			this._oPopup.attachAfterOpen(_handleOpen, this);
-			this._oPopup.attachAfterClose(_handleClose, this);
-			this._oPopup.setBeginButton(new Button({
-					text: oResourceBundle.getText("DATEPICKER_SELECTION_CONFIRM"),
-					press: this._handleOKButton.bind(this)
-				})
-			);
 
 			if (Device.system.phone) {
-				sArialabelledby = this.$("inner").attr("aria-labelledby");
-				sLabel = sArialabelledby ? document.getElementById(sArialabelledby).getAttribute("aria-label") : "";
+				sLabelId = this.$("inner").attr("aria-labelledby");
+				sLabel = sLabelId ? document.getElementById(sLabelId).getAttribute("aria-label") : "";
 				this._oPopup.setTitle(sLabel);
 				this._oPopup.setShowHeader(true);
 				this._oPopup.setShowCloseButton(true);
@@ -1114,7 +1114,6 @@ sap.ui.define([
 				// correctly without an animation on mobile devices so we remove the animation
 				// only for desktop when sap.m.Popover is used instead of sap.m.Dialog
 				this._oPopup._getPopup().setDurations(0, 0);
-				this._oPopup.getBeginButton().setType(library.ButtonType.Emphasized);
 				this._oPopup.setEndButton(new Button({
 						text: oResourceBundle.getText("DATEPICKER_SELECTION_CANCEL"),
 						press: this._handleCancelButton.bind(this)

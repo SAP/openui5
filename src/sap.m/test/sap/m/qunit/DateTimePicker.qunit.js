@@ -643,6 +643,38 @@ sap.ui.define([
 		assert.equal(oDate, actualValue, "Date is formatted and parsed correctly");
 	});
 
+	QUnit.test("_createPopup: mobile device", function(assert) {
+		// prepare
+		var oDateTimePicker = new DateTimePicker(),
+			oDeviceStub = this.stub(Device, "system", {
+				desktop: false,
+				tablet: false,
+				phone: true
+			}),
+			oLabel = new sap.m.Label({text: "DatePicker Label", labelFor: oDateTimePicker.getId()}),
+			oDialog;
+
+		oDateTimePicker.placeAt("qunit-fixture");
+		oLabel.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oDateTimePicker._createPopup();
+		oDialog = oDateTimePicker.getAggregation("_popup");
+
+		// assert
+		assert.ok(oDialog.getShowHeader(), "Header is shown");
+		assert.ok(oDialog.getShowCloseButton(), "Close button in the header is set");
+		assert.strictEqual(oDialog.getTitle(), "DatePicker Label", "Title is set");
+		assert.strictEqual(oDialog.getBeginButton().getType(), "Emphasized", "OK button type is set");
+		assert.notOk(oDialog.getEndButton(), "Close button in the footer is not set");
+
+		// clean
+		oDeviceStub.restore();
+		oDateTimePicker.destroy();
+		oLabel.destroy();
+	});
+
 	QUnit.module("Private");
 
 	QUnit.test("For IE & Edge the input selection is cleared before opening the picker and restoring back when picker is closed", function(assert) {

@@ -1037,7 +1037,10 @@ function(
 				sCancelButtonText,
 				sTitle,
 				oIcon = this.getAggregation("_endIcon")[0],
-				sLocaleId  = this._getLocale().getLanguage();
+				sLocaleId  = this._getLocale().getLanguage(),
+				sArialabelledby,
+				sLabelId,
+				sLabel;
 
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sOKButtonText = oResourceBundle.getText("TIMEPICKER_SET");
@@ -1050,8 +1053,11 @@ function(
 				horizontalScrolling: false,
 				verticalScrolling: false,
 				placement: PlacementType.VerticalPreferedBottom,
-				beginButton: new Button({ text: sOKButtonText, type: ButtonType.Emphasized, press: jQuery.proxy(this._handleOkPress, this) }),
-				endButton: new Button({ text: sCancelButtonText, press: jQuery.proxy(this._handleCancelPress, this) }),
+				beginButton: new Button({
+					text: sOKButtonText,
+					type: ButtonType.Emphasized,
+					press: this._handleOkPress.bind(this)
+				}),
 				content: [
 					new TimePickerSliders(this.getId() + "-sliders", {
 						support2400: this.getSupport2400(),
@@ -1064,7 +1070,10 @@ function(
 					})._setShouldOpenSliderAfterRendering(true)
 				],
 				contentHeight: TimePicker._PICKER_CONTENT_HEIGHT,
-				ariaLabelledBy: InvisibleText.getStaticId("sap.m", "TIMEPICKER_SET_TIME")
+				ariaLabelledBy: InvisibleText.getStaticId("sap.m", "TIMEPICKER_SET_TIME"),
+				beforeOpen: this.onBeforeOpen.bind(this),
+				afterOpen: this.onAfterOpen.bind(this),
+				afterClose: this.onAfterClose.bind(this)
 			});
 
 			oPopover = oPicker.getAggregation("_popup");
@@ -1075,16 +1084,20 @@ function(
 
 			oPopover.oPopup.setAutoCloseAreas([oIcon]);
 
-			oPicker.addStyleClass(this.getRenderer().CSS_CLASS + "DropDown")
-				.attachBeforeOpen(this.onBeforeOpen, this)
-				.attachAfterOpen(this.onAfterOpen, this)
-				.attachAfterClose(this.onAfterClose, this);
+			if (Device.system.phone) {
+				sArialabelledby = this.$("inner").attr("aria-labelledby");
+				sLabelId = sArialabelledby && sArialabelledby.split(" ")[0];
+				sLabel = sLabelId ? document.getElementById(sLabelId).getAttribute("aria-label") : "";
 
-			oPicker.open = function() {
-				return this.openBy(that);
-			};
+				oPicker.setTitle(sLabel);
+				oPicker.setShowHeader(true);
+				oPicker.setShowCloseButton(true);
+			} else {
+				oPicker.setEndButton(new Button(this.getId() + "-Cancel", {
+					text: sCancelButtonText,
+					press: this._handleCancelPress.bind(this)
+				}));
 
-			if (Device.system.desktop) {
 				this._oPopoverKeydownEventDelegate = {
 					onkeydown: function(oEvent) {
 						var oKC = KeyCodes,
@@ -1107,6 +1120,11 @@ function(
 					that._getSliders()._onOrientationChanged();
 				};
 			}
+
+			oPicker.addStyleClass(this.getRenderer().CSS_CLASS + "DropDown");
+			oPicker.open = function() {
+				return this.openBy(that);
+			};
 
 			// define a parent-child relationship between the control's and the _picker pop-up
 			this.setAggregation("_picker", oPicker, true);

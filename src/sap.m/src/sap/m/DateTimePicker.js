@@ -497,10 +497,12 @@ sap.ui.define([
 
 	DateTimePicker.prototype._createPopup = function(){
 
+		var sLabelId, sLabel, oResourceBundle, sOKButtonText, sCancelButtonText, oPopover;
+
 		if (!this._oPopup) {
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			var sOKButtonText = oResourceBundle.getText("TIMEPICKER_SET");
-			var sCancelButtonText = oResourceBundle.getText("TIMEPICKER_CANCEL");
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sOKButtonText = oResourceBundle.getText("TIMEPICKER_SET");
+			sCancelButtonText = oResourceBundle.getText("TIMEPICKER_CANCEL");
 
 			this._oPopupContent = new PopupContent(this.getId() + "-PC");
 			this._oPopupContent._oDateTimePicker = this;
@@ -515,20 +517,32 @@ sap.ui.define([
 				showHeader: false,
 				placement: PlacementType.VerticalPreferedBottom,
 				beginButton: this._oOKButton,
-				endButton: new Button(this.getId() + "-Cancel", { text: sCancelButtonText, press: jQuery.proxy(_handleCancelPress, this) }),
-				content: this._oPopupContent
+				content: this._oPopupContent,
+				afterOpen: _handleAfterOpen.bind(this),
+				afterClose: _handleAfterClose.bind(this)
 			});
+
+
+			if (Device.system.phone) {
+				sLabelId = this.$("inner").attr("aria-labelledby");
+				sLabel = sLabelId ? document.getElementById(sLabelId).getAttribute("aria-label") : "";
+				this._oPopup.setTitle(sLabel);
+				this._oPopup.setShowHeader(true);
+				this._oPopup.setShowCloseButton(true);
+			} else {
+				this._oPopup.setEndButton(new Button(this.getId() + "-Cancel", {
+					text: sCancelButtonText,
+					press: _handleCancelPress.bind(this)
+				}));
+			}
 
 			this._oPopup.addStyleClass("sapMDateTimePopup");
 
-			var oPopover = this._oPopup.getAggregation("_popup");
+			oPopover = this._oPopup.getAggregation("_popup");
 			// hide arrow in case of popover as dialog does not have an arrow
 			if (oPopover.setShowArrow) {
 				oPopover.setShowArrow(false);
 			}
-
-			this._oPopup.attachAfterOpen(_handleAfterOpen, this);
-			this._oPopup.attachAfterClose(_handleAfterClose, this);
 
 			// define a parent-child relationship between the control's and the _picker pop-up
 			this.setAggregation("_popup", this._oPopup, true);
