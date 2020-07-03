@@ -43,7 +43,7 @@ sap.ui.define(["sap/base/Log"], function (Log) {
 		/**
 		 * Ensure that the date is sent if the "visibilitychange" event was not fired.
 		 */
-		window.addEventListener("unload", function () {
+		window.addEventListener("beforeunload", function () {
 			this.send();
 		}.bind(this));
 	};
