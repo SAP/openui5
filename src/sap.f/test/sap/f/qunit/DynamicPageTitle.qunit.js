@@ -1083,7 +1083,7 @@ function (
 				iInitialFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
 
 				// Assert
-				assert.strictEqual(iInitialFlexBasis, 16, "flex-basis is equal to OFT paddings, the OFT has no width");
+				assert.strictEqual(iInitialFlexBasis, 16 + 1, "flex-basis is equal to OFT paddings + 1 for rounding Browser issues");
 
 				// Act
 				oGenericTag.setVisible(true);
