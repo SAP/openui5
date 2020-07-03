@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer', 'sap/m/ToolbarSeparator'
-], function(OverflowToolbar, ToolbarSpacer, ToolbarSeparator) {
+	"sap/m/OverflowToolbar", "sap/m/OverflowToolbarRenderer", "sap/m/ToolbarSpacer", "sap/m/ToolbarSeparator"
+], function(OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator) {
 	"use strict";
 
 	/**
@@ -76,7 +76,7 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: {}
+		renderer: OverflowToolbarRenderer
 	});
 
 	var _aAggregations = [
