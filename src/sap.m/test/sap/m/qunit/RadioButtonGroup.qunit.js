@@ -6,14 +6,16 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/library",
 	"sap/m/RadioButtonGroup",
-	"sap/m/RadioButton"
+	"sap/m/RadioButton",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	jqueryMobileCustom,
 	jQuery,
 	coreLibrary,
 	RadioButtonGroup,
-	RadioButton
+	RadioButton,
+	Core
 ) {
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -475,5 +477,32 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnSpy.callCount, 1, "Click on a radio button should fire 'select'.");
+	});
+
+	QUnit.module("Buttons selection");
+
+	QUnit.test("setSelected should check RadioButton and uncheck all other RadioButtons from the same group", function (assert) {
+
+		// arrange
+		var oRBGroup =  new RadioButtonGroup("RBG1"),
+			oRadioButton1 = new RadioButton(),
+			oRadioButton2 = new RadioButton();
+
+		oRBGroup.addButton(oRadioButton1);
+		oRBGroup.addButton(oRadioButton2);
+
+		oRadioButton2.setSelected(true);
+
+		oRBGroup.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// assert
+		assert.ok(!oRadioButton1.getSelected(), "RadioButton should not be selected");
+		assert.ok(oRadioButton2.getSelected(), "RadioButton should be selected");
+
+		// cleanup
+		oRadioButton1.destroy();
+		oRadioButton2.destroy();
+		oRBGroup.destroy();
 	});
 });
