@@ -772,6 +772,7 @@ sap.ui.define([
 				delete oActualRequest["async"];
 				delete oActualRequest["deferred"];
 				delete oActualRequest["eventInfo"];
+				delete oActualRequest["functionMetadata"];
 				delete oActualRequest["password"];
 				delete oActualRequest["expandRequest"];
 				delete oActualRequest["requestID"];
@@ -1133,16 +1134,24 @@ sap.ui.define([
 		 * this case you can control the response time (typically to control the order of the
 		 * responses).
 		 *
-		 * @param {string|object} vRequest The request with the properties "method", "url" and
-		 *   "headers". A string is interpreted as URL with method "GET". Spaces inside the URL, and
-		 *   "'" and "~" inside the query string are percent-encoded automatically.
+		 * @param {string|object} vRequest
+		 *   The request with the mandatory properties "deepPath", "method" and "requestUri".
+		 *   Optional properties are:
+		 *   <ul>
+		 *     <li>"batchNo": The batch number in which the request is contained</li>
+		 *     <li>"encodeRequestUri": Whether the query string of the requestUri has to be encoded;
+		 *       <code>true</code> by default</li>
+		 *     <li>"headers": The expected request headers/li>
+		 *   </ul>
+		 *   A string is interpreted as URL with method "GET". Spaces inside the URL, and "'" and
+		 *   "~" inside the query string are percent-encoded automatically.
 		 * @param {object|Promise|Error} [oResponse] The response message to be returned from the
 		 *   requestor or a promise on it
 		 * @param {object} [mResponseHeaders] The response headers to be returned from the
 		 *   requestor
 		 * @returns {object} The test instance for chaining
 		 */
-		expectRequest : function (vRequest, oResponse, mResponseHeaders) {
+		expectRequest : function (vRequest, oResponse, mResponseHeaders, bDisableUriEncoding) {
 			var aUrlParts;
 
 			if (typeof vRequest === "string") {
@@ -1157,10 +1166,11 @@ sap.ui.define([
 			vRequest.responseHeaders = mResponseHeaders || {};
 			vRequest.response = oResponse || {/*null object pattern*/};
 			aUrlParts = vRequest.requestUri.split("?");
-			if (aUrlParts[1]) {
+			if (aUrlParts[1] && vRequest.encodeRequestUri !== false) {
 				vRequest.requestUri = aUrlParts[0] + "?"
 					+ aUrlParts[1].replace(/ /g, "%20").replace(/'/g, "%27").replace(/~/g, "%7e");
 			}
+			delete vRequest.encodeRequestUri;
 			this.aRequests.push(vRequest);
 
 			return this;
@@ -4777,6 +4787,96 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.checkValueState(assert, "GrossAmount", "None", ""),
 				that.checkValueState(assert, "LifecycleStatusDescription", "Error", "Bar")
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Parameters of a function import are changed after calling ODataModel#callFunction
+	// before submitting the changes (#submitChanges). The request URL contains the latest parameter
+	// change and the messages get the correct target/fullTarget.
+	// JIRA: CPOUI5MODELS-230
+	QUnit.test("Messages: function import with lazy parameter determination", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({
+				defaultBindingMode : "TwoWay",
+				tokenHandling : false,
+				useBatch : true
+			}),
+			sView = '\
+<FlexBox binding="{/BusinessPartnerSet(\'100\')}">\
+	<Table items="{ToSalesOrders}">\
+		<ColumnListItem>\
+			<Text id="soID" text="{SalesOrderID}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>\
+<FlexBox id="form">\
+	<Input id="soIDParameter" value="{SalesOrderID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/BusinessPartnerSet('100')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "BusinessPartnerSet('100')"
+			}, {
+				__metadata : {uri : "BusinessPartnerSet('100')"}
+			})
+			.expectRequest({
+				deepPath : "/BusinessPartnerSet('100')/ToSalesOrders",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "BusinessPartnerSet('100')/ToSalesOrders?$skip=0&$top=100"
+			}, {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('42')"},
+					SalesOrderID : "42"
+				}]
+			})
+			.expectChange("soID", "42");
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return Promise.all([
+			oModel.callFunction("/SalesOrder_Confirm", {
+				groupId : "changes",
+				method : "POST",
+				refreshAfterChange : false,
+				urlParameters : {
+					SalesOrderID : "1"
+				}
+			}).contextCreated(),
+			this.createView(assert, sView, oModel)
+		]).then(function (aResults) {
+			var oWebAddressError = that.createResponseMessage("WebAddress");
+
+			that.expectRequest({
+					data : undefined,
+					deepPath : "/SalesOrder_Confirm",
+					encodeRequestUri : false,
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : "POST",
+					requestUri : "SalesOrder_Confirm?SalesOrderID='42'"
+				}, {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('42')"},
+						SalesOrderID : "42"
+					}]
+				}, {
+					location : "/SalesOrderSrv/SalesOrderSet('42')",
+					"sap-message" : getMessageHeader([oWebAddressError])
+				})
+				.expectMessage(oWebAddressError, "/SalesOrderSet('42')/"/*,
+				TODO activate if CPOUI5MODELS-230 is complete
+					"/BusinessPartnerSet('100')/ToSalesOrders('42')/"*/);
+
+			that.oView.byId("form").setBindingContext(aResults[0]);
+			that.oView.byId("soIDParameter").setValue("42");
+
+			// code under test
+			oModel.submitChanges({groupId : "changes"});
+
+			return that.waitForChanges(assert);
 		});
 	});
 });
