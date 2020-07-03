@@ -210,11 +210,6 @@ function(
 		evaluateResult(mSettings.source);
 	}
 
-	function configureAddODataPropertyCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oNewAddedElement = mSettings.element;
-		return oDesignTimeMetadata.getAction("addODataProperty", oNewAddedElement);
-	}
-
 	function configureAddDelegatePropertyCommand(oElement, mSettings, oDesignTimeMetadata) {
 		var oNewAddedElement = mSettings.element;
 		return oDesignTimeMetadata.getAction("add", oNewAddedElement, "delegate");
@@ -299,11 +294,6 @@ function(
 			clazz: 'sap.ui.rta.command.Rename',
 			configure: configureRenameCommand,
 			adjustForBinding: adjustRenameCommand
-		},
-		addODataProperty: {
-			clazz: 'sap.ui.rta.command.AddProperty',
-			configure: configureAddODataPropertyCommand,
-			adjustForBinding: adjustAddPropertyCommand
 		},
 		addDelegateProperty: {
 			clazz: 'sap.ui.rta.command.AddProperty',

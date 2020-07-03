@@ -174,14 +174,14 @@ sap.ui.define([
 				}.bind(this), 0);
 			}.bind(this));
 
-			// to reveal we have to remove the field first (otherwise it would be addODataProperty)
+			// to reveal we have to remove the field first (otherwise it would be addViaDelegate)
 			this.oBoundButton35FieldOverlay.focus();
 			QUnitUtils.triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.ENTER, false, false, false);
 			this.oBoundButton35FieldOverlay.focus();
 			QUnitUtils.triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.DELETE);
 		});
 
-		QUnit.test("when adding a group element via context menu (expanded context menu - addODataProperty)", function(assert) {
+		QUnit.test("when adding a group element via context menu (expanded context menu - addViaDelegate)", function(assert) {
 			var fnDone = assert.async();
 
 			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;

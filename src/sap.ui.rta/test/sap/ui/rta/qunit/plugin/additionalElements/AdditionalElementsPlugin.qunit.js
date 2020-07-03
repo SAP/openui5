@@ -123,6 +123,7 @@ sap.ui.define([
 	};
 
 	sinon.stub(Settings, 'getInstance').resolves(new Settings({}));
+	sinon.stub(DelegateMediatorAPI, 'getKnownDefaultDelegateLibraries').returns(["sap.uxap"]);
 
 	var DEFAULT_MANIFEST = {
 		"sap.app": {
@@ -211,7 +212,7 @@ sap.ui.define([
 					}
 				},
 				sibling: false,
-				msg: "when the control's dt metadata has NO addODataProperty and a reveal action"
+				msg: "when the control's dt metadata has NO add.delegate and a reveal action"
 			},
 			{
 				dtMetadata: {
@@ -220,25 +221,7 @@ sap.ui.define([
 					}
 				},
 				sibling: true,
-				msg: " when the control's dt metadata has NO addODataProperty and a reveal action"
-			},
-			{
-				dtMetadata: {
-					addODataProperty: {
-						changeType: "foo"
-					}
-				},
-				sibling: false,
-				msg: "when the control's dt metadata has an addODataProperty and NO reveal action"
-			},
-			{
-				dtMetadata: {
-					addODataProperty: {
-						changeType: "foo"
-					}
-				},
-				sibling: true,
-				msg: "when the control's dt metadata has an addODataProperty and NO reveal action"
+				msg: " when the control's dt metadata has NO add.delegate and a reveal action"
 			},
 			{
 				dtMetadata: {
@@ -273,6 +256,19 @@ sap.ui.define([
 				},
 				sibling: true,
 				msg: "when the control's dt metadata has an add.delegate with default delegate and NO reveal action"
+			},
+			{
+				dtMetadata: {
+					add: {
+						delegate: {
+							changeType: "foo",
+							changeOnRelevantContainer: true,
+							supportsDefaultDelegate: true
+						}
+					}
+				},
+				sibling: true,
+				msg: "when the control's dt metadata has an add.delegate with instancespecific delegate and NO reveal action"
 			},
 			{
 				dtMetadata: {
@@ -412,13 +408,13 @@ sap.ui.define([
 				dtMetadata: {},
 				on: ON_CHILD,
 				sibling: false,
-				msg: "when the control's dt metadata has NO addODataProperty and NO reveal action"
+				msg: "when the control's dt metadata has NO addViaDelegate and NO reveal action"
 			},
 			{
 				dtMetadata: {},
 				on: ON_SIBLING,
 				sibling: true,
-				msg: "when the control's dt metadata has NO addODataProperty and NO reveal action"
+				msg: "when the control's dt metadata has NO addViaDelegate and NO reveal action"
 			},
 			{
 				dtMetadata: {
@@ -463,13 +459,10 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when the control's dt metadata has addODataProperty, reveal, addViaCustom and addViaDelegate actions", function (assert) {
+		QUnit.test("when the control's dt metadata has reveal, addViaCustom and addViaDelegate actions", function (assert) {
 			var fnElementModifiedStub = sandbox.stub();
 
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
-				},
 				reveal: {
 					changeType: "unhideControl"
 				},
@@ -490,14 +483,10 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when the control's dt metadata has addODataProperty, reveal, addViaCustom and addViaDelegate actions with changeOnRelevantContainer", function (assert) {
+		QUnit.test("when the control's dt metadata has reveal, addViaCustom and addViaDelegate actions with changeOnRelevantContainer", function (assert) {
 			var fnElementModifiedStub = sandbox.stub();
 
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields",
-					changeOnRelevantContainer: true
-				},
 				reveal: {
 					changeType: "unhideControl",
 					changeOnRelevantContainer: true
@@ -576,7 +565,7 @@ sap.ui.define([
 			}
 		].forEach(function (test) {
 			var sPrefix = test.sibling ? "On sibling: " : "On child: ";
-			QUnit.test(sPrefix + "when the control's dt metadata has NO addODataProperty and a reveal action", function (assert) {
+			QUnit.test(sPrefix + "when the control's dt metadata has NO addViaDelegate and a reveal action", function (assert) {
 				var done = assert.async();
 				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
 					var oCompositeCommand = oEvent.getParameter("command");
@@ -612,7 +601,7 @@ sap.ui.define([
 
 					.then(function () {
 						assert.ok(this.fnEnhanceInvisibleElementsStub.calledOnce, "then the analyzer is called to return the invisible elements");
-						assert.ok(this.fnGetUnboundODataPropertiesStub.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
+						assert.ok(this.fnGetUnrepresentedDelegateProperties.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
 						assertDialogModelLength.call(this, assert, 2, "then both invisible elements are part of the dialog model");
 						assert.equal(this.oPlugin.getDialog().getElements()[0].label, "Invisible1", "then the first element is an invisible property");
 					}.bind(this));
@@ -684,7 +673,7 @@ sap.ui.define([
 					.then(function () {
 						assert.ok(this.fnGetCustomAddItemsSpy.calledOnce, "then the analyzer is called to return the custom add elements");
 						assert.ok(this.fnEnhanceInvisibleElementsStub.notCalled, "then the analyzer is NOT called to return the invisible elements");
-						assert.ok(this.fnGetUnboundODataPropertiesStub.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
+						assert.ok(this.fnGetUnrepresentedDelegateProperties.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
 						assertDialogModelLength.call(this, assert, 2, "then both custom add elements are part of the dialog model");
 						assert.equal(this.oPlugin.getDialog().getElements()[0].label, aCustomItems[0].label, "then the first element is a custom add item");
 						assert.equal(this.oPlugin.getDialog().getElements()[1].label, aCustomItems[1].label, "then the second element is a custom add item");
@@ -727,7 +716,7 @@ sap.ui.define([
 					}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has NO addODataProperty or reveal or custom add actions", function (assert) {
+			QUnit.test(sPrefix + "when the control's dt metadata has NO addViaDelegate or reveal or custom add actions", function (assert) {
 				var fnElementModifiedStub = sandbox.stub();
 				this.oPlugin.attachEventOnce("elementModified", fnElementModifiedStub);
 
@@ -739,78 +728,10 @@ sap.ui.define([
 
 					.then(function () {
 						assert.ok(this.fnEnhanceInvisibleElementsStub.notCalled, "then the analyzer is NOT called to return the invisible elements");
-						assert.ok(this.fnGetUnboundODataPropertiesStub.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
+						assert.ok(this.fnGetUnrepresentedDelegateProperties.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
 						assert.ok(this.fnGetCommandSpy.notCalled, "then no commands are created");
 						assert.ok(fnElementModifiedStub.notCalled, "then the element modified event is not thrown");
 						assertDialogModelLength.call(this, assert, 0, "then no elements are part of the dialog model");
-					}.bind(this));
-			});
-
-			QUnit.test(sPrefix + "when the control's dt metadata has an addODataProperty and NO reveal action", function (assert) {
-				var done = assert.async();
-				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
-					var oCompositeCommand = oEvent.getParameter("command");
-					var aCommands = oCompositeCommand.getCommands();
-					var iExpectedIndex = test.sibling ? 1 : 0;
-					assert.equal(aCommands.length, 1, "then one command for each selected element is created");
-					assert.equal(aCommands[0].getChangeType(), "addFields", "then add command is created");
-					assert.equal(aCommands[0].getIndex(), iExpectedIndex, "then the index to add the field is set correctly");
-					done();
-				});
-
-				return test.overlay.call(this, {
-					addODataProperty: {
-						changeType: "addFields"
-					}
-				}, test.sibling ? ON_SIBLING : ON_CHILD)
-					.then(function (oOverlay) {
-						return this.oPlugin.showAvailableElements(test.sibling, [oOverlay])
-							.then(function () {
-								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oOverlay]), true, "then isEnabled() returns true");
-							}.bind(this));
-					}.bind(this))
-
-					.then(function () {
-						assert.ok(this.fnEnhanceInvisibleElementsStub.notCalled, "then the analyzer is NOT called to return the invisible elements");
-						assert.ok(this.fnGetUnboundODataPropertiesStub.calledOnce, "then the analyzer is called once to return the unbound odata properties");
-						assertDialogModelLength.call(this, assert, 3, "then the 3 odata properties are part of the dialog model");
-						assert.deepEqual(this.oPlugin.getDialog().getElements()[0].label, "odata0", "then the first element is an oData property");
-					}.bind(this));
-			});
-
-			QUnit.test(sPrefix + "when the control's dt metadata has an addODataProperty and a reveal action (but no move because parent control might not support it so far)", function (assert) {
-				var done = assert.async();
-				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
-					var oCompositeCommand = oEvent.getParameter("command");
-					assert.equal(oCompositeCommand.getCommands().length, 2, "then one command for each selected element is created");
-					assert.equal(oCompositeCommand.getCommands()[0].getName(), "addODataProperty", "addODataProperty was created");
-					assert.equal(oCompositeCommand.getCommands()[1].getName(), "reveal", "reveal was created");
-					//move is not created as move was not enabled for this control
-					done();
-				});
-
-				return test.overlay.call(this,
-					{
-						addODataProperty: {
-							changeType: "addFields",
-							getIndex: test.hiddenTree ? function () {
-								return test.sibling ? 2 : 3;
-							} : undefined
-						},
-						reveal: {
-							changeType: "unhideControl"
-						}
-					},
-					test.sibling ? ON_SIBLING : ON_CHILD)
-					.then(function (oOverlay) {
-						return this.oPlugin.showAvailableElements(test.sibling, [oOverlay]);
-					}.bind(this))
-
-					.then(function () {
-						assert.ok(this.fnEnhanceInvisibleElementsStub.calledOnce, "then the analyzer is called once to return the invisible elements");
-						assert.ok(this.fnGetUnboundODataPropertiesStub.calledOnce, "then the analyzer is called once to return the unbound odata properties");
-						assertDialogModelLength.call(this, assert, 5, "then all invisible elements and odata properties are part of the dialog model, excluding the duplicate properties");
-						assert.deepEqual(this.oPlugin.getDialog().getElements()[0].label, "Invisible1", "then the first element is an invisible property");
 					}.bind(this));
 			});
 
@@ -837,7 +758,7 @@ sap.ui.define([
 						name: "addDelegateProperty",
 						changeType: sChangeType,
 						jsOnly: undefined,
-						oDataServiceUri: undefined,
+						oDataServiceUri: "",
 						oDataServiceVersion: undefined,
 						modelType: undefined,
 						relevantContainerId: "bar",
@@ -879,7 +800,6 @@ sap.ui.define([
 					.then(function () {
 						assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 1, "then the analyzer was called once for addViaDelegate elements");
 						assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
-						assert.equal(this.fnGetUnboundODataPropertiesStub.callCount, 0, "then the analyzer was not called for addODataProperty elements");
 						assert.equal(this.fnGetCustomAddItemsSpy.callCount, 0, "then the analyzer was not called for addViaCustom items");
 						assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 						var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function (oElement, iIndex) {
@@ -912,7 +832,7 @@ sap.ui.define([
 						name: "addDelegateProperty",
 						changeType: sChangeType,
 						jsOnly: undefined,
-						oDataServiceUri: undefined,
+						oDataServiceUri: "",
 						oDataServiceVersion: undefined,
 						modelType: undefined,
 						relevantContainerId: "bar",
@@ -955,7 +875,6 @@ sap.ui.define([
 					.then(function () {
 						assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 1, "then the analyzer was called once for addViaDelegate elements");
 						assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
-						assert.equal(this.fnGetUnboundODataPropertiesStub.callCount, 0, "then the analyzer was not called for addODataProperty elements");
 						assert.equal(this.fnGetCustomAddItemsSpy.callCount, 0, "then the analyzer was not called for addViaCustom items");
 						assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 						var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function (oElement, iIndex) {
@@ -964,7 +883,7 @@ sap.ui.define([
 						assert.ok(bValidDialogElements, "then all elements in the dialog are valid");
 					}.bind(this));
 			});
-			QUnit.test(sPrefix + "when the control's dt metadata has addViaDelegate with a valid delegate configured and addODataProperty actions", function (assert) {
+			QUnit.test(sPrefix + "when the control's dt metadata has addViaDelegate with a valid delegate configured", function (assert) {
 				var done = assert.async();
 				var sChangeType = "addFields";
 
@@ -976,9 +895,6 @@ sap.ui.define([
 				});
 
 				return test.overlay.call(this, {
-					addODataProperty: {
-						changeType: sChangeType
-					},
 					add: {
 						delegate: {
 							changeType: sChangeType
@@ -993,7 +909,6 @@ sap.ui.define([
 					.then(function () {
 						assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 1, "then the analyzer was called once for addViaDelegate elements");
 						assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
-						assert.equal(this.fnGetUnboundODataPropertiesStub.callCount, 0, "then the analyzer was not called for addODataProperty elements");
 						assert.equal(this.fnGetCustomAddItemsSpy.callCount, 0, "then the analyzer was not called for addViaCustom items");
 						assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 						var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function (oElement, iIndex) {
@@ -1003,7 +918,7 @@ sap.ui.define([
 					}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has addViaDelegate with an invalid delegate configured and addODataProperty actions", function (assert) {
+			QUnit.test(sPrefix + "when the control's dt metadata has addViaDelegate with an invalid delegate configured", function (assert) {
 				var done = assert.async();
 				var sChangeType = "addFields";
 				var sDelegatePath = "misconfigured/module/path";
@@ -1014,9 +929,6 @@ sap.ui.define([
 					done();
 				});
 				return test.overlay.call(this, {
-					addODataProperty: {
-						changeType: sChangeType
-					},
 					add: {
 						delegate: {
 							changeType: sChangeType
@@ -1032,14 +944,13 @@ sap.ui.define([
 					.then(function () {
 						assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 0, "then the analyzer was not called for addViaDelegate elements");
 						assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
-						assert.equal(this.fnGetUnboundODataPropertiesStub.callCount, 1, "then the analyzer was called for addODataProperty elements");
 						assert.equal(this.fnGetCustomAddItemsSpy.callCount, 0, "then the analyzer was not called for addViaCustom items");
-						assertDialogModelLength.call(this, assert, 3, "then 3 elements are part of the dialog model");
+						assertDialogModelLength.call(this, assert, 0, "then no elements are part of the dialog model");
 					}.bind(this));
 			});
 		});
 
-		QUnit.test("when when the control's dt metadata has NO addODataProperty and a reveal action and we call showAvailableElements with an index", function (assert) {
+		QUnit.test("when the control's dt metadata has NO addViaDelegate and a reveal action and we call showAvailableElements with an index", function (assert) {
 			var done = assert.async();
 			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
 				var oCompositeCommand = oEvent.getParameter("command");
@@ -1065,7 +976,7 @@ sap.ui.define([
 
 				.then(function () {
 					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 1, "then the analyzer is called to return the invisible elements");
-					assert.equal(this.fnGetUnboundODataPropertiesStub.callCount, 0, "then the analyzer is NOT called to return the unbound odata properties");
+					assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 0, "then the analyzer is NOT called to return the unbound odata properties");
 					assertDialogModelLength.call(this, assert, 2, "then all invisible elements and odata properties are part of the dialog model, excluding the duplicate properties");
 					assert.equal(this.oPlugin.getDialog().getElements()[0].label, "Invisible1", "then the first element is an invisible property");
 				}.bind(this));
@@ -1107,8 +1018,10 @@ sap.ui.define([
 			}.bind(this));
 			return createOverlayWithAggregationActions.call(this,
 				{
-					addODataProperty: {
-						changeType: "addFields"
+					add: {
+						delegate: {
+							changeType: "addFields"
+						}
 					},
 					reveal: {
 						changeType: "unhideControl"
@@ -1127,11 +1040,13 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when the control's dt metadata has a reveal and addODataProperty action on the responsible element and _getActions() is called", function (assert) {
+		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate action on the responsible element and _getActions() is called", function (assert) {
 			return createOverlayWithAggregationActions.call(this,
 				{
-					addODataProperty: {
-						changeType: "addFields"
+					add: {
+						delegate: {
+							changeType: "addFields"
+						}
 					},
 					reveal: {
 						changeType: "unhideControl"
@@ -1146,7 +1061,7 @@ sap.ui.define([
 					return this.oPlugin._getActions(true, oCreatedOverlay);
 				}.bind(this)).then(function (mActions) {
 					assert.equal(mActions.reveal.elements.length, 2, "then the reveal actions has two elements from the responsible element");
-					assert.equal(mActions.addODataProperty.action.changeType, "addFields", "then the addOData action was retrieved from the responsible element");
+					assert.equal(mActions.addViaDelegate.action.changeType, "addFields", "then the addViaDelegate action was retrieved from the responsible element");
 					assert.equal(mActions.aggregation, "contentLeft", "then the reveal actions has the correct aggregation name from the responsible element");
 				});
 		});
@@ -1174,16 +1089,18 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when the control's dt metadata has an addODataProperty action on the responsible element and _getActions() is called", function (assert) {
+		QUnit.test("when the control's dt metadata has an addViaDelegate action on the responsible element and _getActions() is called", function (assert) {
 			return createOverlayWithAggregationActions.call(this,
 				{
-					addODataProperty: {
-						changeType: "addFields"
+					add: {
+						delegate: {
+							changeType: "addFields"
+						}
 					},
 					responsibleElement: {
 						target: this.oSibling,
 						source: this.oPseudoPublicParent,
-						actionsFromResponsibleElement: ["addODataProperty"]
+						actionsFromResponsibleElement: ["delegate"]
 					}
 				}, ON_CONTAINER)
 				.then(function (oCreatedOverlay) {
@@ -1193,7 +1110,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when the control's dt metadata has addODataProperty, a reveal and a custom add actions", function (assert) {
+		QUnit.test("when the control's dt metadata has addViaDelegate, a reveal and a custom add actions", function (assert) {
 			var oOriginalRTATexts = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var fnOriginalGetLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle;
 			var oFakeLibBundle = {
@@ -1208,16 +1125,16 @@ sap.ui.define([
 			});
 
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
-				},
-				reveal: {
-					changeType: "unhideControl"
-				},
 				add: {
+					delegate: {
+						changeType: "addFields"
+					},
 					custom: {
 						getItems: getCustomItems.bind(null, 2)
 					}
+				},
+				reveal: {
+					changeType: "unhideControl"
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
@@ -1391,14 +1308,15 @@ sap.ui.define([
 					assert.equal(bEditable, false, "then the parent overlay is not editable");
 				});
 		});
-		QUnit.test("when the control has addODataProperty and Reveal in different aggregations from DesignTimeMetadata", function (assert) {
+
+		QUnit.test("when the control has addViaDelegate and Reveal in different aggregations from DesignTimeMetadata", function (assert) {
 			var fnLogErrorSpy = sandbox.spy(Log, "error");
 			sandbox.stub(this.oPlugin, "_getRevealActions").resolves({
 				aggregation1: {
 					dummy: "value"
 				}
 			});
-			sandbox.stub(this.oPlugin, "_getAddPropertyActions").resolves({
+			sandbox.stub(this.oPlugin, "_getAddViaDelegateActions").resolves({
 				aggregation2: {
 					dummy: "value"
 				}
@@ -1427,7 +1345,7 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when the control's dt metadata has no addODataProperty and reveal action, and the parent is invisible", function (assert) {
+		QUnit.test("when the control's dt metadata has no addViaDelegate and reveal action, and the parent is invisible", function (assert) {
 			return createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
@@ -1447,84 +1365,6 @@ sap.ui.define([
 				.then(function () {
 					assertDialogModelLength.call(this, assert, 2, "then the two visible elements are part of the dialog model");
 				}.bind(this));
-		});
-
-		QUnit.test("when the control's dt metadata has an addODataProperty on relevant container with required libraries", function (assert) {
-			var done = assert.async();
-			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
-				var oCompositeCommand = oEvent.getParameter("command");
-				assert.equal(oCompositeCommand.getCommands().length, 2, "then two commands are created");
-				assert.equal(oCompositeCommand.getCommands()[0].getName(), "addLibrary",
-					"then the addLibrary command is created first");
-				assert.equal(oCompositeCommand.getCommands()[1].getName(), "addODataProperty",
-					"then the addODataProperty command is created second");
-				assert.ok(oCompositeCommand.getCommands()[1].getNewControlId().indexOf("bar") > -1,
-					"then the pseudo parent (relevant container) is used to create the new control ID");
-				assert.equal(oCompositeCommand.getCommands()[0].getReference(), "applicationId",
-					"then the addLibrary command is created with the proper reference");
-				assert.equal(oCompositeCommand.getCommands()[0].getParameters().libraries["sap.uxap"].minVersion, "1.44",
-					"then the addLibrary command is created with the proper required libraries");
-				done();
-			});
-
-			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields",
-					changeOnRelevantContainer: true,
-					changeHandlerSettings: {
-						key: {
-							oDataServiceVersion: "2.0"
-						},
-						content: {
-							requiredLibraries: {
-								"sap.uxap": {
-									minVersion: "1.44",
-									lazy: "false"
-								}
-							},
-							createFunction: function () {
-							}
-						}
-					}
-				}
-			}, ON_CHILD)
-				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
-				}.bind(this))
-
-				.then(function () {
-					assert.ok(true, "then the plugin should not complain about it");
-				});
-		});
-
-		QUnit.test("when the control's dt metadata has an addODataProperty on relevant container with required libraries but without createFunction defined", function (assert) {
-			var oFireElementModifiedStub = sandbox.spy(this.oPlugin, "fireElementModified");
-			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields",
-					changeOnRelevantContainer: true,
-					changeHandlerSettings: {
-						key: {
-							oDataServiceVersion: "2.0"
-						},
-						content: {
-							requiredLibraries: {
-								"sap.uxap": {
-									minVersion: "1.44",
-									lazy: "false"
-								}
-							}
-						}
-					}
-				}
-			}, ON_CHILD)
-				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
-				}.bind(this))
-				.then(function () {
-					assert.ok(true, "then the plugin should not complain about it");
-					assert.equal(oFireElementModifiedStub.callCount, 0, "then the plugin should not fire element modified event");
-				});
 		});
 
 		QUnit.test("when the control's dt metadata has an add via delegate action", function (assert) {
@@ -1686,13 +1526,15 @@ sap.ui.define([
 
 		QUnit.test("when '_getActions' is called multiple times without invalidate", function (assert) {
 			var oGetRevealActionsSpy = sandbox.spy(this.oPlugin, "_getRevealActions");
-			var oGetAddActionsSpy = sandbox.spy(this.oPlugin, "_getAddPropertyActions");
+			var oGetAddActionsSpy = sandbox.spy(this.oPlugin, "_getAddViaDelegateActions");
 			var oGetAddCustomActionsSpy = sandbox.spy(this.oPlugin, "_getCustomAddActions");
 
 			return createOverlayWithAggregationActions.call(this,
 				{
-					addODataProperty: {
-						changeType: "addFields"
+					add: {
+						delegate: {
+							changeType: "addFields"
+						}
 					},
 					reveal: {
 						changeType: "unhideControl"
@@ -1721,13 +1563,15 @@ sap.ui.define([
 
 		QUnit.test("when '_getActions' is called multiple times with invalidate", function (assert) {
 			var oGetRevealActionsSpy = sandbox.spy(this.oPlugin, "_getRevealActions");
-			var oGetAddActionsSpy = sandbox.spy(this.oPlugin, "_getAddPropertyActions");
+			var oGetAddActionsSpy = sandbox.spy(this.oPlugin, "_getAddViaDelegateActions");
 			var oGetAddCustomActionsSpy = sandbox.spy(this.oPlugin, "_getCustomAddActions");
 
 			return createOverlayWithAggregationActions.call(this,
 				{
-					addODataProperty: {
-						changeType: "addFields"
+					add: {
+						delegate: {
+							changeType: "addFields"
+						}
 					},
 					reveal: {
 						changeType: "unhideControl"
@@ -1801,7 +1645,7 @@ sap.ui.define([
 			this.oPseudoPublicParent.destroy();
 		}
 	}, function () {
-		QUnit.test("when the service is not up to date and no addODataProperty action is available", function (assert) {
+		QUnit.test("when the service is not up to date and no addViaDelegate action is available", function (assert) {
 			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").rejects();
 			return createOverlayWithAggregationActions.call(this, {
 				reveal: {
@@ -1814,17 +1658,19 @@ sap.ui.define([
 
 				.then(function () {
 					assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-					assert.ok(fnServiceUpToDateStub.notCalled, "only addODataProperty is dependent on up to date service");
+					assert.ok(fnServiceUpToDateStub.notCalled, "up to date service is not called");
 					assert.equal(this.oPlugin.getDialog()._oCustomFieldButton.getVisible(), false, "then the Button to create custom Fields is not shown");
 				}.bind(this));
 		});
 
-		QUnit.test("when the service is up to date and addODataProperty action is available but extensibility is not enabled in the system", function (assert) {
+		QUnit.test("when the service is up to date and addViaDelegate action is available but extensibility is not enabled in the system", function (assert) {
 			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
 
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
+				add: {
+					delegate: {
+						changeType: "addFields"
+					}
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
@@ -1833,18 +1679,20 @@ sap.ui.define([
 
 				.then(function () {
 					assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-					assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addODataProperty is dependent on up to date service, it should be called with a control");
+					assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
 					assert.equal(this.oPlugin.getDialog()._oCustomFieldButton.getVisible(), false, "the Button to create custom Fields is not shown");
 				}.bind(this));
 		});
 
-		QUnit.test("when the service is up to date and addODataProperty action is available and extensibility is enabled in the system", function (assert) {
+		QUnit.test("when the service is up to date and addViaDelegate action is available and extensibility is enabled in the system", function (assert) {
 			sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
 			sandbox.stub(RTAUtils, "isExtensibilityEnabledInSystem").resolves();
 
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
+				add: {
+					delegate: {
+						changeType: "addFields"
+					}
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
@@ -1857,11 +1705,13 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when the service is not up to date and addODataProperty action is available", function (assert) {
+		QUnit.test("when the service is not up to date and addViaDelegate action is available", function (assert) {
 			sandbox.stub(RTAUtils, "isServiceUpToDate").rejects();
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
+				add: {
+					delegate: {
+						changeType: "addFields"
+					}
 				},
 				reveal: {
 					changeType: "unhideControl"
@@ -1876,7 +1726,7 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when no addODataProperty action is available", function (assert) {
+		QUnit.test("when no addViaDelegate action is available", function (assert) {
 			var fnIsCustomFieldAvailableStub = sandbox.stub(RTAUtils, "isCustomFieldAvailable");
 			return createOverlayWithAggregationActions.call(this, {
 				reveal: {
@@ -1893,7 +1743,7 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when addODataProperty action is available and simulating a click on open custom field", function (assert) {
+		QUnit.test("when addViaDelegate action is available and simulating a click on open custom field", function (assert) {
 			var done = assert.async();
 			var that = this;
 
@@ -1907,8 +1757,10 @@ sap.ui.define([
 			});
 
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
+				add: {
+					delegate: {
+						changeType: "addFields"
+					}
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
@@ -1916,7 +1768,7 @@ sap.ui.define([
 				}.bind(this))
 
 				.then(function () {
-					assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addODataProperty is dependent on up to date service, it should be called with a control");
+					assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
 
 					assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
 					assert.equal(this.oDialog._oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
@@ -1927,7 +1779,7 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when addODataProperty action is available and showAvailableElements is called 3 times and simulating a click on open custom field the last time", function (assert) {
+		QUnit.test("when addViaDelegate action is available and showAvailableElements is called 3 times and simulating a click on open custom field the last time", function (assert) {
 			var done = assert.async();
 
 			sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
@@ -1942,8 +1794,10 @@ sap.ui.define([
 			});
 
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
+				add: {
+					delegate: {
+						changeType: "addFields"
+					}
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
@@ -1972,8 +1826,10 @@ sap.ui.define([
 			var oOverlay;
 
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
+				add: {
+					delegate: {
+						changeType: "addFields"
+					}
 				}
 			}, ON_CHILD)
 
@@ -2013,14 +1869,14 @@ sap.ui.define([
 
 		QUnit.test("when getAllElements is called for sibling overlay,", function (assert) {
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
-				},
 				reveal: {
 					changeType: "unhideControl"
 				},
 				add: {
-					custom: getCustomItems.bind(null, 1)
+					custom: getCustomItems.bind(null, 1),
+					delegate: {
+						changeType: "addFields"
+					}
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
@@ -2033,14 +1889,14 @@ sap.ui.define([
 
 		QUnit.test("when getAllElements is called for child overlay,", function (assert) {
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
+				add: {
+					delegate: {
+						changeType: "addFields"
+					},
+					custom: getCustomItems.bind(null, 1)
 				},
 				reveal: {
 					changeType: "unhideControl"
-				},
-				add: {
-					custom: getCustomItems.bind(null, 1)
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
@@ -2054,14 +1910,14 @@ sap.ui.define([
 		QUnit.test("when getMenuItems is called,", function (assert) {
 			var ogetAllElementsSpy = sandbox.spy(this.oPlugin, "getAllElements");
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
-				},
 				reveal: {
 					changeType: "unhideControl"
 				},
 				add: {
-					custom: getCustomItems.bind(null, 1)
+					custom: getCustomItems.bind(null, 1),
+					delegate: {
+						changeType: "addFields"
+					}
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
@@ -2075,14 +1931,14 @@ sap.ui.define([
 		QUnit.test("when showAvailableElements is called,", function (assert) {
 			var ogetAllElementsSpy = sandbox.spy(this.oPlugin, "getAllElements");
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
-				},
 				reveal: {
 					changeType: "unhideControl"
 				},
 				add: {
-					custom: getCustomItems.bind(null, 1)
+					custom: getCustomItems.bind(null, 1),
+					delegate: {
+						changeType: "addFields"
+					}
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
@@ -2098,14 +1954,14 @@ sap.ui.define([
 			// "setCachedElements" is not called, when there are Cashed Elements available
 			var ogetAllElementsSpy = sandbox.spy(this.oPlugin, "setCachedElements");
 			return createOverlayWithAggregationActions.call(this, {
-				addODataProperty: {
-					changeType: "addFields"
-				},
 				reveal: {
 					changeType: "unhideControl"
 				},
 				add: {
-					custom: getCustomItems.bind(null, 1)
+					custom: getCustomItems.bind(null, 1),
+					delegate: {
+						changeType: "addFields"
+					}
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
@@ -2241,7 +2097,7 @@ sap.ui.define([
 			];
 		}
 
-		this.fnGetUnboundODataPropertiesStub = sandbox.stub(AdditionalElementsAnalyzer, "getUnboundODataProperties").resolves(getAddItems("odata"));
+		// TODO: getadditems remove type
 		this.fnGetUnrepresentedDelegateProperties = sandbox.stub(AdditionalElementsAnalyzer, "getUnrepresentedDelegateProperties").resolves(getAddItems("delegate"));
 	}
 
@@ -2289,7 +2145,8 @@ sap.ui.define([
 	function enhanceForAddViaDelegate(mActions) {
 		var mAddViaDelegateAction = ObjectPath.get(["add", "delegate"], mActions);
 		if (mAddViaDelegateAction) {
-			//attach delegate into to the control
+			//attach instancespecific delegate into to the control, the default delegate is also valid for this control
+			//but instancespecific delegate should always overrule the default delegate registered in delegate mediator.
 			var oCustomDataValue = {};
 			var sDelegateModulePath = mActions.delegateModulePath || TEST_DELEGATE_PATH;
 			oCustomDataValue["sap.ui.fl"] = {
@@ -2352,9 +2209,8 @@ sap.ui.define([
 			aggregations: {
 				contentLeft: {
 					childNames: mChildNames,
-					actions: (mActions.addODataProperty || mActions.move || mActions.add) ? {
+					actions: (mActions.move || mActions.add) ? {
 						add: mActions.add || null,
-						addODataProperty: mActions.addODataProperty || null,
 						move: mActions.move || null
 					} : null
 				}

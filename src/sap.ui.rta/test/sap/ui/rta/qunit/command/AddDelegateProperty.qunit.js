@@ -47,7 +47,7 @@ function(
 		oGetAppComponentForControlStub.restore();
 	});
 
-	QUnit.module("Given an AddODataProperty change with a valid entry in the change registry,", {
+	QUnit.module("Given an AddDelegateProperty change with a valid entry in the change registry,", {
 		beforeEach : function () {
 			var oChangeRegistry = ChangeRegistry.getInstance();
 
@@ -56,7 +56,7 @@ function(
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
-					addODataProperty : {
+					addFields : {
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						applyChange: this.fnApplyChangeSpy,
 						revertChange: function() {}
@@ -67,11 +67,12 @@ function(
 				this.oButton = new Button("button");
 
 				this.oDesignTimeMetadata = new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							addODataProperty : {
-								changeType: "addODataProperty",
-								isEnabled : true
+					data: {
+						actions: {
+							add: {
+								delegate: {
+									changeType: "addFields"
+								}
 							}
 						}
 					}
@@ -82,12 +83,12 @@ function(
 
 	var ADD_PROPERTY_SPECIAL_SETTINGS_KEYS = ["changeType", "index", "newControlId", "bindingPath", "parentId", "modelType", "relevantContainerId", "oDataServiceVersion", "oDataInformation", "layer", "developerMode", "jsOnly", "selector", "reference", "packageName", "validAppVersions"];
 
-	QUnit.test("when getting a AddODataProperty command for the change ...", function(assert) {
+	QUnit.test("when getting a AddDelegateProperty command for the change ...", function(assert) {
 		return CommandFactory.getCommandFor(
 			this.oButton,
-			"addODataProperty",
+			"addDelegateProperty",
 			{
-				changeType : "addODataProperty",
+				changeType : "addFields",
 				index : 1,
 				newControlId : "newControlId",
 				bindingString : "{bindingPath}",
@@ -98,7 +99,7 @@ function(
 		)
 
 		.then(function(oCommand) {
-			assert.ok(oCommand, "the addODataProperty command exists");
+			assert.ok(oCommand, "the addDelegateProperty command exists");
 
 			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 			var mActualSpecialSettings = this.fnCompleteChangeContentSpy.getCall(0).args[1];
