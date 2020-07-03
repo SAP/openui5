@@ -1231,16 +1231,14 @@ function(
 						layer: this.getLayer(),
 						appVariantDescriptors: aAppVariantDescriptor
 					})
-						.then(function(sResponse) {
-							if (sResponse !== "Error" && sResponse !== "Cancel") {
-								this._showMessageToast("MSG_TRANSPORT_SUCCESS");
-
+						.then(function(sMessage) {
+							if (sMessage !== "Error" && sMessage !== "Cancel") {
+								MessageToast.show(sMessage);
 								if (this.getShowToolbars()) {
-									var mPropertyBag = {
+									PersistenceWriteAPI.getResetAndPublishInfo({
 										selector: this.getRootControlInstance(),
 										layer: this.getLayer()
-									};
-									PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag)
+									})
 									.then(function(oPublishAndResetInfo) {
 										this.getToolbar().setPublishEnabled(oPublishAndResetInfo.isPublishEnabled);
 										this.getToolbar().setRestoreEnabled(oPublishAndResetInfo.isResetEnabled);

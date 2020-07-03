@@ -206,8 +206,10 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.layer - Working layer
 		 * @param {array} [mPropertyBag.appVariantDescriptors] - Array of app variant descriptors that need to be transported
 		 *
-		 * @returns {Promise} Promise that resolves when all the artifacts are successfully transported
-		 * TODO: Must be changed in future.
+		 * @returns {Promise<string>} Promise that can resolve to the following strings:
+		 * - "Cancel" if publish process was canceled
+		 * - <sMessage> when all the artifacts are successfully transported fl will return the message to show
+		 * - "Error" in case of a problem
 		 */
 		publish: function(mPropertyBag) {
 			mPropertyBag.styleClass = mPropertyBag.styleClass || "";
