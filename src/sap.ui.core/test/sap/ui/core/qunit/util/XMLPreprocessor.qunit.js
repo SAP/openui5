@@ -1981,6 +1981,32 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("template:repeat & iSizeLimit", function (assert) {
+		function many(vValue) {
+			var aArray = [],
+				i;
+
+			for (i = 0; i < 200; i += 1) {
+				aArray.push(vValue);
+			}
+
+			return aArray;
+		}
+
+		this.check(assert, [
+			mvcView(),
+			'<template:repeat list="{/items}">',
+			'<In src="{src}"/>',
+			'</template:repeat>',
+			'</mvc:View>'
+		], {
+			models : new JSONModel({
+				items : many({src : "A"})
+			})
+		}, many('<In src="A"/>'));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("template:repeat, startIndex & length", function (assert) {
 		this.check(assert, [
 			mvcView(),
