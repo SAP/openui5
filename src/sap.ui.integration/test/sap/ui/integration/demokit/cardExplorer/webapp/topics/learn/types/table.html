@@ -147,140 +147,163 @@
 					<td>1.15.0</td>
 					<td>1.65</td>
 				</tr>
+				<tr>
+					<td>visible</td>
+					<td>boolean</td>
+					<td>No</td>
+					<td>Determines the visibility of the column</td>
+					<td>1.25.0</td>
+					<td>1.81</td>
+				</tr>
 			</table>
 		</div>
 
 		<h2 id="example">Example</h2>
 		<p>Define the type and data for the card:
 		</p>
-		<pre class="prettyprint  lang-js">{
-	"sap.app": {
-		"id": "card.explorer.table.card",
-		"type": "card",
-		"applicationVersion": {
-		  "version": "1.0.0"
-		}
-	},
-	"sap.card": {
-		"type": "Table",
-		"header": {
-			"title": "Sales Orders for Key Accounts",
-			"subTitle": "Today",
-			"status": {
-				"text": "5 of 27"
+		<p>To bind row information we need to provide a path to the data. Use the root path to bind the column information, as shown in the example below.</p>
+		<pre class="prettyprint  lang-js">
+		{
+		  "sap.app": {
+			"id": "card.explorer.table.card",
+			"type": "card",
+			"applicationVersion": {
+			  "version": "1.0.0"
 			}
-		},
-		"content": {
-			"data": {
-				"request": {
-					"url": "./cardcontent/tableitems.json"
-				}
-			},
-			"row": {
-				"columns": [
-					{
-						"label": "Sales Order",
-						"value": "{salesOrder}",
-						"identifier": true
+		  },
+		  "sap.card": {
+				"type": "Table",
+				"header": {
+				  "title": "Sales Orders for Key Accounts",
+				  "subTitle": "Today"
+				},
+				"content": {
+				  "data": {
+					"request": {
+							"url": "./cardcontent/tableitems.json"
 					},
-					{
-						"label": "Customer",
-						"value": "{name}"
-					},
-					{
-						"label": "Net Amount",
-						"value": "{netAmount}",
-						"hAlign": "End"
-					},
-					{
-						"label": "Status",
-						"value": "{status}",
-						"state": "{statusState}"
-					},
-					{
-						"label": "Avatar",
-						"width": "12%",
-						"icon": {
-							"src": "{icon}"
-						}
-					},
-					{
-						"label": "Progress",
-						"progressIndicator": {
-							"percent": "{percent}",
-							"text": "{percentValue}",
-							"state": "{progressState}"
-						}
+					"path": "/results"
+				  },
+				  "row": {
+					"columns":
+						  [{
+							"title": "{/columns/0/title}",
+							"value": "{salesOrder}",
+							"identifier": "{/columns/0/identifier}",
+							"visible": "{/columns/0/visibleFlag}"
+						  },
+						  {
+							"title": "{/columns/1/title}",
+							"value": "{customerName}",
+							"visible": "{/columns/1/visibleFlag}"
+						  },
+						  {
+							"title": "{/columns/2/title}",
+							"value": "{netAmount}",
+							"hAlign": "End",
+							"visible": "{/columns/2/visibleFlag}"
+						  },
+						  {
+							"title": "{/columns/3/title}",
+							"value": "{status}",
+							"state": "{statusState}",
+							"visible": "{/columns/3/visibleFlag}"
+						  }]
 					}
-				]
+				}
 			}
-		}
-	}
-}</pre>
+
+		</pre>
 		<p>
 			The content of the tableitems.json that we are requesting:
 		</p>
-		<pre class="prettyprint  lang-js">[
-	{
-		"salesOrder": "5000010050",
-		"isActive": true,
-		"name": "Robert Brown Entertainment",
-		"netAmount": "2K USD",
-		"status": "Delivered",
-		"statusState": "Success",
-		"icon": "../images/Woman_avatar_01.png",
-		"percent": 30,
-		"percentValue": "30%",
-		"progressState": "Error"
-	},
-	{
-		"salesOrder": "5000010051",
-		"isActive": true,
-		"name": "Entertainment Argentinia",
-		"netAmount": "127k USD",
-		"status": "Canceled",
-		"statusState": "Error",
-		"icon": "../images/Woman_avatar_01.png",
-		"percent": 70,
-		"percentValue": "70 of 100",
-		"progressState": "Success"
-	},
-	{
-		"salesOrder": "5000010052",
-		"isActive": false,
-		"name": "Brazil Technologies",
-		"netAmount": "8K USD",
-		"status": "In Progress",
-		"statusState": "Warning",
-		"icon": "../images/Woman_avatar_01.png",
-		"percent": 40,
-		"percentValue": "40 of 100",
-		"progressState": "Warning"
-	},
-	{
-		"salesOrder": "5000010053",
-		"isActive": true,
-		"name": "Quimica Madrilenos",
-		"netAmount": "25K USD",
-		"status": "Delivered",
-		"statusState": "Success",
-		"icon": "../images/Woman_avatar_01.png",
-		"percent": 20,
-		"percentValue": "20 of 100",
-		"progressState": "Error"
-	},
-	{
-		"salesOrder": "5000010054",
-		"name": "Development Para O Governo",
-		"netAmount": "7K USD",
-		"status": "Delivered",
-		"statusState": "Success",
-		"icon": "../images/Woman_avatar_01.png",
-		"percent": 40,
-		"percentValue": "40 of 100",
-		"progressState": "Warning"
-	}
-]</pre>
+		<pre class="prettyprint  lang-js">
+		{
+		"results": [
+		  {
+			"salesOrder": "5000010050",
+			"customerName": "Robert Brown Entertainment",
+			"netAmount": "2K USD",
+			"status": "Delivered",
+			"statusState": "Success"
+		  },
+		  {
+			"salesOrder": "5000010051",
+			"customerName": "Entertainment Argentinia",
+			"netAmount": "127k USD",
+			"status": "Canceled",
+			"statusState": "Error"
+		  },
+		  {
+			"salesOrder": "5000010052",
+			"customerName": "Brazil Technologies",
+			"netAmount": "8K USD",
+			"status": "In Progress",
+			"statusState": "Warning"
+		  },
+		  {
+			"salesOrder": "5000010053",
+			"customerName": "Quimica Madrilenos",
+			"netAmount": "25K USD",
+			"status": "Delivered",
+			"statusState": "Success"
+		  },
+		  {
+			"salesOrder": "5000010054",
+			"customerName": "Development Para O Governo",
+			"netAmount": "7K USD",
+			"status": "Delivered",
+			"statusState": "Success"
+		  },
+		  {
+			"salesOrder": "5000010050",
+			"customerName": "Robert Brown Entertainment",
+			"netAmount": "2K USD",
+			"status": "Delivered",
+			"statusState": "Success"
+		  },
+		  {
+			"salesOrder": "5000010051",
+			"customerName": "Entertainment Argentinia",
+			"netAmount": "127k USD",
+			"status": "Canceled",
+			"statusState": "Error"
+		  },
+		  {
+			"salesOrder": "5000010052",
+			"customerName": "Brazil Technologies",
+			"netAmount": "8K USD",
+			"status": "In Progress",
+			"statusState": "Warning"
+		  },
+		  {
+			"salesOrder": "5000010052",
+			"customerName": "Brazil Technologies",
+			"netAmount": "8K USD",
+			"status": "In Progress",
+			"statusState": "Warning"
+		  }
+		],
+		"columns": [
+		  {
+			"title": "Sales Order",
+			"visibleFlag": true,
+			"identifier": true
+		  },
+		  {
+			"title": "Customer",
+			"visibleFlag": true
+		  },
+		  {
+			"title": "Net Amount",
+			"visibleFlag": false
+		  },
+		  {
+			"title": "Status",
+			"visibleFlag": true
+		  }
+		]
+		}</pre>
 		<p>Create the view to display the card:</p>
 		<pre class="prettyprint  lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;

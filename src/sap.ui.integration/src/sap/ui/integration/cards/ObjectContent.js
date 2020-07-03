@@ -56,6 +56,16 @@ sap.ui.define([
 			// registration ID used for deregistering the resize handler
 			this._sResizeListenerId = ResizeHandler.register(oAlignedFlowLayout, this.onAlignedFlowLayoutResize.bind(this));
 
+			oAlignedFlowLayout.addEventDelegate({
+				"onAfterRendering": function() {
+					this.getContent().forEach(function(oElement){
+						if (!oElement.getVisible()) {
+							document.getElementById("sap-ui-invisible-" + oElement.getId()).parentElement.classList.add("sapFCardInvisibleContent");
+						}
+					});
+				}
+			}, oAlignedFlowLayout);
+
 			return oAlignedFlowLayout;
 		};
 
@@ -143,11 +153,13 @@ sap.ui.define([
 
 			aGroups.forEach(function (oGroup) {
 
-				var oGroupContainer = new VBox().addStyleClass("sapFCardObjectGroup");
+				var oGroupContainer = new VBox({
+						visible : oGroup.visible
+				}).addStyleClass("sapFCardObjectGroup");
+
 				var oTitle = new Title({text: oGroup.title}).addStyleClass("sapFCardObjectItemTitle");
 
 				oGroupContainer.addItem(oTitle);
-
 				oGroup.items.forEach(function (oItem) {
 					var oItemValue,
 						vLabel = oItem.label,
@@ -161,7 +173,10 @@ sap.ui.define([
 						vLabel = BindingHelper.formattedProperty(vLabel, function (sValue) {
 							return sValue && sValue[sValue.length - 1] === ":" ? sValue : sValue += ":";
 						});
-						oItemLabel = new Label({text: vLabel}).addStyleClass("sapFCardObjectItemLabel");
+						oItemLabel = new Label({
+							text: vLabel,
+							visible: oItem.visible
+						}).addStyleClass("sapFCardObjectItemLabel");
 					}
 
 					if (vValue) {
@@ -170,7 +185,8 @@ sap.ui.define([
 								oItemValue = new Link({
 									href: oItem.url || vValue,
 									text: vValue,
-									target: oItem.target || '_blank'
+									target: oItem.target || '_blank',
+									visible: oItem.visible
 								});
 								break;
 							case 'email':
@@ -189,16 +205,27 @@ sap.ui.define([
 										}
 									});
 
-								oItemValue = new Link({href: vHref, text: vValue});
+								oItemValue = new Link({
+									href: vHref,
+									text: vValue,
+									visible: oItem.visible
+								});
 								break;
 							case 'phone':
 								vHref = BindingHelper.formattedProperty(vValue, function (sValue) {
 									return "tel:" + sValue;
 								});
-								oItemValue = new Link({href: vHref, text: vValue});
+								oItemValue = new Link({
+									href: vHref,
+									text: vValue,
+									visible: oItem.visible
+								});
 								break;
 							default:
-								oItemValue = new Text({text:  vValue});
+								oItemValue = new Text({
+									text:  vValue,
+									visible: oItem.visible
+								});
 								break;
 						}
 					}
@@ -225,12 +252,12 @@ sap.ui.define([
 							]
 						});
 						var oHBox = new HBox({
+							visible: oItem.visible,
 							items: [
 								oAvatar,
 								oVbox
 							]
 						});
-
 						oGroupContainer.addItem(oHBox);
 					} else {
 						oGroupContainer.addItem(oItemLabel);
