@@ -24,7 +24,6 @@ sap.ui.define([
 		ITEM_COLUMN_INDEX = 1,
 		NOTE_COLUMN_INDEX = 4,
 		SOITEM_NOTE_COLUMN_INDEX = 11,
-		SOITEM_QUANTITY_COLUMN_INDEX = 7,
 		sLastNewNoteValue,
 		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
@@ -208,6 +207,24 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				changeProductIDinLineItem : function (iRow, sProductID) {
+					return this.waitFor({
+						// actions : new EnterText({clearTextFirst : true, text : sProductID}),
+						actions : function (oValueHelp) {
+							oValueHelp.setValue(sProductID);
+						},
+						controlType : "sap.ui.core.sample.common.ValueHelp",
+						id : /SO_2_SOITEM:ProductID/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
+						success : function (aControls) {
+							Opa5.assert.strictEqual(sProductID, aControls[0].getValue(),
+								"ProductID changed to: " + sProductID);
+						},
+						viewName : sViewName
+					});
+				},
 				changeQuantityInLineItem : function (iRow, sValue) {
 					return this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sValue}),
@@ -357,7 +374,7 @@ sap.ui.define([
 								return;
 							}
 							oRow  = oSOItemsTable.getItems()[iRow];
-							sProductID = oRow.getCells()[2].getText();
+							sProductID = oRow.getCells()[2].getValue();
 							// store sales order id and item postion for later comparison
 							Opa.getContext().sExpectedSalesOrderID =
 								oRow.getCells()[ID_COLUMN_INDEX].getText();
@@ -484,24 +501,48 @@ sap.ui.define([
 				},
 				pressValueHelpOnProductCategory : function () {
 					return this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Input",
-						// "0" is the index, "field" is the prefix for the control within ValueHelp
-						id : /-0-field/,
-						success : function (oValueHelp) {
-							Opa5.assert.ok(true, "ValueHelp on Product.Category pressed");
+						actions : function (oControl) {
+							new Press().executeOn(oControl.getAggregation("field"));
+						},
+						controlType : "sap.ui.core.sample.common.ValueHelp",
+						id : /SOITEM_2_PRODUCT:Category/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === 1;
+						},
+						success : function (oControls) {
+							Opa5.assert.ok(true, "ValueHelp pressed: " + oControls[0].getValue());
+						},
+						viewName : sViewName
+					});
+				},
+				pressValueHelpOnProductID : function (iRow) {
+					return this.waitFor({
+						actions : function (oControl) {
+							new Press().executeOn(oControl.getAggregation("field"));
+						},
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
+						controlType : "sap.ui.core.sample.common.ValueHelp",
+						id : /SO_2_SOITEM:ProductID/,
+						success : function (oControls) {
+							Opa5.assert.ok(true, "ValueHelp pressed: " + oControls[0].getValue());
 						},
 						viewName : sViewName
 					});
 				},
 				pressValueHelpOnProductTypeCode : function () {
 					return this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.ComboBox",
-						// "0" is the index, "field" is the prefix for the control within ValueHelp
-						id : /-0-field/,
-						success : function (oValueHelp) {
-							Opa5.assert.ok(true, "ValueHelp on Product.TypeCode pressed");
+						actions : function (oControl) {
+							new Press().executeOn(oControl.getAggregation("field"));
+						},
+						controlType : "sap.ui.core.sample.common.ValueHelp",
+						id : /SOITEM_2_PRODUCT:TypeCode/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === 1;
+						},
+						success : function (oControls) {
+							Opa5.assert.ok(true, "ValueHelp pressed: " + oControls[0].getValue());
 						},
 						viewName : sViewName
 					});
@@ -525,11 +566,11 @@ sap.ui.define([
 				},
 				selectSalesOrderItemWithPosition : function (sPosition) {
 					return this.waitFor({
+						actions : new Press(),
 						controlType : "sap.m.Text",
 						id : /SO_2_SOITEM-/,
 						matchers : new Properties({text: sPosition}),
 						success : function (aControls) {
-							new Press().executeOn(aControls[0]);
 							Opa5.assert.ok(true, "Sales Order Item selected: " + sPosition);
 						},
 						viewName : sViewName
@@ -549,11 +590,17 @@ sap.ui.define([
 				},
 				setValueHelpQualifier : function (sQualifier) {
 					return this.waitFor({
-						controlType : "sap.m.Input",
-						// "0" is the index, "field" is the prefix for the control within ValueHelp
-						id : /-0-field/,
-						success : function (aValueHelps) {
-							aValueHelps[0].oParent.setQualifier(sQualifier);
+						actions : function (oControl) {
+							oControl.setQualifier(sQualifier);
+						},
+						controlType : "sap.ui.core.sample.common.ValueHelp",
+						id : /SOITEM_2_PRODUCT:Category/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === 1;
+						},
+						success : function (oControls) {
+							Opa5.assert.ok(true, "Qualifier Set to: " + sQualifier
+								+ " for ValueHelp: " + oControls[0].getValue());
 						},
 						viewName : sViewName
 					});
@@ -824,14 +871,30 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				checkProductNameInLineItem : function (iRow, sProductName) {
+					return this.waitFor({
+						controlType : "sap.m.Text",
+						id : /SOITEM_2_PRODUCT:Name/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
+						success : function (aControls) {
+							Opa5.assert.strictEqual(aControls[0].getText(), sProductName,
+								"Product Name is " + sProductName);
+						},
+						viewName : sViewName
+					});
+				},
 				checkSalesOrderLineItemQuantityValueState : function (iRow, sExpectedValueState,
 						sExpectedValueStateText) {
 					return this.waitFor({
-						controlType : "sap.m.Table",
-						id : "SO_2_SOITEM",
-						success : function (oTable) {
-							var oInput = oTable.getItems()[iRow]
-									.getCells()[SOITEM_QUANTITY_COLUMN_INDEX];
+						controlType : "sap.m.Input",
+						id : /SO_2_SOITEM:Quantity/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
+						success : function (aControls) {
+							var oInput = aControls[0];
 
 							Opa5.assert.strictEqual(oInput.getValueState(), sExpectedValueState,
 								"ValueState of quantity in row " + iRow + " as expected: "
@@ -1045,6 +1108,27 @@ sap.ui.define([
 						success : function (aControls) {
 							aControls[0].close();
 							Opa5.assert.ok(true, "ValueHelp Popover closed");
+						}
+					});
+				},
+				selectByKey : function (sKey) {
+					return this.waitFor({
+						actions : function (oControl) {
+							var oNewItem,
+								oTable = oControl.getAggregation("content")[0];
+
+							oTable.getItems().some(function (oItem) {
+								if (oItem.getCells()[0].getText() === sKey) {
+									oNewItem = oItem.getCells()[0];
+									new Press().executeOn(oNewItem);
+									return true;
+								}
+							});
+							Opa5.assert.ok(oNewItem, "Selected item: " + oNewItem.getText());
+						},
+						controlType : "sap.m.Popover",
+						success : function (aControls) {
+							Opa5.assert.ok(true, "Selected Value");
 						}
 					});
 				}
