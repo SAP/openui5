@@ -270,11 +270,9 @@ sap.ui.define([
 
 		if (this.getEnabled() && this.getVisible()) {
 			// Safari and Firefox doesn't set the focus to the clicked button tag but to the nearest parent DOM which is focusable
-			// This behavior has to be stopped by calling prevent default when the original event is 'mousedown'
-			// and set the focus explicitly to the button.
+			// That is why we re-set the focus manually after the browser sets the focus.
 			if ((Device.browser.safari || Device.browser.firefox) && (oEvent.originalEvent && oEvent.originalEvent.type === "mousedown")) {
-				this.focus();
-				oEvent.preventDefault();
+				this._setButtonFocus();
 			}
 			if (!sap.ui.Device.browser.msie) {
 				// set the tag ID where the touch event started
@@ -679,6 +677,15 @@ sap.ui.define([
 			focusable: this.getEnabled(),
 			enabled: this.getEnabled()
 		};
+	};
+
+	/*
+	* Helper function which sets the focus on the button manually.
+	*
+	* @private
+	*/
+	Button.prototype._setButtonFocus = function() {
+		setTimeout(function() { this.focus(); }.bind(this), 0);
 	};
 
 	/*

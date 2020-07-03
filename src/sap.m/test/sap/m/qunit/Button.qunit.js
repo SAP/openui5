@@ -445,7 +445,7 @@ sap.ui.define([
 		});
 
 		var oButton = new Button({text: "MyText", icon: "sap-icon://search"}).placeAt("qunit-fixture"),
-			oFocusSpy = this.spy(oButton, "focus");
+			oFocusSpy = this.spy(oButton, "_setButtonFocus");
 
 		// Act
 		oButton.ontouchstart({ setMarked: this.stub() , preventDefault: this.stub(), targetTouches: { length: 1 }, originalEvent: { type: "mousedown" }, target: { id: 'fake-button-id' }});
@@ -465,7 +465,7 @@ sap.ui.define([
 		});
 
 		var oButton = new Button({text: "MyText", icon: "sap-icon://search"}).placeAt("qunit-fixture"),
-			oFocusSpy = this.spy(oButton, "focus");
+			oFocusSpy = this.spy(oButton, "_setButtonFocus");
 
 		// Act
 		oButton.ontouchstart({ setMarked: this.stub() , preventDefault: this.stub(), targetTouches: { length: 1 }, originalEvent: { type: "mousedown" }, target: { id: 'fake-button-id' }});
