@@ -180,7 +180,7 @@ sap.ui.define([
 				icon: IconPool.getIconURI("slim-arrow-down"),
 				type: SelectType.IconOnly,
 				tooltip: BreadcrumbsRenderer._getResourceBundleText("BREADCRUMB_SELECT_TOOLTIP")
-			})));
+			})), true);
 		}
 		return this.getAggregation("_select");
 	};
