@@ -42,6 +42,7 @@ sap.ui.define([
 			"sap.ui.mdc.field.DefineConditionPanel",
 			"sap.ui.mdc.Field",
 			"sap.ui.mdc.FilterField",
+			"sap.ui.mdc.MultiValueField",
 			"sap.ui.mdc.link.Panel",
 			"sap.ui.mdc.link.ContactDetails",
 			"sap.ui.mdc.ui.Container",
@@ -89,7 +90,8 @@ sap.ui.define([
 			"sap.ui.mdc.link.SemanticObjectMappingItem",
 			"sap.ui.mdc.field.InParameter",
 			"sap.ui.mdc.field.OutParameter",
-			"sap.ui.mdc.ui.ContainerItem"
+			"sap.ui.mdc.ui.ContainerItem",
+			"sap.ui.mdc.field.MultiValueFieldItem"
 		],
 		extensions: {
 			flChangeHandlers: {

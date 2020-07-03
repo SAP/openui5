@@ -257,6 +257,51 @@
 
 									</mdc:Field>
 
+									<Label text="Genres"></Label>
+									<mdc:MultiValueField items="{genres}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" change="onMultiChange" display= "Description" fieldHelp="FHAuthorGenre">
+										<mdcf:MultiValueFieldItem key="{path: 'genre/code', type: 'sap.ui.model.odata.type.String'}" description="{genre_label}" />
+										<mdc:dependents>
+											<mdcf:FieldValueHelp filterFields="$search" title="Genre" id="FHAuthorGenre"
+												noDialog="false" keyPath="code" descriptionPath="title"
+												delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+												<mdcf:content>
+													<mdcf:FieldValueHelpMTableWrapper>
+														<mdcf:table>
+															<Table items='{path : "/Genres"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+																<columns>
+																	<Column>
+																		<header>
+																			<Text text="Code" />
+																		</header>
+																	</Column>
+																	<Column>
+																		<header>
+																			<Text text="Title" />
+																		</header>
+																	</Column>
+																	<Column>
+																		<header>
+																			<Text text="Classification" />
+																		</header>
+																	</Column>
+																</columns>
+																<items>
+																	<ColumnListItem type="Active">
+																		<cells>
+																			<Text text="{code}" />
+																			<Text text="{title}" />
+																			<Text text="{classification_code}" />
+																		</cells>
+																	</ColumnListItem>
+																</items>
+															</Table>
+														</mdcf:table>
+													</mdcf:FieldValueHelpMTableWrapper>
+												</mdcf:content>
+											</mdcf:FieldValueHelp>
+										</mdc:dependents>
+									</mdc:MultiValueField>
+
 								</f:content>
 							</f:SimpleForm>
 						</uxap:blocks>
@@ -267,7 +312,7 @@
 				<uxap:subSections>
 					<uxap:ObjectPageSubSection>
 						<uxap:blocks>
-							<List growing="true" growingScrollToLoad="true" growingThreshold="10" items="{path: 'genres', templateShareable: false}">
+							<List growing="true" growingScrollToLoad="true" growingThreshold="20" items="{path: 'genres', templateShareable: false}">
 								<CustomListItem>
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" additionalValue="{genre_label}" editMode="Display" display="Description"/>
 								</CustomListItem>
