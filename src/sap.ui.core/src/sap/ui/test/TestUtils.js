@@ -5,10 +5,11 @@
 sap.ui.define([
 	"jquery.sap.sjax",
 	"sap/base/Log",
+	"sap/base/util/merge",
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/URI"
-], function (jQuery, Log, UriParameters, Core, URI) {
+], function (jQuery, Log, merge, UriParameters, Core, URI) {
 	"use strict";
 	/*global QUnit, sinon */
 	// Note: The dependency to Sinon.JS has been omitted deliberately. Most test files load it via
@@ -477,7 +478,7 @@ sap.ui.define([
 				if (aResponses.length) {
 					oResponse = aResponses[0];
 					if (typeof oResponse.buildResponse === "function") {
-						oResponse = Object.assign({}, oResponse);
+						oResponse = merge({}, oResponse);
 						oResponse.buildResponse(oMatch.match, oResponse);
 					}
 				} else {
