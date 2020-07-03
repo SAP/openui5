@@ -10,7 +10,39 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var mServerFixture = {
+	var aRegExpFixture = [{
+			regExp : /GET \/Foo\/regexp\/b[a]r/,
+			response : {
+				message : "RegExp1"
+			}
+		}, {
+			regExp : /GET \/Foo\/regexp\/ba[z]/,
+			response : [{
+				ifMatch : function (oRequest) {
+					return true;
+				},
+				message : "RegExp2"
+			}, {
+				code : 404,
+				message : "nope"
+			}]
+		}, {
+			regExp : /GET \/Foo\/regexp\/(ba[s])/,
+			response : {
+				source : "bar.json",
+				buildResponse : function (oMatch, oResponse) {
+					var oMessage = JSON.parse(oResponse.message);
+					oMessage.foo = oMatch[1];
+					oResponse.message = JSON.stringify(oMessage);
+				}
+			}
+		}, {
+			regExp : /GET .*regexp\/bor/,
+			response : {
+				message : "RegExp4"
+			}
+		}],
+		mServerFixture = {
 			"/Foo/bar" : {source : "bar.json"},
 			"/Foo/baz" : [{
 				ifMatch : function (oRequest) {
@@ -101,6 +133,39 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
+		method : "GET",
+		url : "/Foo/regexp/bor",
+		status : 200,
+		responseBody : "RegExp4",
+		responseHeaders : {
+			"OData-Version" : "4.0"
+		}
+	}, {
+		method : "GET",
+		url : "/Foo/regexp/bar",
+		status : 200,
+		responseBody : "RegExp1",
+		responseHeaders : {
+			"OData-Version" : "4.0"
+		}
+	}, {
+		method : "GET",
+		url : "/Foo/regexp/baz",
+		status : 200,
+		responseBody : 'RegExp2',
+		responseHeaders : {
+			"OData-Version" : "4.0"
+		}
+	}, {
+		method : "GET",
+		url : "/Foo/regexp/bas",
+		status : 200,
+		responseBody : "{\"foo\":\"bas\",\"@odata.etag\":\"abc123\"}",
+		responseHeaders : {
+			"OData-Version" : "4.0",
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		}
+	}, {
 		method : "GET",
 		url : "/Foo/bar",
 		status : 200,
@@ -257,7 +322,8 @@ sap.ui.define([
 			Object.keys(oFixture.requestHeaders || {}).forEach(function (sKey) {
 				mHeaders[sKey] = oFixture.requestHeaders[sKey];
 			});
-			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture,
+				aRegExpFixture);
 			this.oLogMock.expects("info").withExactArgs(oFixture.method + " " + oFixture.url,
 				'{"If-Match":undefined}', "sap.ui.test.TestUtils");
 
@@ -285,7 +351,8 @@ sap.ui.define([
 
 			mBatchHeaders["Content-Type"] = "multipart/mixed;boundary=batch_id-0123456789012-345";
 
-			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture,
+				aRegExpFixture);
 			this.oLogMock.expects("info").withExactArgs(oFixture.method + " " + oFixture.url,
 				'{"If-Match":undefined}', "sap.ui.test.TestUtils");
 
@@ -318,6 +385,28 @@ sap.ui.define([
 				assert.strictEqual(oXHR.getAllResponseHeaders(), headerString(mBatchHeaders),
 					"batch headers");
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("useFakeServer: multiple RegExp matches", function (assert) {
+		TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", [], [{
+			regExp : /GET \/Foo\/regexp\/ba./,
+			response : {
+				message : "RegExp1"
+			}
+		}, {
+			regExp : /GET \/Foo\/regexp\/b.r/,
+			response : {
+				message : "RegExp2"
+			}
+		}]);
+		this.oLogMock.expects("warning")
+			.withExactArgs("Multiple matches found for GET /Foo/regexp/bar", undefined,
+				"sap.ui.test.TestUtils");
+
+		return request("GET", "/Foo/regexp/bar", {"OData-Version": "4.0"}).then(function (oXHR) {
+			assert.strictEqual(oXHR.status, 404, "status");
 		});
 	});
 
