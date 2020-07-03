@@ -163,6 +163,9 @@
 
 .sapFAvatarFocusable:focus {
 	outline: 0.0625rem dotted @sapUiContentFocusColor;
+	.sapUiRespGrid & {
+		z-index: 100;
+	}
 }
 
 html[data-sap-ui-browser^="ie"] .sapFAvatarFocusable:focus,
