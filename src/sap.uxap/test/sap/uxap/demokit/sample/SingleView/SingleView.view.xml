@@ -10,7 +10,7 @@
 			<ObjectPageSection title="example">
 				<subSections>
 
-					<ObjectPageSubSection title="Example">
+					<ObjectPageSubSection title="Example" titleUppercase="true">
 						<blocks>
 							<blockcolor:BlockBlue id="b1"/>
 						</blocks>
