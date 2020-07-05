@@ -1104,7 +1104,6 @@ function(
 			}
 
 			if (oEvent.which === KeyCodes.TAB) {
-				oEvent.stopPropagation();
 				this._getInput()._$input[0].focus();
 				return false;
 			}
