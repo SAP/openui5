@@ -236,9 +236,6 @@ function(
 
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-	// **
-	// * This file defines behavior for the control,
-	// */
 	MultiInput.prototype.init = function () {
 		this._bShowListWithTokens = false;
 		Input.prototype.init.call(this);

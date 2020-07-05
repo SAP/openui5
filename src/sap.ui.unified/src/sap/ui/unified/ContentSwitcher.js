@@ -75,9 +75,6 @@ sap.ui.define([
 
 	////////////////////////////////////////// Public Methods //////////////////////////////////////////
 
-	/**
-	 * This file defines behavior for the control,
-	 */
 	ContentSwitcher.prototype.init = function(){
 	};
 

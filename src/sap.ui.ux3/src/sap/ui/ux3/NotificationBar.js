@@ -131,9 +131,6 @@ sap.ui.define([
 	}});
 
 
-	/**
-	 * This file defines behavior for the control
-	 */
 	Control.extend("sap.ui.ux3.NotificationBar.NotifierView", {
 		renderMessages : function(oRm) {
 			oRm.write("<div");

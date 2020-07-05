@@ -16,7 +16,7 @@ sap.ui.define([
 		 * @name sap.ui.mdc.condition
 		 * @private
 		 * @experimental
-		 * @sap-restricted
+		 * @ui5-restricted
 		 */
 
 		/**
@@ -29,7 +29,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @experimental
-		 * @sap-restricted
+		 * @ui5-restricted
 		 */
 		var Condition = {
 

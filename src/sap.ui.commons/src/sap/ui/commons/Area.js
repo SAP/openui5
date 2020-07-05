@@ -55,13 +55,6 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/Element', '
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.dev.Area.prototype.init = function(){
-	//   // do something for initialization...
-	//};
-
 	/**
 	 * Function is called when Link is clicked.
 	 *

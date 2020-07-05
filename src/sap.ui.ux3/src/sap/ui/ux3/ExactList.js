@@ -131,26 +131,6 @@ sap.ui.define([
 	}});
 
 
-	/**
-	 * Constructor for a new ExactList.
-	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
-	 *
-	 * @class
-	 * Internal sub-control of the ExactBrowser. The control is not intended to be used stand alone. For this purpose, the ExactBrowser control can be used.
-	 * @extends sap.ui.core.Control
-	 *
-	 * @author SAP SE
-	 * @version 1.15.1-SNAPSHOT
-	 *
-	 * @constructor
-	 * @private
-	 * @name sap.ui.ux3.ExactList
-	 */
-
-
-
 	//Private extension of the ListBox control
 	ListBox.extend("sap.ui.ux3.ExactList.LB", {
 		init : function() {

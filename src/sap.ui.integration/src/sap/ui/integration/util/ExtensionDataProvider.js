@@ -12,7 +12,7 @@ sap.ui.define(["sap/ui/integration/util/DataProvider"], function (DataProvider) 
 	 *
 	 * @class
 	 *
-	 * @extends sap.ui.integration.util.ExtensionDataProvider
+	 * @extends sap.ui.integration.util.DataProvider
 	 *
 	 * @author SAP SE
 	 * @version ${version}

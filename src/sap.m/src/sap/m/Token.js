@@ -144,9 +144,6 @@ sap.ui.define([
 		}
 	}});
 
-	/**
-	 * This file defines behavior for the control,
-	 */
 	Token.prototype.init = function() {
 		var bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
 			sSrcIcon = bSysCancelIconUsed ? "sap-icon://sys-cancel" : "sap-icon://decline",

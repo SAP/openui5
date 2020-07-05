@@ -53,13 +53,6 @@ sap.ui.define([
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.commons.form.GridElementData.prototype.init = function(){
-	//   // do something for initialization...
-	//};
-
 	return GridElementData;
 
 });

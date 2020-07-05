@@ -12,10 +12,10 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class Class for manipulating and receiving changes of the browserhash with the hasher framework.
+	 * @class Class for manipulating and receiving changes of the browser hash with the hasher framework.
 	 *
 	 * Fires a <code>hashChanged</code> event if the browser hash changes.
-	 * @extends sap.ui.base.EventProvider
+	 * @extends sap.ui.core.routing.HashChangerBase
 	 *
 	 * @public
 	 * @alias sap.ui.core.routing.HashChanger

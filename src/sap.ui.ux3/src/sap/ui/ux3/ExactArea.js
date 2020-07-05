@@ -65,7 +65,7 @@ sap.ui.define([
 
 
 	//*************************************************************
-	//Define a private element to enable titles tin the toolbar
+	//Define a private element to enable titles in the toolbar
 	//*************************************************************
 
 	Element.extend("sap.ui.ux3.ExactAreaToolbarTitle", {

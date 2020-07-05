@@ -16,10 +16,9 @@ function(
 	"use strict";
 
 	/**
-	 * Class for Element tests.
+	 * Utility functionality for Element tests.
 	 *
-	 * @class
-	 * Utility functionality for Element tests
+	 * @namespace
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -27,7 +26,7 @@ function(
 	 * @private
 	 * @static
 	 * @since 1.38
-	 * @alias sap.ui.dt.test.Element
+	 * @alias sap.ui.dt.enablement.Util
 	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 

@@ -77,8 +77,6 @@ sap.ui.define([
 		}
 	}});
 
-	/* This file defines behavior for the SegmentedButton control */
-
 
 	/**
 	 * Initialization hook for the SegmentedButton.

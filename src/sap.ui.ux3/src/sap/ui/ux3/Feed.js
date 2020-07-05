@@ -176,10 +176,6 @@ sap.ui.define([
 	}});
 
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-
 	Feed.prototype.init = function(){
 
 		this.rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");

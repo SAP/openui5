@@ -262,10 +262,6 @@ sap.ui.define([
 	}});
 
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-
 	FeedChunk.prototype.init = function(){
 	   this.maxComments = 2; // max. number of comments displayed initially
 	   this.allComments = false; // initially render only maxComments

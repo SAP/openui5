@@ -42,10 +42,6 @@ sap.ui.define([
 		library : "sap.ui.commons"
 	}});
 
-	/**
-	 * This file defines behavior for the control
-	 */
-
 	return GridLayout;
 
 });

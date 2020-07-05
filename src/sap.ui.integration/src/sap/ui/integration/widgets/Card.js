@@ -345,8 +345,7 @@ sap.ui.define([
 
 		/**
 		 * Facade of the {@link sap.ui.integration.widgets.Card} control.
-		 * @class
-		 * @hideconstructor
+		 * @interface
 		 * @name sap.ui.integration.widgets.CardFacade
 		 * @experimental since 1.79
 		 * @public

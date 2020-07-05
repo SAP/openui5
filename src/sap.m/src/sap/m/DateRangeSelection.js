@@ -174,11 +174,6 @@ sap.ui.define([
 		ENDASH = String.fromCharCode(8211),
 		EMDASH = String.fromCharCode(8212);
 
-	/**
-	 * This file defines behavior for the control
-	 * @public
-	 */
-
 	/* eslint-disable no-lonely-if */
 
 	DateRangeSelection.prototype.init = function(){

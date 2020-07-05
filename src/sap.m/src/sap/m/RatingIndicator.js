@@ -157,10 +157,6 @@ sap.ui.define([
 		designtime: "sap/m/designtime/RatingIndicator.designtime"
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-
 	/* =========================================================== */
 	/*           temporary flags for jslint syntax check           */
 	/* =========================================================== */

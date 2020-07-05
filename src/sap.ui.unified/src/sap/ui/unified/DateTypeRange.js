@@ -50,14 +50,6 @@ sap.ui.define(['./DateRange', './library'],
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.unified.DateTypeRange.prototype.init = function(){
-	//   // do something for initialization...
-	//};
-
-
 	return DateTypeRange;
 
 });

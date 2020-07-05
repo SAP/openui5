@@ -201,10 +201,6 @@ sap.ui.define([
 
 	EnabledPropagator.apply(Tokenizer.prototype, [true]);
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-
 	Tokenizer.prototype.init = function() {
 		// Do not allow text selection in the Tokenizer
 		// If called with 'false', the method prevents the
