@@ -135,6 +135,7 @@ sap.ui.define([
 	 * @deprecated Since 1.56, use {@link sap.ui.core.mvc.JSView.create JSView.create} to create view instances;
 	 *   for defining JavaScript views, there's no substitute yet and <em>sap.ui.jsview</em> still has to be used
 	 * @return {sap.ui.core.mvc.JSView | undefined} the created JSView instance in the creation case, otherwise undefined
+	 * @ui5-global-only
 	 */
 	sap.ui.jsview = function(sId, vView, bAsync) {
 		var fnLogDeprecation = function(sMethod) {

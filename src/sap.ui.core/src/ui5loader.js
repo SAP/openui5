@@ -2477,6 +2477,7 @@
 	 *
 	 * @public
 	 * @namespace
+	 * @ui5-global-only
 	 */
 	sap.ui.loader = {
 
@@ -2670,6 +2671,7 @@
 		 * @public
 		 * @since 1.56.0
 		 * @function
+		 * @ui5-global-only
 		 */
 		config: ui5Config,
 
@@ -3000,12 +3002,15 @@
 	 * @public
 	 * @see https://github.com/amdjs/amdjs-api
 	 * @function
+	 * @ui5-global-only
 	 */
 	sap.ui.define = ui5Define;
 
 	/**
 	 * @private
+	 * @ui5-restricted library-preload files
 	 * @function
+	 * @ui5-global-only
 	 */
 	sap.ui.predefine = predefine;
 
@@ -3064,6 +3069,7 @@
 	 * @returns {any|undefined} A single module export value (sync probing variant) or undefined (async loading variant)
 	 * @public
 	 * @function
+	 * @ui5-global-only
 	 */
 	sap.ui.require = ui5Require;
 
@@ -3102,6 +3108,7 @@
 	 * @public
 	 * @name sap.ui.require.toUrl
 	 * @function
+	 * @ui5-global-only
 	 */
 
 	/**
@@ -3127,7 +3134,9 @@
 	 * @param {string} sModuleName Module name in requireJS syntax
 	 * @returns {any} value of the loaded module or undefined
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 * @function
+	 * @ui5-global-only
 	 */
 	sap.ui.requireSync = requireSync;
 

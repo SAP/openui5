@@ -114,6 +114,7 @@ sap.ui.define([
 	 * @static
 	 * @deprecated since 1.56: Use {@link sap.ui.core.mvc.JSONView.create JSONView.create} instead.
 	 * @return {sap.ui.core.mvc.JSONView} the created JSONView instance
+	 * @ui5-global-only
 	 */
 	sap.ui.jsonview = function(sId, vView) {
 		return sap.ui.view(sId, vView, ViewType.JSON);

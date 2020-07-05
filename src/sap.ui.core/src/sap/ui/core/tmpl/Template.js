@@ -445,6 +445,7 @@ function(
 	 * @deprecated since 1.56, use an {@link sap.ui.core.mvc.XMLView XMLView} or {@link sap.ui.core.mvc.JSView JSView} instead.
 	 * @public
 	 * @static
+	 * @ui5-global-only
 	 */
 	sap.ui.template = function(oTemplate) {
 

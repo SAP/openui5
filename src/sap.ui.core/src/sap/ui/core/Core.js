@@ -469,6 +469,7 @@ sap.ui.define([
 			 * @returns {sap.ui.core.Core} the API of the current SAPUI5 Core instance.
 			 * @public
 			 * @function
+			 * @ui5-global-only
 			 */
 			sap.ui.getCore = function() {
 				return that.getInterface();
@@ -4205,6 +4206,7 @@ sap.ui.define([
 	 *            oControl the Control that should be added to the <code>UIArea</code>.
 	 * @public
 	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt Control#placeAt} instead.
+	 * @ui5-global-only
 	 */
 	sap.ui.setRoot = function(oDomRef, oControl) {
 		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");

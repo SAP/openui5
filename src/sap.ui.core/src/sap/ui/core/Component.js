@@ -2189,6 +2189,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 * @since 1.15.0
+	 * @ui5-global-only
 	 */
 	sap.ui.component = function(vConfig) {
 		// a parameter must be given!
@@ -2476,6 +2477,7 @@ sap.ui.define([
 	 * @since 1.16.3
 	 * @static
 	 * @public
+	 * @ui5-global-only
 	 */
 	sap.ui.component.load = function(oConfig, bFailOnError) {
 		Log.warning("Do not use deprecated function 'sap.ui.component.load'! Use 'Component.load' instead");

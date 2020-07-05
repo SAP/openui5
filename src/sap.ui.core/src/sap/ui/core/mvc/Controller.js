@@ -561,6 +561,7 @@ sap.ui.define([
 		 * @deprecated Since 1.56, use {@link sap.ui.core.mvc.Controller.create Controller.create} or
 		 *  {@link sap.ui.core.mvc.Controller.extend Controller.extend} instead.
 		 * @public
+		 * @ui5-global-only
 		 */
 		sap.ui.controller = function (sName, oControllerImpl, bAsync) {
 			if (bAsync) {
