@@ -146,23 +146,26 @@ sap.ui.define([
 		var oPanel = new sap.m.Panel(),
 			oButton = new sap.m.Button(),
 			done = assert.async(),
-			oLogSpy = this.spy(Log, "error"),
 			fnOpened = function() {
 				this.oPopup.detachOpened(fnOpened, this);
-				assert.equal(oLogSpy.callCount, 1, "Error is logged");
-				assert.ok(oLogSpy.getCall(0).args[0].indexOf("is NOT connected with any UIArea and further invalidation may not work properly") !== -1, "error message is correct");
 				assert.ok(oButton.getDomRef(), "The button is rendered");
-				assert.ok(!oButton.getUIArea(), "The button is not attached to any UIArea");
+				assert.ok(oButton.getUIArea(), "The button is attached to an UIArea");
+				assert.equal(oButton.getParent(), oPanel, "The button is still aggregated by its previous parent");
 
-				done();
+				this.oPopup.close();
 
+			},
+			fnClosed = function() {
+				assert.ok(!oButton.getUIArea(), "The button is not attached to any UIArea after closed");
 				oPanel.destroy();
+				done();
 			};
 
 		oPanel.addContent(oButton);
 
 		this.oPopup.setContent(oButton);
 		this.oPopup.attachOpened(fnOpened, this);
+		this.oPopup.attachClosed(fnClosed, this);
 
 		this.oPopup.open();
 	});

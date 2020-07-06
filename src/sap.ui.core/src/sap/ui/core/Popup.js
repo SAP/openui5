@@ -65,6 +65,33 @@ sap.ui.define([
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = library.OpenState;
 
+	var oStaticUIArea;
+
+	function getStaticUIArea() {
+		if (oStaticUIArea) {
+			return oStaticUIArea;
+		}
+
+		var oStaticAreaRef, oControl;
+		try {
+			oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
+			// only a facade of the static UIArea is returned that contains only the public methods
+			oStaticUIArea = sap.ui.getCore().getUIArea(oStaticAreaRef);
+		} catch (e) {
+			Log.error(e);
+			throw new Error("Popup cannot be opened because static UIArea cannot be determined.");
+		}
+
+		oControl = new Control();
+		oStaticUIArea.addDependent(oControl);
+		// get the real instance (not facade) of the static UIArea
+		oStaticUIArea = oControl.getUIArea();
+
+		oControl.destroy();
+
+		return oStaticUIArea;
+	}
+
 	/**
 	 * Creates an instance of <code>sap.ui.core.Popup</code> that can be used to open controls as a Popup,
 	 * visually appearing in front of other controls.
@@ -682,40 +709,36 @@ sap.ui.define([
 
 		this.eOpenState = OpenState.OPENING;
 
-		var oStatic;
-		try {
-			oStatic = sap.ui.getCore().getStaticAreaRef();
-			oStatic = sap.ui.getCore().getUIArea(oStatic);
-		} catch (e) {
-			Log.error(e);
-			throw new Error("Popup cannot be opened because static UIArea cannot be determined.");
-		}
+		var oStaticUIArea = getStaticUIArea(),
+			oUIArea;
 
-		// If the content is a control and has no parent, add it to the static UIArea.
-		// This makes automatic rerendering after invalidation work.
-		// When the popup closes, the content is removed again from the static UIArea.
-		this._bContentAddedToStatic = false;
-		if ( this.oContent instanceof Control && !this.oContent.getParent() ) {
-			oStatic.addContent(this.oContent, true);
-			this._bContentAddedToStatic = true;
-		}
-
-		// Check if the content isn't connected properly to a UIArea. This could cause strange behavior of events and rendering.
-		// To find a Popup issue in this case a warning should be logged to the console.
+		// If the content is a control and has no parent, add it to the static UIArea.  This makes automatic rerendering
+		// after invalidation work.  When the popup closes, the content is removed again from the static UIArea.
 		//
-		// E.g. if the content has a different UI-area than its parent -> warning is thrown if 'sap.ui.core.Popup._bEnableUIAreaCheck'
-		// is set
-		if (this.oContent.getUIArea) {
-			var oArea = this.oContent.getUIArea();
+		// If the content has a parent, but the parent isn't connected to any UIArea, the getUIArea function is
+		// overwritten to return the static UIArea to make further rerendering works. The function is deleted once the
+		// popup is closed.
+		this._bContentAddedToStatic = false;
+		this._bUIAreaPatched = false;
+		if (this.oContent instanceof Control) {
+			if (!this.oContent.getParent()) {
+				oStaticUIArea.addContent(this.oContent, true);
+				this._bContentAddedToStatic = true;
+			} else if (!this.oContent.getUIArea()) {
+				this.oContent.getUIArea = function() {
+					return oStaticUIArea;
+				};
+				this._bUIAreaPatched = true;
+			}
 
-			if (oArea === null) {
-				Log.error("The Popup content with id '" + this.oContent.getId() + "' is NOT connected with any UIArea and further invalidation may not work properly");
-			} else if (Popup._bEnableUIAreaCheck && oArea.getRootNode().id !== oStatic.getRootNode().id) {
+			oUIArea = this.oContent.getUIArea();
+			if (Popup._bEnableUIAreaCheck && oUIArea.getRootNode().id !== oStaticUIArea.getRootNode().id) {
 				// the variable 'sap.ui.core.Popup._bEnableUIAreaCheck' isn't defined anywhere. To enable this check this variable
 				// has to be defined within the console or somehow else.
 				Log.warning("The Popup content is NOT connected with the static-UIArea and may not work properly!");
 			}
 		}
+
 
 		// iDuration is optional... if not given:
 		if (typeof (iDuration) == "string") {
@@ -1228,18 +1251,23 @@ sap.ui.define([
 			Popup.DockTrigger.removeListener(Popup.checkDocking, this);
 		}
 
-		// If we added the content control to the static UIArea,
-		// then we should remove it again now.
-		// Assumption: application did not move the content in the meantime!
-		if ( this.oContent && this._bContentAddedToStatic ) {
-			//Fix for RTE in PopUp
-			sap.ui.getCore().getEventBus().publish("sap.ui","__beforePopupClose", { domNode : this._$().get(0) });
-			var oStatic = sap.ui.getCore().getStaticAreaRef();
-			oStatic = sap.ui.getCore().getUIArea(oStatic);
-			oStatic.removeContent(oStatic.indexOfContent(this.oContent), true);
+		if (this.oContent) {
+			// If we added the content control to the static UIArea,
+			// then we should remove it again now.
+			// Assumption: application did not move the content in the meantime!
+			if (this._bContentAddedToStatic ) {
+				//Fix for RTE in PopUp
+				sap.ui.getCore().getEventBus().publish("sap.ui","__beforePopupClose", { domNode : this._$().get(0) });
+				var oStatic = sap.ui.getCore().getStaticAreaRef();
+				oStatic = sap.ui.getCore().getUIArea(oStatic);
+				oStatic.removeContent(oStatic.indexOfContent(this.oContent), true);
+			} else if (this._bUIAreaPatched) { // if the getUIArea function is patched, delete it
+				delete this.oContent.getUIArea;
+			}
 		}
 
 		this._bContentAddedToStatic = false;
+		this._bUIAreaPatched = false;
 
 		this._sTimeoutId = null;
 
