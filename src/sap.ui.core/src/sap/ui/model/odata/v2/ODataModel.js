@@ -3591,6 +3591,10 @@ sap.ui.define([
 					// (by submitChanges) the merge header must be removed
 					delete oStoredRequest.headers["x-http-method"];
 				}
+				// function imports need to restore a given functionTarget
+				if (oRequest.functionTarget) {
+					oStoredRequest.functionTarget = oRequest.functionTarget;
+				}
 				// if request is already aborted we should delete the aborted flag
 				if (oStoredRequest._aborted) {
 					delete oStoredRequest._aborted;
@@ -3853,8 +3857,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes, bBatch, aRequests) {
-		var oResultData = oResponse.data, oImportData, bContent, sUri, sPath, aParts, oEntity,
-		oEntityMetadata, mLocalGetEntities = {}, mLocalChangeEntities = {}, that = this;
+		var sCanonicalPath, bContent, sDeepPath, oEntity, oEntityMetadata, sHeadersLocation,
+			oImportData, aParts, sPath, iPos, sUri,
+			mLocalChangeEntities = {},
+			mLocalGetEntities = {},
+			oResultData = oResponse.data,
+			that = this;
 
 		if (!bBatch) {
 			bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
@@ -3877,6 +3885,22 @@ sap.ui.define([
 			// decrease laundering
 			this.decreaseLaundering(sPath, oRequest.data);
 			this._decreaseDeferredRequestCount(oRequest);
+
+			// update deep path of function import
+			if (oRequest.functionMetadata && oResponse.headers && oResponse.headers.location) {
+				sHeadersLocation = oResponse.headers.location;
+				iPos = sHeadersLocation.lastIndexOf(this.sServiceUrl);
+				if (iPos > -1) {
+					sCanonicalPath = sHeadersLocation.slice(iPos + this.sServiceUrl.length);
+					if (oRequest.functionTarget === sCanonicalPath) {
+						sDeepPath = this.getDeepPathForCanonicalPath(sCanonicalPath);
+						if (sDeepPath) {
+							oRequest.deepPath = sDeepPath;
+						}
+					}
+					oRequest.functionTarget = sCanonicalPath;
+				}
+			}
 
 			// no data available
 			if (bContent && oResultData === undefined && oResponse) {
@@ -4190,12 +4214,17 @@ sap.ui.define([
 		oRequest = this._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oPayload, sETag,
 			undefined, true);
 
-		//for createEntry requests we need to flag request again
 		if (bCreated) {
 			oRequest.created = true;
+			//for createEntry requests we need to flag request again
 			if (oExpandRequest) {
 				oRequest.expandRequest = oExpandRequest;
 				oRequest.withContentID = sWithContentID;
+			}
+			//for callFunction requests we need to store the updated functionTarget
+			if (oData.__metadata.created.functionMetadata) {
+				oRequest.functionTarget = this.oMetadata._getCanonicalPathOfFunctionImport(
+					oData.__metadata.created.functionMetadata, mParams.urlParameters);
 			}
 		}
 
@@ -4920,6 +4949,9 @@ sap.ui.define([
 			oRequest = that._createRequest(sUrl, sFunctionName, sMethod, that._getHeaders(mHeaders),
 				undefined, sETag, undefined, true);
 			oRequest.functionMetadata = oFunctionMetadata;
+			oData.__metadata.created.functionMetadata = oFunctionMetadata;
+			oRequest.functionTarget = that.oMetadata._getCanonicalPathOfFunctionImport(
+				oFunctionMetadata, mUrlParams);
 			oRequest.key = sKey;
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
