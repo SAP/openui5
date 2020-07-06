@@ -139,6 +139,31 @@ sap.ui.define([
 			return sHighestSeverity;
 		},
 
+		// Display the number of messages with the highest severity
+		highestSeverityMessages: function () {
+			var sHighestSeverityIconType = this.buttonTypeFormatter();
+			var sHighestSeverityMessageType;
+
+			switch (sHighestSeverityIconType) {
+				case "Negative":
+					sHighestSeverityMessageType = "Error";
+					break;
+				case "Critical":
+					sHighestSeverityMessageType = "Warning";
+					break;
+				case "Success":
+					sHighestSeverityMessageType = "Success";
+					break;
+				default:
+					sHighestSeverityMessageType = !sHighestSeverityMessageType ? "Information" : sHighestSeverityMessageType;
+					break;
+			}
+
+			return this.getView().getModel().oData.reduce(function(iNumberOfMessages, oMessageItem) {
+				return oMessageItem.type === sHighestSeverityMessageType ? ++iNumberOfMessages : iNumberOfMessages;
+			}, 0);
+		},
+
 		// Set the button icon according to the message with the highest severity
 		buttonIconFormatter: function () {
 			var sIcon;
