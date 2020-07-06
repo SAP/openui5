@@ -5126,7 +5126,9 @@ jQuery.fn.extend( {
 
 
 var
-	rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:-]+)[^>]*)\/>/gi,
+	// ##### BEGIN: MODIFIED BY SAP
+	// rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:-]+)[^>]*)\/>/gi,
+	// ##### END: MODIFIED BY SAP
 
 	// Support: IE 10-11, Edge 10240+
 	// In IE/Edge using regex groups here causes severe slowdowns.
@@ -5326,7 +5328,10 @@ function remove( elem, selector, keepData ) {
 
 jQuery.extend( {
 	htmlPrefilter: function( html ) {
-		return html.replace( rxhtmlTag, "<$1></$2>" );
+		// ##### BEGIN: MODIFIED BY SAP
+		// return html.replace( rxhtmlTag, "<$1></$2>" );
+		return html;
+		// ##### END: MODIFIED BY SAP
 	},
 
 	clone: function( elem, dataAndEvents, deepDataAndEvents ) {
@@ -5405,6 +5410,68 @@ jQuery.extend( {
 		}
 	}
 } );
+
+// ##### BEGIN: MODIFIED BY SAP
+// This code is for testing purposes only and could be removed in the future!
+if (/(?:\?|&)sap-ui-xx-self-closing-check=(?:x|X|true)/.exec(window.location.search)) {
+	var rNonVoidHtml5Tags = new RegExp(
+		"^(?:a|abbr|address|article|aside|audio|b|bdi|bdo|blockquote|body|button|canvas|caption|cite|code|colgroup|data|datalist|dd|del|details|dfn|dialog|div|dl|dt|em|fieldset"
+		+ "|figcaption|figure|footer|form|h1|h2|h3|h4|h5|h6|head|header|hgroup|html|i|iframe|ins|kbd|label|legend|li|main|map|mark|menu|meter|nav|noscript|object|ol|optgroup|option"
+		+ "|output|p|picture|pre|progress|q|rp|rt|ruby|s|samp|script|section|select|slot|small|span|strong|style|sub|summary|sup|table|tbody|td|template|textarea|tfoot|th|thead|time"
+		+ "|title|tr|u|ul|var|video)$", "i");
+	var rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:-]+)[^>]*)\/>/gi;
+
+	jQuery.htmlPrefilter = function(html) {
+		html.replace(rxhtmlTag, function($0, $1, $2) {
+			if ( rNonVoidHtml5Tags.test($2) && $0.length < html.length ) {
+				var replacement = "<" + $1 + "></" + $2 + ">";
+				var noteUrl = "https://launchpad.support.sap.com/#/notes/2944336";
+				var gitHubUrl = "https://github.com/SAP/openui5/blob/master/docs/self_closing_tags_fix_instructions.md";
+				var errorMessage = "jQuery incompatibility: non-void HTML tags must not use self-closing syntax.\n"
+					+ "HTML element used as self-closing tag: <" + $1 + "/>\n"
+					+ "HTML element should be closed correctly, such as: " + replacement + "\n"
+					+ "Please check the following note for more information:\n";
+
+				var errorMessageWithUrl = errorMessage + noteUrl + " or\n" + gitHubUrl;
+
+				/* eslint-disable no-console */
+				console.error(errorMessageWithUrl);
+				/* eslint-enable no-console */
+
+				try {
+					sap.ui.require(["sap/m/MessageBox", "sap/m/FormattedText", "sap/base/security/encodeXML"], function (MessageBox, FormattedText, encodeXML) {
+						var messageText = new FormattedText({
+							htmlText: encodeXML(errorMessage).replace(/&#xa;/g, "<br>")
+								+ '<a href="' + noteUrl + '" target="_blank" rel="noopener noreferrer">' + noteUrl + '</a> or<br>'
+								+ '<a href="' + gitHubUrl + '" target="_blank" rel="noopener noreferrer">' + gitHubUrl + '</a>'
+						});
+
+						MessageBox.alert(messageText, {
+							title: "Incompatibility detected"
+						});
+
+					}, function() {
+						/* eslint-disable no-console, no-alert */
+						console.error("Showing error with UI5 controls failed. Falling back to alert().");
+						setTimeout(function() {
+							alert(errorMessageWithUrl);
+						});
+						/* eslint-enable no-console, no-alert */
+					});
+				} catch (err) {
+					/* eslint-disable no-console, no-alert */
+					console.error("Exception in error handling: " + err + ". Falling back to alert().");
+					setTimeout(function() {
+						alert(errorMessageWithUrl);
+					});
+					/* eslint-enable no-console, no-alert */
+				}
+			}
+		});
+		return html;
+	};
+}
+// ##### END: MODIFIED BY SAP
 
 jQuery.fn.extend( {
 
