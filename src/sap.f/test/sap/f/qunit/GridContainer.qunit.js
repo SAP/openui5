@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/f/GridContainer",
 	"sap/ui/core/Core",
 	"sap/m/Panel",
@@ -17,6 +18,7 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card"
 ],
 function (
+	jQuery,
 	GridContainer,
 	Core,
 	Panel,
@@ -1006,6 +1008,36 @@ function (
 
 			// Assert
 			assert.strictEqual(oForwardTabSpy.called, true, "Focus should leave the GridContainer");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("'mouseup' on the control focus dom ref should focus the grid list item", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oJQueryFocusSpy = sinon.spy(jQuery.prototype, "focus");
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			// Arrange
+			var oCardFocusDomRef = this.oCard.getFocusDomRef();
+
+			// Act
+			qutils.triggerMouseEvent(oCardFocusDomRef, "mousedown");
+			oCardFocusDomRef.focus();
+			Core.applyChanges();
+
+			assert.notOk(oJQueryFocusSpy.called, "Focus should not be moved");
+
+			qutils.triggerMouseEvent(oCardFocusDomRef, "mouseup");
+			oCardFocusDomRef.focus();
+			Core.applyChanges();
+
+			// Assert
+			assert.ok(oJQueryFocusSpy.called, "Focus should be moved to the grid list item");
+
+			oJQueryFocusSpy.restore();
 			done();
 		}.bind(this));
 	});
