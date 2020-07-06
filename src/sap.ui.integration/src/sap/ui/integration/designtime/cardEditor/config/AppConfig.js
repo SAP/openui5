@@ -22,13 +22,13 @@ sap.ui.define(function () {
 		},
 		"appTitle": {
 			"tags": ["app"],
-			"label": "{i18n>CARD_EDITOR.APP.TITLE}",
+			"label": "{i18n>CARD_EDITOR.TITLE}",
 			"type": "string",
 			"path": "/sap.app/title"
 		},
 		"appSubTitle": {
 			"tags": ["app"],
-			"label": "{i18n>CARD_EDITOR.APP.SUBTITLE}",
+			"label": "{i18n>CARD_EDITOR.SUBTITLE}",
 			"type": "string",
 			"path": "/sap.app/subTitle"
 		},
@@ -46,7 +46,7 @@ sap.ui.define(function () {
 		},
 		"appIcon": {
 			"tags": ["app"],
-			"label": "{i18n>CARD_EDITOR.APP.ICON}",
+			"label": "{i18n>CARD_EDITOR.ICON}",
 			"type": "icon",
 			"path": "/sap.ui/icons/icon"
 		},
@@ -93,24 +93,24 @@ sap.ui.define(function () {
 					"path": "uri"
 				},
 				"type": {
-					"label": "{i18n>CARD_EDITOR.APP.DATASOURCES.TYPE}",
-					"type": "enum",
-					"enum": [
-						"OData",
-						"ODataAnnotation",
-						"INA",
-						"XML",
-						"JSON"
+					"label": "{i18n>CARD_EDITOR.LABEL.TYPE}",
+					"type": "select",
+					"items": [
+						{ "key": "OData" },
+						{ "key": "ODataAnnotation" },
+						{ "key": "INA" },
+						{ "key": "XML" },
+						{ "key": "JSON" }
 					],
 					"defaultValue": "OData",
 					"path": "type"
 				},
 				"odataVersion": {
 					"label": "{i18n>CARD_EDITOR.APP.DATASOURCES.SETTINGS.ODATAVERSION}",
-					"type": "enum",
-					"enum": [
-						"2.0",
-						"4.0"
+					"type": "select",
+					"items": [
+						{ "key": "2.0" },
+						{ "key": "4.0" }
 					],
 					"defaultValue": "2.0",
 					"path": "settings/odataVersion"

@@ -69,15 +69,15 @@ sap.ui.define([
 			oCustomConfig = {
 				template: {
 					label: {
-						label: this.getI18nProperty("CARD_EDITOR.DESTINATION.LABEL"),
+						label: this.getI18nProperty("CARD_EDITOR.LABEL"),
 						type: "string",
 						path: "label"
 					},
 					name: {
 						label: this.getI18nProperty("CARD_EDITOR.DESTINATION.NAME"),
-						type: "enum",
+						type: "select",
 						path: "name",
-						"enum": oConfig["allowedValues"],
+						items: (oConfig["allowedValues"] || []).map(function(sKey){ return { key: sKey }; }),
 						allowCustomValues: true,
 						allowBindings: false
 					},
@@ -96,9 +96,9 @@ sap.ui.define([
 				template: {
 					name: {
 						label: "{= ${label} || ${key}}",
-						type: "enum",
+						type: "select",
 						path: "name",
-						"enum": oConfig["allowedValues"],
+						items: (oConfig["allowedValues"] || []).map(function(sKey){ return { key: sKey }; }),
 						allowCustomValues: false,
 						allowBindings: false
 					}

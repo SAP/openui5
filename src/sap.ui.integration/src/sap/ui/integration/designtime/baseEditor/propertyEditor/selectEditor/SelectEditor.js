@@ -12,7 +12,7 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * Constructor for a new <code>EnumStringEditor</code>.
+	 * Constructor for a new <code>SelectEditor</code>.
 	 * This allows to select from predefined string values or to provide binding strings for a specified property of a JSON object.
 	 * The editor is rendered as a {@link sap.m.ComboBox}.
 	 * To get notified about changes made with the editor, you can use the <code>attachValueChange</code> method,
@@ -42,22 +42,21 @@ sap.ui.define([
 	 * </table>
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
-	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor
+	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.SelectEditor.SelectEditor
 	 * @author SAP SE
-	 * @since 1.70
+	 * @since 1.81
 	 * @version ${version}
 	 *
 	 * @private
-	 * @experimental 1.70
-	 * @deprecated as of version 1.81. Use the {@link sap.ui.integration.designtime.baseEditor.propertyEditor.selectEditor.SelectEditor} instead
+	 * @experimental 1.81
 	 * @ui5-restricted
 	 */
-	var EnumStringEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor", {
-		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor",
+	var SelectEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.selectEditor.SelectEditor", {
+		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.selectEditor.SelectEditor",
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	EnumStringEditor.prototype.getConfigMetadata = function () {
+	SelectEditor.prototype.getConfigMetadata = function () {
 		return Object.assign(
 			{},
 			BasePropertyEditor.prototype.getConfigMetadata.call(this),
@@ -72,7 +71,7 @@ sap.ui.define([
 		);
 	};
 
-	EnumStringEditor.prototype._onChange = function () {
+	SelectEditor.prototype._onChange = function () {
 		var oComboBox = this.getContent();
 		var sSelectedKey = oComboBox.getSelectedKey();
 		var sValue = oComboBox.getValue();
@@ -85,20 +84,30 @@ sap.ui.define([
 		}
 	};
 
-	EnumStringEditor.prototype._validate = function (sSelectedKey, sValue) {
+	SelectEditor.prototype._getItemTitle = function (sValue) {
+		var aItems = this.getConfig() && this.getConfig().items || [];
+		var oSelectedItem = aItems
+			.find(function (oItem) {
+				return oItem.key === sValue;
+			});
+
+		return (oSelectedItem || {}).title || sValue;
+	};
+
+	SelectEditor.prototype._validate = function (sSelectedKey, sValue) {
 		var oConfig = this.getConfig();
 		if (!oConfig["allowBindings"] && isValidBindingString(sValue, false)) {
 			return "BASE_EDITOR.PROPERTY.BINDING_NOT_ALLOWED";
 		}
 		if (!oConfig["allowCustomValues"] && sValue && !sSelectedKey && !isValidBindingString(sValue, false)) {
-			return "BASE_EDITOR.ENUM.CUSTOM_VALUES_NOT_ALLOWED";
+			return "BASE_EDITOR.SELECT.CUSTOM_VALUES_NOT_ALLOWED";
 		}
 		if (!isValidBindingString(sValue)) {
-			return "BASE_EDITOR.ENUM.INVALID_SELECTION";
+			return "BASE_EDITOR.SELECT.INVALID_SELECTION";
 		}
 	};
 
-	EnumStringEditor.prototype._setInputState = function (bIsValid, sErrorMessage) {
+	SelectEditor.prototype._setInputState = function (bIsValid, sErrorMessage) {
 		var oComboBox = this.getContent();
 		if (bIsValid) {
 			oComboBox.setValueState("None");
@@ -108,5 +117,5 @@ sap.ui.define([
 		}
 	};
 
-	return EnumStringEditor;
+	return SelectEditor;
 });

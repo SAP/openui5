@@ -22,7 +22,7 @@ sap.ui.define([
 			"addItemLabel": "{i18n>CARD_EDITOR.OBJECT.GROUP}",
 			"template": {
 				"title": {
-					"label": "{i18n>CARD_EDITOR.OBJECT.GROUP.TITLE}",
+					"label": "{i18n>CARD_EDITOR.TITLE}",
 					"type": "string",
 					"path": "title"
 				},
@@ -36,13 +36,13 @@ sap.ui.define([
 					"template": {
 						"icon": {
 							"tags": ["content", "objectGroupItem"],
-							"label": "{i18n>CARD_EDITOR.OBJECT.GROUP.ITEM.ICON}",
+							"label": "{i18n>CARD_EDITOR.ICON}",
 							"type": "icon",
 							"path": "icon/src"
 						},
 						"label": {
 							"tags": ["content", "objectGroupItem"],
-							"label": "{i18n>CARD_EDITOR.OBJECT.GROUP.ITEM.LABEL}",
+							"label": "{i18n>CARD_EDITOR.LABEL}",
 							"type": "string",
 							"path": "label"
 						},
@@ -54,31 +54,49 @@ sap.ui.define([
 						},
 						"type": {
 							"tags": ["content", "objectGroupItem"],
-							"label": "{i18n>CARD_EDITOR.OBJECT.GROUP.ITEM.TYPE}",
-							"type": "enum",
-							"enum": [
-								"phone",
-								"email",
-								"link",
-								"text"
+							"label": "{i18n>CARD_EDITOR.LABEL.TYPE}",
+							"type": "select",
+							"items": [
+								{
+									"key": "phone",
+									"title": "{i18n>CARD_EDITOR.OBJECT.GROUP.TYPE.PHONE}"
+								},
+								{
+									"key": "email",
+									"title": "{i18n>CARD_EDITOR.OBJECT.GROUP.TYPE.EMAIL}"
+								},
+								{
+									"key": "link",
+									"title": "{i18n>CARD_EDITOR.OBJECT.GROUP.TYPE.LINK}"
+								},
+								{
+									"key": "text",
+									"title": "{i18n>CARD_EDITOR.OBJECT.GROUP.TYPE.TEXT}"
+								}
 							],
 							"defaultValue": "text",
 							"path": "type"
 						},
 						"url": {
 							"tags": ["content", "objectGroupItem"],
-							"label": "{i18n>CARD_EDITOR.OBJECT.GROUP.ITEM.URL}",
+							"label": "{i18n>CARD_EDITOR.LABEL.URL}",
 							"type": "string",
 							"path": "url",
 							"visible": "{= ${type} === 'link'}"
 						},
 						"target": {
 							"tags": ["content", "objectGroupItem"],
-							"label": "{i18n>CARD_EDITOR.OBJECT.GROUP.ITEM.TARGET}",
-							"type": "enum",
-							"enum": [
-								"_blank",
-								"_self"
+							"label": "{i18n>CARD_EDITOR.TARGET}",
+							"type": "select",
+							"items": [
+								{
+									"key":"_blank",
+									"description": "{i18n>CARD_EDITOR.TARGET.BLANK}"
+								},
+								{
+									"key":"_self",
+									"description": "{i18n>CARD_EDITOR.TARGET.SELF}"
+								}
 							],
 							"defaultValue": "_blank",
 							"path": "target",

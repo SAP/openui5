@@ -35,9 +35,9 @@ sap.ui.define([
 					"path": "enabled"
 				},
 				"type": {
-					"label": "{i18n>CARD_EDITOR.ACTION.TYPE}",
-					"type": "enum",
-					"enum": ["Navigation"],
+					"label": "{i18n>CARD_EDITOR.LABEL.TYPE}",
+					"type": "select",
+					"items": [{ "key": "Navigation" }],
 					"path": "type",
 					"visible": "{= !!${enabled}}"
 				},
@@ -48,24 +48,30 @@ sap.ui.define([
 					"visible": false // Currently undocumented
 				},
 				"parameters": {
-					"label": "{i18n>CARD_EDITOR.ACTION.PARAMETERS}",
+					"label": "{i18n>CARD_EDITOR.PARAMETERS}",
 					"type": "map",
 					"allowedTypes": ["string", "number", "boolean"],
 					"path": "parameters",
 					"visible": "{= !!${enabled}}"
 				},
 				"url": {
-					"label": "{i18n>CARD_EDITOR.ACTION.URL}",
+					"label": "{i18n>CARD_EDITOR.LABEL.URL}",
 					"type": "string",
 					"path": "url",
 					"visible": "{= !!${enabled} && ${type} === 'Navigation'}"
 				},
 				"target": {
-					"label": "{i18n>CARD_EDITOR.ACTION.TARGET}",
-					"type": "enum",
-					"enum": [
-						"_blank",
-						"_self"
+					"label": "{i18n>CARD_EDITOR.TARGET}",
+					"type": "select",
+					"items": [
+						{
+							"key":"_blank",
+							"description": "{i18n>CARD_EDITOR.TARGET.BLANK}"
+						},
+						{
+							"key":"_self",
+							"description": "{i18n>CARD_EDITOR.TARGET.SELF}"
+						}
 					],
 					"defaultValue": "_blank",
 					"path": "target",

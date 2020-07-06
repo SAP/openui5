@@ -325,12 +325,12 @@ sap.ui.define([
 				"template": {
 					"prop1": {
 						"label": "Prop1",
-						"type": "enum",
+						"type": "select",
 						"path": "prop1",
-						"enum": [
-							"Value1",
-							"Value2",
-							"Value3"
+						"items": [
+							{ "key": "Value1" },
+							{ "key": "Value2" },
+							{ "key": "Value3" }
 						]
 					},
 					"prop2": {
@@ -374,12 +374,12 @@ sap.ui.define([
 				"template": {
 					"prop1": {
 						"label": "Prop1",
-						"type": "enum",
+						"type": "select",
 						"path": "prop1",
-						"enum": [
-							"Value1",
-							"Value2",
-							"Value3"
+						"items": [
+							{ "key": "Value1" },
+							{ "key": "Value2" },
+							{ "key": "Value3" }
 						],
 						defaultValue: "Value2"
 					},
@@ -453,7 +453,7 @@ sap.ui.define([
 					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			};
 			var mJson = {
@@ -581,7 +581,7 @@ sap.ui.define([
 					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			};
 			var mJson = {

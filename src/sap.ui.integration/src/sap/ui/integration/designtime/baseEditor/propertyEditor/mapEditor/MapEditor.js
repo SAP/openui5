@@ -230,8 +230,13 @@ sap.ui.define([
 					label: this.getI18nProperty("BASE_EDITOR.MAP.TYPE"),
 					path: "type",
 					value: sType,
-					type: "enum",
-					"enum": this._getAllowedTypes(),
+					type: "select",
+					items: this._getAllowedTypes().map(function (sKey) {
+						return {
+							key: sKey,
+							title: this.getI18nProperty(SUPPORTED_TYPE_LABELS[sKey])
+						};
+					}.bind(this)),
 					visible: oConfig.allowTypeChange,
 					itemKey: sKey,
 					allowBindings: false

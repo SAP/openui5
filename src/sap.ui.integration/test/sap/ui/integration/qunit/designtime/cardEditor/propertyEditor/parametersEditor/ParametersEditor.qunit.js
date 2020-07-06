@@ -41,7 +41,7 @@ sap.ui.define([
 				"propertyEditors": {
 					"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			};
 			var mJson = {
@@ -217,7 +217,7 @@ sap.ui.define([
 					"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			});
 
@@ -295,7 +295,7 @@ sap.ui.define([
 					"propertyEditors": {
 						"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
 						"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-						"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+						"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 					}
 				},
 				json: {
