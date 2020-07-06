@@ -25,5 +25,21 @@
         ]
       }
     ]
+  },
+  "1.78.3": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "9c2de83b3390de7e805fec385f79f17f8dcda8ea",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent - now renders with proper CSS classes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070127815"
+          }
+        ]
+      }
+    ]
   }
 }

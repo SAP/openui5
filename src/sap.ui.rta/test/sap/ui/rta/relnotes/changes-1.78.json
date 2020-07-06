@@ -58,5 +58,21 @@
         ]
       }
     ]
+  },
+  "1.78.3": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "856e3fc64aacc0a93c3643f492210c7307ca8943",
+        "type": "FIX",
+        "text": " sap.ui.fl - extension point default content issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080202656"
+          }
+        ]
+      }
+    ]
   }
 }
