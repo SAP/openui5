@@ -138,6 +138,34 @@ sap.ui.define([
 		this.oPopup.open(0, undefined, undefined, window);
 	});
 
+	QUnit.test("Open Popup with a control which already has a not rendered parent", function(assert) {
+		var oPanel = new sap.m.Panel(),
+			oButton = new sap.m.Button(),
+			done = assert.async(),
+			fnOpened = function() {
+				this.oPopup.detachOpened(fnOpened, this);
+				assert.ok(oButton.getDomRef(), "The button is rendered");
+				assert.ok(oButton.getUIArea(), "The button is attached to an UIArea");
+				assert.equal(oButton.getParent(), oPanel, "The button is still aggregated by its previous parent");
+
+				this.oPopup.close();
+
+			},
+			fnClosed = function() {
+				assert.ok(!oButton.getUIArea(), "The button is not attached to any UIArea after closed");
+				oPanel.destroy();
+				done();
+			};
+
+		oPanel.addContent(oButton);
+
+		this.oPopup.setContent(oButton);
+		this.oPopup.attachOpened(fnOpened, this);
+		this.oPopup.attachClosed(fnClosed, this);
+
+		this.oPopup.open();
+	});
+
 	QUnit.test("Close Popup", function(assert) {
 		assert.expect(3);
 
