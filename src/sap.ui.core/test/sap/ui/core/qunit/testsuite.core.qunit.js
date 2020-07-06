@@ -486,6 +486,31 @@ sap.ui.define(function() {
 				title: "sap.ui.core.hyphenation.Hyphenation"
 			},
 
+			"jqueryCompatibilityCheck": {
+				page: "resources/sap/ui/test/starter/Test.qunit.html?testsuite={suite}&test={name}&sap-ui-xx-self-closing-check=true",
+				title: "jqueryCompatibilityCheck",
+				qunit: {
+					version: "edge",
+					reorder: false
+				},
+				sinon: {
+					version: "edge",
+					qunitBridge: true
+				}
+			},
+			"jqueryCompatibilityCheckDisabled": {
+				page: "resources/sap/ui/test/starter/Test.qunit.html?testsuite={suite}&test=jqueryCompatibilityCheck",
+				title: "jqueryCompatibility",
+				qunit: {
+					version: "edge",
+					reorder: false
+				},
+				sinon: {
+					version: "edge",
+					qunitBridge: true
+				}
+			},
+
 			"jquery.sap.global-config": {
 				title: "jquery.sap.global: External configuration",
 				beforeBootstrap: "./jquery.sap.global-config_beforeBootstrap.qunit"
