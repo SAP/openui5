@@ -347,6 +347,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/initial/api/connectors/FileListBaseConnector"]
 				}
 			},
+			"write/api/connectors/FileListBaseConnector": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/connectors/FileListBaseConnector"]
+				}
+			},
 			"write/api/ChangesWriteAPI": {
 				group: "Write API",
 				coverage: {
