@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/m/Text",
 	"sap/ui/Device",
+	"sap/ui/base/EventProvider",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
@@ -24,15 +25,16 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper',
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (Log, uid, ColumnListItem, CustomListItem, Text, Device, SyncPromise, Controller, View,
-		ChangeReason, Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper,
-		ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
+], function (Log, uid, ColumnListItem, CustomListItem, Text, Device, EventProvider, SyncPromise,
+		Controller, View, ChangeReason, Filter, FilterOperator, Sorter, OperationMode,
+		AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0, camelcase: 0*/
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		fnFireEvent = EventProvider.prototype.fireEvent,
 		sInvalidModel = "/invalid/model/",
 		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
@@ -375,6 +377,8 @@ sap.ui.define([
 			// this.mChanges["id"] is a list of expected changes for the property "text" of the
 			// control with ID "id"
 			this.mChanges = {};
+			// expected events, each as [this.toString(), sEventId, mParameters]
+			this.aExpectedEvents = [];
 			// {map<string, true>}
 			// If an ID is in this.mIgnoredChanges, change events with null are ignored
 			this.mIgnoredChanges = {};
@@ -427,6 +431,7 @@ sap.ui.define([
 				});
 			}
 
+			EventProvider.prototype.fireEvent = fnFireEvent;
 			cleanup();
 		},
 
@@ -1212,6 +1217,50 @@ sap.ui.define([
 		},
 
 		/**
+		 * Expects the given events to be fired until the next call to <code>waitForChanges</code>.
+		 * Events are first filtered by event source and then compared.
+		 *
+		 * @param {object} assert
+		 *   The QUnit assert object
+		 * @param {string} sExpectedEventSourcePrefix
+		 *   Expected prefix of event source's <code>this.toString()</code> representation
+		 * @param {object[]} aExpectedEvents
+		 *   Expected events, each as <code>[this.toString(), sEventId, mParameters]</code> from the
+		 *   perspective of {@link sap.ui.base.EventProvider#fireEvent}. For convenience,
+		 *   <code>this.toString()</code> may omit <code>sExpectedEventSourcePrefix</code> and even
+		 *   be undefined. <code>undefined</code> need not be explicitly specified for event
+		 *   parameters.
+		 * @returns {object} The test instance for chaining
+		 */
+		expectEvents : function (assert, sExpectedEventSourcePrefix, aExpectedEvents) {
+			var that = this;
+
+			EventProvider.prototype.fireEvent = function (sEventId, mParameters) {
+				var sThis = this.toString();
+
+				if (sThis.startsWith(sExpectedEventSourcePrefix)) {
+					var aDetails = [sThis, sEventId, mParameters];
+
+					assert.deepEqual(aDetails, that.aExpectedEvents.shift());
+				}
+				return fnFireEvent.apply(this, arguments); // "call through"
+			};
+
+			aExpectedEvents.forEach(function (aExpectedDetails) {
+				aExpectedDetails[0] = aExpectedDetails[0] || "";
+				if (!aExpectedDetails[0].startsWith(sExpectedEventSourcePrefix)) {
+					aExpectedDetails[0] += sExpectedEventSourcePrefix;
+				}
+				if (aExpectedDetails.length === 2) {
+					aExpectedDetails[2] = undefined;
+				}
+			});
+			this.aExpectedEvents = aExpectedEvents;
+
+			return this;
+		},
+
+		/**
 		 * The following code (either {@link #createView} or anything before
 		 * {@link #waitForChanges}) is expected to report exactly the given messages. All expected
 		 * messages should have a different message text.
@@ -1445,6 +1494,7 @@ sap.ui.define([
 						}
 					}
 				}
+				assert.strictEqual(that.aExpectedEvents.length, 0, "no missing events");
 				that.checkMessages(assert);
 				if (sTitle) {
 					assert.ok(true, "waitForChanges: Done with " + sTitle);
@@ -2013,7 +2063,15 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
+		this.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /SalesOrderList", [
+				[, "change", {"detailedReason" : "AddVirtualContext", "reason" : "change"}],
+				[, "change", {"detailedReason" : "RemoveVirtualContext", "reason" : "change"}],
+				[, "refresh", {"reason" : "refresh"}],
+				[, "dataRequested"],
+				[, "change", {"reason" : "change"}],
+				[, "dataReceived", {"data" : {}}]
+			])
+			.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
 				value : [
 					{SalesOrderID : "01", Note : "Note 1"},
 					{SalesOrderID : "02", Note : "Note 2"},
@@ -2025,12 +2083,15 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oBinding = that.oView.byId("table").getBinding("rows");
 
-			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=3&$top=9", {
-				value : [
-					{SalesOrderID : "04", Note : "Note 4"},
-					{SalesOrderID : "05", Note : "Note 5"}
-				]
-			});
+			that.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /SalesOrderList", [
+					[, "change", {"reason" : "change"}]
+				])
+				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=3&$top=9", {
+					value : [
+						{SalesOrderID : "04", Note : "Note 4"},
+						{SalesOrderID : "05", Note : "Note 5"}
+					]
+				});
 
 			return Promise.all([
 				oBinding.requestContexts(2, 10).then(function (aContexts) {
@@ -2049,6 +2110,47 @@ sap.ui.define([
 
 			// scroll down
 			that.oView.byId("table").setFirstVisibleRow(2);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A relative ODataListBinding later gets its parent context; check that
+	// auto-$expand/$select sends the right events
+	// BCP: 2080228141
+	QUnit.test("BCP: 2080228141 - autoExpandSelect & late ODLB#setContext", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table id="table" rows="{}" threshold="0" visibleRowCount="3">\
+	<Text id="note" text="{Note}" />\
+</t:Table>',
+			that = this;
+
+		this.expectEvents(assert, "sap.ui.model.odata.v4.", []) // no events yet
+			.expectChange("note", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("rows");
+
+			that.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /SalesOrderList|", [
+					[, "change", {"detailedReason" : "AddVirtualContext", "reason" : "context"}],
+					[, "change", {"detailedReason" : "RemoveVirtualContext", "reason" : "change"}],
+					[, "refresh", {"reason" : "refresh"}],
+					[, "dataRequested"],
+					[, "change", {"reason" : "change"}],
+					[, "dataReceived", {"data" : {}}]
+				]).expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
+					value : [
+						{SalesOrderID : "01", Note : "Note 1"},
+						{SalesOrderID : "02", Note : "Note 2"},
+						{SalesOrderID : "03", Note : "Note 3"}
+					]
+				})
+				.expectChange("note", ["Note 1", "Note 2", "Note 3"]);
+
+			// code under test
+			oBinding.setContext(oModel.createBindingContext("/SalesOrderList"));
 
 			return that.waitForChanges(assert);
 		});
@@ -10423,7 +10525,15 @@ sap.ui.define([
 		this.expectChange("text", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest({
+			that.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES", [
+					[, "change", {"detailedReason" : "AddVirtualContext", "reason" : "change"}],
+					[, "change", {"detailedReason" : "RemoveVirtualContext", "reason" : "change"}],
+					[, "refresh", {"reason" : "refresh"}],
+					[, "dataRequested"],
+					[, "change", {"reason" : "change"}],
+					[, "dataReceived", {"data" : {}}]
+				])
+				.expectRequest({
 					method : "GET",
 					url : "EMPLOYEES?$select=ID,Name&$skip=0&$top=100"
 				}, {
