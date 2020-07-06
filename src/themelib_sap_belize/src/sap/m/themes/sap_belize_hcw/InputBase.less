@@ -27,23 +27,22 @@
 }
 
 .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper) .sapMInputBaseIcon {
+	box-sizing: border-box;
+
 	&:hover {
 		background: @sapUiButtonLiteHoverBackground;
 		border-left: 1px solid @sapUiFieldBorderColor;
-		margin-left: -1px;
 	}
 	&:active {
 		background-color: @sapUiToggleButtonPressedBackground;
 		color: @sapUiButtonActiveTextColor;
 		border-left: 1px solid @sapUiFieldBorderColor;
-		margin-left: -1px;
 	}
 }
 
 .sapMInputBaseIconPressed {
 	& .sapMInputBaseIcon {
 		border-left: 1px solid @sapUiFieldActiveBorderColor;
-		margin-left: -1px;
 	}
 }
 
