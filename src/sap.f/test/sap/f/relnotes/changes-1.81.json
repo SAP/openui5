@@ -1,0 +1,18 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "b7002d66e653d69bbfb688e25e6eadb695257e1b",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Ensure extra space in DynamicPageTitle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080160972"
+          }
+        ]
+      }
+    ]
+  }
+}

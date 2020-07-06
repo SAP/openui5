@@ -1,0 +1,22 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "4b7e58262127319ed1798376e44dcd00fe376cb4",
+        "type": "FIX",
+        "text": " FieldValueHelp: Pending updates of in- and out-parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080230646"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080208502"
+          }
+        ]
+      }
+    ]
+  }
+}

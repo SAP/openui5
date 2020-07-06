@@ -1,0 +1,29 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "4c1602b88c7d750398a71aaaa0ee19977f04761a",
+        "type": "FIX",
+        "text": " routing.History: fix the failing test in IE 11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080225990"
+          }
+        ]
+      },
+      {
+        "id": "7b5e5594d4ab6bee4f3adb50cfb5081884dd6b91",
+        "type": "FIX",
+        "text": " sap.ui.core.cache.CacheManager: stopping the support for Mozilla Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070220619"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "43bea542817f1c39599d83576cc3b4c41e74b6fc",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Accessibility overhauled",
+        "references": []
+      },
+      {
+        "id": "2c7c9ac657dab66049dc9843a9d893df23a7d8f0",
+        "type": "FIX",
+        "text": " sap.m.Button: drag and drop now works on safari and firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080226059"
+          }
+        ]
+      },
+      {
+        "id": "b7c3a79f0eab00a55aad1473e59b510e1e8ed03a",
+        "type": "FIX",
+        "text": " sap.m.Image, sap.m.Avatar: Outline no longer hidden in sap.ui.layout.Grid",
+        "references": []
+      },
+      {
+        "id": "b7002d66e653d69bbfb688e25e6eadb695257e1b",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Ensure extra space in DynamicPageTitle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080160972"
+          }
+        ]
+      },
+      {
+        "id": "885d85cbf8db9885a8d5de7ac709c61e19ae10fc",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Truncation on destroyTokens fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080209984"
+          }
+        ]
+      }
+    ]
+  }
+}
