@@ -13,7 +13,7 @@
 	"sap.card": {
 		"type": "Table",
 		"header": {
-			"title": "Request table content",
+			"title": "Request Table Content",
 			"icon": {
 				"src": "sap-icon://accept"
 			},

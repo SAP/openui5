@@ -12,57 +12,57 @@ sap.ui.define([
 		{
 			"key": "list1",
 			"columns": 6,
-			"manifest": "./cardcontent/delayedLoading/listManifest1.json"
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifest1.json"
 		},
 		{
 			"key": "list2",
 			"columns": 6,
-			"manifest": "./cardcontent/delayedLoading/listManifest2.json"
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifest2.json"
 		},
 		{
 			"key": "list3",
 			"columns": 5,
-			"manifest": "./cardcontent/delayedLoading/listManifestAll.json"
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifestAll.json"
 		},
 		{
 			"key": "list4",
 			"columns": 4,
-			"manifest": "./cardcontent/delayedLoading/listManifestDescriptionTitle.json"
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifestDescriptionTitle.json"
 		},
 		{
 			"key": "list5",
 			"columns": 3,
-			"manifest": "./cardcontent/delayedLoading/listManifestIconTitle.json"
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifestIconTitle.json"
 		},
 		{
 			"key": "list6",
 			"columns": 2,
-			"manifest": "./cardcontent/delayedLoading/listManifestTitle.json"
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifestTitle.json"
 		},
 		{
 			"key": "table1",
 			"columns": 4,
-			"manifest": "./cardcontent/delayedLoading/tableManifest.json"
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/tableManifest.json"
 		},
 		{
 			"key": "analytical1",
 			"columns": 6,
-			"manifest": "./cardcontent/delayedLoading/analyticalManifest.json"
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/analyticalManifest.json"
 		},
 		{
 			"key": "object1",
 			"columns": 6,
-			"manifest": "./cardcontent/delayedLoading/objectManifest.json"
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/objectManifest.json"
 		},
 		{
 			"key": "calendar1",
 			"columns": 5,
-			"manifest": "./cardcontent/delayedLoading/calendarManifest1.json"
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/calendarManifest1.json"
 		},
 		{
 			"key": "listError",
 			"columns": 5,
-			"manifest": "./cardcontent/delayedLoading/listManifestError.json"
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifestError.json"
 		}
 	];
 

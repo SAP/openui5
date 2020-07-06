@@ -8,7 +8,7 @@ sap.ui.define([
 ], function (MessageToast, Controller, JSONModel, DragInfo, GridDropInfo, Card) {
 	"use strict";
 
-	return Controller.extend("sap.f.cardsdemo.controller.dnd3", {
+	return Controller.extend("sap.f.cardsdemo.controller.Dnd3", {
 		onInit: function () {
 			this.initData();
 
@@ -104,7 +104,7 @@ sap.ui.define([
 				{ uniqueId: "item7", header: "Public Service", subheader: "", footer: "", numberValue: "1", icon: "sap-icon://e-care" },
 				{ uniqueId: "item8", header: "Invoices", subheader: "Personal invoices", footer: "", numberValue: "15", icon: "sap-icon://monitor-payments" },
 				{ uniqueId: "item10", header: "Corporate portal", subheader: "", footer: "", numberValue: "1500", icon: "sap-icon://group" },
-				{ uniqueId: "item11", header: "Ariba Guided Buying", subheader: "Buy Goods & Services", footer: "",  numberValue: "2", icon: "sap-icon://cart-5" },
+				{ uniqueId: "item11", header: "Ariba Guided Buying", subheader: "Buy Goods & Services", footer: "", numberValue: "2", icon: "sap-icon://cart-5" },
 				{ uniqueId: "item12", header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
 			]));
 
@@ -118,7 +118,7 @@ sap.ui.define([
 				{ uniqueId: "item7", header: "Public Service", subheader: "", footer: "", numberValue: "1", icon: "sap-icon://e-care" },
 				{ uniqueId: "item8", header: "Invoices", subheader: "Personal invoices", footer: "", numberValue: "15", icon: "sap-icon://monitor-payments" },
 				{ uniqueId: "item10", header: "Corporate portal", subheader: "", footer: "", numberValue: "1500", icon: "sap-icon://group" },
-				{ uniqueId: "item11", header: "Ariba Guided Buying", subheader: "Buy Goods & Services", footer: "",  numberValue: "2", icon: "sap-icon://cart-5" },
+				{ uniqueId: "item11", header: "Ariba Guided Buying", subheader: "Buy Goods & Services", footer: "", numberValue: "2", icon: "sap-icon://cart-5" },
 				{ uniqueId: "item12", header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
 			]));
 
@@ -196,18 +196,18 @@ sap.ui.define([
 		},
 
 		// todo why grids rerender with factory, is a unique key missing or something else?
-		createItem: function(sID, oBindingContext) {
+		createItem: function (sID, oBindingContext) {
 			var oItemData = oBindingContext.getProperty(oBindingContext.getPath());
 
 			if (oItemData.type === "card") {
 				var oCard = new Card(sID, {
-					layoutData: new sap.f.GridContainerItemLayoutData({rows: oItemData.rows, columns: oItemData.columns})
+					layoutData: new sap.f.GridContainerItemLayoutData({ rows: oItemData.rows, columns: oItemData.columns })
 				});
 				oCard.bindProperty("manifest", oItemData.manifest);
 				return oCard;
 			} else {
 				return new sap.m.GenericTile(sID, {
-					layoutData: new sap.f.GridContainerItemLayoutData({rows: 2, columns: 2}),
+					layoutData: new sap.f.GridContainerItemLayoutData({ rows: 2, columns: 2 }),
 					header: oItemData.header,
 					subheader: oItemData.subheader,
 					tileContent: new sap.m.TileContent({

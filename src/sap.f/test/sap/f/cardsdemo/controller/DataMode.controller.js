@@ -4,7 +4,6 @@ sap.ui.define([
 ], function (Controller, deepClone) {
 	"use strict";
 
-
 	var oCardManifest = {
 		"_version": "1.8.0",
 		"sap.app": {
@@ -24,7 +23,7 @@ sap.ui.define([
 				"type": "Numeric",
 				"data": {
 					"request": {
-						"url": "./cardcontent/kpi.json"
+						"url": "./cardsdemo/cardcontent/kpi.json"
 					},
 					"path": "/kpiInfos/kpi"
 				},
@@ -100,7 +99,7 @@ sap.ui.define([
 
 		onBeforeRendering: function () {
 			this.getView().byId("card").setManifest(oCardManifest);
-			this.getView().byId("card").setBaseUrl("./cardcontent/objectcontent/");
+			this.getView().byId("card").setBaseUrl("./cardsdemo/cardcontent/objectcontent/");
 		},
 
 		onSelectionChange: function (oEvent) {
@@ -108,7 +107,7 @@ sap.ui.define([
 			this.getView().byId("card").setDataMode(sDataMode);
 		},
 
-		onTryToRefresh: function (oEvent) {
+		onTryToRefresh: function () {
 			var oCard = this.getView().byId("card");
 
 			if (oCard) {
@@ -117,13 +116,13 @@ sap.ui.define([
 		},
 
 		onSubmit: function (oEvent) {
-
-			var iInterval = oEvent.getParameter("value");
-			var oClone = deepClone(oCardManifest);
+			var iInterval = oEvent.getParameter("value"),
+				oClone = deepClone(oCardManifest);
 
 			oClone["sap.card"].content.data.updateInterval = iInterval;
 
 			this.getView().byId("card").setManifest(oClone);
 		}
+
 	});
 });

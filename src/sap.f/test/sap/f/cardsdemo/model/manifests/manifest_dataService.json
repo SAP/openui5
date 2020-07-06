@@ -13,7 +13,7 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"title": "Request list content Card",
+			"title": "Request List Content Card",
 			"subTitle": "Card Subtitle",
 			"icon": {
 				"src": "sap-icon://accept"

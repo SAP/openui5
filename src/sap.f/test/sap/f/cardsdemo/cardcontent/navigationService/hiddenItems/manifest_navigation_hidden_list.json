@@ -14,11 +14,11 @@
 		"type": "List",
 		"data": {
 			"request": {
-				"url": "./cardcontent/someitems_services.json"
+				"url": "./cardsdemo/cardcontent/someitems_services.json"
 			}
 		},
 		"header": {
-			"title": "Request list content Card 2",
+			"title": "Request List Content Card 2",
 			"subTitle": "Card Subtitle",
 			"icon": {
 				"src": "sap-icon://accept"

@@ -15,7 +15,7 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "./bundles/timelinebundle/mockdata/employees.json"
+					"url": "./cardsdemo/bundles/timelinebundle/mockdata/employees.json"
 				},
 				"path": "/Employees"
 			},

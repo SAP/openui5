@@ -5,32 +5,34 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.sapFCard", {
+
 		onInit: function () {
 			this._createListModel();
 			this._createTableModel();
 			this._createAnalyticalModel();
 		},
+
 		_createAnalyticalModel: function () {
-			var oModel = new JSONModel("./cardcontent/revenue.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/revenue.json"));
 			this.getView().setModel(oModel, "analyticalData");
 		},
-		_createTableModel: function () {
-			var oData = {
-				Names: [
-					{firstName: "Peter", lastName: "Mueller"},
-					{firstName: "Petra", lastName: "Maier"},
-					{firstName: "Thomas", lastName: "Smith"},
-					{firstName: "John", lastName: "Williams"},
-					{firstName: "Maria", lastName: "Jones"}
-				]
-			};
 
-			var oModel = new JSONModel();
-			oModel.setData(oData);
+		_createTableModel: function () {
+			var oModel = new JSONModel({
+				Names: [
+					{ firstName: "Peter", lastName: "Mueller" },
+					{ firstName: "Petra", lastName: "Maier" },
+					{ firstName: "Thomas", lastName: "Smith" },
+					{ firstName: "John", lastName: "Williams" },
+					{ firstName: "Maria", lastName: "Jones" }
+				]
+			});
+
 			this.getView().setModel(oModel, "tableData");
 		},
+
 		_createListModel: function () {
-			var oData = {
+			var oModel = new JSONModel({
 				ProductCollection: [
 					{
 						"ProductId": "1239106",
@@ -57,11 +59,10 @@ sap.ui.define([
 						"SupplierName": "Titanium"
 					}
 				]
-			};
+			});
 
-			var oModel = new JSONModel();
-			oModel.setData(oData);
 			this.getView().setModel(oModel, "listItems");
 		}
+
 	});
 });

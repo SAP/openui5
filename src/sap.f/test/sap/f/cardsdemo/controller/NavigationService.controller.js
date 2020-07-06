@@ -5,20 +5,22 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.NavigationService", {
+
 		onAction: function (oEvent) {
-			var parameters = oEvent.getParameter("parameters");
+			var oParameters = oEvent.getParameter("parameters");
 			// Header is clicked there is no semantic object so directly use the URL
 			var sUrl;
-			if (parameters && parameters.url) {
-				sUrl = parameters.url;
+			if (oParameters && oParameters.url) {
+				sUrl = oParameters.url;
 			}
 			window.open(sUrl, "_blank");
 		},
+
 		onActionLog: function (oEvent) {
 			Log.info("[CARD]" + oEvent.getParameter("type"));
 			Log.info("[CARD]" + JSON.stringify(oEvent.getParameter("parameters"), null, 2));
 			Log.info("[CARD]" + oEvent.getParameter("actionSource"));
 		}
-    });
 
+	});
 });

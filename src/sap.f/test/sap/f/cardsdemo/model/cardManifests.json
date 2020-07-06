@@ -1,5 +1,5 @@
 {
-	"noLayout": {
+	"defaultHeader": {
 		"card1": {
 			"sap.card": {
 				"header": {
@@ -11,148 +11,41 @@
 					}
 				},
 				"type": "List",
-				"content": {
-					"data": {
-						"json": [{
-								"Name": "Notebook Basic 15",
-								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1000",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Basic 17",
-								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1001",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Basic 18",
-								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1002",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							}
-						]
-					},
-					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
-						"title": {
-							"label": "{{title_label}}",
-							"value": "{Name}"
-						},
-						"description": {
-							"label": "{{description_label}}",
-							"value": "{Description}"
-						}
-					}
-				}
+				"content": {}
 			}
 		},
 		"card2": {
 			"sap.card": {
 				"header": {
-					"title": "This line is the title of sap.f.Card",
+					"title": "This Line is the Title of sap.f.Card",
 					"status": {
 						"text": "Count"
 					}
 				},
 				"type": "List",
-				"content": {
-					"data": {
-						"json": [{
-								"Name": "Notebook Basic 15",
-								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1000",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Basic 17",
-								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1001",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Basic 18",
-								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1002",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							}
-						]
-					},
-					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
-						"title": {
-							"label": "{{title_label}}",
-							"value": "{Name}"
-						},
-						"description": {
-							"label": "{{description_label}}",
-							"value": "{Description}"
-						}
-					}
-				}
+				"content": {}
 			}
 		},
 		"card3": {
 			"sap.card": {
 				"header": {
-					"title": "This line is the title of sap.f.Card",
+					"title": "This Line is the Title of sap.f.Card",
 					"subTitle": " Thi is a sap.f.Card subtitle",
 					"status": {
 						"text": "Count"
 					}
 				},
 				"type": "List",
-				"content": {
-					"data": {
-						"json": [{
-								"Name": "Notebook Basic 17",
-								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1001",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Basic 18",
-								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1002",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							}
-						]
-					},
-					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
-						"title": {
-							"label": "{{title_label}}",
-							"value": "{Name}"
-						},
-						"description": {
-							"label": "{{description_label}}",
-							"value": "{Description}"
-						}
-					}
-				}
+				"content": {}
 			}
 		},
 		"card4": {
 			"sap.card": {
 				"header": {
-					"title": "This line is the title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
+					"title": "This Line is the Title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
 					"subTitle": " Thi is a sap.f.Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
 					"icon": {
-						"src": "../images/Woman_avatar_01.png",
+						"src": "./images/Woman_avatar_01.png",
 						"shape": "Square"
 					},
 					"status": {
@@ -160,52 +53,14 @@
 					}
 				},
 				"type": "List",
-				"content": {
-					"data": {
-						"json": [{
-								"Name": "Notebook Basic 15",
-								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1000",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Basic 17",
-								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1001",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Basic 18",
-								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1002",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							}
-						]
-					},
-					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
-						"title": {
-							"label": "{{title_label}}",
-							"value": "{Name}"
-						},
-						"description": {
-							"label": "{{description_label}}",
-							"value": "{Description}"
-						}
-					}
-				}
+				"content": {}
 			}
 		},
 		"card5": {
 			"sap.card": {
 				"type": "List",
 				"header": {
-					"title": "L3 Request list content Card",
+					"title": "L3 Request List Content Card",
 					"subTitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://activity-items"
@@ -214,86 +69,13 @@
 						"text": "Count"
 					}
 				},
-				"content": {
-					"data": {
-						"json": [{
-								"Name": "Notebook Basic 15",
-								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1000",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Basic 17",
-								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1001",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Basic 18",
-								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1002",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Basic 19",
-								"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1003",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "ITelO Vault",
-								"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
-								"Id": "HT-1007",
-								"SubCategoryId": "PDAs & Organizers",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Professional 15",
-								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-								"Id": "HT-1010",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Professional 26",
-								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-								"Id": "HT-1022",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Professional 27",
-								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-								"Id": "HT-1024",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							}
-						]
-					},
-					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
-						"title": {
-							"label": "{{title_label}}",
-							"value": "{Name}"
-						},
-						"description": {
-							"label": "{{description_label}}",
-							"value": "{Description}"
-						}
-					}
-				}
+				"content": {}
 			}
 		},
 		"card6": {
 			"sap.card": {
 				"header": {
-					"title": "This line is the title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
+					"title": "This Line is the Title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
 					"subTitle": " Thi is a sap.f.Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
 					"icon": {
 						"text": "GK"
@@ -303,45 +85,7 @@
 					}
 				},
 				"type": "List",
-				"content": {
-					"data": {
-						"json": [{
-								"Name": "Notebook Basic 15",
-								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1000",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Basic 17",
-								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1001",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							},
-							{
-								"Name": "Notebook Basic 18",
-								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1002",
-								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png"
-							}
-						]
-					},
-					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
-						"title": {
-							"label": "{{title_label}}",
-							"value": "{Name}"
-						},
-						"description": {
-							"label": "{{description_label}}",
-							"value": "{Description}"
-						}
-					}
-				}
+				"content": {}
 			}
 		},
 		"card7": {
@@ -354,30 +98,7 @@
 						"src": "sap-icon://activity-items"
 					}
 				},
-				"content": {
-					"data": {
-						"json": [{
-							"Name": "Notebook Basic 15",
-							"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-							"Id": "HT-1000",
-							"SubCategoryId": "Notebooks"
-						}]
-					},
-					"item": {
-						"title": {
-							"label": "{{title_label}}",
-							"value": "{Name}",
-							"type": "string",
-							"importance": 0
-						},
-						"description": {
-							"label": "{{description_label}}",
-							"value": "{Description}",
-							"type": "string",
-							"importance": 0
-						}
-					}
-				}
+				"content": {}
 			}
 		},
 		"line": {
@@ -387,7 +108,7 @@
 					"type": "Numeric",
 					"data": {
 						"request": {
-							"url": "./cardcontent/kpi.json"
+							"url": "./cardsdemo/cardcontent/kpi.json"
 						},
 						"path": "/kpiInfos/kpi"
 					},
@@ -401,7 +122,8 @@
 						"state": "{state}"
 					},
 					"details": "{details}",
-					"sideIndicators": [{
+					"sideIndicators": [
+						{
 							"title": "Target",
 							"number": "{target/number}",
 							"unit": "{target/unit}"
@@ -413,45 +135,7 @@
 						}
 					]
 				},
-				"content": {
-					"chartType": "Line",
-					"legend": {
-						"visible": true,
-						"position": "Right",
-						"alignment": "Center"
-					},
-					"plotArea": {
-						"dataLabel": {
-							"visible": true
-						}
-					},
-					"title": {
-						"text": "Line chart",
-						"visible": true,
-						"alignment": "Bottom"
-					},
-					"measureAxis": "valueAxis",
-					"dimensionAxis": "categoryAxis",
-					"data": {
-						"request": {
-							"url": "./cardcontent/revenue.json"
-						},
-						"path": "/list"
-					},
-					"dimensions": [{
-						"label": "Weeks",
-						"value": "{Week}"
-					}],
-					"measures": [{
-							"label": "Revenue",
-							"value": "{Revenue}"
-						},
-						{
-							"label": "Cost",
-							"value": "{Cost}"
-						}
-					]
-				}
+				"content": {}
 			}
 		},
 		"stackedColumn": {
@@ -477,7 +161,8 @@
 						"state": "{valueColor}"
 					},
 					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-					"sideIndicators": [{
+					"sideIndicators": [
+						{
 							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
 							"number": "3252.234",
 							"unit": "K"
@@ -489,44 +174,7 @@
 						}
 					]
 				},
-				"content": {
-					"chartType": "StackedColumn",
-					"legend": {
-						"visible": false
-					},
-					"plotArea": {
-						"dataLabel": {
-							"visible": false,
-							"showTotal": true
-						}
-					},
-					"title": {
-						"text": "Stacked column chart",
-						"visible": true,
-						"alignment": "Bottom"
-					},
-					"measureAxis": "valueAxis",
-					"dimensionAxis": "categoryAxis",
-					"data": {
-						"request": {
-							"url": "./cardcontent/revenue.json"
-						},
-						"path": "/list"
-					},
-					"dimensions": [{
-						"label": "Weeks",
-						"value": "{Week}"
-					}],
-					"measures": [{
-							"label": "Revenue",
-							"value": "{Revenue}"
-						},
-						{
-							"label": "Cost",
-							"value": "{Cost}"
-						}
-					]
-				}
+				"content": {}
 			}
 		},
 		"stackedBar": {
@@ -549,53 +197,15 @@
 						"trend": "{trend}",
 						"state": "{valueColor}"
 					},
-					"sideIndicators": [{
-						"title": "Decrease",
-						"number": "24",
-						"unit": "weeks"
-					}]
-				},
-				"content": {
-					"chartType": "StackedBar",
-					"legend": {
-						"visible": true,
-						"position": "Bottom",
-						"alignment": "Center"
-					},
-					"plotArea": {
-						"dataLabel": {
-							"visible": true,
-							"showTotal": false
-						},
-						"categoryAxisText": {
-							"visible": false
-						},
-						"valueAxisText": {
-							"text": "Value Axis text"
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
 						}
-					},
-					"title": {
-						"text": "Stacked Bar chart",
-						"visible": true,
-						"alignment": "Bottom"
-					},
-					"measureAxis": "valueAxis",
-					"dimensionAxis": "categoryAxis",
-					"data": {
-						"request": {
-							"url": "./cardcontent/revenue.json"
-						},
-						"path": "/list"
-					},
-					"dimensions": [{
-						"label": "Weeks",
-						"value": "{Week}"
-					}],
-					"measures": [{
-						"label": "Revenue",
-						"value": "{Revenue}"
-					}]
-				}
+					]
+				},
+				"content": {}
 			}
 		},
 		"Donut": {
@@ -618,47 +228,15 @@
 						"trend": "{trend}",
 						"state": "{valueColor}"
 					},
-					"sideIndicators": [{
-						"title": "Decrease",
-						"number": "24",
-						"unit": "weeks"
-					}]
-				},
-				"content": {
-					"chartType": "Donut",
-					"legend": {
-						"visible": true,
-						"position": "Top",
-						"alignment": "Center"
-					},
-					"plotArea": {
-						"dataLabel": {
-							"visible": true,
-							"showTotal": true
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
 						}
-					},
-					"title": {
-						"text": "Donut chart",
-						"visible": true,
-						"alignment": "Bottom"
-					},
-					"measureAxis": "size",
-					"dimensionAxis": "color",
-					"data": {
-						"request": {
-							"url": "./cardcontent/cost.json"
-						},
-						"path": "/milk"
-					},
-					"dimensions": [{
-						"label": "Store Name",
-						"value": "{Store Name}"
-					}],
-					"measures": [{
-						"label": "Revenue",
-						"value": "{Revenue}"
-					}]
-				}
+					]
+				},
+				"content": {}
 			}
 		}
 	},
@@ -703,530 +281,17 @@
 			}
 		}
 	},
-	"flexibleHeight": {
-		"card1": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 2x2",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card2": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 2x2",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card3": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 1x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card4": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 2x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card5": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 1x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card6": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 4x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card7": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 2x6",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card8": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 4x4",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card9": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 4x4 with image",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card10": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 2x2",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card11": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 2x2",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card12": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 6x4",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card13": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 6x4",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		}
-	},
-	"grid": {
-		"card1": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 2x2",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card2": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 4x2",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card3": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 1x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card4": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 2x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card5": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 1x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card6": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 4x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card7": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 2x6",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card8": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 4x4",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card9": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 4x4 with image",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card10": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 2x2",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card11": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 2x2",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card12": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 6x4",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card13": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 6x4",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		}
-	},
-	"zflow": {
-		"card1": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "1. Card Title 2x2",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card2": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "2. Card Title 4x2",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card3": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "3. Card Title 1x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card4": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "4. Card Title 2x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card5": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "5. Card Title 1x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card6": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "6. Card Title 4x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card7": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "7. Card Title 2x6",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card8": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "8. Card Title 4x4",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card9": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "../images/Woman_avatar_01.png"
-					},
-					"title": "9. Card Title 4x4 with image",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card10": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "10. Card Title 2x2",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card11": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "11. Card Title 2x2",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card12": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "12. Card Title 6x4",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card13": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "13. Card Title 6x4",
-					"subTitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		}
-	},
 	"listContent": {
 		"card13": {
 			"sap.card": {
 				"data": {
 					"request": {
-						"url": "./cardcontent/someitems.json"
+						"url": "./cardsdemo/cardcontent/someitems.json"
 					}
 				},
 				"type": "List",
 				"header": {
-					"title": "Request list content Card",
+					"title": "Request List Content Card",
 					"subTitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
@@ -1234,10 +299,12 @@
 					"status": {
 						"text": "8 of 17"
 					},
-					"actions": [{
-						"type": "Navigation",
-						"url": "https://www.sap.com"
-					}]
+					"actions": [
+						{
+							"type": "Navigation",
+							"url": "https://www.sap.com"
+						}
+					]
 				},
 				"content": {
 					"item": {
@@ -1275,20 +342,21 @@
 					}
 				},
 				"content": {
-					"items": [{
+					"items": [
+						{
 							"title": "Laurent Dubois",
-							"icon": "../images/Elena_Petrova.png",
+							"icon": "./images/Elena_Petrova.png",
 							"description": "I am Laurent. I put great attention to detail.",
 							"infoState": "Error",
 							"info": "Manager",
 							"highlight": "Success",
 							"action": {
-								"url": "https://www.w3schools.com"
+								"url": "https://www.sap.com"
 							}
 						},
 						{
 							"title": "Alain Chevalier",
-							"icon": "../images/Alain_Chevalier.png",
+							"icon": "./images/Alain_Chevalier.png",
 							"description": "I am Alain. I put great attention to detail.",
 							"infoState": "Success",
 							"info": "Credit Analyst",
@@ -1296,7 +364,7 @@
 						},
 						{
 							"title": "Alain Chevalier",
-							"icon": "../images/Monique_Legrand.png",
+							"icon": "./images/Monique_Legrand.png",
 							"description": "I am Alain. I put great attention to detail.",
 							"infoState": "Information",
 							"info": "Configuration Expert",
@@ -1304,19 +372,19 @@
 						},
 						{
 							"title": "Alain Chevalier",
-							"icon": "../images/Alain_Chevalier.png",
+							"icon": "./images/Alain_Chevalier.png",
 							"description": "I am Alain. I put great attention to detail.",
 							"highlight": "Warning"
 						},
 						{
 							"title": "Laurent Dubois",
-							"icon": "../images/Elena_Petrova.png",
+							"icon": "./images/Elena_Petrova.png",
 							"description": "I am Laurent. I put great attention to detail.",
 							"infoState": "Error",
 							"info": "Manager",
 							"highlight": "Success",
 							"action": {
-								"url": "https://www.w3schools.com"
+								"url": "https://www.sap.com"
 							}
 						}
 					]
@@ -1327,7 +395,7 @@
 			"sap.card": {
 				"type": "List",
 				"header": {
-					"title": "Request list content Card",
+					"title": "Request List Content Card",
 					"subTitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
@@ -1337,7 +405,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardcontent/someitems.json"
+							"url": "./cardsdemo/cardcontent/someitems.json"
 						}
 					},
 					"maxItems": 7,
@@ -1373,7 +441,8 @@
 					}
 				},
 				"content": {
-					"items": [{
+					"items": [
+						{
 							"title": "Call Simone",
 							"icon": "sap-icon://call",
 							"infoState": "Error"
@@ -1398,7 +467,8 @@
 					}
 				},
 				"content": {
-					"items": [{
+					"items": [
+						{
 							"title": "Alain Chevalier",
 							"icon": "sap-icon://person-placeholder"
 						},
@@ -1438,12 +508,13 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardcontent/tableitems.json"
+							"url": "./cardsdemo/cardcontent/tableitems.json"
 						},
 						"path": "/names"
 					},
 					"row": {
-						"columns": [{
+						"columns": [
+							{
 								"label": "First Name",
 								"value": "{firstName}"
 							},
@@ -1478,12 +549,13 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardcontent/tableitems.json"
+							"url": "./cardsdemo/cardcontent/tableitems.json"
 						},
 						"path": "/tableCard3"
 					},
 					"row": {
-						"columns": [{
+						"columns": [
+							{
 								"label": "Order ID",
 								"value": "{orderId}",
 								"url": "{orderUrl}"
@@ -1511,12 +583,13 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardcontent/tableitems.json"
+							"url": "./cardsdemo/cardcontent/tableitems.json"
 						},
 						"path": "/tableCard4"
 					},
 					"row": {
-						"columns": [{
+						"columns": [
+							{
 								"label": "Sales Order",
 								"value": "{salesOrder}",
 								"identifier": true
@@ -1546,13 +619,15 @@
 				"type": "List",
 				"header": {
 					"type": "Numeric",
-					"actions": [{
-						"type": "Navigation",
-						"url": "https://www.sap.com"
-					}],
+					"actions": [
+						{
+							"type": "Navigation",
+							"url": "https://www.sap.com"
+						}
+					],
 					"data": {
 						"request": {
-							"url": "./cardcontent/kpi.json"
+							"url": "./cardsdemo/cardcontent/kpi.json"
 						},
 						"path": "/kpiInfos/kpi"
 					},
@@ -1566,7 +641,8 @@
 						"state": "{state}"
 					},
 					"details": "{details}",
-					"sideIndicators": [{
+					"sideIndicators": [
+						{
 							"title": "Target",
 							"number": "{target/number}",
 							"unit": "{target/unit}"
@@ -1601,11 +677,13 @@
 						"trend": "{trend}",
 						"state": "{valueColor}"
 					},
-					"sideIndicators": [{
-						"title": "Decrease",
-						"number": "245438095430954.4532423",
-						"unit": "%"
-					}]
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "245438095430954.4532423",
+							"unit": "%"
+						}
+					]
 				}
 			}
 		},
@@ -1635,7 +713,8 @@
 						"state": "{valueColor}"
 					},
 					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-					"sideIndicators": [{
+					"sideIndicators": [
+						{
 							"title": "Target Long Target Long Target Long Target Long",
 							"number": "3252.234",
 							"unit": "K"
@@ -1665,7 +744,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardcontent/someitems.json"
+							"url": "./cardsdemo/cardcontent/someitems.json"
 						}
 					},
 					"item": {
@@ -1691,7 +770,7 @@
 					"type": "Numeric",
 					"data": {
 						"request": {
-							"url": "./cardcontent/kpi.json"
+							"url": "./cardsdemo/cardcontent/kpi.json"
 						},
 						"path": "/kpiInfos/kpi"
 					},
@@ -1708,7 +787,8 @@
 						"state": "{state}"
 					},
 					"details": "{details}",
-					"sideIndicators": [{
+					"sideIndicators": [
+						{
 							"title": "Target",
 							"number": "{target/number}",
 							"unit": "{target/unit}"
@@ -1724,12 +804,13 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardcontent/tableitems.json"
+							"url": "./cardsdemo/cardcontent/tableitems.json"
 						},
 						"path": "/names"
 					},
 					"row": {
-						"columns": [{
+						"columns": [
+							{
 								"title": "First Name",
 								"value": "{firstName}"
 							},
@@ -1749,23 +830,24 @@
 					"type": "Numeric",
 					"data": {
 						"request": {
-							"url": "./cardcontent/kpi.json"
+							"url": "./cardsdemo/cardcontent/kpi.json"
 						},
 						"path": "/kpiInfos/kpi"
 					},
-					"title": "Numeric Header with only title and subTitle",
+					"title": "Numeric Header with only Title and Subtitle",
 					"subTitle": "Some subtitle"
 				},
 				"type": "Table",
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardcontent/tableitems.json"
+							"url": "./cardsdemo/cardcontent/tableitems.json"
 						},
 						"path": "/names"
 					},
 					"row": {
-						"columns": [{
+						"columns": [
+							{
 								"title": "First Name",
 								"value": "{firstName}"
 							},
@@ -1787,7 +869,7 @@
 					"type": "Numeric",
 					"data": {
 						"request": {
-							"url": "./cardcontent/kpi.json"
+							"url": "./cardsdemo/cardcontent/kpi.json"
 						},
 						"path": "/kpiInfos/kpi"
 					},
@@ -1801,7 +883,8 @@
 						"state": "{state}"
 					},
 					"details": "{details}",
-					"sideIndicators": [{
+					"sideIndicators": [
+						{
 							"title": "Target",
 							"number": "{target/number}",
 							"unit": "{target/unit}"
@@ -1834,15 +917,18 @@
 					"dimensionAxis": "categoryAxis",
 					"data": {
 						"request": {
-							"url": "./cardcontent/revenue.json"
+							"url": "./cardsdemo/cardcontent/revenue.json"
 						},
 						"path": "/list"
 					},
-					"dimensions": [{
-						"label": "Weeks",
-						"value": "{Week}"
-					}],
-					"measures": [{
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
 							"label": "Revenue",
 							"value": "{Revenue}"
 						},
@@ -1877,7 +963,8 @@
 						"state": "{valueColor}"
 					},
 					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-					"sideIndicators": [{
+					"sideIndicators": [
+						{
 							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
 							"number": "3252.234",
 							"unit": "K"
@@ -1909,15 +996,18 @@
 					"dimensionAxis": "categoryAxis",
 					"data": {
 						"request": {
-							"url": "./cardcontent/revenue.json"
+							"url": "./cardsdemo/cardcontent/revenue.json"
 						},
 						"path": "/list"
 					},
-					"dimensions": [{
-						"label": "Weeks",
-						"value": "{Week}"
-					}],
-					"measures": [{
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
 							"label": "Revenue",
 							"value": "{Revenue}"
 						},
@@ -1950,11 +1040,13 @@
 						"trend": "{trend}",
 						"state": "{valueColor}"
 					},
-					"sideIndicators": [{
-						"title": "Decrease",
-						"number": "24",
-						"unit": "weeks"
-					}]
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
 				},
 				"content": {
 					"chartType": "StackedBar",
@@ -1981,18 +1073,22 @@
 					"dimensionAxis": "categoryAxis",
 					"data": {
 						"request": {
-							"url": "./cardcontent/revenue.json"
+							"url": "./cardsdemo/cardcontent/revenue.json"
 						},
 						"path": "/list"
 					},
-					"dimensions": [{
-						"label": "Weeks",
-						"value": "{Week}"
-					}],
-					"measures": [{
-						"label": "Revenue",
-						"value": "{Revenue}"
-					}]
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
 				}
 			}
 		},
@@ -2016,11 +1112,13 @@
 						"trend": "{trend}",
 						"state": "{valueColor}"
 					},
-					"sideIndicators": [{
-						"title": "Decrease",
-						"number": "24",
-						"unit": "weeks"
-					}]
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
 				},
 				"content": {
 					"chartType": "Donut",
@@ -2044,18 +1142,22 @@
 					"dimensionAxis": "color",
 					"data": {
 						"request": {
-							"url": "./cardcontent/cost.json"
+							"url": "./cardsdemo/cardcontent/cost.json"
 						},
 						"path": "/milk"
 					},
-					"dimensions": [{
-						"label": "Store Name",
-						"value": "{Store Name}"
-					}],
-					"measures": [{
-						"label": "Revenue",
-						"value": "{Revenue}"
-					}]
+					"dimensions": [
+						{
+							"label": "Store Name",
+							"value": "{Store Name}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
 				}
 			}
 		}
@@ -2065,7 +1167,7 @@
 			"sap.card": {
 				"type": "List",
 				"header": {
-					"title": "Request list content Card",
+					"title": "Request List Content Card",
 					"subTitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
@@ -2075,7 +1177,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardcontent/someitems.json"
+							"url": "./cardsdemo/cardcontent/someitems.json"
 						}
 					},
 					"item": {
@@ -2109,7 +1211,7 @@
 					"maxItems": "7",
 					"data": {
 						"request": {
-							"url": "./cardcontent/employees.json"
+							"url": "./cardsdemo/cardcontent/employees.json"
 						},
 						"path": "/Employees"
 					},
@@ -2152,7 +1254,7 @@
 					"maxItems": "5",
 					"data": {
 						"request": {
-							"url": "./cardcontent/employees.json"
+							"url": "./cardsdemo/cardcontent/employees.json"
 						},
 						"path": "/Activities"
 					},
@@ -2173,13 +1275,13 @@
 							"src": "{Icon}"
 						},
 						"actions": [
-						  {
-							"type": "Navigation",
-							"enabled": "{= ${url}}",
-							"parameters": {
-							  "url": "{url}"
+							{
+								"type": "Navigation",
+								"enabled": "{= ${url}}",
+								"parameters": {
+									"url": "{url}"
+								}
 							}
-						  }
 						]
 					}
 				}
@@ -2196,10 +1298,11 @@
 				},
 				"content": {
 					"maxItems": "7",
-					"items": [{
+					"items": [
+						{
 							"owner": "Laurent Dubois",
 							"title": "Accounts Payable Manager",
-							"ownerImage": "../images/Laurent_Dubois.png",
+							"ownerImage": "./images/Laurent_Dubois.png",
 							"icon": "sap-icon://activity-individual",
 							"description": "I am Laurent. I put great attention to detail.",
 							"dateTime": "Date(1371020400000)"
@@ -2207,7 +1310,7 @@
 						{
 							"owner": "Sabine Mayer",
 							"title": "Configuration Expert",
-							"ownerImage": "../images/Sabine_Mayer.png",
+							"ownerImage": "./images/Sabine_Mayer.png",
 							"icon": "sap-icon://settings",
 							"description": "I am Sabine. And can't wait to get to know the team.",
 							"dateTime": "Date(1376290800000)"
@@ -2215,7 +1318,7 @@
 						{
 							"owner": "Alain Chevalier",
 							"title": "Credit Analyst",
-							"ownerImage": "../images/Alain_Chevalier.png",
+							"ownerImage": "./images/Alain_Chevalier.png",
 							"icon": "sap-icon://manager-insight",
 							"description": "I am Alain. I put great attention to detail.",
 							"dateTime": "Date(1332403200000)"
@@ -2223,10 +1326,393 @@
 						{
 							"owner": "Monique Legrand",
 							"title": "Accountant Manager",
-							"ownerImage": "../images/Monique_Legrand.png",
+							"ownerImage": "./images/Monique_Legrand.png",
 							"description": "I am Monique. And i am the new head of Accounting.",
 							"icon": "sap-icon://account",
 							"dateTime": "Date(1422777600000)"
+						}
+					]
+				}
+			}
+		}
+	},
+	"adaptiveCard": {
+		"adaptive1": {
+			"_version": "1.17.0",
+			"sap.app": {
+				"id": "adativecard.embedded",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"body": [
+						{
+							"type": "TextBlock",
+							"text": "Publish Adaptive Card schema",
+							"weight": "Bolder",
+							"size": "Medium"
+						},
+						{
+							"type": "ColumnSet",
+							"columns": [
+								{
+									"type": "Column",
+									"width": "auto",
+									"items": [
+										{
+											"type": "Image",
+											"url": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg",
+											"size": "Small",
+											"style": "Person"
+										}
+									]
+								},
+								{
+									"type": "Column",
+									"width": "stretch",
+									"items": [
+										{
+											"type": "TextBlock",
+											"text": "Matt Hidinger",
+											"weight": "Bolder",
+											"wrap": true
+										},
+										{
+											"type": "TextBlock",
+											"spacing": "None",
+											"text": "Created {{DATE(2017-02-14T06:08:39Z, SHORT)}}",
+											"isSubtle": true,
+											"wrap": true
+										}
+									]
+								}
+							]
+						},
+						{
+							"type": "TextBlock",
+							"text": "Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.",
+							"wrap": true
+						},
+						{
+							"type": "FactSet",
+							"facts": [
+								{
+									"title": "Board:",
+									"value": "Adaptive Card"
+								},
+								{
+									"title": "List:",
+									"value": "Backlog"
+								},
+								{
+									"title": "Assigned to:",
+									"value": "Matt Hidinger"
+								},
+								{
+									"title": "Due date:",
+									"value": "Not set"
+								}
+							]
+						}
+					],
+					"actions": [
+						{
+							"type": "Action.ShowCard",
+							"title": "Set due date",
+							"card": {
+								"type": "AdaptiveCard",
+								"body": [
+									{
+										"type": "Input.Date",
+										"id": "dueDate"
+									}
+								],
+								"actions": [
+									{
+										"type": "Action.Submit",
+										"title": "OK"
+									}
+								]
+							}
+						},
+						{
+							"type": "Action.ShowCard",
+							"title": "Comment",
+							"card": {
+								"type": "AdaptiveCard",
+								"body": [
+									{
+										"type": "Input.Text",
+										"id": "comment",
+										"isMultiline": true,
+										"placeholder": "Enter your comment"
+									}
+								],
+								"actions": [
+									{
+										"type": "Action.Submit",
+										"title": "OK"
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		},
+		"adaptive2": {
+			"_version": "1.17.0",
+			"sap.app": {
+				"id": "adativecard.embedded",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"speak": "Your  meeting about \"Adaptive Card design session\" is starting at 12:30pmDo you want to snooze  or do you want to send a late notification to the attendees?",
+					"body": [
+						{
+							"type": "TextBlock",
+							"text": "Meeting",
+							"size": "Large",
+							"weight": "Bolder"
+						},
+						{
+							"type": "TextBlock",
+							"text": "Conf Room 112/3377 (10)",
+							"isSubtle": true
+						},
+						{
+							"type": "TextBlock",
+							"text": "22:30 - 23:30",
+							"isSubtle": true,
+							"spacing": "None"
+						},
+						{
+							"type": "TextBlock",
+							"text": "Snooze for"
+						},
+						{
+							"type": "Input.ChoiceSet",
+							"id": "snooze",
+							"value": "{reminders.overrides[0].minutes}",
+							"choices": [
+								{
+									"title": "5 minutes",
+									"value": "5"
+								},
+								{
+									"title": "15 minutes",
+									"value": "15"
+								},
+								{
+									"title": "30 minutes",
+									"value": "30"
+								}
+							]
+						}
+					],
+					"actions": [
+						{
+							"type": "Action.Submit",
+							"title": "Snooze",
+							"data": {
+								"x": "snooze"
+							}
+						},
+						{
+							"type": "Action.Submit",
+							"title": "I'll be late",
+							"data": {
+								"x": "late"
+							}
+						}
+					]
+				}
+			}
+		},
+		"adaptive3": {
+			"_version": "1.17.0",
+			"sap.app": {
+				"id": "adativecard.embedded",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"body": [
+						{
+							"type": "TextBlock",
+							"size": "medium",
+							"weight": "bolder",
+							"text": "Input.Text elements",
+							"horizontalAlignment": "center"
+						},
+						{
+							"type": "Input.Text",
+							"placeholder": "Name",
+							"style": "text",
+							"maxLength": 0,
+							"id": "SimpleVal"
+						},
+						{
+							"type": "Input.Text",
+							"placeholder": "Homepage",
+							"style": "url",
+							"maxLength": 0,
+							"id": "UrlVal"
+						},
+						{
+							"type": "Input.Text",
+							"placeholder": "Email",
+							"style": "email",
+							"maxLength": 0,
+							"id": "EmailVal"
+						},
+						{
+							"type": "Input.Text",
+							"placeholder": "Phone",
+							"style": "tel",
+							"maxLength": 0,
+							"id": "TelVal"
+						},
+						{
+							"type": "Input.Text",
+							"placeholder": "Comments",
+							"style": "text",
+							"isMultiline": true,
+							"maxLength": 0,
+							"id": "MultiLineVal"
+						},
+						{
+							"type": "Input.Number",
+							"placeholder": "Quantity",
+							"min": -5,
+							"max": 5,
+							"value": 1,
+							"id": "NumVal"
+						},
+						{
+							"type": "Input.Date",
+							"placeholder": "Due Date",
+							"id": "DateVal",
+							"value": "2017-09-20"
+						},
+						{
+							"type": "Input.Time",
+							"placeholder": "Start time",
+							"id": "TimeVal",
+							"value": "16:59"
+						},
+						{
+							"type": "TextBlock",
+							"size": "medium",
+							"weight": "bolder",
+							"text": "Input.ChoiceSet",
+							"horizontalAlignment": "center"
+						},
+						{
+							"type": "TextBlock",
+							"text": "What color do you want? (compact)"
+						},
+						{
+							"type": "Input.ChoiceSet",
+							"id": "CompactSelectVal",
+							"style": "compact",
+							"value": "1",
+							"choices": [
+								{
+									"title": "Red",
+									"value": "1"
+								},
+								{
+									"title": "Green",
+									"value": "2"
+								},
+								{
+									"title": "Blue",
+									"value": "3"
+								}
+							]
+						},
+						{
+							"type": "TextBlock",
+							"text": "What color do you want? (expanded)"
+						},
+						{
+							"type": "Input.ChoiceSet",
+							"id": "SingleSelectVal",
+							"style": "expanded",
+							"value": "1",
+							"choices": [
+								{
+									"title": "Red",
+									"value": "1"
+								},
+								{
+									"title": "Green",
+									"value": "2"
+								},
+								{
+									"title": "Blue",
+									"value": "3"
+								}
+							]
+						},
+						{
+							"type": "TextBlock",
+							"text": "What colors do you want? (multiselect)"
+						},
+						{
+							"type": "Input.ChoiceSet",
+							"id": "MultiSelectVal",
+							"isMultiSelect": true,
+							"value": "1,3",
+							"choices": [
+								{
+									"title": "Red",
+									"value": "1"
+								},
+								{
+									"title": "Green",
+									"value": "2"
+								},
+								{
+									"title": "Blue",
+									"value": "3"
+								}
+							]
+						},
+						{
+							"type": "TextBlock",
+							"size": "medium",
+							"weight": "bolder",
+							"text": "Input.Toggle",
+							"horizontalAlignment": "center"
+						},
+						{
+							"type": "Input.Toggle",
+							"title": "I accept the terms and conditions (True/False)",
+							"valueOn": "true",
+							"valueOff": "false",
+							"id": "AcceptsTerms"
+						},
+						{
+							"type": "Input.Toggle",
+							"title": "Red cars are better than other cars",
+							"valueOn": "RedCars",
+							"valueOff": "NotRedCars",
+							"id": "ColorPreference"
 						}
 					]
 				}
@@ -2238,7 +1724,7 @@
 			"sap.card": {
 				"data": {
 					"request": {
-						"url": "./cardcontent/someitems.json"
+						"url": "./cardsdemo/cardcontent/someitems.json"
 					}
 				},
 				"type": "List",
@@ -2293,7 +1779,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardcontent/someitems.json"
+							"url": "./cardsdemo/cardcontent/someitems.json"
 						}
 					},
 					"maxItems": 7,
@@ -2329,7 +1815,8 @@
 					}
 				},
 				"content": {
-					"items": [{
+					"items": [
+						{
 							"title": "Call Simone",
 							"icon": "sap-icon://call",
 							"infoState": "Error"
@@ -2354,7 +1841,8 @@
 					}
 				},
 				"content": {
-					"items": [{
+					"items": [
+						{
 							"title": "Alain Chevalier",
 							"icon": "sap-icon://person-placeholder"
 						},
@@ -2391,7 +1879,7 @@
 					"type": "Numeric",
 					"data": {
 						"request": {
-							"url": "./cardcontent/kpi.json"
+							"url": "./cardsdemo/cardcontent/kpi.json"
 						},
 						"path": "/kpiInfos/kpi"
 					},
@@ -2405,7 +1893,8 @@
 						"state": "{state}"
 					},
 					"details": "{details}",
-					"sideIndicators": [{
+					"sideIndicators": [
+						{
 							"title": "Target",
 							"number": "{target/number}",
 							"unit": "{target/unit}"
@@ -2438,15 +1927,18 @@
 					"dimensionAxis": "categoryAxis",
 					"data": {
 						"request": {
-							"url": "./cardcontent/revenue.json"
+							"url": "./cardsdemo/cardcontent/revenue.json"
 						},
 						"path": "/list"
 					},
-					"dimensions": [{
-						"label": "Weeks",
-						"value": "{Week}"
-					}],
-					"measures": [{
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
 							"label": "Revenue",
 							"value": "{Revenue}"
 						},
@@ -2471,7 +1963,7 @@
 							"valueColor": "Good"
 						}
 					},
-					"title": "Card with 24 rem height",
+					"title": "Card with 24rem Height",
 					"subTitle": "Analytical Card - Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
 					"unitOfMeasurement": "EUR",
 					"mainIndicator": {
@@ -2481,7 +1973,8 @@
 						"state": "{valueColor}"
 					},
 					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-					"sideIndicators": [{
+					"sideIndicators": [
+						{
 							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
 							"number": "3252.234",
 							"unit": "K"
@@ -2513,15 +2006,18 @@
 					"dimensionAxis": "categoryAxis",
 					"data": {
 						"request": {
-							"url": "./cardcontent/revenue.json"
+							"url": "./cardsdemo/cardcontent/revenue.json"
 						},
 						"path": "/list"
 					},
-					"dimensions": [{
-						"label": "Weeks",
-						"value": "{Week}"
-					}],
-					"measures": [{
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
 							"label": "Revenue",
 							"value": "{Revenue}"
 						},
@@ -2537,7 +2033,7 @@
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
-					"title": "Card with 12 rem height",
+					"title": "Card with 12rem Height",
 					"subTitle": "Analytical Card"
 				},
 				"content": {
@@ -2565,18 +2061,22 @@
 					"dimensionAxis": "categoryAxis",
 					"data": {
 						"request": {
-							"url": "./cardcontent/revenue.json"
+							"url": "./cardsdemo/cardcontent/revenue.json"
 						},
 						"path": "/list"
 					},
-					"dimensions": [{
-						"label": "Weeks",
-						"value": "{Week}"
-					}],
-					"measures": [{
-						"label": "Revenue",
-						"value": "{Revenue}"
-					}]
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
 				}
 			}
 		},
@@ -2593,7 +2093,7 @@
 							"valueColor": "Critical"
 						}
 					},
-					"title": "Card with NO height (content min-height 14 rem)",
+					"title": "Card with NO Height (Content min-height 14rem)",
 					"subTitle": "Analytical Card",
 					"mainIndicator": {
 						"number": "{n}",
@@ -2601,11 +2101,13 @@
 						"trend": "{trend}",
 						"state": "{valueColor}"
 					},
-					"sideIndicators": [{
-						"title": "Decrease",
-						"number": "24",
-						"unit": "weeks"
-					}]
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
 				},
 				"content": {
 					"chartType": "Donut",
@@ -2629,18 +2131,22 @@
 					"dimensionAxis": "color",
 					"data": {
 						"request": {
-							"url": "./cardcontent/cost.json"
+							"url": "./cardsdemo/cardcontent/cost.json"
 						},
 						"path": "/milk"
 					},
-					"dimensions": [{
-						"label": "Store Name",
-						"value": "{Store Name}"
-					}],
-					"measures": [{
-						"label": "Revenue",
-						"value": "{Revenue}"
-					}]
+					"dimensions": [
+						{
+							"label": "Store Name",
+							"value": "{Store Name}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
 				}
 			}
 		},
@@ -2648,7 +2154,7 @@
 			"sap.card": {
 				"type": "List",
 				"header": {
-					"title": "NO height (content min-height 5 rem)",
+					"title": "NO height (Content min-height 5rem)",
 					"subTitle": "List Card",
 					"icon": {
 						"src": "sap-icon://accept"
@@ -2658,7 +2164,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardcontent/someitems.json"
+							"url": "./cardsdemo/cardcontent/someitems.json"
 						}
 					},
 					"maxItems": 7,
@@ -2687,18 +2193,20 @@
 			"sap.card": {
 				"type": "List",
 				"header": {
-					"title": "NO height (content min-height 5 rem)",
+					"title": "NO Height (Content min-height 5rem)",
 					"subTitle": "List Card",
 					"icon": {
 						"src": "sap-icon://activities"
 					}
 				},
 				"content": {
-					"items": [{
-						"title": "Call Simone",
-						"icon": "sap-icon://call",
-						"infoState": "Error"
-					}]
+					"items": [
+						{
+							"title": "Call Simone",
+							"icon": "sap-icon://call",
+							"infoState": "Error"
+						}
+					]
 				}
 			}
 		},
@@ -2706,14 +2214,15 @@
 			"sap.card": {
 				"type": "List",
 				"header": {
-					"title": "NO height (content min-height 5rem)",
+					"title": "NO Height (Content min-height 5rem)",
 					"subTitle": "List Card",
 					"icon": {
 						"src": "sap-icon://activities"
 					}
 				},
 				"content": {
-					"items": [{
+					"items": [
+						{
 							"title": "Alain Chevalier",
 							"icon": "sap-icon://person-placeholder"
 						},
@@ -2748,7 +2257,7 @@
 				"configuration": {
 					"parameters": {
 						"server": {
-							"value": "./cardcontent/analyticsCloud/example1.json"
+							"value": "./cardsdemo/cardcontent/analyticsCloud/example1.json"
 						},
 						"system": {
 							"value": "moses"
@@ -2781,7 +2290,8 @@
 						"state": "Good"
 					},
 					"details": "Top product price",
-					"sideIndicators": [{
+					"sideIndicators": [
+						{
 							"title": "Target",
 							"number": "120",
 							"unit": "EUR"
@@ -2811,7 +2321,6 @@
 						"state": "Critical"
 					}
 				},
-
 				"content": {
 					"options": {
 						"chart": {
@@ -2824,20 +2333,35 @@
 							"enabled": false
 						},
 						"xAxis": {
-							"categories": ["Apples", "Bananas", "Oranges"]
+							"categories": [
+								"Apples",
+								"Bananas",
+								"Oranges"
+							]
 						},
 						"yAxis": {
 							"title": {
 								"text": "Fruit eaten"
 							}
 						},
-						"series": [{
-							"name": "Jane",
-							"data": [1, 0, 4]
-						}, {
-							"name": "John",
-							"data": [5, 7, 3]
-						}]
+						"series": [
+							{
+								"name": "Jane",
+								"data": [
+									1,
+									0,
+									4
+								]
+							},
+							{
+								"name": "John",
+								"data": [
+									5,
+									7,
+									3
+								]
+							}
+						]
 					},
 					"actions": [
 						{

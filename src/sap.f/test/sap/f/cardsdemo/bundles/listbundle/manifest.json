@@ -13,7 +13,7 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "./bundles/listbundle/mockdata/employees.json"
+					"url": "./cardsdemo/bundles/listbundle/mockdata/employees.json"
 				}
 			},
 			"item": {
