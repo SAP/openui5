@@ -262,6 +262,7 @@ function(
 				this._registerTokenizerResizeHandler();
 			}.bind(this)
 		}, this);
+		this._aTokenValidators = [];
 
 		this.setShowValueHelp(true);
 		this.setShowSuggestion(true);
@@ -459,7 +460,7 @@ function(
 		// If item is selected and no token was already created on sapfocusleave
 		if (item && !this._bTokenIsAdded) {
 			var text = this.getValue();
-			oTokenizer._addValidateToken({
+			this.addValidateToken({
 				text: text,
 				token: token,
 				suggestionObject: item,
@@ -559,46 +560,6 @@ function(
 	MultiInput.prototype.onBeforeRendering = function () {
 		Input.prototype.onBeforeRendering.apply(this, arguments);
 		this.getAggregation("tokenizer").setEnabled(this.getEnabled());
-	};
-
-	/**
-	 * A validation callback called before any new token gets added to the tokens aggregation.
-	 *
-	 * @callback sap.m.MultiInput.fnValidator
-	 * @param {string} text The source text
-	 * @param {sap.m.Token} suggestedToken Suggested token
-	 * @param {object} suggestionObject Any object used to find the suggested token. This property is available when the <code>MultiInput</code> has a list or tabular suggestions.
-	 * @param {function} asyncCallback Callback which accepts {sap.m.Token} as a parameter and gets called after validation has finished.
-	 * @public
-	 */
-
-	/**
-	 * Function adds a validation callback called before any new token gets added to the tokens aggregation.
-	 *
-	 * @param {sap.m.MultiInput.fnValidator} fnValidator The validation callback
-	 * @public
-	 */
-	MultiInput.prototype.addValidator = function (fnValidator) {
-		this.getAggregation("tokenizer").addValidator(fnValidator);
-	};
-
-	/**
-	 * Function removes a validation callback
-	 *
-	 * @param {sap.m.MultiInput.fnValidator} fnValidator The validation callback to be removed
-	 * @public
-	 */
-	MultiInput.prototype.removeValidator = function (fnValidator) {
-		this.getAggregation("tokenizer").removeValidator(fnValidator);
-	};
-
-	/**
-	 * Function removes all validation callbacks
-	 *
-	 * @public
-	 */
-	MultiInput.prototype.removeAllValidators = function () {
-		this.getAggregation("tokenizer").removeAllValidators();
 	};
 
 	/**
@@ -717,9 +678,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype.onpaste = function (oEvent) {
-		var oTokenizer = this.getAggregation("tokenizer"),
-			sOriginalText, i,aSeparatedText,
-			aValidTokens = [],
+		var sOriginalText, i,aSeparatedText,
 			aAddedTokens = [];
 
 		if (this.getValueHelpOnly()) { // BCP: 1670448929
@@ -751,8 +710,8 @@ function(
 					for (i = 0; i < aSeparatedText.length; i++) {
 						if (aSeparatedText[i]) { // pasting from excel can produce empty strings in the array, we don't have to handle empty strings
 							var oToken = this._convertTextToToken(aSeparatedText[i], true);
-							if (oToken) {
-								aValidTokens.push(oToken);
+							if (this._addUniqueToken(oToken)) {
+								aAddedTokens.push(oToken);
 							} else {
 								lastInvalidText = aSeparatedText[i];
 							}
@@ -761,17 +720,17 @@ function(
 
 					this.updateDomValue(lastInvalidText);
 
-					for (i = 0; i < aValidTokens.length; i++) {
-						if (oTokenizer._addUniqueToken(aValidTokens[i])) {
-							aAddedTokens.push(aValidTokens[i]);
-						}
-					}
-
 					if (aAddedTokens.length > 0) {
 						this.fireTokenUpdate({
 							addedTokens: aAddedTokens,
 							removedTokens: [],
 							type: Tokenizer.TokenUpdateType.Added
+						});
+
+						this.fireTokenChange({
+							addedTokens : aAddedTokens,
+							removedTokens : [],
+							type : Tokenizer.TokenChangeType.TokensChanged
 						});
 					}
 				}
@@ -822,54 +781,8 @@ function(
 		}
 	};
 
-	MultiInput.prototype._convertTextToToken = function (text, bCopiedToken) {
-		var oTokenizer = this.getAggregation("tokenizer"),
-			result = null,
-			item = null,
-			token = null,
-			iOldLength = oTokenizer.getTokens().length;
-
-		if (!this.getEditable()) {
-			return null;
-		}
-
-		text = text.trim();
-
-		if (!text) {
-			return null;
-		}
-
-		if ( this._getIsSuggestionPopupOpen() || bCopiedToken) {
-			// only take item from suggestion list if popup is open
-			// or token is pasted (otherwise pasting multiple tokens at once does not work)
-			if (this._hasTabularSuggestions()) {
-				//if there is suggestion table, select the correct item, to avoid selecting the wrong item but with same text.
-				item = this._oSuggestionTable.getSelectedItem();
-			} else {
-				// impossible to enter other text
-				item = this._getSuggestionItem(text);
-			}
-		}
-
-		if (item && item.getText && item.getKey) {
-			token = new Token({
-				text : item.getText(),
-				key : item.getKey()
-			});
-		}
-
-		result = oTokenizer._validateToken({
-			text: text,
-			token: token,
-			suggestionObject: item,
-			validationCallback: this._validationCallback.bind(this, iOldLength)
-		});
-
-		return result;
-	};
-
 	/**
-	 * A callback executed on ._validateToken call
+	 * A callback executed on this._validateToken call
 	 *
 	 * @param {integer} iOldLength Prior validation length of the Tokens
 	 * @param {boolean} bValidated Is token/input successfully validated
@@ -1101,62 +1014,6 @@ function(
 		Input.prototype.onsapescape.apply(this, arguments);
 	};
 
-
-	/**
-	 * Function tries to turn current text into a token
-	 * @param {boolean} bExactMatch Whether an exact match should happen
-	 * @private
-	 */
-	MultiInput.prototype._validateCurrentText = function (bExactMatch) {
-		var oTokenizer = this.getAggregation("tokenizer"),
-			text = this.getValue(),
-			iOldLength = oTokenizer.getTokens().length; //length of tokens before validating
-
-		if (!text || !this.getEditable()) {
-			return;
-		}
-
-		text = text.trim();
-
-		if (!text) {
-			return;
-		}
-
-		var item = null;
-
-
-		if (bExactMatch || this._getIsSuggestionPopupOpen()) { // only take item from suggestion list if popup is open, otherwise it can be
-			if (this._hasTabularSuggestions()) {
-				//if there is suggestion table, select the correct item, to avoid selecting the wrong item but with same text.
-				item = this._oSuggestionTable.getSelectedItem();
-			} else {
-				// impossible to enter other text
-				item = this._getSuggestionItem(text, bExactMatch);
-			}
-		}
-
-		var token = null;
-		if (item && item.getText && item.getKey) {
-			token = new Token({
-				text: item.getText(),
-				key: item.getKey()
-			});
-
-			this._bTokenIsAdded = true;
-		}
-
-		// if maxTokens limit is not set or the added tokens are less than the limit
-		if (!this.getMaxTokens() || this.getTokens().length < this.getMaxTokens()) {
-			this._bIsValidating = true;
-			oTokenizer._addValidateToken({
-				text: text,
-				token: token,
-				suggestionObject: item,
-				validationCallback: this._validationCallback.bind(this, iOldLength)
-			});
-		}
-	};
-
 	/**
 	 * Functions returns true if the input's text is completely selected
 	 *
@@ -1378,7 +1235,7 @@ function(
 		TokensChanged: "tokensChanged"
 	};
 
-	MultiInput.WaitForAsyncValidation = "sap.m.Tokenizer.WaitForAsyncValidation";
+	MultiInput.WaitForAsyncValidation = "sap.m.MultiInput.WaitForAsyncValidation";
 
 	/**
 	 * Get the reference element which the message popup should dock to
@@ -1954,6 +1811,299 @@ function(
 		return bShouldSuggest && !this._bShowListWithTokens;
 	};
 
+	/**
+	 * Function adds a validation callback called before any new token gets added to the tokens aggregation.
+	 *
+	 * @public
+	 * @param {function} fValidator The validation function
+	 */
+	MultiInput.prototype.addValidator = function(fValidator) {
+		if (typeof (fValidator) === "function") {
+			this._aTokenValidators.push(fValidator);
+		}
+	};
+
+	/**
+	 * Function removes a validation callback.
+	 *
+	 * @public
+	 * @param {function} fValidator The validation function
+	 */
+	MultiInput.prototype.removeValidator = function(fValidator) {
+		var i = this._aTokenValidators.indexOf(fValidator);
+		if (i !== -1) {
+			this._aTokenValidators.splice(i, 1);
+		}
+	};
+
+	/**
+	 * Function removes all validation callbacks.
+	 *
+	 * @public
+	 */
+	MultiInput.prototype.removeAllValidators = function() {
+		this._aTokenValidators = [];
+	};
+
+	/**
+	 * Function returns all validation callbacks.
+	 *
+	 * @public
+	 * @returns {function[]} An array of token validation callbacks
+	 */
+	MultiInput.prototype.getValidators = function() {
+		return this._aTokenValidators;
+	};
+
+	/**
+	 * Function validates the given text and adds a new token if validation was successful.
+	 *
+	 * @public
+	 * @param {object} oParameters Parameter bag containing the following fields:
+	 * @param {string} oParameters.text The source text {sap.m.Token}
+	 * @param {object} [oParameters.token] Suggested token
+	 * @param {object} [oParameters.suggestionObject] Any object used to find the suggested token
+	 * @param {function} [oParameters.validationCallback] Callback which gets called after validation has finished
+	 * @param {function[]} aValidators [optional] Array of all validators to be used
+	 */
+	MultiInput.prototype.addValidateToken = function(oParameters, aValidators) {
+		var oToken = this._validateToken(oParameters, aValidators),
+			bAddTokenSuccessful = this._addUniqueToken(oToken, oParameters.validationCallback);
+
+		if (bAddTokenSuccessful) {
+			this.fireTokenUpdate({
+				addedTokens : [oToken],
+				removedTokens : [],
+				type : Tokenizer.TokenUpdateType.Added
+			});
+
+			// added for backward compatibility
+			this.fireTokenChange({
+				addedTokens : [oToken],
+				removedTokens : [],
+				type : Tokenizer.TokenChangeType.TokensChanged
+			});
+		}
+	};
+
+	/**
+	 * Function validates a given token using the set validators.
+	 *
+	 * @private
+	 * @param {object} oParameters Parameter bag containing fields for text, token, suggestionObject and validation callback
+	 * @param {function[]} aValidators [optional] Array of all validators to be used
+	 * @returns {sap.m.Token} A valid token or null
+	 */
+	MultiInput.prototype._validateToken = function(oParameters, aValidators) {
+		var oToken = oParameters.token,
+			fValidateCallback = oParameters.validationCallback,
+			oSuggestionObject = oParameters.suggestionObject,
+			sTokenText = oToken && oToken.getText(),
+			sText = sTokenText ? sTokenText : oParameters.text,
+			iLength;
+
+		aValidators = aValidators ? aValidators : this._aTokenValidators;
+		iLength = aValidators.length;
+
+		// if there are no custom validators, just return given token
+		if (!iLength) {
+			if (!oToken && fValidateCallback) {
+				fValidateCallback(false);
+			}
+			return oToken;
+		}
+
+		for (var i = 0; i < iLength; i++) {
+			oToken = aValidators[i]({
+				text : sText,
+				suggestedToken : oToken,
+				suggestionObject : oSuggestionObject,
+				asyncCallback : this._getAsyncValidationCallback(aValidators, i, sText, oSuggestionObject, fValidateCallback)
+			});
+
+			if (!oToken) {
+				if (fValidateCallback) {
+					fValidateCallback(false);
+				}
+				return null;
+			}
+
+			if (oToken === MultiInput.WaitForAsyncValidation) {
+				return null;
+			}
+		}
+
+		return oToken;
+	};
+
+	/**
+	 * Function adds token if it does not already exist.
+	 *
+	 * @private
+	 * @param {sap.m.Token} oToken The token to be added
+	 * @param {function} fValidateCallback [optional] A validation function callback
+	 * @returns {boolean} True if the token was added
+	 */
+	MultiInput.prototype._addUniqueToken = function(oToken, fValidateCallback) {
+		if (!oToken) {
+			return false;
+		}
+
+		var bTokenUnique = !this._tokenExists(oToken);
+
+		bTokenUnique && this.addToken(oToken);
+
+		if (fValidateCallback) {
+			fValidateCallback(bTokenUnique);
+		}
+
+		return bTokenUnique;
+	};
+
+	/**
+	 * Function checks if a given token already exists in the tokens aggregation based on their keys.
+	 *
+	 * @private
+	 * @param {sap.m.Token} oToken The token to search for
+	 * @return {boolean} true if it exists, otherwise false
+	 */
+	MultiInput.prototype._tokenExists = function(oToken) {
+		var oTokens = this.getTokens(),
+			iLength = oTokens.length,
+			sKey = oToken && oToken.getKey();
+
+		if (!sKey) {
+			return false;
+		}
+
+		for (var i = 0; i < iLength; i++) {
+			if (oTokens[i].getKey() === sKey) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+
+	/**
+	 * Function tries to turn pasted text into a token and returns it.
+	 *
+	 * @returns {sap.m.Token|null} The newly created and validated token
+	 * @private
+	 */
+	MultiInput.prototype._convertTextToToken = function (text, bCopiedToken) {
+		var oTokenizer = this.getAggregation("tokenizer"),
+			iOldLength = oTokenizer.getTokens().length,
+			oOptions = this._configureTokenOptions(text, false, bCopiedToken),
+			sValue = oOptions.text,
+			oItem = oOptions.item,
+			oToken = oOptions.token;
+
+		if (!sValue) {
+			return null;
+		}
+
+		return this._validateToken({
+			text: sValue,
+			token: oToken,
+			suggestionObject: oItem,
+			validationCallback: this._validationCallback.bind(this, iOldLength)
+		});
+	};
+
+	/**
+	 * Function tries to turn current text into a token
+	 * when ENTER is pressed, or onsapfocusleave is called.
+	 *
+	 * @param {boolean} bExactMatch Whether an exact match should happen
+	 * @private
+	 */
+	MultiInput.prototype._validateCurrentText = function (bExactMatch) {
+		var oTokenizer = this.getAggregation("tokenizer"),
+			iOldLength = oTokenizer.getTokens().length, //length of tokens before validating
+			oOptions = this._configureTokenOptions(this.getValue(), bExactMatch),
+			sValue = oOptions.text,
+			oItem = oOptions.item,
+			oToken = oOptions.token;
+
+		if (!sValue) {
+			return null;
+		}
+
+		if (oItem) {
+			this._bTokenIsAdded = true;
+		}
+
+		// if maxTokens limit is not set or the added tokens are less than the limit
+		if (!this.getMaxTokens() || this.getTokens().length < this.getMaxTokens()) {
+			this._bIsValidating = true;
+			this.addValidateToken({
+				text: sValue,
+				token: oToken,
+				suggestionObject: oItem,
+				validationCallback: this._validationCallback.bind(this, iOldLength)
+			});
+		}
+	};
+
+	MultiInput.prototype._configureTokenOptions = function (sValue, bExactMatch, bPasted) {
+		var oItem, oToken;
+
+		if (sValue && this.getEditable()) {
+			sValue = sValue.trim();
+		}
+
+		if (sValue && (bExactMatch || bPasted || this._getIsSuggestionPopupOpen())) { // only take item from suggestion list if popup is open, otherwise it can be
+			if (this._hasTabularSuggestions()) {
+				//if there is suggestion table, select the correct item, to avoid selecting the wrong item but with same text.
+				oItem = this._oSuggestionTable.getSelectedItem();
+			} else {
+				// impossible to enter other text
+				oItem = this._getSuggestionItem(sValue, bExactMatch);
+			}
+		}
+
+		if (oItem && oItem.getText && oItem.getKey) {
+			oToken = new Token({
+				text : oItem.getText(),
+				key : oItem.getKey()
+			});
+		}
+
+		return {
+			text: sValue,
+			item: oItem,
+			token: oToken
+		};
+	};
+
+	/**
+	 * Function returns a callback function which is used for executing validators after an asynchronous validator was triggered.
+	 * @param {function[]} aValidators The validator array
+	 * @param {int} iValidatorIndex The current validator index
+	 * @param {string} sInitialText The initial text used for validation
+	 * @param {object} oSuggestionObject A prevalidated token or suggestion item
+	 * @param {function} fValidateCallback Callback after validation has finished
+	 * @returns {function} A callback function which is used for executing validators
+	 * @private
+	 */
+	MultiInput.prototype._getAsyncValidationCallback = function(aValidators, iValidatorIndex, sInitialText,
+															   oSuggestionObject, fValidateCallback) {
+		var that = this;
+
+		return function(oToken) {
+			if (oToken) { // continue validating
+				oToken = that.addValidateToken({
+					text : sInitialText,
+					token : oToken,
+					suggestionObject : oSuggestionObject,
+					validationCallback : fValidateCallback
+				}, aValidators.slice(iValidatorIndex + 1));
+			} else {
+				fValidateCallback && fValidateCallback(false);
+			}
+		};
+	};
 
 	return MultiInput;
 

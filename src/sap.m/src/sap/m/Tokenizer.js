@@ -214,8 +214,6 @@ sap.ui.define([
 		this._oTokensWidthMap = {};
 		this._oIndicator = null;
 
-		this._aTokenValidators = [];
-
 		this._oScroller = new ScrollEnablement(this, this.getId() + "-scrollContainer", {
 			horizontal : true,
 			vertical : false,
@@ -1055,11 +1053,13 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {function} fValidator The validation function
+	 * @deprecated As of version 1.81, replaced by {@link MultiInput.prototype.addValidator}
 	 */
 	Tokenizer.prototype.addValidator = function(fValidator) {
-		if (typeof (fValidator) === "function") {
-			this._aTokenValidators.push(fValidator);
-		}
+		Log.warning(
+			"[Warning]:",
+			"You are attempting to use deprecated method 'addValidator()', please use MultiInput.prototype.addValidator instead.",
+			this);
 	};
 
 	/**
@@ -1067,122 +1067,26 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {function} fValidator The validation function
+	 * @deprecated As of version 1.81, replaced by {@link MultiInput.prototype.addValidator}
 	 */
 	Tokenizer.prototype.removeValidator = function(fValidator) {
-		var i = this._aTokenValidators.indexOf(fValidator);
-		if (i !== -1) {
-			this._aTokenValidators.splice(i, 1);
-		}
+		Log.warning(
+			"[Warning]:",
+			"You are attempting to use deprecated method 'addValidator()', please use MultiInput.prototype.addValidator instead.",
+			this);
 	};
 
 	/**
 	 * Function removes all validation callbacks
 	 *
 	 * @public
+	 * @deprecated As of version 1.81, replaced by {@link MultiInput.prototype.addValidator}
 	 */
 	Tokenizer.prototype.removeAllValidators = function() {
-		this._aTokenValidators = [];
-	};
-
-	/**
-	 * Function validates a given token using the set validators.
-	 *
-	 * @private
-	 * @param {object} oParameters Parameter bag containing fields for text, token, suggestionObject and validation callback
-	 * @param {function[]} aValidators [optional] Array of all validators to be used
-	 * @returns {sap.m.Token} A valid token or null
-	 */
-	Tokenizer.prototype._validateToken = function(oParameters, aValidators) {
-		var oToken = oParameters.token;
-		var sText;
-
-		if (oToken && oToken.getText()) {
-			sText = oToken.getText();
-		} else {
-			sText = oParameters.text;
-		}
-
-		var fValidateCallback = oParameters.validationCallback;
-		var oSuggestionObject = oParameters.suggestionObject;
-
-		var i, validator, length;
-
-		if (!aValidators) {
-			aValidators = this._aTokenValidators;
-		}
-
-		length = aValidators.length;
-		if (length === 0) { // no custom validators, just return given token
-			if (!oToken && fValidateCallback) {
-				fValidateCallback(false);
-			}
-			return oToken;
-		}
-
-		for (i = 0; i < length; i++) {
-			validator = aValidators[i];
-
-			oToken = validator({
-				text : sText,
-				suggestedToken : oToken,
-				suggestionObject : oSuggestionObject,
-				asyncCallback : this._getAsyncValidationCallback(aValidators, i, sText, oSuggestionObject, fValidateCallback)
-			});
-
-			if (!oToken) {
-				if (fValidateCallback) {
-					fValidateCallback(false);
-				}
-				return null;
-			}
-
-			if (oToken === Tokenizer.WaitForAsyncValidation) {
-				return null;
-			}
-		}
-
-		return oToken;
-	};
-
-	/**
-	 * Function returns a callback function which is used for executing validators after an asynchronous validator was triggered.
-	 * @param {function[]} aValidators The validator array
-	 * @param {int} iValidatorIndex The current validator index
-	 * @param {string} sInitialText The initial text used for validation
-	 * @param {object} oSuggestionObject A pre-validated token or suggestion item
-	 * @param {function} fValidateCallback Callback after validation has finished
-	 * @returns {function} A callback function which is used for executing validators
-	 * @private
-	 */
-	Tokenizer.prototype._getAsyncValidationCallback = function(aValidators, iValidatorIndex, sInitialText,
-															   oSuggestionObject, fValidateCallback) {
-		var that = this,
-			bAddTokenSuccess;
-
-		return function(oToken) {
-			if (oToken) { // continue validating
-				aValidators = aValidators.slice(iValidatorIndex + 1);
-				oToken = that._validateToken({
-					text : sInitialText,
-					token : oToken,
-					suggestionObject : oSuggestionObject,
-					validationCallback : fValidateCallback
-				}, aValidators);
-				bAddTokenSuccess = that._addUniqueToken(oToken, fValidateCallback);
-
-				if (bAddTokenSuccess) {
-					that.fireTokenUpdate({
-						addedTokens : [oToken],
-						removedTokens : [],
-						type : Tokenizer.TokenUpdateType.Added
-					});
-				}
-			} else {
-				if (fValidateCallback) {
-					fValidateCallback(false);
-				}
-			}
-		};
+		Log.warning(
+			"[Warning]:",
+			"You are attempting to use deprecated method 'addValidator()', please use MultiInput.prototype.addValidator instead.",
+			this);
 	};
 
 	/**
@@ -1194,71 +1098,13 @@ sap.ui.define([
 	 * @param {object} [oParameters.token] Suggested token
 	 * @param {object} [oParameters.suggestionObject] Any object used to find the suggested token
 	 * @param {function} [oParameters.validationCallback] Callback which gets called after validation has finished
+	 * @deprecated As of version 1.81, replaced by {@link MultiInput.prototype.addValidator}
 	 */
 	Tokenizer.prototype.addValidateToken = function(oParameters) {
-		var oToken = this._validateToken(oParameters);
-		this._addUniqueToken(oToken, oParameters.validationCallback);
-	};
-
-	/**
-	 * Private function used by MultiInput which validates the given text and adds a new token if validation was successful.
-	 *
-	 * @private
-	 * @param {object} oParameters Parameter bag containing the following fields:
-	 * @param {string} oParameters.text The source text {sap.m.Token}
-	 * @param {object} [oParameters.token] Suggested token
-	 * @param {object} [oParameters.suggestionObject] Any object used to find the suggested token
-	 * @param {function} [oParameters.validationCallback] Callback which gets called after validation has finished
-	 */
-	Tokenizer.prototype._addValidateToken = function(oParameters) {
-		var oToken = this._validateToken(oParameters),
-			bAddTokenSuccessful = this._addUniqueToken(oToken, oParameters.validationCallback);
-
-		if (bAddTokenSuccessful) {
-			this.fireTokenUpdate({
-				addedTokens : [oToken],
-				removedTokens : [],
-				type : Tokenizer.TokenUpdateType.Added
-			});
-		}
-	};
-
-	/**
-	 * Function adds token if it does not already exist.
-	 *
-	 * @private
-	 * @param {sap.m.Token} oToken The token to be added
-	 * @param {function} fValidateCallback [optional] A validation function callback
-	 * @returns {boolean} True if the token was added
-	 */
-	Tokenizer.prototype._addUniqueToken = function(oToken, fValidateCallback) {
-		if (!oToken) {
-			return false;
-		}
-
-		var tokenExists = this._tokenExists(oToken);
-		if (tokenExists) {
-			var oParent = this.getParent();
-			if (oParent instanceof sap.m.MultiInput && fValidateCallback) {
-				fValidateCallback(false);
-			}
-
-			return false;
-		}
-
-		this.addToken(oToken);
-
-		if (fValidateCallback) {
-			fValidateCallback(true);
-		}
-
-		this.fireTokenChange({
-			addedTokens : [oToken],
-			removedTokens : [],
-			type : Tokenizer.TokenChangeType.TokensChanged
-		});
-
-		return true;
+		Log.warning(
+			"[Warning]:",
+			"You are attempting to use deprecated method 'addValidator()', please use MultiInput.prototype.addValidator instead.",
+			this);
 	};
 
 	/**
@@ -1282,39 +1128,6 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype._checkFocus = function() {
 		return this.getDomRef() && containsOrEquals(this.getDomRef(), document.activeElement);
-	};
-
-
-	/**
-	 * Function checks if a given token already exists in the tokens aggregation based on their keys.
-	 *
-	 * @private
-	 * @param {sap.m.Token} oToken The token to search for
-	 * @return {boolean} true if it exists, otherwise false
-	 */
-	Tokenizer.prototype._tokenExists = function(oToken) {
-		var tokens = this.getTokens();
-
-		if (!(tokens && tokens.length)) {
-			return false;
-		}
-
-		var key = oToken.getKey();
-		if (!key) {
-			return false;
-		}
-
-		var length = tokens.length;
-		for (var i = 0; i < length; i++) {
-			var currentToken = tokens[i];
-			var currentKey = currentToken.getKey();
-
-			if (currentKey === key) {
-				return true;
-			}
-		}
-
-		return false;
 	};
 
 	Tokenizer.prototype.addToken = function(oToken, bSuppressInvalidate) {
@@ -1775,9 +1588,6 @@ sap.ui.define([
 		Added : "added",
 		Removed : "removed"
 	};
-
-	Tokenizer.WaitForAsyncValidation = "sap.m.Tokenizer.WaitForAsyncValidation";
-
 
 	return Tokenizer;
 
