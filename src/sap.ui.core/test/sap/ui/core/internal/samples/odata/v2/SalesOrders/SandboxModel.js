@@ -299,7 +299,8 @@ sap.ui.define([
 				"MERGE SalesOrderLineItemSet(SalesOrderID='102.2',ItemPosition='010')" :
 					getSaveResponseIncreasingCallCount(),
 
-				/* Test Case III*/
+				/* Test Case III */
+				/* More responses in the aRegExpFixture! */
 				"SalesOrderSet('103')" : {
 					headers : getMessageHeader(undefined, oCurrentMessages.reset().add("order",
 						"ToLineItems(SalesOrderID='103',ItemPosition='050')/Quantity")),
@@ -308,60 +309,6 @@ sap.ui.define([
 						return true;
 					},
 					source : "Messages/TC3/SalesOrderSet.json"
-				},
-				"SalesOrderSet('103')/ToLineItems?$skip=0&$top=4" : {
-					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
-						undefined, 0, 4)
-				},
-				"SalesOrderSet('103')/ToLineItems?$skip=4&$top=1" : [{
-					ifMatch : ithCall.bind(null, 1),
-					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[4].Quantity = "2";
-						}, 4, 1)
-				}, {
-					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
-						undefined, 4, 1)
-				}],
-				// This and the following until POST are needed to ensure scrolling works
-				"SalesOrderSet('103')/ToLineItems?$skip=4&$top=2" : [{
-					ifMatch : ithCall.bind(null, 1),
-					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[4].Quantity = "2";
-						}, 4, 2)
-				}, {
-					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
-						undefined, 4, 2)
-				}],
-				"SalesOrderSet('103')/ToLineItems?$skip=4&$top=3" : [{
-					ifMatch : ithCall.bind(null, 1),
-					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[4].Quantity = "2";
-						}, 4, 3)
-				}, {
-					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
-						undefined, 4, 3)
-				}],
-				"SalesOrderSet('103')/ToLineItems?$skip=4&$top=4" : [{
-					ifMatch : ithCall.bind(null, 1),
-					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[4].Quantity = "2";
-						}, 4, 4)
-				}, {
-					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
-						undefined, 4, 4)
-				}],
-				"SalesOrderSet('103')/ToLineItems?$skip=5&$top=1" : {
-					message : { "d" : { "results" : []}}
-				},
-				"SalesOrderSet('103')/ToLineItems?$skip=5&$top=2" : {
-					message : { "d" : { "results" : []}}
-				},
-				"SalesOrderSet('103')/ToLineItems?$skip=5&$top=3" : {
-					message : { "d" : { "results" : []}}
 				},
 				"POST SalesOrderItem_FixQuantity?ItemPosition='050'&SalesOrderID='103'" : {
 					ifMatch : increaseSaveCount.bind(),
@@ -387,6 +334,7 @@ sap.ui.define([
 				},
 
 				/* Test Case IV */
+				/* More responses in the aRegExpFixture! */
 				"SalesOrderSet('104')" : {
 					ifMatch : function (request) {
 						iTimesSaved = 0;
@@ -400,407 +348,15 @@ sap.ui.define([
 						.add("error", "(SalesOrderID='104',ItemPosition='010')/Note")
 						.add("warning", "ToLineItems(SalesOrderID='104',ItemPosition='050')/Note")
 						.add("warning", "(SalesOrderID='104',ItemPosition='050')/Note")),
-					ifMatch : ithCall.bind(null, 1)
+					ifMatch : ithCall.bind(null, 1),
+					source : "Messages/TC4/SalesOrderSet.json"
 				}, {
 					headers : getMessageHeader([0, 2]),
-					ifMatch : ithCall.bind(null, 2)
+					ifMatch : ithCall.bind(null, 2),
+					source : "Messages/TC4/SalesOrderSet.json"
 				}, {
 					source : "Messages/TC4/SalesOrderSet.json"
 				}],
-				"SalesOrderSet('104')/ToLineItems?$skip=0&$top=4" : [{
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 0, 4)
-				}, {
-					headers : getMessageHeader([1]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 0, 4)
-				}, {
-					headers : getMessageHeader([1]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 0, 4)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 0, 4)
-				}, {
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						undefined, 0, 4)
-				}],
-				"SalesOrderSet('104')/ToLineItems?$skip=0&$top=1" : [{
-					headers : getMessageHeader([1]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 0, 1)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 0, 1)
-				}, {
-					headers : getMessageHeader([1]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 0, 1)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 0, 1)
-				}, {
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						undefined, 0, 1)
-				}],
-				// This and the following until MERGE are needed to ensure scrolling works
-				"SalesOrderSet('104')/ToLineItems?$skip=1&$top=4" : [{
-					headers : getMessageHeader([3]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 1, 4)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 1, 4)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 1, 4)
-				}, {
-					headers : getMessageHeader([3]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 1, 4)
-				}, {
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						undefined, 1, 4)
-				}],
-				"SalesOrderSet('104')/ToLineItems?$skip=2&$top=4" : [{
-					headers : getMessageHeader([3]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 2, 4)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 2, 4)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 2, 4)
-				}, {
-					headers : getMessageHeader([3]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 2, 4)
-				}, {
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						undefined, 2, 4)
-				}],
-				"SalesOrderSet('104')/ToLineItems?$skip=4&$top=1" : [{
-					headers : getMessageHeader([3]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 4, 1)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 4, 1)
-				}, {
-					headers : getMessageHeader([3]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 4, 1)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 4, 1)
-				}, {
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						undefined, 4, 1)
-				}],
-				"SalesOrderSet('104')/ToLineItems?$skip=4&$top=2" : [{
-					headers : getMessageHeader([3]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 4, 2)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 4, 2)
-				}, {
-					headers : getMessageHeader([3]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 4, 2)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 4, 2)
-				}, {
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						undefined, 4, 2)
-				}],
-				"SalesOrderSet('104')/ToLineItems?$skip=4&$top=3" : [{
-					headers : getMessageHeader([3]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 4, 3)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 4, 3)
-				}, {
-					headers : getMessageHeader([3]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 4, 3)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 4, 3)
-				}, {
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						undefined, 4, 3)
-				}],
-				"SalesOrderSet('104')/ToLineItems?$skip=4&$top=4" : [{
-					headers : getMessageHeader([3]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 4, 4)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 1 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-						}, 4, 4)
-				}, {
-					headers : getMessageHeader([3]),
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && !transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 4, 4)
-				}, {
-					ifMatch : function (request) {
-						var transientOnly =
-							request["requestHeaders"]["sap-messages"] === "transientOnly";
-						return iTimesSaved == 2 && transientOnly;
-					},
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						function (aItems) {
-							aItems[0].Note = mMessageKey2MessageData["error"].message;
-							aItems[4].Note = mMessageKey2MessageData["warning"].message;
-						}, 4, 4)
-				}, {
-					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
-						undefined, 4, 4)
-				}],
-				"SalesOrderSet('104')/ToLineItems?$skip=5&$top=1" : {
-					message : { "d" : { "results" : []}}
-				},
-				"SalesOrderSet('104')/ToLineItems?$skip=5&$top=2" : {
-					message : { "d" : { "results" : []}}
-				},
-				"SalesOrderSet('104')/ToLineItems?$skip=5&$top=3" : {
-					message : { "d" : { "results" : []}}
-				},
 				"MERGE SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='010')" :
 					getSaveResponseIncreasingCallCount(),
 				"MERGE SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='050')" :
@@ -842,9 +398,117 @@ sap.ui.define([
 					source : "Messages/TC8/SalesOrderSet.json"
 				}]
 			},
+			aRegExpFixture : [{
+
+				/* Test Case III */
+				regExp :
+					/GET .*\/SalesOrderSet\('103'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])/,
+				response : [{
+					buildResponse : function (aMatch, oResponse) {
+						applySkipTop(aMatch, oResponse);
+					},
+					ifMatch : ithCall.bind(null, 1),
+					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
+						function (aItems) { aItems[4].Quantity = "2"; })
+				}, {
+					buildResponse : function (aMatch, oResponse) {
+						applySkipTop(aMatch, oResponse);
+					},
+					source : "Messages/TC3/SalesOrderSet-ToLineItems.json"
+				}]
+			}, {
+				regExp : /GET .*\/SalesOrderSet\('103'\)\/ToLineItems\?\$skip=[5-9]&\$top=\d/,
+				response : {
+					message : { "d" : { "results" : []}}
+				}
+			}, {
+
+				/* Test Case IV */
+				regExp :
+					/GET .*\/SalesOrderSet\('104'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])/,
+				response : [{
+					buildResponse : function (aMatch, oResponse) {
+						applySkipTop(aMatch, oResponse);
+					},
+					ifMatch : ithCall.bind(null, 1),
+					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["error"].message;
+						})
+				}, {
+					buildResponse : function (aMatch, oResponse) {
+						var oMessages = JSON.parse(oResponse["headers"]["sap-message"]),
+							iSkip = parseInt(aMatch[1]);
+
+						if (iSkip) {
+							oResponse["headers"]["sap-message"] =
+								JSON.stringify(oMessages.details[0]);
+						} else {
+							oMessages.details = [];
+							oResponse["headers"]["sap-message"] = JSON.stringify(oMessages);
+						}
+
+						applySkipTop(aMatch, oResponse);
+					},
+					headers : getMessageHeader(undefined, oCurrentMessages.reset()
+								.add("error", "(SalesOrderID='104',ItemPosition='010')/Note")
+								.add("warning", "(SalesOrderID='104',ItemPosition='050')/Note")),
+					ifMatch : function (request) {
+						var transientOnly =
+							request["requestHeaders"]["sap-messages"] === "transientOnly";
+						return iTimesSaved == 2 && !transientOnly;
+					},
+					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["error"].message;
+							aItems[4].Note = mMessageKey2MessageData["warning"].message;
+						})
+				}, {
+					buildResponse : function (aMatch, oResponse) {
+						applySkipTop(aMatch, oResponse);
+					},
+					ifMatch : function (request) {
+						var transientOnly =
+							request["requestHeaders"]["sap-messages"] === "transientOnly";
+						return iTimesSaved == 2 && transientOnly;
+					},
+					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["error"].message;
+							aItems[4].Note = mMessageKey2MessageData["warning"].message;
+						})
+				}, {
+					buildResponse : function (aMatch, oResponse) {
+						applySkipTop(aMatch, oResponse);
+					},
+					source : "Messages/TC4/SalesOrderSet-ToLineItems.json"
+				}]
+			}, {
+				regExp : /GET .*\/SalesOrderSet\('104'\)\/ToLineItems\?\$skip=[5-9]&\$top=\d/,
+				response : {
+					message : { "d" : { "results" : []}}
+				}
+			}],
 			sFilterBase : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/",
 			sSourceBase : "sap/ui/core/internal/samples/odata/v2/SalesOrders/data"
 		};
+
+	/**
+	 * Helper function which gets the line items from the response, applies the $skip and $top
+	 * parameters from the url and stores it back in the response.
+	 *
+	 * @param {object[]} aMatch The match array from the matching URL
+	 * @param {object} oResponse The response which will be sent to the client
+	 */
+	function applySkipTop(aMatch, oResponse) {
+		var oResponseBody = JSON.parse(oResponse.message),
+			aLineItems = oResponseBody.d.results,
+			iSkip = parseInt(aMatch[1]),
+			iTop = parseInt(aMatch[2]);
+
+		oResponseBody.d.results = aLineItems.slice(iSkip, iSkip + iTop);
+		oResponse.message = JSON.stringify(oResponseBody);
+	}
 
 	/**
 	 * Reads and returns the line items, each one has the specific note added.
@@ -863,8 +527,6 @@ sap.ui.define([
 	 */
 	function getLineItems(sFilePath, fnModifyData, iSkip, iTop) {
 		var oLineItems;
-		iSkip = iSkip || 0;
-		iTop = iSkip + (iTop || 4);
 
 		if (!oLineItemsModel || oLineItemsModel.getProperty("/path") !== sFilePath) {
 			oLineItemsModel = new JSONModel();
@@ -877,7 +539,11 @@ sap.ui.define([
 			fnModifyData(oLineItems.d.results);
 		}
 
-		oLineItems.d.results = oLineItems.d.results.slice(iSkip, iTop);
+		if (iSkip || iTop) {
+			iSkip = iSkip || 0;
+			iTop = iSkip + (iTop || 4);
+			oLineItems.d.results = oLineItems.d.results.slice(iSkip, iTop);
+		}
 		return oLineItems;
 	}
 
@@ -946,7 +612,7 @@ sap.ui.define([
 			if (!TestUtils.isRealOData()) {
 				oSandbox = sinon.sandbox.create();
 				TestUtils.setupODataV4Server(oSandbox, oMockData.mFixture, oMockData.sSourceBase,
-					oMockData.sFilterBase);
+					oMockData.sFilterBase, oMockData.aRegExpFixture);
 			} else {
 				mParameters = Object.assign({}, mParameters, {
 					serviceUrl : TestUtils.proxy(mParameters.serviceUrl)
