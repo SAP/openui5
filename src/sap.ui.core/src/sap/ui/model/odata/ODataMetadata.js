@@ -20,6 +20,8 @@ sap.ui.define([
 	"use strict";
 	/*eslint max-nested-callbacks: 0*/
 
+	var sClassName = "sap.ui.model.odata.ODataMetadata";
+
 	/**
 	 * Constructor for a new ODataMetadata.
 	 *
@@ -1582,6 +1584,71 @@ sap.ui.define([
 			return oEntityType.key.propertyRef.map(function (oKey) {
 				return oKey.name;
 			});
+		}
+	};
+
+	/**
+	 * Gets the canonical path of the entity referenced by the given function import and its
+	 * parameters based on the function import's metadata.
+	 *
+	 * @param {Object<string,any>} mFunctionInfo
+	 *   The function import metadata as returned by {@link #_getFunctionImportMetadata}
+	 * @param {Object<string,string>} mFunctionParameters
+	 *   Maps the function parameter name to its correct formatted value; for example
+	 *   {SalesOrderID : "'42'"}
+	 * @returns {string}
+	 *   The canonical path of the entity referenced by the given function import and its
+	 *   parameters; <code>undefined</code> if the path cannot be determined
+	 * @private
+	 */
+	ODataMetadata.prototype._getCanonicalPathOfFunctionImport = function (mFunctionInfo,
+			mFunctionParameters) {
+		var sActionFor, mEntitySet, mEntityType, i, aKeys, sParameterName, aPropertyReferences,
+			aExtensions = mFunctionInfo.extensions,
+			sId = "";
+
+		if (aExtensions) {
+			for (i = 0; i < aExtensions.length; i += 1) {
+				if (aExtensions[i].name === "action-for") {
+					sActionFor = aExtensions[i].value;
+					break;
+				}
+			}
+		}
+		if (sActionFor) {
+			mEntityType = this._getEntityTypeByName(sActionFor);
+		} else if (mFunctionInfo.entitySet) {
+			mEntityType = this._getEntityTypeByPath(mFunctionInfo.entitySet);
+		} else if (mFunctionInfo.returnType) {
+			mEntityType = this._getEntityTypeByName(mFunctionInfo.returnType);
+		}
+		if (mEntityType) {
+			mEntitySet = this._getEntitySetByType(mEntityType);
+			if (mEntitySet && mEntityType.key && mEntityType.key.propertyRef) {
+				aPropertyReferences = mEntityType.key.propertyRef;
+				if (aPropertyReferences.length === 1) {
+					sParameterName = aPropertyReferences[0].name;
+					if (mFunctionParameters[sParameterName]) {
+						sId = mFunctionParameters[sParameterName];
+					}
+				} else {
+					aKeys = [];
+					for (i = 0; i < aPropertyReferences.length; i += 1) {
+						sParameterName = aPropertyReferences[i].name;
+						if (mFunctionParameters[sParameterName]) {
+							aKeys.push(sParameterName + "=" + mFunctionParameters[sParameterName]);
+						}
+					}
+					sId = aKeys.join(",");
+				}
+				return "/" + mEntitySet.name + "(" + sId + ")";
+			} else if (!mEntitySet) {
+				Log.error("Cannot determine path of the EntitySet for the function import '"
+					+ mFunctionInfo.name + "'", this, sClassName);
+			} else {
+				Log.error("Cannot determine keys of the EntityType '" + mEntityType.entityType
+					+ "' for the function import '" + mFunctionInfo.name + "'", this, sClassName);
+			}
 		}
 	};
 
