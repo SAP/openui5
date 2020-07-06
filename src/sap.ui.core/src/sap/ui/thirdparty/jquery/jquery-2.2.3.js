@@ -5121,7 +5121,9 @@ jQuery.fn.extend( {
 
 
 var
-	rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:-]+)[^>]*)\/>/gi,
+	// ##### BEGIN: MODIFIED BY SAP
+	// rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:-]+)[^>]*)\/>/gi,
+	// ##### END: MODIFIED BY SAP
 
 	// Support: IE 10-11, Edge 10240+
 	// In IE/Edge using regex groups here causes severe slowdowns.
@@ -5321,7 +5323,10 @@ function remove( elem, selector, keepData ) {
 
 jQuery.extend( {
 	htmlPrefilter: function( html ) {
-		return html.replace( rxhtmlTag, "<$1></$2>" );
+		// ##### BEGIN: MODIFIED BY SAP
+		// return html.replace( rxhtmlTag, "<$1></$2>" );
+		return html;
+		// ##### END: MODIFIED BY SAP
 	},
 
 	clone: function( elem, dataAndEvents, deepDataAndEvents ) {
