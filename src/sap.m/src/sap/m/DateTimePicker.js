@@ -525,26 +525,6 @@ sap.ui.define([
 			this._oPopup.attachAfterOpen(_handleAfterOpen, this);
 			this._oPopup.attachAfterClose(_handleAfterClose, this);
 
-			if (Device.system.desktop) {
-				this._oPopoverKeydownEventDelegate = {
-						onkeydown: function(oEvent) {
-							var oKC = KeyCodes,
-							iKC = oEvent.which || oEvent.keyCode,
-							bAlt = oEvent.altKey;
-
-							// Popover should be closed when Alt+Arrow key or F4 is pressed
-							if ((bAlt && (iKC === oKC.ARROW_UP || iKC === oKC.ARROW_DOWN)) || iKC === oKC.F4) {
-								_handleOkPress.call(this, oEvent);
-								//focus the input
-								this.focus();
-								oEvent.preventDefault();
-							}
-						}
-				};
-
-				this._oPopup.addEventDelegate(this._oPopoverKeydownEventDelegate, this);
-			}
-
 			// define a parent-child relationship between the control's and the _picker pop-up
 			this.setAggregation("_popup", this._oPopup, true);
 

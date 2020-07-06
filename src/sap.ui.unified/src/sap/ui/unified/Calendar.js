@@ -1142,19 +1142,26 @@ sap.ui.define([
 		}
 
 		oEvent.preventDefault(); //ie expands the address bar on F4
-		if (bShift) {
-			switch (this._iMode) {
-				case 0:
-				case 1:
+
+		switch (this._iMode) {
+			case 0:
+				if (bShift) {
 					this._showYearPicker();
-					break;
-				case 2:
+				} else {
+					this._showMonthPicker();
+				}
+				break;
+			case 1:
+				if (bShift) {
+					this._showYearPicker();
+				}
+				break;
+			case 2:
+				if (bShift) {
 					this._showYearRangePicker();
-					break;
-				default:
-			}
-		} else {
-			this._showMonthPicker();
+				}
+				break;
+			default:
 		}
 	};
 
