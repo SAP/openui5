@@ -684,5 +684,32 @@
         ]
       }
     ]
+  },
+  "1.71.19": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "d634be8616e4e20e56d1aa3c108bdb2e09343d51",
+        "type": "FIX",
+        "text": " routing.history: keep history direction in case the browser hash isn't changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003521542020"
+          }
+        ]
+      },
+      {
+        "id": "f26a746eadd0f8d46bfa1129c42f7c4ecae9c38a",
+        "type": "FIX",
+        "text": " sap.ui.core.util.ExportTypeCSV - Cell overflow injection fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080220914"
+          }
+        ]
+      }
+    ]
   }
 }

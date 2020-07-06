@@ -1691,5 +1691,87 @@
         ]
       }
     ]
+  },
+  "1.71.19": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "362c50b842a0e5183fe2e3c63c62825ef109c247",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: changes its value when support2400 property is used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003964512020"
+          }
+        ]
+      },
+      {
+        "id": "1fea7549c4ad0ba75efe43bf21610db3661f58a4",
+        "type": "FIX",
+        "text": " sap.m.Wizard: iOS/Safari scroll fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002548752020"
+          }
+        ]
+      },
+      {
+        "id": "44d486d91b836aa5e8482558b32f458157caba25",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Navigating through the IME popover via arrow keys fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080200423"
+          }
+        ]
+      },
+      {
+        "id": "96a783a477bc22f9640e3ed48deb51fd17f49043",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumb: Prevented redundant invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080143818"
+          }
+        ]
+      },
+      {
+        "id": "54958bcb4afae196c1a630726f0430572dfc3c96",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Tests are now passing on IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070068167"
+          }
+        ]
+      },
+      {
+        "id": "be72f3e17e7a62a6c00afcaa9a845d47535ce301",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: on focus in behavior over the input is now consistent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003307462020"
+          }
+        ]
+      },
+      {
+        "id": "04ceba90ddc6eae9ac86f4ee3d67efe38fe4aedc",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: min/max date are now properly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003923222020"
+          }
+        ]
+      }
+    ]
   }
 }

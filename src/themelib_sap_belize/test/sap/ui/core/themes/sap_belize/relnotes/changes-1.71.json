@@ -41,5 +41,21 @@
         ]
       }
     ]
+  },
+  "1.71.19": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "572cac55141a8f94e5d52887220c90b871e2671b",
+        "type": "FIX",
+        "text": " \"72\" font: fix Vietnamese characters with misplaced dot below",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002309352020"
+          }
+        ]
+      }
+    ]
   }
 }
