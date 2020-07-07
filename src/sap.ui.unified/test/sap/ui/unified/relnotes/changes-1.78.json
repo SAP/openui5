@@ -5,7 +5,7 @@
       {
         "id": "f65c37172ee255404df82e3febb61beadfb02bea",
         "type": "FIX",
-        "text": " sap.ui.unified.Month: doesn\u0027t throw error on theme changed",
+        "text": " sap.ui.unified.Month: doesn't throw error on theme changed",
         "references": [
           {
             "type": "BCP",
@@ -54,6 +54,26 @@
           {
             "type": "BCP",
             "reference": "2070040553"
+          }
+        ]
+      }
+    ]
+  },
+  "1.78.3": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "80aeda823c927464b306dfb7eca4265c6c664870",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: Dummy cell's visibility fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070244746"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080217137"
           }
         ]
       }
