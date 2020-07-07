@@ -1085,7 +1085,7 @@ sap.ui.define([
 			width: oEvent.getParameter("width"),
 			height: oEvent.getParameter("height"),
 			domRef: $indicator,
-			insertAt: $indicator.index()
+			insertAt: oEvent.getParameter("indicatorIndex")
 		};
 
 		this._scheduleIEPolyfill();

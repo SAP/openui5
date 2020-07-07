@@ -231,11 +231,14 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 	 * @param {jQuery.Event} oDragEvent The jQuery drag event.
 	 */
 	GridDragOver.prototype._showIndicator = function(mDropPosition, oDragEvent) {
-		var $targetGridItem = this._findContainingGridItem(mDropPosition.targetControl),
-			$insertTarget = $targetGridItem || mDropPosition.targetControl.$(),
+		var oDropContainer = this._oDropContainer,
+			oTargetControl = mDropPosition.targetControl,
+			iTargetIndex = oDropContainer.indexOfAggregation(this._sTargetAggregation, oTargetControl),
+			$targetGridItem = this._findContainingGridItem(oTargetControl),
+			$insertTarget = $targetGridItem || oTargetControl.$(),
 			mStyles;
 
-		if (this._oDropContainer.isA("sap.f.GridContainer")) {
+		if (oDropContainer.isA("sap.f.GridContainer")) {
 			// todo: find better way to find the item wrapper when it is not grid item, needed for IE
 			$insertTarget = $insertTarget.closest(".sapFGridContainerItemWrapper");
 		}
@@ -261,18 +264,20 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 			this._$indicator.insertBefore($insertTarget);
 		} else {
 			this._$indicator.insertAfter($insertTarget);
+			iTargetIndex += 1;
 		}
 
 		this._$indicator.show();
 
 		// when drop indicator is shown, it becomes the new "drag from"
-		this._iDragFromIndex = this._$indicator.index();
+		this._iDragFromIndex = iTargetIndex;
 
 		/* IE Polyfill */
 
 		// Let the container decide the dimensions of the indicator.
 		var oEventData = {
-			indicator: this._$indicator
+			indicator: this._$indicator,
+			indicatorIndex: this._iDragFromIndex
 		};
 
 		if (this._mDropIndicatorSize) {
