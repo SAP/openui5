@@ -37,9 +37,9 @@
 				masterPages: [
 					new sap.m.Page("master",{
 						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+						content: [new sap.m.Button({text: "That is a Button"})]
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
@@ -79,10 +79,10 @@
 
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
+					new sap.m.Page({
 						title : "Master 1"
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 2"
 					})
 				],
@@ -90,7 +90,7 @@
 					new sap.m.Page("detail",{
 						title : "Detail 1"
 					}),
-					new sap.m.Page("detail2",{
+					new sap.m.Page({
 						title : "Detail 2"
 					})
 				],
@@ -115,6 +115,7 @@
 				done();
 			});
 			oSplitApp._oPopOver.openBy(oSplitApp._oShowMasterBtn);
+			sap.ui.getCore().applyChanges();
 		});
 
 		QUnit.test("ShowHideMode_portrait", function(assert){
@@ -133,11 +134,11 @@
 
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
+					new sap.m.Page("master1",{
 						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+						content: [new sap.m.Button({text: "That is a Button"})]
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
@@ -154,15 +155,15 @@
 			oSplitApp.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
-			assert.equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp", "Parent of Master page should be SpltApp.");
-			assert.ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered initially.");
-			assert.ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered initially.");
-			assert.equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
-			assert.ok(jQuery.sap.byId("splitapp-MasterBtn").length, "Master Button should be rendered");
-			assert.ok(!jQuery.sap.byId("splitapp-MasterBtn").is(":hidden"), "Master Button is shown");
-			assert.equal(oSplitApp.$().children().length, 3, "Splitapp should render both master and detail.");
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp", "Parent of Master page should be SpltApp.");
+			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered initially.");
+			ok(jQuery.sap.byId("master1").length, "Master Nav Container should be rendered initially.");
+			equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
+			ok(jQuery.sap.byId("splitapp-MasterBtn").length, "Master Button should be rendered");
+			ok(!jQuery.sap.byId("splitapp-MasterBtn").is(":hidden"), "Master Button is shown");
+			equal(oSplitApp.$().children().length, 3, "Splitapp should render both master and detail.");
 
 			oSplitApp.showMaster();
 			setTimeout(function(){
@@ -187,11 +188,11 @@
 
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
+					new sap.m.Page({
 						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+						content: [new sap.m.Button({text: "That is a Button"})]
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
@@ -233,11 +234,11 @@
 
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
-						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
-					}),
 					new sap.m.Page("master2",{
+						title : "Master 1",
+						content: [new sap.m.Button({text: "That is a Button"})]
+					}),
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
@@ -254,13 +255,13 @@
 			oSplitApp.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
-			assert.ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
-			assert.ok(jQuery.sap.byId("master").length, "Master Nav Container page should be rendered");
-			assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
-			assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
-			assert.equal(oSplitApp.$("Master").outerWidth(),320, "Master width should be 320px.");
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
+			ok(jQuery.sap.byId("master2").length, "Master Nav Container page should be rendered");
+			equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+			equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+			equal(oSplitApp.$("Master").outerWidth(),320, "Master width should be 320px.");
 
 			oSplitApp.destroy();
 		});
@@ -280,11 +281,11 @@
 
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
+					new sap.m.Page("master3",{
 						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+						content: [new sap.m.Button({text: "That is a Button"})]
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
@@ -301,13 +302,13 @@
 			oSplitApp.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
-			assert.ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
-			assert.ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
-			assert.equal(oSplitApp.$().children().length, 3 ,"Master page should be rendered initially.");
-			assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
-			assert.equal(oSplitApp.$("Master").outerWidth(), 320, "Master width should be 320px.");
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
+			ok(jQuery.sap.byId("master3").length, "Master Nav Container should be rendered");
+			equal(oSplitApp.$().children().length, 3 ,"Master page should be rendered initially.");
+			equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+			equal(oSplitApp.$("Master").outerWidth(), 320, "Master width should be 320px.");
 
 			oSplitApp.destroy();
 		});
@@ -327,11 +328,11 @@
 
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
+					new sap.m.Page("master4",{
 						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+						content: [new sap.m.Button({text: "That is a Button"})]
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
@@ -348,12 +349,12 @@
 			oSplitApp.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
-			assert.ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
-			assert.ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
-			assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
-			assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
+			ok(jQuery.sap.byId("master4").length, "Master Nav Container should be rendered");
+			equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+			equal(oSplitApp.isMasterShown(), true, "Master area is shown");
 
 			assert.ok(!jQuery.sap.byId("splitapp-Master").is(":hidden"),"Master should be visible.");
 			assert.equal(jQuery.sap.byId("splitapp-Master").outerWidth(),320, "Master width should be 320px.");
@@ -371,11 +372,11 @@
 
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
+					new sap.m.Page({
 						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+						content: [new sap.m.Button( {text: "That is a Button"})]
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
@@ -419,11 +420,11 @@
 
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
+					new sap.m.Page("master5",{
 						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+						content: [new sap.m.Button({text: "That is a Button"})]
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
@@ -443,14 +444,14 @@
 			oSplitApp.showMaster();
 
 			setTimeout(function(){
-				assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-				assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
-				assert.ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
-				assert.ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
-				assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+				ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+				equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+				ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
+				ok(jQuery.sap.byId("master5").length, "Master Nav Container should be rendered");
+				equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
 
-				assert.ok(!jQuery("#splitapp-Master").is(":hidden"),"Master should not be hidden.");
-				assert.equal(jQuery("#splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
+				ok(!jQuery("#splitapp-Master").is(":hidden"),"Master should not be hidden.");
+				equal(jQuery("#splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
 				oSplitApp.destroy();
 				done();
 			}, 500);
@@ -465,11 +466,11 @@
 			this.stub(sap.ui.Device, "system", oSystem);
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
+					new sap.m.Page("master6",{
 						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+						content: [new sap.m.Button({text: "That is a Button"})]
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
@@ -486,21 +487,21 @@
 			oSplitApp.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			assert.ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered initially.");
-			assert.equal(jQuery.sap.byId("detail").length , 0, "Detail Nav Container should not be rendered.");
-			assert.equal(jQuery.sap.byId("splitapp-MasterBtn").length, 0, "Master Button should not be rendered");
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			ok(jQuery.sap.byId("master6").length, "Master Nav Container should be rendered initially.");
+			equal(jQuery.sap.byId("detail").length , 0, "Detail Nav Container should not be rendered.");
+			equal(jQuery.sap.byId("splitapp-MasterBtn").length, 0, "Master Button should not be rendered");
 			oSplitApp.destroy();
 		});
 
 		// Tests for all modes
-		QUnit.module("Master / Detail page aggregation");
-		QUnit.test("Master / Detail page aggregation returns the right pages in the right order", function(assert) {
-			var oMasterPage = new sap.m.Page("master",{
+		module("Master / Detail page aggregation");
+		test("Master / Detail page aggregation returns the right pages in the right order", function() {
+			var oMasterPage = new sap.m.Page({
 				title : "Master 1",
-				content: [new sap.m.Button("Button", {text: "That is a Button"})]
+				content: [new sap.m.Button({text: "That is a Button"})]
 			});
-			var oMasterPage2 = new sap.m.Page("master2",{
+			var oMasterPage2 = new sap.m.Page({
 				title : "Master 1"
 			});
 			var oDetailPage = new sap.m.Page("detail",{
@@ -543,11 +544,11 @@
 		QUnit.test("Adding / Removing Pages to/from Master / Detail", function(assert) {
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
+					new sap.m.Page({
 						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+						content: [new sap.m.Button({text: "That is a Button"})]
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
@@ -607,11 +608,11 @@
 		QUnit.test("Moving Page from Master to Detail", function(assert) {
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
+					new sap.m.Page({
 						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+						content: [new sap.m.Button({text: "That is a Button"})]
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
@@ -651,11 +652,11 @@
 		QUnit.test("Insert Page", function(assert) {
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
+					new sap.m.Page({
 						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+						content: [new sap.m.Button({text: "That is a Button"})]
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
@@ -710,11 +711,11 @@
 		QUnit.test("Remove all pages", function(assert) {
 			var oSplitApp = new sap.m.SplitApp("splitapp", {
 				masterPages: [
-					new sap.m.Page("master",{
+					new sap.m.Page({
 						title : "Master 1",
-						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+						content: [new sap.m.Button({text: "That is a Button"})]
 					}),
-					new sap.m.Page("master2",{
+					new sap.m.Page({
 						title : "Master 1"
 					})
 				],
