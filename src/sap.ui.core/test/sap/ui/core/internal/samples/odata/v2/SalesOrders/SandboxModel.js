@@ -90,7 +90,9 @@ sap.ui.define([
 					additionalTargets : aTargets.slice(1),
 					code : oMessageData.code,
 					id : sMessage,
-					message : oMessageData.message,
+					message : oMessageData.message.includes(":")
+						? oMessageData.message.split(": ")[1]
+						: oMessageData.message,
 					severity : oMessageData.severity,
 					target : aTargets[0],
 					transition : oMessageData.transition ? true : false
@@ -665,11 +667,14 @@ sap.ui.define([
 	 *   The OData response for the SalesOrderLineItemSet considering the given skip and top
 	 */
 	function getLineItems(sFilePath, fnModifyData, iSkip, iTop) {
-		var oLineItems;
+		var oLineItems,
+			sPrefix = isOpaTest()
+				? "test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/data/"
+				: "data/";
 
 		if (!oLineItemsModel || oLineItemsModel.getProperty("/path") !== sFilePath) {
 			oLineItemsModel = new JSONModel();
-			oLineItemsModel.loadData("data/" + sFilePath, "", false);
+			oLineItemsModel.loadData(sPrefix + sFilePath, "", false);
 			oLineItemsModel.setProperty("/path", sFilePath);
 		}
 		oLineItems = merge({}, oLineItemsModel.getObject("/"));
@@ -729,6 +734,15 @@ sap.ui.define([
 	function increaseSaveCount() {
 		iTimesSaved += 1;
 		return true;
+	}
+
+	/**
+	 * Function to find out if the code is executed by an OPA test or not.
+	 *
+	 * @returns {boolean} Whether an opa test is running or not.
+	 */
+	function isOpaTest() {
+		return window.location.href.includes("Opa.qunit.html");
 	}
 
 	/**

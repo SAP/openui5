@@ -18,12 +18,14 @@
 							<ToolbarLayoutData shrinkable="false" />
 						</layoutData>
 					</Label>
-					<Input submit="onSelectSalesOrder" value="{ui>/salesOrderID}">
+					<Input id="salesOrderID" submit="onSelectSalesOrder"
+						value="{ui>/salesOrderID}">
 						<layoutData>
 							<ToolbarLayoutData maxWidth="10em" shrinkable="true" />
 						</layoutData>
 					</Input>
-					<Button press="onSelectSalesOrder" text="Show Sales Order" type="Accept" />
+					<Button id="selectSalesOrder" press="onSelectSalesOrder"
+						text="Show Sales Order" type="Accept" />
 					<ToolbarSpacer/>
 					<Link href="MIT.SalesOrders(V2).Messages.html" target="_blank"
 						text="Test Cases" />
@@ -41,7 +43,8 @@
 						<Title level="H2" text="Sales Order" />
 					</Toolbar>
 					<Label text="Sales Order ID" />
-					<Input editable="false" value="{SalesOrderID}" width="8em" />
+					<Input id="salesOrderID::objectPage" editable="false" value="{SalesOrderID}"
+						width="8em" />
 					<Label text="Note" />
 					<Input value="{Note}" />
 					<Label text="Gross Amount" />
@@ -287,7 +290,8 @@
 					</dependents>
 				</Button>
 				<ToolbarSpacer />
-				<Button press="onSaveSalesOrder" text="Save" type="Emphasized" />
+				<Button id="saveSalesOrder" press="onSaveSalesOrder" text="Save"
+					type="Emphasized" />
 				<Button press="onResetChanges" text="Reset Changes" />
 			</OverflowToolbar>
 		</footer>
