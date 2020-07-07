@@ -57,23 +57,6 @@ function(
 					defaultValue: false
 				},
 
-				/** Determines whether the version label and draft buttons are visible */
-				versioningVisible: {
-					type: "boolean",
-					defaultValue: false
-				},
-
-				/** Label of the current version; this label is only visible in case versioningVisible is set to true */
-				versionLabel: {
-					type: "string"
-				},
-
-				/** Determines whether draft buttons are enabled */
-				draftEnabled: {
-					type: "boolean",
-					defaultValue: false
-				},
-
 				/** Defines value of the switcher SegmentedButton */
 				modeSwitcher: {
 					type: "string",
@@ -138,6 +121,26 @@ function(
 		oButton.setTooltip(sToolTip || "");
 		oButton.setIcon(sIcon || "");
 	}
+
+	Adaptation.prototype.formatVersionLabelText = function (bDraftAvailable, aVersions) {
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var sText = "";
+		var bAccentColor = false;
+
+		if (aVersions.length > 0) {
+			if (bDraftAvailable) {
+				bAccentColor = true;
+				sText = oTextResources.getText("LBL_DRAFT");
+			} else {
+				sText = aVersions[0].title || oTextResources.getText("LBL_VERSION_1");
+			}
+		} else {
+			sText = oTextResources.getText("LBL_ORIGNINAL_APP");
+		}
+
+		this.setVersionLabelAccentColor(bAccentColor);
+		return sText;
+	};
 
 	Adaptation.prototype._showButtonIcon = function(sButtonName, sIcon, sToolTipKey) {
 		_setButtonProperties.call(this, sButtonName, sIcon, "", sToolTipKey);
@@ -209,7 +212,9 @@ function(
 				restore: this.eventHandler.bind(this, "Restore"),
 				publish: this.eventHandler.bind(this, "Transport"),
 				saveAs: this.eventHandler.bind(this, "SaveAs"),
-				exit: this.eventHandler.bind(this, "Exit")
+				exit: this.eventHandler.bind(this, "Exit"),
+				formatVersionLabelText: this.formatVersionLabelText.bind(this)
+
 			}
 		}).then(function (aControls) {
 			this.getControl("publish").setVisible(this.getPublishVisible());
@@ -279,14 +284,6 @@ function(
 		this.getControl("restore").setEnabled(bEnabled);
 	};
 
-	Adaptation.prototype.setVersionLabel = function (sText) {
-		this.setProperty("versionLabel", sText, true);
-		var oVersionLabel = this.getControl("versionLabel");
-		oVersionLabel.setText(sText);
-		// to ensure that a text which is to long to be displayed can be read by the user
-		oVersionLabel.setTooltip(sText);
-	};
-
 	Adaptation.prototype.setVersionLabelAccentColor = function (bIsAccentColor) {
 		var oVersionLabel = this.getControl("versionLabel");
 		if (bIsAccentColor) {
@@ -294,21 +291,6 @@ function(
 		} else {
 			oVersionLabel.removeStyleClass(ACCENT_COLOR);
 		}
-	};
-
-	Adaptation.prototype.setVersioningVisible = function (bVisible) {
-		this.setProperty("versioningVisible", bVisible, true);
-		this.getControl("versionLabel").setVisible(bVisible);
-		this.getControl("activateDraft").setVisible(bVisible);
-		this.getControl("discardDraft").setVisible(bVisible);
-		return bVisible;
-	};
-
-	Adaptation.prototype.setDraftEnabled = function (bEnabled) {
-		this.setProperty("draftEnabled", bEnabled, true);
-		this.getControl("activateDraft").setEnabled(bEnabled);
-		this.getControl("discardDraft").setEnabled(bEnabled);
-		return bEnabled;
 	};
 
 	Adaptation.prototype.setAppVariantsVisible = function (bVisible) {

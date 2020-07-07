@@ -143,49 +143,49 @@ function(
 	 * @experimental This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var RuntimeAuthoring = ManagedObject.extend("sap.ui.rta.RuntimeAuthoring", {
-		metadata : {
+		metadata:{
 			// ---- control specific ----
-			library : "sap.ui.rta",
-			associations : {
+			library:"sap.ui.rta",
+			associations:{
 				/** The root control which the runtime authoring should handle. Can only be sap.ui.core.Element or sap.ui.core.UIComponent */
-				rootControl : {
-					type : "sap.ui.base.ManagedObject"
+				rootControl:{
+					type:"sap.ui.base.ManagedObject"
 				}
 			},
-			properties : {
+			properties: {
 				/** The URL which is called when the custom field dialog is opened */
-				customFieldUrl : "string",
+				customFieldUrl: "string",
 
 				/** Whether the create custom field button should be shown */
-				showCreateCustomField : "boolean",
+				showCreateCustomField: "boolean",
 
 				/** Whether the create custom field button should be shown */
-				showToolbars : {
-					type : "boolean",
-					defaultValue : true
+				showToolbars: {
+					type: "boolean",
+					defaultValue: true
 				},
 
 				/** Whether rta is triggered from a dialog button */
-				triggeredFromDialog : {
-					type : "boolean",
-					defaultValue : false
+				triggeredFromDialog: {
+					type: "boolean",
+					defaultValue: false
 				},
 
 				/** Whether the window unload dialog should be shown */
-				showWindowUnloadDialog : {
-					type : "boolean",
-					defaultValue : true
+				showWindowUnloadDialog: {
+					type: "boolean",
+					defaultValue: true
 				},
 
 				/** sap.ui.rta.command.Stack */
-				commandStack : {
-					type : "any"
+				commandStack: {
+					type: "any"
 				},
 
 				/** Map indicating plugins in to be loaded or in use by RuntimeAuthoring and DesignTime */
-				plugins : {
-					type : "any",
-					defaultValue : {}
+				plugins: {
+					type: "any",
+					defaultValue: {}
 				},
 
 				/**
@@ -201,7 +201,7 @@ function(
 				},
 
 				/** Defines view state of the RTA. Possible values: adaptation, navigation */
-				mode : {
+				mode: {
 					type: "string",
 					defaultValue: "adaptation"
 				},
@@ -222,9 +222,9 @@ function(
 					defaultValue: false
 				}
 			},
-			events : {
+			events: {
 				/** Fired when the runtime authoring is started */
-				start : {
+				start: {
 					parameters: {
 						editablePluginsCount: {
 							type: "int"
@@ -233,28 +233,28 @@ function(
 				},
 
 				/** Fired when the runtime authoring is stopped */
-				stop : {},
+				stop: {},
 
 				/** Fired when the runtime authoring failed to start */
-				failed : {},
+				failed: {},
 
 				/**
 				 * Event fired when a DesignTime selection is changed
 				 */
-				selectionChange : {
-					parameters : {
-						selection : {
-							type : "sap.ui.dt.Overlay[]"
+				selectionChange: {
+					parameters: {
+						selection: {
+							type: "sap.ui.dt.Overlay[]"
 						}
 					}
 				},
 				/**Event fired when the runtime authoring mode is changed */
-				modeChanged : {},
+				modeChanged: {},
 
 				/**
 				 * Fired when the undo/redo stack has changed, undo/redo buttons can be updated
 				 */
-				undoRedoStackModified : {}
+				undoRedoStackModified: {}
 			}
 		},
 		_sAppTitle: null,
@@ -284,10 +284,10 @@ function(
 				this.attachEvent("start", validateFlexEnabled.bind(null, this));
 			}
 		},
-		_RELOAD : {
-			NOT_NEEDED : "NO_RELOAD",
-			VIA_HASH : "CROSS_APP_NAVIGATION",
-			RELOAD_PAGE : "HARD_RELOAD"
+		_RELOAD: {
+			NOT_NEEDED: "NO_RELOAD",
+			VIA_HASH: "CROSS_APP_NAVIGATION",
+			RELOAD_PAGE: "HARD_RELOAD"
 		}
 	});
 
@@ -393,12 +393,12 @@ function(
 
 			//Control Variant
 			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 
 			// Add IFrame
 			this._mDefaultPlugins["addIFrame"] = new AddIFramePlugin({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 
 			//ToolHooks
@@ -540,18 +540,13 @@ function(
 		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	};
 
-
 	RuntimeAuthoring.prototype._initVersioning = function() {
-		return FeaturesAPI.isVersioningEnabled(this.getLayer())
-			.then(function (bVersioningEnabled) {
-				this._bVersioningEnabled = bVersioningEnabled;
-				if (bVersioningEnabled) {
-					return VersionsAPI.initialize({
-						selector: this.getRootControlInstance(),
-						layer: this.getLayer()
-					});
-				}
-			}.bind(this));
+		return VersionsAPI.initialize({
+			selector: this.getRootControlInstance(),
+			layer: this.getLayer()
+		}).then(function (oVersionsModel) {
+			this._oVersionsModel = oVersionsModel;
+		}.bind(this));
 	};
 
 	/**
@@ -613,7 +608,7 @@ function(
 					this.getPlugins()["settings"].setCommandStack(this.getCommandStack());
 				}
 
-				this._oSerializer = new LREPSerializer({commandStack : this.getCommandStack(), rootControl : this.getRootControl()});
+				this._oSerializer = new LREPSerializer({commandStack: this.getCommandStack(), rootControl: this.getRootControl()});
 
 				// Create design time
 				var aKeys = Object.keys(this.getPlugins());
@@ -752,58 +747,16 @@ function(
 			var bPublishAppVariantSupported = bIsPublishAvailable && bIsAppVariantSupported;
 			return {
 				publishAvailable: bIsPublishAvailable,
-				publishAppVariantSupported: bPublishAppVariantSupported,
-				draftAvailable: this._isDraftAvailable()
+				publishAppVariantSupported: bPublishAppVariantSupported
 			};
 		}.bind(this));
 	};
 
-	RuntimeAuthoring.prototype._handleVersionToolbar = function(bCanUndo) {
-		//TODO Find out how to check for dirtyChanges on FL side on creation because they are not yet in the ChangePersistence (async)
-		var bDraftEnabled = bCanUndo || this._isDraftAvailable();
-		this.getToolbar().setDraftEnabled(bDraftEnabled);
-		return this._setVersionLabel(bDraftEnabled);
-	};
-
-	RuntimeAuthoring.prototype._setVersionLabel = function(bDraftEnabled) {
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		if (bDraftEnabled) {
-			this.getToolbar().setVersionLabel(oTextResources.getText("LBL_DRAFT"));
-			return this.getToolbar().setVersionLabelAccentColor(true);
-		}
-		var aVersions = VersionsAPI.getVersions({
+	RuntimeAuthoring.prototype._isDraftAvailable = function() {
+		return VersionsAPI.isDraftAvailable({
 			selector: this.getRootControlInstance(),
 			layer: this.getLayer()
 		});
-
-		// When there are changes before the draft is available set label to "Version 1"
-		var sLabel = oTextResources.getText("LBL_VERSION_1");
-		var bAccentColor = false;
-
-		// When there is no content in the version request set label to "Original App"
-		// Otherwise just need to have a look at the first entry in versions
-		// If the title is not set and the versionNumber is zero, set the label to "Draft"
-		if (aVersions.length === 0) {
-			sLabel = oTextResources.getText("LBL_ORIGNINAL_APP");
-		} else if (aVersions[0].title) {
-			sLabel = aVersions[0].title;
-		} else if (aVersions[0].versionNumber === 0) {
-			bAccentColor = true;
-			sLabel = oTextResources.getText("LBL_DRAFT");
-		}
-
-		this.getToolbar().setVersionLabelAccentColor(bAccentColor);
-		return this.getToolbar().setVersionLabel(sLabel);
-	};
-
-	RuntimeAuthoring.prototype._isDraftAvailable = function() {
-		if (this._bVersioningEnabled) {
-			return VersionsAPI.isDraftAvailable({
-				selector: this.getRootControlInstance(),
-				layer: this.getLayer()
-			});
-		}
-		return false;
 	};
 
 	var fnShowTechnicalError = function(vError) {
@@ -873,9 +826,10 @@ function(
 			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled || bCanUndo);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled || bCanUndo);
-			if (this._bVersioningEnabled) {
-				this._handleVersionToolbar(bCanUndo);
-			}
+
+			// TODO: move to the setter to the ChangesState
+			var oVersionsModel = this.getToolbar().getModel("versions");
+			oVersionsModel.setDirtyChanges(bCanUndo);
 		}
 		this.fireUndoRedoStackModified();
 	};
@@ -1015,7 +969,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._serializeAndSave = function() {
-		return this._oSerializer.saveCommands(this._bVersioningEnabled);
+		return this._oSerializer.saveCommands(this._oVersionsModel.getProperty("/versioningEnabled"));
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
@@ -1050,7 +1004,6 @@ function(
 			this.bInitialResetEnabled = true;
 			this.getToolbar().setRestoreEnabled(true);
 			this.getCommandStack().removeAllCommands();
-			return this._handleVersionToolbar(false);
 		}.bind(this))
 		.catch(function (oError) {
 			Utils.showMessageBox("error", "MSG_DRAFT_ACTIVATION_FAILED", {error: oError});
@@ -1117,8 +1070,6 @@ function(
 					modeSwitcher: this.getMode(),
 					publishVisible: aButtonsVisibility.publishAvailable,
 					textResources: this._getTextResources(),
-					versioningVisible: this._bVersioningEnabled,
-					draftEnabled: aButtonsVisibility.draftAvailable,
 					//events
 					exit: this.stop.bind(this, false, false),
 					transport: this._onTransport.bind(this),
@@ -1149,6 +1100,8 @@ function(
 				}.bind(this));
 			}
 		}
+
+		this.getToolbar().setModel(this._oVersionsModel, "versions");
 	};
 
 	RuntimeAuthoring.prototype._onGetAppVariantOverview = function(oEvent) {
@@ -1519,13 +1472,13 @@ function(
 	RuntimeAuthoring.prototype._buildNavigationArguments = function(mParsedHash) {
 		return {
 			target: {
-				semanticObject : mParsedHash.semanticObject,
-				action : mParsedHash.action,
-				context : mParsedHash.contextRaw
+				semanticObject: mParsedHash.semanticObject,
+				action: mParsedHash.action,
+				context: mParsedHash.contextRaw
 			},
 			params: mParsedHash.params,
-			appSpecificRoute : mParsedHash.appSpecificRoute,
-			writeHistory : false
+			appSpecificRoute: mParsedHash.appSpecificRoute,
+			writeHistory: false
 		};
 	};
 
@@ -1756,8 +1709,8 @@ function(
 				layer: this.getLayer(),
 				selector: this.getRootControlInstance(),
 				changesNeedReload: aChangesNeedReload[0],
-				hasDirtyDraftChanges: this._bVersioningEnabled && this.canUndo(),
-				versioningEnabled: this._bVersioningEnabled
+				hasDirtyDraftChanges: this._oVersionsModel.getProperty("/draftAvailable") && this._oVersionsModel.getProperty("/dirtyChanges"),
+				versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled")
 			};
 			oReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			return this._handleReloadMessageBoxOnExit(oReloadInfo).then(function () {

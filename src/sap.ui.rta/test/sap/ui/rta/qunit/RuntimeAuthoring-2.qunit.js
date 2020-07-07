@@ -429,19 +429,21 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RTA gets started in FLP", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
 				showToolbars : false
 			});
 			whenNoAppDescriptorChangesExist(this.oRta);
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
-			this.fnReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
+			sandbox.stub(this.oRta, "_reloadPage");
 			this.fnTriggerCrossAppNavigationSpy = sandbox.spy(this.oRta, "_triggerCrossAppNavigation");
 			this.fnHandleParametersOnExitStub = sandbox.spy(this.oRta, "_handleUrlParameterOnExit");
 			this.fnFLPToExternalStub = sandbox.spy();
+
+			return this.oRta._initVersioning();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -453,7 +455,8 @@ sap.ui.define([
 			givenAnFLP(function() {return true;}, {"sap-ui-fl-version": [Layer.CUSTOMER]});
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
+			return this.oRta._handleReloadOnExit()
+			.then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
 				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.VIA_HASH,
@@ -526,7 +529,8 @@ sap.ui.define([
 			var oReloadInfo = {
 				reloadMethod: this.oRta._RELOAD.VIA_HASH
 			};
-			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(oReloadInfo);			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(oReloadInfo);
+			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(false);
 
 			return this.oRta.stop().then(function() {
@@ -553,6 +557,8 @@ sap.ui.define([
 			this.fnTriggerCrossAppNavigationSpy = sandbox.stub(this.oRta, "_triggerCrossAppNavigation");
 			sandbox.spy(this.oRta, "_handleUrlParameterOnExit");
 			this.fnFLPToExternalStub = sandbox.spy();
+
+			return this.oRta._initVersioning();
 		},
 		afterEach : function() {
 			this.oRta.destroy();
@@ -762,6 +768,8 @@ sap.ui.define([
 				sandbox.stub(this.oRta, "_handleUrlParameterOnExit");
 			this.fnTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
 			sandbox.stub(this.oRta, "_reloadPage");
+
+			return this.oRta._initVersioning();
 		},
 		afterEach : function() {
 			this.oRta.destroy();
@@ -1033,8 +1041,6 @@ sap.ui.define([
 		QUnit.test("when _onActivateDraft is called ", function(assert) {
 			var oActivateDraftStub;
 			var oShowMessageToastStub;
-			var oSetVersionLabelStub;
-			var oToolbarSetDraftEnabledSpy;
 			var oToolbarSetRestoreEnabledSpy;
 			var oRta = this.oRta;
 			var sVersionTitle = "aVersionTitle";
@@ -1048,8 +1054,6 @@ sap.ui.define([
 				oRta.bInitialDraftAvailable = true;
 				oActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").resolves(true);
 				oShowMessageToastStub = sandbox.stub(oRta, "_showMessageToast");
-				oSetVersionLabelStub = sandbox.stub(oRta, "_setVersionLabel");
-				oToolbarSetDraftEnabledSpy = sandbox.spy(oRta.getToolbar(), "setDraftEnabled");
 				oToolbarSetRestoreEnabledSpy = sandbox.spy(oRta.getToolbar(), "setRestoreEnabled");
 			})
 			.then(oRta._onActivateDraft.bind(oRta, oEvent))
@@ -1060,12 +1064,9 @@ sap.ui.define([
 				assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
 				assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
 				assert.equal(oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
-				assert.equal(oToolbarSetDraftEnabledSpy.callCount, 1, "and the draft info is set once");
-				assert.equal(oToolbarSetDraftEnabledSpy.getCall(0).args[0], false, "to false");
 				assert.equal(oToolbarSetRestoreEnabledSpy.callCount, 2, "and the restore enabled is called");
 				assert.equal(oToolbarSetRestoreEnabledSpy.getCall(0).args[0], true, "to true");
 				assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
-				assert.equal(oSetVersionLabelStub.callCount, 1, "and set version title is called");
 			}.bind(this));
 		});
 

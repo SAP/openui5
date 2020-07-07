@@ -15,21 +15,23 @@
                         id="sapUiRta_versionLabel"
                         design="Bold"
                         class="sapUiRtaVersionLabel"
-                        visible="false" />
+                        visible="{versions>/versioningEnabled}"
+                        text="{parts: [{path: 'versions>/draftAvailable'}, {path: 'versions>/versions'}], formatter: '.formatVersionLabelText'}"
+                        tooltip="{parts: [{path: 'versions>/draftAvailable'}, {path: 'versions>/versions'}], formatter: '.formatVersionLabelText'}"  />
                 <Button
                         id="sapUiRta_activateDraft"
                         icon="sap-icon://activate"
                         press=".activateDraft"
-                        visible="false"
-                        enabled="false"
+                        visible="{versions>/versioningEnabled}"
+                        enabled="{versions>/draftAvailable}"
                         type="Transparent"
                         tooltip="{i18n>TOL_ACTIVATE_DRAFT}" />
                 <Button
                         id="sapUiRta_discardDraft"
                         icon="sap-icon://delete"
                         press=".discardDraft"
-                        visible="false"
-                        enabled="false"
+                        visible="{versions>/versioningEnabled}"
+                        enabled="{versions>/draftAvailable}"
                         type="Transparent"
                         tooltip="{i18n>TOL_DISCARD_DRAFT}" />
             </content>

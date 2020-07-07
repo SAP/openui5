@@ -142,7 +142,7 @@ function (
 		});
 
 		function _runSaveAllAndAssumeVersionsCall(assert, vResponse, bDraft, nCallCount) {
-			var oVersionsStub = sandbox.stub(Versions, "ensureDraftVersionExists");
+			var oVersionsStub = sandbox.stub(Versions, "onAllChangesSaved");
 			var oResult = vResponse ? {response: vResponse} : undefined;
 			sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves(oResult);
 			return this.oFlexController.saveAll(oComponent, undefined, bDraft).then(function() {
@@ -167,11 +167,11 @@ function (
 		});
 
 		QUnit.test("when saveAll is called with draft and a change was saved", function(assert) {
-			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{}], true, 1);
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component"}], true, 1);
 		});
 
 		QUnit.test("when saveAll is called with draft and multiple changes were saved", function(assert) {
-			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{}, {}], true, 1);
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component"}, {}], true, 1);
 		});
 
 		QUnit.test("when saveSequenceOfDirtyChanges is called with an array of changes", function(assert) {

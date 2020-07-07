@@ -209,10 +209,6 @@ function(
 	Base.prototype.setUndoRedoEnabled = function () {};
 	Base.prototype.setPublishEnabled = function () {};
 	Base.prototype.setRestoreEnabled = function () {};
-	Base.prototype.setVersioningVisible = function () {};
-	Base.prototype.setDraftEnabled = function () {};
-	Base.prototype.setVersionLabel = function () {};
-	Base.prototype.setVersionLabelAccentColor = function () {};
 	Base.prototype.setAppVariantsVisible = function () {};
 	Base.prototype.setAppVariantsEnabled = function () {};
 	Base.prototype.setExtendedManageAppVariants = function () {};

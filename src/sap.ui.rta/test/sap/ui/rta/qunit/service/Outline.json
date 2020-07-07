@@ -1,18 +1,5 @@
 [
 	{
-		"id": "CompCont",
-		"technicalName": "sap.ui.core.ComponentContainer",
-		"editable": false,
-		"type": "element",
-		"visible": true,
-		"elements": [
-			{
-				"id": "CompCont",
-				"technicalName": "component",
-				"editable": false,
-				"type": "aggregation",
-				"elements": [
-					{
 						"id": "testComponent",
 						"technicalName": "MockController",
 						"editable": false,
@@ -227,11 +214,7 @@
 								]
 							}
 						]
-					}
-				]
-			}
-		]
-	},
+					},
 	{
 		"id": "layout2",
 		"technicalName": "sap.ui.layout.VerticalLayout",
