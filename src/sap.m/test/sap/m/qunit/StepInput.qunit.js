@@ -1134,6 +1134,30 @@ sap.ui.define([
 			"The input's value is decreasing with 5 after arrow up");
 	});
 
+	QUnit.test("up/down/pageup/pagedown doesn't increase/decrease the value when control is not editable", function (assert) {
+		//prepare
+		var oFakeEvent = {
+				preventDefault: function() {},
+				setMarked: function() {}
+			},
+			oSpy = this.spy(this.stepInput, "_changeValueWithStep");
+
+		this.stepInput.setEditable(false);
+		sap.ui.getCore().applyChanges();
+
+		//act
+		this.stepInput.onsapup(oFakeEvent);
+		this.stepInput.onsapdown(oFakeEvent);
+		this.stepInput.onsappageup(oFakeEvent);
+		this.stepInput.onsappagedown(oFakeEvent);
+
+		//assert
+		assert.ok(oSpy.notCalled, "Input value is not changed");
+
+		//clean
+		oSpy.restore();
+	});
+
 	QUnit.test("if the value is out of min/max range, pressing increase/decrease button the value will be set to min/max", function (assert) {
 		//prepare
 		var oIncrementBtn = this.stepInput._getIncrementButton(),
