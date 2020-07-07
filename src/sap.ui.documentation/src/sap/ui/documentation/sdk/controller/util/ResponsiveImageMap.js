@@ -2,12 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(["./overlay/Overlay"], function (Overlay) {
+sap.ui.define(["./overlay/Overlay", "./Tooltip"], function (Overlay, Tooltip) {
     "use strict";
+
+	var TOOLTIP_POINTER_OFFSET = 30;
 
 	var ResponsiveImageMap = function (oMap, oImg) {
         this.oImg = oImg;
         this.oOverlay = new Overlay(this.oImg.parentNode);
+        this.oToolTip = new Tooltip(this.oImg.parentNode);
 
         this.iOriginalWidth = oImg.naturalWidth;
         this.areas = Array.prototype.map.call(oMap.getElementsByTagName('area'), function (oArea) {
@@ -42,14 +45,30 @@ sap.ui.define(["./overlay/Overlay"], function (Overlay) {
 
     ResponsiveImageMap.prototype.onmouseenter = function(oEvent) {
 	    var sCoords = oEvent.target.coords,
-		    sShape = oEvent.target.getAttribute("shape");
+		    sShape = oEvent.target.getAttribute("shape"),
+	        oRect = this.oImg.getBoundingClientRect();
+
+	    this.sTitle = oEvent.target.getAttribute('title');
+	    oEvent.target.setAttribute('title', ''); // prevent browser showing the title as tooltip
 
 	    this.oOverlay.setShape(sShape, sCoords);
 	    this.oOverlay.show();
+
+	    if (this.sTitle) {
+		    this.oToolTip.setText(this.sTitle);
+		    this.oToolTip.setPosition({
+			    top: (oEvent.clientY - oRect.top) - (this.oToolTip.getBounds().offsetHeight + TOOLTIP_POINTER_OFFSET),
+			    left: (oEvent.clientX - oRect.left) - (this.oToolTip.getBounds().offsetWidth / 2)
+		    });
+		    this.oToolTip.show();
+	    }
     };
 
-    ResponsiveImageMap.prototype.onmouseleave = function() {
+    ResponsiveImageMap.prototype.onmouseleave = function(oEvent) {
+	    oEvent.target.setAttribute('title', this.sTitle); // restore title attribute to be used for next tooltip show
+
 	    this.oOverlay.hide();
+	    this.oToolTip.hide();
     };
 
     return ResponsiveImageMap;
