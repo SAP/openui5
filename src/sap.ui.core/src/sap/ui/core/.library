@@ -214,8 +214,10 @@
     <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
         <exclude name=".library-all" />
         <exclude name=".library-all-dbg" />
-        <exclude name=".library-preload" />
-        <exclude name=".library-preload-dbg" />
+        <exclude name=".library-preload*" />
+        <exclude name=".library-h2-preload*" />
+        <exclude name=".Component-preload*" />
+        <exclude name=".Component-h2-preload*" />
         <exclude name=".*[legacy]" />
         <exclude name=".*[legacy]-dbg" />
         <exclude name="jquery-*" />
