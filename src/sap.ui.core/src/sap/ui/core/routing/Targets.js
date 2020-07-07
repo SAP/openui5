@@ -393,10 +393,15 @@ sap.ui.define([
 			 * Returns a target by its name (if you pass myTarget: { view: "myView" }) in the config myTarget is the name.
 			 *
 			 * @param {string|string[]} vName the name of a single target or the name of multiple targets
-			 * @return {sap.ui.core.routing.Target|undefined|sap.ui.core.routing.Target[]} The target with the coresponding name or undefined. If an array way passed as name this will return an array with all found targets. Non existing targets will not be returned but will log an error.
+			 * @param {boolean} [bSuppressNotFoundError=false] In case no target is found for the given name, the not found
+			 *  error is supressed when this is set with true
+			 * @return {sap.ui.core.routing.Target|undefined|sap.ui.core.routing.Target[]} The target with the
+			 * coresponding name or undefined. If an array way passed as name this will return an array with all found
+			 * targets. Non existing targets will not be returned and an error is logged when
+			 * <code>bSuppressNotFoundError</code> param isn't set to <code>true</code>.
 			 * @public
 			 */
-			getTarget : function (vName) {
+			getTarget : function (vName, bSuppressNotFoundError) {
 				var that = this,
 					aTargetsConfig = this._alignTargetsInfo(vName),
 					aTargets;
@@ -406,7 +411,7 @@ sap.ui.define([
 
 					if (oTarget) {
 						aAcc.push(oTarget);
-					} else {
+					} else if (!bSuppressNotFoundError){
 						Log.error("The target you tried to get \"" + oConfig.name + "\" does not exist!", that);
 					}
 					return aAcc;
@@ -431,7 +436,7 @@ sap.ui.define([
 			 *
 			 */
 			addTarget : function (sName, oTargetOptions) {
-				var oOldTarget = this.getTarget(sName),
+				var oOldTarget = this.getTarget(sName, true /* suppress not found error log*/),
 					oTarget;
 
 				if (oOldTarget) {

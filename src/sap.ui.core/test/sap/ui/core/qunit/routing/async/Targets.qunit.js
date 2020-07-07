@@ -91,7 +91,7 @@ sap.ui.define([
 
 	QUnit.test("Should be able to get multiple targets", function (assert) {
 		// Arrange
-		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
+		var oErrorSpy = this.spy(Log, "error");
 
 		// Act
 		var aTargets = this.oTargets.getTarget(["myTarget",  "foo", "myParent"]);
@@ -101,7 +101,7 @@ sap.ui.define([
 		assert.strictEqual(aTargets[0], this.oTargets.getTarget("myTarget"), "The first target should be myTarget");
 		assert.strictEqual(aTargets[1], this.oTargets.getTarget("myParent"), "The second target should be myParent");
 		// check if error for non-existing target "foo" is thrown
-		sinon.assert.calledWith(oStub, sinon.match(/foo/), sinon.match(this.oTargets));
+		sinon.assert.calledWith(oErrorSpy, sinon.match(/"foo" does not exist/), sinon.match(this.oTargets));
 
 		// Act
 		aTargets = this.oTargets.getTarget([undefined, "myTarget", false, {name: "myParent"}, "foo", {name: "myTarget"}]);
@@ -113,10 +113,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should be able to add a new target", function (assert) {
+		var oErrorSpy = this.spy(Log, "error");
 		this.oTargets.addTarget("newTarget", {
 			viewName: "newView",
 			parent: "myParent"
 		});
+
+		assert.ok(oErrorSpy.notCalled, "no error is logged");
 
 		var oTarget = this.oTargets.getTarget("newTarget");
 		assert.ok(oTarget, "new target object is created");
