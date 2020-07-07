@@ -871,6 +871,7 @@ function(
 		StepInput.prototype.onsappageup = function (oEvent) {
 			this._applyValue(this._calculateNewValue(this.getLargerStep(), true).displayValue);
 			this._verifyValue();
+			this._disableButtons(this._getInput().getValue(), this._getMax(), this._getMin());
 			// prevent document scrolling when page up key is pressed
 			oEvent.preventDefault();
 		};
@@ -883,6 +884,7 @@ function(
 		StepInput.prototype.onsappagedown = function (oEvent) {
 			this._applyValue(this._calculateNewValue(this.getLargerStep(), false).displayValue);
 			this._verifyValue();
+			this._disableButtons(this._getInput().getValue(), this._getMax(), this._getMin());
 			// prevent document scrolling when page down key is pressed
 			oEvent.preventDefault();
 		};
@@ -896,6 +898,7 @@ function(
 			if (this._isNumericLike(this._getMax()) && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) {
 				this._applyValue(this._getMax());
 			}
+			this._disableButtons(this._getInput().getValue(), this._getMax(), this._getMin());
 		};
 
 		/**
@@ -907,6 +910,7 @@ function(
 			if (this._isNumericLike(this._getMin()) && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) {
 				this._applyValue(this._getMin());
 			}
+			this._disableButtons(this._getInput().getValue(), this._getMax(), this._getMin());
 		};
 
 		/**
@@ -918,6 +922,7 @@ function(
 			oEvent.preventDefault(); //prevents the value to increase by one (Chrome and Firefox default behavior)
 			this._applyValue(this._calculateNewValue(1, true).displayValue);
 			this._verifyValue();
+			this._disableButtons(this._getInput().getValue(), this._getMax(), this._getMin());
 			oEvent.setMarked();
 		};
 
@@ -930,6 +935,7 @@ function(
 			oEvent.preventDefault(); //prevents the value to decrease by one (Chrome and Firefox default behavior)
 			this._applyValue(this._calculateNewValue(1, false).displayValue);
 			this._verifyValue();
+			this._disableButtons(this._getInput().getValue(), this._getMax(), this._getMin());
 			oEvent.setMarked();
 		};
 
@@ -999,6 +1005,7 @@ function(
 			if (bVerifyValue) {
 				this._verifyValue();
 			}
+			this._disableButtons(this._getInput().getValue(), this._getMax(), this._getMin());
 		};
 
 		/**

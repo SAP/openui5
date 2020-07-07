@@ -1122,6 +1122,110 @@ sap.ui.define([
 			"The input's value is decreasing with step=step*2 after pageup");
 	});
 
+	QUnit.test("pageup and pagedown have effect over the enablement of the increment and decrement buttons", function (assert) {
+		//arrange
+		this.stepInput.setValue(-4);
+		oCore.applyChanges();
+
+		//act
+		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+		this.clock.tick(1000);
+
+		//assert
+		assert.notOk(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"),
+			"the decrement button is enabled");
+
+		//arrange
+		this.stepInput.setValue(10);
+		oCore.applyChanges();
+
+		//act
+		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
+		this.clock.tick(1000);
+
+		//assert
+		assert.notOk(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"),
+			"the decrement button is enabled");
+	});
+
+	QUnit.test("shift + pageup and pagedown have effect over the enablement of the increment and decrement buttons", function (assert) {
+		//arrange
+		this.stepInput.setValue(-4);
+		oCore.applyChanges();
+
+		//act
+		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true);
+		this.clock.tick(1000);
+
+		//assert
+		assert.notOk(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"),
+			"the decrement button is enabled");
+
+		//arrange
+		this.stepInput.setValue(10);
+		oCore.applyChanges();
+
+		//act
+		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true);
+		this.clock.tick(1000);
+
+		//assert
+		assert.notOk(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"),
+			"the decrement button is enabled");
+	});
+
+	QUnit.test("up and down arrows have effect over the enablement of the increment and decrement buttons", function (assert) {
+		//arrange
+		this.stepInput.setValue(-4);
+		oCore.applyChanges();
+
+		//act
+		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		this.clock.tick(1000);
+
+		//assert
+		assert.notOk(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"),
+			"the decrement button is enabled");
+
+		//arrange
+		this.stepInput.setValue(10);
+		oCore.applyChanges();
+
+		//act
+		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		this.clock.tick(1000);
+
+		//assert
+		assert.notOk(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"),
+			"the increment button is enabled");
+	});
+
+	QUnit.test("shift + up and down arrows have effect over the enablement of the increment and decrement buttons", function (assert) {
+		//arrange
+		this.stepInput.setValue(-4);
+		oCore.applyChanges();
+
+		//act
+		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true);
+		this.clock.tick(1000);
+
+		//assert
+		assert.notOk(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"),
+			"the decrement button is enabled");
+
+		//arrange
+		this.stepInput.setValue(10);
+		oCore.applyChanges();
+
+		//act
+		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, true);
+		this.clock.tick(1000);
+
+		//assert
+		assert.notOk(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"),
+			"the increment button is enabled");
+	});
+
 	QUnit.test("shift+up/down increases/decreases the value with a larger step if specified", function (assert) {
 		//act
 		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
