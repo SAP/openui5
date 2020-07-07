@@ -149,12 +149,30 @@
         position: relative;
 
         .overlay {
-            transition: opacity 0.3s;
             position: absolute;
-            opacity: 0;
-            background-color: rgba(227, 245, 255, 0.42);
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
             pointer-events: none;
             user-select: none;
+
+            .shape {
+                transition: opacity 0.3s;
+            }
+        }
+
+    }
+
+    .light-overlays .imagemap {
+        .shape {
+            fill: rgba(255, 255, 255, 0.5);
+        }
+    }
+
+    .dark-overlays .imagemap {
+        .shape {
+            fill: rgba(99, 99, 99, 0.5);
         }
     }
 
