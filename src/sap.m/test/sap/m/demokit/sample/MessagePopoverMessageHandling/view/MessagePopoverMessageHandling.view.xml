@@ -115,6 +115,7 @@
 					visible="{=!!${message>/}.length}"
 					icon="{ path: '/', formatter: '.buttonIconFormatter' }"
 					type="{ path: '/', formatter: '.buttonTypeFormatter' }"
+					text= "{path: '/', formatter: '.highestSeverityMessages' }"
 					press=".handleMessagePopoverPress"/>
 				<ToolbarSpacer/>
 				<Button type="Emphasized" text="Save" press="_generateInvalidUserInput" />

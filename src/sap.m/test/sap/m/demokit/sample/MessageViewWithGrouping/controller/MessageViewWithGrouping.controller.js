@@ -69,6 +69,12 @@ sap.ui.define([
 				subtitle: 'Role is invalid',
 				group: "Purchase Order 450002"
 			}, {
+				type: 'Information',
+				title: 'Account 804 requires an assignment',
+				description: sErrorDescription,
+				subtitle: 'Information type subtitle',
+				group: "Purchase Order 450002"
+			}, {
 				type: 'Error',
 				title: 'Technical message without object relation',
 				description: sErrorDescription,
@@ -145,34 +151,59 @@ sap.ui.define([
 		// Display the button type according to the message with the highest severity
 		// The priority of the message types are as follows: Error > Warning > Success > Info
 		buttonTypeFormatter: function () {
-			var sHighestSeverity;
+			var sHighestSeverityIcon;
 			var aMessages = this.getView().getModel().oData;
 
 			aMessages.forEach(function (sMessage) {
+
 				switch (sMessage.type) {
 					case "Error":
-						sHighestSeverity = "Negative";
+						sHighestSeverityIcon = "Negative";
 						break;
 					case "Warning":
-						sHighestSeverity = sHighestSeverity !== "Negative" ? "Critical" : sHighestSeverity;
+						sHighestSeverityIcon = sHighestSeverityIcon !== "Negative" ? "Critical" : sHighestSeverityIcon;
 						break;
 					case "Success":
-						sHighestSeverity = sHighestSeverity !== "Negative" && sHighestSeverity !== "Critical" ?  "Success" : sHighestSeverity;
+						sHighestSeverityIcon = sHighestSeverityIcon !== "Negative" && sHighestSeverityIcon !== "Critical" ?  "Success" : sHighestSeverityIcon;
 						break;
 					default:
-						sHighestSeverity = !sHighestSeverity ? "Neutral" : sHighestSeverity;
+						sHighestSeverityIcon = !sHighestSeverityIcon ? "Neutral" : sHighestSeverityIcon;
 						break;
 				}
 			});
 
-			return sHighestSeverity;
+			return sHighestSeverityIcon;
+		},
+
+		// Display the number of messages with the highest severity
+		highestSeverityMessages: function () {
+			var sHighestSeverityIconType = this.buttonTypeFormatter();
+			var sHighestSeverityMessageType;
+
+			switch (sHighestSeverityIconType) {
+				case "Negative":
+					sHighestSeverityMessageType = "Error";
+					break;
+				case "Critical":
+					sHighestSeverityMessageType = "Warning";
+					break;
+				case "Success":
+					sHighestSeverityMessageType = "Success";
+					break;
+				default:
+					sHighestSeverityMessageType = !sHighestSeverityMessageType ? "Information" : sHighestSeverityMessageType;
+					break;
+			}
+
+			return this.getView().getModel().oData.reduce(function(iNumberOfMessages, oMessageItem) {
+				return oMessageItem.type === sHighestSeverityMessageType ? ++iNumberOfMessages : iNumberOfMessages;
+			}, 0);
 		},
 
 		// Set the button icon according to the message with the highest severity
 		buttonIconFormatter: function () {
 			var sIcon;
 			var aMessages = this.getView().getModel().oData;
-
 			aMessages.forEach(function (sMessage) {
 				switch (sMessage.type) {
 					case "Error":
