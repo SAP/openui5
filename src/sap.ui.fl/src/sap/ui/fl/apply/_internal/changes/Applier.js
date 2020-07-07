@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Element",
+	"sap/ui/core/StashedControlSupport",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
@@ -13,6 +14,7 @@ sap.ui.define([
 ], function(
 	Log,
 	Element,
+	StashedControlSupport,
 	JsControlTreeModifier,
 	FlexCustomData,
 	Utils,
@@ -152,6 +154,39 @@ sap.ui.define([
 		Log.warning(sWarningMessage, undefined, "sap.ui.fl.apply._internal.changes.Applier");
 	}
 
+	function isControlStashed(mChangesMap, sControlId) {
+		var aControlChanges = mChangesMap.mChanges[sControlId] || [];
+		var bIsStashed = true;
+		var sChangeType;
+		aControlChanges.slice(0).reverse().some(function(oChange) {
+			sChangeType = oChange.getDefinition().changeType;
+			if (sChangeType.indexOf("stash") > -1) {
+				bIsStashed = true;
+				return true;
+			} else if (sChangeType.indexOf("unstash") > -1) {
+				bIsStashed = false;
+				return true;
+			}
+		});
+		return bIsStashed;
+	}
+
+	function handleStashedControls(mChangesMap, sControlId, oAppComponent) {
+		var bHasStashDependencies = false;
+		var aStashedChildren = StashedControlSupport.getStashedControlIds(sControlId);
+		aStashedChildren.forEach(function(sStashedControlId) {
+			if (isControlStashed(mChangesMap, sStashedControlId)) {
+				var aChangesToBeIgnored = DependencyHandler.removeOpenDependentChanges(mChangesMap, oAppComponent, sStashedControlId, sControlId);
+				aChangesToBeIgnored.forEach(function(oChange) {
+					oChange._ignoreOnce = true;
+				});
+				bHasStashDependencies = (aChangesToBeIgnored.length > 0) ? true : bHasStashDependencies;
+			}
+		});
+
+		return bHasStashDependencies;
+	}
+
 	var Applier = {
 		/**
 		 * Sets a specific precondition, which has to be fulfilled before applying all changes on control.
@@ -231,7 +266,11 @@ sap.ui.define([
 		applyAllChangesForControl: function(fnGetChangesMap, oAppComponent, oFlexController, oControl) {
 			// the changes have to be queued synchronously
 			var mChangesMap = fnGetChangesMap();
-			var aChangesForControl = mChangesMap.mChanges[oControl.getId()] || [];
+			var sControlId = oControl.getId();
+			var aChangesForControl = mChangesMap.mChanges[sControlId] || [];
+
+			var bHasStashDependencies = handleStashedControls(mChangesMap, sControlId, oAppComponent);
+
 			aChangesForControl.forEach(function (oChange) {
 				if (!oChange.isApplyProcessFinished() && !oChange._ignoreOnce) {
 					oChange.setQueuedForApply();
@@ -239,7 +278,7 @@ sap.ui.define([
 			});
 
 			// make sure that the current control waits for the previous control to be processed
-			oLastPromise = oLastPromise.then(function(oControl) {
+			oLastPromise = oLastPromise.then(function(oControl, bHasStashDependencies) {
 				var aPromiseStack = [];
 				var sControlId = oControl.getId();
 				var aChangesForControl = mChangesMap.mChanges[sControlId] || [];
@@ -273,12 +312,12 @@ sap.ui.define([
 					}
 				});
 
-				if (aChangesForControl.length || bControlWithDependencies) {
+				if (aChangesForControl.length || bControlWithDependencies || bHasStashDependencies) {
 					return FlUtils.execPromiseQueueSequentially(aPromiseStack).then(function () {
 						return DependencyHandler.processDependentQueue(mChangesMap, oAppComponent, sControlId);
 					});
 				}
-			}.bind(null, oControl));
+			}.bind(null, oControl, bHasStashDependencies));
 
 			return oLastPromise;
 		},
