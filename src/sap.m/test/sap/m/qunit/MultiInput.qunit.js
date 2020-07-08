@@ -1601,6 +1601,30 @@ sap.ui.define([
 		assert.strictEqual(oSpyChangeEvent.callCount, 1, "Change event should be fired once");
 	});
 
+	QUnit.test("The selectedKey property should be reset on user input", function (assert) {
+		// Arrange
+		var oFakeEvent = {
+				isMarked: function(){},
+				setMarked:function(){}
+			},
+			oMultiInput = new MultiInput().placeAt("content"),
+			oSpy;
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oSpy = sinon.spy(oMultiInput, "setProperty");
+		oMultiInput.oninput(oFakeEvent);
+
+		// Assert
+		assert.strictEqual(oSpy.firstCall.args[0], "selectedKey", "SelectedKey property is set");
+		assert.strictEqual(oSpy.firstCall.args[1], "", "SelectedKey value is an empty string");
+		assert.strictEqual(oSpy.firstCall.args[2], true, "Invalidation is suppressed");
+
+		// Clean up
+		oSpy.restore();
+		oMultiInput.destroy();
+	});
+
 	QUnit.test("The binding data and the value should be an empty string after adding a token when focusing out of the control", function (assert) {
 		// Arrange
 		var oMultiInput = new MultiInput({
