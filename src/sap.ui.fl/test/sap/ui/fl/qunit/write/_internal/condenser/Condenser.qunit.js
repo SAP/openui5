@@ -378,7 +378,16 @@ sap.ui.define([
 
 		// only non-index relevant changes get condensed
 		QUnit.test("mix of changes with changes without (currently) existing control", function(assert) {
-			return loadApplyCondenseChanges.call(this, "mixIndexNonIndexNonExisting.json", 8, 7, assert);
+			return loadChangesFromPath("mixIndexNonIndexNonExisting.json", assert, 8).then(function(aLoadedChanges) {
+				aLoadedChanges[2].markFinished();
+				aLoadedChanges[6].markFinished();
+				this.aChanges = aLoadedChanges;
+				return applyChangeSequentially(aLoadedChanges);
+			}.bind(this)).then(function() {
+				return Condenser.condense(oAppComponent, this.aChanges);
+			}.bind(this)).then(function(aRemainingChanges) {
+				assert.equal(aRemainingChanges.length, 7, "Expected number of remaining changes: " + 7);
+			});
 		});
 
 		QUnit.test("mix of changes with non-UI changes in between", function(assert) {
@@ -397,6 +406,39 @@ sap.ui.define([
 				assert.equal(aRemainingChanges[0], "not a change", "the non UI Change was sorted correctly");
 				assert.deepEqual(aRemainingChanges[4], {type: "variant"}, "the non UI Change was sorted correctly");
 				assert.equal(aRemainingChanges[5], false, "the non UI Change was sorted correctly");
+			});
+		});
+
+		QUnit.test("mix of not applied changes in between", function(assert) {
+			return loadChangesFromPath("mixOfIndexRelatedAndNonIndexRelatedChanges.json", assert, 39).then(function(aLoadedChanges) {
+				this.aChanges = aLoadedChanges;
+				return applyChangeSequentially(aLoadedChanges);
+			}.bind(this)).then(function() {
+				// mix in some objects that are not of type sap.ui.fl.Change
+				var aChanges = [].concat(this.aChanges);
+				aChanges.splice(0, 0, new Change(Change.createInitialFileContent({
+					id: "idrename0",
+					changeType: "renameField",
+					reference: "sap.ui.rta.test.Component",
+					selector: {
+						id: "idMain1--Victim",
+						idIsLocal: true
+					}
+				})));
+				aChanges.splice(20, 0, new Change(Change.createInitialFileContent({
+					id: "idrename1",
+					changeType: "renameField",
+					reference: "sap.ui.rta.test.Component",
+					selector: {
+						id: "idMain1--Victim",
+						idIsLocal: true
+					}
+				})));
+				return Condenser.condense(oAppComponent, aChanges);
+			}.bind(this)).then(function(aRemainingChanges) {
+				assert.equal(aRemainingChanges.length, 11, "Expected number of remaining changes: " + 11);
+				assert.equal(aRemainingChanges[0].getId(), "idrename0", "the not applied UI Change was sorted correctly");
+				assert.deepEqual(aRemainingChanges[4].getId(), "idrename1", "the not applied UI Change was sorted correctly");
 			});
 		});
 
