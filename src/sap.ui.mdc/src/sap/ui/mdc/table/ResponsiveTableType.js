@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core", "./TableTypeBase", "../library", "sap/m/Button"
-], function(Core, TableTypeBase, library, Button) {
+	"sap/ui/core/Core", "./TableTypeBase", "../library", "sap/m/Button", "sap/ui/Device"
+], function(Core, TableTypeBase, library, Button, Device) {
 	"use strict";
 
 	var InnerTable, InnerColumn, InnerRow;
@@ -45,6 +45,7 @@ sap.ui.define([
 				 *
 				 * If the available screen space gets too narrow, the columns configured with <code>High</code> and <code>Medium</code>
 				 * importance move to the pop-in area while the columns with <code>Low</code> importance are hidden.
+				 * On mobile phones, the columns with <code>Medium</code> importance are also hidden.
 				 * As soon as the first column is hidden, this button appears in the table toolbar and gives the user
 				 * the possibility to toggle the visibility of the hidden columns in the pop-in area.
 				 *
@@ -83,7 +84,7 @@ sap.ui.define([
 			oTable.getHeaderToolbar().insertEnd(this._getShowDetailsButton(), 0);
 			this._renderShowDetailsButton();
 			oTable.attachEvent("popinChanged", this._onPopinChanged, this);
-			oTable.setHiddenInPopin(["Low"]);
+			oTable.setHiddenInPopin(Device.system.phone ? ["Low", "Medium"] : ["Low"]);
 		} else if (!bValue && this._oShowDetailsButton) {
 			oTable.detachEvent("popinChanged", this._onPopinChanged, this);
 			oTable.getHeaderToolbar().removeEnd(this._oShowDetailsButton);

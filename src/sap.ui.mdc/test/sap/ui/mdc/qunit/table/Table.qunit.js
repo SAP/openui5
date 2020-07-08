@@ -2,8 +2,8 @@
 // These are some globals generated due to fl (signals, hasher) and m (hyphenation) libs.
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils", "sap/ui/events/KeyCodes", "sap/ui/core/Core", "sap/ui/mdc/Table", "sap/ui/mdc/table/Column", "sap/ui/mdc/table/GridTableType", "sap/ui/mdc/table/ResponsiveTableType", "sap/m/Text", "sap/m/Button", "sap/ui/model/odata/v4/ODataListBinding", "sap/ui/model/Sorter", "sap/ui/model/json/JSONModel", "sap/ui/base/Event", 'sap/ui/dom/containsOrEquals', 'sap/ui/mdc/p13n/FlexUtil', 'sap/ui/mdc/table/TableSettings'
-], function(QUtils, KeyCodes, Core, Table, Column, GridTableType, ResponsiveTableType, Text, Button, ODataListBinding, Sorter, JSONModel, Event, containsOrEquals, FlexUtil, TableSettings) {
+	"sap/ui/qunit/QUnitUtils", "sap/ui/events/KeyCodes", "sap/ui/core/Core", "sap/ui/mdc/Table", "sap/ui/mdc/table/Column", "sap/ui/mdc/table/GridTableType", "sap/ui/mdc/table/ResponsiveTableType", "sap/m/Text", "sap/m/Button", "sap/ui/model/odata/v4/ODataListBinding", "sap/ui/model/Sorter", "sap/ui/model/json/JSONModel", "sap/ui/base/Event", 'sap/ui/dom/containsOrEquals', 'sap/ui/mdc/p13n/FlexUtil', 'sap/ui/mdc/table/TableSettings', 'sap/ui/Device'
+], function(QUtils, KeyCodes, Core, Table, Column, GridTableType, ResponsiveTableType, Text, Button, ODataListBinding, Sorter, JSONModel, Event, containsOrEquals, FlexUtil, TableSettings, Device) {
 	"use strict";
 
 	function triggerDragEvent(sDragEventType, oControl) {
@@ -2740,6 +2740,81 @@ sap.ui.define([
 			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "All columns are visible. Button 'Show / Hide Details' is hidden");
 			this.oTable._oTable.setContextualWidth("Phone");
 			Core.applyChanges();
+		}.bind(this));
+	});
+
+	QUnit.test("showDetailsButton property on phone", function(assert) {
+		var done = assert.async();
+
+		// save original state
+		var bDesktop = Device.system.desktop;
+		var bTablet = Device.system.tablet;
+		var bPhone = Device.system.phone;
+
+		// overwrite for our test case
+		Device.system.desktop = false;
+		Device.system.tablet = false;
+		Device.system.phone = true;
+
+		// Destroy the old/default table
+		this.oTable.destroy();
+		this.oTable = new Table({
+			type: new ResponsiveTableType({
+				showDetailsButton: true
+			})
+		});
+
+		var aColumns = [
+			new Column({
+				header: "Column A",
+				hAlign: "Begin",
+				importance: "High"
+			}),
+			new Column({
+				header: "Column B",
+				hAlign: "Begin",
+				importance: "High"
+			}),
+			new Column({
+				header: "Column C",
+				hAlign: "Begin",
+				importance: "Medium"
+			}),
+			new Column({
+				header: "Column D",
+				hAlign: "Begin",
+				importance: "Low"
+			}),
+			new Column({
+				header: "Column E",
+				hAlign: "Begin",
+				importance: "Low"
+			}),
+			new Column({
+				header: "Column F",
+				hAlign: "Begin",
+				importance: "High"
+			})
+		];
+
+		aColumns.forEach(function(oColumn) {
+			this.oTable.addColumn(oColumn);
+		}.bind(this));
+
+		this.oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		this.oTable.initialized().then(function() {
+			var aImportance = this.oTable._oTable.getHiddenInPopin();
+			assert.strictEqual(aImportance.length, 2, "ResponsiveTable property hiddenInPopin.length = 2");
+			assert.strictEqual(aImportance[0], "Low", "ResponsiveTable property hiddenInPopin[0] = 'Low'");
+			assert.strictEqual(aImportance[1], "Medium", "ResponsiveTable property hiddenInPopin[1] = 'Medium'");
+
+			// reset original state
+			Device.system.desktop = bDesktop;
+			Device.system.tablet = bTablet;
+			Device.system.phone = bPhone;
+			done();
 		}.bind(this));
 	});
 
