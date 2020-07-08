@@ -501,10 +501,10 @@ sap.ui.define([
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
 	 *   The reason for the 'refresh' event is
 	 *   <ul>
-	 *   <li> {@link sap.ui.model.ChangeReason.Change Change} on {@link #setAggregation},
 	 *   <li> {@link sap.ui.model.ChangeReason.Context Context} when the binding's
 	 *     parent context is changed,
-	 *   <li> {@link sap.ui.model.ChangeReason.Filter Filter} on {@link #filter},
+	 *   <li> {@link sap.ui.model.ChangeReason.Filter Filter} on {@link #filter} and
+	 *     {@link #setAggregation},
 	 *   <li> {@link sap.ui.model.ChangeReason.Refresh Refresh} on {@link #refresh}, or when the
 	 *     binding is initialized,
 	 *   <li> {@link sap.ui.model.ChangeReason.Sort Sort} on {@link #sort}.
