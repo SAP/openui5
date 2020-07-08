@@ -8,6 +8,10 @@
 			id="GlobalSettingsDialog">
 		<content>
 			<VBox class="sapUiTinyMarginTop">
+					<MessageStrip
+							class="sapUiTinyMarginBottom"
+							showIcon="true"
+							text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE_INFO}"/>
 					<Label text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE}" labelFor="LanguageSelect" />
 					<Select id="LanguageSelect"
 							width="100%"
