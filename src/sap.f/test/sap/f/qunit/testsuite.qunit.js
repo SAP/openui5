@@ -107,14 +107,17 @@ sap.ui.define(function () {
 					useFakeTimers: true
 				}
 			},
+			"GridContainerUtils": {},
 			"GridDropInfo": {
 				coverage: {
 					only: [
+						"sap/f/dnd/GridKeyboardDragAndDrop",
 						"sap/f/dnd/GridDropInfo",
 						"sap/f/dnd/GridDragOver"
 					]
 				},
 				module: [
+					'./dnd/GridKeyboardDragAndDrop.qunit',
 					'./dnd/GridDropInfo.qunit',
 					'./dnd/GridDragOver.qunit'
 				],
