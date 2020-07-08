@@ -1069,18 +1069,17 @@
 
 		// for adhoc defines, there's no module that could report the error -> throws
 		var origOnError = window.onerror;
-		window.onerror = sinon.stub().returns(true);
-
-		sap.ui.define(function() {
-			assert.ok(false, "should not be executed");
-		});
-
-		setTimeout(function() {
+		window.onerror = sinon.stub().callsFake(function() {
 			assert.ok(window.onerror.calledOnce, "an error was thrown");
 			assert.ok(window.onerror.calledWith(sinon.match(/anonymous/).and(sinon.match(/require.*call/))), "...with the expected message");
 			window.onerror = origOnError;
 			done();
-		}, 100);
+			return true;
+		});
+
+		sap.ui.define(function() {
+			assert.ok(false, "should not be executed");
+		});
 	});
 
 	QUnit.test("Named Definition", function(assert) {
