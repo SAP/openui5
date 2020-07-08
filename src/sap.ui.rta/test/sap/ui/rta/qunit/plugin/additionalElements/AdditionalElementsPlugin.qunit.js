@@ -1347,6 +1347,23 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("when the control has delegate action but not a stable ID", function (assert) {
+			return createOverlayWithAggregationActions.call(this, {
+				add: {
+					delegate: {
+						changeType: "addFields"
+					}
+				}
+			}, ON_CHILD)
+				.then(function (oOverlay) {
+					// E.g. Control has delegate action but no stable
+					whenOverlayHasNoStableId.call(this, this.oParentOverlay);
+					return this.oPlugin._isEditableCheck(oOverlay, false);
+				}.bind(this))
+				.then(function (bEditable) {
+					assert.equal(bEditable, false, "then the parent overlay is not editable");
+				});
+		});
 		QUnit.test("when the control has addODataProperty and Reveal in different aggregations from DesignTimeMetadata", function (assert) {
 			var fnLogErrorSpy = sandbox.spy(Log, "error");
 			sandbox.stub(this.oPlugin, "_getRevealActions").resolves({
