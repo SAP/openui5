@@ -519,6 +519,43 @@ sap.ui.define([
 			this.oBaseEditor.addConfig(mConfig);
 		});
 
+		QUnit.test("When the bound value of a managed property editor changes", function (assert) {
+			this.oBaseEditor.setConfig({
+				context: "context",
+				properties: {
+					"prop1": {
+						label: "Prop1",
+						path: "prop1",
+						type: "string",
+						visible: "{= ${context>prop1} === 'value1'}"
+					}
+				},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return this.oBaseEditor.ready().then(function () {
+				sap.ui.getCore().applyChanges();
+
+				var oProp1Editor = this.oBaseEditor.getPropertyEditorsByNameSync("prop1")[0];
+				oProp1Editor.setValue("New prop1 value");
+
+				return oProp1Editor.ready().then(function () {
+					assert.notOk(
+						oProp1Editor.getConfig().visible,
+						"Then the property editor config is updated"
+					);
+					assert.notOk(
+						oProp1Editor.getEditor().getContent()[0].getConfig()[0].visible,
+						"Then the wrapper configuration is updated"
+					);
+				});
+			}.bind(this));
+		});
+
 		QUnit.test("When an editor is registered", function (assert) {
 			var done = assert.async();
 			this.oBaseEditor.setConfig({

@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/restricted/_omit",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/util/deepClone"
 ], function (
 	Control,
 	findClosestInstance,
@@ -18,7 +19,8 @@ sap.ui.define([
 	PropertyEditorFactory,
 	_merge,
 	_omit,
-	deepEqual
+	deepEqual,
+	deepClone
 ) {
 	"use strict";
 
@@ -291,10 +293,11 @@ sap.ui.define([
 	PropertyEditor.prototype.setConfig = function (mConfig) {
 		var mPreviousConfig = this.getConfig();
 		if (!deepEqual(mPreviousConfig, mConfig)) {
-			this.setProperty("config", mConfig);
+			var mNextConfig = deepClone(mConfig);
+			this.setProperty("config", mNextConfig);
 			this.fireConfigChange({
 				previousConfig: mPreviousConfig,
-				config: mConfig
+				config: mNextConfig
 			});
 		}
 	};

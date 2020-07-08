@@ -7,12 +7,14 @@ sap.ui.define([
 	"sap/base/util/deepClone"
 ],
 function (
-	prepareData,
+	FormLayout,
 	includes,
 	_pick,
 	deepClone
 ) {
 	"use strict";
+
+	var prepareData = FormLayout.prepareData;
 
 	QUnit.module("Default group", {
 		before: function () {
