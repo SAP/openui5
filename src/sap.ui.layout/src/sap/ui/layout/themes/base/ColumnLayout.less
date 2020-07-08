@@ -245,6 +245,11 @@ html.sap-phone .sapUiFormEdit .sapUiFormCLSmallColumns .sapUiFormCLContainer:not
 	margin-top: -0.125rem;
 }
 
+/* Additional styling to prevent rendering issues in Safari in combination with column-count and overflow:hidden */
+html[data-sap-ui-browser^="sf"] .sapUiFormEdit .sapUiFormCLElement {
+	transform: translateX(0);
+}
+
 /* display mode */
 /* in display only mode add padding to controls as they don't have one */
 .sapUiForm:not(.sapUiFormEdit) .sapUiFormCLElement > div{
