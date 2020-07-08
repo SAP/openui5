@@ -357,9 +357,10 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#getManifestEntry as getManifestEntry
 		 * @borrows sap.ui.integration.widgets.Card#resolveDestination as resolveDestination
 		 * @borrows sap.ui.integration.widgets.Card#request as request
+		 * @borrows sap.ui.integration.widgets.Card#showMessage as showMessage
 		 */
 		this._oLimitedInterface = new Interface(this, [
-			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request"
+			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage"
 		]);
 
 		this.initBadgeEnablement({
@@ -834,6 +835,27 @@ sap.ui.define([
 	 */
 	Card.prototype.resolveDestination = function (sKey) {
 		return this._oDestinations.getUrl(sKey);
+	};
+
+	/**
+	 * Displays a message strip on top of the content with the given text.
+	 *
+	 * <b>Note</b> Currently only available for an Adaptive Card.
+	 *
+	 * @public
+	 * @experimental As of version 1.81
+	 * @param {string} sMessage The message.
+	 * @param {sap.m.MessageType} sType Type of the message.
+	 */
+	Card.prototype.showMessage = function (sMessage, sType) {
+		var oContent = this.getCardContent();
+
+		if (!oContent || !oContent.showMessage) {
+			Log.error("The experimental feature 'showMessage' is currently available only for an Adaptive Card.");
+			return;
+		}
+
+		oContent.showMessage(sMessage, sType);
 	};
 
 	/**

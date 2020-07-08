@@ -67,6 +67,28 @@ sap.ui.define([
 								manifestUrl: '/samples/adaptive/action-submit.json'
 							},
 							{
+								title: 'Submit with Extension',
+								key: 'extension',
+								manifestUrl: '/samples/adaptive/extensionSample/manifest.json',
+								files: [
+									{
+										url: '/samples/adaptive/extensionSample/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/adaptive/extensionSample/myExtension.js',
+										name: 'myExtension.js',
+										key: 'myExtension.js'
+									},
+									{
+										url: '/samples/adaptive/extensionSample/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n/i18n.properties'
+									}
+								]
+							},
+							{
 								title: 'Open URL Action',
 								key: 'adaptive-action-openurl',
 								manifestUrl: '/samples/adaptive/action-openurl.json'
@@ -602,6 +624,11 @@ sap.ui.define([
 								url: '/samples/adaptiveCustomizedActions/Component.js',
 								name: 'Component.js',
 								key: 'Component.js'
+							},
+							{
+								url: '/samples/adaptiveCustomizedActions/myExtension.js',
+								name: 'myExtension.js',
+								key: 'myExtension.js'
 							}
 						]
 					},
@@ -848,6 +875,11 @@ sap.ui.define([
 								url: '/samples/hostAndExtensionActions/Controller.controller.js',
 								name: 'Controller.controller.js',
 								key: 'Controller.controller.js'
+							},
+							{
+								url: '/samples/hostAndExtensionActions/myExtension.js',
+								name: 'myExtension.js',
+								key: 'myExtension.js'
 							},
 							{
 								url: '/samples/hostAndExtensionActions/manifest.json',

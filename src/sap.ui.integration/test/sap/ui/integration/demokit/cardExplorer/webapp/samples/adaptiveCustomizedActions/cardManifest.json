@@ -3,8 +3,8 @@
 	"sap.app": {
 	"id": "adativecard.embedded",
 	"type": "card",
-	"title": "Sample of an Adaptive Card with Customized Actions",
-	"subTitle": "Sample of an Adaptive Card with Customized Actions",
+	"title": "Sample of an Adaptive Card with Customized Actions and Extension",
+	"subTitle": "Sample of an Adaptive Card with Customized Actions and Extension",
 	"applicationVersion": {
 			"version": "1.0.0"
 	},
@@ -25,10 +25,19 @@
 		}
 	},
 	"sap.card": {
+		"extension": "./myExtension",
+		"configuration": {
+			"actionHandlers": {
+				"submit": {
+					"url": "../adaptive/action-submit.json",
+					"method": "GET"
+				}
+			}
+		},
 	"type": "AdaptiveCard",
 	"header": {
-		"title": "Short Summary",
-		"subTitle": "With a link to more details",
+		"title": "Adaptive Card with Customized Actions and Extension",
+		"subTitle": "Actions are modified via the app's controller or the extension module",
 		"icon": {
 			"src": "sap-icon://business-card"
 		}
@@ -46,11 +55,17 @@
 			},
 			{
 				"type": "TextBlock",
-				"text": "You can modify the default behaviour of the Open URL Action button below in your app.",
+				"text": "You can modify the default behaviour of the Open URL and Submit actions in an extension module - see the Submit action below, or in the application controller - see the Open URL action.",
 				"weight": "Bolder",
 				"size": "Small",
 				"isSubtle": true,
 				"wrap": true
+			},
+			{
+				"type": "Input.Text",
+				"value": "Enter you name",
+				"style": "text",
+				"id": "Name"
 			}
 		],
 	"actions": [
@@ -58,6 +73,10 @@
 				"type": "Action.OpenUrl",
 				"title": "Go to details page",
 				"url": "example.html"
+			},
+			{
+				"type": "Action.Submit",
+				"title": "Submit to backend"
 			}
 		]
 	  }
