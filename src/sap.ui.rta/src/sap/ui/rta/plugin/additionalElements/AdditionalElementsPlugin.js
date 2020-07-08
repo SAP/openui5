@@ -213,7 +213,7 @@ sap.ui.define([
 					mAction.element = oCheckElement;
 					if (bAddViaDelegate) {
 						return DelegateMediatorAPI.getDelegateForControl({
-							control: oCheckElement,
+							control: mParents.relevantContainer, //delegate will always be added on the relevant container
 							modifier: JsControlTreeModifier,
 							supportsDefault: mAction.supportsDefaultDelegate
 						}).then(function(mDelegateInfo) {
@@ -1053,7 +1053,8 @@ sap.ui.define([
 						parentId: mParents.parent.getId(),
 						propertyName: oSelectedElement.name,
 						oDataServiceVersion: oSelectedElement.oDataServiceVersion,
-						modelType: mAddViaDelegateAction.delegateInfo.modelType
+						modelType: mAddViaDelegateAction.delegateInfo.modelType,
+						relevantContainerId: mParents.relevantContainer.getId()
 					}, oParentAggregationDTMetadata, sVariantManagementReference);
 				}.bind(this))
 				.then(function(oAddViaDelegateCommand) {
