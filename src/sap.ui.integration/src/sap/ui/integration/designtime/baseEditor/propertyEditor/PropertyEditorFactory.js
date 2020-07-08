@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/base/util/values"
 ], function (
-	includes
+	includes,
+	values
 ) {
 	"use strict";
 
@@ -26,28 +28,37 @@ sap.ui.define([
 
 	var PropertyEditorFactory = {};
 
+	var oLoadingPromisses = {};
 	var oPropertyEditorClasses = {};
 
 	/**
-	* Registers classes for the given editor types. If an editor type is already registered,
-	* it will be skipped and must first be deregistered using the <code>PropertyEditorFactory.deregisterType</code>
-	* function.
-	* @param {Object<string, string>} mTypes - Map containing pairs of editor type and the path to load the class from
-	* @public
-	* @function
-	* @name sap.ui.integration.designtime.baseEditor.propertyEditor.PropertyEditorFactory.registerTypes
-	*/
+	 * Registers classes for the given editor types. If an editor type is already registered,
+	 * it will be skipped and must first be deregistered using the <code>PropertyEditorFactory.deregisterType</code>
+	 * function.
+	 * @param {Object<string, string>} mTypes - Map containing pairs of editor type and the path to load the class from
+	 * @returns {Promise<object>} Resolves with a map with name and object of the registered PropertyEditors
+	 * @public
+	 * @function
+	 * @name sap.ui.integration.designtime.baseEditor.propertyEditor.PropertyEditorFactory.registerTypes
+	 */
 	PropertyEditorFactory.registerTypes = function (mTypes) {
 		Object.keys(mTypes).forEach(function (sPropertyEditorType) {
-			if (!oPropertyEditorClasses[sPropertyEditorType]) {
-				oPropertyEditorClasses[sPropertyEditorType] = new Promise(function (resolve, reject) {
+			if (!oLoadingPromisses[sPropertyEditorType]) {
+				oLoadingPromisses[sPropertyEditorType] = new Promise(function (resolve, reject) {
 					sap.ui.require(
 						[mTypes[sPropertyEditorType]],
 						resolve,
 						reject
 					);
+				}).then(function(oPropertyEditor) {
+					oPropertyEditorClasses[oPropertyEditor.getMetadata().getName()] = oPropertyEditor;
+					return oPropertyEditor;
 				});
 			}
+		});
+
+		return Promise.all(values(oLoadingPromisses)).then(function() {
+			return oPropertyEditorClasses;
 		});
 	};
 
@@ -59,8 +70,8 @@ sap.ui.define([
 	* @name sap.ui.integration.designtime.baseEditor.propertyEditor.PropertyEditorFactory.deregisterType
 	*/
 	PropertyEditorFactory.deregisterType = function (sType) {
-		if (oPropertyEditorClasses[sType]) {
-			delete oPropertyEditorClasses[sType];
+		if (oLoadingPromisses[sType]) {
+			delete oLoadingPromisses[sType];
 		}
 	};
 
@@ -71,7 +82,7 @@ sap.ui.define([
 	* @name sap.ui.integration.designtime.baseEditor.propertyEditor.PropertyEditorFactory.deregisterAllTypes
 	*/
 	PropertyEditorFactory.deregisterAllTypes = function () {
-		oPropertyEditorClasses = {};
+		oLoadingPromisses = {};
 	};
 
 	/**
@@ -87,10 +98,10 @@ sap.ui.define([
 			if (!sPropertyType) {
 				return reject("No editor type was specified in the property configuration.");
 			}
-			if (!oPropertyEditorClasses[sPropertyType]) {
+			if (!oLoadingPromisses[sPropertyType]) {
 				return reject("Editor type was not registered");
 			}
-			oPropertyEditorClasses[sPropertyType]
+			oLoadingPromisses[sPropertyType]
 				.then(function (PropertyEditorClass) {
 					return resolve(new PropertyEditorClass());
 				})
@@ -100,12 +111,16 @@ sap.ui.define([
 		});
 	};
 
+	PropertyEditorFactory.getType = function(sType) {
+		return oPropertyEditorClasses[sType];
+	};
+
 	/**
 	 * Retrieves all registered types.
 	 * @returns {Object<string, Promise<sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor>>} List of registered types
 	 */
 	PropertyEditorFactory.getTypes = function () {
-		return Object.assign({}, oPropertyEditorClasses);
+		return Object.assign({}, oLoadingPromisses);
 	};
 
 	/**

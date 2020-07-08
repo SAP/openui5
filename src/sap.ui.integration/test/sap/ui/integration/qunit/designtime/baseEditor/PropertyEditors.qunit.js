@@ -1070,8 +1070,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("When a PropertyEditors wrapper has nested editors", function (assert) {
-			var fnDone = assert.async();
-
 			this.oPropertyEditors = new PropertyEditors({
 				config: [
 					{
@@ -1083,16 +1081,17 @@ sap.ui.define([
 				]
 			});
 
-			this.oBaseEditor.addContent(this.oPropertyEditors);
-			sap.ui.getCore().applyChanges();
+			return this.oBaseEditor.ready().then(function() {
+				this.oBaseEditor.addContent(this.oPropertyEditors);
+				sap.ui.getCore().applyChanges();
 
-			this.oPropertyEditors.ready().then(function () {
+				return this.oPropertyEditors.ready();
+			}.bind(this)).then(function () {
 				assert.strictEqual(
 					this.oPropertyEditors._getPropertyEditors()[0].isReady(),
 					true,
 					"Then it is ready when its nested editors are"
 				);
-				fnDone();
 			}.bind(this));
 		});
 	});

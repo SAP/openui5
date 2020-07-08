@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Label",
 	"sap/ui/core/Fragment",
-	"sap/base/util/restricted/_merge",
+	"sap/base/util/restricted/_omit",
 	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
@@ -16,14 +17,15 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/ui/integration/designtime/baseEditor/validator/ValidatorRegistry",
 	"sap/ui/integration/designtime/baseEditor/util/BaseDefaultValidatorModules"
-], function (
+], function(
 	Control,
 	isTemplate,
 	JSONModel,
 	Label,
 	Fragment,
-	_merge,
+	_omit,
 	ManagedObjectObserver,
+	PropertyEditorFactory,
 	createPromise,
 	deepClone,
 	deepEqual,
@@ -671,25 +673,19 @@ sap.ui.define([
 	 * @property {any} defaultValue - The default value
 	 */
 
-	/**
-	 * Method which can be overridden to define the default configuration of a property editor.
-	 * Default config options will be overridden by the property config.
-	 *
-	 * @returns {Object<string, EditorDefaultConfiguration>} Editor config
-	 */
-	BasePropertyEditor.prototype.getConfigMetadata = function () {
-		return {
-			visible: {
-				defaultValue: true
-			}
-		};
+	BasePropertyEditor.configMetadata = {
+		visible: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		}
 	};
 
 	BasePropertyEditor.prototype.setConfig = function (oConfig) {
 		var oPreviousConfig = this.getConfig();
 
 		var oDefaultConfig = {};
-		each(this.getConfigMetadata(), function (sConfigKey, mConfigValue) {
+		var oConfigMetadata = PropertyEditorFactory.getType(this.getMetadata().getName()).configMetadata;
+		each(oConfigMetadata, function (sConfigKey, mConfigValue) {
 			oDefaultConfig[sConfigKey] = mConfigValue.defaultValue;
 		});
 

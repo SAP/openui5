@@ -33,18 +33,6 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	BooleanEditor.prototype.getConfigMetadata = function () {
-		return Object.assign(
-			{},
-			BasePropertyEditor.prototype.getConfigMetadata.call(this),
-			{
-				allowBindings: {
-					defaultValue: true
-				}
-			}
-		);
-	};
-
 	BooleanEditor.prototype.getDefaultValidators = function () {
 		var oConfig = this.getConfig();
 		return Object.assign(
@@ -77,6 +65,13 @@ sap.ui.define([
 
 		this.setValue(vValue);
 	};
+
+	BooleanEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		allowBindings: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		}
+	});
 
 	return BooleanEditor;
 });

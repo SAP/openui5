@@ -1,13 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor"
 ], function (
-	StringEditor,
 	ResourceBundle,
 	ResourceModel,
 	EditorQunitUtils,
@@ -39,7 +37,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("String Editor: Given an editor config", {
-		beforeEach: function (assert) {
+		beforeEach: function() {
 			var mJson = {
 				content: "Hello World."
 			};

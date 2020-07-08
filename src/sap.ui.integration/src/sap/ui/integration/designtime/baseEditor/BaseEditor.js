@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/PropertyEditors",
 	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
 	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
-	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
 	"sap/ui/integration/designtime/baseEditor/util/hasTag",
 	"sap/ui/core/Control",
 	"sap/ui/model/resource/ResourceModel",
@@ -17,9 +16,11 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
 	"sap/base/util/values",
+	"sap/base/util/includes",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/isEmptyObject",
-	"sap/base/util/includes",
+	"sap/base/util/restricted/_intersection",
+	"sap/base/util/restricted/_mergeWith",
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/model/json/JSONModel",
@@ -33,7 +34,6 @@ sap.ui.define([
 	PropertyEditors,
 	resolveBinding,
 	ObjectBinding,
-	isValidBindingString,
 	hasTag,
 	Control,
 	ResourceModel,
@@ -42,9 +42,11 @@ sap.ui.define([
 	deepClone,
 	deepEqual,
 	values,
+	includes,
 	isPlainObject,
 	isEmptyObject,
-	includes,
+	_intersection,
+	_mergeWith,
 	_merge,
 	_omit,
 	JSONModel,
@@ -55,6 +57,7 @@ sap.ui.define([
 	"use strict";
 
 	var CUSTOM_PROPERTY_PREFIX = "customProperty--";
+	var SET_CONFIG_PROMISE = Promise.resolve();
 
 	/**
 	 * @class
@@ -291,25 +294,82 @@ sap.ui.define([
 		}
 	};
 
-	BaseEditor.prototype.setConfig = function (oConfig) {
-		PropertyEditorFactory.deregisterAllTypes();
-		PropertyEditorFactory.registerTypes(oConfig.propertyEditors);
+	BaseEditor.prototype.setConfig = function (oDefaultConfig) {
+		SET_CONFIG_PROMISE = SET_CONFIG_PROMISE.then(function() {
+			PropertyEditorFactory.deregisterAllTypes();
+			return PropertyEditorFactory.registerTypes(oDefaultConfig.propertyEditors);
+		}).then(function(mPropertyEditors) {
+			this._initValidators(oDefaultConfig.validators || {});
 
-		this._initValidators(oConfig.validators || {});
+			// Backwards compatibility. If no i18n configuration specified, we use default one.
+			var oTarget = {};
+			if (!oDefaultConfig.i18n) {
+				oTarget.i18n = this.getMetadata().getProperty("config").getDefaultValue().i18n;
+			}
 
-		// Backwards compatibility. If no i18n configuration specified, we use default one.
-		var oTarget = {};
-		if (!oConfig.i18n) {
-			oTarget.i18n = this.getMetadata().getProperty("config").getDefaultValue().i18n;
-		}
-
-		this.setProperty(
-			"config",
-			this._mergeConfig(oTarget, oConfig),
-			false
-		);
-		this._initialize();
+			this.setProperty(
+				"config",
+				mergeConfig(oTarget, oDefaultConfig, this._oSpecificConfig || {}, mPropertyEditors),
+				false
+			);
+			this._initialize();
+		}.bind(this));
+		return SET_CONFIG_PROMISE;
 	};
+
+	BaseEditor.prototype.addConfig = function (oConfig) {
+		return this.setConfig(
+			mergeConfig(this.getConfig(), oConfig)
+		);
+	};
+
+	BaseEditor.prototype._addSpecificConfig = function(oSpecificConfig) {
+		return SET_CONFIG_PROMISE.then(function() {
+			this._oSpecificConfig = oSpecificConfig;
+			this.setConfig(this.getConfig());
+		}.bind(this));
+	};
+
+	function mergeConfig(oTarget, oDefaultConfig, oSpecificConfig, mPropertyEditors) {
+		var oResult = _merge({}, oTarget, oDefaultConfig);
+		// concat i18n properties to avoid override
+		oResult.i18n = [].concat(oTarget.i18n || [], oDefaultConfig.i18n || []);
+
+		if (oSpecificConfig && mPropertyEditors) {
+			// iterate the specific config and try to merge
+			each(oSpecificConfig.properties, function(sPropertyName, oProperty) {
+				var sEditor = oResult.propertyEditors[oProperty.type] && oResult.propertyEditors[oProperty.type].split("/").join(".");
+				var oConfigMetadata = sEditor && mPropertyEditors[sEditor].configMetadata;
+
+				if (oConfigMetadata) {
+					if (!oResult.properties[sPropertyName]) {
+						oResult.properties[sPropertyName] = {};
+					}
+					each(oProperty, function(sKey, vTargetValue) {
+						var vNewValue;
+						var sMergeStrategy = oConfigMetadata[sKey] && oConfigMetadata[sKey].mergeStrategy;
+						if (sMergeStrategy) {
+							// only applicable for boolean values
+							if (sMergeStrategy === "mostRestrictiveWins") {
+								var bMostRestrictiveValue = oConfigMetadata[sKey].mostRestrictiveValue || false;
+								if (vTargetValue === bMostRestrictiveValue) {
+									vNewValue = bMostRestrictiveValue;
+								} else {
+									vNewValue = oResult.properties[sPropertyName][sKey];
+								}
+							} else if (sMergeStrategy === "intersection") {
+								vNewValue = _intersection(vTargetValue, oResult.properties[sPropertyName][sKey]);
+							}
+						} else {
+							vNewValue = vTargetValue;
+						}
+						oResult.properties[sPropertyName][sKey] = vNewValue;
+					});
+				}
+			});
+		}
+		return oResult;
+	}
 
 	BaseEditor.prototype._initValidators = function (mValidatorModules) {
 		ValidatorRegistry.deregisterAllValidators();
@@ -321,19 +381,6 @@ sap.ui.define([
 			this._bValidatorsReady = true;
 			this._checkReady();
 		}.bind(this));
-	};
-
-	BaseEditor.prototype.addConfig = function (oConfig) {
-		return this.setConfig(
-			this._mergeConfig(this.getConfig(), oConfig)
-		);
-	};
-
-	BaseEditor.prototype._mergeConfig = function (oTarget, oSource) {
-		var oResult = _merge({}, oTarget, oSource);
-		// concat i18n properties to avoid override
-		oResult.i18n = [].concat(oTarget.i18n || [], oSource.i18n || []);
-		return oResult;
 	};
 
 	BaseEditor.prototype._reset = function () {

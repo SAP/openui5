@@ -51,17 +51,12 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	ParametersEditor.prototype.getConfigMetadata = function () {
-		return Object.assign(
-			{},
-			MapEditor.prototype.getConfigMetadata.call(this),
-			{
-				allowLabelChange: {
-					defaultValue: true
-				}
-			}
-		);
-	};
+	ParametersEditor.configMetadata = Object.assign({}, MapEditor.configMetadata, {
+		allowLabelChange: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		}
+	});
 
 	ParametersEditor.prototype.formatItemConfig = function(oConfigValue) {
 		var oMapItemConfig = MapEditor.prototype.formatItemConfig.apply(this, arguments);

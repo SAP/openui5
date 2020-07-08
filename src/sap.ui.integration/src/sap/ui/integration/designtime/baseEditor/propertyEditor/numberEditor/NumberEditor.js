@@ -50,6 +50,8 @@ sap.ui.define([
 		);
 	};
 
+	NumberEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata);
+
 	NumberEditor.prototype.formatValue = function (sValue) {
 		if (_isNil(sValue) || isValidBindingString(sValue, false)) {
 			return sValue;

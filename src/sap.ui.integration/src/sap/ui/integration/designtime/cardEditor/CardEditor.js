@@ -134,18 +134,12 @@ sap.ui.define([
 					var oConfig = merge({}, oBundleConfig);
 					oConfig.i18n = _toArray(oConfig.i18n);
 					oConfig.i18n.push(sDesigntimePrefix + "/i18n.properties");
-					this._applyBundleConfig(merge({}, oConfig));
+					this._addSpecificConfig(merge({}, oConfig));
 				}.bind(this));
 			}
 		}
 
 		BaseEditor.prototype.setJson.apply(this, arguments);
-	};
-
-	CardEditor.prototype._applyBundleConfig = function (oBundleConfig) {
-		var oCurrentConfig = this.getConfig();
-		this.setConfig(oBundleConfig);
-		this.addConfig(oCurrentConfig);
 	};
 
 	function sanitizePath(sPath) {

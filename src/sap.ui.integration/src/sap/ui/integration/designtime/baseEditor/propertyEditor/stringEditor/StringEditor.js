@@ -70,23 +70,19 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	StringEditor.prototype.getConfigMetadata = function () {
-		return Object.assign(
-			{},
-			BasePropertyEditor.prototype.getConfigMetadata.call(this),
-			{
-				enabled: {
-					defaultValue: true
-				},
-				allowBindings: {
-					defaultValue: true
-				},
-				maxLength: {
-					defaultValue: 0
-				}
-			}
-		);
-	};
+	StringEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		enabled: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowBindings: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		maxLength: {
+			defaultValue: 0
+		}
+	});
 
 	StringEditor.prototype.getDefaultValidators = function () {
 		var oConfig = this.getConfig();
