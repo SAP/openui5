@@ -2,8 +2,6 @@
 	controllerName="sap.ui.table.sample.MultiHeader.Controller"
 	xmlns="sap.ui.table"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:u="sap.ui.unified"
-	xmlns:c="sap.ui.core"
 	xmlns:m="sap.m"
 	height="100%">
 	<m:Page
@@ -11,61 +9,79 @@
 		enableScrolling="false"
 		class="sapUiContentPadding">
 		<m:content>
-
-		<Table id="table1" ariaLabelledBy="title" selectionMode="MultiToggle" rows="{/modelData}" visibleRowCount="5">
-			<extension>
-				<m:OverflowToolbar>
-					<m:Title id="title" text="Contacts"/>
-				</m:OverflowToolbar>
-			</extension>
-			<columns>
-				<Column width="11rem" sortProperty="supplier" filterProperty="supplier">
-					<multiLabels>
+			<Table
+				id="table1"
+				ariaLabelledBy="title"
+				selectionMode="MultiToggle"
+				rows="{/modelData}"
+				visibleRowCount="5"
+				enableColumnFreeze="true"
+				showColumnVisibilityMenu="true">
+				<extension>
+					<m:OverflowToolbar>
+						<m:Title id="title" text="Contacts"/>
+					</m:OverflowToolbar>
+				</extension>
+				<columns>
+					<Column
+						width="11rem"
+						sortProperty="supplier"
+						filterProperty="supplier">
 						<m:Label text="Supplier" textAlign="Center" width="100%"/>
-					</multiLabels>
-
-					<template>
-						<m:Text text="{supplier}"/>
-					</template>
-				</Column>
-
-				<Column width="11rem" id="multiheader" sortProperty="street" filterProperty="street">
+						<template>
+							<m:Text text="{supplier}"/>
+						</template>
+					</Column>
+					<Column
+						width="11rem"
+						sortProperty="street"
+						filterProperty="street"
+						headerSpan="3,2">
 						<multiLabels>
 							<m:Label text="Contact" textAlign="Center" width="100%"/>
 							<m:Label text="Address" textAlign="Center" width="100%"/>
 							<m:Label text="Street" textAlign="Center" width="100%"/>
 						</multiLabels>
-
 						<template>
-							<m:Text text="{street}" wrapping="false" />
+							<m:Text text="{street}" wrapping="false"/>
 						</template>
 					</Column>
-
-				<Column width="11rem" sortProperty="city">
-					<multiLabels>
-						<m:Label text="Contact" />
-						<m:Label text="Address" />
-						<m:Label text="City" textAlign="Center" width="100%"/>
-					</multiLabels>
-					<template>
-						<m:Input value="{city}"/>
-					</template>
-				</Column>
-
-				<Column width="11rem"  sortProperty="phone">
-					<multiLabels>
-						<m:Label text="Contact" />
-						<m:Label text="Phone" textAlign="Center" width="100%"/>
-					</multiLabels>
-					<template>
-						<m:Input value="{phone}"/>
-					</template>
-				</Column>
-
-			</columns>
-
-		</Table>
-
+					<Column
+						width="11rem"
+						sortProperty="city"
+						headerSpan="2">
+						<multiLabels>
+							<m:Label text="Contact"/>
+							<m:Label text="Address"/>
+							<m:Label text="City" textAlign="Center" width="100%"/>
+						</multiLabels>
+						<template>
+							<m:Input value="{city}"/>
+						</template>
+					</Column>
+					<Column
+						width="11rem"
+						sortProperty="phone">
+						<multiLabels>
+							<m:Label text="Contact"/>
+							<m:Label text="Phone" textAlign="Center" width="100%"/>
+						</multiLabels>
+						<template>
+							<m:Input value="{phone}"/>
+						</template>
+					</Column>
+					<Column width="8rem" hAlign="End">
+						<multiLabels>
+							<m:Label visible="false" />
+							<m:Label visible="false" />
+							<m:Label text="Open Orders" />
+						</multiLabels>
+						<template>
+							<m:Text text="{openOrders}"/>
+						</template>
+					</Column>
+				</columns>
+			</Table>
 		</m:content>
 	</m:Page>
 </mvc:View>
