@@ -226,8 +226,8 @@ sap.ui.define([
 					}
 					//addODataProperty
 					aFilteredActions.push(mAction);
-					return aFilteredActions;
 				}
+				return aFilteredActions;
 			});
 		}, Promise.resolve([]));
 	}
