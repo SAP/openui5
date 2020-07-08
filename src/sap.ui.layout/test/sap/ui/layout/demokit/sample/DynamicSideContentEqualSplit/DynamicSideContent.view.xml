@@ -16,7 +16,7 @@
 				class="sapUiDSCExplored sapUiContentPadding"
 				containerQuery="true"
 				equalSplit="true"
-				breakpointChanged="updateToggleButtonState">
+				breakpointChanged="handleBreakpointChanged">
 				<VBox>
 					<Title level="H1" text="Main content" />
 					<Image src="{img>/products/pic1}" densityAware="false" width="10em" />
