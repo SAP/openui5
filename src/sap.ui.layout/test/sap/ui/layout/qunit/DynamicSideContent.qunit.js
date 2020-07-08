@@ -668,6 +668,29 @@ sap.ui.define([
 			assert.strictEqual(this._oDSC.getCurrentBreakpoint(), M, "The current breakpoint in this setup should be 'M'");
 		});
 
+		QUnit.module("Content positioning after rerendering", {
+			beforeEach : function () {
+				this._oDSC = new DynamicSideContent({
+					containerQuery: true,
+					sideContentFallDown: "BelowM"
+				});
+				$("#qunit-fixture").width(200);
+				this._oDSC.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				$("#qunit-fixture").width(1000); // Reset qunit fixture size to original (1000px);
+				this._oDSC.destroy();
+				this._oDSC = null;
+			}
+		});
+
+		QUnit.test("After rerendering the visibility of the contents remains the same",function(assert) {
+			this._oDSC.rerender();
+			assert.ok(this._oDSC._MCVisible, "The main content is visible");
+			assert.notOk(this._oDSC._SCVisible, "The side content is not visible");
+		});
+
 		QUnit.module("Construction / Destruction", {
 			beforeEach : function () {
 				this._oDSC = new DynamicSideContent();

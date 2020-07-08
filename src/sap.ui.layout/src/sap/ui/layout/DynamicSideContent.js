@@ -391,8 +391,8 @@ sap.ui.define([
 			this._bSuppressInitialFireBreakPointChange = true;
 			this._detachContainerResizeListener();
 
-			this._SCVisible = this.getProperty("showSideContent");
-			this._MCVisible = this.getProperty("showMainContent");
+			this._SCVisible = (this._SCVisible === undefined) ? this.getProperty("showSideContent") : this._SCVisible;
+			this._MCVisible = (this._MCVisible === undefined) ? this.getProperty("showMainContent") : this._MCVisible;
 
 			if (!this.getContainerQuery()) {
 				this._iWindowWidth = jQuery(window).width();
@@ -595,20 +595,11 @@ sap.ui.define([
 				this._iWindowWidth = jQuery(window).width();
 			}
 
-			if (this._iWindowWidth !== this._iOldWindowWidth) {
-				this._iOldWindowWidth = this._iWindowWidth;
+			this._currentBreakpoint = this._getBreakPointFromWidth(this._iWindowWidth);
 
-				this._oldBreakPoint = this._currentBreakpoint;
-				this._currentBreakpoint = this._getBreakPointFromWidth(this._iWindowWidth);
-
-				if ((this._oldBreakPoint !== this._currentBreakpoint)
-					|| (this._currentBreakpoint === M
-					&& this.getSideContentFallDown() === SideContentFallDown.OnMinimumWidth)) {
-					this._setResizeData(this._currentBreakpoint, this.getEqualSplit());
-					this._changeGridState();
-				}
-				this._setBreakpointFromWidth(this._iWindowWidth);
-			}
+			this._setResizeData(this._currentBreakpoint, this.getEqualSplit());
+			this._changeGridState();
+			this._setBreakpointFromWidth(this._iWindowWidth);
 		};
 
 		/**
@@ -628,7 +619,7 @@ sap.ui.define([
 				switch (sSizeName) {
 					case S:
 						this._setSpanSize(SPAN_SIZE_12, SPAN_SIZE_12);
-						if (this.getProperty("showSideContent") && this.getProperty("showMainContent")) {
+						if (this.getProperty("showSideContent") && this.getProperty("showMainContent") && this._MCVisible) {
 							this._SCVisible = sideContentVisibility === SideContentVisibility.AlwaysShow;
 						}
 						this._bFixedSideContent = false;
