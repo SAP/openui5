@@ -4479,6 +4479,210 @@ usePreliminaryContext : false}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: When the creation of a new entry is called on a collection and leads to messages in
+	// the response header, the request's deepPath is modified by replacing the generic UID with the
+	// responsed entity key predicate. The generic UID must not appear in the message's calculated
+	// fullTarget.
+	// BCP: 002028376600002197422020
+	QUnit.test("createEntry: update deep path with resulting entity", function (assert) {
+		var oModel = createSalesOrdersModel({useBatch : true}),
+			oNoteError = this.createResponseMessage("Note"),
+			sView = '\
+<FlexBox id="page">\
+	<Input id="note" value="{Note}" />\
+</FlexBox>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectHeadRequest()
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "GWSAMPLE_BASIC.SalesOrderLineItem"
+						}
+					},
+					deepPath : "/SalesOrderLineItemSet('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderLineItemSet"
+				}, {
+					data : {
+						__metadata : {
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~1~')"
+						},
+						ItemPosition : "10",
+						Note : "foo",
+						SalesOrderID : "1"
+					},
+					statusCode : 201
+				}, {
+					location : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet"
+						+ "(SalesOrderID='1',ItemPosition='10~1~')",
+					"sap-message" : getMessageHeader(oNoteError)
+				})
+				.expectMessage(oNoteError,
+					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~1~')/");
+
+			// code under test
+			that.oView.byId("page").setBindingContext(
+				oModel.createEntry("/SalesOrderLineItemSet", {properties : {}})
+			);
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(that.oView.byId("note").getValue(), "foo");
+			that.checkValueState(assert, "note", "Error", oNoteError.message);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: When the creation of a new entry is called on a navigation property pointing to a
+	// collection and leads to messages in the response header, the request's deepPath is modified
+	// by replacing the generic UID with the responsed entity key predicate. The generic UID must
+	// not appear in the message's calculated fullTarget.
+	// BCP: 002028376600002197422020
+	QUnit.test("createEntry: update deep path with resulting entity (deep)", function (assert) {
+		var oModel = createSalesOrdersModel({refreshAfterChange : false, useBatch : true}),
+			oNoteError = this.createResponseMessage("Note"),
+			oNoteErrorCopy = cloneODataMessage(oNoteError,
+				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			sView = '\
+<FlexBox binding="{path : \'/SalesOrderSet(\\\'1\\\')\',\
+		parameters : {select : \'SalesOrderID,Note\', expand : \'ToLineItems\'}}">\
+	<Text id="noteSalesOrder" text="{Note}" />\
+	<Table id="table" items="{path : \'ToLineItems\',\
+			parameters : {select : \'ItemPosition,Note,SalesOrderID\'}}">\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+	</Table>\
+</FlexBox>\
+<FlexBox id="details">\
+	<Input id="noteLineItem" value="{Note}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')?$select=SalesOrderID%2cNote&$expand=ToLineItems", {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				Note : "foo",
+				SalesOrderID : "1",
+				ToLineItems : {
+					results : []
+				}
+			})
+			.expectChange("noteSalesOrder", null)
+			.expectChange("noteSalesOrder", "foo");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "GWSAMPLE_BASIC.SalesOrderLineItem"
+						}
+					},
+					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet('1')/ToLineItems"
+				}, {
+					data : {
+						__metadata : {
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						},
+						ItemPosition : "10~0~",
+						Note : "bar",
+						SalesOrderID : "1"
+					},
+					statusCode : 201
+				}, {
+					location : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('1')/ToLineItems"
+						+ "(SalesOrderID='1',ItemPosition='10~0~')",
+					"sap-message" : getMessageHeader(oNoteError)
+				})
+				.expectMessage(oNoteErrorCopy, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems");
+
+			// code under test
+			that.oView.byId("details").setBindingContext(
+				oModel.createEntry("ToLineItems", {
+					context : that.oView.byId("table").getBindingContext(),
+					properties : {}
+				})
+			);
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(that.oView.byId("noteLineItem").getValue(), "bar");
+			that.checkValueState(assert, "noteLineItem", "Error", oNoteError.message);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: When createEntry is called on a navigation property the deep path of the request is
+	// the same as the fullTarget of associated messages.
+	// BCP: 002028376600002197422020
+	QUnit.test("createEntry: no change of deep path for non-collections", function (assert) {
+		var oCompanyNameError = this.createResponseMessage("CompanyName"),
+			oModel = createSalesOrdersModel({useBatch : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}" id="page">\
+	<Input id="note" value="{Note}" />\
+	<FlexBox id="details">\
+		<Input id="name" value="{CompanyName}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				Note : "foo",
+				SalesOrderID : "1"
+			})
+			.expectChange("note", null)
+			.expectChange("note", "foo");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "GWSAMPLE_BASIC.BusinessPartner"
+						}
+					},
+					deepPath : "/SalesOrderSet('1')/ToBusinessPartner",
+					method : "POST",
+					requestUri : "SalesOrderSet('1')/ToBusinessPartner"
+				}, {
+					data : {
+						__metadata : {
+							uri : "/Product('BP1')"
+						},
+						CompanyName : "SAP",
+						ProductID : "BP1"
+					},
+					statusCode : 201
+				}, {
+					location : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('1')"
+						+ "/ToBusinessPartner",
+					"sap-message" : getMessageHeader(oCompanyNameError)
+				})
+				.expectMessage(oCompanyNameError, "/SalesOrderSet('1')/ToBusinessPartner/");
+
+			// code under test
+			that.oView.byId("details").setBindingContext(
+				oModel.createEntry("/SalesOrderSet('1')/ToBusinessPartner", {properties : {}})
+			);
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(that.oView.byId("name").getValue(), "SAP");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Read an entity (SalesOrderLineItem) with an expand on a 0..1 navigation property
 	// (ToProduct) plus an expand of a second 0..1 navigation property from the first one
 	// (ToProduct/ToSupplier). Element bindings on the second navigation property have a valid
