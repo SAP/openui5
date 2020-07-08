@@ -268,7 +268,8 @@ sap.ui.define([
 							delegateInfo: {
 								payload: mAction.delegateInfo.payload || {},
 								delegate: mAction.delegateInfo.instance,
-								modelType: mAction.delegateInfo.modelType
+								modelType: mAction.delegateInfo.modelType,
+								requiredLibraries: mAction.delegateInfo.requiredLibraries
 							}
 						}
 					};
@@ -880,7 +881,7 @@ sap.ui.define([
 						&& mChangeHandlerSettings.content
 						&& mChangeHandlerSettings.content.requiredLibraries;
 					if (mRequiredLibraries) {
-						return this._createCommandForAddLibrary(mParents, mActions, mRequiredLibraries, oParentAggregationDTMetadata)
+						return this._createCommandForAddLibrary(mParents, mRequiredLibraries, oParentAggregationDTMetadata)
 							.then(function(oCommandForAddLibrary) {
 								oCompositeCommand.addCommand(oCommandForAddLibrary);
 							});
@@ -932,15 +933,18 @@ sap.ui.define([
 				}.bind(this));
 		},
 
-		_createCommandForAddLibrary: function(mParents, mActions, mRequiredLibraries, oParentAggregationDTMetadata) {
-			var oComponent = FlUtils.getAppComponentForControl(mParents.relevantContainer);
-			var mManifest = oComponent.getManifest();
-			var sReference = mManifest["sap.app"].id;
-			return this.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
-				reference : sReference,
-				parameters : { libraries : mRequiredLibraries },
-				appComponent: oComponent
-			}, oParentAggregationDTMetadata);
+		_createCommandForAddLibrary: function(mParents, mRequiredLibraries, oParentAggregationDTMetadata) {
+			if (mRequiredLibraries) {
+				var oComponent = FlUtils.getAppComponentForControl(mParents.relevantContainer);
+				var mManifest = oComponent.getManifest();
+				var sReference = mManifest["sap.app"].id;
+				return this.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
+					reference : sReference,
+					parameters : { libraries : mRequiredLibraries },
+					appComponent: oComponent
+				}, oParentAggregationDTMetadata);
+			}
+			return Promise.resolve();
 		},
 
 		_createRevealCommandForInvisible: function(mSelectedElement, mActions, mParents) {
@@ -1043,8 +1047,26 @@ sap.ui.define([
 
 		_createCommandsForAddViaDelegate : function(oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex) {
 			var mAddViaDelegateAction = mActions.addViaDelegate.action;
+			var mRequiredLibraries = mAddViaDelegateAction.delegateInfo.requiredLibraries;
 			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
 			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
+			return this._createCommandForAddLibrary(mParents, mRequiredLibraries, oParentAggregationDTMetadata)
+				.then(function(oCommandForAddLibrary) {
+					if (oCommandForAddLibrary) {
+						oCompositeCommand.addCommand(oCommandForAddLibrary);
+					}
+					return this._createAddViaDelegateCommand(oSelectedElement, mParents, oParentAggregationDTMetadata, oSiblingElement, mActions, iIndex);
+				}.bind(this))
+				.then(function(oAddViaDelegateCommand) {
+					if (oAddViaDelegateCommand) {
+						oCompositeCommand.addCommand(oAddViaDelegateCommand);
+					}
+					return oCompositeCommand;
+				});
+		},
+
+		_createAddViaDelegateCommand : function(oSelectedElement, mParents, oParentAggregationDTMetadata, oSiblingElement, mActions, iIndex) {
+			var mAddViaDelegateAction = mActions.addViaDelegate.action;
 			var oParent = mAddViaDelegateAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
 			return this.hasChangeHandler(mAddViaDelegateAction.changeType, mParents.parent)
 				.then(function (bHasChangeHandler) {
@@ -1065,13 +1087,7 @@ sap.ui.define([
 						modelType: mAddViaDelegateAction.delegateInfo.modelType,
 						relevantContainerId: mParents.relevantContainer.getId()
 					}, oParentAggregationDTMetadata, sVariantManagementReference);
-				}.bind(this))
-				.then(function(oAddViaDelegateCommand) {
-					if (oAddViaDelegateCommand) {
-						oCompositeCommand.addCommand(oAddViaDelegateCommand);
-					}
-					return oCompositeCommand;
-				});
+				}.bind(this));
 		},
 
 		/**
