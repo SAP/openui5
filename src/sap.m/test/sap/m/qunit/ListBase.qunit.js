@@ -2332,6 +2332,31 @@ sap.ui.define([
 			oText1.destroy();
 		});
 
+		QUnit.test("aria-labelledby should not contain same id multiple times",function(assert) {
+			var oHeaderToolbar = new Toolbar({
+				content: [
+					new Title({
+						id: "titleId",
+						text: "Title"
+					})
+				]
+			});
+			var oText = new Text({
+				id: "textId",
+				text: "Text"
+			}).placeAt("qunit-fixture");
+
+			oList.addAriaLabelledBy("titleId");
+			oList.addAriaLabelledBy("textId");
+			oList.setHeaderToolbar(oHeaderToolbar);
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			var aAriaLabelledBy = oList.getNavigationRoot().getAttribute("aria-labelledby").split(" ");
+			assert.strictEqual(aAriaLabelledBy.length, 2, "correct aria-labelledby ids added to the control DOM root");
+			oText.destroy();
+		});
+
 		QUnit.test("group headers info of the item", function(assert) {
 			var oGroupHeader1 = new GroupHeaderListItem({
 					title: "Group Header 1"

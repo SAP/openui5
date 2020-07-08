@@ -259,14 +259,17 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 * Returns the inner aria labelledby ids for the accessibility
 	 *
 	 * @param {sap.ui.core.Control} oControl an object representation of the control
-	 * @returns {String|undefined}
+	 * @returns {String|undefined} header id
 	 */
 	ListBaseRenderer.getAriaLabelledBy = function(oControl) {
 		var oHeaderTBar = oControl.getHeaderToolbar();
 		if (oHeaderTBar) {
 			var oTitle = oHeaderTBar.getTitleControl();
 			if (oTitle) {
-				return oTitle.getId();
+				var sTitleId = oTitle.getId();
+				if (oControl.getAriaLabelledBy().indexOf(sTitleId) === -1) {
+					return sTitleId;
+				}
 			}
 		} else if (oControl.getHeaderText()) {
 			return oControl.getId("header");
