@@ -36,6 +36,7 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
+	var HttpRequestMethod = library.FileUploaderHttpRequestMethod;
 
 
 
@@ -168,6 +169,12 @@ sap.ui.define([
 			 * This property is not supported by Internet Explorer 9.
 			 */
 			sendXHR : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Chosen HTTP request method for file upload.
+			 *
+			 */
+			httpRequestMethod : {type: "sap.ui.unified.FileUploaderHttpRequestMethod", group : "Behavior", defaultValue : HttpRequestMethod.Post},
 
 			/**
 			 * Placeholder for the text field.
@@ -1594,7 +1601,7 @@ sap.ui.define([
 					requestHeaders: []
 				};
 				this._aXhr.push(oXhrEntry);
-				oXhrEntry.xhr.open("POST", this.getUploadUrl(), true);
+				oXhrEntry.xhr.open(this.getHttpRequestMethod(), this.getUploadUrl(), true);
 				if (oXHRSettings) {
 					oXhrEntry.xhr.withCredentials = oXHRSettings.getWithCredentials();
 				}

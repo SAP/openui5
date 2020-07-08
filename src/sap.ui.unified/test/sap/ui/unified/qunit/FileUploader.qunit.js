@@ -3,11 +3,12 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/FileUploader",
+	"sap/ui/unified/FileUploaderHttpRequestMethod",
 	"sap/ui/core/TooltipBase",
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/Device"
-], function(qutils, FileUploader, TooltipBase, Label, Text, Device) {
+], function(qutils, FileUploader, FileUploaderHttpRequestMethod, TooltipBase, Label, Text, Device) {
 	"use strict";
 
 	/**
@@ -260,6 +261,54 @@ sap.ui.define([
 
 		//act
 		oFileUploader.setMimeType(["audio"]);
+	});
+
+	QUnit.test("Test httpRequestMethod property with native form submit", function (assert) {
+		//Setup
+		var oFileUploader = new FileUploader();
+
+		//Act
+		oFileUploader.setHttpRequestMethod(FileUploaderHttpRequestMethod.Put);
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(
+			oFileUploader.getDomRef().querySelector("form").getAttribute("method"),
+			oFileUploader.getHttpRequestMethod().toLowerCase(),
+			"Correct method attribute value is set"
+		);
+
+		//Clean
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Test httpRequestMethod property with XMLHttpRequest", function (assert) {
+		//Setup
+		var oFileUploader = createFileUploader(),
+			aFiles = {
+				"0": createFakeFile({
+					name: "FileUploader.qunit.html",
+					type: "text/html",
+					size: 404450
+				}),
+				"length" : 1
+			},
+			oXMLHttpRequestOpenSpy = this.spy(window.XMLHttpRequest.prototype, "open");
+
+		oFileUploader.setHttpRequestMethod(FileUploaderHttpRequestMethod.Put);
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oFileUploader._sendFilesWithXHR(aFiles);
+
+		//Assert
+		assert.ok(oXMLHttpRequestOpenSpy.calledWith(FileUploaderHttpRequestMethod.Put), "XHL Http put request is made");
+
+		//Clean
+		oFileUploader.destroy();
+		oXMLHttpRequestOpenSpy.restore();
 	});
 
 	//BCP: 1970125350
