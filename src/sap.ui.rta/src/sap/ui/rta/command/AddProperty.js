@@ -49,6 +49,9 @@ sap.ui.define([
 				modelType: {
 					type: "string"
 				},
+				relevantContainerId: {
+					type: "string"
+				},
 				propertyName: {
 					type: "string"
 				}
@@ -66,6 +69,8 @@ sap.ui.define([
 			parentId: this.getParentId(),
 			//used to connect to default delegate
 			modelType: this.getModelType(),
+			//allow change handlers to access delegates if the change is not done on the relevant container
+			relevantContainerId: this.getRelevantContainerId(),
 			//used to connect to change handler mediator
 			oDataServiceVersion: this.getODataServiceVersion(),
 			//necessary for custom fields support tools
