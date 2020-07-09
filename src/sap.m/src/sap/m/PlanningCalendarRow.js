@@ -3,7 +3,16 @@
  */
 
 //Provides control sap.ui.unified.PlanningCalendarRow.
-sap.ui.define(['sap/ui/core/Element', 'sap/m/CustomListItem'], function (Element, CustomListItem) {
+sap.ui.define(['sap/ui/core/Element',
+				'sap/m/CustomListItem',
+				'sap/ui/unified/DateTypeRange',
+				'sap/ui/unified/library'
+			], function (
+				Element,
+				CustomListItem,
+				DateTypeRange,
+				unifiedLibrary
+) {
 	"use strict";
 
 
@@ -356,6 +365,25 @@ sap.ui.define(['sap/ui/core/Element', 'sap/m/CustomListItem'], function (Element
 
 		return this.oRowHeader;
 	};
+
+	PlanningCalendarRow.prototype._getSpecialDates = function(){
+		var specialDates = this.getSpecialDates();
+		for (var i = 0; i < specialDates.length; i++) {
+			var bNeedsSecondTypeAdding = specialDates[i].getSecondaryType() === unifiedLibrary.CalendarDayType.NonWorking
+					&& specialDates[i].getType() !== unifiedLibrary.CalendarDayType.NonWorking;
+			if (bNeedsSecondTypeAdding) {
+				var newSpecialDate = new DateTypeRange();
+				newSpecialDate.setType(unifiedLibrary.CalendarDayType.NonWorking);
+				newSpecialDate.setStartDate(specialDates[i].getStartDate());
+				if (specialDates[i].getEndDate()) {
+					newSpecialDate.setEndDate(specialDates[i].getEndDate());
+				}
+				specialDates.push(newSpecialDate);
+			}
+		}
+		return specialDates;
+	};
+
 
 	return PlanningCalendarRow;
 

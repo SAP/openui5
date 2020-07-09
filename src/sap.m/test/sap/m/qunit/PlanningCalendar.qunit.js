@@ -2197,6 +2197,21 @@ sap.ui.define([
 		this._assertIsClassNoWorkAvailable();
 	});
 
+	QUnit.test("Add a special date with dual property to a row", function(assert) {
+		//Act
+		this.oPC.getAggregation("rows")[1].addSpecialDate(new DateTypeRange({
+			startDate: new Date(2015, 0, 7),
+			endDate: new Date(2015, 0, 9),
+			type: CalendarDayType.Type04,
+			secondaryType: CalendarDayType.NonWorking
+		}));
+		sap.ui.getCore().applyChanges();
+
+		var oSpecialDates = this.oPC.getAggregation("rows")[1]._getSpecialDates();
+		assert.equal(oSpecialDates[0].getType(), CalendarDayType.Type04, "The special date should be of type Type04");
+		assert.equal(oSpecialDates[1].getType(), CalendarDayType.NonWorking, "the special date should be of type NonWorking");
+	});
+
 	QUnit.test("Insert a special date in a row", function(assert) {
 		//Prepare
 		this.oPC.getAggregation("rows")[1].insertSpecialDate(this.oSpecialDateRangeType04);

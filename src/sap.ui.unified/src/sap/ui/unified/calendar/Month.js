@@ -11,6 +11,7 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/DateRange',
+	'sap/ui/unified/DateTypeRange',
 	'sap/ui/unified/library',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/library',
@@ -27,6 +28,7 @@ sap.ui.define([
 	CalendarUtils,
 	CalendarDate,
 	DateRange,
+	DateTypeRange,
 	library,
 	DateFormat,
 	coreLibrary,
@@ -830,7 +832,7 @@ sap.ui.define([
 		CalendarUtils._checkCalendarDate(oDate);
 
 		var oType, oTypeNW, bNonWorkingType, aTypes = [];
-		var aSpecialDates = this.getSpecialDates();
+		var aSpecialDates = this._getSpecialDates();
 		var oTimeStamp = oDate.toUTCJSDate().getTime();
 		// we only need the timestamp of each special date for comparison
 		// because it is independent of calendar type, we use native UTC Date
@@ -1917,6 +1919,30 @@ sap.ui.define([
 
 		return true;
 
+	};
+
+	Month.prototype._getSpecialDates = function(){
+		var oParent = this.getParent();
+
+		if (oParent && oParent._getSpecialDates) {
+			return oParent._getSpecialDates();
+		} else {
+			var specialDates = this.getSpecialDates();
+			for (var i = 0; i < specialDates.length; i++) {
+				var bNeedsSecondTypeAdding = specialDates[i].getSecondaryType() === library.CalendarDayType.NonWorking
+					&& specialDates[i].getType() !== library.CalendarDayType.NonWorking;
+				if (bNeedsSecondTypeAdding) {
+					var newSpecialDate = new DateTypeRange();
+					newSpecialDate.setType(library.CalendarDayType.NonWorking);
+					newSpecialDate.setStartDate(specialDates[i].getStartDate());
+					if (specialDates[i].getEndDate()) {
+						newSpecialDate.setEndDate(specialDates[i].getEndDate());
+					}
+					specialDates.push(newSpecialDate);
+				}
+			}
+			return specialDates;
+		}
 	};
 
 	function _initItemNavigation(){

@@ -21,6 +21,7 @@ sap.ui.define([
 	'sap/ui/unified/calendar/MonthsRow',
 	'sap/ui/unified/calendar/TimesRow',
 	'sap/ui/unified/DateRange',
+	'sap/ui/unified/DateTypeRange',
 	'sap/ui/unified/CalendarAppointment',
 	'sap/ui/unified/CalendarRow',
 	'sap/ui/unified/CalendarRowRenderer',
@@ -70,6 +71,7 @@ sap.ui.define([
 	MonthsRow,
 	TimesRow,
 	DateRange,
+	DateTypeRange,
 	CalendarAppointment,
 	CalendarRow,
 	CalendarRowRenderer,
@@ -1469,6 +1471,9 @@ sap.ui.define([
 						this._oTimesRow.attachEvent("focus", this._handleFocus, this);
 						this._oTimesRow.attachEvent("select", this._handleCalendarSelect, this);
 						this._oTimesRow._oPlanningCalendar = this;
+						this._oTimesRow._getSpecialDates = function(){
+							return this._oPlanningCalendar._getSpecialDates();
+						};
 						this._oTimesRow.getSpecialDates = function(){
 							return this._oPlanningCalendar.getSpecialDates();
 						};
@@ -1505,6 +1510,9 @@ sap.ui.define([
 						}
 
 						oInterval._oPlanningCalendar = this;
+						oInterval._getSpecialDates = function(){
+							return this._oPlanningCalendar._getSpecialDates();
+						};
 						oInterval.getSpecialDates = function(){
 							return this._oPlanningCalendar.getSpecialDates();
 						};
@@ -1534,6 +1542,9 @@ sap.ui.define([
 						this._oMonthsRow.attachEvent("focus", this._handleFocus, this);
 						this._oMonthsRow.attachEvent("select", this._handleCalendarSelect, this);
 						this._oMonthsRow._oPlanningCalendar = this;
+						this._oMonthsRow._getSpecialDates = function(){
+							return this._oPlanningCalendar._getSpecialDates();
+						};
 						this._oMonthsRow.getSpecialDates = function(){
 							return this._oPlanningCalendar.getSpecialDates();
 						};
@@ -3366,8 +3377,8 @@ sap.ui.define([
 				fnNonWorkingFilter = function (oSpecialDate) {
 					return oSpecialDate.getType() === CalendarDayType.NonWorking;
 				},
-				aRowNonWorkingDates = oRow.getSpecialDates().filter(fnNonWorkingFilter),
-				aPCNonWorkingDates = oPC.getSpecialDates().filter(fnNonWorkingFilter),
+				aRowNonWorkingDates = oRow._getSpecialDates().filter(fnNonWorkingFilter),
+				aPCNonWorkingDates = oPC._getSpecialDates().filter(fnNonWorkingFilter),
 				oRowStartDate = oTimeline.getStartDate(),
 				aAllNonworkingDates, oCurrentDate, oNonWorkingStartDate, oNonWorkingEndDate;
 
@@ -4107,6 +4118,24 @@ sap.ui.define([
 
 		this._getHeader()._oPrevBtn.setEnabled(!oMinDate || oStartDate.getTime() > oMinDate.getTime());
 		this._getHeader()._oNextBtn.setEnabled(!oMaxDate || oEndDate.getTime() < oMaxDate.getTime());
+	};
+
+	PlanningCalendar.prototype._getSpecialDates = function(){
+		var specialDates = this.getSpecialDates();
+		for (var i = 0; i < specialDates.length; i++) {
+			var bNeedsSecondTypeAdding = specialDates[i].getSecondaryType() === unifiedLibrary.CalendarDayType.NonWorking
+					&& specialDates[i].getType() !== unifiedLibrary.CalendarDayType.NonWorking;
+			if (bNeedsSecondTypeAdding) {
+				var newSpecialDate = new DateTypeRange();
+				newSpecialDate.setType(unifiedLibrary.CalendarDayType.NonWorking);
+				newSpecialDate.setStartDate(specialDates[i].getStartDate());
+				if (specialDates[i].getEndDate()) {
+					newSpecialDate.setEndDate(specialDates[i].getEndDate());
+				}
+				specialDates.push(newSpecialDate);
+			}
+		}
+		return specialDates;
 	};
 
 	function getResizeGhost() {

@@ -77,7 +77,9 @@ sap.ui.define([
 						new DateTypeRange({startDate: new Date("2011", "0", "6"),
 								endDate: new Date("2011", "0", "6"), type: CalendarDayType.Type01}),
 						new DateTypeRange({startDate: new Date("2011", "0", "21"), type:
-							CalendarDayType.NonWorking})
+							CalendarDayType.NonWorking}),
+						new DateTypeRange({startDate: new Date("2011", "0", "26"), type:
+							CalendarDayType.Type04, secondaryType: CalendarDayType.NonWorking})
 		],
 		legend: oLegend,
 		startDateChange: handleStartDateChange
@@ -341,7 +343,10 @@ sap.ui.define([
 				"20110111 is a regular working date");
 		assert.ok(jQuery("#Cal2--Month0-20110121").hasClass("sapUiCalItemWeekEnd"),
 				"20110121 is date of type 'NonWorking' as part of a single date");
-
+		assert.ok(jQuery("#Cal2--Month0-20110126").hasClass("sapUiCalItemWeekEnd"),
+				"20110126 is date of type 'NonWorking' as part of a single date with property secondaryDate");
+		assert.ok(jQuery("#Cal2--Month0-20110126").hasClass("sapUiCalItemType04"),
+				"20110126 is date of type Type04 as part of a single date with property secondaryDate");
 		//act
 		oCal2.addSpecialDate(new DateTypeRange({
 			type: CalendarDayType.NonWorking,

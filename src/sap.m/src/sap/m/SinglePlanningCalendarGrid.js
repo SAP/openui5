@@ -24,6 +24,7 @@ sap.ui.define([
 		'sap/ui/unified/calendar/DatesRow',
 		'sap/ui/unified/calendar/CalendarDate',
 		'sap/ui/unified/calendar/CalendarUtils',
+		'sap/ui/unified/DateTypeRange',
 		'sap/ui/events/KeyCodes',
 		'./SinglePlanningCalendarGridRenderer',
 		'sap/ui/Device',
@@ -47,6 +48,7 @@ sap.ui.define([
 		DatesRow,
 		CalendarDate,
 		CalendarUtils,
+		DateTypeRange,
 		KeyCodes,
 		SinglePlanningCalendarGridRenderer,
 		Device,
@@ -2027,6 +2029,24 @@ sap.ui.define([
 			this.addAggregation("_intervalPlaceholders", oPlaceholder, true);
 
 			return oPlaceholder;
+		};
+
+		SinglePlanningCalendarGrid.prototype._getSpecialDates = function(){
+			var specialDates = this.getSpecialDates();
+			for (var i = 0; i < specialDates.length; i++) {
+				var bNeedsSecondTypeAdding = specialDates[i].getSecondaryType() === unifiedLibrary.CalendarDayType.NonWorking
+					&& specialDates[i].getType() !== unifiedLibrary.CalendarDayType.NonWorking;
+				if (bNeedsSecondTypeAdding) {
+					var newSpecialDate = new DateTypeRange();
+					newSpecialDate.setType(unifiedLibrary.CalendarDayType.NonWorking);
+					newSpecialDate.setStartDate(specialDates[i].getStartDate());
+					if (specialDates[i].getEndDate()) {
+						newSpecialDate.setEndDate(specialDates[i].getEndDate());
+					}
+					specialDates.push(newSpecialDate);
+				}
+			}
+			return specialDates;
 		};
 
 		function getResizeGhost() {

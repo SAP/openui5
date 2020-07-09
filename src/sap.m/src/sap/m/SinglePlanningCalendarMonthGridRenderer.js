@@ -146,7 +146,7 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGridRenderer.renderDay = function(oRm, oControl, oDay, oLocaleData, more, iCellIndex) {
-			var aSpecialDates = oControl.getSpecialDates(),
+			var aSpecialDates = oControl._getSpecialDates(),
 				aDayTypes = Month.prototype._getDateTypes.call(oControl, oDay),
 				oFormat = oControl._getDateFormatter(),
 				oType,

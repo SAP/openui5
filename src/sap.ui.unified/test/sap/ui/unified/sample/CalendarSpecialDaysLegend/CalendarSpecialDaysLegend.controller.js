@@ -81,15 +81,10 @@ sap.ui.define([
 					startDate : new Date(oRefDate.setDate(25)),
 					type : CalendarDayType.NonWorking
 				}));
-
 				oCal2.addSpecialDate(new DateTypeRange({
 					startDate : new Date(oRefDate.setDate(22)),
-					type : CalendarDayType.NonWorking
-				}));
-
-				oCal2.addSpecialDate(new DateTypeRange({
-					startDate : new Date(oRefDate.setDate(22)),
-					type : CalendarDayType.Type03
+					type : CalendarDayType.Type03,
+					secondaryType: CalendarDayType.NonWorking
 				}));
 
 				oCal2.addSpecialDate(new DateTypeRange({
