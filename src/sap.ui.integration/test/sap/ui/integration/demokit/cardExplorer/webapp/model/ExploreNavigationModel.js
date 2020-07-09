@@ -500,6 +500,22 @@ sap.ui.define([
 										key: 'myExtension.js'
 									}
 								]
+							},
+							{
+								title: 'Northwind Image Conversion',
+								key: 'northwindImage',
+								files: [
+									{
+										url: '/samples/extension/northwindImage/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/extension/northwindImage/myExtension.js',
+										name: 'myExtension.js',
+										key: 'myExtension.js'
+									}
+								]
 							}
 						]
 					},
