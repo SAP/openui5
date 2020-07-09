@@ -187,9 +187,12 @@ sap.ui.define([
 					oSection,
 					aImagemaps = this.oPage.$().find('#d4h5-main-container .imagemap'),
 					aSrcResult,
-					rex = /<img[^>]+src="([^">]+)/g;
+					rex = /<img[^>]+src="([^">]+)/g,
+					oDomRef = this.oLayout.getDomRef();
 
-				this._fixExternalLinks(this.oLayout.getDomRef());
+				this._fixExternalLinks(oDomRef);
+
+				this._computeColumnGroupValues(oDomRef);
 
 				if (this.sSubTopicId) {
 					oSection = document.getElementById(this.sSubTopicId);
@@ -251,6 +254,46 @@ sap.ui.define([
 					oLink.setAttribute("href", sDisclaimerPath + sHref);
 					this._addIconToExternalUrl(oLink, sHref);
 				}
+			},
+
+			/**
+			 *  The XML dita format provides a colwidth attributes to be used inside  colgroup element for configuring
+			 *  the tables proportions. This function iterates over all table colgroup elements and converts
+			 *  their children's width ratio to percent values
+			 *
+			 *  1. First loop - calculates the sum of all colgroup children
+			 *  2. Second loop - transforms the origin values to percent
+			 *
+			 * @param oElement, the dom ref to the container
+			 * @private
+			 */
+			_computeColumnGroupValues: function (oElement) {
+				var fSum,
+					iWidth,
+					aSizes,
+					fPercent,
+					aColGroupChildren,
+					oColGroups = oElement.querySelectorAll("colgroup");
+
+				oColGroups.forEach(function (oColGroup) {
+					fSum = 0;
+					aSizes = [];
+
+					aColGroupChildren = [].slice.call(oColGroup.children); // convert to array
+
+					aColGroupChildren.forEach(function (oColNode, iColIndex) {
+						iWidth = parseInt(oColNode.getAttribute('width'));
+
+						aSizes[iColIndex] = iWidth;
+						fSum += iWidth;
+					});
+
+					aColGroupChildren.forEach(function (oColNode, iColIndex) {
+						fPercent = (aSizes[iColIndex] / fSum) * 100;
+						oColNode.setAttribute('width', fPercent + "%");
+					});
+				});
+
 			},
 
 			/**
