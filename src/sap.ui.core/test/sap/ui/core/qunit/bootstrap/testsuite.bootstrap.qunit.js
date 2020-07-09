@@ -119,6 +119,7 @@ sap.ui.define(function() {
 				loader: {
 					paths: {
 						"sap/ui/test": "test-resources/sap/ui/core/qunit/bootstrap/",
+						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause",
 						"sap/ui/test/RecorderHotkeyListener": "resources/sap/ui/test/RecorderHotkeyListener"
 					}
 				}

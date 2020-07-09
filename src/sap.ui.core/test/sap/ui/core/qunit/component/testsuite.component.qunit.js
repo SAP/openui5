@@ -13,6 +13,7 @@ sap.ui.define(function() {
 					// Other tests only need successful loading, so the name doesn't matter
 					"samples/components": "test-resources/sap/ui/core/samples/components/",
 					"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/",
+					"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause",
 					"sap/ui/test/RecorderHotkeyListener": "resources/sap/ui/test/RecorderHotkeyListener"
 				}
 			},
