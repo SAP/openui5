@@ -60,7 +60,7 @@ sap.ui.define([
 	 */
 	TimelineContent.prototype.loadDependencies = function (oConfig) {
 		return new Promise(function (resolve, reject) {
-			Core.loadLibrary("sap.viz", { async: true})
+			Core.loadLibrary("sap.suite.ui.commons", { async: true })
 				.then(function () {
 					sap.ui.require([
 						"sap/suite/ui/commons/Timeline",
