@@ -510,6 +510,10 @@ sap.ui.define([
 		sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "i2 (Item 2)", "Result of formatting");
 
+		oConditionType.oFormatOptions.preventGetDescription = true; // fake setting directly
+		sResult = oConditionType.formatValue(oCondition);
+		assert.equal(sResult, "I2", "Result of formatting");
+
 	});
 
 	QUnit.test("Formatting: invalid key -> description (from help)", function(assert) {
