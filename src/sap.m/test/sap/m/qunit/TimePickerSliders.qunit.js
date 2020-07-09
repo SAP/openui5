@@ -281,6 +281,21 @@ sap.ui.define([
 		oSecondsSliderStub.restore();
 	});
 
+	QUnit.test("arrows tooltips", function (assert) {
+		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sUpArrowTooltipText = oRB.getText("TIMEPICKER_TOOLTIP_UP"),
+			sDownArrowTooltipText = oRB.getText("TIMEPICKER_TOOLTIP_DOWN");
+
+		assert.strictEqual(this.oTPS._getHoursSlider().getAggregation("_arrowUp").getTooltip(), sUpArrowTooltipText, "Hours up arrow tooltip is properly set");
+		assert.strictEqual(this.oTPS._getHoursSlider().getAggregation("_arrowDown").getTooltip(), sDownArrowTooltipText, "Hours down arrow tooltip is properly set");
+
+		assert.strictEqual(this.oTPS._getMinutesSlider().getAggregation("_arrowUp").getTooltip(), sUpArrowTooltipText, "Minutes up arrow tooltip is properly set");
+		assert.strictEqual(this.oTPS._getMinutesSlider().getAggregation("_arrowDown").getTooltip(), sDownArrowTooltipText, "Minutes down arrow tooltip is properly set");
+
+		assert.strictEqual(this.oTPS._getSecondsSlider().getAggregation("_arrowUp").getTooltip(), sUpArrowTooltipText, "Seconds up arrow tooltip is properly set");
+		assert.strictEqual(this.oTPS._getSecondsSlider().getAggregation("_arrowDown").getTooltip(), sDownArrowTooltipText, "Seconds down arrow tooltip is properly set");
+	});
+
 	QUnit.test("_setTimeValues properly enables Minutes and Seconds Slider when Date(2017, 7, 8, 11, 12, 13) date is used", function (assert) {
 		var oMinutesSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
 				oSecondsSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },

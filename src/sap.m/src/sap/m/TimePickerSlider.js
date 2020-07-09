@@ -1146,13 +1146,15 @@ sap.ui.define([
 		};
 
 		TimePickerSlider.prototype._initArrows = function() {
-			var that = this, oArrowUp, oArrowDown;
+			var that = this, oArrowUp, oArrowDown,
+				oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			oArrowUp = new Button({
 				icon: IconPool.getIconURI("slim-arrow-up"),
 				press: function (oEvent) {
 					that._offsetValue(-1);
 				},
+				tooltip: oRB.getText("TIMEPICKER_TOOLTIP_UP"),
 				type: 'Transparent'
 			});
 			oArrowUp.addEventDelegate({
@@ -1168,6 +1170,7 @@ sap.ui.define([
 				press: function (oEvent) {
 					that._offsetValue(1);
 				},
+				tooltip: oRB.getText("TIMEPICKER_TOOLTIP_DOWN"),
 				type: 'Transparent'
 			});
 
