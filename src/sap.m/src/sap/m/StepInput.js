@@ -198,6 +198,7 @@ function(
 					width: {type: "sap.ui.core.CSSSize", group: "Dimension"},
 					/**
 					 * Accepts the core enumeration ValueState.type that supports <code>None</code>, <code>Error</code>, <code>Warning</code> and <code>Success</code>.
+					 * ValueState is managed internally only when validation is triggered by user interaction.
 					 */
 					valueState: {type: "sap.ui.core.ValueState", group: "Data", defaultValue: ValueState.None},
 					/**
