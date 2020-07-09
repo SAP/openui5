@@ -4,35 +4,27 @@
 /* ====================================== */
 
 .sapMRI {
-	.sapMRIUnsel {
-		color: @sapUiContentIconColor;
-	}
-
-	.sapMRISel {
+	.sapMRISel, .sapMRIHov {
 		color: @sapUiContentRatedColor;
 	}
 
-	.sapMRIHov {
-		color: darken(@sapUiContentRatedColor, 5);
+	.sapMRIUnsel,
+	&.sapMRIReadOnly .sapMRIUnsel,
+	&.sapMRIDisplayOnly .sapMRIUnsel {
+		color: @sapUiContentUnratedColor;
 	}
 
-	&.sapMRIReadOnly .sapMRIUnsel {
-		color: lighten(@sapUiContentUnratedColor, 10);
-	}
-}
-
-.sapMRI.sapMRIDisplayOnly {
-	.sapMRIIconSel {
-		color: @sapUiContentIconColor;
+	&.sapMRIDisplayOnly {
+		.sapMRIIconSel {
+			color: @sapUiContentIconColor;
+		}
 	}
 
-	.sapMRIUnsel {
-		color: darken(@sapUiContentUnratedColor, 10);
+	&.sapMRIDisabled {
+		.sapMRIUnsel, .sapMRISel {
+			color: @sapUiContentDisabledTextColor;
+		}
 	}
-}
-
-.sapMRIDisabled {
-	opacity: 0.4;
 }
 
 /* Custom focus outline */
