@@ -176,7 +176,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 					rm.openStart("div");
 					rm.class("sapMColumnHeader");
 
-					if (oTable.bActiveHeaders) {
+					if (oTable.bActiveHeaders && !control.isA("sap.ui.core.InvisibleText")) {
 						// add active header attributes and style class
 						rm.attr("tabindex", 0);
 						rm.attr("role", "button");
