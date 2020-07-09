@@ -38,13 +38,14 @@ sap.ui.define([
 			}
 			sModelType = oModel.getMetadata().getName();
 		}
-		var sDelegateName = DelegateMediator._mDefaultDelegateItems[sModelType];
-		if (sDelegateName) {
+		var mDelegateInfo = DelegateMediator._mDefaultDelegateItems[sModelType];
+		if (mDelegateInfo) {
 			//only return a delegate info if a default delegate is found
 			return {
-				name: sDelegateName,
+				name: mDelegateInfo.name,
 				payload: {}, //default is empty payload
-				modelType: sModelType //only added for default delegate as this has to be stored when creating a change
+				modelType: sModelType, //only added for default delegate as this has to be stored when creating a change
+				requiredLibraries: mDelegateInfo.requiredLibraries //only required for default delegates
 			};
 		}
 	}
@@ -87,6 +88,10 @@ sap.ui.define([
 		});
 	}
 
+	DelegateMediator.getKnownDefaultDelegateLibraries = function () {
+		return ["sap.ui.comp"]; // OdataV2Delegate is defined in sap.ui.comp
+	};
+
 	/**
 	 * Checks if there is already a registered delegate available for the given model type.
 	 *
@@ -103,6 +108,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property bag for default delegate
 	 * @param {object} mPropertyBag.modelType - Default delegate model type
 	 * @param {object} mPropertyBag.delegate - Path to default delegate
+	 * @param {object} mPropertyBag.requiredLibraries - map of required libraries
 	 */
 	DelegateMediator.registerDefaultDelegate = function (mPropertyBag) {
 		if (!(mPropertyBag.modelType && mPropertyBag.delegate)) {
@@ -111,7 +117,10 @@ sap.ui.define([
 		if (DelegateMediator.isDelegateRegistered(mPropertyBag.modelType)) {
 			throw new Error("modelType " + mPropertyBag.modelType + "is already defined!");
 		}
-		DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType] = mPropertyBag.delegate;
+		DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType] = {
+			name: mPropertyBag.delegate,
+			requiredLibraries: mPropertyBag.requiredLibraries
+		};
 	};
 
 	/**
