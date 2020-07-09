@@ -40,11 +40,8 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				sSrc = oAvatar.getSrc(),
 				sAvatarClass = "sapFAvatar",
 				sTooltip = oAvatar.getTooltip_AsString(),
-				sDefaultTooltip = oAvatar._getDefaultTooltip(),
 				aLabelledBy = oAvatar.getAriaLabelledBy(),
 				aDescribedBy = oAvatar.getAriaDescribedBy(),
-				sAriaLabelTooltip = sTooltip && sInitials ? sDefaultTooltip + " " + sTooltip : sDefaultTooltip,
-				sAriaLabelInitials = sInitials ? sDefaultTooltip + " " + sInitials : sDefaultTooltip,
 				oBadge = oAvatar.hasListeners("press") ?  oAvatar._getBadge() : null,
 				sAriaRoledescription = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("AVATAR_ROLE_DESCRIPTION");
 
@@ -73,9 +70,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			}
 			if (sTooltip) {
 				oRm.attr("title", sTooltip);
-				oRm.attr("aria-label",sAriaLabelTooltip);
-			} else {
-				oRm.attr("aria-label",sAriaLabelInitials);
+				oRm.attr("aria-label", sTooltip);
+			} else if (sInitials) { // if tooltip is set the initials should be overwritten
+				oRm.attr("aria-label", sInitials);
 			}
 			// aria-labelledby references
 			if (aLabelledBy && aLabelledBy.length > 0) {
