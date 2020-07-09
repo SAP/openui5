@@ -7,9 +7,15 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 			// set explored app's demo model on this sample
 			var oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/img.json"));
 			this.getView().setModel(oImgModel, "img");
+			this._oDSC = this.byId("DynamicSideContent");
+			this._oToggleButton = this.byId("equalSplitToggleButton");
 		},
 		onBeforeRendering: function() {
 			this.byId("DSCWidthSlider").setVisible(!Device.system.phone);
+		},
+		onAfterRendering: function() {
+			var sCurrentBreakpoint = this._oDSC.getCurrentBreakpoint();
+			this._updateToggleButtonState(sCurrentBreakpoint);
 		},
 		handleSliderChange: function (oEvent) {
 			var iValue = oEvent.getParameter("value");
@@ -21,18 +27,19 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 				$DSCContainer.width(iValue + "%");
 			}
 		},
-		updateToggleButtonState: function (oEvent) {
-			var oToggleButton = this.byId("equalSplitToggleButton"),
-				sCurrentBreakpoint = oEvent.getParameter("currentBreakpoint");
-
-			if (sCurrentBreakpoint === "S") {
-				oToggleButton.setEnabled(true);
-			} else {
-				oToggleButton.setEnabled(false);
-			}
+		handleBreakpointChanged: function (oEvent) {
+			var sCurrentBreakpoint = oEvent.getParameter("currentBreakpoint");
+			this._updateToggleButtonState(sCurrentBreakpoint);
 		},
 		handleToggleClick: function (oEvent) {
-			this.byId("DynamicSideContent").toggle();
+			this._oDSC.toggle();
+		},
+		_updateToggleButtonState: function(sCurrentBreakpoint) {
+			if (sCurrentBreakpoint === "S") {
+				this._oToggleButton.setEnabled(true);
+			} else {
+				this._oToggleButton.setEnabled(false);
+			}
 		}
 	});
 
