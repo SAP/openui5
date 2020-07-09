@@ -248,6 +248,10 @@ function(
 			 * applied for all header rows, with multiple integers you can specify a separate span for each header row.
 			 * <b>Note:</b> Only columns with a span equal to 1 can have a column menu. When setting a column to fixed, all
 			 * columns which are part of the header with the greatest span will be set to fixed.
+			 * @example <caption>Example of usage: header with 3 subheaders, each of them with span = 1</caption>
+			 * <code>headerSpan = [3, 1] // for the first column
+			 * headerSpan = [2, 1] // for the second column
+			 * headerSpan = [1, 1] // or not set for the third column</code>
 			 */
 			headerSpan : {type : "any", group : "Behavior", defaultValue : 1},
 

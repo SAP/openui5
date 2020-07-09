@@ -1720,6 +1720,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Hide one column in fixed area", function(assert) {
+		var iVisibleRowCount = oTable.getVisibleRowCount();
+		function checkCellsFixedBorder(oTable, iCol, sMsg) {
+			var oColHeader = getColumnHeader(iCol, null, null, oTable)[0];
+			assert.ok(oColHeader.classList.contains("sapUiTableCellLastFixed"), sMsg);
+			for (var i = 0; i < iVisibleRowCount; i++) {
+				var oCell = getCell(i, iCol, null, null, oTable)[0];
+				assert.ok(oCell.classList.contains("sapUiTableCellLastFixed"), sMsg);
+			}
+		}
+
+		checkCellsFixedBorder(oTable, 1, "The fixed border is displayed on the last fixed column");
+
 		oTable.getColumns()[1].setVisible(false);
 		sap.ui.getCore().applyChanges();
 		var $table = oTable.$();
@@ -1729,6 +1741,8 @@ sap.ui.define([
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 6, "Scroll table has 7 Columns");
 		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css("margin-left"), getExpectedHScrollLeftMargin(2),
 			"Horizontal scrollbar has correct left margin");
+
+		checkCellsFixedBorder(oTable, 0, "When the last fixed column is not visible, the fixed border is displayed on the last visible column in fixed area");
 	});
 
 	QUnit.test("Hide one column in scroll area", function(assert) {
