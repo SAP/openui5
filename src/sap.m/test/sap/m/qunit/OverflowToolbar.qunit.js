@@ -2144,6 +2144,22 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("Handling of resizes with flexible content", function (assert) {
+		var aDefaultContent = [
+				new GenericTag({text: "Very long text text text text"}),
+				new GenericTag({text: "Very long text text text text"})
+			],
+			oOverflowTB = createOverflowToolbar({
+				width: "500px"
+			}, aDefaultContent),
+			spyResetAndIvalidate = this.spy(OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+
+		oOverflowTB._handleResize();
+
+		assert.strictEqual(spyResetAndIvalidate.callCount, 1, "hard reset and invalidate is called after the resize when toolbar has flexible content");
+		oOverflowTB.destroy();
+	});
+
 	QUnit.test("Handling of resizes that move elements around", function (assert) {
 
 		var aDefaultContent = [
