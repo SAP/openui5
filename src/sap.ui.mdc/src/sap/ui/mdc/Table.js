@@ -861,16 +861,25 @@ sap.ui.define([
 
 	/**
 	 * Fetches the current state of the table (as a JSON)
+	 * <b>Note:</b> This API may return attributes corresponding to the <code>p13nMode</code> property configuration.
 	 *
 	 * @protected
 	 * @returns {Object} Current state of the table
 	 */
 	Table.prototype.getCurrentState = function() {
-		var oState = {
-			items: this._getVisibleProperties(),
-			sorters: this._getSortedProperties()
-		};
-		if (this._getFilterEnabled()){
+		var oState = {};
+
+		var aP13nMode = this.getP13nMode() || [];
+
+		if (aP13nMode.indexOf("Column") > -1) {
+			oState.items = this._getVisibleProperties();
+		}
+
+		if (aP13nMode.indexOf("Sort") > -1) {
+			oState.sorters = this._getSortedProperties();
+		}
+
+		if (aP13nMode.indexOf("Filter") > -1) {
 			oState.filter = this.getFilterConditions();
 		}
 		return oState;

@@ -243,16 +243,19 @@ sap.ui.define([
 
 	//TODO: consider to restructure the approach _createInnerLayout to properties or seperate methods
 	/**
-	 * Interface for inner layout creation, needs to: provide an two variables on the FilterBarBase derivation:
+	 * Interface for inner layout creation, needs to: provide three variables on the FilterBarBase derivation:
 	 *
 	 * _cLayoutItem, the class which is being used to create FilterItems
 	 * _oFilterBarLayout, instance of the layout which needs to be a IFilterContainer derivation
+	 * bPersistValues should be used to control the persistence of filter conditions
 	 *
 	 * In addition the aggregation "layout" of the FilterBarBase derivation should be set to the created instance of _oFilterBarLayout
 	 */
 	FilterBarBase.prototype._createInnerLayout = function() {
 		this._cLayoutItem = null;
 		this._oFilterBarLayout = null;
+		this.bPersistValues = false;
+		this._btnAdapt = null;
 		this.setAggregation("layout", this._oFilterBarLayout, true);
 	};
 
@@ -323,12 +326,6 @@ sap.ui.define([
 		return this;
 	};
 
-	FilterBarBase.prototype.onAdaptFilters = function(oEvent) {
-		return this._oMetadataAppliedPromise.then(function() {
-			return this._getAdaptationController().showP13n(this._btnAdapt, "Item");
-		}.bind(this));
-	};
-
 	FilterBarBase.prototype.setFilterConditions = function(mValue, bSuppressInvalidate) {
 		StateUtil.checkConditionOperatorSanity(mValue);
 		this.setProperty("filterConditions", mValue, bSuppressInvalidate);
@@ -337,12 +334,32 @@ sap.ui.define([
 
 	/**
 	 * Returns the externalized conditions of the inner condition model.
-	 * This method may only be called, once the <code>waitForInitialization</code> is resolved.
+	 * This method may only be called, once the <code>initialzed</code> is resolved.
+	 * <b>Note:</b> This API may return attributes corresponding to the <code>p13nMode</code> property configuration.
 	 * @protected
 	 * @returns {object} object containing the current status of the FilterBarBase
 	 */
 	FilterBarBase.prototype.getCurrentState = function() {
 		//return this.waitForInitialization().then(function() {
+
+			var oState = {};
+
+			if (this.bPersistValues) {
+				var aIgnoreFieldNames = [];
+				var mConditions = this.getFilterConditions();
+				for (var sKey in mConditions) {
+					if (!this._getPropertyByName(sKey)) {
+						aIgnoreFieldNames.push(sKey);
+					}
+				}
+
+				aIgnoreFieldNames.forEach(function(sKey) {
+					delete mConditions[sKey];
+				});
+
+				oState.filter = mConditions;
+			}
+
 			var aFilterItems = this.getFilterItems();
 			var aItems = [];
 			aFilterItems.forEach(function(oFilterField, iIndex){
@@ -350,22 +367,10 @@ sap.ui.define([
 					name: oFilterField.getFieldPath()
 				});
 			});
-			var aIgnoreFieldNames = [];
-			var mConditions = this.getFilterConditions();
-			for (var sKey in mConditions) {
-				if (!this._getPropertyByName(sKey)) {
-					aIgnoreFieldNames.push(sKey);
-				}
-			}
 
-			aIgnoreFieldNames.forEach(function(sKey) {
-				delete mConditions[sKey];
-			});
+			oState.items = aItems;
 
-			return {
-				filter: mConditions,
-				items: aItems
-			};
+			return oState;
 		//}.bind(this));
 	};
 
@@ -1525,7 +1530,7 @@ sap.ui.define([
 	FilterBarBase.prototype.getConditions = function() {
 		//return this.waitForInitialization().then(function() {
 			var mConditions = this.getCurrentState().filter;
-			if (mConditions["$search"]) {
+			if (mConditions && mConditions["$search"]) {
 				delete mConditions["$search"];
 			}
 

@@ -2,8 +2,8 @@
 * ! ${copyright}
 */
 sap.ui.define([
-	'sap/ui/mdc/library','./AdaptationController', './FlexUtil', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI', 'sap/ui/mdc/condition/FilterOperatorUtil', 'sap/base/Log'
-], function(Library, AdaptationController, FlexUtil, FlexRuntimeInfoAPI, FilterOperatorUtil, Log) {
+	'./AdaptationController', './FlexUtil', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI', 'sap/ui/mdc/condition/FilterOperatorUtil', 'sap/base/Log'
+], function(AdaptationController, FlexUtil, FlexRuntimeInfoAPI, FilterOperatorUtil, Log) {
 	"use strict";
 	var oAdaptationController = new AdaptationController();
 
@@ -67,7 +67,12 @@ sap.ui.define([
 				}
 
 				StateUtil.retrieveExternalState(oControl).then(function(oCurrentState){
-					//in case the app DOES want to support this, he could simply add sth. like the key to the state object with value null, but needs to be reconsidered
+
+					/* The support for the known StateUtil operations (defined above as oState) depend whether the
+					/* getCurrentState method returns the corresponding attribute. This depends on the Controls
+					/* p13nMode configuration --> For instance a Table without atleast p13nMode="Sort" can not create sort
+					/* changes via StateUtil.
+					*/
 					var bSortSupported = oCurrentState.hasOwnProperty("sorters");
 					var bFilterSupported = oCurrentState.hasOwnProperty("filter");
 					var bItemSupported = oCurrentState.hasOwnProperty("items");
@@ -155,19 +160,6 @@ sap.ui.define([
 			//check if a control instance is available
 			if (!oControl) {
 				return false;
-			}
-
-			//TODO: remove this workaround once the reaction to p13nMode is allowed
-			var sControlName = oControl.getMetadata().getName().substring(11); //remove sap.ui.mdc
-			var iAllowedP13nOptions = Object.keys(Library[sControlName + "P13nMode"]).length;
-
-			//TODO: remove once "Filter" personalization is public
-			if (oControl.isA("sap.ui.mdc.Table") && oControl.getP13nMode() && oControl.getP13nMode().indexOf("Filter") < 0) {
-				iAllowedP13nOptions--;
-			}
-
-			if (!oControl.getP13nMode() || (oControl.getP13nMode().length !== iAllowedP13nOptions)) {
-				throw new Error("Please enable all available options in the 'p13nMode' property to use StateUtil");
 			}
 
 			//check if flex is enabled
