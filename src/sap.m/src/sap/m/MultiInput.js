@@ -324,6 +324,12 @@ function(
 	 * @param {jQuery.Event} oEvent User input.
 	 */
 	MultiInput.prototype.oninput = function(oEvent) {
+		// Since the MultiInput control can hold multiple values in form of tokens, selectedKey property,
+		// holding single value, is not valid in this context. We need to clear the selectedKey of the
+		// internal Input control on each user interaction as this better reflects the user's intentions
+		// in the context of the Input control.
+		this.setProperty("selectedKey", '', true);
+
 		Input.prototype.oninput.call(this, oEvent);
 		this._manageListsVisibility(false);
 		this._getSelectedItemsPicker().close();
