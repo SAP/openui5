@@ -230,7 +230,8 @@ sap.ui.define([
 	 *   The group ID to be used for the DELETE request; if not specified, the update group ID for
 	 *   the context's binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindContext}
 	 *   and {@link sap.ui.model.odata.v4.ODataModel#bindList}; the resulting group ID must not have
-	 *   {@link sap.ui.model.odata.v4.SubmitMode.API}.
+	 *   {@link sap.ui.model.odata.v4.SubmitMode.API}. Since 1.81, if this context is transient
+	 *   (see {@link #isTransient}), no group ID needs to be specified.
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not point
@@ -258,10 +259,11 @@ sap.ui.define([
 
 		oModel.checkGroupId(sGroupId);
 		this.oBinding.checkSuspended();
-		if (!this.isTransient() && this.hasPendingChanges()) {
+		if (this.isTransient()) {
+			sGroupId = sGroupId || "$direct";
+		} else if (this.hasPendingChanges()) {
 			throw new Error("Cannot delete due to pending changes");
 		}
-
 		oGroupLock = this.oBinding.lockGroup(sGroupId, true, true);
 
 		return this._delete(oGroupLock).then(function () {
@@ -1170,8 +1172,7 @@ sap.ui.define([
 		}
 		if (sGroupId !== null) {
 			this.oModel.checkGroupId(sGroupId);
-			oGroupLock
-				= this.oModel.lockGroup(sGroupId || this.getUpdateGroupId(), this, true, true);
+			oGroupLock = this.oBinding.lockGroup(sGroupId, true, true);
 		}
 
 		return Promise.resolve(this.doSetProperty(sPath, vValue, oGroupLock, true))

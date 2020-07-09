@@ -830,7 +830,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete: success", function (assert) {
+[false, true].forEach(function (bTransient) {
+	[undefined, "myGroup"].forEach(function (sGroupId) {
+		var sTitle = "delete: success, transient = " + bTransient + ", group ID = " + sGroupId;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
 				lockGroup : function () {}
@@ -849,10 +853,13 @@ sap.ui.define([
 			oPromise = Promise.resolve(),
 			that = this;
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
+		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
-		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup", true, true)
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(bTransient);
+		this.mock(oContext).expects("hasPendingChanges").exactly(bTransient ? 0 : 1).withExactArgs()
+			.returns(false);
+		this.mock(oBinding).expects("lockGroup")
+			.withExactArgs(!sGroupId && bTransient ? "$direct" : sGroupId, true, true)
 			.returns(oGroupLock);
 		this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
 			.returns(oPromise);
@@ -867,12 +874,15 @@ sap.ui.define([
 		});
 
 		// code under test
-		return oContext.delete("myGroup").then(function () {
+		return oContext.delete(sGroupId).then(function () {
 			assert.ok(true);
 		}, function (oError0) {
 			assert.notOk(true);
 		});
 	});
+
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("delete: failure", function (assert) {
@@ -2509,11 +2519,11 @@ sap.ui.define([
 [null, "new value"].forEach(function (vValue) {
 	QUnit.test("setProperty: " + vValue, function (assert) {
 		var oBinding = {
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				lockGroup : function () {}
 			},
 			oModel = {
-				checkGroupId : function () {},
-				lockGroup : function () {}
+				checkGroupId : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
 			oGroupLock = {},
@@ -2521,8 +2531,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
-		this.mock(oModel).expects("lockGroup")
-			.withExactArgs("group", sinon.match.same(oContext), true, true)
+		this.mock(oBinding).expects("lockGroup").withExactArgs("group", true, true)
 			.returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", vValue, sinon.match.same(oGroupLock), true)
@@ -2557,11 +2566,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("setProperty: doSetProperty fails, unlock oGroupLock", function (assert) {
 		var oBinding = {
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				lockGroup : function () {}
 			},
 			oModel = {
-				checkGroupId : function () {},
-				lockGroup : function () {}
+				checkGroupId : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
 			oError = new Error("This call intentionally failed"),
@@ -2573,8 +2582,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
-		this.mock(oModel).expects("lockGroup")
-			.withExactArgs("group", sinon.match.same(oContext), true, true)
+		this.mock(oBinding).expects("lockGroup").withExactArgs("group", true, true)
 			.returns(oGroupLock);
 		oGroupLockMock.expects("unlock").never(); // not yet
 		this.mock(oContext).expects("doSetProperty")
@@ -2596,45 +2604,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setProperty: optional update group ID", function (assert) {
-		var oBinding = {
-				checkSuspended : function () {}
-			},
-			oModel = {
-				checkGroupId : function () {},
-				lockGroup : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
-			oGroupLock = {},
-			vWithCacheResult = {};
-
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oModel).expects("checkGroupId").withExactArgs(undefined);
-		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns("group");
-		this.mock(oModel).expects("lockGroup")
-			.withExactArgs("group", sinon.match.same(oContext), true, true)
-			.returns(oGroupLock);
-		this.mock(oContext).expects("doSetProperty")
-			.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock), true)
-			// allow check that #withCache's result is propagated
-			.returns(SyncPromise.resolve(vWithCacheResult));
-
-		// code under test
-		return oContext.setProperty("some/relative/path", "new value").then(function (vResult) {
-			assert.strictEqual(vResult, vWithCacheResult);
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("setProperty: null as group ID", function (assert) {
 		var oBinding = {
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				lockGroup : function () {}
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/ProductList('HT-1000')"),
 			oError = {};
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("getUpdateGroupId").never();
+		this.mock(oBinding).expects("lockGroup").never();
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", "new value", null, true)
 			.returns(SyncPromise.reject(oError));
