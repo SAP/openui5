@@ -74,6 +74,7 @@ sap.ui.define([
 
 	var oWrapper;
 	var oFieldHelp;
+	var oItemTemplate;
 	var oTable;
 	var oField;
 	var iSelect = 0;
@@ -85,6 +86,7 @@ sap.ui.define([
 	var sNavigateDescription;
 	var oNavigateInParameters;
 	var oNavigateOutParameters;
+	var sNavigateItemId;
 	var iDataUpdate = 0;
 	var bDataUpdateContentChange;
 	var sDataUpdateId;
@@ -102,6 +104,7 @@ sap.ui.define([
 		sNavigateDescription = oEvent.getParameter("description");
 		oNavigateInParameters = oEvent.getParameter("inParameters");
 		oNavigateOutParameters = oEvent.getParameter("outParameters");
+		sNavigateItemId = oEvent.getParameter("itemId");
 	};
 
 	var _myDataUpdateHandler = function(oEvent) {
@@ -173,7 +176,7 @@ sap.ui.define([
 			});
 		sap.ui.getCore().setModel(oModel);
 
-		var oItemTemplate = new ColumnListItem({
+		oItemTemplate = new ColumnListItem("MyItem", {
 			type: "Active",
 			cells: [new Text({text: "{key}"}),
 					new Text({text: "{text}"}),
@@ -213,6 +216,8 @@ sap.ui.define([
 		}
 		oTable.destroy();
 		oTable = undefined;
+		oItemTemplate.destroy();
+		oItemTemplate = undefined;
 		oWrapper.destroy();
 		oWrapper = undefined;
 		iSelect = 0;
@@ -224,6 +229,7 @@ sap.ui.define([
 		sNavigateKey = undefined;
 		oNavigateInParameters = undefined;
 		oNavigateOutParameters = undefined;
+		sNavigateItemId = undefined;
 		iDataUpdate = 0;
 		bDataUpdateContentChange = undefined;
 		sDataUpdateId = undefined;
@@ -407,6 +413,7 @@ sap.ui.define([
 		assert.equal(sNavigateKey, undefined, "Navigate event key");
 		assert.notOk(oNavigateInParameters, "no in-parameters set");
 		assert.notOk(oNavigateOutParameters, "no out-parameters set");
+		assert.equal(sNavigateItemId, undefined, "Navigate event itemId");
 		var aSelectedItems = oWrapper.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "selectedItems");
 		assert.equal(aSelectedItems[0].key, "I2", "selectedItem key");
@@ -425,6 +432,7 @@ sap.ui.define([
 		assert.equal(sNavigateKey, "I3", "Navigate event key");
 		assert.notOk(oNavigateInParameters, "no in-parameters set");
 		assert.notOk(oNavigateOutParameters, "no out-parameters set");
+		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
 		var aSelectedItems = oWrapper.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "selectedItems");
 		assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
@@ -450,6 +458,7 @@ sap.ui.define([
 		assert.equal(iNavigate, 1, "Navigate event fired");
 		assert.equal(sNavigateDescription, "Item 1", "Navigate event description");
 		assert.equal(sNavigateKey, "I1", "Navigate event key");
+		assert.equal(sNavigateItemId, "MyItem-T1-0", "Navigate event itemId");
 		aSelectedItems = oWrapper.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "selectedItems");
 		assert.equal(aSelectedItems[0].key, "I1", "selectedItem key");
@@ -473,6 +482,7 @@ sap.ui.define([
 		assert.equal(iNavigate, 1, "Navigate event fired");
 		assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
 		assert.equal(sNavigateKey, "I3", "Navigate event key");
+		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
 		aSelectedItems = oWrapper.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "selectedItems");
 		assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
@@ -486,6 +496,7 @@ sap.ui.define([
 		assert.equal(iNavigate, 1, "Navigate event fired");
 		assert.equal(sNavigateDescription, "Item 2", "Navigate event description");
 		assert.equal(sNavigateKey, "I2", "Navigate event key");
+		assert.equal(sNavigateItemId, "MyItem-T1-1", "Navigate event itemId");
 		aSelectedItems = oWrapper.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "selectedItems");
 		assert.equal(aSelectedItems[0].key, "I2", "selectedItem key");
@@ -501,6 +512,7 @@ sap.ui.define([
 		assert.equal(iNavigate, 1, "Navigate event fired");
 		assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
 		assert.equal(sNavigateKey, "I3", "Navigate event key");
+		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
 		assert.ok(oNavigateInParameters, "In-parameters set");
 		assert.ok(oNavigateInParameters && oNavigateInParameters.hasOwnProperty("additionalText"), "in-parameters has additionalText");
 		assert.equal(oNavigateInParameters && oNavigateInParameters.additionalText, "Text 3", "in-parameters additionalText");
@@ -531,6 +543,7 @@ sap.ui.define([
 		assert.equal(iNavigate, 1, "Navigate event fired");
 		assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
 		assert.equal(sNavigateKey, "I3", "Navigate event key");
+		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
 		var aSelectedItems = oWrapper.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "selectedItems");
 		assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
@@ -559,6 +572,7 @@ sap.ui.define([
 			assert.equal(iNavigate, 1, "Navigate event fired");
 			assert.equal(sNavigateDescription, "New X-Item 3", "Navigate event description");
 			assert.equal(sNavigateKey, "I3", "Navigate event key");
+			assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
 			var aSelectedItems = oWrapper.getSelectedItems();
 			assert.equal(aSelectedItems.length, 1, "selectedItems");
 			assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
@@ -1095,10 +1109,12 @@ sap.ui.define([
 	var iFVHNavigate = 0;
 	var sFVHNavigateValue;
 	var sFVHNavigateKey;
+	var sFVHNavigateItemId;
 	var _myFVHNavigateHandler = function(oEvent) {
 		iFVHNavigate++;
 		sFVHNavigateValue = oEvent.getParameter("value");
 		sFVHNavigateKey = oEvent.getParameter("key");
+		sFVHNavigateItemId = oEvent.getParameter("itemId");
 	};
 
 	var iFVHDataUpdate = 0;
@@ -1142,6 +1158,7 @@ sap.ui.define([
 		iFVHNavigate = 0;
 		sFVHNavigateValue = undefined;
 		sFVHNavigateKey = undefined;
+		sFVHNavigateItemId = undefined;
 		iFVHDataUpdate = 0;
 	};
 
@@ -1208,6 +1225,7 @@ sap.ui.define([
 			assert.equal(iFVHNavigate, 1, "Navigate event fired");
 			assert.equal(sFVHNavigateValue, "Item 1", "Navigate event value");
 			assert.equal(sFVHNavigateKey, "I1", "Navigate event key");
+			assert.equal(sFVHNavigateItemId, "MyItem-T1-0", "Navigate event itemId");
 
 			oFieldHelp.navigate(1);
 			aItems = oTable.getItems();
@@ -1215,6 +1233,7 @@ sap.ui.define([
 			assert.equal(iFVHNavigate, 2, "Navigate event fired");
 			assert.equal(sFVHNavigateValue, "Item 2", "Navigate event value");
 			assert.equal(sFVHNavigateKey, "I2", "Navigate event key");
+			assert.equal(sFVHNavigateItemId, "MyItem-T1-1", "Navigate event itemId");
 			oFieldHelp.close();
 			oClock.tick(iPopoverDuration); // fake closing time
 		}

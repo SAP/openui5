@@ -9,19 +9,19 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/field/FieldValueHelp",
+	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/enum/BaseType",
-	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
-	"sap/m/MultiInput" // async. loading of content control tested in FieldBase test
+	"sap/ui/mdc/odata/v4/FieldBaseDelegate" // make sure delegate is loaded (test delegate loading in FieldBase test)
 	], function (
 		jQuery,
 		qutils,
 		FilterField,
 		FieldValueHelp,
+		FieldMultiInput,
 		FilterOperatorUtil,
 		BaseType,
-		FieldBaseDelegate,
-		MultiInput
+		FieldBaseDelegate
 		) {
 	"use strict";
 
@@ -68,7 +68,7 @@ sap.ui.define([
 		var aContent = oFilterField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "default content exist");
-		assert.equal(oContent && oContent.getMetadata().getName(), "sap.m.MultiInput", "sap.m.MultiInput is default");
+		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is default");
 		assert.ok(oContent.getShowValueHelp(), "valueHelp used");
 		assert.equal(oFilterField._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
 		var oFieldHelp = sap.ui.getCore().byId(oFilterField._sDefaultFieldHelp);

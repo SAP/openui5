@@ -140,7 +140,7 @@ sap.ui.define([
 	function _createList() {
 
 		if (!this._oList && List && StandardListItem && mLibrary && !this._bListRequested) {
-			var oItemTemplate = new StandardListItem({
+			var oItemTemplate = new StandardListItem(this.getId() + "-item", {
 				type: mLibrary.ListType.Active,
 				title: "{text}"
 			});
@@ -274,7 +274,7 @@ sap.ui.define([
 				var vKey = _getKey.call(this, oItem);
 				var oCondition = _getConditionForKey.call(this, vKey);
 				this.setProperty("conditions", [oCondition], true); // do not invalidate whole FieldHelp
-				this.fireNavigate({value: oItem.getTitle(), key: vKey, condition: oCondition});
+				this.fireNavigate({value: oItem.getTitle(), key: vKey, condition: oCondition, itemId: oItem.getId()});
 			}
 
 		}

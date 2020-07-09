@@ -307,6 +307,19 @@ sap.ui.define([
 					group: "Appearance",
 					defaultValue: false,
 					visibility: "hidden"
+				},
+
+				/**
+				 * Sets the aria attributes added to the Input control.
+				 *
+				 * The object contains aria attribudes in a <code>aria</code> node,
+				 * Additional attributes like <code>role</code> or <code>autocomplete</code> are on root level.
+				 */
+				_ariaAttributes: {
+					type: "object",
+					defaultValue: {},
+					byValue: true,
+					visibility: "hidden"
 				}
 
 			},
@@ -456,8 +469,8 @@ sap.ui.define([
 
 	var mControlTypes = {
 			Default: {
-				edit: "sap/m/Input",
-				editMulti: ["sap/m/MultiInput", "sap/m/Token"],
+				edit: "sap/ui/mdc/field/FieldInput",
+				editMulti: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"],
 				editMultiLine: "sap/m/TextArea",
 				display: "sap/m/Text",
 				createEdit: _createInputControl,
@@ -476,8 +489,8 @@ sap.ui.define([
 				useDefaultFieldHelp: false // no default field help
 			},
 			Date: {
-				edit: "sap/m/Input",
-				editMulti: ["sap/m/MultiInput", "sap/m/Token"], // FieldHelp needed to enter date
+				edit: "sap/ui/mdc/field/FieldInput",
+				editMulti: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], // FieldHelp needed to enter date
 				display: "sap/m/Text",
 				editOperator: {
 					"EQ": {name: "sap/m/DatePicker", create: _createDatePickerControl}, // TODO: how to check custom operators
@@ -489,8 +502,8 @@ sap.ui.define([
 				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true} // if no FieldHelp and multiple operators use default FieldHelp
 			},
 			Time: {
-				edit: "sap/m/Input",
-				editMulti: ["sap/m/MultiInput", "sap/m/Token"], // FieldHelp needed to enter date
+				edit: "sap/ui/mdc/field/FieldInput",
+				editMulti: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], // FieldHelp needed to enter date
 				display: "sap/m/Text",
 				editOperator: {
 					"EQ": {name: "sap/m/TimePicker", create: _createDatePickerControl}  // as same API as DatePicker
@@ -501,8 +514,8 @@ sap.ui.define([
 				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true} // if no FieldHelp and multiple operators use default FieldHelp
 			},
 			DateTime: {
-				edit: "sap/m/Input",
-				editMulti: ["sap/m/MultiInput", "sap/m/Token"], // FieldHelp needed to enter date
+				edit: "sap/ui/mdc/field/FieldInput",
+				editMulti: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], // FieldHelp needed to enter date
 				display: "sap/m/Text",
 				editOperator: {
 					"EQ": {name: "sap/m/DateTimePicker", create: _createDatePickerControl} // as same API as DatePicker
@@ -513,8 +526,8 @@ sap.ui.define([
 				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true} // if no FieldHelp and multiple operators use default FieldHelp
 			},
 			Link: {
-				edit: "sap/m/Input",
-				editMulti: ["sap/m/MultiInput", "sap/m/Token"],
+				edit: "sap/ui/mdc/field/FieldInput",
+				editMulti: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"],
 				editMultiLine: "sap/m/TextArea",
 				display: "sap/m/Link",
 				createEdit: _createInputControl,
@@ -524,15 +537,15 @@ sap.ui.define([
 				useDefaultFieldHelp: false // no default field help
 			},
 			Boolean: {
-				edit: "sap/m/Input",
+				edit: "sap/ui/mdc/field/FieldInput",
 				display: "sap/m/Text",
 				createEdit: _createBoolInputControl,
 				createDisplay: _createTextControl,
 				useDefaultFieldHelp: {name: "bool", oneOperatorSingle: true, oneOperatorMulti: true} // if no FieldHelp and multiple operators use default FieldHelp
 			},
 			Unit: {
-				edit: "sap/m/Input",
-				editMulti: ["sap/m/MultiInput", "sap/m/Input", "sap/m/Token"],
+				edit: "sap/ui/mdc/field/FieldInput",
+				editMulti: ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token"],
 				display: "sap/m/Text",
 				createEdit: _createUnitInputControls,
 				createEditMulti: _createUnitMultiInputControls,
@@ -695,17 +708,6 @@ sap.ui.define([
 	};
 
 	FieldBase.prototype.onAfterRendering = function() {
-
-		// TODO: what if only Input re-renders, but not Field
-		if (_getFieldHelp.call(this) && this.getEditMode() != EditMode.Display) {
-			// disable browsers autocomplete if field help is available
-			var aContent = this.getAggregation("_content", []);
-			for (var i = 0; i < aContent.length; i++) {
-				var oContent = aContent[i];
-				var oDomRef = oContent.getFocusDomRef();
-				jQuery(oDomRef).attr("autocomplete", "off");
-			}
-		}
 
 	};
 
@@ -1375,6 +1377,34 @@ sap.ui.define([
 
 	}
 
+	function _setAriaAttributes(bOpen, sItemId) {
+
+		var oAttributes = {aria: {}};
+		var oFieldHelp = _getFieldHelp.call(this);
+
+		if (oFieldHelp) {
+			var sRoleDescription = oFieldHelp.getRoleDescription();
+			oAttributes["role"] = "combobox";
+			if (sRoleDescription) {
+				oAttributes.aria["roledescription"] = sRoleDescription;
+			}
+			oAttributes.aria["haspopup"] = "listbox";
+			oAttributes["autocomplete"] = "off";
+			if (bOpen) {
+				oAttributes.aria["expanded"] = "true";
+				oAttributes.aria["controls"] = oFieldHelp.getContentId();
+				if (sItemId) {
+					oAttributes.aria["activedescendant"] = sItemId;
+				}
+			} else {
+				oAttributes.aria["expanded"] = "false";
+			}
+		}
+
+		this.setProperty("_ariaAttributes", oAttributes, true);
+
+	}
+
 	/**
 	 * Assigns a <code>Label</code> control to the <code>Field</code> or </code>FilterField</code> controls.
 	 *
@@ -1598,6 +1628,7 @@ sap.ui.define([
 
 		_setUsedConditionType.call(this); // if external content use it's conditionType
 		_checkFieldHelpExist.call(this, this.getFieldHelp()); // as FieldHelp might be greated after ID is assigned to Field
+		_setAriaAttributes.call(this, false);
 
 		var sEditMode = this.getEditMode();
 		if (this.getContent() || this._bIsBeingDestroyed ||
@@ -1803,12 +1834,12 @@ sap.ui.define([
 			valueState: "{$field>/valueState}",
 			valueStateText: "{$field>/valueStateText}",
 			showValueHelp: "{$field>/_fieldHelpEnabled}",
+			ariaAttributes: "{$field>/_ariaAttributes}",
 			width: "100%",
 			tooltip: "{$field>/tooltip}",
 			change: _handleContentChange.bind(this),
 			liveChange: _handleContentLiveChange.bind(this),
-			valueHelpRequest: _handleValueHelpRequest.bind(this),
-			showSuggestion: true	//TODO active suggest to not get the browser history displayed for the input field.
+			valueHelpRequest: _handleValueHelpRequest.bind(this)
 		});
 
 		oInput._setPreferUserInteraction(true);
@@ -1863,6 +1894,7 @@ sap.ui.define([
 			valueState: "{$field>/valueState}",
 			valueStateText: "{$field>/valueStateText}",
 			showValueHelp: "{$field>/_fieldHelpEnabled}",
+			ariaAttributes: "{$field>/_ariaAttributes}",
 			width: "100%",
 			tooltip: "{$field>/tooltip}",
 			tokens: {path: "$field>/conditions", template: oToken},
@@ -2131,6 +2163,7 @@ sap.ui.define([
 				valueState: "{$field>/valueState}",
 				valueStateText: "{$field>/valueStateText}",
 				showValueHelp: "{$field>/_fieldHelpEnabled}",
+				ariaAttributes: "{$field>/_ariaAttributes}",
 				width: "30%",
 				tooltip: "{$field>/tooltip}",
 				change: _handleContentChange.bind(this),
@@ -2646,6 +2679,7 @@ sap.ui.define([
 									oFieldHelp.setConditions([]);
 								}
 								oFieldHelp.open(true);
+								_setAriaAttributes.call(this, true);
 								delete this._vLiveChangeValue;
 							}
 						}.bind(this), 300, { leading: false, trailing: true });
@@ -2686,6 +2720,7 @@ sap.ui.define([
 			oFieldInfo.getTriggerHref().then(function (sHref) {
 				if (!sHref){
 					oFieldInfo.open(this._getContent()[0]);
+					_setAriaAttributes.call(this, true);
 				}
 			}.bind(this));
 		}
@@ -2811,6 +2846,7 @@ sap.ui.define([
 			var aConditions = this.getConditions();
 			_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
 			oFieldHelp.toggleOpen(false);
+			_setAriaAttributes.call(this, true); // if closed it will be set again on afterclose
 			if (!oFieldHelp.isFocusInHelp()) {
 				// need to reset bValueHelpRequested in Input, otherwise on focusout no change event and navigation don't work
 				var oContent = oEvent.getSource();
@@ -2951,6 +2987,7 @@ sap.ui.define([
 		var sValue = oEvent.getParameter("value");
 		var vKey = oEvent.getParameter("key");
 		var oCondition = oEvent.getParameter("condition");
+		var sItemId = oEvent.getParameter("itemId");
 		var sNewValue;
 		var sDOMValue;
 		var oContent = this.getControlForSuggestion();
@@ -3013,6 +3050,8 @@ sap.ui.define([
 		this._bPreventGetDescription = false; // back to default
 		_updateConditionType.call(this);
 
+		_setAriaAttributes.call(this, true, sItemId);
+
 		this._bIgnoreInputValue = false; // use value for input
 		this.fireLiveChange({value: sNewValue});
 
@@ -3026,6 +3065,8 @@ sap.ui.define([
 			this._bIgnoreInputValue = false;
 			oContent.setDOMValue("");
 		}
+
+		_setAriaAttributes.call(this, false);
 
 	}
 

@@ -278,7 +278,7 @@ sap.ui.define([
 			this._bNoTableUpdate = true;
 			this.setSelectedItems([{key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters}]);
 			this._bNoTableUpdate = false;
-			this.fireNavigate({key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters});
+			this.fireNavigate({key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters, itemId: oItem.getId()});
 		}
 
 	};

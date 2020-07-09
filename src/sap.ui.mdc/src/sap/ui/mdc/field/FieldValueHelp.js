@@ -803,6 +803,7 @@ sap.ui.define([
 		var oInParameters = oEvent.getParameter("inParameters");
 		var oOutParameters = oEvent.getParameter("outParameters");
 		var bLeave = oEvent.getParameter("leave");
+		var sItemId = oEvent.getParameter("itemId");
 		var oCondition;
 
 		if (bLeave) {
@@ -839,7 +840,7 @@ sap.ui.define([
 			oCondition.outParameters = _mapOutParametersToField.call(this, oOutParameters);
 		}
 		this.setProperty("conditions", [oCondition], true); // do not invalidate whole FieldHelp
-		this.fireNavigate({value: sDescription, key: vKey, condition: oCondition});
+		this.fireNavigate({value: sDescription, key: vKey, condition: oCondition, itemId: sItemId});
 
 	}
 
@@ -2274,6 +2275,19 @@ sap.ui.define([
 		}
 
 		return true;
+
+	};
+
+	FieldValueHelp.prototype.getRoleDescription = function() {
+
+		if (this.getMaxConditions() === 1) {
+			return null;
+		} else {
+			if (!this._oResourceBundleM) {
+				this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			}
+			return this._oResourceBundleM.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION");
+		}
 
 	};
 
