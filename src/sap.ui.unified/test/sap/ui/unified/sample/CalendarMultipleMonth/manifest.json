@@ -19,13 +19,6 @@
 				"sap.m": {}
 			}
 		},
-		"resources": {
-			"css": [
-				{
-					"uri": "../style.css"
-				}
-			]
-		},
 		"config": {
 			"sample": {
 				"files": [
