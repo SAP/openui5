@@ -16,7 +16,9 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	'sap/ui/dom/units/Rem',
 	"./FlexibleColumnLayoutRenderer",
-	"sap/base/assert"
+	"sap/base/Log",
+	"sap/base/assert",
+	"sap/base/util/merge"
 ], function(
 	jQuery,
 	library,
@@ -30,7 +32,9 @@ sap.ui.define([
 	Parameters,
 	DomUnitsRem,
 	FlexibleColumnLayoutRenderer,
-	assert
+	Log,
+	assert,
+	merge
 ) {
 	"use strict";
 
@@ -649,6 +653,8 @@ sap.ui.define([
 		// Holds an object, responsible for saving and searching the layout history
 		this._oLayoutHistory = new LayoutHistory();
 
+		this._oAnimationEndListener = new AnimationEndListener();
+
 		// Indicates if there are rendered pages inside columns
 		this._oRenderedColumnPagesBoolMap = {};
 
@@ -827,6 +833,7 @@ sap.ui.define([
 
 	FlexibleColumnLayout.prototype.onBeforeRendering = function () {
 		this._deregisterResizeHandler();
+		this._oAnimationEndListener.cancelAll();
 	};
 
 	FlexibleColumnLayout.prototype.onAfterRendering = function () {
@@ -1090,7 +1097,8 @@ sap.ui.define([
 			sLayout,
 			sLastVisibleColumn,
 			bInsetMidColumn,
-			bRestoreFocusOnBackNavigation;
+			bRestoreFocusOnBackNavigation,
+			oPendingAnimationEnd = {};
 
 		// Stop here if the control isn't rendered yet
 		if (!this.isActive()) {
@@ -1127,21 +1135,59 @@ sap.ui.define([
 				oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, bShouldConcealColumn || bShouldRevealColumn);
 
 			}, this);
+
+			// check if the previous animation completed
+			aColumns.forEach(function(sColumn) {
+				oPendingAnimationEnd[sColumn] = this._oAnimationEndListener.isWaitingForColumnResizeEnd(this._$columns[sColumn]);
+			}, this);
+			// detach all listeners to any previous unfinished animation
+			this._oAnimationEndListener.cancelAll();
 		}
 
-		// Resize the columns according to the current layout
+
 		aColumns.forEach(function (sColumn) {
 			var oColumn = this._$columns[sColumn],
+				oColumnDomRef = oColumn.get(0),
 				iNewWidth,
 				sNewWidth,
+				bShouldRevealColumn,
 				bShouldConcealColumn,
-				bShouldRestoreFocus;
+				bPinned,
+				bCanResizeColumnWithAnimation,
+				oOptions;
 
+
+			// Calculate the width of the column
 			iPercentWidth = this._getColumnSize(sColumn);
-			bShouldConcealColumn = bHasAnimations && this._shouldConcealColumn(iDefaultVisibleColumnsCount, sColumn);
-			bShouldRestoreFocus = bRestoreFocusOnBackNavigation && (sColumn === sLastVisibleColumn);
+			iNewWidth = Math.round(iAvailableWidth * (iPercentWidth / 100));
+			if ([100, 0].indexOf(iPercentWidth) !== -1) {
+				sNewWidth = iPercentWidth + "%";
+			} else {
+				sNewWidth = iNewWidth + "px";
+			}
 
-			if (!bShouldConcealColumn) {
+
+			// set the resize options for the column:
+			oOptions = {
+				previousAnimationCompleted: !oPendingAnimationEnd[oColumn],
+				iNewWidth: iNewWidth,
+				shouldRestoreFocus: bRestoreFocusOnBackNavigation && (sColumn === sLastVisibleColumn),
+				hidden: iPercentWidth === 0 && this._oColumnWidthInfo[sColumn] === 0 // is hidden both before and after the resize
+			};
+			if (bHasAnimations) {
+				bShouldRevealColumn = this._shouldRevealColumn(iDefaultVisibleColumnsCount, sColumn === sLastVisibleColumn);
+				bShouldConcealColumn = this._shouldConcealColumn(iDefaultVisibleColumnsCount, sColumn);
+				bPinned = bShouldRevealColumn || bShouldConcealColumn;
+				oOptions = merge(oOptions, {
+					hasAnimations: true,
+					shouldConcealColumn: bShouldConcealColumn,
+					pinned: bPinned
+				});
+				bCanResizeColumnWithAnimation = this._canResizeColumnWithAnimation(sColumn, oOptions);
+			}
+
+
+			if (!bShouldConcealColumn) { // do not remove the active class of the concealed column for now (it should remain visible until the end of animations for other columns)
 				// Add the active class to the column if it shows something
 				oColumn.toggleClass("sapFFCLColumnActive", iPercentWidth > 0);
 			}
@@ -1154,40 +1200,40 @@ sap.ui.define([
 			oColumn.removeClass("sapFFCLColumnLastActive");
 			oColumn.removeClass("sapFFCLColumnFirstActive");
 
-			// Change the width of the column
-			iNewWidth = Math.round(iAvailableWidth * (iPercentWidth / 100));
-			if ([100, 0].indexOf(iPercentWidth) !== -1) {
-				sNewWidth = iPercentWidth + "%";
-			} else {
-				sNewWidth = iNewWidth + "px";
+
+			// toggle ResizeHandler during the animation
+			if (bCanResizeColumnWithAnimation) {
+				ResizeHandler.suspend(oColumnDomRef); // Suspend ResizeHandler while animation is running
+				this._oAnimationEndListener.waitForColumnResizeEnd(oColumn).then(function() {
+					ResizeHandler.resume(oColumnDomRef); // Resume ResizeHandler once animation ended
+				}).catch(function() {
+					ResizeHandler.resume(oColumnDomRef); // Resume ResizeHandler if animation cancelled
+				});
 			}
 
 
-			// Animations on - suspend ResizeHandler while animation is running
-			if (bHasAnimations) {
-				var oColumnDomRef = oColumn.get(0);
-
-				// Clear previous timeouts if present
-				if (oColumn._iResumeResizeHandlerTimeout) {
-					clearTimeout(oColumn._iResumeResizeHandlerTimeout);
-				}
-
-				// Suspending ResizeHandler temporarily
-				ResizeHandler.suspend(oColumnDomRef);
-
-				// Schedule resume of ResizeHandler
-				oColumn._iResumeResizeHandlerTimeout = setTimeout(this._adjustColumnAfterAnimation.bind(this,
-					bShouldConcealColumn, sNewWidth, iNewWidth, oColumn, oColumnDomRef, bShouldRestoreFocus),
-					FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION);
-			} else {
-				this._adjustColumnDisplay(oColumn, iNewWidth, bShouldRestoreFocus);
-			}
-
-			//If the current column is concealed we don't want to apply the new width at this iteration.
-			//The new width should be applied once the animations are over, so that the previous column conceals the current.
-			if (!bShouldConcealColumn) {
+			// Update the width of the column DOM element
+			if (!bShouldConcealColumn) { // regular case
 				oColumn.width(sNewWidth);
+			} else {
+				this._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
+					// the concealed column should be resized last (after all other columns resized)
+					oColumn.width(sNewWidth);
+				}).catch(function() {
+				// no action when no resize
+			});
 			}
+
+
+			// Adjust column after resize
+			if (bCanResizeColumnWithAnimation || bPinned) {
+				this._oAnimationEndListener.waitForAllColumnsResizeEnd().then(this._afterColumnResize.bind(this, sColumn, oOptions)).catch(function() {
+				// no action if resize did not complete
+			});
+			} else {
+				this._afterColumnResize(sColumn, oOptions);
+			}
+
 
 			// For tablet and desktop - notify child controls to render with reduced container size, if they need to
 			if (!Device.system.phone) {
@@ -1219,78 +1265,83 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adjusts styles of Columns after the animation
+	 * Adjusts the column after resize
 	 *
-	 * 	@param bShouldConcealColumn
-	 * 	@param sNewWidth
-	 *	@param iNewWidth
-	 *	@param oColumn
-	 *	@param oColumnDomRef
-	 *	@private
-	*/
-	FlexibleColumnLayout.prototype._adjustColumnAfterAnimation = function (bShouldConcealColumn, sNewWidth, iNewWidth, oColumn, oColumnDomRef, bShouldRestoreFocus) {
-		// If the column is concealed we must apply the width after the animations are over.
-		if (bShouldConcealColumn) {
-			oColumn.width(sNewWidth);
-			// The column does not show anything anymore, so we can remove the active class
-			oColumn.toggleClass("sapFFCLColumnActive", false);
-		}
+	 * @param sColumn, the column name
+	 * @param oOptions, the resize options
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._afterColumnResize = function (sColumn, oOptions) {
+		var oColumn = this._$columns[sColumn],
+			bShouldConcealColumn = oOptions.shouldConcealColumn,
+			iNewWidth = oOptions.iNewWidth,
+			bShouldRestoreFocus = oOptions.shouldRestoreFocus;
 
-		// Clear pinning after transitions are finished
 		oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
-		this._adjustColumnDisplay(oColumn, iNewWidth, bShouldRestoreFocus);
 
-		this._resumeResizeHandler(oColumn, oColumnDomRef);
-	};
-
-
-	/**
-	 * Resumes the resize handler of a Column's DOM reference.
-	 *
-	 *	@param oColumn
-	 *	@param oColumnDomRef
-	 *	@private
-	*/
-	FlexibleColumnLayout.prototype._resumeResizeHandler = function (oColumn, oColumnDomRef) {
-		ResizeHandler.resume(oColumnDomRef);
-		oColumn._iResumeResizeHandlerTimeout = null;
-	};
-
-	/**
-	 * Sets the value of the column's display property to none if the new width of the column is zero.
-	 *
-	 *	@param oColumn
-	 *	@param iNewWidth
-	 *	@private
-	*/
-	FlexibleColumnLayout.prototype._adjustColumnDisplay = function(oColumn, iNewWidth, bShouldRestoreFocus) {
-		var oColumnInfo = {
-				begin: oColumn.hasClass("sapFFCLColumnBegin"),
-				mid: oColumn.hasClass("sapFFCLColumnMid"),
-				end: oColumn.hasClass("sapFFCLColumnEnd")
-			},
-			sCurrentColumn = getCurrentColumn(oColumnInfo),
-			oEventColumnInfo;
+		if (bShouldConcealColumn) {
+			// The column does not show anything anymore, so we can remove the active class
+			oColumn.removeClass("sapFFCLColumnActive");
+		}
 
 		//BCP: 1980006195
-		if (iNewWidth === 0) {
-			oColumn.addClass("sapFFCLColumnHidden");
-		} else {
-			oColumn.removeClass("sapFFCLColumnHidden");
+		oColumn.toggleClass("sapFFCLColumnHidden", iNewWidth === 0);
+
+		this._cacheColumnWidth(sColumn, iNewWidth);
+		if (bShouldRestoreFocus) {
+			this._restoreFocusToColumn(sColumn);
+		}
+	};
+
+	/**
+	 * Obtains the current width of a column
+	 *
+	 * @param sColumn, the column name
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._getColumnWidth = function (sColumn) {
+		var oColumn = this._$columns[sColumn].get(0),
+			sCssWidth = oColumn.style.width,
+			iCssWidth = parseInt(sCssWidth),
+			bPercentWidth;
+
+		if (/px$/.test(sCssWidth)) {
+			return iCssWidth;
 		}
 
-		if (this._oColumnWidthInfo[sCurrentColumn] !== iNewWidth) {
+		bPercentWidth = /%$/.test(sCssWidth);
+		if (bPercentWidth && (iCssWidth === 100)) {
+			return this._getControlWidth();
+		}
+
+		if (bPercentWidth && (iCssWidth === 0)) {
+			return 0;
+		}
+
+		return oColumn.offsetWidth;
+	};
+
+	/**
+	 * Caches the new width of the column and fires an event if
+	 * width changed compared to previous cached value
+	 *
+	 * @param sColumn, the column name
+	 * @param iNewWidth, the new column width
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._cacheColumnWidth = function(sColumn, iNewWidth) {
+		var oEventColumnInfo;
+
+		if (this._oColumnWidthInfo[sColumn] !== iNewWidth) {
 			oEventColumnInfo = {};
-			for (var next in oColumnInfo) {
-				oEventColumnInfo[next + "Column"] = oColumnInfo[next];
-			}
+			FlexibleColumnLayout.COLUMN_ORDER.forEach(function(sNextColumn) {
+				// indicate that the curent column is resized
+				oEventColumnInfo[sNextColumn + "Column"] = sNextColumn === sColumn;
+			});
 			this.fireColumnResize(oEventColumnInfo);
-			if (bShouldRestoreFocus) {
-				this._restoreFocusToColumn(sCurrentColumn);
-			}
 		}
 
-		this._oColumnWidthInfo[sCurrentColumn] = iNewWidth;
+		this._oColumnWidthInfo[sColumn] = iNewWidth;
 	};
 
 	/**
@@ -1337,6 +1388,39 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._shouldConcealColumn = function(iVisibleColumnsCount, sColumn) {
 		return  (iVisibleColumnsCount < this._iPreviousVisibleColumnsCount && sColumn === this._sPreviuosLastVisibleColumn
 					&& !this._bWasFullScreen && this._getColumnSize(sColumn) === 0);
+	};
+
+	/**
+	 * Checks if a column can be resized with an animation
+	 *
+	 * @param sColumn, the column name
+	 * @param oOptions, the column resize options
+	 * @returns {boolean|*}
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._canResizeColumnWithAnimation = function(sColumn, oOptions) {
+		var oColumn, bFirstRendering,
+			iNewWidth = oOptions.iNewWidth,
+			bHasAnimations = oOptions.hasAnimations,
+			bPinned = oOptions.pinned,
+			bHidden = oOptions.hidden,
+			bWasPartiallyResized = !oOptions.previousAnimationCompleted;
+
+		if (!bHasAnimations || bPinned || bHidden) {
+			return false;
+		}
+
+		oColumn = this._$columns[sColumn];
+		if (bWasPartiallyResized) {
+			return oColumn.width() !== iNewWidth;
+		}
+
+		bFirstRendering = !oColumn.get(0).style.width;
+		if (bFirstRendering) {
+			return false; // no animation on initial rendering of the column
+		}
+
+		return this._getColumnWidth(sColumn) !== iNewWidth;
 	};
 
 	/**
@@ -2133,19 +2217,6 @@ sap.ui.define([
 		this._aLayoutHistory = [];
 	}
 
-	function getCurrentColumn(oColumnInfo) {
-		var sCurrentColumn;
-
-		for (var sKey in oColumnInfo) {
-			if (oColumnInfo[sKey]) {
-				sCurrentColumn = sKey;
-				break;
-			}
-		}
-
-		return sCurrentColumn;
-	}
-
 	/**
 	 * Adds a new entry to the history
 	 * @param {string} sLayout
@@ -2168,6 +2239,140 @@ sap.ui.define([
 			if (aLayouts.indexOf(this._aLayoutHistory[i]) !== -1) {
 				return this._aLayoutHistory[i];
 			}
+		}
+	};
+
+	/**
+	 * AnimationEndListener helper class
+	 * @constructor
+	 * @private
+	 */
+	function AnimationEndListener () {
+		this._oListeners = {};
+		this._aPendingPromises = [];
+		this._oPendingPromises = {};
+		this._oCancelPromises = {};
+		this._oPendingPromiseAll = null;
+	}
+
+	/**
+	 * Attaches a <code>transitionend</code> listener to the given column element.
+	 * @param $column - a jQuery object
+	 * @returns {Promise}
+	 * @private
+	 */
+	AnimationEndListener.prototype.waitForColumnResizeEnd = function ($column) {
+		var sId = $column.get(0).id,
+			oPromise;
+
+		if (!this._oPendingPromises[sId]) {
+			oPromise = new Promise(function(resolve, reject) {
+
+				Log.debug("FlexibleColumnLayout", "wait for column " + sId + " to resize");
+				this._attachTransitionEnd($column, function() {
+					Log.debug("FlexibleColumnLayout", "completed column " + sId + " resize");
+					this._cleanUp($column);
+					resolve();
+				}.bind(this));
+
+				this._oCancelPromises[sId] = {
+					cancel: function() {
+						Log.debug("FlexibleColumnLayout", "cancel column " + sId + " resize");
+						this._cleanUp($column);
+						reject();
+					}.bind(this)
+				};
+
+			}.bind(this));
+
+			this._aPendingPromises.push(oPromise);
+			this._oPendingPromises[sId] = oPromise;
+		}
+
+		return this._oPendingPromises[sId];
+	};
+
+	/**
+	 * Waits until *all* <code>transitionend</code> listeners
+	 * attached from <code>AnimationEndListener.prototype.waitForColumnResizeEnd</code> are fired.
+	 * Note that this function must be called synchonously with the mentioned calls to
+	 * <code>AnimationEndListener.prototype.waitForColumnResizeEnd</code>, so that it knows the
+	 * total number of columns that will resize with animation. (This introduces some tighter coupling
+	 * with the calling <code>FlexibleColumnLayout.prototype._resizeColumns</code>function, but since
+	 * the API is private and used only in this context, it is left like this for simplicity.
+	 * @returns {Promise}
+	 * @private
+	 */
+	AnimationEndListener.prototype.waitForAllColumnsResizeEnd = function () {
+		if (!this._oPendingPromiseAll) {
+			this._oPendingPromiseAll = new Promise(function (resolve, reject) {
+				setTimeout(function () { // set a timeout of 0 to execute the following *after*
+					// all promises for resize of the individual columns were created
+					// so that <code>this._aPendingPromises</code> is completely filled
+					Promise.all(this._aPendingPromises).then(function () {
+						Log.debug("FlexibleColumnLayout", "completed all columns resize");
+						resolve();
+					}, 0).catch(function() {
+						reject();
+					});
+				}.bind(this));
+			}.bind(this));
+		}
+		return this._oPendingPromiseAll;
+	};
+
+	/**
+	 * Checks if <code>transitionend</code> listener on the given column element is
+	 * already attached and waiting.
+	 * @param $column - a jQuery object
+	 * @returns {Promise}
+	 * @private
+	 */
+	AnimationEndListener.prototype.isWaitingForColumnResizeEnd = function ($column) {
+		var sId = $column.get(0).id;
+		return !!this._oListeners[sId];
+	};
+
+	/**
+	 * Deregisters all <code>transitionend</code> listeners.
+	 * @returns {Promise}
+	 * @private
+	 */
+	AnimationEndListener.prototype.cancelAll = function () {
+		Object.keys(this._oCancelPromises).forEach(function(sId) {
+			// this will call <code>reject</code> from the promise
+			// to notify those that wait for the promise to complete
+			this._oCancelPromises[sId].cancel();
+		}, this);
+		this._oPendingPromises = {};
+		this._aPendingPromises = [];
+		this._oCancelPromises = {};
+		this._oPendingPromiseAll = null;
+		Log.debug("FlexibleColumnLayout", "detached all listeners for columns resize");
+	};
+
+	AnimationEndListener.prototype._attachTransitionEnd = function ($column, fnCallback) {
+		var sId = $column.get(0).id;
+		if (!this._oListeners[sId]) {
+			$column.on("webkitTransitionEnd transitionend", fnCallback);
+			this._oListeners[sId] = fnCallback;
+		}
+	};
+
+	AnimationEndListener.prototype._detachTransitionEnd = function ($column) {
+		var sId = $column.get(0).id;
+		if (this._oListeners[sId]) {
+			$column.off("webkitTransitionEnd transitionend", this._oListeners[sId]);
+			this._oListeners[sId] = null;
+		}
+	};
+
+	AnimationEndListener.prototype._cleanUp = function ($column) {
+		if ($column.length) {
+			var sId = $column.get(0).id;
+			this._detachTransitionEnd($column);
+			delete this._oPendingPromises[sId];
+			delete this._oCancelPromises[sId];
 		}
 	};
 

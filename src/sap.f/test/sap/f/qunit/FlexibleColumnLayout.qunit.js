@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/core/Core",
+	"sap/ui/core/ResizeHandler",
 	"sap/f/library"
 ],
 function (
@@ -15,6 +16,7 @@ function (
 	Page,
 	Button,
 	Core,
+	ResizeHandler,
 	library
 ) {
 	"use strict";
@@ -27,7 +29,6 @@ function (
 		TABLET_SIZE = "1200px",
 		PHONE_SIZE = "900px",
 		ANIMATION_WAIT_TIME = 500,
-		COLUMN_RESIZING_ANIMATION_DURATION = 560,
 		VISIBLE_COLUMNS = {
 			EndColumnFullScreen: 1,
 			MidColumnFullScreen: 1,
@@ -111,8 +112,10 @@ function (
 	QUnit.module("DESKTOP - API", {
 		beforeEach: function () {
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
+			this.sOldAnimationMode = sap.ui.getCore().getConfiguration().getAnimationMode();
 			$("html").attr("data-sap-ui-animation", "off");
 			$("#" + sQUnitFixture).width(DESKTOP_SIZE); // > 1280px
+			sap.ui.getCore().getConfiguration().setAnimationMode("none");
 
 			this.getBeginColumnBackArrow = function () { return this.oFCL.getAggregation("_beginColumnBackArrow"); };
 			this.getMidColumnBackArrow = function () { return this.oFCL.getAggregation("_midColumnBackArrow"); };
@@ -122,6 +125,7 @@ function (
 		afterEach: function () {
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
 			$("#" + sQUnitFixture).width("auto");
+			sap.ui.getCore().getConfiguration().setAnimationMode(this.sOldAnimationMode);
 			this.oFCL.destroy();
 		}
 	});
@@ -286,8 +290,6 @@ function (
 		this.getMidColumnForwardArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
 
-		//since the last column is concealed we must wait for all animations to end.
-		this.clock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0); // End column is gone
 
 		// Click it again
@@ -461,8 +463,10 @@ function (
 	QUnit.module("TABLET - API", {
 		beforeEach: function () {
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
+			this.sOldAnimationMode = sap.ui.getCore().getConfiguration().getAnimationMode();
 			$("html").attr("data-sap-ui-animation", "off");
 			$("#" + sQUnitFixture).width(TABLET_SIZE); // Between 960 and 1280
+			sap.ui.getCore().getConfiguration().setAnimationMode("none");
 
 			this.getBeginColumnBackArrow = function () { return this.oFCL.getAggregation("_beginColumnBackArrow"); };
 			this.getMidColumnBackArrow = function () { return this.oFCL.getAggregation("_midColumnBackArrow"); };
@@ -472,6 +476,7 @@ function (
 		afterEach: function () {
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
 			$("#" + sQUnitFixture).width("auto");
+			sap.ui.getCore().getConfiguration().setAnimationMode(this.sOldAnimationMode);
 			this.oFCL.destroy();
 		}
 	});
@@ -600,8 +605,6 @@ function (
 		this.getMidColumnForwardArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
 
-		//since the last column is concealed we must wait for all animations to end.
-		this.clock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0); // End column is gone
 
 		// Click it again
@@ -875,53 +878,50 @@ function (
 		}
 	});
 
-	QUnit.test("ResizeHandler's resume method is not called before the toggling of pin column class", function (assert) {
+	QUnit.test("ResizeHandler's suspend method is not called for pinned columns", function (assert) {
 		// Arrange
-		var $column = this.oFCL._$columns["begin"],
-			oSpyResizeHandler = this.spy(this.oFCL, "_resumeResizeHandler"),
-			oStubToggleClass = this.stub($column, "toggleClass", function () {
-				// Assert
-				assert.ok(oSpyResizeHandler.notCalled,
-					"ResizeHandler's resume method is not called before the toggling of pin column class");
+		var oSpySuspendHandler = this.spy(ResizeHandler, "suspend"),
+			oStubShouldRevealColumn = this.stub(this.oFCL, "_shouldRevealColumn", function () {
+				return true; // mock pinnable column
 			});
 
 		// Act
-		this.oFCL._adjustColumnAfterAnimation(false, "300px", 400, $column, $column.get(0));
+		this.oFCL._resizeColumns();
+
+		// Assert
+		assert.ok(oSpySuspendHandler.notCalled, "does not suspend resizeHandler for pinned columns");
 
 		// Clean up
-		oSpyResizeHandler.restore();
-		oStubToggleClass.restore();
+		oSpySuspendHandler.restore();
+		oStubShouldRevealColumn.restore();
 	});
-
 
 	QUnit.test("Suspending and resuming ResizeHandler upon column layout change", function (assert) {
 		// assert
-		assert.expect(6);
+		assert.expect(2);
 
 		// arrange
 		var fnDone = assert.async(),
-			iAnimationDelay = 600,
 			oBeginColumnArrow =  this.oFCL.getAggregation("_beginColumnBackArrow"),
-			aColumns = ["begin", "mid", "end"];
+			oBeginColumn = this.oFCL._$columns["begin"],
+			oBeginColumnDomRef = oBeginColumn.get(0),
+			oSuspendSpy = sinon.spy(ResizeHandler, "suspend"),
+			oResumeSpy = sinon.spy(ResizeHandler, "resume");
 
 		// act
 		oBeginColumnArrow.firePress();
 
 		// assert
-		aColumns.forEach(function (sColumn) {
-			assert.notEqual(this.oFCL._$columns[sColumn]._iResumeResizeHandlerTimeout, null,
-				"ResizeHandler suspended for column '" + sColumn + "' and resume scheduled.");
-		}.bind(this));
+		assert.ok(oSuspendSpy.calledWith(oBeginColumnDomRef), "ResizeHandler suspended for column");
+		oBeginColumn.on("webkitTransitionEnd transitionend", function() {
+			setTimeout(function() { // wait for FCL promise to complete
+				assert.ok(oResumeSpy.calledWith(oBeginColumnDomRef), "ResizeHandler resumed for column");
+				oSuspendSpy.restore();
+				oResumeSpy.restore();
+				fnDone();
+			}, 0);
+		});
 
-		setTimeout(function() {
-			aColumns.forEach(function (sColumn) {
-				// assert
-				assert.strictEqual(this.oFCL._$columns[sColumn]._iResumeResizeHandlerTimeout, null,
-					"ResizeHandler resumed for column '" + sColumn + "'.");
-			}.bind(this));
-
-			fnDone();
-		}.bind(this), iAnimationDelay);
 	});
 
 	QUnit.test("Storing resize information for the reveal effect", function (assert) {
@@ -980,14 +980,17 @@ function (
 			"End column should have the 'sapFFCLPinnedColumn' class applied.");
 
 		this.oFCL.getAggregation("_midColumnForwardArrow").firePress();
-		setTimeout(function() {
-			//assert
-			assertColumnsVisibility(assert, this.oFCL, 1, 1, 0); // End column is gone
-			assert.notOk($endColumn.hasClass("sapFFCLPinnedColumn"),
-				"End column should not have the 'sapFFCLPinnedColumn' class applied.");
 
-			fnDone();
-		}.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
+			setTimeout(function() { // wait for all app callbacks for same event to be called
+				//assert
+				assertColumnsVisibility(assert, this.oFCL, 1, 1, 0); // End column is gone
+				assert.notOk($endColumn.hasClass("sapFFCLPinnedColumn"),
+					"End column should not have the 'sapFFCLPinnedColumn' class applied.");
+
+				fnDone();
+			}.bind(this), 0);
+		}.bind(this));
 	});
 
 	//BCP: 1970178100
@@ -996,8 +999,7 @@ function (
 		function(assert) {
 
 		// arrange
-		var fnDone = assert.async(),
-			iAnimationDelay = COLUMN_RESIZING_ANIMATION_DURATION + 100;
+		var fnDone = assert.async();
 
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded
@@ -1006,25 +1008,24 @@ function (
 		// act
 		this.oFCL.setLayout(LT.EndColumnFullScreen);
 
-		setTimeout(function() {
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
 			// assert
 			assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
 			fnDone();
-		}.bind(this), iAnimationDelay);
+		}.bind(this));
 	});
 
 	//BCP: 1980006195
 	QUnit.test("Columns with width 0 should have the sapFFCLColumnHidden class applied", function(assert){
 		// arrange
-		var fnDone = assert.async(),
-			iAnimationDelay = COLUMN_RESIZING_ANIMATION_DURATION + 100;
+		var fnDone = assert.async();
 
 		this.oFCL = oFactory.createFCL({
 			layout: LT.MidColumnFullScreen
 		});
 
 
-		setTimeout(function() {
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
 			// assert
 			assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
 			assert.ok(this.oFCL._$columns["begin"].hasClass('sapFFCLColumnHidden'));
@@ -1032,20 +1033,19 @@ function (
 			assert.ok(this.oFCL._$columns["end"].hasClass('sapFFCLColumnHidden'));
 
 			// act
-			this.oFCL._adjustColumnDisplay(this.oFCL._$columns["end"], 100);
+			this.oFCL._afterColumnResize("end", 100);
 
 			// assert
 			assert.notOk(this.oFCL._$columns["end"].hasClass('sapFFCLColumnHidden'),
 				"When width is updated, 'sapFFCLColumnHidden' class should be removed");
 
 			fnDone();
-		}.bind(this), iAnimationDelay);
+		}.bind(this));
 	});
 
 	QUnit.test("FCL does not have animations with animationMode=minimal", function(assert){
 		// arrange
-		var oSpy = this.spy(this.oFCL, "_adjustColumnAfterAnimation"),
-			fnDone = assert.async(),
+		var oSpy = this.spy(this.oFCL._oAnimationEndListener, "waitForColumnResizeEnd"),
 			oConfiguration = sap.ui.getCore().getConfiguration(),
 			sOriginalAnimationMode = oConfiguration.getAnimationMode();
 
@@ -1055,15 +1055,12 @@ function (
 		// act
 		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
 
-		setTimeout(function() {
-			// assert
-			assert.ok(oSpy.notCalled, "_adjustColumnAfterAnimation is not called when animationMode=minimal");
+		// assert
+		assert.ok(oSpy.notCalled, "waitForColumnResize is not called when animationMode=minimal");
 
-			// clean-up
-			oConfiguration.setAnimationMode(sOriginalAnimationMode);
-			oSpy.restore();
-			fnDone();
-		}, COLUMN_RESIZING_ANIMATION_DURATION);
+		// clean-up
+		oConfiguration.setAnimationMode(sOriginalAnimationMode);
+		oSpy.restore();
 	});
 
 	QUnit.module("ScreenReader supprot", {
@@ -1342,11 +1339,14 @@ function (
 		beforeEach: function () {
 			this.oFCL = new FlexibleColumnLayout();
 			this.oEventSpy = sinon.spy(this.oFCL, "fireColumnResize");
+			this.iPreviousFixtureWidth = $("#" + sQUnitFixture).width();
+			$("#" + sQUnitFixture).width(DESKTOP_SIZE);
 		},
 
 		afterEach: function () {
 			this.oFCL.destroy();
 			this.oEventSpy.restore();
+			$("#" + sQUnitFixture).width(this.iPreviousFixtureWidth);
 		}
 	});
 
@@ -1354,22 +1354,49 @@ function (
 		assert.expect(1);
 		// setup
 		var fnDone = assert.async(),
-			oResizeFunctionSpy = sinon.spy(this.oFCL, "_resumeResizeHandler"),
+			oResizeFunctionSpy = sinon.spy(ResizeHandler, "resume"),
 			fnCallback = function () {
 				this.oFCL.detachColumnResize(fnCallback);
 				// assert
-				assert.ok(this.oEventSpy.calledAfter(oResizeFunctionSpy), "event is fired after _resumeResizeHandler");
+				assert.ok(this.oEventSpy.calledAfter(oResizeFunctionSpy), "event is fired after ResizeHandler.resume");
+				oResizeFunctionSpy.restore();
 				fnDone();
 			}.bind(this);
 
 		this.oFCL.placeAt(sQUnitFixture);
 		Core.applyChanges();
 
-		setTimeout(function () {
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function () {
 			this.oEventSpy.reset();
 			this.oFCL.attachColumnResize(fnCallback);
 			this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
-		}.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
+		}.bind(this));
+	});
+
+	QUnit.test("columnResize event is fired after resize of all animated columns", function (assert) {
+		assert.expect(3);
+		// setup
+		var fnDone = assert.async(),
+			oResizeFunctionSpy = sinon.spy(ResizeHandler, "resume"),
+			fnCallback = function () {
+				this.oFCL.detachColumnResize(fnCallback);
+				// assert
+				assert.equal(oResizeFunctionSpy.callCount, 2, "ResizeHandler.resume is called for both columns");
+				assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['begin'].get(0)).calledOnce);
+				assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['mid'].get(0)).calledOnce);
+				oResizeFunctionSpy.restore();
+				fnDone();
+			}.bind(this);
+
+		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
+		this.oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function () {
+			oResizeFunctionSpy.reset();
+			this.oFCL.attachColumnResize(fnCallback);
+			this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
+		}.bind(this));
 	});
 
 	QUnit.test("Switching layout from OneColumn to ThreeColumnsEndExpanded", function (assert) {
@@ -1387,7 +1414,7 @@ function (
 
 		this.oEventSpy.reset();
 		this.oFCL.setLayout(LT.ThreeColumnsEndExpanded);
-		setTimeout(fnCallback.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(fnCallback.bind(this));
 	});
 
 	QUnit.test("Switching layout from OneColumn to TwoColumnsBeginExpanded", function (assert) {
@@ -1405,7 +1432,7 @@ function (
 
 		this.oEventSpy.reset();
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
-		setTimeout(fnCallback.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(fnCallback.bind(this));
 	});
 
 	QUnit.test("Switching layout from OneColumn to ThreeColumnsMidExpandedEndHidden", function (assert) {
@@ -1423,7 +1450,7 @@ function (
 
 		this.oEventSpy.reset();
 		this.oFCL.setLayout(LT.ThreeColumnsMidExpandedEndHidden);
-		setTimeout(fnCallback.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(fnCallback.bind(this));
 	});
 
 	(function () {
@@ -1447,9 +1474,85 @@ function (
 			this.oFCL.placeAt(sQUnitFixture);
 			Core.applyChanges();
 
-			setTimeout(fnCallback.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
+			this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(fnCallback.bind(this));
 		});
 	}
+
+
+	QUnit.module("_getColumnWidth", {
+		beforeEach: function () {
+
+			// Arrange
+			this.oPage1 = oFactory.createPage("page1", this.oBtn1);
+			this.oPage2 = oFactory.createPage("page2", this.oBtn2);
+			this.oPage3 = oFactory.createPage("page3", this.oBtn3);
+
+			this.oFCL = oFactory.createFCL({
+				beginColumnPages: this.oPage1,
+				midColumnPages: this.oPage2,
+				endColumnPages: this.oPage3
+			});
+			this.iPreviousFixtureWidth = $("#" + sQUnitFixture).width();
+			$("#" + sQUnitFixture).width(DESKTOP_SIZE);
+			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
+			this._sOrigAminationMode = sap.ui.getCore().getConfiguration().getAnimationMode();
+			sap.ui.getCore().getConfiguration().setAnimationMode("none");
+			$("html").attr("data-sap-ui-animation", "off");
+
+
+			this.oFCL.placeAt(sQUnitFixture);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+
+			// Clean Up
+			this.oFCL.destroy();
+			$("#" + sQUnitFixture).width(this.iPreviousFixtureWidth);
+			sap.ui.getCore().getConfiguration().setAnimationMode(this._sOrigAminationMode);
+			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
+		}
+	});
+
+	(function () {
+		Object.keys(LT).forEach(function(sLayoutName) {
+			_testDifferentLayoutColumnWidths(sLayoutName);
+		});
+	})();
+
+	function _testDifferentLayoutColumnWidths(sLayoutName) {
+		QUnit.test(sLayoutName, function (assert) {
+
+			this.oFCL.setLayout(sLayoutName);
+
+			FlexibleColumnLayout.COLUMN_ORDER.forEach(function(sColumn) {
+				var oColumn = this.oFCL._$columns[sColumn],
+					iExpectedColumnWidth = oColumn.width(),
+					iActualColumnWidth = this.oFCL._getColumnWidth(sColumn);
+				assert.strictEqual(iActualColumnWidth, iExpectedColumnWidth, "correct with for " + sColumn);
+			}, this);
+		});
+	}
+
+	QUnit.test("after resize", function (assert) {
+
+		var iOldWidth = this.oFCL.$().width(),
+			iNewWidth = iOldWidth - 10;
+
+		this.oFCL.setLayout(LT.OneColumn);
+
+		this.oFCL.$().width(iNewWidth + "px");
+		this.oFCL._onResize({
+			size: {width: iNewWidth},
+			oldSize: {width: iOldWidth}
+		});
+
+		FlexibleColumnLayout.COLUMN_ORDER.forEach(function(sColumn) {
+			var oColumn = this.oFCL._$columns[sColumn],
+				iExpectedColumnWidth = oColumn.width(),
+				iActualColumnWidth = this.oFCL._getColumnWidth(sColumn);
+			assert.strictEqual(iActualColumnWidth, iExpectedColumnWidth, "correct with for " + sColumn);
+		}, this);
+	});
 
 	QUnit.module("Focus handling with enabled 'restoreFocusOnBackNavigation' property", {
 		beforeEach: function () {
@@ -1473,14 +1576,18 @@ function (
 			});
 			this.iPreviousFixtureWidth = $("#" + sQUnitFixture).width();
 			$("#" + sQUnitFixture).width(DESKTOP_SIZE);
-			this.oClock = sinon.useFakeTimers();
+			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
+			this._sOrigAminationMode = sap.ui.getCore().getConfiguration().getAnimationMode();
+			sap.ui.getCore().getConfiguration().setAnimationMode("none");
+			$("html").attr("data-sap-ui-animation", "off");
 		},
 		afterEach: function () {
 
 			// Clean Up
 			this.oFCL.destroy();
-			this.oClock.restore();
 			$("#" + sQUnitFixture).width(this.iPreviousFixtureWidth);
+			sap.ui.getCore().getConfiguration().setAnimationMode(this._sOrigAminationMode);
+			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
 		}
 	});
 
@@ -1493,7 +1600,6 @@ function (
 
 		// Act
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
-		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
 		this.oBtn2.$().trigger("focus");
 
 		// Assert
@@ -1501,8 +1607,6 @@ function (
 
 		// Act
 		this.oFCL.setLayout(LT.OneColumn);
-		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
-
 		// Assert
 		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is restored to begin column");
 	});
@@ -1516,7 +1620,6 @@ function (
 
 		// Act
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
-		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
 		this.oBtn2.$().trigger("focus");
 
 		// Assert
@@ -1524,7 +1627,6 @@ function (
 
 		// Act
 		this.oFCL.setLayout(LT.ThreeColumnsEndExpanded);
-		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
 		this.oBtn3.$().trigger("focus");
 
 		// Assert
@@ -1538,8 +1640,6 @@ function (
 
 		// Act
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
-		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
-
 		// Assert
 		assert.strictEqual(this.oBtn1.$().is(":focus"), true,
 			"Focus is preserved to begin column after navigating back from end to mid");
@@ -1548,7 +1648,6 @@ function (
 	QUnit.test("Should restore focus after exiting full screen", function (assert) {
 		// Act
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
-		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
 		this.oBtn1.$().trigger("focus");
 
 		// Assert
@@ -1556,7 +1655,6 @@ function (
 
 		// Act
 		this.oFCL.setLayout(LT.MidColumnFullScreen);
-		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
 		this.oBtn2.$().trigger("focus");
 
 		// Assert
@@ -1564,7 +1662,6 @@ function (
 
 		// Act
 		this.oFCL.setLayout(LT.OneColumn);
-		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
 
 		// Assert
 		assert.strictEqual(this.oBtn1.$().is(":focus"), true,
@@ -1576,7 +1673,6 @@ function (
 
 		// Act
 		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
-		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
 
 		// should focus element in the current column, because of the check in
 		// _isFocusInSomeOfThePreviousColumns which if true, does not restore the focus
@@ -1587,7 +1683,6 @@ function (
 		// Act
 		this.oFCL._oColumnFocusInfo.begin = {}; // reset if there is a stored element
 		this.oFCL.setLayout(LT.OneColumn);
-		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
 
 		// Assert
 		assert.strictEqual(document.activeElement === oExpectedFocusedElement, true,
