@@ -42,7 +42,7 @@ sap.ui.define([
 	 * </table>
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
-	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.SelectEditor.SelectEditor
+	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.selectEditor.SelectEditor
 	 * @author SAP SE
 	 * @since 1.81
 	 * @version ${version}

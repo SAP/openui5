@@ -139,9 +139,6 @@ sap.ui.define([
 		designtime: "sap/ui/layout/designtime/Grid.designtime"
 	}});
 
-	/**
-	 * This file defines behavior for the control
-	 */
 	(function() {
 
 		Grid.prototype.init = function() {

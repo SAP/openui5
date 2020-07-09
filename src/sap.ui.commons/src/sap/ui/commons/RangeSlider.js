@@ -44,9 +44,6 @@ sap.ui.define(['./Slider', './library', './RangeSliderRenderer'],
 		}
 	}});
 
-	///**
-	// * This file defines the control behavior.
-	// */
 	RangeSlider.prototype.onAfterRendering = function() {
 
 		this.oGrip2 = this.getDomRef("grip2");

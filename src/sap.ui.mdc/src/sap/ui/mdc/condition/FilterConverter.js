@@ -26,7 +26,7 @@ function(
 	 *
 	 * @private
 	 * @experimental
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	var FilterConverter = {
 

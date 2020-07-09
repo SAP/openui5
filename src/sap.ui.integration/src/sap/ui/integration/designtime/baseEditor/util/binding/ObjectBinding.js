@@ -23,7 +23,7 @@ sap.ui.define([
 	 * This class allows to resolve bindings strings in JSON.
 	 * Only one-way binding is supported.
 	 *
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.base.ManagedObject
 	 * @alias sap.ui.integration.designtime.baseEditor.util.ObjectBinding
 	 * @author SAP SE
 	 * @since 1.70.0

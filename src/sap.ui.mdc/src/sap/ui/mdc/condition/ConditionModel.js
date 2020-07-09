@@ -39,7 +39,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @experimental
-		 * @sap-restricted
+		 * @ui5-restricted
 		 */
 		var ConditionModel = JSONModel.extend("sap.ui.mdc.condition.ConditionModel", {
 			constructor: function () {

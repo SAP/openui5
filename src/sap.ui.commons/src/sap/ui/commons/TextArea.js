@@ -71,10 +71,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './TextField', './library', './TextAr
 		}
 	}});
 
-	///**
-	// * This file defines the control behavior.
-	// */
-	//.TextArea.prototype.init = function(){
+	//TextArea.prototype.init = function() {
 	//   // do something for initialization...
 	//};
 

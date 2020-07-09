@@ -101,10 +101,6 @@ sap.ui.define([
 	}});
 
 
-	/**
-	 * This file defines behavior for the control,
-	 */
-
 	Feeder.prototype.init = function(){
 		this.rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
 		this.oSendButton = new Button( this.getId() + "-send", {

@@ -41,13 +41,6 @@ sap.ui.define([
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.commons.form.GridLayoutdata.prototype.init = function(){
-	//   // do something for initialization...
-	//};
-
 	return GridContainerData;
 
 });

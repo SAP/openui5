@@ -52,14 +52,6 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.unified.CalendarLegendItem.prototype.init = function(){
-	//   // do something for initialization...
-	//};
-
-
 	return CalendarLegendItem;
 
 });

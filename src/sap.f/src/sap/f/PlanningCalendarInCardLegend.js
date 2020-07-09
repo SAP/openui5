@@ -17,7 +17,7 @@ sap.ui.define(['sap/m/PlanningCalendarLegend', 'sap/ui/unified/CalendarAppointme
 		 * @class
 		 * A legend for the {@link sap.f.PlanningCalendarInCard} that displays the special dates and appointments in
 		 * colors with their corresponding description.
-		 * @extends sap.f.PlanningCalendarLegend
+		 * @extends sap.m.PlanningCalendarLegend
 		 *
 		 * @author SAP SE
 		 * @version ${version}

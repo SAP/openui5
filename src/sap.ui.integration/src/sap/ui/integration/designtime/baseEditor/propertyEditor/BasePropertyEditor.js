@@ -263,6 +263,7 @@ sap.ui.define([
 	 * therefore it should also be called when overridden in complex editors.
 	 *
 	 * @param {*} vValue - Editor value that was already processed by a custom setValue implementation
+	 * @public
 	 */
 	BasePropertyEditor.prototype.setValue = function (vValue) {
 		var vCurrentValue = this.getValue();
