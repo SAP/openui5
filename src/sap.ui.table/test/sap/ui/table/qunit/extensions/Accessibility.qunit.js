@@ -1369,25 +1369,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("ARIA Attributes of TH Elements", function(assert) {
-		var $Elem = oTable.$().find(".sapUiTableCCnt th[id]"); // all with ID
-		$Elem.each(function() {
-			var $TH = jQuery(this);
-			if ($TH.attr("id") === oTable.getId() + "-dummycolhdr") {
-				assert.strictEqual($TH.attr("role"), "presentation", "role");
-			} else {
-				assert.strictEqual($TH.attr("scope"), "col", "scope");
-				var oColumn = oTable.getColumns()[$TH.attr("data-sap-ui-headcolindex")];
-				if (oColumn) {
-					assert.strictEqual($TH.attr("aria-owns"), oColumn.getId(), "aria-owns");
-					assert.strictEqual($TH.attr("aria-labelledby"), oColumn.getId(), "aria-labelledby");
-				}
-			}
+		var oDomRef = oTable.getDomRef("tableCCnt");
+
+		oDomRef.querySelectorAll("th[id]").forEach(function(oElement) {
+			assert.strictEqual(oElement.getAttribute("scope"), "col", "scope");
 		});
-		$Elem = oTable.$().find(".sapUiTableCCnt th:not([id])"); // dummy column
-		$Elem.each(function() {
-			var $TH = jQuery(this);
-			assert.strictEqual($TH.attr("role"), "presentation", "role");
-		});
+
+		// dummy column
+		assert.strictEqual(oDomRef.querySelector("th:not([id])").getAttribute("role"), "presentation", "role");
 	});
 
 	QUnit.test("ARIA Attributes of TR Elements", function(assert) {
