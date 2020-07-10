@@ -175,7 +175,6 @@ sap.ui.define([
 			this.setAggregation("_select", this._decorateSelect(new Select({
 				id: this._getAugmentedId("select"),
 				change: this._selectChangeHandler.bind(this),
-				forceSelection: false,
 				autoAdjustWidth: true,
 				icon: IconPool.getIconURI("slim-arrow-down"),
 				type: SelectType.IconOnly,
