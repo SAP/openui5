@@ -5,6 +5,7 @@
 	window.oDynamicPageUtil = {
 		getLabel: function (sText, sLabelFor) {
 			return new sap.m.Label({
+				wrapping: true,
 				text: sText,
 				labelFor: sLabelFor
 			});
