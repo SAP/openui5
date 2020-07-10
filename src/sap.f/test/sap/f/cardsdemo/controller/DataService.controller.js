@@ -4,6 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.DataService", {
+
 		onPress: function () {
 			this.getOwnerComponent().getService("UserRecent").then(function (oService) {
 				oService.addData({
@@ -15,10 +16,10 @@ sap.ui.define([
 				});
 			});
 		},
-		onRefresh: function () {
-			var oCard = this.getView().byId("SalesOrdersCard");
-			oCard.refresh();
-		}
-    });
 
+		onRefresh: function () {
+			this.getView().byId("SalesOrdersCard").refresh();
+		}
+
+	});
 });

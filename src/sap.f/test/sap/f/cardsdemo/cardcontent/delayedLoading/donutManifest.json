@@ -52,7 +52,7 @@
 			"dimensionAxis": "color",
 			"data": {
 				"request": {
-					"url": "./cardcontent/cost.json"
+					"url": "./cardsdemo/cardcontent/cost.json"
 				},
 				"path": "/milk"
 			},

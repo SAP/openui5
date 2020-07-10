@@ -1,171 +1,147 @@
 <mvc:View
+	controllerName="sap.f.cardsdemo.controller.sapFCard"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
-	xmlns:core="sap.ui.core"
 	xmlns:card="sap.f.cards"
-	xmlns:viz="sap.viz.ui5.controls"
-	xmlns:viz.data="sap.viz.ui5.data"
-	xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
-	displayBlock="true"
-	controllerName="sap.f.cardsdemo.controller.sapFCard">
-
+	displayBlock="true">
 	<Page title="{i18n>appTitle}">
-
 		<subHeader>
 			<Toolbar>
-				<ToolbarSpacer/>
-				<Title text="sap.f.Card example"/>
-				<ToolbarSpacer/>
+				<ToolbarSpacer />
+				<Title text="sap.f.Card example" />
+				<ToolbarSpacer />
 			</Toolbar>
 		</subHeader>
 
-		<content>
+		<f:Card
+			id="card1"
+			width="300px"
+			height="auto"
+			class="sapUiMediumMargin">
+			<f:header>
+				<card:Header
+					title="Some title"
+					subtitle="Some long subtitle"
+					iconSrc="sap-icon://accept" />
+			</f:header>
+			<f:content>
+				<List items="{listItems>/ProductCollection}" headerText="Products">
+					<StandardListItem
+						title="{listItems>Name}"
+						description="{listItems>ProductId}"
+						icon="{listItems>ProductPicUrl}"
+						iconDensityAware="false"
+						iconInset="false" />
+				</List>
+			</f:content>
+		</f:Card>
 
-			<f:Card class="sapUiMediumMargin" width="300px" height="auto">
-				<f:header>
-					<card:Header title="Some title" subtitle="Some long subtitle" iconSrc="sap-icon://accept"/>
-				</f:header>
-				<f:content>
-					<List items="{listItems>/ProductCollection}" headerText="Products">
-						<StandardListItem
-							title="{listItems>Name}"
-							description="{listItems>ProductId}"
-							icon="{listItems>ProductPicUrl}"
-							iconDensityAware="false"
-							iconInset="false"/>
-					</List>
-				</f:content>
-			</f:Card>
+		<f:Card
+			id="card2"
+			width="300px"
+			height="auto"
+			class="sapUiMediumMargin">
+			<f:header>
+				<card:Header
+					title="Activity items"
+					subtitle="Recent activities"
+					iconSrc="sap-icon://activity-items" />
+			</f:header>
+			<f:content>
+				<Table items="{tableData>/Names}">
+					<columns>
+						<Column>
+							<Text text="First Name" />
+						</Column>
+						<Column>
+							<Text text="Last Name" />
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem type="Navigation">
+							<Text text="{tableData>firstName}" />
+							<Text text="{tableData>lastName}" />
+						</ColumnListItem>
+					</items>
+				</Table>
+			</f:content>
+		</f:Card>
 
-			<f:Card class="sapUiMediumMargin" width="300px" height="auto">
-				<f:header>
-					<card:Header
-						title="Activity items"
-						subtitle="Recent activities"
-						iconSrc="sap-icon://activity-items"/>
-				</f:header>
-				<f:content>
-					<Table items="{tableData>/Names}">
-						<columns>
-							<Column>
-								<Text text="First Name"/>
-							</Column>
-							<Column>
-								<Text text="Last Name"/>
-							</Column>
-						</columns>
-						<items>
-							<ColumnListItem type="Navigation">
-								<cells>
-									<Text text="{tableData>firstName}"/>
-									<Text text="{tableData>lastName}"/>
-								</cells>
-							</ColumnListItem>
-						</items>
-					</Table>
-				</f:content>
-			</f:Card>
+		<f:Card
+			id="card3"
+			width="auto"
+			class="sapUiMediumMargin">
+			<f:header>
+				<card:Header
+					title="Donna Moore"
+					subtitle="Sales executive"
+					iconSrc="./cardsdemo/images/Woman_avatar_01.png" />
+			</f:header>
+			<f:content>
+				<HBox>
+					<VBox class="sapUiMediumMargin">
+						<Title text="Contact details" class="sapUiTinyMarginBottom" />
+						<Label text="First Name" />
+						<Text text="Donna" class="sapUiTinyMarginBottom" />
+						<Label text="Last Name" />
+						<Text text="Moore" class="sapUiTinyMarginBottom" />
+						<Label text="Phone" />
+						<Text text="+1 202 555 5555" />
+					</VBox>
+					<VBox class="sapUiMediumMargin">
+						<Title text="Organizational Details" class="sapUiTinyMarginBottom" />
+						<HBox>
+							<f:Avatar src="./cardsdemo/images/Woman_avatar_02.png" />
+							<Text text="John Miller" />
+						</HBox>
+					</VBox>
+					<VBox class="sapUiMediumMargin">
+						<Title text="Company Details" class="sapUiTinyMarginBottom" />
+						<Label text="Company Name" />
+						<Text text="Company A" class="sapUiTinyMarginBottom" />
+						<Text text="481 West Street, Anytown OH 45066, USA" class="sapUiTinyMarginBottom" />
+						<Link text="www.company_a.example.com" />
+					</VBox>
+				</HBox>
+			</f:content>
+		</f:Card>
 
-			<f:Card
-				class="sapUiMediumMargin"
-				width="650px"
-				height="500px">
-				<f:header>
-					<card:NumericHeader
-						title="Numeric"
-						subtitle="Basic Numeric subtitle"
-						unitOfMeasurement="%"
-						details="Some details also"/>
-				</f:header>
-				<f:content>
-					 <viz:VizFrame id="idVizFrame" height='100%' width="100%" vizType='column'>
-						<viz:dataset>
-							<viz.data:FlattenedDataset data="{analyticalData>/list}">
-								<viz.data:dimensions>
-									<viz.data:DimensionDefinition name="Week" value="{analyticalData>Week}" />
-								</viz.data:dimensions>
-								<viz.data:measures>
-									<viz.data:MeasureDefinition name="Revenue" value="{analyticalData>Revenue}" />
-									<viz.data:MeasureDefinition name="Cost" value="{analyticalData>Cost}" />
-								</viz.data:measures>
-							</viz.data:FlattenedDataset>
-						</viz:dataset>
-						<viz:feeds>
-							<viz.feeds:FeedItem id='valueAxisFeed' uid="valueAxis" type="Measure" values="Revenue" />
-							<viz.feeds:FeedItem id='categoryAxisFeed' uid="categoryAxis" type="Dimension" values="Week" />
-						</viz:feeds>
-					</viz:VizFrame>
-				</f:content>
-			</f:Card>
-
-			<f:Card
-				class="sapUiMediumMargin" width="auto">
-				<f:header>
-					<card:Header title="Donna Moore" subtitle="Sales executive" iconSrc="../images/Woman_avatar_01.png"/>
-				</f:header>
-				<f:content>
-					<HBox>
-						<VBox class="sapUiMediumMargin">
-							<Title text="Contact details" class="sapUiTinyMarginBottom"/>
-							<Label text="First Name"/>
-							<Text text="Donna" class="sapUiTinyMarginBottom"/>
-							<Label text="Last Name"/>
-							<Text text="Moore" class="sapUiTinyMarginBottom"/>
-							<Label text="Phone"/>
-							<Text text="+1 202 555 5555"/>
-						</VBox>
-						<VBox class="sapUiMediumMargin">
-							<Title text="Organizational Details" class="sapUiTinyMarginBottom"/>
-							<HBox>
-								<f:Avatar src="../images/Woman_avatar_02.png"/>
-								<Text text="John Miller"/>
-							</HBox>
-						</VBox>
-						<VBox class="sapUiMediumMargin">
-							<Title text="Company Details" class="sapUiTinyMarginBottom"/>
-							<Label text="Company Name"/>
-							<Text text="Company A" class="sapUiTinyMarginBottom"/>
-							<Text text="481 West Street, Anytown OH 45066, USA" class="sapUiTinyMarginBottom"/>
-							<Link text="www.company_a.example.com"/>
-						</VBox>
-					</HBox>
-				</f:content>
-			</f:Card>
-
-			<f:Card
-				class="sapUiMediumMargin" width="auto">
-				<f:header>
-					<card:Header title="Donna Moore" subtitle="Sales executive" iconSrc="../images/Woman_avatar_01.png"/>
-				</f:header>
-				<f:content>
-					<HBox>
-						<VBox class="sapUiMediumMargin">
-							<Title text="Contact details" class="sapUiTinyMarginBottom"/>
-							<Label text="First Name"/>
-							<Text text="Donna" class="sapUiTinyMarginBottom"/>
-							<Label text="Last Name"/>
-							<Text text="Moore" class="sapUiTinyMarginBottom"/>
-							<Label text="Phone"/>
-							<Text text="+1 202 555 5555"/>
-
-							<Title text="Company Details" class="sapUiTinyMarginBottom sapUiLargeMarginTop"/>
-							<Label text="Company Name"/>
-							<Text text="Company A" class="sapUiTinyMarginBottom"/>
-							<Text text="481 West Street, Anytown OH 45066, USA" class="sapUiTinyMarginBottom"/>
-							<Link text="www.company_a.example.com"/>
-						</VBox>
-						<VBox class="sapUiMediumMargin">
-							<Title text="Organizational Details" class="sapUiTinyMarginBottom"/>
-							<HBox>
-								<f:Avatar src="../images/Woman_avatar_02.png"/>
-								<Text text="John Miller"/>
-							</HBox>
-						</VBox>
-					</HBox>
-				</f:content>
-			</f:Card>
-
-		</content>
+		<f:Card
+			id="card4"
+			width="auto"
+			class="sapUiMediumMargin">
+			<f:header>
+				<card:Header
+					title="Donna Moore"
+					subtitle="Sales executive"
+					iconSrc="./cardsdemo/images/Woman_avatar_01.png" />
+			</f:header>
+			<f:content>
+				<HBox>
+					<VBox class="sapUiMediumMargin">
+						<Title text="Contact details" class="sapUiTinyMarginBottom" />
+						<Label text="First Name" />
+						<Text text="Donna" class="sapUiTinyMarginBottom" />
+						<Label text="Last Name" />
+						<Text text="Moore" class="sapUiTinyMarginBottom" />
+						<Label text="Phone" />
+						<Text text="+1 202 555 5555" />
+						<Title text="Company Details" class="sapUiTinyMarginBottom sapUiLargeMarginTop" />
+						<Label text="Company Name" />
+						<Text text="Company A" class="sapUiTinyMarginBottom" />
+						<Text text="481 West Street, Anytown OH 45066, USA" class="sapUiTinyMarginBottom" />
+						<Link text="www.company_a.example.com" />
+					</VBox>
+					<VBox class="sapUiMediumMargin">
+						<Title text="Organizational Details" class="sapUiTinyMarginBottom" />
+						<HBox>
+							<f:Avatar src="./cardsdemo/images/Woman_avatar_02.png" />
+							<Text text="John Miller" />
+						</HBox>
+					</VBox>
+				</HBox>
+			</f:content>
+		</f:Card>
 	</Page>
 </mvc:View>

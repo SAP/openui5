@@ -6,9 +6,6 @@
 	xmlns:w="sap.ui.integration.widgets"
 	xmlns:grid="sap.ui.layout.cssgrid"
 	xmlns:card="sap.f.cards"
-	xmlns:viz="sap.viz.ui5.controls"
-	xmlns:viz.data="sap.viz.ui5.data"
-	xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
     displayBlock="true"
 	controllerName="sap.f.cardsdemo.controller.Dnd3">
 

@@ -8,12 +8,14 @@ sap.ui.define([
 	return Controller.extend("sap.f.cardsdemo.controller.ManifestReady", {
 
 		onInit: function () {
-			this.getView().setModel(new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/listContent/manifest.json")), "manifests");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/listContent/manifest.json"));
+			this.getView().setModel(oModel, "manifests");
 			this._iEventsCounter = 0;
 		},
 
-		onManifestReady: function (oEvent) {
+		onManifestReady: function () {
 			MessageToast.show("manifestReady event fired " + this._iEventsCounter++);
 		}
+
 	});
 });

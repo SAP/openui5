@@ -7,7 +7,7 @@
     "type": "Analytical",
     "header": {
       "type": "Numeric",
-      "title": "Header and Content with Navigation Url",
+      "title": "Header and Content with Navigation URL",
       "data": {
         "json": {
           "n": 6547394.45496,
@@ -60,7 +60,7 @@
       "dimensionAxis": "color",
       "data": {
         "request": {
-          "url": "./cardcontent/cost.json"
+          "url": "./cardsdemo/cardcontent/cost.json"
         },
         "path": "/milk"
       },

@@ -66,7 +66,7 @@
 			"dimensionAxis": "categoryAxis",
 			"data": {
 				"request": {
-					"url": "./cardcontent/delayedLoading/analitycalData.json"
+					"url": "./cardsdemo/cardcontent/delayedLoading/analitycalData.json"
 				},
 				"path": "/list"
 			},

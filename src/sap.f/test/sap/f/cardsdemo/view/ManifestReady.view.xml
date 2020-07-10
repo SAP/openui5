@@ -4,7 +4,6 @@
 	xmlns:w="sap.ui.integration.widgets"
 	displayBlock="true"
 	controllerName="sap.f.cardsdemo.controller.ManifestReady">
-
 	<Page title="{i18n>appTitle}">
 		<subHeader>
 			<Toolbar>
@@ -14,12 +13,17 @@
 			</Toolbar>
 		</subHeader>
 
-		<content>
-			<Panel>
-				<w:Card manifest="./bundles/listBundle/manifest.json" manifestReady="onManifestReady"/>
-				<w:Card manifest="{manifests>/card14}" manifestReady="onManifestReady">
-				</w:Card>
-			</Panel>
-		</content>
+		<Panel>
+			<w:Card
+				manifest="./cardsdemo/bundles/listBundle/manifest.json"
+				manifestReady=".onManifestReady"
+				width="400px"
+				class="sapUiSmallMargin" />
+			<w:Card
+				manifest="{manifests>/card14}"
+				manifestReady=".onManifestReady"
+				width="400px"
+				class="sapUiSmallMargin"/>
+		</Panel>
 	</Page>
 </mvc:View>

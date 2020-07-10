@@ -14,7 +14,7 @@
 	"type": "Object",
 	"data": {
 	  "request": {
-		"url": "./cardcontent/objectcontent/datahandling_employee.json"
+		"url": "./cardsdemo/cardcontent/objectcontent/datahandling_employee.json"
 	  }
 	},
 	"header": {

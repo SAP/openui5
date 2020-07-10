@@ -1,4 +1,7 @@
-sap.ui.define(["sap/ui/integration/services/Data", "sap/ui/base/EventProvider"], function (Data, EventProvider) {
+sap.ui.define([
+	"sap/ui/integration/services/Data",
+	"sap/ui/base/EventProvider"
+], function (Data, EventProvider) {
 	"use strict";
 
 	//Provide meaningful initial data

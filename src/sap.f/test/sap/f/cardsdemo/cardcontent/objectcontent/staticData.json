@@ -32,9 +32,9 @@
 					"items": [
 						{
 							"label": "Company Name",
-							"value": "Sap",
+							"value": "SAP",
 							"icon": {
-								"src": "../images/Woman_avatar_02.png"
+								"src": "./images/Woman_avatar_02.png"
 							}
 						}
 					]

@@ -1,25 +1,22 @@
 <mvc:View
-    xmlns="sap.m"
-    xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
 	xmlns:grid="sap.ui.layout.cssgrid"
-    controllerName="sap.f.cardsdemo.controller.Main"
-    displayBlock="true">
+	controllerName="sap.f.cardsdemo.controller.Main"
+	displayBlock="true">
+	<App id="app">
+		<Page title="{i18n>appTitle}">
+			<subHeader>
+				<Toolbar>
+					<ToolbarSpacer />
+					<Title text="Card layout use cases" />
+					<ToolbarSpacer />
+				</Toolbar>
+			</subHeader>
 
-	<Page title="{i18n>appTitle}">
-
-		<subHeader>
-			<Toolbar>
-				<ToolbarSpacer/>
-				<Title text="Card layout use cases"/>
-				<ToolbarSpacer/>
-			</Toolbar>
-		</subHeader>
-
-		<content>
-			<VBox class="sapUiMediumMargin">
+			<Panel>
 				<f:GridList
-					class="sapUiMediumMarginBottom sapUiMediumMarginTop"
 					items="{
 						path: 'cardTypesExamples>/',
 						sorter: {
@@ -28,14 +25,11 @@
 							group: true
 						}
 					}">
-
 					<f:customLayout>
-						<grid:GridBasicLayout
-							gridTemplateColumns="repeat(6, minmax(10rem, 20rem))"
-							gridGap="0.5rem 0.5rem"/>
+						<grid:GridBasicLayout gridTemplateColumns="repeat(6, minmax(10rem, 20rem))" gridGap="0.5rem 0.5rem" />
 					</f:customLayout>
 
-					<CustomListItem type="Navigation" press="onSelectExample">
+					<CustomListItem type="Navigation" press=".onSelectExample">
 						<VBox height="100%">
 							<VBox justifyContent="SpaceBetween">
 								<layoutData>
@@ -43,17 +37,21 @@
 								</layoutData>
 
 								<VBox class="sapUiSmallMargin">
-									<Title text="{cardTypesExamples>title}" wrapping="true"/>
-									<Text text="{cardTypesExamples>description}" wrapping="true"/>
-									<Title visible="{= ${cardTypesExamples>usage} ? true : false }" text="Use case" wrapping="true" class="sapUiSmallMarginTop"/>
-									<Text text="{cardTypesExamples>usage}" wrapping="true"/>
+									<Title text="{cardTypesExamples>title}" wrapping="true" />
+									<Text text="{cardTypesExamples>description}" wrapping="true" />
+
+									<Title
+										visible="{= ${cardTypesExamples>usage} ? true : false }"
+										text="Use case"
+										wrapping="true"
+										class="sapUiSmallMarginTop" />
+									<Text text="{cardTypesExamples>usage}" wrapping="true" />
 								</VBox>
 							</VBox>
 						</VBox>
 					</CustomListItem>
 				</f:GridList>
-
-			</VBox>
-		</content>
-	</Page>
+			</Panel>
+		</Page>
+	</App>
 </mvc:View>
