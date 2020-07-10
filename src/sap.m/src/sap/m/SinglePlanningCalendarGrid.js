@@ -313,7 +313,7 @@ sap.ui.define([
 					},
 
 					/**
-					 * Fired when a grid cell is focused.
+					 * Fired when a grid cell is pressed.
 					 * @since 1.65
 					 */
 					cellPress: {
