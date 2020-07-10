@@ -220,9 +220,7 @@ sap.ui.define([
 		// use the sendBeacon API instead of the piggyback approach
 		if (oBeaconRequest && sFESR && sFESRopt) {
 			oBeaconRequest.append("SAP-Perf-FESRec", sFESR + "SAP-Perf-FESRec-opt" + sFESRopt);
-			// set a timeout to send in case of no Interactions
-			clearTimeout(iBeaconTimeoutID);
-			iBeaconTimeoutID = setTimeout(sendBeaconRequest, 60000);
+			sendBeaconRequest();
 		}
 
 		if (sAppVersionFull != oFinishedInteraction.appVersion) {
@@ -234,9 +232,13 @@ sap.ui.define([
 	}
 
 	function sendBeaconRequest() {
-		oBeaconRequest.send();
-		clearTimeout(iBeaconTimeoutID);
-		iBeaconTimeoutID = setTimeout(sendBeaconRequest, 60000);
+		if (!iBeaconTimeoutID) {
+			iBeaconTimeoutID = setTimeout(function() {
+				oBeaconRequest.send();
+				clearTimeout(iBeaconTimeoutID);
+				iBeaconTimeoutID = undefined;
+			}, 60000);
+		}
 	}
 
 	/**
