@@ -1711,8 +1711,36 @@ function(
 		});
 	});
 
-	function enableURLParameterForCondensing() {
-		sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-xx-condense-changes").returns("true");
+	function setURLParameterForCondensing(sValue) {
+		sandbox.stub(UriParameters, "fromURL").returns({
+			has: function() {return true;},
+			get: function() {return sValue;}
+		});
+	}
+
+	function addTwoChanges(oChangePersistence, oComponentInstance, sLayer1, sLayer2) {
+		var oChangeContent = {
+			fileName: "Gizorillus",
+			layer: sLayer1,
+			fileType: "change",
+			changeType: "addField",
+			selector: {id: "control1"},
+			content: {},
+			originalLanguage: "DE"
+		};
+
+		var oChangeContent1 = {
+			fileName: "Gizorillus1",
+			layer: sLayer2 || sLayer1,
+			fileType: "change",
+			changeType: "addField",
+			selector: {id: "control1"},
+			content: {},
+			originalLanguage: "DE"
+		};
+
+		oChangePersistence.addChange(oChangeContent, oComponentInstance);
+		oChangePersistence.addChange(oChangeContent1, oComponentInstance);
 	}
 
 	QUnit.module("sap.ui.fl.ChangePersistence saveChanges", {
@@ -1745,7 +1773,6 @@ function(
 		}
 	}, function() {
 		QUnit.test("Shall save the dirty changes when adding a new change and return a promise", function(assert) {
-			enableURLParameterForCondensing();
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
@@ -1765,7 +1792,6 @@ function(
 		});
 
 		QUnit.test("Shall not call condenser when no appcomponent gets passed to saveDirtyChanges", function(assert) {
-			enableURLParameterForCondensing();
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
@@ -1784,61 +1810,60 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("Shall save the dirty changes when adding two new changes, call the condenser and return a promise", function(assert) {
-			enableURLParameterForCondensing();
-			var oChangeContent = {
-				fileName: "Gizorillus",
-				layer: Layer.VENDOR,
-				fileType: "change",
-				changeType: "addField",
-				selector: {id: "control1"},
-				content: {},
-				originalLanguage: "DE"
-			};
-
-			var oChangeContent1 = {
-				fileName: "Gizorillus1",
-				layer: Layer.VENDOR,
-				fileType: "change",
-				changeType: "addField",
-				selector: {id: "control1"},
-				content: {},
-				originalLanguage: "DE"
-			};
-
-			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
-			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
-
+		QUnit.test("Shall save the dirty changes when adding two new CUSTOMER changes, call the condenser and return a promise", function(assert) {
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 			}.bind(this));
 		});
 
+		QUnit.test("Shall save the dirty changes when adding two new VENDOR changes, not call the condenser and return a promise", function(assert) {
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR);
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall save the dirty changes when adding two new VENDOR changes, condenser enabled via url, call the condenser and return a promise", function(assert) {
+			setURLParameterForCondensing("true");
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR);
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall save the dirty changes when adding two new changes with different layers, not call the condenser and return a promise", function(assert) {
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.USER, Layer.CUSTOMER);
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall not call the condenser with two new changes with different layers and the url parameter", function(assert) {
+			setURLParameterForCondensing("true");
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.USER, Layer.CUSTOMER);
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall not call the condenser with two new changes with the same layer when disabled via url parameter", function(assert) {
+			setURLParameterForCondensing("false");
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.USER, Layer.CUSTOMER);
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
+			}.bind(this));
+		});
+
 		QUnit.test("Shall not call the storage when the condenser returns no change", function(assert) {
-			enableURLParameterForCondensing();
-			var oChangeContent = {
-				fileName: "Gizorillus",
-				layer: Layer.VENDOR,
-				fileType: "change",
-				changeType: "addField",
-				selector: {id: "control1"},
-				content: {},
-				originalLanguage: "DE"
-			};
-
-			var oChangeContent1 = {
-				fileName: "Gizorillus1",
-				layer: Layer.VENDOR,
-				fileType: "change",
-				changeType: "addField",
-				selector: {id: "control1"},
-				content: {},
-				originalLanguage: "DE"
-			};
-
-			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
-			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
+			setURLParameterForCondensing("true");
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.USER);
 			this.oCondenserStub.resolves([]);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {

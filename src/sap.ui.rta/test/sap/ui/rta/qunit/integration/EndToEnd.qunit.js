@@ -160,7 +160,8 @@ sap.ui.define([
 									}.bind(this))
 									.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 									.then(function (iNumberOfChanges) {
-										assert.equal(iNumberOfChanges, 3);
+										// hide and unhide get condensed, so only the add is saved
+										assert.equal(iNumberOfChanges, 1);
 									})
 									.then(fnDone);
 								}
