@@ -25,7 +25,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/dom/getScrollbarSize",
 	"sap/base/assert",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/theming/Parameters",
+	'sap/ui/dom/units/Rem'
 ], function(
 	jQuery,
 	ManagedObjectObserver,
@@ -48,7 +50,9 @@ sap.ui.define([
 	Log,
 	getScrollbarSize,
 	assert,
-	KeyCodes
+	KeyCodes,
+	Parameters,
+	DomUnitsRem
 ) {
 	"use strict";
 
@@ -540,6 +544,7 @@ sap.ui.define([
 		this.iAnchorBarHeight = 0;                  // original height of the anchorBar
 		this.iFooterHeight = 0;                     // original height of the anchorBar
 		this.iTotalHeaderSize = 0;                  // total size of headerTitle + headerContent
+		this._iHeaderContentPaddingBottom = 0;
 
 		this._iREMSize = parseInt(jQuery("body").css("font-size"));
 		this._iOffset = parseInt(0.25 * this._iREMSize);
@@ -3024,14 +3029,45 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._getSnapPosition = function() {
+		// the *default* snap position is the headerContent height,
+		// because snapping should occur when the headerContent is just scrolled out of view
 		var iSnapPosition = this.iHeaderContentHeight,
-			iTitleHeightDelta = this.iHeaderTitleHeightStickied - this.iHeaderTitleHeight;
+			iTitleHeightDelta = this._getTitleHeightDelta();
 
-		if (iTitleHeightDelta < ObjectPageLayout.MAX_SNAP_POSITION_OFFSET) {
-			iSnapPosition -= iTitleHeightDelta;
-		}
+		// Adjust the default snap position in order to snap slightly *earlier* in
+		// the following situations:
+		// Either:
+		// 1) <code>iTitleHeightDelta</code> is > 0
+		// => which means the snapped title will have bigger height
+		// => the snapped title [by having a bigger height] will push the content container downwards
+		// [by the same amount of pixels as the value of <code>iTitleHeightDelta</code>]
+		// => we snap earlier to avoid a visual jump;
+		// Or:
+		// (2) the headerContent contains buttons positioned absolutely in the whitespace area of its bottom padding
+		// => we do not want these buttons to be partially hidden as the headerContent is scrolled out of view
+		// => we snap earlier, when almost all of the headerContent is scrolled out of view, but only its bottom padding is still visible
+		// [i.e. offset by the same amount of pixels as the value of <code>this._iHeaderContentPaddingBottom</code>.
+		// Or both (1) and (2):
+		// => we snap earlier to respect both offsets
+		iSnapPosition -= Math.max(iTitleHeightDelta, this._iHeaderContentPaddingBottom);
 
 		return iSnapPosition;
+	};
+
+
+	/**
+	 * Calculates the difference between the snapped and the expanded title height
+	 * @returns {number}
+	 * @private
+	 */
+	ObjectPageLayout.prototype._getTitleHeightDelta = function() {
+		var iTitleHeightDelta = this.iHeaderTitleHeightStickied - this.iHeaderTitleHeight;
+
+		// normalize delta value
+		iTitleHeightDelta = Math.max(iTitleHeightDelta, 0); // ignore negative delta
+		iTitleHeightDelta = Math.min(iTitleHeightDelta, ObjectPageLayout.MAX_SNAP_POSITION_OFFSET); // ignore too big delta
+
+		return iTitleHeightDelta;
 	};
 
 	ObjectPageLayout.prototype._getClosestScrolledSectionId = function (iScrollTop, iPageHeight, bSubSectionsOnly) {
@@ -3249,6 +3285,10 @@ sap.ui.define([
 		// Once the title is resolved, set the correct header
 		if (oHeaderTitle) {
 			this._createHeaderContent();
+		}
+
+		if (this._hasDynamicTitle()) {
+			this._iHeaderContentPaddingBottom = DomUnitsRem.toPx(Parameters.get("_sap_f_DynamicPageHeader_PaddingBottom"));
 		}
 
 		return this;

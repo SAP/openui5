@@ -405,6 +405,29 @@ function (
 		assert.ok(this.oDynamicPage.getHeader()._getCollapseButton().$().hasClass("sapUiHidden"), "Header collapse button is hidden");
 	});
 
+	QUnit.test("no cut-off buttons", function (assert) {
+		var iSnapPosition = this.oDynamicPage._getSnappingHeight(),
+			oHeader = this.oDynamicPage.getHeader(),
+			iScrollTop,
+			iButtonOffsetTop;
+
+		// assert initial setup (in the context of which the final check is valid)
+		assert.notEqual(getComputedStyle( oHeader.getDomRef()).position, "static", "the header is css-positioned");
+		assert.notEqual(getComputedStyle( this.oDynamicPage.$wrapper.get(0)).position, "static", "the scroll-container is css-positioned");
+
+		// Act:
+		// scroll just before snap
+		// so that only the bottommost area of the headerContent is visible
+		this.oDynamicPage._setScrollPosition(iSnapPosition - 5);
+
+		// Check:
+		// obtain the amount of top pixels that are in the overflow (i.e. pixels that are scrolled out of view)
+		iScrollTop = this.oDynamicPage.$wrapper.scrollTop();
+		// obtain the distance of the expand button from the top of the scrollable content
+		iButtonOffsetTop = oHeader._getCollapseButton().getDomRef().offsetTop + oHeader.getDomRef().offsetTop;
+		assert.ok(iButtonOffsetTop >= iScrollTop, "snap button is not in the overflow");
+	});
+
 	QUnit.module("DynamicPage - Rendering - Header State Preserved On Scroll", {
 		beforeEach: function () {
 			this.oDynamicPageWithPreserveHeaderStateOnScroll = oFactory.getDynamicPageWithPreserveHeaderOnScroll();
@@ -1310,7 +1333,7 @@ function (
 	QUnit.test("DynamicPage _getSnappingHeight() returns the correct Snapping position", function (assert) {
 		var $HeaderDom = this.oDynamicPage.getHeader().getDomRef(),
 			$TitleDom = this.oDynamicPage.getTitle().getDomRef(),
-			iSnappingPosition = getElementHeight($HeaderDom, true /* ceil */) || getElementHeight($TitleDom, true /* ceil */);
+			iSnappingPosition = (getElementHeight($HeaderDom, true /* ceil */) || getElementHeight($TitleDom, true /* ceil */)) - this.oDynamicPage._iHeaderContentPaddingBottom;
 
 		assert.equal(this.oDynamicPage._getSnappingHeight(), iSnappingPosition, "DynamicPage snapping position is correct");
 	});
@@ -1682,11 +1705,11 @@ function (
 		var oDynamicPage = this.oDynamicPage,
 			$header = this.oDynamicPage.getHeader().$(),
 			$wrapper = oDynamicPage.$wrapper,
-			iHeaderHeight = $header.outerHeight();
+			iSnappingHeight = this.oDynamicPage._getSnappingHeight();
 
 		//setup
 		oDynamicPage._moveHeaderToTitleArea();
-		$wrapper.scrollTop(iHeaderHeight - 10); // scroll to expand
+		$wrapper.scrollTop(iSnappingHeight - 10); // scroll to expand
 
 		//act
 		oDynamicPage._toggleHeaderOnScroll();
