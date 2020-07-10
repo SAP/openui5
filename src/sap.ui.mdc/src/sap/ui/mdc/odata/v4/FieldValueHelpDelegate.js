@@ -8,10 +8,12 @@
 
 sap.ui.define([
 	'sap/ui/mdc/field/FieldValueHelpDelegate',
-	"sap/ui/mdc/odata/v4/BaseDelegate"
+	"sap/ui/mdc/odata/v4/BaseDelegate",
+	'sap/ui/model/FilterType'
 ], function(
 		FieldValueHelpDelegate,
-		BaseDelegate
+		BaseDelegate,
+		FilterType
 ) {
 	"use strict";
 
@@ -41,6 +43,23 @@ sap.ui.define([
 		} else {
 			oListBinding.changeParameters({ $search: undefined });
 		}
+
+	};
+
+	ODataFieldValueHelpDelegate.executeFilter = function(oPayload, oListBinding, oFilter, fnCallback, iRequestedItems) {
+
+		var fnHandleChange = function(oParameters) {
+			if (oParameters.mParameters.detailedReason) {
+				return; // only use the final change event
+			}
+			oListBinding.detachEvent("change", fnHandleChange);
+			fnCallback();
+		};
+
+		oListBinding.attachEvent("change", fnHandleChange);
+		oListBinding.initialize();
+		oListBinding.filter(oFilter, FilterType.Application);
+		oListBinding.getContexts(0, iRequestedItems); // trigger request. not all entries needed, we only need to know if there is one, none or more
 
 	};
 

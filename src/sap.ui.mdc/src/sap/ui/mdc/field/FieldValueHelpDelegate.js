@@ -7,9 +7,11 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	'sap/ui/mdc/field/FieldHelpBaseDelegate'
+	'sap/ui/mdc/field/FieldHelpBaseDelegate',
+	'sap/ui/model/FilterType'
 ], function(
-		FieldHelpBaseDelegate
+		FieldHelpBaseDelegate,
+		FilterType
 ) {
 	"use strict";
 	/**
@@ -62,6 +64,30 @@ sap.ui.define([
 	FieldValueHelpDelegate.executeSearch = function(oPayload, oListBinding, sSearch) {
 
 		// only on V4
+
+	};
+
+	/**
+	 * Executes a filter in a <code>ListBinding</code>.
+	 *
+	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.model.ListBinding} oListBinding List binding
+	 * @param {sap.ui.model.Filter} oFilter Filter
+	 * @param {function} fnCallback Callback function after result has been received
+	 * @param {integer} iRequestedItems Number of requested items
+	 * @since 1.81.0
+	 */
+	FieldValueHelpDelegate.executeFilter = function(oPayload, oListBinding, oFilter, fnCallback, iRequestedItems) {
+
+		if (oListBinding.isA("sap.ui.model.json.JSONListBinding")) { // TODO: find way unique for all ListBindings
+			oListBinding.filter(oFilter, FilterType.Application);
+			fnCallback();
+		} else { // oData V2
+			oListBinding.attachEventOnce("dataReceived", fnCallback);
+			oListBinding.initialize();
+			oListBinding.filter(oFilter, FilterType.Application);
+			oListBinding.getContexts(0, iRequestedItems); // trigger request. not all entries needed, we only need to know if there is one, none or more
+		}
 
 	};
 
