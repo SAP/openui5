@@ -425,4 +425,55 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Select-Like ListFieldHelp", function(assert) {
+
+		oFieldHelp.setFilterList(false);
+		oFieldHelp.setUseFirstMatch(true);
+
+		assert.ok(oFieldHelp.openByClick(), "openByClick should be true, when FilterList is set to false");
+
+
+		var oList;
+		var aItems;
+
+		// when setting a filterValue the number of items should be stable and not change
+		oFieldHelp.setFilterValue("It");
+		oFieldHelp.open();
+
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		if (oPopover) {
+			oList = oPopover.getContent()[0];
+			aItems = oList.getItems();
+			assert.equal(aItems.length, 3, "List has 3 Items");
+
+			oFieldHelp.setFilterValue("X");
+			aItems = oList.getItems();
+			assert.equal(aItems.length, 3, "List has 3 Items");
+		}
+
+
+		// The first filtered and matching item should be selected when 'UseFirstMatch is true'
+		oFieldHelp.setFilterValue("X");
+
+		oPopover = oFieldHelp.getAggregation("_popover");
+		if (oPopover) {
+			oList = oPopover.getContent()[0];
+			aItems = oList.getItems();
+			assert.ok(aItems[2].getSelected(), "Item 2 is selected");
+		}
+
+
+		var oObj = oFieldHelp.getKeyForText("X");
+		assert.equal(oObj.key, "I3", "key for text");
+
+		try {
+			oObj = oFieldHelp.getKeyForText("foo");
+		} catch (oError) {
+			assert.ok(oError, "Error Fired");
+			assert.ok(oError instanceof ParseException, "Error is a ParseException");
+			var sError = oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", ["foo"]);
+			assert.equal(oError.message, sError, "Error message");
+		}
+	});
+
 });

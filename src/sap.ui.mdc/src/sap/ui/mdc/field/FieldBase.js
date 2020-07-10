@@ -764,6 +764,16 @@ sap.ui.define([
 
 	};
 
+	FieldBase.prototype.ontap = function(oEvent) {
+
+		// in "Select"-case the suggestion help should open on click into field
+		var oFieldHelp = _getFieldHelp.call(this);
+		if (oFieldHelp && oFieldHelp.openByClick() && !oFieldHelp.isOpen(true)) {
+			oFieldHelp.open(true);
+		}
+
+	};
+
 	FieldBase.prototype.clone = function(sIdSuffix, aLocalIds) {
 
 		// detach event handler before cloning to not have it twice on the clone

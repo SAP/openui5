@@ -2547,6 +2547,35 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("openByClick - FieldHelp should open on focus", function (assert) {
+
+		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
+
+		sinon.stub(oFieldHelp, "openByClick").returns(true);
+		sinon.spy(oFieldHelp, "open");
+
+		oField.focus();
+		var oInnerField = oField.getAggregation("_content")[0];
+		qutils.triggerEvent("tap", oInnerField.getId());
+
+		assert.ok(oFieldHelp.openByClick.calledOnce, "openByClick called once");
+		assert.ok(oFieldHelp.open.calledOnce, "open called once");
+
+
+		//do the same test with openByClick(false) and the open should not be called
+		oFieldHelp.openByClick.resetHistory();
+		oFieldHelp.openByClick.returns(false);
+		oFieldHelp.open.resetHistory();
+
+		oField.focus();
+		qutils.triggerEvent("tap", oInnerField.getId());
+
+		assert.ok(oFieldHelp.openByClick.calledOnce, "openByClick called once");
+		assert.notOk(oFieldHelp.open.calledOnce, "open not called");
+
+		oFieldHelp.close();
+	});
+
 	QUnit.test("Opening FieldHelp after openByTyping-Promise is resolved", function (assert) {
 
 		var oIconContent = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }); // just dummy handler to make Icon focusable

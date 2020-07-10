@@ -670,6 +670,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if the field help should be opened when the user clicks into the connected field.
+	 *
+	 * Opening the field help must be triggered by the control the <code>FieldHelp</code> element
+	 * belongs to.
+	 *
+	 * <b>Note:</b> This function must only be called by the control the <code>FieldHelp</code> element
+	 * belongs to, not by the application.
+	 *
+	 * @returns {boolean} If <code>true</code>, the field help should open when user clicks into the connected field
+	 * @since 1.81.0
+	 * @public
+	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldHelpBase.prototype.openByClick = function() {
+
+		return false;
+
+	};
+
+	/**
 	 * Determines if the focus is set in the value help or stays in the calling control.
 	 *
 	 * @returns {boolean} if true, focus goes to the value help, if false it stays in the calling control.

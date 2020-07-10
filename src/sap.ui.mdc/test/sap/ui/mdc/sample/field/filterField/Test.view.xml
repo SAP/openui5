@@ -200,6 +200,44 @@
 						</mdc:dependents>
 					</mdc:FilterField>
 
+					<m:Label text="Select-like single value field (Status)"></m:Label>
+					<mdc:FilterField id="FF17"
+						conditions="{cm>/conditions/Status}"
+						display="Description"
+						maxConditions="1"
+						placeholder="{/#Product/Status/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						fieldHelp="FF17-H">
+						<mdc:dependents>
+							<mdcField:ListFieldHelp id="FF17-H"
+									filterList="false"
+									useFirstMatch="true"
+									items="{path: '/StatusCollection'}" >
+								<c:ListItem text="{Name}" key="{StatusId}"/>
+							</mdcField:ListFieldHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+<!--
+					<m:Label text="Select-like multi value field (Status)"></m:Label>
+					<mdc:FilterField id="FF18"
+						conditions="{cm>/conditions/Status}"
+						display="Description"
+						maxConditions="-1"
+						placeholder="{/#Product/Status/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange"
+						fieldHelp="FF18-H">
+						<mdc:dependents>
+							<mdcField:ListFieldHelp id="FF18-H"
+									filterList="false"
+									useFirstMatch="true"
+									items="{path: '/StatusCollection'}" >
+								<c:ListItem text="{Name}" key="{StatusId}"/>
+							</mdcField:ListFieldHelp>
+						</mdc:dependents>
+					</mdc:FilterField>
+-->
 					<m:Label text="single value field in display mode  (Status)"></m:Label>
 					<mdc:FilterField id="FF10"
 						conditions="{cm>/conditions/Status}"

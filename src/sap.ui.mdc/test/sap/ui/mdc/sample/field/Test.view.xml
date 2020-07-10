@@ -183,6 +183,18 @@
 				<m:Label text="using the same ListFieldHelp"></m:Label>
 				<mdc:Field id="F2-4a" value="22134T" display="Description" change="handleChange" liveChange="handleLiveChange" fieldHelp="F2-4-H"></mdc:Field>
 
+				<m:Label text="Select-like usage"></m:Label>
+				<mdc:Field id="F2-Select" value="870394932" ignoreInvalidValue="true" display="Description" change="handleChange" liveChange="handleLiveChange" fieldHelp="F2-Select-H">
+					<mdc:dependents>
+						<mdcField:ListFieldHelp id="F2-Select-H"
+								filterList="false"
+								useFirstMatch="true"
+								items="{path: '/ProductCollection'}" >
+							<c:ListItem key="{ProductId}" text="{Name}"/>
+						</mdcField:ListFieldHelp>
+					</mdc:dependents>
+				</mdc:Field>
+
 				<c:Title text="table help"></c:Title>
 				<m:Label text="default implementation of FieldValueHelp without dialog"></m:Label>
 				<mdc:Field id="F2-6" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" fieldHelp="F2-6-H">
