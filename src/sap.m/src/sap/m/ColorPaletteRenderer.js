@@ -113,7 +113,7 @@ sap.ui.define(['sap/ui/Device'],
 			oRm.addClass("sapMColorPaletteSeparator");
 			oRm.writeClasses();
 			oRm.write(">");
-			oRm.write("<hr/>");
+			oRm.write("<hr>");
 			oRm.write("</div>");
 		};
 

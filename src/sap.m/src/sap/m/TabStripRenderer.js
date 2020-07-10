@@ -119,7 +119,7 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 			oRm.writeClasses();
 			oRm.writeAttribute("role", "presentation");
 			oRm.writeAttribute("aria-hidden", "true");
-			oRm.write("/>");
+			oRm.write("></span>");
 		}
 		oRm.write("</div>");
 		oRm.write("</div>");

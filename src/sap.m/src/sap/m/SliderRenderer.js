@@ -160,7 +160,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 			oRm.writeClasses();
 			oRm.writeAttributeEscaped("name", oSlider.getName());
 			oRm.writeAttribute("value", oSlider._formatValueByCustomElement(oSlider.toFixed(oSlider.getValue())));
-			oRm.write("/>");
+			oRm.write(">");
 		};
 
 		/**

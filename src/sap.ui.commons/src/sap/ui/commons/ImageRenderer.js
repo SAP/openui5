@@ -82,7 +82,7 @@ sap.ui.define([],
 			rm.writeAttribute("style", myStyle);
 		}
 
-		rm.write("/>"); // close the <img> element
+		rm.write(">"); // close the <img> element
 	};
 
 	return ImageRenderer;

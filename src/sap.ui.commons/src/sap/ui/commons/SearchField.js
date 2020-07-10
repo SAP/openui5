@@ -1028,7 +1028,7 @@ sap.ui.define([
 					}
 					oRM.addClass("sapUiSearchFieldProvIco");
 					oRM.writeClasses();
-					oRM.write("><img src=\"" + oCtrl.getParent().getSearchProvider().getIcon() + "\"/></div>");
+					oRM.write("><img src=\"" + oCtrl.getParent().getSearchProvider().getIcon() + "\"></div>");
 				}
 			},
 

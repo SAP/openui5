@@ -278,7 +278,7 @@ sap.ui.define([
           rm.write('</span>');
 
 
-          rm.write("<br/>");
+          rm.write("<br>");
 
 
           rm.write('<span class="sapUiInteractionItemTriggerText">');
@@ -394,7 +394,7 @@ sap.ui.define([
           rm.write('</span>');
 
 
-          rm.write("<br/>");
+          rm.write("<br>");
 
 
           rm.write('<span class="sapUiInteractionItemTriggerText">');
