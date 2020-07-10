@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 			//In order to make readonly checkbox unresponsive, we need to apply 'disabled' property - only affects HCB theme
 			rm.write(" disabled='disabled'");
 		}
-		rm.write(" />"); // close checkbox-input-element
+		rm.write(">"); // close checkbox-input-element
 
 
 		// Write the checkbox label which also holds the background image

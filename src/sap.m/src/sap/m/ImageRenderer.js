@@ -123,7 +123,7 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeXML"],
 
 		oRm.writeStyles();
 
-		oRm.write(" />"); // close the <img> element
+		oRm.write(sMode === ImageMode.Image ? ">" : "></span>"); // close the <img> or <span> element
 
 		if (oLightBox) {
 			oRm.write("</span>");

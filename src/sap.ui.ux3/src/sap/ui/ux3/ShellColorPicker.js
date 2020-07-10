@@ -118,7 +118,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 
 	ShellColorPicker.prototype.renderHtml = function(rm) {
 		rm.write("<div id='" + this.id + "' class='sapUiUx3ShellColorPicker'>");
-		rm.write("<img id='" + this.id + "-img' src='" + sap.ui.resource('sap.ui.ux3', 'img/colors-h.png') + "' />");
+		rm.write("<img id='" + this.id + "-img' src='" + sap.ui.resource('sap.ui.ux3', 'img/colors-h.png') + "'>");
 		rm.renderControl(this.oSlider);
 		rm.write("<div id='" + this.id + "-grad' class='sapUiUx3ShellColorPickerGradient'></div>");
 		rm.write("<div id='" + this.id + "-marker' class='sapUiUx3ShellColorPickerMarker'></div>");

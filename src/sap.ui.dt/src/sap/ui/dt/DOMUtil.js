@@ -425,7 +425,7 @@ function(
 	};
 
 	/**
-	 * Inserts <style/> tag width specified styles into #overlay-container
+	 * Inserts &lt;style/&gt; tag width specified styles into #overlay-container
 	 * @param {string} sStyles - Plain CSS as a string to be added into the page
 	 * @param {HTMLElement} oTarget - Target DOM Node where to add <style> tag with CSS
 	 */

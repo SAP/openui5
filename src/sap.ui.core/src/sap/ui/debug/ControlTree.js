@@ -122,7 +122,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 		var oDomNode = this.oParentDomRef.ownerDocument.createElement("DIV");
 		oDomNode.setAttribute("id","sap-debug-controltree-" + sId);
 		var sShortType = sType.substring(sType.lastIndexOf(".") >  -1 ? sType.lastIndexOf(".") + 1 : 0);
-		oDomNode.innerHTML = "<img style='height:12px;width:12px;display:none' src='" + this.sSpaceUrl + "' align='absmiddle'/><img style='height:16px;width:16px' src='" + sIcon + "' align='absmiddle'/>&nbsp;<span>" + sShortType + " - " + sId + "</span>";
+		oDomNode.innerHTML = "<img style='height:12px;width:12px;display:none' src='" + this.sSpaceUrl + "' align='absmiddle'><img style='height:16px;width:16px' src='" + sIcon + "' align='absmiddle'>&nbsp;<span>" + sShortType + " - " + sId + "</span>";
 		oDomNode.style.overflow = "hidden";
 		oDomNode.style.whiteSpace = "nowrap";
 		oDomNode.style.textOverflow = "ellipsis";
@@ -145,7 +145,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 		var oDomNode = this.oParentDomRef.ownerDocument.createElement("DIV");
 		oDomNode.setAttribute("id","sap-debug-controltreelink-" + sId);
 		var sShortType = sType ? sType.substring(sType.lastIndexOf(".") >  -1 ? sType.lastIndexOf(".") + 1 : 0) : "";
-		oDomNode.innerHTML = "<img style='height:12px;width:12px;display:none' src='" + this.sSpaceUrl + "' align='absmiddle'/><img style='height:12px;width:12px' src='" + this.sLinkUrl + "' align='absmiddle'/>&nbsp;<span style='color:#888;border-bottom:1px dotted #888;'>" + (sShortType ? sShortType + " - " : "") + sId + "</span>";
+		oDomNode.innerHTML = "<img style='height:12px;width:12px;display:none' src='" + this.sSpaceUrl + "' align='absmiddle'><img style='height:12px;width:12px' src='" + this.sLinkUrl + "' align='absmiddle'>&nbsp;<span style='color:#888;border-bottom:1px dotted #888;'>" + (sShortType ? sShortType + " - " : "") + sId + "</span>";
 		oDomNode.style.overflow = "hidden";
 		oDomNode.style.whiteSpace = "nowrap";
 		oDomNode.style.textOverflow = "ellipsis";
