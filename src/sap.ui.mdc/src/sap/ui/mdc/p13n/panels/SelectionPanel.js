@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 * @since 1.66
-	 * @alias sap.ui.mdc.p13n..panelsSelectionPanel
+	 * @alias sap.ui.mdc.p13n.panels.SelectionPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectionPanel = BasePanel.extend("sap.ui.mdc.p13n.panels.SelectionPanel", {
@@ -77,7 +77,7 @@ sap.ui.define([
 			new Filter("groupLabel", "Contains", oEvent.getSource().getValue())
 		]);
 
-		this._oMTable.getBinding("items").filter(aFilters, false);
+		this._oListControl.getBinding("items").filter(aFilters, false);
 	};
 
 	return SelectionPanel;

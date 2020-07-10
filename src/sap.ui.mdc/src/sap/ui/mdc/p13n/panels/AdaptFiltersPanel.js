@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 * @since 1.72
-	 * @alias sap.ui.mdc.p13n.AdaptFiltersPanel
+	 * @alias sap.ui.mdc.p13n.panels.AdaptFiltersPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AdaptFiltersPanel = BasePanel.extend("sap.ui.mdc.p13n.panels.AdaptFiltersPanel", {
@@ -93,7 +93,7 @@ sap.ui.define([
 			new Filter("label", "Contains", oEvent.getSource().getValue()),
 			new Filter("groupLabel", "Contains", oEvent.getSource().getValue())
 		]);
-		this._oMTable.getBinding("items").filter(aFilters, false);
+		this._oListControl.getBinding("items").filter(aFilters, false);
 	};
 	return AdaptFiltersPanel;
 });

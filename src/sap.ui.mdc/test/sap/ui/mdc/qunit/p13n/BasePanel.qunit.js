@@ -40,7 +40,7 @@ sap.ui.define([
 
 	QUnit.module("BasePanel API tests", {
 		beforeEach: function() {
-			this.oBtnShowSelected = this.oBasePanel._oMTable.getHeaderToolbar().getContent()[6];
+			this.oBtnShowSelected = this.oBasePanel._oListControl.getHeaderToolbar().getContent()[6];
 		}.bind(this),
 		afterEach: function() {
 
@@ -49,10 +49,10 @@ sap.ui.define([
 
 	QUnit.test("instantiate", function(assert) {
 		assert.ok(this.oBasePanel, "Panel has been instantiated");
-		assert.ok(this.oBasePanel._oMTable, "Inner table has been instantiated");
+		assert.ok(this.oBasePanel._oListControl, "Inner table has been instantiated");
 
 		// Check if columns have been created with correct text in header
-		var aColumns = this.oBasePanel._oMTable.getColumns();
+		var aColumns = this.oBasePanel._oListControl.getColumns();
 		assert.equal(aColumns[0].getHeader().getText(), "Name", "Added 'Name' column");
 		assert.equal(aColumns[1].getHeader().getText(), "Country", "Added 'Country' column");
 		assert.equal(aColumns[2].getHeader().getText(), "Year", "Added 'Year' column");
@@ -61,8 +61,8 @@ sap.ui.define([
 	QUnit.test("check 'Reorder / Select mode' eventhandler", function(assert) {
 		//Reorder mode
 		this.oBtnShowSelected.firePress();
-		assert.equal(this.oBasePanel._oMTable.getItems().length, 3, "only selected items are visible in the dialog");// we only see the selected item
-		this.oBasePanel._oMTable.getItems().forEach(function(oItem){
+		assert.equal(this.oBasePanel._oListControl.getItems().length, 3, "only selected items are visible in the dialog");// we only see the selected item
+		this.oBasePanel._oListControl.getItems().forEach(function(oItem){
 			assert.equal(oItem.getType(), "Active", "Type is active in 'Reorder' mode");//type is active in 'Reorder'
 		});
 
@@ -74,8 +74,8 @@ sap.ui.define([
 
 		//Select mode
 		this.oBtnShowSelected.firePress();
-		assert.equal(this.oBasePanel._oMTable.getItems().length, 4, "all items are visible in the dialog");// we see all items
-		this.oBasePanel._oMTable.getItems().forEach(function(oItem){
+		assert.equal(this.oBasePanel._oListControl.getItems().length, 4, "all items are visible in the dialog");// we see all items
+		this.oBasePanel._oListControl.getItems().forEach(function(oItem){
 			assert.equal(oItem.getType(), "Inactive", "Type is inactive in 'Select' mode");//type is inactive in 'Select'
 		});
 	}.bind(this));
@@ -85,8 +85,8 @@ sap.ui.define([
 		this.oBtnShowSelected.firePress();
 
 		// Setup Fake drop event
-		var oDropItem = this.oBasePanel._oMTable.getItems()[0];
-		var oDragItem = this.oBasePanel._oMTable.getItems()[2];
+		var oDropItem = this.oBasePanel._oListControl.getItems()[0];
+		var oDragItem = this.oBasePanel._oListControl.getItems()[2];
 		var oFakeSession = {
 			getDropControl: function() {
 				return oDropItem;
@@ -110,7 +110,7 @@ sap.ui.define([
 		this.oBasePanel._onRearrange(oFakeEvent);
 
 		// Test results
-		var aItems = this.oBasePanel._oMTable.getItems();
+		var aItems = this.oBasePanel._oListControl.getItems();
 		assert.equal(aItems[0].getTitle(), "Test");
 		assert.equal(aItems[1].getTitle(), "Test3");
 		assert.equal(aItems[2].getTitle(), "Test2");
@@ -125,16 +125,16 @@ sap.ui.define([
 		});
 
 		// fire single event
-		this.oBasePanel._oMTable.fireSelectionChange({
+		this.oBasePanel._oListControl.fireSelectionChange({
 			selectAll: false,
-			listItems: this.oBasePanel._oMTable.getItems()
+			listItems: this.oBasePanel._oListControl.getItems()
 		});
 	}.bind(this));
 
 	QUnit.test("press item and check the enablement of move buttons (item at the top)", function(assert) {
 		// fire single event
-		this.oBasePanel._oMTable.fireItemPress({
-			listItem: this.oBasePanel._oMTable.getItems()[0]
+		this.oBasePanel._oListControl.fireItemPress({
+			listItem: this.oBasePanel._oListControl.getItems()[0]
 		});
 
 		assert.equal(this.oBasePanel._moveTopButton.getEnabled(), false, "'move top' button is disabled (item is at the top)");
@@ -145,8 +145,8 @@ sap.ui.define([
 
 	QUnit.test("press item and check the enablement of move buttons (item at the bottom)", function(assert) {
 		// fire single event
-		this.oBasePanel._oMTable.fireItemPress({
-			listItem: this.oBasePanel._oMTable.getItems()[this.oBasePanel._oMTable.getItems().length - 1]
+		this.oBasePanel._oListControl.fireItemPress({
+			listItem: this.oBasePanel._oListControl.getItems()[this.oBasePanel._oListControl.getItems().length - 1]
 		});
 
 		assert.equal(this.oBasePanel._moveTopButton.getEnabled(), true, "'move top' button is enabled");
@@ -157,8 +157,8 @@ sap.ui.define([
 
 	QUnit.test("press item and check the enablement of move buttons (item inbetween)", function(assert) {
 		// fire single event
-		this.oBasePanel._oMTable.fireItemPress({
-			listItem: this.oBasePanel._oMTable.getItems()[1]
+		this.oBasePanel._oListControl.fireItemPress({
+			listItem: this.oBasePanel._oListControl.getItems()[1]
 		});
 
 		assert.equal(this.oBasePanel._moveTopButton.getEnabled(), true, "'move top' button is enabled");
