@@ -203,12 +203,21 @@ sap.ui.define([
 		return mActions.aggregation === sResponsibleElementsParentAggregation;
 	}
 
+	function _isValidAction(oCheckElementOverlay, mParents, mAction, oPlugin) {
+		var bValidAction = mAction.changeType && oPlugin.hasStableId(oCheckElementOverlay);
+		if (bValidAction && oCheckElementOverlay !== mParents.relevantContainerOverlay) {
+			//relevant container is needed for some changes, so it better has a stable ID
+			bValidAction = oPlugin.hasStableId(mParents.relevantContainerOverlay);
+		}
+		return bValidAction;
+	}
+
 	function _filterValidAddPropertyActions(aActions, mParents, bAddViaDelegate, oPlugin) {
 		return aActions.reduce(function (oPreviousActionsPromise, mAction) {
 			return oPreviousActionsPromise.then(function (aFilteredActions) {
 				var oCheckElement = mAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
 				var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
-				var bValidAction = mAction.changeType && oPlugin.hasStableId(oCheckElementOverlay);
+				var bValidAction = _isValidAction(oCheckElementOverlay, mParents, mAction, oPlugin);
 				if (bValidAction) {
 					mAction.element = oCheckElement;
 					if (bAddViaDelegate) {

@@ -80,6 +80,8 @@ function(
 		}
 	});
 
+	var ADD_PROPERTY_SPECIAL_SETTINGS_KEYS = ["changeType", "index", "newControlId", "bindingPath", "parentId", "modelType", "relevantContainerId", "oDataServiceVersion", "oDataInformation", "layer", "developerMode", "jsOnly", "selector", "reference", "packageName", "validAppVersions"];
+
 	QUnit.test("when getting a AddODataProperty command for the change ...", function(assert) {
 		return CommandFactory.getCommandFor(
 			this.oButton,
@@ -97,17 +99,16 @@ function(
 
 		.then(function(oCommand) {
 			assert.ok(oCommand, "the addODataProperty command exists");
-			return oCommand.execute();
-		})
 
-		.then(function() {
 			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
-			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
-		}.bind(this))
+			var mActualSpecialSettings = this.fnCompleteChangeContentSpy.getCall(0).args[1]
+			assert.deepEqual(Object.keys(mActualSpecialSettings), ADD_PROPERTY_SPECIAL_SETTINGS_KEYS, "then all properties are passed to the change handler");
 
-		.catch(function (oError) {
-			assert.ok(false, 'catch must never be called - Error: ' + oError);
-		});
+			return oCommand.execute();
+		}.bind(this))
+		.then(function() {
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+		}.bind(this));
 	});
 
 	QUnit.done(function () {
