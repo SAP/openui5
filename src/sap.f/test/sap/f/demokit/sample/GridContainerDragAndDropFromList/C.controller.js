@@ -102,12 +102,12 @@ sap.ui.define([
 				iDropPosition--;
 			}
 
-			// insert the control in target aggregation
-			if (sInsertPosition === "Before") {
-				oDropModelData.splice(iDropPosition, 0, oItem);
-			} else {
-				oDropModelData.splice(iDropPosition + 1, 0, oItem);
+			if (sInsertPosition === "After") {
+				iDropPosition++;
 			}
+
+			// insert the control in target aggregation
+			oDropModelData.splice(iDropPosition, 0, oItem);
 
 			if (oDragModel !== oDropModel) {
 				oDragModel.setData(oDragModelData);
@@ -115,6 +115,8 @@ sap.ui.define([
 			} else {
 				oDropModel.setData(oDropModelData);
 			}
+
+			this.byId("grid1").focusItem(iDropPosition);
 		}
 
 	});
