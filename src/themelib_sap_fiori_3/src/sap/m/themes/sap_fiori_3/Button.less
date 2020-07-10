@@ -153,7 +153,6 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMFocusable {
 	outline-color:    @sapUiContentContrastFocusColor;
 }
 
-html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable,
 html.sap-desktop .sapMBtn:focus > .sapMBtnCritical.sapMFocusable,
 html.sap-desktop .sapMBtn:focus > .sapMBtnNegative.sapMFocusable,
 html.sap-desktop .sapMBtn:focus > .sapMBtnSuccess.sapMFocusable,
@@ -161,8 +160,23 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnNeutral.sapMFocusable {
 	outline-color:     @sapUiContentContrastFocusColor;
 }
 
+html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
+	outline: 0.0625rem solid @sapUiContentFocusColor;
+	:after {
+		content: "";
+		position: absolute;
+		box-sizing: border-box;
+		left: 0.0625rem;
+		top: 0.0625rem;
+		right: 0.0625rem;
+		bottom: 0.0625rem;
+		border: 0.0625rem dotted @sapUiContentContrastFocusColor;
+		pointer-events: none;
+	}
+}
+
 html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMBtnEmphasized.sapMFocusable {
-	outline-color:    @sapUiContentContrastFocusColor;
+	outline: 0.0625rem dotted @sapUiContentContrastFocusColor;
 }
 
 .sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnAttention):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost) {
