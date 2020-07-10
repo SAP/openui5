@@ -25,6 +25,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Property bag for default delegate
 		 * @param {object} mPropertyBag.modelType - default delegate model type
 		 * @param {object} mPropertyBag.delegate - path to default delegate
+	 	 * @param {object} [mPropertyBag.requiredLibraries] - map of required libraries
 		 */
 		registerDefaultDelegate: function (mPropertyBag) {
 			DelegateMediator.registerDefaultDelegate(mPropertyBag);
@@ -48,6 +49,14 @@ sap.ui.define([
 				mPropertyBag.modelType,
 				mPropertyBag.supportsDefault
 			);
+		},
+
+		/**
+		 * Returns a list of library names which needs to be required to get default delegates loaded.
+		 * @returns {array} List of library names
+		 */
+		getKnownDefaultDelegateLibraries: function () {
+			return DelegateMediator.getKnownDefaultDelegateLibraries();
 		}
 	};
 
