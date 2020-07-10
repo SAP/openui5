@@ -2,20 +2,32 @@
 * ! ${copyright}
 */
 sap.ui.define([
-    "sap/m/ResponsivePopover",
-    "sap/m/Dialog",
-    "sap/m/Button",
     "sap/base/util/merge"
-], function(ResponsivePopover, Dialog, Button, merge) {
-	"use strict";
+], function(merge) {
+    "use strict";
 
+	/**
+	 *  Internal Utility class to create personalization UI's
+	 *
+	 * @author SAP SE
+	 * @private
+	 * @since 1.81.0
+	 * @alias sap.ui.mdc.p13n.P13nBuilder
+	 */
 	var P13nBuilder = {
 
+        /**
+         *
+         * @param {object} oP13nUI control displayed in the content area
+         * @param {object} mDialogSettings settings to overwrite defaults
+         *
+         * @returns {Promise} promise resolving in the Popover instance
+         */
         createP13nPopover: function(oP13nUI, mDialogSettings) {
 
             return new Promise(function(resolve, reject){
 
-                sap.ui.require(["sap/m/Popover"], function(Popover){
+                sap.ui.require(["sap/m/ResponsivePopover"], function(ResponsivePopover){
                     P13nBuilder["_checkSettings"](oP13nUI, mDialogSettings, reject);
 
                     var oPopover = new ResponsivePopover({
@@ -35,6 +47,13 @@ sap.ui.define([
 
         },
 
+        /**
+         *
+         * @param {object} oP13nUI control displayed in the content area
+         * @param {object} mDialogSettings settings to overwrite defaults
+         *
+         * @returns {Promise} promise resolving in the Dialog instance
+         */
         createP13nDialog: function(oP13nUI, mDialogSettings) {
 
             return new Promise(function(resolve, reject){
@@ -69,12 +88,30 @@ sap.ui.define([
                             })
                         ]
                     });
+                    var aAdditionalButtons = mDialogSettings.additionalButtons;
+                    if (aAdditionalButtons instanceof Array) {
+                        aAdditionalButtons.forEach(function(oButton){
+                            if (!oButton.isA("sap.m.Button")) {
+                                reject("Please only provide sap.m.Button instances as 'additionalButtons'");
+                            }
+                            oContainer.addButton(oButton);
+                        });
+                    }
                     resolve(oContainer);
                 }, reject);
             });
 
         },
 
+        /**
+         *
+         * @param {object} oControlState Control state as defined in IxState interface <code>getCurrentState</code> method
+         * @param {array} aInfoData Array of property info objects
+         * @param {array} [aIgnoreAttributes] Optional array of key-value pairs to define ignored values <code>[{ignoreKey: "Key", ignoreValue:"Value"}]</code>
+         * @param {string} [sP13nType] Optional p13n type definition - should not be used without AdaptationController
+         *
+         * @returns {object} Object structure to generate a p13n model
+         */
         prepareP13nData: function(oControlState, aInfoData, aIgnoreAttributes, sP13nType) {
 
             aIgnoreAttributes = aIgnoreAttributes ? aIgnoreAttributes : [];
