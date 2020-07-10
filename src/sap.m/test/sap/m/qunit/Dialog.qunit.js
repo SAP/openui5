@@ -1597,10 +1597,79 @@ sap.ui.define([
 				})
 			});
 
+			this.fnMockResizeEvent = function () {
+				var oResizeHandler = this.oDialog.$().find(".sapMDialogResizeHandler")[0],
+					oResizeHandlerRect = oResizeHandler.getBoundingClientRect();
+
+				// event in which the mouse is on the resize handler
+				return {
+					pageX: oResizeHandlerRect.left,
+					pageY: oResizeHandlerRect.top,
+					offsetX: 5,
+					offsetY: 5,
+					preventDefault: function () {},
+					stopPropagation: function () {},
+					target: oResizeHandler
+				};
+			};
 		},
 		afterEach: function() {
 			this.oDialog.destroy();
 		}
+	});
+
+	QUnit.test("Check if resizing works", function(assert) {
+		// Arrange
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		var $document = jQuery(document),
+			oDialog = this.oDialog,
+			$dialog = oDialog.$(),
+			iWidth = $dialog.width(),
+			iHeight = $dialog.height(),
+			oMockEvent = this.fnMockResizeEvent();
+
+		// Act
+		oDialog.onmousedown(oMockEvent);
+
+		// move mouse right and down
+		oMockEvent.pageX += 20;
+		oMockEvent.pageY += 20;
+
+		$document.trigger(new jQuery.Event("mousemove", oMockEvent));
+		this.clock.tick(500);
+		$document.trigger(new jQuery.Event("mouseup", oMockEvent));
+
+		// Assert
+		assert.strictEqual($dialog.width(), iWidth + 20, "The width is resized.");
+		assert.strictEqual($dialog.height(), iHeight + 20, "The height is resized.");
+	});
+
+	QUnit.test("Resize dialog content section above max height", function(assert) {
+		// Arrange
+		this.oDialog.setContentHeight(window.innerHeight + "px"); // simulate max height dialog
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		var $document = jQuery(document),
+			oDialog = this.oDialog,
+			$dialog = oDialog.$(),
+			$dialogContentSection = $dialog.find(".sapMDialogSection"),
+			oMockEvent = this.fnMockResizeEvent();
+
+		// Act
+		oDialog.onmousedown(oMockEvent);
+
+		// move mouse down
+		oMockEvent.pageY += 1000;
+
+		$document.trigger(new jQuery.Event("mousemove", oMockEvent));
+		this.clock.tick(500);
+		$document.trigger(new jQuery.Event("mouseup", oMockEvent));
+
+		// Assert
+		assert.strictEqual($dialogContentSection.height(), $dialog.height(), "The height of the content section is equal to the height of the dialog.");
 	});
 
 	QUnit.test("Check if after double click on header dialog has the right height", function(assert) {

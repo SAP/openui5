@@ -1850,11 +1850,9 @@ function(
 					if (bResize) {
 						that._$dialog.removeClass('sapMDialogResizing');
 
-						// Take the height from the styles attribute of the DOM element not from the calculated height.
-						// max-height is taken into account if we use calculated height and a wrong value is set for the dialog content's height.
-						// If no value is set for the height style fall back to calculated height.
-						// * Calculated height is the value taken by $dialog.height().
-						dialogHeight = parseInt($dialog[0].style.height) || parseInt($dialog.height());
+						// Take the calculated height of the dialog, so that the max-height is also applied.
+						// Else the content area will be bigger than the dialog and therefore will overflow.
+						dialogHeight = parseInt($dialog.height());
 						dialogBordersHeight = parseInt($dialog.css("border-top-width")) + parseInt($dialog.css("border-bottom-width"));
 						$dialogContent.height(dialogHeight + dialogBordersHeight);
 					}
