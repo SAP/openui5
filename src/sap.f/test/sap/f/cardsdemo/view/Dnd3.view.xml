@@ -41,7 +41,7 @@
 						<FlexItemData growFactor="1" styleClass="sapUiMediumMarginEnd"></FlexItemData>
 					</layoutData>
 				</Panel>
-	
+
 				<Panel headerText="Tiles Group 3">
 					<f:GridContainer id="grid3" items="{
 							path: '/',

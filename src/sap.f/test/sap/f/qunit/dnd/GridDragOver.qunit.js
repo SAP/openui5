@@ -71,26 +71,23 @@ sap.ui.define([
 
 	QUnit.test("Simulate drag over", function(assert) {
 		// Arrange
-		var done = assert.async(),
-			oTargetControl = this.oGrid.getItems()[0],
+		var oTargetControl = this.oGrid.getItems()[0],
 			oFakeEvent = createFakeDragOverEvent(oTargetControl);
 
 		// Act
 		this.oGridDragOver.handleDragOver(oFakeEvent);
 
 		// wait 250ms and handle drag over again on same place
-		setTimeout(function () {
-			this.oGridDragOver.handleDragOver(oFakeEvent);
+		this.clock.tick(250);
 
-			// Assert
-			var mPosition = this.oGridDragOver.getSuggestedDropPosition();
-			assert.ok(mPosition, "There is a suggested position after timeout");
-			assert.strictEqual(mPosition.targetControl.sId, oTargetControl.sId, "The target control is correct");
-			assert.strictEqual(mPosition.position, "Before", "The target position is 'Before'");
-			assert.strictEqual(this.oGridDragOver._iDragFromIndex, 0, "The target index is correct.");
+		this.oGridDragOver.handleDragOver(oFakeEvent);
 
-			done();
-		}.bind(this), 250);
+		// Assert
+		var mPosition = this.oGridDragOver.getSuggestedDropPosition();
+		assert.ok(mPosition, "There is a suggested position after timeout");
+		assert.strictEqual(mPosition.targetControl.sId, oTargetControl.sId, "The target control is correct");
+		assert.strictEqual(mPosition.position, "Before", "The target position is 'Before'");
+		assert.strictEqual(this.oGridDragOver._iDragFromIndex, 0, "The target index is correct.");
 	});
 
 	QUnit.test("Simulate drag leave", function(assert) {
@@ -178,8 +175,7 @@ sap.ui.define([
 
 	QUnit.test("Set indicator size", function(assert) {
 		// Arrange
-		var done = assert.async(),
-			oTargetControl = this.oGrid.getItems()[0],
+		var oTargetControl = this.oGrid.getItems()[0],
 			oFakeEvent = createFakeDragOverEvent(oTargetControl);
 
 		// Act
@@ -190,21 +186,19 @@ sap.ui.define([
 		this.oGridDragOver.handleDragOver(oFakeEvent);
 
 		// wait 250ms and handle drag over again on same place
-		setTimeout(function () {
-			this.oGridDragOver.handleDragOver(oFakeEvent);
+		this.clock.tick(250);
+		this.oGridDragOver.handleDragOver(oFakeEvent);
 
-			// Assert
-			var $indicator = jQuery(".sapUiDnDGridIndicator"),
-				iExpectedWidth = 5 * 80 + 4 * 10, // 5 columns and 4 gaps
-				iExpectedHeight = 3 * 80 + 2 * 10; // 3 rows and 2 gaps
+		Core.applyChanges();
+		this.clock.tick(500);
 
-			setTimeout(function() {
-				assert.strictEqual($indicator.outerWidth(), iExpectedWidth, "The indicator has the expected width.");
-				assert.strictEqual($indicator.outerHeight(), iExpectedHeight, "The indicator has the expected height.");
-				done();
-			}, 100); // for IE it takes a moment to resize, so we need a timeout
+		// Assert
+		var $indicator = jQuery(".sapUiDnDGridIndicator"),
+			iExpectedWidth = 5 * 80 + 4 * 10, // 5 columns and 4 gaps
+			iExpectedHeight = 3 * 80 + 2 * 10; // 3 rows and 2 gaps
 
-		}.bind(this), 250);
+		assert.strictEqual($indicator.outerWidth(), iExpectedWidth, "The indicator has the expected width.");
+		assert.strictEqual($indicator.outerHeight(), iExpectedHeight, "The indicator has the expected height.");
 	});
 
 	QUnit.module("Drag between two Grid containers", {
@@ -245,30 +239,26 @@ sap.ui.define([
 
 	QUnit.test("Check if the dragged keeps its original place", function(assert) {
 		// Arrange
-		var done = assert.async(),
-			oTargetControl = this.oGrid2.getItems()[0],
+		var oTargetControl = this.oGrid2.getItems()[0],
 			oFakeEvent = createFakeDragOverEvent(oTargetControl);
 
 		// Act
 		this.oGridDragOver.handleDragOver(oFakeEvent);
 
 		// wait 250ms and handle drag over again on same place
-		setTimeout(function () {
-			this.oGridDragOver.handleDragOver(oFakeEvent);
+		this.clock.tick(250);
+		this.oGridDragOver.handleDragOver(oFakeEvent);
 
-			setTimeout(function() {
-				assert.strictEqual(jQuery("#dragContainer").outerHeight(), 80, "The drag container has the expected height.");
-				assert.strictEqual(jQuery("#dragContainer .sapMText")[0].style.display, "none", "The drag element is hidden.");
-				done();
-			}, 100); // for IE it takes a moment to resize, so we need a timeout
+		Core.applyChanges();
+		this.clock.tick(500);
 
-		}.bind(this), 250);
+		assert.strictEqual(jQuery("#dragContainer").outerHeight(), 80, "The drag container has the expected height.");
+		assert.strictEqual(jQuery("#dragContainer .sapMText")[0].style.display, "none", "The drag element is hidden.");
 	});
 
 	QUnit.test("Check if the dragged keeps its original place when polyfill is used", function(assert) {
 		// Arrange
-		var done = assert.async(),
-			oTargetControl = this.oGrid2.getItems()[0],
+		var oTargetControl = this.oGrid2.getItems()[0],
 			oFakeEvent = createFakeDragOverEvent(oTargetControl);
 
 		// Act
@@ -277,16 +267,36 @@ sap.ui.define([
 			sSecondItemLeftPosition = oSecondItemWrapper.css("left");
 
 		// wait 250ms and handle drag over again on same place
-		setTimeout(function () {
-			this.oGridDragOver.handleDragOver(oFakeEvent);
+		this.clock.tick(250);
+		this.oGridDragOver.handleDragOver(oFakeEvent);
 
-			setTimeout(function() {
-				var sSecondItemLeftPositionAfterDrag = oSecondItemWrapper.css("left");
+		Core.applyChanges();
+		this.clock.tick(500);
 
-				assert.strictEqual(sSecondItemLeftPositionAfterDrag, sSecondItemLeftPosition, "The second item wrapper didn't shrink while dragging the item to the other container.");
-				done();
-			}, 500); // for IE it takes a moment to resize, so we need a timeout
+		var sSecondItemLeftPositionAfterDrag = oSecondItemWrapper.css("left");
 
-		}.bind(this), 250);
+		assert.strictEqual(sSecondItemLeftPositionAfterDrag, sSecondItemLeftPosition, "The second item wrapper didn't shrink while dragging the item to the other container.");
+	});
+
+	QUnit.test("Drag over an empty grid", function(assert) {
+		// Arrange
+		var oTargetControl = this.oGrid1.getItems()[0],
+			oFakeEvent = createFakeDragOverEvent(oTargetControl);
+
+		this.oGrid2.destroyItems();
+
+		// Act
+		this.oGridDragOver.handleDragOver(oFakeEvent);
+
+		// wait 250ms and handle drag over again on same place
+		this.clock.tick(250);
+
+		this.oGridDragOver.handleDragOver(oFakeEvent);
+
+		var mSuggestedPosition = this.oGridDragOver.getSuggestedDropPosition();
+
+		assert.ok(mSuggestedPosition, "There is a suggested drop position.");
+		assert.strictEqual(mSuggestedPosition.targetControl, null, "The target of the drop position is null.");
+		assert.strictEqual(mSuggestedPosition.position, "After", "The drop position is 'After'.");
 	});
 });

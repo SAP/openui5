@@ -70,6 +70,13 @@ sap.ui.define([
 					draggedControl: {type: "sap.ui.core.Control"}
 				}
 			}
+		},
+		events: {
+			/**
+			 * @override
+			 * @name sap.ui.core.dnd.DropInfo#drop
+			 * @param {sap.ui.core.Element} oControlEvent.getParameters.droppedControl The element on which the drag control is dropped. Could be <code>null</code> if you drop in an empty grid
+			 */
 		}
 	}});
 
@@ -162,7 +169,7 @@ sap.ui.define([
 
 		var mDropPosition = this._suggestDropPosition(oEvent);
 
-		if (mDropPosition && oEvent.dragSession) {
+		if (mDropPosition && oEvent.dragSession && mDropPosition.targetControl) {
 			oEvent.dragSession.setDropControl(mDropPosition.targetControl);
 			// mDropPosition.position may be different than oEvent.dragSession.getDropPosition, since the second is calculated inside DragAndDrop.js.
 			// This can be fixed by having a method oEvent.dragSession.setDropPosition
