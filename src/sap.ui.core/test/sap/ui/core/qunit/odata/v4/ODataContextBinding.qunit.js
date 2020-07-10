@@ -297,7 +297,7 @@ sap.ui.define([
 			assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
 			assert.strictEqual(oBinding.mParameters, mParameters);
 			if (bSuspended) {
-				assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Filter);
+				assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 
 				oModelMock.expects("buildQueryOptions")
 					.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
