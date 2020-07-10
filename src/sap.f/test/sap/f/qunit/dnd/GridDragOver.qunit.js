@@ -87,6 +87,7 @@ sap.ui.define([
 			assert.ok(mPosition, "There is a suggested position after timeout");
 			assert.strictEqual(mPosition.targetControl.sId, oTargetControl.sId, "The target control is correct");
 			assert.strictEqual(mPosition.position, "Before", "The target position is 'Before'");
+			assert.strictEqual(this.oGridDragOver._iDragFromIndex, 0, "The target index is correct.");
 
 			done();
 		}.bind(this), 250);
