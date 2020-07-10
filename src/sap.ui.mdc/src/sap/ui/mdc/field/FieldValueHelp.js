@@ -843,7 +843,7 @@ sap.ui.define([
 
 	}
 
-	FieldValueHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters) {
+	FieldValueHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest) {
 
 		var vResult = "";
 		var oWrapper = this.getContent();
@@ -884,10 +884,10 @@ sap.ui.define([
 			}.bind(this)).then(function() {
 				return SyncPromise.resolve().then(function() {
 					if (bKey) {
-						return oWrapper.getTextForKey(vValue, _mapParametersToHelp.call(this, oInParameters, aInParameters, false, aInBindings, oBindingContext), _mapOutParametersToHelp.call(this, oOutParameters, true));
+						return oWrapper.getTextForKey(vValue, _mapParametersToHelp.call(this, oInParameters, aInParameters, false, aInBindings, oBindingContext), _mapOutParametersToHelp.call(this, oOutParameters, true), bNoRequest);
 					} else {
 						// use default in-parameters for check
-						return oWrapper.getKeyForText(vValue, _mapParametersToHelp.call(this, undefined, aInParameters, false, aInBindings, oBindingContext));
+						return oWrapper.getKeyForText(vValue, _mapParametersToHelp.call(this, undefined, aInParameters, false, aInBindings, oBindingContext), bNoRequest);
 					}
 				}.bind(this)).then(function(vResult) {
 					_cleanupParameterBinding.call(this, aInBindings, bBindingChanged);
@@ -979,6 +979,14 @@ sap.ui.define([
 		return vResult;
 
 	}
+
+	FieldValueHelp.prototype._isTextOrKeyRequestSupported = function() {
+
+		// only possible if Wrapper added
+		var oWrapper = this.getContent();
+		return !!oWrapper;
+
+	};
 
 	FieldValueHelp.prototype.isUsableForValidation = function() {
 

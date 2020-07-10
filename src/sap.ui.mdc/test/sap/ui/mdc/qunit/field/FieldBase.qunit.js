@@ -2668,6 +2668,11 @@ sap.ui.define([
 			oStub.withArgs("Item1").returns("I1");
 			//			oStub.withArgs("Item2").returns("I2");
 			oStub.withArgs("Item3").returns("I3");
+			oStub = sinon.stub(oFieldHelp, "getItemForValue");
+			oStub.withArgs("I1").returns({key: "I1", description: "Item1"});
+			oStub.withArgs("I3").returns({key: "I3", description: "Item3"});
+			oStub.withArgs("Item1").returns({key: "I1", description: "Item1"});
+			oStub.withArgs("Item3").returns({key: "I3", description: "Item3"});
 			sinon.spy(oFieldHelp, "navigate");
 			sinon.spy(oFieldHelp, "open");
 			sinon.spy(oFieldHelp, "close");
@@ -3061,7 +3066,7 @@ sap.ui.define([
 		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		assert.equal(oFieldHelp.getFilterValue(), "", "FilterValue reset");
-		assert.ok(oFieldHelp.getKeyForText.calledWith("Item1"), "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledWith("Item1"), "getItemForValue called");
 		var aConditions = oFieldHelp.getConditions();
 		assert.equal(aConditions.length, 2, "Condition set on FieldHelp");
 		assert.equal(aConditions[1] && aConditions[1].values[0], "I1", "selected item set as condition");
@@ -3076,8 +3081,8 @@ sap.ui.define([
 	QUnit.test("invalid input", function(assert) {
 
 		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
-		oFieldHelp.getKeyForText.withArgs("Invalid").returns(null);
-		oFieldHelp.getKeyForText.withArgs("Unknown").returns(null);
+		oFieldHelp.getItemForValue.withArgs("Invalid").returns(null);
+		oFieldHelp.getItemForValue.withArgs("Unknown").returns(null);
 
 		var fnDone = assert.async();
 		oField.focus(); // as FieldHelp is connected with focus
@@ -3086,7 +3091,7 @@ sap.ui.define([
 		oContent._$input.val("=Invalid");
 		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-		assert.ok(oFieldHelp.getKeyForText.calledWith("Invalid"), "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledWith("Invalid"), "getItemForValue called");
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
@@ -3134,8 +3139,8 @@ sap.ui.define([
 		oField.setMaxConditions(1);
 		sap.ui.getCore().applyChanges();
 		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
-		oFieldHelp.getKeyForText.withArgs("Invalid").returns(null);
-		oFieldHelp.getKeyForText.withArgs("Unknown").returns(null);
+		oFieldHelp.getItemForValue.withArgs("Invalid").returns(null);
+		oFieldHelp.getItemForValue.withArgs("Unknown").returns(null);
 
 		var fnDone = assert.async();
 		oField.focus(); // as FieldHelp is connected with focus
@@ -3144,7 +3149,7 @@ sap.ui.define([
 		oContent._$input.val("Invalid");
 		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-		assert.ok(oFieldHelp.getKeyForText.calledWith("Invalid"), "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledWith("Invalid"), "getItemForValue called");
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
@@ -3333,13 +3338,13 @@ sap.ui.define([
 
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
 		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
-		oFieldHelp.getKeyForText.withArgs("Invalid").returns(
+		oFieldHelp.getItemForValue.withArgs("Invalid").returns(
 				Promise.reject(new ParseException("InvalidValue"))
 		);
-		oFieldHelp.getKeyForText.withArgs("Unknown").returns(
+		oFieldHelp.getItemForValue.withArgs("Unknown").returns(
 				Promise.reject(new ParseException("UnknownValue"))
 		);
-		oFieldHelp.getKeyForText.withArgs("Item9").returns(
+		oFieldHelp.getItemForValue.withArgs("Item9").returns(
 				Promise.reject(new ParseException("InvalidValue"))
 		);
 		sinon.stub(oFieldHelp, "isOpen").returns(true); // to simulate open suggestion
@@ -3352,7 +3357,7 @@ sap.ui.define([
 		oContent._$input.val("=Invalid");
 		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-		assert.ok(oFieldHelp.getKeyForText.calledWith("Invalid"), "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledWith("Invalid"), "getItemForValue called");
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.ok(oPromise, "Promise returned");
@@ -3383,7 +3388,7 @@ sap.ui.define([
 					oContent._$input.val("Invalid");
 					qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-					assert.ok(oFieldHelp.getKeyForText.calledWith("Invalid"), "getKeyForText called");
+					assert.ok(oFieldHelp.getItemForValue.calledWith("Invalid"), "getItemForValue called");
 					assert.equal(iCount, 1, "change event fired once");
 					assert.equal(sId, "F1", "change event fired on Field");
 					assert.ok(oPromise, "Promise returned");
@@ -3492,13 +3497,13 @@ sap.ui.define([
 		oField.setMaxConditions(1);
 		sap.ui.getCore().applyChanges();
 		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
-		oFieldHelp.getKeyForText.withArgs("Invalid").returns(
+		oFieldHelp.getItemForValue.withArgs("Invalid").returns(
 				Promise.reject(new ParseException("InvalidValue"))
 		);
-		oFieldHelp.getKeyForText.withArgs("Unknown").returns(
+		oFieldHelp.getItemForValue.withArgs("Unknown").returns(
 				Promise.reject(new ParseException("UnknownValue"))
 		);
-		oFieldHelp.getKeyForText.withArgs("Item9").returns(
+		oFieldHelp.getItemForValue.withArgs("Item9").returns(
 				Promise.reject(new ParseException("InvalidValue"))
 		);
 		sinon.stub(oFieldHelp, "isOpen").returns(true); // to simulate open suggestion
@@ -3510,7 +3515,7 @@ sap.ui.define([
 		oContent._$input.val("Invalid");
 		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-		assert.ok(oFieldHelp.getKeyForText.calledWith("Invalid"), "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledWith("Invalid"), "getItemForValue called");
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.ok(oPromise, "Promise returned");

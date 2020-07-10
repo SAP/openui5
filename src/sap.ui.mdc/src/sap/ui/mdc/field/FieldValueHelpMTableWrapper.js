@@ -287,7 +287,7 @@ sap.ui.define([
 
 	};
 
-	FieldValueHelpMTableWrapper.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters) {
+	FieldValueHelpMTableWrapper.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, bNoRequest) {
 
 		if (vKey === null || vKey === undefined) { // TODO: support boolean?
 			return null;
@@ -335,12 +335,16 @@ sap.ui.define([
 			}
 		}
 
-		// not in already loaded item -> ask the model
-		return _loadData.call(this, this._getKeyPath, vKey, "description", oInParameters, oOutParameters, true);
+		if (bNoRequest) {
+			throw new FormatException(this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [vKey]));
+		} else {
+			// not in already loaded item -> ask the model
+			return _loadData.call(this, this._getKeyPath, vKey, "description", oInParameters, oOutParameters, true);
+		}
 
 	};
 
-	FieldValueHelpMTableWrapper.prototype.getKeyForText = function(sText, oInParameters) {
+	FieldValueHelpMTableWrapper.prototype.getKeyForText = function(sText, oInParameters, bNoRequest) {
 
 		if (!sText) {
 			return null;
@@ -377,8 +381,12 @@ sap.ui.define([
 			}
 		}
 
-		// not in already loaded item -> ask the model (use in-parameters to find right one)
-		return _loadData.call(this, this._getDescriptionPath, sText, "key", oInParameters, undefined, false);
+		if (bNoRequest) {
+			throw new ParseException(this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [sText]));
+		} else {
+			// not in already loaded item -> ask the model (use in-parameters to find right one)
+			return _loadData.call(this, this._getDescriptionPath, sText, "key", oInParameters, undefined, false);
+		}
 
 	};
 
