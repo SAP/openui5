@@ -220,4 +220,36 @@ sap.ui.define([
         assert.ok(this.oPanel._oResetBtn.getVisible(), "Once handler is provided, Button is visible");
     });
 
+    QUnit.test("Check 'getSelectedFields' - should only return selected fields", function(assert){
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+
+        //Three existing items --> the amount of selected items should match the initially visible ones
+        assert.equal(this.oPanel.getSelectedFields().length, this.oExistingMock.items.length, "Correct amount of selected items returned");
+
+    });
+
+    QUnit.test("Check toggle of 'allowFilterSelection' property", function(assert){
+
+        this.oPanel.setAllowSelection(false);
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+
+        assert.equal(this.oPanel._oGroupModeSelect.getVisible(), false, "Group Select is not visible without selection");
+		this.oPanel._oListControl.getItems().forEach(function(oOuterItem){
+			var oPanel = oOuterItem.getContent()[0];
+			var oInnerList = oPanel.getContent()[0];
+            assert.equal(oInnerList.getMode(), "None", "List does not allow selection");
+		});
+
+
+        this.oPanel.setAllowSelection(true);
+
+        assert.equal(this.oPanel._oGroupModeSelect.getVisible(), true, "Group Select is visible with selection");
+		this.oPanel._oListControl.getItems().forEach(function(oOuterItem){
+			var oPanel = oOuterItem.getContent()[0];
+			var oInnerList = oPanel.getContent()[0];
+            assert.equal(oInnerList.getMode(), "MultiSelect", "List does allow selection");
+		});
+    });
+
 });

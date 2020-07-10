@@ -4,9 +4,14 @@ sap.ui.define([
 	"use strict";
 
 	var oCustomDelegate = Object.assign({}, FilterBarDelegate);
+	var aInfo;
 
-	oCustomDelegate.fetchProperties = function() {
+	oCustomDelegate.fetchProperties = function(oFilterBar) {
 		var oFilterPromise = FilterBarDelegate.fetchProperties.apply(this, arguments);
+
+		if (aInfo){
+			return Promise.resolve(aInfo);
+		}
 
 		return oFilterPromise.then(function(aProperties){
 			aProperties.forEach(function(oProperty, iIndex){
@@ -20,6 +25,8 @@ sap.ui.define([
 					oProperty.label = "Region " + oProperty.label;
 				}
 			});
+
+			aInfo = aProperties;
 			return aProperties;
 		});
 	};

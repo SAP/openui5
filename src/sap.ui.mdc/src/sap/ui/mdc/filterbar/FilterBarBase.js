@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/library', 'sap/ui/Device', 'sap/ui/mdc/Control', 'sap/base/util/merge', 'sap/base/util/deepEqual', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/base/ManagedObjectObserver', 'sap/base/Log', 'sap/ui/mdc/condition/ConditionModel', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/condition/ConditionConverter', 'sap/m/MessageBox', "sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/condition/FilterConverter", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/mdc/util/FilterUtil"
-], function(coreLibrary, Device, Control, merge, deepEqual, ManagedObjectModel, ManagedObjectObserver, Log, ConditionModel, Condition, IdentifierUtil, ConditionConverter, MessageBox, ControlPersonalizationWriteAPI, FlexRuntimeInfoAPI, StateUtil, FilterConverter, ControlVariantApplyAPI, FilterUtil) {
+	'sap/ui/core/library', 'sap/ui/mdc/p13n/AdaptationController', 'sap/ui/mdc/p13n/FlexUtil', 'sap/ui/Device', 'sap/ui/mdc/Control', 'sap/base/util/merge', 'sap/base/util/deepEqual', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/base/ManagedObjectObserver', 'sap/base/Log', 'sap/ui/mdc/condition/ConditionModel', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/condition/ConditionConverter', 'sap/m/MessageBox', "sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/condition/FilterConverter", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/mdc/util/FilterUtil", "sap/m/Button", "sap/m/library"
+], function(coreLibrary, AdaptationController, FlexUtil, Device, Control, merge, deepEqual, ManagedObjectModel, ManagedObjectObserver, Log, ConditionModel, Condition, IdentifierUtil, ConditionConverter, MessageBox, ControlPersonalizationWriteAPI, FlexRuntimeInfoAPI, StateUtil, FilterConverter, ControlVariantApplyAPI, FilterUtil, Button, mLibrary) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -198,6 +198,8 @@ sap.ui.define([
 		}
 	});
 
+	var ButtonType = mLibrary.ButtonType;
+
 	FilterBarBase.INNER_MODEL_NAME = "$sap.ui.filterbar.mdc.FilterBarBase";
 	FilterBarBase.CONDITION_MODEL_NAME = "$filters";
 
@@ -243,15 +245,26 @@ sap.ui.define([
 		this.setProperty("adaptationConfig", {
 			liveMode: true,
 			retrievePropertyInfo: this._getNonHiddenPropertyInfoSet,
+			//TODO: itemConfig can be deleted once the url param sap-ui-xx-complexP13n has been removed
 			itemConfig: {
-				addOperation: "addFilter",
-				removeOperation: "removeFilter",
-				moveOperation: "moveFilter",
-				panelPath: "sap/ui/mdc/p13n/panels/AdaptFiltersPanel",
+				changeOperations: {
+					add: "addFilter",
+					remove: "removeFilter",
+					move: "moveFilter"
+				},
+				adaptationUI: "sap/ui/mdc/p13n/panels/AdaptFiltersPanel",
 				title: this._oRb.getText("filterbar.ADAPT_TITLE")
 			},
 			filterConfig: {
-				filterControl: this //needs to be set for correct determination in 'ConditionFlex'
+				changeOperations: {
+					add: "addFilter",
+					remove: "removeFilter",
+					move: "moveFilter"
+				},
+				ignoreIndex: true,
+				adaptationUI: this.retrieveInbuiltFilter,
+				applyFilterChangeOn: this,
+				title: this._oRb.getText("filterbar.ADAPT_TITLE")
 			}
 		});
 	};
@@ -288,6 +301,18 @@ sap.ui.define([
 
 	FilterBarBase.prototype._getConditionModel = function() {
 		return this._oConditionModel;
+	};
+
+	FilterBarBase.prototype._getSearchButton = function() {
+		if (!this._btnSearch){
+			this._btnSearch = new Button(this.getId() + "-btnSearch", {
+				text: this._oRb.getText("filterbar.GO"),
+				press: this.onSearch.bind(this),
+				type: ButtonType.Emphasized
+			});
+		}
+
+		return this._btnSearch;
 	};
 
 	/**
@@ -341,12 +366,6 @@ sap.ui.define([
 		return this;
 	};
 
-	FilterBarBase.prototype.setFilterConditions = function(mValue, bSuppressInvalidate) {
-		StateUtil.checkConditionOperatorSanity(mValue);
-		this.setProperty("filterConditions", mValue, bSuppressInvalidate);
-		return this;
-	};
-
 	/**
 	 * Returns the externalized conditions of the inner condition model.
 	 * This method may only be called, once the <code>initialzed</code> is resolved.
@@ -392,7 +411,7 @@ sap.ui.define([
 	/* FilterBarBase.prototype.retrieveAdaptationController = function() {
 		if (!this._oAdaptationController) {
 			this._oAdaptationController = new AdaptationController({
-				liveMode: true,
+				liveMode: false,
 				stateRetriever: function(FilterBarDelegate, aPropertyInfo){
 					return this.getCurrentState(aPropertyInfo);
 				},
@@ -400,17 +419,7 @@ sap.ui.define([
 				afterChangesCreated: function (oAdaptationController, aChanges) {
 					FlexUtil.handleChanges(aChanges);
 				},
-				retrievePropertyInfo: this._getNonHiddenPropertyInfoSet,
-				itemConfig: {
-					addOperation: "addFilter",
-					removeOperation: "removeFilter",
-					moveOperation: "moveFilter",
-					panelPath: "sap/ui/mdc/p13n/panels/AdaptFiltersPanel",
-					title: this._oRb.getText("filterbar.ADAPT_TITLE")
-				},
-				filterConfig: {
-					filterControl: this //needs to be set for correct determination in 'ConditionFlex'
-				}
+				retrievePropertyInfo: this._getNonHiddenPropertyInfoSet
 			});
 		}
 		return this._oAdaptationController;

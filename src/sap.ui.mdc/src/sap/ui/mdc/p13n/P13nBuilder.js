@@ -6,6 +6,8 @@ sap.ui.define([
 ], function(merge) {
     "use strict";
 
+    var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+
 	/**
 	 *  Internal Utility class to create personalization UI's
 	 *
@@ -166,23 +168,71 @@ sap.ui.define([
 
             });
 
+            if (sP13nType){
+                this._sortP13nData(sP13nType, aItems);
+            }
+
             return {
                 items: aItems,
                 itemsGrouped: this._builtGroupStructure(mItemsGrouped)
             };
         },
 
-        _builtGroupStructure: function(mItemsGrouped) {
+        //TODO: generify
+        _sortP13nData: function (sP13nType, aItems) {
 
+            var mP13nTypeSorting = this._getSortAttributes()[sP13nType];
+
+            var sPositionAttribute = mP13nTypeSorting.position;
+            var sSelectedAttribute = mP13nTypeSorting.visible;
+
+            var sLocale = sap.ui.getCore().getConfiguration().getLocale().toString();
+
+            var oCollator = window.Intl.Collator(sLocale, {});
+
+            // group selected / unselected --> sort alphabetically in each group
+            aItems.sort(function (mField1, mField2) {
+                if (mField1[sSelectedAttribute] && mField2[sSelectedAttribute]) {
+                    return (mField1[sPositionAttribute] || 0) - (mField2[sPositionAttribute] || 0);
+                } else if (mField1[sSelectedAttribute]) {
+                    return -1;
+                } else if (mField2[sSelectedAttribute]) {
+                    return 1;
+                } else if (!mField1[sSelectedAttribute] && !mField2[sSelectedAttribute]) {
+                    return oCollator.compare(mField1.label, mField2.label);
+                }
+            });
+
+        },
+
+        _getSortAttributes: function(){
+            return {
+                Item: {
+                    position: "position",
+                    visible: "selected"
+                },
+                Sort: {
+                    position: "sortPosition",
+                    visible: "isSorted"
+                },
+                Filter: {
+                    position: undefined,
+                    visible: undefined
+                }
+            };
+        },
+
+        _builtGroupStructure: function(mItemsGrouped) {
             var aGroupedItems = [];
             Object.keys(mItemsGrouped).forEach(function(sGroupKey){
+                this._sortP13nData("Filter", mItemsGrouped[sGroupKey]);
                 aGroupedItems.push({
                     group: sGroupKey,
-                    groupLabel: mItemsGrouped[sGroupKey][0].groupLabel,//Grouplabel might not be necessarily be propagated to every item
+                    groupLabel: mItemsGrouped[sGroupKey][0].groupLabel || oRB.getText("p13nDialog.FILTER_DEFAULT_GROUP"),//Grouplabel might not be necessarily be propagated to every item
                     groupVisible: true,
                     items: mItemsGrouped[sGroupKey]
                 });
-            });
+            }.bind(this));
             return aGroupedItems;
 
         },

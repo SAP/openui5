@@ -48,6 +48,20 @@ sap.ui.define([
 				 */
 				expandFirstGroup: {
 					type: "boolean"
+				},
+				/**
+				 * Can be used to allow the selection of items
+				 */
+				allowSelection: {
+					type: "boolean",
+					defaultValue: true
+				},
+				/**
+				 * Can be used to check whether grouping/Panels should be used or not
+				 */
+				grouping: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			aggregations: {
@@ -74,29 +88,31 @@ sap.ui.define([
 			}.bind(this)
 		}).addStyleClass("sapUiGroupPanelFloatRight");
 
+		this._oGroupModeSelect = new Select({
+			items: [
+				new Item({
+					key: "all",
+					text: this.getResourceText("p13nDialog.GROUPMODE_ALL")
+				}),
+				new Item({
+					key: "visible",
+					text: this.getResourceText("p13nDialog.GROUPMODE_VISIBLE")
+				})
+			],
+			change: this._onGroupModeChange.bind(this)
+		});
+
 		var oContainer = new Page({
 			showHeader: false,
 			content: [
 				new FixFlex({
 					minFlexSize: 1,
 					fixContent: [
-						new Select({
-							items: [
-								new Item({
-									key: "all",
-									text: this.getResourceText("p13nDialog.GROUPMODE_ALL")
-								}),
-								new Item({
-									key: "visible",
-									text: this.getResourceText("p13nDialog.GROUPMODE_VISIBLE")
-								})
-							],
-							change: this._onGroupModeChange.bind(this)
-						}),
+						this._oGroupModeSelect,
 						this._oResetBtn,
 						this._getSearchField()
 					],
-					flexContent: [
+						flexContent: [
 						this._oListControl
 					]
 				})
@@ -128,66 +144,95 @@ sap.ui.define([
 		return this;
 	};
 
+	GroupPanelBase.prototype.setAllowSelection = function(bAllowSelection) {
+		this.setProperty("allowSelection", bAllowSelection);
+
+		this._oGroupModeSelect.setVisible(bAllowSelection);
+
+		this.setItemFactory(this.getItemFactory());//TODO: don't call setter with getter
+		return this;
+	};
+
 	GroupPanelBase.prototype._getDefaultGroupTemplate = function(fnFactory) {
 
 		var bExpandFirstGroup = this.getExpandFirstGroup();
 
-		var oP13nCellTemplate = new CustomListItem({
-			visible: "{groupVisible}",
-			content: [
-				new Panel({
-					expandable: true,
-					expanded: {
-						path: "group",
-						formatter: function(){
-							if (this.getBindingContext()){
-								var bExpanded = bExpandFirstGroup && (this.getBindingContext().sPath.split("/")[2] === "0");
-								return bExpanded;
-							} else {
-								return false;
-							}
-						}
-					},
-					width:"100%",
-					headerToolbar: [
-						new Toolbar({
-							content: [
-								new Label({
-									text: "{groupLabel}",
-									design: "Bold"
-								})
-							]
-						})
-					],
+		var oListTemplate = new List({
+			selectionChange: function(oBindingInfo) {
+				var sPath = oBindingInfo.getParameter("listItem").getBindingContext().sPath;
+				var oItem = this.getModel().getProperty(sPath);
+				this.fireChange({
+					reason: oItem.selected ? "Add" : "Remove",
+					item: oItem
+				});
+			}.bind(this),
+			showSeparators: "None",
+			mode: this.getAllowSelection() ? "MultiSelect" : "None",
+			items: {
+				path: "items",
+				key: "name",
+				factory: fnFactory
+			}
+		});
+
+		var oPanelTemplate = new Panel({
+			expandable: true,
+			expanded: {
+				path: "group",
+				formatter: function(){
+					if (this.getBindingContext()){
+						var bExpanded = bExpandFirstGroup && (this.getBindingContext().sPath.split("/")[2] === "0");
+						return bExpanded;
+					} else {
+						return false;
+					}
+				}
+			},
+			width:"100%",
+			headerToolbar: [
+				new Toolbar({
 					content: [
-						new List({
-							selectionChange: function(oBindingInfo) {
-								var sPath = oBindingInfo.getParameter("listItem").getBindingContext().sPath;
-								var oItem = this.getModel().getProperty(sPath);
-								this.fireChange({
-									reason: oItem.selected ? "Add" : "Remove",
-									item: oItem
-								});
-							}.bind(this),
-							showSeparators: "None",
-							mode: "MultiSelect",
-							items: {
-								path: "items",
-								key: "name",
-								factory: fnFactory
-							}
+						new Label({
+							text: "{groupLabel}",
+							design: "Bold"
 						})
 					]
 				})
+			],
+			content: [
+				oListTemplate
+			]
+		});
+
+		var bGroupingEnabled = this.getGrouping();
+
+		if (!bGroupingEnabled && !oListTemplate.hasStyleClass("sapUiMDCPanelPadding")) {
+			oListTemplate.addStyleClass("sapUiMDCPanelPadding");
+		} else {
+			oListTemplate.removeStyleClass("sapUiMDCPanelPadding");
+		}
+
+		var oInnerTemplate = bGroupingEnabled ? oPanelTemplate : oListTemplate;
+
+		var oP13nCellTemplate = new CustomListItem({
+			visible: "{groupVisible}",
+			content: [
+				oInnerTemplate
 			]
 		});
 
 		return oP13nCellTemplate;
 	};
 
+	GroupPanelBase.prototype.setGrouping = function(bAllowGrouping) {
+		this.setProperty("grouping", bAllowGrouping);
+		this.setItemFactory(this.getItemFactory());//TODO: don't call setter with getter
+		return this;
+	};
+
     GroupPanelBase.prototype._createInnerListControl = function(){
 
-		var oBasePanelUI = new List(this.getId() + "-innerListControl", {
+		var oBasePanelUI = new List(this.getId() + "idBasePanelTable", {
 			rememberSelections: false,
 			itemPress: [this._onItemPressed, this],
 			selectionChange: [this._onSelectionChange, this],
@@ -258,12 +303,42 @@ sap.ui.define([
 
 		aFilters = aFilters ? aFilters : [];
 
+		if (this.getGrouping()) {
+			this._oListControl.getItems().forEach(function(oOuterItem){
+				var oPanel = oOuterItem.getContent()[0];
+				var oInnerList = oPanel.getContent()[0];
+				oInnerList.getBinding("items").filter(aFilters, true);
+				this._togglePanelVisibility(oPanel);
+			}.bind(this));
+		}
+
+	};
+
+	GroupPanelBase.prototype.getSelectedFields = function () {
+
+		//There are no selected Fields in case this mode is disabled
+		if (!this.getAllowSelection()){
+			return;
+		}
+
+		var aSelectedItems = [];
+
 		this._oListControl.getItems().forEach(function(oOuterItem){
 			var oPanel = oOuterItem.getContent()[0];
 			var oInnerList = oPanel.getContent()[0];
-			oInnerList.getBinding("items").filter(aFilters, true);
-			this._togglePanelVisibility(oPanel);
+			oInnerList.getItems().forEach(function(oInnerItem){
+
+
+				if (oInnerItem.getSelected()){
+					var sPath = oInnerItem.getBindingContextPath();
+					var sKey = this.getModel().getProperty(sPath).name;
+
+					aSelectedItems.push(sKey);
+				}
+			}.bind(this));
 		}.bind(this));
+
+		return aSelectedItems;
 	};
 
 	GroupPanelBase.prototype._checkAllPanels = function () {
@@ -276,7 +351,10 @@ sap.ui.define([
 
 	GroupPanelBase.prototype.setP13nModel = function(oP13nModel) {
 		BasePanel.prototype.setP13nModel.apply(this, arguments);
-		this._checkAllPanels();
+		if (this.getGrouping()){
+			this._checkAllPanels();
+		}
+		this._bindListItems();
 	};
 
     GroupPanelBase.prototype._bindListItems = function() {

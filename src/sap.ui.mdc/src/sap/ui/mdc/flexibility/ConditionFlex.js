@@ -8,7 +8,7 @@ sap.ui.define([
 
 	var fDetermineFilterControl = function(oControl) {
 		var oFilterConfig = oControl.getAdaptationConfig ? oControl.getAdaptationConfigAttribute("filterConfig") : null;
-		return oFilterConfig ? oFilterConfig.filterControl : null;
+		return oFilterConfig ? oFilterConfig.applyFilterChangeOn : null;
 	};
 
 	var fAddCondition = function(oChange, oChangeContent, oControl, mPropertyBag, bIsRevert) {

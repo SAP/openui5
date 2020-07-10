@@ -27,6 +27,11 @@ sap.ui.define([
 		// not have any effect on the success rate of the tests.
 		timeout: 45,
 
+
+		appParams: {
+			"sap-ui-xx-complexP13n": true
+		},
+
 		arrangements: {
 			iStartMyUIComponentInViewMode: function() {
 
@@ -256,12 +261,26 @@ sap.ui.define([
 		Then.iTeardownMyUIComponent();
 	});
 
-	opaTest('I should see the "Country Code" filter field', function(Given, When, Then) {
+	opaTest('I should see the "Book ID" and "Date of Birth" filter field', function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
+
+		//select item from default group
 		When.onTheBooksListReportPage.iPressOnTheAdaptFiltersButton();
-		Then.onTheBooksListReportPage.iShouldSeeTheAdaptFiltersP13nPopover();
-		When.onTheBooksListReportPage.iSelectTheAdaptFiltersP13nItem("Country Code");
-		var aLabelNames = ["Author", "Title", "Stock range", "CreatedAt", "Language", "Country Code"];
+		Then.onTheBooksListReportPage.iShouldSeeTheAdaptFiltersP13nDialog();
+		When.onTheBooksListReportPage.iSelectTheAdaptFiltersP13nItem("Book ID");
+		When.onTheBooksListReportPage.iPressAdaptFiltersOk();
+
+		var aLabelNames = ["Author", "Title", "Stock range", "CreatedAt", "Language", "Book ID"];
+		Then.onTheBooksListReportPage.iShouldSeeTheFilterFieldsWithLabels(aLabelNames);
+
+		//Select item from a different group
+		When.onTheBooksListReportPage.iPressOnTheAdaptFiltersButton();
+		When.onTheBooksListReportPage.iToggleFilterPanel("Books");
+		When.onTheBooksListReportPage.iToggleFilterPanel("Authors");
+		When.onTheBooksListReportPage.iSelectTheAdaptFiltersP13nItem("Date of Birth");
+		When.onTheBooksListReportPage.iPressAdaptFiltersOk();
+
+		aLabelNames = ["Author", "Title", "Stock range", "CreatedAt", "Language", "Book ID", "Date of Birth"];
 		Then.onTheBooksListReportPage.iShouldSeeTheFilterFieldsWithLabels(aLabelNames);
 
 		// cleanup
@@ -271,8 +290,10 @@ sap.ui.define([
 	opaTest('I should not see the "Stock" filter field', function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 		When.onTheBooksListReportPage.iPressOnTheAdaptFiltersButton();
-		Then.onTheBooksListReportPage.iShouldSeeTheAdaptFiltersP13nPopover();
-		When.onTheBooksListReportPage.iDeselectTheAdaptFiltersP13nItem("Stock");
+		Then.onTheBooksListReportPage.iShouldSeeTheAdaptFiltersP13nDialog();
+		When.onTheBooksListReportPage.iDeselectTheAdaptFiltersP13nItem("Stock range");
+		When.onTheBooksListReportPage.iPressAdaptFiltersOk();
+
 		var aLabelNames = ["Author", "Title", "CreatedAt", "Language"];
 		Then.onTheBooksListReportPage.iShouldSeeTheFilterFieldsWithLabels(aLabelNames);
 
@@ -280,6 +301,8 @@ sap.ui.define([
 		Then.iTeardownMyUIComponent();
 	});
 
+	/* ------- TEMPORARY DISABLED AS REORDERING IS NOT AVAILABLE YET -----------*/
+	/*
 	opaTest('It should reorder the "Stock" filter field', function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
@@ -309,7 +332,7 @@ sap.ui.define([
 
 		// cleanup
 		Then.iTeardownMyUIComponent();
-	});
+	});*/
 
 	QUnit.module("ListReport - Books Page Variant", oModuleSettings);
 

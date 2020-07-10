@@ -103,7 +103,11 @@ sap.ui.define([
 					oChangedState.items.splice(3,1);
 
 					//create according change(s) --> check with FlexUtil
-					aChanges = FlexUtil.getArrayDeltaChanges(oInitialState.items, oChangedState.items, function(o){return o.name + o.role;}, this.oChart, "removeItem", "addItem");
+					aChanges = FlexUtil.getArrayDeltaChanges(oInitialState.items, oChangedState.items, function(o){return o.name + o.role;}, this.oChart, {
+						add: "addItem",
+						remove: "removeItem",
+						move: "moveItem"
+					});
 					FlexUtil.handleChanges(aChanges, this.oChart).then(function (aNewChanges) {
 						//check if the change has been created correctly
 						assert.strictEqual(aNewChanges.length, 1, "The correct amount of changes has been created:" + aNewChanges.length);
@@ -405,7 +409,11 @@ sap.ui.define([
 			};
 
 			//create according change(s)
-			var aChanges = FlexUtil.getArrayDeltaChanges(aExistingArray, aChangedArray, fnSymbol, this.oChart, "removeSort", "addSort");
+			var aChanges = FlexUtil.getArrayDeltaChanges(aExistingArray, aChangedArray, fnSymbol, this.oChart, {
+				add: "addSort",
+				remove: "removeSort",
+				move: "moveSort"
+			});
 
 			//check if the change has been created correctly
 			assert.strictEqual(aChanges.length, 1, "The correct amount of changes has been created");
@@ -426,7 +434,11 @@ sap.ui.define([
 					aExistingArray = Object.assign([], aSorters);
 					aChangedArray = [];
 
-					aChanges = FlexUtil.getArrayDeltaChanges(aExistingArray, aChangedArray, fnSymbol, this.oChart, "removeSort", "addSort");
+					aChanges = FlexUtil.getArrayDeltaChanges(aExistingArray, aChangedArray, fnSymbol, this.oChart,  {
+						add: "addSort",
+						remove: "removeSort",
+						move: "moveSort"
+					});
 					assert.strictEqual(aChanges.length, 1, "The correct amount of changes has been created");
 					assert.strictEqual(aChanges[0].changeSpecificData.changeType, "removeSort", "The created change has a correct type");
 					assert.strictEqual(aChanges[0].changeSpecificData.content.name, "Name", "The change includes the correct property");
@@ -461,7 +473,11 @@ sap.ui.define([
 			};
 
 			//create according change(s)
-			var aChanges = FlexUtil.getArrayDeltaChanges(aExistingArray, aChangedArray, fnSymbol, this.oChart, "removeSort", "addSort");
+			var aChanges = FlexUtil.getArrayDeltaChanges(aExistingArray, aChangedArray, fnSymbol, this.oChart,  {
+				add: "addSort",
+				remove: "removeSort",
+				move: "moveSort"
+			});
 
 			//check if the change has been created correctly
 			assert.strictEqual(aChanges.length, 2, "The correct amount of changes has been created");
@@ -500,7 +516,11 @@ sap.ui.define([
 				return o.name + o.descending;
 			};
 			//create according change(s)
-			var aChanges = FlexUtil.getArrayDeltaChanges(aExistingArray, aChangedArray, fnSymbol, this.oChart, "removeSort", "addSort");
+			var aChanges = FlexUtil.getArrayDeltaChanges(aExistingArray, aChangedArray, fnSymbol, this.oChart,  {
+				add: "addSort",
+				remove: "removeSort",
+				move: "moveSort"
+			});
 			//check if the change has been created correctly
 			assert.strictEqual(aChanges.length, 1, "The correct amount of changes has been created");
 			assert.strictEqual(aChanges[0].changeSpecificData.changeType, "addSort", "The created change has a correct type");
@@ -572,7 +592,11 @@ sap.ui.define([
 			};
 
 			//create according change(s)
-			var aChanges = FlexUtil.getArrayDeltaChanges(aExistingArray, aChangedArray, fnSymbol, this.oChart, "removeSort", "addSort", "moveSort");
+			var aChanges = FlexUtil.getArrayDeltaChanges(aExistingArray, aChangedArray, fnSymbol, this.oChart,  {
+				add: "addSort",
+				remove: "removeSort",
+				move: "moveSort"
+			});
 
 			//check if the change(s) have been created correctly
 			assert.strictEqual(aChanges.length, 1, "The correct amount of changes has been created");
@@ -622,7 +646,11 @@ sap.ui.define([
 				return o.name + o.descending;
 			};
 			//create according change(s)
-			var aChanges = FlexUtil.getArrayDeltaChanges(aExistingArray, aChangedArray, fnSymbol, this.oChart, "removeSort", "addSort");
+			var aChanges = FlexUtil.getArrayDeltaChanges(aExistingArray, aChangedArray, fnSymbol, this.oChart,  {
+				add: "addSort",
+				remove: "removeSort",
+				move: "moveSort"
+			});
 			//check if the change has been created correctly
 			assert.strictEqual(aChanges.length, 4, "The correct amount of changes has been created");
 

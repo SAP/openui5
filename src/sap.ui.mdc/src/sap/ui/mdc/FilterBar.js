@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button'
-], function(FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button) {
+	"sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button', "sap/ui/mdc/p13n/StateUtil", "sap/base/util/merge", "sap/ui/mdc/filterbar/p13n/AdaptationFilterBar"
+], function(FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, StateUtil, merge, AdaptationFilterBar) {
 	"use strict";
 
 
@@ -113,6 +113,15 @@ sap.ui.define([
 		}
 	};
 
+	FilterBar.prototype.setFilterConditions = function(mValue, bSuppressInvalidate) {
+		StateUtil.checkConditionOperatorSanity(mValue);
+		if (this._oP13nFB){
+			this._oP13nFB.setFilterConditions(merge({},mValue));
+		}
+		this.setProperty("filterConditions", mValue, bSuppressInvalidate);
+		return this;
+	};
+
 	FilterBar.prototype._getP13nModeItem = function() {
 		return this._oModel.getProperty("/_p13nModeItem");
 	};
@@ -161,11 +170,7 @@ sap.ui.define([
 
 			this._oFilterBarLayout.addButton(this._btnAdapt);
 
-			this._btnSearch = new Button(this.getId() + "-btnSearch", {
-				text: this._oRb.getText("filterbar.GO"),
-				press: this.onSearch.bind(this),
-				type: ButtonType.Emphasized
-			});
+			this._btnSearch = this._getSearchButton();
 			this._btnSearch.setModel(this._oModel, FilterBarBase.INNER_MODEL_NAME);
 			this._btnSearch.bindProperty("visible", {
 				parts: [
@@ -185,11 +190,27 @@ sap.ui.define([
 		}
 	};
 
+	FilterBar.prototype.retrieveInbuiltFilter = function() {
+		var oInbuiltFilterPromise = FilterBarBase.prototype.retrieveInbuiltFilter.apply(this, arguments);
+		return oInbuiltFilterPromise.then(function(oInnerFB){
+			oInnerFB._bPersistValues = this._bPersistValues;
+			return oInnerFB;
+		}.bind(this));
+	};
+
 	FilterBar.prototype.onAdaptFilters = function(oEvent) {
-		return this._oMetadataAppliedPromise.then(function() {
-			return this.retrieveAdaptationController().then(function (oAdaptationController) {
-				return oAdaptationController.showP13n(this._btnAdapt, "Item");
-			}.bind(this));
+		return new Promise(function(resolve, reject){
+			return this._oMetadataAppliedPromise.then(function() {
+				//TODO: remove experimental URL param
+				sap.ui.require(["sap/base/util/UriParameters"], function(SAPUriParameters){
+					var oURLParams = new SAPUriParameters(window.location.search);
+					var bComplexP13nEnabled = oURLParams.getAll("sap-ui-xx-complexP13n")[0] === "true";
+						this.retrieveAdaptationController().then(function (oAdaptationController) {
+							oAdaptationController.setLiveMode(!bComplexP13nEnabled);
+							resolve(oAdaptationController.showP13n(this._btnAdapt, bComplexP13nEnabled ? "Filter" : "Item"));
+						}.bind(this));
+				}.bind(this), reject);
+			}.bind(this), reject);
 		}.bind(this));
 	};
 

@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/p13n/panels/BasePanel", "sap/ui/mdc/Table", "sap/ui/mdc/Chart", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/TableSettings", "sap/ui/mdc/chart/ChartSettings", "sap/ui/mdc/FilterBar", "sap/m/Button", "sap/ui/mdc/table/Column","sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/mdc/FilterField"
-], function (BasePanel, Table, Chart, TableDelegate, TableSettings, ChartSettings, FilterBar, Button, Column, Dimension, Measure, FilterField) {
+	"sap/ui/mdc/p13n/panels/BasePanel", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/Table", "sap/ui/mdc/Chart", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/TableSettings", "sap/ui/mdc/chart/ChartSettings", "sap/ui/mdc/FilterBar", "sap/m/Button", "sap/ui/mdc/table/Column","sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/mdc/FilterField"
+], function (BasePanel, FilterBarDelegate, Table, Chart, TableDelegate, TableSettings, ChartSettings, FilterBar, Button, Column, Dimension, Measure, FilterField) {
 	"use strict";
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
@@ -27,8 +27,10 @@ sap.ui.define([
 
 				this.oAdaptationController.oAdaptationControlDelegate.getFilterDelegate = function() {
 					return {
-						addFilterItem: function(){
-							return Promise.resolve(new FilterField());
+						addFilterItem: function(oProp, oControl){
+							return Promise.resolve(new FilterField({
+								conditions: "{$filters>/conditions/" + oProp.name + "}"
+							}));
 						}
 					};
 				};
@@ -558,6 +560,14 @@ sap.ui.define([
 					}
 				];
 
+				FilterBarDelegate.addItem = function(sKey, oFilterBar) {
+					return Promise.resolve(new FilterField({
+						conditions: "{$filters>/conditions/" + sKey + "}"
+					}));
+				};
+
+				this.oAdaptationController.oAdaptationControlDelegate = FilterBarDelegate;
+
 				//no delegate in Test --> Stub property info call
 				var oPropertyInfoPromise = new Promise(function(resolve,reject){
 					this.oAdaptationController.aPropertyInfo = this.aPropertyInfo;
@@ -589,29 +599,26 @@ sap.ui.define([
 		this.oFilterBarNonStub._aProperties = aMockProperties;
 
 		this.oFilterBarNonStub.retrieveAdaptationController().then(function (oAdaptationController) {
-			this.oNonStubAC = oAdaptationController;
-
-			var oBtn = new Button();
-
-			this.oNonStubAC.showP13n(oBtn, "Item").then(function(oP13nControl){
+		this.oNonStubAC = oAdaptationController;
+		this.oNonStubAC.setLiveMode(false);
+		this.oNonStubAC.showP13n(undefined, "Filter").then(function(oP13nControl){
 
 				//check container
 				assert.ok(oP13nControl, "Container has been created");
-				assert.ok(oP13nControl.isA("sap.m.ResponsivePopover"));
+				assert.ok(oP13nControl.isA("sap.m.Dialog"));
 				assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
 				assert.ok(this.oNonStubAC.bIsDialogOpen,"dialog is open");
 
 				//check inner panel
-				var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-				assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.AdaptFiltersPanel"), "Correct panel created");
+				var oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner()._oListControl;
+				assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "Correct P13n UI created");
 				assert.ok(oInnerTable, "Inner Table has been created");
 
-				//we do not want to see the basic search field
-				assert.equal(oInnerTable.getItems().length, aMockProperties.length - 1, "correct amount of items has been set");
 				this.oFilterBarNonStub.destroy();
 				this.oFilterBarNonStub = null;
 				this.oNonStubAC = null;
 				done();
+
 			}.bind(this));
 		}.bind(this));
 
@@ -634,7 +641,6 @@ sap.ui.define([
 	QUnit.test("use AdaptFiltersPanel", function (assert) {
 		var done = assert.async();
 		var oBtn = new Button();
-
 		this.oAdaptationController.showP13n(oBtn, "Item").then(function(oP13nControl){
 
 			//check container

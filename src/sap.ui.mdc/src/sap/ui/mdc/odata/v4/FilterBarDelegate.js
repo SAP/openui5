@@ -165,8 +165,16 @@ sap.ui.define([
 		} else {
 			oSelector.id = oFilterBar.id;
 		}
+
 		var sSelectorId = oModifier.getControlIdBySelector(oSelector, oAppComponent);
+
 		var sId = sSelectorId +  "--filter--" + IdentifierUtil.replace(sName);
+
+		var oExistingFilterField = sap.ui.getCore().byId(sId);
+
+		if (oExistingFilterField) {
+			return Promise.resolve(oExistingFilterField);
+		}
 
 		return oModifier.createControl("sap.ui.mdc.FilterField", oAppComponent, oView, sId, {
 			dataType: oProperty.typeConfig.className,
@@ -423,7 +431,7 @@ sap.ui.define([
 			var sGroup = sEntityName;
 			var sGroupLabel = oMetaModel.getObject(sEntitySetPath + "@com.sap.vocabularies.Common.v1.Label");
 			if (!sGroupLabel ) {
-				sGroupLabel = sGroup;
+				sGroupLabel = sGroup.split(".")[1];
 			}
 
 			aVisitedEntityTypes.push(sEntityName);

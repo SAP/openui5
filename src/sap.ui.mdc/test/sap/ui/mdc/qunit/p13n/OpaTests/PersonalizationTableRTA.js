@@ -110,7 +110,7 @@ sap.ui.define([
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
 
-		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.columns, aTableItems, false);
+		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.columns, aTableItems);
 
 		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Country").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
@@ -149,8 +149,8 @@ sap.ui.define([
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
 
-		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems,false);
-		When.iSelectColumn("regionOfOrigin_code", Arrangement.P13nDialog.Titles.columns, aTableItems,false);
+		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems);
+		When.iSelectColumn("regionOfOrigin_code", Arrangement.P13nDialog.Titles.columns, aTableItems);
 
 		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Breakout Year").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
@@ -187,8 +187,8 @@ sap.ui.define([
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
 
-		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems,false);
-		When.iSelectColumn("regionOfOrigin_code", Arrangement.P13nDialog.Titles.columns, aTableItems,false);
+		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems);
+		When.iSelectColumn("regionOfOrigin_code", Arrangement.P13nDialog.Titles.columns, aTableItems);
 
 		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Breakout Year").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);

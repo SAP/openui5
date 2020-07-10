@@ -53,7 +53,11 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aExistingItems, aChangedItems, function(o) {return o.name;}, this.oTable, "removeColumn", "addColumn", "moveColumn");
+		var aChanges = FlexUtil.getArrayDeltaChanges(aExistingItems, aChangedItems, function(o) {return o.name;}, this.oTable, {
+			add: "addColumn",
+			remove: "removeColumn",
+			move: "moveColumn"
+		});
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oTable.getId(), "the correct selectorElement has been set");
@@ -75,7 +79,11 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aExistingItems, aChangedItems, function(o) {return o.name;}, this.oTable, "removeColumn", "addColumn", "moveColumn");
+		var aChanges = FlexUtil.getArrayDeltaChanges(aExistingItems, aChangedItems, function(o) {return o.name;}, this.oTable, {
+			add: "addColumn",
+			remove: "removeColumn",
+			move: "moveColumn"
+		});
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oTable.getId(), "the correct selectorElement has been set");
@@ -104,7 +112,11 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aExistingItems, aChangedItems, function(o) {return o.name;}, this.oTable, "removeColumn", "addColumn", "moveColumn");
+		var aChanges = FlexUtil.getArrayDeltaChanges(aExistingItems, aChangedItems, function(o) {return o.name;}, this.oTable, {
+			add: "addColumn",
+			remove: "removeColumn",
+			move: "moveColumn"
+		});
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oTable.getId(), "the correct selectorElement has been set");
@@ -166,7 +178,11 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aChartExisting, aChangedItems, function(o) {return o.name;}, this.oChart, "removeItem", "addItem", "moveItem");
+		var aChanges = FlexUtil.getArrayDeltaChanges(aChartExisting, aChangedItems, function(o) {return o.name;}, this.oChart,  {
+			add: "addItem",
+			remove: "removeItem",
+			move: "moveItem"
+		});
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oChart.getId(), "the correct selectorElement has been set");
@@ -187,7 +203,11 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aChartExisting, aChangedItems, function(o) {return o.name;}, this.oChart, "removeItem", "addItem", "moveItem");
+		var aChanges = FlexUtil.getArrayDeltaChanges(aChartExisting, aChangedItems, function(o) {return o.name;}, this.oChart, {
+			add: "addItem",
+			remove: "removeItem",
+			move: "moveItem"
+		});
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oChart.getId(), "the correct selectorElement has been set");
@@ -215,7 +235,11 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aChartExisting, aChangedItems, function(o) {return o.name;}, this.oChart, "removeItem", "addItem", "moveItem");
+		var aChanges = FlexUtil.getArrayDeltaChanges(aChartExisting, aChangedItems, function(o) {return o.name;}, this.oChart,  {
+			add: "addItem",
+			remove: "removeItem",
+			move: "moveItem"
+		});
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oChart.getId(), "the correct selectorElement has been set");
@@ -244,7 +268,11 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aChartExisting, aChangedItems, function(o) {return o.name + o.role;}, this.oChart, "removeItem", "addItem", "moveItem");
+		var aChanges = FlexUtil.getArrayDeltaChanges(aChartExisting, aChangedItems, function(o) {return o.name + o.role;}, this.oChart,  {
+			add: "addItem",
+			remove: "removeItem",
+			move: "moveItem"
+		});
 
 		assert.strictEqual(aChanges.length, 2, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oChart.getId(), "the correct selectorElement has been set");
@@ -306,7 +334,11 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aSortState, aChangedSorters, function(o) {return o.name + o.role;}, this.oTable, "removeSort", "addSort", "moveSort");
+		var aChanges = FlexUtil.getArrayDeltaChanges(aSortState, aChangedSorters, function(o) {return o.name + o.role;}, this.oTable, {
+			add: "addSort",
+			remove: "removeSort",
+			move: "moveSort"
+		});
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oTable.getId(), "the correct selectorElement has been set");
@@ -327,7 +359,11 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aSortState, aChangedSorters, function(o) {return o.name + o.role;}, this.oTable, "removeSort", "addSort", "moveSort");
+		var aChanges = FlexUtil.getArrayDeltaChanges(aSortState, aChangedSorters, function(o) {return o.name + o.role;}, this.oTable, {
+			add: "addSort",
+			remove: "removeSort",
+			move: "moveSort"
+		});
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oTable.getId(), "the correct selectorElement has been set");
@@ -353,7 +389,11 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aSortState, aChangedSorters, function(o) {return o.name + o.role;}, this.oTable, "removeSort", "addSort", "moveSort");
+		var aChanges = FlexUtil.getArrayDeltaChanges(aSortState, aChangedSorters, function(o) {return o.name + o.role;}, this.oTable, {
+			add: "addSort",
+			remove: "removeSort",
+			move: "moveSort"
+		});
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oTable.getId(), "the correct selectorElement has been set");

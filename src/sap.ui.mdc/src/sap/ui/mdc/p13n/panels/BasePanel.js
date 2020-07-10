@@ -85,7 +85,7 @@ sap.ui.define([
 			apiVersion: 2,
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl);
-				oRm.addStyle("height", "100%");
+				oRm.style("height", "100%");
 				oRm.openEnd();
 				oRm.renderControl(oControl.getAggregation("_content"));
 				oRm.close("div");
@@ -170,7 +170,7 @@ sap.ui.define([
 			press: [this._onPressToggleMode, this]
 		});
 
-		var oBasePanelUI = new Table("idBasePanelTable", {
+		var oBasePanelUI = new Table(this.getId() + "idBasePanelTable", {
 			mode:"MultiSelect",
 			rememberSelections: false,
 			itemPress: [this._onItemPressed, this],
@@ -195,7 +195,7 @@ sap.ui.define([
 
 	BasePanel.prototype._getSearchField = function() {
 		if (!this._oSearchField) {
-			this._oSearchField = new SearchField("IDSearchField",{
+			this._oSearchField = new SearchField(this.getId() + "IDSearchField",{
 				liveChange: [this._onSearchFieldLiveChange, this],
 				width: "100%",
 				layoutData: new OverflowToolbarLayoutData({

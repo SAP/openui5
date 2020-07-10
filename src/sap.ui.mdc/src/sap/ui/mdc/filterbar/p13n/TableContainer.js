@@ -10,6 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new filterBar/p13n/TableContainer.
+     * Used for a simple FilterBar table like view, should be used in combination with <code>FilterCellLayout</code>
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @class The TableContainer is a IFilterContainer implementation for <code>sap.m.Table</code>
 	 * @extends sap.ui.mdc.filterbar.IFilterContainer
