@@ -6,7 +6,17 @@
 	height="100%">
 	<m:Page>
 		<m:customHeader>
-			<ShellBar title="Application Title" secondTitle="Short description" homeIcon="./../../../../../../../resources/sap/ui/documentation/sdk/images/logo_ui5.png" showCopilot="true" showSearch="true" showNotifications="true" showProductSwitcher="true" notificationsNumber="2">
+			<ShellBar
+					title="Application Title" secondTitle="Short description"
+					  homeIcon="./../../../../../../../resources/sap/ui/documentation/sdk/images/logo_ui5.png"
+					  showCopilot="true"
+					  showSearch="true"
+					  showNotifications="true"
+					  showProductSwitcher="true"
+					  showNavButton="{= ${/layout} === 'EndColumnFullScreen'}"
+					  notificationsNumber="2"
+					  navButtonPressed="handleBackButtonPressed"
+			>
 				<menu>
 					<m:Menu>
 						<m:MenuItem text="Flight booking" icon="sap-icon://flight" />
