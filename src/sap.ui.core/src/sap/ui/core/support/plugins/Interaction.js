@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			rm.write("<button id=\"" + this.getId() + "-record\" class=\"sapUiSupportIntToggleRecordingBtn\"></button>");
 			rm.write("<label class='sapUiSupportIntODataLbl'><input type='checkbox' id=\"" + this.getId() + "-odata\" > Enable OData Statistics</label>");
 			rm.write("<div class='sapUiSupportIntFupInputMask'>");
-			rm.write("<input id=\"" + this.getId() + "-fileImport\" tabindex='-1' size='1' accept='application/zip' type='file'/>");
+			rm.write("<input id=\"" + this.getId() + "-fileImport\" tabindex='-1' size='1' accept='application/zip' type='file'>");
 			rm.write("</div>");
 			rm.write("<button id=\"" + this.getId() + "-import\" class=\"sapUiSupportIntImportExportBtn sapUiSupportIntImportBtn sapUiSupportRoundedButton \">Import</button>");
 			rm.write("<button id=\"" + this.getId() + "-export\" class=\"sapUiSupportIntImportExportBtn sapUiSupportIntExportBtn sapUiSupportRoundedButton sapUiSupportIntHidden \">Export</button>");

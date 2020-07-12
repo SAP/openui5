@@ -221,7 +221,7 @@ sap.ui.define(['sap/ui/core/Renderer', './Select', 'sap/ui/core/IconPool', 'sap/
 			oRm.writeClasses();
 			oRm.writeAttributeEscaped("name", oSelect.getName());
 			oRm.writeAttributeEscaped("value", oSelect.getSelectedKey());
-			oRm.write("/>");
+			oRm.write(">");
 		};
 
 		/**

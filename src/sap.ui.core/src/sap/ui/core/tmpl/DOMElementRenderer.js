@@ -16,6 +16,11 @@ sap.ui.define(['jquery.sap.global'],
 	var DOMElementRenderer = {};
 
 	/**
+	 * RegExp to recognize void tags.
+	 */
+	var rVoidTags = /^(?:area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)$/i;
+
+	/**
 	 * Renders the DOM element for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
 	 *
@@ -69,10 +74,8 @@ sap.ui.define(['jquery.sap.global'],
 		var aElements = oElement.getElements(),
 			bHasChildren = !!oElement.getText() || aElements.length > 0;
 
-		if (!bHasChildren) {
-			oRM.write("/>");
-		} else {
-			oRM.write(">");
+		oRM.write(">");
+		if (bHasChildren) {
 
 			// append the text (do escaping)
 			if (oElement.getText()) {
@@ -83,7 +86,9 @@ sap.ui.define(['jquery.sap.global'],
 			aElements.forEach(function(iIndex, oChildElement) {
 				oRM.renderControl(oChildElement);
 			});
+		}
 
+		if ( !rVoidTags.test(oElement.getTag()) ) {
 			// closing tag
 			oRM.write("</");
 			oRM.writeEscaped(oElement.getTag());

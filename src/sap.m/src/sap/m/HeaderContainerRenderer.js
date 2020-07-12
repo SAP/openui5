@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 		oRm.write("<div");
 		oRm.writeAttribute("id", oControl.getId() + "-after");
 		oRm.writeAttribute("tabindex", "0");
-		oRm.write("/>");
+		oRm.write("></div>");
 		oRm.write("</div>");
 	};
 

@@ -111,7 +111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/library'],
 
 		rm.writeStyles();
 
-		rm.write(" />"); // close the <img> element
+		rm.write(sMode === ImageMode.Image ? ">" : "></span>");
 
 		if (oLightBox) {
 			rm.write("</span>");

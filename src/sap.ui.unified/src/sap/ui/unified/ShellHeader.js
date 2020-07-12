@@ -150,7 +150,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				rm.writeAttributeEscaped("alt", sLogoTooltip);
 				rm.write("src='");
 				rm.writeEscaped(sIco);
-				rm.write("' style='", sIco ? "" : "display:none;","'/>");
+				rm.write("' style='", sIco ? "" : "display:none;","'>");
 				rm.write("</div>");
 			}
 		}

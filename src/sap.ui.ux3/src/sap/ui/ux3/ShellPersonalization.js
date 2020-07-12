@@ -299,7 +299,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 				content:"<div id='" + sId + "bgImageHolder' class='sapUiUx3ShellP13nImgHolder'><img id='" + sId + "bgImageImg' src='"
 				+ (this.oTransientSettings.sBackgroundImageSrc ?
 						jQuery.sap.encodeHTML(this.oTransientSettings.sBackgroundImageSrc)
-						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif')) + "'/></div>"}
+						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif')) + "'></div>"}
 			);
 
 			this.oBgImgOpacitySlider = new c.Slider({
@@ -354,7 +354,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 				+ (this.oTransientSettings.sHeaderImageSrc ?
 						jQuery.sap.encodeHTML(this.oTransientSettings.sHeaderImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
-				+ "'/></div>"}
+				+ "'></div>"}
 			);
 
 			this.oLineColorPicker = new sap.ui.ux3.ShellColorPicker(sId + "lineColorPicker");
@@ -390,7 +390,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 				+ (this.oTransientSettings.sLogoImageSrc ?
 						jQuery.sap.encodeHTML(this.oTransientSettings.sLogoImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
-				+ "'/></div>"}
+				+ "'></div>"}
 			);
 			this.oLogoRbg = new c.RadioButtonGroup()
 				.addItem(new sap.ui.core.Item({text:"Left",key:"left"}))
@@ -447,7 +447,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 				+ (oActualSettings.sBackgroundImageSrc ?
 						jQuery.sap.encodeHTML(oActualSettings.sBackgroundImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
-				+ "'/></div>");
+				+ "'></div>");
 		this.oBgImgOpacitySlider.setValue(100 - oActualSettings.fBgImgOpacity * 100);
 		this.oSidebarOpacitySlider.setValue(100 - oActualSettings.fSidebarOpacity * 100);
 
@@ -456,7 +456,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 				+ (oActualSettings.sHeaderImageSrc ?
 						jQuery.sap.encodeHTML(oActualSettings.sHeaderImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
-				+ "'/></div>");
+				+ "'></div>");
 
 		this.oLogoRbg.setSelectedIndex((oActualSettings.sLogoAlign == "center") ? 1 : 0);
 		this.oUseLogoSizeCb.setChecked(oActualSettings.bUseLogoSize);
@@ -464,7 +464,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 				+ (oActualSettings.sLogoImageSrc ?
 						jQuery.sap.encodeHTML(oActualSettings.sLogoImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
-				+ "'/></div>");
+				+ "'></div>");
 	};
 
 

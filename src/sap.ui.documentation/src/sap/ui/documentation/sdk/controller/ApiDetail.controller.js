@@ -1376,7 +1376,7 @@ sap.ui.define([
 
 				// format references
 				if (aReferences && aReferences.length > 0) {
-					sDescription += "<br/><br/><span>Documentation links:</span><ul>";
+					sDescription += "<br><br><span>Documentation links:</span><ul>";
 
 					iLen = aReferences.length;
 					for (i = 0; i < iLen; i++) {
@@ -1406,7 +1406,7 @@ sap.ui.define([
 				if (!description && !deprecatedText && !deprecatedSince) {
 					// Note we have to always return a string wrapped in a valid html tag else parsing it with
 					// sap.ui.core.HTML control will fail.
-					return "<span/>";
+					return "<span></span>";
 				}
 
 				var result = description || "";
@@ -1415,14 +1415,14 @@ sap.ui.define([
 					result += "<span class=\"sapUiDocumentationDeprecated\">";
 
 					if (deprecatedSince) {
-						result += '<br/>Deprecated since version ' + deprecatedSince + '.';
+						result += '<br>Deprecated since version ' + deprecatedSince + '.';
 					}
 
 					if (deprecatedText) {
 						if (deprecatedSince) {
 							result += ' ' + deprecatedText;
 						} else {
-							result += '<br/>' + deprecatedText;
+							result += '<br>' + deprecatedText;
 						}
 					}
 
@@ -1443,7 +1443,7 @@ sap.ui.define([
 				var result = description || "";
 
 				if (since) {
-					result += '<br/><br/><i>Since: ' + since + '.</i>';
+					result += '<br><br><i>Since: ' + since + '.</i>';
 				}
 
 				result = this._wrapInSpanTag(result);
@@ -1459,10 +1459,10 @@ sap.ui.define([
 			formatAnnotationDescription: function (description, since) {
 				var result = description || "";
 
-				result += '<br/>For more information, see ' + '<a target="_blank" href="' + this.ANNOTATIONS_LINK + '">OData v4 Annotations</a>';
+				result += '<br>For more information, see ' + '<a target="_blank" href="' + this.ANNOTATIONS_LINK + '">OData v4 Annotations</a>';
 
 				if (since) {
-					result += '<br/><br/><i>Since: ' + since + '.</i>';
+					result += '<br><br><i>Since: ' + since + '.</i>';
 				}
 
 				result = this._wrapInSpanTag(result);
@@ -1493,7 +1493,7 @@ sap.ui.define([
 
 				if (target) {
 					target.forEach(function (element) {
-						result += element + '<br/>';
+						result += element + '<br>';
 					});
 				}
 

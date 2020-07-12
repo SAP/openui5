@@ -510,7 +510,7 @@ sap.ui.define([
 				contentHeight: "300px",
 				content: [
 					new sap.ui.core.HTML({
-						content: "<span style='padding: 5px'>" + jQuery.sap.escapeHTML(sErrorText) + "</span><br/><span><i>Please see the debug-console ('Network' tab), for the actual back-end response.</i></span>"
+						content: "<span style='padding: 5px'>" + jQuery.sap.escapeHTML(sErrorText) + "</span><br><span><i>Please see the debug-console ('Network' tab), for the actual back-end response.</i></span>"
 					})
 				],
 				beginButton: new Button({
