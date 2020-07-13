@@ -2248,12 +2248,17 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.oLogMock.expects("error")
-				.withArgs("Failed to drill-down into CompanyName, invalid segment: CompanyName");
+			// late property request
+			that.expectRequest("SalesOrderList('1')/SO_2_BP?$select=BusinessPartnerID,CompanyName",
+				{
+					"@odata.etag" : "etag",
+					BusinessPartnerID : "2",
+					CompanyName : "SAP"
+				});
 
 			// code under test
 			return oFormContext.requestProperty("CompanyName").then(function (sValue) {
-				assert.strictEqual(sValue, undefined);
+				assert.strictEqual(sValue, "SAP");
 			});
 		}).then(function () {
 			that.expectChange("longitude3", "8.700000000000");
@@ -16404,12 +16409,21 @@ sap.ui.define([
 			that = this;
 
 		function expectFailedToDrillDown(sPrefix) {
+			if (sPrefix !== "") {
+				that.oLogMock.expects("error").withExactArgs("Failed to enhance query options for "
+					+ "auto-$expand/$select as the path '/MANAGERS/" + sPrefix
+					+ "@$ui5._/predicate' does not point to a property",
+					undefined, "sap.ui.model.odata.v4.ODataParentBinding"
+				); // fetchIfChildCanUseCache
+				that.oLogMock.expects("error").withExactArgs("Not a valid property path: " +
+					sPrefix + "@$ui5._/predicate", undefined, "sap.ui.model.odata.v4.Context");
+			}
 			that.oLogMock.expects("error").withExactArgs("Failed to drill-down into "
-						+ sPrefix + "@$ui5._/predicate, invalid segment: @$ui5._",
-					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/MANAGERS('1')"
-						+ "?$expand=Manager_to_Team",
-					"sap.ui.model.odata.v4.lib._Cache")
-				.thrice(); // binding, getProperty, requestProperty
+				+ sPrefix + "@$ui5._/predicate, invalid segment: @$ui5._",
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/MANAGERS('1')"
+				+ "?$expand=Manager_to_Team",
+				"sap.ui.model.odata.v4.lib._Cache")
+				.exactly(sPrefix !== "" ? 2 : 3); // binding, getProperty, requestObject
 		}
 
 		this.expectRequest("MANAGERS('1')?$expand=Manager_to_Team",
@@ -16443,7 +16457,7 @@ sap.ui.define([
 			);
 
 			// code under test
-			return  Promise.all([
+			return Promise.all([
 					oContext.requestProperty("@$ui5._/predicate"),
 					oContext.requestProperty("Manager_to_Team/@$ui5._/predicate")
 				]).then(function (aResult) {
@@ -27581,6 +27595,69 @@ sap.ui.define([
 			that.oView.byId("listReport-trigger").firePress();
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: As application developer you want to use Context#requestProperty in your
+	// controller code with the following use cases:
+	// 1. Request a single non-nested property
+	// 2. Request a nested property for a single-valued navigation property
+	// 3. Request an array of properties
+	// JIRA: CPOUI5ODATAV4-339
+	// BCP: 2080303042
+	QUnit.test("Context#requestProperty (JIRA: CPOUI5ODATAV4-339)", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			oContext = oModel.bindContext("/SalesOrderList(\'1\')").getBoundContext(),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID", {
+				"@odata.etag" : "etag",
+				Note : "Test",
+				SalesOrderID : "1"
+			});
+
+			return Promise.all([
+				// code under test - 1. Single non-nested property
+				oContext.requestProperty("Note").then(function (sNote) {
+					assert.strictEqual(sNote, "Test");
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=SO_2_BP"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+				"@odata.etag" : "etag",
+				SO_2_BP : {
+					BusinessPartnerID : "42",
+					CompanyName : "SAP"
+				}
+			});
+
+			return Promise.all([
+				// code under test - 2. Single nested property
+				oContext.requestProperty("SO_2_BP/CompanyName").then(function (sCompanyName) {
+					assert.strictEqual(sCompanyName, "SAP");
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=BillingStatus,NetAmount", {
+				"@odata.etag" : "etag",
+				BillingStatus : "S",
+				NetAmount : "1234"
+			});
+
+			return Promise.all([
+				// code under test - 3. Array of properties
+				oContext.requestProperty([
+					"BillingStatus", "NetAmount", "Note"
+				]).then(function (aValues) {
+					assert.deepEqual(aValues, ["S", "1234", "Test"]);
+				}),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });
