@@ -2049,5 +2049,21 @@
         ]
       }
     ]
+  },
+  "1.52.42": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "8a513d524f626f32e77e4e8ff2ff03a623c295de",
+        "type": "FIX",
+        "text": " sap.ui.core.util.ExportTypeCSV - Cell overflow injection fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080220914"
+          }
+        ]
+      }
+    ]
   }
 }
