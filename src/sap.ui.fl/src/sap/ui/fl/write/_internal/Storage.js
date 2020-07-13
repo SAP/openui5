@@ -234,6 +234,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Property bag
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
 		 * @param {string} mPropertyBag.reference - Flex reference
+		 * @param {string} mPropertyBag.limit - Maximum number of required versions
 		 * @returns {Promise<sap.ui.fl.Version[]>} Promise resolving with a list of versions if available;
 		 * rejects if an error occurs or the layer does not support draft handling
 		 */

@@ -433,7 +433,7 @@ sap.ui.define([
 						vChangeDefinition = vChangeDefinition[0];
 					}
 					Versions.onAllChangesSaved({
-						reference: Utils.normalizeReference(vChangeDefinition.reference),
+						reference: vChangeDefinition.reference,
 						layer: vChangeDefinition.layer
 					});
 				}

@@ -60,9 +60,10 @@ sap.ui.define([
 	KeyUserConnector.versions = {
 		load: function (mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
-			var mParameter = {};
-			InitialUtils.addLanguageInfo(mParameter);
-			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.GET, mPropertyBag, mParameter);
+			var mParameters = {};
+			InitialUtils.addLanguageInfo(mParameters);
+			mParameters.limit = mPropertyBag.limit;
+			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.GET, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sVersionsUrl, "GET", mPropertyBag).then(function (oResult) {
 				return oResult.response;
 			});
@@ -70,9 +71,9 @@ sap.ui.define([
 		activate: function (mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			_enhancePropertyBagForDraftActivation(mPropertyBag);
-			var mParameter = {version: 0};
-			InitialUtils.addLanguageInfo(mParameter);
-			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag, mParameter);
+			var mParameters = {version: 0};
+			InitialUtils.addLanguageInfo(mParameters);
+			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function (oResult) {
 				return oResult.response;
 			});
