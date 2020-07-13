@@ -194,7 +194,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		});
 
 		QUnit.test("Beacon timeout", function(assert) {
-			assert.expect(7);
+			assert.expect(9);
 			this.clock = sinon.useFakeTimers();
 			var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
 			window.performance.getEntriesByType = function() { return []; };
@@ -210,6 +210,17 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			Interaction.start();
 			Interaction.end(true);
 			this.clock.tick(30000);
+			assert.ok(sendBeaconStub.notCalled, "Beacon not called when Interaction occured");
+			this.clock.tick(30000);
+			assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called 60s after Interaction");
+			sendBeaconStub.reset();
+
+			this.clock.tick(30000);
+			Interaction.start();
+			Interaction.end(true);
+			this.clock.tick(30000);
+			Interaction.start();
+			Interaction.end(true);
 			assert.ok(sendBeaconStub.notCalled, "Beacon not called when Interaction occured");
 			this.clock.tick(30000);
 			assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called 60s after Interaction");
