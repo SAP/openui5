@@ -32,6 +32,11 @@ sap.ui.define([
 				message : "Product HT-1110 is out of maintenance",
 				severity : "warning"
 			},
+			note : {
+				code : "ZUI5TEST/001",
+				message : "Enter an Item Note",
+				severity : "warning"
+			},
 			order : {
 				code : "ZUI5TEST/003",
 				message : "Order at least 2 EA of product 'HT-1000'",
@@ -398,6 +403,42 @@ sap.ui.define([
 						undefined, 2, 1)
 				},
 
+				/* Test Case VI */
+				/* More responses in the aRegExpFixture! */
+				"SalesOrderSet('106')" : {
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
+					source : "Messages/TC6/SalesOrderSet.json"
+				},
+				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=4" : [{
+					ifMatch : ithCall.bind(null, 3),
+					source : "Messages/TC6/SalesOrderSet-ToLineItems.json"
+				}, {
+					message : getLineItems("Messages/TC6/SalesOrderSet-ToLineItems.json",
+						undefined, 0, 2)
+				}],
+				"SalesOrderSet('106')?$select=ChangedAt,GrossAmount,SalesOrderID" : {
+					source : "Messages/TC6/SalesOrderSet.json"
+				},
+				"DELETE SalesOrderLineItemSet(SalesOrderID='106',ItemPosition='030')" : {
+					code : 204,
+					ifMatch : increaseSaveCount.bind()
+				},
+				"POST SalesOrderSet('106')/ToLineItems" : [{
+					code : 400,
+					ifMatch : function (oRequest) {
+						iTimesSaved += 1;
+						return iTimesSaved < 3;
+					},
+					source : "Messages/TC6/error-0.json"
+				}, {
+					code : 201,
+					ifMatch : ithCall.bind(null, 3),
+					source : "Messages/TC6/SalesOrderLineItem.json"
+				}],
+
 				/* Test Case VII */
 				"SalesOrderSet('107')" : {
 					headers : getMessageHeader(undefined,
@@ -534,6 +575,20 @@ sap.ui.define([
 				response : {
 					message : { "d" : { "results" : []}}
 				}
+			}, {
+
+				/* Test Case VI */
+				regExp :
+					/GET .*\$id(?:-[0-9]+){2}\?\$expand=ToProduct%2CToHeader&\$select=ToProduct%2CToHeader/,
+				response : [{
+					headers : getMessageHeader(undefined, oCurrentMessages.reset()
+						.add("note", "Note").add("order", "Quantity")),
+					ifMatch : ithCall.bind(null, 3),
+					source : "Messages/TC6/SalesOrderLineItem-ToProduct-ToHeader.json"
+				}, {
+					code : 400,
+					source : "Messages/TC6/error-1.json"
+				}]
 			}],
 			sFilterBase : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/",
 			sSourceBase : "sap/ui/core/internal/samples/odata/v2/SalesOrders/data"
