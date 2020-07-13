@@ -106,8 +106,8 @@ sap.ui.define([
 				 */
 				subsequentSteps : {type : "sap.m.WizardStep", multiple : true, singularName : "subsequentStep"},
 				/**
-				 * The next step to be taken after the step is completed.
-				 * Set this association value in the complete event of the current WizardStep.
+				 * The next step to be taken.
+				 * It must be defined in order for the previous step to be completed.
 				 * @since 1.32
 				 */
 				nextStep : {type: "sap.m.WizardStep", multiple: false}
