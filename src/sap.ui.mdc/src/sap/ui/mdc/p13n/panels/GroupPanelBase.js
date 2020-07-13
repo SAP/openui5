@@ -105,6 +105,7 @@ sap.ui.define([
 		var bExpandFirstGroup = this.getExpandFirstGroup();
 
 		var oP13nCellTemplate = new CustomListItem({
+			visible: "{groupVisible}",
 			content: [
 				new Panel({
 					expandable: true,
@@ -120,7 +121,6 @@ sap.ui.define([
 						}
 					},
 					width:"100%",
-					visible: "{groupVisible}",
 					headerToolbar: [
 						new Toolbar({
 							content: [
@@ -194,7 +194,7 @@ sap.ui.define([
 		var sPanelBindingContextPath = oPanel.getBindingContext().sPath;
 
 		var oItem = this.getModel().getProperty(sPanelBindingContextPath);
-		oItem.groupVisible = oInnerList.getItems().length < 1 ? false : true;
+		oItem.groupVisible = oInnerList.getVisibleItems().length < 1 ? false : true;
 
 		this.getModel().setProperty(sPanelBindingContextPath, oItem);
 	};
@@ -214,6 +214,19 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	GroupPanelBase.prototype._checkAllPanels = function () {
+
+		this._oListControl.getItems().forEach(function(oOuterItem){
+			var oPanel = oOuterItem.getContent()[0];
+			this._togglePanelVisibility(oPanel);
+		}.bind(this));
+	};
+
+	GroupPanelBase.prototype.setP13nModel = function(oP13nModel) {
+		BasePanel.prototype.setP13nModel.apply(this, arguments);
+		this._checkAllPanels();
+	};
+
     GroupPanelBase.prototype._bindListItems = function() {
 
 		var mBindingInfo = {
@@ -225,7 +238,6 @@ sap.ui.define([
 
 		//Overwrite default binding
 		BasePanel.prototype._bindListItems.call(this, mBindingInfo);
-
 	};
 
 	return GroupPanelBase;
