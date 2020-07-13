@@ -376,6 +376,21 @@ sap.ui.define(["sap/ui/mdc/util/TypeUtil"], function(TypeUtil) {
 		return oFilterRestrictionsInfo;
 	};
 
+	util.isMultiValueFilterExpression = function(sFilterExpression) {
+		var bIsMultiValue = true;
+
+		//SingleValue | MultiValue | SingleRange | MultiRange | SearchExpression | MultiRangeOrSearchExpression
+
+		switch (sFilterExpression) {
+			case "SearchExpression":
+			case "SingleRange":
+			case "SingleValue": bIsMultiValue = false; break;
+			default: break;
+		}
+
+		return bIsMultiValue;
+	};
+
 	/**
 	 *
 	 * @param oProperty the entity property

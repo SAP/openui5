@@ -153,6 +153,7 @@ sap.ui.define([
 	 */
 	AdaptationController.prototype.createP13n = function(sP13nType, aPropertyInfo) {
 		return new Promise(function(resolve, reject){
+			this.aPropertyInfo = aPropertyInfo;
 			this._retrieveControl(this.getAdaptationControl().getDelegate().name).then(function(oDelegate){
 
 				if (!(aPropertyInfo instanceof Array)) {
@@ -286,7 +287,7 @@ sap.ui.define([
 			var mPreviousConditionState = oCurrentState.filter;
 			var oAdaptationControl = this.getAdaptationControl();
 			for (var sFieldPath in mNewConditionState) {
-				var bValidProperty = this._hasProperty(sFieldPath);
+				var bValidProperty = this._hasProperty(sFieldPath).valid;
 				if (!bValidProperty) {
 					Log.warning("property '" + sFieldPath + "' not supported");
 					continue;
@@ -453,20 +454,21 @@ sap.ui.define([
 
 		var oFilterControl = this.getFilterConfig().filterControl;
 
-		return oFilterControl.waitForInitialization().then(function(){
-
+		return oFilterControl.setPropertyInfo(this.aPropertyInfo).then(function(){
 			this.oAdaptationModel.getProperty("/items").forEach(function(oItem){
-				var oFilterControlDelegate = oFilterControl.getControlDelegate();
-				if (oItem.selected || oItem.isFiltered) {
-					var oFilterFieldPromise = oFilterControlDelegate.beforeAddFilterFlex(oItem.name, oFilterControl);
+				var oAdaptationControl = this.getAdaptationControl();
+				var mFilterHandler = this.getAdaptationControl().getControlDelegate().getFilterDelegate();
+				if (oItem.filterable !== false) {
+					var oProperty = this._hasProperty(oItem.name).property;
+					var oFilterFieldPromise = mFilterHandler.addFilterItem(oProperty, oAdaptationControl);
 					oFilterFieldPromise.then(function(oFilterField){
 						oFilterControl.addAggregation("filterItems", oFilterField);
 					});
 				}
-			});
-
+			}, this);
 			return oFilterControl;
 		}.bind(this));
+
 	};
 
 	AdaptationController.prototype._createP13nContainer = function (oPanel, sTitle) {
@@ -614,10 +616,23 @@ sap.ui.define([
 	};
 
 	AdaptationController.prototype._hasProperty = function(sName) {
-		return this.aPropertyInfo.some(function(oProperty){
+		var oInfo;
+		this.aPropertyInfo.some(function(oProperty){
+			//First check unique name
 			var bValid = oProperty.name === sName || sName == "$search";
+
+			//Use path as Fallback
+			bValid = bValid ? bValid : oProperty.path === sName;
+
+			if (bValid){
+				oInfo = {
+					valid: bValid,
+					property: oProperty
+				};
+			}
 			return bValid;
 		});
+		return oInfo;
 	};
 
 	AdaptationController.prototype.destroy = function(bSuppressInvalidate){
@@ -628,6 +643,9 @@ sap.ui.define([
 			this.oAdaptationModel.destroy();
 		}	this.oAdaptationModel = null;
 
+		this.aPropertyInfo = null;
+		this.oAdaptationModel = null;
+		this.oState = null;
 		this.bIsDialogOpen = null;
 		this.sP13nType = null;
 		this.oAdaptationControlDelegate = null;
