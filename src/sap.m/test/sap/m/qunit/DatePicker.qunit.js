@@ -2308,6 +2308,36 @@ sap.ui.define([
 			"The method should return sap.ui.unified.DateRange");
 	});
 
+	QUnit.test("_createPopup: mobile device", function(assert) {
+		// prepare
+		var oDeviceStub = this.stub(Device, "system", {
+				desktop: false,
+				tablet: false,
+				phone: true
+			}),
+			oLabel = new sap.m.Label({text: "DatePicker Label", labelFor: this.oDP.getId()}),
+			oDialog;
+
+		this.oDP.placeAt("qunit-fixture");
+		oLabel.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		this.oDP._createPopup();
+		oDialog = this.oDP.getAggregation("_popup");
+
+		// assert
+		assert.ok(oDialog.getShowHeader(), "Header is shown");
+		assert.ok(oDialog.getShowCloseButton(), "Close button in the header is set");
+		assert.strictEqual(oDialog.getTitle(), "DatePicker Label", "Title is set");
+		assert.strictEqual(oDialog.getBeginButton().getType(), "Emphasized", "OK button type is set");
+		assert.notOk(oDialog.getEndButton(), "Close button in the footer is not set");
+
+		// clean
+		oDeviceStub.restore();
+		oLabel.destroy();
+	});
+
 	//set the input value to an invalid one
 	function simulateUserInputViaTheInputField(){
 		bChange = false;

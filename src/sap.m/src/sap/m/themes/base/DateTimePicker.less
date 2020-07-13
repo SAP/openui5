@@ -67,12 +67,9 @@ html.sapUiMedia-Std-Phone .sapMDateTimePopupCont {
 	display: block;
 }
 
-html.sap-phone .sapMDateTimePopupCont {
-	position: fixed;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	top: 0;
+html.sap-phone .sapMDialogScroll,
+html.sap-phone .sapMDialog.sapUiPopupWithPadding:not(.sapUiNoContentPadding) .sapMDialogScrollCont.sapMDialogStretchContent {
+	height: 100%;
 }
 
 html.sap-phone .sapUiSizeCompact .sapMDateTimePopupCont,
