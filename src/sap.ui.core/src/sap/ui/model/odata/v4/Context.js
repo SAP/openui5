@@ -22,7 +22,7 @@ sap.ui.define([
 	 * Fetches and formats the primitive value at the given path.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext The context
-	 * @param {string} sPath The requested path relative to this context
+	 * @param {string} sPath The requested path, absolute or relative to this context
 	 * @param {boolean} [bExternalFormat=false]
 	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
 	 *   given property path that formats corresponding to the property's EDM type and constraints.
@@ -33,7 +33,7 @@ sap.ui.define([
 	function fetchPrimitiveValue(oContext, sPath, bExternalFormat, bCached) {
 		var oError,
 			aPromises = [oContext.fetchValue(sPath, null, bCached)],
-			sResolvedPath = _Helper.buildPath(oContext.getPath(), sPath);
+			sResolvedPath = sPath[0] === "/" ? sPath : _Helper.buildPath(oContext.getPath(), sPath);
 
 		if (bExternalFormat) {
 			aPromises.push(
@@ -904,14 +904,17 @@ sap.ui.define([
 	/**
 	 * Returns a promise on the property value for the given path relative to this context. The path
 	 * is expected to point to a structural property with primitive type.
+	 * Since 1.81.1 it is possible to request more than one property. Property values that are not
+	 * cached yet are requested from the back end.
 	 *
-	 * @param {string} [sPath]
-	 *   A path relative to this context
+	 * @param {string|string[]} [vPath]
+	 *   One or multiple paths relative to this context
 	 * @param {boolean} [bExternalFormat=false]
-	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
-	 *   given property path that formats corresponding to the property's EDM type and constraints.
+	 *   If <code>true</code>, the values are returned in external format using UI5 types for the
+	 *   given property paths that format corresponding to the properties' EDM types and
+	 *   constraints
 	 * @returns {Promise}
-	 *   A promise on the requested value; it is rejected if the value is not primitive
+	 *   A promise on the requested value or values; it is rejected if a value is not primitive
 	 * @throws {Error}
 	 *   If the context's root binding is suspended
 	 *
@@ -919,10 +922,25 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataMetaModel#requestUI5Type
 	 * @since 1.39.0
 	 */
-	Context.prototype.requestProperty = function (sPath, bExternalFormat) {
+	Context.prototype.requestProperty = function (vPath, bExternalFormat) {
+		var aPaths = Array.isArray(vPath) ? vPath : [vPath],
+			that = this;
+
 		this.oBinding.checkSuspended();
 
-		return Promise.resolve(fetchPrimitiveValue(this, sPath, bExternalFormat));
+		return Promise.all(aPaths.map(function (sPath) {
+			return that.oBinding.fetchIfChildCanUseCache(that, sPath, SyncPromise.resolve({}))
+				.then(function(sReducedPath) {
+					if (sReducedPath) {
+						return fetchPrimitiveValue(that, sReducedPath, bExternalFormat);
+					}
+
+					Log.error("Not a valid property path: " + sPath, undefined, sClassName);
+					// return undefined;
+				});
+		})).then(function (aValues) {
+			return Array.isArray(vPath) ? aValues : aValues[0];
+		});
 	};
 
 	/**
