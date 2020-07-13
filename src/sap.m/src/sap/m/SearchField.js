@@ -93,9 +93,9 @@ sap.ui.define([
 			value : {type : "string", group : "Data", defaultValue : null, bindable : "bindable"},
 
 			/**
-			 * Defines the CSS width of the input. 100% by default.
+			 * Defines the CSS width of the input. If not set, width is 100%.
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : "100%" },
+			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null },
 
 			/**
 			 * Boolean property to enable the control (default is true).
@@ -298,6 +298,10 @@ sap.ui.define([
 			this.$("I").cursorPos(oFocusInfo.cursorPos);
 		}
 		return this;
+	};
+
+	SearchField.prototype.getWidth = function() {
+		return this.getProperty("width") || "100%";
 	};
 
 	SearchField.prototype._hasPlaceholder = (function () {

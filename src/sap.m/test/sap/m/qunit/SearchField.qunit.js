@@ -231,7 +231,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering", {
 		beforeEach: function () {
-			this.SearchField = new SearchField("sf5", {
+			this.oSearchField = new SearchField("sf5", {
 				placeholder: sPlaceholder,
 				value: sValue,
 				enabled: true,
@@ -241,7 +241,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			this.SearchField.destroy();
+			this.oSearchField.destroy();
 		}
 	});
 
@@ -251,8 +251,8 @@ sap.ui.define([
 		this.stub(Device, "browser", {name: "cr", chrome: true});
 
 		// act
-		this.SearchField.rerender();
-		bHasAutocorrect = this.SearchField.$("I").attr("autocorrect") == "off";
+		this.oSearchField.rerender();
+		bHasAutocorrect = this.oSearchField.$("I").attr("autocorrect") == "off";
 
 		// assert
 		assert.strictEqual(bHasAutocorrect, false, "Shouldn't be rendered");
@@ -264,8 +264,8 @@ sap.ui.define([
 		this.stub(Device, "browser", {name: "sf", safari: true});
 
 		// act
-		this.SearchField.rerender();
-		bHasAutocorrect = this.SearchField.$("I").attr("autocorrect") == "off";
+		this.oSearchField.rerender();
+		bHasAutocorrect = this.oSearchField.$("I").attr("autocorrect") == "off";
 
 		// assert
 		assert.strictEqual(bHasAutocorrect, true, "Should be rendered when on Safari");
@@ -273,12 +273,16 @@ sap.ui.define([
 
 	QUnit.test("When refresh button is added invisible text should be set", function (assert) {
 		// arrange
-		var ariaDescribedByAttr = this.SearchField.$("I").attr('aria-describedby');
+		var ariaDescribedByAttr = this.oSearchField.$("I").attr('aria-describedby');
 		var f5TextId = InvisibleText.getStaticId("sap.m", "SEARCHFIELD_ARIA_F5");
 		var isF5TextSet = ariaDescribedByAttr.indexOf(f5TextId) >= 0;
 
 		// assert
 		assert.strictEqual(isF5TextSet, true, 'The "Press F5 to refresh" text should be set as aria-describedby');
+	});
+
+	QUnit.test("Inline width style is not added when 'width' property is not set", function (assert) {
+		assert.notOk(this.oSearchField.getDomRef().style.width, "Width style is not added");
 	});
 
 	QUnit.module("SearchField tooltip:", {
