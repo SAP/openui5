@@ -23,6 +23,34 @@
             "reference": "2070220619"
           }
         ]
+      },
+      {
+        "id": "15f1f43e4bc532664522c13219842a603c12d532",
+        "type": "FIX",
+        "text": " Opa: fix binding path selector for named models",
+        "references": []
+      },
+      {
+        "id": "589e288b535bd15c8148557de369a09d5f3e9cb9",
+        "type": "FIX",
+        "text": " routing.Targets: avoid misleading error log when add new target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080034913"
+          }
+        ]
+      },
+      {
+        "id": "6d72922d235f26827e6c66393b991ec5d32abe66",
+        "type": "FIX",
+        "text": " trace/Interaction: checkCompression with no responseUrl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080261661"
+          }
+        ]
       }
     ]
   }

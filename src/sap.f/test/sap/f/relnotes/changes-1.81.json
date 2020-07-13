@@ -12,6 +12,23 @@
             "reference": "2080160972"
           }
         ]
+      },
+      {
+        "id": "dfc27102ee97ac7ca29e2dd993eb93b38ec86fda",
+        "type": "FEATURE",
+        "text": " sap.f.GridContainer: Added Drag and Drop support with keyboard arrows",
+        "references": []
+      },
+      {
+        "id": "aa97232bc1da8f26c7c606c59a78b56ec899ea99",
+        "type": "FIX",
+        "text": " sap.f.CalendarContent: looks correct on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080256991"
+          }
+        ]
       }
     ]
   }
