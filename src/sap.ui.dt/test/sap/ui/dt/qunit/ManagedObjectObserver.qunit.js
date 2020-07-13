@@ -96,6 +96,8 @@ sap.ui.define([
 		this.insertMyInheritedAggregation();
 	};
 
+	var sandbox = sinon.sandbox.create();
+
 	QUnit.module("Given that an ManagedObject is observed", {
 		beforeEach: function (assert) {
 			this.oManagedObject = new TestObject();
@@ -113,6 +115,7 @@ sap.ui.define([
 			});
 		},
 		afterEach: function () {
+			sandbox.restore();
 			this.oManagedObjectObserver.destroy();
 			this.oSmartManagedObjectObserver.destroy();
 			this.oManagedObject.destroy();
@@ -259,6 +262,22 @@ sap.ui.define([
 		oOtherManagedObjectObserver.setTarget(this.oManagedObject);
 		assert.ok(oOtherManagedObjectObserver._bIsObserved, "then _bIsObserved flag is set on setting the target");
 		this.oManagedObject.destroy();
+		assert.strictEqual(oOtherManagedObjectObserver._bIsObserved, false, "then _bIsObserved flag is unset on destroying the target");
+		assert.strictEqual(this.oManagedObject.destroy, Element.prototype.destroy, "then original base functions (like destroy) are set back on destroying the target");
+	});
+
+	QUnit.test("when an observed element cannot be found by id and is unobserved", function (assert) {
+		var oOtherManagedObjectObserver = new ManagedObjectObserver();
+		assert.strictEqual(oOtherManagedObjectObserver._bIsObserved, undefined, "then _bIsObserved flag does not exist");
+		oOtherManagedObjectObserver.setTarget(this.oManagedObject);
+		assert.ok(oOtherManagedObjectObserver._bIsObserved, "then _bIsObserved flag is set on setting the target");
+
+		sandbox.stub(oOtherManagedObjectObserver, "getTargetInstance")
+			.callsFake(function () {
+				return;
+			});
+		this.oManagedObject.destroy();
+
 		assert.strictEqual(oOtherManagedObjectObserver._bIsObserved, false, "then _bIsObserved flag is unset on destroying the target");
 		assert.strictEqual(this.oManagedObject.destroy, Element.prototype.destroy, "then original base functions (like destroy) are set back on destroying the target");
 	});
