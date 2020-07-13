@@ -2624,7 +2624,8 @@ sap.ui.define([
 		this.sut._onRowDeselectAppointment();
 
 		//assert
-		assert.strictEqual(oSetPropertySpy.callCount, 0, "If the appointment does not exist, setProperty is not called");
+		assert.strictEqual(oSetPropertySpy.callCount, 1, "If an appointment with the specified id does not exist in the DOM," +
+			"setProperty is not called for it. setProperty(\"selected\") is called only if an appointment is present and selected.");
 
 		//cleanup
 		oSetPropertySpy.restore();
