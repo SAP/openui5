@@ -73,7 +73,8 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mLateQueryOptions, undefined);
 		assert.ok(oBinding.hasOwnProperty("sReducedPath"));
 		assert.strictEqual(oBinding.sReducedPath, undefined);
-		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+		assert.ok(oBinding.hasOwnProperty("sResumeChangeReason"));
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
 	});
 
 	//*********************************************************************************************

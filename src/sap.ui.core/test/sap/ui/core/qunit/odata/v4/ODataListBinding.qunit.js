@@ -213,22 +213,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("initialize: resolved, suspended", function (assert) {
+[undefined, "AddVirtualContext"].forEach(function (sChangeReason) {
+	var sTitle = "initialize: resolved, suspended; sChangeReason = " + sChangeReason;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("n/a"),
-			sChangeReason = {},
 			oRootBinding = {isSuspended : function () {}};
 
 		oBinding.sChangeReason = sChangeReason;
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
 		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_fireChange").never();
 		this.mock(oBinding).expects("_fireRefresh").never();
 
 		// code under test
 		oBinding.initialize();
 
 		assert.strictEqual(oBinding.sChangeReason, sChangeReason);
+		assert.strictEqual(oBinding.sResumeChangeReason,
+			sChangeReason ? ChangeReason.Change : ChangeReason.Refresh);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("initialize: resolved, refresh", function (assert) {
@@ -5540,16 +5546,31 @@ sap.ui.define([
 	// We need to have integration tests first for both differences.
 
 	//*********************************************************************************************
-	QUnit.test("resumeInternal: initial binding", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES");
+[false, true].forEach(function (bAutoExpandSelect) {
+	var sTitle = "resumeInternal: initial binding, bAutoExpandSelect = " + bAutoExpandSelect;
 
-		oBinding.suspend();
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
+			sResumeChangeReason = {};
 
-		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason : ChangeReason.Change});
+		oBinding.sResumeChangeReason = sResumeChangeReason;
+		if (bAutoExpandSelect) {
+			oBinding.sChangeReason = "AddVirtualContext";
+			oBindingMock.expects("_fireChange").withExactArgs({
+				detailedReason : "AddVirtualContext",
+				reason : sResumeChangeReason
+			});
+		} else {
+			oBindingMock.expects("_fireRefresh").withExactArgs({reason : sResumeChangeReason});
+		}
 
 		// code under test
-		oBinding.resume();
+		oBinding.resumeInternal();
+
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("resumeInternal: no sResumeChangeReason", function (assert) {

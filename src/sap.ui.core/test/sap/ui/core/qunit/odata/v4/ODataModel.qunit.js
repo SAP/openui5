@@ -2515,6 +2515,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("addPrerenderingTask: process", function (assert) {
 		var fnFirstTask = this.spy(),
+			fnLastTask = this.spy(),
 			oModel = createModel(),
 			fnPrerenderingTask0 = this.spy(function () {
 				assert.notStrictEqual(oModel.aPrerenderingTasks, null);
@@ -2523,7 +2524,6 @@ sap.ui.define([
 			fnPrerenderingTask1 = this.spy(function () {
 				oModel.addPrerenderingTask(fnLastTask);
 			}),
-			fnLastTask = this.spy(),
 			fnProcess;
 
 		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
