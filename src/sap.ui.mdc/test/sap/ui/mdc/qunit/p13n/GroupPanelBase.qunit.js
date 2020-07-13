@@ -80,11 +80,12 @@ sap.ui.define([
             });
 
             this.oPanel.setItemFactory(function(){
-                return new CustomListItem();
+                return new CustomListItem({
+                    visible: "{visibleInDialog}"
+                });
             });
 
-            var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
-            this.oPanel.setP13nModel(new JSONModel(oP13nData));
+            this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
 
             this.oPanel.placeAt("qunit-fixture");
             sap.ui.getCore().applyChanges();
@@ -99,10 +100,13 @@ sap.ui.define([
 
     QUnit.test("check instantiation", function(assert){
         assert.ok(this.oPanel, "Panel created");
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
         assert.ok(this.oPanel.getModel().isA("sap.ui.model.json.JSONModel"), "Model has been set");
     });
 
     QUnit.test("Check Outer and Inner List creation", function(assert){
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
 
         var oOuterList = this.oPanel._oListControl;
         assert.ok(oOuterList.isA("sap.m.ListBase"), "Inner control is a list");
@@ -121,17 +125,21 @@ sap.ui.define([
 
     QUnit.test("Check Search implementation", function(assert){
 
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+
         this.oPanel._getSearchField().setValue("Field 5");
         var oFakeEvent = new Event("liveSearch", this.oPanel._getSearchField(), {});
 
         this.oPanel._onSearchFieldLiveChange(oFakeEvent);
 
         var oOuterList = this.oPanel._oListControl;
-        assert.equal(oOuterList.getItems()[0].getContent()[0].getVisible(), false, "Panel is invisible since no items are available");
-        assert.equal(oOuterList.getItems()[1].getContent()[0].getVisible(), true, "Panel is visible since items are available");
+        assert.equal(oOuterList.getItems()[0].getVisible(), false, "Panel is invisible since no items are available");
+        assert.equal(oOuterList.getItems()[1].getVisible(), true, "Panel is visible since items are available");
     });
 
     QUnit.test("Check Search implementation - also for ToolTip", function(assert){
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
 
         this.oPanel._getSearchField().setValue("Some Tooltip");
         var oFakeEvent = new Event("liveSearch", this.oPanel._getSearchField(), {});
@@ -139,8 +147,25 @@ sap.ui.define([
         this.oPanel._onSearchFieldLiveChange(oFakeEvent);
 
         var oOuterList = this.oPanel._oListControl;
-        assert.equal(oOuterList.getItems()[0].getContent()[0].getVisible(), false, "Panel is invisible since no items are available");
-        assert.equal(oOuterList.getItems()[1].getContent()[0].getVisible(), true, "Panel is visible since items are available");
+        assert.equal(oOuterList.getItems()[0].getVisible(), false, "Panel is invisible since no items are available");
+        assert.equal(oOuterList.getItems()[1].getVisible(), true, "Panel is visible since items are available");
+    });
+
+    QUnit.test("Check that groups are initially only displayed if necessary", function(assert){
+
+        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        this.oPanel.setP13nModel(new JSONModel(oP13nData));
+
+        assert.equal(this.oPanel._oListControl.getVisibleItems().length, 2, "All groups visible");
+
+        oP13nData.itemsGrouped[0].items.forEach(function(oItem){
+            oItem.visibleInDialog = false;
+        });
+
+        this.oPanel.setP13nModel(new JSONModel(oP13nData));
+
+        assert.equal(this.oPanel._oListControl.getVisibleItems().length, 1, "Only necessary groups visible");
+
     });
 
 });
