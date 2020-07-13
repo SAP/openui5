@@ -359,6 +359,14 @@ sap.ui.define([
 			this._sUpdateCurrentTime = undefined;
 		}
 
+		if (!this.getAppointments().length) {
+			this.aSelectedAppointments = [];
+		} else {
+			this.getAppointments().forEach(function (oApp) {
+				this._updateSelectedAppointmentsArray(oApp);
+			}.bind(this));
+		}
+
 	};
 
 	CalendarRow.prototype.onAfterRendering = function(){
