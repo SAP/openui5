@@ -61,6 +61,17 @@
 		]
 	  },
 	  {
+		"id": "sap.uxap.HeaderFacetPattern",
+		"name": "Header Facet Pattern",
+		"category": "Pattern",
+		"formFactors": "-",
+		"since": "1.77",
+		"samples": [
+		  "sap.uxap.sample.HeaderFacetSample1",
+		  "sap.uxap.sample.HeaderFacetSample2"
+		]
+	  },
+	  {
 		"id": "sap.uxap.ObjectPageSection",
 		"name": "Object Page Section",
 		"category": "Container",
