@@ -7,7 +7,7 @@ sap.ui.define([
 
 	var TABLESETTINGS = window.TABLESETTINGS;
 
-	return Controller.extend("sap.ui.table.testApps.DragAndDrop", {
+	return Controller.extend("sap.ui.table.mvc.DragAndDrop", {
 		onInit: function() {
 			var oTable = this.byId("table");
 			var oTreeTable = this.byId("treetable");
