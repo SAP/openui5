@@ -102,7 +102,7 @@ sap.ui.define([
 	_AggregationCache.prototype = Object.create(_Cache.prototype);
 
 	/**
-	 * Copies the given elements from a cache read into aElements.
+	 * Unconditionally copies the given elements from a cache read into aElements.
 	 *
 	 * @param {object[]} aReadElements
 	 *   The elements from a cache read
@@ -344,15 +344,24 @@ sap.ui.define([
 		 * @param {number} iGapEnd end of gap, exclusive
 		 */
 		function readGap(iGapStart, iGapEnd) {
-			var iStart = _Helper.getPrivateAnnotation(that.aElements[iGapStart], "index");
+			var iStart = _Helper.getPrivateAnnotation(that.aElements[iGapStart], "index"),
+				oStartElement = that.aElements[iGapStart];
 
 			aReadPromises.push(
 				oGapParent.read(iStart, iGapEnd - iGapStart, 0, oGroupLock.getUnlockedCopy(),
-					fnDataRequested)
-				.then(function (oReadResult) {
-					// Note: iGapStart needs to be a local variable, the closure has changed by now!
-					that.addElements(oReadResult.value, iGapStart);
-				})
+						fnDataRequested)
+					.then(function (oReadResult) {
+						// Note: aElements[iGapStart] may have changed by a parallel operation
+						if (oStartElement !== that.aElements[iGapStart]
+							&& oReadResult.value[0] !== that.aElements[iGapStart]) {
+								// start of the gap has moved meanwhile
+								iGapStart = that.aElements.indexOf(oStartElement);
+								if (iGapStart < 0) {
+									iGapStart = that.aElements.indexOf(oReadResult.value[0]);
+								}
+						}
+						that.addElements(oReadResult.value, iGapStart);
+					})
 			);
 		}
 
