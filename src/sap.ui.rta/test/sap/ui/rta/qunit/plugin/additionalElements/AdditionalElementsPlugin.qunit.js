@@ -81,7 +81,13 @@ sap.ui.define([
 	var SomeModel = JSONModel.extend("sap.ui.rta.qunit.test.Model");
 	DelegateMediatorAPI.registerDefaultDelegate({
 		modelType: SomeModel.getMetadata().getName(),
-		delegate: TEST_DELEGATE_PATH
+		delegate: TEST_DELEGATE_PATH,
+		requiredLibraries: {
+			"sap.uxap": {
+				minVersion: "1.44",
+				lazy: false
+			}
+		}
 	});
 
 	var fnRegisterControlsForChanges = function () {
@@ -481,7 +487,8 @@ sap.ui.define([
 				add: {
 					custom: getCustomItems.bind(null, 2),
 					delegate: {
-						changeType: "addFields"
+						changeType: "addFields",
+						changeOnRelevantContainer: true
 					}
 				}
 			}, ON_CHILD)
@@ -889,7 +896,7 @@ sap.ui.define([
 						jsOnly: undefined,
 						oDataServiceUri: undefined,
 						oDataServiceVersion: undefined,
-						modelType: SomeModel.getMetadata().getName(),
+						modelType: undefined,
 						relevantContainerId: "bar",
 						runtimeOnly: undefined,
 						selector: {
@@ -901,11 +908,11 @@ sap.ui.define([
 					var oCompositeCommand = oEvent.getParameter("command");
 					var aCommands = oCompositeCommand.getCommands();
 
-					assert.strictEqual(aCommands.length, 1, "then one command was created");
+					assert.strictEqual(aCommands.length, 1, "then one command is created");
 					assert.ok(oDummyChangeHandler.completeChangeContent.calledOnce, "then addViaDelegate change handler's completeChangeContent() was called");
 
-					var oCommand = aCommands[0];
-					assert.deepEqual(oCommand.mProperties, oExpectedCommandProperties, "then the command was created correctly");
+					var oAddDelegatePropertyCommand = aCommands[0];
+					assert.deepEqual(oAddDelegatePropertyCommand.mProperties, oExpectedCommandProperties, "then the addDelegateProperty command was created correctly");
 
 					done();
 				});
@@ -1502,7 +1509,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container", function (assert) {
+		QUnit.test("when the control's dt metadata has an add via delegate action", function (assert) {
 			var done = assert.async();
 			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
 				var oCompositeCommand = oEvent.getParameter("command");
@@ -1511,7 +1518,45 @@ sap.ui.define([
 				assert.equal(oAddCmd.getName(), "addDelegateProperty",
 					"then the addDelegateProperty command is created ");
 				assert.equal(oAddCmd.getParentId(), "bar", "then the parentId is set correctly ");
-				assert.equal(oAddCmd.getElementId(), "pseudoParent", "then the relevant container is set correctly as element of the command");
+				assert.equal(oAddCmd.getElementId(), "bar", "then the relevant container is set correctly as element of the command");
+				assert.equal(oAddCmd.getRelevantContainerId(), "bar", "then the relevant container is set correctly ");
+				assert.ok(oAddCmd.getNewControlId().indexOf("bar") > -1,
+					"then the pseudo parent (relevant container) is used to create the new control ID");
+				done();
+			});
+			return createOverlayWithAggregationActions.call(this, {
+				add: {
+					delegate : {
+						changeType: "addFields",
+						supportsDefaultDelegate: true
+					}
+				}
+			}, ON_CHILD)
+				.then(function (oOverlay) {
+					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+				}.bind(this))
+
+				.then(function () {
+					assert.ok(true, "then the plugin should not complain about it");
+				});
+		});
+
+		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container and default delegate is available", function (assert) {
+			var done = assert.async();
+			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
+				var oCompositeCommand = oEvent.getParameter("command");
+				assert.equal(oCompositeCommand.getCommands().length, 2, "then two commands are created");
+
+				var oAddLibrary = oCompositeCommand.getCommands()[0];
+				assert.equal(oAddLibrary.getName(), "addLibrary", "then the addLibrary command is created first");
+				assert.equal(oAddLibrary.getReference(), "applicationId", "then the addLibrary command is created with the proper reference");
+				assert.equal(oAddLibrary.getParameters().libraries["sap.uxap"].minVersion, "1.44", "then the addLibrary command is created with the proper required libraries");
+
+				var oAddCmd = oCompositeCommand.getCommands()[1];
+				assert.equal(oAddCmd.getName(), "addDelegateProperty",
+					"then the addDelegateProperty command is created ");
+				assert.equal(oAddCmd.getParentId(), "bar", "then the parentId is set correctly ");
+				assert.equal(oAddCmd.getElementId(), "pseudoParent", "then the parent is set correctly as element of the command");
 				assert.equal(oAddCmd.getRelevantContainerId(), "pseudoParent", "then the relevant container is set correctly ");
 				assert.ok(oAddCmd.getNewControlId().indexOf("pseudoParent") > -1,
 					"then the pseudo parent (relevant container) is used to create the new control ID");
@@ -1522,7 +1567,8 @@ sap.ui.define([
 				add: {
 					delegate : {
 						changeType: "addFields",
-						changeOnRelevantContainer: true
+						changeOnRelevantContainer: true,
+						supportsDefaultDelegate: true
 					}
 				}
 			}, ON_CHILD)
@@ -1535,38 +1581,6 @@ sap.ui.define([
 				});
 		});
 
-
-		QUnit.test("when the control's dt metadata has an add via delegate action", function (assert) {
-			var done = assert.async();
-			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
-				var oCompositeCommand = oEvent.getParameter("command");
-				assert.equal(oCompositeCommand.getCommands().length, 1, "then one command is created");
-				var oAddCmd = oCompositeCommand.getCommands()[0];
-				assert.equal(oAddCmd.getName(), "addDelegateProperty",
-					"then the addDelegateProperty command is created ");
-				assert.equal(oAddCmd.getParentId(), "bar", "then the parentId is set correctly ");
-				assert.equal(oAddCmd.getElementId(), "bar", "then the parent is set correctly as element of the command");
-				assert.equal(oAddCmd.getRelevantContainerId(), "bar", "then the relevant container is set correctly ");
-				assert.ok(oAddCmd.getNewControlId().indexOf("bar") > -1,
-					"then the pseudo parent (relevant container) is used to create the new control ID");
-				done();
-			});
-
-			return createOverlayWithAggregationActions.call(this, {
-				add: {
-					delegate : {
-						changeType: "addFields"
-					}
-				}
-			}, ON_CHILD)
-				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
-				}.bind(this))
-
-				.then(function () {
-					assert.ok(true, "then the plugin should not complain about it");
-				});
-		});
 		QUnit.test("when 'registerElementOverlay' is called and the metamodel is not loaded yet", function (assert) {
 			var fnDone = assert.async();
 			var oSibling = this.oSibling;
@@ -2200,9 +2214,9 @@ sap.ui.define([
 		}
 	}
 
-	function enhanceForAddViaDelegate(bPropagateRelevantContainer, mActions) {
+	function enhanceForAddViaDelegate(mActions) {
 		var mAddViaDelegateAction = ObjectPath.get(["add", "delegate"], mActions);
-		if (mAddViaDelegateAction && !mAddViaDelegateAction.supportsDefaultDelegate) {
+		if (mAddViaDelegateAction) {
 			//attach delegate into to the control
 			var oCustomDataValue = {};
 			var sDelegateModulePath = mActions.delegateModulePath || TEST_DELEGATE_PATH;
@@ -2216,9 +2230,6 @@ sap.ui.define([
 				value: oCustomDataValue
 			});
 			var oControl = this.oControl;
-			if (bPropagateRelevantContainer) {
-				oControl = this.oPseudoPublicParent;
-			}
 			oControl.insertAggregation("customData", oCustomData, 0, /*bSuppressInvalidate=*/true);
 		}
 	}
@@ -2306,7 +2317,7 @@ sap.ui.define([
 				this.oSiblingOverlay = OverlayRegistry.getOverlay(this.oSibling);
 				this.oIrrelevantOverlay = OverlayRegistry.getOverlay(this.oIrrelevantChild);
 				enhanceForResponsibleElement(mActions);
-				enhanceForAddViaDelegate.call(this, bPropagateRelevantContainer, mActions);
+				enhanceForAddViaDelegate.call(this, mActions);
 				resolve();
 			}.bind(this));
 		}.bind(this))
