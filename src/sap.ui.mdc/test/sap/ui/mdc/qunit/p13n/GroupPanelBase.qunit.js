@@ -151,6 +151,26 @@ sap.ui.define([
         assert.equal(oOuterList.getItems()[1].getVisible(), true, "Panel is visible since items are available");
     });
 
+    QUnit.test("Check Search implementation in combination with 'grou mode' Select", function(assert){
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+
+        this.oPanel._getSearchField().setValue("Some Tooltip");
+        this.oPanel._sModeKey = "visible";
+        var oFakeEvent = new Event("liveSearch", this.oPanel._getSearchField(), {});
+
+        this.oPanel._onSearchFieldLiveChange(oFakeEvent);
+
+        var oOuterList = this.oPanel._oListControl;
+        assert.equal(oOuterList.getItems()[0].getVisible(), false, "Panel is invisible since no items are available");
+        assert.equal(oOuterList.getItems()[1].getVisible(), false, "Panel is invisible since no items are available");
+
+        this.oPanel._sModeKey = "all";
+        this.oPanel._onSearchFieldLiveChange(oFakeEvent);
+        assert.equal(oOuterList.getItems()[0].getVisible(), false, "Panel is invisible since no items are available");
+        assert.equal(oOuterList.getItems()[1].getVisible(), true, "Panel is visible since items are available");
+    });
+
     QUnit.test("Check that groups are initially only displayed if necessary", function(assert){
 
         var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
