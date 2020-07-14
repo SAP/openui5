@@ -2306,7 +2306,10 @@ sap.ui.define([
 
 				function preventKeyPredicateChange(sPath) {
 					sPath = sPath.slice(sPredicate.length + 1); // strip sPredicate
-					return aPaths.indexOf(sPath) < 0; // not a $NavigationPropertyPath
+					// not (below) a $NavigationPropertyPath?
+					return !aPaths.some(function (sSideEffectPath) {
+						return _Helper.getRelativePath(sPath, sSideEffectPath) !== undefined;
+					});
 				}
 
 				if (oResult.value.length !== aFilters.length) {
@@ -2668,7 +2671,10 @@ sap.ui.define([
 			// visit response to report the messages
 			that.visitResponse(oNewValue, aResult[1]);
 			_Helper.updateAll(that.mChangeListeners, "", oOldValue, oNewValue, function (sPath) {
-				return aPaths.indexOf(sPath) < 0; // not a $NavigationPropertyPath
+				// not (below) a $NavigationPropertyPath?
+				return !aPaths.some(function (sSideEffectPath) {
+					return _Helper.getRelativePath(sPath, sSideEffectPath) !== undefined;
+				});
 			});
 
 			return oOldValue;

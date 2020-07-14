@@ -7323,8 +7323,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{error : false, path : "Bar"},
-	{error : true, path : "Bar/*"}
+	{error : false, path : "EMPLOYEE_2_TEAM"},
+	{error : false, path : "EMPLOYEE_2_TEAM/TEAM_2_MANAGER"},
+	{error : true, path : "EMPLOYEE_2_EQUIPMENT"} // key predicate must not change here
 ].forEach(function (oFixture, i) {
 	QUnit.test("CollectionCache#requestSideEffects: key property change #" + i, function (assert) {
 		var oError = new Error(),
@@ -7338,7 +7339,7 @@ sap.ui.define([
 					"@$ui5._" : {predicate : "(3)"}
 				}
 			},
-			aPaths = [oFixture.path],
+			aPaths = ["n/a", "EMPLOYEE_2_TEAM", "EMPLOYEE"],
 			mQueryOptions = {},
 			sResourcePath = "TEAMS('42')/Foo",
 			oCache = this.createCache(sResourcePath, mQueryOptions, true),
@@ -7375,7 +7376,7 @@ sap.ui.define([
 						sinon.match.func)
 					.callsFake(function (mChangeListeners, sPath, oTarget, oSource,
 								fnCheckKeyPredicate) {
-							if (fnCheckKeyPredicate("('c')/Bar")) {
+							if (fnCheckKeyPredicate("('c')/" + oFixture.path)) {
 								throw oError;
 							}
 						});
@@ -8108,8 +8109,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{error : false, path : "Bar"},
-	{error : true, path : "Bar/*"}
+	{error : false, path : "EMPLOYEE_2_TEAM"},
+	{error : false, path : "EMPLOYEE_2_TEAM/TEAM_2_MANAGER"},
+	{error : true, path : "EMPLOYEE_2_EQUIPMENT"} // key predicate must not change here
 ].forEach(function (oFixture, i) {
 	QUnit.test("SingleCache#requestSideEffects: key property change #" + i, function (assert) {
 		var sResourcePath = "Employees('42')",
@@ -8131,7 +8133,7 @@ sap.ui.define([
 					"@$ui5._" : {predicate : "('old')"}
 				}
 			},
-			aPaths = [oFixture.path],
+			aPaths = ["n/a", "EMPLOYEE_2_TEAM", "EMPLOYEE"],
 			mTypeForMetaPath = {};
 
 		oCache.oPromise = {/*from previous #fetchValue*/};
@@ -8158,7 +8160,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 				sinon.match.same(oOldValue), sinon.match.same(oNewValue), sinon.match.func)
 			.callsFake(function (mChangeListeners, sPath, oTarget, oSource, fnCheckKeyPredicate) {
-				if (fnCheckKeyPredicate("Bar")) {
+				if (fnCheckKeyPredicate(oFixture.path)) {
 					throw oError;
 				}
 			});

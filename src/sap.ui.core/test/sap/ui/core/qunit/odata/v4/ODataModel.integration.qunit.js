@@ -2671,6 +2671,104 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Context binding as root binding has dependent bindings w/o own cache which result
+	// in a nested $expand. Side effects affect this nested $expand. Expect no error message about
+	// changed key predicate for TEAM_2_MANAGER.
+	// JIRA: CPOUI5ODATAV4-362
+	QUnit.test("ODCB: requestSideEffects for nested expand", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="employee_id" text="{ID}" />\
+	<Text id="team_id" text="{EMPLOYEE_2_TEAM/Team_Id}" />\
+	<Text id="manager_id" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/ID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
+				+ "$expand=TEAM_2_MANAGER($select=ID))", {
+				ID : "1",
+				EMPLOYEE_2_TEAM : {
+					Team_Id : "2",
+					TEAM_2_MANAGER : {ID : "3"}
+				}
+			})
+			.expectChange("employee_id", "1")
+			.expectChange("team_id", "2")
+			.expectChange("manager_id", "3");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("EMPLOYEES('1')?$select=EMPLOYEE_2_TEAM&$expand=EMPLOYEE_2_TEAM"
+					+ "($select=Team_Id;$expand=TEAM_2_MANAGER($select=ID))", {
+					EMPLOYEE_2_TEAM : {
+						Team_Id : "2*",
+						TEAM_2_MANAGER : {ID : "3*"}
+					}
+				})
+				.expectChange("team_id", "2*")
+				.expectChange("manager_id", "3*");
+
+			// code under test
+			that.oView.byId("form").getBindingContext().requestSideEffects([
+				{$NavigationPropertyPath : "EMPLOYEE_2_EQUIPMENT"}, // must be ignored
+				{$NavigationPropertyPath : "EMPLOYEE_2_TEAM"}
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: List binding as root binding has dependent bindings w/o own cache which result
+	// in a nested $expand. Side effects affect this nested $expand. Expect no error message about
+	// changed key predicate for TEAM_2_MANAGER.
+	// JIRA: CPOUI5ODATAV4-362
+	QUnit.test("ODLB: requestSideEffects for nested expand", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/EMPLOYEES}">\
+	<Text id="employee_id" text="{ID}" />\
+	<Text id="team_id" text="{EMPLOYEE_2_TEAM/Team_Id}" />\
+	<Text id="manager_id" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/ID}" />\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=ID&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
+				+ "$expand=TEAM_2_MANAGER($select=ID))&$skip=0&$top=100", {
+				value : [{
+					ID : "1",
+					EMPLOYEE_2_TEAM : {
+						Team_Id : "2",
+						TEAM_2_MANAGER : {ID : "3"}
+					}
+				}]
+			})
+			.expectChange("employee_id", ["1"])
+			.expectChange("team_id", ["2"])
+			.expectChange("manager_id", ["3"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("EMPLOYEES?$select=ID&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
+					+ "$expand=TEAM_2_MANAGER($select=ID))&$filter=ID eq '1'", {
+					value : [{
+						ID : "1",
+						EMPLOYEE_2_TEAM : {
+							Team_Id : "2*",
+							TEAM_2_MANAGER : {ID : "3*"}
+						}
+					}]
+				})
+				.expectChange("team_id", ["2*"])
+				.expectChange("manager_id", ["3*"]);
+
+			// code under test
+			that.oView.byId("table").getItems()[0].getBindingContext()
+				.requestSideEffects([
+					{$NavigationPropertyPath : "EMPLOYEE_2_EQUIPMENT"}, // must be ignored
+					{$NavigationPropertyPath : "EMPLOYEE_2_TEAM"}
+				]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: ODLB, late property at an entity within $expand.
 	// JIRA: CPOUI5ODATAV4-23
 	QUnit.test("ODLB: late property at nested entity", function (assert) {
@@ -26624,7 +26722,11 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oHeaderContext.requestSideEffects([{$PropertyPath : "BestFriend/*"}])
+				oHeaderContext.requestSideEffects([
+						// this must not allow BestFriend/ArtistID to change
+						{$NavigationPropertyPath : "Best"},
+						{$PropertyPath : "BestFriend/*"}
+					])
 					.then(function () {
 						assert.ok(false, "unexpected success");
 					}, function (oError) {
