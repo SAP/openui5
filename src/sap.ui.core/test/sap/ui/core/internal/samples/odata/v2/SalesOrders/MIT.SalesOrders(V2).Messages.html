@@ -436,5 +436,36 @@
 				<b>Check:</b> The message has been removed from the message popover.
 			</li>
 		</ol>
+		<h3>(IX) Messages returned from a function import</h3>
+		Search for a sales order with an item for the product <code>HT-1000</code>. In case of mock
+		data: Use sales order <code>109</code>.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.<br />
+				<b>Check:</b> Remember the number of messages.
+			</li>
+			<li>Change the <code>Quantity</code> value of the item with product <code>HT-1000</code>
+				to the value <code>1</code> and save it.<br />
+				<b>Check:</b> The number of messages has been increased by 1.<br />
+				<b>Check:</b> There is a warning message for the quantity of the item that at least
+					2 have to be ordered.
+			</li>
+			<li>Make sure that the message popover is closed and press the <code>Fix</code> button
+				in the item's row.<br />
+				<b>Check:</b> The <code>Quantity</code> value has been changed to the value
+					<code>2</code>.<br />
+				<b>Check:</b> The number of messages has not changed.<br />
+				<b>Check:</b> The previous warning message has disappeared.<br />
+				<b>Check:</b> There is a new message that the quantity has been successfully
+					updated.
+			</li>
+			<li>Close the message popopver.<br />
+				<b>Check:</b> The number of messages has been decreased by 1.<br />
+				<b>Check:</b> The new message of the last step has been removed from the message
+					popover.
+			</li>
+		</ol>
 	</body>
 </html>
