@@ -1,4 +1,6 @@
 /*global QUnit, sinon */
+/*eslint max-nested-callbacks: [2,4]*/
+
 sap.ui.define([
 	"sap/ui/test/actions/Action",
 	"sap/ui/core/Control"

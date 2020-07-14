@@ -3,9 +3,8 @@ sap.ui.define([
     "sap/ui/test/selectors/_ControlSelectorGenerator",
     "sap/ui/model/resource/ResourceModel",
     "sap/m/Text",
-    "../fixture/bindingPath",
-    "sap/ui/thirdparty/jquery"
-], function (_ControlSelectorGenerator, ResourceModel, Text, fixture, $) {
+    "../fixture/bindingPath"
+], function (_ControlSelectorGenerator, ResourceModel, Text, fixture) {
     "use strict";
 
     QUnit.module("_BindingPath - properties", {

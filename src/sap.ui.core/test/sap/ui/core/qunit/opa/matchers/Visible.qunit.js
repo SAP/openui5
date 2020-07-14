@@ -1,16 +1,17 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	'sap/ui/test/matchers/Visible',
-	'jquery.sap.global',
 	'sap/m/Button'
-], function (Visible, $, Button) {
+], function (Visible, Button) {
 	"use strict";
 
-	QUnit.module("Visible - matching", {
+	QUnit.module("Visible", {
 		beforeEach: function () {
 			this.oVisibleMatcher = new Visible();
 			this.oSpy = sinon.spy(this.oVisibleMatcher._oLogger, "debug");
 			this.oButton = new Button();
+			this.oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 		},
 
 		afterEach: function () {
@@ -19,6 +20,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should not match a Button without domref", function (assert) {
+		this.oButton.destroy();
+		sap.ui.getCore().applyChanges();
 		// Act
 		var oResult = this.oVisibleMatcher.isMatching(this.oButton);
 
@@ -28,9 +31,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should not match an invisible Button", function (assert) {
-		// Arrange
-		this.oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
 		// make the button invisible after rendering it
 		this.oButton.$().hide();
 
@@ -43,8 +43,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should not match an Button with style invisibility", function (assert) {
-		this.oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
 		// make the button invisible after rendering it
 		this.oButton.$().css("visibility", "hidden");
 
@@ -55,10 +53,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should match a visible Button", function (assert) {
-		// Arrange
-		this.oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		// Act
 		var oResult = this.oVisibleMatcher.isMatching(this.oButton);
 

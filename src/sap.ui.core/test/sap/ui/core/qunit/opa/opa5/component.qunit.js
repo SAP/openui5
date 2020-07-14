@@ -1,6 +1,6 @@
 /*global QUnit */
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/test/Opa5',
 	'sap/ui/core/routing/HashChanger',
 	'samples/components/button/Component'
