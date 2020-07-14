@@ -45,26 +45,6 @@ function (
 				]
 			},
 			{
-				"type": "Input.ChoiceSet",
-				"id": "CompactSelectValWithPlaceholder",
-				"style": "compact",
-				"placeholder": "Enter a value",
-				"choices": [
-					{
-					"title": "Red",
-					"value": "1"
-					},
-					{
-					"title": "Green",
-					"value": "2"
-					},
-					{
-					"title": "Blue",
-					"value": "3"
-					}
-				]
-			},
-			{
 				"type": "TextBlock",
 				"text": "style: expanded, isMultiSelect: false"
 			},
@@ -134,23 +114,16 @@ function (
 	QUnit.test("style: compact, isMultiSelect: false", function (assert) {
 		//Arrange
 		var oSelect = document.getElementById("CompactSelectValWithValue"),
-			oSelect1 = document.getElementById("CompactSelectValWithPlaceholder"),
-			oPlaceholder = oSelect1.firstChild,
 			aOptions = oSelect.children,
-			oSelectedOption = aOptions[1],
+			oSelectedOption = aOptions[0],
 			iCount = oSelect.childElementCount;
 
 		//Assert
 		assert.strictEqual(oSelect.tagName.toLowerCase(), "ui5-select", "ui5-select webcomponent is rendered");
-		assert.ok(oSelect.hasAttribute("ac-select"), "ac-select attribute is set");
-		//There is always one more option, since the first one is used for placeholder or to simulate an empty value.
-		assert.strictEqual(iCount, 4, "There are three choices");
-		assert.strictEqual(oSelect.firstChild.textContent, "", "The first choice is empty and is used for placeholder");
+		assert.strictEqual(iCount, 3, "There are three choices");
 		assert.ok(oSelectedOption.selected, "The correct option is selected");
 		assert.strictEqual(oSelectedOption.innerHTML, "Red", "The choice title is mapped correctly");
 		assert.strictEqual(oSelectedOption.value, "1", "The choice value is mapped correctly");
-		assert.strictEqual(oPlaceholder.tagName.toLowerCase(), "ui5-option", "the placeholder is rendered as ui5-option web component");
-		assert.strictEqual(oPlaceholder.textContent, "Enter a value", "the placeholder is not set initially, so an option with empty value is rendered");
 
 		for (var i = 0; i < aOptions.length; i++) {
 			var oOption = aOptions[i];
@@ -162,7 +135,7 @@ function (
 		//Arrange
 		var oRBContainer = document.getElementById("SingleSelectVal"),
 			aRadioButtons = oRBContainer.children,
-			aToggleInputs = this.oAdaptiveContent.adaptiveCardInstance._items[4]._toggleInputs,
+			aToggleInputs = this.oAdaptiveContent.adaptiveCardInstance._items[3]._toggleInputs,
 			oSelectedRB = aRadioButtons[1];
 
 		//Assert
@@ -185,7 +158,7 @@ function (
 		//Arrange
 		var oCBContainer = document.getElementById("MultiSelectVal"),
 			aCheckBoxs = oCBContainer.children,
-			aToggleInputs = this.oAdaptiveContent.adaptiveCardInstance._items[6]._toggleInputs,
+			aToggleInputs = this.oAdaptiveContent.adaptiveCardInstance._items[5]._toggleInputs,
 			oFirstCheckedCB = aCheckBoxs[0],
 			oSecondCheckedCB = aCheckBoxs[2];
 
