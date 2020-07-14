@@ -847,6 +847,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FileUploader.prototype.exit = function(){
+		var oStaticArea = sap.ui.getCore().getStaticAreaRef();
 
 		// destroy the nested controls
 		this.oFilePath.destroy();
@@ -855,10 +856,15 @@ sap.ui.define([
 		// remove the IFRAME
 		if (this.oIFrameRef) {
 			jQuery(this.oIFrameRef).off();
-			sap.ui.getCore().getStaticAreaRef().removeChild(this.oIFrameRef);
+			oStaticArea.removeChild(this.oIFrameRef);
 			this.oIFrameRef = null;
 		}
 
+		if (this.oFileUpload && oStaticArea.contains(this.oFileUpload)) {
+			jQuery(this.oFileUpload).off();
+			oStaticArea.removeChild(this.oFileUpload);
+			this.oFileUpload = null;
+		}
 	};
 
 	/**
