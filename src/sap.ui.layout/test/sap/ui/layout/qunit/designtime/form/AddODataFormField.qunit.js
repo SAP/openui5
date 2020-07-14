@@ -72,9 +72,7 @@ sap.ui.define([
 					appComponent : this.oMockedAppComponent
 				}
 			)
-			.then(function(bApplied) {
-				assert.ok(bApplied, "the change to add a field was applied");
-
+			.then(function() {
 				var oFormContainer = this.oForm.getFormContainers()[0];
 				var oFormElements = oFormContainer.getFormElements();
 				var oNewFormElement = oFormElements[1];
@@ -106,9 +104,7 @@ sap.ui.define([
 					}
 				);
 			}.bind(this))
-			.then(function(bApplied) {
-				assert.ok(bApplied, "the change adding a field to index 0 was applied");
-
+			.then(function() {
 				assert.equal(this.oForm.getFormContainers()[0].getFormElements().length, 3, "the form has now 3 form elements");
 
 				var oFormContainer = this.oForm.getFormContainers()[0];
@@ -159,9 +155,7 @@ sap.ui.define([
 				"the form has only one form element in the beginning");
 
 			return AddFieldChangeHandler.applyChange(oChange, this.oForm, oPropertyBag)
-			.then(function(bApplied) {
-				assert.ok(bApplied, "the first change to add a field was applied");
-
+			.then(function() {
 				return AddFieldChangeHandler.applyChange(oChange, this.oForm, oPropertyBag);
 			}.bind(this))
 			.catch(function(oReturn) {
@@ -258,8 +252,7 @@ sap.ui.define([
 					appComponent: this.oMockedAppComponent
 				}
 			)
-			.then(function(bApplied) {
-				assert.ok(bApplied, "the change was successfully applied");
+			.then(function() {
 				assert.equal(oXmlFormContainer.childElementCount, 2, "the formContainer has 2 elements after the change");
 				assert.equal(oXmlFormContainer.getElementsByTagNameNS("sap.ui.comp.smartfield","SmartLabel")[0].getAttribute("id"), sAddedFieldId + "-field-label", "the field's label was added in the right position");
 				assert.equal(oXmlFormContainer.getElementsByTagNameNS("sap.ui.comp.smartfield","SmartField")[0].getAttribute("id"), sAddedFieldId + "-field", "the field was added in the right position");

@@ -1637,7 +1637,7 @@ sap.ui.define([
 			"changeHandler/MoveTableColumns": {
 				title: "QUnit - sap.m.changeHandler.MoveTableColumns",
 				ui5: {
-					libs: "sap.m,sap.ui.fl"
+					libs: ["sap.m","sap.ui.fl"]
 				}
 			},
 			"colorpalette/test/integration/opaTest": {
@@ -1689,7 +1689,7 @@ sap.ui.define([
 			"designtime/ActionSheet": {
 				title: "QUnit Page for sap.m.ActionSheet design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				sinon: false,
 				qunit: 2,
@@ -1699,7 +1699,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.Avatar design time and rta enabling",
 				_alternativeTitle: "QUnit Page for sap.m.Avatar rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1709,7 +1709,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.Bar design time and rta enabling",
 				_alternativeTitle: "QUnit Page for sap.m.Bar",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1724,7 +1724,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.Button design time",
 				_alternativeTitle: "QUnit Page for sap.m.Button",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1738,7 +1738,7 @@ sap.ui.define([
 			"designtime/CheckBox": {
 				title: "QUnit Page for sap.m.CheckBox design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1779,7 +1779,7 @@ sap.ui.define([
 			"designtime/DatePicker": {
 				title: "QUnit Page for sap.m.DatePicker design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1788,7 +1788,7 @@ sap.ui.define([
 			"designtime/FlexBox": {
 				title: "QUnit Page for sap.m.FlexBox design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1797,7 +1797,7 @@ sap.ui.define([
 			"designtime/IconTabBar": {
 				title: "QUnit IconTabBar for sap.m.IconTabBar design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1811,7 +1811,7 @@ sap.ui.define([
 			"designtime/IconTabFilter": {
 				title: "QUnit IconTabFilter for sap.m.IconTabFilter design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1825,7 +1825,7 @@ sap.ui.define([
 			"designtime/Image": {
 				title: "QUnit Page for sap.m.Image design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1834,7 +1834,7 @@ sap.ui.define([
 			"designtime/InputBase": {
 				title: "QUnit Page for sap.m.InputBase design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1852,7 +1852,7 @@ sap.ui.define([
 			"designtime/Label": {
 				title: "QUnit Page for sap.m.Label design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1867,7 +1867,7 @@ sap.ui.define([
 			"designtime/Link": {
 				title: "QUnit Page for sap.m.Link design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1876,7 +1876,7 @@ sap.ui.define([
 			"designtime/ListBase": {
 				title: "QUnit Page for sap.m.ListBase design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1885,7 +1885,7 @@ sap.ui.define([
 			"designtime/ListItemBase": {
 				title: "QUnit Page for sap.m.ListItemBase design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1903,7 +1903,7 @@ sap.ui.define([
 			"designtime/ObjectListItem": {
 				title: "QUnit Page for sap.m.ObjectListItem design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1914,7 +1914,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.OverflowToolbarButton design time and rta enabling",
 				_alternativeTitle: "QUnit Page for sap.m.OverflowToolbarButton rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1923,7 +1923,7 @@ sap.ui.define([
 			"designtime/Page": {
 				title: "QUnit Page for sap.m.Page design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1937,7 +1937,7 @@ sap.ui.define([
 			"designtime/Panel": {
 				title: "QUnit Page for sap.m.Panel design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1946,7 +1946,7 @@ sap.ui.define([
 			"designtime/Popover": {
 				title: "QUnit Page for sap.m.Popover design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1955,7 +1955,7 @@ sap.ui.define([
 			"designtime/RadioButton": {
 				title: "QUnit Page for sap.m.RadioButton design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1964,7 +1964,7 @@ sap.ui.define([
 			"designtime/RatingIndicator": {
 				title: "QUnit Page for sap.m.RatingIndicator design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				loader: {
 					paths: {
@@ -1978,7 +1978,7 @@ sap.ui.define([
 			"designtime/ScrollContainer": {
 				title: "QUnit Page for sap.m.ScrollContainer design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -1997,7 +1997,7 @@ sap.ui.define([
 			"designtime/Slider": {
 				title: "QUnit Page for sap.m.Slider design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -2016,7 +2016,7 @@ sap.ui.define([
 			"designtime/StandardListItem": {
 				title: "QUnit Page for sap.m.StandardListItem design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -2025,7 +2025,8 @@ sap.ui.define([
 			"designtime/Table": {
 				title: "QUnit Page for sap.m.Table design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"],
+					language: "en"
 				},
 				qunit: 2,
 				sinon: false,
@@ -2035,7 +2036,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.Text design time and rta enabling",
 				_alternativeTitle: "QUnit Page for sap.m.Text rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -2044,7 +2045,7 @@ sap.ui.define([
 			"designtime/Title": {
 				title: "QUnit Page for sap.m.Title design time and rta enabling",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -2054,7 +2055,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.Toolbar design time and rta enabling",
 				_alternativeTitle: "QUnit Page for sap.m.Toolbar",
 				ui5: {
-					libs: "sap.m,sap.ui.rta"
+					libs: ["sap.m","sap.ui.rta"]
 				},
 				qunit: 2,
 				sinon: false,
@@ -2226,9 +2227,10 @@ sap.ui.define([
 		mConfig = merge({}, mConfig, {
 			tests: {
 				"changeHandler/AddTableColumn": {
-					title: "QUnit - sap.m.changeHandler.AddTableColumn",
+					title: "QUnit - legacy addTableColumn changes in sap.m.changeHandler.AddTableColumn",
 					ui5: {
-						libs: "sap.m,sap.ui.fl"
+						libs: ["sap.m","sap.ui.fl", "sap.ui.comp"],
+						language: "en"
 					}
 				}
 			}

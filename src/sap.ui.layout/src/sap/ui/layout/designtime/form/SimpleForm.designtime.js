@@ -134,12 +134,12 @@ sap.ui.define([
 					singular: "FIELD_CONTROL_NAME",
 					plural: "FIELD_CONTROL_NAME_PLURAL"
 				},
-				beforeMove: function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
+				beforeMove: function (oSimpleForm) { //TODO extract as function
 					if (oSimpleForm){
 						oSimpleForm._bChangedByMe = true;
 					}
 				},
-				afterMove: function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
+				afterMove: function (oSimpleForm) { //TODO extract as function
 					if (oSimpleForm){
 						oSimpleForm._bChangedByMe = false;
 					}
@@ -152,15 +152,11 @@ sap.ui.define([
 							};
 						}
 					},
-					addODataProperty: function (oFormContainer) {
-						var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldWithLabelSettings(oFormContainer);
-
-						if (mChangeHandlerSettings){
-							return {
-								changeType: "addSimpleFormField",
-								changeOnRelevantContainer: true,
-								changeHandlerSettings: mChangeHandlerSettings
-							};
+					add: {
+						delegate: {
+							changeType: "addSimpleFormField",
+							changeOnRelevantContainer: true,
+							supportsDefaultDelegate: true
 						}
 					}
 				}

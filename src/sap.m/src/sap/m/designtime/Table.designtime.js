@@ -42,15 +42,17 @@ sap.ui.define([
 				},
 				domRef: ":sap-domref .sapMListTblHeader",
 				actions: {
-					move: function(oColumn) {return fCheckPersoController(oColumn.getParent()) ? null : "moveTableColumns";},
-					addODataProperty: function (oTable) {
-						var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldSettings(oTable);
-
-						if (mChangeHandlerSettings && !fCheckPersoController(oTable)){
-							return {
-								changeType: "addTableColumn",
-								changeHandlerSettings : mChangeHandlerSettings
-							};
+					move: function(oColumn) {
+						return fCheckPersoController(oColumn.getParent()) ? null : "moveTableColumns";
+					},
+					add: {
+						delegate: function (oTable) {
+							if (!fCheckPersoController(oTable)){
+								return {
+									changeType: "addTableColumn",
+									supportsDefaultDelegate: true
+								};
+							}
 						}
 					}
 				}

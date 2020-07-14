@@ -184,7 +184,7 @@ sap.ui.define([
 		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings, bAsync) {
 			var sErrorMessage;
 			if (this.bySelector(oSelector, oAppComponent)) {
-				sErrorMessage = "Can't create a control with duplicated ID " + oSelector;
+				sErrorMessage = "Can't create a control with duplicated ID " + (oSelector.id || oSelector);
 				if (bAsync) {
 					return Promise.reject(sErrorMessage);
 				}

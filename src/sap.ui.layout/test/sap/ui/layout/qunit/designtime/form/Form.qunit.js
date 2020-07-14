@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/m/Toolbar",
 	"sap/m/Title",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI"
 ], function (
@@ -21,7 +20,6 @@ sap.ui.define([
 	ResponsiveGridLayout,
 	Toolbar,
 	Title,
-	JsControlTreeModifier,
 	JSONModel,
 	DelegateMediatorAPI
 ) {
@@ -198,7 +196,7 @@ sap.ui.define([
 
 		// Add delegate tests
 		function buildViewContentForAddDelegate(sDelegate) {
-			return '<mvc:View id="view" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns="sap.m" xmlns:fl="sap.ui.fl">' +
+			return '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns="sap.m" xmlns:fl="sap.ui.fl">' +
 					sDelegate +
 						'<f:layout>' +
 							'<f:ResponsiveGridLayout/>' +
@@ -223,11 +221,13 @@ sap.ui.define([
 				'</mvc:View>';
 		}
 
+		var NEW_CONTROL_ID = "my_new_control";
+
 		function confirmFieldIsAdded(sValueHelpId, oAppComponent, oView, assert) {
 			var oFormContainer = oView.byId("group");
 			var aFormElements = oFormContainer.getFormElements();
 			assert.equal(aFormElements.length, 3, "then a new form element exists");
-			var oNewFormElement = oView.byId("my_new_control");
+			var oNewFormElement = oView.byId(NEW_CONTROL_ID);
 			assert.equal(aFormElements.indexOf(oNewFormElement), 0, "then the new form element is inserted at the correct position");
 			var oField = oNewFormElement.getFields()[0];
 			assert.equal(oField.getId().indexOf(oNewFormElement.getId()), 0, "then the field was assigned a stable id as suffix of the provided id");
@@ -236,7 +236,7 @@ sap.ui.define([
 			var aDependents = oFormContainer.getDependents();
 			if (sValueHelpId) {
 				assert.equal(aDependents.length, 1, "then one dependent was added");
-				var oValueHelp = oView.byId(sValueHelpId);
+				var oValueHelp = oView.byId(oView.createId(NEW_CONTROL_ID) + "-field-" + sValueHelpId);
 				assert.equal(aDependents.indexOf(oValueHelp), 0, "then the value help element was added as a dependent");
 			} else {
 				assert.equal(aDependents.length, 0, "then no dependents were added");
@@ -247,25 +247,25 @@ sap.ui.define([
 			var oFormContainer = oView.byId("group");
 			var aFormElements = oFormContainer.getFormElements();
 			assert.equal(aFormElements.length, 2, "then only the old form elements exists");
-			var oNewFormElement = oView.byId("my_new_control");
+			var oNewFormElement = oView.byId(NEW_CONTROL_ID);
 			assert.notOk(oNewFormElement, "then the new control was removed");
 
 			if (sValueHelpId) {
 				var aDependents = oFormContainer.getDependents();
 				assert.equal(aDependents.length, 0, "then the dependent was removed");
-				var oValueHelp = oView.byId("valueHelp");
+				var oValueHelp = oView.byId(oView.createId(NEW_CONTROL_ID) + "-field-" + sValueHelpId);
 				assert.notOk(oValueHelp, "then the value help element was destroyed");
 			}
 		}
 
-		var sTestDelegatePath = "sap/ui/rta/enablement/TestDelegate";
+		var TEST_DELEGATE_PATH = "sap/ui/rta/enablement/TestDelegate";
 		elementActionTest("Checking the add action via delegate for a form container, returning a value help from payload, where Delegate.createLayout() is not responsible for controls", {
 			xmlView: buildViewContentForAddDelegate(
 				'<f:Form id="idForm" ' +
 					"fl:delegate='{" +
-						'"name":"' + sTestDelegatePath + '",' +
+						'"name":"' + TEST_DELEGATE_PATH + '",' +
 						'"payload":{' +
-							'"valueHelpId":"valueHelp"' +
+							'"valueHelpId":"valueHelp"' + //enforce creation of valueHelp in the test delegate
 						'}' +
 					"}'" +
 				'>'
@@ -276,7 +276,7 @@ sap.ui.define([
 				parameter: function (oView) {
 					return {
 						index: 0,
-						newControlId: oView.createId("my_new_control"),
+						newControlId: oView.createId(NEW_CONTROL_ID),
 						bindingString: "binding/path",
 						parentId: oView.createId("group")
 					};
@@ -291,7 +291,7 @@ sap.ui.define([
 			xmlView:buildViewContentForAddDelegate(
 				'<f:Form id="idForm" ' +
 					"fl:delegate='{" +
-						'"name":"' + sTestDelegatePath + '"' +
+						'"name":"' + TEST_DELEGATE_PATH + '"' +
 					"}'" +
 				'>'
 			),
@@ -301,7 +301,7 @@ sap.ui.define([
 				parameter: function (oView) {
 					return {
 						index: 0,
-						newControlId: oView.createId("my_new_control"),
+						newControlId: oView.createId(NEW_CONTROL_ID),
 						bindingString: "binding/path",
 						parentId: oView.createId("group")
 					};
@@ -316,13 +316,13 @@ sap.ui.define([
 			xmlView: buildViewContentForAddDelegate(
 				'<f:Form id="idForm" ' +
 					"fl:delegate='{" +
-						'"name":"' + sTestDelegatePath + '",' +
+						'"name":"' + TEST_DELEGATE_PATH + '",' +
 						'"payload":{' +
-							'"useCreateLayout":"true",' +
-							'"valueHelpId":"valueHelp",' +
-							'"layoutType":"sap.ui.layout.form.FormElement",' +
-							'"labelAggregation": "label",' +
-							'"aggregation": "fields"' +
+							'"useCreateLayout":"true",' + //enforce availability of createLayout in the test delegate
+							'"valueHelpId":"valueHelp",' + //enforce creation of valueHelp in the test delegate
+							'"layoutType":"sap.ui.layout.form.FormElement",' + //specify createLayout details in the test delegate
+							'"labelAggregation": "label",' + //specify createLayout details in the test delegate
+							'"aggregation": "fields"' + //specify createLayout details in the test delegate
 						'}' +
 					"}'" +
 				'>'
@@ -333,7 +333,7 @@ sap.ui.define([
 				parameter: function (oView) {
 					return {
 						index: 0,
-						newControlId: oView.createId("my_new_control"),
+						newControlId: oView.createId(NEW_CONTROL_ID),
 						bindingString: "binding/path",
 						parentId: oView.createId("group")
 					};
@@ -348,9 +348,9 @@ sap.ui.define([
 			xmlView:buildViewContentForAddDelegate(
 				'<f:Form id="idForm" ' +
 					"fl:delegate='{" +
-						'"name":"' + sTestDelegatePath + '",' +
+						'"name":"' + TEST_DELEGATE_PATH + '",' +
 						'"payload":{' +
-							'"valueHelpId":"valueHelp"' +
+							'"valueHelpId":"valueHelp"' + //enforce creation of valueHelp in the test delegate
 						'}' +
 					"}'" +
 				'>'
@@ -361,7 +361,7 @@ sap.ui.define([
 				parameter: function (oView) {
 					return {
 						index: 0,
-						newControlId: oView.createId("my_new_control"),
+						newControlId: oView.createId(NEW_CONTROL_ID),
 						bindingString: "binding/path",
 						parentId: oView.createId("group")
 					};
@@ -373,10 +373,10 @@ sap.ui.define([
 		});
 
 		//ensure a default delegate exists for a model not used anywhere else
-		var SomeModel = JSONModel.extend("sap.ui.layout.qunit.test.Model");
+		var SomeModel = JSONModel.extend("sap.ui.layout.form.qunit.test.Model");
 		DelegateMediatorAPI.registerDefaultDelegate({
 			modelType: SomeModel.getMetadata().getName(),
-			delegate: sTestDelegatePath
+			delegate: TEST_DELEGATE_PATH
 		});
 		elementActionTest("Checking the add action via delegate with a default delegate", {
 			xmlView: buildViewContentForAddDelegate(
@@ -389,10 +389,10 @@ sap.ui.define([
 				parameter: function (oView) {
 					return {
 						index: 0,
-						newControlId: oView.createId("my_new_control"),
+						newControlId: oView.createId(NEW_CONTROL_ID),
 						bindingString: "binding/path",
-						modelType: SomeModel.getMetadata().getName(),
-						parentId: oView.createId("group")
+						parentId: oView.createId("group"),
+						modelType: SomeModel.getMetadata().getName()
 					};
 				}
 			},
