@@ -43,7 +43,9 @@
 		</l:VerticalLayout>
 		<dependents>
 			<mdcField:ListFieldHelp id="rowSelect-help"
-					items="{ path:'om>/', templateShareable:false}" >
+					items="{ path:'om>/', templateShareable:false}"
+					filterList="false"
+					useFirstMatch="true">
 				<core:ListItem key="{om>key}" text="{om>additionalText}" additionalText="{om>info}"/>
 			</mdcField:ListFieldHelp>
 		</dependents>
