@@ -15745,6 +15745,98 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Call requestSideEffects on a list binding with data aggregation. See that the
+	// request is not influenced by $select/$sexpand, but by $apply.
+	// JIRA: CPOUI5ODATAV4-337
+	QUnit.test("requestSideEffects and $$aggregation", function (assert) {
+		var oBinding,
+			oHeaderContext,
+			oModel = createAggregationModel(),
+			sView = '\
+<Table id="table" items="{path : \'/BusinessPartners\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {SalesAmount : {}},\
+				groupLevels : [\'Region\']\
+			}\
+		}}">\
+	<Text id="region" text="{Region}" />\
+	<Text id="salesAmount" text="{= %{SalesAmount}}" />\
+</Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true&$skip=0&$top=100",
+				{value : [{Region : "A"}]})
+			.expectChange("region", ["A"])
+			.expectChange("salesAmount", [null]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// expect no request
+
+			oBinding = that.oView.byId("table").getBinding("items");
+			oHeaderContext = oBinding.getHeaderContext();
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "AccountResponsible"}]),
+				that.waitForChanges(assert, "AccountResponsible (unused)")
+			]);
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
+					+ "&$skip=0&$top=100",
+					{value : [{Region : "A"}]});
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$NavigationPropertyPath : ""}]),
+				that.waitForChanges(assert, "entity")
+			]);
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
+					+ "&$skip=0&$top=100",
+					{value : [{Region : "A"}]});
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "SalesAmount"}]),
+				that.waitForChanges(assert, "SalesAmount (aggregate)")
+			]);
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
+					+ "&$skip=0&$top=100",
+					{value : [{Region : "A"}]});
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "Region"}]),
+				that.waitForChanges(assert, "Region (group level)")
+			]);
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
+					+ "/groupby((Region))&$count=true&$skip=0&$top=100",
+					{value : [{Region : "A"}]});
+
+			oBinding.filter(new Filter("Country", FilterOperator.EQ, "US"));
+
+			return that.waitForChanges(assert, "filter");
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
+					+ "/groupby((Region))&$count=true&$skip=0&$top=100",
+					{value : [{Region : "A"}]});
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "Country"}]),
+				that.waitForChanges(assert, "Country (filter)")
+			]);
+		}).then(function () {
+			return that.oView.byId("table").getItems()[0].getBindingContext()
+				.requestSideEffects([{$PropertyPath : "Country"}])
+				.then(function () {
+					assert.ok(false);
+				}, function (oError) {
+					assert.strictEqual(oError.message, "Must not request side effects for a context"
+						+ " of a binding with $$aggregation");
+				});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Application tries to overwrite client-side instance annotations.
 	QUnit.test("@$ui5.* is write-protected", function (assert) {
 		var oModel = createTeaBusiModel(),

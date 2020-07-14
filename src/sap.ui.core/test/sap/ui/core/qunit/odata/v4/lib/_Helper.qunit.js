@@ -3074,6 +3074,10 @@ sap.ui.define([
 	QUnit.test("getRelativePath: " + oFixture.sPath, function (assert) {
 		// code under test
 		assert.strictEqual(_Helper.getRelativePath(oFixture.sPath, "/foo/bar"), oFixture.sResult);
+
+		// code under test
+		assert.strictEqual(_Helper.getRelativePath(oFixture.sPath.slice(1), "foo/bar"),
+			oFixture.sResult);
 	});
 });
 
@@ -3121,6 +3125,22 @@ sap.ui.define([
 		assert.deepEqual(oFixture.aggregated, oFixture.result);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("hasPathPrefix", function (assert) {
+		var oHelperMock = this.mock(_Helper);
+
+		oHelperMock.expects("getRelativePath").withExactArgs("sPath", "sBasePath")
+			.returns(undefined);
+
+		// code under test
+		assert.strictEqual(_Helper.hasPathPrefix("sPath", "sBasePath"), false);
+
+		oHelperMock.expects("getRelativePath").withExactArgs("sPath", "sBasePath").returns("");
+
+		// code under test
+		assert.strictEqual(_Helper.hasPathPrefix("sPath", "sBasePath"), true);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("aggregateQueryOptions: recursion", function (assert) {

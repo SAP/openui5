@@ -359,8 +359,6 @@ sap.ui.define([
 		 *    the given message itself or if supplied, the "@$ui5.originalMessage" property.
 		 *    If one of these is an <code>Error</code> instance, then <code>{}</code> is returned.
 		 *    The clone is created lazily.
-		 *
-		 * @private
 		 */
 		createTechnicalDetails : function (oMessage) {
 			var oClonedMessage,
@@ -796,8 +794,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the relative path for a given absolute path by stripping off the base path. Note
-		 * that the resulting path may start with a key predicate.
+		 * Returns the relative path for a given (absolute) path by stripping off the base path.
+		 * Note that the resulting path may start with a key predicate.
 		 *
 		 * Examples: (The base path is "/foo/bar"):
 		 * "/foo/bar/baz" -> "baz"
@@ -807,14 +805,14 @@ sap.ui.define([
 		 * "/foo" -> undefined
 		 *
 		 * @param {string} sPath
-		 *   An absolute path
+		 *   A path
 		 * @param {string} sBasePath
-		 *   The absolute base path to strip off
+		 *   The (absolute) base path to strip off
 		 * @returns {string}
 		 *   The path relative to the base path or <code>undefined</code> if the path does not start
 		 *   with the base path
 		 *
-		 * @private
+		 * @see .hasPathPrefix
 		 */
 		getRelativePath : function (sPath, sBasePath) {
 			if (!sPath.startsWith(sBasePath)) {
@@ -859,8 +857,6 @@ sap.ui.define([
 		 * @param {string} sPath The path of both values in mChangeListeners
 		 * @param {any} vOld The old value
 		 * @param {any} vNew The new value
-		 *
-		 * @private
 		 */
 		informAll : function (mChangeListeners, sPath, vOld, vNew) {
 			if (vNew === vOld) {
@@ -1038,7 +1034,21 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks that the value is a safe integer.
+		 * Tells whether <code>sPath</code> has <code>sBasePath</code> as path prefix. It returns
+		 * <code>true</code> iff {@link .getRelativePath} does not return <code>undefined</code>.
+		 *
+		 * @param {string} sPath The path
+		 * @param {string} sBasePath The base path
+		 * @returns {boolean} true if sBasePath path is a prefix of sPath
+		 *
+		 * @see .getRelativePath
+		 */
+		hasPathPrefix : function (sPath, sBasePath) {
+			return _Helper.getRelativePath(sPath, sBasePath) !== undefined;
+		},
+
+		/**
+		 * Tells whether the value is a safe integer.
 		 *
 		 * @param {number} iNumber The value
 		 * @returns {boolean}
