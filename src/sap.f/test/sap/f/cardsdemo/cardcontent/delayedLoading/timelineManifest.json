@@ -14,7 +14,7 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "./cardcontent/employees.json"
+					"url": "./cardsdemo/cardcontent/employees.json"
 				},
 				"path": "/Employees"
 			},

@@ -47,7 +47,7 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * @extends sap.f.PlanningCalendar
+	 * @extends sap.m.PlanningCalendar
 	 * @version ${version}
 	 *
 	 * @constructor

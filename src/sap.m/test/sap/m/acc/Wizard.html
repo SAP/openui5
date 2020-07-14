@@ -59,7 +59,12 @@
 				title: "Payment details",
 				icon: "sap-icon://simple-payment",
 				content: [
+					new sap.m.Label({
+						labelFor: "wizardTextArea",
+						text: "Comment:"
+					}),
 					new sap.m.TextArea({
+						id: "wizardTextArea",
 						placeholder: "Please add your comment",
 						rows: 6,
 						maxLength: 255,

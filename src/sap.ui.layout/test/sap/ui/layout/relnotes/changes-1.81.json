@@ -1,0 +1,29 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "8b605e5aeb11f4b4c29f4d777ef2916e223eb116",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: demokit samples are now improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080256954"
+          }
+        ]
+      },
+      {
+        "id": "db092357ac4940efdc320bd2435bf665000556fb",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: the contents visibility remain the same after rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080215441"
+          }
+        ]
+      }
+    ]
+  }
+}

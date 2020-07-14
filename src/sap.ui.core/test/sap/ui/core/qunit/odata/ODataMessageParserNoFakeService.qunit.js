@@ -1459,4 +1459,23 @@ sap.ui.define([
 		assert.deepEqual(mAffectedTargets, oFixture.oResult);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_getFunctionTarget: from function metadata", function (assert) {
+		var oODataMessageParser = {
+				_metadata : {
+					_getCanonicalPathOfFunctionImport : function () {}
+				}
+			};
+
+		this.mock(oODataMessageParser._metadata).expects("_getCanonicalPathOfFunctionImport")
+			.withExactArgs("~mFunctionInfo", "~parameters")
+			.returns("~canonicalPath");
+
+		// code under test
+		assert.strictEqual(
+			ODataMessageParser.prototype._getFunctionTarget.call(oODataMessageParser,
+				"~mFunctionInfo", {/*mRequestInfo*/}, {parameters : "~parameters"}),
+			"~canonicalPath");
+	});
 });

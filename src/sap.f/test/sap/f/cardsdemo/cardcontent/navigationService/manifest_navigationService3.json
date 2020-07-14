@@ -25,7 +25,7 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "./cardcontent/salesOrders.json"
+					"url": "./cardsdemo/cardcontent/salesOrders.json"
 				},
 				"path": "/items"
 			},

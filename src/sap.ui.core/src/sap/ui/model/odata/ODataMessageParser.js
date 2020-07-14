@@ -376,9 +376,7 @@ ODataMessageParser.prototype._createMessage = function (oMessageObject, mRequest
  * @returns {string} The Path to the affected entity
  */
 ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mRequestInfo, mUrlData) {
-	var sTarget = "";
-
-	var i;
+	var sTarget;
 
 	// In case of a function import the location header may point to the correct entry in the service.
 	// This should be the case for writing/changing operations using POST
@@ -390,62 +388,11 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 			sTarget = sTarget.substr(iPos + this._serviceUrl.length);
 		}
 	} else {
-
-		// Search for "action-for" annotation
-		var sActionFor = null;
-		if (mFunctionInfo.extensions) {
-			for (i = 0; i < mFunctionInfo.extensions.length; ++i) {
-				if (mFunctionInfo.extensions[i].name === "action-for") {
-					sActionFor = mFunctionInfo.extensions[i].value;
-					break;
-				}
-			}
-		}
-
-		var mEntityType;
-		if (sActionFor) {
-			mEntityType = this._metadata._getEntityTypeByName(sActionFor);
-		} else if (mFunctionInfo.entitySet) {
-			mEntityType = this._metadata._getEntityTypeByPath(mFunctionInfo.entitySet);
-		} else if (mFunctionInfo.returnType) {
-			mEntityType = this._metadata._getEntityTypeByName(mFunctionInfo.returnType);
-		}
-		if (mEntityType){
-			var mEntitySet = this._metadata._getEntitySetByType(mEntityType);
-
-			if (mEntitySet && mEntityType && mEntityType.key && mEntityType.key.propertyRef) {
-
-				var sId = "";
-				var sParam;
-
-				if (mEntityType.key.propertyRef.length === 1) {
-					// Just the ID in brackets
-					sParam = mEntityType.key.propertyRef[0].name;
-					if (mUrlData.parameters[sParam]) {
-						sId = mUrlData.parameters[sParam];
-					}
-				} else {
-					// Build ID string from keys
-					var aKeys = [];
-					for (i = 0; i < mEntityType.key.propertyRef.length; ++i) {
-						sParam = mEntityType.key.propertyRef[i].name;
-						if (mUrlData.parameters[sParam]) {
-							aKeys.push(sParam + "=" + mUrlData.parameters[sParam]);
-						}
-					}
-					sId = aKeys.join(",");
-				}
-
-				sTarget = "/" + mEntitySet.name + "(" + sId + ")";
-			} else if (!mEntitySet) {
-				Log.error("Could not determine path of EntitySet for function call: " + mUrlData.url);
-			} else {
-				Log.error("Could not determine keys of EntityType for function call: " + mUrlData.url);
-			}
-		}
+		sTarget = this._metadata._getCanonicalPathOfFunctionImport(mFunctionInfo,
+			mUrlData.parameters);
 	}
 
-	return sTarget;
+	return sTarget || "";
 };
 
 /**

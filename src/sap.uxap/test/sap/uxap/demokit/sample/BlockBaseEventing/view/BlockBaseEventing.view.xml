@@ -11,7 +11,7 @@
 			<ObjectPageSection title="example">
 				<subSections>
 
-					<ObjectPageSubSection title="Example">
+					<ObjectPageSubSection title="Example" titleUppercase="true">
 						<blocks>
 
 							<html:div style="padding:1em;height:4em; background-color: #A9EAFF ;">

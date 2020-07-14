@@ -8457,7 +8457,6 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(this.oMultiComboBox._getReadOnlyPopover().isOpen(), "Suggestion read only popover should be opened");
-		assert.notOk(oTokenizer.hasOneTruncatedToken(), "The token should not be truncated");
 	});
 
 	QUnit.test("Truncation should stay on token click in read only mode", function (assert) {

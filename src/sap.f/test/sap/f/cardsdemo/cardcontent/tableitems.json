@@ -1,8 +1,9 @@
 {
-	"names": [{
+	"names": [
+		{
 			"firstName": "Peter",
 			"lastName": "Mueller",
-			"icon": "../images/Woman_avatar_01.png",
+			"icon": "images/Woman_avatar_01.png",
 			"urlText": "link text",
 			"url": "http://www.sap.com",
 			"percent": 30,
@@ -22,7 +23,7 @@
 		{
 			"firstName": "Thomas",
 			"lastName": "Smith",
-			"icon": "../images/Woman_avatar_01.png",
+			"icon": "images/Woman_avatar_01.png",
 			"urlText": "www.sap.com",
 			"url": "http://www.sap.com",
 			"percent": 55,
@@ -32,7 +33,7 @@
 		{
 			"firstName": "John",
 			"lastName": "Williams",
-			"icon": "../images/Woman_avatar_01.png",
+			"icon": "images/Woman_avatar_01.png",
 			"urlText": "www.sap.com",
 			"url": "http://www.sap.com",
 			"percent": 10,
@@ -42,7 +43,7 @@
 		{
 			"firstName": "Maria",
 			"lastName": "Jones",
-			"icon": "../images/Woman_avatar_01.png",
+			"icon": "images/Woman_avatar_01.png",
 			"urlText": "link text",
 			"url": "http://www.sap.com",
 			"percent": 100,
@@ -87,14 +88,13 @@
 				}
 			]
 		}
-
 	],
 	"tableCard3": [
 		{
 			"orderId": "102223882",
 			"orderUrl": "http://www.sap.com",
 			"name": "Viktoria Sanchez",
-			"icon": "../images/Woman_avatar_01.png",
+			"icon": "images/Woman_avatar_01.png",
 			"status": "Approved",
 			"statusState": "None"
 		},
@@ -102,7 +102,7 @@
 			"orderId": "102223882",
 			"orderUrl": "http://www.sap.com",
 			"name": "Monique Legran",
-			"icon": "../images/Woman_avatar_02.png",
+			"icon": "images/Woman_avatar_02.png",
 			"status": "Rejected",
 			"statusState": "None"
 		},
@@ -117,11 +117,10 @@
 			"orderId": "102223882",
 			"orderUrl": "http://www.sap.com",
 			"name": "Viktoria Sanchez",
-			"icon": "../images/Woman_avatar_01.png",
+			"icon": "images/Woman_avatar_01.png",
 			"status": "Approved",
 			"statusState": "None"
 		}
-
 	],
 	"tableCard4": [
 		{
@@ -163,6 +162,5 @@
 			"status": "Delivered",
 			"statusState": "Success"
 		}
-
 	]
 }

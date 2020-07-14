@@ -34,10 +34,12 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/ScrollContainer",
 	"sap/m/Title",
-	"sap/m/plugins/DataStateIndicator"
+	"sap/m/plugins/DataStateIndicator",
+	"sap/ui/layout/VerticalLayout"
 ], function(Core, createAndAppendDiv, jQuery,
 			qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, ThemeParameters, library, StandardListItem, App, Page, ListBase, List, Toolbar,
-			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator) {
+			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator,
+			VerticalLayout) {
 		"use strict";
 		jQuery("#qunit-fixture").attr("data-sap-ui-fastnavgroup", "true");
 
@@ -2330,6 +2332,31 @@ sap.ui.define([
 			oText1.destroy();
 		});
 
+		QUnit.test("aria-labelledby should not contain same id multiple times",function(assert) {
+			var oHeaderToolbar = new Toolbar({
+				content: [
+					new Title({
+						id: "titleId",
+						text: "Title"
+					})
+				]
+			});
+			var oText = new Text({
+				id: "textId",
+				text: "Text"
+			}).placeAt("qunit-fixture");
+
+			oList.addAriaLabelledBy("titleId");
+			oList.addAriaLabelledBy("textId");
+			oList.setHeaderToolbar(oHeaderToolbar);
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			var aAriaLabelledBy = oList.getNavigationRoot().getAttribute("aria-labelledby").split(" ");
+			assert.strictEqual(aAriaLabelledBy.length, 2, "correct aria-labelledby ids added to the control DOM root");
+			oText.destroy();
+		});
+
 		QUnit.test("group headers info of the item", function(assert) {
 			var oGroupHeader1 = new GroupHeaderListItem({
 					title: "Group Header 1"
@@ -2391,6 +2418,44 @@ sap.ui.define([
 				"If the highlight is 'None', the highlight text does not exist in the accessibility info of the item");
 
 			oListItem1.destroy();
+		});
+
+		QUnit.test("Internal control created by the ListBase should not be disabled by the EnabledPropagator", function(assert) {
+			var oListItem = new StandardListItem({
+					title: "Foo",
+					description: "Bar"
+				}),
+				oList = new List({
+					mode: "MultiSelect",
+					items: [oListItem]
+				}),
+				oVerticalLayout = new VerticalLayout({
+					enabled: false,
+					content: [oList]
+				});
+
+			oVerticalLayout.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			assert.strictEqual(oListItem.getMultiSelectControl().getEnabled(), true, "MultiSelect Checkbox was not disabled by the EnabledPropagator");
+
+			oList.setMode("SingleSelect");
+			Core.applyChanges();
+			assert.strictEqual(oListItem.getSingleSelectControl().getEnabled(), true, "SingleSelect RadioButton was not disabled by the EnabledPropagator");
+
+			oList.setMode("SingleSelectLeft");
+			Core.applyChanges();
+			assert.strictEqual(oListItem.getSingleSelectControl().getEnabled(), true, "SingleSelectLeft RadioButton was not disabled by the EnabledPropagator");
+
+			oList.setMode("Delete");
+			Core.applyChanges();
+			assert.strictEqual(oListItem.getDeleteControl().getEnabled(), true, "Delete button was not disabled by the EnabledPropagator");
+
+			oListItem.setType("Detail");
+			Core.applyChanges();
+			assert.strictEqual(oListItem.getDetailControl().getEnabled(), true, "Detail button was not disabled by the EnabledPropagator");
+
+			oVerticalLayout.destroy();
 		});
 
 		QUnit.module("Context Menu", {

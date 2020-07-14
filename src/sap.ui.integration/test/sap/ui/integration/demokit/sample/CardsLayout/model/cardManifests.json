@@ -1,6 +1,7 @@
 {
 	"stackedColumn": {
 		"sap.app": {
+			"id": "sample.CardsLayout.model.Analytical",
 			"type": "card"
 		},
 		"sap.card": {
@@ -99,6 +100,10 @@
 		}
 	},
 	"donut": {
+		"sap.app": {
+			"id": "sample.CardsLayout.model.donut",
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "Analytical",
 			"header": {
@@ -166,6 +171,7 @@
 	},
 	"object": {
 		"sap.app": {
+			"id": "sample.CardsLayout.model.object",
 			"type": "card"
 		},
 		"sap.card": {
@@ -231,6 +237,7 @@
 	},
 	"list1": {
 		"sap.app": {
+			"id": "sample.CardsLayout.model.list",
 			"type": "card"
 		},
 		"sap.card": {
@@ -287,6 +294,7 @@
 	},
 	"list2": {
 		"sap.app": {
+			"id": "sample.CardsLayout.model.list2",
 			"type": "card"
 		},
 		"sap.card": {
@@ -295,7 +303,7 @@
 				"title": "Incidents in the last 24 hours",
 				"subTitle": "Suddent storm wind damaged 3 polinating hives",
 				"icon": {
-					"src": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/Case1.png"
+					"src": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/CompanyLogo.png"
 				}
 			},
 			"content": {
@@ -347,6 +355,7 @@
 	},
 	"table": {
 		"sap.app": {
+			"id": "sample.CardsLayout.model.table",
 			"type": "card"
 		},
 		"sap.card": {
@@ -453,6 +462,7 @@
 	},
 	"timeline": {
 		"sap.app": {
+			"id": "sample.CardsLayout.model.timeline",
 			"type": "card"
 		},
 		"sap.card": {
@@ -512,6 +522,7 @@
 	},
 	"calendar": {
 		"sap.app": {
+			"id": "sample.CardsLayout.model.calendar",
 			"type": "card"
 		},
 		"sap.card": {

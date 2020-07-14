@@ -38,26 +38,24 @@
 }
 
 .sapMInputBaseIconContainer .sapMInputBaseIcon {
+	box-sizing: border-box;
 	color: @sapUiContentIconColor;
 
 	&:hover {
 		background: @sapUiButtonLiteHoverBackground;
 		border-left: 1px solid @sapUiListSelectionBorderColor;
-		margin-left: -1px;
 	}
 
 	&:active {
 		background-color: @sapUiButtonLiteActiveBackground;
 		color: @sapUiButtonActiveTextColor;
 		border-left: 1px solid @sapUiListSelectionBorderColor;
-		margin-left: -1px;
 	}
 }
 
 .sapMInputBaseIconPressed .sapMInputBaseIcon {
 	background: @sapUiButtonSelectedBackground;
 	border-left: 1px solid @sapUiListSelectionBorderColor;
-	margin-left: -1px;
 }
 
 .sapMInputBaseDisabledWrapper .sapMInputBaseIcon {
@@ -106,4 +104,8 @@
 
 .sapMInputBaseInner:-ms-input-placeholder {
 	font-style: normal;
+}
+
+.sapUiSizeCompact .sapMInputBaseContentWrapper.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) .sapMInputBaseIcon {
+	line-height: 1.375rem;
 }

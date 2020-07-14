@@ -163,6 +163,7 @@ sap.ui.define([
 		 * @static
 		 * @deprecated since 1.56: Use {@link sap.ui.core.mvc.XMLView.create XMLView.create} instead
 		 * @returns {sap.ui.core.mvc.XMLView} the created XMLView instance
+		 * @ui5-global-only
 		 */
 		sap.ui.xmlview = function(sId, vView) {
 			return sap.ui.view(sId, vView, ViewType.XML);

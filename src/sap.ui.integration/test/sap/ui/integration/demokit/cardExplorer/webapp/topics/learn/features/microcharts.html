@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../../css/topic.css">
+	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
+
+	<link rel="stylesheet" href="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
+	<script src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+</head>
+<body class="sapUiBody topicBody">
+<div class="topic">
+	<div class="content">
+		<h1 id="overview">
+			Card Microcharts
+		</h1>
+		<div class="messageStripWarning">
+			Experimental feature since version 1.80. The API may change.
+		</div>
+		<p>
+			Microcharts help you to visualize information in a compact non-interactive manner. They are used to display changes in the data or provide tracking at a glance.
+			Currently supported types are <code>Bullet</code> and <code>StackedBar</code>. They can be embedded in a List card.
+			For more information when to use them read the <a target="_blank" href="https://experience.sap.com/fiori-design-web/micro-chart/">Fiori Design Guidelines</a>.
+		</p>
+
+		<h2 id="properties">Properties</h2>
+		<p>
+			Microcharts have the following common properties:
+		</p>
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+					<th>Since</th>
+				</tr>
+				<tr>
+					<td>type</td>
+					<td>Bullet, StackedBar</td>
+					<td>Yes</td>
+					<td>Specifies one of the available microchart types. See details for every different type below.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+				<tr>
+					<td>displayValue</td>
+					<td>string</td>
+					<td>No</td>
+					<td>The value, which is displayed next to the chart.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+				<tr>
+					<td>maxValue</td>
+					<td>float</td>
+					<td>No</td>
+					<td>The maximum value.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+			</table>
+		</div>
+
+		<h2 id="bullet">Bullet Microchart</h2>
+		<img src="../../images/microChart_bullet.png" alt="Stacked Bar chart">
+		<h4>Properties</h4>
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+					<th>Since</th>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>float</td>
+					<td>Yes</td>
+					<td>The actual value.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+				<tr>
+					<td>color</td>
+					<td><a data-demokit-href="/api/sap.m.ValueColor" target="_blank">sap.m.ValueColor</a></td>
+					<td>No</td>
+					<td>The color of the chart.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+				<tr>
+					<td>minValue</td>
+					<td>float</td>
+					<td>No</td>
+					<td>The minimum value.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+				<tr>
+					<td>target</td>
+					<td>float</td>
+					<td>No</td>
+					<td>The target value.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+				<tr>
+					<td>thresholds</td>
+					<td><a href="#thresholdApi">Threshold[]</a></td>
+					<td>No</td>
+					<td>The thresholds of the chart.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+			</table>
+		</div>
+
+		<h4 id="thresholdApi">Threshold</h4>
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+					<th>Since</th>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>float</td>
+					<td>Yes</td>
+					<td>The value of the threshold.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+				<tr>
+					<td>color</td>
+					<td><a data-demokit-href="/api/sap.m.ValueColor" target="_blank">sap.m.ValueColor</a></td>
+					<td>No</td>
+					<td>The color of the threshold.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+			</table>
+		</div>
+
+		<h2 id="stackedBar">StackedBar Microchart</h2>
+		<img src="../../images/microChart_stackedBar.png" alt="Stacked Bar chart">
+		<p><b>Note:</b> For this type of chart a legend is also displayed in the card.</p>
+		<h4>Properties</h4>
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+					<th>Since</th>
+				</tr>
+				<tr>
+					<td>bars</td>
+					<td><a href="#barApi">Bar[]</a></td>
+					<td>Yes</td>
+					<td>The bars of the microchart.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+			</table>
+		</div>
+
+		<h4 id="barApi">Bar</h4>
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+					<th>Since</th>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>float</td>
+					<td>Yes</td>
+					<td>The value of the bar.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+				<tr>
+					<td>color</td>
+					<td><a data-demokit-href="/api/sap.m.ValueCSSColor" target="_blank">sap.m.ValueCSSColor</a></td>
+					<td>No</td>
+					<td>The color of the bar.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+				<tr>
+					<td>displayValue</td>
+					<td>string</td>
+					<td>No</td>
+					<td>The display value of the bar.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+				<tr>
+					<td>legendTitle</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Title, which will be displayed in the legend.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
+			</table>
+		</div>
+
+		<h2 id="examples">Examples</h2>
+		<p>Example of a List card with Bullet microchart:</p>
+<pre class="prettyprint  lang-js">
+{
+	"sap.app": {
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Request list content Card"
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Comfort Easy",
+						"Description": "32 GB Digital Assistant with high-resolution color screen",
+						"Expected": 300000,
+						"Actual": 330000,
+						"Target": 280000,
+						"ChartColor": "Good"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+						"Expected": 230000,
+						"Actual": 225000,
+						"Target": 210000,
+						"ChartColor": "Good"
+					}
+				]
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"chart": {
+					"type": "Bullet",
+					"minValue": 0,
+					"maxValue": "{Expected}",
+					"target": "{Target}",
+					"value": "{Actual}",
+					"color": "{ChartColor}"
+				}
+			}
+		}
+	}
+}
+</pre>
+
+		<p>Example of a List card with StackedBar microchart:</p>
+<pre class="prettyprint  lang-js">
+{
+	"sap.app": {
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Request list content Card"
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Year": 2017,
+						"Category": "Computer system accessories",
+						"Notebook13": 200,
+						"Notebook17": 500
+					},
+					{
+						"Year": 2018,
+						"Category": "Computer system accessories",
+						"Notebook13": 300,
+						"Notebook17": 320
+					}
+				]
+			},
+			"item": {
+				"title": "Notebooks Distribution",
+				"subTitle": "by years",
+				"chart": {
+					"type": "StackedBar",
+					"displayValue": "{= ${Notebook13} + ${Notebook17}}K",
+					"maxValue": "{/maxOverYears}",
+					"bars": [
+						{
+							"value": "{Notebook13}",
+							"displayValue": "Notebook 13: {Notebook13}K",
+							"legendTitle": "Notebook13"
+						},
+						{
+							"value": "{Notebook17}",
+							"displayValue": "Notebook 17: {Notebook17}K",
+							"legendTitle": "Notebook17"
+						}
+					]
+				}
+			}
+		}
+	}
+}
+</pre>
+		<a class="try-button" href="../../../index.html#/explore/list/bulletChart" target="_parent">Try it Out</a>
+	</div>
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<div><a href="#properties">Properties</a></div>
+		<div><a href="#bullet">Bullet Microchart</a></div>
+		<div><a href="#stackedBar">StackedBar Microchart</a></div>
+		<div><a href="#examples">Examples</a></div>
+	</div>
+</div>
+<script src="../../../scripts/topic.js"></script>
+</body>
+</html>

@@ -16,11 +16,26 @@ sap.ui.define([
 
 	/**
 	* @class
-	 * Constructor for a new <code>ParametersEditor</code> for editing key-value pairs with primitive values and persisted type information.
+	 * Constructor for a new <code>ParametersEditor</code> for editing key-value pairs with primitive values, labels and persisted type information.
 	 *
 	 * <h3>Configuration</h3>
 	 *
 	 * Configuration is inherited from {@link sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor}
+	 *
+	 * <table style="width:100%;">
+	 * <tr style="text-align:left">
+	 * 	<th>Option</th>
+	 * 	<th>Type</th>
+	 * 	<th>Default</th>
+	 * 	<th>Description</th>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>allowLabelChange</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether to allow editing the label of parameters</td>
+	 * </tr>
+	 * </table>
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor
 	 * @alias sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersEditor
@@ -36,18 +51,30 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
+	ParametersEditor.prototype.getConfigMetadata = function () {
+		return Object.assign(
+			{},
+			MapEditor.prototype.getConfigMetadata.call(this),
+			{
+				allowLabelChange: {
+					defaultValue: true
+				}
+			}
+		);
+	};
+
 	ParametersEditor.prototype.formatItemConfig = function(oConfigValue) {
 		var oMapItemConfig = MapEditor.prototype.formatItemConfig.apply(this, arguments);
 		var sKey = oConfigValue.key;
 		var sLabel = oConfigValue.value.label;
 
 		oMapItemConfig.splice(1, 0, {
-			label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.LABEL"),
+			label: this.getI18nProperty("CARD_EDITOR.LABEL"),
 			path: "label",
 			value: sLabel,
 			placeholder: sLabel ? undefined : sKey,
 			type: "string",
-			enabled: this.getConfig().allowLabelChange !== false,
+			enabled: this.getConfig().allowLabelChange,
 			itemKey: sKey,
 			allowBindings: false
 		});
@@ -75,14 +102,14 @@ sap.ui.define([
 		}) : [];
 	};
 
-	ParametersEditor.prototype.setConfig = function(oConfig) {
+	ParametersEditor.prototype.onBeforeConfigChange = function(oConfig) {
 		// Config scenario
-		if (oConfig.allowTypeChange === false && oConfig.allowKeyChange === false) {
+		if (!oConfig.allowTypeChange && !oConfig.allowKeyChange) {
 			this.setFragment("sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersConfigurationEditor", function () {
 				return 1;
 			});
 		}
-		MapEditor.prototype.setConfig.apply(this, arguments);
+		return oConfig;
 	};
 
 	ParametersEditor.prototype._isValidItem = function(oItem, oOriginalItem) {

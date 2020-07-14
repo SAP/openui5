@@ -13,6 +13,7 @@
 				<Button id="messagePopoverBtn"
 					icon="{ path: '/', formatter: '.buttonIconFormatter' }"
 					type="{ path: '/', formatter: '.buttonTypeFormatter' }"
+					text= "{path: '/', formatter: '.highestSeverityMessages' }"
 					press=".handleMessagePopoverPress"/>
 				<ToolbarSpacer/>
 			</OverflowToolbar>

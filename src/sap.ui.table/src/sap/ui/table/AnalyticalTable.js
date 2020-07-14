@@ -447,7 +447,7 @@ sap.ui.define([
 		} else if (oNode.nodeState.sum) {
 			oState.type = oState.Type.Summary;
 		}
-		oState.level = oNode.level + (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() ? 1 : 0);
+		oState.level = oNode.level;
 		oState.expanded = oNode.nodeState.expanded;
 		oState.contentHidden = oState.expanded && !oBindingInfo.parameters.sumOnTop;
 		oState.title = oState.type === oState.Type.GroupHeader ? oBinding.getGroupName(oNode.context, oNode.level) : "";
@@ -462,11 +462,8 @@ sap.ui.define([
 
 		for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
 			var oRow = aRows[iRowIndex];
-			var iLevel = oRow.getLevel();
+			var iLevel = oRow.getLevel() - (!oRow.isGroupHeader() && !oRow.isSummary() ? 1 : 0);
 			var iIndent = 0;
-
-			iLevel -= oBinding && oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() ? 1 : 0;
-			iLevel = !oRow.isGroupHeader() && !oRow.isSummary() ? iLevel - 1 : iLevel;
 
 			for (var j = 1; j < iLevel; j++) {
 				if (j === 1) {
@@ -512,9 +509,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this.getBinding("rows");
-
-		this._iGroupedLevel = oRow.getLevel() - (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() ? 1 : 0);
+		this._iGroupedLevel = oRow.getLevel();
 		this._addGroupHeaderMenuItems(oMenu);
 	};
 

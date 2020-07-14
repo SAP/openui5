@@ -121,10 +121,6 @@ sap.ui.define([
 		}
 	}});
 
-	/**
-	 * This file defines behavior for the control,
-	 */
-
 	/*
 	 * On focus the InplaceEdit automatically switches to edit mode. Only for Links it stays in display mode to allow link-clicking.
 	 * When the focus is set outside the control is switches back to display mode. So for styling it is clear that edit mode

@@ -268,6 +268,26 @@ sap.ui.define([
 		oRadioButton5.destroy();
 	});
 
+	QUnit.test("setSelected should update group name to avoid double selection", function (assert) {
+
+		// arrange
+		var oRadioButton1 = new RadioButton();
+		var oUpdateGroupNameSpy = sinon.spy(oRadioButton1, "_updateGroupName");
+
+		oRadioButton1.placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		// act
+		oRadioButton1.setSelected(true);
+
+		// assert
+		assert.ok(oUpdateGroupNameSpy.called, "_updateGroupName was called in setSelected method");
+
+		// cleanup
+		oRadioButton1.destroy();
+	});
+
 	QUnit.test("setSelected should check RadioButton and uncheck all other RadioButtons from the same group", function (assert) {
 
 		// arrange

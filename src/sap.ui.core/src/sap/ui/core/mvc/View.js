@@ -1025,6 +1025,7 @@ sap.ui.define([
 	 * @static
 	 * @deprecated since 1.56: Use {@link sap.ui.core.mvc.View.create View.create} instead
 	 * @return {sap.ui.core.mvc.View} the created View instance
+	 * @ui5-global-only
 	 */
 	sap.ui.view = function(sId, vView, sType /* used by factory functions */) {
 		var fnLogDeprecation = function(sMethod) {

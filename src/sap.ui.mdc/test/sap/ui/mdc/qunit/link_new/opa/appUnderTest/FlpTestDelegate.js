@@ -5,9 +5,9 @@ sap.ui.define([
 	"sap/ui/mdc/flp/FlpLinkDelegate",
 	"sap/m/Button",
 	"sap/m/Dialog",
-	"sap/m/MessageToast",
+	"sap/m/Text",
 	"sap/m/library"
-], function(LinkDelegate, Button, Dialog, MessageToast, mobileLibrary) {
+], function(LinkDelegate, Button, Dialog, Text, mobileLibrary) {
 	"use strict";
 
 	var ButtonType = mobileLibrary.ButtonType;
@@ -39,7 +39,6 @@ sap.ui.define([
 					oDialog.destroy();
 				}
 			});
-
 			oDialog.open();
 		});
 	};

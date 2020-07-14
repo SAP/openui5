@@ -56,40 +56,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("validator add/remove/removeAll", function(assert) {
-		// arrange
-		var function1 = function() {},
-			function2 = function() {},
-			function3 = function() {};
-
-		// act
-		this.tokenizer.removeAllValidators();
-
-		// assert
-		assert.equal(this.tokenizer._aTokenValidators.length, 0, "No token validators available");
-
-		// act
-		this.tokenizer.addValidator(function1);
-
-		// assert
-		assert.equal(this.tokenizer._aTokenValidators.length, 1, "1 token validator available");
-
-		// act
-		this.tokenizer.addValidator(function2);
-		this.tokenizer.addValidator(function3);
-
-		this.tokenizer.removeValidator(function2);
-
-		// assert
-		assert.equal(this.tokenizer._aTokenValidators.length, 2, "2 token validators available");
-
-		// act
-		this.tokenizer.removeAllValidators();
-
-		// assert
-		assert.equal(this.tokenizer._aTokenValidators.length, 0, "No token validators available");
-	});
-
 	QUnit.test("clone", function(assert) {
 		//arrange
 		var token1 = new Token(),
@@ -140,6 +106,24 @@ sap.ui.define([
 		assert.strictEqual(oSpy.firstCall.args[0], false, "setFirstTokenTruncated was called with 'false'.");
 	});
 
+	QUnit.test("DestroyTokens should call setFirstTokenTruncated with 'false'", function (assert) {
+		// arrange
+		this.tokenizer.addToken(new Token());
+		sap.ui.getCore().applyChanges();
+		var oSpy = sinon.spy(this.tokenizer, "setFirstTokenTruncated");
+
+		// Act
+		this.tokenizer.destroyTokens();
+
+		// assert
+		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
+		assert.ok(oSpy.calledWith(false), "The setFirstTokenTruncated is called with false value");
+
+		// Cleanup
+		oSpy.restore();
+	});
+
+
 	QUnit.test("updateTokens should call setFirstTokenTruncated with 'false'.", function(assert) {
 		var oSpy = sinon.spy(this.tokenizer, "setFirstTokenTruncated");
 
@@ -152,107 +136,6 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
 		assert.strictEqual(oSpy.firstCall.args[0], false, "setFirstTokenTruncated was called with 'false'.");
-	});
-
-	QUnit.test("validate tokens using validator callback", function(assert) {
-		var validationCallbackCount = 0,
-			isValidated = false,
-			fValidationCallback = function(bValidated) {
-				validationCallbackCount++;
-				isValidated = bValidated;
-			},
-			tokenText = "new Token 1";
-
-		this.tokenizer.addValidateToken({
-			text : tokenText,
-			validationCallback : fValidationCallback
-		});
-
-		assert.equal(validationCallbackCount, 1, "validation callback called 1x");
-
-		assert.equal(isValidated, false, "token not validated");
-
-		this.tokenizer.addValidateToken({
-			text : tokenText,
-			token : new Token({
-				text : tokenText
-			}),
-			validationCallback : fValidationCallback
-		});
-
-		assert.equal(this.tokenizer.getTokens().length, 1, "Tokenizer contains 1 token");
-		assert.equal(this.tokenizer.getTokens()[0].getText(), tokenText, "added token contains validated text");
-		assert.equal(validationCallbackCount, 2, "validation callback called 2x");
-		assert.equal(isValidated, true, "token got validated");
-
-
-
-		this.tokenizer.removeAllTokens();
-
-		this.tokenizer.addValidator(function(args) {
-			return new Token({
-				text : args.text
-			});
-		});
-
-		tokenText = "TestToken1";
-		this.tokenizer.addValidateToken({
-			text : tokenText,
-			validationCallback : fValidationCallback
-		});
-
-		assert.equal(this.tokenizer.getTokens().length, 1, "Tokenizer contains 1 token");
-		assert.equal(this.tokenizer.getTokens()[0].getText(), tokenText, "added token contains validated text");
-		assert.equal(validationCallbackCount, 3, "validation callback called 3x");
-		assert.equal(isValidated, true, "token got validated");
-
-		isValdiated = false;
-		var tokenText = "TestToken2";
-		this.tokenizer.addValidateToken({
-			text : tokenText,
-			validationCallback : fValidationCallback
-		});
-
-		assert.equal(this.tokenizer.getTokens().length, 2, "Tokenizer contains 2 tokens");
-		assert.equal(this.tokenizer.getTokens()[1].getText(), tokenText, "added token contains validated text");
-		assert.equal(validationCallbackCount, 4, "validation callback called 4x");
-		assert.equal(isValidated, true, "token got validated");
-
-		this.tokenizer.removeAllValidators();
-		this.tokenizer.addValidator(function(args) {
-			return;
-		});
-		tokenText = "TestToken3";
-		this.tokenizer.addValidateToken({
-			text : tokenText,
-			validationCallback : fValidationCallback
-		});
-		assert.equal(this.tokenizer.getTokens().length, 2, "Tokenizer contains 2 tokens, no token added as validator rejected it");
-		assert.equal(validationCallbackCount, 5, "validation callback called 5x");
-		assert.equal(isValidated, false, "token not validated");
-
-		var fAsyncValidateCallback;
-		this.tokenizer.removeAllValidators();
-		this.tokenizer.addValidator(function(args) {
-			fAsyncValidateCallback = args.asyncCallback;
-			return Tokenizer.WaitForAsyncValidation;
-		});
-		tokenText = "TestToken4";
-		this.tokenizer.addValidateToken({
-			text : tokenText,
-			validationCallback : fValidationCallback
-		});
-		assert.equal(this.tokenizer.getTokens().length, 2,
-				"Tokenizer contains 2 tokens, no token added as validator runs asynchronously");
-		assert.equal(validationCallbackCount, 5, "validation callback called 5x (1 call still pending)");
-
-		fAsyncValidateCallback(new Token({
-			text : "dummy"
-		}));
-
-		assert.equal(this.tokenizer.getTokens().length, 3, "Tokenizer contains 3 tokens");
-		assert.equal(validationCallbackCount, 6, "validation callback called 6x");
-		assert.equal(isValidated, true, "token got validated");
 	});
 
 	QUnit.test("tokens change event", function(assert) {
@@ -271,31 +154,6 @@ sap.ui.define([
 
 		this.tokenizer.removeAllTokens();
 		assert.equal(eventType, Tokenizer.TokenChangeType.RemovedAll, "removedAll event raised");
-
-		// clean-up
-		token1.destroy();
-	});
-
-	QUnit.test("tokenUpdate event", function(assert) {
-		var eventType,
-			token1 = new Token({key: "test", text: "test", selected: true}),
-			count = 0;
-
-		this.tokenizer.attachTokenUpdate(function(args) {
-			eventType = args.getParameter("type");
-			count++;
-		});
-
-		this.tokenizer._addValidateToken({
-			token : token1,
-			validationCallback : function() {return true;}
-		});
-		assert.strictEqual(eventType, Tokenizer.TokenUpdateType.Added, "tokenUpdate event raised when token added");
-		assert.strictEqual(count, 1, "tokenUpdate event fired once upon adding unique token");
-
-		this.tokenizer._removeSelectedTokens();
-		assert.strictEqual(eventType, Tokenizer.TokenUpdateType.Removed, "tokenUpdate event raised when token removed");
-		assert.strictEqual(count, 2, "tokenUpdate event fired once upon removing selected token");
 
 		// clean-up
 		token1.destroy();

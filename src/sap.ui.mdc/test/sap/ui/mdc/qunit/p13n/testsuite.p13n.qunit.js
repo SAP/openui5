@@ -47,6 +47,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"GroupPanelBase": {
+				group: "UI Panels",
+				module: "./GroupPanelBase.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"AdaptFiltersPanel": {
 				group: "UI Panels",
 				module: "./AdaptFiltersPanel.qunit",
@@ -86,6 +95,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"AdaptationController": {
 				group: "P13n logic",
 				module: "./AdaptationController.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"P13nBuilder": {
+				group: "P13n logic",
+				module: "./P13nBuilder.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.mdc"

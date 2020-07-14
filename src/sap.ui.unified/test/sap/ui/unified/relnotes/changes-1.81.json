@@ -1,0 +1,35 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "223391551d1b000cd176ff1566a58540425326cb",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.FileUploader: HTTP PUT request method is now available",
+        "references": []
+      },
+      {
+        "id": "bc83113972776b4c61a6880ec91d0fc6444d3957",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: demokit sample improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080257128"
+          }
+        ]
+      },
+      {
+        "id": "8374ef77a6b6ab21a1f6c988bab8662d26e63daf",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: upload input element is now created only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070211785"
+          }
+        ]
+      }
+    ]
+  }
+}

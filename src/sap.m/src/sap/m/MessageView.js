@@ -429,45 +429,35 @@ sap.ui.define([
 
 	/**
 	 * Fills grouped items in the lists
-	 * @param {sap.m.MessageItem[]} oGroupedItems An array of items
+	 * @param {sap.m.MessageItem[]} aGroupedItems An array of items
 	 * @private
 	 */
-	MessageView.prototype._fillGroupedLists = function(oGroupedItems) {
-		var aGroups = Object.keys(oGroupedItems),
+	MessageView.prototype._fillGroupedLists = function(aGroupedItems) {
+		var aGroups = Object.keys(aGroupedItems),
 			iUngroupedIndex = aGroups.indexOf(""),
-			oUngrouped, aUngroupedTypes;
+			aUngrouped;
 
 		if (iUngroupedIndex !== -1) {
-			oUngrouped = oGroupedItems[""];
-			aUngroupedTypes = Object.keys(oUngrouped);
+			aUngrouped = aGroupedItems[""];
 
-			aUngroupedTypes.forEach(function(sType) {
-				var aUngroupedItems = oUngrouped[sType];
-				this._fillLists(aUngroupedItems);
+			this._fillLists(aUngrouped);
 
-				delete oGroupedItems[""];
-				aGroups.splice(iUngroupedIndex, 1);
-			}, this);
+			delete aGroupedItems[""];
+			aGroups.splice(iUngroupedIndex, 1);
 		}
 
 		aGroups.forEach(function(sGroupName) {
-			this._fillListsWithGroups(sGroupName, oGroupedItems[sGroupName]);
+			this._fillListsWithGroups(sGroupName, aGroupedItems[sGroupName]);
 		}, this);
 	};
 
-	MessageView.prototype._fillListsWithGroups = function(sGroupName, oItemTypes) {
-		var aTypes = Object.keys(oItemTypes),
-			oHeader = new GroupHeaderListItem({
+	MessageView.prototype._fillListsWithGroups = function(sGroupName, aItems) {
+		var oHeader = new GroupHeaderListItem({
 				title: sGroupName
-			}), aItems;
+			});
 
 		this._oLists["all"].addAggregation("items", oHeader, true);
-
-		aTypes.forEach(function(sType) {
-			this._oLists[sType.toLowerCase()].addAggregation("items", oHeader.clone(), true);
-			aItems = oItemTypes[sType];
-			this._fillLists(aItems);
-		}, this);
+		this._fillLists(aItems);
 	};
 
 	/**
@@ -541,20 +531,13 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageView.prototype._groupItems = function (aItems) {
-		var oGroups = {}, sItemGroup, sItemType;
+		var oGroups = {}, sItemGroup;
 
 		aItems.forEach(function(oItem) {
 			sItemGroup = oItem.getGroupName();
-			sItemType = oItem.getType();
-			oGroups[sItemGroup] = oGroups[sItemGroup] || {};
+			oGroups[sItemGroup] = oGroups[sItemGroup] || [];
 
-			var oGroup = oGroups[sItemGroup];
-
-			if (oGroup[sItemType]) {
-				oGroup[sItemType].push(oItem);
-			} else {
-				oGroup[sItemType] = [oItem];
-			}
+			oGroups[sItemGroup].push(oItem);
 		});
 
 		return oGroups;

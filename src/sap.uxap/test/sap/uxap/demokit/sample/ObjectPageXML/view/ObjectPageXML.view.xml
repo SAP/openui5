@@ -50,7 +50,8 @@
 				<subSections>
 					<ObjectPageSubSection icon="sap-icon://employee-pane"
 										  title="{ObjectPageState>/sections/0/subsections/0/title}"
-										  mode="{ObjectPageState>/sections/0/subsections/0/mode}">
+										  mode="{ObjectPageState>/sections/0/subsections/0/mode}"
+										  titleUppercase="true">
 						<blocks>
 							<bl:GeneralInfo id="generalInfoId">
 								<ModelMapping internalModelName="Employee" externalModelName="ObjectPageModel"
@@ -60,6 +61,7 @@
 					</ObjectPageSubSection>
 					<ObjectPageSubSection title="{ObjectPageState>/sections/0/subsections/1/title}"
 										  mode="{ObjectPageState>/sections/0/subsections/1/mode}"
+										  titleUppercase="true"
 							>
 						<actions>
 							<m:Button icon="sap-icon://action" type="Transparent" press="onActionPress"/>
@@ -78,7 +80,8 @@
 			<ObjectPageSection title="{ObjectPageState>/sections/1/title}">
 				<subSections>
 					<ObjectPageSubSection title="{ObjectPageState>/sections/1/subsections/0/title}"
-										  mode="{ObjectPageState>/sections/1/subsections/0/mode}">
+										  mode="{ObjectPageState>/sections/1/subsections/0/mode}"
+										  titleUppercase="true">
 						<blocks>
 							<bl:GeneralInfo id="compensationId">
 								<ModelMapping internalModelName="Employee" externalModelName="ObjectPageModel"
@@ -87,7 +90,8 @@
 						</blocks>
 					</ObjectPageSubSection>
 					<ObjectPageSubSection title="{ObjectPageState>/sections/1/subsections/1/title}"
-										  mode="{ObjectPageState>/sections/1/subsections/1/mode}">
+										  mode="{ObjectPageState>/sections/1/subsections/1/mode}"
+										  titleUppercase="true">
 						<blocks>
 							<edit:SimpleEdit/>
 							<mb:MixedBlock/>

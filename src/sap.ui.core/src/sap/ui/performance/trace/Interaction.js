@@ -19,7 +19,17 @@ sap.ui.define([
 	var HOST = window.location.host, // static per session
 		INTERACTION = "INTERACTION",
 		aInteractions = [],
-		oPendingInteraction = createMeasurement();
+		oPendingInteraction = createMeasurement(),
+		mCompressedMimeTypes = {
+			"application/zip": true,
+			"application/vnd.rar": true,
+			"application/gzip": true,
+			"application/x-tar": true,
+			"application/java-archive": true,
+			"image/jpeg": true,
+			"application/pdf": true
+		},
+		sCompressedExtensions = "zip,rar,arj,z,gz,tar,lzh,cab,hqx,ace,jar,ear,war,jpg,jpeg,pdf,gzip";
 
 	function isCORSRequest(sUrl) {
 		var sHost = new URI(sUrl).host();
@@ -55,7 +65,7 @@ sap.ui.define([
 			networkTime: 0, // request time minus server time from the header
 			bytesSent: 0, // sum over all requests bytes
 			bytesReceived: 0, // sum over all response bytes
-			requestCompression: undefined, // true if all responses have been sent gzipped
+			requestCompression: "X", // ok per default, if compression does not match SAP rules we report an empty string
 			busyDuration: 0, // summed GlobalBusyIndicator duration during this interaction
 			id: uid(), //Interaction id
 			passportAction: "undetermined_startup_0" //default PassportAction for startup
@@ -136,7 +146,6 @@ sap.ui.define([
 			// calculate processing time of before requests start
 			oPendingInteraction.processing = oTimings.start - iRelativeStart;
 		}
-
 	}
 
 	function finalizeInteraction(iTime) {
@@ -282,9 +291,27 @@ sap.ui.define([
 				this.addEventListener("readystatechange", handleInteraction.bind(this, Interaction.notifyAsyncStep()));
 				// assign the current interaction to the xhr for later response header retrieval.
 				this.pendingInteraction = oPendingInteraction;
+				// forward request url as fallback for compression check as IE11 does not support responseUrl on a XHR
+				this._ui5RequestUrl = arguments[1] || "";
 			}
 		});
 
+	}
+
+	// check if SAP compression rules are fulfilled
+	function checkCompression(sURL, sContentEncoding, sContentType, sContentLength) {
+		//remove hashes and queries + find extension (last . segment)
+		var fileExtension = sURL.split('.').pop().split(/\#|\?/)[0];
+
+		if (sContentEncoding === 'gzip' ||
+			sContentEncoding === 'br' ||
+			sContentType in mCompressedMimeTypes ||
+			(fileExtension && sCompressedExtensions.indexOf(fileExtension) !== -1) ||
+			sContentLength < 1024) {
+				return true;
+		} else {
+			return false;
+		}
 	}
 
 	// response handler which uses the custom properties we added to the xhr to retrieve information from the response headers
@@ -293,7 +320,7 @@ sap.ui.define([
 			if (this.pendingInteraction && !this.pendingInteraction.completed && oPendingInteraction.id === sId) {
 				// enrich interaction with information
 				var sContentLength = this.getResponseHeader("content-length"),
-					bCompressed = this.getResponseHeader("content-encoding") === "gzip",
+					bCompressed = checkCompression(this.responseURL || this._ui5RequestUrl, this.getResponseHeader("content-encoding"), this.getResponseHeader("content-type"), sContentLength),
 					sFesrec = this.getResponseHeader("sap-perf-fesrec");
 				this.pendingInteraction.bytesReceived += sContentLength ? parseInt(sContentLength) : 0;
 				this.pendingInteraction.bytesReceived += this.getAllResponseHeaders().length;

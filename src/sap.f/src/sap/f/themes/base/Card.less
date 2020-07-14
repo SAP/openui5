@@ -137,6 +137,9 @@
 			color: @sapUiTileTitleTextColor;
 			min-height: 1rem;
 			position: relative;
+			white-space: normal;
+			word-wrap: break-word;
+			text-align: left;
 		}
 	}
 
@@ -148,15 +151,20 @@
 		font-weight: normal;
 		color: @sapUiTileTextColor;
 		min-height: 1rem;
+		white-space: normal;
+		word-wrap: break-word;
+		text-align: left;
+		width: 100%;
 	}
 
 	.sapFCardStatus {
 		font-family: @sapUiFontFamily;
 		font-size: @sapMFontSmallSize;
 		color: @sapUiTileTextColor;
-		text-align: left;
+		text-align: right;
 		line-height: normal;
 		margin-left: 1rem;
+		margin-top: 0.188rem;
 		text-wrap: avoid;
 		display: inline-block;
 		white-space: nowrap;
@@ -437,4 +445,10 @@ html[data-sap-ui-browser^="ie"] .sapFCardHeader:focus::before {
 
 .sapFCard .ac-adaptiveCard {
 	outline: none;
+}
+
+.sapFCard.sapMBadge .sapMBadgeIndicator {
+	padding: 0 0.5rem;
+	top: -0.6125rem;
+	right: 0;
 }

@@ -43,10 +43,6 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/calendar/Cale
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-
 	DateRange.prototype.setStartDate = function(oDate){
 
 		if (oDate) {

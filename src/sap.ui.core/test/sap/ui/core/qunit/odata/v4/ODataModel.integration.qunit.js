@@ -877,7 +877,7 @@ sap.ui.define([
 		 * @param {object} [oController]
 		 *   An object defining the methods and properties of the controller
 		 * @param {object} [mPreprocessors] A map from the specified preprocessor type (e.g. "xml")
-		 *    to a preprocessor configuration, see {@link @sap.ui.core.mvc.View.create}
+		 *    to a preprocessor configuration, see {@link sap.ui.core.mvc.View.create}
 		 * @returns {Promise} A promise that is resolved when the view is created and all expected
 		 *   values for controls have been set
 		 */
@@ -1491,15 +1491,18 @@ sap.ui.define([
 	/**
 	 * Test that the template output is as expected.
 	 *
-	 * @param {sString} sTitle The title of the test case
+	 * @param {object} assert The QUnit assert object
 	 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
-	 *    see {@link @sap.ui.core.mvc.View.create}
+	 *    see {@link sap.ui.core.mvc.View.create}
 	 * @param {string} sTemplate The template used to generate the expected view as XML
 	 * @param {string} sView The expected resulting view from templating
+	 * @returns {Promise} A promise that is resolved when the test is done
 	 *
 	 * @private
 	 */
-	function testXMLTemplating(sTitle, oXMLPreprocessorConfig, sTemplate, sView) {
+	function doTestXMLTemplating(assert, oXMLPreprocessorConfig, sTemplate, sView) {
+		var that = this;
+
 		/*
 		 * Remove all namespaces and all spaces before tag ends (..."/>) and all tabs from the
 		 * given XML string.
@@ -1533,20 +1536,32 @@ sap.ui.define([
 			return sXml;
 		}
 
+		// allow indents in expectation
+		sView = sView.replace(/\t/g, "");
 
+		return this.createView(assert, sTemplate, undefined, undefined,
+			{xml : oXMLPreprocessorConfig}).then(function () {
+				assert.strictEqual(
+					_normalizeXml(XMLHelper.serialize(that.oView._xContent)),
+					_normalizeXml(XMLHelper.serialize(xml(sView)))
+				);
+		});
+	}
+
+	/**
+	 * Creates a QUnit.test which tests that the template output is as expected.
+	 *
+	 * @param {sString} sTitle The title of the test case
+	 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
+	 *    see {@link sap.ui.core.mvc.View.create}
+	 * @param {string} sTemplate The template used to generate the expected view as XML
+	 * @param {string} sView The expected resulting view from templating
+	 *
+	 * @private
+	 */
+	function testXMLTemplating(sTitle, oXMLPreprocessorConfig, sTemplate, sView) {
 		QUnit.test(sTitle, function (assert) {
-			var that = this;
-
-			// allow indents in expectation
-			sView = sView.replace(/\t/g, "");
-
-			return this.createView(assert, sTemplate, undefined, undefined,
-				{xml : oXMLPreprocessorConfig}).then(function () {
-					assert.strictEqual(
-						_normalizeXml(XMLHelper.serialize(that.oView._xContent)),
-						_normalizeXml(XMLHelper.serialize(xml(sView)))
-					);
-			});
+			return doTestXMLTemplating.call(this, assert, oXMLPreprocessorConfig, sTemplate, sView);
 		});
 	}
 
@@ -26744,6 +26759,33 @@ sap.ui.define([
 			}, function (oError) {
 				assert.strictEqual(oError.message, sMessage);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: <template:repeat> over more than Model#iSizeLimit (= 100) entries.
+	// BCP: 002075129500002532232020 (253223 / 2020)
+	QUnit.test("BCP: 002075129500002532232020", function (assert) {
+		var oMetaModel = createSpecialCasesModel().getMetaModel(),
+			sTemplate = '\
+<template:repeat list="{meta>/As/$Type/$Key}">\
+	<Text text="{meta>}"/>\
+</template:repeat>',
+			that = this;
+
+		return oMetaModel.requestObject("/As/$Type/$Key").then(function (aKeys) {
+			var i,
+				sView = '';
+
+			// DON'T TRY THIS AT HOME, KIDZ!
+			aKeys.length = 0;
+			for (i = 0; i < 200; i += 1) {
+				aKeys.push("" + i);
+				sView += '<Text text="' + i + '"/>';
+			}
+
+			return doTestXMLTemplating.call(that, assert,
+				{models : {meta : oMetaModel}}, sTemplate, sView);
 		});
 	});
 

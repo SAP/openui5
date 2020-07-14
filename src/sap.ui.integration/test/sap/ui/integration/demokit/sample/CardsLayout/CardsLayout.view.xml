@@ -80,12 +80,12 @@
 							<f:GridContainerItemLayoutData rows="4" columns="4" />
 						</w:layoutData>
 					</w:Card>
-					<w:Card manifest="{manifests>/list1}">
+					<w:Card manifest="{manifests>/list1}" baseUrl="./">
 						<w:layoutData>
 							<f:GridContainerItemLayoutData columns="4" />
 						</w:layoutData>
 					</w:Card>
-					<w:Card manifest="{manifests>/list2}" action="onAction">
+					<w:Card manifest="{manifests>/list2}"  baseUrl="./" action="onAction">
 						<w:layoutData>
 							<f:GridContainerItemLayoutData columns="4" />
 						</w:layoutData>

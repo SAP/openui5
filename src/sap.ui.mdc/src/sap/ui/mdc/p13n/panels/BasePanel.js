@@ -53,17 +53,24 @@ sap.ui.define([
 				/**
 				 * This event is fired if there has been made any change within the <code>BasePanel</code> control.
 				 */
-				change: {}
+				change: {
+					reason: {
+						type: "String"
+					},
+					item: {
+						type: "Object"
+					}
+				}
 			}
 		},
 		init: function() {
 			// list is necessary to set the template + model on
-			this._oMTable = this._createInnerTable();
+			this._oListControl = this._createInnerListControl();
 
 			// disable 'select all'
-			this._oMTable.bPreventMassSelection = true;
+			this._oListControl.bPreventMassSelection = true;
 
-			this.setAggregation("_content", this._oMTable);
+			this._setInnerLayout();
 		},
 		renderer: {
 			apiVersion: 2,
@@ -77,7 +84,14 @@ sap.ui.define([
 
 	});
 
-	BasePanel.prototype._createInnerTable = function(){
+	/**
+	 * Can be overwritten in case a different wrapping Control is required for the inner content
+	 */
+	BasePanel.prototype._setInnerLayout = function() {
+		this.setAggregation("_content", this._oListControl);
+	};
+
+	BasePanel.prototype._createInnerListControl = function(){
 
 		this._moveTopButton = new OverflowToolbarButton("IDButtonMoveToTop",{
 			type: "Transparent",
@@ -128,17 +142,6 @@ sap.ui.define([
 			})
 		});
 
-		this._oSearchField = new SearchField("IDSearchField",{
-			liveChange: [this._onSearchFieldLiveChange, this],
-			width: "100%",
-			layoutData: new OverflowToolbarLayoutData({
-				shrinkable: true,
-				moveToOverflow: true,
-				priority: "High",
-				maxWidth: "16rem"
-			})
-		});
-
 		this._oDragDropInfo = new DragDropInfo({
 			enabled: false,
 			sourceAggregation: "items",
@@ -165,7 +168,7 @@ sap.ui.define([
 			sticky: ["HeaderToolbar", "ColumnHeaders"],
 			headerToolbar: new OverflowToolbar({
 				content: [
-					this._oSearchField,
+					this._getSearchField(),
 					new ToolbarSpacer(),
 					this._moveTopButton,
 					this._moveUpButton,
@@ -178,6 +181,22 @@ sap.ui.define([
 		});
 
 		return oBasePanelUI;
+	};
+
+	BasePanel.prototype._getSearchField = function() {
+		if (!this._oSearchField) {
+			this._oSearchField = new SearchField("IDSearchField",{
+				liveChange: [this._onSearchFieldLiveChange, this],
+				width: "100%",
+				layoutData: new OverflowToolbarLayoutData({
+					shrinkable: true,
+					moveToOverflow: true,
+					priority: "High",
+					maxWidth: "16rem"
+				})
+			});
+		}
+		return this._oSearchField;
 	};
 
 	BasePanel.prototype.setTemplate = function(oTemplate) {
@@ -207,6 +226,9 @@ sap.ui.define([
 		this._addTableColumns(aTexts);
 	};
 
+	/**
+	 * @param {Object} oP13nModel Personalization model provided by sap.ui.mdc.p13n.P13nBuilder
+	 */
 	BasePanel.prototype.setP13nModel = function(oP13nModel) {
 		this.setModel(oP13nModel);
 		//initial value for "Reorder"-mode is false
@@ -219,9 +241,9 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype._addTableColumns = function(aTexts) {
-		this._oMTable.removeAllColumns();
+		this._oListControl.removeAllColumns();
 		aTexts.forEach(function(sText) {
-			this._oMTable.addColumn(new Column({
+			this._oListControl.addColumn(new Column({
 				header: new Text({
 					text: sText
 				})
@@ -244,7 +266,7 @@ sap.ui.define([
 					return bReorderMode ? "Active" : "Inactive";
 				}
 			});
-			this._oMTable.bindItems(Object.assign({
+			this._oListControl.bindItems(Object.assign({
 				path: "/items",
 				key: "name",
 				templateShareable: false,
@@ -283,7 +305,7 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype._onSearchFieldLiveChange = function(oEvent) {
-		this._oMTable.getBinding("items").filter(new Filter("label", "Contains", oEvent.getSource().getValue()));
+		this._oListControl.getBinding("items").filter(new Filter("label", "Contains", oEvent.getSource().getValue()));
 	};
 
 	BasePanel.prototype._onPressButtonMoveToTop = function() {
@@ -299,7 +321,7 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype._onPressButtonMoveToBottom = function() {
-		var iIndex = this._oMTable.getItems().length - 1;
+		var iIndex = this._oListControl.getItems().length - 1;
 		this._moveSelectedItem(iIndex);
 	};
 
@@ -325,7 +347,7 @@ sap.ui.define([
 		}
 		// Switch the list mode (which also unbinds selection) and then filter by selected
 		this.switchListMode(bReorderMode ? "None" : "MultiSelect");
-		this._filterBySelected(bReorderMode);
+		this._filterBySelected(bReorderMode, this._oListControl);
 		// Show/Hide and clear the search field
 		this._oSearchField.setVisible(!bReorderMode);
 		this._oSearchField.setValue("");
@@ -359,8 +381,8 @@ sap.ui.define([
 		this.getModel().setProperty("/items", aSelectedFields.concat(aOtherFields));
 	};
 
-	BasePanel.prototype._filterBySelected = function(bShowSelected) {
-		this._oMTable.getBinding("items").filter(bShowSelected ? new Filter("selected", "EQ", true) : []);
+	BasePanel.prototype._filterBySelected = function(bShowSelected, oList) {
+		oList.getBinding("items").filter(bShowSelected ? new Filter("selected", "EQ", true) : []);
 	};
 
 	BasePanel.prototype.switchListMode = function(sMode) {
@@ -374,11 +396,11 @@ sap.ui.define([
 				this.getTemplate().bindProperty("selected", this._oSelectionBindingInfo);
 			}
 			// Unbind the table to ensure selected is not used
-			this._oMTable.unbindAggregation("items");
+			this._oListControl.unbindAggregation("items");
 		}
 
 		// Update the selection mode of the table
-		this._oMTable.setMode(sMode);
+		this._oListControl.setMode(sMode);
 
 		if (this._oSelectionBindingInfo) {
 			// Bind the table to ensure selection state (selected binding) is used by the table
@@ -390,14 +412,18 @@ sap.ui.define([
 		this._updateEnableOfMoveButtons(oTableItem);
 		this._oSelectedItem = oTableItem;
 		if (!bSelectAll) {
+			var oItem = this.getModel().getProperty(this._oSelectedItem.getBindingContext().sPath);
 			// only fire this event if one item is being selected in a live scenario, else fire the change event in the _onSelectionChange method
-			this.fireChange();
+			this.fireChange({
+				reason: oItem.selected ? "Add" : "Remove",
+				item: oItem
+			});
 		}
 	};
 
 	BasePanel.prototype._moveSelectedItem = function(vNewIndex) {
 		var oSelectedItem = this._oSelectedItem;
-		var iSelectedIndex = this._oMTable.indexOfItem(oSelectedItem);
+		var iSelectedIndex = this._oListControl.indexOfItem(oSelectedItem);
 		if (iSelectedIndex < 0) {
 			return;
 		}
@@ -409,8 +435,8 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype._moveTableItem = function(oItem, iNewIndex) {
-		var aItems = this._oMTable.getItems();
-		var aFields = this._oMTable.getModel().getProperty("/items");
+		var aItems = this._oListControl.getItems();
+		var aFields = this._oListControl.getModel().getProperty("/items");
 
 		// index of the item in the model not the index in the aggregation
 		var iOldIndex = aFields.indexOf(oItem.getBindingContext().getObject());
@@ -426,35 +452,38 @@ sap.ui.define([
 
 		// remove data from old position and insert it into new position
 		aFields.splice(iNewIndex, 0, aFields.splice(iOldIndex, 1)[0]);
-		this._oMTable.getModel().setProperty("/items", aFields);
+		this._oListControl.getModel().setProperty("/items", aFields);
 
 		// store the moved item again due to binding
 		this._oSelectedItem = aItems[iNewIndex];
 
 		this._updateEnableOfMoveButtons(this._oSelectedItem);
 
-		this.fireChange();
+		this.fireChange({
+			reason: "Move",
+			item: this.getModel().getProperty(this._oSelectedItem.getBindingContext().sPath)
+		});
 	};
 
 	BasePanel.prototype._onRearrange = function(oEvent) {
 		var oDraggedItem = oEvent.getParameter("draggedControl");
 		var oDroppedItem = oEvent.getParameter("droppedControl");
 		var sDropPosition = oEvent.getParameter("dropPosition");
-		var iDraggedIndex = this._oMTable.indexOfItem(oDraggedItem);
-		var iDroppedIndex = this._oMTable.indexOfItem(oDroppedItem);
+		var iDraggedIndex = this._oListControl.indexOfItem(oDraggedItem);
+		var iDroppedIndex = this._oListControl.indexOfItem(oDroppedItem);
 		var iActualDroppedIndex = iDroppedIndex + (sDropPosition == "Before" ? 0 : 1) + (iDraggedIndex < iDroppedIndex ? -1 : 0);
 
 		this._moveTableItem(oDraggedItem, iActualDroppedIndex);
 	};
 
 	BasePanel.prototype._updateEnableOfMoveButtons = function(oTableItem) {
-		var iTableItemPos = this._oMTable.getItems().indexOf(oTableItem);
+		var iTableItemPos = this._oListControl.getItems().indexOf(oTableItem);
 		var bUpEnabled = true, bDownEnabled = true;
 		if (iTableItemPos == 0) {
 			// disable move buttons upwards, if the item is at the top
 			bUpEnabled = false;
 		}
-		if (iTableItemPos == this._oMTable.getItems().length - 1) {
+		if (iTableItemPos == this._oListControl.getItems().length - 1) {
 			// disable move buttons downwards, if the item is at the bottom
 			bDownEnabled = false;
 		}
@@ -468,7 +497,7 @@ sap.ui.define([
 	BasePanel.prototype.exit = function() {
 		this._oSelectionBindingInfo = null;
 		this._oSelectedItem = null;
-		this._oMTable = null;
+		this._oListControl = null;
 		this._moveTopButton = null;
 		this._moveUpButton = null;
 		this._moveDownButton = null;

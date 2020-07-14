@@ -815,6 +815,7 @@ sap.ui.define([
 						oDataServiceUri: undefined,
 						oDataServiceVersion: undefined,
 						modelType: undefined,
+						relevantContainerId: "bar",
 						runtimeOnly: undefined,
 						selector: {
 							id: oElement.getId(),
@@ -889,6 +890,7 @@ sap.ui.define([
 						oDataServiceUri: undefined,
 						oDataServiceVersion: undefined,
 						modelType: SomeModel.getMetadata().getName(),
+						relevantContainerId: "bar",
 						runtimeOnly: undefined,
 						selector: {
 							id: oElement.getId(),
@@ -1347,6 +1349,23 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("when the control has delegate action but not a stable ID", function (assert) {
+			return createOverlayWithAggregationActions.call(this, {
+				add: {
+					delegate: {
+						changeType: "addFields"
+					}
+				}
+			}, ON_CHILD)
+				.then(function (oOverlay) {
+					// E.g. Control has delegate action but no stable
+					whenOverlayHasNoStableId.call(this, this.oParentOverlay);
+					return this.oPlugin._isEditableCheck(oOverlay, false);
+				}.bind(this))
+				.then(function (bEditable) {
+					assert.equal(bEditable, false, "then the parent overlay is not editable");
+				});
+		});
 		QUnit.test("when the control has addODataProperty and Reveal in different aggregations from DesignTimeMetadata", function (assert) {
 			var fnLogErrorSpy = sandbox.spy(Log, "error");
 			sandbox.stub(this.oPlugin, "_getRevealActions").resolves({
@@ -1483,6 +1502,71 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container", function (assert) {
+			var done = assert.async();
+			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
+				var oCompositeCommand = oEvent.getParameter("command");
+				assert.equal(oCompositeCommand.getCommands().length, 1, "then one command is created");
+				var oAddCmd = oCompositeCommand.getCommands()[0];
+				assert.equal(oAddCmd.getName(), "addDelegateProperty",
+					"then the addDelegateProperty command is created ");
+				assert.equal(oAddCmd.getParentId(), "bar", "then the parentId is set correctly ");
+				assert.equal(oAddCmd.getElementId(), "pseudoParent", "then the relevant container is set correctly as element of the command");
+				assert.equal(oAddCmd.getRelevantContainerId(), "pseudoParent", "then the relevant container is set correctly ");
+				assert.ok(oAddCmd.getNewControlId().indexOf("pseudoParent") > -1,
+					"then the pseudo parent (relevant container) is used to create the new control ID");
+				done();
+			});
+
+			return createOverlayWithAggregationActions.call(this, {
+				add: {
+					delegate : {
+						changeType: "addFields",
+						changeOnRelevantContainer: true
+					}
+				}
+			}, ON_CHILD)
+				.then(function (oOverlay) {
+					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+				}.bind(this))
+
+				.then(function () {
+					assert.ok(true, "then the plugin should not complain about it");
+				});
+		});
+
+
+		QUnit.test("when the control's dt metadata has an add via delegate action", function (assert) {
+			var done = assert.async();
+			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
+				var oCompositeCommand = oEvent.getParameter("command");
+				assert.equal(oCompositeCommand.getCommands().length, 1, "then one command is created");
+				var oAddCmd = oCompositeCommand.getCommands()[0];
+				assert.equal(oAddCmd.getName(), "addDelegateProperty",
+					"then the addDelegateProperty command is created ");
+				assert.equal(oAddCmd.getParentId(), "bar", "then the parentId is set correctly ");
+				assert.equal(oAddCmd.getElementId(), "bar", "then the parent is set correctly as element of the command");
+				assert.equal(oAddCmd.getRelevantContainerId(), "bar", "then the relevant container is set correctly ");
+				assert.ok(oAddCmd.getNewControlId().indexOf("bar") > -1,
+					"then the pseudo parent (relevant container) is used to create the new control ID");
+				done();
+			});
+
+			return createOverlayWithAggregationActions.call(this, {
+				add: {
+					delegate : {
+						changeType: "addFields"
+					}
+				}
+			}, ON_CHILD)
+				.then(function (oOverlay) {
+					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+				}.bind(this))
+
+				.then(function () {
+					assert.ok(true, "then the plugin should not complain about it");
+				});
+		});
 		QUnit.test("when 'registerElementOverlay' is called and the metamodel is not loaded yet", function (assert) {
 			var fnDone = assert.async();
 			var oSibling = this.oSibling;
@@ -2116,7 +2200,7 @@ sap.ui.define([
 		}
 	}
 
-	function enhanceForAddViaDelegate(mActions) {
+	function enhanceForAddViaDelegate(bPropagateRelevantContainer, mActions) {
 		var mAddViaDelegateAction = ObjectPath.get(["add", "delegate"], mActions);
 		if (mAddViaDelegateAction && !mAddViaDelegateAction.supportsDefaultDelegate) {
 			//attach delegate into to the control
@@ -2131,7 +2215,11 @@ sap.ui.define([
 				key: "sap-ui-custom-settings",
 				value: oCustomDataValue
 			});
-			this.oControl.insertAggregation("customData", oCustomData, 0, /*bSuppressInvalidate=*/true);
+			var oControl = this.oControl;
+			if (bPropagateRelevantContainer) {
+				oControl = this.oPseudoPublicParent;
+			}
+			oControl.insertAggregation("customData", oCustomData, 0, /*bSuppressInvalidate=*/true);
 		}
 	}
 
@@ -2153,6 +2241,10 @@ sap.ui.define([
 			};
 
 			bPropagateRelevantContainer = mActions.reveal.changeOnRelevantContainer;
+		}
+		var mAddViaDelegateAction = ObjectPath.get(["add", "delegate"], mActions);
+		if (mAddViaDelegateAction) {
+			bPropagateRelevantContainer = !!mAddViaDelegateAction.changeOnRelevantContainer;
 		}
 
 		var oPseudoPublicParentDesignTimeMetadata = {
@@ -2214,26 +2306,25 @@ sap.ui.define([
 				this.oSiblingOverlay = OverlayRegistry.getOverlay(this.oSibling);
 				this.oIrrelevantOverlay = OverlayRegistry.getOverlay(this.oIrrelevantChild);
 				enhanceForResponsibleElement(mActions);
-				enhanceForAddViaDelegate.call(this, mActions);
+				enhanceForAddViaDelegate.call(this, bPropagateRelevantContainer, mActions);
 				resolve();
 			}.bind(this));
 		}.bind(this))
-
-			.then(function () {
-				sap.ui.getCore().applyChanges();
-				switch (sOverlayType) {
-					case ON_SIBLING :
-						return this.oSiblingOverlay;
-					case ON_CHILD :
-						return this.oParentOverlay;
-					case ON_CONTAINER :
-						return this.oPseudoPublicParentOverlay;
-					case ON_IRRELEVANT :
-						return this.oIrrelevantOverlay;
-					default :
-						return undefined;
-				}
-			}.bind(this));
+		.then(function () {
+			sap.ui.getCore().applyChanges();
+			switch (sOverlayType) {
+				case ON_SIBLING :
+					return this.oSiblingOverlay;
+				case ON_CHILD :
+					return this.oParentOverlay;
+				case ON_CONTAINER :
+					return this.oPseudoPublicParentOverlay;
+				case ON_IRRELEVANT :
+					return this.oIrrelevantOverlay;
+				default :
+					return undefined;
+			}
+		}.bind(this));
 	}
 
 	function createOverlayWithoutDesignTimeMetadata(mActions, bOnSibling) {

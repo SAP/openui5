@@ -295,6 +295,7 @@ function(
 	 * @static
 	 * @deprecated since 1.58, use {@link sap.ui.core.Fragment.load} instead
 	 * @return {sap.ui.core.Control|sap.ui.core.Control[]} the root Control(s) of the Fragment content
+	 * @ui5-global-only
 	 */
 	sap.ui.fragment = function (sName, sType, oController) {
 
@@ -464,6 +465,7 @@ function(
 	 * @static
 	 * @deprecated since 1.58, use {@link sap.ui.core.Fragment.load} instead
 	 * @return {sap.ui.core.Control|sap.ui.core.Control[]} the root Control(s) of the created fragment instance
+	 * @ui5-global-only
 	 */
 	sap.ui.xmlfragment = function(sId, vFragment, oController) {
 
@@ -536,6 +538,7 @@ function(
 	 * @static
 	 * @deprecated since 1.58, use {@link sap.ui.core.Fragment.load} instead
 	 * @return {sap.ui.core.Control|sap.ui.core.Control[]} The root control(s) of the created fragment instance
+	 * @ui5-global-only
 	 */
 	sap.ui.jsfragment = function(vName, vFragmentDefinition, oController) { // definition of a JS Fragment
 
@@ -619,6 +622,7 @@ function(
 	 * @static
 	 * @deprecated since 1.58, use {@link sap.ui.core.Fragment.load} instead
 	 * @return {sap.ui.core.Control|sap.ui.core.Control[]} Root control or controls of the created fragment instance
+	 * @ui5-global-only
 	 */
 	sap.ui.htmlfragment = function(sId, vFragment, oController) {
 

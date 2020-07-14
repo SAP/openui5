@@ -789,6 +789,8 @@ sap.ui.define([
 		 * @property {string} [payload.path] Relative/absolute path to a node in a UI5 model, optional if it can be derived by the delegate, e.g. from binding context
 		 * @property {string} [payload.modelName] Runtime model name, optional if default model is used (allows to support named models)
 		 * @property {any} [payload.something] Payload can contain additional delegate-specific keys and values (not just "something" as a key, the key can be defined as well as the values)
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta, sap.ui.model.meta, implementations of sap.ui.fl.interfaces.Delegate, control change handler and provider
 		 */
 
 		/**

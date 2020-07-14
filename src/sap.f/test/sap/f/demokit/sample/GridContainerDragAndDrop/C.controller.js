@@ -40,11 +40,12 @@ sap.ui.define([
 						iDropPosition--;
 					}
 
-					if (sInsertPosition === "Before") {
-						oDropParent.insertItem(oDragged, iDropPosition);
-					} else {
-						oDropParent.insertItem(oDragged, iDropPosition + 1);
+					if (sInsertPosition === "After") {
+						iDropPosition++;
 					}
+
+					oDropParent.insertItem(oDragged, iDropPosition);
+					oGrid.focusItem(iDropPosition);
 				}
 			}));
 

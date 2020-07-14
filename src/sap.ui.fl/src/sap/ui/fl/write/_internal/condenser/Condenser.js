@@ -392,20 +392,22 @@ sap.ui.define([
 		Measurement.start("Condenser_overall", "Condenser overall - CondenserClass", ["sap.ui.fl", "Condenser"]);
 		var mReducedChanges = {};
 		var mUIReconstructions = {};
-		var aCopyChanges = aChanges.slice(0).reverse();
 		var aAllIndexRelatedChanges = [];
 
 		// filter out objects which are not of type change, e.g. Variants, AppVariants, AppVariantInlineChange
-		var aAllNonUIChanges = aCopyChanges.filter(function(oChange) {
-			return !(oChange instanceof Change);
-		});
-		aCopyChanges = aCopyChanges.filter(function(oChange) {
-			return oChange instanceof Change;
+		var aNotCondensableChanges = [];
+		var aCondensableChanges = [];
+		aChanges.slice(0).reverse().forEach(function(oChange) {
+			if (oChange instanceof Change && oChange.isApplyProcessFinished()) {
+				aCondensableChanges.push(oChange);
+			} else {
+				aNotCondensableChanges.push(oChange);
+			}
 		});
 
 		Measurement.start("Condenser_defineMaps", "defining of maps - CondenserClass", ["sap.ui.fl", "Condenser"]);
 
-		return defineMaps(oAppComponent, mReducedChanges, mUIReconstructions, aAllIndexRelatedChanges, aCopyChanges)
+		return defineMaps(oAppComponent, mReducedChanges, mUIReconstructions, aAllIndexRelatedChanges, aCondensableChanges)
 
 		.then(function() {
 			Measurement.end("Condenser_defineMaps");
@@ -420,7 +422,7 @@ sap.ui.define([
 				addAllIndexRelatedChanges(aReducedChanges, aAllIndexRelatedChanges);
 			}
 
-			aReducedChanges = aReducedChanges.concat(aAllNonUIChanges);
+			aReducedChanges = aReducedChanges.concat(aNotCondensableChanges);
 			sortByInitialOrder(aChanges, aReducedChanges);
 
 			if (!bUnclassifiedChanges) {

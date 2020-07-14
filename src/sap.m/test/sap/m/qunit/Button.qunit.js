@@ -10,6 +10,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/m/Label",
+	"sap/m/Text",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/events/KeyCodes"
 ], function(
@@ -22,6 +24,8 @@ sap.ui.define([
 	coreLibrary,
 	Device,
 	Label,
+	Text,
+	InvisibleText,
 	DragInfo,
 	KeyCodes
 ) {
@@ -30,6 +34,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
+
+	// shortcut for sap.m.ButtonAccessibilityType
+	var ButtonAccessibilityType = mobileLibrary.ButtonAccessibilityType;
 
 	var styleElement = document.createElement("style");
 	styleElement.textContent =
@@ -438,7 +445,7 @@ sap.ui.define([
 		});
 
 		var oButton = new Button({text: "MyText", icon: "sap-icon://search"}).placeAt("qunit-fixture"),
-			oFocusSpy = this.spy(oButton, "focus");
+			oFocusSpy = this.spy(oButton, "_setButtonFocus");
 
 		// Act
 		oButton.ontouchstart({ setMarked: this.stub() , preventDefault: this.stub(), targetTouches: { length: 1 }, originalEvent: { type: "mousedown" }, target: { id: 'fake-button-id' }});
@@ -458,7 +465,7 @@ sap.ui.define([
 		});
 
 		var oButton = new Button({text: "MyText", icon: "sap-icon://search"}).placeAt("qunit-fixture"),
-			oFocusSpy = this.spy(oButton, "focus");
+			oFocusSpy = this.spy(oButton, "_setButtonFocus");
 
 		// Act
 		oButton.ontouchstart({ setMarked: this.stub() , preventDefault: this.stub(), targetTouches: { length: 1 }, originalEvent: { type: "mousedown" }, target: { id: 'fake-button-id' }});
@@ -502,6 +509,12 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oButton._getTooltip(), "Search", "Should return the derived tooltip");
+
+		// Act
+		oButton.setIcon("sap-icon://accidental-leave"); // Icon WITHOUT semantic text
+
+		// Assert
+		assert.strictEqual(oButton._getTooltip(), "accidental-leave", "Should return icon name if there's no icon text");
 
 		// Cleanup
 		oButton.destroy();
@@ -554,142 +567,6 @@ sap.ui.define([
 		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
 
 		// clean
-		oButton.destroy();
-	});
-
-	// check if we have reference added to the text content of the button
-	// so it can be read otherwise it causes the issue reported in BCP: 1680223321
-	QUnit.test("AriaLabeledBy when the Button is associated with Label and the button has text", function(assert) {
-		var sTextSpanId = "-content";
-		var oLabel = new Label("L1", {
-			text:'Label'
-		});
-		var oButton = new Button("B1",{
-			text:'Hello World',
-			ariaLabelledBy: "L1"
-		});
-
-		oLabel.placeAt("qunit-fixture");
-		oButton.placeAt("qunit-fixture");
-
-		var oLabel2 = new Label("L2", {
-			text: 'Label',
-			labelFor: "B2"
-		});
-		var oButton2 = new Button("B2", {
-			text: 'Hello World'
-		});
-
-		oLabel2.placeAt("qunit-fixture");
-		oButton2.placeAt("qunit-fixture");
-
-		var oLabel3 = new Label("L3", {
-			text: 'Label',
-			labelFor: "B3"
-		});
-		var oButton3 = new Button("B3", {
-			text: 'Hello World',
-			ariaLabelledBy: "B3"
-		});
-
-		oLabel3.placeAt("qunit-fixture");
-		oButton3.placeAt("qunit-fixture");
-
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(oButton.$().attr("aria-labelledby"), "L1 B1" + sTextSpanId, "Label id and Button content id are written inside aria-labelledby attribute");
-		assert.equal(oButton2.$().attr("aria-labelledby"), "L2 B2" + sTextSpanId, "Label id and Button content id are written inside aria-labelledby attribute");
-		assert.equal(oButton3.$().attr("aria-labelledby"), "L3 B3", "Label id and Button id are written inside aria-labelledby attribute");
-
-		oLabel.destroy();
-		oButton.destroy();
-	});
-
-	// in case of icon only button we shouldn't have self reference otherwise
-	// it causes issue reported in BCP: 1780428239
-	QUnit.test("AriaLabeledBy when the Button is associated with Label and the button has icon only", function(assert) {
-		var oLabel = new Label("L1", {
-			text:'Label'
-		});
-		var oButton = new Button("B1",{
-			icon: "sap-icon://edit",
-			ariaLabelledBy: "L1"
-		});
-
-		oLabel.placeAt("qunit-fixture");
-		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(oButton.$().attr("aria-labelledby"), "L1", "Only Label id is written inside aria-labelledby attribute");
-
-		oLabel.destroy();
-		oButton.destroy();
-	});
-
-	QUnit.test("AriaDescribedBy when the Button has tooltip and special type", function(assert) {
-		var oButton = new Button("B1",{
-			text: "my button",
-			tooltip: "tooltip",
-			type: sButtonTypeAccept
-		}),
-		sTextId,
-		sTooltipId;
-
-		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		sTextId = ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeAccept);
-		sTooltipId = "B1-tooltip";
-		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
-
-		oButton.destroy();
-	});
-
-	QUnit.test("AriaDescribedBy when the Button has tooltip and special type", function(assert) {
-		var oButton = new Button("B1",{
-				type: sButtonTypeCritical,
-				tooltip: "tooltip"
-			}).placeAt("qunit-fixture"),
-			sTooltipId = "B1-tooltip",
-			sTextId;
-
-		sap.ui.getCore().applyChanges();
-
-		sTextId = ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeCritical);
-		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
-
-		oButton.destroy();
-	});
-
-	QUnit.test("AriaDescribedBy when the Button has tooltip and special type", function(assert) {
-		var oButton = new Button("B1",{
-				type: sButtonTypeNegative,
-				tooltip: "tooltip"
-			}).placeAt("qunit-fixture"),
-			sTooltipId = "B1-tooltip",
-			sTextId;
-
-		sap.ui.getCore().applyChanges();
-
-		sTextId = ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeNegative);
-		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
-
-		oButton.destroy();
-	});
-
-	QUnit.test("AriaDescribedBy when the Button has tooltip and special type", function(assert) {
-		var oButton = new Button("B1",{
-				type: sButtonTypeSuccess,
-				tooltip: "tooltip"
-			}).placeAt("qunit-fixture"),
-			sTooltipId = "B1-tooltip",
-			sTextId;
-
-		sap.ui.getCore().applyChanges();
-
-		sTextId = ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeSuccess);
-		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
-
 		oButton.destroy();
 	});
 
@@ -1172,4 +1049,415 @@ sap.ui.define([
 		});
 	}
 
+	QUnit.module("Determining ACC type", {
+		beforeEach: function () {
+			this.oLabel = new Label({
+				text: "Label"
+			});
+
+			this.oDescription = new Text({
+				text: "Descriptive text"
+			});
+
+			this.oButton = new Button({
+				icon: "sap-icon://add",
+				text: "I am a button"
+			});
+
+			this.oLabel.placeAt("qunit-fixture");
+			this.oDescription.placeAt("qunit-fixture");
+			this.oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oLabel.destroy();
+			this.oDescription.destroy();
+			this.oButton.destroy();
+		}
+	});
+
+	QUnit.test("Default", function (assert) {
+		assert.strictEqual(this.oButton._determineAccessibilityType(), ButtonAccessibilityType.Default);
+	});
+
+	QUnit.test("Described (via association)", function (assert) {
+		this.oButton.addAriaDescribedBy(this.oDescription);
+
+		assert.strictEqual(this.oButton._determineAccessibilityType(), ButtonAccessibilityType.Described);
+	});
+
+	QUnit.test("Described (via semantic type)", function (assert) {
+		this.oButton.setType(ButtonType.Emphasized);
+
+		assert.strictEqual(this.oButton._determineAccessibilityType(), ButtonAccessibilityType.Described);
+	});
+
+	QUnit.test("Labelled (via association)", function (assert) {
+		this.oButton.addAriaLabelledBy(this.oLabel);
+
+		assert.strictEqual(this.oButton._determineAccessibilityType(), ButtonAccessibilityType.Labelled);
+	});
+
+	QUnit.test("Labelled (via labelFor)", function (assert) {
+		this.oLabel.setLabelFor(this.oButton);
+
+		assert.strictEqual(this.oButton._determineAccessibilityType(), ButtonAccessibilityType.Labelled);
+	});
+
+	QUnit.test("Combined (via associations)", function (assert) {
+		this.oButton.addAriaLabelledBy(this.oLabel);
+		this.oButton.addAriaDescribedBy(this.oDescription);
+
+		assert.strictEqual(this.oButton._determineAccessibilityType(), ButtonAccessibilityType.Combined);
+	});
+
+	QUnit.test("Combined (via labelFor and association)", function (assert) {
+		this.oLabel.setLabelFor(this.oButton);
+		this.oButton.addAriaDescribedBy(this.oDescription);
+
+		assert.strictEqual(this.oButton._determineAccessibilityType(), ButtonAccessibilityType.Combined);
+	});
+
+	QUnit.test("Combined (via association and semantic type)", function (assert) {
+		this.oButton.addAriaLabelledBy(this.oLabel);
+		this.oButton.setType(ButtonType.Emphasized);
+
+		assert.strictEqual(this.oButton._determineAccessibilityType(), ButtonAccessibilityType.Combined);
+	});
+
+	QUnit.test("Combined (via labelFor and semantic type)", function (assert) {
+		this.oLabel.setLabelFor(this.oButton);
+		this.oButton.setType(ButtonType.Emphasized);
+
+		assert.strictEqual(this.oButton._determineAccessibilityType(), ButtonAccessibilityType.Combined);
+	});
+
+	QUnit.module("Icon-only button ARIA", {
+		beforeEach: function () {
+			this.oLabel = new Label("label", {
+				text: "Label"
+			});
+
+			this.oDescription = new Text("description", {
+				text: "Descriptive text"
+			});
+
+			this.oButton = new Button("btn", {
+				icon: "sap-icon://add"
+			});
+
+			this.oLabel.placeAt("qunit-fixture");
+			this.oDescription.placeAt("qunit-fixture");
+			this.oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oButtonDomRef = this.oButton.getDomRef();
+		},
+		afterEach: function() {
+			this.oLabel.destroy();
+			this.oDescription.destroy();
+			this.oButton.destroy();
+		}
+	});
+
+	QUnit.test("Default", function (assert) {
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-label"), "Add", "Tooltip is added in aria-label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
+	});
+
+	QUnit.test("Described (via association)", function (assert) {
+		this.oButton.addAriaDescribedBy(this.oDescription);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-label"), "Add", "Tooltip is added in aria-label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description btn-tooltip", "Both description and tooltip are added in aria-describedby");
+	});
+
+	QUnit.test("Described (via semantic type)", function (assert) {
+		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
+
+		this.oButton.setType(ButtonType.Emphasized);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-label"), "Add", "Tooltip is added in aria-label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip " + sTypeId, "Both tooltip and type are added in aria-describedby");
+	});
+
+	QUnit.test("Labelled (via association)", function (assert) {
+		this.oButton.addAriaLabelledBy(this.oLabel);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label", "Label is added");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip", "Tooltip is added in aria-describedby");
+	});
+
+	QUnit.test("Labelled (via labelFor)", function (assert) {
+		this.oLabel.setLabelFor(this.oButton);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label", "Label is added");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip", "Tooltip is added in aria-describedby");
+	});
+
+	QUnit.test("Combined (via associations)", function (assert) {
+		this.oButton.addAriaLabelledBy(this.oLabel);
+		this.oButton.addAriaDescribedBy(this.oDescription);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label", "Label is added");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description btn-tooltip", "Both description and tooltip are added in aria-describedby");
+	});
+
+	QUnit.test("Combined (via labelFor and association)", function (assert) {
+		this.oLabel.setLabelFor(this.oButton);
+		this.oButton.addAriaDescribedBy(this.oDescription);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label", "Label is added");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description btn-tooltip", "Both description and tooltip are added in aria-describedby");
+	});
+
+	QUnit.test("Combined (via association and semantic type)", function (assert) {
+		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
+
+		this.oButton.addAriaLabelledBy(this.oLabel);
+		this.oButton.setType(ButtonType.Emphasized);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label", "Label is added");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip " + sTypeId, "Both tooltip and type are added in aria-describedby");
+	});
+
+	QUnit.test("Combined (via labelFor and semantic type)", function (assert) {
+		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
+
+		this.oLabel.setLabelFor(this.oButton);
+		this.oButton.setType(ButtonType.Emphasized);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label", "Label is added");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip " + sTypeId, "Both tooltip and type are added in aria-describedby");
+	});
+
+	QUnit.module("Text button w/ tooltip ARIA", {
+		beforeEach: function () {
+			this.oLabel = new Label("label", {
+				text: "Label"
+			});
+
+			this.oDescription = new Text("description", {
+				text: "Descriptive text"
+			});
+
+			this.oButton = new Button("btn", {
+				text: "I am a button",
+				tooltip: "Tooltip"
+			});
+
+			this.oLabel.placeAt("qunit-fixture");
+			this.oDescription.placeAt("qunit-fixture");
+			this.oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oButtonDomRef = this.oButton.getDomRef();
+		},
+		afterEach: function() {
+			this.oLabel.destroy();
+			this.oDescription.destroy();
+			this.oButton.destroy();
+		}
+	});
+
+	QUnit.test("Default", function (assert) {
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip", "Tooltip is added in aria-describedby");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
+	});
+
+	QUnit.test("Descriptive (via association)", function (assert) {
+		this.oButton.addAriaDescribedBy(this.oDescription);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description btn-tooltip", "Both description and tooltip are added in aria-describedby");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
+	});
+
+	QUnit.test("Described (via semantic type)", function (assert) {
+		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
+
+		this.oButton.setType(ButtonType.Emphasized);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip " + sTypeId, "Both tooltip and type are added in aria-describedby");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
+	});
+
+	QUnit.test("Labelled (via association)", function (assert) {
+		this.oButton.addAriaLabelledBy(this.oLabel);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip", "Tooltip is added in aria-describedby");
+	});
+
+	QUnit.test("Labelled (via labelFor)", function (assert) {
+		this.oLabel.setLabelFor(this.oButton);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip", "Tooltip is added in aria-describedby");
+	});
+
+	QUnit.test("Combined (via associations)", function (assert) {
+		this.oButton.addAriaLabelledBy(this.oLabel);
+		this.oButton.addAriaDescribedBy(this.oDescription);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description btn-tooltip", "Both description and tooltip are added in aria-describedby");
+	});
+
+	QUnit.test("Combined (via labelFor and association)", function (assert) {
+		this.oLabel.setLabelFor(this.oButton);
+		this.oButton.addAriaDescribedBy(this.oDescription);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description btn-tooltip", "Both description and tooltip are added in aria-describedby");
+	});
+
+	QUnit.test("Combined (via association and semantic type)", function (assert) {
+		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
+
+		this.oButton.addAriaLabelledBy(this.oLabel);
+		this.oButton.setType(ButtonType.Emphasized);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip " + sTypeId, "Both tooltip and type are added in aria-describedby");
+	});
+
+	QUnit.test("Combined (via labelFor and semantic type)", function (assert) {
+		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
+
+		this.oLabel.setLabelFor(this.oButton);
+		this.oButton.setType(ButtonType.Emphasized);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip " + sTypeId, "Both tooltip and type are added in aria-describedby");
+	});
+
+	QUnit.module("Text button w/o tooltip ARIA", {
+		beforeEach: function () {
+			this.oLabel = new Label("label", {
+				text: "Label"
+			});
+
+			this.oDescription = new Text("description", {
+				text: "Descriptive text"
+			});
+
+			this.oButton = new Button("btn", {
+				text: "I am a button"
+			});
+
+			this.oLabel.placeAt("qunit-fixture");
+			this.oDescription.placeAt("qunit-fixture");
+			this.oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oButtonDomRef = this.oButton.getDomRef();
+		},
+		afterEach: function() {
+			this.oLabel.destroy();
+			this.oDescription.destroy();
+			this.oButton.destroy();
+		}
+	});
+
+	// Nothing to assert for the Default case...
+
+	QUnit.test("Descriptive (via association)", function (assert) {
+		this.oButton.addAriaDescribedBy(this.oDescription);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description", "Description is added");
+	});
+
+	QUnit.test("Described (via semantic type)", function (assert) {
+		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
+
+		this.oButton.setType(ButtonType.Emphasized);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Type is added");
+	});
+
+	QUnit.test("Labelled (via association)", function (assert) {
+		this.oButton.addAriaLabelledBy(this.oLabel);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
+	});
+
+	QUnit.test("Labelled (via labelFor)", function (assert) {
+		this.oLabel.setLabelFor(this.oButton);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
+	});
+
+	QUnit.test("Combined (via associations)", function (assert) {
+		this.oButton.addAriaLabelledBy(this.oLabel);
+		this.oButton.addAriaDescribedBy(this.oDescription);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description", "Description is added");
+	});
+
+	QUnit.test("Combined (via labelFor and association)", function (assert) {
+		this.oLabel.setLabelFor(this.oButton);
+		this.oButton.addAriaDescribedBy(this.oDescription);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description", "Description is added");
+	});
+
+	QUnit.test("Combined (via association and semantic type)", function (assert) {
+		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
+
+		this.oButton.addAriaLabelledBy(this.oLabel);
+		this.oButton.setType(ButtonType.Emphasized);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Type is added");
+	});
+
+	QUnit.test("Combined (via labelFor and semantic type)", function (assert) {
+		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
+
+		this.oLabel.setLabelFor(this.oButton);
+		this.oButton.setType(ButtonType.Emphasized);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
+		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Type is added");
+	});
 });

@@ -489,19 +489,20 @@ sap.ui.define([
 		 * @private
 		 */
 		CardActions.prototype._extractActionConfigurations = function (oCard, mParameters) {
-			var oRequestConfig = oCard && oCard.getManifestEntry("/sap.card/configuration/actionHandlers/submit");
+			var oRequestConfig = oCard && oCard.getManifestEntry("/sap.card/configuration/actionHandlers/submit"),
+				oData = mParameters.data || {};
 
 			if (!oRequestConfig) {
 				return mParameters;
 			}
 
 			return {
-				data: mParameters,
+				data: oData,
 				configuration: {
 					"mode": oRequestConfig.mode || "cors",
 					"url": oRequestConfig.url,
 					"method": oRequestConfig.method || "POST",
-					"parameters": Object.assign({}, mParameters, oRequestConfig.parameters),
+					"parameters": Object.assign({}, oData, oRequestConfig.parameters),
 					"headers": oRequestConfig.headers,
 					"xhrFields": {
 						"withCredentials": !!oRequestConfig.withCredentials

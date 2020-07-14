@@ -424,7 +424,7 @@ sap.ui.define([
 					if ((bContainsTreeIcon || bIsGroupHeader) && (bRowChange || bColChange)) {
 						aDescriptions.push(oTable.getId() + (!oRow.isExpanded() ? "-rowexpandtext" : "-rowcollapsetext"));
 					} else if (!bHidden && !bIsGroupHeader && !bIsSummary && TableUtils.isRowSelectionAllowed(oTable) && bRowChange) {
-						aDescriptions.push(oRow.getId() + "-rowselecttext");
+						aLabels.push(oRow.getId() + "-rowselecttext");
 					}
 				}
 			);
@@ -792,19 +792,9 @@ sap.ui.define([
 					break;
 
 				case AccExtension.ELEMENTTYPES.TH: //The "technical" column headers
-					var bHasFixedColumns = oTable.getComputedFixedColumnCount() > 0;
-					if (!bHasFixedColumns) {
-						mAttributes["role"] = "presentation";
-					}
+					mAttributes["role"] = "presentation";
 					mAttributes["scope"] = "col";
-					if (bHasFixedColumns) {
-						if (mParams && mParams.column) {
-							mAttributes["aria-owns"] = mParams.column.getId();
-							mAttributes["aria-labelledby"] = [mParams.column.getId()];
-						}
-					} else {
-						mAttributes["aria-hidden"] = "true";
-					}
+					mAttributes["aria-hidden"] = "true";
 					break;
 
 				case AccExtension.ELEMENTTYPES.TR: //The rows

@@ -82,6 +82,12 @@
         font-size: 2em;
         font-weight: 400;
         margin: 1.6em 0 .75em 0;
+
+        .apiname,
+        .sap-technical-name,
+        code {
+            font-size: inherit;
+        }
     }
 
     .h2 {
@@ -91,6 +97,13 @@
 
     .section.topic > section {
         margin: 1.5rem 0;
+    }
+
+    .section.topic > section:first-of-type {
+        margin-top: 0.75rem;
+        h2 {
+            margin-top: 0;
+        }
     }
 
     .section.topic:first-of-type > h1:first-of-type {
@@ -143,12 +156,42 @@
         position: relative;
 
         .overlay {
-            transition: opacity 0.3s;
             position: absolute;
-            opacity: 0;
-            background-color: rgba(227, 245, 255, 0.42);
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
             pointer-events: none;
             user-select: none;
+
+            .shape {
+                transition: opacity 0.3s;
+            }
+        }
+
+        .area-tooltip {
+            pointer-events: none;
+            user-select: none;
+            opacity: 0;
+            position: absolute;
+            background-color: #e8e8e8;
+            max-width: 200px;
+            display: inline-block;
+            padding: 1rem 1.5rem;
+            box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.5);
+        }
+
+    }
+
+    .light-overlays .imagemap {
+        .shape {
+            fill: rgba(255, 255, 255, 0.5);
+        }
+    }
+
+    .dark-overlays .imagemap {
+        .shape {
+            fill: rgba(99, 99, 99, 0.5);
         }
     }
 
@@ -183,6 +226,12 @@
         margin: 1.5em 0;
     }
 
+    .note {
+        .note {
+            border-left: unset;
+        }
+    }
+
     .note .codeblock {
         border: none;
     }
@@ -210,7 +259,8 @@
     }
 
     .caution,
-    .restriction {
+    .restriction,
+    .limitations {
         border-left: 0.6rem solid #e35500;
     }
 
@@ -354,45 +404,6 @@
         background-color: #ffffff;
     }
 
-    /**** Parsed Code ****/
-
-    pre .string {
-        color: #080;
-    }
-
-    pre .special {
-        color: #3b96d6;
-    }
-
-    pre .special-js {
-        color: #6DE4D1;
-    }
-
-    pre .special-js-glob {
-        color: #008;
-        font-weight: bold;
-    }
-
-    pre .special-comment {
-        color: #aaa;
-    }
-
-    pre .special-js-meth {
-        color: #E46D8A;
-    }
-
-    pre .special-html {
-        color: #008;
-    }
-
-    pre .special-sql {
-        color: #1D968C;
-    }
-
-    pre .special-php {
-        color: #267d96;
-    }
-
     .samplecode .title:before,
     .codesyntax .title:before,
     .syntaxtitle .title:before,
@@ -416,6 +427,12 @@
         line-height: 1.25rem;
         margin: 2.125rem 0 1.25rem 0;
         word-wrap: break-word;
+
+        .apiname,
+        .sap-technical-name,
+        code {
+            font-size: inherit;
+        }
     }
 
     em,
@@ -477,10 +494,17 @@
         border: 0;
         border-color: #adadad;
         border-collapse: collapse;
-        width: auto;
         text-align: left;
         table-layout: fixed;
         border-spacing: 0;
+    }
+
+    table.tableFullWidth {
+        width: 100%;
+    }
+
+    table.tableAutoWidth {
+        width: auto;
     }
 
     .tablecap {
@@ -533,11 +557,29 @@
         margin-bottom: .625rem;
     }
 
+    ol ol {
+        list-style-type: lower-alpha;
+    }
+
+    ol ol ol {
+        list-style-type: lower-roman;
+    }
+
     .relatedLinks ol,
     .relatedLinks ul,
     .contentInSection ul {
         list-style-type: none;
         padding: 0;
+    }
+
+    .contentInSection {
+        h2 {
+            font-size: 1em;
+        }
+        ul {
+            font-weight: 600;
+            font-size: 1em;
+        }
     }
 
     .sl {
@@ -582,7 +624,7 @@
     }
 
     .parmname {
-        font-size: 1.075rem;
+        font-size: 1rem;
         font-family: Monaco, monospace;
     }
 

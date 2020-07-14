@@ -144,6 +144,15 @@ sap.ui.define([
 		assert.equal(jQuery.sap.domById("headerContainer").style.height, "32%");
 	});
 
+	QUnit.test("Acc - role assigned is of type list", function (assert) {
+		//Arrange
+		var sRole = this.oHeaderContainer.$().attr( "role" );
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(sRole, "list", "HeaderContainer role is of type list");
+	});
+
 	QUnit.module("Background design", {
 		beforeEach: function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");

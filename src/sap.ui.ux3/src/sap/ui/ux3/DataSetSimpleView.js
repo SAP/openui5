@@ -122,10 +122,6 @@ sap.ui.define([
 	}});
 
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-
 	/**
 	 * Initialization of DataSetSimpleView
 	 *

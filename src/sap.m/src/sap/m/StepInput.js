@@ -198,6 +198,7 @@ function(
 					width: {type: "sap.ui.core.CSSSize", group: "Dimension"},
 					/**
 					 * Accepts the core enumeration ValueState.type that supports <code>None</code>, <code>Error</code>, <code>Warning</code> and <code>Success</code>.
+					 * ValueState is managed internally only when validation is triggered by user interaction.
 					 */
 					valueState: {type: "sap.ui.core.ValueState", group: "Data", defaultValue: ValueState.None},
 					/**
@@ -1009,8 +1010,11 @@ function(
 		StepInput.prototype.onsappageup = function (oEvent) {
 			// prevent document scrolling when page up key is pressed
 			oEvent.preventDefault();
-			this._bDelayedEventFire = true;
-			this._changeValueWithStep(this.getLargerStep());
+
+			if (this.getEditable()) {
+				this._bDelayedEventFire = true;
+				this._changeValueWithStep(this.getLargerStep());
+			}
 		};
 
 		/**
@@ -1021,8 +1025,11 @@ function(
 		StepInput.prototype.onsappagedown = function (oEvent) {
 			// prevent document scrolling when page down key is pressed
 			oEvent.preventDefault();
-			this._bDelayedEventFire = true;
-			this._changeValueWithStep(-this.getLargerStep());
+
+			if (this.getEditable()) {
+				this._bDelayedEventFire = true;
+				this._changeValueWithStep(-this.getLargerStep());
+			}
 		};
 
 		/**
@@ -1031,7 +1038,7 @@ function(
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		StepInput.prototype.onsappageupmodifiers = function (oEvent) {
-			if (this._isNumericLike(this._getMax()) && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) {
+			if (this.getEditable() && this._isNumericLike(this._getMax()) && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) {
 				this._bDelayedEventFire = true;
 				this._fTempValue = Number(this._getInput().getValue());
 				this._changeValueWithStep(this._getMax() - this._fTempValue);
@@ -1044,7 +1051,7 @@ function(
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		StepInput.prototype.onsappagedownmodifiers = function (oEvent) {
-			if (this._isNumericLike(this._getMin()) && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) {
+			if (this.getEditable() && this._isNumericLike(this._getMin()) && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) {
 				this._bDelayedEventFire = true;
 				this._fTempValue = Number(this._getInput().getValue());
 				this._changeValueWithStep(-(this._fTempValue - this._getMin()));
@@ -1058,9 +1065,12 @@ function(
 		 */
 		StepInput.prototype.onsapup = function (oEvent) {
 			oEvent.preventDefault(); //prevents the value to increase by one (Chrome and Firefox default behavior)
-			this._bDelayedEventFire = true;
-			this._changeValueWithStep(1);
-			oEvent.setMarked();
+
+			if (this.getEditable()) {
+				this._bDelayedEventFire = true;
+				this._changeValueWithStep(1);
+				oEvent.setMarked();
+			}
 		};
 
 		/**
@@ -1070,9 +1080,12 @@ function(
 		 */
 		StepInput.prototype.onsapdown = function (oEvent) {
 			oEvent.preventDefault(); //prevents the value to decrease by one (Chrome and Firefox default behavior)
-			this._bDelayedEventFire = true;
-			this._changeValueWithStep(-1);
-			oEvent.setMarked();
+
+			if (this.getEditable()) {
+				this._bDelayedEventFire = true;
+				this._changeValueWithStep(-1);
+				oEvent.setMarked();
+			}
 		};
 
 		StepInput.prototype._onmousewheel = function (oEvent) {
@@ -1097,16 +1110,14 @@ function(
 				fMax,
 				fMin;
 
+			if (!this.getEditable()) {
+				return;
+			}
+
 			if (oEvent.which === KeyCodes.ENTER && this._fTempValue !== this.getValue()) {
 				oEvent.preventDefault();
 				this._changeValue();
-				return false;
-			}
-
-			if (oEvent.which === KeyCodes.TAB) {
-				oEvent.stopPropagation();
-				this._getInput()._$input[0].focus();
-				return false;
+				return;
 			}
 
 			this._bPaste = (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === KeyCodes.V);

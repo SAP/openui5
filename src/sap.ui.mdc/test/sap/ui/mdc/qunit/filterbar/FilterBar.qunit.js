@@ -944,6 +944,7 @@ sap.ui.define([
 		sinon.stub(oFilterBar, "_applyFilterConditionsChanges");
 		sinon.stub(oFilterBar, "_getPropertyByName").returns(true);
 		var mCondition = { "fieldPath1": [Condition.createCondition("EQ", ["foo"])] };
+		oFilterBar.setP13nMode(["Item","Value"]);
 		oFilterBar.setFilterConditions(mCondition);
 
 		var oConditions = oFilterBar.getConditions();
@@ -951,6 +952,28 @@ sap.ui.define([
 		assert.ok(oConditions["fieldPath1"]);
 		assert.equal(oConditions["fieldPath1"][0].operator, "EQ");
 		assert.equal(oConditions["fieldPath1"][0].values[0], "foo");
+	});
+
+	QUnit.test("check getCurrentState corresponding to p13nMode", function (assert) {
+
+		oFilterBar.setP13nMode(undefined);
+		var oCurrentState = oFilterBar.getCurrentState();
+		assert.deepEqual(oCurrentState, {}, "current state should react on p13nMode undefined");
+
+		oFilterBar.setP13nMode(["Item"]);
+		oCurrentState = oFilterBar.getCurrentState();
+		assert.ok(oCurrentState.items, "current state should react on p13nMode Item");
+		assert.ok(!oCurrentState.filter, "current state should not contain unnecessary attrbiutes");
+
+		oFilterBar.setP13nMode(["Value"]);
+		oCurrentState = oFilterBar.getCurrentState();
+		assert.ok(oCurrentState.filter, "current state should react on p13nMode Value");
+		assert.ok(!oCurrentState.items, "current state should not contain unnecessary attrbiutes");
+
+		oFilterBar.setP13nMode(["Item", "Value"]);
+		oCurrentState = oFilterBar.getCurrentState();
+		assert.ok(oCurrentState.filter, "current state should react on every p13nMode");
+		assert.ok(oCurrentState.items, "current state should react on every p13nMode");
 	});
 
 	QUnit.test("check getSearch", function (assert) {

@@ -49,12 +49,28 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @experimental 1.70
+	 * @deprecated as of version 1.81. Use the {@link sap.ui.integration.designtime.baseEditor.propertyEditor.selectEditor.SelectEditor} instead
 	 * @ui5-restricted
 	 */
 	var EnumStringEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor",
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
+
+	EnumStringEditor.prototype.getConfigMetadata = function () {
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getConfigMetadata.call(this),
+			{
+				allowBindings: {
+					defaultValue: true
+				},
+				allowCustomValues: {
+					defaultValue: false
+				}
+			}
+		);
+	};
 
 	EnumStringEditor.prototype._onChange = function () {
 		var oComboBox = this.getContent();
@@ -71,7 +87,7 @@ sap.ui.define([
 
 	EnumStringEditor.prototype._validate = function (sSelectedKey, sValue) {
 		var oConfig = this.getConfig();
-		if (oConfig["allowBindings"] === false && isValidBindingString(sValue, false)) {
+		if (!oConfig["allowBindings"] && isValidBindingString(sValue, false)) {
 			return "BASE_EDITOR.PROPERTY.BINDING_NOT_ALLOWED";
 		}
 		if (!oConfig["allowCustomValues"] && sValue && !sSelectedKey && !isValidBindingString(sValue, false)) {

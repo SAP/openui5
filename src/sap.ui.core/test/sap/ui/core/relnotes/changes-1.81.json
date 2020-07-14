@@ -1,0 +1,57 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "4c1602b88c7d750398a71aaaa0ee19977f04761a",
+        "type": "FIX",
+        "text": " routing.History: fix the failing test in IE 11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080225990"
+          }
+        ]
+      },
+      {
+        "id": "7b5e5594d4ab6bee4f3adb50cfb5081884dd6b91",
+        "type": "FIX",
+        "text": " sap.ui.core.cache.CacheManager: stopping the support for Mozilla Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070220619"
+          }
+        ]
+      },
+      {
+        "id": "15f1f43e4bc532664522c13219842a603c12d532",
+        "type": "FIX",
+        "text": " Opa: fix binding path selector for named models",
+        "references": []
+      },
+      {
+        "id": "589e288b535bd15c8148557de369a09d5f3e9cb9",
+        "type": "FIX",
+        "text": " routing.Targets: avoid misleading error log when add new target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080034913"
+          }
+        ]
+      },
+      {
+        "id": "6d72922d235f26827e6c66393b991ec5d32abe66",
+        "type": "FIX",
+        "text": " trace/Interaction: checkCompression with no responseUrl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080261661"
+          }
+        ]
+      }
+    ]
+  }
+}

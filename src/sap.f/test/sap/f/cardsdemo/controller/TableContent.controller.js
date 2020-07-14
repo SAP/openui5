@@ -5,12 +5,15 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.TableContent", {
+
 		onInit: function () {
-			var oModel = new JSONModel("./cardcontent/tablecontent/tableManifests.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/tablecontent/tableManifests.json"));
 			this.getView().setModel(oModel);
 		},
-		onFormFactorChange: function (oEvent) {
+
+		onFormFactorChange: function () {
 			document.getElementsByClassName("sapFGridContainer")[0].classList.toggle("sapUiSizeCompact");
 		}
+
 	});
 });

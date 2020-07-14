@@ -47,9 +47,46 @@ sap.ui.define([
 	{
 		metadata: {
 			library: "sap.ui.mdc",
+			properties: {
+				/**
+				 * If set, the items of the list are filtered based on <code>filterValue</code>.
+				 *
+				 * If a type-ahead behavior for the connected field is wanted, this property must be set to <code>true</code>.
+				 * For small lists all values are meant to be shown, independent of the typing in the connected field.
+				 * In this case this property must be set to <code>false</code>.
+				 *
+				 * If not set, the list opens if the user clicks into the connected field.
+				 *
+				 * @since 1.81.0
+				 */
+				filterList: {
+					type: "boolean",
+					group: "Appearance",
+					defaultValue: true
+				},
+
+				/**
+				 * If set, <code>getKeyForText</code> returns the first item that matches the text.
+				 *
+				 * This is the case if the text of the item starts with the text entered.
+				 *
+				 * @since 1.81.0
+				 */
+				useFirstMatch: { // TODO: put into FieldHelpBase and implement for all FieldHelps
+					type: "boolean",
+					group: "Behavior",
+					defaultValue: false
+				}
+			},
 			aggregations: {
 				/**
 				 * Items of the field help.
+				 *
+				 * The <code>key</code> of the items is not shown in the list, but is used as a value of the connected field.
+				 *
+				 * If the <code>additionalText</code> for all the items is not used, the column will not be displayed.
+				 *
+				 * <b>Note:</b> At the moment, icons are not supported.
 				 */
 				items: {
 					type: "sap.ui.core.ListItem",
@@ -232,6 +269,12 @@ sap.ui.define([
 
 	};
 
+	ListFieldHelp.prototype.openByClick = function() {
+
+		return !this.getFilterList();
+
+	};
+
 	ListFieldHelp.prototype.navigate = function(iStep) {
 
 		var oPopover = this._getPopover();
@@ -247,8 +290,28 @@ sap.ui.define([
 		var aItems = this._oList.getItems();
 		var iItems = aItems.length;
 		var iSelectedIndex = 0;
+		var bFilterList = this.getFilterList();
+		var sFilterValue = this.getFilterValue();
 
-		if (oSelectedItem) {
+		if (!bFilterList && !oSelectedItem) {
+			// try to find item that matches Filter
+			var i = 0;
+			if (iStep >= 0) {
+				for (i = 0; i < aItems.length; i++) {
+					if (_filterText.call(this, aItems[i].getLabel(), sFilterValue)) {
+						iSelectedIndex = i;
+						break;
+					}
+				}
+			} else {
+				for (i = aItems.length - 1; i >= 0; i--) {
+					if (_filterText.call(this, aItems[i].getLabel(), sFilterValue)) {
+						iSelectedIndex = i;
+						break;
+					}
+				}
+			}
+		} else if (oSelectedItem) {
 			iSelectedIndex = this._oList.indexOfItem(oSelectedItem);
 			iSelectedIndex = iSelectedIndex + iStep;
 			if (iSelectedIndex < 0) {
@@ -282,7 +345,7 @@ sap.ui.define([
 
 	};
 
-	ListFieldHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters) {
+	ListFieldHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest) {
 
 		if (vValue === null || vValue === undefined) {
 			return null;
@@ -291,9 +354,11 @@ sap.ui.define([
 		}
 
 		var aItems = this.getItems();
+		var oItem;
+		var i = 0;
 
-		for (var i = 0; i < aItems.length; i++) {
-			var oItem = aItems[i];
+		for (i = 0; i < aItems.length; i++) {
+			oItem = aItems[i];
 			if (bKey) {
 				if (_getKey.call(this, oItem) === vValue) {
 					return oItem.getText();
@@ -306,6 +371,16 @@ sap.ui.define([
 		if (bKey && vValue === "") {
 			// empty key and no item with empty key
 			return null;
+		}
+
+		if (!bKey && this.getUseFirstMatch()) {
+			for (i = 0; i < aItems.length; i++) {
+				oItem = aItems[i];
+				var sText = oItem.getText();
+				if (_filterText.call(this, sText, vValue)) {
+					return {key: _getKey.call(this, oItem), description: sText};
+				}
+			}
 		}
 
 		var sError = this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [vValue]);
@@ -351,13 +426,15 @@ sap.ui.define([
 
 	function _suggestFilter(sText) {
 
-		var sFilterValue = this.getFilterValue();
+		var bFilterList = this.getFilterList();
 
-		if (!sFilterValue || (typeof sFilterValue === "string" && sText.toLowerCase().startsWith(sFilterValue.toLowerCase()))) {
-			return true;
-		} else {
-			return false;
-		}
+		return !bFilterList || _filterText.call(this, sText, this.getFilterValue());
+
+	}
+
+	function _filterText(sText, sFilterValue) {
+
+		return !sFilterValue || (typeof sFilterValue === "string" && sText.toLowerCase().startsWith(sFilterValue.toLowerCase()));
 
 	}
 
@@ -366,6 +443,9 @@ sap.ui.define([
 		if (this._oList) {
 			var aConditions = this.getConditions();
 			var vSelectedKey;
+			var sFilterValue = this.getFilterValue();
+			var bUseFirstMatch = this.getUseFirstMatch();
+			var bFistFilterItemSelected = false;
 
 			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === "EQ")) {
 				vSelectedKey = aConditions[0].values[0];
@@ -375,8 +455,13 @@ sap.ui.define([
 			for (var i = 0; i < aItems.length; i++) {
 				var oItem = aItems[i];
 				var oOriginalItem = _getOriginalItem.call(this, oItem);
-				if (_getKey.call(this, oOriginalItem) === vSelectedKey) {
+				if (aConditions.length > 0 && _getKey.call(this, oOriginalItem) === vSelectedKey) {
+					// conditions given -> use them to show selected items
 					oItem.setSelected(true);
+				} else if (aConditions.length === 0 && bUseFirstMatch && sFilterValue && !bFistFilterItemSelected && _filterText.call(this, oItem.getLabel(), sFilterValue)) {
+					// filter value used -> show first match as selected
+					oItem.setSelected(true);
+					bFistFilterItemSelected = true;
 				} else {
 					oItem.setSelected(false);
 				}

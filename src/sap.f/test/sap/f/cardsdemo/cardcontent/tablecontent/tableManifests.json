@@ -12,7 +12,7 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "./cardcontent/tableitems.json"
+						"url": "./cardsdemo/cardcontent/tableitems.json"
 					},
 					"path": "/names"
 				},
@@ -58,7 +58,7 @@
 		"sap.card": {
 			"type": "Table",
 			"header": {
-				"title": "Table Card with Static content",
+				"title": "Table Card with Static Content",
 				"subTitle": "Table Card subtitle"
 			},
 			"content": {
@@ -82,7 +82,7 @@
 						"cells": [
 							{
 								"icon": {
-									"src": "../images/Woman_avatar_01.png"
+									"src": "./images/Woman_avatar_01.png"
 								}
 							},
 							{
@@ -105,7 +105,7 @@
 							{
 								"width": "12%",
 								"icon": {
-									"src": "../images/Woman_avatar_02.png"
+									"src": "./images/Woman_avatar_02.png"
 								}
 							},
 							{
@@ -145,12 +145,13 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "./cardcontent/tableitems.json"
+						"url": "./cardsdemo/cardcontent/tableitems.json"
 					},
 					"path": "/tableCard3"
 				},
 				"row": {
-					"columns": [{
+					"columns": [
+						{
 							"title": "Order ID",
 							"width": "25%",
 							"value": "{orderId}",
@@ -176,7 +177,6 @@
 						}
 					]
 				}
-
 			}
 		}
 	},
@@ -192,12 +192,13 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "./cardcontent/tableitems.json"
+						"url": "./cardsdemo/cardcontent/tableitems.json"
 					},
 					"path": "/tableCard4"
 				},
 				"row": {
-					"columns": [{
+					"columns": [
+						{
 							"title": "Sales Order",
 							"value": "{salesOrder}",
 							"identifier": true

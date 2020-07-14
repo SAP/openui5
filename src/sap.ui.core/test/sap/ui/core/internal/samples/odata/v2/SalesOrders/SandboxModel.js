@@ -27,6 +27,16 @@ sap.ui.define([
 				message : "Info: My info message",
 				severity : "info"
 			},
+			maintenance : {
+				code : "ZUI5TEST/004",
+				message : "Product HT-1110 is out of maintenance",
+				severity : "warning"
+			},
+			note : {
+				code : "ZUI5TEST/001",
+				message : "Enter an Item Note",
+				severity : "warning"
+			},
 			order : {
 				code : "ZUI5TEST/003",
 				message : "Order at least 2 EA of product 'HT-1000'",
@@ -36,6 +46,12 @@ sap.ui.define([
 				code : "ZUI5TEST/001",
 				message : "Success: My success message",
 				severity : "success"
+			},
+			system : {
+				code : "ZUI5TEST/006",
+				message : "System maintenance starts in 2 hours",
+				severity : "warning",
+				transition : true
 			},
 			warning : {
 				code : "ZUI5TEST/001",
@@ -49,48 +65,59 @@ sap.ui.define([
 			}
 		},
 		oCurrentMessages = {
-			create : function (vTarget, sMessage) {
+			aMessages : [],
+			/**
+			 * Adds a new message.
+			 *
+			 * @param {string} sMessage
+			 *   An identifier which gets the message from the <code>MessageKey2MessageData</code>
+			 *   map
+			 * @param {string|string[]} vTarget
+			 *   The path to the message target
+			 * @returns {object}
+			 *   this, to allow chaining
+			 */
+			add : function (sMessage, vTarget) {
 				var oMessageData = mMessageKey2MessageData[sMessage],
 					aTargets = Array.isArray(vTarget) ? vTarget : [vTarget];
-				this.oMessage = {
+				this.aMessages.push({
 					additionalTargets : aTargets.slice(1),
 					code : oMessageData.code,
-					details : [],
 					id : sMessage,
 					message : oMessageData.message,
 					severity : oMessageData.severity,
-					target : aTargets[0]
-				};
-				return this;
-			},
-			oMessage : {},
-			add : function (sTarget, sMessage) {
-				var oMessageData = mMessageKey2MessageData[sMessage];
-				this.oMessage.details.push({
-					code : oMessageData.code,
-					id : sMessage,
-					message : oMessageData.message,
-					severity : oMessageData.severity,
-					target : sTarget
+					target : aTargets[0],
+					transition : oMessageData.transition ? true : false
 				});
+
 				return this;
 			},
-			remove : function (sMessage) {
-				var aDetails, iIndex;
-				if (this.oMessage.id === sMessage) {
-					aDetails = this.oMessage.details;
-					this.oMessage = this.oMessage.details.shift();
-					this.oMessage.details = aDetails;
-				} else {
-					iIndex = this.oMessage.details.findIndex(function (oMessage) {
-						return oMessage.id === sMessage;
-					});
-					this.oMessage.details.splice(iIndex, 1);
-				}
-				return this;
+			/**
+			 * Builds a string of the current array of messages.
+			 *
+			 * @param {array} aNeededMessages
+			 *   The indices of the needed messages; if not given all current messages are used
+			 * @returns {string}
+			 *   The message object as string
+			 */
+			buildString : function (aNeededMessages) {
+				var aMessages = aNeededMessages
+						? aNeededMessages.map(function (i) { return this.aMessages[i]; }, this)
+						: this.aMessages,
+					oMessages = Object.assign({}, aMessages[0]);
+				oMessages.details = aMessages.slice(1);
+
+				return JSON.stringify(oMessages);
 			},
-			buildString : function () {
-				return JSON.stringify(this.oMessage);
+			/**
+			 * Resets the message object. Needs to be called once when building messages for a new
+			 * sales order.
+			 *
+			 * @returns {object} this, to allow chaining
+			 */
+			reset : function () {
+				this.aMessages = [];
+				return this;
 			}
 		},
 		oLineItemsModel,
@@ -103,209 +130,323 @@ sap.ui.define([
 				"$metadata?sap-language=EN" : {
 					source : "metadata.xml"
 				},
-				"SalesOrderSet('0500000001')" : {
-					headers : {
-						"sap-message" : oCurrentMessages.create(
-							"ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000100')/Quantity",
-							"order"
-						).buildString()
-					},
-					source : "tc1-salesOrder.json"
+
+				/* Test Case I */
+				"SalesOrderSet('101')" : {
+					source : "Messages/TC1/SalesOrderSet.json"
 				},
-				"SalesOrderSet('0500000001')/ToLineItems?$skip=0&$top=4" : [{
-					ifMatch : function (request) {
-						return iTimesSaved === 1;
-					},
-					message : getLineItems("error", 0)
+				"SalesOrderSet('101')/ToLineItems?$skip=0&$top=4" : [{
+					ifMatch : ithCall.bind(null, 1),
+					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["error"].message;
+						})
 				}, {
-					ifMatch : function (request) {
-						return iTimesSaved === 2;
-					},
-					message : getLineItems("none", 0)
+					ifMatch : ithCall.bind(null, 2),
+					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = "No message";
+						})
 				}, {
-					ifMatch : function (request) {
-						return iTimesSaved === 3;
-					},
-					message : getLineItems("warning", 1)
+					ifMatch : ithCall.bind(null, 3),
+					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["warning"].message;
+						})
 				}, {
-					ifMatch : function (request) {
-						return iTimesSaved === 4;
-					},
-					message : getLineItems("none", 1)
+					ifMatch : ithCall.bind(null, 4),
+					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = "No message";
+						})
 				}, {
-					ifMatch : function (request) {
-						return iTimesSaved === 5;
-					},
-					message : getLineItems("info", 2)
+					ifMatch : ithCall.bind(null, 5),
+					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["info"].message;
+						})
 				}, {
-					ifMatch : function (request) {
-						return iTimesSaved === 6;
-					},
-					message : getLineItems("none", 2)
+					ifMatch : ithCall.bind(null, 6),
+					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = "No message";
+						})
 				}, {
-					ifMatch : function (request) {
-						return iTimesSaved === 7;
-					},
-					message : getLineItems("success", 3)
+					ifMatch : ithCall.bind(null, 7),
+					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["success"].message;
+						})
 				}, {
-					ifMatch : function (request) {
-						return iTimesSaved === 8;
-					},
-					message : getLineItems("none", 3)
+					ifMatch : ithCall.bind(null, 8),
+					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = "No message";
+						})
 				}, {
-					ifMatch : function (request) {
-						return true;
-					},
-					source : "tc1-lineItems.json"
+					source : "Messages/TC1/SalesOrderSet-ToLineItems.json"
 				}],
-				"MERGE SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')" : {
-					code : 204,
-					ifMatch : function (request) {
-						iTimesSaved++;
-						return true;
-					},
-					message : "no content"
-				},
-				"MERGE SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')" : {
-					code : 204,
-					ifMatch : function (request) {
-						iTimesSaved++;
-						return true;
-					},
-					message : "no content"
-				},
-				"MERGE SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')" : {
-					code : 204,
-					ifMatch : function (request) {
-						iTimesSaved++;
-						return true;
-					},
-					message : "no content"
-				},
-				"MERGE SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')" : {
-					code : 204,
-					ifMatch : function (request) {
-						iTimesSaved++;
-						return true;
-					},
-					message : "no content"
-				},
-				"POST SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')" : {
-					code : 204,
-					ifMatch : function (request) {
-						iTimesSaved++;
-						return true;
-					},
-					message : "no content"
-				},
-				"POST SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')" : {
-					code : 204,
-					ifMatch : function (request) {
-						iTimesSaved++;
-						return true;
-					},
-					message : "no content"
-				},
-				"POST SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')" : {
-					code : 204,
-					ifMatch : function (request) {
-						iTimesSaved++;
-						return true;
-					},
-					message : "no content"
-				},
-				"POST SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')" : {
-					code : 204,
-					ifMatch : function (request) {
-						iTimesSaved++;
-						return true;
-					},
-					message : "no content"
-				},
-				"SalesOrderSet('0500000001')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
-					headers : {
-						"sap-message" : oCurrentMessages.add(
-							"ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/Note",
-							"error"
-						).buildString()
-					},
-					ifMatch : function (request) {
-						return iTimesSaved === 1;
-					},
-					source : "tc1-setUpdated.json"
+				"MERGE SalesOrderLineItemSet(SalesOrderID='101',ItemPosition='010')" :
+					getSaveResponseIncreasingCallCount(),
+				"SalesOrderSet('101')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
+					headers : getMessageHeader([0], oCurrentMessages.reset().add("error",
+							"ToLineItems(SalesOrderID='101',ItemPosition='010')/Note")
+						.add("warning",
+							"ToLineItems(SalesOrderID='101',ItemPosition='010')/Note")
+						.add("info",
+							"ToLineItems(SalesOrderID='101',ItemPosition='010')/Note")
+						.add("success",
+							"ToLineItems(SalesOrderID='101',ItemPosition='010')/Note")),
+					ifMatch : ithCall.bind(null, 1),
+					source : "Messages/TC1/SalesOrderSet.json"
 				}, {
-					headers : {
-						"sap-message" : oCurrentMessages.remove("error").buildString()
-					},
-					ifMatch : function (request) {
-						return iTimesSaved === 2;
-					},
-					source : "tc1-setUpdated.json"
+					ifMatch : ithCall.bind(null, 2),
+					source : "Messages/TC1/SalesOrderSet.json"
 				}, {
-					headers : {
-						"sap-message" : oCurrentMessages.add(
-							"ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000020')/Note",
-							"warning"
-						).buildString()
-					},
-					ifMatch : function (request) {
-						return iTimesSaved === 3;
-					},
-					source : "tc1-setUpdated.json"
+					headers : getMessageHeader([1]),
+					ifMatch : ithCall.bind(null, 3),
+					source : "Messages/TC1/SalesOrderSet.json"
 				}, {
-					headers : {
-						"sap-message" : oCurrentMessages.remove("warning1").buildString()
-					},
-					ifMatch : function (request) {
-						return iTimesSaved === 4;
-					},
-					source : "tc1-setUpdated.json"
+					ifMatch : ithCall.bind(null, 4),
+					source : "Messages/TC1/SalesOrderSet.json"
 				}, {
-					headers : {
-						"sap-message" : oCurrentMessages.add(
-							"ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000040')/Note",
-							"info"
-						).buildString()
-					},
-					ifMatch : function (request) {
-						return iTimesSaved === 5;
-					},
-					source : "tc1-setUpdated.json"
+					headers : getMessageHeader([2]),
+					ifMatch : ithCall.bind(null, 5),
+					source : "Messages/TC1/SalesOrderSet.json"
 				}, {
-					headers : {
-						"sap-message" : oCurrentMessages.remove("info").buildString()
-					},
-					ifMatch : function (request) {
-						return iTimesSaved === 6;
-					},
-					source : "tc1-setUpdated.json"
+					ifMatch : ithCall.bind(null, 6),
+					source : "Messages/TC1/SalesOrderSet.json"
 				}, {
-					headers : {
-						"sap-message" : oCurrentMessages.add(
-							"ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000050')/Note",
-							"success"
-						).buildString()
-					},
-					ifMatch : function (request) {
-						return iTimesSaved === 7;
-					},
-					source : "tc1-setUpdated.json"
+					headers : getMessageHeader([3]),
+					ifMatch : ithCall.bind(null, 7),
+					source : "Messages/TC1/SalesOrderSet.json"
 				}, {
-					headers : {
-						"sap-message" : oCurrentMessages.remove("success").buildString()
-					},
-					ifMatch : function (request) {
-						return iTimesSaved === 8;
-					},
-					source : "tc1-setUpdated.json"
+					ifMatch : ithCall.bind(null, 8),
+					source : "Messages/TC1/SalesOrderSet.json"
 				}, {
-					headers : {
-						"sap-message" : oCurrentMessages.buildString()
-					},
 					ifMatch : function (request) {
 						return true;
 					},
-					source : "tc1-setUpdated.json"
+					source : "Messages/TC1/SalesOrderSet.json"
+				}],
+
+				/* Test Case II */
+				"SalesOrderSet('102')" : {
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
+					source : "Messages/TC2/SalesOrderSet.json"
+				},
+				"SalesOrderSet('102')/ToLineItems?$skip=0&$top=4" : [{
+					ifMatch : ithCall.bind(null, 1),
+					message : getLineItems("Messages/TC2/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["info"].message;
+						})
+				}, {
+					ifMatch : ithCall.bind(null, 2),
+					message : getLineItems("Messages/TC2/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["info"].message;
+							aItems[1].Quantity = "1";
+						})
+				}, {
+					ifMatch : ithCall.bind(null, 3),
+					message : getLineItems("Messages/TC2/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["info"].message;
+							aItems[1].Quantity = "1";
+							aItems[1].Note = mMessageKey2MessageData["error"].message;
+						})
+				}, {
+					source : "Messages/TC2/SalesOrderSet-ToLineItems.json"
+				}],
+				"SalesOrderSet('102')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
+					ifMatch : ithCall.bind(null, 1),
+					source : "Messages/TC2/SalesOrderSet.json",
+					headers : getMessageHeader([1], oCurrentMessages.reset().add("order",
+							"ToLineItems(SalesOrderID='102',ItemPosition='020')/Quantity")
+						.add("info", "ToLineItems(SalesOrderID='102',ItemPosition='010')/Note")
+						.add("error", "ToLineItems(SalesOrderID='102',ItemPosition='020')/Note"))
+				}, {
+					ifMatch : ithCall.bind(null, 2),
+					source : "Messages/TC2/SalesOrderSet.json",
+					headers : getMessageHeader([0, 1])
+				}, {
+					ifMatch : ithCall.bind(null, 3),
+					source : "Messages/TC2/SalesOrderSet.json",
+					headers : getMessageHeader()
+				}],
+				"MERGE SalesOrderLineItemSet(SalesOrderID='102',ItemPosition='010')" :
+					getSaveResponseIncreasingCallCount(),
+				"MERGE SalesOrderLineItemSet(SalesOrderID='102',ItemPosition='020')" :
+					getSaveResponseIncreasingCallCount(),
+
+				/* Test Case II Section II */
+				"SalesOrderSet('102.2')" : {
+					source : "Messages/TC2/SalesOrderSet-2.json",
+					headers : getMessageHeader(undefined, oCurrentMessages.reset().add("maintenance",
+							"ToLineItems(SalesOrderID='102.2',ItemPosition='010')/ToProduct/ProductID"
+						).add("error",
+							"ToLineItems(SalesOrderID='102.2',ItemPosition='010')/Note"
+						)),
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					}
+				},
+				"SalesOrderSet('102.2')/ToLineItems?$skip=0&$top=4" : [{
+					ifMatch : ithCall.bind(null, 1),
+					message : getLineItems("Messages/TC2/SalesOrderSet-ToLineItems-2.json",
+						function (aItems) {
+							aItems[0].Note = "My error Message";
+						})
+				}, {
+					source : "Messages/TC2/SalesOrderSet-ToLineItems-2.json"
+				}],
+				"SalesOrderSet('102.2')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
+					headers : getMessageHeader([0]),
+					ifMatch : ithCall.bind(null, 1),
+					source : "Messages/TC2/SalesOrderSet-2.json"
+				}],
+				"MERGE SalesOrderLineItemSet(SalesOrderID='102.2',ItemPosition='010')" :
+					getSaveResponseIncreasingCallCount(),
+
+				/* Test Case III */
+				/* More responses in the aRegExpFixture! */
+				"SalesOrderSet('103')" : {
+					headers : getMessageHeader(undefined, oCurrentMessages.reset().add("order",
+						"ToLineItems(SalesOrderID='103',ItemPosition='050')/Quantity")),
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
+					source : "Messages/TC3/SalesOrderSet.json"
+				},
+				"POST SalesOrderItem_FixQuantity?ItemPosition='050'&SalesOrderID='103'" : {
+					ifMatch : increaseSaveCount.bind(),
+					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[4].Quantity = "2";
+						}, 4, 1)
+				},
+				"POST SalesOrderItem_FixAllQuantities?SalesOrderID='103'" : {
+					ifMatch : increaseSaveCount.bind(),
+					message :
+						{"d" : {
+							"SalesOrderItem_FixAllQuantities" : {
+								"__metadata" : {
+									"type" : "GWSAMPLE_BASIC.CT_String"
+								},
+							"String" : "OK"
+							}
+						}}
+				},
+				"SalesOrderSet('103')?$select=ChangedAt,GrossAmount,SalesOrderID" : {
+					source : "Messages/TC3/SalesOrderSet.json"
+				},
+
+				/* Test Case IV */
+				/* More responses in the aRegExpFixture! */
+				"SalesOrderSet('104')" : {
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
+					source : "Messages/TC4/SalesOrderSet.json"
+				},
+				"SalesOrderSet('104')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
+					headers : getMessageHeader([0], oCurrentMessages.reset().add("error",
+							"ToLineItems(SalesOrderID='104',ItemPosition='010')/Note")
+						.add("error", "(SalesOrderID='104',ItemPosition='010')/Note")
+						.add("warning", "ToLineItems(SalesOrderID='104',ItemPosition='050')/Note")
+						.add("warning", "(SalesOrderID='104',ItemPosition='050')/Note")),
+					ifMatch : ithCall.bind(null, 1),
+					source : "Messages/TC4/SalesOrderSet.json"
+				}, {
+					headers : getMessageHeader([0, 2]),
+					ifMatch : ithCall.bind(null, 2),
+					source : "Messages/TC4/SalesOrderSet.json"
+				}, {
+					source : "Messages/TC4/SalesOrderSet.json"
+				}],
+				"MERGE SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='010')" :
+					getSaveResponseIncreasingCallCount(),
+				"MERGE SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='050')" :
+					getSaveResponseIncreasingCallCount(),
+
+				/* Test Case V */
+				"SalesOrderSet('105')" : {
+					headers : getMessageHeader(undefined, oCurrentMessages.reset().add("error",
+							"ToLineItems(SalesOrderID='105',ItemPosition='020')/Note")
+						.add("info", "ToLineItems(SalesOrderID='105',ItemPosition='030')/Note")),
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
+					source : "Messages/TC5/SalesOrderSet.json"
+				},
+				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4" : {
+					source : "Messages/TC5/SalesOrderSet-ToLineItems.json"
+				},
+				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=(SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27020%27)%20or%20(SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27030%27)" : {
+					message : getLineItems("Messages/TC5/SalesOrderSet-ToLineItems.json",
+						undefined, 1, 2)
+				},
+				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27020%27" : {
+					message : getLineItems("Messages/TC5/SalesOrderSet-ToLineItems.json",
+						undefined, 1, 1)
+				},
+				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27030%27" : {
+					message : getLineItems("Messages/TC5/SalesOrderSet-ToLineItems.json",
+						undefined, 2, 1)
+				},
+
+				/* Test Case VI */
+				/* More responses in the aRegExpFixture! */
+				"SalesOrderSet('106')" : {
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
+					source : "Messages/TC6/SalesOrderSet.json"
+				},
+				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=4" : [{
+					ifMatch : ithCall.bind(null, 3),
+					source : "Messages/TC6/SalesOrderSet-ToLineItems.json"
+				}, {
+					message : getLineItems("Messages/TC6/SalesOrderSet-ToLineItems.json",
+						undefined, 0, 2)
+				}],
+				"SalesOrderSet('106')?$select=ChangedAt,GrossAmount,SalesOrderID" : {
+					source : "Messages/TC6/SalesOrderSet.json"
+				},
+				"DELETE SalesOrderLineItemSet(SalesOrderID='106',ItemPosition='030')" : {
+					code : 204,
+					ifMatch : increaseSaveCount.bind()
+				},
+				"POST SalesOrderSet('106')/ToLineItems" : [{
+					code : 400,
+					ifMatch : function (oRequest) {
+						iTimesSaved += 1;
+						return iTimesSaved < 3;
+					},
+					source : "Messages/TC6/error-0.json"
+				}, {
+					code : 201,
+					ifMatch : ithCall.bind(null, 3),
+					source : "Messages/TC6/SalesOrderLineItem.json"
+				}],
+
+				/* Test Case VII */
+				"SalesOrderSet('107')" : {
+					headers : getMessageHeader(undefined,
+						oCurrentMessages.reset().add("system", undefined)),
+					source : "Messages/TC7/SalesOrderSet.json"
+				},
+				"SalesOrderSet('107')/ToLineItems?$skip=0&$top=4" : [{
+					source : "Messages/TC7/SalesOrderSet-ToLineItems.json"
 				}],
 
 				/* Test Case VIII */
@@ -317,73 +458,253 @@ sap.ui.define([
 					source : "Messages/TC8/SalesOrderSet.json"
 				},
 				"SalesOrderSet('108')/ToLineItems?$skip=0&$top=4" : [{
-					ifMatch : function (request) {
-						return iTimesSaved === 1;
-					},
+					ifMatch : ithCall.bind(null, 1),
 					source : "Messages/TC8/SalesOrderSet-ToLineItems-1.json"
 				}, {
-					ifMatch : function (request) {
-						return iTimesSaved === 2;
-					},
+					ifMatch : ithCall.bind(null, 2),
 					source : "Messages/TC8/SalesOrderSet-ToLineItems-2.json"
 				}, {
-					ifMatch : function (request) {
-						return iTimesSaved === 3;
-					},
+					ifMatch : ithCall.bind(null, 3),
 					source : "Messages/TC8/SalesOrderSet-ToLineItems-3.json"
 				}, {
 					source : "Messages/TC8/SalesOrderSet-ToLineItems-0.json"
 				}],
 				"MERGE SalesOrderLineItemSet(SalesOrderID='108',ItemPosition='010')" : [{
 					code : 204,
-					ifMatch : function (request) {
-						iTimesSaved++;
-						return true;
-					},
+					ifMatch : increaseSaveCount.bind(),
 					message : "no content"
 				}],
 				"SalesOrderSet('108')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
-					headers : {
-						"sap-message" : oCurrentMessages.create([
-							"ToLineItems(SalesOrderID='108',ItemPosition='010')/Quantity",
-							"ToLineItems(SalesOrderID='108',ItemPosition='010')/Note"
-						], "warningMultiTarget").buildString()
-					},
-					ifMatch : function (request) {
-						return iTimesSaved === 2;
-					},
+					headers : getMessageHeader(undefined, oCurrentMessages.reset().add(
+							"warningMultiTarget",
+							["ToLineItems(SalesOrderID='108',ItemPosition='010')/Quantity",
+							"ToLineItems(SalesOrderID='108',ItemPosition='010')/Note"])),
+					ifMatch : ithCall.bind(null, 2),
 					source : "Messages/TC8/SalesOrderSet.json"
 				}, {
-					ifMatch : function (request) {
-						return true;
-					},
 					source : "Messages/TC8/SalesOrderSet.json"
 				}]
 			},
+			aRegExpFixture : [{
+
+				/* Test Case III */
+				regExp :
+					/GET .*\/SalesOrderSet\('103'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])/,
+				response : [{
+					buildResponse : function (aMatch, oResponse) {
+						applySkipTop(aMatch, oResponse);
+					},
+					ifMatch : ithCall.bind(null, 1),
+					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
+						function (aItems) { aItems[4].Quantity = "2"; })
+				}, {
+					buildResponse : function (aMatch, oResponse) {
+						applySkipTop(aMatch, oResponse);
+					},
+					source : "Messages/TC3/SalesOrderSet-ToLineItems.json"
+				}]
+			}, {
+				regExp : /GET .*\/SalesOrderSet\('103'\)\/ToLineItems\?\$skip=[5-9]&\$top=\d/,
+				response : {
+					message : { "d" : { "results" : []}}
+				}
+			}, {
+
+				/* Test Case IV */
+				regExp :
+					/GET .*\/SalesOrderSet\('104'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])/,
+				response : [{
+					buildResponse : function (aMatch, oResponse) {
+						applySkipTop(aMatch, oResponse);
+					},
+					ifMatch : ithCall.bind(null, 1),
+					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["error"].message;
+						})
+				}, {
+					buildResponse : function (aMatch, oResponse) {
+						var oMessages = JSON.parse(oResponse["headers"]["sap-message"]),
+							iSkip = parseInt(aMatch[1]);
+
+						if (iSkip) {
+							oResponse["headers"]["sap-message"] =
+								JSON.stringify(oMessages.details[0]);
+						} else {
+							oMessages.details = [];
+							oResponse["headers"]["sap-message"] = JSON.stringify(oMessages);
+						}
+
+						applySkipTop(aMatch, oResponse);
+					},
+					headers : getMessageHeader(undefined, oCurrentMessages.reset()
+								.add("error", "(SalesOrderID='104',ItemPosition='010')/Note")
+								.add("warning", "(SalesOrderID='104',ItemPosition='050')/Note")),
+					ifMatch : function (request) {
+						var transientOnly =
+							request["requestHeaders"]["sap-messages"] === "transientOnly";
+						return iTimesSaved == 2 && !transientOnly;
+					},
+					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["error"].message;
+							aItems[4].Note = mMessageKey2MessageData["warning"].message;
+						})
+				}, {
+					buildResponse : function (aMatch, oResponse) {
+						applySkipTop(aMatch, oResponse);
+					},
+					ifMatch : function (request) {
+						var transientOnly =
+							request["requestHeaders"]["sap-messages"] === "transientOnly";
+						return iTimesSaved == 2 && transientOnly;
+					},
+					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
+						function (aItems) {
+							aItems[0].Note = mMessageKey2MessageData["error"].message;
+							aItems[4].Note = mMessageKey2MessageData["warning"].message;
+						})
+				}, {
+					buildResponse : function (aMatch, oResponse) {
+						applySkipTop(aMatch, oResponse);
+					},
+					source : "Messages/TC4/SalesOrderSet-ToLineItems.json"
+				}]
+			}, {
+				regExp : /GET .*\/SalesOrderSet\('104'\)\/ToLineItems\?\$skip=[5-9]&\$top=\d/,
+				response : {
+					message : { "d" : { "results" : []}}
+				}
+			}, {
+
+				/* Test Case VI */
+				regExp :
+					/GET .*\$id(?:-[0-9]+){2}\?\$expand=ToProduct%2CToHeader&\$select=ToProduct%2CToHeader/,
+				response : [{
+					headers : getMessageHeader(undefined, oCurrentMessages.reset()
+						.add("note", "Note").add("order", "Quantity")),
+					ifMatch : ithCall.bind(null, 3),
+					source : "Messages/TC6/SalesOrderLineItem-ToProduct-ToHeader.json"
+				}, {
+					code : 400,
+					source : "Messages/TC6/error-1.json"
+				}]
+			}],
 			sFilterBase : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/",
 			sSourceBase : "sap/ui/core/internal/samples/odata/v2/SalesOrders/data"
 		};
 
 	/**
-	 * Reads and returns the line items, each one has the specific note added.
-	 * @param {string} sSeverity The severity of the message at the current item
-	 * @param {number} iCurrentItem The current item from the line items
-	 * @return {object} The line items
+	 * Gets the line items from the response, applies the <code>$skip</code> and <code>$top</code>
+	 * parameters from the url and stores it back in the response.
+	 *
+	 * @param {object[]} aMatch The match array from the matching URL
+	 * @param {object} oResponse The response which will be sent to the client
 	 */
-	function getLineItems(sSeverity, iCurrentItem) {
-		var i, oLineItems;
-		if (!oLineItemsModel) {
+	function applySkipTop(aMatch, oResponse) {
+		var oResponseBody = JSON.parse(oResponse.message),
+			aLineItems = oResponseBody.d.results,
+			iSkip = parseInt(aMatch[1]),
+			iTop = parseInt(aMatch[2]);
+
+		oResponseBody.d.results = aLineItems.slice(iSkip, iSkip + iTop);
+		oResponse.message = JSON.stringify(oResponseBody);
+	}
+
+	/**
+	 * Reads and returns the line items, each one has the specific note added.
+	 *
+	 * @param {string} sFilePath
+	 *   The path to the file in the data folder
+	 * @param {function} [fnModifyData]
+	 *   Function which modifies the data to fit the current testcase. Gets passed an array with
+	 *   the line items
+	 * @param {number} [iSkip=0]
+	 *   The number of skipped line items
+	 * @param {number} [iTop=4]
+	 *   The maximum number of returned line items
+	 * @return {object}
+	 *   The OData response for the SalesOrderLineItemSet considering the given skip and top
+	 */
+	function getLineItems(sFilePath, fnModifyData, iSkip, iTop) {
+		var oLineItems;
+
+		if (!oLineItemsModel || oLineItemsModel.getProperty("/path") !== sFilePath) {
 			oLineItemsModel = new JSONModel();
-			oLineItemsModel.loadData("data/tc1-lineItems.json", "", false);
+			oLineItemsModel.loadData("data/" + sFilePath, "", false);
+			oLineItemsModel.setProperty("/path", sFilePath);
 		}
 		oLineItems = merge({}, oLineItemsModel.getObject("/"));
 
-		for (i = 0; i <= iCurrentItem - 1; i += 1) {
-			oLineItems.d.results[i].Note = "No message";
+		if (fnModifyData) {
+			fnModifyData(oLineItems.d.results);
 		}
-		oLineItems.d.results[iCurrentItem].Note = mMessageKey2MessageData[sSeverity] ?
-			mMessageKey2MessageData[sSeverity].message : "No message";
+
+		if (iSkip || iTop) {
+			iSkip = iSkip || 0;
+			iTop = iSkip + (iTop || 4);
+			oLineItems.d.results = oLineItems.d.results.slice(iSkip, iTop);
+		}
 		return oLineItems;
+	}
+
+	/**
+	 * Creates a response header object containing only a <code>sap-message</code> property for
+	 * the given messages.
+	 *
+	 * @param {number[]} [aMessageIndices]
+	 *   The indices of messages to be used in the <code>sap-message</code> header; if not given,
+	 *   all current messages are used
+	 * @param {object} [oMessageObject=oCurrentMessages]
+	 *   The current oMessageObject
+	 * @returns {object}
+	 *   A response header object containing the <code>sap-message</code> property for the given
+	 *   messages
+	 */
+	function getMessageHeader(aMessageIndices, oMessageObject) {
+		oMessageObject = oMessageObject || oCurrentMessages;
+		return {
+			"sap-message" : oMessageObject.buildString(aMessageIndices)
+		};
+	}
+
+	/**
+	 * Gets the response object for a <code>MERGE</code> request and increments the current save
+	 * counter if the request matches.
+	 *
+	 * @returns {object} The response object for a "save" button click
+	 */
+	function getSaveResponseIncreasingCallCount() {
+		return {
+			code : 204,
+			ifMatch : increaseSaveCount.bind(),
+			message : "no content"
+		};
+	}
+
+	/**
+	 * Increments the save counter and returns <code>true</code>; used as value for the
+	 * <code>ifMatch</code> property of a mockserver fixture.
+	 *
+	 * @returns {boolean} <code>true</code>
+	 */
+	function increaseSaveCount() {
+		iTimesSaved += 1;
+		return true;
+	}
+
+	/**
+	 * Whether the given call count matches the current save count; used as value for the
+	 * <code>ifMatch</code> property of a mockserver fixture.
+	 *
+	 * @param {number} iCallCount
+	 *   The number of the current response
+	 * @returns {boolean}
+	 *   Whether the call count is the same as the number of saves in the current
+	 *   testcase
+	 */
+	function ithCall(iCallCount) {
+		return iTimesSaved === iCallCount;
 	}
 
 	return ODataModel.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.SandboxModel", {
@@ -393,7 +714,7 @@ sap.ui.define([
 			if (!TestUtils.isRealOData()) {
 				oSandbox = sinon.sandbox.create();
 				TestUtils.setupODataV4Server(oSandbox, oMockData.mFixture, oMockData.sSourceBase,
-					oMockData.sFilterBase);
+					oMockData.sFilterBase, oMockData.aRegExpFixture);
 			} else {
 				mParameters = Object.assign({}, mParameters, {
 					serviceUrl : TestUtils.proxy(mParameters.serviceUrl)

@@ -1,0 +1,52 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "4d232a7dc3f50da11d1f90912636ade21734bb8b",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Icon correctly visualized in High Contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000439894 2020"
+          }
+        ]
+      },
+      {
+        "id": "90c0c109b23933e7728fafc92c15cbab50056d60",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Icon is correctly positioned in High Contast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080225133"
+          }
+        ]
+      },
+      {
+        "id": "fcfed40c1afff12b34ab797551035417e65755ea",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: styles calculation removal",
+        "references": []
+      },
+      {
+        "id": "01e6cef3b8649eb222337efe65109ac28c82ebb8",
+        "type": "FIX",
+        "text": " sap.m.Searchfield: Fixed focus outline in high-contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080218933"
+          }
+        ]
+      },
+      {
+        "id": "430b5d389d2c1556cad4aa20434087d9d5ab413b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: styles calculation removal",
+        "references": []
+      }
+    ]
+  }
+}

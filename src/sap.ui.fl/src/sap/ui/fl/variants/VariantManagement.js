@@ -190,6 +190,17 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: true
+				},
+
+				/**
+				 * Determines the behavior for Apply Automatically if the standard variant is marked as the default variant.
+				 *
+				 * @since 1.80
+				 */
+				executeOnSelectionForStandardDefault: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				}
 			},
 			associations: {

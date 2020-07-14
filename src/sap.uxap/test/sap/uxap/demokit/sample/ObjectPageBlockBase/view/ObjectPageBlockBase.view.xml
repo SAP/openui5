@@ -17,7 +17,7 @@
 		<sections>
 			<ObjectPageSection>
 				<subSections>
-					<ObjectPageSubSection title="Blocks with columnLayout 1">
+					<ObjectPageSubSection title="Blocks with columnLayout 1" titleUppercase="true">
 						<blocks>
 							<blockcolor:BlockBlue columnLayout="auto"/>
 							<blockcolor:BlockBlue columnLayout="1"/>
@@ -25,13 +25,13 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Blocks with columnLayout 2">
+					<ObjectPageSubSection title="Blocks with columnLayout 2" titleUppercase="true">
 						<blocks>
 							<blockcolor:BlockBlueWithInfo showSubSectionMore="true" columnLayout="2"/>
 							<blockcolor:BlockBlue columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="Blocks with columnLayout 3">
+					<ObjectPageSubSection title="Blocks with columnLayout 3" titleUppercase="true">
 						<blocks>
 							<blockcolor:BlockBlue columnLayout="3"/>
 							<blockcolor:BlockBlue columnLayout="3"/>

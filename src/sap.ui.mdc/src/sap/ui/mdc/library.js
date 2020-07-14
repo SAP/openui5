@@ -147,7 +147,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 * @experimental
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	var thisLib = sap.ui.mdc;
 	/* eslint-enable no-undef */

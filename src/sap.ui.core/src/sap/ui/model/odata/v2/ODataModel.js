@@ -4790,143 +4790,143 @@ sap.ui.define([
 	};
 
 	/**
-	 * Trigger a request to the function import OData service that was specified in the model constructor.
+	 * Triggers a request for the given function import.
 	 *
-	 * If the return type of the function import is either an entity type or a collection of an entity type,
-	 * then the changes are reflected in the model. Otherwise they are ignored, and the <code>response</code> can
-	 * be processed in the <code>success</code> callback.
+	 * If the return type of the function import is either an entity type or a collection of an
+	 * entity type, then this OData model's cache is updated with the values of the returned
+	 * entities. Otherwise they are ignored, and the <code>response</code> can be processed in the
+	 * <code>success</code> callback.
 	 *
-	 * @param {string} sFunctionName A string containing the name of the function to call. The name is concatenated to the service URL which was
-	 *        specified in the model constructor.
-	 * @param {object} [mParameters] Optional parameter map containing any of the following properties:
-	 * @param {string} [mParameters.method='GET'] HTTP method to use for the function call, should match the metadata for the function import
-	 * @param {Object<string,string>} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {function} [mParameters.success] A callback function which is called when the data has been successfully retrieved. The handler can have
-	 *        the following parameters: <code>oData</code> and <code>response</code>.
-	 * @param {function} [mParameters.error] A callback function which is called when the request failed.
-	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
-	 * @param {Object<string,string>} [mParameters.headers] A map of headers for this request
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
-	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
-	 * @param {string} [mParameters.eTag] If the function import changes an entity, the ETag for this entity could be passed with this parameter
-	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
-	 * @param {boolean} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
-	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
+	 * @param {string} sFunctionName
+	 *   The name of the function import starting with a slash, for example <code>/Activate</code>.
+	 * @param {object} [mParameters]
+	 *   The parameter map containing any of the following properties:
+	 * @param {string} [mParameters.method='GET']
+	 *   The HTTP method used for the function import call as specified in the metadata definition
+	 *   of the function import
+	 * @param {Object<string,string>} [mParameters.urlParameters]
+	 *   Maps the function import parameter name as specified in the function import's metadata to
+	 *   its value; the value is formatted based on the paramter's type as specified in the metadata
+	 * @param {function} [mParameters.success]
+	 *   A callback function which is called when the data has been successfully retrieved; the
+	 *   handler can have the following parameters: <code>oData</code> and <code>response</code>.
+	 * @param {function} [mParameters.error]
+	 *   A callback function which is called when the request failed. The handler can have the
+	 *   parameter: <code>oError</code> which contains additional error information.
+	 * @param {Object<string,string>} [mParameters.headers]
+	 *   A map of headers for this request
+	 * @param {string} [mParameters.groupId]
+	 *   ID of a request group; requests belonging to the same group are bundled in one batch
+	 *   request
+	 * @param {string} [mParameters.eTag]
+	 *   If the function import changes an entity, the ETag for this entity can be passed with this
+	 *   parameter
+	 * @param {string} [mParameters.changeSetId]
+	 *   ID of the <code>ChangeSet</code> that this request belongs to
+	 * @param {boolean} [mParameters.refreshAfterChange]
+	 *   Defines whether to update all bindings after submitting this change operation; since 1.46.
+	 *   See {@link #setRefreshAfterChange}. If given, this overrules the model-wide
+	 *   <code>refreshAfterChange</code> flag for this operation only.
+	 * @param {string} [mParameters.batchGroupId]
+	 *   <b>Deprecated - use <code>groupId</code> instead</b>
 	 *
-	 * @return {object} An object which has a <code>contextCreated</code> function that returns a <code>Promise</code>.
-	 *         This resolves with the created {@link sap.ui.model.Context}.
-	 *         In addition it has an <code>abort</code> function to abort the current request.
+	 * @return {object}
+	 *   An object which has a <code>contextCreated</code> function that returns a
+	 *   <code>Promise</code>. This resolves with the created {@link sap.ui.model.Context}. In
+	 *   addition it has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
-	 *
 	 */
 	ODataModel.prototype.callFunction = function (sFunctionName, mParameters) {
-		var oRequest, sUrl,
-			oFunctionMetadata,
-			mRequests,
-			mUrlParams,
-			aUrlParams,
-			fnSuccess, fnError,
-			sMethod = "GET",
-			sGroupId,
-			sChangeSetId,
-			mHeaders,
-			sETag,
-			that = this,
-			sKey,
-			oContext,
-			fnResolve,
-			fnReject,
-			pContextCreated,
-			oRequestHandle,
-			bRefreshAfterChange,
-			oData = {};
-
-		if (mParameters) {
-			sGroupId 		= mParameters.groupId || mParameters.batchGroupId;
-			sChangeSetId 	= mParameters.changeSetId;
-			sMethod			= mParameters.method ? mParameters.method : sMethod;
-			mUrlParams		= Object.assign({}, mParameters.urlParameters);
-			sETag			= mParameters.eTag;
-			fnSuccess		= mParameters.success;
-			fnError			= mParameters.error;
-			mHeaders		= mParameters.headers;
-			bRefreshAfterChange = mParameters.refreshAfterChange;
-		}
-		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
+		var sChangeSetId, pContextCreated, fnError, sETag, sGroupId, mHeaders, sMethod,
+			bRefreshAfterChange, fnReject, oRequestHandle, fnResolve, fnSuccess, mUrlParams,
+			that = this;
 
 		if (!sFunctionName.startsWith("/")) {
-			Log.fatal(this + " callFunction: path '" + sFunctionName + "' must be absolute!");
-			return;
+			Log.fatal("callFunction: sFunctionName has to be absolute, but the given '"
+				+ sFunctionName + "' is not absolute", this, sClassName);
+			return undefined;
 		}
 
-		mHeaders = this._getHeaders(mHeaders);
+		mParameters = mParameters || {};
+		sChangeSetId = mParameters.changeSetId;
+		fnError = mParameters.error;
+		sETag = mParameters.eTag;
+		sGroupId = mParameters.groupId || mParameters.batchGroupId;
+		mHeaders = mParameters.headers;
+		sMethod = mParameters.method || "GET";
+		bRefreshAfterChange = mParameters.refreshAfterChange;
+		fnSuccess = mParameters.success;
+		mUrlParams = Object.assign({}, mParameters.urlParameters);
 
+		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 		pContextCreated = new Promise(function(resolve, reject) {
 			fnResolve = resolve;
 			fnReject = reject;
 		});
+		oRequestHandle = this._processRequest(function (requestHandle) {
+			var oContext, oFunctionMetadata, sKey, oRequest, mRequests, sUrl, aUrlParams,
+				oData = {};
 
-		oRequestHandle = this._processRequest(function(requestHandle) {
 			oFunctionMetadata = that.oMetadata._getFunctionImportMetadata(sFunctionName, sMethod);
-			assert(oFunctionMetadata, that + ": Function " + sFunctionName + " not found in the metadata !");
 			if (!oFunctionMetadata) {
+				Log.error("Function '" + sFunctionName + "' not found in the metadata", that,
+					sClassName);
 				fnReject();
-				return;
+				return undefined;
 			}
-			/* 	check returnType and create $results navprop
-				we do not create $result when primitive/complex types will be returned */
-			var bReturnsEntity = oFunctionMetadata.entitySet || oFunctionMetadata.entitySetPath;
-			// default: $result is a collection of entities
-			if (bReturnsEntity) {
-				oData.$result = {__list: []};
-				// single entry?
-				if (oFunctionMetadata.returnType && oFunctionMetadata.returnType.indexOf("Collection") == -1) {
-					oData.$result = {__ref: {}};
+			if (oFunctionMetadata.entitySet || oFunctionMetadata.entitySetPath) {
+				oData.$result = {__list : []};
+				if (oFunctionMetadata.returnType
+						&& !oFunctionMetadata.returnType.startsWith("Collection")) {
+					oData.$result = {__ref : {}};
 				}
 			}
 			if (oFunctionMetadata.parameter != null) {
-				each(oFunctionMetadata.parameter, function (iIndex, oParam) {
+				oFunctionMetadata.parameter.forEach(function (oParam) {
 					oData[oParam.name] = that._createPropertyValue(oParam.type);
-					if (mUrlParams && mUrlParams[oParam.name] !== undefined) {
+					if (mUrlParams[oParam.name] !== undefined) {
 						oData[oParam.name] = mUrlParams[oParam.name];
-						mUrlParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name], oParam.type);
+						mUrlParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name],
+							oParam.type);
 					} else {
-						Log.warning(that + " - No value for parameter '" + oParam.name + "' found!'");
+						Log.warning("No value given for parameter '" + oParam.name
+							+ "' of function import '" + sFunctionName + "'", that, sClassName);
 					}
 				});
 			}
-			// add entry to model data
-			// remove starting / for key only
-			sKey = sFunctionName.substring(1) + "('" + uid() + "')";
-			oData.__metadata = {uri: that.sServiceUrl + '/' + sKey, created: {
-				key: sFunctionName.substring(1),
-				success: fnSuccess,
-				error: fnError,
-				headers: mHeaders,
-				method: sMethod,
-				groupId: sGroupId,
-				changeSetId: sChangeSetId,
-				eTag: sETag,
-				functionImport: true
-			}};
+			oData.__metadata = {
+				uri : that.sServiceUrl + sFunctionName + "('" + uid() + "')",
+				created : {
+					changeSetId : sChangeSetId,
+					error : fnError,
+					eTag : sETag,
+					functionImport : true,
+					groupId : sGroupId,
+					headers : Object.assign({}, mHeaders),
+					key : sFunctionName.substring(1),
+					method : sMethod,
+					success : fnSuccess
+				}
+			};
 
 			sKey = that._addEntity(oData);
 			oContext = that.getContext("/" + sKey);
 			that._writePathCache("/" + sKey, "/" + sKey);
 			fnResolve(oContext);
-
 			aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
-
-			sUrl = that._createRequestUrlWithNormalizedPath(sFunctionName, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, that.resolveDeep(sFunctionName, oContext), sMethod, mHeaders, undefined, sETag);
+			sUrl = that._createRequestUrlWithNormalizedPath(sFunctionName, aUrlParams,
+				that.bUseBatch);
+			oRequest = that._createRequest(sUrl, sFunctionName, sMethod, that._getHeaders(mHeaders),
+				undefined, sETag, undefined, true);
+			oRequest.functionMetadata = oFunctionMetadata;
 			oRequest.key = sKey;
-
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
-			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle, bRefreshAfterChange);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess,
+				fnError, requestHandle, bRefreshAfterChange);
 
 			return oRequest;
 		}, fnError);
@@ -7234,6 +7234,47 @@ sap.ui.define([
 	ODataModel.prototype.getMessages = function (oContext) {
 		return this.getMessagesByPath(oContext.sDeepPath, /*bPrefixMatch*/true)
 			.sort(Message.compare);
+	};
+
+	/**
+	 * Returns the deep path for the given canonical path. Only ODataContextBindings and
+	 * ODataListBindings are considered while calculating the deep path.
+	 *
+	 * @param {string} sCanonicalPath
+	 *   The canonical path addressing an entity, for example "/SalesOrderSet('42')"
+	 * @returns {string}
+	 *   The deep path for the given canonical path; <code>undefined</code> if the deep path cannot
+	 *   be determined, which may happen if there are different deep paths referencing the same
+	 *   entity or if there is no binding referencing the entity
+	 * @private
+	 */
+	ODataModel.prototype.getDeepPathForCanonicalPath = function (sCanonicalPath) {
+		var oCurrentBinding, sCurrentCanonicalPath, sCurrentDeepPath, sDeepPath, aFilteredBindings,
+			i, n,
+			sKeyPredicate = sCanonicalPath.slice(sCanonicalPath.indexOf("("));
+
+		aFilteredBindings = this.aBindings.filter(function (oBinding) {
+			return (oBinding instanceof ODataContextBinding || oBinding instanceof ODataListBinding)
+				&& oBinding.isResolved();
+		});
+
+		for (i = 0, n = aFilteredBindings.length; i < n; i += 1) {
+			oCurrentBinding = aFilteredBindings[i];
+			sCurrentDeepPath = this.resolveDeep(oCurrentBinding instanceof ODataListBinding
+					? oCurrentBinding.sPath + sKeyPredicate
+					: oCurrentBinding.sPath,
+				oCurrentBinding.oContext);
+			sCurrentCanonicalPath = this.resolveFromCache(sCurrentDeepPath);
+
+			if (sCurrentCanonicalPath === sCanonicalPath) {
+				if (sDeepPath && sDeepPath !== sCurrentDeepPath) {
+					return undefined; // multiple deep paths for the same canonical path
+				}
+				sDeepPath = sCurrentDeepPath;
+			}
+		}
+
+		return sDeepPath;
 	};
 
 	return ODataModel;

@@ -1006,6 +1006,13 @@ sap.ui.define([
 			oOverflowToolbar.removeContent(this.oVariantManagement);
 			oOverflowToolbar.destroy();
 		});
+
+		QUnit.test("Check property 'executeOnSelectionForStandardDefault'", function(assert) {
+			assert.ok(!this.oVariantManagement.getExecuteOnSelectionForStandardDefault());
+
+			this.oVariantManagement.setExecuteOnSelectionForStandardDefault(true);
+			assert.ok(this.oVariantManagement.getExecuteOnSelectionForStandardDefault());
+		});
 	});
 
 	QUnit.done(function() {

@@ -6,7 +6,7 @@
 	"sap.card": {
 	  "data": {
 		"request": {
-		  "url": "./cardcontent/delayedLoading/tableData.json"
+		  "url": "./cardsdemo/cardcontent/delayedLoading/tableData.json"
 		}
 	  },
 		"type": "Table",

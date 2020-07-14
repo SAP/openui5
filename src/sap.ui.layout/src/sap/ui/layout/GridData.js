@@ -242,9 +242,6 @@ sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
 		}
 	}});
 
-	/**
-	 * This file defines behavior for the control
-	 */
 	(function() {
 
 		GridData.prototype._setStylesInternal = function(sStyles) {

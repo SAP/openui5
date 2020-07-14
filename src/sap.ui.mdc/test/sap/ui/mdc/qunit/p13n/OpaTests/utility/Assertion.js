@@ -406,6 +406,20 @@ sap.ui.define([
 				}
 			});
 		},
+
+		iShouldSeeTableConditions: function(oFilterConditions) {
+			return this.waitFor({
+				controlType: "sap.ui.mdc.Table",
+				success: function(aTables) {
+					Opa5.assert.ok(aTables.length == 1);
+					var oTable = aTables[0];
+					oTable.initialized().then(function(oTable){
+						Opa5.assert.deepEqual(oTable.getFilterConditions(), sap.base.util.merge(oFilterConditions), "Table holds correct filterConditions");
+					});
+				}
+			});
+		},
+
 		iShouldSeeVisibleColumnsInOrderInTable: function (sTableType, sColumnType, aOrderedColumnNames) {
 			return this.waitFor({
 				controlType: sTableType,

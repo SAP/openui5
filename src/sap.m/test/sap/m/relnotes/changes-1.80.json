@@ -486,6 +486,56 @@
             "reference": "0020751295 0000396451 2020"
           }
         ]
+      },
+      {
+        "id": "8547386fcc7806ede3b7ed2a05d4456578b723fb",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabHeader: Add ariaTexts property",
+        "references": []
+      },
+      {
+        "id": "5cd43d09f8fe516f88ae87df1b2c245a8869661d",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer : Accessibility fix role assigned of type list.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970601254"
+          }
+        ]
+      },
+      {
+        "id": "7c0bf7d2653be0f47671e49c7da14213d201e884",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Do not throw exceptions when databinding is changed on updateToken event.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080186880"
+          }
+        ]
+      },
+      {
+        "id": "d9c3bc61f78c40a339be914bd8bb5ab25d886a25",
+        "type": "FIX",
+        "text": " sap.m.Panel: Header text is now read out correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080190194"
+          }
+        ]
+      },
+      {
+        "id": "9fbabcf1afff8d52726b2f3ccaf02c09eff347a6",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Accessibility example improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080190140"
+          }
+        ]
       }
     ]
   }

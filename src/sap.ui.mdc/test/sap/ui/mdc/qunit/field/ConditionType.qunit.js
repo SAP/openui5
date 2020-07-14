@@ -456,6 +456,13 @@ sap.ui.define([
 			oStub.withArgs("Item1").returns("I1");
 			oStub.withArgs("Item2").returns({key: "i2", description: "Item 2", inParameters: {in1: "I2"}, outParameters: {out1: "I2"}});
 			oStub.withArgs("Item3").returns("I3");
+			oStub = sinon.stub(oFieldHelp, "getItemForValue");
+			oStub.withArgs("I1").returns({key: "I1", description: "Item1"});
+			oStub.withArgs("I2").returns({key: "i2", description: "Item 2", inParameters: {in1: "I2"}, outParameters: {out1: "I2"}});
+			oStub.withArgs("I3").returns({key: "I3", description: "Item3"});
+			oStub.withArgs("Item1").returns({key: "I1", description: "Item1"});
+			oStub.withArgs("Item2").returns({key: "i2", description: "Item 2", inParameters: {in1: "I2"}, outParameters: {out1: "I2"}});
+			oStub.withArgs("Item3").returns({key: "I3", description: "Item3"});
 
 			oConditionType = new ConditionType({
 				display: "Description",
@@ -509,6 +516,10 @@ sap.ui.define([
 		oCondition = Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated);
 		sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "i2 (Item 2)", "Result of formatting");
+
+		oConditionType.oFormatOptions.preventGetDescription = true; // fake setting directly
+		sResult = oConditionType.formatValue(oCondition);
+		assert.equal(sResult, "I2", "Result of formatting");
 
 	});
 
@@ -738,11 +749,9 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.equal(oException && oException.message, "Value \"X\" does not exist.", "error text");
-		assert.ok(oFieldHelp.getTextForKey.calledOnce, "getTextForKey called");
-		assert.ok(oFieldHelp.getKeyForText.calledOnce, "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
-		oFieldHelp.getTextForKey.resetHistory();
-		oFieldHelp.getKeyForText.resetHistory();
+		oFieldHelp.getItemForValue.resetHistory();
 		oException = null;
 
 		try {
@@ -753,14 +762,12 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.equal(oException && oException.message, "Value \"XXX\" does not exist.", "error text");
-		assert.notOk(oFieldHelp.getTextForKey.called, "getTextForKey not called");
-		assert.ok(oFieldHelp.getKeyForText.calledOnce, "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// test own error (like runtime error) just forwarded
-		oFieldHelp.getTextForKey.resetHistory();
-		oFieldHelp.getKeyForText.resetHistory();
+		oFieldHelp.getItemForValue.resetHistory();
 		oException = null;
-		oFieldHelp.getTextForKey.withArgs("YY").throws(new Error("myError"));
+		oFieldHelp.getItemForValue.withArgs("YY").throws(new Error("myError"));
 		try {
 			oConditionType.parseValue("YY");
 		} catch (e) {
@@ -769,11 +776,9 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.equal(oException && oException.message, "myError", "error text");
-		assert.ok(oFieldHelp.getTextForKey.calledOnce, "getTextForKey called");
-		assert.notOk(oFieldHelp.getKeyForText.called, "getKeyForText not called");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
-		oFieldHelp.getTextForKey.resetHistory();
-		oFieldHelp.getKeyForText.resetHistory();
+		oFieldHelp.getItemForValue.resetHistory();
 		oException = null;
 		oConditionType.oFormatOptions.display = "DescriptionValue"; // fake setting directly
 
@@ -785,11 +790,9 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.equal(oException.message, "Value \"X\" does not exist.", "error text");
-		assert.ok(oFieldHelp.getTextForKey.calledOnce, "getTextForKey called");
-		assert.ok(oFieldHelp.getKeyForText.calledOnce, "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
-		oFieldHelp.getTextForKey.resetHistory();
-		oFieldHelp.getKeyForText.resetHistory();
+		oFieldHelp.getItemForValue.resetHistory();
 		oException = null;
 
 		try {
@@ -800,8 +803,7 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.equal(oException.message, "Value \"XXX\" does not exist.", "error text");
-		assert.notOk(oFieldHelp.getTextForKey.called, "getTextForKey not called");
-		assert.ok(oFieldHelp.getKeyForText.calledOnce, "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		oType.destroy();
 
@@ -821,14 +823,12 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.equal(oException && oException.message, "Value \"X\" does not exist.", "error text");
-		assert.ok(oFieldHelp.getTextForKey.calledOnce, "getTextForKey called");
-		assert.ok(oFieldHelp.getKeyForText.calledOnce, "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// test own error (like runtime error) just forwarded
-		oFieldHelp.getTextForKey.resetHistory();
-		oFieldHelp.getKeyForText.resetHistory();
+		oFieldHelp.getItemForValue.resetHistory();
 		oException = null;
-		oFieldHelp.getTextForKey.withArgs("YY").throws(new Error("myError-TextForKey"));
+		oFieldHelp.getItemForValue.withArgs("YY").throws(new Error("myError-TextForKey"));
 		try {
 			oConditionType.parseValue("YY");
 		} catch (e) {
@@ -837,14 +837,12 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.equal(oException && oException.message, "myError-TextForKey", "error text");
-		assert.ok(oFieldHelp.getTextForKey.calledOnce, "getTextForKey called");
-		assert.ok(oFieldHelp.getKeyForText.calledOnce, "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// test own error (like runtime error) just forwarded
-		oFieldHelp.getTextForKey.resetHistory();
-		oFieldHelp.getKeyForText.resetHistory();
+		oFieldHelp.getItemForValue.resetHistory();
 		oException = null;
-		oFieldHelp.getKeyForText.withArgs("YY").throws(new Error("myError-KeyForText"));
+		oFieldHelp.getItemForValue.withArgs("YY").throws(new Error("myError-KeyForText"));
 		try {
 			oConditionType.parseValue("YY");
 		} catch (e) {
@@ -853,14 +851,12 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.equal(oException && oException.message, "myError-KeyForText", "error text");
-		assert.notOk(oFieldHelp.getTextForKey.called, "getTextForKey not called");
-		assert.ok(oFieldHelp.getKeyForText.calledOnce, "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// test invalid key because of type validation
-		oFieldHelp.getTextForKey.resetHistory();
-		oFieldHelp.getKeyForText.resetHistory();
+		oFieldHelp.getItemForValue.resetHistory();
 		oException = null;
-		oFieldHelp.getKeyForText.withArgs("ZZZ").throws(new ParseException("myParseException"));
+		oFieldHelp.getItemForValue.withArgs("ZZZ").throws(new ParseException("myParseException"));
 		try {
 			oConditionType.parseValue("ZZZ");
 		} catch (e) {
@@ -869,8 +865,7 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.equal(oException && oException.message, "myParseException", "error text");
-		assert.notOk(oFieldHelp.getTextForKey.called, "getTextForKey not called");
-		assert.ok(oFieldHelp.getKeyForText.calledOnce, "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 	});
 
@@ -886,12 +881,10 @@ sap.ui.define([
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "X", "Values entry1");
-		assert.ok(oFieldHelp.getTextForKey.called, "getTextForKey called");
-		assert.ok(oFieldHelp.getKeyForText.calledOnce, "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// invalid default operator
-		oFieldHelp.getTextForKey.reset();
-		oFieldHelp.getKeyForText.reset();
+		oFieldHelp.getItemForValue.reset();
 		oConditionType.oFormatOptions.operators = ["EQ"]; // fake setting directly
 		var oException;
 		try {
@@ -901,13 +894,11 @@ sap.ui.define([
 		}
 		assert.ok(oException, "exception fired");
 		assert.equal(oException && oException.message, "Value \"X\" does not exist.", "error text");
-		assert.ok(oFieldHelp.getTextForKey.called, "getTextForKey called");
-		assert.ok(oFieldHelp.getKeyForText.calledOnce, "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// use EQ operator -> if invalid don't use as default
 		FilterOperatorUtil.getDefaultOperator.returns(FilterOperatorUtil.getOperator("EQ"));
-		oFieldHelp.getTextForKey.reset();
-		oFieldHelp.getKeyForText.reset();
+		oFieldHelp.getItemForValue.reset();
 		oException = undefined;
 		try {
 			oCondition = oConditionType.parseValue("X");
@@ -916,8 +907,7 @@ sap.ui.define([
 		}
 		assert.ok(oException, "exception fired");
 		assert.equal(oException && oException.message, "Value \"X\" does not exist.", "error text");
-		assert.ok(oFieldHelp.getTextForKey.called, "getTextForKey called");
-		assert.ok(oFieldHelp.getKeyForText.calledOnce, "getKeyForText called");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getKeyForText called");
 
 		FilterOperatorUtil.getDefaultOperator.restore();
 
@@ -925,8 +915,8 @@ sap.ui.define([
 
 	QUnit.test("Parsing: description -> key (from help) Async", function(assert) {
 
-		oFieldHelp.getKeyForText.restore();
-		var oStub = sinon.stub(oFieldHelp, "getKeyForText");
+		oFieldHelp.getItemForValue.restore();
+		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
 		oStub.callsFake(function(sText) {
 			var oPromise = new Promise(function(fResolve) {
@@ -949,7 +939,11 @@ sap.ui.define([
 						break;
 					}
 
-					fResolve(vKey);
+					var oResult;
+					if (vKey) {
+						oResult = {key: vKey, description: sText};
+					}
+					fResolve(oResult);
 				}, 0);
 			});
 			return oPromise;
@@ -977,15 +971,15 @@ sap.ui.define([
 	QUnit.test("Parsing: key and description -> key and Description (from help) Async", function(assert) {
 
 		oConditionType.oFormatOptions.display = "ValueDescription"; // fake setting directly
-		oFieldHelp.getTextForKey.restore();
-		var oStub = sinon.stub(oFieldHelp, "getTextForKey");
+		oFieldHelp.getItemForValue.restore();
+		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
 		oStub.callsFake(function(vKey) {
 			var oPromise = new Promise(function(fResolve, fReject) {
 				setTimeout(function () { // simulate request
 					switch (vKey) {
 					case "I1":
-						fResolve("Item1");
+						fResolve({key: vKey, description: "Item1"});
 						break;
 
 					case "I2":
@@ -993,7 +987,8 @@ sap.ui.define([
 						break;
 
 					case "I3":
-						fResolve("Item3");
+					case "Item3":
+						fResolve({key: "I3", description: "Item3"});
 						break;
 
 					default:
@@ -1048,8 +1043,8 @@ sap.ui.define([
 
 	QUnit.test("Parsing: description -> key (from help) with error Async", function(assert) {
 
-		oFieldHelp.getKeyForText.restore();
-		var oStub = sinon.stub(oFieldHelp, "getKeyForText");
+		oFieldHelp.getItemForValue.restore();
+		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
 		oStub.callsFake(function(sText) {
 			var oPromise = new Promise(function(fResolve, fReject) {
@@ -1147,8 +1142,8 @@ sap.ui.define([
 
 		oConditionType.oFormatOptions.operators = []; // fake setting directly
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
-		oFieldHelp.getKeyForText.restore();
-		var oStub = sinon.stub(oFieldHelp, "getKeyForText");
+		oFieldHelp.getItemForValue.restore();
+		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
 		oStub.callsFake(function(sText) {
 			var oPromise = new Promise(function(fResolve, fReject) {
@@ -1185,33 +1180,23 @@ sap.ui.define([
 
 		oConditionType.oFormatOptions.display = "Description"; // fake setting directly
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
-		oFieldHelp.getKeyForText.restore();
-		var oStub = sinon.stub(oFieldHelp, "getKeyForText");
-
-		oStub.callsFake(function(sText) {
-			var oPromise = new Promise(function(fResolve, fReject) {
-				throw new ParseException("Cannot parse value " + sText);
-			});
-			return oPromise;
-		});
-
-		oFieldHelp.getTextForKey.restore();
-		oStub = sinon.stub(oFieldHelp, "getTextForKey");
+		oFieldHelp.getItemForValue.restore();
+		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
 		oStub.callsFake(function(vKey) {
 			var oPromise = new Promise(function(fResolve, fReject) {
 				setTimeout(function () { // simulate request
 					switch (vKey) {
 					case "I1":
-						fResolve("Item1");
+						fResolve({key: vKey, description: "Item1"});
 						break;
 
 					case "I2":
-						fResolve("Item2");
+						fResolve({key: vKey, description: "Item2"});
 						break;
 
 					case "I3":
-						fResolve("Item3");
+						fResolve({key: vKey, description: "Item3"});
 						break;
 
 					default:
@@ -1282,8 +1267,8 @@ sap.ui.define([
 
 		oConditionType.oFormatOptions.display = "Value"; // fake setting directly
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
-		oFieldHelp.getTextForKey.restore();
-		var oStub = sinon.stub(oFieldHelp, "getTextForKey");
+		oFieldHelp.getItemForValue.restore();
+		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
 		oStub.callsFake(function(vKey) {
 			var oPromise = new Promise(function(fResolve, fReject) {
@@ -1349,8 +1334,7 @@ sap.ui.define([
 
 	QUnit.test("Parsing: empty string -> key and description", function(assert) {
 
-		oFieldHelp.getTextForKey.withArgs("").returns("Empty");
-		oFieldHelp.getKeyForText.withArgs("Empty").returns("");
+		oFieldHelp.getItemForValue.withArgs("").returns({key: "", description: "Empty"});
 
 		var oCondition = oConditionType.parseValue("");
 		assert.ok(oCondition, "Result returned");
@@ -1367,8 +1351,7 @@ sap.ui.define([
 	QUnit.test("Parsing: empty string -> key only", function(assert) {
 
 		oConditionType.oFormatOptions.display = "Value"; // fake setting directly
-		oFieldHelp.getTextForKey.withArgs("").returns("Empty");
-		oFieldHelp.getKeyForText.withArgs("Empty").returns("");
+		oFieldHelp.getItemForValue.withArgs("", "").returns({key: "", description: "Empty"});
 
 		var oCondition = oConditionType.parseValue("");
 		assert.ok(oCondition, "Result returned");
@@ -1395,8 +1378,8 @@ sap.ui.define([
 		var vResult = oConditionType.parseValue("");
 		assert.equal(vResult, null, "null returned");
 
-		oFieldHelp.getTextForKey.restore();
-		var oStub = sinon.stub(oFieldHelp, "getTextForKey");
+		oFieldHelp.getItemForValue.restore();
+		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 		var bExist = true;
 
 		oStub.callsFake(function(vKey) {
@@ -1455,8 +1438,8 @@ sap.ui.define([
 		var vResult = oConditionType.parseValue("");
 		assert.equal(vResult, null, "null returned");
 
-		oFieldHelp.getTextForKey.restore();
-		var oStub = sinon.stub(oFieldHelp, "getTextForKey");
+		oFieldHelp.getItemForValue.restore();
+		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 		var bExist = true;
 
 		oStub.callsFake(function(vKey) {

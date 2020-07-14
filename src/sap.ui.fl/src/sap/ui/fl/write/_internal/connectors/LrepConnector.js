@@ -227,12 +227,16 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.appVersion Version of the application for which the reset takes place
 		 * @param {sap.ui.fl.Change[]} mPropertyBag.localChanges Local changes to  be published
 		 * @param {object[]} [mPropertyBag.appVariantDescriptors] An array of app variant descriptors which needs to be transported
-		 * @returns {Promise} Promise that resolves when all the artifacts are successfully transported
+		 * @returns {Promise<string>} Promise that can resolve to the following strings:
+		 * - "Cancel" if publish process was canceled
+		 * - <sMessage> when all the artifacts are successfully transported fl will return the message to show
+		 * - "Error" in case of a problem
 		 */
 		publish: function (mPropertyBag) {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+
 			var fnHandleAllErrors = function (oError) {
 				BusyIndicator.hide();
-				var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 				var sMessage = oResourceBundle.getText("MSG_TRANSPORT_ERROR", oError ? [oError.message || oError] : undefined);
 				var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
 				Log.error("transport error" + oError);
@@ -261,6 +265,10 @@ sap.ui.define([
 							oContentParameters
 						).then(function() {
 							BusyIndicator.hide();
+							if (oTransportInfo.transport === "ATO_NOTIFICATION") {
+								return oResourceBundle.getText("MSG_ATO_NOTIFICATION");
+							}
+							return oResourceBundle.getText("MSG_TRANSPORT_SUCCESS");
 						});
 					}
 					return "Cancel";

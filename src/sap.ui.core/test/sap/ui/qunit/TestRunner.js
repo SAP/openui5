@@ -78,17 +78,23 @@
 				jQuery.get(sTestPage).done(function(sData) {
 					if (/(?:window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/.test(sData)
 							|| (/data-sap-ui-testsuite/.test(sData) && !/sap\/ui\/test\/starter\/runTest/.test(sData)) ) {
+						window.console.log("[DEBUG] checkTestPage checking testsuite page: " + sTestPage);
 						var $frame = jQuery("<iframe>");
 						var that = this;
 
 						var onSuiteReady = function(oIFrame) {
 							that.findTestPages(oIFrame, bSequential).then(function(aTestPages) {
+								var aTestPagesFiltered = aTestPages.filter(function(e, i, a) { return a.indexOf(e) === i; });
+								if (oIFrame.src.indexOf("test-resources/qunit/testsuite.qunit.html") > -1) {
+									window.console.log("[DEBUG] findTestPages oIFrame source " + oIFrame.src + " found pages " + aTestPagesFiltered.length);
+									window.console.log("[DEBUG] findTestPages oIFrame source " + oIFrame.src + " currently running IFrames " + window.frames.length);
+								}
 								$frame.remove();
 								// avoid duplicates in test pages
-								resolve(aTestPages.filter(function(e, i, a) { return a.indexOf(e) === i; }));
+								resolve(aTestPagesFiltered);
 							}, function(oError) {
 								if (window.console && typeof window.console.error === "function") {
-									window.console.error("QUnit: failed to load page '" + sTestPage + "'");
+									window.console.error("QUnit: failed to load page '" + sTestPage + "'" + " Error: " + oError);
 								}
 								$frame.remove();
 								resolve([]);
@@ -133,7 +139,11 @@
 		findTestPages: function(oIFrame, bSequential) {
 
 			return Promise.resolve(oIFrame.contentWindow.suite()).then(function(oSuite) {
+				window.console.log("[DEBUG] findTestPages oIFrame source: " + oIFrame.src);
 				var aPages = oSuite && oSuite.getTestPages() || [];
+				for (var i = 0; i < aPages.length; i++) {
+					window.console.log("[DEBUG] findTestPages oIFrame source " + oIFrame.src + ": " + aPages[i]);
+				}
 				return new Promise(function(resolve, reject) {
 
 					try {
@@ -169,6 +179,11 @@
 										aTestPages = aTestPages.concat(aFoundTestPages[i]);
 									}
 									resolve(aTestPages);
+								})
+								.catch(function(oError){
+									if (window.console && typeof window.console.error === "function") {
+										window.console.error("[DEBUG] findTestPages Promise.all error: " + oError);
+									}
 								});
 							}
 

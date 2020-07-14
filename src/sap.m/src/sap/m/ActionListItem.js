@@ -70,7 +70,7 @@ sap.ui.define(['./ListItemBase', './library', './ActionListItemRenderer'],
 	 * By overwriting <code>getMode</code> (inherited from <code>ListItemBase</code>), we
 	 * exclude the item from processing steps that are specific for selectable list-items.
 	 *
-	 * @returns {sap.m.ListMode|""} Mode if the list item.
+	 * @returns {sap.m.ListMode|""} Mode of the list item.
 	 * @protected
 	 * @overwrite
 	 */

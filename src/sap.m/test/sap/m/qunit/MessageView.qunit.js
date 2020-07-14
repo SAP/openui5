@@ -1214,6 +1214,61 @@ sap.ui.define([
 		oMessageView.destroy();
 	});
 
+
+	QUnit.test("Checks the sorting order when groupItems=true", function (assert) {
+		// Setup
+		var oModel = new JSONModel([
+			{
+				type: 'Information',
+				title: 'Test1',
+				subtitle: 'Undefined task',
+				group: "Purchase Order 450001"
+			},
+				{
+				type: 'Error',
+				title: 'Test2',
+				subtitle: 'Role is invalid',
+				group: "Purchase Order 450001"
+			}, {
+				type: 'Information',
+				title: 'Test3',
+				group: "Purchase Order 450001"
+			},{
+				type: 'Information',
+				title: 'Test4',
+				subtitle: 'Undefined task',
+				group: "Purchase Order 450001"
+			},{
+				type: 'Warning',
+				title: 'Test5',
+				subtitle: 'Undefined task',
+				group: "Purchase Order 450001"
+			}
+		]);
+
+		var oMessageView = new MessageView({
+			showDetailsPageHeader: false,
+			groupItems: true,
+			items: {
+				path: "message>/",
+				template: new MessageItem(
+						{
+							title: "{message>title}",
+							subtitle: "{message>additionalText}",
+							type: "{message>type}",
+							groupName: "{message>group}"
+						})
+			}
+		}).setModel(oModel, "message").placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oMessageView._oLists["all"].getAggregation('items')[2].getTitle(), "Test2", "The third item in the list should be correct");
+
+		// cleanup
+		oMessageView.destroy();
+	});
+
 	QUnit.test("Filter messages then show all the messages again", function (assert) {
 		//Setup
 		var oModel = new JSONModel([{

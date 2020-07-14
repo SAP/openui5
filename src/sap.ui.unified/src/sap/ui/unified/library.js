@@ -5,7 +5,18 @@
 /**
  * Initialization Code and shared classes of library sap.ui.unified.
  */
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', "./ColorPickerDisplayMode", 'sap/ui/core/library'], function(Core, BaseObject, ColorPickerDisplayMode) {
+sap.ui.define([
+	'sap/ui/core/Core',
+	'sap/ui/base/Object',
+	"./ColorPickerDisplayMode",
+	"./FileUploaderHttpRequestMethod",
+	'sap/ui/core/library'
+], function(
+	Core,
+	BaseObject,
+	ColorPickerDisplayMode,
+	FileUploaderHttpRequestMethod
+) {
 
 	"use strict";
 
@@ -23,6 +34,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', "./ColorPickerDisplayMo
 			"sap.ui.unified.ColorPickerMode",
 			"sap.ui.unified.ContentSwitcherAnimation",
 			"sap.ui.unified.GroupAppointmentsMode",
+			"sap.ui.unified.FileUploaderHttpRequestMethod",
 			"sap.ui.unified.StandardCalendarLegendItem"
 		],
 		interfaces: [
@@ -345,6 +357,17 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', "./ColorPickerDisplayMo
 		Expanded : "Expanded"
 
 	};
+
+	/**
+	 * Types of HTTP request methods.
+	 *
+	 * @enum {string}
+	 * @alias sap.ui.unified.FileUploaderHttpRequestMethod
+	 * @public
+	 * @since 1.81.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.FileUploaderHttpRequestMethod = FileUploaderHttpRequestMethod;
 
 	/**
 	 * Visualization types for {@link sap.ui.unified.CalendarAppointment}.

@@ -348,7 +348,7 @@ function(
 					rightButton: {type: "sap.m.Button", multiple: false, deprecated: true},
 
 					/**
-					 * In the Dialog focus is set first on the <code>leftButton</code> and then on <code>rightButton</code>, when available. If another control needs to get the focus, set the <code>initialFocus</code> with the control which should be focused on. Setting <code>initialFocus</code> to input controls doesn't open the On-Screen keyboard on mobile device as, due to browser limitation, the On-Screen keyboard can't be opened with JavaScript code. The opening of On-Screen keyboard must be triggered by real user action.
+					 * In the Dialog focus is set first on the <code>beginButton</code> and then on <code>endButton</code>, when available. If another control needs to get the focus, set the <code>initialFocus</code> with the control which should be focused on. Setting <code>initialFocus</code> to input controls doesn't open the On-Screen keyboard on mobile device as, due to browser limitation, the On-Screen keyboard can't be opened with JavaScript code. The opening of On-Screen keyboard must be triggered by real user action.
 					 * @since 1.15.0
 					 */
 					initialFocus: {type: "sap.ui.core.Control", multiple: false},
@@ -382,7 +382,7 @@ function(
 						parameters: {
 
 							/**
-							 * This indicates the trigger of closing the Dialog. If the Dialog is closed by either the <code>leftButton</code> or the <code>rightButton</code>, the button that closes the Dialog is set to this parameter. Otherwise, the parameter is set to <code>null</code>.
+							 * This indicates the trigger of closing the Dialog. If the Dialog is closed by either the <code>beginButton</code> or the <code>endButton</code>, the button that closes the Dialog is set to this parameter. Otherwise, the parameter is set to <code>null</code>.
 							 * @since 1.9.2
 							 */
 							origin: {type: "sap.m.Button"}
@@ -396,7 +396,7 @@ function(
 						parameters: {
 
 							/**
-							 * This indicates the trigger of closing the Dialog. If the Dialog is closed by either the <code>leftButton</code> or the <code>rightButton</code>, the button that closes the Dialog is set to this parameter. Otherwise, the parameter is set to <code>null</code>.
+							 * This indicates the trigger of closing the Dialog. If the Dialog is closed by either the <code>beginButton</code> or the <code>endButton</code>, the button that closes the Dialog is set to this parameter. Otherwise, the parameter is set to <code>null</code>.
 							 * @since 1.9.2
 							 */
 							origin: {type: "sap.m.Button"}
@@ -1839,11 +1839,9 @@ function(
 					if (bResize) {
 						that._$dialog.removeClass('sapMDialogResizing');
 
-						// Take the height from the styles attribute of the DOM element not from the calculated height.
-						// max-height is taken into account if we use calculated height and a wrong value is set for the dialog content's height.
-						// If no value is set for the height style fall back to calculated height.
-						// * Calculated height is the value taken by $dialog.height().
-						dialogHeight = parseInt($dialog[0].style.height) || parseInt($dialog.height());
+						// Take the calculated height of the dialog, so that the max-height is also applied.
+						// Else the content area will be bigger than the dialog and therefore will overflow.
+						dialogHeight = parseInt($dialog.height());
 						dialogBordersHeight = parseInt($dialog.css("border-top-width")) + parseInt($dialog.css("border-bottom-width"));
 						$dialogContent.height(dialogHeight + dialogBordersHeight);
 					}

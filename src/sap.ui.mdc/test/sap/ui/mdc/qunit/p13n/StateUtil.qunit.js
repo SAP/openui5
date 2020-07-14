@@ -41,7 +41,7 @@ sap.ui.define([
 				async: false,
 				type: "XML",
 				id: this.createId("view"),
-				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort"></mdc:Table></mvc:View>'
+				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter"></mdc:Table></mvc:View>'
 			});
 			return oView;
 		}
@@ -671,7 +671,8 @@ sap.ui.define([
 					name: "String",
 					descending: true
 				}
-			]
+			],
+			filter: {}
 		};
 
 		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
@@ -733,6 +734,75 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
+	});
+
+	QUnit.test("call 'applyExternalState' twice to create and change some filter conditions", function(assert){
+		var done = assert.async();
+
+		var mFilterConditions = {
+			"String": [{ "operator": "Contains", "values": ["Test"] }],
+			"Boolean": [{ "operator": "EQ", "values": [true] }],
+			"Decimal":[{"operator":"EQ","values":["12.01"]}],
+			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+		};
+
+		var oExternalState = {
+			filter: mFilterConditions
+		};
+
+		//we expect one change and the other conditions to be unaffected by the change
+		StateUtil.applyExternalState(this.oTable, oExternalState).then(function(aDirtyChanges){
+
+			//an existing value has been changed --> removeCondition + addCondition
+			assert.equal(aDirtyChanges.length, 4, "The correct amount of changes has been created");
+
+			//the second time there should not be any changes
+			var oResetState = {
+				filter: {
+					"String": [],
+					"Date":[{"operator":"EQ","values":["2020-02-12"]}]
+				}
+			};
+
+			StateUtil.applyExternalState(this.oTable, oResetState).then(function(aDirtyChanges){
+				assert.equal(aDirtyChanges.length, 3, "Every condition has been removed via 'removeCondition' change");
+				assert.equal(aDirtyChanges[0].getChangeType(), "removeCondition", "The condition change for remove has been created");
+				assert.equal(aDirtyChanges[0].getContent().name, "String", "The correct property is affected");
+				assert.equal(aDirtyChanges[1].getChangeType(), "removeCondition", "The condition change for remove has been created");
+				assert.equal(aDirtyChanges[1].getContent().name, "Date", "The correct property is affected");
+				assert.equal(aDirtyChanges[2].getChangeType(), "addCondition", "The condition change for remove has been created");
+				assert.equal(aDirtyChanges[2].getContent().name, "Date", "The correct property is affected");
+
+				done();
+			});
+		}.bind(this));
+	});
+
+	QUnit.test("call 'applyExternalState' to create filter values but without p13nMode enabled", function(assert) {
+		var done = assert.async();
+
+		this.oTable.setP13nMode(["Column","Sort"]);
+
+		var oState = {
+			sorters: [
+				{
+					name: "String",
+					descending: true
+				}
+			],
+			filter: {
+				"Date":[{"operator":"EQ","values":["2020-02-12"]}]
+			}
+		};
+
+		//add new sorter
+		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
+			assert.equal(aChanges.length, 1, "Only one change was created");
+			assert.equal(aChanges[0].getChangeType(), "addSort", "Only sort and no filter changes should be created");
+			this.oTable.setP13nMode(["Column","Sort","Filter"]);
+			done();
+		}.bind(this));
+
 	});
 
 });

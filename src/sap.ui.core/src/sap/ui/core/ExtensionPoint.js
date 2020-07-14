@@ -31,6 +31,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 	 * @deprecated since 1.56, Use {@link sap.ui.core.ExtensionPoint.load} instead
 	 * @public
 	 * @static
+	 * @ui5-global-only
 	 */
 	sap.ui.extensionpoint = function(oContainer, sExtName, fnCreateDefaultContent,  oTargetControl, sAggregationName) {
 		Log.warning("Do not use deprecated factory function 'sap.ui.extensionpoint'. Use 'sap.ui.core.ExtensionPoint.load' instead", "sap.ui.extensionpoint", null, function () {

@@ -132,7 +132,7 @@ sap.ui.define([
 		// Wrapper for the destroy method to recognize changes
 		this._fnOriginalDestroy = oTarget.destroy;
 		oTarget.destroy = function() {
-			this.unobserve();
+			this.unobserve(oTarget);
 			// Original destroy method was restored by unobserve() call above
 			var vOriginalReturn = oTarget.destroy.apply(oTarget, arguments);
 			this.fireDestroyed();
@@ -588,8 +588,8 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	ManagedObjectObserver.prototype.unobserve = function() {
-		var oTarget = this.getTargetInstance();
+	ManagedObjectObserver.prototype.unobserve = function(oTarget) {
+		oTarget = oTarget || this.getTargetInstance();
 
 		if (this._bIsObserved && oTarget) {
 			this._bIsObserved = false;

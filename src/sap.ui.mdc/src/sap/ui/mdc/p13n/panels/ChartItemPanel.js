@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 * @since 1.66
-	 * @alias sap.ui.mdc.p13n..panelsChartItemPanel
+	 * @alias sap.ui.mdc.p13n.panels.ChartItemPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ChartItemPanel = BasePanel.extend("sap.ui.mdc.p13n.panels.ChartItemPanel", {

@@ -608,6 +608,8 @@ sap.ui.define([
 
 		this._aAsyncChanges = [];
 
+		this._bPreventGetDescription = false; // set in navigate or select from field help
+
 	};
 
 	FieldBase.prototype.exit = function() {
@@ -759,6 +761,16 @@ sap.ui.define([
 
 		// close FieldHelp also if escape pressed without changing value
 		this.onsapenter(oEvent);
+
+	};
+
+	FieldBase.prototype.ontap = function(oEvent) {
+
+		// in "Select"-case the suggestion help should open on click into field
+		var oFieldHelp = _getFieldHelp.call(this);
+		if (oFieldHelp && oFieldHelp.openByClick() && !oFieldHelp.isOpen(true)) {
+			oFieldHelp.open(true);
+		}
 
 	};
 
@@ -1583,6 +1595,7 @@ sap.ui.define([
 	function _createInternalContent() {
 
 		_setUsedConditionType.call(this); // if external content use it's conditionType
+		_checkFieldHelpExist.call(this, this.getFieldHelp()); // as FieldHelp might be greated after ID is assigned to Field
 
 		var sEditMode = this.getEditMode();
 		if (this.getContent() || this._bIsBeingDestroyed ||
@@ -2717,9 +2730,8 @@ sap.ui.define([
 
 	function _fieldHelpChanged(sId, sMutation) {
 
-		var oFieldHelp = sap.ui.getCore().byId(sId);
-
 		if (sMutation === "remove") {
+			var oFieldHelp = sap.ui.getCore().byId(sId);
 			if (oFieldHelp) {
 				oFieldHelp.detachEvent("select", _handleFieldHelpSelect, this);
 				oFieldHelp.detachEvent("navigate", _handleFieldHelpNavigate, this);
@@ -2729,13 +2741,22 @@ sap.ui.define([
 			}
 			this.setProperty("_fieldHelpEnabled", false, true);
 		} else if (sMutation === "insert") {
+			_checkFieldHelpExist.call(this, sId);
+		}
+
+		_handleConditionsChange.call(this, this.getConditions()); // to update descriptions
+
+	}
+
+	function _checkFieldHelpExist(sId) {
+
+		if (sId && !this.getProperty("_fieldHelpEnabled")) {
+			var oFieldHelp = sap.ui.getCore().byId(sId);
 			if (oFieldHelp) {
 				oFieldHelp.attachEvent("dataUpdate", _handleHelpDataUpdate, this);
 				this.setProperty("_fieldHelpEnabled", true, true);
 			}
 		}
-
-		_handleConditionsChange.call(this, this.getConditions()); // to update descriptions
 
 	}
 
@@ -2889,11 +2910,11 @@ sap.ui.define([
 				if (sDOMValue instanceof Promise) {
 					// text is determined async
 					sDOMValue.then(function(sText) {
-						oContent.setDOMValue(""); // to overwrite it event if the text is the same -> otherwise cursor position could be wrong
+						oContent.setDOMValue(""); // to overwrite it even if the text is the same -> otherwise cursor position could be wrong
 						oContent.setDOMValue(sText);
 					});
 				} else {
-					oContent.setDOMValue(""); // to overwrite it event if the text is the same -> otherwise cursor position could be wrong
+					oContent.setDOMValue(""); // to overwrite it even if the text is the same -> otherwise cursor position could be wrong
 					oContent.setDOMValue(sDOMValue);
 				}
 			} else if (bClose) {
@@ -2956,6 +2977,7 @@ sap.ui.define([
 			}
 		}
 
+		this._bPreventGetDescription = true; // if no description in navigated condition, no description exist. Don't try to read one
 		_updateConditionType.call(this);
 
 		// take what ever comes from field help as valid - even if it is an empty key
@@ -2985,6 +3007,9 @@ sap.ui.define([
 			oContent.setDOMValue(sDOMValue);
 			oContent._doSelect();
 		}
+
+		this._bPreventGetDescription = false; // back to default
+		_updateConditionType.call(this);
 
 		this._bIgnoreInputValue = false; // use value for input
 		this.fireLiveChange({value: sNewValue});
@@ -3180,7 +3205,8 @@ sap.ui.define([
 				navigateCondition: this._oNavigateCondition,
 				delegate: this.getControlDelegate(),
 				delegateName: this.getDelegate() && this.getDelegate().name,
-				payload: this.getPayload()
+				payload: this.getPayload(),
+				preventGetDescription: this._bPreventGetDescription
 			};
 
 	};
@@ -3301,6 +3327,7 @@ sap.ui.define([
 			navigateCondition: this._oNavigateCondition,
 			delegate: this.getControlDelegate(),
 			payload: this.getPayload(),
+			preventGetDescription: this._bPreventGetDescription,
 			isUnit: true,
 			getConditions: this.getConditions.bind(this) // TODO: better solution to update unit in all conditions
 		};

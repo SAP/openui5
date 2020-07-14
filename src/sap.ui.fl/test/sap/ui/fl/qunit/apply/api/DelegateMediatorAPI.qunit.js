@@ -25,6 +25,13 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
+	var mRequiredLibraries = {
+		"sap.some.lib": {
+			minVersion: "1.81",
+			lazy: false
+		}
+	};
+
 	QUnit.module("Given 'registerDefaultDelegate' function is called", {
 		beforeEach: function () {
 			this.mPropertyBag = {
@@ -55,6 +62,12 @@ sap.ui.define([
 			assert.ok(DelegateMediator.isDelegateRegistered(this.mPropertyBag.modelType), "then the delegate is registered successfull with the given modelType");
 		});
 
+		QUnit.test("When it is called with valid property bag including optional requiredLibraries property", function (assert) {
+			this.mPropertyBag.requiredLibraries = mRequiredLibraries;
+			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
+			assert.ok(DelegateMediator.isDelegateRegistered(this.mPropertyBag.modelType), "then the delegate is registered successfull with the given modelType");
+		});
+
 		QUnit.test("When try to register the same modelType twice", function (assert) {
 			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
 			assert.throws(function () {
@@ -69,7 +82,8 @@ sap.ui.define([
 		beforeEach: function () {
 			this.mPropertyBag = {
 				modelType: SomeModel.getMetadata().getName(),
-				delegate: "sap/ui/rta/enablement/TestDelegate"
+				delegate: "sap/ui/rta/enablement/TestDelegate",
+				requiredLibraries: mRequiredLibraries
 			};
 			this.oPanel = new Panel("test_panel");
 			this.oDelegateCustomData = {
@@ -141,6 +155,7 @@ sap.ui.define([
 					assert.strictEqual(mDelegateInfo.name, this.mPropertyBag.delegate, "then the default delegate info is returned");
 					assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
 					assert.deepEqual(mDelegateInfo.modelType, this.mPropertyBag.modelType, "then the default delegate info contains the modelType");
+					assert.deepEqual(mDelegateInfo.requiredLibraries, this.mPropertyBag.requiredLibraries, "then the default delegate info contains the passed required libraries");
 				}.bind(this));
 		});
 
@@ -153,6 +168,21 @@ sap.ui.define([
 					assert.strictEqual(mDelegateInfo.name, this.mPropertyBag.delegate, "then the default delegate info is returned");
 					assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
 					assert.deepEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
+					assert.deepEqual(mDelegateInfo.requiredLibraries, this.mPropertyBag.requiredLibraries, "then the default delegate info contains the passed required libraries");
+				}.bind(this));
+		});
+
+		QUnit.test("When it is called with delegate specified as default delegate (JS Case) without required libraries registered", function (assert) {
+			this.oPanel.setModel(new SomeModel());
+			delete this.mPropertyBag.requiredLibraries;
+			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
+			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, undefined, true))
+				.then(function (mDelegateInfo) {
+					assert.deepEqual(mDelegateInfo.instance, TestDelegate, "then the default delegate info is returned");
+					assert.strictEqual(mDelegateInfo.name, this.mPropertyBag.delegate, "then the default delegate info is returned");
+					assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
+					assert.deepEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
+					assert.notOk(mDelegateInfo.requiredLibraries, "then the default delegate does not contain any required libraries defined as default");
 				}.bind(this));
 		});
 
@@ -165,10 +195,25 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("When default delegate is available, but default delegate should be ignored (XML Case)", function (assert) {
+		QUnit.test("When default delegate is available, but default delegate should be ignored (JS Case)", function (assert) {
 			this.oPanel.setModel(new SomeModel());
-			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier))
+				.then(function (mDelegateInfo) {
+					assert.notOk(mDelegateInfo, "then an 'undefined' is returned");
+				});
+		});
+
+		QUnit.test("When no default delegate is available, but default delegate is asked (XML Case)", function (assert) {
+			var vDomNode = jQuery("#qunit-fixture").get(0);
+			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier, "some.not.existing.model", true))
+				.then(function (mDelegateInfo) {
+					assert.notOk(mDelegateInfo, "then an 'undefined' is returned");
+				});
+		});
+
+		QUnit.test("When no default delegate is available, but default delegate is asked (JS Case)", function (assert) {
+			this.oPanel.setModel(new SomeModel());
+			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, "some.not.existing.model", true))
 				.then(function (mDelegateInfo) {
 					assert.notOk(mDelegateInfo, "then an 'undefined' is returned");
 				});
@@ -197,6 +242,15 @@ sap.ui.define([
 					assert.deepEqual(mDelegateInfo.payload, {}, "then the specific delegate info contains an empty payload");
 					assert.notOk(mDelegateInfo.modelType, "then modelType 'undefined' is returned");
 				});
+		});
+	});
+
+
+	QUnit.module("Given 'getKnownDefaultDelegateLibraries' function is called", function() {
+		QUnit.test("When it is called", function (assert) {
+			var aExpectedResult = ["sap.ui.comp"];
+			var aExistingKnownDefaultDelegateLibs = DelegateMediatorAPI.getKnownDefaultDelegateLibraries();
+			assert.deepEqual(aExistingKnownDefaultDelegateLibs, aExpectedResult, "then the known libs for default delegate locations are returned");
 		});
 	});
 

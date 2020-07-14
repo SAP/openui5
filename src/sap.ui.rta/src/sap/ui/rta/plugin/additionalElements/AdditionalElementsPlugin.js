@@ -203,17 +203,26 @@ sap.ui.define([
 		return mActions.aggregation === sResponsibleElementsParentAggregation;
 	}
 
+	function _isValidAction(oCheckElementOverlay, mParents, mAction, oPlugin) {
+		var bValidAction = mAction.changeType && oPlugin.hasStableId(oCheckElementOverlay);
+		if (bValidAction && oCheckElementOverlay !== mParents.relevantContainerOverlay) {
+			//relevant container is needed for some changes, so it better has a stable ID
+			bValidAction = oPlugin.hasStableId(mParents.relevantContainerOverlay);
+		}
+		return bValidAction;
+	}
+
 	function _filterValidAddPropertyActions(aActions, mParents, bAddViaDelegate, oPlugin) {
 		return aActions.reduce(function (oPreviousActionsPromise, mAction) {
 			return oPreviousActionsPromise.then(function (aFilteredActions) {
 				var oCheckElement = mAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
 				var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
-				var bValidAction = mAction.changeType && oPlugin.hasStableId(oCheckElementOverlay);
+				var bValidAction = _isValidAction(oCheckElementOverlay, mParents, mAction, oPlugin);
 				if (bValidAction) {
 					mAction.element = oCheckElement;
 					if (bAddViaDelegate) {
 						return DelegateMediatorAPI.getDelegateForControl({
-							control: oCheckElement,
+							control: mParents.relevantContainer, //delegate will always be added on the relevant container
 							modifier: JsControlTreeModifier,
 							supportsDefault: mAction.supportsDefaultDelegate
 						}).then(function(mDelegateInfo) {
@@ -226,8 +235,8 @@ sap.ui.define([
 					}
 					//addODataProperty
 					aFilteredActions.push(mAction);
-					return aFilteredActions;
 				}
+				return aFilteredActions;
 			});
 		}, Promise.resolve([]));
 	}
@@ -983,11 +992,8 @@ sap.ui.define([
 			if (iRevealTargetIndex !== iRevealedSourceIndex || mParents.parent !== oRevealedElement.getParent()) {
 				var oSourceParentOverlay = OverlayRegistry.getOverlay(oRevealedElement) ? OverlayRegistry.getOverlay(oRevealedElement).getParentAggregationOverlay() : mParents.relevantContainerOverlay;
 				var SourceParentDesignTimeMetadata = oSourceParentOverlay.getDesignTimeMetadata();
-				var oMoveAction = SourceParentDesignTimeMetadata.getAction("move", oRevealedElement);
-				var sVariantManagementReference;
-				if (oMoveAction) {
-					sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement));
-				}
+				var sVariantManagementReference = this.getVariantManagementReference(oSourceParentOverlay);
+
 				return this.getCommandFactory().getCommandFor(mParents.relevantContainer, "move", {
 					movedElements : [{
 						element : oRevealedElement,
@@ -1056,7 +1062,8 @@ sap.ui.define([
 						parentId: mParents.parent.getId(),
 						propertyName: oSelectedElement.name,
 						oDataServiceVersion: oSelectedElement.oDataServiceVersion,
-						modelType: mAddViaDelegateAction.delegateInfo.modelType
+						modelType: mAddViaDelegateAction.delegateInfo.modelType,
+						relevantContainerId: mParents.relevantContainer.getId()
 					}, oParentAggregationDTMetadata, sVariantManagementReference);
 				}.bind(this))
 				.then(function(oAddViaDelegateCommand) {

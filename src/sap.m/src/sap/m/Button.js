@@ -36,6 +36,9 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
+	// shortcut for sap.m.ButtonAccessibilityType
+	var ButtonAccessibilityType = library.ButtonAccessibilityType;
+
 	/**
 	 * Constructor for a new <code>Button</code>.
 	 *
@@ -267,11 +270,9 @@ sap.ui.define([
 
 		if (this.getEnabled() && this.getVisible()) {
 			// Safari and Firefox doesn't set the focus to the clicked button tag but to the nearest parent DOM which is focusable
-			// This behavior has to be stopped by calling prevent default when the original event is 'mousedown'
-			// and set the focus explicitly to the button.
+			// That is why we re-set the focus manually after the browser sets the focus.
 			if ((Device.browser.safari || Device.browser.firefox) && (oEvent.originalEvent && oEvent.originalEvent.type === "mousedown")) {
-				this.focus();
-				oEvent.preventDefault();
+				this._setButtonFocus();
 			}
 			if (!sap.ui.Device.browser.msie) {
 				// set the tag ID where the touch event started
@@ -637,8 +638,9 @@ sap.ui.define([
 			var oIconInfo = IconPool.getIconInfo(this._getAppliedIcon());
 
 			// add tooltip if available
-			if (oIconInfo && oIconInfo.text) {
-				sTooltip = oIconInfo.text;
+			if (oIconInfo) {
+				// Fall back to the icon's name if there's no semantic text
+				sTooltip = oIconInfo.text ? oIconInfo.text : oIconInfo.name;
 			}
 		}
 
@@ -678,6 +680,15 @@ sap.ui.define([
 	};
 
 	/*
+	* Helper function which sets the focus on the button manually.
+	*
+	* @private
+	*/
+	Button.prototype._setButtonFocus = function() {
+		setTimeout(function() { this.focus(); }.bind(this), 0);
+	};
+
+	/*
 	* Determines whether self-reference should be added.
 	*
 	* @returns {boolean}
@@ -692,6 +703,35 @@ sap.ui.define([
 
 		return !bAlreadyHasSelfReference && this._getText() &&
 			(aAriaLabelledBy.length > 0 || bHasReferencingLabels || bAllowEnhancingByParent);
+	};
+
+	/*
+	 * Determines what combination of labels/descriptions does the Button have.
+	 *
+	 * @returns {string}
+	 * @private
+	 */
+	Button.prototype._determineAccessibilityType = function () {
+		var bHasAriaLabelledBy = this.getAriaLabelledBy().length > 0,
+			bHasAriaDescribedBy = this.getAriaDescribedBy().length > 0,
+			bHasReferencingLabels = LabelEnablement.getReferencingLabels(this).length > 0,
+			bHasSemanticType = this.getType() !== ButtonType.Default,
+			bHasLabelling = bHasAriaLabelledBy || bHasReferencingLabels,
+			bHasDescription = bHasAriaDescribedBy || bHasSemanticType,
+			sAccType;
+
+		// Conditions are separated instead of grouped to improve readability afterwards.
+		if (!bHasLabelling && !bHasDescription) {
+			sAccType = ButtonAccessibilityType.Default;
+		} else if (bHasLabelling && !bHasDescription) {
+			sAccType = ButtonAccessibilityType.Labelled;
+		} else if (!bHasLabelling && bHasDescription) {
+			sAccType = ButtonAccessibilityType.Described;
+		} else if (bHasLabelling && bHasDescription) {
+			sAccType = ButtonAccessibilityType.Combined;
+		}
+
+		return sAccType;
 	};
 
 	return Button;

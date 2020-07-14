@@ -10,7 +10,7 @@ sap.ui.define([], function () {
 
 	/**
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	var _Calendars = {
 		get: function (sCalendarType) {

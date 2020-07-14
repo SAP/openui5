@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/formatters/IconFormatter",
-	"sap/ui/integration/util/FilterBarFactory"
+	"sap/ui/integration/util/FilterBarFactory",
+	"sap/m/BadgeEnabler"
 ], function (
 	Interface,
 	jQuery,
@@ -54,7 +55,8 @@ sap.ui.define([
 	ContentFactory,
 	BindingHelper,
 	IconFormatter,
-	FilterBarFactory
+	FilterBarFactory,
+	BadgeEnabler
 ) {
 	"use strict";
 	/* global Map */
@@ -143,7 +145,10 @@ sap.ui.define([
 	var Card = Control.extend("sap.ui.integration.widgets.Card", /** @lends sap.ui.integration.widgets.Card.prototype */ {
 		metadata: {
 			library: "sap.ui.integration",
-			interfaces: ["sap.f.ICard"],
+			interfaces: [
+				"sap.f.ICard",
+				"sap.m.IBadge"
+			],
 			properties: {
 
 				/**
@@ -323,6 +328,8 @@ sap.ui.define([
 		renderer: FCardRenderer
 	});
 
+	BadgeEnabler.call(Card.prototype);
+
 	/**
 	 * Initialization hook.
 	 * @private
@@ -338,8 +345,7 @@ sap.ui.define([
 
 		/**
 		 * Facade of the {@link sap.ui.integration.widgets.Card} control.
-		 * @class
-		 * @hideconstructor
+		 * @interface
 		 * @name sap.ui.integration.widgets.CardFacade
 		 * @experimental since 1.79
 		 * @public
@@ -350,10 +356,15 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#getManifestEntry as getManifestEntry
 		 * @borrows sap.ui.integration.widgets.Card#resolveDestination as resolveDestination
 		 * @borrows sap.ui.integration.widgets.Card#request as request
+		 * @borrows sap.ui.integration.widgets.Card#showMessage as showMessage
 		 */
 		this._oLimitedInterface = new Interface(this, [
-			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request"
+			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage"
 		]);
+
+		this.initBadgeEnablement({
+			accentColor: "AccentColor6"
+		});
 	};
 
 	/**
@@ -823,6 +834,27 @@ sap.ui.define([
 	 */
 	Card.prototype.resolveDestination = function (sKey) {
 		return this._oDestinations.getUrl(sKey);
+	};
+
+	/**
+	 * Displays a message strip on top of the content with the given text.
+	 *
+	 * <b>Note</b> Currently only available for an Adaptive Card.
+	 *
+	 * @public
+	 * @experimental As of version 1.81
+	 * @param {string} sMessage The message.
+	 * @param {sap.m.MessageType} sType Type of the message.
+	 */
+	Card.prototype.showMessage = function (sMessage, sType) {
+		var oContent = this.getCardContent();
+
+		if (!oContent || !oContent.showMessage) {
+			Log.error("The experimental feature 'showMessage' is currently available only for an Adaptive Card.");
+			return;
+		}
+
+		oContent.showMessage(sMessage, sType);
 	};
 
 	/**

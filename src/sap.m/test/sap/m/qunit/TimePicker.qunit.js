@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/ui/core/LocaleData",
 	"sap/m/MaskEnabler",
 	"sap/ui/model/odata/type/Time",
+	"sap/ui/Device",
 	"jquery.sap.global"
 ], function(
 	qutils,
@@ -46,7 +47,8 @@ sap.ui.define([
 	Label,
 	LocaleData,
 	MaskEnabler,
-	typeTime
+	typeTime,
+	Device
 ) {
 	// shortcut for sap.ui.core.mvc.ViewType
 	var ViewType = coreLibrary.mvc.ViewType;
@@ -2010,7 +2012,7 @@ sap.ui.define([
 		tp.destroy();
 	});
 
-	QUnit.module("Time picker has same behaviour on mobile like on desktop", {
+	QUnit.module("Time picker on mobile", {
 		beforeEach: function () {
 			jQuery("html").removeClass("sap-desktop");
 			jQuery("html").removeClass("sapUiMedia-Std-Desktop");
@@ -2041,6 +2043,36 @@ sap.ui.define([
 
 		//cleanup
 		tp.destroy();
+	});
+
+	QUnit.test("_createPopup: mobile device", function(assert) {
+		// prepare
+		var oTimePicker = new TimePicker(),
+			oSandbox = sinon.createSandbox({}),
+			oLabel = new sap.m.Label({text: "DatePicker Label", labelFor: oTimePicker.getId()}),
+			oDialog;
+
+		oSandbox.stub(Device.system, "phone").value(true);
+		oSandbox.stub(Device.system, "desktop").value(false);
+		oTimePicker.placeAt("qunit-fixture");
+		oLabel.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oTimePicker._createPicker();
+		oDialog = oTimePicker.getAggregation("_picker");
+
+		// assert
+		assert.ok(oDialog.getShowHeader(), "Header is shown");
+		assert.ok(oDialog.getShowCloseButton(), "Close button in the header is set");
+		assert.strictEqual(oDialog.getTitle(), "DatePicker Label", "Title is set");
+		assert.strictEqual(oDialog.getBeginButton().getType(), "Emphasized", "OK button type is set");
+		assert.notOk(oDialog.getEndButton(), "Close button in the footer is not set");
+
+		// clean
+		oSandbox.restore();
+		oTimePicker.destroy();
+		oLabel.destroy();
 	});
 
 	QUnit.module("Accessibility", {

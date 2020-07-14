@@ -50,15 +50,6 @@
 				]
 			},
 			{
-				"id" : "sap.ui.core.mvc.ControllerExtension",
-				"name" : "Controller Extensions",
-				"category" : "Display",
-				"since" : "1.56",
-				"samples" : [
-					"sap.ui.core.sample.ControllerExtension"
-				]
-			},
-			{
 				"id" : "sap.ui.core.HTML",
 				"name" : "HTML",
 				"category" : "Display",
@@ -491,11 +482,6 @@
 				"id": "sap.ui.core.sample.ControlBusyIndicator",
 				"name": "Control Busy Indicator",
 				"description": "A control's busy indicator can be used to block parts of the screen until an operation has finished. In this example we block the content of only one out of two panels."
-			},
-			{
-				"id": "sap.ui.core.sample.ControllerExtension",
-				"name": "Controller Extension",
-				"description": "Controller extensions allow you to add functionality to existing applications. They can be used for extensibility purposes, for example by a customer wishing to extend SAP-delivered applications, or as a reusable part that is added to the original application."
 			},
 			{
 				"id": "sap.ui.core.sample.FieldGroup",

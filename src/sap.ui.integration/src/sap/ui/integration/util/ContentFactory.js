@@ -69,6 +69,10 @@ sap.ui.define([
 
 			var oContent = new Content();
 
+			if (oContent instanceof AdaptiveContent) {
+				oContent.setCardDataProvider(oCard._oDataProvider);
+			}
+
 			oContent.loadDependencies(mConfig.contentManifest)
 				.then(function () {
 					if ((mConfig.cardManifest && mConfig.cardManifest.isDestroyed()) ||

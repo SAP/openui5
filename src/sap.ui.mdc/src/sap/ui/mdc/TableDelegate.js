@@ -61,7 +61,7 @@ sap.ui.define([
 			if (bFilterEnabled) {
 				mConditions = oMDCTable.getConditions();
 				//TODO: reuse 'FilterUtil' --> Table does not derive from sap.ui.mdc.Control as of now
-				var aFilters = FilterConverter.getFilterInfo(mConditions);
+				var aFilters = FilterConverter.createFilters(mConditions);
 				oBindingInfo.filters = aFilters;
 			} else if (oFilter) {
 				mConditions = oFilter.getConditions();
@@ -115,6 +115,7 @@ sap.ui.define([
 
 		/**
 		 * Set the <code>delegate</code> property for the inner <code>FilterBar</code>
+		 *
 		 * @param {Object} oPayload The payload configuration for the current Table instance
 		 * @returns {Object} Object for the inner FilterBar <code>delegate</code> property
 		 *

@@ -193,10 +193,6 @@ sap.ui.define([
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the QuickView control,
-	// */
-
 
 	/**
 	 * Initialization of the QuickView control.

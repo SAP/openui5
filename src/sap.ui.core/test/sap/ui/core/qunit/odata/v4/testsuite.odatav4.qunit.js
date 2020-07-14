@@ -16,7 +16,7 @@ sap.ui.define(function () {
 				language : "en-US",
 				rtl : false,
 				libs : null,
-				"xx-waitForTheme" : true
+				"xx-waitForTheme" : "init"
 			},
 			coverage : {
 				only : "[sap/ui/model/odata/v4]",

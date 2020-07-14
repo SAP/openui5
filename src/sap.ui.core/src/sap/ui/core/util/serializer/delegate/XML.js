@@ -256,7 +256,7 @@ sap.ui.define([
 	 * @private
 	 */
 	XML.prototype._createAttribute = function (sAttribute, oValue) {
-		var oEncoded = jQuery.type(oValue) === "string" ? encodeXML(oValue) : oValue;
+		var oEncoded = (typeof oValue === "string" || oValue instanceof String) ? encodeXML(oValue) : oValue;
 		return ' ' + sAttribute + '="' + oEncoded + '"';
 	};
 

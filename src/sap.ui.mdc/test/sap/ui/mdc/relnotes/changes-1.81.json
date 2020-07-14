@@ -1,0 +1,50 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "4b7e58262127319ed1798376e44dcd00fe376cb4",
+        "type": "FIX",
+        "text": " FieldValueHelp: Pending updates of in- and out-parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080230646"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080208502"
+          }
+        ]
+      },
+      {
+        "id": "8abc5e70c7cf649a62db52dedb7208021c7da8f5",
+        "type": "FEATURE",
+        "text": " ListFieldHelp: sap.m.Select-like behavior enabled",
+        "references": []
+      },
+      {
+        "id": "bbf933e34594a7548ff7e24e29a5edee8649f9c8",
+        "type": "FIX",
+        "text": " Field: [object Promise] shown while keybord navigation in help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080226074"
+          }
+        ]
+      },
+      {
+        "id": "df607756b9f187ed6299dbe4b3684c523c1a8b4f",
+        "type": "FIX",
+        "text": " FieldValueHelp: unneeded get call to determine item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080208502"
+          }
+        ]
+      }
+    ]
+  }
+}

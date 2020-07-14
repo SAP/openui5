@@ -229,8 +229,7 @@ sap.ui.define([
 	 * @returns {Document} The view as XML document
 	 */
 	function xml(sViewXML) {
-		var oChildNode, aChildNodes, iColumnCount, aColumnNodes, oColumnsElement, oDocument,
-			oElement, bHasColumns, i, j, k, aTableElements;
+		var oDocument;
 
 		oDocument = XMLHelper.parse(
 			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
@@ -238,10 +237,28 @@ sap.ui.define([
 			+ '</mvc:View>',
 			"application/xml"
 		);
+		xmlConvertMTables(oDocument);
+
+		return oDocument;
+	}
+
+	/**
+	 * Converts the sap.m.Table controls within the document. Embeds all inner controls into a
+	 * <ColumnListItem>. <ColumnListItem> may still be used however. Do not use <items>, it breaks
+	 * this automatic conversion (and is unnecessary anyway). Do not use <columns>, they are added
+	 * automatically.
+	 *
+	 * @param {Document} oDocument The view as XML document
+	 */
+	function xmlConvertMTables(oDocument) {
+		var aControls, oChildNode, aChildNodes, iColumnCount, aColumnNodes, oColumnsElement,
+			oElement, bHasColumns, bHasListItem, i, j, k, aTableElements;
+
 		aTableElements = oDocument.getElementsByTagNameNS("sap.m", "Table");
 		iColumnCount = 0;
 		for (i = aTableElements.length - 1; i >= 0; i -= 1) {
 			oElement = aTableElements[i];
+			aControls = [];
 
 			aChildNodes = oElement.childNodes;
 			for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
@@ -255,18 +272,35 @@ sap.ui.define([
 					case "ColumnListItem":
 						aColumnNodes = oChildNode.childNodes;
 
+						bHasListItem = true;
 						for (k = aColumnNodes.length - 1; k >= 0; k -= 1) {
-							if (aColumnNodes[k].nodeType === 1) { // Node.ELEMENT_NODE
+							if (aColumnNodes[k].nodeType === Node.ELEMENT_NODE) {
 								iColumnCount += 1;
 							}
 						}
 						break;
-					// no default
+					default:
+						if (oChildNode.nodeType === Node.ELEMENT_NODE) {
+							oElement.removeChild(oChildNode);
+							aControls.unshift(oChildNode);
+							iColumnCount += 1;
+						}
 				}
 			}
 			if (iColumnCount) {
 				if (bHasColumns) {
 					throw new Error("Do not use <columns> in sap.m.Table");
+				}
+				if (aControls.length) {
+					if (bHasListItem) {
+						throw new Error("Do not use controls w/ and w/o <ColumnListItem>"
+							+ " in sap.m.Table");
+					}
+					oColumnsElement = document.createElementNS("sap.m", "ColumnListItem");
+					for (j = 0; j < aControls.length; j += 1) {
+						oColumnsElement.appendChild(aControls[j]);
+					}
+					oElement.appendChild(oColumnsElement);
 				}
 				oColumnsElement = oDocument.createElementNS("sap.m", "columns");
 				while (iColumnCount > 0) {
@@ -276,8 +310,6 @@ sap.ui.define([
 				oElement.appendChild(oColumnsElement);
 			}
 		}
-
-		return oDocument;
 	}
 
 	//*********************************************************************************************
@@ -740,6 +772,7 @@ sap.ui.define([
 				delete oActualRequest["async"];
 				delete oActualRequest["deferred"];
 				delete oActualRequest["eventInfo"];
+				delete oActualRequest["functionMetadata"];
 				delete oActualRequest["password"];
 				delete oActualRequest["expandRequest"];
 				delete oActualRequest["requestID"];
@@ -1101,16 +1134,24 @@ sap.ui.define([
 		 * this case you can control the response time (typically to control the order of the
 		 * responses).
 		 *
-		 * @param {string|object} vRequest The request with the properties "method", "url" and
-		 *   "headers". A string is interpreted as URL with method "GET". Spaces inside the URL, and
-		 *   "'" and "~" inside the query string are percent-encoded automatically.
+		 * @param {string|object} vRequest
+		 *   The request with the mandatory properties "deepPath", "method" and "requestUri".
+		 *   Optional properties are:
+		 *   <ul>
+		 *     <li>"batchNo": The batch number in which the request is contained</li>
+		 *     <li>"encodeRequestUri": Whether the query string of the requestUri has to be encoded;
+		 *       <code>true</code> by default</li>
+		 *     <li>"headers": The expected request headers/li>
+		 *   </ul>
+		 *   A string is interpreted as URL with method "GET". Spaces inside the URL, and "'" and
+		 *   "~" inside the query string are percent-encoded automatically.
 		 * @param {object|Promise|Error} [oResponse] The response message to be returned from the
 		 *   requestor or a promise on it
 		 * @param {object} [mResponseHeaders] The response headers to be returned from the
 		 *   requestor
 		 * @returns {object} The test instance for chaining
 		 */
-		expectRequest : function (vRequest, oResponse, mResponseHeaders) {
+		expectRequest : function (vRequest, oResponse, mResponseHeaders, bDisableUriEncoding) {
 			var aUrlParts;
 
 			if (typeof vRequest === "string") {
@@ -1125,10 +1166,11 @@ sap.ui.define([
 			vRequest.responseHeaders = mResponseHeaders || {};
 			vRequest.response = oResponse || {/*null object pattern*/};
 			aUrlParts = vRequest.requestUri.split("?");
-			if (aUrlParts[1]) {
+			if (aUrlParts[1] && vRequest.encodeRequestUri !== false) {
 				vRequest.requestUri = aUrlParts[0] + "?"
 					+ aUrlParts[1].replace(/ /g, "%20").replace(/'/g, "%27").replace(/~/g, "%7e");
 			}
+			delete vRequest.encodeRequestUri;
 			this.aRequests.push(vRequest);
 
 			return this;
@@ -1338,9 +1380,7 @@ sap.ui.define([
 	QUnit.test("Minimal integration test with collection data", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderSet}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>';
 
 		this.expectRequest("SalesOrderSet?$skip=0&$top=100", {
@@ -1362,9 +1402,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({useBatch : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderSet}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>';
 
 		this.expectHeadRequest()
@@ -1399,9 +1437,7 @@ sap.ui.define([
 	<Text id="id" text="{SalesOrderID}" />\
 </FlexBox>\
 <Table id="table" items="{/SalesOrderSet}">\
-	<ColumnListItem>\
-		<Text text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text text="{SalesOrderID}" />\
 </Table>';
 
 		this.expectHeadRequest()
@@ -1459,9 +1495,7 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({useBatch : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderSet}">\
-	<ColumnListItem>\
-		<Text text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text text="{SalesOrderID}" />\
 </Table>\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
@@ -1513,9 +1547,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderSet}">\
-	<ColumnListItem>\
-		<Text text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text text="{SalesOrderID}" />\
 </Table>';
 
 		this.mock(sap.ui.getCore().getLibraryResourceBundle()).expects("getText")
@@ -1684,9 +1716,7 @@ sap.ui.define([
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderId" text="{SalesOrderID}" />\
 	<Table id="table" items="{ToLineItems}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
 	</Table>\
 </FlexBox>\
 <FlexBox id="detailProduct" binding="{ToProduct}">\
@@ -1924,9 +1954,7 @@ sap.ui.define([
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
 	<Table id="table" items="{ToLineItems}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -2046,9 +2074,7 @@ sap.ui.define([
 			sView = '\
 <Table growing="true" growingThreshold="2" id="table"\
 		items="{/SalesOrderSet(\'1\')/ToLineItems}">\
-	<ColumnListItem>\
-		<Text id="itemPosition" text="{ItemPosition}" />\
-	</ColumnListItem>\
+	<Text id="itemPosition" text="{ItemPosition}" />\
 </Table>',
 			that = this;
 
@@ -2256,11 +2282,9 @@ usePreliminaryContext : false}}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
 	<Input id="grossAmount" value="{GrossAmount}" />\
 	<Table id="table" items="{ToLineItems}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="grossAmount::item" value="{GrossAmount}" />\
-			<Input id="currencyCode" value="{CurrencyCode}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="grossAmount::item" value="{GrossAmount}" />\
+		<Input id="currencyCode" value="{CurrencyCode}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -2352,10 +2376,8 @@ usePreliminaryContext : false}}">\
 	<Input id="note" value="{Note}" />\
 	<Table id="table" items="{path : \'ToLineItems\',\
 			parameters : {select : \'ItemPosition,Note,SalesOrderID\'}}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -2558,10 +2580,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject;
@@ -2652,10 +2672,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
@@ -2796,10 +2814,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="grossAmount" value="{GrossAmount}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="grossAmount" value="{GrossAmount}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
@@ -2947,19 +2963,15 @@ usePreliminaryContext : false}}">\
 		parameters : {transitionMessagesOnly : true},\
 		filters : {path : \'GrossAmount\', operator : \'GT\', value1 : \'100.0\'}\
 	}">\
-		<ColumnListItem>\
-			<Text id="itemPosition1" text="{ItemPosition}" />\
-			<Input id="grossAmount1" value="{GrossAmount}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition1" text="{ItemPosition}" />\
+		<Input id="grossAmount1" value="{GrossAmount}" />\
 	</Table>\
 	<Table id="table2" items="{path : \'ToLineItems\', \
 		parameters : {transitionMessagesOnly : true},\
 		filters : {path : \'GrossAmount\', operator : \'LE\', value1 : \'100.0\'}\
 	}">\
-		<ColumnListItem>\
-			<Text id="itemPosition2" text="{ItemPosition}" />\
-			<Input id="grossAmount2" value="{GrossAmount}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition2" text="{ItemPosition}" />\
+		<Input id="grossAmount2" value="{GrossAmount}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
@@ -3156,10 +3168,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
@@ -3303,10 +3313,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
@@ -3488,10 +3496,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
@@ -3616,9 +3622,7 @@ usePreliminaryContext : false}}">\
 				= this.createResponseMessage("('2~1~')/ToBusinessPartner/Address"),
 			sView = '\
 <Table growing="true" growingThreshold="2" id="table" items="{/SalesOrderSet}">\
-	<ColumnListItem>\
-		<Input id="note" value="{Note}" />\
-	</ColumnListItem>\
+	<Input id="note" value="{Note}" />\
 </Table>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
 			that = this;
@@ -3811,10 +3815,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -3955,14 +3957,12 @@ usePreliminaryContext : false}}">\
 			path : \'carrierFlights\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="connectionID" text="{connid}" />\
-			<Text id="flightDate" text="{\
-				path:\'fldate\',\
-				type: \'sap.ui.model.odata.type.DateTime\',\
-				formatOptions: {style : \'short\', UTC : true}\
-			}" />\
-		</ColumnListItem>\
+		<Text id="connectionID" text="{connid}" />\
+		<Text id="flightDate" text="{\
+			path:\'fldate\',\
+			type: \'sap.ui.model.odata.type.DateTime\',\
+			formatOptions: {style : \'short\', UTC : true}\
+		}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -4054,10 +4054,8 @@ usePreliminaryContext : false}}">\
 			parameters : {transitionMessagesOnly : true},\
 			templateShareable : true\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -4789,6 +4787,96 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.checkValueState(assert, "GrossAmount", "None", ""),
 				that.checkValueState(assert, "LifecycleStatusDescription", "Error", "Bar")
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Parameters of a function import are changed after calling ODataModel#callFunction
+	// before submitting the changes (#submitChanges). The request URL contains the latest parameter
+	// change and the messages get the correct target/fullTarget.
+	// JIRA: CPOUI5MODELS-230
+	QUnit.test("Messages: function import with lazy parameter determination", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({
+				defaultBindingMode : "TwoWay",
+				tokenHandling : false,
+				useBatch : true
+			}),
+			sView = '\
+<FlexBox binding="{/BusinessPartnerSet(\'100\')}">\
+	<Table items="{ToSalesOrders}">\
+		<ColumnListItem>\
+			<Text id="soID" text="{SalesOrderID}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>\
+<FlexBox id="form">\
+	<Input id="soIDParameter" value="{SalesOrderID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/BusinessPartnerSet('100')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "BusinessPartnerSet('100')"
+			}, {
+				__metadata : {uri : "BusinessPartnerSet('100')"}
+			})
+			.expectRequest({
+				deepPath : "/BusinessPartnerSet('100')/ToSalesOrders",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "BusinessPartnerSet('100')/ToSalesOrders?$skip=0&$top=100"
+			}, {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('42')"},
+					SalesOrderID : "42"
+				}]
+			})
+			.expectChange("soID", "42");
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return Promise.all([
+			oModel.callFunction("/SalesOrder_Confirm", {
+				groupId : "changes",
+				method : "POST",
+				refreshAfterChange : false,
+				urlParameters : {
+					SalesOrderID : "1"
+				}
+			}).contextCreated(),
+			this.createView(assert, sView, oModel)
+		]).then(function (aResults) {
+			var oWebAddressError = that.createResponseMessage("WebAddress");
+
+			that.expectRequest({
+					data : undefined,
+					deepPath : "/SalesOrder_Confirm",
+					encodeRequestUri : false,
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : "POST",
+					requestUri : "SalesOrder_Confirm?SalesOrderID='42'"
+				}, {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('42')"},
+						SalesOrderID : "42"
+					}]
+				}, {
+					location : "/SalesOrderSrv/SalesOrderSet('42')",
+					"sap-message" : getMessageHeader([oWebAddressError])
+				})
+				.expectMessage(oWebAddressError, "/SalesOrderSet('42')/"/*,
+				TODO activate if CPOUI5MODELS-230 is complete
+					"/BusinessPartnerSet('100')/ToSalesOrders('42')/"*/);
+
+			that.oView.byId("form").setBindingContext(aResults[0]);
+			that.oView.byId("soIDParameter").setValue("42");
+
+			// code under test
+			oModel.submitChanges({groupId : "changes"});
+
+			return that.waitForChanges(assert);
 		});
 	});
 });

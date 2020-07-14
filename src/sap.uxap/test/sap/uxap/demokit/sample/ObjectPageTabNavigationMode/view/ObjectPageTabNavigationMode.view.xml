@@ -75,7 +75,7 @@
 		<sections>
 			<ObjectPageSection id="goals" title="2014 Goals Plan">
 			<subSections>
-				<ObjectPageSubSection id="goalsSS1">
+				<ObjectPageSubSection id="goalsSS1" titleUppercase="true">
 					<blocks>
 						<goals:GoalsBlock id="goalsblock"/>
 					</blocks>
@@ -85,7 +85,7 @@
 
 			<ObjectPageSection id="personal" title="Personal">
 				<subSections>
-					<ObjectPageSubSection id="personalSS1" title="Connect">
+					<ObjectPageSubSection id="personalSS1" title="Connect" titleUppercase="true">
 						<blocks>
 							<personal:BlockPhoneNumber id="phone"/>
 							<personal:BlockSocial id="social"/>
@@ -94,7 +94,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="personalSS2" title="Payment information">
+					<ObjectPageSubSection id="personalSS2" title="Payment information" titleUppercase="true">
 						<blocks>
 							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
 						</blocks>
@@ -107,7 +107,7 @@
 
 			<ObjectPageSection id="employment" title="Employment">
 				<subSections>
-					<ObjectPageSubSection id="employmentSS1" title="Job information">
+					<ObjectPageSubSection id="employmentSS1" title="Job information" titleUppercase="true">
 						<blocks>
 							<employment:BlockJobInfoPart1 id="jobinfopart1"/>
 							<employment:BlockJobInfoPart2 id="jobinfopart2"/>
@@ -115,7 +115,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="employmentSS2" title="Employee Details">
+					<ObjectPageSubSection id="employmentSS2" title="Employee Details" titleUppercase="true">
 						<blocks>
 							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
 						</blocks>
@@ -125,7 +125,7 @@
 						</moreBlocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="employmentSS3" title="Job Relationship">
+					<ObjectPageSubSection id="employmentSS3" title="Job Relationship" titleUppercase="true">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob" showSubSectionMore="true">
 								<employment:mappings>
@@ -149,7 +149,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection id="connections" title="Connections">
 				<subSections>
-					<ObjectPageSubSection id="connectionsSS1">
+					<ObjectPageSubSection id="connectionsSS1" titleUppercase="true">
 						<blocks>
 							<connections:ConnectionsBlock id="connectionsblock">
 								<connections:mappings>

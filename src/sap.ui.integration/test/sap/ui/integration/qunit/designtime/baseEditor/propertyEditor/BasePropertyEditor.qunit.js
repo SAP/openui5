@@ -446,6 +446,126 @@ function (
 		});
 	});
 
+	QUnit.module("Given a BasePropertyEditor default config", {
+		beforeEach: function (assert) {
+			var mConfig = {
+				context: "/",
+				properties: {
+					foo: {
+						path: "foo",
+						type: "string",
+						configB: "property B",
+						configC: "property C",
+						configE: {
+							b: "property E"
+						},
+						configF: ["property F"]
+					}
+				},
+				propertyEditors: {
+					string: "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			};
+			var mJson = {
+				foo: "bar"
+			};
+
+			sandbox.stub(BasePropertyEditor.prototype, "getConfigMetadata").callsFake(function () {
+				return {
+					configA: {
+						defaultValue: "editor default A"
+					},
+					configB: {
+						defaultValue: "editor default B"
+					},
+					configD: {
+						defaultValue: "editor default D"
+					},
+					configE: {
+						defaultValue: {
+							a: "editor default E"
+						}
+					},
+					configF: {
+						defaultValue: ["editor default F"]
+					}
+				};
+			});
+
+			sandbox.stub(StringEditor.prototype, "onBeforeConfigChange").callsFake(function (oConfig) {
+				return Object.assign(
+					{},
+					oConfig,
+					{
+						configC: "editor modification C",
+						configD: "editor modification D"
+					}
+				);
+			});
+
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+			return this.oBaseEditor.ready().then(function () {
+				this.oFooEditor = this.oBaseEditor.getPropertyEditorsByNameSync("foo")[0].getAggregation("propertyEditor");
+			}.bind(this));
+		},
+		afterEach: function () {
+			sandbox.restore();
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("When an editor defines a default config option which is not overridden", function (assert) {
+			assert.strictEqual(
+				this.oFooEditor.getConfig().configA,
+				"editor default A",
+				"Then it is added to the property configuration"
+			);
+		});
+
+		QUnit.test("When an editor default config option is set in the property configuration", function (assert) {
+			assert.strictEqual(
+				this.oFooEditor.getConfig().configB,
+				"property B",
+				"Then the property config overrides the editor default config"
+			);
+		});
+
+		QUnit.test("When an editor modifies the config in the onBeforeConfigurationChange hook", function (assert) {
+			assert.strictEqual(
+				this.oFooEditor.getConfig().configC,
+				"editor modification C",
+				"Then the property config is overridden"
+			);
+		});
+
+		QUnit.test("When an editor modifies the default config in the onBeforeConfigurationChange hook", function (assert) {
+			assert.strictEqual(
+				this.oFooEditor.getConfig().configD,
+				"editor modification D",
+				"Then the editor default config is overridden"
+			);
+		});
+
+		QUnit.test("When the default config contains complex values", function (assert) {
+			assert.deepEqual(
+				this.oFooEditor.getConfig().configE,
+				{
+					b: "property E"
+				},
+				"Then objects in the editor default config are overridden"
+			);
+
+			assert.deepEqual(
+				this.oFooEditor.getConfig().configF,
+				["property F"],
+				"Then arrays in the editor default config are overridden"
+			);
+		});
+	});
+
 	QUnit.done(function () {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});

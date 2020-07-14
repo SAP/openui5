@@ -44,7 +44,7 @@ sap.ui.define([
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
 					"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			};
 			var mJson = {
@@ -265,11 +265,24 @@ sap.ui.define([
 				},
 				{
 					allowBindings: false,
-					"enum": ["string", "number", "boolean"],
+					items: [
+						{
+							"key": "string",
+							"title": this.oMapEditor.getModel("i18n").getResourceBundle().getText("BASE_EDITOR.MAP.TYPES.STRING")
+						},
+						{
+							"key": "number",
+							"title": this.oMapEditor.getModel("i18n").getResourceBundle().getText("BASE_EDITOR.MAP.TYPES.NUMBER")
+						},
+						{
+							"key": "boolean",
+							"title": this.oMapEditor.getModel("i18n").getResourceBundle().getText("BASE_EDITOR.MAP.TYPES.BOOLEAN")
+						}
+					],
 					itemKey: "test",
 					label: "Type",
 					path: "type",
-					type: "enum",
+					type: "select",
 					value: "string",
 					visible: true
 				},
@@ -356,7 +369,7 @@ sap.ui.define([
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			});
 
@@ -388,7 +401,7 @@ sap.ui.define([
 				"propertyEditors": {
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			});
 
@@ -419,7 +432,7 @@ sap.ui.define([
 				"propertyEditors": {
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			});
 
@@ -452,7 +465,7 @@ sap.ui.define([
 				"propertyEditors": {
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			});
 
@@ -486,7 +499,7 @@ sap.ui.define([
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			});
 
@@ -520,7 +533,7 @@ sap.ui.define([
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 				}
 			});
 

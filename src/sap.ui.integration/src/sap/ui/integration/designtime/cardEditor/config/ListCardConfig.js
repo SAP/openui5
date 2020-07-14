@@ -15,7 +15,7 @@ sap.ui.define([
 		// List Card
 		"listMaxItems": {
 			"tags": ["content"],
-			"label": "{i18n>CARD_EDITOR.LIST.MAXITEMS}",
+			"label": "{i18n>CARD_EDITOR.MAXITEMS}",
 			"type": "integer",
 			"path": "content/maxItems",
 			"visible": "{= ${context>type} === 'List' }"
@@ -24,7 +24,7 @@ sap.ui.define([
 		// List Card Item
 		"listItemTitle": {
 			"tags": ["content", "listItem"],
-			"label": "{i18n>CARD_EDITOR.LIST_ITEM.TITLE}",
+			"label": "{i18n>CARD_EDITOR.TITLE}",
 			"type": "string",
 			"path": "content/item/title",
 			"visible": "{= ${context>type} === 'List' }"
@@ -46,13 +46,27 @@ sap.ui.define([
 		"listItemInfoState": {
 			"tags": ["content", "listItem"],
 			"label": "{i18n>CARD_EDITOR.LIST_ITEM.INFO.STATE}",
-			"type": "enum",
-			"enum": [
-				"Success",
-				"Error",
-				"Warning",
-				"None",
-				"Information"
+			"type": "select",
+			"items": [
+				{
+					"key": "Success",
+					"title": "{i18n>CARD_EDITOR.STATE.SUCCESS}"
+				},
+				{   "key": "Error",
+					"title": "{i18n>CARD_EDITOR.STATE.ERROR}"
+				},
+				{
+					"key": "Warning",
+					"title": "{i18n>CARD_EDITOR.STATE.WARNING}"
+				},
+				{
+					"key": "None",
+					"title": "{i18n>CARD_EDITOR.STATE.NONE}"
+				},
+				{
+					"key": "Information",
+					"title": "{i18n>CARD_EDITOR.STATE.INFORMATION}"
+				}
 			],
 			"defaultValue": "None",
 			"path": "content/item/info/state",
@@ -61,13 +75,27 @@ sap.ui.define([
 		"listItemHighlight": {
 			"tags": ["content", "listItem"],
 			"label": "{i18n>CARD_EDITOR.LIST_ITEM.HIGHLIGHT}",
-			"type": "enum",
-			"enum": [
-				"Success",
-				"Error",
-				"Warning",
-				"None",
-				"Information"
+			"type": "select",
+			"items": [
+				{
+					"key": "Success",
+					"title": "{i18n>CARD_EDITOR.STATE.SUCCESS}"
+				},
+				{   "key": "Error",
+					"title": "{i18n>CARD_EDITOR.STATE.ERROR}"
+				},
+				{
+					"key": "Warning",
+					"title": "{i18n>CARD_EDITOR.STATE.WARNING}"
+				},
+				{
+					"key": "None",
+					"title": "{i18n>CARD_EDITOR.STATE.NONE}"
+				},
+				{
+					"key": "Information",
+					"title": "{i18n>CARD_EDITOR.STATE.INFORMATION}"
+				}
 			],
 			"defaultValue": "None",
 			"path": "content/item/highlight",

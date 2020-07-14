@@ -103,22 +103,22 @@ sap.ui.define([
 				"type": {
 					"tags": ["general"],
 					"label": "{i18n>CARD_EDITOR.TYPE}",
-					"type": "enum",
-					"enum": sap.ui.version.includes('SNAPSHOT') && !window.location.host.includes("openui5nightly")
+					"type": "select",
+					"items": sap.ui.version.includes('SNAPSHOT') && !window.location.host.includes("openui5nightly")
 						? [
-							"List",
-							"Analytical",
-							"Table",
-							"Object",
-							"Timeline",
-							"Component",
-							"Calendar",
-							"AdaptiveCard"
+							{ "key": "List" },
+							{ "key": "Analytical" },
+							{ "key": "Table" },
+							{ "key": "Object" },
+							{ "key": "Timeline" },
+							{ "key": "Component" },
+							{ "key": "Calendar" },
+							{ "key": "AdaptiveCard" }
 						]
 						: [
-							"List",
-							"Table",
-							"Object"
+							{ "key": "List" },
+							{ "key": "Table" },
+							{ "key": "Object" }
 						],
 					"path": "type"
 				},
@@ -149,6 +149,7 @@ sap.ui.define([
 		),
 		"propertyEditors": {
 			"enum" : "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor",
+			"select" : "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor",
 			"string" : "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 			"icon" : "sap/ui/integration/designtime/baseEditor/propertyEditor/iconEditor/IconEditor",
 			"array" : "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",

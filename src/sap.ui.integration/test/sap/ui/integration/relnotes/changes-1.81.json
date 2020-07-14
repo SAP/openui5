@@ -1,0 +1,13 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "b4a6298075ecd9f2dc05f0e374516824e0b6b498",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.AdaptiveContent: Adding customElements check in _loadDependencies",
+        "references": []
+      }
+    ]
+  }
+}

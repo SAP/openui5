@@ -589,9 +589,17 @@ sap.ui.define([
 		assert.deepEqual(oResult.outParameters, {additionalText: "Text 2"} , "out-parameters returned");
 
 		oResult = oWrapper.getTextForKey("Test");
-		var oResult2 = oWrapper.getTextForKey("Test");
+		var oResult2 = oWrapper.getTextForKey("Test", undefined, undefined, false);
 		assert.ok(oResult instanceof Promise, "Promise returned as model is asked");
 		assert.equal(oResult, oResult2, "Same promise returned for same request");
+
+		var oException;
+		try {
+			var oResult3 = oWrapper.getTextForKey("Test", undefined, undefined, true);
+		} catch (oError) {
+			oException = oError;
+		}
+		assert.ok(oException instanceof FormatException, "FormatException fired");
 
 		var fnDone = assert.async();
 		oResult.then(function(oResult) {
@@ -791,9 +799,17 @@ sap.ui.define([
 		assert.deepEqual(oResult.outParameters, {additionalText: "Text 2"} , "out-parameters returned");
 
 		oResult = oWrapper.getKeyForText("X");
-		var oResult2 = oWrapper.getKeyForText("X");
+		var oResult2 = oWrapper.getKeyForText("X", undefined, false);
 		assert.ok(oResult instanceof Promise, "Promise returned as model is asked");
 		assert.equal(oResult, oResult2, "Same promise returned for same request");
+
+		var oException;
+		try {
+			var oResult3 = oWrapper.getKeyForText("X", undefined, true);
+		} catch (oError) {
+			oException = oError;
+		}
+		assert.ok(oException instanceof ParseException, "ParseException fired");
 
 		var fnDone = assert.async();
 		oResult.then(function(oResult) {

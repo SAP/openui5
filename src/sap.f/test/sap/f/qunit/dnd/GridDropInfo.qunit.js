@@ -19,6 +19,7 @@ sap.ui.define([
 	function createFakeEvent(sType) {
 		var oEvent = new jQuery.Event(sType);
 
+		oEvent.originalEvent = {};
 		oEvent.pageX = 0;
 		oEvent.pageY = 0;
 

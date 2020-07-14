@@ -30,7 +30,7 @@ sap.ui.define([
 				actions: function (oCard) {
 					oCard.attachAction(function (oEvent) {
 						oEventType = oEvent.getParameter("type");
-						oData = oEvent.getParameter("parameters");
+						oData = oEvent.getParameter("parameters").data;
 					});
 
 					oCard.$().find("ui5-button").eq(0).trigger("click");

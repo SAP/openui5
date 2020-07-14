@@ -21,8 +21,10 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/m/ScrollContainer",
-	"sap/m/library"
-], function(Core, qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, PasteHelper, InvisibleText, Table, Column, Label, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library) {
+	"sap/m/library",
+	"sap/ui/layout/VerticalLayout"
+], function(Core, qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, PasteHelper, InvisibleText, Table, Column,
+	 Label, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout) {
 	"use strict";
 
 	var oTable;
@@ -702,6 +704,19 @@ sap.ui.define([
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Text correctly assinged for screen reader announcement");
 
 		sut.destroy();
+	});
+
+	QUnit.test("Internal SelectAll checkbox should not be disabled by the EnabledPropagator",function(assert) {
+		var sut = createSUT("idTableSelectAll", true, false, "MultiSelect"),
+			oVerticalLayout = new VerticalLayout({
+				enabled: false,
+				content: [sut]
+			});
+
+		oVerticalLayout.placeAt("qunit-fixture");
+		Core.applyChanges();
+		assert.strictEqual(sut._getSelectAllCheckbox().getEnabled(), true, "SelectAll checkbox control was not disabled by the EnabledPropagator");
+		oVerticalLayout.destroy();
 	});
 
 	QUnit.test("ARIA Roles, Attributes, ...", function(assert) {
@@ -1417,10 +1432,12 @@ sap.ui.define([
 	QUnit.test("Active Headers", function(assert) {
 		var oHeader1 = new Text({ text: "Header1" });
 		var oHeader2 = new Button({ text: "Header2" });
+		var oInvisibleHeader = new InvisibleText({ text: "Invisible header"});
 		var oColumn1 = new Column({ header: oHeader1 });
 		var oColumn2 = new Column({ header: oHeader2, hAlign: "Center" });
+		var oColumn3 = new Column({ header: oInvisibleHeader});
 		oColumn1.setFooter(new Label({ text: "Footer Text" }));
-		var oTable = new Table({ columns: [oColumn1, oColumn2] });
+		var oTable = new Table({ columns: [oColumn1, oColumn2, oColumn3] });
 		var fnFireEventSpy = sinon.spy(oTable, "fireEvent");
 
 		oTable.bActiveHeaders = true;
@@ -1429,10 +1446,12 @@ sap.ui.define([
 
 		assert.equal(oColumn1.$().attr("role"), "columnheader", "role=columnheader applied to the columns");
 		assert.equal(oColumn2.$().attr("role"), "columnheader", "role=columnheader applied to the columns");
+		assert.equal(oColumn3.$().attr("role"), "columnheader", "role=columnheader applied to the columns");
 		assert.ok(!oTable.getDomRef("tblFooter").getAttribute("role"), "role=columnheader is not applied to the table footer");
 
 		assert.ok(oHeader1.$().hasClass("sapMColumnHeaderContent"), "Content class is set for the 1st header");
 		assert.ok(oHeader2.$().hasClass("sapMColumnHeaderContent"), "Content class is set for the 2nd header");
+		assert.ok(oInvisibleHeader.$().hasClass("sapMColumnHeaderContent"), "Content class is set for the 3rd header");
 
 		assert.ok(oHeader1.$().parent().hasClass("sapMColumnHeader sapMColumnHeaderActive"), "1st Header wrapper has the correct classes");
 		assert.equal(oHeader1.$().parent().attr("aria-haspopup"), "dialog", "1st Header wrapper has the correct aria settings");
@@ -1443,6 +1462,12 @@ sap.ui.define([
 		assert.equal(oHeader2.$().parent().attr("aria-haspopup"), "dialog", "2nd Header wrapper has the correct aria settings");
 		assert.equal(oHeader2.$().parent().attr("tabindex"), "0", "2nd Header wrapper has the correct tabindex");
 		assert.equal(oHeader2.$().parent().attr("role"), "button", "2nd Header wrapper has the correct role");
+
+		var $oInvisibleTextColumn = oInvisibleHeader.$().parent();
+		assert.ok($oInvisibleTextColumn.hasClass("sapMColumnHeader"), "InvisibleText header wrapper has the corrent class");
+		assert.notOk($oInvisibleTextColumn.hasClass("sapMColumnHeaderActive"), "ActiveHeader class is not added to the wrapper when invisible text is used");
+		assert.notOk($oInvisibleTextColumn.attr("tabindex"), "tabindex attribute is not added to the wrapper when invisible text is used");
+		assert.notOk($oInvisibleTextColumn.attr("role"), "role attribute is not added to the wrapper when invisible text is used");
 
 		oHeader1.$().trigger("tap");
 		assert.ok(fnFireEventSpy.lastCall.calledWith("columnPress", sinon.match.has("column", oColumn1)), "Clicking on non-interactive header fires the columnPress event");

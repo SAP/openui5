@@ -6,13 +6,15 @@ sap.ui.define([
 	"sap/f/CardRenderer",
 	"sap/f/library",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/m/BadgeEnabler"
 ], function (
 	Control,
 	CardRenderer,
 	library,
 	InvisibleText,
-	Core
+	Core,
+	BadgeEnabler
 ) {
 	"use strict";
 
@@ -119,6 +121,8 @@ sap.ui.define([
 		renderer: CardRenderer
 	});
 
+	BadgeEnabler.call(Card.prototype);
+
 	/**
 	 * Initialization hook.
 	 *
@@ -129,6 +133,10 @@ sap.ui.define([
 		this._oRb  = Core.getLibraryResourceBundle("sap.f");
 		this._ariaText = new InvisibleText({id: this.getId() + "-ariaText"});
 		this._ariaText.setText(this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD"));
+
+		this.initBadgeEnablement({
+			accentColor: "AccentColor6"
+		});
 	};
 
 	Card.prototype.exit = function () {

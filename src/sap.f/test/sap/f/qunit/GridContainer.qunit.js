@@ -1,13 +1,16 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/f/GridContainer",
 	"sap/ui/core/Core",
+	"sap/ui/core/dnd/DragInfo",
 	"sap/m/Panel",
 	"sap/m/GenericTile",
 	"sap/f/Card",
 	"sap/f/GridContainerItemLayoutData",
 	"sap/f/GridContainerSettings",
+	"sap/f/dnd/GridDropInfo",
 	"sap/ui/Device",
 	"sap/base/Log",
 	"sap/ui/qunit/QUnitUtils",
@@ -17,13 +20,16 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card"
 ],
 function (
+	jQuery,
 	GridContainer,
 	Core,
+	DragInfo,
 	Panel,
 	GenericTile,
 	Card,
 	GridContainerItemLayoutData,
 	GridContainerSettings,
+	GridDropInfo,
 	Device,
 	Log,
 	qutils,
@@ -872,9 +878,6 @@ function (
 			// Arrange
 			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
 
-			this.oButton = new Button({
-				text: "Test"
-			});
 			this.oGrid = new GridContainer({
 				layout: oSettings,
 				items: [
@@ -907,23 +910,21 @@ function (
 			});
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			this.oButton.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
-			this.oButton.destroy();
 			this.oCard.destroy();
 			this.oTile.destroy();
 		}
 	});
 
-	QUnit.test("Right/Down Arrow navigating trough grid container", function (assert) {
-
+	QUnit.test("Right Arrow navigation through grid container", function (assert) {
 		// Arrange
 		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
 			oItemWrapper2 = this.oGrid.getDomRef().children[2],
 			oItemWrapper3 = this.oGrid.getDomRef().children[3];
+
 		oItemWrapper1.focus();
 		Core.applyChanges();
 
@@ -933,19 +934,40 @@ function (
 		// Assert
 		assert.strictEqual(oItemWrapper2.getAttribute("tabindex"), "0", "Focus should be on the second GridItem");
 
-		// Act
-		qutils.triggerKeydown(oItemWrapper2, KeyCodes.ARROW_DOWN, false, false, false);
+		// Act - continue with arrow right
+		qutils.triggerKeydown(oItemWrapper2, KeyCodes.ARROW_RIGHT, false, false, false);
 
 		// Assert
-		assert.strictEqual(oItemWrapper3.getAttribute("tabindex"), "0",  "Focus should be on the third GridItem");
-
+		assert.strictEqual(oItemWrapper3.getAttribute("tabindex"), "0", "Focus should be on the third GridItem (the item on the next row)");
 	});
 
-	QUnit.test("Left/Up Arrow navigating trough grid container", function (assert) {
-
+	QUnit.test("Down Arrow navigating through grid container", function (assert) {
 		// Arrange
 		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
-			oItemWrapper2 = this.oGrid.getDomRef().children[2],
+			oItemWrapper3 = this.oGrid.getDomRef().children[3],
+			oItemWrapper5 = this.oGrid.getDomRef().children[5];
+
+		oItemWrapper1.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oItemWrapper1, KeyCodes.ARROW_DOWN, false, false, false);
+
+		// Assert
+		assert.strictEqual(oItemWrapper3.getAttribute("tabindex"), "0", "Focus should be on the third GridItem (the item below)");
+
+		// Act
+		oItemWrapper5.focus();
+		Core.applyChanges();
+		qutils.triggerKeydown(oItemWrapper5, KeyCodes.ARROW_DOWN, false, false, false);
+
+		// Assert
+		assert.strictEqual(oItemWrapper5.getAttribute("tabindex"), "0", "Focus should remain on the fifth GridItem if there is no other item below it");
+	});
+
+	QUnit.test("Left Arrow navigating through grid container", function (assert) {
+		// Arrange
+		var oItemWrapper2 = this.oGrid.getDomRef().children[2],
 			oItemWrapper3 = this.oGrid.getDomRef().children[3];
 		oItemWrapper3.focus();
 		Core.applyChanges();
@@ -955,14 +977,21 @@ function (
 
 		// Assert
 		assert.strictEqual(oItemWrapper2.getAttribute("tabindex"), "0", "Focus should be on the second GridItem");
+	});
+
+	QUnit.test("Up Arrow navigating through grid container", function (assert) {
+		// Arrange
+		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
+			oItemWrapper3 = this.oGrid.getDomRef().children[3];
+		oItemWrapper3.focus();
+		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oItemWrapper2, KeyCodes.ARROW_UP, false, false, false);
+		qutils.triggerKeydown(oItemWrapper3, KeyCodes.ARROW_UP, false, false, false);
 
 		// Assert
 		assert.strictEqual(oItemWrapper1.getAttribute("tabindex"), "0",  "Focus should be on the first GridItem");
 	});
-
 
 	QUnit.test("Tabbing tough a tile - focus should leave the grid container", function (assert) {
 
@@ -994,7 +1023,7 @@ function (
 			Core.applyChanges();
 
 			// Arrange
-			this.oGrid._itemNavigation.setFocusedIndex(4);
+			this.oGrid._oItemNavigation.setFocusedIndex(4);
 			var listDomRef = this.oCard.getCardContent()._getList().getDomRef(),
 				firstListItem = listDomRef.children[1].children[0],
 				oForwardTabSpy = sinon.spy(this.oGrid, "forwardTab");
@@ -1006,6 +1035,36 @@ function (
 
 			// Assert
 			assert.strictEqual(oForwardTabSpy.called, true, "Focus should leave the GridContainer");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("'mouseup' on the control focus dom ref should focus the grid list item", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oJQueryFocusSpy = sinon.spy(jQuery.prototype, "focus");
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			// Arrange
+			var oCardFocusDomRef = this.oCard.getFocusDomRef();
+
+			// Act
+			qutils.triggerMouseEvent(oCardFocusDomRef, "mousedown");
+			oCardFocusDomRef.focus();
+			Core.applyChanges();
+
+			assert.notOk(oJQueryFocusSpy.called, "Focus should not be moved");
+
+			qutils.triggerMouseEvent(oCardFocusDomRef, "mouseup");
+			oCardFocusDomRef.focus();
+			Core.applyChanges();
+
+			// Assert
+			assert.ok(oJQueryFocusSpy.called, "Focus should be moved to the grid list item");
+
+			oJQueryFocusSpy.restore();
 			done();
 		}.bind(this));
 	});
@@ -1024,4 +1083,392 @@ function (
 		// Assert
 		assert.strictEqual(oAttachPressSpy.callCount, 1, "Tile is pressed");
 	});
+
+	QUnit.module("Event - 'borderReached'", {
+		beforeEach: function () {
+			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
+
+			this.oGrid = new GridContainer({
+				layout: oSettings,
+				items: [
+					new GenericTile({
+						header: "Tile 1",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 2",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 3",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 4",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					})
+				]
+			});
+
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
+		}
+	});
+
+	QUnit.test("Arrow Left on edge element should trigger 'borderReached' event", function (assert) {
+		// Arrange
+		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement,
+			oSpy = sinon.spy();
+
+		this.oGrid.attachBorderReached(oSpy);
+
+		oFirstItemWrapper.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_LEFT, false, false, false);
+
+		// Assert
+		assert.ok(oSpy.called, "'borderReached' event is fired");
+	});
+
+	QUnit.test("Arrow Up on edge element should trigger 'borderReached' event", function (assert) {
+		// Arrange
+		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement,
+			oSpy = sinon.spy();
+
+		this.oGrid.attachBorderReached(oSpy);
+
+		oFirstItemWrapper.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_UP, false, false, false);
+
+		// Assert
+		assert.ok(oSpy.called, "'borderReached' event is fired");
+	});
+
+	QUnit.test("Arrow Right on edge element should trigger 'borderReached' event", function (assert) {
+		// Arrange
+		var oFourthItemWrapper = this.oGrid.getItems()[3].getDomRef().parentElement,
+			oSpy = sinon.spy();
+
+		this.oGrid.attachBorderReached(oSpy);
+
+		oFourthItemWrapper.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oFourthItemWrapper, KeyCodes.ARROW_RIGHT, false, false, false);
+
+		// Assert
+		assert.ok(oSpy.called, "'borderReached' event is fired");
+	});
+
+	QUnit.test("Arrow Down on edge element should trigger 'borderReached' event", function (assert) {
+		// Arrange
+		var oThirdItemWrapper = this.oGrid.getItems()[3].getDomRef().parentElement,
+			oSpy = sinon.spy();
+
+		this.oGrid.attachBorderReached(oSpy);
+
+		oThirdItemWrapper.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oThirdItemWrapper, KeyCodes.ARROW_DOWN, false, false, false);
+
+		// Assert
+		assert.ok(oSpy.called, "'borderReached' event is fired");
+	});
+
+	QUnit.module("Keyboard Drag&Drop - suggested positions in different directions", {
+		beforeEach: function () {
+			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
+
+			this.oGrid = new GridContainer({
+				layout: oSettings,
+				items: [
+					new GenericTile({
+						header: "Tile 1",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 2",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 3",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 4",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					})
+				],
+				dragDropConfig: [
+					new DragInfo({
+						sourceAggregation: "items"
+					}),
+					new GridDropInfo({
+						targetAggregation: "items",
+						dropPosition: "Between",
+						dropLayout: "Horizontal",
+						drop: function (oInfo) {
+							this.oDraggedControl = oInfo.getParameter("draggedControl");
+							this.oDroppedControl = oInfo.getParameter("droppedControl");
+							this.sInsertPosition = oInfo.getParameter("dropPosition");
+						}.bind(this)
+					})
+				]
+			});
+
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
+			this.oDraggedControl = null;
+			this.oDroppedControl = null;
+			this.sInsertPosition = "";
+		}
+	});
+
+	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Down", function (assert) {
+		// Arrange
+		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement;
+
+		// Act
+		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_DOWN, false, false, /**ctrl */ true );
+
+		// Assert
+		assert.strictEqual(this.oGrid.indexOfItem(this.oDraggedControl), 0, "The dragged item is the first one");
+		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), 2, "The dropped item is the third one");
+		assert.strictEqual(this.sInsertPosition, "After", "The insert position is 'After'");
+	});
+
+	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Right", function (assert) {
+		// Arrange
+		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement;
+
+		// Act
+		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_RIGHT, false, false, /**ctrl */ true );
+
+		assert.strictEqual(this.oGrid.indexOfItem(this.oDraggedControl), 0, "The dragged item is the first one");
+		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), 1, "The dropped item is the second one");
+		assert.strictEqual(this.sInsertPosition, "After", "The insert position is 'After'");
+	});
+
+	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Left", function (assert) {
+		// Arrange
+		var oSecondItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement;
+
+		// Act
+		qutils.triggerKeydown(oSecondItemWrapper, KeyCodes.ARROW_LEFT, false, false, /**ctrl */ true );
+
+		assert.strictEqual(this.oGrid.indexOfItem(this.oDraggedControl), 1, "The dragged item is the second one");
+		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), 0, "The dropped item is the first one");
+		assert.strictEqual(this.sInsertPosition, "Before", "The insert position is 'Before'");
+	});
+
+	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Up", function (assert) {
+		// Arrange
+		var oThirdItemWrapper = this.oGrid.getItems()[2].getDomRef().parentElement;
+
+		oThirdItemWrapper.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oThirdItemWrapper, KeyCodes.ARROW_UP, false, false, /**ctrl */ true );
+
+		assert.strictEqual(this.oGrid.indexOfItem(this.oDraggedControl), 2, "The dragged item is the third one");
+		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), 0, "The dropped item is the first one");
+		assert.strictEqual(this.sInsertPosition, "Before", "The insert position is 'Before'");
+	});
+
+	QUnit.module("Keyboard Drag&Drop in RTL mode - suggested positions in different directions", {
+		beforeEach: function () {
+			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
+
+			this.oRTLStub = sinon.stub(Core.getConfiguration(), "getRTL").returns(true)
+
+			this.oGrid = new GridContainer({
+				layout: oSettings,
+				items: [
+					new GenericTile({
+						header: "Tile 1",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 2",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 3",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 4",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					})
+				],
+				dragDropConfig: [
+					new DragInfo({
+						sourceAggregation: "items"
+					}),
+					new GridDropInfo({
+						targetAggregation: "items",
+						dropPosition: "Between",
+						dropLayout: "Horizontal",
+						drop: function (oInfo) {
+							this.oDraggedControl = oInfo.getParameter("draggedControl");
+							this.oDroppedControl = oInfo.getParameter("droppedControl");
+							this.sInsertPosition = oInfo.getParameter("dropPosition");
+						}.bind(this)
+					})
+				]
+			});
+
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oRTLStub.restore();
+			this.oGrid.destroy();
+			this.oDraggedControl = null;
+			this.oDroppedControl = null;
+			this.sInsertPosition = "";
+		}
+	});
+
+	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Right", function (assert) {
+		// Arrange
+		var oSecondItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement;
+
+		// Act
+		qutils.triggerKeydown(oSecondItemWrapper, KeyCodes.ARROW_RIGHT, false, false, /**ctrl */ true );
+
+		// Assert
+		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), 0, "The dropped item is the in the right when in RTL");
+	});
+
+	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Left", function (assert) {
+		// Arrange
+		var oSecondItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement;
+
+		// Act
+		qutils.triggerKeydown(oSecondItemWrapper, KeyCodes.ARROW_LEFT, false, false, /**ctrl */ true );
+
+		// Assert
+		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), 2, "The dropped item is the one in the left when in RTL");
+	});
+
+	QUnit.module("Keyboard Drag&Drop between GridContainers - suggested positions in different directions", {
+		beforeEach: function () {
+			this.oGrid1 = new GridContainer({
+				layout: new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"}),
+				items: [
+					new GenericTile({
+						header: "Tile 1",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 2",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 3",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 4",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					})
+				],
+				dragDropConfig: [
+					new DragInfo({
+						sourceAggregation: "items"
+					})
+				]
+			});
+
+			this.oGrid2 = new GridContainer({
+				layout: new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"}),
+				items: [
+					new GenericTile({
+						header: "Tile 1",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 2",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 3",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 4",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					})
+				],
+				dragDropConfig: [
+					new DragInfo({
+						sourceAggregation: "items"
+					})
+				]
+			});
+
+			this.oGrid1.placeAt(DOM_RENDER_LOCATION);
+			this.oGrid2.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGrid1.destroy();
+			this.oGrid2.destroy();
+		}
+	});
+
+	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Down from the first container to the second container", function (assert) {
+		// Arrange
+		var oFirstContainerItem = this.oGrid1.getItems()[3].getDomRef().parentElement,
+			oExpectedSuggestion = this.oGrid2.getItems()[1];
+
+		this.oGrid2.addDragDropConfig(new GridDropInfo({
+			targetAggregation: "items",
+			dropPosition: "Between",
+			dropLayout: "Horizontal",
+			drop: function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("droppedControl"), oExpectedSuggestion, "The suggested drop control is correct");
+				assert.strictEqual(oEvent.getParameter("dropPosition"), "Before", "The suggested drop position is correct");
+			}
+		}));
+
+		// Act
+		qutils.triggerKeydown(oFirstContainerItem, KeyCodes.ARROW_DOWN, false, false, /**ctrl */ true );
+	});
+
+	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Up from the second container to the first container", function (assert) {
+		// Arrange
+		var oSecondContainerItem = this.oGrid2.getItems()[0].getDomRef().parentElement,
+			oExpectedSuggestion = this.oGrid1.getItems()[2];
+
+		this.oGrid1.addDragDropConfig(new GridDropInfo({
+			targetAggregation: "items",
+			dropPosition: "Between",
+			dropLayout: "Horizontal",
+			drop: function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("droppedControl"), oExpectedSuggestion, "The suggested drop control is correct");
+				assert.strictEqual(oEvent.getParameter("dropPosition"), "Before", "The suggested drop position is correct");
+			}
+		}));
+
+		// Act
+		qutils.triggerKeydown(oSecondContainerItem, KeyCodes.ARROW_UP, false, false, /**ctrl */ true );
+	});
+
 });

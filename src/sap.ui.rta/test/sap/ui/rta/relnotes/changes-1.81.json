@@ -1,0 +1,18 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "ab42ee8ba7b535258769f6c09fa3ba8232dadffe",
+        "type": "FIX",
+        "text": " sap.ui.rta:Move for unstashed element has correct variantReference",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080199392"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -543,6 +543,141 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("validator add/remove/removeAll", function(assert) {
+		// arrange
+		var function1 = function() {},
+			function2 = function() {},
+			function3 = function() {};
+
+		// act
+		this.multiInput1.removeAllValidators();
+
+		// assert
+		assert.equal(this.multiInput1._aTokenValidators.length, 0, "No token validators available");
+
+		// act
+		this.multiInput1.addValidator(function1);
+
+		// assert
+		assert.equal(this.multiInput1._aTokenValidators.length, 1, "1 token validator available");
+
+		// act
+		this.multiInput1.addValidator(function2);
+		this.multiInput1.addValidator(function3);
+
+		this.multiInput1.removeValidator(function2);
+
+		// assert
+		assert.equal(this.multiInput1._aTokenValidators.length, 2, "2 token validators available");
+
+		// act
+		this.multiInput1.removeAllValidators();
+
+		// assert
+		assert.equal(this.multiInput1._aTokenValidators.length, 0, "No token validators available");
+	});
+
+	QUnit.test("validate tokens using validator callback", function(assert) {
+		var oTokenizer = this.multiInput1.getAggregation("tokenizer"),
+			validationCallbackCount = 0,
+			isValidated = false,
+			fValidationCallback = function(bValidated) {
+				validationCallbackCount++;
+				isValidated = bValidated;
+			},
+			tokenText = "new Token 1";
+
+		this.multiInput1.addValidateToken({
+			text : tokenText,
+			validationCallback : fValidationCallback
+		});
+
+		assert.equal(validationCallbackCount, 1, "validation callback called 1x");
+		assert.equal(isValidated, false, "token not validated");
+
+		this.multiInput1.addValidateToken({
+			text : tokenText,
+			token : new Token({
+				text : tokenText
+			}),
+			validationCallback : fValidationCallback
+		});
+
+		assert.equal(oTokenizer.getTokens().length, 1, "Tokenizer contains 1 token");
+		assert.equal(oTokenizer.getTokens()[0].getText(), tokenText, "added token contains validated text");
+		assert.equal(validationCallbackCount, 2, "validation callback called 2x");
+		assert.equal(isValidated, true, "token got validated");
+
+		oTokenizer.removeAllTokens();
+		this.multiInput1.addValidator(function(args) {
+			return new Token({
+				text : args.text
+			});
+		});
+
+		tokenText = "TestToken1";
+		this.multiInput1.addValidateToken({
+			text : tokenText,
+			validationCallback : fValidationCallback
+		});
+
+		assert.equal(oTokenizer.getTokens().length, 1, "Tokenizer contains 1 token");
+		assert.equal(oTokenizer.getTokens()[0].getText(), tokenText, "added token contains validated text");
+		assert.equal(validationCallbackCount, 3, "validation callback called 3x");
+		assert.equal(isValidated, true, "token got validated");
+
+		tokenText = "TestToken2";
+		this.multiInput1.addValidateToken({
+			text : tokenText,
+			validationCallback : fValidationCallback
+		});
+
+		assert.equal(oTokenizer.getTokens().length, 2, "Tokenizer contains 2 tokens");
+		assert.equal(oTokenizer.getTokens()[1].getText(), tokenText, "added token contains validated text");
+		assert.equal(validationCallbackCount, 4, "validation callback called 4x");
+		assert.equal(isValidated, true, "token got validated");
+
+		this.multiInput1.removeAllValidators();
+		this.multiInput1.addValidator(function(args) {
+			return;
+		});
+
+		tokenText = "TestToken3";
+		this.multiInput1.addValidateToken({
+			text : tokenText,
+			validationCallback : fValidationCallback
+		});
+
+		assert.equal(oTokenizer.getTokens().length, 2, "Tokenizer contains 2 tokens, no token added as validator rejected it");
+		assert.equal(validationCallbackCount, 5, "validation callback called 5x");
+		assert.equal(isValidated, false, "token not validated");
+
+		var fAsyncValidateCallback;
+		this.multiInput1.removeAllValidators();
+		this.multiInput1.addValidator(function(args) {
+			fAsyncValidateCallback = args.asyncCallback;
+			return MultiInput.WaitForAsyncValidation;
+		});
+
+		tokenText = "TestToken4";
+		this.multiInput1.addValidateToken({
+			text : tokenText,
+			validationCallback : fValidationCallback
+		});
+
+		assert.equal(oTokenizer.getTokens().length, 2,
+				"Tokenizer contains 2 tokens, no token added as validator runs asynchronously");
+		assert.equal(validationCallbackCount, 5, "validation callback called 5x (1 call still pending)");
+
+		fAsyncValidateCallback(new Token({
+			text : "dummy"
+		}));
+
+		assert.equal(oTokenizer.getTokens().length, 3, "Tokenizer contains 3 tokens");
+		assert.equal(validationCallbackCount, 6, "validation callback called 6x");
+		assert.equal(isValidated, true, "token got validated");
+	});
+
 	QUnit.test("validation via suggestion items", function(assert) {
 		var i,
 			AasciiCode = 65; // A == 65 in ASCII
@@ -673,7 +808,7 @@ sap.ui.define([
 
 	QUnit.test("removeValidator", function(assert) {
 
-		var oSpy = sinon.spy(Tokenizer.prototype, "removeValidator"),
+		var oSpy = sinon.spy(this.multiInput1, "removeValidator"),
 			oValidator = function(args){
 				return new Token({text: args.text});
 			};
@@ -683,8 +818,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.multiInput1.removeValidator(oValidator);
 		// assert
-		assert.strictEqual(this.multiInput1.getAggregation("tokenizer")._aTokenValidators.length, 0 , "then the MultiInput has no validators");
-		assert.ok(oSpy.called, "Tokenizer's removeValidator is called");
+		assert.strictEqual(this.multiInput1._aTokenValidators.length, 0 , "then the MultiInput has no validators");
+		assert.ok(oSpy.called, "MultiInput's removeValidator is called");
 
 		// cleanup
 		oSpy.restore();
@@ -1484,6 +1619,32 @@ sap.ui.define([
 		assert.equal(eventType, MultiInput.TokenChangeType.RemovedAll, "removedAll event raised");
 	});
 
+	QUnit.test("tokenUpdate event", function(assert) {
+		var oTokenizer = this.multiInput1.getAggregation("tokenizer"),
+			eventType,
+			token1 = new Token({key: "test", text: "test", selected: true}),
+			count = 0;
+
+			this.multiInput1.attachTokenUpdate(function(args) {
+			eventType = args.getParameter("type");
+			count++;
+		});
+
+		this.multiInput1.addValidateToken({
+			token : token1,
+			validationCallback : function() {return true;}
+		});
+		assert.strictEqual(eventType, Tokenizer.TokenUpdateType.Added, "tokenUpdate event raised when token added");
+		assert.strictEqual(count, 1, "tokenUpdate event fired once upon adding unique token");
+
+		oTokenizer._removeSelectedTokens();
+		assert.strictEqual(eventType, Tokenizer.TokenUpdateType.Removed, "tokenUpdate event raised when token removed");
+		assert.strictEqual(count, 2, "tokenUpdate event fired once upon removing selected token");
+
+		// clean-up
+		token1.destroy();
+	});
+
 	QUnit.test("token update event", function(assert) {
 		/* TODO remove after the end of support for Internet Explorer */
 		if (!Device.browser.internet_explorer) {
@@ -1700,6 +1861,30 @@ sap.ui.define([
 		assert.strictEqual(this.multiInput1.getValue(), "", "Value of the input should be empty");
 
 		assert.strictEqual(oSpyChangeEvent.callCount, 1, "Change event should be fired once");
+	});
+
+	QUnit.test("The selectedKey property should be reset on user input", function (assert) {
+		// Arrange
+		var oFakeEvent = {
+				isMarked: function(){},
+				setMarked:function(){}
+			},
+			oMultiInput = new MultiInput().placeAt("content"),
+			oSpy;
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oSpy = sinon.spy(oMultiInput, "setProperty");
+		oMultiInput.oninput(oFakeEvent);
+
+		// Assert
+		assert.strictEqual(oSpy.firstCall.args[0], "selectedKey", "SelectedKey property is set");
+		assert.strictEqual(oSpy.firstCall.args[1], "", "SelectedKey value is an empty string");
+		assert.strictEqual(oSpy.firstCall.args[2], true, "Invalidation is suppressed");
+
+		// Clean up
+		oSpy.restore();
+		oMultiInput.destroy();
 	});
 
 	QUnit.test("The binding data and the value should be an empty string after adding a token when focusing out of the control", function (assert) {

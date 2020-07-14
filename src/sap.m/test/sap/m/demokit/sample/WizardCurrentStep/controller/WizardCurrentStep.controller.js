@@ -8,8 +8,8 @@ sap.ui.define([
 
 	return Controller.extend("sap.m.sample.WizardCurrentStep.controller.WizardCurrentStep", {
 		onInit: function () {
-			this.linearWizard = this.byId("wizardViewLinear").byId("CreateProductWizard");
-			this.branchingWizard = this.byId("wizardViewBranching").byId("BranchingWizard");
+			this.linearWizard = this.byId("wizardViewLinear");
+			this.branchingWizard = this.byId("wizardViewBranching");
 			this.model = new JSONModel({
 				selectedBackgroundDesign: "Standard",
 				selectedShowCase: "linear",
@@ -19,17 +19,24 @@ sap.ui.define([
 		},
 
 		onCurrentStepChangeLinear: function (event) {
-			this.linearWizard.setCurrentStep(this.byId("wizardViewLinear").byId(event.getParameter("selectedItem").getKey()));
+			var oProductWizard = this.linearWizard.byId("CreateProductWizard");
+
+			oProductWizard.setCurrentStep(this.byId("wizardViewLinear").byId(event.getParameter("selectedItem").getKey()));
 		},
 
 		onBackgroundDesignChange: function (event) {
-			this.linearWizard.setBackgroundDesign(event.getParameter("selectedItem").getKey());
-			this.branchingWizard.setBackgroundDesign(event.getParameter("selectedItem").getKey());
+			var oProductWizard = this.linearWizard.byId("CreateProductWizard"),
+				oBranchingWizard = this.branchingWizard.byId("BranchingWizard");
+
+			oProductWizard.setBackgroundDesign(event.getParameter("selectedItem").getKey());
+			oBranchingWizard.setBackgroundDesign(event.getParameter("selectedItem").getKey());
 		},
 
 		onCurrentStepChangeBranching: function (event) {
+			var oBranchingWizard = this.branchingWizard.byId("BranchingWizard");
+
 			try {
-				this.branchingWizard.setCurrentStep(this.byId("wizardViewBranching").byId(event.getParameter("selectedItem").getKey()));
+				oBranchingWizard.setCurrentStep(this.byId("wizardViewBranching").byId(event.getParameter("selectedItem").getKey()));
 			} catch (ex) {
 				MessageToast.show(ex);
 				Log.error(ex);

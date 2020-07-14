@@ -15,6 +15,22 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	function getReferenceAndAppVersion(oAppComponent) {
+		if (oAppComponent) {
+			var oManifest = oAppComponent.getManifest();
+			var sReference = ManifestUtils.getFlexReference({
+				manifest: oManifest,
+				componentData: oAppComponent.getComponentData()
+			});
+			var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
+		}
+
+		return {
+			reference: sReference,
+			appVersion: sAppVersion
+		};
+	}
+
 	/**
 	 * Provides an API for tools like {@link sap.ui.rta} to activate, discard and retrieve versions.
 	 *
@@ -45,14 +61,13 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var sReference = Utils.getComponentClassName(oAppComponent);
+		var oAppInfo = getReferenceAndAppVersion(oAppComponent);
 
-		if (!sReference) {
+		if (!oAppInfo.reference) {
 			return Promise.reject("The application ID could not be determined");
 		}
-
 		return Versions.initialize({
-			reference: Utils.normalizeReference(sReference),
+			reference: Utils.normalizeReference(oAppInfo.reference),
 			layer: mPropertyBag.layer
 		});
 	};
@@ -95,14 +110,13 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var sReference = Utils.getComponentClassName(oAppComponent);
-
-		if (!sReference) {
+		var oAppInfo = getReferenceAndAppVersion(oAppComponent);
+		if (!oAppInfo.reference) {
 			throw Error("The application ID could not be determined");
 		}
-
 		return Versions.getVersions({
-			reference: Utils.normalizeReference(sReference),
+			nonNormalizedReference: oAppInfo.reference,
+			reference: Utils.normalizeReference(oAppInfo.reference),
 			layer: mPropertyBag.layer
 		});
 	};
@@ -126,13 +140,13 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var sReference = Utils.getComponentClassName(oAppComponent);
-		if (!sReference) {
+		var oAppInfo = getReferenceAndAppVersion(oAppComponent);
+		if (!oAppInfo.reference) {
 			return Promise.reject("The application ID could not be determined");
 		}
 		return FlexState.clearAndInitialize({
 			componentId: oAppComponent.getId(),
-			reference: sReference,
+			reference: oAppInfo.reference,
 			draftLayer: mPropertyBag.layer
 		});
 	};
@@ -163,25 +177,17 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		if (oAppComponent) {
-			var oManifest = oAppComponent.getManifest();
-			var sReference = ManifestUtils.getFlexReference({
-				manifest: oManifest,
-				componentData: oAppComponent.getComponentData()
-			});
-			var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
-		}
-
-		if (!sReference) {
+		var oAppInfo = getReferenceAndAppVersion(oAppComponent);
+		if (!oAppInfo.reference) {
 			return Promise.reject("The application ID could not be determined");
 		}
-
 		return Versions.activateDraft({
-			nonNormalizedReference: sReference,
-			reference: Utils.normalizeReference(sReference),
-			appVersion: sAppVersion,
+			nonNormalizedReference: oAppInfo.reference,
+			reference: Utils.normalizeReference(oAppInfo.reference),
+			appVersion: oAppInfo.appVersion,
 			layer: mPropertyBag.layer,
-			title: mPropertyBag.title
+			title: mPropertyBag.title,
+			appComponent: oAppComponent
 		});
 	};
 
@@ -205,31 +211,21 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var sReference;
-		if (oAppComponent) {
-			var oManifest = oAppComponent.getManifest();
-			sReference = ManifestUtils.getFlexReference({
-				manifest: oManifest,
-				componentData: oAppComponent.getComponentData()
-			});
-			var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
-		}
-
-		if (!sReference) {
+		var oAppInfo = getReferenceAndAppVersion(oAppComponent);
+		if (!oAppInfo.reference) {
 			return Promise.reject("The application ID could not be determined");
 		}
-
 		return Versions.discardDraft({
-			nonNormalizedReference: sReference,
-			reference: Utils.normalizeReference(sReference),
+			nonNormalizedReference: oAppInfo.reference,
+			reference: Utils.normalizeReference(oAppInfo.reference),
 			layer: mPropertyBag.layer,
-			appVersion: sAppVersion
+			appVersion: oAppInfo.appVersion
 		}).then(function(oDiscardInfo) {
 			if (oDiscardInfo.backendChangesDiscarded) {
 				//invalidate flexState to trigger getFlexData after discard
 				FlexState.clearAndInitialize({
 					componentId: oAppComponent.getId(),
-					reference: sReference,
+					reference: oAppInfo.reference,
 					draftLayer: mPropertyBag.layer
 				});
 			}

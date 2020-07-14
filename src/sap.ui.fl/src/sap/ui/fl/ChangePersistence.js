@@ -792,12 +792,42 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	function shouldCondensingBeEnabled(oAppComponent, aChanges) {
+		var bCondenserEnabled = false;
+
+		if (!oAppComponent || aChanges.length < 2) {
+			return false;
+		}
+
+		var aLayers = aChanges.map(function(oChange) {
+			return oChange.getLayer();
+		});
+		var aUniqueLayers = aLayers.filter(function(sValue, iIndex, aLayers) {
+			return aLayers.indexOf(sValue) === iIndex;
+		});
+
+		if (aUniqueLayers.length > 1) {
+			return false;
+		}
+
+		if (aUniqueLayers[0] === "CUSTOMER" || aUniqueLayers[0] === "USER") {
+			bCondenserEnabled = true;
+		}
+
+		var oUriParameters = UriParameters.fromURL(window.location.href);
+		if (oUriParameters.has("sap-ui-xx-condense-changes")) {
+			bCondenserEnabled = oUriParameters.get("sap-ui-xx-condense-changes") === "true";
+		}
+
+		return bCondenserEnabled;
+	}
+
 	/**
 	 * Saves the passed or all dirty changes by calling the appropriate back-end method (create for new changes, deleteChange for deleted changes);
 	 * to ensure the correct order, the methods are called sequentially;
 	 * after a change was saved successfully, it is removed from the dirty changes and the cache is updated.
 	 * If all changes are new they are condensed before they are passed to the Storage. For this the App Component is necessary.
-	 * Currently this feature is hidden behind the URL Parameter 'sap-ui-xx-condense-changes=true'
+	 * Condensing is enabled by default for CUSTOMER and USER layers, but can be overruled with the URL Parameter 'sap-ui-xx-condense-changes'
 	 *
 	 * @param {sap.ui.core.UIComponent} [oAppComponent] - AppComponent instance
 	 * @param {boolean} [bSkipUpdateCache] - If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
@@ -813,10 +843,8 @@ sap.ui.define([
 		var aPendingActions = this._getPendingActions(aChanges);
 
 		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
-			var oUriParameters = new UriParameters(window.location.href);
-			var sCondenserEnabled = oUriParameters.get("sap-ui-xx-condense-changes");
 			var oCondensedChangesPromise = Promise.resolve(aChangesClone);
-			if (oAppComponent && sCondenserEnabled === "true" && aChangesClone.length > 1) {
+			if (shouldCondensingBeEnabled(oAppComponent, aChangesClone)) {
 				oCondensedChangesPromise = Condenser.condense(oAppComponent, aChangesClone);
 			}
 			return oCondensedChangesPromise.then(function(aCondensedChanges) {

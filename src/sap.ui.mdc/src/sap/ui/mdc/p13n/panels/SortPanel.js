@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 * @since 1.66
-	 * @alias sap.ui.mdc.p13n..panelsSortPanel
+	 * @alias sap.ui.mdc.p13n.panels.SortPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SortPanel = BasePanel.extend("sap.ui.mdc.p13n.panels.SortPanel", {
@@ -88,7 +88,7 @@ sap.ui.define([
 	});
 
 	SortPanel.prototype._filterBySelected = function(bShowSelected) {
-		this._oMTable.getBinding("items").filter(bShowSelected ? new Filter("isSorted", "EQ", true) : []);
+		this._oListControl.getBinding("items").filter(bShowSelected ? new Filter("isSorted", "EQ", true) : []);
 	};
 
 	SortPanel.prototype._updateModelItems = function() {
@@ -120,7 +120,7 @@ sap.ui.define([
 			new Filter("groupLabel", "Contains", oEvent.getSource().getValue())
 		]);
 
-		this._oMTable.getBinding("items").filter(aFilters, false);
+		this._oListControl.getBinding("items").filter(aFilters, false);
 	};
 
 	SortPanel.prototype._onPressToggleMode = function(oEvent) {
