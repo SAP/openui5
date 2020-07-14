@@ -1698,10 +1698,13 @@ sap.ui.define([
 
 			//SETUP
 			var oRequest = {
-				headers : {},
-				method: "POST",
-				key: "EditProduct",
 				created: true,
+				deepPath : "/EditProduct",
+				functionMetadata : {name : "EditProduct"},
+				functionTarget : "/Products(1)", // calculated in ODataModel#_processSuccess
+				headers : {},
+				key: "EditProduct",
+				method: "POST",
 				requestUri: sServiceURI + "/EditProduct"
 			};
 

@@ -47,6 +47,12 @@ sap.ui.define([
 				message : "Success: My success message",
 				severity : "success"
 			},
+			successFix : {
+				code : "ZUI5TEST/008",
+				message : "Successfully updated the quantity",
+				severity : "success",
+				transition : true
+			},
 			system : {
 				code : "ZUI5TEST/006",
 				message : "System maintenance starts in 2 hours",
@@ -483,7 +489,39 @@ sap.ui.define([
 					source : "Messages/TC8/SalesOrderSet.json"
 				}, {
 					source : "Messages/TC8/SalesOrderSet.json"
-				}]
+				}],
+
+				/* Test Case IX */
+				"SalesOrderSet('109')" : {
+					source : "Messages/TC9/SalesOrderSet.json"
+				},
+				"SalesOrderSet('109')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
+					headers : getMessageHeader([0], oCurrentMessages.reset().add("order",
+							"ToLineItems(SalesOrderID='109',ItemPosition='010')/Quantity")
+						.add("successFix", "")),
+					ifMatch : ithCall.bind(null, 1),
+					source : "Messages/TC9/SalesOrderSet.json"
+				}, {
+					source : "Messages/TC9/SalesOrderSet.json"
+				}],
+				"SalesOrderSet('109')/ToLineItems?$skip=0&$top=4" : [{
+					ifMatch : ithCall.bind(null, 1),
+					message : getLineItems("Messages/TC9/SalesOrderSet-ToLineItems.json",
+						function (aItems) { aItems[0].Quantity = "1"; })
+				}, {
+					source : "Messages/TC9/SalesOrderSet-ToLineItems.json"
+				}],
+				"MERGE SalesOrderLineItemSet(SalesOrderID='109',ItemPosition='010')" :
+					getSaveResponseIncreasingCallCount(),
+				"POST SalesOrderItem_FixQuantity?ItemPosition='010'&SalesOrderID='109'" : {
+					code : 200,
+					headers : Object.assign(getMessageHeader([1]), {
+						location : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet"
+							+ "(SalesOrderID='109',ItemPosition='010')"
+					}),
+					ifMatch : increaseSaveCount.bind(),
+					source : "Messages/TC9/SalesOrderSet-ToLineItems.json"
+				}
 			},
 			aRegExpFixture : [{
 
