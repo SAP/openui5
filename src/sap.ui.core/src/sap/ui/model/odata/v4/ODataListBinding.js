@@ -360,10 +360,15 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters()
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
-	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Add} when a new
-	 *   context is created, {@link sap.ui.model.ChangeReason.Remove} when a context is removed,
-	 *   {@link sap.ui.model.ChangeReason.Context} when the parent context is changed, or
-	 *   {@link sap.ui.model.ChangeReason.Change} for other changes
+	 *   The reason for the 'change' event is
+	 *   <ul>
+	 *   <li> {@link sap.ui.model.ChangeReason.Add Add} when a new context is created,
+	 *   <li> {@link sap.ui.model.ChangeReason.Remove Remove} when a context is removed,
+	 *   <li> {@link sap.ui.model.ChangeReason.Context Context} when the parent context is changed,
+	 *   <li> {@link sap.ui.model.ChangeReason.Change Change} for other changes.
+	 *   </ul>
+	 *   Additionally each '{@link #event:refresh refresh}' event is followed by a 'change' event
+	 *   repeating the change reason when the requested data is available.
 	 * @param {string} oEvent.getParameters().detailedReason
 	 *   During automatic determination of $expand and $select, a "virtual" context is first added
 	 *   with detailed reason "AddVirtualContext" and then removed with detailed reason
@@ -499,7 +504,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters()
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
-	 *   The reason for the 'refresh' event is
+	 *   The reason for the 'refresh' event could be
 	 *   <ul>
 	 *   <li> {@link sap.ui.model.ChangeReason.Context Context} when the binding's
 	 *     parent context is changed,
@@ -513,13 +518,12 @@ sap.ui.define([
 	 *   of the parameters '$filter' and '$search' is changed, otherwise it leads to
 	 *   {@link sap.ui.model.ChangeReason.Sort Sort} if the parameter '$orderby' is
 	 *   changed; in other cases, it leads to {@link sap.ui.model.ChangeReason.Change Change}.<br>
-	 *   {@link #resume} leads to {@link sap.ui.model.ChangeReason.Change Change}; if APIs firing
-	 *   change events have been called on the binding while suspended, the &quot;strongest&quot;
-	 *   change reason in the order
+	 *   If APIs that would normally fire change events have been called while the binding is
+	 *   suspended, {@link #resume} leads to the &quot;strongest&quot; change reason in the order
 	 *   {@link sap.ui.model.ChangeReason.Filter Filter},
 	 *   {@link sap.ui.model.ChangeReason.Sort Sort},
 	 *   {@link sap.ui.model.ChangeReason.Refresh Refresh},
-	 *   {@link sap.ui.model.ChangeReason.Change Change} is used.
+	 *   {@link sap.ui.model.ChangeReason.Change Change}.
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataListBinding#refresh

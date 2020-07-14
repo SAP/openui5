@@ -106,9 +106,17 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters()
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
-	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change} when the
-	 *   binding is initialized, {@link sap.ui.model.ChangeReason.Refresh} when the binding is
-	 *   refreshed, and {@link sap.ui.model.ChangeReason.Context} when the parent context is changed
+	 *   The reason for the 'change' event could be
+	 *   <ul>
+	 *   <li> {@link sap.ui.model.ChangeReason.Change Change} when the binding is initialized, when
+	 *     it gets a new type via {@link #setType}, or when the data state is reset via
+	 *     {@link sap.ui.model.odata.v4.ODataModel#resetChanges},
+	 *     {@link sap.ui.model.odata.v4.ODataContextBinding#resetChanges},
+	 *     {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges} or
+	 *     {@link sap.ui.model.odata.v4.ODataPropertyBinding#resetChanges},
+	 *   <li> {@link sap.ui.model.ChangeReason.Refresh Refresh} when the binding is refreshed,
+	 *   <li> {@link sap.ui.model.ChangeReason.Context Context} when the parent context is changed.
+	 *   </ul>
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#change
