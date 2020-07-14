@@ -49,6 +49,7 @@ sap.ui.define([
 		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
+
 	opaTest("When I click on 'More Links' button, the selection dialog opens", function(Given, When, Then) {
 		When.iPressOnLinkPersonalizationButton();
 		Then.thePersonalizationDialogOpens();
@@ -65,9 +66,11 @@ sap.ui.define([
 		Then.iShouldSeeLinkItemWithSelection("Name Link3", false);
 		Then.iShouldSeeLinkItemAsEnabled("Name Link3", true);
 
+
 		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
 		// Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
+
 	opaTest("When I deselect the 'Name Link2 (Superior)' item, the 'Restore' button should be enabled", function(Given, When, Then) {
 		When.iSelectLink("Name Link2 (Superior)");
 
@@ -86,12 +89,14 @@ sap.ui.define([
 		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
 		// Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
+
 	opaTest("When I press 'Ok' button, the dialog should close", function(Given, When, Then) {
 		When.iPressOkButton();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeOrderedLinksOnNavigationContainer([]);
 	});
+
 	opaTest("When I click on 'Flat Medium' link in the 'Name' column, popover should open", function(Given, When, Then) {
 		Given.closeAllNavigationPopovers();
 		When.iClickOnLink("Flat Medium");
@@ -100,6 +105,7 @@ sap.ui.define([
 		Then.iShouldSeeOrderedLinksOnNavigationContainer([]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
+
 	opaTest("When I click on 'More Links' button, the selection dialog opens", function(Given, When, Then) {
 		When.iPressOnLinkPersonalizationButton();
 		Then.thePersonalizationDialogOpens();
@@ -118,9 +124,11 @@ sap.ui.define([
 
 		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
 		// Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+
 		Given.closeAllNavigationPopovers();
 		Then.iTeardownMyAppFrame();
 	});
+
 	// opaTest("When I press 'Restore' and then 'OK' button, popover should show previous link selection again", function(Given, When, Then) {
 	// 	When.iPressRestoreButton();
 	// 	When.iPressOkButton();

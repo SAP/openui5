@@ -95,8 +95,9 @@ sap.ui.define([
 		// Set device model
 		var oDeviceModel = new JSONModel(Device);
 		oDeviceModel.setDefaultBindingMode("OneWay");
+		oDeviceModel.setSizeLimit(1000);
 		this.setModel(oDeviceModel, "device");
-		this._getCompositeAggregation().getContent()[0].bPreventMassSelection = true;
+		this._getManagedObjectModel().setSizeLimit(1000);
 	};
 	SelectionDialog.prototype.open = function() {
 		this._getManagedObjectModel().setProperty("/@custom/countOfItems", this._getTable().getItems().length);

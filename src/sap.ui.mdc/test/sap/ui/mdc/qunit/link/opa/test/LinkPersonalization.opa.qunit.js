@@ -84,4 +84,42 @@ sap.ui.define([
 		Given.closeAllNavigationPopovers();
 		Then.iTeardownMyAppFrame();
 	});
+
+	opaTest("When I click on 'Flat S' link in the 'Name' column and click 'Select all Links' in the selection dialog I should see all links on the popup", function(Given, When, Then) {
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/link/opa/appUnderTest/start.html');
+
+		When.iClickOnLink("Flat S");
+
+		Then.iShouldSeeNavigationPopoverOpens();
+		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
+
+		When.iPressOnLinkPersonalizationButton();
+		Then.thePersonalizationDialogOpens();
+
+		When.iSelectAllLinks(true);
+		When.iPressOkButton();
+
+		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+			"FactSheet of Name",
+			"Name Link2 (Superior)",
+			"Name Link3"
+		]);
+	});
+
+	opaTest("When I click on 'Flat S' link in the 'Name' column and deselect 'Select all Links' in the selection dialog I should see no links on the popup", function(Given, When, Then) {
+		Given.closeAllNavigationPopovers();
+		When.iClickOnLink("Flat S");
+
+		Then.iShouldSeeNavigationPopoverOpens();
+		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
+
+		When.iPressOnLinkPersonalizationButton();
+		Then.thePersonalizationDialogOpens();
+
+		When.iSelectAllLinks(false);
+		When.iPressOkButton();
+
+		Then.iShouldSeeOrderedLinksOnNavigationContainer([]);
+		Then.iTeardownMyAppFrame();
+	});
 });

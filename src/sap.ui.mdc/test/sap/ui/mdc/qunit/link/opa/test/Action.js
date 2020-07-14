@@ -92,36 +92,17 @@ sap.ui.define([
 			});
 		},
 
-		iSelectColumn: function(sColumnName) {
-			return this.waitFor({
-				controlType: "sap.m.CheckBox",
-				success: function(aCheckBoxes) {
-					aCheckBoxes.some(function(oCheckBox) {
-						var oItem = oCheckBox.getParent();
-						if (oItem.getCells) {
-							var oText = oItem.getCells()[0];
-							if (oText.getText() === sColumnName) {
-								oCheckBox.$().trigger("tap");
-								return true;
-							}
-						}
-					});
-				}
-			});
-		},
-
 		iSelectLink: function(sColumnName) {
 			return this.waitFor({
 				controlType: "sap.m.CheckBox",
-				success: function(aCheckBoxes) {
-					aCheckBoxes.some(function(oCheckBox) {
-						var oItem = oCheckBox.getParent();
-						if (oItem.getCells()[0].getText() === sColumnName) {
-							oCheckBox.$().trigger("tap");
-							return true;
-						}
-					});
-				}
+				matchers: function (oCheckBox) {
+					var oItem = oCheckBox.getParent();
+					if (oItem.getCells && oItem.getCells()[0].getText() === sColumnName) {
+						return true;
+					}
+					return false;
+				},
+				actions: new Press()
 			});
 		},
 
@@ -704,8 +685,16 @@ sap.ui.define([
 					});
 				}
 			});
+		},
+		iSelectAllLinks: function(bSelectAll) {
+			return this.waitFor({
+				controlType: "sap.m.CheckBox",
+				matchers: function(oCheckBox) {
+					return oCheckBox.getSelected() !== bSelectAll && oCheckBox.getId().endsWith("-sa");
+				},
+				actions: new Press()
+			});
 		}
-
 	});
 
 	return Action;

@@ -57,12 +57,14 @@ sap.ui.define([
 		Then.iShouldSeeColumnWithName("Category");
 		Then.theCellWithTextIsOfType("Projector", "sap.m.Link");
 	});
+
 	opaTest("When I click on 'Projector' link in the 'Category' column, popover should open with main link", function(Given, When, Then) {
 		When.iClickOnLink("Projector");
 
 		Then.iShouldSeeNavigationPopoverOpens();
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
+
 	opaTest("When I click on 'More Links' button, the selection dialog opens", function(Given, When, Then) {
 		When.iPressOnLinkPersonalizationButton();
 
@@ -119,6 +121,7 @@ sap.ui.define([
 		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
 		// Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
+
 	opaTest("When I deselect the 'Category Link2 (Superior)' and select the 'Category Link3' item, the 'Restore' button should be enabled", function(Given, When, Then) {
 		When.iSelectLink("Category Link2 (Superior)").and.iSelectLink("Category Link3");
 
@@ -173,6 +176,7 @@ sap.ui.define([
 		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
 		// Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
+
 	opaTest("When I press 'Ok' button, the dialog should close", function(Given, When, Then) {
 		When.iPressOkButton();
 
@@ -181,6 +185,7 @@ sap.ui.define([
 			 "Category Link3"
 		]);
 	});
+
 	opaTest("When I click on 'More Links' button again, the selection dialog opens", function(Given, When, Then) {
 		When.iPressOnLinkPersonalizationButton();
 
@@ -237,6 +242,7 @@ sap.ui.define([
 		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
 		// Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
+
 	opaTest("When I select the 'Category Link2 (Superior)' and deselect the 'Category Link3' item, the 'Restore' button should be disabled", function(Given, When, Then) {
 		When.iSelectLink("Category Link2 (Superior)").and.iSelectLink("Category Link3");
 
@@ -291,6 +297,7 @@ sap.ui.define([
 		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
 		// Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
+
 	opaTest("When I press 'Ok' button, the dialog should close", function(Given, When, Then) {
 		When.iPressOkButton();
 
@@ -300,6 +307,7 @@ sap.ui.define([
 
 		Then.iTeardownMyAppFrame();
 	});
+
 	// opaTest("When I start RTA, the Runtime Adaptation mode should open", function(Given, When, Then) {
 	// 	When.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("applicationUnderTest---IDView--myApp");
 	// 	Then.iShouldSeeTheRtaToolbar().and.iShouldSeeTheRtaOverlayForTheViewId("applicationUnderTest---IDView--myApp");
