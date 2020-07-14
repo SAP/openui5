@@ -50,61 +50,80 @@
 			<l:SplitPane requiredParentWidth="1">
 				<Page id="editPage">
 					<customHeader>
-						<Bar>
-							<contentLeft>
-								<Button
-									class="sapUiSmallMarginBegin"
-									text="Run"
-									type="Emphasized"
-									icon="sap-icon://media-play"
-									press="onRunPressed"
-									enabled="{settings>/editable}"
-								/>
-								<CheckBox
-									text="Auto Run"
-									selected="{settings>/autoRun}"
-									enabled="{settings>/editable}"
-								/>
-								<CheckBox
-									class="sapUiSmallMarginBegin"
-									text="Schema Validation"
-									selected="{settings>/schemaValidation}"
-									enabled="{settings>/editable}"
-									select=".onSchemaValidationCheck"
-								/>
-							</contentLeft>
-							<contentRight>
-								<MenuButton
-									id="downloadSampleButton"
-									icon="sap-icon://download"
-									tooltip="Download"
-									text="Download"
-									type="Transparent"
-								>
-									<menu>
-										<Menu>
-											<MenuItem text="Manifest File" icon="sap-icon://document-text" press="onDownloadManifestFile" />
-											<MenuItem text="{= ${settings>/isApplication} ? 'All files as .zip' : 'Bundle as card.zip'}" icon="sap-icon://attachment-zip-file" press="onDownloadZip" />
-										</Menu>
-									</menu>
-								</MenuButton>
-								<Button
-									press="onChangeEditorClick"
-									tooltip="Design-time editor"
-									icon="sap-icon://developer-settings"
-									enabled="{settings>/editable}"
-									type="Transparent"
-									visible="{= ${settings>/editable} &amp;&amp; ${settings>/designtime} }"
-								/>
-								<Button
-									class="orientationBtn"
-									press="onChangeSplitterOrientation"
-									tooltip="Change position"
-									icon="sap-icon://header"
-									type="Transparent"
-								/>
-							</contentRight>
-						</Bar>
+						<OverflowToolbar>
+							<Button
+								class="sapUiSmallMarginBegin"
+								text="Run"
+								type="Emphasized"
+								icon="sap-icon://media-play"
+								press="onRunPressed"
+								enabled="{settings>/editable}"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="High" />
+								</layoutData>
+							</Button>
+							<CheckBox
+								text="Auto Run"
+								selected="{settings>/autoRun}"
+								enabled="{settings>/editable}"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</CheckBox>
+							<CheckBox
+								text="Schema Validation"
+								selected="{settings>/schemaValidation}"
+								enabled="{settings>/editable}"
+								select=".onSchemaValidationCheck"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</CheckBox>
+							<ToolbarSpacer />
+							<MenuButton
+								id="downloadSampleButton"
+								icon="sap-icon://download"
+								tooltip="Download"
+								text="Download"
+								type="Transparent"
+							>
+								<menu>
+									<Menu>
+										<MenuItem text="Manifest File" icon="sap-icon://document-text" press="onDownloadManifestFile" />
+										<MenuItem text="{= ${settings>/isApplication} ? 'All files as .zip' : 'Bundle as card.zip'}" icon="sap-icon://attachment-zip-file" press="onDownloadZip" />
+									</Menu>
+								</menu>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="High" />
+								</layoutData>
+							</MenuButton>
+							<Button
+								press="onChangeEditorClick"
+								tooltip="Design-time editor"
+								icon="sap-icon://developer-settings"
+								enabled="{settings>/editable}"
+								type="Transparent"
+								visible="{= ${settings>/editable} &amp;&amp; ${settings>/designtime} }"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</Button>
+							<Button
+								class="orientationBtn"
+								press="onChangeSplitterOrientation"
+								tooltip="Change position"
+								icon="sap-icon://header"
+								type="Transparent"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</Button>
+						</OverflowToolbar>
 					</customHeader>
 					<cardExplorer:FileEditor
 						id="fileEditor"
