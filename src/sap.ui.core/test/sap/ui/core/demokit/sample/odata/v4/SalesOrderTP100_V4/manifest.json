@@ -6,7 +6,7 @@
 		"applicationVersion" : {
 			"version" : "${version}"
 		},
-		"description" : "{{sap.app.description}}",
+		"description" : "Example for consuming an OData V4 Service",
 		"dataSources" : {
 			"default" : {
 				"uri" : "/sap/opu/odata4/sap/sepm_odata_ref/sadl/sap/sepm_c_slsorder_tp_100/0001/",
@@ -17,8 +17,7 @@
 			}
 		},
 		"id" : "sap.ui.core.sample.odata.v4.SalesOrderTP100_V4",
-		"i18n" : "i18n/i18n.properties",
-		"title" : "{{sap.app.title}}",
+		"title" : "Sales Orders TP100",
 		"type" : "application"
 	},
 	"sap.ui" : {

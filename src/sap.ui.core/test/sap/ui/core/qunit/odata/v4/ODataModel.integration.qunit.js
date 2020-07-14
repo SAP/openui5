@@ -41,16 +41,15 @@ sap.ui.define([
 		rTransientPredicate = /\(\$uid=[-\w]+\)/g;
 
 	/**
-	 * Creates a V4 OData model for <code>serviceroot.svc</code>
-	 * (com.odata.v4.mathias.BusinessPartnerTest).
+	 * Creates a V4 OData model for data aggregation tests.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
 	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
 	 *   synchronizationMode which are set by default
 	 * @returns {ODataModel} The model
 	 */
-	function createBusinessPartnerTestModel(mModelParameters) {
-		return createModel("/serviceroot.svc/", mModelParameters);
+	function createAggregationModel(mModelParameters) {
+		return createModel("/aggregation/", mModelParameters);
 	}
 
 	/**
@@ -98,18 +97,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates a V4 OData model for <code>TEA_BUSI</code>.
-	 *
-	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
-	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
-	 *   synchronizationMode which are set by default
-	 * @returns {sap.ui.model.odata.v4.ODataModel} The model
-	 */
-	function createTeaBusiModel(mModelParameters) {
-		return createModel(sTeaBusi, mModelParameters);
-	}
-
-	/**
 	 * Creates a V4 OData model for <code>zui5_epm_sample</code>.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
@@ -134,15 +121,15 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates a V4 OData model for data aggregation tests.
+	 * Creates a V4 OData model for <code>TEA_BUSI</code>.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
 	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
 	 *   synchronizationMode which are set by default
-	 * @returns {ODataModel} The model
+	 * @returns {sap.ui.model.odata.v4.ODataModel} The model
 	 */
-	function createAggregationModel(mModelParameters) {
-		return createModel("/aggregation/", mModelParameters);
+	function createTeaBusiModel(mModelParameters) {
+		return createModel(sTeaBusi, mModelParameters);
 	}
 
 	/**
@@ -328,6 +315,8 @@ sap.ui.define([
 
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit", {
+				"/aggregation/$metadata"
+					: {source : "odata/v4/data/metadata_aggregation.xml"},
 				"/invalid/model/" : {code : 500},
 				"/invalid/model/$metadata" : {code : 500},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
@@ -352,8 +341,6 @@ sap.ui.define([
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/$metadata"
 					: {source : "odata/v4/data/VH_ProductTypeCode.xml"},
-				"/serviceroot.svc/$metadata"
-					: {source : "odata/v4/data/BusinessPartnerTest.metadata.xml"},
 				"/special/cases/$metadata"
 					: {source : "odata/v4/data/metadata_special_cases.xml"},
 				"/special/cases/$metadata?sap-client=123"
@@ -363,9 +350,7 @@ sap.ui.define([
 				"/special/CurrencyCode/$metadata"
 					: {source : "odata/v4/data/metadata_CurrencyCode.xml"},
 				"/special/Price/$metadata"
-					: {source : "odata/v4/data/metadata_Price.xml"},
-				"/aggregation/$metadata"
-					: {source : "odata/v4/data/metadata_aggregation.xml"}
+					: {source : "odata/v4/data/metadata_Price.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -2784,6 +2769,104 @@ sap.ui.define([
 				]),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Context binding as root binding has dependent bindings w/o own cache which result
+	// in a nested $expand. Side effects affect this nested $expand. Expect no error message about
+	// changed key predicate for TEAM_2_MANAGER.
+	// JIRA: CPOUI5ODATAV4-362
+	QUnit.test("ODCB: requestSideEffects for nested expand", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="employee_id" text="{ID}" />\
+	<Text id="team_id" text="{EMPLOYEE_2_TEAM/Team_Id}" />\
+	<Text id="manager_id" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/ID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
+				+ "$expand=TEAM_2_MANAGER($select=ID))", {
+				ID : "1",
+				EMPLOYEE_2_TEAM : {
+					Team_Id : "2",
+					TEAM_2_MANAGER : {ID : "3"}
+				}
+			})
+			.expectChange("employee_id", "1")
+			.expectChange("team_id", "2")
+			.expectChange("manager_id", "3");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("EMPLOYEES('1')?$select=EMPLOYEE_2_TEAM&$expand=EMPLOYEE_2_TEAM"
+					+ "($select=Team_Id;$expand=TEAM_2_MANAGER($select=ID))", {
+					EMPLOYEE_2_TEAM : {
+						Team_Id : "2*",
+						TEAM_2_MANAGER : {ID : "3*"}
+					}
+				})
+				.expectChange("team_id", "2*")
+				.expectChange("manager_id", "3*");
+
+			// code under test
+			that.oView.byId("form").getBindingContext().requestSideEffects([
+				{$NavigationPropertyPath : "EMPLOYEE_2_EQUIPMENT"}, // must be ignored
+				{$NavigationPropertyPath : "EMPLOYEE_2_TEAM"}
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: List binding as root binding has dependent bindings w/o own cache which result
+	// in a nested $expand. Side effects affect this nested $expand. Expect no error message about
+	// changed key predicate for TEAM_2_MANAGER.
+	// JIRA: CPOUI5ODATAV4-362
+	QUnit.test("ODLB: requestSideEffects for nested expand", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/EMPLOYEES}">\
+	<Text id="employee_id" text="{ID}" />\
+	<Text id="team_id" text="{EMPLOYEE_2_TEAM/Team_Id}" />\
+	<Text id="manager_id" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/ID}" />\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=ID&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
+				+ "$expand=TEAM_2_MANAGER($select=ID))&$skip=0&$top=100", {
+				value : [{
+					ID : "1",
+					EMPLOYEE_2_TEAM : {
+						Team_Id : "2",
+						TEAM_2_MANAGER : {ID : "3"}
+					}
+				}]
+			})
+			.expectChange("employee_id", ["1"])
+			.expectChange("team_id", ["2"])
+			.expectChange("manager_id", ["3"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("EMPLOYEES?$select=ID&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
+					+ "$expand=TEAM_2_MANAGER($select=ID))&$filter=ID eq '1'", {
+					value : [{
+						ID : "1",
+						EMPLOYEE_2_TEAM : {
+							Team_Id : "2*",
+							TEAM_2_MANAGER : {ID : "3*"}
+						}
+					}]
+				})
+				.expectChange("team_id", ["2*"])
+				.expectChange("manager_id", ["3*"]);
+
+			// code under test
+			that.oView.byId("table").getItems()[0].getBindingContext()
+				.requestSideEffects([
+					{$NavigationPropertyPath : "EMPLOYEE_2_EQUIPMENT"}, // must be ignored
+					{$NavigationPropertyPath : "EMPLOYEE_2_TEAM"}
+				]);
 		});
 	});
 
@@ -13635,7 +13718,7 @@ sap.ui.define([
 				.expectChange("role", ["01", "02"]);
 
 			oBinding.attachEventOnce("change", function (oEvent) {
-				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Filter);
 			});
 
 			// code under test
@@ -14402,18 +14485,18 @@ sap.ui.define([
 
 			return that.waitForChanges(assert).then(function () {
 				that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))"
-						+ "/orderby(LifecycleStatus desc)&$count=true&$skip=7&$top=3", {
+						+ "/orderby(LifecycleStatus desc)&$count=true&$skip=0&$top=3", {
 						"@odata.count" : "26",
 						value : [
-							{LifecycleStatus : "T"},
-							{LifecycleStatus : "S"},
-							{LifecycleStatus : "R"}
+							{LifecycleStatus : "Z"},
+							{LifecycleStatus : "Y"},
+							{LifecycleStatus : "X"}
 						]
 					})
-					.expectChange("isExpanded", [,,,,,,, false, false, false])
-					.expectChange("isTotal", [,,,,,,, false, false, false])
-					.expectChange("level", [,,,,,,, 1, 1, 1])
-					.expectChange("lifecycleStatus", [,,,,,,, "T", "S", "R"]);
+					.expectChange("isExpanded", [false, false, false])
+					.expectChange("isTotal", [false, false, false])
+					.expectChange("level", [1, 1, 1])
+					.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 				oTable.removeColumn(4).destroy(); // GrossAmount
 				oListBinding.setAggregation({groupLevels : ["LifecycleStatus"]});
@@ -15246,7 +15329,7 @@ sap.ui.define([
 					"SalesNumber@odata.type" : "#Decimal"
 				},
 				oListBinding,
-				oModel = createBusinessPartnerTestModel({autoExpandSelect : bAutoExpandSelect}),
+				oModel = createAggregationModel({autoExpandSelect : bAutoExpandSelect}),
 				oTable,
 				sView = '\
 <Text id="count" text="{$count}"/>\
@@ -15310,7 +15393,7 @@ sap.ui.define([
 					that.oLogMock.expects("error").withExactArgs(
 						"Failed to drill-down into $count, invalid segment: $count",
 						// Note: toString() shows realistic (first) request w/o skip/top
-						"/serviceroot.svc/" + sBasicPath + "/concat(aggregate(SalesNumber"
+						"/aggregation/" + sBasicPath + "/concat(aggregate(SalesNumber"
 							+ (bCount ? ",$count%20as%20UI5__count" : "") + "),identity)",
 						"sap.ui.model.odata.v4.lib._Cache");
 				}
@@ -15352,7 +15435,7 @@ sap.ui.define([
 					= "BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
 					+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)",
 				oListBinding,
-				oModel = createBusinessPartnerTestModel({autoExpandSelect : true}),
+				oModel = createAggregationModel({autoExpandSelect : true}),
 				oTable,
 				aValues = [
 					{Country : "a", Region : "Z", SalesNumber : 1},
@@ -15415,7 +15498,7 @@ sap.ui.define([
 					that.oLogMock.expects("error").withExactArgs(
 						"Failed to drill-down into $count, invalid segment: $count",
 						// Note: toString() shows realistic (first) request w/o skip/top
-						"/serviceroot.svc/" + sBasicPath + "/concat(aggregate(SalesNumber"
+						"/aggregation/" + sBasicPath + "/concat(aggregate(SalesNumber"
 							+ (bCount ? ",$count%20as%20UI5__count" : "") + "),identity)",
 						"sap.ui.model.odata.v4.lib._Cache");
 				}
@@ -15449,7 +15532,7 @@ sap.ui.define([
 	// but a grand total row using with/as (CPOUI5UISERVICESV3-1418)
 	QUnit.test("Data Aggregation: $$aggregation grandTotal w/o groupLevels using with/as",
 			function (assert) {
-		var oModel = createBusinessPartnerTestModel({autoExpandSelect : true}),
+		var oModel = createAggregationModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table rows="{path : \'/BusinessPartners\',\
 		parameters : {\
@@ -15525,7 +15608,7 @@ sap.ui.define([
 	QUnit.test("API calls before binding is resolved", function (assert) {
 		var that = this;
 
-		return this.createView(assert, "", createBusinessPartnerTestModel()).then(function () {
+		return this.createView(assert, "", createAggregationModel()).then(function () {
 			var oListBinding = that.oModel.bindList("BusinessPartners");
 
 			// code under test
@@ -15571,7 +15654,7 @@ sap.ui.define([
 	// - those filters that must be applied after aggregating
 	// JIRA: CPOUI5ODATAV4-119
 	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _AggregationCache", function (assert) {
-		var oModel = createBusinessPartnerTestModel({autoExpandSelect : true}),
+		var oModel = createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -15610,7 +15693,7 @@ sap.ui.define([
 	// - those filters that must be applied after aggregating
 	// JIRA: CPOUI5ODATAV4-119
 	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _Cache.CollectionCache", function (assert) {
-		var oModel = createBusinessPartnerTestModel({autoExpandSelect : true}),
+		var oModel = createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -15866,6 +15949,98 @@ sap.ui.define([
 			oListBinding.setAggregation();
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Call requestSideEffects on a list binding with data aggregation. See that the
+	// request is not influenced by $select/$sexpand, but by $apply.
+	// JIRA: CPOUI5ODATAV4-337
+	QUnit.test("requestSideEffects and $$aggregation", function (assert) {
+		var oBinding,
+			oHeaderContext,
+			oModel = createAggregationModel(),
+			sView = '\
+<Table id="table" items="{path : \'/BusinessPartners\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {SalesAmount : {}},\
+				groupLevels : [\'Region\']\
+			}\
+		}}">\
+	<Text id="region" text="{Region}" />\
+	<Text id="salesAmount" text="{= %{SalesAmount}}" />\
+</Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true&$skip=0&$top=100",
+				{value : [{Region : "A"}]})
+			.expectChange("region", ["A"])
+			.expectChange("salesAmount", [null]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// expect no request
+
+			oBinding = that.oView.byId("table").getBinding("items");
+			oHeaderContext = oBinding.getHeaderContext();
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "AccountResponsible"}]),
+				that.waitForChanges(assert, "AccountResponsible (unused)")
+			]);
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
+					+ "&$skip=0&$top=100",
+					{value : [{Region : "A"}]});
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$NavigationPropertyPath : ""}]),
+				that.waitForChanges(assert, "entity")
+			]);
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
+					+ "&$skip=0&$top=100",
+					{value : [{Region : "A"}]});
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "SalesAmount"}]),
+				that.waitForChanges(assert, "SalesAmount (aggregate)")
+			]);
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
+					+ "&$skip=0&$top=100",
+					{value : [{Region : "A"}]});
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "Region"}]),
+				that.waitForChanges(assert, "Region (group level)")
+			]);
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
+					+ "/groupby((Region))&$count=true&$skip=0&$top=100",
+					{value : [{Region : "A"}]});
+
+			oBinding.filter(new Filter("Country", FilterOperator.EQ, "US"));
+
+			return that.waitForChanges(assert, "filter");
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
+					+ "/groupby((Region))&$count=true&$skip=0&$top=100",
+					{value : [{Region : "A"}]});
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "Country"}]),
+				that.waitForChanges(assert, "Country (filter)")
+			]);
+		}).then(function () {
+			return that.oView.byId("table").getItems()[0].getBindingContext()
+				.requestSideEffects([{$PropertyPath : "Country"}])
+				.then(function () {
+					assert.ok(false);
+				}, function (oError) {
+					assert.strictEqual(oError.message, "Must not request side effects for a context"
+						+ " of a binding with $$aggregation");
+				});
 		});
 	});
 
@@ -26334,10 +26509,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Multiple absolute list bindings share the same requests in order to avoid redundant
-	// value help requests.
+	// Scenario: A list binding with $$sharedRequests below another list binding.
 	// JIRA: CPOUI5ODATAV4-269
-	QUnit.test("CPOUI5ODATAV4-269: Avoid redundant value help requests", function (assert) {
+	QUnit.test("CPOUI5ODATAV4-269: Nested lists and $$sharedRequest", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
@@ -26349,45 +26523,79 @@ sap.ui.define([
 			<Text id="id" text="{ID}" />\
 		</CustomListItem>\
 	</List>\
-</Table>',
-			that = this;
-
-		// returns the List in the given row of the Table
-		function getList(iRow) {
-			return that.oView.byId("table").getItems()[iRow].getCells()[1];
-		}
+</Table>';
 
 		this.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=100", {
 				value : [
-					{ID : "2", Name : "Frederic Fall"},
-					{ID : "3", Name : "Jonathan Smith"}
+					{ID : "2", Name : "Frederic Fall"}
 				]
 			})
-			.expectChange("name", ["Frederic Fall", "Jonathan Smith"])
+			.expectChange("name", ["Frederic Fall"])
 			.expectRequest("MANAGERS?$select=ID&$skip=0&$top=3", {
 				value : [{ID: "M1"}, {ID: "M2"}, {ID: "M3"}]
 			})
-			.expectChange("id", ["M1", "M2", "M3"])
 			.expectChange("id", ["M1", "M2", "M3"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Multiple absolute list bindings share the same requests in order to avoid redundant
+	// value help requests.
+	// JIRA: CPOUI5ODATAV4-269
+	QUnit.test("CPOUI5ODATAV4-269: Avoid redundant value help requests", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="name1" text="{Name}" />\
+	<List id="list1" growing="true" growingThreshold="3" \
+			items="{parameters : {$$sharedRequest : true}, path: \'/MANAGERS\',\
+			templateShareable: false}">\
+		<CustomListItem>\
+			<Text id="id1" text="{ID}" />\
+		</CustomListItem>\
+	</List>\
+</FlexBox>\
+<FlexBox binding="{/EMPLOYEES(\'2\')}">\
+	<Text id="name2" text="{Name}" />\
+	<List id="list2" growing="true" growingThreshold="3" \
+			items="{parameters : {$$sharedRequest : true}, path: \'/MANAGERS\',\
+			templateShareable: false}">\
+		<CustomListItem>\
+			<Text id="id2" text="{ID}" />\
+		</CustomListItem>\
+	</List>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID,Name", {ID : "1", Name : "Frederic Fall"})
+			.expectChange("name1", "Frederic Fall")
+			.expectRequest("EMPLOYEES('2')?$select=ID,Name", {ID : "2", Name : "Jonathan Smith"})
+			.expectChange("name2", "Jonathan Smith")
+			.expectRequest("MANAGERS?$select=ID&$skip=0&$top=3", {
+				value : [{ID: "M1"}, {ID: "M2"}, {ID: "M3"}]
+			})
+			.expectChange("id1", ["M1", "M2", "M3"])
+			.expectChange("id2", ["M1", "M2", "M3"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("MANAGERS?$select=ID&$orderby=ID desc&$skip=0&$top=3", {
 					value : [{ID: "M9"}, {ID: "M8"}, {ID: "M7"}]
 				})
-				.expectChange("id", ["M9", "M8" , "M7"]);
+				.expectChange("id1", ["M9", "M8" , "M7"]);
 
-			// code under test - sort list binding in 1st row
-			getList(0).getBinding("items").sort(new Sorter("ID", true));
+			// code under test - sort 1st list
+			that.oView.byId("list1").getBinding("items").sort(new Sorter("ID", true));
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("MANAGERS?$select=ID&$skip=3&$top=3", {
 					value : [{ID: "M4"}, {ID: "M5"}, {ID: "M6"}]
 				})
-				.expectChange("id", [,,, "M4", "M5" , "M6"]);
+				.expectChange("id2", [,,, "M4", "M5" , "M6"]);
 
-			// code under test - press "More" button in list binding of 2nd row
-			sap.ui.getCore().byId(getList(1).getId() + "-trigger").firePress();
+			// code under test - press "More" button in 2nd list
+			that.oView.byId("list2-trigger").firePress();
 
 			return that.waitForChanges(assert);
 		});
@@ -26624,7 +26832,11 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oHeaderContext.requestSideEffects([{$PropertyPath : "BestFriend/*"}])
+				oHeaderContext.requestSideEffects([
+						// this must not allow BestFriend/ArtistID to change
+						{$NavigationPropertyPath : "Best"},
+						{$PropertyPath : "BestFriend/*"}
+					])
 					.then(function () {
 						assert.ok(false, "unexpected success");
 					}, function (oError) {

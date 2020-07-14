@@ -435,8 +435,11 @@ sap.ui.define([
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
 
+		// Note: sChangeReason can only be "undefined" or "change", because "filter" or "sort"
+		// change reason are not suitable for a context binding.
 		if (this.isRootBindingSuspended()) {
-			this.sResumeChangeReason = sChangeReason || ChangeReason.Change;
+			this.sResumeChangeReason = ChangeReason.Change;
+
 			return;
 		}
 
@@ -449,7 +452,6 @@ sap.ui.define([
 				this.checkUpdate();
 			}
 		} else if (this.oOperation.bAction === false) {
-			// Note: sChangeReason ignored here, "filter"/"sort" not suitable for ContextBinding
 			this.execute();
 		}
 	};
@@ -463,9 +465,16 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters()
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
-	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change} when the
-	 *   binding is initialized, {@link sap.ui.model.ChangeReason.Refresh} when the binding is
-	 *   refreshed, and {@link sap.ui.model.ChangeReason.Context} when the parent context is changed
+	 *   The reason for the 'change' event could be
+	 *   <ul>
+	 *   <li> {@link sap.ui.model.ChangeReason.Change Change} when the binding is initialized, when
+	 *     an operation has been processed (see {@link #execute}), or in {@link #resume} when the
+	 *     binding has been modified while suspended,
+	 *   <li> {@link sap.ui.model.ChangeReason.Refresh Refresh} when the binding is refreshed,
+	 *   <li> {@link sap.ui.model.ChangeReason.Context Context} when the parent context is changed,
+	 *   <li> {@link sap.ui.model.ChangeReason.Remove Remove} when the element context has been
+	 *     deleted (see {@link sap.ui.model.odata.v4.Context#delete}).
+	 *   </ul>
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataContextBinding#change

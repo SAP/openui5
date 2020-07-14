@@ -5,7 +5,7 @@
 		"applicationVersion" : {
 			"version" : "${version}"
 		},
-		"description" : "{{sap.app.description}}",
+		"description" : "Example for OData V4 music artists service with draft handling",
 		"dataSources" : {
 			"default" : {
 				"uri" : "/sap/opu/odata4/sap/sadl_gw_appmusic_draft/srvd/sap/sadl_gw_appmusicdr_definition/0001/",
@@ -16,8 +16,7 @@
 			}
 		},
 		"id" : "sap.ui.core.sample.odata.v4.MusicArtists",
-		"i18n" : "i18n/i18n.properties",
-		"title" : "{{sap.app.title}}",
+		"title" : "Music Artists",
 		"type" : "application"
 	},
 	"sap.ui" : {

@@ -297,7 +297,7 @@ sap.ui.define([
 			assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
 			assert.strictEqual(oBinding.mParameters, mParameters);
 			if (bSuspended) {
-				assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Filter);
+				assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 
 				oModelMock.expects("buildQueryOptions")
 					.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
@@ -3849,7 +3849,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: do not stifle exceptions", function (assert) {
+	QUnit.test("requestSideEffects: do not stifle errors", function (assert) {
 		var oBinding = this.bindContext("/Me/name.space.Operation(...)"),
 			oCache = {
 				requestSideEffects : function () {}
