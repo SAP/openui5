@@ -176,6 +176,17 @@ sap.ui.define([
 		return this;
 	};
 
+	GroupPanelBase.prototype.setGroupExpanded = function(sGroup, bExpand){
+		this._oListControl.getItems().forEach(function(oOuterItem){
+			var oPanel = oOuterItem.getContent()[0];
+			var sBindingPath = oPanel.getBindingContext().sPath;
+			var oItem = this.getModel().getProperty(sBindingPath);
+			if (oItem.group === sGroup) {
+				oPanel.setExpanded(bExpand);
+			}
+		}, this);
+	};
+
 	GroupPanelBase.prototype._onGroupModeChange = function(oEvt) {
 		var sKey = oEvt.getParameters().selectedItem.getKey();
 
