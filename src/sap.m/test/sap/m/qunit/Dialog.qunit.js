@@ -1119,6 +1119,28 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Focusable elements in content area without an id", function (assert) {
+		// Arrange
+		var oHtml = new HTML({content: "<div><div tabindex='0'>testFocus</div></div>"}),
+			oDialog = new Dialog({
+				content: [oHtml]
+			}),
+			oFocusedElement;
+
+		overwriteAnimationIE(oDialog);
+
+		// Act
+		oDialog.open();
+		this.clock.tick(500);
+
+		// Assert
+		oFocusedElement = document.activeElement;
+		assert.strictEqual(oFocusedElement.innerHTML, "testFocus", "First focusable element has the focus.");
+
+		// Clean up
+		oDialog.destroy();
+	});
+
 	QUnit.test('Aggregations "beginButton" and "endButton" - both visible', function (assert) {
 		// Arrange
 		var oButton1 = new Button();
