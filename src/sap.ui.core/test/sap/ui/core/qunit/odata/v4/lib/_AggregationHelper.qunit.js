@@ -569,5 +569,79 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(_AggregationHelper.hasMinOrMax({A : {}, B : {max : true}}), true);
+
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isAffected", function (assert) {
+		var oAggregation = {
+				aggregate : {
+					measure1 : {},
+					"complex1/measure2" : {},
+					alias : {name : "measure3"}
+				},
+				group : {
+					dimension1 : {}, // assuming a structured type with property1, property2
+					"complex2/dimension2" : {}
+				},
+				groupLevels : ["level1", "complex3/level2"]
+			};
+
+		// code under test
+		assert.notOk(_AggregationHelper.isAffected(oAggregation, [],
+			["foo", "bar", "meas", "dim", "lev"]));
+
+		["", "*", "measure1", "measure1/*", "measure3", "dimension1", "dimension1/property1",
+			"dimension1/*", "level1", "complex1", "complex1/*", "complex2", "complex2/*",
+			"complex3", "complex3/*"
+		].forEach(function (sSideEffectPath) {
+			// code under test
+			assert.ok(_AggregationHelper.isAffected(oAggregation, [], [sSideEffectPath]),
+				sSideEffectPath);
+
+			// code under test
+			assert.ok(
+				_AggregationHelper.isAffected(oAggregation, [], ["foo", sSideEffectPath, "bar"]),
+				sSideEffectPath);
+		});
+
+		// code under test
+		assert.notOk(_AggregationHelper.isAffected(oAggregation, [
+			new Filter("bar", FilterOperator.EQ, "baz")
+		], ["foo"]));
+
+		// code under test
+		assert.ok(_AggregationHelper.isAffected(oAggregation, [
+			new Filter("bar", FilterOperator.EQ, "baz")
+		], ["foo", "bar"]));
+
+		// code under test
+		assert.ok(_AggregationHelper.isAffected(oAggregation, [
+			new Filter("foo/bar", FilterOperator.EQ, "baz")
+		], ["foo"]));
+
+		// code under test
+		assert.notOk(_AggregationHelper.isAffected(oAggregation, [
+			new Filter("foobar", FilterOperator.EQ, "baz")
+		], ["foo"]));
+
+		// code under test
+		assert.ok(_AggregationHelper.isAffected(oAggregation, [
+			new Filter("foo/bar/baz", FilterOperator.EQ, "qux")
+		], ["foo/*"]));
+
+		// code under test
+		assert.ok(_AggregationHelper.isAffected(oAggregation, [
+			new Filter("foo", FilterOperator.EQ, "baz"),
+			new Filter("bar", FilterOperator.EQ, "baz")
+		], ["bar"]));
+
+		// code under test
+		assert.ok(_AggregationHelper.isAffected(oAggregation, [
+			new Filter({filters : [
+				new Filter("foo", FilterOperator.EQ, "baz"),
+				new Filter("bar", FilterOperator.EQ, "baz")
+			]})
+		], ["foo"]));
 	});
 });

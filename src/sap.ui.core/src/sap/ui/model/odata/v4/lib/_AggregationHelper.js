@@ -4,8 +4,9 @@
 
 //Provides class sap.ui.model.odata.v4.lib._AggregationHelper
 sap.ui.define([
+	"./_Helper",
 	"sap/ui/model/Filter"
-], function (Filter) {
+], function (_Helper, Filter) {
 	"use strict";
 
 	var mAllowedAggregateDetails2Type =  {
@@ -384,6 +385,56 @@ sap.ui.define([
 		},
 
 		/**
+		 * Tells whether the binding with the given aggregation data and filters is affected when
+		 * requesting side effects for the given paths.
+		 *
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation;
+		 *   (see {@link .buildApply}).
+		 * @param {sap.ui.model.Filter[]} aFilters
+		 *   The binding's current filters
+		 * @param {string[]} aSideEffectPaths
+		 *   The paths to request side effects for
+		 * @returns {boolean}
+		 *   <code>true</code> if the binding is affected
+		 */
+		isAffected : function (oAggregation, aFilters, aSideEffectPaths) {
+			// returns true if the side effect path affects the property path
+			function affects(sSideEffectPath, sPropertyPath) {
+				if (sSideEffectPath.endsWith("/*")) {
+					// To avoid metadata access, we do not distinguish between properties and
+					// navigation properties, so there is no need to look at "/*".
+					sSideEffectPath = sSideEffectPath.slice(0, -2);
+				}
+				return _Helper.hasPathPrefix(sPropertyPath, sSideEffectPath)
+					|| _Helper.hasPathPrefix(sSideEffectPath, sPropertyPath);
+			}
+
+			// returns true if the array contains a filter affected by the side effect path
+			function hasAffectedFilter(sSideEffectPath, aFilters0) {
+				return aFilters0.some(function (oFilter) {
+					return oFilter.aFilters
+						? hasAffectedFilter(sSideEffectPath, oFilter.aFilters)
+					    : affects(sSideEffectPath, oFilter.sPath);
+				});
+			}
+
+			return aSideEffectPaths.some(function (sSideEffectPath) {
+				var fnAffects = affects.bind(null, sSideEffectPath);
+
+				return sSideEffectPath === "" || sSideEffectPath === "*"
+					|| Object.keys(oAggregation.aggregate).some(function (sAlias) {
+							var oDetails = oAggregation.aggregate[sAlias];
+
+							return affects(sSideEffectPath, oDetails.name || sAlias);
+						})
+					|| Object.keys(oAggregation.group).some(fnAffects)
+					|| oAggregation.groupLevels.some(fnAffects)
+					|| hasAffectedFilter(sSideEffectPath, aFilters);
+			});
+		},
+
+		/**
 		 * Splits a filter depending on the aggregation information into an array that consists of
 		 * two filters, one that must be applied after and one that must be applied before
 		 * aggregating the data.
@@ -392,7 +443,7 @@ sap.ui.define([
 		 *   The filter object that is split
 		 * @param {object} [oAggregation]
 		 *   An object holding the information needed for data aggregation;
-		 *   (see {@link _AggregationHelper#buildApply}).
+		 *   (see {@link .buildApply}).
 		 * @returns {sap.ui.model.Filter[]}
 		 *   An array that consists of two filters, the first one has to be applied after and the
 		 *   second one has to be applied before aggregating the data. Both can be

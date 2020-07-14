@@ -5,7 +5,7 @@
 		"applicationVersion" : {
 			"version" : "${version}"
 		},
-		"description" : "{{sap.app.description}}",
+		"description" : "Example for OData V4 EPM Sales Orders using XML Templating",
 		"dataSources" : {
 			"default" : {
 				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
@@ -21,8 +21,7 @@
 			}
 		},
 		"id" : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
-		"i18n" : "i18n/i18n.properties",
-		"title" : "{{sap.app.title}}",
+		"title" : "EPM Sales Orders Template",
 		"type" : "application"
 	},
 	"sap.ui" : {

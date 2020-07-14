@@ -606,12 +606,12 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
 		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
-			.withExactArgs(ChangeReason.Change);
+			.withExactArgs(ChangeReason.Filter);
 		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
 			.withExactArgs("");
 		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oBinding.oContext));
-		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Change);
+		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Filter);
 
 		// code under test - simulate call from setAggregation
 		oBinding.applyParameters(mParameters, "");
@@ -637,12 +637,12 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
 		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
-			.withExactArgs(ChangeReason.Change);
+			.withExactArgs(ChangeReason.Filter);
 		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
 			.withExactArgs("");
 		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oBinding.oContext));
-		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Change);
+		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Filter);
 
 		// code under test - simulate call from setAggregation
 		oBinding.applyParameters(mParameters, "");
@@ -681,6 +681,43 @@ sap.ui.define([
 			.returns(false);
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
 		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
+			.withExactArgs(ChangeReason.Filter);
+		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
+			.withExactArgs("");
+		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
+			.withExactArgs(sinon.match.same(oBinding.oContext));
+		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Filter);
+
+		// code under test - simulate call from setAggregation
+		oBinding.applyParameters(mParameters, "");
+
+		assert.deepEqual(oBinding.mQueryOptions, {
+			$apply : sApply,
+			$filter : "bar"
+		}, "mQueryOptions");
+		assert.deepEqual(oBinding.mParameters, mParameters);
+		assert.strictEqual(oBinding.mParameters.$$aggregation, oAggregation, "$$aggregation");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("applyParameters: from updateAnalyticalInfo, " + bSuspended, function (assert) {
+		var oAggregation = {
+//				aggregate : {GrossAmount : {subtotals : true}},
+//				groupLevels : ["LifecycleStatus"]
+			},
+			sApply = "A.P.P.L.E.",
+			oBinding = this.bindList("/EMPLOYEES"),
+			mParameters = {
+				$$aggregation : oAggregation
+			};
+
+		oBinding.bHasAnalyticalInfo = true;
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
+		this.mock(this.oModel).expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(mParameters), true).returns({});
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
+		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
 			.withExactArgs(ChangeReason.Change);
 		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
 			.withExactArgs("");
@@ -692,8 +729,7 @@ sap.ui.define([
 		oBinding.applyParameters(mParameters, "");
 
 		assert.deepEqual(oBinding.mQueryOptions, {
-			$apply : sApply,
-			$filter : "bar"
+			$apply : sApply
 		}, "mQueryOptions");
 		assert.deepEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.mParameters.$$aggregation, oAggregation, "$$aggregation");
@@ -3941,7 +3977,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iCreatedContexts, 1);
 		assert.strictEqual(oBinding.getLength(), 4);
 
-		// avoid "pause on uncaught exception"
+		// avoid "Uncaught (in promise)"
 		oContext.created().catch(function (oError) {
 			assert.ok(oError.canceled, "create promise rejected with 'canceled'");
 		});
@@ -5126,7 +5162,10 @@ sap.ui.define([
 					oSetAggregationExpectation;
 
 				oSetAggregationExpectation = this.mock(oBinding).expects("setAggregation")
-					.withExactArgs(oFixture.oTransformedAggregation);
+					.withExactArgs(oFixture.oTransformedAggregation)
+					.callsFake(function () {
+						assert.strictEqual(oBinding.bHasAnalyticalInfo, true);
+					});
 				this.mock(oBinding).expects("getRootBindingResumePromise").withExactArgs()
 					.callsFake(function () {
 						assert.ok(oSetAggregationExpectation.called,
@@ -5880,6 +5919,63 @@ sap.ui.define([
 
 		// code under test
 		return oBinding.requestSideEffects("group", ["n/a", ""]);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bRefresh) {
+	[false, true].forEach(function (bHeaderContext) {
+		var sTitle = "requestSideEffects: $$aggregation, refresh=" + bRefresh + ", headerContext="
+				+ bHeaderContext;
+
+		QUnit.test(sTitle, function (assert) {
+		var oBinding = this.bindList("/Set", undefined, undefined, undefined, {
+				$$aggregation : {}
+			}),
+			oContext = bHeaderContext ? oBinding.getHeaderContext() : undefined,
+			aFilters = [],
+			aPaths = [],
+			oPromise,
+			oRefreshPromise = {};
+
+		this.mock(oBinding.oCache).expects("requestSideEffects").never();
+		this.mock(oBinding.aFilters).expects("concat").withExactArgs(oBinding.aApplicationFilters)
+			.returns(aFilters);
+		this.mock(_AggregationHelper).expects("isAffected")
+			.withExactArgs(sinon.match.same(oBinding.mParameters.$$aggregation),
+				sinon.match.same(aFilters), sinon.match.same(aPaths))
+			.returns(bRefresh);
+		this.mock(oBinding).expects("refreshInternal").exactly(bRefresh ? 1 : 0)
+			.withExactArgs("", "group", false, true)
+			.returns(oRefreshPromise);
+
+		// code under test
+		oPromise = oBinding.requestSideEffects("group", aPaths, oContext);
+
+		if (bRefresh) {
+			assert.strictEqual(oPromise, oRefreshPromise);
+		} else {
+			assert.strictEqual(oPromise, SyncPromise.resolve());
+		}
+	});
+
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects with $$aggregation and row context", function (assert) {
+		var oBinding = this.bindList("/Set", undefined, undefined, undefined, {
+				$$aggregation : {}
+			});
+
+		this.mock(oBinding.oCache).expects("requestSideEffects").never();
+		this.mock(oBinding).expects("refreshInternal").never();
+		this.mock(_AggregationHelper).expects("isAffected").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.requestSideEffects("group", [/*aPaths*/], {/*oContext*/});
+		}, new Error(
+			"Must not request side effects for a context of a binding with $$aggregation"));
 	});
 
 	//*********************************************************************************************
