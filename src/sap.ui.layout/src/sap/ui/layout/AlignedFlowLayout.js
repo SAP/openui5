@@ -201,8 +201,13 @@ sap.ui.define([
 		};
 
 		AlignedFlowLayout.prototype.onResize = function(aObserverEntries) {
-			var oDomRef = this.getDomRef(),
-				oEndItemDomRef,
+			var oDomRef = this.getDomRef();
+			this.fnThisReflow = this.fnThisReflow || this.reflow.bind(this); // need one pointer that can be identified as equal
+			if (ResizeHandler.isSuspended(oDomRef, this.fnThisReflow)) {
+				return;
+			}
+
+			var oEndItemDomRef,
 				oObserverEntry = aObserverEntries[0],
 				bWidthChangedSignificantly = hasWidthChangedSignificantly(this.fLayoutWidth, oObserverEntry, oDomRef),
 				fNewWidth = oObserverEntry.contentRect.width;
