@@ -101,7 +101,7 @@ function(
 			assert.ok(oCommand, "the addODataProperty command exists");
 
 			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
-			var mActualSpecialSettings = this.fnCompleteChangeContentSpy.getCall(0).args[1]
+			var mActualSpecialSettings = this.fnCompleteChangeContentSpy.getCall(0).args[1];
 			assert.deepEqual(Object.keys(mActualSpecialSettings), ADD_PROPERTY_SPECIAL_SETTINGS_KEYS, "then all properties are passed to the change handler");
 
 			return oCommand.execute();

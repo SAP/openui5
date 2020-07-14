@@ -595,7 +595,7 @@ sap.ui.define([
 
 		var oException;
 		try {
-			var oResult3 = oWrapper.getTextForKey("Test", undefined, undefined, true);
+			oWrapper.getTextForKey("Test", undefined, undefined, true);
 		} catch (oError) {
 			oException = oError;
 		}
@@ -805,7 +805,7 @@ sap.ui.define([
 
 		var oException;
 		try {
-			var oResult3 = oWrapper.getKeyForText("X", undefined, true);
+			oWrapper.getKeyForText("X", undefined, true);
 		} catch (oError) {
 			oException = oError;
 		}

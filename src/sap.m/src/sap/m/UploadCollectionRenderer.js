@@ -48,9 +48,9 @@ sap.ui.define(['./ListItemBaseRenderer'], function(ListItemBaseRenderer) {
 		oRm.writeClasses();
 		oRm.write(">");
 		if (oUploadCollection.getModel() instanceof sap.ui.model.odata.v2.ODataModel && oUploadCollection.getBindingInfo("items") ) {
-			if(oUploadCollection.getBindingInfo("items").binding.getContexts().length !== oUploadCollection.getItems().length){
+			if (oUploadCollection.getBindingInfo("items").binding.getContexts().length !== oUploadCollection.getItems().length) {
 				oRm.writeEscaped(oUploadCollection.getNoDataText());
-			}else{
+			} else {
 				oUploadCollection.setBusy(true);
 				oRm.writeEscaped(oUploadCollection._oRb.getText("PULL2REFRESH_LOADING")); //Loading
 			}

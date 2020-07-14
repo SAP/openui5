@@ -512,7 +512,7 @@ sap.ui.define([
 			mChangesCopy.mDependencies.fileNameChange4.dependencies = [];
 
 			var oRemoveChangeFromDependenciesSpy = sandbox.spy(DependencyHandler, "removeChangeFromDependencies");
-			var aChangesToBeDeleted = DependencyHandler.removeOpenDependentChanges(this.mChangesMap, this.oAppComponent,"controlId2", "controlId1");
+			var aChangesToBeDeleted = DependencyHandler.removeOpenDependentChanges(this.mChangesMap, this.oAppComponent, "controlId2", "controlId1");
 			assert.deepEqual(aChangesToBeDeleted, [this.mChangesMap.aChanges[0], this.mChangesMap.aChanges[2]], "correct change objects are returned");
 			assert.equal(oRemoveChangeFromDependenciesSpy.callCount, 2, "the two dependent changes were removed from dependencies");
 			assert.deepEqual(this.mChangesMap.mDependencies, mChangesCopy.mDependencies, "the dependencies map looks as expected after removal of the dependencies");
