@@ -1334,7 +1334,7 @@ sap.ui.define([
 
 		if (!oIcon) {
 			oIcon = new Icon({
-				src : IconPool.getIconURI("sys-cancel"),
+				src : IconPool.getIconURI("decline"),
 				tooltip:this._bundle.getText("FACETFILTER_REMOVE"),
 				press: function() {
 					oIcon._bPressed = true;
