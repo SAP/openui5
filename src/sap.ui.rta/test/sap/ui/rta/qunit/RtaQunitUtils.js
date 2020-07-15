@@ -75,6 +75,10 @@ sap.ui.define([
 			.then(function (aSavedChanges) {
 				if (bRevert) {
 					return aSavedChanges[0].concat(aSavedChanges[1]).reverse()
+						.filter(function (oChange) {
+							//skip descriptor changes
+							return !oChange.getDefinition().appDescriptorChange;
+						})
 						.reduce(function (oPreviousPromise, oChange) {
 							var oElementToBeReverted = JsControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
 							return ChangesWriteAPI.revert({
