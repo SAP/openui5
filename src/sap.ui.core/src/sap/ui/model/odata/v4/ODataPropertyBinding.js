@@ -422,24 +422,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests the value of the property binding.
-	 *
-	 * @returns {Promise}
-	 *   A promise resolving with the resulting value or <code>undefined</code> if it could not be
-	 *   determined
-	 *
-	 * @public
-	 * @since 1.69
-	 */
-	ODataPropertyBinding.prototype.requestValue = function () {
-		var that = this;
-
-		return Promise.resolve(this.checkUpdateInternal().then(function () {
-			return that.getValue();
-		}));
-	};
-
-	/**
 	 * Determines which type of value list exists for this property.
 	 *
 	 * @returns {sap.ui.model.odata.v4.ValueListType}
@@ -502,6 +484,24 @@ sap.ui.define([
 		return bCheckUpdate
 			? this.checkUpdateInternal(false, ChangeReason.Refresh, sGroupId)
 			: SyncPromise.resolve();
+	};
+
+	/**
+	 * Requests the value of the property binding.
+	 *
+	 * @returns {Promise}
+	 *   A promise resolving with the resulting value or <code>undefined</code> if it could not be
+	 *   determined
+	 *
+	 * @public
+	 * @since 1.69
+	 */
+	ODataPropertyBinding.prototype.requestValue = function () {
+		var that = this;
+
+		return Promise.resolve(this.checkUpdateInternal().then(function () {
+			return that.getValue();
+		}));
 	};
 
 	/**
