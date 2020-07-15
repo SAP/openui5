@@ -1,0 +1,15 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+			<TextArea valueState="Warning" placeholder="ValueState : Warning" width="100%"/>
+			<TextArea valueState="Error" placeholder="ValueState : Error" width="100%"/>
+			<TextArea valueState="Success" placeholder="ValueState : Success" width="100%"/>
+			<TextArea valueState="Information" placeholder="ValueState : Information" width="100%"/>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>
