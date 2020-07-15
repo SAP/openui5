@@ -180,6 +180,7 @@ sap.ui.define([
 	QUnit.test("Should return no pending request if there is an open xhr", function (assert) {
 		var oXHR = new XMLHttpRequest();
 		oXHR.open("GET", "/foo", true);
+		oLogCollector.getAndClearLog();
 		assert.ok(!_XHRWaiter.hasPending(), "there are no pending xhrs");
 		assert.ok(!oLogCollector.getAndClearLog());
 	});
