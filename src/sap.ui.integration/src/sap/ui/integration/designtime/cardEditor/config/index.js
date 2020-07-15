@@ -132,7 +132,7 @@ sap.ui.define([
 				"destinations": {
 					"tags": ["general"],
 					"label": "{i18n>CARD_EDITOR.DESTINATIONS}",
-					"itemLabel": "{i18n>CARD_EDITOR.DESTINATION}",
+					"itemLabel": "{key}",
 					"addItemLabel": "{i18n>CARD_EDITOR.DESTINATION}",
 					"path": "configuration/destinations",
 					"type": "destinations",
