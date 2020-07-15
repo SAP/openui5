@@ -373,6 +373,12 @@
         <lib name="es6-shim-nopromise" displayName="ECMAScript 6 compatibility shims for legacy JavaScript engines" homepage="https://github.com/paulmillr/es6-shim">
             <license url="https://github.com/paulmillr/es6-shim/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-shim-nopromise-MIT-LICENSE.txt" />
         </lib>
+        <lib name="p-cancelable" displayName="p-cancelable" homepage="https://github.com/sindresorhus/p-cancelable/tree/v2.0.0">
+            <license url="https://github.com/sindresorhus/p-cancelable/blob/v2.0.0/license" type="MIT License" file="../thirdparty/licenses/p-cancelable-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="@babel/helpers" displayName="@babel/helpers" homepage="https://github.com/babel/babel/tree/v7.10.4">
+            <license url="https://github.com/babel/babel/blob/v7.10.4/LICENSE" type="MIT License" file="../thirdparty/licenses/babel-MIT-LICENSE.txt" />
+        </lib>
     </thirdparty>
 
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
