@@ -161,6 +161,7 @@ sap.ui.define([
 	Panel.prototype.onPressLinkPersonalization = function() {
 		this.openSelectionDialog(false, true, undefined);
 	};
+
 	Panel.prototype.openSelectionDialog = function(bForbidNavigation, bShowReset, sStyleClass) {
 		return sap.ui.getCore().loadLibrary('sap.ui.fl', {
 			async: true
@@ -185,6 +186,11 @@ sap.ui.define([
 						});
 						var aMRuntimeItems = jQuery.extend(true, [], this._getInternalModel().getProperty("/runtimeItems"));
 
+						var aMBaselineItems = MetadataHelper.retrieveBaseline(this);
+						// TODO: add KEYUSER changed items
+						var aMBaselineItemsTotal = aMBaselineItems;
+						this._getInternalModel().setProperty("/baselineItems", aMBaselineItemsTotal);
+
 						var fnCleanUp = function(oSelectionDialog) {
 							oSelectionDialog.close();
 							oSelectionDialog.destroy();
@@ -198,19 +204,25 @@ sap.ui.define([
 							});
 						};
 
+						var fnUpdateResetButton = function(oSelectionDialog) {
+							var bShowResetEnabled = Panel._showResetButtonEnabled(aMBaselineItemsTotal, oSelectionDialog.getItems());
+							this._getInternalModel().setProperty("/showResetEnabled", bShowResetEnabled);
+						};
+
 						this.fireBeforeSelectionDialogOpen();
+
+						var aResetPromises = [];
 
 						var oSelectionDialog = new SelectionDialog({
 							showItemAsLink: !bForbidNavigation,
-							// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-							showReset: false,
-							// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-							// showResetEnabled: {
-							// 	path: '$selectionDialog>/showResetEnabled'
-							// },
+							showReset: bShowReset,
+							showResetEnabled: {
+								path: '$selectionDialog>/showResetEnabled'
+							},
 							items: aAllLinkItems.map(function(oMItem) {
 								// Overwrite metadata with the current values
 								var oMItemRuntime = Panel._getItemById(oMItem.id, aMRuntimeItems);
+								var bIsBaseline = this._isItemBaseline(oMItem);
 								var sIcon = oMItem.icon;
 								if (bShowDefaultIcon && !sIcon) {
 									sIcon = "sap-icon://chain-link";
@@ -222,55 +234,66 @@ sap.ui.define([
 									href: oMItem.href,
 									target: oMItem.target,
 									icon: sIcon,
-									visible: oMItemRuntime ? oMItemRuntime.visible : false
+									visible: oMItemRuntime ? oMItemRuntime.visible : false,
+									isBaseline: bIsBaseline
 								});
-							}),
+							}.bind(this)),
 							visibilityChanged: function(oEvent) {
 								// convert key to id
 								var sId = oEvent.getParameter("key");
 								fnAddRuntimeChange(sId, oEvent.getParameter("visible"));
-							},
+								fnUpdateResetButton.call(this, oEvent.getSource());
+							}.bind(this),
 							ok: function() {
+								var aPanelChanges = PanelFlexibility.createChanges(this, aRuntimeChanges);
+								var aFlexChangesTotal = [];
+								var fnCreateChanges = function() {
+									ControlPersonalizationWriteAPI.add({
+										changes: aPanelChanges,
+										ignoreVariantManagement: true
+									}).then(function(aFlexChanges) {
+										aFlexChangesTotal = aFlexChangesTotal.concat(aFlexChanges);
+										// Then use the new item instance as selector control
+										var aPanelItemChanges = PanelItemFlexibility.createChanges(aRuntimeChanges);
+										return ControlPersonalizationWriteAPI.add({
+											changes: aPanelItemChanges,
+											ignoreVariantManagement: true
+										});
+									}).then(function(aFlexChanges) {
+										aFlexChangesTotal = aFlexChangesTotal.concat(aFlexChanges);
+										return ControlPersonalizationWriteAPI.save({
+											selector: this,
+											changes: aFlexChangesTotal
+										});
+									}.bind(this)).then(function() {
+										return resolve(true);
+									});
+								};
+
 								fnCleanUp(oSelectionDialog);
 
-								var aPanelChanges = PanelFlexibility.createChanges(this, aRuntimeChanges);
-
-								var aFlexChangesTotal = [];
 								// First create a new item instance
-								ControlPersonalizationWriteAPI.add({
-									changes: aPanelChanges,
-									ignoreVariantManagement: true
-								}).then(function(aFlexChanges) {
-									aFlexChangesTotal = aFlexChangesTotal.concat(aFlexChanges);
-									// Then use the new item instance as selector control
-									var aPanelItemChanges = PanelItemFlexibility.createChanges(aRuntimeChanges);
-									return ControlPersonalizationWriteAPI.add({
-										changes: aPanelItemChanges,
-										ignoreVariantManagement: true
+								if (aResetPromises.length) {
+									Promise.all(aResetPromises).then(function() {
+										fnCreateChanges.call(this);
 									});
-								}).then(function(aFlexChanges) {
-									aFlexChangesTotal = aFlexChangesTotal.concat(aFlexChanges);
-									return ControlPersonalizationWriteAPI.save({
-										selector: this,
-										changes: aFlexChangesTotal
-									});
-								}.bind(this)).then(function() {
-									return resolve(true);
-								});
+								} else {
+									fnCreateChanges.call(this);
+								}
 							}.bind(this),
 							cancel: function() {
 								fnCleanUp(oSelectionDialog);
 								return resolve(true);
 							},
 							reset: function() {
-								// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-							}
+								aResetPromises.push(ControlPersonalizationWriteAPI.reset({selectors: this.getItems()}));
+								aResetPromises.push(ControlPersonalizationWriteAPI.reset({selectors: [this]}));
+							}.bind(this)
 						});
 						if (sStyleClass) {
 							oSelectionDialog.addStyleClass(sStyleClass);
 						}
-						// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-						// this._getInternalModel().setProperty("/showResetEnabled", !Panel._isEqual(aMBaselineItemsTotal, Panel._convertSelectionDialogItems2MItems(oSelectionDialog.getItems())));
+						fnUpdateResetButton.call(this, oSelectionDialog);
 
 						// toggle compact style
 						jQuery.sap.syncStyleClass("sapUiSizeCompact", this, oSelectionDialog);
@@ -278,7 +301,6 @@ sap.ui.define([
 						this.addDependent(oSelectionDialog);
 
 						oSelectionDialog.open();
-
 					}.bind(this));
 				}.bind(this));
 
@@ -286,27 +308,52 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	Panel._getArrayElementById = function(sId, aArray) {
-		var aElements = aArray.filter(function(oElement) {
-			return oElement.id !== undefined && oElement.id === sId;
-		});
-		return aElements.length ? aElements[0] : null;
-	};
-	Panel._getItemById = function(sId, aArray) {
-		return aArray.filter(function(oMElement) {
-			return oMElement.id === sId;
-		})[0];
-	};
-	Panel._getDiffToBase = function(aMBaseItems, aMItems) {
-		if (!aMItems || !aMBaseItems || aMBaseItems.length !== aMItems.length) {
-			return false;
+	Panel._showResetButtonEnabled = function(aMBaseLineItems, aSelectionDialogItems) {
+		var bShowResetButtonEnabled = false;
+		var aMRuntimeItems = Panel._mapSelectionDialogItems(aSelectionDialogItems);
+
+		var aMVisibleRuntimeItems = Panel._getVisibleItems(aMRuntimeItems);
+		var aMVisibleBaseLineItems = Panel._getVisibleItems(aMBaseLineItems);
+
+		if (aMVisibleRuntimeItems.length !== aMBaseLineItems.length) {
+			bShowResetButtonEnabled = true;
+		} else if (aMVisibleBaseLineItems.length && aMVisibleRuntimeItems.length) {
+			var bAllVisibleBaselineItemsIncludedInVisibleRuntimeItems = Panel._allItemsIncludedInArray(aMVisibleBaseLineItems, aMVisibleRuntimeItems);
+			var bAllVisibleRuntimeItemsIncludedInVisibleBaselineItems = Panel._allItemsIncludedInArray(aMVisibleRuntimeItems, aMVisibleBaseLineItems);
+
+			bShowResetButtonEnabled = !bAllVisibleBaselineItemsIncludedInVisibleRuntimeItems || !bAllVisibleRuntimeItemsIncludedInVisibleBaselineItems;
 		}
-		return aMItems.filter(function(oMItem) {
-			var oMBaseItem = Panel._getItemById(oMItem.id, aMBaseItems);
-			return oMItem.id !== oMBaseItem.id || oMItem.visible !== oMBaseItem.visible;
+		return bShowResetButtonEnabled;
+	};
+
+	Panel._allItemsIncludedInArray = function(aMItemsToBeIncluded, aMArrayToCheck) {
+		var bAllItemsIncluded = true;
+		aMItemsToBeIncluded.forEach(function(oItemToBeIncluded) {
+			var aMItemsIncluded = Panel._getItemsById(oItemToBeIncluded.id, aMArrayToCheck);
+			if (aMItemsIncluded.length === 0) {
+				bAllItemsIncluded = false;
+			}
+		});
+		return bAllItemsIncluded;
+	};
+
+	Panel._getItemsById = function(sId, aMItems) {
+		return aMItems.filter(function(oItem) {
+			return oItem.id === sId;
 		});
 	};
-	Panel._convertSelectionDialogItems2MItems = function(aSelectionDialogItems) {
+
+	Panel._getItemById = function(sId, aArray) {
+		return Panel._getItemsById(sId, aArray)[0];
+	};
+
+	Panel._getVisibleItems = function(aMItems) {
+		return aMItems.filter(function(oItem) {
+			return oItem.id !== undefined && oItem.visible;
+		});
+	};
+
+	Panel._mapSelectionDialogItems = function(aSelectionDialogItems) {
 		return aSelectionDialogItems.map(function(oSelectionDialogItem) {
 			return {
 				id: oSelectionDialogItem.getKey(),
@@ -314,30 +361,16 @@ sap.ui.define([
 			};
 		});
 	};
-	// Panel._isEqual = function(aMBaselineItemsTotal, aMItems) {
-	// 	var aMItemsTotal = Panel._getUnion(aMBaselineItemsTotal, aMItems);
-	// 	return Panel._getDiffToBase(aMItemsTotal, aMBaselineItemsTotal).length === 0;
-	// };
-	Panel._getUnion = function(aMBaselineItems, aMItems) {
-		if (!aMItems) {
-			return jQuery.extend(true, [], aMBaselineItems);
-		}
-		var aUnion = jQuery.extend(true, [], aMItems);
-		aMBaselineItems.forEach(function(oMItemBase) {
-			var oMItemUnion = Panel._getItemById(oMItemBase.id, aUnion);
-			if (!oMItemUnion) {
-				aUnion.push(oMItemBase);
-				return;
-			}
-			if (oMItemUnion.visible === undefined && oMItemBase.visible !== undefined) {
-				oMItemUnion.visible = oMItemBase.visible;
-			}
-		});
-		return aUnion;
+
+	Panel.prototype._isItemBaseline = function(oItem) {
+		var aBaselineItems = this._getInternalModel().getProperty("/baselineItems");
+		return !!Panel._getItemsById(oItem.id, aBaselineItems).length;
 	};
+
 	Panel.prototype._getInternalModel = function() {
 		return this.getModel("$sapuimdclinkPanel");
 	};
+
 	Panel.prototype._propagateDefaultIcon = function(bShowDefaultIcon) {
 		// If at least one item has an icon we have to set a default icon for the items which do not have an icon
 		// Once the defaultIcon has been set, it can not be reverted (to false)
@@ -369,12 +402,12 @@ sap.ui.define([
 					] : oChanges.children;
 
 					aItems.forEach(function(oPanelItem) {
+						var aRuntimeItems = oModel.getProperty("/runtimeItems/");
 						switch (oChanges.mutation) {
 							case "insert":
 								oModel.setProperty("/countItemsWithIcon", oPanelItem.getIcon() ? oModel.getProperty("/countItemsWithIcon") + 1 : oModel.getProperty("/countItemsWithIcon"));
 								oModel.setProperty("/countItemsWithoutIcon", oPanelItem.getIcon() ? oModel.getProperty("/countItemsWithoutIcon") : oModel.getProperty("/countItemsWithoutIcon") + 1);
 								// Note: the new item(s) has been already added/inserted into the aggregation, so we have to insert the relevant model item into same position.
-								var aRuntimeItems = oModel.getProperty("/runtimeItems/");
 								aRuntimeItems.splice(this.indexOfItem(oPanelItem), 0, oPanelItem.getJson());
 								oModel.setProperty("/runtimeItems", aRuntimeItems);
 
@@ -388,8 +421,16 @@ sap.ui.define([
 								});
 								break;
 							case "remove":
+								oModel.setProperty("/countItemsWithIcon", oPanelItem.getIcon() ? oModel.getProperty("/countItemsWithIcon") - 1 : oModel.getProperty("/countItemsWithIcon"));
+								oModel.setProperty("/countItemsWithoutIcon", oPanelItem.getIcon() ? oModel.getProperty("/countItemsWithoutIcon") : oModel.getProperty("/countItemsWithoutIcon") - 1);
+
+								aRuntimeItems.splice(this.indexOfItem(oPanelItem), 1);
+								oModel.setProperty("/runtimeItems", aRuntimeItems);
+
+								this._propagateDefaultIcon(oModel.getProperty("/countItemsWithIcon") > 0 && oModel.getProperty("/countItemsWithoutIcon") > 0);
+
 								this._oObserver.unobserve(oPanelItem);
-								Log.error("Deletion of items is not supported yet");
+								oPanelItem.destroy();
 								break;
 							default:
 								Log.error("Mutation '" + oChanges.mutation + "' is not supported yet.");
@@ -406,14 +447,14 @@ sap.ui.define([
 			switch (oChanges.name) {
 				case "visible":
 					var oPanelItem = oChanges.object;
-					// if (oPanelItem.getVisibleChangedByUser()) {
-					// Note: the new item(s) has been already added/inserted into the aggregation, so we have to insert the relevant model item into same index.
-					oModel.setProperty("/runtimeItems/" + this.indexOfItem(oPanelItem) + "/visible", oPanelItem.getVisible());
-					// }
-					// else {
-					// oModel.setProperty("/baselineItems/" + iIndex + "/visible", oPanelItem.getVisible());
-					// 	oModel.setProperty("/runtimeItems/" + iIndex + "/visible", oPanelItem.getVisible());
-					// }
+					var iIndex = this.indexOfItem(oPanelItem);
+					if (oPanelItem.getVisibleChangedByUser()) {
+						// Note: the new item(s) has been already added/inserted into the aggregation, so we have to insert the relevant model item into same index.
+						oModel.setProperty("/runtimeItems/" + iIndex + "/visible", oPanelItem.getVisible());
+					} else {
+						oModel.setProperty("/baselineItems/" + iIndex + "/visible", oPanelItem.getVisible());
+						oModel.setProperty("/runtimeItems/" + iIndex + "/visible", oPanelItem.getVisible());
+					}
 					break;
 				default:
 					Log.error("The '" + oChanges.name + "' of PanelItem is not supported yet.");

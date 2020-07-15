@@ -70,6 +70,10 @@ sap.ui.define([
 				visible: {
 					type: "boolean",
 					defaultValue: false
+				},
+				isBaseline: {
+					type: "boolean",
+					defaultValue: false
 				}
 			}
 		}

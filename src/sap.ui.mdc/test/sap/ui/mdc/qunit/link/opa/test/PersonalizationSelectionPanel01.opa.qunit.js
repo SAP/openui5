@@ -116,8 +116,7 @@ sap.ui.define([
 		Then.iShouldSeeLinkItemWithSelection("Category Link12", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link12", true);
 
-		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-		// Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
 
 	opaTest("When I deselect the 'Category Link2 (Superior)' and select the 'Category Link3' item, the 'Restore' button should be enabled", function(Given, When, Then) {
@@ -171,8 +170,7 @@ sap.ui.define([
 		Then.iShouldSeeLinkItemWithSelection("Category Link12", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link12", true);
 
-		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-		// Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
 
 	opaTest("When I press 'Ok' button, the dialog should close", function(Given, When, Then) {
@@ -247,8 +245,7 @@ sap.ui.define([
 		Then.iShouldSeeLinkItemWithSelection("Category Link12", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link12", true);
 
-		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-		// Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
 
 	opaTest("When I select the 'Category Link2 (Superior)' and deselect the 'Category Link3' item, the 'Restore' button should be disabled", function(Given, When, Then) {
@@ -302,8 +299,7 @@ sap.ui.define([
 		Then.iShouldSeeLinkItemWithSelection("Category Link12", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link12", true);
 
-		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-		// Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
 
 	opaTest("When I press 'Ok' button, the dialog should close", function(Given, When, Then) {

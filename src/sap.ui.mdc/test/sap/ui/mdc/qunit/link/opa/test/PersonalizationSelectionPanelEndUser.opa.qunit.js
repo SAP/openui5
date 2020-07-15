@@ -45,7 +45,7 @@ sap.ui.define([
 	// ------------------------------------------------------
 	// Test: select an item for one link and check that this item is shown also for another link
 	// ------------------------------------------------------
-	opaTest("When I click on '1239102' link in the 'Product ID' column, popover should open with main link", function(Given, When, Then) {
+	opaTest("When I click on '1239102' link in the 'Product ID' column, popover should open with no links", function(Given, When, Then) {
 		When.iClickOnLink("1239102");
 
 		Then.iShouldSeeNavigationPopoverOpens();
@@ -69,8 +69,7 @@ sap.ui.define([
 		Then.iShouldSeeLinkItemWithSelection("Edit Description", false);
 		Then.iShouldSeeLinkItemAsEnabled("Edit Description", true);
 
-		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-		// Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
 
 	opaTest("When I select the 'Edit Description' item, the 'Restore' button should be enabled", function(Given, When, Then) {
@@ -88,8 +87,7 @@ sap.ui.define([
 		Then.iShouldSeeLinkItemWithSelection("Edit Description", true);
 		Then.iShouldSeeLinkItemAsEnabled("Edit Description", true);
 
-		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-		// Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
 
 	opaTest("When I press 'Ok' button, the dialog should close", function(Given, When, Then) {
@@ -101,7 +99,7 @@ sap.ui.define([
 		]);
 	});
 
-	opaTest("When I click on '977700-11' link in the 'Product ID' column, popover should open with main link and 'Edit Description'", function(Given, When, Then) {
+	opaTest("When I click on '977700-11' link in the 'Product ID' column, popover should open with link 'Edit Description'", function(Given, When, Then) {
 		Given.closeAllNavigationPopovers();
 		When.iClickOnLink("977700-11");
 
@@ -112,7 +110,7 @@ sap.ui.define([
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
-	opaTest("When I click on 'More Links' button, the selection dialog opens with disabled 'Restore' button", function(Given, When, Then) {
+	opaTest("When I click on 'More Links' button, the selection dialog opens with a enabled 'Restore' button", function(Given, When, Then) {
 		When.iPressOnLinkPersonalizationButton();
 
 		Then.thePersonalizationDialogOpens();
@@ -129,8 +127,7 @@ sap.ui.define([
 		Then.iShouldSeeLinkItemWithSelection("Edit Description", true);
 		Then.iShouldSeeLinkItemAsEnabled("Edit Description", true);
 
-		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
-		// Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
 
 	opaTest("When I press 'Ok' button, the dialog should close", function(Given, When, Then) {

@@ -55,8 +55,12 @@
 					<m:OverflowToolbarLayoutData priority="NeverOverflow"/>
 				</m:layoutData>
 			</m:Button>
+			<m:Button visible="{$this>/showReset}" enabled="{$this>/showResetEnabled}" id="idReset" text="{$this.i18n>p13nDialog.RESET}" press="onPressReset">
+				<m:layoutData>
+					<m:OverflowToolbarLayoutData priority="NeverOverflow"/>
+				</m:layoutData>
+			</m:Button>
 		</m:buttons>
 	</m:Dialog>
 
 </core:FragmentDefinition>
-
