@@ -260,7 +260,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.writeClasses();
 
-		rm.write("/>");
+		rm.write(">");
 	};
 
 	/**

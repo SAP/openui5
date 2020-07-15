@@ -204,7 +204,7 @@ sap.ui.define(['jquery.sap.global', './Select', 'sap/ui/core/Renderer', 'sap/ui/
 			oRm.writeClasses();
 			oRm.writeAttributeEscaped("name", oSelect.getName());
 			oRm.writeAttributeEscaped("value", oSelect.getSelectedKey());
-			oRm.write("/>");
+			oRm.write(">");
 		};
 
 		/**

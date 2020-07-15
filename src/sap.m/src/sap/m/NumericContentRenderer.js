@@ -151,7 +151,7 @@ sap.ui.define([],
 			oRm.addClass(sState);
 			oRm.addClass(sColor);
 			oRm.writeClasses();
-			oRm.write("/>");
+			oRm.write("></div>");
 
 			if (isScale) {
 				oRm.write("<div");

@@ -291,7 +291,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				'<div>' +
 				'<label>' +
 				'Min. Duration: ' +
-				'<input id="sapUiSupportPerfHeaderFilterMinDuration" type="number" min="0" value="0" /> ms.' +
+				'<input id="sapUiSupportPerfHeaderFilterMinDuration" type="number" min="0" value="0"> ms.' +
 				'</label>' +
 				'</div>' +
 				'<div class="flex-spacer"></div>' +
@@ -815,7 +815,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 			allCategories.forEach(function (category) {
 				category = jQuery.sap.escapeHTML(category);
-				categoriesHTML += '<label title="' + category + '"><input class="' + _getBarClassType(category) + '" checked type="checkbox" name="' + category + '" />' + category + '</label>';
+				categoriesHTML += '<label title="' + category + '"><input class="' + _getBarClassType(category) + '" checked type="checkbox" name="' + category + '">' + category + '</label>';
 			});
 
 			var categoriesDom = document.querySelector('#categories');

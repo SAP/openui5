@@ -156,7 +156,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeAttributeEscaped("title", oControl.getTitle());
 		rm.write(">");
 		rm.writeEscaped(oControl.getTitle());
-		rm.write("</span><br/>");
+		rm.write("</span><br>");
 		rm.write("</div><div class='sapUiUx3TVTitle'>");
 		rm.write("<span role='heading' aria-level='3' class='sapUiUx3TVTitleSecond'");
 		rm.writeAttributeEscaped("title", oControl.getSubtitle());

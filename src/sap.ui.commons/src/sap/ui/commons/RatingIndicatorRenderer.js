@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeAttribute("class", "sapUiRatingItmImg");
 		var sIcon = RatingIndicatorRenderer.getThemeSymbol("selected", oRating);
 		rm.writeAttributeEscaped("src", sIcon);
-		rm.write("/>");
+		rm.write(">");
 
 		rm.write("<div");
 		rm.writeAttribute("class", "sapUiRatingItmOvrflw");
@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeAttribute("class", "sapUiRatingItmOvrflwImg");
 		sIcon = RatingIndicatorRenderer.getThemeSymbol("unselected", oRating);
 		rm.writeAttributeEscaped("src", sIcon);
-		rm.write("/>");
+		rm.write(">");
 
 		rm.write("</div>");
 		rm.write("</div>");

@@ -59,7 +59,7 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			oRm.writeAttribute("id", oControl.getId() + "-startMarker");
 			oRm.addClass("sapMGTStartMarker");
 			oRm.writeClasses();
-			oRm.write("/>");
+			oRm.write("></div>");
 
 			this._renderFailedIcon(oRm, oControl);
 			this._renderHeader(oRm, oControl);
@@ -71,14 +71,14 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 			oRm.writeAttribute("id", oControl.getId() + "-endMarker");
 			oRm.addClass("sapMGTEndMarker");
 			oRm.writeClasses();
-			oRm.write("/>");
+			oRm.write("></div>");
 
 			//hover and press style helper
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-styleHelper");
 			oRm.addClass("sapMGTStyleHelper");
 			oRm.writeClasses();
-			oRm.write("/>");
+			oRm.write("></div>");
 
 		} else {
 			// cozy
@@ -179,7 +179,7 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState" ],
 		for (i; i < this._oStyleData.lines.length; i++) {
 			oLine = this._oStyleData.lines[i];
 
-			var $Rect = jQuery("<div class='sapMGTLineStyleHelper'><div class='sapMGTLineStyleHelperInner' /></div>");
+			var $Rect = jQuery("<div class='sapMGTLineStyleHelper'><div class='sapMGTLineStyleHelperInner'></div></div>");
 			if (this._oStyleData.rtl) {
 				$Rect.css("right", oLine.offset.x + "px");
 			} else {

@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	RichTooltip.prototype.setText = function(sText) {
 		if (!!sText) {
 			//replace carriage returns etc. with br tag
-			sText = sText.replace(/(\r\n|\n|\r)/g,"<br />");
+			sText = sText.replace(/(\r\n|\n|\r)/g,"<br>");
 		}
 
 		var oText = this.getAggregation("formattedText");

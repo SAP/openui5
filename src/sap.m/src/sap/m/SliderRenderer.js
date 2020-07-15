@@ -190,7 +190,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeClasses();
 			oRm.writeAttributeEscaped("name", oSlider.getName());
 			oRm.writeAttribute("value", oSlider.toFixed(oSlider.getValue()));
-			oRm.write("/>");
+			oRm.write(">");
 		};
 
 		/**

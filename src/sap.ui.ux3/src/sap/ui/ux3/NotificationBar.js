@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 				oRm.write("<img");
 				oRm.writeAttributeEscaped("src", oControl.getIcon());
-				oRm.write("/>");
+				oRm.write(">");
 
 				oRm.write("</div>");
 			}

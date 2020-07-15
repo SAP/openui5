@@ -188,10 +188,10 @@ sap.ui.define([
 				var bHasChildren = mElement.aggregation.length > 0 || mElement.association.length > 0;
 				rm.write("<li id=\"sap-debug-controltree-" + encode(mElement.id) + "\" class=\"sapUiControlTreeElement\">");
 				var sImage = bHasChildren ? "minus" : "space";
-				rm.write("<img class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" src=\"../../debug/images/" + sImage + ".gif\" />");
+				rm.write("<img class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" src=\"../../debug/images/" + sImage + ".gif\">");
 
 				if (mElement.isAssociation) {
-					rm.write("<img title=\"Association\" class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" src=\"../../debug/images/link.gif\" />");
+					rm.write("<img title=\"Association\" class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" src=\"../../debug/images/link.gif\">");
 				}
 
 				var sClass = basename(mElement.type);
@@ -216,8 +216,8 @@ sap.ui.define([
 						if (oValue.isAssociationLink) {
 							var sType = basename(oValue.type);
 							rm.write("<li data-sap-ui-controlid=\"" + encode(oValue.id) + "\" class=\"sapUiControlTreeLink\">");
-							rm.write("<img class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" align=\"middle\" src=\"../../debug/images/space.gif\" />");
-							rm.write("<img class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" align=\"middle\" src=\"../../debug/images/link.gif\" />");
+							rm.write("<img class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" align=\"middle\" src=\"../../debug/images/space.gif\">");
+							rm.write("<img class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" align=\"middle\" src=\"../../debug/images/link.gif\">");
 							rm.write("<div><span title=\"Association '" + encode(oValue.name) + "' to '" + encode(oValue.id) + "' with type '" + encode(oValue.type) + "'\">" +
 								encode(sType) + " - " + encode(oValue.id) + " (" + encode(oValue.name) + ")</span></div>");
 							rm.write("</li>");
@@ -252,7 +252,7 @@ sap.ui.define([
 
 					rm.write('<div class="get" title="Activate debugger for get-method">G</div><div class="set" title="Activate debugger for set-method">S</div>');
 
-					rm.write("<div class=\"sapUiSupportControlProperties\"><table><colgroup><col width=\"50%\"/><col width=\"50%\"/></colgroup>");
+					rm.write("<div class=\"sapUiSupportControlProperties\"><table><colgroup><col width=\"50%\"><col width=\"50%\"></colgroup>");
 
 					$.each(oValue.properties, function(iIndex, oProperty) {
 
@@ -268,7 +268,7 @@ sap.ui.define([
 							if (oProperty.value == true) {
 								rm.write("checked='checked'");
 							}
-							rm.write("/>");
+							rm.write(">");
 
 						} else if (oProperty.enumValues) {
 
@@ -296,7 +296,7 @@ sap.ui.define([
 								rm.writeEscaped("" + oProperty.value);
 								rm.write("'");
 							}
-							rm.write("/></div>");
+							rm.write("></div>");
 
 						}
 
@@ -306,13 +306,13 @@ sap.ui.define([
 						if (oProperty.bp_sGetter) {
 							rm.write("checked='checked'");
 						}
-						rm.write('/></td>');
+						rm.write('></td>');
 
 						rm.write('<td><input type="checkbox" data-sap-ui-method="' + encode(oProperty._sMutator) + '" title="Activate debugger for ' + encode(oProperty._sMutator) + '"');
 						if (oProperty.bp_sMutator) {
 							rm.write("checked='checked'");
 						}
-						rm.write('/></td>');
+						rm.write('></td>');
 
 						rm.write("</tr>");
 
@@ -333,13 +333,13 @@ sap.ui.define([
 						if (oAggregation.bp_sGetter) {
 							rm.write("checked='checked'");
 						}
-						rm.write('/></td>');
+						rm.write('></td>');
 
 						rm.write('<td><input type="checkbox" data-sap-ui-method="' + encode(oAggregation._sMutator) + '" title="Activate debugger for ' + encode(oAggregation._sMutator) + '"');
 						if (oAggregation.bp_sMutator) {
 							rm.write("checked='checked'");
 						}
-						rm.write('/></td>');
+						rm.write('></td>');
 
 						rm.write("</tr>");
 
@@ -640,9 +640,9 @@ sap.ui.define([
 
 			rm.write('</select>');
 
-			rm.write('<input class="sapUiSupportControlBreakpointInput sapUiSupportAutocomplete" type="text"/>');
+			rm.write('<input class="sapUiSupportControlBreakpointInput sapUiSupportAutocomplete" type="text">');
 			rm.write('<button id="sapUiSupportControlAddBreakPoint" class="sapUiSupportBtn">Add breakpoint</button>');
-			rm.write('<hr class="no-border"/><ul id="sapUiSupportControlActiveBreakpoints" class="sapUiSupportList sapUiSupportBreakpointList">');
+			rm.write('<hr class="no-border"><ul id="sapUiSupportControlActiveBreakpoints" class="sapUiSupportList sapUiSupportBreakpointList">');
 
 			$.each(aMethods, function(iIndex, oValue) {
 				if (!oValue.active) {

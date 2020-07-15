@@ -1131,7 +1131,7 @@ sap.ui.define([
 			}
 			this.write("</span>");
 		} else {
-			this.write("/>");
+			this.write(">");
 		}
 
 		return this;

@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueState', 'sap/ui/core/Value
 			oRm.write(" readonly=\"readonly\"");
 		}
 
-		oRm.write(" /></div>");
+		oRm.write("></div>");
 		oRm.renderControl(oCbLabel);
 
 		if (sTooltip && sap.ui.getCore().getConfiguration().getAccessibility()) {

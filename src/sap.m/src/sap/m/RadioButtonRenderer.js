@@ -119,7 +119,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 			oRm.writeAttribute("disabled", "disabled");
 		}
 
-		oRm.write(" />"); // Close RadioButton-input-element
+		oRm.write(">"); // Close RadioButton-input-element
 
 		oRm.write("</div></div>"); // Control - DIVs close
 
