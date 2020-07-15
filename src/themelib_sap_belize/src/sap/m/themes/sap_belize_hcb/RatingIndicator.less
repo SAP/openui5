@@ -10,7 +10,7 @@
 }
 
 .sapMRIIconUnsel {
-	color: @sapUiContentIconColor;
+	color: @sapUiHcReducedAltForeground;
 }
 
 .sapMRI.sapMRIDisplayOnly {
@@ -18,13 +18,16 @@
 		color: @sapUiContentIconColor;
 	}
 	.sapMRIIconUnsel {
-		color: lighten(@sapUiContentForegroundColor, 50);
+		color: @sapUiHcReducedForeground;
 	}
 }
 
 .sapMRI.sapMRIReadOnly {
   .sapMRIIconSel {
 	color: @sapUiContentIconColor;
+  }
+  .sapMRIIconUnsel {
+	color: @sapUiHcReducedForeground;
   }
 
   .sapMRIIconReadOnly {
@@ -38,7 +41,7 @@
   }
 
   .sapMRIIconUnsel {
-	color: @sapUiContentDisabledTextColor;
+	color: @sapUiHcReducedForeground;
   }
 }
 
