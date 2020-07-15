@@ -1294,7 +1294,7 @@ function (
 		beforeEach: function () {
 			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
 
-			this.oRTLStub = sinon.stub(Core.getConfiguration(), "getRTL").returns(true)
+			this.oRTLStub = sinon.stub(Core.getConfiguration(), "getRTL").returns(true);
 
 			this.oGrid = new GridContainer({
 				layout: oSettings,
