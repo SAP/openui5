@@ -432,8 +432,8 @@ sap.ui.define([
 						// the reference and layer of all items are the same
 						vChangeDefinition = vChangeDefinition[0];
 					}
-					Versions.ensureDraftVersionExists({
-						reference: vChangeDefinition.reference,
+					Versions.onAllChangesSaved({
+						reference: Utils.normalizeReference(vChangeDefinition.reference),
 						layer: vChangeDefinition.layer
 					});
 				}

@@ -73,6 +73,9 @@ sap.ui.define([
 				group: 'Service',
 				coverage: {
 					only: ["sap/ui/rta/service/Property"]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 				}
 			},
 

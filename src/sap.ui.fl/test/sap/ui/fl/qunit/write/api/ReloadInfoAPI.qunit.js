@@ -392,12 +392,8 @@ sap.ui.define([
 				selector: {},
 				versioningEnabled: true
 			};
-			var aReturnedVersions = [
-				{versionNumber: 2},
-				{versionNumber: 1}
-			];
-			sandbox.stub(VersionsAPI, "getVersions").returns(aReturnedVersions);
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 
 			var bActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
 			assert.equal(bActivated, true, "it returns true");
@@ -409,11 +405,7 @@ sap.ui.define([
 				selector: {},
 				versioningEnabled: true
 			};
-			var aReturnedVersions = [
-				{versionNumber: 2},
-				{versionNumber: 1}
-			];
-			sandbox.stub(VersionsAPI, "getVersions").returns(aReturnedVersions);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
 
 			var bActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
@@ -426,12 +418,7 @@ sap.ui.define([
 				selector: {},
 				versioningEnabled: true
 			};
-			var aReturnedVersions = [
-				{versionNumber: 0},
-				{versionNumber: 2},
-				{versionNumber: 1}
-			];
-			sandbox.stub(VersionsAPI, "getVersions").returns(aReturnedVersions);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
 
 			var bActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
@@ -444,11 +431,7 @@ sap.ui.define([
 				selector: {},
 				versioningEnabled: false
 			};
-			var aReturnedVersions = [
-				{versionNumber: 2},
-				{versionNumber: 1}
-			];
-			sandbox.stub(VersionsAPI, "getVersions").returns(aReturnedVersions);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
 
 			var bActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);

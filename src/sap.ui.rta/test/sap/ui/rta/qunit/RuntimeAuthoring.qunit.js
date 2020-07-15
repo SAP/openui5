@@ -87,15 +87,6 @@ function(
 		QUnitUtils.triggerEvent("keydown", oTargetDomRef, oParams);
 	};
 
-	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
-		sandbox.stub(RtaUtils, "showMessageBox").callsFake(
-			function(oMessageType, sMessageKey) {
-				assert.equal(sMessageKey, sExpectedMessageKey, "then expected message is shown");
-				return Promise.resolve();
-			}
-		);
-	}
-
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
 		beforeEach : function() {
 			this.oRta = new RuntimeAuthoring({
@@ -266,48 +257,58 @@ function(
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is not available", function(assert) {
-			this.oRta._bVersiningEnabled = false;
-			assert.equal(this.oRta._isDraftAvailable(), false, "then the 'isDraftAvailable' is false");
+			return this.oRta._initVersioning()
+			.then(function () {
+				this.oRta._oVersionsModel.setProperty("/versioningEnabled", false);
+				assert.equal(this.oRta._isDraftAvailable(), false, "then the 'isDraftAvailable' is false");
+			}.bind(this));
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is available", function(assert) {
-			this.oRta._bVersioningEnabled = true;
-			var oDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
-			var oPropertyBag = {
-				selector: oCompCont.getComponentInstance(),
-				layer: Layer.CUSTOMER
-			};
+			return this.oRta.start()
+			.then(function () {
+				this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+				var oDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+				var oPropertyBag = {
+					selector : oCompCont.getComponentInstance(),
+					layer : Layer.CUSTOMER
+				};
 
-			assert.equal(this.oRta._isDraftAvailable(), true, "then the 'isDraftAvailable' is true");
-			assert.deepEqual(oDraftAvailableStub.lastCall.args[0], oPropertyBag, "and the property bag was set correctly");
+				assert.equal(this.oRta._isDraftAvailable(), true, "then the 'isDraftAvailable' is true");
+				assert.deepEqual(oDraftAvailableStub.lastCall.args[0], oPropertyBag, "and the property bag was set correctly");
+			}.bind(this));
 		});
 
 		QUnit.test("when RTA is started in the customer layer, and no uShell is available", function(assert) {
-			this.oRta._bVersioningEnabled = true;
 			var oDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable");
 			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
 
 			return this.oRta._initVersioning()
 				.then(function() {
-					assert.equal(this.oRta._bVersioningEnabled, false, "then the 'versioningEnabled' is false");
+					assert.equal(this.oRta._oVersionsModel.getProperty("/versioningEnabled"), false, "then the 'versioningEnabled' is false");
 					assert.deepEqual(oDraftAvailableStub.callCount, 0, "and the draft available was not checked");
 				}.bind(this));
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, no changes yet done", function(assert) {
-			this.oRta._bVersioningEnabled = true;
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 			sandbox.stub(this.oRta, "canUndo").returns(false);
-
-			assert.equal(this.oRta._isDraftAvailable(), false, "then the 'isDraftAvailable' is false");
+			return this.oRta.start()
+			.then(function () {
+				this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+				assert.equal(this.oRta._isDraftAvailable(), false, "then the 'isDraftAvailable' is false");
+			}.bind(this));
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, there are unsaved changes", function(assert) {
-			this.oRta._bVersioningEnabled = true;
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 			sandbox.stub(this.oRta, "canUndo").returns(true);
 
-			assert.equal(this.oRta._isDraftAvailable(), false, "then the 'isDraftAvailable' is false");
+			return this.oRta.start()
+			.then(function () {
+				this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+				assert.equal(this.oRta._isDraftAvailable(), false, "then the 'isDraftAvailable' is false");
+			}.bind(this));
 		});
 
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
@@ -365,239 +366,6 @@ function(
 			return this.oRta._onGetAppVariantOverview(oEmptyEvent).then(function() {
 				assert.ok(fnAppVariantFeatureSpy.calledOnce, "then the onGetOverview() method is called once and the key user view will be shown");
 			});
-		});
-	});
-
-	QUnit.module("Given a CUSTOMER layer with versioning enabled", {
-		beforeEach : function() {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
-			this.oGroupElement = new GroupElement({id : oComp.createId("element")});
-			var oGroup = new Group({
-				id : oComp.createId("group"),
-				groupElements : [this.oGroupElement]
-			});
-			this.oSmartForm = new SmartForm({
-				id : oComp.createId("smartform"),
-				groups : [oGroup]
-			});
-			this.oSmartForm.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			this.oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						remove : {
-							changeType : "hideControl"
-						}
-					}
-				}
-			});
-			this.oCommandStack = new Stack();
-			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oSmartForm,
-				commandStack : this.oCommandStack,
-				showToolbars : true
-			});
-			sandbox.stub(this.oRta, "_initVersioning").resolves();
-			this.oRta._bVersioningEnabled = true;
-			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
-			this.oRta.oTriggerCrossAppNavigationStub = sandbox.stub(this.oRta, "_triggerCrossAppNavigation");
-			this.oRta.setFlexSettings({layer: Layer.CUSTOMER});
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: function() {
-					return {
-						toExternal: true,
-						getHash: function() {
-							return "Action-somestring";
-						},
-						parseShellHash: function() {
-							return {
-								semanticObject: "Action",
-								action: "somestring"
-							};
-						},
-						unregisterNavigationFilter: function() {},
-						registerNavigationFilter: function() {}
-					};
-				}
-			});
-		},
-		afterEach : function() {
-			sandbox.restore();
-			this.oRta.destroy();
-			this.oSmartForm.destroy();
-			return RtaQunitUtils.clear();
-		}
-	}, function() {
-		QUnit.test("when RTA is started and no draft is available", function(assert) {
-			sandbox.stub(VersionsAPI, "getVersions").returns([]);
-			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
-
-			return this.oRta.start().then(function () {
-				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are shown");
-				assert.equal(this.oRta.getToolbar().getDraftEnabled(), false, "then the draft buttons are disabled");
-			}.bind(this));
-		});
-		QUnit.test("when RTA is started and a draft is available", function(assert) {
-			sandbox.stub(VersionsAPI, "getVersions").returns([{versionNumber: 0}]);
-			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
-			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
-			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
-
-			return this.oRta.start().then(function () {
-				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
-			}.bind(this));
-		});
-
-		QUnit.test("when RTA is started and no draft is available, and and the key user starts working", function(assert) {
-			sandbox.stub(this.oRta, "_isDraftAvailable").returns(false);
-			sandbox.stub(VersionsAPI, "getVersions").returns([]);
-
-			return this.oRta.start()
-				.then(function() {
-					return new CommandFactory().getCommandFor(this.oGroupElement, "Remove", {
-						removedElement : this.oGroupElement
-					}, this.oGroupElementDesignTimeMetadata);
-				}.bind(this))
-				.then(function(oRemoveCommand) {
-					return this.oCommandStack.pushAndExecute(oRemoveCommand);
-				}.bind(this))
-				.then(function() {
-					assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
-					assert.equal(this.oRta.getToolbar().getDraftEnabled(), true, "then the draft buttons are enabled");
-				}.bind(this))
-				.then(this.oRta.undo.bind(this.oRta))
-				.then(function() {
-					assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are stil shwon");
-					assert.equal(this.oRta.getToolbar().getDraftEnabled(), false, "then the draft buttons are disabled");
-				}.bind(this));
-		});
-
-		QUnit.test("when RTA is started and no draft is available, and and the key user starts working and discards", function(assert) {
-			sandbox.stub(VersionsAPI, "getVersions").returns([]);
-			var mParsedHash = {
-				params: {}
-			};
-			var mExpectedParsedHash = {
-				params: {"sap-ui-fl-version": ["false"]}
-			};
-			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
-			sandbox.stub(Utils, "getParsedURLHash").returns(mParsedHash);
-
-			return this.oRta.start()
-			.then(function () {
-				return new CommandFactory().getCommandFor(this.oGroupElement, "Remove", {
-					removedElement: this.oGroupElement
-				}, this.oGroupElementDesignTimeMetadata);
-			}.bind(this))
-			.then(function (oRemoveCommand) {
-				return this.oCommandStack.pushAndExecute(oRemoveCommand);
-			}.bind(this))
-			.then(function () {
-				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
-				assert.equal(this.oRta.getToolbar().getDraftEnabled(), true, "then the draft buttons are enabled");
-			}.bind(this))
-			.then(function () {
-				return this.oRta._handleDiscard();
-			}.bind(this))
-			.then(function () {
-				assert.deepEqual(this.oRta.oTriggerCrossAppNavigationStub.getCall(0).args[0],
-					mExpectedParsedHash, "then crossAppNavigation was triggered");
-			}.bind(this));
-		});
-
-		QUnit.test("when RTA is started and a draft is available, and and the key user starts working", function(assert) {
-			sandbox.stub(VersionsAPI, "getVersions").returns([{versionNumber: 0}]);
-			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
-			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
-			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
-
-			return this.oRta.start()
-				.then(function() {
-					return new CommandFactory().getCommandFor(this.oGroupElement, "Remove", {
-						removedElement : this.oGroupElement
-					}, this.oGroupElementDesignTimeMetadata);
-				}.bind(this))
-				.then(function(oRemoveCommand) {
-					return this.oCommandStack.pushAndExecute(oRemoveCommand);
-				}.bind(this))
-				.then(function() {
-					assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
-				}.bind(this))
-				.then(this.oRta.undo.bind(this.oRta))
-				.then(function() {
-					assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are still visible");
-				}.bind(this));
-		});
-
-		QUnit.test("when RTA is started and a draft is not available and versions response is empty", function(assert) {
-			sandbox.stub(this.oRta, "_isDraftAvailable").returns(false);
-
-			var aVersions = [];
-			sandbox.stub(VersionsAPI, "getVersions").returns(aVersions);
-
-			return this.oRta.start().then(function () {
-				var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
-				assert.equal(this.oRta.getToolbar().getControl("versionLabel").getVisible(), true, "then the version label is visible");
-				assert.equal(this.oRta.getToolbar().getControl("versionLabel").getText(), oTextResources.getText("LBL_ORIGNINAL_APP"), "then the version label is empty");
-			}.bind(this));
-		});
-
-		QUnit.test("when RTA is started and a draft is not available and versions response is empty contain changes before draft was available", function(assert) {
-			sandbox.stub(this.oRta, "_isDraftAvailable").returns(false);
-
-			var aVersions = [{versionNumber: 1}];
-			sandbox.stub(VersionsAPI, "getVersions").returns(aVersions);
-
-			return this.oRta.start().then(function () {
-				var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
-				assert.equal(this.oRta.getToolbar().getControl("versionLabel").getVisible(), true, "then the version label is visible");
-				assert.equal(this.oRta.getToolbar().getControl("versionLabel").getText(), oTextResources.getText("LBL_VERSION_1"), "then the version label is empty");
-			}.bind(this));
-		});
-
-		QUnit.test("when RTA is started and a draft is available and versions just contain draft", function(assert) {
-			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
-			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
-			var aVersions = [{versionNumber: 0}];
-			sandbox.stub(VersionsAPI, "getVersions").returns(aVersions);
-			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
-
-			return this.oRta.start().then(function () {
-				var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
-				assert.equal(this.oRta.getToolbar().getControl("versionLabel").getVisible(), true, "then the version label is visible");
-				assert.equal(this.oRta.getToolbar().getControl("versionLabel").getText(), oTextResources.getText("LBL_DRAFT"), "then the version label is empty");
-			}.bind(this));
-		});
-
-		QUnit.test("when RTA is started and a draft is not available and versions contain different versions", function(assert) {
-			sandbox.stub(this.oRta, "_isDraftAvailable").returns(false);
-
-			var aVersions = [{versionNumber: 2, title: "version_2"}, {versionNumber: 1, title: "version_1"}];
-			sandbox.stub(VersionsAPI, "getVersions").returns(aVersions);
-
-			return this.oRta.start().then(function () {
-				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
-				assert.equal(this.oRta.getToolbar().getControl("versionLabel").getVisible(), true, "then the version label is visible");
-				assert.equal(this.oRta.getToolbar().getControl("versionLabel").getText(), "version_2", "then the version label is empty");
-			}.bind(this));
-		});
-
-		QUnit.test("when RTA is started and a draft is available and versions contain different versions and draft", function(assert) {
-			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
-			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
-			var aVersions = [{versionNumber: 0}, {versionNumber: 2, title: "version_2"}, {versionNumber: 1, title: "version_1"}];
-			sandbox.stub(VersionsAPI, "getVersions").returns(aVersions);
-			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
-
-			return this.oRta.start().then(function () {
-				var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
-				assert.equal(this.oRta.getToolbar().getControl("versionLabel").getVisible(), true, "then the version label is visible");
-				assert.equal(this.oRta.getToolbar().getControl("versionLabel").getText(), oTextResources.getText("LBL_DRAFT"), "then the version label is empty");
-			}.bind(this));
 		});
 	});
 
@@ -1065,8 +833,7 @@ function(
 		});
 
 		QUnit.test("when stopping rta with saving changes and versioning is enabled", function(assert) {
-			this.oRta._bVersioningEnabled = true;
-			sandbox.stub(VersionsAPI, "getVersions").returns([]);
+			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 
 			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
 
@@ -1619,69 +1386,24 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when versioning is not enabled", function(assert) {
-			this.oRta._bVersioningEnabled = false;
-			this.oRta._onStackModified(this.oRta.getFlexSettings());
-			var oHandleVersionToolbarSpy = sandbox.spy(this.oRta, "_handleVersionToolbar");
-			this.oRta._onStackModified(this.oRta.getFlexSettings());
-			assert.equal(oHandleVersionToolbarSpy.callCount, 0, "_handleVersionToolbar was not called");
-		});
-
-		QUnit.test("when versioning is enabled but no draft or undoable change is present", function(assert) {
-			this.oRta._bVersioningEnabled = true;
-			sandbox.stub(VersionsAPI, "getVersions").returns([]);
-			this.oRta._onStackModified(this.oRta.getFlexSettings());
-			var oSetDraftEnabledSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftEnabled");
-			var oSetVersionLabelSpy = sandbox.spy(this.oRta, "_setVersionLabel");
-			var oHandleVersionToolbarSpy = sandbox.spy(this.oRta, "_handleVersionToolbar");
-			this.oRta._onStackModified(this.oRta.getFlexSettings());
-			assert.equal(oSetDraftEnabledSpy.callCount, 1, "the draft visibility was set");
-			assert.equal(oSetDraftEnabledSpy.getCall(0).args[0], false, "to false");
-			assert.equal(oSetVersionLabelSpy.callCount, 1, "_setVersionLabel was called");
-			assert.equal(oSetVersionLabelSpy.getCall(0).args[0], false, "with bDraftEnabled false");
-			assert.equal(oHandleVersionToolbarSpy.callCount, 1, "_handleVersionToolbar was called");
-			assert.equal(oHandleVersionToolbarSpy.getCall(0).args[0], false, "with bCanUndo false");
-		});
-
-		QUnit.test("when versioning is enabled and a draft is present", function(assert) {
-			this.oRta._bVersioningEnabled = true;
-			var oIsDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
-			var oSetDraftEnabledSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftEnabled");
-			var oSetVersionLabelAccentColorSpy = sandbox.spy(this.oRta.getToolbar(), "setVersionLabelAccentColor");
-			var oSetVersionLabelSpy = sandbox.spy(this.oRta, "_setVersionLabel");
-			var oHandleVersionToolbarSpy = sandbox.spy(this.oRta, "_handleVersionToolbar");
-			this.oRta._onStackModified(this.oRta.getFlexSettings());
-			assert.equal(oIsDraftAvailableStub.callCount, 1, "isDraftAvailable was called");
-			assert.equal(oSetDraftEnabledSpy.callCount, 1, "the draft visibility was set");
-			assert.equal(oSetDraftEnabledSpy.getCall(0).args[0], true, "to true");
-			assert.equal(oSetVersionLabelAccentColorSpy.callCount, 1, "setVersionLabelAccentColor was set");
-			assert.equal(oSetVersionLabelAccentColorSpy.getCall(0).args[0], true, "to true");
-			assert.equal(oSetVersionLabelSpy.callCount, 1, "_setVersionLabel was called");
-			assert.equal(oSetVersionLabelSpy.getCall(0).args[0], true, "with bDraftEnabled true");
-			assert.equal(oHandleVersionToolbarSpy.callCount, 1, "_handleVersionToolbar was called");
-			assert.equal(oHandleVersionToolbarSpy.getCall(0).args[0], false, "with bCanUndo false");
-			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-			assert.equal(this.oRta.getToolbar().getControl("versionLabel").getText(), oTextResources.getText("LBL_DRAFT"), "then the version label is set to 'DRAFT'");
-		});
-
-		QUnit.test("when versioning is enabled and a undoable change is present", function(assert) {
-			this.oRta._bVersioningEnabled = true;
+		QUnit.test("when an undo operation can be done", function(assert) {
+			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 			sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(true);
-			var oSetDraftEnabledSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftEnabled");
-			var oSetVersionLabelAccentColorSpy = sandbox.spy(this.oRta.getToolbar(), "setVersionLabelAccentColor");
-			var oSetVersionLabelSpy = sandbox.spy(this.oRta, "_setVersionLabel");
-			var oHandleVersionToolbarSpy = sandbox.spy(this.oRta, "_handleVersionToolbar");
-			this.oRta._onStackModified(this.oRta.getFlexSettings());
-			assert.equal(oSetDraftEnabledSpy.callCount, 1, "the draft visibility was set");
-			assert.equal(oSetDraftEnabledSpy.getCall(0).args[0], true, "to true");
-			assert.equal(oSetVersionLabelAccentColorSpy.callCount, 1, "setVersionLabelAccentColor was set");
-			assert.equal(oSetVersionLabelAccentColorSpy.getCall(0).args[0], true, "to true");
-			assert.equal(oSetVersionLabelSpy.callCount, 1, "_setVersionLabel was not called");
-			assert.equal(oSetVersionLabelSpy.getCall(0).args[0], true, "with bDraftEnabled true");
-			assert.equal(oHandleVersionToolbarSpy.callCount, 1, "_handleVersionToolbar was called");
-			assert.equal(oHandleVersionToolbarSpy.getCall(0).args[0], true, "with bCanUndo true");
-			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-			assert.equal(this.oRta.getToolbar().getControl("versionLabel").getText(), oTextResources.getText("LBL_DRAFT"), "then the version label is set to 'DRAFT'");
+			var oVersionsModel = this.oRta.getToolbar().getModel("versions");
+			var oSetDirtyChangesSpy = sandbox.spy(oVersionsModel, "setDirtyChanges");
+			this.oRta._onStackModified();
+			assert.equal(oSetDirtyChangesSpy.callCount, 1, "dirtyChanges was set in the versions model");
+			assert.equal(oSetDirtyChangesSpy.getCall(0).args[0], true, "to true");
+		});
+
+		QUnit.test("when an undo operation is not available", function(assert) {
+			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+			sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(false);
+			var oVersionsModel = this.oRta.getToolbar().getModel("versions");
+			var oSetDirtyChangesSpy = sandbox.spy(oVersionsModel, "setDirtyChanges");
+			this.oRta._onStackModified();
+			assert.equal(oSetDirtyChangesSpy.callCount, 1, "dirtyChanges was set in the versions model");
+			assert.equal(oSetDirtyChangesSpy.getCall(0).args[0], false, "to false");
 		});
 	});
 

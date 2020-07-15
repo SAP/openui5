@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/Utils",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/m/Page",
@@ -14,6 +15,7 @@ function (
 	RuntimeAuthoring,
 	BasePlugin,
 	PersistenceWriteAPI,
+	FlUtils,
 	UIComponent,
 	ComponentContainer,
 	Page,
@@ -65,7 +67,7 @@ function (
 
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
-				rootControl: this.oComponentContainer
+				rootControl: this.oComponent
 			});
 
 			sandbox.stub(this.oRta, "_determineReload").resolves(false);

@@ -3,6 +3,8 @@
 sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -12,6 +14,8 @@ sap.ui.define([
 ], function(
 	VersionsAPI,
 	Versions,
+	Storage,
+	Settings,
 	FlexState,
 	Layer,
 	Utils,
@@ -28,18 +32,25 @@ sap.ui.define([
 	QUnit.module("Given VersionsAPI.isDraftAvailable is called", {
 		before: function() {
 			this.oAppComponent = {
-				getManifest: function () {
+				getManifest : function () {
 					return {};
 				},
-				getId: function () {
+				getId : function () {
 					return "sComponentId";
 				},
-				getComponentData: function () {
+				getComponentData : function () {
 					return {
-						startupParameters: ["sap-app-id"]
+						startupParameters : ["sap-app-id"]
 					};
 				}
 			};
+		},
+		beforeEach: function () {
+			sandbox.stub(Settings, "getInstance").resolves({
+				isVersioningEnabled: function () {
+					return true;
+				}
+			});
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -91,13 +102,15 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
-				{versionNumber: 1},
+				{versionNumber: 0},
 				{versionNumber: 2},
-				{versionNumber: 0}
+				{versionNumber: 1}
 			];
-			sandbox.stub(Versions, "getVersions").returns(aReturnedVersions);
+			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 
-			assert.equal(VersionsAPI.isDraftAvailable(mPropertyBag), true, "then a 'true' is returned");
+			return VersionsAPI.initialize(mPropertyBag).then(function () {
+				assert.equal(VersionsAPI.isDraftAvailable(mPropertyBag), true, "then a 'true' is returned");
+			});
 		});
 
 		QUnit.test("when a selector and a layer were provided and a draft does not exists", function(assert) {
@@ -109,82 +122,14 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
-				{versionNumber: 1},
-				{versionNumber: 2}
+				{versionNumber: 2},
+				{versionNumber: 1}
 			];
-			sandbox.stub(Versions, "getVersions").returns(aReturnedVersions);
+			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 
-			assert.equal(VersionsAPI.isDraftAvailable(mPropertyBag), false, "then a 'false' is returned");
-		});
-	});
-
-	QUnit.module("Given VersionsAPI.getVersions is called", {
-		before: function() {
-			this.oAppComponent = {
-				getManifest: function () {
-					return {};
-				},
-				getId: function () {
-					return "sComponentId";
-				},
-				getComponentData: function () {
-					return {
-						startupParameters: ["sap-app-id"]
-					};
-				}
-			};
-		},
-		afterEach: function() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when no selector is provided", function (assert) {
-			var mPropertyBag = {
-				layer: Layer.CUSTOMER
-			};
-
-			assert.throws(
-				VersionsAPI.getVersions.bind(undefined, mPropertyBag),
-				new Error("No selector was provided"),
-				"then an Error is thrown"
-			);
-		});
-
-		QUnit.test("when no layer is provided", function (assert) {
-			var mPropertyBag = {
-				selector: new Control()
-			};
-			assert.throws(
-				VersionsAPI.getVersions.bind(undefined, mPropertyBag),
-				new Error("No layer was provided"),
-				"then an Error is thrown"
-			);
-		});
-
-		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
-			var mPropertyBag = {
-				layer: Layer.CUSTOMER,
-				selector: new Control()
-			};
-			assert.throws(
-				VersionsAPI.getVersions.bind(undefined, mPropertyBag),
-				new Error("The application ID could not be determined"),
-				"then an Error is thrown"
-			);
-		});
-
-		QUnit.test("when a selector and a layer were provided and the request returns a list of versions", function(assert) {
-			var mPropertyBag = {
-				layer: Layer.CUSTOMER,
-				selector: new Control()
-			};
-
-			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
-			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
-			var aReturnedVersions = [];
-			sandbox.stub(Versions, "getVersions").returns(aReturnedVersions);
-
-			assert.equal(VersionsAPI.getVersions(mPropertyBag), aReturnedVersions, "then the returned version list is passed");
+			return VersionsAPI.initialize(mPropertyBag).then(function () {
+				assert.equal(VersionsAPI.isDraftAvailable(mPropertyBag), false, "then a 'false' is returned");
+			});
 		});
 	});
 
@@ -204,8 +149,16 @@ sap.ui.define([
 				}
 			};
 		},
+		beforeEach: function () {
+			sandbox.stub(Settings, "getInstance").resolves({
+				isVersioningEnabled: function () {
+					return true;
+				}
+			});
+		},
 		afterEach: function() {
 			sandbox.restore();
+			Versions.clearInstances();
 		}
 	}, function() {
 		QUnit.test("when no selector is provided", function (assert) {

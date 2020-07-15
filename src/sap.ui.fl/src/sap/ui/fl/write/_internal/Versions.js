@@ -3,32 +3,66 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/Utils"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/fl/Utils",
+	"sap/ui/model/BindingMode"
 ], function(
+	Settings,
 	ChangePersistenceFactory,
 	Storage,
-	Utils
+	JSONModel,
+	Utils,
+	BindingMode
 ) {
 	"use strict";
 
 	var _mInstances = {};
 
-	function isBackendDraftAvailable(mPropertyBag) {
-		var sReference = mPropertyBag.reference;
-		var sLayer = mPropertyBag.layer;
-		return _mInstances[sReference] &&
-			_mInstances[sReference][sLayer] &&
-			_mInstances[sReference][sLayer].backendDraft;
-	}
+	function createModel(mPropertyBag, bVersioningEnabled, aVersions) {
+		var bBackendDraft = _doesDraftExistInVersions(aVersions);
 
-	function setBackendDraftAvailable(mPropertyBag, bBackendDraftAvailable) {
-		var sReference = mPropertyBag.reference;
-		var sLayer = mPropertyBag.layer;
-		if (_mInstances[sReference]) {
-			_mInstances[sReference][sLayer].backendDraft = bBackendDraftAvailable;
-		}
+		var oModel = new JSONModel({
+			versioningEnabled: bVersioningEnabled,
+			versions: aVersions,
+			backendDraft: bBackendDraft,
+			dirtyChanges: false,
+			draftAvailable: bBackendDraft
+		});
+
+		oModel.setDefaultBindingMode(BindingMode.OneWay);
+
+		// TODO: currently called by sap.ui.rta.RuntimeAuthoring but should be by a ChangesState
+		oModel.setDirtyChanges = function (bDirtyChanges) {
+			oModel.setProperty("/dirtyChanges", bDirtyChanges);
+			oModel.updateDraftVersion();
+			oModel.updateBindings(true);
+		};
+
+		oModel.updateDraftVersion = function () {
+			var aVersions = oModel.getProperty("/versions");
+			var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
+			var bDirtyChanges = oModel.getProperty("/dirtyChanges");
+			var bBackendDraft = oModel.getProperty("/backendDraft");
+			var bDraftAvailable = bVersioningEnabled && (bDirtyChanges || bBackendDraft);
+			oModel.setProperty("/draftAvailable", bDraftAvailable);
+
+			// add draft
+			if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
+				aVersions.splice(0, 0, {versionNumber: 0});
+				oModel.updateBindings(true);
+			}
+
+			// remove draft
+			if (_doesDraftExistInVersions(aVersions) && !bDraftAvailable) {
+				aVersions.shift();
+				oModel.updateBindings(true);
+			}
+		};
+
+		return oModel;
 	}
 
 	// TODO: the handling should move to the FlexState as soon as it is ready
@@ -68,18 +102,10 @@ sap.ui.define([
 		return oDirtyChangesInfo;
 	}
 
-	function _doesDraftExist(aVersions) {
+	function _doesDraftExistInVersions(aVersions) {
 		return aVersions.some(function(oVersion) {
 			return oVersion.versionNumber === 0;
 		});
-	}
-
-	function _updateInstanceAfterDraftActivation(aVersions, oVersion) {
-		if (_doesDraftExist(aVersions)) {
-			aVersions.shift();
-		}
-		aVersions.splice(0, 0, oVersion);
-		return aVersions;
 	}
 
 	/**
@@ -97,19 +123,25 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 * @returns {Promise<sap.ui.fl.Versions[]>} Promise resolving with a list of versions if available;
+	 * @returns {sap.ui.model.json.JSONModel} Model containing version data like <code>versions</code>,
+	 *  <code>dirtyChanges</code> and <code>backendDraft</code>
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
 	Versions.initialize = function(mPropertyBag) {
 		var sReference = mPropertyBag.reference;
 		var sLayer = mPropertyBag.layer;
 
-		return Storage.versions.load(mPropertyBag)
-			.then(function (aVersions) {
-				_mInstances[sReference] = _mInstances[sReference] || {};
-				_mInstances[sReference][sLayer] = aVersions;
-				_mInstances[sReference][sLayer].backendDraft = _doesDraftExist(aVersions);
-				return _mInstances[sReference][sLayer];
+		return Settings.getInstance()
+			.then(function (oSettings) {
+				var bVersionsEnabled = oSettings.isVersioningEnabled(sLayer);
+				var aVersionsPromise = bVersionsEnabled ? Storage.versions.load(mPropertyBag) : Promise.resolve([]);
+				return aVersionsPromise
+					.then(function (aVersions) {
+						_mInstances[sReference] = _mInstances[sReference] || {};
+						_mInstances[sReference][sLayer] = _mInstances[sReference][sLayer] || {};
+						_mInstances[sReference][sLayer] = createModel(mPropertyBag, bVersionsEnabled, aVersions);
+						return _mInstances[sReference][sLayer];
+					});
 			});
 	};
 
@@ -117,20 +149,21 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 * @returns {array} Array with a list of versions if available;
+	 * @returns {sap.ui.model.json.JSONModel} Model containing version data like <code>versions</code>,
+	 *  <code>dirtyChanges</code> and <code>backendDraft</code>
 	 * throws an error if versions were not initialized for the given reference and layer
 	 */
-	Versions.getVersions = function(mPropertyBag) {
+	Versions.getVersionsModel = function(mPropertyBag) {
 		var sReference = mPropertyBag.reference;
 		var sLayer = mPropertyBag.layer;
 
 		if (!_mInstances[sReference] || !_mInstances[sReference][sLayer]) {
-			throw Error("Versions for reference '" + sReference + "' and layer '" + sLayer + "' were not initialized.");
+			throw Error("Versions Model for reference '" + sReference + "' and layer '" + sLayer + "' were not initialized.");
 		}
 
 		var oDirtyChangesInfo = _getDirtyChangesInfo(mPropertyBag);
 		if (oDirtyChangesInfo.dirtyChangesExist) {
-			this.ensureDraftVersionExists(mPropertyBag);
+			_mInstances[sReference][sLayer].updateDraftVersion(mPropertyBag);
 		}
 		return _mInstances[sReference][sLayer];
 	};
@@ -140,18 +173,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets a draft in case it is not already present; This function must be called after a save operation to ensure a correct versions state in the session.
+	 * Updates dirty changes and the backendDraft property of the model after a saveAll was called.
 	 *
 	 * @param {object} mPropertyBag - Property Bag
-	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
+	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 */
-	Versions.ensureDraftVersionExists = function(mPropertyBag) {
-		var sReference = Utils.normalizeReference(mPropertyBag.reference);
-		var aVersions = _mInstances[sReference][mPropertyBag.layer];
-		if (!_doesDraftExist(aVersions)) {
-			_mInstances[sReference][mPropertyBag.layer].splice(0, 0, {versionNumber: 0});
-		}
+	Versions.onAllChangesSaved = function (mPropertyBag) {
+		var oModel = Versions.getVersionsModel(mPropertyBag);
+		var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
+		var bDirtyChanges = oModel.getProperty("/dirtyChanges");
+		oModel.setProperty("/dirtyChanges", true);
+		oModel.setProperty("/backendDraft", bVersioningEnabled && bDirtyChanges);
+		oModel.updateDraftVersion();
 	};
 
 	/**
@@ -169,16 +203,17 @@ sap.ui.define([
 	 * rejects if an error occurs or the layer does not support draft handling or there is no draft to activate
 	 */
 	Versions.activateDraft = function(mPropertyBag) {
-		var aVersions = Versions.getVersions(mPropertyBag);
-		var bDraftExists = _doesDraftExist(aVersions);
+		var oModel = Versions.getVersionsModel(mPropertyBag);
+		var aVersions = oModel.getProperty("/versions");
+		var bDraftExists = _doesDraftExistInVersions(aVersions);
 		if (!bDraftExists) {
 			return Promise.reject("No draft exists");
 		}
 
-		var oDirtyChangeInfo = _getDirtyChangesInfo(mPropertyBag);
 		var aSaveDirtyChangesPromise = [];
-		if (oDirtyChangeInfo.dirtyChangesExist) {
+		if (oModel.getProperty("/dirtyChanges")) {
 			// TODO: the handling should move to the FlexState as soon as it is ready
+			var oDirtyChangeInfo = _getDirtyChangesInfo(mPropertyBag);
 			var aChangePersistences = oDirtyChangeInfo.changePersistences;
 			aSaveDirtyChangesPromise = aChangePersistences.map(function (oChangePersistence) {
 				return oChangePersistence.saveDirtyChanges(mPropertyBag.appComponent, false, undefined, true);
@@ -187,8 +222,12 @@ sap.ui.define([
 		return Promise.all(aSaveDirtyChangesPromise)
 		.then(Storage.versions.activate.bind(undefined, mPropertyBag))
 		.then(function (oVersion) {
-			setBackendDraftAvailable(mPropertyBag, false);
-			return _updateInstanceAfterDraftActivation(aVersions, oVersion);
+			aVersions.shift();
+			aVersions.splice(0, 0, oVersion);
+			oModel.setProperty("/backendDraft", false);
+			oModel.setProperty("/dirtyChanges", false);
+			oModel.setProperty("/draftAvailable", false);
+			oModel.updateBindings(true);
 		});
 	};
 
@@ -204,28 +243,25 @@ sap.ui.define([
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
 	Versions.discardDraft = function(mPropertyBag) {
-		var aVersions = Versions.getVersions(mPropertyBag);
+		var oModel = Versions.getVersionsModel(mPropertyBag);
+		var aVersions = oModel.getProperty("/versions");
 		var oDirtyChangesInfo = _getDirtyChangesInfo(mPropertyBag);
-		// check if a draft existed when starting RTA (draft was loaded from the backend)
-		if (isBackendDraftAvailable(mPropertyBag)) {
-			return Storage.versions.discardDraft(mPropertyBag)
-			.then(function () {
-				aVersions.shift();
-				setBackendDraftAvailable(mPropertyBag, false);
-				// in case of a existing draft known by the backend;
-				// we remove dirty changes only after successful DELETE request
-				var bDirtyChangesRemoved = _removeDirtyChanges(mPropertyBag, oDirtyChangesInfo);
-				return {
-					backendChangesDiscarded: true,
-					dirtyChangesDiscarded: bDirtyChangesRemoved
-				};
-			});
-		}
-		aVersions.shift();
-		var bDirtyChangesRemoved = _removeDirtyChanges(mPropertyBag, oDirtyChangesInfo);
-		return Promise.resolve({
-			backendChangesDiscarded: false,
-			dirtyChangesDiscarded: bDirtyChangesRemoved
+		var bBackendDraftExists = oModel.getProperty("/backendDraft");
+		var oDiscardPromise = bBackendDraftExists ? Storage.versions.discardDraft(mPropertyBag) : Promise.resolve();
+
+		return oDiscardPromise.then(function () {
+			aVersions.shift();
+			oModel.setProperty("/backendDraft", false);
+			oModel.setProperty("/dirtyChanges", false);
+			oModel.setProperty("/draftAvailable", false);
+			oModel.updateBindings(true);
+			// in case of a existing draft known by the backend;
+			// we remove dirty changes only after successful DELETE request
+			var bDirtyChangesRemoved = _removeDirtyChanges(mPropertyBag, oDirtyChangesInfo);
+			return {
+				backendChangesDiscarded: bBackendDraftExists,
+				dirtyChangesDiscarded: bDirtyChangesRemoved
+			};
 		});
 	};
 

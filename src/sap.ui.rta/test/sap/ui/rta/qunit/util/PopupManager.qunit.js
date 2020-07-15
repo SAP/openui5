@@ -20,6 +20,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -42,6 +44,8 @@ function(
 	PersistenceWriteAPI,
 	ZIndexManager,
 	XMLView,
+	FlSettings,
+	FlUtils,
 	sinon
 ) {
 	"use strict";
@@ -55,7 +59,8 @@ function(
 				"sap.app" : {
 					applicationVersion : {
 						version : "1.2.3"
-					}
+					},
+					id: "MockComponent"
 				}
 			}
 		},
@@ -563,6 +568,16 @@ function(
 				isPublishEnabled: true
 			});
 
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComp);
+			sandbox.stub(FlSettings, "getInstance").resolves({
+				isVersioningEnabled: function () {
+					return false;
+				},
+				isProductiveSystem: function () {
+					return true;
+				}
+			});
+
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
 			});
@@ -641,6 +656,8 @@ function(
 				isResetEnabled: true,
 				isPublishEnabled: true
 			});
+
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComp);
 
 			this.oDialog = new Dialog("testDialog");
 			oView.addDependent(this.oDialog);
