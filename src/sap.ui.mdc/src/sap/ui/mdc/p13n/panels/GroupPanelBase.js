@@ -188,16 +188,8 @@ sap.ui.define([
 	};
 
 	GroupPanelBase.prototype._onGroupModeChange = function(oEvt) {
-		var sKey = oEvt.getParameters().selectedItem.getKey();
-
-		this._oListControl.getItems().forEach(function(oOuterItem){
-			var oPanel = oOuterItem.getContent()[0];
-			var oInnerList = oPanel.getContent()[0];
-
-			this._filterBySelected(sKey == "visible" ? true : false, oInnerList);
-			this._togglePanelVisibility(oPanel);
-		}.bind(this));
-
+		this._sModeKey = oEvt.getParameters().selectedItem.getKey();
+		this._filterByModeAndSearch();
 	};
 
 	GroupPanelBase.prototype._togglePanelVisibility = function(oPanel) {
@@ -211,16 +203,37 @@ sap.ui.define([
 	};
 
 	GroupPanelBase.prototype._onSearchFieldLiveChange = function (oEvent) {
+		this._sSearchString = oEvent.getSource().getValue();
+		this._filterByModeAndSearch();
+	};
 
-		var aFilters = new Filter([
-			new Filter("label", "Contains", oEvent.getSource().getValue()),
-			new Filter("tooltip", "Contains", oEvent.getSource().getValue())
-		]);
+	GroupPanelBase.prototype._filterByModeAndSearch = function() {
+		var aFiltersSearch = [], oFilterMode;
+		var aFilters;
+
+		if (this._sSearchString){
+			aFiltersSearch = [
+				new Filter("label", "Contains", this._sSearchString),
+				new Filter("tooltip", "Contains", this._sSearchString)
+			];
+			aFilters = new Filter(aFiltersSearch, false);
+		}
+
+		if (this._sModeKey === "visible") {
+			oFilterMode = new Filter("selected", "EQ", true);
+			if (aFilters) {
+				aFilters = new Filter([new Filter({filters: aFiltersSearch}), oFilterMode], true);
+			} else {
+				aFilters = oFilterMode;
+			}
+		}
+
+		aFilters = aFilters ? aFilters : [];
 
 		this._oListControl.getItems().forEach(function(oOuterItem){
 			var oPanel = oOuterItem.getContent()[0];
 			var oInnerList = oPanel.getContent()[0];
-			oInnerList.getBinding("items").filter(aFilters, false);
+			oInnerList.getBinding("items").filter(aFilters, true);
 			this._togglePanelVisibility(oPanel);
 		}.bind(this));
 	};
@@ -249,6 +262,11 @@ sap.ui.define([
 
 		//Overwrite default binding
 		BasePanel.prototype._bindListItems.call(this, mBindingInfo);
+	};
+
+	GroupPanelBase.prototype.exit = function(){
+		BasePanel.prototype.exit.apply(this, arguments);
+		this._sSearchString = null;
 	};
 
 	return GroupPanelBase;
