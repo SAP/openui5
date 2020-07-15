@@ -251,7 +251,7 @@ sap.ui.define([
 
 	QUnit.module("Events");
 
-	QUnit.test("appointmentSelect: select a single appointment", function (assert) {
+	QUnit.test("appointmentSelect: select a single appointment in day-based view", function (assert) {
 		var oAppointment = new CalendarAppointment(),
 			oSPC = new SinglePlanningCalendar({
 				appointments: [
@@ -285,8 +285,89 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("appointmentSelect: deselect all appointments", function (assert) {
+	QUnit.test("appointmentSelect: deselect all appointments in day-based view", function (assert) {
 		var oSPC = new SinglePlanningCalendar({
+				appointments: [
+					new CalendarAppointment({
+						startDate: new Date(2018, 6, 8, 5),
+						endDate: new Date(2018, 6, 8, 6),
+						selected: true
+					}),
+					new CalendarAppointment({
+						startDate: new Date(2018, 6, 9, 4),
+						endDate: new Date(2018, 6, 10, 4),
+						selected: true
+					})
+				]
+			}),
+			oFakeEvent = {
+				target: jQuery("<div></div>").attr({
+					"data-sap-start-date": "20180708-0300",
+					"data-sap-end-date": "20180708-0400",
+					"class": "sapMSinglePCRow"
+				}).get(0)
+			},
+			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
+
+		//act
+		oSPC.getAggregation("_grid").ontap(oFakeEvent);
+
+		//assert
+		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
+		assert.ok(fnFireAppointmentSelectSpy.calledWithExactly({
+			appointment: undefined,
+			appointments: oSPC.getAggregation("appointments"),
+			id: oSPC.getId()
+		}), "Event was fired with the correct parameters");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("appointmentSelect: select a single appointment in month-based view", function (assert) {
+		var oAppointment = new CalendarAppointment(),
+			oSPC = new SinglePlanningCalendar({
+				views: new SinglePlanningCalendarMonthView({
+					key: "MonthView",
+					title: "Month View"
+				}),
+				appointments: [
+					oAppointment
+				]
+			}),
+			oFakeEvent = {
+				target: {
+					classList: {
+						contains: function() {
+							return false;
+						}
+					}
+				},
+				srcControl: oAppointment
+			},
+			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
+
+		//act
+		oSPC.getAggregation("_mvgrid").ontap(oFakeEvent);
+
+		//assert
+		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
+		assert.ok(fnFireAppointmentSelectSpy.calledWithExactly({
+			appointment: oAppointment,
+			appointments: [oAppointment],
+			id: oSPC.getId()
+		}), "Event was fired with the correct parameters");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("appointmentSelect: deselect all appointments in month-based view", function (assert) {
+		var oSPC = new SinglePlanningCalendar({
+				views: new SinglePlanningCalendarMonthView({
+					key: "MonthView",
+					title: "Month View"
+				}),
 				appointments: [
 					new CalendarAppointment({
 						startDate: new Date(2018, 6, 8, 5),
@@ -304,15 +385,17 @@ sap.ui.define([
 				target: {
 					classList: {
 						contains: function() {
-							return true;
+							return false;
 						}
 					}
-				}
+				},
+				srcControl: oSPC.getAggregation("_mvgrid")
 			},
 			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
+		sap.ui.getCore().applyChanges();
 
 		//act
-		oSPC.getAggregation("_grid").ontap(oFakeEvent);
+		oSPC.getAggregation("_mvgrid")._fireSelectionEvent(oFakeEvent);
 
 		//assert
 		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
@@ -496,7 +579,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("cellPress", function (assert) {
+	QUnit.test("cellPress: in day-based view", function (assert) {
 		// prepare
 		var oSPC = new SinglePlanningCalendar({
 				startDate: new Date(2018, 6, 8)
@@ -513,13 +596,44 @@ sap.ui.define([
 			fnFireGridCellFocusSpy = this.spy(oSPC, "fireEvent");
 
 		// act
-		oSPC.getAggregation("_grid").onkeydown(oFakeEvent);
-		// assert
+		oSPC.getAggregation("_grid")._fireSelectionEvent(oFakeEvent);
 
-		assert.ok(fnFireGridCellFocusSpy.calledOnce, "The cellPress event was fired");
+		// assert
+		assert.ok(fnFireGridCellFocusSpy.withArgs("cellPress").calledOnce, "Event was fired");
 		assert.ok(fnFireGridCellFocusSpy.calledWithExactly("cellPress", {
 			startDate: new Date(2018, 6 , 8, 3),
 			endDate: new Date(2018, 6, 8, 4),
+			id: oSPC.getId()
+		}), "Event was fired with the correct parameters");
+
+		// cleanup
+		oSPC.destroy();
+	});
+
+	QUnit.test("cellPress: in month-based view", function (assert) {
+		// prepare
+		var oSPC = new SinglePlanningCalendar({
+				startDate: new Date(2018, 7, 2),
+				views: new SinglePlanningCalendarMonthView({
+					key: "MonthView",
+					title: "Month View"
+				})
+			}).placeAt("qunit-fixture"),
+			oGrid = oSPC.getAggregation("_mvgrid"),
+			oFakeEvent,
+			fnFireGridCellFocusSpy = this.spy(oSPC, "fireEvent");
+		sap.ui.getCore().applyChanges();
+
+		oFakeEvent = { target: oGrid.$().find('.sapMSPCMonthDay')[3], srcControl: oGrid };
+
+		// act
+		oGrid._fireSelectionEvent(oFakeEvent);
+
+		// assert
+		assert.ok(fnFireGridCellFocusSpy.withArgs("cellPress").calledOnce, "Event was fired");
+		assert.ok(fnFireGridCellFocusSpy.calledWithExactly("cellPress", {
+			startDate: new Date(2018, 7, 1),
+			endDate: new Date(2018, 7, 2),
 			id: oSPC.getId()
 		}), "Event was fired with the correct parameters");
 

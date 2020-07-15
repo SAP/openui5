@@ -398,7 +398,7 @@ function(
 			},
 
 			/**
-			 * Fired when a grid cell is focused.
+			 * Fired when a grid cell is pressed.
 			 * @since 1.65
 			 */
 			cellPress: {
@@ -1097,6 +1097,7 @@ function(
 		oGrid._getColumnHeaders().attachEvent("select", fnHandleHeadersSelect, this);
 
 		oGrid.attachEvent("appointmentSelect", fnHandleAppointmentSelect, this);
+		oGridMV.attachEvent("appointmentSelect", fnHandleAppointmentSelect, this);
 
 		oGrid.attachEvent("appointmentDrop", fnHandleAppointmentDrop, this);
 		oGridMV.attachEvent("appointmentDrop", fnHandleAppointmentDrop, this);
