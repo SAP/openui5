@@ -146,15 +146,7 @@ function(
 	});
 
 	QUnit.test("Setting the selection mode", function(assert) {
-		var done = assert.async();
 		this.oChart.setSelectionMode("SINGLE");
-		// Note: if we do not wait until oSelectionHandlerPromise is resolved it will break due to duplicate id of Chart's toolbar
-		this.oChart.oChartPromise.then(function() {
-			this.oChart.oSelectionHandlerPromise.then(function() {
-				done();
-			});
-		}.bind(this));
-
 		var done1 = assert.async();
 		this.oChart.oChartPromise.then(function() {
 			var oChart = this.getAggregation("_chart");
@@ -678,4 +670,25 @@ function(
 		}.bind(this));
 	});
 
+	QUnit.test("Details button is visible", function(assert) {
+		var done = assert.async();
+		var fnTest = function () {
+			var oToolBar = this.oChart.getAggregation("_toolbar");
+			var oToolBarContent = oToolBar.getContent();
+			assert.ok(oToolBarContent.find(function (oControl) {
+				return oControl.sId.indexOf("selectionDetails") >= 0;
+			}), "selectionDetails are available on ToolBar");
+			done();
+		}.bind(this);
+
+		this.oChart.oChartPromise.then(function() {
+			// the SelectionHandler dependency may not be ready at this time, so we use an internal helper promise
+			if (this.oChart._oSelectionHandlerPromise) {
+				this.oChart._oSelectionHandlerPromise.then(fnTest);
+			} else {
+				fnTest();
+			}
+		}.bind(this));
 	});
+
+});

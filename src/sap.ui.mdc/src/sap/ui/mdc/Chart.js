@@ -290,6 +290,19 @@ sap.ui.define([
 			}
 		});
 
+		var _onSelectionMode = function(vValue) {
+			this.oChartPromise.then(function (oChart) {
+				if (this.bIsDestroyed) {
+					return;
+				}
+				vValue = vValue || this.getSelectionMode();
+				oChart.setSelectionMode(vValue);
+				if (vValue !== "NONE") {
+					this._prepareSelection();
+				}
+			}.bind(this));
+		};
+
 		Chart.prototype.init = function () {
 			this._oObserver = new ManagedObjectObserver(this.update.bind(this));
 			this._oAdaptationController = null;
@@ -384,6 +397,10 @@ sap.ui.define([
 				}
 
 			}.bind(this));
+
+			if (!mSettings || mSettings.selectionMode === undefined) {
+				_onSelectionMode.apply(this);
+			}
 
 			return Control.prototype.applySettings.apply(this, arguments);
 		};
@@ -550,27 +567,7 @@ sap.ui.define([
 		};
 
 		Chart.prototype.setSelectionMode = function (vValue) {
-			var oChart = this.getAggregation("_chart");
-
-			if (oChart) {
-				oChart.setSelectionMode(vValue);
-
-				if (vValue !== "NONE") {
-					this._prepareSelection();
-				}
-			} else if (this.oChartPromise) {
-				this.oChartPromise.then(function (oChart) {
-
-					if (oChart) {
-						oChart.setSelectionMode(vValue);
-
-						if (vValue !== "NONE") {
-							this._prepareSelection();
-						}
-					}
-				}.bind(this));
-			}
-
+			_onSelectionMode.call(this, vValue);
 			return this.setProperty("selectionMode", vValue, true);
 		};
 
@@ -660,6 +657,7 @@ sap.ui.define([
 			}
 
 			this.oChartPromise = null;
+			this._oSelectionHandlerPromise = null;
 
 			var oChart = this.getAggregation("_chart");
 
@@ -1006,23 +1004,16 @@ sap.ui.define([
 		};
 
 		Chart.prototype._prepareSelection = function () {
-
 			if (SelectionHandler) {
 				SelectionHandler.prepareChart(this);
 			} else {
+				this._oSelectionHandlerPromise = loadModules(["sap/ui/mdc/chart/SelectionHandler"]).then(function (aModules) {
+					SelectionHandler = aModules[0];
 
-				if (!this.oSelectionHandlerPromise) {
-					this.oSelectionHandlerPromise = new Promise(function (resolve, reject) {
-						sap.ui.require([
-							"sap/ui/mdc/chart/SelectionHandler"
-						], function (SelectionHandlerLoaded) {
-							SelectionHandler = SelectionHandlerLoaded;
-							resolve(true);
-						});
-					});
-				}
+					if (this.bIsDestroyed) {
+						return;
+					}
 
-				this.oSelectionHandlerPromise.then(function () {
 					SelectionHandler.prepareChart(this);
 				}.bind(this));
 			}
