@@ -437,7 +437,7 @@
         </component>
 
         <component>
-            <name>CA-UI5-FST</name>
+            <name>CA-UI5-TA</name>
             <modules>
                 <module>sap/ui/test/*</module>
             </modules>
