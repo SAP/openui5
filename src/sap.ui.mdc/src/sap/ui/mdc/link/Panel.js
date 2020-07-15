@@ -10,7 +10,6 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/m/Image',
 	'sap/m/Link',
-	'sap/ui/mdc/link/ILinkHandler',
 	'sap/ui/core/CustomData',
 	'sap/base/Log',
 	'sap/m/SelectDialog',
@@ -22,7 +21,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/mdc/flexibility/PanelItem.flexibility',
 	'sap/ui/mdc/flexibility/Panel.flexibility'
-], function(XMLComposite, mdcLibrary, HBox, VBox, Text, Image, Link, ILinkHandler, CustomData, Log, SelectDialog, StandardListItem, SelectionDialog, SelectionDialogItem, JSONModel, BindingMode, ManagedObjectObserver, PanelItemFlexibility, PanelFlexibility) {
+], function(XMLComposite, mdcLibrary, HBox, VBox, Text, Image, Link, CustomData, Log, SelectDialog, StandardListItem, SelectionDialog, SelectionDialogItem, JSONModel, BindingMode, ManagedObjectObserver, PanelItemFlexibility, PanelFlexibility) {
 	"use strict";
 
 	/**
@@ -82,7 +81,7 @@ sap.ui.define([
 					singularName: "item"
 				},
 				/**
-				 * In addition to main item and items some additional content can be displayed in the panel.
+				 * In addition to items some additional content can be displayed in the panel.
 				 */
 				additionalContent: {
 					type: "sap.ui.core.Control",
@@ -109,10 +108,9 @@ sap.ui.define([
 		XMLComposite.prototype.init.call(this);
 		var oModel = new JSONModel({
 			// disjunct sets
-			countMainItems: 0,
-			countNonMainItemsWithIcon: 0,
-			countNonMainItemsWithoutIcon: 0,
 			countAdditionalContent: 0,
+			countItemsWithIcon: 0,
+			countItemsWithoutIcon: 0,
 
 			showResetEnabled: false,
 
@@ -168,7 +166,7 @@ sap.ui.define([
 			async: true
 		}).then(function() {
 			sap.ui.require([
-				'sap/ui/fl/write/api/ControlPersonalizationWriteAPI', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI', 'sap/ui/fl/Utils', this.getMetadataHelperPath() || "sap/ui/mdc/link/ContentHandler"
+				'sap/ui/fl/write/api/ControlPersonalizationWriteAPI', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI', 'sap/ui/fl/Utils', this.getMetadataHelperPath() || "sap/ui/mdc/Link"
 			], function(ControlPersonalizationWriteAPI, FlexRuntimeInfoAPI, Utils, MetadataHelper) {
 
 				// If the condition, that a control is assigned to a AppComponent is not fulfilled, we can go ahead
@@ -180,21 +178,12 @@ sap.ui.define([
 				return FlexRuntimeInfoAPI.waitForChanges({element: this}).then(function() {
 
 					return new Promise(function(resolve) {
-						// Do not show main item in the selection dialog
-						var aAllItemsWithoutMain = MetadataHelper.retrieveAllMetadata(this).filter(function(oMetadataItem) {
-							return oMetadataItem.isMain !== true;
-						});
-						if (!aAllItemsWithoutMain.length) {
-							aAllItemsWithoutMain = jQuery.extend(true, [], this._getInternalModel().getProperty("/runtimeItems")).filter(function(oMItem) {
-								return oMItem.isMain !== true;
-							});
-						}
-						var bShowDefaultIcon = aAllItemsWithoutMain.some(function(oMItem) {
+						var aAllLinkItems = MetadataHelper.retrieveAllMetadata(this);
+
+						var bShowDefaultIcon = aAllLinkItems.some(function(oMItem) {
 							return !!oMItem.icon;
 						});
-						var aMItemsRuntimeWithoutMain = jQuery.extend(true, [], this._getInternalModel().getProperty("/runtimeItems")).filter(function(oMItem) {
-							return oMItem.isMain !== true;
-						});
+						var aMRuntimeItems = jQuery.extend(true, [], this._getInternalModel().getProperty("/runtimeItems"));
 
 						var fnCleanUp = function(oSelectionDialog) {
 							oSelectionDialog.close();
@@ -219,9 +208,9 @@ sap.ui.define([
 							// showResetEnabled: {
 							// 	path: '$selectionDialog>/showResetEnabled'
 							// },
-							items: aAllItemsWithoutMain.map(function(oMItem) {
+							items: aAllLinkItems.map(function(oMItem) {
 								// Overwrite metadata with the current values
-								var oMItemRuntime = Panel._getItemById(oMItem.id, aMItemsRuntimeWithoutMain);
+								var oMItemRuntime = Panel._getItemById(oMItem.id, aMRuntimeItems);
 								var sIcon = oMItem.icon;
 								if (bShowDefaultIcon && !sIcon) {
 									sIcon = "sap-icon://chain-link";
@@ -350,19 +339,18 @@ sap.ui.define([
 		return this.getModel("$sapuimdclinkPanel");
 	};
 	Panel.prototype._propagateDefaultIcon = function(bShowDefaultIcon) {
-		// If at least one item has an icon, except the main item, we have to set a default icon for the items which do not have an icon
+		// If at least one item has an icon we have to set a default icon for the items which do not have an icon
 		// Once the defaultIcon has been set, it can not be reverted (to false)
 		if (!bShowDefaultIcon) {
 			return;
 		}
 		var oModel = this._getInternalModel();
 		oModel.getProperty("/runtimeItems").forEach(function(oMItem, iIndex) {
-			if (oMItem.isMain === true || !!oMItem.icon) {
+			if (!!oMItem.icon) {
 				return;
 			}
-			// Note: due to this enhancement of default icon, depending on isMain property, we have to use internal
-			// JSON model $sapuimdclinkPanel>/runtimeItems in the Panel.control.xml. Without this enhancement
-			// we could just use $this instead.
+			// Note: due to this enhancement of default icon we have to use internal JSON model $sapuimdclinkPanel>/runtimeItems
+			// in the Panel.control.xml. Without this enhancement we could just use $this instead.
 			oModel.setProperty("/runtimeItems/" + iIndex + "/icon", "sap-icon://chain-link");
 		});
 	};
@@ -383,18 +371,14 @@ sap.ui.define([
 					aItems.forEach(function(oPanelItem) {
 						switch (oChanges.mutation) {
 							case "insert":
-								oModel.setProperty("/countMainItems", oPanelItem.getIsMain() ? oModel.getProperty("/countMainItems") + 1 : oModel.getProperty("/countMainItems"));
-								if (!oPanelItem.getIsMain()) {
-									oModel.setProperty("/countNonMainItemsWithIcon", oPanelItem.getIcon() ? oModel.getProperty("/countNonMainItemsWithIcon") + 1 : oModel.getProperty("/countNonMainItemsWithIcon"));
-									oModel.setProperty("/countNonMainItemsWithoutIcon", oPanelItem.getIcon() ? oModel.getProperty("/countNonMainItemsWithoutIcon") : oModel.getProperty("/countNonMainItemsWithoutIcon") + 1);
-								}
-
+								oModel.setProperty("/countItemsWithIcon", oPanelItem.getIcon() ? oModel.getProperty("/countItemsWithIcon") + 1 : oModel.getProperty("/countItemsWithIcon"));
+								oModel.setProperty("/countItemsWithoutIcon", oPanelItem.getIcon() ? oModel.getProperty("/countItemsWithoutIcon") : oModel.getProperty("/countItemsWithoutIcon") + 1);
 								// Note: the new item(s) has been already added/inserted into the aggregation, so we have to insert the relevant model item into same position.
 								var aRuntimeItems = oModel.getProperty("/runtimeItems/");
 								aRuntimeItems.splice(this.indexOfItem(oPanelItem), 0, oPanelItem.getJson());
 								oModel.setProperty("/runtimeItems", aRuntimeItems);
 
-								this._propagateDefaultIcon(oModel.getProperty("/countNonMainItemsWithIcon") > 0 && oModel.getProperty("/countNonMainItemsWithoutIcon") > 0);
+								this._propagateDefaultIcon(oModel.getProperty("/countItemsWithIcon") > 0 && oModel.getProperty("/countItemsWithoutIcon") > 0);
 
 								// Assumption: only property 'visible' can be changed inside of the 'items' aggregation during the runtime.
 								this._oObserver.observe(oPanelItem, {

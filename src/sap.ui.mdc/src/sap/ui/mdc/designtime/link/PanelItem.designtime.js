@@ -2,7 +2,7 @@
  * ! ${copyright}
  */
 
-// Provides the Design Time Metadata for the sap.ui.mdc.link.ILinkHandler
+// Provides the Design Time Metadata for the sap.ui.mdc.Link
 sap.ui.define([], function() {
 	"use strict";
 
@@ -21,18 +21,12 @@ sap.ui.define([], function() {
 		},
 		// RTA mode
 		actions: {
-			remove: function(oPanelItem) {
-				if (oPanelItem.getIsMain()) {
-					return null;
-				}
+			remove: function() {
 				return {
 					changeType: "hideItem"
 				};
 			},
-			reveal: function(oPanelItem) {
-				if (oPanelItem.getIsMain()) {
-					return null;
-				}
+			reveal: function() {
 				return {
 					changeType: "revealItem"
 				};

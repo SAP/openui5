@@ -3,9 +3,9 @@ sap.ui.define(function() {
 	"use strict";
 
 	return {
-		name: "Library 'sap.ui.mdc' - Testsuite FLpLinkHandler",	/* Just for a nice title on the pages */
+		name: "Library 'sap.ui.mdc' - Testsuite Link",	/* Just for a nice title on the pages */
 		defaults: {
-			group: "FLpLinkHandler",
+			group: "Link",
 			qunit: {
 				version: 2					// Whether QUnit should be loaded and if so, what version
 			},
@@ -28,12 +28,8 @@ sap.ui.define(function() {
 			module: "./../{name}.qunit"				// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {
-			"link/ContactDetails": {
-				title: "ContactDetails",
-				page: "test-resources/sap/ui/mdc/qunit/link/ContactDetails.qunit.html"
-			},
-			"link/ContentHandler": {
-				title: "ContentHandler"
+			"link/Link": {
+				title: "Link"
 			},
 			"link/Panel": {
 				title: "Panel"
@@ -46,13 +42,10 @@ sap.ui.define(function() {
 				title: "FieldInfo"
 			},
 
-			"link/FlpLinkHandler": {
-				title: "FlpLinkHandler"
+			"link/FlpLinkDelegate": {
+				title: "FlpLinkDelegate"
 			},
 
-			"link/opa/test/LinkContactAnnotation.opa": {
-				title: "LinkContactAnnotation"
-			},
 			"link/opa/test/LinkPersonalization.opa": {
 				title: "LinkPersonalization"
 			},
@@ -73,8 +66,10 @@ sap.ui.define(function() {
 			},
 			"link/opa/test/PersonalizationSelectionPanelRestore.opa": {
 				title: "PersonalizationSelectionPanelRestore"
+			},
+			"link/opa/test/Link.opa": {
+				title: "Link"
 			}
 		}
 	};
-
 });

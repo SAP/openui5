@@ -40,7 +40,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.mdc.flp.FlpLinkDelegate: 'semanticObjects'", {
 		beforeEach: function() {
-			// startMockServer("test-resources/sap/ui/mdc/qunit/link_new/mockserver/metadata.xml", "test-resources/sap/ui/mdc/qunit/link_new/mockserver/", "/odataFake/");
+			// startMockServer("test-resources/sap/ui/mdc/qunit/link/mockserver/metadata.xml", "test-resources/sap/ui/mdc/qunit/link/mockserver/", "/odataFake/");
 			// this.oODataModel = new ODataModel("/odataFake/");
 			this.oLink;
 		},
@@ -710,7 +710,7 @@ sap.ui.define([
 			SapBaseLog.setLevel(SapBaseLog.Level.TRACE);
 			this.oLink = new Link({
 				delegate: {
-					name: "test-resources/sap/ui/mdc/qunit/link_new/TestDelegate_FlpLinkDelegate",
+					name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_FlpLinkDelegate",
 					payload: {
 						semanticObjects: ["SOMainActionWithText"]
 					}

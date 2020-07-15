@@ -6,13 +6,11 @@
 sap.ui.define([
 	"sap/ui/mdc/field/CustomFieldInfo",
 	"sap/ui/mdc/field/FieldInfoBase",
-	"sap/ui/core/Icon",
-	"sap/m/Link"
+	"sap/ui/core/Icon"
 ], function(
 		CustomFieldInfo,
 		FieldInfoBase,
-		Icon,
-		Link
+		Icon
 	) {
 	"use strict";
 
