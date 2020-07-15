@@ -1843,6 +1843,45 @@ sap.ui.define([
 		sap.ui.getCore().getConfiguration().setFormatLocale(sOriginalFormatLocale);
 	});
 
+	QUnit.test('Removing a selected appointment from the model updates the selectedAppointments association', function(assert) {
+		// Prepare
+		var oPC = new PlanningCalendar("OPC", {
+				rows: new PlanningCalendarRow("OROW", {
+					appointments: {
+						path: '/',
+							template: new CalendarAppointment({
+								title: "{title}",
+								startDate: "{start}",
+								endDate: "{end}",
+								selected: "{selected}"
+						})
+					}
+				})
+			}).placeAt("bigUiArea"),
+			oModel = new JSONModel(),
+			oData = [{
+				title: "just title",
+				start: new Date(2020, 1, 1, 11),
+				end: new Date(2020, 1, 1, 12),
+				selected: true
+			}];
+
+		oModel.setData(oData);
+		oPC.setModel(oModel);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oData.splice(0, 1);
+		oModel.setProperty("/", oData);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(_getRowTimeline(oPC.getRows()[0]).aSelectedAppointments.length, 0, "ok");
+
+		// Clean up
+		oPC.destroy();
+	});
+
 	QUnit.module('showDayNamesLine', {
 		beforeEach: function () {
 			this.oPC = new PlanningCalendar("OPC");
