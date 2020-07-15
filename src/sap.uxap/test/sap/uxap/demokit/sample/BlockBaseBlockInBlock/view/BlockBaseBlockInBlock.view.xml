@@ -9,10 +9,10 @@
 		</headerTitle>
 
 		<sections>
-			<ObjectPageSection title="example">
+			<ObjectPageSection titleUppercase="false" title="example">
 				<subSections>
 
-					<ObjectPageSubSection title="Example" titleUppercase="true">
+					<ObjectPageSubSection title="Example" titleUppercase="false">
 						<blocks>
 							<blockinblock:Block id="block" mode="Collapsed">
 								<ModelMapping externalModelName="jsonModel"

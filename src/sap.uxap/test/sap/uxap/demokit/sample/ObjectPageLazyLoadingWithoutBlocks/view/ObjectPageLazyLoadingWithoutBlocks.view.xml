@@ -24,9 +24,9 @@
 		</headerTitle>
 
 		<sections>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 1" mode="Expanded" id="Section1" titleUppercase="true">
+					<ObjectPageSubSection title="Section 1" mode="Expanded" id="Section1" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section1stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -61,9 +61,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 2" mode="Expanded" id="Section2" titleUppercase="true">
+					<ObjectPageSubSection title="Section 2" mode="Expanded" id="Section2" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section2stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -98,9 +98,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 3" mode="Expanded" id="Section3" titleUppercase="true">
+					<ObjectPageSubSection title="Section 3" mode="Expanded" id="Section3" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section3stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -135,9 +135,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 4" mode="Expanded" id="Section4" titleUppercase="true">
+					<ObjectPageSubSection title="Section 4" mode="Expanded" id="Section4" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section4stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -172,9 +172,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 5" mode="Expanded" id="Section5" titleUppercase="true">
+					<ObjectPageSubSection title="Section 5" mode="Expanded" id="Section5" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section5stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -209,9 +209,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 6" mode="Expanded" id="Section6" titleUppercase="true">
+					<ObjectPageSubSection title="Section 6" mode="Expanded" id="Section6" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section6stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -246,9 +246,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 7" mode="Expanded" id="Section7" titleUppercase="true">
+					<ObjectPageSubSection title="Section 7" mode="Expanded" id="Section7" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section7stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -283,9 +283,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 8" mode="Expanded" id="Section8" titleUppercase="true">
+					<ObjectPageSubSection title="Section 8" mode="Expanded" id="Section8" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section8stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -320,9 +320,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 9" mode="Expanded" id="Section9" titleUppercase="true">
+					<ObjectPageSubSection title="Section 9" mode="Expanded" id="Section9" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section9stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -357,9 +357,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 10" mode="Expanded" id="Section10" titleUppercase="true">
+					<ObjectPageSubSection title="Section 10" mode="Expanded" id="Section10" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section10stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -394,9 +394,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 11" mode="Expanded" id="Section11" titleUppercase="true">
+					<ObjectPageSubSection title="Section 11" mode="Expanded" id="Section11" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section11stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -431,9 +431,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 12" mode="Expanded" id="Section12" titleUppercase="true">
+					<ObjectPageSubSection title="Section 12" mode="Expanded" id="Section12" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section12stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -468,9 +468,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 13" mode="Expanded" id="Section13" titleUppercase="true">
+					<ObjectPageSubSection title="Section 13" mode="Expanded" id="Section13" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section13stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -505,9 +505,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 14" mode="Expanded" id="Section14" titleUppercase="true">
+					<ObjectPageSubSection title="Section 14" mode="Expanded" id="Section14" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section14stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -542,9 +542,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 15" mode="Expanded" id="Section15" titleUppercase="true">
+					<ObjectPageSubSection title="Section 15" mode="Expanded" id="Section15" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section15stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -579,9 +579,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 16" mode="Expanded" id="Section16" titleUppercase="true">
+					<ObjectPageSubSection title="Section 16" mode="Expanded" id="Section16" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section16stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -616,9 +616,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 17" mode="Expanded" id="Section17" titleUppercase="true">
+					<ObjectPageSubSection title="Section 17" mode="Expanded" id="Section17" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section17stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -653,9 +653,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 18" mode="Expanded" id="Section18" titleUppercase="true">
+					<ObjectPageSubSection title="Section 18" mode="Expanded" id="Section18" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section18stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -690,9 +690,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 19" mode="Expanded" id="Section19" titleUppercase="true">
+					<ObjectPageSubSection title="Section 19" mode="Expanded" id="Section19" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section19stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -727,9 +727,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 20" mode="Expanded" id="Section20" titleUppercase="true">
+					<ObjectPageSubSection title="Section 20" mode="Expanded" id="Section20" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section20stashed">
 								<m:VBox class="sapUiSmallMargin">
@@ -764,9 +764,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 21" mode="Expanded" id="Section21" titleUppercase="true">
+					<ObjectPageSubSection title="Section 21" mode="Expanded" id="Section21" titleUppercase="false">
 						<blocks>
 							<ObjectPageLazyLoader stashed="true" id="Section21stashed">
 								<m:VBox class="sapUiSmallMargin">

@@ -71,9 +71,9 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection title="2014 Goals Plan">
+			<ObjectPageSection titleUppercase="false" title="2014 Goals Plan">
 				<subSections>
-					<ObjectPageSubSection titleUppercase="true">
+					<ObjectPageSubSection titleUppercase="false">
 						<blocks>
 							<goals:GoalsBlock id="goalsblock"/>
 						</blocks>
@@ -81,9 +81,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Personal">
+			<ObjectPageSection titleUppercase="false" title="Personal">
 				<subSections>
-					<ObjectPageSubSection title="Connect" titleUppercase="true">
+					<ObjectPageSubSection title="Connect" titleUppercase="false">
 						<blocks>
 							<personal:BlockPhoneNumber id="phone"/>
 							<personal:BlockSocial id="social"/>
@@ -92,7 +92,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="paymentSubSection" title="Payment information" mode="Expanded" titleUppercase="true">
+					<ObjectPageSubSection id="paymentSubSection" title="Payment information" mode="Expanded" titleUppercase="false">
 						<blocks>
 							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
 						</blocks>
@@ -103,9 +103,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Employment">
+			<ObjectPageSection titleUppercase="false" title="Employment">
 				<subSections>
-					<ObjectPageSubSection title="Job information" titleUppercase="true">
+					<ObjectPageSubSection title="Job information" titleUppercase="false">
 						<blocks>
 							<employment:BlockJobInfoPart1 id="jobinfopart1"/>
 							<employment:BlockJobInfoPart2 id="jobinfopart2"/>
@@ -113,7 +113,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Employee Details" titleUppercase="true">
+					<ObjectPageSubSection title="Employee Details" titleUppercase="false">
 						<blocks>
 							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
 						</blocks>
@@ -123,7 +123,7 @@
 						</moreBlocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Job Relationship" titleUppercase="true">
+					<ObjectPageSubSection title="Job Relationship" titleUppercase="false">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob" showSubSectionMore="true">
 								<employment:mappings>
@@ -146,9 +146,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Table information">
+			<ObjectPageSection titleUppercase="false" title="Table information">
 				<subSections>
-					<ObjectPageSubSection title="Personal Belongings" titleUppercase="true">
+					<ObjectPageSubSection title="Personal Belongings" titleUppercase="false">
 					<ui:Table id="idProductsTable"
 						visibleRowCountMode="Auto"
 						minAutoRowCount="2"

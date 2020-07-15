@@ -53,9 +53,9 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection title="2014 Goals Plan">
+			<ObjectPageSection titleUppercase="false" title="2014 Goals Plan">
 				<subSections>
-					<ObjectPageSubSection titleUppercase="true">
+					<ObjectPageSubSection titleUppercase="false">
 						<blocks>
 							<goals:GoalsBlock id="goalsblock"/>
 						</blocks>
@@ -63,9 +63,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Personal">
+			<ObjectPageSection titleUppercase="false" title="Personal">
 				<subSections>
-					<ObjectPageSubSection title="Connect" titleUppercase="true">
+					<ObjectPageSubSection title="Connect" titleUppercase="false">
 						<blocks>
 							<personal:BlockPhoneNumber id="phone"/>
 							<personal:BlockSocial id="social"/>
@@ -74,7 +74,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="paymentSubSection" title="Payment information" titleUppercase="true">
+					<ObjectPageSubSection id="paymentSubSection" title="Payment information" titleUppercase="false">
 						<blocks>
 							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
 						</blocks>

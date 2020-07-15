@@ -66,24 +66,24 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection title="2014 Goals Plan">
+			<ObjectPageSection titleUppercase="false" title="2014 Goals Plan">
 				<subSections>
-					<ObjectPageSubSection title="Goal summary" titleUppercase="true">
+					<ObjectPageSubSection title="Goal summary" titleUppercase="false">
 						<blocks>
 							<goals:GoalsBlock/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="Goal summary" titleUppercase="true">
+					<ObjectPageSubSection title="Goal summary" titleUppercase="false">
 						<blocks>
 							<goals:GoalsBlock/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="Goal summary" titleUppercase="true">
+					<ObjectPageSubSection title="Goal summary" titleUppercase="false">
 						<blocks>
 							<goals:GoalsBlock/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="Goal summary" titleUppercase="true">
+					<ObjectPageSubSection title="Goal summary" titleUppercase="false">
 						<blocks>
 							<goals:GoalsBlock/>
 						</blocks>

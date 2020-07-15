@@ -46,12 +46,12 @@
 			</layout:VerticalLayout>
 		</headerContent>
 		<sections>
-			<ObjectPageSection title="{ObjectPageState>/sections/0/title}" icon="sap-icon://employee">
+			<ObjectPageSection titleUppercase="false" title="{ObjectPageState>/sections/0/title}" icon="sap-icon://employee">
 				<subSections>
 					<ObjectPageSubSection icon="sap-icon://employee-pane"
 										  title="{ObjectPageState>/sections/0/subsections/0/title}"
 										  mode="{ObjectPageState>/sections/0/subsections/0/mode}"
-										  titleUppercase="true">
+										  titleUppercase="false">
 						<blocks>
 							<bl:GeneralInfo id="generalInfoId">
 								<ModelMapping internalModelName="Employee" externalModelName="ObjectPageModel"
@@ -61,7 +61,7 @@
 					</ObjectPageSubSection>
 					<ObjectPageSubSection title="{ObjectPageState>/sections/0/subsections/1/title}"
 										  mode="{ObjectPageState>/sections/0/subsections/1/mode}"
-										  titleUppercase="true"
+										  titleUppercase="false"
 							>
 						<actions>
 							<m:Button icon="sap-icon://action" type="Transparent" press="onActionPress"/>
@@ -77,11 +77,11 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="{ObjectPageState>/sections/1/title}">
+			<ObjectPageSection titleUppercase="false" title="{ObjectPageState>/sections/1/title}">
 				<subSections>
 					<ObjectPageSubSection title="{ObjectPageState>/sections/1/subsections/0/title}"
 										  mode="{ObjectPageState>/sections/1/subsections/0/mode}"
-										  titleUppercase="true">
+										  titleUppercase="false">
 						<blocks>
 							<bl:GeneralInfo id="compensationId">
 								<ModelMapping internalModelName="Employee" externalModelName="ObjectPageModel"
@@ -91,7 +91,7 @@
 					</ObjectPageSubSection>
 					<ObjectPageSubSection title="{ObjectPageState>/sections/1/subsections/1/title}"
 										  mode="{ObjectPageState>/sections/1/subsections/1/mode}"
-										  titleUppercase="true">
+										  titleUppercase="false">
 						<blocks>
 							<edit:SimpleEdit/>
 							<mb:MixedBlock/>

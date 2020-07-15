@@ -14,28 +14,28 @@
 		</headerTitle>
 
 		<sections>
-			<ObjectPageSection showTitle="false">
+			<ObjectPageSection titleUppercase="false" showTitle="false">
 				<subSections>
-					<ObjectPageSubSection title="1 block" titleUppercase="true">
+					<ObjectPageSubSection title="1 block" titleUppercase="false">
 						<blocks>
 							<sample:BlockEmpty id="multiview11"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="2 blocks" titleUppercase="false">
 						<blocks>
 							<sample:BlockEmpty id="multiview21"/>
 							<sample:BlockEmpty id="multiview22"/>
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="3 blocks" titleUppercase="false">
 						<blocks>
 							<sample:BlockEmpty id="multiview41"/>
 							<sample:BlockEmpty id="multiview42"/>
 							<sample:BlockEmpty id="multiview43"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="4 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="4 blocks" titleUppercase="false">
 						<blocks>
 							<sample:BlockEmpty id="multiview51"/>
 							<sample:BlockEmpty id="multiview52"/>
@@ -43,7 +43,7 @@
 							<sample:BlockEmpty id="multiview54"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="5 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="5 blocks" titleUppercase="false">
 						<blocks>
 							<sample:BlockEmpty id="multiview61"/>
 							<sample:BlockEmpty id="multiview62"/>
@@ -52,7 +52,7 @@
 							<sample:BlockEmpty id="multiview65"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="6 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="6 blocks" titleUppercase="false">
 						<blocks>
 							<sample:BlockEmpty id="multiview71"/>
 							<sample:BlockEmpty id="multiview72"/>
