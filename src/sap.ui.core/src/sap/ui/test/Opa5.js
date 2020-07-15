@@ -1256,7 +1256,8 @@ sap.ui.define([
 			includeStylesheet(sIFrameStyleLocation);
 			var oFrameLaunchOptions = $.extend({}, oOptions, {
 				frameId: sFrameId,
-				opaLogLevel: Opa.config.logLevel
+				opaLogLevel: Opa.config.logLevel,
+				disableHistoryOverride: Opa.config.disableHistoryOverride
 			});
 			return iFrameLauncher.launch(oFrameLaunchOptions);
 		}
