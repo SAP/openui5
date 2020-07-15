@@ -323,11 +323,9 @@ sap.ui.define([
 		// URI params overwrite other config params
 		// if any action, assertion or arrangement is already defined in OPA, it will be overwritten
 		// deep extend is necessary so plain object configs like appParams are properly merged
-		Opa.config = $.extend(true, Opa.config, oOptions, opaUriParams);
+		Opa.config = $.extend(true, Opa.config, oOptions, Opa._uriParams);
 		_OpaLogger.setLevel(Opa.config.logLevel);
 	};
-
-	var opaUriParams = _OpaUriParameterParser._getOpaParams();
 
 	// These browsers are not executing Promises as microtasks so slow down OPA a bit to let mircotasks before other tasks.
 	// TODO: A proper solution would be waiting for all the active timeouts in the synchronization part until then this is a workaround
@@ -378,7 +376,7 @@ sap.ui.define([
 			_stackDropCount : 0, //Internal use. Specify numbers of additional stack frames to remove for logging
 			executionDelay: executionDelayDefault,
 			asyncPolling: false
-		},opaUriParams);
+		}, Opa._uriParams);
 	};
 
 	/**
@@ -458,6 +456,8 @@ sap.ui.define([
 			oQueueDeferred.reject(oStopQueueOptions);
 		}
 	};
+
+	Opa._uriParams = _OpaUriParameterParser._getOpaParams();
 
 	//create the default config
 	Opa.resetConfig();

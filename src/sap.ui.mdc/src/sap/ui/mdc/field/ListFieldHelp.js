@@ -336,9 +336,7 @@ sap.ui.define([
 				this.open();
 			}
 
-			if (oItem.getDomRef()) {
-				oItem.getDomRef().scrollIntoView();
-			}
+			this._oList.scrollToIndex(iSelectedIndex);
 
 			this.fireNavigate({key: vKey, value: oItem.getLabel(), condition: oCondition});
 		}

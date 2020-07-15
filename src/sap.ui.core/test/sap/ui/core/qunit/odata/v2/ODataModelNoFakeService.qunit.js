@@ -668,6 +668,147 @@ sap.ui.define([
 	// path -> object with single property 'canonicalPath'
 
 	//*********************************************************************************************
+[{
+	functionMetadata : false,
+	headers : {location : "/service/new/function/target"},
+	result : {
+		// no changes: no functionMetadata given
+		deepPath : "/deep/path",
+		functionTarget : "/function/target"
+	}
+}, {
+	functionMetadata : true,
+	headers : undefined,
+	result : {
+		// no changes: no headers given
+		deepPath : "/deep/path",
+		functionTarget : "/function/target"
+	}
+}, {
+	functionMetadata : true,
+	headers : {},
+	result : {
+		// no changes: no location header given
+		deepPath : "/deep/path",
+		functionTarget : "/function/target"
+	}
+}, {
+	functionMetadata : true,
+	headers : {location : "/service/new/function/target"},
+	result : {
+		// functionTarget is updated by the new canonical path sliced out of locationHeader;
+		// locationHeader and functionTarget do not match -> no deep path calculation
+		deepPath : "/deep/path",
+		functionTarget : "/new/function/target"
+	}
+}, {
+	functionMetadata : true,
+	headers : {location : "/http/service/new/function/target"},
+	result : {
+		// functionTarget is updated by the new canonical path sliced out of locationHeader;
+		// oModel.sServiceUrl is not a starting position of the locationHeader;
+		// locationHeader and functionTarget do not match -> no deep path calculation
+		deepPath : "/deep/path",
+		functionTarget : "/new/function/target"
+	}
+}, {
+	getDeepPathForCanonicalPath : {
+		inputParam : "/function/target",
+		result : undefined
+	},
+	functionMetadata : true,
+	headers : {location : "/service/function/target"},
+	result : {
+		// deepPath cannot be updated until getDeepPathForCanonicalPath returns a value
+		deepPath : "/deep/path",
+		functionTarget : "/function/target"
+	}
+}, {
+	getDeepPathForCanonicalPath : {
+		inputParam : "/function/target",
+		result : "/new/deep/path"
+	},
+	functionMetadata : true,
+	headers : {location : "/service/function/target"},
+	result : {
+		// deepPath and functionTarget are updated
+		deepPath : "/new/deep/path",
+		functionTarget : "/function/target"
+	}
+}, {
+	functionMetadata : true,
+	headers : {location : "/otherservice/function/target"},
+	result : {
+		// no changes: locationHeader must contain oModel.sServiceUrl
+		deepPath : "/deep/path",
+		functionTarget : "/function/target"
+	}
+}].forEach(function (oFixture, i) {
+	var sTitle = "_processSuccess for function import: update deepPath/functionTarget, " + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = {
+				oMetadata : {
+					_getEntityTypeByPath : function () {}
+				},
+				sServiceUrl : "/service",
+				_createEventInfo : function () {},
+				_decreaseDeferredRequestCount : function () {},
+				_getEntity : function () {},
+				_normalizePath : function () {},
+				_parseResponse : function () {},
+				_updateETag : function () {},
+				decreaseLaundering : function () {},
+				fireRequestCompleted : function () {},
+				getDeepPathForCanonicalPath : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oRequest = {
+				data : "requestData",
+				deepPath : "/deep/path",
+				functionMetadata : oFixture.functionMetadata,
+				functionTarget : "/function/target",
+				requestUri : "/service/path"
+			},
+			oResponse = {
+				data : {
+					_metadata : {}
+				},
+				headers : oFixture.headers,
+				_imported : true
+			};
+
+		oModelMock.expects("_normalizePath").withExactArgs("/path").returns("normalizedPath0");
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("normalizedPath0")
+			.returns("isFunction");
+		oModelMock.expects("_normalizePath").withExactArgs("/path", undefined, true)
+			.returns("normalizedPath1");
+		oModelMock.expects("decreaseLaundering").withExactArgs("normalizedPath1", "requestData");
+		oModelMock.expects("_decreaseDeferredRequestCount")
+			.withExactArgs(sinon.match.same(oRequest));
+		if (oFixture.getDeepPathForCanonicalPath) {
+			oModelMock.expects("getDeepPathForCanonicalPath")
+				.withExactArgs(oFixture.getDeepPathForCanonicalPath.inputParam)
+				.returns(oFixture.getDeepPathForCanonicalPath.result);
+		}
+		oModelMock.expects("_getEntity").withExactArgs(undefined).returns({__metadata : {}});
+		oModelMock.expects("_parseResponse").withExactArgs(oResponse, oRequest, {}, {});
+		oModelMock.expects("_updateETag").withExactArgs(oRequest, oResponse);
+		oModelMock.expects("_createEventInfo").withExactArgs(oRequest, oResponse, "aRequests")
+			.returns("oEventInfo");
+		oModelMock.expects("fireRequestCompleted").withExactArgs("oEventInfo");
+
+		// code under test
+		ODataModel.prototype._processSuccess.call(oModel, oRequest, oResponse,
+			/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {},
+			/*mEntityTypes*/ {}, /*bBatch*/ false, "aRequests");
+
+		assert.strictEqual(oRequest.deepPath, oFixture.result.deepPath);
+		assert.strictEqual(oRequest.functionTarget, oFixture.result.functionTarget);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("removeInternalMetadata", function (assert) {
 		var oEntityData,
 			oModel = {},
@@ -1263,6 +1404,74 @@ sap.ui.define([
 		});
 		assert.strictEqual(oResult, oRequest);
 	});
+
+	//*********************************************************************************************
+[undefined, "~functionMetadata"].forEach(function (sFunctionMetadata, i) {
+	var sTitle = "_processChange: restore functionTarget for function imports; " + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oData = {
+				__metadata : {
+					created : {
+						functionImport : true,
+						functionMetadata : sFunctionMetadata,
+						key : "~createdKey"
+					}
+				}
+			},
+			oModel = {
+				mChangedEntities : {
+					"~sKey" : {__metadata : {deepPath : "~deepPath"}}
+				},
+				oMetadata : {
+					_getCanonicalPathOfFunctionImport : function () {},
+					_getEntityTypeByPath : function () {}
+				},
+				_createFunctionImportParameters : function () {},
+				_createRequest : function () {},
+				_createRequestUrl : function () {},
+				_getHeaders : function () {},
+				_getObject : function () {},
+				_removeReferences : function () {},
+				getETag : function () {}
+			},
+			oRequest = {},
+			oResult;
+
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("~sKey")
+			.returns("~oEntityType");
+		this.mock(oModel).expects("_getObject").withExactArgs("/~sKey", true).returns({});
+		this.mock(oModel).expects("_createFunctionImportParameters")
+			.withExactArgs("~createdKey", "POST", oData).returns("~urlParameters");
+		this.mock(oModel).expects("_removeReferences").withExactArgs(undefined).returns("~payload");
+		this.mock(ODataUtils).expects("_createUrlParamsArray").withExactArgs("~urlParameters")
+			.returns("~aUrlParams");
+		this.mock(oModel).expects("_getHeaders").withExactArgs(undefined).returns("~mHeaders");
+		this.mock(oModel).expects("getETag").withExactArgs("~payload").returns("~sETag");
+		this.mock(oModel).expects("_createRequestUrl")
+			.withExactArgs("/~createdKey", null, "~aUrlParams", undefined).returns("~sUrl");
+		this.mock(oModel).expects("_createRequest")
+			.withExactArgs("~sUrl", "~deepPath", "POST", "~mHeaders", "~payload", "~sETag",
+				undefined, true)
+			.returns(oRequest);
+		this.mock(oModel.oMetadata).expects("_getCanonicalPathOfFunctionImport")
+			.withExactArgs(sFunctionMetadata, "~urlParameters").exactly(sFunctionMetadata ? 1 : 0)
+			.returns("~functionTarget");
+
+		// code under test
+		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST");
+
+		assert.deepEqual(oResult, sFunctionMetadata
+			? {
+				created : true,
+				functionTarget : "~functionTarget"
+			}
+			: {
+				created : true
+			});
+		assert.strictEqual(oResult, oRequest);
+	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bExpandRequest, i) {
@@ -2226,6 +2435,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oContextCreatedPromise,
+			oData,
 			bFunctionHasParameter = oFunctionMetadataFixture.oFunctionMetadata.parameter !== null,
 			mHeaders = {foo : "bar"},
 			oExpectedOData = Object.assign({
@@ -2251,6 +2461,7 @@ sap.ui.define([
 					? {"~name0" : "~defaultValue0", "~name1" : "foo"}
 					: undefined),
 			oMetadata = {
+				_getCanonicalPathOfFunctionImport : function () {},
 				_getFunctionImportMetadata : function () {}
 			},
 			oModel = {
@@ -2334,7 +2545,8 @@ sap.ui.define([
 		}
 
 		oModelMock.expects("_addEntity").withExactArgs(oExpectedOData)
-			.callsFake(function (oData) {
+			.callsFake(function (oData0) {
+				oData = oData0;
 				assert.notStrictEqual(oData.__metadata.created.headers, mHeaders);
 
 				return "~sKey";
@@ -2351,6 +2563,10 @@ sap.ui.define([
 			.withExactArgs("~sUrl", "/~sFunctionName", "~method", "~mHeaders", undefined, "~eTag",
 				undefined, true)
 			.returns(oRequest);
+		this.mock(oMetadata).expects("_getCanonicalPathOfFunctionImport")
+			.withExactArgs(sinon.match.same(oFunctionMetadataFixture.oFunctionMetadata),
+				{"~name1" : bFunctionHasParameter ? "~value1" : "foo"})
+			.returns("~functionTarget");
 		oModelMock.expects("_pushToRequestQueue")
 			.withExactArgs(bInDeferredGroups ? "~mDeferredRequests" : "~mRequests", "~groupId",
 				"~changeSetId", sinon.match.same(oRequest), "~success", "~error", "~requestHandle",
@@ -2362,8 +2578,11 @@ sap.ui.define([
 		assert.strictEqual(oResultingRequest, oRequest);
 		assert.deepEqual(oResultingRequest, {
 			functionMetadata : oFunctionMetadataFixture.oFunctionMetadata,
+			functionTarget : "~functionTarget",
 			key : "~sKey"
 		});
+		assert.strictEqual(oData.__metadata.created.functionMetadata,
+			oFunctionMetadataFixture.oFunctionMetadata);
 
 		return oContextCreatedPromise.then(function (oContext) {
 			assert.strictEqual(oContext, "~oContext");
@@ -2538,4 +2757,41 @@ sap.ui.define([
 			ODataModel.prototype.getDeepPathForCanonicalPath.call(oModel, "/~sCanonicalPath(42)"),
 			"/same/deep/path2entity");
 	});
+
+	//*********************************************************************************************
+[undefined, "~functionTarget"].forEach(function (sFunctionTarget, i) {
+	QUnit.test("_pushToRequestQueue: restore functionTarget; " + i, function (assert) {
+		var oModel = {},
+			oRequest = {
+				functionTarget : sFunctionTarget,
+				key : "~key"
+			},
+			mRequests = {
+				"~sGroupId" : {
+					map : {
+						"~key" : {request : {}}
+					}
+				}
+			};
+
+		// code under test
+		ODataModel.prototype._pushToRequestQueue.call(oModel, mRequests, "~sGroupId", undefined,
+			oRequest);
+
+		assert.deepEqual(mRequests["~sGroupId"].map["~key"].request, sFunctionTarget
+			? {
+				data : undefined,
+				functionTarget : "~functionTarget",
+				headers : undefined,
+				method : undefined,
+				requestUri : undefined
+			}
+			: {
+				data : undefined,
+				headers : undefined,
+				method : undefined,
+				requestUri : undefined
+			});
+	});
+});
 });

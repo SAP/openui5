@@ -9,11 +9,10 @@ sap.ui.define([
 	"sap/ui/test/matchers/Visible",
 	"sap/ui/test/matchers/_Enabled",
 	"sap/ui/test/matchers/_Editable",
-	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/_ValidationParameters",
 	"sap/ui/test/matchers/matchers"
-], function (UI5Object, Interactable, Visible, _Enabled, _Editable, capitalize, jQueryDOM, _ValidationParameters) {
+], function (UI5Object, Interactable, Visible, _Enabled, _Editable, jQueryDOM, _ValidationParameters) {
 	"use strict";
 
 	/**
@@ -117,10 +116,10 @@ sap.ui.define([
 				// filter out any properties that don't represent a matcher class
 				return aIgnoredProperties.indexOf(sMatcher) === -1;
 			}).map(function (sMatcher) {
-				if (aSupportedMatchers.indexOf(capitalize(sMatcher)) === -1) {
+				if (!aSupportedMatchers[sMatcher]) {
 					throw new Error("Matcher is not supported! Matcher name: '" + sMatcher + "', arguments: '" + JSON.stringify(mMatchers[sMatcher]) + "'");
 				}
-				var MatcherConstructor = sap.ui.test.matchers[capitalize(sMatcher)];
+				var MatcherConstructor = aSupportedMatchers[sMatcher];
 				// if the matcher params are declared as an array, this means that
 				// a new matcher should be instanciated for each element in this array
 				var aMatcherParams = jQueryDOM.isArray(mMatchers[sMatcher]) ? mMatchers[sMatcher] : [mMatchers[sMatcher]];
@@ -151,10 +150,15 @@ sap.ui.define([
 		 */
 		_getSupportedMatchers: function (mMatchers) {
 			mMatchers = mMatchers || sap.ui.test.matchers;
-			return Object.keys(mMatchers).filter(function (sMatcher) {
+			var mFilteredMatchers = {};
+			Object.keys(mMatchers).forEach(function (sMatcher) {
 				// filter out private matchers and helpers
-				return !sMatcher.match(/^(_|matcher)/i);
+				if (!sMatcher.match(/^(_|matcher)/i)) {
+					var sFilteredMatcher = sMatcher.charAt(0).toLowerCase() + sMatcher.substr(1);
+					mFilteredMatchers[sFilteredMatcher] = mMatchers[sMatcher];
+				}
 			});
+			return mFilteredMatchers;
 		}
 	});
 

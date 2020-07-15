@@ -38,7 +38,7 @@ sap.ui.define([
 					fontFamily: SAP_ICON_FONT_FAMILY
 				},
 				metadataLoaded: true,
-				inserted: false
+				inserted: true
 			}
 		};
 
@@ -977,11 +977,6 @@ sap.ui.define([
 			// icon collection should have name undefined
 			collectionName = collectionName === 'undefined' ? undefined : collectionName;
 
-			// insert default font face
-			if (collectionName === undefined && !mFontRegistry[collectionName].inserted) {
-				IconPool.insertFontFaceStyle();
-			}
-
 			// fetch the info from the registry
 			info = getInfo();
 
@@ -1087,14 +1082,26 @@ sap.ui.define([
 		/**
 		 * Adds CSS code to load an icon font to the DOM
 		 *
-		 * @param {string} [sFontFace] the file name of the font face, if not specified SAP-icons will be inserted
-		 * @param {string} [sPath] the path to the font, if not specified the base theme folder will be used
+		 * @param {string} sFontFace the file name of the font face
+		 * @param {string} sPath the path to the font file
 		 * @param {string} [sCollectionName] the collection name, if not specified the font face is used
 		 */
 		IconPool.insertFontFaceStyle = function (sFontFace, sPath, sCollectionName) {
-			sFontFace = sFontFace || SAP_ICON_FONT_FAMILY;
+			var oElement;
 
-			if (sCollectionName === undefined && sFontFace !== SAP_ICON_FONT_FAMILY) {
+			if (arguments.length === 0 || sFontFace === SAP_ICON_FONT_FAMILY) {
+				// The font-face declaration for the predefined icon font is done in SAP-icons.css which is imported to the
+				// library.source.less. Therefore it's not needed to use inline css to declare it.
+				Log.info("It's not needed to call IconPool.insertFontFaceStyle to insert font-face for the predefined icon font SAP-icons because the font-face is included in the library.css of sap.ui.core");
+				return;
+			}
+
+			if (sFontFace && sPath === undefined) {
+				Log.error("IconPool.insertFontFaceStyle must be called with at least two parameters!");
+				return;
+			}
+
+			if (sCollectionName === undefined) {
 				// when the collection name isn't given
 				// set the collection name with sFontFace only when the icon font
 				// isn't the standard icon font. The collectionName of the standard icon font
@@ -1109,36 +1116,24 @@ sap.ui.define([
 			}
 			// check if font face has already been inserted
 			if (mFontRegistry[sCollectionName].inserted) {
-				if (sCollectionName === undefined) {
-					Log.info("The font face style of standard icon font was already inserted.");
-				} else {
-					Log.info("The font face style of icon font '" + sCollectionName + "' was already inserted.");
-				}
-				return;
-			}
-			// do nothing if the default font is about to be overwritten
-			if (sFontFace === SAP_ICON_FONT_FAMILY && sCollectionName !== undefined) {
-				Log.error("Must not overwrite the standard icon set with '" + sCollectionName + "'.");
+				Log.info("The font face style of icon font '" + sCollectionName + "' was already inserted.");
 				return;
 			}
 
-			// use default font path or the one passed in by argument
-			var sFontPath = sPath || sap.ui.require.toUrl("sap/ui/core/themes/base/fonts/");
+			oElement = document.createElement("style");
+			oElement.type = "text/css";
+			oElement.textContent = "@font-face {" +
+				"font-family: '" + sFontFace + "';" +
+				"src: url('" + sPath + sFontFace + ".woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android */
+				"url('" + sPath + sFontFace + ".woff') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
+				"url('" + sPath + sFontFace + ".ttf') format('truetype')," + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
+				"local('" + sFontFace + "');" + /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */
+				"font-weight: normal;" +
+				"font-style: normal;" +
+				"}";
 
 			// load the font asynchronously via CSS
-			var sFontFaceCSS = "@font-face {" +
-					"font-family: '" + sFontFace + "';" +
-					"src: url('" + sFontPath + sFontFace + ".woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android */
-					"url('" + sFontPath + sFontFace + ".woff') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
-					"url('" + sFontPath + sFontFace + ".ttf') format('truetype')," + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
-					"local('" + sFontFace + "');" + /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */
-					"font-weight: normal;" +
-					"font-style: normal;" +
-				"}";
-			var style = document.createElement("style");
-			style.type = "text/css";
-			style.textContent = sFontFaceCSS;
-			document.head.appendChild(style);
+			document.head.appendChild(oElement);
 
 			mFontRegistry[sCollectionName].inserted = true;
 			mFontRegistry[sCollectionName].fontFace = sFontFace;

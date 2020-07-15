@@ -1133,8 +1133,11 @@ sap.ui.define([
 			this.oSaveSave = new Button(this.getId() + "-variantsave", {
 				text: this._oRb.getText("VARIANT_MANAGEMENT_SAVE"),
 				press: function() {
-					this._bSaveCanceled = false;
-					this._handleVariantSaveAs(this.oInputName.getValue());
+					if (!this._bSaveOngoing) {
+						this._bSaveOngoing = true;
+						this._bSaveCanceled = false;
+						this._handleVariantSaveAs(this.oInputName.getValue());
+					}
 				}.bind(this),
 				enabled: true
 			});
@@ -1152,6 +1155,9 @@ sap.ui.define([
 
 			this.oSaveAsDialog = new Dialog(this.getId() + "-savedialog", {
 				title: this._oRb.getText("VARIANT_MANAGEMENT_SAVEDIALOG"),
+				afterClose: function() {
+					this._bSaveOngoing = false;
+				}.bind(this),
 				beginButton: this.oSaveSave,
 				endButton: new Button(this.getId() + "-variantcancel", {
 					text: this._oRb.getText("VARIANT_MANAGEMENT_CANCEL"),

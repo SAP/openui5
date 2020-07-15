@@ -1,11 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/Device",
 	"sap/ui/test/autowaiter/_utils",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/test/opaQunit" // only used implicitly
-], function ($, Device, _utils, URI) {
+], function (_utils, URI) {
 	"use strict";
 
 	QUnit.module("AutoWaiter - utils");
@@ -20,10 +18,8 @@ sap.ui.define([
 		assert.ok(!sTrace.match(/^Error\n/));
 	});
 
-	["false", "true", undefined].forEach(function (paramValue, index) {
-		QUnit.test("Should handle stack trace in IE if opaFrameIEStackTrace is " + paramValue, function (assert) {
-			var fnDone = assert.async();
-			$.sap.unloadResources("sap/ui/test/autowaiter/_utils.js", false, true, true);
+	["false", "true", undefined].forEach(function (paramValue) {
+		QUnit.test("Should handle stack trace in IE if opaFrameIEStackTrace is " + paramValue, function callingFunction (assert) {
 			var fnOrig = URI.prototype.search;
 			var oSearchStub = sinon.stub(URI.prototype, "search", function(query) {
 				if ( query === true ) {
@@ -31,12 +27,9 @@ sap.ui.define([
 				}
 				return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
 			});
-			sap.ui.require(["sap/ui/test/autowaiter/_utils"], function callingFunction (_utils) {
-				var sTrace = _utils.resolveStackTrace();
-				assert.contains(sTrace, new Error().stack || paramValue === "true" ? "callingFunction" : "No stack trace available");
-				oSearchStub.restore();
-				fnDone();
-			});
+			var sTrace = _utils.resolveStackTrace();
+			assert.contains(sTrace, new Error().stack || paramValue === "true" ? "callingFunction" : "No stack trace available");
+			oSearchStub.restore();
 		});
 	});
 

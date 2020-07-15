@@ -27,16 +27,6 @@ sap.ui.define([
 ], function ($, UI5Object, UI5Element, View, Ancestor, MatcherFactory,
 			MatcherPipeline, _OpaLogger) {
 
-		var oMatcherFactory = new MatcherFactory();
-		var oMatcherPipeline = new MatcherPipeline();
-		var aControlSelectorsForMatchingControls = [
-			"id",
-			"viewName",
-			"viewId",
-			"controlType",
-			"searchOpenDialogs"
-		];
-
 		/**
 		 * @class A Plugin to search UI5 controls.
 		 *
@@ -49,6 +39,7 @@ sap.ui.define([
 
 			constructor : function() {
 				this._oLogger = _OpaLogger.getLogger("sap.ui.test.Opa5");
+				this._oMatcherFactory = new MatcherFactory();
 			},
 
 			/**
@@ -367,13 +358,13 @@ sap.ui.define([
 					return vResult;
 				}
 
-				var oStateMatchers = oMatcherFactory.getStateMatchers({
+				var oStateMatchers = this._oMatcherFactory.getStateMatchers({
 					visible: oOptions.visible, // true by default
 					interactable: oOptions.interactable, // false by default
 					enabled: typeof oOptions.enabled === "undefined" ? oOptions.interactable : oOptions.enabled, // by default, true when interactable, false elsewise
 					editable: typeof oOptions.editable === "undefined" ? false : oOptions.editable // false by default
 				});
-				var vPipelineResult = oMatcherPipeline.process({
+				var vPipelineResult = OpaPlugin._oMatcherPipeline.process({
 					control: vResult,
 					matchers: oStateMatchers
 				});
@@ -443,7 +434,7 @@ sap.ui.define([
 			// instantiate any matchers with declarative syntax and run controls through matcher pipeline
 			_filterControlsByMatchers: function (oOptions, vControl) {
 				var oOptionsWithMatchers = $.extend({}, oOptions);
-				var aMatchers = oMatcherFactory.getFilteringMatchers(oOptionsWithMatchers);
+				var aMatchers = this._oMatcherFactory.getFilteringMatchers(oOptionsWithMatchers);
 				var bPluginLooksForControls = this._isLookingForAControl(oOptions);
 				var vResult = null;
 
@@ -454,7 +445,7 @@ sap.ui.define([
 				 * success: function (sFoo) {}
 				 */
 				if ((vControl || !bPluginLooksForControls) && aMatchers.length) {
-					vResult = oMatcherPipeline.process({
+					vResult = OpaPlugin._oMatcherPipeline.process({
 						matchers: aMatchers,
 						control: vControl
 					});
@@ -575,7 +566,7 @@ sap.ui.define([
 			 */
 			_isLookingForAControl : function (oOptions) {
 				return Object.keys(oOptions).some(function (sKey) {
-					return aControlSelectorsForMatchingControls.indexOf(sKey) !== -1 && !!oOptions[sKey];
+					return OpaPlugin._aControlSelectorsForMatchingControls.indexOf(sKey) !== -1 && !!oOptions[sKey];
 				});
 			},
 
@@ -652,6 +643,15 @@ sap.ui.define([
 				return oElement instanceof fnControlType;
 			};
 		}
+
+		OpaPlugin._oMatcherPipeline = new MatcherPipeline();
+		OpaPlugin._aControlSelectorsForMatchingControls = [
+			"id",
+			"viewName",
+			"viewId",
+			"controlType",
+			"searchOpenDialogs"
+		];
 
 		/**
 		 * marker for a return type

@@ -2,12 +2,11 @@
 sap.ui.define([
     "sap/ui/test/selectors/_TableRowItem",
     "sap/ui/test/selectors/_ControlSelectorGenerator",
-    "sap/ui/thirdparty/jquery",
     "sap/m/App",
     "sap/ui/core/mvc/View",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/library"
-], function (_TableRowItem, _ControlSelectorGenerator, $, App, View, JSONModel, library) {
+], function (_TableRowItem, _ControlSelectorGenerator, App, View, JSONModel, library) {
     "use strict";
 
     // shortcut for sap.ui.core.mvc.ViewType

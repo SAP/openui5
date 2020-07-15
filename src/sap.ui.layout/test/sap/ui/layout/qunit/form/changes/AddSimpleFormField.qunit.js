@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/layout/changeHandler/AddSimpleFormField",
 	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/commons/TextView",
 	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
@@ -19,13 +18,12 @@ function(
 	View,
 	AddFieldChangeHandler,
 	SimpleForm,
-	TextView,
 	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Label,
 	Input,
-	fnBaseIncludes
+	includes
 ) {
 	'use strict';
 
@@ -75,9 +73,7 @@ function(
 				appComponent : this.oMockedAppComponent
 			}
 		)
-		.then(function(bApplied) {
-			assert.ok(bApplied, "the change to add a field was applied");
-
+		.then(function() {
 			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
 			var oFormElement = oFormContainer.getAggregation("formElements")[0];
 			assert.equal(this.oSimpleForm.getContent().length, 3, "the form has now 3 content items");
@@ -106,9 +102,7 @@ function(
 				}
 			);
 		}.bind(this))
-		.then(function(bApplied) {
-			assert.ok(bApplied, "the change adding a field to index 0 was applied");
-
+		.then(function() {
 			assert.equal(this.oSimpleForm.getContent().length, 5, "the form has now 5 content items");
 			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
 			var oFormElement = oFormContainer.getAggregation("formElements")[0];
@@ -142,9 +136,7 @@ function(
 				}
 			);
 		}.bind(this))
-		.then(function(bApplied) {
-			assert.ok(bApplied, "the change adding a field to index 1 was applied");
-
+		.then(function() {
 			assert.equal(this.oSimpleForm.getContent().length, 7, "the form has now 7 content items");
 			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
 			var oFormElement = oFormContainer.getAggregation("formElements")[0];
@@ -198,9 +190,7 @@ function(
 				appComponent : this.oMockedAppComponent
 			}
 		)
-		.then(function(bApplied) {
-			assert.ok(bApplied, "the change to add a field was applied");
-
+		.then(function() {
 			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
 			var oFormElement = oFormContainer.getAggregation("formElements")[0];
 			assert.equal(this.oSimpleForm.getContent().length, 5, "the form has 5 content items after field was added");
@@ -244,9 +234,7 @@ function(
 				appComponent : this.oMockedAppComponent
 			}
 		)
-		.then(function(bApplied) {
-			assert.ok(bApplied, "the change to add a field was applied");
-
+		.then(function() {
 			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[1];
 			var oFormElement = oFormContainer.getAggregation("formElements")[0];
 			assert.equal(this.oSimpleForm.getContent().length, 6, "the form has 6 content items after field was added");
@@ -290,9 +278,7 @@ function(
 				appComponent : this.oMockedAppComponent
 			}
 		)
-		.then(function(bApplied) {
-			assert.ok(bApplied, "the change to add a field was applied");
-
+		.then(function() {
 			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
 			var oFormElement = oFormContainer.getAggregation("formElements")[1];
 			assert.equal(this.oSimpleForm.getContent().length, 6, "the form has 6 content items after field was added");
@@ -335,11 +321,10 @@ function(
 
 		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo, oPropertyBag);
 		return AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm, oPropertyBag)
-		.then(function(bApplied) {
-			assert.ok(bApplied, "the first change to add a field was applied");
+		.then(function() {
 			return AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm, oPropertyBag)
 			.catch(function(oReturn) {
-				assert.ok(fnBaseIncludes(oReturn.message, "Control to be created already exists"),
+				assert.ok(includes(oReturn.message, "Control to be created already exists"),
 				"the second change to add the same field throws a not applicable info message");
 			});
 		}.bind(this));
@@ -376,9 +361,7 @@ function(
 				appComponent : this.oMockedAppComponent
 			}
 		)
-		.then(function(bApplied) {
-			assert.ok(bApplied, "the change to add a field was applied");
-
+		.then(function() {
 			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
 			var oFormElement = oFormContainer.getAggregation("formElements")[0];
 			assert.equal(this.oSimpleForm.getContent().length, 4, "the form has 4 content items after field was added");
@@ -445,9 +428,7 @@ function(
 				appComponent: this.oMockedAppComponent
 			}
 		)
-		.then(function(bApplied) {
-			assert.ok(bApplied, "the change was successfully applied");
-
+		.then(function() {
 			assert.equal(this.oXmlSimpleForm.childElementCount, 5, "the simpleform has 5 elements after the change");
 			var aChildNodes = this.oXmlSimpleForm.childNodes;
 			assert.equal(aChildNodes[1].getAttribute("id"), sSmartFieldLabelId);
@@ -458,7 +439,6 @@ function(
 	});
 
 	QUnit.test('Add smart field to SimpleForm xml tree in the beginning', function (assert) {
-
 		var sAddedFieldId = "addedFieldId";
 		var sValue = "{BindingPath1}";
 		var sTitleId = "NewTitle";
@@ -503,9 +483,7 @@ function(
 				appComponent: this.oMockedAppComponent
 			}
 		)
-		.then(function(bApplied) {
-			assert.ok(bApplied, "the change was successfully applied");
-
+		.then(function() {
 			assert.equal(this.oSimpleForm.childElementCount, 5, "the simpleform has 5 elements after the change");
 			var aChildNodes = this.oSimpleForm.childNodes;
 			assert.equal(aChildNodes[1].getAttribute("id"), sAddedFieldId + "-label");
@@ -516,7 +494,6 @@ function(
 	});
 
 	QUnit.test('Add smart field to SimpleForm xml tree in the middle', function (assert) {
-
 		var sAddedFieldId = "addedFieldId";
 		var sValue = "{BindingPath1}";
 		var sTitleId = "NewTitle";
@@ -565,9 +542,7 @@ function(
 				appComponent: this.oMockedAppComponent
 			}
 		)
-		.then(function(bApplied) {
-			assert.ok(bApplied, "the change was successfully applied");
-
+		.then(function() {
 			assert.equal(this.oSimpleForm.childElementCount, 7, "the simpleform has 7 elements after the change");
 			var aChildNodes = this.oSimpleForm.childNodes;
 			assert.equal(aChildNodes[1].getAttribute("id"), sSmartFieldLabelId);
@@ -623,9 +598,7 @@ function(
 				appComponent: this.oMockedAppComponent
 			}
 		)
-		.then(function(bApplied) {
-			assert.ok(bApplied, "the change was successfully applied");
-
+		.then(function() {
 			assert.equal(this.oSimpleForm.childElementCount, 6, "the simpleform has 6 elements after the change");
 			var aChildNodes = this.oSimpleForm.childNodes;
 			assert.equal(aChildNodes[0].getAttribute("id"), sSmartFieldLabelId);

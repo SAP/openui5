@@ -102,15 +102,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should handle matcher constructors with multiple arguments", function (assert) {
-		var fnAncestorMatcher = sap.ui.test.matchers.Ancestor;
-		sap.ui.test.matchers.Ancestor = sinon.spy();
+		var fnAncestorMatcher = sinon.spy();
 		var oMatcherFactory = new MatcherFactory();
+		oMatcherFactory._getSupportedMatchers = function () {
+			return {
+				ancestor: fnAncestorMatcher
+			};
+		};
 		/* var aMatchers = */ oMatcherFactory.getFilteringMatchers({
 			ancestor: [["ancestorId", true]]
 		});
 
-		sinon.assert.calledWith(sap.ui.test.matchers.Ancestor, "ancestorId", true);
-		sap.ui.test.matchers.Ancestor = fnAncestorMatcher;
+		sinon.assert.calledWith(fnAncestorMatcher, "ancestorId", true);
 	});
 
 	QUnit.test("Should throw error with unsupported matcher", function (assert) {

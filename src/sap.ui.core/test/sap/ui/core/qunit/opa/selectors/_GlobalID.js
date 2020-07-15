@@ -1,9 +1,8 @@
 /*global QUnit */
 sap.ui.define([
     "sap/ui/test/selectors/_ControlSelectorGenerator",
-    "sap/m/Button",
-    "sap/ui/thirdparty/jquery"
-], function (_ControlSelectorGenerator, Button, $) {
+    "sap/m/Button"
+], function (_ControlSelectorGenerator, Button) {
     "use strict";
 
     QUnit.module("_GlobalID", {

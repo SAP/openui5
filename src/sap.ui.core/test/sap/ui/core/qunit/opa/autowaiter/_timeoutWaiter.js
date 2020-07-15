@@ -1,6 +1,8 @@
 /*global QUnit, sinon */
+/*eslint max-nested-callbacks: [2,5]*/
+
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/autowaiter/_timeoutWaiter"
 ], function ($, timeoutWaiter) {
 	"use strict";
@@ -134,12 +136,12 @@ sap.ui.define([
 
 		QUnit.test("Should clear 1 of 2 timeouts", function (assert) {
 			var fnDone = assert.async();
+			var fnSecondTimeoutSpy = sinon.spy();
 			fnSetFunction(function () {
 				assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
 				sinon.assert.notCalled(fnSecondTimeoutSpy);
 				fnDone();
 			},20);
-			var fnSecondTimeoutSpy = sinon.spy();
 			var iId = fnSetFunction(fnSecondTimeoutSpy);
 			fnClearFunction(iId);
 			assert.ok(timeoutWaiter.hasPending(), "There was a timeout");

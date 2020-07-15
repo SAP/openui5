@@ -58,58 +58,9 @@ sap.ui.define([
 				// matcher context === app context
 				return window;
 			}
-		},
-
-		/**
-		 * @return {object} the OpaPlugin instance, used by Opa5
-		 * Note: declared matchers are instanciated in the app context (by MatcherFactory)
-		 * while users instanciate matchers in the test context (in a waitFor)
-		 * @private
-		 * @function
-		 */
-		_getOpaPlugin: function () {
-			// the matcher should be in the app context, and Opa5 is in the test context. these contexts may be different.
-			// also, Opa5 may be loaded in some custom scenario (e.g. several nested frames)
-			var oPlugin;
-			if (sap.ui.test && sap.ui.test.Opa5) {
-				oPlugin = sap.ui.test.Opa5.getPlugin();
-			} else if (window.top === window.self) {
-				// sap.ui.test.Opa5 is not defined -> look for Opa5 in another context
-
-				// app context === matcher context, but Opa5 is not loaded
-				sap.ui.require(["sap/ui/test/Opa5"], function (Opa5) {
-					oPlugin = Opa5.getPlugin();
-				});
-			} else {
-				// app launched in iframe -> get Opa5 from a parent window
-				var oTestLauncherWindow = _getTestLauncherWindow();
-				if (oTestLauncherWindow.sap.ui.test && oTestLauncherWindow.sap.ui.test.Opa5) {
-					oPlugin = oTestLauncherWindow.sap.ui.test.Opa5.getPlugin();
-				} else {
-					// sap.ui.test.Opa5 is not loaded in the parent
-					oTestLauncherWindow.sap.ui.require(["sap/ui/test/Opa5"], function (Opa5) {
-						oPlugin = Opa5.getPlugin();
-					});
-				}
-			}
-
-			return oPlugin;
 		}
 
 	});
-
-	function _getTestLauncherWindow() {
-		var oLauncher = window.parent;
-		while (!(oLauncher === window.top && oLauncher.parent === window.top)) {
-			var opaFrame = oLauncher.document.getElementById("OpaFrame");
-			if (opaFrame && opaFrame.contentWindow === window.self) {
-				return oLauncher;
-			} else {
-				oLauncher = oLauncher.parent;
-			}
-		}
-		return oLauncher;
-	}
 
 	return Matcher;
 });

@@ -1,11 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/autowaiter/_autoWaiter",
 	"sap/ui/test/autowaiter/_XHRWaiter",
+	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"sap/ui/test/autowaiter/_autoWaiterAsync",
 	"sap/ui/test/_LogCollector"
-], function ($, _autoWaiter, _XHRWaiter, _autoWaiterAsync, _LogCollector) {
+], function ($, _autoWaiter, _XHRWaiter, _timeoutWaiter, _autoWaiterAsync, _LogCollector) {
 	"use strict";
 
 	var iPollInterval = 400;
@@ -15,7 +16,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
 			this.fnCallbackSpy = sinon.spy();
-			this.fnHasToWaitStub = sinon.stub(sap.ui.test.autowaiter._autoWaiter, "hasToWait");
+			this.fnHasToWaitStub = sinon.stub(_autoWaiter, "hasToWait");
 		},
 		afterEach: function () {
 			this.clock.restore();
@@ -91,10 +92,9 @@ sap.ui.define([
 		this.fnHasToWaitStub.returns(true).onCall(1).returns(false);
 		var fnCallbackSpy = sinon.spy();
 		var fnCallbackSecondSpy = sinon.spy();
-		var autoWaiterAsync = sap.ui.test.autowaiter._autoWaiterAsync;
 
-		autoWaiterAsync.waitAsync(fnCallbackSpy);
-		autoWaiterAsync.waitAsync(fnCallbackSecondSpy);
+		_autoWaiterAsync.waitAsync(fnCallbackSpy);
+		_autoWaiterAsync.waitAsync(fnCallbackSecondSpy);
 
 		this.clock.tick(iPollInterval);
 		assert.ok(fnCallbackSpy.calledOnce, "Should invoke the callback for the successful waiter");
@@ -108,9 +108,9 @@ sap.ui.define([
 	QUnit.test("Should log autoWaiter pending work on timeout", function (assert) {
 		var iTimeoutAttempts = Math.ceil(iPollTimeout / iPollInterval);
 		var sAutoWaiterLog = "autoWaiterLogCollector#getAndClearLog";
-		var fnGetAndClearLogStub = sinon.stub(sap.ui.test._LogCollector.prototype, "getAndClearLog");
-		var fnStartLogSpy = sinon.spy(sap.ui.test._LogCollector.prototype, "start");
-		var fnDestroyLogSpy = sinon.spy(sap.ui.test._LogCollector.prototype, "destroy");
+		var fnGetAndClearLogStub = sinon.stub(_LogCollector.prototype, "getAndClearLog");
+		var fnStartLogSpy = sinon.spy(_LogCollector.prototype, "start");
+		var fnDestroyLogSpy = sinon.spy(_LogCollector.prototype, "destroy");
 		fnGetAndClearLogStub.returns(sAutoWaiterLog);
 		this.fnHasToWaitStub.returns(true);
 
@@ -129,10 +129,10 @@ sap.ui.define([
 		fnDestroyLogSpy.restore();
 	});
 
-	QUnit.module("AutoWaiterAsync - autoWait timeout waiter", {
+	QUnit.module("AutoWaiterAsync - autoWait xhr waiter", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
-			this.fnHasPendingStub = sinon.stub(sap.ui.test.autowaiter._XHRWaiter, "hasPending");
+			this.fnHasPendingStub = sinon.stub(_XHRWaiter, "hasPending");
 			// ensure setTimeout is called once in waitAsync
 			this.fnHasPendingStub.returns(false).onCall(1).returns(true);
 		},
@@ -147,39 +147,12 @@ sap.ui.define([
 	// as a result, there are no pending timeouts at the moment when hasToWait is performed
 	QUnit.test("Should ignore the waitAsync timeout in autoWaiter check", function (assert) {
 		var fnCallbackSpy = sinon.spy();
-		var autoWaiterAsync = sap.ui.test.autowaiter._autoWaiterAsync;
 
-		autoWaiterAsync.waitAsync(fnCallbackSpy);
+		_autoWaiterAsync.waitAsync(fnCallbackSpy);
 
 		this.clock.tick(iPollInterval);
 		assert.ok(fnCallbackSpy.calledOnce, "Should invoke the callback when the autoWaiter conditions are met");
 		assert.ok(!fnCallbackSpy.args[0][0], "Should invoke the callback with no arguments");
 		assert.ok($.isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
 	});
-
-	/* timeoutWaiter is not enabled now
-	QUnit.module("AutoWaiterAsync - config timeout Waiter");
-
-	QUnit.test("Should be able to change _timeoutWaiter config", function (assert) {
-		var fnCallbackSpy = sinon.spy();
-		var autoWaiterAsync = sap.ui.test.autowaiter._autoWaiterAsync;
-		var aHasPendingTimeoutsResults = [];
-		var fnHasPendingTimeouts = sap.ui.test.autowaiter._timeoutWaiter.hasPending;
-
-		sap.ui.test.autowaiter._timeoutWaiter.hasPending = function () {
-			var bHasPendingTimeouts = fnHasPendingTimeouts();
-			aHasPendingTimeoutsResults.push(bHasPendingTimeouts);
-			return bHasPendingTimeouts;
-		};
-
-		autoWaiterAsync.extendConfig({timeoutWaiter: {maxDelay: 400}});
-		setTimeout(function () {},  401);
-		autoWaiterAsync.waitAsync(fnCallbackSpy);
-
-		assert.ok(!aHasPendingTimeoutsResults[0], "Should ignore long running timeout");
-		assert.ok(fnCallbackSpy.calledOnce, "Should invoke the callback when the autoWaiter conditions are met");
-
-		sap.ui.test.autowaiter._timeoutWaiter.hasPending = fnHasPendingTimeouts;
-	});
-	*/
 });
