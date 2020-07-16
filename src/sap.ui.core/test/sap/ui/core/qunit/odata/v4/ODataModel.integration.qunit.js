@@ -325,9 +325,13 @@ sap.ui.define([
 					: {source : "model/GWSAMPLE_BASIC.annotations.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "odata/v4/data/metadata.xml"},
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=279&sap-context-token=20200716120000&sap-language=en"
+					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?c1=a&c2=b"
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
+					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
+				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?sap-client=279&sap-language=en"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?c1=a&c2=b"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
@@ -27123,5 +27127,28 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a model with metadataUrlParams. See that the main $metadata request contains
+	// sap-context-token, sap-language, and sap-client -> see above TestUtils.useFakeServer().
+	// Further requests for $metadata references must not use sap-context-token.
+	//
+	// JIRA: CPOUI5ODATAV4-279
+	QUnit.test("CPOUI5ODATAV4-279", function (assert) {
+		var oModel = createModel(sTeaBusi + "?sap-client=279", {
+				earlyRequests : true,
+				metadataUrlParams : {
+					"sap-context-token" : "20200716120000",
+					"sap-language" : "en"
+				}
+			});
+
+		return oModel.getMetaModel()
+			.requestObject("/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY/$Type")
+			.then(function (sName) {
+				assert.strictEqual(sName,
+					"com.sap.gateway.default.iwbep.tea_busi_product.v0001.Category");
+			});
 	});
 });

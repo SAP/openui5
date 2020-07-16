@@ -106,7 +106,7 @@ sap.ui.define([
 			oMetaModel,
 			oModel,
 			oModelPrototypeMock = this.mock(ODataModel.prototype),
-			mModelOptions = {};
+			mUriParameters = {"sap-client" : "279"};
 
 		assert.throws(function () {
 			return new ODataModel();
@@ -124,6 +124,7 @@ sap.ui.define([
 			return new ODataModel({operationMode : OperationMode.Auto, serviceUrl : "/foo/",
 				synchronizationMode : "None"});
 		}, new Error("Unsupported operation mode: Auto"), "Unsupported OperationMode");
+
 		oModelPrototypeMock.expects("initializeSecurityToken").never();
 
 		// code under test: operation mode Server must not throw an error
@@ -133,9 +134,9 @@ sap.ui.define([
 		assert.strictEqual(oModel.sOperationMode, OperationMode.Server);
 
 		this.mock(ODataModel.prototype).expects("buildQueryOptions")
-			.withExactArgs({}, false, true).returns(mModelOptions);
+			.withExactArgs({}, false, true).returns(mUriParameters);
 		this.mock(_MetadataRequestor).expects("create")
-			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", sinon.match.same(mModelOptions))
+			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", mUriParameters)
 			.returns(oMetadataRequestor);
 		this.mock(ODataMetaModel.prototype).expects("fetchEntityContainer").withExactArgs(true);
 		oModelPrototypeMock.expects("initializeSecurityToken").withExactArgs();
@@ -145,7 +146,7 @@ sap.ui.define([
 
 		assert.strictEqual(oModel.sServiceUrl, getServiceUrl());
 		assert.strictEqual(oModel.toString(), sClassName + ": " + getServiceUrl());
-		assert.strictEqual(oModel.mUriParameters, mModelOptions);
+		assert.strictEqual(oModel.mUriParameters, mUriParameters);
 		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.TwoWay);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), true);
@@ -158,6 +159,35 @@ sap.ui.define([
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, getServiceUrl() + "$metadata");
 		assert.deepEqual(oMetaModel.aAnnotationUris, ["my/annotations.xml"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("metadataUrlParams", function (assert) {
+		var mUriParameters = {
+				"sap-client" : "279",
+				"sap-context-token" : "n/a"
+			};
+
+		this.mock(ODataModel.prototype).expects("buildQueryOptions")
+			.withExactArgs({}, false, true).returns(mUriParameters);
+		this.mock(_MetadataRequestor).expects("create")
+			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", {
+				"sap-client" : "279",
+				"sap-context-token" : "20200716120000",
+				"sap-language" : "en"
+			});
+		this.mock(_Requestor).expects("create")
+			.withExactArgs(getServiceUrl(), sinon.match.object, {"Accept-Language" : "ab-CD"},
+				{"sap-client" : "279", "sap-context-token" : "n/a"}, "4.0")
+			.callThrough();
+
+		// code under test
+		createModel("", {
+			metadataUrlParams : {
+				"sap-context-token" : "20200716120000",
+				"sap-language" : "en"
+			}
+		});
 	});
 
 	//*********************************************************************************************
@@ -235,17 +265,17 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("with serviceUrl params", function (assert) {
 		var oModel,
-			mModelOptions = {};
+			mUriParameters = {};
 
 		this.mock(ODataModel.prototype).expects("buildQueryOptions")
 			.withExactArgs({"sap-client" : "111"}, false, true)
-			.returns(mModelOptions);
+			.returns(mUriParameters);
 
 		// code under test
 		oModel = createModel("?sap-client=111");
 
 		assert.strictEqual(oModel.sServiceUrl, getServiceUrl());
-		assert.strictEqual(oModel.mUriParameters, mModelOptions);
+		assert.strictEqual(oModel.mUriParameters, mUriParameters);
 	});
 
 	//*********************************************************************************************
