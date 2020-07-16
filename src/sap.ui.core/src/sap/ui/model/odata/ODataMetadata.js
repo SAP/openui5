@@ -1598,14 +1598,15 @@ sap.ui.define([
 	 *   {SalesOrderID : "'42'"}
 	 * @returns {string}
 	 *   The canonical path of the entity referenced by the given function import and its
-	 *   parameters; <code>undefined</code> if the path cannot be determined
+	 *   parameters; empty string if the path cannot be determined
 	 * @private
 	 */
 	ODataMetadata.prototype._getCanonicalPathOfFunctionImport = function (mFunctionInfo,
 			mFunctionParameters) {
 		var sActionFor, mEntitySet, mEntityType, i, aKeys, sParameterName, aPropertyReferences,
 			aExtensions = mFunctionInfo.extensions,
-			sId = "";
+			sId = "",
+			sTarget = "";
 
 		if (aExtensions) {
 			for (i = 0; i < aExtensions.length; i += 1) {
@@ -1641,7 +1642,7 @@ sap.ui.define([
 					}
 					sId = aKeys.join(",");
 				}
-				return "/" + mEntitySet.name + "(" + sId + ")";
+				sTarget = "/" + mEntitySet.name + "(" + sId + ")";
 			} else if (!mEntitySet) {
 				Log.error("Cannot determine path of the EntitySet for the function import '"
 					+ mFunctionInfo.name + "'", this, sClassName);
@@ -1650,6 +1651,8 @@ sap.ui.define([
 					+ "' for the function import '" + mFunctionInfo.name + "'", this, sClassName);
 			}
 		}
+
+		return sTarget;
 	};
 
 	return ODataMetadata;
