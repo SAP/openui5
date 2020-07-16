@@ -103,6 +103,19 @@ sap.ui.define([
 		}
 	};
 
+	PullToRefresh.prototype._getAriaDescribedByReferences = function(){
+		var sTooltipText = this.getTooltip_AsString(),
+			sDescribedBy = this._sAriaF5Text,
+			sTooltipId;
+
+		if (sTooltipText) {
+			sTooltipId = InvisibleText.getStaticId("sap.m", sTooltipText);
+			sDescribedBy += ' ' + sTooltipId;
+		}
+
+		return sDescribedBy;
+	};
+
 	PullToRefresh.prototype.onBeforeRendering = function(){
 		// Check Busy indicator at later point to avoid overhead when initially invisible
 		this._loadBI();
