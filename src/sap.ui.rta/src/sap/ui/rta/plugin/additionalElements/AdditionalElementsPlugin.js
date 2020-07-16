@@ -277,6 +277,13 @@ sap.ui.define([
 			});
 	}
 
+	function _areLibDependenciesMissing(oComponent, mRequiredLibraries) {
+		var mAppsLibDependencies = oComponent.getManifestEntry("/sap.ui5/dependencies/libs");
+		return Object.keys(mRequiredLibraries).some(function(sRequiredLib) {
+			return !mAppsLibDependencies[sRequiredLib];
+		});
+	}
+
 	/**
 	 * Constructor for a new Additional Elements Plugin.
 	 *
@@ -936,13 +943,16 @@ sap.ui.define([
 		_createCommandForAddLibrary: function(mParents, mRequiredLibraries, oParentAggregationDTMetadata) {
 			if (mRequiredLibraries) {
 				var oComponent = FlUtils.getAppComponentForControl(mParents.relevantContainer);
-				var mManifest = oComponent.getManifest();
-				var sReference = mManifest["sap.app"].id;
-				return this.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
-					reference : sReference,
-					parameters : { libraries : mRequiredLibraries },
-					appComponent: oComponent
-				}, oParentAggregationDTMetadata);
+				var bLibsMissing = _areLibDependenciesMissing(oComponent, mRequiredLibraries);
+				if (bLibsMissing) {
+					var mManifest = oComponent.getManifest();
+					var sReference = mManifest["sap.app"].id;
+					return this.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
+						reference : sReference,
+						parameters : { libraries : mRequiredLibraries },
+						appComponent: oComponent
+					}, oParentAggregationDTMetadata);
+				}
 			}
 			return Promise.resolve();
 		},

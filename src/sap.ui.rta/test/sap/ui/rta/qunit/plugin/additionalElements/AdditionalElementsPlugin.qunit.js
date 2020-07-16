@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/uid",
 	"sap/base/util/isEmptyObject",
+	"sap/base/util/merge",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
@@ -48,6 +49,7 @@ sap.ui.define([
 	Log,
 	uid,
 	isEmptyObject,
+	merge,
 	JsControlTreeModifier,
 	JSONModel,
 	DelegateMediatorAPI,
@@ -76,10 +78,9 @@ sap.ui.define([
 	};
 
 	var TEST_DELEGATE_PATH = "sap/ui/rta/enablement/TestDelegate";
-
 	//ensure a default delegate exists for a model not used anywhere else
 	var SomeModel = JSONModel.extend("sap.ui.rta.qunit.test.Model");
-	DelegateMediatorAPI.registerDefaultDelegate({
+	var DEFAULT_DELEGATE_REGISTRATION = {
 		modelType: SomeModel.getMetadata().getName(),
 		delegate: TEST_DELEGATE_PATH,
 		requiredLibraries: {
@@ -88,7 +89,8 @@ sap.ui.define([
 				lazy: false
 			}
 		}
-	});
+	};
+	DelegateMediatorAPI.registerDefaultDelegate(DEFAULT_DELEGATE_REGISTRATION);
 
 	var fnRegisterControlsForChanges = function () {
 		// asynchronous registration. Returns a promise
@@ -122,6 +124,29 @@ sap.ui.define([
 
 	sinon.stub(Settings, 'getInstance').resolves(new Settings({}));
 
+	var DEFAULT_MANIFEST = {
+		"sap.app": {
+			id: "applicationId",
+			applicationVersion: {
+				version: "1.2.3"
+			}
+		},
+		"sap.ui5": {
+			dependencies: {
+				minUI5Version: "2.6.4",
+				libs: {
+					"sap.ui.core": {
+						minVersion: "2.5.4"
+					},
+					"sap.m": {
+						minVersion: "2.3.5"
+					}
+				}
+			}
+		}
+	};
+
+
 	var oMockedAppComponent = {
 		getLocalId: function () {
 			return undefined;
@@ -137,14 +162,7 @@ sap.ui.define([
 			};
 		},
 		getManifest: function () {
-			return {
-				"sap.app": {
-					id: "applicationId",
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
+			return DEFAULT_MANIFEST;
 		},
 		getModel: function () {
 		}
@@ -1550,7 +1568,12 @@ sap.ui.define([
 				var oAddLibrary = oCompositeCommand.getCommands()[0];
 				assert.equal(oAddLibrary.getName(), "addLibrary", "then the addLibrary command is created first");
 				assert.equal(oAddLibrary.getReference(), "applicationId", "then the addLibrary command is created with the proper reference");
-				assert.equal(oAddLibrary.getParameters().libraries["sap.uxap"].minVersion, "1.44", "then the addLibrary command is created with the proper required libraries");
+				var sLib = Object.keys(DEFAULT_DELEGATE_REGISTRATION.requiredLibraries)[0];
+				assert.equal(
+					oAddLibrary.getParameters().libraries[sLib].minVersion,
+					DEFAULT_DELEGATE_REGISTRATION.requiredLibraries[sLib].minVersion,
+					"then the addLibrary command is created with the proper required libraries"
+				);
 
 				var oAddCmd = oCompositeCommand.getCommands()[1];
 				assert.equal(oAddCmd.getName(), "addDelegateProperty",
@@ -1560,6 +1583,55 @@ sap.ui.define([
 				assert.equal(oAddCmd.getRelevantContainerId(), "pseudoParent", "then the relevant container is set correctly ");
 				assert.ok(oAddCmd.getNewControlId().indexOf("pseudoParent") > -1,
 					"then the pseudo parent (relevant container) is used to create the new control ID");
+				done();
+			});
+
+			return createOverlayWithAggregationActions.call(this, {
+				add: {
+					delegate : {
+						changeType: "addFields",
+						changeOnRelevantContainer: true,
+						supportsDefaultDelegate: true
+					}
+				}
+			}, ON_CHILD)
+				.then(function (oOverlay) {
+					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+				}.bind(this))
+
+				.then(function () {
+					assert.ok(true, "then the plugin should not complain about it");
+				});
+		});
+
+		function givenAddHasLibraryDependencyToDefaultDelegatesLibDependencies() {
+			var oMockedAppComponentWithLibDependency = merge({}, oMockedAppComponent, {
+				getManifestEntry : function(sPath) {
+					if (sPath.indexOf("libs")) {
+						return merge(
+							{},
+							DEFAULT_MANIFEST["sap.ui5"].dependencies.libs,
+							DEFAULT_DELEGATE_REGISTRATION.requiredLibraries
+						);
+					}
+					return {};
+				}
+			});
+			FlexUtils.getAppComponentForControl.restore(); //assuming the default stub is always (re)set in beforeEach
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponentWithLibDependency);
+		}
+
+		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container and default delegate is available, but library dependency already exists", function (assert) {
+			givenAddHasLibraryDependencyToDefaultDelegatesLibDependencies();
+
+			var done = assert.async();
+			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
+				var oCompositeCommand = oEvent.getParameter("command");
+				assert.equal(oCompositeCommand.getCommands().length, 1, "then only the addDelegateProperty is created and no addLibrary command as the library dependency already exists");
+
+				var oAddCmd = oCompositeCommand.getCommands()[0];
+				assert.equal(oAddCmd.getName(), "addDelegateProperty",
+					"then the addDelegateProperty command is created ");
 				done();
 			});
 
