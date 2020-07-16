@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/Util",
 	"qunit/RtaQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
@@ -14,7 +13,6 @@ sap.ui.define([
 	jQuery,
 	RuntimeAuthoring,
 	OverlayRegistry,
-	DtUtil,
 	RtaQunitUtils,
 	QUnitUtils,
 	KeyCodes,
@@ -194,14 +192,6 @@ sap.ui.define([
 
 			// open context menu (context menu) and select add field
 			RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function () {
-				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				oContextMenuControl.attachEventOnce("Opened", function () {
-					var oContextMenuButton = oContextMenuControl.getButtons()[1];
-					assert.equal(oContextMenuButton.getText(), "Add: Field", "then the add field action button is available in the menu");
-					oContextMenuButton.firePress();
-					sap.ui.getCore().applyChanges();
-				});
-
 				oDialog.attachOpened(function () {
 					var oFieldToAdd = oDialog._oList.getItems()[1];
 					var sFieldToAddText = oFieldToAdd.getContent()[0].getItems()[0].getText();
@@ -232,6 +222,12 @@ sap.ui.define([
 					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
 					sap.ui.getCore().applyChanges();
 				}.bind(this));
+
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var oContextMenuButton = oContextMenuControl.getButtons()[1];
+				assert.equal(oContextMenuButton.getText(), "Add: Field", "then the add field action button is available in the menu");
+				oContextMenuButton.firePress();
+				sap.ui.getCore().applyChanges();
 			}.bind(this));
 		});
 
@@ -375,14 +371,6 @@ sap.ui.define([
 			oFieldOverlay.setSelected(true);
 			// open context menu (compact context menu)
 			RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(function () {
-				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				oContextMenuControl.attachEventOnce("Opened", function () {
-					var oContextMenuButton = oContextMenuControl.getButtons()[1];
-					assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
-					oContextMenuButton.firePress();
-					sap.ui.getCore().applyChanges();
-				});
-
 				// wait for opening additional Elements dialog
 				oDialog.attachOpened(function () {
 					var oFieldToAdd = oDialog.getElements().filter(function (oField) {
@@ -412,6 +400,12 @@ sap.ui.define([
 					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
 					sap.ui.getCore().applyChanges();
 				}.bind(this));
+
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var oContextMenuButton = oContextMenuControl.getButtons()[1];
+				assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
+				oContextMenuButton.firePress();
+				sap.ui.getCore().applyChanges();
 			}.bind(this));
 		});
 
