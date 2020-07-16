@@ -374,6 +374,20 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Checks whether the given context may be kept alive.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   A context of this binding
+	 * @throws {Error} If <code>oContext.setKeepAlive()</code> is not allowed
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataListBinding#checkKeepAlive
+	 * @private
+	 * @see sap.ui.model.odata.v4.Context#setKeepAlive
+	 */
+
 	/*
 	 * Checks dependent bindings for updates or refreshes the binding if the resource path of its
 	 * parent context changed.
@@ -1342,6 +1356,8 @@ sap.ui.define([
 		= ODataParentBinding.prototype.doDeregisterChangeListener;
 	// #destroy is still not final, allow for "super" calls
 	asODataParentBinding.prototype.destroy = ODataParentBinding.prototype.destroy;
+	// #fetchCache is still not final, allow for "super" calls
+	asODataParentBinding.prototype.fetchCache = ODataParentBinding.prototype.fetchCache;
 	// #hasPendingChangesForPath is still not final, allow for "super" calls
 	asODataParentBinding.prototype.hasPendingChangesForPath
 		= ODataParentBinding.prototype.hasPendingChangesForPath;

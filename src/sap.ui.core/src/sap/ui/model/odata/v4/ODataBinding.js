@@ -1155,6 +1155,8 @@ sap.ui.define([
 		= ODataBinding.prototype.doDeregisterChangeListener;
 	// #destroy is not final, allow for "super" calls
 	asODataBinding.prototype.destroy = ODataBinding.prototype.destroy;
+	// #fetchCache is not final, allow for "super" calls
+	asODataBinding.prototype.fetchCache = ODataBinding.prototype.fetchCache;
 	// #hasPendingChangesForPath is not final, allow for "super" calls
 	asODataBinding.prototype.hasPendingChangesForPath
 		= ODataBinding.prototype.hasPendingChangesForPath;

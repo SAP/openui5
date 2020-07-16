@@ -112,6 +112,7 @@ sap.ui.define([
 					&& Promise.resolve(oCreatePromise).then(function () {});
 				this.oSyncCreatePromise = oCreatePromise && SyncPromise.resolve(oCreatePromise);
 				this.iIndex = iIndex;
+				this.bKeepAlive = false;
 				this.iReturnValueContextId = iReturnValueContextId;
 			}
 		});
@@ -521,8 +522,11 @@ sap.ui.define([
 	 * <code>bAtEnd</code>, and when a context representing a created entity is deleted again.
 	 *
 	 * @returns {number}
-	 *   The context's index within the binding's collection or <code>undefined</code> if the
-	 *   context does not belong to a list binding.
+	 *   The context's index within the binding's collection. It is <code>undefined</code> if
+	 *   <ul>
+	 *     <li> it does not belong to a list binding,
+	 *     <li> it is kept alive (see {@link #isKeepAlive}), but not in the collection currently.
+	 *   </ul>
 	 *
 	 * @public
 	 * @since 1.39.0
@@ -544,13 +548,16 @@ sap.ui.define([
 	 * or deleted again.
 	 *
 	 * @returns {number}
-	 *   The context's model index within the binding's collection or <code>undefined</code> if the
-	 *   context does not belong to a list binding.
+	 *   The context's index within the binding's collection. It is <code>undefined</code> if
+	 *   <ul>
+	 *     <li> it does not belong to a list binding,
+	 *     <li> it is kept alive (see {@link #isKeepAlive}), but not in the collection currently.
+	 *   </ul>
 	 *
 	 * @private
 	 */
 	Context.prototype.getModelIndex = function () {
-		if (this.oBinding.iCreatedContexts) {
+		if (this.iIndex !== undefined && this.oBinding.iCreatedContexts) {
 			return this.iIndex + this.oBinding.iCreatedContexts;
 		}
 		return this.iIndex;
@@ -748,6 +755,19 @@ sap.ui.define([
 	 */
 	Context.prototype.isExpanded = function () {
 		return this.getProperty("@$ui5.node.isExpanded");
+	};
+
+	/**
+	 * Returns whether this context is kept alive.
+	 *
+	 * @returns {boolean} <code>true</code> if this context is kept alive
+	 *
+	 * @public
+	 * @see #setKeepAlive
+	 * @since 1.81.0
+	 */
+	Context.prototype.isKeepAlive = function () {
+		return this.bKeepAlive;
 	};
 
 	/**
@@ -1142,6 +1162,39 @@ sap.ui.define([
 		}
 
 		return SyncPromise.all(aPromises);
+	};
+
+	/**
+	 * Sets this context's <code>keepAlive</code> attribute. If <code>true</code> the context is
+	 * kept alive even when it is removed from its binding's collection, for example if a filter is
+	 * applied and the entity represented by this context does not match the filter criteria.
+	 *
+	 * @param {boolean} bKeepAlive
+	 *   Whether to keep the context alive
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> this context is not a list binding's context,
+	 *     <li> it is the header context,
+	 *     <li> it is transient,
+	 *     <li> it does not point to an entity,
+	 *     <li> a key property of the entity has not been requested,
+	 *     <li> the list binding is relative and does not use the <code>$$ownRequest</code>
+	 *       parameter (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *   </ul>
+	 *
+	 * @public
+	 * @see #isKeepAlive
+	 * @since 1.81.0
+	 */
+	Context.prototype.setKeepAlive = function (bKeepAlive) {
+		if (this.isTransient()) {
+			throw new Error("Unsupported transient context " + this);
+		}
+		if (!_Helper.getPrivateAnnotation(this.getValue(), "predicate")) {
+			throw new Error("No key predicate known at " + this);
+		}
+		this.oBinding.checkKeepAlive(this);
+		this.bKeepAlive = bKeepAlive;
 	};
 
 	/**

@@ -51,6 +51,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.getModelIndex(), 42);
 		assert.strictEqual(oContext.created(), undefined);
 		assert.strictEqual(oContext.getReturnValueContextId(), undefined);
+		assert.strictEqual(oContext.isKeepAlive(), false);
 
 		// code under test
 		oContext = Context.create(oModel, oBinding, sPath, 42,
@@ -155,6 +156,11 @@ sap.ui.define([
 		oBinding.iCreatedContexts = 7;
 
 		assert.strictEqual(oContext.getModelIndex(), 49);
+
+		// simulate setKeepAlive and removal from the collection
+		oContext.iIndex = undefined;
+
+		assert.strictEqual(oContext.getModelIndex(), undefined);
 	});
 
 	//*********************************************************************************************
@@ -177,6 +183,9 @@ sap.ui.define([
 		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", 5).getIndex(), 5);
 		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", -1).getIndex(), 6);
 		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", -4).getIndex(), 9);
+		// simulate a kept context not in the collection
+		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", undefined).getIndex(),
+			undefined);
 	});
 
 	//*********************************************************************************************
@@ -2760,5 +2769,79 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oContext.isExpanded(), "~anything~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setKeepAlive", function (assert) {
+		var oBinding = {
+				checkKeepAlive : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/path");
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
+		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~value~", "predicate")
+			.returns("('foo')");
+		this.mock(oBinding).expects("checkKeepAlive")
+			.withExactArgs(sinon.match.same(oContext));
+
+		// code under test
+		oContext.setKeepAlive("bTrueOrFalse");
+
+		assert.strictEqual(oContext.isKeepAlive(), "bTrueOrFalse");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setKeepAlive: forbidden by the binding", function (assert) {
+		var oBinding = {
+				checkKeepAlive : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/path"),
+			oError = new Error();
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
+		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~value~", "predicate")
+			.returns("('foo')");
+		this.mock(oBinding).expects("checkKeepAlive")
+			.withExactArgs(sinon.match.same(oContext)).throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			oContext.setKeepAlive(true);
+		}, oError);
+
+		assert.strictEqual(oContext.isKeepAlive(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setKeepAlive: transient", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.setKeepAlive(true);
+		}, new Error("Unsupported transient context " + oContext));
+
+		assert.strictEqual(oContext.isKeepAlive(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setKeepAlive: no predicate", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
+		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~value~", "predicate")
+			.returns(undefined);
+
+		assert.throws(function () {
+			// code under test
+			oContext.setKeepAlive(true);
+		}, new Error("No key predicate known at /path"));
+
+		assert.strictEqual(oContext.isKeepAlive(), false);
 	});
 });

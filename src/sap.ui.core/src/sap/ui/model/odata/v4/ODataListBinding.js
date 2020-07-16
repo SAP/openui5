@@ -547,6 +547,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#checkKeepAlive
+	 */
+	ODataListBinding.prototype.checkKeepAlive = function (oContext) {
+		if (this.isRelative() && !this.mParameters.$$ownRequest) {
+			throw new Error("Missing $$ownRequest at " + this);
+		}
+		if (oContext === this.oHeaderContext) {
+			throw new Error("Unsupported header context " + oContext);
+		}
+		if (this.mParameters.$$aggregation) {
+			throw new Error("Unsupported $$aggregation at " + this);
+		}
+	};
+
+	/**
 	 * Creates a new entity and inserts it at the start or the end of the list.
 	 *
 	 * For creating the new entity, the binding's update group ID is used, see
@@ -811,7 +827,7 @@ sap.ui.define([
 		this.aContexts.forEach(function (oContext) {
 			oContext.destroy();
 		});
-		this.destroyPreviousContexts();
+		this.destroyPreviousContexts(true);
 		if (this.oHeaderContext) {
 			this.oHeaderContext.destroy();
 		}
@@ -867,18 +883,28 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears mPreviousContextsByPath, destroying all contexts.
+	 * Removes and destroys contexts from mPreviousContextsByPath.
+	 *
+	 * @param {boolean} [bAllContexts]
+	 *   If <code>true</code>, all contexts are removed and destroyed, otherwise only those that
+	 *   are not kept alive (see {@link sap.ui.model.odata.v4.Context#isKeepAlive})
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.destroyPreviousContexts = function () {
+	ODataListBinding.prototype.destroyPreviousContexts = function (bAllContexts) {
 		var mPreviousContextsByPath = this.mPreviousContextsByPath;
 
 		if (mPreviousContextsByPath) { // binding may have been destroyed already
 			Object.keys(mPreviousContextsByPath).forEach(function (sPath) {
-				mPreviousContextsByPath[sPath].destroy();
+				var oContext = mPreviousContextsByPath[sPath];
+
+				if (bAllContexts || !oContext.isKeepAlive()) {
+					oContext.destroy();
+					delete mPreviousContextsByPath[sPath];
+				} else {
+					oContext.iIndex = undefined;
+				}
 			});
-			this.mPreviousContextsByPath = {};
 		}
 	};
 
@@ -984,6 +1010,38 @@ sap.ui.define([
 
 			throw oError;
 		});
+	};
+
+	/**
+	 * Creates a cache for this binding if a cache is needed and updates <code>oCachePromise</code>.
+	 * Copies the data for kept alive contexts and the late query options from the old cache to the
+	 * new one.
+	 *
+	 * @private
+	 */
+	// @override sap.ui.model.odata.v4.ODataBinding#fetchCache
+	ODataListBinding.prototype.fetchCache = function () {
+		var oOldCache = this.oCache,
+			sBindingPath = this.oModel.resolve(this.sPath, this.oContext),
+			that = this;
+
+		asODataParentBinding.prototype.fetchCache.apply(this, arguments);
+
+		if (oOldCache) {
+			this.oCachePromise.then(function (oCache) {
+				Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
+					var oContext = that.mPreviousContextsByPath[sPath];
+					if (oContext.isKeepAlive()) {
+						oCache.addKeptElement(
+							oOldCache.getValue(_Helper.getRelativePath(sPath, sBindingPath)));
+						oContext.checkUpdate(); // add change listeners
+					}
+				});
+				if (oCache && oCache.hasChangeListeners()) {
+					oCache.setLateQueryOptions(oOldCache.getLateQueryOptions());
+				}
+			}); // no catch; if the new cache cannot be created, data for the kept contexts is lost
+		}
 	};
 
 	/**
@@ -2381,6 +2439,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resets the keep-alive flag on all contexts of this binding.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.resetKeepAlive = function () {
+		var mPreviousContextsByPath = this.mPreviousContextsByPath;
+
+		// resets the keep alive flag for the given context
+		function reset(oContext) {
+			// do not call it always, it throws an exception on a relative binding w/o $$ownRequest
+			if (oContext.isKeepAlive()) {
+				oContext.setKeepAlive(false);
+			}
+		}
+
+		Object.keys(mPreviousContextsByPath).forEach(function (sPath) {
+			reset(mPreviousContextsByPath[sPath]);
+		});
+		this.aContexts.forEach(reset);
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#resumeInternal
 	 */
@@ -2490,12 +2570,14 @@ sap.ui.define([
 			delete mParameters.$$aggregation;
 		} else {
 			mParameters.$$aggregation = _Helper.clone(oAggregation);
+			this.resetKeepAlive();
 		}
 		this.applyParameters(mParameters, "");
 	};
 
 	/**
-	 * Sets the context and resets the cached contexts of the list items.
+	 * Sets the context and resets the cached contexts of the list items. This destroys all kept
+	 * contexts.
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context object
@@ -2526,6 +2608,7 @@ sap.ui.define([
 				// context remains unchanged if the parent context is temporarily dropped during a
 				// refresh.
 				this.reset();
+				this.resetKeepAlive(); // before fetchCache to avoid that it copies data
 				this.fetchCache(oContext);
 				if (oContext) {
 					sResolvedPath = this.oModel.resolve(this.sPath, oContext);

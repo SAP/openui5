@@ -4077,6 +4077,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkKeepAlive", function (assert) {
+		var oBinding = this.bindContext("/path");
+
+		assert.throws(function () {
+			oBinding.checkKeepAlive({/*oContext*/});
+		}, new Error("Unsupported " + oBinding));
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("Action import on navigation property", function (assert) {

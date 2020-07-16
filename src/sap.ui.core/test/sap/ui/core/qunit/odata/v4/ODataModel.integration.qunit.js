@@ -25495,14 +25495,14 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("EMPLOYEES?$skip=3&$top=3", {
 					value : [
-						{ID : "3", Name : "Alice Grey"},
-						{ID : "4", Name : "Bob Green"}
+						{ID : "4", Name : "Alice Grey"},
+						{ID : "5", Name : "Bob Green"}
 					],
 					"@odata.nextLink" : "~nextLink2"
 				})
 				.expectRequest("EMPLOYEES?$skip=5&$top=1", {
 					value : [
-						{ID : "5", Name : "Erica Brown"}
+						{ID : "6", Name : "Erica Brown"}
 					]
 				})
 				.expectChange("text", null, null)
@@ -27197,5 +27197,193 @@ sap.ui.define([
 				assert.strictEqual(sName,
 					"com.sap.gateway.default.iwbep.tea_busi_product.v0001.Category");
 			});
+	});
+
+	//*********************************************************************************************
+	// Scenario:
+	// 1. Create a view with an object page showing a sales order. Use an update group. Ensure that
+	//    the order shares the list's cache, but needs late properties.
+	// 2. Select a sales order and see that late properties are requested. Keep its context alive.
+	// 3. Filter the list, so that the context drops out of it. Check that the context is still
+	//    alive and has its data.
+	// 4. Modify a property. See that the list has pending changes.
+	// 5. Reset the list's pending changes.
+	// 6. Delete the filter. Expect no request for the late properties.
+	// 7. Filter the list, so that the context remains. Give the sales order a new ETag. See that
+	//    the late properties are requested again.
+	// JIRA: CPOUI5ODATAV4-340
+	QUnit.test("CPOUI5ODATAV4-340: Context#setKeepAlive", function (assert) {
+		var oKeptContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oTable,
+			oTableBinding,
+			sView = '\
+<Table id="listReport" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}" />\
+</Table>\
+<FlexBox id="objectPage">\
+	<Input id="buyerId" value="{BuyerID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				value : [{"@odata.etag" : "etag1", SalesOrderID : "1"}]
+			})
+			.expectChange("id", ["1"])
+			.expectChange("buyerId");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("listReport");
+			oTableBinding = oTable.getBinding("items");
+			oKeptContext = oTable.getItems()[0].getBindingContext();
+
+			that.expectRequest("SalesOrderList('1')?$select=BuyerID",
+					{"@odata.etag" : "etag1", BuyerID : "42"})
+				.expectChange("buyerId", "42");
+
+			// code under test
+			oKeptContext.setKeepAlive(true);
+			that.oView.byId("objectPage").setBindingContext(oKeptContext);
+
+			return that.waitForChanges(assert, "(2)");
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID ne '1'"
+					+ "&$skip=0&$top=100",
+					{value : []}
+				);
+
+			oTableBinding.filter(new Filter("SalesOrderID", FilterOperator.NE, "1"));
+
+			return that.waitForChanges(assert, "(3)");
+		}).then(function () {
+			assert.strictEqual(oKeptContext.isKeepAlive(), true);
+			assert.strictEqual(oKeptContext.getIndex(), undefined);
+			assert.strictEqual(oKeptContext.getProperty("BuyerID"), "42");
+
+			that.expectChange("buyerId", "42a");
+
+			that.oView.byId("buyerId").getBinding("value").setValue("42a");
+
+			assert.ok(oTableBinding.hasPendingChanges());
+
+			return that.waitForChanges(assert, "(4)");
+		}).then(function () {
+			that.expectChange("buyerId", "42");
+			// expect no PATCH request
+
+			oTableBinding.resetChanges();
+
+			assert.notOk(oTableBinding.hasPendingChanges());
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert, "(5)")
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+					value : [{"@odata.etag" : "etag1", SalesOrderID : "1"}]
+				})
+				.expectChange("id", ["1"]);
+				// expect no request for late properties
+
+			oTableBinding.filter();
+
+			return that.waitForChanges(assert, "(6)");
+		}).then(function () {
+			assert.strictEqual(oKeptContext.getIndex(), 0);
+
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID eq '1'"
+					+ "&$skip=0&$top=100", {
+					value : [{"@odata.etag" : "etag2", SalesOrderID : "1"}]
+				})
+				.expectRequest("SalesOrderList('1')?$select=BuyerID",
+					{"@odata.etag" : "etag2", BuyerID : "42*"})
+				.expectChange("buyerId", "42*");
+
+			oTableBinding.filter(new Filter("SalesOrderID", FilterOperator.EQ, "1"));
+
+			return that.waitForChanges(assert, "(7)");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A property of a kept context is modified while the context is not in the
+	// collection. Via paging it becomes part of the collection, but the ETag was changed on the
+	// server.
+	// JIRA: CPOUI5ODATAV4-340
+	QUnit.test("CPOUI5ODATAV4-340: Context#setKeepAlive, update conflict", function (assert) {
+		var oKeptContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oTable,
+			oTableBinding,
+			sView = '\
+<Table id="listReport" growing="true" growingThreshold="1" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}" />\
+</Table>\
+<FlexBox id="objectPage">\
+	<Input id="buyerId" value="{BuyerID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=1", {
+				value : [{"@odata.etag" : "etag1", SalesOrderID : "1"}]
+			})
+			.expectChange("id", ["1"])
+			.expectChange("buyerId");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("listReport");
+			oTableBinding = oTable.getBinding("items");
+			oKeptContext = oTable.getItems()[0].getBindingContext();
+
+			that.expectRequest("SalesOrderList('1')?$select=BuyerID",
+					{"@odata.etag" : "etag1", BuyerID : "42"})
+				.expectChange("buyerId", "42");
+
+			// code under test
+			oKeptContext.setKeepAlive(true);
+			that.oView.byId("objectPage").setBindingContext(oKeptContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$orderby=SalesOrderID desc"
+					+ "&$skip=0&$top=1", {
+					value : [{"@odata.etag" : "etag2", SalesOrderID : "2"}]
+				})
+				.expectChange("id", ["2"]);
+
+			oTableBinding.sort(new Sorter("SalesOrderID", true));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("buyerId", "42a");
+
+			that.oView.byId("buyerId").getBinding("value").setValue("42a");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$orderby=SalesOrderID desc"
+					+ "&$skip=1&$top=1", {
+					value : [{"@odata.etag" : "etag1*", SalesOrderID : "1"}]
+				})
+				.expectMessages([{
+					code : undefined,
+					message : "Modified on client and on server: SalesOrderList('1')",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}]);
+
+			that.oLogMock.expects("error")
+				.withArgs("Failed to get contexts for " + sSalesOrderService
+					+ "SalesOrderList with start index 0 and length 2",
+					sinon.match("Modified on client and on server: SalesOrderList('1')"));
+
+			// show more items
+			that.oView.byId("listReport-trigger").firePress();
+
+			return that.waitForChanges(assert);
+		});
 	});
 });

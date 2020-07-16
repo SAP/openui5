@@ -2499,6 +2499,7 @@ sap.ui.define([
 		assert.strictEqual(asODataBinding.prototype.doDeregisterChangeListener,
 			oBinding.doDeregisterChangeListener);
 		assert.strictEqual(asODataBinding.prototype.destroy, oBinding.destroy);
+		assert.strictEqual(asODataBinding.prototype.fetchCache, oBinding.fetchCache);
 		assert.strictEqual(asODataBinding.prototype.hasPendingChangesForPath,
 			oBinding.hasPendingChangesForPath);
 	});

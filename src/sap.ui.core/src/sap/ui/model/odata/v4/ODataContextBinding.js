@@ -584,6 +584,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#checkKeepAlive
+	 */
+	ODataContextBinding.prototype.checkKeepAlive = function () {
+		throw new Error("Unsupported " + this);
+	};
+
+	/**
 	 * Creates a single cache for an operation and sends a GET/POST request.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
