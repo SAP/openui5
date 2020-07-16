@@ -22,11 +22,12 @@ sap.ui.define([
 		"sap/ui/core/HTML",
 		"sap/ui/core/Core",
 		"sap/ui/model/json/JSONModel",
-		"sap/base/Log"
+		"sap/base/Log",
+		"sap/ui/integration/util/LoadingProvider"
 	],
 	function (library, coreLibrary, includeScript, BaseContent, AdaptiveCards, ACData, Markdown,
-			  UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig,
-			  VBox, MessageStrip, HTML, Core, JSONModel, Log) {
+			UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig,
+			VBox, MessageStrip, HTML, Core, JSONModel, Log, LoadingProvider) {
 		"use strict";
 
 		// shortcut for sap.ui.core.MessageType
@@ -65,10 +66,14 @@ sap.ui.define([
 		AdaptiveContent.prototype.init = function () {
 			this.setComponentsReady(false);
 			this._bAdaptiveCardElementsReady = false;
-
 			this._setupCardContent();
 			this._setupAdaptiveCardDependency();
 			this._loadDependencies();
+			this._oLoadingProvider = new LoadingProvider();
+		};
+
+		AdaptiveContent.prototype.onAfterRendering = function () {
+			this._renderMSCardContent(this._oCardTemplate || this._oCardConfig);
 		};
 
 		/**
@@ -159,10 +164,6 @@ sap.ui.define([
 					// notify the user that the provided URL is not correct
 					Log.error("No JSON file found on this URL. Please provide a correct path to the JSON-serialized card object model file.");
 				});
-		};
-
-		AdaptiveContent.prototype.onAfterRendering = function () {
-			this._setupMSCardContent();
 		};
 
 		/**
@@ -323,12 +324,11 @@ sap.ui.define([
 		 * @private
 		 */
 		AdaptiveContent.prototype._setupMSCardContent = function () {
-			var oDom = this.getAggregation("_content").getItems()[1].getDomRef(),
-				oConfiguration = this._oCardConfig,
+			var oConfiguration = this._oCardConfig,
 				oContentTemplateData,
 				oCardDataProvider = this._oCardDataProvider;
 
-			if (!this.adaptiveCardInstance || !oConfiguration || !oDom) {
+			if (!this.adaptiveCardInstance || !oConfiguration) {
 				return;
 			}
 
@@ -337,14 +337,8 @@ sap.ui.define([
 
 			// if there is no data for templating, render the MS AdaptiveCard
 			if (!oContentTemplateData && !oCardDataProvider) {
+				this._oCardTemplate = null;
 				this._renderMSCardContent(oConfiguration);
-				return;
-			}
-
-			// if there is no data provided on content level, check for an existing
-			// setup the data provider from card level
-			if (!oContentTemplateData && oCardDataProvider) {
-				this._setupDataProvider(oCardDataProvider);
 				return;
 			}
 
@@ -354,77 +348,26 @@ sap.ui.define([
 				oContentTemplateData = {
 					"json": oContentTemplateData
 				};
-			}
 
+			}
 			// create a data provider with the templating data and setup it
-			this._setupDataProvider(this._createDataProvider(oContentTemplateData));
+			this._setDataConfiguration(oContentTemplateData);
 		};
 
 		/**
-		 * Creates a data provider.
+		 * Called when the data for the content was changed either by the content or by the card.
 		 *
-		 * @param {Object} oData The data needed for the provider
-		 * @returns {Object} The created data provider
-		 * @private
 		 */
-		AdaptiveContent.prototype._createDataProvider = function (oData) {
-			var oDataProvider = null;
+		AdaptiveContent.prototype.onDataChanged = function () {
+			var sPath = this.getBindingContext().getPath(),
+				oData = this.getModel().getProperty(sPath);
 
-			if (this._oDataProviderFactory) {
-				oDataProvider = this._oDataProviderFactory.create(oData, this._oServiceManager);
-			}
-
-			return oDataProvider;
-		};
-
-		/**
-		 * Setup a data provider - attach to needed events,
-		 * set the templating and render the card.
-		 *
-		 * @param {Object} oDataProvider The data provider
-		 * @returns {Object} The created data provider
-		 * @private
-		 */
-		AdaptiveContent.prototype._setupDataProvider = function (oDataProvider) {
-			var oData, oCard,
-				sPath = oDataProvider && oDataProvider._oSettings.path || "";
-
-			if (oDataProvider) {
-				this.setBusy(true);
-
-				// If a data provider is created use an own model.
-				var oModel = this.setModel(new JSONModel());
-
-				oDataProvider.attachDataChanged(function (oEvent) {
-					oData = oEvent.getParameter('data');
-					this._updateModel(oData);
-
-					// if a path is present, setup this part of the data
-					// as a data object for the card template.
-					if (sPath.length) {
-						oData = oModel.getProperty(sPath);
-					}
-
-					// attach the data with the card template
-					oCard = this._setTemplating(this._oCardConfig, oData);
-
-					// render the MS AdaptiveCard
-					oCard && this._renderMSCardContent(oCard);
-
-					this.setBusy(false);
-				}.bind(this));
-
-				oDataProvider.attachError(function (oEvent) {
-					this._handleError(oEvent.getParameter("message"));
-					this.setBusy(false);
-				}.bind(this));
-
-				oDataProvider.triggerDataUpdate().then(function () {
-					this.fireEvent("_dataReady");
-				}.bind(this));
-			} else {
-				this.fireEvent("_dataReady");
-			}
+			// Аttaches the data with the card template
+			this._oCardTemplate = this._setTemplating(this._oCardConfig, oData);
+			// Marks the loading as finished manually, because _handleCardLoading() is called too early in this case
+			this._oLoadingProvider.setLoading(false);
+			// Re-renders the card with the new data
+			this.invalidate();
 		};
 
 		/**
@@ -434,7 +377,13 @@ sap.ui.define([
 		 * @private
 		 */
 		AdaptiveContent.prototype._renderMSCardContent = function (oCard) {
-			var oDom = this.getAggregation("_content").getItems()[1].$();
+			var oDom = this.getAggregation("_content").getItems()[1].$(),
+				bIsLoading = !!this.isLoading();
+
+			// Do not show content until the data for it is fully loaded
+			this.setBusy(bIsLoading);
+			this.getAggregation("_content").toggleStyleClass("sapFCardContentHidden", bIsLoading);
+
 			if (this.adaptiveCardInstance && oCard && oDom.length) {
 				this.adaptiveCardInstance.parse(oCard);
 				oDom.html(this.adaptiveCardInstance.render());
