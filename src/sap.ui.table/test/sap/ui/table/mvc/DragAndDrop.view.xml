@@ -4,14 +4,13 @@
 		  xmlns:table="sap.ui.table"
 		  xmlns:unified="sap.ui.unified"
 		  xmlns:dnd="sap.ui.core.dnd"
-		  controllerName="sap.ui.table.testApps.DragAndDrop">
+		  controllerName="sap.ui.table.mvc.DragAndDrop">
 	<HBox renderType="Bare">
 		<items>
-			<table:Table
-					id="table"
-					title="Table - Reorder rows and drag to TreeTable"
-					width="50%"
-					rows="{/listData}">
+			<table:Table id="table"
+						 title="Table - Reorder rows and drag to TreeTable"
+						 width="50%"
+						 rows="{/listData}">
 				<table:columns>
 					<table:Column width="120px" sortProperty="lastName" filterProperty="lastName">
 						<table:label>
@@ -157,32 +156,32 @@
 				</table:columns>
 				<table:dragDropConfig>
 					<dnd:DragDropInfo
-							sourceAggregation="rows"
-							targetAggregation="rows"
-							dropEffect="Move"
-							dropPosition="Between"
-							dragStart="tableDragStart"
-							dragEnter="tableReorderDragEnter"
-							drop="tableReorderDrop"/>
+						sourceAggregation="rows"
+						targetAggregation="rows"
+						dropEffect="Move"
+						dropPosition="Between"
+						dragStart="tableDragStart"
+						dragEnter="tableReorderDragEnter"
+						drop="tableReorderDrop"/>
 					<dnd:DragDropInfo
-							sourceAggregation="rows"
-							targetAggregation="rows"
-							dropEffect="Copy"
-							dropPosition="On"
-							dragStart="tableDragStart"
-							dragEnter="tableToTreeTableDragEnter"
-							drop="tableToTreeTableDrop"
-							targetElement="treetable"/>
+						sourceAggregation="rows"
+						targetAggregation="rows"
+						dropEffect="Copy"
+						dropPosition="On"
+						dragStart="tableDragStart"
+						dragEnter="tableToTreeTableDragEnter"
+						drop="tableToTreeTableDrop"
+						targetElement="treetable"/>
 				</table:dragDropConfig>
 			</table:Table>
 			<ToolbarSpacer width="1rem"/>
 			<table:TreeTable
-					id="treetable"
-					title="TreeTable - Reorder rows and drag to Table"
-					width="50%"
-					expandFirstLevel="true"
-					rows="{/treeData/root}"
-					groupHeaderProperty="name">
+				id="treetable"
+				title="TreeTable - Reorder rows and drag to Table"
+				width="50%"
+				expandFirstLevel="true"
+				rows="{/treeData/root}"
+				groupHeaderProperty="name">
 				<table:columns>
 					<table:Column width="300px" sortProperty="name" filterProperty="name">
 						<table:label>
@@ -211,20 +210,20 @@
 				</table:columns>
 				<table:dragDropConfig>
 					<dnd:DragDropInfo
-							sourceAggregation="rows"
-							targetAggregation="rows"
-							dropEffect="Move"
-							dropPosition="OnOrBetween"
-							dragStart="treeTableDragStart"
-							dragEnter="treeTableReorderDragEnter"
-							drop="treeTableReorderDrop"/>
+						sourceAggregation="rows"
+						targetAggregation="rows"
+						dropEffect="Move"
+						dropPosition="OnOrBetween"
+						dragStart="treeTableDragStart"
+						dragEnter="treeTableReorderDragEnter"
+						drop="treeTableReorderDrop"/>
 					<dnd:DragDropInfo
-							sourceAggregation="rows"
-							dropEffect="Copy"
-							dragStart="treeTableDragStart"
-							dragEnter="treeTableToTableDragEnter"
-							drop="treeTableToTableDrop"
-							targetElement="table"/>
+						sourceAggregation="rows"
+						dropEffect="Copy"
+						dragStart="treeTableDragStart"
+						dragEnter="treeTableToTableDragEnter"
+						drop="treeTableToTableDrop"
+						targetElement="table"/>
 				</table:dragDropConfig>
 			</table:TreeTable>
 		</items>

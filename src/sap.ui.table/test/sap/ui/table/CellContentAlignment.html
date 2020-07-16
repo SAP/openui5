@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta charset="utf-8">
 
-<title>Table - sap.ui.table: Cell Alignment</title>
+<title>sap.ui.table - Cell content alignment</title>
 <link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.table.Table.gif">
 
 <script src="shared-config.js"></script>
@@ -650,8 +650,18 @@
 		columns: [
 			new sap.ui.table.Column({
 				hAlign: "Begin",
-				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})]}),
-				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})]}),
+				label: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}),
+						new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})
+					]
+				}),
+				template: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}),
+						new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})
+					]
+				}),
 				width: sColumnWidth
 			}),
 			new sap.ui.table.Column({
@@ -686,32 +696,72 @@
 			}),
 			new sap.ui.table.Column({
 				hAlign: "Begin",
-				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})]}),
-				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})]}),
+				label: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-Begin\nVBox"}),
+						new sap.m.Text({text: sLongTextWithoutSpaces})
+					]
+				}),
+				template: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-Begin\nVBox"}),
+						new sap.m.Text({text: sLongTextWithoutSpaces})
+					]
+				}),
 				width: sColumnWidth,
 				sorted: true,
 				filtered: true
 			}),
 			new sap.ui.table.Column({
 				hAlign: "End",
-				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})]}),
-				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})]}),
+				label: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-End\nVBox"}),
+						new sap.m.Text({text: sLongTextWithoutSpaces})
+					]
+				}),
+				template: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-End\nVBox"}),
+						new sap.m.Text({text: sLongTextWithoutSpaces})
+					]
+				}),
 				width: sColumnWidth,
 				sorted: true,
 				filtered: true
 			}),
 			new sap.ui.table.Column({
 				hAlign: "Begin",
-				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})]}),
-				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})]}),
+				label: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}),
+						new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})
+					]
+				}),
+				template: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}),
+						new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})
+					]
+				}),
 				width: sColumnWidth,
 				sorted: true,
 				filtered: true
 			}),
 			new sap.ui.table.Column({
 				hAlign: "End",
-				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})]}),
-				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})]}),
+				label: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-End\nVBox", wrapping: false}),
+						new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})
+					]
+				}),
+				template: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-End\nVBox", wrapping: false}),
+						new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})
+					]
+				}),
 				width: sColumnWidth,
 				sorted: true,
 				filtered: true
@@ -729,8 +779,20 @@
 		columns: [
 			new sap.ui.table.Column({
 				hAlign: "End",
-				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})], width: "100%"}),
-				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})], width: "100%"}),
+				label: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-End\nVBox", wrapping: false}),
+						new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})
+					],
+					width: "100%"
+				}),
+				template: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-End\nVBox", wrapping: false}),
+						new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})
+					],
+					width: "100%"
+				}),
 				width: sColumnWidth
 			}),
 			new sap.ui.table.Column({
@@ -765,32 +827,80 @@
 			}),
 			new sap.ui.table.Column({
 				hAlign: "Begin",
-				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})], width: "100%"}),
-				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})], width: "100%"}),
+				label: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-Begin\nVBox"}),
+						new sap.m.Text({text: sLongTextWithoutSpaces})
+					],
+					width: "100%"
+				}),
+				template: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-Begin\nVBox"}),
+						new sap.m.Text({text: sLongTextWithoutSpaces})
+					],
+					width: "100%"
+				}),
 				width: sColumnWidth,
 				sorted: true,
 				filtered: true
 			}),
 			new sap.ui.table.Column({
 				hAlign: "End",
-				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})], width: "100%"}),
-				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})], width: "100%"}),
+				label: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-End\nVBox"}),
+						new sap.m.Text({text: sLongTextWithoutSpaces})
+					],
+					width: "100%"
+				}),
+				template: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-End\nVBox"}),
+						new sap.m.Text({text: sLongTextWithoutSpaces})
+					],
+					width: "100%"
+				}),
 				width: sColumnWidth,
 				sorted: true,
 				filtered: true
 			}),
 			new sap.ui.table.Column({
 				hAlign: "Begin",
-				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})], width: "100%"}),
-				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})], width: "100%"}),
+				label: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}),
+						new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})
+					],
+					width: "100%"
+				}),
+				template: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}),
+						new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})
+					],
+					width: "100%"
+				}),
 				width: sColumnWidth,
 				sorted: true,
 				filtered: true
 			}),
 			new sap.ui.table.Column({
 				hAlign: "End",
-				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})], width: "100%"}),
-				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})], width: "100%"}),
+				label: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-End\nVBox", wrapping: false}),
+						new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})
+					],
+					width: "100%"
+				}),
+				template: new sap.m.VBox({
+					items: [
+						new sap.m.Text({text: "Col-End\nVBox", wrapping: false}),
+						new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})
+					],
+					width: "100%"
+				}),
 				width: sColumnWidth,
 				sorted: true,
 				filtered: true

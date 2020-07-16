@@ -1499,25 +1499,42 @@
 		}
 	};
 
-	TABLESETTINGS.getAnalyticalService = function() {
-		if (!TABLESETTINGS.oStorage) {
-			jQuery.sap.require("jquery.sap.storage");
-			TABLESETTINGS.oStorage = jQuery.sap.storage(jQuery.sap.storage.Type.local);
-		}
-		return {url: TABLESETTINGS.oStorage.get("ANALYTICALSERVICETESTURL"), collection: TABLESETTINGS.oStorage.get("ANALYTICALSERVICETESTCOLLECTION")};
-	};
+	TABLESETTINGS.addServiceSettings = function(oTable, sKey, fnUpdate) {
+		var mServiceSettings = JSON.parse(window.localStorage.getItem(sKey));
 
-	TABLESETTINGS.setAnalyticalService = function(sUrl, sCollection) {
-		if (!TABLESETTINGS.oStorage) {
-			jQuery.sap.require("jquery.sap.storage");
-			TABLESETTINGS.oStorage = jQuery.sap.storage(jQuery.sap.storage.Type.local);
+		oTable.addExtension(new sap.m.Toolbar({
+			content: [
+				new sap.m.Input("TableSettings_ServiceUrl", {
+					value: mServiceSettings ? mServiceSettings.url : undefined,
+					tooltip: "Service Url",
+					placeholder: "Enter Service Url"
+				}),
+				new sap.m.Input("TableSettings_Collection", {
+					value: mServiceSettings ? mServiceSettings.collection : undefined,
+					tooltip: "Service Collection",
+					placeholder: "Enter Service Collection"
+				}),
+				new sap.m.Button({
+					tooltip: "Go",
+					icon: "sap-icon://restart",
+					press: function() {
+						var mNewServiceSettings = {
+							url: sap.ui.getCore().byId("TableSettings_ServiceUrl").getValue(),
+							collection: sap.ui.getCore().byId("TableSettings_Collection").getValue()
+						};
+
+						mNewServiceSettings.defaultProxyUrl = "../../../../proxy/" + mNewServiceSettings.url.replace("://", "/");
+
+						window.localStorage.setItem(sKey, JSON.stringify(mNewServiceSettings));
+						fnUpdate(mNewServiceSettings);
+					}
+				})
+			]
+		}));
+
+		if (mServiceSettings) {
+			fnUpdate(mServiceSettings);
 		}
-		if (sUrl && sCollection) {
-			TABLESETTINGS.oStorage.put("ANALYTICALSERVICETESTURL", sUrl);
-			TABLESETTINGS.oStorage.put("ANALYTICALSERVICETESTCOLLECTION", sCollection);
-			return true;
-		}
-		return false;
 	};
 
 	//*************************

@@ -7,13 +7,13 @@
 		confirm=".closeClipboard"
 		items="{
 			path: '/nodes'
-		}" >
+		}">
 		<StandardListItem
 			title="{key}"
 			description="removed node/sub-tree"
 			icon="sap-icon://tree"
 			iconDensityAware="false"
 			iconInset="false"
-			type="Active" />
+			type="Active"/>
 	</SelectDialog>
 </core:FragmentDefinition>

@@ -1,18 +1,18 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 
-	<title>sap.ui.table.Table Personalization Test</title>
-	<script src="shared-config.js"></script>
-	<script src="../../../../resources/sap-ui-core.js"
-		id="sap-ui-bootstrap"
+<title>sap.ui.table - Personalization with TablePersoController</title>
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+		src="../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-libs="sap.ui.commons,sap.ui.table">
-	</script>
+</script>
 
-	<style type="text/css">
+<style type="text/css">
 
 	#table-content {
 		margin-top: 10px;
@@ -30,9 +30,9 @@
 		margin-left: 10px;
 	}
 
-	</style>
+</style>
 
-	<script>
+<script>
 
 	jQuery(function() {
 
@@ -40,9 +40,9 @@
 
 		var oData = {
 			items: [
-				{ name: "Michelle", color: "orange", number: 3.14 },
-				{ name: "Joseph", color: "blue", number: 1.618 },
-				{ name: "David", color: "green", number: 0 },
+				{name: "Michelle", color: "orange", number: 3.14},
+				{name: "Joseph", color: "blue", number: 1.618},
+				{name: "David", color: "green", number: 0}
 			],
 			cols: ["Name", "Color", "Number"]
 		};
@@ -85,25 +85,29 @@
 			}),
 			columns: jQuery.map(oData.cols, function(sColumn) {
 				return new sap.ui.table.Column({
-					label: new sap.ui.commons.Label({ text: sColumn }),
+					label: new sap.ui.commons.Label({text: sColumn}),
 					visible: sColumn === "Color" ? false : true, // Color column should be invisible by default
 					template: new sap.ui.commons.Label({
 						text: {
 							path: sColumn.toLowerCase()
 						}
 					}),
-					customData: [new sap.ui.core.CustomData({ // PersoService: customDataKey
-						key: "persoKey",
-						value: sColumn
-					})],
+					customData: [
+						new sap.ui.core.CustomData({ // PersoService: customDataKey
+							key: "persoKey",
+							value: sColumn
+						})
+					],
 					sortProperty: sColumn.toLowerCase(),
 					filterProperty: sColumn.toLowerCase()
-				})
+				});
 			}),
-			customData: [new sap.ui.core.CustomData({ // PersoService: customDataKey
-				key: "persoKey",
-				value: "PersoTable"
-			})]
+			customData: [
+				new sap.ui.core.CustomData({ // PersoService: customDataKey
+					key: "persoKey",
+					value: "PersoTable"
+				})
+			]
 		});
 
 		oTable.setModel(new sap.ui.model.json.JSONModel(oData));
@@ -111,10 +115,10 @@
 
 		var printPersoData = function(sJSON) {
 			jQuery("#perso-data").html(sJSON
-				.replace(/\n/g, "<br>")
-				.replace(/\s/g, "&nbsp;")
-				.replace(/(true)/g, "<span style=\"color:green\">$1</span>")
-				.replace(/(false)/g, "<span style=\"color:red\">$1</span>"));
+					.replace(/\n/g, "<br>")
+					.replace(/\s/g, "&nbsp;")
+					.replace(/(true)/g, "<span style=\"color:green\">$1</span>")
+					.replace(/(false)/g, "<span style=\"color:red\">$1</span>"));
 		};
 
 		var oPersoService = {
@@ -155,12 +159,12 @@
 		oTable.placeAt("table-content");
 
 	});
-	</script>
+</script>
 </head>
 <body id="body" class="sapUiBody">
-	<h1 id="header">Test Page for <code>sap.ui.table.TablePersoController</code></h1>
-	<div id="table-content"></div>
-	<p class="dataMargin">Local Storage Data</p>
-	<div id="perso-data"></div>
+<h1 id="header">Test Page for <code>sap.ui.table.TablePersoController</code></h1>
+<div id="table-content"></div>
+<p class="dataMargin">Local Storage Data</p>
+<div id="perso-data"></div>
 </body>
 </html>

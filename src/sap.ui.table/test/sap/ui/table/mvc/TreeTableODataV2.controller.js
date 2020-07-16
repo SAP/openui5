@@ -28,7 +28,7 @@ sap.ui.define([
 		}
 	});
 
-	return Controller.extend("sap.ui.table.testApps.TreeTableOData", {
+	return Controller.extend("sap.ui.table.mvc.TreeTableODataV2", {
 
 		onInit: function() {
 			this._oMessageManager = sap.ui.getCore().getMessageManager();
@@ -609,7 +609,7 @@ sap.ui.define([
 		 */
 		openClipboard: function() {
 			if (!this._oPasteDialog) {
-				this._oPasteDialog = sap.ui.xmlfragment("sap.ui.table.testApps.TreeTableODataClipboard", this);
+				this._oPasteDialog = sap.ui.xmlfragment("sap.ui.table.mvc.TreeTableODataV2Clipboard", this);
 			}
 
 			this._oPasteDialog.setModel(this._oClipboardModel);
@@ -794,7 +794,7 @@ sap.ui.define([
 					updateRowHeaderAve + ";" +
 					syncColumnHeadersAve + "\n";
 
-			var sFileName = "TreeTableODataPerformanceTestResults.csv";
+			var sFileName = "TreeTableODataV2PerformanceTestResults.csv";
 			var oBlob = new Blob([sCSV], { type: 'application/csv;charset=utf-8' });
 
 			if (navigator.appVersion.toString().indexOf('.NET') > 0) {
