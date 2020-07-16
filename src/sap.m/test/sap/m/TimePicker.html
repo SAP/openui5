@@ -148,7 +148,7 @@
 			for (i = 0; i < options.length; i++) {
 				options[i].change = handleChange;
 				if (options[i].value && options[i].value.path) { //data binding
-					oBar = new sap.m.Toolbar({
+					oBar = new sap.m.Toolbar(options[i].id + "-toolbar", {
 						content: [
 							new sap.m.TimePicker(options[i]),
 							new sap.m.Text({
@@ -162,7 +162,7 @@
 				} else {
                 	oTp = new sap.m.TimePicker(options[i]);
 					sInfo =  JSON.stringify(options[i]).split("\"").join("").replace("{", "").replace(",", " ").replace("}", "") + ", id: " + oTp.getId();
-					oBar = new sap.m.Toolbar({
+					oBar = new sap.m.Toolbar(options[i].id + "-toolbar", {
 						content: [
 							oTp,
 							new sap.m.Text({ text: sInfo })

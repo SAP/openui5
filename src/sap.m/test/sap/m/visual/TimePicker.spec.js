@@ -63,6 +63,6 @@ describe("sap.m.TimePicker", function() {
 		oInnerInput.click();
 
 		//Assert
-		expect(takeScreenshot()).toLookAs("input_value_selected");
+		expect(takeScreenshot(element(by.id("TP1-toolbar")))).toLookAs("input_value_selected");
 	});
 });
