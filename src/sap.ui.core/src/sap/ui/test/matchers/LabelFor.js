@@ -144,9 +144,9 @@ sap.ui.define([
 				return false;
 			}
 
-
+			var fnLabelType = this._getApplicationWindow().jQuery.sap.getObject("sap.m.Label");
 			var aLabelsInPage = this._getApplicationWindow().sap.ui.core.Element.registry.filter(function (oElement) {
-				return oElement.getMetadata().getName() === "sap.m.Label";
+				return oElement instanceof fnLabelType;
 			});
 
 			oI18nMatcher.applySettings({
