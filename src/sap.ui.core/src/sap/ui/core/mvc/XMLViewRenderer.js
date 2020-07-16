@@ -105,7 +105,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer', '../RenderManager', '../li
 						rm.renderControl(fragment);
 						// when the child control did not render anything (e.g. visible=false), we add a placeholder to know where to render the child later
 						if ( !fragment.bOutput ) {
-							rm.write('<div id="' + PREFIX_DUMMY + fragment.getId() + '" class="sapUiHidden"/>');
+							rm.write('<div id="' + PREFIX_DUMMY + fragment.getId() + '" class="sapUiHidden"></div>');
 						}
 					}
 				}
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer', '../RenderManager', '../li
 					if ($fragment.length == 0) {
 						$fragment = jQuery.sap.byId(PREFIX_INVISIBLE + sFragmentId, $oldContent);
 					}
-					$fragment.replaceWith('<div id="' + PREFIX_DUMMY + sFragmentId + '" class="sapUiHidden"/>');
+					$fragment.replaceWith('<div id="' + PREFIX_DUMMY + sFragmentId + '" class="sapUiHidden"></div>');
 
 					// render new DOM for the child
 					rm.renderControl(fragment);

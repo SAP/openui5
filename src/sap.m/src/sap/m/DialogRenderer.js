@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				// Invisible element which is used to determine when desktop keyboard navigation
 				// has reached the first focusable element of a dialog and went beyond. In that case, the controller
 				// will focus the last focusable element.
-				oRm.write('<span id="' + oControl.getId() + '-firstfe" tabindex="0"/>');
+				oRm.write('<span id="' + oControl.getId() + '-firstfe" tabindex="0"></span>');
 			}
 
 			if (oHeader) {
@@ -188,7 +188,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				// Invisible element which is used to determine when desktop keyboard navigation
 				// has reached the last focusable element of a dialog and went beyond. In that case, the controller
 				// will focus the first focusable element.
-				oRm.write('<span id="' + oControl.getId() + '-lastfe" tabindex="0"/>');
+				oRm.write('<span id="' + oControl.getId() + '-lastfe" tabindex="0"></span>');
 			}
 
 			oRm.write("</div>");
