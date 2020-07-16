@@ -688,6 +688,12 @@ function(
 
 			MaskEnabler.setValue.call(this, sValue);
 
+			// We need to reset the mask temporary value when using a setter
+			// as the given value might not formatted according to mask value format
+			if (this.getMask()) {
+				this._setupMaskVariables();
+			}
+
 			this._sLastChangeValue = sValue;
 			this._bValid = true;
 
