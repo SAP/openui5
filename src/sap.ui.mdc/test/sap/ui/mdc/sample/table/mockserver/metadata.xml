@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+	xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference
+		Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_XJG',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1"
+			Alias="Z__UI" />
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1"
+			Alias="Z__COM" />
+	</edmx:Reference>
+	<edmx:Reference
+		Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1"
+			Alias="SAP__common" />
+	</edmx:Reference>
+	<edmx:Reference
+		Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures" />
+	</edmx:Reference>
+	<edmx:Reference
+		Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001"
+			Alias="SAP__self">
+			<EntityType Name="Product">
+				<Key>
+					<PropertyRef Name="ProductID" />
+				</Key>
+				<Property Name="ProductID" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="TypeCode" Type="Edm.String" Nullable="false"
+					MaxLength="2" />
+				<Property Name="Category" Type="Edm.String" Nullable="false"
+					MaxLength="40" />
+				<Property Name="Name" Type="Edm.String" Nullable="false"
+					MaxLength="255" />
+				<Property Name="NameLanguage" Type="Edm.String" Nullable="false"
+					MaxLength="2" />
+				<Property Name="Description" Type="Edm.String" Nullable="false"
+					MaxLength="255" />
+				<Property Name="DescriptionLanguage" Type="Edm.String"
+					Nullable="false" MaxLength="2" />
+				<Property Name="SupplierID" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="SupplierName" Type="Edm.String" Nullable="false"
+					MaxLength="80" />
+				<Property Name="TaxTarifCode" Type="Edm.Byte" Nullable="false" />
+				<Property Name="MeasureUnit" Type="Edm.String" Nullable="false"
+					MaxLength="3" />
+				<Property Name="WeightMeasure" Type="Edm.Decimal" Nullable="false"
+					Precision="13" Scale="3" />
+				<Property Name="WeightUnit" Type="Edm.String" Nullable="false"
+					MaxLength="3" />
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false"
+					MaxLength="5" />
+				<Property Name="Price" Type="Edm.Decimal" Nullable="false"
+					Precision="16" Scale="variable" />
+				<Property Name="Width" Type="Edm.Decimal" Nullable="false"
+					Precision="13" Scale="3" />
+				<Property Name="Depth" Type="Edm.Decimal" Nullable="false"
+					Precision="13" Scale="3" />
+				<Property Name="Height" Type="Edm.Decimal" Nullable="false"
+					Precision="13" Scale="3" />
+				<Property Name="DimUnit" Type="Edm.String" Nullable="false"
+					MaxLength="3" />
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset"
+					Nullable="false" Precision="7" />
+				<Property Name="ChangedAt" Type="Edm.DateTimeOffset"
+					Nullable="false" Precision="7" />
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="ProductList"
+					EntityType="com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.Product">
+				</EntitySet>
+			</EntityContainer>
+			<Annotations Target="SAP__self.Product/Price">
+				<Annotation Term="Org.OData.Measures.V1.ISOCurrency"
+					Path="CurrencyCode"></Annotation>
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product/WeightMeasure">
+				<Annotation Term="Org.OData.Measures.V1.Unit" Path="WeightUnit"></Annotation>
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product/Width">
+				<Annotation Term="Org.OData.Measures.V1.Unit" Path="DimUnit"></Annotation>
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product/SupplierID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text"
+					Path="SupplierName">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly" />
+				</Annotation>
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product/Depth">
+				<Annotation Term="Org.OData.Measures.V1.Unit" Path="DimUnit"></Annotation>
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product/Height">
+				<Annotation Term="Org.OData.Measures.V1.Unit" String="cm"></Annotation>
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product/ProductID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text"
+					Path="Name"></Annotation>
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product/ProductID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label"
+					String="Product" />
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product/Category">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label"
+					String="Category" />
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product/TypeCode">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label"
+					String="Type Code" />
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product/CurrencyCode">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label"
+					String="Currency" />
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product/CreatedAt">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label"
+					String="Range of Creation Date" />
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product/SupplierID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label"
+					String="Supplier" />
+			</Annotations>
+
+			<Annotations Target="SAP__self.Product">
+				<Annotation Term="com.sap.vocabularies.UI.v1.SelectionFields">
+					<Collection>
+						<PropertyPath>ProductID</PropertyPath>
+						<PropertyPath>Category</PropertyPath>
+						<PropertyPath>SupplierID</PropertyPath>
+						<PropertyPath>CurrencyCode</PropertyPath>
+						<PropertyPath>TypeCode</PropertyPath>
+					</Collection>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
+					<Record Type="com.sap.vocabularies.UI.v1.HeaderInfoType">
+						<PropertyValue Property="TypeName" String="Product" />
+						<PropertyValue Property="TypeNamePlural" String="Products" />
+						<PropertyValue Property="Title">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Product Name" />
+								<PropertyValue Property="Value" Path="Name" />
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Product Description" />
+								<PropertyValue Property="Value" Path="Description" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.Badge">
+					<Record Type="com.sap.vocabularies.UI.v1.BadgeType">
+						<PropertyValue Property="HeadLine" Path="ProductID" />
+						<PropertyValue Property="Title">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Product Name" />
+								<PropertyValue Property="Value" Path="Name" />
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="MainInfo">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Price" />
+								<PropertyValue Property="Value" Path="Price" />
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="SecondaryInfo">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Dimension" />
+								<PropertyValue Property="Value">
+									<Apply Function="odata.concat">
+										<Path>Width</Path>
+										<String>/</String>
+										<String>Depth</String>
+										<String>/</String>
+										<String>Height</String>
+									</Apply>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.DataPoint">
+					<Record Type="com.sap.vocabularies.UI.v1.DataPointType">
+						<PropertyValue Property="Title" String="Weight" />
+						<PropertyValue Property="Title" Path="Name" />
+						<PropertyValue Property="Value" Path="WeightMeasure" />
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.Identification">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Product ID" />
+							<PropertyValue Property="Value" Path="ProductID" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Category" />
+							<PropertyValue Property="Value" Path="Category" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Supplier" />
+							<PropertyValue Property="Value" Path="SupplierName" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Weight" />
+							<PropertyValue Property="Value" Path="WeightMeasure" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Unit Price" />
+							<PropertyValue Property="Value" Path="Price" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Product ID" />
+							<PropertyValue Property="Value" Path="ProductID" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Category" />
+							<PropertyValue Property="Value" Path="Category" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Product Name" />
+							<PropertyValue Property="Value" Path="Name" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Supplier" />
+							<PropertyValue Property="Value" Path="SupplierName" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Unit Price" />
+							<PropertyValue Property="Value" Path="Price" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Weight" />
+							<PropertyValue Property="Value" Path="WeightMeasure" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Width" />
+							<PropertyValue Property="Value" Path="Width" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Depth" />
+							<PropertyValue Property="Value" Path="Depth" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Height" />
+							<PropertyValue Property="Value" Path="Height" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup"
+					Qualifier="Dimensions">
+					<Record>
+						<PropertyValue Property="Label" String="Dimensions" />
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Label" String="Width" />
+									<PropertyValue Property="Value" Path="Width" />
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Label" String="Depth" />
+									<PropertyValue Property="Value" Path="Depth" />
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Label" String="Height" />
+									<PropertyValue Property="Value" Path="Height" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.Chart"
+					Qualifier="Dimensions">
+					<Record>
+						<PropertyValue Property="Title" String="Product Dimensions" />
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>ProductID</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Measures">
+							<Collection>
+								<PropertyPath>Depth</PropertyPath>
+								<PropertyPath>Height</PropertyPath>
+								<PropertyPath>Width</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.Facets">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.CollectionFacet">
+							<PropertyValue Property="Label" String="Supplier" />
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Label" String="Address" />
+										<PropertyValue Property="Target"
+											AnnotationPath="PRODUCT_2_BP/@com.sap.vocabularies.Communication.v1.Address" />
+									</Record>
+									<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+										<PropertyValue Property="Label" String="Contact Data" />
+										<PropertyValue Property="Target"
+											AnnotationPath="PRODUCT_2_BP/@com.sap.vocabularies.UI.v1.Badge" />
+									</Record>
+								</Collection>
+							</PropertyValue>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Label" String="Dimensions" />
+							<PropertyValue Property="Target"
+								AnnotationPath="@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Product/ProductID">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>
+							../../../../f4/sap/h_epm_pr-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.PRODUCT_ID'/$metadata
+						</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Product/TypeCode">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>
+							../../../../f4/sap/d_pr_type-fv/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.TYPE_CODE'/$metadata
+						</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues" />
+			</Annotations>
+			<Annotations Target="SAP__self.Product/Category">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>
+							../../../../f4/sap/h_epm_pd_cats-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.CATEGORY'/$metadata
+						</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Product/NameLanguage">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>
+							../../../../f4/sap/h_t002-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.NAME_LANGUAGE'/$metadata
+						</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Product/DescriptionLanguage">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>
+							../../../../f4/sap/h_t002-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.DESCRIPTION_LANGUAGE'/$metadata
+						</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Product/TaxTarifCode">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>
+							../../../../f4/sap/d_pr_tax-fv/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.TAX_TARIF_CODE'/$metadata
+						</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues" />
+			</Annotations>
+			<Annotations Target="SAP__self.Product/MeasureUnit">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>
+							../../../../f4/sap/h_epm_t006-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.MEASURE_UNIT'/$metadata
+						</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Product/WeightUnit">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>
+							../../../../f4/sap/h_epm_t006_qu-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.WEIGHT_UNIT'/$metadata
+						</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Product/CurrencyCode">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>
+							../../../../f4/sap/h_tcurc-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.CURRENCY_CODE'/$metadata
+						</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Product/DimUnit">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>
+							../../../../f4/sap/h_epm_t006_le-sh/0001;ps='default-*iwbep*v4_gw_sample_basic-0001';va='com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001.ET-PRODUCT.DIM_UNIT'/$metadata
+						</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/ProductList">
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>Width</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>Height</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
