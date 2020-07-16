@@ -10,5 +10,4 @@
 		local('SAP-icons'); /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */
 	font-weight: normal;
 	font-style: normal;
-	unicode-range: U+E000-E289;
 }
