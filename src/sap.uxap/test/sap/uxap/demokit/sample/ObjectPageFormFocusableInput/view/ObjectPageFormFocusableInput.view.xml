@@ -74,39 +74,39 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection title="Personal 1">
-				<ObjectPageSubSection titleUppercase="true">
+			<ObjectPageSection titleUppercase="false" title="Personal 1">
+				<ObjectPageSubSection titleUppercase="false">
 					<blockcolor:BlockBlue/>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
-			<ObjectPageSection title="Personal 2">
-				<ObjectPageSubSection titleUppercase="true">
+			<ObjectPageSection titleUppercase="false" title="Personal 2">
+				<ObjectPageSubSection titleUppercase="false">
 					<blockcolor:BlockBlue/>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
-			<ObjectPageSection title="Personal 3">
-				<ObjectPageSubSection titleUppercase="true">
+			<ObjectPageSection titleUppercase="false" title="Personal 3">
+				<ObjectPageSubSection titleUppercase="false">
 					<blockcolor:BlockBlue/>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
-			<ObjectPageSection title="Personal 4">
-				<ObjectPageSubSection titleUppercase="true">
+			<ObjectPageSection titleUppercase="false" title="Personal 4">
+				<ObjectPageSubSection titleUppercase="false">
 					<blockcolor:BlockBlue/>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
-			<ObjectPageSection title="Personal 5">
-				<ObjectPageSubSection titleUppercase="true">
+			<ObjectPageSection titleUppercase="false" title="Personal 5">
+				<ObjectPageSubSection titleUppercase="false">
 					<blockcolor:BlockBlue/>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
-			<ObjectPageSection title="Personal 6">
-				<ObjectPageSubSection titleUppercase="true">
+			<ObjectPageSection titleUppercase="false" title="Personal 6">
+				<ObjectPageSubSection titleUppercase="false">
 					<blockcolor:BlockBlue/>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
-			<ObjectPageSection id="Employment" title="Employment">
+			<ObjectPageSection titleUppercase="false" id="Employment" title="Employment">
 				<subSections>
-					<ObjectPageSubSection titleUppercase="true">
+					<ObjectPageSubSection titleUppercase="false">
 						<f:SimpleForm editable="true" layout="ColumnLayout" columnsM="2" columnsL="3" columnsXL="4">
 							<f:content>
 								<m:Label text="Name"/>

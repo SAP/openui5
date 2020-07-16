@@ -64,36 +64,36 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection title="JS View">
+			<ObjectPageSection titleUppercase="false" title="JS View">
 				<subSections>
-					<ObjectPageSubSection titleUppercase="true">
+					<ObjectPageSubSection titleUppercase="false">
 						<blocks>
 							<goals:GoalsBlockJS id="goalsblock2"/>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="JSON View">
+			<ObjectPageSection titleUppercase="false" title="JSON View">
 				<subSections>
-					<ObjectPageSubSection titleUppercase="true">
+					<ObjectPageSubSection titleUppercase="false">
 						<blocks>
 							<goals:GoalsBlockJSON id="goalsblock3"/>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="HTML View">
+			<ObjectPageSection titleUppercase="false" title="HTML View">
 				<subSections>
-					<ObjectPageSubSection titleUppercase="true">
+					<ObjectPageSubSection titleUppercase="false">
 						<blocks>
 							<goals:GoalsBlockHTML id="goalsblock4"/>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="XML View">
+			<ObjectPageSection titleUppercase="false" title="XML View">
 				<subSections>
-					<ObjectPageSubSection titleUppercase="true">
+					<ObjectPageSubSection titleUppercase="false">
 						<blocks>
 							<goals:GoalsBlock id="goalsblock1"/>
 						</blocks>

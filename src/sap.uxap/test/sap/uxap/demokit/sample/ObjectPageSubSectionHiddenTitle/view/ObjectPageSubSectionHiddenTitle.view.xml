@@ -14,9 +14,9 @@
 		</uxap:headerTitle>
 
 		<uxap:sections>
-			<uxap:ObjectPageSection showTitle="false">
+			<uxap:ObjectPageSection titleUppercase="false" showTitle="false">
 				<uxap:subSections>
-					<uxap:ObjectPageSubSection title="Hidden Title" titleUppercase="true">
+					<uxap:ObjectPageSubSection title="Hidden Title" titleUppercase="false">
 						<Table
 							headerText="Products"
 							items="{

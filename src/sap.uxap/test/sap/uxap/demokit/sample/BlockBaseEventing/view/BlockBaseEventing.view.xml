@@ -8,10 +8,10 @@
 		</headerTitle>
 
 		<sections>
-			<ObjectPageSection title="example">
+			<ObjectPageSection titleUppercase="false" title="example">
 				<subSections>
 
-					<ObjectPageSubSection title="Example" titleUppercase="true">
+					<ObjectPageSubSection title="Example" titleUppercase="false">
 						<blocks>
 
 							<html:div style="padding:1em;height:4em; background-color: #A9EAFF ;">

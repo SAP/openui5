@@ -7,10 +7,10 @@
 		</headerTitle>
 
 		<sections>
-			<ObjectPageSection title="examples">
+			<ObjectPageSection titleUppercase="false" title="examples">
 				<subSections>
 
-					<ObjectPageSubSection title="Subsection with action buttons" titleUppercase="true">
+					<ObjectPageSubSection title="Subsection with action buttons" titleUppercase="false">
 						<blocks>
 							<blockcolor:BlockBlue id="b1"/>
 						</blocks>
@@ -20,7 +20,7 @@
 						</actions>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Subsection without action buttons" titleUppercase="true">
+					<ObjectPageSubSection title="Subsection without action buttons" titleUppercase="false">
 						<blocks>
 							<blockcolor:BlockBlue id="b2"/>
 						</blocks>
@@ -31,10 +31,10 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="examples 2">
+			<ObjectPageSection titleUppercase="false" title="examples 2">
 				<subSections>
 
-					<ObjectPageSubSection title="Single subsection with action buttons" titleUppercase="true">
+					<ObjectPageSubSection title="Single subsection with action buttons" titleUppercase="false">
 						<blocks>
 							<blockcolor:BlockBlue id="b3"/>
 						</blocks>

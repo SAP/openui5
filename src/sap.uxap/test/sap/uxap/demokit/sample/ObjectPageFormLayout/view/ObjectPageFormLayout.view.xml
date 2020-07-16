@@ -75,9 +75,9 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection title="Personal">
+			<ObjectPageSection titleUppercase="false" title="Personal">
 				<subSections>
-					<ObjectPageSubSection titleUppercase="true">
+					<ObjectPageSubSection titleUppercase="false">
 						<blocks>
 							<personal:PersonalFormBlock id="personalinfo" columnLayout="3"/>
 							<blockcolor:BlockBlue id="bbt1"/>
@@ -89,9 +89,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Employment">
+			<ObjectPageSection titleUppercase="false" title="Employment">
 				<subSections>
-					<ObjectPageSubSection title="Employment" titleUppercase="true">
+					<ObjectPageSubSection title="Employment" titleUppercase="false">
 						<blocks>
 							<employment:BlockJobInfo id="jobinfo" columnLayout="3"/>
 							<blockcolor:BlockBlue id="bbt5"/>
