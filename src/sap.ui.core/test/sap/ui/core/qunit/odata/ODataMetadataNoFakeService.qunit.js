@@ -152,13 +152,13 @@ sap.ui.define([
 	entityType : {entityType : "namespace.entityType"},
 	expectedLog : "Cannot determine keys of the EntityType 'namespace.entityType' for the function"
 		+ " import '~functionName'",
-	result : undefined
+	result : ""
 }, {
 	entitySet : {name : "~entitySetName"},
 	entityType : {key : {}, entityType : "namespace.entityType"},
 	expectedLog : "Cannot determine keys of the EntityType 'namespace.entityType' for the function"
 		+ " import '~functionName'",
-	result : undefined
+	result : ""
 }, {
 	entitySet : {name : "~entitySetName"},
 	entityType : {
@@ -199,11 +199,11 @@ sap.ui.define([
 		}
 	},
 	expectedLog : "Cannot determine path of the EntitySet for the function import '~functionName'",
-	result : undefined
+	result : ""
 }, {
 	entitySet : undefined,
 	entityType : undefined,
-	result : undefined
+	result : ""
 }].forEach(function (oFixture, i) {
 	[{ // action-for wins over entitySet and returnType
 		entityTypeByName : "~entityTypeName",
