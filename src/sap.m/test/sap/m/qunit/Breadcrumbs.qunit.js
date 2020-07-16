@@ -220,11 +220,14 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 	});
 
 	QUnit.test("Select aggregation", function (assert) {
-		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl;
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
+			oSelect = oStandardBreadCrumbsControl._getSelect();
 
 		helpers.setSmallScreenSize();
 		helpers.renderObject(oStandardBreadCrumbsControl);
-		assert.ok(oStandardBreadCrumbsControl._getSelect().getDomRef(), "Select is rendered");
+		assert.ok(oSelect.getDomRef(), "Select is rendered");
+
+		assert.ok(oSelect.getForceSelection(), "Select has forceSelection set to true");
 
 		helpers.resetScreenSize();
 	});
