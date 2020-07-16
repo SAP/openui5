@@ -1842,8 +1842,11 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bCurrency, i) {
-	QUnit.test("requestSideEffectsInternal: path reduction and recursion #" + i, function (assert) {
+[false, true].forEach(function (bBinding, i) {
+	var sTitle = "requestSideEffectsInternal: delegate up"
+			+ (bBinding ? " and request on binding" : "");
+
+	QUnit.test(sTitle, function (assert) {
 		var oParentContext = {
 				getPath : function () { return "/SalesOrder('42')"; },
 				requestSideEffectsInternal : function () {}
@@ -1871,17 +1874,17 @@ sap.ui.define([
 		this.mock(oParentContext).expects("requestSideEffectsInternal")
 			.withExactArgs(["/SalesOrder('42')/Note"], "groupId")
 			.returns(oPromise1);
-		oHelperMock.expects("getRelativePath").exactly(bCurrency ? 1 : 0)
+		oHelperMock.expects("getRelativePath").exactly(bBinding ? 1 : 0)
 			.withExactArgs("/SalesOrder('42')/SO_2_SOITEM('0010')/Currency",
 				"/SalesOrder('42')/SO_2_SOITEM('0010')")
 			.returns("Currency");
-		this.mock(oBinding).expects("requestSideEffects").exactly(bCurrency ? 1 : 0)
+		this.mock(oBinding).expects("requestSideEffects").exactly(bBinding ? 1 : 0)
 			.withExactArgs("groupId", ["Currency"], oContext)
 			.returns(oPromise2);
 
 		// code under test
 		return oContext.requestSideEffectsInternal(
-			bCurrency
+			bBinding
 				? ["/SalesOrder('42')/Note", "/SalesOrder('42')/SO_2_SOITEM('0010')/Currency"]
 				: ["/SalesOrder('42')/Note"],
 			"groupId"
