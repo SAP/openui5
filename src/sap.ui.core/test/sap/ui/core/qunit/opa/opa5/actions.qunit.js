@@ -3,10 +3,9 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/autowaiter/_timeoutWaiter",
-	"sap/ui/Device",
 	"sap/m/Button",
 	"sap/ui/test/autowaiter/_autoWaiter"
-], function (Opa5, opaTest, _timeoutWaiter, Device, Button, _autoWaiter) {
+], function (Opa5, opaTest, _timeoutWaiter, Button, _autoWaiter) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {

@@ -1,9 +1,11 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/test/Opa5",
+	"sap/ui/test/Opa",
 	"sap/ui/thirdparty/URI",
-	"sap/ui/thirdparty/jquery"
-], function (Opa5, URI, $) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/test/_OpaUriParameterParser"
+], function (Opa5, Opa, URI, $, _OpaUriParameterParser) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -215,23 +217,20 @@ sap.ui.define([
 			}
 			return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
 		});
-		$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
-		$.sap.unloadResources("sap/ui/test/Opa5.js", false, true, true);
+		Opa._uriParams = _OpaUriParameterParser._getOpaParams();
+		Opa.extendConfig({});
+		var oOpa5 = new Opa5();
 
-		sap.ui.require(["sap/ui/test/Opa5"], function (Opa5) {
-			var oOpa5 = new Opa5();
+		oOpa5.iStartMyAppInAFrame({source: EMPTY_SITE_URL}).done(function() {
+			assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame", "Should not scale frame");
+			assert.strictEqual(jQuery("#OpaFrame").css("width"), "600px", "Should have desired frame width");
+			assert.strictEqual(jQuery("#OpaFrame").css("height"), "400px", "Should have desired frame height");
+		});
 
-			oOpa5.iStartMyAppInAFrame({source: EMPTY_SITE_URL}).done(function() {
-				assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame", "Should not scale frame");
-				assert.strictEqual(jQuery("#OpaFrame").css("width"), "600px", "Should have desired frame width");
-				assert.strictEqual(jQuery("#OpaFrame").css("height"), "400px", "Should have desired frame height");
-			});
-
-			oOpa5.iTeardownMyAppFrame();
-			oOpa5.emptyQueue().done(function () {
-				oStub.restore();
-				fnDone();
-			});
+		oOpa5.iTeardownMyAppFrame();
+		oOpa5.emptyQueue().done(function () {
+			oStub.restore();
+			fnDone();
 		});
 	});
 

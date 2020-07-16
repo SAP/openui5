@@ -101,7 +101,7 @@ sap.ui.define([
 					type: "object",
 					defaultValue: {
 						name: "sap/ui/mdc/TableDelegate",
-						payload : {}
+						payload: {}
 					}
 				},
 				/**
@@ -292,7 +292,7 @@ sap.ui.define([
 				 * <code>setRowSettings</code> for the changes to take effect.
 				 *
 				 */
-				rowSettings : {type : "sap.ui.mdc.table.RowSettings", multiple : false}
+				rowSettings: {type: "sap.ui.mdc.table.RowSettings", multiple: false}
 			},
 			associations: {
 				/**
@@ -401,17 +401,17 @@ sap.ui.define([
 		* Create setter and getter for aggregation that are passed to ToolBar aggregation named "Between"
 		* Several different Table aggregations are passed to the same ToolBar aggregation (Between)
 	**/
-	aToolBarBetweenAggregations.forEach(function (sAggregationName) {
+	aToolBarBetweenAggregations.forEach(function(sAggregationName) {
 		var sCapAggregationName = capitalize(sAggregationName),
 			sPropertyName = "_o" + sCapAggregationName,
 			sGetter = "get" + sCapAggregationName,
 			sSetter = "set" + sCapAggregationName,
 			sDestroyer = "destroy" + sCapAggregationName;
-		Table.prototype[sGetter] = function () {
+		Table.prototype[sGetter] = function() {
 			return this[sPropertyName];
 		};
 
-		Table.prototype[sDestroyer] = function () {
+		Table.prototype[sDestroyer] = function() {
 			var oControl = this[sPropertyName];
 			this[sSetter]();
 			if (oControl) {
@@ -420,11 +420,11 @@ sap.ui.define([
 			return this;
 		};
 
-		Table.prototype[sSetter] = function (oControl) {
+		Table.prototype[sSetter] = function(oControl) {
 			this.validateAggregation(sAggregationName, oControl, false);
 			var oToolBar = this._createToolbar(),
-			bNewValue = oControl !== this[sPropertyName];
-			if ( !oControl || bNewValue) {
+				bNewValue = oControl !== this[sPropertyName];
+			if (!oControl || bNewValue) {
 				oToolBar.removeBetween((this[sGetter]()));
 				this[sPropertyName] = oControl;
 			}
@@ -577,7 +577,7 @@ sap.ui.define([
 		return this;
 	};
 
-	Table.prototype.focus = function (oFocusInfo) {
+	Table.prototype.focus = function(oFocusInfo) {
 		//see Element.prototype.focus, MDCTable does not have any own focusable DOM, therefor forward to inner control
 		var oDomRef = this.getDomRef();
 
@@ -766,7 +766,7 @@ sap.ui.define([
 		// Resolve any pending promise if table exists
 		this._onAfterTableCreated(true);
 
-		this.initialized().then(function(){
+		this.initialized().then(function() {
 			// add this to the micro task execution queue to enable consumers to handle this correctly
 			var oCreationRow = this.getCreationRow();
 			if (oCreationRow) {
@@ -887,10 +887,10 @@ sap.ui.define([
 
 	//TODO: remove method once 'filter' personalization is public --> use only p13nMode instead
 	//URL param is only meant for experimental testing
-	Table.prototype._getFilterEnabled = function(){
+	Table.prototype._getFilterEnabled = function() {
 		var oURLParams = new SAPUriParameters(window.location.search);
 		var bExperimentalFilterEnabled = oURLParams.getAll("sap-ui-xx-p13nFilter")[0] === "true";
-		if (this._bFilterEnabled || ( this.getP13nMode() && this.getP13nMode().indexOf("Filter") > -1 && bExperimentalFilterEnabled)) {
+		if (this._bFilterEnabled || (this.getP13nMode() && this.getP13nMode().indexOf("Filter") > -1 && bExperimentalFilterEnabled)) {
 			return true;
 		} else {
 			return false;
@@ -1615,7 +1615,7 @@ sap.ui.define([
 		return this;
 	};
 
-// ResponsiveTable
+	// ResponsiveTable
 	Table.prototype._updateColumnTemplate = function(oMDCColumn, iIndex) {
 		var oCellTemplate, iCellIndex;
 		// TODO: Check if this can be moved inside the m.Table.
@@ -1995,8 +1995,8 @@ sap.ui.define([
 
 	Table.prototype.checkAndRebindTable = function() {
 		//If filter personalization is enabled, use it
-		if (this._getFilterEnabled()){
-			this._retrieveP13nFilter().then(function(oFilter){
+		if (this._getFilterEnabled()) {
+			this._retrieveP13nFilter().then(function(oFilter) {
 				oFilter.triggerSearch();
 			});
 		} else {
@@ -2044,11 +2044,11 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._retrieveP13nFilter = function() {
-		return new Promise(function(resolve, reject){
-			if (!this._oP13nFilter){
-				sap.ui.require(["sap/ui/mdc/filterbar/p13n/AdaptationFilterBar"],function(AdaptationFilterBar){
+		return new Promise(function(resolve, reject) {
+			if (!this._oP13nFilter) {
+				sap.ui.require(["sap/ui/mdc/filterbar/p13n/AdaptationFilterBar"], function(AdaptationFilterBar) {
 					//create instance of 'AdaptationFilterBar'
-					this._oP13nFilter = new AdaptationFilterBar(this.getId() + "-p13nFilter",{
+					this._oP13nFilter = new AdaptationFilterBar(this.getId() + "-p13nFilter", {
 						liveMode: true,
 						adaptationControl: this,
 						filterConditions: this.getFilterConditions(),
@@ -2072,7 +2072,7 @@ sap.ui.define([
 
 		var aSorters = [];
 
-		aSorterProperties.forEach(function(oSorter){
+		aSorterProperties.forEach(function(oSorter) {
 			aSorters.push(new Sorter(oSorter.name, oSorter.descending));
 		});
 
@@ -2088,7 +2088,6 @@ sap.ui.define([
 	};
 
 	Table.prototype.exit = function() {
-		var that = this;
 		// Always destroy the template
 		if (this._oTemplate) {
 			this._oTemplate.destroy();
@@ -2103,15 +2102,19 @@ sap.ui.define([
 
 		this._oTemplate = null;
 		this._oTable = null;
+		// Destroy toolbar if Table is not yet created, normally it is destroyed automatically due to table being destroyed!
+		if (this._oToolbar && !this._bTableExists) {
+			this._oToolbar.destroy();
+		}
 		this._oToolbar = null;
 		this._oTitle = null;
 		this._oNumberFormatInstance = null;
 
-		aToolBarBetweenAggregations.forEach(function (sAggregationName) {
+		aToolBarBetweenAggregations.forEach(function(sAggregationName) {
 			var sCapAggregationName = capitalize(sAggregationName),
 				sPropertyName = "_o" + sCapAggregationName;
-				that[sPropertyName] = null;
-		});
+			this[sPropertyName] = null;
+		}, this);
 
 		this._oTableReady = null;
 		this._fReject = null;

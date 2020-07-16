@@ -1,21 +1,21 @@
-/*global QUnit, sinon */
+/*global QUnit */
+/*eslint max-nested-callbacks: [2,4]*/
 sap.ui.define([
-	"jquery.sap.global",
-	"../utils/loggerInterceptor",
-	"sap/ui/test/Opa5"
-], function ($, loggerInterceptor, Opa5) {
+	"sap/ui/test/_OpaLogger",
+	"sap/ui/test/_LogCollector",
+	"sap/ui/test/autowaiter/_promiseWaiter"
+], function (_OpaLogger, _LogCollector, _promiseWaiter) {
 	"use strict";
 
-	$.sap.unloadResources("sap/ui/test/autowaiter/_promiseWaiter.js", false, true, true);
-	var aLoggers = loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._promiseWaiter");
-	var oTraceSpy = sinon.spy(aLoggers[0], "trace");
-	var oDebugSpy = sinon.spy(aLoggers[1], "debug");
-	var promiseWaiter = sap.ui.test.autowaiter._promiseWaiter;
+	var oLogCollector = _LogCollector.getInstance();
 
 	QUnit.module("PromiseWaiter", {
+		beforeEach: function () {
+			this.defaultLogLevel = _OpaLogger.getLevel();
+			_OpaLogger.setLevel("trace");
+		},
 		afterEach: function () {
-			oDebugSpy.reset();
-			oTraceSpy.reset();
+			_OpaLogger.setLevel(this.defaultLogLevel);
 		}
 	});
 
@@ -23,23 +23,22 @@ sap.ui.define([
 		QUnit.test("Should hook into the Promise." + sPromiseFunction + " function", function (assert) {
 			var fnDone = assert.async();
 			Promise[sPromiseFunction]().then(function () {
-				sinon.assert.calledWithMatch(oTraceSpy, "Promise complete:\nPromise: Function: " + sPromiseFunction);
+				assert.ok(!_promiseWaiter.hasPending(), "Has no pending promise");
 				fnDone();
 			}, fnDone);
-			assert.ok(promiseWaiter.hasPending(), "Has pending promise");
-			sinon.assert.calledWithMatch(oDebugSpy, "There are 1 pending promises");
-			sinon.assert.calledWithMatch(oTraceSpy, "New pending promise:\nPromise: Function: " + sPromiseFunction);
+			assert.ok(_promiseWaiter.hasPending(), "Has pending promise");
 		});
 
 		QUnit.test("Should log args and execution stack trace", function callingFunction(assert) {
 			var fnDone = assert.async();
 			Promise[sPromiseFunction](["test", function fnPromiseArg () {}, {a: 2, b: "foo"}]).then(fnDone, fnDone);
-			assert.ok(promiseWaiter.hasPending(), "Has pending promise");
-			sinon.assert.calledWithMatch(oDebugSpy, "There are 1 pending promises");
-			sinon.assert.calledWithMatch(oDebugSpy, "\nPromise: Function: " + sPromiseFunction + " Args: ['test', '");
-			sinon.assert.calledWithMatch(oDebugSpy, "function fnPromiseArg");
-			sinon.assert.calledWithMatch(oDebugSpy, "', {\"a\":2,\"b\":\"foo\"}] Stack: ");
-			sinon.assert.calledWithMatch(oDebugSpy, new Error().stack ? "callingFunction" : "No stack trace available");
+			assert.ok(_promiseWaiter.hasPending(), "Has pending promise");
+			var sLog = oLogCollector.getAndClearLog();
+			assert.ok(sLog.match("There are 1 pending promises"));
+			assert.ok(sLog.match("\nPromise: Function: " + sPromiseFunction + " Args: \\['test', '"));
+			assert.ok(sLog.match("function fnPromiseArg"));
+			assert.ok(sLog.match("', {\"a\":2,\"b\":\"foo\"}] Stack: "));
+			assert.ok(sLog.match(new Error().stack ? "callingFunction" : "No stack trace available"));
 		});
 	});
 
@@ -50,11 +49,11 @@ sap.ui.define([
 
 		Promise.resolve(oPromiseAfter2Sec);
 
-		assert.ok(promiseWaiter.hasPending(), "Has pending promise");
-		sinon.assert.calledWithMatch(oDebugSpy, "There are 1 pending promises");
+		assert.ok(_promiseWaiter.hasPending(), "Has pending promise");
+		assert.ok(oLogCollector.getAndClearLog().match("There are 1 pending promises"));
 		setTimeout(function () {
-			assert.ok(!promiseWaiter.hasPending(), "Has no pending promise");
-			sinon.assert.calledWithMatch(oTraceSpy, "Long-running promise is ignored:\nPromise: Function: resolve Args:");
+			assert.ok(!_promiseWaiter.hasPending(), "Has no pending promise");
+			assert.ok(oLogCollector.getAndClearLog().match("Long-running promise is ignored:\nPromise: Function: resolve Args:"));
 		}, 1400);
 
 		return oPromiseAfter2Sec;
@@ -64,10 +63,11 @@ sap.ui.define([
 		QUnit.test("Should hook into the Promise." + sPromiseFunction + " function", function (assert) {
 			var fnDone = assert.async();
 			Promise[sPromiseFunction]([Promise.resolve(), Promise.reject(), new Promise(function (fnResolve) { fnResolve(); })]).then(fnDone, fnDone);
-			assert.ok(promiseWaiter.hasPending(), "Has pending promise");
+			assert.ok(_promiseWaiter.hasPending(), "Has pending promise");
 			// Promise might be wrapped twice or there are still pending ones
-			sinon.assert.calledWithMatch(oDebugSpy, /There are [3-6] pending promises/);
-			sinon.assert.calledWithMatch(oDebugSpy, "Promise: Function: " + sPromiseFunction);
+			var sLog = oLogCollector.getAndClearLog();
+			assert.ok(sLog.match(/There are [3-6] pending promises/));
+			assert.ok(sLog.match("Promise: Function: " + sPromiseFunction));
 		});
 
 		QUnit.test("Should ignore long runners for " + sPromiseFunction, function (assert) {
@@ -77,11 +77,11 @@ sap.ui.define([
 
 			Promise[sPromiseFunction]([oPromiseAfter2Sec, oPromiseAfter2Sec]);
 
-			assert.ok(promiseWaiter.hasPending(), "Has pending promise");
-			sinon.assert.calledWithMatch(oDebugSpy, "There are 3 pending promises");
+			assert.ok(_promiseWaiter.hasPending(), "Has pending promise");
+			assert.ok(oLogCollector.getAndClearLog().match("There are 3 pending promises"));
 			setTimeout(function () {
-				assert.ok(!promiseWaiter.hasPending(), "Has no pending promise");
-				sinon.assert.calledWithMatch(oTraceSpy, "Long-running promise is ignored:\nPromise: Function: " + sPromiseFunction);
+				assert.ok(!_promiseWaiter.hasPending(), "Has no pending promise");
+				assert.ok(oLogCollector.getAndClearLog().match("Long-running promise is ignored:\nPromise: Function: " + sPromiseFunction));
 			}, 1400);
 
 			return oPromiseAfter2Sec;
@@ -90,24 +90,26 @@ sap.ui.define([
 		QUnit.test("Should log args and execution stack trace", function callingFunction(assert) {
 			var fnDone = assert.async();
 			Promise[sPromiseFunction]([new Promise(function (fnResolve) { fnResolve(); }), Promise.resolve({foo: "bar", foo2: [1]})]).then(fnDone, fnDone);
-			assert.ok(promiseWaiter.hasPending(), "Has pending promise");
-			sinon.assert.calledWithMatch(oDebugSpy, /There are [2-4] pending promises/);
-			sinon.assert.calledWithMatch(oDebugSpy, "Args: {\"foo\":\"bar\",\"foo2\":[1]} Stack: ");
-			sinon.assert.calledWithMatch(oDebugSpy, new Error().stack ? "callingFunction" : "No stack trace available");
+			assert.ok(_promiseWaiter.hasPending(), "Has pending promise");
+			var sLog = oLogCollector.getAndClearLog();
+			assert.ok(sLog.match(/There are [2-4] pending promises/));
+			assert.ok(sLog.match("Args: {\"foo\":\"bar\",\"foo2\":\\[1\\]} Stack: "));
+			assert.ok(sLog.match(new Error().stack ? "callingFunction" : "No stack trace available"));
 		});
 	});
 
 	QUnit.test("Should have configurable max promise delay", function (assert) {
-		promiseWaiter.extendConfig({timeoutWaiter: {maxDelay: 10}});
+		_promiseWaiter.extendConfig({timeoutWaiter: {maxDelay: 10}});
 		var fnDone = assert.async();
 		var oPromise = new Promise(function (fnResolve) {
 			setTimeout(fnResolve, 20);
 		});
 
 		Promise.resolve(oPromise);
+		assert.ok(_promiseWaiter.hasPending(), "Has pending promise");
 		setTimeout(function () {
-			assert.ok(!promiseWaiter.hasPending(), "Has no pending promise");
-			sinon.assert.calledWithMatch(oTraceSpy, "Long-running promise is ignored:\nPromise: Function: resolve Args:");
+			assert.ok(!_promiseWaiter.hasPending(), "Has no pending promise");
+			assert.ok(oLogCollector.getAndClearLog().match("Long-running promise is ignored:\nPromise: Function: resolve Args:"));
 			fnDone();
 		}, 30);
 	});

@@ -1441,7 +1441,7 @@ sap.ui.define([
 			bFireChange = false,
 			oGroupLock,
 			oPromise,
-			bRefreshEvent = !!this.sChangeReason,
+			bRefreshEvent = !!this.sChangeReason, // ignored for "*VirtualContext"
 			oVirtualContext,
 			that = this;
 
@@ -1490,7 +1490,7 @@ sap.ui.define([
 						// Note: first result of getContexts after refresh is ignored
 						that.sChangeReason = "RemoveVirtualContext";
 						that._fireChange({
-							detailedReason : that.sChangeReason,
+							detailedReason : "RemoveVirtualContext",
 							reason : ChangeReason.Change
 						});
 						that.reset(ChangeReason.Refresh);
@@ -1987,7 +1987,7 @@ sap.ui.define([
 		if (this.isResolved() && !this.getRootBinding().isSuspended()) {
 			if (this.sChangeReason === "AddVirtualContext") {
 				this._fireChange({
-					detailedReason : this.sChangeReason,
+					detailedReason : "AddVirtualContext",
 					reason : ChangeReason.Change
 				});
 			} else {
@@ -2402,7 +2402,7 @@ sap.ui.define([
 			// auto-$expand/$select. The refresh event is sent later after the change event with
 			// reason "RemoveVirtualContext".
 			this._fireChange({
-				detailedReason : this.sChangeReason,
+				detailedReason : "AddVirtualContext",
 				reason : sResumeChangeReason
 			});
 		} else if (sResumeChangeReason) {
@@ -2507,9 +2507,7 @@ sap.ui.define([
 
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
-				// Keep the header context even if we lose the parent context, so that the header
-				// context remains unchanged if the parent context is temporarily dropped during a
-				// refresh.
+				this.checkSuspended();
 				for (i = 0; i < that.iCreatedContexts; i += 1) {
 					if (that.aContexts[i].isTransient()) {
 						// to allow switching the context for new created entities (transient or
@@ -2518,7 +2516,9 @@ sap.ui.define([
 							+ "transient entity exists: " + that);
 					}
 				}
-
+				// Keep the header context even if we lose the parent context, so that the header
+				// context remains unchanged if the parent context is temporarily dropped during a
+				// refresh.
 				this.reset();
 				this.fetchCache(oContext);
 				if (oContext) {
@@ -2532,7 +2532,7 @@ sap.ui.define([
 					}
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
-				Binding.prototype.setContext.call(this, oContext);
+				Binding.prototype.setContext.call(this, oContext, this.sChangeReason);
 			} else {
 				// remember context even if no "change" fired
 				this.oContext = oContext;

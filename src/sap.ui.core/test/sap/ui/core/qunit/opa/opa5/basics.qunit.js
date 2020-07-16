@@ -3,10 +3,12 @@ sap.ui.define([
 	"sap/ui/test/Opa",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
-	"sap/ui/thirdparty/URI"
-], function (Opa, Opa5, opaTest, $, Button, URI) {
+	"sap/ui/thirdparty/URI",
+	"sap/ui/test/_OpaUriParameterParser",
+	"sap/ui/test/autowaiter/_autoWaiter"
+], function (Opa, Opa5, opaTest, $, Button, URI, _OpaUriParameterParser, _autoWaiter) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -70,7 +72,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should read application config from URL parameters", function (assert) {
-		var fnDone = assert.async();
 		var fnOrig = URI.prototype.search;
 		var oStub = sinon.stub(URI.prototype, "search", function (query) {
 			if ( query === true ) {
@@ -87,34 +88,28 @@ sap.ui.define([
 			}
 			return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
 		});
-		$.sap.unloadResources("sap/ui/test/Opa5.js", false, true, true);
-
-		sap.ui.require(["sap/ui/test/Opa5","sap/ui/test/Opa"], function (Opa5,Opa) {
-			assert.strictEqual(Opa.config.appParams.newKey, "value");
-			assert.strictEqual(Opa.config.appParams.specific, undefined);
-			assert.strictEqual(Opa.config.appParams.notopaSpecific, "value");
-			assert.strictEqual(Opa.config.appParams.notopaFrameKey, "value");
-			assert.strictEqual(Opa.config.appParams.opaFrameKey, "value");
-			assert.strictEqual(Opa.config.appParams.opaKeyFrameKey, undefined);
-			assert.strictEqual(Opa.config.appParams.someTruthyValue, "True");
-			Opa5.extendConfig({
-				appParams: {
-					existingKey: "oldValue"
-				}
-			});
-			assert.strictEqual(Opa.config.appParams.existingKey, "value");
-
-			// restore the stub and reload OPA5 so empty app params are loaded
-			oStub.restore();
-			$.sap.unloadResources("sap/ui/test/Opa5.js", false, true, true);
-			sap.ui.require(["sap/ui/test/Opa5","sap/ui/test/Opa"], function (Opa5,Opa) {
-				// should not check for empty appParams
-				// as the test itself could be started with some params
-				assert.strictEqual(Opa.config.appParams.existingKey, undefined,
-					"App params should be cleared now");
-				fnDone();
-			});
+		Opa5._appUriParams = _OpaUriParameterParser._getAppParams();
+		Opa5.extendConfig({});
+		assert.strictEqual(Opa.config.appParams.newKey, "value");
+		assert.strictEqual(Opa.config.appParams.specific, undefined);
+		assert.strictEqual(Opa.config.appParams.notopaSpecific, "value");
+		assert.strictEqual(Opa.config.appParams.notopaFrameKey, "value");
+		assert.strictEqual(Opa.config.appParams.opaFrameKey, "value");
+		assert.strictEqual(Opa.config.appParams.opaKeyFrameKey, undefined);
+		assert.strictEqual(Opa.config.appParams.someTruthyValue, "True");
+		Opa5.extendConfig({
+			appParams: {
+				existingKey: "oldValue"
+			}
 		});
+		assert.strictEqual(Opa.config.appParams.existingKey, "value");
+
+		// restore the stub and reload OPA5 so empty app params are loaded
+		oStub.restore();
+		Opa5._appUriParams = _OpaUriParameterParser._getAppParams();
+		Opa5.resetConfig({});
+		// don't check for empty appParams as the test itself could be started with some params
+		assert.strictEqual(Opa.config.appParams.existingKey, undefined, "App params should be cleared now");
 	});
 
 	QUnit.test("Should have instances of OPA5 as arrangements, actions and assertions", function (assert) {
@@ -450,7 +445,7 @@ sap.ui.define([
 	});
 
 	opaTest("Should change autoWait timeout delay through extendConfig", function (oOpa) {
-		var fnHasToWait = sinon.spy(sap.ui.test.autowaiter._autoWaiter, "hasToWait");
+		var fnHasToWait = sinon.spy(_autoWaiter, "hasToWait");
 		Opa5.extendConfig({
 			autoWait: {
 				timeoutWaiter: {
@@ -484,7 +479,7 @@ sap.ui.define([
 	});
 
 	opaTest("Should change autoWait timeout delay through waitFor params", function (oOpa) {
-		var fnHasToWait = sinon.spy(sap.ui.test.autowaiter._autoWaiter, "hasToWait");
+		var fnHasToWait = sinon.spy(_autoWaiter, "hasToWait");
 
 		oOpa.waitFor({
 			autoWait: {

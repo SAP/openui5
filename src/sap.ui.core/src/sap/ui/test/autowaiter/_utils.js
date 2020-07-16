@@ -2,16 +2,18 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/thirdparty/URI', "sap/ui/thirdparty/jquery"], function(URI, jQueryDOM) {
+sap.ui.define([
+	'sap/ui/thirdparty/URI',
+	"sap/ui/thirdparty/jquery"
+], function(URI, jQueryDOM) {
 	"use strict";
-
-	var oUriParams = new URI().search(true);
-	var bForceResolveStackTrace = ["false", undefined].indexOf(oUriParams.opaFrameIEStackTrace) < 0;
 
 	function resolveStackTrace() {
 		var oError = new Error();
-
 		var sStack = "No stack trace available";
+		var oUriParams = new URI().search(true);
+		var bForceResolveStackTrace = ["false", undefined].indexOf(oUriParams.opaFrameIEStackTrace) < 0;
+
 		if (oError.stack) {
 			sStack = oError.stack;
 		} else if (bForceResolveStackTrace) {

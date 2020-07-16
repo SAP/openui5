@@ -1371,9 +1371,12 @@ sap.ui.define([
 	QUnit.test("ARIA Attributes of TH Elements", function(assert) {
 		var oDomRef = oTable.getDomRef("tableCCnt");
 
-		oDomRef.querySelectorAll("th[id]").forEach(function(oElement) {
-			assert.strictEqual(oElement.getAttribute("scope"), "col", "scope");
-		});
+		var aThs = oDomRef.querySelectorAll("th[id]");
+		for (var i = 0; i < aThs.length; i++) {
+			assert.strictEqual(aThs[i].getAttribute("scope"), "col", "scope");
+			assert.strictEqual(aThs[i].getAttribute("role"), "presentation", "role");
+			assert.strictEqual(aThs[i].getAttribute("aria-hidden"), "true", "aria-hidden");
+		}
 
 		// dummy column
 		assert.strictEqual(oDomRef.querySelector("th:not([id])").getAttribute("role"), "presentation", "role");

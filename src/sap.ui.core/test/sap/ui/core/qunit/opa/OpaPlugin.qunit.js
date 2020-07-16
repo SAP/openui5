@@ -2,19 +2,17 @@
 sap.ui.define([
 	"sap/ui/test/OpaPlugin",
 	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/matchers/Visible",
-	'sap/ui/test/autowaiter/_autoWaiter',
-	'sap/ui/test/matchers/_Enabled',
+	"sap/ui/test/autowaiter/_autoWaiter",
+	"sap/ui/test/matchers/_Enabled",
 	"sap/m/CheckBox",
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/Fragment",
 	"./utils/view",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/Log"
 ], function (OpaPlugin,
 			 Interactable,
-			 Visible,
 			 _autoWaiter,
 			 _Enabled,
 			 CheckBox,
@@ -23,7 +21,7 @@ sap.ui.define([
 			 View,
 			 Fragment,
 			 viewUtils,
-			$) {
+			 Log) {
 	"use strict";
 
 
@@ -580,8 +578,6 @@ sap.ui.define([
 
 	QUnit.module("OpaPlugin - initialization", {
 		beforeEach: function (assert) {
-			var Log = sap.ui.require("sap/base/Log");
-			assert.ok(Log, "Log module should be available");
 			this.fnLoggerSpy = sinon.spy(Log, "getLogger");
 			this.oPlugin =  new OpaPlugin();
 		},

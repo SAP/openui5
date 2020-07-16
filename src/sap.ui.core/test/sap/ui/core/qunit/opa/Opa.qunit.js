@@ -1,20 +1,20 @@
 /*global QUnit, sinon */
+/*eslint max-nested-callbacks: [2,4]*/
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/URI",
-	"./utils/loggerInterceptor",
+	"sap/ui/test/_OpaUriParameterParser",
+	"sap/ui/test/_LogCollector",
+	"sap/ui/test/Opa",
 	"./utils/browser"
-], function ($, URI, loggerInterceptor, browser) {
+], function ($, URI, _OpaUriParameterParser, _LogCollector, Opa, browser) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
 		assert.ok(!window["sap-ui-debug"], "Starting the OPA tests in debug mode is not supported since it changes timeouts");
 	});
 
-	// loadAndIntercept also loads the module.
-	// I cannot load it with the require above because i need to spy during the loading
-	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa");
-	var Opa = sap.ui.test.Opa;
+	var oLogCollector = _LogCollector.getInstance();
 
 	// save default execution delay for this specific browser
 	var iExecutionDelay = Opa.config.executionDelay;
@@ -138,39 +138,39 @@ sap.ui.define([
 		});
 
 		// Arrange
-		var oSuccess_1_1 = this.spy(),
-			oSuccess_1_2_1 = this.spy(),
-			fnSuccess_1_2 = function(){
+		var oSuccess11 = this.spy(),
+			oSuccess121 = this.spy(),
+			fnSuccess12 = function(){
 				return oOpa.waitFor({
-					success : oSuccess_1_2_1
+					success : oSuccess121
 				});
 			},
-			fnSuccessSpy_1_2 = this.spy(fnSuccess_1_2),
-			oSuccess_1_3 = this.spy(),
-			fnSuccess_1 = function(){
+			fnSuccessSpy12 = this.spy(fnSuccess12),
+			oSuccess13 = this.spy(),
+			fnSuccess1 = function(){
 				oOpa.waitFor({
-					success : oSuccess_1_1
+					success : oSuccess11
 				});
 				oOpa.waitFor({
-					success : fnSuccessSpy_1_2
+					success : fnSuccessSpy12
 				});
 				return oOpa.waitFor({
-					success : oSuccess_1_3
+					success : oSuccess13
 				});
 			},
-			fnSuccessSpy_1 = this.spy(fnSuccess_1),
-			oSuccess_2 = this.spy(),
+			fnSuccessSpy1 = this.spy(fnSuccess1),
+			oSuccess2 = this.spy(),
 			oDoneSpy = this.spy();
 
 
 
 		// Act
 		oOpa.waitFor({
-			success : fnSuccessSpy_1
+			success : fnSuccessSpy1
 		});
 
 		oOpa.waitFor({
-			success : oSuccess_2
+			success : oSuccess2
 		}).done(oDoneSpy);
 
 		Opa.emptyQueue();
@@ -180,18 +180,18 @@ sap.ui.define([
 
 		// Assert
 		// Ensure Order
-		assert.ok(fnSuccessSpy_1.calledBefore(oSuccess_1_1), "Success Handler Order: 1 before 1.1");
-		assert.ok(oSuccess_1_1.calledBefore(fnSuccessSpy_1_2), "Success Handler Order: 1.1 before 1.2");
-		assert.ok(fnSuccessSpy_1_2.calledBefore(oSuccess_1_2_1), "Success Handler Order: 1.2 before 1.2.1");
-		assert.ok(oSuccess_1_2_1.calledBefore(oSuccess_1_3), "Success Handler Order: 1.2.1 before 1.3");
-		assert.ok(oSuccess_1_3.calledBefore(oSuccess_2), "Success Handler Order: 1.3 before 2");
+		assert.ok(fnSuccessSpy1.calledBefore(oSuccess11), "Success Handler Order: 1 before 1.1");
+		assert.ok(oSuccess11.calledBefore(fnSuccessSpy12), "Success Handler Order: 1.1 before 1.2");
+		assert.ok(fnSuccessSpy12.calledBefore(oSuccess121), "Success Handler Order: 1.2 before 1.2.1");
+		assert.ok(oSuccess121.calledBefore(oSuccess13), "Success Handler Order: 1.2.1 before 1.3");
+		assert.ok(oSuccess13.calledBefore(oSuccess2), "Success Handler Order: 1.3 before 2");
 		// Ensure called once
-		assert.strictEqual(fnSuccessSpy_1.callCount, 1, "Ensure Success Handler #1 called once");
-		assert.strictEqual(oSuccess_1_1.callCount, 1, "Ensure Success Handler #1.1 called once");
-		assert.strictEqual(fnSuccessSpy_1_2.callCount, 1, "Ensure Success Handler #1.2 called once");
-		assert.strictEqual(oSuccess_1_2_1.callCount, 1, "Ensure Success Handler #1.2.1 called once");
-		assert.strictEqual(oSuccess_1_3.callCount, 1, "Ensure Success Handler #1.3 called once");
-		assert.strictEqual(oSuccess_2.callCount, 1, "Ensure Success Handler #2 called once");
+		assert.strictEqual(fnSuccessSpy1.callCount, 1, "Ensure Success Handler #1 called once");
+		assert.strictEqual(oSuccess11.callCount, 1, "Ensure Success Handler #1.1 called once");
+		assert.strictEqual(fnSuccessSpy12.callCount, 1, "Ensure Success Handler #1.2 called once");
+		assert.strictEqual(oSuccess121.callCount, 1, "Ensure Success Handler #1.2.1 called once");
+		assert.strictEqual(oSuccess13.callCount, 1, "Ensure Success Handler #1.3 called once");
+		assert.strictEqual(oSuccess2.callCount, 1, "Ensure Success Handler #2 called once");
 		assert.strictEqual(oDoneSpy.callCount, 1, "Resolve the deferred");
 	});
 
@@ -419,21 +419,11 @@ sap.ui.define([
 		assert.strictEqual(fnSuccess.callCount, 0, "Should never call the second success since the previous waitFor threw an exception");
 	});
 
-	QUnit.module("StopQueue", {
-		beforeEach : function () {
-			this.fnErrorLogStub = sinon.stub(oLogger, "error", $.noop);
-		},
-		afterEach : function () {
-			this.fnErrorLogStub.restore();
-		}
-	});
+	QUnit.module("StopQueue");
 
 	QUnit.test("Should display a warning if 'stopQueue' is called without calling 'emptyQueue'", function(assert) {
-		// System under Test
-		var fnSpy = this.spy(oLogger, "warning");
 		Opa.stopQueue();
-
-		sinon.assert.calledWith(fnSpy, "stopQueue was called before emptyQueue, queued tests have never been executed", "Opa");
+		assert.ok(oLogCollector.getAndClearLog(), "stopQueue was called before emptyQueue, queued tests have never been executed");
 	});
 
 	QUnit.test("Should stop the queue inside of success", function (assert) {
@@ -504,23 +494,23 @@ sap.ui.define([
 		});
 
 		oOpa.emptyQueue().fail(function () {
-			sinon.assert.calledOnce(this.fnErrorLogStub);
+			assert.ok(oLogCollector.getAndClearLog());
 
 			oOpa.waitFor({success: fnShouldNotBeCalled});
 
 			Opa.emptyQueue().fail(function () {
 				sinon.assert.notCalled(fnShouldNotBeCalled);
-				sinon.assert.calledTwice(this.fnErrorLogStub);
+				var sLog = oLogCollector.getAndClearLog();
 				if (browser.supportsStacktraces()) {
-					sinon.assert.alwaysCalledWithMatch(this.fnErrorLogStub, "callingFunction", "Opa");
+					assert.ok(sLog.match("callingFunction"));
 				}
-				sinon.assert.alwaysCalledWithMatch(this.fnErrorLogStub, "Queue was stopped manually","Opa");
+				assert.ok(sLog.match("Queue was stopped manually"));
 				fnDone();
-			}.bind(this));
+			});
 
 			// stop again outside check/success to validate state is deleted correctly
 			callingFunction();
-		}.bind(this));
+		});
 	});
 
 	QUnit.test("Should show info about last executed check on QUnit timeout", function callingFunction (assert) {
@@ -536,13 +526,13 @@ sap.ui.define([
 		});
 
 		oOpa.emptyQueue().fail(function () {
-			sinon.assert.calledOnce(this.fnErrorLogStub);
+			var sLog = oLogCollector.getAndClearLog();
 			if (browser.supportsStacktraces()) {
-				sinon.assert.calledWithMatch(this.fnErrorLogStub, "callingFunction", "Opa");
+				assert.ok(sLog.match("callingFunction"));
 			}
-			sinon.assert.calledWithMatch(this.fnErrorLogStub, "QUnit timeout", "Opa");
+			assert.ok(sLog.match("QUnit timeout"));
 			fnDone();
-		}.bind(this));
+		});
 
 		setTimeout(function () {
 			// _stopQueue on QUnit timeout is called outside the queue
@@ -563,8 +553,7 @@ sap.ui.define([
 			oWaitForDoneSpy = sinon.spy(),
 			oSuccessSpy = sinon.spy(),
 			oDoneSpy = sinon.spy(),
-			fnDone = assert.async(),
-			fnLogErrorSpy = sinon.spy(oLogger, "error");
+			fnDone = assert.async();
 
 		// System under Test
 		var oOpa = new Opa();
@@ -584,9 +573,7 @@ sap.ui.define([
 			assert.strictEqual(oDoneSpy.callCount, 0, "Done was not called");
 			assert.strictEqual(oSuccessSpy.callCount, 0, "Success was not called");
 			assert.strictEqual(oErrorSpy.callCount, 1, "Error spy got invoked");
-			sinon.assert.calledOnce(fnLogErrorSpy);
-
-			fnLogErrorSpy.restore();
+			assert.ok(oLogCollector.getAndClearLog().match("Opa timeout after 1 seconds"));
 			fnDone();
 		}).done(oDoneSpy);
 
@@ -596,7 +583,6 @@ sap.ui.define([
 		// System under Test
 		var oOpa = new Opa();
 		var fnDone = assert.async();
-		sinon.spy(oLogger, "error");
 
 		// Act
 		oOpa.waitFor({
@@ -609,15 +595,13 @@ sap.ui.define([
 		oOpa.emptyQueue().fail(function (oOptions) {
 			assert.ok(true, 0, "Promise got rejected");
 			assert.ok(oOptions, "Options are passed");
-			assert.ok(oOptions.errorMessage, "Error message is there");
+			assert.ok(oOptions.errorMessage.match("Opa timeout after 1 seconds"), "Error message is there");
 
 			if (browser.supportsStacktraces()) {
 				assert.ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
 			}
 
-			assert.strictEqual(oLogger.error.callCount, 1, "Error log spy got invoked");
-			assert.ok(oLogger.error.calledWith(oOptions.errorMessage), "Error message is written to Error log");
-			oLogger.error.restore();
+			assert.ok(oLogCollector.getAndClearLog().match("Opa timeout after 1 seconds"));
 			fnDone();
 		});
 
@@ -771,7 +755,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should read an opa config value from URL parameter", function (assert) {
-		var fnDone = assert.async();
 		var fnOrig = URI.prototype.search;
 		var oStub = sinon.stub(URI.prototype, "search", function (query) {
 			if ( query === true ) {
@@ -784,32 +767,27 @@ sap.ui.define([
 			}
 			return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
 		});
-		$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
+		Opa._uriParams = _OpaUriParameterParser._getOpaParams();
+		Opa.extendConfig({});
+		assert.strictEqual(Opa.config.key, 'value');
+		assert.strictEqual(Opa.config.executionDelay, 2000);
+		assert.strictEqual(Opa.config.another, undefined);
 
-		sap.ui.require(["sap/ui/test/Opa"], function (Opa) {
-			assert.strictEqual(Opa.config.key, 'value');
-			assert.strictEqual(Opa.config.executionDelay, 2000);
-			assert.strictEqual(Opa.config.another, undefined);
-
-			Opa.extendConfig({
-				override: 'initialValue'
-			});
-			assert.strictEqual(Opa.config.override, "value");
-
-			// restore the stub and reload OPA5 so empty app params are loaded
-			oStub.restore();
-			$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
-			sap.ui.require(["sap/ui/test/Opa"], function (Opa) {
-				assert.strictEqual(Opa.config.key, undefined);
-				assert.strictEqual(Opa.config.executionDelay, iExecutionDelay);
-				assert.strictEqual(Opa.config.override, undefined);
-				fnDone();
-			});
+		Opa.extendConfig({
+			override: 'initialValue'
 		});
+		assert.strictEqual(Opa.config.override, "value");
+
+		// restore the stub and reload OPA5 so empty app params are loaded
+		oStub.restore();
+		Opa._uriParams = _OpaUriParameterParser._getOpaParams();
+		Opa.resetConfig();
+		assert.strictEqual(Opa.config.key, undefined);
+		assert.strictEqual(Opa.config.executionDelay, iExecutionDelay);
+		assert.strictEqual(Opa.config.override, undefined);
 	});
 
 	QUnit.test("Should configure the max log level", function (assert) {
-		var fnDone = assert.async();
 		var fnLogLevelSpy = sinon.spy(sap.ui.test._OpaLogger, "setLevel");
 		var fnOrig = URI.prototype.search;
 		var oStub = sinon.stub(URI.prototype, "search", function (query) {
@@ -821,26 +799,13 @@ sap.ui.define([
 			return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
 		});
 
-		$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
-		sap.ui.require(["sap/ui/test/Opa"], function (Opa) {
-			assert.strictEqual(Opa.config.logLevel, "trace");
-			assert.ok(fnLogLevelSpy.calledOnce, "Log level was changed");
-			sinon.assert.calledWith(fnLogLevelSpy, "trace");
-			oStub.restore();
-			fnLogLevelSpy.restore();
-			fnDone();
-		});
-	});
-
-	QUnit.test("Should start log collector on import", function (assert) {
-		var fnDone = assert.async();
-		var fnStartLogCollectorSpy = sinon.spy(sap.ui.test._LogCollector.prototype, "start");
-		$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
-		sap.ui.require(["sap/ui/test/Opa"], function (Opa) {
-			sinon.assert.calledOnce(fnStartLogCollectorSpy, "Should start log collection");
-			fnStartLogCollectorSpy.restore();
-			fnDone();
-		});
+		Opa._uriParams = _OpaUriParameterParser._getOpaParams();
+		Opa.extendConfig({});
+		assert.strictEqual(Opa.config.logLevel, "trace");
+		assert.ok(fnLogLevelSpy.calledOnce, "Log level was changed");
+		sinon.assert.calledWith(fnLogLevelSpy, "trace");
+		oStub.restore();
+		fnLogLevelSpy.restore();
 	});
 
 	QUnit.module("Opa Empty queue");

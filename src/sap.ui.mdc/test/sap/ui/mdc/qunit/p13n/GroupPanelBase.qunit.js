@@ -81,6 +81,7 @@ sap.ui.define([
 
             this.oPanel.setItemFactory(function(){
                 return new CustomListItem({
+                    selected: "{selected}",
                     visible: "{visibleInDialog}"
                 });
             });
@@ -93,6 +94,7 @@ sap.ui.define([
         afterEach: function(){
             this.sDefaultGroup = null;
             this.oExistingMock = null;
+            this.oP13nData = null;
             this.aMockInfo = null;
             this.oPanel.destroy();
         }
@@ -166,6 +168,26 @@ sap.ui.define([
 
         assert.equal(this.oPanel._oListControl.getVisibleItems().length, 1, "Only necessary groups visible");
 
+    });
+
+    QUnit.test("Check method 'setGroupExpanded' ", function(assert){
+
+        this.oPanel.setP13nModel(new JSONModel(this.oP13nData));
+
+        var oSecondPanel = this.oPanel._oListControl.getItems()[1].getContent()[0];
+        assert.ok(!oSecondPanel.getExpanded(), "Panel is initially collapsed");
+
+        this.oPanel.setGroupExpanded("G2", true);
+        assert.ok(oSecondPanel.getExpanded(), "Panel is expanded after manually triggering");
+
+        this.oPanel.setGroupExpanded("G2");
+        assert.ok(!oSecondPanel.getExpanded(), "Panel is collapsed when calling with 'undefined' as second parameter");
+
+        this.oPanel.setGroupExpanded("G2", true);
+        assert.ok(oSecondPanel.getExpanded(), "Panel is expanded after manually triggering");
+
+        this.oPanel.setGroupExpanded("G2", false);
+        assert.ok(!oSecondPanel.getExpanded(), "Panel is collapsed when calling with 'false'' as second parameter");
     });
 
 });

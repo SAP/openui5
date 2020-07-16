@@ -264,12 +264,14 @@ sap.ui.define([
 
 		var sCollectionPath = "/foo";
 		this.oTable.destroy();
-		this.oTable = new Table({delegate: {
-			name: "sap/ui/mdc/TableDelegate",
-			payload: {
-				collectionPath: sCollectionPath
+		this.oTable = new Table({
+			delegate: {
+				name: "sap/ui/mdc/TableDelegate",
+				payload: {
+					collectionPath: sCollectionPath
+				}
 			}
-		}});
+		});
 
 		this.oTable.initialized().then(function() {
 			// Initilaized has to be used again as the binding itself is done when the initialized Promise is fired
@@ -723,9 +725,14 @@ sap.ui.define([
 			assert.ok(this.oTable._oTable);
 			assert.ok(this.oTable._oTemplate);
 
+			var oToolbar = this.oTable._oToolbar;
 			this.oTable.destroy();
 
 			assert.ok(!this.oTable._oTemplate);
+			assert.ok(!this.oTable._oToolbar);
+			// Toolbar is destroyed
+			assert.strictEqual(oToolbar.bIsDestroyed, true);
+
 			done();
 		}.bind(this));
 	});
@@ -1225,7 +1232,7 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			var oTable = this.oTable,
 				oSortConditions = {
-					sorters:[
+					sorters: [
 						{name: "name", descending: true}
 					]
 				};
@@ -1265,7 +1272,7 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			var oTable = this.oTable,
 				oSortConditions = {
-					sorters:[
+					sorters: [
 						{name: "age", descending: false}
 					]
 				};
@@ -1305,7 +1312,7 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			var oTable = this.oTable,
 				oSortConditions = {
-					sorters:[
+					sorters: [
 						{name: "name", descending: true}
 					]
 				};
@@ -1322,7 +1329,7 @@ sap.ui.define([
 			assert.equal(aInnerColumns[1].getSorted(), false);
 			var oAC = TableSettings._getAdaptationController(oTable);
 
-			var oPropertyInfoPromise = new Promise(function(resolve,reject){
+			var oPropertyInfoPromise = new Promise(function(resolve, reject) {
 				resolve([
 					{name: "name", sortable: true},
 					{name: "age", sortable: true}
@@ -1330,7 +1337,7 @@ sap.ui.define([
 			});
 
 			sinon.stub(oAC, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
-			oAC._retrievePropertyInfo().then(function(){
+			oAC._retrievePropertyInfo().then(function() {
 
 
 				var FlexUtil_handleChanges_Stub = sinon.stub(FlexUtil, "handleChanges");
@@ -1461,8 +1468,8 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	var fnRearrangeTest = function(iColumnIndexFrom, iColumnIndexTo){
-		return new Promise(function(resolve){
+	var fnRearrangeTest = function(iColumnIndexFrom, iColumnIndexTo) {
+		return new Promise(function(resolve) {
 			this.oTable.addColumn(new Column({
 				dataProperties: [
 					"col0"
@@ -1532,7 +1539,7 @@ sap.ui.define([
 		var fMoveColumnSpy = sinon.spy(TableSettings, "moveColumn");
 		var fMoveItemSpy = sinon.spy(TableSettings, "_moveItem");
 		//move from 0 --> 1
-		fnRearrangeTest.bind(this)(0, 1).then(function(){
+		fnRearrangeTest.bind(this)(0, 1).then(function() {
 			assert.ok(fMoveColumnSpy.calledOnce);
 			assert.ok(fMoveItemSpy.calledOnce);
 			assert.ok(fMoveColumnSpy.calledWithExactly(this.oTable, 0, 1));
@@ -1546,7 +1553,7 @@ sap.ui.define([
 		var done = assert.async();
 		var fMoveItemSpy = sinon.spy(TableSettings, "_moveItem");
 		//move from 0 --> 0
-		fnRearrangeTest.bind(this)(0, 0).then(function(){
+		fnRearrangeTest.bind(this)(0, 0).then(function() {
 			assert.ok(!fMoveItemSpy.calledOnce);
 			fMoveItemSpy.restore();
 			done();
@@ -1572,12 +1579,14 @@ sap.ui.define([
 		});
 
 		this.oTable.destroy();
-		this.oTable = new Table({delegate: {
-			name: "sap/ui/mdc/TableDelegate",
-			payload: {
-				collectionPath: "/testpath"
+		this.oTable = new Table({
+			delegate: {
+				name: "sap/ui/mdc/TableDelegate",
+				payload: {
+					collectionPath: "/testpath"
+				}
 			}
-		}});
+		});
 
 		this.oTable.setModel(oModel);
 		this.oTable.addColumn(new Column({
@@ -1746,12 +1755,14 @@ sap.ui.define([
 		var done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = new Table({delegate: {
-			name: "sap/ui/mdc/TableDelegate",
-			payload: {
-				collectionPath: "/testpath"
+		this.oTable = new Table({
+			delegate: {
+				name: "sap/ui/mdc/TableDelegate",
+				payload: {
+					collectionPath: "/testpath"
+				}
 			}
-		}});
+		});
 
 		this.oTable.setType("ResponsiveTable");
 		this.oTable.addColumn(new Column({
@@ -2312,12 +2323,14 @@ sap.ui.define([
 
 		var done = assert.async();
 		this.oTable.destroy();
-		this.oTable = new Table({delegate: {
-			name: "sap/ui/mdc/TableDelegate",
-			payload: {
-				collectionPath: "/testpath"
+		this.oTable = new Table({
+			delegate: {
+				name: "sap/ui/mdc/TableDelegate",
+				payload: {
+					collectionPath: "/testpath"
+				}
 			}
-		}});
+		});
 
 		this.oTable.setType("ResponsiveTable");
 		this.oTable.addColumn(new Column({
@@ -2539,8 +2552,8 @@ sap.ui.define([
 			assert.ok(this.oTable._oToolbar);
 
 			sap.ui.require([
-				"sap/ui/fl/variants/VariantManagement","sap/m/SegmentedButton",  "sap/ui/core/Control"
-			], function(VariantManagement,SegmentedButton, Control) {
+				"sap/ui/fl/variants/VariantManagement", "sap/m/SegmentedButton", "sap/ui/core/Control"
+			], function(VariantManagement, SegmentedButton, Control) {
 				// Test with VariantManagement
 				var oVariant = new VariantManagement(),
 					oVariant2 = new VariantManagement(),
@@ -2862,7 +2875,7 @@ sap.ui.define([
 				sap.ui.require([
 					"sap/m/MessageBox"
 				], function(MessageBox) {
-					sinon.stub(MessageBox, "error").callsFake(function(){
+					sinon.stub(MessageBox, "error").callsFake(function() {
 						assert.ok(fnOnExport.calledOnce, "_onExport called");
 						assert.ok(MessageBox.error.calledOnce);
 						MessageBox.error.restore();
@@ -2935,12 +2948,14 @@ sap.ui.define([
 
 		var sCollectionPath = "/foo";
 		this.oTable.destroy();
-		this.oTable = new Table({delegate: {
-			name: "sap/ui/mdc/TableDelegate",
-			payload: {
-				collectionPath: sCollectionPath
+		this.oTable = new Table({
+			delegate: {
+				name: "sap/ui/mdc/TableDelegate",
+				payload: {
+					collectionPath: sCollectionPath
+				}
 			}
-		}});
+		});
 
 		assert.ok(this.oTable, "sap.ui.mdc.Table initialized");
 
@@ -3181,12 +3196,14 @@ sap.ui.define([
 
 		var sCollectionPath = "/foo";
 		this.oTable.destroy();
-		this.oTable = new Table({delegate: {
-			name: "sap/ui/mdc/TableDelegate",
-			payload: {
-				collectionPath: sCollectionPath
+		this.oTable = new Table({
+			delegate: {
+				name: "sap/ui/mdc/TableDelegate",
+				payload: {
+					collectionPath: sCollectionPath
+				}
 			}
-		}});
+		});
 
 		assert.ok(this.oTable, "sap.ui.mdc.Table initialized");
 
@@ -3308,7 +3325,7 @@ sap.ui.define([
 						name: "companyName",
 						label: "Company Name",
 						exportSettings: {
-							width : 15
+							width: 15
 						}
 					},
 					{
@@ -3369,7 +3386,7 @@ sap.ui.define([
 			var iBindingLength = oTable._oTable.getBinding('rows') ? oTable._oTable.getBinding('rows').getLength() : 0,
 				iIndex;
 
-			oTableStub =  sinon.stub(oTable._oTable, "setFirstVisibleRow");
+			oTableStub = sinon.stub(oTable._oTable, "setFirstVisibleRow");
 			assert.notOk(oTableStub.called, "setFirstVisibleRow was not called yet");
 
 			iIndex = 0;
@@ -3397,7 +3414,7 @@ sap.ui.define([
 
 			oTable.setType("ResponsiveTable").initialized().then(function() {
 
-				oTableStub =  sinon.stub(oTable._oTable, "scrollToIndex");
+				oTableStub = sinon.stub(oTable._oTable, "scrollToIndex");
 				assert.notOk(oTableStub.called, "scrollToIndex was not called yet");
 
 				iIndex = 0;
@@ -3495,5 +3512,23 @@ sap.ui.define([
 			var oInnerTable = this.oTable._oTable;
 			oInnerTable.firePaste({data: [["111", "222", "333"], ["aaa", "bbb", "ccc"]]});
 		}.bind(this));
+	});
+
+	QUnit.test("Destroy immediately after create - destroys toolbar", function(assert) {
+		// Destroy the old/default table, as this is not used for this test
+		this.oTable.destroy();
+
+		//Create a table (say grid table) and destroy it immediately
+		var oTable = new Table();
+
+		oTable.getActions(); //Leads to immediate creation of toolbar
+		var oToolbar = oTable._oToolbar;
+		oTable.destroy();
+
+		assert.ok(!oTable._oTable);
+		assert.ok(!oTable._oTemplate);
+		assert.ok(!oTable._oToolbar);
+		// Toolbar is destroyed
+		assert.strictEqual(oToolbar.bIsDestroyed, true);
 	});
 });

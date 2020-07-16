@@ -49,7 +49,6 @@ sap.ui.define([
 		"use strict";
 
 		var oLogger = _OpaLogger.getLogger("sap.ui.test.Opa5"),
-			oPlugin = new OpaPlugin(),
 			oActionPipeline = new ActionPipeline(),
 			sFrameId = "OpaFrame",
 			oValidator = new _ParameterValidator({
@@ -71,9 +70,6 @@ sap.ui.define([
 			aExtensions = [],
 			aEventProvider = new EventProvider();
 
-		var appUriParams = _OpaUriParameterParser._getAppParams();
-		var allUriParams = new URI().search(true);
-
 		/**
 		 * @class
 		 * UI5 extension of the OPA framework.
@@ -89,16 +85,15 @@ sap.ui.define([
 		 * @author SAP SE
 		 * @since 1.22
 		 */
-		var Opa5 = Ui5Object.extend("sap.ui.test.Opa5",
-			$.extend({},
-				Opa.prototype,
-				{
-					constructor: function () {
-						Opa.apply(this, arguments);
-					}
-				}
-			)
-		);
+		var Opa5 = Ui5Object.extend("sap.ui.test.Opa5", $.extend({}, Opa.prototype, {
+			constructor: function () {
+				Opa.apply(this, arguments);
+			}
+		}));
+
+		Opa5._appUriParams = _OpaUriParameterParser._getAppParams();
+		Opa5._allUriParams = new URI().search(true);
+		Opa5._oPlugin = new OpaPlugin();
 
 		function iStartMyAppInAFrame() {
 			var that = this;
@@ -252,7 +247,7 @@ sap.ui.define([
 			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
 			oParamsWaitForOptions.success = function () {
 				var uri = new URI();
-				uri.search(allUriParams);
+				uri.search(Opa5._allUriParams);
 				window.history.replaceState({}, "", uri.toString());
 			};
 
@@ -847,7 +842,7 @@ sap.ui.define([
 		 * @public
 		 */
 		Opa5.getPlugin = function () {
-			return iFrameLauncher.getPlugin() || oPlugin;
+			return iFrameLauncher.getPlugin() || Opa5._oPlugin;
 		};
 
 		/**
@@ -1005,7 +1000,7 @@ sap.ui.define([
 			Opa.extendConfig(options);
 			// URL app params overwrite extendConfig app params
 			Opa.extendConfig({
-				appParams: appUriParams
+				appParams: Opa5._appUriParams
 			});
 			Opa5._getAutoWaiter().extendConfig(options.autoWait);
 		};
@@ -1045,7 +1040,7 @@ sap.ui.define([
 				_stackDropCount: 1
 			});
 			Opa.extendConfig({
-				appParams: appUriParams
+				appParams: Opa5._appUriParams
 			});
 		};
 

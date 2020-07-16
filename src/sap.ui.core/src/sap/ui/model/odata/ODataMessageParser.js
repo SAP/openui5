@@ -364,38 +364,6 @@ ODataMessageParser.prototype._createMessage = function (oMessageObject, mRequest
 };
 
 /**
- * Returns the path of the Entity affected by the given FunctionImport. It either uses the location header sent by the
- * back-end or if none is sent tries to construct the correct URL from the metadata information about the function.
- * In case the URL of the target is built using only one key, the parameter-name is removed from the URL.
- * Example, if there are two keys "A" and "B", the URL mitgt look like this: "/List(A=1,B=2)" in case there is only one
- * key named "A", the URL would be "/List(1)"
- *
- * @param {map} mFunctionInfo - Function information map as returned by sap.ui.model.odata.ODataMetadata._getFunctionImportMetadata
- * @param {ODataMessageParser~RequestInfo} mRequestInfo - Map containing information about the current request
- * @param {ODataMessageParser~UrlInfo} mUrlData - Map containing parsed URL information as returned by sap.ui.mode.odata.ODataMessageParser._parseUrl
- * @returns {string} The Path to the affected entity
- */
-ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mRequestInfo, mUrlData) {
-	var sTarget;
-
-	// In case of a function import the location header may point to the correct entry in the service.
-	// This should be the case for writing/changing operations using POST
-	if (mRequestInfo.response && mRequestInfo.response.headers && mRequestInfo.response.headers["location"]) {
-		sTarget = mRequestInfo.response.headers["location"];
-
-		var iPos = sTarget.lastIndexOf(this._serviceUrl);
-		if (iPos > -1) {
-			sTarget = sTarget.substr(iPos + this._serviceUrl.length);
-		}
-	} else {
-		sTarget = this._metadata._getCanonicalPathOfFunctionImport(mFunctionInfo,
-			mUrlData.parameters);
-	}
-
-	return sTarget || "";
-};
-
-/**
  * Whether the given response is the response for a successful entity creation.
  *
  * @param {ODataMessageParser~RequestInfo} mRequestInfo
@@ -451,8 +419,8 @@ ODataMessageParser._isResponseForCreate = function (mRequestInfo) {
  */
 ODataMessageParser.prototype._createTarget = function (sODataTarget, mRequestInfo, bIsTechnical,
 		bODataTransition) {
-	var sCanonicalTarget, bCreate, mFunctionInfo, iPos, sPreviousCanonicalTarget, sRequestTarget,
-		sUrl, mUrlData, sUrlForTargetCalculation,
+	var sCanonicalTarget, bCreate, iPos, sPreviousCanonicalTarget, sRequestTarget, sUrl, mUrlData,
+		sUrlForTargetCalculation,
 		sDeepPath = "",
 		oRequest = mRequestInfo.request,
 		oResponse = mRequestInfo.response;
@@ -487,14 +455,12 @@ ODataMessageParser.prototype._createTarget = function (sODataTarget, mRequestInf
 			sRequestTarget = "/" + sUrl;
 		}
 
-		if (!bCreate) { // bCreate === false might be a failed function import
-			mFunctionInfo = this._metadata._getFunctionImportMetadata(sRequestTarget,
-				oRequest.method);
-
-			if (mFunctionInfo) {
-				sRequestTarget = this._getFunctionTarget(mFunctionInfo, mRequestInfo, mUrlData);
-				sDeepPath = sRequestTarget;
-			}
+		// bCreate === false might be a failed function import
+		if (!bCreate && oRequest.functionMetadata) {
+			sRequestTarget = oRequest.functionTarget;
+			sDeepPath = oRequest.deepPath === "/" + oRequest.functionMetadata.name
+				? sRequestTarget
+				: oRequest.deepPath;
 		}
 		if (!sDeepPath && oRequest.deepPath){
 			sDeepPath = oRequest.deepPath;

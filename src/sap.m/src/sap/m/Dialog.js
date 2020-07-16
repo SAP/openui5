@@ -1169,14 +1169,19 @@ function(
 		 *
 		 * @private
 		 */
-		Dialog.prototype._getFocusId = function () {
+		Dialog.prototype._getFocusDomRef = function () {
 			// Left or Right button can be visible false and therefore not rendered.
 			// In such a case, focus should be set somewhere else.
-			return this.getInitialFocus()
-				|| this._getFirstFocusableContentSubHeader()
-				|| this._getFirstFocusableContentElementId()
-				|| this._getFirstVisibleButtonId()
-				|| this.getId();
+			var sInitialFocusId = this.getInitialFocus();
+
+			if (sInitialFocusId) {
+				return document.getElementById(sInitialFocusId);
+			}
+
+			return this._getFirstFocusableContentSubHeader()
+				|| this._getFirstFocusableContentElement()
+				|| this._getFirstVisibleButtonDomRef()
+				|| this.getDomRef();
 		};
 
 		/**
@@ -1184,26 +1189,26 @@ function(
 		 * @returns {string}
 		 * @private
 		 */
-		Dialog.prototype._getFirstVisibleButtonId = function () {
+		Dialog.prototype._getFirstVisibleButtonDomRef = function () {
 			var oBeginButton = this.getBeginButton(),
 				oEndButton = this.getEndButton(),
 				aButtons = this.getButtons(),
-				sButtonId = "";
+				oButtonDomRef;
 
 			if (oBeginButton && oBeginButton.getVisible()) {
-				sButtonId = oBeginButton.getId();
+				oButtonDomRef = oBeginButton.getDomRef();
 			} else if (oEndButton && oEndButton.getVisible()) {
-				sButtonId = oEndButton.getId();
+				oButtonDomRef = oEndButton.getDomRef();
 			} else if (aButtons && aButtons.length > 0) {
 				for (var i = 0; i < aButtons.length; i++) {
 					if (aButtons[i].getVisible()) {
-						sButtonId = aButtons[i].getId();
+						oButtonDomRef = aButtons[i].getDomRef();
 						break;
 					}
 				}
 			}
 
-			return sButtonId;
+			return oButtonDomRef;
 		};
 
 		/**
@@ -1213,14 +1218,8 @@ function(
 		 */
 		Dialog.prototype._getFirstFocusableContentSubHeader = function () {
 			var $subHeader = this.$().find('.sapMDialogSubHeader');
-			var sResult;
 
-			var oFirstFocusableDomRef = $subHeader.firstFocusableDomRef();
-
-			if (oFirstFocusableDomRef) {
-				sResult = oFirstFocusableDomRef.id;
-			}
-			return sResult;
+			return $subHeader.firstFocusableDomRef();
 		};
 
 		/**
@@ -1228,15 +1227,10 @@ function(
 		 * @returns {string}
 		 * @private
 		 */
-		Dialog.prototype._getFirstFocusableContentElementId = function () {
-			var sResult = "";
+		Dialog.prototype._getFirstFocusableContentElement = function () {
 			var $dialogContent = this.$("cont");
-			var oFirstFocusableDomRef = $dialogContent.firstFocusableDomRef();
 
-			if (oFirstFocusableDomRef) {
-				sResult = oFirstFocusableDomRef.id;
-			}
-			return sResult;
+			return $dialogContent.firstFocusableDomRef();
 		};
 
 		// The control that needs to be focused after the Dialog is open is calculated in the following sequence:
@@ -1249,9 +1243,12 @@ function(
 		 * @private
 		 */
 		Dialog.prototype._setInitialFocus = function () {
-			var sFocusId = this._getFocusId();
-			var oControl = sap.ui.getCore().byId(sFocusId);
-			var oFocusDomRef;
+			var oFocusDomRef = this._getFocusDomRef(),
+				oControl;
+
+			if (oFocusDomRef && oFocusDomRef.id) {
+				oControl = sap.ui.getCore().byId(oFocusDomRef.id);
+			}
 
 			if (oControl) {
 				//if someone tries to focus on an existing but not visible control, focus the Dialog itself.
@@ -1263,12 +1260,10 @@ function(
 				oFocusDomRef = oControl.getFocusDomRef();
 			}
 
-			oFocusDomRef = oFocusDomRef || ((sFocusId ? window.document.getElementById(sFocusId) : null));
-
 			// if focus dom ref is not found
 			if (!oFocusDomRef) {
 				this.setInitialFocus(""); // clear the saved initial focus
-				oFocusDomRef = sap.ui.getCore().byId(this._getFocusId()); // recalculate the element on focus
+				oFocusDomRef = this._getFocusDomRef(); // recalculate the element on focus
 			}
 
 			//if there is no set initial focus, set the default one to the initialFocus association

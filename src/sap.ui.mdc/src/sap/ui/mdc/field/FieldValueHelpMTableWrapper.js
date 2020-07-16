@@ -222,9 +222,7 @@ sap.ui.define([
 			_updateSelectedItems.call(this); // as selection mode might be changed
 			if (bSuggestion) {
 				var oSelectedItem = oTable.getSelectedItem();
-				if (oSelectedItem && oSelectedItem.getDomRef()) {
-					oSelectedItem.getDomRef().scrollIntoView();
-				}
+				oTable.scrollToIndex(oTable.indexOfItem(oSelectedItem));
 			}
 		}
 
@@ -275,9 +273,7 @@ sap.ui.define([
 			oItem.setSelected(true);
 			var oValue = _getDataFromItem.call(this, oItem);
 
-			if (oItem.getDomRef()) {
-				oItem.getDomRef().scrollIntoView();
-			}
+			oTable.scrollToIndex(iSelectedIndex);
 
 			this._bNoTableUpdate = true;
 			this.setSelectedItems([{key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters}]);

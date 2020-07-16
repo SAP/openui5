@@ -265,6 +265,7 @@ var mPredefinedServiceResponses = {
 				case "fakeservice://testdata/odata/northwind/functionWithInvalidReturnType":
 				iStatus = 204;
 				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+				mResponseHeaders["location"] = "fakeservice://testdata/odata/northwind";
 				mResponseHeaders["sap-message"] = JSON.stringify({
 					"code":		Date.now(),
 					"message":	"This is FunctionImport specific message with an invalid return type.",
@@ -276,6 +277,7 @@ var mPredefinedServiceResponses = {
 				case "fakeservice://testdata/odata/northwind/functionWithInvalidEntitySet":
 				iStatus = 204;
 				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+				mResponseHeaders["location"] = "fakeservice://testdata/odata/northwind";
 				mResponseHeaders["sap-message"] = JSON.stringify({
 					"code":		Date.now(),
 					"message":	"This is FunctionImport specific message with an invalid entityset.",
