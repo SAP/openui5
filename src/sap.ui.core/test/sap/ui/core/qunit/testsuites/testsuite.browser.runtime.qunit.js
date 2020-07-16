@@ -56,6 +56,27 @@ sap.ui.define(function() {
 				ui5: {
 					theme: "base"
 				}
+			},
+			"jquery-mobile-custom": {
+				title: "jquery-mobile-custom",
+				sinon: {
+					qunitBridge: true
+				},
+				bootCore: false
+			},
+			"jquery-mobile-custom_msie": {
+				title: "jquery-mobile-custom_msie",
+				sinon: {
+					qunitBridge: true
+				},
+				bootCore: false
+			},
+			"jquery-mobile-custom_edge": {
+				title: "jquery-mobile-custom_edge",
+				sinon: {
+					qunitBridge: true
+				},
+				bootCore: false
 			}
 		}
 	};

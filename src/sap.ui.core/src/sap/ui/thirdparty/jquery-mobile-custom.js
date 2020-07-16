@@ -707,7 +707,9 @@ jQuery.mobile.orientationChangeEnabled = true;
 		};
 		// SAP MODIFICATION
 		// => if the device API is loaded we override the touch detection
-		if (window.sap && sap.ui && sap.ui.Device && sap.ui.Device.support) {
+		// MS Internet Explorer and MS Edge do not fire 'touchstart' and 'touchend' events
+		// Therefore $.mobile.support should not be overriden with the actual device screen capability
+		if (window.sap && sap.ui && sap.ui.Device && sap.ui.Device.support && !(sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
 			support.touch = sap.ui.Device.support.touch
 		}
 
