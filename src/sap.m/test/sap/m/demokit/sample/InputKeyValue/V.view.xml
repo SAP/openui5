@@ -9,7 +9,7 @@
 		<Input
 			id="productInput"
 			textFormatMode="KeyValue"
-			placeholder="Enter Product ..."
+			placeholder="Enter product"
 			showSuggestion="true"
 			showValueHelp="true"
 			valueHelpRequest=".onValueHelpRequest"

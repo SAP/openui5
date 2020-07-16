@@ -13,7 +13,7 @@
 				id="InputNoEdit"
 				class="sapUiSmallMarginBottom"
 				type="Text"
-				placeholder="Product..."
+				placeholder="Product"
 				enabled="true"
 				editable="false"
 			/>
@@ -23,7 +23,7 @@
 				id="InputDisabled"
 				class="sapUiSmallMarginBottom"
 				type="Text"
-				placeholder="Product ..."
+				placeholder="Product"
 				enabled="false"
 			/>
 
@@ -32,7 +32,7 @@
 				id="InputEdit"
 				class="sapUiSmallMarginBottom"
 				type="Text"
-				placeholder="Enter Product..."
+				placeholder="Enter product"
 				enabled="true"
 				editable="true"
 			/>
@@ -42,7 +42,7 @@
 				id="InputValueHelp"
 				class="sapUiSmallMarginBottom"
 				type="Text"
-				placeholder="Enter Product..."
+				placeholder="Enter product"
 				enabled="true"
 				editable="true"
 				showValueHelp="true"
@@ -54,7 +54,7 @@
 				id="productInputVHO"
 				class="sapUiSmallMarginBottom"
 				type="Text"
-				placeholder="Enter Product..."
+				placeholder="Enter product"
 				enabled="true"
 				editable="true"
 				showValueHelp="true"

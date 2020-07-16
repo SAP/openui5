@@ -8,7 +8,7 @@
 		<Label text="Input with grouped suggestions" labelFor="productInputWithList" />
 		<Input
 			id="productInputWithList"
-			placeholder="Enter Product ..."
+			placeholder="Enter product"
 			showSuggestion="true"
 			suggestionItems="{
 				path: '/ProductCollection',
@@ -26,7 +26,7 @@
 		<Label text="Input with grouped tabular suggestions" labelFor="productInputWithTable" />
 		<Input
 			id="productInputWithTable"
-			placeholder="Enter Product ..."
+			placeholder="Enter product"
 			showSuggestion="true"
 			showTableSuggestionValueHelp="false"
 			suggestionRows="{
