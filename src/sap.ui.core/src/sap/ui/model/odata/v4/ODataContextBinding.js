@@ -106,7 +106,9 @@ sap.ui.define([
 	 * @since 1.37.0
 	 * @version ${version}
 	 *
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#getGroupId as #getGroupId
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#getUpdateGroupId as #getUpdateGroupId
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
@@ -776,7 +778,9 @@ sap.ui.define([
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
-	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
+	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor} and
+	 *   {@link #getGroupId}. To use the update group ID, see {@link #getUpdateGroupId}, it needs to
+	 *   be specified explicitly.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @returns {Promise}
@@ -961,7 +965,7 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.ODataContextBinding})
 	 *
 	 * @public
-	 * @since 1.73
+	 * @since 1.73.0
 	 */
 	ODataContextBinding.prototype.getParameterContext = function () {
 		if (!this.oOperation) {
@@ -1276,7 +1280,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContext#requestObject
-	 * @since 1.69
+	 * @since 1.69.0
 	 */
 	ODataContextBinding.prototype.requestObject = function (sPath) {
 		return this.oElementContext

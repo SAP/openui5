@@ -550,12 +550,21 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Returns the group ID of the binding that is used for read requests.
+	 * Returns the group ID of the binding that is used for read requests. The group ID of the
+	 * binding is alternatively defined by
+	 * <ul>
+	 * <li>the <code>groupId</code> parameter of the OData model; see
+	 * {@link sap.ui.model.odata.v4.ODataModel#constructor},</li>
+	 * <li>the <code>$$groupId</code> binding parameter; see
+	 * {@link sap.ui.model.odata.v4.ODataModel#bindList} and
+	 * {@link sap.ui.model.odata.v4.ODataModel#bindContext}.</li>
+	 * </ul>
 	 *
 	 * @returns {string}
 	 *   The group ID
 	 *
-	 * @private
+	 * @public
+	 * @since 1.81.0
 	 */
 	ODataBinding.prototype.getGroupId = function () {
 		return this.sGroupId
@@ -661,12 +670,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the group ID of the binding that is used for update requests.
+	 * Returns the group ID of the binding that is used for update requests. The update group ID of
+	 * the binding is alternatively defined by
+	 * <ul>
+	 * <li>the <code>updateGroupId</code> parameter of the OData model; see
+	 * {@link sap.ui.model.odata.v4.ODataModel#constructor},</li>
+	 * <li>the <code>$$updateGroupId</code> binding parameter; see
+	 * {@link sap.ui.model.odata.v4.ODataModel#bindList} and
+	 * {@link sap.ui.model.odata.v4.ODataModel#bindContext}.</li>
+	 * </ul>
 	 *
 	 * @returns {string}
 	 *   The update group ID
 	 *
-	 * @private
+	 * @public
+	 * @since 1.81.0
 	 */
 	ODataBinding.prototype.getUpdateGroupId = function () {
 		return this.sUpdateGroupId
@@ -842,9 +860,9 @@ sap.ui.define([
 	 * {@link #refresh}.
 	 *
 	 * @param {string} [sGroupId]
-	 *   The group ID to be used for refresh; if not specified, the binding's group ID is used. For
-	 *   suspended bindings, only the binding's group ID is supported because {@link #resume} uses
-	 *   the binding's group ID.
+	 *   The group ID to be used for refresh; if not specified, the binding's group ID is used, see
+	 *   {@link #getGroupId}. For suspended bindings, only the binding's group ID is supported
+	 *   because {@link #resume} uses the binding's group ID.
 	 *
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
