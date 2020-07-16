@@ -6,35 +6,35 @@
 		<Label text="Text" labelFor="inputText" />
 		<Input
 			id="inputText"
-			placeholder="Enter Text ..."
+			placeholder="Enter text"
 			class="sapUiSmallMarginBottom" />
 
 		<Label text="Email" labelFor="inputEmail" />
 		<Input
 			id="inputEmail"
 			type="Email"
-			placeholder="Enter Email ..."
+			placeholder="Enter email"
 			class="sapUiSmallMarginBottom" />
 
 		<Label text="Telephone" labelFor="inputTel" />
 		<Input
 			id="inputTel"
 			type="Tel"
-			placeholder="Enter Telephone Number ..."
+			placeholder="Enter telephone number"
 			class="sapUiSmallMarginBottom" />
 
 		<Label text="Number" labelFor="inputNumber" />
 		<Input
 			id="inputNumber"
 			type="Number"
-			placeholder="Enter a Number ..."
+			placeholder="Enter a number"
 			class="sapUiSmallMarginBottom" />
 
 		<Label text="URL" labelFor="inputUrl" />
 		<Input
 			id="inputUrl"
 			type="Url"
-			placeholder="Enter URL ..."
+			placeholder="Enter URL"
 			class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>
