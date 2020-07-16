@@ -26,7 +26,9 @@ sap.ui.define([
 	 *
 	 * @type {RegExp}
 	 */
-	var rCardPlaceholderPattern = /\{\{([^}]+)\}\}/g;
+	var rCardPlaceholderPattern = /\{\{([^}]+)\}\}/g,
+		rCardParametersPattern = /\{\{(parameters\.[^}]+)\}\}/g,
+		rCardDataSourcesPattern = /\{\{(dataSources\.[^}]+)\}\}/g;
 
 	/**
 	 * Helper class for working with bindings.
@@ -69,7 +71,7 @@ sap.ui.define([
 		return BindingParser.complexParser(
 			vValue,
 			undefined, // oContext
-			true, // bUnescape - when set to 'true' expressions that don't contain bindings are also resolved, else they are treated as strings
+			true, // bUnescape - when set to 'true' expressions that don't contain bindings are also resolved, else they are treated as strings (needed to resolve expression binding)
 			undefined, // bTolerateFunctionsNotFound
 			undefined, // bStaticContext
 			undefined, // bPreferContext
@@ -80,6 +82,7 @@ sap.ui.define([
 	/**
 	 * Calls <code>BindingHelper.extractBindingInfo</code> for the given vItem. If it is array or object, it will be processed recursively.
 	 * The given vItem won't be modified.
+	 * If any there is any left string value containing placeholders, e.g '{{parameters.city}} it will be escaped.
 	 *
 	 * @param {*} vItem Object, Array, or any other type.
 	 * @returns {*} Processed variant of vItem which is turned to binding info(s).
@@ -104,9 +107,8 @@ sap.ui.define([
 			return oItemCopy;
 		}
 
-		return BindingHelper.extractBindingInfo(vItem) || vItem;
+		return BindingHelper.escapeParametersAndDataSources(BindingHelper.extractBindingInfo(vItem) || vItem);
 	};
-
 
 	/**
 	 * Creates a binding info with formatter or applies formatter directly if the value is string.
@@ -160,6 +162,15 @@ sap.ui.define([
 		}
 
 		return vValue.replace(rCardPlaceholderPattern, "\\{\\{$1\\}\\}");
+	};
+
+	// Escapes the card placeholders like <code>escapeCardPlaceholders</code>, but doesn't include destinations.
+	BindingHelper.escapeParametersAndDataSources = function (vValue) {
+		if (typeof vValue !== "string") {
+			return vValue;
+		}
+
+		return vValue.replace(rCardParametersPattern, "\\{\\{$1\\}\\}").replace(rCardDataSourcesPattern, "\\{\\{$1\\}\\}");
 	};
 
 	/**
