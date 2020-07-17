@@ -143,7 +143,7 @@
 				aControls = [],
 				sInfo,
 				oBar,
-			    oTp;
+				oTp;
 
 			for (i = 0; i < options.length; i++) {
 				options[i].change = handleChange;
@@ -160,7 +160,7 @@
 						]
 					});
 				} else {
-                	oTp = new sap.m.TimePicker(options[i]);
+					oTp = new sap.m.TimePicker(options[i]);
 					sInfo =  JSON.stringify(options[i]).split("\"").join("").replace("{", "").replace(",", " ").replace("}", "") + ", id: " + oTp.getId();
 					oBar = new sap.m.Toolbar(options[i].id + "-toolbar", {
 						content: [
