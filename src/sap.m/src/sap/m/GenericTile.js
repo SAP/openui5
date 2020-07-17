@@ -544,7 +544,7 @@ sap.ui.define([
 			iLineHeight = Math.ceil(LineModeRenderer._getCSSPixelValue(this, "min-height")), //line height
 			iHeight = LineModeRenderer._getCSSPixelValue(this, "line-height"), //height including gap between lines
 			bLineBreak = this.$().is(":not(:first-child)") && iLines > 1,
-			$LineBreak = jQuery("<span><br /></span>"),
+			$LineBreak = jQuery("<span><br></span>"),
 			i = 0,
 			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
 			oEndMarkerPosition = $End.position();
