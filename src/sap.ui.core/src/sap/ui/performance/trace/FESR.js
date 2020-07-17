@@ -138,7 +138,7 @@ sap.ui.define([
 			"", // persistency_time
 			"", // persistency_data_transferred
 			formatInt(oInteraction.busyDuration, 4), // extension_1 - busy duration
-			"", // extension_2
+			formatInt(oFESRHandle.interactionType || 0, 4), // extension_2 - type of interaction: 0 = not implemented, 1 = app start, 2 = follow up step, 3 = unknown
 			format(CLIENT_DEVICE, 1), // extension_3 - client device
 			"", // extension_4
 			format(formatInteractionStartTimestamp(oInteraction.start), 20), // extension_5 - interaction start time
@@ -201,11 +201,13 @@ sap.ui.define([
 	}
 
 	function onInteractionFinished(oFinishedInteraction) {
+		var sStepName = oFinishedInteraction.trigger + "_" + oFinishedInteraction.event;
 		var oFESRHandle = FESR.onBeforeCreated({
-			stepName: oFinishedInteraction.trigger + "_" + oFinishedInteraction.event,
+			stepName: sStepName,
 			appNameLong: oFinishedInteraction.stepComponent || oFinishedInteraction.component,
 			appNameShort: oFinishedInteraction.stepComponent || oFinishedInteraction.component,
-			timeToInteractive: oFinishedInteraction.duration
+			timeToInteractive: oFinishedInteraction.duration,
+			interactionType: determineInteractionType(sStepName)
 		}, oFinishedInteraction);
 
 		// do not send UI-only FESR with piggyback approach
@@ -239,6 +241,14 @@ sap.ui.define([
 				iBeaconTimeoutID = undefined;
 			}, 60000);
 		}
+	}
+
+	function determineInteractionType(sStepName) {
+		var interactionType = 2;
+		if (sStepName.indexOf("startup") !== -1) {
+			interactionType = 1;
+		}
+		return interactionType;
 	}
 
 	/**
@@ -329,6 +339,7 @@ sap.ui.define([
 	 * @param {string} oFESRHandle.stepName The step name with <Trigger>_<Event>
 	 * @param {string} oFESRHandle.appNameLong The application name with max 70 chars
 	 * @param {string} oFESRHandle.appNameShort The application name with max 20 chars
+	 * @param {string} oFESRHandle.interactionType Type of interaction: 0 = not implemented, 1 = app start, 2 = step in open app, 3 = unknown
 	 * @param {int} oFESRHandle.timeToInteractive The Time To Interactive (TTI) with max 16 digits
 	 * @param  {object} oInteraction The corresponding interaction object, read-only
 	 * @return {object} Modified header information
@@ -340,7 +351,8 @@ sap.ui.define([
 			stepName: oFESRHandle.stepName,
 			appNameLong: oFESRHandle.appNameLong,
 			appNameShort: oFESRHandle.appNameShort,
-			timeToInteractive: oFESRHandle.timeToInteractive
+			timeToInteractive: oFESRHandle.timeToInteractive,
+			interactionType: oFESRHandle.interactionType
 		};
 	};
 
