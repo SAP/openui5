@@ -28,7 +28,10 @@ sap.ui.define([
 			});
 			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/additionalElements");
 
-			oMockServer.simulate(this._sResourcePath + "/mockserver/metadata.xml", this._sResourcePath + "/mockserver");
+			oMockServer.simulate(this._sResourcePath + "/mockserver/metadata.xml", {
+				sMockdataBaseUrl: this._sResourcePath + "/mockserver",
+				bGenerateMissingMockData: true
+			});
 
 			oMockServer.start();
 

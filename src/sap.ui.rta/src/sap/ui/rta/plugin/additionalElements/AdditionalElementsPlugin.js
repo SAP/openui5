@@ -35,8 +35,7 @@ sap.ui.define([
 		var oParentOverlay;
 		var oResponsibleElementOverlay = oOverlay;
 		if (oPlugin) {
-			//TODO add.delegate
-			var bResponsibleElementAvailable = ["addODataProperty", "reveal", "custom"].some(function(vActionName) {
+			var bResponsibleElementAvailable = ["delegate", "reveal", "custom"].some(function(vActionName) {
 				return oPlugin.isResponsibleElementActionAvailable(oOverlay, vActionName);
 			});
 			if (bResponsibleElementAvailable) {
@@ -112,7 +111,6 @@ sap.ui.define([
 	 */
 	function _getDTMetadataFromActions (mActions) {
 		return (mActions["addViaDelegate"] && mActions["addViaDelegate"].designTimeMetadata)
-			|| (mActions["addODataProperty"] && mActions["addODataProperty"].designTimeMetadata)
 			|| (mActions["addViaCustom"] && mActions["addViaCustom"].designTimeMetadata);
 	}
 
@@ -122,7 +120,7 @@ sap.ui.define([
 		var aNames = [];
 		var mControlType;
 		var sControlType;
-		if (mActions.addODataProperty || mActions.addViaCustom || mActions.addViaDelegate) {
+		if (mActions.addViaCustom || mActions.addViaDelegate) {
 			var sAggregationName = mActions.aggregation;
 			var oDesignTimeMetadata = _getDTMetadataFromActions(mActions);
 			mControlType = oDesignTimeMetadata.getAggregationDescription(sAggregationName, oParentElement);
@@ -212,7 +210,7 @@ sap.ui.define([
 		return bValidAction;
 	}
 
-	function _filterValidAddPropertyActions(aActions, mParents, bAddViaDelegate, oPlugin) {
+	function _filterValidAddPropertyActions(aActions, mParents, oPlugin) {
 		return aActions.reduce(function (oPreviousActionsPromise, mAction) {
 			return oPreviousActionsPromise.then(function (aFilteredActions) {
 				var oCheckElement = mAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
@@ -220,40 +218,21 @@ sap.ui.define([
 				var bValidAction = _isValidAction(oCheckElementOverlay, mParents, mAction, oPlugin);
 				if (bValidAction) {
 					mAction.element = oCheckElement;
-					if (bAddViaDelegate) {
-						return DelegateMediatorAPI.getDelegateForControl({
-							control: mParents.relevantContainer, //delegate will always be added on the relevant container
-							modifier: JsControlTreeModifier,
-							supportsDefault: mAction.supportsDefaultDelegate
-						}).then(function(mDelegateInfo) {
-							if (mDelegateInfo && mDelegateInfo.name) {
-								mAction.delegateInfo = mDelegateInfo;
-								aFilteredActions.push(mAction);
-							}
-							return aFilteredActions;
-						});
-					}
-					//addODataProperty
-					aFilteredActions.push(mAction);
+					return DelegateMediatorAPI.getDelegateForControl({
+						control: mParents.relevantContainer, //delegate will always be added on the relevant container
+						modifier: JsControlTreeModifier,
+						supportsDefault: mAction.supportsDefaultDelegate
+					}).then(function(mDelegateInfo) {
+						if (mDelegateInfo && mDelegateInfo.name) {
+							mAction.delegateInfo = mDelegateInfo;
+							aFilteredActions.push(mAction);
+						}
+						return aFilteredActions;
+					});
 				}
 				return aFilteredActions;
 			});
 		}, Promise.resolve([]));
-	}
-
-	function _getAddODataPropertyActionData(mAction, oDesignTimeMetadata) {
-		return this.hasChangeHandler(mAction.changeType, mAction.element)
-			.then(function (bHasChangeHandler) {
-				if (bHasChangeHandler) {
-					return {
-						aggregationName: mAction.aggregation,
-						addPropertyActionData: {
-							designTimeMetadata: oDesignTimeMetadata,
-							action: mAction
-						}
-					};
-				}
-			});
 	}
 
 	function _getAddViaDelegateActionData(mAction, oDesignTimeMetadata) {
@@ -282,6 +261,20 @@ sap.ui.define([
 		return Object.keys(mRequiredLibraries).some(function(sRequiredLib) {
 			return !mAppsLibDependencies[sRequiredLib];
 		});
+	}
+
+	function _loadKnownDefaultDelegateLibraries() {
+		var aLoadLibraryPromises = [];
+		var aRequiredLibraries = DelegateMediatorAPI.getKnownDefaultDelegateLibraries();
+		aRequiredLibraries.forEach(function(sLibrary) {
+			var oLoadLibraryPromise = sap.ui.getCore().loadLibrary(sLibrary, { async: true })
+				.catch(function() {
+					Log.warning("Required library not available: ");
+					return Promise.reject();
+				});
+			aLoadLibraryPromises.push(oLoadLibraryPromise);
+		});
+		return Promise.all(aLoadLibraryPromises);
 	}
 
 	/**
@@ -350,7 +343,6 @@ sap.ui.define([
 				if (
 					(!mActions.reveal || mActions.reveal.elements.length === 0)
 					&& !mActions.addViaCustom
-					&& !mActions.addODataProperty
 					&& !mActions.addViaDelegate
 				) {
 					bIsEnabled = false;
@@ -367,7 +359,7 @@ sap.ui.define([
 
 		/**
 		 * Register an overlay
-		 * If the MetaModel was not loaded yet when evaluating addODataProperty, the
+		 * If the MetaModel was not loaded yet when evaluating addViaDelegate, the
 		 * plugin returns editable = false. Therefore we must make an extra check after
 		 * the MetaModel is loaded.
 		 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
@@ -505,51 +497,41 @@ sap.ui.define([
 		},
 
 		/**
-		 * Return the action data for additional properties, either via delegate or if delegate is not available via add OData property.
-		 * There will never be both actions in parallel.
+		 * Return the action data for additional properties.
 		 * @param {boolean} bSibling - If source element overlay should be sibling or parent to the newly added fields
 		 * @param {sap.ui.dt.ElementOverlay} oSourceElementOverlay - Overlay the dialog is opened for
-		 * @returns {Promise<Map>} addViaDelegate or addODataProperty action data
+		 * @returns {Promise<Map>} addViaDelegate action data
 		 */
-		_getAddPropertyActions: function (bSibling, oSourceElementOverlay) {
+		_getAddViaDelegateActions: function (bSibling, oSourceElementOverlay) {
 			var mParents = _getParents(bSibling, oSourceElementOverlay, this);
 			var oDesignTimeMetadata = mParents.parentOverlay && mParents.parentOverlay.getDesignTimeMetadata();
-			var sAction = "addViaDelegate";
-			var fnGetActionData = _getAddViaDelegateActionData.bind(this);
-
 			return Promise.resolve()
 				.then(function() {
-					if (oDesignTimeMetadata) {
-						var aActions = oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent, undefined, "delegate");
-						return _filterValidAddPropertyActions(aActions, mParents, true, this);
+					var aActions = oDesignTimeMetadata ? oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent, undefined, "delegate") : [];
+					if (aActions.length) {
+						return _loadKnownDefaultDelegateLibraries()
+							.then(_filterValidAddPropertyActions.bind(this, aActions, mParents, this));
 					}
 					return [];
-				}.bind(this)).then(function(aActions) {
-					if (aActions.length === 0 && oDesignTimeMetadata) {
-						sAction = "addODataProperty";
-						fnGetActionData = _getAddODataPropertyActionData.bind(this);
-
-						aActions = oDesignTimeMetadata.getActionDataFromAggregations(sAction, mParents.parent);
-						return _filterValidAddPropertyActions(aActions, mParents, false, this);
-					}
-					return aActions;
-				}.bind(this)).then(function(aActions) {
+				}.bind(this))
+				.then(function(aActions) {
 					return aActions.reduce(function (oPreviousPromise, oAction) {
-						return oPreviousPromise.then(function (oReturn) {
-							return fnGetActionData(oAction, oDesignTimeMetadata)
-								.then(function (mAction) {
-									if (mAction) {
-										mAction.addPropertyActionData.relevantContainer = mParents.relevantContainer;
-										if (!oReturn[mAction.aggregationName]) {
-											oReturn[mAction.aggregationName] = {};
+						return oPreviousPromise
+							.then(function (oReturn) {
+								return _getAddViaDelegateActionData.call(this, oAction, oDesignTimeMetadata)
+									.then(function (mAction) {
+										if (mAction) {
+											mAction.addPropertyActionData.relevantContainer = mParents.relevantContainer;
+											if (!oReturn[mAction.aggregationName]) {
+												oReturn[mAction.aggregationName] = {};
+											}
+											oReturn[mAction.aggregationName].addViaDelegate = mAction.addPropertyActionData;
 										}
-										oReturn[mAction.aggregationName][sAction] = mAction.addPropertyActionData;
-									}
-									return oReturn;
-								});
-						});
-					}, Promise.resolve({}));
-				});
+										return oReturn;
+									});
+							}.bind(this));
+					}.bind(this), Promise.resolve({}));
+				}.bind(this));
 		},
 
 		_getCustomAddActions: function (bSibling, oOverlay) {
@@ -623,10 +605,6 @@ sap.ui.define([
 		 * <pre>
 		 * {
 		 *    <aggregationName> : {
-		 *        addODataProperty : {
-		 *             designTimeMetadata : <sap.ui.dt.ElementDesignTimeMetadata of parent>,
-		 *             action : <addODataProperty action section from designTimeMetadata>
-		 *        },
 		 *        addViaDelegate : {
 		 *             designTimeMetadata : <sap.ui.dt.ElementDesignTimeMetadata of parent>,
 		 *             action : <add.delegate action section from designTimeMetadata>
@@ -663,7 +641,7 @@ sap.ui.define([
 				}
 
 				var oRevealActionsPromise = this._getRevealActions(bSibling, oSourceElementOverlay);
-				var oAddPropertyActionsPromise = this._getAddPropertyActions(bSibling, oSourceElementOverlay);
+				var oAddPropertyActionsPromise = this._getAddViaDelegateActions(bSibling, oSourceElementOverlay);
 				var oCustomAddActionsPromise = this._getCustomAddActions(bSibling, oSourceElementOverlay);
 
 				return Promise.all([
@@ -673,13 +651,13 @@ sap.ui.define([
 				])
 					.then(function(aAllActions) {
 						//join and condense all action data
-						var mOverall = merge(aAllActions[0], aAllActions[1], aAllActions[2], aAllActions[3]);
+						var mOverall = merge(aAllActions[0], aAllActions[1], aAllActions[2]);
 						var aAggregationNames = Object.keys(mOverall);
 
 						if (aAggregationNames.length === 0) {
 							mOverall = {};
 						} else if (aAggregationNames.length > 1) {
-							Log.error("reveal or addODataProperty action defined for more than 1 aggregation, that is not yet possible");
+							Log.error("reveal or addViaDelegate or custom add action defined for more than 1 aggregation, that is not yet possible");
 						}
 						if (aAggregationNames.length > 0) {
 							var sAggregationName = aAggregationNames[0];
@@ -812,10 +790,6 @@ sap.ui.define([
 									oPromise = oPromise.then(
 										this._createCommandsForInvisibleElement.bind(this, oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex));
 									break;
-								case "odata":
-									oPromise = oPromise.then(
-										this._createCommandsForODataElement.bind(this, oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex));
-									break;
 								case "delegate":
 									oPromise = oPromise.then(
 										this._createCommandsForAddViaDelegate.bind(this, oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex));
@@ -865,79 +839,6 @@ sap.ui.define([
 					}
 					return oCompositeCommand;
 				});
-		},
-
-		_waitForChangeHandlerSettings : function(mODataPropertyAction) {
-			if (mODataPropertyAction.changeHandlerSettings instanceof Promise) {
-				return mODataPropertyAction.changeHandlerSettings
-					.then(function(mSettings) {
-						mODataPropertyAction.changeHandlerSettings = mSettings;
-						return mODataPropertyAction.changeHandlerSettings;
-					});
-			}
-			return Promise.resolve(mODataPropertyAction.changeHandlerSettings);
-		},
-
-		_createCommandsForODataElement : function(oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex) {
-			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
-			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
-			return this._waitForChangeHandlerSettings(mActions.addODataProperty.action)
-
-				.then(function(mChangeHandlerSettings) {
-					var mRequiredLibraries = mChangeHandlerSettings
-						&& mChangeHandlerSettings.content
-						&& mChangeHandlerSettings.content.requiredLibraries;
-					if (mRequiredLibraries) {
-						return this._createCommandForAddLibrary(mParents, mRequiredLibraries, oParentAggregationDTMetadata)
-							.then(function(oCommandForAddLibrary) {
-								oCompositeCommand.addCommand(oCommandForAddLibrary);
-							});
-					}
-				}.bind(this))
-
-				.then(this._createCommandForOData.bind(this, oSelectedElement, mActions, mParents, oSiblingElement, iIndex))
-
-				.then(function(oCommandsForOData) {
-					oCompositeCommand.addCommand(oCommandsForOData);
-					return oCompositeCommand;
-				});
-		},
-
-		_createCommandForOData: function(oSelectedElement, mActions, mParents, oSiblingElement, iIndex) {
-			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
-			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
-			var mODataPropertyAction = mActions.addODataProperty.action;
-			return this._waitForChangeHandlerSettings(mODataPropertyAction)
-
-				.then(function(mChangeHandlerSettings) {
-					var sVariantManagementReference;
-					var sODataServiceVersion = mChangeHandlerSettings
-						&& mChangeHandlerSettings.key
-						&& mChangeHandlerSettings.key.oDataServiceVersion;
-					var oRefControlForId = mParents.parent; //e.g. SmartForm
-					if (mODataPropertyAction.changeOnRelevantContainer) {
-						oRefControlForId = mParents.relevantContainer; //e.g. SimpleForm
-					}
-					var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
-					return this.hasChangeHandler(mODataPropertyAction.changeType, oRefControlForId)
-						.then(function(bHasChangeHandler) {
-							if (mParents.parentOverlay.getVariantManagement && bHasChangeHandler) {
-								sVariantManagementReference = mParents.parentOverlay.getVariantManagement();
-							}
-							var oManifest = FlUtils.getAppComponentForControl(mParents.parent).getManifest();
-							var sServiceUri = FlUtils.getODataServiceUriFromManifest(oManifest);
-							return this.getCommandFactory().getCommandFor(mParents.parent, "addODataProperty", {
-								newControlId: Utils.createFieldLabelId(oRefControlForId, oSelectedElement.entityType, oSelectedElement.bindingPath),
-								index: iIndex !== undefined ? iIndex : iAddTargetIndex,
-								bindingString: oSelectedElement.bindingPath,
-								entityType: oSelectedElement.entityType,
-								parentId: mParents.parent.getId(),
-								oDataServiceVersion: sODataServiceVersion,
-								oDataServiceUri: sServiceUri,
-								propertyName: oSelectedElement.name
-							}, oParentAggregationDTMetadata, sVariantManagementReference);
-						}.bind(this));
-				}.bind(this));
 		},
 
 		_createCommandForAddLibrary: function(mParents, mRequiredLibraries, oParentAggregationDTMetadata) {
@@ -1086,14 +987,17 @@ sap.ui.define([
 					}
 					var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
 					var sCommandName = "addDelegateProperty";
+					var oManifest = FlUtils.getAppComponentForControl(mParents.parent).getManifest();
+					var sServiceUri = FlUtils.getODataServiceUriFromManifest(oManifest);
 					return this.getCommandFactory().getCommandFor(mParents.parent, sCommandName, {
 						newControlId: Utils.createFieldLabelId(oParent, oSelectedElement.entityType, oSelectedElement.bindingPath),
 						index: iIndex !== undefined ? iIndex : iAddTargetIndex,
 						bindingString: oSelectedElement.bindingPath,
-						entityType: oSelectedElement.entityType,
+						entityType: oSelectedElement.entityType, // needed for custom field support tool
 						parentId: mParents.parent.getId(),
 						propertyName: oSelectedElement.name,
 						oDataServiceVersion: oSelectedElement.oDataServiceVersion,
+						oDataServiceUri: sServiceUri,
 						modelType: mAddViaDelegateAction.delegateInfo.modelType,
 						relevantContainerId: mParents.relevantContainer.getId()
 					}, oParentAggregationDTMetadata, sVariantManagementReference);
@@ -1144,8 +1048,6 @@ sap.ui.define([
 								if (!bEditable && !bOverlayIsSibling) {
 									if (mActions.addViaDelegate) {
 										return this.checkAggregationsOnSelf(mParents.parentOverlay, "add", undefined, "delegate");
-									} else if (mActions.addODataProperty) {
-										return this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
 									}
 								}
 
@@ -1181,24 +1083,9 @@ sap.ui.define([
 			return this._getActions(bOverlayIsSibling, oElementOverlay)
 				.then(function(mAllActions) {
 					mActions = mAllActions;
-
-					var oAddPropertyPromise = Promise.resolve([]);
-					if (mActions.addViaDelegate) {
-						oAddPropertyPromise = this.getAnalyzer().getUnrepresentedDelegateProperties(mParents.parent, mActions.addViaDelegate);
-					}
-
-					if (mActions.addODataProperty) {
-						oAddPropertyPromise = this._waitForChangeHandlerSettings(mActions.addODataProperty.action)
-							.then(function(mChangeHandlerSettings) {
-								// No dialog elements for metadata with changeHandlerSettings and without createFunction
-								return this._checkIfCreateFunctionIsAvailable(mChangeHandlerSettings) ?
-									this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty) : [];
-							}.bind(this));
-					}
-
 					aPromises.push(
 						mActions.reveal ? this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions) : Promise.resolve([]),
-						oAddPropertyPromise,
+						mActions.addViaDelegate ? this.getAnalyzer().getUnrepresentedDelegateProperties(mParents.parent, mActions.addViaDelegate) : Promise.resolve([]),
 						mActions.addViaCustom ? this.getAnalyzer().getCustomAddItems(mParents.parent, mActions.addViaCustom, mActions.aggregation) : Promise.resolve([])
 					);
 
@@ -1208,20 +1095,20 @@ sap.ui.define([
 				}.bind(this))
 
 				.then(function() {
-					if (mActions.addViaDelegate || mActions.addODataProperty) {
+					if (mActions.addViaDelegate) {
 						return Utils.isServiceUpToDate(mParents.parent);
 					}
 				})
 
 				.then(function() {
-					if (mActions.addViaDelegate || mActions.addODataProperty) {
+					if (mActions.addViaDelegate) {
 						return Utils.isExtensibilityEnabledInSystem(mParents.parent);
 					}
 					this.getDialog()._oCustomFieldButton.setVisible(false);
 				}.bind(this))
 
 				.then(function(bExtensibilityEnabled) {
-					if (mActions.addViaDelegate || mActions.addODataProperty) {
+					if (mActions.addViaDelegate) {
 						this.getDialog()._oCustomFieldButton.setVisible(bExtensibilityEnabled);
 						this.getDialog().setCustomFieldEnabled(false);
 						return Utils.isCustomFieldAvailable(mParents.parent);
@@ -1279,8 +1166,8 @@ sap.ui.define([
 							rank: iRank,
 							icon: sIcon
 						};
-						// check if responsible element exist on either "reveal" or "addODataProperty" actions
-						aMenuItems.push(this.enhanceItemWithResponsibleElement(oMenuItem, aElementOverlays, ["addODataProperty", "reveal", "custom"]));
+						// check if responsible element exist on either "reveal" or "addViaDelegate" actions
+						aMenuItems.push(this.enhanceItemWithResponsibleElement(oMenuItem, aElementOverlays, ["addViaDelegate", "reveal", "custom"]));
 					}
 
 					bOverlayIsSibling = false;

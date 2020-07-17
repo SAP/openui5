@@ -228,10 +228,7 @@ sap.ui.define([
 								oControl = oRelevantContainer;
 								oElementDesignTimeMetadata = oElementOverlay.getParentAggregationOverlay().getDesignTimeMetadata();
 							} else if (oAction.name === "addODataProperty") {
-								var aAddODataPropertyActions = oElementDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", oControl);
-								assert.equal(aAddODataPropertyActions.length, 1, "there should be only one aggregation with the possibility to do addODataProperty action");
-								oAggregationOverlay = oControlOverlay.getAggregationOverlay(aAddODataPropertyActions[0].aggregation);
-								oElementDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
+								assert.ok(false, "addODataProperty action is outdated. Use addViaDelegate action instead.");
 							} else if (Array.isArray(oAction.name)) {
 								var aAddActions = oElementDesignTimeMetadata.getActionDataFromAggregations(oAction.name[0], oControl, undefined, oAction.name[1]);
 								assert.equal(aAddActions.length, 1, "there should be only one aggregation with the possibility to do an add " + oAction.name[1] + " action");

@@ -30,7 +30,7 @@ sap.ui.define([
 			var mShared = {
 				view: oView,
 				group: oView.byId("GroupEntityType01"),
-				mAddODataPropertyAction: undefined,
+				mAddViaDelegateAction: undefined,
 				delegate: undefined
 			};
 			return Promise.all([
@@ -39,7 +39,7 @@ sap.ui.define([
 					sap.ui.require(["sap/ui/rta/test/additionalElements/V2StackDelegate"], resolve);
 				})
 			]).then(function(aArgs) {
-				mShared.mAddODataPropertyAction = aArgs[0].aggregations.formElements.actions.addODataProperty;
+				mShared.mAddViaDelegateAction = aArgs[0].aggregations.formElements.actions.add.delegate;
 				mShared.delegate = aArgs[1];
 				return mShared;
 			});
@@ -70,7 +70,7 @@ sap.ui.define([
 					return _setupSharedObjects().then(function(mShared) {
 						//Shared objects for all tests => Don't modify them, it will have side-effects on other tests!
 						this.oView = mShared.view;
-						this.mAddODataPropertyAction = mShared.mAddODataPropertyAction;
+						this.mAddViaDelegateAction = mShared.mAddViaDelegateAction;
 						this.oDelegate = mShared.delegate;
 						this.sandbox = sinon.sandbox.create();
 					}.bind(this));
