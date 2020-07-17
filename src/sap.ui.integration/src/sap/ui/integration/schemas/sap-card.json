@@ -25,6 +25,10 @@
 				"1.12.0"
 			]
 		},
+		"designtime": {
+			"description": "The path to the design time folder with assets files.",
+			"type": "string"
+		},
 		"configuration": {
 			"description": "Represents configuration with parameters and destinations, which can be used inside the card",
 			"type": "object",
@@ -1839,7 +1843,7 @@
 					"description": "The thresholds indicators of the bar",
 					"type": "array",
 					"items": {
-						"$ref": "#/definitions/Microchart.Bullet.Threshold" 
+						"$ref": "#/definitions/Microchart.Bullet.Threshold"
 					}
 				}
 			}
@@ -1892,7 +1896,7 @@
 					"description": "The bars of the chart.",
 					"type": "array",
 					"items": {
-						"$ref": "#/definitions/Microchart.StackedBar.Bar" 
+						"$ref": "#/definitions/Microchart.StackedBar.Bar"
 					}
 				}
 			}
