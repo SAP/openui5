@@ -3620,15 +3620,20 @@ function(
 	 */
 	MultiComboBox.prototype._syncInputWidth = function (oTokenizer) {
 		var oFocusDomRef = this.getDomRef('inner'),
-			iSummedIconsWidth, iTokenizerWidth;
+			iSummedIconsWidth, fTokenizerWidth;
 
 		if (!oFocusDomRef || (oTokenizer && !oTokenizer.getDomRef())) {
 			return;
 		}
 
+		/* Most of the time the tokenizer's BoundingClientRect width is a decimal number.
+		Rounding it to an integer causes visual bugs in some cases (depending on the tokens'
+		width - see BCP: 2070139347)as the width is no longer the exact calculated one.
+
+		Handle numbers as floating and rounded to 2 decimal points for cross-browser compatability */
+		fTokenizerWidth = parseFloat(oTokenizer.getDomRef().getBoundingClientRect().width.toFixed(2));
 		iSummedIconsWidth = this._calculateIconsSpace();
-		iTokenizerWidth = Math.ceil(oTokenizer.getDomRef().getBoundingClientRect().width);
-		oFocusDomRef.style.width = 'calc(100% - ' + Math.floor(iSummedIconsWidth + iTokenizerWidth) + "px";
+		oFocusDomRef.style.width = 'calc(100% - ' + parseFloat(iSummedIconsWidth + fTokenizerWidth) + "px)";
 	};
 
 	/**
