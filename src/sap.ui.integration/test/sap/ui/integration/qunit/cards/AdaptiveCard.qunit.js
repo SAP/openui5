@@ -560,7 +560,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			oCard.attachEvent("_ready", setTimeout(function() {
-				assert.ok(oSetupCardFunctionSpy.called, "The _setupMSCardContent function should be called.")
+				assert.ok(oSetupCardFunctionSpy.called, "The _setupMSCardContent function should be called.");
 				assert.ok(oRenderCardFunctionSpy.called, "The _renderMSCardContent function should be called.");
 				assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
 
