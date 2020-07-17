@@ -1,10 +1,10 @@
-/*global QUnit, sinon*/
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/* global QUnit */
+
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"jquery.sap.global",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/m/SearchField",
 	"sap/m/Label",
 	"sap/ui/Device",
@@ -13,10 +13,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/SuggestionItem"
 ], function(
-	qutils,
+	Core,
+	QunitUtils,
 	createAndAppendDiv,
 	jQuery,
-	EventExtension,
 	SearchField,
 	Label,
 	Device,
@@ -25,11 +25,10 @@ sap.ui.define([
 	Button,
 	SuggestionItem
 ) {
+	"use strict";
 	createAndAppendDiv("content");
 
-
-	var sf1, sf2, sf3,
-		sPlaceholder = "search for..",
+	var sPlaceholder = "search for..",
 		sValue = "value",
 		sQuery = "",
 		sLive  = "",
@@ -106,47 +105,47 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach : function() {
-			sf1 = sap.ui.getCore().getControl("sf1");
-			sf2 = sap.ui.getCore().getControl("sf2");
-			sf3 = sap.ui.getCore().getControl("sf3");
-			sf4 = sap.ui.getCore().getControl("sf4");
-			sf1Dom = sf1.getFocusDomRef();
-			sf2Dom = sf2.getFocusDomRef();
-			sf3Dom = sf3.getFocusDomRef();
-			sf4Dom = sf4.getFocusDomRef();
+			this.sf1 = Core.byId("sf1");
+			this.sf2 = Core.byId("sf2");
+			this.sf3 = Core.byId("sf3");
+			this.sf4 = Core.byId("sf4");
+			this.sf1Dom = this.sf1.getFocusDomRef();
+			this.sf2Dom = this.sf2.getFocusDomRef();
+			this.sf3Dom = this.sf3.getFocusDomRef();
+			this.sf4Dom = this.sf4.getFocusDomRef();
 		},
 		afterEach : function() {
-			sf1 = null;
-			sf2 = null;
-			sf3 = null;
-			sf4 = null;
-			sf1Dom = null;
-			sf2Dom = null;
-			sf3Dom = null;
-			sf4Dom = null;
+			this.sf1 = null;
+			this.sf2 = null;
+			this.sf3 = null;
+			this.sf4 = null;
+			this.sf1Dom = null;
+			this.sf2Dom = null;
+			this.sf3Dom = null;
+			this.sf4Dom = null;
 			aEvents = [];
 		}
 	});
 
 	// test properties
 	QUnit.test("Properties", function(assert) {
-		assert.equal(sf1.getValue(), sValue, "Value property, UI5");
-		assert.equal(sf1Dom.value, sValue, "Value property, DOM");
-		assert.equal(sf2.getPlaceholder(), sPlaceholder, "Placeholder property, UI5");
-		if (sf2Dom.placeholder){
-			assert.equal(sf2Dom.placeholder, sPlaceholder, "Placeholder property, DOM");
+		assert.equal(this.sf1.getValue(), sValue, "Value property, UI5");
+		assert.equal(this.sf1Dom.value, sValue, "Value property, DOM");
+		assert.equal(this.sf2.getPlaceholder(), sPlaceholder, "Placeholder property, UI5");
+		if (this.sf2Dom.placeholder){
+			assert.equal(this.sf2Dom.placeholder, sPlaceholder, "Placeholder property, DOM");
 		} else {
 			// IE9
 			// IE9/IE10 cleanup comment: there are still issues with IE11 and placeholders
 			// TODO remove after the end of support for Internet Explorer
-			assert.equal(sf2.$("P").text(), sPlaceholder, "Placeholder in IE9");
+			assert.equal(this.sf2.$("P").text(), sPlaceholder, "Placeholder in IE9");
 		}
-		assert.equal(sf2.getEnabled(), false, "Enabled property, UI5");
-		assert.equal(sf2Dom.disabled, true, "Disabled property, DOM");
-		assert.ok(sf2.$().hasClass("sapMSFDisabled"),"CSS class name for \"disabled\" is set");
+		assert.equal(this.sf2.getEnabled(), false, "Enabled property, UI5");
+		assert.equal(this.sf2Dom.disabled, true, "Disabled property, DOM");
+		assert.ok(this.sf2.$().hasClass("sapMSFDisabled"),"CSS class name for \"disabled\" is set");
 		// Button icons
-		assert.ok(/\uE00D/.test(getIconId(sf1, "search")), "First button icon is magnifier");
-		assert.ok(/\uE00A/.test(getIconId(sf3, "search")), "Third button icon is synchronize");
+		assert.ok(/\uE00D/.test(getIconId(this.sf1, "search")), "First button icon is magnifier");
+		assert.ok(/\uE00A/.test(getIconId(this.sf3, "search")), "Third button icon is synchronize");
 		// showSearchButton:false :
 		assert.ok(jQuery("#sf4-search").length == 0, "Search button is not rendered if showSearchButton == false");
 		var rightOffset = window.getComputedStyle(jQuery("#sf4-reset")[0]).getPropertyValue("right");
@@ -164,12 +163,9 @@ sap.ui.define([
 			placeholder: sPlaceholder
 		});
 		sf.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		var describedById = sf3Dom.getAttribute("aria-describedby");
-		var labelledByIdSf3 = sf3Dom.getAttribute("aria-labelledby");
-		var sf6Dom = sap.ui.getCore().getControl("sf6").getFocusDomRef();
-		var labelledByIdSf6 = sf6Dom.getAttribute("aria-labelledby");
+		var describedById = this.sf3Dom.getAttribute("aria-describedby");
 		var aLabels = describedById.split(' ');
 		var bLabelsExist = aLabels.every(function(id){
 			return !!document.getElementById(id);
@@ -198,16 +194,16 @@ sap.ui.define([
 		doTouchEnd("sf2-reset");
 
 		setTimeout(function(){
-			assert.ok(sf1.getValue() == "", "Value property should be empty after reset, UI5");
-			assert.ok(sf1Dom.value == "", "Value property should be empty after reset, DOM");
+			assert.ok(this.sf1.getValue() == "", "Value property should be empty after reset, UI5");
+			assert.ok(this.sf1Dom.value == "", "Value property should be empty after reset, DOM");
 			assert.ok(sQuery == "", "Search query parameter should be empty after reset, Event");
-			assert.ok(sf2.getValue() == sValue, "Disabled searchField should not react on reset, UI5");
-			assert.ok(sf2Dom.value == sValue, "Disabled searchField should not react on reset, DOM");
+			assert.ok(this.sf2.getValue() == sValue, "Disabled searchField should not react on reset, UI5");
+			assert.ok(this.sf2Dom.value == sValue, "Disabled searchField should not react on reset, DOM");
 			// check events: both search and liveChange should be fired
 			assert.ok(aEvents.length >= 2, "there should be at least 2 events in the log");
 			aEvents = [];
 			done();
-			}, 200);
+		}.bind(this), 200);
 	});
 
 	QUnit.test("Focused SearchField", function(assert) {
@@ -217,15 +213,15 @@ sap.ui.define([
 		doTouchEnd("sf3-reset");
 
 		setTimeout(function(){
-			assert.ok(sf3.$().hasClass("sapMFocus"), "Third search field is focused after reset button press");
-			assert.ok(/\uE00D/.test(getIconId(sf3, "search")), "Focused search field icon is magnifier");
+			assert.ok(this.sf3.$().hasClass("sapMFocus"), "Third search field is focused after reset button press");
+			assert.ok(/\uE00D/.test(getIconId(this.sf3, "search")), "Focused search field icon is magnifier");
 
 			document.activeElement.blur();
 			setTimeout( function(){
-				assert.ok(/\uE00A/.test(getIconId(sf3, "search")), "Defocused search field icon is synchronize");
+				assert.ok(/\uE00A/.test(getIconId(this.sf3, "search")), "Defocused search field icon is synchronize");
 				done();
-			}, 350);
-		}, 200);
+			}.bind(this), 350);
+		}.bind(this), 200);
 
 	});
 
@@ -238,7 +234,7 @@ sap.ui.define([
 				showRefreshButton: true,
 				visible: true
 			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oSearchField.destroy();
@@ -285,6 +281,29 @@ sap.ui.define([
 		assert.notOk(this.oSearchField.getDomRef().style.width, "Width style is not added");
 	});
 
+	QUnit.test("Setting value to empty string should update the search field", function (assert) {
+		// arrange
+		var oSF = new SearchField();
+		oSF.placeAt("content");
+		Core.applyChanges();
+
+		// act
+		oSF.$("I").val("Some value").trigger("input");
+
+		// assert
+		assert.strictEqual(oSF.getDomRef("I").value, "Some value", "There is value displayed in the DOM after typing");
+
+		// act
+		oSF.setValue("");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oSF.getDomRef("I").value, "", "The value is successfully displayed as '' in the DOM");
+
+		// clean up
+		oSF.destroy();
+	});
+
 	QUnit.module("SearchField tooltip:", {
 		beforeEach: function () {
 			this.oSearchField = new SearchField("SF", {
@@ -294,9 +313,9 @@ sap.ui.define([
 				visible: true
 			}).placeAt("content");
 			this.oButton = new Button({}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
-			this.oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this.oRB = Core.getLibraryResourceBundle("sap.m");
 			this.oMockEvent = {type: "focus"};
 
 		},
@@ -307,6 +326,7 @@ sap.ui.define([
 			this.oMockEvent = null;
 		}
 	});
+
 	QUnit.test("After initial loading only Search button", function (assert) {
 		//act
 		this.oSearchField.setShowRefreshButton(false);
@@ -391,7 +411,7 @@ sap.ui.define([
 
 			this.oMockEvent = {type: "focus"};
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oSearchField.destroy();
@@ -430,7 +450,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oSearchField = new SearchField();
 			this.oSearchField.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oSearchField.destroy();
@@ -469,8 +489,8 @@ sap.ui.define([
 		var fnFireSearchSpy = this.spy(this.oSearchField, "fireSearch");
 
 		// act
-		sap.ui.test.qunit.triggerCharacterInput(this.oSearchField.getFocusDomRef(), "a");
-		qutils.triggerKeydown(this.oSearchField.getDomRef("I"), KeyCodes.ENTER);
+		QunitUtils.triggerCharacterInput(this.oSearchField.getFocusDomRef(), "a");
+		QunitUtils.triggerKeydown(this.oSearchField.getDomRef("I"), KeyCodes.ENTER);
 
 		// assertions
 		assert.strictEqual(fnFireSearchSpy.callCount, 1, "The search event is fired");
@@ -479,7 +499,7 @@ sap.ui.define([
 		this.oSearchField.onChange();
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is not fired");
 
-		sap.ui.test.qunit.triggerCharacterInput(this.oSearchField.getFocusDomRef(), "ab");
+		QunitUtils.triggerCharacterInput(this.oSearchField.getFocusDomRef(), "ab");
 
 		this.oSearchField.onChange();
 		assert.strictEqual(fnFireChangeSpy.callCount, 2, "The change event is fired");
@@ -518,7 +538,7 @@ sap.ui.define([
 				}.bind(this)
 			});
 			this.oSearchField.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oSearchField.destroy();
@@ -538,7 +558,7 @@ sap.ui.define([
 
 		// Act
 		this.oSearchField.focus();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		setTimeout(function () {
@@ -563,7 +583,7 @@ sap.ui.define([
 
 		// Act
 		this.oSearchField.focus();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		setTimeout(function () {
@@ -597,12 +617,12 @@ sap.ui.define([
 
 		// Act
 		this.oSearchField.focus();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		setTimeout(function () {
 			// tap on the 'OK' button
-			qutils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogFooter .sapMBtn")[0]);
+			QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogFooter .sapMBtn")[0]);
 
 			// Asert
 			setTimeout(function () {
@@ -623,12 +643,12 @@ sap.ui.define([
 
 		// Act
 		this.oSearchField.focus();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		setTimeout(function () {
 			// tap on the 'X' button
-			qutils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogTitle .sapMBtn")[0]);
+			QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogTitle .sapMBtn")[0]);
 
 			// Asert
 			setTimeout(function () {
@@ -652,7 +672,7 @@ sap.ui.define([
 		this.oSearchField.suggest();
 
 		// tap on the 'OK' button
-		qutils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogFooter .sapMBtn")[0]);
+		QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogFooter .sapMBtn")[0]);
 	});
 
 	QUnit.module("Suggestions aria-selected", {
@@ -668,7 +688,7 @@ sap.ui.define([
 				}.bind(this)
 			});
 			this.oSearchField.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oSearchField.destroy();
@@ -680,7 +700,7 @@ sap.ui.define([
 		var done = assert.async(),
 			oSuggestionItems = this.oSearchField.getSuggestionItems();
 		this.oSearchField.focus();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		setTimeout(function () {

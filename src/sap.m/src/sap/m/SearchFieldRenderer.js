@@ -19,7 +19,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oSF an object representation of the control that should be rendered
+	 * @param {sap.m.SearchField} oSF an object representation of the control that should be rendered
 	 */
 	SearchFieldRenderer.render = function(rm, oSF){
 		// render nothing if control is invisible
@@ -115,9 +115,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 				rm.attr("maxLength", oSF.getMaxLength());
 			}
 
-			if (sValue) {
-				rm.attr("value", sValue);
-			}
+			rm.attr("value", sValue);
 
 			// ARIA attributes
 			if (oSF.getEnabled() && bShowRefreshButton) {
