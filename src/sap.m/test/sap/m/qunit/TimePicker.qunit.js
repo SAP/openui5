@@ -3164,7 +3164,7 @@ sap.ui.define([
 		oGetMaskModeStub.restore();
 	});
 
-	QUnit.test("setValue method should MaskEnabler's setValue method with value formated using 'displayFormat'", function (assert) {
+	QUnit.test("setValue method should reset the mask temporary value", function (assert) {
 		// prepare
 		this.oTp.setValue("12:00:00 PM");
 		this.oTp.setValueFormat("HH:mm:ss a");
