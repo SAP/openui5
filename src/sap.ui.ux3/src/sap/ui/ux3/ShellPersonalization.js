@@ -330,7 +330,7 @@ sap.ui.define([
 				content:"<div id='" + sId + "bgImageHolder' class='sapUiUx3ShellP13nImgHolder'><img id='" + sId + "bgImageImg' src='"
 				+ (this.oTransientSettings.sBackgroundImageSrc ?
 						encodeXML(this.oTransientSettings.sBackgroundImageSrc)
-						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif')) + "'/></div>"}
+						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif')) + "'></div>"}
 			);
 
 			this.oBgImgOpacitySlider = new c.Slider({
@@ -385,7 +385,7 @@ sap.ui.define([
 				+ (this.oTransientSettings.sHeaderImageSrc ?
 						encodeXML(this.oTransientSettings.sHeaderImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
-				+ "'/></div>"}
+				+ "'></div>"}
 			);
 
 			this.oLineColorPicker = new ShellColorPicker(sId + "lineColorPicker");
@@ -421,7 +421,7 @@ sap.ui.define([
 				+ (this.oTransientSettings.sLogoImageSrc ?
 						encodeXML(this.oTransientSettings.sLogoImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
-				+ "'/></div>"}
+				+ "'></div>"}
 			);
 			this.oLogoRbg = new c.RadioButtonGroup()
 				.addItem(new Item({text:"Left",key:"left"}))
@@ -477,7 +477,7 @@ sap.ui.define([
 				+ (oActualSettings.sBackgroundImageSrc ?
 						encodeXML(oActualSettings.sBackgroundImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
-				+ "'/></div>");
+				+ "'></div>");
 		this.oBgImgOpacitySlider.setValue(100 - oActualSettings.fBgImgOpacity * 100);
 		this.oSidebarOpacitySlider.setValue(100 - oActualSettings.fSidebarOpacity * 100);
 
@@ -486,7 +486,7 @@ sap.ui.define([
 				+ (oActualSettings.sHeaderImageSrc ?
 						encodeXML(oActualSettings.sHeaderImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
-				+ "'/></div>");
+				+ "'></div>");
 
 		this.oLogoRbg.setSelectedIndex((oActualSettings.sLogoAlign == "center") ? 1 : 0);
 		this.oUseLogoSizeCb.setChecked(oActualSettings.bUseLogoSize);
@@ -494,7 +494,7 @@ sap.ui.define([
 				+ (oActualSettings.sLogoImageSrc ?
 						encodeXML(oActualSettings.sLogoImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
-				+ "'/></div>");
+				+ "'></div>");
 	};
 
 

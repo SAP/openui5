@@ -88,7 +88,7 @@ sap.ui.define(["sap/base/Log", "sap/base/security/encodeXML"],
 
 		if (bHasChildren) {
 			if ( bIsVoid ) {
-				Log.error("Void element '" + sEncodedTagName + "' is rendered with children");
+				Log.error("Void element '" + sEncodedTagName + "' is rendered with children and/or text content");
 			}
 
 			// append the text (do escaping)
@@ -100,7 +100,9 @@ sap.ui.define(["sap/base/Log", "sap/base/security/encodeXML"],
 			aElements.forEach(function(iIndex, oChildElement) {
 				oRM.renderControl(oChildElement);
 			});
+		}
 
+		if ( !bIsVoid ) {
 			// closing tag
 			oRM.close(sEncodedTagName);
 		}
