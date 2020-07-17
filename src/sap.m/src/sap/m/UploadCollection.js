@@ -797,12 +797,6 @@ sap.ui.define([
 		return sNoDataText;
 	};
 
-	UploadCollection.prototype.setNoDataText = function(sNoDataText) {
-		this.setProperty("noDataText", sNoDataText, true);
-		this.$().find("#" + this.getId() + "-no-data-text").text(sNoDataText);
-		return this;
-	};
-
 	UploadCollection.prototype.getNoDataDescription = function() {
 		var sNoDataDescription = this.getProperty("noDataDescription");
 		sNoDataDescription = sNoDataDescription || this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION");
@@ -1018,10 +1012,6 @@ sap.ui.define([
 	/* =========================================================== */
 
 	UploadCollection.prototype.onBeforeRendering = function() {
-		if (this.getModel() instanceof sap.ui.model.odata.v2.ODataModel && this.getBindingInfo("items")) {
-			var that = this;
-			this.getModel().attachEvent("requestCompleted", that._handleRequestCompleted, that);
-		}
 		this._RenderManager = this._RenderManager || sap.ui.getCore().createRenderManager();
 		var i, cAitems;
 		if (this._oListEventDelegate) {
@@ -2104,27 +2094,6 @@ sap.ui.define([
 			if (oPlaceHolder instanceof FileUploader) {
 				oPlaceHolder.setVisible(!uploadButtonInvisible);
 			}
-		}
-	};
-
-	/**
-	 * Handler for Model Request complete event.
-	 * @private
-	 */
-	UploadCollection.prototype._handleRequestCompleted = function(oEvent) {
-		if (oEvent.getParameter("success") === true) {
-			if (oEvent.getParameter("response")) {
-				var iCount = parseInt(oEvent.getParameter("response").responseText);
-				if (iCount === 0) {
-					this.$().find("#" + this.getId() + "-no-data-text").text(this.getNoDataText());
-					this.setBusy(false);
-				} else if (iCount !== "NaN" && iCount !== 0) {
-					this.setBusy(false);
-				}
-			}
-		} else if (oEvent.getParameter("success") === false && oEvent.getParameter("url") && oEvent.getParameter("url").indexOf("$count") !== -1) {
-			this.$().find("#" + this.getId() + "-no-data-text").text(this.getNoDataText());
-			this.setBusy(false);
 		}
 	};
 
