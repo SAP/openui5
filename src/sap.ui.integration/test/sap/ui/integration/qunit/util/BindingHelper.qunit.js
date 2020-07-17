@@ -226,6 +226,27 @@ function (
 		assert.strictEqual(vOutput.formatter.textFragments.join(""), "{{parameters.something}}/0", "The card placeholder is unchanged.");
 	});
 
+	QUnit.test("#createBindingInfos called with a placeholder should result in escaped placeholder", function (assert) {
+		var sInput = "Some binding {{parameters.city}} with parameter",
+			sExpected = "Some binding \\{\\{parameters.city\\}\\} with parameter";
+
+		assert.strictEqual(BindingHelper.createBindingInfos(sInput), sExpected, "The binding info shouldn't unescaped placeholders");
+	});
+
+	QUnit.test("#createBindingInfos should escape parameters and dataSources syntax", function (assert) {
+		var sInput = "Parameter {{parameters.city}}, data source {{dataSources.source}}",
+			sExpected = "Parameter \\{\\{parameters.city\\}\\}, data source \\{\\{dataSources.source\\}\\}";
+
+		assert.strictEqual(BindingHelper.createBindingInfos(sInput), sExpected, "The binding info contains escaped placeholders");
+	});
+
+	QUnit.test("#createBindingInfos should NOT escape destinations syntax", function (assert) {
+		var sInput = "Destination {{destinations.city}}",
+			sExpected = "Destination {{destinations.city}}";
+
+		assert.strictEqual(BindingHelper.createBindingInfos(sInput), sExpected, "Destinations syntax is not escaped");
+	});
+
 	QUnit.module("Static method #prependRelativePaths'");
 
 	QUnit.test("#prependRelativePaths doesn't change primitive types", function (assert) {
