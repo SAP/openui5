@@ -119,6 +119,8 @@ sap.ui.define([
 				return AdaptiveContent;
 			case "analytical":
 				return AnalyticalContent;
+			case "analyticscloud":
+				return AnalyticsCloudContent;
 			case "calendar":
 				return CalendarContent;
 			case "component":

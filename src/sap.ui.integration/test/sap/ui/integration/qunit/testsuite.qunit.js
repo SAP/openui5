@@ -257,6 +257,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"util/ContentFactory": {},
 			"util/DataProvider": {
 				coverage: {
 					only: [
