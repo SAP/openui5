@@ -2376,10 +2376,11 @@ sap.ui.define([
 		if (oEventInfo.detailedReason === "AddVirtualContext") {
 			var oVirtualRow = this._getRowClone("virtual");
 			oVirtualRow.setBindingContext(this._getRowContexts(null, true)[0], this.getBindingInfo("rows").model);
-			this.insertAggregation("rows", oVirtualRow, 0, true);
+			this.addAggregation("rows", oVirtualRow,true);
+			this.removeAggregation("rows", oVirtualRow, true);
+			oVirtualRow.destroy();
 			return;
 		} else if (oEventInfo.detailedReason === "RemoveVirtualContext") {
-			this.removeAggregation("rows", 0, true).destroy();
 			return;
 		}
 
