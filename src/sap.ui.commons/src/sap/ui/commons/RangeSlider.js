@@ -32,6 +32,7 @@ sap.ui.define(['./Slider', './library', './RangeSliderRenderer'],
 	var RangeSlider = Slider.extend("sap.ui.commons.RangeSlider", /** @lends sap.ui.commons.RangeSlider.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

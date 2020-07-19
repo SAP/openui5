@@ -41,6 +41,7 @@ sap.ui.define([
 	var HorizontalDivider = Control.extend("sap.ui.commons.HorizontalDivider", /** @lends sap.ui.commons.HorizontalDivider.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 			/**
 			 * Defines the width of the divider.

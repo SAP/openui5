@@ -42,6 +42,7 @@ sap.ui.define([
 	 */
 	var BorderLayout = Control.extend("sap.ui.commons.layout.BorderLayout", /** @lends sap.ui.commons.layout.BorderLayout.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.commons",
 		properties : {
 

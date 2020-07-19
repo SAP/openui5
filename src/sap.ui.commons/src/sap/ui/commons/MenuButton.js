@@ -39,6 +39,7 @@ sap.ui.define([
 	var MenuButton = Button.extend("sap.ui.commons.MenuButton", /** @lends sap.ui.commons.MenuButton.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

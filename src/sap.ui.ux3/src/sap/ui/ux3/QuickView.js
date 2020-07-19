@@ -44,6 +44,7 @@ sap.ui.define([
 	 */
 	var QuickView = CalloutBase.extend("sap.ui.ux3.QuickView", /** @lends sap.ui.ux3.QuickView.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

@@ -142,7 +142,7 @@ function(
 				 * @deprecated Since version 1.58. Replaced with N-more/N-items labels, which work in all cases.
 				 * @since 1.28
 				 */
-				enableMultiLineMode: {type: "boolean", group: "Behavior", defaultValue: false},
+				enableMultiLineMode: {type: "boolean", group: "Behavior", defaultValue: false, deprecated: true},
 
 				/**
 				 * The max number of tokens that is allowed in MultiInput.
@@ -202,7 +202,8 @@ function(
 						 * This parameter is used when tokenChange type is "tokenChanged".
 						 */
 						removedTokens: {type: "sap.m.Token[]"}
-					}
+					},
+					deprecated: true
 				},
 
 				/**

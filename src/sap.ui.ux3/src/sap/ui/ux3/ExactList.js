@@ -70,6 +70,7 @@ sap.ui.define([
 	 */
 	var ExactList = Control.extend("sap.ui.ux3.ExactList", /** @lends sap.ui.ux3.ExactList.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

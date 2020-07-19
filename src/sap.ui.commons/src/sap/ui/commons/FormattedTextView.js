@@ -41,6 +41,7 @@ sap.ui.define([
 			metadata: {
 
 				library: "sap.ui.commons",
+				deprecated: true,
 				properties: {
 					/**
 					 * The ARIA role for the control.

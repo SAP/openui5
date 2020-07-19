@@ -52,6 +52,7 @@ sap.ui.define([
 	var Splitter = Control.extend("sap.ui.commons.Splitter", /** @lends sap.ui.commons.Splitter.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

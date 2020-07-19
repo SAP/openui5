@@ -41,6 +41,7 @@ sap.ui.define([
 	var Paginator = Control.extend("sap.ui.commons.Paginator", /** @lends sap.ui.commons.Paginator.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

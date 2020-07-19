@@ -54,6 +54,7 @@ sap.ui.define([
 	var MenuBar = Control.extend("sap.ui.commons.MenuBar", /** @lends sap.ui.commons.MenuBar.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

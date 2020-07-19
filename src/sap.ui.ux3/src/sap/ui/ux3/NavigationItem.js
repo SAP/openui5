@@ -30,6 +30,7 @@ sap.ui.define(['sap/ui/core/Item', './library'],
 	 */
 	var NavigationItem = Item.extend("sap.ui.ux3.NavigationItem", /** @lends sap.ui.ux3.NavigationItem.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

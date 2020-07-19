@@ -72,7 +72,7 @@ sap.ui.define([
 			 * The value must be between 0 and 9999
 			 * @deprecated as of version 1.34.0, replaced by <code>date</code> property
 			 */
-			year : {type : "int", group : "Data", defaultValue : 2000},
+			year : {type : "int", group : "Data", defaultValue : 2000, deprecated: true},
 
 			/**
 			 * number of displayed years

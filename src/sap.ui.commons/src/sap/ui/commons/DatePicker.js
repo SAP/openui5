@@ -55,6 +55,7 @@ sap.ui.define([
 	var DatePicker = TextField.extend("sap.ui.commons.DatePicker", /** @lends sap.ui.commons.DatePicker.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

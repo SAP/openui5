@@ -150,6 +150,7 @@ sap.ui.define([
 			 * @deprecated Since version 1.82, replaced by <code>tokenDelete</code> event.
 			 */
 			tokenChange : {
+				deprecated: true,
 				parameters : {
 
 					/**
@@ -191,6 +192,7 @@ sap.ui.define([
 			 * @since 1.46
 			 */
 			tokenUpdate: {
+				deprecated: true,
 				allowPreventDefault : true,
 				parameters: {
 					/**

@@ -30,6 +30,7 @@ sap.ui.define(['sap/base/Log', 'sap/ui/commons/library', 'sap/ui/core/Element', 
 	 */
 	var PositionContainer = Element.extend("sap.ui.commons.layout.PositionContainer", /** @lends sap.ui.commons.layout.PositionContainer.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.commons",
 		properties : {
 

@@ -28,6 +28,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 */
 	var ThingGroup = Element.extend("sap.ui.ux3.ThingGroup", /** @lends sap.ui.ux3.ThingGroup.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

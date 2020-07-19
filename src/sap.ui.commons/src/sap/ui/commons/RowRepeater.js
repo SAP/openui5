@@ -51,6 +51,7 @@ sap.ui.define([
 	var RowRepeater = Control.extend("sap.ui.commons.RowRepeater", /** @lends sap.ui.commons.RowRepeater.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 			/**
 			 * Number of rows displayed.

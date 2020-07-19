@@ -47,6 +47,7 @@ sap.ui.define([
 	var CalloutBase = TooltipBase.extend("sap.ui.commons.CalloutBase", /** @lends sap.ui.commons.CalloutBase.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		events : {
 
 			/**

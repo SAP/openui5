@@ -72,6 +72,7 @@ sap.ui.define([
         var ToolPopup = Control.extend("sap.ui.ux3.ToolPopup", /** @lends sap.ui.ux3.ToolPopup.prototype */ {
             metadata: {
 
+                deprecated: true,
                 interfaces: [
                     "sap.ui.core.PopupInterface"
                 ],

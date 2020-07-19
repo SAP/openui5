@@ -48,7 +48,8 @@ sap.ui.define([
 				contributor: {
 					type: "string",
 					group: "Data",
-					defaultValue: null
+					defaultValue: null,
+					deprecated: true
 				},
 
 				/**
@@ -76,7 +77,8 @@ sap.ui.define([
 				fileSize: {
 					type: "float",
 					group: "Misc",
-					defaultValue: null
+					defaultValue: null,
+					deprecated: true
 				},
 
 				/**
@@ -105,7 +107,8 @@ sap.ui.define([
 				uploadedDate: {
 					type: "string",
 					group: "Misc",
-					defaultValue: null
+					defaultValue: null,
+					deprecated: true
 				},
 
 				/**

@@ -50,6 +50,7 @@ sap.ui.define([
 	var StandardTile = Tile.extend("sap.m.StandardTile", /** @lends sap.m.StandardTile.prototype */ { metadata : {
 
 		library : "sap.m",
+		deprecated: true,
 		properties : {
 
 			/**

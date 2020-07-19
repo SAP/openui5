@@ -186,7 +186,8 @@ sap.ui.define([
 						 * This refers to the control which opens the popover.
 						 */
 						openBy: {type: "sap.ui.core.Control"}
-					}
+					},
+					deprecated: true
 				},
 				/**
 				 * Event fired when description is shown.

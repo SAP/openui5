@@ -50,6 +50,7 @@ sap.ui.define([
 	 */
 	var ThingInspector = Overlay.extend("sap.ui.ux3.ThingInspector", /** @lends sap.ui.ux3.ThingInspector.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

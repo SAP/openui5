@@ -39,6 +39,7 @@ sap.ui.define([
 	 */
 	var FacetFilter = Control.extend("sap.ui.ux3.FacetFilter", /** @lends sap.ui.ux3.FacetFilter.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 			/**

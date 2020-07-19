@@ -39,6 +39,7 @@ sap.ui.define([
 	var RichTooltip = TooltipBase.extend("sap.ui.commons.RichTooltip", /** @lends sap.ui.commons.RichTooltip.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

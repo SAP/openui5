@@ -65,6 +65,7 @@ sap.ui.define([
 	 */
 	var NotificationBar = Control.extend("sap.ui.ux3.NotificationBar", /** @lends sap.ui.ux3.NotificationBar.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

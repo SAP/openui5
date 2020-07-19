@@ -36,6 +36,7 @@ sap.ui.define([
 	var ResponsiveContainer = Control.extend("sap.ui.commons.ResponsiveContainer", /** @lends sap.ui.commons.ResponsiveContainer.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

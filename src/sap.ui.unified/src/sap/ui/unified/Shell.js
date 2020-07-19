@@ -35,6 +35,7 @@ sap.ui.define(['./ShellHeader', './ShellLayout', './library', './ShellRenderer']
 	var Shell = ShellLayout.extend("sap.ui.unified.Shell", /** @lends sap.ui.unified.Shell.prototype */ { metadata : {
 
 		library : "sap.ui.unified",
+		deprecated : true,
 		properties : {
 
 			/**

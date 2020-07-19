@@ -74,7 +74,8 @@ sap.ui.define([
 					contentDesign: {
 						type: "sap.uxap.ObjectPageHeaderDesign",
 						group: "Misc",
-						defaultValue: ObjectPageHeaderDesign.Light
+						defaultValue: ObjectPageHeaderDesign.Light,
+						deprecated: true
 					}
 				},
 				aggregations: {

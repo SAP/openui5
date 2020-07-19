@@ -191,7 +191,7 @@ sap.ui.define([
 			 * @deprecated Since version 1.81. Please use the <code>appointmentHeight</code> with value "Automatic" property instead.
 			 * @since 1.38.0
 			 */
-			appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false},
+			appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 			/**
 			 * Defines the visualization of the <code>CalendarAppoinment</code>

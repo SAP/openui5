@@ -44,6 +44,7 @@ sap.ui.define([
 	var TriStateCheckBox = Control.extend("sap.ui.commons.TriStateCheckBox", /** @lends sap.ui.commons.TriStateCheckBox.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

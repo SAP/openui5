@@ -47,6 +47,7 @@ sap.ui.define([
 	var CheckBox = Control.extend("sap.ui.commons.CheckBox", /** @lends sap.ui.commons.CheckBox.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

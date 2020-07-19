@@ -31,6 +31,7 @@ sap.ui.define(['sap/ui/dom/containsOrEquals', './library', 'sap/ui/core/Element'
 	var RoadMapStep = Element.extend("sap.ui.commons.RoadMapStep", /** @lends sap.ui.commons.RoadMapStep.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

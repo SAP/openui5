@@ -60,6 +60,7 @@ sap.ui.define([
 					"sap.ui.core.PopupInterface"
 				],
 				library: "sap.ui.commons",
+				deprecated: true,
 				properties: {
 
 					/**

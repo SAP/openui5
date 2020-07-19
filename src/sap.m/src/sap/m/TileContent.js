@@ -40,7 +40,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './TileContentRenderer'],
 				 * Updates the size of the tile. If it is not set, then the default size is applied based on the device tile.
 				 * @deprecated Since version 1.38.0. The TileContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
-				"size" : {type : "sap.m.Size", group : "Appearance", defaultValue : "Auto"},
+				"size" : {type : "sap.m.Size", group : "Appearance", defaultValue : "Auto", deprecated: true},
 				/**
 				 * The percent sign, the currency symbol, or the unit of measure.
 				 */

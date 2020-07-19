@@ -54,6 +54,7 @@ function(
 	var TileContainer = Control.extend("sap.m.TileContainer", /** @lends sap.m.TileContainer.prototype */ { metadata : {
 
 		library : "sap.m",
+		deprecated: true,
 		properties : {
 
 			/**

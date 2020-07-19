@@ -61,6 +61,7 @@ sap.ui.define([
 	 */
 	var Feed = Control.extend("sap.ui.ux3.Feed", /** @lends sap.ui.ux3.Feed.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

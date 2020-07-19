@@ -31,6 +31,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	var AccordionSection = Element.extend("sap.ui.commons.AccordionSection", /** @lends sap.ui.commons.AccordionSection.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

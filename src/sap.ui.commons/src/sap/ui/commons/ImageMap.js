@@ -39,6 +39,7 @@ sap.ui.define([
 	var ImageMap = Control.extend("sap.ui.commons.ImageMap", /** @lends sap.ui.commons.ImageMap.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

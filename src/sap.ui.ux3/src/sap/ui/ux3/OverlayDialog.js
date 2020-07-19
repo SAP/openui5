@@ -34,6 +34,7 @@ sap.ui.define([
 	 */
 	var OverlayDialog = Overlay.extend("sap.ui.ux3.OverlayDialog", /** @lends sap.ui.ux3.OverlayDialog.prototype */ {
 		metadata: {
+			deprecated: true,
 			library: "sap.ui.ux3",
 			properties: {
 				/**

@@ -53,10 +53,11 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var EnumStringEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor", {
-		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor",
 		metadata: {
-			library: "sap.ui.integration"
+			library: "sap.ui.integration",
+			deprecated: true
 		},
+		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor",
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 

@@ -70,6 +70,7 @@ sap.ui.define([
 	 */
 	var NavigationBar = Control.extend("sap.ui.ux3.NavigationBar", /** @lends sap.ui.ux3.NavigationBar.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

@@ -28,6 +28,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 */
 	var DataSetItem = Element.extend("sap.ui.ux3.DataSetItem", /** @lends sap.ui.ux3.DataSetItem.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

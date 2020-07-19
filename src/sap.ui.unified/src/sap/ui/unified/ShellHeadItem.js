@@ -38,6 +38,7 @@ sap.ui.define([
 	var ShellHeadItem = Element.extend("sap.ui.unified.ShellHeadItem", /** @lends sap.ui.unified.ShellHeadItem.prototype */ { metadata : {
 
 		library : "sap.ui.unified",
+		deprecated : true,
 		properties : {
 
 			/**

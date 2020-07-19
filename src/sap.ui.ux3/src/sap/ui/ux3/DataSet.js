@@ -52,6 +52,7 @@ sap.ui.define([
 	 */
 	var DataSet = Control.extend("sap.ui.ux3.DataSet", /** @lends sap.ui.ux3.DataSet.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

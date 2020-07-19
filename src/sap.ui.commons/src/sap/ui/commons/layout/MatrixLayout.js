@@ -65,6 +65,7 @@ sap.ui.define([
 	 */
 	var MatrixLayout = Control.extend("sap.ui.commons.layout.MatrixLayout", /** @lends sap.ui.commons.layout.MatrixLayout.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.commons",
 		properties : {
 			/**

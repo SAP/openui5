@@ -52,6 +52,7 @@ sap.ui.define([
 	var Carousel = Control.extend("sap.ui.commons.Carousel", /** @lends sap.ui.commons.Carousel.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

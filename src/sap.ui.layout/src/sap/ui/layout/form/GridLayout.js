@@ -40,6 +40,7 @@ sap.ui.define(['sap/ui/layout/library', './FormLayout', './GridLayoutRenderer'],
 	var GridLayout = FormLayout.extend("sap.ui.layout.form.GridLayout", /** @lends sap.ui.layout.form.GridLayout.prototype */ { metadata : {
 
 		library : "sap.ui.layout",
+		deprecated: true,
 		properties : {
 
 			/**

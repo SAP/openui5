@@ -30,6 +30,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './TextField', './library', './TextAr
 	var TextArea = TextField.extend("sap.ui.commons.TextArea", /** @lends sap.ui.commons.TextArea.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

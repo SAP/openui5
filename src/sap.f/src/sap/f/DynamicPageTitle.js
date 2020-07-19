@@ -117,7 +117,7 @@ sap.ui.define([
 				* <code>primaryArea=Middle</code> can be achieved by setting a low number for the Content area to
 				* <code>areaShrinkRatio</code>, for example <code>1.6:1:1.6</code>.
 				*/
-				primaryArea : {type: "sap.f.DynamicPageTitleArea", group: "Appearance", defaultValue: DynamicPageTitleArea.Begin},
+				primaryArea : {type: "sap.f.DynamicPageTitleArea", group: "Appearance", defaultValue: DynamicPageTitleArea.Begin, deprecated: true},
 
 				/**
 				 * Assigns shrinking ratio to the <code>DynamicPageTitle</code> areas (Heading, Content, Actions).

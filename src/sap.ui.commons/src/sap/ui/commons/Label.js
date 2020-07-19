@@ -54,6 +54,7 @@ sap.ui.define([
 			"sap.ui.core.Label"
 		],
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**
