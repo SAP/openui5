@@ -282,6 +282,14 @@ sap.ui.define([
 		assert.strictEqual(this.oSpies.onStepActivated.calledOnce, true, "StepActivate should be fired");
 	});
 
+	QUnit.test("Click on next button should fire _handleNextButtonPress before (not as) the attachEvent handler of the 'complete' event is executed", function (assert) {
+		var oNextButtenPressHandlerSpy = sinon.spy(this.oWizard, "_handleNextButtonPress");
+		var oAttachCompleteSpy = sinon.spy(this.oWizard, "attachComplete");
+
+		this.oWizard._getNextButton().firePress();
+		assert.strictEqual(oNextButtenPressHandlerSpy.calledBefore(oAttachCompleteSpy), true, "_handleNextButtonPress is fired not as attachEvent handler for the 'complete' event");
+	});
+
 	QUnit.test("Click on next button should change the enable state of the button", function (assert) {
 		this.oWizard.invalidateStep(this.oWizard._getStartingStep());
 		this.clock.tick(500);

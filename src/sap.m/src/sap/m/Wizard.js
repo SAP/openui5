@@ -172,7 +172,6 @@ sap.ui.define([
 			this._scrollLocked = false;
 			this._scroller = this._initScrollEnablement();
 			this._resourceBundle = Core.getLibraryResourceBundle("sap.m");
-			this._handleNextButtonPressListener = this._handleNextButtonPress.bind(this);
 			this._initProgressNavigator();
 		};
 
@@ -220,7 +219,6 @@ sap.ui.define([
 			this._stepCount = null;
 			this._scrollLocked = null;
 			this._resourceBundle = null;
-			this._handleNextButtonPressListener = null;
 		};
 
 		/**************************************** PUBLIC METHODS ***************************************/
@@ -478,7 +476,6 @@ sap.ui.define([
 			}
 
 			wizardStep.setWizardContext({bParentAllowsButtonShow: this.getShowNextButton()});
-			wizardStep.attachComplete(this._handleNextButtonPressListener);
 			this._incrementStepCount();
 
 			return this.addAggregation("steps", wizardStep);
@@ -514,7 +511,6 @@ sap.ui.define([
 			this._resetStepCount();
 			return this.removeAllAggregation("steps")
 				.map(function (oStep) {
-					oStep.detachComplete(this._handleNextButtonPressListener);
 					return oStep;
 				}, this);
 		};
