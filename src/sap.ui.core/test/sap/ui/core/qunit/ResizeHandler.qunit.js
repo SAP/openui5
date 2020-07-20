@@ -353,4 +353,25 @@ sap.ui.define([
 		}, 300);
 	});
 
+	QUnit.test("it should call the callback function (registered via .isSuspended(oDomRef, fnCallback)) once " +
+				"the DOM element is resumed after it was previously suspended", function(assert) {
+
+		// arrange
+		var oResizeAreaDomRef = document.getElementById("resizeArea"),
+			sResizeListenerId = _register(oResizeAreaDomRef),
+			oSpy = this.spy();
+
+		ResizeHandler.suspend(oResizeAreaDomRef);
+		ResizeHandler.isSuspended(oResizeAreaDomRef, oSpy);
+
+		// act
+		ResizeHandler.resume(oResizeAreaDomRef);
+
+		// assert
+		assert.strictEqual(oSpy.callCount, 1, "it should call the callback");
+
+		// cleanup
+		ResizeHandler.deregister(sResizeListenerId);
+	});
+
 });
