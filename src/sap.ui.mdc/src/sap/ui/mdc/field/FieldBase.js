@@ -1503,9 +1503,11 @@ sap.ui.define([
 					oContent.bindProperty(sAggregation, { path: "$field>/tooltip" });
 				}
 			}
-		}
 
-		_setAriaLabelledBy.call(this, oContent);
+			if (oContent.getMetadata().getAllAssociations().ariaLabelledBy) {
+				_setAriaLabelledBy.call(this, oContent);
+			}
+		}
 
 	}
 
