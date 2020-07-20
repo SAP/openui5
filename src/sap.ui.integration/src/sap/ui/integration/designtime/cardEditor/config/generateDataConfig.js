@@ -75,7 +75,15 @@ sap.ui.define(function () {
 				"tags": aTags.concat(["data"]),
 				"label": "{i18n>CARD_EDITOR.DATA.PATH}",
 				"type": "string",
-				"path": sRelativePath + "data/path"
+				"path": sRelativePath + "data/path",
+				"validators": {
+					"dataPathPattern": {
+						"type": "pattern",
+						"config": {
+							"pattern": "^[a-zA-Z0-9_\\.\\-/|\\@\\#]*$"
+						}
+					}
+				}
 			},
 			"DataServiceName": {
 				"tags": aTags.concat(["data"]),

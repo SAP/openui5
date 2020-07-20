@@ -127,8 +127,8 @@ sap.ui.define([
 					label: oConfig["keyLabel"],
 					type: "string",
 					path: "key",
-					validators: [
-						{
+					validators: {
+						uniqueKey: {
 							type: "isUniqueKey",
 							config: {
 								keys: function () {
@@ -139,7 +139,7 @@ sap.ui.define([
 								}
 							}
 						}
-					]
+					}
 				}
 			};
 		}
