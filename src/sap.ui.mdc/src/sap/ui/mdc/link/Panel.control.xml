@@ -31,7 +31,7 @@
 		<!-- Determination of 'visible' property of PanelListItem rely on some prerequisites:                           -->
 		<!-- If link personalization is not enabled we have to show all links independent whether they are valid or not -->
 		<!-- The item without valid <code>key</code> property should always be shown.                                   -->
-		<m:VBox id="idSectionLinks" fitContainer="false"
+		<m:VBox id="idSectionLinks" fitContainer="false" class="mdcbaseinfoPanelSectionLinks"
 				items="{
 					path:'$sapuimdclinkPanel>/runtimeItems',
 					templateShareable:false,
