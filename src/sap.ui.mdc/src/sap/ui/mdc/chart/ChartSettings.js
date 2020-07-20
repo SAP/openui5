@@ -53,7 +53,7 @@ sap.ui.define([
 		getCurrentState: function (oChart) {
 			return {
 				items: this._getVisibleProperties(oChart),
-				sorter: this._getSortedProperties(oChart)
+				sorters: this._getSortedProperties(oChart)
 			};
 		},
 
