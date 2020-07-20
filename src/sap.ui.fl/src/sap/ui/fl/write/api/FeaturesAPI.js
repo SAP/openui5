@@ -3,9 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer"
 ], function(
-	Settings
+	Settings,
+	FlexUtils,
+	Layer
 ) {
 	"use strict";
 
@@ -32,6 +36,33 @@ sap.ui.define([
 		isPublishAvailable: function () {
 			return Settings.getInstance().then(function (oSettings) {
 				return !oSettings.isProductiveSystem();
+			});
+		},
+
+		/**
+		 * Determines if Save As app variants feature is available in the connected backend.
+		 *
+		 * @param {string} sLayer - Layer to check for key user app variants
+		 * @returns {Promise<boolean>} Promise resolving with a flag if Save As is available
+		 *
+		 * @description App variant functionality is only supported in S/4HANA Cloud Platform & S/4HANA on Premise.
+		 * App variant functionality should be available if the following conditions are met:
+		 * When the current layer is 'CUSTOMER'.
+		 * When it is not a standalone app runing on Neo Cloud.
+		 * When the backend supports this feature.
+		 * @private
+	 	 * @ui5-restricted
+		 */
+		isSaveAsAvailable: function (sLayer) {
+			return Settings.getInstance().then(function (oSettings) {
+				if (
+					oSettings.isAppVariantSaveAsEnabled()
+					&& sLayer === Layer.CUSTOMER
+					&& !!sap.ushell_abap // Not a standalone app
+				) {
+					return true;
+				}
+				return false;
 			});
 		},
 

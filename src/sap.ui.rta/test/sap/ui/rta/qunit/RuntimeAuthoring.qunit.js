@@ -314,7 +314,7 @@ function(
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
 			sandbox.stub(this.oRta, '_getToolbarButtonsVisibility').returns(Promise.resolve({
 				publishAvailable: true,
-				publishAppVariantSupported: true,
+				saveAsAvailable: true,
 				draftAvailable : false
 			}));
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: false}));
@@ -334,7 +334,7 @@ function(
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP developer) but the manifest of an app is not supported", function(assert) {
 			sandbox.stub(this.oRta, '_getToolbarButtonsVisibility').returns(Promise.resolve({
 				publishAvailable: true,
-				publishAppVariantSupported: true,
+				saveAsAvailable: true,
 				draftAvailable : false
 			 }));
 			sandbox.stub(RtaAppVariantFeature, "isOverviewExtended").returns(true);

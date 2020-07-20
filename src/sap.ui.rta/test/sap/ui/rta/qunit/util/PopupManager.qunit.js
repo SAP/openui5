@@ -575,6 +575,9 @@ function(
 				},
 				isProductiveSystem: function () {
 					return true;
+				},
+				isAppVariantSaveAsEnabled: function() {
+					return true;
 				}
 			});
 
