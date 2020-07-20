@@ -420,6 +420,7 @@ sap.ui.define([
 	BaseContent.prototype.onDataRequestComplete = function () {
 		this.fireEvent("_dataReady");
 		this.destroyPlaceholder();
+		this._oLoadingProvider.setLoading(false);
 	};
 
 	return BaseContent;

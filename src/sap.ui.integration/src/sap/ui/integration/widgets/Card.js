@@ -1389,6 +1389,7 @@ sap.ui.define([
 	Card.prototype.onDataRequestComplete = function () {
 		this.fireEvent("_cardReady");
 		this._handleCardLoading();
+		this._oLoadingProvider.setLoading(false);
 	};
 
 	/**

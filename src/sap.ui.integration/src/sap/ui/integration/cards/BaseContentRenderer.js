@@ -80,7 +80,10 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 	 * @param {sap.ui.integration.cards.BaseContent} oCardContent an object representation of the control that should be rendered
 	 */
 	BaseContentRenderer.hideContent = function (oCardContent) {
-		oCardContent.getAggregation("_content").addStyleClass("sapFCardContentHidden");
+
+		if (oCardContent.isLoading()) {
+			oCardContent.getAggregation("_content").addStyleClass("sapFCardContentHidden");
+		}
 	};
 
 	/**

@@ -27,7 +27,7 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 	 * @override
 	 */
 	ListContentRenderer.hideContent = function (oListContent) {
-		oListContent.getAggregation("_content").addStyleClass("sapFCardContentHidden");
+		BaseContentRenderer.hideContent(oListContent);
 
 		if (oListContent.getAggregation("_legend")) {
 			oListContent.getAggregation("_legend").addStyleClass("sapFCardContentHidden");
