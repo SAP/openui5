@@ -352,7 +352,11 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 	};
 
 	CalendarRowRenderer.renderIntervalHeader = function(oRm, oRow, oIntervalHeader, bRtl, left, right) {
-		var sId = oIntervalHeader.appointment.getId();
+		var sId = oIntervalHeader.appointment.getId(),
+			mAccProps = {
+				labelledby: { value: sId + "-Descr", append: true }
+			},
+			sStartEndAriaText;
 
 		var oArrowValues = oRow._calculateAppoitnmentVisualCue(oIntervalHeader.appointment);
 
@@ -395,6 +399,8 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 				oRm.style("border-left-color", sColor);
 			}
 		}
+
+		oRm.accessibilityState(oIntervalHeader.appointment, mAccProps);
 
 		oRm.openEnd(); //div element
 		oRm.openStart("div");
@@ -441,6 +447,21 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 		if (oArrowValues.appTimeUnitsDifRowEnd > 0) {
 			oRm.icon("sap-icon://arrow-right",["sapUiCalendarAppArrowIconRight"], { title: null });
 		}
+
+		// ARIA information about start and end
+		sStartEndAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRow._oFormatAria.format(oIntervalHeader.appointment.getStartDate())
+				+ "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRow._oFormatAria.format(oIntervalHeader.appointment.getEndDate());
+
+		if (sType && sType !== CalendarDayType.None) {
+
+			sStartEndAriaText += "; " + this.getAriaTextForType(sType, this.getLegendItems(oRow));
+		}
+
+		oRm.openStart("span", sId + "-Descr");
+		oRm.class("sapUiInvisibleText");
+		oRm.openEnd();
+		oRm.text(sStartEndAriaText);
+		oRm.close("span");
 
 		oRm.close("div");
 		oRm.close("div");
