@@ -73,6 +73,8 @@ sap.ui.define([
 
 	IconEditor.prototype._onLiveChange = function(oEvent) {
 		var sIconInput = oEvent.getParameter("value");
+		// OPEN TASK for UICSFLEX-7061:
+		// Replace custom validation with validators
 		if (this._isValid(sIconInput)) {
 			this.setValue(sIconInput);
 		}

@@ -72,40 +72,38 @@ sap.ui.define([
 		);
 	};
 
+	EnumStringEditor.prototype.getDefaultValidators = function () {
+		var oConfig = this.getConfig();
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getDefaultValidators.call(this),
+			{
+				isValidBinding: {
+					type: "isValidBinding",
+					isEnabled: oConfig.allowBindings
+				},
+				notABinding: {
+					type: "notABinding",
+					isEnabled: !oConfig.allowBindings
+				},
+				isSelectedKey: {
+					type: "isSelectedKey",
+					config: {
+						keys: function (oPropertyEditor) {
+							return oPropertyEditor.getConfig().enum;
+						}
+					},
+					isEnabled: !oConfig.allowCustomValues
+				}
+			}
+		);
+	};
+
 	EnumStringEditor.prototype._onChange = function () {
 		var oComboBox = this.getContent();
 		var sSelectedKey = oComboBox.getSelectedKey();
 		var sValue = oComboBox.getValue();
-		var sError = this._validate(sSelectedKey, sValue);
-		if (!sError) {
-			this.setValue(sSelectedKey || sValue);
-			this._setInputState(true);
-		} else {
-			this._setInputState(false, this.getI18nProperty(sError));
-		}
-	};
-
-	EnumStringEditor.prototype._validate = function (sSelectedKey, sValue) {
-		var oConfig = this.getConfig();
-		if (!oConfig["allowBindings"] && isValidBindingString(sValue, false)) {
-			return "BASE_EDITOR.PROPERTY.BINDING_NOT_ALLOWED";
-		}
-		if (!oConfig["allowCustomValues"] && sValue && !sSelectedKey && !isValidBindingString(sValue, false)) {
-			return "BASE_EDITOR.ENUM.CUSTOM_VALUES_NOT_ALLOWED";
-		}
-		if (!isValidBindingString(sValue)) {
-			return "BASE_EDITOR.ENUM.INVALID_SELECTION";
-		}
-	};
-
-	EnumStringEditor.prototype._setInputState = function (bIsValid, sErrorMessage) {
-		var oComboBox = this.getContent();
-		if (bIsValid) {
-			oComboBox.setValueState("None");
-		} else {
-			oComboBox.setValueState("Error");
-			oComboBox.setValueStateText(sErrorMessage);
-		}
+		this.setValue(sSelectedKey || sValue);
 	};
 
 	return EnumStringEditor;

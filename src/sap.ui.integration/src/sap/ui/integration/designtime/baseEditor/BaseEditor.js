@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
+	"sap/ui/integration/designtime/baseEditor/validator/ValidatorRegistry",
 	"sap/ui/integration/designtime/baseEditor/PropertyEditors",
 	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
 	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
@@ -28,6 +29,7 @@ sap.ui.define([
 ], function (
 	createPromise,
 	PropertyEditorFactory,
+	ValidatorRegistry,
 	PropertyEditors,
 	resolveBinding,
 	ObjectBinding,
@@ -198,6 +200,7 @@ sap.ui.define([
 			this._oDataModel = this._createDataModel();
 
 			this._bInitFinished = false;
+			this._bValidatorsReady = false;
 			this._setReady(false);
 
 			Control.prototype.constructor.apply(this, arguments);
@@ -292,6 +295,8 @@ sap.ui.define([
 		PropertyEditorFactory.deregisterAllTypes();
 		PropertyEditorFactory.registerTypes(oConfig.propertyEditors);
 
+		this._initValidators(oConfig.validators || {});
+
 		// Backwards compatibility. If no i18n configuration specified, we use default one.
 		var oTarget = {};
 		if (!oConfig.i18n) {
@@ -304,6 +309,18 @@ sap.ui.define([
 			false
 		);
 		this._initialize();
+	};
+
+	BaseEditor.prototype._initValidators = function (mValidatorModules) {
+		ValidatorRegistry.deregisterAllValidators();
+		ValidatorRegistry.registerValidators(mValidatorModules);
+
+		// Wait for all validators in order to use them
+		// synchronously inside the property editors
+		ValidatorRegistry.ready().then(function () {
+			this._bValidatorsReady = true;
+			this._checkReady();
+		}.bind(this));
 	};
 
 	BaseEditor.prototype.addConfig = function (oConfig) {
@@ -713,6 +730,7 @@ sap.ui.define([
 
 		var bIsReady = (
 			this._bInitFinished
+			&& this._bValidatorsReady
 			&& aAsyncDependencies.every(function (oEditor) {
 				return oEditor.isReady();
 			})

@@ -71,17 +71,40 @@ sap.ui.define([
 		);
 	};
 
+	SelectEditor.prototype.getDefaultValidators = function () {
+		var oConfig = this.getConfig();
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getDefaultValidators.call(this),
+			{
+				isValidBinding: {
+					type: "isValidBinding",
+					isEnabled: oConfig.allowBindings
+				},
+				notABinding: {
+					type: "notABinding",
+					isEnabled: !oConfig.allowBindings
+				},
+				isSelectedKey: {
+					type: "isSelectedKey",
+					config: {
+						keys: function (oPropertyEditor) {
+							return oPropertyEditor.getConfig().items.map(function (oItem) {
+								return oItem.key;
+							});
+						}
+					},
+					isEnabled: !oConfig.allowCustomValues
+				}
+			}
+		);
+	};
+
 	SelectEditor.prototype._onChange = function () {
 		var oComboBox = this.getContent();
 		var sSelectedKey = oComboBox.getSelectedKey();
 		var sValue = oComboBox.getValue();
-		var sError = this._validate(sSelectedKey, sValue);
-		if (!sError) {
-			this.setValue(sSelectedKey || sValue);
-			this._setInputState(true);
-		} else {
-			this._setInputState(false, this.getI18nProperty(sError));
-		}
+		this.setValue(sSelectedKey || sValue);
 	};
 
 	SelectEditor.prototype._getItemTitle = function (sValue) {
@@ -92,29 +115,6 @@ sap.ui.define([
 			});
 
 		return (oSelectedItem || {}).title || sValue;
-	};
-
-	SelectEditor.prototype._validate = function (sSelectedKey, sValue) {
-		var oConfig = this.getConfig();
-		if (!oConfig["allowBindings"] && isValidBindingString(sValue, false)) {
-			return "BASE_EDITOR.PROPERTY.BINDING_NOT_ALLOWED";
-		}
-		if (!oConfig["allowCustomValues"] && sValue && !sSelectedKey && !isValidBindingString(sValue, false)) {
-			return "BASE_EDITOR.SELECT.CUSTOM_VALUES_NOT_ALLOWED";
-		}
-		if (!isValidBindingString(sValue)) {
-			return "BASE_EDITOR.SELECT.INVALID_SELECTION";
-		}
-	};
-
-	SelectEditor.prototype._setInputState = function (bIsValid, sErrorMessage) {
-		var oComboBox = this.getContent();
-		if (bIsValid) {
-			oComboBox.setValueState("None");
-		} else {
-			oComboBox.setValueState("Error");
-			oComboBox.setValueStateText(sErrorMessage);
-		}
 	};
 
 	return SelectEditor;

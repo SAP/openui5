@@ -33,6 +33,18 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
+	IntegerEditor.prototype.getDefaultValidators = function () {
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getDefaultValidators.call(this),
+			{
+				isInteger: {
+					type: "isInteger"
+				}
+			}
+		);
+	};
+
 	IntegerEditor.prototype.validateNumber = function (vValue) {
 		return NumberEditor.prototype.validateNumber.call(this, vValue) && Number.isInteger(vValue);
 	};
