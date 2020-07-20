@@ -162,6 +162,122 @@
             "reference": "2080255126"
           }
         ]
+      },
+      {
+        "id": "2da07dabdaf80e140c0a63cb4e156b8651afff92",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Now finds first focusable element even if it is missing an id",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080223380"
+          }
+        ]
+      },
+      {
+        "id": "5a3e70fe253af27cc16a7263ad88f9a228e5b443",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Belize alignment fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080266204"
+          }
+        ]
+      },
+      {
+        "id": "c2f8b71e7594bc0469115db1d2b1407e11008250",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Input\u0027s width calculation is now in decimals",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070139347"
+          }
+        ]
+      },
+      {
+        "id": "789814cbc816b4bb0a20120e55ab462ffbf9626f",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Sample update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080177577"
+          }
+        ]
+      },
+      {
+        "id": "6580a0d54a5b94808fe0dfa1798b37b259c2a5e6",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: manages selectedAppointments association correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003492272020"
+          }
+        ]
+      },
+      {
+        "id": "d68da655664f6a1dcf386909e1d9faeca651b4cf",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Return defaultValue of width property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080265989"
+          }
+        ]
+      },
+      {
+        "id": "70c6cc0a1a8e99ded039995708019cf063266b4e",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Value is now cleared when setValue(\"\") is called",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080281248"
+          }
+        ]
+      },
+      {
+        "id": "7554fabcbc5f700ee47495163b3cdb377403206c",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: on focus in behavior over the input is now consistent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003307462020"
+          }
+        ]
+      },
+      {
+        "id": "cf07a7dd42bcf85d0082717d9abe93e7f4da7a03",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Model refresh shows No Data text.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003060082020"
+          }
+        ]
+      },
+      {
+        "id": "301f13153c4ca8e5d97a3d83f55dd1d4b1fe86b7",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Revert Model refresh shows No Data text.",
+        "references": []
+      },
+      {
+        "id": "f857170e51d6b05f7e8310f669cc368e0616fc8d",
+        "type": "FIX",
+        "text": " sap.m.Wizard: NextStep documentation updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080264920"
+          }
+        ]
       }
     ]
   }

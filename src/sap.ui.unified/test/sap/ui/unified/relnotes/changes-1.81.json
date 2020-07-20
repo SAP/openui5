@@ -29,6 +29,17 @@
             "reference": "2070211785"
           }
         ]
+      },
+      {
+        "id": "6580a0d54a5b94808fe0dfa1798b37b259c2a5e6",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: manages selectedAppointments association correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003492272020"
+          }
+        ]
       }
     ]
   }

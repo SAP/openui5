@@ -46,6 +46,39 @@
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendar: styles calculation removal",
         "references": []
+      },
+      {
+        "id": "ded7e8d50b693841d28e690b3e3835c3a3afd976",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button focus is now visible in Quartz Light and Dark",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080263557"
+          }
+        ]
+      },
+      {
+        "id": "a4a2918f90a21ee49b6604f63ee3204f8d4f91ff",
+        "type": "FIX",
+        "text": " sap.m.Link: has high contrast ratio when displayed in a selected row in a table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080202639"
+          }
+        ]
+      },
+      {
+        "id": "5a3e70fe253af27cc16a7263ad88f9a228e5b443",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Belize alignment fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080266204"
+          }
+        ]
       }
     ]
   }

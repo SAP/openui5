@@ -44,6 +44,34 @@
             "reference": "2080208502"
           }
         ]
+      },
+      {
+        "id": "97ff36d7c43b377b8baa0e935ef84a2212890dd3",
+        "type": "FIX",
+        "text": " DefineConditionPanel: use select like Field for Operator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070006006"
+          }
+        ]
+      },
+      {
+        "id": "d0933f591ef62d83d76ecc6e91b477f8e1db4154",
+        "type": "FIX",
+        "text": " FieldHelp: item navigated with keyboard not visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080226206"
+          }
+        ]
+      },
+      {
+        "id": "e90e942c89fbb697222873e68310beb4142d34fa",
+        "type": "FIX",
+        "text": " mdc.FilterBar: CSS tweaks",
+        "references": []
       }
     ]
   }

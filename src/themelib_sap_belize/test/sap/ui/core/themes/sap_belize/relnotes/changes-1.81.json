@@ -29,6 +29,17 @@
             "reference": "2080219138"
           }
         ]
+      },
+      {
+        "id": "f73d1148b70f7230996aa4d0a839a8bf2a366b1b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Remove actions redundant \"right\" style alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000397149 2020"
+          }
+        ]
       }
     ]
   }
