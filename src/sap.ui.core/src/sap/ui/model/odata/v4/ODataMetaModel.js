@@ -8,6 +8,7 @@ sap.ui.define([
 	"./lib/_Helper",
 	"sap/base/assert",
 	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/ObjectPath",
 	"sap/ui/base/SyncPromise",
@@ -38,10 +39,10 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/thirdparty/URI"
-], function (ValueListType, _Helper, assert, Log, JSTokenizer, ObjectPath, SyncPromise, BindingMode,
-		ChangeReason, ClientListBinding, BaseContext, ContextBinding, MetaModel, PropertyBinding,
-		OperationMode, Boolean, Byte, EdmDate, DateTimeOffset, Decimal, Double, Guid, Int16, Int32,
-		Int64, Raw, SByte, Single, Stream, String, TimeOfDay, URI) {
+], function (ValueListType, _Helper, assert, Log, isEmptyObject, JSTokenizer, ObjectPath,
+		SyncPromise, BindingMode, ChangeReason, ClientListBinding, BaseContext, ContextBinding,
+		MetaModel, PropertyBinding, OperationMode, Boolean, Byte, EdmDate, DateTimeOffset, Decimal,
+		Double, Guid, Int16, Int32, Int64, Raw, SByte, Single, Stream, String, TimeOfDay, URI) {
 	"use strict";
 	/*global Map */
 	/*eslint max-nested-callbacks: 0 */
@@ -1487,6 +1488,10 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   An absolute path to an OData property within the OData data model
+	 * @param {object} [mFormatOptions]
+	 *   Type-specific format options, since 1.81.0. The boolean format option
+	 *   "parseKeepsEmptyString" applies to {@link sap.ui.model.odata.type.String} only and is
+	 *   ignored for all other types. All other format options are passed "as is".
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that gets resolved with the corresponding UI5 type from
 	 *   {@link sap.ui.model.odata.type}; if no specific type can be determined, a warning is logged
@@ -1495,7 +1500,7 @@ sap.ui.define([
 	 * @private
 	 * @see #requestUI5Type
 	 */
-	ODataMetaModel.prototype.fetchUI5Type = function (sPath) {
+	ODataMetaModel.prototype.fetchUI5Type = function (sPath, mFormatOptions) {
 		var oMetaContext = this.getMetaContext(sPath),
 			that = this;
 
@@ -1516,7 +1521,21 @@ sap.ui.define([
 				return oType;
 			}
 
-			if (oProperty["$ui5.type"]) {
+			if (mFormatOptions) {
+				if (isEmptyObject(mFormatOptions)) {
+					mFormatOptions = undefined;
+				} else if ("parseKeepsEmptyString" in mFormatOptions
+						&& oProperty.$Type !== "Edm.String") {
+					if (Object.keys(mFormatOptions).length === 1) {
+						mFormatOptions = undefined;
+					} else {
+						mFormatOptions = Object.assign({}, mFormatOptions);
+						delete mFormatOptions.parseKeepsEmptyString;
+					}
+				}
+			}
+
+			if (!mFormatOptions && oProperty["$ui5.type"]) {
 				return oProperty["$ui5.type"];
 			}
 
@@ -1526,14 +1545,17 @@ sap.ui.define([
 			} else {
 				oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
 				if (oTypeInfo) {
-					oType = new oTypeInfo.Type(undefined,
+					oType = new oTypeInfo.Type(mFormatOptions,
 						that.getConstraints(oProperty, oMetaContext.getPath()));
 				} else {
 					Log.warning("Unsupported type '" + oProperty.$Type + "', using "
 						+ oType.getName(), sPath, sODataMetaModel);
 				}
 			}
-			oProperty["$ui5.type"] = oType;
+			if (!mFormatOptions) {
+				oProperty["$ui5.type"] = oType;
+			}
+
 			return oType;
 		});
 	};
@@ -2278,6 +2300,10 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   An absolute path to an OData property within the OData data model
+	 * @param {object} [mFormatOptions]
+	 *   Type-specific format options, since 1.81.0. The boolean format option
+	 *   "parseKeepsEmptyString" applies to {@link sap.ui.model.odata.type.String} only and is
+	 *   ignored for all other types. All other format options are passed "as is".
 	 * @returns {sap.ui.model.odata.type.ODataType}
 	 *   The corresponding UI5 type from {@link sap.ui.model.odata.type}, if all required
 	 *   metadata to calculate this type is already available; if no specific type can be
@@ -2852,6 +2878,10 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   An absolute path to an OData property within the OData data model
+	 * @param {object} [mFormatOptions]
+	 *   Type-specific format options, since 1.81.0. The boolean format option
+	 *   "parseKeepsEmptyString" applies to {@link sap.ui.model.odata.type.String} only and is
+	 *   ignored for all other types. All other format options are passed "as is".
 	 * @returns {Promise}
 	 *   A promise that gets resolved with the corresponding UI5 type from
 	 *   {@link sap.ui.model.odata.type}; if no specific type can be
