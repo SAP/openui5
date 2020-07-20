@@ -94,7 +94,9 @@ sap.ui.define([
 							if (document.activeElement.id !== oElement.getId()) {
 								oElement.focus();
 							}
-						}, new Press()],
+						}, function(oElement) {
+							oElement.firePress();
+						}],
 					success: function () {
 						Opa5.assert.ok(true, sTargetId + " is clicked successfully");
 					},
