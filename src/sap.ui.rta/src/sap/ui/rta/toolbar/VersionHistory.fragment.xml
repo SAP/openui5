@@ -1,0 +1,27 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core" >
+    <Popover
+            class="sapUiRtaVersionHistory"
+            showHeader="false"
+            placement="Bottom" >
+        <List
+                visible="{path: 'versions>/versions/length', formatter: '.formatVersionTableVisibility'}"
+                items="{versions>/versions}" >
+            <FeedListItem
+                text="{parts: [{path: 'versions>title'}, {path: 'versions>type'}], formatter: '.formatVersionTitle'}"
+                info="{versions>activatedAt}"
+                timestamp="{versions>activatedBy}"
+                highlight="{path: 'versions>type', formatter: '.formatHighlight'}"
+                highlightText="{path: 'versions>type', formatter: '.formatHighlightText'}"
+                showIcon="false" />
+        </List>
+        <List>
+            <FeedListItem
+                text="{i18n>TIT_ORIGINAL_APP}"
+                highlight="{path: 'versions>/versions', formatter: '.formatOriginalAppHighlight'}"
+                highlightText="{path: 'versions>/versions', formatter: '.formatOriginalAppHighlightText'}"
+                showIcon="false" />
+        </List>
+    </Popover>
+</core:FragmentDefinition>

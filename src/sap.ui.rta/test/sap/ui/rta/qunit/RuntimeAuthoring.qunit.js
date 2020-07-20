@@ -112,7 +112,7 @@ function(
 			assert.ok(this.oRootControlOverlay.$().css("z-index") < this.oRta.getToolbar().$().css("z-index"), "and the toolbar is in front of the root overlay");
 			assert.notOk(RuntimeAuthoring.needsRestart(), "restart is not needed initially");
 
-			assert.equal(this.oRta.getToolbar().getControl('versionLabel').getVisible(), false, "then the version label is hidden");
+			assert.equal(this.oRta.getToolbar().getControl('versionButton').getVisible(), false, "then the version label is hidden");
 			assert.equal(this.oRta.getToolbar().getControl('activateDraft').getVisible(), false, "then the activate draft Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('discardDraft').getVisible(), false, "then the discard draft Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('exit').getVisible(), true, "then the exit Button is visible");
@@ -256,7 +256,7 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("when RTA is started in the customer layer, the versioning is not available", function(assert) {
+		QUnit.test("when RTA is initializes versioning in the customer layer, the versioning is not available", function(assert) {
 			return this.oRta._initVersioning()
 			.then(function () {
 				this.oRta._oVersionsModel.setProperty("/versioningEnabled", false);
@@ -264,8 +264,8 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is available", function(assert) {
-			return this.oRta.start()
+		QUnit.test("when RTA is initializes versioning in the customer layer, the versioning is available, draft is available", function(assert) {
+			return this.oRta._initVersioning()
 			.then(function () {
 				this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 				var oDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
@@ -279,7 +279,7 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("when RTA is started in the customer layer, and no uShell is available", function(assert) {
+		QUnit.test("when RTA is initializes versioning in the customer layer, and no uShell is available", function(assert) {
 			var oDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable");
 			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
 
@@ -290,21 +290,21 @@ function(
 				}.bind(this));
 		});
 
-		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, no changes yet done", function(assert) {
+		QUnit.test("when RTA is initializes versioning in the customer layer, the versioning is available, draft is not available, no changes yet done", function(assert) {
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 			sandbox.stub(this.oRta, "canUndo").returns(false);
-			return this.oRta.start()
+			return this.oRta._initVersioning()
 			.then(function () {
 				this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 				assert.equal(this.oRta._isDraftAvailable(), false, "then the 'isDraftAvailable' is false");
 			}.bind(this));
 		});
 
-		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, there are unsaved changes", function(assert) {
+		QUnit.test("when RTA is initializes versioning in the customer layer, the versioning is available, draft is not available, there are unsaved changes", function(assert) {
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 			sandbox.stub(this.oRta, "canUndo").returns(true);
 
-			return this.oRta.start()
+			return this.oRta._initVersioning()
 			.then(function () {
 				this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 				assert.equal(this.oRta._isDraftAvailable(), false, "then the 'isDraftAvailable' is false");

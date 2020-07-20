@@ -20,9 +20,23 @@ sap.ui.define([
 	"use strict";
 
 	var _mInstances = {};
+	var MODEL_SIZE_LIMIT = 9;
+	// Limiting the data requested from the back end but one additional version is requested to
+	// ensure sufficient data is present even if a draft was returned and later discarded
+	var BACKEND_REQUEST_LIMIT = MODEL_SIZE_LIMIT + 1;
 
 	function createModel(mPropertyBag, bVersioningEnabled, aVersions) {
 		var bBackendDraft = _doesDraftExistInVersions(aVersions);
+
+		var bActiveVersionFlagged = false;
+		aVersions.forEach(function (oVersion) {
+			if (oVersion.versionNumber === 0) {
+				oVersion.type = "draft";
+			} else {
+				oVersion.type = bActiveVersionFlagged ? "inactive" : "active";
+				bActiveVersionFlagged = true;
+			}
+		});
 
 		var oModel = new JSONModel({
 			versioningEnabled: bVersioningEnabled,
@@ -33,6 +47,7 @@ sap.ui.define([
 		});
 
 		oModel.setDefaultBindingMode(BindingMode.OneWay);
+		oModel.setSizeLimit(MODEL_SIZE_LIMIT);
 
 		// TODO: currently called by sap.ui.rta.RuntimeAuthoring but should be by a ChangesState
 		oModel.setDirtyChanges = function (bDirtyChanges) {
@@ -51,7 +66,7 @@ sap.ui.define([
 
 			// add draft
 			if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
-				aVersions.splice(0, 0, {versionNumber: 0});
+				aVersions.splice(0, 0, {versionNumber: 0, type: "draft"});
 				oModel.updateBindings(true);
 			}
 
@@ -130,6 +145,7 @@ sap.ui.define([
 	Versions.initialize = function(mPropertyBag) {
 		var sReference = mPropertyBag.reference;
 		var sLayer = mPropertyBag.layer;
+		mPropertyBag.limit = BACKEND_REQUEST_LIMIT;
 
 		return Settings.getInstance()
 			.then(function (oSettings) {
@@ -180,6 +196,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 */
 	Versions.onAllChangesSaved = function (mPropertyBag) {
+		mPropertyBag.reference = Utils.normalizeReference(mPropertyBag.reference);
 		var oModel = Versions.getVersionsModel(mPropertyBag);
 		var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
 		var bDirtyChanges = oModel.getProperty("/dirtyChanges");
@@ -222,6 +239,10 @@ sap.ui.define([
 		return Promise.all(aSaveDirtyChangesPromise)
 		.then(Storage.versions.activate.bind(undefined, mPropertyBag))
 		.then(function (oVersion) {
+			aVersions.forEach(function (oVersionEntry) {
+				oVersionEntry.type = "inactive";
+			});
+			oVersion.type = "active";
 			aVersions.shift();
 			aVersions.splice(0, 0, oVersion);
 			oModel.setProperty("/backendDraft", false);

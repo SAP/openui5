@@ -11,13 +11,20 @@
                         id="sapUiRta_iconSpacer"
                         width="0%"
                         visible="true" />
-                <Label
-                        id="sapUiRta_versionLabel"
-                        design="Bold"
-                        class="sapUiRtaVersionLabel"
+                <Button
+                        id="sapUiRta_versionButton"
+                        type="Transparent"
+                        class="sapUiRtaVersionButton"
+                        icon="sap-icon://megamenu"
+                        iconFirst="false"
                         visible="{versions>/versioningEnabled}"
-                        text="{parts: [{path: 'versions>/draftAvailable'}, {path: 'versions>/versions'}], formatter: '.formatVersionLabelText'}"
-                        tooltip="{parts: [{path: 'versions>/draftAvailable'}, {path: 'versions>/versions'}], formatter: '.formatVersionLabelText'}"  />
+                        text="{parts: [{path: 'versions>/draftAvailable'}, {path: 'versions>/versions'}], formatter: '.formatVersionButtonText'}"
+                        tooltip="{parts: [{path: 'versions>/draftAvailable'}, {path: 'versions>/versions'}], formatter: '.formatVersionButtonText'}"
+                        press=".showVersionHistory">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow"/>
+                    </layoutData>
+                </Button>
                 <Button
                         id="sapUiRta_activateDraft"
                         icon="sap-icon://activate"

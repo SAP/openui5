@@ -72,15 +72,24 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given Versions.initialize is called", function (assert) {
-			setVersioningEnabled({CUSTOMER: true});
+			var sReference = "com.sap.app";
+			var sLayer = Layer.CUSTOMER;
+
+			var oVersioningEnabled = {};
+			oVersioningEnabled[sLayer] = true;
+			setVersioningEnabled(oVersioningEnabled);
 
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
+				layer : sLayer,
+				reference : sReference
 			};
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
+				var aCallArguments = this.oStorageLoadVersionsStub.getCall(0).args[0];
+				assert.equal(aCallArguments.reference, sReference, "the reference was passed");
+				assert.equal(aCallArguments.layer, sLayer, "the layer was passed");
+				assert.equal(aCallArguments.limit, 10, "and the limit was passed");
 				assert.ok(oResponse instanceof JSONModel, "a model was returned");
 				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
 			}.bind(this));
@@ -177,7 +186,7 @@ sap.ui.define([
 
 	QUnit.module("Calling the Storage: Given Versions.initialize is called", {
 		beforeEach: function () {
-			setVersioningEnabled(true);
+			setVersioningEnabled({CUSTOMER: true});
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector : "KeyUserConnector", layers : [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
@@ -197,6 +206,74 @@ sap.ui.define([
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse.getProperty("/versions"), aReturnedVersions, "then the versions list is returned");
+			});
+		});
+
+		QUnit.test("and a connector is configured which returns a list of versions with entries", function (assert) {
+			var mPropertyBag = {
+				layer : Layer.CUSTOMER,
+				reference : "com.sap.app"
+			};
+
+			var oFirstVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a long while ago",
+				versionNumber : 1
+			};
+
+			var oSecondVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a while ago",
+				versionNumber : 2
+			};
+
+			var aReturnedVersions = [
+				oSecondVersion,
+				oFirstVersion
+			];
+
+			sandbox.stub(KeyUserConnector.versions, "load").resolves(aReturnedVersions);
+
+			return Versions.initialize(mPropertyBag).then(function (oResponse) {
+				var aVersions = oResponse.getProperty("/versions");
+				assert.deepEqual(aVersions, aReturnedVersions, "then the versions list is returned");
+				assert.deepEqual(aVersions[0].type, "active", "the first version is the 'active' one");
+				assert.deepEqual(aVersions[1].type, "inactive", "the second version is the 'inactive' one");
+			});
+		});
+
+		QUnit.test("and a connector is configured which returns a list of versions with entries and a draft", function (assert) {
+			var mPropertyBag = {
+				layer : Layer.CUSTOMER,
+				reference : "com.sap.app"
+			};
+
+			var oFirstVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a long while ago",
+				versionNumber : 1
+			};
+
+			var oSecondVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a while ago",
+				versionNumber : 2
+			};
+
+			var aReturnedVersions = [
+				{versionNumber : 0},
+				oSecondVersion,
+				oFirstVersion
+			];
+
+			sandbox.stub(KeyUserConnector.versions, "load").resolves(aReturnedVersions);
+
+			return Versions.initialize(mPropertyBag).then(function (oResponse) {
+				var aVersions = oResponse.getProperty("/versions");
+				assert.deepEqual(aVersions, aReturnedVersions, "then the versions list is returned");
+				assert.deepEqual(aVersions[0].type, "draft", "the first version is the 'draft' one");
+				assert.deepEqual(aVersions[1].type, "active", "the second version is the 'active' one");
+				assert.deepEqual(aVersions[2].type, "inactive", "the third version is the 'inactive' one");
 			});
 		});
 	});
@@ -326,7 +403,8 @@ sap.ui.define([
 			};
 
 			var oDraft = {
-				versionNumber: 0
+				versionNumber: 0,
+				type: "draft"
 			};
 
 			var aReturnedVersions = [
@@ -418,7 +496,8 @@ sap.ui.define([
 			};
 
 			var oDraft = {
-				versionNumber: 0
+				versionNumber: 0,
+				type: "draft"
 			};
 
 			var aReturnedBackendVersions = [
