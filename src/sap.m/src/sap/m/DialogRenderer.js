@@ -93,6 +93,7 @@ sap.ui.define([
 
 		// ARIA
 		var sRole = oDialog.getProperty("role");
+		var sRoleDescription = oDialog._sAriaRoleDescription;
 
 		if (sState === ValueState.Error || sState === ValueState.Warning) {
 			sRole = DialogRoleType.AlertDialog;
@@ -100,6 +101,7 @@ sap.ui.define([
 
 		oRM.accessibilityState(oDialog, {
 			role: sRole,
+			roledescription: sRoleDescription,
 			modal: true
 		});
 
