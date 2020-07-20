@@ -1912,6 +1912,18 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
+	QUnit.test("_getAccessibilityInfo", function (assert) {
+		// Prepare
+		var oAccInfo = this.stepInput.getAccessibilityInfo();
+
+		// Assert
+		assert.strictEqual(oAccInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_STEPINPUT"), "Type correctly provided");
+		assert.strictEqual(oAccInfo.description, 4, "Value correctly provided");
+		assert.ok(oAccInfo.focusable, "Control is focusable");
+		assert.ok(oAccInfo.enabled, "Control is enabled");
+		assert.ok(oAccInfo.editable, "Control is editable");
+	});
+
 	QUnit.module("binding", {
 		beforeEach: function () {
 			this.stepInput = new StepInput({

@@ -1642,5 +1642,15 @@ function(
 			this._speed = 120;
 		};
 
+		StepInput.prototype.getAccessibilityInfo = function() {
+			return {
+				type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_STEPINPUT"),
+				description: this.getValue() || "",
+				focusable: this.getEnabled(),
+				enabled: this.getEnabled(),
+				editable: this.getEnabled() && this.getEditable()
+			};
+		};
+
 		return StepInput;
 	});
