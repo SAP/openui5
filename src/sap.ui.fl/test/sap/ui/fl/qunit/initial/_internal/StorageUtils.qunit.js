@@ -198,10 +198,33 @@ sap.ui.define([
 				var mConnectorsSorted = sortConnectors(mConnectors);
 				assert.equal(this.oGetConnectorsSpy.callCount, 1, "the getConnector is called once");
 				assert.equal(this.oConfigurationStub.callCount, 1, "configuration is called once");
-				assert.equal(mConnectors.length, 3, "result contains only one connector");
+				assert.equal(mConnectors.length, 3, "result contains three connector");
 				assert.equal(mConnectorsSorted[0].connector, "StaticFileConnector", "first connector is of type StaticFileConnector");
 				assert.equal(mConnectorsSorted[1].connector, "PersonalizationConnector", "second connector is of type PersonalizationConnector");
 				assert.equal(mConnectorsSorted[2].connector, "KeyUserConnector", "third connector is of type KeyUserConnector");
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("getConnector for neo lrep", {
+		beforeEach: function() {
+			this.oGetConnectorsSpy = sandbox.spy(Utils, "getConnectors");
+			this.oConfigurationStub = sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "NeoLrepConnector", layers: [Layer.ALL]}
+			]);
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("getLoadConnectors", function(assert) {
+			return Utils.getLoadConnectors().then(function(mConnectors) {
+				var mConnectorsSorted = sortConnectors(mConnectors);
+				assert.equal(this.oGetConnectorsSpy.callCount, 1, "the getConnector is called once");
+				assert.equal(this.oConfigurationStub.callCount, 1, "configuration is called once");
+				assert.equal(mConnectors.length, 2, "result contains only one connector");
+				assert.equal(mConnectorsSorted[0].connector, "StaticFileConnector", "first connector is of type StaticFileConnector");
+				assert.equal(mConnectorsSorted[1].connector, "NeoLrepConnector", "second connector is of type Neo Connector");
 			}.bind(this));
 		});
 	});

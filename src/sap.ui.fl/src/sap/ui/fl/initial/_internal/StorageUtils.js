@@ -35,6 +35,7 @@ sap.ui.define([
 		load: {
 			// Server Connectors
 			LrepConnector: "sap/ui/fl/initial/_internal/connectors/LrepConnector",
+			NeoLrepConnector: "sap/ui/fl/initial/_internal/connectors/NeoLrepConnector",
 			PersonalizationConnector: "sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
 			KeyUserConnector: "sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 			StaticFileConnector: "sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
@@ -48,6 +49,7 @@ sap.ui.define([
 		write: {
 			// Server Connectors
 			LrepConnector: "sap/ui/fl/write/_internal/connectors/LrepConnector",
+			NeoLrepConnector: "sap/ui/fl/write/_internal/connectors/NeoLrepConnector",
 			PersonalizationConnector: "sap/ui/fl/write/_internal/connectors/PersonalizationConnector",
 			KeyUserConnector: "sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 			StaticFileConnector: "sap/ui/fl/write/_internal/connectors/StaticFileConnector",
