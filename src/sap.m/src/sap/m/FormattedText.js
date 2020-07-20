@@ -73,7 +73,7 @@ function(
 					 *	<li><code>u</code></li>
 					 *	<li><code>dl</code></li>
 					 *	<li><code>dt</code></li>
-					 *	<li><code>dl</code></li>
+					 *	<li><code>dd</code></li>
 					 *	<li><code>ul</code></li>
 					 *	<li><code>ol</code></li>
 					 *	<li><code>li</code></li>
