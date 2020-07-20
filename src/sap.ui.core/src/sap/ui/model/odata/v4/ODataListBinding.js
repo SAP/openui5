@@ -626,6 +626,8 @@ sap.ui.define([
 			throw new Error("Binding is unresolved: " + this);
 		}
 
+		this.checkSuspended();
+
 		bAtEnd = !!bAtEnd; // normalize to simplify comparisons
 		if (bAtEnd && !this.bLengthFinal) {
 			throw new Error(
@@ -635,8 +637,6 @@ sap.ui.define([
 			throw new Error("Creating entities at the start and at the end is not supported.");
 		}
 		this.bCreatedAtEnd = bAtEnd;
-
-		this.checkSuspended();
 
 		// only for createInCache
 		oGroupLock = this.lockGroup(undefined, true, true, function () {

@@ -3790,6 +3790,21 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("create: bAtEnd & suspended", function (assert) {
+		var oBinding = this.bindList("/TEAMS"),
+			oError = new Error("suspended");
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs().throws(oError);
+
+		// code under test
+		assert.throws(function () {
+			oBinding.create();
+		}, oError);
+
+		assert.strictEqual(oBinding.bCreatedAtEnd, undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create: failure", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
@@ -3861,6 +3876,8 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			sError = "Must know the final length to create at the end. Consider setting $count";
 
+		this.mock(oBinding).expects("checkSuspended").thrice().withExactArgs();
+
 		// code under test
 		assert.throws(function () {
 			oBinding.create(undefined, true, true);
@@ -3881,6 +3898,8 @@ sap.ui.define([
 		oBinding = this.bindList("TEAM_2_EMPLOYEES",
 			Context.create(this.oModel, {/*oBinding*/}, "/TEAMS('42')"));
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+
 		// code under test
 		assert.throws(function () {
 			oBinding.create(undefined, true, true);
@@ -3888,6 +3907,8 @@ sap.ui.define([
 
 		oBinding = this.bindList("TEAM_2_EMPLOYEES",
 			this.oModel.createBindingContext("/TEAMS('42')"));
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 
 		// code under test
 		assert.throws(function () {
