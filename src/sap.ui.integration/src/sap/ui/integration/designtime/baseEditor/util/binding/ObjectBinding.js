@@ -65,6 +65,7 @@ sap.ui.define([
 
 	ObjectBinding.prototype.init = function () {
 		this._aIgnoreList = [];
+		this._oModelMap = {};
 	};
 
 	ObjectBinding.prototype.exit = function () {
@@ -90,7 +91,28 @@ sap.ui.define([
 		return this._originalObject;
 	};
 
-	ObjectBinding.prototype.setModel = function () {
+	ObjectBinding.prototype.setModel = function (oModel, sName) {
+		// If the same model is registered under different names
+		// with different context paths, track this relation
+		// in order to only track changes on one of these models
+
+		// Track explicitly since undefined is a valid model name
+		var bModelAlreadyRegistered = false;
+
+		var sExistingModelName = Object.keys(this.oModels || {})
+			.find(function (sModelName) {
+				if (this.oModels[sModelName] === oModel) {
+					bModelAlreadyRegistered = true;
+					return true;
+				}
+				return false;
+			}.bind(this));
+		this._oModelMap[sName] = bModelAlreadyRegistered
+			// Use name from model map in case the first found model
+			// refers to a different model name itself
+			? this._oModelMap[sExistingModelName]
+			: sName;
+
 		var vReturn = ManagedObject.prototype.setModel.apply(this, arguments);
 		this._init();
 		return vReturn;
@@ -114,7 +136,7 @@ sap.ui.define([
 	ObjectBinding.prototype._cleanup = function () {
 		if (this._mSimpleBindings) {
 			Object.keys(this._mSimpleBindings).forEach(function(sKey) {
-				var oBinding = this._mSimpleBindings[sKey];
+				var oBinding = this._mSimpleBindings[sKey].binding;
 				// destroy is not removing binding from the model's list of bindings
 				oBinding.getModel().removeBinding(oBinding);
 				oBinding.destroy();
@@ -153,7 +175,10 @@ sap.ui.define([
 						} else {
 							return;
 						}
-						this._updateValue(sCurPath, oBindingInfo);
+						this._updateValue([{
+							path: sCurPath,
+							bindingInfo: oBindingInfo
+						}]);
 					}
 				} else if (
 					oObject[sKey]
@@ -167,37 +192,58 @@ sap.ui.define([
 			}, this);
 	};
 
-	ObjectBinding.prototype._updateValue = function (sPath, oBindingInfo) {
-		var oObject = this.getObject();
-		var aParts = sPath.split("/");
-		var sKey = aParts.pop();
-		if (aParts.length) {
-			oObject = ObjectPath.get(aParts, oObject);
-		}
-		this.bindProperty("_value", deepClone(oBindingInfo));
-		// to avoid changes influencing the model, if oValue is an object (since it is one-way only binding)
-		var oValue = deepClone(this.getProperty("_value"));
-		this.unbindProperty("_value");
-		if (oValue !== oObject[sKey]) {
-			oObject[sKey] = oValue;
-			this.fireChange({
-				path: sPath,
-				value: oValue
-			});
+	ObjectBinding.prototype._updateValue = function (aValueUpdates) {
+		var aChanges = [];
+
+		aValueUpdates.forEach(function (oUpdate) {
+			var oObject = this.getObject();
+			var aParts = oUpdate.path.split("/");
+			var sKey = aParts.pop();
+			if (aParts.length) {
+				oObject = ObjectPath.get(aParts, oObject);
+			}
+			this.bindProperty("_value", deepClone(oUpdate.bindingInfo));
+			// to avoid changes influencing the model, if oValue is an object (since it is one-way only binding)
+			var oValue = deepClone(this.getProperty("_value"));
+			this.unbindProperty("_value");
+
+			if (oValue !== oObject[sKey]) {
+				oObject[sKey] = oValue;
+				aChanges.push({
+					path: oUpdate.path,
+					value: oValue
+				});
+			}
+		}.bind(this));
+
+		if (aChanges.length) {
+			this.fireChange({ changes: aChanges });
 		}
 	};
 
 	ObjectBinding.prototype._createSimpleBinding = function(oSimpleBindingInfo, sCurPath, oBindingInfo) {
 		var oContext = this.getBindingContext(oSimpleBindingInfo.model);
-		var sHash = oSimpleBindingInfo.model + ">" + oSimpleBindingInfo.path;
+		var sModelName = this._oModelMap[oSimpleBindingInfo.model];
+		var oOriginalModel = this.oModels[oSimpleBindingInfo.model];
+		var sAbsolutePath = oOriginalModel.resolve(oSimpleBindingInfo.path, oContext);
+		var sHash = sModelName + ">" + sAbsolutePath;
 		var oBinding = this._mSimpleBindings[sHash];
+
 		if (!oBinding) {
 			oBinding = this.getModel(oSimpleBindingInfo.model).bindProperty(oSimpleBindingInfo.path, oContext);
-			this._mSimpleBindings[sHash] = oBinding;
+			this._mSimpleBindings[sHash] = {
+				binding: oBinding,
+				properties: []
+			};
+
+			oBinding.attachChange(function () {
+				this._updateValue(this._mSimpleBindings[sHash].properties);
+			}.bind(this));
 		}
-		oBinding.attachChange(function () {
-			this._updateValue(sCurPath, oBindingInfo);
-		}.bind(this));
+		this._mSimpleBindings[sHash].properties.push({
+			path: sCurPath,
+			bindingInfo: oBindingInfo
+		});
 		return oBinding;
 	};
 

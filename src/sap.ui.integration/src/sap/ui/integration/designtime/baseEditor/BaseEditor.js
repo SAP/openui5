@@ -341,6 +341,10 @@ sap.ui.define([
 				this.deregisterPropertyEditor(oPropertyEditor, sPropertyName);
 			}, this);
 		}.bind(this));
+
+		if (this._oRootWrapper) {
+			this._oRootWrapper.destroy();
+		}
 	};
 
 	BaseEditor.prototype._initialize = function () {
@@ -383,24 +387,7 @@ sap.ui.define([
 					this._mObservableConfig = Object.assign(this._mObservableConfig, this._prepareConfig(mPropertiesConfig));
 					this._oConfigObserver.setObject(this._mObservableConfig);
 
-					this._oConfigObserver.attachChange(function (oEvent) {
-						var aPath = oEvent.getParameter("path").split("/");
-						var vValue = oEvent.getParameter("value");
-						var sPropertyKey = aPath.shift();
-						var aPropertyEditors = this.getPropertyEditorsByNameSync(sPropertyKey) || [];
-
-						aPropertyEditors.forEach(function (oPropertyEditor) {
-							if (aPath[0] === "value") {
-								oPropertyEditor.setValue(vValue);
-							} else {
-								var mProperties = oEvent.getSource().getObject();
-								var mPropertyConfig = _omit(deepClone(mProperties[sPropertyKey]), "value");
-
-								ObjectPath.set(aPath, vValue, mPropertyConfig);
-								oPropertyEditor.setConfig(mPropertyConfig);
-							}
-						});
-					}, this);
+					this._oConfigObserver.attachChange(this._onConfigChange, this);
 
 					// If there is no custom layout, create default
 					var aContent = this.getContent();
@@ -415,6 +402,76 @@ sap.ui.define([
 					this._bInitFinished = true;
 					this._checkReady();
 				}.bind(this));
+		}
+	};
+
+	BaseEditor.prototype._onConfigChange = function (oEvent) {
+		var oChangeMap = oEvent.getParameter("changes")
+			.reduce(function (oCurrentChangeMap, oOriginalChange) {
+				var oChange = deepClone(oOriginalChange);
+				oChange.path = oChange.path.split("/");
+				oChange.propertyKey = oChange.path.shift();
+				if (!oCurrentChangeMap[oChange.propertyKey]) {
+					oCurrentChangeMap[oChange.propertyKey] = [];
+				}
+				oCurrentChangeMap[oChange.propertyKey].push(oChange);
+				return oCurrentChangeMap;
+			}, {});
+
+		// Collect all editors which are affected by one of the changes
+		var aPropertyEditors = Object.keys(oChangeMap).reduce(function (aList, sPropertyName) {
+			var aAffectedEditors = (this.getPropertyEditorsByNameSync(sPropertyName) || [])
+				.map(function (oEditor) {
+					return {
+						editor: oEditor,
+						// Keep the property name to identify independent editors later
+						propertyName: sPropertyName
+					};
+				});
+			aList = aList.concat(aAffectedEditors);
+			return aList;
+		}.bind(this), []);
+
+		// Property editors which are not managed by the root wrapper
+		// have to be updated independently
+		var aIndependentEditors = aPropertyEditors.filter(function (oPropertyEditor) {
+			return !this._oRootWrapper || !includes(this._oRootWrapper._aEditorWrappers, oPropertyEditor.editor);
+		}.bind(this));
+
+		aIndependentEditors.forEach(function (oPropertyEditor) {
+			var sPropertyKey = oPropertyEditor.propertyName;
+			var mProperties = oEvent.getSource().getObject();
+			var mPropertyConfig = _omit(deepClone(mProperties[sPropertyKey]), "value");
+			var bConfigChanged = false;
+
+			var aChanges = oChangeMap[sPropertyKey] || [];
+			aChanges.forEach(function (oChange) {
+				if (oChange.path[0] === "value") {
+					oPropertyEditor.editor.setValue(oChange.value);
+				} else {
+					ObjectPath.set(oChange.path, oChange.value, mPropertyConfig);
+					bConfigChanged = true;
+				}
+			});
+
+			if (bConfigChanged) {
+				oPropertyEditor.editor.setConfig(mPropertyConfig);
+			}
+		});
+
+		// If at least one property editor is managed by the root wrapper
+		// update the wrapper and let it pass the change down to the
+		// property editors
+		if (aIndependentEditors.length < aPropertyEditors.length) {
+			var aModifiedConfigs = deepClone(this._oRootWrapper.getConfig())
+				.map(function (mConfig) {
+					var aChanges = oChangeMap[mConfig.__propertyName] || [];
+					aChanges.forEach(function (oChange) {
+						ObjectPath.set(oChange.path, oChange.value, mConfig);
+					});
+					return mConfig;
+				});
+			this._oRootWrapper.setConfig(aModifiedConfigs);
 		}
 	};
 

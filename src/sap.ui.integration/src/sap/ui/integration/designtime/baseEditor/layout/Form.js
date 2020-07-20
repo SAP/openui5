@@ -114,7 +114,7 @@ sap.ui.define([
 	 * @param {boolean} [mLayoutConfig.renderLabels] - Default: true. Indicates whether form labels should be rendered
 	 * @returns {object} Returns data in a convenient for the Form fragment format
 	 */
-	return function (aPropertyEditorConfigs, mLayoutConfig) {
+	function prepareData (aPropertyEditorConfigs, mLayoutConfig) {
 		mLayoutConfig = mLayoutConfig || {};
 		var aConfigs = aPropertyEditorConfigs.slice();
 		var aGroups = mLayoutConfig.groups || [];
@@ -175,5 +175,10 @@ sap.ui.define([
 		mViewModel.count = aPropertyEditorConfigs.length - aConfigs.length;
 
 		return mViewModel;
+	}
+
+	return {
+		prepareData: prepareData,
+		updateDependencies: ["visible", "tags"]
 	};
 });
