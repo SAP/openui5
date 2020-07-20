@@ -337,7 +337,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.init = function () {
-		this._ariaText = new InvisibleText({id: this.getId() + "-ariaText"});
+		this._ariaText = new InvisibleText({ id: this.getId() + "-ariaText" });
 		this._oRb = Core.getLibraryResourceBundle("sap.f");
 		this.setModel(new JSONModel(), "parameters");
 		this._busyStates = new Map();
@@ -359,9 +359,10 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#resolveDestination as resolveDestination
 		 * @borrows sap.ui.integration.widgets.Card#request as request
 		 * @borrows sap.ui.integration.widgets.Card#showMessage as showMessage
+		 * @borrows sap.ui.integration.widgets.Card#getBaseUrl as showMessage
 		 */
 		this._oLimitedInterface = new Interface(this, [
-			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage"
+			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl"
 		]);
 
 		this.initBadgeEnablement({
@@ -543,7 +544,7 @@ sap.ui.define([
 			return null;
 		}
 
-		var sFullExtensionPath = this._oCardManifest.get("/sap.app/id").replace(/\./g,"/") + "/" + sExtensionPath;
+		var sFullExtensionPath = this._oCardManifest.get("/sap.app/id").replace(/\./g, "/") + "/" + sExtensionPath;
 
 		return new Promise(function (resolve, reject) {
 			sap.ui.require([sFullExtensionPath], function (oExtension) {
@@ -1089,14 +1090,14 @@ sap.ui.define([
 		this._createContentPromise = this.createContent({
 			cardType: sCardType,
 			contentManifest: oContentManifest,
-			serviceManager:  this._oServiceManager,
+			serviceManager: this._oServiceManager,
 			dataProviderFactory: this._oDataProviderFactory,
 			iconFormatter: this._oIconFormatter,
 			appId: this._sAppId
 		}).then(function (oContent) {
-				this._setCardContent(oContent);
-				return oContent;
-			}.bind(this));
+			this._setCardContent(oContent);
+			return oContent;
+		}.bind(this));
 
 		this._createContentPromise.catch(function (sError) {
 			if (sError) {
@@ -1221,7 +1222,7 @@ sap.ui.define([
 	Card.prototype._handleError = function (sLogMessage, sDisplayMessage) {
 		Log.error(sLogMessage);
 
-		this.fireEvent("_error", {message:sLogMessage});
+		this.fireEvent("_error", { message: sLogMessage });
 
 		var sDefaultDisplayMessage = "Unable to load the data.",
 			sErrorMessage = sDisplayMessage || sDefaultDisplayMessage,
@@ -1332,29 +1333,39 @@ sap.ui.define([
 	 * @experimental Since 1.73
 	 * @returns {Promise} Promise resolves after the designtime configuration is loaded.
 	 */
-	Card.prototype.loadDesigntime = function() {
-		if (!this._oCardManifest) {
-			return Promise.reject("Manifest not yet available");
+	Card.prototype.loadDesigntime = function () {
+		if (this._oDesigntime) {
+			return Promise.resolve(this._oDesigntime);
 		}
+
+		if (!this._oCardManifest) {
+			return new Promise(function (resolve, reject) {
+				this.attachManifestReady(function () {
+					this.loadDesigntime().then(resolve, reject);
+				}.bind(this));
+			}.bind(this));
+		}
+
 		var sAppId = this._oCardManifest.get("/sap.app/id");
 		if (!sAppId) {
 			return Promise.reject("App id not maintained");
 		}
-		var sModulePath = sAppId.replace(/\./g,"/");
-		return new Promise(function(resolve, reject) {
+
+		return new Promise(function (resolve, reject) {
 			//build the module path to load as part of the widgets module path
-			var sModule = sModulePath + "/" + (this._oCardManifest.get("/sap.card/designtime") || "designtime/Card.designtime");
-			if (sModule) {
-				sap.ui.require([sModule, "sap/base/util/deepClone"], function(oDesigntime, deepClone) {
+			var sDesigntimePath = this._oCardManifest.get("/sap.card/designtime"),
+				sFullDesigntimePath = this._oCardManifest.get("/sap.app/id").replace(/\./g, "/") + "/" + sDesigntimePath;
+			if (sFullDesigntimePath) {
+				sap.ui.require([sFullDesigntimePath], function (oDesigntime) {
 					//successfully loaded
-					resolve({
-						designtime: oDesigntime,
-						manifest: deepClone(this._oCardManifest._oManifest.getRawJson(), 30)
-					});
+					oDesigntime._readyPromise(this._oLimitedInterface, this).then(function () {
+						this._oDesigntime = oDesigntime;
+						resolve(oDesigntime);
+					}.bind(this));
 				}.bind(this), function () {
 					//error
 					reject({
-						error: sModule + " not found"
+						error: sFullDesigntimePath + " not found"
 					});
 				});
 			} else {
@@ -1406,7 +1417,7 @@ sap.ui.define([
 	 * @returns {Promise} Resolves when the request is successful, rejects otherwise.
 	 */
 	Card.prototype.request = function (oConfiguration) {
-		return this._oDataProviderFactory.create({ request: oConfiguration}).getData();
+		return this._oDataProviderFactory.create({ request: oConfiguration }).getData();
 	};
 
 	Card.prototype.onfocusin = function () {
