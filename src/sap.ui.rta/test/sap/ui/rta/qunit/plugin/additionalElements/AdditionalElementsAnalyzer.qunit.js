@@ -673,8 +673,8 @@ function(
 				});
 		});
 
-		function getFilteredItemsListTests(aInvisibleItems, aODataItems, aInvisibleCustomItems, aUniqueCustomItems, aDelegateItems, assert) {
-			var aPropertyItems = aODataItems || aDelegateItems;
+		function getFilteredItemsListTests(aInvisibleItems, aInvisibleCustomItems, aUniqueCustomItems, aDelegateItems, assert) {
+			var aPropertyItems = aDelegateItems;
 
 			var aAnalyzerValues = [
 				aInvisibleItems.concat([]),
@@ -693,7 +693,6 @@ function(
 		QUnit.test("when getFilteredItemsList is called with existing addViaDelegate items and no delegate items, for filtering custom add items which also exist as invisible items", function(assert) {
 			getFilteredItemsListTests(
 				[{ elementId: "invisibleElement1" }, { elementId: "invisibleElement2" }],
-				[{ property: "oDataProperty1" }],
 				[{ itemId: "invisibleElement1" }, { itemId: "invisibleElement2" }],
 				[{ itemId: "customItem1" }],
 				[],
@@ -704,7 +703,6 @@ function(
 		QUnit.test("when getFilteredItemsList is called without addViaDelegate items, with delegate items, for filtering custom add items which also exist as invisible items", function(assert) {
 			getFilteredItemsListTests(
 				[{ elementId: "invisibleElement1" }, { elementId: "invisibleElement2" }],
-				[],
 				[{ itemId: "invisibleElement1" }, { itemId: "invisibleElement2" }],
 				[{ itemId: "customItem1" }],
 				[{name: "fromDelegate"}],
@@ -715,7 +713,6 @@ function(
 		QUnit.test("when getFilteredItemsList is called without addViaDelegate nor delegate items, for filtering custom add items which do not exist as invisible items", function(assert) {
 			getFilteredItemsListTests(
 				[{ elementId: "invisibleElement1" }, { elementId: "invisibleElement2" }],
-				[],
 				[],
 				[{ itemId: "customItem1" }, { itemId: "customItem2" }],
 				[],

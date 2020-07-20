@@ -268,8 +268,8 @@ sap.ui.define([
 		var aRequiredLibraries = DelegateMediatorAPI.getKnownDefaultDelegateLibraries();
 		aRequiredLibraries.forEach(function(sLibrary) {
 			var oLoadLibraryPromise = sap.ui.getCore().loadLibrary(sLibrary, { async: true })
-				.catch(function() {
-					Log.warning("Required library not available: ");
+				.catch(function(vError) {
+					Log.warning("Required library not available: ", vError);
 					return Promise.reject();
 				});
 			aLoadLibraryPromises.push(oLoadLibraryPromise);
