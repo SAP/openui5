@@ -7,6 +7,8 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core">
 	<ScrollContainer height="100%" horizontal="false" vertical="true" class="sapUiMdcDefineConditionPanel">
+		<core:InvisibleText id="ivtOperator" text="{$i18n>valuehelp.DEFINECONDITIONS_OPERATORLABEL}"/>
+
 		<l:VerticalLayout id="defineCondition" width="100%" content="{path: '$this>/conditions', filters:[{path: 'validated', operator:'NE', value1:'Validated'}], templateShareable:false}"> <!-- class="sapUiSmallMarginBottom sapUiSmallMarginTop"> -->
 			<l:Grid id="conditionRow" width="100%" hSpacing="0" vSpacing="0" containerQuery="true" class="sapUiMdcDefineConditionGrid">
 				<mdc:Field
@@ -16,7 +18,8 @@
 					width="100%"
 					display="Description"
 					fieldHelp="rowSelect-help"
-					change="onSelectChange">
+					change="onSelectChange"
+					ariaLabelledBy="ivtOperator">
 					<mdc:layoutData>
 						<l:GridData span="XL3 L3 M3 S3" />
 					</mdc:layoutData>
