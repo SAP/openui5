@@ -65,6 +65,12 @@ sap.ui.define([
 					});
 				},
 				/*
+				 * Presses the "Fix Quantities" button.
+				 */
+				pressFixAllQuantities : function () {
+					return pressButton(this, "fixAllQuantities");
+				},
+				/*
 				 * Presses the Save button at the bottom of the page.
 				 */
 				pressSalesOrderSaveButton : function () {
@@ -79,6 +85,37 @@ sap.ui.define([
 						id : "messagePopoverButton",
 						success : function (oButton) {
 							iCurrentMessageCount = parseInt(oButton.getText());
+						},
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Scrolls through the items in the table. Positive values scroll up, negative
+				 * values down.
+				 *
+				 * @param {number} iDelta Number of items to scroll.
+				 */
+				scrollTable : function (iDelta) {
+					return this.waitFor({
+						id : "ToLineItems",
+						success : function (oTable) {
+							var iCurrentFirst = oTable.getFirstVisibleRow();
+							oTable.setFirstVisibleRow(iCurrentFirst + iDelta);
+
+							Opa5.assert.ok(true, "Scrolling by " + iDelta);
+						},
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Scrolls the table to the top.
+				 */
+				scrollToTop : function () {
+					return this.waitFor({
+						id : "ToLineItems",
+						success : function (oTable) {
+							oTable.setFirstVisibleRow(0);
+							Opa5.assert.ok(true, "Scrolled to top");
 						},
 						viewName : sViewName
 					});
@@ -107,6 +144,35 @@ sap.ui.define([
 				}
 			},
 			assertions : {
+				/*
+				 * Checks if all item quantities are as described in the MIT. All HT-1000 items need
+				 * a quantity of at least two, all other items a quantity of at least one.
+				 */
+				checkItemQuantities : function () {
+					return this.waitFor({
+						id : "ToLineItems",
+						success : function (oTable) {
+							var aCells, i, sItemPosition, sProductId, iQuantity,
+								aRows = oTable.getRows();
+
+							for (i = 0; i < aRows.length; i += 1) {
+								aCells = aRows[i].getCells();
+								sItemPosition = aCells[1].getValue();
+								sProductId = aCells[2].getValue();
+								iQuantity = parseInt(aCells[3].getValue());
+
+								if (sProductId === "HT-1000") {
+									Opa5.assert.ok(iQuantity >= 2,
+										"Quantity for item " + sItemPosition + " is ok.");
+								} else {
+									Opa5.assert.ok(iQuantity >= 1,
+										"Quantity for item " + sItemPosition + " is ok.");
+								}
+							}
+						},
+						viewName : sViewName
+					});
+				},
 				/*
 				 * Checks, if the message count has changed by a specified amount.
 				 *
