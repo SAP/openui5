@@ -540,7 +540,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 				ariaProps.role = 'menuitemradio';
 				if (!control.hasStyleClass("sapTntNavLIPopup") && this.getItems().length > 0) {
-					ariaProps.haspopup = true;
+					ariaProps.haspopup = "menu";
 				}
 			} else {
 				ariaProps.role = 'treeitem';

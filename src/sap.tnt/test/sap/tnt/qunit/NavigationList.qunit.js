@@ -354,6 +354,15 @@ sap.ui.define([
 		this.navigationList.getItems()[2]._select();
 		assert.notOk(currentItemCollapsed.parentElement.getAttribute('aria-pressed'), 'Root 2 has no ARIA attribute pressed when NavigationList is collapsed.');
 		assert.ok(currentItemCollapsed.getAttribute('aria-selected'), 'aria-selected is set.');
+
+		//aria-haspopup
+		this.navigationList.setExpanded(true);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(currentItem.getAttribute("aria-haspopup"), null, "no aria-haspopup attribute when NavigationList is expanded");
+
+		this.navigationList.setExpanded(false);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(currentItem.getAttribute("aria-haspopup"), "menu", "aria-haspopup is of type menu when NavigationList is collapsed");
 	});
 
 	QUnit.module("ARIA - Accessibility Text", {
