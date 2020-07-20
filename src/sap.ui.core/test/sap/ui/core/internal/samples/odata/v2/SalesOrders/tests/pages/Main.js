@@ -108,19 +108,6 @@ sap.ui.define([
 					});
 				},
 				/*
-				 * Scrolls the table to the top.
-				 */
-				scrollToTop : function () {
-					return this.waitFor({
-						id : "ToLineItems",
-						success : function (oTable) {
-							oTable.setFirstVisibleRow(0);
-							Opa5.assert.ok(true, "Scrolled to top");
-						},
-						viewName : sViewName
-					});
-				},
-				/*
 				 * Loads the specified sales order.
 				 *
 				 * @param {string} sSalesOrderId The sales order id
@@ -141,6 +128,12 @@ sap.ui.define([
 				 */
 				toggleMessagePopover : function () {
 					return pressButton(this, "messagePopoverButton");
+				},
+				/*
+				 * Presses the "Transition Messages Only" button
+				 */
+				toggleTransitionMessages : function () {
+					return pressButton(this, "transitionMessagesOnly");
 				}
 			},
 			assertions : {

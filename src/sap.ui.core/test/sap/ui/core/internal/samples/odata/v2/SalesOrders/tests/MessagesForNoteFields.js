@@ -51,5 +51,7 @@ sap.ui.define([
 			Then.onMainPage.checkMessageNotInPopover("010", oFixture.messageKey + "NoPrefix");
 			When.onMainPage.toggleMessagePopover();
 		});
+
+		Given.iTeardownMyApp();
 	});
 });
