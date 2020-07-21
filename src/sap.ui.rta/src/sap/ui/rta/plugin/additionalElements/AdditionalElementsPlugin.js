@@ -35,7 +35,7 @@ sap.ui.define([
 		var oParentOverlay;
 		var oResponsibleElementOverlay = oOverlay;
 		if (oPlugin) {
-			var bResponsibleElementAvailable = ["delegate", "reveal", "custom"].some(function(vActionName) {
+			var bResponsibleElementAvailable = ["add.delegate", "reveal", "add.custom"].some(function(vActionName) {
 				return oPlugin.isResponsibleElementActionAvailable(oOverlay, vActionName);
 			});
 			if (bResponsibleElementAvailable) {

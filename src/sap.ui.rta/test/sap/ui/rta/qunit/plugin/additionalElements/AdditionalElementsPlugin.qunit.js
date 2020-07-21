@@ -1077,7 +1077,7 @@ sap.ui.define([
 					responsibleElement: {
 						target: this.oSibling,
 						source: this.oPseudoPublicParent,
-						actionsFromResponsibleElement: ["custom"]
+						actionsFromResponsibleElement: ["add.custom"]
 					}
 				}, ON_CONTAINER)
 				.then(function (oCreatedOverlay) {
@@ -1100,7 +1100,7 @@ sap.ui.define([
 					responsibleElement: {
 						target: this.oSibling,
 						source: this.oPseudoPublicParent,
-						actionsFromResponsibleElement: ["delegate"]
+						actionsFromResponsibleElement: ["add.delegate"]
 					}
 				}, ON_CONTAINER)
 				.then(function (oCreatedOverlay) {
