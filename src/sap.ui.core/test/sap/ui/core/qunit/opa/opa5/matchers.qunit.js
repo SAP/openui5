@@ -3,12 +3,13 @@ sap.ui.define([
 	'sap/ui/test/Opa',
 	'sap/ui/test/Opa5',
 	"sap/m/Button",
+	"sap/m/Input",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/matchers/MatcherFactory",
 	"sap/ui/layout/HorizontalLayout"
-], function (Opa, Opa5, Button, PropertyStrictEquals, Ancestor, Descendant, MatcherFactory, HorizontalLayout) {
+], function (Opa, Opa5, Button, Input, PropertyStrictEquals, Ancestor, Descendant, MatcherFactory, HorizontalLayout) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -523,13 +524,19 @@ sap.ui.define([
 		beforeEach : function () {
 			this.oButton = new Button("enabledButton", {text : "foo"});
 			this.oButton2 = new Button("disabledButton", {text : "bar", enabled: false});
+			this.oInput = new Input("editableInput");
+			this.oInput2 = new Input("noneditableInput", {editable: false});
 			this.oButton.placeAt("qunit-fixture");
 			this.oButton2.placeAt("qunit-fixture");
+			this.oInput.placeAt("qunit-fixture");
+			this.oInput2.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function () {
 			this.oButton.destroy();
 			this.oButton2.destroy();
+			this.oInput.destroy();
+			this.oInput2.destroy();
 		}
 	});
 
@@ -622,6 +629,36 @@ sap.ui.define([
 			enabled: false,
 			success: function (aButtons) {
 				assert.strictEqual(aButtons.length, 2, "Should include both enabled and disabled controls when enabled: false");
+			}
+		});
+
+		Opa5.emptyQueue().done(function () {
+			Opa5.resetConfig();
+			done();
+		});
+	});
+
+	QUnit.test("Should filter by editable state", function (assert) {
+		var done = assert.async();
+		var oOpa5 = new Opa5();
+
+		Opa5.extendConfig({
+			autoWait: true
+		});
+
+		oOpa5.waitFor({
+			controlType: "sap.m.Input",
+			editable: true,
+			success: function (aInputs) {
+				assert.strictEqual(aInputs.length, 1, "Should include only editable controls by default (editable: undefined)");
+			}
+		});
+
+		oOpa5.waitFor({
+			controlType: "sap.m.Input",
+			editable: false,
+			success: function (aInputs) {
+				assert.strictEqual(aInputs.length, 2, "Should include all controls when editable: false");
 			}
 		});
 

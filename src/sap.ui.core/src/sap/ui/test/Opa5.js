@@ -54,19 +54,8 @@ sap.ui.define([
 			oValidator = new _ParameterValidator({
 				errorPrefix: "sap.ui.test.Opa5#waitFor"
 			}),
-			aConfigValuesForWaitFor = [
-				"visible",
-				"enabled",
-				"editable",
-				"viewNamespace",
-				"viewName",
-				"viewId",
-				"fragmentId",
-				"autoWait"
-			].concat(Opa._aConfigValuesForWaitFor),
-			aPropertiesThatShouldBePassedToOpaWaitFor = [
-				"check", "error", "success"
-			].concat(Opa._aConfigValuesForWaitFor),
+			aConfigValuesForWaitFor = Object.keys(_ValidationParameters.OPA5_WAITFOR_CONFIG),
+			aPropertiesThatShouldBePassedToOpaWaitFor = Object.keys(_ValidationParameters.OPA_WAITFOR),
 			aExtensions = [],
 			aEventProvider = new EventProvider();
 
