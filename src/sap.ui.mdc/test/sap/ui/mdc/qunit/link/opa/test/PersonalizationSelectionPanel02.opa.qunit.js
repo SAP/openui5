@@ -61,9 +61,6 @@ sap.ui.define([
 		When.iClickOnLink("Projector");
 
 		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"Projector"
-		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 	opaTest("When I click on 'More Links' button, the selection dialog opens", function(Given, When, Then) {
@@ -71,97 +68,105 @@ sap.ui.define([
 
 		Then.thePersonalizationDialogOpens();
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link2 (Superior)", 0);
-		Then.iShouldSeeLinkItemWithSelection("Category Link2 (Superior)", false);
+		Then.iShouldSeeLinkItemOnPosition("FactSheet of Category", 0);
+		Then.iShouldSeeLinkItemWithSelection("FactSheet of Category", false);
+		Then.iShouldSeeLinkItemAsEnabled("FactSheet of Category", true);
+
+		Then.iShouldSeeLinkItemOnPosition("Category Link2 (Superior)", 1);
+		Then.iShouldSeeLinkItemWithSelection("Category Link2 (Superior)", true);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link2 (Superior)", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link3", 1);
+		Then.iShouldSeeLinkItemOnPosition("Category Link3", 2);
 		Then.iShouldSeeLinkItemWithSelection("Category Link3", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link3", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link4", 2);
+		Then.iShouldSeeLinkItemOnPosition("Category Link4", 3);
 		Then.iShouldSeeLinkItemWithSelection("Category Link4", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link4", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link5", 3);
+		Then.iShouldSeeLinkItemOnPosition("Category Link5", 4);
 		Then.iShouldSeeLinkItemWithSelection("Category Link5", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link5", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link6", 4);
+		Then.iShouldSeeLinkItemOnPosition("Category Link6", 5);
 		Then.iShouldSeeLinkItemWithSelection("Category Link6", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link6", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link7", 5);
+		Then.iShouldSeeLinkItemOnPosition("Category Link7", 6);
 		Then.iShouldSeeLinkItemWithSelection("Category Link7", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link7", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link8", 6);
+		Then.iShouldSeeLinkItemOnPosition("Category Link8", 7);
 		Then.iShouldSeeLinkItemWithSelection("Category Link8", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link8", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link9", 7);
+		Then.iShouldSeeLinkItemOnPosition("Category Link9", 8);
 		Then.iShouldSeeLinkItemWithSelection("Category Link9", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link9", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link10", 8);
+		Then.iShouldSeeLinkItemOnPosition("Category Link10", 9);
 		Then.iShouldSeeLinkItemWithSelection("Category Link10", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link10", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link11", 9);
+		Then.iShouldSeeLinkItemOnPosition("Category Link11", 10);
 		Then.iShouldSeeLinkItemWithSelection("Category Link11", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link11", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link12", 10);
+		Then.iShouldSeeLinkItemOnPosition("Category Link12", 11);
 		Then.iShouldSeeLinkItemWithSelection("Category Link12", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link12", true);
 
 		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
 		// Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
-	opaTest("When I select the 'Category Link2 (Superior)' and 'Category Link3' item, the 'Restore' button should be enabled", function(Given, When, Then) {
+	opaTest("When I deselect the 'Category Link2 (Superior)' and select the 'Category Link3' item, the 'Restore' button should be enabled", function(Given, When, Then) {
 		When.iSelectLink("Category Link2 (Superior)").and.iSelectLink("Category Link3");
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link2 (Superior)", 0);
-		Then.iShouldSeeLinkItemWithSelection("Category Link2 (Superior)", true);
+		Then.iShouldSeeLinkItemOnPosition("FactSheet of Category", 0);
+		Then.iShouldSeeLinkItemWithSelection("FactSheet of Category", false);
+		Then.iShouldSeeLinkItemAsEnabled("FactSheet of Category", true);
+
+		Then.iShouldSeeLinkItemOnPosition("Category Link2 (Superior)", 1);
+		Then.iShouldSeeLinkItemWithSelection("Category Link2 (Superior)", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link2 (Superior)", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link3", 1);
+		Then.iShouldSeeLinkItemOnPosition("Category Link3", 2);
 		Then.iShouldSeeLinkItemWithSelection("Category Link3", true);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link3", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link4", 2);
+		Then.iShouldSeeLinkItemOnPosition("Category Link4", 3);
 		Then.iShouldSeeLinkItemWithSelection("Category Link4", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link4", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link5", 3);
+		Then.iShouldSeeLinkItemOnPosition("Category Link5", 4);
 		Then.iShouldSeeLinkItemWithSelection("Category Link5", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link5", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link6", 4);
+		Then.iShouldSeeLinkItemOnPosition("Category Link6", 5);
 		Then.iShouldSeeLinkItemWithSelection("Category Link6", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link6", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link7", 5);
+		Then.iShouldSeeLinkItemOnPosition("Category Link7", 6);
 		Then.iShouldSeeLinkItemWithSelection("Category Link7", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link7", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link8", 6);
+		Then.iShouldSeeLinkItemOnPosition("Category Link8", 7);
 		Then.iShouldSeeLinkItemWithSelection("Category Link8", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link8", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link9", 7);
+		Then.iShouldSeeLinkItemOnPosition("Category Link9", 8);
 		Then.iShouldSeeLinkItemWithSelection("Category Link9", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link9", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link10", 8);
+		Then.iShouldSeeLinkItemOnPosition("Category Link10", 9);
 		Then.iShouldSeeLinkItemWithSelection("Category Link10", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link10", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link11", 9);
+		Then.iShouldSeeLinkItemOnPosition("Category Link11", 10);
 		Then.iShouldSeeLinkItemWithSelection("Category Link11", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link11", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link12", 10);
+		Then.iShouldSeeLinkItemOnPosition("Category Link12", 11);
 		Then.iShouldSeeLinkItemWithSelection("Category Link12", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link12", true);
 
@@ -173,7 +178,7 @@ sap.ui.define([
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"Projector", "Category Link2 (Superior)", "Category Link3"
+			 "Category Link3"
 		]);
 	});
 	opaTest("When I click on 'More Links' button again, the selection dialog opens", function(Given, When, Then) {
@@ -181,97 +186,105 @@ sap.ui.define([
 
 		Then.thePersonalizationDialogOpens();
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link2 (Superior)", 0);
-		Then.iShouldSeeLinkItemWithSelection("Category Link2 (Superior)", true);
+		Then.iShouldSeeLinkItemOnPosition("FactSheet of Category", 0);
+		Then.iShouldSeeLinkItemWithSelection("FactSheet of Category", false);
+		Then.iShouldSeeLinkItemAsEnabled("FactSheet of Category", true);
+
+		Then.iShouldSeeLinkItemOnPosition("Category Link2 (Superior)", 1);
+		Then.iShouldSeeLinkItemWithSelection("Category Link2 (Superior)", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link2 (Superior)", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link3", 1);
+		Then.iShouldSeeLinkItemOnPosition("Category Link3", 2);
 		Then.iShouldSeeLinkItemWithSelection("Category Link3", true);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link3", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link4", 2);
+		Then.iShouldSeeLinkItemOnPosition("Category Link4", 3);
 		Then.iShouldSeeLinkItemWithSelection("Category Link4", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link4", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link5", 3);
+		Then.iShouldSeeLinkItemOnPosition("Category Link5", 4);
 		Then.iShouldSeeLinkItemWithSelection("Category Link5", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link5", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link6", 4);
+		Then.iShouldSeeLinkItemOnPosition("Category Link6", 5);
 		Then.iShouldSeeLinkItemWithSelection("Category Link6", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link6", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link7", 5);
+		Then.iShouldSeeLinkItemOnPosition("Category Link7", 6);
 		Then.iShouldSeeLinkItemWithSelection("Category Link7", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link7", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link8", 6);
+		Then.iShouldSeeLinkItemOnPosition("Category Link8", 7);
 		Then.iShouldSeeLinkItemWithSelection("Category Link8", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link8", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link9", 7);
+		Then.iShouldSeeLinkItemOnPosition("Category Link9", 8);
 		Then.iShouldSeeLinkItemWithSelection("Category Link9", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link9", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link10", 8);
+		Then.iShouldSeeLinkItemOnPosition("Category Link10", 9);
 		Then.iShouldSeeLinkItemWithSelection("Category Link10", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link10", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link11", 9);
+		Then.iShouldSeeLinkItemOnPosition("Category Link11", 10);
 		Then.iShouldSeeLinkItemWithSelection("Category Link11", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link11", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link12", 10);
+		Then.iShouldSeeLinkItemOnPosition("Category Link12", 11);
 		Then.iShouldSeeLinkItemWithSelection("Category Link12", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link12", true);
 
 		// TODO: reset is currently not supported. We are waiting for delivery of Flex regarding reset functionality
 		// Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
-	opaTest("When I deselect the 'Category Link2 (Superior)' and 'Category Link3' item, the 'Restore' button should be disabled", function(Given, When, Then) {
+	opaTest("When I select the 'Category Link2 (Superior)' and deselect the 'Category Link3' item, the 'Restore' button should be disabled", function(Given, When, Then) {
 		When.iSelectLink("Category Link2 (Superior)").and.iSelectLink("Category Link3");
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link2 (Superior)", 0);
-		Then.iShouldSeeLinkItemWithSelection("Category Link2 (Superior)", false);
+		Then.iShouldSeeLinkItemOnPosition("FactSheet of Category", 0);
+		Then.iShouldSeeLinkItemWithSelection("FactSheet of Category", false);
+		Then.iShouldSeeLinkItemAsEnabled("FactSheet of Category", true);
+
+		Then.iShouldSeeLinkItemOnPosition("Category Link2 (Superior)", 1);
+		Then.iShouldSeeLinkItemWithSelection("Category Link2 (Superior)", true);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link2 (Superior)", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link3", 1);
+		Then.iShouldSeeLinkItemOnPosition("Category Link3", 2);
 		Then.iShouldSeeLinkItemWithSelection("Category Link3", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link3", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link4", 2);
+		Then.iShouldSeeLinkItemOnPosition("Category Link4", 3);
 		Then.iShouldSeeLinkItemWithSelection("Category Link4", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link4", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link5", 3);
+		Then.iShouldSeeLinkItemOnPosition("Category Link5", 4);
 		Then.iShouldSeeLinkItemWithSelection("Category Link5", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link5", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link6", 4);
+		Then.iShouldSeeLinkItemOnPosition("Category Link6", 5);
 		Then.iShouldSeeLinkItemWithSelection("Category Link6", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link6", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link7", 5);
+		Then.iShouldSeeLinkItemOnPosition("Category Link7", 6);
 		Then.iShouldSeeLinkItemWithSelection("Category Link7", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link7", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link8", 6);
+		Then.iShouldSeeLinkItemOnPosition("Category Link8", 7);
 		Then.iShouldSeeLinkItemWithSelection("Category Link8", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link8", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link9", 7);
+		Then.iShouldSeeLinkItemOnPosition("Category Link9", 8);
 		Then.iShouldSeeLinkItemWithSelection("Category Link9", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link9", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link10", 8);
+		Then.iShouldSeeLinkItemOnPosition("Category Link10", 9);
 		Then.iShouldSeeLinkItemWithSelection("Category Link10", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link10", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link11", 9);
+		Then.iShouldSeeLinkItemOnPosition("Category Link11", 10);
 		Then.iShouldSeeLinkItemWithSelection("Category Link11", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link11", true);
 
-		Then.iShouldSeeLinkItemOnPosition("Category Link12", 10);
+		Then.iShouldSeeLinkItemOnPosition("Category Link12", 11);
 		Then.iShouldSeeLinkItemWithSelection("Category Link12", false);
 		Then.iShouldSeeLinkItemAsEnabled("Category Link12", true);
 
@@ -282,9 +295,6 @@ sap.ui.define([
 		When.iPressOkButton();
 
 		Then.thePersonalizationDialogShouldBeClosed();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"Projector"
-		]);
 
 		Given.closeAllNavigationPopovers();
 

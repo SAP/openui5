@@ -15,7 +15,6 @@ sap.ui.define([
 		var aLinkItems = [
 			new LinkItem({
 				key: "IDLinkItem00",
-				isMain: true,
 				text: "{ProductId}",
 				description: "{Name}",
 				icon: "{Image}",

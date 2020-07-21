@@ -112,7 +112,6 @@ sap.ui.define([
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
-					isMain: true,
 					text: "A",
 					href: "#A"
 				})
@@ -129,7 +128,6 @@ sap.ui.define([
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
-					isMain: true,
 					text: "A" // invalid item
 				})
 			]
@@ -237,7 +235,7 @@ sap.ui.define([
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
 
-	QUnit.module("sap.ui.mdc.link.Panel: default icon without main item", {
+	QUnit.module("sap.ui.mdc.link.Panel: default icon", {
 		beforeEach: function() {
 			this.oPanel;
 		},
@@ -301,150 +299,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		fnHasVisibleIcons(assert, this.oPanel, 2);
-	});
-
-	QUnit.module("sap.ui.mdc.link.Panel: default icon with main item", {
-		beforeEach: function() {
-			this.oPanel;
-		},
-		afterEach: function() {
-			this.oPanel.destroy();
-		}
-	});
-	QUnit.test("all items have not icon", function(assert) {
-		this.oPanel = new Panel({
-			items: [
-				new PanelItem({
-					isMain: true,
-					text: "A",
-					href: "#A"
-				}), new PanelItem({
-					text: "B",
-					href: "#B"
-				}), new PanelItem({
-					text: "C",
-					href: "#C"
-				})
-			]
-		});
-
-		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		fnHasVisibleIcons(assert, this.oPanel, 0);
-	});
-	QUnit.test("all items have icon", function(assert) {
-		this.oPanel = new Panel({
-			items: [
-				new PanelItem({
-					isMain: true,
-					text: "A",
-					href: "#A",
-					icon: "sap-icon://user-edit"
-				}), new PanelItem({
-					text: "B",
-					href: "#B",
-					icon: "sap-icon://user-edit"
-				})
-			]
-		});
-
-		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		fnHasVisibleIcons(assert, this.oPanel, 2);
-	});
-	QUnit.test("main item have not icon", function(assert) {
-		this.oPanel = new Panel({
-			items: [
-				new PanelItem({
-					isMain: true,
-					text: "A",
-					href: "#A"
-				}), new PanelItem({
-					text: "B",
-					href: "#B",
-					icon: "sap-icon://user-edit"
-				}), new PanelItem({
-					text: "C",
-					href: "#C",
-					icon: "sap-icon://user-edit"
-				})
-			]
-		});
-
-		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		fnHasVisibleIcons(assert, this.oPanel, 2);
-	});
-	QUnit.test("main item have not icon", function(assert) {
-		this.oPanel = new Panel({
-			items: [
-				new PanelItem({
-					isMain: true,
-					text: "A",
-					href: "#A"
-				}), new PanelItem({
-					text: "B",
-					href: "#B"
-				}), new PanelItem({
-					text: "C",
-					href: "#C",
-					icon: "sap-icon://user-edit"
-				})
-			]
-		});
-
-		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		fnHasVisibleIcons(assert, this.oPanel, 2);
-	});
-	QUnit.test("main item have not icon", function(assert) {
-		this.oPanel = new Panel({
-			items: [
-				new PanelItem({
-					isMain: true,
-					text: "A",
-					href: "#A"
-				}), new PanelItem({
-					text: "B",
-					href: "#B",
-					icon: "sap-icon://user-edit"
-				}), new PanelItem({
-					text: "C",
-					href: "#C"
-				})
-			]
-		});
-
-		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		fnHasVisibleIcons(assert, this.oPanel, 2);
-	});
-	QUnit.test("only main item have icon", function(assert) {
-		this.oPanel = new Panel({
-			items: [
-				new PanelItem({
-					isMain: true,
-					text: "A",
-					icon: "sap-icon://user-edit"
-				}), new PanelItem({
-					text: "B",
-					href: "#B"
-				}), new PanelItem({
-					text: "C",
-					href: "#C"
-				})
-			]
-		});
-
-		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		fnHasVisibleIcons(assert, this.oPanel, 1);
 	});
 
 	QUnit.module("sap.ui.mdc.link.Panel: open selection dialog", {

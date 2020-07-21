@@ -57,9 +57,6 @@ sap.ui.define([
 		When.iClickOnLink("Projector");
 
 		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"Projector"
-		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 
 		Given.closeAllNavigationPopovers();

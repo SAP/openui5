@@ -47,9 +47,6 @@ sap.ui.define([
 		When.iClickOnLink("Power Projector 4713");
 
 		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"Power Projector 4713"
-		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
@@ -58,9 +55,6 @@ sap.ui.define([
 		When.iClickOnLink("Flat S");
 
 		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"Flat S"
-		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
@@ -77,9 +71,6 @@ sap.ui.define([
 		When.iClickOnLink("1239102");
 
 		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"1239102"
-		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
@@ -88,9 +79,6 @@ sap.ui.define([
 		When.iClickOnLink("Laptop");
 
 		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"Laptop"
-		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 
 		Given.closeAllNavigationPopovers();

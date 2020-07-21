@@ -1,12 +1,10 @@
 /*
  * ! ${copyright}
  */
-
 sap.ui.define([
-	"sap/ui/test/Opa5", "sap/ui/core/library", "sap/ui/core/format/DateFormat", "test-resources/sap/ui/mdc/qunit/link_new/opa/test/Util", "sap/ui/test/matchers/PropertyStrictEquals"
+	"sap/ui/test/Opa5", "sap/ui/core/library", "sap/ui/core/format/DateFormat", "test-resources/sap/ui/mdc/qunit/link/opa/test/Util", "sap/ui/test/matchers/PropertyStrictEquals"
 ], function(Opa5, coreLibrary, DateFormat, TestUtil, PropertyStrictEquals) {
 	"use strict";
-
 	var Assertion = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Assertion", {
 		isTabSelected: function(oSegmentedButton, sTabName) {
 			if (!oSegmentedButton || sTabName === "") {
@@ -16,7 +14,6 @@ sap.ui.define([
 			var oSelectedButton = TestUtil.getNavigationItem(oSegmentedButton, sTabName);
 			return sSelectedButtonID === oSelectedButton.getId();
 		},
-
 		/**
 		 * Returns NavigationItem
 		 * @param {sap.m.SegmentedButton || sap.m.List} oNavigationControl
@@ -60,7 +57,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		thePersonalizationDialogOpens: function() {
 			return this.waitFor({
 				controlType: "sap.m.Dialog",
@@ -74,7 +70,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		thePersonalizationDialogShouldBeClosed: function() {
 			var aDomDialogs;
 			return this.waitFor({
@@ -90,7 +85,6 @@ sap.ui.define([
 				timeout: 5
 			});
 		},
-
 		iShouldSeeNavigationControl: function() {
 			if (sap.ui.Device.system.phone) {
 				return this.waitFor({
@@ -110,7 +104,6 @@ sap.ui.define([
 				errorMessage: "sap.m.SegmentedButton not found"
 			});
 		},
-
 		iShouldSeeNavigationControlWithPanels: function(iNumberOfPanels) {
 			if (sap.ui.Device.system.phone) {
 				return this.waitFor({
@@ -147,7 +140,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		iShouldSeeSelectedTab: function(sPanelType) {
 			// On desktop we can check if the tap is selected. On phone we do not have SegmentedButtons on the top of panel.
 			if (sap.ui.Device.system.phone) {
@@ -160,7 +152,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		iShouldSeePanel: function(sPanelType) {
 			return this.waitFor({
 				searchOpenDialogs: true,
@@ -170,7 +161,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		iShouldSeeTheCheckboxSelectAllSwitchedOn: function(bIsSwitchedOn) {
 			var oSelectAllCheckbox;
 			return this.waitFor({
@@ -190,7 +180,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		iShouldSeeTableWithFixedColumnCount: function(iFixedColumnCount) {
 			return this.waitFor({
 				controlType: "sap.ui.table.Table",
@@ -200,7 +189,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		iShouldSeeColumnOfWidth: function(sColumnName, sWidth) {
 			var oDomColumn;
 			return this.waitFor({
@@ -219,7 +207,6 @@ sap.ui.define([
 				timeout: 5
 			});
 		},
-
 		iShouldSeeVisibleColumnsInOrder: function(sColumnType, aOrderedColumnNames) {
 			var aDomColumns;
 			return this.waitFor({
@@ -259,7 +246,6 @@ sap.ui.define([
 				timeout: 5
 			});
 		},
-
 		iShouldSeeVisibleMeasuresInOrder: function(aOrderedMeasureNames) {
 			var aDomElements;
 			return this.waitFor({
@@ -280,7 +266,6 @@ sap.ui.define([
 				timeout: 5
 			});
 		},
-
 		iShouldSeeChartOfType: function(sChartTypeKey) {
 			var aDomElements;
 			return this.waitFor({
@@ -298,7 +283,6 @@ sap.ui.define([
 				timeout: 5
 			});
 		},
-
 		iShouldSeeComboBoxWithChartType: function(sChartTypeText) {
 			return this.waitFor({
 				searchOpenDialogs: true,
@@ -343,7 +327,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		theTableShouldContainColumns: function(sTableType, iNumberColumns) {
 			return this.waitFor({
 				controlType: sTableType,
@@ -356,7 +339,6 @@ sap.ui.define([
 				timeout: 5
 			});
 		},
-
 		iShouldSeeItemWithSelection: function(sItemText, bSelected) {
 			return this.waitFor({
 				searchOpenDialogs: true,
@@ -417,7 +399,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		iShouldSeeLinkItemOnPosition: function(sItemText, iIndex) {
 			return this.waitFor({
 				searchOpenDialogs: true,
@@ -435,7 +416,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		iShouldSeeMarkingOfItem: function(sItemText, bMarked) {
 			return this.waitFor({
 				searchOpenDialogs: true,
@@ -528,7 +508,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		iShouldSeeSortSelectionWithColumnName: function(sColumnName) {
 			return this.waitFor({
 				controlType: "sap.m.ComboBox",
@@ -538,7 +517,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		iShouldSeeSortSelectionWithSortOrder: function(sSortOrder) {
 			return this.waitFor({
 				controlType: "sap.m.Select",
@@ -548,7 +526,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		iShouldSeeFilterSelectionWithColumnName: function(sColumnName) {
 			return this.waitFor({
 				controlType: "sap.m.ComboBox",
@@ -586,7 +563,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		iShouldSeeFilterSelectionWithValueInput: function(sText) {
 			return this.waitFor({
 				controlType: "sap.m.Input",
@@ -596,7 +572,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		theNumberOfFilterableColumnKeysShouldRemainStable: function() {
 			var oTable = null;
 			this.waitFor({
@@ -615,7 +590,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		theNumberOfSortableColumnKeysShouldRemainStable: function() {
 			var oTable = null;
 			this.waitFor({
@@ -634,7 +608,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		iShouldSeeRestoreButtonWhichIsEnabled: function(bEnabled) {
 			return this.waitFor({
 				searchOpenDialogs: true,
@@ -649,7 +622,6 @@ sap.ui.define([
 				}
 			});
 		},
-
 		// iShouldSeeSelectedVariant: function(sVariantName) {
 		// 	return this.waitFor({
 		// 		controlType: "sap.ui.comp.smartvariants.SmartVariantManagement",
@@ -667,7 +639,6 @@ sap.ui.define([
 		// 		errorMessage: "Could not find SmartVariantManagement"
 		// 	});
 		// },
-
 		theTableHasFreezeColumn: function(sColumnName) {
 			return this.waitFor({
 				controlType: "sap.ui.table.Table",
@@ -748,26 +719,26 @@ sap.ui.define([
 			});
 		},
 		iShouldSeeOrderedLinksOnNavigationContainer: function(aTexts) {
-			var oPanel;
-			this.waitFor({
-				controlType: "sap.ui.mdc.link.Panel",
-				success: function(aPanels) {
-					Opa5.assert.equal(aPanels.length, 1, "One Panel found");
-					oPanel = aPanels[0];
-				}
-			});
+			var aVisibleAvailableActions;
 			return this.waitFor({
-				searchOpenDialogs: true,
-				controlType: "sap.m.Link",
-				matchers: new sap.ui.test.matchers.Ancestor(oPanel, true),
-				success: function(aLinks) {
-					var aVisibleLinks = aLinks.filter(function(oLink) {
-						return !!oLink.getVisible() && !!oLink.getHref();
+				controlType: "sap.ui.mdc.link.Panel",
+				check: function(aPanels) {
+					Opa5.assert.equal(aPanels.length, 1, "One Panel found");
+					var oPanel = aPanels[0];
+					aVisibleAvailableActions = oPanel.getItems().filter(function(oAvailableAction) {
+						return !!oAvailableAction.getVisible() && !!oAvailableAction.getHref();
 					});
-					Opa5.assert.equal(aVisibleLinks.length, aTexts.length, aVisibleLinks.length + " links are visible");
-					aVisibleLinks.forEach(function(oLink, iIndex) {
-						Opa5.assert.equal(oLink.getText(), aTexts[iIndex], "link " + oLink.getText() + " is on " + iIndex + " position");
+					Opa5.assert.equal(aVisibleAvailableActions.length, aTexts.length, "Amount of visible Links is as expected");
+					return aVisibleAvailableActions.every(function(oAction, iIndex) {
+						return oAction.getText() === aTexts[iIndex];
 					});
+				},
+				error: function(oError) {
+					var aVisibleAvailableActionTexts = [];
+					aVisibleAvailableActionTexts = aVisibleAvailableActions.map(function(oVisibleAvailableAction) {
+						return oVisibleAvailableAction.getText();
+					});
+					oError.errorMessage = "Links " + JSON.stringify(aTexts) + " not found on Panel " + JSON.stringify(aVisibleAvailableActionTexts) + " found instead.";
 				}
 			});
 		},
@@ -871,7 +842,7 @@ sap.ui.define([
 				timeout: 5
 			});
 		},
-		theApplicationURLContains: function(sText, iTimeOut) {
+		theApplicationURLContains: function(sText) {
 			return this.waitFor({
 				check: function() {
 					var sUrl = Opa5.getWindow().location.href;
@@ -880,10 +851,10 @@ sap.ui.define([
 				success: function() {
 					Opa5.assert.ok(true, "The URL of the Application is correct.");
 				},
-				timeout: iTimeOut
+				timeout: 15
 			});
 		},
-		theApplicationURLDoesNotContain: function(sText, iTimeOut) {
+		theApplicationURLDoesNotContain: function(sText) {
 			return this.waitFor({
 				check: function() {
 					var sUrl = Opa5.getWindow().location.href;
@@ -891,8 +862,19 @@ sap.ui.define([
 				},
 				success: function() {
 					Opa5.assert.ok(true, "The URL of the Application is correct.");
-				},
-				timeout: iTimeOut
+				}
+			});
+		},
+		iShouldSeeAConfirmationDialog: function() {
+			return this.waitFor({
+				controlType: "sap.m.Dialog",
+				matchers: new PropertyStrictEquals({
+					name: "title",
+					value: "Confirm"
+				}),
+				success: function() {
+					Opa5.assert.ok(true, "The confirmation dialog is open.");
+				}
 			});
 		}
 	});

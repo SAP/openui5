@@ -55,7 +55,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oLink = new Link({
 			delegate: {
-				name: "test-resources/sap/ui/mdc/qunit/link_new/TestDelegate_Link",
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
 					items: [
 						new LinkItem({
@@ -96,7 +96,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oLink = new Link({
 			delegate: {
-				name: "test-resources/sap/ui/mdc/qunit/link_new/TestDelegate_Link",
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
 					items: [
 						new LinkItem({
@@ -188,7 +188,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oLink = new Link({
 			delegate: {
-				name: "test-resources/sap/ui/mdc/qunit/link_new/TestDelegate_Link",
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
 					items: [
 						new LinkItem({
@@ -234,7 +234,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oLink = new Link({
 			delegate: {
-				name: "test-resources/sap/ui/mdc/qunit/link_new/TestDelegate_Link",
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
 					items: [
 						new LinkItem({
@@ -313,7 +313,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oLink = new Link({
 			delegate: {
-				name: "test-resources/sap/ui/mdc/qunit/link_new/TestDelegate_Link",
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
 					items: [
 						new LinkItem({
@@ -361,7 +361,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oLink = new Link({
 			delegate: {
-				name: "test-resources/sap/ui/mdc/qunit/link_new/TestDelegate_Link",
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
 					items: [
 						new LinkItem({
@@ -472,7 +472,7 @@ sap.ui.define([
 
 		this.oLink = new Link({
 			delegate: {
-				name: "test-resources/sap/ui/mdc/qunit/link_new/TestDelegate_Link",
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
 					items: [
 						new LinkItem({
@@ -519,7 +519,7 @@ sap.ui.define([
 		var done = assert.async();
 		this.oLink = new Link({
 			delegate: {
-				name: "test-resources/sap/ui/mdc/qunit/link_new/TestDelegate_Link",
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
 					items: [
 						new LinkItem({

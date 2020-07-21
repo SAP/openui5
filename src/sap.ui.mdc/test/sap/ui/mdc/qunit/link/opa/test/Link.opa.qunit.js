@@ -3,9 +3,9 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"test-resources/sap/ui/mdc/qunit/link_new/opa/test/Arrangement",
-	"test-resources/sap/ui/mdc/qunit/link_new/opa/test/Action",
-	"test-resources/sap/ui/mdc/qunit/link_new/opa/test/Assertion",
+	"test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement",
+	"test-resources/sap/ui/mdc/qunit/link/opa/test/Action",
+	"test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion",
 	"sap/ui/Device"
 ], function(Opa5, opaQunit, Arrangement, Action, Assertion, Device) {
 	"use strict";
@@ -30,7 +30,7 @@ sap.ui.define([
 	}
 
 	opaTest("When I click on a Link with 'beforeNavigationCallback', I should see a popup to confirm the navigation", function(Given, When, Then) {
-		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/qunit/link_new/opa/appUnderTest/start.html");
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/qunit/link/opa/appUnderTest/start.html");
 
 		Given.iEnableTheLocalLRep();
 		Given.iClearTheLocalStorageFromRtaRestart();
@@ -76,7 +76,7 @@ sap.ui.define([
 	});
 
 	opaTest("When I click on a Link with exactly one LinkItem and additionalContent I should see the 'More Links' button", function(Given, When, Then) {
-		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/qunit/link_new/opa/appUnderTestAdditionalContent/start.html");
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/qunit/link/opa/appUnderTestAdditionalContent/start.html");
 		Then.iShouldSeeColumnWithName("Product ID");
 
 		When.iClickOnLink("1239102");

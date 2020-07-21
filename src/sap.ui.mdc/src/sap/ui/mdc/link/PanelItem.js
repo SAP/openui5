@@ -59,13 +59,6 @@ sap.ui.define([
 					type: "string"
 				},
 				/**
-				 * Defines the main item.
-				 */
-				isMain: {
-					type: "boolean",
-					defaultValue: false
-				},
-				/**
 				 * Defines visibility of the item.
 				 */
 				visible: {
@@ -114,7 +107,6 @@ sap.ui.define([
 			href: this.getHref(),
 			icon: this.getIcon(),
 			target: this.getTarget(),
-			isMain: this.getIsMain(),
 			visible: this.getVisible()
 			// visibleChangedByUser: this.getVisibleChangedByUser(),
 			// visibleChangedChangeHandler: this.getVisibleChangedChangeHandler(),

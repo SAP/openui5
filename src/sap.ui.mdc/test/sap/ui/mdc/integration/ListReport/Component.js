@@ -33,7 +33,6 @@ sap.ui.define([
 							intent: "?testsuite_mdc_internal_LinkInTable_MainNavigationAction_00#link",
 							text: "{title}",
 							icon: "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1031.jpg",
-							isMain: true,
 							description: "{author/name}"
 						},
 						{
