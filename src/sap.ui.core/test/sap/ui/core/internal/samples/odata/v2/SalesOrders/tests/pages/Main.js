@@ -26,6 +26,32 @@ sap.ui.define([
 		return Helper.pressButton(oOpa5, sViewName, sId, bSearchOpenDialogs);
 	}
 
+	/*
+	 * Finds the table on the page and loops through its rows. Applies given function to each row.
+	 *
+	 * @param {sap.ui.test.Opa5} oOpa5
+	 *   An instance of Opa5 to access the current page object
+	 * @param {function} fnCheckRow
+	 *   A function to check the rows values. Gets passed the rows cells and the item position
+	 */
+	function loopTableRows(oOpa5, fnCheckRow) {
+		return oOpa5.waitFor({
+			id : "ToLineItems",
+			success : function (oTable) {
+				var aCells, i, sItemPosition,
+					aRows = oTable.getRows();
+
+				for (i = 0; i < aRows.length; i += 1) {
+					aCells = aRows[i].getCells();
+					sItemPosition = aCells[1].getValue();
+
+					fnCheckRow(aCells, sItemPosition);
+				}
+			},
+			viewName : sViewName
+		});
+	}
+
 	Opa5.createPageObjects({
 		onMainPage : {
 			actions : {
@@ -62,6 +88,16 @@ sap.ui.define([
 							return oTable.getRows()[iRow].getCells()[3];
 						},
 						viewName : sViewName
+					});
+				},
+				/*
+				 * Close the currently showing dialog.
+				 */
+				closeDialog : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						searchOpenDialogs : true
 					});
 				},
 				/*
@@ -108,6 +144,27 @@ sap.ui.define([
 					});
 				},
 				/*
+				 * Chooses a filter from the drop down list and selects it.
+				 *
+				 * @param {string} sFilterKey The key for the specific filter
+				 */
+				setFilter : function (sFilterKey) {
+					return this.waitFor({
+						id : "itemFilter",
+						success : function (oFilter) {
+							var aItems = oFilter.getItems(),
+								mParameters = aItems.find(function (oItem) {
+									return oItem.mProperties.key === sFilterKey;
+								});
+
+							oFilter.setSelectedKey(sFilterKey);
+							oFilter.fireChange(mParameters);
+							Opa5.assert.ok(true, "Filter has been applied.");
+						},
+						viewName : sViewName
+					});
+				},
+				/*
 				 * Loads the specified sales order.
 				 *
 				 * @param {string} sSalesOrderId The sales order id
@@ -138,32 +195,68 @@ sap.ui.define([
 			},
 			assertions : {
 				/*
+				 * Checks if there is a dialog open currently.
+				 */
+				checkDialogOpen : function () {
+					return this.waitFor({
+						controlType : "sap.m.Dialog",
+						success : function () {
+							Opa5.assert.ok(true, "Dialog is showing.");
+						}
+					});
+				},
+				/*
+				 * Checks if the filter has been reset to "Show all".
+				 */
+				checkFilterReset : function () {
+					return this.waitFor({
+						id : "itemFilter",
+						success : function (oFilter) {
+							Opa5.assert.equal(oFilter.getSelectedKey(), "Show all",
+								"Filter has been reset.");
+						},
+						viewName : sViewName
+					});
+				},
+				/*
 				 * Checks if all item quantities are as described in the MIT. All HT-1000 items need
 				 * a quantity of at least two, all other items a quantity of at least one.
 				 */
 				checkItemQuantities : function () {
-					return this.waitFor({
-						id : "ToLineItems",
-						success : function (oTable) {
-							var aCells, i, sItemPosition, sProductId, iQuantity,
-								aRows = oTable.getRows();
+					return loopTableRows(this, function (aCells, sItemPosition) {
+						var sProductId = aCells[2].getValue(),
+							iQuantity = parseInt(aCells[3].getValue());
 
-							for (i = 0; i < aRows.length; i += 1) {
-								aCells = aRows[i].getCells();
-								sItemPosition = aCells[1].getValue();
-								sProductId = aCells[2].getValue();
-								iQuantity = parseInt(aCells[3].getValue());
+						if (sProductId === "HT-1000") {
+							Opa5.assert.ok(iQuantity >= 2,
+								"Quantity for item " + sItemPosition + " is ok.");
+						} else {
+							Opa5.assert.ok(iQuantity >= 1,
+								"Quantity for item " + sItemPosition + " is ok.");
+						}
+					});
+				},
+				/*
+				 * Checks if all items in the table match the selected filter.
+				 *
+				 * @param {string|string[]} vAllowedValueState To the filter matching value state(s)
+				 */
+				checkItemsMatchingFilter : function (vAllowedValueState) {
+					return loopTableRows(this, function (aCells, sItemPosition) {
+						var sValueState;
 
-								if (sProductId === "HT-1000") {
-									Opa5.assert.ok(iQuantity >= 2,
-										"Quantity for item " + sItemPosition + " is ok.");
-								} else {
-									Opa5.assert.ok(iQuantity >= 1,
-										"Quantity for item " + sItemPosition + " is ok.");
-								}
+						if (sItemPosition !== "") {
+							sValueState = aCells[0].getParent()
+								.mAggregations._settings.mProperties["highlight"];
+
+							if (Array.isArray(vAllowedValueState)) {
+								Opa5.assert.ok(vAllowedValueState.includes(sValueState),
+									sItemPosition + " has a correct value state.");
+							} else {
+								Opa5.assert.equal(sValueState, vAllowedValueState,
+									sItemPosition + " has a correct value state.");
 							}
-						},
-						viewName : sViewName
+						}
 					});
 				},
 				/*
