@@ -17,6 +17,9 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 	// shortcut for sap.ui.unified.CalendarAppointmentVisualization
 	var CalendarAppointmentVisualization = library.CalendarAppointmentVisualization;
 
+	// shortcut for sap.ui.unified.CalendarAppointmentHeight
+	var CalendarAppointmentHeight = library.CalendarAppointmentHeight;
+
 
 	/**
 	 * CalendarRow renderer.
@@ -222,6 +225,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			oRm.class("sapUiCalendarApp");
 			oRm.class("sapUiCalendarAppTitleOnly");
 			oRm.class("sapUiCalendarAppDummy");
+			oRm.class("sapUiCalendarAppHeight1");
 			oRm.openEnd();
 			oRm.close("div");
 		}
@@ -454,16 +458,18 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 		var sColor = oAppointment.getColor();
 		var sTitle = oAppointment.getTitle();
 		var sText = oAppointment.getText();
+		var sDescription = oAppointment.getDescription();
 		var sIcon = oAppointment.getIcon();
 		var sId = oAppointment.getId();
+		var bReducedHeight = oRow._getAppointmentReducedHeight(oAppointmentInfo);
 		var mAccProps = {
 			labelledby: {value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT") + " " + sId + "-Descr", append: true},
 			selected: null
 		};
+		var iRowCount = oRow._getAppointmentRowCount(oAppointmentInfo, bReducedHeight);
 		var aAriaLabels = oRow.getAriaLabelledBy();
 
 		var oArrowValues = oRow._calculateAppoitnmentVisualCue(oAppointment);
-
 		if (aAriaLabels.length > 0) {
 			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + aAriaLabels.join(" ");
 		}
@@ -478,7 +484,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 
 		oRm.openStart("div", oAppointment);
 		oRm.class("sapUiCalendarApp");
-
+		oRm.class("sapUiCalendarAppHeight" + iRowCount);
 		if (oAppointment.getSelected()) {
 			oRm.class("sapUiCalendarAppSel");
 			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
@@ -489,7 +495,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_TENTATIVE");
 		}
 
-		if (!sText) {
+		if (iRowCount === 1) {
 			oRm.class("sapUiCalendarAppTitleOnly");
 		}
 
@@ -571,11 +577,19 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			oRm.close("span");
 		}
 
-		if (sText) {
+		if (sText && oAppointmentInfo.size !== CalendarAppointmentHeight.HalfSize) {
 			oRm.openStart("span", sId + "-Text");
 			oRm.class("sapUiCalendarAppText");
 			oRm.openEnd(); // span element
 			oRm.text(sText);
+			oRm.close("span");
+		}
+
+		if (sDescription && oAppointmentInfo.size !== CalendarAppointmentHeight.HalfSize && (oAppointmentInfo.size !== CalendarAppointmentHeight.Regular || !sText ) ) {
+			oRm.openStart("span", sId + "-Info");
+			oRm.class("sapUiCalendarAppDescription");
+			oRm.openEnd();
+			oRm.text(sDescription);
 			oRm.close("span");
 		}
 

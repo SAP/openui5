@@ -134,6 +134,9 @@ sap.ui.define([
 	// shortcut for sap.ui.unified.CalendarIntervalType
 	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
 
+	// shortcut for sap.ui.unified.CalendarAppointmentHeight
+	var CalendarAppointmentHeight = unifiedLibrary.CalendarAppointmentHeight;
+
 	var DRAG_DROP_CONFIG_NAME = "DragDropConfig";
 	var RESIZE_CONFIG_NAME = "ResizeConfig";
 	var CREATE_CONFIG_NAME = "CreateConfig";
@@ -285,6 +288,12 @@ sap.ui.define([
 				 * @since 1.38.0
 				 */
 				appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false},
+
+				/**
+				 * Determines the different possible sizes for appointments.
+				 * @since 1.81.0
+				 */
+				appointmentHeight: { type: "sap.ui.unified.CalendarAppointmentHeight", group: "Appearance", defaultValue: CalendarAppointmentHeight.Regular },
 
 				/**
 				 * Determines how the appointments are visualized depending on the used theme.
@@ -1860,6 +1869,19 @@ sap.ui.define([
 
 		return this;
 
+	};
+
+	PlanningCalendar.prototype.setAppointmentHeight = function(sAppointmentHeight) {
+		var aRows = this.getRows(),
+			i;
+
+		this.setProperty("appointmentHeight", sAppointmentHeight);
+		for (i = 0; i < aRows.length; i++) {
+			var oRow = aRows[i];
+			getRowTimeline(oRow).setAppointmentHeight(sAppointmentHeight);
+		}
+
+		return this;
 	};
 
 	PlanningCalendar.prototype.setAppointmentsVisualization = function(sAppointmentsVisualization){
