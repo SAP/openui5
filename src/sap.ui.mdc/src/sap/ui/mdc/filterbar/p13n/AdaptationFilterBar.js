@@ -83,6 +83,12 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	AdaptationFilterBar.prototype.setPropertyInfo = function(aPropertyInfo) {
+		return this.initialized().then(function(){
+			this._aProperties = aPropertyInfo;
+		}.bind(this));
+	};
+
 	AdaptationFilterBar.prototype._createInnerLayout = function() {
 		this._cLayoutItem = FilterColumnLayout;
 		this._oFilterBarLayout = new TableContainer();

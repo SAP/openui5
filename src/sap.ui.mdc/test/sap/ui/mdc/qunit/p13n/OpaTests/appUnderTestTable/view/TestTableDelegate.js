@@ -5,15 +5,6 @@ sap.ui.define([
 
 	var oCustomDelegate = Object.assign({}, TableDelegate);
 
-	oCustomDelegate.getFilterDelegate = function() {
-		return {
-			name: "AppUnderTestTable/view/TestFilterBarDelegate",
-			payload: {
-				collectionName: "Artists"
-			}
-		};
-	};
-
 	oCustomDelegate.beforeAddColumnFlex = function(sPropertyInfoName, oTable, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var sId = mPropertyBag.id + "--" + sPropertyInfoName;

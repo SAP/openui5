@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	'sap/ui/mdc/enum/FieldDisplay', "sap/ui/fl/Utils", "sap/ui/mdc/FilterBarDelegate", 'sap/base/util/ObjectPath', 'sap/base/util/merge', 'sap/ui/mdc/odata/v4/BaseDelegate', 'sap/ui/mdc/condition/FilterOperatorUtil', "sap/ui/model/FilterOperator", "sap/ui/model/Filter", 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/core/util/reflection/JsControlTreeModifier'
-	], function (FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, BaseDelegate, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier) {
+	'./ODataMetaModelUtil', 'sap/ui/mdc/enum/FieldDisplay', "sap/ui/fl/Utils", "sap/ui/mdc/FilterBarDelegate", 'sap/base/util/ObjectPath', 'sap/base/util/merge', 'sap/ui/mdc/odata/v4/BaseDelegate', 'sap/ui/mdc/condition/FilterOperatorUtil', "sap/ui/model/FilterOperator", "sap/ui/model/Filter", 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/core/util/reflection/JsControlTreeModifier'
+	], function (ODataMetaModelUtil, FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, BaseDelegate, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier) {
 	"use strict";
 
 	/**
@@ -87,22 +87,6 @@ sap.ui.define([
 		};
 
 		return this.fetchProperties(oObj);
-	};
-
-
-	ODataFilterBarDelegate._isMultiValue = function(sFilterExpression) {
-		var bIsMultiValue = true;
-
-		//SingleValue | MultiValue | SingleRange | MultiRange | SearchExpression | MultiRangeOrSearchExpression
-
-		switch (sFilterExpression) {
-			case "SearchExpression":
-			case "SingleRange":
-			case "SingleValue": bIsMultiValue = false; break;
-			default: break;
-		}
-
-		return bIsMultiValue;
 	};
 
 	ODataFilterBarDelegate._ensureSingleRangeEQOperators = function() {
@@ -188,7 +172,7 @@ sap.ui.define([
 			dataType: oProperty.typeConfig.className,
 			conditions: "{$filters>/conditions/" + sName + '}',
 			required: oProperty.required,
-			label: oProperty.label,
+			label: oProperty.label || oProperty.name,
 			maxConditions: oProperty.maxConditions,
 			delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}}
 		}, true).then(function(oFilterField) {
@@ -482,8 +466,7 @@ sap.ui.define([
 									oPropertyInfo.filterOperators = aOperators;
 								}
 							}
-
-							oPropertyInfo.maxConditions = ODataFilterBarDelegate._isMultiValue(mAllowedExpressions[sKey]) ? -1 : 1;
+							oPropertyInfo.maxConditions = ODataMetaModelUtil.isMultiValueFilterExpression(mAllowedExpressions[sKey]) ? -1 : 1;
 
 							if (bIsParameterType && oParameterInfo && (oParameterInfo.parameters.indexOf(sKey) > -1)) {
 								oPropertyInfo.path = null;

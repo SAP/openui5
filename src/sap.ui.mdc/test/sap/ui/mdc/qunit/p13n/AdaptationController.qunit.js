@@ -24,6 +24,14 @@ sap.ui.define([
 			this.oAdaptationController.oAdaptationControlDelegate = TableDelegate;//necessary as the "getCurrentState" is in TableDelegate + retrieve in AC is stubbed
 			var aColumns = this.oTable.getColumns();
 
+			this.oAdaptationController.oAdaptationControlDelegate.getFilterDelegate = function() {
+				return {
+					addFilterItem: function(){
+						return Promise.resolve(new FilterField());
+					}
+				};
+			};
+
 			//mock delegate data
 			this.aPropertyInfo = [
 				{
@@ -31,20 +39,24 @@ sap.ui.define([
 					"path": "nav/" + aColumns[0].getDataProperties()[0],
 					"id": aColumns[0].getId(),
 					"label": aColumns[0].getHeader(),
-					"sortable": true
+					"sortable": true,
+					"filterable": true
 				}, {
 					"name": aColumns[1].getDataProperties()[0],
 					"path": "nav/" + aColumns[1].getDataProperties()[0],
 					"id": aColumns[1].getId(),
 					"label": aColumns[1].getHeader(),
-					"sortable": true
+					"sortable": true,
+					"filterable": false
 				}
 			];
 
 			//no delegate in Test --> Stub property info call
 			var oPropertyInfoPromise = new Promise(function(resolve,reject){
-				resolve(this.aPropertyInfo );
+				resolve(this.aPropertyInfo);
 			}.bind(this));
+
+			this.oAdaptationController.aPropertyInfo = this.aPropertyInfo;
 
 			//stub '_retrievePropertyInfo'
 			sinon.stub(this.oAdaptationController, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
@@ -123,10 +135,31 @@ sap.ui.define([
 					//check inner Control
 					assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "Correct control created");
 
+					//check that only 'filterable' fields have been created
+					assert.equal(oP13nControl.getContent()[0].getFilterItems().length, 1, "Only one field is filterable");
+
 					//check that inner oP13nFilter is an IFilter
 					assert.ok(oP13nFilter.isA("sap.ui.mdc.IFilter"));
 					done();
 				}.bind(this));
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("open filter dialog - do not maintain 'filterable'", function (assert) {
+		var done = assert.async();
+		var oBtn = new Button();
+		delete this.aPropertyInfo[0].filterable;
+
+		this.oTable.initialized().then(function(){
+			TableSettings._setFilterConfig(this.oTable).then(function(oP13nFilter){
+				this.oAdaptationController.showP13n(oBtn, "Filter").then(function(oP13nControl){
+						var aFilterItems = oP13nControl.getContent()[0].getFilterItems();
+
+						//always display in Filter dialog by default
+						assert.equal(aFilterItems.length, 1, "correct amount of items has been set");
+					done();
+				});
 			}.bind(this));
 		}.bind(this));
 	});

@@ -50,6 +50,20 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", selected: false}
 	];
 
+	var aFilterItems = [
+		{p13nItem: "artistUUID", value: null},
+		{p13nItem: "Breakout Year", value: null},
+		{p13nItem: "Changed By", value: null},
+		{p13nItem: "Changed On", value: null},
+		{p13nItem: "cityOfOrigin_city", value: null},
+		{p13nItem: "Country", value: null},
+		{p13nItem: "Created By", value: null},
+		{p13nItem: "Created On", value: null},
+		{p13nItem: "Founding Year", value: null},
+		{p13nItem: "Name", value: null},
+		{p13nItem: "regionOfOrigin_code", value: null}
+	];
+
 	opaTest("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
 		//insert application
 		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
@@ -86,10 +100,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
 
-		Then.iShouldSeeP13nFilterItem("Changed By", 0);
-		Then.iShouldSeeP13nFilterItem("Created On", 1);
-		Then.iShouldSeeP13nFilterItem("Founding Year", 2);
-		Then.iShouldSeeP13nFilterItem("Name", 3);
+		Then.iShouldSeeP13nFilterItems(aFilterItems);
 	});
 
 	opaTest("When I close the 'Add/Remove Columns' button, the table has not been changed", function (Given, When, Then) {
@@ -355,13 +366,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
 
-		Then.iShouldSeeP13nFilterItem("Breakout Year", 0);
-		Then.iShouldSeeP13nFilterItem("Changed By", 1);
-		Then.iShouldSeeP13nFilterItem("Country", 2);
-		Then.iShouldSeeP13nFilterItem("Created By", 3);
-		Then.iShouldSeeP13nFilterItem("Created On", 4);
-		Then.iShouldSeeP13nFilterItem("Founding Year", 5);
-		Then.iShouldSeeP13nFilterItem("Name", 6);
+		Then.iShouldSeeP13nFilterItems(aFilterItems);
 	});
 
 	opaTest("Open the filter personalization dialog and enter a value", function (Given, When, Then) {
@@ -376,13 +381,10 @@ sap.ui.define([
 		When.iEnterTextInFilterDialog("Founding Year", "1989");
 		When.iEnterTextInFilterDialog("Country", "DE");
 
-		Then.iShouldSeeP13nFilterItem("Breakout Year", 0);
-		Then.iShouldSeeP13nFilterItem("Changed By", 1);
-		Then.iShouldSeeP13nFilterItem("Country", 2, ["DE"]);
-		Then.iShouldSeeP13nFilterItem("Created By", 3);
-		Then.iShouldSeeP13nFilterItem("Created On", 4);
-		Then.iShouldSeeP13nFilterItem("Founding Year", 5, ["1989"]);
-		Then.iShouldSeeP13nFilterItem("Name", 6);
+		aFilterItems[5].value = ["DE"];
+		aFilterItems[8].value = ["1989"];
+
+		Then.iShouldSeeP13nFilterItems(aFilterItems);
 	});
 
 	opaTest("Close and open the filter dialog to check if the value is still there", function (Given, When, Then) {
@@ -393,8 +395,8 @@ sap.ui.define([
 
 		Then.thePersonalizationDialogOpens();
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
-		Then.iShouldSeeP13nFilterItem("Country", 2, ["DE"]);
-		Then.iShouldSeeP13nFilterItem("Founding Year", 5, ["1989"]);
+		Then.iShouldSeeP13nFilterItem("Country", 5, ["DE"]);
+		Then.iShouldSeeP13nFilterItem("Founding Year", 8, ["1989"]);
 
 		//shut down app frame for next test
 		Then.iTeardownMyAppFrame();

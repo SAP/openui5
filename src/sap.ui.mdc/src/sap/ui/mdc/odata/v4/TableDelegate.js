@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/TableDelegate", "sap/ui/mdc/odata/v4/BaseDelegate", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil', 'sap/ui/mdc/odata/v4/util/DelegateUtil', 'sap/ui/mdc/condition/FilterConverter'
-], function(TableDelegate, BaseDelegate, Core, FilterUtil, DelegateUtil, FilterConverter) {
+	"sap/ui/mdc/TableDelegate", "sap/ui/mdc/odata/v4/BaseDelegate", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil', 'sap/ui/mdc/odata/v4/util/DelegateUtil', 'sap/ui/mdc/odata/v4/FilterBarDelegate', './ODataMetaModelUtil'
+], function(TableDelegate, BaseDelegate, Core, FilterUtil, DelegateUtil, FilterBarDelegate, ODataMetaModelUtil) {
 	"use strict";
 	/**
 	 * Helper class for sap.ui.mdc.Table.
@@ -22,6 +22,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.odata.v4.TableDelegate
 	 */
 	var ODataTableDelegate = Object.assign({}, TableDelegate, BaseDelegate);
+
 	/**
 	 * Fetches the relevant metadata for the table and returns property info array
 	 *
@@ -42,6 +43,8 @@ sap.ui.define([
 			var aNonSortableProperties = (aSortRestrictions["NonSortableProperties"] || []).map(function(oCollection) {
 				return oCollection["$PropertyPath"];
 			});
+			var oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
+			var oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
 
 			for ( var sKey in oEntityType) {
 				oObj = oEntityType[sKey];
@@ -57,11 +60,18 @@ sap.ui.define([
 						scale: oObj.$Scale,
 						type: oObj.$Type,
 						sortable: aNonSortableProperties.indexOf(sKey) == -1,
-						filterable: true
+
+						//Required for inbuilt filtering: filterable, typeConfig
+						//Optional: maxConditions, fieldHelp
+						filterable: oFilterRestrictionsInfo.propertyInfo[sKey] ? oFilterRestrictionsInfo.propertyInfo[sKey].filterable : true,
+						typeConfig: oTable.getTypeUtil().getTypeConfig(oObj.$Type),
+						fieldHelp: undefined,
+						maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1
 					};
 					aProperties.push(oPropertyInfo);
 				}
 			}
+			oTable.data("$tablePropertyInfo",aProperties);
 			return aProperties;
 		});
 	};
@@ -88,22 +98,21 @@ sap.ui.define([
 			oBindingInfo = {};
 		}
 
-		var oFilter = Core.byId(oMDCTable.getFilter()), bFilterEnabled = oMDCTable._getFilterEnabled(), mConditions;
+		var oFilter = Core.byId(oMDCTable.getFilter()), bFilterEnabled = oMDCTable._getFilterEnabled(), mConditions, oFilterInfo;
 
 		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
 		if (bFilterEnabled) {
 			mConditions = oMDCTable.getConditions();
-			//TODO: reuse 'FilterUtil' --> Table does not derive from sap.ui.mdc.Control as of now
-			var aFilters = FilterConverter.createFilters(mConditions);
-			oBindingInfo.filters = aFilters;
-
+			var aTableProperties = oMDCTable.data("$tablePropertyInfo");
+			oFilterInfo = FilterUtil.getFilterInfo(oMDCTable, mConditions, aTableProperties);
+			oBindingInfo.filters = oFilterInfo.filters;
 		} else if (oFilter) {
 			mConditions = oFilter.getConditions();
 			if (mConditions) {
 
 				var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
 				var aParameterNames = DelegateUtil.getParameterNames(oFilter);
-				var oFilterInfo = FilterUtil.getFilterInfo(oFilter, mConditions, aPropertiesMetadata, aParameterNames);
+				oFilterInfo = FilterUtil.getFilterInfo(oFilter, mConditions, aPropertiesMetadata, aParameterNames);
 				if (oFilterInfo) {
 					oBindingInfo.filters = oFilterInfo.filters;
 				}
@@ -129,17 +138,31 @@ sap.ui.define([
 	};
 
 	/**
-	 * Set the <code>delegate</code> property for the inner <code>FilterBar</code>
+	 * Provide the Table's filter delegate to provide basic filter functionality such as adding FilterFields
+	 * <b>Note:</b> The functionality provided in this delegate should act as a subset of a FilterBarDelegate
+	 * to enable the Table for inbuilt filtering
 	 *
-	 * @param {Object} oPayload The payload configuration for the current Table instance
-	 * @returns {Object} Object for the inner FilterBar <code>delegate</code> property
+	 * @returns {Object} Object for the Tables filter personalization:
+	 *
+	 * oFilterDelegate = {
+	 * 		addFilterItem: function() {
+	 * 			var oFilterFieldPromise = new Promise(...);
+	 * 			return oFilterFieldPromise;
+	 * 		}
+	 * }
 	 *
 	 * @public
 	 */
-	ODataTableDelegate.getFilterDelegate = function(oPayload) {
+	ODataTableDelegate.getFilterDelegate = function() {
 		return {
-			name: "sap/ui/mdc/odata/v4/FilterBarDelegate",
-			payload: oPayload
+			/**
+			 *
+			 * @param {Object} oProperty Corresponding property to create a FilterField
+			 * @param {Object} oTable Table instance
+			 */
+			addFilterItem: function(oProperty, oTable) {
+				return FilterBarDelegate._createFilterField(oProperty, oTable);
+			}
 		};
 	};
 

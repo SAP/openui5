@@ -2051,8 +2051,7 @@ sap.ui.define([
 					this._oP13nFilter = new AdaptationFilterBar(this.getId() + "-p13nFilter", {
 						liveMode: true,
 						adaptationControl: this,
-						filterConditions: this.getFilterConditions(),
-						delegate: this.getControlDelegate().getFilterDelegate(this.getDelegate().payload)
+						filterConditions: this.getFilterConditions()
 					});
 
 					//link 'AdaptationFilterBar' with Table and propagate the model
