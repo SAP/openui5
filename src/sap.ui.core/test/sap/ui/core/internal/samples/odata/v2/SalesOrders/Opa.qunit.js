@@ -14,7 +14,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/MessageStripAndAggregatedTableRowHighlighting",
 		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/MessageLifecycleSideEffects",
 		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/TransitionMessagesOnly",
-		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/FilterSalesOrderItemsByItemsWithMessages"
+		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/FilterSalesOrderItemsByItemsWithMessages",
+		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/CreateAndDeleteSalesOrderItems"
 	], function () {
 		QUnit.start();
 	});

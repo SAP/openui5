@@ -14,6 +14,13 @@
 				margin-bottom: 2px;
 				padding: 2px 5px 2px 5px;
 			}
+			.backendOnly {
+				background-color: lightcoral;
+				border-radius: 5px;
+				margin-top: 2px;
+				margin-bottom: 2px;
+				padding: 2px 5px 2px 5px;
+			}
 		</style>
 	</head>
 	<body>
@@ -330,9 +337,9 @@
 				<code>Discard</code> button.<br />
 				<b>Check:</b> The <code>Create a New Sales Order Item</code> dialog is closed.
 			</li>
-			<li>Repeat the steps (2) - (4).</li>
 			<li>Remember the <code>Gross Amount</code> and the <code>Changed At</code> data from the
 				<code>Sales Order</code> section.</li>
+			<li>Repeat the steps (2) - (4).</li>
 			<li>In the <code>Create a New Sales Order Item</code> dialog enter <code>HT-1000</code>
 				in the <code>Product ID</code> field, remove the content of the <code>Note</code>
 				field and press the <code>Save</code> button.<br />
@@ -346,13 +353,13 @@
 					quantity which has to be at least 2 and one for the missing note of the new
 					sales order item.
 			</li>
-			<li>Open the developer tools, navigate to the network tab, clear the requests and filter
+			<li><span class="backendOnly">Only with back end:</span> Open the developer tools, navigate to the network tab, clear the requests and filter
 				for <code>$batch</code> requests.</li>
 			<li>In the <code>Sales Order Items</code> table click on the <code>&gt;</code> at the
 				end of the row for the newly created entity to open the product details.<br />
-				<b>Check:</b> There is no <code>$batch</code> request.<br />
 				<b>Check:</b> A <code>Product Details</code> dialog is opened showing the
-					<code>Product ID</code> and the corresponding product <code>Name</code>.
+					<code>Product ID</code> and the corresponding product <code>Name</code>.<br />
+				<span class="backendOnly">Only with back end:</span> <b>Check:</b> There is no <code>$batch</code> request.
 			</li>
 			<li>Close the <code>Product Details</code> dialog.</li>
 			<li>In the <code>Sales Order Items</code> table select the newly created item and press

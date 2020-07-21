@@ -48,12 +48,12 @@
 					<Label text="Note" />
 					<Input value="{Note}" />
 					<Label text="Gross Amount" />
-					<Input editable="false" value="{
+					<Input editable="false" id="grossAmount::objectPage" value="{
 							parts : ['GrossAmount', 'CurrencyCode'],
 							type : 'sap.ui.model.odata.Currency'
 						}" width="12em" />
 					<Label text="Changed At" />
-					<Input editable="false" value="{
+					<Input editable="false" id="changedAt::objectPage" value="{
 							path : 'ChangedAt',
 							type : 'sap.ui.model.odata.type.DateTime'
 						}" width="12em" />
@@ -74,10 +74,11 @@
 								</layoutData>
 							</Title>
 							<Button enabled="{= !!${SalesOrderID}}" icon="sap-icon://add"
-								press="onCreateItem" tooltip="Create a sales order item" />
+								id="createItem::ToLineItems" press="onCreateItem"
+								tooltip="Create a sales order item" />
 							<Button enabled="{ui>/itemSelected}" icon="sap-icon://delete"
-								press="onDeleteItem" tooltip="Delete the selected sales order item"
-								/>
+								id="deleteItem::ToLineItems" press="onDeleteItem"
+								tooltip="Delete the selected sales order item" />
 							<ToolbarSpacer/>
 							<Label labelFor="itemFilter" text="Filter">
 								<layoutData>
@@ -91,7 +92,7 @@
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
 							</Select>
-							<Button id="fixAllQuantities" press="onFixAllQuantities"
+							<Button id="fixAllQuantities::ToLineItems" press="onFixAllQuantities"
 								text="Fix Quantities" />
 							<ToggleButton id="transitionMessagesOnly"
 								press="onTransitionMessagesOnly" pressed="true"
@@ -104,7 +105,8 @@
 					</t:rowSettingsTemplate>
 					<t:rowActionTemplate>
 						<t:RowAction>
-							<t:RowActionItem press="onShowProductDetails" type="Navigation" />
+							<t:RowActionItem id="showProductDetails::ToLineItems"
+								press="onShowProductDetails" type="Navigation" />
 						</t:RowAction>
 					</t:rowActionTemplate>
 					<t:columns>
@@ -187,15 +189,17 @@
 				<dependents>
 					<Dialog id="createSalesOrderItemDialog" title="Create a New Sales Order Item">
 						<buttons>
-							<Button press="onSaveCreatedItem" text="Save" type="Accept" />
-							<Button press="onDiscardCreatedItem" text="Discard" type="Reject" />
+							<Button id="saveCreatedItem::createSalesOrderItemDialog"
+								press="onSaveCreatedItem" text="Save" type="Accept" />
+							<Button id="discardCreatedItem::createSalesOrderItemDialog"
+								press="onDiscardCreatedItem" text="Discard" type="Reject" />
 						</buttons>
 						<form:SimpleForm ariaLabelledBy="createSalesOrderItemDialog" editable="true"
 							layout="ResponsiveGridLayout">
 							<Label text="Sales Order ID" />
 							<Input editable="false" value="{SalesOrderID}" width="8em" />
 							<Label text="Product ID" />
-							<Input value="{ProductID}" />
+							<Input id="productID::createSalesOrderItemDialog" value="{ProductID}" />
 							<Label text="Quantity" />
 							<Input value="{
 									constraints : {precision : 13, scale : 3},
@@ -211,7 +215,7 @@
 									type : 'sap.ui.model.odata.type.DateTime'
 								}" />
 							<Label text="Note" />
-							<Input value="{Note}" />
+							<Input id="note::createSalesOrderItemDialog" value="{Note}" />
 						</form:SimpleForm>
 					</Dialog>
 					<Dialog binding="{ToProduct}" id="productDetailsDialog" title="Product Details">
@@ -220,9 +224,9 @@
 						</buttons>
 						<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
 							<Label text="Product ID" />
-							<Input value="{ProductID}" />
+							<Input id="productID::productDetailsDialog" value="{ProductID}" />
 							<Label text="Name" />
-							<Input value="{Name}" />
+							<Input id="name::productDetailsDialog" value="{Name}" />
 						</form:SimpleForm>
 					</Dialog>
 					<Dialog contentWidth="50%" id="messageDetails" title="Message Details">
