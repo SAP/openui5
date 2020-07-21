@@ -20,7 +20,6 @@
 	position: relative;
 
 	width : 100%;
-	height: 3rem;
 
 	padding-right: 1rem;
 	box-sizing: border-box;
@@ -42,6 +41,10 @@
 	&.sapMITHUnselectable {
 		cursor: default;
 	}
+}
+
+.sapMITBSelectList .sapMITBSelectItem:not(.sapMITBSep) {
+	min-height: 3rem;
 }
 
 .sapMITBSelectList .sapMITBSep {
@@ -89,7 +92,8 @@
 	pointer-events: none;
 	flex: 1 1 auto;
 	min-width: 0;  // chrome flex overflow issue
-	overflow: visible;
+	overflow: hidden;
+	white-space: normal;
 }
 
 .sapMITBSelectListTextOnly .sapMITBSelectItem .sapMITBText {
@@ -106,7 +110,7 @@
 /* Compact size */
 .sapUiSizeCompact {
 	.sapMITBSelectList .sapMITBSelectItem:not(.sapMITBSep) {
-		height: 2rem;
+		min-height: 2rem;
 	}
 
 	.sapMITBSelectItem .sapMITBText {
