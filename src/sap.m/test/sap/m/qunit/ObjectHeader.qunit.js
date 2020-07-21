@@ -1059,6 +1059,20 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
+	QUnit.test("Decorative property of the image is set to false", function(assert){
+		// Arrange
+		var oObjectHeader = new ObjectHeader({
+				title: "Test title level",
+				icon : "../images/action.png",
+				iconTooltip: "test tooltip"
+			});
+
+		// Assert
+		assert.strictEqual(oObjectHeader._getImageControl().getDecorative(), false, "The image has property decorative set to false");
+		// cleanup
+		oObjectHeader.destroy();
+	});
+
 	/******************************************************************/
 
 	var iconOH = new ObjectHeader("iconOH", {
