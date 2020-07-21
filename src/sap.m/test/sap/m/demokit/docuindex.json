@@ -1282,7 +1282,8 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.TextArea",
-			 "sap.m.sample.TextAreaMaxLength",
+			"sap.m.sample.TextAreaMaxLength",
+			"sap.m.sample.TextAreaValueStates",
 			"sap.m.sample.TextAreaValueUpdate",
 			"sap.m.sample.TextAreaGrowing"
 		  ]
@@ -2418,7 +2419,13 @@
 	 	{
 		  "id": "sap.m.sample.TextAreaMaxLength",
 		  "name": "TextArea with MaxLength = true",
-		  "description": "Shows the behavior of the control with the new showExceededText property (since 1.48) and maxLength = true"},
+		  "description": "Shows the behavior of the control with the new showExceededText property (since 1.48) and maxLength = true"
+		},
+		{
+		  "id": "sap.m.sample.TextAreaValueStates",
+		  "name": "TextArea - Value States",
+		  "description": "This sample illustrates the different value states of the sap.m.TextArea control."
+		},
 		{
 		  "id": "sap.m.sample.TextAreaValueUpdate",
 		  "name": "TextArea - Value Update",
