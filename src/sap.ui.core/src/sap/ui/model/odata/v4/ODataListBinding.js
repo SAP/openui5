@@ -72,7 +72,9 @@ sap.ui.define([
 	 * @public
 	 * @since 1.37.0
 	 * @version ${version}
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#getGroupId as #getGroupId
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#getUpdateGroupId as #getUpdateGroupId
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
@@ -547,8 +549,8 @@ sap.ui.define([
 	/**
 	 * Creates a new entity and inserts it at the start or the end of the list.
 	 *
-	 * For creating the new entity, the binding's update group ID is used, see binding parameter
-	 * $$updateGroupId of {@link sap.ui.model.odata.v4.ODataModel#bindList}.
+	 * For creating the new entity, the binding's update group ID is used, see
+	 * {@link #getUpdateGroupId}.
 	 *
 	 * You can call {@link sap.ui.model.odata.v4.Context#delete} to delete the created context
 	 * again. As long as the context is transient (see
@@ -2195,7 +2197,7 @@ sap.ui.define([
 	 *   <code>Infinity</code> may be used to retrieve all data
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
-	 *   used, see {@link sap.ui.model.odata.v4.ODataListBinding#constructor}.
+	 *   used, see {@link #getGroupId}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @returns {Promise<sap.ui.model.odata.v4.Context[]>}

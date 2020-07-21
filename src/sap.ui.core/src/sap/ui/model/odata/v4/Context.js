@@ -228,10 +228,9 @@ sap.ui.define([
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the DELETE request; if not specified, the update group ID for
-	 *   the context's binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindContext}
-	 *   and {@link sap.ui.model.odata.v4.ODataModel#bindList}; the resulting group ID must not have
-	 *   {@link sap.ui.model.odata.v4.SubmitMode.API}. Since 1.81, if this context is transient
-	 *   (see {@link #isTransient}), no group ID needs to be specified.
+	 *   the context's binding is used, see {@link #getUpdateGroupId}; the resulting group ID must
+	 *   not have {@link sap.ui.model.odata.v4.SubmitMode.API}. Since 1.81, if this context is
+	 *   transient (see {@link #isTransient}), no group ID needs to be specified.
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not point
@@ -502,12 +501,15 @@ sap.ui.define([
 	Context.prototype.getCanonicalPath = _Helper.createGetMethod("fetchCanonicalPath", true);
 
 	/**
-	 * Returns the group ID of the context's binding that is used for read requests.
+	 * Returns the group ID of the context's binding that is used for read requests. See
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#getGroupId} and
+	 * {@link sap.ui.model.odata.v4.ODataContextBinding#getGroupId}.
 	 *
 	 * @returns {string}
 	 *   The group ID
 	 *
-	 * @private
+	 * @public
+	 * @since 1.81.0
 	 */
 	Context.prototype.getGroupId = function () {
 		return this.oBinding.getGroupId();
@@ -662,12 +664,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the group ID of the context's binding that is used for update requests.
+	 * Returns the group ID of the context's binding that is used for update requests. See
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#getUpdateGroupId} and
+	 * {@link sap.ui.model.odata.v4.ODataContextBinding#getUpdateGroupId}.
 	 *
 	 * @returns {string}
-	 *   The group ID
+	 *   The update group ID
 	 *
-	 * @private
+	 * @public
+	 * @since 1.81.0
 	 */
 	Context.prototype.getUpdateGroupId = function () {
 		return this.oBinding.getUpdateGroupId();
@@ -785,8 +790,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the refresh; if not specified, the group ID for the context's
-	 *   binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}.
+	 *   binding is used, see {@link #getGroupId}.
 	 * @param {boolean} [bAllowRemoval=false]
 	 *   If the context belongs to a list binding, the parameter allows the list binding to remove
 	 *   the context from the list binding's collection because the entity does not match the
@@ -957,12 +961,10 @@ sap.ui.define([
 	 *   <code>[{$PropertyPath : "EMPLOYEE_2_MANAGER/*"}]</code>.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used (since 1.69.0); if not specified, the update group ID for the
-	 *   context's binding is used, see "$$updateGroupId" at
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList} and
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}. If a different group ID is specified,
-	 *   make sure that {@link #requestSideEffects} is called after the corresponding updates have
-	 *   been successfully processed by the server and that there are no pending changes for the
-	 *   affected properties.
+	 *   context's binding is used, see {@link #getUpdateGroupId}. If a different group ID is
+	 *   specified, make sure that {@link #requestSideEffects} is called after the corresponding
+	 *   updates have been successfully processed by the server and that there are no pending
+	 *   changes for the affected properties.
 	 * @returns {Promise}
 	 *   Promise resolved with <code>undefined</code>, or rejected with an error if loading of side
 	 *   effects fails. Use it to set fields affected by side effects to read-only before
@@ -1152,8 +1154,7 @@ sap.ui.define([
 	 *   The new value which must be primitive
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the PATCH request; if not specified, the update group ID for
-	 *   the context's binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}. Since 1.74, you can use
+	 *   the context's binding is used, see {@link #getUpdateGroupId}. Since 1.74.0, you can use
 	 *   <code>null</code> to prevent the PATCH request.
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
