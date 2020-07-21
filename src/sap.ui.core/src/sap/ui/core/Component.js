@@ -2918,8 +2918,12 @@ sap.ui.define([
 						registerModulePath(sComponentName, sUrl);
 					}
 
-					// preload the component
-					return preload(sComponentName, true).then(function() {
+					var pPreload = Promise.resolve();
+					// preload the component only if not embedded in a library
+					if (!oManifest.getEntry("/sap.app/embeddedBy")) {
+						pPreload = preload(sComponentName, true);
+					}
+					return pPreload.then(function() {
 						// after preload is finished, load the i18n resource
 						return oManifest._processI18n(true);
 					}).then(function() {
