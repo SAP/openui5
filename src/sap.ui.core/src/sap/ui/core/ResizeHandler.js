@@ -366,8 +366,8 @@ sap.ui.define([
 		if (fnCallback && vSuspended) { // DOM node causing the suspension
 			var aCallbacks = oHandler.mCallbacks.get(vSuspended);
 			if (!aCallbacks) {
-				oHandler.mCallbacks.set(vSuspended, []);
 				aCallbacks = [];
+				oHandler.mCallbacks.set(vSuspended, aCallbacks);
 			}
 			if (!aCallbacks.includes(fnCallback)) {
 				aCallbacks.push(fnCallback);
