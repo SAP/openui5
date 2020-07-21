@@ -358,6 +358,78 @@ sap.ui.define([
 
 		},
 
+		addSingleMultiSelectItems: function (oVsdInst) {
+			oVsdInst.addFilterItem(new ViewSettingsFilterItem({
+				key: "mySingleFilter1",
+				text: "Single 1",
+				multiSelect: false,
+				items: [
+					new ViewSettingsItem({
+						key: "s1.1",
+						text: "Option 1"
+					}),
+					new ViewSettingsItem({
+						key: "s1.2",
+						text: "Option 2",
+						selected: true
+					})
+				]
+			}));
+
+			oVsdInst.addFilterItem(new ViewSettingsFilterItem({
+				key: "myMultiFilter1",
+				text: "Multi 1",
+				multiSelect: true,
+				items: [
+					new ViewSettingsItem({
+						key: "m1.1",
+						text: "Option 1",
+						selected: true
+					}),
+					new ViewSettingsItem({
+						key: "m1.2",
+						text: "Option 2"
+					})
+				]
+			}));
+
+			oVsdInst.addFilterItem(new ViewSettingsFilterItem({
+				key: "mySingleFilter2",
+				text: "Single 2",
+				multiSelect: false,
+				items: [
+					new ViewSettingsItem({
+						key: "s2.1",
+						text: "Option 1",
+						selected: true
+					}),
+					new ViewSettingsItem({
+						key: "s2.2",
+						text: "Option 2"
+					})
+				]
+			}));
+
+			oVsdInst.addFilterItem(new ViewSettingsFilterItem({
+				key: "myMultiFilter2",
+				text: "Multi 2",
+				multiSelect: true,
+				items: [
+					new ViewSettingsItem({
+						key: "m2.1",
+						text: "Option 1",
+						selected: true
+					}),
+					new ViewSettingsItem({
+						key: "m2.2",
+						text: "Option 2",
+						selected: true
+					})
+				]
+			}));
+
+		},
+
 		addPresetFilterItems: function(oVsdInst) {
 			// preset filters
 			oVsdInst.addPresetFilterItem(new ViewSettingsItem({
@@ -2124,6 +2196,29 @@ sap.ui.define([
 		assert.equal(aSelectedAfter[1].getText(), "Monitor", "Second item is correctly selected");
 		assert.equal(aSelectedAfter[2].getText(), "Printer", "Third item is correctly selected");
 		assert.equal(aSelectedAfter[3].getText(), "Open", "Fourth item is correctly selected");
+	});
+
+	QUnit.test("Check setSelectedFilterCompoundKeys when there are both single- and multi-select filter items", function (assert) {
+		var oSelectedBefore,
+			oSelectedAfter;
+
+		// set filter items, some of them with single-select subitems, and some of them - with multi-select sub-items
+		oVsdConfig.addSingleMultiSelectItems(this.oVSD);
+
+		// act
+		oSelectedBefore = this.oVSD.getSelectedFilterCompoundKeys();
+		this.oVSD.setSelectedFilterCompoundKeys(oSelectedBefore);
+		oSelectedAfter = this.oVSD.getSelectedFilterCompoundKeys();
+
+		// assert
+		assert.ok(oSelectedAfter['mySingleFilter1'] && oSelectedBefore['mySingleFilter1'].length == oSelectedAfter['mySingleFilter1'].length,
+					"There are correct number of sub-items selected in first single-select filter item");
+		assert.ok(oSelectedAfter['myMultiFilter1'] && oSelectedBefore['myMultiFilter1'].length == oSelectedAfter['myMultiFilter1'].length,
+					"There are correct number of sub-items selected in first multi-select filter item");
+		assert.ok(oSelectedAfter['mySingleFilter2'] && oSelectedBefore['mySingleFilter2'].length == oSelectedAfter['mySingleFilter2'].length,
+					"There are correct number of sub-items selected in second single-select filter item");
+		assert.ok(oSelectedAfter['myMultiFilter2'] && oSelectedBefore['myMultiFilter2'].length == oSelectedAfter['myMultiFilter2'].length,
+					"There are correct number of sub-items selected in second multi-select filter item");
 	});
 
 

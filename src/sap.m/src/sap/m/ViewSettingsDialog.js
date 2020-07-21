@@ -1645,6 +1645,7 @@ function(
 					oSelectedSubFilterKeys = oSelectedFilterKeys[sParentKey];
 					aSubFilterItems = oParentItem.getItems();
 					bMultiSelect = oParentItem.getMultiSelect();
+					bOneSelected = false;
 					// loop through the sub-items
 					for (iIndex = 0; iIndex < aSubFilterItems.length; iIndex++) {
 						sKey = aSubFilterItems[iIndex].getKey();
