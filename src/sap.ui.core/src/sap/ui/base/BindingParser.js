@@ -208,8 +208,9 @@ sap.ui.define([
 		 */
 		function resolveType(o) {
 			var FNType;
-			if (typeof o.type === "string" ) {
-				FNType = resolveReference(o.type, mVariables, {
+			var sType = o.type;
+			if (typeof sType === "string" ) {
+				FNType = resolveReference(sType, mVariables, {
 					bindContext: false
 				});
 
@@ -219,6 +220,11 @@ sap.ui.define([
 				} else {
 					o.type = FNType;
 				}
+
+				if (!o.type) {
+					Log.error("Failed to resolve type '" + sType + "'. Maybe not loaded or a typo?");
+				}
+
 				// TODO why are formatOptions and constraints also removed for an already instantiated type?
 				// TODO why is a value of type object not validated (instanceof Type)
 				delete o.formatOptions;
