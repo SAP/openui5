@@ -115,19 +115,15 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
 		var fnOnBeforeCreated = FESR.onBeforeCreated;
 
-		//startup
+		// startup
 		FESR.setActive(true);
 		Interaction.end(true);
 
-		//next interaction
-		Interaction.notifyEventStart({
-			type: "other_interaction"
-		});
-		Interaction.notifyStepStart("other_interaction");
+		// next interaction
+		Interaction.start("other_interaction");
 
 		// implement hook
-		var fnOnBeforeCreated = FESR.onBeforeCreated;
-		FESR.onBeforeCreated = function(oFESRHandle, oInteraction) {
+		FESR.onBeforeCreated = function (oFESRHandle, oInteraction) {
 			assert.ok(oFESRHandle.timeToInteractive > 0, "startup time should be > 0");
 			//delete startup time as we cannot compare it
 			delete oFESRHandle.timeToInteractive;
