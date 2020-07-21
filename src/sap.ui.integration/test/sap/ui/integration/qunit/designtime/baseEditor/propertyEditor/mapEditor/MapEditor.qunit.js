@@ -253,51 +253,10 @@ sap.ui.define([
 					value: "Test value"
 				}
 			};
-			var oExpectedItemConfig = [
-				{
-					allowBindings: false,
-					enabled: true,
-					itemKey: "test",
-					label: "Key",
-					path: "key",
-					type: "string",
-					value: "test"
-				},
-				{
-					allowBindings: false,
-					items: [
-						{
-							"key": "string",
-							"title": this.oMapEditor.getModel("i18n").getResourceBundle().getText("BASE_EDITOR.MAP.TYPES.STRING")
-						},
-						{
-							"key": "number",
-							"title": this.oMapEditor.getModel("i18n").getResourceBundle().getText("BASE_EDITOR.MAP.TYPES.NUMBER")
-						},
-						{
-							"key": "boolean",
-							"title": this.oMapEditor.getModel("i18n").getResourceBundle().getText("BASE_EDITOR.MAP.TYPES.BOOLEAN")
-						}
-					],
-					itemKey: "test",
-					label: "Type",
-					path: "type",
-					type: "select",
-					value: "string",
-					visible: true
-				},
-				{
-					itemKey: "test",
-					label: "Value",
-					path: "value",
-					type: "string",
-					value: "Test value"
-				}
-			];
 
-			assert.deepEqual(
-				this.oMapEditor.getAggregation("propertyEditor").formatItemConfig(oItem),
-				oExpectedItemConfig,
+			assert.strictEqual(
+				this.oMapEditor.getAggregation("propertyEditor").formatItemConfig(oItem).length,
+				3,
 				"Then configurations for the nested editors are returned"
 			);
 		});

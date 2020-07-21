@@ -38,6 +38,18 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
+	NumberEditor.prototype.getDefaultValidators = function () {
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getDefaultValidators.call(this),
+			{
+				isNumber: {
+					type: "isNumber"
+				}
+			}
+		);
+	};
+
 	NumberEditor.prototype.formatValue = function (sValue) {
 		if (_isNil(sValue) || isValidBindingString(sValue, false)) {
 			return sValue;
@@ -45,31 +57,16 @@ sap.ui.define([
 
 		var nValue = parseFloat(sValue);
 		if (!this.validateNumber(nValue)) {
-			this._setValueState(false, this.getI18nProperty(this.invalidInputError));
 			return sValue;
 		}
 
-		this._setValueState(true);
 		return this.getFormatterInstance().format(nValue);
-	};
-
-	NumberEditor.prototype.setValue = function (vValue) {
-		// When a string arrives through setValue, it might come directly from the manifest
-		// As we don't know the locale in which the value was created we assume default EN locale
-		this._parseAndSetValue(vValue, false, true);
 	};
 
 	NumberEditor.prototype._onLiveChange = function (oEvent) {
 		// When a string arrives through editor, we assume the users locale was used
-		this._parseAndSetValue(oEvent.getParameter("newValue"), true, false);
-	};
-
-	NumberEditor.prototype._parseAndSetValue = function (vValue, bIsLocalizedValue, bAllowInvalidValue) {
-		var vParsedValue = bIsLocalizedValue ? this._parseAndValidateLocalized(vValue) : this._parseAndValidate(vValue);
-		this._setValueState(!!(!vValue || vParsedValue), this.getI18nProperty(this.invalidInputError));
-		if (!vValue || vParsedValue || bAllowInvalidValue) {
-			BasePropertyEditor.prototype.setValue.call(this, vParsedValue || vValue);
-		}
+		var nValue = this._parseLocalized(oEvent.getParameter("newValue"));
+		BasePropertyEditor.prototype.setValue.call(this, nValue);
 	};
 
 	/**
@@ -83,40 +80,13 @@ sap.ui.define([
 		return NumberFormat.getFloatInstance();
 	};
 
-	NumberEditor.prototype._parseAndValidate = function (vValue) {
-		if (!vValue || isValidBindingString(vValue, false)) {
-			return vValue;
-		}
-
-		var nValue = parseFloat(vValue);
-		return this.validateNumber(nValue) ? nValue : undefined;
-	};
-
-	NumberEditor.prototype._parseAndValidateLocalized = function (vValue) {
+	NumberEditor.prototype._parseLocalized = function (vValue) {
 		if (!vValue || isValidBindingString(vValue, false)) {
 			return vValue;
 		}
 
 		var nValue = this.getFormatterInstance().parse(vValue);
-		return this.validateNumber(nValue) ? nValue : undefined;
-	};
-
-	NumberEditor.prototype._setValueState = function (bIsValid, sError) {
-		var fnSetValueState = function () {
-			var oInput = this.getContent();
-			if (bIsValid) {
-				oInput.setValueState("None");
-			} else {
-				oInput.setValueState("Error");
-				oInput.setValueStateText(sError);
-			}
-		}.bind(this, bIsValid, sError);
-
-		if (this.isReady()) {
-			fnSetValueState();
-		} else {
-			this.ready().then(fnSetValueState);
-		}
+		return nValue;
 	};
 
 	return NumberEditor;

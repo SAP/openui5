@@ -224,7 +224,20 @@ sap.ui.define([
 					type: "string",
 					enabled: oConfig.allowKeyChange,
 					itemKey: sKey,
-					allowBindings: false
+					allowBindings: false,
+					validators: [
+						{
+							type: "isUniqueKey",
+							config: {
+								keys: function () {
+									return Object.keys(this.getValue());
+								}.bind(this),
+								currentKey: function (oPropertyEditor) {
+									return oPropertyEditor.getValue();
+								}
+							}
+						}
+					]
 				},
 				{
 					label: this.getI18nProperty("BASE_EDITOR.MAP.TYPE"),
@@ -354,28 +367,20 @@ sap.ui.define([
 			}
 
 			var oEditorValue = _merge({}, this.getValue());
-			var oInput = oEvent.getSource().getAggregation("propertyEditor").getContent();
 			var sNewKey = oEvent.getParameter("value");
 
-			if (oEditorValue.hasOwnProperty(sOldKey) && (!oEditorValue.hasOwnProperty(sNewKey) || sNewKey === sOldKey)) {
-				oInput.setValueState("None");
+			if (sNewKey !== sOldKey) {
+				var oNewValue = {};
+				// Iterate over items to keep the order
+				Object.keys(oEditorValue).forEach(function (sItemKey) {
+					var sNewItemKey = sItemKey === sOldKey ? sNewKey : sItemKey;
+					oNewValue[sNewItemKey] = oEditorValue[sItemKey];
+				});
 
-				if (sNewKey !== sOldKey) {
-					var oNewValue = {};
-					// Iterate over items to keep the order
-					Object.keys(oEditorValue).forEach(function (sItemKey) {
-						var sNewItemKey = sItemKey === sOldKey ? sNewKey : sItemKey;
-						oNewValue[sNewItemKey] = oEditorValue[sItemKey];
-					});
+				this._mTypes[sNewKey] = this._mTypes[sOldKey];
+				delete this._mTypes[sOldKey];
 
-					this._mTypes[sNewKey] = this._mTypes[sOldKey];
-					delete this._mTypes[sOldKey];
-
-					this.setValue(oNewValue);
-				}
-			} else {
-				oInput.setValueState("Error");
-				oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.MAP.DUPLICATE_KEY"));
+				this.setValue(oNewValue);
 			}
 		},
 

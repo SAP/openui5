@@ -3,12 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
-	"sap/base/util/restricted/_uniq"
+	"sap/ui/integration/designtime/baseEditor/validator/IsValidBinding"
 ], function (
 	BasePropertyEditor,
-	isValidBindingString,
-	_uniq
+	IsValidBinding
 ) {
 	"use strict";
 
@@ -33,6 +31,27 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
+	ListEditor.prototype.onFragmentReady = function () {
+		this.attachValueChange(function () {
+			this.getContent().setValue("");
+		}.bind(this));
+	};
+
+	ListEditor.prototype.getDefaultValidators = function () {
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getDefaultValidators.call(this),
+			{
+				isUniqueList: {
+					type: "isUniqueList"
+				},
+				isStringList: {
+					type: "isStringList"
+				}
+			}
+		);
+	};
+
 	ListEditor.prototype._onTokenUpdate = function (oEvent) {
 		this._setTokens(
 			oEvent.getParameter("addedTokens").map(function (oToken) {
@@ -45,48 +64,28 @@ sap.ui.define([
 	};
 
 	ListEditor.prototype._onTokenSubmission = function (oEvent) {
-		if (this._setTokens([oEvent.getParameter("value")], [])) {
-			this.getContent().setValue("");
-		}
+		this._setTokens([oEvent.getParameter("value")], []);
 	};
 
 	ListEditor.prototype._onLiveChange = function (oEvent) {
 		var sValue = oEvent.getParameter("newValue");
-		this._validate(sValue);
+		this._validateInput(sValue);
 	};
 
 	ListEditor.prototype._setTokens = function (aAddedTokens, aRemovedTokens) {
 		var aValue = (this.getValue() || []).filter(function (sToken) {
 			return aRemovedTokens.indexOf(sToken) < 0;
 		});
+		var aNewValue = aValue.concat(aAddedTokens);
 
-		var aNewValue = _uniq(aValue.concat(aAddedTokens.filter(function (sNewToken) {
-			return this._validate(sNewToken);
-		}, this)));
-
-		if (aRemovedTokens.length || aNewValue.length !== aValue.length) {
-			this.setValue(aNewValue);
-			this._setInputState(true);
-			return true;
-		}
-		this._setInputState(false, this.getI18nProperty("BASE_EDITOR.LIST.DUPLICATE_ENTRY"));
-		return false;
+		this.setValue(aNewValue);
 	};
 
-	ListEditor.prototype._validate = function (sToken) {
-		var bInvalidBindingString = isValidBindingString(sToken);
-		this._setInputState(bInvalidBindingString, this.getI18nProperty("BASE_EDITOR.STRING.INVALID_BINDING"));
-		return bInvalidBindingString;
-	};
-
-	ListEditor.prototype._setInputState = function (bIsValid, sErrorMessage) {
-		var oInput = this.getContent();
-		if (bIsValid) {
-			oInput.setValueState("None");
-		} else {
-			oInput.setValueState("Error");
-			oInput.setValueStateText(sErrorMessage || "Unknown Error");
-		}
+	ListEditor.prototype._validateInput = function (sToken) {
+		this.setInputState(
+			!IsValidBinding.validate(sToken),
+			IsValidBinding.errorMessage
+		);
 	};
 
 	return ListEditor;

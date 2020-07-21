@@ -3,12 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
 	"sap/base/util/restricted/_isNil",
 	"sap/base/util/isPlainObject"
 ], function (
 	BasePropertyEditor,
-	isValidBindingString,
 	_isNil,
 	isPlainObject
 ) {
@@ -81,6 +79,24 @@ sap.ui.define([
 		);
 	};
 
+	StringEditor.prototype.getDefaultValidators = function () {
+		var oConfig = this.getConfig();
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getDefaultValidators.call(this),
+			{
+				isValidBinding: {
+					type: "isValidBinding",
+					isEnabled: oConfig.allowBindings
+				},
+				notABinding: {
+					type: "notABinding",
+					isEnabled: !oConfig.allowBindings
+				}
+			}
+		);
+	};
+
 	StringEditor.prototype.setValue = function (vValue) {
 		if (!_isNil(vValue) && !isPlainObject(vValue)) {
 			vValue = vValue.toString();
@@ -90,28 +106,9 @@ sap.ui.define([
 
 	StringEditor.prototype._onLiveChange = function () {
 		var oInput = this.getContent();
-		if (this._validate()) {
-			this.setValue(oInput.getValue());
-		}
-	};
-
-	StringEditor.prototype._validate = function () {
-		var oInput = this.getContent();
-		var sValue = oInput.getValue();
-		var oConfig = this.getConfig();
-
-		if (!oConfig["allowBindings"] && isValidBindingString(sValue, false)) {
-			oInput.setValueState("Error");
-			oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.PROPERTY.BINDING_NOT_ALLOWED"));
-			return false;
-		} else if (!isValidBindingString(sValue)) {
-			oInput.setValueState("Error");
-			oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.STRING.INVALID_BINDING"));
-			return false;
-		} else {
-			oInput.setValueState("None");
-			return true;
-		}
+		// if (this._validate()) {
+		this.setValue(oInput.getValue());
+		// }
 	};
 
 	return StringEditor;

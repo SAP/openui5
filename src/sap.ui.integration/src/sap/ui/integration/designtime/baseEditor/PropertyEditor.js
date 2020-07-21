@@ -437,7 +437,7 @@ sap.ui.define([
 					this.fireValueChange(_omit(oEvent.getParameters(), "id"));
 				}, this);
 
-				oPropertyEditor.setValue(this.getValue());
+				oPropertyEditor.setValue(this.getValue(), true);
 
 				this._sCreatedBy = sCreatedBy;
 
@@ -503,7 +503,7 @@ sap.ui.define([
 
 		var oNestedEditor = this.getAggregation("propertyEditor");
 		if (oNestedEditor) {
-			oNestedEditor.setValue(vValue);
+			oNestedEditor.setValue(vValue, true);
 		}
 	};
 
