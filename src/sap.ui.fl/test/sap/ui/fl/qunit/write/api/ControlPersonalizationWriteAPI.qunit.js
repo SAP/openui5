@@ -687,6 +687,107 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("restore", {
+		beforeEach: function() {
+			this.oAppComponent = new UIComponent();
+			this.sControlId = "view--control1";
+			this.oControl = new Control(this.oAppComponent.createId(this.sControlId));
+		},
+		afterEach: function() {
+			sandbox.restore();
+			this.oAppComponent.destroy();
+			this.oControl.destroy();
+		}
+	}, function() {
+		QUnit.test("when called without a property bag", function (assert) {
+			return ControlPersonalizationWriteAPI.restore()
+				.catch(function (sMessage) {
+					assert.equal(sMessage, "No selector was provided", "then a rejection with the correct message was done");
+				});
+		});
+
+		QUnit.test("when called without a selector", function (assert) {
+			return ControlPersonalizationWriteAPI.restore({})
+				.catch(function (sMessage) {
+					assert.equal(sMessage, "No selector was provided", "then a rejection with the correct message was done");
+				});
+		});
+
+		QUnit.test("when no app component could be determined", function (assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(undefined);
+
+			return ControlPersonalizationWriteAPI.restore({
+				selector: new Control(this.oControl)
+			})
+				.catch(function (sMessage) {
+					assert.equal(sMessage, "App Component could not be determined", "then a rejection with the correct message was done");
+				});
+		});
+
+		QUnit.test("when a restore with a generator was called", function (assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			var oFlexController = FlexControllerFactory.createForControl(this.oAppComponent);
+			var oRemoveDirtyChangesSpy = sandbox.spy(oFlexController, "removeDirtyChanges");
+
+			var sGenerator = "Change.createInitialFileContent";
+			return ControlPersonalizationWriteAPI.restore({
+				selector: this.oControl,
+				generator: sGenerator
+			})
+			.then(function () {
+				assert.equal(oRemoveDirtyChangesSpy.callCount, 1, "removeDirtyChanges was called once");
+				var aArguments = oRemoveDirtyChangesSpy.getCall(0).args;
+				assert.equal(aArguments[0], Layer.USER, "the USER layer was passed");
+				assert.equal(aArguments[1], this.oAppComponent, "the app component was passed");
+				assert.equal(aArguments[2], this.oControl, "the the control was passed");
+				assert.equal(aArguments[3], sGenerator, "the generator was passed");
+				assert.equal(aArguments[4], undefined, "the changeTypes were not passed");
+			}.bind(this));
+		});
+
+		QUnit.test("when a restore with a changeType list was called", function (assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			var oFlexController = FlexControllerFactory.createForControl(this.oAppComponent);
+			var oRemoveDirtyChangesSpy = sandbox.spy(oFlexController, "removeDirtyChanges");
+
+			var aChangeTypes = ["Change.createInitialFileContent"];
+			return ControlPersonalizationWriteAPI.restore({
+				selector: this.oControl,
+				changeTypes: aChangeTypes
+			})
+			.then(function () {
+				assert.equal(oRemoveDirtyChangesSpy.callCount, 1, "removeDirtyChanges was called once");
+				var aArguments = oRemoveDirtyChangesSpy.getCall(0).args;
+				assert.equal(aArguments[0], Layer.USER, "the USER layer was passed");
+				assert.equal(aArguments[1], this.oAppComponent, "the app component was passed");
+				assert.equal(aArguments[2], this.oControl, "the the control was passed");
+				assert.equal(aArguments[3], undefined, "the generator was passed");
+				assert.equal(aArguments[4], aChangeTypes, "the changeTypes were passed");
+			}.bind(this));
+		});
+
+		QUnit.test("when a restore with a changeType list was called", function (assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			var oFlexController = FlexControllerFactory.createForControl(this.oAppComponent);
+			var oRemoveDirtyChangesSpy = sandbox.spy(oFlexController, "removeDirtyChanges");
+
+			var sSelectorIds = ["myControl"];
+			return ControlPersonalizationWriteAPI.restore({
+				selector: this.oControl,
+				selectorIds: sSelectorIds
+			})
+			.then(function () {
+				assert.equal(oRemoveDirtyChangesSpy.callCount, 1, "removeDirtyChanges was called once");
+				var aArguments = oRemoveDirtyChangesSpy.getCall(0).args;
+				assert.equal(aArguments[0], Layer.USER, "the USER layer was passed");
+				assert.equal(aArguments[1], this.oAppComponent, "the app component was passed");
+				assert.equal(aArguments[2], this.oControl, "the the control was passed");
+				assert.equal(aArguments[3], undefined, "the generator was passed");
+				assert.equal(aArguments[4], undefined, "the changeTypes were not passed");
+			}.bind(this));
+		});
+	});
+
 	QUnit.module("buildSelectorFromElementIdAndType", {
 		beforeEach: function() {
 			this.oAppComponent = new UIComponent();

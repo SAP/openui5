@@ -4,9 +4,13 @@
 
 sap.ui.define([
 	"sap/ui/fl/ControlPersonalizationAPI",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
 ], function(
 	OldControlPersonalizationAPI,
+	FlexControllerFactory,
+	Layer,
 	Utils
 ) {
 	"use strict";
@@ -72,6 +76,36 @@ sap.ui.define([
 		reset: function(mPropertyBag) {
 			mPropertyBag.selectors = mPropertyBag.selectors || [];
 			return OldControlPersonalizationAPI.resetChanges(mPropertyBag.selectors, mPropertyBag.changeTypes);
+		},
+
+		/**
+		 * Reset dirty changes for a given control.
+		 * This function also triggers a reversion of deleted UI changes.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.core.Control} mPropertyBag.selector - Retrieves the associated flex persistence
+		 * @param {string} [mPropertyBag.generator] - Generator of changes
+		 * @param {string[]} [mPropertyBag.changeTypes] - Types of changes
+		 *
+		 * @returns {Promise} Promise that resolves after the deletion took place
+		 *
+		 * @private
+		 * @ui5-restricted
+		 */
+		restore: function (mPropertyBag) {
+			if (!mPropertyBag || !mPropertyBag.selector) {
+				return Promise.reject("No selector was provided");
+			}
+
+			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+
+			if (!oAppComponent) {
+				return Promise.reject("App Component could not be determined");
+			}
+
+			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+			// limit the deletion to the passed selector control only
+			return oFlexController.removeDirtyChanges(Layer.USER, oAppComponent, mPropertyBag.selector, mPropertyBag.generator, mPropertyBag.changeTypes);
 		},
 
 		/**

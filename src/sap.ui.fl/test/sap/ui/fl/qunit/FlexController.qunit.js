@@ -300,7 +300,7 @@ function (
 			assert.ok(oRemoveChangeStub.calledOnce, "then model's removeChange is called as VariantManagement Change is detected and deleted");
 		});
 
-		QUnit.test("resetChanges for control shall call ChangePersistance.resetChanges(), reset control variant URL parameters, and revert changes", function(assert) {
+		QUnit.test("resetChanges for control shall call ChangePersistence.resetChanges(), reset control variant URL parameters, and revert changes", function(assert) {
 			var oVariantModel = {
 				id: "variantModel"
 			};
@@ -314,7 +314,7 @@ function (
 			var sGenerator = "test.Generator";
 			var sSelectorString = "abc123";
 			var sChangeTypeString = "labelChange";
-			var aDeletedChanges = [{fileName: "change1"}, {fileName: "change2"}];
+			var aDeletedChanges = [new Change({fileName: "change1"}), new Change({fileName: "change2"})];
 			sandbox.stub(URLHandler, "update");
 			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function() {
 				assert.strictEqual(arguments[0], sLayer, "then correct layer passed");
@@ -338,6 +338,8 @@ function (
 		});
 
 		QUnit.test("resetChanges for whole component shall call ChangePersistance.resetChanges(), reset control variant URL parameters but do not revert changes", function(assert) {
+			assert.expect(4);
+
 			var oVariantModel = {
 				id: "variantModel"
 			};
@@ -366,6 +368,38 @@ function (
 						model: oVariantModel
 					}, "then URLHandler._setTechnicalURLParameterValues with the correct parameters");
 				});
+		});
+
+		QUnit.test("resetChanges for whole component was called and two changes are present, one related to a control variant", function(assert) {
+			assert.expect(3);
+
+			var oDeletedChangeWithVariantReference = new Change({
+				variantReference: "someReference"
+			});
+
+			var oDeletedChange = new Change({});
+
+			var oVariantModel = {
+				id: "variantModel",
+				removeChange: function (oChange) {
+					assert.equal(oChange, oDeletedChangeWithVariantReference, "the Model.removeChange was called for a change with a variant reference");
+				}
+			};
+			var oComp = {
+				name: "testComp",
+				getModel: function() {
+					return oVariantModel;
+				}
+			};
+			var sLayer = "testLayer";
+			var sGenerator = "test.Generator";
+			sandbox.stub(URLHandler, "update");
+			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function() {
+				assert.strictEqual(arguments[0], sLayer, "then correct layer passed");
+				assert.strictEqual(arguments[1], sGenerator, "then correct generator passed");
+				return Promise.resolve([oDeletedChangeWithVariantReference, oDeletedChange]);
+			});
+			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp);
 		});
 
 		QUnit.test("addChange shall add a change and contain the applicationVersion in the connector", function(assert) {

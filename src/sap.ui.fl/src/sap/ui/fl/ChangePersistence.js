@@ -825,6 +825,54 @@ sap.ui.define([
 	};
 
 	/**
+	 * Removes unsaved changes and reverts these.
+	 *
+	 * @param {string} sLayer - Layer for which changes shall be deleted
+	 * @param {sap.ui.core.Component} oComponent - Component instance
+	 * @param {string} oControl - Control for which the changes should be removed
+	 * @param {string} [sGenerator] - Generator of changes (optional)
+	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
+	 *
+	 * @returns {Promise} Promise that resolves after the deletion took place
+	 */
+	ChangePersistence.prototype.removeDirtyChanges = function(sLayer, oComponent, oControl, sGenerator, aChangeTypes) {
+		if (!oControl) {
+			Log.error("The selectorId must be provided");
+			return Promise.reject("The selectorId must be provided");
+		}
+
+		var aDirtyChanges = this._aDirtyChanges;
+
+		var aChangesToBeRemoved = aDirtyChanges.filter(function (oChange) {
+			var bChangeValid = true;
+
+			if (oChange.getLayer() !== sLayer) {
+				return false;
+			}
+
+			if (sGenerator && oChange.getDefinition().support.generator !== sGenerator) {
+				return false;
+			}
+
+			var vSelector = oChange.getSelector();
+			bChangeValid = oControl.getId() === JsControlTreeModifier.getControlIdBySelector(vSelector, oComponent);
+
+			if (aChangeTypes) {
+				bChangeValid = bChangeValid && aChangeTypes.indexOf(oChange.getChangeType()) !== -1;
+			}
+
+			return bChangeValid;
+		});
+
+		aChangesToBeRemoved.forEach(function (oChange) {
+			var nIndex = aDirtyChanges.indexOf(oChange);
+			aDirtyChanges.splice(nIndex, 1);
+		});
+
+		return Promise.resolve(aChangesToBeRemoved);
+	};
+
+	/**
 	 * Reset changes on the server. Specification of a generator, selector string or change type string is optional
 	 * but at least one of these parameters has to be filled.
 	 * This function returns an array of changes which need to be reverted from UI. When neither a selector nor a change type is provided,
