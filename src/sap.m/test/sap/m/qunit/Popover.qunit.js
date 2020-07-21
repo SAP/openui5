@@ -2288,6 +2288,44 @@ sap.ui.define([
 		oPopover.destroy();
 	});
 
+	QUnit.test("beforeClose should be fired if the Popover is auto-closed and the focus is still inside but the DOM of the element that opened it no longer exists", function (assert) {
+		// Arrange
+		var oCloseButton;
+		var oOpenButton = new Button({
+			text: "Open Popover"
+		}).placeAt("content");
+		var oPopover = new Popover({
+			endButton: [
+				oCloseButton = new sap.m.Button({
+					text: "Close Popover",
+					press: function () {
+						oOpenButton.setVisible(false);
+						setTimeout(function() {
+							oPopover.close();
+						}, 300);
+					}
+				})
+			]
+		});
+		var oBeforeCloseSpy = this.spy();
+
+		// Act
+		sap.ui.getCore().applyChanges();
+		oPopover.openBy(oOpenButton);
+		this.clock.tick(300);
+
+		oPopover.attachBeforeClose(oBeforeCloseSpy);
+		oCloseButton.firePress();
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(oBeforeCloseSpy.called, true, "beforeClose event is fired");
+
+		// Clean
+		oPopover.destroy();
+		oOpenButton.destroy();
+	});
+
 	QUnit.test("Do not fire close events when already closed.", function (assert) {
 		// Setup
 		var oPopover = new Popover(),
@@ -2339,8 +2377,8 @@ sap.ui.define([
 		this.stub(Device, "support", oDeviceParams.support);
 
 		var oResizeHandlerSpy = this.spy(Device.resize, "attachHandler");
-		oButton = new Button().placeAt("content");
-		oPopover = new Popover({
+		var oButton = new Button().placeAt("content");
+		var oPopover = new Popover({
 			contentWidth: "300px",
 			contentHeight: "300px",
 			content: new HTML({
@@ -2350,6 +2388,8 @@ sap.ui.define([
 				oPopover.destroy();
 			}
 		});
+
+		sap.ui.getCore().applyChanges();
 
 		// act
 		oPopover.openBy(oButton);
