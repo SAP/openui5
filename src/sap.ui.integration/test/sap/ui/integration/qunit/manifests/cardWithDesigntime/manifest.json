@@ -5,6 +5,7 @@
     },
     "sap.card": {
         "type": "Table",
+        "designtime": "./designtime/myDesigntime",
         "header": {
             "title": "Table Card with Top 5 Products",
             "subTitle": "These are the top sellers this month",

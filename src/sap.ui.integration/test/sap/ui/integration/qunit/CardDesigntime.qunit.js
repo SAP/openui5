@@ -1,12 +1,14 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/integration/Designtime"
 ],
 function (
 	Card,
-	Core
+	Core,
+	Designtime
 ) {
 	"use strict";
 
@@ -23,19 +25,20 @@ function (
 	});
 
 	QUnit.test("Designtime can be loaded", function (assert) {
-
 		// Arrange
-		var done = assert.async();
+		var done = assert.async(),
+			fnCardReadySpy = sinon.spy(Designtime.prototype, "onCardReady");
+
 		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/cardWithDesigntime/manifest.json");
+
+		this.oCard.loadDesigntime().then(function (oResult) {
+			assert.ok(oResult instanceof Designtime, "Design time is loaded.");
+			assert.ok(fnCardReadySpy.calledOnce, "Designtime.onCardReady was called.");
+			done();
+		});
+
+		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
-
-		this.oCard.attachEvent("_ready", function () {
-			this.oCard.loadDesigntime().then(function (oResult) {
-				assert.ok(oResult.designtime, "Design time is loaded.");
-				assert.ok(oResult.manifest, "Card manifest is provided in load designtime result.");
-				done();
-			});
-		}.bind(this));
 	});
 });
