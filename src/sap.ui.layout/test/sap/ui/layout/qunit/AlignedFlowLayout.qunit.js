@@ -9,14 +9,16 @@ sap.ui.require([
 	"sap/ui/Device",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem",
-	"sap/ui/core/IntervalTrigger"
+	"sap/ui/core/IntervalTrigger",
+	"sap/ui/core/ResizeHandler"
 ], function(
 	Core,
 	Control,
 	Device,
 	AlignedFlowLayout,
 	Rem,
-	IntervalTrigger
+	IntervalTrigger,
+	ResizeHandler
 ) {
 	"use strict";
 
@@ -1487,4 +1489,89 @@ sap.ui.require([
 		// assert
 		assert.ok(this.oAlignedFlowLayout.getLastItemDomRef() === null);
 	});
+
+	QUnit.module("suspend", {
+		beforeEach: function(assert) {
+
+			// arrange
+			this.oAlignedFlowLayout = new AlignedFlowLayout({
+				minItemWidth: "240px", // 15rem
+				maxItemWidth: "480px",  // 30rem
+				content: [
+					new Input(),
+					new Input()
+				],
+				endContent: [
+					new Button()
+				]
+			});
+
+			this.oContentDomRef = document.getElementById(CONTENT_ID);
+			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
+			Core.applyChanges();
+		},
+		afterEach: function(assert) {
+
+			// cleanup
+			if (this.oAlignedFlowLayout) {
+				this.oAlignedFlowLayout.destroy();
+				this.oAlignedFlowLayout = null;
+			}
+
+			this.oContentDomRef.style.width = "";
+			this.oContentDomRef = null;
+			Core.applyChanges();
+		}
+	});
+
+	QUnit.test("it should unobserve size changes after the resize handler is suspended", function(assert) {
+		var done = assert.async(),
+			spy = this.spy;
+
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
+
+			// arrange
+			var oDomRef = this.oAlignedFlowLayout.getDomRef();
+			ResizeHandler.suspend(oDomRef);
+			var oReflowSpy = spy(this.oAlignedFlowLayout, "reflow");
+
+			// act
+			this.oAlignedFlowLayout.onResize();
+
+			// assert
+			window.requestAnimationFrame(function() {
+				assert.ok(this.oAlignedFlowLayout.bReflowSuspended, "the reflow suspended flag should be set to true");
+				assert.strictEqual(oReflowSpy.callCount, 0, "the reflow method should not be called if the resize handler is suspended");
+				oReflowSpy.restore();
+				done();
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("it should call the .reflow() method after the layout was suspended and " +
+				"resumed from resizing changes notifications", function(assert) {
+
+		var done = assert.async();
+
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
+
+			// arrange
+			var oDomRef = this.oAlignedFlowLayout.getDomRef();
+
+			// act
+			ResizeHandler.suspend(oDomRef);
+			this.oAlignedFlowLayout.onResize();
+			var bReflowSuspended = this.oAlignedFlowLayout.bReflowSuspended;
+			ResizeHandler.resume(oDomRef);
+
+			// assert
+			assert.ok(bReflowSuspended, true, "the reflow suspended flag should be set to true after suspend");
+			assert.strictEqual(this.oAlignedFlowLayout.bReflowSuspended, false, "the reflow suspended flag should be set to false after resume");
+
+			done();
+		}.bind(this));
+	});
+
 });
