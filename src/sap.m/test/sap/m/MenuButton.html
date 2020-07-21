@@ -785,10 +785,13 @@ var oMenu22 = new sap.m.Menu({
                 oVBox,
                 oList
             ],
-            footer: new sap.m.Toolbar({
-                content: [
+            footer: new sap.m.Bar({
+                contentMiddle: [
                     oLabel2,
-                    oMenuButton2
+                    oMenuButton2,
+                    new sap.m.MenuButton({
+                        text: "Test"
+                    })
                 ]
             })
         });
