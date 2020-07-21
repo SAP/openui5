@@ -650,17 +650,24 @@ sap.ui.define([
 				iconDensityAware: true,
 				showIcon: true,
 				senderActive: false
-			}).placeAt("qunit-fixture");
+			});
+			this.oFeedListItem.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
-			this.oFeedListItem.destroy();
+			//this.oFeedListItem.destroy();
 		}
 	});
 
 	QUnit.test("'sender' is set to null and 'senderActive' is set to false", function (assert) {
 		this.oFeedListItem.$().trigger("tap");
 		assert.ok(this.oFeedListItem, "FeedListItem is clickable");
+	});
+
+	QUnit.test("Only single Press event is added.", function (assert) {
+		assert.equal(Object.keys(this.oFeedListItem._oImageControl.mEventRegistry).length, 1,  "Only single press event is added to the ImageControl");
+		this.oFeedListItem.rerender();
+		assert.equal(Object.keys(this.oFeedListItem._oImageControl.mEventRegistry).length, 1,  "Only single press event is added to the ImageControl");
 	});
 
 	QUnit.module("HTML Text inside", {
