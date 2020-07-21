@@ -33,7 +33,7 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype.init = function() {
 		FilterBarBase.prototype.init.apply(this,arguments);
-		this.bPersistValues = true;
+		this._bPersistValues = true;
 	};
 
 	AdaptationFilterBar.prototype.setLiveMode = function(bLive, bSuppressInvalidate) {
