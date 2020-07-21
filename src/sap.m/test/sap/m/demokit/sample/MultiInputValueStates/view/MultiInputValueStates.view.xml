@@ -1,0 +1,19 @@
+<mvc:View
+	height="100%"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<Label text="MultiInput with value state 'Warning'" labelFor="multiInput"/>
+		<MultiInput id="multiInput" valueState="Warning" showValueHelp="false" width="70%"/>
+		<Label text="MultiInput with value state 'Error'" labelFor="multiInput1"/>
+		<MultiInput id="multiInput1" valueState="Error" showValueHelp="false" width="70%"/>
+		<Label text="MultiInput with value state 'Success'" labelFor="multiInput2"/>
+		<MultiInput id="multiInput2" valueState="Success" showValueHelp="false" width="70%"/>
+		<Label text="MultiInput with value state 'Information'" labelFor="multiInput3"/>
+		<MultiInput id="multiInput3" valueState="Information" showValueHelp="false" width="70%"/>
+	</l:VerticalLayout>
+</mvc:View>
