@@ -180,6 +180,9 @@ sap.ui.define([
 	};
 
 	ActionToolbar.prototype._onContentPropertyChangedOverflowToolbar = function(oEvent) {
+		if (this._bIsBeingDestroyed) {
+			return;
+		}
 		OverflowToolbar.prototype._onContentPropertyChangedOverflowToolbar.apply(this, arguments);
 		if (oEvent.getParameter("name") === "visible" || oEvent.getParameter("name") === "width" && oEvent.getSource() != this._oTitleSeparator) {
 			this._updateSeparator();
