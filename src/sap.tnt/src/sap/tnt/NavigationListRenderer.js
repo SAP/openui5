@@ -59,7 +59,7 @@ sap.ui.define([],
 			}
 
 			// ARIA
-			role = !expanded || control.hasStyleClass("sapTntNavLIPopup") ? 'menubar' : 'tree';
+			role = !expanded && !control.hasStyleClass("sapTntNavLIPopup") ? 'menubar' : 'tree';
 
 			rm.attr("role", role);
 
