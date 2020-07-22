@@ -5,9 +5,11 @@
  * @experimental
  */
 sap.ui.define([
-	"sap/ui/integration/designtime/cardEditor/config/generateActionConfig"
+	"sap/ui/integration/designtime/cardEditor/config/generateActionConfig",
+	"sap/ui/integration/designtime/cardEditor/util/CommonPatterns"
 ], function (
-	generateActionConfig
+	generateActionConfig,
+	CommonPatterns
 ) {
 	"use strict";
 
@@ -50,7 +52,18 @@ sap.ui.define([
 							"tags": ["content", "objectGroupItem"],
 							"label": "{i18n>CARD_EDITOR.OBJECT.GROUP.ITEM.VALUE}",
 							"type": "string",
-							"path": "value"
+							"path": "value",
+							"validators": {
+								"emailPattern": {
+									"type": "pattern",
+									"config": {
+										"pattern": CommonPatterns.email,
+										"modifiers": "i"
+									},
+									"errorMessage": "CARD_EDITOR.VALIDATOR.INVALID_EMAIL",
+									"isEnabled": "{= ${type} === 'email'}"
+								}
+							}
 						},
 						"type": {
 							"tags": ["content", "objectGroupItem"],

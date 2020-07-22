@@ -74,7 +74,15 @@ sap.ui.define(function () {
 			"tags": ["app"],
 			"label": "{i18n>CARD_EDITOR.APP.TAGS.TECHNICALATTRIBUTES}",
 			"type": "list",
-			"path": "/sap.app/tags/technicalAttributes"
+			"path": "/sap.app/tags/technicalAttributes",
+			"validators": {
+				"technicalAttributesPattern": {
+					"type": "patternList",
+					"config": {
+						"pattern": "^[A-Z0-9_\\-\\/]+$"
+					}
+				}
+			}
 		},
 		"appDataSources": {
 			"label": "{i18n>CARD_EDITOR.APP.DATASOURCES}",
@@ -86,7 +94,15 @@ sap.ui.define(function () {
 				"key": {
 					"label": "{i18n>CARD_EDITOR.APP.DATASOURCES.KEY}",
 					"type": "string",
-					"path": "key"
+					"path": "key",
+					"validators": {
+						"keyPattern": {
+							"type": "pattern",
+							"config": {
+								"pattern": "^[a-zA-Z0-9_\\.\\-]*$"
+							}
+						}
+					}
 				},
 				"uri": {
 					"label": "{i18n>CARD_EDITOR.APP.DATASOURCES.URI}",

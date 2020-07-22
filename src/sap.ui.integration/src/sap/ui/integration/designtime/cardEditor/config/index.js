@@ -165,6 +165,10 @@ sap.ui.define([
 			"date": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateEditor/DateEditor",
 			"destinations": "sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor"
 		},
+		"validators": {
+			"pattern": "sap/ui/integration/designtime/cardEditor/validator/IsPatternMatch",
+			"patternList": "sap/ui/integration/designtime/cardEditor/validator/IsPatternMatchList"
+		},
 		"i18n" : "sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"
 	};
 });
