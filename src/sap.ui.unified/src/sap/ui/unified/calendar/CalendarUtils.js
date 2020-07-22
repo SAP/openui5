@@ -361,11 +361,7 @@ sap.ui.define([
 		CalendarUtils._checkJSDateObject = function(oDate) {
 			// Cross frame check for a date should be performed here otherwise setDateValue would fail in OPA tests
 			// because Date object in the test is different than the Date object in the application (due to the iframe).
-			// We can use jQuery.type or this method:
-			// function isValidDate (date) {
-			//	return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
-			//}
-			if (jQuery.type(oDate) !== "date") {
+			if (!oDate || Object.prototype.toString.call(oDate) !== "[object Date]" || isNaN(oDate)) {
 				throw new Error("Date must be a JavaScript date object.");
 			}
 		};

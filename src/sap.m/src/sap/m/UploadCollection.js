@@ -2948,7 +2948,7 @@ sap.ui.define([
 	 */
 	UploadCollection.prototype._getIconFromFilename = function(sFilename) {
 		var sFileExtension = UploadCollection._splitFilename(sFilename).extension;
-		if (jQuery.type(sFileExtension) === "string") {
+		if (typeof sFileExtension === "string") {
 			sFileExtension = sFileExtension.toLowerCase();
 		}
 

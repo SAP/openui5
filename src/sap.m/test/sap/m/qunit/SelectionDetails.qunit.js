@@ -1120,11 +1120,26 @@ sap.ui.define([
 	});
 
 	QUnit.test("A call with wrong parameter does not have any effect", function(assert) {
-		//Act
 		var oResult = this.oSelectionDetails.attachSelectionHandler({}, "");
-
-		//Assert
 		assert.equal(oResult, this.oSelectionDetails, "Function returns SelectionDetails.");
+
+		var oResult2 = this.oSelectionDetails.attachSelectionHandler(23);
+		assert.equal(oResult2, this.oSelectionDetails, "Function returns SelectionDetails (called with invalid eventID).");
+
+		var oResult3 = this.oSelectionDetails.attachSelectionHandler("someEvent", null);
+		assert.equal(oResult3, this.oSelectionDetails, "Function returns SelectionDetails (called with invalid listener: null).");
+
+		var oResult4 = this.oSelectionDetails.attachSelectionHandler("someEvent", undefined);
+		assert.equal(oResult4, this.oSelectionDetails, "Function returns SelectionDetails (called with invalid listener: undefined).");
+
+		var oResult5 = this.oSelectionDetails.attachSelectionHandler("someEvent", "wrong");
+		assert.equal(oResult5, this.oSelectionDetails, "Function returns SelectionDetails (called with invalid listener: string).");
+
+		var oResult6 = this.oSelectionDetails.attachSelectionHandler("someEvent", {});
+		assert.equal(oResult6, this.oSelectionDetails, "Function returns SelectionDetails (called with invalid listener: object without attachEvent function).");
+
+		var oResult7 = this.oSelectionDetails.attachSelectionHandler("someEvent", {attachEvent: "wrong"});
+		assert.equal(oResult7, this.oSelectionDetails, "Function returns SelectionDetails (called with invalid listener: object with invalid attachEvent property).");
 	});
 
 	QUnit.test("Attaching selectionChange handler a second time does not have any effect", function(assert) {

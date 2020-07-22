@@ -599,7 +599,7 @@ sap.ui.define([
 
 	DatePicker.prototype.setMinDate = function(oDate) {
 
-		if (this._isValidDate(oDate)) {
+		if (!this._isValidDate(oDate)) {
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
@@ -639,7 +639,7 @@ sap.ui.define([
 
 	DatePicker.prototype.setMaxDate = function(oDate) {
 
-		if (this._isValidDate(oDate)) {
+		if (!this._isValidDate(oDate)) {
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 

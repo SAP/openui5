@@ -332,7 +332,7 @@ sap.ui.define([
 	 */
 	jQuery.sap.delayedCall = function delayedCall(iDelay, oObject, method, aParameters) {
 		return setTimeout(function(){
-			if (jQuery.type(method) == "string") {
+			if (typeof method === "string") {
 				method = oObject[method];
 			}
 			method.apply(oObject, aParameters || []);
@@ -366,7 +366,7 @@ sap.ui.define([
 	 */
 	jQuery.sap.intervalCall = function intervalCall(iInterval, oObject, method, aParameters) {
 		return setInterval(function(){
-			if (jQuery.type(method) == "string") {
+			if (typeof method === "string") {
 				method = oObject[method];
 			}
 			method.apply(oObject, aParameters || []);

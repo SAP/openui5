@@ -906,7 +906,7 @@ function(
 	 */
 	SelectionDetails.prototype._handleSelectionChange = function(oEvent) {
 		var oEventParams = oEvent.getParameter("data");
-		if (jQuery.type(oEventParams) === "array") {
+		if (Array.isArray(oEventParams)) {
 			this._oSelectionData = oEventParams;
 			this._updateButton();
 			this.getAggregation("_button").rerender();
@@ -950,15 +950,15 @@ function(
 	 * @returns {sap.m.SelectionDetails} this to allow method chaining
 	 */
 	SelectionDetails.prototype.attachSelectionHandler = function(eventId, listener) {
-		if (this._oChangeHandler || jQuery.type(eventId) !== "String" && (jQuery.type(listener) !== "object" || jQuery.type(listener.attachEvent) !== "function")) {
-			return this;
-		} else {
+		// only create change handler once + check for argument validity
+		if (!this._oChangeHandler && typeof eventId === "string" && listener && typeof listener.attachEvent === "function") {
 			this._oChangeHandler = {
 				eventId: eventId,
 				listener: listener
 			};
 			listener.attachEvent(eventId, this._handleSelectionChange, this);
 		}
+
 		return this;
 	};
 
