@@ -369,7 +369,7 @@ sap.ui.define([
 				aCallbacks = [];
 				oHandler.mCallbacks.set(vSuspended, aCallbacks);
 			}
-			if (!aCallbacks.includes(fnCallback)) {
+			if (aCallbacks.indexOf(fnCallback) === -1) {
 				aCallbacks.push(fnCallback);
 			}
 		}
