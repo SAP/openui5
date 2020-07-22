@@ -3,12 +3,7 @@
  */
 
 // Provides the Design Time Metadata for the sap.ui.table.Table control
-sap.ui.define([
-	'sap/ui/table/utils/TableUtils'
-],
-	function(
-		TableUtils
-	) {
+sap.ui.define(function() {
 	"use strict";
 
 	return {
@@ -24,10 +19,7 @@ sap.ui.define([
 				domRef : ".sapUiTableCHA"
 			},
 			rows : {
-				ignore : function(oTable){
-					//it is ugly to show overlays on the rows if no data is visible
-					return TableUtils.isNoDataVisible(oTable);
-				}
+				ignore : true
 			},
 			// fake aggregations with a dom ref pointing to scrollbars
 			// since scrollbars aren't part of columns aggregation dom ref, this is needed to allow overlay scrolling
@@ -37,21 +29,16 @@ sap.ui.define([
 					return oTable.$("hsb").get(0);
 				}
 			},
-			vScroll : {
-				ignore: false,
-				domRef : function(oTable) {
-					return oTable.$("vsb").get(0);
+			// vertical scroll is not possible because it is not a common scorll of controls. The controls keeps the same on scrolling, just the data is changing
+			scrollContainers: [
+				{
+					domRef: function(oTable) {
+						return oTable.$("sapUiTableCnt").get(0);
+					},
+					aggregations: ["rows"]
 				}
-			}
-		},
-		scrollContainers: [
-			{
-				domRef: function(oTable) {
-					return oTable.$("sapUiTableCnt").get(0);
-				},
-				aggregations: ["rows"]
-			}
-		]
+			]
+		}
 	};
 
 });
