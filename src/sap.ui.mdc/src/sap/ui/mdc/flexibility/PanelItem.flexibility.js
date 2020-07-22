@@ -2,7 +2,10 @@
  * ! ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/ui/fl/changeHandler/HideControl",
+	"sap/ui/fl/changeHandler/UnhideControl"
+], function(HideControl, UnhideControl) {
 	"use strict";
 
 	/**
@@ -13,25 +16,6 @@ sap.ui.define([], function() {
 	 * @since 1.60.0
 	 * @alias sap.ui.mdc.flexibility.PanelItem
 	 */
-
-	var fnApplyChange = function(bVisible, oChange, oPanelItem, mPropertyBag) {
-		// // TODO: workaround due to disabled 'Reset' button in SelectionDialog
-		// if (!mPropertyBag.modifier.getProperty(oPanelItem, "visibleChangedChangeHandler")) {
-		// 	mPropertyBag.modifier.setProperty(oPanelItem, "visibleInitial", oPanelItem.getVisible());
-		// }
-		// // TODO: end of workaround
-
-		// mPropertyBag.modifier.setProperty(oPanelItem, "visibleChangedByUser", oChange.getLayer() === "USER");
-
-		// First store the old value for revert
-		oChange.setRevertData(mPropertyBag.modifier.getProperty(oPanelItem, "visible"));
-		// Then set the new value
-		mPropertyBag.modifier.setProperty(oPanelItem, "visible", bVisible);
-	};
-	var fnRevertChange = function(bVisible, oChange, oPanelItem, mPropertyBag) {
-		mPropertyBag.modifier.setProperty(oPanelItem, "visible", oChange.getRevertData());
-		oChange.resetRevertData();
-	};
 	return {
 		createChanges: function(aDeltaMItems) {
 			return aDeltaMItems.map(function(oDeltaMItem) {
@@ -51,31 +35,13 @@ sap.ui.define([], function() {
 			layers: {
 				USER: true
 			},
-			changeHandler: {
-				applyChange: function(oChange, oPanelItem, mPropertyBag) {
-					fnApplyChange(true, oChange, oPanelItem, mPropertyBag);
-				},
-				revertChange: function(oChange, oPanelItem, mPropertyBag) {
-					fnRevertChange(true, oChange, oPanelItem, mPropertyBag);
-				},
-				completeChangeContent: function(oChange, mSpecificChangeInfo) {
-				}
-			}
+			changeHandler: UnhideControl
 		},
 		hideItem: {
 			layers: {
 				USER: true
 			},
-			changeHandler: {
-				applyChange: function(oChange, oPanelItem, mPropertyBag) {
-					fnApplyChange(false, oChange, oPanelItem, mPropertyBag);
-				},
-				revertChange: function(oChange, oPanelItem, mPropertyBag) {
-					fnRevertChange(false, oChange, oPanelItem, mPropertyBag);
-				},
-				completeChangeContent: function(oChange, mSpecificChangeInfo) {
-				}
-			}
+			changeHandler: HideControl
 		}
 	};
 }, /* bExport= */true);
