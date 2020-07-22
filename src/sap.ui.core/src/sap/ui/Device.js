@@ -690,7 +690,7 @@ if (typeof window.sap.ui !== "object") {
 			var ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/;
 			var rmsie = /(msie) ([\w.]+)/;
 			var rmsie11 = /(trident)\/[\w.]+;.*rv:([\w.]+)/;
-			var redge = /(edge)[ \/]([\w.]+)/;
+			var redge = /(edg)[ \/]([\w.]+)/;
 			var rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/;
 
 			// WinPhone IE11 and MS Edge userAgents contain "WebKit" and "Mozilla" and therefore must be checked first
