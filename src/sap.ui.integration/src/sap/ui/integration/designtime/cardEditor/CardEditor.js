@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
+	"sap/base/util/restricted/_CancelablePromise",
+	"sap/base/util/restricted/_toArray",
 	"./config/index"
 ], function (
 	deepEqual,
@@ -14,6 +16,8 @@ sap.ui.define([
 	merge,
 	ObjectPath,
 	BaseEditor,
+	CancelablePromise,
+	_toArray,
 	oDefaultCardConfig
 ) {
 	"use strict";
@@ -34,7 +38,9 @@ sap.ui.define([
 		},
 		constructor: function() {
 			BaseEditor.prototype.constructor.apply(this, arguments);
-			this.addConfig(oDefaultCardConfig);
+			if (!this.getConfig()) {
+				this.addConfig(oDefaultCardConfig);
+			}
 		},
 		renderer: BaseEditor.getMetadata().getRenderer()
 	});
@@ -89,6 +95,66 @@ sap.ui.define([
 		}, this);
 
 	};
+
+	CardEditor.prototype.setJson = function (oJson) {
+		var sCardId = ObjectPath.get(["sap.app", "id"], oJson);
+
+		if (this._bDesigntimeInit && this._bCardId !== sCardId) {
+			this._oDesigntimePromise.cancel();
+			delete this._bCardId;
+			delete this._bDesigntimeInit;
+		}
+
+		if (!this._bDesigntimeInit) {
+			this._bDesigntimeInit = true;
+			this._bCardId = sCardId;
+			var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
+			var sBaseUrl = sanitizePath(ObjectPath.get(["baseURL"], oJson) || "");
+
+			if (sBaseUrl && sDesigntimePath) {
+				var mPaths = {};
+				mPaths[sCardId] = sanitizePath(sBaseUrl);
+				sap.ui.loader.config({
+					paths: mPaths
+				});
+				var sDesigntimePrefix = sCardId + "/" + trimCurrentFolderPrefix(sDesigntimePath);
+				var sEditorConfigPath = sDesigntimePrefix + "/editor.config";
+
+				this._oDesigntimePromise = new CancelablePromise(function (fnResolve) {
+					sap.ui.require(
+						[sEditorConfigPath],
+						fnResolve,
+						function () {
+							return {}; // if editor.config.js doesn't exist
+						}
+					);
+				});
+
+				this._oDesigntimePromise.then(function (oBundleConfig) {
+					var oConfig = merge({}, oBundleConfig);
+					oConfig.i18n = _toArray(oConfig.i18n);
+					oConfig.i18n.push(sDesigntimePrefix + "/i18n.properties");
+					this._applyBundleConfig(merge({}, oConfig));
+				}.bind(this));
+			}
+		}
+
+		BaseEditor.prototype.setJson.apply(this, arguments);
+	};
+
+	CardEditor.prototype._applyBundleConfig = function (oBundleConfig) {
+		var oCurrentConfig = this.getConfig();
+		this.setConfig(oBundleConfig);
+		this.addConfig(oCurrentConfig);
+	};
+
+	function sanitizePath(sPath) {
+		return sPath.trim().replace(/\/*$/, "");
+	}
+
+	function trimCurrentFolderPrefix(sPath) {
+		return sPath.replace(/^\.\//, "");
+	}
 
 	/**
 	 *
