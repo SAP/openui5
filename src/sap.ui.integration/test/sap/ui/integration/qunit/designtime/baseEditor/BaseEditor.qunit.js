@@ -167,6 +167,36 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("When property editor changes value and other properties have default values", function (assert) {
+			var done = assert.async();
+			this.oBaseEditor.setConfig({
+				context: "context",
+				properties: {
+					"prop1": {
+						path: "undefinedPath",
+						type: "string",
+						defaultValue: "Test"
+					},
+					"prop2": {
+						path: "prop2",
+						type: "string"
+					}
+				},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+			this.oBaseEditor.getPropertyEditorsByName("prop2").then(function (aPropertyEditor) {
+				var oProp2Editor = aPropertyEditor[0];
+				this.oBaseEditor.attachJsonChange(function(oEvent) {
+					assert.strictEqual(oEvent.getParameter("json").context.prop2, "New Value", "Then the value is updated in JSON");
+					done();
+				});
+
+				oProp2Editor.setValue("New Value");
+			}.bind(this));
+		});
+
 		QUnit.test("When config contains properties with tags", function (assert) {
 			var done = assert.async();
 
