@@ -475,7 +475,8 @@ sap.ui.define([
 					icon: oItem.getIcon(),
 					iconTooltip: oItem.getIconTooltip(),
 					modified: oItem.getModified(),
-					tooltip: oItem.getTooltip()
+					tooltip: oItem.getTooltip(),
+					customData: oItem.getCustomData()
 				})
 			);
 
@@ -512,7 +513,8 @@ sap.ui.define([
 					icon: oItem.getIcon(),
 					iconTooltip: oItem.getIconTooltip(),
 					modified: oItem.getModified(),
-					tooltip: oItem.getTooltip()
+					tooltip: oItem.getTooltip(),
+					customData: oItem.getCustomData()
 				}),
 				iIndex
 			);

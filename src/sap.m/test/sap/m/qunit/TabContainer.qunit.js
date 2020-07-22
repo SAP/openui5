@@ -478,13 +478,23 @@ sap.ui.define([
 			name: "Apple",
 			additionalText: "test",
 			icon: "sap-icon://syringe",
-			tooltip: "added item"
+			tooltip: "added item",
+			customData: new sap.ui.core.CustomData({
+				key:"customData",
+				value:"customValue",
+				writeToDom:true
+			})
 		});
 		oTabContainerInsertedItem = new TabContainerItem({
 			name: "Apple",
 			additionalText: "test",
 			icon: "sap-icon://syringe",
-			tooltip: "inserted item"
+			tooltip: "inserted item",
+			customData: new sap.ui.core.CustomData({
+				key:"customData",
+				value:"customValue",
+				writeToDom:true
+			})
 		});
 		this.oTabContainer.addItem(oTabContainerAddedItem);
 		this.oTabContainer.insertItem(oTabContainerInsertedItem, 0);
@@ -507,6 +517,7 @@ sap.ui.define([
 		assert.equal(this.oTabStrip.getItems()[1].getIcon(), oTabContainerAddedItem.getIcon(), "Added TabContainerItem.icon should be propagated to TabStripItem.icon");
 		assert.equal(this.oTabStrip.getItems()[1].getModified(), oTabContainerAddedItem.getModified(), "Added TabContainerItem.modified should be propagated to TabStripItem.modified");
 		assert.equal(this.oTabStrip.getItems()[1].getTooltip(), oTabContainerAddedItem.getTooltip(), "Added TabContainerItem.tooltip should be propagated to TabStripItem.tooltip");
+		assert.equal(this.oTabStrip.getItems()[1].getCustomData()[0].getValue(), "customValue", "Added TabContainerItem.customData should be propagated to TabStripItem.customData");
 
 		assert.equal(this.oTabStrip.getItems()[0].getKey(), oTabContainerInsertedItem.getId(), "Inserted TabContainerItem.id should be propagated to TabStripItem.key");
 		assert.equal(this.oTabStrip.getItems()[0].getText(), oTabContainerInsertedItem.getName(), "Inserted TabContainerItem.name should be propagated to TabStripItem.text");
@@ -514,6 +525,7 @@ sap.ui.define([
 		assert.equal(this.oTabStrip.getItems()[0].getIcon(), oTabContainerInsertedItem.getIcon(), "Inserted TabContainerItem.icon should be propagated to TabStripItem.icon");
 		assert.equal(this.oTabStrip.getItems()[0].getModified(), oTabContainerInsertedItem.getModified(), "Inserted TabContainerItem.modified should be propagated to TabStripItem.modified");
 		assert.equal(this.oTabStrip.getItems()[0].getTooltip(), oTabContainerInsertedItem.getTooltip(), "Inserted TabContainerItem.tooltip should be propagated to TabStripItem.tooltip");
+		assert.equal(this.oTabStrip.getItems()[0].getCustomData()[0].getValue(), "customValue", "Inserted TabContainerItem.customData should be propagated to TabStripItem.customData");
 	});
 
 	QUnit.module("Constructing with array of items", {
