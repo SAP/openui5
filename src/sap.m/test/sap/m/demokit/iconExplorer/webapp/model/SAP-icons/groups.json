@@ -378,7 +378,8 @@
 				{ "name" : "fx" },
 				{ "name" : "text-color" },
 				{ "name" : "strikethrough" },
-				{ "name" : "text" }
+				{ "name" : "text" },
+				{ "name" : "translate" }
 			]
 		},
 		{
@@ -1177,7 +1178,8 @@
 				{ "name" : "table-row" },
 				{ "name" : "table-column" },
 				{ "name" : "keyboard-and-mouse" },
-				{ "name" : "touch" }
+				{ "name" : "touch" },
+				{ "name" : "S/4HANA" }
 			]
 		},
 		{
