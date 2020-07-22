@@ -2146,7 +2146,8 @@ sap.ui.define([
 	 *   The corresponding metadata path within the OData metadata model, for example
 	 *    "/EMPLOYEES/ENTRYDATE"
 	 *
-	 * @private
+	 * @public
+	 * @since 1.81.0
 	 */
 	ODataMetaModel.prototype.getMetaPath = function (sPath) {
 		return _Helper.getMetaPath(sPath);
