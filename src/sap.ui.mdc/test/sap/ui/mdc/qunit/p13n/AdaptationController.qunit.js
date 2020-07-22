@@ -583,6 +583,26 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("AdaptationController should not crash for non present properties", function(assert){
+		var done = assert.async();
+
+		//use AdaptationController with a non existing property
+		var mConditions = {
+			someNonexistingProperty: [{operator: "EQ", values:["Test"]}]
+		};
+
+		this.oAdaptationController.createConditionChanges(mConditions).then(function(){
+			assert.ok(true, "Callback triggered");
+		});
+
+		//--> _hasProperty inbetween should always return something, but no changes should be created for "wrong" properties
+		this.oAdaptationController.setProperty("afterChangesCreated", function(oAC, aChanges){
+			assert.ok(aChanges, "changes created");
+			assert.equal(aChanges.length, 0, "no change created as the property is not defined in the PropertyInfo");
+			done();
+		});
+	});
+
 	QUnit.test("create condition changes via 'createConditionChanges' with initial filterConditions", function(assert){
 		var done = assert.async();
 
