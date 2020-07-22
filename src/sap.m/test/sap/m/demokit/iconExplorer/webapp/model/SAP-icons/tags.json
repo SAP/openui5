@@ -6443,5 +6443,27 @@
 			"filled",
 			"notification"
 		]
+	},
+	"S/4HANA": {
+		"tags": [
+			"S/4HANA",
+			"HANA",
+			"hana",
+			"s4",
+			"S/4",
+			"product switch",
+			"product",
+			"switch"
+		]
+	},
+	"translate": {
+		"tags": [
+			"translate",
+			"text",
+			"letters",
+			"translation",
+			"A",
+			"arrows"
+		]
 	}
 }
