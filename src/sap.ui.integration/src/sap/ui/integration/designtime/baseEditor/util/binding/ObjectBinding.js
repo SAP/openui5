@@ -7,14 +7,16 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
 	"sap/ui/base/BindingParser",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/base/util/deepEqual"
 ], function (
 	ManagedObject,
 	deepClone,
 	ObjectPath,
 	isPlainObject,
 	BindingParser,
-	includes
+	includes,
+	deepEqual
 ) {
 	"use strict";
 
@@ -207,7 +209,10 @@ sap.ui.define([
 			var oValue = deepClone(this.getProperty("_value"));
 			this.unbindProperty("_value");
 
-			if (oValue !== oObject[sKey]) {
+			if (
+				oValue !== oObject[sKey]
+				&& (sKey !== "value" || !(oObject.value === undefined && deepEqual(oValue, oObject.defaultValue)))
+			) {
 				oObject[sKey] = oValue;
 				aChanges.push({
 					path: oUpdate.path,
