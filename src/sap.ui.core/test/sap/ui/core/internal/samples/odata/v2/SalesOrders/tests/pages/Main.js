@@ -14,6 +14,7 @@ sap.ui.define([
 			info : "Info: My info message",
 			infoNoPrefix : "My info message",
 			none : "No message",
+			order : "Order at least 2 EA of product 'HT-1000'",
 			success : "Success: My success message",
 			successNoPrefix : "My success message",
 			warning : "Warning: My warning message",
@@ -44,6 +45,22 @@ sap.ui.define([
 							return oTable.getRows()[iRow].getCells()[7];
 						},
 						actions : new EnterText({text : mMessageShort2Message[sNewNote]}),
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Changes the quantity of an item to the given value.
+				 *
+				 * @param {number} iRow The items position in the table
+				 * @param {number} iNewQuantity The new quantity for the item
+				 */
+				changeItemQuantity : function (iRow, iNewQuantity) {
+					return this.waitFor({
+						actions : new EnterText({text : iNewQuantity}),
+						id : "ToLineItems",
+						matchers : function (oTable) {
+							return oTable.getRows()[iRow].getCells()[3];
+						},
 						viewName : sViewName
 					});
 				},
@@ -192,6 +209,26 @@ sap.ui.define([
 							Opa5.assert.ok(true, "The message popover has opened");
 						},
 						viewName : sViewName
+					});
+				},
+				/*
+				 * Checks if the message strip is shown and if it shows the correct color.
+				 *
+				 * @param {string} sExpectedMessageType
+				 *   The expected severity shown by the message strip
+				 */
+				checkMessageStrip : function (sExpectedMessageType) {
+					return this.waitFor({
+						controlType : "sap.m.plugins.DataStateIndicator",
+						success : function (aMatchedControls) {
+							var oMessageStrip = aMatchedControls[0]._oMessageStrip,
+								sMessageType = oMessageStrip.mProperties.type;
+
+							Opa5.assert.strictEqual(sMessageType, sExpectedMessageType,
+								"Message strip shows correct Message");
+						},
+						viewName : sViewName,
+						visible : false
 					});
 				},
 				/*
