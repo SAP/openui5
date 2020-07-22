@@ -199,7 +199,7 @@ sap.ui.define([
 			appointmentsVisualization: { type: "sap.ui.unified.CalendarAppointmentVisualization", group: "Appearance", defaultValue: CalendarAppointmentVisualization.Standard },
 
 			/**
-			 * Defines the size of the <code>CalendarAppoinment<code>
+			 * Defines the height of the <code>CalendarAppoinment<code>
 			 * @since 1.81.0
 			 */
 			appointmentHeight: { type: "sap.ui.unified.CalendarAppointmentHeight", group: "Appearance", defaultValue: CalendarAppointmentHeight.Regular}
