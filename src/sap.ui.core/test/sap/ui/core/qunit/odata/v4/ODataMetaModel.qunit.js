@@ -1198,6 +1198,32 @@ sap.ui.define([
 			this.oMetaModel.validate("n/a", mScope); // fill mSchema2MetadataUrl!
 			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(mScope));
+		},
+
+		/**
+		 * Expectations suitable for #fetchUI5Type.
+		 *
+		 * @param {string} sPath - An absolute path to an OData property within the OData data model
+		 * @param {object} oProperty - Simulated result of #fetchObject
+		 * @param {object} [oConstraints={}] - Simulated result of #getConstraints
+		 */
+		expects4FetchUI5Type : function (sPath, oProperty, oConstraints) {
+			var oMetaContext = {
+					getPath : function () {}
+				},
+				sMetaPath = "/some/meta/path";
+
+			this.oMetaModelMock.expects("getMetaContext").withExactArgs(sPath)
+				.returns(oMetaContext);
+			this.oMetaModelMock.expects("fetchObject")
+				.withExactArgs(undefined, sinon.match.same(oMetaContext))
+				.returns(SyncPromise.resolve(oProperty));
+			// Note: these calls are optional
+			this.mock(oMetaContext).expects("getPath").atLeast(0).withExactArgs()
+				.returns(sMetaPath);
+			this.oMetaModelMock.expects("getConstraints").atLeast(0)
+				.withExactArgs(sinon.match.same(oProperty), sMetaPath)
+				.returns(oConstraints || {});
 		}
 	});
 
@@ -2820,31 +2846,17 @@ sap.ui.define([
 				oConstraints.nullable = false;
 			}
 
-			QUnit.test("fetchUI5Type: " + JSON.stringify(oProperty), function (assert) {
-				// Note: just spy on fetchModule() to make sure that the real types are used
-				// which check correctness of constraints
-				var sMetaPath = "/EMPLOYEES/ENTRYDATE",
-					oMetaContext = {
-						getPath : function () {}
-					},
-					sPath = "/EMPLOYEES/0/ENTRYDATE",
+			QUnit.test("fetchUI5Type: " + JSON.stringify(oProperty0), function (assert) {
+				var sPath = "/EMPLOYEES/0/ENTRYDATE",
 					that = this;
 
-				this.oMetaModelMock.expects("getMetaContext")
-					.withExactArgs(sPath)
-					.returns(oMetaContext);
-				this.oMetaModelMock.expects("fetchObject")
-					.withExactArgs(undefined, sinon.match.same(oMetaContext))
-					.returns(SyncPromise.resolve(oProperty));
-				this.mock(oMetaContext).expects("getPath").withExactArgs().returns(sMetaPath);
-				this.oMetaModelMock.expects("getConstraints")
-					.withExactArgs(sinon.match.same(oProperty), sMetaPath)
-					.returns(oConstraints);
+				this.expects4FetchUI5Type(sPath, oProperty, oConstraints);
 
 				// code under test
 				return this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
 					var sExpectedTypeName = "sap.ui.model.odata.type."
-							+ oProperty.$Type.slice(4)/*cut off "Edm."*/;
+							+ oProperty.$Type.slice(4)/*cut off "Edm."*/,
+						oTypeKeepsEmptyString;
 
 					assert.strictEqual(oType.getName(), sExpectedTypeName);
 					if (oConstraints && oConstraints.scale === "variable") {
@@ -2853,13 +2865,24 @@ sap.ui.define([
 					}
 					assert.deepEqual(oType.oConstraints, oConstraints);
 
-					oMetaContext = {/*new meta context*/};
-					that.oMetaModelMock.expects("getMetaContext")
-						.withExactArgs(sPath)
-						.returns(oMetaContext);
-					that.oMetaModelMock.expects("fetchObject")
-						.withExactArgs(undefined, sinon.match.same(oMetaContext))
-						.returns(SyncPromise.resolve(oProperty));
+					if (oProperty.$Type === "Edm.String") {
+						that.expects4FetchUI5Type(sPath, oProperty, oConstraints);
+
+						// code under test
+						oTypeKeepsEmptyString
+							= that.oMetaModel.getUI5Type(sPath, {parseKeepsEmptyString : true});
+
+						assert.strictEqual(oTypeKeepsEmptyString.parseValue(""),
+							!bNullable && oConstraints && oConstraints.isDigitSequence ? "0" : "");
+
+						that.expects4FetchUI5Type(sPath, oProperty);
+
+						// code under test
+						assert.strictEqual(that.oMetaModel.getUI5Type(sPath, {}), oType,
+							"cached, even w/ empty mFormatOptions");
+					}
+
+					that.expects4FetchUI5Type(sPath, oProperty);
 
 					// code under test
 					assert.strictEqual(that.oMetaModel.getUI5Type(sPath), oType, "cached");
@@ -2868,6 +2891,63 @@ sap.ui.define([
 		});
 	});
 	//TODO later: support for facet DefaultValue?
+
+	//*********************************************************************************************
+[{
+	style : "short"
+}, {
+	parseKeepsEmptyString : true,
+	style : "short"
+}].forEach(function (mFormatOptions) {
+	var sFormatOptions = JSON.stringify(mFormatOptions),
+		sTitle = "fetchUI5Type: ignore only parseKeepsEmptyString w/ " + sFormatOptions;
+
+	QUnit.test(sTitle, function (assert) {
+		var sPath = "/EMPLOYEES('0')/ENTRYDATE";
+
+		this.expects4FetchUI5Type(sPath, {$Type : "Edm.Date"});
+
+		// code under test
+		return this.oMetaModel.fetchUI5Type(sPath, mFormatOptions)
+			.then(function (oType) {
+				assert.strictEqual(JSON.stringify(mFormatOptions), sFormatOptions, "unchanged");
+				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Date");
+				assert.deepEqual(oType.oFormatOptions, {style : "short"});
+				if (!("parseKeepsEmptyString" in mFormatOptions)) {
+					assert.strictEqual(oType.oFormatOptions, mFormatOptions, "no clone");
+				}
+			});
+	});
+});
+
+	//*********************************************************************************************
+[{}, {parseKeepsEmptyString : true}].forEach(function (mFormatOptions) {
+	var sFormatOptions = JSON.stringify(mFormatOptions),
+		sTitle = "fetchUI5Type: caching w/ mFormatOptions = " + sFormatOptions;
+
+	QUnit.test(sTitle, function (assert) {
+		var sPath = "/EMPLOYEES('0')/ENTRYDATE",
+			oProperty = {$Type : "Edm.Date"},
+			that = this;
+
+		this.expects4FetchUI5Type(sPath, oProperty);
+		this.mock(Object).expects("assign").never(); // no clone needed
+
+		// code under test
+		return this.oMetaModel.fetchUI5Type(sPath, mFormatOptions)
+			.then(function (oType) {
+				assert.strictEqual(JSON.stringify(mFormatOptions), sFormatOptions, "unchanged");
+				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Date");
+				assert.strictEqual(oType.oFormatOptions, undefined);
+
+				that.expects4FetchUI5Type(sPath, oProperty);
+
+				assert.strictEqual(
+					that.oMetaModel.getUI5Type(sPath, mFormatOptions), // code under test
+					oType, "cached");
+			});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("fetchUI5Type: fetchObject fails", function (assert) {

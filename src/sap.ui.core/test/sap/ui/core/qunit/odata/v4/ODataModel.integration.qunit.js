@@ -1843,11 +1843,15 @@ sap.ui.define([
 	// for which the data is already available in the cache. Ensure that it does not deliver the
 	// contexts in getContexts for the initial refresh event, but fires an additional change event.
 	// BCP: 1980383883
+	//
+	// Check how ODataMetaModel#fetchUIType works in case of Type="Edm.String" Nullable="false"
+	// BCP: 2080251230
 	QUnit.test("Relative ODLB created on a cache that already has its data", function (assert) {
 		var sView = '\
 <FlexBox id="form"\
 		binding="{path : \'/TEAMS(\\\'1\\\')\', parameters : {$expand : \'TEAM_2_EMPLOYEES\'}}">\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : true}">\
+		<Text id="age" text="{AGE}"/>\
 		<Text id="name" text="{Name}"/>\
 	</Table>\
 </FlexBox>',
@@ -1856,10 +1860,12 @@ sap.ui.define([
 
 		this.expectRequest("TEAMS('1')?$expand=TEAM_2_EMPLOYEES", {
 				TEAM_2_EMPLOYEES : [{
+					AGE : 42,
 					ID : "2",
 					Name : "Frederic Fall"
 				}]
 			})
+			.expectChange("age", ["42"])
 			.expectChange("name", ["Frederic Fall"]);
 
 		return this.createView(assert, sView).then(function () {
@@ -1871,14 +1877,45 @@ sap.ui.define([
 
 			assert.strictEqual(oTable.getItems().length, 0);
 
-			that.expectChange("name", ["Frederic Fall"]);
+			that.expectChange("age", ["42"])
+				.expectChange("name", ["Frederic Fall"]);
 
 			// code under test
 			oTable.bindItems(oBindingInfo);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			var oType = that.oModel.getMetaModel()
+					.getUI5Type("/TEAMS('1')/TEAM_2_EMPLOYEES('2')/Name"),
+				oTypeKeepsEmptyString;
+
 			assert.strictEqual(oTable.getItems().length, 1);
+
+			assert.strictEqual(oType.parseValue(""), null);
+			assert.strictEqual(
+				oTable.getItems()[0].getCells()[1].getBinding("text").getType(), // Name
+				oType,
+				"cached type is used on UI already");
+
+			// code under test
+			oTypeKeepsEmptyString = that.oModel.getMetaModel().getUI5Type(
+				"/TEAMS('1')/TEAM_2_EMPLOYEES('2')/Name", {parseKeepsEmptyString : true});
+
+			assert.strictEqual(oTypeKeepsEmptyString.parseValue(""), "");
+			assert.strictEqual(
+				that.oModel.getMetaModel().getUI5Type("/TEAMS('1')/TEAM_2_EMPLOYEES('2')/Name"),
+				oType,
+				"cached type is unchanged");
+
+			// code under test
+			oTypeKeepsEmptyString = that.oModel.getMetaModel().getUI5Type(
+				"/TEAMS('1')/TEAM_2_EMPLOYEES('2')/AGE", {parseKeepsEmptyString : true});
+
+			assert.strictEqual(oTypeKeepsEmptyString.parseValue(""), null); // Int16
+			assert.strictEqual(
+				oTable.getItems()[0].getCells()[0].getBinding("text").getType(), // AGE
+				oTypeKeepsEmptyString,
+				"parseKeepsEmptyString ignored, type is cached and used on UI already");
 		});
 	});
 
