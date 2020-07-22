@@ -616,7 +616,10 @@ sap.ui.define([
 	};
 
 	AdaptationController.prototype._hasProperty = function(sName) {
-		var oInfo;
+		var oInfo = {
+			valid: false,
+			property: undefined
+		};
 		this.aPropertyInfo.some(function(oProperty){
 			//First check unique name
 			var bValid = oProperty.name === sName || sName == "$search";
@@ -625,10 +628,8 @@ sap.ui.define([
 			bValid = bValid ? bValid : oProperty.path === sName;
 
 			if (bValid){
-				oInfo = {
-					valid: bValid,
-					property: oProperty
-				};
+				oInfo.valid = true;
+				oInfo.property = oProperty;
 			}
 			return bValid;
 		});
