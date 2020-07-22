@@ -15,6 +15,10 @@ sap.ui.require([
 	"use strict";
 
 	Opa5.extendConfig({
+
+		//Increase the timeout due to failures of the initial startup
+		timeout: 45,
+
 		autoWait: true,
 		async: true,
 		appParams: {
