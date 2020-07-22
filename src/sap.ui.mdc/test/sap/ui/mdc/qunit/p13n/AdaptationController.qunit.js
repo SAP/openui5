@@ -403,13 +403,13 @@ sap.ui.define([
 			//mock delegate data
 			this.aPropertyInfo = [
 				{
-					"name": aItems[0].getKey()[0],
+					"name": aItems[0].getKey(),
 					"id": aItems[0].getId(),
-					"label": aItems[0].getLabel()
+					"label": "Item 1"
 				}, {
-					"name": aItems[1].getKey()[0],
+					"name": aItems[1].getKey(),
 					"id": aItems[1].getId(),
-					"label": aItems[1].getLabel()
+					"label": "Item 2"
 				}
 			];
 
@@ -444,6 +444,36 @@ sap.ui.define([
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.ChartItemPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length, "correct amount of items has been set");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("check sorting in Chart", function (assert) {
+		var done = assert.async();
+		var oBtn = new Button();
+		this.oAdaptationController.setLiveMode(true);
+
+		this.oChart.setSortConditions({
+			sorters: [
+				{name: this.aPropertyInfo[0].name, descending: true}
+			]
+		});
+
+		this.oAdaptationController.showP13n(oBtn, "Sort").then(function(oP13nControl){
+
+			//check container
+			assert.ok(oP13nControl, "Container has been created");
+			assert.ok(oP13nControl.isA("sap.m.ResponsivePopover"));
+			assert.equal(oP13nControl.getTitle(), "Sort", "Correct title has been set");
+			assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
+
+			//check inner panel
+			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SortPanel"), "Correct panel created");
+			assert.ok(oInnerTable, "Inner Table has been created");
+			assert.equal(oInnerTable.getItems()[0].getSelected(), true, "Correct sorter in the dialog");
+			assert.equal(oInnerTable.getItems()[1].getSelected(), false, "Correct sorter in the dialog");
+			assert.equal(oInnerTable.getItems()[0].getCells()[1].getSelectedItem().getText(), "Descending", "Correct sorter in the dialog");
 			done();
 		}.bind(this));
 	});
