@@ -47,6 +47,12 @@ sap.ui.define([
 	 * 	<td></td>
 	 * 	<td>Placeholder for the input field</td>
 	 * </tr>
+	 * <tr>
+	 * 	<td><code>maxLength</code></td>
+	 *  <td><code>number</code></td>
+	 * 	<td>0</td>
+	 * 	<td>Maximum number of characters</td>
+	 * </tr>
 	 * </table>
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
@@ -74,6 +80,9 @@ sap.ui.define([
 				},
 				allowBindings: {
 					defaultValue: true
+				},
+				maxLength: {
+					defaultValue: 0
 				}
 			}
 		);
@@ -106,9 +115,7 @@ sap.ui.define([
 
 	StringEditor.prototype._onLiveChange = function () {
 		var oInput = this.getContent();
-		// if (this._validate()) {
 		this.setValue(oInput.getValue());
-		// }
 	};
 
 	return StringEditor;

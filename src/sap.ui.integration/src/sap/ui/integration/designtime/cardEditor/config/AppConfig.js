@@ -12,6 +12,7 @@ sap.ui.define(function () {
 			"tags": ["app"],
 			"label": "{i18n>CARD_EDITOR.APP.ID}",
 			"type": "string",
+			"maxLength": 70,
 			"path": "/sap.app/id"
 		},
 		"appVersion": {
