@@ -780,4 +780,13 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Load library-preload.js instead of Component-preload.js when the Component.js is included in a library preload (embeddedBy check)", function(assert) {
+		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
+		return Component.create({
+			name: "sap.ui.test.embedded"
+		}).then(function(oComponent) {
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/Component-preload\.js$/));
+		});
+	});
+
 });
