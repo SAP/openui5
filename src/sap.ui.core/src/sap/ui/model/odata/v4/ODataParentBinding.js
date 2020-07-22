@@ -1359,8 +1359,6 @@ sap.ui.define([
 	// #doDeregisterChangeListener is still not final, allow for "super" calls
 	asODataParentBinding.prototype.doDeregisterChangeListener
 		= ODataParentBinding.prototype.doDeregisterChangeListener;
-	// #doSetProperty is not final, allow for "super" calls
-	asODataParentBinding.prototype.doSetProperty = ODataParentBinding.prototype.doSetProperty;
 	// #destroy is still not final, allow for "super" calls
 	asODataParentBinding.prototype.destroy = ODataParentBinding.prototype.destroy;
 	// #hasPendingChangesForPath is still not final, allow for "super" calls
