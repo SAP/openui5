@@ -981,8 +981,7 @@
 			"sap.m.sample.PlanningCalendarModifyAppointments",
 			"sap.m.sample.PlanningCalendarWithLegend",
 			"sap.m.sample.PlanningCalendarDnD",
-			"sap.m.sample.PlanningCalendarWithStickyHeader",
-			"sap.m.sample.PlanningCalendarPaging"]
+			"sap.m.sample.PlanningCalendarWithStickyHeader"]
 		},
 		{
 			"id": "sap.m.SinglePlanningCalendar",
@@ -3292,11 +3291,6 @@
 		  "id": "sap.m.sample.PlanningCalendarWithStickyHeader",
 		  "name": "Planning Calendar - with header that remains visible (fixed on top) on scroll",
 		  "description": "PlanningCalendar with header area that remains visible (fixed on top) when the rest of the content is scrolled out of view."
-		},
-		{
-			"id": "sap.m.sample.PlanningCalendarPaging",
-			"name": "Planning Calendar with Paging",
-			"description": "PlanningCalendar with ability to load rows on pages."
 		},
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendar",
