@@ -7,22 +7,22 @@ sap.ui.define([
 	var TableController = Controller.extend("sap.m.sample.TableNavigated.Table", {
 
 		onInit: function () {
-
-			// set explored app's demo model on this sample
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
-			var oGroupingModel = new JSONModel({ hasGrouping: false});
+			var oSettingsModel = new JSONModel({ navigatedItem: ""});
 			this.getView().setModel(oModel);
-			this.getView().setModel(oGroupingModel, 'Grouping');
+			this.getView().setModel(oSettingsModel, 'settings');
 		},
 
 		onPress: function (oEvent) {
 			var oItem = oEvent.getSource();
+			var oBindingContext = oItem.getBindingContext();
+			var oModel = this.getView().getModel();
+			var oSettingsModel = this.getView().getModel('settings');
+			oSettingsModel.setProperty("/navigatedItem", oModel.getProperty("ProductId", oBindingContext));
+		},
 
-			if (oItem.getNavigated()) {
-				oItem.setNavigated(false);
-			} else {
-				oItem.setNavigated(true);
-			}
+		isNavigated: function(sNavigatedItemId, sItemId) {
+			return sNavigatedItemId === sItemId;
 		}
 	});
 
