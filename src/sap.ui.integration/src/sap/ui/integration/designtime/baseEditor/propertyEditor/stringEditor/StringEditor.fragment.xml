@@ -7,6 +7,5 @@
 		enabled="{config/enabled}"
 		placeholder="{config/placeholder}"
 		liveChange="_onLiveChange"
-		maxLength="{config/maxLength}"
 	/>
 </core:FragmentDefinition>

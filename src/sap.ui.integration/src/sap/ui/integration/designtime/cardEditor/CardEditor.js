@@ -111,7 +111,10 @@ sap.ui.define([
 
 	};
 
-	CardEditor.prototype.setJson = function (oJson) {
+	CardEditor.prototype.setJson = function () {
+		BaseEditor.prototype.setJson.apply(this, arguments);
+
+		var oJson = this.getJson();
 		var sCardId = ObjectPath.get(["sap.app", "id"], oJson);
 
 		if (this._bDesigntimeInit && this._bCardId !== sCardId) {
@@ -177,8 +180,6 @@ sap.ui.define([
 				}.bind(this));
 			}
 		}
-
-		BaseEditor.prototype.setJson.apply(this, arguments);
 	};
 
 	CardEditor.prototype.setDesigntimeChanges = function(aDesigntimeChanges) {

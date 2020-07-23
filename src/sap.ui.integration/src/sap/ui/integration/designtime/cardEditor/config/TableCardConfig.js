@@ -50,7 +50,8 @@ sap.ui.define([
 					"tags": ["content", "tableRowColumn"],
 					"label": "{i18n>CARD_EDITOR.ICON}",
 					"type": "icon",
-					"path": "icon/src"
+					"path": "icon",
+					"visible": false
 				},
 				"state": {
 					"tags": ["content", "tableRowColumn"],

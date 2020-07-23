@@ -40,7 +40,7 @@ sap.ui.define([
 							"tags": ["content", "objectGroupItem"],
 							"label": "{i18n>CARD_EDITOR.ICON}",
 							"type": "icon",
-							"path": "icon/src"
+							"path": "icon"
 						},
 						"label": {
 							"tags": ["content", "objectGroupItem"],

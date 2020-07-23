@@ -103,7 +103,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			EditorQunitUtils.setInputValue(this.oIconEditorElement, "sap-icon://complete");
+			EditorQunitUtils.setInputValueAndConfirm(this.oIconEditorElement, "sap-icon://complete");
 		});
 
 		QUnit.test("When a binding path is provided", function (assert) {
@@ -114,12 +114,13 @@ sap.ui.define([
 				fnDone();
 			});
 
-			EditorQunitUtils.setInputValue(this.oIconEditorElement, "{someBindingPath}");
+			EditorQunitUtils.setInputValueAndConfirm(this.oIconEditorElement, "{someBindingPath}");
 		});
 
 		QUnit.test("When an invalid input is provided", function (assert) {
+			var fnDone = assert.async();
 			// Load the i18n model for the value state text on error
-			return ResourceBundle.create({
+			ResourceBundle.create({
 				url: sap.ui.require.toUrl("sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"),
 				async: true
 			}).then(function (oI18nBundle) {
@@ -130,10 +131,14 @@ sap.ui.define([
 				this.oIconEditor.setModel(oI18nModel, "i18n");
 
 				// Test
-				EditorQunitUtils.setInputValue(this.oIconEditorElement, "sap-icon://not-a-valid-icon");
+				EditorQunitUtils.setInputValueAndConfirm(this.oIconEditorElement, "sap-icon://not-a-valid-icon");
 
-				assert.strictEqual(this.oIconEditorElement.getValueState(), "Error", "Then the error is displayed");
-				assert.strictEqual(this.oIconEditor.getValue(), "sap-icon://target-group", "Then the editor value is not updated");
+				// SetTimeout is needed due to async behaviour of blur() call in setInputValue() util.
+				setTimeout(function () {
+					assert.strictEqual(this.oIconEditorElement.getValueState(), "Error", "Then the error is displayed");
+					assert.strictEqual(this.oIconEditor.getValue(), "sap-icon://target-group", "Then the editor value is not updated");
+					fnDone();
+				}.bind(this));
 			}.bind(this));
 		});
 

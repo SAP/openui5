@@ -4,7 +4,7 @@
 >
 	<Input
 		value="{value}"
-		liveChange="_onLiveChange"
+		change="_onChange"
 		suggestionItemSelected="_onSuggestionItemSelected"
 		showSuggestion="true"
 		showValueHelp="true"

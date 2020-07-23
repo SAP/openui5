@@ -75,7 +75,7 @@ sap.ui.define([
 			"tags": ["header", "defaultHeader"],
 			"label": "{i18n>CARD_EDITOR.ICON}",
 			"type": "icon",
-			"path": "header/icon/src",
+			"path": "header/icon",
 			"visible": "{= ${context>header/type} !== 'Numeric' }"
 		},
 
