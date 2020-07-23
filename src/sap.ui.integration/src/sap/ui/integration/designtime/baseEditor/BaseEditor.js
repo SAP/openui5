@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_mergeWith",
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/restricted/_omit",
+	"sap/base/util/restricted/_union",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/Log",
@@ -49,6 +50,7 @@ sap.ui.define([
 	_mergeWith,
 	_merge,
 	_omit,
+	_union,
 	JSONModel,
 	ResourceBundle,
 	Log,
@@ -294,24 +296,26 @@ sap.ui.define([
 		}
 	};
 
-	BaseEditor.prototype.setConfig = function (oDefaultConfig) {
+	BaseEditor.prototype.setConfig = function (oConfig) {
 		SET_CONFIG_PROMISE = SET_CONFIG_PROMISE.then(function() {
 			PropertyEditorFactory.deregisterAllTypes();
-			return PropertyEditorFactory.registerTypes(oDefaultConfig.propertyEditors);
+			return PropertyEditorFactory.registerTypes(oConfig.propertyEditors);
 		}).then(function(mPropertyEditors) {
-			this._initValidators(oDefaultConfig.validators || {});
+			this._initValidators(oConfig.validators || {});
 
 			// Backwards compatibility. If no i18n configuration specified, we use default one.
 			var oTarget = {};
-			if (!oDefaultConfig.i18n) {
+			if (!oConfig.i18n) {
 				oTarget.i18n = this.getMetadata().getProperty("config").getDefaultValue().i18n;
 			}
 
-			this.setProperty(
-				"config",
-				mergeConfig(oTarget, oDefaultConfig, this._oSpecificConfig || {}, mPropertyEditors),
-				false
-			);
+			var oNewConfig = mergeConfig(oTarget, oConfig);
+
+			if (this._oSpecificConfig) {
+				oNewConfig = mergeSpecificConfig(oNewConfig, this._oSpecificConfig, mPropertyEditors);
+			}
+
+			this.setProperty("config", oNewConfig, false);
 			this._initialize();
 		}.bind(this));
 		return SET_CONFIG_PROMISE;
@@ -323,52 +327,74 @@ sap.ui.define([
 		);
 	};
 
+	function mergeConfig(oTarget, oCurrentConfig) {
+		var oResult = _merge({}, oTarget, oCurrentConfig);
+		// concat i18n properties to avoid override
+		oResult.i18n = [].concat(oTarget.i18n || [], oCurrentConfig.i18n || []);
+		return oResult;
+	}
+
 	BaseEditor.prototype._addSpecificConfig = function(oSpecificConfig) {
 		return SET_CONFIG_PROMISE.then(function() {
 			this._oSpecificConfig = oSpecificConfig;
-			this.setConfig(this.getConfig());
+
+			addMissingPropertyEditors(this.getConfig(), oSpecificConfig);
+			return this.setConfig(this.getConfig());
 		}.bind(this));
 	};
 
-	function mergeConfig(oTarget, oDefaultConfig, oSpecificConfig, mPropertyEditors) {
-		var oResult = _merge({}, oTarget, oDefaultConfig);
-		// concat i18n properties to avoid override
-		oResult.i18n = [].concat(oTarget.i18n || [], oDefaultConfig.i18n || []);
+	function addMissingPropertyEditors(oCurrentConfig, oSpecificConfig) {
+		each(oSpecificConfig.propertyEditors, function(sEditorName, sEditorPath) {
+			if (!oCurrentConfig.propertyEditors[sEditorName]) {
+				oCurrentConfig.propertyEditors[sEditorName] = sEditorPath;
+			}
+		});
+	}
 
-		if (oSpecificConfig && mPropertyEditors) {
-			// iterate the specific config and try to merge
-			each(oSpecificConfig.properties, function(sPropertyName, oProperty) {
-				var sEditor = oResult.propertyEditors[oProperty.type] && oResult.propertyEditors[oProperty.type].split("/").join(".");
-				var oConfigMetadata = sEditor && mPropertyEditors[sEditor].configMetadata;
+	function mergeSpecificConfig(oCurrentConfig, oSpecificConfig, mPropertyEditors) {
+		// merge i18n
+		oCurrentConfig.i18n = _union(oCurrentConfig.i18n, oSpecificConfig.i18n);
 
-				if (oConfigMetadata) {
-					if (!oResult.properties[sPropertyName]) {
-						oResult.properties[sPropertyName] = {};
-					}
-					each(oProperty, function(sKey, vTargetValue) {
-						var vNewValue;
-						var sMergeStrategy = oConfigMetadata[sKey] && oConfigMetadata[sKey].mergeStrategy;
-						if (sMergeStrategy) {
-							// only applicable for boolean values
-							if (sMergeStrategy === "mostRestrictiveWins") {
-								var bMostRestrictiveValue = oConfigMetadata[sKey].mostRestrictiveValue || false;
-								if (vTargetValue === bMostRestrictiveValue) {
-									vNewValue = bMostRestrictiveValue;
-								} else {
-									vNewValue = oResult.properties[sPropertyName][sKey];
-								}
-							} else if (sMergeStrategy === "intersection") {
-								vNewValue = _intersection(vTargetValue, oResult.properties[sPropertyName][sKey]);
+		// merge rest
+		var oNewConfig = Object.assign(
+			{},
+			oCurrentConfig,
+			_omit(oSpecificConfig, ["properties", "i18n", "propertyEditors"]),
+			_omit(oCurrentConfig, ["properties", "i18n", "propertyEditors"])
+		);
+
+		// merge properties
+		oNewConfig.properties = {};
+		each(oSpecificConfig.properties, function(sPropertyName, oProperty) {
+			var sEditor = oCurrentConfig.propertyEditors[oProperty.type] && oCurrentConfig.propertyEditors[oProperty.type].split("/").join(".");
+			var oConfigMetadata = sEditor && mPropertyEditors[sEditor].configMetadata;
+
+			if (oConfigMetadata && oCurrentConfig.properties[sPropertyName]) {
+				each(oProperty, function(sKey, vTargetValue) {
+					var vNewValue;
+					var sMergeStrategy = oConfigMetadata[sKey] && oConfigMetadata[sKey].mergeStrategy;
+					if (sMergeStrategy) {
+						// only applicable for boolean values
+						if (sMergeStrategy === "mostRestrictiveWins") {
+							var bMostRestrictiveValue = oConfigMetadata[sKey].mostRestrictiveValue || false;
+							if (vTargetValue === bMostRestrictiveValue) {
+								vNewValue = bMostRestrictiveValue;
+							} else {
+								vNewValue = oCurrentConfig.properties[sPropertyName][sKey];
 							}
-						} else {
-							vNewValue = vTargetValue;
+						} else if (sMergeStrategy === "intersection") {
+							vNewValue = _intersection(vTargetValue, oCurrentConfig.properties[sPropertyName][sKey]);
 						}
-						oResult.properties[sPropertyName][sKey] = vNewValue;
-					});
-				}
-			});
-		}
-		return oResult;
+					} else {
+						vNewValue = vTargetValue;
+					}
+					oNewConfig.properties[sPropertyName] = oNewConfig.properties[sPropertyName] || {};
+					oNewConfig.properties[sPropertyName][sKey] = vNewValue;
+				});
+			}
+		});
+
+		return oNewConfig;
 	}
 
 	BaseEditor.prototype._initValidators = function (mValidatorModules) {
