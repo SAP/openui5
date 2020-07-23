@@ -28,8 +28,10 @@ sap.ui.define([
 	// jQuery Plugin "cursorPos"
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/DateRange",
+	'sap/ui/unified/DateTypeRange',
 	"sap/ui/unified/calendar/CustomMonthPicker",
 	"sap/ui/unified/calendar/CustomYearPicker",
+	"sap/ui/unified/library",
 	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
@@ -51,8 +53,10 @@ sap.ui.define([
 		InstanceManager,
 		Calendar,
 		DateRange,
+		DateTypeRange,
 		CustomMonthPicker,
-		CustomYearPicker
+		CustomYearPicker,
+		unifiedLibrary
 	) {
 	"use strict";
 
@@ -1453,6 +1457,26 @@ sap.ui.define([
 			}
 		}
 
+	};
+
+
+	DatePicker.prototype._getSpecialDates = function() {
+		var specialDates = this.getSpecialDates();
+		for (var i = 0; i < specialDates.length; i++) {
+			var bNeedsSecondTypeAdding = specialDates[i].getSecondaryType() === unifiedLibrary.CalendarDayType.NonWorking
+					&& specialDates[i].getType() !== unifiedLibrary.CalendarDayType.NonWorking;
+			if (bNeedsSecondTypeAdding) {
+				var newSpecialDate = new DateTypeRange();
+				newSpecialDate.setType(specialDates[i].getSecondaryType());
+				newSpecialDate.setStartDate(specialDates[i].getStartDate());
+				if (specialDates[i].getEndDate()) {
+					newSpecialDate.setEndDate(specialDates[i].getEndDate());
+				}
+				specialDates.push(newSpecialDate);
+			}
+		}
+
+		return specialDates;
 	};
 
 	function _handleOpen() {

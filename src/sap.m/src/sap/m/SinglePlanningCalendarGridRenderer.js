@@ -56,7 +56,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				// hackie thing to calculate the container width. When we have more than 1 line of blockers - we must add 3 px in order to render the blockers visually in the container.
 				iContainerHeight = (iMaxLevel + 1) * oControl._getBlockerRowHeight() + 3,
 				oFormat = oControl._getDateFormatter(),
-				aSpecialDates = oControl.getSpecialDates(),
+				aSpecialDates = oControl._getSpecialDates(),
 				oCalendarDate = CalendarDate.fromLocalJSDate(oStartDate),
 				aDayTypes = oControl._getColumnHeaders()._getDateTypes(oCalendarDate),
 				oType,

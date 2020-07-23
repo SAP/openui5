@@ -11,6 +11,8 @@ sap.ui.define([
 	"sap/m/PlanningCalendarLegend",
 	"sap/ui/unified/CalendarAppointment",
 	"sap/ui/unified/CalendarLegendItem",
+	"sap/ui/unified/DateTypeRange",
+	"sap/ui/unified/library",
 	"sap/ui/core/InvisibleText",
 	'sap/ui/events/KeyCodes',
 	"sap/ui/model/json/JSONModel",
@@ -28,6 +30,8 @@ sap.ui.define([
 	PlanningCalendarLegend,
 	CalendarAppointment,
 	CalendarLegendItem,
+	DateTypeRange,
+	unifiedLibrary,
 	InvisibleText,
 	KeyCodes,
 	JSONModel,
@@ -111,22 +115,30 @@ sap.ui.define([
 
 	QUnit.test("special dates aggregation", function (assert) {
 		var oDate = new Date(2018, 11, 24),
-			oSpecialDate = new sap.ui.unified.DateTypeRange({
+			oSpecialDate = new DateTypeRange({
 				startDate: new Date(2018, 6, 8),
 				endDate: new Date(2018, 6, 9),
-				type: sap.ui.unified.CalendarDayType.Type02
+				type: unifiedLibrary.CalendarDayType.Type02
+			}),
+			oSpecialDate2 = new DateTypeRange({
+				startDate: new Date(2018, 6, 18),
+				type: unifiedLibrary.CalendarDayType.Type03,
+				secondaryType: unifiedLibrary.CalendarDayType.NonWorking
 			}),
 			oSPC = new SinglePlanningCalendar({
 				startDate: oDate,
 				specialDates : [
-					oSpecialDate
+					oSpecialDate,
+					oSpecialDate2
 				]
 			});
 
 		//assert
-		assert.strictEqual(oSPC.getSpecialDates().length, 1, "One special date is set");
-		assert.strictEqual(oSPC.getAggregation("_grid").getSpecialDates().length, 1, "One special date is set to the grid");
+		assert.strictEqual(oSPC.getSpecialDates().length, 2, "One special date is set");
+		assert.strictEqual(oSPC.getAggregation("_grid").getSpecialDates().length, 2, "One special date is set to the grid");
 		assert.strictEqual(oSPC.getAggregation("_grid").getSpecialDates()[0], oSpecialDate, "Special date set to the calendar is the same that is set to the grid");
+		assert.strictEqual(oSPC.getAggregation("_grid")._getSpecialDates()[1].getType(), unifiedLibrary.CalendarDayType.Type03, "Special date set to the calendar is the same that is set to the grid");
+		assert.strictEqual(oSPC.getAggregation("_grid")._getSpecialDates()[2].getType(), unifiedLibrary.CalendarDayType.NonWorking, "Special date set to the calendar is the same that is set to the grid");
 
 		//clean up
 		oSPC.destroy();

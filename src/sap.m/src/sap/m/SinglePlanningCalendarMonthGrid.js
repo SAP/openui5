@@ -13,6 +13,8 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/unified/DateTypeRange',
+	'sap/ui/unified/library',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/Locale',
 	'sap/ui/core/delegate/ItemNavigation',
@@ -30,6 +32,8 @@ sap.ui.define([
 		DateFormat,
 		CalendarDate,
 		CalendarUtils,
+		DateTypeRange,
+		unifiedLibrary,
 		LocaleData,
 		Locale,
 		ItemNavigation,
@@ -805,6 +809,24 @@ sap.ui.define([
 			}
 
 			return false;
+		};
+
+		SinglePlanningCalendarMonthGrid.prototype._getSpecialDates = function(){
+			var specialDates = this.getSpecialDates();
+			for (var i = 0; i < specialDates.length; i++) {
+				var bNeedsSecondTypeAdding = specialDates[i].getSecondaryType() === unifiedLibrary.CalendarDayType.NonWorking
+					&& specialDates[i].getType() !== unifiedLibrary.CalendarDayType.NonWorking;
+				if (bNeedsSecondTypeAdding) {
+					var newSpecialDate = new DateTypeRange();
+					newSpecialDate.setType(unifiedLibrary.CalendarDayType.NonWorking);
+					newSpecialDate.setStartDate(specialDates[i].getStartDate());
+					if (specialDates[i].getEndDate()) {
+						newSpecialDate.setEndDate(specialDates[i].getEndDate());
+					}
+					specialDates.push(newSpecialDate);
+				}
+			}
+			return specialDates;
 		};
 
 		return SinglePlanningCalendarMonthGrid;
