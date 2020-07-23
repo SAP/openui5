@@ -91,7 +91,8 @@
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
 							</Select>
-							<Button press="onFixAllQuantities" text="Fix Quantities" />
+							<Button id="fixAllQuantities" press="onFixAllQuantities"
+								text="Fix Quantities" />
 							<ToggleButton press="onTransitionMessagesOnly" pressed="true"
 								text="Transition Messages Only"
 								tooltip="Message handling is done by the parent entity" />
