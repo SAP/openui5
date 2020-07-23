@@ -135,7 +135,7 @@ sap.ui.define([
 
 		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_SHOW_MORE"), 'Show More link is rendered');
 
-		assert.strictEqual($item.find('.sapFAvatar').attr('aria-label'), oResourceBundleM.getText("AVATAR_TOOLTIP"), 'author avatar is rendered');
+		assert.strictEqual($item.find('.sapFAvatar').length > 0, true, 'author avatar is rendered');
 
 		assert.strictEqual($item.find('.sapMNLIDescription').text(), 'Notification List Item Description', 'description is rendered');
 	});
