@@ -29,7 +29,7 @@ sap.ui.define(['sap/ui/core/IconPool'],
 			role: "button",
 			controls: oControl.getParent().sId + "-cont",
 			keyshortcuts: "F5",
-			describedby: oControl._sAriaF5Text
+			describedby: oControl._getAriaDescribedByReferences()
 		};
 
 		oRm.accessibilityState(oControl, oAccAttributes);
