@@ -166,15 +166,15 @@ sap.ui.define([
 				this._setP13nModelData(oP13nData);
 
 				this._retrieveP13nContainer(this.sTitle).then(function(oP13nControl){
-					var oPanel = oP13nControl.getContent()[0];
+					var oAdaptationUI = oP13nControl.getContent()[0];
 					if (this.sP13nType == "Filter") {
-						this._initializeFilterControl().then(function(oFilterControl){
+						oAdaptationUI.createFilterFields(this.oAdaptationModel).then(function(){
 							this.getAdaptationControl().addDependent(oP13nControl);
-							oFilterControl.setLiveMode(this.getLiveMode());
+							oAdaptationUI.setLiveMode(this.getLiveMode());
 							resolve(oP13nControl);
 						}.bind(this));
 					} else {
-						oPanel.setP13nModel(this.oAdaptationModel);
+						oAdaptationUI.setP13nModel(this.oAdaptationModel);
 						this.getAdaptationControl().addDependent(oP13nControl);
 						resolve(oP13nControl);
 					}
@@ -364,7 +364,7 @@ sap.ui.define([
 		var aNewItemsPrepared = merge([], aPreviousItems);
 		var aNewItemState = merge([], aNewItems);
 
-		var mExistingItems = P13nBuilder._arrayToMap(aPreviousItems);
+		var mExistingItems = P13nBuilder.arrayToMap(aPreviousItems);
 
 		aNewItemState.forEach(function (oItem) {
 			var oExistingItem = mExistingItems[oItem.name];
@@ -448,27 +448,6 @@ sap.ui.define([
 				resolve(Class);
 			}, reject);
 		});
-	};
-
-	AdaptationController.prototype._initializeFilterControl = function(){
-
-		var oFilterControl = this.getFilterConfig().filterControl;
-
-		return oFilterControl.setPropertyInfo(this.aPropertyInfo).then(function(){
-			this.oAdaptationModel.getProperty("/items").forEach(function(oItem){
-				var oAdaptationControl = this.getAdaptationControl();
-				var mFilterHandler = this.getAdaptationControl().getControlDelegate().getFilterDelegate();
-				if (oItem.filterable !== false) {
-					var oProperty = this._hasProperty(oItem.name).property;
-					var oFilterFieldPromise = mFilterHandler.addFilterItem(oProperty, oAdaptationControl);
-					oFilterFieldPromise.then(function(oFilterField){
-						oFilterControl.addAggregation("filterItems", oFilterField);
-					});
-				}
-			}, this);
-			return oFilterControl;
-		}.bind(this));
-
 	};
 
 	AdaptationController.prototype._createP13nContainer = function (oPanel, sTitle) {

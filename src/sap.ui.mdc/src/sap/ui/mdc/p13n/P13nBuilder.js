@@ -119,8 +119,8 @@ sap.ui.define([
             var aItemState = oControlState.items || [];
             var aSortState = oControlState.sorters || [];
 
-            var mExistingProperties = this._arrayToMap(aItemState);
-            var mExistingSorters = this._arrayToMap(aSortState);
+            var mExistingProperties = this.arrayToMap(aItemState);
+            var mExistingSorters = this.arrayToMap(aSortState);
             var mExistingFilters = oControlState.filter || {};
 
             aInfoData.forEach(function (oProperty) {
@@ -203,7 +203,7 @@ sap.ui.define([
             }
         },
 
-        _arrayToMap: function(aArray) {
+        arrayToMap: function(aArray) {
             return aArray.reduce(function(mMap, oProp, iIndex){
                 mMap[oProp.name] = oProp;
                 mMap[oProp.name].position = iIndex;
