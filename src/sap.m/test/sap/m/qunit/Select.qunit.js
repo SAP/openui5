@@ -9681,6 +9681,26 @@ sap.ui.define([
 			oIconOnlySelect.destroy();
 		});
 
+		QUnit.test("Visual focus should be set on first item if there is no selectedItem when popover opens", function (assert) {
+			var oItemA = new Item({key: "Item1", text: "Item1"}),
+				oItemB = new Item({key: "Item2", text: "Item2"}),
+				oSelect = new Select({
+					items: [oItemA, oItemB],
+					forceSelection: false
+				});
+
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			oSelect.open();
+			Core.applyChanges();
+
+			assert.strictEqual(oItemA.getDomRef().classList.contains('sapMSelectListItemBase'), true,
+				"Visual focus set correctly");
+
+			oSelect.destroy();
+		});
+
 		QUnit.test("Label for IconOnly Select", function (assert) {
 			var aItems = [
 				new Item({key: "Item1", text: "Item1"}),
