@@ -743,12 +743,12 @@ function(
 	 */
 	RuntimeAuthoring.prototype._getToolbarButtonsVisibility = function() {
 		return FeaturesAPI.isPublishAvailable().then(function(bIsPublishAvailable) {
-			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this.getRootControlInstance(), this.getLayer(), this._oSerializer);
-			var bPublishAppVariantSupported = bIsPublishAvailable && bIsAppVariantSupported;
-			return {
-				publishAvailable: bIsPublishAvailable,
-				publishAppVariantSupported: bPublishAppVariantSupported
-			};
+			return RtaAppVariantFeature.isSaveAsAvailable(this.getRootControlInstance(), this.getLayer(), this._oSerializer).then(function(bIsSaveAsAvailable) {
+				return {
+					publishAvailable: bIsPublishAvailable,
+					saveAsAvailable: bIsPublishAvailable && bIsSaveAsAvailable
+				};
+			});
 		}.bind(this));
 	};
 
@@ -1088,13 +1088,13 @@ function(
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled);
 
-			var bAppVariantSupported = aButtonsVisibility.publishAppVariantSupported;
-			this.getToolbar().setAppVariantsVisible(bAppVariantSupported);
+			var bSaveAsAvailable = aButtonsVisibility.saveAsAvailable;
+			this.getToolbar().setAppVariantsVisible(bSaveAsAvailable);
 
-			var bExtendedOverview = bAppVariantSupported && RtaAppVariantFeature.isOverviewExtended();
+			var bExtendedOverview = bSaveAsAvailable && RtaAppVariantFeature.isOverviewExtended();
 			this.getToolbar().setExtendedManageAppVariants(bExtendedOverview);
 
-			if (bAppVariantSupported) {
+			if (bSaveAsAvailable) {
 				RtaAppVariantFeature.isManifestSupported().then(function (bResult) {
 					this.getToolbar().setAppVariantsEnabled(bResult);
 				}.bind(this));

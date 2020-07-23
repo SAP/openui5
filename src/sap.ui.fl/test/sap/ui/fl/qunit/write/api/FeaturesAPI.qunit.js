@@ -4,11 +4,13 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FeaturesAPI,
 	Settings,
 	Layer,
+	FlexUtils,
 	sinon
 ) {
 	"use strict";
@@ -31,6 +33,22 @@ sap.ui.define([
 
 				return FeaturesAPI.isPublishAvailable().then(function (bReturnValue) {
 					assert.strictEqual(bReturnValue, !bValueToBeSet, "then " + !bValueToBeSet + " is returned");
+				});
+			});
+
+			QUnit.test("when isSaveAsAvailable() is called for " + (bValueToBeSet ? "not a" : "a") + " steampunk system", function (assert) {
+				sandbox.stub(Settings, "getInstance").resolves({
+					isAppVariantSaveAsEnabled: function () {
+						return bValueToBeSet;
+					}
+				});
+
+				sap["ushell_abap"] = Object.assign({}, sap.ushell_abap, {
+					someKey: "someValue"
+				});
+
+				return FeaturesAPI.isSaveAsAvailable(Layer.CUSTOMER).then(function (bReturnValue) {
+					assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
 				});
 			});
 

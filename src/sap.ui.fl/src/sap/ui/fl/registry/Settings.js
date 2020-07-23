@@ -5,13 +5,9 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/Utils",
-	"sap/base/util/UriParameters",
 	"sap/base/Log"
 ], function(
 	Storage,
-	Utils,
-	UriParameters,
 	Log
 ) {
 	"use strict";
@@ -117,6 +113,7 @@ sap.ui.define([
 					isVariantSharingEnabled: false,
 					isAtoAvailable: false,
 					isAtoEnabled: false,
+					isAppVariantSaveAsEnabled: false,
 					isProductiveSystem: true,
 					versioning: {},
 					_bFlexChangeMode: false,
@@ -168,11 +165,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Settings.prototype._getBooleanProperty = function(sPropertyName) {
-		var bValue = false;
-		if (this._oSettings[sPropertyName]) {
-			bValue = this._oSettings[sPropertyName];
-		}
-		return bValue;
+		return this._oSettings[sPropertyName] || false;
 	};
 
 	/**
@@ -183,6 +176,16 @@ sap.ui.define([
 	 */
 	Settings.prototype.isKeyUser = function() {
 		return this._getBooleanProperty("isKeyUser");
+	};
+
+	/**
+	 * Returns a flag if save as app variants is enabled in the backend
+	 *
+	 * @returns {boolean} true if the underlying ABAP system allows app variants, false if not supported.
+	 * @public
+	 */
+	Settings.prototype.isAppVariantSaveAsEnabled = function() {
+		return this._getBooleanProperty("isAppVariantSaveAsEnabled");
 	};
 
 	/**
