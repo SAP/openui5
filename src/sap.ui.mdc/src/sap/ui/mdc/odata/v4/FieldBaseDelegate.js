@@ -81,7 +81,7 @@ sap.ui.define([
 
 	ODataFieldBaseDelegate.initializeInternalUnitType = function(oPayload, oType, oTypeInitialization) {
 
-		if (oTypeInitialization && oTypeInitialization.mCustomUnits) {
+		if (oTypeInitialization && oTypeInitialization.mCustomUnits !== undefined) {
 			// if already initialized initialize new type too.
 			oType.formatValue([null, null, oTypeInitialization.mCustomUnits], "string");
 		}
