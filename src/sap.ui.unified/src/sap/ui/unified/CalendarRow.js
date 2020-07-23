@@ -51,6 +51,9 @@ sap.ui.define([
 	// shortcut for sap.ui.unified.CalendarAppointmentHeight
 	var CalendarAppointmentHeight = library.CalendarAppointmentHeight;
 
+	// shortcut for sap.ui.unified.CalendarAppointmentRoundWidth
+	var CalendarAppointmentRoundWidth = library.CalendarAppointmentRoundWidth;
+
 	/*
 	 * <code>UniversalDate</code> objects are used inside the <code>CalendarRow</code>, whereas JavaScript dates are used in the API.
 	 * So conversion must be done on API functions.
@@ -202,7 +205,16 @@ sap.ui.define([
 			 * Defines the height of the <code>CalendarAppoinment<code>
 			 * @since 1.81.0
 			 */
-			appointmentHeight: { type: "sap.ui.unified.CalendarAppointmentHeight", group: "Appearance", defaultValue: CalendarAppointmentHeight.Regular}
+			appointmentHeight: { type: "sap.ui.unified.CalendarAppointmentHeight", group: "Appearance", defaultValue: CalendarAppointmentHeight.Regular},
+
+			/**
+			 * Defines rounding of the width of <code>CalendarAppoinment<code>
+			 * <b>Note:</b> This property is applied, when the calendar interval type is day and the view shows more than 20 days
+			 * @experimental Since 1.81.0
+			 * @since 1.81.0
+			 */
+			appointmentRoundWidth: { type: "sap.ui.unified.CalendarAppointmentRoundWidth", group: "Appearance", defaultValue: CalendarAppointmentRoundWidth.None}
+
 		},
 		aggregations : {
 
@@ -1101,6 +1113,7 @@ sap.ui.define([
 		var i = 0;
 		var j = 0;
 		var bGroupsEnabled = _isGroupAppointmentsEnabled.call(this);
+		var bHorizontalFit = this._needAppointmentHorizontalFit();
 
 		this.destroyAggregation("groupAppointments", true);
 
@@ -1160,6 +1173,9 @@ sap.ui.define([
 						// appointment ends in next group
 						oGroupAppointment2 = _getGroupAppointment.call(this, oAppointmentEndDate, oAppointment, sIntervalType, iIntervals, oStartDate, oEndDate, iStartTime, aVisibleAppointments);
 					}
+				}
+				if (bHorizontalFit) {
+					this._setHorizontalRoundingWidth(oAppointment, oAppointmentStartDate, oAppointmentEndDate);
 				}
 
 				iBegin = _calculateBegin.call(this, sIntervalType, iIntervals, oStartDate, oEndDate, iStartTime, oAppointmentStartDate);
@@ -1510,6 +1526,7 @@ sap.ui.define([
 		var i = 0;
 		var bIntervalContainer = false;
 		var iTop;
+		var bHorizontalFit = this._needAppointmentHorizontalFit();
 
 		if (this.getShowIntervalHeaders() && (this.getShowEmptyIntervalHeaders() || this._getVisibleIntervalHeaders().length > 0)) {
 			iStaticHeight = jQuery(this.$("AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0]).outerHeight(true);
@@ -1538,7 +1555,7 @@ sap.ui.define([
 				$Appointment.removeClass("sapUiCalendarAppSmall");
 			}
 
-			if (bChanged) {
+			if (bChanged && !bHorizontalFit) {
 				if (this._bRTL) {
 					$Appointment.css("left", oAppointment.end + "%");
 				} else {
@@ -1689,6 +1706,50 @@ sap.ui.define([
 			oPC["_onRow" + sFuncName]();
 		}
 	}
+
+	CalendarRow.prototype._needAppointmentHorizontalFit = function (){
+		var oPC = this._getPlanningCalendar(),
+			sKey,
+			oView,
+			iIntervals;
+
+		if (!oPC || this.getAppointmentRoundWidth() === CalendarAppointmentRoundWidth.None) {
+			return false;
+		}
+
+		sKey = oPC.getViewKey();
+		oView = oPC._getView(sKey);
+		iIntervals = oPC._getIntervals(oView);
+
+		return iIntervals >= 20;
+	};
+
+	CalendarRow.prototype._setHorizontalRoundingWidth = function(oAppointment, oAppointmentStartDate, oAppointmentEndDate) {
+		var iRound;
+		switch (this.getAppointmentRoundWidth()) {
+			case CalendarAppointmentRoundWidth.HalfColumn :
+				iRound = 12;
+			break;
+		}
+		this._roundAppointment(oAppointment, oAppointmentStartDate, oAppointmentEndDate, iRound);
+	};
+
+	CalendarRow.prototype._roundAppointment = function(oAppointment, oAppointmentStartDate, oAppointmentEndDate,iRound) {
+		var iNewStartHour,
+			iNewEndHour;
+
+			iNewStartHour = oAppointment.getStartDate().getHours() - oAppointment.getStartDate().getHours() % iRound;
+			oAppointmentStartDate.setUTCHours(iNewStartHour);
+			oAppointmentStartDate.setUTCMinutes(0);
+			oAppointmentStartDate.setUTCSeconds(0);
+			oAppointmentStartDate.setUTCMilliseconds(0);
+
+			iNewEndHour = oAppointment.getEndDate().getHours() - oAppointment.getEndDate().getHours() % iRound + iRound;
+			oAppointmentEndDate.setUTCHours(iNewEndHour);
+			oAppointmentEndDate.setUTCMinutes(0);
+			oAppointmentEndDate.setUTCSeconds(0);
+			oAppointmentEndDate.setUTCMilliseconds(0);
+	};
 
 	CalendarRow.prototype._setBlockedLevelsForAppointment = function (oVisibleAppointment, oBlockedLevels) {
 		var iBlockedLevels = this._getAppointmentRowCount(oVisibleAppointment);
