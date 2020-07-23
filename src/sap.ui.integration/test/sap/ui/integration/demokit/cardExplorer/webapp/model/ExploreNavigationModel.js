@@ -18,7 +18,6 @@ sap.ui.define([
 						title: 'Adaptive',
 						target: 'exploreSamples',
 						key: 'adaptive',
-						experimental: true,
 						subSamples: [
 							{
 								title: 'Card',
