@@ -13,6 +13,7 @@ sap.ui.define([
 			errorNoPrefix : "My error message",
 			info : "Info: My info message",
 			infoNoPrefix : "My info message",
+			maintenance : "System maintenance starts in 2 hours",
 			none : "No message",
 			note : "Enter an Item Note",
 			order : "Order at least 2 EA of product 'HT-1000'",
@@ -21,6 +22,7 @@ sap.ui.define([
 			warning : "Warning: My warning message",
 			warningNoPrefix : "My warning message"
 		},
+		rMessageDetails = /messageDetails/,
 		rObjectPage = /objectPage/,
 		rProductDetailsDialog = /productDetailsDialog/,
 		rToLineItems = /ToLineItems/,
@@ -154,6 +156,23 @@ sap.ui.define([
 							return oButton.getText() === "OK";
 						},
 						searchOpenDialogs : true
+					});
+				},
+				/*
+				 * Opens the technical details of a message. Only works if the message popover is
+				 * open and a message is selected.
+				 */
+				openTechnicalDetails : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Link",
+						success : function (aLinks) {
+							return aLinks.find(function (oLink) {
+								return oLink.getId().includes("messageView");
+							});
+						},
+						searchOpenDialogs : true,
+						viewName : sViewName
 					});
 				},
 				/*
@@ -512,10 +531,36 @@ sap.ui.define([
 					});
 				},
 				/*
-				 * Searches for the item position and a part of the message. Asserts ok if exactly
-				 * one match has been found.
+				 * Checks if the specified detail is correct in the message. Only works if the
+				 * message details dialog is opened.
 				 *
-				 * @param {string} sItemPosition
+				 * @param {string} sId The full id of the detail text field
+				 * @param {string} sExpectedValue The expected value of the field
+				 */
+				checkMessageHasTechnicalDetail : function (sId, sExpectedValue) {
+					return this.waitFor({
+						id : rMessageDetails,
+						success : function (aControls) {
+							var oControl, i;
+
+							for (i = 0; i < aControls.length; i += 1) {
+								oControl = aControls[i];
+
+								if (oControl.getId().endsWith(sId)) {
+									Opa5.assert.equal(oControl.getText(), sExpectedValue,
+										"Message has correct details at " + sId);
+								}
+							}
+						},
+						viewName : sViewName,
+						visible : false
+					});
+				},
+				/*
+				 * Searches for a part of the message and, if specified, the item position. Asserts
+				 * ok if exactly one match has been found.
+				 *
+				 * @param {string} [sItemPosition]
 				 *   The position of the item which will be searched for
 				 * @param {string} sMessage
 				 *   The whole message or a part of it, will be searched for
@@ -524,12 +569,13 @@ sap.ui.define([
 					return this.waitFor({
 						id : "messagePopover",
 						success : function (oPopover) {
-							var aMessages = oPopover._oMessageView.mAggregations.items;
+							var aMessages = oPopover.getItems();
 
 							aMessages = (aMessages || []).filter(function (oMessage) {
-								return oMessage.mProperties.title
-									=== mMessageShort2Message[sMessage]
-									&& oMessage.mProperties.subtitle.includes(sItemPosition);
+								return sItemPosition
+									? oMessage.getTitle() === mMessageShort2Message[sMessage]
+										&& oMessage.getProperty("subtitle").includes(sItemPosition)
+									: oMessage.getTitle() === mMessageShort2Message[sMessage];
 							});
 
 							switch (aMessages.length) {
@@ -537,9 +583,7 @@ sap.ui.define([
 									Opa5.assert.ok(false, "No fitting message displayed");
 									break;
 								case 1:
-									Opa5.assert.ok(
-										aMessages[0].mProperties.subtitle.includes(sItemPosition),
-										"A message is displayed");
+									Opa5.assert.ok(true, "A message is displayed");
 									break;
 								default:
 									Opa5.assert.ok(false, "Too many messages fit arguments");

@@ -251,12 +251,12 @@
 							<Label text="Code" />
 							<Text text="{messages>code}" />
 							<Label text="Target" />
-							<Text text="{
+							<Text id="target::messageDetails" text="{
 									formatter : '.formatMessageTargets',
 									path : 'messages>aTargets'
 								}" />
 							<Label text="Full Target" />
-							<Text text="{
+							<Text id="fullTarget::messageDetails" text="{
 									formatter : '.formatMessageTargets',
 									path : 'messages>aFullTargets'
 								}" />
