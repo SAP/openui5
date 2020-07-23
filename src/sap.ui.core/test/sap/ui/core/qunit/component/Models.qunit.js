@@ -3647,7 +3647,7 @@ sap.ui.define([
 
 			sap.ui.loader.config({
 				paths: {
-					"path/to/odata/service": "http://remote.system:9000/odata/service",
+					"path/to/odata/service": "https://remote.system:9000/odata/service",
 					"sap/ui/test/v2models/ui5urls": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls",
 					"another/name/space": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/another/name/space",
 					"cool.name.space": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/cool/name/space"
@@ -3691,7 +3691,7 @@ sap.ui.define([
 
 		// model: "ODataModel"
 		sinon.assert.calledWithExactly(this.modelSpy.odataV2.getCall(0), {
-			serviceUrl: 'http://remote.system:9000/odata/service?sap-client=foo&sap-server=bar',
+			serviceUrl: 'https://remote.system:9000/odata/service?sap-client=foo&sap-server=bar',
 			metadataUrlParams: {"sap-language": "EN"},
 			annotationURI: [
 				'/path/to/odata/annotations/1?sap-language=EN&sap-client=foo',
@@ -3708,7 +3708,7 @@ sap.ui.define([
 
 		// model: "OtherODataModel"
 		sinon.assert.calledWithExactly(this.modelSpy.odataV2.getCall(1), {
-			serviceUrl: 'http://remote.system:9000/odata/service',
+			serviceUrl: 'https://remote.system:9000/odata/service',
 			useBatch: true,
 			refreshAfterChange: true
 		});
