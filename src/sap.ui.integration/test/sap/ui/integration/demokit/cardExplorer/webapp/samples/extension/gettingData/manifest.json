@@ -37,7 +37,10 @@
 		"content": {
 			"item": {
 				"title": "{title}",
-				"description": "Trainer: {trainer}"
+				"description": "Trainer: {trainer}",
+				"info": {
+					"value": "Location: {location}"
+				}
 			},
 			"maxItems": "{{parameters.maxItems}}"
 		}
