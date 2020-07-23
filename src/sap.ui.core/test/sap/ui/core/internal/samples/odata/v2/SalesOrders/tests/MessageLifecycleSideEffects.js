@@ -10,6 +10,12 @@ sap.ui.define([
 	//*****************************************************************************
 	opaTest("Check if messages for items that are not currently seen are loaded",
 		function (Given, When, Then) {
+			Given.iStartMyUIComponent({
+				componentConfig : {
+					name : "sap.ui.core.internal.samples.odata.v2.SalesOrders"
+				}
+			});
+
 			When.onMainPage.showSalesOrder("103");
 			Then.onMainPage.checkSalesOrderLoaded("103");
 			Then.onMainPage.checkSalesOrderItemsLoaded("103");
@@ -31,6 +37,6 @@ sap.ui.define([
 			When.onMainPage.scrollTable(1);
 			Then.onMainPage.checkItemQuantities();
 
-			When.onMainPage.scrollToTop();
+			Given.iTeardownMyApp();
 		});
 });

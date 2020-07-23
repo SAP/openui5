@@ -9,6 +9,12 @@ sap.ui.define([
 
 	//*****************************************************************************
 	opaTest("Check item specific messages", function (Given, When, Then) {
+		Given.iStartMyUIComponent({
+			componentConfig : {
+				name : "sap.ui.core.internal.samples.odata.v2.SalesOrders"
+			}
+		});
+
 		When.onMainPage.showSalesOrder("102");
 		Then.onMainPage.checkSalesOrderLoaded("102");
 		Then.onMainPage.checkSalesOrderItemsLoaded("102");
@@ -42,5 +48,7 @@ sap.ui.define([
 		When.onMainPage.changeItemNote(0, "errorNoPrefix");
 		When.onMainPage.pressSalesOrderSaveButton();
 		Then.onMainPage.checkTableRowHighlight(0, "Warning");
+
+		Given.iTeardownMyApp();
 	});
 });

@@ -93,7 +93,8 @@
 							</Select>
 							<Button id="fixAllQuantities" press="onFixAllQuantities"
 								text="Fix Quantities" />
-							<ToggleButton press="onTransitionMessagesOnly" pressed="true"
+							<ToggleButton id="transitionMessagesOnly"
+								press="onTransitionMessagesOnly" pressed="true"
 								text="Transition Messages Only"
 								tooltip="Message handling is done by the parent entity" />
 						</Toolbar>
