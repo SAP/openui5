@@ -805,8 +805,8 @@ function(
 				 * This is required for <code>Field</code>
 				 * @returns {sap.ui.mdc.condition.Operator} Operator object
 				 *
-				 * @public
-				 * @restricted sap.ui.mdc.Field sap.ui.mdc.field.FieldBase sap.ui.mdc.field.ConditionType
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.Field sap.ui.mdc.field.FieldBase sap.ui.mdc.field.ConditionType
 				 */
 				getEQOperator: function() {
 
@@ -820,8 +820,8 @@ function(
 				 * @param {string[]} aOperators Array with the supported filter operators
 				 * @returns {boolean} true if only EQ is supported
 				 *
-				 * @public
-				 * @restricted sap.ui.mdc.field.FieldBase sap.ui.mdc.field.FieldValueHelp sap.ui.mdc.field.ConditionType
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.field.FieldBase sap.ui.mdc.field.FieldValueHelp sap.ui.mdc.field.ConditionType
 				 */
 				onlyEQ: function(aOperators) {
 
