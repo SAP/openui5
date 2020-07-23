@@ -31,18 +31,6 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	DateEditor.prototype.getConfigMetadata = function () {
-		return Object.assign(
-			{},
-			BasePropertyEditor.prototype.getConfigMetadata.call(this),
-			{
-				allowBindings: {
-					defaultValue: true
-				}
-			}
-		);
-	};
-
 	DateEditor.prototype.getDefaultValidators = function () {
 		var oConfig = this.getConfig();
 		return Object.assign(
@@ -71,6 +59,12 @@ sap.ui.define([
 		}
 		return this.getFormatterInstance().format(oDate);
 	};
+
+	DateEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		allowBindings: {
+			defaultValue: true
+		}
+	});
 
 	DateEditor.prototype.onFragmentReady = function () {
 		var oDatePicker = this.getContent();

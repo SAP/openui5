@@ -49,17 +49,12 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	DestinationsEditor.prototype.getConfigMetadata = function () {
-		return Object.assign(
-			{},
-			ComplexMapEditor.prototype.getConfigMetadata.call(this),
-			{
-				allowedValues: {
-					defaultValue: []
-				}
-			}
-		);
-	};
+	DestinationsEditor.configMetadata = Object.assign({}, ComplexMapEditor.configMetadata, {
+		allowedValues: {
+			defaultValue: [],
+			mergeStrategy: "intersection"
+		}
+	});
 
 	DestinationsEditor.prototype.onBeforeConfigChange = function (oConfig) {
 		var oCustomConfig = {};

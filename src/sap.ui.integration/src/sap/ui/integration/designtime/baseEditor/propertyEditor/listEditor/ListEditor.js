@@ -52,6 +52,8 @@ sap.ui.define([
 		);
 	};
 
+	ListEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata);
+
 	ListEditor.prototype._onTokenUpdate = function (oEvent) {
 		this._setTokens(
 			oEvent.getParameter("addedTokens").map(function (oToken) {

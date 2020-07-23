@@ -90,30 +90,6 @@ sap.ui.define([
 	var MapEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor",
 
-		getConfigMetadata: function() {
-			return Object.assign(
-				{},
-				BasePropertyEditor.prototype.getConfigMetadata.call(this),
-				{
-					allowKeyChange: {
-						defaultValue: true
-					},
-					allowTypeChange: {
-						defaultValue: true
-					},
-					allowAddAndRemove: {
-						defaultValue: true
-					},
-					allowedTypes: {
-						defaultValue: ["string"]
-					},
-					includeInvalidEntries: {
-						defaultValue: true
-					}
-				}
-			);
-		},
-
 		init: function() {
 			BasePropertyEditor.prototype.init.apply(this, arguments);
 			this._itemsModel = new JSONModel();
@@ -191,7 +167,7 @@ sap.ui.define([
 		},
 
 		_getAllowedTypes: function () {
-			return (this.getConfig() || this.getConfigMetadata())["allowedTypes"];
+			return (this.getConfig() || MapEditor.configMetadata).allowedTypes;
 		},
 
 		_setSupportedTypesModel: function () {
@@ -415,6 +391,29 @@ sap.ui.define([
 		},
 
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
+	});
+
+	MapEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		allowKeyChange: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowTypeChange: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowAddAndRemove: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowedTypes: {
+			defaultValue: ["string"],
+			mergeStrategy: "intersection"
+		},
+		includeInvalidEntries: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		}
 	});
 
 	return MapEditor;

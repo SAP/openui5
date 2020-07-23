@@ -62,23 +62,19 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	ComplexMapEditor.prototype.getConfigMetadata = function () {
-		return Object.assign(
-			{},
-			BasePropertyEditor.prototype.getConfigMetadata.call(this),
-			{
-				allowKeyChange: {
-					defaultValue: true
-				},
-				allowAddAndRemove: {
-					defaultValue: true
-				},
-				keyLabel: {
-					defaultValue: this.getI18nProperty("CARD_EDITOR.COMPLEX_MAP.KEY")
-				}
-			}
-		);
-	};
+	ComplexMapEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		allowKeyChange: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowAddAndRemove: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		keyLabel: {
+			defaultValue: "{i18n>CARD_EDITOR.COMPLEX_MAP.KEY}"//this.getI18nProperty("CARD_EDITOR.COMPLEX_MAP.KEY")
+		}
+	});
 
 	ComplexMapEditor.prototype.onFragmentReady = function () {
 		this._oNestedArrayEditor = this.getContent();

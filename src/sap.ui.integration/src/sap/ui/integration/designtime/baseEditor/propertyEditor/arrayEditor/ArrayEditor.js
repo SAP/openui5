@@ -98,29 +98,27 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	ArrayEditor.prototype.getConfigMetadata = function () {
-		return Object.assign(
-			{},
-			BasePropertyEditor.prototype.getConfigMetadata.call(this),
-			{
-				allowAddAndRemove: {
-					defaultValue: true
-				},
-				allowSorting: {
-					defaultValue: true
-				},
-				collapsibleItems: {
-					defaultValue: true
-				},
-				showItemLabel: {
-					defaultValue: true
-				},
-				template: {
-					defaultValue: {}
-				}
-			}
-		);
-	};
+	ArrayEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		allowAddAndRemove: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowSorting: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		collapsibleItems: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		showItemLabel: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		template: {
+			defaultValue: {}
+		}
+	});
 
 	ArrayEditor.prototype.init = function () {
 		BasePropertyEditor.prototype.init.apply(this, arguments);

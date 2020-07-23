@@ -57,20 +57,17 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	EnumStringEditor.prototype.getConfigMetadata = function () {
-		return Object.assign(
-			{},
-			BasePropertyEditor.prototype.getConfigMetadata.call(this),
-			{
-				allowBindings: {
-					defaultValue: true
-				},
-				allowCustomValues: {
-					defaultValue: false
-				}
-			}
-		);
-	};
+	EnumStringEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		allowBindings: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowCustomValues: {
+			defaultValue: false,
+			mergeStrategy: "mostRestrictiveWins",
+			mostRestrictiveValue: true
+		}
+	});
 
 	EnumStringEditor.prototype.getDefaultValidators = function () {
 		var oConfig = this.getConfig();

@@ -45,6 +45,8 @@ sap.ui.define([
 		);
 	};
 
+	IntegerEditor.configMetadata = Object.assign({}, NumberEditor.configMetadata);
+
 	IntegerEditor.prototype.validateNumber = function (vValue) {
 		return NumberEditor.prototype.validateNumber.call(this, vValue) && Number.isInteger(vValue);
 	};

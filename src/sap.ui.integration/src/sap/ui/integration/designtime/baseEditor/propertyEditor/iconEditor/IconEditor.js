@@ -49,6 +49,8 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
+	IconEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata);
+
 	IconEditor.prototype.onFragmentReady = function () {
 		var oInput = this.getContent();
 		this._oIconModel = this._getIconModel();
