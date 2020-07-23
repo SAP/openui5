@@ -76,11 +76,17 @@
 			]
 		});
 
+		var oSplitContainer = new sap.m.SplitContainer({
+			masterPages: [oMaster],
+			detailPages: [oDetail]
+		});
+
+		oMaster.attachEvent("navButtonPress", function () {
+			oSplitContainer.hideMaster();
+		});
+
 		new sap.m.App("myApp", {
-			pages: [new sap.m.SplitContainer({
-				masterPages: [oMaster],
-				detailPages: [oDetail]
-			})]
+			pages: [oSplitContainer]
 
 		}).placeAt("body");
 
