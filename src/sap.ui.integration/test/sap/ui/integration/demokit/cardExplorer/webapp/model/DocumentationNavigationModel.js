@@ -44,8 +44,7 @@ sap.ui.define([
 						title: 'Adaptive',
 						topicTitle: 'AdaptiveCard',
 						target: 'learnDetail',
-						key: 'adaptive',
-						experimental: true
+						key: 'adaptive'
 					},
 					{
 						title: 'Analytical',
