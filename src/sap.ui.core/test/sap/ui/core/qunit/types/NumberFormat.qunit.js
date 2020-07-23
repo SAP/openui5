@@ -2154,12 +2154,14 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.ok(isNaN(oFormat.parse("12,34567%")), "12,34567%");
 	});
 
+	QUnit.module("Default Options");
+
 	QUnit.test("parse default format", function (assert) {
 		assert.equal(oDefaultInteger.parse("123"), 123, "123");
 		assert.equal(oDefaultInteger.parse("123,123"), 123123, "123,123");
 		assert.equal(oDefaultInteger.parse("123,123,1234"), 1231231234, "123,123,1234");
+		assert.equal(oDefaultInteger.parse("5e+3"), 5000, "5e+3");
 		assert.equal(isNaN(oDefaultInteger.parse("123.00")), true, "123.00");
-		assert.equal(isNaN(oDefaultInteger.parse("5e+3")), true, "5e+3");
 		assert.equal(isNaN(oDefaultInteger.parse("a1b2c3")), true, "a1b2c3");
 
 		assert.equal(oDefaultFloat.parse("123.23"), 123.23, "123.23");
@@ -2228,6 +2230,83 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(sParsed, expectedNumber, "should match input number " + expectedNumber);
 	});
 
+	QUnit.test("parse: scientific format parseAsString", function (assert) {
+		var oIntegerFormat = NumberFormat.getIntegerInstance({
+			parseAsString: true
+		}), oFloatFormat = NumberFormat.getFloatInstance({
+			parseAsString: true
+		});
+
+		[{
+			value: "3e+5",
+			expected: "300000"
+		}, {
+			value: "-3e+5",
+			expected: "-300000"
+		}, {
+			value: "3e+22",
+			expected: "30000000000000000000000"
+		}, {
+			value: "-3e+22",
+			expected: "-30000000000000000000000"
+		}, {
+			value: "1.2345678901234568e+22",
+			expected: "12345678901234568000000"
+		}, {
+			value: "-1.2345678901234568e+22",
+			expected: "-12345678901234568000000"
+		}, {
+			value: "1.2345678901234568e+32",
+			expected: "123456789012345680000000000000000"
+		}, {
+			value: "-1.2345678901234568e+32",
+			expected: "-123456789012345680000000000000000"
+		}].forEach(function (oInput) {
+			var sParsedInteger = oIntegerFormat.parse(oInput.value);
+			assert.strictEqual(sParsedInteger, oInput.expected, "integer content must be the same for " + oInput.value);
+
+			var sParsedFloat = oFloatFormat.parse(oInput.value);
+			assert.strictEqual(sParsedFloat, oInput.expected, "float content must be the same for " + oInput.value);
+		});
+	});
+
+	QUnit.test("parse: scientific format", function (assert) {
+		var oIntegerFormat = NumberFormat.getIntegerInstance(),
+			oFloatFormat = NumberFormat.getFloatInstance();
+
+		[{
+			value: "3e+5",
+			expected: 3e+5
+		}, {
+			value: "-3e+5",
+			expected: -3e+5
+		}, {
+			value: "3e+22",
+			expected: 3e+22
+		}, {
+			value: "-3e+22",
+			expected: -3e+22
+		}, {
+			value: "1.2345678901234568e+22",
+			expected: 1.2345678901234568e+22
+		}, {
+			value: "-1.2345678901234568e+22",
+			expected: -1.2345678901234568e+22
+		}, {
+			value: "1.2345678901234568e+32",
+			expected: 1.2345678901234568e+32
+		}, {
+			value: "-1.2345678901234568e+32",
+			expected: -1.2345678901234568e+32
+		}].forEach(function (oInput) {
+			var sParsedInteger = oIntegerFormat.parse(oInput.value);
+			assert.strictEqual(sParsedInteger, oInput.expected, "integer content must be the same for " + oInput.value);
+
+			var sParsedFloat = oFloatFormat.parse(oInput.value);
+			assert.strictEqual(sParsedFloat, oInput.expected, "float content must be the same for " + oInput.value);
+		});
+	});
+
 	QUnit.test("parse default format with parameter 'parseAsString' set to true", function (assert) {
 		var oIntegerFormat = NumberFormat.getIntegerInstance({
 			parseAsString: true
@@ -2239,9 +2318,15 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oIntegerFormat.parse("123,123"), "123123", "123,123");
 		assert.equal(oIntegerFormat.parse("000123,123"), "123123", "000123,123");
 		assert.equal(oIntegerFormat.parse("123,123,1234"), "1231231234", "123,123,1234");
-		assert.equal(isNaN(oIntegerFormat.parse("123.00")), true, "123.00");
-		assert.equal(isNaN(oIntegerFormat.parse("5e+3")), true, "5e+3");
-		assert.equal(isNaN(oIntegerFormat.parse("a1b2c3")), true, "a1b2c3");
+		assert.equal(oIntegerFormat.parse("5e+3"), "5000", "5e+3");
+		assert.equal(oIntegerFormat.parse("1.234567e+6"), "1234567", "1.234567e+6");
+		assert.ok(isNaN(oIntegerFormat.parse("1.234567e+5")), "1.234567e+5");
+		assert.ok(isNaN(oIntegerFormat.parse("123.00")), "123.00");
+		assert.ok(isNaN(oIntegerFormat.parse("5e-3")), "5e-3 (0.005 not an integer)");
+		assert.ok(isNaN(oIntegerFormat.parse("a1b2c3")), "a1b2c3");
+		assert.ok(isNaN(oIntegerFormat.parse("5e-3e+2")), "5e-3e+2");
+		assert.ok(isNaN(oIntegerFormat.parse("123e-4e5")), "123e-4e5");
+		assert.ok(isNaN(oIntegerFormat.parse("123ee-4")), "123ee-4");
 
 		assert.equal(oFloatFormat.parse("123.23"), "123.23", "123.23");
 		assert.equal(oFloatFormat.parse("000123.23"), "123.23", "000123.23");
@@ -2253,7 +2338,82 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFloatFormat.parse("1E+4"), "10000", "1E+4");
 		assert.equal(oFloatFormat.parse("5e-3"), "0.005", "5e-3");
 		assert.equal(oFloatFormat.parse(".5e-3"), "0.0005", ".5e-3");
-		assert.equal(isNaN(oFloatFormat.parse("123.x5")), true, "123.x5");
+		assert.ok(isNaN(oFloatFormat.parse("123.x5")), "123.x5");
+		assert.ok(isNaN(oFloatFormat.parse("5e-3e+2")), "5e-3e+2");
+		assert.ok(isNaN(oFloatFormat.parse("123e-4e5")), "123e-4e5");
+		assert.ok(isNaN(oFloatFormat.parse("123ee-4")), "123ee-4");
+	});
+
+	QUnit.test("parse: scientific format not normalized with edge case numbers", function (assert) {
+		var oIntegerFormatParseAsString = NumberFormat.getIntegerInstance({
+			parseAsString: true
+		});
+
+		assert.equal(oIntegerFormatParseAsString.parse("10.2e+4"), "102000", "spacing1");
+		assert.equal(oIntegerFormatParseAsString.parse("10.2e +4"), "102000", "spacing2");
+		assert.equal(oIntegerFormatParseAsString.parse("10.2 e +4"), "102000", "spacing3");
+		assert.equal(oIntegerFormatParseAsString.parse("10.2 e+4"), "102000", "spacing4");
+		assert.equal(oIntegerFormatParseAsString.parse(" 10.2e+4"), "102000", "spacing5");
+		assert.equal(oIntegerFormatParseAsString.parse("10.2e+4 "), "102000", "spacing6");
+		assert.equal(oIntegerFormatParseAsString.parse(" 10.2e+4 "), "102000", "spacing7");
+
+		assert.ok(isNaN(oIntegerFormatParseAsString.parse("1e4")), "no sign for exponent");
+		assert.ok(isNaN(oIntegerFormatParseAsString.parse("10 e4")), "no sign for exponent");
+		assert.ok(isNaN(oIntegerFormatParseAsString.parse("10e 4")), "no sign for exponent");
+
+		assert.ok(isNaN(oIntegerFormatParseAsString.parse("1234567891234.12345e+4")), "1234567891234.12345e+4");
+		assert.ok(isNaN(oIntegerFormatParseAsString.parse("1234567891234.123456e+4")), "1234567891234.123456e+4");
+		assert.ok(isNaN(oIntegerFormatParseAsString.parse("1234567891234.123456789e+4")), "1234567891234.123456789e+4");
+
+		var oIntegerFormat = NumberFormat.getIntegerInstance();
+		assert.ok(isNaN(oIntegerFormat.parse("1234567891234.12345e+4")), "1234567891234.12345e+4");
+		assert.ok(isNaN(oIntegerFormat.parse("1234567891234.123456e+4")), "1234567891234.123456e+4");
+		assert.ok(isNaN(oIntegerFormat.parse("1234567891234.123456789e+4")), "1234567891234.123456789e+4");
+
+		assert.equal(oIntegerFormat.parse("10.2e+4"), "102000", "spacing1");
+		assert.equal(oIntegerFormat.parse("10.2e +4"), "102000", "spacing2");
+		assert.equal(oIntegerFormat.parse("10.2 e +4"), "102000", "spacing3");
+		assert.equal(oIntegerFormat.parse("10.2 e+4"), "102000", "spacing4");
+		assert.equal(oIntegerFormat.parse(" 10.2e+4"), "102000", "spacing5");
+		assert.equal(oIntegerFormat.parse("10.2e+4 "), "102000", "spacing6");
+		assert.equal(oIntegerFormat.parse(" 10.2e+4 "), "102000", "spacing7");
+	});
+
+	QUnit.test("parse: scientific format not normalized", function (assert) {
+		var oIntegerFormat = NumberFormat.getIntegerInstance(),
+			oFloatFormat = NumberFormat.getFloatInstance();
+
+		[{
+			value: "30.0e+5",
+			expected: 3e+6
+		}, {
+			value: "-30.0e+5",
+			expected: -3e+6
+		}, {
+			value: "30.0e+22",
+			expected: 3e+23
+		}, {
+			value: "-30.0e+22",
+			expected: -3e+23
+		}, {
+			value: "12.345678901234568e+22",
+			expected: 1.2345678901234568e+23
+		}, {
+			value: "-12.345678901234568e+22",
+			expected: -1.2345678901234568e+23
+		}, {
+			value: "12.345678901234568e+32",
+			expected: 1.2345678901234568e+33
+		}, {
+			value: "-12.345678901234568e+32",
+			expected: -1.2345678901234568e+33
+		}].forEach(function (oInput) {
+			var sParsedInteger = oIntegerFormat.parse(oInput.value);
+			assert.strictEqual(sParsedInteger, oInput.expected, "integer content must be the same for " + oInput.value);
+
+			var sParsedFloat = oFloatFormat.parse(oInput.value);
+			assert.strictEqual(sParsedFloat, oInput.expected, "float content must be the same for " + oInput.value);
+		});
 	});
 
 	QUnit.test("parse a number with custom plus and minus signs", function (assert) {
@@ -2285,9 +2445,10 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oCustomInteger.parse("123"), 123, "123");
 		assert.equal(oCustomInteger.parse("123.123"), 123123, "123.123");
 		assert.equal(oCustomInteger.parse("123.123.1234"), 1231231234, "123.123.1234");
-		assert.equal(isNaN(oCustomInteger.parse("123,00")), true, "123,00");
-		assert.equal(isNaN(oCustomInteger.parse("5e+3")), true, "5e+3");
-		assert.equal(isNaN(oCustomInteger.parse("a1b2c3")), true, "a1b2c3");
+		assert.equal(oCustomInteger.parse("5e+3"), 5000, "5e+3");
+		assert.ok(isNaN(oCustomInteger.parse("123,00")), "123,00");
+		assert.ok(isNaN(oCustomInteger.parse("5e-3")), "5e+3");
+		assert.ok(isNaN(oCustomInteger.parse("a1b2c3")), "a1b2c3");
 
 		assert.equal(oCustomFloat.parse("0,23"), 0.23, "0.23");
 		assert.equal(oCustomFloat.parse("1.234,23"), 1234.23, "1.234,23");
