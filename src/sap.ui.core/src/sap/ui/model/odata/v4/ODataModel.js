@@ -63,6 +63,7 @@ sap.ui.define([
 			groupId : true,
 			groupProperties : true,
 			httpHeaders : true,
+			metadataUrlParams : true,
 			odataVersion : true,
 			operationMode : true,
 			serviceUrl : true,
@@ -114,6 +115,10 @@ sap.ui.define([
 	 *   Supported since 1.51.0
 	 * @param {object} [mParameters.httpHeaders]
 	 *   Map of HTTP header names to their values, see {@link #changeHttpHeaders}
+	 * @param {object} [mParameters.metadataUrlParams]
+	 *   Additional map of URL parameters used specifically for $metadata requests. Note that
+	 *   "sap-context-token" applies only to the service's root $metadata, but not to
+	 *   "cross-service references". Supported since 1.81.0
 	 * @param {string} [mParameters.odataVersion="4.0"]
 	 *   The version of the OData service. Supported values are "2.0" and "4.0".
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
@@ -283,7 +288,7 @@ sap.ui.define([
 					// BEWARE: do not share mHeaders between _MetadataRequestor and _Requestor!
 					this.oMetaModel = new ODataMetaModel(
 						_MetadataRequestor.create(this.mMetadataHeaders, sODataVersion,
-							this.mUriParameters),
+							Object.assign({}, this.mUriParameters, mParameters.metadataUrlParams)),
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
 					this.oInterface = {
