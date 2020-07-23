@@ -3622,4 +3622,155 @@ sap.ui.define([
 		);
 
 	});
+
+	QUnit.module("ui5:// URL resolution for local annotations", {
+		before: function() {
+			// preload any used libraries / modules to avoid sync requests
+			return new Promise(function(resolve, reject) {
+				sap.ui.require([
+					"sap/ui/commons/Label",
+					"sap/ui/core/CustomData",
+					"sap/ui/core/CustomizingConfiguration",
+					"sap/ui/core/mvc/XMLView",
+					"sap/ui/core/routing/Router",
+					"sap/ui/model/odata/ODataAnnotations"
+				], function() {
+					resolve();
+				}, reject);
+			});
+		},
+		beforeEach: function() {
+			bindHelper.call(this);
+
+			this.spyModels();
+			this.oLogSpy = sinon.spy(Log, "error");
+
+			sap.ui.loader.config({
+				paths: {
+					"path/to/odata/service": "http://remote.system:9000/odata/service",
+					"sap/ui/test/v2models/ui5urls": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls",
+					"another/name/space": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/another/name/space",
+					"cool.name.space": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/cool/name/space"
+				}
+			});
+		},
+		afterEach: function() {
+			this.restoreModels();
+			this.oLogSpy.restore();
+
+			this.oComponent.destroy();
+
+			this.restoreGetUriParameters();
+
+			// To keep reusing the same component for async and sync path tests,
+			// we need to unload the Component and remove the leftovers from the ComponentMetadata.
+			// This way all tests start fresh and actually load the Component again.
+			sap.ui.loader._.unloadResources('sap/ui/test/v2models/ui5urls/Component.js', true, true, true);
+			delete sap.ui.test.v2models.ui5Urls.Component.getMetadata()._oManifest;
+
+			// remove the previous path-configs/resource-roots
+			sap.ui.loader.config({
+				paths: {
+					"cool.name.space": null,
+					"this/is/a/resourceRoot": null
+				}
+			});
+		}
+	});
+
+	function fnAssert(assert) {
+		// resource roots now defined after component creation
+		assert.equal(
+			sap.ui.require.toUrl("this/is/a/resourceRoot"),
+			"test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/resourceRoots/subfolder",
+			"Resource-roots is now defined."
+		);
+
+		// sap.ui.model.odata.ODataModel
+		sinon.assert.callCount(this.modelSpy.odataV2, 2);
+
+		// model: "ODataModel"
+		sinon.assert.calledWithExactly(this.modelSpy.odataV2.getCall(0), {
+			serviceUrl: 'http://remote.system:9000/odata/service?sap-client=foo&sap-server=bar',
+			metadataUrlParams: {"sap-language": "EN"},
+			annotationURI: [
+				'/path/to/odata/annotations/1?sap-language=EN&sap-client=foo',
+				sap.ui.loader._.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/annotations/2?sap-language=EN&sap-client=foo'),
+				sap.ui.loader._.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/another/name/space/annotations/3?sap-language=EN&sap-client=foo'),
+				sap.ui.loader._.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/cool/name/space/annotations/4.xml?sap-language=EN&sap-client=foo'),
+				sap.ui.loader._.resolveURL('resources/unkown.name.space/annotations/5.xml?sap-language=EN&sap-client=foo'),
+				sap.ui.loader._.resolveURL('resources/another/unkown/name/space/annotations/6.xml?sap-language=EN&sap-client=foo'),
+				sap.ui.loader._.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/resourceRoots/subfolder/annotations/file7.xml?sap-language=EN&sap-client=foo')
+			],
+			useBatch: false,
+			refreshAfterChange: false
+		});
+
+		// model: "OtherODataModel"
+		sinon.assert.calledWithExactly(this.modelSpy.odataV2.getCall(1), {
+			serviceUrl: 'http://remote.system:9000/odata/service',
+			useBatch: true,
+			refreshAfterChange: true
+		});
+	}
+
+	QUnit.test("ASYNC: Resolve annotation urls; Manifest first;", function(assert) {
+		// stub uri parameters with sap-client and sap-server
+		this.stubGetUriParameters();
+
+		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
+
+		return Component.create({
+			name: "sap.ui.test.v2models.ui5urls"
+		}).then(function(oComponent) {
+			this.oComponent = oComponent;
+			fnAssert.call(this, assert);
+		}.bind(this));
+	});
+
+	QUnit.test("ASYNC: Resolve annotation urls; Manifest last;", function(assert) {
+		// stub uri parameters with sap-client and sap-server
+		this.stubGetUriParameters();
+
+		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
+
+		// manifest-last   =>   Component metadata says manifest: "json", so the manifest is loaded later
+		// url resolution triggered during manifest init
+		// Manifest model init is triggered afterwards during Component constructor, at this time all URLs have been resolved
+		return Component.create({
+			name: "sap.ui.test.v2models.ui5urls",
+			manifest: false
+		}).then(function(oComponent) {
+			this.oComponent = oComponent;
+			fnAssert.call(this, assert);
+		}.bind(this));
+	});
+
+	QUnit.test("SYNC: Resolve annotation urls; Manifest first;", function(assert) {
+		// stub uri parameters with sap-client and sap-server
+		this.stubGetUriParameters();
+
+		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
+
+		this.oComponent = sap.ui.component({
+			name: "sap.ui.test.v2models.ui5urls",
+			manifest: true,
+			async: false
+		});
+
+		fnAssert.call(this, assert);
+	});
+
+	QUnit.test("SYNC: Resolve annotation urls; Manifest last;", function(assert) {
+		// stub uri parameters with sap-client and sap-server
+		this.stubGetUriParameters();
+
+		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
+
+		this.oComponent = sap.ui.component({
+			name: "sap.ui.test.v2models.ui5urls"
+		});
+
+		fnAssert.call(this, assert);
+	});
 });

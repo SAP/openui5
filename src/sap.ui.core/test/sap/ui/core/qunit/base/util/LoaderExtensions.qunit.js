@@ -30,5 +30,56 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 		});
 	});
 
+	QUnit.test("toURL - resolve ui5:// pseudo protocol", function(assert) {
+		// define paths
+		sap.ui.loader.config({
+			paths: {
+				"my/path/to/ui5app": "test-resource/my/path/to/something",
+				"my.path.to.dots.ui5app": "test-resource/my/path/to/something/with/dots",
+				"my/cross/app": "http://somewhere.else/my/cross/app/deployment"
+			}
+		});
+
+		// simple
+		var sResolvedURL = LoaderExtensions.resolveUI5Url("ui5://my/path/to/ui5app/file/some.xml");
+		assert.equal(sResolvedURL, sap.ui.loader._.resolveURL("test-resource/my/path/to/something/file/some.xml"), "simple url resolution");
+
+		// simple (dots)
+		var sResolvedURLDots = LoaderExtensions.resolveUI5Url("ui5://my.path.to.dots.ui5app/file/some.xml");
+		assert.equal(sResolvedURLDots, sap.ui.loader._.resolveURL("test-resource/my/path/to/something/with/dots/file/some.xml"), "simple url resolution");
+
+		// simple + url params
+		var sResolvedURLWithUrlParams = LoaderExtensions.resolveUI5Url("ui5://my/path/to/ui5app/file/some.xml?param1=true&param2=5");
+		assert.equal(sResolvedURLWithUrlParams, sap.ui.loader._.resolveURL("test-resource/my/path/to/something/file/some.xml?param1=true&param2=5"), "simple url resolution");
+
+		// simple (dots) + url params
+		var sResolvedURLDotsWithUrlParams = LoaderExtensions.resolveUI5Url("ui5://my.path.to.dots.ui5app/file/some.xml?param1=true&param2=5");
+		assert.equal(sResolvedURLDotsWithUrlParams, sap.ui.loader._.resolveURL("test-resource/my/path/to/something/with/dots/file/some.xml?param1=true&param2=5"), "simple url resolution");
+
+		// cross-origin resolution
+		var sResolvedCrossURL = LoaderExtensions.resolveUI5Url("ui5://my/cross/app/file/some.xml");
+		assert.equal(sResolvedCrossURL, sap.ui.loader._.resolveURL("http://somewhere.else/my/cross/app/deployment/file/some.xml"), "cross origin url resolution");
+
+		// cross-origin resolution + url params
+		var sUnmappedCrossURL = LoaderExtensions.resolveUI5Url("ui5://my/cross/app/file/some.xml?param1=true&param2=5");
+		assert.equal(sUnmappedCrossURL, sap.ui.loader._.resolveURL("http://somewhere.else/my/cross/app/deployment/file/some.xml?param1=true&param2=5"), "cross origin url resolution");
+
+		// unmapped paths (dots)
+		var sUnmappedURLDots = LoaderExtensions.resolveUI5Url("ui5://dot.namespace.not.registered/file/some.xml");
+		assert.equal(sUnmappedURLDots, sap.ui.loader._.resolveURL("resources/dot.namespace.not.registered/file/some.xml"), "unmapped paths");
+
+		// unmapped paths (slashes)
+		var sUnmappedURLSlashes = LoaderExtensions.resolveUI5Url("ui5://other/namespace/not/registered/file/some.xml");
+		assert.equal(sUnmappedURLSlashes, sap.ui.loader._.resolveURL("resources/other/namespace/not/registered/file/some.xml"), "unmapped paths");
+
+		// unmapped paths (dots) + url params
+		var sUnmappedDotsWithUrlParams = LoaderExtensions.resolveUI5Url("ui5://other.namespace.not.registered/file/some.xml?param1=true&param2=5");
+		assert.equal(sUnmappedDotsWithUrlParams, sap.ui.loader._.resolveURL("resources/other.namespace.not.registered/file/some.xml?param1=true&param2=5"), "unmapped paths with url params");
+
+		// unmapped paths (slashes) + url params
+		var sUnmappedSlashesWithUrlParams = LoaderExtensions.resolveUI5Url("ui5://other/namespace/not/registered/file/some.xml?param1=true&param2=5");
+		assert.equal(sUnmappedSlashesWithUrlParams, sap.ui.loader._.resolveURL("resources/other/namespace/not/registered/file/some.xml?param1=true&param2=5"), "unmapped paths with url params");
+
+	});
 
 });

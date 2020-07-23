@@ -1460,7 +1460,7 @@ sap.ui.define([
 								}
 							}
 
-							// resolve relative to component
+							// resolve relative to component, ui5:// URLs are already resolved upfront
 							var oAnnotationSourceManifest = mConfig.origin.dataSources[aAnnotations[i]] || oManifest;
 							var sAnnotationUri = oAnnotationSourceManifest._resolveUri(oAnnotationUri).toString();
 
@@ -2763,9 +2763,6 @@ sap.ui.define([
 				aPromises.push(oPromise);
 			} : function() {};
 
-			// lookup the resource roots and call the register API
-			oManifest.defineResourceRoots();
-
 			// lookup the required libraries
 			var mLibs = oManifest.getEntry("/sap.ui5/dependencies/libs");
 			if (mLibs) {
@@ -2857,28 +2854,11 @@ sap.ui.define([
 				phase1Preloads,
 				libs;
 
-			if (oManifest && mOptions.createModels) {
-				collect(oManifest.then(function(oManifest) {
-					// Calculate configurations of preloaded models once the manifest is available
-					mModelConfigs = getPreloadModelConfigsFromManifest(oManifest, oConfig.componentData, hints.cacheTokens, aActiveTerminologies);
-
-					return oManifest;
-				}).then(function(oManifest) {
-					// Create preloaded models directly after the manifest has been loaded
-					if (Object.keys(mModelConfigs.afterManifest).length > 0) {
-						mModels = Component._createManifestModels(mModelConfigs.afterManifest, oManifest.getComponentName());
-					}
-
-					return oManifest;
-				}));
-			}
-
 			phase1Preloads = [];
 
 			// load any required preload bundles
 			if ( Array.isArray(hints.preloadBundles) ) {
 				hints.preloadBundles.forEach(function(vBundle) {
-					//TODO: global jquery call found
 					phase1Preloads.push(
 						sap.ui.loader._.loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true) );
 				});
@@ -2903,29 +2883,73 @@ sap.ui.define([
 			}
 			collect( phase1Preloads );
 
+			// if a hint about "used" components is given, preload those components
+			if ( hints.components ) {
+				Object.keys(hints.components).forEach(function(sComp) {
+					collect(preload(processOptions(hints.components[sComp]), true));
+				});
+			}
+
 			// preload the component itself
 			if (!oManifest) {
 				collect(preload(sName, true));
 			} else {
-				// in case of manifest first we need to load the manifest
-				// to know the component name and preload the component itself
-				collect(oManifest.then(function(oManifest) {
-					var sComponentName = oManifest.getComponentName();
-
+				var aI18nProperties = [];
+				// // we have a manifest, so we can register the module path for the component
+				// // and resolve any "ui5://" pseudo-protocol URLs inside.
+				// // This needs to be done before we create the "afterPreload" models.
+				oManifest = oManifest.then(function(oManifest) {
 					// if a URL is given we register this URL for the name of the component:
 					// the name is the package in which the component is located (dot separated)
+					var sComponentName = oManifest.getComponentName();
+
 					if (typeof sUrl === 'string') {
 						registerModulePath(sComponentName, sUrl);
 					}
 
-					var pPreload = Promise.resolve();
+					// define resource roots, so they can be respected for "ui5://..." URL resolution
+					oManifest.defineResourceRoots();
+
+					oManifest._preprocess({
+						resolveUI5Urls: true,
+						i18nProperties: aI18nProperties
+					});
+
+					return oManifest;
+				});
+
+				// create "afterPreload" models in parallel to loading the component preload (below)
+				if (mOptions.createModels) {
+					collect(oManifest.then(function(oManifest) {
+						// Calculate configurations of preloaded models once the manifest is available
+						mModelConfigs = getPreloadModelConfigsFromManifest(oManifest, oConfig.componentData, hints.cacheTokens, aActiveTerminologies);
+
+						return oManifest;
+					}).then(function(oManifest) {
+						// Create preloaded models directly after the manifest has been loaded
+						if (Object.keys(mModelConfigs.afterManifest).length > 0) {
+							mModels = Component._createManifestModels(mModelConfigs.afterManifest, oManifest.getComponentName());
+						}
+
+						return oManifest;
+					}));
+				}
+
+				// in case of manifest first we need to load the manifest
+				// to know the component name and then preload the component itself
+				collect(oManifest.then(function(oManifest) {
+
 					// preload the component only if not embedded in a library
+					// if the component is embedded in a lib. we expect a matching dependency in the manifest
+					// this way the cascading dependency loading later on will make sure the component itself is available
+					var pPreload = Promise.resolve();
 					if (!oManifest.getEntry("/sap.app/embeddedBy")) {
-						pPreload = preload(sComponentName, true);
+						pPreload = preload(oManifest.getComponentName(), true);
 					}
+
 					return pPreload.then(function() {
-						// after preload is finished, load the i18n resource
-						return oManifest._processI18n(true);
+						// after preload is finished, load the i18n resource and process the placeholder texts
+						return oManifest._processI18n(true, aI18nProperties);
 					}).then(function() {
 						// after i18n resource is finished, the resource models from the manifest are loaded
 
@@ -2975,7 +2999,7 @@ sap.ui.define([
 									}, function(err) {
 										Log.error("Component Manifest: Could not preload ResourceBundle for ResourceModel. " +
 											"The model will be skipped here and tried to be created on Component initialization.",
-											"[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sComponentName);
+											"[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", oManifest.getComponentName());
 										Log.error(err);
 
 										// If the resource bundle can't be loaded, the resource model will be skipped.
@@ -3022,13 +3046,6 @@ sap.ui.define([
 						}
 					}
 				};
-			}
-
-			// if a hint about "used" components is given, preload those components
-			if ( hints.components ) {
-				Object.keys(hints.components).forEach(function(sComp) {
-					collect(preload(processOptions(hints.components[sComp]), true));
-				});
 			}
 
 			// combine given promises
@@ -3239,6 +3256,13 @@ sap.ui.define([
 		}
 
 		if (oManifest) {
+
+			// define resource roots, so they can be respected for "ui5://..." URL resolution
+			oManifest.defineResourceRoots();
+
+			oManifest._preprocess({
+				resolveUI5Urls: true
+			});
 			preloadDependencies(sName, oManifest);
 		}
 		preload(sName);
