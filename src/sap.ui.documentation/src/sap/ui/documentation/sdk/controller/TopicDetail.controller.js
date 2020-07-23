@@ -16,8 +16,10 @@ sap.ui.define([
 		"sap/ui/core/HTML",
 		"sap/base/Log",
 		"sap/m/LightBox",
-		"sap/m/LightBoxItem"
-	], function (jQuery, ResizeHandler, BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler, ResourcesUtil, ResponsiveImageMap, HTML, Log, LightBox, LightBoxItem) {
+		"sap/m/LightBoxItem",
+		"./util/DataTableHelper",
+		"./util/DataTable"
+	], function (jQuery, ResizeHandler, BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler, ResourcesUtil, ResponsiveImageMap, HTML, Log, LightBox, LightBoxItem, DataTableHelper, DataTable) {
 		"use strict";
 
 		var GIT_HUB_DOCS_URL = "https://sap.github.io/openui5-docs/#/",
@@ -34,9 +36,12 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
+				var dataTablesConfigURL;
+
 				this.oPage = this.byId("topicDetailPage");
 				this.oPage.addStyleClass('docuPage');
 				this.oHtml = this.byId("staticContent");
+				this.aWaitingDatatables = [];
 				this.aResponsiveImageMaps = [];
 				this.oLayout = this.byId("staticContentLayout");
 
@@ -47,9 +52,53 @@ sap.ui.define([
 					jQuery.sap.require("sap.ui.documentation.sdk.thirdparty.google-code-prettify.prettify");
 				}
 
+				jQuery.sap.includeStyleSheet("resources/sap/ui/thirdparty/jqueryui/themes/base/jquery.ui.all.css");
+				jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/css/dataTables.jqueryui.css");
+				jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.6.3/css/buttons.jqueryui.css");
+
+				// order is important
+				jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/js/jquery.dataTables.js" })
+					.then(function () {
+						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/js/dataTables.jqueryui.js" });
+					})
+					.then(function () {
+						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.6.3/js/dataTables.buttons.js" });
+					})
+					.then(function () {
+						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.6.3/js/buttons.jqueryui.js" });
+					})
+					.then(function () {
+						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.6.3/js/buttons.html5.js" });
+					})
+					.then(function () {
+						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.6.3/js/buttons.colVis.js" });
+					})
+					.then(function() {
+						this.bDataTablesPluginLoaded = true;
+						this._getDataTableHelper().addMiddlewares();
+
+						// to prevent dom from being not rendered while loading plugin, after fetch is successful
+						// check if we have rendered tables to be transformed to datatable
+						if (this.aWaitingDatatables.length > 0) {
+							this.aWaitingDatatables.forEach(function (oTable) {
+								this._enableDataTable(oTable);
+							}, this);
+							this.aWaitingDatatables = [];
+						}
+					}.bind(this));
+
 				this.getRouter().getRoute("topicId").attachPatternMatched(this._onTopicMatched, this);
 				this.getRouter().getRoute("subTopicId").attachPatternMatched(this._onTopicMatched, this);
 				this._oConfig = this.getConfig();
+				this.oMatchedTopicDataTablesConfig = {};
+
+				dataTablesConfigURL = ResourcesUtil.getResourceOriginPath(this._oConfig.docuPath + 'dataTablesConfig.json');
+
+				jQuery.ajax(dataTablesConfigURL)
+					.success(function(result) {
+						this.dataTablesConfigs = result;
+					}.bind(this))
+					.fail(Log.err);
 
 				this.jsonDefModel = new JSONModel();
 				this.getView().setModel(this.jsonDefModel);
@@ -57,8 +106,9 @@ sap.ui.define([
 
 			onBeforeRendering: function() {
 				var oViewDom = this.getView().getDomRef();
-				if (oViewDom)  {
-					oViewDom.removeEventListener('click', this._onPageClick.bind(this));
+
+				if (oViewDom && this.fnOnPageClickListener)  {
+					oViewDom.removeEventListener('click', this.fnOnPageClickListener);
 				}
 
 				ResizeHandler.deregister(this._onResize.bind(this));
@@ -67,8 +117,10 @@ sap.ui.define([
 
 			onAfterRendering: function() {
 				var oViewDom = this.getView().getDomRef();
+				this.fnOnPageClickListener = this._onPageClick.bind(this);
+
 				if (oViewDom)  {
-					oViewDom.addEventListener('click', this._onPageClick.bind(this));
+					oViewDom.addEventListener('click', this.fnOnPageClickListener);
 				}
 
 				ResizeHandler.register(this.getView().getDomRef(), this._onResize.bind(this));
@@ -132,6 +184,10 @@ sap.ui.define([
 				return this._oLightBox;
 			},
 
+			_getDataTableHelper: function () {
+				return DataTableHelper.getInstance();
+			},
+
 			_onHtmlResourceLoaded: function (htmlContent) {
 				var jsonObj;
 
@@ -174,6 +230,13 @@ sap.ui.define([
 					sTopicId = aUrlParts[0],
 					sSubTopicId = aUrlParts[1];
 
+				this.sTopicId = sTopicId;
+				this.sSubTopicId = sSubTopicId;
+
+				if (this.dataTablesConfigs) {
+					this.oMatchedTopicDataTablesConfig = this.dataTablesConfigs[this.sSubTopicId] || this.dataTablesConfigs[this.sTopicId];
+				}
+
 				this.sTopicURL = ResourcesUtil.getResourceOriginPath(this._oConfig.docuPath + sTopicId + (sTopicId.match(/\.html/) ? "" : ".html"));
 				this.sSubTopicId = event.getParameter("arguments").subId || sSubTopicId;
 
@@ -183,11 +246,11 @@ sap.ui.define([
 			},
 
 			_onHtmlRendered: function () {
-				var newImage,
-					oSection,
+				this._getDataTableHelper().destroyDatatables();
+
+				var oSection,
 					aImagemaps = this.oPage.$().find('#d4h5-main-container .imagemap'),
-					aSrcResult,
-					rex = /<img[^>]+src="([^">]+)/g,
+					aDataTables = this.oPage.$().find('#d4h5-main-container table.datatable'),
 					oDomRef = this.oLayout.getDomRef();
 
 				this._fixExternalLinks(oDomRef);
@@ -203,27 +266,59 @@ sap.ui.define([
 
 				this.aResponsiveImageMaps = [];
 
-				aImagemaps.each(function (index, image) {
-					if (image.complete) {
-						this._addResponsiveImageMap(image);
-					} else {
-						// Image still not loaded
-						// If the src is already set, then the event is firing in the cached case,
-						// before you even get the event handler bound.
-						// Having two images, loading from one src force the second image to wait for
-						// the first to load and takes it's resources without event making new request.
-						newImage = new Image();
-
-						newImage.onload = function () {
-							this._addResponsiveImageMap(image);
-						}.bind(this);
-
-						aSrcResult = rex.exec(image.innerHTML);
-						if (aSrcResult) {
-							newImage.src = aSrcResult && aSrcResult[1];
+				if (aDataTables.length) {
+					aDataTables.each(function (index, table) {
+						if (this.oMatchedTopicDataTablesConfig) {
+							if (this.bDataTablesPluginLoaded) {
+								this._enableDataTable(table);
+							} else {
+								this.aWaitingDatatables.push(table);
+							}
 						}
-					}
+					}.bind(this));
+				}
+
+				aImagemaps.each(function (index, image) {
+					this._enableImageMap(image);
 				}.bind(this));
+
+			},
+
+			_enableImageMap: function(image) {
+				var newImage,
+					aSrcResult,
+					rex = /<img[^>]+src="([^">]+)/g;
+
+				if (image.complete) {
+					this._addResponsiveImageMap(image);
+				} else {
+					// Image still not loaded
+					// If the src is already set, then the event is firing in the cached case,
+					// before you even get the event handler bound.
+					// Having two images, loading from one src force the second image to wait for
+					// the first to load and takes it's resources without event making new request.
+					newImage = new Image();
+
+					newImage.onload = function () {
+						this._addResponsiveImageMap(image);
+					}.bind(this);
+
+					aSrcResult = rex.exec(image.innerHTML);
+					if (aSrcResult) {
+						newImage.src = aSrcResult && aSrcResult[1];
+					}
+				}
+			},
+
+			_enableDataTable: function(oTable) {
+				var sId = oTable.id,
+					oConfig = this.oMatchedTopicDataTablesConfig[sId],
+					oDataTable;
+
+				if (oConfig) {
+					oDataTable = new DataTable().init(sId, oTable, oConfig);
+					this._getDataTableHelper().addDatatable(oDataTable);
+				}
 
 			},
 
@@ -274,6 +369,8 @@ sap.ui.define([
 					fPercent,
 					aColGroupChildren,
 					oColGroups = oElement.querySelectorAll("colgroup");
+
+				oColGroups = [].slice.call(oColGroups); // convert to array
 
 				oColGroups.forEach(function (oColGroup) {
 					fSum = 0;
