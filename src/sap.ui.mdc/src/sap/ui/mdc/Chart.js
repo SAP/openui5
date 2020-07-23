@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
 	"sap/ui/Device",
-	"sap/ui/mdc/chart/ToolbarHandler"
+	"sap/ui/mdc/chart/ToolbarHandler",
+	"sap/ui/mdc/mixin/FilterIntegrationMixin"
 ],
 	function (
 		Core,
@@ -33,7 +34,8 @@ sap.ui.define([
 		Log,
 		deepEqual,
 		Device,
-		ToolbarHandler
+		ToolbarHandler,
+		FilterIntegrationMixin
 	) {
 		"use strict";
 
@@ -317,6 +319,8 @@ sap.ui.define([
 				}
 			}.bind(this));
 		};
+
+		FilterIntegrationMixin.call(Chart.prototype);
 
 		Chart.prototype.init = function () {
 			this._oObserver = new ManagedObjectObserver(this.update.bind(this));
@@ -948,7 +952,7 @@ sap.ui.define([
 
 			// Update binding with sorters
 			if (bRebind) {
-				this._rebind();
+				this.rebind();
 				this._updateSemanticalPattern(oChart, aVisibleMeasures, mDataPoints);
 				this._updateColoring(oChart, aVisibleDimensions, aVisibleMeasures);
 			}
@@ -1088,7 +1092,7 @@ sap.ui.define([
 
 		};
 
-		Chart.prototype._rebind = function() {
+		Chart.prototype.rebind = function() {
 
 			if (!this.bDelegateInitialized) {
 				return;
@@ -1120,44 +1124,6 @@ sap.ui.define([
 			this._renderOverlay(false);
 		};
 
-		Chart.prototype.setFilter = function(vFilter) {
-			if (this._validateFilter(vFilter)) {
-				this._deregisterFilter();
-
-				this.setAssociation("filter", vFilter, true);
-
-				this._registerFilter();
-				this._updateInnerChartNoDataText();
-			}
-
-			return this;
-		};
-
-		Chart.prototype._validateFilter = function(vFilter) {
-			var oFilter = typeof vFilter === "object" ? vFilter : Core.byId(vFilter);
-			if (!oFilter || oFilter.isA(FILTER_INTERFACE)) {
-				return true;
-			}
-			throw new Error("\"" + vFilter + "\" is not valid for association \"filter\" of mdc.Chart. Please use an object that implements \"" + FILTER_INTERFACE + "\" interface");
-		};
-
-		Chart.prototype._registerFilter = function() {
-			var oFilter = Core.byId(this.getFilter());
-			if (oFilter) {
-				oFilter.attachSearch(this._rebind, this);
-				oFilter.attachFiltersChanged(this._onFiltersChanged, this);
-			}
-		};
-
-		Chart.prototype._deregisterFilter = function() {
-			var oFilter = Core.byId(this.getFilter());
-			if (oFilter) {
-				oFilter.detachSearch(this._rebind, this);
-				oFilter.detachFiltersChanged(this._onFiltersChanged, this);
-			}
-		};
-
-
 		Chart.prototype.isInnerChartBound = function() {
 			return this.getAggregation("_chart") ? this.getAggregation("_chart").isBound("data") : false;
 		};
@@ -1186,6 +1152,11 @@ sap.ui.define([
 			this.setProperty("noDataText", sNoData, true);
 			this._updateInnerChartNoDataText();
 			return this;
+		};
+
+		//method provided via FilterIntegrationMixin
+		Chart.prototype._onFilterProvided = function() {
+			this._updateInnerChartNoDataText();
 		};
 
 		Chart.prototype._updateInnerChartNoDataText = function() {
@@ -1293,6 +1264,11 @@ sap.ui.define([
 
 		var _getSortedProperties = function(oChart) {
 			return oChart.getSortConditions() ? oChart.getSortConditions().sorters : [];
+		};
+
+		Chart.prototype.isFilteringEnabled = function() {
+			var aP13nMode = this.getP13nMode() || [];
+			return aP13nMode.indexOf("Filter");
 		};
 
 		/**

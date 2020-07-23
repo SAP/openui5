@@ -122,25 +122,9 @@ sap.ui.define([
 			oAdaptationController.showP13n(oSource, "Sort");
 		},
 
-		retrieveConfiguredFilter: function(oControl) {
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-			return oControl.retrieveInbuiltFilter(oControl._registerInnerFilter, false).then(function(oAdaptationFilterBar){
-				var oFilterConfig = {
-					adaptationUI: oAdaptationFilterBar,
-					applyFilterChangeOn: oAdaptationFilterBar,
-					initializeControl: oAdaptationFilterBar.createFilterFields,
-					containerSettings: {
-						title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
-					}
-				};
-				oControl.enhanceAdaptationConfig({filterConfig: oFilterConfig});
-				return oAdaptationFilterBar;
-			});
-		},
-
 		showP13nFilter: function(oControl, oSource) {
 			var oAdaptationController = oControl.getAdaptationController();
-			TableSettings.retrieveConfiguredFilter(oControl).then(function(){
+			oControl.retrieveInbuiltFilter().then(function(){
 				oAdaptationController.showP13n(oSource, "Filter");
 			});
 		},

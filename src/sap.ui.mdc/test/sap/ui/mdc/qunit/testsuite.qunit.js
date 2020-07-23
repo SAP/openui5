@@ -410,6 +410,11 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 				group: "Mixin",
 				module: "./mixin/AdaptationMixin.qunit",
 				sinon: true
+			},
+			"FilterIntegrationMixin": {
+				group: "Mixin",
+				module: "./mixin/FilterIntegrationMixin.qunit",
+				sinon: true
 			}
 		}
 	};

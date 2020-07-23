@@ -216,7 +216,7 @@ function(
 			var fUpdateInnerChartNoDataText = sinon.spy(this, "_updateInnerChartNoDataText");
 			var fRenderOverlay = sinon.spy(this, "_renderOverlay");
 
-			this._rebind();
+			this.rebind();
 			assert.equal(fIsChartInnerBoundStub.calledOnce, true, "isInnerChartBound correctly called once");
 			assert.equal(fBindAggregationStub.callCount, 0, "bindAggregation correctly never called");
 			assert.equal(fUpdateInnerChartNoDataText.callCount, 0, "_updateInnerChartNoDataText correctly never called");
@@ -253,8 +253,8 @@ function(
 
 			var fGetSortersStub = sinon.stub(this, "_getSorters").returns(oBindingInfo.sorters);
 
-			this._rebind();
-			//called in _rebindChart and for NoData text handling
+			this.rebind();
+			//called in rebind and for NoData text handling
 			assert.equal(fIsChartInnerBoundStub.callCount, 2, "isInnerChartBound correctly called twice");
 			assert.equal(fBindAggregationStub.callCount, 1, "bindAggregation correctly called once");
 			assert.equal(fUpdateInnerChartNoDataText.callCount, 1, "_updateInnerChartNoDataText correctly called once");

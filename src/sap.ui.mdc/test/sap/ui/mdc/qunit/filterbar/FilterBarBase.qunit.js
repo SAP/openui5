@@ -128,4 +128,46 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Check 'valid' promise - do not provide parameter", function(assert){
+        var done = assert.async();
+
+        var oValid = this.oFilterBarBase.valid();
+
+        var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
+
+        oValid.then(function(){
+            assert.ok(true, "Valid Promise resolved");
+            assert.equal(oSearchSpy.callCount, 1, "Search executed by default");
+            done();
+        });
+    });
+
+    QUnit.test("Check 'valid' promise - explicitly fire search", function(assert){
+        var done = assert.async();
+
+        var oValid = this.oFilterBarBase.valid(true);
+
+        var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
+
+        oValid.then(function(){
+            assert.ok(true, "Valid Promise resolved");
+            assert.equal(oSearchSpy.callCount, 1, "Search executed");
+            done();
+        });
+    });
+
+    QUnit.test("Check 'valid' promise - do not fire search", function(assert){
+        var done = assert.async();
+
+        var oValid = this.oFilterBarBase.valid(false);
+
+        var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
+
+        oValid.then(function(){
+            assert.ok(true, "Valid Promise resolved");
+            assert.equal(oSearchSpy.callCount, 0, "No Search executed");
+            done();
+        });
+    });
+
 });
