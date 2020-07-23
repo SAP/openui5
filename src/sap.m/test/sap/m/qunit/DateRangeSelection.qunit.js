@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/test/TestUtils",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/unified/DateTypeRange",
 	"sap/m/DateRangeSelection",
 	"sap/m/DatePicker",
 	"jquery.sap.keycodes",
@@ -22,6 +23,7 @@ sap.ui.define([
 	DateFormat,
 	TestUtils,
 	JSONModel,
+	DateTypeRange,
 	DateRangeSelection,
 	DatePicker,
 	jQuery,
@@ -478,6 +480,35 @@ sap.ui.define([
 		assert.equal(aDates.length, 0, "Passing an empty string as a value: The returned array is empty");
 
 		//clean
+		oDateRangeSelection.destroy();
+	});
+
+	QUnit.test("weekNumberSelect applies new selection", function(assert) {
+		// Arrange
+		var oDateRangeSelection = new DateRangeSelection({
+				dateValue: new Date(2014,1,2),
+				secondDateValue: new Date(2014,1,18)
+			}).placeAt("qunit-fixture"),
+			oStartDate = new Date(2014, 1, 16),
+			oEndDate = new Date(2014, 1, 22);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDateRangeSelection.toggleOpen();
+		oDateRangeSelection._getCalendar().fireWeekNumberSelect({
+			weekNumber: 8,
+			weekDays: new DateTypeRange({
+				startDate: oStartDate,
+				endDate: oEndDate
+			})
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oDateRangeSelection.getDateValue().getTime(), oStartDate.getTime(), "dateValue is at the beginning of the week");
+		assert.equal(oDateRangeSelection.getSecondDateValue().getTime(), oEndDate.getTime(), "secondDateValue is at the end of the week");
+
+		// Clean
 		oDateRangeSelection.destroy();
 	});
 
