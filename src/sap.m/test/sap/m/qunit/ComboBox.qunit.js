@@ -12638,6 +12638,23 @@ sap.ui.define([
 		assert.ok(!oExpectedListGroupHeader.hasStyleClass("sapMLIBFocused"), "The group header does not have visual focus");
 	});
 
+	QUnit.test("No exception should be thrown when setting the initial visual focus after picker opening", function (assert) {
+		// Act
+		this.oComboBox.open();
+
+		// Arrange
+		var oGetFocusDomRefStub = this.stub(this.oComboBox, "getFocusDomRef", function() { return null; });
+
+		// Act
+		this.oComboBox.handleListItemsVisualFocus();
+
+		// Assert
+		assert.ok(true, "item11", "No exception is thrown if no control has been rendered in the dom the but initial focus is tried to be added after opening");
+
+		// Cleanup
+		oGetFocusDomRefStub.restore();
+	});
+
 	QUnit.test("Grouping with models", function (assert) {
 		// Setup
 		var oData = {
