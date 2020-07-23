@@ -1211,8 +1211,9 @@ sap.ui.define([
 		 *
 		 * @param {object} assert
 		 *   The QUnit assert object
-		 * @param {string} sExpectedEventSourcePrefix
-		 *   Expected prefix of event source's <code>this.toString()</code> representation
+		 * @param {object|string} vExpectedEventSourcePrefix
+		 *   Expected prefix of event source's <code>this.toString()</code> representation; an
+		 *   object is transformed into a string
 		 * @param {object[]} aExpectedEvents
 		 *   Expected events, each as <code>[this.toString(), sEventId, mParameters]</code> from the
 		 *   perspective of {@link sap.ui.base.EventProvider#fireEvent}. For convenience,
@@ -1221,8 +1222,9 @@ sap.ui.define([
 		 *   parameters.
 		 * @returns {object} The test instance for chaining
 		 */
-		expectEvents : function (assert, sExpectedEventSourcePrefix, aExpectedEvents) {
-			var that = this;
+		expectEvents : function (assert, vExpectedEventSourcePrefix, aExpectedEvents) {
+			var sExpectedEventSourcePrefix = String(vExpectedEventSourcePrefix),
+				that = this;
 
 			EventProvider.prototype.fireEvent = function (sEventId, mParameters) {
 				var sThis = this.toString();
@@ -1230,7 +1232,8 @@ sap.ui.define([
 				if (sThis.startsWith(sExpectedEventSourcePrefix)) {
 					var aDetails = [sThis, sEventId, mParameters];
 
-					assert.deepEqual(aDetails, that.aExpectedEvents.shift());
+					assert.deepEqual(aDetails, that.aExpectedEvents.shift(),
+						JSON.stringify(aDetails));
 				}
 				return fnFireEvent.apply(this, arguments); // "call through"
 			};
@@ -1238,7 +1241,7 @@ sap.ui.define([
 			aExpectedEvents.forEach(function (aExpectedDetails) {
 				aExpectedDetails[0] = aExpectedDetails[0] || "";
 				if (!aExpectedDetails[0].startsWith(sExpectedEventSourcePrefix)) {
-					aExpectedDetails[0] += sExpectedEventSourcePrefix;
+					aExpectedDetails[0] = sExpectedEventSourcePrefix + aExpectedDetails[0];
 				}
 				if (aExpectedDetails.length === 2) {
 					aExpectedDetails[2] = undefined;
@@ -2090,12 +2093,12 @@ sap.ui.define([
 			that = this;
 
 		this.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /SalesOrderList", [
-				[, "change", {"detailedReason" : "AddVirtualContext", "reason" : "change"}],
-				[, "change", {"detailedReason" : "RemoveVirtualContext", "reason" : "change"}],
-				[, "refresh", {"reason" : "refresh"}],
+				[, "change", {detailedReason : "AddVirtualContext", reason : "change"}],
+				[, "change", {detailedReason : "RemoveVirtualContext", reason : "change"}],
+				[, "refresh", {reason : "refresh"}],
 				[, "dataRequested"],
-				[, "change", {"reason" : "change"}],
-				[, "dataReceived", {"data" : {}}]
+				[, "change", {reason : "change"}],
+				[, "dataReceived", {data : {}}]
 			])
 			.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
 				value : [
@@ -2109,8 +2112,8 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oBinding = that.oView.byId("table").getBinding("rows");
 
-			that.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /SalesOrderList", [
-					[, "change", {"reason" : "change"}]
+			that.expectEvents(assert, oBinding, [
+					[, "change", {reason : "change"}]
 				])
 				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=3&$top=9", {
 					value : [
@@ -2160,12 +2163,12 @@ sap.ui.define([
 			var oBinding = that.oView.byId("table").getBinding("rows");
 
 			that.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /SalesOrderList|", [
-					[, "change", {"detailedReason" : "AddVirtualContext", "reason" : "context"}],
-					[, "change", {"detailedReason" : "RemoveVirtualContext", "reason" : "change"}],
-					[, "refresh", {"reason" : "refresh"}],
+					[, "change", {detailedReason : "AddVirtualContext", reason : "context"}],
+					[, "change", {detailedReason : "RemoveVirtualContext", reason : "change"}],
+					[, "refresh", {reason : "refresh"}],
 					[, "dataRequested"],
-					[, "change", {"reason" : "change"}],
-					[, "dataReceived", {"data" : {}}]
+					[, "change", {reason : "change"}],
+					[, "dataReceived", {data : {}}]
 				]).expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
 					value : [
 						{SalesOrderID : "01", Note : "Note 1"},
@@ -5274,8 +5277,6 @@ sap.ui.define([
 	QUnit.test("Refresh a suspended binding hierarchy", function (assert) {
 		var oBinding,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
-			bPropertyEvent,
-			bTableEvent,
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'0500000001\')}">\
 	<Text id="note" text="{Note}"/>\
@@ -5320,7 +5321,26 @@ sap.ui.define([
 			// Do not immediately resume to see that no requests are triggered by refresh
 			return resolveLater();
 		}).then(function () {
-			that.expectRequest("SalesOrderList('0500000001')?$select=Note,SalesOrderID",
+			that.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
+					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "refresh",
+						{reason : "refresh"}],
+					["ContextBinding: /SalesOrderList('0500000001')", "change",
+						{reason : "refresh"}],
+					["ContextBinding: /SalesOrderList('0500000001')", "dataRequested"],
+					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "dataRequested"],
+					["ContextBinding: /SalesOrderList('0500000001')", "dataReceived", {data : {}}],
+					["PropertyBinding: /SalesOrderList('0500000001')|Note", "change",
+						{reason : "refresh"}],
+					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "change",
+						{reason : "change"}],
+					["ListBinding: /SalesOrderList('0500000001')|SO_2_SOITEM", "dataReceived",
+						{data : {}}],
+					["PropertyBinding: /SalesOrderList('0500000001')/SO_2_SOITEM|$count", "change",
+						{reason : "change"}],
+					["PropertyBinding: /SalesOrderList('0500000001')/SO_2_SOITEM/2[2]|ItemPosition",
+						"change", {reason : "change"}]
+				])
+				.expectRequest("SalesOrderList('0500000001')?$select=Note,SalesOrderID",
 					{SalesOrderID : "0500000001", Note : "refreshed"})
 				.expectRequest("SalesOrderList('0500000001')/SO_2_SOITEM?$select=ItemPosition,"
 					+ "SalesOrderID&$skip=0&$top=100", {
@@ -5334,28 +5354,10 @@ sap.ui.define([
 				.expectChange("note", "refreshed")
 				.expectChange("item", [,, "0000000030"]);
 
-			// expect event only for ODLB because ODCB doesn't fire a change event
-			that.oView.byId("table").getBinding("items")
-				.attachEventOnce("refresh", function (oEvent) {
-					bTableEvent = true;
-					assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Refresh,
-						"Table change event");
-			});
-
-			that.oView.byId("note").getBinding("text")
-				.attachEventOnce("change", function (oEvent) {
-					bPropertyEvent = true;
-					assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Refresh,
-						"ID property change event");
-			});
-
 			// code under test
 			oBinding.resume();
 
 			return that.waitForChanges(assert);
-		}).then(function () {
-			assert.ok(bTableEvent, "got TableEvent");
-			assert.ok(bPropertyEvent, "got PropertyEvent");
 		});
 	});
 
@@ -10650,12 +10652,12 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES", [
-					[, "change", {"detailedReason" : "AddVirtualContext", "reason" : "change"}],
-					[, "change", {"detailedReason" : "RemoveVirtualContext", "reason" : "change"}],
-					[, "refresh", {"reason" : "refresh"}],
+					[, "change", {detailedReason : "AddVirtualContext", reason : "change"}],
+					[, "change", {detailedReason : "RemoveVirtualContext", reason : "change"}],
+					[, "refresh", {reason : "refresh"}],
 					[, "dataRequested"],
-					[, "change", {"reason" : "change"}],
-					[, "dataReceived", {"data" : {}}]
+					[, "change", {reason : "change"}],
+					[, "dataReceived", {data : {}}]
 				])
 				.expectRequest({
 					method : "GET",
@@ -13677,7 +13679,16 @@ sap.ui.define([
 				.sort(new Sorter("CompanyName"))
 				.changeParameters({$filter : "BusinessPartnerID gt '0100000001'"});
 
-			that.expectRequest("BusinessPartnerList?$filter=BusinessPartnerRole eq '01' "
+			that.expectEvents(assert, oBinding, [
+					[, "change", {detailedReason : "AddVirtualContext", reason : "filter"}],
+					[, "change", {reason : "add"}], //TODO does this really work as expected?
+					[, "change", {detailedReason : "RemoveVirtualContext", reason : "change"}],
+					[, "refresh", {reason : "refresh"}],
+					[, "dataRequested"], //TODO why not before RemoveVirtualContext?
+					[, "change", {reason : "change"}],
+					[, "dataReceived", {data : {}}]
+				])
+				.expectRequest("BusinessPartnerList?$filter=BusinessPartnerRole eq '01' "
 				+ "and (BusinessPartnerID gt '0100000001')&$orderby=CompanyName"
 				+ "&$select=BusinessPartnerID&$skip=0&$top=99", {
 					value : [{
@@ -13691,10 +13702,6 @@ sap.ui.define([
 					"0100000002",
 					"0100000003"
 				]);
-
-			oBinding.attachEventOnce("change", function (oEvent) {
-				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Filter);
-			});
 
 			// code under test
 			oBinding.resume();
@@ -13748,7 +13755,15 @@ sap.ui.define([
 
 			oBinding.setAggregation({groupLevels : ["BusinessPartnerRole"]});
 
-			that.expectRequest("BusinessPartnerList?$apply=groupby((BusinessPartnerRole))"
+			that.expectEvents(assert, oBinding, [
+					[, "change", {detailedReason : "AddVirtualContext", reason : "filter"}],
+					[, "dataRequested"],
+					[, "change", {detailedReason : "RemoveVirtualContext", reason : "change"}],
+					[, "refresh", {reason : "refresh"}],
+					[, "change", {reason : "change"}],
+					[, "dataReceived", {data : {}}]
+				])
+				.expectRequest("BusinessPartnerList?$apply=groupby((BusinessPartnerRole))"
 				+ "&$count=true&$skip=0&$top=100", {
 					value : [{
 						BusinessPartnerRole : "01"
@@ -13757,10 +13772,6 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("role", ["01", "02"]);
-
-			oBinding.attachEventOnce("change", function (oEvent) {
-				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Filter);
-			});
 
 			// code under test
 			oBinding.resume();
@@ -19277,7 +19288,7 @@ sap.ui.define([
 			var oError1 = new Error("404 Not Found"),
 				oError2 = new Error("404 Not Found");
 
-			that.oLogMock.expects("error").twice()
+			that.oLogMock.expects("error")
 				.withExactArgs("Failed to read path /TEAMS('TEAM_01')/Team_Id",
 					sinon.match.string, "sap.ui.model.odata.v4.ODataPropertyBinding");
 			that.oLogMock.expects("error")
@@ -25599,8 +25610,7 @@ sap.ui.define([
 	<Text id="name" text="{TEAM_2_EMPLOYEES/Name}"/>\
 </FlexBox>';
 
-		// once from initialize and once from the context's checkUpdate
-		this.oLogMock.expects("error").twice()
+		this.oLogMock.expects("error")
 			.withArgs("Failed to drill-down into TEAM_2_EMPLOYEES/Name, invalid segment: Name");
 
 		this.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"

@@ -39,10 +39,8 @@ sap.ui.define([
 		this.mLateQueryOptions = undefined;
 		// the absolute binding path (possibly reduced if the binding uses a parent binding's cache)
 		this.sReducedPath = undefined;
-		// change reason to be used when the binding is resumed, defaults to "Change" for the case
-		// that the binding is created while its root binding is suspended; otherwise it is set
-		// accordingly in suspend
-		this.sResumeChangeReason = ChangeReason.Change;
+		// change reason to be used when the binding is resumed
+		this.sResumeChangeReason = undefined;
 	}
 
 	/**
@@ -218,6 +216,8 @@ sap.ui.define([
 	 * @function
 	 * @name sap.ui.model.odata.v4.ODataBinding#checkUpdateInternal
 	 * @private
+	 * @see #checkUpdate
+	 * @see sap.ui.model.Binding#checkUpdate
 	 */
 
 	/**
@@ -1049,14 +1049,6 @@ sap.ui.define([
 			this.sResumeChangeReason = sChangeReason;
 		}
 	};
-
-	/**
-	 * Suspends this binding and all dependent bindings.
-	 * @abstract
-	 * @function
-	 * @name sap.ui.model.odata.v4.ODataBinding#suspendInternal
-	 * @private
-	 */
 
 	/**
 	 * Returns a string representation of this object including the binding path. If the binding is

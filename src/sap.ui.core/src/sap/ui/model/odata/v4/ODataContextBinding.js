@@ -428,7 +428,8 @@ sap.ui.define([
 	 * @param {object} mParameters
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
-	 *   A change reason, used to distinguish calls by {@link #constructor} from calls by
+	 *   A change reason (either <code>undefined</code> or <code>ChangeReason.Change</code>), only
+	 *   used to distinguish calls by {@link #constructor} from calls by
 	 *   {@link sap.ui.model.odata.v4.ODataParentBinding#changeParameters}
 	 *
 	 * @private
@@ -437,21 +438,13 @@ sap.ui.define([
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
 
-		// Note: sChangeReason can only be "undefined" or "change", because "filter" or "sort"
-		// change reason are not suitable for a context binding.
 		if (this.isRootBindingSuspended()) {
 			this.sResumeChangeReason = ChangeReason.Change;
-
-			return;
-		}
-
-		if (!this.oOperation) {
+		} else if (!this.oOperation) {
 			this.fetchCache(this.oContext);
 			if (sChangeReason) {
 				this.refreshInternal("", undefined, true)
 					.catch(function () {/*avoid "Uncaught (in promise)"*/});
-			} else {
-				this.checkUpdate();
 			}
 		} else if (this.oOperation.bAction === false) {
 			this.execute();
@@ -1080,8 +1073,12 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#initialize
 	ODataContextBinding.prototype.initialize = function () {
-		if (this.isResolved() && !this.getRootBinding().isSuspended()) {
-			this._fireChange({reason : ChangeReason.Change});
+		if (this.isResolved()) {
+			if (this.getRootBinding().isSuspended()) {
+				this.sResumeChangeReason = ChangeReason.Change;
+			} else {
+				this._fireChange({reason : ChangeReason.Change});
+			}
 		}
 	};
 

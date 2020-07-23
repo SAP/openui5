@@ -221,11 +221,9 @@ sap.ui.define([
 	 *   no longer the active cache when the response arrives
 	 *
 	 * @private
-	 * @see sap.ui.model.Binding#checkUpdate
-	 * @see sap.ui.model.ODataBinding#checkUpdateInternal
 	 * @see sap.ui.model.PropertyBinding#checkDataState
 	 */
-	// @override
+	// @override sap.ui.model.odata.v4.ODataBinding#checkUpdateInternal
 	ODataPropertyBinding.prototype.checkUpdateInternal = function (bForceUpdate, sChangeReason,
 			sGroupId, vValue) {
 		var bDataRequested = false,
@@ -452,6 +450,17 @@ sap.ui.define([
 		return false;
 	};
 
+	// @override sap.ui.model.Binding#initialize
+	ODataPropertyBinding.prototype.initialize = function () {
+		if (this.isResolved()) {
+			if (this.getRootBinding().isSuspended()) {
+				this.sResumeChangeReason = ChangeReason.Change;
+			} else {
+				this.checkUpdate(true);
+			}
+		}
+	};
+
 	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#isMeta
@@ -596,12 +605,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.resumeInternal = function (bCheckUpdate) {
+		var sResumeChangeReason = this.sResumeChangeReason;
+
+		this.sResumeChangeReason = undefined;
+
 		this.fetchCache(this.oContext);
 		if (bCheckUpdate) {
-			this.checkUpdateInternal(false, this.sResumeChangeReason);
+			this.checkUpdateInternal(false, sResumeChangeReason);
 		}
-		// the change event is fired asynchronously, so it is safe to reset here
-		this.sResumeChangeReason = ChangeReason.Change;
 	};
 
 	/**
@@ -738,12 +749,6 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.suspend = function () {
 		throw new Error("Unsupported operation: suspend");
 	};
-
-	/**
-	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#suspendInternal
-	 */
-	ODataPropertyBinding.prototype.suspendInternal = function () {};
 
 	/**
 	 * @override

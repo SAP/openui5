@@ -385,7 +385,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	// @override
+	// @override sap.ui.model.odata.v4.ODataBinding#checkUpdateInternal
 	ODataParentBinding.prototype.checkUpdateInternal = function (bForceUpdate) {
 		var that = this;
 
@@ -1263,25 +1263,6 @@ sap.ui.define([
 		});
 		this.oResumePromise.$resolve = fnResolve;
 		this.removeReadGroupLock();
-		this.suspendInternal();
-	};
-
-	/**
-	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#suspendInternal
-	 */
-	ODataParentBinding.prototype.suspendInternal = function () {
-		// Only if the cache is currently being determined or has not sent a request yet (except
-		// shared caches), we have to fire a change event to inform the UI while resuming.
-		this.sResumeChangeReason
-			= this.oCache === undefined
-			|| this.oCache && (!this.oCache.bSentRequest || this.oCache.bSharedRequest)
-				? ChangeReason.Change
-				: undefined;
-
-		this.getDependentBindings().forEach(function (oBinding) {
-			oBinding.suspendInternal();
-		});
 	};
 
 	/**

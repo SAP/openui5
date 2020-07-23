@@ -224,7 +224,7 @@ sap.ui.define([
 				this.oCachePromise = SyncPromise.resolve({});
 			});
 		this.mock(oBinding).expects("refreshInternal").never();
-		this.mock(oBinding).expects("checkUpdate").withExactArgs();
+		this.mock(oBinding).expects("checkUpdate").never();
 		this.mock(oBinding).expects("execute").never();
 
 		// code under test
@@ -292,7 +292,7 @@ sap.ui.define([
 			oBindingMock.expects("execute").never();
 
 			// code under test (as called by ODataParentBinding#changeParameters)
-			oBinding.applyParameters(mParameters, ChangeReason.Filter);
+			oBinding.applyParameters(mParameters, ChangeReason.Change);
 
 			assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
 			assert.strictEqual(oBinding.mParameters, mParameters);
@@ -3293,14 +3293,24 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("resumeInternal: initial binding", function (assert) {
-		var oBinding = this.bindContext("/EMPLOYEES('42')");
+		var oBinding = this.bindContext("/EMPLOYEES('42')"),
+			oBindingMock = this.mock(oBinding);
 
+		oBindingMock.expects("_fireChange").never();
 		oBinding.suspend();
-
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
 
 		// code under test
-		oBinding.resume();
+		oBinding.initialize();
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+
+		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		oBinding.resumeInternal();
+
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
 	});
 
 	//*********************************************************************************************

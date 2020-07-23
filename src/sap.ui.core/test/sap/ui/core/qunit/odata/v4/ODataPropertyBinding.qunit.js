@@ -336,7 +336,7 @@ sap.ui.define([
 		QUnit.test("checkUpdateInternal(" + bForceUpdate + "): unchanged", function (assert) {
 			var that = this;
 
-			return this.createTextBinding(assert, 2).then(function (oBinding) {
+			return this.createTextBinding(assert, 3).then(function (oBinding) {
 				var bGotChangeEvent = false;
 
 				oBinding.attachChange(function () {
@@ -346,8 +346,12 @@ sap.ui.define([
 				// checkDataState is called independently of bForceUpdate
 				that.mock(oBinding).expects("checkDataState").withExactArgs();
 
-				// code under test
-				oBinding.checkUpdateInternal(bForceUpdate).then(function () {
+				return Promise.all([
+					// code under test
+					oBinding.checkUpdateInternal(bForceUpdate),
+					// code under test
+					oBinding.checkUpdateInternal() // must not override previous bForceUpdate
+				]).then(function () {
 					assert.strictEqual(bGotChangeEvent, bForceUpdate,
 						"got change event as expected");
 				});
@@ -439,7 +443,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve("foo"));
 		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 			.withExactArgs("/.../relative")
-			.returns(new SyncPromise(function () {})); // does not resolve
+			.returns(new SyncPromise(function () {})); // does not resolve!
 
 		// code under test
 		oBinding.checkUpdateInternal(true);
@@ -640,6 +644,7 @@ sap.ui.define([
 			that.mock(oBinding).expects("deregisterChange").withExactArgs();
 			assert.strictEqual(oBinding.getValue(), "value", "value before context reset");
 			oBinding.attachChange(fnChangeHandler, oBinding);
+			//TODO code under test? how does this fit the title?
 			oBinding.setContext(); // reset context triggers checkUpdate
 		});
 	});
@@ -662,7 +667,7 @@ sap.ui.define([
 			});
 
 			// code under test
-			oBinding.checkUpdateInternal(false).then(function () {
+			return oBinding.checkUpdateInternal(false).then(function () {
 				assert.strictEqual(oBinding.getValue(), undefined,
 					"read error resets the value");
 				assert.ok(bChangeReceived, "Value changed -> expecting change event");
@@ -687,7 +692,7 @@ sap.ui.define([
 			});
 
 			// code under test
-			oBinding.checkUpdateInternal(true);
+			return oBinding.checkUpdateInternal(true);
 		});
 	});
 
@@ -766,6 +771,8 @@ sap.ui.define([
 
 			assert.ok(oPromise.isFulfilled());
 			assert.strictEqual(oBinding.getValue(), vValue);
+
+			return oPromise;
 		});
 	});
 
@@ -1153,9 +1160,9 @@ sap.ui.define([
 		oBinding.setType(new TypeString());
 		assert.ok(!bChangeReceived, "No Change event while initial");
 
-		oBinding.checkUpdateInternal(false).then(function () {
+		return oBinding.checkUpdateInternal(false).then(function () {
 			assert.strictEqual(oBinding.getValue(), "foo");
-			oBinding.checkUpdateInternal(false).then(function () {
+			return oBinding.checkUpdateInternal(false).then(function () {
 				assert.strictEqual(oBinding.getValue(), undefined, "Value reset");
 				assert.ok(bChangeReceived, "Change event received");
 				done();
@@ -1273,7 +1280,8 @@ sap.ui.define([
 					oBinding.attachChange(done);
 					setTimeout(function () {
 						// only with force update, failed type is requested again
-						oBinding.checkUpdate(bForceUpdate);
+						oBinding.checkUpdateInternal(bForceUpdate);
+						//TODO return promise from above?!
 					}, 0);
 				}
 
@@ -1389,7 +1397,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[undefined, "$direct"].forEach(function (sGroupId) {
-		QUnit.test("initialize, binding group ID " + sGroupId , function (assert) {
+		QUnit.test("checkUpdateInternal, binding group ID " + sGroupId , function (assert) {
 			var oBinding = this.oModel.bindProperty("/absolute", undefined, {$$groupId : sGroupId}),
 				sExpectedGroupId = sGroupId,
 				oGroupLock = {},
@@ -1410,10 +1418,54 @@ sap.ui.define([
 				.callsArg(2)
 				.returns(oReadPromise);
 
-			oBinding.initialize();
-
-			return Promise.all([oTypePromise, oReadPromise]);
+			// code under test
+			return oBinding.checkUpdateInternal();
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize", function (assert) {
+		var oBinding = this.oModel.bindProperty("/absolute");
+
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oBinding);
+		this.mock(oBinding).expects("isSuspended").withExactArgs().returns(false);
+		this.mock(oBinding).expects("checkUpdate").withExactArgs(true);
+
+		// code under test
+		oBinding.initialize();
+
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize: unresolved", function (assert) {
+		var oBinding = this.oModel.bindProperty("relative");
+
+		this.mock(oBinding).expects("getRootBinding").never();
+		this.mock(oBinding).expects("checkUpdate").never();
+
+		// code under test
+		oBinding.initialize();
+
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize: suspended", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
+			oBinding = this.oModel.bindProperty("relative", oContext),
+			oRootBinding = {
+				isSuspended : function () {}
+			};
+
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("checkUpdate").never();
+
+		// code under test
+		oBinding.initialize();
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 	});
 
 	//*********************************************************************************************
@@ -1998,12 +2050,13 @@ sap.ui.define([
 			oBinding.sResumeChangeReason = sResumeChangeReason;
 			oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
 			oBindingMock.expects("checkUpdateInternal").exactly(bCheckUpdate ? 1 : 0)
-				.withExactArgs(false, sinon.match.same(sResumeChangeReason));
+				.withExactArgs(false, sinon.match.same(sResumeChangeReason))
+				.callsFake(function () {
+					assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+				});
 
 			// code under test
 			oBinding.resumeInternal(bCheckUpdate);
-
-			assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 		});
 	});
 
@@ -2073,16 +2126,6 @@ sap.ui.define([
 		return oPromise.then(function (vValue) {
 			assert.strictEqual(vValue, "42");
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("suspendInternal has empty implementation", function (assert) {
-		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
-
-		Object.freeze(oBinding); // ensures that suspendInternal does not change the binding
-
-		// code under test
-		assert.strictEqual(oBinding.suspendInternal(), undefined);
 	});
 
 	//*********************************************************************************************
