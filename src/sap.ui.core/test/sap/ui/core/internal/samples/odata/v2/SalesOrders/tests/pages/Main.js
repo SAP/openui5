@@ -15,19 +15,24 @@ sap.ui.define([
 			Note : 7
 		},
 		mMessageShort2Message = {
+			approval : "For a quantity greater than 1 you need an approval reason",
 			empty : "",
-			error : "Error: My error message",
-			errorNoPrefix : "My error message",
-			info : "Info: My info message",
-			infoNoPrefix : "My info message",
+			error : "My error message",
+			info : "My info message",
 			maintenance : "System maintenance starts in 2 hours",
-			none : "No message",
 			note : "Enter an Item Note",
 			order : "Order at least 2 EA of product 'HT-1000'",
+			success : "My success message",
+			warning : "My warning message"
+		},
+		mNoteShort2Note = {
+			error : "Error: My error message",
+			errorNoPrefix : "My error Message",
+			info : "Info: My info message",
+			none : "No message",
+			reason : "Reason: do it",
 			success : "Success: My success message",
-			successNoPrefix : "My success message",
-			warning : "Warning: My warning message",
-			warningNoPrefix : "My warning message"
+			warning : "Warning: My warning message"
 		},
 		rMessageDetails = /messageDetails/,
 		rObjectPage = /objectPage/,
@@ -76,12 +81,12 @@ sap.ui.define([
 			actions : {
 				/*
 				 * Changes the note of the item at the given position to a message from
-				 * <code>mMessageShort2Message</code>.
+				 * <code>mNoteShort2Note</code>.
 				 *
 				 * @param {number} iRow
 				 *   The item position in the table, with the top being 0
 				 * @param {string} sNewNote
-				 *   A message shortcut refering to <code>mMessageShort2Message</code>
+				 *   A message shortcut refering to <code>mNoteShort2Note</code>
 				 */
 				changeItemNote : function (iRow, sNewNote) {
 					return this.waitFor({
@@ -89,7 +94,7 @@ sap.ui.define([
 						matchers : function (oTable) {
 							return oTable.getRows()[iRow].getCells()[mColumn.Note];
 						},
-						actions : new EnterText({text : mMessageShort2Message[sNewNote]}),
+						actions : new EnterText({text : mNoteShort2Note[sNewNote]}),
 						viewName : sViewName
 					});
 				},
@@ -611,7 +616,7 @@ sap.ui.define([
 				 * combination of item position and a message string.
 				 *
 				 * @param {string} sItemPosition The item position property
-				 * @param {string} sMessage The key of a message in
+				 * @param {string} [sMessageShort] The key of a message in
 				 *   <code>mMessageShort2Message</code> which should not be shown
 				 */
 				checkMessageNotInPopover : function (sItemPosition, sMessageShort) {
@@ -621,8 +626,10 @@ sap.ui.define([
 							var aMessages = oPopover.getItems();
 
 							aMessages = (aMessages || []).filter(function (oMessage) {
-								return oMessage.getTitle() === mMessageShort2Message[sMessageShort]
-									&& oMessage.getSubtitle().includes(sItemPosition);
+								return sMessageShort
+									? oMessage.getTitle() === mMessageShort2Message[sMessageShort]
+										&& oMessage.getSubtitle().includes(sItemPosition)
+									: oMessage.getSubtitle().includes(sItemPosition);
 							});
 
 							switch (aMessages.length) {
@@ -776,26 +783,34 @@ sap.ui.define([
 					});
 				},
 				/*
-				 * Checks if the note field has the correct value state. If it has, the border
-				 * color and correct message will be displayed.
+				 * Checks if the specified field has the correct value state and value state text.
+				 * If it has, the border color and correct message will be displayed.
 				 *
-				 * @param {number} iRow The position of the item in the table
-				 * @param {string} sExpectedValueState The expected value state of the note field
-				 * @param {string} sMessageShort Key in <code>mMessageShort2Message</code> for the
-				 *   expected text below the note field
+				 * @param {number} iRow
+				 *   The position of the item in the table
+				 * @param {string} sField
+				 *   The field as key from <code>mColumn</code>
+				 * @param {string} sExpectedValueState
+				 *   The expected value state of the field
+				 * @param {string} [sMessageShort]
+				 *   Key in <code>mMessageShort2Message</code> for the expected text below the note
+				 *   field; leave empty if no message is expected
 				 */
-				checkValueStateOfNoteField : function (iRow, sExpectedValueState,
+				checkValueStateOfField : function (iRow, sField, sExpectedValueState,
 					sMessageShort) {
 					return this.waitFor({
 						id : "ToLineItems",
 						success : function (oTable) {
-							var oNoteField = oTable.getRows()[iRow].getCells()[mColumn.Note];
-							Opa5.assert.equal(oNoteField.getValueState(), sExpectedValueState,
-								"The note field in row " + iRow +
+							var oSelectedField = oTable.getRows()[iRow].getCells()[mColumn[sField]];
+
+							sMessageShort = sMessageShort || "empty";
+
+							Opa5.assert.equal(oSelectedField.getValueState(), sExpectedValueState,
+								"The " + sField + " in row " + iRow +
 									" has the correct value state");
-							Opa5.assert.equal(oNoteField.getValueStateText(),
+							Opa5.assert.equal(oSelectedField.getValueStateText(),
 								mMessageShort2Message[sMessageShort],
-								"The note field in row " + iRow +
+								"The " + sField + " in row " + iRow +
 									" has the correct value state");
 						},
 						viewName : sViewName

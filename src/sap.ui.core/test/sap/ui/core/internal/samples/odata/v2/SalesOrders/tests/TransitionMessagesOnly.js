@@ -34,7 +34,7 @@ sap.ui.define([
 
 		When.onMainPage.toggleMessagePopover();
 		Then.onMainPage.checkMessagePopoverOpen();
-		Then.onMainPage.checkMessageNotInPopover("050", "warningNoPrefix");
+		Then.onMainPage.checkMessageNotInPopover("050", "warning");
 		When.onMainPage.toggleMessagePopover();
 
 		When.onMainPage.scrollTable(1);
@@ -42,7 +42,7 @@ sap.ui.define([
 
 		When.onMainPage.toggleMessagePopover();
 		Then.onMainPage.checkMessagePopoverOpen();
-		Then.onMainPage.checkMessageInPopover("050", "warningNoPrefix");
+		Then.onMainPage.checkMessageInPopover("050", "warning");
 		When.onMainPage.toggleMessagePopover();
 
 		Given.iTeardownMyApp();
