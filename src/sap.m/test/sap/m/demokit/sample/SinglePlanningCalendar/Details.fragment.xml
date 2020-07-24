@@ -5,7 +5,7 @@
 	<ResponsivePopover
 			id="appTitle"
 			title="{title}"
-			class="sapUiPopupWithPadding"
+			class="sapUiResponsivePadding--header"
 			placement="Auto">
 		<beginButton>
 			<Button text="Edit" type="Emphasized" press="handleEditButton"/>
