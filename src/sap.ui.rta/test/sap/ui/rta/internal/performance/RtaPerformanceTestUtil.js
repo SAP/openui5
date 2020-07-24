@@ -43,7 +43,8 @@ sap.ui.define([
 			return oManifest;
 		},
 		getModel: function () {},
-		getLocalId: function() {}
+		getLocalId: function() {},
+		getComponentData: function () {}
 	};
 
 	var Util = {
@@ -60,7 +61,8 @@ sap.ui.define([
 
 		_defineTestStubs: function() {
 			sandbox.stub(FlexSettings, "getInstance").returns(Promise.resolve({
-				isProductiveSystem: function() { return false; }
+				isProductiveSystem: function() { return false; },
+				isVersioningEnabled: function () { return false; }
 			}));
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
