@@ -1585,7 +1585,7 @@ function(
 	 *
 	 * @param  {object}  oReloadInfo - Contains the information needed to return the correct reload message
 	 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if sap-ui-fl-max-layer parameter is present in the url
-	 * @param  {boolean} oReloadInfo.hasDraftChanges - Indicates if a draft is available
+	 * @param  {boolean} oReloadInfo.hasDirtyDraftChanges - Indicates if a draft is available
 	 * @param  {boolean} oReloadInfo.changesNeedReload - Indicates if app descriptor changes need hard reload
 	 * @param  {boolean} oReloadInfo.initialDraftGotActivated - Indicates if a draft got activated and had a draft initially when entering UI adaptation
 
@@ -1597,10 +1597,12 @@ function(
 		var sReason;
 		var bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
 
-		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.hasDraftChanges) {
-			sReason = bIsCustomerLayer ? "PERSONALIZATION_AND_WITHOUT_DRAFT" : "MSG_RELOAD_WITH_ALL_CHANGES";
-		} else if (oReloadInfo.hasHigherLayerChanges) {
-			sReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
+		if (oReloadInfo.hasHigherLayerChanges) {
+			if (oReloadInfo.hasDirtyDraftChanges) {
+				sReason = bIsCustomerLayer ? "PERSONALIZATION_AND_WITHOUT_DRAFT" : "MSG_RELOAD_WITH_ALL_CHANGES";
+			} else {
+				sReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
+			}
 		} else if (oReloadInfo.initialDraftGotActivated) {
 			sReason = "MSG_RELOAD_ACTIVATED_DRAFT";
 		} else if (oReloadInfo.hasDraftChanges) {
@@ -1702,13 +1704,13 @@ function(
 		if (bSkipRestart) {
 			return Promise.resolve({reloadMethod: this._RELOAD.NOT_NEEDED});
 		}
-		return Promise.all([
-			(!this._bReloadNeeded) ? this._oSerializer.needsReload() : Promise.resolve(this._bReloadNeeded)
-		]).then(function (aChangesNeedReload) {
+
+		var oReloadPromise = this._bReloadNeeded ? Promise.resolve(this._bReloadNeeded) : this._oSerializer.needsReload();
+		return oReloadPromise.then(function (bChangesNeedReload) {
 			var oReloadInfo = {
 				layer: this.getLayer(),
 				selector: this.getRootControlInstance(),
-				changesNeedReload: aChangesNeedReload[0],
+				changesNeedReload: bChangesNeedReload,
 				hasDirtyDraftChanges: this._oVersionsModel.getProperty("/draftAvailable") && this._oVersionsModel.getProperty("/dirtyChanges"),
 				versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled")
 			};

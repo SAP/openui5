@@ -1335,6 +1335,118 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given that RuntimeAuthoring in the CUSTOMER layer was started within an FLP and wants to determine if a reload is needed on exit", {
+		beforeEach: function() {
+			givenAnFLP(function() {return true;}, {});
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl,
+				showToolbars : false
+			});
+			return this.oRta.start();
+		},
+		afterEach: function() {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and nothing has changed", function (assert) {
+			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox");
+			return this.oRta._handleReloadOnExit()
+				.then(function (oReloadInfo) {
+					assert.equal(oReloadInfo.reloadMethod, "NO_RELOAD", "then no reload is triggered");
+					assert.equal(oShowMessageBoxStub.callCount, 0, "and no message was shown");
+				});
+		});
+
+		QUnit.test("a higher layer changes exist but no dirty draft changes", function (assert) {
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
+			return this.oRta._handleReloadOnExit()
+				.then(function (oReloadInfo) {
+					assert.equal(oReloadInfo.reloadMethod, "CROSS_APP_NAVIGATION", "then a cross app is triggered");
+				});
+		});
+
+		QUnit.test("a higher layer changes exist with dirty draft changes", function (assert) {
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
+			this.oRta._oVersionsModel.setProperty("/draftAvailable", true);
+			this.oRta._oVersionsModel.setProperty("/dirtyChanges", true);
+			whenUserConfirmsMessage.call(this, "PERSONALIZATION_AND_WITHOUT_DRAFT", assert);
+			return this.oRta._handleReloadOnExit()
+				.then(function (oReloadInfo) {
+					assert.equal(oReloadInfo.reloadMethod, "CROSS_APP_NAVIGATION", "then a cross app is triggered");
+				});
+		});
+
+		QUnit.test("and the initial draft got activated", function (assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_ACTIVATED_DRAFT", assert);
+			return this.oRta._handleReloadOnExit()
+				.then(function (oReloadInfo) {
+					assert.equal(oReloadInfo.reloadMethod, "CROSS_APP_NAVIGATION", "then a cross app is triggered");
+				});
+		});
+
+		QUnit.test("and draft changes exist", function (assert) {
+			this.oRta._oVersionsModel.setProperty("/draftAvailable", true);
+			this.oRta._oVersionsModel.setProperty("/dirtyChanges", true);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
+			return this.oRta._handleReloadOnExit()
+				.then(function (oReloadInfo) {
+					assert.equal(oReloadInfo.reloadMethod, "CROSS_APP_NAVIGATION", "then a cross app is triggered");
+				});
+		});
+
+		QUnit.test("and changes need a reload", function (assert) {
+			this.oRta._bReloadNeeded = true;
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
+			return this.oRta._handleReloadOnExit()
+				.then(function (oReloadInfo) {
+					assert.equal(oReloadInfo.reloadMethod, "HARD_RELOAD", "then a cross app is triggered");
+				});
+		});
+	});
+
+	QUnit.module("Given that RuntimeAuthoring in the VENDOR layer was started within an FLP and wants to determine if a reload is needed on exit", {
+		beforeEach: function() {
+			givenAnFLP(function() {return true;}, {});
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl,
+				showToolbars : false,
+				flexSettings: {
+					layer: Layer.VENDOR
+				}
+			});
+			return this.oRta.start();
+		},
+		afterEach: function() {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("a higher layer changes exist but no dirty draft changes", function (assert) {
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_ALL_CHANGES", assert);
+			return this.oRta._handleReloadOnExit()
+				.then(function (oReloadInfo) {
+					assert.equal(oReloadInfo.reloadMethod, "CROSS_APP_NAVIGATION", "then a cross app is triggered");
+				});
+		});
+
+		QUnit.test("a higher layer changes exist with dirty draft changes", function (assert) {
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
+			this.oRta._oVersionsModel.setProperty("/draftAvailable", true);
+			this.oRta._oVersionsModel.setProperty("/dirtyChanges", true);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_ALL_CHANGES", assert);
+			return this.oRta._handleReloadOnExit()
+				.then(function (oReloadInfo) {
+					assert.equal(oReloadInfo.reloadMethod, "CROSS_APP_NAVIGATION", "then a cross app is triggered");
+				});
+		});
+	});
+
 	QUnit.done(function() {
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();
