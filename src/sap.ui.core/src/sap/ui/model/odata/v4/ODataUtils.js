@@ -45,7 +45,7 @@ sap.ui.define([
 				});
 				oDateTimeOffsetFormatter = DateFormat.getDateTimeInstance({
 					calendarType : CalendarType.Gregorian,
-					pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+					pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
 					strictParsing : true
 				});
 				oTimeFormatter = DateFormat.getTimeInstance({

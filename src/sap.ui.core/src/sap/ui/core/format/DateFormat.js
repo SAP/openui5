@@ -480,7 +480,14 @@ sap.ui.define([
 				value: iFoundIndex === -1 ? null : aList[iFoundIndex]
 			};
 		},
-		parseTZ: function (sValue, bISO) {
+		/**
+		 * Parses a given timezone
+		 *
+		 * @param {string} sValue, e.g. "-0800", "-08:00", "-08"
+		 * @param {boolean} bColonSeparated whether or not the values are colon separated, e.g. "-08:00"
+		 * @returns {{tzDiff: number, length: number}}
+		 */
+		parseTZ: function (sValue, bColonSeparated) {
 			var iLength = 0;
 			var iTZFactor = sValue.charAt(0) == "+" ? -1 : 1;
 			var sPart;
@@ -491,13 +498,16 @@ sap.ui.define([
 			var iTZDiffHour = parseInt(sPart);
 			iLength += 2; //hh: 2 digits for hours
 
-			if (bISO) {
+			if (bColonSeparated) {
 				iLength++; //":"
 			}
 			sPart = this.findNumbers(sValue.substr(iLength), 2);
-			iLength += 2; //mm: 2 digits for minutes
-
-			var iTZDiff = parseInt(sPart);
+			var iTZDiff = 0;
+			// timezone pattern "X": will produce only 2 digits: "-08"
+			if (sPart) {
+				iLength += 2; //mm: 2 digits for minutes
+				iTZDiff = parseInt(sPart);
+			}
 
 			return {
 				length: iLength,
@@ -1320,11 +1330,13 @@ sap.ui.define([
 			format: function(oField, oDate, bUTC, oFormat) {
 				//TODO getTimezoneLong and getTimezoneShort does not exist on Date object
 				//-> this is a preparation for a future full timezone support (only used by unit test so far)
-				if (oField.digits > 3 && oDate.getTimezoneLong()) {
+				if (oField.digits > 3 && oDate.getTimezoneLong && oDate.getTimezoneLong()) {
 					return oDate.getTimezoneLong();
-				} else if (oDate.getTimezoneShort()) {
+				} else if (oDate.getTimezoneShort && oDate.getTimezoneShort()) {
 					return oDate.getTimezoneShort();
 				}
+
+				// valid for zzzz (fallback to OOOO)
 
 				var sTimeZone = "GMT";
 				var iTZOffset = Math.abs(oDate.getTimezoneOffset());
@@ -1352,7 +1364,7 @@ sap.ui.define([
 					iLength = 3;
 				} else if (sValue.substring(0, 2) === "UT") {
 					iLength = 2;
-				} else if (sValue.charAt(0) == "Z") {
+				} else if (sValue.charAt(0) === "Z") {
 					iLength = 1;
 					iTZDiff = 0;
 				} else {
@@ -1361,7 +1373,7 @@ sap.ui.define([
 					};
 				}
 
-				if (sValue.charAt(0) != "Z") {
+				if (sValue.charAt(0) !== "Z") {
 					var oParsedTZ = oParseHelper.parseTZ(sValue.substr(iLength), true);
 
 					iLength += oParsedTZ.length;
@@ -1383,7 +1395,13 @@ sap.ui.define([
 				var iMinuteOffset = iTZOffset % 60;
 				var sTimeZone = "";
 
-				if (!bUTC && iTZOffset != 0) {
+				// valid for Z-ZZZ
+				// per RFC822 a timezone always has 4 digits
+				// UTC+0: "+0000"
+				// UTC-7: "-0700"
+				// UTC+2: "+0200"
+				// https://tools.ietf.org/html/rfc822 paragraph 5.1
+				if (!bUTC) {
 					sTimeZone += (bPositiveOffset ? "-" : "+");
 					sTimeZone += String(iHourOffset).padStart(2, "0");
 					sTimeZone += String(iMinuteOffset).padStart(2, "0");
@@ -1398,6 +1416,35 @@ sap.ui.define([
 		"X": {
 			name: "timezoneISO8601",
 			format: function(oField, oDate, bUTC, oFormat) {
+				/*
+				 * Mountain Standard Time (MST, UTC-7)
+				 * X:           "-07"
+				 * XX, XXXX:    "-0700"
+				 * XXX, XXXXX:  "-07:00"
+				 */
+
+				/*
+				 * Central European Summer Time (CEST, UTC+2)
+				 * X:           "+02"
+				 * XX, XXXX:    "+0200"
+				 * XXX, XXXXX:  "+02:00"
+				 */
+
+				/*
+				 * Indian Standard Time (IST, UTC+5:30)
+				 * X:           "+0530"
+				 * XX, XXXX:    "+0530"
+				 * XXX, XXXXX:  "+05:30"
+				 */
+
+				/*
+				 * Greenwich Mean Time (GMT, UTC+0)
+				 * X:           "Z"
+				 * XX, XXXX:    "Z"
+				 * XXX, XXXXX:  "Z"
+				 */
+
+				// @see http://www.unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
 				var iTZOffset = Math.abs(oDate.getTimezoneOffset());
 				var bPositiveOffset = oDate.getTimezoneOffset() > 0;
 				var iHourOffset = Math.floor(iTZOffset / 60);
@@ -1407,8 +1454,12 @@ sap.ui.define([
 				if (!bUTC && iTZOffset != 0) {
 					sTimeZone += (bPositiveOffset ? "-" : "+");
 					sTimeZone += String(iHourOffset).padStart(2, "0");
-					sTimeZone += ":";
-					sTimeZone += String(iMinuteOffset).padStart(2, "0");
+					if (oField.digits > 1 || iMinuteOffset > 0) {
+						if (oField.digits === 3 || oField.digits === 5) {
+							sTimeZone += ":";
+						}
+						sTimeZone += String(iMinuteOffset).padStart(2, "0");
+					}
 				} else {
 					sTimeZone += "Z";
 				}
@@ -1416,13 +1467,13 @@ sap.ui.define([
 				return sTimeZone;
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				if (sValue.charAt(0) == "Z") {
+				if (sValue.charAt(0) === "Z") {
 					return {
 						length: 1,
 						tzDiff: 0
 					};
 				} else {
-					return oParseHelper.parseTZ(sValue, true);
+					return oParseHelper.parseTZ(sValue, oPart.digits === 3 || oPart.digits === 5);
 				}
 			}
 		}
