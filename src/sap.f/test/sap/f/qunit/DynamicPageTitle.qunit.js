@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/Link",
 	"sap/m/Title",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/m/ObjectNumber"
 ],
 function (
 	$,
@@ -19,7 +20,8 @@ function (
 	Core,
 	Link,
 	Title,
-	Text
+	Text,
+	ObjectNumber
 ) {
 	"use strict";
 
@@ -1105,6 +1107,66 @@ function (
 		}, 600);
 	});
 
+	QUnit.test("Changing GenericTag property which might influence width", function (assert) {
+		// Arrange
+		var oToolbar = oFactory.getEmptyOverflowToolbar(),
+			oGenericTag = oFactory.getGenericTag("Test 1"),
+			oDynamicPageTitle = this.oDynamicPageTitle,
+			oSpy,
+			iInitialFlexBasis,
+			iNewFlexBasis;
+
+		// Act
+		oToolbar.addContent(oGenericTag);
+		this.oDynamicPageTitle.addContent(oToolbar);
+		Core.applyChanges();
+
+		// Act
+		oSpy = sinon.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
+		iInitialFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
+		oGenericTag.setText("New looooooooooooooonger text");
+		Core.applyChanges();
+
+		// Assert
+		iNewFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
+		assert.ok(iNewFlexBasis > iInitialFlexBasis,
+			"Setting longer text of the GenericTag expands the flex-basis area");
+		assert.strictEqual(oSpy.firstCall.args[0], null,
+			"_setContentAreaFlexBasis is called first with null value to reset the flex-basis");
+		assert.strictEqual(oSpy.lastCall.args[0], iNewFlexBasis,
+			"_setContentAreaFlexBasis is called second time with width value, needed for the GenericTag");
+	});
+
+
+	QUnit.test("Changing GenericTag value aggregation", function (assert) {
+		// Arrange
+		var oToolbar = oFactory.getEmptyOverflowToolbar(),
+			oGenericTag = oFactory.getGenericTag("Test 1"),
+			oDynamicPageTitle = this.oDynamicPageTitle,
+			oSpy,
+			iInitialFlexBasis,
+			iNewFlexBasis;
+
+		// Act
+		oToolbar.addContent(oGenericTag);
+		this.oDynamicPageTitle.addContent(oToolbar);
+		Core.applyChanges();
+
+		// Act
+		oSpy = sinon.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
+		iInitialFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
+		oGenericTag.setValue(new ObjectNumber({ number: "22222222222222222222222" }));
+		Core.applyChanges();
+
+		// Assert
+		iNewFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
+		assert.ok(iNewFlexBasis > iInitialFlexBasis,
+			"Setting value aggregation of the GenericTag expands the flex-basis area");
+		assert.strictEqual(oSpy.firstCall.args[0], null,
+			"_setContentAreaFlexBasis is called first with null value to reset the flex-basis");
+		assert.strictEqual(oSpy.lastCall.args[0], iNewFlexBasis,
+			"_setContentAreaFlexBasis is called second time with width value, needed for the GenericTag");
+	});
 
 
 	/* --------------------------- DynamicPage Title Aggregations ---------------------------------- */
