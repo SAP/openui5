@@ -374,6 +374,68 @@ function(
 			}
 		}
 
+		var oAnnounceInstance = null;
+
+		/**
+		 * @return {string} Returns the span to be rendered for the assertive instance.
+		 * @private
+		 * @function
+		 */
+		function fnGetAssertiveInstance(sId) {
+			return '<span id="' + sId + '-assertive' + '" data-sap-ui="' + sId + '-assertive' +
+					'" class="sapUiAnnounceMessageAssertive" role="status" aria-live="assertive">' +
+					'</span>';
+		}
+
+		function fnGetAnnounceInstance(sId) {
+			var oCore = sap.ui.getCore(),
+				oStatic = oCore.getStaticAreaRef(),
+				oNode;
+
+			if (!oAnnounceInstance) {
+				oStatic.insertAdjacentHTML("beforeend", fnGetAssertiveInstance(sId));
+
+				oAnnounceInstance = {
+					announce: function (sText) {
+						oNode = oStatic.querySelector(".sapUiAnnounceMessageAssertive");
+
+						oNode.textContent = "";
+						oNode.textContent = sText;
+					}
+				};
+			}
+
+			return oAnnounceInstance;
+		}
+
+		Select.prototype._attachHiddenSelectHandlers = function () {
+			var oSelect = this._getHiddenSelect();
+
+			oSelect.on("focusin", this._addFocusClass.bind(this));
+			oSelect.on("focusout", this._removeFocusClass.bind(this));
+		};
+
+		Select.prototype._addFocusClass = function () {
+			this.$().addClass("sapMSltFocused");
+		};
+
+		Select.prototype._removeFocusClass = function () {
+			this.$().removeClass("sapMSltFocused");
+		};
+
+		Select.prototype._detachHiddenSelectHandlers = function () {
+			var oSelect = this._getHiddenSelect();
+
+			if (oSelect) {
+				oSelect.off("focusin");
+				oSelect.off("focusout");
+			}
+		};
+
+		Select.prototype._getHiddenSelect = function () {
+			return this.$("hiddenSelect");
+		};
+
 		Select.prototype._handleFocusout = function(oEvent) {
 			this._bFocusoutDueRendering = this.bRenderingPhase;
 
@@ -579,6 +641,22 @@ function(
 		 */
 		Select.prototype.setValue = function(sValue) {
 			this.$("label").text(sValue);
+
+			this._setHiddenSelectValue();
+
+			if (this._bFocused && this._oAnnounceInstance && !this.isOpen()) {
+				this._oAnnounceInstance.announce(sValue);
+			}
+		};
+
+		Select.prototype._setHiddenSelectValue = function () {
+			var oSelect = this._getHiddenSelect(),
+				oSelectedItem = this.getSelectedItem(),
+				sSelectedItemText;
+
+			sSelectedItemText = oSelectedItem ? oSelectedItem.getText() : "";
+			oSelect.attr("value", this.getSelectedKey());
+			oSelect.val(sSelectedItemText);
 		};
 
 		/**
@@ -606,7 +684,7 @@ function(
 		 * @since 1.30
 		 */
 		Select.prototype._handleAriaActiveDescendant = function(vItem) {
-			var oDomRef = this.getDomRef(),
+			var oDomRef = this.getFocusDomRef(),
 				oItemDomRef = vItem && vItem.getDomRef(),
 				sActivedescendant = "aria-activedescendant";
 
@@ -674,8 +752,7 @@ function(
 		 */
 		Select.prototype.onAfterOpen = function(oControlEvent) {
 			var oDomRef = this.getFocusDomRef(),
-				oItem = null,
-				$oLabel = this.$("label");
+				oItem = null;
 
 			if (!oDomRef) {
 				return;
@@ -684,9 +761,6 @@ function(
 			oItem = this.getSelectedItem();
 			oDomRef.setAttribute("aria-expanded", "true");
 
-			// Needs to be removed while popover is opened. Otherwise when going through the items, the currently
-			// selected item would be read out for a second time due to this label's update.
-			$oLabel.attr("aria-live", null);
 
 			// expose a parent/child contextual relationship to assistive technologies
 			// note: the "aria-owns" attribute is set when the list is visible and in view
@@ -735,15 +809,11 @@ function(
 		Select.prototype.onAfterClose = function(oControlEvent) {
 			var oDomRef = this.getFocusDomRef(),
 				CSS_CLASS = this.getRenderer().CSS_CLASS,
-				sPressedCSSClass = CSS_CLASS + "Pressed",
-				$oLabel = this.$("label");
+				sPressedCSSClass = CSS_CLASS + "Pressed";
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "false");
 				oDomRef.removeAttribute("aria-activedescendant");
-
-				// Add it back, because we want to hear updates when going through the items, while the popover is closed
-				$oLabel.attr("aria-live", "polite");
 			}
 
 			// Remove the active state
@@ -978,9 +1048,15 @@ function(
 
 			// delegate object used to open/close value state message popups
 			this._oValueStateMessage = new ValueStateMessage(this);
+
+			this._bFocused = false;
 		};
 
 		Select.prototype.onBeforeRendering = function() {
+
+			if (Device.os.macintosh && !this._oAnnounceInstance) {
+				this._oAnnounceInstance = fnGetAnnounceInstance(this.sId);
+			}
 
 			// rendering phase is started
 			this.bRenderingPhase = true;
@@ -991,12 +1067,16 @@ function(
 			}
 
 			this.synchronizeSelection();
+			this._detachHiddenSelectHandlers();
 		};
 
 		Select.prototype.onAfterRendering = function() {
 
 			// rendering phase is finished
 			this.bRenderingPhase = false;
+
+			this._setHiddenSelectValue();
+			this._attachHiddenSelectHandlers();
 		};
 
 		Select.prototype.exit = function() {
@@ -1076,6 +1156,8 @@ function(
 				}
 
 				if (Device.system.phone) {
+					// focus has to be set to the native select DOM element in order to restore the focus back to it
+					// after the select dialog is closed
 					this.focus();
 				}
 
@@ -1191,6 +1273,20 @@ function(
 		Select.prototype.onsaphide = Select.prototype.onsapshow;
 
 		/**
+		 * Handle when mousedown event is fired on the select.
+		 *
+		 * Call preventDefault function on oEvent object to suppress
+		 * the default browser behavior of opening a native dropdown
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 * @function
+		 */
+		Select.prototype.onmousedown = function (oEvent) {
+			oEvent.preventDefault();
+		};
+
+		/**
 		 * Handle when escape is pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
@@ -1221,6 +1317,8 @@ function(
 		 * @private
 		 */
 		Select.prototype.onsapenter = function(oEvent) {
+			// Prevent the opening of the native select with options
+			oEvent.preventDefault();
 
 			// prevents actions from occurring when the control is disabled,
 			// IE11 browser focus non-focusable elements
@@ -1242,7 +1340,6 @@ function(
 		 * @private
 		 */
 		Select.prototype.onsapspace = function(oEvent) {
-
 			// prevents actions from occurring when the control is disabled,
 			// IE11 browser focus non-focusable elements
 			if (!this.getEnabled()) {
@@ -1465,6 +1562,7 @@ function(
 		 * @private
 		 */
 		Select.prototype.onfocusin = function(oEvent) {
+			this._bFocused = true;
 
 			if (!this._bFocusoutDueRendering && !this._bProcessChange) {
 				this._oSelectionOnFocus = this.getSelectedItem();
@@ -1494,6 +1592,8 @@ function(
 		 * @private
 		 */
 		Select.prototype.onfocusout = function(oEvent) {
+			this._bFocused = false;
+
 			this._handleFocusout(oEvent);
 
 			if (this.bRenderingPhase) {
@@ -1532,8 +1632,32 @@ function(
 		/* =========================================================== */
 
 		/* ----------------------------------------------------------- */
+		/* overrides                                                   */
+		/* ----------------------------------------------------------- */
+
+		/**
+		 * Returns the DOM Element that should get the focus.
+		 *
+		 * @return {Element} Returns the DOM Element that should get the focus
+		 * @protected
+		 * @override
+		 */
+		Select.prototype.getFocusDomRef = function () {
+			return this._getHiddenSelect()[0];
+		};
+
+		/* ----------------------------------------------------------- */
 		/* protected methods                                           */
 		/* ----------------------------------------------------------- */
+
+		/**
+		 * Gets the DOM reference the popup should be docked to.
+		 *
+		 * @return {Element} The DOM reference
+		 */
+		Select.prototype.getPopupAnchorDomRef = function() {
+			return this.getDomRef();
+		};
 
 		/**
 		 * Updates and synchronizes <code>selectedItem</code> association, <code>selectedItemId</code> and <code>selectedKey</code> properties.
@@ -1969,16 +2093,18 @@ function(
 		};
 
 		Select.prototype.updateAriaLabelledBy = function(sValueState, sOldValueState) {
-			var $this = this.$(),
-                            sAttr = $this.attr("aria-labelledby"),
+			var $this = this._getHiddenSelect(),
+				sAttr = $this.attr("aria-labelledby"),
 				aIDs = sAttr ? sAttr.split(" ") : [],
+				iIndex,
 				sNewIDs;
 
-			if (sOldValueState !== ValueState.None) {
-				aIDs.pop();
+			if (sOldValueState !== ValueState.None && sOldValueState !== ValueState.Error) {
+				iIndex = aIDs.indexOf(InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_" + sOldValueState.toUpperCase()));
+				aIDs.splice(iIndex, 1);
 			}
 
-			if (sValueState !== ValueState.None) {
+			if (sValueState !== ValueState.None && sValueState !== ValueState.Error) {
 				aIDs.push(InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_" + sValueState.toUpperCase()));
 			}
 
@@ -2521,7 +2647,7 @@ function(
 		 * @public
 		 */
 		Select.prototype.getIdForLabel = function () {
-			return this.getId() + "-hiddenInput";
+			return this.getId() + "-hiddenSelect";
 		};
 
 		return Select;

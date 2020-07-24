@@ -510,7 +510,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("aria-labelledby is correctly set", function (assert) {
-		var ariaLabelledby = this.select.$().attr('aria-labelledby');
+		var ariaLabelledby = this.select._getHiddenSelect().attr('aria-labelledby') || "";
 
 		assert.equal(ariaLabelledby.indexOf(this.label.getId()), -1, "aria-labelledby doesn't contain label id");
 
@@ -518,7 +518,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		ariaLabelledby = this.select.$().attr('aria-labelledby');
+		ariaLabelledby = this.select._getHiddenSelect().attr('aria-labelledby') || "";
 
 		assert.equal(ariaLabelledby.indexOf(this.label.getId()) > -1, true, "aria-labelledby contains label id");
 	});
