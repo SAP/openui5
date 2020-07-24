@@ -209,6 +209,7 @@ function(
 					formatVersionTitle: this.formatVersionTitle.bind(this),
 					formatVersionTableVisibility: this.formatVersionTableVisibility.bind(this),
 					formatHighlight: this.formatHighlight.bind(this),
+					formatHighlightText: this.formatHighlightText.bind(this),
 					formatOriginalAppHighlight: this.formatOriginalAppHighlight.bind(this),
 					formatOriginalAppHighlightText: this.formatOriginalAppHighlightText.bind(this)
 				}
