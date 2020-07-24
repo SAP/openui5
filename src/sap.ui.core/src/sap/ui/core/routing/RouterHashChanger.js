@@ -1,11 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/*!
- * ${copyright}
- */
-
 sap.ui.define([
 	'./HashChangerBase',
 	"sap/base/Log"
@@ -92,7 +87,7 @@ sap.ui.define([
 		this.hash = sHash;
 		this.subHashMap = oSubHashMap;
 
-		if (!bUpdateHashOnly) {
+		if (!bUpdateHashOnly && sHash !== sOldHash) {
 			this.fireEvent("hashChanged", {
 				newHash : sHash,
 				oldHash : sOldHash
@@ -160,16 +155,12 @@ sap.ui.define([
 	 * @protected
 	 */
 	RouterHashChanger.prototype.setHash = function(sHash) {
-		if (this._hasRouterAttached()) {
-			var aDeletePrefix = this._collectActiveDescendantPrefix();
+		var aDeletePrefix = this._collectActiveDescendantPrefix();
 
-			this.fireEvent("hashSet", {
-				hash: sHash,
-				deletePrefix: aDeletePrefix
-			});
-		} else {
-			Log.warning("The function setHash is called on a router which isn't matched within the last browser hashChange event. The call is ignored.");
-		}
+		this.fireEvent("hashSet", {
+			hash: sHash,
+			deletePrefix: aDeletePrefix
+		});
 	};
 
 	/**
@@ -180,16 +171,12 @@ sap.ui.define([
 	 * @protected
 	 */
 	RouterHashChanger.prototype.replaceHash = function(sHash) {
-		if (this._hasRouterAttached()) {
-			var aDeletePrefix = this._collectActiveDescendantPrefix();
+		var aDeletePrefix = this._collectActiveDescendantPrefix();
 
-			this.fireEvent("hashReplaced", {
-				hash: sHash,
-				deletePrefix: aDeletePrefix
-			});
-		} else {
-			Log.warning("The function replaceHash is called on a router which isn't matched within the last browser hashChange event. The call is ignored.");
-		}
+		this.fireEvent("hashReplaced", {
+			hash: sHash,
+			deletePrefix: aDeletePrefix
+		});
 	};
 
 	RouterHashChanger.prototype.destroy = function() {
