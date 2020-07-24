@@ -80,6 +80,15 @@ html .sapUxAPObjectPageLayout-Std-Desktop, html .sapUxAPObjectPageLayout-Std-Tab
 			font-size: @sapMFontMediumSize;
 		}
 	}
+
+	&:empty {
+		.sapUxAPObjectPageLayout-Std-Desktop &,
+		.sapUxAPObjectPageLayout-Std-Tablet &,
+		.sapUxAPObjectPageLayout-Std-Phone &
+		{
+			padding: 0;
+		}
+	}
 }
 
 .sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutNoAnchorBar) {
