@@ -14,6 +14,8 @@ sap.ui.define([
 	function(Device, ResizeHandler, library, FormLayout, ColumnLayoutRenderer, jQuery) {
 	"use strict";
 
+	/* global ResizeObserver */
+
 	/**
 	 * Constructor for a new <code>sap.ui.layout.form.ColumnLayout</code>.
 	 *
@@ -111,11 +113,16 @@ sap.ui.define([
 
 		this._resizeProxy = jQuery.proxy(_handleResize, this);
 
+		if (typeof ResizeObserver === "function") {
+			this._oResizeObserver = new ResizeObserver(this._resizeProxy);
+		}
+
 	};
 
 	ColumnLayout.prototype.exit = function(){
 
 		_cleanup.call(this);
+		this._oResizeObserver = undefined;
 
 	};
 
@@ -131,7 +138,13 @@ sap.ui.define([
 
 	ColumnLayout.prototype.onAfterRendering = function( oEvent ){
 
-		this._sResizeListener = ResizeHandler.register(this, this._resizeProxy);
+		if (this._oResizeObserver) {
+			var oDomRef = this.getDomRef();
+			this._oResizeObserver.observe(oDomRef);
+		} else {
+			// resize handler fallback for old browsers (e.g. IE 11)
+			this._sResizeListener = ResizeHandler.register(this, this._resizeProxy);
+		}
 		_handleResize.call(this);
 
 	};
@@ -544,6 +557,9 @@ sap.ui.define([
 
 	function _cleanup(){
 
+		if (this._oResizeObserver) {
+			this._oResizeObserver.disconnect();
+		}
 		if (this._sResizeListener) {
 			ResizeHandler.deregister(this._sResizeListener);
 			this._sResizeListener = undefined;
@@ -562,6 +578,10 @@ sap.ui.define([
 
 		var $DomRef = this.$();
 		if (!$DomRef.is(":visible")) {
+			return;
+		}
+
+		if (ResizeHandler.isSuspended(oDomRef, this._resizeProxy)) {
 			return;
 		}
 
