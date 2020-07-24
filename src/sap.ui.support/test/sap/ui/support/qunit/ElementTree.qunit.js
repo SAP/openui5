@@ -622,9 +622,9 @@ sap.ui.define(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			// arrange
 			var generatedHTML = '<filter>' +
 				'<end>' +
-				'<label><input type="checkbox" issues checked/>Issues</label>' +
-				'<label><input type="checkbox" namespaces checked/>Namespaces</label>' +
-				'<label><input type="checkbox" attributes/>Attributes</label>' +
+				'<label><input type="checkbox" issues checked>Issues</label>' +
+				'<label><input type="checkbox" namespaces checked>Namespaces</label>' +
+				'<label><input type="checkbox" attributes>Attributes</label>' +
 				'</end>' +
 				'</filter>';
 			generatedHTML += '<tree show-namespaces show-problematic-elements></tree>';
@@ -678,9 +678,9 @@ sap.ui.define(['sap/ui/support/supportRules/ui/external/ElementTree'],
 			// arrange
 			var filterHTML = '<filter>' +
 				'<end>' +
-				'<label><input type="checkbox" issues checked/>Issues</label>' +
-				'<label><input type="checkbox" namespaces checked/>Namespaces</label>' +
-				'<label><input type="checkbox" attributes/>Attributes</label>' +
+				'<label><input type="checkbox" issues checked>Issues</label>' +
+				'<label><input type="checkbox" namespaces checked>Namespaces</label>' +
+				'<label><input type="checkbox" attributes>Attributes</label>' +
 				'</end>' +
 				'</filter>';
 

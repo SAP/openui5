@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 				rm.write(" style='position:relative;left:40px;top:45px;'");
 			}
 			rm.write(" border='0'");
-			rm.write("/>");
+			rm.write(">");
 		}
 		rm.write("</div>");
 	};

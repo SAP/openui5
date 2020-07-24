@@ -279,7 +279,7 @@ sap.ui.define([
 		}
 		rm.writeClasses();
 
-		rm.write("/>");
+		rm.write(">");
 	};
 
 	/**

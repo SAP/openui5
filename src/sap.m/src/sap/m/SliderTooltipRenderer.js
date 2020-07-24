@@ -69,7 +69,7 @@ sap.ui.define(['sap/ui/core/Renderer'],
 		oRM.writeAttributeEscaped("step", oControl.getStep());
 		oRM.writeAttributeEscaped("id", oControl.getId() + "-input");
 
-		oRM.write("/>");
+		oRM.write(">");
 	};
 
 	return SliderTooltipRenderer;

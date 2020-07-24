@@ -173,7 +173,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 			oRm.writeAttribute("disabled", "disabled");
 		}
 
-		oRm.write(" />"); // Close RadioButton-input-element
+		oRm.write(">"); // Close RadioButton-input-element
 	};
 
 	RadioButtonRenderer.renderTooltip = function (oRm, oRadioButton) {
