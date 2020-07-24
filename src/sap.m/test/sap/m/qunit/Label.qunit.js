@@ -495,41 +495,4 @@ sap.ui.define([
 		oOverflowTB.destroy();
 		oLabelledControl.destroy();
 	});
-
-	QUnit.module("LabelFor with non-labelable controls", {
-		beforeEach: function () {
-			this.select = new Select('select1', {
-				items: [
-					new Item({text: 'item 1'}),
-					new Item({text: 'item 2'}),
-					new Item({text: 'item 3'})
-				]
-			}).placeAt('qunit-fixture');
-
-			this.label = new Label('label1', {
-				text: 'Hello World'
-			}).placeAt('qunit-fixture');
-
-			sap.ui.getCore().applyChanges();
-		},
-
-		afterEach: function () {
-			this.select.destroy();
-			this.label.destroy();
-		}
-	});
-
-	QUnit.test("aria-labelledby is correctly set", function (assert) {
-		var ariaLabelledby = this.select.$().attr('aria-labelledby');
-
-		assert.equal(ariaLabelledby.indexOf(this.label.getId()), -1, "aria-labelledby doesn't contain label id");
-
-		this.label.setLabelFor(this.select);
-
-		sap.ui.getCore().applyChanges();
-
-		ariaLabelledby = this.select.$().attr('aria-labelledby');
-
-		assert.equal(ariaLabelledby.indexOf(this.label.getId()) > -1, true, "aria-labelledby contains label id");
-	});
 });
