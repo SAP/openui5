@@ -143,7 +143,7 @@ sap.ui.define([
 				labelledby: {value: /*oMenu.getId() + "-label " + */itemId + "-lbl", append: true}
 			});
 		}
-		rm.write("/></div></div>");
+		rm.write("></div></div>");
 
 		// Right border
 		rm.write("<div class=\"sapUiMnuItmR\"></div>");

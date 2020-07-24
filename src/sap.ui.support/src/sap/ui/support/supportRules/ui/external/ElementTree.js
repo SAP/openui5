@@ -294,9 +294,9 @@ sap.ui.define(["jquery.sap.global"],
 		ElementTree.prototype._createFilter = function () {
 			return "<filter>" +
 				"<end>" +
-				"<label><input type=\"checkbox\" issues checked/>Issues</label>" +
-				"<label><input type=\"checkbox\" namespaces checked/>Namespaces</label>" +
-				"<label><input type=\"checkbox\" attributes/>Attributes</label>" +
+				"<label><input type=\"checkbox\" issues checked>Issues</label>" +
+				"<label><input type=\"checkbox\" namespaces checked>Namespaces</label>" +
+				"<label><input type=\"checkbox\" attributes>Attributes</label>" +
 				"</end>" +
 				"</filter>";
 		};

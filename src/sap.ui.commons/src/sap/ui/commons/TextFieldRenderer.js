@@ -178,7 +178,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 				rm.writeEscaped(oTextField.getValue());
 			}
 			rm.write("\"");
-			rm.write("/>");
+			rm.write(">");
 		}
 
 		if (this.getInnerTagName) {

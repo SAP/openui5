@@ -161,7 +161,7 @@ sap.ui.define(['./SliderUtilities'],
 			oRm.writeClasses();
 			oRm.writeAttributeEscaped("name", oSlider.getName());
 			oRm.writeAttribute("value", oSlider._formatValueByCustomElement(oSlider.toFixed(oSlider.getValue())));
-			oRm.write("/>");
+			oRm.write(">");
 		};
 
 		/**
