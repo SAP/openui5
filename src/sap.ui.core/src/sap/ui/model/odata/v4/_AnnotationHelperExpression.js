@@ -105,33 +105,33 @@ sap.ui.define([
 	 * The handler functions corresponding to nodes of an annotation expression all use
 	 * a parameter <code>oPathValue</code>. This parameter contains the following properties:
 	 * <ul>
-	 *  <li><code>asExpression</code>: {boolean} parser state: if this property is
-	 *    <code>true</code>, an embedded <code>concat</code> must be rendered as an expression
-	 *    binding and not a composite binding.
-	 *  <li><code>complexBinding</code>: {boolean} parser state: if this property is
-	 *    <code>true</code>, bindings shall have type and constraints information
-	 *  <li><code>ignoreAsPrefix</code>: {string} an optional prefix to be ignored in a path
-	 *    expression (for example, binding parameter name)
-	 *  <li><code>model</code>: {sap.ui.model.odata.v4.ODataMetaModel} the metamodel
-	 *  <li><code>path</code>: {string} the path in the metamodel that leads to the value
-	 *  <li><code>prefix</code>: {string} used in a path expression as a prefix for the
-	 *    value; is either an empty string or a path ending with a "/"
-	 *  <li><code>value</code>: {any} the value of the (sub) expression from the metamodel
+	 *   <li> <code>asExpression</code>: {boolean} parser state: if this property is
+	 *     <code>true</code>, an embedded <code>concat</code> must be rendered as an expression
+	 *     binding and not a composite binding.
+	 *   <li> <code>complexBinding</code>: {boolean} parser state: if this property is
+	 *     <code>true</code>, bindings shall have type and constraints information
+	 *   <li> <code>ignoreAsPrefix</code>: {string} an optional prefix to be ignored in a path
+	 *     expression (for example, binding parameter name)
+	 *   <li> <code>model</code>: {sap.ui.model.odata.v4.ODataMetaModel} the metamodel
+	 *   <li> <code>path</code>: {string} the path in the metamodel that leads to the value
+	 *   <li> <code>prefix</code>: {string} used in a path expression as a prefix for the
+	 *     value; is either an empty string or a path ending with a "/"
+	 *   <li> <code>value</code>: {any} the value of the (sub) expression from the metamodel
 	 * </ul>
 	 *
 	 * Unless specified otherwise all functions return a result object with the following
 	 * properties:
 	 * <ul>
-	 *  <li><code>result</code>: "binding", "composite", "constant" or "expression"
-	 *  <li><code>value</code>: depending on <code>result</code>:
-	 *   <ul>
-	 *    <li>when "binding": {string} the binding path
-	 *    <li>when "composite": {string} the binding string incl. the curly braces
-	 *    <li>when "constant": {any} the constant value (not escaped if string)
-	 *    <li>when "expression": {string} the expression unwrapped (no "{=" and "}")
-	 *   </ul>
-	 *  <li><code>type</code>:  the EDM data type (like "Edm.String") if it could be determined
-	 *  <li><code>constraints</code>: {object} type constraints if result is "binding"
+	 *   <li> <code>result</code>: "binding", "composite", "constant" or "expression"
+	 *   <li> <code>value</code>: depending on <code>result</code>:
+	 *     <ul>
+	 *       <li> when "binding": {string} the binding path
+	 *       <li> when "composite": {string} the binding string incl. the curly braces
+	 *       <li> when "constant": {any} the constant value (not escaped if string)
+	 *       <li> when "expression": {string} the expression unwrapped (no "{=" and "}")
+	 *     </ul>
+	 *   <li> <code>type</code>:  the EDM data type (like "Edm.String") if it could be determined
+	 *   <li> <code>constraints</code>: {object} type constraints if result is "binding"
 	 * </ul>
 	 */
 	Expression = {
@@ -288,15 +288,15 @@ sap.ui.define([
 		/**
 		 * Handling of "14.4 Constant Expressions", i.e.
 		 * <ul>
-		 *   <li>"14.4.2 Expression edm:Bool",</li>
-		 *   <li>"14.4.3 Expression edm:Date",</li>
-		 *   <li>"14.4.4 Expression edm:DateTimeOffset",</li>
-		 *   <li>"14.4.5 Expression edm:Decimal",</li>
-		 *   <li>"14.4.8 Expression edm:Float",</li>
-		 *   <li>"14.4.9 Expression edm:Guid",</li>
-		 *   <li>"14.4.10 Expression edm:Int",</li>
-		 *   <li>"14.4.11 Expression edm:String",</li>
-		 *   <li>"14.4.12 Expression edm:TimeOfDay".</li>
+		 *   <li> "14.4.2 Expression edm:Bool",
+		 *   <li> "14.4.3 Expression edm:Date",
+		 *   <li> "14.4.4 Expression edm:DateTimeOffset",
+		 *   <li> "14.4.5 Expression edm:Decimal",
+		 *   <li> "14.4.8 Expression edm:Float",
+		 *   <li> "14.4.9 Expression edm:Guid",
+		 *   <li> "14.4.10 Expression edm:Int",
+		 *   <li> "14.4.11 Expression edm:String",
+		 *   <li> "14.4.12 Expression edm:TimeOfDay".
 		 * </ul>
 		 *
 		 * @param {object} oPathValue

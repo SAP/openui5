@@ -82,17 +82,17 @@ sap.ui.define([
 	 * are ignored. The following parameters are supported, if the parameter name is contained in
 	 * the given 'aAllowed' parameter:
 	 * <ul>
-	 * <li> '$$aggregation' with allowed values as specified in
-	 *      {@link sap.ui.model.odata.v4.ODataListBinding#updateAnalyticalInfo} (but without
-	 *      validation here)
-	 * <li> '$$canonicalPath' with value <code>true</code>
-	 * <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
-	 * <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
-	 * <li> '$$inheritExpandSelect' with allowed values <code>false</code> and <code>true</code>
-	 * <li> "$$noPatch" with value <code>true</code>
-	 * <li> '$$operationMode' with value {@link sap.ui.model.odata.OperationMode.Server}
-	 * <li> '$$ownRequest' with value <code>true</code>
-	 * <li> '$$patchWithoutSideEffects' with value <code>true</code>
+	 *   <li> '$$aggregation' with allowed values as specified in
+	 *     {@link sap.ui.model.odata.v4.ODataListBinding#updateAnalyticalInfo} (but without
+	 *     validation here)
+	 *   <li> '$$canonicalPath' with value <code>true</code>
+	 *   <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
+	 *   <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
+	 *   <li> '$$inheritExpandSelect' with allowed values <code>false</code> and <code>true</code>
+	 *   <li> "$$noPatch" with value <code>true</code>
+	 *   <li> '$$operationMode' with value {@link sap.ui.model.odata.OperationMode.Server}
+	 *   <li> '$$ownRequest' with value <code>true</code>
+	 *   <li> '$$patchWithoutSideEffects' with value <code>true</code>
 	 * </ul>
 	 *
 	 * @param {object} mParameters
@@ -553,11 +553,11 @@ sap.ui.define([
 	 * Returns the group ID of the binding that is used for read requests. The group ID of the
 	 * binding is alternatively defined by
 	 * <ul>
-	 * <li>the <code>groupId</code> parameter of the OData model; see
-	 * {@link sap.ui.model.odata.v4.ODataModel#constructor},</li>
-	 * <li>the <code>$$groupId</code> binding parameter; see
-	 * {@link sap.ui.model.odata.v4.ODataModel#bindList} and
-	 * {@link sap.ui.model.odata.v4.ODataModel#bindContext}.</li>
+	 *   <li> the <code>groupId</code> parameter of the OData model; see
+	 *     {@link sap.ui.model.odata.v4.ODataModel#constructor},
+	 *   <li> the <code>$$groupId</code> binding parameter; see
+	 *     {@link sap.ui.model.odata.v4.ODataModel#bindList} and
+	 *     {@link sap.ui.model.odata.v4.ODataModel#bindContext}.
 	 * </ul>
 	 *
 	 * @returns {string}
@@ -673,11 +673,11 @@ sap.ui.define([
 	 * Returns the group ID of the binding that is used for update requests. The update group ID of
 	 * the binding is alternatively defined by
 	 * <ul>
-	 * <li>the <code>updateGroupId</code> parameter of the OData model; see
-	 * {@link sap.ui.model.odata.v4.ODataModel#constructor},</li>
-	 * <li>the <code>$$updateGroupId</code> binding parameter; see
-	 * {@link sap.ui.model.odata.v4.ODataModel#bindList} and
-	 * {@link sap.ui.model.odata.v4.ODataModel#bindContext}.</li>
+	 *  <li> the <code>updateGroupId</code> parameter of the OData model; see
+	 *    {@link sap.ui.model.odata.v4.ODataModel#constructor},
+	 *  <li> the <code>$$updateGroupId</code> binding parameter; see
+	 *    {@link sap.ui.model.odata.v4.ODataModel#bindList} and
+	 *    {@link sap.ui.model.odata.v4.ODataModel#bindContext}.
 	 * </ul>
 	 *
 	 * @returns {string}

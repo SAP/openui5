@@ -2872,8 +2872,8 @@ sap.ui.define([
 	 *
 	 * Examples:
 	 * <ul>
-	 * <li>["Age"], 42 -> {Age: 42}
-	 * <li>["Address", "City"], "Walldorf" -> {Address: {City: "Walldorf"}}
+	 *   <li> ["Age"], 42 -> {Age: 42}
+	 *   <li> ["Address", "City"], "Walldorf" -> {Address: {City: "Walldorf"}}
 	 * </ul>
 	 *
 	 * @param {string[]} aPropertyPath

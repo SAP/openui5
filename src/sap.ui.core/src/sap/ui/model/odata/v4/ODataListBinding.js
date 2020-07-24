@@ -364,10 +364,11 @@ sap.ui.define([
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
 	 *   The reason for the 'change' event is
 	 *   <ul>
-	 *   <li> {@link sap.ui.model.ChangeReason.Add Add} when a new context is created,
-	 *   <li> {@link sap.ui.model.ChangeReason.Remove Remove} when a context is removed,
-	 *   <li> {@link sap.ui.model.ChangeReason.Context Context} when the parent context is changed,
-	 *   <li> {@link sap.ui.model.ChangeReason.Change Change} for other changes.
+	 *     <li> {@link sap.ui.model.ChangeReason.Add Add} when a new context is created,
+	 *     <li> {@link sap.ui.model.ChangeReason.Remove Remove} when a context is removed,
+	 *     <li> {@link sap.ui.model.ChangeReason.Context Context} when the parent context is
+	 *       changed,
+	 *     <li> {@link sap.ui.model.ChangeReason.Change Change} for other changes.
 	 *   </ul>
 	 *   Additionally each '{@link #event:refresh refresh}' event is followed by a 'change' event
 	 *   repeating the change reason when the requested data is available.
@@ -508,13 +509,13 @@ sap.ui.define([
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
 	 *   The reason for the 'refresh' event could be
 	 *   <ul>
-	 *   <li> {@link sap.ui.model.ChangeReason.Context Context} when the binding's
-	 *     parent context is changed,
-	 *   <li> {@link sap.ui.model.ChangeReason.Filter Filter} on {@link #filter} and
-	 *     {@link #setAggregation},
-	 *   <li> {@link sap.ui.model.ChangeReason.Refresh Refresh} on {@link #refresh}, or when the
-	 *     binding is initialized,
-	 *   <li> {@link sap.ui.model.ChangeReason.Sort Sort} on {@link #sort}.
+	 *     <li> {@link sap.ui.model.ChangeReason.Context Context} when the binding's
+	 *       parent context is changed,
+	 *     <li> {@link sap.ui.model.ChangeReason.Filter Filter} on {@link #filter} and
+	 *       {@link #setAggregation},
+	 *     <li> {@link sap.ui.model.ChangeReason.Refresh Refresh} on {@link #refresh}, or when the
+	 *       binding is initialized,
+	 *     <li> {@link sap.ui.model.ChangeReason.Sort Sort} on {@link #sort}.
 	 *   </ul>
 	 *   {@link #changeParameters} leads to {@link sap.ui.model.ChangeReason.Filter Filter} if one
 	 *   of the parameters '$filter' and '$search' is changed, otherwise it leads to
@@ -1362,9 +1363,9 @@ sap.ui.define([
 	 *   The filter executed on the list is created from the following parts, which are combined
 	 *   with a logical 'and':
 	 *   <ul>
-	 *   <li> Dynamic filters of type {@link sap.ui.model.FilterType.Application}
-	 *   <li> Dynamic filters of type {@link sap.ui.model.FilterType.Control}
-	 *   <li> The static filters, as defined in the '$filter' binding parameter
+	 *     <li> Dynamic filters of type {@link sap.ui.model.FilterType.Application}
+	 *     <li> Dynamic filters of type {@link sap.ui.model.FilterType.Control}
+	 *     <li> The static filters, as defined in the '$filter' binding parameter
 	 *   </ul>
 	 *
 	 * @param {sap.ui.model.FilterType} [sFilterType=sap.ui.model.FilterType.Application]
@@ -1737,9 +1738,9 @@ sap.ui.define([
 	 * If the system query option <code>$filter</code> is present, it will be added to the AST as a
 	 * node with the following structure:
 	 *   <ul>
-	 *   <li><code>expression</code>: the value of the system query option <code>$filter</code>
-	 *   <li><code>syntax</code>: the OData version of this bindings model, e.g. "OData 4.0"
-	 *   <li><code>type</code>: "Custom"
+	 *     <li> <code>expression</code>: the value of the system query option <code>$filter</code>
+	 *     <li> <code>syntax</code>: the OData version of this bindings model, e.g. "OData 4.0"
+	 *     <li> <code>type</code>: "Custom"
 	 *   </ul>
 	 *
 	 * @param {boolean} [bIncludeOrigin=false] whether to include information about the filter
@@ -1789,11 +1790,11 @@ sap.ui.define([
 	 *
 	 * The count is known to the binding in the following situations:
 	 * <ul>
-	 *   <li>The server-side count has been requested via the system query option
+	 *   <li> The server-side count has been requested via the system query option
 	 *     <code>$count</code>.
-	 *   <li>A "short read" in a paged collection (the server delivered less elements than
+	 *   <li> A "short read" in a paged collection (the server delivered less elements than
 	 *     requested) indicated that the server has no more unread elements.
-	 *   <li>It has been read completely in one request, for example an embedded collection via
+	 *   <li> It has been read completely in one request, for example an embedded collection via
 	 *     <code>$expand</code>.
 	 * </ul>
 	 *
@@ -2435,17 +2436,17 @@ sap.ui.define([
 	 *   A map from aggregatable property names or aliases to objects containing the following
 	 *   details:
 	 *   <ul>
-	 *   <li><code>grandTotal</code>: An optional boolean that tells whether a grand total for this
-	 *     aggregatable property is needed (since 1.59.0)
-	 *   <li><code>subtotals</code>: An optional boolean that tells whether subtotals for this
-	 *     aggregatable property are needed
-	 *   <li><code>with</code>: An optional string that provides the name of the method (for
-	 *     example "sum") used for aggregation of this aggregatable property; see
-	 *     "3.1.2 Keyword with". Both, "average" and "countdistinct" are not supported for subtotals
-	 *     or grand totals.
-	 *   <li><code>name</code>: An optional string that provides the original aggregatable
-	 *     property name in case a different alias is chosen as the name of the dynamic property
-	 *     used for aggregation of this aggregatable property; see "3.1.1 Keyword as"
+	 *     <li> <code>grandTotal</code>: An optional boolean that tells whether a grand total for
+	 *       this aggregatable property is needed (since 1.59.0)
+	 *     <li> <code>subtotals</code>: An optional boolean that tells whether subtotals for this
+	 *       aggregatable property are needed
+	 *     <li> <code>with</code>: An optional string that provides the name of the method (for
+	 *       example "sum") used for aggregation of this aggregatable property; see
+	 *       "3.1.2 Keyword with". Both, "average" and "countdistinct" are not supported for
+	 *       subtotals or grand totals.
+	 *     <li> <code>name</code>: An optional string that provides the original aggregatable
+	 *       property name in case a different alias is chosen as the name of the dynamic property
+	 *       used for aggregation of this aggregatable property; see "3.1.1 Keyword as"
 	 *   </ul>
 	 * @param {object} [oAggregation.group]
 	 *   A map from groupable property names to empty objects
