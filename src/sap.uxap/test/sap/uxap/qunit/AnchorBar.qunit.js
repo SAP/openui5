@@ -441,6 +441,45 @@ sap.ui.define([
 		assert.equal(oSectionButton.getProperty("text"), "newvalue", "New model value must not be reflected");
 	});
 
+	QUnit.test("selectItems with bound text", function (assert) {
+
+		var sButtonText = "my text",
+			oAnchorBar = new AnchorBar(),
+			oModel = new JSONModel({
+				buttonText: sButtonText
+			}),
+			oButton = new Button({text: "{/buttonText}"});
+
+		// Check select-item is created before the data-binding of the text is resolved
+		oAnchorBar.addContent(oButton);
+		assert.equal(oAnchorBar._oSelect.getItems().length, 1, "select item for the button is created");
+
+		// Check the data-binding of the text is successfully resolved
+		oAnchorBar.setModel(oModel);
+		assert.equal(oAnchorBar._oSelect.getItems()[0].getText(), sButtonText, "select item for the button has correct text");
+	});
+
+	QUnit.test("selectItems with bound text and contextBinding", function (assert) {
+
+		var sButtonText = "my text",
+			oAnchorBar = new AnchorBar(),
+			oModel = new JSONModel({
+				buttons: {
+					buttonText: sButtonText
+				}
+			}),
+			oButton = new Button({text: "{buttonText}"});
+
+		// Check select-item is created before the data-binding of the text is resolved
+		oAnchorBar.addContent(oButton);
+		assert.equal(oAnchorBar._oSelect.getItems().length, 1, "select item for the button is created");
+
+		// Check the data-binding of the text is successfully resolved
+		oAnchorBar.setBindingContext(oModel.createBindingContext("/buttons"));
+		oAnchorBar.setModel(oModel);
+		assert.equal(oAnchorBar._oSelect.getItems()[0].getText(), sButtonText, "select item for the button has correct text");
+	});
+
 	QUnit.module("complex binding", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
