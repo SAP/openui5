@@ -239,7 +239,7 @@ sap.ui.define([
 
 		_changeIframeBootstrapToCloud: function (sRawIndexFileHtml) {
 			var rReplaceIndex = /src=(?:"[^"]*\/sap-ui-core\.js"|'[^']*\/sap-ui-core\.js')/,
-				oCurrentURI = new URI(window.location.href).search(""),
+				oCurrentURI = new URI(document.baseURI).search(""),
 				oRelativeBootstrapURI = new URI(sap.ui.require.toUrl("") + "/sap-ui-core.js"),
 				sBootstrapURI = oRelativeBootstrapURI.absoluteTo(oCurrentURI).toString();
 
