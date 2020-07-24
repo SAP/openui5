@@ -363,7 +363,7 @@ sap.ui.define([
 
 	BaseContent.prototype.isLoading  = function () {
 		var oLoadingProvider = this._oLoadingProvider,
-			oCard = Core.byId(this.getCard());
+			oCard = this.getCardInstance();
 
 		return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || (oCard && oCard.isLoading()));
 	};
@@ -421,6 +421,10 @@ sap.ui.define([
 		this.fireEvent("_dataReady");
 		this.destroyPlaceholder();
 		this._oLoadingProvider.setLoading(false);
+	};
+
+	BaseContent.prototype.getCardInstance = function () {
+		return Core.byId(this.getCard());
 	};
 
 	return BaseContent;
