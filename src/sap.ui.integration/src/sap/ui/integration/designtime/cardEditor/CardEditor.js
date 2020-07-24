@@ -36,9 +36,10 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
+		constructor: function (mParameters) {
+			mParameters = mParameters || {};
 			BaseEditor.prototype.constructor.apply(this, arguments);
-			if (!this.getConfig()) {
+			if (!mParameters["config"]) {
 				this.addConfig(oDefaultCardConfig);
 			}
 		},
@@ -100,7 +101,9 @@ sap.ui.define([
 		var sCardId = ObjectPath.get(["sap.app", "id"], oJson);
 
 		if (this._bDesigntimeInit && this._bCardId !== sCardId) {
-			this._oDesigntimePromise.cancel();
+			if (this._oDesigntimePromise) {
+				this._oDesigntimePromise.cancel();
+			}
 			delete this._bCardId;
 			delete this._bDesigntimeInit;
 		}
