@@ -12,7 +12,8 @@ sap.ui.define([
 			ItemPosition : 1,
 			ProductID : 2,
 			Quantity : 3,
-			Note : 7
+			Note : 7,
+			Fix : 8
 		},
 		mMessageShort2Message = {
 			approval : "For a quantity greater than 1 you need an approval reason",
@@ -23,6 +24,7 @@ sap.ui.define([
 			note : "Enter an Item Note",
 			order : "Order at least 2 EA of product 'HT-1000'",
 			success : "My success message",
+			updateSuccess : "Successfully updated the quantity",
 			warning : "My warning message"
 		},
 		mNoteShort2Note = {
@@ -204,6 +206,25 @@ sap.ui.define([
 				 */
 				pressFixAllQuantities : function () {
 					return pressButton(this, "fixAllQuantities::ToLineItems");
+				},
+				/*
+				 * Presses the "Fix Quantity Issues" Button in the specified row.
+				 *
+				 * @param {number} iRow The row in which the fix button should be pressed
+				 */
+				pressFixQuantityInRow : function (iRow) {
+					return this.waitFor({
+						id : "ToLineItems",
+						success : function (oTable) {
+							var oFixButton = oTable.getRows()[iRow].getCells()[mColumn.Fix];
+
+							oFixButton.firePress();
+							Opa5.assert.ok(true,
+								"Fix Quantity button in row " + iRow + " has been pressed.");
+						},
+						viewName : sViewName,
+						visible : false
+					});
 				},
 				/*
 				 * Presses the "Show more details" button in the specified line in the table.
@@ -477,7 +498,7 @@ sap.ui.define([
 						if (sProductId === "HT-1000") {
 							Opa5.assert.ok(iQuantity >= 2,
 								"Quantity for item " + sItemPosition + " is ok.");
-						} else {
+						} else if (sProductId !== "") {
 							Opa5.assert.ok(iQuantity >= 1,
 								"Quantity for item " + sItemPosition + " is ok.");
 						}
