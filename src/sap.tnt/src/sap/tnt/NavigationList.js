@@ -158,12 +158,17 @@ sap.ui.define([
 		 * @private
 		 */
 		NavigationList.prototype._getDomRefs = function () {
-			var domRefs = [];
 
-			var items = this.getItems();
+			var domRefs = [],
+				items = this.getItems(),
+				isExpanded = this.getExpanded();
 
 			for (var i = 0; i < items.length; i++) {
-				jQuery.merge(domRefs, items[i]._getDomRefs());
+				if (isExpanded) {
+					jQuery.merge(domRefs, items[i]._getDomRefs());
+				} else {
+					domRefs.push(items[i].getDomRef());
+				}
 			}
 
 			return domRefs;
