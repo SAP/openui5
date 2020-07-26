@@ -112,6 +112,23 @@ sap.ui.define([
 				},
 
 				/**
+				 * Fires when designtime metadata is changed
+				 */
+				designtimeMetadataChange: {
+					parameters: {
+						path: {
+							type: "string"
+						},
+						value: {
+							type: "any"
+						},
+						previousValue: {
+							type: "any"
+						}
+					}
+				},
+
+				/**
 				 * Fires when config is changed
 				 */
 				 configChange: {
@@ -310,6 +327,29 @@ sap.ui.define([
 				});
 			}
 		}.bind(this));
+	};
+
+	BasePropertyEditor.prototype.setDesigntimeMetadata = function (oValue) {
+		var oCurrentMetadata = this.getConfig().metadata;
+		var oNextMetadata = oValue;
+		var oConfig = this.getConfig();
+
+		if (!deepEqual(oCurrentMetadata, oNextMetadata)) {
+			this.fireDesigntimeMetadataChange({
+				path: oConfig.path,
+				previousValue: oCurrentMetadata,
+				value: oNextMetadata
+			});
+		}
+	};
+
+	BasePropertyEditor.prototype.getNestedDesigntimeMetadata = function (sKey) {
+		var oDesigntimeMetadata = (this.getConfig() || {}).designtime || {};
+		return oDesigntimeMetadata[sKey];
+	};
+
+	BasePropertyEditor.prototype.getNestedDesigntimeMetadataValue = function (sKey) {
+		return (this.getNestedDesigntimeMetadata(sKey) || {}).__value || {};
 	};
 
 	BasePropertyEditor.prototype._getValidators = function () {

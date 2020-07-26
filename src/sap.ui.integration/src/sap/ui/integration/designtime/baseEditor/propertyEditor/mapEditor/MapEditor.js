@@ -320,7 +320,7 @@ sap.ui.define([
 			var sKey = oEvent.getSource().getConfig().itemKey;
 			var sChangeType = oEvent.getParameter("path");
 
-			var fnHandler = this._getItemChangeHandlers()[sChangeType];
+			var fnHandler = this.getItemChangeHandlers()[sChangeType];
 			if (typeof fnHandler !== 'function') {
 				// No specific handler is registered for the change, use generic handler
 				fnHandler = this._onFieldChange;
@@ -329,7 +329,7 @@ sap.ui.define([
 			fnHandler.call(this, sKey, oEvent);
 		},
 
-		_getItemChangeHandlers: function () {
+		getItemChangeHandlers: function () {
 			return {
 				"key": this._onKeyChange,
 				"type": this._onTypeChange

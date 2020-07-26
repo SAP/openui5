@@ -159,6 +159,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Designtime-specific metadata to be changed in the editor. Note: If an object is passed as a parameter, it won't be mutated. <code>.getDesigntimeMetadata()</code> or
+				 * <code>.attachDesigntimeMetadataChange()</code> should be used instead to get the changed object.
+				 */
+				"designtimeMetadata": {
+					type: "object"
+				},
+
+				/**
 				 * Layout name. Standard layout types: list | form
 				 */
 				"layout": {
@@ -185,6 +193,16 @@ sap.ui.define([
 					}
 				},
 				/**
+				 * Fired when designtime metadata has been changed by a <code>propertyEditor</code>.
+				 */
+				designtimeMetadataChange: {
+					parameters: {
+						designtimeMetadata: {
+							type: "object"
+						}
+					}
+				},
+				/**
 				 * Fired when all property editors for the given JSON and configuration are created.
 				 * TODO: remove this public event.
 				 */
@@ -200,7 +218,8 @@ sap.ui.define([
 			this._mObservableConfig = {};
 			this._mPropertyEditors = {};
 			this._aCancelHandlers = [];
-			this._oDataModel = this._createDataModel();
+			this._oDataModel = this._createModel();
+			this._oDesigntimeMetadataModel = this._createModel();
 
 			this._bInitFinished = false;
 			this._bValidatorsReady = false;
@@ -242,6 +261,7 @@ sap.ui.define([
 	BaseEditor.prototype.exit = function () {
 		this._reset();
 		this._oDataModel.destroy();
+		this._oDesigntimeMetadataModel.destroy();
 	};
 
 	BaseEditor.prototype._prepareData = function (oJson) {
@@ -371,6 +391,37 @@ sap.ui.define([
 		return oResult;
 	}
 
+	BaseEditor.prototype.setDesigntimeMetadata = function (oDesigntimeMetadata, bIsInitialMetadata) {
+		var oNextMetadata = deepClone(oDesigntimeMetadata);
+		if (!deepEqual(oNextMetadata, this.getDesigntimeMetadata())) {
+			this.setProperty("designtimeMetadata", oNextMetadata);
+			this._oDesigntimeMetadataModel.setData(oNextMetadata);
+			if (!bIsInitialMetadata) {
+				this.fireDesigntimeMetadataChange({
+					designtimeMetadata: formatExportedDesigntimeMetadata(oNextMetadata)
+				});
+			}
+		}
+	};
+
+	function formatExportedDesigntimeMetadata (oMetadata) {
+		var oFlatMetadata = {};
+		var fnFlattenPath = function (oObject, aPath) {
+			Object.keys(oObject).forEach(function (sKey) {
+				var vValue = oObject[sKey];
+
+				if (sKey === "__value") {
+					oFlatMetadata[aPath.join("/")] = vValue;
+				} else if (isPlainObject(vValue)) {
+					fnFlattenPath(vValue, [].concat(aPath, sKey));
+				}
+			});
+		};
+
+		fnFlattenPath(oMetadata, []);
+		return oFlatMetadata;
+	}
+
 	BaseEditor.prototype._initValidators = function (mValidatorModules) {
 		ValidatorRegistry.deregisterAllValidators();
 		ValidatorRegistry.registerValidators(mValidatorModules);
@@ -433,6 +484,7 @@ sap.ui.define([
 					// Setup config observer
 					this._oConfigObserver.addToIgnore(["template", "itemLabel"]); // Ignore array templates and itemLabels
 					this._oConfigObserver.setModel(this._oDataModel);
+					this._oConfigObserver.setModel(this._oDesigntimeMetadataModel, "designtimeMetadata");
 					this._oConfigObserver.setModel(this._oI18nModel, "i18n");
 
 					var sContextPath = this._getContextPath();
@@ -539,7 +591,7 @@ sap.ui.define([
 		}
 	};
 
-	BaseEditor.prototype._createDataModel = function () {
+	BaseEditor.prototype._createModel = function () {
 		var oModel = new JSONModel();
 		oModel.setDefaultBindingMode("OneWay");
 		return oModel;
@@ -624,7 +676,8 @@ sap.ui.define([
 
 		return Object.assign({}, mPropertyConfig, {
 			path: sPath,
-			value: "{" + sPath + "}"
+			value: "{" + sPath + "}",
+			designtime: "{designtimeMetadata>" + sPath + "}"
 		});
 	};
 
@@ -716,6 +769,7 @@ sap.ui.define([
 
 		oPropertyEditor.setValue(vValue);
 		oPropertyEditor.attachValueChange(this._onValueChange, this);
+		oPropertyEditor.attachDesigntimeMetadataChange(this._onDesigntimeMetadataChange, this);
 		oPropertyEditor.attachReady(this._checkReady, this);
 	};
 
@@ -734,6 +788,7 @@ sap.ui.define([
 		}
 
 		oPropertyEditor.detachValueChange(this._onValueChange, this);
+		oPropertyEditor.detachDesigntimeMetadataChange(this._onDesigntimeMetadataChange, this);
 
 		if (Array.isArray(aList)) {
 			this._mPropertyEditors[sKey] = aList.filter(function (oItem) {
@@ -922,6 +977,10 @@ sap.ui.define([
 		return _merge({}, this.getProperty("json")); // To avoid manipulations with the json outside of the editor
 	};
 
+	BaseEditor.prototype.getDesigntimeMetadata = function () {
+		return _merge({}, this.getProperty("designtimeMetadata"));
+	};
+
 	BaseEditor.prototype._getContextPath = function () {
 		var oConfig = this.getConfig();
 		var sContext = oConfig && oConfig.context || null;
@@ -963,6 +1022,28 @@ sap.ui.define([
 		}
 
 		this.setJson(oJson);
+	};
+
+	BaseEditor.prototype._onDesigntimeMetadataChange = function (oEvent) {
+		var sPath = oEvent.getParameter("path");
+		var oDesigntimeMetadata = this.getDesigntimeMetadata() || {};
+		var vValue = oEvent.getParameter("value");
+
+		if (sPath[0] === "/") {
+			sPath = sPath.substr(1);
+		} else {
+			throw new Error("BaseEditor._onDesigntimeMetadataChange: unknown relative path - '" + sPath + "'");
+		}
+
+		var aParts = sPath.split("/");
+
+		ObjectPath.set(
+			aParts,
+			vValue,
+			oDesigntimeMetadata
+		);
+
+		this.setDesigntimeMetadata(oDesigntimeMetadata);
 	};
 
 	return BaseEditor;
