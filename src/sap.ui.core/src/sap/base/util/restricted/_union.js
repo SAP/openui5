@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.15#union}
+ * See {@link https://lodash.com/docs/4.17.19#union}
  *
  * @function
  * @alias module:sap/base/util/restricted/_union

@@ -19,7 +19,7 @@ sap.ui.define(function() {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.15';
+  var VERSION = '4.17.19';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -2544,6 +2544,10 @@ sap.ui.define(function() {
       var key = toKey(path[index]),
           newValue = value;
 
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        return object;
+      }
+
       if (index != lastIndex) {
         var objValue = nested[key];
         newValue = customizer ? customizer(objValue, key, nested) : undefined;
@@ -3483,10 +3487,11 @@ sap.ui.define(function() {
     if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
       return false;
     }
-    // Assume cyclic values are equal.
-    var stacked = stack.get(array);
-    if (stacked && stack.get(other)) {
-      return stacked == other;
+    // Check that cyclic values are equal.
+    var arrStacked = stack.get(array);
+    var othStacked = stack.get(other);
+    if (arrStacked && othStacked) {
+      return arrStacked == other && othStacked == array;
     }
     var index = -1,
         result = true,
@@ -3648,10 +3653,11 @@ sap.ui.define(function() {
         return false;
       }
     }
-    // Assume cyclic values are equal.
-    var stacked = stack.get(object);
-    if (stacked && stack.get(other)) {
-      return stacked == other;
+    // Check that cyclic values are equal.
+    var objStacked = stack.get(object);
+    var othStacked = stack.get(other);
+    if (objStacked && othStacked) {
+      return objStacked == other && othStacked == object;
     }
     var result = true;
     stack.set(object, other);
