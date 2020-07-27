@@ -267,7 +267,9 @@ sap.ui.define([
 
 	AnchorBar.prototype._createSelectItem = function (oButton, bIsSecondLevel) {
 		//create the phone equivalent item if the button has some visible text (UX rule)
-		if (oButton.getText().trim() != "" && (!bIsSecondLevel || oButton.data("bTitleVisible") === true)) {
+		var oBindingInfo = oButton.getBindingInfo("text"),
+			bButtonHasText = oButton.getText().trim() != "" || oBindingInfo;
+		if (bButtonHasText && (!bIsSecondLevel || oButton.data("bTitleVisible") === true)) {
 			var oPhoneItem = new Item({
 				key: oButton.data("sectionId"),
 				text: oButton.getText(),
@@ -278,6 +280,10 @@ sap.ui.define([
 					})
 				]
 			});
+
+			if (oBindingInfo) {
+				oPhoneItem.bindProperty("text", Object.assign({}, oBindingInfo));
+			}
 
 			this._oSelect.addItem(oPhoneItem);
 		}
