@@ -44,6 +44,8 @@ sap.ui.define([
 
 	// Regex for matching the number placeholder in pattern
 	var rNumPlaceHolder = /0+(\.0+)?/;
+	// Regex for checking that the given string only consists of '0' characters
+	var rOnlyZeros = /^0+$/;
 
 	/**
 	 * Internal enumeration to differentiate number types
@@ -1615,7 +1617,10 @@ sap.ui.define([
 			return +(aExpParts[0] + "e" + iStep);
 		} else if (typeof vValue === "string") {
 			if (parseFloat(vValue) === 0 && iStep >= 0) {
-				return vValue;
+				// input "00000" should become "0"
+				// input "1e-1337" should remain "1e-1337"
+				// in order to keep the precision
+				return rOnlyZeros.test(vValue) ? "0" : vValue;
 			}
 			// In case of a negative value the leading minus needs to be cut off before shifting the decimal point.
 			// Otherwise the minus will affect the positioning by index 1.
