@@ -1043,15 +1043,22 @@ sap.ui.define([
 
 		Chart.prototype._rebind = function() {
 
+			if (!this.bDelegateInitialized) {
+				return;
+			}
+
+			var oBindingInfo = this.oDataInfo,
+				oDelegate = this.getControlDelegate();
+
+			if (oDelegate) {
+				oDelegate.updateBindingInfo(this, oBindingInfo);
+			}
+
 			if (!this.isInnerChartBound()) {
 				return;
 			}
 
-			var oBindingInfo = this.oDataInfo;
 			if (oBindingInfo) {
-				if (this.bDelegateInitialized) {
-					this.getControlDelegate().updateBindingInfo(this, oBindingInfo);
-				}
 
 				//BindingInfo.filters = this._getFilterInfo().filters;
 				oBindingInfo.sorter = this._getSorters();
@@ -1062,7 +1069,6 @@ sap.ui.define([
 			}
 
 			this.bindAggregation("data", oBindingInfo);
-
 			this._updateInnerChartNoDataText();
 			this._renderOverlay(false);
 		};
