@@ -43,7 +43,16 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
 	UniversalDate.prototype.createDate = function(clDate, aArgs) {
 		switch (aArgs.length) {
 			case 0: return new clDate();
-			case 1: return new clDate(aArgs[0]);
+			// new Date(new Date()) is officially not supported
+			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date
+			// IE 11 loses milliseconds when using new Date(new Date())
+			// var oDateWithMs = new Date(1985, 9, 9, 13, 37, 13, 370);
+			// new Date(oDateWithMs).getMilliseconds();
+			// ie11: 0
+			// chrome/edge/safari/ff: 370
+			// -> Date#getTime to circumvent this problem
+			// this is e.g. executed when calling <code>new UniversalDate(oDateWithMs)</code>
+			case 1: return new clDate(aArgs[0] instanceof Date ? aArgs[0].getTime() : aArgs[0]);
 			case 2: return new clDate(aArgs[0], aArgs[1]);
 			case 3: return new clDate(aArgs[0], aArgs[1], aArgs[2]);
 			case 4: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3]);
