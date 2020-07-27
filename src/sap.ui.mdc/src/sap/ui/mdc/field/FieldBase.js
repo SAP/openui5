@@ -2153,7 +2153,10 @@ sap.ui.define([
 
 		var bPrevent = false;
 		var oFieldHelp = _getFieldHelp.call(this);
-		if (oFieldHelp && oFieldHelp.isOpen()) {
+
+		if (!oFieldHelp) {
+			return; // no FieldHelp -> just use logic of content control
+		} else if (oFieldHelp.isOpen()) {
 			// FieldHelp open, navigate always in FieldHelp
 			bPrevent = true;
 		}else {
