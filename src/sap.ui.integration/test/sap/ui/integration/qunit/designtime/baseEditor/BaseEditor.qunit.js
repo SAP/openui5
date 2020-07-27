@@ -440,7 +440,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when setConfig is called with a specific config - 1", function(assert) {
+		QUnit.test("when _addSpecificConfig is called with a specific config - 1", function(assert) {
 			var mConfig = {
 				context: "context",
 				properties: {
@@ -462,11 +462,15 @@ sap.ui.define([
 					}
 				},
 				propertyEditors: {
-					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
-				}
+					select: "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
+				},
+				layout: {
+					foo: "bar"
+				},
+				sameProperty: "foo"
 			};
 
-			this.oBaseEditor._oSpecificConfig = {
+			var oSpecificConfig = {
 				properties: {
 					parameters: {
 						tags: ["general2"],
@@ -481,30 +485,29 @@ sap.ui.define([
 						path: "prop11"
 					},
 					foo: {
+						path: "prop1",
 						type: "select",
 						allowBindings: true,
 						allowCustomValues: true
 					},
 					bar: {
+						path: "prop1",
 						type: "select",
 						allowBindings: false,
 						allowCustomValues: false
 					}
 				},
-				context: "whatever"
+				context: "whatever",
+				layout: {
+					foo: "foobar"
+				},
+				sameProperty: "bar",
+				newProperty: "foo"
 			};
 
 			var mExpectedConfig = {
 				context: "context",
 				properties: {
-					parameters: {
-						tags: ["general2"],
-						label: "myOwnLabel",
-						path: "configuration/parameters2",
-						type: "select",
-						allowLabelChange: false,
-						allowedTypes: ["string", "number", "foo"]
-					},
 					prop1: {
 						type: "select",
 						path: "prop11"
@@ -523,11 +526,20 @@ sap.ui.define([
 					}
 				},
 				propertyEditors: {
-					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
-				}
+					select: "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
+				},
+				layout: {
+					foo: "bar"
+				},
+				sameProperty: "foo",
+				newProperty: "foo"
 			};
 
-			return this.oBaseEditor.setConfig(mConfig).then(function() {
+			return this.oBaseEditor.setConfig(mConfig)
+			.then(function() {
+				return this.oBaseEditor._addSpecificConfig(oSpecificConfig);
+			}.bind(this))
+			.then(function() {
 				assert.deepEqual(
 					_omit(this.oBaseEditor.getConfig(), "i18n"),
 					mExpectedConfig,
@@ -536,9 +548,8 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when setConfig is called with a specific config - 2", function(assert) {
+		QUnit.test("when _addSpecificConfig is called with a specific config - 2", function(assert) {
 			var mConfig = {
-				context: "context",
 				properties: {
 					parameters: {
 						tags: ["general"],
@@ -550,11 +561,15 @@ sap.ui.define([
 					}
 				},
 				propertyEditors: {
-					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
-				}
+					map: "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
+				},
+				i18n: [
+					"i18n1",
+					"i18n2"
+				]
 			};
 
-			this.oBaseEditor._oSpecificConfig = {
+			var oSpecificConfig = {
 				properties: {
 					parameters: {
 						tags: ["general2"],
@@ -565,11 +580,15 @@ sap.ui.define([
 						allowedTypes: ["string", "foo", "foobar"]
 					}
 				},
-				context: "whatever"
+				context: "whatever",
+				i18n: [
+					"i18n2",
+					"i18n3"
+				]
 			};
 
 			var mExpectedConfig = {
-				context: "context",
+				context: "whatever",
 				properties: {
 					parameters: {
 						tags: ["general2"],
@@ -581,20 +600,25 @@ sap.ui.define([
 					}
 				},
 				propertyEditors: {
-					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
-				}
+					map: "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
+				},
+				i18n: [
+					"i18n1",
+					"i18n2",
+					"i18n3"
+				]
 			};
 
-			return this.oBaseEditor.setConfig(mConfig).then(function() {
-				assert.deepEqual(
-					_omit(this.oBaseEditor.getConfig(), "i18n"),
-					mExpectedConfig,
-					"then the correct config is saved"
-				);
+			return this.oBaseEditor.setConfig(mConfig)
+			.then(function() {
+				return this.oBaseEditor._addSpecificConfig(oSpecificConfig);
+			}.bind(this))
+			.then(function() {
+				assert.deepEqual(this.oBaseEditor.getConfig(), mExpectedConfig, "then the correct config is saved");
 			}.bind(this));
 		});
 
-		QUnit.test("when setConfig is called with a specific config - 3", function(assert) {
+		QUnit.test("when _addSpecificConfig is called with a specific config - 3", function(assert) {
 			var mConfig = {
 				context: "context",
 				properties: {
@@ -608,108 +632,41 @@ sap.ui.define([
 					}
 				},
 				propertyEditors: {
-					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
-				}
-			};
-
-			this.oBaseEditor._oSpecificConfig = {
-				properties: {
-					parameters: {
-						tags: ["general2"],
-						label: "myOwnLabel",
-						path: "configuration/parameters2",
-						type: "newType",
-						allowLabelChange: false,
-						allowedTypes: ["string", "foo", "foobar"]
-					}
-				},
-				propertyEditors: {
-					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
-					"newType": "sap/ui/integration/designtime/baseEditor/propertyEditor/NewType"
-				},
-				context: "whatever"
-			};
-
-			var mExpectedConfig = {
-				context: "context",
-				properties: {
-					parameters: {
-						tags: ["general"],
-						label: "label",
-						path: "configuration/parameters",
-						type: "map",
-						allowLabelChange: true,
-						allowedTypes: ["string", "number", "foo", "bar"]
-					}
-				},
-				propertyEditors: {
-					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
-				}
-			};
-
-			return this.oBaseEditor.setConfig(mConfig).then(function() {
-				assert.deepEqual(
-					_omit(this.oBaseEditor.getConfig(), "i18n"),
-					mExpectedConfig,
-					"then the correct config is saved"
-				);
-			}.bind(this));
-		});
-
-		QUnit.test("when _addSpecificConfig is called", function(assert) {
-			var mConfig = {
-				context: "context",
-				properties: {
-					parameters: {
-						tags: ["general"],
-						label: "label",
-						path: "configuration/parameters",
-						type: "map",
-						allowLabelChange: true,
-						allowedTypes: ["string", "number", "foo", "bar"]
-					}
-				},
-				propertyEditors: {
-					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
+					map: "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
 				}
 			};
 
 			var oSpecificConfig = {
 				properties: {
-					parameters: {
-						tags: ["general2"],
-						label: "myOwnLabel",
+					destinations: {
 						path: "configuration/parameters2",
 						type: "newType",
-						allowLabelChange: false,
-						allowedTypes: ["string", "foo", "foobar"]
+						allowKeyChange: true,
+						allowAddAndRemove: false,
+						allowedValues: ["string", "foo", "foobar"]
 					}
 				},
 				propertyEditors: {
-					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
-					"newType": "sap/ui/integration/designtime/baseEditor/propertyEditor/NewType"
+					map: "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
+					newType: "sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor"
 				},
 				context: "whatever"
 			};
 
 			var mExpectedConfig = {
 				context: "context",
-				properties: {
-					parameters: {
-						tags: ["general"],
-						label: "label",
-						path: "configuration/parameters",
-						type: "map",
-						allowLabelChange: true,
-						allowedTypes: ["string", "number", "foo", "bar"]
-					}
-				},
+				properties: {},
 				propertyEditors: {
-					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
+					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
+					"newType": "sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor"
 				}
 			};
-			this.oBaseEditor.setConfig(mConfig);
-			return this.oBaseEditor._addSpecificConfig(oSpecificConfig).then(function() {
+
+			return this.oBaseEditor.setConfig(mConfig)
+			.then(function() {
+				return this.oBaseEditor._addSpecificConfig(oSpecificConfig);
+			}.bind(this))
+			.then(function() {
 				assert.deepEqual(
 					_omit(this.oBaseEditor.getConfig(), "i18n"),
 					mExpectedConfig,
@@ -739,11 +696,17 @@ sap.ui.define([
 			};
 			var oSpecificConfig = {
 				properties: {
+					prop1: {
+						type: "select",
+						path: "prop12"
+					},
 					foo: {
+						path: "prop1",
 						type: "select",
 						allowBindings: true
 					},
 					bar: {
+						path: "prop1",
 						type: "select",
 						allowBindings: false
 					}
