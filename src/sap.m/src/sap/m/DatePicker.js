@@ -553,7 +553,7 @@ sap.ui.define([
 	 *
 	 * Returns a date as a string in the format defined in property <code>valueFormat</code>.
 	 *
-	 * <b>Note:</b> The value is always expected and updated in Gregorian calendar format. (If data binding is used the format of the binding is used.)
+	 * <b>Note:</b> If there is no data binding, the value is expected and updated in Gregorian calendar type. (Otherwise, the type of the binding is used.)
 	 *
 	 * If this property is used, the <code>dateValue</code> property should not be changed from the caller.
 	 *
@@ -568,7 +568,7 @@ sap.ui.define([
 	 *
 	 * Expects a date as a string in the format defined in property <code>valueFormat</code>.
 	 *
-	 * <b>Note:</b> The value is always expected and updated in Gregorian calendar format. (If data binding is used the format of the binding is used.)
+	 * <b>Note:</b> If there is no data binding, the value is expected and updated in Gregorian calendar type. (Otherwise, the type of the binding is used.)
 	 *
 	 * If this property is used, the <code>dateValue</code> property should not be changed from the caller.
 	 *
@@ -1552,6 +1552,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
 	 * @param {string} oControlEvent.getParameters.value The new value of the <code>sap.m.DatePicker</code> as specified by <code>valueFormat</code>.
+	 * <b>Note:</b> If there is no data binding, the value is expected and updated in Gregorian calendar type. (Otherwise, the type of the binding is used.)
 	 * @param {boolean} oControlEvent.getParameters.valid Indicator for a valid date.
 	 * @public
 	 */
