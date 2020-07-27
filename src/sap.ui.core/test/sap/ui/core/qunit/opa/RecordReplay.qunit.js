@@ -167,40 +167,40 @@ sap.ui.define([
 
     QUnit.module("RecordReplay - AutoWait", {
         beforeEach: function () {
-            this.fnWaitAsyncStub = sinon.spy(sap.ui.test.autowaiter._autoWaiterAsync, "waitAsync");
-            this.fnConfigStub = sinon.spy(sap.ui.test.autowaiter._autoWaiterAsync, "extendConfig");
-            this.fnHasToWaitStub = sinon.spy(sap.ui.test.autowaiter._autoWaiter, "hasToWait");
+            this.clock = sinon.useFakeTimers();
+            this.fnWaitAsyncSpy = sinon.spy(sap.ui.test.autowaiter._autoWaiterAsync, "waitAsync");
+            this.fnConfigSpy = sinon.spy(sap.ui.test.autowaiter._autoWaiterAsync, "extendConfig");
+            this.fnHasToWaitStub = sinon.stub(sap.ui.test.autowaiter._autoWaiter, "hasToWait");
         },
         afterEach: function () {
-            this.fnWaitAsyncStub.restore();
-            this.fnConfigStub.restore();
+            this.clock.restore();
+            this.fnWaitAsyncSpy.restore();
+            this.fnConfigSpy.restore();
             this.fnHasToWaitStub.restore();
         }
     });
 
     QUnit.test("Should wait for UI5 processing to complete", function (assert) {
         var fnDone = assert.async();
-        //force polling
-        var oTimeout = setTimeout(function() {}, 200);
-
+        this.fnHasToWaitStub.onFirstCall().returns(true);
+        this.fnHasToWaitStub.returns(false);
         RecordReplay.waitForUI5({timeout: 10000, interval: 100}).then(function () {
             assert.ok(this.fnHasToWaitStub.called, "Should call autoWaiter");
             assert.ok(!sap.ui.test.autowaiter._autoWaiter.hasToWait(), "Should wait for processing to end");
-            assert.ok(this.fnConfigStub.calledOnce, "Should configure polling parameters");
-            assert.ok(this.fnWaitAsyncStub.calledOnce, "Should poll for autoWaiter conditions to be met");
+            assert.ok(this.fnConfigSpy.calledOnce, "Should configure polling parameters");
+            assert.ok(this.fnWaitAsyncSpy.calledOnce, "Should poll for autoWaiter conditions to be met");
         }.bind(this)).catch(function (error) {
             assert.ok(false, "Should not reach here" + error);
         }).finally(function () {
-            clearTimeout(oTimeout);
             fnDone();
         });
+
+        this.clock.tick(200);
     });
 
     QUnit.test("Should timeout when UI5 processing is not complete", function (assert) {
         var fnDone = assert.async();
-        //force polling
-        var oTimeout = setTimeout(function() {}, 200);
-
+        this.fnHasToWaitStub.returns(true);
         RecordReplay.waitForUI5({timeout: 100, interval: 100}).then(function () {
             assert.ok(false, "Should not reach here");
         }).catch(function (oError) {
@@ -208,8 +208,9 @@ sap.ui.define([
             assert.ok(sap.ui.test.autowaiter._autoWaiter.hasToWait(), "Should have pending processing");
             assert.ok(oError.toString().match(/Polling stopped.*there is still pending asynchronous work/), "Should receive polling error message");
         }.bind(this)).finally(function () {
-            clearTimeout(oTimeout);
             fnDone();
         });
+
+        this.clock.tick(200);
     });
 });
