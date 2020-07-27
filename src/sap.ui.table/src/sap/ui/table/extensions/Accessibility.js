@@ -400,7 +400,7 @@ sap.ui.define([
 				// if (oInfo && oInfo.described) { aDescriptions.push(oInfo.described); }
 
 				if (TableUtils.getInteractiveElements($Cell) !== null) {
-					aDescriptions.push(sTableId + "-toggleedit");
+					aLabels.push(sTableId + "-toggleedit");
 				}
 
 				if (TableUtils.Grouping.isTreeMode(oTable) && $Cell.parent().attr("aria-selected") === "true") {
