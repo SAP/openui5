@@ -120,6 +120,10 @@ sap.ui.define([
 		assert.ok(oDate instanceof Gregorian, "getInstance returns expected object");
 		assert.equal(oDate.getCalendarType(), "Gregorian", "Calendar type is set correctly");
 
+		// Default date
+		oDate = UniversalDate.getInstance();
+		assert.ok(oDate.oDate instanceof Date, "oDate field is set");
+
 		// getInstance with other UniversalDate
 		oGregorian = new Gregorian();
 		oDate = UniversalDate.getInstance(oGregorian, CalendarType.Islamic);
