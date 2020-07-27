@@ -2,9 +2,131 @@
 // These are some globals generated due to fl (signals, hasher) and m (hyphenation) libs.
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils", "sap/ui/events/KeyCodes", "sap/ui/core/Core", "sap/ui/mdc/Table", "sap/ui/mdc/table/Column", "sap/ui/mdc/table/GridTableType", "sap/ui/mdc/table/ResponsiveTableType", "sap/m/Text", "sap/m/Button", "sap/ui/model/odata/v4/ODataListBinding", "sap/ui/model/Sorter", "sap/ui/model/json/JSONModel", "sap/ui/base/Event", 'sap/ui/dom/containsOrEquals', 'sap/ui/mdc/p13n/FlexUtil', 'sap/ui/mdc/table/TableSettings', 'sap/ui/Device'
-], function(QUtils, KeyCodes, Core, Table, Column, GridTableType, ResponsiveTableType, Text, Button, ODataListBinding, Sorter, JSONModel, Event, containsOrEquals, FlexUtil, TableSettings, Device) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core",
+	"sap/ui/core/format/ListFormat",
+	"sap/ui/mdc/Table",
+	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/table/GridTableType",
+	"sap/ui/mdc/table/ResponsiveTableType",
+	"sap/m/Text",
+	"sap/m/Button",
+	"sap/ui/model/odata/v4/ODataListBinding",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/base/Event",
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/mdc/p13n/FlexUtil",
+	"sap/ui/mdc/table/TableSettings",
+	"sap/ui/Device"
+], function(
+	QUtils,
+	KeyCodes,
+	Core,
+	ListFormat,
+	Table,
+	Column,
+	GridTableType,
+	ResponsiveTableType,
+	Text,
+	Button,
+	ODataListBinding,
+	Sorter,
+	JSONModel,
+	Event,
+	containsOrEquals,
+	FlexUtil,
+	TableSettings,
+	Device
+) {
 	"use strict";
+
+	function stubFetchProperties(aPropertyInfos, oTable) {
+		var oTarget = oTable || Table.prototype;
+		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
+		var oOriginalDelegate;
+		var fnOriginalFetchProperties;
+
+		unstubFetchProperties();
+
+		sinon.stub(oTarget, "getControlDelegate").callsFake(function() {
+			var oDelegate = fnOriginalGetControlDelegate.apply(this, arguments);
+
+			if (oDelegate.fetchProperties.__whenResolved) {
+				return oDelegate;
+			}
+
+			var fnResolveFetchProperties;
+			var pFetchPropertiesResolved = new Promise(function(resolve) {
+				fnResolveFetchProperties = resolve;
+			});
+
+			oOriginalDelegate = oDelegate;
+			fnOriginalFetchProperties = oDelegate.fetchProperties;
+
+			oDelegate.fetchProperties = function() {
+				fnOriginalFetchProperties.apply(this, arguments);
+				var pReturn = Promise.resolve(aPropertyInfos);
+				pReturn.then(function() {
+					fnResolveFetchProperties();
+					pFetchPropertiesResolved = new Promise(function(resolve) {
+						fnResolveFetchProperties = resolve;
+					});
+				});
+				return pReturn;
+			};
+
+			oDelegate.fetchProperties.__whenResolved = function() {
+				return pFetchPropertiesResolved;
+			};
+
+			return oDelegate;
+		});
+
+		oTarget.__unstubFetchProperties = function() {
+			delete oTarget.__unstubFetchProperties;
+			oTarget.getControlDelegate.restore();
+			oOriginalDelegate.fetchProperties = fnOriginalFetchProperties;
+		};
+	}
+
+	function unstubFetchProperties(oTable) {
+		var oTarget = oTable || Table.prototype;
+
+		if (oTarget.__unstubFetchProperties) {
+			oTarget.__unstubFetchProperties();
+		}
+	}
+
+	function whenFetchPropertiesResolved(oTable, fnFetchPropertiesTrigger) {
+		return new Promise(function(resolve) {
+			oTable.awaitControlDelegate().then(function() {
+				var oDelegate = oTable.getControlDelegate();
+
+				if (oDelegate.fetchProperties.__whenResolved) {
+					oDelegate.fetchProperties.__whenResolved().then(resolve);
+				} else {
+					var fnFetchProperties = oDelegate.fetchProperties;
+
+					oDelegate.fetchProperties = function() {
+						var pFetchProperties = fnFetchProperties.apply(this, arguments);
+						pFetchProperties.then(resolve);
+						oDelegate.fetchProperties = fnFetchProperties;
+						return pFetchProperties;
+					};
+				}
+
+				fnFetchPropertiesTrigger(oTable);
+			});
+		});
+	}
+
+	function wait(iMilliseconds) {
+		return new Promise(function(resolve) {
+			setTimeout(resolve, iMilliseconds);
+		});
+	}
 
 	function triggerDragEvent(sDragEventType, oControl) {
 		var oJQueryDragEvent = jQuery.Event(sDragEventType);
@@ -51,6 +173,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
+			unstubFetchProperties();
 		}
 	});
 
@@ -1360,6 +1483,25 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Set filter conditions", function(assert) {
+		var oFilterConditions = {
+			name: [
+				{
+					isEmpty: null,
+					operator: "EQ",
+					validated: "NotValidated",
+					values: ["test"]
+				}
+			]
+		};
+
+		this.oTable.setFilterConditions(oFilterConditions);
+		assert.deepEqual(this.oTable.getFilterConditions(), oFilterConditions, "Filter conditions set");
+
+		this.oTable.setFilterConditions(null);
+		assert.deepEqual(this.oTable.getFilterConditions(), {}, "Filter conditions removed");
+	});
+
 	QUnit.test("setThreshold", function(assert) {
 		var done = assert.async();
 		var setThresholdSpy = sinon.spy(this.oTable, "setThreshold");
@@ -1899,28 +2041,21 @@ sap.ui.define([
 					"Sort"
 				]);
 
-				var fnResolve;
-				var pFetchProperties = new Promise(function(resolve) {
-					fnResolve = resolve;
-				});
-
-				var oFetchPropertiesStub = sinon.stub(this.oTable.getControlDelegate(), "fetchProperties").callsFake(function() {
-					var pResolved = Promise.resolve([{
+				stubFetchProperties([
+					{
 						name: "test",
 						sortable: true
-					}]);
-					pResolved.then(fnResolve);
-					return pResolved;
-				});
+					}
+				]);
 
-				this.oTable._oTable.fireEvent("columnPress", {
-					column: oInnerColumn
-				});
+				whenFetchPropertiesResolved(this.oTable, function(oTable) {
+					oTable._oTable.fireEvent("columnPress", {
+						column: oInnerColumn
+					});
 
-				// Event triggered and the ColumnHeaderPopover is created
-				assert.ok(fColumnPressSpy.calledTwice);
-
-				pFetchProperties.then(function() {
+					// Event triggered and the ColumnHeaderPopover is created
+					assert.ok(fColumnPressSpy.calledTwice);
+				}).then(function() {
 					assert.ok(this.oTable._oPopover);
 					assert.ok(this.oTable._oPopover.isA("sap.m.ColumnHeaderPopover"));
 
@@ -1951,7 +2086,6 @@ sap.ui.define([
 
 					fSortSpy.restore();
 					fColumnPressSpy.restore();
-					oFetchPropertiesStub.restore();
 					done();
 				}.bind(this));
 			}.bind(this));
@@ -1998,28 +2132,21 @@ sap.ui.define([
 					"Sort"
 				]);
 
-				var fnResolve;
-				var pFetchProperties = new Promise(function(resolve) {
-					fnResolve = resolve;
-				});
-
-				var oFetchPropertiesStub = sinon.stub(this.oTable.getControlDelegate(), "fetchProperties").callsFake(function() {
-					var pResolved = Promise.resolve([{
+				stubFetchProperties([
+					{
 						name: "test",
 						sortable: true
-					}]);
-					pResolved.then(fnResolve);
-					return pResolved;
-				});
+					}
+				]);
 
-				// Simulate click on sortable column
-				this.oTable._oTable.fireEvent("columnSelect", {
-					column: oInnerColumn
-				});
-				// Event triggered and the ColumnHeaderPopover is created
-				assert.ok(fColumnPressSpy.calledTwice);
-
-				pFetchProperties.then(function() {
+				whenFetchPropertiesResolved(this.oTable, function(oTable) {
+					// Simulate click on sortable column
+					oTable._oTable.fireEvent("columnSelect", {
+						column: oInnerColumn
+					});
+					// Event triggered and the ColumnHeaderPopover is created
+					assert.ok(fColumnPressSpy.calledTwice);
+				}).then(function() {
 					assert.ok(this.oTable._oPopover);
 					assert.ok(this.oTable._oPopover.isA("sap.m.ColumnHeaderPopover"));
 
@@ -2050,7 +2177,6 @@ sap.ui.define([
 
 					fSortSpy.restore();
 					fColumnPressSpy.restore();
-					oFetchPropertiesStub.restore();
 					done();
 				}.bind(this));
 			}.bind(this));
@@ -2085,29 +2211,21 @@ sap.ui.define([
 					"Sort"
 				]);
 
-				var fnResolve;
-				var pFetchProperties = new Promise(function(resolve) {
-					fnResolve = resolve;
-				});
-
-				var oFetchPropertiesStub = sinon.stub(this.oTable.getControlDelegate(), "fetchProperties").callsFake(function() {
-					var pResolved = Promise.resolve([{
+				stubFetchProperties([
+					{
 						name: "test",
 						sortable: false
-					}]);
-					pResolved.then(fnResolve);
-					return pResolved;
-				});
+					}
+				]);
 
-				// Simulate click on sortable column
-				this.oTable._oTable.fireEvent("columnSelect", {
-					column: oInnerColumn
-				});
-
-				pFetchProperties.then(function() {
+				whenFetchPropertiesResolved(this.oTable, function(oTable) {
+					// Simulate click on sortable column
+					oTable._oTable.fireEvent("columnSelect", {
+						column: oInnerColumn
+					});
+				}).then(function() {
 					assert.ok(!this.oTable._oPopover, "No ColumnHeaderPopover as for NonSortable Property");
 					fColumnPressSpy.restore();
-					oFetchPropertiesStub.restore();
 					done();
 				}.bind(this));
 			}.bind(this));
@@ -2136,37 +2254,28 @@ sap.ui.define([
 					"Sort"
 				]);
 
-				var fnResolve;
-				var pFetchProperties = new Promise(function(resolve) {
-					fnResolve = resolve;
-				});
-
-				var oFetchPropertiesStub = sinon.stub(this.oTable.getControlDelegate(), "fetchProperties").callsFake(function() {
-					var pResolved = Promise.resolve([{
+				stubFetchProperties([
+					{
 						name: "test",
 						sortable: false
-					},
-					{
+					}, {
 						name: "test2",
 						sortable: true
-					}]);
-					pResolved.then(fnResolve);
-					return pResolved;
-				});
+					}
+				]);
 
-				// Simulate click on sortable column
-				this.oTable._oTable.fireEvent("columnSelect", {
-					column: oInnerColumn
-				});
-
-				pFetchProperties.then(function() {
+				whenFetchPropertiesResolved(this.oTable, function(oTable) {
+					// Simulate click on sortable column
+					oTable._oTable.fireEvent("columnSelect", {
+						column: oInnerColumn
+					});
+				}).then(function() {
 					assert.ok(this.oTable._oPopover);
 					assert.strictEqual(this.oTable._oPopover.getItems().length, 1, "Sort item button created");
 					var aSortItem = this.oTable._oPopover.getItems()[0].getItems();
 					assert.strictEqual(aSortItem.length, 1, "Sort item button created");
 					assert.strictEqual(aSortItem[0].getText(), "test2", "Sortable dataProperty added as sort item");
 					fColumnPressSpy.restore();
-					oFetchPropertiesStub.restore();
 					done();
 				}.bind(this));
 			}.bind(this));
@@ -3113,79 +3222,69 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oTable);
 
-			var oFetchPropertiesStub = sinon.stub(this.oTable.getControlDelegate(), "fetchProperties").returns(
-				Promise.resolve([
-					{
-						name: "firstName",
-						path: "firstName",
-						label: "First name",
-						exportSettings: {
-							width: 19,
-							type: "String",
-							label: "First_Name"
-						}
-					},
-					{
-						name: "lastName",
-						path: "lastName",
-						label: "Last name"
-					},
-					{
-						name: "fullName", // complex PropertyInfo without exportSettings => 2 spreadsheet column configs will be created
-						propertyInfos: ["firstName", "lastName"]
-					},
-					{
-						name: "fullName2", // complex PropertyInfo withexportSettings => 1 spreadsheet column config will be created
-						propertyInfos: ["firstName", "lastName"],
-						exportSettings: {
-							template: "{0}, {1}"
-						}
-					},
-					{
-						name: "age",
-						path: "age",
-						label: "Age",
-						exportSettings: {
-							type: "Number"
-						}
-					},
-					{
-						name: "dob",
-						path: "dob",
-						exportSettings: {
-							label: "Date of Birth",
-							type: "Date",
-							inputFormat: "YYYYMMDD",
-							width: 15,
-							template: "{0}"
-						}
-					},
-					{
-						name: "salary",
-						path: "salary",
-						label: "Salary",
-						exportSettings: {
-							displayUnit: true,
-							unitProperty: "currency",
-							template: "{0} {1}",
-							width: 10,
-							type: "Currency"
-						}
-					},
-					{
-						name: "currency",
-						path: "currency",
-						label: "Currency code",
-						exportSettings: {
-							width: 5
-						}
+			stubFetchProperties([
+				{
+					name: "firstName",
+					path: "firstName",
+					label: "First name",
+					exportSettings: {
+						width: 19,
+						type: "String",
+						label: "First_Name"
 					}
-				])
-			);
+				}, {
+					name: "lastName",
+					path: "lastName",
+					label: "Last name"
+				}, {
+					name: "fullName", // complex PropertyInfo without exportSettings => 2 spreadsheet column configs will be created
+					propertyInfos: ["firstName", "lastName"]
+				}, {
+					name: "fullName2", // complex PropertyInfo withexportSettings => 1 spreadsheet column config will be created
+					propertyInfos: ["firstName", "lastName"],
+					exportSettings: {
+						template: "{0}, {1}"
+					}
+				}, {
+					name: "age",
+					path: "age",
+					label: "Age",
+					exportSettings: {
+						type: "Number"
+					}
+				}, {
+					name: "dob",
+					path: "dob",
+					exportSettings: {
+						label: "Date of Birth",
+						type: "Date",
+						inputFormat: "YYYYMMDD",
+						width: 15,
+						template: "{0}"
+					}
+				}, {
+					name: "salary",
+					path: "salary",
+					label: "Salary",
+					exportSettings: {
+						displayUnit: true,
+						unitProperty: "currency",
+						template: "{0} {1}",
+						width: 10,
+						type: "Currency"
+					}
+				}, {
+					name: "currency",
+					path: "currency",
+					label: "Currency code",
+					exportSettings: {
+						width: 5
+					}
+				}
+			]);
 
 			this.oTable._createExportColumnConfiguration({fileName: 'Table header'}).then(function(aActualOutput) {
 				assert.deepEqual(aActualOutput[0], aExpectedOutput, "The export configuration was created as expected");
-				oFetchPropertiesStub.restore();
 				done();
 			});
 		}.bind(this));
@@ -3292,52 +3391,44 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oTable);
 
-			var oFetchPropertiesStub = sinon.stub(this.oTable.getControlDelegate(), "fetchProperties").returns(
-				Promise.resolve([
-					{
-						name: "product",
-						path: "product",
-						label: "Product"
-					},
-					{
-						name: "price",
-						path: "price",
-						exportSettings: {
-							label: "Price",
-							displayUnit: true,
-							unitProperty: "currencyCode",
-							type: "Currency"
-						}
-					},
-					{
-						name: "currencyCode",
-						path: "currencyCode",
-						exportSettings: {
-							width: 4,
-							textAlign: "Left"
-						}
-					},
-					{
-						name: "company",
-						propertyInfos: ["companyName", "companyCode"]
-					},
-					{
-						name: "companyName",
-						label: "Company Name",
-						exportSettings: {
-							width: 15
-						}
-					},
-					{
-						name: "companyCode",
-						label: "Company Code"
+			stubFetchProperties([
+				{
+					name: "product",
+					path: "product",
+					label: "Product"
+				}, {
+					name: "price",
+					path: "price",
+					exportSettings: {
+						label: "Price",
+						displayUnit: true,
+						unitProperty: "currencyCode",
+						type: "Currency"
 					}
-				])
-			);
+				}, {
+					name: "currencyCode",
+					path: "currencyCode",
+					exportSettings: {
+						width: 4,
+						textAlign: "Left"
+					}
+				}, {
+					name: "company",
+					propertyInfos: ["companyName", "companyCode"]
+				}, {
+					name: "companyName",
+					label: "Company Name",
+					exportSettings: {
+						width: 15
+					}
+				}, {
+					name: "companyCode",
+					label: "Company Code"
+				}
+			]);
 
 			this.oTable._createExportColumnConfiguration({fileName: 'Table header', splitCells: true}).then(function(aActualOutput) {
 				assert.deepEqual(aActualOutput[0], aExpectedOutput, "The export configuration was created as expected");
-				oFetchPropertiesStub.restore();
 				done();
 			});
 		}.bind(this));
@@ -3530,5 +3621,340 @@ sap.ui.define([
 		assert.ok(!oTable._oToolbar);
 		// Toolbar is destroyed
 		assert.strictEqual(oToolbar.bIsDestroyed, true);
+	});
+
+	function getFilterInfoBar(oTable) {
+		var oFilterInfoBar;
+
+		if (oTable._bMobileTable) {
+			oFilterInfoBar = oTable._oTable.getInfoToolbar();
+		} else {
+			oFilterInfoBar = oTable._oTable.getExtension()[1];
+		}
+
+		if (oFilterInfoBar && oFilterInfoBar.isA("sap.m.OverflowToolbar")) {
+			return oFilterInfoBar;
+		} else {
+			return null;
+		}
+	}
+
+	function getFilterInfoText(oTable) {
+		var oFilterInfoBar = getFilterInfoBar(oTable);
+		return oFilterInfoBar ? oFilterInfoBar.getContent()[0] : null;
+	}
+
+	function hasFilterInfoBar(oTable) {
+		return getFilterInfoBar(oTable) !== null;
+	}
+
+	function waitForFilterInfoBarRendered(oTable) {
+		return new Promise(function(resolve) {
+			var oFilterInfoBar = getFilterInfoBar(oTable);
+
+			if (!oFilterInfoBar.getDomRef()) {
+				oFilterInfoBar.addEventDelegate({
+					onAfterRendering: function() {
+						oFilterInfoBar.removeEventDelegate(this);
+						resolve();
+					}
+				});
+			} else {
+				resolve();
+			}
+		});
+	}
+
+	QUnit.test("Filter info bar (filter disabled)", function(assert) {
+		var that = this;
+
+		stubFetchProperties([
+			{
+				name: "name",
+				label: "NameLabel"
+			}
+		]);
+
+		return this.oTable.initialized().then(function() {
+			assert.ok(!hasFilterInfoBar(that.oTable), "No initial filter conditions: Filter info bar does not exist");
+		}).then(function() {
+			that.oTable.destroy();
+			that.oTable = new Table({
+				filterConditions: {
+					name: [
+						{
+							isEmpty: null,
+							operator: "EQ",
+							validated: "NotValidated",
+							values: ["test"]
+						}
+					]
+				}
+			});
+			return that.oTable.initialized();
+		}).then(function() {
+			assert.ok(!hasFilterInfoBar(that.oTable), "Initial filter conditions: Filter info bar does not exist");
+
+			that.oTable.setFilterConditions({
+				age: [
+					{
+						isEmpty: null,
+						operator: "EQ",
+						validated: "NotValidated",
+						values: ["test"]
+					}
+				]
+			});
+
+			return wait(50);
+		}).then(function() {
+			assert.ok(!hasFilterInfoBar(that.oTable), "Change filter conditions: Filter info bar does not exist");
+		});
+	});
+
+	["Table", "ResponsiveTable"].forEach(function(sTableType) {
+		QUnit.test("Filter info bar with table type = " + sTableType + "(filter enabled)", function(assert) {
+			var that = this;
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			var oListFormat = ListFormat.getInstance();
+
+			this.oTable.destroy();
+			this.oTable = new Table({
+				type: sTableType
+			});
+
+			sinon.stub(Table.prototype, "_getFilterEnabled").returns(true);
+			stubFetchProperties([
+				{
+					name: "name",
+					label: "NameLabel"
+				}, {
+					name: "age"
+				}, {
+					name: "gender"
+				}
+			]);
+
+			return this.oTable.initialized().then(function() {
+				assert.ok(hasFilterInfoBar(that.oTable), "No initial filter conditions: Filter info bar exists");
+				assert.ok(!getFilterInfoBar(that.oTable).getVisible(), "No initial filter conditions: Filter info bar is invisible");
+			}).then(function() {
+				that.oTable.destroy();
+				that.oTable = new Table({
+					columns: [
+						new Column({
+							template: new Text(),
+							dataProperties: [
+								"name"
+							],
+							header: "NameLabelColumnHeader"
+						}),
+						new Column({
+							template: new Text(),
+							dataProperties: [
+								"age"
+							],
+							header: "AgeLabelColumnHeader"
+						})
+					],
+					type: sTableType,
+					filterConditions: {
+						name: [
+							{
+								isEmpty: null,
+								operator: "EQ",
+								validated: "NotValidated",
+								values: ["test"]
+							}
+						]
+					}
+				});
+				that.oTable.placeAt("qunit-fixture");
+				Core.applyChanges();
+				return that.oTable.initialized();
+			}).then(function() {
+				assert.ok(hasFilterInfoBar(that.oTable), "Initial filter conditions: Filter info bar exists");
+				assert.ok(getFilterInfoBar(that.oTable).getVisible(), "Initial filter conditions: Filter info bar is visible");
+				assert.strictEqual(getFilterInfoText(that.oTable).getText(),
+					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel"])),
+					"Initial filter conditions: The filter info bar text is correct (1 filter)");
+				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
+					return sId === getFilterInfoText(that.oTable).getId();
+				}).length, 1, "The filter info bar text is in the \"ariaLabelledBy\" association of the table");
+
+				return whenFetchPropertiesResolved(that.oTable, function() {
+					that.oTable.setFilterConditions({
+						name: [
+							{
+								isEmpty: null,
+								operator: "EQ",
+								validated: "NotValidated",
+								values: ["test"]
+							}
+						],
+						age: [
+							{
+								isEmpty: null,
+								operator: "EQ",
+								validated: "NotValidated",
+								values: ["test"]
+							}
+						]
+					});
+				});
+			}).then(function() {
+				return waitForFilterInfoBarRendered(that.oTable);
+			}).then(function() {
+				var oFilterInfoBar = getFilterInfoBar(that.oTable);
+
+				assert.strictEqual(getFilterInfoText(that.oTable).getText(),
+					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabelColumnHeader"])),
+					"Change filter conditions: The filter info bar text is correct (2 filters)");
+
+				oFilterInfoBar.focus();
+				assert.strictEqual(document.activeElement, oFilterInfoBar.getFocusDomRef(), "The filter info bar is focused");
+
+				that.oTable.setFilterConditions({
+					name: []
+				});
+				assert.ok(hasFilterInfoBar(that.oTable), "Filter conditions removed: Filter info bar exists");
+				assert.ok(!getFilterInfoBar(that.oTable).getVisible(), "Filter conditions removed: Filter info bar is invisible");
+				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
+
+				return whenFetchPropertiesResolved(that.oTable, function() {
+					that.oTable.setFilterConditions({
+						name: [
+							{
+								isEmpty: null,
+								operator: "EQ",
+								validated: "NotValidated",
+								values: ["test"]
+							}
+						],
+						age: [
+							{
+								isEmpty: null,
+								operator: "EQ",
+								validated: "NotValidated",
+								values: ["test"]
+							}
+						],
+						gender: [
+							{
+								isEmpty: null,
+								operator: "EQ",
+								validated: "NotValidated",
+								values: ["test"]
+							}
+						]
+					});
+				});
+			}).then(function() {
+				assert.ok(getFilterInfoBar(that.oTable).getVisible(), "Set filter conditions: Filter info bar is visible");
+				assert.strictEqual(getFilterInfoText(that.oTable).getText(),
+					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabelColumnHeader", "gender"])),
+					"Set filter conditions: The filter info bar text is correct (3 filters)");
+				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
+					return sId === getFilterInfoText(that.oTable).getId();
+				}).length, 1, "The filter info bar text is in the \"ariaLabelledBy\" association of the table");
+			}).then(function() {
+				return waitForFilterInfoBarRendered(that.oTable);
+			}).then(function() {
+				var oFilterInfoBar = getFilterInfoBar(that.oTable);
+
+				Table.prototype._getFilterEnabled.restore();
+
+				oFilterInfoBar.focus();
+				assert.strictEqual(document.activeElement, oFilterInfoBar.getFocusDomRef(), "The filter info bar is focused");
+
+				that.oTable.setP13nMode(["Column", "Sort"]);
+				assert.ok(hasFilterInfoBar(that.oTable), "Filter disabled: Filter info bar exists");
+				assert.ok(!oFilterInfoBar.getVisible(), "Filter disabled: Filter info bar is invisible");
+				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
+
+				that.oTable.destroy();
+				assert.ok(oFilterInfoBar.bIsDestroyed, "Filter info bar is destroyed when the table is destroyed");
+			});
+		});
+	});
+
+	QUnit.test("Press the filter info bar", function(assert) {
+		var that = this;
+
+		this.oTable.addColumn(new Column({
+			template: new Text(),
+			dataProperties: [
+				"name"
+			]
+		}));
+
+		sinon.stub(this.oTable, "_getFilterEnabled").returns(true);
+
+		return this.oTable.initialized().then(function() {
+			stubFetchProperties([
+				{
+					name: "age",
+					label: "AgeLabel"
+				}
+			]);
+
+			return whenFetchPropertiesResolved(that.oTable, function() {
+				that.oTable.setFilterConditions({
+					age: [
+						{
+							isEmpty: null,
+							operator: "EQ",
+							validated: "NotValidated",
+							values: ["test"]
+						}
+					]
+				});
+			});
+		}).then(function() {
+			return waitForFilterInfoBarRendered(that.oTable);
+		}).then(function() {
+			var oTableSettingsShowPanelSpy = sinon.stub(TableSettings, "showPanel");
+			var oFilterInfoBar = getFilterInfoBar(that.oTable);
+			var iIntervalId;
+
+			oFilterInfoBar.firePress();
+
+			assert.equal(oTableSettingsShowPanelSpy.callCount, 1, "TableSettings.showPanel is called once");
+			assert.ok(oTableSettingsShowPanelSpy.calledWithExactly(that.oTable, "Filter", oFilterInfoBar),
+				"TableSettings.showPanel is called with the correct arguments");
+
+			that.oTable.setFilterConditions({
+				name: []
+			});
+
+			// # 1 - Simulate that the filter info bar is focused after being set to invisible, but before rendering.
+			// The focus should still be somewhere in the table after the filter info bar is hidden.
+
+			// # 2 - Simulate setting the focus when the filter dialog is closed and all filters have been removed.
+			// The filter info bar will be hidden in this case. The focus should still be somewhere in the table and not on the document body.
+
+			oFilterInfoBar.focus();
+
+			return Promise.race([
+				new Promise(function(resolve) { // wait until the FilterInfoBar is hidden
+					iIntervalId = setInterval(function() {
+						if (!oFilterInfoBar.getDomRef()) {
+							resolve();
+						}
+					}, 10);
+				}),
+				wait(100) // timeout
+			]).then(function() {
+				clearInterval(iIntervalId);
+			});
+		}).then(function() {
+			// # 1
+			assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
+
+			// # 2
+			document.body.focus();
+			getFilterInfoBar(that.oTable).focus();
+			assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
+		});
 	});
 });

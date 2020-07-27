@@ -8,6 +8,10 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.mdc.sample.table.controller.Test", {
 
+		onInit: function() {
+			window.oTable = this.getView().byId("mdcTable");
+		},
+
 		formatHighlight: function(sPrice) {
 			var price = sPrice.replace(",", "");
 

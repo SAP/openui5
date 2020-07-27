@@ -157,6 +157,11 @@ sap.ui.define([
 		 */
 		_initItemNavigation: function(oExtension) {
 			var oTable = oExtension.getTable();
+
+			if (!oTable) {
+				return;
+			}
+
 			var $Table = oTable.$();
 			var iRowCount = oTable.getRows().length;
 			var iColumnCount = TableUtils.getVisibleColumnCount(oTable);
