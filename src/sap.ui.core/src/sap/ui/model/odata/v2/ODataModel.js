@@ -3794,7 +3794,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes, bBatch, aRequests) {
 		var oResultData = oResponse.data, oImportData, bContent, sUri, sPath, aParts, oEntity,
-		oEntityMetadata, mLocalGetEntities = {}, mLocalChangeEntities = {}, that = this;
+		oEntityMetadata, sDeepPath, mLocalGetEntities = {}, mLocalChangeEntities = {}, that = this;
 
 		if (!bBatch) {
 			bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
@@ -3892,8 +3892,13 @@ sap.ui.define([
 						var sKey = this._getKey(oResultData); // e.g. /myEntity-4711
 						// rewrite context for new path
 						var oContext = this.getContext("/" + oRequest.key);
-						oContext.bCreated = false;
 						this._updateContext(oContext, '/' + sKey);
+						sDeepPath = oRequest.deepPath;
+						if (oContext.bCreated && sDeepPath.endsWith(")")) {
+							oRequest.deepPath = sDeepPath.slice(0, sDeepPath.lastIndexOf("("))
+								+ sKey.slice(sKey.indexOf("("));
+						}
+						oContext.bCreated = false;
 						oContext.setUpdated(true);
 						// register function to reset updated flag call as callAfterUpdate
 						this.callAfterUpdate(function() {

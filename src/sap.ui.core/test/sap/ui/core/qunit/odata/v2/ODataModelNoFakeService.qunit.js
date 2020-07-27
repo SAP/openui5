@@ -845,6 +845,114 @@ sap.ui.define([
 	});
 });
 
+	//*********************************************************************************************
+[{
+	created : false,
+	deepPath : "/entity",
+	resultDeepPath : "/entity"
+}, {
+	created : true,
+	deepPath : "/entity",
+	resultDeepPath : "/entity"
+}, {
+	created : false,
+	deepPath : "/entity(id-0-0)",
+	resultDeepPath : "/entity(id-0-0)"
+}, {
+	created : true,
+	deepPath : "/collection(id-0-0)",
+	responseEntityKey : "~responseEntity(~newKey)",
+	resultDeepPath : "/collection(~newKey)"
+}, {
+	created : true,
+	deepPath : "/entity(1)/collection(id-0-0)",
+	responseEntityKey : "~responseEntity(~newKey)",
+	resultDeepPath : "/entity(1)/collection(~newKey)"
+}, {
+	created : true,
+	deepPath : "/collection(id-0-0)",
+	responseEntityKey : "~responseEntity('A(0)')",
+	resultDeepPath : "/collection('A(0)')"
+}].forEach(function (oFixture, i) {
+	QUnit.test("_processSuccess for createEntry; " + i, function (assert) {
+		var oContext = {
+				bCreated : oFixture.created,
+				setUpdated : function () {}
+			},
+			oModel = {
+				oData : {},
+				oMetadata : {
+					_getEntityTypeByPath : function () {}
+				},
+				sServiceUrl : "/service",
+				_createEventInfo : function () {},
+				_decreaseDeferredRequestCount : function () {},
+				_getEntity : function () {},
+				_getKey : function () {},
+				_normalizePath : function () {},
+				_parseResponse : function () {},
+				_removeEntity : function () {},
+				_updateContext : function () {},
+				_updateETag : function () {},
+				callAfterUpdate : function () {},
+				decreaseLaundering : function () {},
+				fireRequestCompleted : function () {},
+				getContext : function () {}
+			},
+			oMetadataMock = this.mock(oModel.oMetadata),
+			oModelMock = this.mock(oModel),
+			oRequest = {
+				created : true,
+				data : "requestData",
+				deepPath : oFixture.deepPath,
+				key : "key('id-0-0')",
+				method : "POST",
+				requestUri : "/service/path"
+			},
+			oResponse = {
+				data : {},
+				_imported : true,
+				statusCode : 201
+			};
+
+		oModelMock.expects("_normalizePath").withExactArgs("/path").returns("~sNormalizedPath");
+		oMetadataMock.expects("_getEntityTypeByPath").withExactArgs("~sNormalizedPath")
+			.returns("~oEntityType");
+		oModelMock.expects("_normalizePath").withExactArgs("/path", undefined, true)
+			.returns("~sPath");
+		oModelMock.expects("decreaseLaundering").withExactArgs("~sPath", "requestData");
+		oModelMock.expects("_decreaseDeferredRequestCount")
+			.withExactArgs(sinon.match.same(oRequest));
+		oModelMock.expects("_getEntity").withExactArgs("key('id-0-0')").returns({__metadata : {}});
+		oMetadataMock.expects("_getEntityTypeByPath").withExactArgs("~sPath")
+			.returns("~oEntityMetadata");
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oResponse.data))
+			.returns(oFixture.responseEntityKey);
+		oModelMock.expects("getContext").withExactArgs("/key('id-0-0')").returns(oContext);
+		oModelMock.expects("_updateContext")
+			.withExactArgs(sinon.match.same(oContext), "/" + oFixture.responseEntityKey);
+		this.mock(oContext).expects("setUpdated").withExactArgs(true);
+		oModelMock.expects("callAfterUpdate").withExactArgs(sinon.match.func);
+		oModelMock.expects("_getEntity").withExactArgs(oFixture.responseEntityKey)
+			.returns({__metadata : {}});
+		oModelMock.expects("_removeEntity").withExactArgs("key('id-0-0')");
+		oModelMock.expects("_parseResponse")
+			.withExactArgs(sinon.match.same(oResponse), sinon.match.same(oRequest), {}, {});
+		oModelMock.expects("_updateETag")
+			.withExactArgs(sinon.match.same(oRequest), sinon.match.same(oResponse));
+		oModelMock.expects("_createEventInfo")
+			.withExactArgs(sinon.match.same(oRequest), sinon.match.same(oResponse), "~aRequests")
+			.returns("~oEventInfo");
+		oModelMock.expects("fireRequestCompleted").withExactArgs("~oEventInfo");
+
+		// code under test
+		ODataModel.prototype._processSuccess.call(oModel, oRequest, oResponse,
+			/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {},
+			/*mEntityTypes*/ {}, /*bBatch*/ false, "~aRequests");
+
+		assert.strictEqual(oRequest.deepPath, oFixture.resultDeepPath);
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_submitBatchRequest: with error responses", function (assert) {
