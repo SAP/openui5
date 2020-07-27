@@ -7,7 +7,7 @@
 	<form:Form
 		editable="true"
 		formContainers="{path: '/groups', templateShareable: false}"
-		class="sapUiIntegrationBaseEditorFormLayoutNoPadding"
+		class="sapUiIntegrationBaseEditorFormLayout"
 	>
 		<form:layout>
 			<form:ResponsiveGridLayout
