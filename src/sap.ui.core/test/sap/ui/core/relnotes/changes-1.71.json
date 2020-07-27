@@ -711,5 +711,32 @@
         ]
       }
     ]
+  },
+  "1.71.20": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "a2c61880ad3500466a5c10650a9b6e98a0475682",
+        "type": "FIX",
+        "text": " core.routing: allow set/replaceHash also when no listener to \"hashChanged\" event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004678552020"
+          }
+        ]
+      },
+      {
+        "id": "55c5ac1441b26f3ceca612a7ddbd0039b8a8f527",
+        "type": "FIX",
+        "text": " Opa: fix binding path selector for named models",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080258112"
+          }
+        ]
+      }
+    ]
   }
 }

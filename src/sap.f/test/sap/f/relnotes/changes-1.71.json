@@ -33,7 +33,7 @@
       {
         "id": "ed0d97a8750cd322e6723a53b343ae4e1463700b",
         "type": "FIX",
-        "text": " sap.f.GridContainer: Hidden controls now don\u0027t take space",
+        "text": " sap.f.GridContainer: Hidden controls now don't take space",
         "references": [
           {
             "type": "BCP",
@@ -61,7 +61,7 @@
       {
         "id": "ed0d97a8750cd322e6723a53b343ae4e1463700b",
         "type": "FIX",
-        "text": " sap.f.GridContainer: Hidden controls now don\u0027t take space",
+        "text": " sap.f.GridContainer: Hidden controls now don't take space",
         "references": [
           {
             "type": "BCP",
@@ -140,6 +140,22 @@
         "references": [
           {
             "type": "BCP"
+          }
+        ]
+      }
+    ]
+  },
+  "1.71.20": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "3acc0f96cf2800196e3283e1097a1fbd34ac60ec",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Prevented unwanted scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002536912020"
           }
         ]
       }

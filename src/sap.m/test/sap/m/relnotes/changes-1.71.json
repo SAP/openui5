@@ -1773,5 +1773,98 @@
         ]
       }
     ]
+  },
+  "1.71.20": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "8f11971189111b428c7ebecc6775a727a40a9688",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed out of bounds text in the list items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080282515"
+          }
+        ]
+      },
+      {
+        "id": "2cfc5056f8778efcbd67b0d0fb694597f95086b4",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Next button handler now fired before attachComplete",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080264920"
+          }
+        ]
+      },
+      {
+        "id": "9e56cf2147eefa9d77ed4c176716cb01493121d9",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: qunit tests are optimized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080175896"
+          }
+        ]
+      },
+      {
+        "id": "66aa13dfd3f6e8fefd5c6fc431c36ac1720ede18",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Prevent resizing of content above max-height",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2030432314"
+          }
+        ]
+      },
+      {
+        "id": "61ab59d310b1efbe09403379a8361bbc7aa68760",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: on focus in behavior over the input is now consistent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003307462020"
+          }
+        ]
+      },
+      {
+        "id": "ff40b56f9682939b6b6383f52bb4a0cb410f1bac",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: manages selectedAppointments association correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003492272020"
+          }
+        ]
+      },
+      {
+        "id": "002af0289e8dbc9eab66c9a24c49f522eac5d59b",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: selectedKey reset on user input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004275882020"
+          }
+        ]
+      },
+      {
+        "id": "e4b1119b278d4507d8426b29a96530c51be161ee",
+        "type": "FIX",
+        "text": " sap.m.StepInput: the increment and decrement buttons state is correctly managed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003484012020"
+          }
+        ]
+      }
+    ]
   }
 }

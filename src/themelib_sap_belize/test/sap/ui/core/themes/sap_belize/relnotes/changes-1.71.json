@@ -57,5 +57,21 @@
         ]
       }
     ]
+  },
+  "1.71.20": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "7518d414e0ce8a1661d331190964ce6b345b8511",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Remove actions redundant \"right\" style alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003971492020"
+          }
+        ]
+      }
+    ]
   }
 }

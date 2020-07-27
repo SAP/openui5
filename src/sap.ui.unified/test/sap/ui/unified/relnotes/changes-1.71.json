@@ -178,5 +178,21 @@
         ]
       }
     ]
+  },
+  "1.71.20": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "ff40b56f9682939b6b6383f52bb4a0cb410f1bac",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: manages selectedAppointments association correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003492272020"
+          }
+        ]
+      }
+    ]
   }
 }
