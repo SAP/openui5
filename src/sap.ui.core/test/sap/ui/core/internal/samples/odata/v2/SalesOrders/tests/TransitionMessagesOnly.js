@@ -28,7 +28,7 @@ sap.ui.define([
 
 		When.onMainPage.scrollTable(-1);
 		When.onMainPage.toggleTransitionMessages();
-		Then.onMainPage.checkMessageCountHasChangedByX(-1);
+		Then.onMainPage.checkMessageCountHasChangedBy(-1);
 
 		When.onMainPage.toggleMessagePopover();
 		Then.onMainPage.checkMessagePopoverOpen();
@@ -36,7 +36,7 @@ sap.ui.define([
 		When.onMainPage.toggleMessagePopover();
 
 		When.onMainPage.scrollTable(1);
-		Then.onMainPage.checkMessageCountHasChangedByX(1);
+		Then.onMainPage.checkMessageCountHasChangedBy(1);
 
 		When.onMainPage.toggleMessagePopover();
 		Then.onMainPage.checkMessagePopoverOpen();

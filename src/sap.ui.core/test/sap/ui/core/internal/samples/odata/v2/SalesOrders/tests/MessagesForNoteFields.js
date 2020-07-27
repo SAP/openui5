@@ -34,7 +34,7 @@ sap.ui.define([
 		}].forEach(function (oFixture) {
 			When.onMainPage.changeItemNote(0, oFixture.messageKey);
 			When.onMainPage.pressSalesOrderSaveButton();
-			Then.onMainPage.checkMessageCountHasChangedByX(1);
+			Then.onMainPage.checkMessageCountHasChangedBy(1);
 			Then.onMainPage.checkValueStateOfNoteField(0, oFixture.valueState,
 				oFixture.messageKey + "NoPrefix");
 			Then.onMainPage.checkTableRowHighlight(0, oFixture.valueState);
@@ -46,7 +46,7 @@ sap.ui.define([
 
 			When.onMainPage.changeItemNote(0, "none");
 			When.onMainPage.pressSalesOrderSaveButton();
-			Then.onMainPage.checkMessageCountHasChangedByX(-1);
+			Then.onMainPage.checkMessageCountHasChangedBy(-1);
 			When.onMainPage.toggleMessagePopover();
 			Then.onMainPage.checkMessageNotInPopover("010", oFixture.messageKey + "NoPrefix");
 			When.onMainPage.toggleMessagePopover();

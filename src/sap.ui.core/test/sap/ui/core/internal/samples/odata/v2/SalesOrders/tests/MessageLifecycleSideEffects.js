@@ -27,7 +27,7 @@ sap.ui.define([
 			When.onMainPage.toggleMessagePopover();
 
 			When.onMainPage.pressFixAllQuantities();
-			Then.onMainPage.checkMessageCountHasChangedByX(-1);
+			Then.onMainPage.checkMessageCountHasChangedBy(-1);
 
 			When.onMainPage.toggleMessagePopover();
 			Then.onMainPage.checkMessagePopoverOpen();

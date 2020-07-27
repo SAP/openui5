@@ -169,9 +169,9 @@ sap.ui.define([
 				/*
 				 * Checks, if the message count has changed by a specified amount.
 				 *
-				 * @param {number} iX Amount by which the message count should be changed
+				 * @param {number} iCount Amount by which the message count should be changed
 				 */
-				checkMessageCountHasChangedByX : function (iCount) {
+				checkMessageCountHasChangedBy : function (iCount) {
 					return this.waitFor({
 						id : "messagePopoverButton",
 						success : function (oButton) {
