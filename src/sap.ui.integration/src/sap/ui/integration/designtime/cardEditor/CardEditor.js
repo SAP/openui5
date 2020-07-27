@@ -5,19 +5,23 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/util/each",
 	"sap/base/util/merge",
+	"sap/base/util/deepClone",
 	"sap/base/util/ObjectPath",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/base/util/restricted/_CancelablePromise",
 	"sap/base/util/restricted/_toArray",
+	"sap/ui/thirdparty/jquery",
 	"./config/index"
 ], function (
 	deepEqual,
 	each,
 	merge,
+	deepClone,
 	ObjectPath,
 	BaseEditor,
 	CancelablePromise,
 	_toArray,
+	jQuery,
 	oDefaultCardConfig
 ) {
 	"use strict";
@@ -116,34 +120,64 @@ sap.ui.define([
 
 			if (sBaseUrl && sDesigntimePath) {
 				var mPaths = {};
-				mPaths[sCardId] = sanitizePath(sBaseUrl);
+				var sSanitizedBaseUrl = sanitizePath(sBaseUrl);
+				mPaths[sCardId] = sSanitizedBaseUrl;
 				sap.ui.loader.config({
 					paths: mPaths
 				});
-				var sDesigntimePrefix = sCardId + "/" + trimCurrentFolderPrefix(sDesigntimePath);
+				var sDesigntimeFolderPath = trimCurrentFolderPrefix(sDesigntimePath);
+				var sDesigntimePrefix = sCardId + "/" + sDesigntimeFolderPath;
 				var sEditorConfigPath = sDesigntimePrefix + "/editor.config";
+				var sDesigntimeMetadataPath = sSanitizedBaseUrl + "/" + sDesigntimeFolderPath + "/metadata.json";
 
 				this._oDesigntimePromise = new CancelablePromise(function (fnResolve) {
-					sap.ui.require(
-						[sEditorConfigPath],
-						fnResolve,
-						function () {
-							return {}; // if editor.config.js doesn't exist
-						}
-					);
+					Promise.all([
+						new Promise(function (fnResolveEditorConfig) {
+							sap.ui.require(
+								[sEditorConfigPath],
+								fnResolveEditorConfig,
+								function () {
+									return {}; // if editor.config.js doesn't exist
+								}
+							);
+						}),
+						new Promise(function (fnResolveMetadata) {
+							jQuery.getJSON(sDesigntimeMetadataPath)
+								.done(fnResolveMetadata)
+								.fail(function () {
+									fnResolveMetadata({});
+								});
+						})
+					]).then(fnResolve);
 				});
 
-				this._oDesigntimePromise.then(function (oBundleConfig) {
-					var oConfig = merge({}, oBundleConfig);
+				this._oDesigntimePromise.then(function (aDesigntimeFiles) {
+					// Editor config
+					var oConfig = merge({}, aDesigntimeFiles[0]);
 					oConfig.i18n = _toArray(oConfig.i18n);
 					oConfig.i18n.push(sDesigntimePrefix + "/i18n.properties");
 					this._addSpecificConfig(merge({}, oConfig));
+
+					// Metadata
+					// TODO: Merge file content with delta changes
+					var oDesigntimeMetadata = aDesigntimeFiles[1];
+
+					this._oInitialDesigntimeMetadata = oDesigntimeMetadata;
+					this.setDesigntimeMetadata(formatImportedDesigntimeMetadata(oDesigntimeMetadata), true);
 				}.bind(this));
 			}
 		}
 
 		BaseEditor.prototype.setJson.apply(this, arguments);
 	};
+
+	function formatImportedDesigntimeMetadata (oFlatMetadata) {
+		var oFormattedMetadata = {};
+		Object.keys(oFlatMetadata).forEach(function (sPath) {
+			ObjectPath.set(sPath.split("/"), { __value: deepClone(oFlatMetadata[sPath]) }, oFormattedMetadata);
+		});
+		return oFormattedMetadata;
+	}
 
 	function sanitizePath(sPath) {
 		return sPath.trim().replace(/\/*$/, "");

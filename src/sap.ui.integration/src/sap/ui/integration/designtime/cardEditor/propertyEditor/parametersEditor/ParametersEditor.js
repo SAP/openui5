@@ -61,7 +61,8 @@ sap.ui.define([
 	ParametersEditor.prototype.formatItemConfig = function(oConfigValue) {
 		var oMapItemConfig = MapEditor.prototype.formatItemConfig.apply(this, arguments);
 		var sKey = oConfigValue.key;
-		var sLabel = oConfigValue.value.label;
+		var vItemMetadata = this.getNestedDesigntimeMetadataValue(sKey);
+		var sLabel = vItemMetadata.label;
 
 		oMapItemConfig.splice(1, 0, {
 			label: this.getI18nProperty("CARD_EDITOR.LABEL"),
@@ -87,14 +88,39 @@ sap.ui.define([
 
 	ParametersEditor.prototype._configItemsFormatter = function(aItems) {
 		return Array.isArray(aItems) ? aItems.map(function (oItem) {
-			var oConfig = _merge({}, oItem.value);
+			var oItemMetadata = this.getNestedDesigntimeMetadataValue(oItem.key);
+			var oConfig = _merge({}, oItem.value, oItemMetadata);
 			if (!oConfig.label) {
 				oConfig.label = oItem.key;
 			}
 			oConfig.itemKey = oItem.key;
 			oConfig.path = "value";
+			oConfig.designtime = this.getNestedDesigntimeMetadata(oItem.key);
 			return oConfig;
-		}) : [];
+		}.bind(this)) : [];
+	};
+
+	ParametersEditor.prototype.getItemChangeHandlers = function () {
+		return Object.assign(
+			{},
+			MapEditor.prototype.getItemChangeHandlers.apply(this, arguments),
+			{
+				label: this._onDesigntimeChange
+			}
+		);
+	};
+
+	ParametersEditor.prototype._onDesigntimeChange = function (sKey, oEvent) {
+		var oDesigntime = _merge({}, this.getConfig().designtime);
+		var newDesigntimeValue = { __value: {} };
+		newDesigntimeValue.__value[oEvent.getParameter("path")] = oEvent.getParameter("value");
+
+		oDesigntime[sKey] = _merge(
+			{},
+			oDesigntime[sKey],
+			newDesigntimeValue
+		);
+		this.setDesigntimeMetadata(oDesigntime);
 	};
 
 	ParametersEditor.prototype.onBeforeConfigChange = function(oConfig) {

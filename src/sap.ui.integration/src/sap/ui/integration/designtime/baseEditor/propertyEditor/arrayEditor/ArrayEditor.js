@@ -132,6 +132,7 @@ sap.ui.define([
 			var aItems = [];
 			aValue.forEach(function(oValue, iIndex) {
 				var oValueCopy = deepClone(oValue);
+				var oDesigntimeMetadata = this.getNestedDesigntimeMetadata(iIndex);
 				var mItem = {
 					itemLabel: oConfig.itemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL"),
 					index: iIndex,
@@ -147,7 +148,8 @@ sap.ui.define([
 
 						return _merge({}, mTemplate, {
 							path: sPath,
-							value: vValue
+							value: vValue,
+							designtime: (oDesigntimeMetadata || {})[sKey]
 						});
 					}, this)
 				};

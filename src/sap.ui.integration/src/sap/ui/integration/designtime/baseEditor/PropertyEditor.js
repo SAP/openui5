@@ -197,6 +197,23 @@ sap.ui.define([
 				},
 
 				/**
+				 * Fires when the designtime metadata of the nested property editor changes
+				 */
+				designtimeMetadataChange: {
+					parameters: {
+						path: {
+							type: "string"
+						},
+						value: {
+							type: "any"
+						},
+						previousValue: {
+							type: "any"
+						}
+					}
+				},
+
+				/**
 				 * Fires when the wrapper is initialized.
 				 */
 				init: {}
@@ -239,10 +256,12 @@ sap.ui.define([
 			this.attachConfigChange(function (oEvent) {
 				var oPreviousConfig = oEvent.getParameter("previousConfig");
 				var oConfig = oEvent.getParameter("config");
+				var oNestedEditor = this.getAggregation("propertyEditor");
 
 				// Recreate the editor if the old editor cannot handle the config change internally
 				if (
 					this._fnCancelInit
+					|| !oNestedEditor
 					|| !oPreviousConfig
 					|| !oConfig
 					|| oPreviousConfig.type !== oConfig.type
@@ -251,7 +270,7 @@ sap.ui.define([
 					this._removePropertyEditor(this.getEditor());
 					this._initPropertyEditor();
 				} else {
-					this.getAggregation("propertyEditor").setConfig(oConfig);
+					oNestedEditor.setConfig(oConfig);
 				}
 			});
 
@@ -292,8 +311,17 @@ sap.ui.define([
 
 	PropertyEditor.prototype.setConfig = function (mConfig) {
 		var mPreviousConfig = this.getConfig();
-		if (!deepEqual(mPreviousConfig, mConfig)) {
-			var mNextConfig = deepClone(mConfig);
+		var mNextConfig = mConfig && _merge(
+			{},
+			// Default for non-managed editors with absolute path to avoid
+			// unnecessary config changes after registration
+			{
+				designtime: undefined
+			},
+			mConfig
+		);
+
+		if (!deepEqual(mPreviousConfig, mNextConfig)) {
 			this.setProperty("config", mNextConfig);
 			this.fireConfigChange({
 				previousConfig: mPreviousConfig,
@@ -414,15 +442,15 @@ sap.ui.define([
 			this._mConfig = this.getConfig() || this.getEditor().getPropertyConfigByName(this.getPropertyName());
 			var sCreatedBy = this.getConfig() ? CREATED_BY_CONFIG : CREATED_BY_PROPERTY_NAME;
 
-			if (this._isAbsolutePath(this._mConfig.path)) {
-				this.getEditor().registerPropertyEditor(this, this._mConfig.__propertyName);
-			}
-
 			var mPromise = createPromise(function (fnResolve, fnReject) {
 				PropertyEditorFactory.create(this._mConfig.type).then(fnResolve).catch(fnReject);
 			}.bind(this));
 
 			this._fnCancelInit = mPromise.cancel;
+
+			if (this._isAbsolutePath(this._mConfig.path)) {
+				this.getEditor().registerPropertyEditor(this, this._mConfig.__propertyName);
+			}
 
 			mPromise.promise.then(function (oPropertyEditor) {
 				oPropertyEditor.setModel(this.getEditor().getModel("i18n"), "i18n");
@@ -435,6 +463,10 @@ sap.ui.define([
 				oPropertyEditor.attachValueChange(function (oEvent) {
 					this.setValue(oEvent.getParameter("value"));
 					this.fireValueChange(_omit(oEvent.getParameters(), "id"));
+				}, this);
+
+				oPropertyEditor.attachDesigntimeMetadataChange(function (oEvent) {
+					this.fireDesigntimeMetadataChange(_omit(oEvent.getParameters(), "id"));
 				}, this);
 
 				oPropertyEditor.setValue(this.getValue(), true);
