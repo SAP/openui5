@@ -37,7 +37,8 @@
 					delegate='\{ "name": "sap/ui/mdc/odata/v4/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
 					selectionMode="Multi"
 					height="100%"
-					p13nMode="Column,Sort"
+					p13nMode="Column,Sort,Filter"
+					filterConditions='\{"Category":[\{"operator":"EQ","values":["asd"],"isEmpty":null,"validated":"NotValidated"\}]\}'
 					noDataText="This text is shown when no data is present in the table"
 					paste="onPaste">
 				<mdc:type>
