@@ -118,16 +118,18 @@ sap.ui.define([
 				if (this.tokenText === sTokenTextKey) {
 					this.tokenText = this.longText;
 				}
-				var sTokenText = this.tokenText;
-				if (Device.browser.msie) { // IE cannot replace single $, $$ will be replaced to $
-					sTokenText = sTokenText.replace(/\$/g, "$$$");
-				}
 
-				// create token parsing RegExp
-				if (sTokenText) {
+				if (this.tokenText) {
+					// create token parsing RegExp
 					var sRegExp;
+					var sTokenText;
 					if (oConfiguration.tokenParse) {
-						this.tokenParse = oConfiguration.tokenParse.replace(/#tokenText#/g, escapeRegExp(sTokenText));
+						sTokenText = escapeRegExp(this.tokenText);
+						if (Device.browser.msie) { // IE cannot replace single $, $$ will be replaced to $
+							sTokenText = sTokenText.replace(/\$/g, "$$$");
+						}
+
+						this.tokenParse = oConfiguration.tokenParse.replace(/#tokenText#/g, sTokenText);
 						for (var i = 0; i < this.valueTypes.length; i++) {
 							var sReplace = this.paramTypes ? this.paramTypes[i] : this.valueTypes[i];
 							// the regexp will replace placeholder like $0, 0$ and {0}
@@ -139,11 +141,13 @@ sap.ui.define([
 						sRegExp = escapeRegExp(this.tokenText); // operator without value
 					}
 					this.tokenParseRegExp = new RegExp(sRegExp, "i");
-				}
 
-				// create token formatter
-				if (sTokenText) {
+					// create token formatter
 					if (oConfiguration.tokenFormat) {
+						sTokenText = this.tokenText;
+						if (Device.browser.msie) { // IE cannot replace single $, $$ will be replaced to $
+							sTokenText = sTokenText.replace(/\$/g, "$$$");
+						}
 						this.tokenFormat = oConfiguration.tokenFormat.replace(/\#tokenText\#/g, sTokenText);
 					} else {
 						this.tokenFormat = this.tokenText; // static operator with no value (e.g. "THIS YEAR")
