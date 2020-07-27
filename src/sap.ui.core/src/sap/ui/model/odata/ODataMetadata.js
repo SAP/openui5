@@ -1605,8 +1605,7 @@ sap.ui.define([
 			mFunctionParameters) {
 		var sActionFor, mEntitySet, mEntityType, i, aKeys, sParameterName, aPropertyReferences,
 			aExtensions = mFunctionInfo.extensions,
-			sId = "",
-			sTarget = "";
+			sId = "";
 
 		if (aExtensions) {
 			for (i = 0; i < aExtensions.length; i += 1) {
@@ -1642,7 +1641,7 @@ sap.ui.define([
 					}
 					sId = aKeys.join(",");
 				}
-				sTarget = "/" + mEntitySet.name + "(" + sId + ")";
+				return "/" + mEntitySet.name + "(" + sId + ")";
 			} else if (!mEntitySet) {
 				Log.error("Cannot determine path of the EntitySet for the function import '"
 					+ mFunctionInfo.name + "'", this, sClassName);
@@ -1652,7 +1651,7 @@ sap.ui.define([
 			}
 		}
 
-		return sTarget;
+		return "";
 	};
 
 	return ODataMetadata;
