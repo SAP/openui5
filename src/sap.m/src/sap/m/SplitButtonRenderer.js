@@ -2,9 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
+sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText", "sap/ui/core/ShortcutHintsMixin"],
 
-	function(library, InvisibleText) {
+	function(library, InvisibleText, ShortcutHintsMixin) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType
@@ -56,7 +56,7 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 			oRm.attr("tabindex", bEnabled ? "0" : "-1");
 
 			// add tooltip if available
-			if (sTitleAttribute) {
+			if (sTitleAttribute && !ShortcutHintsMixin.isDOMIDRegistered(oButton.getId())) {
 				oRm.attr("title", sTitleAttribute);
 			}
 
