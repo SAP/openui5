@@ -3403,5 +3403,21 @@
         ]
       }
     ]
+  },
+  "1.60.28": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "d03ad4c9c324a2182b9a6f7aa9cf784e129f0969",
+        "type": "FIX",
+        "text": " sap.m.Wizard: iOS/Safari scroll fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002548752020"
+          }
+        ]
+      }
+    ]
   }
 }

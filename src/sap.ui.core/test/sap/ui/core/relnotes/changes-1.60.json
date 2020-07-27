@@ -1344,5 +1344,43 @@
         ]
       }
     ]
+  },
+  "1.60.28": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "fb6fc43c94582c869941466017ede40c2f1deaf7",
+        "type": "FIX",
+        "text": " sap.ui.core.util.ExportTypeCSV - Cell overflow injection fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080220914"
+          }
+        ]
+      },
+      {
+        "id": "100f46a2743a08bbcfaa52a45b194a45b1585011",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataModel#_loadData: Do not use x-csrf-token for GET requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002585962020"
+          }
+        ]
+      },
+      {
+        "id": "d8b5d6f5ea00898fcbe9c3e8280b1f534a31ac5a",
+        "type": "FIX",
+        "text": " hasher.js: replace hash should not affect the path in href",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070234256"
+          }
+        ]
+      }
+    ]
   }
 }

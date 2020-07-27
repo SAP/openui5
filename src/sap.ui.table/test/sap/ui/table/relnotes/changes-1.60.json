@@ -401,5 +401,21 @@
         ]
       }
     ]
+  },
+  "1.60.28": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "084d2174ce5afd8a56bc16ce3df4776a22949d9c",
+        "type": "FIX",
+        "text": " Table: Last row not being fully visible in zoomed Chrome",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003301062020"
+          }
+        ]
+      }
+    ]
   }
 }
