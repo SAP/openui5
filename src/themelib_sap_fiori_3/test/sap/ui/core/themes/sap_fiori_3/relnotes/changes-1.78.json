@@ -137,5 +137,21 @@
         ]
       }
     ]
+  },
+  "1.78.4": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "2f45553d926df9ac007ee19a8cffec9d4605602f",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Icon correctly visualized in High Contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004398942020"
+          }
+        ]
+      }
+    ]
   }
 }

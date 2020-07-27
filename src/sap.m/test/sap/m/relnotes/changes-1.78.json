@@ -143,5 +143,21 @@
         ]
       }
     ]
+  },
+  "1.78.4": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "5c8b3f3e7f391da3148d3ddb902cd66e2c0ede70",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: selectedKey reset on user input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004275882020"
+          }
+        ]
+      }
+    ]
   }
 }
