@@ -23,6 +23,8 @@ sap.ui.define([
 
 		var IBADGE_STATE = library.BadgeState;
 
+		var IBADGE_INVALID_VALUES = ["", "undefined", "null"];
+
 		/**
 		 * @class A helper class for implementing the {@link sap.m.IBadge} interface.
 		 *
@@ -74,10 +76,9 @@ sap.ui.define([
 
 			//Adding badge DOM element
 			function _renderBadgeDom() {
-
 				this._isBadgeAttached = false;
 
-				if (!this.getBadgeCustomData() || !isValidValue(this.getBadgeCustomData().getValue())) {
+				if (!this.getBadgeCustomData() || !this.getBadgeCustomData().getVisible()) {
 					return false;
 				}
 
@@ -102,13 +103,11 @@ sap.ui.define([
 			function _removeBadgeDom() {
 				var oBadgeElement = _getBadgeElement.call(this);
 
-				this._isBadgeAttached = false;
-
 				oBadgeElement.removeClass("sapMBadgeAnimationAdd");
 				oBadgeElement.width();
 				oBadgeElement.addClass("sapMBadgeAnimationRemove");
-				oBadgeElement.attr("data-badge", "");
 
+				this._isBadgeAttached = false;
 				callHandler.call(this, "", IBADGE_STATE["Disappear"]);
 
 				return this;
@@ -152,23 +151,19 @@ sap.ui.define([
 			}
 
 			//Manually updating the 'span', containing badge
-			this.updateBadge = function (sValue) {
-				var oBadgeElement = _getBadgeElement.call(this);
-				oBadgeElement.removeClass("sapMBadgeAnimationUpdate");
-				if (isValidValue(sValue)) {
-					if (this._isBadgeAttached) {
-						oBadgeElement.attr("data-badge", sValue);
-						oBadgeElement.attr("aria-label", getAriaLabelText.call(this));
-						oBadgeElement.width();
-						oBadgeElement.addClass("sapMBadgeAnimationUpdate");
 
-						callHandler.call(this, sValue, IBADGE_STATE["Updated"]);
-					} else if (this.getDomRef()) {
-						_createBadgeDom.call(this);
-					}
-				} else if (this._isBadgeAttached) {
-					_removeBadgeDom.call(this);
-				}
+			this.updateBadgeValue = function (sValue) {
+				if (!this._oBadgeCustomData.getVisible()) { return false; }
+
+				var oBadgeElement = _getBadgeElement.call(this),
+					sValue = isValidValue(sValue || this.getBadgeCustomData().getValue()) || "";
+					oBadgeElement.removeClass("sapMBadgeAnimationUpdate");
+					oBadgeElement.attr("data-badge", sValue);
+					oBadgeElement.attr("aria-label", getAriaLabelText.call(this));
+					oBadgeElement.width();
+					oBadgeElement.addClass("sapMBadgeAnimationUpdate");
+
+					callHandler.call(this, sValue, IBADGE_STATE["Updated"]);
 			};
 
 			function getAriaLabelText() {
@@ -186,7 +181,7 @@ sap.ui.define([
 
 			//Validating the input for the badge
 			function isValidValue (sValue) {
-				return sValue !== undefined && sValue !== "undefined" && sValue !== "";
+				return IBADGE_INVALID_VALUES.indexOf(sValue) === -1 && sValue;
 			}
 
 			// Override for the initial 1..n aggregation method for adding new one,
@@ -199,7 +194,7 @@ sap.ui.define([
 
 
 					this.addAggregation("customData", oCustomData, true);
-					return this.updateBadge(oCustomData.getValue());
+					return this.updateBadgeVisibility(oCustomData.getVisible());
 				}
 
 				return this.addAggregation("customData", oCustomData);
@@ -210,11 +205,12 @@ sap.ui.define([
 			this.insertCustomData = function (oCustomData) {
 				if (oCustomData.isA("sap.m.BadgeCustomData")) {
 
-					this.updateBadge(oCustomData.getValue());
 					this.removeAggregation("customData", this._oBadgeCustomData, true);
 					this._oBadgeCustomData = oCustomData;
 
-					return this.addAggregation("customData", oCustomData, true);
+
+					this.addAggregation("customData", oCustomData, true);
+					return this.updateBadgeVisibility(oCustomData.getVisible());
 				}
 
 				return this.insertAggregation("customData", oCustomData);
@@ -229,7 +225,6 @@ sap.ui.define([
 				var oBadgeCustomData;
 				oBadgeCustomData = this._oBadgeCustomData;
 				this._oBadgeCustomData = null;
-				this.updateBadge("");
 				return this.removeAggregation("customData", oBadgeCustomData, true);
 			};
 
@@ -249,6 +244,10 @@ sap.ui.define([
 
 				this._oBadgeContainer.addClass(IBADGE_POSITION_CLASSES[sValue]);
 				this._oBadgeConfig.position = sValue;
+			};
+
+			this.updateBadgeVisibility = function (sVisible) {
+				return sVisible ? _createBadgeDom.call(this) : _removeBadgeDom.call(this);
 			};
 		};
 	return BadgeEnabler;

@@ -30,7 +30,7 @@ sap.ui.define([
 	var BadgeCustomData = CustomData.extend("sap.m.BadgeCustomData", {
 		metadata: {
 			properties: {
-				key : {type : "string", group : "Data", defaultValue : "badge"}
+				visible: {type: "boolean", group: "Appearance", defaultValue: true}
 			}
 		}
 	});
@@ -50,13 +50,27 @@ sap.ui.define([
 	 * @return {sap.m.BadgeCustomData} this BadgeCustomData reference for chaining.
 	 */
 	BadgeCustomData.prototype.setValue =  function (sValue) {
+		if (this.getValue() === sValue) { return this; }
 		var oParent = this.getParent();
 
 		CustomData.prototype.setValue.call(this, sValue);
 		if (oParent && typeof sValue === "string") {
-			oParent.updateBadge(sValue);
+			oParent.updateBadgeValue(sValue);
 		}
 
+		return this;
+	};
+
+	BadgeCustomData.prototype.setVisible =  function (sVisible) {
+		if (this.getVisible() === sVisible) { return this; }
+
+		var oParent = this.getParent();
+
+		if (oParent) {
+			oParent.updateBadgeVisibility(sVisible);
+		}
+
+		this.setProperty("visible", sVisible, true);
 		return this;
 	};
 
@@ -67,7 +81,7 @@ sap.ui.define([
 	 * @param {string} Key to be.
 	 * @return {sap.m.BadgeCustomData} this BadgeCustomData reference for chaining.
 	 */
-	BadgeCustomData.prototype.setKey =  function () {
+	BadgeCustomData.prototype.setKey = function () {
 		return this;
 	};
 

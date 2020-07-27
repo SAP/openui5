@@ -1838,7 +1838,7 @@ sap.ui.define([
 
 				this.clock.tick(4000);
 
-				assert.notOk(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is not rendered");
+				assert.equal(this.oCard._isBadgeAttached, false, "Badge indicator is not rendered");
 
 				this.clock.restore();
 				done();
