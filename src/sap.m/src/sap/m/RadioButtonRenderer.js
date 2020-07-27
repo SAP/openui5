@@ -68,6 +68,7 @@ sap.ui.define([
 			selected: null, // Avoid output aria-selected
 			checked: oRadioButton.getSelected(), // aria-checked must be set explicitly
 			disabled: bNonEditable ? true : undefined, // Avoid output aria-disabled=false when the button is editable
+			invalid: oValueState === ValueState.Error ? true : null,
 			labelledby: { value: sId + "-label", append: true },
 			describedby: { value: (sTooltipWithStateMessage ? sId + "-Descr" : undefined), append: true }
 		});

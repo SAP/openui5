@@ -948,6 +948,21 @@ sap.ui.define([
 		oRadioButton.destroy();
 	});
 
+	QUnit.test("ValueState=Error results in aria-invalid attribute in DomRef", function (assert) {
+		var oRBError = new RadioButton({ text: "test", valueState: "Error" });
+		var oRBSuccess = new RadioButton({ text: "test", valueState: "Success" });
+
+		oRBError.placeAt("qunit-fixture");
+		oRBSuccess.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(oRBError.getDomRef().getAttribute("aria-invalid"), "true", "aria-invalid attribute is present");
+		assert.strictEqual(oRBSuccess.getDomRef().getAttribute("aria-invalid"), null, "aria-invalid attribute is not present");
+
+		oRBError.destroy();
+		oRBSuccess.destroy();
+	});
+
 	QUnit.module("Message support", {
 		beforeEach: function () {
 			this.oRadioButton = new RadioButton({
