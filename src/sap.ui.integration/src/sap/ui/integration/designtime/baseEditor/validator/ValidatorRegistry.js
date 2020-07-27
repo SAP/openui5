@@ -49,6 +49,8 @@ sap.ui.define([
 						delete oLoadingValidators[sName];
 					});
 
+					onCancel.shouldReject = false;
+
 					sap.ui.require(
 						[mNames[sName]],
 						resolve,
