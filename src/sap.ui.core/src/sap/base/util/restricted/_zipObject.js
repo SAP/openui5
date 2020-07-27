@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.15#zipObject}
+ * See {@link https://lodash.com/docs/4.17.19#zipObject}
  *
  * @function
  * @alias module:sap/base/util/restricted/_zipObject
