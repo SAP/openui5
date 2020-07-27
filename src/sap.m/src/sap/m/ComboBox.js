@@ -901,6 +901,10 @@ sap.ui.define([
 
 			this.synchronizeSelection();
 
+			if (!this.getOpen() && document.activeElement === this.getFocusDomRef()) {
+				this.addStyleClass("sapMFocus");
+			}
+
 			if (bFormattedTextHeaderFocused) {
 				oPseudoFocusedElement.addStyleClass("sapMPseudoFocus");
 				oList.removeStyleClass("sapMListFocus");
@@ -909,7 +913,6 @@ sap.ui.define([
 			} else if (oPseudoFocusedElement) {
 				oPseudoFocusedElement.removeStyleClass("sapMPseudoFocus");
 			}
-
 		};
 
 		/**

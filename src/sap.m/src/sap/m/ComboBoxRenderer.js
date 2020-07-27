@@ -30,10 +30,6 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/Device'
 		ComboBoxRenderer.addOuterClasses = function(oRm, oControl) {
 			ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
 			oRm.class(ComboBoxRenderer.CSS_CLASS_COMBOBOX);
-
-			if (!oControl.isOpen() && document.activeElement === oControl.getFocusDomRef()) {
-				oRm.class("sapMFocus");
-			}
 		};
 
 		/**
