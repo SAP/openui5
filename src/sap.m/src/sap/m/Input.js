@@ -1748,7 +1748,9 @@ function(
 			if (!this.isMobileDevice()) {
 				if (oPopup.isOpen()) {
 					this._sCloseTimer = setTimeout(function () {
-						this._oSuggPopover._iPopupListSelectedIndex = -1;
+						if (this._oSuggPopover) {
+							this._oSuggPopover._iPopupListSelectedIndex = -1;
+						}
 						this.cancelPendingSuggest();
 						if (this._oSuggPopover._sTypedInValue) {
 							setDomValue.call(this);
