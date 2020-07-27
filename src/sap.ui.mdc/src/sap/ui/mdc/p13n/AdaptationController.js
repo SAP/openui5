@@ -544,7 +544,9 @@ sap.ui.define([
 
 		var mSettings = {
 			title: sTitle,
-			ok: fnDialogOk,
+			confirm: {
+				handler: fnDialogOk
+			},
 			cancel: fnDialogCancel
 		};
 
