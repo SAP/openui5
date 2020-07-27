@@ -10,7 +10,7 @@ sap.ui.define([
 		onInit: function (oEvent) {
 
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/layout/sample") + "/supplier.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/supplier.json"));
 			oModel.attachRequestCompleted(function() {
 				this.byId('edit').setEnabled(true);
 			}.bind(this));
