@@ -113,17 +113,7 @@ sap.ui.define([
 		assert.strictEqual(this.oRHC.getHash(), "", "intial hash is empty string");
 	});
 
-	QUnit.test("setHash called without Router attached", function(assert) {
-		var oWarningSpy = sinon.spy(Log, "warning");
-
-		this.oRHC.setHash("newHash");
-
-		assert.equal(oWarningSpy.callCount, 1, "Warning log is called");
-		assert.equal(oWarningSpy.getCall(0).args[0], "The function setHash is called on a router which isn't matched within the last browser hashChange event. The call is ignored.", "correct warning message is provided");
-		oWarningSpy.restore();
-	});
-
-	QUnit.test("setHash called with Router attached", function(assert) {
+	QUnit.test("call setHash", function(assert) {
 		var sHash, aChildPrefixes,
 			iCount = 0,
 			fnHashSet = function(oEvent) {
@@ -131,9 +121,6 @@ sap.ui.define([
 				sHash = oEvent.getParameter("hash");
 				aChildPrefixes = oEvent.getParameter("deletePrefix");
 			};
-
-		// simulate that there's a router attached
-		this.oRHC.attachEvent("hashChanged", function(){});
 
 		this.oRHC.attachEvent("hashSet", fnHashSet);
 
@@ -144,17 +131,7 @@ sap.ui.define([
 		assert.deepEqual(aChildPrefixes, [], "child prefix is an empty array");
 	});
 
-	QUnit.test("replaceHash called without Router attached", function(assert) {
-		var oWarningSpy = sinon.spy(Log, "warning");
-
-		this.oRHC.replaceHash("newHash");
-
-		assert.equal(oWarningSpy.callCount, 1, "Warning log is called");
-		assert.equal(oWarningSpy.getCall(0).args[0], "The function replaceHash is called on a router which isn't matched within the last browser hashChange event. The call is ignored.", "correct warning message is provided");
-		oWarningSpy.restore();
-	});
-
-	QUnit.test("replaceHash called with Router attached", function(assert) {
+	QUnit.test("call replaceHash", function(assert) {
 		var sHash, aChildPrefixes,
 			iCount = 0,
 			fnHashReplaced = function(oEvent) {
@@ -162,9 +139,6 @@ sap.ui.define([
 				sHash = oEvent.getParameter("hash");
 				aChildPrefixes = oEvent.getParameter("deletePrefix");
 			};
-
-		// simulate that there's a router attached
-		this.oRHC.attachEvent("hashChanged", function(){});
 
 		this.oRHC.attachEvent("hashReplaced", fnHashReplaced);
 
@@ -277,11 +251,9 @@ sap.ui.define([
 		assert.equal(oRHCHashChangedSpy.args[0][0].getParameter("newHash"), "rootHash", "The correct hash is passed");
 		assert.equal(this.oChild1HashChangedSpy.callCount, 1, "hashChange event is fired on oChildRHC1");
 		assert.equal(this.oChild1HashChangedSpy.args[0][0].getParameter("newHash"), "fooHash/fooHash1", "The correct hash is passed");
-		assert.equal(oChild2HashChangedSpy.callCount, 1, "hashChange event is fired on oChildRHC2");
-		assert.equal(oChild2HashChangedSpy.args[0][0].getParameter("newHash"), "", "The correct hash is passed");
-		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 1, "hashChange event is fired on oGrandChildRHC1");
-		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "", "The correct hash is passed");
-		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChange event is fired on oGrandChildRHC2");
+		assert.equal(oChild2HashChangedSpy.callCount, 0, "no hashChange event is fired on oChildRHC2 because the RouterHashChanger already have empty string as default hash");
+		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 0, "no hashChange event is fired on oGrandChildRHC1 because the RouterHashChanger already have empty string as default hash");
+		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChange event is fired on oGrandChildRHC2 because the RouterHashChanger already have empty string as default hash");
 		assert.equal(this.oGrandChild2HashChangedSpy.args[0][0].getParameter("newHash"), "foo.child2/foo.child2Hash", "The correct hash is passed");
 	});
 
@@ -352,23 +324,18 @@ sap.ui.define([
 	QUnit.test("fireHashChanged on SubHashChanger", function(assert) {
 		this.oRHC.fireHashChanged("hash", {});
 
-		assert.equal(this.oChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the child hashChanger");
-		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
-		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
-		assert.equal(this.oChild1HashChangedSpy.args[0][0].getParameter("newHash"), "", "Child1 hashChanged fired");
-		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "", "Grand Child1 hashChanged fired");
-		assert.equal(this.oGrandChild2HashChangedSpy.args[0][0].getParameter("newHash"), "", "Grand Child2 hashChanged fired");
+		assert.equal(this.oChild1HashChangedSpy.callCount, 0, "no hashChanged event is fired on the child hashChanger because the RouterHashChanger already have empty string as default hash");
+		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 0, "no hashChanged event is fired on the grand child hashChanger because the RouterHashChanger already have empty string as default hash");
+		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 0, "no hashChanged event is fired on the grand child hashChanger because the RouterHashChanger already have empty string as default hash");
 	});
 
 	QUnit.test("fireHashChanged on SubHashChanger with subhash", function(assert) {
 		this.oRHC.fireHashChanged("hash", {"foo": "subhash"});
 
 		assert.equal(this.oChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the child hashChanger");
-		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
-		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
+		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 0, "no hashChanged event is fired on the grand child hashChanger because the RouterHashChanger already have empty string as default hash");
+		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 0, "hashChanged event is fired on the grand child hashChanger because the RouterHashChanger already have empty string as default hash");
 		assert.equal(this.oChild1HashChangedSpy.args[0][0].getParameter("newHash"), "subhash", "Child1 hashChanged fired");
-		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "", "Grand Child1 hashChanged fired");
-		assert.equal(this.oGrandChild2HashChangedSpy.args[0][0].getParameter("newHash"), "", "Grand Child2 hashChanged fired");
 	});
 
 	QUnit.test("fireHashChanged on SubHashChanger with subhashes on nested level", function(assert) {
@@ -376,9 +343,8 @@ sap.ui.define([
 
 		assert.equal(this.oChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the child hashChanger");
 		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
-		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
+		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 0, "no hashChanged event is fired on the grand child hashChanger because the RouterHashChanger already have empty string as default hash");
 		assert.equal(this.oChild1HashChangedSpy.args[0][0].getParameter("newHash"), "subhash", "Child1 hashChanged fired");
-		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "subhash.foo", "Child1 hashChanged fired");
-		assert.equal(this.oGrandChild2HashChangedSpy.args[0][0].getParameter("newHash"), "", "Child1 hashChanged fired");
+		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "subhash.foo", "Grand Child1 hashChanged fired");
 	});
 });
