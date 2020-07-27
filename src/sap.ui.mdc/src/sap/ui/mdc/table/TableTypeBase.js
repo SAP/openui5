@@ -56,8 +56,8 @@ sap.ui.define([
 		return oTable;
 	};
 
-	TableTypeBase.prototype.updateTableSettings = function() {
-		var mProperties = this.getMetadata().getProperties(), sProperty, oTable = this.getRelevantTable();
+	TableTypeBase.prototype.updateTableSettings = function(mAdditionalProperties) {
+		var mProperties = Object.assign({}, mAdditionalProperties, this.getMetadata().getProperties()), sProperty, oTable = this.getRelevantTable();
 		if (oTable) {
 			for (sProperty in mProperties) {
 				this.updateRelevantTableProperty(oTable, sProperty, this.getProperty(sProperty));
