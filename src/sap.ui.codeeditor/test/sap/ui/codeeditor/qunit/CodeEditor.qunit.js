@@ -147,7 +147,7 @@ sap.ui.define([
 			});
 
 			this.oCodeEditor.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCodeEditor.destroy();
@@ -164,7 +164,7 @@ sap.ui.define([
 		// Arrange
 		var oCodeEditor = new CodeEditor({});
 		oCodeEditor.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oCodeEditor.destroy();
@@ -172,5 +172,20 @@ sap.ui.define([
 		// Assert
 		assert.notOk(oCodeEditor._oEditorDomRef, "DOM node of the editor should be destroyed.");
 		assert.notOk(oCodeEditor._oEditor, "ACE editor should be destroyed");
+	});
+
+	QUnit.module("Accessibility");
+
+	QUnit.test("Aria role and roledescription", function(assert) {
+		var oCodeEditor = new CodeEditor({}),
+			sExpectedRoleDescriptionText = Core.getLibraryResourceBundle("sap.ui.codeeditor").getText("CODEEDITOR_ROLE_DESCRIPTION");
+
+		oCodeEditor.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(oCodeEditor.$().attr("role"), "application", "aria-role is 'application'");
+		assert.strictEqual(oCodeEditor.$().attr("aria-roledescription"), sExpectedRoleDescriptionText, "aria-roledescription is '" + sExpectedRoleDescriptionText + "'");
+
+		oCodeEditor.destroy();
 	});
 });
