@@ -1,0 +1,41 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:fb="sap.ui.comp.smartfilterbar"
+	xmlns="sap.m"
+	controllerName="samples.components.commands.Commands"
+	displayBlock="true">
+	<App id="commands">
+		<Page id="page" title="Commands">
+			<dependents>
+				<core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".onSave" />
+				<core:CommandExecution id="CE_DELETE" command="Delete" enabled="true" execute=".onDelete" />
+			</dependents>
+			<Panel headerText="Button">
+				<Label width="100%" text="Vanilla Buttons"></Label>
+				<Button icon="sap-icon://save" />
+				<Button text="Save" tooltip="User Tooltip" />
+				<Button icon="sap-icon://save" tooltip="User Tooltip" />
+
+				<Label width="100%" text="Command Registered"></Label>
+				<Button icon="sap-icon://save" press="cmd:Save" />
+				<Button text="Save" tooltip="User Tooltip" press="cmd:Save" />
+				<Button icon="sap-icon://save" tooltip="User Tooltip" press="cmd:Save" />
+
+				<Label width="100%" text="Vanilla Buttons + direct shortcut hints"></Label>
+				<Button id="b1" icon="sap-icon://save" />
+				<Button id="b2" text="Save" tooltip="User Tooltip" />
+				<Button id="b3" icon="sap-icon://save" tooltip="User Tooltip" />
+
+				<Label width="100%" text="Command Registered + direct shortcut hints"></Label>
+				<Button id="b4" icon="sap-icon://save" press="cmd:Save" />
+				<Button id="b5" text="Save" tooltip="User Tooltip" press="cmd:Save" />
+				<Button id="b6" icon="sap-icon://save" tooltip="User Tooltip" press="cmd:Save" />
+
+				<Button id="b7" text="Non-existent command" tooltip="User Tooltip" press="cmd:MyCommand" />
+
+				<fb:SmartFilterBar search="cmd:Save" />
+			</Panel>
+		</Page>
+	</App>
+</mvc:View>

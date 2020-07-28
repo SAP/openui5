@@ -6,7 +6,7 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
-	'sap/ui/core/CommandShortcutHintsMixin',
+	'sap/ui/core/ShortcutHintsMixin',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
@@ -18,7 +18,7 @@ sap.ui.define([
 ], function(
 	library,
 	Control,
-	CommandShortcutHintsMixin,
+	ShortcutHintsMixin,
 	EnabledPropagator,
 	IconPool,
 	Device,
@@ -176,16 +176,16 @@ sap.ui.define([
 
 	EnabledPropagator.call(Button.prototype);
 	ContextMenuSupport.apply(Button.prototype);
-	CommandShortcutHintsMixin.call(Button.prototype, {
-		position: "0 4",
-		addAccessibilityLabel: false
-	});
 
 	Button.prototype.init = function() {
 		this._onmouseenter = this._onmouseenter.bind(this);
 		this._buttonPressed = false;
 
-		CommandShortcutHintsMixin.init(this);
+		ShortcutHintsMixin.addConfig(this, {
+				event: "press",
+				position: "0 4",
+				addAccessibilityLabel: true
+			}, this);
 	};
 
 	/**
@@ -630,12 +630,14 @@ sap.ui.define([
 
 	// A hook to be used by controls that extend sap.m.Button and want to display the tooltip in a different way
 	Button.prototype._getTooltip = function() {
+		var sTooltip,
+			oIconInfo;
 
-		var sTooltip = this.getTooltip_AsString();
+		sTooltip = this.getTooltip_AsString();
 
 		if (!sTooltip && !this.getText()) {
 			// get icon-font info. will return null if the icon is an image
-			var oIconInfo = IconPool.getIconInfo(this._getAppliedIcon());
+			oIconInfo = IconPool.getIconInfo(this._getAppliedIcon());
 
 			// add tooltip if available
 			if (oIconInfo) {
@@ -732,6 +734,15 @@ sap.ui.define([
 		}
 
 		return sAccType;
+	};
+
+	Button.prototype._getHintAccessibility = function() {
+			return ShortcutHintsMixin.getHintAccessibility(this);
+	};
+
+	//gets the title attribute for the given dom node id
+	Button.prototype._getTitleAttribute = function(sDOMID) {
+		return this.getTooltip();
 	};
 
 	return Button;

@@ -175,6 +175,10 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				title: "sap.ui.core.util.ShortcutHelper",
 				module: "test-resources/sap/ui/core/qunit/ShortcutHelper.qunit"
 			},
+			ShortcutHints: {
+				title: "sap.ui.core.ShortcutHintsMixin",
+				module: "test-resources/sap/ui/core/qunit/ShortcutHints.qunit"
+			},
 			XMLHelper: {
 				title: "sap.ui.core.util.XMLHelper",
 				module: "test-resources/sap/ui/core/qunit/util/XMLHelper.qunit"
