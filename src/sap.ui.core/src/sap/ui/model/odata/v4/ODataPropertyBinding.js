@@ -55,8 +55,10 @@ sap.ui.define([
 	 * @public
 	 * @since 1.37.0
 	 * @version ${version}
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#getGroupId as #getGroupId
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#getUpdateGroupId as #getUpdateGroupId
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
@@ -219,11 +221,9 @@ sap.ui.define([
 	 *   no longer the active cache when the response arrives
 	 *
 	 * @private
-	 * @see sap.ui.model.Binding#checkUpdate
-	 * @see sap.ui.model.ODataBinding#checkUpdateInternal
 	 * @see sap.ui.model.PropertyBinding#checkDataState
 	 */
-	// @override
+	// @override sap.ui.model.odata.v4.ODataBinding#checkUpdateInternal
 	ODataPropertyBinding.prototype.checkUpdateInternal = function (bForceUpdate, sChangeReason,
 			sGroupId, vValue) {
 		var bDataRequested = false,
@@ -422,24 +422,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests the value of the property binding.
-	 *
-	 * @returns {Promise}
-	 *   A promise resolving with the resulting value or <code>undefined</code> if it could not be
-	 *   determined
-	 *
-	 * @public
-	 * @since 1.69
-	 */
-	ODataPropertyBinding.prototype.requestValue = function () {
-		var that = this;
-
-		return Promise.resolve(this.checkUpdateInternal().then(function () {
-			return that.getValue();
-		}));
-	};
-
-	/**
 	 * Determines which type of value list exists for this property.
 	 *
 	 * @returns {sap.ui.model.odata.v4.ValueListType}
@@ -466,6 +448,17 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.hasPendingChangesInDependents = function () {
 		return false;
+	};
+
+	// @override sap.ui.model.Binding#initialize
+	ODataPropertyBinding.prototype.initialize = function () {
+		if (this.isResolved()) {
+			if (this.getRootBinding().isSuspended()) {
+				this.sResumeChangeReason = ChangeReason.Change;
+			} else {
+				this.checkUpdate(true);
+			}
+		}
 	};
 
 	/**
@@ -502,6 +495,24 @@ sap.ui.define([
 		return bCheckUpdate
 			? this.checkUpdateInternal(false, ChangeReason.Refresh, sGroupId)
 			: SyncPromise.resolve();
+	};
+
+	/**
+	 * Requests the value of the property binding.
+	 *
+	 * @returns {Promise}
+	 *   A promise resolving with the resulting value or <code>undefined</code> if it could not be
+	 *   determined
+	 *
+	 * @public
+	 * @since 1.69
+	 */
+	ODataPropertyBinding.prototype.requestValue = function () {
+		var that = this;
+
+		return Promise.resolve(this.checkUpdateInternal().then(function () {
+			return that.getValue();
+		}));
 	};
 
 	/**
@@ -594,12 +605,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.resumeInternal = function (bCheckUpdate) {
+		var sResumeChangeReason = this.sResumeChangeReason;
+
+		this.sResumeChangeReason = undefined;
+
 		this.fetchCache(this.oContext);
 		if (bCheckUpdate) {
-			this.checkUpdateInternal(false, this.sResumeChangeReason);
+			this.checkUpdateInternal(false, sResumeChangeReason);
 		}
-		// the change event is fired asynchronously, so it is safe to reset here
-		this.sResumeChangeReason = ChangeReason.Change;
 	};
 
 	/**
@@ -664,8 +677,7 @@ sap.ui.define([
 	 *   The new value which must be primitive
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for this update call; if not specified, the update group ID for
-	 *   this binding (or its relevant parent binding) is used, see
-	 *   {@link sap.ui.model.odata.v4.ODataPropertyBinding#constructor}.
+	 *   this binding (or its relevant parent binding) is used, see {@link #getUpdateGroupId}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @throws {Error}
@@ -737,12 +749,6 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.suspend = function () {
 		throw new Error("Unsupported operation: suspend");
 	};
-
-	/**
-	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#suspendInternal
-	 */
-	ODataPropertyBinding.prototype.suspendInternal = function () {};
 
 	/**
 	 * @override

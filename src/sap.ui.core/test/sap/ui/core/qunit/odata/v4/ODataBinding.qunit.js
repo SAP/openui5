@@ -73,7 +73,8 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mLateQueryOptions, undefined);
 		assert.ok(oBinding.hasOwnProperty("sReducedPath"));
 		assert.strictEqual(oBinding.sReducedPath, undefined);
-		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+		assert.ok(oBinding.hasOwnProperty("sResumeChangeReason"));
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
 	});
 
 	//*********************************************************************************************
@@ -2498,6 +2499,7 @@ sap.ui.define([
 		assert.strictEqual(asODataBinding.prototype.doDeregisterChangeListener,
 			oBinding.doDeregisterChangeListener);
 		assert.strictEqual(asODataBinding.prototype.destroy, oBinding.destroy);
+		assert.strictEqual(asODataBinding.prototype.fetchCache, oBinding.fetchCache);
 		assert.strictEqual(asODataBinding.prototype.hasPendingChangesForPath,
 			oBinding.hasPendingChangesForPath);
 	});

@@ -805,6 +805,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the query options for late properties.
+	 *
+	 * @returns {object} The late query options
+	 *
+	 * @public
+	 */
+	Cache.prototype.getLateQueryOptions = function () {
+		return this.mLateQueryOptions;
+	};
+
+	/**
 	 * Gets the <code>Promise</code> which resolves with a map of minimum and maximum values.
 	 *
 	 * @returns {Promise}
@@ -1202,16 +1213,20 @@ sap.ui.define([
 	 * Accepts only $expand and $select.
 	 *
 	 * @param {object} mQueryOptions
-	 *   The new late query options
+	 *   The new late query options or <code>null</code> to reset
 	 *
 	 * @public
 	 */
 	Cache.prototype.setLateQueryOptions = function (mQueryOptions) {
-		this.mLateQueryOptions = {
-			// ensure that $select precedes $expand in the resulting query
-			$select : mQueryOptions.$select,
-			$expand : mQueryOptions.$expand
-		};
+		if (mQueryOptions) {
+			this.mLateQueryOptions = {
+				// ensure that $select precedes $expand in the resulting query
+				$select : mQueryOptions.$select,
+				$expand : mQueryOptions.$expand
+			};
+		} else {
+			this.mLateQueryOptions = null;
+		}
 	};
 
 	/**
@@ -1735,6 +1750,17 @@ sap.ui.define([
 	CollectionCache.prototype = Object.create(Cache.prototype);
 
 	/**
+	 * Adds the element to $byPredicate of the cache's element list.
+	 *
+	 * @param {object} oElement - The element
+	 *
+	 * @public
+	 */
+	CollectionCache.prototype.addKeptElement = function (oElement) {
+		this.aElements.$byPredicate[_Helper.getPrivateAnnotation(oElement, "predicate")] = oElement;
+	};
+
+	/**
 	 * Adjusts the indices for read requests.
 	 *
 	 * @param {number} iIndex The index at which an element has been added or removed
@@ -2002,6 +2028,7 @@ sap.ui.define([
 			iCreated = this.aElements.$created,
 			oElement,
 			i,
+			oKeptElement,
 			iOld$count = this.aElements.$count,
 			sPredicate,
 			iResultLength = oResult.value.length;
@@ -2010,11 +2037,20 @@ sap.ui.define([
 		this.visitResponse(oResult, mTypeForMetaPath, undefined, undefined, undefined, iStart);
 		for (i = 0; i < iResultLength; i += 1) {
 			oElement = oResult.value[i];
-			this.aElements[iStart + i] = oElement;
 			sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 			if (sPredicate) {
+				oKeptElement = this.aElements.$byPredicate[sPredicate];
+				if (oKeptElement) {
+					if (oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {
+						oElement = oKeptElement;
+					} else if (this.hasPendingChangesForPath(sPredicate)) {
+						throw new Error("Modified on client and on server: "
+							+ this.sResourcePath + sPredicate);
+					}
+				}
 				this.aElements.$byPredicate[sPredicate] = oElement;
 			}
+			this.aElements[iStart + i] = oElement;
 		}
 		sCount = oResult["@odata.count"];
 		if (sCount) {

@@ -112,6 +112,7 @@ sap.ui.define([
 					&& Promise.resolve(oCreatePromise).then(function () {});
 				this.oSyncCreatePromise = oCreatePromise && SyncPromise.resolve(oCreatePromise);
 				this.iIndex = iIndex;
+				this.bKeepAlive = false;
 				this.iReturnValueContextId = iReturnValueContextId;
 			}
 		});
@@ -228,10 +229,9 @@ sap.ui.define([
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the DELETE request; if not specified, the update group ID for
-	 *   the context's binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindContext}
-	 *   and {@link sap.ui.model.odata.v4.ODataModel#bindList}; the resulting group ID must not have
-	 *   {@link sap.ui.model.odata.v4.SubmitMode.API}. Since 1.81, if this context is transient
-	 *   (see {@link #isTransient}), no group ID needs to be specified.
+	 *   the context's binding is used, see {@link #getUpdateGroupId}; the resulting group ID must
+	 *   not have {@link sap.ui.model.odata.v4.SubmitMode.API}. Since 1.81, if this context is
+	 *   transient (see {@link #isTransient}), no group ID needs to be specified.
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not point
@@ -502,12 +502,15 @@ sap.ui.define([
 	Context.prototype.getCanonicalPath = _Helper.createGetMethod("fetchCanonicalPath", true);
 
 	/**
-	 * Returns the group ID of the context's binding that is used for read requests.
+	 * Returns the group ID of the context's binding that is used for read requests. See
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#getGroupId} and
+	 * {@link sap.ui.model.odata.v4.ODataContextBinding#getGroupId}.
 	 *
 	 * @returns {string}
 	 *   The group ID
 	 *
-	 * @private
+	 * @public
+	 * @since 1.81.0
 	 */
 	Context.prototype.getGroupId = function () {
 		return this.oBinding.getGroupId();
@@ -519,8 +522,11 @@ sap.ui.define([
 	 * <code>bAtEnd</code>, and when a context representing a created entity is deleted again.
 	 *
 	 * @returns {number}
-	 *   The context's index within the binding's collection or <code>undefined</code> if the
-	 *   context does not belong to a list binding.
+	 *   The context's index within the binding's collection. It is <code>undefined</code> if
+	 *   <ul>
+	 *     <li> it does not belong to a list binding,
+	 *     <li> it is kept alive (see {@link #isKeepAlive}), but not in the collection currently.
+	 *   </ul>
 	 *
 	 * @public
 	 * @since 1.39.0
@@ -542,13 +548,16 @@ sap.ui.define([
 	 * or deleted again.
 	 *
 	 * @returns {number}
-	 *   The context's model index within the binding's collection or <code>undefined</code> if the
-	 *   context does not belong to a list binding.
+	 *   The context's index within the binding's collection. It is <code>undefined</code> if
+	 *   <ul>
+	 *     <li> it does not belong to a list binding,
+	 *     <li> it is kept alive (see {@link #isKeepAlive}), but not in the collection currently.
+	 *   </ul>
 	 *
 	 * @private
 	 */
 	Context.prototype.getModelIndex = function () {
-		if (this.oBinding.iCreatedContexts) {
+		if (this.iIndex !== undefined && this.oBinding.iCreatedContexts) {
 			return this.iIndex + this.oBinding.iCreatedContexts;
 		}
 		return this.iIndex;
@@ -662,12 +671,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the group ID of the context's binding that is used for update requests.
+	 * Returns the group ID of the context's binding that is used for update requests. See
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#getUpdateGroupId} and
+	 * {@link sap.ui.model.odata.v4.ODataContextBinding#getUpdateGroupId}.
 	 *
 	 * @returns {string}
-	 *   The group ID
+	 *   The update group ID
 	 *
-	 * @private
+	 * @public
+	 * @since 1.81.0
 	 */
 	Context.prototype.getUpdateGroupId = function () {
 		return this.oBinding.getUpdateGroupId();
@@ -746,6 +758,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns whether this context is kept alive.
+	 *
+	 * @returns {boolean} <code>true</code> if this context is kept alive
+	 *
+	 * @public
+	 * @see #setKeepAlive
+	 * @since 1.81.0
+	 */
+	Context.prototype.isKeepAlive = function () {
+		return this.bKeepAlive;
+	};
+
+	/**
 	 * For a context created using {@link sap.ui.model.odata.v4.ODataListBinding#create}, the
 	 * method returns <code>true</code> if the context is transient, meaning that the promise
 	 * returned by {@link #created} is not yet resolved or rejected, and returns <code>false</code>
@@ -785,8 +810,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the refresh; if not specified, the group ID for the context's
-	 *   binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}.
+	 *   binding is used, see {@link #getGroupId}.
 	 * @param {boolean} [bAllowRemoval=false]
 	 *   If the context belongs to a list binding, the parameter allows the list binding to remove
 	 *   the context from the list binding's collection because the entity does not match the
@@ -957,12 +981,10 @@ sap.ui.define([
 	 *   <code>[{$PropertyPath : "EMPLOYEE_2_MANAGER/*"}]</code>.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used (since 1.69.0); if not specified, the update group ID for the
-	 *   context's binding is used, see "$$updateGroupId" at
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList} and
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}. If a different group ID is specified,
-	 *   make sure that {@link #requestSideEffects} is called after the corresponding updates have
-	 *   been successfully processed by the server and that there are no pending changes for the
-	 *   affected properties.
+	 *   context's binding is used, see {@link #getUpdateGroupId}. If a different group ID is
+	 *   specified, make sure that {@link #requestSideEffects} is called after the corresponding
+	 *   updates have been successfully processed by the server and that there are no pending
+	 *   changes for the affected properties.
 	 * @returns {Promise}
 	 *   Promise resolved with <code>undefined</code>, or rejected with an error if loading of side
 	 *   effects fails. Use it to set fields affected by side effects to read-only before
@@ -1143,6 +1165,39 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets this context's <code>keepAlive</code> attribute. If <code>true</code> the context is
+	 * kept alive even when it is removed from its binding's collection, for example if a filter is
+	 * applied and the entity represented by this context does not match the filter criteria.
+	 *
+	 * @param {boolean} bKeepAlive
+	 *   Whether to keep the context alive
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> this context is not a list binding's context,
+	 *     <li> it is the header context,
+	 *     <li> it is transient,
+	 *     <li> it does not point to an entity,
+	 *     <li> a key property of the entity has not been requested,
+	 *     <li> the list binding is relative and does not use the <code>$$ownRequest</code>
+	 *       parameter (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *   </ul>
+	 *
+	 * @public
+	 * @see #isKeepAlive
+	 * @since 1.81.0
+	 */
+	Context.prototype.setKeepAlive = function (bKeepAlive) {
+		if (this.isTransient()) {
+			throw new Error("Unsupported transient context " + this);
+		}
+		if (!_Helper.getPrivateAnnotation(this.getValue(), "predicate")) {
+			throw new Error("No key predicate known at " + this);
+		}
+		this.oBinding.checkKeepAlive(this);
+		this.bKeepAlive = bKeepAlive;
+	};
+
+	/**
 	 * Sets a new value for the property identified by the given path. The path is relative to this
 	 * context and is expected to point to a structural property with primitive type.
 	 *
@@ -1152,8 +1207,7 @@ sap.ui.define([
 	 *   The new value which must be primitive
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the PATCH request; if not specified, the update group ID for
-	 *   the context's binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}. Since 1.74, you can use
+	 *   the context's binding is used, see {@link #getUpdateGroupId}. Since 1.74.0, you can use
 	 *   <code>null</code> to prevent the PATCH request.
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
