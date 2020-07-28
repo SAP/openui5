@@ -6,7 +6,7 @@ sap.ui.define([
 ], function(Helper, EnterText, Press, Opa5) {
 	"use strict";
 
-	var iCurrentMessageCount,
+	var iCurrentItemCount, iCurrentMessageCount, oSalesOrderDetails,
 		mMessageShort2Message = {
 			empty : "",
 			error : "Error: My error message",
@@ -14,12 +14,16 @@ sap.ui.define([
 			info : "Info: My info message",
 			infoNoPrefix : "My info message",
 			none : "No message",
+			note : "Enter an Item Note",
 			order : "Order at least 2 EA of product 'HT-1000'",
 			success : "Success: My success message",
 			successNoPrefix : "My success message",
 			warning : "Warning: My warning message",
 			warningNoPrefix : "My warning message"
 		},
+		rObjectPage = /objectPage/,
+		rProductDetailsDialog = /productDetailsDialog/,
+		rToLineItems = /ToLineItems/,
 		sViewName = "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main";
 
 	function pressButton(oOpa5, sId, bSearchOpenDialogs) {
@@ -33,8 +37,10 @@ sap.ui.define([
 	 *   An instance of Opa5 to access the current page object
 	 * @param {function} fnCheckRow
 	 *   A function to check the rows values. Gets passed the rows cells and the item position
+	 * @param {function} [fnCheckResult]
+	 *   A function called after looping the rows to check the end result
 	 */
-	function loopTableRows(oOpa5, fnCheckRow) {
+	function loopTableRows(oOpa5, fnCheckRow, fnCheckResult) {
 		return oOpa5.waitFor({
 			id : "ToLineItems",
 			success : function (oTable) {
@@ -46,6 +52,10 @@ sap.ui.define([
 					sItemPosition = aCells[1].getValue();
 
 					fnCheckRow(aCells, sItemPosition);
+				}
+
+				if (fnCheckResult) {
+					fnCheckResult();
 				}
 			},
 			viewName : sViewName
@@ -91,26 +101,137 @@ sap.ui.define([
 					});
 				},
 				/*
-				 * Close the currently showing dialog.
+				 * Changes the note of the new product in the "Create New Item" dialog.
+				 *
+				 * @param {string} sNewNote The note for the new item
 				 */
-				closeDialog : function () {
+				changeNoteInDialog : function (sNewNote) {
+					return this.waitFor({
+						actions : new EnterText({text : sNewNote}),
+						id : "note::createSalesOrderItemDialog",
+						searchOpenDialogs : true,
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Changes the id of the new product in the "Create New Item" dialog.
+				 *
+				 * @param {string} sNewId The product id for the new item
+				 */
+				changeProductIdInDialog : function (sNewId) {
+					return this.waitFor({
+						actions : new EnterText({text : sNewId}),
+						id : "productID::createSalesOrderItemDialog",
+						searchOpenDialogs : true,
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Close the currently showing dialog.
+				 *
+				 * @param {string} sDialogTitle Title of the dialog to match
+				 */
+				closeDialog : function (sDialogTitle) {
+					return this.waitFor({
+						controlType : "sap.m.Dialog",
+						success : function (aDialogs) {
+							var oDialog = aDialogs.find(function(oDialog) {
+								return oDialog.getTitle().includes(sDialogTitle);
+							});
+
+							oDialog.close();
+						}
+					});
+				},
+				/*
+				 * Confirms a confirmation dialog.
+				 */
+				confirmDialog : function () {
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
+						matchers : function (oButton) {
+							return oButton.getText() === "OK";
+						},
 						searchOpenDialogs : true
 					});
+				},
+				/*
+				 * Presses the "create item" button
+				 */
+				pressCreateItem : function () {
+					return pressButton(this, "createItem::ToLineItems");
+				},
+				/*
+				 * Presses the "delete item" button
+				 */
+				pressDeleteItem : function () {
+					return pressButton(this, "deleteItem::ToLineItems");
 				},
 				/*
 				 * Presses the "Fix Quantities" button.
 				 */
 				pressFixAllQuantities : function () {
-					return pressButton(this, "fixAllQuantities");
+					return pressButton(this, "fixAllQuantities::ToLineItems");
+				},
+				/*
+				 * Presses the "Show more details" button in the specified line in the table.
+				 *
+				 * @param {number} iRow The row in which the button should be pressed
+				 */
+				pressMoreDetails : function (iRow) {
+					return this.waitFor({
+						id : rToLineItems,
+						success : function (aElements) {
+							var i, oRow, oMoreDetailsButton;
+
+							for (i = 0; i < aElements.length; i += 1) {
+								if (aElements[i].sId.endsWith("showProductDetails::ToLineItems")) {
+									oMoreDetailsButton = aElements[i];
+								} else if (typeof aElements[i].getRows === "function") {
+									oRow = aElements[i].getRows()[iRow];
+								}
+							}
+
+							if (!oRow || !oMoreDetailsButton) {
+								Opa5.assert.ok(false, "Couldn't find necessary controls.");
+							}
+
+							oMoreDetailsButton.firePress({row : oRow});
+						},
+						viewName : sViewName,
+						visible : false
+					});
+				},
+				/*
+				 * Presses the Discard button in the "Create new item" Dialog.
+				 */
+				pressNewItemDiscardButton : function () {
+					return pressButton(this, "discardCreatedItem::createSalesOrderItemDialog");
+				},
+				/*
+				 * Presses the Save button in the "Create new item" Dialog.
+				 */
+				pressNewItemSaveButton : function () {
+					return pressButton(this, "saveCreatedItem::createSalesOrderItemDialog");
 				},
 				/*
 				 * Presses the Save button at the bottom of the page.
 				 */
 				pressSalesOrderSaveButton : function () {
 					return pressButton(this, "saveSalesOrder");
+				},
+				/*
+				 * Stores the current item count.
+				 */
+				rememberCurrentItemCount : function () {
+					iCurrentItemCount = 0;
+
+					return loopTableRows(this, function (aCells, sItemPosition) {
+						if (sItemPosition !== "") {
+							iCurrentItemCount += 1;
+						}
+					});
 				},
 				/*
 				 * Reads and stores the number of current messages shown on the message popover
@@ -121,6 +242,27 @@ sap.ui.define([
 						id : "messagePopoverButton",
 						success : function (oButton) {
 							iCurrentMessageCount = parseInt(oButton.getText());
+						},
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Reads and stores the sales order details.
+				 */
+				rememberSalesOrderDetails : function () {
+					return this.waitFor({
+						id : rObjectPage,
+						success : function (aInputFields) {
+							var i;
+
+							oSalesOrderDetails = {};
+							for (i = 0; i < aInputFields.length; i += 1) {
+								if (aInputFields[i].sId.includes("grossAmount")) {
+									oSalesOrderDetails["grossAmount"] = aInputFields[i].getValue();
+								} else if (aInputFields[i].sId.includes("changedAt")) {
+									oSalesOrderDetails["changedAt"] = aInputFields[i].getValue();
+								}
+							}
 						},
 						viewName : sViewName
 					});
@@ -139,6 +281,20 @@ sap.ui.define([
 							oTable.setFirstVisibleRow(iCurrentFirst + iDelta);
 
 							Opa5.assert.ok(true, "Scrolling by " + iDelta);
+						},
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Selects a row in the table.
+				 *
+				 * @param {number} iRow The row to select
+				 */
+				selectRow : function (iRow) {
+					return this.waitFor({
+						id : "ToLineItems",
+						success : function (oTable) {
+							oTable.setSelectedIndex(iRow);
 						},
 						viewName : sViewName
 					});
@@ -195,14 +351,72 @@ sap.ui.define([
 			},
 			assertions : {
 				/*
-				 * Checks if there is a dialog open currently.
+				 * Checks if the named dialog is not open.
+				 *
+				 * @param {string} sTitleText Part of the title which will be searched for
 				 */
-				checkDialogOpen : function () {
+				checkDialogNotOpen : function (sTitleText) {
 					return this.waitFor({
 						controlType : "sap.m.Dialog",
-						success : function () {
-							Opa5.assert.ok(true, "Dialog is showing.");
+						success : function (aDialogs) {
+							var oDialog = aDialogs.find(function (oDialog) {
+								return oDialog.getTitle().includes(sTitleText);
+							});
+
+							Opa5.assert.ok(!oDialog.isOpen(), "Dialog not showing.");
+						},
+						visible : false
+					});
+				},
+				/*
+				 * Checks if there is a dialog open currently.
+				 *
+				 * @param {string} sTitleText Part of the title which will be searched for
+				 * @param {string} [sSubHeader] Part of the sub header which can be searched for
+				 */
+				checkDialogOpen : function (sTitleText, sSubHeader) {
+					return this.waitFor({
+						controlType : "sap.m.Dialog",
+						success : function (aDialogs) {
+							var oDialog = aDialogs.find(function (oDialog) {
+								if (sSubHeader) {
+									return oDialog.getTitle().includes(sTitleText)
+										&& oDialog.getContent()[0].mProperties.text
+											.includes(sSubHeader);
+								} else {
+									return oDialog.getTitle().includes(sTitleText);
+								}
+							});
+
+							Opa5.assert.ok(!!oDialog, "Correct dialog showing.");
 						}
+					});
+				},
+				/*
+				 * Checks if the product details dialog is showing the correct information.
+				 *
+				 * @param {string} sProductId The product idea which should be shown
+				 * @param {string} sProductName The product name which should be shown
+				 */
+				checkDialogShowingProductIdAndName : function (sProductId, sProductName) {
+					return this.waitFor({
+						id : rProductDetailsDialog,
+						success : function (aControls) {
+							var oControl, i;
+
+							for (i = 0; i < aControls.length; i++) {
+								oControl = aControls[i];
+
+								if (oControl.sId.includes("productID")) {
+									Opa5.assert.equal(oControl.getValue(), sProductId,
+										"Product ID in dialog correct");
+								} else if (oControl.sId.includes("name")) {
+									Opa5.assert.equal(oControl.getValue(), sProductName,
+										"Product name in dialog correct");
+								}
+							}
+						},
+						viewName : sViewName
 					});
 				},
 				/*
@@ -235,6 +449,27 @@ sap.ui.define([
 								"Quantity for item " + sItemPosition + " is ok.");
 						}
 					});
+				},
+				/*
+				 * Checks if the item count has changed by a specifed value.
+				 *
+				 * @param {number} iDelta
+				 *   The supposed difference between the current and the old item count
+				 */
+				checkItemCountChangedBy : function (iDelta) {
+					var iItemCount = 0,
+						fnCheckRows = function (aCells, sItemPosition) {
+							if (sItemPosition !== "") {
+								iItemCount += 1;
+							}
+						},
+						fnCheckResult = function () {
+							iCurrentItemCount += iDelta;
+							Opa5.assert.equal(iItemCount, iCurrentItemCount,
+								"Item count has changed by " + iDelta);
+						};
+
+					return loopTableRows(this, fnCheckRows, fnCheckResult);
 				},
 				/*
 				 * Checks if all items in the table match the selected filter.
@@ -381,6 +616,48 @@ sap.ui.define([
 						},
 						viewName : sViewName,
 						visible : false
+					});
+				},
+				/*
+				 * Checks if a message toast is showing.
+				 */
+				checkMessageToast : function () {
+					return this.waitFor({
+						check : function () {
+							return !!sap.ui.test.Opa5.getJQuery()(".sapMMessageToast").length;
+						},
+						errorMessage : "No Toast message detected!",
+						success : function () {
+							Opa5.assert.ok(true, "Found a Toast");
+						},
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Compares the sales order details with the details that have been stored earlier.
+				 * Stores the current details after comparing.
+				 */
+				checkSalesOrderDetailsUpdated : function () {
+					return this.waitFor({
+						id : rObjectPage,
+						success : function (aInputFields) {
+							var i,
+								oNewSalesOrderDetails = {};
+
+							for (i = 0; i < aInputFields.length; i += 1) {
+								if (aInputFields[i].sId.includes("grossAmount")) {
+									oNewSalesOrderDetails["grossAmount"]
+										= aInputFields[i].getValue();
+								} else if (aInputFields[i].sId.includes("changedAt")) {
+									oNewSalesOrderDetails["changedAt"] = aInputFields[i].getValue();
+								}
+							}
+
+							Opa5.assert.notDeepEqual(oNewSalesOrderDetails, oSalesOrderDetails,
+								"Sales order details have changed");
+							oSalesOrderDetails = oNewSalesOrderDetails;
+						},
+						viewName : sViewName
 					});
 				},
 				/*

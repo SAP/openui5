@@ -38,8 +38,8 @@ sap.ui.define([
 			When.onMainPage.setFilter(oFixture.filterKey);
 
 			if (oFixture.filterKey === "Warning" || oFixture.filterKey === "Success") {
-				Then.onMainPage.checkDialogOpen();
-				When.onMainPage.closeDialog();
+				Then.onMainPage.checkDialogOpen("Information");
+				When.onMainPage.closeDialog("Information");
 				Then.onMainPage.checkFilterReset();
 			} else {
 				Then.onMainPage.checkItemsMatchingFilter(oFixture.valueState);

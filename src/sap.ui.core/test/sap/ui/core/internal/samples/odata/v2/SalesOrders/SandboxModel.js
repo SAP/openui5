@@ -141,6 +141,10 @@ sap.ui.define([
 
 				/* Test Case I */
 				"SalesOrderSet('101')" : {
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
 					source : "Messages/TC1/SalesOrderSet.json"
 				},
 				"SalesOrderSet('101')/ToLineItems?$skip=0&$top=4" : [{
@@ -495,6 +499,10 @@ sap.ui.define([
 
 				/* Test Case IX */
 				"SalesOrderSet('109')" : {
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
 					source : "Messages/TC9/SalesOrderSet.json"
 				},
 				"SalesOrderSet('109')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
