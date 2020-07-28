@@ -5795,5 +5795,295 @@ sap.ui.define([
 		this.oInput.destroy();
 	});
 
+	QUnit.module("selectedKey vs. value behavior", {
+		beforeEach: function () {
+			this.oData = {
+				selectedKey: "2",
+				value: "zzzzzzz",
+				items: [
+					{status: "0", statusText: "Backups"},
+					{status: "1", statusText: "Equipment"},
+					{status: "2", statusText: "Locations"},
+					{status: "3", statusText: "Systems"}
+				]
+			};
+			this.oModel = new JSONModel(this.oData);
+		},
+		afterEach: function () {
+			this.oModel.destroy();
+		}
+	});
+
+	QUnit.test("Setters: selectedKey + matching item should overwrite the value", function (assert) {
+		// Setup
+		var oInput = new Input({
+			value: "Zzzzzz",
+			selectedKey: "2",
+			showSuggestion: true,
+				suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("Setters: selectedKey + matching item should overwrite the value (changed setters order)", function (assert) {
+		// Setup
+		var oInput = new Input({
+			selectedKey: "2",
+			value: "Zzzzzz",
+			showSuggestion: true,
+				suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("Bindings: selectedKey + matching item should overwrite the value", function (assert) {
+		// Setup
+		var oInput = new Input({
+			value: "{/value}",
+			selectedKey: "{/selectedKey}",
+			showSuggestion: true,
+				suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("Bindings: selectedKey + matching item should overwrite the value (changed binding order)", function (assert) {
+		// Setup
+		var oInput = new Input({
+			selectedKey: "{/selectedKey}",
+			value: "{/value}",
+			showSuggestion: true,
+				suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("Bindings: Value + No selectedKey: should leave the value as it is", function (assert) {
+		// Setup
+		var oInput = new Input({
+			value: "{/value}",
+			showSuggestion: true,
+				suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedKey(), "", "selectedKey should remain");
+		assert.strictEqual(oInput.getValue(), "zzzzzzz", "The value should come from the selected key");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("Bindings: selectedKey + No Value: should set the value to the matching item", function (assert) {
+		// Setup
+		var oInput = new Input({
+			selectedKey: "{/selectedKey}",
+			showSuggestion: true,
+				suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("Mixed: Binding: selectedKey, Setter: Value: should set the value of the matching item", function (assert) {
+		// Setup
+		var oInput = new Input({
+			value: "Zzzzzz",
+			selectedKey: "{/selectedKey}",
+			showSuggestion: true,
+				suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("Mixed: Setter: selectedKey, Binding: Value: should set the value of the matching item", function (assert) {
+		// Setup
+		var oInput = new Input({
+			value: "{/value}",
+			selectedKey: "2",
+			showSuggestion: true,
+				suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("User Interaction: Sets value over selectedKey", function (assert) {
+		// Setup
+		var oInput = new Input({
+			selectedKey: "2",
+			showSuggestion: true,
+				suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.focus();
+		qutils.triggerCharacterInput(oInput._$input, "T", "This is a user input");
+		sap.ui.getCore().applyChanges();
+
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oInput.getValue(), "This is a user input", "The value should come from the user input");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("User Interaction: Sets value over selectedKey (binding)", function (assert) {
+		// Setup
+		var oInput = new Input({
+			selectedKey: "{/selectedKey}",
+			showSuggestion: true,
+				suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.focus();
+		qutils.triggerCharacterInput(oInput._$input, "T", "This is a user input");
+		sap.ui.getCore().applyChanges();
+
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oInput.getValue(), "This is a user input", "The value should come from the user input");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("User Interaction: Sets value over selectedKey (binding: async)", function (assert) {
+		// Setup
+		var oModel = new JSONModel(),
+			oInput = new Input({
+				selectedKey: "{/selectedKey}",
+				showSuggestion: true,
+				suggestionItems: {
+					path: "/items",
+					template: new Item({key: "{status}", text: "{statusText}"})
+				}
+			})
+				.setModel(oModel)
+				.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.focus();
+		qutils.triggerCharacterInput(oInput._$input, "T", "This is a user input");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oModel.setData(this.oData);
+		sap.ui.getCore().applyChanges();
+
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the user input");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
 	return waitForThemeApplied(this.oInput);
 });
