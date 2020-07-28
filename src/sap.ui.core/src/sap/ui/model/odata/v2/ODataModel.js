@@ -3980,10 +3980,8 @@ sap.ui.define([
 						this._updateContext(oContext, '/' + sKey);
 						sDeepPath = oRequest.deepPath;
 						if (oContext.bCreated && sDeepPath.endsWith(")")) {
-							sDeepPath = sDeepPath.slice(0, sDeepPath.lastIndexOf("("));
-							if (this.oMetadata._isCollection(sDeepPath)) {
-								oRequest.deepPath = sDeepPath + sKey.slice(sKey.lastIndexOf("("));
-							}
+							oRequest.deepPath = sDeepPath.slice(0, sDeepPath.lastIndexOf("("))
+								+ sKey.slice(sKey.indexOf("("));
 						}
 						oContext.bCreated = false;
 						oContext.setUpdated(true);

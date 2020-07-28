@@ -812,43 +812,30 @@ sap.ui.define([
 [{
 	created : false,
 	deepPath : "/entity",
-	isCollection : {
-		calledExactly : 0,
-		returns : false
-	},
 	resultDeepPath : "/entity"
 }, {
 	created : true,
 	deepPath : "/entity",
-	isCollection : {
-		calledExactly : 0,
-		returns : false
-	},
 	resultDeepPath : "/entity"
-}, {
-	created : true,
-	deepPath : "/entity(id-0-0)",
-	isCollection : {
-		calledExactly : 1,
-		returns : false
-	},
-	resultDeepPath : "/entity(id-0-0)"
 }, {
 	created : false,
 	deepPath : "/entity(id-0-0)",
-	isCollection : {
-		calledExactly : 0,
-		returns : false
-	},
 	resultDeepPath : "/entity(id-0-0)"
 }, {
 	created : true,
 	deepPath : "/collection(id-0-0)",
-	isCollection : {
-		calledExactly : 1,
-		returns : true
-	},
+	responseEntityKey : "~responseEntity(~newKey)",
 	resultDeepPath : "/collection(~newKey)"
+}, {
+	created : true,
+	deepPath : "/entity(1)/collection(id-0-0)",
+	responseEntityKey : "~responseEntity(~newKey)",
+	resultDeepPath : "/entity(1)/collection(~newKey)"
+}, {
+	created : true,
+	deepPath : "/collection(id-0-0)",
+	responseEntityKey : "~responseEntity('A(0)')",
+	resultDeepPath : "/collection('A(0)')"
 }].forEach(function (oFixture, i) {
 	QUnit.test("_processSuccess for createEntry; " + i, function (assert) {
 		var oContext = {
@@ -858,15 +845,13 @@ sap.ui.define([
 			oModel = {
 				oData : {},
 				oMetadata : {
-					_getEntityTypeByPath : function () {},
-					_isCollection : function () {}
+					_getEntityTypeByPath : function () {}
 				},
 				sServiceUrl : "/service",
 				_createEventInfo : function () {},
 				_decreaseDeferredRequestCount : function () {},
 				_getEntity : function () {},
-				// _getKey: static method; gets key from oResponse.data.__metatdata.uri
-				_getKey : ODataModel.prototype._getKey,
+				_getKey : function () {},
 				_normalizePath : function () {},
 				_parseResponse : function () {},
 				_removeEntity : function () {},
@@ -888,9 +873,7 @@ sap.ui.define([
 				requestUri : "/service/path"
 			},
 			oResponse = {
-				data : {
-					__metadata : {uri : "/service/~responseEntity(~newKey)"}
-				},
+				data : {},
 				_imported : true,
 				statusCode : 201
 			};
@@ -906,15 +889,14 @@ sap.ui.define([
 		oModelMock.expects("_getEntity").withExactArgs("key('id-0-0')").returns({__metadata : {}});
 		oMetadataMock.expects("_getEntityTypeByPath").withExactArgs("~sPath")
 			.returns("~oEntityMetadata");
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oResponse.data))
+			.returns(oFixture.responseEntityKey);
 		oModelMock.expects("getContext").withExactArgs("/key('id-0-0')").returns(oContext);
 		oModelMock.expects("_updateContext")
-			.withExactArgs(sinon.match.same(oContext), "/~responseEntity(~newKey)");
-		oMetadataMock.expects("_isCollection").exactly(oFixture.isCollection.calledExactly)
-			.withExactArgs(oFixture.isCollection.returns ? "/collection" : "/entity")
-			.returns(oFixture.isCollection.returns);
+			.withExactArgs(sinon.match.same(oContext), "/" + oFixture.responseEntityKey);
 		this.mock(oContext).expects("setUpdated").withExactArgs(true);
 		oModelMock.expects("callAfterUpdate").withExactArgs(sinon.match.func);
-		oModelMock.expects("_getEntity").withExactArgs("~responseEntity(~newKey)")
+		oModelMock.expects("_getEntity").withExactArgs(oFixture.responseEntityKey)
 			.returns({__metadata : {}});
 		oModelMock.expects("_removeEntity").withExactArgs("key('id-0-0')");
 		oModelMock.expects("_parseResponse")
