@@ -943,12 +943,16 @@ sap.ui.define([
 	 *   The context corresponding to the group node
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved when the expand is succesful and rejected when it fails
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.expand = function (oContext) {
 		var bDataRequested = false,
 			that = this;
+
+		this.checkSuspended();
 
 		return this.oCache.expand(this.lockGroup(),
 			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()),
