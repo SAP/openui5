@@ -40,6 +40,6 @@ describe("sap.m.PlanningCalendarAppointmentSize", function() {
 	it("should render the appointment with ReducedHeight", function() {
 		element(by.id("reduced_height")).click();
 
-		expect(takeScreenshot()).toLookAs("calendar_appointment_size_reduced_height_size");
+		expect(takeScreenshot()).toLookAs("calendar_appointment_reduced_height");
 	});
 });
