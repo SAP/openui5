@@ -12,6 +12,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	// shortcuts
 	var VisibleRowCountMode = library.VisibleRowCountMode;
 	var SortOrder = library.SortOrder;
+	var ColumnUtils = TableUtils.Column;
 
 	var mFlexCellContentAlignment = {
 		Begin: "flex-start",
@@ -988,7 +989,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		// collect header spans and find the last visible column header
 		function collectHeaderSpans(oColumn, index, aCols) {
-			var colSpan = TableUtils.Column.getHeaderSpan(oColumn, iRow),
+			var colSpan = ColumnUtils.getHeaderSpan(oColumn, iRow),
 				iColIndex;
 
 			if (nSpan < 1) {
@@ -1095,7 +1096,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	TableRenderer.renderTableCell = function(rm, oTable, oRow, oCell, iCellIndex, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns, bSelected) {
 		var oColumn = Column.ofCell(oCell);
 		var iColIndex = oColumn.getIndex();
-		var oLastFixedColumn = oTable.getColumns()[oTable.getFixedColumnCount() - 1];
+		var oLastFixedColumn = oTable.getColumns()[ColumnUtils.getFixedColumnCount(oTable, true) - 1];
 
 		if (oColumn.shouldRender() && iStartColumn <= iColIndex && iEndColumn > iColIndex) {
 			var sId = oRow.getId() + "-col" + iCellIndex;
