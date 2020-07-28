@@ -49,10 +49,11 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 		 * Retrieves and returns the relevant <code>additionalContent</code> for the <code>Link</code> control as an array.
 		 * @public
 		 * @param {Object} oPayload Payload of the <code>Link</code> control given by the application
-		 * @param {Object} oBindingContext binding context of the <code>Link</code> control
+		 * @param {Object} oBindingContext Binding context of the <code>Link</code> control
+		 * @param {Object} oLink Instance of the <code>Link</code> control
 		 * @returns {Promise} Once resolved, an array of {@link sap.ui.core.Control} is returned
 		 */
-		fetchAdditionalContent: function(oPayload, oBindingContext) {
+		fetchAdditionalContent: function(oPayload, oBindingContext, oLink) {
 			return Promise.resolve([]);
 		},
 		/**

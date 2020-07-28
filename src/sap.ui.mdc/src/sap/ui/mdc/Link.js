@@ -330,7 +330,7 @@ sap.ui.define([
 			return this.awaitControlDelegate().then(function() {
 				var oPayload = Object.assign({}, this.getPayload());
 				var oBindingContext = this._getControlBindingContext();
-				return this.getControlDelegate().fetchAdditionalContent(oPayload, oBindingContext).then(function(aAdditionalContent) {
+				return this.getControlDelegate().fetchAdditionalContent(oPayload, oBindingContext, this).then(function(aAdditionalContent) {
 					return aAdditionalContent;
 				});
 			}.bind(this));
