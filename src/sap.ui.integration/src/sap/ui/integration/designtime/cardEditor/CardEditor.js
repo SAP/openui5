@@ -54,7 +54,7 @@ sap.ui.define([
 			mParameters = mParameters || {};
 			BaseEditor.prototype.constructor.apply(this, arguments);
 			if (!mParameters["config"]) {
-				this.addConfig(oDefaultCardConfig);
+				this.addConfig(oDefaultCardConfig, true);
 			}
 		},
 		renderer: BaseEditor.getMetadata().getRenderer()
