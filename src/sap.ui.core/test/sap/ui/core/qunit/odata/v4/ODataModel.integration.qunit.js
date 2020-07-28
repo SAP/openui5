@@ -14762,7 +14762,7 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		function expectResets (iRowCount) {
+		function expectResets(iRowCount) {
 			var i;
 
 			for (i = 0; i < iRowCount; i += 1) {
@@ -14949,12 +14949,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: table.Table with aggregation and visual grouping.
-	// Scrolling down to the last element with intersecting requests
+	// Optionally expand and scroll down in two steps with intersecting ranges.
 	// JIRA: CPOUI5ODATAV4-255
-	QUnit.test("Data Aggregation: intersecting requests", function (assert) {
+[false, true].forEach(function (bWithExpand) {
+	var sTitle = "Data Aggregation: intersecting requests, with expand = " + bWithExpand;
+	QUnit.test(sTitle, function (assert) {
 		var oModel = createAggregationModel(),
-			fnResolve1,
-			fnResolve2,
+			fnRespondExpand,
+			fnRespondScroll1,
+			fnRespondScroll2,
+			oTable,
 			sView = '\
 <t:Table id="table" rows="{path : \'/BusinessPartners\',\
 	parameters : {\
@@ -14979,7 +14983,7 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		function expectResets (iRowCount) {
+		function expectResets(iRowCount) {
 			var i;
 
 			for (i = 0; i < iRowCount; i += 1) {
@@ -15010,73 +15014,119 @@ sap.ui.define([
 			.expectChange("salesNumber", [null, null, null]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			if (!bWithExpand) {
+				return;
+			}
+			that.expectChange("isExpanded", [, true]) // "client side expand"
+				.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
+					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
+					+ "&$count=true&$skip=0&$top=3", new Promise(function (resolve) {
+						fnRespondExpand = resolve.bind(null, {
+							"@odata.count" : "1",
+							value : [
+								{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1}
+							]
+						});
+					})
+				);
+
+			// code under test
+			oTable.getRows()[1].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "expand 'Y' before scroll");
+		}).then(function () {
 
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
 					+ "&$count=true&$skip=3&$top=3", new Promise(function (resolve) {
-					fnResolve1 = resolve;
-			}));
+					fnRespondScroll1 = resolve.bind(null, {
+						"@odata.count" : "26",
+						value : [
+							{Region : "W", SalesAmount : "400"},
+							{Region : "V", SalesAmount : "500"},
+							{Region : "U", SalesAmount : "600"}
+						]
+					});
+				}));
 
 			expectResets(3);
 			that.expectChange("isExpanded", undefined, null)
 				.expectChange("isExpanded", undefined, null)
 				.expectChange("isExpanded", undefined, null);
 
-			that.oView.byId("table").setFirstVisibleRow(3);
+			oTable.setFirstVisibleRow(3);
 
 			return that.waitForChanges(assert, "first scroll to node 'W'");
 		}).then(function () {
 
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
 					+ "&$count=true&$skip=6&$top=1", new Promise(function (resolve) {
-					fnResolve2 = resolve;
-			}));
+					fnRespondScroll2 = resolve.bind(null, {
+						"@odata.count" : "26",
+						value : [
+							{Region : "T", SalesAmount : "700"}
+						]
+					});
+				}));
 
-			that.oView.byId("table").setFirstVisibleRow(4);
+			oTable.setFirstVisibleRow(4);
 
 			return that.waitForChanges(assert, "second scroll to node 'V'");
 		}).then(function () {
 
-			that.expectChange("isExpanded", [,,,, false, false, false])
-				.expectChange("isTotal", [,,,, true, true, true])
-				.expectChange("level", [,,,, 1, 1, 1])
-				.expectChange("region", [/*Z*/,/*X*/,/*Y*/,/*W*/, "V", "U", "T"])
-				.expectChange("accountResponsible", [,,,, "", "", ""])
-				.expectChange("salesAmount", [,,,, "500", "600", "700"])
-				.expectChange("salesNumber", [,,,, null, null, null]);
-
+			if (bWithExpand) {
+				that.expectChange("isExpanded", [,,,, false, false, false])
+					.expectChange("isTotal", [,,,, true, true, true])
+					.expectChange("level", [,,,, 1, 1, 1])
+					.expectChange("region", [/*Z*/,/*Y*/,/*Y*/,/*X*/, "W", "V", "U"])
+					.expectChange("accountResponsible", [,,,, "", "", ""])
+					.expectChange("salesAmount", [,,,, "400", "500", "600"])
+					.expectChange("salesNumber", [,,,, null, null, null]);
+				// code under test
+				fnRespondExpand();
+			} else {
+				that.expectChange("isExpanded", [,,,, false, false, false])
+					.expectChange("isTotal", [,,,, true, true, true])
+					.expectChange("level", [,,,, 1, 1, 1])
+					.expectChange("region", [/*Z*/,/*Y*/,/*X*/,/*W*/, "V", "U", "T"])
+					.expectChange("accountResponsible", [,,,, "", "", ""])
+					.expectChange("salesAmount", [,,,, "500", "600", "700"])
+					.expectChange("salesNumber", [,,,, null, null, null]);
+			}
 			// code under test
-			fnResolve1({
-				"@odata.count" : "26",
-				value : [
-					{Region : "W", SalesAmount : "400"},
-					{Region : "V", SalesAmount : "500"},
-					{Region : "U", SalesAmount : "600"}
-				]
-			});
-			fnResolve2({
-				"@odata.count" : "26",
-				value : [
-					{Region : "T", SalesAmount : "700"}
-				]
-			});
+			fnRespondScroll1();
+			fnRespondScroll2();
 
 			return that.waitForChanges(assert, "result");
 		}).then(function () {
-			var oListBinding = that.oView.byId("table").getBinding("rows");
-
+			var oListBinding = oTable.getBinding("rows");
+			// Check oCache.aElements because only there the error case is observable.
 			assert.deepEqual(
-				oListBinding.getCurrentContexts()
-					.map(function (oContext) {
-						return oContext.getPath();
+				oListBinding.oCache.aElements.slice(0, 7)
+					.map(function (oElement) {
+						return oElement["@$ui5._"]["predicate"];
 					}),
-				[
-					"/BusinessPartners(Region='V')",
-					"/BusinessPartners(Region='U')",
-					"/BusinessPartners(Region='T')"
+				bWithExpand ? [
+					"(Region='Z')",
+					"(Region='Y')",
+					"(Region='Y',AccountResponsible='a')",
+					"(Region='X')",
+					"(Region='W')",
+					"(Region='V')",
+					"(Region='U')"
+				] : [
+					"(Region='Z')",
+					"(Region='Y')",
+					"(Region='X')",
+					"(Region='W')",
+					"(Region='V')",
+					"(Region='U')",
+					"(Region='T')"
 				]
 			);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: table.Table with aggregation and visual grouping.
@@ -15108,7 +15158,7 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		function expectResets (iRowCount) {
+		function expectResets(iRowCount) {
 			var i;
 
 			for (i = 0; i < iRowCount; i += 1) {
@@ -15360,6 +15410,153 @@ sap.ui.define([
 			return that.waitForChanges(assert, "third expand 'US-Z-z'");
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: table.Table with aggregation and visual grouping.
+	// Expand and paging in parallel.
+	//
+	// JIRA: CPOUI5ODATAV4-336
+[false, true].forEach(function (bSecondScroll) {
+	var sTitle = "Data Aggregation: expand and paging in parallel. (Second scroll = "
+		+ bSecondScroll + ")";
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createAggregationModel(),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{path : \'/BusinessPartners\',\
+	parameters : {\
+		$$aggregation : {\
+			aggregate : {\
+				SalesAmount : {}\
+			},\
+			group : {\
+				AccountResponsible : {}\
+			},\
+			groupLevels : [\'Region\']\
+		}\
+	}}" threshold="0" visibleRowCount="3">\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="accountResponsible" text="{AccountResponsible}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+</t:Table>',
+			that = this;
+
+		function expectResets(iRowCount) {
+			var i;
+
+			for (i = 0; i < iRowCount; i += 1) {
+				that.expectChange("isExpanded", undefined, null)
+					.expectChange("isTotal", undefined, null)
+					.expectChange("level", undefined, null)
+					.expectChange("region", null, null)
+					.expectChange("accountResponsible", null, null)
+					.expectChange("salesAmount", undefined, null);
+			}
+		}
+
+		this.expectRequest("BusinessPartners?$apply=groupby((Region))"
+			+ "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "26",
+				value : [
+					{Region : "Z"},
+					{Region : "Y"},
+					{Region : "X"}
+				]
+			})
+			.expectChange("isExpanded", [false, false, false])
+			.expectChange("isTotal", [false, false, false])
+			.expectChange("level", [1, 1, 1])
+			.expectChange("region", ["Z", "Y", "X"])
+			.expectChange("accountResponsible", ["", "", ""])
+			.expectChange("salesAmount", [null, null, null]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			// "client side expand"
+			that.expectChange("isExpanded", [, true]);
+
+			if (!bSecondScroll) {
+				expectResets(2);
+				that.expectChange("region", [,, "X"]); // "client side scrolling"
+
+				that.expectChange("isExpanded", [,, undefined])
+					.expectChange("level", [,, 2])
+					.expectChange("region", [,, "Y"])
+					.expectChange("accountResponsible", [,, "a"])
+					.expectChange("salesAmount", [,, "10"]);
+			} else {
+				expectResets(3);
+			}
+
+			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
+					+ "/groupby((AccountResponsible),aggregate(SalesAmount))"
+					+ "&$count=true&$skip=0&$top=3", {
+						"@odata.count" : "1",
+						value : [
+							{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1}
+						]
+				});
+
+			// code under test
+			oTable.getRows()[1].getBindingContext().expand();
+
+			that.expectRequest("BusinessPartners?$apply=groupby((Region))"
+					+ "&$count=true&$skip=3&$top=" + (bSecondScroll ? "3" : "2"), {
+						"@odata.count" : "26",
+						value : [
+							{Region: "W"},
+							{Region: "V"}
+						]
+				});
+
+			if (!bSecondScroll) {
+				that.expectChange("isExpanded", [,,, false, false])
+					.expectChange("isTotal", [,,, false, false])
+					.expectChange("level", [,,, 1, 1])
+					.expectChange("region", [,,, "X", "W"])
+					.expectChange("accountResponsible", [,,, "", ""])
+					.expectChange("salesAmount", [,,, null, null]);
+
+				// code under test
+				oTable.setFirstVisibleRow(2);
+			} else {
+				that.expectChange("isExpanded", [,,, false, false, false])
+					.expectChange("isTotal", [,,, false, false, false])
+					.expectChange("level", [,,, 1, 1, 1])
+					.expectChange("region", [,,, "X", "W", "V"])
+					.expectChange("accountResponsible", [,,, "", "", ""])
+					.expectChange("salesAmount", [,,, null, null, null]);
+
+				// code under test
+				oTable.setFirstVisibleRow(3);
+			}
+
+			return that.waitForChanges(assert, "expand and paging in parallel");
+		}).then(function () {
+			var oListBinding = oTable.getBinding("rows");
+
+			assert.deepEqual(
+				oListBinding.getContexts(0, 6)
+					.map(function (oContext) {
+						return oContext.getPath();
+					}),
+				[
+					"/BusinessPartners(Region='Z')",
+					"/BusinessPartners(Region='Y')",
+					"/BusinessPartners(Region='Y',AccountResponsible='a')",
+					"/BusinessPartners(Region='X')",
+					"/BusinessPartners(Region='W')",
+					"/BusinessPartners(Region='V')"
+				]
+			);
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,

@@ -1293,9 +1293,9 @@ sap.ui.define([
 		oCache.aElements = [
 			{/* expanded node */},
 			{/* first leaf */},
-			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 1}},
-			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 2}},
-			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 3}},
+			{"@$ui5._": {index : 1, parent : oGroupLevelCache}},
+			{"@$ui5._": {index : 2, parent : oGroupLevelCache}},
+			{"@$ui5._": {index : 3, parent : oGroupLevelCache}},
 			{/* other node */}
 		];
 		oCache.aElements.$byPredicate = {};
@@ -1358,9 +1358,9 @@ sap.ui.define([
 		oCache.aElements = [
 			{/* expanded node */},
 			oFirstLeaf,
-			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 1}},
-			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 2}},
-			{"@$ui5._": {"parent" : oCache.oFirstLevel, "index" : 1}}
+			{"@$ui5._": {index : 1, parent : oGroupLevelCache}},
+			{"@$ui5._": {index : 2, parent : oGroupLevelCache}},
+			{"@$ui5._": {index : 1, parent : oCache.oFirstLevel}}
 		];
 
 		oCache.aElements.$byPredicate = {};
@@ -1420,18 +1420,19 @@ sap.ui.define([
 			oGroupLockCopy0 = {},
 			oGroupLockCopy1 = {},
 			oGroupLockMock = this.mock(oGroupLock),
-			oReadResult0 = {value : [{}, {}, {}, {}]},
-			oReadResult1 = {value : [{}]};
+			oReadSameNode = {},
+			oReadResult0 = {value : [{}, oReadSameNode, {}, {}]},
+			oReadResult1 = {value : [oReadSameNode]};
 
 		oCache.aElements = [
 			{/* expanded node */},
 			oFirstLeaf,
-			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 1}},
-			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 2}},
-			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 3}},
-			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 4}},
-			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 5}},
-			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 6}}
+			{"@$ui5._": {index : 1, parent : oGroupLevelCache}},
+			{"@$ui5._": {index : 2, parent : oGroupLevelCache}},
+			{"@$ui5._": {index : 3, parent : oGroupLevelCache}},
+			{"@$ui5._": {index : 4, parent : oGroupLevelCache}},
+			{"@$ui5._": {index : 5, parent : oGroupLevelCache}},
+			{"@$ui5._": {index : 6, parent : oGroupLevelCache}}
 		];
 
 		oCache.aElements.$byPredicate = {};
@@ -1476,6 +1477,121 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("read: expand before reading", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oFirstLeaf = {},
+			oGroupLevelCache = {
+				read : function () {}
+			},
+			oGroupLevelCacheMock = this.mock(oGroupLevelCache),
+			oGroupLock = {
+				getUnlockedCopy : function () {},
+				unlock : function () {}
+			},
+			oGroupLockCopy = {},
+			oInsertedNode = {},
+			oReadResult0 = {value : [{}, {}]};
+
+		oCache.aElements = [
+			{/* not expanded node */},
+			{/* expanded node */},
+			oFirstLeaf,
+			{"@$ui5._": {index : 1, parent : oGroupLevelCache}},
+			{"@$ui5._": {index : 2, parent : oGroupLevelCache}}
+		];
+
+		oCache.aElements.$byPredicate = {};
+		oCache.aElements.$count = 42;
+
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
+
+		oGroupLevelCacheMock.expects("read")
+			.withExactArgs(1, 2, 0, sinon.match.same(oGroupLockCopy), "~fnDataRequested~")
+			.callsFake(function () {
+				// while the read request is running - simulate an expand
+				oCache.aElements.splice(1, 0, oInsertedNode);
+
+				return new Promise(function (resolve) {
+					resolve(oReadResult0);
+				});
+			});
+
+		this.mock(oCache).expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult0.value), 4)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		// code under test
+		return oCache.read(3, 2, 0, oGroupLock, "~fnDataRequested~").then(function() {
+			assert.strictEqual(oCache.aElements[1], oInsertedNode);
+			assert.strictEqual(oCache.aElements[3], oFirstLeaf);
+			assert.strictEqual(oCache.aElements[4], oReadResult0.value[0]);
+			assert.strictEqual(oCache.aElements[5], oReadResult0.value[1]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: aElements has changed while reading", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oFirstLeaf = {},
+			oGroupLevelCache = {
+				read : function () {}
+			},
+			oGroupLevelCacheMock = this.mock(oGroupLevelCache),
+			oGroupLock = {
+				getUnlockedCopy : function () {},
+				unlock : function () {}
+			},
+			oGroupLockCopy = {},
+			oReadResultFirstNode = {},
+			oReadResult0 = {value : [oReadResultFirstNode]};
+
+		oCache.aElements = [
+			{/* not expanded node */},
+			{/* expanded node */},
+			oFirstLeaf,
+			{"@$ui5._": {index : 1, parent : oGroupLevelCache}},
+			{"@$ui5._": {index : 2, parent : oGroupLevelCache}}
+		];
+
+		oCache.aElements.$byPredicate = {};
+		oCache.aElements.$count = 42;
+
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
+
+		oGroupLevelCacheMock.expects("read")
+			.withExactArgs(2, 1, 0, sinon.match.same(oGroupLockCopy), "~fnDataRequested~")
+			.callsFake(function () {
+				// while the read request is running - simulate an expand and a concurrent read
+				oCache.aElements.splice(1, 0, {});
+				oCache.aElements.splice(5, 1, oReadResultFirstNode);
+
+				return new Promise(function (resolve) {
+					resolve(oReadResult0);
+				});
+			});
+
+		this.mock(oCache).expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult0.value), 5)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		// code under test
+		return oCache.read(4, 1, 0, oGroupLock, "~fnDataRequested~").then(function() {
+			assert.strictEqual(oCache.aElements[3], oFirstLeaf);
+			assert.strictEqual(oCache.aElements[5], oReadResultFirstNode);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("read: with visual grouping - two different group level caches", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
@@ -1506,12 +1622,12 @@ sap.ui.define([
 		oCache.aElements = [
 			{/* expanded node */},
 			oFirstLeaf0,
-			{"@$ui5._" : {"parent" : oGroupLevelCache0, "index" : 1}},
-			{"@$ui5._" : {"parent" : oGroupLevelCache0, "index" : 2}},
+			{"@$ui5._" : {index : 1, parent : oGroupLevelCache0}},
+			{"@$ui5._" : {index : 2, parent : oGroupLevelCache0}},
 			{/* expanded node */},
 			oFirstLeaf1,
-			{"@$ui5._" : {"parent" : oGroupLevelCache1, "index" : 1}},
-			{"@$ui5._" : {"parent" : oGroupLevelCache1, "index" : 2}}
+			{"@$ui5._" : {index : 1, parent : oGroupLevelCache1}},
+			{"@$ui5._" : {index : 2, parent : oGroupLevelCache1}}
 		];
 
 		oCache.aElements.$byPredicate = {};
@@ -1578,13 +1694,13 @@ sap.ui.define([
 
 		oCache.aElements = [
 			{},
-			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 1}},
-			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 2}},
-			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 3}},
-			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 4}},
-			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 5}},
-			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 6}},
-			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 7}}
+			{"@$ui5._" : {index : 1, parent : oCache.oFirstLevel}},
+			{"@$ui5._" : {index : 2, parent : oCache.oFirstLevel}},
+			{"@$ui5._" : {index : 3, parent : oCache.oFirstLevel}},
+			{"@$ui5._" : {index : 4, parent : oCache.oFirstLevel}},
+			{"@$ui5._" : {index : 5, parent : oCache.oFirstLevel}},
+			{"@$ui5._" : {index : 6, parent : oCache.oFirstLevel}},
+			{"@$ui5._" : {index : 7, parent : oCache.oFirstLevel}}
 		];
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 8;
@@ -1624,7 +1740,7 @@ sap.ui.define([
 
 		oCache.aElements = [
 			{},
-			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 1}}
+			{"@$ui5._" : {index : 1, parent : oCache.oFirstLevel}}
 		];
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 2;
