@@ -130,11 +130,11 @@
 			border-radius: 1.125rem;
 			display: block;
 
-			padding: 0 0.25rem;
+			padding: 0 0.3125rem;
 			min-width: 0.5rem;
 			height: 1.125rem;
 			line-height: 1.125rem;
-			font-size: 0.6875rem;
+			font-size: @sapMFontSmallSize;
 			font-family: @sapUiFontFamily;
 			text-align: center;
 
@@ -159,7 +159,7 @@
 			min-width: 0.5rem;
 			height: 1.125rem;
 			line-height: 1.125rem;
-			font-size: 0.6875rem;
+			font-size: @sapMFontSmallSize;
 			font-family: @sapUiFontFamily;
 
 			background-color: @sapUiContentBadgeBackground;
@@ -189,7 +189,7 @@
 	}
 }
 
- .sapMBadgeIndicator:not(.sapMBadgeAnimationRemove):after {
+ .sapMBadgeIndicator:after {
 	content: attr(data-badge);
 }
 
@@ -201,8 +201,9 @@
 	animation: sapMBadgeAppearPulse .2s;
 }
 .sapMBadgeAnimationRemove:after {
-	animation: sapMBadgeDisappear .5s;
+	animation: sapMBadgeDisappear .1s;
 	animation-fill-mode: forwards;
+	transform-origin: center;
 }
 
 .sapMBadgeAnimationUpdate:after {
@@ -216,6 +217,7 @@
 
 	.sapMBadgeAccentColor@{i}& {
 		background-color: @@value;
+		border-color: @@value;
 	}
 	.badgeAccentColorMixin(@n, (@i + 1));
 }
