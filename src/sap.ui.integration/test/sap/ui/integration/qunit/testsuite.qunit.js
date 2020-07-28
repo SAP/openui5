@@ -82,7 +82,8 @@ sap.ui.define(function () {
 						"sap/ui/integration/util/RequestDataProvider",
 						"sap/ui/integration/util/ServiceDataProvider",
 						"sap/ui/integration/cards/TableContent",
-						"sap/ui/integration/cards/BaseContent"
+						"sap/ui/integration/cards/BaseContent",
+						"sap/ui/integration/cards/AnalyticsCloudContent"
 					]
 				},
 				module: [
@@ -103,7 +104,8 @@ sap.ui.define(function () {
 					'./formatters/IconFormatter.qunit',
 					'./CardFiltering.qunit',
 					'./cards/TableCard.qunit',
-					'./cards/ObjectCard.qunit'
+					'./cards/ObjectCard.qunit',
+					'./cards/AnalyticsCloudContent.qunit'
 				]
 			},
 			"CardLoading": {
@@ -215,6 +217,13 @@ sap.ui.define(function () {
 					only: [
 						"sap/ui/integration/widgets/Card",
 						"sap/ui/integration/util/FilterBarFactory"
+					]
+				}
+			},
+			"cards/AnalyticsCloudContent": {
+				coverage: {
+					only: [
+						"sap/ui/integration/cards/AnalyticsCloudContent"
 					]
 				}
 			},
