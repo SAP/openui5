@@ -3,80 +3,86 @@
  */
 
 // Provides the default renderer for control sap.tnt.NavigationList
-sap.ui.define([],
-	function() {
-		"use strict";
+sap.ui.define([
+	"sap/ui/core/Core"
+], function (Core) {
+	"use strict";
 
-		/**
-		 * NavigationListRenderer renderer.
-		 *
-		 * @author SAP SE
-		 * @namespace
-		 */
-		var NavigationListRenderer = {
-			apiVersion: 2
-		};
+	/**
+	 * NavigationListRenderer renderer.
+	 *
+	 * @author SAP SE
+	 * @namespace
+	 */
+	var NavigationListRenderer = {
+		apiVersion: 2
+	};
 
-		/**
-		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-		 *
-		 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the renderer output buffer
-		 * @param {sap.ui.core.Control} control An object representation of the control that should be rendered
-		 */
-		NavigationListRenderer.render = function (rm, control) {
-			var role,
-				groups = control.getItems(),
-				expanded = control.getExpanded(),
-				visibleGroups = [],
-				hasGroupWithIcon = false;
+	var oRB = Core.getLibraryResourceBundle("sap.tnt");
 
-			//Checking which groups should render
-			groups.forEach(function(group) {
-				if (group.getVisible()) {
-					visibleGroups.push(group);
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the renderer output buffer
+	 * @param {sap.ui.core.Control} control An object representation of the control that should be rendered
+	 */
+	NavigationListRenderer.render = function (rm, control) {
+		var role,
+			groups = control.getItems(),
+			expanded = control.getExpanded(),
+			visibleGroups = [],
+			hasGroupWithIcon = false;
 
-					if (group.getIcon()) {
-						hasGroupWithIcon = true;
-					}
+		//Checking which groups should render
+		groups.forEach(function (group) {
+			if (group.getVisible()) {
+				visibleGroups.push(group);
+
+				if (group.getIcon()) {
+					hasGroupWithIcon = true;
 				}
-			});
-
-			rm.openStart("ul", control);
-
-			var width = control.getWidth();
-			if (width && expanded) {
-				rm.style("width", width);
 			}
+		});
 
-			rm.class("sapTntNavLI");
+		rm.openStart("ul", control);
 
-			if (!expanded) {
-				rm.class("sapTntNavLICollapsed");
-			}
+		var width = control.getWidth();
+		if (width && expanded) {
+			rm.style("width", width);
+		}
 
-			if (!hasGroupWithIcon) {
-				rm.class("sapTntNavLINoIcons");
-			}
+		rm.class("sapTntNavLI");
 
-			// ARIA
-			role = !expanded && !control.hasStyleClass("sapTntNavLIPopup") ? 'menubar' : 'tree';
+		if (!expanded) {
+			rm.class("sapTntNavLICollapsed");
+		}
 
-			rm.attr("role", role);
+		if (!hasGroupWithIcon) {
+			rm.class("sapTntNavLINoIcons");
+		}
 
-			if (role === 'menubar') {
-				rm.attr("aria-orientation", "vertical");
-			}
-			rm.openEnd();
+		// ARIA
+		role = !expanded && !control.hasStyleClass("sapTntNavLIPopup") ? 'menubar' : 'tree';
 
-			// Rendering visible groups
-			visibleGroups.forEach(function(group) {
-				group.render(rm, control);
-			});
+		rm.attr("role", role);
+
+		if (role === 'menubar') {
+			rm.attr("aria-orientation", "vertical");
+			rm.attr("aria-roledescription", oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUBAR"));
+		} else {
+			rm.attr("aria-roledescription", oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE"));
+		}
+		rm.openEnd();
+
+		// Rendering visible groups
+		visibleGroups.forEach(function (group) {
+			group.render(rm, control);
+		});
 
 
-			rm.close("ul");
-		};
+		rm.close("ul");
+	};
 
-		return NavigationListRenderer;
+	return NavigationListRenderer;
 
-	}, /* bExport= */ true);
+}, /* bExport= */ true);

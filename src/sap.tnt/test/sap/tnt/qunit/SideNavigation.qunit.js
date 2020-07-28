@@ -3,11 +3,13 @@
 sap.ui.define([
 	'sap/tnt/SideNavigation',
 	'sap/tnt/NavigationList',
-	'sap/tnt/NavigationListItem'
+	'sap/tnt/NavigationListItem',
+	"sap/ui/core/Core"
 ], function(
 	SideNavigation,
 	NavigationList,
-	NavigationListItem) {
+	NavigationListItem,
+	Core) {
 	'use strict';
 
 	var DOM_RENDER_LOCATION = 'qunit-fixture';
@@ -22,7 +24,7 @@ sap.ui.define([
 				fixedItem: new NavigationList()
 			});
 			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.sideNavigation.destroy();
@@ -35,6 +37,8 @@ sap.ui.define([
 	});
 
 	QUnit.test('SetExpanded true', function (assert) {
+		var oRB = Core.getLibraryResourceBundle("sap.tnt");
+
 		this.sideNavigation.setExpanded(true);
 
 		this.clock.tick(1000);
@@ -45,15 +49,18 @@ sap.ui.define([
 
 		this.sideNavigation.$().find('.sapTntNavLI').each(function (index, item) {
 			assert.strictEqual(item.getAttribute('role'), 'tree', 'ul should have role "tree"');
+			assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE"), 'ul should have aria-roledescription "Navigation list tree"');
 		});
 
 		this.sideNavigation.$().find('.sapTntNavLIGroup.sapTntNavLIItem').each(function (index, item) {
 			assert.strictEqual(item.getAttribute('role'), 'treeitem', 'li should have role "treeitem"');
+			assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE_ITEM"), 'li should have aria-roledescription "Navigation list tree item"');
 		});
 	});
 
 	QUnit.test('SetExpanded false', function (assert) {
 		// arrange
+		var oRB = Core.getLibraryResourceBundle("sap.tnt");
 		this.clock.restore(); // using real timeouts for this test
 		var done = assert.async();
 
@@ -68,10 +75,12 @@ sap.ui.define([
 
 			this.sideNavigation.$().find('.sapTntNavLI').each(function (index, item) {
 				assert.strictEqual(item.getAttribute('role'), 'menubar', 'ul should have role "menubar"');
+				assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUBAR"), 'ul should have aria-roledescription "Navigation list menu bar"');
 			});
 
 			this.sideNavigation.$().find('.sapTntNavLIGroup.sapTntNavLIItem').each(function (index, item) {
 				assert.strictEqual(item.getAttribute('role'), 'menuitem', 'li should have role "menuitem"');
+				assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM"), 'ul should have aria-roledescription "Navigation list menu item"');
 			});
 			done();
 		}.bind(this), 1000);
@@ -85,7 +94,7 @@ sap.ui.define([
 		// act
 		this.sideNavigation.getItem().addItem(listItem);
 		this.sideNavigation.getFixedItem().addItem(fixedListItem);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.sideNavigation.setSelectedItem(listItem);
 		this.sideNavigation.setSelectedItem(fixedListItem);
@@ -111,7 +120,7 @@ sap.ui.define([
 		this.sideNavigation.setAggregation('fixedItem', null);
 
 		this.sideNavigation.setSelectedItem(listItem);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), listItem.getId(), 'The correct item should be selected');
@@ -127,7 +136,7 @@ sap.ui.define([
 		// act
 		this.sideNavigation.getItem().addItem(listItem);
 		this.sideNavigation.getFixedItem().addItem(fixedListItem);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		this.sideNavigation.setSelectedItem(listItem);
@@ -154,7 +163,7 @@ sap.ui.define([
 				fixedItem: new NavigationList()
 			});
 			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.sideNavigation.destroy();
@@ -219,7 +228,7 @@ sap.ui.define([
 				})
 			});
 			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.sideNavigation.destroy();
@@ -229,21 +238,21 @@ sap.ui.define([
 
 	QUnit.test('api', function (assert) {
 
-		var selectedItem = sap.ui.getCore().byId(this.sideNavigation.getSelectedItem());
+		var selectedItem = Core.byId(this.sideNavigation.getSelectedItem());
 		assert.strictEqual(selectedItem.getText(), 'Root', 'initial selection is correct');
 
 		this.sideNavigation.setSelectedKey('fixed1');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		selectedItem = sap.ui.getCore().byId(this.sideNavigation.getSelectedItem());
+		selectedItem = Core.byId(this.sideNavigation.getSelectedItem());
 		assert.strictEqual(selectedItem.getText(), 'Fixed 1', 'selection is correct');
 		assert.notOk(this.sideNavigation.getItem()._selectedItem, 'selection is removed');
 		assert.strictEqual(this.sideNavigation.getFixedItem()._selectedItem.getKey(), 'fixed1', 'selection is set');
 
 		this.sideNavigation.setSelectedKey('child2');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		selectedItem = sap.ui.getCore().byId(this.sideNavigation.getSelectedItem());
+		selectedItem = Core.byId(this.sideNavigation.getSelectedItem());
 		assert.strictEqual(selectedItem.getText(), 'Child 2', 'selection is correct');
 		assert.notOk(this.sideNavigation.getFixedItem()._selectedItem, 'selection is removed');
 		assert.strictEqual(this.sideNavigation.getItem()._selectedItem.getKey(), 'child2', 'selection is set');
@@ -252,17 +261,17 @@ sap.ui.define([
 	QUnit.test('interaction', function (assert) {
 
 		this.sideNavigation.getFixedItem().getItems()[0]._selectItem();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		var selectedItem = sap.ui.getCore().byId(this.sideNavigation.getSelectedItem());
+		var selectedItem = Core.byId(this.sideNavigation.getSelectedItem());
 		assert.strictEqual(selectedItem.getText(), 'Fixed 1', 'selection is correct');
 		assert.notOk(this.sideNavigation.getItem()._selectedItem, 'selection is removed');
 		assert.strictEqual(this.sideNavigation.getFixedItem()._selectedItem.getKey(), 'fixed1', 'selection is set');
 
 		this.sideNavigation.getItem().getItems()[0].getItems()[1]._selectItem();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		selectedItem = sap.ui.getCore().byId(this.sideNavigation.getSelectedItem());
+		selectedItem = Core.byId(this.sideNavigation.getSelectedItem());
 		assert.strictEqual(selectedItem.getText(), 'Child 2', 'selection is correct');
 		assert.notOk(this.sideNavigation.getFixedItem()._selectedItem, 'selection is removed');
 		assert.strictEqual(this.sideNavigation.getItem()._selectedItem.getKey(), 'child2', 'selection is set');
@@ -322,7 +331,7 @@ sap.ui.define([
 				})
 			});
 			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.sideNavigation.destroy();
@@ -339,18 +348,18 @@ sap.ui.define([
 		assert.strictEqual(this.sideNavigation.$().find('.sapTntNavLI').attr('role'), 'tree', 'control should be initially expanded');
 
 		this.sideNavigation.setExpanded(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		setTimeout(function () {
 
 			this.sideNavigation.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.sideNavigation.setExpanded(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.sideNavigation.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.strictEqual(this.sideNavigation.$().find('.sapTntNavLI').attr('role'), 'tree', 'control should be expanded');
 
@@ -366,13 +375,13 @@ sap.ui.define([
 		setTimeout(function () {
 
 			this.sideNavigation.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.sideNavigation.setExpanded(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.sideNavigation.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.strictEqual(this.sideNavigation.$().find('.sapTntNavLI').attr('role'), 'menubar', 'control should be collapsed');
 
@@ -383,15 +392,15 @@ sap.ui.define([
 
 	QUnit.test('Selected key removed from fixed items list if flexible item is selected', function (assert) {
 		this.sideNavigation.getFixedItem().getItems()[0]._selectItem();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.sideNavigation.getFixedItem().getSelectedKey(), 'fixed1', 'Item is selected from the fixed items list');
 
 
 		this.sideNavigation.getItem().getItems()[0]._selectItem();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.sideNavigation.setExpanded(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.sideNavigation.getItem().getSelectedKey(), 'root', 'Flexible list item is selected');
 		assert.strictEqual(this.sideNavigation.getFixedItem().getSelectedKey(), undefined, 'No selected items in the fixed items list');
@@ -401,17 +410,44 @@ sap.ui.define([
 	QUnit.test('Selected key removed from flexible items list if fixed item is selected', function (assert) {
 
 		this.sideNavigation.getItem().getItems()[0]._selectItem();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.sideNavigation.getItem().getSelectedKey(), 'root', 'Item is selected from the flexible items list');
 
 		this.sideNavigation.getFixedItem().getItems()[0]._selectItem();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.sideNavigation.setExpanded(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.sideNavigation.getFixedItem().getSelectedKey(), 'fixed1', 'Fixed list item is selected');
 		assert.strictEqual(this.sideNavigation.getItem().getSelectedKey(), undefined, 'No selected items in the flexible items list');
 
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.sideNavigation = new SideNavigation({
+				item: new NavigationList(),
+				fixedItem: new NavigationList()
+			});
+			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.sideNavigation.destroy();
+		}
+	});
+
+	QUnit.test("Aria attributes - aria-roledescription", function (assert) {
+
+		var sExpectedAriaRoleDescription = Core.getLibraryResourceBundle("sap.tnt")
+			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE");
+
+		this.sideNavigation.setExpanded(true);
+		this.clock.tick(1000);
+
+		this.sideNavigation.$().find('.sapTntNavLI').each(function (index, item) {
+			assert.strictEqual(item.getAttribute('aria-roledescription'), sExpectedAriaRoleDescription, 'aria-roledescription is as expected');
+		});
 	});
 });
