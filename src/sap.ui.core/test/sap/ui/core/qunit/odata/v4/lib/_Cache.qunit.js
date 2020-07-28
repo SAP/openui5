@@ -3267,8 +3267,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#setLateQueryOptions", function (assert) {
+	QUnit.test("Cache#[gs]etLateQueryOptions", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Employees('31')", {});
+
+		assert.strictEqual(oCache.getLateQueryOptions(), null);
 
 		// code under test
 		oCache.setLateQueryOptions({
@@ -3283,6 +3285,12 @@ sap.ui.define([
 			$expand : {n : {$select : 'p3'}},
 			$select : ['p1', 'p2']
 		});
+
+		assert.strictEqual(oCache.getLateQueryOptions(), oCache.mLateQueryOptions);
+
+		// code under test
+		oCache.setLateQueryOptions(null);
+		assert.strictEqual(oCache.getLateQueryOptions(), null);
 	});
 
 	//*********************************************************************************************
@@ -4987,6 +4995,86 @@ sap.ui.define([
 			assert.notOk(oCache.aElements.hasOwnProperty(i));
 		}
 		assert.strictEqual(oCache.aElements[10], oElement10);
+	});
+
+	//*********************************************************************************************
+["old", "new"].forEach(function (sResultETag) {
+	var sTitle = "CollectionCache#handleResponse: kept element, eTag=" + sResultETag;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = this.createCache("Employees"),
+			oElement0 = {},
+			oElement1 = {
+				"@odata.etag" : sResultETag
+			},
+			aElements = [],
+			oFetchTypesResult = {},
+			oKeptElement = {
+				"@odata.etag" : "old"
+			},
+			oResult = {
+				value : [oElement0, oElement1]
+			};
+
+		aElements.$byPredicate = {
+			bar : oKeptElement
+		};
+		oCache.aElements = aElements;
+
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult),
+				undefined, undefined, undefined, 2)
+			.callsFake(function () {
+				_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
+				_Helper.setPrivateAnnotation(oElement1, "predicate", "bar");
+			});
+		this.mock(oCache).expects("hasPendingChangesForPath").exactly(sResultETag === "old" ? 0 : 1)
+			.withExactArgs("bar").returns(false);
+
+		// code under test
+		oCache.handleResponse(2, 4, oResult, oFetchTypesResult);
+
+		assert.strictEqual(oCache.aElements[2], oElement0);
+		assert.strictEqual(oCache.aElements[3], sResultETag === "old" ? oKeptElement : oElement1);
+		assert.strictEqual(oCache.aElements.$byPredicate["foo"], oElement0);
+		assert.strictEqual(oCache.aElements.$byPredicate["bar"], oCache.aElements[3]);
+		assert.strictEqual(Object.keys(oCache.aElements.$byPredicate).length, 2);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#handleResponse: kept element, update conflict", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oElement = {
+				"@odata.etag" : "new"
+			},
+			aElements = [],
+			oFetchTypesResult = {},
+			oKeptElement = {
+				"@odata.etag" : "old"
+			},
+			oResult = {
+				value : [oElement]
+			};
+
+		aElements.$byPredicate = {
+			"('foo')" : oKeptElement
+		};
+		oCache.aElements = aElements;
+
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult),
+				undefined, undefined, undefined, 2)
+			.callsFake(function () {
+				_Helper.setPrivateAnnotation(oElement, "predicate", "('foo')");
+			});
+		this.mock(oCache).expects("hasPendingChangesForPath").withExactArgs("('foo')")
+			.returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oCache.handleResponse(2, 4, oResult, oFetchTypesResult);
+		}, new Error("Modified on client and on server: Employees('foo')"));
 	});
 
 	//*********************************************************************************************
@@ -8720,6 +8808,22 @@ sap.ui.define([
 			assert.strictEqual(oCache.aElements[0], oValue0);
 			assert.strictEqual(oCache.aElements[1], oValue1);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#addKeptElement", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oElement = {};
+
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "predicate")
+			.returns("('foo')");
+
+		// code under test
+		oCache.addKeptElement(oElement);
+
+		assert.strictEqual(oCache.aElements.$byPredicate["('foo')"], oElement);
+		assert.ok(oCache.aElements.indexOf(oElement) < 0);
 	});
 
 	//*********************************************************************************************

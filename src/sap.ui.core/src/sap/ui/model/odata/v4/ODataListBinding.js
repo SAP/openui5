@@ -72,7 +72,9 @@ sap.ui.define([
 	 * @public
 	 * @since 1.37.0
 	 * @version ${version}
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#getGroupId as #getGroupId
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#getUpdateGroupId as #getUpdateGroupId
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
@@ -545,10 +547,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#checkKeepAlive
+	 */
+	ODataListBinding.prototype.checkKeepAlive = function (oContext) {
+		if (this.isRelative() && !this.mParameters.$$ownRequest) {
+			throw new Error("Missing $$ownRequest at " + this);
+		}
+		if (oContext === this.oHeaderContext) {
+			throw new Error("Unsupported header context " + oContext);
+		}
+		if (this.mParameters.$$aggregation) {
+			throw new Error("Unsupported $$aggregation at " + this);
+		}
+	};
+
+	/**
 	 * Creates a new entity and inserts it at the start or the end of the list.
 	 *
-	 * For creating the new entity, the binding's update group ID is used, see binding parameter
-	 * $$updateGroupId of {@link sap.ui.model.odata.v4.ODataModel#bindList}.
+	 * For creating the new entity, the binding's update group ID is used, see
+	 * {@link #getUpdateGroupId}.
 	 *
 	 * You can call {@link sap.ui.model.odata.v4.Context#delete} to delete the created context
 	 * again. As long as the context is transient (see
@@ -626,6 +644,8 @@ sap.ui.define([
 			throw new Error("Binding is unresolved: " + this);
 		}
 
+		this.checkSuspended();
+
 		bAtEnd = !!bAtEnd; // normalize to simplify comparisons
 		if (bAtEnd && !this.bLengthFinal) {
 			throw new Error(
@@ -635,8 +655,6 @@ sap.ui.define([
 			throw new Error("Creating entities at the start and at the end is not supported.");
 		}
 		this.bCreatedAtEnd = bAtEnd;
-
-		this.checkSuspended();
 
 		// only for createInCache
 		oGroupLock = this.lockGroup(undefined, true, true, function () {
@@ -809,7 +827,7 @@ sap.ui.define([
 		this.aContexts.forEach(function (oContext) {
 			oContext.destroy();
 		});
-		this.destroyPreviousContexts();
+		this.destroyPreviousContexts(true);
 		if (this.oHeaderContext) {
 			this.oHeaderContext.destroy();
 		}
@@ -865,18 +883,28 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears mPreviousContextsByPath, destroying all contexts.
+	 * Removes and destroys contexts from mPreviousContextsByPath.
+	 *
+	 * @param {boolean} [bAllContexts]
+	 *   If <code>true</code>, all contexts are removed and destroyed, otherwise only those that
+	 *   are not kept alive (see {@link sap.ui.model.odata.v4.Context#isKeepAlive})
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.destroyPreviousContexts = function () {
+	ODataListBinding.prototype.destroyPreviousContexts = function (bAllContexts) {
 		var mPreviousContextsByPath = this.mPreviousContextsByPath;
 
 		if (mPreviousContextsByPath) { // binding may have been destroyed already
 			Object.keys(mPreviousContextsByPath).forEach(function (sPath) {
-				mPreviousContextsByPath[sPath].destroy();
+				var oContext = mPreviousContextsByPath[sPath];
+
+				if (bAllContexts || !oContext.isKeepAlive()) {
+					oContext.destroy();
+					delete mPreviousContextsByPath[sPath];
+				} else {
+					oContext.iIndex = undefined;
+				}
 			});
-			this.mPreviousContextsByPath = {};
 		}
 	};
 
@@ -941,12 +969,16 @@ sap.ui.define([
 	 *   The context corresponding to the group node
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved when the expand is succesful and rejected when it fails
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.expand = function (oContext) {
 		var bDataRequested = false,
 			that = this;
+
+		this.checkSuspended();
 
 		return this.oCache.expand(this.lockGroup(),
 			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()),
@@ -982,6 +1014,38 @@ sap.ui.define([
 
 			throw oError;
 		});
+	};
+
+	/**
+	 * Creates a cache for this binding if a cache is needed and updates <code>oCachePromise</code>.
+	 * Copies the data for kept alive contexts and the late query options from the old cache to the
+	 * new one.
+	 *
+	 * @private
+	 */
+	// @override sap.ui.model.odata.v4.ODataBinding#fetchCache
+	ODataListBinding.prototype.fetchCache = function () {
+		var oOldCache = this.oCache,
+			sBindingPath = this.oModel.resolve(this.sPath, this.oContext),
+			that = this;
+
+		asODataParentBinding.prototype.fetchCache.apply(this, arguments);
+
+		if (oOldCache) {
+			this.oCachePromise.then(function (oCache) {
+				Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
+					var oContext = that.mPreviousContextsByPath[sPath];
+					if (oContext.isKeepAlive()) {
+						oCache.addKeptElement(
+							oOldCache.getValue(_Helper.getRelativePath(sPath, sBindingPath)));
+						oContext.checkUpdate(); // add change listeners
+					}
+				});
+				if (oCache && oCache.hasChangeListeners()) {
+					oCache.setLateQueryOptions(oOldCache.getLateQueryOptions());
+				}
+			}); // no catch; if the new cache cannot be created, data for the kept contexts is lost
+		}
 	};
 
 	/**
@@ -1984,8 +2048,12 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#initialize
 	ODataListBinding.prototype.initialize = function () {
-		if (this.isResolved() && !this.getRootBinding().isSuspended()) {
-			if (this.sChangeReason === "AddVirtualContext") {
+		if (this.isResolved()) {
+			if (this.getRootBinding().isSuspended()) {
+				this.sResumeChangeReason = this.sChangeReason === "AddVirtualContext"
+					? ChangeReason.Change
+					: ChangeReason.Refresh;
+			} else if (this.sChangeReason === "AddVirtualContext") {
 				this._fireChange({
 					detailedReason : "AddVirtualContext",
 					reason : ChangeReason.Change
@@ -2195,7 +2263,7 @@ sap.ui.define([
 	 *   <code>Infinity</code> may be used to retrieve all data
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
-	 *   used, see {@link sap.ui.model.odata.v4.ODataListBinding#constructor}.
+	 *   used, see {@link #getGroupId}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @returns {Promise<sap.ui.model.odata.v4.Context[]>}
@@ -2375,6 +2443,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resets the keep-alive flag on all contexts of this binding.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.resetKeepAlive = function () {
+		var mPreviousContextsByPath = this.mPreviousContextsByPath;
+
+		// resets the keep alive flag for the given context
+		function reset(oContext) {
+			// do not call it always, it throws an exception on a relative binding w/o $$ownRequest
+			if (oContext.isKeepAlive()) {
+				oContext.setKeepAlive(false);
+			}
+		}
+
+		Object.keys(mPreviousContextsByPath).forEach(function (sPath) {
+			reset(mPreviousContextsByPath[sPath]);
+		});
+		this.aContexts.forEach(reset);
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#resumeInternal
 	 */
@@ -2484,12 +2574,14 @@ sap.ui.define([
 			delete mParameters.$$aggregation;
 		} else {
 			mParameters.$$aggregation = _Helper.clone(oAggregation);
+			this.resetKeepAlive();
 		}
 		this.applyParameters(mParameters, "");
 	};
 
 	/**
-	 * Sets the context and resets the cached contexts of the list items.
+	 * Sets the context and resets the cached contexts of the list items. This destroys all kept
+	 * contexts.
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context object
@@ -2520,6 +2612,7 @@ sap.ui.define([
 				// context remains unchanged if the parent context is temporarily dropped during a
 				// refresh.
 				this.reset();
+				this.resetKeepAlive(); // before fetchCache to avoid that it copies data
 				this.fetchCache(oContext);
 				if (oContext) {
 					sResolvedPath = this.oModel.resolve(this.sPath, oContext);
