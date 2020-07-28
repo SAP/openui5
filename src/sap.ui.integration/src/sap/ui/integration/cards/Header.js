@@ -53,6 +53,7 @@ sap.ui.define([
 				mSettings.iconSrc = mConfiguration.icon.src;
 				mSettings.iconDisplayShape = mConfiguration.icon.shape;
 				mSettings.iconInitials = mConfiguration.icon.text;
+				mSettings.iconAlt = mConfiguration.icon.alt;
 			}
 
 			mSettings = BindingHelper.createBindingInfos(mSettings);
