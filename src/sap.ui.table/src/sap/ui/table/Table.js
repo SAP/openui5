@@ -1543,11 +1543,10 @@ sap.ui.define([
 					}
 					return iColumnsWidth;
 				}.bind(this), 0);
-				var iDummyColWidth = oDummyColumn.clientWidth;
 				var bDummyColumnHasWidth = iTableWidth > iColumnsWidth;
 
 				if (!bHasFlexibleRowActions && bDummyColumnHasWidth) {
-					var iRowActionPos = oTableSizes.tableCtrlScrWidth + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth - iDummyColWidth;
+					var iRowActionPos = iColumnsWidth + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth;
 					var oRowActionStyles = {};
 					if (!TableUtils.hasRowActions(this)) {
 						iRowActionPos = iRowActionPos - TableUtils.ThemeParameters.navIndicatorWidth + TableUtils.BaseBorderWidth;
