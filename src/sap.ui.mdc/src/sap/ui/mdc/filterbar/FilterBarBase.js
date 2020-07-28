@@ -976,14 +976,15 @@ sap.ui.define([
 	 * @private
 	 * @param {object} oModel containing the conditions.
 	 * @param {boolean} bDoNotExternalize Indicates if the returned conditions are in an external format
+	 * @param {boolean} bKeepAllValues Indicates if the returned conditions include empty arrays rather then removing them
 	 * @returns {map} A map containing the conditions
 	 */
-	FilterBarBase.prototype._getModelConditions = function(oModel, bDoNotExternalize) {
+	FilterBarBase.prototype._getModelConditions = function(oModel, bDoNotExternalize, bKeepAllValues) {
 		var mConditions = {};
 		if (oModel) {
 			var aAllConditions = oModel.getAllConditions();
 			for (var sFieldPath in aAllConditions) {
-				if (aAllConditions[sFieldPath] && (aAllConditions[sFieldPath].length > 0)) {
+				if (aAllConditions[sFieldPath] && (bKeepAllValues || aAllConditions[sFieldPath].length > 0)) {
 					mConditions[sFieldPath] = merge([], aAllConditions[sFieldPath]);
 					if (!bDoNotExternalize && this.bPersistValues) {
 						this._cleanupConditions(mConditions[sFieldPath]);
