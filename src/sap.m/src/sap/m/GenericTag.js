@@ -135,6 +135,13 @@ sap.ui.define([
 		return this;
 	};
 
+	GenericTag.prototype.setValue = function(oValue) {
+		this.setAggregation("value", oValue);
+		this.fireEvent("_valueChanged");
+
+		return this;
+	};
+
 	/**
 	 * Gets the GenericTag's status icon.
 	 *
@@ -292,7 +299,8 @@ sap.ui.define([
 	 */
 	GenericTag.prototype.getOverflowToolbarConfig = function() {
 		var oConfig = {
-			canOverflow: true
+			canOverflow: true,
+			invalidationEvents: ["_valueChanged"]
 		};
 
 		oConfig.onBeforeEnterOverflow = this._onBeforeEnterOverflow;

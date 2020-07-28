@@ -1344,14 +1344,14 @@ sap.ui.define([
 		// the cached controls' sizes will be updated, as they might not be accurate
 		if (sParameterName === "visible") {
 			this._bContentVisibilityChanged = true;
+		}
 
-			// If a flexible control becomes visible (after it was invisible), we should notify DynamicPageTitle
-			// to reset the flex-basis of its content area
-			if (oSourceControl.isA("sap.m.IOverflowToolbarFlexibleContent") && oSourceControl.getVisible()) {
-				this.fireEvent("_contentSizeChange", {
-					contentSize: null
-				});
-			}
+		// If a flexible control has property modification, which might influence width,
+		// we should notify DynamicPageTitle to reset the flex-basis of its content area
+		if (oSourceControl.isA("sap.m.IOverflowToolbarFlexibleContent") && oSourceControl.getVisible()) {
+			this.fireEvent("_contentSizeChange", {
+				contentSize: null
+			});
 		}
 
 		// Trigger a recalculation
@@ -1362,11 +1362,18 @@ sap.ui.define([
 	 * Triggered when invalidation event is fired. Resets and invalidates the OverflowToolbar.
 	 * @private
 	 */
-	OverflowToolbar.prototype._onInvalidationEventFired = function () {
+	OverflowToolbar.prototype._onInvalidationEventFired = function (oEvent) {
+		var oSource = oEvent.getSource();
 
 		// Listening for invalidation events is turned off during layout recalculation to avoid infinite loops
 		if (!this._bListenForInvalidationEvents) {
 			return;
+		}
+
+		if (oSource.isA("sap.m.IOverflowToolbarFlexibleContent")) {
+			this.fireEvent("_contentSizeChange", {
+				contentSize: null
+			});
 		}
 
 		// Trigger a recalculation
