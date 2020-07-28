@@ -644,7 +644,8 @@ sap.ui.define([
 		this._iFUCounter = 0; // it is necessary to count FileUploader instances in case of 'instantUpload' = false
 
 		this._oList = new List(this.getId() + "-list", {
-			selectionChange: [this._handleSelectionChange, this]
+			selectionChange: [this._handleSelectionChange, this],
+			noDataText:this.getNoDataText()
 		});
 		this.setAggregation("_list", this._oList, true);
 		this._oList.addStyleClass("sapMUCList");
@@ -802,6 +803,14 @@ sap.ui.define([
 		sNoDataDescription = sNoDataDescription || this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION");
 		return sNoDataDescription;
 	};
+
+	UploadCollection.prototype.setNoDataText = function(sNoDataText) {
+		this.setProperty("noDataText", sNoDataText, true);
+		this.$().find("#" + this.getId() + "-no-data-text").text(sNoDataText);
+		this._oList.setNoDataText(sNoDataText);
+		return this;
+	};
+
 
 	UploadCollection.prototype.setUploadButtonInvisible = function(uploadButtonInvisible) {
 		if (this.getUploadButtonInvisible() === uploadButtonInvisible) {
