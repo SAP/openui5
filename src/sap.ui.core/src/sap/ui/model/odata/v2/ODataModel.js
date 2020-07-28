@@ -3591,7 +3591,8 @@ sap.ui.define([
 					// (by submitChanges) the merge header must be removed
 					delete oStoredRequest.headers["x-http-method"];
 				}
-				// function imports need to restore a given functionTarget
+				// function imports need to update the functionTarget in case the function
+				// parameters are changed before submitting
 				if (oRequest.functionTarget) {
 					oStoredRequest.functionTarget = oRequest.functionTarget;
 				}
@@ -4223,12 +4224,12 @@ sap.ui.define([
 
 		if (bCreated) {
 			oRequest.created = true;
-			//for createEntry requests we need to flag request again
+			// for createEntry requests we need to flag request again
 			if (oExpandRequest) {
 				oRequest.expandRequest = oExpandRequest;
 				oRequest.withContentID = sWithContentID;
 			}
-			//for callFunction requests we need to store the updated functionTarget
+			// for callFunction requests we need to store the updated functionTarget
 			if (oData.__metadata.created.functionMetadata) {
 				oRequest.functionTarget = this.oMetadata._getCanonicalPathOfFunctionImport(
 					oData.__metadata.created.functionMetadata, mParams.urlParameters);
