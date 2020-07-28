@@ -31,7 +31,7 @@
 										<ToolbarLayoutData shrinkable="true"/>
 									</layoutData>
 								</Button>
-								<Button id="Go" press="_onGo" text="Go" type="Emphasized"
+								<Button id="Go" press="_onGo" text="{$i18n>filterbar.GO}" type="Emphasized"
 									visible="{$this>/showFilterbar}"/>
 							</Toolbar>
 							<ScrollContainer height="calc(100% - 3rem)" width="100%" vertical="true" horizontal="false">
