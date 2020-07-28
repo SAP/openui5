@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/library",
 	"sap/m/Toolbar",
+	"sap/m/Title",
 	"sap/m/Label",
 	"sap/m/Input"
 	],
@@ -35,6 +36,7 @@ sap.ui.define([
 		Title,
 		mLibrary,
 		Toolbar,
+		mTitle,
 		Label,
 		Input
 	) {
@@ -151,11 +153,18 @@ sap.ui.define([
 		assert.equal(oToolbar.getActiveDesign(), mLibrary.ToolbarDesign.Transparent, "Toolbar Auto-design set");
 		assert.equal(oToolbar.getDesign(), mLibrary.ToolbarDesign.Auto, "Toolbar design not changed");
 		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
+		assert.equal(jQuery("#F1").attr("aria-labelledby"), "TB1", "aria-labelledby points to Toolbar");
 
 		oForm.destroyToolbar();
 		sap.ui.getCore().applyChanges();
 		assert.notOk(oForm.getToolbar(), "no Toolbar set");
 		assert.notOk(window.document.getElementById("TB1"), "no Toolbar rendered");
+		assert.notOk(jQuery("#F1").attr("aria-labelledby"), "no aria-labelledby");
+
+		oToolbar = new Toolbar("TB1", {content: [new mTitle("T1", {text: "Test"})]});
+		oForm.setToolbar(oToolbar);
+		sap.ui.getCore().applyChanges();
+		assert.equal(jQuery("#F1").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
 	});
 
 	QUnit.test("Title and Toolbar", function(assert) {
@@ -336,7 +345,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.notOk(window.document.getElementById("FC1--title"), "no Title rendered");
 		assert.notOk(jQuery("#FC1").attr("role"), "role \"form\" not set");
-		assert.notOk(jQuery("#F1").attr("aria-labelledby"), "no aria-labelledby");
+		assert.notOk(jQuery("#FC1").attr("aria-labelledby"), "no aria-labelledby");
 	});
 
 	QUnit.test("Title  as object", function(assert) {
@@ -370,7 +379,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.notOk(window.document.getElementById("T1"), "no Title rendered");
 		assert.notOk(jQuery("#FC1").attr("role"), "role \"form\" not set");
-		assert.notOk(jQuery("#F1").attr("aria-labelledby"), "no aria-labelledby");
+		assert.notOk(jQuery("#FC1").attr("aria-labelledby"), "no aria-labelledby");
 	});
 
 	QUnit.test("Toolbar", function(assert) {
@@ -383,10 +392,17 @@ sap.ui.define([
 		assert.equal(oToolbar.getActiveDesign(), mLibrary.ToolbarDesign.Transparent, "Toolbar Auto-design set");
 		assert.equal(oToolbar.getDesign(), mLibrary.ToolbarDesign.Auto, "Toolbar design not changed");
 		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
+		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "TB1", "aria-labelledby points to Toolbar");
 
 		oFormContainer1.destroyToolbar();
 		sap.ui.getCore().applyChanges();
 		assert.notOk(window.document.getElementById("TB1"), "no Toolbar rendered");
+		assert.notOk(jQuery("#FC1").attr("aria-labelledby"), "no aria-labelledby");
+
+		oToolbar = new Toolbar("TB1", {content: [new mTitle("T1", {text: "Test"})]});
+		oFormContainer1.setToolbar(oToolbar);
+		sap.ui.getCore().applyChanges();
+		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
 	});
 
 	QUnit.test("Title and Toolbar", function(assert) {

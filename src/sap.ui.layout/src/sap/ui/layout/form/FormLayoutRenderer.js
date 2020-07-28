@@ -259,8 +259,9 @@ sap.ui.define([
 		var oToolbar = oContainer.getToolbar();
 		if (oToolbar) {
 			if (!oContainer.getAriaLabelledBy() || oContainer.getAriaLabelledBy().length == 0) {
-				// no aria-label -> use complete Toolbar as fallback
-				mAriaProps["labelledby"] = {value: oToolbar.getId(), append: true};
+				// no aria-label -> use Title of Toolbar
+				var sToolbarTitleID = library.form.FormHelper.getToolbarTitle(oToolbar);
+				mAriaProps["labelledby"] = {value: sToolbarTitleID, append: true};
 			}
 		} else if (oTitle) {
 			var sId = "";

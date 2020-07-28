@@ -5008,6 +5008,19 @@ sap.ui.define([
 			}
 			return oToolbar;
 		},
+		getToolbarTitle: function(oToolbar) {
+			// determine Title to point aria-label on this. As Fallback use the whole Toolbar
+			if (oToolbar) {
+				var aContent = oToolbar.getContent();
+				for (var i = 0; i < aContent.length; i++) {
+					var oContent = aContent[i];
+					if (oContent.isA("sap.m.Title")) {
+						return oContent.getId();
+					}
+				}
+				return oToolbar.getId(); // fallback
+			}
+		},
 		bArrowKeySupport: false, /* disables the keyboard support for arrow keys */
 		bFinal: true
 	});

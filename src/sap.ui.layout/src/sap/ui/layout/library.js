@@ -778,6 +778,7 @@ sap.ui.define([
 			setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){ throw new Error("no Button control available!"); },
 			addFormClass: function(){ return null; },
 			setToolbar: function(oToolbar){ return oToolbar; }, /* allow to overwrite toolbar settings */
+			getToolbarTitle: function(oToolbar) { return oToolbar && oToolbar.getId(); }, /* To determine title ID in toolbar for aria-label */
 			bArrowKeySupport: true, /* enables the keyboard support for arrow keys */
 			bFinal: false /* if true, the helper must not be overwritten by an other library */
 		};

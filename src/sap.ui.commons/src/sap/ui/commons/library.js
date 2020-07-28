@@ -1292,6 +1292,10 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 			},
 			addFormClass: function(){ return null; },
 			setToolbar: function(oToolbar){ return oToolbar; },
+			getToolbarTitle: function(oToolbar) {
+				// as no Title control as ToolbarItem exust just use Toolbar ID. (Let application point to the wanted control.)
+				return oToolbar && oToolbar.getId();
+			},
 			bArrowKeySupport: true, /* enables the keyboard support for arrow keys */
 			bFinal: false /* to allow mobile to overwrite  */
 		};
