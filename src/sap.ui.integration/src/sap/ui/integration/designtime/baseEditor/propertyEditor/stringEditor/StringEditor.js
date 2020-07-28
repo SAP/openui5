@@ -104,9 +104,9 @@ sap.ui.define([
 
 	StringEditor.prototype.setValue = function (vValue) {
 		if (!_isNil(vValue) && !isPlainObject(vValue)) {
-			vValue = vValue.toString();
+			arguments[0] = vValue.toString();
 		}
-		BasePropertyEditor.prototype.setValue.call(this, vValue);
+		BasePropertyEditor.prototype.setValue.apply(this, arguments);
 	};
 
 	StringEditor.prototype._onLiveChange = function () {

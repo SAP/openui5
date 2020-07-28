@@ -178,15 +178,9 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oEditor.attachDesigntimeMetadataChange(function (oEvent) {
-				assert.deepEqual(
-					oEvent.getParameter("value"),
-					{
-						"foo": {
-							"__value": {
-								"label": "Changed Label"
-							}
-						}
-					},
+				assert.strictEqual(
+					oEvent.getParameter("value").foo.__value.label,
+					"Changed Label",
 					"Then the label is updated"
 				);
 				fnDone();
