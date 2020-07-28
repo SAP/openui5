@@ -27,8 +27,8 @@
 					<Button id="selectSalesOrder" press="onSelectSalesOrder"
 						text="Show Sales Order" type="Accept" />
 					<ToolbarSpacer/>
-					<Link href="MIT.SalesOrders(V2).Messages.html" target="_blank"
-						text="Test Cases" />
+					<Link href="test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/MIT.SalesOrders(V2).Messages.html"
+						target="_blank" text="Test Cases" />
 				</Toolbar>
 			</VBox>
 			<VBox class="sapUiSmallMargin" id="objectPage">
@@ -50,7 +50,7 @@
 					<Label text="Gross Amount" />
 					<Input editable="false" id="grossAmount::objectPage" value="{
 							parts : ['GrossAmount', 'CurrencyCode'],
-							type : 'sap.ui.model.odata.Currency'
+							type : 'sap.ui.model.type.Currency'
 						}" width="12em" />
 					<Label text="Changed At" />
 					<Input editable="false" id="changedAt::objectPage" value="{
