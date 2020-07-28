@@ -129,7 +129,9 @@ sap.ui.define([
 
 				var oItem = {
 					key: sKey,
-					value: mFormattedValue
+					value: mFormattedValue,
+					// Include designtime in the model to react on changes
+					designtime: this.getNestedDesigntimeMetadata(sKey)
 				};
 
 				return this.getConfig().includeInvalidEntries || this._isValidItem(oItem, deepClone(mValue[sKey])) ? oItem : undefined;
@@ -355,6 +357,13 @@ sap.ui.define([
 
 				this._mTypes[sNewKey] = this._mTypes[sOldKey];
 				delete this._mTypes[sOldKey];
+
+				var oDesigntime = _merge({}, this.getConfig().designtime);
+				if (oDesigntime.hasOwnProperty(sOldKey)) {
+					oDesigntime[sNewKey] = oDesigntime[sOldKey];
+					delete oDesigntime[sOldKey];
+					this.setDesigntimeMetadata(oDesigntime);
+				}
 
 				this.setValue(oNewValue);
 			}
