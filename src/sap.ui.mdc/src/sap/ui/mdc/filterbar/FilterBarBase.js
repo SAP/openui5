@@ -226,7 +226,7 @@ sap.ui.define([
 
 		this._createInnerLayout();
 
-		this.bPersistValues = false;
+		this._bPersistValues = false;
 
 		this._aProperties = null;
 
@@ -247,14 +247,14 @@ sap.ui.define([
 	 *
 	 * _cLayoutItem, the class which is being used to create FilterItems
 	 * _oFilterBarLayout, instance of the layout which needs to be a IFilterContainer derivation
-	 * bPersistValues should be used to control the persistence of filter conditions
+	 * _bPersistValues should be used to control the persistence of filter conditions
 	 *
 	 * In addition the aggregation "layout" of the FilterBarBase derivation should be set to the created instance of _oFilterBarLayout
 	 */
 	FilterBarBase.prototype._createInnerLayout = function() {
 		this._cLayoutItem = null;
 		this._oFilterBarLayout = null;
-		this.bPersistValues = false;
+		this._bPersistValues = false;
 		this._btnAdapt = null;
 		this.setAggregation("layout", this._oFilterBarLayout, true);
 	};
@@ -344,7 +344,7 @@ sap.ui.define([
 
 			var oState = {};
 
-			if (this.bPersistValues) {
+			if (this._bPersistValues) {
 				var aIgnoreFieldNames = [];
 				var mConditions = merge({}, this.getFilterConditions());
 				for (var sKey in mConditions) {
@@ -551,7 +551,7 @@ sap.ui.define([
 
 				var sFieldPath = sPath.substring("/conditions/".length);
 
-				if (this.bPersistValues && this._isFlexSupported()) {
+				if (this._bPersistValues && this._isFlexSupported()) {
 					var mOrigConditions = {};
 					mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, oEvent.getParameter("value"));
 					this._cleanupConditions(mOrigConditions[sFieldPath]);
@@ -985,7 +985,7 @@ sap.ui.define([
 			for (var sFieldPath in aAllConditions) {
 				if (aAllConditions[sFieldPath] && (aAllConditions[sFieldPath].length > 0)) {
 					mConditions[sFieldPath] = merge([], aAllConditions[sFieldPath]);
-					if (!bDoNotExternalize && this.bPersistValues) {
+					if (!bDoNotExternalize) {
 						this._cleanupConditions(mConditions[sFieldPath]);
 						var aFieldConditions = this._stringifyConditions(sFieldPath, mConditions[sFieldPath]);
 						mConditions[sFieldPath] = aFieldConditions;
@@ -1067,6 +1067,10 @@ sap.ui.define([
 				}
 			}
 		}
+	};
+
+	FilterBarBase.prototype._getXConditions = function () {
+		return this._getModelConditions(this._getConditionModel(), false);
 	};
 
 	FilterBarBase.prototype._storeChanges = function(aChanges) {
@@ -1529,7 +1533,7 @@ sap.ui.define([
 	 */
 	FilterBarBase.prototype.getConditions = function() {
 		//return this.waitForInitialization().then(function() {
-			var mConditions = this.getCurrentState().filter;
+			var mConditions = this._bPersistValues ? this.getCurrentState().filter : this._getXConditions();
 			if (mConditions && mConditions["$search"]) {
 				delete mConditions["$search"];
 			}
@@ -1592,7 +1596,7 @@ sap.ui.define([
 		this._oObserver.disconnect();
 		this._oObserver = undefined;
 
-		this.bPersistValues = null;
+		this._bPersistValues = null;
 
 		this._oDelegate = null;
 		this._aProperties = null;
