@@ -1,0 +1,65 @@
+{
+	"@odata.context" : "$metadata#SalesOrderList(CurrencyCode,GrossAmount,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName))",
+	"@odata.metadataEtag" : "W/\"20200721151616\"",
+	"@odata.count" : "27",
+	"value" : [{
+		"@odata.etag" : "W/\"20200714143235.2254550 \"",
+		"SalesOrderID" : "0500000232",
+		"Note" : "Modified by OPA_save",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "0",
+		"SO_2_BP" : {
+		"@odata.etag" : "W/\"20200722155503.1802100 \"",
+		"BusinessPartnerID" : "0100000000",
+		"CompanyName" : "SAP"
+		}
+	},
+	{
+		"@odata.etag" : "W/\"20200713105633.4613740 \"",
+		"SalesOrderID" : "0500000211",
+		"Note" : "Modified by OPA_save",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "0",
+		"SO_2_BP" : {
+		"@odata.etag" : "W/\"20200722155503.1802100 \"",
+		"BusinessPartnerID" : "0100000000",
+		"CompanyName" : "SAP"
+		}
+	},
+	{
+		"@odata.etag" : "W/\"20200708120447.0141190 \"",
+		"SalesOrderID" : "0500000100",
+		"Note" : "new 4",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "0",
+		"SO_2_BP" : {
+		"@odata.etag" : "W/\"20200722155503.1802100 \"",
+		"BusinessPartnerID" : "0100000000",
+		"CompanyName" : "SAP"
+		}
+	},
+	{
+		"@odata.etag" : "W/\"20200708120446.9385290 \"",
+		"SalesOrderID" : "0500000099",
+		"Note" : "new 3",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "0",
+		"SO_2_BP" : {
+		"@odata.etag" : "W/\"20200722155503.1802100 \"",
+		"BusinessPartnerID" : "0100000000",
+		"CompanyName" : "SAP"
+		}
+	},
+	{
+		"@odata.etag" : "W/\"20200708120434.6460980 \"",
+		"SalesOrderID" : "0500000097",
+		"Note" : "new 2",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "0",
+		"SO_2_BP" : {
+		"@odata.etag" : "W/\"20200722155503.1802100 \"",
+		"BusinessPartnerID" : "0100000000",
+		"CompanyName" : "SAP"
+		}
+	}]
+}
