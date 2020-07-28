@@ -157,7 +157,8 @@ sap.ui.define([
 			oTable.addColumn(new Column({
 				header: new Text({ text: oColumn.title }),
 				width: oColumn.width,
-				hAlign: oColumn.hAlign
+				hAlign: oColumn.hAlign,
+				visible: oColumn.visible
 			}));
 			aCells.push(this._createCell(oColumn));
 		}.bind(this));

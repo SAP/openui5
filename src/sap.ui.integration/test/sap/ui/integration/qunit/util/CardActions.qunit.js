@@ -1334,7 +1334,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Object content should be actionable - service ", function (assert) {
+		QUnit.test("Object content should be actionable - service", function (assert) {
 
 			testActionOnContentService(objectContent_service, assert);
 		});

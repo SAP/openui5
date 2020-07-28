@@ -82,8 +82,7 @@ sap.ui.define(function () {
 						"sap/ui/integration/util/RequestDataProvider",
 						"sap/ui/integration/util/ServiceDataProvider",
 						"sap/ui/integration/cards/TableContent",
-						"sap/ui/integration/cards/BaseContent",
-						"sap/ui/integration/CardFiltering"
+						"sap/ui/integration/cards/BaseContent"
 					]
 				},
 				module: [
@@ -101,7 +100,10 @@ sap.ui.define(function () {
 					'./cards/BaseContent.qunit',
 					'./bindingFeatures/DateRange.qunit',
 					'./CardHost.qunit',
-					'./formatters/IconFormatter.qunit'
+					'./formatters/IconFormatter.qunit',
+					'./CardFiltering.qunit',
+					'./cards/TableCard.qunit',
+					'./cards/ObjectCard.qunit'
 				]
 			},
 			"CardLoading": {
@@ -206,6 +208,8 @@ sap.ui.define(function () {
 			"cards/AnalyticalCard": { },
 			"cards/CalendarCard": { },
 			"cards/ListCard": { },
+			"cards/TableCard": { },
+			"cards/ObjectCard": { },
 			"CardFiltering": {
 				coverage: {
 					only: [

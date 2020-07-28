@@ -22,7 +22,8 @@
 				"1.9.0",
 				"1.10.0",
 				"1.11.0",
-				"1.12.0"
+				"1.12.0",
+			  	"1.13.0"
 			]
 		},
 		"designtime": {
@@ -829,6 +830,18 @@
 					"items": {
 						"$ref": "#/definitions/ContentType.Object.Item"
 					}
+				},
+				"visible": {
+				  "description": "Represents the visibility state of the group",
+				  "oneOf": [
+					{
+					  "type": "boolean",
+					  "default": true
+					},
+					{
+					  "$ref": "#/definitions/simpleBinding"
+					}
+				  ]
 				}
 			}
 		},
@@ -881,6 +894,18 @@
 				"emailSubject": {
 					"description": "Represents the subject of the email. Works only with item of type 'email'.",
 					"type": "string"
+				},
+				"visible": {
+					"description": "Represents the visibility state of the item",
+					"oneOf": [
+						{
+							"type": "boolean",
+							"default": true
+						},
+						{
+							"$ref": "#/definitions/simpleBinding"
+						}
+					]
 				}
 			}
 		},
@@ -938,8 +963,12 @@
 				"hAlign": {
 					"description": "Defines the horizontal alignment of the column content.",
 					"oneOf": [
-						{ "$ref": "#/definitions/textAlign" },
-						{ "$ref": "#/definitions/simpleBinding" }
+						{
+							"$ref": "#/definitions/textAlign"
+						},
+						{
+							"$ref": "#/definitions/simpleBinding"
+						}
 					]
 				},
 				"value": {
@@ -953,8 +982,12 @@
 				"state": {
 					"description": "Defines the state of the column.",
 					"oneOf": [
-						{ "$ref": "#/definitions/state" },
-						{ "$ref": "#/definitions/simpleBinding" }
+						{
+							"$ref": "#/definitions/state"
+						},
+						{
+							"$ref": "#/definitions/simpleBinding"
+						}
 					]
 				},
 				"url": {
@@ -965,19 +998,39 @@
 					"description": "Specifies where to open the 'url', if it is provided.",
 					"type": "string",
 					"oneOf": [
-						{ "$ref": "#/definitions/target" },
-						{ "$ref": "#/definitions/simpleBinding" }
+						{
+							"$ref": "#/definitions/target"
+						},
+						{
+							"$ref": "#/definitions/simpleBinding"
+						}
 					]
 				},
 				"identifier": {
 					"oneOf": [
-						{ "$ref": "#/definitions/identifier" },
-						{ "$ref": "#/definitions/simpleBinding" }
+						{
+							"$ref": "#/definitions/identifier"
+						},
+						{
+							"$ref": "#/definitions/simpleBinding"
+						}
 					]
 				},
 				"progressIndicator": {
 					"description": "Represents progress indicator attributes",
 					"$ref": "#/definitions/progressIndicator"
+				},
+				"visible": {
+					"description": "Represents the visibility state of the column",
+					"oneOf": [
+						{
+							"type": "boolean",
+							"default": true
+						},
+						{
+							"$ref": "#/definitions/simpleBinding"
+						}
+					]
 				}
 			}
 		},

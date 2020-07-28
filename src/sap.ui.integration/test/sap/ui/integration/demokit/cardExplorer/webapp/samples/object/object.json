@@ -1,0 +1,125 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.object.card",
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"json": {
+				"firstName": "Donna",
+				"lastName": "Moore",
+				"position": "Sales Executive",
+				"phone": "+1 202 555 5555",
+				"email": "my@mymail.com",
+				"photo": "./DonnaMoore.png",
+				"manager": {
+					"firstName": "Alain",
+					"lastName": "Chevalier",
+					"photo": "./AlainChevalier.png"
+				},
+				"company": {
+					"name": "Robert Brown Entertainment",
+					"address": "481 West Street, Anytown OH 45066, USA",
+					"email": "mail@mycompany.com",
+					"emailSubject": "Subject",
+					"website": "www.company_a.example.com",
+					"url": "http://www.company_a.example.com"
+				}
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "{photo}"
+			},
+			"title": "{firstName} {lastName}",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"groups": [
+				{
+					"title": "Contact Details",
+					"items": [
+						{
+							"label": "First Name",
+							"value": "{firstName}"
+						},
+						{
+							"label": "Last Name",
+							"value": "{lastName}"
+						},
+						{
+							"label": "Phone",
+							"value": "{phone}",
+							"type": "phone"
+						},
+						{
+							"label": "Email",
+							"value": "{email}",
+							"type": "email"
+						}
+					]
+				},
+				{
+					"title": "Company Details",
+					"items": [
+						{
+							"label": "Company Name",
+							"value": "{company/name}"
+						},
+						{
+							"label": "Address",
+							"value": "{company/address}"
+						},
+						{
+							"label": "Email",
+							"value": "{company/email}",
+							"emailSubject": "{company/emailSubject}",
+							"type": "email"
+						},
+						{
+							"label": "Website",
+							"value": "{company/website}",
+						  	"url": "{company/url}",
+							"type": "link"
+						}
+					]
+				},
+				{
+				  "title": "Organizational Details",
+				  "items": [
+						{
+							"label": "Direct Manager",
+							"value": "{manager/firstName} {manager/lastName}",
+							"icon": {
+								"src": "{manager/photo}"
+							}
+						}
+				  ]
+				}
+			]
+		}
+	}
+}

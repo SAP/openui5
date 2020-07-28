@@ -95,10 +95,7 @@
 		},
 		"header": {
 			"title": "Sales Orders for Key Accounts",
-			"subTitle": "Today",
-			"status": {
-				"text": "{headerData/statusText}"
-			}
+			"subTitle": "Today"
 		},
 		"content": {
 			"row": {
