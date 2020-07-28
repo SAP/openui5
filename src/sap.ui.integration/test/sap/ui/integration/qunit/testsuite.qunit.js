@@ -571,6 +571,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/validator/IsPatternMatch": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/validator/IsPatternMatch"
+					]
+				},
+				sinon: false
+			},
 			"designtime/cardEditor/CardEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {
@@ -603,15 +612,6 @@ sap.ui.define(function () {
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor"
-					]
-				},
-				sinon: false
-			},
-			"designtime/cardEditor/validator/IsPatternMatch": {
-				group: "Card DesignTime Editor",
-				coverage: {
-					only: [
-						"sap/ui/integration/designtime/cardEditor/validator/IsPatternMatch"
 					]
 				},
 				sinon: false

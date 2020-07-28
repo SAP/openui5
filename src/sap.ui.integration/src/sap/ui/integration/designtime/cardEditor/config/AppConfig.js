@@ -48,7 +48,7 @@ sap.ui.define(function () {
 		"appIcon": {
 			"tags": ["app"],
 			"label": "{i18n>CARD_EDITOR.ICON}",
-			"type": "icon",
+			"type": "simpleicon",
 			"path": "/sap.ui/icons/icon"
 		},
 		"appDescription": {

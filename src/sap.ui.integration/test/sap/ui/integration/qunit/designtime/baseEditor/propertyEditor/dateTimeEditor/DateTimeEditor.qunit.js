@@ -83,7 +83,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			EditorQunitUtils.setCustomComboBoxValue(this.oDateTimeEditorElement, sCurrentDateTimeString);
+			EditorQunitUtils.setInputValueAndConfirm(this.oDateTimeEditorElement, sCurrentDateTimeString);
 		});
 	});
 

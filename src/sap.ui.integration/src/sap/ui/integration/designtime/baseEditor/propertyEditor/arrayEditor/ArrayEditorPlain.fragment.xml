@@ -21,7 +21,7 @@
 					<contentRight>
 						<Button
 							icon="sap-icon://navigation-up-arrow"
-							tooltip="{i18n>BASE_EDITOR.ARRAY.MOVEUP}"
+							tooltip="{i18n>BASE_EDITOR.MOVEUP}"
 							press="_moveUp"
 							enabled="{= ${itemsModel>index} !== 0}"
 							visible="{config/allowSorting}"
@@ -35,7 +35,7 @@
 						</Button>
 						<Button
 							icon="sap-icon://navigation-down-arrow"
-							tooltip="{i18n>BASE_EDITOR.ARRAY.MOVEDOWN}"
+							tooltip="{i18n>BASE_EDITOR.MOVEDOWN}"
 							press="_moveDown"
 							enabled="{= ${itemsModel>total} - 1 !== ${itemsModel>index}}"
 							visible="{config/allowSorting}"

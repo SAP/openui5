@@ -100,7 +100,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			EditorQunitUtils.setCustomComboBoxValue(this.oBooleanEditorElement, "{someBindingPath}");
+			EditorQunitUtils.setInputValueAndConfirm(this.oBooleanEditorElement, "{someBindingPath}");
 		});
 
 		QUnit.test("When a binding path is provided as the editor value", function (assert) {
@@ -121,7 +121,7 @@ sap.ui.define([
 				this.oBooleanEditor.setModel(oI18nModel, "i18n");
 
 				// Test
-				EditorQunitUtils.setCustomComboBoxValue(this.oBooleanEditorElement, "abc");
+				EditorQunitUtils.setInputValueAndConfirm(this.oBooleanEditorElement, "abc");
 				assert.strictEqual(this.oBooleanEditorElement.getValueState(), "Error", "Then the error is displayed");
 				assert.strictEqual(this.oBooleanEditor.getValue(), true, "Then the editor value is not updated");
 			}.bind(this));

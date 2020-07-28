@@ -104,7 +104,7 @@ sap.ui.define([
 		"listItemIcon": {
 			"tags": ["content", "listItem"],
 			"label": "{i18n>CARD_EDITOR.LIST_ITEM.ICON}",
-			"type": "icon",
+			"type": "simpleicon",
 			"path": "content/item/icon/src",
 			"visible": "{= ${context>type} === 'List' }"
 		},

@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/integration/designtime/cardEditor/validator/IsPatternMatch"
+	"sap/ui/integration/designtime/baseEditor/validator/IsPatternMatch"
 ], function (
 	IsPatternMatch
 ) {

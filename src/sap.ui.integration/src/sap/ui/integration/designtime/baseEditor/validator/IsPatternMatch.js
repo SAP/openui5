@@ -10,7 +10,7 @@ sap.ui.define([
 
 	return {
 		async: false,
-		errorMessage: "CARD_EDITOR.VALIDATOR.FAILED_PATTERN_TEST",
+		errorMessage: "BASE_EDITOR.VALIDATOR.FAILED_PATTERN_TEST",
 		validate: function (sValue, oConfig) {
 			var sModifiers = oConfig.modifiers || "";
 			var oRegExp = new RegExp(oConfig.pattern, sModifiers);

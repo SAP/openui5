@@ -50,7 +50,7 @@ sap.ui.define([
 	 * <tr>
 	 * 	<td><code>maxLength</code></td>
 	 *  <td><code>number</code></td>
-	 * 	<td>0</td>
+	 * 	<td></td>
 	 * 	<td>Maximum number of characters</td>
 	 * </tr>
 	 * </table>
@@ -78,9 +78,6 @@ sap.ui.define([
 		allowBindings: {
 			defaultValue: true,
 			mergeStrategy: "mostRestrictiveWins"
-		},
-		maxLength: {
-			defaultValue: 0
 		}
 	});
 
@@ -97,6 +94,13 @@ sap.ui.define([
 				notABinding: {
 					type: "notABinding",
 					isEnabled: !oConfig.allowBindings
+				},
+				maxLength: {
+					type: "maxLength",
+					isEnabled: typeof oConfig.maxLength === "number",
+					config: {
+						maxLength: oConfig.maxLength
+					}
 				}
 			}
 		);
