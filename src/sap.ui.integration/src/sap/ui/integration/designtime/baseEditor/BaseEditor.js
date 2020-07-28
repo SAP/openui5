@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/restricted/_union",
+	"sap/base/util/restricted/_isNil",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/Log",
@@ -51,6 +52,7 @@ sap.ui.define([
 	_merge,
 	_omit,
 	_union,
+	_isNil,
 	JSONModel,
 	ResourceBundle,
 	Log,
@@ -444,7 +446,7 @@ sap.ui.define([
 			});
 		};
 
-		fnFlattenPath(oMetadata, []);
+		fnFlattenPath(oMetadata || {}, []);
 		return oFlatMetadata;
 	}
 
@@ -1069,8 +1071,26 @@ sap.ui.define([
 			oDesigntimeMetadata
 		);
 
+		cleanupDesigntimeMetadata(oDesigntimeMetadata);
+
 		this.setDesigntimeMetadata(oDesigntimeMetadata);
 	};
+
+	function cleanupDesigntimeMetadata (oObjectToMutate) {
+		each(oObjectToMutate, function (sKey, vValue) {
+			if (isPlainObject(vValue)) {
+				cleanupDesigntimeMetadata(vValue);
+			}
+
+			if (
+				_isNil(vValue)
+				|| Array.isArray(vValue) && vValue.length === 0
+				|| isPlainObject(vValue) && isEmptyObject(vValue)
+			) {
+				delete oObjectToMutate[sKey];
+			}
+		});
+	}
 
 	return BaseEditor;
 });

@@ -80,9 +80,12 @@ sap.ui.define([
 		this._oNestedArrayEditor = this.getContent();
 
 		this._oNestedArrayEditor.attachValueChange(function (oEvent) {
+			var aPreviousValues = oEvent.getParameter("previousValue") || [];
 			var aValues = deepClone(oEvent.getParameter("value") || []);
+			var oNewDesigntimeMetadata = {};
+			var aDesigntimeProperties = this.getDesigntimeProperties();
 
-			aValues.forEach(function (oValue, iIndex) {
+			aValues = aValues.map(function (oValue, iIndex) {
 				if (typeof oValue.key === "undefined") {
 					var sKey = "key";
 					var iNextIndex = 0;
@@ -94,22 +97,60 @@ sap.ui.define([
 					}
 					oValue.key = sKey;
 				}
+
+				// Set designtime values
+				var oNestedMetadata = {};
+				aDesigntimeProperties.forEach(function (sPropertyKey) {
+					oNestedMetadata[sPropertyKey] = deepClone(oValue[sPropertyKey]);
+				});
+				oNewDesigntimeMetadata[oValue.key] = { __value: oNestedMetadata };
+
+				return _omit(oValue, aDesigntimeProperties);
 			});
 
-			this.setValue(this._processOutputValue(aValues));
+			var oNextValue = this._processOutputValue(aValues);
+
+			// Remove renamed keys from designtime
+			aPreviousValues.forEach(function (oPreviousValue) {
+				var sOldKey = oPreviousValue.key;
+				if (sOldKey !== undefined && !oNextValue.hasOwnProperty(sOldKey)) {
+					oNewDesigntimeMetadata[sOldKey] = null;
+				}
+			});
+
+			this.setDesigntimeMetadata(_merge(
+				{},
+				this.getConfig().designtime,
+				oNewDesigntimeMetadata
+			));
+			this.setValue(oNextValue);
 		}, this);
 	};
 
 	ComplexMapEditor.prototype._processInputValue = function (oValue) {
+		var aDesigntimeProperties = this.getDesigntimeProperties();
 		if (!oValue) {
 			oValue = {};
 		}
 		var aFormattedValues = Object.keys(oValue).map(function (sKey) {
 			var oFormattedValue = deepClone(oValue[sKey]);
+
 			oFormattedValue.key = sKey;
+
+			var oDesigntimeMetadata = this.getNestedDesigntimeMetadataValue(sKey);
+			// Only write the explicitly defined designtime properties into the value
+			// because they have to be cleaned up on value change later
+			aDesigntimeProperties.forEach(function (sProperty) {
+				oFormattedValue[sProperty] = oDesigntimeMetadata[sProperty];
+			});
+
 			return oFormattedValue;
-		});
+		}.bind(this));
 		return aFormattedValues;
+	};
+
+	ComplexMapEditor.prototype.getDesigntimeProperties = function () {
+		return [];
 	};
 
 	ComplexMapEditor.prototype.onBeforeConfigChange = function (oConfig) {
