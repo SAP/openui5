@@ -1731,6 +1731,7 @@ function(
 		 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 		 * @param {object} oControlEvent.getParameters
 		 * @param {string} oControlEvent.getParameters.value The new value of the input
+		 * <b>Note:</b> If there is no data binding, the value is expected and updated in Gregorian calendar type. (Otherwise, the type of the binding is used.)
 		 * @param {boolean} oControlEvent.getParameters.valid Indicator for a valid time
 		 * @public
 		 */
