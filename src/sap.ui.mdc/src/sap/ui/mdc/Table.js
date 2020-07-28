@@ -1990,7 +1990,6 @@ sap.ui.define([
 	Table.prototype._registerInnerFilter = function(oFilter) {
 		this._deregisterFilter();
 		oFilter.attachSearch(this.rebindTable, this);
-		oFilter.attachFiltersChanged(this._onFiltersChanged, this);
 	};
 
 	Table.prototype._onFiltersChanged = function(oEvent) {
@@ -2189,7 +2188,9 @@ sap.ui.define([
 		//If filter personalization is enabled, use it
 		if (this._getFilterEnabled()) {
 			this._retrieveP13nFilter().then(function(oFilter) {
-				oFilter.triggerSearch();
+				oFilter.initialized().then(function(){
+					oFilter.triggerSearch();
+				});
 			});
 		} else {
 			//if filter personalization is disabled, use filter association if provided or trigger rebind manually

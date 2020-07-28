@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", "sap/ui/mdc/p13n/FlexUtil", "sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/base/util/merge"
-], function(TableContainer, FilterColumnLayout, FilterBarBase, FilterBarBaseRenderer, FlexUtil, FlexRuntimeInfoAPI, merge) {
+	"sap/ui/mdc/p13n/P13nBuilder", "sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", "sap/ui/mdc/p13n/FlexUtil", "sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/base/util/merge"
+], function(P13nBuilder, TableContainer, FilterColumnLayout, FilterBarBase, FilterBarBaseRenderer, FlexUtil, FlexRuntimeInfoAPI, merge) {
 	"use strict";
 
 	/**
@@ -83,9 +83,39 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	AdaptationFilterBar.prototype.setPropertyInfo = function(aPropertyInfo) {
-		return this.initialized().then(function(){
+	AdaptationFilterBar.prototype.initialized = function(){
+
+		var oParentPropertyInfoPromise = this.getAdaptationControl().awaitControlDelegate().then(function(oParentControl) {
+			return oParentControl.fetchProperties(this.getAdaptationControl()).then(function(aPropertyInfo){
+				return aPropertyInfo;
+			});
+		}.bind(this));
+
+		return Promise.all([
+			oParentPropertyInfoPromise,
+			FilterBarBase.prototype.initialized.apply(this, arguments)
+		]).then(function(aResolvedValues){
+			var aPropertyInfo = aResolvedValues[0];
+			this._setXConditions(this.getAdaptationControl().getFilterConditions(), true);
 			this._aProperties = aPropertyInfo;
+		}.bind(this));
+
+	};
+
+	AdaptationFilterBar.prototype.createFilterFields = function(oAdaptationModel){
+		return this.initialized().then(function(){
+			var mProperties = P13nBuilder.arrayToMap(this._aProperties);
+			oAdaptationModel.getProperty("/items").forEach(function(oItem){
+				var oProperty = mProperties[oItem.name];
+				var oAdaptationControl = this.getAdaptationControl();
+				var mFilterHandler = this.getAdaptationControl().getControlDelegate().getFilterDelegate();
+				if (oProperty && oProperty.filterable !== false) {
+					var oFilterFieldPromise = mFilterHandler.addFilterItem(oProperty, oAdaptationControl);
+					oFilterFieldPromise.then(function(oFilterField){
+						this.addAggregation("filterItems", oFilterField);
+					}.bind(this));
+				}
+			}, this);
 		}.bind(this));
 	};
 

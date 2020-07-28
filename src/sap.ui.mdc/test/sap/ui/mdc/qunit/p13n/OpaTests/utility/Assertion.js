@@ -253,7 +253,10 @@ sap.ui.define([
 						success: function(aFilterFields) {
 							var oFilterField = aFilterFields[0];
 							if (aValues.length > 0){
-								Opa5.assert.deepEqual(oFilterField.getConditions()[0].values, aValues, "Correct conditions in FF");
+								aValues.forEach(function(sValue, iIndex){
+									var oValue = oFilterField.getConditions()[iIndex];
+									Opa5.assert.deepEqual(oValue ? oValue.values[0] : undefined, sValue, "Correct conditions in FF");
+								});
 							}
 							Opa5.assert.equal(oFilterField.getLabel(), sItemText, "Item with label:' " + sItemText + "' has been found." );
 							var aFilterItems = oFilterField.getParent().getFilterItems();
@@ -261,7 +264,6 @@ sap.ui.define([
 							Opa5.assert.equal(iFieldIndex, iIndex, "Item is on correct index");
 						}
 					});
-
 				}
 			});
 		},
