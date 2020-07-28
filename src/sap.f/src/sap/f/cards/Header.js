@@ -87,7 +87,14 @@ sap.ui.define([
 				/**
 				 * Defines the initials of the icon.
 				 */
-				iconInitials: { type: "string", defaultValue: "" }
+				iconInitials: { type: "string", defaultValue: "" },
+
+				/**
+				 * Defines an alt text for the avatar or icon.
+				 *
+				 * @experimental Since 1.81 this feature is experimental and the api may change.
+				 */
+				iconAlt: { type: "string", defaultValue: "" }
 			},
 			aggregations: {
 
@@ -188,11 +195,15 @@ sap.ui.define([
 	 * @private
 	 */
 	Header.prototype.onBeforeRendering = function () {
+		var oAvatar = this._getAvatar();
+
 		this._getTitle().setText(this.getTitle());
 		this._getSubtitle().setText(this.getSubtitle());
-		this._getAvatar().setDisplayShape(this.getIconDisplayShape());
-		this._getAvatar().setSrc(this.getIconSrc());
-		this._getAvatar().setInitials(this.getIconInitials());
+
+		oAvatar.setDisplayShape(this.getIconDisplayShape());
+		oAvatar.setSrc(this.getIconSrc());
+		oAvatar.setInitials(this.getIconInitials());
+		oAvatar.setTooltip(this.getIconAlt());
 
 		this._setAccessibilityAttributes();
 	};

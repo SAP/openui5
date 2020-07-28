@@ -420,7 +420,7 @@
 					]
 				},
 				"icon": {
-					"$ref": "#/definitions/icon"
+					"$ref": "#/definitions/simpleIcon"
 				},
 				"actions": {
 					"description": "Defines actions that can be applied on the item.",
@@ -756,7 +756,7 @@
 				},
 				"icon": {
 					"description": "The icon of the timeline item.",
-					"$ref": "#/definitions/icon"
+					"$ref": "#/definitions/simpleIcon"
 				}
 			}
 		},
@@ -977,7 +977,7 @@
 				},
 				"icon": {
 					"description": "Represents column with icon.",
-					"$ref": "#/definitions/icon"
+					"$ref": "#/definitions/simpleIcon"
 				},
 				"state": {
 					"description": "Defines the state of the column.",
@@ -1186,7 +1186,7 @@
 					"type": "string"
 				},
 				"icon": {
-					"$ref": "#/definitions/icon"
+					"$ref": "#/definitions/simpleIcon"
 				},
 				"type": {
 					"description": "The type of the item - one of the types defined in the legend.",
@@ -1396,7 +1396,7 @@
 								"Square",
 								"Circle"
 							],
-							"default": "Square"
+							"default": "Circle"
 						},
 						{
 							"$ref": "#/definitions/simpleBinding"
@@ -1405,15 +1405,18 @@
 				},
 				"text": {
 					"type": "string",
-					"description": "Text inside icon"
-				},
-				"backgroundColor": {
+					"description": "Initials for the avatar. Up to 2 symbols."
+				}
+			}
+		},
+		"simpleIcon": {
+			"description": "Represents simple icon attributes",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"src": {
 					"type": "string",
-					"description": "Background color of the icon"
-				},
-				"color": {
-					"type": "string",
-					"description": "Color of the icon"
+					"description": "Represents icon name or source URL"
 				}
 			}
 		},

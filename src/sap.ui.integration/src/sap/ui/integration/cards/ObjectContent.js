@@ -242,7 +242,10 @@ sap.ui.define([
 						var oAvatar = new Avatar({
 							customDisplaySize: "2.5rem",
 							displaySize: "Custom",
-							src: vSrc
+							src: vSrc,
+							initials: oItem.icon.text,
+							displayShape: oItem.icon.shape,
+							tooltip: oItem.icon.alt
 						}).addStyleClass("sapFCardObjectItemAvatar sapFCardObjectItemLabel");
 
 						var oVbox = new VBox({
