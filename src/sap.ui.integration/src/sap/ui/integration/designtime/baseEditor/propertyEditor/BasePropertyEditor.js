@@ -330,7 +330,7 @@ sap.ui.define([
 	};
 
 	BasePropertyEditor.prototype.setDesigntimeMetadata = function (oValue) {
-		var oCurrentMetadata = this.getConfig().metadata;
+		var oCurrentMetadata = this.getDesigntimeMetadata();
 		var oNextMetadata = oValue;
 		var oConfig = this.getConfig();
 
@@ -341,6 +341,10 @@ sap.ui.define([
 				value: oNextMetadata
 			});
 		}
+	};
+
+	BasePropertyEditor.prototype.getDesigntimeMetadata = function () {
+		return (this.getConfig() || {}).designtime || {};
 	};
 
 	BasePropertyEditor.prototype.getNestedDesigntimeMetadata = function (sKey) {

@@ -75,6 +75,12 @@ sap.ui.define([
 	 * 	<td><code>true</code></td>
 	 * 	<td>Whether to show entries with invalid types if the <code>StringEditor</code> cannot be used as a fallback</td>
 	 * </tr>
+	 * <tr>
+	 * 	<td><code>allowSorting</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether to allow changing the order of items.</td>
+	 * </tr>
 	 * </table>
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
@@ -116,9 +122,30 @@ sap.ui.define([
 
 		setValue: function(mValue) {
 			mValue = isPlainObject(mValue) ? mValue : {};
+
+			var mPositions = this._getPositions(mValue);
+			// Persist item positions in designtime metadata
+			this.setDesigntimeMetadata(_merge(
+				{},
+				this.getDesigntimeMetadata(),
+				Object.keys(mPositions).reduce(function (mNewMetadata, sKey) {
+					mNewMetadata[sKey] = { __value: { position: mPositions[sKey] } };
+					return mNewMetadata;
+				}, {})
+			));
+
 			BasePropertyEditor.prototype.setValue.call(this, mValue);
 
 			var aItems = this._processValue(mValue);
+			aItems = aItems
+				.sort(function (oValue1, oValue2) {
+					return mPositions[oValue1.key] - mPositions[oValue2.key];
+				})
+				.map(function (oItem, iIndex) {
+					oItem.index = iIndex;
+					oItem.total = aItems.length;
+					return oItem;
+				});
 			this._itemsModel.setData(aItems);
 		},
 
@@ -136,6 +163,25 @@ sap.ui.define([
 
 				return this.getConfig().includeInvalidEntries || this._isValidItem(oItem, deepClone(mValue[sKey])) ? oItem : undefined;
 			}, this).filter(Boolean);
+		},
+
+		_getPositions: function(mValue) {
+			var aKeys = Object.keys(mValue);
+			var aExistingPositions = aKeys
+				.map(function (sKey) {
+					var nCurrentPosition = this.getNestedDesigntimeMetadataValue(sKey).position;
+					return nCurrentPosition >= 0 ? nCurrentPosition : -1;
+				}.bind(this));
+
+			// Put values without an existing position to the end
+			var nMax = aExistingPositions.reduce(function(a, b) {
+				return Math.max(a, b);
+			}, -1);
+			var mPositions = {};
+			aExistingPositions.forEach(function (nCurrentPosition, nIndex) {
+				mPositions[aKeys[nIndex]] = nCurrentPosition >= 0 ? nCurrentPosition : ++nMax;
+			});
+			return mPositions;
 		},
 
 		_prepareInputValue: function(oValue, sKey) {
@@ -280,6 +326,41 @@ sap.ui.define([
 			this.setValue(mParams);
 		},
 
+		_moveUp: function (oEvent) {
+			var iIndex = oEvent.getSource().data("index");
+			if (iIndex > 0) {
+				// Get the data from the model because some items from original
+				// value might be filtered out
+				var aValues = this._itemsModel.getData();
+				this._swapPositions(aValues[iIndex].key, aValues[iIndex - 1].key);
+			}
+		},
+
+		_moveDown: function (oEvent) {
+			var iIndex = oEvent.getSource().data("index");
+			var aValues = this._itemsModel.getData();
+
+			if (iIndex < aValues.length - 1) {
+				this._swapPositions(aValues[iIndex].key, aValues[iIndex + 1].key);
+			}
+		},
+
+		_swapPositions: function (sKey1, sKey2) {
+			var oNewDesigntimeMetadata = {};
+			oNewDesigntimeMetadata[sKey1] = {
+				__value: { position: this.getNestedDesigntimeMetadataValue(sKey2).position }
+			};
+			oNewDesigntimeMetadata[sKey2] = {
+				__value: { position: this.getNestedDesigntimeMetadataValue(sKey1).position }
+			};
+			this.setDesigntimeMetadata(_merge(
+				{},
+				this.getDesigntimeMetadata(),
+				oNewDesigntimeMetadata
+			));
+			this.setValue(this.getValue());
+		},
+
 		_getItemTemplate: function() {
 			return {
 				value: "",
@@ -418,6 +499,10 @@ sap.ui.define([
 		allowedTypes: {
 			defaultValue: ["string"],
 			mergeStrategy: "intersection"
+		},
+		allowSorting: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
 		},
 		includeInvalidEntries: {
 			defaultValue: true,
