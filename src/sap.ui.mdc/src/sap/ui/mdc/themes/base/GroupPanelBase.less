@@ -2,16 +2,6 @@
 
 }
 
-.sapUiMDCGroupPanelBase .sapMFlexBox .sapMVBox {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-    padding-top: 0.25rem;
-}
-
-.sapUiMDCGroupPanelBase .sapMFlexBox .sapMVBox .sapMFlexItem {
-    padding-bottom: 0.25rem;
-}
-
 .sapUiMDCGroupPanelBase .sapMPanelWrappingDivTb{
 	border: none;
 }
@@ -22,7 +12,15 @@
 
 .sapUiMDCGroupPanelBase .sapMLIB.sapMLIBSelected {
 	border: none;
-	background: none;
+	background: @sapUiListBackground;
+}
+
+.sapUiMDCGroupPanelBase .sapMPageBgStandard {
+    background: @sapUiListBackground;
+}
+
+.sapUiMDCGroupPanelBase .sapUiFixFlexFixed {
+    padding: 0.5rem 1rem 0.5rem 1rem;
 }
 
 .sapUiMDCGroupPanelBase .sapMTBStandard {
@@ -32,5 +30,6 @@
 .sapUiMDCGroupPanelBase .sapMPanelContent{
     overflow: visible;
     border-bottom: none;
+    padding-left: 0;
     padding-bottom: 0;
 }
