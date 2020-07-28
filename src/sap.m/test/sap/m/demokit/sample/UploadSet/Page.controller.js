@@ -19,6 +19,8 @@ sap.ui.define([
 
 			// Modify "add file" button
 			oUploadSet.getDefaultFileUploader().setButtonOnly(false);
+			oUploadSet.getDefaultFileUploader().setTooltip("");
+			oUploadSet.getDefaultFileUploader().setIconOnly(true);
 			oUploadSet.getDefaultFileUploader().setIcon("sap-icon://attachment");
 		},
 		onUploadSelectedButton: function () {

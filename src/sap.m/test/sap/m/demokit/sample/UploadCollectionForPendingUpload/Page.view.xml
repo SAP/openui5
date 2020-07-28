@@ -21,7 +21,7 @@
 			multiple="true"
 			sameFilenameAllowed="true"
 			instantUpload="false"
-			noDataDescription="Drop files or use the &quot;+&quot; button for pending upload"
+			noDataDescription="Drop files or use the &quot;Add&quot; button to keep files ready for upload"
 			change="onChange"
 			fileDeleted="onFileDeleted"
 			filenameLengthExceed="onFilenameLengthExceed"

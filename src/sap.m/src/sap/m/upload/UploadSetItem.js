@@ -561,7 +561,7 @@ sap.ui.define([
 		if (!this._oEditButton) {
 			this._oEditButton = new Button({
 				id: this.getId() + "-editButton",
-				icon: "sap-icon://request",
+				icon: "sap-icon://edit",
 				type: MobileLibrary.ButtonType.Standard,
 				enabled: this.getEnabledEdit(),
 				visible: this.getVisibleEdit(),
@@ -655,7 +655,7 @@ sap.ui.define([
 		if (!this._oDeleteButton) {
 			this._oDeleteButton = new Button({
 				id: this.getId() + "-deleteButton",
-				icon: "sap-icon://sys-cancel",
+				icon: "sap-icon://decline",
 				type: MobileLibrary.ButtonType.Standard,
 				enabled: this.getEnabledRemove(),
 				visible: this.getVisibleRemove(),
