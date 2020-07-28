@@ -6457,6 +6457,7 @@ sap.ui.define([
 		oBinding.createContexts(3, 2, createData(2, 3, true, 5));
 		aContextsBefore = oBinding.aContexts.slice();
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("lockGroup").withExactArgs().returns(oGroupLock);
 		this.mock(oContext).expects("getPath").withExactArgs().returns("~contextpath~");
 		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
