@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/integration/designtime/cardEditor/CardEditor",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	merge,
 	CardEditor,
 	sinon
@@ -386,6 +386,27 @@ sap.ui.define([
 				assert.equal(oChange.support.generator, "CardEditor", "the generator is set correctly");
 				assert.equal(oChange.appDescriptorChange, true, "the appDescriptorChange is set correctly");
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("Given a CardEditor", {
+		beforeEach: function() {
+			this.oCardEditor = new CardEditor();
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when setDesigntimeChanges is called before init", function(assert) {
+			this.oCardEditor.setDesigntimeChanges({foo: "bar"});
+			assert.deepEqual(this.oCardEditor.getDesigntimeChanges(), {foo: "bar"}, "the changes were properly set");
+		});
+
+		QUnit.test("when setDesigntimeChanges is called after init", function(assert) {
+			this.oCardEditor._oInitialDesigntimeMetadata = {someObject: "bar"};
+			assert.throws(function() {
+				this.oCardEditor.setDesigntimeChanges({foo: "bar"});
+			}, /Designtime Changes can only be set initially/, "the function throws an error");
 		});
 	});
 

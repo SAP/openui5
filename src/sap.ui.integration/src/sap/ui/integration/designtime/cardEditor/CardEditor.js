@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/base/util/ObjectPath",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
+	"sap/ui/integration/util/CardMerger",
 	"sap/ui/thirdparty/jquery",
 	"./config/index"
 ], function(
@@ -25,6 +26,7 @@ sap.ui.define([
 	deepClone,
 	ObjectPath,
 	BaseEditor,
+	CardMerger,
 	jQuery,
 	oDefaultCardConfig
 ) {
@@ -38,9 +40,13 @@ sap.ui.define([
 	var CardEditor = BaseEditor.extend("sap.ui.integration.designtime.cardEditor.CardEditor", {
 		metadata: {
 			properties: {
-				"layout": {
+				layout: {
 					type: "string",
 					defaultValue: "form"
+				},
+				designtimeChanges: {
+					type: "array",
+					defaultValue: []
 				}
 			}
 		},
@@ -163,8 +169,8 @@ sap.ui.define([
 					this._addSpecificConfig(merge({}, oConfig));
 
 					// Metadata
-					// TODO: Merge file content with delta changes
 					var oDesigntimeMetadata = aDesigntimeFiles[1];
+					oDesigntimeMetadata = CardMerger.mergeCardDesigntimeMetadata(oDesigntimeMetadata, this.getDesigntimeChanges());
 
 					this._oInitialDesigntimeMetadata = oDesigntimeMetadata;
 					this.setDesigntimeMetadata(formatImportedDesigntimeMetadata(oDesigntimeMetadata), true);
@@ -173,6 +179,14 @@ sap.ui.define([
 		}
 
 		BaseEditor.prototype.setJson.apply(this, arguments);
+	};
+
+	CardEditor.prototype.setDesigntimeChanges = function(aDesigntimeChanges) {
+		if (this._oInitialDesigntimeMetadata) {
+			throw Error("Designtime Changes can only be set initially");
+		}
+
+		this.setProperty("designtimeChanges", aDesigntimeChanges);
 	};
 
 	function formatImportedDesigntimeMetadata (oFlatMetadata) {
@@ -192,7 +206,8 @@ sap.ui.define([
 	}
 
 	/**
-	 * foo
+	 * Returns a promise with a runtime change and a designtime change
+	 *
 	 * @param {object} oPropertyBag - Property bag
 	 * @param {String} oPropertyBag.layer - Layer of the Change
 	 * @returns {Promise<object>} Promise with both designtime and runtime change
