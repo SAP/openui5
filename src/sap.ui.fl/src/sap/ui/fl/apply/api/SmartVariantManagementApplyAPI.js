@@ -64,7 +64,7 @@ sap.ui.define([
 				componentId: Utils.getAppComponentForControl(oControl).getId()
 			})
 			.then(function() {
-				return oChangePersistence.getChangesForVariant(this._PERSISTENCY_KEY, sStableId, mParameters);
+				return oChangePersistence.getControlChangesForVariant(this._PERSISTENCY_KEY, sStableId, mParameters);
 			}.bind(this));
 		},
 

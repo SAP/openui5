@@ -120,7 +120,7 @@ function (
 			};
 
 			this.oGetCurrentLayerStub = sinon.stub(FlLayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
-			sinon.stub(VariantManagementState, "getVariantChanges").returns([oChange1, oChange2]);
+			sinon.stub(VariantManagementState, "getControlChangesForVariant").returns([oChange1, oChange2]);
 			sinon.stub(this.oModel, "getVariant").returns(this.oVariant);
 			sinon.stub(VariantManagementState, "addVariantToVariantManagement").returns(1);
 			sinon.stub(VariantManagementState, "removeVariantFromVariantManagement").returns(1);

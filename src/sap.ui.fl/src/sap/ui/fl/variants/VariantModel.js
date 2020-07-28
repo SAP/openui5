@@ -79,7 +79,7 @@ sap.ui.define([
 			.then(function() {
 				// 'modified' property is only set when not in UI Adaptation mode
 				if (ObjectPath.get([sVMReference, "modified"], oModel.oData) === true) {
-					var aControlChanges = VariantManagementState.getVariantChanges({
+					var aControlChanges = VariantManagementState.getControlChangesForVariant({
 						reference: oModel.sFlexReference,
 						vmReference: sVMReference,
 						vReference: sSourceVReference,
@@ -500,7 +500,7 @@ sap.ui.define([
 		var oSourceVariant = this.getVariant(sSourceVariantReference);
 
 		var aVariantChanges =
-			VariantManagementState.getVariantChanges({
+			VariantManagementState.getControlChangesForVariant({
 				vmReference: sVariantManagementReference,
 				vReference: sSourceVariantReference,
 				changeInstance: true,
@@ -1063,7 +1063,7 @@ sap.ui.define([
 			var bSetExecuteOnSelect = mParameters.execute;
 
 			var sSourceVariantReference = this.getCurrentVariantReference(sVariantManagementReference);
-			var aSourceVariantChanges = VariantManagementState.getVariantChanges({
+			var aSourceVariantChanges = VariantManagementState.getControlChangesForVariant({
 				reference: this.sFlexReference,
 				vmReference: sVariantManagementReference,
 				vReference: sSourceVariantReference,
@@ -1248,7 +1248,7 @@ sap.ui.define([
 
 			if (mVariantManagementModelData.modified === true) {
 				var sCurrentVariantReference = this.getCurrentVariantReference(sVariantManagementReference);
-				var aCurrentVariantControlChanges = VariantManagementState.getVariantChanges({
+				var aCurrentVariantControlChanges = VariantManagementState.getControlChangesForVariant({
 					reference: this.sFlexReference,
 					vmReference: sVariantManagementReference,
 					vReference: sCurrentVariantReference,

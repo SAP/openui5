@@ -69,7 +69,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").withArgs(this.oControl).returns({
-				getChangesForVariant: fnStub
+				getControlChangesForVariant: fnStub
 			});
 			return SmartVariantManagementApplyAPI.loadChanges({control: this.oControl})
 				.then(function() {
@@ -94,7 +94,7 @@ sap.ui.define([
 			}];
 
 			var getChangePersistenceForControlStub = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").withArgs(this.oControl).returns({
-				getChangesForVariant: function() {
+				getControlChangesForVariant: function() {
 					return aChanges;
 				}
 			});
