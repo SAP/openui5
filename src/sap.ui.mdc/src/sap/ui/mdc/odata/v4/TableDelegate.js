@@ -98,7 +98,7 @@ sap.ui.define([
 			oBindingInfo = {};
 		}
 
-		var oFilter = Core.byId(oMDCTable.getFilter()), bFilterEnabled = oMDCTable._getFilterEnabled(), mConditions, oFilterInfo;
+		var oFilter = Core.byId(oMDCTable.getFilter()), bFilterEnabled = oMDCTable.isFilteringEnabled(), mConditions, oFilterInfo;
 
 		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
 		if (bFilterEnabled) {

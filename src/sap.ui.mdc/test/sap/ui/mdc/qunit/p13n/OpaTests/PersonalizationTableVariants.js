@@ -180,7 +180,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I select the default variant and restart the application, it should load the default variant", function(Given, When, Then){
 		//simulate restart
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?sap-ui-xx-p13nFilter=true');
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
 
 		//check if the correct variant is selected
 		Then.iShouldSeeSelectedVariant("TestVariant");
@@ -269,7 +269,7 @@ sap.ui.define([
 	});
 
 	opaTest("Close 'FilterVariantTest' appliance after restart", function (Given, When, Then) {
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?sap-ui-xx-p13nFilter=true');
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
 
 		//check default variant appliance
 		Then.iShouldSeeSelectedVariant("FilterVariantTest");

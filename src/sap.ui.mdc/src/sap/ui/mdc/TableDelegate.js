@@ -54,7 +54,7 @@ sap.ui.define([
 			}
 
 			var oFilter = Core.byId(oMDCTable.getFilter()),
-				bFilterEnabled = oMDCTable._getFilterEnabled(),//TODO: use 'getP13nMode' once URL param has been removed
+				bFilterEnabled = oMDCTable.isFilteringEnabled(),
 				mConditions;
 
 			//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
