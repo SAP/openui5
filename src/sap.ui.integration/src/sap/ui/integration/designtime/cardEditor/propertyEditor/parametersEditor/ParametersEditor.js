@@ -121,6 +121,7 @@ sap.ui.define([
 			newDesigntimeValue
 		);
 		this.setDesigntimeMetadata(oDesigntime);
+		this.setValue(this.getValue());
 	};
 
 	ParametersEditor.prototype.onBeforeConfigChange = function(oConfig) {
