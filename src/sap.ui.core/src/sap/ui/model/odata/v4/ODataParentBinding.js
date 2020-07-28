@@ -374,6 +374,20 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Checks whether the given context may be kept alive.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   A context of this binding
+	 * @throws {Error} If <code>oContext.setKeepAlive()</code> is not allowed
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataListBinding#checkKeepAlive
+	 * @private
+	 * @see sap.ui.model.odata.v4.Context#setKeepAlive
+	 */
+
 	/*
 	 * Checks dependent bindings for updates or refreshes the binding if the resource path of its
 	 * parent context changed.
@@ -385,7 +399,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	// @override
+	// @override sap.ui.model.odata.v4.ODataBinding#checkUpdateInternal
 	ODataParentBinding.prototype.checkUpdateInternal = function (bForceUpdate) {
 		var that = this;
 
@@ -1263,25 +1277,6 @@ sap.ui.define([
 		});
 		this.oResumePromise.$resolve = fnResolve;
 		this.removeReadGroupLock();
-		this.suspendInternal();
-	};
-
-	/**
-	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#suspendInternal
-	 */
-	ODataParentBinding.prototype.suspendInternal = function () {
-		// Only if the cache is currently being determined or has not sent a request yet (except
-		// shared caches), we have to fire a change event to inform the UI while resuming.
-		this.sResumeChangeReason
-			= this.oCache === undefined
-			|| this.oCache && (!this.oCache.bSentRequest || this.oCache.bSharedRequest)
-				? ChangeReason.Change
-				: undefined;
-
-		this.getDependentBindings().forEach(function (oBinding) {
-			oBinding.suspendInternal();
-		});
 	};
 
 	/**
@@ -1359,10 +1354,10 @@ sap.ui.define([
 	// #doDeregisterChangeListener is still not final, allow for "super" calls
 	asODataParentBinding.prototype.doDeregisterChangeListener
 		= ODataParentBinding.prototype.doDeregisterChangeListener;
-	// #doSetProperty is not final, allow for "super" calls
-	asODataParentBinding.prototype.doSetProperty = ODataParentBinding.prototype.doSetProperty;
 	// #destroy is still not final, allow for "super" calls
 	asODataParentBinding.prototype.destroy = ODataParentBinding.prototype.destroy;
+	// #fetchCache is still not final, allow for "super" calls
+	asODataParentBinding.prototype.fetchCache = ODataParentBinding.prototype.fetchCache;
 	// #hasPendingChangesForPath is still not final, allow for "super" calls
 	asODataParentBinding.prototype.hasPendingChangesForPath
 		= ODataParentBinding.prototype.hasPendingChangesForPath;
