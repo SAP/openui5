@@ -43,10 +43,7 @@ sap.ui.define([
 
 			//TODO: do not rely on parent control structure (e.g. Dialog)
 			this.getParent().getButtons()[0].attachPress(function(){
-				var mConditions = this._getModelConditions(this._getConditionModel());
-
-				//needs to be done to create remove changes --> AdaptationController should generally provide an absolute appliance as already done for sorting
-				mConditions = merge(this._getConditionModel().getAllConditions(), mConditions);
+				var mConditions = this._getModelConditions(this._getConditionModel(), false, true);
 				this._getAdaptationController().createConditionChanges(mConditions);
 			}.bind(this));
 
