@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.15#throttle}
+ * See {@link https://lodash.com/docs/4.17.19#throttle}
  *
  * @function
  * @alias module:sap/base/util/restricted/_throttle

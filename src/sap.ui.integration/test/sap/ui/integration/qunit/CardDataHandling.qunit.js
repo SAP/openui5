@@ -309,6 +309,7 @@ function (
 				}
 
 				// Assert
+				assert.notOk(oControlToTest.isLoading(), 'control is not loading any more');
 				assert.deepEqual(oControlToTest.getModel().getData(), oExpectedData, sMessage);
 
 				done();
@@ -336,6 +337,7 @@ function (
 				}
 
 				// Assert
+				assert.notOk(oControlToTest.isLoading(), 'control is not loading any more');
 				assert.notOk(oControlToTest.getModel(), "Should NOT set a model when there is no data section.");
 
 				done();
@@ -366,6 +368,7 @@ function (
 				}
 
 				// Assert
+				assert.notOk(oControlToTest.isLoading(), 'control is not loading any more');
 				assert.deepEqual(oControlToTest.getModel().getData(), oData["json"], "Should set correct data model.");
 
 				done();
@@ -398,6 +401,7 @@ function (
 				var oNewData = { test: "Test" };
 
 				oControlToTest._oDataProvider.fireDataChanged({ data: oNewData });
+				assert.notOk(oControlToTest.isLoading(), 'control is not loading any more');
 				assert.deepEqual(oControlToTest.getModel().getData(), oNewData, "Should update data on data changed event.");
 
 				done();

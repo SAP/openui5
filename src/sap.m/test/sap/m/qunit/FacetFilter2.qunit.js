@@ -253,8 +253,8 @@ sap.ui.define([
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function(oEvent) {
 			assert.ok(getRemoveIconCtrl(oFF, 0).getDomRef(), "Facet filter remove icon should be rendered");
-			assert.equal(getRemoveIconCtrl(oFF, 0).$().attr("data-sap-ui-icon-content").charCodeAt(0), 57799,
-					"The remove icon should be the sys-cancel icon font.");
+			assert.equal(getRemoveIconCtrl(oFF, 0).$().attr("data-sap-ui-icon-content").charCodeAt(0), 57406,
+					"The remove icon should be the decline icon font.");
 			assert.ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should be displayed.");
 
 			destroyFF(oFF);
@@ -308,11 +308,11 @@ sap.ui.define([
 				// Personalization, remove facet icons
 				assert.ok(getRemoveIconCtrl(oFF, 0).getDomRef(), "Facet filter remove icon should be rendered");
 				assert.ok(getRemoveIconCtrl(oFF, 1).getDomRef(), "Facet filter remove icon should be rendered");
-				assert.equal(getRemoveIconCtrl(oFF, 0).$().attr("data-sap-ui-icon-content").charCodeAt(0), 57799,
-						"The remove icon should be the sys-cancel icon font.");
+				assert.equal(getRemoveIconCtrl(oFF, 0).$().attr("data-sap-ui-icon-content").charCodeAt(0), 57406,
+						"The remove icon should be the decline icon font.");
 				assert.ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should be hidden.");
-				assert.equal(getRemoveIconCtrl(oFF, 1).$().attr("data-sap-ui-icon-content").charCodeAt(0), 57799,
-						"The remove icon should be the sys-cancel icon font.");
+				assert.equal(getRemoveIconCtrl(oFF, 1).$().attr("data-sap-ui-icon-content").charCodeAt(0), 57406,
+						"The remove icon should be the decline icon font.");
 				assert.ok(getRemoveIconCtrl(oFF, 1).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should be hidden.");
 			}
 

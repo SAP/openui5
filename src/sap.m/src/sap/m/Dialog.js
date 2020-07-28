@@ -419,7 +419,7 @@ function(
 			return this._headerTitle ? this._headerTitle.getId() : false;
 		});
 
-		Dialog._bPaddingByDefault = (sap.ui.getCore().getConfiguration().getCompatibilityVersion("sapMDialogWithPadding").compareTo("1.16") < 0);
+		Dialog._bPaddingByDefault = (Core.getConfiguration().getCompatibilityVersion("sapMDialogWithPadding").compareTo("1.16") < 0);
 
 		Dialog._mIcons = {};
 		Dialog._mIcons[ValueState.Success] = IconPool.getIconURI("message-success");
@@ -434,7 +434,7 @@ function(
 			var that = this;
 			this._oManuallySetSize = null;
 			this._oManuallySetPosition = null;
-			this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			this._bRTL = Core.getConfiguration().getRTL();
 
 			// used to judge if enableScrolling needs to be disabled
 			this._scrollContentList = ["sap.m.NavContainer", "sap.m.Page", "sap.m.ScrollContainer", "sap.m.SplitContainer", "sap.m.MultiInput", "sap.m.SimpleFixFlex"];
@@ -480,6 +480,10 @@ function(
 			this._initTitlePropagationSupport();
 
 			this._initResponsivePaddingsEnablement();
+
+			this._sAriaRoleDescription = Core
+			.getLibraryResourceBundle("sap.m")
+			.getText("DIALOG_ROLE_DESCRIPTION");
 		};
 
 		Dialog.prototype.onBeforeRendering = function () {
@@ -504,7 +508,7 @@ function(
 
 			this._createToolbarButtons();
 
-			if (sap.ui.getCore().getConfiguration().getAccessibility() && this.getState() != ValueState.None) {
+			if (Core.getConfiguration().getAccessibility() && this.getState() != ValueState.None) {
 				var oValueState = new InvisibleText({text: this.getValueStateString(this.getState())});
 
 				this.setAggregation("_valueState", oValueState);
@@ -1247,7 +1251,7 @@ function(
 				oControl;
 
 			if (oFocusDomRef && oFocusDomRef.id) {
-				oControl = sap.ui.getCore().byId(oFocusDomRef.id);
+				oControl = Core.byId(oFocusDomRef.id);
 			}
 
 			if (oControl) {
@@ -1553,7 +1557,7 @@ function(
 		 * @private
 		 */
 		Dialog.prototype.getValueStateString = function (sValueState) {
-			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var rb = Core.getLibraryResourceBundle("sap.m");
 
 			switch (sValueState) {
 				case (ValueState.Success):
@@ -1594,7 +1598,7 @@ function(
 
 		Dialog.prototype.setLeftButton = function (vButton) {
 			if (typeof vButton === "string") {
-				vButton = sap.ui.getCore().byId(vButton);
+				vButton = Core.byId(vButton);
 			}
 
 			//setting leftButton will also set the beginButton with the same button instance.
@@ -1605,7 +1609,7 @@ function(
 
 		Dialog.prototype.setRightButton = function (vButton) {
 			if (typeof vButton === "string") {
-				vButton = sap.ui.getCore().byId(vButton);
+				vButton = Core.byId(vButton);
 			}
 
 			//setting rightButton will also set the endButton with the same button instance.

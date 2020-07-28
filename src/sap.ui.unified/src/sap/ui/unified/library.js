@@ -30,6 +30,7 @@ sap.ui.define([
 			"sap.ui.unified.CalendarAppointmentVisualization",
 			"sap.ui.unified.CalendarDayType",
 			"sap.ui.unified.CalendarIntervalType",
+			"sap.ui.unifief.CalendarAppointmentHeight",
 			"sap.ui.unified.ColorPickerDisplayMode",
 			"sap.ui.unified.ColorPickerMode",
 			"sap.ui.unified.ContentSwitcherAnimation",
@@ -331,6 +332,43 @@ sap.ui.define([
 		 * @since 1.46
 		 */
 		OneMonth : "One Month"
+
+	};
+
+	/**
+	 * Types of a calendar appointment display mode
+	 *
+	 * @enum {string}
+	 * @alias sap.ui.unified.CalendarAppointmentHeight
+	 * @public
+	 * @since 1.80.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.CalendarAppointmentHeight = {
+
+		/**
+		 * HalfSize display mode.
+		 * @public
+		 */
+		HalfSize : "HalfSize",
+
+		/**
+		 * Regular display mode.
+		 * @public
+		 */
+		Regular : "Regular",
+
+		/**
+		 * Large display mode.
+		 * @public
+		 */
+		Large : "Large",
+
+		/**
+		 * Automatic display mode.
+		 * @public
+		 */
+		Automatic : "Automatic"
 
 	};
 

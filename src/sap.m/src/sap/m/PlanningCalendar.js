@@ -21,6 +21,7 @@ sap.ui.define([
 	'sap/ui/unified/calendar/MonthsRow',
 	'sap/ui/unified/calendar/TimesRow',
 	'sap/ui/unified/DateRange',
+	'sap/ui/unified/DateTypeRange',
 	'sap/ui/unified/CalendarAppointment',
 	'sap/ui/unified/CalendarRow',
 	'sap/ui/unified/CalendarRowRenderer',
@@ -70,6 +71,7 @@ sap.ui.define([
 	MonthsRow,
 	TimesRow,
 	DateRange,
+	DateTypeRange,
 	CalendarAppointment,
 	CalendarRow,
 	CalendarRowRenderer,
@@ -133,6 +135,9 @@ sap.ui.define([
 
 	// shortcut for sap.ui.unified.CalendarIntervalType
 	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
+
+	// shortcut for sap.ui.unified.CalendarAppointmentHeight
+	var CalendarAppointmentHeight = unifiedLibrary.CalendarAppointmentHeight;
 
 	var DRAG_DROP_CONFIG_NAME = "DragDropConfig";
 	var RESIZE_CONFIG_NAME = "ResizeConfig";
@@ -285,6 +290,12 @@ sap.ui.define([
 				 * @since 1.38.0
 				 */
 				appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false},
+
+				/**
+				 * Determines the different possible sizes for appointments.
+				 * @since 1.81.0
+				 */
+				appointmentHeight: { type: "sap.ui.unified.CalendarAppointmentHeight", group: "Appearance", defaultValue: CalendarAppointmentHeight.Regular },
 
 				/**
 				 * Determines how the appointments are visualized depending on the used theme.
@@ -1251,6 +1262,7 @@ sap.ui.define([
 
 		this.setProperty("startDate", oStartDate, true);
 		this._dateNav.setStart(oStartDate);
+		this._dateNav.setCurrent(oStartDate);
 		this._getHeader().setStartDate(oStartDate);
 
 		INTERVAL_CTR_REFERENCES.forEach(function (sControlRef) {
@@ -1459,6 +1471,9 @@ sap.ui.define([
 						this._oTimesRow.attachEvent("focus", this._handleFocus, this);
 						this._oTimesRow.attachEvent("select", this._handleCalendarSelect, this);
 						this._oTimesRow._oPlanningCalendar = this;
+						this._oTimesRow._getSpecialDates = function(){
+							return this._oPlanningCalendar._getSpecialDates();
+						};
 						this._oTimesRow.getSpecialDates = function(){
 							return this._oPlanningCalendar.getSpecialDates();
 						};
@@ -1495,6 +1510,9 @@ sap.ui.define([
 						}
 
 						oInterval._oPlanningCalendar = this;
+						oInterval._getSpecialDates = function(){
+							return this._oPlanningCalendar._getSpecialDates();
+						};
 						oInterval.getSpecialDates = function(){
 							return this._oPlanningCalendar.getSpecialDates();
 						};
@@ -1524,6 +1542,9 @@ sap.ui.define([
 						this._oMonthsRow.attachEvent("focus", this._handleFocus, this);
 						this._oMonthsRow.attachEvent("select", this._handleCalendarSelect, this);
 						this._oMonthsRow._oPlanningCalendar = this;
+						this._oMonthsRow._getSpecialDates = function(){
+							return this._oPlanningCalendar._getSpecialDates();
+						};
 						this._oMonthsRow.getSpecialDates = function(){
 							return this._oPlanningCalendar.getSpecialDates();
 						};
@@ -1859,6 +1880,19 @@ sap.ui.define([
 
 		return this;
 
+	};
+
+	PlanningCalendar.prototype.setAppointmentHeight = function(sAppointmentHeight) {
+		var aRows = this.getRows(),
+			i;
+
+		this.setProperty("appointmentHeight", sAppointmentHeight);
+		for (i = 0; i < aRows.length; i++) {
+			var oRow = aRows[i];
+			getRowTimeline(oRow).setAppointmentHeight(sAppointmentHeight);
+		}
+
+		return this;
 	};
 
 	PlanningCalendar.prototype.setAppointmentsVisualization = function(sAppointmentsVisualization){
@@ -2967,6 +3001,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the width property and ensures that the start date is in sync with each row timeline.
+	 *
+	 * @param sWidth the width to be set to the PlanningCalendar
+	 * @returns {object} this for method chaining
+	 * @public
+	 */
+	PlanningCalendar.prototype.setWidth = function (sWidth) {
+		var oStartDate = this.getStartDate();
+
+		this.getRows().forEach(function (oRow) {
+			getRowTimeline(oRow).setStartDate(oStartDate);
+		});
+
+		return this.setProperty("width", sWidth);
+	};
+
+	/**
 	 * Getter for custom appointments sorter (if any).
 	 * @since 1.54
 	 * @returns {sap.m.PlanningCalendar.appointmentsSorterCallback}
@@ -3326,8 +3377,8 @@ sap.ui.define([
 				fnNonWorkingFilter = function (oSpecialDate) {
 					return oSpecialDate.getType() === CalendarDayType.NonWorking;
 				},
-				aRowNonWorkingDates = oRow.getSpecialDates().filter(fnNonWorkingFilter),
-				aPCNonWorkingDates = oPC.getSpecialDates().filter(fnNonWorkingFilter),
+				aRowNonWorkingDates = oRow._getSpecialDates().filter(fnNonWorkingFilter),
+				aPCNonWorkingDates = oPC._getSpecialDates().filter(fnNonWorkingFilter),
 				oRowStartDate = oTimeline.getStartDate(),
 				aAllNonworkingDates, oCurrentDate, oNonWorkingStartDate, oNonWorkingEndDate;
 
@@ -4067,6 +4118,24 @@ sap.ui.define([
 
 		this._getHeader()._oPrevBtn.setEnabled(!oMinDate || oStartDate.getTime() > oMinDate.getTime());
 		this._getHeader()._oNextBtn.setEnabled(!oMaxDate || oEndDate.getTime() < oMaxDate.getTime());
+	};
+
+	PlanningCalendar.prototype._getSpecialDates = function(){
+		var specialDates = this.getSpecialDates();
+		for (var i = 0; i < specialDates.length; i++) {
+			var bNeedsSecondTypeAdding = specialDates[i].getSecondaryType() === unifiedLibrary.CalendarDayType.NonWorking
+					&& specialDates[i].getType() !== unifiedLibrary.CalendarDayType.NonWorking;
+			if (bNeedsSecondTypeAdding) {
+				var newSpecialDate = new DateTypeRange();
+				newSpecialDate.setType(unifiedLibrary.CalendarDayType.NonWorking);
+				newSpecialDate.setStartDate(specialDates[i].getStartDate());
+				if (specialDates[i].getEndDate()) {
+					newSpecialDate.setEndDate(specialDates[i].getEndDate());
+				}
+				specialDates.push(newSpecialDate);
+			}
+		}
+		return specialDates;
 	};
 
 	function getResizeGhost() {

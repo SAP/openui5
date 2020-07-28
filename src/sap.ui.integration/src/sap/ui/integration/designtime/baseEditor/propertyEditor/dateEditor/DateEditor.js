@@ -3,11 +3,9 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
 	"sap/ui/core/format/DateFormat"
 ], function (
 	BasePropertyEditor,
-	isValidBindingString,
 	DateFormat
 ) {
 	"use strict";
@@ -33,12 +31,40 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
+	DateEditor.prototype.getDefaultValidators = function () {
+		var oConfig = this.getConfig();
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getDefaultValidators.call(this),
+			{
+				isValidBinding: {
+					type: "isValidBinding",
+					isEnabled: oConfig.allowBindings
+				},
+				notABinding: {
+					type: "notABinding",
+					isEnabled: !oConfig.allowBindings
+				},
+				isDate: {
+					type: "isDate"
+				}
+			}
+		);
+	};
+
 	DateEditor.prototype.formatValue = function (sValue) {
-		if (!sValue || isValidBindingString(sValue, false)) {
+		var oDate = new Date(sValue);
+		if (!this._isValidDate(oDate)) {
 			return sValue;
 		}
-		return this._formatDate(sValue);
+		return this.getFormatterInstance().format(oDate);
 	};
+
+	DateEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		allowBindings: {
+			defaultValue: true
+		}
+	});
 
 	DateEditor.prototype.onFragmentReady = function () {
 		var oDatePicker = this.getContent();
@@ -53,20 +79,15 @@ sap.ui.define([
 	DateEditor.prototype._onChange = function (oEvent) {
 		var sValue = oEvent.getParameter("newValue");
 		var sParsedValue = this._parse(sValue);
-		if (this._validate(sValue, sParsedValue)) {
-			this._setInputState(true);
-			this.setValue(sParsedValue);
-		} else {
-			this._setInputState(false, this.getI18nProperty("BASE_EDITOR.DATE.INVALID_BINDING_OR_DATE"));
-		}
+		this.setValue(sParsedValue);
 	};
 
 	DateEditor.prototype._parse = function (sValue) {
-		if (isValidBindingString(sValue, false)) {
-			return sValue;
+		if (sValue === "") {
+			return undefined;
 		}
 		var sParsedDate = new Date(sValue);
-		return this._isValidDate(sParsedDate) ? sParsedDate.toISOString() : undefined;
+		return this._isValidDate(sParsedDate) ? sParsedDate.toISOString() : sValue;
 	};
 
 	DateEditor.prototype._isValidDate = function (sDate) {
@@ -75,39 +96,6 @@ sap.ui.define([
 
 	DateEditor.prototype.getFormatterInstance = function () {
 		return DateFormat.getDateInstance();
-	};
-
-	DateEditor.prototype._formatDate = function (sDate) {
-		var oDate = new Date(sDate);
-		if (!this._isValidDate(oDate)) {
-			this._setInputState(false, this.getI18nProperty("BASE_EDITOR.DATE.INVALID_BINDING_OR_DATE"));
-			return sDate;
-		}
-		this._setInputState(true);
-		return this.getFormatterInstance().format(oDate);
-	};
-
-	DateEditor.prototype._validate = function (sValue, sParsedValue) {
-		return typeof sValue === "undefined" || typeof sParsedValue !== "undefined";
-	};
-
-	DateEditor.prototype._setInputState = function (bIsValid, sErrorMessage) {
-		var fnSetValueState = function () {
-			var oInput = this.getContent();
-			if (bIsValid) {
-				oInput.setValueState("None");
-			} else {
-				oInput.setValueState("Error");
-				oInput.setValueStateText(sErrorMessage || "Unknown Error");
-			}
-		}.bind(this, bIsValid, sErrorMessage);
-
-		if (this.isReady()) {
-			fnSetValueState();
-		} else {
-			this.ready().then(fnSetValueState);
-		}
-
 	};
 
 	return DateEditor;

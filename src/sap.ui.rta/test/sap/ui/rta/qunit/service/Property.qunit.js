@@ -398,6 +398,7 @@ function(
 			}.bind(this));
 		},
 		after: function() {
+			sandbox.restore();
 			return this.oRta.stop().then(function () {
 				this.oComp.destroy();
 				delete this.oExpectedPropertyData;
@@ -469,29 +470,60 @@ function(
 				visible: false,
 				text: "{i18n>ButtonName}"
 			});
-			var oPage = new Page('page', {
-				content: [
-					oButton
-				]
+
+			var MockComponent = UIComponent.extend("MockController2", {
+				metadata: {
+					manifest: {
+						"sap.app" : {
+							applicationVersion : {
+								version : "1.2.3"
+							},
+							id: "MockAppId2"
+						}
+					}
+				},
+				createContent : function() {
+					return new Page('page', {
+						content : [
+							oButton
+						]
+					});
+				}
 			});
 
-			oPage.placeAt("qunit-fixture");
+			var oComp = new MockComponent("testComponent2");
+
+			var oComponentContainer = new ComponentContainer("CompCont2", {
+				component: oComp
+			});
+			oComponentContainer.placeAt('qunit-fixture');
+
 			sap.ui.getCore().applyChanges();
+
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: false
+			});
 
 			var oRta = new RuntimeAuthoring({
 				showToolbars: false,
-				rootControl: oPage
+				rootControl: oComp
 			});
 			sandbox.stub(oRta, "_determineReload").resolves(false);
-			oRta.start();
 
-			return oRta.getService("property").then(function (oService) {
-				return oService.get(oButton.getId()).then(function (mResult) {
-					var mBinding = mResult.properties.text.binding;
-					assert.strictEqual(mBinding.parts[0].model, "i18n");
-					assert.strictEqual(mBinding.parts[0].path, "ButtonName");
-					assert.strictEqual(mBinding.bindingValues, undefined);
-				});
+
+			return oRta.start()
+			.then(function () {
+				return oRta.getService("property");
+			})
+			.then(function (oService) {
+				return oService.get(oButton.getId());
+			})
+			.then(function (mResult) {
+				var mBinding = mResult.properties.text.binding;
+				assert.strictEqual(mBinding.parts[0].model, "i18n");
+				assert.strictEqual(mBinding.parts[0].path, "ButtonName");
+				assert.strictEqual(mBinding.bindingValues, undefined);
 			});
 		});
 	});

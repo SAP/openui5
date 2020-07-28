@@ -700,7 +700,7 @@ sap.ui.define([
 			this.spy(sap.ui, 'require');
 			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 
-			this.spy(Manifest, 'load');
+			var loadLibrariesSpy = this.spy(sap.ui.getCore(), 'loadLibraries');
 
 			this.spy(LoaderExtensions, 'loadResource');
 
@@ -713,40 +713,31 @@ sap.ui.define([
 			var sURL = LoaderExtensions.loadResource.getCall(0).args[0].url;
 			assert.ok(/\/scenario15\/lib1\/comp\/manifest\.json/.test(sURL), "The manifest.json load request is sent");
 
-			var pLoadManifest = Manifest.load.getCall(0).returnValue;
-			pLoadManifest.then(function() {
-				// at this point the component should not be required yet
-				sinon.assert.neverCalledWith(sap.ui.require, ["testlibs/scenario15/lib1/comp/Component"]);
+			return pLoad.then(function() {
+				// the component should be required
+				sinon.assert.calledWith(sap.ui.require, ["testlibs/scenario15/lib1/comp/Component"]);
 
-				// no component preload
+				// no component preload should be triggered since the component is contained in lib1
 				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/Component-preload\.js$/));
 
 				// load of trans. dependencies should be triggered
-				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib1\/library-preload\.js$/));
-				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib3\/library-preload\.js$/));
-				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib4\/library-preload\.js$/));
-				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib6\/library-preload\.js$/));
-				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib8\/library-preload\.js$/));
-				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib9\/library-preload\.js$/));
+				var loadedLibraries = loadLibrariesSpy.getCall(0).args[0];
+				assert.deepEqual(loadedLibraries, [
+					"testlibs.scenario15.lib1",
+					"testlibs.scenario15.lib3",
+					"testlibs.scenario15.lib4",
+					"testlibs.scenario15.lib6",
+					"testlibs.scenario15.lib8",
+					"testlibs.scenario15.lib9"
+				]);
 
-				// lib10 should not be requested yet, as it is not part of the version-info
-				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib10\/library-preload\.js$/));
+				// lib10 is loaded with a seperate request and not part of the initial loadLibraries call
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib10\/library-preload\.js$/));
 
-				// lib5 is still not requested --> lazy: true
+				// lib5 is not requested --> lazy: true
 				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib5\/library-preload\.js$/));
 			});
-
-			return Promise.all([pLoadManifest, pLoad]);
-		}.bind(this)).then(function() {
-			// the component should be required now
-			sinon.assert.calledWith(sap.ui.require, ["testlibs/scenario15/lib1/comp/Component"]);
-
-			// lib10 is now requested, as a seperate request after all other libraries
-			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib1\/library-preload\.js$/));
-
-			// lib5 is still not requested --> lazy: true
-			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib5\/library-preload\.js$/));
-		});
+		}.bind(this));
 	});
 
 	QUnit.module("Misc", {
@@ -778,6 +769,15 @@ sap.ui.define([
 			});
 		});
 
+	});
+
+	QUnit.test("Load library-preload.js instead of Component-preload.js when the Component.js is included in a library preload (embeddedBy check)", function(assert) {
+		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
+		return Component.create({
+			name: "sap.ui.test.embedded"
+		}).then(function(oComponent) {
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/Component-preload\.js$/));
+		});
 	});
 
 });

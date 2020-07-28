@@ -447,7 +447,7 @@ function (
 	});
 
 	QUnit.module("Given a BasePropertyEditor default config", {
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			var mConfig = {
 				context: "/",
 				properties: {
@@ -470,26 +470,24 @@ function (
 				foo: "bar"
 			};
 
-			sandbox.stub(BasePropertyEditor.prototype, "getConfigMetadata").callsFake(function () {
-				return {
-					configA: {
-						defaultValue: "editor default A"
-					},
-					configB: {
-						defaultValue: "editor default B"
-					},
-					configD: {
-						defaultValue: "editor default D"
-					},
-					configE: {
-						defaultValue: {
-							a: "editor default E"
-						}
-					},
-					configF: {
-						defaultValue: ["editor default F"]
+			sandbox.stub(StringEditor, "configMetadata").value({
+				configA: {
+					defaultValue: "editor default A"
+				},
+				configB: {
+					defaultValue: "editor default B"
+				},
+				configD: {
+					defaultValue: "editor default D"
+				},
+				configE: {
+					defaultValue: {
+						a: "editor default E"
 					}
-				};
+				},
+				configF: {
+					defaultValue: ["editor default F"]
+				}
 			});
 
 			sandbox.stub(StringEditor.prototype, "onBeforeConfigChange").callsFake(function (oConfig) {

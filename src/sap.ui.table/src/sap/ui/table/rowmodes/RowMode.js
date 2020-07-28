@@ -341,28 +341,6 @@ sap.ui.define([
 		var oTable = this.getTable();
 
 		clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
-
-		// Special handling for the V4 AutoExpandSelect feature.
-		if (!oTable._bBindingReady) {
-			var aContexts = this.getRowContexts(null, true);
-
-			if (this.getTotalRowCountOfTable() === 0 && aContexts.length === 1) {
-				// The context might be a virtual context part of AutoExpandSelect.
-				var oVirtualContext = aContexts[0];
-				var oVirtualRow = oTable._getRowClone("Virtual");
-				var oBindingInfo = oTable.getBindingInfo("rows");
-				var sModelName = oBindingInfo ? oBindingInfo.model : undefined;
-
-				oVirtualRow.setBindingContext(oVirtualContext, sModelName);
-				oTable.addAggregation("rows", oVirtualRow, true);
-				oTable.removeAggregation("rows", oVirtualRow, true);
-				oVirtualRow.setBindingContext(null, sModelName);
-				oVirtualRow.destroy();
-			}
-
-			return; // No need to update rows if the binding is not ready.
-		}
-
 		this.updateTableAsync(sReason);
 	};
 

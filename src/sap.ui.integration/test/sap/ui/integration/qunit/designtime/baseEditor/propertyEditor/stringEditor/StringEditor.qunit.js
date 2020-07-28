@@ -1,13 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor"
 ], function (
-	StringEditor,
 	ResourceBundle,
 	ResourceModel,
 	EditorQunitUtils,
@@ -20,7 +18,9 @@ sap.ui.define([
 			{
 				label: "Test String",
 				type: "string",
-				path: "content"
+				path: "content",
+				defaultValue: "Test",
+				placeholder: "Placeholder"
 			},
 			mConfigOptions
 		);
@@ -37,31 +37,25 @@ sap.ui.define([
 	}
 
 	QUnit.module("String Editor: Given an editor config", {
-		before: function () {
-			this.oPropertyConfig = {
-				tags: ["content"],
-				label: "Test String",
-				type: "string",
-				defaultValue: "Test",
-				placeholder: "Placeholder",
-				path: "content"
+		beforeEach: function() {
+			var mJson = {
+				content: "Hello World."
 			};
-		},
-		beforeEach: function (assert) {
-			this.oStringEditor = new StringEditor();
-			this.oStringEditor.setConfig(this.oPropertyConfig);
-			this.oStringEditor.setValue("Hello World.");
-			this.oStringEditor.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
 
-			var fnReady = assert.async();
-			this.oStringEditor.ready().then(function () {
+			this.oBaseEditor = new BaseEditor({
+				json: mJson,
+				config: createBaseEditorConfig()
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleString").then(function (aPropertyEditors) {
+				this.oStringEditor = aPropertyEditors[0];
+				sap.ui.getCore().applyChanges();
 				this.oStringEditorElement = this.oStringEditor.getContent();
-				fnReady();
 			}.bind(this));
 		},
 		afterEach: function () {
-			this.oStringEditor.destroy();
+			this.oBaseEditor.destroy();
 		}
 	}, function () {
 		QUnit.test("When a StringEditor is created", function (assert) {

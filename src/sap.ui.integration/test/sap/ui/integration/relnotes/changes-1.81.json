@@ -7,6 +7,23 @@
         "type": "FIX",
         "text": " sap.ui.integration.cards.AdaptiveContent: Adding customElements check in _loadDependencies",
         "references": []
+      },
+      {
+        "id": "5a74c8663ef2dabdc07270ae750dbbde4896c491",
+        "type": "FIX",
+        "text": " sap.ui.integration.qunit.cards.AdaptiveCard: Missing semicolon fixed",
+        "references": []
+      },
+      {
+        "id": "edece81db7cc8ac731ad7ce1cedce4c34ba582d4",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Curly braces are now escaped properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080153977"
+          }
+        ]
       }
     ]
   }

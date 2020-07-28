@@ -48,33 +48,45 @@
         margin-bottom: 1.5em;
     }
 
-    .collapsible-icon::before {
-        cursor: pointer;
-        font-family: sap-icons;
-        content: '\e0e3';
-    }
-
     .collapsible.expanded {
-        .fig > :not(h2) {
+        .fig > :not(.title) {
             display: block;
         }
 
-        .collapsible-icon::before {
+        > .collapsible-icon::before {
             content: '\E1EF';
         }
     }
 
-    .collapsible {
-        .fig > :not(h2) {
+    .collapsible:not(.expanded) {
+        .fig > :not(.title) {
             display: none;
         }
 
-        h2 {
-            display: inline-block;
-            margin: 0.25rem 0.25rem 0.25rem 1rem;
-            pointer-events: none;
-            top: -1.45rem;
-            position: relative;
+        > .collapsible-icon::before {
+           content: '\e0e3';
+        }
+    }
+
+    .collapsible {
+        .collapsible-icon {
+            cursor: pointer;
+
+            &:before {
+                margin-right: 1rem;
+                font-family: sap-icons;
+            }
+
+            &:hover {
+                color: rgba(0,29,134,0.9)
+            }
+
+            h2, h3, .title, strong {
+              cursor: pointer;
+              display: inline-block;
+              margin: 0.25rem 0.25rem 0.25rem;
+              pointer-events: none;
+            }
         }
     }
 
@@ -254,7 +266,7 @@
         margin-top: 0;
     }
 
-    .note > p {
+    .note .fig > p {
         margin: .4em 0;
     }
 

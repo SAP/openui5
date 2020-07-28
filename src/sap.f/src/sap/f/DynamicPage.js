@@ -169,12 +169,19 @@ sap.ui.define([
 				backgroundDesign : {type: "sap.m.PageBackgroundDesign", group: "Appearance", defaultValue: PageBackgroundDesign.Standard},
 
 				/**
-				 * Optimizes <code>DynamicPage</code> responsiveness on small screens and behavior
-				 * when expanding/collapsing the <code>DynamicPageHeader</code>.
+				 * Forces the content container of the <code>DynamicPage</code> to make room for
+				 * stretchable controls in the <code>content</code> aggregation to fill exactly
+				 * the visible space between the header and the footer.
 				 *
-				 * <b>Note:</b> It is recommended to use this property when displaying content
-				 * of adaptive controls that stretch to fill the available space. Such controls may be
-				 * {@link sap.ui.table.Table} and {@link sap.ui.table.AnalyticalTable} depending on their settings.
+				 * <b>Notes:</b>
+				 * <ul>
+				 * <li>Enable this property only if the control of the <code>content</code> aggregation is configured
+				 * to automatically stretch to fill the available height, which means that the content would appear
+				 * squashed in height when this property is disabled. Such stretchable controls may be
+				 * {@link sap.ui.table.Table} and {@link sap.ui.table.AnalyticalTable} depending on their settings.</li>
+				 * <li>It is not recommended to enable this property for controls that do not stretch in
+				 * height (and appear properly when this property is disabled).</li>
+				 * </ul>
 				 */
 				fitContent: {type: "boolean", group: "Behavior", defaultValue: false}
 			},

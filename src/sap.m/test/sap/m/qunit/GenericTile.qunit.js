@@ -2859,4 +2859,84 @@ sap.ui.define([
 		assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile hover overlay");
 
 	});
+
+	QUnit.test("Navigation using keyboard to other tiles disabled when a tile is clicked", function(assert){
+		this.oGenericTile.rerender();
+		this.oGenericTile.$().trigger("focus");
+
+		//simulate space key press
+		var spaceDown = jQuery.Event("keydown");
+		spaceDown.keyCode = jQuery.sap.KeyCodes.SPACE;
+		this.oGenericTile.$().trigger(spaceDown);
+
+		//simulate tab key navigation
+		var tabDown = jQuery.Event("keydown");
+		tabDown.keyCode = jQuery.sap.KeyCodes.TAB;
+		this.oGenericTile.$().trigger(tabDown);
+		var tabUp = jQuery.Event("keyup");
+		tabUp.keyCode = jQuery.sap.KeyCodes.TAB;
+		this.oGenericTile.$().trigger(tabUp);
+
+		//Default event cancelled when space key is down
+		assert.ok(tabDown.isDefaultPrevented(), "Navigation using TAB disabled when a tile is in selected state with SPACE key");
+		var spaceUp = jQuery.Event("keyup");
+		spaceUp.keyCode = jQuery.sap.KeyCodes.SPACE;
+		this.oGenericTile.$().trigger(spaceUp);
+
+		//simulate enter key press
+		var enterDown = jQuery.Event("keydown");
+		enterDown.keyCode = jQuery.sap.KeyCodes.ENTER;
+		this.oGenericTile.$().trigger(enterDown);
+
+		//simulate tab key navigation
+		tabDown = jQuery.Event("keydown");
+		tabDown.keyCode = jQuery.sap.KeyCodes.TAB;
+		this.oGenericTile.$().trigger(tabDown);
+		tabUp = jQuery.Event("keyup");
+		tabUp.keyCode = jQuery.sap.KeyCodes.TAB;
+		this.oGenericTile.$().trigger(tabUp);
+
+		//Default event cancelled when enter key is down
+		assert.ok(tabDown.isDefaultPrevented(), "Navigation using TAB disabled when a tile is in selected state with ENTER key");
+		var enterUp = jQuery.Event("keyup");
+		enterUp.keyCode = jQuery.sap.KeyCodes.ENTER;
+		this.oGenericTile.$().trigger(enterUp);
+
+		//simulate space key press
+		spaceDown = jQuery.Event("keydown");
+		spaceDown.keyCode = jQuery.sap.KeyCodes.SPACE;
+		this.oGenericTile.$().trigger(spaceDown);
+
+		//simulating shift+tab key press
+		var shiftDown = jQuery.Event("keydown");
+		shiftDown.keyCode = jQuery.sap.KeyCodes.SHIFT;
+		this.oGenericTile.$().trigger(shiftDown);
+		tabDown = jQuery.Event("keydown");
+		tabDown.keyCode = jQuery.sap.KeyCodes.TAB;
+		this.oGenericTile.$().trigger(tabDown);
+		var shiftUp = jQuery.Event("keyup");
+		shiftUp.keyCode = jQuery.sap.KeyCodes.SHIFT;
+		this.oGenericTile.$().trigger(shiftUp);
+		tabUp = jQuery.Event("keyup");
+		tabUp.keyCode = jQuery.sap.KeyCodes.TAB;
+		this.oGenericTile.$().trigger(tabUp);
+
+		//navigation disabled using shift+tab when a tile is selected
+		assert.ok(tabDown.isDefaultPrevented(), "Navigation using SHIFT+TAB disabled when a tile is in selected state with SPACE key");
+		spaceUp = jQuery.Event("keyup");
+		spaceUp.keyCode = jQuery.sap.KeyCodes.SPACE;
+		this.oGenericTile.$().trigger(spaceUp);
+
+		//simulating navigation using tab key when no tile is in selected state
+		tabDown = jQuery.Event("keydown");
+		tabDown.keyCode = jQuery.sap.KeyCodes.TAB;
+		this.oGenericTile.$().trigger(tabDown);
+		tabUp = jQuery.Event("keyup");
+		tabUp.keyCode = jQuery.sap.KeyCodes.TAB;
+		this.oGenericTile.$().trigger(tabUp);
+
+		//Default event is not cancelled when no tile is selected
+		assert.ok(!tabDown.isDefaultPrevented(), "Navigation using TAB enabled since no tile is in selected state");
+
+	});
 });

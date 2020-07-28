@@ -17,6 +17,9 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 	// shortcut for sap.ui.unified.CalendarAppointmentVisualization
 	var CalendarAppointmentVisualization = library.CalendarAppointmentVisualization;
 
+	// shortcut for sap.ui.unified.CalendarAppointmentHeight
+	var CalendarAppointmentHeight = library.CalendarAppointmentHeight;
+
 
 	/**
 	 * CalendarRow renderer.
@@ -222,6 +225,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			oRm.class("sapUiCalendarApp");
 			oRm.class("sapUiCalendarAppTitleOnly");
 			oRm.class("sapUiCalendarAppDummy");
+			oRm.class("sapUiCalendarAppHeight1");
 			oRm.openEnd();
 			oRm.close("div");
 		}
@@ -352,7 +356,11 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 	};
 
 	CalendarRowRenderer.renderIntervalHeader = function(oRm, oRow, oIntervalHeader, bRtl, left, right) {
-		var sId = oIntervalHeader.appointment.getId();
+		var sId = oIntervalHeader.appointment.getId(),
+			mAccProps = {
+				labelledby: { value: sId + "-Descr", append: true }
+			},
+			sStartEndAriaText;
 
 		var oArrowValues = oRow._calculateAppoitnmentVisualCue(oIntervalHeader.appointment);
 
@@ -395,6 +403,8 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 				oRm.style("border-left-color", sColor);
 			}
 		}
+
+		oRm.accessibilityState(oIntervalHeader.appointment, mAccProps);
 
 		oRm.openEnd(); //div element
 		oRm.openStart("div");
@@ -442,6 +452,21 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			oRm.icon("sap-icon://arrow-right",["sapUiCalendarAppArrowIconRight"], { title: null });
 		}
 
+		// ARIA information about start and end
+		sStartEndAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRow._oFormatAria.format(oIntervalHeader.appointment.getStartDate())
+				+ "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRow._oFormatAria.format(oIntervalHeader.appointment.getEndDate());
+
+		if (sType && sType !== CalendarDayType.None) {
+
+			sStartEndAriaText += "; " + this.getAriaTextForType(sType, this.getLegendItems(oRow));
+		}
+
+		oRm.openStart("span", sId + "-Descr");
+		oRm.class("sapUiInvisibleText");
+		oRm.openEnd();
+		oRm.text(sStartEndAriaText);
+		oRm.close("span");
+
 		oRm.close("div");
 		oRm.close("div");
 	};
@@ -454,16 +479,18 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 		var sColor = oAppointment.getColor();
 		var sTitle = oAppointment.getTitle();
 		var sText = oAppointment.getText();
+		var sDescription = oAppointment.getDescription();
 		var sIcon = oAppointment.getIcon();
 		var sId = oAppointment.getId();
+		var bReducedHeight = oRow._getAppointmentReducedHeight(oAppointmentInfo);
 		var mAccProps = {
 			labelledby: {value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT") + " " + sId + "-Descr", append: true},
 			selected: null
 		};
+		var iRowCount = oRow._getAppointmentRowCount(oAppointmentInfo, bReducedHeight);
 		var aAriaLabels = oRow.getAriaLabelledBy();
 
 		var oArrowValues = oRow._calculateAppoitnmentVisualCue(oAppointment);
-
 		if (aAriaLabels.length > 0) {
 			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + aAriaLabels.join(" ");
 		}
@@ -478,7 +505,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 
 		oRm.openStart("div", oAppointment);
 		oRm.class("sapUiCalendarApp");
-
+		oRm.class("sapUiCalendarAppHeight" + iRowCount);
 		if (oAppointment.getSelected()) {
 			oRm.class("sapUiCalendarAppSel");
 			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
@@ -489,7 +516,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_TENTATIVE");
 		}
 
-		if (!sText) {
+		if (iRowCount === 1) {
 			oRm.class("sapUiCalendarAppTitleOnly");
 		}
 
@@ -571,11 +598,19 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			oRm.close("span");
 		}
 
-		if (sText) {
+		if (sText && oAppointmentInfo.size !== CalendarAppointmentHeight.HalfSize) {
 			oRm.openStart("span", sId + "-Text");
 			oRm.class("sapUiCalendarAppText");
 			oRm.openEnd(); // span element
 			oRm.text(sText);
+			oRm.close("span");
+		}
+
+		if (sDescription && oAppointmentInfo.size !== CalendarAppointmentHeight.HalfSize && (oAppointmentInfo.size !== CalendarAppointmentHeight.Regular || !sText ) ) {
+			oRm.openStart("span", sId + "-Info");
+			oRm.class("sapUiCalendarAppDescription");
+			oRm.openEnd();
+			oRm.text(sDescription);
 			oRm.close("span");
 		}
 

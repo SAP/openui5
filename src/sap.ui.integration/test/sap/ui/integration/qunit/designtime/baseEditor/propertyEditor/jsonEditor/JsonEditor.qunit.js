@@ -3,12 +3,14 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor",
+	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	Core,
 	JsonEditor,
+	BaseEditor,
 	EditorQunitUtils,
 	QUnitUtils,
 	sinon
@@ -39,19 +41,37 @@ sap.ui.define([
 			}];
 		},
 		beforeEach: function () {
+			// needed to properly wait for the value help dialog to be initialized / opened
 			sandbox.spy(JsonEditor.prototype, "_openJsonEditor");
-			this.oJsonEditor = new JsonEditor();
-			this.oJsonEditor.setConfig(this.oPropertyConfig);
-			this.oJsonEditor.setValue(this.oValue);
-			this.oJsonEditor.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
 
-			return this.oJsonEditor.ready().then(function () {
+			var mConfig = {
+				context: "/",
+				properties: {
+					sampleJson: this.oPropertyConfig
+				},
+				propertyEditors: {
+					"json": "sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor"
+				}
+			};
+			var mJson = {
+				content: 3.14
+			};
+
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleJson").then(function(aPropertyEditor) {
+				this.oJsonEditor = aPropertyEditor[0].getAggregation("propertyEditor");
+				this.oJsonEditor.setValue(this.oValue);
+				sap.ui.getCore().applyChanges();
 				this.oJsonEditorElement = this.oJsonEditor.getContent();
 			}.bind(this));
 		},
 		afterEach: function () {
-			this.oJsonEditor.destroy();
+			this.oBaseEditor.destroy();
 			sandbox.restore();
 		}
 	}, function () {

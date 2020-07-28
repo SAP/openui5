@@ -4,21 +4,21 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/Layer",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/core/BusyIndicator",
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/base/util/merge"
 ], function(
 	FlexUtils,
-	Layer,
 	AppVariantUtils,
 	BusyIndicator,
 	UriParameters,
 	Settings,
 	AppVariantFactory,
+	FeaturesAPI,
 	merge
 ) {
 	"use strict";
@@ -156,35 +156,34 @@ sap.ui.define([
 		 * @param {string} sCurrentLayer - Current working layer
 		 * @param {object} oLrepSerializer - Layered repository serializer
 		 * @returns {boolean} Boolean value
-		 * @description App variant functionality is only supported in S/4HANA Cloud Platform & S/4HANA on Premise.
-		 * App variant functionality should be available if the following conditions are met:
-		 * When it is an FLP app.
-		 * When the current layer is 'CUSTOMER'.
-		 * When it is not a standalone app runing on Neo Cloud.
 		 */
-		isPlatFormEnabled: function(oRootControl, sCurrentLayer, oLrepSerializer) {
+		isSaveAsAvailable: function(oRootControl, sCurrentLayer, oLrepSerializer) {
 			oRootControlRunningApp = oRootControl;
 			oCommandSerializer = oLrepSerializer;
 
 			var oDescriptor = fnGetDescriptor();
 
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
-				if (FlexUtils.getUshellContainer() && !AppVariantUtils.isStandAloneApp() && sCurrentLayer === Layer.CUSTOMER) {
-					var oInboundInfo;
+				return FeaturesAPI.isSaveAsAvailable(sCurrentLayer).then(function(bIsSaveAsAvailable) {
+					if (bIsSaveAsAvailable) {
+						var oInboundInfo;
 
-					if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
-						oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
-					} else {
-						oInboundInfo = AppVariantUtils.getInboundInfo();
+						if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
+							oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
+						} else {
+							oInboundInfo = AppVariantUtils.getInboundInfo();
+						}
+
+						if (oInboundInfo) {
+							return true;
+						}
 					}
 
-					if (oInboundInfo) {
-						return true;
-					}
-				}
+					return false;
+				});
 			}
 
-			return false;
+			return Promise.resolve(false);
 		},
 		/**
 		 * @param {object} oRootControl - Root control of an app (variant)

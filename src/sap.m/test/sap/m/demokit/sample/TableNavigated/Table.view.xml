@@ -13,6 +13,13 @@
 		<items>
 			<ColumnListItem
 				type="Active"
+				navigated="{
+						parts: [
+							'settings>/navigatedItem',
+							'ProductId'
+						],
+						formatter: '.isNavigated'
+					}"
 				press="onPress">
 				<cells>
 					<ObjectIdentifier title="{Name}" text="{ProductId}" class="sapMTableContentMargin" />

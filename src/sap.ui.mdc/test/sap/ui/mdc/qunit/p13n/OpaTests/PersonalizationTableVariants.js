@@ -43,6 +43,20 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", selected: false}
 	];
 
+	var aFilterItems = [
+		{p13nItem: "artistUUID", value: null},
+		{p13nItem: "Breakout Year", value: null},
+		{p13nItem: "Changed By", value: null},
+		{p13nItem: "Changed On", value: null},
+		{p13nItem: "cityOfOrigin_city", value: null},
+		{p13nItem: "Country", value: null},
+		{p13nItem: "Created By", value: null},
+		{p13nItem: "Created On", value: null},
+		{p13nItem: "Founding Year", value: null},
+		{p13nItem: "Name", value: null},
+		{p13nItem: "regionOfOrigin_code", value: null}
+	];
+
 	// ----------------------------------------------------------------
 	// Check if the application is running normaly
 	// ----------------------------------------------------------------
@@ -230,10 +244,7 @@ sap.ui.define([
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
 
 		//check filter field creation
-		Then.iShouldSeeP13nFilterItem("Changed By", 0);
-		Then.iShouldSeeP13nFilterItem("Created On", 1);
-		Then.iShouldSeeP13nFilterItem("Founding Year", 2);
-		Then.iShouldSeeP13nFilterItem("Name", 3);
+		Then.iShouldSeeP13nFilterItems(aFilterItems);
 
 		//enter some filter values
 		When.iEnterTextInFilterDialog("Founding Year", "1989");

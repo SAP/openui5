@@ -182,7 +182,9 @@ sap.ui.define([
 				oRM.openStart("div", oControl).class("sapCEd")
 					.style("width", oControl.getWidth())
 					.style("height", oControl.getHeight())
-					.attr("data-sap-ui-syntaxhints", oControl.getSyntaxHints());
+					.attr("data-sap-ui-syntaxhints", oControl.getSyntaxHints())
+					.attr("role", "application")
+					.attr("aria-roledescription", Core.getLibraryResourceBundle("sap.ui.codeeditor").getText("CODEEDITOR_ROLE_DESCRIPTION"));
 
 				var sTooltip = oControl.getTooltip_AsString();
 				if (sTooltip) {

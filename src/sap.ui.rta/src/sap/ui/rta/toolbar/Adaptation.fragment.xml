@@ -11,25 +11,34 @@
                         id="sapUiRta_iconSpacer"
                         width="0%"
                         visible="true" />
-                <Label
-                        id="sapUiRta_versionLabel"
-                        design="Bold"
-                        class="sapUiRtaVersionLabel"
-                        visible="false" />
+                <Button
+                        id="sapUiRta_versionButton"
+                        type="Transparent"
+                        class="sapUiRtaVersionButton"
+                        icon="sap-icon://megamenu"
+                        iconFirst="false"
+                        visible="{versions>/versioningEnabled}"
+                        text="{parts: [{path: 'versions>/draftAvailable'}, {path: 'versions>/versions'}], formatter: '.formatVersionButtonText'}"
+                        tooltip="{parts: [{path: 'versions>/draftAvailable'}, {path: 'versions>/versions'}], formatter: '.formatVersionButtonText'}"
+                        press=".showVersionHistory">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow"/>
+                    </layoutData>
+                </Button>
                 <Button
                         id="sapUiRta_activateDraft"
                         icon="sap-icon://activate"
                         press=".activateDraft"
-                        visible="false"
-                        enabled="false"
+                        visible="{versions>/versioningEnabled}"
+                        enabled="{versions>/draftAvailable}"
                         type="Transparent"
                         tooltip="{i18n>TOL_ACTIVATE_DRAFT}" />
                 <Button
                         id="sapUiRta_discardDraft"
                         icon="sap-icon://delete"
                         press=".discardDraft"
-                        visible="false"
-                        enabled="false"
+                        visible="{versions>/versioningEnabled}"
+                        enabled="{versions>/draftAvailable}"
                         type="Transparent"
                         tooltip="{i18n>TOL_DISCARD_DRAFT}" />
             </content>

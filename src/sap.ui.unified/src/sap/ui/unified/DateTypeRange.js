@@ -40,6 +40,14 @@ sap.ui.define(['./DateRange', './library'],
 			 * Type of the date range.
 			 */
 			type : {type : "sap.ui.unified.CalendarDayType", group : "Appearance", defaultValue : CalendarDayType.Type01},
+			/**
+			 * Applies secondary <code>CalendarDayType</code> combined with the <code>CalendarDayType</code> type chosen.
+			 * Allows <code>specialDates</code> to be also a <code>NonWorkingDay</code>.
+			 * The secondary day type can only be used for <code>NonWorkingDay</code> or <code>None</code> calendar day types.
+			 * In other cases it will not be visible.
+			 * @since 1.81.0
+			 */
+			secondaryType : {type : "sap.ui.unified.CalendarDayType", group : "Appearance", defaultValue : CalendarDayType.None},
 
 			/**
 			 * Background color of the <code>Calendar</code> <code>specialDates</code> aggregation.

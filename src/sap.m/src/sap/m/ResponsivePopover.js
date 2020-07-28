@@ -742,7 +742,7 @@ sap.ui.define([
 			ResponsivePopover.prototype[sName] = function(){
 				var iLastUpperCase = this._lastIndexOfUpperCaseLetter(sName),
 					sMethodName, res;
-				if (jQuery.type(arguments[0]) === "string") {
+				if (typeof arguments[0] === "string") {
 					if (iLastUpperCase !== -1) {
 						sMethodName = sName.substring(0, iLastUpperCase) + this._firstLetterUpperCase(arguments[0]);
 						//_oControl can be already destroyed in exit method

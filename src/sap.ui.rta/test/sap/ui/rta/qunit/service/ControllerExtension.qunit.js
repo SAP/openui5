@@ -64,7 +64,7 @@ function(
 		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
-				rootControl: this.oComponentContainer
+				rootControl: this.oComponent
 			});
 			this.iCreateChangeCounter = 0;
 			this.iAddChangeCounter = 0;
@@ -81,7 +81,6 @@ function(
 			sandbox.stub(PersistenceWriteAPI, "add").callsFake(function() {
 				this.iAddChangeCounter ++;
 			}.bind(this));
-			sandbox.stub(FlexUtils, "getAppComponentForControl");
 			sandbox.stub(FlexUtils, "getComponentClassName").returns("sap.ui.rta.service.controllerExtension.Component");
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
@@ -181,7 +180,7 @@ function(
 
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
-				rootControl: this.oComponentContainer
+				rootControl: this.oComponent
 			});
 			sandbox.stub(this.oRta, "_determineReload").resolves(false);
 			return this.oRta.start().then(function () {

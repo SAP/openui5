@@ -2591,6 +2591,10 @@ function(
 
 		oItem = aItems[iIndex];
 
+		if (!oItem) {
+			return;
+		}
+
 		// adding timeout of 0 ensures the DOM is ready in case of rerendering
 		setTimeout(function() {
 			oScrollDelegate.scrollToElement(oItem.getDomRef(), null, [0, this._getStickyAreaHeight() * -1]);

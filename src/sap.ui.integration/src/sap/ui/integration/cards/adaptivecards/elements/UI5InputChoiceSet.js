@@ -28,24 +28,10 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 			if (this.isCompact) {
 				//if this.isMultiSelect is false and this.isCompact is true, we need to render an ui5-select web component
 				this._selectElement = document.createElement("ui5-select");
-				this._selectElement.setAttribute('ac-select', '');
 				this._selectElement.id = this.id;
 				this._selectElement.addEventListener("change", function () {
 					this.valueChanged();
 				}.bind(this));
-
-				// we handle the empty initial value and the placeholder internally,
-				// since that use case is not supported in the ui5-select web component
-				var oPlaceholder = document.createElement("ui5-option");
-				oPlaceholder.setAttribute('ac-select-placeholder', '');
-				oPlaceholder.selected = true;
-				oPlaceholder.value = "";
-
-				if (this.placeholder) {
-					oPlaceholder.innerHTML = this.placeholder;
-				}
-
-				this._selectElement.appendChild(oPlaceholder);
 
 				for (var i = 0; i < this.choices.length; i++) {
 					var oOption = document.createElement("ui5-option");
@@ -122,7 +108,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 			var i;
 			if (!this.isMultiSelect) {
 				if (this.isCompact) {
-					return this._selectElement.selectedOption && !this._selectElement.selectedOption.hasAttribute('ac-select-placeholder') ? this._selectElement.selectedOption.value : null;
+					return this._selectElement.selectedOption ? this._selectElement.selectedOption.value : null;
 				} else {
 					if (!this._toggleInputs || this._toggleInputs.length === 0) {
 						return null;

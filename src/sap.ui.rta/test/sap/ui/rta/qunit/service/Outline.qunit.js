@@ -55,7 +55,8 @@ sap.ui.define([
 						"sap.app": {
 							applicationVersion : {
 								version : "1.2.3"
-							}
+							},
+							id: "MockController"
 						}
 					}
 				},
@@ -137,7 +138,7 @@ sap.ui.define([
 
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
-				rootControl: this.oComponentContainer
+				rootControl: this.oComp
 			});
 			sandbox.stub(this.oRta, "_determineReload").resolves(false);
 
@@ -150,7 +151,6 @@ sap.ui.define([
 			}.bind(this);
 
 			sandbox.stub(DesignTime.prototype, "getDesignTimeMetadataFor")
-
 			.withArgs(this.oPage).returns(StaticDesigntimeMetadata.getPageDesigntimeMetadata())
 			.withArgs(this.oButton1).returns(StaticDesigntimeMetadata.getButtonDesigntimeMetadata())
 			.withArgs(this.oLayout).returns(oExtendedDesigntimeMetadataForLayout)
@@ -207,14 +207,14 @@ sap.ui.define([
 
 				assert.ok(Array.isArray(aReceivedResponse[0].elements), "then first level children are returned");
 				var bDepthLevelsCovered = aReceivedResponse[0].elements.some(function(oChild1) {
-					if (oChild1.technicalName === "component") { // component aggregation of ComponentContainer
+					if (oChild1.technicalName === "rootControl") { // root control in the component
 						assert.ok(Array.isArray(oChild1.elements), "then second level children are returned");
 
-						var oChild2 = oChild1.elements[0]; // Component
+						var oChild2 = oChild1.elements[0]; // content of the page
 						assert.ok(Array.isArray(oChild2.elements), "then third level children are returned");
 
 						return oChild2.elements.some(function (oChild3) {
-							if (oChild3.technicalName === "rootControl") { // rootControl aggregation of Component
+							if (oChild3.technicalName === "content") { // content aggregation of the Page
 								assert.notOk(oChild3.elements, "then fourth level children are not returned");
 								return true;
 							}
@@ -289,7 +289,8 @@ sap.ui.define([
 						"sap.app": {
 							applicationVersion : {
 								version : "1.2.3"
-							}
+							},
+							id: "MockController"
 						}
 					}
 				},
@@ -345,7 +346,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl: this.oComponentContainer,
+				rootControl: this.oComp,
 				showToolbars: false,
 				plugins: { testPlugin: oPlugin }
 			});

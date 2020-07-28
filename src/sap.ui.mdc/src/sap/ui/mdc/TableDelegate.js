@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"./table/Column", "sap/m/Text", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil', 'sap/ui/mdc/condition/FilterConverter'
-], function(Column, Text, Core, FilterUtil, FilterConverter) {
+	"./table/Column", "sap/m/Text", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil'
+], function(Column, Text, Core, FilterUtil) {
 	"use strict";
 	/**
 	 * Delegate class for sap.ui.mdc.Table.<br>
@@ -58,19 +58,13 @@ sap.ui.define([
 				mConditions;
 
 			//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
-			if (bFilterEnabled) {
-				mConditions = oMDCTable.getConditions();
-				//TODO: reuse 'FilterUtil' --> Table does not derive from sap.ui.mdc.Control as of now
-				var aFilters = FilterConverter.createFilters(mConditions);
-				oBindingInfo.filters = aFilters;
-			} else if (oFilter) {
-				mConditions = oFilter.getConditions();
-				var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
+			var oFilterControl = bFilterEnabled ? oMDCTable : oFilter;
+			if (oFilterControl) {
+				var aPropertiesMetadata = bFilterEnabled ? [] : oFilter.getPropertyInfoSet();
+				mConditions = oFilterControl.getConditions();
 
-				if (mConditions) {
-					var oFilterInfo = FilterUtil.getFilterInfo(oFilter, mConditions, aPropertiesMetadata);
-					oBindingInfo.filters = oFilterInfo.filters;
-				}
+				var oFilterInfo = FilterUtil.getFilterInfo(oFilterControl, mConditions, aPropertiesMetadata);
+				oBindingInfo.filters = oFilterInfo.filters;
 			}
 
 		},
@@ -114,17 +108,31 @@ sap.ui.define([
 		},
 
 		/**
-		 * Set the <code>delegate</code> property for the inner <code>FilterBar</code>
+		 * Provide the Table's filter delegate to provide basic filter functionality such as adding FilterFields
+		 * <b>Note:</b> The functionality provided in this delegate should act as a subset of a FilterBarDelegate
+		 * to enable the Table for inbuilt filtering
 		 *
-		 * @param {Object} oPayload The payload configuration for the current Table instance
-		 * @returns {Object} Object for the inner FilterBar <code>delegate</code> property
+		 * @returns {Object} Object for the Tables filter personalization:
+		 *
+		 * oFilterDelegate = {
+		 * 		addFilterItem: function() {
+		 * 			var oFilterFieldPromise = new Promise(...);
+		 * 			return oFilterFieldPromise;
+		 * 		}
+		 * }
 		 *
 		 * @public
 		 */
-		getFilterDelegate: function(oPayload) {
+		getFilterDelegate: function() {
 			return {
-				name: "sap/ui/mdc/FilterBarDelegate",
-				payload: oPayload
+				/**
+				 *
+				 * @param {Object} oProperty Corresponding property to create a FilterField
+				 * @param {Object} oTable Table instance
+				 */
+				addFilterItem: function(oProperty, oTable) {
+					return Promise.resolve(null);
+				}
 			};
 		},
 

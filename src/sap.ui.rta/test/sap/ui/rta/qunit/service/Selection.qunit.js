@@ -65,7 +65,7 @@ function (
 
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
-				rootControl: this.oComponentContainer
+				rootControl: this.oComponent
 			});
 
 			sandbox.stub(this.oRta, "_determineReload").resolves(false);

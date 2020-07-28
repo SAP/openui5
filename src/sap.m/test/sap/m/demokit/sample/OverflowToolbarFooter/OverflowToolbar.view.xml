@@ -30,7 +30,7 @@
 					<OverflowToolbar id="otbSubheader">
 						<ToolbarSpacer/>
 						<SearchField id="maxPrice" liveChange="onFilter">
-							<layoutData><OverflowToolbarLayoutData minWidth="200px" maxWidth="300px" shrinkable="true"/></layoutData>
+							<layoutData><OverflowToolbarLayoutData minWidth="200px" maxWidth="300px" shrinkable="true" priority="NeverOverflow"/></layoutData>
 						</SearchField>
 						<Button text="Reset" type="Transparent" press="onReset"/>
 						<OverflowToolbarButton type="Transparent" text="Sort" icon="sap-icon://sort" press="onSort"/>

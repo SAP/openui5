@@ -4,6 +4,7 @@ src/*/.gitignore
 src/*/target/
 src/*/dist/
 src/*/coverage/
+src/*/surefire-reports/
 /target
 /tmp
 

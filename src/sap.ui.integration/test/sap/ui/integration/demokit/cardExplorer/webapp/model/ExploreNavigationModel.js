@@ -18,7 +18,6 @@ sap.ui.define([
 						title: 'Adaptive',
 						target: 'exploreSamples',
 						key: 'adaptive',
-						experimental: true,
 						subSamples: [
 							{
 								title: 'Card',
@@ -645,6 +644,45 @@ sap.ui.define([
 								url: '/samples/adaptiveCustomizedActions/myExtension.js',
 								name: 'myExtension.js',
 								key: 'myExtension.js'
+							}
+						]
+					},
+					{
+						key: 'badge',
+						target: 'exploreSamples',
+						title: 'Text Badge (Experimental)',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/badge/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/badge/cardManifest.json',
+								name: 'cardManifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/badge/Badge.view.xml',
+								name: 'Badge.view.xml',
+								key: 'Badge.view.xml'
+							},
+							{
+								url: '/samples/badge/Badge.controller.js',
+								name: 'Badge.controller.js',
+								key: 'Badge.controller.js'
+							},
+							{
+								url: '/samples/badge/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/badge/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
 							}
 						]
 					},

@@ -171,4 +171,24 @@ function (
 
 		oCard.destroy();
 	});
+
+	QUnit.test("Auto hide", function (assert) {
+
+		// Arrange
+		var oCard = createCard(CardHeader);
+
+		oCard.addCustomData(new BadgeCustomData({value: 10}));
+		Core.applyChanges();
+
+		oCard.focus();
+
+		// Assert
+		assert.ok(oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is rendered");
+
+		this.clock.tick(4000);
+
+		assert.notOk(oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is not rendered");
+
+		oCard.destroy();
+	});
 });

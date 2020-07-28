@@ -90,30 +90,6 @@ sap.ui.define([
 	var MapEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor",
 
-		getConfigMetadata: function() {
-			return Object.assign(
-				{},
-				BasePropertyEditor.prototype.getConfigMetadata.call(this),
-				{
-					allowKeyChange: {
-						defaultValue: true
-					},
-					allowTypeChange: {
-						defaultValue: true
-					},
-					allowAddAndRemove: {
-						defaultValue: true
-					},
-					allowedTypes: {
-						defaultValue: ["string"]
-					},
-					includeInvalidEntries: {
-						defaultValue: true
-					}
-				}
-			);
-		},
-
 		init: function() {
 			BasePropertyEditor.prototype.init.apply(this, arguments);
 			this._itemsModel = new JSONModel();
@@ -191,7 +167,7 @@ sap.ui.define([
 		},
 
 		_getAllowedTypes: function () {
-			return (this.getConfig() || this.getConfigMetadata())["allowedTypes"];
+			return (this.getConfig() || MapEditor.configMetadata).allowedTypes;
 		},
 
 		_setSupportedTypesModel: function () {
@@ -224,7 +200,20 @@ sap.ui.define([
 					type: "string",
 					enabled: oConfig.allowKeyChange,
 					itemKey: sKey,
-					allowBindings: false
+					allowBindings: false,
+					validators: [
+						{
+							type: "isUniqueKey",
+							config: {
+								keys: function () {
+									return Object.keys(this.getValue());
+								}.bind(this),
+								currentKey: function (oPropertyEditor) {
+									return oPropertyEditor.getValue();
+								}
+							}
+						}
+					]
 				},
 				{
 					label: this.getI18nProperty("BASE_EDITOR.MAP.TYPE"),
@@ -331,7 +320,7 @@ sap.ui.define([
 			var sKey = oEvent.getSource().getConfig().itemKey;
 			var sChangeType = oEvent.getParameter("path");
 
-			var fnHandler = this._getItemChangeHandlers()[sChangeType];
+			var fnHandler = this.getItemChangeHandlers()[sChangeType];
 			if (typeof fnHandler !== 'function') {
 				// No specific handler is registered for the change, use generic handler
 				fnHandler = this._onFieldChange;
@@ -340,7 +329,7 @@ sap.ui.define([
 			fnHandler.call(this, sKey, oEvent);
 		},
 
-		_getItemChangeHandlers: function () {
+		getItemChangeHandlers: function () {
 			return {
 				"key": this._onKeyChange,
 				"type": this._onTypeChange
@@ -354,28 +343,20 @@ sap.ui.define([
 			}
 
 			var oEditorValue = _merge({}, this.getValue());
-			var oInput = oEvent.getSource().getAggregation("propertyEditor").getContent();
 			var sNewKey = oEvent.getParameter("value");
 
-			if (oEditorValue.hasOwnProperty(sOldKey) && (!oEditorValue.hasOwnProperty(sNewKey) || sNewKey === sOldKey)) {
-				oInput.setValueState("None");
+			if (sNewKey !== sOldKey) {
+				var oNewValue = {};
+				// Iterate over items to keep the order
+				Object.keys(oEditorValue).forEach(function (sItemKey) {
+					var sNewItemKey = sItemKey === sOldKey ? sNewKey : sItemKey;
+					oNewValue[sNewItemKey] = oEditorValue[sItemKey];
+				});
 
-				if (sNewKey !== sOldKey) {
-					var oNewValue = {};
-					// Iterate over items to keep the order
-					Object.keys(oEditorValue).forEach(function (sItemKey) {
-						var sNewItemKey = sItemKey === sOldKey ? sNewKey : sItemKey;
-						oNewValue[sNewItemKey] = oEditorValue[sItemKey];
-					});
+				this._mTypes[sNewKey] = this._mTypes[sOldKey];
+				delete this._mTypes[sOldKey];
 
-					this._mTypes[sNewKey] = this._mTypes[sOldKey];
-					delete this._mTypes[sOldKey];
-
-					this.setValue(oNewValue);
-				}
-			} else {
-				oInput.setValueState("Error");
-				oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.MAP.DUPLICATE_KEY"));
+				this.setValue(oNewValue);
 			}
 		},
 
@@ -410,6 +391,29 @@ sap.ui.define([
 		},
 
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
+	});
+
+	MapEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		allowKeyChange: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowTypeChange: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowAddAndRemove: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowedTypes: {
+			defaultValue: ["string"],
+			mergeStrategy: "intersection"
+		},
+		includeInvalidEntries: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		}
 	});
 
 	return MapEditor;

@@ -379,7 +379,7 @@ sap.ui.define([
 		jQuery.each(aProperties, function(i, sName) {
 			var sValue = this.getProperty(sName),
 				oAttribute = this._mDeprecatedProperties[sName];
-			if (jQuery.type(sValue) === "number" && !!sValue || !!sValue) {
+			if (typeof sValue === "number" && !!sValue || !!sValue) {
 				if (!oAttribute) {
 					oAttribute = new ObjectAttribute({
 						active: false

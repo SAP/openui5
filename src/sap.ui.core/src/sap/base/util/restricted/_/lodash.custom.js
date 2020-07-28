@@ -1,7 +1,7 @@
 /**
  * @license
  * Lodash (Custom Build) <https://lodash.com/>
- * Build: `lodash strict include="omit,uniq,uniqBy,uniqWith,intersection,intersectionBy,intersectionWith,pick,pickBy,debounce,throttle,max,min,castArray,curry,merge,mergeWith,toArray,xor,xorBy,xorWith,isNil,difference,differenceBy,differenceWith,flatMap,flatMapDeep,flatMapDepth,isEqual,isEqualWith,without,flatten,flattenDeep,flattenDepth,compact"`
+ * Build: `lodash strict include="omit,uniq,uniqBy,uniqWith,intersection,intersectionBy,intersectionWith,pick,pickBy,debounce,throttle,max,min,castArray,curry,merge,mergeWith,toArray,xor,xorBy,xorWith,isNil,difference,differenceBy,differenceWith,flatMap,flatMapDeep,flatMapDepth,isEqual,isEqualWith,without,flatten,flattenDeep,flattenDepth,compact,zipObject,zipObjectDeep,union,unionBy,unionWith"`
  * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -19,7 +19,7 @@ sap.ui.define(function() {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.15';
+  var VERSION = '4.17.19';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -2544,6 +2544,10 @@ sap.ui.define(function() {
       var key = toKey(path[index]),
           newValue = value;
 
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        return object;
+      }
+
       if (index != lastIndex) {
         var objValue = nested[key];
         newValue = customizer ? customizer(objValue, key, nested) : undefined;
@@ -2747,6 +2751,28 @@ sap.ui.define(function() {
       }
     }
     return baseUniq(baseFlatten(result, 1), iteratee, comparator);
+  }
+
+  /**
+   * This base implementation of `_.zipObject` which assigns values using `assignFunc`.
+   *
+   * @private
+   * @param {Array} props The property identifiers.
+   * @param {Array} values The property values.
+   * @param {Function} assignFunc The function to assign values.
+   * @returns {Object} Returns the new object.
+   */
+  function baseZipObject(props, values, assignFunc) {
+    var index = -1,
+        length = props.length,
+        valsLength = values.length,
+        result = {};
+
+    while (++index < length) {
+      var value = index < valsLength ? values[index] : undefined;
+      assignFunc(result, props[index], value);
+    }
+    return result;
   }
 
   /**
@@ -3461,10 +3487,11 @@ sap.ui.define(function() {
     if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
       return false;
     }
-    // Assume cyclic values are equal.
-    var stacked = stack.get(array);
-    if (stacked && stack.get(other)) {
-      return stacked == other;
+    // Check that cyclic values are equal.
+    var arrStacked = stack.get(array);
+    var othStacked = stack.get(other);
+    if (arrStacked && othStacked) {
+      return arrStacked == other && othStacked == array;
     }
     var index = -1,
         result = true,
@@ -3626,10 +3653,11 @@ sap.ui.define(function() {
         return false;
       }
     }
-    // Assume cyclic values are equal.
-    var stacked = stack.get(object);
-    if (stacked && stack.get(other)) {
-      return stacked == other;
+    // Check that cyclic values are equal.
+    var objStacked = stack.get(object);
+    var othStacked = stack.get(other);
+    if (objStacked && othStacked) {
+      return objStacked == other && othStacked == object;
     }
     var result = true;
     stack.set(object, other);
@@ -4874,6 +4902,84 @@ sap.ui.define(function() {
   }
 
   /**
+   * Creates an array of unique values, in order, from all given arrays using
+   * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+   * for equality comparisons.
+   *
+   * @static
+   * @memberOf _
+   * @since 0.1.0
+   * @category Array
+   * @param {...Array} [arrays] The arrays to inspect.
+   * @returns {Array} Returns the new array of combined values.
+   * @example
+   *
+   * _.union([2], [1, 2]);
+   * // => [2, 1]
+   */
+  var union = baseRest(function(arrays) {
+    return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
+  });
+
+  /**
+   * This method is like `_.union` except that it accepts `iteratee` which is
+   * invoked for each element of each `arrays` to generate the criterion by
+   * which uniqueness is computed. Result values are chosen from the first
+   * array in which the value occurs. The iteratee is invoked with one argument:
+   * (value).
+   *
+   * @static
+   * @memberOf _
+   * @since 4.0.0
+   * @category Array
+   * @param {...Array} [arrays] The arrays to inspect.
+   * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+   * @returns {Array} Returns the new array of combined values.
+   * @example
+   *
+   * _.unionBy([2.1], [1.2, 2.3], Math.floor);
+   * // => [2.1, 1.2]
+   *
+   * // The `_.property` iteratee shorthand.
+   * _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+   * // => [{ 'x': 1 }, { 'x': 2 }]
+   */
+  var unionBy = baseRest(function(arrays) {
+    var iteratee = last(arrays);
+    if (isArrayLikeObject(iteratee)) {
+      iteratee = undefined;
+    }
+    return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), getIteratee(iteratee, 2));
+  });
+
+  /**
+   * This method is like `_.union` except that it accepts `comparator` which
+   * is invoked to compare elements of `arrays`. Result values are chosen from
+   * the first array in which the value occurs. The comparator is invoked
+   * with two arguments: (arrVal, othVal).
+   *
+   * @static
+   * @memberOf _
+   * @since 4.0.0
+   * @category Array
+   * @param {...Array} [arrays] The arrays to inspect.
+   * @param {Function} [comparator] The comparator invoked per element.
+   * @returns {Array} Returns the new array of combined values.
+   * @example
+   *
+   * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
+   * var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }];
+   *
+   * _.unionWith(objects, others, _.isEqual);
+   * // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
+   */
+  var unionWith = baseRest(function(arrays) {
+    var comparator = last(arrays);
+    comparator = typeof comparator == 'function' ? comparator : undefined;
+    return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), undefined, comparator);
+  });
+
+  /**
    * Creates a duplicate-free version of an array, using
    * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
    * for equality comparisons, in which only the first occurrence of each element
@@ -5052,6 +5158,45 @@ sap.ui.define(function() {
     comparator = typeof comparator == 'function' ? comparator : undefined;
     return baseXor(arrayFilter(arrays, isArrayLikeObject), undefined, comparator);
   });
+
+  /**
+   * This method is like `_.fromPairs` except that it accepts two arrays,
+   * one of property identifiers and one of corresponding values.
+   *
+   * @static
+   * @memberOf _
+   * @since 0.4.0
+   * @category Array
+   * @param {Array} [props=[]] The property identifiers.
+   * @param {Array} [values=[]] The property values.
+   * @returns {Object} Returns the new object.
+   * @example
+   *
+   * _.zipObject(['a', 'b'], [1, 2]);
+   * // => { 'a': 1, 'b': 2 }
+   */
+  function zipObject(props, values) {
+    return baseZipObject(props || [], values || [], assignValue);
+  }
+
+  /**
+   * This method is like `_.zipObject` except that it supports property paths.
+   *
+   * @static
+   * @memberOf _
+   * @since 4.1.0
+   * @category Array
+   * @param {Array} [props=[]] The property identifiers.
+   * @param {Array} [values=[]] The property values.
+   * @returns {Object} Returns the new object.
+   * @example
+   *
+   * _.zipObjectDeep(['a.b[0].c', 'a.b[1].d'], [1, 2]);
+   * // => { 'a': { 'b': [{ 'c': 1 }, { 'd': 2 }] } }
+   */
+  function zipObjectDeep(props, values) {
+    return baseZipObject(props || [], values || [], baseSet);
+  }
 
   /*------------------------------------------------------------------------*/
 
@@ -6890,6 +7035,9 @@ sap.ui.define(function() {
   lodash.throttle = throttle;
   lodash.toArray = toArray;
   lodash.toPlainObject = toPlainObject;
+  lodash.union = union;
+  lodash.unionBy = unionBy;
+  lodash.unionWith = unionWith;
   lodash.uniq = uniq;
   lodash.uniqBy = uniqBy;
   lodash.uniqWith = uniqWith;
@@ -6898,6 +7046,8 @@ sap.ui.define(function() {
   lodash.xor = xor;
   lodash.xorBy = xorBy;
   lodash.xorWith = xorWith;
+  lodash.zipObject = zipObject;
+  lodash.zipObjectDeep = zipObjectDeep;
 
   /*------------------------------------------------------------------------*/
 

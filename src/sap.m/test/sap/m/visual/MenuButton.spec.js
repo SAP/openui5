@@ -11,4 +11,10 @@ describe("sap.m.MenuButton", function() {
 		oMenuButton4.click();
 		expect(takeScreenshot(oMenuButton3)).toLookAs('menubutton_initial_width');
 	});
+
+	it('Menu button parts are visible and aligned', function() {
+		var oPage = element(by.id("page0"));
+
+		expect(takeScreenshot(oPage)).toLookAs('menu_buttons_in_page');
+	});
 });

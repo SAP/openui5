@@ -692,6 +692,54 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("metadata v4 with cacheTokens", function(assert) {
+		this.stubGetUriParameters({
+			"sapClient": "200"
+		});
+		return Component.create({
+			name: "sap.ui.test.v4models.cacheTokens",
+			manifest: false,
+			asyncHints: {
+				cacheTokens: {
+					dataSources: {
+						"/path/to/odata/service/": "1476971059",
+						"/path/to/odata/annotations/1": "1476971462",
+						"/path/to/odata/annotations/2": "1476971136",
+						"/path/to/odata/annotations/3": "1476971160",
+						"/path/to/odata/annotations/4": "1476971188"
+					}
+				}
+			}
+		}).then(function(oComponent) {
+			this.oComponent = oComponent;
+			sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
+				serviceUrl: '/path/to/odata/service/?sap-client=200&sap-server=bar',
+				metadataUrlParams: {
+					"sap-language": "EN",
+					"sap-context-token": "1476971059"
+				},
+				annotationURI: [
+					'/path/to/odata/annotations/1?sap-language=EN&sap-client=200&sap-context-token=1476971462',
+					'/path/to/odata/annotations/2?sap-language=EN&sap-client=200&sap-context-token=1476971136',
+					'/path/to/odata/annotations/3?sap-language=EN&sap-client=200&sap-context-token=1476971160',
+					'/path/to/odata/annotations/4?sap-language=EN&sap-client=200&sap-context-token=1476971188'
+				],
+				operationMode: "Server",
+				synchronizationMode: "None"
+			});
+
+			// destroy the component
+			this.oComponent.destroy();
+
+			// check if all models got destroyed (uses the models from #assertModelInstances)
+			this.assertModelsDestroyed();
+
+			// check if internal models references were removed
+			assert.ok(!this.oComponent._mManifestModels, "Component should not have internal model references anymore");
+
+		}.bind(this));
+	});
+
 	QUnit.test("metadata v2 with dataSources (extension inheritance)", function(assert) {
 		this.stubGetUriParameters();
 
@@ -2552,11 +2600,12 @@ sap.ui.define([
 
 		// Model (serviceUrl)
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for model \"\" (/foo). " +
-			"Missing \"sap-client\" parameter",
+			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for Model \"\" (/foo). " +
+			"Missing \"sap-client\" URI parameter",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
 			"sap.ui.core.test.component.models"
 		);
+
 
 	});
 
@@ -2634,7 +2683,7 @@ sap.ui.define([
 
 		// Annotation1
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000002\" for ODataAnnotation \"Annotation1\" (/path/to/odata/annotation/1?sap-language=EN). " +
+			"Component Manifest: Ignoring provided \"sap-context-token=1400000002\" for DataSource \"Annotation1\" (/path/to/odata/annotation/1?sap-language=EN). " +
 			"Missing \"sap-client\" URI parameter",
 			"[\"sap.app\"][\"dataSources\"][\"Annotation1\"]",
 			"sap.ui.core.test.component.models"
@@ -2642,7 +2691,7 @@ sap.ui.define([
 
 		// Annotation2
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000003\" for ODataAnnotation \"Annotation2\" (path/to/local/odata/annotation/2?sap-language=EN). " +
+			"Component Manifest: Ignoring provided \"sap-context-token=1400000003\" for DataSource \"Annotation2\" (path/to/local/odata/annotation/2?sap-language=EN). " +
 			"Missing \"sap-client\" URI parameter",
 			"[\"sap.app\"][\"dataSources\"][\"Annotation2\"]",
 			"sap.ui.core.test.component.models"
@@ -2650,8 +2699,8 @@ sap.ui.define([
 
 		// Model (serviceUrl)
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for model \"\" (/foo). " +
-			"Missing \"sap-client\" parameter",
+			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for Model \"\" (/foo). " +
+			"Missing \"sap-client\" URI parameter",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
 			"sap.ui.core.test.component.models"
 		);
@@ -2943,7 +2992,7 @@ sap.ui.define([
 
 		// Annotation1
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000002\" for ODataAnnotation \"Annotation1\" (/path/to/odata/annotation/1?sap-client=888&sap-language=EN). " +
+			"Component Manifest: Ignoring provided \"sap-context-token=1400000002\" for DataSource \"Annotation1\" (/path/to/odata/annotation/1?sap-client=888&sap-language=EN). " +
 			"URI parameter \"sap-client=888\" must be identical with configuration \"sap-client=foo\"",
 			"[\"sap.app\"][\"dataSources\"][\"Annotation1\"]",
 			"sap.ui.core.test.component.models"
@@ -2951,7 +3000,7 @@ sap.ui.define([
 
 		// Annotation2
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000003\" for ODataAnnotation \"Annotation2\" (path/to/local/odata/annotation/2?sap-client=777&sap-language=EN). " +
+			"Component Manifest: Ignoring provided \"sap-context-token=1400000003\" for DataSource \"Annotation2\" (path/to/local/odata/annotation/2?sap-client=777&sap-language=EN). " +
 			"URI parameter \"sap-client=777\" must be identical with configuration \"sap-client=foo\"",
 			"[\"sap.app\"][\"dataSources\"][\"Annotation2\"]",
 			"sap.ui.core.test.component.models"
@@ -2959,7 +3008,7 @@ sap.ui.define([
 
 		// Model (serviceUrl)
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for model \"\" (/foo?sap-client=999&sap-server=XXX). " +
+			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for Model \"\" (/foo?sap-client=999&sap-server=XXX). " +
 			"URI parameter \"sap-client=999\" must be identical with configuration \"sap-client=foo\"",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
 			"sap.ui.core.test.component.models"
@@ -3125,8 +3174,8 @@ sap.ui.define([
 
 		// Model (serviceUrl)
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for model \"\" (/foo?sap-client=foo&sap-server=bar). " +
-			"Parameter metadataUrlParams[\"sap-client\"] = \"999\" must be identical with configuration \"sap-client=foo\"",
+			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for Model \"\" (/foo?sap-client=foo&sap-server=bar). " +
+			"URI parameter \"sap-client=999\" must be identical with configuration \"sap-client=foo\"",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
 			"sap.ui.core.test.component.models"
 		);
@@ -3335,13 +3384,14 @@ sap.ui.define([
 								"path/to/manifest/path/to/local/odata/annotation/2?sap-context-token=1400000003&sap-language=EN&sap-client=foo"
 							],
 							"metadataUrlParams": {
-								"sap-language": "EN"
+								"sap-language": "EN",
+								"sap-context-token" : "1400000001"
 							},
-							"serviceUrl": "/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar"
+							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
 						}
 					],
 					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar",
+					"uri": "/foo?sap-client=foo&sap-server=bar",
 					"uriSettingName": "serviceUrl"
 				}
 			}
@@ -3350,13 +3400,12 @@ sap.ui.define([
 		// No errors should be logged
 		sinon.assert.callCount(this.oLogErrorSpy, 0);
 
-		// One warning should be logged (serviceUrl)
+		// One warnings should be logged
 		sinon.assert.callCount(this.oLogWarningSpy, 1);
 
 		// Model (serviceUrl)
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for model \"\" (/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar). " +
-			"Model URI already contains parameter \"sap-context-token=1400000001\"",
+			"Component Manifest: Move existing \"sap-context-token=1400000001\" to metadataUrlParams for Model \"\" (/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar).",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
 			"sap.ui.core.test.component.models"
 		);
@@ -3417,13 +3466,14 @@ sap.ui.define([
 								"path/to/manifest/path/to/local/odata/annotation/2?sap-context-token=1400000333&sap-language=EN&sap-client=foo"
 							],
 							"metadataUrlParams": {
-								"sap-language": "EN"
+								"sap-language": "EN",
+								"sap-context-token":"1400000111"
 							},
-							"serviceUrl": "/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar"
+							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
 						}
 					],
 					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar",
+					"uri": "/foo?sap-client=foo&sap-server=bar",
 					"uriSettingName": "serviceUrl"
 				}
 			}
@@ -3432,27 +3482,33 @@ sap.ui.define([
 		// No errors should be logged
 		sinon.assert.callCount(this.oLogErrorSpy, 0);
 
-		// Three warnings should be logged (serviceUrl + 2x annotationURIs)
-		sinon.assert.callCount(this.oLogWarningSpy, 3);
+		// Four warnings should be logged (2 * serviceUrl + 2x annotationURIs)
+		sinon.assert.callCount(this.oLogWarningSpy, 4);
 
 		// Annotation1
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Overriding existing \"sap-context-token=1400000002\" with provided value \"1400000222\" for ODataAnnotation \"Annotation1\" (/path/to/odata/annotation/1?sap-context-token=1400000002&sap-language=EN&sap-client=foo).",
+			"Component Manifest: Overriding existing \"sap-context-token=1400000002\" with provided value \"1400000222\" for DataSource \"Annotation1\" (/path/to/odata/annotation/1?sap-context-token=1400000002&sap-language=EN&sap-client=foo).",
 			"[\"sap.app\"][\"dataSources\"][\"Annotation1\"]",
 			"sap.ui.core.test.component.models"
 		);
 
 		// Annotation2
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Overriding existing \"sap-context-token=1400000003\" with provided value \"1400000333\" for ODataAnnotation \"Annotation2\" (path/to/local/odata/annotation/2?sap-context-token=1400000003&sap-language=EN&sap-client=foo).",
+			"Component Manifest: Overriding existing \"sap-context-token=1400000003\" with provided value \"1400000333\" for DataSource \"Annotation2\" (path/to/local/odata/annotation/2?sap-context-token=1400000003&sap-language=EN&sap-client=foo).",
 			"[\"sap.app\"][\"dataSources\"][\"Annotation2\"]",
 			"sap.ui.core.test.component.models"
 		);
 
 		// Model (serviceUrl)
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000111\" for model \"\" (/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar). " +
-			"Model URI already contains parameter \"sap-context-token=1400000001\"",
+			"Component Manifest: Overriding existing \"sap-context-token=1400000001\" with provided value \"1400000111\" for Model \"\" (/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar).",
+			"[\"sap.ui5\"][\"models\"][\"\"]",
+			"sap.ui.core.test.component.models"
+		);
+
+		// Model (serviceUrl)
+		sinon.assert.calledWithExactly(this.oLogWarningSpy,
+			"Component Manifest: Move existing \"sap-context-token=1400000001\" to metadataUrlParams for Model \"\" (/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar).",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
 			"sap.ui.core.test.component.models"
 		);
@@ -3616,10 +3672,161 @@ sap.ui.define([
 
 		// Model (serviceUrl)
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Overriding existing \"sap-context-token=1400000001\" with provided value \"1400000111\" for model \"\" (/foo?sap-client=foo&sap-server=bar).",
+			"Component Manifest: Overriding existing \"sap-context-token=1400000001\" with provided value \"1400000111\" for Model \"\" (/foo?sap-client=foo&sap-server=bar).",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
 			"sap.ui.core.test.component.models"
 		);
 
+	});
+
+	QUnit.module("ui5:// URL resolution for local annotations", {
+		before: function() {
+			// preload any used libraries / modules to avoid sync requests
+			return new Promise(function(resolve, reject) {
+				sap.ui.require([
+					"sap/ui/commons/Label",
+					"sap/ui/core/CustomData",
+					"sap/ui/core/CustomizingConfiguration",
+					"sap/ui/core/mvc/XMLView",
+					"sap/ui/core/routing/Router",
+					"sap/ui/model/odata/ODataAnnotations"
+				], function() {
+					resolve();
+				}, reject);
+			});
+		},
+		beforeEach: function() {
+			bindHelper.call(this);
+
+			this.spyModels();
+			this.oLogSpy = sinon.spy(Log, "error");
+
+			sap.ui.loader.config({
+				paths: {
+					"path/to/odata/service": "https://remote.system:9000/odata/service",
+					"sap/ui/test/v2models/ui5urls": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls",
+					"another/name/space": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/another/name/space",
+					"cool.name.space": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/cool/name/space"
+				}
+			});
+		},
+		afterEach: function() {
+			this.restoreModels();
+			this.oLogSpy.restore();
+
+			this.oComponent.destroy();
+
+			this.restoreGetUriParameters();
+
+			// To keep reusing the same component for async and sync path tests,
+			// we need to unload the Component and remove the leftovers from the ComponentMetadata.
+			// This way all tests start fresh and actually load the Component again.
+			sap.ui.loader._.unloadResources('sap/ui/test/v2models/ui5urls/Component.js', true, true, true);
+			delete sap.ui.test.v2models.ui5Urls.Component.getMetadata()._oManifest;
+
+			// remove the previous path-configs/resource-roots
+			sap.ui.loader.config({
+				paths: {
+					"cool.name.space": null,
+					"this/is/a/resourceRoot": null
+				}
+			});
+		}
+	});
+
+	function fnAssert(assert) {
+		// resource roots now defined after component creation
+		assert.equal(
+			sap.ui.require.toUrl("this/is/a/resourceRoot"),
+			"test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/resourceRoots/subfolder",
+			"Resource-roots is now defined."
+		);
+
+		// sap.ui.model.odata.ODataModel
+		sinon.assert.callCount(this.modelSpy.odataV2, 2);
+
+		// model: "ODataModel"
+		sinon.assert.calledWithExactly(this.modelSpy.odataV2.getCall(0), {
+			serviceUrl: 'https://remote.system:9000/odata/service?sap-client=foo&sap-server=bar',
+			metadataUrlParams: {"sap-language": "EN"},
+			annotationURI: [
+				'/path/to/odata/annotations/1?sap-language=EN&sap-client=foo',
+				sap.ui.loader._.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/annotations/2?sap-language=EN&sap-client=foo'),
+				sap.ui.loader._.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/another/name/space/annotations/3?sap-language=EN&sap-client=foo'),
+				sap.ui.loader._.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/cool/name/space/annotations/4.xml?sap-language=EN&sap-client=foo'),
+				sap.ui.loader._.resolveURL('resources/unkown.name.space/annotations/5.xml?sap-language=EN&sap-client=foo'),
+				sap.ui.loader._.resolveURL('resources/another/unkown/name/space/annotations/6.xml?sap-language=EN&sap-client=foo'),
+				sap.ui.loader._.resolveURL('test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/resourceRoots/subfolder/annotations/file7.xml?sap-language=EN&sap-client=foo')
+			],
+			useBatch: false,
+			refreshAfterChange: false
+		});
+
+		// model: "OtherODataModel"
+		sinon.assert.calledWithExactly(this.modelSpy.odataV2.getCall(1), {
+			serviceUrl: 'https://remote.system:9000/odata/service',
+			useBatch: true,
+			refreshAfterChange: true
+		});
+	}
+
+	QUnit.test("ASYNC: Resolve annotation urls; Manifest first;", function(assert) {
+		// stub uri parameters with sap-client and sap-server
+		this.stubGetUriParameters();
+
+		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
+
+		return Component.create({
+			name: "sap.ui.test.v2models.ui5urls"
+		}).then(function(oComponent) {
+			this.oComponent = oComponent;
+			fnAssert.call(this, assert);
+		}.bind(this));
+	});
+
+	QUnit.test("ASYNC: Resolve annotation urls; Manifest last;", function(assert) {
+		// stub uri parameters with sap-client and sap-server
+		this.stubGetUriParameters();
+
+		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
+
+		// manifest-last   =>   Component metadata says manifest: "json", so the manifest is loaded later
+		// url resolution triggered during manifest init
+		// Manifest model init is triggered afterwards during Component constructor, at this time all URLs have been resolved
+		return Component.create({
+			name: "sap.ui.test.v2models.ui5urls",
+			manifest: false
+		}).then(function(oComponent) {
+			this.oComponent = oComponent;
+			fnAssert.call(this, assert);
+		}.bind(this));
+	});
+
+	QUnit.test("SYNC: Resolve annotation urls; Manifest first;", function(assert) {
+		// stub uri parameters with sap-client and sap-server
+		this.stubGetUriParameters();
+
+		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
+
+		this.oComponent = sap.ui.component({
+			name: "sap.ui.test.v2models.ui5urls",
+			manifest: true,
+			async: false
+		});
+
+		fnAssert.call(this, assert);
+	});
+
+	QUnit.test("SYNC: Resolve annotation urls; Manifest last;", function(assert) {
+		// stub uri parameters with sap-client and sap-server
+		this.stubGetUriParameters();
+
+		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
+
+		this.oComponent = sap.ui.component({
+			name: "sap.ui.test.v2models.ui5urls"
+		});
+
+		fnAssert.call(this, assert);
 	});
 });

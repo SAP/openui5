@@ -46,6 +46,7 @@ sap.ui.define([
 		WrappingType = library.WrappingType;
 
 	var DEVICE_SET = "GenericTileDeviceSet";
+	var keyPressed = {};
 
 	/**
 	 * Constructor for a new sap.m.GenericTile control.
@@ -848,6 +849,13 @@ sap.ui.define([
 	};
 
 	GenericTile.prototype.onkeydown = function (event) {
+		var currentKey = keyPressed[event.keyCode];
+		if (!currentKey) {
+			keyPressed[event.keyCode] = true;
+			if (keyPressed[32] || keyPressed[13]) {
+				event.preventDefault();
+			}
+		}
 		if (PseudoEvents.events.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
 			this.addStyleClass("sapMGTPressActive");
 			if (this.$("hover-overlay").length > 0) {
@@ -872,6 +880,10 @@ sap.ui.define([
 	};
 
 	GenericTile.prototype.onkeyup = function (event) {
+		var currentKey = keyPressed[event.keyCode];    //disable navigation to other tiles when one tile is selected
+		if (currentKey) {
+			delete keyPressed[event.keyCode];
+		}
 		var oParams,
 			bFirePress = false,
 			sScope = this.getScope(),
@@ -886,7 +898,7 @@ sap.ui.define([
 			bFirePress = true;
 		}
 		if (PseudoEvents.events.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
-			this.removeStyleClass("sapMGTPressActive"); //Class sapMGTPressActive was added instead of remove.
+			this.removeStyleClass("sapMGTPressActive");
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").removeClass("sapMGTPressActive");
 			}

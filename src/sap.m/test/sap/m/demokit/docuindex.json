@@ -976,12 +976,12 @@
 			"sap.m.sample.PlanningCalendarSingle",
 			"sap.m.sample.PlanningCalendarViews",
 			"sap.m.sample.PlanningCalendarOneLine",
+			"sap.m.sample.PlanningCalendarAppointmentSizes",
 			"sap.m.sample.PlanningCalendarMinMax",
 			"sap.m.sample.PlanningCalendarModifyAppointments",
 			"sap.m.sample.PlanningCalendarWithLegend",
 			"sap.m.sample.PlanningCalendarDnD",
-			"sap.m.sample.PlanningCalendarWithStickyHeader",
-			"sap.m.sample.PlanningCalendarPaging"]
+			"sap.m.sample.PlanningCalendarWithStickyHeader"]
 		},
 		{
 			"id": "sap.m.SinglePlanningCalendar",
@@ -1162,7 +1162,8 @@
 			"sap.m.sample.MultiInputMaxTokens",
 			"sap.m.sample.MultiInputTokenUpdate",
 			"sap.m.sample.MultiInputGrouping",
-			"sap.m.sample.MultiInputValueHelp"
+			"sap.m.sample.MultiInputValueHelp",
+			"sap.m.sample.MultiInputValueStates"
 		  ]
 		},
 		{
@@ -1282,7 +1283,8 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.TextArea",
-			 "sap.m.sample.TextAreaMaxLength",
+			"sap.m.sample.TextAreaMaxLength",
+			"sap.m.sample.TextAreaValueStates",
 			"sap.m.sample.TextAreaValueUpdate",
 			"sap.m.sample.TextAreaGrowing"
 		  ]
@@ -2346,6 +2348,11 @@
 		  "description": "MultiInput that includes a SelectDialog as a value help dialog"
 		},
 		{
+		  "id": "sap.m.sample.MultiInputValueStates",
+		  "name": "MultiInput - Value States",
+		  "description": "This sample illustrates the different value states of the sap.m.MultiInput control."
+		},
+		{
 			"id": "sap.m.sample.NumericContentDifColors",
 			"name": "Numeric Content of Different Colors",
 			"description": "Shows NumericContent including numbers, units of measurement, and status arrows indicating a trend. The numbers can be colored according to their meaning."
@@ -2418,7 +2425,13 @@
 	 	{
 		  "id": "sap.m.sample.TextAreaMaxLength",
 		  "name": "TextArea with MaxLength = true",
-		  "description": "Shows the behavior of the control with the new showExceededText property (since 1.48) and maxLength = true"},
+		  "description": "Shows the behavior of the control with the new showExceededText property (since 1.48) and maxLength = true"
+		},
+		{
+		  "id": "sap.m.sample.TextAreaValueStates",
+		  "name": "TextArea - Value States",
+		  "description": "This sample illustrates the different value states of the sap.m.TextArea control."
+		},
 		{
 		  "id": "sap.m.sample.TextAreaValueUpdate",
 		  "name": "TextArea - Value Update",
@@ -3250,6 +3263,11 @@
 		  "description": "PlanningCalendar showing appointment with only title in one line to save space. The interval headers are only shown if there are some assigned in the visible area."
 		},
 		{
+			"id": "sap.m.sample.PlanningCalendarAppointmentSizes",
+			"name": "Planning Calendar - with appointments in different sizes",
+			"description": "PlanningCalendar showing normal, half-sized and large appointments."
+		},
+		{
 		  "id": "sap.m.sample.PlanningCalendarMinMax",
 		  "name": "Planning Calendar - with min. and max. date",
 		  "description": "PlanningCalendar with min. date 2000-01-01 and max. date 2050-12-31"
@@ -3273,11 +3291,6 @@
 		  "id": "sap.m.sample.PlanningCalendarWithStickyHeader",
 		  "name": "Planning Calendar - with header that remains visible (fixed on top) on scroll",
 		  "description": "PlanningCalendar with header area that remains visible (fixed on top) when the rest of the content is scrolled out of view."
-		},
-		{
-			"id": "sap.m.sample.PlanningCalendarPaging",
-			"name": "Planning Calendar with Paging",
-			"description": "PlanningCalendar with ability to load rows on pages."
 		},
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendar",

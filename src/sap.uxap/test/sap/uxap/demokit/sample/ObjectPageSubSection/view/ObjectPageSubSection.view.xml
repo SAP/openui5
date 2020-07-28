@@ -7,12 +7,12 @@
 		</headerTitle>
 
 		<sections>
-			<ObjectPageSection title="All examples">
+			<ObjectPageSection titleUppercase="false" title="All examples">
 				<subSections>
 
 					<ObjectPageSubSection title="No Expand/Collapse"
 										  mode="Expanded"
-										  titleUppercase="true">
+										  titleUppercase="false">
 						<blocks>
 							<sample:MultiViewBlock id="multiview21"/>
 							<sample:MultiViewBlock id="multiview22"/>
@@ -20,7 +20,7 @@
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="Collapsed by default"
-										  titleUppercase="true">
+										  titleUppercase="false">
 						<blocks>
 							<sample:MultiViewBlock id="multiview11"/>
 							<sample:MultiViewBlock id="multiview12"/>
@@ -33,7 +33,7 @@
 
 					<ObjectPageSubSection title="Expanded by default"
 										  mode="Expanded"
-										  titleUppercase="true">
+										  titleUppercase="false">
 						<blocks>
 							<sample:MultiViewBlock id="multiview31"/>
 							<sample:MultiViewBlock id="multiview32"/>

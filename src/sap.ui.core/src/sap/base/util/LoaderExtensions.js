@@ -161,6 +161,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resolves the given <code>ui5://...</code> URL with <code>sap.ui.require.toURl</code>.
+	 * Strings which are not a ui5: URL are simply returned unchanged.
+	 *
+	 * @param {string} sUrl The URL string which should be resolved
+	 * @returns {string} The resolved URL or the input string if not a ui5: URL.
+	 *
+	 * @static
+	 * @private
+	 * @ui5-restricted sap.ui.core.Component
+	 */
+	LoaderExtensions.resolveUI5Url = function(sUrl) {
+		// check for ui5 scheme
+		if (sUrl.startsWith("ui5:")) {
+			var sNoScheme = sUrl.replace("ui5:", "");
+
+			// check for authority
+			if (!sNoScheme.startsWith("//")) {
+				throw new Error("URLs using the 'ui5' protocol must be absolute. Relative and server absolute URLs are reserved for future use.");
+			}
+
+			sNoScheme = sNoScheme.replace("//", "");
+
+			return sap.ui.loader._.resolveURL(sap.ui.require.toUrl(sNoScheme));
+		} else {
+			// not a ui5 url
+			return sUrl;
+		}
+	};
+
+	/**
 	 * Retrieves the resource with the given name, either from the preload cache or from
 	 * the server. The expected data type of the resource can either be specified in the
 	 * options (<code>dataType</code>) or it will be derived from the suffix of the <code>sResourceName</code>.

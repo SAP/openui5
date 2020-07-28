@@ -16,39 +16,39 @@
 			</ObjectPageHeader>
 		</headerTitle>
 		<sections>
-			<ObjectPageSection title="2 blocks" showTitle="true">
+			<ObjectPageSection titleUppercase="false" title="2 blocks" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="a-1" titleUppercase="true">
+					<ObjectPageSubSection title="a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2" titleUppercase="true">
+					<ObjectPageSubSection title="a-2" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-3" titleUppercase="true">
+					<ObjectPageSubSection title="a-3" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="3"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a" titleUppercase="true">
+					<ObjectPageSubSection title="1-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 -a" titleUppercase="true">
+					<ObjectPageSubSection title="2 -a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3-a" titleUppercase="true">
+					<ObjectPageSubSection title="3-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -56,51 +56,51 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="3 blocks" showTitle="true">
+			<ObjectPageSection titleUppercase="false" title="3 blocks" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="a-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="a-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-2" titleUppercase="true">
+					<ObjectPageSubSection title="a-a-2" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="1-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-2" titleUppercase="true">
+					<ObjectPageSubSection title="1-a-2" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2-a-a" titleUppercase="true">
+					<ObjectPageSubSection title="2-a-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="2-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2-1-a" titleUppercase="true">
+					<ObjectPageSubSection title="2-1-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -109,9 +109,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="4 blocks" showTitle="true">
+			<ObjectPageSection titleUppercase="false" title="4 blocks" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="a-a-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="a-a-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -119,7 +119,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-a-2" titleUppercase="true">
+					<ObjectPageSubSection title="a-a-a-2" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -127,7 +127,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-1-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="a-1-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -135,7 +135,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-1-a" titleUppercase="true">
+					<ObjectPageSubSection title="1-a-1-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -143,7 +143,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="1-a-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -151,23 +151,23 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-1" titleUppercase="true">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="1"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-2" titleUppercase="true">
+					<ObjectPageSubSection title="a-2-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="a-2-a-2" titleUppercase="false">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2-a-a-2" titleUppercase="true">
+					<ObjectPageSubSection title="2-a-a-2" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -175,7 +175,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3-a-3-a" titleUppercase="true">
+					<ObjectPageSubSection title="3-a-3-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -185,9 +185,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="5 blocks" showTitle="true">
+			<ObjectPageSection titleUppercase="false" title="5 blocks" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1-a-a-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="1-a-a-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -196,7 +196,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2-a-a-a-2" titleUppercase="true">
+					<ObjectPageSubSection title="2-a-a-a-2" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -205,7 +205,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3-a-a-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="3-a-a-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -214,7 +214,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3-a-a-a-2" titleUppercase="true">
+					<ObjectPageSubSection title="3-a-a-a-2" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -223,7 +223,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-1-1-a" titleUppercase="true">
+					<ObjectPageSubSection title="a-a-1-1-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -232,7 +232,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-1-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="a-a-1-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -241,70 +241,70 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-3-a-a-2" titleUppercase="true">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="3"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-a-1" titleUppercase="true">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="1"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-a-2" titleUppercase="true">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-1-a-1-a" titleUppercase="true">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="1"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="1"/>
-							<sample:InfoButton columnLayout="auto"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-1-a-2-a" titleUppercase="true">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="1"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-							<sample:InfoButton columnLayout="auto"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-1-a" titleUppercase="true">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="1"/>
-							<sample:InfoButton columnLayout="auto"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-3-a-1-a" titleUppercase="true">
+					<ObjectPageSubSection title="a-3-a-a-2" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="a-2-a-a-1" titleUppercase="false">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="a-2-a-a-2" titleUppercase="false">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="a-1-a-1-a" titleUppercase="false">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="1"/>
+							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-1-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="a-1-a-2-a" titleUppercase="false">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="1"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+							<sample:InfoButton columnLayout="auto"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="a-2-a-1-a" titleUppercase="false">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="1"/>
+							<sample:InfoButton columnLayout="auto"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="a-3-a-1-a" titleUppercase="false">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="3"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="1"/>
+							<sample:InfoButton columnLayout="auto"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="1-a-1-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -313,7 +313,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-a-1-a" titleUppercase="true">
+					<ObjectPageSubSection title="1-a-a-1-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -322,7 +322,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-2-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="1-a-2-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -331,7 +331,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-3-a-2" titleUppercase="true">
+					<ObjectPageSubSection title="1-a-3-a-2" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -340,7 +340,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2-a-a-2-a" titleUppercase="true">
+					<ObjectPageSubSection title="2-a-a-2-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -349,7 +349,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3-a-a-3-a" titleUppercase="true">
+					<ObjectPageSubSection title="3-a-a-3-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -360,9 +360,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="6 blocks" showTitle="true">
+			<ObjectPageSection titleUppercase="false" title="6 blocks" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1-a-a-a-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="1-a-a-a-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -372,7 +372,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-a-a-a-3" titleUppercase="true">
+					<ObjectPageSubSection title="1-a-a-a-a-3" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -382,7 +382,7 @@
 							<sample:InfoButton columnLayout="3"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-a-1-a-a" titleUppercase="true">
+					<ObjectPageSubSection title="a-a-a-1-a-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -392,7 +392,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-a-2-a-a" titleUppercase="true">
+					<ObjectPageSubSection title="a-a-a-2-a-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -402,7 +402,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-1-a-a-a" titleUppercase="true">
+					<ObjectPageSubSection title="a-a-1-a-a-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -412,7 +412,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-2-a-a-a" titleUppercase="true">
+					<ObjectPageSubSection title="a-a-2-a-a-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -422,7 +422,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-3-a-a-a" titleUppercase="true">
+					<ObjectPageSubSection title="a-a-3-a-a-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -432,7 +432,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-1-a-a-1-a" titleUppercase="true">
+					<ObjectPageSubSection title="a-1-a-a-1-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -442,7 +442,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-a-2-a" titleUppercase="true">
+					<ObjectPageSubSection title="a-2-a-a-2-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
@@ -452,7 +452,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-3-a-a-3-a" titleUppercase="true">
+					<ObjectPageSubSection title="a-3-a-a-3-a" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="3"/>
@@ -462,7 +462,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-1-a-a-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="a-1-a-a-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -472,7 +472,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-a-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="a-2-a-a-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
@@ -482,7 +482,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-1-a-1-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="a-1-a-1-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -492,7 +492,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-2-a-2" titleUppercase="true">
+					<ObjectPageSubSection title="a-2-a-2-a-2" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
@@ -502,7 +502,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-3-a-2-a-1" titleUppercase="true">
+					<ObjectPageSubSection title="a-3-a-2-a-1" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="3"/>
@@ -515,28 +515,28 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="All default" showTitle="true">
+			<ObjectPageSection titleUppercase="false" title="All default" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1 block" titleUppercase="true">
+					<ObjectPageSubSection title="1 block" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="2 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton/>
 							<sample:InfoButton/>
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="3 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton/>
 							<sample:InfoButton/>
 							<sample:InfoButton/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="4 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="4 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton/>
 							<sample:InfoButton/>
@@ -545,7 +545,7 @@
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="5 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="5 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton/>
 							<sample:InfoButton/>
@@ -554,7 +554,7 @@
 							<sample:InfoButton/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="6 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="6 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton/>
 							<sample:InfoButton/>
@@ -566,27 +566,27 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="All 1" showTitle="true">
+			<ObjectPageSection titleUppercase="false" title="All 1" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1 block" titleUppercase="true">
+					<ObjectPageSubSection title="1 block" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="2 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="3 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="4 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="4 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -595,7 +595,7 @@
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="5 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="5 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -604,7 +604,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="6 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="6 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -616,27 +616,27 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="All 2" showTitle="true">
+			<ObjectPageSection titleUppercase="false" title="All 2" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1 block" titleUppercase="true">
+					<ObjectPageSubSection title="1 block" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="2 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="3 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="4 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="4 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="2"/>
@@ -645,7 +645,7 @@
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="5 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="5 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="2"/>
@@ -654,7 +654,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="6 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="6 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="2"/>
@@ -666,27 +666,27 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="All 3" showTitle="true">
+			<ObjectPageSection titleUppercase="false" title="All 3" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1 block" titleUppercase="true">
+					<ObjectPageSubSection title="1 block" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="2 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="3"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="3 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="3"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="4 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="4 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="3"/>
@@ -695,7 +695,7 @@
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="5 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="5 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="3"/>
@@ -704,7 +704,7 @@
 							<sample:InfoButton columnLayout="3"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="6 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="6 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="3"/>
@@ -716,27 +716,27 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="All 4" showTitle="true">
+			<ObjectPageSection titleUppercase="false" title="All 4" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1 block" titleUppercase="true">
+					<ObjectPageSubSection title="1 block" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="4"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="2 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="4"/>
 							<sample:InfoButton columnLayout="4"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="3 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="4"/>
 							<sample:InfoButton columnLayout="4"/>
 							<sample:InfoButton columnLayout="4"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="4 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="4 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="4"/>
 							<sample:InfoButton columnLayout="4"/>
@@ -745,7 +745,7 @@
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="5 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="5 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="4"/>
 							<sample:InfoButton columnLayout="4"/>
@@ -754,7 +754,7 @@
 							<sample:InfoButton columnLayout="4"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="6 blocks" titleUppercase="true">
+					<ObjectPageSubSection title="6 blocks" titleUppercase="false">
 						<blocks>
 							<sample:InfoButton columnLayout="4"/>
 							<sample:InfoButton columnLayout="4"/>

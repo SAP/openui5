@@ -326,8 +326,9 @@ function (
 			);
 
 			this.oObjectBinding.attachChange(function (oEvent) {
-				assert.strictEqual(oEvent.getParameter("path"), "absoluteBinding");
-				assert.strictEqual(oEvent.getParameter("value"), "foo");
+				var oChange = oEvent.getParameter("changes")[0];
+				assert.strictEqual(oChange.path, "absoluteBinding");
+				assert.strictEqual(oChange.value, "foo");
 				assert.deepEqual(
 					this.oObjectBinding.getObject(),
 					{
@@ -340,6 +341,59 @@ function (
 
 			this.oDefaultModel.setData(Object.assign({}, this.oDefaultModel.getData(), {
 				root: "foo"
+			}));
+		});
+
+		QUnit.test("when multiple models are updated", function (assert) {
+			var fnDone = assert.async();
+			var oJson = {
+				noBinding: 1,
+				absoluteBinding: "{/context/value}",
+				contextBinding: "{context>value}"
+			};
+
+			this.oObjectBinding.setModel(this.oDefaultModel);
+			this.oObjectBinding.setModel(this.oDefaultModel, "context");
+			this.oObjectBinding.setBindingContext(this.oDefaultModel.getContext("/context"), "context");
+			this.oObjectBinding.setObject(oJson);
+
+			assert.deepEqual(
+				this.oObjectBinding.getObject(),
+				{
+					noBinding: 1,
+					absoluteBinding: "DefaultValue",
+					contextBinding: "DefaultValue"
+				},
+				"then the initial values are resolved properly"
+			);
+
+			this.oObjectBinding.attachChange(function (oEvent) {
+				var aChanges = oEvent.getParameter("changes");
+				assert.deepEqual(
+					aChanges,
+					[
+						{
+						  "path": "absoluteBinding",
+						  "value": "New value"
+						},
+						{
+						  "path": "contextBinding",
+						  "value": "New value"
+						}
+					  ],
+					"then all changes are fired together"
+				);
+				fnDone();
+			}, this);
+
+			this.oDefaultModel.setData(Object.assign({}, this.oDefaultModel.getData(), {
+				root: "root",
+				context: {
+					value: "New value"
+				},
+				another: {
+					foo: "bar"
+				}
 			}));
 		});
 

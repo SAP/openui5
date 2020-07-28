@@ -8,7 +8,7 @@
 		<Label text="Product" labelFor="productInput" />
 		<Input
 			id="productInput"
-			placeholder="Enter Product ..."
+			placeholder="Enter product"
 			showSuggestion="true"
 			showValueHelp="true"
 			valueHelpRequest=".onValueHelpRequest"

@@ -872,7 +872,7 @@ function (
 		}
 	});
 
-	QUnit.module("Keyboard handling", {
+	QUnit.module("Keyboard mouse and focus handling", {
 		beforeEach: function () {
 
 			// Arrange
@@ -1065,6 +1065,33 @@ function (
 			assert.ok(oJQueryFocusSpy.called, "Focus should be moved to the grid list item");
 
 			oJQueryFocusSpy.restore();
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("focusing the grid list item should call onfocusin of the control", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oCardFocusInSpy = sinon.spy(Card.prototype, "onfocusin"),
+			oIntegrationCardFocusInSpy = sinon.spy(IntegrationCard.prototype, "onfocusin");
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			var oItemWrapper = this.oGrid.getDomRef().children[2];
+			oItemWrapper.focus();
+
+			// Assert
+			assert.ok(oCardFocusInSpy.called, "onfocusin is called");
+
+			oItemWrapper = this.oGrid.getDomRef().children[5];
+			oItemWrapper.focus();
+
+			// Assert
+			assert.ok(oIntegrationCardFocusInSpy.called, "onfocusin is called");
+
+			oCardFocusInSpy.restore();
+			oIntegrationCardFocusInSpy.restore();
 			done();
 		}.bind(this));
 	});
@@ -1294,7 +1321,7 @@ function (
 		beforeEach: function () {
 			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
 
-			this.oRTLStub = sinon.stub(Core.getConfiguration(), "getRTL").returns(true)
+			this.oRTLStub = sinon.stub(Core.getConfiguration(), "getRTL").returns(true);
 
 			this.oGrid = new GridContainer({
 				layout: oSettings,

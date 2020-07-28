@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/PropertyEditors",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+	"sap/base/util/deepClone",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	BaseEditor,
 	PropertyEditors,
 	PropertyEditorFactory,
 	StringEditor,
+	deepClone,
 	sinon
 ) {
 	"use strict";
@@ -1068,8 +1070,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("When a PropertyEditors wrapper has nested editors", function (assert) {
-			var fnDone = assert.async();
-
 			this.oPropertyEditors = new PropertyEditors({
 				config: [
 					{
@@ -1081,16 +1081,128 @@ sap.ui.define([
 				]
 			});
 
-			this.oBaseEditor.addContent(this.oPropertyEditors);
-			sap.ui.getCore().applyChanges();
+			return this.oBaseEditor.ready().then(function() {
+				this.oBaseEditor.addContent(this.oPropertyEditors);
+				sap.ui.getCore().applyChanges();
 
-			this.oPropertyEditors.ready().then(function () {
+				return this.oPropertyEditors.ready();
+			}.bind(this)).then(function () {
 				assert.strictEqual(
 					this.oPropertyEditors._getPropertyEditors()[0].isReady(),
 					true,
 					"Then it is ready when its nested editors are"
 				);
-				fnDone();
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Form layout", {
+		beforeEach: function () {
+			this.oBaseEditor = new BaseEditor({
+				config: {
+					"layout": {
+						"form": {
+							"groups": [
+								{
+									"label": "Foo 1 group",
+									"items": [
+										{
+											type: "propertyName",
+											value: "foo1"
+										}
+									]
+								},
+								{
+									"label": "All foos group",
+									"items": [
+										{
+											type: "tag",
+											value: "foo"
+										}
+									]
+								}
+							]
+						}
+					},
+					"properties": {
+						"foo1": {
+							"tags": [],
+							"label": "Foo1 property",
+							"path": "/foo1",
+							"type": "string"
+						},
+						"foo2": {
+							"tags": ["foo"],
+							"label": "Foo2 property",
+							"path": "/foo2",
+							"type": "string",
+							"visible": false
+						},
+						"foo3": {
+							"tags": ["foo"],
+							"label": "Foo3 property",
+							"path": "/foo3",
+							"type": "string",
+							"visible": false
+						}
+					},
+					"propertyEditors": {
+						"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+					}
+				},
+				json: mJson,
+				layout: 'form'
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+			return this.oBaseEditor.getPropertyEditorsByTag("foo").then(function (aPropertyEditors) {
+				sap.ui.getCore().applyChanges();
+				this.oFoo1LayoutGroup = this.oBaseEditor.getContent()[0].getContent().getFormContainers()[0];
+				this.oFooTagLayoutGroup = this.oBaseEditor.getContent()[0].getContent().getFormContainers()[1];
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("When a group contains at least one visible element", function (assert) {
+			assert.ok(
+				this.oFoo1LayoutGroup.getVisible(),
+				"Then the group is visible"
+			);
+		});
+
+		QUnit.test("When a group contains only invisible elements", function (assert) {
+			assert.notOk(
+				this.oFooTagLayoutGroup.getVisible(),
+				"Then the group is not visible"
+			);
+		});
+
+		QUnit.test("When an element of an invsible group becomes visible", function (assert) {
+			var oRootWrapper = this.oBaseEditor.getContent()[0];
+			var oConfig = deepClone(oRootWrapper.getConfig());
+			oConfig[1].visible = true;
+			oRootWrapper.setConfig(oConfig);
+
+			return oRootWrapper.ready().then(function () {
+				assert.ok(
+					this.oFooTagLayoutGroup.getVisible(),
+					"Then the group becomes visible"
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("When all elements of a visible group become invisible", function (assert) {
+			var oRootWrapper = this.oBaseEditor.getContent()[0];
+			var oConfig = deepClone(oRootWrapper.getConfig());
+			oConfig[0].visible = false;
+			oRootWrapper.setConfig(oConfig);
+
+			return oRootWrapper.ready().then(function () {
+				assert.notOk(
+					this.oFoo1LayoutGroup.getVisible(),
+					"Then the group becomes invisible"
+				);
 			}.bind(this));
 		});
 	});

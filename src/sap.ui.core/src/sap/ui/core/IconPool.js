@@ -708,7 +708,9 @@ sap.ui.define([
 				'split': 0xe286,
 				'megamenu': 0xe287,
 				'feedback': 0xe288,
-				'information': 0xe289
+				'information': 0xe289,
+				'S/4HANA': 0x1e28A,
+				'translate': 0x1e28B
 			}
 		};
 

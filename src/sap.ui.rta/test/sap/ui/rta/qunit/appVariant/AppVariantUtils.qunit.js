@@ -637,10 +637,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When isStandAloneApp() method is called", function (assert) {
-			assert.equal(AppVariantUtils.isStandAloneApp(), true, "then the app is a stand alone application");
-		});
-
 		QUnit.test("When copyId() is called", function (assert) {
 			assert.equal(AppVariantUtils.copyId("CopyMe"), true, "then the the string is copied to your clipboard");
 		});

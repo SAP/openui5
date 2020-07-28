@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/Util",
 	"qunit/RtaQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
@@ -14,7 +13,6 @@ sap.ui.define([
 	jQuery,
 	RuntimeAuthoring,
 	OverlayRegistry,
-	DtUtil,
 	RtaQunitUtils,
 	QUnitUtils,
 	KeyCodes,
@@ -176,14 +174,14 @@ sap.ui.define([
 				}.bind(this), 0);
 			}.bind(this));
 
-			// to reveal we have to remove the field first (otherwise it would be addODataProperty)
+			// to reveal we have to remove the field first (otherwise it would be addViaDelegate)
 			this.oBoundButton35FieldOverlay.focus();
 			QUnitUtils.triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.ENTER, false, false, false);
 			this.oBoundButton35FieldOverlay.focus();
 			QUnitUtils.triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.DELETE);
 		});
 
-		QUnit.test("when adding a group element via context menu (expanded context menu - addODataProperty)", function(assert) {
+		QUnit.test("when adding a group element via context menu (expanded context menu - addViaDelegate)", function(assert) {
 			var fnDone = assert.async();
 
 			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
@@ -194,14 +192,6 @@ sap.ui.define([
 
 			// open context menu (context menu) and select add field
 			RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function () {
-				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				oContextMenuControl.attachEventOnce("Opened", function () {
-					var oContextMenuButton = oContextMenuControl.getButtons()[1];
-					assert.equal(oContextMenuButton.getText(), "Add: Field", "then the add field action button is available in the menu");
-					oContextMenuButton.firePress();
-					sap.ui.getCore().applyChanges();
-				});
-
 				oDialog.attachOpened(function () {
 					var oFieldToAdd = oDialog._oList.getItems()[1];
 					var sFieldToAddText = oFieldToAdd.getContent()[0].getItems()[0].getText();
@@ -232,6 +222,12 @@ sap.ui.define([
 					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
 					sap.ui.getCore().applyChanges();
 				}.bind(this));
+
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var oContextMenuButton = oContextMenuControl.getButtons()[1];
+				assert.equal(oContextMenuButton.getText(), "Add: Field", "then the add field action button is available in the menu");
+				oContextMenuButton.firePress();
+				sap.ui.getCore().applyChanges();
 			}.bind(this));
 		});
 
@@ -362,107 +358,55 @@ sap.ui.define([
 		});
 
 		QUnit.test("when adding a SimpleForm Field via context menu (expanded context menu) - reveal", function(assert) {
-			var fnDone = assert.async();
-			var oForm = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm--Form");
-			var oFormContainer = oForm.getFormContainers()[0];
-			var oFieldToHide = oFormContainer.getFormElements()[0];
-			var oFieldToHideOverlay = OverlayRegistry.getOverlay(oFieldToHide);
-
-			function checkOverlay(oEvent, oData) {
-				var oOverlayCreated = oEvent.getParameters().elementOverlay;
-				if (oOverlayCreated.getElement().getId() === oData.controlId) {
-					this.oRta._oDesignTime.detachEvent("elementOverlayCreated", checkOverlay, this);
-					oData.resolve(oOverlayCreated);
-				}
-			}
-
 			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : this.oCompanyCodeField}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
+			var fnDone = assert.async();
+			var oForm = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm--Form");
+			var oFormContainer = oForm.getFormContainers()[0];
 			var oCommandStack = this.oRta.getCommandStack();
-			var oFieldOverlay;
-			oCommandStack.attachEventOnce("commandExecuted", function () {
-				setTimeout(function () {
-					DtUtil.waitForSynced(this.oRta._oDesignTime)().then(function () {
-						// remove field is executed, reveal should be available
-						var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
-						oFormContainer = oForm.getFormContainers()[0];
-						var oField = oFormContainer.getFormElements()[1];
-						oFieldOverlay = OverlayRegistry.getOverlay(oField);
+			var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
+			var oFieldOverlay = OverlayRegistry.getOverlay(oFormContainer.getFormElements()[1]);
+			oFieldOverlay.focus();
+			oFieldOverlay.setSelected(true);
+			// open context menu (compact context menu)
+			RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(function () {
+				// wait for opening additional Elements dialog
+				oDialog.attachOpened(function () {
+					var oFieldToAdd = oDialog.getElements().filter(function (oField) {
+						return oField.type === "invisible";
+					})[0];
+					oCommandStack.attachModified(function () {
+						var aCommands = oCommandStack.getAllExecutedCommands();
+						if (aCommands && aCommands.length === 1) {
+							fnWaitForExecutionAndSerializationBeingDone.call(this)
+								.then(function () {
+									sap.ui.getCore().applyChanges();
 
-						// BCP: 1970331115 - Simple form destroys and re-created all content async, when aggregation content is either added or remoeved.
-						// TODO: Remove this promise, when this issue is fixed.
-						new Promise(function (fnResolve) {
-							if (!oFieldOverlay) {
-								this.oRta._oDesignTime.attachEvent("elementOverlayCreated", {
-									resolve : fnResolve,
-									controlId : oField.getId()
-								}, checkOverlay, this);
-							} else {
-								fnResolve(oFieldOverlay);
-							}
-						}.bind(this))
-							.then(function (oCreatedOverlay) {
-								oFieldOverlay = oCreatedOverlay;
-								oFieldOverlay.focus();
-								oFieldOverlay.setSelected(true);
-								// open context menu (compact context menu)
-								RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(function () {
-									var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-									oContextMenuControl.attachEventOnce("Opened", function () {
-										var oContextMenuButton = oContextMenuControl.getButtons()[1];
-										assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
-										oContextMenuButton.firePress();
-										sap.ui.getCore().applyChanges();
-									});
-
-									// wait for opening additional Elements dialog
-									oDialog.attachOpened(function () {
-										var oFieldToAdd = oDialog.getElements().filter(function (oField) {
-											return oField.type === "invisible";
-										})[0];
-										oCommandStack.attachModified(function () {
-											var aCommands = oCommandStack.getAllExecutedCommands();
-											if (aCommands &&
-												aCommands.length === 3) {
-												fnWaitForExecutionAndSerializationBeingDone.call(this)
-													.then(function () {
-														sap.ui.getCore().applyChanges();
-													})
-													.then(function () {
-														iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : this.oCompanyCodeField}).length;
-														assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
-														return this.oRta.stop();
-													}.bind(this))
-													.then(RtaQunitUtils.getNumberOfChangesForTestApp).then(function (iNumberOfChanges) {
-														assert.equal(iNumberOfChanges, 3);
-													})
-													.then(fnDone);
-											}
-										}.bind(this));
-
-										// select the field in the list and close the dialog with OK
-										oFieldToAdd.selected = true;
-										sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
-										sap.ui.getCore().applyChanges();
-									}.bind(this));
-								}.bind(this));
-							}.bind(this));
+									iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : this.oCompanyCodeField}).length;
+									assert.strictEqual(iDirtyChangesCount, 1, "then there are three dirty changes in the flex persistence");
+									return this.oRta.stop();
+								}.bind(this))
+								.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+								.then(function (iNumberOfChanges) {
+									assert.equal(iNumberOfChanges, 1);
+									fnDone();
+								});
+						}
 					}.bind(this));
-				}.bind(this));
-			}.bind(this));
 
-			// to reveal we have to remove the field first (otherwise it would be addODataProperty)
-			oFieldToHideOverlay.focus();
-			oFieldToHideOverlay.setSelected(true);
-			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-			oContextMenuControl.attachEventOnce("Opened", function () {
-				var oContextMenuButton = oContextMenuControl.getButtons()[2];
-				assert.equal(oContextMenuButton.getText(), "Remove", "the 'remove' action button is available in the menu");
+					// select the field in the list and close the dialog with OK
+					oFieldToAdd.selected = true;
+					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
+					sap.ui.getCore().applyChanges();
+				}.bind(this));
+
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var oContextMenuButton = oContextMenuControl.getButtons()[1];
+				assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
 				oContextMenuButton.firePress();
 				sap.ui.getCore().applyChanges();
-			});
-			QUnitUtils.triggerKeyup(oFieldToHideOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			}.bind(this));
 		});
 
 		QUnit.test("when renaming a group element via Context menu (compact context menu) and setting a new label...", function(assert) {

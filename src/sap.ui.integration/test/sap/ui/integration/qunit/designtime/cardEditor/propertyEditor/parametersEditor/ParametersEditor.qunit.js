@@ -84,7 +84,8 @@ sap.ui.define([
 				{
 					type: "string",
 					itemKey: "foo",
-					path: "value"
+					path: "value",
+					designtime: undefined
 				},
 				"Then the nested editor receives the correct config"
 			);
@@ -176,14 +177,14 @@ sap.ui.define([
 		QUnit.test("When the label is changed in the editor", function (assert) {
 			var fnDone = assert.async();
 
-			this.oEditor.attachValueChange(function (oEvent) {
+			this.oEditor.attachDesigntimeMetadataChange(function (oEvent) {
 				assert.deepEqual(
 					oEvent.getParameter("value"),
 					{
 						"foo": {
-							"value": "bar",
-							"type": "string",
-							"label": "Changed Label"
+							"__value": {
+								"label": "Changed Label"
+							}
 						}
 					},
 					"Then the label is updated"

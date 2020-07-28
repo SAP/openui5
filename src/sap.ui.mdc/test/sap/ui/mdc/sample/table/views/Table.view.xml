@@ -1,0 +1,62 @@
+<mvc:View
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdcTable="sap.ui.mdc.table"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:variants="sap.ui.fl.variants"
+	controllerName="sap.ui.mdc.sample.table.controller.Test">
+	<mdc:Table id="mdcTable"
+			   header="MDC Table without rowCount"
+			   showRowCount="false"
+			   delegate='\{ "name": "sap/ui/mdc/odata/v4/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
+			   type="ResponsiveTable"
+			   p13nMode="Column,Sort"
+			   selectionMode="Multi"
+			   height="100%"
+			   paste="onPaste">
+		<mdc:actions>
+			<Button text= "Single Selection"  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setSelectionMode('Single')"/>
+			<Button text= " Multi Selection"  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setSelectionMode('Multi')"/>
+			<Button text= "  No Selection  "  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setSelectionMode('None')"/>
+			<Button text= "  Navigation on  " press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setRowAction(['Navigation'])"/>
+			<Button text= "  Navigation off " press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setRowAction()"/>
+			<ToggleButton text= "Toggle navigated" press=".toggleNavigated"/>
+			<ToggleButton text= "Toggle highlight" press=".toggleHighlight"/>
+		</mdc:actions>
+		<mdc:columns>
+				<mdcTable:Column id="create" header="Created On" initialIndex="3" dataProperties="CreatedAt" importance="Low">
+					<Text text="{CreatedAt}"/>
+				</mdcTable:Column>
+				<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" dataProperties="ProductID,Name" importance="High">
+					<ObjectIdentifier text="{Name}" title="{ProductID}"/>
+				</mdcTable:Column>
+				<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" dataProperties="Category" importance="Low">
+					<Text text="{Category}"/>
+				</mdcTable:Column>
+				<mdcTable:Column id="onlyTableView--mdcTable--Name" header="Product Name" dataProperties="Name" importance="Low">
+					<Text text="{Name}"/>
+				</mdcTable:Column>
+				<mdcTable:Column id="onlyTableView--mdcTable--SupplierName" header="Supplier" dataProperties="SupplierName" importance="Medium">
+					<Text text="{SupplierName}"/>
+				</mdcTable:Column>
+				<mdcTable:Column id="onlyTableView--mdcTable--Price" header="Unit Price" dataProperties="Price,CurrencyCode" hAlign="Right" importance="High">
+					<u:Currency xmlns:u="sap.ui.unified" value="{Price}" currency="{CurrencyCode}" useSymbol="false"/>
+				</mdcTable:Column>
+				<mdcTable:Column id="onlyTableView--mdcTable--WeightMeasure" header="Weight" dataProperties="WeightMeasure,WeightUnit" hAlign="End" importance="Low">
+					<ObjectNumber number="{WeightMeasure}" emphasized="false" textAlign="End" unit="{WeightUnit}"/>
+				</mdcTable:Column>
+				<mdcTable:Column id="onlyTableView--mdcTable--Width" header="Width" dataProperties="Width,DimUnit" hAlign="End" importance="Low">
+					<ObjectNumber number="{Width}" emphasized="false" textAlign="End" unit="{DimUnit}"/>
+				</mdcTable:Column>
+				<mdcTable:Column id="onlyTableView--mdcTable--Depth" header="Depth" dataProperties="Depth,DimUnit" hAlign="End" importance="Low">
+					<ObjectNumber number="{Depth}" emphasized="false" textAlign="End" unit="{DimUnit}"/>
+				</mdcTable:Column>
+				<mdcTable:Column id="onlyTableView--mdcTable--Height" header="Height" dataProperties="Height" hAlign="End" importance="Low">
+					<ObjectNumber number="{Height}" emphasized="false" textAlign="End" unit="cm"/>
+				</mdcTable:Column>
+		</mdc:columns>
+		<mdc:variant>
+			<variants:VariantManagement id="onlyTableView" for="mdcTable"/>
+		</mdc:variant>
+	</mdc:Table>
+</mvc:View>

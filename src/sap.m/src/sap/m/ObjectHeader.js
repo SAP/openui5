@@ -1043,7 +1043,8 @@ sap.ui.define([
 				// If there isn't an alt, then just add a default 'Icon' just in case
 				alt: this.getIconAlt() || ObjectHeader._getResourceBundle().getText("OH_ARIA_ICON"),
 				useIconTooltip : false,
-				densityAware : this.getIconDensityAware()
+				densityAware : this.getIconDensityAware(),
+				decorative : false
 			},
 				IconPool.isIconURI(this.getIcon()) ? { size : sSize } : {}
 		);
@@ -1058,7 +1059,6 @@ sap.ui.define([
 			}.bind(this);
 			mProperties.decorative = false;
 		}
-
 
 		this._oImageControl = ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties);
 

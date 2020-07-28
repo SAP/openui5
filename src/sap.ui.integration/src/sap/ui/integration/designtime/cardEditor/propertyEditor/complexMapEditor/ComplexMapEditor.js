@@ -62,57 +62,41 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	ComplexMapEditor.prototype.getConfigMetadata = function () {
-		return Object.assign(
-			{},
-			BasePropertyEditor.prototype.getConfigMetadata.call(this),
-			{
-				allowKeyChange: {
-					defaultValue: true
-				},
-				allowAddAndRemove: {
-					defaultValue: true
-				},
-				keyLabel: {
-					defaultValue: this.getI18nProperty("CARD_EDITOR.COMPLEX_MAP.KEY")
-				}
-			}
-		);
-	};
+	ComplexMapEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		allowKeyChange: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowAddAndRemove: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		keyLabel: {
+			defaultValue: "{i18n>CARD_EDITOR.COMPLEX_MAP.KEY}"//this.getI18nProperty("CARD_EDITOR.COMPLEX_MAP.KEY")
+		}
+	});
 
 	ComplexMapEditor.prototype.onFragmentReady = function () {
 		this._oNestedArrayEditor = this.getContent();
 
 		this._oNestedArrayEditor.attachValueChange(function (oEvent) {
-			var aPreviousValue = oEvent.getParameter("previousValue") || [];
-			var aValue = deepClone(oEvent.getParameter("value") || []);
+			var aValues = deepClone(oEvent.getParameter("value") || []);
 
-			var aInvalidItems = aValue.map(function (oValue, iIndex) {
+			aValues.forEach(function (oValue, iIndex) {
 				if (typeof oValue.key === "undefined") {
 					var sKey = "key";
 					var iNextIndex = 0;
 					var fnCheckDuplicateKey = function (oExistingValue) {
 						return oExistingValue.key === sKey;
 					};
-					while (aValue.some(fnCheckDuplicateKey)) {
+					while (aValues.some(fnCheckDuplicateKey)) {
 						sKey = "key" + ++iNextIndex;
 					}
 					oValue.key = sKey;
 				}
+			});
 
-				var bIsDuplicateKey = (
-					(!aPreviousValue[iIndex] || oValue.key !== aPreviousValue[iIndex].key) && // Entry is new or key changed
-					aValue.some(function (oValueToCompare, iIndexToCompare) { // Key already exists
-						return oValueToCompare.key === oValue.key && iIndexToCompare !== iIndex;
-					})
-				);
-				this._setInputState(iIndex, bIsDuplicateKey, this.getI18nProperty("BASE_EDITOR.MAP.DUPLICATE_KEY"));
-				return bIsDuplicateKey;
-			}, this).filter(Boolean);
-
-			if (!aInvalidItems.length) {
-				this.setValue(this._processOutputValue(aValue));
-			}
+			this.setValue(this._processOutputValue(aValues));
 		}, this);
 	};
 
@@ -138,7 +122,20 @@ sap.ui.define([
 				key: {
 					label: oConfig["keyLabel"],
 					type: "string",
-					path: "key"
+					path: "key",
+					validators: {
+						uniqueKey: {
+							type: "isUniqueKey",
+							config: {
+								keys: function () {
+									return Object.keys(this.getValue());
+								}.bind(this),
+								currentKey: function (oPropertyEditor) {
+									return oPropertyEditor.getValue();
+								}
+							}
+						}
+					}
 				}
 			};
 		}
@@ -165,23 +162,6 @@ sap.ui.define([
 		}
 
 		return oConfig;
-	};
-
-	ComplexMapEditor.prototype._setInputState = function (iIndex, bHasError, sError) {
-		// Open task: Introduce an API for setting errors on editors to avoid use of private attributes in this function
-
-		var oComplexMapItem = this._oNestedArrayEditor.getAggregation("propertyEditor");
-		if (!oComplexMapItem || !oComplexMapItem._aEditorWrappers[iIndex]) {
-			return;
-		}
-		var oKeyInput = oComplexMapItem._aEditorWrappers[iIndex]._getPropertyEditors()[0].getContent();
-
-		if (bHasError) {
-			oKeyInput.setValueState("Error");
-			oKeyInput.setValueStateText(sError);
-		} else {
-			oKeyInput.setValueState("None");
-		}
 	};
 
 	ComplexMapEditor.prototype.setValue = function (oValue) {

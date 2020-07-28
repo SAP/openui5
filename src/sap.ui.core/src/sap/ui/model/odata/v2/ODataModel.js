@@ -3976,8 +3976,15 @@ sap.ui.define([
 						var sKey = this._getKey(oResultData); // e.g. /myEntity-4711
 						// rewrite context for new path
 						var oContext = this.getContext("/" + oRequest.key);
-						oContext.bCreated = false;
 						this._updateContext(oContext, '/' + sKey);
+						sDeepPath = oRequest.deepPath;
+						if (oContext.bCreated && sDeepPath.endsWith(")")) {
+							sDeepPath = sDeepPath.slice(0, sDeepPath.lastIndexOf("("));
+							if (this.oMetadata._isCollection(sDeepPath)) {
+								oRequest.deepPath = sDeepPath + sKey.slice(sKey.lastIndexOf("("));
+							}
+						}
+						oContext.bCreated = false;
 						oContext.setUpdated(true);
 						// register function to reset updated flag call as callAfterUpdate
 						this.callAfterUpdate(function() {

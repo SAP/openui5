@@ -8,7 +8,7 @@
 		<Input
 			id="nameInput"
 			class="sapUiSmallMarginBottom"
-			placeholder="Enter name ..."
+			placeholder="Enter name"
 			valueStateText="Name must not be empty. Maximum 10 characters."
 			value="{
 				path : '/name',
@@ -25,7 +25,7 @@
 			id="emailInput"
 			class="sapUiSmallMarginBottom"
 			type="Email"
-			placeholder="Enter e-mail ..."
+			placeholder="Enter email"
 			valueStateText="E-mail must be a valid email address."
 			value="{
 				path: '/email',

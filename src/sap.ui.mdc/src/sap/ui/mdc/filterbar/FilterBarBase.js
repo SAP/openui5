@@ -346,7 +346,7 @@ sap.ui.define([
 
 			if (this.bPersistValues) {
 				var aIgnoreFieldNames = [];
-				var mConditions = this.getFilterConditions();
+				var mConditions = merge({}, this.getFilterConditions());
 				for (var sKey in mConditions) {
 					if (!this._getPropertyByName(sKey)) {
 						aIgnoreFieldNames.push(sKey);

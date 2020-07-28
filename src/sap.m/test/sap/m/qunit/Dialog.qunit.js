@@ -265,7 +265,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		this.dialog.$('cont').scrollTop(1000);
 		this.clock.tick(500);
-		sap.ui.getCore().byId("lastSC").setVisible(true);
+		Core.byId("lastSC").setVisible(true);
 		this.dialog._onResize();
 
 		// assert
@@ -371,7 +371,7 @@ sap.ui.define([
 			oTitleDom = jQuery.sap.domById(oDialog.getId() + "-title"),
 			oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
 			oIconDom = jQuery.sap.domById(oDialog.getId() + "-icon"),
-			oSearchField = sap.ui.getCore().byId("__field0").getFocusDomRef();
+			oSearchField = Core.byId("__field0").getFocusDomRef();
 		assert.ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
 		assert.ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
 		assert.ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
@@ -458,7 +458,7 @@ sap.ui.define([
 		oDialog.setVerticalScrolling(false);
 		oDialog.setHorizontalScrolling(false);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMDialogVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
 		assert.equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMDialogHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
 		assert.equal(oDialog.getVerticalScrolling(), false, "verticalScrolling should be disabled");
@@ -478,7 +478,7 @@ sap.ui.define([
 		oDialog.setVerticalScrolling(true);
 		oDialog.setHorizontalScrolling(true);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
 		assert.equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
 		assert.equal(oDialog.getVerticalScrolling(), true, "verticalScrolling should be enabled");
@@ -747,13 +747,13 @@ sap.ui.define([
 		// act
 		oDialog.open();
 		this.clock.tick(250);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oDialog._oCloseTrigger = 'some button';
 
 		qutils.triggerKeydown(oDialog.getDomRef(), KeyCodes.ESCAPE);
 		this.clock.tick(250);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(fnEscapeHandlerFunctionSpy.callCount, 1, 'escapeHandler function should be called');
@@ -795,7 +795,7 @@ sap.ui.define([
 		aButtons.forEach(function (oButton) {
 			oDialog.addButton(oButton);
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(oDialog._oToolbar.getContent().length, 4, "Toolbar contains 3 new buttons");
 		assert.equal(oDialog._oToolbar.indexOfContent(oBBtn), -1, "Toolbar doesn't contain beginButton");
 		assert.equal(oDialog._oToolbar.indexOfContent(oEBtn), -1, "Toolbar doesn't contain endButton");
@@ -811,7 +811,7 @@ sap.ui.define([
 		oDialog.setBeginButton(oBBtn);
 		oDialog.setEndButton(oEBtn);
 		oDialog.removeAllButtons();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(oDialog._oToolbar.getContent().length, 3, "Toolbar contains 2 buttons");
 		assert.equal(oDialog._oToolbar.indexOfContent(oBBtn), 1, "Toolbar contains beginButton");
 		assert.equal(oDialog._oToolbar.indexOfContent(oEBtn), 2, "Toolbar contains endButton");
@@ -862,7 +862,7 @@ sap.ui.define([
 		aButtons.forEach(function (oButton) {
 			oDialog.addButton(oButton);
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(oDialog._oToolbar, "Toolbar instance is created");
 		assert.equal(oDialog._oToolbar.getContent().length, 4, "Toolbar contains 3 new buttons");
 
@@ -877,7 +877,7 @@ sap.ui.define([
 		oDialog.setBeginButton(oBBtn);
 		oDialog.setEndButton(oEBtn);
 		oDialog.removeAllButtons();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(oBBtn.$().closest(".sapMIBar").length, "BeginButton should be rendered");
 		assert.ok(oEBtn.$().closest(".sapMIBar").length, "EndButton should be rendered");
 
@@ -902,7 +902,7 @@ sap.ui.define([
 		oDialog.setLeftButton(testButton);
 		oDialog.setRightButton(testButton2);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oDialog.getLeftButton(), testButton.getId(), 'Setting the left button');
@@ -1335,7 +1335,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
 
@@ -1399,7 +1399,7 @@ sap.ui.define([
 		var oDialogSuccess = new Dialog({
 			state: ValueState.Success
 		});
-		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var rb = Core.getLibraryResourceBundle("sap.m");
 		var sValueState = rb.getText("LIST_ITEM_STATE_SUCCESS");
 
 		overwriteAnimationIE(oDialogSuccess);
@@ -1524,6 +1524,22 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Dialog should have aria-roledescription", function (assert) {
+		// arrange
+		var oDialog = new Dialog(),
+			sExpectedAriaRoleDescription = Core
+				.getLibraryResourceBundle("sap.m")
+				.getText("DIALOG_ROLE_DESCRIPTION");
+		// act
+		oDialog.open();
+
+		// assert
+		assert.strictEqual(oDialog.$().attr("aria-roledescription"), sExpectedAriaRoleDescription,  "aria-roledescription value is as expected");
+
+		// clean
+		oDialog.destroy();
+	});
+
 	QUnit.module("Dragging");
 
 	QUnit.test("Check if dialog size remain unchanged after dragging it", function(assert) {
@@ -1614,8 +1630,8 @@ sap.ui.define([
 
 		this.clock.tick(500);
 
-		sap.ui.getCore().byId("txt").setVisible(false);
-		sap.ui.getCore().applyChanges();
+		Core.byId("txt").setVisible(false);
+		Core.applyChanges();
 		oDialog._onResize();
 
 		var iAfterResizeHeight = oDialog.$().height();
@@ -1999,7 +2015,7 @@ sap.ui.define([
 		this.oDialog.open();
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var $longTextItem = this.oDialog.$().find("#longTextItem .sapMSLITitleOnly");
 
@@ -2222,7 +2238,7 @@ sap.ui.define([
 
 	QUnit.test("setTitleAlignment test", function (assert) {
 
-		var initialTheme = sap.ui.getCore().getConfiguration().getTheme(),
+		var initialTheme = Core.getConfiguration().getTheme(),
 			themeAlignment = sap.ui.core.theming.Parameters.get("sapMTitleAlignment"),
 			themeAlignmentName = themeAlignment ? themeAlignment : 'not defined',
 			haveStartClass = themeAlignment === "Start" ? true : false,
@@ -2299,13 +2315,13 @@ sap.ui.define([
 			assert.ok(fnHasClass(".sapMDialogScrollCont", sClass), "Content section has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
 			assert.ok(fnHasClass(".sapMDialogFooter .sapMIBar", sClass), "Buttons have correct responsive padding class applied on " + sBreakpoint + " breakpoint");
 		};
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oDialog.addStyleClass("sapUiResponsivePadding--header");
 		oDialog.addStyleClass("sapUiResponsivePadding--subHeader");
 		oDialog.addStyleClass("sapUiResponsivePadding--content");
 		oDialog.addStyleClass("sapUiResponsivePadding--footer");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oDialog.open();
 

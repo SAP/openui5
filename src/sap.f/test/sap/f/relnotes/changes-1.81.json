@@ -29,6 +29,17 @@
             "reference": "2080256991"
           }
         ]
+      },
+      {
+        "id": "2d0fcedbbf6e4f3a9877627334c539aa464f8653",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Back button in Sample including Shellbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080256635"
+          }
+        ]
       }
     ]
   }

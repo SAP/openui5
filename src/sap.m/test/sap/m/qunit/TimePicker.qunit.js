@@ -3164,6 +3164,19 @@ sap.ui.define([
 		oGetMaskModeStub.restore();
 	});
 
+	QUnit.test("setValue method should reset the mask temporary value", function (assert) {
+		// prepare
+		this.oTp.setValue("12:00:00 PM");
+		this.oTp.setValueFormat("HH:mm:ss a");
+		this.oTp.setDisplayFormat("HH:mm:ss a");
+
+		// act
+		this.oTp.setValue("12:00");
+
+		// assert
+		assert.equal(this.oTp._oTempValue.toString(), "--:--:-- --" , "MaskEnabler._oTempValue is reset");
+	});
+
 	QUnit.test("onkeydown event should call MaskEnabler's onkeydown event if maskMode is 'On'", function (assert) {
 		// prepare
 		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.On; }),

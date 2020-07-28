@@ -27,7 +27,8 @@ sap.ui.define([
 		bUi5Loaded = false,
 		oAutoWaiter = null,
 		FrameHashChanger = null,
-		sOpaLogLevel;
+		sOpaLogLevel,
+		bDisableHistoryOverride;
 
 	/*
 	 * INTERNALS
@@ -282,7 +283,9 @@ sap.ui.define([
 			oFramePlugin = new OpaPlugin();
 			oAutoWaiter = _autoWaiter;
 			oFrameUtils = QUnitUtils;
-			modifyIFrameNavigation(hasher, History, HashChanger);
+			if (!bDisableHistoryOverride) {
+				modifyIFrameNavigation(hasher, History, HashChanger);
+			}
 			FrameHashChanger = HashChanger;
 			afterModulesLoaded();
 		});
@@ -366,6 +369,7 @@ sap.ui.define([
 				$Frame.on("load", handleFrameLoad);
 			}
 			sOpaLogLevel = options.opaLogLevel;
+			bDisableHistoryOverride = options.disableHistoryOverride;
 			return checkForUI5ScriptLoaded();
 		},
 		hasLaunched: function () {

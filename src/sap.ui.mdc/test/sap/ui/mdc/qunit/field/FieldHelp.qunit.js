@@ -726,10 +726,8 @@ sap.ui.define([
 		oClock.restore(); // need real Timeout to wait for Promises
 		oClock = undefined;
 
-		var fnResolveDescription1;
 		var fnRejectDescription1;
 		var oPromiseDescription1 = new Promise(function(fResolve, fReject) {
-			fnResolveDescription1 = fResolve;
 			fnRejectDescription1 = fReject;
 		});
 
@@ -790,7 +788,7 @@ sap.ui.define([
 		assert.equal(oFieldHelp._getTextOrKey.callCount, 3, "_getTextOrKey called 3 times");
 		oFieldHelp._getTextOrKey.resetHistory();
 
-		oException = undefined;;
+		oException = undefined;
 		try {
 			oResult = oFieldHelp.getItemForValue("Z", "Z", "in", "out", oContext, true, true, true);
 		} catch (oError) {
@@ -803,7 +801,7 @@ sap.ui.define([
 		assert.equal(oFieldHelp._getTextOrKey.callCount, 3, "_getTextOrKey called 3 times");
 		oFieldHelp._getTextOrKey.resetHistory();
 
-		oException = undefined;;
+		oException = undefined;
 		try {
 			oResult = oFieldHelp.getItemForValue("A", "A", "in", "out", oContext, true, true, true);
 		} catch (oError) {

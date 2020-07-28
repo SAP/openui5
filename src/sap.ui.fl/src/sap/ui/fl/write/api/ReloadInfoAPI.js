@@ -165,8 +165,7 @@ sap.ui.define([
 		initialDraftGotActivated: function(oReloadInfo) {
 			if (oReloadInfo.versioningEnabled) {
 				var bUrlHasVersionParameter = this.hasVersionParameterWithValue({value: oReloadInfo.layer});
-				var aVersions = VersionsAPI.getVersions(oReloadInfo);
-				return aVersions && aVersions[0] && aVersions[0].versionNumber !== 0 && bUrlHasVersionParameter;
+				return !VersionsAPI.isDraftAvailable(oReloadInfo) && bUrlHasVersionParameter;
 			}
 			return false;
 		},
@@ -194,11 +193,11 @@ sap.ui.define([
 
 			// TODO fix app descriptor handling and reload behavior
 			// TODO move changesNeedReload near flexState; set flag when saving change that needs a reload
-			oReloadInfo.hasDraftChanges = oReloadInfo.hasDirtyDraftChanges || ReloadInfoAPI.hasVersionParameterWithValue({value: oReloadInfo.layer});
+			oReloadInfo.hasDraft = oReloadInfo.hasDirtyDraftChanges || ReloadInfoAPI.hasVersionParameterWithValue({value: oReloadInfo.layer});
 			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: oReloadInfo.layer});
 			oReloadInfo.initialDraftGotActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
 			if (oReloadInfo.changesNeedReload
-				|| oReloadInfo.hasDraftChanges
+				|| oReloadInfo.hasDraft
 				|| oReloadInfo.hasHigherLayerChanges
 				|| oReloadInfo.initialDraftGotActivated
 			) {

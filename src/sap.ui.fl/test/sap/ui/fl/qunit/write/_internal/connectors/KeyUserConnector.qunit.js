@@ -238,7 +238,8 @@ sap.ui.define([
 		QUnit.test("get Versions", function (assert) {
 			var mPropertyBag = {
 				url: "/flexKeyuser",
-				reference: "com.sap.test.app"
+				reference: "com.sap.test.app",
+				limit: 10
 			};
 			var mExpectedPropertyBag = Object.assign({
 				xsrfToken: undefined,
@@ -249,7 +250,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: aReturnedVersions});
 			return KeyUserConnector.versions.load(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, aReturnedVersions, "the versions list is returned correctly");
-				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/com.sap.test.app?sap-language=en", "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/com.sap.test.app?sap-language=en&limit=10", "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
 			});

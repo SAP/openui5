@@ -42,6 +42,9 @@ sap.ui.define(function () {
 			"Card": {
 				coverage: {
 					only: ["sap/f/Card"]
+				},
+				sinon: {
+					useFakeTimers: true
 				}
 			},
 			"DynamicPage": {

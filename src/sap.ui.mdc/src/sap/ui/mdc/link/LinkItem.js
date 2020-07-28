@@ -45,10 +45,6 @@ sap.ui.define([
 				icon: {
 					type: "string"
 				},
-				isMain: {
-					type: "boolean",
-					defaultValue: false
-				},
 				initiallyVisible: {
 					type: "boolean",
 					defaultValue: false
@@ -56,8 +52,7 @@ sap.ui.define([
 			// ER: LinkItem should not have the visible property.
 			// The visibility should be modified either via default logic defined by UX like
 			// * show only less 10 links
-			// * show always superior links and other do not show
-			// * show always the main link
+			// * show always initiallyVisible links and other do not show
 			// or wia personalization. So the application should not be able to manipulate the
 			// visibility in breakout.
 			// visible: {

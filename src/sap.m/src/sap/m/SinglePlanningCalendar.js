@@ -23,6 +23,8 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/DateRange',
+	'sap/ui/unified/DateTypeRange',
+	'sap/ui/unified/library',
 	'sap/ui/base/ManagedObjectObserver',
 	"sap/ui/thirdparty/jquery"
 ],
@@ -41,6 +43,8 @@ function(
 	DateFormat,
 	CalendarDate,
 	DateRange,
+	DateTypeRange,
+	unifiedLibrary,
 	ManagedObjectObserver,
 	jQuery
 ) {
@@ -403,7 +407,7 @@ function(
 			},
 
 			/**
-			 * Fired when a grid cell is focused.
+			 * Fired when a grid cell is pressed.
 			 * @since 1.65
 			 */
 			cellPress: {
@@ -1430,6 +1434,24 @@ function(
 		}
 
 		return this;
+	};
+
+	SinglePlanningCalendar.prototype._getSpecialDates = function(){
+		var specialDates = this.getSpecialDates();
+		for (var i = 0; i < specialDates.length; i++) {
+			var bNeedsSecondTypeAdding = specialDates[i].getSecondaryType() === unifiedLibrary.CalendarDayType.NonWorking
+					&& specialDates[i].getType() !== unifiedLibrary.CalendarDayType.NonWorking;
+			if (bNeedsSecondTypeAdding) {
+				var newSpecialDate = new DateTypeRange();
+				newSpecialDate.setType(unifiedLibrary.CalendarDayType.NonWorking);
+				newSpecialDate.setStartDate(specialDates[i].getStartDate());
+				if (specialDates[i].getEndDate()) {
+					newSpecialDate.setEndDate(specialDates[i].getEndDate());
+				}
+				specialDates.push(newSpecialDate);
+			}
+		}
+		return specialDates;
 	};
 
 	return SinglePlanningCalendar;

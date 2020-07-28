@@ -4,12 +4,14 @@
 
 sap.ui.define([
 	"./BaseContentRenderer",
+	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/integration/util/LoadingProvider"
 ], function (
 	BaseContentRenderer,
+	Core,
 	Control,
 	JSONModel,
 	ManagedObjectObserver,
@@ -46,6 +48,15 @@ sap.ui.define([
 				_content: {
 					multiple: false,
 					visibility: "hidden"
+				}
+			},
+			associations: {
+				/**
+				 * Associates a card to the content
+				 */
+				card: {
+					type : "sap.ui.integration.widgets.Card",
+					multiple: false
 				}
 			},
 			events: {
@@ -351,12 +362,10 @@ sap.ui.define([
 	};
 
 	BaseContent.prototype.isLoading  = function () {
-		var oLoadingProvider,
-			oCard = this.getParent();
+		var oLoadingProvider = this._oLoadingProvider,
+			oCard = Core.byId(this.getCard());
 
-		oLoadingProvider = this._oLoadingProvider;
-
-		return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || oCard.isLoading());
+		return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || (oCard && oCard.isLoading()));
 	};
 
 	BaseContent.prototype.attachPress = function () {
@@ -411,6 +420,7 @@ sap.ui.define([
 	BaseContent.prototype.onDataRequestComplete = function () {
 		this.fireEvent("_dataReady");
 		this.destroyPlaceholder();
+		this._oLoadingProvider.setLoading(false);
 	};
 
 	return BaseContent;

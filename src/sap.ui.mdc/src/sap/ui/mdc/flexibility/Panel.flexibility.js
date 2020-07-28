@@ -63,9 +63,7 @@ sap.ui.define([
 								// return Base.markAsNotApplicable("applyChange of createItem: the item with selector " + oSelector + " is already existing and therefore can not be created.", true);
 							}
 
-							var aMetadataItems = MetadataHelper.retrieveAllMetadata(oPanel).filter(function(oMetadataItem) {
-								return oMetadataItem.isMain !== true;
-							});
+							var aMetadataItems = MetadataHelper.retrieveAllMetadata(oPanel);
 
 							var fnIndexOfItemId = function(sId, aItems) {
 								var iFoundIndex = -1;
@@ -103,7 +101,6 @@ sap.ui.define([
 								href: oMetadataOfNewItem.href,
 								target: oMetadataOfNewItem.target,
 								icon: oMetadataOfNewItem.icon,
-								isMain: oMetadataOfNewItem.isMain,
 								visible: oMetadataOfNewItem.visible
 							});
 							mPropertyBag.modifier.insertAggregation(oPanel, "items", oItem, iItemsIndex + 1);

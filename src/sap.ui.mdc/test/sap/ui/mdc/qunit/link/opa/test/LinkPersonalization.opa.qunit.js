@@ -47,9 +47,6 @@ sap.ui.define([
 		When.iClickOnLink("Power Projector 4713");
 
 		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"Power Projector 4713"
-		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
@@ -58,9 +55,6 @@ sap.ui.define([
 		When.iClickOnLink("Flat S");
 
 		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"Flat S"
-		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
@@ -77,9 +71,6 @@ sap.ui.define([
 		When.iClickOnLink("1239102");
 
 		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"1239102"
-		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
@@ -88,12 +79,47 @@ sap.ui.define([
 		When.iClickOnLink("Laptop");
 
 		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"Laptop"
-		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 
 		Given.closeAllNavigationPopovers();
+		Then.iTeardownMyAppFrame();
+	});
+
+	opaTest("When I click on 'Flat S' link in the 'Name' column and click 'Select all Links' in the selection dialog I should see all links on the popup", function(Given, When, Then) {
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/link/opa/appUnderTest/start.html');
+
+		When.iClickOnLink("Flat S");
+
+		Then.iShouldSeeNavigationPopoverOpens();
+		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
+
+		When.iPressOnLinkPersonalizationButton();
+		Then.thePersonalizationDialogOpens();
+
+		When.iSelectAllLinks(true);
+		When.iPressOkButton();
+
+		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+			"FactSheet of Name",
+			"Name Link2 (Superior)",
+			"Name Link3"
+		]);
+	});
+
+	opaTest("When I click on 'Flat S' link in the 'Name' column and deselect 'Select all Links' in the selection dialog I should see no links on the popup", function(Given, When, Then) {
+		Given.closeAllNavigationPopovers();
+		When.iClickOnLink("Flat S");
+
+		Then.iShouldSeeNavigationPopoverOpens();
+		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
+
+		When.iPressOnLinkPersonalizationButton();
+		Then.thePersonalizationDialogOpens();
+
+		When.iSelectAllLinks(false);
+		When.iPressOkButton();
+
+		Then.iShouldSeeOrderedLinksOnNavigationContainer([]);
 		Then.iTeardownMyAppFrame();
 	});
 });

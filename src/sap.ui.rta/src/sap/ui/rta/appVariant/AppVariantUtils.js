@@ -55,13 +55,6 @@ function(
 		});
 	};
 
-	AppVariantUtils.isStandAloneApp = function() {
-		if (sap.ushell_abap) {
-			return false;
-		}
-		return true;
-	};
-
 	AppVariantUtils.getNewAppVariantId = function() {
 		return AppVariantUtils._newAppVariantId;
 	};

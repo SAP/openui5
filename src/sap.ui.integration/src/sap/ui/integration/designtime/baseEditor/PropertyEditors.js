@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_intersection",
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/deepEqual",
+	"sap/base/util/deepClone",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/ManagedObjectObserver"
@@ -22,6 +23,7 @@ sap.ui.define([
 	_intersection,
 	_omit,
 	deepEqual,
+	deepClone,
 	Fragment,
 	JSONModel,
 	ManagedObjectObserver
@@ -274,22 +276,20 @@ sap.ui.define([
 			});
 
 			this.attachConfigChange(function (oEvent) {
-				var aPreviousConfig = oEvent.getParameter("previousConfig");
-				var aConfig = oEvent.getParameter("config");
+				var aPreviousConfigs = oEvent.getParameter("previousConfig");
+				var aConfigs = oEvent.getParameter("config");
 
 				if (
 					this._fnCancelInit
 					|| this._sCreatedBy === CREATED_BY_TAGS
-					|| !Array.isArray(aPreviousConfig)
-					|| !Array.isArray(aConfig)
-					|| aPreviousConfig.length !== aConfig.length
+					|| !Array.isArray(aPreviousConfigs)
+					|| !Array.isArray(aConfigs)
+					|| aPreviousConfigs.length !== aConfigs.length
 				) {
 					this._removePropertyEditors();
 					this._initPropertyEditors();
 				} else if (this._sCreatedBy) {
-					var mData = this._prepareViewData(aConfig, this._getLayoutConfig());
-					this._iExpectedWrapperCount = mData.count;
-					this.getModel().setData(mData);
+					this._evaluateViewRecreation(aPreviousConfigs, aConfigs);
 				}
 			});
 
@@ -339,6 +339,9 @@ sap.ui.define([
 	};
 
 	PropertyEditors.prototype.destroy = function () {
+		this._bInitFinished = false;
+		this._setReady(false);
+
 		if (this._fnCancelLayoutLoading) {
 			this._fnCancelLayoutLoading();
 		}
@@ -384,17 +387,15 @@ sap.ui.define([
 	PropertyEditors.prototype.setConfig = function (mConfig) {
 		var mPreviousConfig = this.getConfig();
 		if (
-			mPreviousConfig !== mConfig
-			&& (
-				!Array.isArray(mPreviousConfig)
-				|| !Array.isArray(mConfig)
-				|| JSON.stringify(mPreviousConfig) !== JSON.stringify(mConfig)
-			)
+			!Array.isArray(mPreviousConfig)
+			|| !Array.isArray(mConfig)
+			|| JSON.stringify(mPreviousConfig) !== JSON.stringify(mConfig)
 		) {
-			this.setProperty("config", mConfig);
+			var mNextConfig = deepClone(mConfig);
+			this.setProperty("config", mNextConfig);
 			this.fireConfigChange({
 				previousConfig: mPreviousConfig,
-				config: mConfig
+				config: mNextConfig
 			});
 		}
 	};
@@ -471,12 +472,7 @@ sap.ui.define([
 			}
 
 			var aPreviousPropertyEditors = (this._getPropertyEditors() || []).slice();
-			var mData = this._prepareViewData(aConfigs, this._getLayoutConfig());
-			this._iExpectedWrapperCount = mData.count;
-			if (this._iExpectedWrapperCount > 0) {
-				this._setReady(false);
-			}
-			this.getModel().setData(mData);
+			this._updateViewModel(aConfigs);
 
 			this.ready().then(function () {
 				this.firePropertyEditorsChange({
@@ -587,14 +583,51 @@ sap.ui.define([
 			delete this._fnCancelLayoutLoading;
 
 			var oLayout = aResult[0];
-			this._prepareViewData = aResult[1];
+			var oLayoutModule = aResult[1];
 
+			this._prepareData = oLayoutModule.prepareData;
+			this._aUpdateDependencies = oLayoutModule.updateDependencies || [];
 			this.setContent(oLayout);
 			this._bLayoutReady = true;
 			this._initPropertyEditors();
 		}.bind(this));
 
 		this._fnCancelLayoutLoading = mPromise.cancel;
+	};
+
+	PropertyEditors.prototype._evaluateViewRecreation = function (aPreviousConfigs, aConfigs) {
+		var aRegisteredEditors = this._getPropertyEditors() || [];
+		// Only recreate the layout if a config option which is relevant
+		// for the calculation and might change the output of the preparation
+		// function was modified
+		if (
+			aPreviousConfigs.length !== aConfigs.length
+			|| aConfigs.length !== aRegisteredEditors.length
+			|| aConfigs.some(function (oConfig, iIndex) {
+				return this._aUpdateDependencies.some(function (sDependency) {
+					return aPreviousConfigs[iIndex][sDependency] !== oConfig[sDependency];
+				});
+			}.bind(this))
+		) {
+			this._updateViewModel(aConfigs);
+		} else {
+			aRegisteredEditors.map(function (oProperyEditor, iIndex) {
+				var oConfig = aConfigs[iIndex];
+				oProperyEditor.setConfig(_omit(deepClone(oConfig), "value"));
+				if (oConfig.hasOwnProperty("value")) {
+					oProperyEditor.setValue(oConfig.value);
+				}
+			});
+		}
+	};
+
+	PropertyEditors.prototype._updateViewModel = function (aConfigs) {
+		var mData = this._prepareData(aConfigs, this._getLayoutConfig());
+		this._iExpectedWrapperCount = mData.count;
+		if (this._iExpectedWrapperCount > 0) {
+			this._checkReadyState();
+		}
+		this.getModel().setData(mData);
 	};
 
 	PropertyEditors.prototype.ready = function () {

@@ -200,6 +200,10 @@ sap.ui.define([
 		if (oCalendar instanceof CustomYearPicker) {
 			oCalendar._getYearPicker().setIntervalSelection(true);
 		}
+
+		this._getCalendar().attachWeekNumberSelect(this._handleWeekSelect, this);
+		this._getCalendar().getSelectedDates()[0].setStartDate(this._oDateRange.getStartDate());
+		this._getCalendar().getSelectedDates()[0].setEndDate(this._oDateRange.getEndDate());
 	};
 
 	DateRangeSelection.prototype.onkeypress = function(oEvent){
@@ -449,7 +453,7 @@ sap.ui.define([
 	 */
 	DateRangeSelection.prototype.setDateValue = function(oDateValue) {
 
-		if (this._isValidDate(oDateValue)) {
+		if (!this._isValidDate(oDateValue)) {
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
@@ -466,7 +470,7 @@ sap.ui.define([
 
 	DateRangeSelection.prototype.setSecondDateValue = function(oSecondDateValue) {
 
-		if (this._isValidDate(oSecondDateValue)) {
+		if (!this._isValidDate(oSecondDateValue)) {
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
@@ -860,6 +864,9 @@ sap.ui.define([
 					}
 				}
 
+				this._oDateRange.setStartDate(this._getCalendar().getSelectedDates()[0].getStartDate());
+				this._oDateRange.setEndDate(this._getCalendar().getSelectedDates()[0].getEndDate());
+
 				// close popup and focus input after change event to allow application to reset value state or similar things
 				this._oPopup.close();
 			}
@@ -875,6 +882,24 @@ sap.ui.define([
 			this._oPopup.getBeginButton().setEnabled(!!(oSelectedStartDate && oSelectedEndDate));
 			return;
 		}
+
+		this._selectDate();
+	};
+
+	DateRangeSelection.prototype._handleWeekSelect = function(oEvent){
+		var oSelectedDates = oEvent.getParameter("weekDays"),
+			oSelectedStartDate = oSelectedDates.getStartDate(),
+			oSelectedEndDate = oSelectedDates.getEndDate();
+
+		if (this.getShowFooter()) {
+			this._oPopup.getBeginButton().setEnabled(!!(oSelectedStartDate && oSelectedEndDate));
+			return;
+		}
+
+		this._getCalendar().getSelectedDates()[0].setStartDate(oSelectedStartDate);
+		this._getCalendar().getSelectedDates()[0].setEndDate(oSelectedEndDate);
+		this._oDateRange.setStartDate(oSelectedStartDate);
+		this._oDateRange.setEndDate(oSelectedEndDate);
 
 		this._selectDate();
 	};

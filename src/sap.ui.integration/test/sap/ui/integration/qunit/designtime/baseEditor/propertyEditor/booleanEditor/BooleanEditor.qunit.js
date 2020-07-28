@@ -1,12 +1,12 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
+	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
 	"qunit/designtime/EditorQunitUtils"
 ], function (
-	BooleanEditor,
+	BaseEditor,
 	ResourceBundle,
 	ResourceModel,
 	EditorQunitUtils
@@ -24,18 +24,34 @@ sap.ui.define([
 			};
 		},
 		beforeEach: function () {
-			this.oBooleanEditor = new BooleanEditor();
-			this.oBooleanEditor.setConfig(this.oPropertyConfig);
-			this.oBooleanEditor.setValue(true);
-			this.oBooleanEditor.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			var mConfig = {
+				context: "/",
+				properties: {
+					sampleBoolean: this.oPropertyConfig
+				},
+				propertyEditors: {
+					"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor"
+				}
+			};
+			var mJson = {
+				content: 3.14
+			};
 
-			return this.oBooleanEditor.ready().then(function () {
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleBoolean").then(function (aPropertyEditor) {
+				this.oBooleanEditor = aPropertyEditor[0];
+				this.oBooleanEditor.setValue(true);
+				sap.ui.getCore().applyChanges();
 				this.oBooleanEditorElement = this.oBooleanEditor.getContent();
 			}.bind(this));
 		},
 		afterEach: function () {
-			this.oBooleanEditor.destroy();
+			this.oBaseEditor.destroy();
 		}
 	}, function () {
 		QUnit.test("When a BooleanEditor is created", function (assert) {

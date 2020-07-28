@@ -37,5 +37,7 @@ sap.ui.define([
 		return DateFormat.getDateTimeInstance();
 	};
 
+	DateTimeEditor.configMetadata = Object.assign({}, DateEditor.configMetadata);
+
 	return DateTimeEditor;
 });

@@ -192,19 +192,6 @@ sap.ui.define([
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
-	/**
-	 * Sets the width of the panel.
-	 * @param {sap.ui.core.CSSSize} sWidth The width of the Panel as CSS size.
-	 * @returns {sap.m.Panel} Pointer to the control instance to allow method chaining.
-	 * @public
-	 */
-
-	/**
-	 * Sets the height of the panel.
-	 * @param {sap.ui.core.CSSSize} sHeight The height of the panel as CSS size.
-	 * @returns {sap.m.Panel} Pointer to the control instance to allow method chaining.
-	 * @public
-	 */
 	Panel.prototype.onThemeChanged = function () {
 		this._setContentHeight();
 	};

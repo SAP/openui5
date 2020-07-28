@@ -1190,6 +1190,13 @@ QUnit.module("Accessibility", {
 					text: "Appointment of 2 hour, 30 minutes in past",
 					key: "app-2"
 				})
+			],
+			intervalHeaders: [
+				new CalendarAppointment({
+					startDate: new Date(2017, 3, 1, 14, 0, 0, 0),
+					endDate: new Date(2017, 3, 1, 16, 0, 0, 0),
+					text: "Test"
+				})
 			]
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -1214,7 +1221,8 @@ QUnit.test("CalendarRow '_oFormatAria' formatter", function (assert) {
 
 			return sLocalizedStart + ": " + sFormattedStartDate + "; " + sLocalizedEnd + ": " + sFormattedEndDate + sType;
 		},
-		aAppointments = this.sut.getAppointments();
+		aAppointments = this.sut.getAppointments(),
+		aIntervalHeaders = this.sut.getIntervalHeaders();
 
 	assert.ok(this.sut._oFormatAria, "Formatter has been initialized");
 	assert.ok(this.sut._oFormatAria instanceof sap.ui.core.format.DateFormat, "Formatter is of a correct type");
@@ -1225,6 +1233,17 @@ QUnit.test("CalendarRow '_oFormatAria' formatter", function (assert) {
 
 		if (oAppointmentDescElement.length) {
 			assert.strictEqual(oAppointmentDescElement.text(), sExpectedDescription, "The text node of the appointment " + iIndex + " 'aria-describedby' element has correct value");
+		} else {
+			assert.ok(true, "The appointment " + iIndex + " is not displayed in the current viewport");
+		}
+	});
+
+	aIntervalHeaders.forEach(function (oIntervalHeader, iIndex) {
+		var sExpectedDescription = fnGetAriaDescriptionText(oIntervalHeader),
+			oIntervalHeaderDescElement = oIntervalHeader.$("Descr");
+
+		if (oIntervalHeaderDescElement.length) {
+			assert.strictEqual(oIntervalHeaderDescElement.text(), sExpectedDescription, "The text node of the interval header " + iIndex + " 'aria-describedby' element has correct value");
 		} else {
 			assert.ok(true, "The appointment " + iIndex + " is not displayed in the current viewport");
 		}

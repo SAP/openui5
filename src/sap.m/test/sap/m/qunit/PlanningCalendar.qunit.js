@@ -2197,6 +2197,21 @@ sap.ui.define([
 		this._assertIsClassNoWorkAvailable();
 	});
 
+	QUnit.test("Add a special date with dual property to a row", function(assert) {
+		//Act
+		this.oPC.getAggregation("rows")[1].addSpecialDate(new DateTypeRange({
+			startDate: new Date(2015, 0, 7),
+			endDate: new Date(2015, 0, 9),
+			type: CalendarDayType.Type04,
+			secondaryType: CalendarDayType.NonWorking
+		}));
+		sap.ui.getCore().applyChanges();
+
+		var oSpecialDates = this.oPC.getAggregation("rows")[1]._getSpecialDates();
+		assert.equal(oSpecialDates[0].getType(), CalendarDayType.Type04, "The special date should be of type Type04");
+		assert.equal(oSpecialDates[1].getType(), CalendarDayType.NonWorking, "the special date should be of type NonWorking");
+	});
+
 	QUnit.test("Insert a special date in a row", function(assert) {
 		//Prepare
 		this.oPC.getAggregation("rows")[1].insertSpecialDate(this.oSpecialDateRangeType04);
@@ -2624,7 +2639,8 @@ sap.ui.define([
 		this.sut._onRowDeselectAppointment();
 
 		//assert
-		assert.strictEqual(oSetPropertySpy.callCount, 0, "If the appointment does not exist, setProperty is not called");
+		assert.strictEqual(oSetPropertySpy.callCount, 1, "If an appointment with the specified id does not exist in the DOM," +
+			"setProperty is not called for it. setProperty(\"selected\") is called only if an appointment is present and selected.");
 
 		//cleanup
 		oSetPropertySpy.restore();
@@ -2864,6 +2880,14 @@ sap.ui.define([
 		//Clean
 		this.oPC2.setStartDate(oStartDate);
 		this.oPC2._dateNav.setCurrent(oStartDate);
+	});
+
+	QUnit.test("Selected date is in visible range after navigation", function(assert){
+		this.oPC2._dateNav.setCurrent(new Date(2016, 8, 2));
+		this.oPC2.setStartDate(new Date());
+		this.oPC2._applyArrowsLogic();
+
+		assert.ok(1, "Error is not thrown.");
 	});
 
 	QUnit.test("previous button when minDate >= current view start date initially", function(assert) {

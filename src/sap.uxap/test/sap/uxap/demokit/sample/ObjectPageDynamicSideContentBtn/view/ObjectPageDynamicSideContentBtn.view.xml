@@ -60,9 +60,9 @@
 						</l:VerticalLayout>
 					</headerContent>
 					<sections>
-						<ObjectPageSection title="2014 Goals Plan">
+						<ObjectPageSection titleUppercase="false" title="2014 Goals Plan">
 							<subSections>
-								<ObjectPageSubSection titleUppercase="true">
+								<ObjectPageSubSection titleUppercase="false">
 									<m:Text width="200px"
 								text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
 
@@ -70,15 +70,15 @@
 							</subSections>
 						</ObjectPageSection>
 
-						<ObjectPageSection title="Personal">
+						<ObjectPageSection titleUppercase="false" title="Personal">
 							<subSections>
-								<ObjectPageSubSection title="Connect" titleUppercase="true">
+								<ObjectPageSubSection title="Connect" titleUppercase="false">
 									<m:Text width="200px"
 								text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
 
 								</ObjectPageSubSection>
 
-								<ObjectPageSubSection id="paymentSubSection" title="Payment information" titleUppercase="true">
+								<ObjectPageSubSection id="paymentSubSection" title="Payment information" titleUppercase="false">
 									<blocks>
 
 									</blocks>

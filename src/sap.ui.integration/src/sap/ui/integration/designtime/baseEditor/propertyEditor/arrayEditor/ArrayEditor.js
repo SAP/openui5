@@ -98,29 +98,27 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	ArrayEditor.prototype.getConfigMetadata = function () {
-		return Object.assign(
-			{},
-			BasePropertyEditor.prototype.getConfigMetadata.call(this),
-			{
-				allowAddAndRemove: {
-					defaultValue: true
-				},
-				allowSorting: {
-					defaultValue: true
-				},
-				collapsibleItems: {
-					defaultValue: true
-				},
-				showItemLabel: {
-					defaultValue: true
-				},
-				template: {
-					defaultValue: {}
-				}
-			}
-		);
-	};
+	ArrayEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		allowAddAndRemove: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowSorting: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		collapsibleItems: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		showItemLabel: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		template: {
+			defaultValue: {}
+		}
+	});
 
 	ArrayEditor.prototype.init = function () {
 		BasePropertyEditor.prototype.init.apply(this, arguments);
@@ -134,6 +132,7 @@ sap.ui.define([
 			var aItems = [];
 			aValue.forEach(function(oValue, iIndex) {
 				var oValueCopy = deepClone(oValue);
+				var oDesigntimeMetadata = this.getNestedDesigntimeMetadata(iIndex);
 				var mItem = {
 					itemLabel: oConfig.itemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL"),
 					index: iIndex,
@@ -149,7 +148,8 @@ sap.ui.define([
 
 						return _merge({}, mTemplate, {
 							path: sPath,
-							value: vValue
+							value: vValue,
+							designtime: (oDesigntimeMetadata || {})[sKey]
 						});
 					}, this)
 				};

@@ -3,43 +3,28 @@
 /* Belize High Contrast White theme       */
 /* ====================================== */
 
-.sapMRIIconSel,
-.sapMRIIconHov,
-.sapMPointer .sapMRIIconUnsel {
-	color: @sapUiContentIconColor;
-}
-
-.sapMRIIconUnsel {
-	color: @sapUiHcReducedAltForeground;
-}
-
-.sapMRI.sapMRIDisplayOnly {
-	.sapMRIIconSel{
-		color: @sapUiContentIconColor;
+.sapMRI {
+	.sapMRISel, .sapMRIHov {
+		color: @sapUiContentRatedColor;
 	}
-	.sapMRIIconUnsel {
-		color: darken(@sapUiContentForegroundColor, 50);
+
+	.sapMRIUnsel,
+	&.sapMRIReadOnly .sapMRIUnsel,
+	&.sapMRIDisplayOnly .sapMRIUnsel {
+		color: @sapUiContentUnratedColor;
 	}
-}
 
-.sapMRI.sapMRIReadOnly {
-  .sapMRIIconSel {
-	color: @sapUiContentIconColor;
-  }
+	&.sapMRIDisplayOnly {
+		.sapMRIIconSel {
+			color: @sapUiContentIconColor;
+		}
+	}
 
-  .sapMRIIconReadOnly {
-	color: darken(@sapUiContentForegroundColor, 50);
-  }
-}
-
-.sapMRIDisabled {
-  .sapMRIIconSel {
-	color: @sapUiHcReducedForeground;
-  }
-
-  .sapMRIIconUnsel {
-	color: @sapUiContentDisabledTextColor;
-  }
+	&.sapMRIDisabled {
+		.sapMRIUnsel, .sapMRISel {
+			color: @sapUiContentDisabledTextColor;
+		}
+	}
 }
 
 /* Custom focus outline */

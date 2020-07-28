@@ -7,6 +7,6 @@
 		<Input
 			id="passwordInput"
 			type="Password"
-			placeholder="Enter password ..." />
+			placeholder="Enter password" />
 	</l:VerticalLayout>
 </mvc:View>

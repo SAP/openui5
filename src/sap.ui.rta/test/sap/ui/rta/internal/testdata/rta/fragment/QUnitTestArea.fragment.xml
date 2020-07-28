@@ -74,13 +74,14 @@
 			<Label id="Label0" text="Name" />
 			<Input id="Input0" value="Some Supplier" />
 			<Label id="Label1" text="Street/No." />
-			<Input id="Input1" value="Home Street">
-			</Input>
+			<Input id="Input1" value="Home Street" />
 			<Input id="Input2" value="6">
 				<layoutData>
 					<sap.ui.layout:GridData span="L3 M3 S4" />
 				</layoutData>
 			</Input>
+			<Label id="InvisivleLabel" text="City" visible="false" />
+			<Input id="InvisibleInput" value="Home City" visible="false" />
 		</form:content>
 	</form:SimpleForm>
 	<Text text="END OF TEST FRAGMENT!" />

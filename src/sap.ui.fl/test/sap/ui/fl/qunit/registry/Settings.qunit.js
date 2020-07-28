@@ -23,6 +23,7 @@ sap.ui.define([
 				isKeyUser: false,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
+				isAppVariantSaveAsEnabled: false,
 				features: {
 					addField: [Layer.CUSTOMER, Layer.VENDOR],
 					changeTypeOnlyForUser: [Layer.USER],
@@ -46,6 +47,12 @@ sap.ui.define([
 			assert.equal(this.cut._oSettings.isKeyUser, false);
 			var bIsKeyUser = this.cut.isKeyUser();
 			assert.equal(bIsKeyUser, false);
+		});
+
+		QUnit.test("isAppVariantSaveAsEnabled", function(assert) {
+			assert.equal(this.cut._oSettings.isAppVariantSaveAsEnabled, false);
+			var bIsAppVariantSaveAsEnabled = this.cut.isAppVariantSaveAsEnabled();
+			assert.equal(bIsAppVariantSaveAsEnabled, false);
 		});
 
 		QUnit.test("isModelS", function(assert) {
@@ -148,13 +155,15 @@ sap.ui.define([
 		QUnit.test("get instance from flex settings request when load settings promise is not available", function(assert) {
 			var oSetting = {
 				isKeyUser: true,
-				isAtoAvailable: true
+				isAtoAvailable: true,
+				isAppVariantSaveAsEnabled: true
 			};
 
 			sandbox.stub(Storage, "loadFeatures").resolves(oSetting);
 			Settings._oLoadSettingsPromise = undefined;
 			return Settings.getInstance().then(function(oSettings) {
 				assert.equal(oSettings.isKeyUser(), true);
+				assert.equal(oSettings.isAppVariantSaveAsEnabled(), true);
 				assert.equal(oSettings.isModelS(), true);
 				Settings.getInstance().then(function(oSettings2) {
 					assert.equal(oSettings, oSettings2);
@@ -167,6 +176,7 @@ sap.ui.define([
 			Settings._oLoadSettingsPromise = undefined;
 			return Settings.getInstance().then(function(oSettings) {
 				assert.equal(oSettings.isKeyUser(), false);
+				assert.equal(oSettings.isAppVariantSaveAsEnabled(), false);
 				assert.equal(oSettings.isModelS(), false);
 				assert.equal(oSettings.isVariantSharingEnabled(), false);
 				assert.equal(oSettings.isAtoEnabled(), false);
@@ -180,11 +190,13 @@ sap.ui.define([
 		QUnit.test("get instance when _oLoadSettingsPromise is resolved", function(assert) {
 			var oSettings = {
 				isKeyUser: true,
-				isAtoAvailable: true
+				isAtoAvailable: true,
+				isAppVariantSaveAsEnabled: true
 			};
 			Settings._oLoadSettingsPromise = Promise.resolve(new Settings(oSettings));
 			return Settings.getInstance().then(function(oSettings) {
 				assert.equal(oSettings.isKeyUser(), true);
+				assert.equal(oSettings.isAppVariantSaveAsEnabled(), true);
 				assert.equal(oSettings.isModelS(), true);
 				Settings.getInstance().then(function(oSettings2) {
 					assert.equal(oSettings, oSettings2);
@@ -195,7 +207,8 @@ sap.ui.define([
 		QUnit.test("getInstanceOrUndef", function(assert) {
 			var oSetting = {
 				isKeyUser: true,
-				isAtoAvailable: true
+				isAtoAvailable: true,
+				isAppVariantSaveAsEnabled: true
 			};
 			sandbox.stub(Storage, "loadFeatures").resolves(oSetting);
 			var oSettings0 = Settings.getInstanceOrUndef();
@@ -219,6 +232,7 @@ sap.ui.define([
 			return Settings.getInstance().then(function (oSettings) {
 				assert.ok(oSettings, "the settings instance is available");
 				assert.equal(oSettings.isKeyUser(), false);
+				assert.equal(oSettings.isAppVariantSaveAsEnabled(), false);
 				assert.equal(oSettings.isAtoAvailable(), false);
 				assert.equal(oSettings.isAtoEnabled(), false);
 				assert.equal(oSettings.isProductiveSystem(), true);

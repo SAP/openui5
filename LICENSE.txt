@@ -674,6 +674,19 @@ License: MIT License
 <year> = 2015-2017
 <copyright holders> = Evgeny Poberezkin
 
+Component: p-cancelable 2.0.0
+Licensor: Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
+Website: https://github.com/sindresorhus/p-cancelable
+License: MIT License
+<year> = unspecified
+<copyright holders> = Sindre Sorhus
+
+Component: @babel/helpers 7.10.4
+Licensor: Sebastian McKenzie and other contributors
+Website: https://babeljs.io/
+License: MIT License
+<year> = 2014-...
+<copyright holders> = Sebastian McKenzie and other contributors
 --------------------------------------------------------------------------------------------------------------------------
 
 CC0 1.0 Universal (CCO 1.0) Public Domain Dedication

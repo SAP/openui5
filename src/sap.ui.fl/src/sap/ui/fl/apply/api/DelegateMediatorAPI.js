@@ -31,7 +31,6 @@ sap.ui.define([
 			DelegateMediator.registerDefaultDelegate(mPropertyBag);
 		},
 
-
 		/**
 		 * Returns the delegate object for the requested control.
 		 *

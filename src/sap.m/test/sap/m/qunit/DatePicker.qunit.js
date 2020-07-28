@@ -1605,13 +1605,17 @@ sap.ui.define([
 		assert.equal(oDP3.getSpecialDates().length, 3, "3 SpecialDates in Aggregation");
 		oDP3.removeSpecialDate(0);
 		assert.equal(oDP3.getSpecialDates().length, 2, "2 SpecialDates in Aggregation");
+		oDP3.insertSpecialDate(new DateTypeRange({startDate: new Date(2016, 5, 21), type: CalendarDayType.Type02, secondaryType: CalendarDayType.NonWorking}), 1);
 		sap.ui.getCore().applyChanges();
+
 
 		setTimeout( function(){
 			assert.ok(!jQuery("#DP3-cal--Month0-20160601").hasClass("sapUiCalItemType01"), "20160603 has no Type01");
 			assert.ok(jQuery("#DP3-cal--Month0-20160602").hasClass("sapUiCalItemType02"), "20160602 has Type02");
 			assert.ok(jQuery("#DP3-cal--Month0-20160603").hasClass("sapUiCalItemType02"), "20160603 has Type02");
 			assert.ok(jQuery("#DP3-cal--Month0-20160604").hasClass("sapUiCalItemType03"), "20160603 has Type03");
+			assert.ok(jQuery("#DP3-cal--Month0-20160621").hasClass("sapUiCalItemType02"), "20160331 has Type02");
+			assert.ok(jQuery("#DP3-cal--Month0-20160621").hasClass("sapUiCalItemWeekEnd"), "20160331 has NonWorking added with secondaryType");
 
 			oDP3.focus();
 			qutils.triggerEvent("mousedown", "DP3-icon");

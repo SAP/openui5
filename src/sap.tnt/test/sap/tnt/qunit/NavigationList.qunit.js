@@ -336,12 +336,12 @@ sap.ui.define([
 		assert.equal(currentItem.getAttribute('aria-expanded'), 'true', jQuery(currentItem).text() + ' has ARIA attribute expanded true.');
 
 		// aria-selected
-		assert.equal(currentItem.getAttribute('aria-selected'), 'true', jQuery(currentItem).text() + ' has ARIA attribute selected true.');
+		assert.strictEqual(currentItem.getAttribute('aria-selected'), 'true', jQuery(currentItem).text() + ' has ARIA attribute selected true.');
 
 		this.navigationList.getItems()[0].setExpanded(false);
 		sap.ui.getCore().applyChanges();
-		currentItem = this.navigationList.$().find('div.sapTntNavLIGroup')[0];
-		assert.equal(currentItem.getAttribute('aria-expanded'), 'false', jQuery(currentItem).text() + ' has ARIA attribute expanded false.');
+		currentItem = this.navigationList.$().find('li')[0];
+		assert.notOk(currentItem.getAttribute('aria-expanded'), jQuery(currentItem).text() + ' do not have ARIA attribute expanded.');
 
 		var currentItemNoChildren = this.navigationList.$().find('div.sapTntNavLIGroup')[4];
 		assert.notOk(currentItemNoChildren.getAttribute('aria-expanded'), jQuery(currentItemNoChildren).text() + ' has no ARIA attribute expanded.');
@@ -350,10 +350,19 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		var currentItemCollapsed = this.navigationList.$().find('div.sapTntNavLIGroup')[2];
 		assert.notOk(currentItemCollapsed.getAttribute('aria-expanded'), 'Root 2 has no ARIA attribute expanded when NavigationList is collapsed.');
+		assert.strictEqual(currentItemCollapsed.parentElement.getAttribute('aria-checked'), 'false', 'aria-checked is set to false.');
 
 		this.navigationList.getItems()[2]._select();
-		assert.notOk(currentItemCollapsed.parentElement.getAttribute('aria-pressed'), 'Root 2 has no ARIA attribute pressed when NavigationList is collapsed.');
-		assert.ok(currentItemCollapsed.getAttribute('aria-selected'), 'aria-selected is set.');
+		assert.strictEqual(currentItemCollapsed.parentElement.getAttribute('aria-checked'), 'true' ,'aria-checked is set to true.');
+
+		//aria-haspopup
+		this.navigationList.setExpanded(true);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(currentItem.getAttribute("aria-haspopup"), null, "no aria-haspopup attribute when NavigationList is expanded");
+
+		this.navigationList.setExpanded(false);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(currentItem.getAttribute("aria-haspopup"), "tree", "aria-haspopup is of type menu when NavigationList is collapsed");
 	});
 
 	QUnit.module("ARIA - Accessibility Text", {
@@ -702,8 +711,8 @@ sap.ui.define([
 		var popover = $groupItem.closest('.sapMPopover').control()[0];
 
 
-		assert.strictEqual($list[0].getAttribute("role"), "menubar", "Role of the popup ul should be menubar");
-		assert.strictEqual($InnerListItem.getAttribute("role"), "menuitemradio", "Role of the popup li should be menuitem");
+		assert.strictEqual($list[0].getAttribute("role"), "tree", "Role of the popup ul should be menubar");
+		assert.strictEqual($InnerListItem.getAttribute("role"), "treeitem", "Role of the popup li should be treeitem");
 		assert.ok(popover.oPopup.getOpenState() === sap.ui.core.OpenState.OPEN, "should change popover status to OPEN");
 
 		$groupItem.trigger('tap');

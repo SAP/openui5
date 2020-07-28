@@ -60,6 +60,10 @@ sap.ui.define([
 			oModel.setData(oUIState);
 		},
 
+		handleBackButtonPressed: function () {
+			window.history.go(-1);
+		},
+
 		onExit: function () {
 			this.oRouter.detachRouteMatched(this.onRouteMatched, this);
 			this.oRouter.detachBeforeRouteMatched(this.onBeforeRouteMatched, this);

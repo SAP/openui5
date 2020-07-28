@@ -289,8 +289,13 @@ sap.ui.define([
 	};
 
 	WizardStep.prototype._complete = function () {
+		var oWizard = this._getWizardParent();
 		this.setLast(this.bReviewStep || false);
 		this.fireComplete();
+
+		if (oWizard !== null) {
+			oWizard._handleNextButtonPress();
+		}
 	};
 
 	WizardStep.prototype.exit = function () {

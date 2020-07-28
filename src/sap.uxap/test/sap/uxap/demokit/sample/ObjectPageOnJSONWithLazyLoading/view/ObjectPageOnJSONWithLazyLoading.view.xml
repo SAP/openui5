@@ -25,9 +25,9 @@
 		</headerTitle>
 
 		<sections>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 1" mode="Expanded" titleUppercase="true">
+					<ObjectPageSubSection title="Section 1" mode="Expanded" titleUppercase="false">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob1">
 								<employment:mappings>
@@ -49,9 +49,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 2" mode="Expanded" titleUppercase="true">
+					<ObjectPageSubSection title="Section 2" mode="Expanded" titleUppercase="false">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob2">
 								<employment:mappings>
@@ -73,9 +73,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 3" mode="Expanded" titleUppercase="true">
+					<ObjectPageSubSection title="Section 3" mode="Expanded" titleUppercase="false">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob4">
 								<employment:mappings>
@@ -97,9 +97,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 4" mode="Expanded" titleUppercase="true">
+					<ObjectPageSubSection title="Section 4" mode="Expanded" titleUppercase="false">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob5">
 								<employment:mappings>
@@ -121,9 +121,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 5" mode="Expanded" titleUppercase="true">
+					<ObjectPageSubSection title="Section 5" mode="Expanded" titleUppercase="false">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob6">
 								<employment:mappings>
@@ -145,9 +145,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 6" mode="Expanded" titleUppercase="true">
+					<ObjectPageSubSection title="Section 6" mode="Expanded" titleUppercase="false">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob7">
 								<employment:mappings>
@@ -169,9 +169,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 7" mode="Expanded" titleUppercase="true">
+					<ObjectPageSubSection title="Section 7" mode="Expanded" titleUppercase="false">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob8">
 								<employment:mappings>
@@ -193,9 +193,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 8" mode="Expanded" titleUppercase="true">
+					<ObjectPageSubSection title="Section 8" mode="Expanded" titleUppercase="false">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob9">
 								<employment:mappings>
@@ -217,9 +217,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 9" mode="Expanded" titleUppercase="true">
+					<ObjectPageSubSection title="Section 9" mode="Expanded" titleUppercase="false">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob10">
 								<employment:mappings>
@@ -241,9 +241,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 10" mode="Expanded" titleUppercase="true">
+					<ObjectPageSubSection title="Section 10" mode="Expanded" titleUppercase="false">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob11">
 								<employment:mappings>
@@ -265,9 +265,9 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection title="my section">
+			<ObjectPageSection titleUppercase="false" title="my section">
 				<subSections>
-					<ObjectPageSubSection title="Section 11" mode="Expanded" titleUppercase="true">
+					<ObjectPageSubSection title="Section 11" mode="Expanded" titleUppercase="false">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob3">
 								<employment:mappings>

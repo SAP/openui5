@@ -3,12 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
 	"sap/base/util/restricted/_isNil",
 	"sap/base/util/isPlainObject"
 ], function (
 	BasePropertyEditor,
-	isValidBindingString,
 	_isNil,
 	isPlainObject
 ) {
@@ -49,6 +47,12 @@ sap.ui.define([
 	 * 	<td></td>
 	 * 	<td>Placeholder for the input field</td>
 	 * </tr>
+	 * <tr>
+	 * 	<td><code>maxLength</code></td>
+	 *  <td><code>number</code></td>
+	 * 	<td>0</td>
+	 * 	<td>Maximum number of characters</td>
+	 * </tr>
 	 * </table>
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
@@ -66,16 +70,33 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	StringEditor.prototype.getConfigMetadata = function () {
+	StringEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		enabled: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		allowBindings: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		},
+		maxLength: {
+			defaultValue: 0
+		}
+	});
+
+	StringEditor.prototype.getDefaultValidators = function () {
+		var oConfig = this.getConfig();
 		return Object.assign(
 			{},
-			BasePropertyEditor.prototype.getConfigMetadata.call(this),
+			BasePropertyEditor.prototype.getDefaultValidators.call(this),
 			{
-				enabled: {
-					defaultValue: true
+				isValidBinding: {
+					type: "isValidBinding",
+					isEnabled: oConfig.allowBindings
 				},
-				allowBindings: {
-					defaultValue: true
+				notABinding: {
+					type: "notABinding",
+					isEnabled: !oConfig.allowBindings
 				}
 			}
 		);
@@ -90,28 +111,7 @@ sap.ui.define([
 
 	StringEditor.prototype._onLiveChange = function () {
 		var oInput = this.getContent();
-		if (this._validate()) {
-			this.setValue(oInput.getValue());
-		}
-	};
-
-	StringEditor.prototype._validate = function () {
-		var oInput = this.getContent();
-		var sValue = oInput.getValue();
-		var oConfig = this.getConfig();
-
-		if (!oConfig["allowBindings"] && isValidBindingString(sValue, false)) {
-			oInput.setValueState("Error");
-			oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.PROPERTY.BINDING_NOT_ALLOWED"));
-			return false;
-		} else if (!isValidBindingString(sValue)) {
-			oInput.setValueState("Error");
-			oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.STRING.INVALID_BINDING"));
-			return false;
-		} else {
-			oInput.setValueState("None");
-			return true;
-		}
+		this.setValue(oInput.getValue());
 	};
 
 	return StringEditor;

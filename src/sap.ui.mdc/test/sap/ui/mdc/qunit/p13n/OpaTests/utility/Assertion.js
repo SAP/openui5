@@ -266,6 +266,12 @@ sap.ui.define([
 			});
 		},
 
+		iShouldSeeP13nFilterItems: function(aP13nFilterItems){
+			aP13nFilterItems.forEach(function(oP13nFilterItem, iIndex){
+				return this.iShouldSeeP13nFilterItem(oP13nFilterItem.p13nItem, iIndex, oP13nFilterItem.value);
+			}.bind(this));
+		},
+
 		iShouldSeeItemOnPosition: function (sItemText, iIndex) {
 			return this.waitFor({
 				searchOpenDialogs: true,

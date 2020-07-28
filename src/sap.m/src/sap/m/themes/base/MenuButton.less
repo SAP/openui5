@@ -93,7 +93,6 @@
 
 //Transparent(footer)
 .sapMIBar-CTX.sapMFooter-CTX .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
-	color: @sapUiContentContrastIconColor;
 	text-shadow: @sapUiButtonEmphasizedTextShadow;
 }
 
@@ -131,6 +130,10 @@
 
 .sapMMenuBtn .sapMBtn .sapMBtnInner {
 	display: block;
+}
+
+.sapMMenuBtn .sapMBtn:not(.sapMSBArrow) .sapMBtnInner.sapMBtnIconFirst .sapMBtnIcon {
+	padding-right: 0.375rem;
 }
 
 .sapMMenuBtn .sapMBtn .sapMBtnInner.sapMBtnText:not(.sapMBtnIconFirst) .sapMBtnContent{

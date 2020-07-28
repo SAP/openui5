@@ -472,18 +472,16 @@ sap.ui.define([
 							oException._bNotUnique = bNotUnique; // TODO: better solution?
 							fReject(oException);
 						}
-						oFilterListBinding.destroy();
+
+						setTimeout(function() { // as Binding might process other steps after event was fired - destroy it lazy
+							oFilterListBinding.destroy();
+						}, 0);
 						delete this._oPromises[sFieldPath][vValue];
 					};
 
-					if (oFilterListBinding.isA("sap.ui.model.json.JSONListBinding")) { // TODO: find way unique for all ListBindings
-						oFilterListBinding.filter(oFilter, FilterType.Application);
-						fnCheckData.call(this);
-					} else {
-						oFilterListBinding.attachEventOnce("dataReceived", fnCheckData.bind(this));
-						oFilterListBinding.initialize();
-						oFilterListBinding.filter(oFilter, FilterType.Application);
-						oFilterListBinding.getContexts(0,2); // trigger request. not all entries needed, we only need to know if there is one, none or more
+					var oDelegate = this._getDelegate();
+					if (oDelegate.delegate){
+						oDelegate.delegate.executeFilter(oDelegate.payload, oFilterListBinding, oFilter, fnCheckData.bind(this), 2);
 					}
 				} catch (oError) {
 					fReject(oError);

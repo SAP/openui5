@@ -3,15 +3,70 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Core', './Control', './library', 'sap/m/library', 'sap/ui/events/KeyCodes', './ActionToolbar', 'sap/m/Title', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/Sorter', 'sap/ui/core/dnd/DragDropInfo', "./table/TableSettings", "./table/GridTableType", "./table/ResponsiveTableType", "sap/m/ColumnHeaderPopover", "sap/ui/core/Item", "sap/m/ColumnPopoverSortItem", 'sap/ui/dom/containsOrEquals', 'sap/base/strings/capitalize', 'sap/base/util/UriParameters'
-], function(Core, Control, library, MLibrary, KeyCodes, ActionToolbar, Title, NumberFormat, Sorter, DragDropInfo, TableSettings, GridTableType, ResponsiveTableType, ColumnHeaderPopover, Item, ColumnPopoverSortItem, containsOrEquals, capitalize, SAPUriParameters) {
+	"./Control",
+	"./ActionToolbar",
+	"./table/TableSettings",
+	"./table/GridTableType",
+	"./table/ResponsiveTableType",
+	"./library",
+	"sap/m/Text",
+	"sap/m/Title",
+	"sap/m/ColumnHeaderPopover",
+	"sap/m/ColumnPopoverSortItem",
+	"sap/m/OverflowToolbar",
+	"sap/m/library",
+	"sap/ui/core/Core",
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/core/dnd/DragDropInfo",
+	"sap/ui/core/Item",
+	"sap/ui/core/format/ListFormat",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/model/Sorter",
+	"sap/ui/dom/containsOrEquals",
+	"sap/base/strings/capitalize",
+	"sap/base/util/UriParameters"
+], function(
+	Control,
+	ActionToolbar,
+	TableSettings,
+	GridTableType,
+	ResponsiveTableType,
+	library,
+	Text,
+	Title,
+	ColumnHeaderPopover,
+	ColumnPopoverSortItem,
+	OverflowToolbar,
+	MLibrary,
+	Core,
+	NumberFormat,
+	DragDropInfo,
+	Item,
+	ListFormat,
+	KeyCodes,
+	Sorter,
+	containsOrEquals,
+	capitalize,
+	SAPUriParameters
+) {
 	"use strict";
 
 	var SelectionMode = library.SelectionMode;
 	var TableType = library.TableType;
 	var RowAction = library.RowAction;
+	var ToolbarDesign = MLibrary.ToolbarDesign;
 
 	var sFilterInterface = "sap.ui.mdc.IFilter";
+
+	var internalMap = new window.WeakMap();
+	var internal = function(oTable) {
+		if (!internalMap.has(oTable)) {
+			internalMap.set(oTable, {
+				oFilterInfoBar: null
+			});
+		}
+		return internalMap.get(oTable);
+	};
 
 	function showMessage(sTextKey, aValues) {
 		sap.ui.require([
@@ -334,7 +389,8 @@ sap.ui.define([
 				/**
 				 * This event is fired right before the export is triggered.
 				 *
-				 * For more information about the export settings, see {@link sap.ui.export.Spreadsheet} or {@link topic:7e12e6b9154a4607be9d6072c72d609c Spreadsheet Export Configuration}.
+				 * For more information about the export settings, see {@link sap.ui.export.Spreadsheet} or
+				 * {@link topic:7e12e6b9154a4607be9d6072c72d609c Spreadsheet Export Configuration}.
 				 *
 				 * @since 1.75
 				 */
@@ -644,13 +700,133 @@ sap.ui.define([
 	 *
 	 */
 	Table.prototype.setFilterConditions = function(mConditions) {
-
 		this.setProperty("filterConditions", mConditions, true);
+
 		if (this._oP13nFilter) {
 			this._oP13nFilter.setFilterConditions(mConditions);
 		}
+
+		updateFilterInfoBar(this);
+
 		return this;
 	};
+
+	function updateFilterInfoBar(oTable) {
+		var oFilterInfoBar = getFilterInfoBar(oTable);
+		var oFilterInfoBarText = getFilterInfoBarText(oTable);
+		var aFilteredProperties = getFilteredProperties(oTable);
+
+		if (!oFilterInfoBar) {
+			return;
+		}
+
+		if (aFilteredProperties.length === 0 || !oTable._getFilterEnabled()) {
+			var oFilterInfoBarDomRef = oFilterInfoBar.getDomRef();
+
+			if (oFilterInfoBarDomRef && oFilterInfoBarDomRef.contains(document.activeElement)) {
+				oTable.focus();
+			}
+
+			oFilterInfoBar.setVisible(false);
+
+			return;
+		}
+
+		getPropertyInfoMap(oTable, true).then(function(mPropertyInfoMap) {
+			var aPropertyLabels = aFilteredProperties.map(function(sFilteredPropertyKey) {
+				return getLabelForProperty(oTable, mPropertyInfoMap[sFilteredPropertyKey]);
+			});
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			var oListFormat = ListFormat.getInstance();
+			var sFilterText = oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(aPropertyLabels));
+
+			oFilterInfoBar.setVisible(true);
+			oFilterInfoBarText.setText(sFilterText);
+		});
+	}
+
+	function getPropertyInfoMap(oTable, bOnlySimple) {
+		return oTable.getControlDelegate().fetchProperties(oTable).then(function(aPropertyInfos) {
+			var mProperties = {};
+
+			aPropertyInfos.forEach(function(oPropertyInfo) {
+				if (!bOnlySimple || !Array.isArray(oPropertyInfo.propertyInfos)) {
+					mProperties[oPropertyInfo.name] = oPropertyInfo;
+				}
+			});
+
+			return mProperties;
+		});
+	}
+
+	function getLabelForProperty(oTable, oProperty) {
+		if ("label" in oProperty) {
+			return oProperty.label;
+		}
+
+		var aColumns = [];
+
+		oTable.getColumns().forEach(function(oColumn) {
+			if (oColumn.getDataProperties().indexOf(oProperty.name) > -1) {
+				aColumns.push(oColumn);
+			}
+		});
+
+		if (aColumns.length === 1) {
+			return aColumns[0].getHeader();
+		} else {
+			return oProperty.name;
+		}
+	}
+
+	function createFilterInfoBar(oTable) {
+		var sToolbarId = oTable.getId() + "-filterInfoBar";
+		var oFilterInfoToolbar = internal(oTable).oFilterInfoBar;
+
+		if (oFilterInfoToolbar && !oFilterInfoToolbar.bIsDestroyed) {
+			oFilterInfoToolbar.destroy();
+		}
+
+		oFilterInfoToolbar = new OverflowToolbar({
+			id: sToolbarId,
+			active: true,
+			design: ToolbarDesign.Info,
+			visible: false,
+			content: [
+				new Text({
+					id: sToolbarId + "-text",
+					wrapping: false
+				})
+			],
+			press: function() {
+				TableSettings.showPanel(oTable, "Filter", getFilterInfoBar(oTable));
+			}
+		});
+
+		// If the toolbar is hidden while it has the focus, the focus moves to the body. This can happen, for example, when all filters are removed in
+		// the filter dialog that was opened via the filter info bar.
+		oFilterInfoToolbar.focus = function() {
+			if (this.getDomRef()) {
+				OverflowToolbar.prototype.focus.apply(this, arguments);
+			} else {
+				oTable.focus();
+			}
+		};
+
+		internal(oTable).oFilterInfoBar = oFilterInfoToolbar;
+		updateFilterInfoBar(oTable);
+
+		return oFilterInfoToolbar;
+	}
+
+	function getFilterInfoBar(oTable) {
+		return internal(oTable).oFilterInfoBar;
+	}
+
+	function getFilterInfoBarText(oTable) {
+		var oFilterInfoBar = getFilterInfoBar(oTable);
+		return oFilterInfoBar ? oFilterInfoBar.getContent()[0] : null;
+	}
 
 	Table.prototype.setThreshold = function(iThreshold) {
 		this.setProperty("threshold", iThreshold, true);
@@ -858,6 +1034,14 @@ sap.ui.define([
 	Table.prototype._getSortedProperties = function() {
 		return this.getSortConditions() ? this.getSortConditions().sorters : [];
 	};
+
+	function getFilteredProperties(oTable) {
+		var mFilterConditions = oTable.getFilterConditions();
+
+		return Object.keys(mFilterConditions).filter(function(sProperty) {
+			return mFilterConditions[sProperty].length > 0;
+		});
+	}
 
 	/**
 	 * Fetches the current state of the table (as a JSON)
@@ -1279,18 +1463,22 @@ sap.ui.define([
 				oDnDColumns.setEnabled((aMode || []).indexOf("Column") > -1);
 			}
 		}
+
+		updateFilterInfoBar(this);
 	};
 
 	Table.prototype._createTable = function() {
 		var iThreshold = this.getThreshold() > -1 ? this.getThreshold() : undefined,
-			oRowSettings = this.getRowSettings() ? this.getRowSettings().getAllSettings() : {};
+			oRowSettings = this.getRowSettings() ? this.getRowSettings().getAllSettings() : {},
+			oFilterInfoBar = this._getFilterEnabled() ? createFilterInfoBar(this) : null,
+			oFilterInfoBarText = this._getFilterEnabled() ? getFilterInfoBarText(this) : null;
 
 		if (this._bMobileTable) {
 			this._oTable = ResponsiveTableType.createTable(this.getId() + "-innerTable", {
 				autoPopinMode: true,
 				growing: true,
 				sticky: [
-					"ColumnHeaders", "HeaderToolbar"
+					"ColumnHeaders", "HeaderToolbar", "InfoToolbar"
 				],
 				itemPress: [
 					this._onItemPress, this
@@ -1301,8 +1489,10 @@ sap.ui.define([
 				growingThreshold: iThreshold,
 				noDataText: this._getNoDataText(),
 				headerToolbar: this._oToolbar,
+				infoToolbar: oFilterInfoBar,
 				ariaLabelledBy: [
-					this._oTitle
+					this._oTitle,
+					oFilterInfoBarText
 				]
 			});
 			this._oTemplate = ResponsiveTableType.createTemplate(this.getId() + "-innerTableRow", oRowSettings);
@@ -1323,10 +1513,12 @@ sap.ui.define([
 				],
 				noData: this._getNoDataText(),
 				extension: [
-					this._oToolbar
+					this._oToolbar,
+					oFilterInfoBar
 				],
 				ariaLabelledBy: [
-					this._oTitle
+					this._oTitle,
+					oFilterInfoBarText
 				],
 				plugins: [
 					GridTableType.createMultiSelectionPlugin(this, [
@@ -2051,8 +2243,7 @@ sap.ui.define([
 					this._oP13nFilter = new AdaptationFilterBar(this.getId() + "-p13nFilter", {
 						liveMode: true,
 						adaptationControl: this,
-						filterConditions: this.getFilterConditions(),
-						delegate: this.getControlDelegate().getFilterDelegate(this.getDelegate().payload)
+						filterConditions: this.getFilterConditions()
 					});
 
 					//link 'AdaptationFilterBar' with Table and propagate the model

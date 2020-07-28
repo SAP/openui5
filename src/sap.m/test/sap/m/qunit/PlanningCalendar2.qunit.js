@@ -1843,6 +1843,45 @@ sap.ui.define([
 		sap.ui.getCore().getConfiguration().setFormatLocale(sOriginalFormatLocale);
 	});
 
+	QUnit.test('Removing a selected appointment from the model updates the selectedAppointments association', function(assert) {
+		// Prepare
+		var oPC = new PlanningCalendar("OPC", {
+				rows: new PlanningCalendarRow("OROW", {
+					appointments: {
+						path: '/',
+							template: new CalendarAppointment({
+								title: "{title}",
+								startDate: "{start}",
+								endDate: "{end}",
+								selected: "{selected}"
+						})
+					}
+				})
+			}).placeAt("bigUiArea"),
+			oModel = new JSONModel(),
+			oData = [{
+				title: "just title",
+				start: new Date(2020, 1, 1, 11),
+				end: new Date(2020, 1, 1, 12),
+				selected: true
+			}];
+
+		oModel.setData(oData);
+		oPC.setModel(oModel);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oData.splice(0, 1);
+		oModel.setProperty("/", oData);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(_getRowTimeline(oPC.getRows()[0]).aSelectedAppointments.length, 0, "ok");
+
+		// Clean up
+		oPC.destroy();
+	});
+
 	QUnit.module('showDayNamesLine', {
 		beforeEach: function () {
 			this.oPC = new PlanningCalendar("OPC");
@@ -1926,20 +1965,18 @@ sap.ui.define([
 
 	});
 
-	QUnit.module('Destroy', {
-		beforeEach: function () {
-			this.oPC = new PlanningCalendar();
-			this.oPC.placeAt("bigUiArea");
-		},
-		afterEach: function () {
-			this.oPC.destroy();
-			this.oPC = null;
-		}
-	});
+	QUnit.module('Destroy');
 
 	QUnit.test("When the control is destroyed there's no need of custom invalidation logic", function (assert) {
+
+		sap.ui.getCore().applyChanges();	// because of BCP 2080159964/ Reply from 21.07.2020  14:26:04
+
+		this.oPC = new PlanningCalendar();
+		this.oPC.placeAt("bigUiArea");
+
 		//define
 		var oControlInvalidateSpy = this.spy(Control.prototype, "invalidate");
+
 
 		//act
 		this.oPC.addSpecialDate(new DateTypeRange({startDate: new Date(), tooltip: "test"}));
@@ -1953,6 +1990,10 @@ sap.ui.define([
 		//cleanup
 		oControlInvalidateSpy.restore();
 		this.oPC._bIsBeingDestroyed = false;
+
+		this.oPC.destroy();
+		this.oPC = null;
+
 	});
 
 	QUnit.module("WeekNumbers");

@@ -1,0 +1,18 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "f6abe8c7fbd0900ccadcc9825535228d2c19fdd0",
+        "type": "FIX",
+        "text": " fl.VariantManagement: avoid multiple clicks on \u0027Save View\u0027 dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080270402"
+          }
+        ]
+      }
+    ]
+  }
+}

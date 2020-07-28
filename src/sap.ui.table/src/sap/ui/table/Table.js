@@ -915,16 +915,9 @@ sap.ui.define([
 		this._bRowsBeingBound = false;
 
 		/*
-		 * Flag indicating whether the binding is ready. Will be set to <code>true</code> on <code>refreshRows</code> for OData bindings, and on
-		 * <code>updateRows</code> for client bindings, before any <code>refreshRows</code> or <code>updateRows</code> hooks are called.
-		 *
-		 * @type {boolean}
-		 */
-		this._bBindingReady = false;
-
-		/*
-		 * Flag indicating whether the binding context are available. Will be set to <code>true</code> on <code>updateRows</code>, if the binding
-		 * is ready, before any <code>updateRows</code> hooks are called.
+		 * Flag indicating whether the binding contexts are available.
+		 * Is <code>false</code> if there is no binding, or the binding is being initialized or refreshed. Is set to <code>true</code>
+		 * in {@link sap.ui.table.Table#updateRows}.
 		 *
 		 * @type {boolean}
 		 */
@@ -1766,11 +1759,9 @@ sap.ui.define([
 				var bFirstRenderedRowChanged = this._getFirstRenderedRowIndex() !== iOldFirstRenderedRowIndex;
 
 				if (bFirstRenderedRowChanged && !mConfig.suppressRendering) {
-					var sReason = mConfig.onScroll ? TableUtils.RowsUpdateReason.VerticalScroll : TableUtils.RowsUpdateReason.FirstVisibleRowChange;
-
-					if (this._bContextsAvailable) {
-						this.updateRows(sReason);
-					}
+					triggerRowsUpdate(this, mConfig.onScroll
+											? TableUtils.RowsUpdateReason.VerticalScroll
+											: TableUtils.RowsUpdateReason.FirstVisibleRowChange);
 
 					bExpectRowsUpdatedEvent = true;
 				}
@@ -1919,7 +1910,6 @@ sap.ui.define([
 
 	function initBindingFlags(oTable) {
 		oTable._bRowsBeingBound = true;
-		oTable._bBindingReady = false;
 		oTable._bContextsAvailable = false;
 		oTable._iPendingRequests = 0;
 		oTable._bPendingRequest = false;
@@ -2347,11 +2337,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refresh rows
+	 * Notifies about a binding refresh - called internally by the <code>ManagedObject</code> when the binding fires a "refresh" event.
+	 * Only relevant for server-side bindings. The table is expected to call <code>Binding#getContexts</code>, which triggers a data request. The
+	 * table can expect {@link sap.ui.table.Table#updateRows} to be called after the response is successfully received.
+	 *
+	 * <b>Must not be called manually!</b>
+	 *
+	 * @param {sap.ui.model.ChangeReason} sReason The reason for the refresh.
 	 * @private
 	 */
 	Table.prototype.refreshRows = function(sReason) {
-		this._bBindingReady = true;
 		this._bContextsAvailable = false;
 
 		if (sReason === ChangeReason.Sort || sReason === ChangeReason.Filter) {
@@ -2362,33 +2357,49 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the rows - called internally by the updateAggregation function when
-	 * anything in the model has been changed.
+	 * Updates the rows - called internally by the ManagedObject when the binding fires a "change" event.
+	 *
+	 * <b>Must not be called manually!</b>
+	 *
+	 * @param {sap.ui.model.ChangeReason} sReason The reason for the update.
+	 * @param {object} oEventInfo Additional information about the update.
+	 * @param {string} [oEventInfo.detailedReason] A non-standardized string that further classifies the change event.
 	 * @private
 	 */
-	Table.prototype.updateRows = function(sReason) {
+	Table.prototype.updateRows = function(sReason, oEventInfo) {
+		// Called during destruction with reason "Unbind". In general, rows of a destroyed table should not be updated.
 		if (this.bIsDestroyed || this._bIsBeingDestroyed) {
-			// During destruction, updateRows is called with reason "Unbind". In general, rows of a destroyed table should not be updated.
 			return;
 		}
 
-		var oBinding = this.getBinding("rows");
-
-		/*
-		 * Special handling for client bindings. For OData bindings, the flag is set to "true" in refreshRows.
-		 * - Client bindings do not fire a refresh event, but their length is final immediately.
-		 * - If the length is final, we can consider the binding to be ready.
-		 * - Client tree bindings do not implement #isLengthFinal. In this case we always consider the binding to be ready.
-		 */
-		if (!this._bBindingReady && (typeof oBinding.isLengthFinal !== "function" || oBinding.isLengthFinal())) {
-			this._bBindingReady = true;
+		// Special handling for "AutoExpandSelect" of the V4 ODataModel.
+		if (oEventInfo.detailedReason === "AddVirtualContext") {
+			var oVirtualRow = this._getRowClone("virtual");
+			oVirtualRow.setBindingContext(this._getRowContexts(null, true)[0], this.getBindingInfo("rows").model);
+			this.addAggregation("rows", oVirtualRow,true);
+			this.removeAggregation("rows", oVirtualRow, true);
+			oVirtualRow.destroy();
+			return;
+		} else if (oEventInfo.detailedReason === "RemoveVirtualContext") {
+			return;
 		}
 
-		// The contexts cannot be available if updateRows is called while the binding is not ready.
-		this._bContextsAvailable = this._bBindingReady;
-
-		TableUtils.Hook.call(this, Hook.UpdateRows, sReason);
+		this._bContextsAvailable = true;
+		triggerRowsUpdate(this, sReason);
 	};
+
+	/**
+	 * Triggers an update of the rows.
+	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason The reason for the update.
+	 * @private
+	 */
+	function triggerRowsUpdate(oTable, sReason) {
+		if (oTable._bContextsAvailable) {
+			TableUtils.Hook.call(oTable, Hook.UpdateRows, sReason);
+		}
+	}
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
@@ -3532,17 +3543,18 @@ sap.ui.define([
 	};
 
 	Table.prototype._getRowClone = function(vIndex) {
-		var bGetRowFromPool = typeof vIndex === "number";
-		var oRowClone = bGetRowFromPool ? this._aRowClones[vIndex] : null;
+		var bIndexIsNumber = typeof vIndex === "number";
+		var bRowIsPoolable = bIndexIsNumber;
+		var oRowClone = bRowIsPoolable ? this._aRowClones[vIndex] : null;
 
 		if (oRowClone && !oRowClone.bIsDestroyed) {
 			return oRowClone;
 		}
 
 		// No intact row clone at this index exists. Therefore, create a new row clone.
-		oRowClone = new Row(this.getId() + "-rows" + "-row" + vIndex);
+		oRowClone = new Row(this.getId() + "-rows" + "-row" + (bIndexIsNumber ? vIndex : "-" + vIndex));
 
-		if (bGetRowFromPool) {
+		if (bRowIsPoolable) {
 			this._aRowClones[vIndex] = oRowClone;
 		}
 

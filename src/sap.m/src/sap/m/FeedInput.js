@@ -473,7 +473,7 @@ sap.ui.define([
 	 */
 	FeedInput.prototype._isControlEnabled = function() {
 		var sValue = this.getValue();
-		return this.getEnabled() && jQuery.type(sValue) === "string" && sValue.trim().length > 0;
+		return this.getEnabled() && (typeof sValue === "string" || sValue instanceof String) && sValue.trim().length > 0;
 	};
 
 	/**

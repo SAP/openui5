@@ -7,24 +7,32 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Label",
 	"sap/ui/core/Fragment",
-	"sap/base/util/restricted/_merge",
+	"sap/base/util/restricted/_omit",
 	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
-	"sap/base/util/each"
-], function (
+	"sap/base/util/values",
+	"sap/base/util/each",
+	"sap/ui/integration/designtime/baseEditor/validator/ValidatorRegistry",
+	"sap/ui/integration/designtime/baseEditor/util/BaseDefaultValidatorModules"
+], function(
 	Control,
 	isTemplate,
 	JSONModel,
 	Label,
 	Fragment,
-	_merge,
+	_omit,
 	ManagedObjectObserver,
+	PropertyEditorFactory,
 	createPromise,
 	deepClone,
 	deepEqual,
-	each
+	values,
+	each,
+	ValidatorRegistry,
+	BaseDefaultValidatorModules
 ) {
 	"use strict";
 
@@ -90,6 +98,23 @@ sap.ui.define([
 				 * Fires when value is changed
 				 */
 				valueChange: {
+					parameters: {
+						path: {
+							type: "string"
+						},
+						value: {
+							type: "any"
+						},
+						previousValue: {
+							type: "any"
+						}
+					}
+				},
+
+				/**
+				 * Fires when designtime metadata is changed
+				 */
+				designtimeMetadataChange: {
 					parameters: {
 						path: {
 							type: "string"
@@ -196,9 +221,21 @@ sap.ui.define([
 			}, this);
 
 			this.attachConfigChange(function (oEvent) {
+				var oPreviousConfig = oEvent.getParameter("previousConfig");
+				var oConfig = oEvent.getParameter("config");
+
+				// If validators have changed, reevaluate current value
+				if (
+					oPreviousConfig
+					&& oConfig
+					&& !deepEqual(oPreviousConfig.validators, oConfig.validators)
+				) {
+					this._validate(this.getValue());
+				}
+
 				this._oDefaultModel.setData(
 					Object.assign({}, this._oDefaultModel.getData(), {
-						config: oEvent.getParameter("config")
+						config: oConfig
 					})
 				);
 			}, this);
@@ -263,9 +300,10 @@ sap.ui.define([
 	 * therefore it should also be called when overridden in complex editors.
 	 *
 	 * @param {*} vValue - Editor value that was already processed by a custom setValue implementation
+	 * @param {boolean} bSuppressValidation - Whether to set the value regardless of the validation result, false by default
 	 * @public
 	 */
-	BasePropertyEditor.prototype.setValue = function (vValue) {
+	BasePropertyEditor.prototype.setValue = function (vValue, bSuppressValidation) {
 		var vCurrentValue = this.getValue();
 		var oConfig = this.getConfig() || {};
 		var vNextValue = vValue;
@@ -274,19 +312,156 @@ sap.ui.define([
 			vNextValue = deepClone(oConfig.defaultValue);
 		}
 
-		if (!deepEqual(vNextValue, vCurrentValue)) {
-			this.fireBeforeValueChange({
+		this._validate(vNextValue, function (bResult) {
+			if ((bResult || bSuppressValidation) && !deepEqual(vNextValue, vCurrentValue)) {
+				this.fireBeforeValueChange({
+					path: oConfig.path,
+					value: vCurrentValue,
+					nextValue: vNextValue
+				});
+				this.setProperty("value", vNextValue);
+				this.fireValueChange({
+					path: oConfig.path,
+					previousValue: vCurrentValue,
+					value: vNextValue
+				});
+			}
+		}.bind(this));
+	};
+
+	BasePropertyEditor.prototype.setDesigntimeMetadata = function (oValue) {
+		var oCurrentMetadata = this.getConfig().metadata;
+		var oNextMetadata = oValue;
+		var oConfig = this.getConfig();
+
+		if (!deepEqual(oCurrentMetadata, oNextMetadata)) {
+			this.fireDesigntimeMetadataChange({
 				path: oConfig.path,
-				value: vCurrentValue,
-				nextValue: vNextValue
-			});
-			this.setProperty("value", vNextValue);
-			this.fireValueChange({
-				path: oConfig.path,
-				previousValue: vCurrentValue,
-				value: vNextValue
+				previousValue: oCurrentMetadata,
+				value: oNextMetadata
 			});
 		}
+	};
+
+	BasePropertyEditor.prototype.getNestedDesigntimeMetadata = function (sKey) {
+		var oDesigntimeMetadata = (this.getConfig() || {}).designtime || {};
+		return oDesigntimeMetadata[sKey];
+	};
+
+	BasePropertyEditor.prototype.getNestedDesigntimeMetadataValue = function (sKey) {
+		return (this.getNestedDesigntimeMetadata(sKey) || {}).__value || {};
+	};
+
+	BasePropertyEditor.prototype._getValidators = function () {
+		var oPropertyValidators = this.getConfig().validators || {};
+		return values(Object.assign(
+			{},
+			oPropertyValidators,
+			this.getDefaultValidators()
+		)).filter(function (oValidator) {
+			return oValidator.isEnabled !== false;
+		});
+	};
+
+	/**
+	 * @typedef {object} ValidatorDefinition
+	 * @property {string} type - Validator type, must be defined by <code>getDefaultValidatorModules</code>
+	 * @property {string} errorMessage - Custom error message i18n key
+	 * @property {Object<string, any>} config - Type-specific configuration
+	 * @property {boolean} isEnabled - Whether the validator should run
+	 */
+
+	/**
+	 * Returns the default validators which should run when a value is set.
+	 * Can be overridden to specify default validators of custom editors.
+	 * If validators with the same key are defined on the property level, they will
+	 * override default validators.
+	 *
+	 * @returns {Object<string, ValidatorDefinition>} Map of validator keys and definitions
+	 */
+	BasePropertyEditor.prototype.getDefaultValidators = function () {
+		return {};
+	};
+
+	BasePropertyEditor.prototype._validate = function (vValue, onValidationResult) {
+		var aErrors = [];
+		var aValidators = this._getValidators();
+
+		aValidators = aValidators.map(function (mValidatorDefinition) {
+			// Use custom validators if they were registered,
+			// otherwise try to get a default validator
+			var oValidator = ValidatorRegistry.hasValidator(mValidatorDefinition.type)
+				? ValidatorRegistry.getValidator(mValidatorDefinition.type)
+				: this.getDefaultValidatorModules()[mValidatorDefinition.type];
+
+			if (!oValidator) {
+				throw new Error("Unknown validator: " + mValidatorDefinition.type);
+			}
+
+			var oValidatorConfig = {};
+			Object.keys(mValidatorDefinition.config || {}).forEach(function (sConfigKey) {
+				var vConfigValue = mValidatorDefinition.config[sConfigKey];
+				if (typeof vConfigValue === "function") {
+					vConfigValue = vConfigValue(this);
+				}
+				oValidatorConfig[sConfigKey] = vConfigValue;
+			}.bind(this));
+
+			return {
+				validator: oValidator,
+				config: oValidatorConfig,
+				errorMessage: mValidatorDefinition.errorMessage,
+				type: mValidatorDefinition.type
+			};
+		}.bind(this));
+
+		var fnEvaluateResults = function () {
+			var bResultIsValid = aErrors.length === 0;
+
+			// Open task: Display all errors
+			this.setInputState(!bResultIsValid, aErrors[0]);
+
+			if (typeof onValidationResult === "function") {
+				onValidationResult(bResultIsValid);
+			}
+		}.bind(this);
+
+		aValidators.forEach(function (oValidator) {
+			if (!oValidator.validator.validate(vValue, oValidator.config)) {
+				aErrors.push(oValidator.errorMessage || oValidator.validator.errorMessage);
+			}
+		});
+		fnEvaluateResults();
+	};
+
+	/**
+	 * Sets the input state of the property editor control.
+	 * Can be overridden to handle error messages differently inside custom editors.
+	 *
+	 * @param {boolean} bHasError - Whether an error should be displayed
+	 * @param {string} sErrorMessage - i18n key for the error message
+	 */
+	BasePropertyEditor.prototype.setInputState = function (bHasError, sErrorMessage) {
+		var oInput = this.getContent();
+		if (!oInput || !oInput.setValueState) {
+			return;
+		}
+		if (bHasError) {
+			oInput.setValueState("Error");
+			oInput.setValueStateText(this.getI18nProperty(sErrorMessage));
+		} else {
+			oInput.setValueState("None");
+		}
+	};
+
+	/**
+	 * Returns the map of validator module paths which are required by the editor.
+	 * Can be overridden in custom editors to require custom validators.
+	 *
+	 * @returns {Object<string, string>} Map of validator names and module paths
+	 */
+	BasePropertyEditor.prototype.getDefaultValidatorModules = function () {
+		return BaseDefaultValidatorModules;
 	};
 
 	BasePropertyEditor.prototype._formatValue = function (vValue) {
@@ -538,25 +713,19 @@ sap.ui.define([
 	 * @property {any} defaultValue - The default value
 	 */
 
-	/**
-	 * Method which can be overridden to define the default configuration of a property editor.
-	 * Default config options will be overridden by the property config.
-	 *
-	 * @returns {Object<string, EditorDefaultConfiguration>} Editor config
-	 */
-	BasePropertyEditor.prototype.getConfigMetadata = function () {
-		return {
-			visible: {
-				defaultValue: true
-			}
-		};
+	BasePropertyEditor.configMetadata = {
+		visible: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		}
 	};
 
 	BasePropertyEditor.prototype.setConfig = function (oConfig) {
 		var oPreviousConfig = this.getConfig();
 
 		var oDefaultConfig = {};
-		each(this.getConfigMetadata(), function (sConfigKey, mConfigValue) {
+		var oConfigMetadata = PropertyEditorFactory.getType(this.getMetadata().getName()).configMetadata;
+		each(oConfigMetadata, function (sConfigKey, mConfigValue) {
 			oDefaultConfig[sConfigKey] = mConfigValue.defaultValue;
 		});
 

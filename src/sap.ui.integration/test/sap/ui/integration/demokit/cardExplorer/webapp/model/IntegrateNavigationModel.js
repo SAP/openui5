@@ -37,6 +37,12 @@ sap.ui.define([
 				icon: 'sap-icon://overflow',
 				target: 'integrate',
 				key: 'hostActions'
+			},
+			{
+				title: 'Text Badge (Experimental)',
+				icon: 'sap-icon://badge',
+				target: 'integrate',
+				key: 'badge'
 			}
 		]
 	});

@@ -33,13 +33,14 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		assert.notOk(XHRInterceptor.isRegistered("FESR", "open"), "FESR must not be registered");
 	});
 
-	QUnit.test("onBeforeCreated hook", function(assert) {
+	QUnit.test("onBeforeCreated hook: interactionType 1", function(assert) {
 		assert.expect(8);
 
 		var oHandle = {
 			stepName:"undetermined_startup",
 			appNameLong:"undetermined",
-			appNameShort:"undetermined"
+			appNameShort:"undetermined",
+			interactionType: 1
 		};
 
 		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
@@ -61,7 +62,8 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 				stepName: "newStepName",
 				appNameLong: "newAppNameLong",
 				appNameShort: "newAppNameShort",
-				timeToInteractive: 1000
+				timeToInteractive: 1000,
+				interactionType: 1
 			};
 		};
 
@@ -87,7 +89,79 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			if (args[0] === "SAP-Perf-FESRec-opt") {
 				var values = args[1].split(",");
 				// application_name, step_name, application_name with 70 characters
-				return values[0] === "newAppNameShort" && values[1] === "newStepName" && values[19] === "newAppNameLong";
+				return values[0] === "newAppNameShort" && values[1] === "newStepName" && values[15] === "1" && values[19] === "newAppNameLong";
+			}
+		}), "Found the optional FESR header field values.");
+
+		Interaction.end(true);
+		Interaction.clear();
+		FESR.onBeforeCreated = fnOnBeforeCreated;
+		FESR.setActive(false);
+		FESR.onBeforeCreated = fnOnBeforeCreated;
+		oHeaderSpy.restore();
+		oXhrHandle.abort();
+	});
+
+	QUnit.test("onBeforeCreated hook: interactionType 2", function(assert) {
+		assert.expect(8);
+
+		var oHandle = {
+			stepName:"undetermined_other_interaction",
+			appNameLong:"undetermined",
+			appNameShort:"undetermined",
+			interactionType: 2
+		};
+
+		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
+		var fnOnBeforeCreated = FESR.onBeforeCreated;
+
+		// startup
+		FESR.setActive(true);
+		Interaction.end(true);
+
+		// next interaction
+		Interaction.start("other_interaction");
+
+		// implement hook
+		FESR.onBeforeCreated = function (oFESRHandle, oInteraction) {
+			assert.ok(oFESRHandle.timeToInteractive > 0, "startup time should be > 0");
+			//delete startup time as we cannot compare it
+			delete oFESRHandle.timeToInteractive;
+			assert.deepEqual(oFESRHandle, oHandle, "Passed FESRHandle should be correct.");
+			assert.throws(function() { oInteraction.component = "badComponent"; }, "Should throw an error after trying to overwrite the interaction object.");
+			assert.ok(Object.isFrozen(oInteraction), "Interaction is not editable.");
+			return {
+				stepName: "newStepName",
+				appNameLong: "newAppNameLong",
+				appNameShort: "newAppNameShort",
+				timeToInteractive: 1000,
+				interactionType: 2
+			};
+		};
+
+		// trigger at least one request for header creation
+		var oXhrHandle = this.dummyRequest();
+
+		// first interaction ends with end
+		Interaction.end(true);
+		oXhrHandle.abort();
+
+		// trigger another request to send FESR
+		oXhrHandle = this.dummyRequest();
+
+		assert.ok(oHeaderSpy.args.some(function(args) {
+			if (args[0] === "SAP-Perf-FESRec") {
+				var values = args[1].split(",");
+				// duration - end_to_end_time
+				return values[4] === "1000";
+			}
+		}), "Found the FESR header field values.");
+
+		assert.ok(oHeaderSpy.args.some(function(args) {
+			if (args[0] === "SAP-Perf-FESRec-opt") {
+				var values = args[1].split(",");
+				// application_name, step_name, application_name with 70 characters
+				return values[0] === "newAppNameShort" && values[1] === "newStepName" && values[15] === "2" && values[19] === "newAppNameLong";
 			}
 		}), "Found the optional FESR header field values.");
 

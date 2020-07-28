@@ -4,10 +4,10 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
+	"sap/ui/integration/designtime/baseEditor/validator/ValidatorRegistry",
 	"sap/ui/integration/designtime/baseEditor/PropertyEditors",
 	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
 	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
-	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
 	"sap/ui/integration/designtime/baseEditor/util/hasTag",
 	"sap/ui/core/Control",
 	"sap/ui/model/resource/ResourceModel",
@@ -16,11 +16,14 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
 	"sap/base/util/values",
+	"sap/base/util/includes",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/isEmptyObject",
-	"sap/base/util/includes",
+	"sap/base/util/restricted/_intersection",
+	"sap/base/util/restricted/_mergeWith",
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/restricted/_omit",
+	"sap/base/util/restricted/_union",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/Log",
@@ -28,10 +31,10 @@ sap.ui.define([
 ], function (
 	createPromise,
 	PropertyEditorFactory,
+	ValidatorRegistry,
 	PropertyEditors,
 	resolveBinding,
 	ObjectBinding,
-	isValidBindingString,
 	hasTag,
 	Control,
 	ResourceModel,
@@ -40,11 +43,14 @@ sap.ui.define([
 	deepClone,
 	deepEqual,
 	values,
+	includes,
 	isPlainObject,
 	isEmptyObject,
-	includes,
+	_intersection,
+	_mergeWith,
 	_merge,
 	_omit,
+	_union,
 	JSONModel,
 	ResourceBundle,
 	Log,
@@ -53,6 +59,7 @@ sap.ui.define([
 	"use strict";
 
 	var CUSTOM_PROPERTY_PREFIX = "customProperty--";
+	var SET_CONFIG_PROMISE = Promise.resolve();
 
 	/**
 	 * @class
@@ -154,6 +161,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Designtime-specific metadata to be changed in the editor. Note: If an object is passed as a parameter, it won't be mutated. <code>.getDesigntimeMetadata()</code> or
+				 * <code>.attachDesigntimeMetadataChange()</code> should be used instead to get the changed object.
+				 */
+				"designtimeMetadata": {
+					type: "object"
+				},
+
+				/**
 				 * Layout name. Standard layout types: list | form
 				 */
 				"layout": {
@@ -180,6 +195,16 @@ sap.ui.define([
 					}
 				},
 				/**
+				 * Fired when designtime metadata has been changed by a <code>propertyEditor</code>.
+				 */
+				designtimeMetadataChange: {
+					parameters: {
+						designtimeMetadata: {
+							type: "object"
+						}
+					}
+				},
+				/**
 				 * Fired when all property editors for the given JSON and configuration are created.
 				 * TODO: remove this public event.
 				 */
@@ -195,9 +220,11 @@ sap.ui.define([
 			this._mObservableConfig = {};
 			this._mPropertyEditors = {};
 			this._aCancelHandlers = [];
-			this._oDataModel = this._createDataModel();
+			this._oDataModel = this._createModel();
+			this._oDesigntimeMetadataModel = this._createModel();
 
 			this._bInitFinished = false;
+			this._bValidatorsReady = false;
 			this._setReady(false);
 
 			Control.prototype.constructor.apply(this, arguments);
@@ -236,6 +263,7 @@ sap.ui.define([
 	BaseEditor.prototype.exit = function () {
 		this._reset();
 		this._oDataModel.destroy();
+		this._oDesigntimeMetadataModel.destroy();
 	};
 
 	BaseEditor.prototype._prepareData = function (oJson) {
@@ -289,34 +317,147 @@ sap.ui.define([
 	};
 
 	BaseEditor.prototype.setConfig = function (oConfig) {
-		PropertyEditorFactory.deregisterAllTypes();
-		PropertyEditorFactory.registerTypes(oConfig.propertyEditors);
+		SET_CONFIG_PROMISE = SET_CONFIG_PROMISE.then(function() {
+			PropertyEditorFactory.deregisterAllTypes();
+			return PropertyEditorFactory.registerTypes(oConfig.propertyEditors);
+		}).then(function(mPropertyEditors) {
+			this._initValidators(oConfig.validators || {});
 
-		// Backwards compatibility. If no i18n configuration specified, we use default one.
-		var oTarget = {};
-		if (!oConfig.i18n) {
-			oTarget.i18n = this.getMetadata().getProperty("config").getDefaultValue().i18n;
-		}
+			// Backwards compatibility. If no i18n configuration specified, we use default one.
+			var oTarget = {};
+			if (!oConfig.i18n) {
+				oTarget.i18n = this.getMetadata().getProperty("config").getDefaultValue().i18n;
+			}
 
-		this.setProperty(
-			"config",
-			this._mergeConfig(oTarget, oConfig),
-			false
-		);
-		this._initialize();
+			var oNewConfig = mergeConfig(oTarget, oConfig);
+
+			if (this._oSpecificConfig) {
+				oNewConfig = mergeSpecificConfig(oNewConfig, this._oSpecificConfig, mPropertyEditors);
+			}
+
+			this.setProperty("config", oNewConfig, false);
+			this._initialize();
+		}.bind(this));
+		return SET_CONFIG_PROMISE;
 	};
 
 	BaseEditor.prototype.addConfig = function (oConfig) {
 		return this.setConfig(
-			this._mergeConfig(this.getConfig(), oConfig)
+			mergeConfig(this.getConfig(), oConfig)
 		);
 	};
 
-	BaseEditor.prototype._mergeConfig = function (oTarget, oSource) {
-		var oResult = _merge({}, oTarget, oSource);
+	function mergeConfig(oTarget, oCurrentConfig) {
+		var oResult = _merge({}, oTarget, oCurrentConfig);
 		// concat i18n properties to avoid override
-		oResult.i18n = [].concat(oTarget.i18n || [], oSource.i18n || []);
+		oResult.i18n = [].concat(oTarget.i18n || [], oCurrentConfig.i18n || []);
 		return oResult;
+	}
+
+	BaseEditor.prototype._addSpecificConfig = function(oSpecificConfig) {
+		return SET_CONFIG_PROMISE.then(function() {
+			this._oSpecificConfig = oSpecificConfig;
+
+			addMissingPropertyEditors(this.getConfig(), oSpecificConfig);
+			return this.setConfig(this.getConfig());
+		}.bind(this));
+	};
+
+	function addMissingPropertyEditors(oCurrentConfig, oSpecificConfig) {
+		each(oSpecificConfig.propertyEditors, function(sEditorName, sEditorPath) {
+			if (!oCurrentConfig.propertyEditors[sEditorName]) {
+				oCurrentConfig.propertyEditors[sEditorName] = sEditorPath;
+			}
+		});
+	}
+
+	function mergeSpecificConfig(oCurrentConfig, oSpecificConfig, mPropertyEditors) {
+		// merge i18n
+		oCurrentConfig.i18n = _union(oCurrentConfig.i18n, oSpecificConfig.i18n);
+
+		// merge rest
+		var oNewConfig = Object.assign(
+			{},
+			oCurrentConfig,
+			_omit(oSpecificConfig, ["properties", "i18n", "propertyEditors"]),
+			_omit(oCurrentConfig, ["properties", "i18n", "propertyEditors"])
+		);
+
+		// merge properties
+		oNewConfig.properties = {};
+		each(oSpecificConfig.properties, function(sPropertyName, oProperty) {
+			var sEditor = oCurrentConfig.propertyEditors[oProperty.type] && oCurrentConfig.propertyEditors[oProperty.type].split("/").join(".");
+			var oConfigMetadata = sEditor && mPropertyEditors[sEditor].configMetadata;
+
+			if (oConfigMetadata && oCurrentConfig.properties[sPropertyName]) {
+				each(oProperty, function(sKey, vTargetValue) {
+					var vNewValue;
+					var sMergeStrategy = oConfigMetadata[sKey] && oConfigMetadata[sKey].mergeStrategy;
+					if (sMergeStrategy) {
+						// only applicable for boolean values
+						if (sMergeStrategy === "mostRestrictiveWins") {
+							var bMostRestrictiveValue = oConfigMetadata[sKey].mostRestrictiveValue || false;
+							if (vTargetValue === bMostRestrictiveValue) {
+								vNewValue = bMostRestrictiveValue;
+							} else {
+								vNewValue = oCurrentConfig.properties[sPropertyName][sKey];
+							}
+						} else if (sMergeStrategy === "intersection") {
+							vNewValue = _intersection(vTargetValue, oCurrentConfig.properties[sPropertyName][sKey]);
+						}
+					} else {
+						vNewValue = vTargetValue;
+					}
+					oNewConfig.properties[sPropertyName] = oNewConfig.properties[sPropertyName] || {};
+					oNewConfig.properties[sPropertyName][sKey] = vNewValue;
+				});
+			}
+		});
+
+		return oNewConfig;
+	}
+
+	BaseEditor.prototype.setDesigntimeMetadata = function (oDesigntimeMetadata, bIsInitialMetadata) {
+		var oNextMetadata = deepClone(oDesigntimeMetadata);
+		if (!deepEqual(oNextMetadata, this.getDesigntimeMetadata())) {
+			this.setProperty("designtimeMetadata", oNextMetadata);
+			this._oDesigntimeMetadataModel.setData(oNextMetadata);
+			if (!bIsInitialMetadata) {
+				this.fireDesigntimeMetadataChange({
+					designtimeMetadata: formatExportedDesigntimeMetadata(oNextMetadata)
+				});
+			}
+		}
+	};
+
+	function formatExportedDesigntimeMetadata (oMetadata) {
+		var oFlatMetadata = {};
+		var fnFlattenPath = function (oObject, aPath) {
+			Object.keys(oObject).forEach(function (sKey) {
+				var vValue = oObject[sKey];
+
+				if (sKey === "__value") {
+					oFlatMetadata[aPath.join("/")] = vValue;
+				} else if (isPlainObject(vValue)) {
+					fnFlattenPath(vValue, [].concat(aPath, sKey));
+				}
+			});
+		};
+
+		fnFlattenPath(oMetadata, []);
+		return oFlatMetadata;
+	}
+
+	BaseEditor.prototype._initValidators = function (mValidatorModules) {
+		ValidatorRegistry.deregisterAllValidators();
+		ValidatorRegistry.registerValidators(mValidatorModules);
+
+		// Wait for all validators in order to use them
+		// synchronously inside the property editors
+		ValidatorRegistry.ready().then(function () {
+			this._bValidatorsReady = true;
+			this._checkReady();
+		}.bind(this));
 	};
 
 	BaseEditor.prototype._reset = function () {
@@ -341,6 +482,10 @@ sap.ui.define([
 				this.deregisterPropertyEditor(oPropertyEditor, sPropertyName);
 			}, this);
 		}.bind(this));
+
+		if (this._oRootWrapper) {
+			this._oRootWrapper.destroy();
+		}
 	};
 
 	BaseEditor.prototype._initialize = function () {
@@ -365,6 +510,7 @@ sap.ui.define([
 					// Setup config observer
 					this._oConfigObserver.addToIgnore(["template", "itemLabel"]); // Ignore array templates and itemLabels
 					this._oConfigObserver.setModel(this._oDataModel);
+					this._oConfigObserver.setModel(this._oDesigntimeMetadataModel, "designtimeMetadata");
 					this._oConfigObserver.setModel(this._oI18nModel, "i18n");
 
 					var sContextPath = this._getContextPath();
@@ -383,24 +529,7 @@ sap.ui.define([
 					this._mObservableConfig = Object.assign(this._mObservableConfig, this._prepareConfig(mPropertiesConfig));
 					this._oConfigObserver.setObject(this._mObservableConfig);
 
-					this._oConfigObserver.attachChange(function (oEvent) {
-						var aPath = oEvent.getParameter("path").split("/");
-						var vValue = oEvent.getParameter("value");
-						var sPropertyKey = aPath.shift();
-						var aPropertyEditors = this.getPropertyEditorsByNameSync(sPropertyKey) || [];
-
-						aPropertyEditors.forEach(function (oPropertyEditor) {
-							if (aPath[0] === "value") {
-								oPropertyEditor.setValue(vValue);
-							} else {
-								var mProperties = oEvent.getSource().getObject();
-								var mPropertyConfig = _omit(deepClone(mProperties[sPropertyKey]), "value");
-
-								ObjectPath.set(aPath, vValue, mPropertyConfig);
-								oPropertyEditor.setConfig(mPropertyConfig);
-							}
-						});
-					}, this);
+					this._oConfigObserver.attachChange(this._onConfigChange, this);
 
 					// If there is no custom layout, create default
 					var aContent = this.getContent();
@@ -418,7 +547,77 @@ sap.ui.define([
 		}
 	};
 
-	BaseEditor.prototype._createDataModel = function () {
+	BaseEditor.prototype._onConfigChange = function (oEvent) {
+		var oChangeMap = oEvent.getParameter("changes")
+			.reduce(function (oCurrentChangeMap, oOriginalChange) {
+				var oChange = deepClone(oOriginalChange);
+				oChange.path = oChange.path.split("/");
+				oChange.propertyKey = oChange.path.shift();
+				if (!oCurrentChangeMap[oChange.propertyKey]) {
+					oCurrentChangeMap[oChange.propertyKey] = [];
+				}
+				oCurrentChangeMap[oChange.propertyKey].push(oChange);
+				return oCurrentChangeMap;
+			}, {});
+
+		// Collect all editors which are affected by one of the changes
+		var aPropertyEditors = Object.keys(oChangeMap).reduce(function (aList, sPropertyName) {
+			var aAffectedEditors = (this.getPropertyEditorsByNameSync(sPropertyName) || [])
+				.map(function (oEditor) {
+					return {
+						editor: oEditor,
+						// Keep the property name to identify independent editors later
+						propertyName: sPropertyName
+					};
+				});
+			aList = aList.concat(aAffectedEditors);
+			return aList;
+		}.bind(this), []);
+
+		// Property editors which are not managed by the root wrapper
+		// have to be updated independently
+		var aIndependentEditors = aPropertyEditors.filter(function (oPropertyEditor) {
+			return !this._oRootWrapper || !includes(this._oRootWrapper._aEditorWrappers, oPropertyEditor.editor);
+		}.bind(this));
+
+		aIndependentEditors.forEach(function (oPropertyEditor) {
+			var sPropertyKey = oPropertyEditor.propertyName;
+			var mProperties = oEvent.getSource().getObject();
+			var mPropertyConfig = _omit(deepClone(mProperties[sPropertyKey]), "value");
+			var bConfigChanged = false;
+
+			var aChanges = oChangeMap[sPropertyKey] || [];
+			aChanges.forEach(function (oChange) {
+				if (oChange.path[0] === "value") {
+					oPropertyEditor.editor.setValue(oChange.value);
+				} else {
+					ObjectPath.set(oChange.path, oChange.value, mPropertyConfig);
+					bConfigChanged = true;
+				}
+			});
+
+			if (bConfigChanged) {
+				oPropertyEditor.editor.setConfig(mPropertyConfig);
+			}
+		});
+
+		// If at least one property editor is managed by the root wrapper
+		// update the wrapper and let it pass the change down to the
+		// property editors
+		if (aIndependentEditors.length < aPropertyEditors.length) {
+			var aModifiedConfigs = deepClone(this._oRootWrapper.getConfig())
+				.map(function (mConfig) {
+					var aChanges = oChangeMap[mConfig.__propertyName] || [];
+					aChanges.forEach(function (oChange) {
+						ObjectPath.set(oChange.path, oChange.value, mConfig);
+					});
+					return mConfig;
+				});
+			this._oRootWrapper.setConfig(aModifiedConfigs);
+		}
+	};
+
+	BaseEditor.prototype._createModel = function () {
 		var oModel = new JSONModel();
 		oModel.setDefaultBindingMode("OneWay");
 		return oModel;
@@ -503,7 +702,8 @@ sap.ui.define([
 
 		return Object.assign({}, mPropertyConfig, {
 			path: sPath,
-			value: "{" + sPath + "}"
+			value: "{" + sPath + "}",
+			designtime: "{designtimeMetadata>" + sPath + "}"
 		});
 	};
 
@@ -595,6 +795,7 @@ sap.ui.define([
 
 		oPropertyEditor.setValue(vValue);
 		oPropertyEditor.attachValueChange(this._onValueChange, this);
+		oPropertyEditor.attachDesigntimeMetadataChange(this._onDesigntimeMetadataChange, this);
 		oPropertyEditor.attachReady(this._checkReady, this);
 	};
 
@@ -613,6 +814,7 @@ sap.ui.define([
 		}
 
 		oPropertyEditor.detachValueChange(this._onValueChange, this);
+		oPropertyEditor.detachDesigntimeMetadataChange(this._onDesigntimeMetadataChange, this);
 
 		if (Array.isArray(aList)) {
 			this._mPropertyEditors[sKey] = aList.filter(function (oItem) {
@@ -656,6 +858,7 @@ sap.ui.define([
 
 		var bIsReady = (
 			this._bInitFinished
+			&& this._bValidatorsReady
 			&& aAsyncDependencies.every(function (oEditor) {
 				return oEditor.isReady();
 			})
@@ -800,6 +1003,10 @@ sap.ui.define([
 		return _merge({}, this.getProperty("json")); // To avoid manipulations with the json outside of the editor
 	};
 
+	BaseEditor.prototype.getDesigntimeMetadata = function () {
+		return _merge({}, this.getProperty("designtimeMetadata"));
+	};
+
 	BaseEditor.prototype._getContextPath = function () {
 		var oConfig = this.getConfig();
 		var sContext = oConfig && oConfig.context || null;
@@ -841,6 +1048,28 @@ sap.ui.define([
 		}
 
 		this.setJson(oJson);
+	};
+
+	BaseEditor.prototype._onDesigntimeMetadataChange = function (oEvent) {
+		var sPath = oEvent.getParameter("path");
+		var oDesigntimeMetadata = this.getDesigntimeMetadata() || {};
+		var vValue = oEvent.getParameter("value");
+
+		if (sPath[0] === "/") {
+			sPath = sPath.substr(1);
+		} else {
+			throw new Error("BaseEditor._onDesigntimeMetadataChange: unknown relative path - '" + sPath + "'");
+		}
+
+		var aParts = sPath.split("/");
+
+		ObjectPath.set(
+			aParts,
+			vValue,
+			oDesigntimeMetadata
+		);
+
+		this.setDesigntimeMetadata(oDesigntimeMetadata);
 	};
 
 	return BaseEditor;

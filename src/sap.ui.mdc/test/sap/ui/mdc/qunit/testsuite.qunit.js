@@ -111,21 +111,9 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 					only: "[sap/ui/mdc/field]"
 				}
 			},
-			"FieldInfoBase_new": {
-				group: "Field",
-				module: "./field/FieldInfoBase_new.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/field]"
-				}
-			},
 			"FieldInfo": {
 				group: "Field",
 				module: "./field/FieldInfo.qunit",
-				sinon: false
-			},
-			"FieldInfo_new": {
-				group: "Field",
-				module: "./field/FieldInfo_new.qunit",
 				sinon: false
 			},
 			"FieldValueHelp": {
@@ -192,15 +180,10 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 				},
 				module: "./actiontoolbar/ActionToolbar.qunit"
 			},
-			"FlpLinkHandler Testsuite": {
-				title: "FlpLinkHandler Testsuite",
-				group: "Testsuite",
-				page: "test-resources/sap/ui/mdc/qunit/link/testsuite.flplinkhandler.qunit.html"
-			},
 			"Link Testsuite": {
 				title: "Link Testsuite",
 				group: "Testsuite",
-				page: "test-resources/sap/ui/mdc/qunit/link_new/testsuite.link.qunit.html"
+				page: "test-resources/sap/ui/mdc/qunit/link/testsuite.link.qunit.html"
 			},
 			"Table": {
 				group: "Table",

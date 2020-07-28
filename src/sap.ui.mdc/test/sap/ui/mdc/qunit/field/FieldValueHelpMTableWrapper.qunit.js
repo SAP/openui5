@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/field/FieldValueHelpMTableWrapper",
 	"sap/ui/mdc/field/FieldValueHelp",
-	"sap/ui/mdc/odata/v4/FieldValueHelpDelegate", // to test also V4 functionality
+	"sap/ui/mdc/field/FieldValueHelpDelegate",
+	"sap/ui/mdc/odata/v4/FieldValueHelpDelegate",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/mdc/field/InParameter",
@@ -37,6 +38,7 @@ sap.ui.define([
 		FieldValueHelpMTableWrapper,
 		FieldValueHelp,
 		FieldValueHelpDelegate,
+		FieldValueHelpDelegateV4,
 		Condition,
 		ConditionModel,
 		InParameter,
@@ -595,7 +597,7 @@ sap.ui.define([
 
 		var oException;
 		try {
-			var oResult3 = oWrapper.getTextForKey("Test", undefined, undefined, true);
+			oWrapper.getTextForKey("Test", undefined, undefined, true);
 		} catch (oError) {
 			oException = oError;
 		}
@@ -668,12 +670,15 @@ sap.ui.define([
 	QUnit.test("getTextForKey using ODataListBinding", function(assert) {
 
 		// fake oData binding - Don't use real logic
+		sinon.stub(oValueHelp, "getDelegate").returns({name: "sap/ui/mdc/odata/v4/FieldValueHelpDelegate", payload: {}});
+		sinon.stub(oValueHelp, "getControlDelegate").returns(FieldValueHelpDelegateV4);
 		var oDataModel = new ODataModel({synchronizationMode: "None", serviceUrl: "x/"});
 		var oListBinding = new ODataListBinding(oDataModel, "/items");
 		oListBinding.aContexts = [];
 		sinon.stub(oListBinding, "initialize").returns(null);
 		sinon.stub(oListBinding, "filter").callsFake(function() {
-				oListBinding.fireDataReceived();
+				oListBinding._fireChange({detailedReason: "Ignore", reason: "change"});
+				oListBinding._fireChange({reason: "filter"});
 		});
 		sinon.stub(oListBinding, "getContexts").returns([]);
 		sinon.stub(oWrapper, "getListBinding").returns(oListBinding);
@@ -690,10 +695,14 @@ sap.ui.define([
 			assert.ok(oListBinding.filter.called, "ListBinding.filter called");
 			assert.ok(oListBinding.getContexts.calledWith(0, 2), "ListBinding.getContexts called");
 			oDataModel.destroy(); // ListBinding already destroyed as reused inside Wrappe (bindList stub)
+			oValueHelp.getDelegate.restore();
+			oValueHelp.getControlDelegate.restore();
 			fnDone();
 		}).catch(function(oError) {
 			assert.notOk(oError, "no Error Fired");
 			oDataModel.destroy();
+			oValueHelp.getDelegate.restore();
+			oValueHelp.getControlDelegate.restore();
 			fnDone();
 		});
 
@@ -805,7 +814,7 @@ sap.ui.define([
 
 		var oException;
 		try {
-			var oResult3 = oWrapper.getKeyForText("X", undefined, true);
+			oWrapper.getKeyForText("X", undefined, true);
 		} catch (oError) {
 			oException = oError;
 		}
@@ -1001,16 +1010,19 @@ sap.ui.define([
 
 	QUnit.test("applyFilters", function(assert) {
 
-		sinon.spy(FieldValueHelpDelegate, "isSearchSupported"); // returns false for non V4-ListBinding
-		sinon.spy(FieldValueHelpDelegate, "executeSearch"); //test V4 logic
+		// simulate V4 logic in this test too
+		sinon.stub(oValueHelp, "getDelegate").returns({name: "sap/ui/mdc/odata/v4/FieldValueHelpDelegate", payload: {}});
+		sinon.stub(oValueHelp, "getControlDelegate").returns(FieldValueHelpDelegateV4);
+		sinon.spy(FieldValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
+		sinon.spy(FieldValueHelpDelegateV4, "executeSearch"); //test V4 logic
 		var oFilter = new Filter({path: "additionalText", operator: "EQ", value1: "Text 2"});
 		var oListBinding = oWrapper.getListBinding(); // just test the call of the ListBinding, we need not to test the table here
 
 		sinon.spy(oListBinding, "filter");
 		oWrapper.applyFilters([oFilter]);
 		assert.ok(oListBinding.filter.calledWith([oFilter], "Application"), "ListBinding filtered");
-		assert.ok(FieldValueHelpDelegate.isSearchSupported.called, "FieldValueHelpDelegate.isSearchSupported called");
-		assert.notOk(FieldValueHelpDelegate.executeSearch.called, "FieldValueHelpDelegate.executeSearch not called");
+		assert.ok(FieldValueHelpDelegateV4.isSearchSupported.called, "FieldValueHelpDelegate.isSearchSupported called");
+		assert.notOk(FieldValueHelpDelegateV4.executeSearch.called, "FieldValueHelpDelegate.executeSearch not called");
 		oListBinding.filter.reset();
 
 		oWrapper.applyFilters();
@@ -1032,9 +1044,9 @@ sap.ui.define([
 		sinon.spy(oListBinding, "changeParameters");
 		oWrapper.applyFilters([oFilter], "X");
 		assert.ok(oListBinding.filter.calledWith([oFilter], "Application"), "ListBinding filtered");
-		assert.ok(FieldValueHelpDelegate.isSearchSupported.called, "FieldValueHelpDelegate.isSearchSupported called");
-		assert.ok(FieldValueHelpDelegate.executeSearch.called, "FieldValueHelpDelegate.executeSearch called");
-		assert.ok(FieldValueHelpDelegate.executeSearch.calledWith({}, oListBinding, "X"), "FieldValueHelpDelegate.executeSearch called parameters");
+		assert.ok(FieldValueHelpDelegateV4.isSearchSupported.called, "FieldValueHelpDelegate.isSearchSupported called");
+		assert.ok(FieldValueHelpDelegateV4.executeSearch.called, "FieldValueHelpDelegate.executeSearch called");
+		assert.ok(FieldValueHelpDelegateV4.executeSearch.calledWith({}, oListBinding, "X"), "FieldValueHelpDelegate.executeSearch called parameters");
 		assert.ok(oListBinding.changeParameters.calledWith({$search: "X"}), "ListBinding.changeParameters called with search string");
 		assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
 		oListBinding.filter.reset();
@@ -1043,8 +1055,10 @@ sap.ui.define([
 		assert.ok(oListBinding.changeParameters.calledWith({$search: undefined}), "ListBinding.changeParameters called with no search string");
 		oListBinding.filter.reset();
 
-		FieldValueHelpDelegate.isSearchSupported.restore();
-		FieldValueHelpDelegate.executeSearch.restore();
+		FieldValueHelpDelegateV4.isSearchSupported.restore();
+		FieldValueHelpDelegateV4.executeSearch.restore();
+		oValueHelp.getDelegate.restore();
+		oValueHelp.getControlDelegate.restore();
 
 	});
 

@@ -73,9 +73,14 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool"
 				aItems = oList.getItems(),
 				oSelectedItem = oList.getSelectedItem(),
 				iCurrentPosInSet = 1,
-				oItemStates;
+				oItemStates,
+				bForceSelectedVisualState;
 
 			for (var i = 0; i < aItems.length; i++) {
+				// should force selected state when there is no selected item for the
+				// visual focus to be set on the first item when popover is opened
+				bForceSelectedVisualState = i === 0 && !oSelectedItem;
+
 				oItemStates = {
 					selected: oSelectedItem === aItems[i],
 					setsize: iSize,
@@ -86,7 +91,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool"
 					oItemStates.posinset = iCurrentPosInSet++;
 				}
 
-				this.renderItem(oRm, oList, aItems[i], oItemStates);
+				this.renderItem(oRm, oList, aItems[i], oItemStates, bForceSelectedVisualState);
 			}
 		};
 
@@ -97,8 +102,9 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool"
 		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
 		 * @param {sap.ui.core.Element} oItem An object representation of the element that should be rendered.
 		 * @param {object} mStates
+		 * @param {boolean} bForceSelectedVisualState Forces the visual focus (selected state) to be se on the item.
 		 */
-		SelectListRenderer.renderItem = function(oRm, oList, oItem, mStates) {
+		SelectListRenderer.renderItem = function(oRm, oList, oItem, mStates, bForceSelectedVisualState) {
 
 			if (!(oItem instanceof Element)) {
 				return;
@@ -144,7 +150,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool"
 					oRm.class(CSS_CLASS + "ItemBaseHoverable");
 				}
 
-				if (oItem === oSelectedItem) {
+				if (oItem === oSelectedItem || bForceSelectedVisualState) {
 					oRm.class(CSS_CLASS + "ItemBaseSelected");
 				}
 

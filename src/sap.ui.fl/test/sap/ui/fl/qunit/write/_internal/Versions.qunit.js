@@ -2,14 +2,20 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/BindingMode",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/ChangePersistenceFactory"
 ], function(
 	sinon,
+	JSONModel,
+	BindingMode,
 	Layer,
+	Settings,
 	Versions,
 	Storage,
 	KeyUserConnector,
@@ -18,6 +24,14 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+
+	function setVersioningEnabled(oVersioning) {
+		sandbox.stub(Settings, "getInstance").resolves({
+			isVersioningEnabled: function (sLayer) {
+				return oVersioning[sLayer];
+			}
+		});
+	}
 
 	function _prepareResponsesAndStubMethod(sReference, aReturnedVersions, sFunctionName, aDirtyChanges) {
 		sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
@@ -36,19 +50,54 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given Versions.initialize is called", function (assert) {
+		QUnit.test("Given Versions.initialize is called and versioning is NOT enabled", function (assert) {
+			setVersioningEnabled({CUSTOMER: false});
+
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
 			};
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
+				assert.equal(this.oStorageLoadVersionsStub.callCount, 0, "then no request for versions was sent");
+				assert.ok(oResponse instanceof JSONModel, "a model was returned");
+				assert.equal(oResponse.getDefaultBindingMode(), BindingMode.OneWay, "with its default binding set to 'OneWay'");
+				var oData = oResponse.getData();
+				assert.equal(oData.versioningEnabled, false, "with a versionsEnabled flag set to false");
+				assert.deepEqual(oData.versions, [], ", an empty versions list");
+				assert.equal(oData.backendDraft, false, ", a backendDraft flag set to false");
+				assert.equal(oData.dirtyChanges, false, ", a dirty changes flag set to false");
+				assert.equal(oData.draftAvailable, false, "and a draftAvailable flag set to false as data");
+			}.bind(this));
+		});
+
+		QUnit.test("Given Versions.initialize is called", function (assert) {
+			var sReference = "com.sap.app";
+			var sLayer = Layer.CUSTOMER;
+
+			var oVersioningEnabled = {};
+			oVersioningEnabled[sLayer] = true;
+			setVersioningEnabled(oVersioningEnabled);
+
+			var mPropertyBag = {
+				layer : sLayer,
+				reference : sReference
+			};
+
+			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
-				assert.equal(oResponse, this.aReturnedVersions, "and the versions list is returned");
+				var aCallArguments = this.oStorageLoadVersionsStub.getCall(0).args[0];
+				assert.equal(aCallArguments.reference, sReference, "the reference was passed");
+				assert.equal(aCallArguments.layer, sLayer, "the layer was passed");
+				assert.equal(aCallArguments.limit, 10, "and the limit was passed");
+				assert.ok(oResponse instanceof JSONModel, "a model was returned");
+				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
 			}.bind(this));
 		});
 
 		QUnit.test("Given Versions.initialize is called multiple times for the same reference and layer", function (assert) {
+			setVersioningEnabled({CUSTOMER: true});
+
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
@@ -56,15 +105,19 @@ sap.ui.define([
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
-				assert.equal(oResponse, this.aReturnedVersions, "and the versions list is returned");
+				assert.ok(oResponse instanceof JSONModel, "a model was returned");
+				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
 				return Versions.initialize(mPropertyBag);
 			}.bind(this)).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 2, "a second request is sent");
-				assert.equal(oResponse, this.aReturnedVersions, "and the versions list is returned");
+				assert.ok(oResponse instanceof JSONModel, "a model was returned");
+				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
 			}.bind(this));
 		});
 
 		QUnit.test("Given Versions.initialize is called multiple times for different references", function (assert) {
+			setVersioningEnabled({CUSTOMER: true});
+
 			var mPropertyBag1 = {
 				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
@@ -80,15 +133,18 @@ sap.ui.define([
 
 			return Versions.initialize(mPropertyBag1).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
-				assert.deepEqual(oResponse, aReturnedVersions, "and the versions list is returned");
+				assert.ok(oResponse instanceof JSONModel, "a model was returned");
+				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
 				return Versions.initialize(mPropertyBag2);
 			}.bind(this)).then(function (oResponse) {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 2, "a further request is sent");
-				assert.deepEqual(oResponse, aReturnedVersions, "and the versions list is returned");
+				assert.ok(oResponse instanceof JSONModel, "a model was returned");
+				assert.equal(oResponse.getProperty("/versions"), this.aReturnedVersions, "and the versions list is returned in the model data");
 			}.bind(this));
 		});
 
-		QUnit.test("Given Versions.initialize is called multiple times for different layers", function (assert) {
+		QUnit.test("Given Versions.initialize is called multiple times for different layers where only one is versioning enabled", function (assert) {
+			setVersioningEnabled({CUSTOMER: true, USER: false});
 			var mPropertyBag1 = {
 				layer : Layer.CUSTOMER,
 				reference : "com.sap.app"
@@ -99,19 +155,38 @@ sap.ui.define([
 				reference : "com.sap.app"
 			};
 
-			return Versions.initialize(mPropertyBag1).then(function (oResponse) {
+			return Versions.initialize(mPropertyBag1).then(function () {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
-				assert.equal(oResponse, this.aReturnedVersions, "and the versions list is returned");
 				return Versions.initialize(mPropertyBag2);
-			}.bind(this)).then(function (oResponse) {
+			}.bind(this)).then(function () {
+				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "a further request is sent");
+			}.bind(this));
+		});
+
+		QUnit.test("Given Versions.initialize is called multiple times for different layers where all are versioning enabled", function (assert) {
+			setVersioningEnabled({CUSTOMER: true, USER: true});
+			var mPropertyBag1 = {
+				layer : Layer.CUSTOMER,
+				reference : "com.sap.app"
+			};
+
+			var mPropertyBag2 = {
+				layer : Layer.USER,
+				reference : "com.sap.app"
+			};
+
+			return Versions.initialize(mPropertyBag1).then(function () {
+				assert.equal(this.oStorageLoadVersionsStub.callCount, 1, "then a request was sent");
+				return Versions.initialize(mPropertyBag2);
+			}.bind(this)).then(function () {
 				assert.equal(this.oStorageLoadVersionsStub.callCount, 2, "a further request is sent");
-				assert.equal(oResponse, this.aReturnedVersions, "and the versions list is returned");
 			}.bind(this));
 		});
 	});
 
 	QUnit.module("Calling the Storage: Given Versions.initialize is called", {
 		beforeEach: function () {
+			setVersioningEnabled({CUSTOMER: true});
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector : "KeyUserConnector", layers : [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
@@ -130,7 +205,75 @@ sap.ui.define([
 			sandbox.stub(KeyUserConnector.versions, "load").resolves(aReturnedVersions);
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
-				assert.equal(oResponse, aReturnedVersions, "then the versions list is returned");
+				assert.deepEqual(oResponse.getProperty("/versions"), aReturnedVersions, "then the versions list is returned");
+			});
+		});
+
+		QUnit.test("and a connector is configured which returns a list of versions with entries", function (assert) {
+			var mPropertyBag = {
+				layer : Layer.CUSTOMER,
+				reference : "com.sap.app"
+			};
+
+			var oFirstVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a long while ago",
+				versionNumber : 1
+			};
+
+			var oSecondVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a while ago",
+				versionNumber : 2
+			};
+
+			var aReturnedVersions = [
+				oSecondVersion,
+				oFirstVersion
+			];
+
+			sandbox.stub(KeyUserConnector.versions, "load").resolves(aReturnedVersions);
+
+			return Versions.initialize(mPropertyBag).then(function (oResponse) {
+				var aVersions = oResponse.getProperty("/versions");
+				assert.deepEqual(aVersions, aReturnedVersions, "then the versions list is returned");
+				assert.deepEqual(aVersions[0].type, "active", "the first version is the 'active' one");
+				assert.deepEqual(aVersions[1].type, "inactive", "the second version is the 'inactive' one");
+			});
+		});
+
+		QUnit.test("and a connector is configured which returns a list of versions with entries and a draft", function (assert) {
+			var mPropertyBag = {
+				layer : Layer.CUSTOMER,
+				reference : "com.sap.app"
+			};
+
+			var oFirstVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a long while ago",
+				versionNumber : 1
+			};
+
+			var oSecondVersion = {
+				activatedBy : "qunit",
+				activatedAt : "a while ago",
+				versionNumber : 2
+			};
+
+			var aReturnedVersions = [
+				{versionNumber : 0},
+				oSecondVersion,
+				oFirstVersion
+			];
+
+			sandbox.stub(KeyUserConnector.versions, "load").resolves(aReturnedVersions);
+
+			return Versions.initialize(mPropertyBag).then(function (oResponse) {
+				var aVersions = oResponse.getProperty("/versions");
+				assert.deepEqual(aVersions, aReturnedVersions, "then the versions list is returned");
+				assert.deepEqual(aVersions[0].type, "draft", "the first version is the 'draft' one");
+				assert.deepEqual(aVersions[1].type, "active", "the second version is the 'active' one");
+				assert.deepEqual(aVersions[2].type, "inactive", "the third version is the 'inactive' one");
 			});
 		});
 	});
@@ -147,6 +290,7 @@ sap.ui.define([
 			};
 		},
 		beforeEach: function () {
+			setVersioningEnabled({CUSTOMER: true});
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector : "KeyUserConnector", layers : [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
@@ -194,21 +338,17 @@ sap.ui.define([
 
 			return Versions.initialize(mPropertyBag)
 				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
-				.then(function (oResponse) {
+				.then(function () {
 					assert.equal(oSaveStub.callCount, 0, "no save changes was called");
-					assert.equal(Array.isArray(oResponse), true, "then the versions list is returned");
-					assert.equal(oResponse.length, 3, "with three versions");
-					assert.equal(oResponse[0], oActivatedVersion, "and the newly activated is the first");
-					assert.equal(oResponse[1], oSecondVersion, "where the old version is the second");
-					assert.equal(oResponse[2], oFirstVersion, "where the older version is the third");
 				})
-				.then(Versions.getVersions.bind(Versions, mPropertyBag))
-				.then(function (aVersions) {
+				.then(Versions.getVersionsModel.bind(Versions, mPropertyBag))
+				.then(function (oResponse) {
+					var aVersions = oResponse.getProperty("/versions");
 					assert.equal(aVersions.length, 3, "with three versions");
 					assert.equal(aVersions[0], oActivatedVersion, "and the newly activated is the first");
 					assert.equal(aVersions[1], oSecondVersion, "where the old version is the second");
 					assert.equal(aVersions[2], oFirstVersion, "where the older version is the third");
-					assert.equal(aVersions.backendDraft, false, "backendDraft property was set to false");
+					assert.equal(oResponse.getProperty("/backendDraft"), false, "backendDraft property was set to false");
 				});
 		});
 
@@ -256,14 +396,15 @@ sap.ui.define([
 				appComponent: this.oAppComponent
 			};
 
-			var oDraft = {
-				versionNumber: 0
-			};
-
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
 				versionNumber: 1
+			};
+
+			var oDraft = {
+				versionNumber: 0,
+				type: "draft"
 			};
 
 			var aReturnedVersions = [
@@ -280,27 +421,38 @@ sap.ui.define([
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
 			return Versions.initialize(mPropertyBag)
+				.then(function (oVersionsModel) {
+					oVersionsModel.setDirtyChanges(true);
+				})
+				.then(function () {
+					var oData = Versions.getVersionsModel(mPropertyBag).getData();
+					var aVersions = oData.versions;
+					assert.equal(Array.isArray(aVersions), true, "then the draft is added");
+					assert.equal(aVersions.length, 2, "summing up to two versions");
+					assert.deepEqual(aVersions[0], oDraft, "and first is the draft");
+					assert.equal(aVersions[1], oFirstVersion, "where the older version is the second");
+					assert.equal(oData.backendDraft, false, "the backendDraft flag is false");
+					assert.equal(oData.dirtyChanges, true, "the dirtyChanges flag is set to true");
+					assert.equal(oData.draftAvailable, true, "as well as draftAvailable true");
+				})
 				.then(Versions.activateDraft.bind(undefined, mPropertyBag))
-				.then(function (oResponse) {
+				.then(function () {
 					assert.equal(oSaveStub.callCount, 1, "the changes were saved");
 					var aSaveCallArgs = oSaveStub.getCall(0).args;
 					assert.deepEqual(aSaveCallArgs[0], this.oAppComponent, "the app component was passed");
 					assert.equal(aSaveCallArgs[1], false, "the caching update should not be skipped");
 					assert.equal(aSaveCallArgs[2], undefined, "no list of changes is passed");
 					assert.equal(aSaveCallArgs[3], true, "the draft flag is set");
-					assert.equal(Array.isArray(oResponse), true, "then the versions list is returned");
-					assert.equal(oResponse.length, 2, "with two versions");
-					assert.equal(oResponse[0], oActivatedVersion, "and the newly activated is the second");
-					assert.equal(oResponse[1], oFirstVersion, "where the older version is the first");
-				}.bind(this))
-				.then(function () {
-					var aVersions = Versions.getVersions(mPropertyBag);
-					assert.equal(aVersions.length, 3, "and a getting the versions new will return two versions with added draft on top");
-					assert.deepEqual(aVersions[0], oDraft, "and the newly activated is the first");
-					assert.equal(aVersions[1], oActivatedVersion, "and the newly activated is the first");
-					assert.equal(aVersions[2], oFirstVersion, "where the older version is the second");
-					assert.equal(aVersions.backendDraft, false, "backendDraft property was set to false");
-				});
+					var oData = Versions.getVersionsModel(mPropertyBag).getData();
+					var aVersions = oData.versions;
+					assert.equal(Array.isArray(aVersions), true, "the versions list in the model is updated");
+					assert.equal(aVersions.length, 2, "still containing two versions");
+					assert.equal(aVersions[0], oActivatedVersion, "with the previous draft updated");
+					assert.equal(aVersions[1], oFirstVersion, "and the older version is the second");
+					assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
+					assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
+					assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
+				}.bind(this));
 		});
 	});
 
@@ -319,6 +471,7 @@ sap.ui.define([
 			};
 		},
 		beforeEach: function () {
+			setVersioningEnabled({CUSTOMER: true});
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector : "KeyUserConnector", layers : [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
@@ -342,6 +495,11 @@ sap.ui.define([
 				versionNumber : 1
 			};
 
+			var oDraft = {
+				versionNumber: 0,
+				type: "draft"
+			};
+
 			var aReturnedBackendVersions = [
 				oFirstVersion
 			];
@@ -353,17 +511,36 @@ sap.ui.define([
 			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
 
 			return Versions.initialize(mPropertyBag)
+			.then(function (oVersionsModel) {
+				oVersionsModel.setDirtyChanges(true);
+			})
+			.then(function () {
+				var oData = Versions.getVersionsModel(mPropertyBag).getData();
+				var aVersions = oData.versions;
+				assert.equal(Array.isArray(aVersions), true, "then the draft is added");
+				assert.equal(aVersions.length, 2, "summing up to two versions");
+				assert.deepEqual(aVersions[0], oDraft, "and first is the draft");
+				assert.equal(aVersions[1], oFirstVersion, "where the older version is the second");
+				assert.equal(oData.backendDraft, false, "the backendDraft flag is false");
+				assert.equal(oData.dirtyChanges, true, "the dirtyChanges flag is set to true");
+				assert.equal(oData.draftAvailable, true, "as well as draftAvailable true");
+			})
 			.then(Versions.discardDraft.bind(undefined, mPropertyBag))
 			.then(function () {
 				assert.equal(oDeleteStub.callCount, 1, "deleteChange was called");
 				assert.equal(oDiscardStub.callCount, 0, "no discardDraft was called");
 				oGetDirtyChangesStub.restore();
 			})
-			.then(Versions.getVersions.bind(Versions, mPropertyBag))
-			.then(function (aVersions) {
+			.then(Versions.getVersionsModel.bind(undefined, mPropertyBag))
+			.then(function (oModel) {
+				var oData = oModel.getData();
+				var aVersions = oData.versions;
 				assert.equal(aVersions.length, 1, "and a getting the versions anew will return one version");
 				assert.equal(oDiscardStub.callCount, 0, "no discardDraft was called");
 				assert.equal(aVersions[0], oFirstVersion, "which is the activated version");
+				assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
+				assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
+				assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
 			});
 		});
 
@@ -394,12 +571,16 @@ sap.ui.define([
 			.then(function () {
 				assert.equal(oSaveStub.callCount, 0, "no save changes was called");
 			})
-			.then(Versions.getVersions.bind(Versions, mPropertyBag))
-			.then(function (aVersions) {
+			.then(Versions.getVersionsModel.bind(undefined, mPropertyBag))
+			.then(function (oModel) {
+				var oData = oModel.getData();
+				var aVersions = oData.versions;
 				assert.equal(aVersions.length, 1, "and a getting the versions anew will return one version");
-				assert.equal(oDiscardStub.callCount, 1, "discarding the draft was called");
+				assert.equal(oDiscardStub.callCount, 1, "discardDraft was called once");
 				assert.equal(aVersions[0], oFirstVersion, "which is the activated version");
-				assert.equal(aVersions.backendDraft, false, "backendDraft property was set to false");
+				assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
+				assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
+				assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
 			});
 		});
 
@@ -526,64 +707,6 @@ sap.ui.define([
 					assert.equal(oDiscardStub.callCount, 1, "discarding the draft was called");
 					assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
 				});
-		});
-	});
-
-	QUnit.module("Given Versions.ensureDraftVersionExists is called", {
-		beforeEach: function () {
-		},
-		afterEach: function() {
-			Versions.clearInstances();
-			sandbox.restore();
-		}
-	}, function() {
-		function _setVersionsCallEnsureDraftAndCheckVersions(assert, aInitialVersions, aFinalVersions) {
-			var sReference = "com.sap.app";
-			var sLayer = Layer.CUSTOMER;
-			var mPropertyBag = {
-				reference: sReference,
-				layer: sLayer
-			};
-			sandbox.stub(Storage.versions, "load").resolves(aInitialVersions);
-			return Versions.initialize(mPropertyBag)
-				.then(function() {
-					Versions.ensureDraftVersionExists(mPropertyBag);
-					var aVersions = Versions.getVersions(mPropertyBag);
-					assert.equal(aVersions.length, aFinalVersions.length, "the number of versions is correct");
-					assert.deepEqual(aVersions, aFinalVersions, "the versions objects match");
-				});
-		}
-
-		QUnit.test("if no versions were present", function (assert) {
-			return _setVersionsCallEnsureDraftAndCheckVersions(
-				assert,
-				[],
-				[{versionNumber: 0}]
-			);
-		});
-
-		QUnit.test("if a draft version was present", function (assert) {
-			return _setVersionsCallEnsureDraftAndCheckVersions(
-				assert,
-				[{versionNumber: 0}],
-				[{versionNumber: 0}]
-			);
-		});
-
-		QUnit.test("if no draft version but other versions were present", function (assert) {
-			return _setVersionsCallEnsureDraftAndCheckVersions(
-				assert,
-				[{versionNumber: 2}, {versionNumber: 1}],
-				[{versionNumber: 0}, {versionNumber: 2}, {versionNumber: 1}]
-			);
-		});
-
-		QUnit.test("if a draft version and other versions were present", function (assert) {
-			return _setVersionsCallEnsureDraftAndCheckVersions(
-				assert,
-				[{versionNumber: 0}, {versionNumber: 2}, {versionNumber: 1}],
-				[{versionNumber: 0}, {versionNumber: 2}, {versionNumber: 1}]
-			);
 		});
 	});
 

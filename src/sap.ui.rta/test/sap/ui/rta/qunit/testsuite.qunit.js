@@ -73,6 +73,9 @@ sap.ui.define([
 				group: 'Service',
 				coverage: {
 					only: ["sap/ui/rta/service/Property"]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 				}
 			},
 
@@ -240,10 +243,10 @@ sap.ui.define([
 					"xx-designMode": true
 				}
 			},
-			"command/AddODataProperty": {
+			"command/AddDelegateProperty": {
 				group: "Command",
 				coverage: {
-					only: ["sap/ui/rta/command/AddODataProperty"]
+					only: ["sap/ui/rta/command/AddProperty"]
 				}
 			},
 			"command/AddXML": {

@@ -30,32 +30,47 @@ sap.ui.define([
 	 */
 	var BooleanEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.booleanEditor.BooleanEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.booleanEditor.BooleanEditor",
-
-		_onChange: function() {
-			var bInput = this._validate();
-			if (bInput !== null) {
-				this.setValue(bInput);
-			}
-		},
-
-		_validate: function() {
-			var oComboBox = this.getContent();
-			var sSelectedKey = oComboBox.getSelectedKey();
-			var sValue = oComboBox.getValue();
-
-			if (sValue && !sSelectedKey && !isValidBindingString(sValue, false)) {
-				oComboBox.setValueState("Error");
-				oComboBox.setValueStateText(this.getI18nProperty("BASE_EDITOR.BOOLEAN.INVALID_BINDING_OR_BOOLEAN"));
-				return null;
-			}
-
-			oComboBox.setValueState("None");
-			if (sSelectedKey) {
-				return sSelectedKey === "true";
-			}
-			return sValue;
-		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
+	});
+
+	BooleanEditor.prototype.getDefaultValidators = function () {
+		var oConfig = this.getConfig();
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getDefaultValidators.call(this),
+			{
+				isValidBinding: {
+					type: "isValidBinding",
+					isEnabled: oConfig.allowBindings
+				},
+				notABinding: {
+					type: "notABinding",
+					isEnabled: !oConfig.allowBindings
+				},
+				isBoolean: {
+					type: "isBoolean"
+				}
+			}
+		);
+	};
+
+	BooleanEditor.prototype._onChange = function() {
+		var oComboBox = this.getContent();
+		var vValue = oComboBox.getSelectedKey() || oComboBox.getValue();
+		if (vValue === "false") {
+			vValue = false;
+		} else if (vValue === "true") {
+			vValue = true;
+		}
+
+		this.setValue(vValue);
+	};
+
+	BooleanEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		allowBindings: {
+			defaultValue: true,
+			mergeStrategy: "mostRestrictiveWins"
+		}
 	});
 
 	return BooleanEditor;

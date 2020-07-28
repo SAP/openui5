@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	"sap/ui/model/type/String",
 	"sap/ui/mdc/p13n/FlexUtil",
-	"sap/ui/mdc/odata/TypeUtil"
+	"sap/ui/mdc/odata/TypeUtil",
+	'sap/base/util/merge'
 
 ], function (
 	FilterBar,
@@ -20,7 +21,8 @@ sap.ui.define([
 	JSONModel,
 	ModelString,
 	FlexUtil,
-	TypeUtil
+	TypeUtil,
+	merge
 ) {
 	"use strict";
 
@@ -974,6 +976,22 @@ sap.ui.define([
 		oCurrentState = oFilterBar.getCurrentState();
 		assert.ok(oCurrentState.filter, "current state should react on every p13nMode");
 		assert.ok(oCurrentState.items, "current state should react on every p13nMode");
+	});
+
+	QUnit.test("check getCurrentState should return a copy", function (assert) {
+
+		var oContent = { "name": [{operator: "Contains", values: ["value"], validated: "NotValidated"}]};
+
+		oFilterBar.setP13nMode(["Value"]);
+		sinon.stub(oFilterBar, "_getPropertyByName").returns(true);
+		oFilterBar.setFilterConditions(merge({}, oContent));
+		var oCurrentState = oFilterBar.getCurrentState();
+		assert.deepEqual(oCurrentState.filter, oContent, "current state should be set");
+
+		delete oCurrentState.filter["name"];
+
+		oCurrentState = oFilterBar.getCurrentState();
+		assert.deepEqual(oCurrentState.filter, oContent, "current state should not change");
 	});
 
 	QUnit.test("check getSearch", function (assert) {

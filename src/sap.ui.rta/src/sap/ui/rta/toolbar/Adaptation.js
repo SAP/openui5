@@ -5,12 +5,14 @@
 sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/Device",
-	"./Base"
+	"./Base",
+	"sap/ui/core/MessageType"
 ],
 function(
 	Fragment,
 	Device,
-	Base
+	Base,
+	MessageType
 ) {
 	"use strict";
 
@@ -57,23 +59,6 @@ function(
 					defaultValue: false
 				},
 
-				/** Determines whether the version label and draft buttons are visible */
-				versioningVisible: {
-					type: "boolean",
-					defaultValue: false
-				},
-
-				/** Label of the current version; this label is only visible in case versioningVisible is set to true */
-				versionLabel: {
-					type: "string"
-				},
-
-				/** Determines whether draft buttons are enabled */
-				draftEnabled: {
-					type: "boolean",
-					defaultValue: false
-				},
-
 				/** Defines value of the switcher SegmentedButton */
 				modeSwitcher: {
 					type: "string",
@@ -109,7 +94,8 @@ function(
 
 	var DEVICE_SET = "sapUiRtaToolbar";
 
-	var ACCENT_COLOR = "sapUiRtaVersionAccent1";
+	var DRAFT_ACCENT_COLOR = "sapUiRtaDraftVersionAccent";
+	var ACTIVE_ACCENT_COLOR = "sapUiRtaActiveVersionAccent";
 
 	Adaptation.prototype.init = function() {
 		Device.media.attachHandler(this._onSizeChanged, this, DEVICE_SET);
@@ -138,6 +124,105 @@ function(
 		oButton.setTooltip(sToolTip || "");
 		oButton.setIcon(sIcon || "");
 	}
+
+	Adaptation.prototype.formatVersionButtonText = function (bDraftAvailable, aVersions) {
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var sText = "";
+		var sType = "Active";
+
+		if (aVersions.length > 0) {
+			sType = aVersions[0].type;
+			if (bDraftAvailable) {
+				sText = oTextResources.getText("TIT_DRAFT");
+			} else {
+				sText = aVersions[0].title || oTextResources.getText("TIT_VERSION_1");
+			}
+		} else {
+			sText = oTextResources.getText("TIT_ORIGINAL_APP");
+		}
+
+		this.setVersionButtonAccentColor(sType);
+		return sText;
+	};
+
+	Adaptation.prototype.formatVersionTableVisibility = function (nVersionsLength) {
+		return nVersionsLength > 0;
+	};
+
+	Adaptation.prototype.formatVersionTitle = function (sTitle, sType) {
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+
+		if (sType === "draft") {
+			return oTextResources.getText("TIT_DRAFT");
+		}
+
+		return sTitle || oTextResources.getText("TIT_VERSION_1");
+	};
+
+	Adaptation.prototype.formatHighlight = function (sType) {
+		switch (sType) {
+			case "draft":
+				return MessageType.Warning;
+			case "active":
+				return MessageType.Success;
+			default:
+				return MessageType.None;
+		}
+	};
+
+	Adaptation.prototype.formatHighlightText = function (sType) {
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		switch (sType) {
+			case "draft":
+				return oTextResources.getText("TIT_DRAFT");
+			case "active":
+				return oTextResources.getText("LBL_ACTIVE");
+			default:
+				return oTextResources.getText("LBL_INACTIVE");
+		}
+	};
+
+	function doesActiveVersionExists (aVersions) {
+		return aVersions.some(function (oVersion) {
+			return oVersion.type === "active";
+		});
+	}
+
+	Adaptation.prototype.formatOriginalAppHighlight = function (aVersions) {
+		return doesActiveVersionExists(aVersions) ? MessageType.None : MessageType.Success;
+	};
+
+
+	Adaptation.prototype.formatOriginalAppHighlightText = function (aVersions) {
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		return doesActiveVersionExists(aVersions) ? oTextResources.getText("LBL_INACTIVE") : oTextResources.getText("LBL_ACTIVE");
+	};
+
+	Adaptation.prototype.showVersionHistory = function (oEvent) {
+		var oVersionButton = oEvent.getSource();
+
+		if (!this.oVersionDialogPromise) {
+			this.oVersionDialogPromise = Fragment.load({
+				name: "sap.ui.rta.toolbar.VersionHistory",
+				id: this.getId() + "_versionHistoryDialog",
+				controller: {
+					formatVersionTitle: this.formatVersionTitle.bind(this),
+					formatVersionTableVisibility: this.formatVersionTableVisibility.bind(this),
+					formatHighlight: this.formatHighlight.bind(this),
+					formatHighlightText: this.formatHighlightText.bind(this),
+					formatOriginalAppHighlight: this.formatOriginalAppHighlight.bind(this),
+					formatOriginalAppHighlightText: this.formatOriginalAppHighlightText.bind(this)
+				}
+			}).then(function (oVersionHistory) {
+				oVersionButton.addDependent(oVersionHistory);
+				return oVersionHistory;
+			});
+		}
+
+		return this.oVersionDialogPromise.then(function (oVersionsDialog) {
+			oVersionsDialog.openBy(oVersionButton);
+		});
+	};
 
 	Adaptation.prototype._showButtonIcon = function(sButtonName, sIcon, sToolTipKey) {
 		_setButtonProperties.call(this, sButtonName, sIcon, "", sToolTipKey);
@@ -209,7 +294,9 @@ function(
 				restore: this.eventHandler.bind(this, "Restore"),
 				publish: this.eventHandler.bind(this, "Transport"),
 				saveAs: this.eventHandler.bind(this, "SaveAs"),
-				exit: this.eventHandler.bind(this, "Exit")
+				exit: this.eventHandler.bind(this, "Exit"),
+				formatVersionButtonText: this.formatVersionButtonText.bind(this),
+				showVersionHistory: this.showVersionHistory.bind(this)
 			}
 		}).then(function (aControls) {
 			this.getControl("publish").setVisible(this.getPublishVisible());
@@ -226,12 +313,12 @@ function(
 
 	function _createDialog() {
 		return Fragment.load({
-			name : "sap.ui.rta.toolbar.VersionTitleDialog",
+			name: "sap.ui.rta.toolbar.VersionTitleDialog",
 			id: this.getId() + "_fragment",
-			controller : {
+			controller: {
 				onConfirmVersioningDialog: function () {
 					var sVersionTitle = this.getControl("versionTitleInput").getValue();
-					this.fireEvent("activateDraft", {versionTitle : sVersionTitle});
+					this.fireEvent("activateDraft", {versionTitle: sVersionTitle});
 					this._oDialog.close();
 				}.bind(this),
 				onCancelVersioningDialog: function () {
@@ -279,36 +366,15 @@ function(
 		this.getControl("restore").setEnabled(bEnabled);
 	};
 
-	Adaptation.prototype.setVersionLabel = function (sText) {
-		this.setProperty("versionLabel", sText, true);
-		var oVersionLabel = this.getControl("versionLabel");
-		oVersionLabel.setText(sText);
-		// to ensure that a text which is to long to be displayed can be read by the user
-		oVersionLabel.setTooltip(sText);
-	};
-
-	Adaptation.prototype.setVersionLabelAccentColor = function (bIsAccentColor) {
-		var oVersionLabel = this.getControl("versionLabel");
-		if (bIsAccentColor) {
-			oVersionLabel.addStyleClass(ACCENT_COLOR);
+	Adaptation.prototype.setVersionButtonAccentColor = function (sType) {
+		var oVersionButton = this.getControl("versionButton");
+		if (sType === "draft") {
+			oVersionButton.addStyleClass(DRAFT_ACCENT_COLOR);
+			oVersionButton.removeStyleClass(ACTIVE_ACCENT_COLOR);
 		} else {
-			oVersionLabel.removeStyleClass(ACCENT_COLOR);
+			oVersionButton.addStyleClass(ACTIVE_ACCENT_COLOR);
+			oVersionButton.removeStyleClass(DRAFT_ACCENT_COLOR);
 		}
-	};
-
-	Adaptation.prototype.setVersioningVisible = function (bVisible) {
-		this.setProperty("versioningVisible", bVisible, true);
-		this.getControl("versionLabel").setVisible(bVisible);
-		this.getControl("activateDraft").setVisible(bVisible);
-		this.getControl("discardDraft").setVisible(bVisible);
-		return bVisible;
-	};
-
-	Adaptation.prototype.setDraftEnabled = function (bEnabled) {
-		this.setProperty("draftEnabled", bEnabled, true);
-		this.getControl("activateDraft").setEnabled(bEnabled);
-		this.getControl("discardDraft").setEnabled(bEnabled);
-		return bEnabled;
 	};
 
 	Adaptation.prototype.setAppVariantsVisible = function (bVisible) {

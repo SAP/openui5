@@ -49,7 +49,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 *
-	 * @returns {Promise<sap.ui.fl.Version[]>} List of versions if available;
+	 * @returns {Promise<sap.ui.model.json.JSONModel>} Model with list of versions if available and further version properties;
 	 * Rejects if not all parameters were passed or the application could not be determined
 	 */
 	VersionsAPI.initialize = function (mPropertyBag) {
@@ -83,25 +83,6 @@ sap.ui.define([
 	 * Throws an error in case no initialization took place upfront
 	 */
 	VersionsAPI.isDraftAvailable = function (mPropertyBag) {
-		var aVersions = VersionsAPI.getVersions(mPropertyBag);
-		var oDraft = aVersions.find(function (oVersion) {
-			return oVersion.versionNumber === 0;
-		});
-
-		return !!oDraft;
-	};
-
-	/**
-	 * Returns a list of versions.
-	 *
-	 * @param {object} mPropertyBag - Property Bag
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
-	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 *
-	 * @returns {sap.ui.fl.Version[]} List of versions if available;
-	 * Throws an error in case no initialization took place upfront
-	 */
-	VersionsAPI.getVersions = function (mPropertyBag) {
 		if (!mPropertyBag.selector) {
 			throw Error("No selector was provided");
 		}
@@ -114,11 +95,15 @@ sap.ui.define([
 		if (!oAppInfo.reference) {
 			throw Error("The application ID could not be determined");
 		}
-		return Versions.getVersions({
-			nonNormalizedReference: oAppInfo.reference,
-			reference: Utils.normalizeReference(oAppInfo.reference),
-			layer: mPropertyBag.layer
+		var aVersions = Versions.getVersionsModel({
+			reference : Utils.normalizeReference(oAppInfo.reference),
+			layer : mPropertyBag.layer
+		}).getProperty("/versions");
+		var oDraft = aVersions.find(function (oVersion) {
+			return oVersion.versionNumber === 0;
 		});
+
+		return !!oDraft;
 	};
 
 	/**

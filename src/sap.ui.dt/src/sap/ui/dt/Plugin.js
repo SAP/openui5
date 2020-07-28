@@ -361,6 +361,7 @@ function(
 	Plugin.prototype.isResponsibleElementActionAvailable = function (oElementOverlay, sActionName) {
 		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
 		if (oDesignTimeMetadata) {
+			// TODO: support for sub actions required
 			return oDesignTimeMetadata.isResponsibleActionAvailable(sActionName || this.getActionName());
 		}
 		return false;

@@ -69,6 +69,9 @@ sap.ui.define([
 
 			var oContent = new Content();
 
+			// Set the card ID as association to the content
+			oContent.setCard(oCard);
+
 			if (oContent instanceof AdaptiveContent) {
 				oContent.setCardDataProvider(oCard._oDataProvider);
 			}
@@ -116,6 +119,8 @@ sap.ui.define([
 				return AdaptiveContent;
 			case "analytical":
 				return AnalyticalContent;
+			case "analyticscloud":
+				return AnalyticsCloudContent;
 			case "calendar":
 				return CalendarContent;
 			case "component":

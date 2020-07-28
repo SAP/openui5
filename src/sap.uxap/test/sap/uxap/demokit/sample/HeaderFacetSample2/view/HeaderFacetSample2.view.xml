@@ -143,9 +143,9 @@
         </headerContent>
 
         <sections>
-			<ObjectPageSection id="goalsSection" title="2014 Goals Plan">
+			<ObjectPageSection titleUppercase="false" id="goalsSection" title="2014 Goals Plan">
 				<subSections>
-					<ObjectPageSubSection id="goalsSectionSS1" titleUppercase="true">
+					<ObjectPageSubSection id="goalsSectionSS1" titleUppercase="false">
 						<blocks>
 							<goals:GoalsBlock id="goalsblock"/>
 						</blocks>
@@ -153,9 +153,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection id="personalSection" title="Personal" importance="Medium">
+			<ObjectPageSection titleUppercase="false" id="personalSection" title="Personal" importance="Medium">
 				<subSections>
-					<ObjectPageSubSection id="personalSectionSS1" title="Connect" titleUppercase="true">
+					<ObjectPageSubSection id="personalSectionSS1" title="Connect" titleUppercase="false">
 						<blocks>
 							<personal:BlockPhoneNumber id="phone"/>
 							<personal:BlockSocial id="social"/>
@@ -164,7 +164,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="personalSectionSS2" title="Payment information" titleUppercase="true">
+					<ObjectPageSubSection id="personalSectionSS2" title="Payment information" titleUppercase="false">
 						<blocks>
 							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
 						</blocks>
@@ -175,9 +175,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection id="employmentSection" title="Employment">
+			<ObjectPageSection titleUppercase="false" id="employmentSection" title="Employment">
 				<subSections>
-					<ObjectPageSubSection id="employmentSectionSS1" title="Job information" titleUppercase="true">
+					<ObjectPageSubSection id="employmentSectionSS1" title="Job information" titleUppercase="false">
 						<blocks>
 							<employment:BlockJobInfoPart1 id="jobinfopart1"/>
 							<employment:BlockJobInfoPart2 id="jobinfopart2"/>
@@ -185,7 +185,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" importance="Medium" titleUppercase="true">
+					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" importance="Medium" titleUppercase="false">
 						<blocks>
 							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
 						</blocks>
