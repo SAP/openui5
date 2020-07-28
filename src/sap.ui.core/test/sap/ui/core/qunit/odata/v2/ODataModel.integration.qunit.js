@@ -4508,7 +4508,7 @@ usePreliminaryContext : false}}">\
 				}, {
 					data : {
 						__metadata : {
-							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~1~')"
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 						},
 						ItemPosition : "10",
 						Note : "foo",
@@ -4517,11 +4517,11 @@ usePreliminaryContext : false}}">\
 					statusCode : 201
 				}, {
 					location : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet"
-						+ "(SalesOrderID='1',ItemPosition='10~1~')",
+						+ "(SalesOrderID='1',ItemPosition='10')",
 					"sap-message" : getMessageHeader(oNoteError)
 				})
 				.expectMessage(oNoteError,
-					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~1~')/");
+					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/");
 
 			// code under test
 			that.oView.byId("page").setBindingContext(
@@ -4545,8 +4545,6 @@ usePreliminaryContext : false}}">\
 	QUnit.test("createEntry: update deep path with resulting entity (deep)", function (assert) {
 		var oModel = createSalesOrdersModel({refreshAfterChange : false, useBatch : true}),
 			oNoteError = this.createResponseMessage("Note"),
-			oNoteErrorCopy = cloneODataMessage(oNoteError,
-				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
 			sView = '\
 <FlexBox binding="{path : \'/SalesOrderSet(\\\'1\\\')\',\
 		parameters : {select : \'SalesOrderID,Note\', expand : \'ToLineItems\'}}">\
@@ -4574,6 +4572,9 @@ usePreliminaryContext : false}}">\
 			.expectChange("noteSalesOrder", "foo");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oNoteErrorCopy = cloneODataMessage(oNoteError,
+					"(SalesOrderID='1',ItemPosition='10')/Note");
+
 			that.expectRequest({
 					created : true,
 					data : {
@@ -4587,7 +4588,7 @@ usePreliminaryContext : false}}">\
 				}, {
 					data : {
 						__metadata : {
-							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 						},
 						ItemPosition : "10~0~",
 						Note : "bar",
@@ -4596,7 +4597,7 @@ usePreliminaryContext : false}}">\
 					statusCode : 201
 				}, {
 					location : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('1')/ToLineItems"
-						+ "(SalesOrderID='1',ItemPosition='10~0~')",
+						+ "(SalesOrderID='1',ItemPosition='10')",
 					"sap-message" : getMessageHeader(oNoteError)
 				})
 				.expectMessage(oNoteErrorCopy, "/SalesOrderLineItemSet",
@@ -4623,11 +4624,9 @@ usePreliminaryContext : false}}">\
 	// the same as the fullTarget of associated messages.
 	// BCP: 002028376600002197422020
 	QUnit.test("createEntry: no change of deep path for non-collections", function (assert) {
-		var oCompanyNameError = this.createResponseMessage("CompanyName"),
-			oModel = createSalesOrdersModel({useBatch : true}),
+		var oModel = createSalesOrdersModel({useBatch : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}" id="page">\
-	<Input id="note" value="{Note}" />\
 	<FlexBox id="details">\
 		<Input id="name" value="{CompanyName}" />\
 	</FlexBox>\
@@ -4637,13 +4636,14 @@ usePreliminaryContext : false}}">\
 		this.expectHeadRequest()
 			.expectRequest("SalesOrderSet('1')", {
 				__metadata : {uri : "SalesOrderSet('1')"},
-				Note : "foo",
 				SalesOrderID : "1"
 			})
-			.expectChange("note", null)
-			.expectChange("note", "foo");
+			.expectChange("name", null)
+			.expectChange("name", undefined);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oCompanyNameError = that.createResponseMessage("CompanyName");
+
 			that.expectRequest({
 					created : true,
 					data : {
@@ -4657,28 +4657,30 @@ usePreliminaryContext : false}}">\
 				}, {
 					data : {
 						__metadata : {
-							uri : "/Product('BP1')"
+							uri : "/BusinessPartnerSet('BP1')"
 						},
-						CompanyName : "SAP",
-						ProductID : "BP1"
+						BusinessPartnerID : "BP1",
+						CompanyName : "SAP"
 					},
 					statusCode : 201
 				}, {
-					location : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('1')"
-						+ "/ToBusinessPartner",
+					location : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('BP1')",
 					"sap-message" : getMessageHeader(oCompanyNameError)
 				})
-				.expectMessage(oCompanyNameError, "/SalesOrderSet('1')/ToBusinessPartner/");
+				.expectChange("name", "SAP")
+				.expectMessage(oCompanyNameError, "/BusinessPartnerSet('BP1')/",
+					"/SalesOrderSet('1')/ToBusinessPartner/");
 
 			// code under test
 			that.oView.byId("details").setBindingContext(
-				oModel.createEntry("/SalesOrderSet('1')/ToBusinessPartner", {properties : {}})
+				oModel.createEntry("ToBusinessPartner", {
+					context : that.oView.byId("page").getBindingContext(),
+					properties : {}
+				})
 			);
 			oModel.submitChanges();
 
 			return that.waitForChanges(assert);
-		}).then(function () {
-			assert.strictEqual(that.oView.byId("name").getValue(), "SAP");
 		});
 	});
 
