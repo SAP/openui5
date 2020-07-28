@@ -100,7 +100,7 @@
 				<m:Label text="{/#Product/MatrQuantity/@sap:label}"/>
 				<mdc:Field
 					id="F-Quantity"
-					value="{parts: ['MatrQuantity', 'MatrUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit'}"
+					value="{parts: ['MatrQuantity', 'MatrUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.type.Unit'}"
 					placeholder="{/#Product/MatrQuantity/@sap:label}"
 					display="Value"
 					fieldHelp="FH-Quantity">

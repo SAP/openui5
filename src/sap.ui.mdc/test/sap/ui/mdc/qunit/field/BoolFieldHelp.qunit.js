@@ -48,6 +48,8 @@ sap.ui.define([
 	var iNavigate = 0;
 	var sNavigateValue;
 	var sNavigateKey;
+	var oNavigateCondition;
+	var sNavigateItemId;
 	var iDataUpdate = 0;
 	var iOpen = 0;
 
@@ -66,6 +68,8 @@ sap.ui.define([
 		iNavigate++;
 		sNavigateValue = oEvent.getParameter("value");
 		sNavigateKey = oEvent.getParameter("key");
+		oNavigateCondition = oEvent.getParameter("condition");
+		sNavigateItemId = oEvent.getParameter("itemId");
 	};
 
 	var _myDataUpdateHandler = function(oEvent) {
@@ -108,6 +112,8 @@ sap.ui.define([
 		iNavigate = 0;
 		sNavigateValue = undefined;
 		sNavigateKey = undefined;
+		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
 		iDataUpdate = 0;
 		iOpen = 0;
 		BoolFieldHelp._init();
@@ -232,6 +238,11 @@ sap.ui.define([
 			assert.equal(iNavigate, 1, "Navigate event fired");
 			assert.equal(sNavigateValue, "true", "Navigate event value");
 			assert.equal(sNavigateKey, true, "Navigate event key");
+			assert.equal(oNavigateCondition.operator, "EQ", "Navigate event condition operator");
+			assert.equal(oNavigateCondition.values[0], true, "Navigate event condition key");
+			assert.equal(oNavigateCondition.values[1], "true", "Navigate event condition description");
+			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-0", "Navigate event itemId");
 			var aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], true, "conditions key");
@@ -241,6 +252,11 @@ sap.ui.define([
 			assert.equal(iNavigate, 2, "Navigate event fired");
 			assert.equal(sNavigateValue, "false", "Navigate event value");
 			assert.equal(sNavigateKey, false, "Navigate event key");
+			assert.equal(oNavigateCondition.operator, "EQ", "Navigate event condition operator");
+			assert.equal(oNavigateCondition.values[0], false, "Navigate event condition key");
+			assert.equal(oNavigateCondition.values[1], "false", "Navigate event condition description");
+			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-1", "Navigate event itemId");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], false, "conditions key");
@@ -250,6 +266,11 @@ sap.ui.define([
 			assert.equal(iNavigate, 3, "Navigate event fired");
 			assert.equal(sNavigateValue, "true", "Navigate event value");
 			assert.equal(sNavigateKey, true, "Navigate event key");
+			assert.equal(oNavigateCondition.operator, "EQ", "Navigate event condition operator");
+			assert.equal(oNavigateCondition.values[0], true, "Navigate event condition key");
+			assert.equal(oNavigateCondition.values[1], "true", "Navigate event condition description");
+			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-0", "Navigate event itemId");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], true, "conditions key");
@@ -263,6 +284,11 @@ sap.ui.define([
 			assert.equal(iNavigate, 4, "Navigate event fired");
 			assert.equal(sNavigateValue, "false", "Navigate event value");
 			assert.equal(sNavigateKey, false, "Navigate event key");
+			assert.equal(oNavigateCondition.operator, "EQ", "Navigate event condition operator");
+			assert.equal(oNavigateCondition.values[0], false, "Navigate event condition key");
+			assert.equal(oNavigateCondition.values[1], "false", "Navigate event condition description");
+			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-1", "Navigate event itemId");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], false, "conditions key");
@@ -273,6 +299,11 @@ sap.ui.define([
 			assert.equal(iNavigate, 5, "Navigate event fired");
 			assert.equal(sNavigateValue, "false", "Navigate event value");
 			assert.equal(sNavigateKey, false, "Navigate event key");
+			assert.equal(oNavigateCondition.operator, "EQ", "Navigate event condition operator");
+			assert.equal(oNavigateCondition.values[0], false, "Navigate event condition key");
+			assert.equal(oNavigateCondition.values[1], "false", "Navigate event condition description");
+			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-1", "Navigate event itemId");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], false, "conditions key");
@@ -286,6 +317,11 @@ sap.ui.define([
 			assert.equal(iNavigate, 6, "Navigate event fired");
 			assert.equal(sNavigateValue, "true", "Navigate event value");
 			assert.equal(sNavigateKey, true, "Navigate event key");
+			assert.equal(oNavigateCondition.operator, "EQ", "Navigate event condition operator");
+			assert.equal(oNavigateCondition.values[0], true, "Navigate event condition key");
+			assert.equal(oNavigateCondition.values[1], "true", "Navigate event condition description");
+			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-0", "Navigate event itemId");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], true, "conditions key");

@@ -158,7 +158,16 @@ sap.ui.define([
 						 *
 						 * @since 1.66.0
 						 */
-						condition: { type: "object" }
+						condition: { type: "object" },
+
+						/**
+						 * The id of the navigated item
+						 *
+						 * This is the DOM reference needed for aria support to point to the navigated item
+						 *
+						 * @since 1.81.0
+						 */
+						itemId: { type: "string" }
 					}
 				},
 
@@ -352,6 +361,48 @@ sap.ui.define([
 		} else {
 			return Element.prototype.getDomRef.apply(this, arguments);
 		}
+
+	};
+
+	/**
+	 * Returns the Id of the value holding content (list or table).
+	 *
+	 * This is used to enrich the field with the corresponding aria attributes
+	 *
+	 * @returns {string} Id
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.81.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldHelpBase.prototype.getContentId = function() {
+
+		var oPopover = this.getAggregation("_popover");
+
+		if (oPopover) {
+			var aContent = oPopover._getAllContent();
+			if (aContent.length === 1) {
+				return aContent[0].getId();
+			}
+		}
+
+	};
+
+	/**
+	 * Returns the description of the aria role to added to the assigned field.
+	 *
+	 * Normally the role is set to <code>combobox</code>. This is fine for the most cases.
+	 * so per default no description is needed. But in some cases, like multi select mode, an additional description is needed.
+	 *
+	 * @returns {string|null} rode description
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.81.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldHelpBase.prototype.getRoleDescription = function() {
+
+		return null;
 
 	};
 

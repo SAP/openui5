@@ -7,9 +7,12 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/Field",
+	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/EditMode",
 	"sap/ui/mdc/enum/FieldDisplay",
-	"sap/ui/mdc/condition/Condition",
+	"sap/ui/mdc/field/ConditionsType",
+	"sap/ui/mdc/field/FieldInput",
+	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
 	"sap/m/Label",
 	"sap/m/Input", // async. loading of content control tested in FieldBase test
 	"sap/m/Text",
@@ -24,17 +27,18 @@ sap.ui.define([
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/odata/type/Currency",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/type/DateTime",
-	"sap/ui/mdc/field/ConditionsType",
-	"sap/ui/mdc/odata/v4/FieldBaseDelegate" // make sure delegate is loaded (test delegate loading in FieldBase test)
+	"sap/ui/model/odata/type/DateTime"
 ], function (
 		jQuery,
 		qutils,
 		library,
 		Field,
+		Condition,
 		EditMode,
 		FieldDisplay,
-		Condition,
+		ConditionsType,
+		FieldInput,
+		FieldBaseDelegate,
 		Label,
 		Input,
 		Text,
@@ -49,9 +53,7 @@ sap.ui.define([
 		CurrencyType,
 		oDataCurrencyType,
 		JSONModel,
-		DateTimeType,
-		ConditionsType,
-		FieldBaseDelegate
+		DateTimeType
 		) {
 	"use strict";
 
@@ -125,7 +127,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "default content exist");
-		assert.equal(oContent && oContent.getMetadata().getName(), "sap.m.Input", "sap.m.Input is default");
+		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is default");
 		assert.notOk(oContent && oContent.getShowValueHelp(), "no valueHelp");
 
 	});
@@ -146,7 +148,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
-		assert.equal(oContent.getMetadata().getName(), "sap.m.Input", "sap.m.Input is used");
+		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
 		assert.notOk(oContent.getEditable(), "Input is not editable");
 
 	});
@@ -169,7 +171,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "internal content exist");
-		assert.equal(oContent && oContent.getMetadata().getName(), "sap.m.Input", "sap.m.Input is used");
+		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
 
 		oSlider = new Slider("S1");
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType()});

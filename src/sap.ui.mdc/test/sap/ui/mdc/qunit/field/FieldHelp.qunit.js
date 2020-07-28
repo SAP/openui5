@@ -893,6 +893,26 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getContentId", function(assert) {
+
+		var oContent = new Icon("I3", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
+		oFieldHelp._setContent(oContent);
+
+		oField.addDependent(oFieldHelp);
+		oFieldHelp.open();
+		var sContentId = oFieldHelp.getContentId();
+		assert.equal(sContentId, "I3", "Content ID returned");
+
+		oContent.destroy();
+
+	});
+
+	QUnit.test("getRoleDescription", function(assert) {
+
+		assert.strictEqual(oFieldHelp.getRoleDescription(), null, "no role description returned as default");
+
+	});
+
 	var iBeforeOpen = 0;
 
 	var _myBeforeOpenHandler = function(oEvent) {

@@ -13,6 +13,8 @@ sap.ui.define([
 	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // to test V4 logic too
 	"sap/ui/mdc/field/FieldHelpBaseDelegate",
 	"sap/ui/mdc/field/FieldValueHelpDelegate",
+	"sap/ui/mdc/field/FieldInput",
+	"sap/ui/mdc/field/FieldMultiInput",
 	"sap/ui/mdc/enum/EditMode",
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/mdc/enum/ConditionValidated",
@@ -57,6 +59,8 @@ sap.ui.define([
 	FieldBaseDelegate,
 	FieldHelpBaseDelegate,
 	FieldValueHelpDelegate,
+	FieldInput,
+	FieldMultiInput,
 	EditMode,
 	FieldDisplay,
 	ConditionValidated,
@@ -252,7 +256,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "default content exist");
-		assert.equal(oContent.getMetadata().getName(), "sap.m.MultiInput", "sap.m.MultiInput is default");
+		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is default");
 		assert.equal(oContent.getModel("$field"), oField._oManagedObjectModel, "MultiInput has ManagedObjectModel of Field");
 		assert.equal(oContent.getBindingPath("tokens"), "/conditions", "MultiInput tokens bound to Field conditions");
 		assert.ok(oContent.getShowValueHelp(), "valueHelp used");
@@ -287,7 +291,7 @@ sap.ui.define([
 	QUnit.test("default rendering, async loading of control", function(assert) {
 
 		var oStub = sinon.stub(sap.ui, "require");
-		oStub.withArgs("sap/m/MultiInput").onFirstCall().returns(undefined);
+		oStub.withArgs("sap/ui/mdc/field/FieldMultiInput").onFirstCall().returns(undefined);
 		oStub.callThrough();
 
 		oField.placeAt("content");
@@ -370,8 +374,8 @@ sap.ui.define([
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
-		assert.equal(oContent.getMetadata().getName(), "sap.m.MultiInput", "sap.m.MultiInput is used");
-		if (oContent.getMetadata().getName() == "sap.m.MultiInput") {
+		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is used");
+		if (oContent.getMetadata().getName() == "sap.ui.mdc.field.FieldMultiInput") {
 			assert.equal(oContent.getModel("$field"), oField._oManagedObjectModel, "MultiInput has ManagedObjectModel of Field");
 			assert.notOk(oContent.getEditable(), "MultiInput is not editable");
 		}
@@ -412,8 +416,6 @@ sap.ui.define([
 
 	});
 
-
-
 	QUnit.test("external control", function(assert) {
 
 		oField.setMaxConditions(1);
@@ -443,7 +445,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "internal content exist");
-		assert.equal(oContent.getMetadata().getName(), "sap.m.Input", "sap.m.Input is used");
+		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
 		assert.equal(oSlider.aBeforeDelegates.length, 0, "Delegate with keyboard handling removed");
 		assert.notEqual(oField._oConditionsType, oConditionsType, "ConditionsType of Slider not used in Field");
 		assert.ok(oField._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
@@ -477,7 +479,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "Field has internal content");
-		assert.equal(oContent && oContent.getMetadata().getName(), "sap.m.Input", "sap.m.Input is used");
+		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
 		assert.notOk(oProgressIndicator.getDomRef(), "ProgressIndicator not rendered");
 		assert.equal(oProgressIndicator.getPercentValue(), 0, "Value of ProgressIndicator not taken from Field");
 		assert.notOk(oProgressIndicator.getModel("$field"), "ProgressIndicator not bound to ManagedObjectModel of Field as not rendered");
@@ -548,7 +550,7 @@ sap.ui.define([
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "internal content exist");
-		assert.equal(oContent.getMetadata().getName(), "sap.m.MultiInput", "sap.m.MultiInput is used");
+		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is used");
 
 	});
 
@@ -800,7 +802,7 @@ sap.ui.define([
 		setTimeout(function() { // to update ConditionModel
 			var aContent = oFieldEditMulti.getAggregation("_content");
 			var oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getMetadata().getName(), "sap.m.MultiInput", "sap.m.MultiInput is used");
+			assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is used");
 			assert.equal(oContent.getValue && oContent.getValue(), "", "no value set on MultiInput control");
 			var aTokens = oContent.getTokens ? oContent.getTokens() : [];
 			assert.equal(aTokens.length, 1, "MultiInput has one Token");
@@ -809,7 +811,7 @@ sap.ui.define([
 
 			aContent = oFieldEditSingle.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getMetadata().getName(), "sap.m.Input", "sap.m.Input is used");
+			assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
 			assert.equal(oContent.getValue && oContent.getValue(), "Test", "Value set on Input control");
 			assert.notOk(oFieldEditSingle._sDefaultFieldHelp, "No default Field help set");
 
@@ -3602,6 +3604,134 @@ sap.ui.define([
 				}, 0);
 			}, 0);
 		});
+
+	});
+
+	QUnit.test("aria attributes on multi Field", function(assert) {
+
+		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
+		var aContent = oField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+		var oVHIcon = oContent && oContent.getAggregation("_endIcon")[0];
+		var $FocusDomRef = jQuery(oField.getFocusDomRef());
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var sText = oResourceBundle.getText("MULTIINPUT_ARIA_ROLE_DESCRIPTION");
+
+		oField.focus(); // as FieldHelp is connected with focus
+
+		assert.equal($FocusDomRef.attr("role"), "combobox", "Role Combobox set");
+		assert.equal($FocusDomRef.attr("aria-roledescription"), sText, "Role Description set - default from MultiInput");
+		assert.equal($FocusDomRef.attr("aria-haspopup"), "listbox", "aria-haspopup set");
+		assert.equal($FocusDomRef.attr("autocomplete"), "off", "autocomplete off set");
+		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "aria-expanded set to false");
+		assert.notOk($FocusDomRef.attr("aria-controls"), "aria-controls not set");
+		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "aria-activedescendant not set");
+
+		// open FieldHelp
+		var oClock = sinon.useFakeTimers();
+		sinon.stub(oFieldHelp, "getContentId").returns("Test");
+		sinon.stub(oFieldHelp, "getRoleDescription").returns("RoleDescription");
+		oVHIcon.firePress();
+		sinon.stub(oFieldHelp, "isOpen").returns(true);
+		sap.ui.getCore().applyChanges();
+		oClock.tick(400); // fake opening time
+		assert.equal($FocusDomRef.attr("role"), "combobox", "Open: Role Combobox set");
+		assert.equal($FocusDomRef.attr("aria-roledescription"), "RoleDescription", "Open: Role Description set - from FieldHelp");
+		assert.equal($FocusDomRef.attr("aria-haspopup"), "listbox", "Open: aria-haspopup set");
+		assert.equal($FocusDomRef.attr("autocomplete"), "off", "Open: autocomplete off set");
+		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Open: aria-expanded set to true");
+		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
+		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Open: aria-activedescendant not set");
+
+		oFieldHelp.close();
+		oClock.tick(400); // fake closing time
+		oFieldHelp.fireAfterClose();
+		sap.ui.getCore().applyChanges();
+
+		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "Closed: aria-expanded set to false");
+		assert.notOk($FocusDomRef.attr("aria-controls"), "Closed: aria-controls not set");
+		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Closed: aria-activedescendant not set");
+
+		oFieldHelp.fireNavigate({ value: "Item 3", key: "I3", itemId: "ItemId"});
+		sap.ui.getCore().applyChanges();
+		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Navigation: aria-expanded set to true");
+		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Navigation: aria-controls set");
+		assert.equal($FocusDomRef.attr("aria-activedescendant"), "ItemId", "Navigation: aria-activedescendant set");
+
+		oFieldHelp.close();
+		oClock.tick(400); // fake closing time
+		oClock.restore();
+
+		oField.setFieldHelp();
+		sap.ui.getCore().applyChanges();
+		assert.notOk($FocusDomRef.attr("role"), "no Help: no Role set");
+		assert.equal($FocusDomRef.attr("aria-roledescription"), sText, "no Help: Role Description set to MultiInput default");
+		assert.equal($FocusDomRef.attr("aria-haspopup"), "listbox", "no Help: aria-haspopup set from MultiInput");
+		assert.equal($FocusDomRef.attr("autocomplete"), "off", "no Help: autocomplete set from Input");
+		assert.notOk($FocusDomRef.attr("aria-expanded"), "no Help: aria-expanded not set");
+		assert.notOk($FocusDomRef.attr("aria-controls"), "no Help: aria-controls not set");
+		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "no Help: aria-activedescendant not set");
+
+	});
+
+	QUnit.test("aria attributes on single Field", function(assert) {
+
+		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		oField.setMaxConditions(1);
+		sap.ui.getCore().applyChanges();
+		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
+		var aContent = oField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+		var oVHIcon = oContent && oContent.getAggregation("_endIcon")[0];
+		var $FocusDomRef = jQuery(oField.getFocusDomRef());
+
+		oField.focus(); // as FieldHelp is connected with focus
+
+		assert.equal($FocusDomRef.attr("role"), "combobox", "Role Combobox set");
+		assert.equal($FocusDomRef.attr("aria-haspopup"), "listbox", "aria-haspopup set");
+		assert.equal($FocusDomRef.attr("autocomplete"), "off", "autocomplete off set");
+		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "aria-expanded set to false");
+		assert.notOk($FocusDomRef.attr("aria-controls"), "aria-controls not set");
+		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "aria-activedescendant not set");
+
+		// open FieldHelp
+		var oClock = sinon.useFakeTimers();
+		sinon.stub(oFieldHelp, "getContentId").returns("Test");
+		oVHIcon.firePress();
+		sinon.stub(oFieldHelp, "isOpen").returns(true);
+		sap.ui.getCore().applyChanges();
+		oClock.tick(400); // fake opening time
+		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Open: aria-expanded set to true");
+		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
+		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Open: aria-activedescendant not set");
+
+		oFieldHelp.close();
+		oClock.tick(400); // fake closing time
+		oFieldHelp.fireAfterClose();
+		sap.ui.getCore().applyChanges();
+
+		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "Closed: aria-expanded set to false");
+		assert.notOk($FocusDomRef.attr("aria-controls"), "Closed: aria-controls not set");
+		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Closed: aria-activedescendant not set");
+
+		oFieldHelp.fireNavigate({ value: "Item 3", key: "I3", itemId: "ItemId"});
+		sap.ui.getCore().applyChanges();
+		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Navigation: aria-expanded set to true");
+		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Navigation: aria-controls set");
+		assert.equal($FocusDomRef.attr("aria-activedescendant"), "ItemId", "Navigation: aria-activedescendant set");
+
+		oFieldHelp.close();
+		oClock.tick(400); // fake closing time
+		oClock.restore();
+
+		oField.setFieldHelp();
+		sap.ui.getCore().applyChanges();
+		assert.notOk($FocusDomRef.attr("role"), "no Help: no Role set");
+		assert.notOk($FocusDomRef.attr("aria-haspopup"), "no Help: aria-haspopup not set");
+		assert.equal($FocusDomRef.attr("autocomplete"), "off", "no Help: autocomplete set from Input");
+		assert.notOk($FocusDomRef.attr("aria-expanded"), "no Help: aria-expanded not set");
+		assert.notOk($FocusDomRef.attr("aria-controls"), "no Help: aria-controls not set");
+		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "no Help: aria-activedescendant not set");
 
 	});
 
