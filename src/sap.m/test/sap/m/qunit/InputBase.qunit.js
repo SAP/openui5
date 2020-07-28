@@ -2308,6 +2308,77 @@ sap.ui.define([
 		}, 100);
 	});
 
+	QUnit.test("IE should not fire change event when value is selected from IME Popover with Enter", function(assert) {
+
+		// arrange
+		var oInput = new InputBase({
+			value : "Initial value"
+		});
+
+		this.stub(InputBase.prototype, "isComposingCharacter", function() {
+			return true;
+		});
+
+		this.stub(Device, "browser", {
+			msie: true
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oInputDomRef = oInput.getFocusDomRef(),
+			fnFireChangeSpy = this.spy(oInput, "fireChange"),
+			fnOnEnterSpy = this.spy(oInput, "onsapenter");
+
+		// change dom and cursor pos
+		sap.ui.test.qunit.triggerCharacterInput(oInputDomRef, "a");
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(oInputDomRef, "ENTER");
+
+		// assertion
+		assert.notOk(fnFireChangeSpy.callCount, "Change event is not fired when the IME Popover is opened.");
+		assert.ok(fnOnEnterSpy.args[0][0].isMarked("invalid"), "Enter is marked as invalid");
+
+		// cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("Safari should not fire change event when value is selected from IME Popover with Enter", function(assert) {
+
+		// arrange
+		var oInput = new InputBase({
+			value : "Initial value"
+		});
+
+		this.stub(InputBase.prototype, "isComposingCharacter", function() {
+			return true;
+		});
+
+		this.stub(Device, "browser", {
+			safari: true
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oInputDomRef = oInput.getFocusDomRef(),
+			fnFireChangeSpy = this.spy(oInput, "fireChange"),
+			fnOnEnterSpy = this.spy(oInput, "onsapenter");
+
+		// change dom and cursor pos
+		sap.ui.test.qunit.triggerCharacterInput(oInputDomRef, "a");
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(oInputDomRef, "ENTER");
+
+		// assertion
+		assert.notOk(fnFireChangeSpy.callCount, "Change event is not fired when the IME Popover is opened.");
+		assert.ok(fnOnEnterSpy.args[0][0].isMarked("invalid"), "Enter is marked as invalid");
+
+		// cleanup
+		oInput.destroy();
+	});
 
 	QUnit.module("Width calculations");
 
