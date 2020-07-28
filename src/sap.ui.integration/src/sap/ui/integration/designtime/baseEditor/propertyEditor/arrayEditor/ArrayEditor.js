@@ -125,71 +125,72 @@ sap.ui.define([
 		this._itemsModel = new JSONModel();
 		this._itemsModel.setDefaultBindingMode("OneWay");
 		this.setModel(this._itemsModel, "itemsModel");
-		this.attachValueChange(function (oEvent) {
-			var aValue = oEvent.getParameter("value");
-			var oConfig = this.getConfig();
-
-			var aItems = [];
-			aValue.forEach(function(oValue, iIndex) {
-				var oValueCopy = deepClone(oValue);
-				var oDesigntimeMetadata = this.getNestedDesigntimeMetadata(iIndex);
-				var mItem = {
-					itemLabel: oConfig.itemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL"),
-					index: iIndex,
-					total: aValue.length,
-					properties: Object.keys(oConfig.template).map(function (sKey) {
-						var mTemplate = oConfig.template[sKey];
-						var sPath = iIndex + "/" + mTemplate.path;
-						var vValue = ObjectPath.get(sPath.split("/"), aValue);
-
-						if (typeof vValue === "undefined") {
-							ObjectPath.set(mTemplate.path.split('/'), deepClone(mTemplate.defaultValue), oValueCopy);
-						}
-
-						return _merge({}, mTemplate, {
-							path: sPath,
-							value: vValue,
-							designtime: (oDesigntimeMetadata || {})[sKey]
-						});
-					}, this)
-				};
-
-				var oProxyModel = new JSONModel(oValueCopy);
-				mItem.properties = resolveBinding(
-					mItem.properties,
-					{
-						"": oProxyModel
-					},
-					{
-						"": oProxyModel.getContext("/")
-					},
-					["template", "value", "itemLabel"]
-				);
-				mItem.itemLabel = resolveBinding(
-					{
-						itemLabel: mItem.itemLabel
-					},
-					{
-						"": oProxyModel
-					},
-					{
-						"": oProxyModel.getContext("/")
-					}
-				).itemLabel || formatMessage(
-					this.getI18nProperty("BASE_EDITOR.ARRAY.NEW_ITEM_LABEL"),
-					[oConfig.addItemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL")]
-				);
-				oProxyModel.destroy();
-				aItems.push(mItem);
-			}, this);
-
-			this._itemsModel.setData(aItems);
-		}, this);
 	};
 
 	ArrayEditor.prototype.setValue = function (aValue) {
 		aValue = Array.isArray(aValue) ? aValue : [];
 		BasePropertyEditor.prototype.setValue.call(this, aValue);
+		this._handleValueChange(this.getValue());
+	};
+
+	ArrayEditor.prototype._handleValueChange = function (aValue) {
+		var oConfig = this.getConfig();
+
+		var aItems = [];
+		aValue.forEach(function(oValue, iIndex) {
+			var oValueCopy = deepClone(oValue);
+			var oDesigntimeMetadata = this.getNestedDesigntimeMetadata(iIndex);
+			var mItem = {
+				itemLabel: oConfig.itemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL"),
+				index: iIndex,
+				total: aValue.length,
+				properties: Object.keys(oConfig.template).map(function (sKey) {
+					var mTemplate = oConfig.template[sKey];
+					var sPath = iIndex + "/" + mTemplate.path;
+					var vValue = ObjectPath.get(sPath.split("/"), aValue);
+
+					if (typeof vValue === "undefined") {
+						ObjectPath.set(mTemplate.path.split('/'), deepClone(mTemplate.defaultValue), oValueCopy);
+					}
+
+					return _merge({}, mTemplate, {
+						path: sPath,
+						value: vValue,
+						designtime: (oDesigntimeMetadata || {})[sKey]
+					});
+				}, this)
+			};
+
+			var oProxyModel = new JSONModel(oValueCopy);
+			mItem.properties = resolveBinding(
+				mItem.properties,
+				{
+					"": oProxyModel
+				},
+				{
+					"": oProxyModel.getContext("/")
+				},
+				["template", "value", "itemLabel"]
+			);
+			mItem.itemLabel = resolveBinding(
+				{
+					itemLabel: mItem.itemLabel
+				},
+				{
+					"": oProxyModel
+				},
+				{
+					"": oProxyModel.getContext("/")
+				}
+			).itemLabel || formatMessage(
+				this.getI18nProperty("BASE_EDITOR.ARRAY.NEW_ITEM_LABEL"),
+				[oConfig.addItemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL")]
+			);
+			oProxyModel.destroy();
+			aItems.push(mItem);
+		}, this);
+
+		this._itemsModel.setData(aItems);
 	};
 
 	ArrayEditor.prototype.onBeforeConfigChange = function (oConfig) {
@@ -249,9 +250,11 @@ sap.ui.define([
 	ArrayEditor.prototype._propertyEditorsChange = function (oEvent) {
 		oEvent.getParameter("previousPropertyEditors").forEach(function (oPropertyEditor) {
 			oPropertyEditor.detachValueChange(this._onPropertyValueChange, this);
+			oPropertyEditor.detachDesigntimeMetadataChange(this._onDesigntimeMetadataChange, this);
 		}, this);
 		oEvent.getParameter("propertyEditors").forEach(function (oPropertyEditor) {
 			oPropertyEditor.attachValueChange(this._onPropertyValueChange, this);
+			oPropertyEditor.attachDesigntimeMetadataChange(this._onDesigntimeMetadataChange, this);
 		}, this);
 	};
 
@@ -273,6 +276,23 @@ sap.ui.define([
 		}
 
 		this.setValue(aEditorValue);
+	};
+
+	ArrayEditor.prototype._onDesigntimeMetadataChange = function (oEvent) {
+		var oNewDesigntimeMetadata = {};
+		ObjectPath.set(
+			oEvent.getParameter("path").split("/"),
+			oEvent.getParameter("value"),
+			oNewDesigntimeMetadata
+		);
+
+		this.setDesigntimeMetadata(_merge(
+			{},
+			this.getDesigntimeMetadata(),
+			oNewDesigntimeMetadata
+		));
+
+		this.setValue(this.getValue());
 	};
 
 	ArrayEditor.prototype._isNewItem = function (mArrayItem) {
