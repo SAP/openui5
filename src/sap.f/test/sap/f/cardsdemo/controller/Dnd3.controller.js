@@ -45,7 +45,7 @@ sap.ui.define([
 							sInsertPosition = oInfo.getParameter("dropPosition"),
 
 							oDraggedParent = oDragged.getParent(),
-							oDroppedParent = oDropped.getParent(),
+							oDroppedParent = oInfo.getSource().getParent(),
 
 							oDragModel = oDraggedParent.getModel(),
 							oDropModel = oDroppedParent.getModel(),
@@ -63,13 +63,12 @@ sap.ui.define([
 							iDropPosition--;
 						}
 
-						// insert the control in target aggregation
-						if (sInsertPosition === "Before") {
-							oDropModelData.splice(iDropPosition, 0, oItem);
-						} else {
-							iDropPosition = iDropPosition + 1;
-							oDropModelData.splice(iDropPosition, 0, oItem);
+						if (sInsertPosition === "After") {
+							iDropPosition++;
 						}
+
+						// insert the control in target aggregation
+						oDropModelData.splice(iDropPosition, 0, oItem);
 
 						if (oDragModel !== oDropModel) {
 							oDragModel.setData(oDragModelData);

@@ -83,16 +83,16 @@ sap.ui.define([
 				oDropped = oInfo.getParameter("droppedControl"),
 				sInsertPosition = oInfo.getParameter("dropPosition"),
 
-				oDraggedParent = oDragged.getParent(),
-				oDroppedParent = oDropped.getParent(),
+				oDragContainer = oDragged.getParent(),
+				oDropContainer = oInfo.getSource().getParent(),
 
-				oDragModel = oDraggedParent.getModel(),
-				oDropModel = oDroppedParent.getModel(),
+				oDragModel = oDragContainer.getModel(),
+				oDropModel = oDropContainer.getModel(),
 				oDragModelData = oDragModel.getData(),
 				oDropModelData = oDropModel.getData(),
 
-				iDragPosition = oDraggedParent.indexOfItem(oDragged),
-				iDropPosition = oDroppedParent.indexOfItem(oDropped);
+				iDragPosition = oDragContainer.indexOfItem(oDragged),
+				iDropPosition = oDropContainer.indexOfItem(oDropped);
 
 			// remove the item
 			var oItem = oDragModelData[iDragPosition];

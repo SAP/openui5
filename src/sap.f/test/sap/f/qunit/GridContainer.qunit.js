@@ -244,6 +244,28 @@ function (
 		assert.strictEqual(this.oGrid.$().width(), 100, "Width is as expected");
 	});
 
+	QUnit.test("Min Height", function (assert) {
+		// Act
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oGrid.$().css("min-height"), "32px", "Default min height is 2rem.");
+
+		// Act
+		this.oGrid.setMinHeight("0");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oGrid.$().css("min-height"), "0px", "Min height can be set to 0.");
+
+		// Act
+		this.oGrid.setMinHeight("20px");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oGrid.$().css("min-height"), "20px", "Min height can be set to 20px.");
+	});
+
 	QUnit.test("Tooltip", function (assert) {
 		// Arrange
 		var sExample = "Some tooltip";
