@@ -13,6 +13,37 @@ sap.ui.define(["sap/base/util/merge"], function(merge) {
 				merge(oInitialManifest[sSection], oChange.content);
 			});
 			return oInitialManifest;
+		},
+
+		mergeCardDesigntimeMetadata: function(oDesigntimeMetadata, aChanges) {
+			var oInitialDTMedatada = merge({}, oDesigntimeMetadata);
+
+			aChanges.forEach(function(oChange) {
+				var aInlineChanges = oChange.content.entityPropertyChange || [];
+
+				aInlineChanges.forEach(function(oInlineChange) {
+					var sPropertyPath = oInlineChange.propertyPath;
+					switch (oInlineChange.operation) {
+						case "UPDATE":
+							if (oInitialDTMedatada.hasOwnProperty(sPropertyPath)) {
+								oInitialDTMedatada[sPropertyPath] = oInlineChange.propertyValue;
+							}
+							break;
+						case "DELETE":
+							delete oInitialDTMedatada[sPropertyPath];
+							break;
+						case "INSERT":
+							if (!oInitialDTMedatada.hasOwnProperty(sPropertyPath)) {
+								oInitialDTMedatada[sPropertyPath] = oInlineChange.propertyValue;
+							}
+							break;
+						default:
+							break;
+					}
+				});
+			});
+
+			return oInitialDTMedatada;
 		}
 	};
 
