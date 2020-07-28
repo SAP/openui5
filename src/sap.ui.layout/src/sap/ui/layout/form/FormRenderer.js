@@ -60,8 +60,9 @@ sap.ui.define([
 		var oToolbar = oForm.getToolbar();
 		if (oToolbar) {
 			if (!oForm.getAriaLabelledBy() || oForm.getAriaLabelledBy().length == 0) {
-				// no aria-label -> use complete Toolbar as fallback
-				mAriaProps["labelledby"] = oToolbar.getId();
+				// no aria-label -> use Title of Toolbar
+				var sToolbarTitleID = library.form.FormHelper.getToolbarTitle(oToolbar);
+				mAriaProps["labelledby"] = sToolbarTitleID;
 			}
 		} else if (oTitle) {
 			var sId = "";
