@@ -1450,36 +1450,36 @@ sap.ui.define([
 			assert.equal(aInnerColumns[0].getSorted(), true);
 			assert.equal(aInnerColumns[0].getSortOrder(), "Descending");
 			assert.equal(aInnerColumns[1].getSorted(), false);
-			var oAC = TableSettings._getAdaptationController(oTable);
+			oTable.retrieveAdaptationController().then(function (oAdaptationController) {
 
-			var oPropertyInfoPromise = new Promise(function(resolve, reject) {
-				resolve([
-					{name: "name", sortable: true},
-					{name: "age", sortable: true}
-				]);
-			});
-
-			sinon.stub(oAC, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
-			oAC._retrievePropertyInfo().then(function() {
-
-
-				var FlexUtil_handleChanges_Stub = sinon.stub(FlexUtil, "handleChanges");
-				FlexUtil_handleChanges_Stub.callsFake(function(aChanges) {
-					assert.equal(aChanges.length, 2);
-					assert.equal(aChanges[0].changeSpecificData.changeType, "removeSort");
-					assert.equal(aChanges[0].changeSpecificData.content.name, "name");
-					assert.equal(aChanges[0].changeSpecificData.content.descending, true);
-					assert.equal(aChanges[1].changeSpecificData.changeType, "addSort");
-					assert.equal(aChanges[1].changeSpecificData.content.name, "name");
-					assert.equal(aChanges[1].changeSpecificData.content.descending, false);
-
-					FlexUtil_handleChanges_Stub.restore();
-					done();
+				var oPropertyInfoPromise = new Promise(function(resolve, reject) {
+					resolve([
+						{name: "name", sortable: true},
+						{name: "age", sortable: true}
+					]);
 				});
 
-				TableSettings.createSort(oTable, "name", true);
-			});
+				sinon.stub(oAdaptationController, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
+				oAdaptationController._retrievePropertyInfo().then(function() {
 
+
+					var FlexUtil_handleChanges_Stub = sinon.stub(FlexUtil, "handleChanges");
+					FlexUtil_handleChanges_Stub.callsFake(function(aChanges) {
+						assert.equal(aChanges.length, 2);
+						assert.equal(aChanges[0].changeSpecificData.changeType, "removeSort");
+						assert.equal(aChanges[0].changeSpecificData.content.name, "name");
+						assert.equal(aChanges[0].changeSpecificData.content.descending, true);
+						assert.equal(aChanges[1].changeSpecificData.changeType, "addSort");
+						assert.equal(aChanges[1].changeSpecificData.content.name, "name");
+						assert.equal(aChanges[1].changeSpecificData.content.descending, false);
+
+						FlexUtil_handleChanges_Stub.restore();
+						done();
+					});
+
+					TableSettings.createSort(oTable, "name", true);
+				});
+			});
 		}.bind(this));
 	});
 

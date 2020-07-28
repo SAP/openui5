@@ -9,8 +9,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/m/OverflowToolbarButton", "sap/m/OverflowToolbarLayoutData", "sap/base/util/merge", "sap/m/library", "sap/m/MenuButton", "sap/ui/mdc/p13n/AdaptationController", "sap/ui/mdc/p13n/FlexUtil"
-], function(OverflowToolbarButton, OverflowToolbarLayoutData, merge, MLibrary, MenuButton, AdaptationController, FlexUtil) {
+	"sap/m/OverflowToolbarButton", "sap/m/OverflowToolbarLayoutData", "sap/base/util/merge", "sap/m/library", "sap/m/MenuButton"
+], function(OverflowToolbarButton, OverflowToolbarLayoutData, merge, MLibrary, MenuButton) {
 	"use strict";
 
 	// TODO: this is just a draft version and is not final --> just for verifying flex/p13n concepts
@@ -112,55 +112,30 @@ sap.ui.define([
 			TableSettings["showP13n" + sP13nType](oControl, oSource);
 		},
 
-		_getAdaptationController: function(oControl) {
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-			if (!oControl._oAdaptationController) {
-				oControl._oAdaptationController = new AdaptationController({
-					adaptationControl: oControl,
-					stateRetriever: function(){
-						return oControl.getCurrentState();
-					},
-					afterChangesCreated: function(oAdaptationController, aChanges){
-						FlexUtil.handleChanges(aChanges);
-					},
-					itemConfig: {
-						addOperation: "addColumn",
-						removeOperation: "removeColumn",
-						moveOperation: "moveColumn",
-						panelPath: "sap/ui/mdc/p13n/panels/SelectionPanel",
-						title: oResourceBundle.getText("table.SETTINGS_COLUMN")
-					}
-				});
-			}
-
-			return oControl._oAdaptationController;
-		},
-
 		showP13nColumns: function(oControl, oSource) {
-			var oAdaptationController = this._getAdaptationController(oControl);
+			var oAdaptationController = oControl.getAdaptationController();
 			oAdaptationController.showP13n(oSource, "Item");
 		},
 
 		showP13nSort: function(oControl, oSource) {
-			var oAdaptationController = this._getAdaptationController(oControl);
+			var oAdaptationController = oControl.getAdaptationController();
 			oAdaptationController.showP13n(oSource, "Sort");
 		},
 
 		_setFilterConfig: function(oControl) {
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-			var oAdaptationController = this._getAdaptationController(oControl);
 			return oControl._retrieveP13nFilter().then(function(oAdaptationFilterBar){
 				var oFilterConfig = {
 					filterControl: oAdaptationFilterBar,
 					title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
 				};
-				oAdaptationController.setFilterConfig(oFilterConfig);
+				oControl.enhanceAdaptationConfig({filterConfig: oFilterConfig});
 				return oAdaptationFilterBar;
 			});
 		},
 
 		showP13nFilter: function(oControl, oSource) {
-			var oAdaptationController = this._getAdaptationController(oControl);
+			var oAdaptationController = oControl.getAdaptationController();
 			TableSettings._setFilterConfig(oControl).then(function(){
 				oAdaptationController.showP13n(oSource, "Filter");
 			});
@@ -181,7 +156,7 @@ sap.ui.define([
 				}
 			});
 
-			var oAdaptationController = this._getAdaptationController(oControl);
+			var oAdaptationController = oControl.getAdaptationController();
 			var aItems = [oSorter];
 
 			oAdaptationController.createSortChanges(aItems, true);
@@ -198,7 +173,7 @@ sap.ui.define([
 			var aVisibleFields = oControl.getCurrentState(oControl).items || [];
 			var oMovedField = aVisibleFields[iDraggedIndex];
 
-			var oAdaptationController = this._getAdaptationController(oControl);
+			var oAdaptationController = oControl.getAdaptationController();
 			oAdaptationController.createItemChanges([{name: oMovedField.name, position: iNewIndex}]);
 
 		}

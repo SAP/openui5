@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/library', 'sap/ui/mdc/p13n/AdaptationController', 'sap/ui/mdc/p13n/FlexUtil', 'sap/ui/Device', 'sap/ui/mdc/Control', 'sap/base/util/merge', 'sap/base/util/deepEqual', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/base/ManagedObjectObserver', 'sap/base/Log', 'sap/ui/mdc/condition/ConditionModel', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/condition/ConditionConverter', 'sap/m/MessageBox', "sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/condition/FilterConverter", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/mdc/util/FilterUtil"
-], function(coreLibrary, AdaptationController, FlexUtil, Device, Control, merge, deepEqual, ManagedObjectModel, ManagedObjectObserver, Log, ConditionModel, Condition, IdentifierUtil, ConditionConverter, MessageBox, ControlPersonalizationWriteAPI, FlexRuntimeInfoAPI, StateUtil, FilterConverter, ControlVariantApplyAPI, FilterUtil) {
+	'sap/ui/core/library', 'sap/ui/Device', 'sap/ui/mdc/Control', 'sap/base/util/merge', 'sap/base/util/deepEqual', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/base/ManagedObjectObserver', 'sap/base/Log', 'sap/ui/mdc/condition/ConditionModel', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/condition/ConditionConverter', 'sap/m/MessageBox', "sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/condition/FilterConverter", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/mdc/util/FilterUtil"
+], function(coreLibrary, Device, Control, merge, deepEqual, ManagedObjectModel, ManagedObjectObserver, Log, ConditionModel, Condition, IdentifierUtil, ConditionConverter, MessageBox, ControlPersonalizationWriteAPI, FlexRuntimeInfoAPI, StateUtil, FilterConverter, ControlVariantApplyAPI, FilterUtil) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -239,6 +239,21 @@ sap.ui.define([
 		this._oAdaptationController = null;
 
 		this._bSearchTriggered = false;
+
+		this.setProperty("adaptationConfig", {
+			liveMode: true,
+			retrievePropertyInfo: this._getNonHiddenPropertyInfoSet,
+			itemConfig: {
+				addOperation: "addFilter",
+				removeOperation: "removeFilter",
+				moveOperation: "moveFilter",
+				panelPath: "sap/ui/mdc/p13n/panels/AdaptFiltersPanel",
+				title: this._oRb.getText("filterbar.ADAPT_TITLE")
+			},
+			filterConfig: {
+				filterControl: this //needs to be set for correct determination in 'ConditionFlex'
+			}
+		});
 	};
 
 	//TODO: consider to restructure the approach _createInnerLayout to properties or seperate methods
@@ -374,18 +389,7 @@ sap.ui.define([
 		//}.bind(this));
 	};
 
-
-	/**
-	 * Part of the IxState interface to determine the necessary adaptation config (e.g. item type based changes)
-	 *
-	 * @param {String} sAdaptationType The desired adaptation configuration which should be retrieved (Item, Sort, Filter)
-	 * @protected
-	 */
-	FilterBarBase.prototype.getAdaptationConfig = function(sAdaptationType) {
-		return this._getAdaptationController()["get" + sAdaptationType + "Config"]();
-	};
-
-	FilterBarBase.prototype._getAdaptationController = function() {
+	/* FilterBarBase.prototype.retrieveAdaptationController = function() {
 		if (!this._oAdaptationController) {
 			this._oAdaptationController = new AdaptationController({
 				liveMode: true,
@@ -410,7 +414,7 @@ sap.ui.define([
 			});
 		}
 		return this._oAdaptationController;
-	};
+	}; */
 
 	FilterBarBase.prototype._getAssignedFilterNames = function() {
 		var sName, aFilterNames = null, oModel = this._getConditionModel();
@@ -555,7 +559,9 @@ sap.ui.define([
 					var mOrigConditions = {};
 					mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, oEvent.getParameter("value"));
 					this._cleanupConditions(mOrigConditions[sFieldPath]);
-					this._getAdaptationController().createConditionChanges(mOrigConditions);
+					this.retrieveAdaptationController().then(function (oAdaptationController) {
+						oAdaptationController.createConditionChanges(mOrigConditions);
+					});
 				} else {
 					this._reportModelChange(false);
 				}
@@ -1581,11 +1587,6 @@ sap.ui.define([
 		if (this._oModel) {
 			this._oModel.destroy();
 			this._oModel = null;
-		}
-
-		if (this._oAdaptationController) {
-			this._oAdaptationController.destroy();
-			this._oAdaptationController = null;
 		}
 
 		if (this._oConditionModel) {

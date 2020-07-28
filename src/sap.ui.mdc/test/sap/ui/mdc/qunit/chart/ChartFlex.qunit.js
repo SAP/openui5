@@ -49,7 +49,11 @@ sap.ui.define([
 			this.oChart = this.oView.byId('IDChartVisibility');
 			this.oUiComponentContainer.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			this.oAdaptationController = ChartSettings._getAdaptationController(this.oChart);
+
+			return this.oChart.retrieveAdaptationController().then(function (oAdaptationController) {
+				this.oAdaptationController = this.oChart.getAdaptationController();
+			}.bind(this));
+
 		},
 		afterEach: function () {
 			this.oAdaptationController.destroy();
@@ -201,9 +205,12 @@ sap.ui.define([
 			});
 			this.oView = this.oUiComponent.getRootControl();
 			this.oChart = this.oView.byId('IDChartVisibility2');
-			this.oAdaptationController = ChartSettings._getAdaptationController(this.oChart);
 			this.oUiComponentContainer.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			return this.oChart.retrieveAdaptationController().then(function (oAdaptationController) {
+				this.oAdaptationController = this.oChart.getAdaptationController();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oAdaptationController.destroy();

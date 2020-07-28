@@ -43,8 +43,10 @@ sap.ui.define([
 
 			//TODO: do not rely on parent control structure (e.g. Dialog)
 			this.getParent().getButtons()[0].attachPress(function(){
-				var mConditions = this._getModelConditions(this._getConditionModel(), false, true);
-				this._getAdaptationController().createConditionChanges(mConditions);
+			var mConditions = this._getModelConditions(this._getConditionModel(), false, true);
+			this.retrieveAdaptationController().then(function (oAdaptationController) {
+				oAdaptationController.createConditionChanges(mConditions);
+			});
 			}.bind(this));
 
 			//TODO: do not rely on parent control structure (e.g. Dialog)
@@ -59,14 +61,16 @@ sap.ui.define([
 		return FlexRuntimeInfoAPI.waitForChanges({element: this.getAdaptationControl()});
 	};
 
-	AdaptationFilterBar.prototype._getAdaptationController = function(){
-		this._oAdaptationController = FilterBarBase.prototype._getAdaptationController.apply(this, arguments);
-		this._oAdaptationController.setLiveMode(this.getLiveMode());
-		this._oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
-			this.rerouteChangesBeforeAppliance(aChanges);
-			FlexUtil.handleChanges(aChanges);
+	AdaptationFilterBar.prototype.retrieveAdaptationController = function(){
+		return FilterBarBase.prototype.retrieveAdaptationController.apply(this, arguments).then(function (oAdaptationController) {
+			this._oAdaptationController = oAdaptationController;
+			this._oAdaptationController.setLiveMode(this.getLiveMode());
+			this._oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
+				this.rerouteChangesBeforeAppliance(aChanges);
+				FlexUtil.handleChanges(aChanges);
+			}.bind(this));
+			return this._oAdaptationController;
 		}.bind(this));
-		return this._oAdaptationController;
 	};
 
 	AdaptationFilterBar.prototype.applyConditionsAfterChangesApplied = function() {

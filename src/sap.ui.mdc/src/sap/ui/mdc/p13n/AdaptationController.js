@@ -239,11 +239,13 @@ sap.ui.define([
 	 */
 	AdaptationController.prototype.createItemChanges = function(aNewItems){
 		return this._executeAfterAsyncActions(function(){
+			var oAdaptationControl = this.getAdaptationControl();
 			//create clones as the original might be modified for delta calculation
-			var oCurrentState = merge({}, this.getStateRetriever().call(this.getAdaptationControl(), this.oAdaptationControlDelegate));
+			var oCurrentState = merge({}, this.getStateRetriever().call(oAdaptationControl, this.oAdaptationControlDelegate));
 			var aPreviousItems = oCurrentState.items;
 
 			var oItemConfig = this.getItemConfig();
+
 			var fnSymbol = function (o) {
 				return o.name;
 			};

@@ -49,7 +49,7 @@
 		.then(function onAfterDrillDownPopoverOpen(oDrillDownPopover) {
 
 			var oFirstListItem = oDrillDownPopover.getContent()[1].getItems()[0],
-				oAdaptationController = ChartSettings._getAdaptationController(this.oChart);
+				oAdaptationController = this.oChart.getAdaptationController();
 
 			var oDrillDownPopoverCloseSpy = this.spy(oDrillDownPopover, "close"),
 				oCreateFlexItemChangesSpy = this.spy(oAdaptationController, "createItemChanges");
@@ -97,7 +97,7 @@
 				oDrillBreadcrumb1 = DrillStackHandler.createCrumb(this.oChart, oCrumbSettings1),
 				oDrillBreadcrumb2 = DrillStackHandler.createCrumb(this.oChart, oCrumbSettings2),
 				oInnerChart = this.oChart.getAggregation("_chart"),
-				oAdaptationController = ChartSettings._getAdaptationController(this.oChart);
+				oAdaptationController = this.oChart.getAdaptationController();
 
 			var oFireDeselectDataEventSpy = this.spy(oInnerChart, "fireDeselectData"),
 				oCreateFlexItemChangesSpy = this.spy(oAdaptationController, "createItemChanges");

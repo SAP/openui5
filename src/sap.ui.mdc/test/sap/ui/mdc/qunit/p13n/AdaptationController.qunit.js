@@ -20,43 +20,45 @@ sap.ui.define([
 				]
 			});
 			this.oTable.setP13nMode(["Column","Sort","Filter"]);
-			this.oAdaptationController = TableSettings._getAdaptationController(this.oTable);
-			this.oAdaptationController.oAdaptationControlDelegate = TableDelegate;//necessary as the "getCurrentState" is in TableDelegate + retrieve in AC is stubbed
-			var aColumns = this.oTable.getColumns();
+			return this.oTable.retrieveAdaptationController().then(function (oAdaptationController) {
+				this.oAdaptationController = oAdaptationController;
+				this.oAdaptationController.oAdaptationControlDelegate = TableDelegate;//necessary as the "getCurrentState" is in TableDelegate + retrieve in AC is stubbed
+				var aColumns = this.oTable.getColumns();
 
-			this.oAdaptationController.oAdaptationControlDelegate.getFilterDelegate = function() {
-				return {
-					addFilterItem: function(){
-						return Promise.resolve(new FilterField());
-					}
+				this.oAdaptationController.oAdaptationControlDelegate.getFilterDelegate = function() {
+					return {
+						addFilterItem: function(){
+							return Promise.resolve(new FilterField());
+						}
+					};
 				};
-			};
 
-			//mock delegate data
-			this.aPropertyInfo = [
-				{
-					"name": aColumns[0].getDataProperties()[0],
-					"path": "nav/" + aColumns[0].getDataProperties()[0],
-					"id": aColumns[0].getId(),
-					"label": aColumns[0].getHeader(),
-					"sortable": true,
-					"filterable": true
-				}, {
-					"name": aColumns[1].getDataProperties()[0],
-					"path": "nav/" + aColumns[1].getDataProperties()[0],
-					"id": aColumns[1].getId(),
-					"label": aColumns[1].getHeader(),
-					"sortable": true,
-					"filterable": false
-				}
-			];
+				//mock delegate data
+				this.aPropertyInfo = [
+					{
+						"name": aColumns[0].getDataProperties()[0],
+						"path": "nav/" + aColumns[0].getDataProperties()[0],
+						"id": aColumns[0].getId(),
+						"label": aColumns[0].getHeader(),
+						"sortable": true,
+						"filterable": true
+					}, {
+						"name": aColumns[1].getDataProperties()[0],
+						"path": "nav/" + aColumns[1].getDataProperties()[0],
+						"id": aColumns[1].getId(),
+						"label": aColumns[1].getHeader(),
+						"sortable": true,
+						"filterable": false
+					}
+				];
 
-			//no delegate in Test --> Stub property info call
-			var oPropertyInfoPromise = new Promise(function(resolve,reject){
-				resolve(this.aPropertyInfo);
+				//no delegate in Test --> Stub property info call
+				var oPropertyInfoPromise = new Promise(function(resolve,reject){
+					resolve(this.aPropertyInfo);
+				}.bind(this));
+
+				sinon.stub(TableDelegate, "fetchProperties").returns(Promise.resolve(oPropertyInfoPromise));
 			}.bind(this));
-
-			sinon.stub(TableDelegate, "fetchProperties").returns(Promise.resolve(oPropertyInfoPromise));
 		},
 		afterEach: function () {
 			this.oTable.destroy();
@@ -394,7 +396,6 @@ sap.ui.define([
 					})
 				]
 			});
-			this.oAdaptationController = ChartSettings._getAdaptationController(this.oChart);
 
 			var aItems = this.oChart.getItems();
 
@@ -411,17 +412,23 @@ sap.ui.define([
 				}
 			];
 
-			//no delegate in Test --> Stub property info call
-			var oPropertyInfoPromise = new Promise(function(resolve,reject){
-				resolve(this.aPropertyInfo );
-			}.bind(this));
+			this.bModuleRunning = true;
 
-			//stub '_retrievePropertyInfo'
-			sinon.stub(this.oAdaptationController, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
+			return this.oChart.retrieveAdaptationController().then(function () {
+				this.oAdaptationController = this.oChart.getAdaptationController();
+				var oPropertyInfoPromise = new Promise(function(resolve,reject){
+					resolve(this.aPropertyInfo );
+				}.bind(this));
+				sinon.stub(this.oAdaptationController, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
+			}.bind(this));
 		},
 		afterEach: function () {
+			this.bModuleRunning = false;
 			this.oChart.destroy();
-			this.oAdaptationController.destroy();
+
+			if (this.oAdaptationController) {
+				this.oAdaptationController.destroy();
+			}
 		}
 	});
 
@@ -491,34 +498,37 @@ sap.ui.define([
 					})
 				]
 			});
-			this.oAdaptationController = this.oFilterBar._getAdaptationController();
 
-			var aItems = this.oFilterBar.getFilterItems();
+			return this.oFilterBar.retrieveAdaptationController().then(function (oAdaptationController) {
+				this.oAdaptationController = oAdaptationController;
 
-			//mock delegate data
-			this.aPropertyInfo = [
-				{
-					"name": "item1",
-					"id": aItems[0].getId(),
-					"label": aItems[0].getLabel()
-				}, {
-					"name": "item2",
-					"id": aItems[1].getId(),
-					"label": aItems[1].getLabel()
-				}, {
-					"name": "item3",
-					"label": aItems[1].getLabel()
-				}
-			];
+				var aItems = this.oFilterBar.getFilterItems();
 
-			//no delegate in Test --> Stub property info call
-			var oPropertyInfoPromise = new Promise(function(resolve,reject){
-				this.oAdaptationController.aPropertyInfo = this.aPropertyInfo;
-				resolve(this.aPropertyInfo);
-			}.bind(this));
+				//mock delegate data
+				this.aPropertyInfo = [
+					{
+						"name": "item1",
+						"id": aItems[0].getId(),
+						"label": aItems[0].getLabel()
+					}, {
+						"name": "item2",
+						"id": aItems[1].getId(),
+						"label": aItems[1].getLabel()
+					}, {
+						"name": "item3",
+						"label": aItems[1].getLabel()
+					}
+				];
 
-			//stub '_retrievePropertyInfo'
-			sinon.stub(this.oAdaptationController, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
+				//no delegate in Test --> Stub property info call
+				var oPropertyInfoPromise = new Promise(function(resolve,reject){
+					this.oAdaptationController.aPropertyInfo = this.aPropertyInfo;
+					resolve(this.aPropertyInfo);
+				}.bind(this));
+
+				//stub '_retrievePropertyInfo'
+				sinon.stub(this.oAdaptationController, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
+				}.bind(this));
 		},
 		afterEach: function () {
 			this.oFilterBar.destroy();
@@ -539,29 +549,32 @@ sap.ui.define([
 
 		this.oFilterBarNonStub = new FilterBar();
 		this.oFilterBarNonStub._aProperties = aMockProperties;
-		this.oNonStubAC = this.oFilterBarNonStub._getAdaptationController();
 
-		var oBtn = new Button();
+		this.oFilterBarNonStub.retrieveAdaptationController().then(function (oAdaptationController) {
+			this.oNonStubAC = oAdaptationController;
 
-		this.oNonStubAC.showP13n(oBtn, "Item").then(function(oP13nControl){
+			var oBtn = new Button();
 
-			//check container
-			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(oP13nControl.isA("sap.m.ResponsivePopover"));
-			assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
-			assert.ok(this.oNonStubAC.bIsDialogOpen,"dialog is open");
+			this.oNonStubAC.showP13n(oBtn, "Item").then(function(oP13nControl){
 
-			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.AdaptFiltersPanel"), "Correct panel created");
-			assert.ok(oInnerTable, "Inner Table has been created");
+				//check container
+				assert.ok(oP13nControl, "Container has been created");
+				assert.ok(oP13nControl.isA("sap.m.ResponsivePopover"));
+				assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
+				assert.ok(this.oNonStubAC.bIsDialogOpen,"dialog is open");
 
-			//we do not want to see the basic search field
-			assert.equal(oInnerTable.getItems().length, aMockProperties.length - 1, "correct amount of items has been set");
-			this.oFilterBarNonStub.destroy();
-			this.oFilterBarNonStub = null;
-			this.oNonStubAC = null;
-			done();
+				//check inner panel
+				var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+				assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.AdaptFiltersPanel"), "Correct panel created");
+				assert.ok(oInnerTable, "Inner Table has been created");
+
+				//we do not want to see the basic search field
+				assert.equal(oInnerTable.getItems().length, aMockProperties.length - 1, "correct amount of items has been set");
+				this.oFilterBarNonStub.destroy();
+				this.oFilterBarNonStub = null;
+				this.oNonStubAC = null;
+				done();
+			}.bind(this));
 		}.bind(this));
 
 	});

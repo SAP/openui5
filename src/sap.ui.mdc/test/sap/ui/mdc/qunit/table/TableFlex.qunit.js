@@ -162,7 +162,7 @@ sap.ui.define([
 
 	QUnit.test("addCondition (via AdaptationFilterBar _oP13nFilter)", function(assert){
 		var done = assert.async();
-		var oAC = TableSettings._getAdaptationController(this.oTable);
+		var oAC = this.oTable.getAdaptationController();
 
 		//wait for Table initialization
 		this.oTable.initialized().then(function(){
@@ -193,31 +193,30 @@ sap.ui.define([
 						]
 					};
 
-					var oTableAC = oP13nFilter._getAdaptationController();
+					oP13nFilter.retrieveAdaptationController().then(function (oAdaptationController) {
+						//No FilterBarDelegate provided in test --> rereoute property info for change creation
+						oAdaptationController.setRetrievePropertyInfo(function(){return aPropertyInfo;});
+						oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
+							oP13nFilter.rerouteChangesBeforeAppliance(aChanges);
 
-					//No FilterBarDelegate provided in test --> rereoute property info for change creation
-					oTableAC.setRetrievePropertyInfo(function(){return aPropertyInfo;});
-					oTableAC.setAfterChangesCreated(function(oAC, aChanges){
-						oP13nFilter.rerouteChangesBeforeAppliance(aChanges);
+							assert.equal(aChanges.length, 2, "Two condition based changes created");
 
-						assert.equal(aChanges.length, 2, "Two condition based changes created");
+							//check raw changes
+							assert.equal(aChanges[0].selectorElement, this.oTable, "Correct Selector");
+							assert.equal(aChanges[1].selectorElement, this.oTable, "Correct Selector");
 
-						//check raw changes
-						assert.equal(aChanges[0].selectorElement, this.oTable, "Correct Selector");
-						assert.equal(aChanges[1].selectorElement, this.oTable, "Correct Selector");
+							FlexUtil.handleChanges(aChanges).then(function(){
+								//check updates via changehandler
+								assert.deepEqual(this.oTable.getFilterConditions(), mNewConditions, "conditions are present on Table");
+								assert.deepEqual(this.oTable._oP13nFilter.getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");
+							}.bind(this));
 
-						FlexUtil.handleChanges(aChanges).then(function(){
-							//check updates via changehandler
-							assert.deepEqual(this.oTable.getFilterConditions(), mNewConditions, "conditions are present on Table");
-							assert.deepEqual(this.oTable._oP13nFilter.getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");
+							done();
 						}.bind(this));
 
-						done();
+						//create filter change to trigger 'afterChangesCreated' on AC
+						oAdaptationController.createConditionChanges(mNewConditions);
 					}.bind(this));
-
-					//create filter change to trigger 'afterChangesCreated' on AC
-					oTableAC.createConditionChanges(mNewConditions);
-
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));

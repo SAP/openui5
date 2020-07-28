@@ -500,6 +500,18 @@ sap.ui.define([
 		this.mSkipPropagation = {
 			rowSettings: true
 		};
+
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc"); //TODO: house keeping?
+
+		this.setProperty("adaptationConfig", {
+			itemConfig: {
+				addOperation: "addColumn",
+				removeOperation: "removeColumn",
+				moveOperation: "moveColumn",
+				panelPath: "sap/ui/mdc/p13n/panels/SelectionPanel",
+				title: oResourceBundle.getText("table.SETTINGS_COLUMN")
+			}
+		});
 	};
 
 	Table.prototype.applySettings = function() {
@@ -926,7 +938,7 @@ sap.ui.define([
 		var oType = sType === "ResponsiveTable" ? ResponsiveTableType : GridTableType;
 		// Load the necessary modules via the corresponding TableType
 		Promise.all([
-			this.awaitControlDelegate(), oType.loadTableModules()
+			this.awaitControlDelegate(), oType.loadTableModules(), this.retrieveAdaptationController()
 		]).then(function() {
 			// The table type might be switched while the necessary libs, modules are being loaded; hence the below checks
 			if (this.bIsDestroyed) {
@@ -2266,16 +2278,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Part of the IxState interface to determine the necessary adaptation config (e.g. item type based changes)
-	 *
-	 * @param {String} sAdaptationType The desired adaptation configuration which should be retrieved (Item, Sort, Filter)
-	 * @protected
-	 */
-	Table.prototype.getAdaptationConfig = function(sAdaptationType) {
-		return TableSettings._getAdaptationController(this)["get" + sAdaptationType + "Config"]();
-	};
-
-	/**
 	 * Getter for the inner IFilter Control
 	 *
 	 * @private
@@ -2327,11 +2329,6 @@ sap.ui.define([
 		// Always destroy the template
 		if (this._oTemplate) {
 			this._oTemplate.destroy();
-		}
-
-		if (this._oAdaptationController) {
-			this._oAdaptationController.destroy();
-			this._oAdaptationController = null;
 		}
 
 		this._oP13nFilter = null;
