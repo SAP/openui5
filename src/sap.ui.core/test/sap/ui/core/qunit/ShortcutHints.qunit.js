@@ -278,6 +278,20 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("addConfig with an event that already has eventHandlers", function(assert) {
+		// arrange
+		var oMyControl = new lib.my.MyControl({ myEvent: function() { } });
+
+		// act
+		ShortcutHintsMixin.addConfig(oMyControl, { event: "myEvent" }, oMyControl);
+
+		// assert
+		assert.ok(true, "no exception");
+
+		// clean
+		oMyControl.destroy();
+	});
+
 	QUnit.module("integration");
 
 	QUnit.test("sap.m.Button accessibility", function(assert) {
