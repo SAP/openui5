@@ -310,10 +310,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Sets the aria attributes added to the Input control.
+				 * Sets the ARIA attributes added to the inner control.
 				 *
-				 * The object contains aria attribudes in a <code>aria</code> node,
-				 * Additional attributes like <code>role</code> or <code>autocomplete</code> are on root level.
+				 * The object contains ARIA attribudes in an <code>aria</code> node.
+				 * Additional attributes, such as <code>role</code> or <code>autocomplete</code>, are added on root level.
 				 */
 				_ariaAttributes: {
 					type: "object",

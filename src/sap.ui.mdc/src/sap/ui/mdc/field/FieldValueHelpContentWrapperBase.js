@@ -74,9 +74,9 @@ sap.ui.define([
 						leave: { type: "boolean" },
 
 						/**
-						 * The id of the navigated item
+						 * The ID of the navigated item
 						 *
-						 * This is the DOM reference needed for aria support to point to the navigated item
+						 * This is the DOM reference needed for ARIA support to point to the navigated item.
 						 *
 						 * @since 1.81.0
 						 */

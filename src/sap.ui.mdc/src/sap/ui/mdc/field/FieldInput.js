@@ -14,8 +14,8 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>FieldInput</code>.
 	 *
-	 * The <code>FieldInput</code> enhanced the <code>sap.m.Input</code> control to add aria attributes
-	 * and other <code>sap.ui.mdc.field.FieldBase</code> specific logic.
+	 * The <code>FieldInput</code> enhances the <code>sap.m.Input</code> control to add ARIA attributes
+	 * and other <code>sap.ui.mdc.field.FieldBase</code>-specific logic.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
@@ -36,10 +36,10 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			properties: {
 				/**
-				 * Sets the aria attributes added to the <code>Input</code> control.
+				 * Sets the ARIA attributes added to the <code>Input</code> control.
 				 *
-				 * The object contains aria attribudes in a <code>aria</code> node,
-				 * Additional attributes like <code>role</code> or <code>autocomplete</code> are on root level.
+				 * The object contains ARIA attribudes in an <code>aria</code> node.
+				 * Additional attributes, such as <code>role</code> or <code>autocomplete</code>, are added on root level.
 				 */
 				ariaAttributes: {
 					type: "object",

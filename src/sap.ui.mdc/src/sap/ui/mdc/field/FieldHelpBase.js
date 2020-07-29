@@ -161,9 +161,9 @@ sap.ui.define([
 						condition: { type: "object" },
 
 						/**
-						 * The id of the navigated item
+						 * The ID of the navigated item
 						 *
-						 * This is the DOM reference needed for aria support to point to the navigated item
+						 * This is the DOM reference needed for ARIA support to point to the navigated item.
 						 *
 						 * @since 1.81.0
 						 */
@@ -368,9 +368,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the Id of the value holding content (list or table).
+	 * Returns the ID of the content that displays the values (list or table).
 	 *
-	 * This is used to enrich the field with the corresponding aria attributes
+	 * This is used to enrich the field with the corresponding ARIA attributes.
 	 *
 	 * @returns {string} Id
 	 * @private
@@ -392,10 +392,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the description of the aria role to added to the assigned field.
+	 * Returns the description of the ARIA role added to the assigned field.
 	 *
-	 * Normally the role is set to <code>combobox</code>. This is fine for the most cases.
-	 * so per default no description is needed. But in some cases, like multi select mode, an additional description is needed.
+	 * Normally the role is set to <code>combobox</code>. This works for most cases,
+	 * so per default no description is needed.
+	 * But in some cases, such as the multi-select mode, an additional description is needed.
 	 *
 	 * @returns {string|null} rode description
 	 * @private
