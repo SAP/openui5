@@ -364,8 +364,7 @@ sap.ui.define([
 		// creates list item from the factory
 		createListItem : function(oContext, oBindingInfo) {
 			this._iRenderedDataItems++;
-			var oItem = oBindingInfo.factory(ManagedObjectMetadata.uid("clone"), oContext);
-			return oItem.setBindingContext(oContext, oBindingInfo.model);
+			return GrowingEnablement.createItem(oContext, oBindingInfo);
 		},
 
 		// update context on all items except group headers
@@ -685,6 +684,11 @@ sap.ui.define([
 			}
 		}
 	});
+
+	GrowingEnablement.createItem = function(oContext, oBindingInfo, sIdSuffix) {
+		var oItem = oBindingInfo.factory(ManagedObjectMetadata.uid(sIdSuffix ? sIdSuffix : "clone"), oContext);
+		return oItem.setBindingContext(oContext, oBindingInfo.model);
+	};
 
 	return GrowingEnablement;
 
