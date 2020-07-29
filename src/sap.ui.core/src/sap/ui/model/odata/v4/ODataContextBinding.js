@@ -462,13 +462,14 @@ sap.ui.define([
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
 	 *   The reason for the 'change' event could be
 	 *   <ul>
-	 *   <li> {@link sap.ui.model.ChangeReason.Change Change} when the binding is initialized, when
-	 *     an operation has been processed (see {@link #execute}), or in {@link #resume} when the
-	 *     binding has been modified while suspended,
-	 *   <li> {@link sap.ui.model.ChangeReason.Refresh Refresh} when the binding is refreshed,
-	 *   <li> {@link sap.ui.model.ChangeReason.Context Context} when the parent context is changed,
-	 *   <li> {@link sap.ui.model.ChangeReason.Remove Remove} when the element context has been
-	 *     deleted (see {@link sap.ui.model.odata.v4.Context#delete}).
+	 *     <li> {@link sap.ui.model.ChangeReason.Change Change} when the binding is initialized,
+	 *       when an operation has been processed (see {@link #execute}), or in {@link #resume} when
+	 *       the binding has been modified while suspended,
+	 *     <li> {@link sap.ui.model.ChangeReason.Refresh Refresh} when the binding is refreshed,
+	 *     <li> {@link sap.ui.model.ChangeReason.Context Context} when the parent context is
+	 *       changed,
+	 *     <li> {@link sap.ui.model.ChangeReason.Remove Remove} when the element context has been
+	 *       deleted (see {@link sap.ui.model.odata.v4.Context#delete}).
 	 *   </ul>
 	 *
 	 * @event

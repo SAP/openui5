@@ -932,11 +932,11 @@ sap.ui.define([
 	 * off via the binding-specific parameter <code>$$patchWithoutSideEffects</code>. The method
 	 * can be called on
 	 * <ul>
-	 * <li> the bound context of a context binding,
-	 * <li> the return value context of an operation binding,
-	 * <li> a context of a list binding representing a single entity,
-	 * <li> the header context of a list binding; side effects are loaded for the whole binding in
-	 *   this case.
+	 *   <li> the bound context of a context binding,
+	 *   <li> the return value context of an operation binding,
+	 *   <li> a context of a list binding representing a single entity,
+	 *   <li> the header context of a list binding; side effects are loaded for the whole binding in
+	 *     this case.
 	 * </ul>
 	 * Key predicates must be available in this context's path. Avoid
 	 * navigation properties as part of a binding's $select system query option as they may trigger
@@ -962,10 +962,10 @@ sap.ui.define([
 	 * The events 'dataRequested' and 'dataReceived' are not fired. Whatever should happen in the
 	 * event handler attached to...
 	 * <ul>
-	 * <li>'dataRequested', can instead be done before calling {@link #requestSideEffects}.</li>
-	 * <li>'dataReceived', can instead be done once the <code>oPromise</code> returned by
-	 * {@link #requestSideEffects} fulfills or rejects (using
-	 * <code>oPromise.then(function () {...}, function () {...})</code>).</li>
+	 *   <li> 'dataRequested', can instead be done before calling {@link #requestSideEffects}.
+	 *   <li> 'dataReceived', can instead be done once the <code>oPromise</code> returned by
+	 *     {@link #requestSideEffects} fulfills or rejects (using
+	 *     <code>oPromise.then(function () {...}, function () {...})</code>).
 	 * </ul>
 	 *
 	 * @param {object[]} aPathExpressions
@@ -992,23 +992,25 @@ sap.ui.define([
 	 *   error handler, you can repeat the loading of side effects.
 	 * @throws {Error} If
 	 *   <ul>
-	 *    <li> <code>aPathExpressions</code> contains objects other than
-	 *     "14.5.11 Expression edm:NavigationPropertyPath" or "14.5.13 Expression edm:PropertyPath"
-	 *    <li> this context is not supported
-	 *    <li> the root binding of this context's binding is suspended (see {@link #getBinding} and
-	 *    {@link sap.ui.model.odata.v4.ODataContextBinding#getRootBinding},
-	 *    {@link sap.ui.model.odata.v4.ODataListBinding#getRootBinding}, or
-	 *    {@link sap.ui.model.odata.v4.ODataPropertyBinding#getRootBinding}, and
-	 *    {@link sap.ui.model.Binding#isSuspended})
-	 *    <li> this context is transient (see {@link #isTransient})
-	 *    <li> the binding of this context is unresolved (see
-	 *    {@link sap.ui.model.Binding#isResolved})
-	 *    <li> the group ID is invalid
-	 *    <li> a <code>$PropertyPath</code> has been requested which contains a navigation
-	 *    property that was changed on the server and now targets a different entity (since 1.79.0)
-	 *    <li> the binding of this context has "$$aggregation" (see
-	 *    {@link sap.ui.model.odata.v4.ODataModel#bindList}) and the context is not the
-	 *    header context
+	 *     <li> <code>aPathExpressions</code> contains objects other than
+	 *       "14.5.11 Expression edm:NavigationPropertyPath" or
+	 *       "14.5.13 Expression edm:PropertyPath"
+	 *     <li> this context is not supported
+	 *     <li> the root binding of this context's binding is suspended (see {@link #getBinding} and
+	 *       {@link sap.ui.model.odata.v4.ODataContextBinding#getRootBinding},
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#getRootBinding}, or
+	 *       {@link sap.ui.model.odata.v4.ODataPropertyBinding#getRootBinding}, and
+	 *       {@link sap.ui.model.Binding#isSuspended})
+	 *     <li> this context is transient (see {@link #isTransient})
+	 *     <li> the binding of this context is unresolved (see
+	 *       {@link sap.ui.model.Binding#isResolved})
+	 *     <li> the group ID is invalid
+	 *     <li> a <code>$PropertyPath</code> has been requested which contains a navigation
+	 *       property that was changed on the server and now targets a different entity
+	 *       (since 1.79.0)
+	 *     <li> the binding of this context has "$$aggregation" (see
+	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}) and the context is not the
+	 *       header context
 	 *   </ul>
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#execute

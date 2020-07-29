@@ -230,20 +230,20 @@ sap.ui.define([
 		 *   "METHOD URL". The method "GET" may be omitted. The value is an array or single response
 		 *   object that may have the following properties:
 		 *   <ul>
-		 *   <li>{number} <code>code</code>: The response code (<code>200</code> if not given)
-		 *   <li>{map} <code>headers</code>: A map of headers to set in the response
-		 *   <li>{RegExp|function} <code>ifMatch</code>: A filter to select the response. If not
-		 *     given, all requests match. The first match in the list wins. A regular expression is
-		 *     matched against the request body. A function is called with a request object having
-		 *     properties method, url, requestHeaders and requestBody; it must return truthy to
-		 *     indicate a match.
-		 *   <li>{object|string} <code>message</code>: The response message, either as a string or
-		 *     as an object which is serialized via <code>JSON.stringify</code> (the header
-		 *     <code>Content-Type</code> will be set appropriately in this case)
-		 *   <li>{string} <code>source</code>: The path of a file relative to <code>sBase</code> to
-		 *     be used for the response message. It will be read synchronously in advance. In this
-		 *     case the header <code>Content-Type</code> is determined from the source name's
-		 *     extension unless specified. This has precedence over <code>message</code>.
+		 *     <li> {number} <code>code</code>: The response code (<code>200</code> if not given)
+		 *     <li> {map} <code>headers</code>: A map of headers to set in the response
+		 *     <li> {RegExp|function} <code>ifMatch</code>: A filter to select the response. If not
+		 *       given, all requests match. The first match in the list wins. A regular expression
+		 *       is matched against the request body. A function is called with a request object
+		 *       having properties method, url, requestHeaders and requestBody; it must return
+		 *       truthy to indicate a match.
+		 *     <li> {object|string} <code>message</code>: The response message, either as a string
+		 *       or as an object which is serialized via <code>JSON.stringify</code> (the header
+		 *       <code>Content-Type</code> will be set appropriately in this case)
+		 *     <li> {string} <code>source</code>: The path of a file relative to <code>sBase</code>
+		 *       to be used for the response message. It will be read synchronously in advance. In
+		 *       this case the header <code>Content-Type</code> is determined from the source name's
+		 *       extension unless specified. This has precedence over <code>message</code>.
 		 *   </ul>
 		 * @param {object[]} [aRegExps]
 		 *    An array containing regular expressions in the regExp property and the corresponding
@@ -838,12 +838,12 @@ sap.ui.define([
 		 * The behavior is controlled by the request property "realOData". If the property has any
 		 * of the following values, the fake server is <i>not</i> set up.
 		 * <ul>
-		 * <li>"realOData=proxy" (or "realOData=true"): The test must be part of the UI5 Java
-		 *   Servlet. Set the system property "com.sap.ui5.proxy.REMOTE_LOCATION" to a server
-		 *   containing the Gateway test service.
-		 * <li>"realOData=direct": The test and the Gateway service must be reachable via the same
-		 *   host. This can be reached either by deploying the test code to the Gateway host or by
-		 *   using a reverse proxy like the SAP Web Dispatcher.
+		 *   <li> "realOData=proxy" (or "realOData=true"): The test must be part of the UI5 Java
+		 *     Servlet. Set the system property "com.sap.ui5.proxy.REMOTE_LOCATION" to a server
+		 *     containing the Gateway test service.
+		 *   <li> "realOData=direct": The test and the Gateway service must be reachable via the
+		 *     same host. This can be reached either by deploying the test code to the Gateway host
+		 *     or by using a reverse proxy like the SAP Web Dispatcher.
 		 * </ul>
 		 *
 		 * @param {object} oSandbox

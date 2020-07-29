@@ -782,15 +782,15 @@ sap.ui.define([], function () {
 		/**
 		 * Parses a filter string to a syntax tree. In this tree
 		 * <ul>
-		 * <li> paths are leafs with <code>id="PATH"</code> and the path in <code>value</code>
-		 * <li> literals are leafs with <code>id="VALUE"</code> and the literal (as parsed) in
-		 *   <code>value</code>
-		 * <li> operations are nodes with the operator in <code>id</code>, the operator incl.
-		 *   the surrounding required space in <code>value</code> and <code>left</code> and
-		 *   <code>right</code> containing syntax trees for the operands. <code>not</code> only uses
-		 *   <code>right</code>.
-		 * <li> functions are nodes with <code>id="FUNCTION"</code>,the name in <code>value</code>
-		 *   and an array of <code>parameters</code>.
+		 *   <li> paths are leafs with <code>id="PATH"</code> and the path in <code>value</code>
+		 *   <li> literals are leafs with <code>id="VALUE"</code> and the literal (as parsed) in
+		 *     <code>value</code>
+		 *   <li> operations are nodes with the operator in <code>id</code>, the operator incl.
+		 *     the surrounding required space in <code>value</code> and <code>left</code> and
+		 *     <code>right</code> containing syntax trees for the operands. <code>not</code> only
+		 *     uses <code>right</code>.
+		 *   <li> functions are nodes with <code>id="FUNCTION"</code>,the name in <code>value</code>
+		 *     and an array of <code>parameters</code>.
 		 * </ul>
 		 * If the type is known (especially for logical operators and functions), it is given in
 		 * <code>type</code>. If a function parameter may have different types (like Edm.Decimal or
