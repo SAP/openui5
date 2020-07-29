@@ -443,9 +443,9 @@ sap.ui.define([
 	QUnit.test("When link is set it should have aria-labelledby attribute", function (assert) {
 		var link = this.oMessageStrip.getLink(),
 			linkDom = link.getDomRef(),
-			labelledBy = linkDom.getAttribute("aria-labelledby");
+			describedBy = linkDom.getAttribute("aria-describedby");
 
-			assert.strictEqual(labelledBy, this.oMessageStrip.getId() + " " + link.getId(),
+			assert.strictEqual(describedBy, this.oMessageStrip.getId(),
 				"link aria-labelledby should point to the MessageStrip and Link id");
 	});
 
