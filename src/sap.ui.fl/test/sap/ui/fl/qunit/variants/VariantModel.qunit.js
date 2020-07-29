@@ -678,7 +678,7 @@ sap.ui.define([
 		});
 
 		QUnit.skip("when calling 'updateCurrentVariant' with dirty changes in current variant", function(assert) {
-			sandbox.stub(VariantManagementState, "getVariantChanges");
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant");
 
 			this.oModel.oData["variantMgmtId1"].modified = true;
 			assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant is variant1");
@@ -782,7 +782,7 @@ sap.ui.define([
 			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
 			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 			oSourceVariantCopy.content.fileName = "newVariant";
-			sandbox.stub(VariantManagementState, "getVariantChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
 			sandbox.stub(LayerUtils, "compareAgainstCurrentLayer").returns(0);
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
@@ -819,7 +819,7 @@ sap.ui.define([
 			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 			oSourceVariantCopy.content.fileName = "newVariant";
 			oSourceVariantCopy.content.variantReference = "variant0";
-			sandbox.stub(VariantManagementState, "getVariantChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 			assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
@@ -877,7 +877,7 @@ sap.ui.define([
 			oSourceVariantCopy.content.variantReference = "variant0";
 
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-			sandbox.stub(VariantManagementState, "getVariantChanges").returns(oSourceVariant.controlChanges);
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns(oSourceVariant.controlChanges);
 			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 
 			assert.deepEqual(oDuplicateVariant.content, oSourceVariantCopy.content, "then the duplicate variant returned with customized properties");
@@ -947,7 +947,7 @@ sap.ui.define([
 			oSourceVariantCopy.content.variantReference = "variant0";
 
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-			sandbox.stub(VariantManagementState, "getVariantChanges").returns(oSourceVariant.controlChanges);
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns(oSourceVariant.controlChanges);
 			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 
 			assert.deepEqual(oDuplicateVariant.content, oSourceVariantCopy.content, "then the duplicate variant returned with customized properties");
@@ -984,7 +984,7 @@ sap.ui.define([
 				title: "variant A Copy"
 			};
 
-			sandbox.stub(VariantManagementState, "getVariantChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 
 			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
@@ -1022,7 +1022,7 @@ sap.ui.define([
 				title: "variant A Copy"
 			};
 
-			sandbox.stub(VariantManagementState, "getVariantChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 
 			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
@@ -1081,7 +1081,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-			sandbox.stub(VariantManagementState, "getVariantChanges").returns(oSourceVariant.controlChanges);
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns(oSourceVariant.controlChanges);
 
 			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
 			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
@@ -1403,7 +1403,7 @@ sap.ui.define([
 			this.oModel.getData()[sVMReference].modified = true;
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
-			sandbox.stub(VariantManagementState, "getVariantChanges")
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant")
 				.callThrough()
 				.withArgs({
 					vmReference: sVMReference,
@@ -1502,7 +1502,7 @@ sap.ui.define([
 			this.oModel.getData()[sVMReference].modified = true;
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
-			sandbox.stub(VariantManagementState, "getVariantChanges")
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant")
 				.callThrough()
 				.withArgs({
 					vmReference: sVMReference,
@@ -1569,7 +1569,7 @@ sap.ui.define([
 			this.oModel.getData()[sVMReference].modified = true;
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
-			sandbox.stub(VariantManagementState, "getVariantChanges")
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant")
 				.callThrough()
 				.withArgs(sVMReference, this.oModel.oData[sVMReference].currentVariant, true)
 				.returns([oChange1, oChange2]);
@@ -1615,7 +1615,7 @@ sap.ui.define([
 			this.oModel.getData()[sVMReference].modified = true; // dirty changes exist
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
-			sandbox.stub(VariantManagementState, "getVariantChanges")
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant")
 				.callThrough()
 				.withArgs({
 					vmReference: sVMReference,
@@ -1938,7 +1938,7 @@ sap.ui.define([
 			this.oFlexController._oChangePersistence.addDirtyChange(oDirtyChange1);
 			this.oFlexController._oChangePersistence.addDirtyChange(oDirtyChange2);
 
-			sandbox.stub(VariantManagementState, "getVariantChanges")
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant")
 				.callThrough()
 				.withArgs({
 					vmReference: sVMReference,
@@ -2056,7 +2056,8 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				title: "variant A",
 				favorite: true,
-				visible: true
+				visible: true,
+				executeOnSelect: false
 			};
 			this.oVariant2 = {
 				author: "Me",
@@ -2064,14 +2065,15 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				title: "variant B",
 				favorite: true,
-				visible: true
+				visible: true,
+				executeOnSelect: false
 			};
 			oData[this.sVMReference].variants.push(this.oVariant1);
 			oData[this.sVMReference].variants.push(this.oVariant2);
 			sandbox.stub(this.oVariantModel, "updateCurrentVariant").resolves();
 			sandbox.stub(VariantManagementState, "removeChangeFromVariant");
 			sandbox.stub(VariantManagementState, "getCurrentVariantReference").returns("variant1");
-			sandbox.stub(VariantManagementState, "getVariantChanges");
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant");
 			sandbox.stub(this.oVariantModel.oFlexController, "deleteChange");
 			sandbox.stub(this.oVariantModel.oChangePersistence, "getDirtyChanges");
 			sandbox.stub(Switcher, "switchVariant").resolves();
@@ -2161,7 +2163,7 @@ sap.ui.define([
 
 			this.oVariantModel.oData[this.sVMReference].modified = true;
 			var aMockDirtyChanges = [new Change({fileName: "dirtyChange1"}), new Change({fileName: "dirtyChange2"})];
-			VariantManagementState.getVariantChanges.returns(aMockDirtyChanges);
+			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
 			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
 
 			// when new item is selected from the variants list
@@ -2198,7 +2200,7 @@ sap.ui.define([
 			var oVMControl = sap.ui.getCore().byId(sVMControlId);
 
 			var aMockDirtyChanges = [new Change({fileName: "dirtyChange1"}), new Change({fileName: "dirtyChange2"})];
-			VariantManagementState.getVariantChanges.returns(aMockDirtyChanges);
+			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
 			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
 
 			// when new item is selected from the variants list
@@ -2227,7 +2229,7 @@ sap.ui.define([
 
 			this.oVariantModel.oData[this.sVMReference].modified = true;
 			var aMockDirtyChanges = [new Change({fileName: "dirtyChange1"}), new Change({fileName: "dirtyChange2"})];
-			VariantManagementState.getVariantChanges.returns(aMockDirtyChanges);
+			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
 			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
 
 			// when new item is selected from the variants list

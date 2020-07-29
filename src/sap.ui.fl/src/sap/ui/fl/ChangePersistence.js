@@ -328,7 +328,7 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving with an array of changes
 	 * @public
 	 */
-	ChangePersistence.prototype.getChangesForVariant = function(sStableIdPropertyName, sStableId, mPropertyBag) {
+	ChangePersistence.prototype.getControlChangesForVariant = function(sStableIdPropertyName, sStableId, mPropertyBag) {
 		if (this._mVariantsChanges[sStableId]) {
 			return Promise.resolve(this._mVariantsChanges[sStableId]);
 		}

@@ -47,7 +47,7 @@ sap.ui.define([
 				}
 			};
 			this.aSourceVariantChanges = [this.oChangesMap.mChanges.control1[0], this.oChangesMap.mChanges.control2[1]];
-			this.aTargetVariantChanges = [this.oChangesMap.mChanges.control2[0]];
+			this.aTargetControlChangesForVariant = [this.oChangesMap.mChanges.control2[0]];
 			this.oFlexController = {
 				_oChangePersistence: {
 					getChangesMapForComponent: function() {
@@ -73,7 +73,7 @@ sap.ui.define([
 			sandbox.stub(Reverter, "revertMultipleChanges").resolves();
 			sandbox.stub(VariantManagementState, "getContent").returns(this.oVariantsMap);
 			sandbox.stub(VariantManagementState, "setCurrentVariant");
-			sandbox.stub(VariantManagementState, "getVariantChanges")
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant")
 				.callThrough()
 				.withArgs(Object.assign(
 					_pick(this.mPropertyBag, ["vmReference"]), {
@@ -90,7 +90,7 @@ sap.ui.define([
 						changeInstance: true
 					}
 				))
-				.returns(this.aTargetVariantChanges);
+				.returns(this.aTargetControlChangesForVariant);
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -100,7 +100,7 @@ sap.ui.define([
 			return Switcher.switchVariant(this.mPropertyBag)
 				.then(function() {
 					assert.ok(Reverter.revertMultipleChanges.calledWith(this.aSourceVariantChanges.reverse(), this.mPropertyBag), "then revert of changes was correctly triggered");
-					assert.ok(this.oFlexController.applyVariantChanges.calledWith(this.aTargetVariantChanges, this.oAppComponent), "then apply of changes was correctly triggered");
+					assert.ok(this.oFlexController.applyVariantChanges.calledWith(this.aTargetControlChangesForVariant, this.oAppComponent), "then apply of changes was correctly triggered");
 					assert.ok(VariantManagementState.setCurrentVariant.calledWith(this.mPropertyBag), "then setting current variant was correctly triggered");
 				}.bind(this));
 		});
