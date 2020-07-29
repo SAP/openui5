@@ -5433,7 +5433,7 @@ if (/(?:\?|&)sap-ui-xx-self-closing-check=(?:x|X|true)/.exec(window.location.sea
 				/* eslint-enable no-console */
 
 				try {
-					sap.ui.require(["sap/m/MessageBox", "sap/m/FormattedText", "jquery.sap.encoder"], function (MessageBox, FormattedText, /* encoder */) {
+					sap.ui.require(["sap/m/MessageBox", "sap/m/FormattedText", "jquery.sap.encoder"], function (MessageBox, FormattedText) {
 						var messageText = new FormattedText({
 							htmlText: jQuery.sap.encodeXML(errorMessage).replace(/&#xa;/g, "<br>")
 								+ '<a href="' + noteUrl + '" target="_blank" rel="noopener noreferrer">' + noteUrl + '</a> or<br>'
