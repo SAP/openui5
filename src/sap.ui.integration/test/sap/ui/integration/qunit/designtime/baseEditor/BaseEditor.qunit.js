@@ -510,7 +510,7 @@ sap.ui.define([
 				properties: {
 					prop1: {
 						type: "select",
-						path: "prop11"
+						path: "prop1"
 					},
 					foo: {
 						path: "prop1",
@@ -556,7 +556,7 @@ sap.ui.define([
 						label: "label",
 						path: "configuration/parameters",
 						type: "map",
-						allowLabelChange: true,
+						allowTypeChange: true,
 						allowedTypes: ["string", "number", "foo", "bar"]
 					}
 				},
@@ -576,7 +576,7 @@ sap.ui.define([
 						label: "myOwnLabel",
 						path: "configuration/parameters2",
 						type: "map",
-						allowLabelChange: false,
+						allowTypeChange: false,
 						allowedTypes: ["string", "foo", "foobar"]
 					}
 				},
@@ -591,11 +591,11 @@ sap.ui.define([
 				context: "whatever",
 				properties: {
 					parameters: {
-						tags: ["general2"],
-						label: "myOwnLabel",
-						path: "configuration/parameters2",
+						tags: ["general"],
+						label: "label",
+						path: "configuration/parameters",
 						type: "map",
-						allowLabelChange: false,
+						allowTypeChange: false,
 						allowedTypes: ["string", "foo"]
 					}
 				},
