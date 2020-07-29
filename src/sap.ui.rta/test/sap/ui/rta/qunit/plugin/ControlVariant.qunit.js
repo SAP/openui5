@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/m/Page",
+	"sap/m/FlexBox",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/rta/Utils",
@@ -50,6 +51,7 @@ sap.ui.define([
 	ObjectPageSection,
 	ObjectPageSubSection,
 	Page,
+	FlexBox,
 	VariantManagement,
 	VariantModel,
 	RtaUtils,
@@ -227,6 +229,7 @@ sap.ui.define([
 			this.oToolHooksPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			assert.strictEqual(this.oObjectPageLayoutOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
+			assert.strictEqual(this.oVariantManagementOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to VariantManagement control itself");
 			assert.notOk(this.oLayoutOuterOverlay.getVariantManagement(), "then no VariantManagement reference set to an element outside element not a part of the associated control");
 			assert.deepEqual(this.oVariantManagementOverlay.getEditableByPlugins(), [this.oControlVariantPlugin.getMetadata().getName()],
 				"then VariantManagement is marked as editable by ControlVariant plugin");
@@ -550,6 +553,109 @@ sap.ui.define([
 			assert.ok(aMenuItems[3].enabled([this.oVariantManagementOverlay]), "and the entry is enabled");
 			assert.propEqual(aMenuItems[3].submenu, aExpectedSubmenu, "and the submenu array is correct");
 			aMenuItems[3].handler([this.oVariantManagementOverlay], mPropertyBag);
+		});
+	});
+
+	QUnit.module("Given a designTime where variant management control is not part of responsible control tree and ControlVariant plugin are instantiated", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+
+			var oMockAppComponent = getMockComponent.call(this);
+			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(flUtils, "getComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
+			this.oData = {
+				varMgtKey: {
+					defaultVariant : "variant1",
+					variantsEditable : true,
+					variants: [
+						{
+							key: "variant1",
+							title: "Variant 1",
+							visible: true
+						},
+						{
+							key: "variant2",
+							title: "Variant 2",
+							visible: true
+						}
+					]
+				}
+			};
+
+			//	page
+			//		verticalLayout
+			//			flexBox1
+			//				variantManagement
+			//				button1
+			//			flexBox2
+			//				button2
+
+			this.sLocalVariantManagementId = "varMgtKey";
+			this.oModel = new VariantModel(this.oData, undefined, oMockAppComponent);
+			this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
+			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oButton1 = new Button("button1");
+			this.oButton2 = new Button("button2");
+			this.oFlexBox1 = new FlexBox("flexbox1", {
+				items: [this.oVariantManagementControl, this.oButton1]
+			});
+			this.oFlexBox2 = new FlexBox("flexbox2", {
+				items: [this.oButton2]
+			});
+			this.oVariantManagementControl.addAssociation("for", "flexbox2", true);
+			this.oLayoutOuter = new VerticalLayout("layoutouter", {
+				content: [this.oFlexBox1, this.oFlexBox2]
+			});
+			this.oPage = new Page("mainPage", {
+				content: [this.oLayoutOuter]
+			}).placeAt("qunit-fixture");
+			var oVariantManagementDesignTimeMetadata = {
+				"sap.ui.fl.variants.VariantManagement": {}
+			};
+
+			this.oDesignTime = new DesignTime({
+				designTimeMetadata : oVariantManagementDesignTimeMetadata,
+				rootElements : [this.oPage]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oLayoutOuterOverlay = OverlayRegistry.getOverlay(this.oLayoutOuter);
+				this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
+				this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
+				this.oFlexBox1Overlay = OverlayRegistry.getOverlay(this.oFlexBox1);
+				this.oFlexBox2Overlay = OverlayRegistry.getOverlay(this.oFlexBox2);
+				this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
+				this.oControlVariantPlugin = new ControlVariantPlugin({
+					commandFactory: new CommandFactory()
+				});
+				this.oToolHooksPlugin = new ToolHooksPlugin();
+				done();
+			}.bind(this));
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			sandbox.restore();
+			this.oLayoutOuter.destroy();
+			this.oPage.destroy();
+			this.oDesignTime.destroy();
+			this.oData = null;
+			this.oModel.destroy();
+		}
+	}, function () {
+		QUnit.test("when registerElementOverlay is called with VariantManagement control Overlay", function(assert) {
+			this.oToolHooksPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			assert.strictEqual(this.oFlexBox2Overlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
+			assert.strictEqual(this.oButton2Overlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
+			assert.strictEqual(this.oVariantManagementOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to VariantManagement control itself");
+			assert.notOk(this.oLayoutOuterOverlay.getVariantManagement(), "then no VariantManagement reference set to an element outside element not a part of the associated control");
+			assert.notOk(this.oFlexBox1Overlay.getVariantManagement(), "then no VariantManagement reference set to an element outside element not a part of the associated control");
+			assert.notOk(this.oButton1Overlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
+			assert.deepEqual(this.oVariantManagementOverlay.getEditableByPlugins(), [this.oControlVariantPlugin.getMetadata().getName()],
+				"then VariantManagement is marked as editable by ControlVariant plugin");
+			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, false, "the parameter 'variantsEditable' is set to false");
 		});
 	});
 
