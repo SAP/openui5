@@ -178,8 +178,9 @@ sap.ui.define([
 				aRegisteredCommands = oEventListeners.reduce(function(aResults, oListener) {
 					if (oListener.fFunction && oListener.fFunction._sapui_commandName) {
 						aResults.push(oListener.fFunction._sapui_commandName);
-						return aResults;
 					}
+
+					return aResults;
 				}, []);
 
 				if (aRegisteredCommands.length) {
