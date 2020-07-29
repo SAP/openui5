@@ -2,10 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/test/opaQunit",
-	"sap/ui/test/Opa5"
-], function (opaTest, Opa5) {
+	"sap/ui/core/sample/common/Helper",
+	"sap/ui/test/opaQunit"
+], function (Helper, opaTest) {
 	"use strict";
+
+	Helper.qUnitModule("sap.ui.core.internal.samples.odata.v2.SalesOrders - Create and Delete");
 
 	//*****************************************************************************
 	opaTest("Check if creating and deleting sales order items works",
