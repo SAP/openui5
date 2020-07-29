@@ -2,10 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/ui/core/InvisibleText"
+		"sap/ui/core/InvisibleText",
+		'sap/ui/unified/library'
 	],
-	function(InvisibleText) {
+	function(InvisibleText, library) {
 	"use strict";
+
+	// shortcut for sap.ui.unified.CalendarAppointmentRoundWidth
+	var CalendarAppointmentRoundWidth = library.CalendarAppointmentRoundWidth;
 
 	/**
 	 * PlanningCalendar renderer.
@@ -36,6 +40,12 @@ sap.ui.define([
 		this.addAdditionalClasses(oRm, oPC);
 		if (oPC._iSize !== undefined && oPC._iSize !== null) {
 			oRm.class("sapMSize" + oPC._iSize);
+		}
+
+		switch (oPC.getAppointmentRoundWidth()) {
+			case CalendarAppointmentRoundWidth.HalfColumn :
+				oRm.class("sapUiCalendarAppHalfColumnRounding");
+			break;
 		}
 
 		if (!oPC.getSingleSelection()) {

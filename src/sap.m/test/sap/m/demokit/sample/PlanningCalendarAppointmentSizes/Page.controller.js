@@ -143,15 +143,15 @@ function (Controller, JSONModel) {
 							tentative: true
 						},
 							{
-								start: new Date("2017", "2", "2", "07", "0"),
-								end: new Date("2017", "2", "3", "09", "0"),
+								start: new Date("2017", "2", "2", "08", "0"),
+								end: new Date("2017", "2", "2", "17", "0"),
 								title: "Education",
 								type: "Type05",
 								tentative: false
 							},
 							{
-								start: new Date("2017", "2", "5", "00", "30"),
-								end: new Date("2017", "2", "5", "23", "30"),
+								start: new Date("2017", "2", "3", "09", "00"),
+								end: new Date("2017", "2", "3", "10", "00"),
 								title: "New Product",
 								info: "room 105",
 								type: "Type03",
@@ -159,14 +159,14 @@ function (Controller, JSONModel) {
 							},
 							{
 								start: new Date("2017", "2", "8", "08", "0"),
-								end: new Date("2017", "2", "8", "09", "0"),
+								end: new Date("2017", "2", "8", "13", "0"),
 								title: "Meet Donna",
 								type: "Type06",
 								tentative: false
 							},
 							{
-								start: new Date("2017", "2", "8", "9", "0"),
-								end: new Date("2017", "2", "8", "11", "0"),
+								start: new Date("2017", "2", "8", "13", "0"),
+								end: new Date("2017", "2", "9", "11", "0"),
 								title: "Team meeting",
 								info: "room 1",
 								type: "Type01",
@@ -174,8 +174,8 @@ function (Controller, JSONModel) {
 								tentative: false
 							},
 							{
-								start: new Date("2017", "2", "8", "9", "0"),
-								end: new Date("2017", "2", "8", "11", "0"),
+								start: new Date("2017", "2", "8", "13", "0"),
+								end: new Date("2017", "2", "8", "14", "59"),
 								title: "Team meeting2",
 								info: "room 2",
 								type: "Type01",
@@ -183,21 +183,21 @@ function (Controller, JSONModel) {
 								tentative: false
 							},
 							{
-								start: new Date("2017", "2", "9", "14", "00"),
-								end: new Date("2017", "2", "9", "15", "15"),
+								start: new Date("2017", "2", "9", "00", "00"),
+								end: new Date("2017", "2", "9", "23", "59"),
 								title: "Department meeting",
 								type: "Type04",
 								tentative: false
 							},
 							{
-								start: new Date("2017", "2", "10", "9", "30"),
-								end: new Date("2017", "2", "10", "11", "30"),
+								start: new Date("2017", "2", "12", "00", "00"),
+								end: new Date("2017", "2", "12", "12", "00"),
 								title: "Meeting with John",
 								type: "Type02",
 								tentative: false
 							},
 							{
-								start: new Date("2017", "2", "11", "0", "0"),
+								start: new Date("2017", "2", "12", "12", "00"),
 								end: new Date("2017", "2", "12", "23", "59"),
 								title: "Team Building",
 								info: "out of office",
@@ -206,32 +206,32 @@ function (Controller, JSONModel) {
 								tentative: false
 							},
 							{
-								start: new Date("2017", "2", "19", "00", "30"),
-								end: new Date("2017", "2", "17", "23", "30"),
+								start: new Date("2017", "2", "13", "00", "00"),
+								end: new Date("2017", "2", "13", "12", "00"),
 								title: "New Product",
 								info: "room 325",
 								type: "Type07",
 								tentative: true
 							},
 							{
-								start: new Date("2017", "2", "21", "00", "30"),
-								end: new Date("2017", "2", "21", "23", "30"),
+								start: new Date("2017", "2", "13", "12", "00"),
+								end: new Date("2017", "2", "13", "23", "30"),
 								title: "New Product",
 								info: "room 105",
 								type: "Type03",
 								tentative: true
 							},
 							{
-								start: new Date("2017", "5", "1", "0", "0"),
-								end: new Date("2017", "6", "15", "23", "59"),
+								start: new Date("2017", "2", "14", "0", "0"),
+								end: new Date("2017", "2", "14", "12", "00"),
 								title: "Vacation",
 								info: "out of office",
 								type: "Type04",
 								tentative: false
 							},
 							{
-								start: new Date("2017", "11", "1", "00", "30"),
-								end: new Date("2018", "1", "31", "23", "30"),
+								start: new Date("2017", "2", "14", "12", "00"),
+								end: new Date("2017", "2", "14", "23", "30"),
 								title: "New product release",
 								info: "room 105",
 								type: "Type03",
@@ -274,6 +274,12 @@ function (Controller, JSONModel) {
 
 			oPC.setCustomAppointmentsSorterCallback(fnSelectedSort);
 
+		},
+
+		handleAppointmentRoundingChange: function (oEvent){
+			var oPC = this.byId("PC1"),
+				sAppointmentRoundingWidth = oEvent.getParameter("selectedItem").getKey();
+			oPC.setAppointmentRoundWidth(sAppointmentRoundingWidth);
 		},
 
 		// custom function for appointments sort by alphabetical order

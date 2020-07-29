@@ -31,6 +31,7 @@ sap.ui.define([
 			"sap.ui.unified.CalendarDayType",
 			"sap.ui.unified.CalendarIntervalType",
 			"sap.ui.unifief.CalendarAppointmentHeight",
+			"sap.ui.unifief.CalendarAppointmentRoundWidth",
 			"sap.ui.unified.ColorPickerDisplayMode",
 			"sap.ui.unified.ColorPickerMode",
 			"sap.ui.unified.ContentSwitcherAnimation",
@@ -369,6 +370,32 @@ sap.ui.define([
 		 * @public
 		 */
 		Automatic : "Automatic"
+
+	};
+
+	/**
+	 * Types of a calendar appointment display mode
+	 *
+	 * @enum {string}
+	 * @alias sap.ui.unified.CalendarAppointmentRoundWidth
+	 * @public
+	 * @experimental Since 1.81.0
+	 * @since 1.81.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.CalendarAppointmentRoundWidth = {
+
+		/**
+		 * HalfRow display mode.
+		 * @public
+		 */
+		HalfColumn : "HalfColumn",
+
+		/**
+		 * None display mode.
+		 * @public
+		 */
+		None : "None"
 
 	};
 

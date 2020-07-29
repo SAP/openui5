@@ -5,7 +5,7 @@
 	xmlns:unified="sap.ui.unified"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
-			<HBox>
+		<HBox>
 			<VBox class="sapUiSmallMarginEnd">
 				<Label text="Appointment Size:"></Label>
 				<Select
@@ -18,8 +18,8 @@
 						<core:Item key="Automatic" text="Automatic" />
 					</items>
 				</Select>
-				</VBox>
-				<VBox class="sapUiSmallMarginEnd">
+			</VBox>
+			<VBox class="sapUiSmallMarginEnd">
 				<Label text="Appointment Sort:"></Label>
 				<Select
 						change="handleSortChange"
@@ -27,6 +27,17 @@
 					<items>
 						<core:Item key="default" text="Default Appointments Sort" />
 						<core:Item key="custom" text="Alphabetical Appointments Sort" />
+					</items>
+				</Select>
+			</VBox>
+			<VBox class="sapUiSmallMarginEnd">
+				<Label text="Appointment Row Rounding:"></Label>
+				<Select
+					change="handleAppointmentRoundingChange"
+					width="230px">
+					<items>
+						<core:Item key="None" text="None" />
+						<core:Item key="HalfColumn" text="Half Column" />
 					</items>
 				</Select>
 			</VBox>
