@@ -40,6 +40,12 @@
             "reference": "0020751295 0000397149 2020"
           }
         ]
+      },
+      {
+        "id": "fe94e64b6521720a1695a7eacfe36ad937bd256b",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Appointment text on 3 lines",
+        "references": []
       }
     ]
   }

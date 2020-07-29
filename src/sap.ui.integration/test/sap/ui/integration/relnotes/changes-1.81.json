@@ -24,6 +24,29 @@
             "reference": "2080153977"
           }
         ]
+      },
+      {
+        "id": "29a64393ba8cf00551e71ed1cf51f9f131414c47",
+        "type": "FEATURE",
+        "text": " Enhancments for external design-time capabilities",
+        "references": []
+      },
+      {
+        "id": "bff06a06a569a908e9f0d224cec1f306da6e28a3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: visible property is now available in the manifest",
+        "references": []
+      },
+      {
+        "id": "bd888971975bcb3276f8afa57df6a51c9457a30a",
+        "type": "FIX",
+        "text": " Integration Cards: Content is now visible after re-rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080174673"
+          }
+        ]
       }
     ]
   }
