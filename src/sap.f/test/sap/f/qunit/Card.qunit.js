@@ -112,6 +112,36 @@ function (
 		oHeader.destroy();
 	});
 
+	QUnit.test("Numeric Header unitOfMeasurement truncation", function (assert) {
+
+		// Arrange
+		var oHeader = new CardNumericHeader({
+				subTitle: "Lorem",
+				unitOfMeasurement: "EUR EUR EUR"
+			}),
+			oCard = new Card({
+				width: "300px",
+				header: oHeader
+			}),
+			iWidth;
+
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		iWidth = oHeader.$("unitOfMeasurement").width();
+
+		// Act - set long subtitle so that there is no place for unitOfMeasurement
+		oHeader.setSubtitle("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean a libero nec risus egestas lacinia nec ac metus.");
+		Core.applyChanges();
+		this.clock.tick(400);
+
+		// Assert
+		assert.strictEqual(oHeader.$("unitOfMeasurement").width(), iWidth, "The unitOfMeasurement is not truncated");
+
+		// Clean up
+		oCard.destroy();
+	});
+
 	QUnit.module("Headers ACC roles");
 
 	QUnit.test("Header", function (assert) {
