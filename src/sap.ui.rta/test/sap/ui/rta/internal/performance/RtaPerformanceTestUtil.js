@@ -61,8 +61,9 @@ sap.ui.define([
 
 		_defineTestStubs: function() {
 			sandbox.stub(FlexSettings, "getInstance").returns(Promise.resolve({
-				isProductiveSystem: function() { return false; },
-				isVersioningEnabled: function () { return false; }
+				isProductiveSystem: function () { return false; },
+				isVersioningEnabled: function () { return false; },
+				isAppVariantSaveAsEnabled: function () { return false; }
 			}));
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
