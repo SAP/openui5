@@ -3079,6 +3079,7 @@ sap.ui.define([
 		oRowTimeline.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
 		oRowTimeline.setLegend(this.getLegend());
 		oRowTimeline.setAppointmentsVisualization(this.getAppointmentsVisualization());
+		oRowTimeline.setAppointmentHeight(this.getAppointmentHeight());
 		oRowTimeline.attachEvent("select", handleAppointmentSelect, this);
 		oRowTimeline.attachEvent("startDateChange", this._handleStartDateChange, this);
 		oRowTimeline.attachEvent("leaveRow", handleLeaveRow, this);
