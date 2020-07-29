@@ -2,9 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
+	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	BaseEditor,
+	EditorQunitUtils,
 	sinon
 ) {
 	"use strict";
@@ -93,11 +95,12 @@ sap.ui.define([
 				[
 					{
 						name: "MySampleDestination",
+						label: undefined,
 						key: "sampleDestination"
 					},
 					{
 						name: "AnotherDestination",
-						label: "Hello World",
+						label: undefined,
 						key: "anotherDestination"
 					}
 				],
@@ -105,12 +108,25 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("When a label was set", function (assert) {
-			assert.strictEqual(
-				_getComplexMapEditors(this.oNestedArrayEditor)[1].label.getValue(),
-				"Hello World",
-				"Then it is used in the editor"
-			);
+		QUnit.test("When the label is set in the editor", function (assert) {
+			var fnDone = assert.async();
+			var oLabelEditor = _getComplexMapEditors(this.oNestedArrayEditor)[0].label;
+
+			this.oDestinationsEditor.attachDesigntimeMetadataChange(function (oEvent) {
+				assert.deepEqual(
+					oEvent.getParameter("value"),
+					{
+						"sampleDestination": {
+							"__value": {
+								"label": "Label"
+							}
+						}
+					},
+					"Then the label is updated"
+				);
+				fnDone();
+			});
+			EditorQunitUtils.setInputValue(oLabelEditor.getContent(), "Label");
 		});
 	});
 

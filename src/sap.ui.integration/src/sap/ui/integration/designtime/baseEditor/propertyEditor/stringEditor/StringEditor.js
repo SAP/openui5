@@ -50,7 +50,7 @@ sap.ui.define([
 	 * <tr>
 	 * 	<td><code>maxLength</code></td>
 	 *  <td><code>number</code></td>
-	 * 	<td>0</td>
+	 * 	<td></td>
 	 * 	<td>Maximum number of characters</td>
 	 * </tr>
 	 * </table>
@@ -78,9 +78,6 @@ sap.ui.define([
 		allowBindings: {
 			defaultValue: true,
 			mergeStrategy: "mostRestrictiveWins"
-		},
-		maxLength: {
-			defaultValue: 0
 		}
 	});
 
@@ -97,6 +94,13 @@ sap.ui.define([
 				notABinding: {
 					type: "notABinding",
 					isEnabled: !oConfig.allowBindings
+				},
+				maxLength: {
+					type: "maxLength",
+					isEnabled: typeof oConfig.maxLength === "number",
+					config: {
+						maxLength: oConfig.maxLength
+					}
 				}
 			}
 		);
@@ -104,9 +108,9 @@ sap.ui.define([
 
 	StringEditor.prototype.setValue = function (vValue) {
 		if (!_isNil(vValue) && !isPlainObject(vValue)) {
-			vValue = vValue.toString();
+			arguments[0] = vValue.toString();
 		}
-		BasePropertyEditor.prototype.setValue.call(this, vValue);
+		BasePropertyEditor.prototype.setValue.apply(this, arguments);
 	};
 
 	StringEditor.prototype._onLiveChange = function () {

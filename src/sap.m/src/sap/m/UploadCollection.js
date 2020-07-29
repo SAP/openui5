@@ -1963,7 +1963,7 @@ sap.ui.define([
 
 		oDeleteButton = fnGetter ? fnGetter() : item._getControl("sap.m.Button", {
 			id: itemId + "-" + buttonType,
-			icon: "sap-icon://sys-cancel",
+			icon: "sap-icon://decline",
 			type: Library.ButtonType.Standard,
 			press: fnPressHandler
 		}, sGetterName).addStyleClass("sapMUCDeleteBtn");

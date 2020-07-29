@@ -691,4 +691,70 @@ function(
 		}.bind(this));
 	});
 
+	QUnit.module("sap.ui.mdc.Chart: Events", {
+		beforeEach: function() {
+			var TestComponent = UIComponent.extend("test", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							"id": "",
+							"type": "application"
+						}
+					}
+				},
+				createContent: function() {
+					return new Chart("IDChart", {
+						chartType: "bullet",
+						items: [
+							new DimensionItem({
+								key: "Name",
+								label: "Name",
+								role: "category"
+							}), new MeasureItem({
+								key: "agSalesAmount",
+								propertyPath: "SalesAmount",
+								label: "Depth",
+								role: "axis1",
+								aggregationMethod: "sum"
+							}), new MeasureItem({
+								key: "SalesNumber",
+								label: "Width",
+								role: "axis2",
+								visible: false
+							})
+						]
+					});
+				}
+			});
+
+			this.oUiComponent = new TestComponent("IDComponent");
+			this.oUiComponentContainer = new ComponentContainer({
+				component: this.oUiComponent,
+				async: false
+			});
+			this.oChart = this.oUiComponent.getRootControl();
+
+			this.oUiComponentContainer.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oUiComponentContainer.destroy();
+			this.oUiComponent.destroy();
+		}
+	});
+
+	QUnit.test("dataPointsSelected event is fired on data selection", function(assert) {
+		var done = assert.async();
+		var oDataPointsSelectedSpy = sinon.spy(this.oChart, "fireDataPointsSelected");
+		this.oChart.oChartPromise.then(function() {
+			var oInnerChart = this.oChart.getAggregation("_chart");
+			oInnerChart.fireSelectData();
+			oInnerChart.fireDeselectData();
+			assert.ok(oDataPointsSelectedSpy.calledTwice, "fireDataPointsSelected called on Chart");
+			oDataPointsSelectedSpy.restore();
+			done();
+
+		}.bind(this));
+	});
+
 });

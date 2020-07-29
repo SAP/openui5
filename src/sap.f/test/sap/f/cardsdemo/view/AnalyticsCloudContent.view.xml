@@ -16,16 +16,22 @@
 		</subHeader>
 
 		<content>
-			<Text class="sapUiSmallMargin" text="Note: You can run this example only locally and you have to include the Highcharts script in 'cardsdemo/Card.html'. It can be copied from the Highcharts website." />
+			<MessageStrip
+				class="sapUiSmallMargin"
+				type="Warning"
+				showIcon="true"
+				text="To run this sample check for the instructions in the related BLI."
+				/>
+
 			<f:GridContainer class="sapUiSmallMargin">
-				<w:Card manifest="{manifests>/analyticsCloud/example1}">
+				<w:Card manifest="./cardsdemo/cardcontent/analyticsCloud/manifest1.json">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="4" />
 					</w:layoutData>
 				</w:Card>
-				<w:Card id="listCountStatic" manifest="{manifests>/analyticsCloud/example2}">
+				<w:Card manifest="./cardsdemo/cardcontent/analyticsCloud/manifest2.json">
 					<w:layoutData>
-						<f:GridContainerItemLayoutData columns="4" />
+						<f:GridContainerItemLayoutData columns="6" />
 					</w:layoutData>
 				</w:Card>
 			</f:GridContainer>

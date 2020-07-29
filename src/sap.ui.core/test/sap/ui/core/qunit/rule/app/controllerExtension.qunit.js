@@ -17,7 +17,7 @@ sap.ui.define([
 		};
 	};
 
-	QUnit.module("ControllerExtension", {
+	QUnit.module("Async ControllerExtension", {
 		beforeEach: function(assert) {
 			return new Promise(function(resolve, reject) {
 				sap.ui.require(["sap/ui/core/Component"], function(Component) {
@@ -40,6 +40,22 @@ sap.ui.define([
 		libName: "sap.ui.core",
 		ruleId: "controllerExtension",
 		async: true,
+		expectedNumberOfIssues: fnIncrement(1)
+	});
+
+	QUnit.module("Sync ControllerExtension", {
+		beforeEach: function(assert) {
+			sap.ui.component({
+				name: "mvc.testdata.ControllerExtensionTest.SyncWrongExtension"
+			});
+		}
+	});
+
+	testRule({
+		executionScopeType: "global",
+		libName: "sap.ui.core",
+		ruleId: "controllerExtension",
+		async: false,
 		expectedNumberOfIssues: fnIncrement(1)
 	});
 

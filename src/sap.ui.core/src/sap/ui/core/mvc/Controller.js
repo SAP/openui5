@@ -460,13 +460,20 @@ sap.ui.define([
 						vController = vController.then(extendAsync.bind(null, sControllerName, oController));
 					} else {
 						//load Controller extension
-						if ( !mRegistry[sControllerName] && !sap.ui.require(sControllerName) ) {
+						if (!mRegistry[sControllerName] && !sap.ui.require(sControllerName)) {
 							loadControllerClass(sControllerName);
 						}
 						if ((oCustomControllerDef = mRegistry[sControllerName]) !== undefined) { //variable init, not comparison!
 							mixinControllerDefinition(oController, oCustomControllerDef);
 						} else {
-							Log.error("Attempt to load Extension Controller " + sControllerName + " was not successful - is the Controller correctly defined in its file?");
+							/* eslint-disable no-loop-func */
+							Log.error("Attempt to load Extension Controller " + sControllerName + " was not successful - is the Controller correctly defined in its file?", null, function() {
+								return {
+									type: "ControllerExtension",
+									name: sControllerName
+								};
+							});
+							/* eslint-enable no-loop-func */
 						}
 					}
 				}

@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/validator/IsBoolean",
 	"sap/ui/integration/designtime/baseEditor/validator/IsDate",
 	"sap/ui/integration/designtime/baseEditor/validator/IsStringList",
-	"sap/ui/integration/designtime/baseEditor/validator/IsUniqueList"
+	"sap/ui/integration/designtime/baseEditor/validator/IsUniqueList",
+	"sap/ui/integration/designtime/baseEditor/validator/MaxLength",
+	"sap/ui/integration/designtime/baseEditor/validator/IsPatternMatch"
 ], function (
 	NotABinding,
 	IsValidBinding,
@@ -22,7 +24,9 @@ sap.ui.define([
 	IsBoolean,
 	IsDate,
 	IsStringList,
-	IsUniqueList
+	IsUniqueList,
+	MaxLength,
+	IsPatternMatch
 ) {
 	"use strict";
 
@@ -36,6 +40,8 @@ sap.ui.define([
 		"isBoolean": IsBoolean,
 		"isDate": IsDate,
 		"isUniqueList": IsUniqueList,
-		"isStringList": IsStringList
+		"isStringList": IsStringList,
+		"maxLength": MaxLength,
+		"pattern": IsPatternMatch
 	};
 });

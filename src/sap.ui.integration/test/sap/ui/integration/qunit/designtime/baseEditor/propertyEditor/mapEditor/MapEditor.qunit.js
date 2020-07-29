@@ -23,7 +23,7 @@ sap.ui.define([
 					key: oNestedEditors[0],
 					type: oNestedEditors[1],
 					value: oNestedEditors[2],
-					deleteButton: oItem.getHeaderToolbar().getContent()[2]
+					deleteButton: oItem.getHeaderToolbar().getContent()[4]
 				};
 			})
 		};

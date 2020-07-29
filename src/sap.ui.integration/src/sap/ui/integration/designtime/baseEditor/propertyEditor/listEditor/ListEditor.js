@@ -86,7 +86,7 @@ sap.ui.define([
 	ListEditor.prototype._validateInput = function (sToken) {
 		this.setInputState(
 			!IsValidBinding.validate(sToken),
-			IsValidBinding.errorMessage
+			this.getI18nProperty(IsValidBinding.errorMessage)
 		);
 	};
 

@@ -14,13 +14,6 @@
 			},
 			"transactionid" : "B5D8524E18950210E005ED6EDB56062B",
 			"timestamp" : "",
-			"Error_Resolution" : {
-				"SAP_Transaction" : "",
-				"SAP_Note" :
-					"See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)",
-				"Batch_SAP_Note" :
-					"See SAP Note 1869434 for details about working with $batch (https://service.sap.com/sap/support/notes/1869434)"
-			},
 			"errordetails" : [
 				{
 					"code" : "/IWBEP/CX_MGW_TECH_EXCEPTION",

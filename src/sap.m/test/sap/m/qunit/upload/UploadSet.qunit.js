@@ -180,5 +180,39 @@ sap.ui.define([
 				};
 			}
 		});
-    });
+	});
+
+	QUnit.test("No data rendering - with default text and description", function(assert) {
+		//Arrange
+		this.oUploadSet.unbindAggregation("items");
+		var sNoDataText = this.oUploadSet._oRb.getText("UPLOAD_SET_NO_DATA_TEXT");
+		var sNoDataDescription = this.oUploadSet._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION");
+
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(this.oUploadSet.getNoDataText(), sNoDataText, "default text is returned for getNoDataText");
+		assert.equal(this.oUploadSet.getNoDataDescription(), sNoDataDescription, "default description is returned for getNoDataDescription");
+		assert.equal(jQuery.sap.byId(this.oUploadSet.getId() + "-no-data-text").text(), sNoDataText, "default no data text is rendered in upload set");
+		assert.equal(jQuery.sap.byId(this.oUploadSet.getId() + "-no-data-description").text(), sNoDataDescription, "default no data description is rendered in upload set");
+	});
+
+	QUnit.test("No data rendering - with user specified no data text", function(assert) {
+		//Arrange
+		this.oUploadSet.setNoDataText("myNoDataText");
+		this.oUploadSet.unbindAggregation("items");
+
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(jQuery.sap.byId(this.oUploadSet.getId() + "-no-data-text").text(), "myNoDataText", "The no data text set by user is rendered");
+	});
+
+	QUnit.test("No data rendering - with user specified no data description", function(assert) {
+		//Arrange
+		this.oUploadSet.setNoDataDescription("myNoDataDescription");
+		this.oUploadSet.unbindAggregation("items");
+
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(jQuery.sap.byId(this.oUploadSet.getId() + "-no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
+	});
 });

@@ -1,13 +1,17 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/util/merge",
 	"sap/ui/integration/designtime/cardEditor/CardEditor",
-	"sap/base/util/merge"
-], function (
+	"sap/ui/thirdparty/sinon-4"
+], function(
+	merge,
 	CardEditor,
-	merge
+	sinon
 ) {
 	"use strict";
+
+	var sandbox = sinon.createSandbox();
 
 	function getBaseJson(sNamespace) {
 		var oJson = {
@@ -40,7 +44,7 @@ sap.ui.define([
 		return oJson;
 	}
 
-	QUnit.module("getDeltaChangeDefinition (sap.card namespace)", {
+	QUnit.module("delta change handling (sap.card namespace)", {
 		beforeEach: function() {
 			this.oCardEditor = new CardEditor();
 			this.oBaseJson = getBaseJson("sap.card");
@@ -51,9 +55,10 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oCardEditor.destroy();
+			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("without any changes", function (assert) {
+		QUnit.test("getDeltaChangeDefinition - without any changes", function (assert) {
 			return this.oCardEditor.getDeltaChangeDefinition(this.oPropertyBag)
 			.then(function(){
 				assert.ok(false, "should not go here");
@@ -63,7 +68,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("with some changes in sap.card namespace", function (assert) {
+		QUnit.test("getDeltaChangeDefinition - with some changes in sap.card namespace", function (assert) {
 			this.oBaseJson["sap.card"].configuration.destinations.myDestination1.name = "myNewName1";
 			this.oBaseJson["sap.card"].configuration.destinations.myDestination3 = {
 				name: "myName3"
@@ -144,6 +149,116 @@ sap.ui.define([
 				assert.equal(oChange.support.generator, "CardEditor", "the generator is set correctly");
 				assert.equal(oChange.appDescriptorChange, true, "the appDescriptorChange is set correctly");
 			}.bind(this));
+		});
+
+		QUnit.test("getDesigntimeChangeDefinition - without any change", function(assert) {
+			var mMetadataJson = {
+				foo: "bar",
+				foobar: "foo"
+			};
+			sandbox.stub(this.oCardEditor, "getDesigntimeMetadata").returns(mMetadataJson);
+			this.oCardEditor._oInitialDesigntimeMetadata = mMetadataJson;
+
+			return this.oCardEditor.getDesigntimeChangeDefinition(this.oPropertyBag).then(function() {
+				assert.ok(false, "should not go here");
+			})
+			.catch(function(sError) {
+				assert.equal(sError, "No Change", "the function rejects with a text");
+			});
+		});
+
+		QUnit.test("getDesigntimeChangeDefinition - with several different changes", function(assert) {
+			var mOldJson = {
+				"path/foo": "bar",
+				"path/bar": "foobar",
+				"path/to/array": ["value1", "value2"],
+				"path/to/object": {
+					old: "foo"
+				},
+				"path/to/boolean/1": true,
+				"path/to/boolean/2": false
+			};
+			var mNewJson = {
+				"path/foo": "bar1",
+				"path/to/array": ["value2", "value3"],
+				"path/to/object": {
+					"new": "foo"
+				},
+				"path/to/new/property": "new",
+				"path/to/boolean/1": false,
+				"path/to/boolean/2": true
+			};
+			var aChanges = [
+				{
+					propertyPath: "path/foo",
+					operation: "UPDATE",
+					propertyValue: "bar1"
+				},
+				{
+					propertyPath: "path/to/array",
+					operation: "UPDATE",
+					propertyValue: ["value2", "value3"]
+				},
+				{
+					propertyPath: "path/to/object",
+					operation: "UPDATE",
+					propertyValue: { "new": "foo" }
+				},
+				{
+					propertyPath: "path/to/new/property",
+					operation: "INSERT",
+					propertyValue: "new"
+				},
+				{
+					propertyPath: "path/to/boolean/1",
+					operation: "UPDATE",
+					propertyValue: false
+				},
+				{
+					propertyPath: "path/to/boolean/2",
+					operation: "UPDATE",
+					propertyValue: true
+				},
+				{
+					propertyPath: "path/bar",
+					operation: "DELETE"
+				}
+			];
+
+			sandbox.stub(this.oCardEditor, "getDesigntimeMetadata").returns(mNewJson);
+			this.oCardEditor._oInitialDesigntimeMetadata = mOldJson;
+			return this.oCardEditor.getDesigntimeChangeDefinition(this.oPropertyBag).then(function(oChangeDefinition) {
+				var oExpectedContent = {
+					entityPropertyChange: aChanges
+				};
+				assert.deepEqual(oChangeDefinition.content, oExpectedContent, "the content is set correctly");
+				assert.equal(oChangeDefinition.changeType, "appdescr_card_designtime", "the change type is set correctly");
+				assert.equal(oChangeDefinition.fileType, "change", "the fileType is set correctly");
+				assert.ok(oChangeDefinition.creation, "the creation is filled");
+				assert.equal(oChangeDefinition.layer, this.oPropertyBag.layer, "the layer is set correctly");
+				assert.equal(oChangeDefinition.reference, "sap-app-id", "the reference is set correctly");
+				assert.equal(oChangeDefinition.support.generator, "CardEditor", "the generator is set correctly");
+				assert.equal(oChangeDefinition.appDescriptorChange, true, "the appDescriptorChange is set correctly");
+			}.bind(this));
+		});
+
+		QUnit.test("getChanges", function(assert) {
+			var oGetDeltaChangeStub = sandbox.stub(this.oCardEditor, "getDeltaChangeDefinition").resolves("runtimeChange");
+			var oGetDesigntimeChangeStub = sandbox.stub(this.oCardEditor, "getDesigntimeChangeDefinition").resolves("designtimeChange");
+			var oPropertyBag = {
+				foo: "bar"
+			};
+			return this.oCardEditor.getChanges(oPropertyBag).then(function(oChanges) {
+				var oExpectedReturn = {
+					runtimeChange: "runtimeChange",
+					designtimeChange: "designtimeChange"
+				};
+				assert.deepEqual(oChanges, oExpectedReturn, "both changes got returned");
+				assert.equal(oGetDeltaChangeStub.callCount, 1, "the function was called");
+				assert.equal(oGetDeltaChangeStub.lastCall.args[0], oPropertyBag, "the propertybag was properly passed");
+				assert.equal(oGetDesigntimeChangeStub.callCount, 1, "the function was called");
+				assert.equal(oGetDesigntimeChangeStub.lastCall.args[0], oPropertyBag, "the propertybag was properly passed");
+			});
 		});
 	});
 
@@ -271,6 +386,27 @@ sap.ui.define([
 				assert.equal(oChange.support.generator, "CardEditor", "the generator is set correctly");
 				assert.equal(oChange.appDescriptorChange, true, "the appDescriptorChange is set correctly");
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("Given a CardEditor", {
+		beforeEach: function() {
+			this.oCardEditor = new CardEditor();
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when setDesigntimeChanges is called before init", function(assert) {
+			this.oCardEditor.setDesigntimeChanges({foo: "bar"});
+			assert.deepEqual(this.oCardEditor.getDesigntimeChanges(), {foo: "bar"}, "the changes were properly set");
+		});
+
+		QUnit.test("when setDesigntimeChanges is called after init", function(assert) {
+			this.oCardEditor._oInitialDesigntimeMetadata = {someObject: "bar"};
+			assert.throws(function() {
+				this.oCardEditor.setDesigntimeChanges({foo: "bar"});
+			}, /Designtime Changes can only be set initially/, "the function throws an error");
 		});
 	});
 

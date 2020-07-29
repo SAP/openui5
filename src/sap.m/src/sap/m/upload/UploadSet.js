@@ -432,7 +432,7 @@ sap.ui.define([
 
 	UploadSet.prototype.getNoDataDescription = function () {
 		var sNoDataDescription = this.getProperty("noDataDescription");
-		sNoDataDescription = sNoDataDescription || this._oRb.getText("UPLOAD_SET_NO_DATA_DESCRIPTION");
+		sNoDataDescription = sNoDataDescription || this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION");
 		return sNoDataDescription;
 	};
 
@@ -629,15 +629,15 @@ sap.ui.define([
 	 * @public
 	 */
 	UploadSet.prototype.getDefaultFileUploader = function () {
-		var sTooltip;
+		var sTooltip = this._oRb.getText("UPLOADCOLLECTION_UPLOAD");
 		if (!this._oFileUploader) {
 			this._oFileUploader = new FileUploader(this.getId() + "-uploader", {
 				buttonOnly: true,
 				buttonText: sTooltip,
 				tooltip: sTooltip,
-				iconOnly: true,
+				iconOnly: false,
 				enabled: this.getUploadEnabled(),
-				icon: "sap-icon://add",
+				icon: "",
 				iconFirst: false,
 				style: "Transparent",
 				name: "uploadSetFileUploader",

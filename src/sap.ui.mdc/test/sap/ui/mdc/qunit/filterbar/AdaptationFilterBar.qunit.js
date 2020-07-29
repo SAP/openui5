@@ -1,15 +1,17 @@
-/* global QUnit*/
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/filterbar/p13n/AdaptationFilterBar",
 	"sap/ui/mdc/p13n/FlexUtil",
-	"sap/ui/mdc/Table"
+	"sap/ui/mdc/Table",
+	"sap/ui/mdc/TableDelegate"
 ], function (
 	FilterBarBase,
 	AdaptationFilterBar,
 	FlexUtil,
-	Table
+	Table,
+	TableDelegate
 ) {
 	"use strict";
 
@@ -23,10 +25,20 @@ sap.ui.define([
 				FlexUtil.handleChanges.restore();
 			}
 			oAdaptationController = oAdaptationFilterBar._getAdaptationController();
+
+			this.aMockProperties = [
+				{
+					name: "key1"
+				},
+				{
+					name: "key2"
+				}
+			];
 		},
 		afterEach: function () {
 			oAdaptationFilterBar.destroy();
-			oAdaptationFilterBar = undefined;
+			oAdaptationFilterBar = null;
+			this.aMockProperties = null;
 		}
 	});
 
@@ -64,6 +76,36 @@ sap.ui.define([
 				done();
 			});
 		});
+	});
+
+	QUnit.test("Set propertyInfo depending on parent", function(assert) {
+		var done = assert.async();
+
+		var oParent = new Table("delegateTestTable",{});
+		var oNoDelegateAFB = new AdaptationFilterBar();
+
+		var oMockedPropertyInfoPromise = new Promise(function(resolve){
+			resolve(this.aMockProperties);
+		}.bind(this));
+
+		sinon.stub(TableDelegate, "fetchProperties").returns(oMockedPropertyInfoPromise);
+
+		//AdaptationFilterBar should listen to parent "fetchProperties"
+		oNoDelegateAFB.setAdaptationControl(oParent);
+
+		//Init parent
+		oParent.initialized().then(function(){
+
+			assert.deepEqual(oNoDelegateAFB._aProperties, [], "Inner FB has no properties if not initialzed");
+
+			//init AdaptationFilterBar
+			oNoDelegateAFB.initialized().then(function(){
+
+				assert.deepEqual(oNoDelegateAFB._aProperties.length, this.aMockProperties.length, "Property info has been passed from the Parent");
+				done();
+			}.bind(this));
+		}.bind(this));
+
 	});
 
 });

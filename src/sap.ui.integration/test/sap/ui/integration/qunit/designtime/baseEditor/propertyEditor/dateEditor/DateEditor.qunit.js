@@ -83,7 +83,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			EditorQunitUtils.setCustomComboBoxValue(this.oDateEditorElement, sCurrentDateString);
+			EditorQunitUtils.setInputValueAndConfirm(this.oDateEditorElement, sCurrentDateString);
 		});
 
 		QUnit.test("When a binding path is added in the editor", function (assert) {
@@ -98,7 +98,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			EditorQunitUtils.setCustomComboBoxValue(this.oDateEditorElement, "{someBindingPath}");
+			EditorQunitUtils.setInputValueAndConfirm(this.oDateEditorElement, "{someBindingPath}");
 		});
 
 		QUnit.test("When a binding path is provided as the editor value", function (assert) {
@@ -114,7 +114,7 @@ sap.ui.define([
 			var oSpy = sandbox.spy();
 			this.oDateEditor.attachValueChange(oSpy);
 
-			EditorQunitUtils.setCustomComboBoxValue(this.oDateEditorElement, "This is not a date");
+			EditorQunitUtils.setInputValueAndConfirm(this.oDateEditorElement, "This is not a date");
 
 			assert.strictEqual(this.oDateEditorElement.getValueState(), "Error", "Then the error is displayed");
 

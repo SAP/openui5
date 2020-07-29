@@ -54,7 +54,7 @@
 					"title": "Advanced",
 					"text": "Success",
 					"state": "Success",
-					"icon": "sap-icon://alert"
+					"icon": "sap-icon://message-success"
 				},
 				{
 					"title": "Ultimate",

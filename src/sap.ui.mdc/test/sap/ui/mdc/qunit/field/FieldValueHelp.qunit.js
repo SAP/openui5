@@ -94,6 +94,7 @@ sap.ui.define([
 	var sNavigateKey;
 	var sNavigateId;
 	var oNavigateCondition;
+	var sNavigateItemId;
 	var iDataUpdate = 0;
 	var sDataUpdateId;
 	var iOpen = 0;
@@ -118,6 +119,7 @@ sap.ui.define([
 		sNavigateKey = oEvent.getParameter("key");
 		sNavigateId = oEvent.oSource.getId();
 		oNavigateCondition = oEvent.getParameter("condition");
+		sNavigateItemId = oEvent.getParameter("itemId");
 	};
 
 	var _myDataUpdateHandler = function(oEvent) {
@@ -294,6 +296,7 @@ sap.ui.define([
 		sNavigateKey = undefined;
 		sNavigateId = undefined;
 		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
 		iDataUpdate = 0;
 		sDataUpdateId = undefined;
 		iOpen = 0;
@@ -824,6 +827,18 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getRoleDescription", function(assert) {
+
+		assert.strictEqual(oFieldHelp.getRoleDescription(), null, "no role description returned as default");
+
+		oFieldHelp.connect(oField2);
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var sText = oResourceBundle.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION");
+
+		assert.strictEqual(oFieldHelp.getRoleDescription(), sText, "no role description returned for multi-combobox");
+
+	});
+
 	QUnit.module("Connect", {
 		beforeEach: _initFieldHelp,
 		afterEach: _teardown
@@ -1154,7 +1169,7 @@ sap.ui.define([
 		assert.equal(iOpen, 1, "Open event fired");
 		oClock.tick(iPopoverDuration); // fake opening time
 
-		oWrapper.fireNavigate({key: "I1", description: "Item 1"});
+		oWrapper.fireNavigate({key: "I1", description: "Item 1", itemId: "Item1"});
 		var oPopover = oFieldHelp.getAggregation("_popover");
 		if (oPopover) {
 			assert.ok(bOpenSuggest, "Open as suggestion");
@@ -1170,12 +1185,13 @@ sap.ui.define([
 			assert.notOk(oNavigateCondition.hasOwnProperty("outParameters"), "no out-parameters set");
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
 			assert.notOk(oFieldHelp.isFocusInHelp.returnValues[0], "isFocusInHelp returns false");
+			assert.equal(sNavigateItemId, "Item1", "Navigate itemId");
 			oFieldHelp.isFocusInHelp.reset();
 
 			oFieldHelp.addInParameter(new InParameter({value: "{testIn}", helpPath: "myTestIn"}));
 			oFieldHelp.addOutParameter(new OutParameter({value: "{testOut}", helpPath: "myTestOut"}));
 			oFieldHelp.navigate(1);
-			oWrapper.fireNavigate({key: "I2", description: "Item 2", inParameters: {myTestIn: "X"}, outParameters: {myTestOut: "Y"}});
+			oWrapper.fireNavigate({key: "I2", description: "Item 2", inParameters: {myTestIn: "X"}, outParameters: {myTestOut: "Y"}, itemId: "Item2"});
 			assert.equal(iNavigate, 2, "Navigate event fired");
 			assert.equal(sNavigateValue, "Item 2", "Navigate event value");
 			assert.equal(sNavigateKey, "I2", "Navigate event key");
@@ -1186,6 +1202,7 @@ sap.ui.define([
 			assert.ok(oNavigateCondition.hasOwnProperty("outParameters"), "out-parameters set");
 			assert.ok(oNavigateCondition.outParameters && oNavigateCondition.outParameters.hasOwnProperty("testOut"), "out-parameters has 'testOut'");
 			assert.equal(oNavigateCondition.outParameters && oNavigateCondition.outParameters.testOut, "Y", "out-parameters 'testOut'");
+			assert.equal(sNavigateItemId, "Item2", "Navigate itemId");
 		}
 		oFieldHelp.close();
 		oClock.tick(iPopoverDuration); // fake closing time
@@ -1222,7 +1239,7 @@ sap.ui.define([
 			assert.equal(iOpen, 1, "Open event fired");
 			var oPopover = oFieldHelp.getAggregation("_popover");
 			if (oPopover) {
-				oWrapper.fireNavigate({key: "I1", description: "Item 1"});
+				oWrapper.fireNavigate({key: "I1", description: "Item 1", itemId: "Item1"});
 				assert.ok(bOpenSuggest, "Open as suggestion");
 				assert.ok(oPopover.isOpen(), "Field help opened");
 				assert.equal(iNavigate, 1, "Navigate event fired");
@@ -1233,6 +1250,7 @@ sap.ui.define([
 				assert.equal(oNavigateCondition.values[0], "I1", "NavigateEvent condition key");
 				assert.equal(oNavigateCondition.values[1], "Item 1", "NavigateEvent condition description");
 				assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
+				assert.equal(sNavigateItemId, "Item1", "Navigate itemId");
 			}
 			oFieldHelp.close();
 			oClock.tick(iPopoverDuration); // fake closing time

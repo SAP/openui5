@@ -56,13 +56,11 @@ sap.ui.define([
 				resolve(this.aPropertyInfo);
 			}.bind(this));
 
-			this.oAdaptationController.aPropertyInfo = this.aPropertyInfo;
-
-			//stub '_retrievePropertyInfo'
-			sinon.stub(this.oAdaptationController, "_retrievePropertyInfo").returns(oPropertyInfoPromise);
+			sinon.stub(TableDelegate, "fetchProperties").returns(Promise.resolve(oPropertyInfoPromise));
 		},
 		afterEach: function () {
 			this.oTable.destroy();
+			TableDelegate.fetchProperties.restore();
 			this.oAdaptationController.destroy();
 		}
 	});

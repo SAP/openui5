@@ -125,7 +125,7 @@ sap.ui.define(function () {
 					'./dnd/GridDragOver.qunit'
 				],
 				sinon: {
-					useFakeTimers: false
+					useFakeTimers: true
 				}
 			},
 			"GridList": {

@@ -229,7 +229,7 @@ sap.ui.define([
 			this.navigationList = getNavigationList();
 			oPage.addContent(this.navigationList);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.navigationList.destroy();
@@ -242,7 +242,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("created", function (assert) {
-		assert.ok(sap.ui.getCore().byId(this.navigationList.getId()), "created");
+		assert.ok(Core.byId(this.navigationList.getId()), "created");
 	});
 
 	QUnit.test("contains elements and classes", function (assert) {
@@ -264,7 +264,7 @@ sap.ui.define([
 		assert.notOk(this.navigationList.$().hasClass('sapTntNavLICollapsed'), "expanded mode is ok");
 
 		this.navigationList.setExpanded(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(this.navigationList.$().hasClass('sapTntNavLICollapsed'), "collapsed mode is ok");
 	});
@@ -274,7 +274,7 @@ sap.ui.define([
 		assert.notOk(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapTntNavLIHiddenGroupItems'), "sapTntNavLIHiddenGroupItems class is not set");
 
 		this.navigationList.getItems()[2].setExpanded(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapTntNavLIHiddenGroupItems'), "sapTntNavLIHiddenGroupItems class is set");
 	});
@@ -284,7 +284,7 @@ sap.ui.define([
 			this.navigationList = getNavigationList('rootChild1');
 			oPage.addContent(this.navigationList);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.navigationList.destroy();
@@ -317,6 +317,9 @@ sap.ui.define([
 
 	QUnit.test('ARIA attributes', function (assert) {
 
+		var sExpectedAriaRoleDescription = Core.getLibraryResourceBundle("sap.tnt")
+			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM");
+
 		// aria-level
 		this.navigationList.$().find('li:not(.sapTntNavLIGroupItem)').each(function (index, item) {
 			assert.ok(item.getAttribute('aria-level') === null, 'first level "li" element does not have ARIA attributes.');
@@ -339,7 +342,7 @@ sap.ui.define([
 		assert.strictEqual(currentItem.getAttribute('aria-selected'), 'true', jQuery(currentItem).text() + ' has ARIA attribute selected true.');
 
 		this.navigationList.getItems()[0].setExpanded(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		currentItem = this.navigationList.$().find('li')[0];
 		assert.notOk(currentItem.getAttribute('aria-expanded'), jQuery(currentItem).text() + ' do not have ARIA attribute expanded.');
 
@@ -347,7 +350,7 @@ sap.ui.define([
 		assert.notOk(currentItemNoChildren.getAttribute('aria-expanded'), jQuery(currentItemNoChildren).text() + ' has no ARIA attribute expanded.');
 
 		this.navigationList.setExpanded(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var currentItemCollapsed = this.navigationList.$().find('div.sapTntNavLIGroup')[2];
 		assert.notOk(currentItemCollapsed.getAttribute('aria-expanded'), 'Root 2 has no ARIA attribute expanded when NavigationList is collapsed.');
 		assert.strictEqual(currentItemCollapsed.parentElement.getAttribute('aria-checked'), 'false', 'aria-checked is set to false.');
@@ -357,12 +360,15 @@ sap.ui.define([
 
 		//aria-haspopup
 		this.navigationList.setExpanded(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(currentItem.getAttribute("aria-haspopup"), null, "no aria-haspopup attribute when NavigationList is expanded");
 
 		this.navigationList.setExpanded(false);
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(currentItem.getAttribute("aria-haspopup"), "tree", "aria-haspopup is of type menu when NavigationList is collapsed");
+		Core.applyChanges();
+		assert.strictEqual(currentItem.getAttribute("aria-haspopup"), "tree", "aria-haspopup is of type tree when NavigationList is collapsed");
+
+		//aria-roledescription
+		assert.equal(currentItem.getAttribute('aria-roledescription'), sExpectedAriaRoleDescription, jQuery(currentItem).text() + ' has ARIA attribute roledescription.');
 	});
 
 	QUnit.module("ARIA - Accessibility Text", {
@@ -370,7 +376,7 @@ sap.ui.define([
 			this.navigationList = getNavigationList();
 			oPage.addContent(this.navigationList);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.navigationList.destroy();
@@ -393,6 +399,7 @@ sap.ui.define([
 		var secondLevelItem = groupItem.getItems()[2];
 
 		this.navigationList.setSelectedItem(secondLevelItem);
+		Core.applyChanges();
 
 		secondLevelItem.onfocusin({
 			srcControl: secondLevelItem
@@ -520,17 +527,17 @@ sap.ui.define([
 
 		this.navigationList = getNavigationList('child1');
 		oPage.addContent(this.navigationList);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.navigationList._selectedItem.getText(), 'Child 1', 'initial selection is correct');
 
 		this.navigationList.setSelectedKey('child3');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.navigationList._selectedItem.getText(), 'Child 3', 'selection is correct');
 
 		this.navigationList.setSelectedKey('');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.notOk(this.navigationList._selectedItem,'selection is removed');
 	});
@@ -541,7 +548,7 @@ sap.ui.define([
 		var oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
 
 		oPage.addContent(this.navigationList);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.notOk(this.navigationList._selectedItem, 'no initial selection');
 
@@ -559,7 +566,7 @@ sap.ui.define([
 			this.navigationList = getNavigationList();
 			oPage.addContent(this.navigationList);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.navigationList.destroy();
@@ -581,7 +588,7 @@ sap.ui.define([
 		// act
 		$groupIcon.trigger('tap');
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		setTimeout(function () {
 			// assert
@@ -634,7 +641,7 @@ sap.ui.define([
 
 		$group.trigger('tap');
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// wait 500ms
 		this.clock.tick(500);
@@ -665,7 +672,7 @@ sap.ui.define([
 
 		$groupItem.trigger('tap');
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// wait 500ms
 		this.clock.tick(500);
@@ -688,12 +695,12 @@ sap.ui.define([
 		var oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
 
 		this.navigationList.setExpanded(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var $item = jQuery('.sapTntNavLI .sapTntNavLIGroup').first();
 		$item.trigger('tap');
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// wait 500ms
 		this.clock.tick(500);
@@ -710,14 +717,23 @@ sap.ui.define([
 		var $groupItem = jQuery('.sapTntNavLI .sapTntNavLIGroupItem').first();
 		var popover = $groupItem.closest('.sapMPopover').control()[0];
 
+		var sExpectedAriaRoleDescription = Core.getLibraryResourceBundle("sap.tnt")
+			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE");
 
 		assert.strictEqual($list[0].getAttribute("role"), "tree", "Role of the popup ul should be menubar");
+		assert.strictEqual($list[0].getAttribute("aria-roledescription"), sExpectedAriaRoleDescription, "Role description of the popup is as expected");
+
+		sExpectedAriaRoleDescription = Core.getLibraryResourceBundle("sap.tnt")
+			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE_ITEM");
+
 		assert.strictEqual($InnerListItem.getAttribute("role"), "treeitem", "Role of the popup li should be treeitem");
+		assert.strictEqual($InnerListItem.getAttribute("aria-roledescription"), sExpectedAriaRoleDescription, "Role description of the popup is as expected");
+
 		assert.ok(popover.oPopup.getOpenState() === sap.ui.core.OpenState.OPEN, "should change popover status to OPEN");
 
 		$groupItem.trigger('tap');
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// wait 500ms
 		this.clock.tick(500);

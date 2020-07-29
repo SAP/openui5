@@ -875,7 +875,7 @@ sap.ui.define([
 
 			fP13nModeSpy = sinon.spy(this.oTable, "_updatep13nSettings");
 			assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-			assert.equal(this.oTable.getP13nMode(), undefined);
+			assert.deepEqual(this.oTable.getP13nMode(), []);
 			assert.ok(fP13nModeSpy.notCalled);
 			assert.equal(this.oTable._oToolbar.getEnd().length, 0);
 
@@ -984,7 +984,7 @@ sap.ui.define([
 					assert.equal(this.oTable._oTable.getThreshold(), this.oTable.getThreshold());
 
 					this.oTable.setP13nMode();
-					assert.deepEqual(this.oTable.getP13nMode(), undefined);
+					assert.deepEqual(this.oTable.getP13nMode(), []);
 					assert.ok(fP13nModeSpy.calledThrice);
 					assert.equal(this.oTable._oToolbar.getEnd().length, 0, "Nothing is shown if p13nMode is not set");
 					done();
@@ -3709,6 +3709,10 @@ sap.ui.define([
 			return wait(50);
 		}).then(function() {
 			assert.ok(!hasFilterInfoBar(that.oTable), "Change filter conditions: Filter info bar does not exist");
+
+			that.oTable.setP13nMode(["Filter"]);
+			assert.ok(hasFilterInfoBar(that.oTable), "Filtering enabled: Filter info bar exists");
+			assert.ok(!getFilterInfoBar(that.oTable).getVisible(), "Filtering enabled: Filter info bar is invisible");
 		});
 	});
 
@@ -3720,10 +3724,10 @@ sap.ui.define([
 
 			this.oTable.destroy();
 			this.oTable = new Table({
-				type: sTableType
+				type: sTableType,
+				p13nMode: ["Filter"]
 			});
 
-			sinon.stub(Table.prototype, "_getFilterEnabled").returns(true);
 			stubFetchProperties([
 				{
 					name: "name",
@@ -3758,6 +3762,7 @@ sap.ui.define([
 						})
 					],
 					type: sTableType,
+					p13nMode: ["Filter"],
 					filterConditions: {
 						name: [
 							{
@@ -3862,7 +3867,7 @@ sap.ui.define([
 			}).then(function() {
 				var oFilterInfoBar = getFilterInfoBar(that.oTable);
 
-				Table.prototype._getFilterEnabled.restore();
+				that.oTable.setP13nMode();
 
 				oFilterInfoBar.focus();
 				assert.strictEqual(document.activeElement, oFilterInfoBar.getFocusDomRef(), "The filter info bar is focused");
@@ -3878,6 +3883,35 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Filter info bar after changing table type", function(assert) {
+		var that = this;
+
+		this.oTable.destroy();
+		this.oTable = new Table({
+			p13nMode: ["Filter"]
+		});
+
+		return this.oTable.initialized().then(function() {
+			that.oTable.setType("ResponsiveTable");
+			return that.oTable.initialized();
+		}).then(function() {
+			assert.ok(hasFilterInfoBar(that.oTable), "Changed from \"Table\" to \"ResponsiveTable\": Filter info bar exists");
+			assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
+				return sId === getFilterInfoText(that.oTable).getId();
+			}).length, 1, "Changed from \"Table\" to \"ResponsiveTable\": The filter info bar text is in the \"ariaLabelledBy\" association of the"
+						  + " table");
+		}).then(function() {
+			that.oTable.setType("Table");
+			return that.oTable.initialized();
+		}).then(function() {
+			assert.ok(hasFilterInfoBar(that.oTable), "Changed from \"ResponsiveTable\" to \"Table\": Filter info bar exists");
+			assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
+				return sId === getFilterInfoText(that.oTable).getId();
+			}).length, 1, "Changed from \"ResponsiveTable\" to \"Table\": The filter info bar text is in the \"ariaLabelledBy\" association of the"
+						  + " table");
+		});
+	});
+
 	QUnit.test("Press the filter info bar", function(assert) {
 		var that = this;
 
@@ -3887,8 +3921,7 @@ sap.ui.define([
 				"name"
 			]
 		}));
-
-		sinon.stub(this.oTable, "_getFilterEnabled").returns(true);
+		this.oTable.setP13nMode(["Filter"]);
 
 		return this.oTable.initialized().then(function() {
 			stubFetchProperties([
@@ -3956,5 +3989,22 @@ sap.ui.define([
 			getFilterInfoBar(that.oTable).focus();
 			assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 		});
+	});
+
+	QUnit.test("Internal and external filtering", function(assert) {
+		this.oTable.setFilter("some_id");
+
+		assert.throws(function() {
+			this.oTable.setP13nMode(["Filter"]);
+		}.bind(this), "Enabling the \"Filter\" p13nMode throws an error if there is an external filter");
+		assert.ok(this.oTable.getP13nMode().indexOf("Filter") === -1, "The \"Filter\" p13nMode is not enabled");
+
+		this.oTable.setFilter();
+		this.oTable.setP13nMode(["Filter"]);
+
+		assert.throws(function() {
+			this.oTable.setFilter("some_id");
+		}.bind(this), "Setting an external filter throws an error if the p13nMode \"Filter\" is enabled");
+		assert.ok(!this.oTable.getFilter(), "The external filter is not set");
 	});
 });

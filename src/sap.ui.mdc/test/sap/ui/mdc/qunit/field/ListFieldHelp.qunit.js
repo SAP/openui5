@@ -49,6 +49,7 @@ sap.ui.define([
 	var sNavigateValue;
 	var sNavigateKey;
 	var oNavigateCondition;
+	var sNavigateItemId;
 	var iDataUpdate = 0;
 	var iOpen = 0;
 
@@ -68,6 +69,7 @@ sap.ui.define([
 		sNavigateValue = oEvent.getParameter("value");
 		sNavigateKey = oEvent.getParameter("key");
 		oNavigateCondition = oEvent.getParameter("condition");
+		sNavigateItemId = oEvent.getParameter("itemId");
 	};
 
 	var _myDataUpdateHandler = function(oEvent) {
@@ -108,6 +110,7 @@ sap.ui.define([
 		sNavigateValue = undefined;
 		sNavigateKey = undefined;
 		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
 		iDataUpdate = 0;
 		iOpen = 0;
 		ListFieldHelp._init();
@@ -116,9 +119,9 @@ sap.ui.define([
 	QUnit.module("ListFieldHelp", {
 		beforeEach: function() {
 			oFieldHelp = new ListFieldHelp("F1-H", {
-				items: [new ListItem({text: "Item1", additionalText: "Text1", key: "I1"}),
-						new ListItem({text: "Item2", additionalText: "Text2", key: "I2"}),
-						new ListItem({text: "X-Item3", additionalText: "Text3", key: "I3"})
+				items: [new ListItem("item1", {text: "Item1", additionalText: "Text1", key: "I1"}),
+						new ListItem("item2", {text: "Item2", additionalText: "Text2", key: "I2"}),
+						new ListItem("item3", {text: "X-Item3", additionalText: "Text3", key: "I3"})
 					   ],
 				disconnect: _myDisconnectHandler,
 				select: _mySelectHandler,
@@ -245,6 +248,7 @@ sap.ui.define([
 			assert.equal(oNavigateCondition.values[0], "I1", "NavigateEvent condition key");
 			assert.equal(oNavigateCondition.values[1], "Item1", "NavigateEvent condition description");
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-0", "Navigate itemId");
 			var aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], "I1", "conditions key");
@@ -259,6 +263,7 @@ sap.ui.define([
 			assert.equal(oNavigateCondition.values[0], "I2", "NavigateEvent condition key");
 			assert.equal(oNavigateCondition.values[1], "Item2", "NavigateEvent condition description");
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-1", "Navigate itemId");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], "I2", "conditions key");
@@ -273,6 +278,7 @@ sap.ui.define([
 			assert.equal(oNavigateCondition.values[0], "I1", "NavigateEvent condition key");
 			assert.equal(oNavigateCondition.values[1], "Item1", "NavigateEvent condition description");
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-0", "Navigate itemId");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], "I1", "conditions key");
@@ -291,6 +297,7 @@ sap.ui.define([
 			assert.equal(oNavigateCondition.values[0], "I3", "NavigateEvent condition key");
 			assert.equal(oNavigateCondition.values[1], "X-Item3", "NavigateEvent condition description");
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-2", "Navigate itemId");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], "I3", "conditions key");
@@ -306,6 +313,7 @@ sap.ui.define([
 			assert.equal(oNavigateCondition.values[0], "I3", "NavigateEvent condition key");
 			assert.equal(oNavigateCondition.values[1], "X-Item3", "NavigateEvent condition description");
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-2", "Navigate itemId");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], "I3", "conditions key");
@@ -324,6 +332,7 @@ sap.ui.define([
 			assert.equal(oNavigateCondition.values[0], "I1", "NavigateEvent condition key");
 			assert.equal(oNavigateCondition.values[1], "Item1", "NavigateEvent condition description");
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-0", "Navigate itemId");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], "I1", "conditions key");

@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/IconPool",
 	"sap/ui/base/BindingParser",
-	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString"
+	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
+	"./IsInIconPool.validator"
 ], function (
 	BasePropertyEditor,
 	ListItem,
@@ -20,7 +21,8 @@ sap.ui.define([
 	FilterOperator,
 	IconPool,
 	BindingParser,
-	isValidBindingString
+	isValidBindingString,
+	IsInIconPoolValidator
 ) {
 	"use strict";
 
@@ -28,7 +30,7 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * Constructor for a new <code>IconEditor</code>.
+	 * Constructor for a <code>IconEditor</code>.
 	 * This allows to set icon URIs or binding strings for a specified property of a JSON object.
 	 * The editor is rendered as a {@link sap.m.Input} with a {@link sap.m.SelectDialog} value help.
 	 * To get notified about changes made with the editor, you can use the <code>attachValueChange</code> method,
@@ -73,31 +75,13 @@ sap.ui.define([
 		return oIconModel;
 	};
 
-	IconEditor.prototype._onLiveChange = function(oEvent) {
+	IconEditor.prototype._onChange = function(oEvent) {
 		var sIconInput = oEvent.getParameter("value");
-		// OPEN TASK for UICSFLEX-7061:
-		// Replace custom validation with validators
-		if (this._isValid(sIconInput)) {
-			this.setValue(sIconInput);
-		}
+		this.setValue(sIconInput);
 	};
 
 	IconEditor.prototype._onSuggestionItemSelected = function(oEvent) {
 		this.setValue(oEvent.getParameter("selectedItem").getText());
-	};
-
-	IconEditor.prototype._isValid = function (sSelectedIcon) {
-		var oInput = this.getContent();
-		var bIsValidIcon = IconPool.isIconURI(sSelectedIcon) && !!IconPool.getIconInfo(sSelectedIcon);
-
-		if (sSelectedIcon && !bIsValidIcon && !isValidBindingString(sSelectedIcon, false)) {
-			oInput.setValueState("Error");
-			oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.ICON.INVALID_BINDING_OR_ICON"));
-			return false;
-		}
-
-		oInput.setValueState("None");
-		return true;
 	};
 
 	IconEditor.prototype._getDefaultSearchValue = function (sSelectedIcon) {
@@ -149,6 +133,31 @@ sap.ui.define([
 			this.setValue(oSelectedItem.getIcon());
 		}
 		oEvent.getSource().getBinding("items").filter([]);
+	};
+
+	IconEditor.prototype.getDefaultValidators = function () {
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getDefaultValidators.call(this),
+			{
+				isValidBinding: {
+					type: "isValidBinding"
+				},
+				isInIconPool: {
+					type: "isInIconPool"
+				}
+			}
+		);
+	};
+
+	IconEditor.prototype.getDefaultValidatorModules = function () {
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getDefaultValidatorModules.apply(this, arguments),
+			{
+				isInIconPool: IsInIconPoolValidator
+			}
+		);
 	};
 
 	return IconEditor;

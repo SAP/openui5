@@ -2,25 +2,31 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/util/restricted/_CancelablePromise",
+	"sap/base/util/restricted/_isEqual",
+	"sap/base/util/restricted/_omit",
+	"sap/base/util/restricted/_toArray",
 	"sap/base/util/deepEqual",
 	"sap/base/util/each",
 	"sap/base/util/merge",
 	"sap/base/util/deepClone",
 	"sap/base/util/ObjectPath",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"sap/base/util/restricted/_CancelablePromise",
-	"sap/base/util/restricted/_toArray",
+	"sap/ui/integration/util/CardMerger",
 	"sap/ui/thirdparty/jquery",
 	"./config/index"
-], function (
+], function(
+	CancelablePromise,
+	_isEqual,
+	_omit,
+	_toArray,
 	deepEqual,
 	each,
 	merge,
 	deepClone,
 	ObjectPath,
 	BaseEditor,
-	CancelablePromise,
-	_toArray,
+	CardMerger,
 	jQuery,
 	oDefaultCardConfig
 ) {
@@ -34,9 +40,13 @@ sap.ui.define([
 	var CardEditor = BaseEditor.extend("sap.ui.integration.designtime.cardEditor.CardEditor", {
 		metadata: {
 			properties: {
-				"layout": {
+				layout: {
 					type: "string",
 					defaultValue: "form"
+				},
+				designtimeChanges: {
+					type: "array",
+					defaultValue: []
 				}
 			}
 		},
@@ -101,7 +111,10 @@ sap.ui.define([
 
 	};
 
-	CardEditor.prototype.setJson = function (oJson) {
+	CardEditor.prototype.setJson = function () {
+		BaseEditor.prototype.setJson.apply(this, arguments);
+
+		var oJson = this.getJson();
 		var sCardId = ObjectPath.get(["sap.app", "id"], oJson);
 
 		if (this._bDesigntimeInit && this._bCardId !== sCardId) {
@@ -159,16 +172,22 @@ sap.ui.define([
 					this._addSpecificConfig(merge({}, oConfig));
 
 					// Metadata
-					// TODO: Merge file content with delta changes
 					var oDesigntimeMetadata = aDesigntimeFiles[1];
+					oDesigntimeMetadata = CardMerger.mergeCardDesigntimeMetadata(oDesigntimeMetadata, this.getDesigntimeChanges());
 
 					this._oInitialDesigntimeMetadata = oDesigntimeMetadata;
 					this.setDesigntimeMetadata(formatImportedDesigntimeMetadata(oDesigntimeMetadata), true);
 				}.bind(this));
 			}
 		}
+	};
 
-		BaseEditor.prototype.setJson.apply(this, arguments);
+	CardEditor.prototype.setDesigntimeChanges = function(aDesigntimeChanges) {
+		if (this._oInitialDesigntimeMetadata) {
+			throw Error("Designtime Changes can only be set initially");
+		}
+
+		this.setProperty("designtimeChanges", aDesigntimeChanges);
 	};
 
 	function formatImportedDesigntimeMetadata (oFlatMetadata) {
@@ -188,37 +207,109 @@ sap.ui.define([
 	}
 
 	/**
+	 * Returns a promise with a runtime change and a designtime change
+	 *
+	 * @param {object} oPropertyBag - Property bag
+	 * @param {String} oPropertyBag.layer - Layer of the Change
+	 * @returns {Promise<object>} Promise with both designtime and runtime change
+	 */
+	CardEditor.prototype.getChanges = function(oPropertyBag) {
+		return Promise.all([
+			this.getDeltaChangeDefinition(oPropertyBag),
+			this.getDesigntimeChangeDefinition(oPropertyBag)
+		]).then(function(aChanges) {
+			return {
+				runtimeChange: aChanges[0],
+				designtimeChange: aChanges[1]
+			};
+		});
+	};
+
+	function createChangeDefinition(mParameters) {
+		return new Promise(function(resolve) {
+			sap.ui.require(["sap/ui/fl/Change"], function(Change) {
+				var oChangeDefinition = Change.createInitialFileContent(mParameters);
+				// by default the function createInitialFileContent sets the creation to ""
+				oChangeDefinition.creation = new Date().toISOString();
+				resolve(oChangeDefinition);
+			});
+		});
+	}
+
+	/**
+	 * @param {object} oPropertyBag - Property bag
+	 * @param {String} oPropertyBag.layer - Layer of the Change
+	 * @returns {Promise<object>} Promise with the change definition for the designtime delta change
+	 */
+	CardEditor.prototype.getDesigntimeChangeDefinition = function(oPropertyBag) {
+		var aChanges = [];
+		var oOldValue = Object.assign({}, this._oInitialDesigntimeMetadata);
+		var oNewValue = this.getDesigntimeMetadata();
+		each(oNewValue, function(sKey, vValue) {
+			if (oOldValue.hasOwnProperty(sKey)) {
+				if (!_isEqual(oOldValue[sKey], vValue)) {
+					aChanges.push({
+						propertyPath: sKey,
+						operation: "UPDATE",
+						propertyValue: vValue
+					});
+				}
+				delete oOldValue[sKey];
+			} else {
+				aChanges.push({
+					propertyPath: sKey,
+					operation: "INSERT",
+					propertyValue: vValue
+				});
+			}
+		});
+
+		each(oOldValue, function(sKey) {
+			aChanges.push({
+				propertyPath: sKey,
+				operation: "DELETE"
+			});
+		});
+
+		if (!aChanges.length) {
+			return Promise.reject("No Change");
+		}
+
+		var oCurrentJson = this.getJson();
+		var mParameters = merge({}, _omit(oPropertyBag, ["oldValue", "newValue"]));
+		mParameters.content = {
+			entityPropertyChange: aChanges
+		};
+		mParameters.changeType = "appdescr_card_designtime";
+		mParameters.generator = "CardEditor";
+		mParameters.selector = {};
+		mParameters.reference = ObjectPath.get(["sap.app", "id"], oCurrentJson);
+
+		return createChangeDefinition(mParameters);
+	};
+
+	/**
 	 *
 	 * @param {Object} oPropertyBag - Property bag
 	 * @param {String} oPropertyBag.layer - Layer of the Change
 	 * @returns {Promise<object>} Promise with the change definition for the current delta changes
 	 */
 	CardEditor.prototype.getDeltaChangeDefinition = function(oPropertyBag) {
-		return new Promise(function (resolve, reject) {
-			sap.ui.require(["sap/ui/fl/Change"], function (Change) {
-				var oCurrentJson = this.getJson();
-				var mParameters = merge({}, oPropertyBag);
-				mParameters.content = getCardConfigurationDeltaForChange(oCurrentJson, this._oInitialJson);
+		var oCurrentJson = this.getJson();
+		var mParameters = merge({}, oPropertyBag);
+		mParameters.content = getCardConfigurationDeltaForChange(oCurrentJson, this._oInitialJson);
 
-				if (!mParameters.content) {
-					reject("No Change");
-				}
+		if (!mParameters.content) {
+			return Promise.reject("No Change");
+		}
 
-				mParameters.changeType = oCurrentJson.hasOwnProperty("sap.card") ? "appdescr_card" : "appdescr_widget";
-				mParameters.creation = new Date().toISOString();
-				mParameters.generator = "CardEditor";
-				mParameters.selector = {};
-				mParameters.reference = ObjectPath.get(["sap.app", "id"], oCurrentJson);
+		this._oInitialJson = oCurrentJson;
+		mParameters.changeType = oCurrentJson.hasOwnProperty("sap.card") ? "appdescr_card" : "appdescr_widget";
+		mParameters.generator = "CardEditor";
+		mParameters.selector = {};
+		mParameters.reference = ObjectPath.get(["sap.app", "id"], oCurrentJson);
 
-				var oChangeDefinition = Change.createInitialFileContent(mParameters);
-				// by default the function createInitialFileContent sets the creation to ""
-				oChangeDefinition.creation = new Date().toISOString();
-
-				this._oInitialJson = oCurrentJson;
-
-				resolve(oChangeDefinition);
-			}.bind(this));
-		}.bind(this));
+		return createChangeDefinition(mParameters);
 	};
 
 	return CardEditor;

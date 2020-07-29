@@ -40,7 +40,7 @@ sap.ui.define([
 		return oJson;
 	}
 
-	QUnit.module("getDeltaChangeDefinition", {
+	QUnit.module("mergeCardDelta", {
 		beforeEach: function() {
 			this.oBaseJson = getBaseJson("sap.card");
 			this.oChange1 = {
@@ -228,6 +228,101 @@ sap.ui.define([
 		});
 	});
 
+	function createDTChange(aChanges) {
+		return {
+			content: {
+				entityPropertyChange: aChanges
+			}
+		};
+	}
+
+	QUnit.module("mergeCardDesigntimeMetadata", {
+		beforeEach: function() {
+			this.oBaseDTMetadata = {
+				"path/to/key/1": "foo",
+				"path/to/key/2": { bar: "foobar" },
+				"path/to/key/3": true,
+				"path/to/key/4": false,
+				"path/to/key/5": "foo"
+			};
+			this.oChange1 = {
+				propertyPath: "path/to/key/1",
+				operation: "UPDATE",
+				propertyValue: "newValue"
+			};
+			this.oChange2 = {
+				propertyPath: "path/to/key/4",
+				operation: "UPDATE",
+				propertyValue: true
+			};
+			this.oChange3 = {
+				propertyPath: "path/to/key/3",
+				operation: "UPDATE",
+				propertyValue: false
+			};
+			this.oChange4 = {
+				propertyPath: "path/to/key/5",
+				operation: "DELETE"
+			};
+			this.oChange5 = {
+				propertyPath: "path/to/key/6",
+				operation: "INSERT",
+				propertyValue: "newInsert"
+			};
+			this.oChange6 = {
+				propertyPath: "path/to/key/5",
+				operation: "UPDATE",
+				propertyValue: "value"
+			};
+			this.oChange7 = {
+				propertyPath: "path/to/key/1",
+				operation: "UPDATE",
+				propertyValue: "newNewValue"
+			};
+			this.oChange8 = {
+				propertyPath: "path/to/key/2",
+				operation: "UPDATE",
+				propertyValue: { newObject: "foo" }
+			};
+			this.oChange9 = {
+				propertyPath: "path/to/key/6",
+				operation: "INSERT",
+				propertyValue: "newNewInsert"
+			};
+		},
+		afterEach: function() {
+		}
+	}, function() {
+		QUnit.test("with multiple changes in one change", function(assert) {
+			var oExpectedDTMetadata = {
+				"path/to/key/1": "newValue",
+				"path/to/key/2": { newObject: "foo" },
+				"path/to/key/3": false,
+				"path/to/key/4": true,
+				"path/to/key/6": "newInsert"
+			};
+			var oChange = createDTChange([this.oChange1, this.oChange2, this.oChange3, this.oChange4, this.oChange5, this.oChange8]);
+
+			assert.deepEqual(CardMerger.mergeCardDesigntimeMetadata(this.oBaseDTMetadata, [oChange]), oExpectedDTMetadata, "the changes got merged correctly");
+		});
+
+		QUnit.test("with multiple changes in multiple changes", function(assert) {
+			var oExpectedDTMetadata = {
+				"path/to/key/1": "newNewValue",
+				"path/to/key/2": { bar: "foobar" },
+				"path/to/key/3": true,
+				"path/to/key/4": false,
+				"path/to/key/6": "newInsert"
+			};
+			var oChange1 = createDTChange([this.oChange4, this.oChange5, this.oChange1]);
+			// second delete is ignored
+			var oChange2 = createDTChange([this.oChange4, this.oChange7]);
+			// second insert and update after delete are ignored
+			var oChange3 = createDTChange([this.oChange6, this.oChange9]);
+
+			assert.deepEqual(CardMerger.mergeCardDesigntimeMetadata(this.oBaseDTMetadata, [oChange1, oChange2, oChange3]), oExpectedDTMetadata, "the changes got merged correctly");
+		});
+	});
 
 	QUnit.done(function () {
 		document.getElementById("qunit-fixture").style.display = "none";

@@ -29,24 +29,25 @@
 		"type": "Object",
 		"data": {
 			"json": {
+				"showContactDetails": false,
 				"firstName": "Donna",
 				"lastName": "Moore",
 				"position": "Sales Executive",
 				"phone": "+1 202 555 5555",
-				"email": "my@mymail.com",
-				"photo": "./images/DonnaMoore.png",
+				"email": "",
+				"photo": "./DonnaMoore.png",
 				"manager": {
-					"firstName": "Alain",
+					"firstName": "",
 					"lastName": "Chevalier",
-					"photo": "./images/AlainChevalier.png"
+					"photo": "./AlainChevalier.png"
 				},
 				"company": {
 					"name": "Robert Brown Entertainment",
 					"address": "481 West Street, Anytown OH 45066, USA",
 					"email": "mail@mycompany.com",
 					"emailSubject": "Subject",
-					"website": "www.company_a.example.com",
-					"url": "http://www.company_a.example.com"
+					"website": "",
+					"url": ""
 				}
 			}
 		},
@@ -60,22 +61,27 @@
 		"content": {
 			"groups": [
 				{
+					"visible": "{showContactDetails}",
 					"title": "Contact Details",
 					"items": [
 						{
+							"visible": "{= !!${firstName}}",
 							"label": "First Name",
 							"value": "{firstName}"
 						},
 						{
+							"visible": "{= !!${lastName}}",
 							"label": "Last Name",
 							"value": "{lastName}"
 						},
 						{
+							"visible": "{= !!${phone}}",
 							"label": "Phone",
 							"value": "{phone}",
 							"type": "phone"
 						},
 						{
+							"visible": "{= !!${email}}",
 							"label": "Email",
 							"value": "{email}",
 							"type": "email"
@@ -83,41 +89,48 @@
 					]
 				},
 				{
+					"visible": "{= !!${company}}",
 					"title": "Company Details",
 					"items": [
 						{
+							"visible": "{= !!${company/name}}",
 							"label": "Company Name",
 							"value": "{company/name}"
 						},
 						{
+							"visible": "{= !!${company/address}}",
 							"label": "Address",
 							"value": "{company/address}"
 						},
 						{
+							"visible": "{= !!${company/email}}",
 							"label": "Email",
 							"value": "{company/email}",
 							"emailSubject": "{company/emailSubject}",
 							"type": "email"
 						},
 						{
+							"visible": "{= !!${company/website}}",
 							"label": "Website",
 							"value": "{company/website}",
-						  	"url": "{company/url}",
+							"url": "{company/url}",
 							"type": "link"
 						}
 					]
 				},
 				{
-				  "title": "Organizational Details",
-				  "items": [
+					"visible": "{= !!${manager/firstName} || !!${manager/lastName}}",
+					"title": "Organizational Details",
+					"items": [
 						{
+							"visible": "{= !!${manager/firstName} || !!${manager/lastName}}",
 							"label": "Direct Manager",
 							"value": "{manager/firstName} {manager/lastName}",
 							"icon": {
 								"src": "{manager/photo}"
 							}
 						}
-				  ]
+					]
 				}
 			]
 		}

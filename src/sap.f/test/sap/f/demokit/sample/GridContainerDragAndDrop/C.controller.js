@@ -28,15 +28,13 @@ sap.ui.define([
 				drop: function (oInfo) {
 					var oDragged = oInfo.getParameter("draggedControl"),
 						oDropped = oInfo.getParameter("droppedControl"),
-						oDragParent = oDragged.getParent(),
-						oDropParent = oDropped.getParent(),
 						sInsertPosition = oInfo.getParameter("dropPosition"),
-						iDragPosition = oDragParent.indexOfItem(oDragged),
-						iDropPosition = oDropParent.indexOfItem(oDropped);
+						iDragPosition = oGrid.indexOfItem(oDragged),
+						iDropPosition = oGrid.indexOfItem(oDropped);
 
-					oDragParent.removeItem(oDragged);
+					oGrid.removeItem(oDragged);
 
-					if (oDragParent === oDropParent && iDragPosition < iDropPosition) {
+					if (iDragPosition < iDropPosition) {
 						iDropPosition--;
 					}
 
@@ -44,7 +42,7 @@ sap.ui.define([
 						iDropPosition++;
 					}
 
-					oDropParent.insertItem(oDragged, iDropPosition);
+					oGrid.insertItem(oDragged, iDropPosition);
 					oGrid.focusItem(iDropPosition);
 				}
 			}));

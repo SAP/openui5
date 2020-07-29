@@ -232,13 +232,19 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 	 */
 	GridDragOver.prototype._showIndicator = function(mDropPosition, oDragEvent) {
 		var oDropContainer = this._oDropContainer,
+			oDropContainerDomRef = oDropContainer.getDomRefForSetting(this._sTargetAggregation) || oDropContainer.getDomRef(),
 			oTargetControl = mDropPosition.targetControl,
 			iTargetIndex = oDropContainer.indexOfAggregation(this._sTargetAggregation, oTargetControl),
-			$targetGridItem = this._findContainingGridItem(oTargetControl),
-			$insertTarget = $targetGridItem || oTargetControl.$(),
+			$targetGridItem,
+			$insertTarget,
 			mStyles;
 
-		if (oDropContainer.isA("sap.f.GridContainer")) {
+		if (oTargetControl) {
+			$targetGridItem = this._findContainingGridItem(oTargetControl);
+			$insertTarget = $targetGridItem || oTargetControl.$();
+		}
+
+		if ($insertTarget && oDropContainer.isA("sap.f.GridContainer")) {
 			// todo: find better way to find the item wrapper when it is not grid item, needed for IE
 			$insertTarget = $insertTarget.closest(".sapFGridContainerItemWrapper");
 		}
@@ -248,7 +254,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 				"grid-row-start": "span " + this._mDropIndicatorSize.rows,
 				"grid-column-start": "span " + this._mDropIndicatorSize.columns
 			};
-		} else if ($targetGridItem) { // target container is a grid
+		} else {
 			// indicator should be the same size as dragged item
 			mStyles = {
 				"grid-column-start": this._mDragItemDimensions.columnsSpan,
@@ -260,11 +266,13 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 			this._$indicator.css(mStyles);
 		}
 
-		if (mDropPosition.position == "Before") {
+		if ($insertTarget && mDropPosition.position == "Before") {
 			this._$indicator.insertBefore($insertTarget);
-		} else {
+		} else if ($insertTarget) {
 			this._$indicator.insertAfter($insertTarget);
 			iTargetIndex += 1;
+		} else {
+			oDropContainerDomRef.appendChild(this._$indicator[0]);
 		}
 
 		this._$indicator.show();
@@ -403,6 +411,14 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 			sBeforeOrAfter = "After";
 		}
 
+		if (!$target) {
+			// an empty grid
+			return {
+				targetControl: null,
+				position: "After"
+			};
+		}
+
 		if ($target.hasClass("sapUiDnDGridIndicator")) {
 			// the indicator is the target
 			return null;
@@ -518,7 +534,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 		var aItems = this._oDropContainer.getAggregation(this._sTargetAggregation),
 			$target;
 
-		if (aItems.length) {
+		if (aItems && aItems.length) {
 			$target = aItems[aItems.length - 1].$();
 		}
 

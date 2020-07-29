@@ -285,7 +285,17 @@ sap.ui.define([
 								type: "sap.m.SelectionDetailsActionLevel"
 							}
 						}
-					}
+					},
+                    dataPointsSelected:{
+					    parameters: {
+                            /**
+                             * The context of selected / deselected data points
+                             */
+					        dataContext: {
+					            type: "object"
+                            }
+                        }
+                    }
 				}
 			}
 		});
@@ -551,6 +561,21 @@ sap.ui.define([
 				oChart.setVisibleDimensions([]);
 				oChart.setVisibleMeasures([]);
 				oChart.setInResultDimensions([]);
+
+                //attach dataPointsSelected event to inner charts selection/deselection events
+                var fireDataPointsSelectedEvent = function(oEvent){
+                    this.fireDataPointsSelected({
+                        dataContext: oEvent.getParameters()
+                    });
+                };
+
+                oChart.attachSelectData(function(oEvent){
+                    fireDataPointsSelectedEvent.call(this, oEvent);
+                }.bind(this));
+
+                oChart.attachDeselectData(function(oEvent){
+                    fireDataPointsSelectedEvent.call(this, oEvent);
+                }.bind(this));
 
 				this._oObserver.observe(oChart, {
 					bindings: [

@@ -70,7 +70,16 @@ sap.ui.define([
 						 * In this case the field should get the focus.
 						 * @since: 1.79.0
 						 */
-						leave: { type: "boolean" }
+						leave: { type: "boolean" },
+
+						/**
+						 * The id of the navigated item
+						 *
+						 * This is the DOM reference needed for aria support to point to the navigated item
+						 *
+						 * @since 1.81.0
+						 */
+						itemId: { type: "string" }
 					}
 				},
 				/**

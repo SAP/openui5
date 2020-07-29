@@ -207,6 +207,15 @@ sap.ui.define([
 				width: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: ""},
 
 				/**
+				 * Defines the minimum height of the grid.
+				 *
+				 * Allows an empty grid to be available as a drop target.
+				 *
+				 * @experimental As of version 1.81 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release.
+				 */
+				minHeight: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "2rem"},
+
+				/**
 				 * If set to <code>true</code> the current range (large, medium or small) is defined by the size of the
 				 * container surrounding the <code>GridContainer</code>, instead of the device screen size (media Query).
 				 */
@@ -1583,8 +1592,17 @@ sap.ui.define([
 	 * @param {int} iIndex The index of the item, which will be focused.
 	 */
 	GridContainer.prototype.focusItem = function (iIndex) {
+		var aItemDomRefs,
+			oItemNavigation = this._oItemNavigation;
+
 		this._setItemNavigationItems();
-		this._oItemNavigation.getItemDomRefs()[iIndex].focus();
+
+		aItemDomRefs = oItemNavigation.getItemDomRefs();
+
+		if (aItemDomRefs[iIndex]) {
+			// @todo fix the focus when adding a new item into an empty grid
+			aItemDomRefs[iIndex].focus();
+		}
 	};
 
 	GridContainer.prototype._isItemWrapper = function (oElement) {

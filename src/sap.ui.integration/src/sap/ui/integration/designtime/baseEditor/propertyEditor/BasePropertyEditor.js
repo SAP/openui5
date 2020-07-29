@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
+	"sap/base/util/isPlainObject",
 	"sap/base/util/values",
 	"sap/base/util/each",
 	"sap/ui/integration/designtime/baseEditor/validator/ValidatorRegistry",
@@ -29,6 +30,7 @@ sap.ui.define([
 	createPromise,
 	deepClone,
 	deepEqual,
+	isPlainObject,
 	values,
 	each,
 	ValidatorRegistry,
@@ -330,7 +332,7 @@ sap.ui.define([
 	};
 
 	BasePropertyEditor.prototype.setDesigntimeMetadata = function (oValue) {
-		var oCurrentMetadata = this.getConfig().metadata;
+		var oCurrentMetadata = this.getDesigntimeMetadata();
 		var oNextMetadata = oValue;
 		var oConfig = this.getConfig();
 
@@ -343,6 +345,22 @@ sap.ui.define([
 		}
 	};
 
+	BasePropertyEditor.prototype.getDesigntimeMetadata = function () {
+		return (this.getConfig() || {}).designtime || {};
+	};
+
+	BasePropertyEditor.prototype.setDesigntimeMetadataValue = function (oValue) {
+		this.setDesigntimeMetadata(
+			Object.assign(
+				{},
+				this.getConfig().designtime,
+				{
+					__value: oValue
+				}
+			)
+		);
+	};
+
 	BasePropertyEditor.prototype.getNestedDesigntimeMetadata = function (sKey) {
 		var oDesigntimeMetadata = (this.getConfig() || {}).designtime || {};
 		return oDesigntimeMetadata[sKey];
@@ -351,6 +369,12 @@ sap.ui.define([
 	BasePropertyEditor.prototype.getNestedDesigntimeMetadataValue = function (sKey) {
 		return (this.getNestedDesigntimeMetadata(sKey) || {}).__value || {};
 	};
+
+	BasePropertyEditor.prototype.getDesigntimeMetadataValue = function () {
+		var oDesigntimeMetadata = (this.getConfig() || {}).designtime || {};
+		return oDesigntimeMetadata.__value || {};
+	};
+
 
 	BasePropertyEditor.prototype._getValidators = function () {
 		var oPropertyValidators = this.getConfig().validators || {};
@@ -364,9 +388,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * @typedef {object} ValidatorErrorMessage
+	 * @property {string} message - Custom error message i18n key with placeholders
+	 * @property {function} placeholders - Resolves placeholders for the <code>message</code>. Invoked with validator configuration as a single argument.
+
 	 * @typedef {object} ValidatorDefinition
 	 * @property {string} type - Validator type, must be defined by <code>getDefaultValidatorModules</code>
-	 * @property {string} errorMessage - Custom error message i18n key
+	 * @property {string|ValidatorErrorMessage} errorMessage - Custom error message i18n key
 	 * @property {Object<string, any>} config - Type-specific configuration
 	 * @property {boolean} isEnabled - Whether the validator should run
 	 */
@@ -399,6 +427,16 @@ sap.ui.define([
 			}
 
 			var oValidatorConfig = {};
+
+			var vErrorMessage = mValidatorDefinition.errorMessage || oValidator.errorMessage;
+			var aPlaceholders = [];
+			var sErrorMessage = vErrorMessage;
+
+			if (isPlainObject(vErrorMessage)) {
+				aPlaceholders = vErrorMessage.placeholders(mValidatorDefinition.config);
+				sErrorMessage = vErrorMessage.message;
+			}
+
 			Object.keys(mValidatorDefinition.config || {}).forEach(function (sConfigKey) {
 				var vConfigValue = mValidatorDefinition.config[sConfigKey];
 				if (typeof vConfigValue === "function") {
@@ -410,7 +448,7 @@ sap.ui.define([
 			return {
 				validator: oValidator,
 				config: oValidatorConfig,
-				errorMessage: mValidatorDefinition.errorMessage,
+				errorMessage: this.getI18nProperty(sErrorMessage, aPlaceholders),
 				type: mValidatorDefinition.type
 			};
 		}.bind(this));
@@ -428,7 +466,7 @@ sap.ui.define([
 
 		aValidators.forEach(function (oValidator) {
 			if (!oValidator.validator.validate(vValue, oValidator.config)) {
-				aErrors.push(oValidator.errorMessage || oValidator.validator.errorMessage);
+				aErrors.push(oValidator.errorMessage);
 			}
 		});
 		fnEvaluateResults();
@@ -439,7 +477,7 @@ sap.ui.define([
 	 * Can be overridden to handle error messages differently inside custom editors.
 	 *
 	 * @param {boolean} bHasError - Whether an error should be displayed
-	 * @param {string} sErrorMessage - i18n key for the error message
+	 * @param {string} sErrorMessage - Error message
 	 */
 	BasePropertyEditor.prototype.setInputState = function (bHasError, sErrorMessage) {
 		var oInput = this.getContent();
@@ -448,7 +486,7 @@ sap.ui.define([
 		}
 		if (bHasError) {
 			oInput.setValueState("Error");
-			oInput.setValueStateText(this.getI18nProperty(sErrorMessage));
+			oInput.setValueStateText(sErrorMessage);
 		} else {
 			oInput.setValueState("None");
 		}
@@ -757,9 +795,9 @@ sap.ui.define([
 		return oConfig;
 	};
 
-	BasePropertyEditor.prototype.getI18nProperty = function(sName) {
+	BasePropertyEditor.prototype.getI18nProperty = function(sName, aPlaceholders) {
 		if (this.getModel("i18n")) {
-			return this.getModel("i18n").getProperty(sName);
+			return this.getModel("i18n").getResourceBundle().getText(sName, aPlaceholders);
 		}
 		return sName;
 	};

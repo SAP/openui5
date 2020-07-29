@@ -165,7 +165,7 @@ sap.ui.define([
 	function _createList() {
 
 		if (!this._oList && List && DisplayListItem && mLibrary && !this._bListRequested) {
-			var oItemTemplate = new DisplayListItem({
+			var oItemTemplate = new DisplayListItem(this.getId() + "-item", {
 				type: mLibrary.ListType.Active,
 				label: "{$field>text}",
 				value: "{$field>additionalText}"
@@ -338,7 +338,7 @@ sap.ui.define([
 
 			this._oList.scrollToIndex(iSelectedIndex);
 
-			this.fireNavigate({key: vKey, value: oItem.getLabel(), condition: oCondition});
+			this.fireNavigate({key: vKey, value: oItem.getLabel(), condition: oCondition, itemId: oItem.getId()});
 		}
 
 	};

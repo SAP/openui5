@@ -148,10 +148,11 @@ sap.ui.define([
 			generateDataConfig(["content"], "content/", "content")
 		),
 		"propertyEditors": {
+			// base editors:
 			"enum" : "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor",
 			"select" : "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor",
 			"string" : "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-			"icon" : "sap/ui/integration/designtime/baseEditor/propertyEditor/iconEditor/IconEditor",
+			"simpleicon" : "sap/ui/integration/designtime/baseEditor/propertyEditor/iconEditor/IconEditor",
 			"array" : "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 			"parameters" : "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
 			"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
@@ -160,13 +161,15 @@ sap.ui.define([
 			"json": "sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor",
 			"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
 			"list": "sap/ui/integration/designtime/baseEditor/propertyEditor/listEditor/ListEditor",
-			"complexMap": "sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor",
 			"datetime": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateTimeEditor/DateTimeEditor",
 			"date": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateEditor/DateEditor",
+
+			// card editors
+			"icon" : "sap/ui/integration/designtime/cardEditor/propertyEditor/iconEditor/IconEditor",
+			"complexMap": "sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor",
 			"destinations": "sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor"
 		},
 		"validators": {
-			"pattern": "sap/ui/integration/designtime/cardEditor/validator/IsPatternMatch",
 			"patternList": "sap/ui/integration/designtime/cardEditor/validator/IsPatternMatchList"
 		},
 		"i18n" : "sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"

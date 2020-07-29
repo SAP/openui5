@@ -328,19 +328,47 @@ sap.ui.define([
 						title: 'Object',
 						target: 'exploreSamples',
 						key: 'object',
-						settings: {
-							columns: 5
-						},
-						manifestUrl: '/samples/object.json'
+						subSamples: [
+							{
+								title: 'Object',
+								key: 'object1',
+								manifestUrl: '/samples/object/object.json',
+								settings: {
+									columns: 5
+								}
+							},
+							{
+								title: 'Visible Object Attributes',
+								key: 'visibleObjects',
+								manifestUrl: '/samples/object/visibleObject.json',
+								settings: {
+									columns: 5
+								}
+							}
+						]
 					},
 					{
 						title: 'Table',
 						target: 'exploreSamples',
 						key: 'table',
-						settings: {
-							columns: 6
-						},
-						manifestUrl: '/samples/table.json'
+						subSamples: [
+							{
+								title: 'Table',
+								key: 'table1',
+								manifestUrl: '/samples/table/table.json',
+								settings: {
+									columns: 6
+								}
+							},
+							{
+								title: 'Visible Columns',
+								key: 'visibleColumns',
+								manifestUrl: '/samples/table/visibleColumns.json',
+								settings: {
+									columns: 5
+								}
+							}
+						]
 					},
 					{
 						title: 'Timeline',

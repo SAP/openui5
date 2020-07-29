@@ -37,14 +37,14 @@ sap.ui.define([
 	*/
 	EditorQunitUtils.selectComboBoxValue = function(oControl, sKey) {
 		var sValue = oControl.getItemByKey(sKey).getText();
-		this.setCustomComboBoxValue(oControl, sValue);
+		this.setInputValueAndConfirm(oControl, sValue);
 	};
 
 	/**
-	 * @param {sap.m.ComboBox} oControl - Control to set the value on
+	 * @param {sap.m.InputBase} oControl - Control to set the value on
 	 * @param {string} sValue - Custom value to set
 	*/
-	EditorQunitUtils.setCustomComboBoxValue = function(oControl, sValue) {
+	EditorQunitUtils.setInputValueAndConfirm = function(oControl, sValue) {
 		this.setInputValue(oControl, sValue);
 		var oControlDomRef = oControl.getDomRef();
 		QUnitUtils.triggerKeydown(oControlDomRef, KeyCodes.ENTER);

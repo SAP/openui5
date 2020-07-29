@@ -121,6 +121,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 		NavigationListItem.prototype.init = function () {
 			this._resourceBundle = Core.getLibraryResourceBundle("sap.ui.core");
 			this._resourceBundleMLib = Core.getLibraryResourceBundle("sap.m");
+			this._resourceBundleTNTLib = Core.getLibraryResourceBundle("sap.tnt");
 		};
 
 		/**
@@ -511,7 +512,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				ariaProps = {
 					level: '1',
 					role: 'treeitem',
-					selected: false
+					selected: false,
+					roledescription: this._resourceBundleTNTLib.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE_ITEM")
 				};
 
 			rm.openStart("div");
@@ -534,10 +536,11 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 			}
 
 			// checking if there are items level 2 in the NavigationListItem
-			// of yes - there is need of aria-expanded property
+			// if yes - there is need of aria-expanded property
 			if (isListExpanded) {
 
 				tooltip = this.getTooltip_AsString() || text;
+
 				if (tooltip) {
 					rm.attr("title", tooltip);
 				}
@@ -597,7 +600,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				tooltip,
 				ariaProps = {
 					role: 'menuitemradio',
-					checked: false
+					checked: false,
+					roledescription: this._resourceBundleTNTLib.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM")
 				};
 
 			rm.openStart("li", this);
@@ -670,7 +674,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				ariaProps = {
 					role: 'treeitem',
 					level: '2',
-					selected: false
+					selected: false,
+					roledescription: this._resourceBundleTNTLib.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE_ITEM")
 				};
 
 			rm.openStart('li', this);

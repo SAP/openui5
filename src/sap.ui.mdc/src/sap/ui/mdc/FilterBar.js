@@ -127,7 +127,7 @@ sap.ui.define([
 
 	FilterBar.prototype._setP13nModeValue = function(bValue) {
 		this._oModel.setProperty("/_p13nModeValue", bValue, false);
-		this.bPersistValues = bValue;
+		this._bPersistValues = bValue;
 	};
 
 	FilterBar.prototype._addButtons = function() {

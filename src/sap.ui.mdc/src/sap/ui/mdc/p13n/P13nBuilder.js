@@ -32,10 +32,10 @@ sap.ui.define([
 
                     var oPopover = new ResponsivePopover({
                         title: mDialogSettings.title,
-                        horizontalScrolling: mDialogSettings.horizontalScrolling ? mDialogSettings.horizontalScrolling : false,
-                        verticalScrolling: mDialogSettings.verticalScrolling ? mDialogSettings.verticalScrolling : true,
+                        horizontalScrolling: mDialogSettings.hasOwnProperty("horizontalScrolling") ? mDialogSettings.horizontalScrolling : false,
+                        verticalScrolling: mDialogSettings.hasOwnProperty("verticalScrolling") ? mDialogSettings.verticalScrolling : false,
                         contentWidth: mDialogSettings.contentWidth ? mDialogSettings.contentWidth : "24rem",
-                        resizable: mDialogSettings.resizable ? mDialogSettings.resizable : true,
+                        resizable: mDialogSettings.hasOwnProperty("resizable") ? mDialogSettings.resizable : true,
                         contentHeight: mDialogSettings.contentHeight ? mDialogSettings.contentHeight : "35rem",
                         placement: mDialogSettings.placement ? mDialogSettings.placement : "Bottom",
                         content: oP13nUI,
@@ -64,8 +64,8 @@ sap.ui.define([
                     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
                     var oContainer = new Dialog({
                         title: mDialogSettings.title,
-                        horizontalScrolling: mDialogSettings.horizontalScrolling ? mDialogSettings.horizontalScrolling : false,
-                        verticalScrolling: mDialogSettings.verticalScrolling ? mDialogSettings.verticalScrolling : true,
+                        horizontalScrolling: mDialogSettings.hasOwnProperty("horizontalScrolling") ? mDialogSettings.horizontalScrolling : false,
+                        verticalScrolling: mDialogSettings.hasOwnProperty("verticalScrolling") ? mDialogSettings.verticalScrolling : true,
                         contentWidth: mDialogSettings.contentWidth ? mDialogSettings.contentWidth : "40rem",
                         contentHeight: mDialogSettings.contentHeight ? mDialogSettings.contentHeight : "55rem",
                         draggable: true,
@@ -74,10 +74,12 @@ sap.ui.define([
                         content: oP13nUI,
                         buttons: [
                             new Button({
-                                text: oResourceBundle.getText("p13nDialog.OK"),
+                                text:  mDialogSettings.confirm && mDialogSettings.confirm.text ?  mDialogSettings.confirm.text : oResourceBundle.getText("p13nDialog.OK"),
                                 type: "Emphasized",
                                 press: function() {
-                                    mDialogSettings.ok.apply(oContainer, arguments);
+                                    if (mDialogSettings.confirm && mDialogSettings.confirm.handler) {
+                                        mDialogSettings.confirm.handler.apply(oContainer, arguments);
+                                    }
                                 }
 
                             }), new Button({
@@ -119,8 +121,8 @@ sap.ui.define([
             var aItemState = oControlState.items || [];
             var aSortState = oControlState.sorters || [];
 
-            var mExistingProperties = this._arrayToMap(aItemState);
-            var mExistingSorters = this._arrayToMap(aSortState);
+            var mExistingProperties = this.arrayToMap(aItemState);
+            var mExistingSorters = this.arrayToMap(aSortState);
             var mExistingFilters = oControlState.filter || {};
 
             aInfoData.forEach(function (oProperty) {
@@ -203,7 +205,7 @@ sap.ui.define([
             }
         },
 
-        _arrayToMap: function(aArray) {
+        arrayToMap: function(aArray) {
             return aArray.reduce(function(mMap, oProp, iIndex){
                 mMap[oProp.name] = oProp;
                 mMap[oProp.name].position = iIndex;

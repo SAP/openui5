@@ -22,7 +22,8 @@
 				"1.9.0",
 				"1.10.0",
 				"1.11.0",
-				"1.12.0"
+				"1.12.0",
+			  	"1.13.0"
 			]
 		},
 		"designtime": {
@@ -419,7 +420,7 @@
 					]
 				},
 				"icon": {
-					"$ref": "#/definitions/icon"
+					"$ref": "#/definitions/simpleIcon"
 				},
 				"actions": {
 					"description": "Defines actions that can be applied on the item.",
@@ -755,7 +756,7 @@
 				},
 				"icon": {
 					"description": "The icon of the timeline item.",
-					"$ref": "#/definitions/icon"
+					"$ref": "#/definitions/simpleIcon"
 				}
 			}
 		},
@@ -829,6 +830,18 @@
 					"items": {
 						"$ref": "#/definitions/ContentType.Object.Item"
 					}
+				},
+				"visible": {
+				  "description": "Represents the visibility state of the group",
+				  "oneOf": [
+					{
+					  "type": "boolean",
+					  "default": true
+					},
+					{
+					  "$ref": "#/definitions/simpleBinding"
+					}
+				  ]
 				}
 			}
 		},
@@ -881,6 +894,18 @@
 				"emailSubject": {
 					"description": "Represents the subject of the email. Works only with item of type 'email'.",
 					"type": "string"
+				},
+				"visible": {
+					"description": "Represents the visibility state of the item",
+					"oneOf": [
+						{
+							"type": "boolean",
+							"default": true
+						},
+						{
+							"$ref": "#/definitions/simpleBinding"
+						}
+					]
 				}
 			}
 		},
@@ -938,8 +963,12 @@
 				"hAlign": {
 					"description": "Defines the horizontal alignment of the column content.",
 					"oneOf": [
-						{ "$ref": "#/definitions/textAlign" },
-						{ "$ref": "#/definitions/simpleBinding" }
+						{
+							"$ref": "#/definitions/textAlign"
+						},
+						{
+							"$ref": "#/definitions/simpleBinding"
+						}
 					]
 				},
 				"value": {
@@ -948,13 +977,17 @@
 				},
 				"icon": {
 					"description": "Represents column with icon.",
-					"$ref": "#/definitions/icon"
+					"$ref": "#/definitions/simpleIcon"
 				},
 				"state": {
 					"description": "Defines the state of the column.",
 					"oneOf": [
-						{ "$ref": "#/definitions/state" },
-						{ "$ref": "#/definitions/simpleBinding" }
+						{
+							"$ref": "#/definitions/state"
+						},
+						{
+							"$ref": "#/definitions/simpleBinding"
+						}
 					]
 				},
 				"url": {
@@ -965,19 +998,39 @@
 					"description": "Specifies where to open the 'url', if it is provided.",
 					"type": "string",
 					"oneOf": [
-						{ "$ref": "#/definitions/target" },
-						{ "$ref": "#/definitions/simpleBinding" }
+						{
+							"$ref": "#/definitions/target"
+						},
+						{
+							"$ref": "#/definitions/simpleBinding"
+						}
 					]
 				},
 				"identifier": {
 					"oneOf": [
-						{ "$ref": "#/definitions/identifier" },
-						{ "$ref": "#/definitions/simpleBinding" }
+						{
+							"$ref": "#/definitions/identifier"
+						},
+						{
+							"$ref": "#/definitions/simpleBinding"
+						}
 					]
 				},
 				"progressIndicator": {
 					"description": "Represents progress indicator attributes",
 					"$ref": "#/definitions/progressIndicator"
+				},
+				"visible": {
+					"description": "Represents the visibility state of the column",
+					"oneOf": [
+						{
+							"type": "boolean",
+							"default": true
+						},
+						{
+							"$ref": "#/definitions/simpleBinding"
+						}
+					]
 				}
 			}
 		},
@@ -1133,7 +1186,7 @@
 					"type": "string"
 				},
 				"icon": {
-					"$ref": "#/definitions/icon"
+					"$ref": "#/definitions/simpleIcon"
 				},
 				"type": {
 					"description": "The type of the item - one of the types defined in the legend.",
@@ -1343,7 +1396,7 @@
 								"Square",
 								"Circle"
 							],
-							"default": "Square"
+							"default": "Circle"
 						},
 						{
 							"$ref": "#/definitions/simpleBinding"
@@ -1352,15 +1405,18 @@
 				},
 				"text": {
 					"type": "string",
-					"description": "Text inside icon"
-				},
-				"backgroundColor": {
+					"description": "Initials for the avatar. Up to 2 symbols."
+				}
+			}
+		},
+		"simpleIcon": {
+			"description": "Represents simple icon attributes",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"src": {
 					"type": "string",
-					"description": "Background color of the icon"
-				},
-				"color": {
-					"type": "string",
-					"description": "Color of the icon"
+					"description": "Represents icon name or source URL"
 				}
 			}
 		},

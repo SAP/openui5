@@ -180,7 +180,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I select the default variant and restart the application, it should load the default variant", function(Given, When, Then){
 		//simulate restart
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?sap-ui-xx-p13nFilter=true');
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
 
 		//check if the correct variant is selected
 		Then.iShouldSeeSelectedVariant("TestVariant");
@@ -241,7 +241,6 @@ sap.ui.define([
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
 
 		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
 
 		//check filter field creation
 		Then.iShouldSeeP13nFilterItems(aFilterItems);
@@ -270,7 +269,7 @@ sap.ui.define([
 	});
 
 	opaTest("Close 'FilterVariantTest' appliance after restart", function (Given, When, Then) {
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?sap-ui-xx-p13nFilter=true');
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
 
 		//check default variant appliance
 		Then.iShouldSeeSelectedVariant("FilterVariantTest");
@@ -280,9 +279,72 @@ sap.ui.define([
 
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
 
-		//shut down app frame for next test
-		Then.iTeardownMyAppFrame();
+		When.iPressDialogOk();
 	});
+
+	opaTest("Reopen the filter personalization dialog to validate 'FilterVariantTest'", function (Given, When, Then) {
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+
+		Then.thePersonalizationDialogOpens();
+
+		//check values from variant
+		Then.iShouldSeeP13nFilterItem("Founding Year", 8, ["1989", "1904"]);
+		Then.iShouldSeeP13nFilterItem("Name", 9, ["S"]);
+
+		When.iPressDialogOk();
+
+		//Check Table conditions
+		Then.iShouldSeeTableConditions(oTableConditions);
+	});
+
+	opaTest("Check if Variant remains unchanged after dialog closes", function (Given, When, Then) {
+
+		//Variant Management is not dirty --> no changes made
+		Then.theVariantManagementIsDirty(false);
+
+	});
+
+	opaTest("Check that filter dialog changes values upon variant switch", function (Given, When, Then) {
+
+		When.iSelectVariant("Standard");
+
+		//no filters on standard
+		Then.iShouldSeeTableConditions({filter: {}});
+
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+
+		//check values from variant
+		Then.iShouldSeeP13nFilterItem("Founding Year", 8, [undefined]);
+		Then.iShouldSeeP13nFilterItem("Name", 9, [undefined]);
+
+		When.iPressDialogOk();
+
+		Then.theVariantManagementIsDirty(false);
+	});
+
+	opaTest("Switch back to 'FilterVariantTest' to check reappliance of condition values", function (Given, When, Then) {
+
+		//Switch back to check condition appliance in filter dialog
+		When.iSelectVariant("FilterVariantTest");
+
+		//open dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+
+		Then.thePersonalizationDialogOpens();
+
+		//check values persisted in variant --> values should be present again
+		Then.iShouldSeeP13nFilterItem("Founding Year", 8, ["1989", "1904"]);
+		Then.iShouldSeeP13nFilterItem("Name", 9, ["S"]);
+
+		//close dialogs
+		When.iPressDialogOk();
+
+		//tear down app
+		Then.iTeardownMyAppFrame();
+
+	});
+
+
 
 	// ----------------------------------------------------------------
 	// Methods

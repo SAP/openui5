@@ -185,6 +185,10 @@ sap.ui.define([
 			} else {
 				aLabels.push(oTable.getId() + "-cellacc");
 			}
+
+			if (iIndex === 0 || iIndex === 2 || iIndex === 4) {
+				aLabels.push(oTable.getId() + "-toggleedit");
+			}
 		}
 
 		if (oTable.isIndexSelected(iRow) && TableUtils.Grouping.isTreeMode(oTable)) {
@@ -281,12 +285,6 @@ sap.ui.define([
 		var oRow = oTable.getRows()[iRow];
 		var oCell = oRow.getCells()[iCol];
 		var iIndex = Column.ofCell(oCell).getIndex();
-
-		if (!bGroup) {
-			if (iIndex === 0 || iIndex === 2 || iIndex === 4) {
-				aDescriptions.push(oTable.getId() + "-toggleedit");
-			}
-		}
 
 		if (oTable instanceof sap.ui.table.TreeTable && iIndex == 0 && $Cell.find(".sapUiTableTreeIcon").not(".sapUiTableTreeIconLeaf").length == 1 || bGroup){
 			aDescriptions.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));

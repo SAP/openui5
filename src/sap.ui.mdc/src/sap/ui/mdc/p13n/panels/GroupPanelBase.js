@@ -11,8 +11,10 @@ sap.ui.define([
     "sap/m/Toolbar",
     "sap/m/List",
 	"sap/m/VBox",
-	'sap/ui/model/Filter'
-], function (BasePanel, Label, CustomListItem, Panel, Select, Item, Toolbar, List, VBox, Filter) {
+	'sap/ui/model/Filter',
+	"sap/ui/layout/FixFlex",
+	"sap/m/Page"
+], function (BasePanel, Label, CustomListItem, Panel, Select, Item, Toolbar, List, VBox, Filter, FixFlex, Page) {
 	"use strict";
 
 	/**
@@ -62,12 +64,15 @@ sap.ui.define([
 	});
 
 	GroupPanelBase.prototype._setInnerLayout = function() {
-		var oContainer = new VBox({
-			items: [
-				new VBox({
-					items: [
+		var oContainer = new Page({
+			height:"100%",
+			showHeader: false,
+			content: [
+				new FixFlex({
+					height: "100%",
+					minFlexSize: 1,
+					fixContent: [
 						new Select({
-							width: "50%",
 							items: [
 								new Item({
 									key: "all",
@@ -81,9 +86,11 @@ sap.ui.define([
 							change: this._onGroupModeChange.bind(this)
 						}),
 						this._getSearchField()
+					],
+					flexContent: [
+						this._oListControl
 					]
-				}),
-				this._oListControl
+				})
 			]
 		});
 
@@ -172,7 +179,7 @@ sap.ui.define([
 
 	GroupPanelBase.prototype.setFooterToolbar = function(oFooterToolbar) {
 		this.setAggregation("footerToolbar", oFooterToolbar);
-		this.getAggregation("_content").addItem(oFooterToolbar);
+		this.getAggregation("_content").setFooter(oFooterToolbar.clone());
 		return this;
 	};
 

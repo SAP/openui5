@@ -143,7 +143,8 @@ sap.ui.define([
 				 * @since 1.62
 				 */
 				p13nMode: {
-					type: "sap.ui.mdc.TableP13nMode[]"
+					type: "sap.ui.mdc.TableP13nMode[]",
+					defaultValue: []
 				},
 				/**
 				 * Path to <code>TableDelegate</code> module that provides the required APIs to create table content.<br>
@@ -515,10 +516,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a Promise that is resolved once the table content is initialized.
+	 * Returns a Promise that resolves after the table has been initialized after being created and after changing the type.
 	 *
-	 * @returns <Promise>
-	 * @protected
+	 * @returns {Promise} A Promise that resolves after the table has been initialized
+	 * @public
 	 */
 	Table.prototype.initialized = function() {
 		return this._oTableReady;
@@ -689,9 +690,12 @@ sap.ui.define([
 	};
 
 	Table.prototype.setP13nMode = function(aMode) {
-		var aOldMode = this.getP13nMode();
+		if (this.getFilter() && Array.isArray(aMode) && aMode.indexOf("Filter") > -1) {
+			throw new Error("The p13nMode \"Filter\" and the \"filter\" association cannot be used together");
+		}
+
 		this.setProperty("p13nMode", aMode, true);
-		this._updatep13nSettings(aOldMode, aMode);
+		this._updatep13nSettings();
 		return this;
 	};
 
@@ -720,7 +724,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (aFilteredProperties.length === 0 || !oTable._getFilterEnabled()) {
+		if (aFilteredProperties.length === 0 || !oTable.isFilteringEnabled()) {
 			var oFilterInfoBarDomRef = oFilterInfoBar.getDomRef();
 
 			if (oFilterInfoBarDomRef && oFilterInfoBarDomRef.contains(document.activeElement)) {
@@ -779,6 +783,28 @@ sap.ui.define([
 		}
 	}
 
+	function insertFilterInfoBar(oTable) {
+		if (!oTable._oTable) {
+			return;
+		}
+
+		var oFilterInfoBar = getFilterInfoBar(oTable);
+
+		if (!oFilterInfoBar) {
+			oFilterInfoBar = createFilterInfoBar(oTable);
+		}
+
+		if (oTable._bMobileTable) {
+			if (oTable._oTable.getInfoToolbar() !== oFilterInfoBar) {
+				oTable._oTable.setInfoToolbar(oFilterInfoBar);
+				oTable._oTable.addAriaLabelledBy(getFilterInfoBarText(oTable));
+			}
+		} else if (oTable._oTable.indexOfExtension(oFilterInfoBar) === -1) {
+			oTable._oTable.insertExtension(oFilterInfoBar, 1);
+			oTable._oTable.addAriaLabelledBy(getFilterInfoBarText(oTable));
+		}
+	}
+
 	function createFilterInfoBar(oTable) {
 		var sToolbarId = oTable.getId() + "-filterInfoBar";
 		var oFilterInfoToolbar = internal(oTable).oFilterInfoBar;
@@ -799,7 +825,7 @@ sap.ui.define([
 				})
 			],
 			press: function() {
-				TableSettings.showPanel(oTable, "Filter", getFilterInfoBar(oTable));
+				TableSettings.showPanel(oTable, "Filter", oFilterInfoToolbar);
 			}
 		});
 
@@ -820,6 +846,12 @@ sap.ui.define([
 	}
 
 	function getFilterInfoBar(oTable) {
+		var oFilterInfoBar = internal(oTable).oFilterInfoBar;
+
+		if (oFilterInfoBar && (oFilterInfoBar.bIsDestroyed || oFilterInfoBar.bIsBeingDestroyed)) {
+			return null;
+		}
+
 		return internal(oTable).oFilterInfoBar;
 	}
 
@@ -1052,56 +1084,66 @@ sap.ui.define([
 	 */
 	Table.prototype.getCurrentState = function() {
 		var oState = {};
-
-		var aP13nMode = this.getP13nMode() || [];
+		var aP13nMode = this.getP13nMode();
 
 		if (aP13nMode.indexOf("Column") > -1) {
 			oState.items = this._getVisibleProperties();
 		}
 
-		if (aP13nMode.indexOf("Sort") > -1) {
+		if (this.isSortingEnabled()) {
 			oState.sorters = this._getSortedProperties();
 		}
 
-		if (aP13nMode.indexOf("Filter") > -1) {
+		if (this.isFilteringEnabled()) {
 			oState.filter = this.getFilterConditions();
 		}
+
 		return oState;
 	};
 
-	//TODO: remove method once 'filter' personalization is public --> use only p13nMode instead
-	//URL param is only meant for experimental testing
-	Table.prototype._getFilterEnabled = function() {
-		var oURLParams = new SAPUriParameters(window.location.search);
-		var bExperimentalFilterEnabled = oURLParams.getAll("sap-ui-xx-p13nFilter")[0] === "true";
-		if (this._bFilterEnabled || (this.getP13nMode() && this.getP13nMode().indexOf("Filter") > -1 && bExperimentalFilterEnabled)) {
-			return true;
-		} else {
-			return false;
-		}
+	/**
+	 * Checks whether filter personalization is enabled.
+	 *
+	 * @protected
+	 * @returns {boolean} Whether filter personalization is enabled
+	 */
+	Table.prototype.isFilteringEnabled = function() {
+		return this.getP13nMode().indexOf("Filter") > -1;
+	};
+
+	/**
+	 * Checks whether sort personalization is enabled.
+	 *
+	 * @protected
+	 * @returns {boolean} Whether sort personalization is enabled
+	 */
+	Table.prototype.isSortingEnabled = function() {
+		return this.getP13nMode().indexOf("Sort") > -1;
 	};
 
 	Table.prototype._getP13nButtons = function() {
-		var aP13nMode = this.getP13nMode() || [], aButtons = [];
-		if (aP13nMode.length > 0) {
-			// Order should be: Sort, Filter, Group and then Columns as per UX spec
-			if (aP13nMode.indexOf("Sort") > -1) {
-				aButtons.push(TableSettings.createSortButton(this.getId(), [
-					this._showSort, this
-				]));
-			}
-			//TODO: remove once 'filter' is enabled
-			if (this._getFilterEnabled()) {
-				aButtons.push(TableSettings.createFilterButton(this.getId(), [
-					this._showFilter, this
-				]));
-			}
-			if (aP13nMode.indexOf("Column") > -1) {
-				aButtons.push(TableSettings.createColumnsButton(this.getId(), [
-					this._showSettings, this
-				]));
-			}
+		var aP13nMode = this.getP13nMode();
+		var aButtons = [];
+
+		// Order should be: Sort, Filter, Group and then Columns as per UX spec
+		if (this.isSortingEnabled()) {
+			aButtons.push(TableSettings.createSortButton(this.getId(), [
+				this._showSort, this
+			]));
 		}
+
+		if (this.isFilteringEnabled()) {
+			aButtons.push(TableSettings.createFilterButton(this.getId(), [
+				this._showFilter, this
+			]));
+		}
+
+		if (aP13nMode.indexOf("Column") > -1) {
+			aButtons.push(TableSettings.createColumnsButton(this.getId(), [
+				this._showSettings, this
+			]));
+		}
+
 		return aButtons;
 	};
 
@@ -1447,7 +1489,7 @@ sap.ui.define([
 		}
 	};
 
-	Table.prototype._updatep13nSettings = function(aOldMode, aMode) {
+	Table.prototype._updatep13nSettings = function() {
 		// TODO: consider avoiding destroy and some other optimization if nothing changed
 		if (this._oToolbar) {
 			this._oToolbar.destroyEnd();
@@ -1460,18 +1502,20 @@ sap.ui.define([
 		if (this._oTable) {
 			var oDnDColumns = this._oTable.getDragDropConfig()[0];
 			if (oDnDColumns) {
-				oDnDColumns.setEnabled((aMode || []).indexOf("Column") > -1);
+				oDnDColumns.setEnabled(this.getP13nMode().indexOf("Column") > -1);
 			}
+		}
+
+		if (this.isFilteringEnabled()) {
+			insertFilterInfoBar(this);
 		}
 
 		updateFilterInfoBar(this);
 	};
 
 	Table.prototype._createTable = function() {
-		var iThreshold = this.getThreshold() > -1 ? this.getThreshold() : undefined,
-			oRowSettings = this.getRowSettings() ? this.getRowSettings().getAllSettings() : {},
-			oFilterInfoBar = this._getFilterEnabled() ? createFilterInfoBar(this) : null,
-			oFilterInfoBarText = this._getFilterEnabled() ? getFilterInfoBarText(this) : null;
+		var iThreshold = this.getThreshold() > -1 ? this.getThreshold() : undefined;
+		var oRowSettings = this.getRowSettings() ? this.getRowSettings().getAllSettings() : {};
 
 		if (this._bMobileTable) {
 			this._oTable = ResponsiveTableType.createTable(this.getId() + "-innerTable", {
@@ -1489,10 +1533,8 @@ sap.ui.define([
 				growingThreshold: iThreshold,
 				noDataText: this._getNoDataText(),
 				headerToolbar: this._oToolbar,
-				infoToolbar: oFilterInfoBar,
 				ariaLabelledBy: [
-					this._oTitle,
-					oFilterInfoBarText
+					this._oTitle
 				]
 			});
 			this._oTemplate = ResponsiveTableType.createTemplate(this.getId() + "-innerTableRow", oRowSettings);
@@ -1513,12 +1555,10 @@ sap.ui.define([
 				],
 				noData: this._getNoDataText(),
 				extension: [
-					this._oToolbar,
-					oFilterInfoBar
+					this._oToolbar
 				],
 				ariaLabelledBy: [
-					this._oTitle,
-					oFilterInfoBarText
+					this._oTitle
 				],
 				plugins: [
 					GridTableType.createMultiSelectionPlugin(this, [
@@ -1544,7 +1584,7 @@ sap.ui.define([
 			sourceAggregation: "columns",
 			targetAggregation: "columns",
 			dropPosition: "Between",
-			enabled: (this.getP13nMode() || []).indexOf("Column") > -1,
+			enabled: this.getP13nMode().indexOf("Column") > -1,
 			drop: [
 				this._onColumnRearrange, this
 			]
@@ -1554,6 +1594,10 @@ sap.ui.define([
 
 		// Attach paste event
 		this._oTable.attachPaste(this._onInnerTablePaste, this);
+
+		if (this.isFilteringEnabled()) {
+			insertFilterInfoBar(this);
+		}
 	};
 
 	Table.prototype._updateSelectionBehavior = function() {
@@ -1576,9 +1620,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._onColumnPress = function(oColumn) {
-		// Sort disabled by settings
-		var aP13nMode = this.getP13nMode() || [];
-		if (aP13nMode.indexOf("Sort") < 0) {
+		if (!this.isSortingEnabled()) {
 			return;
 		}
 
@@ -1951,6 +1993,10 @@ sap.ui.define([
 	};
 
 	Table.prototype.setFilter = function(vFilter) {
+		if (this.isFilteringEnabled()) {
+			throw new Error("The p13nMode \"Filter\" and the \"filter\" association cannot be used together");
+		}
+
 		if (this._validateFilter(vFilter)) {
 			this._deregisterFilter();
 
@@ -1990,7 +2036,6 @@ sap.ui.define([
 	Table.prototype._registerInnerFilter = function(oFilter) {
 		this._deregisterFilter();
 		oFilter.attachSearch(this.rebindTable, this);
-		oFilter.attachFiltersChanged(this._onFiltersChanged, this);
 	};
 
 	Table.prototype._onFiltersChanged = function(oEvent) {
@@ -2186,13 +2231,13 @@ sap.ui.define([
 	};
 
 	Table.prototype.checkAndRebindTable = function() {
-		//If filter personalization is enabled, use it
-		if (this._getFilterEnabled()) {
+		if (this.isFilteringEnabled()) {
 			this._retrieveP13nFilter().then(function(oFilter) {
-				oFilter.triggerSearch();
+				oFilter.initialized().then(function(){
+					oFilter.triggerSearch();
+				});
 			});
 		} else {
-			//if filter personalization is disabled, use filter association if provided or trigger rebind manually
 			var oFilter = Core.byId(this.getFilter());
 			if (oFilter) {
 				oFilter.triggerSearch();

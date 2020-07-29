@@ -43,6 +43,10 @@ sap.ui.define([ "sap/ui/Device"],
 			if (control.getWidth()) {
 				rm.style("width", control.getWidth());
 			}
+			if (control.getMinHeight()) {
+				rm.style("min-height", control.getMinHeight());
+			}
+
 			this.addGridStyles(rm, control);
 
 			// Add tooltip

@@ -49,7 +49,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @experimental Since version 1.21.
-	 * The AnalyticalColumn will be productized soon. Some attributes will be added to Column.
 	 * @alias sap.ui.table.AnalyticalColumn
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

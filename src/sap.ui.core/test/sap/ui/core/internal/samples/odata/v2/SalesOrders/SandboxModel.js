@@ -129,8 +129,90 @@ sap.ui.define([
 			}
 		},
 		oLineItemsModel,
-		iTimesSaved = 0,
-		oMockData = {
+		iTimesSaved = 0;
+
+	/**
+	 * Gets the line items from the response, applies the <code>$skip</code> and <code>$top</code>
+	 * parameters from the url and stores it back in the response.
+	 *
+	 * @param {object[]} aMatch The match array from the matching URL
+	 * @param {object} oResponse The response which will be sent to the client
+	 */
+	function applySkipTop(aMatch, oResponse) {
+		var oResponseBody = JSON.parse(oResponse.message),
+			aLineItems = oResponseBody.d.results,
+			iSkip = parseInt(aMatch[1]),
+			iTop = parseInt(aMatch[2]);
+
+		oResponseBody.d.results = aLineItems.slice(iSkip, iSkip + iTop);
+		oResponse.message = JSON.stringify(oResponseBody);
+	}
+
+	/**
+	 * Reads and returns the line items, each one has the specific note added.
+	 *
+	 * @param {string} sFilePath
+	 *   The path to the file in the data folder
+	 * @param {function} [fnModifyData]
+	 *   Function which modifies the data to fit the current testcase. Gets passed an array with
+	 *   the line items
+	 * @param {number} [iSkip=0]
+	 *   The number of skipped line items
+	 * @param {number} [iTop=4]
+	 *   The maximum number of returned line items
+	 * @return {object}
+	 *   The OData response for the SalesOrderLineItemSet considering the given skip and top
+	 */
+	function getLineItems(sFilePath, fnModifyData, iSkip, iTop) {
+		var oLineItems,
+			sPrefix = "test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/data/";
+
+		if (!oLineItemsModel || oLineItemsModel.getProperty("/path") !== sFilePath) {
+			oLineItemsModel = new JSONModel();
+			oLineItemsModel.loadData(sPrefix + sFilePath, "", false);
+			oLineItemsModel.setProperty("/path", sFilePath);
+		}
+		oLineItems = merge({}, oLineItemsModel.getObject("/"));
+
+		if (fnModifyData) {
+			fnModifyData(oLineItems.d.results);
+		}
+
+		if (iSkip || iTop) {
+			iSkip = iSkip || 0;
+			iTop = iSkip + (iTop || 4);
+			oLineItems.d.results = oLineItems.d.results.slice(iSkip, iTop);
+		}
+		return oLineItems;
+	}
+
+	/**
+	 * Creates a response header object containing only a <code>sap-message</code> property for
+	 * the given messages.
+	 *
+	 * @param {number[]} [aMessageIndices]
+	 *   The indices of messages to be used in the <code>sap-message</code> header; if not given,
+	 *   all current messages are used
+	 * @param {object} [oMessageObject=oCurrentMessages]
+	 *   The current oMessageObject
+	 * @returns {object}
+	 *   A response header object containing the <code>sap-message</code> property for the given
+	 *   messages
+	 */
+	function getMessageHeader(aMessageIndices, oMessageObject) {
+		oMessageObject = oMessageObject || oCurrentMessages;
+		return {
+			"sap-message" : oMessageObject.buildString(aMessageIndices)
+		};
+	}
+
+	/**
+	 * Gets the fixtures for the mock server.
+	 *
+	 * @returns {object} The fixture and the RegExp fixture for the mock server
+	 */
+	function getMockServerFixtures() {
+		return {
 			mFixture : {
 				"$metadata" : {
 					source : "metadata.xml"
@@ -141,6 +223,10 @@ sap.ui.define([
 
 				/* Test Case I */
 				"SalesOrderSet('101')" : {
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
 					source : "Messages/TC1/SalesOrderSet.json"
 				},
 				"SalesOrderSet('101')/ToLineItems?$skip=0&$top=4" : [{
@@ -495,6 +581,10 @@ sap.ui.define([
 
 				/* Test Case IX */
 				"SalesOrderSet('109')" : {
+					ifMatch : function (request) {
+						iTimesSaved = 0;
+						return true;
+					},
 					source : "Messages/TC9/SalesOrderSet.json"
 				},
 				"SalesOrderSet('109')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
@@ -629,85 +719,7 @@ sap.ui.define([
 					code : 400,
 					source : "Messages/TC6/error-1.json"
 				}]
-			}],
-			sFilterBase : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/",
-			sSourceBase : "sap/ui/core/internal/samples/odata/v2/SalesOrders/data"
-		};
-
-	/**
-	 * Gets the line items from the response, applies the <code>$skip</code> and <code>$top</code>
-	 * parameters from the url and stores it back in the response.
-	 *
-	 * @param {object[]} aMatch The match array from the matching URL
-	 * @param {object} oResponse The response which will be sent to the client
-	 */
-	function applySkipTop(aMatch, oResponse) {
-		var oResponseBody = JSON.parse(oResponse.message),
-			aLineItems = oResponseBody.d.results,
-			iSkip = parseInt(aMatch[1]),
-			iTop = parseInt(aMatch[2]);
-
-		oResponseBody.d.results = aLineItems.slice(iSkip, iSkip + iTop);
-		oResponse.message = JSON.stringify(oResponseBody);
-	}
-
-	/**
-	 * Reads and returns the line items, each one has the specific note added.
-	 *
-	 * @param {string} sFilePath
-	 *   The path to the file in the data folder
-	 * @param {function} [fnModifyData]
-	 *   Function which modifies the data to fit the current testcase. Gets passed an array with
-	 *   the line items
-	 * @param {number} [iSkip=0]
-	 *   The number of skipped line items
-	 * @param {number} [iTop=4]
-	 *   The maximum number of returned line items
-	 * @return {object}
-	 *   The OData response for the SalesOrderLineItemSet considering the given skip and top
-	 */
-	function getLineItems(sFilePath, fnModifyData, iSkip, iTop) {
-		var oLineItems,
-			sPrefix = isOpaTest()
-				? "test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/data/"
-				: "data/";
-
-		if (!oLineItemsModel || oLineItemsModel.getProperty("/path") !== sFilePath) {
-			oLineItemsModel = new JSONModel();
-			oLineItemsModel.loadData(sPrefix + sFilePath, "", false);
-			oLineItemsModel.setProperty("/path", sFilePath);
-		}
-		oLineItems = merge({}, oLineItemsModel.getObject("/"));
-
-		if (fnModifyData) {
-			fnModifyData(oLineItems.d.results);
-		}
-
-		if (iSkip || iTop) {
-			iSkip = iSkip || 0;
-			iTop = iSkip + (iTop || 4);
-			oLineItems.d.results = oLineItems.d.results.slice(iSkip, iTop);
-		}
-		return oLineItems;
-	}
-
-	/**
-	 * Creates a response header object containing only a <code>sap-message</code> property for
-	 * the given messages.
-	 *
-	 * @param {number[]} [aMessageIndices]
-	 *   The indices of messages to be used in the <code>sap-message</code> header; if not given,
-	 *   all current messages are used
-	 * @param {object} [oMessageObject=oCurrentMessages]
-	 *   The current oMessageObject
-	 * @returns {object}
-	 *   A response header object containing the <code>sap-message</code> property for the given
-	 *   messages
-	 */
-	function getMessageHeader(aMessageIndices, oMessageObject) {
-		oMessageObject = oMessageObject || oCurrentMessages;
-		return {
-			"sap-message" : oMessageObject.buildString(aMessageIndices)
+			}]
 		};
 	}
 
@@ -737,15 +749,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Function to find out if the code is executed by an OPA test or not.
-	 *
-	 * @returns {boolean} Whether an opa test is running or not.
-	 */
-	function isOpaTest() {
-		return window.location.href.includes("Opa.qunit.html");
-	}
-
-	/**
 	 * Whether the given call count matches the current save count; used as value for the
 	 * <code>ifMatch</code> property of a mockserver fixture.
 	 *
@@ -761,12 +764,14 @@ sap.ui.define([
 
 	return ODataModel.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.SandboxModel", {
 		constructor : function (mParameters) {
-			var oModel, oSandbox;
+			var oMockServerFixtures, oModel, oSandbox;
 
 			if (!TestUtils.isRealOData()) {
+				oMockServerFixtures = getMockServerFixtures();
 				oSandbox = sinon.sandbox.create();
-				TestUtils.setupODataV4Server(oSandbox, oMockData.mFixture, oMockData.sSourceBase,
-					oMockData.sFilterBase, oMockData.aRegExpFixture);
+				TestUtils.setupODataV4Server(oSandbox, oMockServerFixtures.mFixture,
+					"sap/ui/core/internal/samples/odata/v2/SalesOrders/data",
+					"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/", oMockServerFixtures.aRegExpFixture);
 			} else {
 				mParameters = Object.assign({}, mParameters, {
 					serviceUrl : TestUtils.proxy(mParameters.serviceUrl)
