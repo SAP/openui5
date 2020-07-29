@@ -2768,6 +2768,11 @@ sap.ui.define([
 			assert.notOk(this.oTable.getBusy(), "sap.ui.mdc.Table busy state is false");
 			assert.notOk(this.oTable._oTable.getBusy(), "Inner table busy state is false");
 
+			assert.strictEqual(this.oTable.getBusyIndicatorDelay(), 100, "sap.ui.mdc.Table - Default Busy Indicator Delay");
+			assert.strictEqual(this.oTable._oTable.getBusyIndicatorDelay(), 100, "Inner table - Default Busy Indicator Delay");
+			this.oTable.setBusyIndicatorDelay(200);
+			assert.strictEqual(this.oTable.getBusyIndicatorDelay(), 200, "sap.ui.mdc.Table - Custom Busy Indicator Delay");
+			assert.strictEqual(this.oTable._oTable.getBusyIndicatorDelay(), 200, "Inner table - Custom Busy Indicator Delay");
 			done();
 		}.bind(this));
 	});

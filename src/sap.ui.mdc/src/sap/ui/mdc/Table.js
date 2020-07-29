@@ -280,6 +280,14 @@ sap.ui.define([
 				enableExport: {
 					type: "boolean",
 					defaultValue: false
+				},
+
+				/**
+				 * The delay in milliseconds, after which the busy indicator will show up.
+				 */
+				busyIndicatorDelay : {
+					type: "int",
+					defaultValue: 100
 				}
 			},
 			aggregations: {
@@ -655,6 +663,22 @@ sap.ui.define([
 
 		if (this._oTable) {
 			this._oTable.setBusy(bBusy);
+		}
+
+		return this;
+	};
+
+	/**
+	 * Sets the delay in milliseconds, after which the busy indicator will show up for the inner table.
+	 *
+	 * @param {integer} iDelay the delay in milliseconds
+	 * @returns {sap.ui.mdc.Table} Returns <code>this</code> to allow method chaining
+	 */
+	Table.prototype.setBusyIndicatorDelay = function(iDelay) {
+		this.setProperty('busyIndicatorDelay', iDelay, true);
+
+		if (this._oTable) {
+			this._oTable.setBusyIndicatorDelay(iDelay);
 		}
 
 		return this;
@@ -1595,6 +1619,8 @@ sap.ui.define([
 		});
 		oDDI.bIgnoreMetadataCheck = true;
 		this._oTable.addDragDropConfig(oDDI);
+
+		this._oTable.setBusyIndicatorDelay(this.getBusyIndicatorDelay());
 
 		// Attach paste event
 		this._oTable.attachPaste(this._onInnerTablePaste, this);

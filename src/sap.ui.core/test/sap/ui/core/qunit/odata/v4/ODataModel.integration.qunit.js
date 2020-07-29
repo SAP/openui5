@@ -13702,8 +13702,9 @@ sap.ui.define([
 						BusinessPartnerID : "0100000003"
 					}]
 				})
+				.expectChange("id", "", -1) //TODO fix Context#getIndex to not return -1;
 				.expectChange("id", [
-					"",
+					,
 					"0100000002",
 					"0100000003"
 				]);
@@ -27224,8 +27225,7 @@ sap.ui.define([
 			}), aExpectedContent);
 		}
 
-		this.expectChange("groupHeader", undefined) // caused by virtual context
-			.expectRequest("EMPLOYEES?$orderby=AGE&$select=AGE,ID,Name&$skip=0&$top=20", {
+		this.expectRequest("EMPLOYEES?$orderby=AGE&$select=AGE,ID,Name&$skip=0&$top=20", {
 				value : [{
 					AGE : 23,
 					ID : "2",

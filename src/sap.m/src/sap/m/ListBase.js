@@ -595,7 +595,17 @@ function(
 	// if there is no data this should get called anyway
 	// TODO: if there is a network error this will not get called
 	// but we need to turn back to initial state
-	ListBase.prototype.updateItems = function(sReason) {
+	ListBase.prototype.updateItems = function(sReason, oEventInfo) {
+
+		// Special handling for "AutoExpandSelect" of the V4 ODataModel.
+		if (oEventInfo && oEventInfo.detailedReason === "AddVirtualContext") {
+			createVirtualItem(this);
+			return;
+		} else if (oEventInfo && oEventInfo.detailedReason === "RemoveVirtualContext") {
+			destroyVirtualItem(this);
+			return;
+		}
+
 		if (this._oGrowingDelegate) {
 			// inform growing delegate to handle
 			this._oGrowingDelegate.updateItems(sReason);
@@ -622,6 +632,23 @@ function(
 		}
 	};
 
+	function createVirtualItem(oList) {
+		var oBinding = oList.getBinding("items");
+		var oBindingInfo = oList.getBindingInfo("items");
+		var oVirtualContext = oBinding.getContexts(0, oList.getGrowing() ? oList.getGrowingThreshold() : oBindingInfo.length)[0];
+
+		destroyVirtualItem(oList);
+		oList._oVirtualItem = GrowingEnablement.createItem(oVirtualContext, oBindingInfo, "virtual");
+		oList.addAggregation("dependents", oList._oVirtualItem, true);
+	}
+
+	function destroyVirtualItem(oList) {
+		if (oList._oVirtualItem) {
+			oList._oVirtualItem.destroy();
+			delete oList._oVirtualItem;
+		}
+	}
+
 	ListBase.prototype.setBindingContext = function(oContext, sModelName) {
 		var sItemsModelName = (this.getBindingInfo("items") || {}).model;
 		if (sItemsModelName === sModelName) {
@@ -629,6 +656,12 @@ function(
 		}
 
 		return Control.prototype.setBindingContext.apply(this, arguments);
+	};
+
+	ListBase.prototype.bindAggregation = function(sName) {
+		destroyVirtualItem(this);
+		Control.prototype.bindAggregation.apply(this, arguments);
+		return this;
 	};
 
 	ListBase.prototype._bindAggregation = function(sName, oBindingInfo) {

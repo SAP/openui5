@@ -742,4 +742,75 @@ sap.ui.define([
 			done();
 		});
 	});
+
+	QUnit.module("Virtual Context", {
+		beforeEach: function() {
+		},
+
+		afterEach: function() {
+			this.list.destroy();
+		},
+
+		testVirtualContext: function(assert, bWithGrowing) {
+
+			this.list = createList({growing: bWithGrowing}, null, createJSONModel());
+
+			var iInitialItemCount = this.list.getItems().length;
+			var oUpdateItemsSpy = sinon.spy(this.list, "_updateFinished");
+			var oInvalidateSpy = sinon.spy(this.list, "invalidate");
+			var oBinding = this.list.getBinding("items");
+
+			// Fake the virtual context process.
+
+			oBinding.fireEvent("change", {
+				detailedReason: "AddVirtualContext",
+				reason: "change"
+			});
+
+			var oVirtualItem = this.list._oVirtualItem;
+
+			assert.ok(oInvalidateSpy.notCalled, "AddVirtualContext: List is not invalidated");
+			assert.ok(oUpdateItemsSpy.notCalled, "AddVirtualContext: Update hook is not called");
+			assert.ok(this.list.indexOfDependent(oVirtualItem) >= 0, "AddVirtualContext: Virtual item added to dependents aggregation");
+			assert.ok(oVirtualItem.getId().indexOf("virtual") > 0, "AddVirtualContext: Virtual item has the correct ID");
+			assert.strictEqual(this.list.getItems().length, iInitialItemCount, "AddVirtualContext: Number of items is correct");
+			assert.strictEqual(oVirtualItem.getBindingContext(), oBinding.getContexts(0, 1)[0],
+				"AddVirtualContext: Virtual item has the correct context");
+			assert.notOk(oVirtualItem.bIsDestroyed, "AddVirtualContext: Virtual item is not destroyed");
+			oInvalidateSpy.reset();
+			oUpdateItemsSpy.reset();
+
+			oBinding.fireEvent("change", {
+				detailedReason: "RemoveVirtualContext",
+				reason: "change"
+			});
+
+			assert.ok(oInvalidateSpy.notCalled, "RemoveVirtualContext: List is not invalidated");
+			assert.ok(oUpdateItemsSpy.notCalled, "RemoveVirtualContext: Update hook is not called");
+			assert.ok(this.list.indexOfDependent(oVirtualItem) === -1, "RemoveVirtualContext: Virtual item removed from dependents aggregation");
+			assert.strictEqual(this.list.getItems().length, iInitialItemCount, "AddVirtualContext: Number of items is correct");
+			assert.ok(oVirtualItem.bIsDestroyed, "RemoveVirtualContext: Virtual row is destroyed");
+			assert.notOk("_oVirtualItem" in this.list, "RemoveVirtualContext: Reference to virtual item removed from list");
+
+			oBinding.fireEvent("change", {
+				detailedReason: "AddVirtualContext",
+				reason: "change"
+			});
+			oVirtualItem = this.list._oVirtualItem;
+			this.list.bindItems(this.list.getBindingInfo("items"));
+
+			assert.ok(this.list.indexOfDependent(oVirtualItem) === -1, "BindItems: Virtual item removed from dependents aggregation");
+			assert.ok(oVirtualItem.bIsDestroyed, "BindItems: Virtual item is destroyed");
+			assert.notOk("_oVirtualItem" in this.list, "BindItems: Reference to virtual item removed from list");
+		}
+	});
+
+	QUnit.test("Virtual Context Handling - Without Growing", function(assert) {
+		this.testVirtualContext(assert, false);
+	});
+
+	QUnit.test("Virtual Context Handling - With Growing", function(assert) {
+		this.testVirtualContext(assert, true);
+	});
+
 });
