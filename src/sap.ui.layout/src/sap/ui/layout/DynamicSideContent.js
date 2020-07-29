@@ -9,10 +9,9 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/delegate/ScrollEnablement',
 	'sap/ui/layout/library',
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	'./DynamicSideContentRenderer'
 ],
-	function(jQuery, Control, ResizeHandler, ScrollEnablement, library, waitForThemeApplied, DynamicSideContentRenderer) {
+	function(jQuery, Control, ResizeHandler, ScrollEnablement, library, DynamicSideContentRenderer) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.SideContentPosition
@@ -420,6 +419,12 @@ sap.ui.define([
 			this._initScrolling();
 		};
 
+		DynamicSideContent.prototype.onThemeChanged = function () {
+			if (this.getContainerQuery()) {
+				this._adjustToScreenSize();
+			}
+		};
+
 		/**
 		 * Function is called when exiting the control.
 		 * @private
@@ -528,15 +533,11 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicSideContent.prototype._attachContainerResizeListener = function () {
-			waitForThemeApplied().then(function() {
-				if (!this._sContainerResizeListener) {
-					// Ensure that the resize listener will be attached to the control,
-					// after rendering handler is executed and DOM reference adjustments are all done
-					setTimeout(function() {
-						this._sContainerResizeListener = ResizeHandler.register(this, this._adjustToScreenSize.bind(this));
-					}.bind(this), 0);
-				}
-			}.bind(this));
+			// Ensure that the resize listener will be attached to the control,
+			// after rendering handler is executed and DOM reference adjustments are all done
+			setTimeout(function() {
+				this._sContainerResizeListener = ResizeHandler.register(this, this._adjustToScreenSize.bind(this));
+			}.bind(this), 0);
 		};
 
 		/**
