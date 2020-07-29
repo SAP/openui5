@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/core/Control",
@@ -38,7 +38,15 @@ sap.ui.define([
 		this.initBadgeEnablement();
 	};
 
-	QUnit.module("API", {
+	MyCustomControl.prototype.onBadgeUpdate = function(){
+		return true;
+	};
+
+	MyCustomControl.prototype.getAriaLabelBadgeText = function(){
+		return this.getBadgeCustomData().getValue() + " items";
+	};
+
+	QUnit.module("Basic", {
 		beforeEach: function() {
 			this.oCustomControl = new MyCustomControl({id: "CustomControl"});
 			this.oCustomControl.addCustomData(new BadgeCustomData({value: "10"}));
@@ -97,5 +105,67 @@ sap.ui.define([
 
 		assert.equal(this.oCustomControl._oBadgeConfig.position, "topRight", "API for configuration change works correctly - position");
 		assert.equal(this.oCustomControl._oBadgeContainer.hasClass("sapMBadgeTopRight"), true, "API for configuration change works correctly - position");
+	});
+
+	QUnit.module("API", {
+		beforeEach: function() {
+			this.oCustomControl = new MyCustomControl({id: "CustomControl"});
+			this.oCustomControl.addCustomData(new BadgeCustomData({value: "10"}));
+			this.oCustomControl.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCustomControl.destroy();
+			this.oCustomControl = null;
+		}
+	});
+
+
+	QUnit.test("API", function (assert) {
+
+		//Arrange
+		var oUpdateFuncStub = sinon.spy(this.oCustomControl, "onBadgeUpdate");
+
+		//Act
+		this.oCustomControl.addCustomData(new BadgeCustomData({value: "100"}));
+
+		//Assert
+		assert.equal(oUpdateFuncStub.calledOnce, true, "Update handler method called");
+		assert.equal(oUpdateFuncStub.calledWith("100", "Updated", "CustomControl-sapMBadge"), true, "Update handler method called with correct data" +
+			"- Updated");
+
+		//Act
+		this.oCustomControl.removeBadgeCustomData();
+
+		//Assert
+		assert.equal(oUpdateFuncStub.called, true, "Update handler method called");
+		assert.equal(oUpdateFuncStub.calledWith("", "Disappear", "CustomControl-sapMBadge"), true, "Update handler method called with correct data" +
+			"-Appeared");
+
+		//Act
+		this.oCustomControl.addCustomData(new BadgeCustomData({value: "100"}));
+
+		//Assert
+		assert.equal(oUpdateFuncStub.called, true, "Update handler method called");
+		assert.equal(oUpdateFuncStub.calledWith("100", "Appear", "CustomControl-sapMBadge"), true, "Update handler method called with correct data" +
+			"-Disappeared");
+	});
+
+	QUnit.module("ACC", {
+		beforeEach: function() {
+			this.oCustomControl = new MyCustomControl({id: "CustomControl"});
+			this.oCustomControl.addCustomData(new BadgeCustomData({value: "10"}));
+			this.oCustomControl.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCustomControl.destroy();
+			this.oCustomControl = null;
+		}
+	});
+
+	QUnit.test("ACC", function(assert) {
+		assert.equal(this.oCustomControl._oBadgeContainer.find(".sapMBadgeIndicator").attr("aria-label"), "10 items", "Aria-label with custom  text" +
+			" set properly");
 	});
 });

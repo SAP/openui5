@@ -63,6 +63,7 @@ sap.ui.define([
 			"sap.m.AvatarType",
 			"sap.m.AvatarColor",
 			"sap.m.BackgroundDesign",
+			"sap.m.BadgeState",
 			"sap.m.BarDesign",
 			"sap.m.BreadcrumbsSeparatorStyle",
 			"sap.m.ButtonType",
@@ -334,6 +335,7 @@ sap.ui.define([
 			"sap.m.semantic.MasterPage"
 		],
 		elements: [
+			"sap.m.BadgeCustomData",
 			"sap.m.Column",
 			"sap.m.ColumnPopoverActionItem",
 			"sap.m.ColumnPopoverCustomItem",
@@ -577,8 +579,37 @@ sap.ui.define([
 
 	};
 
+		/**
+		 * Types of state of {@link sap.m.BadgeEnabler} to expose its current state.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.81
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.BadgeState = {
 
-	/**
+			/**
+			 * Informing interested parties that the badge has been updated.
+			 * @public
+			 */
+			Updated : "Updated",
+
+			/**
+			 * Informing interested parties that the badge has appeared.
+			 * @public
+			 */
+			Appear : "Appear",
+
+			/**
+			 * Informing interested parties that the badge has disappeared.
+			 * @public
+			 */
+			Disappear : "Disappear"
+
+		};
+
+		/**
 	 * Types of the Bar design.
 	 *
 	 * @enum {string}
