@@ -1413,12 +1413,16 @@ sap.ui.define([
 	 * @param {string} [oConfiguration.mode="cors"] The mode of the request. Possible values are "cors", "no-cors", "same-origin".
 	 * @param {string} [oConfiguration.method="GET"] The HTTP method. Possible values are "GET", "POST".
 	 * @param {Object} [oConfiguration.parameters] The request parameters. If the method is "POST" the parameters will be put as key/value pairs into the body of the request.
+	 * @param {Object} [oConfiguration.dataType="json"] The expected Content-Type of the response. Possible values are "xml", "json", "text", "script", "html", "jsonp". Note: Complex Binding is not supported when a dataType is provided. Serialization of the response to an object is up to the developer.
 	 * @param {Object} [oConfiguration.headers] The HTTP headers of the request.
 	 * @param {boolean} [oConfiguration.withCredentials=false] Indicates whether cross-site requests should be made using credentials.
 	 * @returns {Promise} Resolves when the request is successful, rejects otherwise.
 	 */
 	Card.prototype.request = function (oConfiguration) {
-		return this._oDataProviderFactory.create({ request: oConfiguration }).getData();
+		return this._oDataProviderFactory
+			.create({ request: oConfiguration })
+			.setAllowCustomDataType(true)
+			.getData();
 	};
 
 	Card.prototype.onfocusin = function () {
