@@ -2493,9 +2493,7 @@ function(
 
 	// gets the sticky header position and scrolls the page so that the item is completely visible when focused
 	ListBase.prototype._handleStickyItemFocus = function(oItemDomRef) {
-		// when an item is focused and later focus is lost from the list control, the list control is scrolled and new item is focused,
-		// this resulted in unnecessary scroll jumping
-		if (!this._iStickyValue || this._sLastFocusedStickyItemId === oItemDomRef.id) {
+		if (!this._iStickyValue) {
 			return;
 		}
 
@@ -2545,8 +2543,6 @@ function(
 				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight]);
 			});
 		}
-
-		this._sLastFocusedStickyItemId = oItemDomRef.id;
 	};
 
 	ListBase.prototype.setHeaderToolbar = function(oHeaderToolbar) {
