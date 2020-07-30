@@ -172,28 +172,26 @@ sap.ui.define([
 				oHintProviderControl);
 		} else if (oHintInfo.event) {
 			var oEventListeners = EventProvider.getEventList(oHintProviderControl)[oHintInfo.event],
-				aRegisteredCommands;
+				aAttachedCommands = [];
 
 			if (oEventListeners) {
-				aRegisteredCommands = oEventListeners.reduce(function(aResults, oListener) {
+				aAttachedCommands = oEventListeners.reduce(function(aResults, oListener) {
 					if (oListener.fFunction && oListener.fFunction._sapui_commandName) {
 						aResults.push(oListener.fFunction._sapui_commandName);
 					}
 
 					return aResults;
 				}, []);
+			}
 
-				if (aRegisteredCommands.length) {
-					this.register(oHintInfo.id,
-						{
-							commandName: aRegisteredCommands[0]
-						},
-						oHintProviderControl
-					);
-				}
+			if (aAttachedCommands.length) {
+				this.register(oHintInfo.id,
+					{
+						commandName: aAttachedCommands[0]
+					},
+					oHintProviderControl
+				);
 			} else {
-				//no need to attach here if the same handler is already attached on init
-				//just add the info to a different array and look inside the original handler
 				oHintProviderControl.attachEvent("EventHandlerChange", function(oEvent) {
 					var oFn = oEvent.getParameter("func");
 
