@@ -137,7 +137,38 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Error handling");
 
+	QUnit.test("Async Factory, broken binding string", function(assert) {
+		var oViewPromise = XMLView.create({
+			definition: "" +
+			"<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.ui.commons\" xmlns:html=\"http://www.w3.org/1999/xhtml\">\n" +
+			"\t<Panel id=\"aPanel\">\n" +
+			"\t\t<Button id=\"Button1\" text=\"{This should cause a parse error\"></Button>\n" +
+			"\t</Panel>\n" +
+			"</mvc:View>"
+		});
+
+		return oViewPromise.then(function(oView) {
+			assert.ok(false, "should not succeed");
+		}, function(err) {
+			assert.deepEqual(err, new SyntaxError("no closing braces found in '{This should cause a parse error' after pos:0"), "SyntaxError is thrown during parsing of binding string.");
+		});
+	});
+
+	QUnit.test("Sync Factory, broken binding string", function(assert) {
+		assert.throws(function() {
+			sap.ui.xmlview({
+				viewContent: "" +
+				"<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.ui.commons\" xmlns:html=\"http://www.w3.org/1999/xhtml\">\n" +
+				"\t<Panel id=\"aPanel\">\n" +
+				"\t\t<Button id=\"Button1\" text=\"{This should cause a parse error\"></Button>\n" +
+				"\t</Panel>\n" +
+				"</mvc:View>"
+			});
+		}, new SyntaxError("no closing braces found in '{This should cause a parse error' after pos:0"),
+		"SyntaxError is thrown during parsing of binding string.");
+	});
 
 	QUnit.module("Preserve DOM");
 
