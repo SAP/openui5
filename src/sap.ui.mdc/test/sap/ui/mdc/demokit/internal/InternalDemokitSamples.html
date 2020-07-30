@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+
+	<title>MDCTable Explored Samples</title>
+
+	<script src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.mdc, sap.m"
+			data-sap-ui-theme="sap_fiori_3"></script>
+	<script>
+		jQuery.sap.require("sap.ui.core.util.LibraryInfo");
+		var oLibraryInfo = new sap.ui.core.util.LibraryInfo();
+		oLibraryInfo._getDocuIndex("sap/ui/mdc", function(res) {
+			var data = {
+				samples: res.explored.samples
+			};
+
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(data);
+
+			var oTable = new sap.m.Table({
+				headerText: "MDC Internal Demokit Samples",
+				mode: "None",
+				itemPress: function(oEvent) {
+					var sPathname = window.location.pathname.split('/')[1];
+					var sBaseUrl = window.location.origin + "/" + sPathname + "/";
+					if (sPathname === "testsuite") {
+						sBaseUrl += "documentation.html"
+					}
+					window.open(sBaseUrl + "#/entity/sap.ui.mdc.sample.Table/sample/sap.ui.mdc.sample."
+							+ oEvent.getParameter("listItem").getCells()[0].getText());
+				},
+				columns: [
+					new sap.m.Column({
+						header: new sap.m.Label({text: "Name"})
+					}),
+					new sap.m.Column({
+						header: new sap.m.Label({text: "Description"})
+					})
+				],
+				items: {
+					path: "/samples",
+					template: new sap.m.ColumnListItem({
+						cells: [
+							new sap.m.Text({text: "{name}"}),
+							new sap.m.Text({text: "{description}"})
+						],
+						type: "Navigation"
+					})
+				}
+			});
+
+			oTable.placeAt("content");
+			oTable.setModel(oModel);
+		});
+	</script>
+
+</head>
+<body id="content" class="sapUiBody">
+</body>
+</html>

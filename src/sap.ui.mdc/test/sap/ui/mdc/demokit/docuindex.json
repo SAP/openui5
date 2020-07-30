@@ -1,18 +1,51 @@
 {
-	"demo": {},
 	"explored": {
 		"entitiesDefaults": {
-			"formFactors": "ML"
+			"formFactors": "SML"
 		},
 		"samplesRef": [
 			{
 				"namespace": "sap.ui.mdc.sample",
-				"ref": "test-resources/sap/ui/mdc/demokit/sample"
+				"ref": "test-resources/sap/ui/mdc/demokit/internal/sample"
 			}
 		],
 		"entities": [
+			{
+				"id": "sap.ui.mdc.sample.Table",
+				"name": "MDC",
+				"category": "_PRIVATE_",
+				"since": "1.82",
+				"samples": [
+					"sap.ui.mdc.sample.ResponsiveTable",
+					"sap.ui.mdc.sample.GridTable",
+					"sap.ui.mdc.sample.V4AnalyticsTable",
+					"sap.ui.mdc.sample.TableStateHandling",
+					"sap.ui.mdc.sample.TableFilter"
+				]
+			}
 		],
 		"samples": [
+			{
+				"id": "sap.ui.mdc.sample.ResponsiveTable",
+				"name": "ResponsiveTable",
+				"description": "Basic example with ResponsiveTable"
+			}, {
+				"id": "sap.ui.mdc.sample.GridTable",
+				"name": "GridTable",
+				"description": "Basic example with GridTable"
+			}, {
+				"id": "sap.ui.mdc.sample.V4AnalyticsTable",
+				"name": "V4AnalyticsTable",
+				"description": "Basic example with V4AnalyticsTable"
+			}, {
+				"id": "sap.ui.mdc.sample.TableStateHandling",
+				"name": "TableStateHandling",
+				"description": "Basic example of State Handling"
+			}, {
+				"id": "sap.ui.mdc.sample.TableFilter",
+				"name": "TableFilter",
+				"description": "Basic example with Filter"
+			}
 		]
 	}
 }
