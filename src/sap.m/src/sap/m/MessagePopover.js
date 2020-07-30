@@ -424,7 +424,7 @@ function(
 			}*/
 
 			// Update MV only if 'items' aggregation is changed
-			if (this._bItemsChanged) {
+			if (this._oMessageView && this._bItemsChanged) {
 				var items = this.getItems();
 				var that = this;
 
@@ -648,7 +648,7 @@ function(
 		 * @private
 		 */
 		MessagePopover.prototype._restoreExpansionDefaults = function () {
-			if (!this.getInitiallyExpanded() && this.getItems().length != 1) {
+			if (this._oMessageView && !this.getInitiallyExpanded() && this.getItems().length != 1) {
 				this._collapseMsgPopover();
 				this._oMessageView._oSegmentedButton.setSelectedButton("none");
 			} else {
@@ -709,7 +709,7 @@ function(
 		 * @private
 		 */
 		MessagePopover.prototype._setInitialFocus = function () {
-			if (this._oMessageView._isListPage() && this.getInitiallyExpanded()) {
+			if (this._oMessageView && this._oMessageView._isListPage() && this.getInitiallyExpanded()) {
 				// if the controls state is "InitiallyExpanded: true" and
 				// if current page is the list page - set initial focus to the list.
 				// otherwise use default functionality built-in the popover
@@ -718,9 +718,11 @@ function(
 		};
 
 		MessagePopover.prototype._syncMessageView = function () {
-			this._oMessageView.setProperty('asyncDescriptionHandler', this.getAsyncDescriptionHandler(), true);
-			this._oMessageView.setProperty('asyncURLHandler', this.getAsyncURLHandler(), true);
-			this._oMessageView.setProperty("groupItems", this.getGroupItems(), false);
+			if (this._oMessageView) {
+				this._oMessageView.setProperty('asyncDescriptionHandler', this.getAsyncDescriptionHandler(), true);
+				this._oMessageView.setProperty('asyncURLHandler', this.getAsyncURLHandler(), true);
+				this._oMessageView.setProperty("groupItems", this.getGroupItems(), false);
+			}
 		};
 
 		/*
@@ -731,11 +733,13 @@ function(
 		 */
 
 		MessagePopover.prototype.setModel = function(oModel, sName) {
-			/* When a model is set to the MessagePopover it is propagated to all its aggregation
+			/* 	When a model is set to the MessagePopover it is propagated to all its aggregation
 				Unfortunately the MessageView is not an aggregation of the MessagePopover (due to some rendering issues)
 				Furthermore the MessageView is actually child of a ResponsivePopover
 				Therefore once the developer set a model to the MessagePopover we need to forward it to the internal MessageView */
-			this._oMessageView.setModel(oModel, sName);
+			if (this._oMessageView) {
+				this._oMessageView.setModel(oModel, sName);
+			}
 
 			return Control.prototype.setModel.apply(this, arguments);
 		};
@@ -747,7 +751,9 @@ function(
 		 */
 		MessagePopover.prototype.navigateBack = function () {
 			// MessagePopover is just a proxy to the MessageView
-			this._oMessageView.navigateBack();
+			if (this._oMessageView) {
+				this._oMessageView.navigateBack();
+			}
 		};
 
 		["invalidate", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "getBusyIndicatorDelay",
