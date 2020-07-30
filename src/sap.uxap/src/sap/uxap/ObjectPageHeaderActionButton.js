@@ -62,6 +62,8 @@ sap.ui.define(["sap/m/Button", "./library", "./ObjectPageHeaderActionButtonRende
 	});
 
 	ObjectPageHeaderActionButton.prototype.init = function () {
+		Button.prototype.init.call(this);
+
 		this._bInternalVisible = this.getVisible();
 	};
 
