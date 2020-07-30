@@ -347,6 +347,7 @@ sap.ui.define([
 		}
 
 		Chart.prototype.applySettings = function(mSettings, oScope) {
+			var aActions;
 
 			// Note: In the mdc.Chart control metadata, the "action" aggregation
 			// is defined as a forwarded aggregation.
@@ -356,12 +357,12 @@ sap.ui.define([
 			// an exception to happen when an aggregation is forwarded to a
 			// target control that has not been created.
 			if (mSettings) {
+				aActions = mSettings.actions;
 				delete mSettings.actions;
 			}
 
 			var oDelegateSettings = (mSettings && mSettings.delegate) || this.getDelegate();
 			var sDelegatePath = oDelegateSettings && oDelegateSettings.name;
-
 			var aModulesPaths = [ sDelegatePath ].concat(getModulesPaths());
 
 			this.oChartPromise = loadModules(aModulesPaths)
@@ -386,7 +387,6 @@ sap.ui.define([
 					return SyncPromise.reject();
 				}
 
-				var aActions = mSettings && mSettings.actions;
 				ToolbarHandler.createToolbar(this, aActions);
 				this._createDrillBreadcrumbs();
 
