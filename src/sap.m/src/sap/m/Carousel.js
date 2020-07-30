@@ -560,13 +560,15 @@ sap.ui.define([
 	 * @private
 	 */
 	Carousel.prototype._onAfterPageChanged = function (oEvent, iPreviousSlide, iNextSlide) {
+		var bHasPages = this.getPages().length > 0;
+
 		//the event might bubble up from another carousel inside of this one.
 		//in this case we ignore the event
 		if (oEvent.target !== this.getDomRef()) {
 			return;
 		}
 
-		if (iNextSlide > 0) {
+		if (bHasPages && iNextSlide > 0) {
 			this._changePage(iPreviousSlide, iNextSlide);
 		}
 	};
