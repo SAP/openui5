@@ -41,9 +41,13 @@ sap.ui.define([
 		// Arrange
 		var oToolbar = new Toolbar(),
 				oSegment = new Segment(null, oToolbar, "content"),
+				aContent = oSegment.getContent(),
 				oBtn1 = new Button(),
 				oBtn2 = new Button(),
 				oBtn3 = new Button();
+
+		// Assert
+		assert.ok(aContent !== oSegment.getContent(), "New copy of the content array is returned");
 
 		// Act
 		oSegment.addContent(oBtn1);

@@ -58,7 +58,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/Log"], function(BaseObject, Log) 
 
 	Segment.prototype.getContent = function () {
 
-		return this._aContent;
+		return this._aContent.slice();
 	};
 
 	Segment.prototype.indexOfContent = function (oControl) {
