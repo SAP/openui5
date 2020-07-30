@@ -3410,6 +3410,45 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_delete: kept-alive context not in the collection", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
+			aContexts = [{iIndex : 0}, {iIndex : 1}],
+			oKeptAliveContext = {
+				created : function () { return false; },
+				destroy : function () {},
+				getPath : function () { return "~contextpath~"; }
+			};
+
+		// simulate created entities which are already persisted
+		oBinding.aContexts = aContexts;
+		oBinding.iMaxLength = 42;
+		oBinding.mPreviousContextsByPath = {
+			"~contextpath~" : oKeptAliveContext,
+			doNotDelete : {bKeepAlive : true}
+		};
+
+		this.mock(_Helper).expects("getRelativePath")
+			.withExactArgs("~contextpath~", "/EMPLOYEES").returns("~predicate~");
+		oBindingMock.expects("deleteFromCache")
+			.withExactArgs("myGroup", "EMPLOYEES('1')", "~predicate~", "oETagEntity",
+				sinon.match.func)
+			.callsArgWith(4, undefined, [/*unused*/])
+			.resolves();
+		this.mock(oKeptAliveContext).expects("destroy");
+		oBindingMock.expects("_fireChange").never();
+
+		// code under test
+		return oBinding._delete("myGroup", "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity")
+			.then(function () {
+				assert.deepEqual(oBinding.mPreviousContextsByPath,
+					{doNotDelete : {bKeepAlive : true}});
+				assert.deepEqual(oBinding.aContexts, aContexts);
+				assert.strictEqual(oBinding.iMaxLength, 41);
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create: callbacks and eventing", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),

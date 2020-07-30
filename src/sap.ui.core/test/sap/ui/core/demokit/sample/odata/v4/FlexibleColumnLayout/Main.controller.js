@@ -36,6 +36,28 @@ sap.ui.define([
 			this.oModel.resetChanges("UpdateGroup");
 		},
 
+		onDeleteSalesOrder : function (oEvent) {
+			var oButton = oEvent.getSource(),
+				that = this;
+
+			oButton.getBindingContext().delete("$auto").then(function () {
+				MessageBox.success("Sales order deleted");
+				that.oUIModel.setProperty("/sLayout", LayoutType.OneColumn);
+				this.oUIModel.setProperty("/bSalesOrderSelected", false);
+			});
+		},
+
+		onDeleteSalesOrderItem : function (oEvent) {
+			var oButton = oEvent.getSource(),
+				that = this;
+
+			oButton.getBindingContext().delete("$auto").then(function () {
+				MessageBox.success("Sales order line item deleted");
+				that.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
+				this.oUIModel.setProperty("/bSalesOrderItemSelected", false);
+			});
+		},
+
 		onInit : function () {
 			this.initMessagePopover("showMessages");
 			this.oModel = this.getView().getModel();

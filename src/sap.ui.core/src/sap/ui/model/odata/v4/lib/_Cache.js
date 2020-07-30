@@ -152,8 +152,9 @@ sap.ui.define([
 		this.addPendingRequest();
 
 		return this.fetchValue(_GroupLock.$cached, sParentPath).then(function (vCacheData) {
-			var oEntity = vDeleteProperty
-					? vCacheData[Cache.from$skip(vDeleteProperty, vCacheData)]
+			var vCachePath = Cache.from$skip(vDeleteProperty, vCacheData),
+				oEntity = vDeleteProperty
+					? vCacheData[vCachePath] || vCacheData.$byPredicate[vCachePath]
 					: vCacheData, // deleting at root level
 				mHeaders,
 				sKeyPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
@@ -1068,12 +1069,16 @@ sap.ui.define([
 	 * @private
 	 */
 	Cache.prototype.removeElement = function (aElements, iIndex, sPredicate, sPath) {
-		var oElement, sTransientPredicate;
+		var bIsKeptAlive = isNaN(iIndex),
+			oElement,
+			sTransientPredicate;
 
-		// the element might have moved due to parallel insert/delete
-		iIndex = Cache.getElementIndex(aElements, sPredicate, iIndex);
-		oElement = aElements[iIndex];
-		aElements.splice(iIndex, 1);
+		oElement = aElements.$byPredicate[sPredicate];
+		if (!bIsKeptAlive) {
+			// the element might have moved due to parallel insert/delete
+			iIndex = Cache.getElementIndex(aElements, sPredicate, iIndex);
+			aElements.splice(iIndex, 1);
+		}
 		delete aElements.$byPredicate[sPredicate];
 		sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
 		if (sTransientPredicate) {
@@ -1082,8 +1087,10 @@ sap.ui.define([
 		} else if (!sPath) {
 			// Note: sPath is empty only in a CollectionCache, so we may use iLmit and
 			// adjustReadRequests
-			this.iLimit -= 1;
-			this.adjustReadRequests(iIndex, -1);
+			this.iLimit -= 1; // this doesn't change Infinity
+			if (!bIsKeptAlive) {
+				this.adjustReadRequests(iIndex, -1);
+			}
 		}
 		addToCount(this.mChangeListeners, sPath, aElements, -1);
 		return iIndex;

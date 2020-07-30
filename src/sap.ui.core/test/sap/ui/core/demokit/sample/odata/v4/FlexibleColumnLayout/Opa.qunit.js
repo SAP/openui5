@@ -92,6 +92,30 @@ sap.ui.getCore().attachInit(function () {
 				Then.iTeardownMyUIComponent();
 			});
 
+			//*****************************************************************************
+			opaTest("Delete a kept-alive context that is not visible in the sales orders table",
+					function (Given, When, Then) {
+				When.onAnyPage.applySupportAssistant();
+				Given.iStartMyUIComponent({
+					autoWait : true,
+					componentConfig : {
+						name : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout"
+					}
+				});
+
+				When.onTheListReport.sortBySalesOrderID();
+				When.onTheListReport.selectSalesOrder(0);
+				Then.onTheObjectPage.checkSalesOrderID("0500000009");
+
+				When.onTheListReport.sortBySalesOrderID();
+				Then.onTheListReport.checkSalesOrderNotInTheList("0500000009");
+				Then.onTheObjectPage.checkSalesOrderID("0500000009");
+
+				When.onTheObjectPage.deleteSalesOrder();
+				When.onTheApplication.closeDialog("Success"); // close the success dialog
+				Then.onTheApplication.checkMessagesButtonCount(0);
+			});
+
 			QUnit.start();
 		}
 	});

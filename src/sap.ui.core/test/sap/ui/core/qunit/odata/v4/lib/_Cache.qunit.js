@@ -516,6 +516,45 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#_delete: kept-alive context not in collection", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
+			aCacheData = [],
+			fnCallback = this.spy(),
+			oGroupLock = {},
+			that = this;
+
+		aCacheData.$byPredicate = {
+			"('1')" : {
+				"@$ui5._" : {"predicate" : "('1')"},
+				"@odata.etag" : "etag"
+			}
+		};
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
+			.returns(SyncPromise.resolve(aCacheData));
+		this.oRequestorMock.expects("request")
+			.withExactArgs("DELETE", "EMPLOYEES('1')", sinon.match.same(oGroupLock), {
+					"If-Match" : "etag"
+				}, undefined, undefined, undefined, undefined, "EMPLOYEES('1')")
+			.returns(Promise.resolve().then(function () {
+				that.oModelInterfaceMock.expects("reportBoundMessages")
+					.withExactArgs(oCache.sResourcePath, [], ["('1')"]);
+			}));
+		this.mock(oCache).expects("removeElement").withExactArgs(aCacheData, NaN, "('1')", "")
+			.returns("iIndex");
+
+		// code under test
+		return oCache._delete(oGroupLock, "EMPLOYEES('1')", "('1')", "etag", fnCallback)
+			.then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+				sinon.assert.calledOnce(fnCallback);
+				sinon.assert.calledWithExactly(fnCallback, "iIndex", aCacheData);
+			});
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bCreated) {
 	["", "EMPLOYEE_2_EQUIPMENTS"].forEach(function (sParentPath) {
 		[false, true].forEach(function (bCount) {
@@ -579,6 +618,43 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#removeElement for a kept-alive context", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
+			aCacheData = [{
+				"@$ui5._" : {"predicate" : "('2')"},
+				"@odata.etag" : "etag"
+			}],
+			iIndex;
+
+		aCacheData.$byPredicate = {
+			"('1')" : {
+					"@$ui5._" : {"predicate" : "('1')"},
+					"@odata.etag" : "etag"
+				},
+			"('2')" : aCacheData[0]
+		};
+		aCacheData.$count = 42;
+		oCache.iLimit = 42;
+		this.mock(_Cache).expects("getElementIndex").never();
+		this.mock(_Helper).expects("updateExisting")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
+				sinon.match.same(aCacheData), {$count : 41})
+			.callThrough();
+
+		// code under test
+		iIndex = oCache.removeElement(aCacheData, NaN, "('1')", "");
+
+		assert.ok(isNaN(iIndex));
+		assert.strictEqual(aCacheData.$count, 41);
+		assert.strictEqual(oCache.iLimit, 41);
+		assert.deepEqual(aCacheData, [{
+			"@$ui5._" : {"predicate" : "('2')"},
+			"@odata.etag" : "etag"
+		}]);
+		assert.deepEqual(aCacheData.$byPredicate, {"('2')" : aCacheData[0]});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#registerChange", function (assert) {

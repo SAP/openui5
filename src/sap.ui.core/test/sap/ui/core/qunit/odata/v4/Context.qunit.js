@@ -1043,6 +1043,8 @@ sap.ui.define([
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
+		oContext.bKeepAlive = {/*true or false*/};
+
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
@@ -1055,6 +1057,7 @@ sap.ui.define([
 			assert.strictEqual(oResult, undefined);
 			assert.strictEqual(oContext.oBinding, oBinding);
 			assert.strictEqual(oContext.oModel, oModel);
+			assert.strictEqual(oContext.bKeepAlive, false);
 		});
 	});
 
@@ -1087,10 +1090,13 @@ sap.ui.define([
 			},
 			oError = new Error(),
 			oGroupLock = {},
+			bKeepAlive = {/*true or false*/},
 			oModel = {
 				reportError : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+
+		oContext.bKeepAlive = bKeepAlive;
 
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
@@ -1108,6 +1114,7 @@ sap.ui.define([
 			assert.strictEqual(oContext.getModelIndex(), 42);
 			assert.strictEqual(oContext.getModel(), oModel);
 			assert.strictEqual(oContext.getPath(), "/EMPLOYEES/42");
+			assert.strictEqual(oContext.bKeepAlive, bKeepAlive);
 		});
 	});
 
@@ -1115,11 +1122,13 @@ sap.ui.define([
 	QUnit.test("_delete: failure in fetchCanonicalPath", function (assert) {
 		var oBinding = {},
 			oError = new Error(),
+			bKeepAlive = {/*true or false*/},
 			oModel = {
 				reportError : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
+		oContext.bKeepAlive = bKeepAlive;
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs().returns(SyncPromise.reject(oError));
 
@@ -1128,6 +1137,7 @@ sap.ui.define([
 			assert.ok(false);
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
+			assert.strictEqual(oContext.bKeepAlive, bKeepAlive);
 		});
 	});
 

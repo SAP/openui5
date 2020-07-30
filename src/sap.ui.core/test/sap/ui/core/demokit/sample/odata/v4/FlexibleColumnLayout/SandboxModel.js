@@ -36,6 +36,12 @@ sap.ui.define([
 				},
 				"SalesOrderList('0500000000')/SO_2_SOITEM?$count=true&$orderby=GrossAmount,ItemPosition&$select=CurrencyCode,GrossAmount,ItemPosition,ProductID,Quantity,QuantityUnit,SalesOrderID&$skip=5&$top=5" : {
 					source : "SalesOrderList('0500000000')-SO_2_ITEM-OrderByGrossAmount_skip5_top5.json"
+				},
+				"SalesOrderList('0500000009')/SO_2_SOITEM?$count=true&$orderby=ItemPosition&$select=CurrencyCode,GrossAmount,ItemPosition,ProductID,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=5" : {
+					source : "SalesOrderList('0500000009')-SO_2_ITEM.json"
+				},
+				"SalesOrderList('0500000009')?$select=ChangedAt,CreatedAt,LifecycleStatusDesc" : {
+					source : "SalesOrderList('0500000009')-ChangedAt+CreatedAt+LifecycleStatusDesc.json"
 				}
 			},
 			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",

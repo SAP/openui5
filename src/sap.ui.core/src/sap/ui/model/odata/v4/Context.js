@@ -142,6 +142,9 @@ sap.ui.define([
 		}
 		return this.fetchCanonicalPath().then(function (sCanonicalPath) {
 			return that.oBinding._delete(oGroupLock, sCanonicalPath.slice(1), that, oETagEntity);
+		}).then(function () {
+			// enable destroying in ODLB#destroyPreviousContexts
+			that.bKeepAlive = false;
 		});
 	};
 

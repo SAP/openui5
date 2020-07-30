@@ -217,16 +217,21 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype._delete = function (oGroupLock, sEditUrl, oContext, oETagEntity) {
 		var bFireChange = false,
+			sPath = oContext.iIndex === undefined
+				// not in the list -> use the predicate
+				? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
+				: String(oContext.iIndex),
 			that = this;
 
-		return this.deleteFromCache(oGroupLock, sEditUrl, String(oContext.iIndex), oETagEntity,
+		return this.deleteFromCache(oGroupLock, sEditUrl, sPath, oETagEntity,
 			function (iIndex, aEntities) {
 				var sContextPath, i, sPredicate, sResolvedPath, i$skipIndex;
 
 				if (oContext.created()) {
 					// happens only for a created context that is not transient anymore
 					that.destroyCreated(oContext, true);
-				} else {
+					bFireChange = true;
+				} else if (iIndex >= 0) {
 					// prepare all contexts for deletion
 					for (i = iIndex; i < that.aContexts.length; i += 1) {
 						oContext = that.aContexts[i];
@@ -258,8 +263,12 @@ sap.ui.define([
 						}
 					}
 					that.iMaxLength -= 1; // this doesn't change Infinity
+					bFireChange = true;
+				} else {
+					that.iMaxLength -= 1; // this doesn't change Infinity
+					oContext.destroy();
+					delete that.mPreviousContextsByPath[oContext.getPath()];
 				}
-				bFireChange = true;
 			}
 		).then(function () {
 			// Fire the change asynchronously so that Cache#delete is finished and #getContexts can
