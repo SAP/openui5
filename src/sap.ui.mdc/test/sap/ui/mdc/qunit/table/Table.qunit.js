@@ -3605,6 +3605,49 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("ResponsiveTableType should have 'Inactive' row template when no rowPress event is attached", function(assert) {
+		var done = assert.async();
+		this.oTable.destroy();
+		this.oTable = new Table({
+			type: "ResponsiveTable"
+		});
+
+		this.oTable.addColumn(new Column({
+			header: "Test",
+			template: new Text({
+				text: "Test"
+			})
+		}));
+
+		this.oTable.initialized().then(function() {
+			assert.strictEqual(this.oTable._oTemplate.getType(), "Inactive", "row template is Inactive since no rowPress event is attached");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("ResponsiveTableType should have 'Active' row template type when rowPress event is attached", function(assert) {
+		var done = assert.async();
+		this.oTable.destroy();
+		this.oTable = new Table({
+			type: "ResponsiveTable",
+			rowPress: function() {
+				return true;
+			}
+		});
+
+		this.oTable.addColumn(new Column({
+			header: "Test",
+			template: new Text({
+				text: "Test"
+			})
+		}));
+
+		this.oTable.initialized().then(function() {
+			assert.strictEqual(this.oTable._oTemplate.getType(), "Active", "row template type is Active since rowPress event is attached");
+			done();
+		}.bind(this));
+	});
+
 	QUnit.test("Destroy immediately after create - destroys toolbar", function(assert) {
 		// Destroy the old/default table, as this is not used for this test
 		this.oTable.destroy();
