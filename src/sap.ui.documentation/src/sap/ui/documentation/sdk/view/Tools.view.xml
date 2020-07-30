@@ -47,54 +47,11 @@
 			</l:BlockLayout>
 		</Panel>
 		<l:Grid defaultSpan="XL3 L4 M4 S12" class="toolpageResponsiveMargins">
-			<!-- WebIDE -->
-			<f:Card class="threeColumnLayoutCard">
-				<f:content>
-					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
-							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
-								<custom:TitleLink
-										level="H1"
-										titleStyle="H1"
-										text="SAP Web IDE"
-										href="https://sdk-sapwebide.dispatcher.hana.ondemand.com/index.html"
-										target="_blank"/>
-								<Image
-									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-									tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
-									width="1.25rem"
-									press="onDisclaimerLinkPress"/>
-							</html:div>
-							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_1_TEXT}" />
-							<HBox wrap="Wrap">
-								<html:div class="sapUIDisclaimerLink sapUiMediumMarginEnd">
-									<Link text="{i18n>TOOLS_VIEW_DOC}"
-											target="_blank"
-											href="https://help.sap.com/viewer/825270ffffe74d9f988a0f0066ad59f0/CF/en-US"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-										tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-								<html:div class="sapUIDisclaimerLink">
-									<Link text="{i18n>TOOLS_CARD_1_LINK_1}"
-											target="_blank"
-											href="https://sdk-sapwebide.dispatcher.hana.ondemand.com/index.html"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-										tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-							</HBox>
-						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/WebIDE.png" class="toolsPageImage" alt="{i18n>TOOLS_CARD_1_IMG_ALT}"/>
-					</VBox>
-				</f:content>
-			</f:Card>
 			<!-- UI Theme Designer -->
-			<f:Card class="threeColumnLayoutCard">
+			<f:Card height="25rem">
+				<f:layoutData>
+					<l:GridData spanM="6" spanL="6" spanXL="4"/>
+				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -139,8 +96,50 @@
 					</VBox>
 				</f:content>
 			</f:Card>
+			<!-- Business Application Studio -->
+			<f:Card height="25rem">
+				<f:layoutData>
+					<l:GridData spanM="6" spanL="6" spanXL="4"/>
+				</f:layoutData>
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+								<custom:TitleLink
+										level="H1"
+										titleStyle="H1"
+										text="Business Application Studio"
+										href="http://www.sap.com/appstudio"
+										target="_blank"/>
+								<Image
+									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+									tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
+									width="1.25rem"
+									press="onDisclaimerLinkPress"/>
+							</html:div>
+							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_9_TEXT}" />
+							<HBox wrap="Wrap">
+								<html:div class="sapUIDisclaimerLink sapUiMediumMarginEnd">
+									<Link text="{i18n>TOOLS_VIEW_DOC}"
+											target="_blank"
+											href="https://help.sap.com/viewer/product/SAP%20Business%20Application%20Studio/Cloud/en-US"/>
+									<Image
+										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+										tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
+										width="1.25rem"
+										press="onDisclaimerLinkPress"/>
+								</html:div>
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/BusinessApplicationStudio.jpg" class="toolsPageImage" alt="{i18n>TOOLS_CARD_9_IMG_ALT}"/>
+					</VBox>
+				</f:content>
+			</f:Card>
 			<!-- UI5 Tooling -->
 			<f:Card class="threeColumnLayoutCard">
+				<f:layoutData>
+					<l:GridData spanXL="4"/>
+				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -186,10 +185,7 @@
 				</f:content>
 			</f:Card>
 			<!-- UI5 Inspector -->
-			<f:Card height="25rem">
-				<f:layoutData>
-					<l:GridData spanM="6" spanL="6"/>
-				</f:layoutData>
+			<f:Card class="threeColumnLayoutCard">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -229,10 +225,7 @@
 				</f:content>
 			</f:Card>
 			<!-- Card Explorer -->
-			<f:Card height="25rem">
-				<f:layoutData>
-					<l:GridData spanM="6" spanL="6"/>
-				</f:layoutData>
+			<f:Card class="threeColumnLayoutCard">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -259,7 +252,10 @@
 				</f:content>
 			</f:Card>
 			<!-- Support Assistant -->
-			<f:Card class="threeColumnLayoutCard">
+			<f:Card height="25rem">
+				<f:layoutData>
+					<l:GridData spanM="6" spanL="6"/>
+				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -282,7 +278,10 @@
 				</f:content>
 			</f:Card>
 			<!-- Icon Explorer -->
-			<f:Card class="threeColumnLayoutCard">
+			<f:Card height="25rem">
+				<f:layoutData>
+					<l:GridData spanM="6" spanL="6"/>
+				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -312,8 +311,60 @@
 					</VBox>
 				</f:content>
 			</f:Card>
+			<!-- WebIDE -->
+			<f:Card class="threeColumnLayoutCard">
+				<f:layoutData>
+					<l:GridData spanXL="4"/>
+				</f:layoutData>
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+								<custom:TitleLink
+										level="H1"
+										titleStyle="H1"
+										text="SAP Web IDE"
+										href="https://sdk-sapwebide.dispatcher.hana.ondemand.com/index.html"
+										target="_blank"/>
+								<Image
+									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+									tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
+									width="1.25rem"
+									press="onDisclaimerLinkPress"/>
+							</html:div>
+							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_1_TEXT}" />
+							<HBox wrap="Wrap">
+								<html:div class="sapUIDisclaimerLink sapUiMediumMarginEnd">
+									<Link text="{i18n>TOOLS_VIEW_DOC}"
+											target="_blank"
+											href="https://help.sap.com/viewer/825270ffffe74d9f988a0f0066ad59f0/CF/en-US"/>
+									<Image
+										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+										tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
+										width="1.25rem"
+										press="onDisclaimerLinkPress"/>
+								</html:div>
+								<html:div class="sapUIDisclaimerLink">
+									<Link text="{i18n>TOOLS_CARD_1_LINK_1}"
+											target="_blank"
+											href="https://sdk-sapwebide.dispatcher.hana.ondemand.com/index.html"/>
+									<Image
+										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+										tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
+										width="1.25rem"
+										press="onDisclaimerLinkPress"/>
+								</html:div>
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/WebIDE.png" class="toolsPageImage" alt="{i18n>TOOLS_CARD_1_IMG_ALT}"/>
+					</VBox>
+				</f:content>
+			</f:Card>
 			<!-- Theme Parameter Toolbox -->
 			<f:Card class="threeColumnLayoutCard">
+				<f:layoutData>
+					<l:GridData spanXL="4"/>
+				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -327,6 +378,55 @@
 							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_8_TEXT}" />
 						</VBox>
 						<Image src="./resources/sap/ui/documentation/sdk/images/tools/ThemeParameterToolbox.png" class="toolsPageImage" alt="{i18n>TOOLS_CARD_8_IMG_ALT}"/>
+					</VBox>
+				</f:content>
+			</f:Card>
+			<!-- UI5 Web Components -->
+			<f:Card class="threeColumnLayoutCard">
+				<f:layoutData>
+					<l:GridData spanXL="4"/>
+				</f:layoutData>
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+								<custom:TitleLink
+										level="H1"
+										titleStyle="H1"
+										text="UI5 Web Components"
+										href="https://sap.github.io/ui5-webcomponents/"
+										target="_blank"/>
+								<Image
+									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+									tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
+									width="1.25rem"
+									press="onDisclaimerLinkPress"/>
+							</html:div>
+							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_10_TEXT}" />
+							<HBox wrap="Wrap">
+								<html:div class="sapUIDisclaimerLink sapUiMediumMarginEnd">
+									<Link text="{i18n>TOOLS_CARD_10_LINK_1}"
+											target="_blank"
+											href="https://sap.github.io/ui5-webcomponents/playground"/>
+									<Image
+										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+										tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
+										width="1.25rem"
+										press="onDisclaimerLinkPress"/>
+								</html:div>
+								<html:div class="sapUIDisclaimerLink">
+									<Link text="{i18n>TOOLS_CARD_10_LINK_2}"
+											target="_blank"
+											href="https://github.com/SAP/ui5-webcomponents"/>
+									<Image
+										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+										tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
+										width="1.25rem"
+										press="onDisclaimerLinkPress"/>
+								</html:div>
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/UI5WebComponents.png" class="toolsPageImage" alt="{i18n>TOOLS_CARD_10_IMG_ALT}"/>
 					</VBox>
 				</f:content>
 			</f:Card>
