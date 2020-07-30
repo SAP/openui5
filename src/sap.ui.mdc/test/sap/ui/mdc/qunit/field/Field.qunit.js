@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/m/Slider",
 	"sap/m/Button",
 	"sap/ui/model/ParseException",
+	"sap/ui/model/type/String",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/odata/type/Currency",
@@ -49,6 +50,7 @@ sap.ui.define([
 		Slider,
 		Button,
 		ParseException,
+		StringType,
 		IntegerType,
 		CurrencyType,
 		oDataCurrencyType,
@@ -771,6 +773,7 @@ sap.ui.define([
 	var oField2;
 	var oType2;
 	var oField3;
+	var oType3;
 	var oField4;
 	var oType4;
 	var ODataCurrencyCodeList = {
@@ -785,11 +788,13 @@ sap.ui.define([
 			oModel = new JSONModel({
 				value: 10,
 				date: new Date(Date.UTC(2018, 11, 20)),
-				key: "A",
-				description: "Text A",
 				price: 123.45,
 				currencyCode: "USD",
-				units: ODataCurrencyCodeList
+				units: ODataCurrencyCodeList,
+				items: [{key: "A", description: "Text A"},
+				        {key: "A", description: "Text A"}, // to test same value
+				        {key: "B", description: "Text B"}
+				        ]
 			});
 
 			oType = new IntegerType();
@@ -810,13 +815,17 @@ sap.ui.define([
 			}).placeAt("content");
 			oField2.setModel(oModel);
 
+			oType3 = new StringType({}, {maxLength: 1});
+			oType3._bMyType = true;
+			var oBindingContext = oModel.getContext("/items/0/");
 			oField3 = new Field("F3", {
-				value: {path: "/key"},
-				additionalValue: {path: "/description", mode: "OneWay"},
+				value: {path: "key", type: oType3},
+				additionalValue: {path: "description", mode: "OneWay"},
 				display: FieldDisplay.DescriptionValue,
 				change: _myChangeHandler
 			}).placeAt("content");
 			oField3.setModel(oModel);
+			oField3.setBindingContext(oBindingContext);
 
 			oType4 = new oDataCurrencyType();
 			oType4._bMyType = true;
@@ -844,6 +853,8 @@ sap.ui.define([
 			oType = undefined;
 			oType2.destroy();
 			oType2 = undefined;
+			oType3.destroy();
+			oType3 = undefined;
 			oType4.destroy();
 			oType4 = undefined;
 			iCount = 0;
@@ -928,13 +939,13 @@ sap.ui.define([
 
 			oField3.setConditions([Condition.createItemCondition("B", "Text B")]); // fake user input
 			oModel.checkUpdate(true); // otherwise following test behave strange
-			assert.equal(oModel.getData().key, "B", "Key updated in Model");
-			assert.equal(oModel.getData().description, "Text A", "Description not updated in Model");
+			assert.equal(oModel.getData().items[0].key, "B", "Key updated in Model");
+			assert.equal(oModel.getData().items[0].description, "Text A", "Description not updated in Model");
 			aConditions = oField3.getConditions();
 			oCondition = aConditions.length === 1 && aConditions[0];
 			assert.deepEqual(oCondition.values, ["B", "Text B"], "Condition ok");
 
-			oModel.getData().key = "A";
+			oModel.getData().items[0].key = "A";
 			oModel.checkUpdate(true);
 			setTimeout(function() { // as conditions are updated async
 				aConditions = oField3.getConditions();
@@ -942,8 +953,8 @@ sap.ui.define([
 				assert.deepEqual(oCondition.values, ["A", "Text A"], "Condition ok");
 
 
-				oModel.getData().key = "B";
-				oModel.getData().description = "Text B";
+				oModel.getData().items[0].key = "B";
+				oModel.getData().items[0].description = "Text B";
 				oModel.checkUpdate(true);
 				setTimeout(function() { // as conditions are updated async
 					aConditions = oField3.getConditions();
@@ -952,6 +963,64 @@ sap.ui.define([
 					fnDone();
 				}, 0);
 			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("BindingContext change to same value on wrong input", function(assert) {
+
+		sap.ui.getCore().getMessageManager().registerObject(oField3, true); // to activate message manager
+		var fnDone = assert.async();
+
+		setTimeout(function() { // as conditions are updated async
+			var aContent = oField3.getAggregation("_content");
+			var oContent = aContent && aContent.length > 0 && aContent[0];
+
+			oField3.focus();
+			oContent._$input.val("A1");
+			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+			setTimeout(function() { // as valueState is updates async
+				assert.equal(oField3.getValueState(), "Error", "ValueState set");
+
+				var oBindingContext = oModel.getContext("/items/1/");
+				oField3.setBindingContext(oBindingContext);
+
+				setTimeout(function() { // as propertys are updated async
+					assert.equal(oField3.getValueState(), "None", "ValueState not set");
+					assert.equal(oContent.getDOMValue(), "Text A (A)", "new value set on Input");
+					fnDone();
+				}, 50); // as different Timeout-0 are involved
+			}, 50); // as different Timeout-0 are involved
+		}, 0);
+
+	});
+
+	QUnit.test("BindingContext change to different value on wrong input", function(assert) {
+
+		sap.ui.getCore().getMessageManager().registerObject(oField3, true); // to activate message manager
+		var fnDone = assert.async();
+
+		setTimeout(function() { // as conditions are updated async
+			var aContent = oField3.getAggregation("_content");
+			var oContent = aContent && aContent.length > 0 && aContent[0];
+
+			oField3.focus();
+			oContent._$input.val("A1");
+			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+			setTimeout(function() { // as valueState is updates async
+				assert.equal(oField3.getValueState(), "Error", "ValueState set");
+
+				var oBindingContext = oModel.getContext("/items/2/");
+				oField3.setBindingContext(oBindingContext);
+
+				setTimeout(function() { // as propertys are updated async
+					assert.equal(oField3.getValueState(), "None", "ValueState not set");
+					assert.equal(oContent.getDOMValue(), "Text B (B)", "new value set on Input");
+					fnDone();
+				}, 50); // as different Timeout-0 are involved
+			}, 50); // as different Timeout-0 are involved
 		}, 0);
 
 	});
