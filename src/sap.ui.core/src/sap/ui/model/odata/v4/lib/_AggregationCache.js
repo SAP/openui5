@@ -71,8 +71,9 @@ sap.ui.define([
 			mFirstQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions,
 				mAlias2MeasureAndMethod); // 1st request only
 			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mFirstQueryOptions, true);
-			this.oFirstLevel.getResourcePath = _AggregationCache.getResourcePath.bind(
-				this.oFirstLevel, oAggregation, mQueryOptions);
+			this.oFirstLevel.getResourcePathWithQuery =
+				_AggregationCache.getResourcePathWithQuery.bind(this.oFirstLevel, oAggregation,
+					mQueryOptions);
 			this.oFirstLevel.handleResponse = _AggregationCache.handleResponse
 				.bind(this.oFirstLevel, null, mAlias2MeasureAndMethod, fnMeasureRangeResolve,
 					this.oFirstLevel.handleResponse);
@@ -91,8 +92,9 @@ sap.ui.define([
 			this.oFirstLevel = this.createGroupLevelCache();
 		} else { // grand total w/o visual grouping
 			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mQueryOptions, true);
-			this.oFirstLevel.getResourcePath = _AggregationCache.getResourcePath.bind(
-				this.oFirstLevel, oAggregation, mQueryOptions);
+			this.oFirstLevel.getResourcePathWithQuery =
+				_AggregationCache.getResourcePathWithQuery.bind(this.oFirstLevel, oAggregation,
+					mQueryOptions);
 			this.oFirstLevel.handleResponse = _AggregationCache.handleResponse
 				.bind(this.oFirstLevel, oAggregation, null, null, this.oFirstLevel.handleResponse);
 		}
@@ -429,7 +431,7 @@ sap.ui.define([
 	 * @returns {string} The URL
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.lib._AggregationCache.getResourcePath
+	 * @see sap.ui.model.odata.v4.lib._AggregationCache.getResourcePathWithQuery
 	 */
 	// @override
 	_AggregationCache.prototype.toString = function () {
@@ -660,8 +662,8 @@ sap.ui.define([
 	 * as transformations. Follow-up requests do not aggregate the count and minimum or maximum
 	 * values again. Grand total values are requested only for <code>iStart === 0</code>.
 	 *
-	 * This function is used to replace <code>getResourcePath</code> of the first level cache and
-	 * needs to be called on the first level cache.
+	 * This function is used to replace <code>getResourcePathWithQuery</code> of the first level
+	 * cache and needs to be called on the first level cache.
 	 *
 	 * @param {object} oAggregation
 	 *   An object holding the information needed for data aggregation; see also
@@ -677,7 +679,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	_AggregationCache.getResourcePath = function (oAggregation, mQueryOptions, iStart, iEnd) {
+	_AggregationCache.getResourcePathWithQuery = function (oAggregation, mQueryOptions, iStart,
+			iEnd) {
 		mQueryOptions = Object.assign({}, mQueryOptions, {
 			$skip : iStart,
 			$top : iEnd - iStart
