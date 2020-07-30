@@ -4,10 +4,14 @@
 
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"./waitForValueHelpConditionsTable"
+	"./waitForValueHelpConditionsTable",
+	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/matchers/AggregationContainsPropertyEqual"
 ], function(
 	Opa5,
-	waitForValueHelpConditionsTable
+	waitForValueHelpConditionsTable,
+	Ancestor,
+	AggregationContainsPropertyEqual
 ) {
 	"use strict";
 
@@ -18,38 +22,18 @@ sap.ui.define([
 		});
 
 		function onValueHelpDialogConditionsTableFound(oValueHelpDialogConditionsTable) {
+			var aMatchers = aValues.map(function(oValue) {
+				return new AggregationContainsPropertyEqual({
+					aggregationName: "cells",
+					propertyName: "text",
+					propertyValue: oValue
+				});
+			});
+			aMatchers.push(new Ancestor(oValueHelpDialogConditionsTable, false));
 			this.waitFor({
 				controlType: "sap.m.ColumnListItem",
 				searchOpenDialogs: true,
-				matchers: function(oColumnListItem) {
-					var oColumnListItemParent = oColumnListItem.getParent();
-
-					if (!oColumnListItemParent) {
-						return false;
-					}
-
-					if (oColumnListItemParent !== oValueHelpDialogConditionsTable) {
-						return false;
-					}
-
-					var aCells = oColumnListItem.getCells().filter(function(oCell) {
-						return oCell.isA("sap.m.Text");
-					});
-
-					var aCellTexts = aCells.map(function(oCell) {
-						return oCell.getText();
-					});
-
-					if (aCellTexts.length < aValues.length) {
-						return false;
-					}
-
-					var bCellsFound = aValues.every(function(vValue) {
-						return aCellTexts.includes(String(vValue));
-					});
-
-					return bCellsFound;
-				},
+				matchers: aMatchers,
 				actions: oSettings.actions,
 				success: function(aColumnListItems) {
 					Opa5.assert.ok(true, "The column list item condition inside the value help dialog was found");

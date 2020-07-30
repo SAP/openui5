@@ -12,7 +12,7 @@ sap.ui.define([
 		return this.waitFor({
 			controlType: "sap.ui.mdc.Table",
 			success: function(aTables) {
-				//Opa5.assert.strictEqual(aTables.length, 1, 'The mdc.Table was found');
+				Opa5.assert.strictEqual(aTables.length, 1, 'The mdc.Table was found');
 
 				if (typeof oSettings.success === "function") {
 					var oTable = aTables[0];
