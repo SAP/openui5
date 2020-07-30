@@ -751,6 +751,8 @@ sap.ui.define([
 
 		this._updatePickerSelection();
 
+		this._updateHeaderButtons();
+
 		Device.orientation.detachHandler(this._updateStickyHeader, this);
 
 		this._bBeforeRendering = undefined;
@@ -837,6 +839,16 @@ sap.ui.define([
 			this._dateNav.previous();
 		} else {
 			this._dateNav.next();
+		}
+
+		if (this.getMinDate() && this._dateNav.getStart().getTime() <= this.getMinDate().getTime()) {
+			this._dateNav.setStart(this.getMinDate());
+			this._dateNav.setCurrent(this.getMinDate());
+		}
+
+		if (this.getMaxDate() && this._dateNav.getEnd().getTime() >= this.getMaxDate().getTime()) {
+			this._dateNav.setStart(this.getMaxDate());
+			this._dateNav.setCurrent(this.getMaxDate());
 		}
 
 		var oRow = this._getRowInstanceByViewKey(this.getViewKey());
@@ -1222,6 +1234,8 @@ sap.ui.define([
 			this._updateCurrentTimeVisualization(false);
 			this._updatePickerSelection();
 		}
+
+		this._updateHeaderButtons();
 
 		return this;
 
@@ -2428,6 +2442,7 @@ sap.ui.define([
 		}
 
 		this._changeStartDate(oStartDate);
+		this._dateNav.setCurrent(oStartDate);
 
 		var sViewKey = this.getViewKey(),
 			oCurrentView = this._getView(sViewKey),
@@ -3935,6 +3950,26 @@ sap.ui.define([
 		oCreateConfig.setProperty("groupName", CREATE_CONFIG_NAME);
 
 		return oCreateConfig;
+	};
+
+	PlanningCalendar.prototype._updateHeaderButtons = function() {
+		var sViewKey = this.getViewKey(),
+			oCurrentView = this._getView(sViewKey),
+			sCurrentViewIntervalType = oCurrentView.getIntervalType(),
+			oStartDate = new Date(this._dateNav.getStart().getTime()),
+			oEndDate = new Date(this._dateNav.getEnd().getTime()),
+			oMinDate = this.getMinDate() ? new Date(this.getMinDate().getTime()) : undefined,
+			oMaxDate = this.getMaxDate() ? new Date(this.getMaxDate().getTime()) : undefined;
+
+		if (sCurrentViewIntervalType !== "Hour") {
+			oMinDate && oMinDate.setHours(0, 0, 0, 0);
+			oMaxDate && oMaxDate.setHours(23, 59, 59, 999);
+			oStartDate.setHours(0, 0, 0, 0);
+			oEndDate.setHours(23, 59, 59, 999);
+		}
+
+		this._getHeader()._oPrevBtn.setEnabled(!oMinDate || oStartDate.getTime() > oMinDate.getTime());
+		this._getHeader()._oNextBtn.setEnabled(!oMaxDate || oEndDate.getTime() < oMaxDate.getTime());
 	};
 
 	function getResizeGhost() {
