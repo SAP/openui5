@@ -44,7 +44,14 @@ sap.ui.define([
 					singularName: "ariaLabelledBy"
 				}
 			},
-			events : {}
+			events : {
+				selectionChanged : {
+					parameters : {
+						context : {type : "object"},
+						value : {type : "string"}
+					}
+				}
+			}
 		},
 
 		renderer : {
@@ -146,7 +153,8 @@ sap.ui.define([
 					sAdditionalText = aParameters[2] && aParameters[2].ValueListProperty;
 
 				function onSelectionChange(oEvent) {
-					that.setValue(oEvent.getParameters("selectedItem").selectedItem.getText());
+					that.setValue(oEvent.getParameter("selectedItem").getText(),
+						oBinding.getContext());
 				}
 
 				oItem.bindProperty("key", {path: sKey, model: "ValueList"});
@@ -170,7 +178,7 @@ sap.ui.define([
 		},
 
 		onValueChange : function (oEvent) {
-			this.setProperty("value", oEvent.getParameter("newValue"));
+			this.setValue(oEvent.getParameter("newValue"), oEvent.getSource().getBindingContext());
 		},
 
 		onValueHelp : function (oEvent) {
@@ -201,9 +209,8 @@ sap.ui.define([
 				}
 
 				function onSelectionChange(oEvent) {
-					var oValueHelpControl = oEvent.getSource().getSelectedItems()[0].getCells()[0];
-
-					that.setValue(oValueHelpControl.getText());
+					that.setValue(oEvent.getParameter("listItem").getCells()[0].getText(),
+						oBinding.getContext());
 					oPopover.close();
 				}
 
@@ -243,12 +250,15 @@ sap.ui.define([
 			}
 		},
 
-		setValue : function (sValue) {
+		setValue : function (sValue, oContext) {
 			var oField = this.getAggregation("field");
 
 			this.setProperty("value", sValue);
 			if (oField) {
 				oField.setValue(sValue);
+			}
+			if (oContext) {
+				this.fireEvent("selectionChanged", {context : oContext, value : sValue});
 			}
 		}
 	});

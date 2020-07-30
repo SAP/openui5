@@ -404,7 +404,7 @@
 						<Text text="Item Position"/>
 					</Column>
 					<Column>
-						<Text text="ProductID"/>
+						<Text text="Product ID"/>
 					</Column>
 					<Column demandPopin="true" minScreenWidth="Large">
 						<Text text="Product"/>
@@ -413,7 +413,7 @@
 						<Text text="Category"/>
 					</Column>
 					<Column demandPopin="true" minScreenWidth="XXLarge">
-						<Text text="TypeCode"/>
+						<Text text="Type Code"/>
 					</Column>
 					<Column demandPopin="true" minScreenWidth="XXLarge">
 						<Text text="Supplier"/>
@@ -437,12 +437,13 @@
 				<ColumnListItem>
 					<Text text="{SalesOrderID}"/>
 					<Text text="{ItemPosition}"/>
-					<Text text="{ProductID}"/>
-					<Text text="{SOITEM_2_PRODUCT/Name}"/>
-					<demo:ValueHelp value="{SOITEM_2_PRODUCT/Category}"
-						enabled="{= %{ItemPosition} !== ''}"/>
-					<demo:ValueHelp value="{SOITEM_2_PRODUCT/TypeCode}"
-						enabled="{= %{ItemPosition} !== ''}"/>
+					<demo:ValueHelp id="SO_2_SOITEM:ProductID" value="{ProductID}"
+						selectionChanged="onProductIDChanged"/>
+					<Text id="SOITEM_2_PRODUCT:Name" text="{SOITEM_2_PRODUCT/Name}"/>
+					<demo:ValueHelp id="SOITEM_2_PRODUCT:Category"
+						value="{SOITEM_2_PRODUCT/Category}" enabled="{= %{ItemPosition} !== ''}"/>
+					<demo:ValueHelp id="SOITEM_2_PRODUCT:TypeCode"
+						value="{SOITEM_2_PRODUCT/TypeCode}" enabled="{= %{ItemPosition} !== ''}"/>
 					<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
 					<Input id="SO_2_SOITEM:Quantity" value="{Quantity}" textAlign="Right"/>
 					<Input value="{QuantityUnit}"/>
