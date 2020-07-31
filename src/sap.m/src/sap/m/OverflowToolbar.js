@@ -301,7 +301,7 @@ sap.ui.define([
 
 		this._recalculateOverflowButtonSize();
 
-		iWidth = this.$().width();
+		iWidth = this.$().is(":visible") ? this.$().width() : 0;
 
 		// Stop listening for control property changes while calculating the layout to avoid an infinite loop scenario
 		this._bListenForControlPropertyChanges = false;

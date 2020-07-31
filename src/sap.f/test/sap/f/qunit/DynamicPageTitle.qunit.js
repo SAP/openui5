@@ -1137,7 +1137,6 @@ function (
 			"_setContentAreaFlexBasis is called second time with width value, needed for the GenericTag");
 	});
 
-
 	QUnit.test("Changing GenericTag value aggregation", function (assert) {
 		// Arrange
 		var oToolbar = oFactory.getEmptyOverflowToolbar(),
@@ -1168,6 +1167,36 @@ function (
 			"_setContentAreaFlexBasis is called second time with width value, needed for the GenericTag");
 	});
 
+	QUnit.test("Hiding DynamicPageTitle will not trigger caching controls info", function (assert) {
+		// Arrange
+		var oToolbar = oFactory.getEmptyOverflowToolbar(),
+			oGenericTag = oFactory.getGenericTag("Test 1"),
+			oDynamicPageTitle = this.oDynamicPageTitle,
+			fnDone = assert.async(),
+			oSpy;
+
+		assert.expect(1);
+
+		// Act
+		oToolbar.addContent(oGenericTag);
+		oToolbar.setWidth("100%");
+		this.oDynamicPageTitle.addContent(oToolbar);
+		Core.applyChanges();
+
+		// Act
+		oSpy = sinon.spy(oToolbar, "_cacheControlsInfo");
+
+		// Simulating going to another page and resize handler triggered
+		oDynamicPageTitle.$().css("display", "none");
+
+		oToolbar.addEventDelegate({
+				onAfterRendering: function () {
+				// Assert
+				assert.strictEqual(oSpy.callCount, 0, "_cacheControlsInfo is not called");
+				fnDone();
+			}
+		});
+	});
 
 	/* --------------------------- DynamicPage Title Aggregations ---------------------------------- */
 	QUnit.module("DynamicPage Title - SnappedTitleOnMobile Aggregation", {
