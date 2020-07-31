@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/util/IdentifierUtil","sap/ui/mdc/p13n/FlexUtil","sap/ui/mdc/Table", "sap/ui/mdc/Chart", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/TableSettings", "sap/ui/mdc/chart/ChartSettings", "sap/ui/mdc/FilterBar", "sap/ui/mdc/p13n/AdaptationController", "sap/m/Button", "sap/ui/mdc/table/Column","sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/mdc/FilterField"
-], function (IdentifierUtil, FlexUtil, Table, Chart, TableDelegate, TableSettings, ChartSettings, FilterBar, AdaptationController, Button, Column, Dimension, Measure, FilterField) {
+	"sap/ui/mdc/p13n/panels/BasePanel", "sap/ui/mdc/Table", "sap/ui/mdc/Chart", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/TableSettings", "sap/ui/mdc/chart/ChartSettings", "sap/ui/mdc/FilterBar", "sap/m/Button", "sap/ui/mdc/table/Column","sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/mdc/FilterField"
+], function (BasePanel, Table, Chart, TableDelegate, TableSettings, ChartSettings, FilterBar, Button, Column, Dimension, Measure, FilterField) {
 	"use strict";
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
@@ -564,6 +564,20 @@ sap.ui.define([
 			done();
 		}.bind(this));
 
+	});
+
+	QUnit.test("call _createPopover - check vertical scrolling", function(assert) {
+		var done = assert.async();
+
+		this.oAdaptationController._createPopover(new BasePanel(), "Test").then(function(oPopover){
+			var bVerticalScrolling = oPopover.getVerticalScrolling();
+
+			assert.ok(bVerticalScrolling, "Popover has been created with verticalScrolling set to true");
+			assert.ok(oPopover.isA("sap.m.ResponsivePopover"));
+
+			oPopover.destroy();
+			done();
+		});
 	});
 
 	QUnit.test("use AdaptFiltersPanel", function (assert) {
