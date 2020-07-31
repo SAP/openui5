@@ -31,6 +31,15 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			associations: {},
 			defaultAggregation: "items",
+			properties: {
+				/**
+				 * Callback executed once the <code>Reset</code> Button has been pressed.
+				 */
+				onReset: {
+					type: "function",
+					defaultValue: false
+				}
+			},
 			aggregations: {
 				/**
 				 * Content to be set for the <code>BasePanel</code>.
