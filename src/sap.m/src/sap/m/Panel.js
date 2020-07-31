@@ -203,18 +203,23 @@ sap.ui.define([
 	 * @public
 	 */
 	Panel.prototype.setExpanded = function (bExpanded) {
+		var that = this;
 
 		if (bExpanded === this.getExpanded()) {
 			return this;
 		}
 
-		this.setProperty("expanded", bExpanded);
+		this.setProperty("expanded", bExpanded, true);
 
 		if (!this.getExpandable()) {
 			return this;
 		}
 
-		this._toggleExpandCollapse();
+		this._toggleExpandCollapse(function () {
+			// invalidate once the animation is over so rerendering could be smoоth
+			that.invalidate();
+		});
+
 		this._toggleButtonIcon(bExpanded);
 		this.fireExpand({ expand: bExpanded, triggeredByInteraction: this._bInteractiveExpand });
 		this._bInteractiveExpand = false;
@@ -374,8 +379,11 @@ sap.ui.define([
 		oPanelContent.style.height = sAdjustedContentHeight;
 	};
 
-	Panel.prototype._toggleExpandCollapse = function () {
-		var oOptions = {};
+	Panel.prototype._toggleExpandCollapse = function (fnAnimationComplete) {
+		var oOptions = {
+			complete: fnAnimationComplete
+		};
+
 		if (!this.getExpandAnimation()) {
 			oOptions.duration = 0;
 		}

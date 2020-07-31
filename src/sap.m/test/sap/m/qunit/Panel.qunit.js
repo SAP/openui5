@@ -379,6 +379,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Expandable and expanded panel with headerText", function(assert) {
+		// Arrange
 		var panel = new Panel({
 			headerText: "test",
 			expandable: true,
@@ -386,11 +387,30 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
+		// Assert
 		assert.strictEqual(panel.$().find(".sapMPanelWrappingDiv").length, 1, "should have wrapping div with sapMPanelWrappingDiv class");
 		assert.strictEqual(panel.$().find(".sapMPanelWrappingDivExpanded").length, 1, "should have wrapping div with sapMPanelWrappingDivExpanded class");
+
+		// Act
+		panel.setExpanded(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(panel.$().hasClass(".sapMPanelWrappingDivExpanded"), "sapMPanelWrappingDivExpanded class should be removed");
+
+		// Act
+		panel.setExpanded(true);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(panel.$().find(".sapMPanelWrappingDivExpanded").length, 1, "should have wrapping div with sapMPanelWrappingDivExpanded class");
+
+		// Clean up
+		panel.destroy();
 	});
 
 	QUnit.test("Expandable and expanded panel with headerToolbar", function(assert) {
+		// Arrange
 		var panel = new Panel({
 			headerToolbar: this.createToolbar(),
 			expandable: true,
@@ -398,9 +418,27 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
+		// Assert
 		assert.strictEqual(panel.$().find(".sapMPanelWrappingDivTb").length, 1, "should have wrapping div with sapMPanelWrappingDivTb class");
 		assert.strictEqual(panel.$().find(".sapMPanelWrappingDivTbExpanded").length, 1, "should have wrapping div with sapMPanelWrappingDivTbExpanded class");
 		assert.strictEqual(panel.$().find(".sapMPanelHeaderTB").length, 1, "should have a toolbar with sapMPanelHeaderToolbar class");
+
+		// Act
+		panel.setExpanded(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(panel.$().hasClass(".sapMPanelWrappingDivTbExpanded"), "sapMPanelWrappingDivTbExpanded class should be removed");
+
+		// Act
+		panel.setExpanded(true);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(panel.$().find(".sapMPanelWrappingDivTbExpanded").length, 1, "should have wrapping div with sapMPanelWrappingDivTbExpanded class");
+
+		// Clean up
+		panel.destroy();
 	});
 
 	QUnit.test("Expandable panel with headerToolbar and infoToolbar", function(assert) {
