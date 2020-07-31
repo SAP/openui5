@@ -5603,4 +5603,228 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Messages returned by a function import get the correct full target by using the
+	// given callback function adjustDeepPath. The framework is not able to determine the correct
+	// deep path.
+	// JIRA: CPOUI5MODELS-262
+	QUnit.test("Messages: function import with callback function", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Table items="{path : \'ToLineItems\', parameters : {transitionMessagesOnly : true}}">\
+		<Text id="note" text="{Note}" />\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				SalesOrderID : "1"
+			})
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers : {
+					"sap-message-scope" : "BusinessObject",
+					"sap-messages" : "transientOnly"
+				},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
+			}, {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					ItemPosition : "10~0~",
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("note", "Foo", 0);
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oNoteError = that.createResponseMessage("Note"),
+				oPromise;
+
+			that.expectRequest({
+					deepPath : "/LineItem_Create",
+					encodeRequestUri : false,
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : "POST",
+					requestUri : "LineItem_Create?SalesOrderID='1'"
+				}, {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					},
+					ItemPosition : "20~1~",
+					Note : "Bar",
+					SalesOrderID : "1"
+				}, {
+					location : "/SalesOrderSrv/"
+						+ "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')",
+					"sap-message" : getMessageHeader(oNoteError)
+				})
+				.expectRequest({
+					deepPath : "/SalesOrderSet('1')/ToLineItems",
+					headers : {
+						"sap-message-scope" : "BusinessObject",
+						"sap-messages" : "transientOnly"
+					},
+					method : "GET",
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
+				}, {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						},
+						ItemPosition : "10~0~",
+						Note : "Foo",
+						SalesOrderID : "1"
+					}, {
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+						},
+						ItemPosition : "20~1~",
+						Note : "Bar",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("note", "Bar", 1)
+				.expectMessage(oNoteError,
+					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')/",
+					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='20~1~')/");
+
+			// code under test
+			oPromise = oModel.callFunction("/LineItem_Create", {
+				adjustDeepPath : function (mParameters) {
+					assert.strictEqual(mParameters.deepPath,
+						"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')");
+					return "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='20~1~')";
+				},
+				method : "POST",
+				urlParameters : {
+					SalesOrderID : "1"
+				}
+			});
+
+			return Promise.all([
+				oPromise.contextCreated(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Messages returned by a function import get the correct full target. The callback
+	// function adjustDeepPath verifies that the ODataModel was able to calculate a correct deep
+	// path based on given binding information. The callback function is used to overwrite the
+	// calculated deep path due to the application's business logic. Exisiting messages for the
+	// originally calculated deep path are not removed.
+	// JIRA: CPOUI5MODELS-262
+	QUnit.test("Messages: function import with callback function overrides calculated deepPath",
+			function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			oNoteError = this.createResponseMessage("('1')/Note"),
+			oToItem10NoteError = this.createResponseMessage(
+				"('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/Note"),
+			oItem10NoteError = cloneODataMessage(oToItem10NoteError,
+				"(SalesOrderID='1',ItemPosition='10')/Note"),
+			sView = '\
+<FlexBox binding="{/BusinessPartnerSet(\'100\')}">\
+	<Table items="{ToSalesOrders}">\
+		<ColumnListItem>\
+			<Text id="soID" text="{SalesOrderID}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
+				deepPath : "/BusinessPartnerSet('100')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "BusinessPartnerSet('100')"
+			}, {
+				__metadata : {uri : "BusinessPartnerSet('100')"}
+			})
+			.expectRequest({
+				deepPath : "/BusinessPartnerSet('100')/ToSalesOrders",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "BusinessPartnerSet('100')/ToSalesOrders?$skip=0&$top=100"
+			}, {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1"
+				}]
+			}, {"sap-message" : getMessageHeader([oNoteError, oToItem10NoteError])})
+			.expectMessage(oNoteError, "/SalesOrderSet", "/BusinessPartnerSet('100')/ToSalesOrders")
+			.expectMessage(oItem10NoteError, "/SalesOrderLineItemSet",
+				"/BusinessPartnerSet('100')/ToSalesOrders('1')/ToLineItems")
+			.expectChange("soID", "1");
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oGrossAmountError = that.createResponseMessage("GrossAmount"),
+				oPromise,
+				oToItem20QuantityError = that.createResponseMessage(
+					"ToLineItems(SalesOrderID='1',ItemPosition='20')/Quantity"),
+				oItem20QuantityError = cloneODataMessage(oToItem20QuantityError,
+					"(SalesOrderID='1',ItemPosition='20')/Quantity");
+
+			that.expectRequest({
+					deepPath : "/SalesOrder_Confirm",
+					encodeRequestUri : false,
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : "POST",
+					requestUri : "SalesOrder_Confirm?SalesOrderID='1'"
+				}, {
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1"
+				}, {
+					location : "/SalesOrderSrv/SalesOrderSet('1')",
+					"sap-message" : getMessageHeader([oGrossAmountError, oToItem20QuantityError])
+				})
+				.expectMessage(oGrossAmountError, "/SalesOrderSet('1')/",
+					"/BusinessPartnerSet('200')/ToSalesOrders('1')/", true)
+				.expectMessage(oItem20QuantityError, "/SalesOrderLineItemSet",
+					"/BusinessPartnerSet('200')/ToSalesOrders('1')/ToLineItems")
+				// oItem10NoteError is not removed because the value
+				// SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10') is not an affected
+				// target and prefix match does not match because BusinessPartner is updated to 200
+				.expectMessage(oItem10NoteError, "/SalesOrderLineItemSet",
+					"/BusinessPartnerSet('100')/ToSalesOrders('1')/ToLineItems");
+
+			oPromise = oModel.callFunction("/SalesOrder_Confirm", {
+				adjustDeepPath : function (mParameters) {
+					assert.strictEqual(mParameters.deepPath,
+						"/BusinessPartnerSet('100')/ToSalesOrders('1')");
+					assert.strictEqual(mParameters.response.headers.location,
+						"/SalesOrderSrv/SalesOrderSet('1')");
+					return "/BusinessPartnerSet('200')/ToSalesOrders('1')";
+				},
+				method : "POST",
+				refreshAfterChange : false,
+				urlParameters : {
+					SalesOrderID : "1"
+				}
+			});
+
+			return Promise.all([
+				oPromise.contextCreated(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });
