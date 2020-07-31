@@ -4,10 +4,8 @@
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.SimpleForm control
 sap.ui.define([
-	"sap/ui/fl/changeHandler/ChangeHandlerMediator",
 	"sap/ui/fl/Utils"
 ], function(
-	ChangeHandlerMediator,
 	FlexUtils
 ) {
 	"use strict";

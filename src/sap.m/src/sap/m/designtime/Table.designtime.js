@@ -3,11 +3,8 @@
  */
 
 // Provides the Design Time Metadata for the sap.m.Table control
-sap.ui.define([
-	"sap/ui/fl/changeHandler/ChangeHandlerMediator"
-], function (
-	ChangeHandlerMediator
-) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 	var fCheckPersoController = function(oTable) {
