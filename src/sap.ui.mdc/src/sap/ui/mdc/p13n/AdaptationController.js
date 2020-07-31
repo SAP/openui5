@@ -485,6 +485,7 @@ sap.ui.define([
 
 		var mSettings = {
 			title: sTitle,
+			verticalScrolling: true,
 			afterClose: fnAfterDialogClose
 		};
 
