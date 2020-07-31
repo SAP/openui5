@@ -1277,7 +1277,7 @@ sap.ui.define([
 
 						this._oFilterConditionModel.addCondition(sFilterPath, oCondition);
 						if (this._bUseFilterBar && oFilterBar) {
-							oConditions[sFilterPath].push(vValue[i]);
+							oConditions[sFilterPath].push(oCondition); // use FieldHelp paths in FilterBar too
 						}
 						bUpdate = true;
 					}
@@ -2148,7 +2148,7 @@ sap.ui.define([
 				if (sMyFieldPath !== sFilterFields) {
 					for (i = 0; i < oFilterConditions[sMyFieldPath].length; i++) {
 						oCondition = merge({}, oFilterConditions[sMyFieldPath][i]);
-						// don't change paths of in- and out-parameters as they pont to the same filters
+						// don't change paths of in- and out-parameters as they point to the same filters
 						if (!oConditions[sMyFieldPath] || FilterOperatorUtil.indexOfCondition(oCondition, oConditions[sMyFieldPath]) < 0) {
 							this._oFilterConditionModel.removeCondition(sMyFieldPath, oCondition);
 						}
