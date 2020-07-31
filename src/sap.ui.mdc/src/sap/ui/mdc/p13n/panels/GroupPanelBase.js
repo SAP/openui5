@@ -65,7 +65,7 @@ sap.ui.define([
 
 	GroupPanelBase.prototype._setInnerLayout = function() {
 
-		this._oResetBtn = new Button({
+		this._oResetBtn = new Button(this.getId() + "-resetBtn", {
 			text: this.getResourceText("p13nDialog.RESET"),
 			visible: false,
 			type: "Transparent",
@@ -115,6 +115,8 @@ sap.ui.define([
 		} else {
 			this._oResetBtn.setVisible(false);
 		}
+
+		return this;
 	};
 
 	GroupPanelBase.prototype.setItemFactory = function (fnFactory) {
@@ -185,7 +187,7 @@ sap.ui.define([
 
     GroupPanelBase.prototype._createInnerListControl = function(){
 
-		var oBasePanelUI = new List("idBasePanelTable", {
+		var oBasePanelUI = new List(this.getId() + "-innerListControl", {
 			rememberSelections: false,
 			itemPress: [this._onItemPressed, this],
 			selectionChange: [this._onSelectionChange, this],

@@ -147,8 +147,10 @@ sap.ui.define([
         oPanel.setP13nModel(oModel);
 
         P13nBuilder.createP13nDialog(oPanel, {
-            title: "Test"
+            title: "Test",
+            id: "myTestDialog"
         }).then(function(oDialog){
+            assert.ok(oDialog.getId(), "myTestDialog");
             assert.ok(oDialog.isA("sap.m.Dialog"), "Correct container control created");
             assert.ok(oDialog.getContent()[0].isA("sap.ui.mdc.p13n.panels.BasePanel"), "correct Content provided");
             assert.equal(oDialog.getTitle(), "Test");

@@ -60,9 +60,11 @@ sap.ui.define([
 
                 P13nBuilder["_checkSettings"](oP13nUI, mDialogSettings, reject);
 
+                var sId = mDialogSettings.id;
+
                 sap.ui.require(["sap/m/Dialog", "sap/m/Button"], function(Dialog, Button){
                     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-                    var oContainer = new Dialog({
+                    var oContainer = new Dialog(sId, {
                         title: mDialogSettings.title,
                         horizontalScrolling: mDialogSettings.hasOwnProperty("horizontalScrolling") ? mDialogSettings.horizontalScrolling : false,
                         verticalScrolling: mDialogSettings.hasOwnProperty("verticalScrolling") ? mDialogSettings.verticalScrolling : true,
@@ -73,7 +75,7 @@ sap.ui.define([
                         stretch: "{device>/system/phone}",
                         content: oP13nUI,
                         buttons: [
-                            new Button({
+                            new Button(sId ? sId + "-confirmBtn" : undefined, {
                                 text:  mDialogSettings.confirm && mDialogSettings.confirm.text ?  mDialogSettings.confirm.text : oResourceBundle.getText("p13nDialog.OK"),
                                 type: "Emphasized",
                                 press: function() {
@@ -82,7 +84,7 @@ sap.ui.define([
                                     }
                                 }
 
-                            }), new Button({
+                            }), new Button(sId ? sId + "-cancelBtn" : undefined, {
                                 text: oResourceBundle.getText("p13nDialog.CANCEL"),
                                 press: function () {
                                     mDialogSettings.cancel.apply(oContainer, arguments);
