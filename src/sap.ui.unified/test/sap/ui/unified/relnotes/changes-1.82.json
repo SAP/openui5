@@ -1,0 +1,18 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "88ffa08f6962851cdf768757c7651004ab9e9f59",
+        "type": "FIX",
+        "text": " Revert for \"sap.ui.unified.FileUploader: input field is now only one\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080318120"
+          }
+        ]
+      }
+    ]
+  }
+}
