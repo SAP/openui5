@@ -38,23 +38,49 @@
 
     <!-- Thirdparty references -->
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-        <lib name="webcomponentsjs" displayName="Webcomponentsjs" homepage="https://github.com/webcomponents/webcomponentsjs">
-            <license url="https://github.com/webcomponents/webcomponentsjs/blob/master/LICENSE.md" type="BSD License" file="./thirdparty/licenses/CustomElements-BSD-LICENSE.txt"></license>
+        <lib name="ui5-web-components" displayName="UI5 Web Components" version="1.0.0-rc.8" homepage="https://sap.github.io/ui5-webcomponents/">
+            <license url="https://github.com/SAP/ui5-webcomponents/blob/master/LICENSE.txt" type="Apache-2.0"></license>
+            <copyright>SAP</copyright>
+            <pattern>sap/ui/integration/thirdparty/webcomponents/*.*.json</pattern>
+            <pattern>sap/ui/integration/thirdparty/webcomponents/bundle*</pattern>
         </lib>
-        <lib name="custom-event-polyfill" displayName="CustomEvent Polyfill" homepage="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill">
-            <license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="./thirdparty/licenses/CustomEvent-polyfill-LICENSE.txt"></license>
+        <lib name="webcomponentsjs" displayName="Webcomponentsjs" version="1.0.2" homepage="https://github.com/webcomponents/webcomponentsjs">
+            <license url="https://github.com/webcomponents/webcomponentsjs/blob/master/LICENSE.md" type="BSD-3-Clause"></license>
+            <copyright>2015 The Polymer Authors</copyright>
+            <pattern>sap/ui/integration/thirdparty/webcomponents/webcomponentsjs/*</pattern>
+            <pattern>sap/ui/integration/thirdparty/customElements.js</pattern>
         </lib>
-        <lib name="adaptive-cards" displayName="Adaptive Cards" homepage="https://adaptivecards.io/">
-            <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT License" file="./thirdparty/licenses/adaptive-cards.txt"></license>
+        <lib name="cldr" displayName="Unicode Common Locale Data Repository" version="unknown" homepage="http://cldr.unicode.org/">
+            <license url="http://www.unicode.org/copyright.html" type="Unicode-DFS-2015" />
+            <copyright>1991-2014 Unicode, Inc.</copyright>
+            <pattern>sap/ui/integration/thirdparty/webcomponents/Unicode-Data-Files-LICENSE.txt</pattern>
         </lib>
-        <lib name="markdown-it" displayName="Markdown-it" homepage="https://github.com/markdown-it/markdown-it">
-            <license url="https://github.com/markdown-it/markdown-it/blob/master/LICENSE" type="MIT License" file="./thirdparty/licenses/markdown-it.txt"></license>
+        <lib name="custom-event-polyfill" displayName="CustomEvent Polyfill" version="20190614" homepage="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill">
+            <!-- Added in revision https://wiki.developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent$revision/1557457 of the page -->
+            <license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0-1.0"></license>
+            <copyright>Mozilla Developer Network</copyright>
+            <pattern>sap/ui/integration/thirdparty/customEvent.js</pattern>
         </lib>
-        <lib name="ui5-web-components" displayName="UI5 Web Components" homepage="https://sap.github.io/ui5-webcomponents/">
-            <license url="https://github.com/SAP/ui5-webcomponents/blob/master/LICENSE.txt" type="Apache License 2.0" file="./thirdparty/licenses/web-components.txt"></license>
+        <lib name="adaptive-cards" displayName="Adaptive Cards" version="1.2.3" homepage="https://adaptivecards.io/">
+            <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT"></license>
+            <copyright>2017 Microsoft</copyright>
+            <pattern>sap/ui/integration/thirdparty/adaptivecards.js</pattern>
+            <pattern>sap/ui/integration/schemas/adaptive-card.json</pattern>
         </lib>
-        <lib name="ajv" displayName="ajv" homepage="https://ajv.js.org/">
-            <license url="https://ajv.js.org/license.html" type="MIT License" file="./designtime/thirdparty/licenses/ajv-LICENSE.txt"></license>
+        <lib name="adaptive-cards-templating" displayName="Adaptive Cards Templating" version="0.1.1-alpha.0" homepage="https://adaptivecards.io/">
+            <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT"></license>
+            <copyright>2017 Microsoft</copyright>
+            <pattern>sap/ui/integration/thirdparty/adaptivecards-templating.js</pattern>
+        </lib>
+        <lib name="markdown-it" displayName="Markdown-it" version="10.0.0" homepage="https://github.com/markdown-it/markdown-it">
+            <license url="https://github.com/markdown-it/markdown-it/blob/master/LICENSE" type="MIT"></license>
+            <copyright>2014 Vitaly Puzrin, Alex Kocharin</copyright>
+            <pattern>sap/ui/integration/thirdparty/markdown-it.js</pattern>
+        </lib>
+        <lib name="ajv" displayName="ajv" version="6.10.2" homepage="https://ajv.js.org/">
+            <license url="https://ajv.js.org/license.html" type="MIT"></license>
+            <copyright>2015-2017 Evgeny Poberezkin</copyright>
+            <pattern>sap/ui/integration/designtime/thirdparty/ajv.js</pattern>
         </lib>
     </thirdparty>
 

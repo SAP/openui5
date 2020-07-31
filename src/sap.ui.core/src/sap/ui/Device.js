@@ -3,6 +3,16 @@
  */
 
 /**
+ * This module is overall:
+ * SPDX-FileCopyrightText: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * but contains code taken from jQuery 1.7.1 (see the respective comment):
+ * SPDX-FileCopyrightText: 2011, John Resig
+ * SPDX-License-Identifier: MIT
+ */
+
+/**
  * Device and Feature Detection API: Provides information about the used browser / device and cross platform support for certain events
  * like media queries, orientation change or resizing.
  *

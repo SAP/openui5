@@ -5,6 +5,17 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
+
+/**
+ * This module is overall:
+ * SPDX-FileCopyrightText: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * but contains code has been taken from the component JSON in JavaScript (https://github.com/douglascrockford/JSON-js/blob/master/json2.js) from Douglas Crockford which is licensed under Public Domain:
+ * SPDX-FileCopyrightText: Douglas Crockford
+ * SPDX-License-Identifier: LicenseRef-JSONinJSPublicDomain
+ */
+
 sap.ui.define([], function() {
 	"use strict";
 

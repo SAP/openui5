@@ -16,4 +16,5 @@ According to the usage restrictions mentioned above we will not accept or proces
 ``` npm install @openui5/sap.ui.mdc ```
 
 ## License
-OpenUI5 is licensed under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0). Subcomponents may have different licenses, see [LICENSE.txt](LICENSE.txt).
+OpenUI5 is licensed under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), see [LICENSE.txt](LICENSE.txt).
+Subcomponents may have different licenses, see [THIRDPARTY.txt](THIRDPARTY.txt).

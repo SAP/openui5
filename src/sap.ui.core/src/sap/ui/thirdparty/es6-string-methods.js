@@ -1,5 +1,14 @@
 /**
  * This module contains String polyfills in order to establish unified language features across environments
+ *
+ * They have been created by the following authors and are licensed under the mentioned licenses:
+ *
+ * SPDX-FileCopyrightText: Mathias Bynens
+ * SPDX-License-Identifier: MIT
+ *
+ * SPDX-FileCopyrightText: 2017 Behnam Mohammadi (بهنام محمدی)
+ * SPDX-License-Identifier: MIT
+ *
  */
 
 /** @license

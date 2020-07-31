@@ -4,6 +4,20 @@
  * Version 2.0.0, see https://github.com/sindresorhus/p-cancelable/tree/v2.0.0
  */
 
+/*
+ * This file is derived from p-cancelable by Sindre Sorhus and was transpiled with Babel,
+ * so the resulting file contains Babel code fragments. The resulting copyright owners and licenses are:
+ *
+ * p-cancelable:
+ * SPDX-FileCopyrightText: Sindre Sorhus <sindresorhus@gmail.com>
+ * SPDX-License-Identifier: MIT
+ *
+ * babel/helpers:
+ * SPDX-FileCopyrightText: 2014-present Sebastian McKenzie and other contributors
+ * SPDX-License-Identifier: MIT
+ *
+ */
+
 /* global Symbol,Reflect,Proxy,Map */
 /* eslint-disable */
 

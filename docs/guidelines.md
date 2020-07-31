@@ -52,7 +52,8 @@ JavaScript Coding Guidelines
 -   Do not access internal (private) members of other objects
 -   Do not use console.log()
 -   Use `jQuery(window.document.getElementById("<someId>")` instead of `jQuery("#<someId>")` when &lt;someId&gt; is not a known string - certain characters in IDs need to be escaped for jQuery to work correctly
--   Keep modifications of jQuery and other embedded Open Source to a minimum and document them clearly with the term "SAP modification"
+-   Keep modifications of jQuery and other embedded Open Source to a minimum and document them clearly with the terms "BEGIN: MODIFIED BY SAP" and "END: MODIFIED BY SAP" before and after the modified section. Also add the following sentence to the copyright comment:
+```Modifications SAP SE or an SAP affiliate company and OpenUI5 contributors. All rights reserved.```
     -   Such modifications may not alter the standard behavior of the used library in a way that breaks other libraries
 
 ### Code Formatting

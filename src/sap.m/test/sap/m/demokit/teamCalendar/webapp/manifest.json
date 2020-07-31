@@ -45,9 +45,7 @@
 					"webapp/view/SinglePlanningCalendar.fragment.xml",
 					"webapp/Component.js",
 					"webapp/index.html",
-					"webapp/LICENSE.txt",
 					"webapp/manifest.json",
-					"webapp/NOTICE.txt",
 					"demoapp.json",
 					"manifest.json",
 					"ui5.yaml"

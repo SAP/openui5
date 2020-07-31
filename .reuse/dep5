@@ -1,0 +1,356 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: OpenUI5
+Upstream-Contact: SAP OpenUI5 <openui5@sap.com>
+Source: https://github.com/SAP/openui5
+Disclaimer: The code in this project may include calls to APIs (“API Calls”) of
+ SAP or third-party products or services developed outside of this project
+ (“External Products”).
+ “APIs” means application programming interfaces, as well as their respective
+ specifications and implementing code that allows software to communicate with
+ other software.
+ API Calls to External Products are not licensed under the open source license
+ that governs this project. The use of such API Calls and related External
+ Products are subject to applicable additional agreements with the relevant
+ provider of the External Products. In no event shall the open source license
+ that governs this project grant any rights in or to any External Products,or
+ alter, expand or supersede any terms of the applicable additional agreements.
+ If you have a valid license agreement with SAP for the use of a particular SAP
+ External Product, then you may make use of any API Calls included in this
+ project’s code for that SAP External Product, subject to the terms of such
+ license agreement. If you do not have a valid license agreement for the use of
+ a particular SAP External Product, then you may only make use of any API Calls
+ in this project for that SAP External Product for your internal, non-productive
+ and non-commercial test and evaluation of such API Calls. Nothing herein grants
+ you any rights to use or access any SAP External Product, or provide any third
+ parties the right to use of access any SAP External Product, through API Calls.
+
+
+# OpenUI5 code
+
+Files: *
+Copyright: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+License: Apache-2.0
+
+
+#
+# THIRDPARTY MODULES
+#
+
+# Dummy license to make all thirdparty modules unlicensed by default
+# Uncomment only for testing!
+# NPL is used as an unlikely-to-be-really-used license and applied to all easily detectable thirdparty resources.
+# If the result of "reuse spdx" shows any resource with NPL, then this resource has apparently been forgotten.
+#
+#Files: *thirdparty*
+#Copyright: NONE - ERROR!
+#License: NPL-1.0
+
+# this is an SAP-created resource in thirdparty folder
+Files: src/sap.ui.core/src/sap/ui/thirdparty/baseuri.js
+Copyright: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+License: Apache-2.0
+
+
+#
+# GENERATED CONTENT BELOW - DO NOT EDIT
+# (editing above this comment is ok)
+#
+
+
+# Library: sap.ui.codeeditor:
+
+Files: src/sap.ui.codeeditor/src/sap/ui/codeeditor/js/ace/*
+Copyright: 2010, Ajax.org B.V.
+License: BSD-3-Clause
+Comment: these files belong to: Ace (Ajax.org Cloud9 Editor)
+
+
+# Library: sap.ui.commons:
+
+Files: src/sap.ui.commons/src/sap/ui/commons/themes/base/jQueryUi*
+Copyright: 2014 jQuery Foundation and other contributors
+License: MIT
+Comment: these files belong to: jQuery UI
+
+
+# Library: sap.ui.core:
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/jquery.js
+Copyright: JS Foundation and other contributors
+License: MIT
+Comment: these files belong to: jQuery 3
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/jqueryui/*
+Copyright: 2014 jQuery Foundation and other contributors
+License: MIT
+Comment: these files belong to: jQuery UI
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit.* src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.*
+Copyright: jQuery Foundation and other contributors
+License: MIT
+Comment: these files belong to: QUnit
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/jquery-compat.js
+Copyright: OpenJS Foundation and other contributors
+License: MIT
+Comment: these files belong to: jQuery-Migrate
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/jquery-mobile-custom.js
+Copyright: 2010, 2013 jQuery Foundation, Inc. and other contributors
+License: MIT
+Comment: these files belong to: jQuery Mobile
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite*
+Copyright: jQuery Foundation and other contributors
+License: MIT
+Comment: these files belong to: QUnit Composite
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit-reporter-junit.js
+Copyright: jQuery Foundation and other contributors
+License: MIT
+Comment: these files belong to: JUnit Reporter for QUnit
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/iscroll*
+Copyright: 2012 Matteo Spinelli
+License: MIT
+Comment: these files belong to: cubiq.org - iscroll
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/swipe-view.js
+Copyright: 2012 Matteo Spinelli
+License: MIT
+Comment: these files belong to: cubiq.org - swipeview
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/mobify-carousel.js
+Copyright: Mobify R&D Inc.
+License: MIT
+Comment: these files belong to: Mobify.js
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/zyngascroll.js
+Copyright: 2011 Zynga Inc.
+License: MIT
+Comment: these files belong to: Zynga Scroller
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/less.js
+Copyright: 2009-2014, Alexis Sellier
+License: Apache-2.0
+Comment: these files belong to: LESS
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/datajs.js
+Copyright: 2011 Microsoft
+License: MIT
+Comment: these files belong to: DataJS
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/d3.js
+Copyright: 2010-2014 Michael Bostock
+License: BSD-3-Clause
+Comment: these files belong to: D3
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/jszip.js
+Copyright: 2009-2014 Stuart Knightley, David Duponchel, Franz Buchinger, António Afonso
+License: MIT
+Comment: these files belong to: JSZip
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/caja-html-sanitizer.js
+Copyright: Google Inc.
+License: Apache-2.0
+Comment: these files belong to: Google-Caja JS HTML Sanitizer
+
+Files: src/sap.ui.core/src/sap/ui/core/cldr/*
+Copyright: 1991-2014 Unicode, Inc.
+License: Unicode-DFS-2015
+Comment: these files belong to: Unicode Common Locale Data Repository
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/mobiscroll/*
+Copyright: 2010-2013, Acid Media
+License: MIT
+Comment: these files belong to: MobiScroll
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/sinon.js src/sap.ui.core/src/sap/ui/thirdparty/sinon-ie.js src/sap.ui.core/src/sap/ui/thirdparty/sinon-server.js
+Copyright: 2010-2014, Christian Johansen, christian@cjohansen.no
+License: BSD-3-Clause
+Comment: these files belong to: SinonJS
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/sinon-4.js
+Copyright: 2010-2017, Christian Johansen, christian@cjohansen.no
+License: BSD-3-Clause
+Comment: these files belong to: SinonJS
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/sinon-qunit.js
+Copyright: 2010-2011, Christian Johansen
+License: BSD-3-Clause
+Comment: these files belong to: Sinon-qunit
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/URI.js src/sap.ui.core/src/sap/ui/thirdparty/URITemplate.js src/sap.ui.core/src/sap/ui/thirdparty/RequestRecorder.js src/sap.ui.core/src/sap/ui/thirdparty/SecondLevelDomains.js src/sap.ui.core/src/sap/ui/thirdparty/IPv6.js
+Copyright: Rodney Rehm
+License: MIT
+Comment: these files belong to: URI.js
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/punycode.js
+Copyright: Mathias Bynens
+License: MIT
+Comment: these files belong to: punycode.js
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/flexie.js
+Copyright: 2010 Richard Herrera
+License: MIT
+Comment: these files belong to: Flexie.js
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/handlebars.js
+Copyright: 2011-2019 by Yehuda Katz
+License: MIT
+Comment: these files belong to: handlebars
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/require.js
+Copyright: 2010-2012, The Dojo Foundation
+License: MIT
+Comment: these files belong to: requireJS
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/crossroads.js
+Copyright: Miller Medeiros
+License: MIT
+Comment: these files belong to: crossroads.js
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/hasher.js
+Copyright: Miller Medeiros
+License: MIT
+Comment: these files belong to: hasher.js
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/signals.js
+Copyright: Miller Medeiros
+License: MIT
+Comment: these files belong to: JS-Signals
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/blanket.js
+Copyright: 2013 Alex Seville
+License: MIT
+Comment: these files belong to: blanket.js
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/es6-object-assign.js
+Copyright: Mozilla Developer Network
+License: CC0-1.0
+Comment: these files belong to: Object.assign Polyfill
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/unorm*
+Copyright: 2008-2013 Matsuza <matsuza@gmail.com>, Bjarke Walling <bwp@bwp.dk>
+License: MIT
+Comment: these files belong to: unorm.js
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/es6-promise.js
+Copyright: 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
+License: MIT
+Comment: these files belong to: es6-promise
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/klay.js
+Copyright: Ulf Rueegg
+License: EPL-1.0
+Comment: these files belong to: KLayJS
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/bignumber.js
+Copyright: 2018 Michael Mclaughlin
+License: MIT
+Comment: these files belong to: bignumber.js
+
+Files: src/sap.ui.core/src/sap/ui/base/util/restricted/_/lodash.custom.js
+Copyright: OpenJS Foundation and other contributors
+License: MIT
+Comment: these files belong to: lodash
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/hyphenopoly/*
+Copyright: 2018 Mathias Nater
+License: MIT
+Comment: these files belong to: Hyphenopoly
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/es6-shim-nopromise.js
+Copyright: 2013-2016 Paul Miller (http://paulmillr.com) and contributors
+License: MIT
+Comment: these files belong to: ECMAScript 6 compatibility shims for legacy JavaScript engines
+
+Files: src/sap.ui.core/src/sap/ui/base/util/restricted/_CancelablePromise.js
+Copyright: Sindre Sorhus <sindresorhus@gmail.com>
+License: MIT
+Comment: these files belong to: p-cancelable
+
+Files: src/sap.ui.core/src/sap/ui/thirdparty/vkbeautify.js
+Copyright: 2012 Vadim Kiryukhin
+License: MIT
+Comment: these files belong to: vkBeautify
+
+
+# Library: sap.ui.documentation:
+
+Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/esprima.js
+Copyright: 2013 Ariya Hidayat and other contributors
+License: BSD-2-Clause
+Comment: these files belong to: Esprima
+
+Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/google-code-prettify/*
+Copyright: 2006 Google Inc.
+License: Apache-2.0
+Comment: these files belong to: google-code-prettify
+
+Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/elasticlunr.js
+Copyright: 2017 Wei Song and Oliver Nightingale
+License: MIT
+Comment: these files belong to: Elasticlunr
+
+Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/*
+Copyright: 2008-2017 SpryMedia Ltd
+License: MIT
+Comment: these files belong to: DataTables
+
+Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/*
+Copyright: 2016 SpryMedia Ltd
+License: MIT
+Comment: these files belong to: Buttons extension for DataTables
+
+
+# Library: sap.ui.integration:
+
+Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/*.*.json src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/bundle*
+Copyright: SAP
+License: Apache-2.0
+Comment: these files belong to: UI5 Web Components
+
+Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/webcomponentsjs/* src/sap.ui.integration/src/sap/ui/integration/thirdparty/customElements.js
+Copyright: 2015 The Polymer Authors
+License: BSD-3-Clause
+Comment: these files belong to: Webcomponentsjs
+
+Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/Unicode-Data-Files-LICENSE.txt
+Copyright: 1991-2014 Unicode, Inc.
+License: Unicode-DFS-2015
+Comment: these files belong to: Unicode Common Locale Data Repository
+
+Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/customEvent.js
+Copyright: Mozilla Developer Network
+License: CC0-1.0
+Comment: these files belong to: CustomEvent Polyfill
+
+Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/adaptivecards.js src/sap.ui.integration/src/sap/ui/integration/schemas/adaptive-card.json
+Copyright: 2017 Microsoft
+License: MIT
+Comment: these files belong to: Adaptive Cards
+
+Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/adaptivecards-templating.js
+Copyright: 2017 Microsoft
+License: MIT
+Comment: these files belong to: Adaptive Cards Templating
+
+Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/markdown-it.js
+Copyright: 2014 Vitaly Puzrin, Alex Kocharin
+License: MIT
+Comment: these files belong to: Markdown-it
+
+Files: src/sap.ui.integration/src/sap/ui/integration/designtime/thirdparty/ajv.js
+Copyright: 2015-2017 Evgeny Poberezkin
+License: MIT
+Comment: these files belong to: ajv
+
+
+# Outside of Libraries:
+
+Files: src/testsuite-utils/src/main/resources/META-INF/less/less.js
+Copyright: 2009-2014, Alexis Sellier <self@cloudhead.net>
+License: Apache-2.0
+Comment: these files belong to: LESS
+

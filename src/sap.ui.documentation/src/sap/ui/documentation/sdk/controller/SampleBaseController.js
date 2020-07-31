@@ -172,16 +172,10 @@ sap.ui.define([
 				});
 
 
-				// add generic license and notice file
+				// add generic license file
 				aPromises.push(this._addFileToZip({
 					name: "LICENSE.txt",
-					url: TMPL_REF + "/" + "LICENSE.txt"
-				}, oZipFile));
-
-
-				aPromises.push(this._addFileToZip({
-					name: "NOTICE.txt",
-					url: TMPL_REF + "/" + "NOTICE.txt"
+					url: "LICENSE.txt" // fetch from root level of UI5
 				}, oZipFile));
 
 
