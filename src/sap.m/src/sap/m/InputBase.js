@@ -624,6 +624,13 @@ function(
 	 */
 	InputBase.prototype.onsapenter = function(oEvent) {
 
+		// Ignore the change event in IE & Safari when value is selected from IME popover via Enter keypress
+		if ((Device.browser.safari || Device.browser.msie) && this.isComposingCharacter()) {
+			oEvent.setMarked("invalid");
+
+			return;
+		}
+
 		// handle change event on enter
 		this.onChange(oEvent);
 	};
