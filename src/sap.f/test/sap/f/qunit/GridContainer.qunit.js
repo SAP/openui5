@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/Button",
 	"sap/ui/integration/cards/Header",
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/model/json/JSONModel"
 ],
 function (
 	jQuery,
@@ -36,7 +37,8 @@ function (
 	KeyCodes,
 	Button,
 	Header,
-	IntegrationCard
+	IntegrationCard,
+	JSONModel
 ) {
 	"use strict";
 
@@ -486,16 +488,11 @@ function (
 		var aWrappers = this.oGrid.$().children();
 		Core.applyChanges();
 
-		// Assert
-		assert.ok(aWrappers[1].offsetWidth > 0, "Initially visible item wrapper should take width.");
-		assert.notOk(aWrappers[2].offsetWidth > 0, "Initially invisible item wrapper should NOT take any width.");
-
 		// Act
 		oInvisibleItem.setVisible(true);
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(aWrappers[1].offsetWidth > 0, "Wrapper of visible item should take width.");
 		assert.ok(aWrappers[2].offsetWidth > 0, "When item is turned to visible, its wrapper should take width.");
 
 		// Act
@@ -505,6 +502,64 @@ function (
 		// Assert
 		assert.notOk(aWrappers[1].offsetWidth > 0, "When item is turned to invisible, its wrapper should NOT take width.");
 		assert.ok(aWrappers[2].offsetWidth > 0, "Wrapper of visible item should take width.");
+	});
+
+	QUnit.test("Visible/Invisible items with model", function (assert) {
+		// Arrange
+		var $grid,
+			oData = [
+				{
+					title: "Tile1",
+					visible: true
+				},
+				{
+					title: "Tile2",
+					visible: false
+				},
+				{
+					title: "Tile3",
+					visible: true
+				}
+			],
+			oModel = new JSONModel(oData);
+
+		this.oGrid.setModel(oModel);
+
+		this.oGrid.bindAggregation("items", {
+			path: "/",
+			template: new GenericTile({
+				header: "{title}",
+				visible: "{visible}"
+			})
+		});
+
+		Core.applyChanges();
+		$grid = this.oGrid.$();
+
+		// Act - hide first item
+		oModel.setProperty("/0/visible", false);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok($grid.children()[1].offsetWidth === 0, "The first item is not visible and wrapper is not visible.");
+
+		// Act - back to visible
+		oModel.setProperty("/0/visible", true);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok($grid.children()[1].offsetWidth > 0, "The first item is visible again.");
+
+		// Act - set second item to visible
+		oModel.setProperty("/1/visible", true);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok($grid.children()[2].offsetWidth > 0, "The second item is visible.");
+
+		// Clean up
+		this.oGrid.setModel(null);
+		this.oGrid.unbindAggregation("items");
 	});
 
 	if (bIsGridSupported) {
