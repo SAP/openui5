@@ -15,8 +15,8 @@ sap.ui.define([
 		var oSeparator1 = new ToolbarSeparator(),
 			oSeparator2 = new ToolbarSeparator(),
 			oSeparator3 = new ToolbarSeparator(),
-			oButton1 = new Button({text:"Button 1"}),
-			oButton2 = new Button({text:"Button 2"}),
+			oButton1 = new Button({text:"Button 1", width: "100px"}),
+			oButton2 = new Button({text:"Button 2", width: "100px"}),
 			aToolbarContent = [
 				oSeparator1,
 				oButton1,
@@ -45,7 +45,7 @@ sap.ui.define([
 
 		// Act
 		// shrinking the OTB resulting in oSeparator3 and oButton2 going in the overflow area
-		oOverflowTB.setWidth('189px');
+		oOverflowTB.setWidth('230px');
 		this.clock.tick(1000);
 
 		// Click the overflow button
@@ -61,7 +61,7 @@ sap.ui.define([
 
 		// Act
 		// shrinking the OTB resulting in oSeparator2 going in the overflow area
-		oOverflowTB.setWidth('149px');
+		oOverflowTB.setWidth('173px');
 		this.clock.tick(1000);
 
 		// Click the overflow button
@@ -72,8 +72,10 @@ sap.ui.define([
 		assert.ok(oSeparator2.hasStyleClass(ToolbarSeparator.CLASSNAME_OVERFLOW_TOOLBAR),
 				"Second separator has the " + ToolbarSeparator.CLASSNAME_OVERFLOW_TOOLBAR +
 				" CSS class, since it's in the overflow area");
+
 		assert.strictEqual(oSeparator2.$().css("display"), "none",
-				"Second separator isn't displayed since it's the first element of the overflow area.");
+		"Second separator isn't displayed since it's the first element of the overflow area.");
+
 		assert.strictEqual(oSeparator3.$().css("display"), "none",
 				"Third separator isn't displayed since it's the last element of the overflow area.");
 
