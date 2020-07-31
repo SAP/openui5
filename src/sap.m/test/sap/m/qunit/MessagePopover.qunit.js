@@ -1552,6 +1552,22 @@ sap.ui.define([
 		assert.strictEqual(oNavigateBackSpy.callCount, 1, "MessageView's navigateBack() is called.");
 	});
 
+	QUnit.test("Should not throw if no MessageView is present", function (assert) {
+		// Arrange
+		this.oMessagePopover._oMessageView = null;
+
+		// Act
+		this.oMessagePopover._setInitialFocus();
+		this.oMessagePopover._syncMessageView();
+		this.oMessagePopover.onBeforeRenderingPopover();
+		this.oMessagePopover._restoreExpansionDefaults();
+		this.oMessagePopover.setModel(null, "Name");
+		this.oMessagePopover.navigateBack();
+
+		// Assert
+		assert.ok(true, "No exception is thrown");
+	});
+
 	//================================================================================
 	// MessagePopover accessibility
 	//================================================================================

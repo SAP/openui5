@@ -2629,6 +2629,19 @@ sap.ui.define([
 		oStub.restore();
 	});
 
+	QUnit.test("Should not throw exception if no DOM reference is found in _clearCSSStyles()", function (assert) {
+		var oPopover = new Popover({}),
+			oStub = sinon.stub(oPopover, "getDomRef", function() { return null; });
+
+		sap.ui.getCore().applyChanges();
+		oPopover._clearCSSStyles();
+
+		assert.ok(true, "No exception is thrown");
+
+		oPopover.destroy();
+		oStub.restore();
+	});
+
 	// include stylesheet and let test starter wait for it
 	return includeStylesheet({
 		url: sap.ui.require.toUrl("test-resources/sap/m/qunit/Popover.css")
