@@ -2453,6 +2453,9 @@ sap.ui.define([
 				fnDataRequested, undefined, this.sMetaPath));
 		}
 		return this.oPromise.then(function (oResult) {
+			// for a null value, null is returned due to "204 No Content". But it is expected in the
+			// value property of an object
+			oResult = oResult || {value : null};
 			that.registerChange("", oListener);
 			return oResult.value;
 		});
@@ -2563,7 +2566,7 @@ sap.ui.define([
 			});
 		}
 		return this.oPromise.then(function (oResult) {
-			if (oResult["$ui5.deleted"]) {
+			if (oResult && oResult["$ui5.deleted"]) {
 				throw new Error("Cannot read a deleted entity");
 			}
 			that.registerChange(sPath, oListener);

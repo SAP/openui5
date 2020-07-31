@@ -7606,13 +7606,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache#fetchValue", function (assert) {
+[{}, null].forEach(function (oExpectedResult) {
+	QUnit.test("SingleCache#fetchValue, oExpectedResult = " + oExpectedResult, function (assert) {
 		var oCache,
 			oCacheMock,
 			bCreateOnDemand = "bCreateOnDemand",
 			fnDataRequested1 = {},
 			fnDataRequested2 = {},
-			oExpectedResult = {},
 			oGroupLock1 = {
 				unlock : function () {}
 			},
@@ -7699,6 +7699,7 @@ sap.ui.define([
 
 		return Promise.all(aPromises);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_SingleCache#getValue: drillDown asynchronous", function (assert) {
@@ -8394,12 +8395,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("PropertyCache#fetchValue", function (assert) {
+[{}, null].forEach(function (oExpectedResult) {
+	QUnit.test("PropertyCache#fetchValue, oExpectedResult = " + oExpectedResult, function (assert) {
 		var oCache,
 			oCacheMock,
 			fnDataRequested1 = {},
 			fnDataRequested2 = {},
-			oExpectedResult = {},
 			aFetchValuePromises,
 			oGroupLock1 = {unlock : function () {}},
 			oGroupLock2 = {unlock : function () {}},
@@ -8426,7 +8427,7 @@ sap.ui.define([
 					oCacheMock.expects("registerChange").withExactArgs("",
 						sinon.match.same(oListener1));
 					oCacheMock.expects("registerChange").withExactArgs("", undefined);
-					return {value : oExpectedResult};
+					return oExpectedResult ? {value : oExpectedResult} : null;
 				}));
 
 		// code under test
@@ -8459,6 +8460,7 @@ sap.ui.define([
 
 		return Promise.all(aFetchValuePromises);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("PropertyCache#_delete", function (assert) {

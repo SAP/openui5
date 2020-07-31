@@ -956,8 +956,25 @@ sap.ui.define([
 		// code under test
 		return oRequestor.request("DELETE", "SalesOrderList('0500000676')")
 			.then(function (oResult) {
-				assert.deepEqual(oResult, {}, "null object pattern");
+				assert.deepEqual(oResult, {});
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sendRequest: GET returns '204 No Content'", function (assert) {
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		this.mock(jQuery).expects("ajax")
+			.withExactArgs(sServiceUrl + "SalesOrderList('0500000676')", sinon.match.object)
+			.returns(createMock(assert, undefined, "No Content", {}));
+		this.mock(oRequestor).expects("doCheckVersionHeader")
+			.withExactArgs(sinon.match.func, "SalesOrderList('0500000676')", true);
+
+		// code under test
+		return oRequestor.request("GET", "SalesOrderList('0500000676')")
+			.then(function (oResult) {
+				assert.deepEqual(oResult, null);
+		});
 	});
 
 	//*********************************************************************************************
@@ -1379,13 +1396,30 @@ sap.ui.define([
 				$resolve : sinon.match.func,
 				$resourcePath : "~Products('23')",
 				$submit : undefined
+			}, {
+				method : "GET",
+				url : "~Products('4711')",
+				headers : {
+					"Accept" : "application/json;odata.metadata=full",
+					"Accept-Language" : "ab-CD",
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+				},
+				body : undefined,
+				$cancel : undefined,
+				$metaPath : undefined,
+				$promise : sinon.match.defined,
+				$queryOptions : undefined,
+				$reject : sinon.match.func,
+				$resolve : sinon.match.func,
+				$resourcePath : "~Products('4711')",
+				$submit : undefined
 			}],
 			aMergedRequests,
 			aPromises = [],
 			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}, {}],
 			aBatchResults = [
 				[createResponse(aResults[1]), createResponse()],
-				createResponse(aResults[0], {"etAG" : "ETag value"})
+				createResponse(aResults[0], {"etAG" : "ETag value"}), createResponse()
 			],
 			oRequestor = _Requestor.create("/Service/", oModelInterface,
 				{"Accept-Language" : "ab-CD"}),
@@ -1400,6 +1434,14 @@ sap.ui.define([
 					"@odata.etag" : "ETag value",
 					"foo1" : "bar1"
 				});
+				aResults[0] = null;
+			}));
+		oRequestorMock.expects("convertResourcePath").withExactArgs("Products('4711')")
+			.returns("~Products('4711')");
+		aPromises.push(oRequestor.request("GET", "Products('4711')", this.createGroupLock("group1"),
+				{Accept : "application/json;odata.metadata=full"})
+			.then(function (oResult) {
+				assert.deepEqual(oResult, null);
 				aResults[0] = null;
 			}));
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Customers")
