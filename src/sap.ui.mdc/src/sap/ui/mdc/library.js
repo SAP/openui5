@@ -63,6 +63,7 @@ sap.ui.define([
 			"sap.ui.mdc.field.FieldValueHelpContentWrapperBase",
 			"sap.ui.mdc.field.FieldValueHelpMTableWrapper",
 			"sap.ui.mdc.field.ListFieldHelp",
+			"sap.ui.mdc.field.ListFieldHelpItem",
 			"sap.ui.mdc.field.BoolFieldHelp",
 			"sap.ui.mdc.field.ConditionFieldHelp",
 			"sap.ui.mdc.filterbar.aligned.FilterItemLayout",

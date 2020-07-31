@@ -7,6 +7,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/field/ListFieldHelp",
+	"sap/ui/mdc/field/ListFieldHelpItem",
 	"sap/ui/mdc/field/FieldHelpBaseDelegate",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/ConditionValidated",
@@ -15,6 +16,8 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/Filter",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/json/JSONModel",
 	"sap/m/library",
 	"sap/m/Popover",
 	"sap/m/List",
@@ -22,6 +25,7 @@ sap.ui.define([
 ], function (
 		qutils,
 		ListFieldHelp,
+		ListFieldHelpItem,
 		FieldHelpBaseDelegate,
 		Condition,
 		ConditionValidated,
@@ -30,6 +34,8 @@ sap.ui.define([
 		FormatException,
 		ParseException,
 		Filter,
+		Sorter,
+		JSONModel,
 		mLibrary,
 		Popover,
 		List,
@@ -502,6 +508,182 @@ sap.ui.define([
 			var sError = oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", ["foo"]);
 			assert.equal(oError.message, sError, "Error message");
 		}
+	});
+
+	QUnit.module("grouping", {
+		beforeEach: function() {
+			oFieldHelp = new ListFieldHelp("F1-H", {
+				items: [
+				        new ListFieldHelpItem("item1", {text: "Item1", additionalText: "Text1", key: "I1", groupKey: "G1"}),
+				        new ListFieldHelpItem("item2", {text: "Item2", additionalText: "Text2", key: "I2", groupKey: "G2", groupText: "Group 2"}),
+				        new ListFieldHelpItem("item3", {text: "Item3", additionalText: "Text3", key: "I3", groupKey: "G1"})
+				        ],
+				disconnect: _myDisconnectHandler,
+				select: _mySelectHandler,
+				navigate: _myNavigateHandler,
+				dataUpdate: _myDataUpdateHandler,
+				open: _myOpenHandler
+			});
+			_initFields();
+			oField.addDependent(oFieldHelp);
+		},
+		afterEach: _teardown
+	});
+
+	QUnit.test("List creation", function(assert) {
+
+		oFieldHelp.open();
+
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		if (oPopover) {
+			var oList = oPopover.getContent()[0];
+			assert.ok(oList, "Popover has content");
+			assert.ok(oList instanceof List, "content is List");
+			var aItems = oList.getItems();
+			assert.equal(aItems.length, 5, "List has 5 Items");
+			assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
+			assert.equal(aItems[0].getTitle(), "G1", "Item0: Text");
+			assert.ok(aItems[1] instanceof DisplayListItem, "Item1 is DisplayListItem");
+			assert.equal(aItems[1].getLabel(), "Item1", "Item1: Text assigned to Label");
+			assert.equal(aItems[1].getValue(), "Text1", "Item1: AdditinalText assigned to Value");
+			assert.ok(aItems[2] instanceof DisplayListItem, "Item2 is DisplayListItem");
+			assert.equal(aItems[2].getLabel(), "Item3", "Item2: Text assigned to Label");
+			assert.equal(aItems[2].getValue(), "Text3", "Item2: AdditinalText assigned to Value");
+			assert.ok(aItems[3].isA("sap.m.GroupHeaderListItem"), "Item3 is GroupHeaderListItem");
+			assert.equal(aItems[3].getTitle(), "Group 2", "Item3: Text");
+			assert.ok(aItems[4] instanceof DisplayListItem, "Item4 is DisplayListItem");
+			assert.equal(aItems[4].getLabel(), "Item2", "Item4: Text assigned to Label");
+			assert.equal(aItems[4].getValue(), "Text2", "Item4: AdditinalText assigned to Value");
+		}
+
+		oFieldHelp.close();
+
+	});
+
+	QUnit.test("navigate", function(assert) {
+
+		oFieldHelp.navigate(1);
+
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		if (oPopover) {
+			assert.equal(iOpen, 1, "Open event fired");
+			assert.ok(oPopover.isOpen(), "Field help opened");
+			var oList = oPopover.getContent()[0];
+			var aItems = oList.getItems();
+			assert.ok(aItems[1].getSelected(), "Item1 is selected");
+			assert.equal(iNavigate, 1, "Navigate event fired");
+			assert.equal(sNavigateValue, "Item1", "Navigate event value");
+			assert.equal(sNavigateKey, "I1", "Navigate event key");
+			assert.equal(oNavigateCondition.operator, "EQ", "NavigateEvent condition operator");
+			assert.equal(oNavigateCondition.values[0], "I1", "NavigateEvent condition key");
+			assert.equal(oNavigateCondition.values[1], "Item1", "NavigateEvent condition description");
+			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-0", "Navigate itemId");
+			var aConditions = oFieldHelp.getConditions();
+			assert.equal(aConditions.length, 1, "conditions length");
+			assert.equal(aConditions[0].values[0], "I1", "conditions key");
+			assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
+
+			oFieldHelp.navigate(2);
+			assert.ok(aItems[4].getSelected(), "Item2 is selected");
+			assert.equal(iNavigate, 2, "Navigate event fired");
+			assert.equal(sNavigateValue, "Item2", "Navigate event value");
+			assert.equal(sNavigateKey, "I2", "Navigate event key");
+			assert.equal(oNavigateCondition.operator, "EQ", "NavigateEvent condition operator");
+			assert.equal(oNavigateCondition.values[0], "I2", "NavigateEvent condition key");
+			assert.equal(oNavigateCondition.values[1], "Item2", "NavigateEvent condition description");
+			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-2", "Navigate itemId");
+			aConditions = oFieldHelp.getConditions();
+			assert.equal(aConditions.length, 1, "conditions length");
+			assert.equal(aConditions[0].values[0], "I2", "conditions key");
+			assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
+
+			oFieldHelp.navigate(-1);
+			assert.ok(aItems[2].getSelected(), "Item 3 is selected");
+			assert.equal(iNavigate, 3, "Navigate event fired");
+			assert.equal(sNavigateValue, "Item3", "Navigate event value");
+			assert.equal(sNavigateKey, "I3", "Navigate event key");
+			assert.equal(oNavigateCondition.operator, "EQ", "NavigateEvent condition operator");
+			assert.equal(oNavigateCondition.values[0], "I3", "NavigateEvent condition key");
+			assert.equal(oNavigateCondition.values[1], "Item3", "NavigateEvent condition description");
+			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-1", "Navigate itemId");
+			aConditions = oFieldHelp.getConditions();
+			assert.equal(aConditions.length, 1, "conditions length");
+			assert.equal(aConditions[0].values[0], "I3", "conditions key");
+			assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
+
+			oFieldHelp.close();
+		}
+
+	});
+
+	var oModel;
+	var oTemplate;
+
+	QUnit.module("grouping with binding", {
+		beforeEach: function() {
+			oModel = new JSONModel({
+				items:[{text: "Item1", key: "I1", additionalText: "Text1", groupKey: "G1", groupText: null},
+				       {text: "Item2", key: "I2", additionalText: "Text2", groupKey: "G2", groupText: "Group 2"},
+				       {text: "Item3", key: "I3", additionalText: "Text3", groupKey: "G1", groupText: null}]
+			});
+			oTemplate = new ListFieldHelpItem({
+				key: "{key}",
+				text: "{text}",
+				additionalText: "{additionalText}",
+				groupKey: "{groupKey}",
+				groupText: "{groupText}"
+			});
+
+			oFieldHelp = new ListFieldHelp("F1-H", {
+				items:{path: "/items", template: oTemplate},
+				disconnect: _myDisconnectHandler,
+				select: _mySelectHandler,
+				navigate: _myNavigateHandler,
+				dataUpdate: _myDataUpdateHandler,
+				open: _myOpenHandler
+			});
+			oFieldHelp.setModel(oModel);
+			_initFields();
+			oField.addDependent(oFieldHelp);
+		},
+		afterEach: function() {
+			oModel.destroy();
+			oTemplate.destroy();
+			_teardown();
+		}
+	});
+
+	QUnit.test("List creation", function(assert) {
+
+		oFieldHelp.open();
+
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		if (oPopover) {
+			var oList = oPopover.getContent()[0];
+			assert.ok(oList, "Popover has content");
+			assert.ok(oList instanceof List, "content is List");
+			var aItems = oList.getItems();
+			assert.equal(aItems.length, 5, "List has 5 Items");
+			assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
+			assert.equal(aItems[0].getTitle(), "G1", "Item0: Text");
+			assert.ok(aItems[1] instanceof DisplayListItem, "Item1 is DisplayListItem");
+			assert.equal(aItems[1].getLabel(), "Item1", "Item1: Text assigned to Label");
+			assert.equal(aItems[1].getValue(), "Text1", "Item1: AdditinalText assigned to Value");
+			assert.ok(aItems[2] instanceof DisplayListItem, "Item2 is DisplayListItem");
+			assert.equal(aItems[2].getLabel(), "Item3", "Item2: Text assigned to Label");
+			assert.equal(aItems[2].getValue(), "Text3", "Item2: AdditinalText assigned to Value");
+			assert.ok(aItems[3].isA("sap.m.GroupHeaderListItem"), "Item3 is GroupHeaderListItem");
+			assert.equal(aItems[3].getTitle(), "Group 2", "Item3: Text");
+			assert.ok(aItems[4] instanceof DisplayListItem, "Item4 is DisplayListItem");
+			assert.equal(aItems[4].getLabel(), "Item2", "Item4: Text assigned to Label");
+			assert.equal(aItems[4].getValue(), "Text2", "Item4: AdditinalText assigned to Value");
+		}
+
+		oFieldHelp.close();
+
 	});
 
 });
