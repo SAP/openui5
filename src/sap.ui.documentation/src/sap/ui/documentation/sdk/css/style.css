@@ -1571,6 +1571,23 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 	display: inline;
 }
 
+/* 5 Depths are handled - if more than 5 levels should be displayed we should think of another approach */
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-1 {
+	padding-left: 2rem;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-2 {
+	padding-left: 4rem;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-3 {
+	padding-left: 6rem;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-4 {
+	padding-left: 8rem;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
+	padding-left: 10rem;
+}
+
 /* Special list */
 .specialListsMessageStrip {
 	width: calc(100% - 2rem);
