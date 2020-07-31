@@ -2617,6 +2617,7 @@ sap.ui.define([
 
 		// code under test
 		oResult = ODataModel.prototype.callFunction.call(oModel, "/~sFunctionName", {
+			adjustDeepPath : "~adjustDeepPath",
 			batchGroupId : oGroupFixture.batchGroupId,
 			changeSetId : "~changeSetId",
 			error : "~error",
@@ -2687,6 +2688,7 @@ sap.ui.define([
 
 		assert.strictEqual(oResultingRequest, oRequest);
 		assert.deepEqual(oResultingRequest, {
+			adjustDeepPath : "~adjustDeepPath",
 			functionMetadata : oFunctionMetadataFixture.oFunctionMetadata,
 			functionTarget : "~functionTarget",
 			key : "~sKey"

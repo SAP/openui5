@@ -769,6 +769,7 @@ sap.ui.define([
 				delete mHeaders["sap-cancel-on-close"];
 				delete mHeaders["sap-contextid-accept"];
 				delete oActualRequest["_handle"];
+				delete oActualRequest["adjustDeepPath"];
 				delete oActualRequest["async"];
 				delete oActualRequest["deferred"];
 				delete oActualRequest["eventInfo"];

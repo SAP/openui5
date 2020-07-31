@@ -4862,6 +4862,24 @@ sap.ui.define([
 	 *   Defines whether to update all bindings after submitting this change operation; since 1.46.
 	 *   See {@link #setRefreshAfterChange}. If given, this overrules the model-wide
 	 *   <code>refreshAfterChange</code> flag for this operation only.
+	 * @param {function} [mParameters.adjustDeepPath]
+	 *   Defines a callback function to adjust the deep path for the resulting entity of the
+	 *   function import call; since 1.82. The deep path of an entity is the resolved path relative
+	 *   to the parent contexts of the binding in the UI hierarchy. For example, for a
+	 *   <code>ToBusinessPartner</code> relative context binding with a
+	 *   <code>/SalesOrder('42')</code> parent context, the resulting deep path for the
+	 *   <code>BusinessPartner</code> is <code>/SalesOrder('42')/ToBusinessPartner</code>. This deep
+	 *   path is used to properly assign messages and show them correctly on the UI.
+	 *
+	 *   The callback function returns a <code>string</code> with the deep path for the entity
+	 *   returned by the function import and gets the parameter map <code>mParameters</code>
+	 *   containing the following properties:
+	 *   <ul>
+	 *     <li><code>{string} mParameters.deepPath</code>: The deep path of the resulting entity,
+	 *       as far as the framework is able to determine from the metadata and the OData response
+	 *       </li>
+	 *     <li><code>{object} mParameters.response</code>: A copy of the OData response object</li>
+	 *   </ul>
 	 * @param {string} [mParameters.batchGroupId]
 	 *   <b>Deprecated - use <code>groupId</code> instead</b>
 	 *
@@ -4954,6 +4972,7 @@ sap.ui.define([
 				that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sFunctionName, sMethod, that._getHeaders(mHeaders),
 				undefined, sETag, undefined, true);
+			oRequest.adjustDeepPath = mParameters.adjustDeepPath;
 			oRequest.functionMetadata = oFunctionMetadata;
 			oData.__metadata.created.functionMetadata = oFunctionMetadata;
 			oRequest.functionTarget = that.oMetadata._getCanonicalPathOfFunctionImport(
