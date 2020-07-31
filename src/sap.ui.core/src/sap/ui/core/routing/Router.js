@@ -472,7 +472,7 @@ sap.ui.define([
 					this._oTargets.detachTitleChanged(this._forwardTitleChanged, this);
 
 					// remove the last saved title since the router is reset
-					delete this._oTargets._sPreviousTitle;
+					this._oTargets._oLastTitleTarget = {};
 				}
 
 				if (this._oMatchedRoute) {
