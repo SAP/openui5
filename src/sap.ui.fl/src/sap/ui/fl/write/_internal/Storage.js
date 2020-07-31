@@ -161,6 +161,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * @typedef {object} ResetResponseEntry
+	 * @property {string} fileName
+	 */
+
+	/**
 	 * Resets the flex data by calling the according reset of the connector in charge of the passed layer;
 	 * The promise is rejected in case the writing failed or no connector is configured to handle the layer.
 	 *
@@ -172,7 +177,8 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.generator] - Generator with which the changes were created
 	 * @param {string[]} [mPropertyBag.selectorIds] - Selector IDs of controls for which the reset should filter
 	 * @param {string} [mPropertyBag.changeTypes] - Change types of the changes which should be reset
-	 * @returns {Promise} Resolves after the reset is completed and rejects in case of an error
+	 *
+	 * @returns {Promise<ResetResponseEntry[]>} Resolves as an array after the reset is completed and returns the reset changes; rejects in case of an error
 	 */
 	Storage.reset = function(mPropertyBag) {
 		return _executeActionByName("reset", mPropertyBag);

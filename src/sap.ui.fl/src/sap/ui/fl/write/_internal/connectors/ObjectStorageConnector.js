@@ -128,9 +128,20 @@ sap.ui.define([
 				layer: mPropertyBag.layer
 			}, function(mFlexObject) {
 				if (shouldChangeBeDeleted(mPropertyBag, mFlexObject.changeDefinition)) {
-					return this.oStorage.removeItem(mFlexObject.key);
+					return Promise.resolve(this.oStorage.removeItem(mFlexObject.key)).then(function () {
+						return {
+							fileName: mFlexObject.changeDefinition && mFlexObject.changeDefinition.fileName
+						};
+					});
 				}
-			}.bind(this));
+			}.bind(this))
+			.then(function(aResponse) {
+				return {
+					response: aResponse.filter(function (oChangeDefinition) {
+						return !!oChangeDefinition;
+					})
+				};
+			});
 		},
 
 		/**

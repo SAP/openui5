@@ -204,6 +204,12 @@ sap.ui.define([
 					sTokenUrl
 				);
 				return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption).then(function (oResponse) {
+					if (oResponse && oResponse.response) {
+						oResponse.response.forEach(function(oContentId) {
+							oContentId.fileName = oContentId.name;
+							delete oContentId.name;
+						});
+					}
 					BusyIndicator.hide();
 					return oResponse;
 				}).catch(function(oError) {

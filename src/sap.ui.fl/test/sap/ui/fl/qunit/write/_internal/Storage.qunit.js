@@ -585,7 +585,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("then it fails in case no connector is available for the layer", function(assert) {
+		QUnit.test("then it fails in case no connector is available for the layer", function (assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "reference",
@@ -596,12 +596,12 @@ sap.ui.define([
 			]);
 
 			return Storage.reset(mPropertyBag)
-				.catch(function (oError) {
-					assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
-				});
+			.catch(function (oError) {
+				assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
+			});
 		});
 
-		QUnit.test("then it fails in case no connector is available for the layer by default layer settings of the connector", function(assert) {
+		QUnit.test("then it fails in case no connector is available for the layer by default layer settings of the connector", function (assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "reference",
@@ -612,12 +612,12 @@ sap.ui.define([
 			]);
 
 			return Storage.reset(mPropertyBag)
-				.catch(function (oError) {
-					assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
-				});
+			.catch(function (oError) {
+				assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
+			});
 		});
 
-		QUnit.test("then it fails in case multiple connectors are available for the layer", function(assert) {
+		QUnit.test("then it fails in case multiple connectors are available for the layer", function (assert) {
 			var mPropertyBag = {
 				layer: Layer.VENDOR,
 				reference: "reference",
@@ -630,10 +630,10 @@ sap.ui.define([
 			]);
 
 			return Storage.reset(mPropertyBag)
-				.catch(function (oError) {
-					assert.equal(oError.message, "sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: " +
-						"Multiple Connector configurations were found to write into layer: VENDOR");
-				});
+			.catch(function (oError) {
+				assert.equal(oError.message, "sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: " +
+					"Multiple Connector configurations were found to write into layer: VENDOR");
+			});
 		});
 
 		QUnit.test("with valid mPropertyBag and Connector: LrepConnector aiming for USER layer", function (assert) {
@@ -664,7 +664,7 @@ sap.ui.define([
 			var sExpectedUrl = sUrl + "/changes/";
 			var sExpectedMethod = "DELETE";
 
-			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves([]);
 			var oStubGetUrl = sandbox.stub(InitialUtils, "getUrl").returns(sExpectedUrl);
 
 			return Storage.reset(mPropertyBag).then(function () {
@@ -702,7 +702,7 @@ sap.ui.define([
 
 			var sExpectedMethod = "DELETE";
 
-			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves([]);
 			var oSpyGetUrl = sandbox.spy(InitialUtils, "getUrl");
 
 			return Storage.reset(mPropertyBag).then(function () {
@@ -742,7 +742,7 @@ sap.ui.define([
 
 			var sExpectedMethod = "DELETE";
 
-			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves([]);
 			var oSpyGetUrl = sandbox.spy(InitialUtils, "getUrl");
 
 			return Storage.reset(mPropertyBag).then(function () {
@@ -782,7 +782,7 @@ sap.ui.define([
 
 			var sExpectedMethod = "DELETE";
 
-			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves([]);
 			var oStubGetUrl = sandbox.spy(InitialUtils, "getUrl");
 
 			return Storage.reset(mPropertyBag).then(function () {
@@ -802,7 +802,6 @@ sap.ui.define([
 			});
 		});
 	});
-
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

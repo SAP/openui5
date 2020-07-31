@@ -1116,8 +1116,8 @@ sap.ui.define([
 			if (aSelectorIds || aChangeTypes) {
 				var aNames = [];
 				if (oResponse && oResponse.response && oResponse.response.length > 0) {
-					oResponse.response.forEach(function(oChangeContentId) {
-						aNames.push(oChangeContentId.name);
+					oResponse.response.forEach(function (oChangeContentId) {
+						aNames.push(oChangeContentId.fileName);
 					});
 				}
 				Cache.removeChanges(this._mComponent, aNames);
