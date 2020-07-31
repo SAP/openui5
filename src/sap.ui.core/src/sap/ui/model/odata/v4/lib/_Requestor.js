@@ -1116,7 +1116,9 @@ sap.ui.define([
 							return;
 						}
 					} else { // e.g. 204 No Content
-						oResponse = {/*null object pattern*/};
+						// With GET it must be visible that there is no content, with the other
+						// methods it must be possible to insert the ETag from the header
+						oResponse = vRequest.method === "GET" ? null : {};
 					}
 					that.reportUnboundMessagesAsJSON(vRequest.url,
 						getResponseHeader.call(vResponse, "sap-messages"));
@@ -1601,7 +1603,11 @@ sap.ui.define([
 
 					// Note: string response appears only for $batch and thus cannot be empty;
 					// for 204 "No Content", vResponse === undefined
-					vResponse = vResponse || {/*null object pattern*/};
+					if (!vResponse) {
+						// With GET it must be visible that there is no content, with the other
+						// methods it must be possible to insert the ETag from the header
+						vResponse = sMethod === "GET" ? null : {};
+					}
 					if (sETag) {
 						vResponse["@odata.etag"] = sETag;
 					}
