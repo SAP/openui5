@@ -3,12 +3,14 @@
 sap.ui.define([
 	"sap/m/IconTabHeader",
 	"sap/m/IconTabFilter",
+	"sap/m/IconTabSeparator",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Panel"
 ], function(
 	IconTabHeader,
 	IconTabFilter,
+	IconTabSeparator,
 	Core,
 	createAndAppendDiv,
 	Panel
@@ -19,13 +21,17 @@ sap.ui.define([
 
 	createAndAppendDiv(DOM_RENDER_LOCATION);
 
-	function createHeaderWithItems(iNum) {
+	function createHeaderWithItems(iNum, bWithSeparators) {
 		var aItems = [];
 		for (var i = 0; i < iNum; i++) {
 			aItems.push(new IconTabFilter({
 				text: "Tab " + i,
 				key: i
 			}));
+
+			if (bWithSeparators && i < (iNum - 1)) {
+				aItems.push(new IconTabSeparator());
+			}
 		}
 
 		return new IconTabHeader({
@@ -69,6 +75,42 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oLastItem.$().hasClass("sapMITBFilterHidden"), "the last filter is hidden");
+
+		// clean up
+		oITH.destroy();
+	});
+
+	QUnit.test("hide items together with preceding separator", function(assert) {
+		// arrange
+		var oITH = createHeaderWithItems(4, true),
+			aItems = oITH.getItems(),
+			oLastSeparator = aItems[5],
+			oLastItem = aItems[6];
+
+		oITH.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// assert - all visible
+		assert.notOk(oLastSeparator.$().hasClass("sapMITBFilterHidden"), "the last separator is visible");
+		assert.notOk(oLastItem.$().hasClass("sapMITBFilterHidden"), "the last filter item is visible");
+
+		// act - resize
+		oITH.$().width("200px");
+		Core.applyChanges();
+		this.clock.tick(300);
+
+		// assert - last item is hidden
+		assert.ok(oLastSeparator.$().hasClass("sapMITBFilterHidden"), "the last separator is hidden");
+		assert.ok(oLastItem.$().hasClass("sapMITBFilterHidden"), "the last filter item is hidden");
+
+		// act - select last item
+		oITH.setSelectedKey(oLastItem.getKey());
+		Core.applyChanges();
+		this.clock.tick(300);
+
+		// assert - selected item is visible
+		assert.notOk(oLastSeparator.$().hasClass("sapMITBFilterHidden"), "the last separator is visible");
+		assert.notOk(oLastItem.$().hasClass("sapMITBFilterHidden"), "the last filter item is visible");
 
 		// clean up
 		oITH.destroy();
