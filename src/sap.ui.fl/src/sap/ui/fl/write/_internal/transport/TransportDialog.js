@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/ComboBox",
 	"sap/m/Dialog",
-	"sap/m/DialogRenderer",
 	"sap/m/Input",
 	"sap/m/MessageToast",
 	"sap/ui/core/ListItem",
@@ -21,7 +20,6 @@ function(
 	Button,
 	ComboBox,
 	Dialog,
-	DialogRenderer,
 	Input,
 	MessageToast,
 	ListItem,
@@ -81,7 +79,7 @@ function(
 				cancel : {}
 			}
 		},
-		renderer: DialogRenderer.render
+		renderer: {} // inherit Dialog renderer
 	});
 
 
