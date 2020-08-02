@@ -7,6 +7,8 @@ function(TreeItemBaseRenderer, Core, Renderer) {
 
 	var DemokitTreeItemRender = Renderer.extend(TreeItemBaseRenderer);
 
+	DemokitTreeItemRender.apiVersion = 2;
+
 	DemokitTreeItemRender.renderEntityType = function (oRm, oControl) {
 		var sType = oControl.getEntityType(),
 			sTypeAbbreviation = sType ? sType[0].toUpperCase() : "";
@@ -15,15 +17,12 @@ function(TreeItemBaseRenderer, Core, Renderer) {
 			return;
 		}
 
-		oRm.write('<span');
-		oRm.addClass("sapUiDemoKitTreeItemIcon");
-		oRm.addClass("sapUiDemoKitTreeItem" + sTypeAbbreviation);
-		oRm.writeClasses();
-		oRm.write('>');
-
-		oRm.write(sTypeAbbreviation);
-
-		oRm.write('</span>');
+		oRm.openStart('span')
+			.class("sapUiDemoKitTreeItemIcon")
+			.class("sapUiDemoKitTreeItem" + sTypeAbbreviation)
+			.openEnd()
+			.text(sTypeAbbreviation)
+			.close('span');
 	};
 
 	DemokitTreeItemRender.renderTooltip = function(oRm, oControl) {
@@ -31,7 +30,7 @@ function(TreeItemBaseRenderer, Core, Renderer) {
 			sTarget = oControl.getTarget();
 
 		if (sType && sTarget) {
-			oRm.writeAttributeEscaped("title", sType + " " + sTarget);
+			oRm.attr("title", sType + " " + sTarget);
 		}
 	};
 
@@ -40,28 +39,27 @@ function(TreeItemBaseRenderer, Core, Renderer) {
 
 		this.renderEntityType(oRm, oControl);
 
-		oRm.write('<a');
-		oRm.writeAttributeEscaped("href", oControl.getHref());
-		oRm.write('>');
-		oRm.write('<span');
-		oRm.addClass("sapDemokitTreeItemTitle");
-		oRm.addClass("sapUiTinyMarginEnd");
-		oRm.writeClasses();
-		oRm.write('>');
-		oRm.writeEscaped(oControl.getTitle());
-		oRm.write('</span>');
+		oRm.openStart('a')
+			.attr("href", oControl.getHref())
+			.openEnd();
 
-		oRm.write('</a>');
+			oRm.openStart('span')
+				.class("sapDemokitTreeItemTitle")
+				.class("sapUiTinyMarginEnd")
+				.openEnd()
+				.text(oControl.getTitle())
+				.close('span');
+
+		oRm.close('a');
 
 		if (oControl.getDeprecated()) {
 			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.documentation");
 
-			oRm.write('<span');
-			oRm.addClass("sapDemokitTreeItemLabel");
-			oRm.writeClasses();
-			oRm.write('>');
-			oRm.write(oResourceBundle.getText("API_MASTER_DEPRECATED"));
-			oRm.write('</span>');
+			oRm.openStart('span')
+				.class("sapDemokitTreeItemLabel")
+				.openEnd()
+				.text(oResourceBundle.getText("API_MASTER_DEPRECATED"))
+				.close('span');
 		}
 	};
 
