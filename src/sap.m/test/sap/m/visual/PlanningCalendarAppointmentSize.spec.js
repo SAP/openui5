@@ -46,8 +46,6 @@ describe("sap.m.PlanningCalendarAppointmentSize", function() {
 	it("should render the whole months page", function() {
 		element(by.id("PC1-Header-ViewSwitch")).click();
 		element(by.cssContainingText(".sapMSelectListItem", "1 Month")).click();
-		element(by.id("select_width-label")).click();
-		element(by.id("select_width_item_0")).click();
 		expect(takeScreenshot(element(by.id("page1-cont")))).toLookAs("months_page");
 	});
 
@@ -58,8 +56,14 @@ describe("sap.m.PlanningCalendarAppointmentSize", function() {
 
 	it("should render the appointment with Half Size width", function() {
 		element(by.id("select_rounding")).click();
-		element(by.cssContainingText(".sapMSelectListItem", "Half-Row")).click();
-
+		element(by.cssContainingText(".sapMSelectListItem", "Half Column")).click();
 		expect(takeScreenshot()).toLookAs("calendar_appointment_half_size_width");
 	});
+
+	it("should render the appointment with Half Size width 1024px", function() {
+		element(by.id("select_width")).click();
+		element(by.cssContainingText(".sapMSelectListItem", "1024px < x")).click();
+		expect(takeScreenshot()).toLookAs("calendar_appointment_half_size_width_1024px");
+	});
+
 });

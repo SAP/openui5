@@ -80,16 +80,32 @@
 								text: 'None',
 								key: 'None'
 							}),
-							new sap.ui.core.Item('Half-Row', {
-								text: 'Half-Row',
-								key: 'HalfRow'
+							new sap.ui.core.Item('halfColumn', {
+								text: 'Half Column',
+								key: 'HalfColumn'
 							})
 						],
 						change: function(oEvent) {
 							var sSelectedRouding = oEvent.getParameter('selectedItem').getKey();
 							oPC1.setAppointmentRoundWidth(sSelectedRouding);
 						}
-					})
+					}),
+					new sap.m.Select('select_width', {
+						items: [
+							new sap.ui.core.Item('select_width_item_0', {
+								text: '100%',
+								key: '100%'
+							}),
+							new sap.ui.core.Item('select_width_item_3', {
+								text: '1024px < x',
+								key: '1200px'
+							})
+						],
+						change: function (oEvent) {
+							var sSelectedWidth = oEvent.getParameter('selectedItem').getKey();
+							sap.ui.getCore().byId('PC1').setWidth(sSelectedWidth);
+						}
+					}),
 				]
 			});
 		};
@@ -105,18 +121,9 @@
 			text: "Title"
 		});
 
-		var oPC1 = sap.m.PlanningCalendar("PC1", {
+		var oPC1 = new sap.m.PlanningCalendar("PC1", {
 			stickyHeader: true,
 			startDate: new Date("2015", "0", "1", "08", "00"),
-			views: [
-						new sap.m.PlanningCalendarView({
-							key: "ne",
-							intervalType: sap.ui.unified.CalendarIntervalType.Day,
-							intervalsS: 20,
-							intervalsM: 20,
-							intervalsL: 20
-						})
-					],
 			rows: [ new sap.m.PlanningCalendarRow("Row1", {
 						icon: "sap-icon://employee",
 						title: "Max Mustermann",
@@ -343,6 +350,41 @@
 							new sap.ui.unified.CalendarAppointment("R2A15", {
 											startDate: new Date("2015", "1", "9", "14", "36"),
 											endDate: new Date("2015", "1", "9", "19", "44"),
+											type: sap.ui.unified.CalendarDayType.Type09,
+											title: "Meeting 14",
+											tooltip: "Tooltip 14"
+							}),
+							new sap.ui.unified.CalendarAppointment("R2A16", {
+											startDate: new Date("2015", "1", "10", "0", "0"),
+											endDate: new Date("2015", "1", "10", "23", "59"),
+											type: sap.ui.unified.CalendarDayType.Type09,
+											title: "Meeting 14",
+											tooltip: "Tooltip 14"
+							}),
+							new sap.ui.unified.CalendarAppointment("R2A17", {
+											startDate: new Date("2015", "1", "11", "0", "0"),
+											endDate: new Date("2015", "1", "11", "23", "59"),
+											type: sap.ui.unified.CalendarDayType.Type09,
+											title: "Meeting 14",
+											tooltip: "Tooltip 14"
+							}),
+							new sap.ui.unified.CalendarAppointment("R2A18", {
+											startDate: new Date("2015", "1", "12", "0", "0"),
+											endDate: new Date("2015", "1", "12", "23", "59"),
+											type: sap.ui.unified.CalendarDayType.Type09,
+											title: "Meeting 14",
+											tooltip: "Tooltip 14"
+							}),
+							new sap.ui.unified.CalendarAppointment("R2A19", {
+											startDate: new Date("2015", "1", "13", "0", "0"),
+											endDate: new Date("2015", "1", "13", "23", "59"),
+											type: sap.ui.unified.CalendarDayType.Type09,
+											title: "Meeting 14",
+											tooltip: "Tooltip 14"
+							}),
+							new sap.ui.unified.CalendarAppointment("R2A20", {
+											startDate: new Date("2015", "1", "14", "0", "0"),
+											endDate: new Date("2015", "1", "14", "23", "59"),
 											type: sap.ui.unified.CalendarDayType.Type09,
 											title: "Meeting 14",
 											tooltip: "Tooltip 14"
