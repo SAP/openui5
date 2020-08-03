@@ -145,7 +145,8 @@ sap.ui.define([
 			// resize handler fallback for old browsers (e.g. IE 11)
 			this._sResizeListener = ResizeHandler.register(this, this._resizeProxy);
 		}
-		_handleResize.call(this);
+
+		_reflow.call(this);
 
 	};
 
@@ -567,9 +568,15 @@ sap.ui.define([
 
 	}
 
-	function _handleResize(oEvent, bNoRowResize){
+	function _handleResize(oEvent, bNoRowResize) {
+		window.requestAnimationFrame(function() {
+			_reflow.call(this, oEvent, bNoRowResize);
+		}.bind(this));
+	}
 
+	function _reflow(oEvent, bNoRowResize) {
 		var oDomRef = this.getDomRef();
+
 		// Prove if DOM reference exist, and if not - clean up the references.
 		if (!oDomRef) {
 			_cleanup.call(this);
@@ -577,6 +584,7 @@ sap.ui.define([
 		}
 
 		var $DomRef = this.$();
+
 		if (!$DomRef.is(":visible")) {
 			return;
 		}
@@ -587,6 +595,7 @@ sap.ui.define([
 
 		var iWidth = oDomRef.clientWidth;
 		var iColumns = 1;
+
 		if (iWidth <= this._iBreakPointTablet) {
 			$DomRef.toggleClass("sapUiFormCLMedia-Std-Phone", true);
 			$DomRef.toggleClass("sapUiFormCLMedia-Std-Desktop", false).toggleClass("sapUiFormCLMedia-Std-Tablet", false).toggleClass("sapUiFormCLMedia-Std-LargeDesktop", false);
@@ -607,7 +616,6 @@ sap.ui.define([
 		var bWideColumns = this.getLabelCellsLarge() < 12 && iWidth / iColumns > this._iBreakPointTablet;
 		$DomRef.toggleClass("sapUiFormCLWideColumns", bWideColumns);
 		$DomRef.toggleClass("sapUiFormCLSmallColumns", !bWideColumns);
-
 	}
 
 	return ColumnLayout;

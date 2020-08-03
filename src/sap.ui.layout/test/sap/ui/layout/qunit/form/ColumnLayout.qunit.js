@@ -196,46 +196,92 @@ sap.ui.define([
 		assert.equal(oColumnLayout.getEmptyCellsLarge(), 0, "emptyCellsLarge");
 	});
 
-	QUnit.test("Responsiveness", function(assert) {
+	QUnit.test("Responsiveness (test case 1)", function(assert) {
+
+		// arrange
+		var done = assert.async();
+
+		// act
 		oForm.setWidth("500px");
 		sap.ui.getCore().applyChanges();
-		var $Layout = jQuery("#CL1");
-		assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has Phone size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
-		assert.ok($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has small columns");
-		assert.notOk($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has not large columns");
 
+		// assert
+		window.requestAnimationFrame(function() {
+			var $Layout = jQuery("#CL1");
+			assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has Phone size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
+			assert.ok($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has small columns");
+			assert.notOk($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has not large columns");
+			done();
+		});
+	});
+
+	QUnit.test("Responsiveness (test case 2)", function(assert) {
+
+		// arrange
+		var done = assert.async();
+
+		// act
 		oForm.setWidth("1000px");
 		sap.ui.getCore().applyChanges();
-		$Layout = jQuery("#CL1");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
-		assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has Tablet size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
-		assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
-		assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
 
+		// assert
+		window.requestAnimationFrame(function() {
+			var $Layout = jQuery("#CL1");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
+			assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has Tablet size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
+			assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
+			assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+			done();
+		});
+	});
+
+	QUnit.test("Responsiveness (test case 3)", function(assert) {
+
+		// arrange
+		var done = assert.async();
+
+		// act
 		oForm.setWidth("1300px");
 		sap.ui.getCore().applyChanges();
-		$Layout = jQuery("#CL1");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
-		assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has Desktop size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
-		assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
-		assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
 
+		// assert
+		window.requestAnimationFrame(function() {
+			var $Layout = jQuery("#CL1");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
+			assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has Desktop size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has not LargeDesktop size");
+			assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
+			assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+			done();
+		});
+	});
+
+	QUnit.test("Responsiveness (test case 4)", function(assert) {
+
+		// arrange
+		var done = assert.async();
+
+		// act
 		oForm.setWidth("1500px");
 		sap.ui.getCore().applyChanges();
-		$Layout = jQuery("#CL1");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
-		assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
-		assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has LargeDesktop size");
-		assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
-		assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+
+		// assert
+		window.requestAnimationFrame(function() {
+			var $Layout = jQuery("#CL1");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Phone"), "Layout has not Phone size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Tablet"), "Layout has not Tablet size");
+			assert.notOk($Layout.hasClass("sapUiFormCLMedia-Std-Desktop"), "Layout has not Desktop size");
+			assert.ok($Layout.hasClass("sapUiFormCLMedia-Std-LargeDesktop"), "Layout has LargeDesktop size");
+			assert.notOk($Layout.hasClass("sapUiFormCLSmallColumns"), "Layout has not small columns");
+			assert.ok($Layout.hasClass("sapUiFormCLWideColumns"), "Layout has large columns");
+			done();
+		});
 	});
 
 	QUnit.test("keyboard", function(assert) {
