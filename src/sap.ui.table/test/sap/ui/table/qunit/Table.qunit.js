@@ -2895,12 +2895,14 @@ sap.ui.define([
 		oTable.bindRows("namedModel>" + oTable.getBindingInfo("rows").path);
 		oTable.setModel(oTable.getModel(), "namedModel");
 
-		//var iInitialRowCount = oTable.getRows().length;
+		var iInitialRowCount = oTable.getRows().length;
 		var oUpdateRowsHookSpy = sinon.spy();
 		var oInvalidateSpy = sinon.spy(oTable, "invalidate");
 		var oBinding = oTable.getBinding("rows");
 
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UpdateRows, oUpdateRowsHookSpy);
+
+		assert.notOk("_oVirtualRow" in oTable, "Virtual row does not exist");
 
 		// Fake the virtual context process.
 
@@ -2909,16 +2911,16 @@ sap.ui.define([
 			reason: "change"
 		});
 
-		//var oVirtualRow = oTable.getRows()[0];
+		var oVirtualRow = oTable._oVirtualRow;
 
 		assert.ok(oInvalidateSpy.notCalled, "AddVirtualContext: Table is not invalidated");
 		assert.ok(oUpdateRowsHookSpy.notCalled, "AddVirtualContext: UpdateRows hook is not called");
-		/*assert.ok(oTable.indexOfRow(oVirtualRow) > 0, "AddVirtualContext: Virtual row added");
+		assert.ok(oTable.indexOfAggregation("_hiddenDependents", oVirtualRow) >= 0, "AddVirtualContext: Virtual row added to hidden dependents");
 		assert.ok(oVirtualRow.getId().endsWith("-virtual"), "AddVirtualContext: Virtual row has the correct ID");
-		assert.strictEqual(oTable.getRows().length, iInitialRowCount + 1, "AddVirtualContext: Number of rows is correct");
+		assert.strictEqual(oTable.getRows().length, iInitialRowCount, "AddVirtualContext: Number of rows is correct");
 		assert.strictEqual(oVirtualRow.getBindingContext("namedModel"), oBinding.getContexts(0, 1)[0],
 			"AddVirtualContext: Virtual row has the correct context");
-		assert.notOk(oVirtualRow.bIsDestroyed, "RemoveVirtualContext: Virtual row is not destroyed");*/
+		assert.notOk(oVirtualRow.bIsDestroyed, "AddVirtualContext: Virtual row is not destroyed");
 		oInvalidateSpy.reset();
 		oUpdateRowsHookSpy.reset();
 
@@ -2929,8 +2931,22 @@ sap.ui.define([
 
 		assert.ok(oInvalidateSpy.notCalled, "RemoveVirtualContext: Table is not invalidated");
 		assert.ok(oUpdateRowsHookSpy.notCalled, "RemoveVirtualContext: UpdateRows hook is not called");
-		/*assert.ok(oTable.getRows().length === iInitialRowCount && oTable.indexOfRow(oVirtualRow) < 0, "RemoveVirtualContext: Virtual row removed");
-		assert.ok(oVirtualRow.bIsDestroyed, "RemoveVirtualContext: Virtual row is destroyed");*/
+		assert.ok(oTable.indexOfAggregation("_hiddenDependents", oVirtualRow) === -1,
+			"RemoveVirtualContext: Virtual row removed from hidden dependents");
+		assert.strictEqual(oTable.getRows().length, iInitialRowCount, "RemoveVirtualContext: Number of rows is correct");
+		assert.ok(oVirtualRow.bIsDestroyed, "RemoveVirtualContext: Virtual row is destroyed");
+		assert.notOk("_oVirtualRow" in oTable, "RemoveVirtualContext: Reference to virtual row removed from table");
+
+		oBinding.fireEvent("change", {
+			detailedReason: "AddVirtualContext",
+			reason: "change"
+		});
+		oVirtualRow = oTable._oVirtualRow;
+		oTable.bindRows(oTable.getBindingInfo("rows"));
+
+		assert.ok(oTable.indexOfAggregation("_hiddenDependents", oVirtualRow) === -1, "BindRows: Virtual row removed from hidden dependents");
+		assert.ok(oVirtualRow.bIsDestroyed, "BindRows: Virtual row is destroyed");
+		assert.notOk("_oVirtualRow" in oTable, "BindRows: Reference to virtual row removed from table");
 	});
 
 	QUnit.module("Callbacks", {
