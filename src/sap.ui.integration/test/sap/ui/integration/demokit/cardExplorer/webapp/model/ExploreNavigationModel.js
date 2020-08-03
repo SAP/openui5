@@ -386,7 +386,33 @@ sap.ui.define([
 							{
 								title: 'New Team Members',
 								key: 'line',
-								manifestUrl: '/samples/timeline/members.json'
+								files: [
+									{
+										url: '/samples/timeline/members.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/timeline/images/Alain_Chevalier.png',
+										name: 'images/Alain_Chevalier.png',
+										key: 'images/Alain_Chevalier.png'
+									},
+									{
+										url: '/samples/timeline/images/Laurent_Dubois.png',
+										name: 'images/Laurent_Dubois.png',
+										key: 'images/Laurent_Dubois.png'
+									},
+									{
+										url: '/samples/timeline/images/Monique_Legrand.png',
+										name: 'images/Monique_Legrand.png',
+										key: 'images/Monique_Legrand.png'
+									},
+									{
+										url: '/samples/timeline/images/Sabine_Mayer.png',
+										name: 'images/Sabine_Mayer.png',
+										key: 'images/Sabine_Mayer.png'
+									}
+								]
 							}
 						]
 					}
