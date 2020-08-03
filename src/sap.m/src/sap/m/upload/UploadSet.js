@@ -389,7 +389,9 @@ sap.ui.define([
 				this._handleItemEditCancelation(oEvent, oItem);
 				break;
 			case KeyCodes.DELETE:
-				this._handleItemDelete(oEvent, oItem);
+				if (!oItem.$("fileNameEdit").hasClass("sapMInputFocused")) {
+					this._handleItemDelete(oEvent, oItem);
+				}
 				break;
 			case KeyCodes.ENTER:
 				if (oItem === this._oEditedItem) {

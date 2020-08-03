@@ -121,7 +121,7 @@ sap.ui.define([
 	/* ======== */
 
 	QUnit.test("Keyboard actions [Enter, Delete, Escape, F2] are handled properly.", function (assert) {
-		assert.expect(6);
+		assert.expect(7);
 		var oItem = this.oUploadSet.getItems()[0],
 			oTarget = {id: oItem.getListItem().getId()},
 			oPressedSpy = sinon.spy(UploadSetItem.prototype, "_handleFileNamePressed"),
@@ -156,12 +156,21 @@ sap.ui.define([
 			keyCode: KeyCodes.DELETE
 		});
 		assert.equal(oDeleteSpy.callCount, 1, "Upload set item handler for removing a file should be called.");
-		oDeleteSpy.restore();
 
 		// Close the dialog
 		var oDialog = sap.ui.getCore().byId(this.oUploadSet.getId() + "-deleteDialog");
 		oDialog.getButtons()[1].firePress();
 		oDialog.destroy();
+
+		oItem._setInEditMode(true);
+		sap.ui.getCore().applyChanges();
+		oItem.$("fileNameEdit").addClass( "sapMInputFocused" );
+		this.oUploadSet.onkeydown({
+			target: oTarget,
+			keyCode: KeyCodes.DELETE
+		});
+		assert.equal(oDeleteSpy.calledTwice, false, "When focus is on input element delete handler should not be called");
+		oDeleteSpy.restore();
 	});
 
 	/* ============== */
