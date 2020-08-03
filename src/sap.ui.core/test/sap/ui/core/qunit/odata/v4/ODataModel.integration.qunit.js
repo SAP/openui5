@@ -21703,6 +21703,69 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A requestSideEffects and a bound action are triggered concurrently and end up in
+	// the same $batch. The requestSideEffects is already running when the action starts.
+	// Nevertheless it must be possible to get the action's binding parameter from the cache being
+	// updated.
+	// BCP: 2080268833
+	QUnit.test("BCP: 2080268833: requestSideEffects before bound action", function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Text id="note" text="{Note}"/>\
+	<Table items="{SO_2_SOITEM}">\
+		<Text id="pos" text="{ItemPosition}"/>\
+	</Table>\
+	<FlexBox id="action" binding="{' + sAction + '(...)}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID"
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+				"@odata.etag" : "ETag",
+				Note : "Note 1",
+				SalesOrderID : "1",
+				SO_2_SOITEM : [{ItemPosition : "0010", SalesOrderID : "1"}]
+			})
+			.expectChange("note", "Note 1")
+			.expectChange("pos", ["0010"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					batchNo : 2,
+					method : "POST",
+					url : "SalesOrderList('1')/" + sAction,
+					headers : {"If-Match" : "ETag"},
+					payload : {}
+				})
+				.expectRequest({
+					batchNo : 2,
+					method : "GET",
+					url : "SalesOrderList('1')?$select=SO_2_SOITEM"
+							+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)"
+				}, {
+					"@odata.etag" : "ETag",
+					SO_2_SOITEM : [{ItemPosition : "0010*", SalesOrderID : "1"}]
+				})
+				.expectChange("pos", ["0010*"]);
+
+			return Promise.all([
+				that.oView.byId("form").getBindingContext().requestSideEffects([
+					{$NavigationPropertyPath : "SO_2_SOITEM"}
+				]),
+
+				Promise.resolve().then(function () {
+					// code under test - execute while requestSideEffects is already being processed
+					return that.oView.byId("action").getObjectBinding().execute();
+				}),
+
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Automatic retry of failed PATCHes, along the lines of
 	// MIT.SalesOrderCreateRelative.html, but with $auto group
 	[function () {
@@ -24542,12 +24605,7 @@ sap.ui.define([
 					SalesOrderID : "0500000001"
 				}]
 			})
-			//.expectChange("id", ["43"]);
-			.expectChange("id", "43", -1) //TODO fix Context#getIndex to not return -1;
-			// this is caused by ODLB#reset which sets iCreatedContexts = 0 and parks all
-			// contexts without changing the index;
-			// this conflicts with the _Cache#create success handler that changes values
-			// corresponding to the context with iIndex === -1
+			.expectChange("id", ["43"])
 			.expectChange("note", ["Unrealistic", "Side Effect"]);
 	},
 	text : "Repeated POST succeeds"
@@ -24900,8 +24958,7 @@ sap.ui.define([
 						SalesOrderID : "0500000001"
 					}]
 				})
-				//.expectChange("id", ["43"]);
-				.expectChange("id", "43", -1); //TODO see test above
+				.expectChange("id", ["43"]);
 
 			// invocation here shall trigger all requests
 			fnRespond();
@@ -26731,6 +26788,9 @@ sap.ui.define([
 	// wrong response, but the side effect must win anyway!
 	// BCP: 2070200175
 	// JIRA: CPOUI5ODATAV4-288
+	// Note that before the fix for BCP 2080268833 this worked more or less accidentally. The "C"
+	// from the POST was not applied because the cache was busy from requestSideEffects and did not
+	// deliver the old predicate, so the binding parameter was not updated.
 	QUnit.test("BCP: 2070200175, CPOUI5ODATAV4-288: POST > GET", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
 			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),

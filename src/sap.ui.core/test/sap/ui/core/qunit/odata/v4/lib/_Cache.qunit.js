@@ -8140,7 +8140,7 @@ sap.ui.define([
 				oUpdateAllExpectation,
 				oVisitResponseExpectation;
 
-			oCache.oPromise = {/*from previous #fetchValue*/};
+			oCache.oPromise = SyncPromise.resolve(oOldValue); // from previous #fetchValue
 			oCache.mLateQueryOptions = mLateQueryOptions;
 			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(mLateQueryOptions || oCache.mQueryOptions),
@@ -8171,7 +8171,6 @@ sap.ui.define([
 			oPromise = oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths,
 					sReadPath)
 				.then(function (vResult) {
-					assert.strictEqual(vResult, oOldValue);
 					assert.ok(oVisitResponseExpectation.calledBefore(oUpdateAllExpectation));
 				});
 
@@ -8180,14 +8179,10 @@ sap.ui.define([
 			oCacheMock.expects("fetchValue")
 				.withExactArgs(sinon.match.same(_GroupLock.$cached), "").callThrough();
 
-			return Promise.all([
-				oPromise,
-				// code under test: check that a "parallel" read waits for oPromise
-				oCache.fetchValue(_GroupLock.$cached, "").then(function (vResult) {
-					assert.strictEqual(vResult, oOldValue);
-					assert.ok(oUpdateAllExpectation.called, "old value already updated");
-				})
-			]);
+			// code under test: check that a "parallel" read does not wait for oPromise
+			assert.strictEqual(oCache.fetchValue(_GroupLock.$cached, "").getResult(), oOldValue);
+
+			return oPromise;
 		});
 	});
 });
@@ -8318,7 +8313,7 @@ sap.ui.define([
 			aPaths = ["ROOM_ID"],
 			oPromise;
 
-		oCache.oPromise = Promise.resolve(oOldValue); // from previous #fetchValue
+		oCache.oPromise = SyncPromise.resolve(oOldValue); // from previous #fetchValue
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
@@ -8348,18 +8343,15 @@ sap.ui.define([
 		oCacheMock.expects("fetchValue").twice()
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "").callThrough();
 
-		return Promise.all([
-				oPromise.then(function () {
-					// code under test: check that a read afterwards returns the old value
-					return oCache.fetchValue(_GroupLock.$cached, "").then(function (vResult) {
-						assert.strictEqual(vResult, oOldValue);
-					});
-				}),
-				// code under test: check that a "parallel" read waits for oPromise
-				oCache.fetchValue(_GroupLock.$cached, "").then(function (vResult) {
+		// code under test: check that a "parallel" read does not wait for oPromise
+		assert.strictEqual(oCache.fetchValue(_GroupLock.$cached, "").getResult(), oOldValue);
+
+		return oPromise.then(function () {
+				// code under test: check that a read afterwards returns the old value
+				return oCache.fetchValue(_GroupLock.$cached, "").then(function (vResult) {
 					assert.strictEqual(vResult, oOldValue);
-				})
-			]);
+				});
+			});
 	});
 
 	//*********************************************************************************************

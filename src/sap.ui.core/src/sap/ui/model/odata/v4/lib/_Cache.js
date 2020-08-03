@@ -2644,10 +2644,13 @@ sap.ui.define([
 			this.fetchTypes()
 		]).then(function (aResult) {
 			that.visitResponse(aResult[0], aResult[1]);
+			that.bPosting = false;
 
 			return aResult[0];
-		}).finally(function () {
+		}, function (oError) {
+			// BEWARE! Avoid finally here! BCP: 2070200175
 			that.bPosting = false;
+			throw oError;
 		});
 
 		return this.oPromise;
@@ -2701,6 +2704,10 @@ sap.ui.define([
 			this.fetchTypes(),
 			this.fetchValue(_GroupLock.$cached, "") // Note: includes some additional checks
 		]).then(function (aResult) {
+			// Delay by a microtask so that it does not overtake a POST.
+			// This will be resolved by JIRA: CPOUI5ODATAV4-288
+			return aResult;
+		}).then(function (aResult) {
 			var oNewValue = aResult[0],
 				oOldValue = aResult[2];
 
@@ -2712,12 +2719,6 @@ sap.ui.define([
 					return _Helper.getRelativePath(sPath, sSideEffectPath) !== undefined;
 				});
 			});
-
-			return oOldValue;
-		});
-		this.oPromise = oResult.catch(function () {
-			// if side effects cannot be requested, keep the old value!
-			return oOldValuePromise;
 		});
 
 		return oResult;

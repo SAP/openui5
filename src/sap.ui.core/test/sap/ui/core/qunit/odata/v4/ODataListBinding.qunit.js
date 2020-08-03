@@ -5882,7 +5882,11 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bHeader) {
-	QUnit.test("requestSideEffects: efficient request possible, " + bHeader, function (assert) {
+	[false, true].forEach(function (bRecursionRejects) {
+		var sTitle = "requestSideEffects: efficient request possible, header=" + bHeader
+				+ ", reject=" + bRecursionRejects;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			oBinding = this.bindList("/Set"),
 			oContext = bHeader
@@ -5910,11 +5914,17 @@ sap.ui.define([
 						sinon.match.same(mNavigationPropertyPaths), [oPromise])
 					.callsFake(function (sGroupId, aPaths, oContext, mNavigationPropertyPaths,
 							aPromises) {
-						aPromises.push(Promise.reject(oError));
+						aPromises.push(Promise.resolve());
+						if (bRecursionRejects) {
+							aPromises.push(Promise.reject(oError));
+						}
 					});
+				that.mock(oBinding).expects("refreshDependentListBindingsWithoutCache")
+					.exactly(bRecursionRejects ? 0 : 1).withExactArgs().resolves("~");
+
 				return oPromise;
 			});
-		this.mock(this.oModel).expects("reportError")
+		this.mock(this.oModel).expects("reportError").exactly(bRecursionRejects ? 1 : 0)
 			.withExactArgs("Failed to request side effects", sClassName, sinon.match.same(oError));
 		this.mock(oBinding).expects("refreshInternal").never();
 
@@ -5923,11 +5933,16 @@ sap.ui.define([
 
 		assert.ok(oResult.isPending(), "instanceof SyncPromise");
 
-		return oResult.then(function () {
-			assert.ok(false);
-		}, function (oError0) {
-			assert.strictEqual(oError0, oError);
-		});
+		return oResult.then(function (vValue) {
+				assert.notOk(bRecursionRejects);
+				assert.strictEqual(vValue, "~",
+					"refreshDependentListBindingsWithoutCache finished");
+			}, function (oError0) {
+				assert.ok(bRecursionRejects);
+				assert.strictEqual(oError0, oError);
+			});
+	});
+
 	});
 });
 

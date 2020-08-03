@@ -3705,6 +3705,8 @@ sap.ui.define([
 									aPromises.push(Promise.reject(oError));
 								}
 							});
+							that.mock(oBinding).expects("refreshDependentListBindingsWithoutCache")
+								.exactly(bRecursionRejects ? 0 : 1).withExactArgs().resolves("~");
 
 						return oPromise;
 					});
@@ -3719,8 +3721,10 @@ sap.ui.define([
 
 				assert.ok(oResult.isPending(), "instanceof SyncPromise");
 
-				return oResult.then(function () {
+				return oResult.then(function (vValue) {
 						assert.notOk(bRecursionRejects);
+						assert.strictEqual(vValue, "~",
+							"refreshDependentListBindingsWithoutCache finished");
 					}, function (oError0) {
 						assert.ok(bRecursionRejects);
 						assert.strictEqual(oError0, oError);
