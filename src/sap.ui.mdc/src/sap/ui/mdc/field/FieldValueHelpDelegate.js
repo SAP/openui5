@@ -20,8 +20,8 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp
 	 * @experimental
-	 * @restricted sap.ui.mdc.field.FieldvalueHelp
 	 * @since 1.77.0
 	 * @alias sap.ui.mdc.field.FieldValueHelpDelegate
 	 */

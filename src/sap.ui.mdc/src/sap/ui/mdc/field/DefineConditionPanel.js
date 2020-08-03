@@ -65,7 +65,7 @@ sap.ui.define([
 	 * @abstract
 	 *
 	 * @private
-	 * @restricted sap.ui.mdc.field.ValueHelpPanel
+	 * @ui5-restricted sap.ui.mdc.field.ValueHelpPanel
 	 */
 	var DefineConditionPanel = XMLComposite.extend("sap.ui.mdc.field.DefineConditionPanel", {
 		metadata: {

@@ -1795,7 +1795,7 @@ sap.ui.define([
 	 *
 	 * @returns {object} formatOptions of the field
 	 * @private
-	 * @restricted sap.ui.mdc.field.FieldValueHelpContentWrapperBase
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelpContentWrapperBase
 	 */
 	FieldValueHelp.prototype._getFormatOptions = function() {
 
@@ -1813,7 +1813,7 @@ sap.ui.define([
 	 *
 	 * @returns {string} Key path
 	 * @private
-	 * @restricted sap.ui.mdc.field.FieldValueHelpContentWrapperBase
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelpContentWrapperBase
 	 */
 	FieldValueHelp.prototype._getKeyPath = function() {
 
