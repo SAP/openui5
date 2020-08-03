@@ -74,7 +74,7 @@
       {
         "id": "012028c1971de56a00b7e448bccee84f763debf3",
         "type": "FIX",
-        "text": " ManagedObject: set (+ bind) a formatter only when it\u0027s a function",
+        "text": " ManagedObject: set (+ bind) a formatter only when it's a function",
         "references": [
           {
             "type": "BCP",
@@ -102,7 +102,7 @@
       {
         "id": "c2d5ba6f9b6b2c51f2d6aa222dac46da1b87f250",
         "type": "FIX",
-        "text": " core.Popup: log an error when popup content isn\u0027t connected to any UIArea",
+        "text": " core.Popup: log an error when popup content isn't connected to any UIArea",
         "references": [
           {
             "type": "BCP",
@@ -113,7 +113,7 @@
       {
         "id": "f02c4f78333d40092fd0c1464acc8e932c19b025",
         "type": "FIX",
-        "text": " routing.history: keep history direction in case the browser hash isn\u0027t changed",
+        "text": " routing.history: keep history direction in case the browser hash isn't changed",
         "references": [
           {
             "type": "BCP",
@@ -137,6 +137,22 @@
         "type": "FEATURE",
         "text": " Opa: add editable property in waitFor",
         "references": []
+      }
+    ]
+  },
+  "1.80.1": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "df2e0ed6ed405e96c7e90ea760f3c77cd07c373e",
+        "type": "FIX",
+        "text": " Opa: fix binding path selector for named models",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080258112"
+          }
+        ]
       }
     ]
   }
