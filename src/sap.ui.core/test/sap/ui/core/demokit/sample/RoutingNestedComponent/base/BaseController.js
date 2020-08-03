@@ -5,11 +5,13 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.RoutingNestedComponent.base.BaseController", {
+
 		onInit: function() {
 			Log.info(this.getView().getControllerName(), "onInit");
 		},
-		northwindImageFormatter: function(picture) {
-			return picture ? "data:image/bmp;base64," + picture.substr(104) : null;
+
+		base64StringToImage: function(picture) {
+			return picture ? "data:image/bmp;base64," + picture : null;
 		}
 	});
 });
