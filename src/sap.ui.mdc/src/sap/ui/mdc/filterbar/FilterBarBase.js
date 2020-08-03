@@ -412,7 +412,15 @@ sap.ui.define([
 		return this._oAdaptationController;
 	};
 
-	FilterBarBase.prototype._getAssignedFilterNames = function() {
+	/**
+	 * Returns the labels of all filters with a value assignment.
+	 *
+	 * Note: filters annotated with hiddenFilters will not be considered
+	 *
+	 * @returns {Array} array of labels of filters with value assignment
+	 * @protected
+	 */
+	FilterBarBase.prototype.getAssignedFilterNames = function() {
 		var sName, aFilterNames = null, oModel = this._getConditionModel();
 		if (oModel) {
 			aFilterNames = [];
@@ -439,7 +447,7 @@ sap.ui.define([
 	FilterBarBase.prototype._getAssignedFiltersText = function() {
 		var mTexts = {};
 
-		mTexts.filtersText = this._getAssignedFiltersCollapsedText(this._getAssignedFilterNames());
+		mTexts.filtersText = this._getAssignedFiltersCollapsedText(this.getAssignedFilterNames());
 		mTexts.filtersTextExpanded = this._getAssignedFiltersExpandedText();
 
 		return mTexts;
@@ -489,21 +497,21 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._getAssignedFiltersCollapsedText = function(aFilterNames) {
-		var sAssignedFiltersText;
+		var sAssignedFiltersList;
 
 		aFilterNames = aFilterNames || [];
 
 		if (aFilterNames.length) {
-			sAssignedFiltersText = Object.keys(aFilterNames).map(function(i) {return aFilterNames[i];}).join(", ");
+			sAssignedFiltersList = Object.keys(aFilterNames).map(function(i) {return aFilterNames[i];}).join(", ");
 
 			if (aFilterNames.length === 1) {
 				return this._oRb.getText("filterbar.ADAPT_FILTER_COLLAPSED", [
-					aFilterNames.length, sAssignedFiltersText
+					aFilterNames.length, sAssignedFiltersList
 				]);
 			}
 
 			return this._oRb.getText("filterbar.ADAPT_FILTERS_COLLAPSED", [
-				aFilterNames.length, sAssignedFiltersText
+				aFilterNames.length, sAssignedFiltersList
 			]);
 		}
 
@@ -701,7 +709,7 @@ sap.ui.define([
 
 			if (!bFiltersAggregationChanged) {
 				if (this._btnAdapt) {
-					var aFilterNames = this._getAssignedFilterNames();
+					var aFilterNames = this.getAssignedFilterNames();
 					this.setProperty("_filterCount", this._oRb.getText(aFilterNames.length ? "filterbar.ADAPT_NONZERO" : "filterbar.ADAPT", aFilterNames.length), false);
 				}
 			}
