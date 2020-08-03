@@ -1349,7 +1349,7 @@ function(
 	Input.prototype.updateSuggestionItems = function() {
 		this._bSuspendInvalidate = true;
 		this.updateAggregation("suggestionItems");
-		this._synchronizeSuggestions();
+		this._synchronizeSelection();
 		this._bSuspendInvalidate = false;
 		return this;
 	};
@@ -1386,7 +1386,6 @@ function(
 	Input.prototype._triggerSuggest = function(sValue) {
 
 		this.cancelPendingSuggest();
-		this._bShouldRefreshListItems = true;
 
 		if (!sValue) {
 			sValue = "";
@@ -1448,7 +1447,7 @@ function(
 				this._oSuggPopover._iPopupListSelectedIndex = -1;
 				if (!this._oSuggPopover._oPopover) {
 					this._createSuggestionsPopoverPopup();
-					this._synchronizeSuggestions();
+					this._synchronizeSelection();
 					this._createSuggestionPopupContent();
 				}
 			} else {
@@ -1881,7 +1880,6 @@ function(
 			this._oSuggPopover._iPopupListSelectedIndex = -1;
 
 			if (!bShowSuggestion ||
-				!this._bShouldRefreshListItems ||
 				!this.getDomRef() ||
 				(!this.isMobileDevice() && !this.$().hasClass("sapMInputFocused"))) {
 
@@ -1947,7 +1945,7 @@ function(
 				this._getSuggestionsPopover();
 			}
 
-			this._synchronizeSuggestions();
+			this._synchronizeSelection();
 			this._createSuggestionPopupContent();
 
 			return this;
@@ -1968,7 +1966,7 @@ function(
 				this._getSuggestionsPopover();
 			}
 
-			this._synchronizeSuggestions();
+			this._synchronizeSelection();
 			this._createSuggestionPopupContent();
 
 			return this;
@@ -1983,7 +1981,7 @@ function(
 		 */
 		Input.prototype.removeSuggestionItem = function(oItem) {
 			var res = this.removeAggregation("suggestionItems", oItem, true);
-			this._synchronizeSuggestions();
+			this._synchronizeSelection();
 			return res;
 		};
 
@@ -1995,7 +1993,7 @@ function(
 		 */
 		Input.prototype.removeAllSuggestionItems = function() {
 			var res = this.removeAllAggregation("suggestionItems", true);
-			this._synchronizeSuggestions();
+			this._synchronizeSelection();
 			return res;
 		};
 
@@ -2007,7 +2005,7 @@ function(
 		 */
 		Input.prototype.destroySuggestionItems = function() {
 			this.destroyAggregation("suggestionItems", true);
-			this._synchronizeSuggestions();
+			this._synchronizeSelection();
 			return this;
 		};
 
@@ -2021,7 +2019,7 @@ function(
 		Input.prototype.addSuggestionRow = function(oItem) {
 			oItem.setType(ListType.Active);
 			this.addAggregation("suggestionRows", oItem);
-			this._synchronizeSuggestions();
+			this._synchronizeSelection();
 			this._createSuggestionPopupContent(true);
 			return this;
 		};
@@ -2037,7 +2035,7 @@ function(
 		Input.prototype.insertSuggestionRow = function(oItem, iIndex) {
 			oItem.setType(ListType.Active);
 			this.insertAggregation("suggestionRows", oItem, iIndex);
-			this._synchronizeSuggestions();
+			this._synchronizeSelection();
 			this._createSuggestionPopupContent(true);
 			return this;
 		};
@@ -2051,7 +2049,7 @@ function(
 		 */
 		Input.prototype.removeSuggestionRow = function(oItem) {
 			var res = this.removeAggregation("suggestionRows", oItem);
-			this._synchronizeSuggestions();
+			this._synchronizeSelection();
 			return res;
 		};
 
@@ -2063,7 +2061,7 @@ function(
 		 */
 		Input.prototype.removeAllSuggestionRows = function() {
 			var res = this.removeAllAggregation("suggestionRows");
-			this._synchronizeSuggestions();
+			this._synchronizeSelection();
 			return res;
 		};
 
@@ -2075,7 +2073,7 @@ function(
 		 */
 		Input.prototype.destroySuggestionRows = function() {
 			this.destroyAggregation("suggestionRows");
-			this._synchronizeSuggestions();
+			this._synchronizeSelection();
 			return this;
 		};
 
@@ -2095,7 +2093,6 @@ function(
 		Input.prototype._closeSuggestionPopup = function() {
 
 			if (this._oSuggPopover && this._oSuggPopover.isOpen()) {
-				this._bShouldRefreshListItems = false;
 				this.cancelPendingSuggest();
 				this._oSuggPopover._oPopover.close();
 
@@ -2110,21 +2107,6 @@ function(
 				this._sPrevSuggValue = null;
 			}
 
-		};
-
-		/**
-		 * Synchronize the displayed suggestion items and sets the correct selectedItem/selectedRow
-		 * @private
-		 */
-		Input.prototype._synchronizeSuggestions = function() {
-			this._bShouldRefreshListItems = true;
-			this._refreshItemsDelayed();
-
-			if (!this.getDomRef() || this._isSuggestionsPopoverOpen()) {
-				return;
-			}
-
-			this._synchronizeSelection();
 		};
 
 		/**
@@ -2870,6 +2852,7 @@ function(
 	Input.prototype._openSuggestionsPopover = function() {
 		this.closeValueStateMessage();
 		this._updateSuggestionsPopoverValueState();
+		this._refreshListItems();
 		this._oSuggPopover._oPopover.open();
 	};
 

@@ -4079,7 +4079,6 @@ sap.ui.define([
 	QUnit.test('Calling insertSuggestionRow', function (assert) {
 		// arrange
 		var fnInsertAggregation = sinon.spy(this.oInput, "insertAggregation");
-		this.oInput._synchronizeSuggestions = function() {};
 		var oColumnListItem = new ColumnListItem();
 
 		// act
