@@ -438,13 +438,13 @@ sap.ui.define([
 			this._oDesigntimeMetadataModel.setData(oNextMetadata);
 			if (!bIsInitialMetadata) {
 				this.fireDesigntimeMetadataChange({
-					designtimeMetadata: formatExportedDesigntimeMetadata(oNextMetadata)
+					designtimeMetadata: this._formatExportedDesigntimeMetadata(oNextMetadata)
 				});
 			}
 		}
 	};
 
-	function formatExportedDesigntimeMetadata (oMetadata) {
+	BaseEditor.prototype._formatExportedDesigntimeMetadata = function (oMetadata) {
 		var oFlatMetadata = {};
 		var fnFlattenPath = function (oObject, aPath) {
 			Object.keys(oObject).forEach(function (sKey) {
@@ -460,7 +460,7 @@ sap.ui.define([
 
 		fnFlattenPath(oMetadata || {}, []);
 		return oFlatMetadata;
-	}
+	};
 
 	BaseEditor.prototype._initValidators = function (mValidatorModules) {
 		ValidatorRegistry.deregisterAllValidators();
