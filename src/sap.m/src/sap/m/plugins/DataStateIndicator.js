@@ -273,8 +273,31 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 		return Core.getLibraryResourceBundle("sap.m").getText(sBundleText);
 	};
 
+	DataStateIndicator.prototype._getCombinedType = function(aMessages) {
+		if (aMessages && aMessages.length) {
+			var mTypes = {None: 0, Information: 1, Success: 2, Warning: 4, Error: 8};
+			var iSeverity = 0;
+
+			aMessages.forEach(function(oMessage) {
+				iSeverity |= mTypes[oMessage.getType()];
+			});
+
+			if (iSeverity & mTypes.Error && iSeverity & mTypes.Warning) {
+				return "Issue";
+			} else if (iSeverity & mTypes.Error) {
+				return "Error";
+			} else if (iSeverity & mTypes.Warning) {
+				return "Warning";
+			} else if (iSeverity & mTypes.Success || iSeverity & mTypes.Information) {
+				return "Notification";
+			}
+		}
+
+		return "";
+	};
+
 	DataStateIndicator.prototype._processDataState = function(oDataState) {
-		if (!oDataState || !oDataState.getChanges().messages || !this.fireDataStateChange({ dataState: oDataState }, true)) {
+		if (!oDataState || !oDataState.getChanges().messages) {
 			return;
 		}
 
@@ -287,14 +310,16 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			});
 		}
 
+		if (!this.fireDataStateChange({ dataState: oDataState, filteredMessages: aMessages})) {
+			return;
+		}
+
 		if (aMessages.length) {
 			var oFirstMessage = aMessages[0];
 			var sBindingName = this._getBindingName();
 			var sBindingPath = oControl.getBinding(sBindingName).getPath();
-			var mTypes = {None: 0, Information: 1, Success: 2, Warning: 4, Error: 8};
 			var bUpdateMessageModel = false;
 			var sBundleKey = "";
-			var iSeverity = 0;
 			var sMessage = "";
 
 			aMessages.forEach(function(oMessage) {
@@ -302,23 +327,15 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 					oMessage.addControlId(oControl.getId());
 					bUpdateMessageModel = true;
 				}
-				iSeverity |= mTypes[oMessage.getType()];
 			});
 
 			if (aMessages.length == 1 && oFirstMessage.getTarget() && oFirstMessage.getTarget().endsWith(sBindingPath)) {
 				sMessage = oFirstMessage.getMessage();
 			} else {
-				if (iSeverity & mTypes.Error && iSeverity & mTypes.Warning) {
-					sBundleKey = "ISSUE";
-				} else if (iSeverity & mTypes.Error) {
-					sBundleKey = "ERROR";
-				} else if (iSeverity & mTypes.Warning) {
-					sBundleKey = "WARNING";
-				} else if (iSeverity & mTypes.Success || iSeverity & mTypes.Information) {
-					sBundleKey = "NOTIFICATION";
-				}
+				sBundleKey = this._getCombinedType(aMessages);
+
 				if (sBundleKey) {
-					sMessage = this._translate(sBundleKey);
+					sMessage = this._translate(sBundleKey.toUpperCase());
 				}
 			}
 

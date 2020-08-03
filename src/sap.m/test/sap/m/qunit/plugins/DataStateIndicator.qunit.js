@@ -5,8 +5,8 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/message/Message',
 	'sap/m/plugins/DataStateIndicator',
-	'sap/m/MessageStrip'
-], function(List, StandardListItem, Core, JSONModel, Message, DataStateIndicator) {
+	"sap/ui/base/ManagedObjectObserver"
+], function(List, StandardListItem, Core, JSONModel, Message, DataStateIndicator, ManagedObjectObserver) {
 
 	"use strict";
 	/*global QUnit */
@@ -42,7 +42,7 @@ sap.ui.define([
 			this.addMessage = function(sType) {
 				Core.getMessageManager().addMessages(
 					new Message({
-						message: sType,
+						message: sType + " Message Text",
 						type: sType,
 						target: "/names",
 						processor: this.oModel
@@ -77,7 +77,7 @@ sap.ui.define([
 
 		this.oPromise.then(function() {
 			var oMsgStrp = this.oPlugin._oMessageStrip;
-			assert.equal(oMsgStrp.getText(), "Error");
+			assert.equal(oMsgStrp.getText(), "Error Message Text");
 			assert.equal(oMsgStrp.getType(), "Error");
 			done();
 		}.bind(this));
@@ -123,7 +123,7 @@ sap.ui.define([
 
 		this.oPromise.then(function() {
 			var oMsgStrp = this.oPlugin._oMessageStrip;
-			assert.equal(oMsgStrp.getText(), "Warning");
+			assert.equal(oMsgStrp.getText(), "Warning Message Text");
 			assert.equal(oMsgStrp.getType(), "Warning");
 			done();
 		}.bind(this));
@@ -144,29 +144,100 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("dataStateChange event", function(assert) {
+	QUnit.test("dataStateChange event and combined type", function(assert) {
 		var done = assert.async();
-		this.oPlugin.attachDataStateChange(function(oEvent) {
-			var oDataState = oEvent.getParameter("dataState");
-			var aMessages = oDataState.getMessages();
-			var bError = aMessages.some(function(oMessage) {
-				return oMessage.getType() == "Error";
-			});
-			if (!bError) {
-				oEvent.preventDefault();
+		var that = this;
+
+		var createTest = function(iTotalMessageCount, iFilteredMessageCount, sType, sSeverity, sText) {
+			return function(oDataState, aFilteredMessages) {
+				var doTest = function() {
+					var oMsgStrp = that.oPlugin._oMessageStrip;
+					assert.equal(oDataState.getMessages().length, iTotalMessageCount, aSteps[iCurrentStep].name + ": DataState.getMessages()");
+					assert.equal(aFilteredMessages.length, iFilteredMessageCount, aSteps[iCurrentStep].name + ": filteredMessages");
+					assert.equal(that.oPlugin._getCombinedType(aFilteredMessages), sType, aSteps[iCurrentStep].name + ": Plugin._getStateType()");
+					if (iFilteredMessageCount > 0) {
+						assert.equal(oMsgStrp.getText(), sText !== undefined ? sText : that.oPlugin._translate(sType.toUpperCase()), aSteps[iCurrentStep].name + ": MessageStrip Text");
+						assert.equal(oMsgStrp.getType(), sSeverity, aSteps[iCurrentStep].name + ": MessageStrip Severity");
+						assert.ok(oMsgStrp.getVisible(), aSteps[iCurrentStep].name + ": MessageStrip Visibility");
+					} else {
+						assert.ok(!oMsgStrp.getVisible(), aSteps[iCurrentStep].name + ": MessageStrip Visibility");
+					}
+				};
+
+				return new Promise(function(resolve) {
+					var oObserver = new ManagedObjectObserver(function(){
+						oObserver.disconnect();
+						setTimeout(function() {
+							doTest();
+							resolve();
+						}, 0);
+					});
+
+					if (that.oPlugin._oMessageStrip) {
+						oObserver.observe(that.oPlugin._oMessageStrip, { properties: ["text"] });
+					} else {
+						oObserver.observe(that.oList, { aggregations: ["_messageStrip"] });
+					}
+				});
+
+			};
+		};
+
+		var iCurrentStep = 0;
+		var aSteps = [
+			{
+				name: "Only Information Message",
+				action: function() {
+					that.addMessage("Information");
+				},
+				test: createTest(1, 1, "Notification", "Information", "Information Message Text")
+			},{
+				name: "Information + Warning Message",
+				action: function() {
+					that.addMessage("Warning");
+				},
+				test: createTest(2, 2, "Warning", "Warning")
+			},{
+				name: "Information + Warning + Error Message",
+				action: function() {
+					that.addMessage("Error");
+				},
+				test: createTest(3, 3, "Issue", "Error")
+			},{
+				name: "Information + Warning + Error Message, filter for Error only",
+				action: function() {
+					that.oPlugin.setFilter(function(oMessage) {
+						return oMessage.getType() == "Error";
+					});
+					that.oPlugin.refresh();
+				},
+				test: createTest(3, 1, "Error", "Error", "Error Message Text")
+			},{
+				name: "No messages",
+				action: function() {
+					that.oPlugin.setFilter(function(oMessage) {
+						return false;
+					});
+					that.oPlugin.refresh();
+				},
+				test: createTest(3, 0, "", "")
 			}
+		];
+
+		that.oPlugin.attachEvent("dataStateChange", function(oEvent) {
+			var oDataState = oEvent.getParameter("dataState");
+			var aFilteredMessages = oEvent.getParameter("filteredMessages");
+			aSteps[iCurrentStep].test(oDataState, aFilteredMessages).then(function() {
+				iCurrentStep++;
+				if (iCurrentStep < aSteps.length) {
+					aSteps[iCurrentStep].action();
+				} else {
+					done();
+				}
+			});
 		});
 
-		this.addMessage("Information");
-		this.addMessage("Success");
-		this.addMessage("Error");
-
-		this.oPromise.then(function() {
-			var oMsgStrp = this.oPlugin._oMessageStrip;
-			assert.equal(oMsgStrp.getText(), this.oPlugin._translate("ERROR"));
-			assert.equal(oMsgStrp.getType(), "Error");
-			done();
-		}.bind(this));
+		aSteps[iCurrentStep].action();
 	});
 
 	QUnit.test("Link control test when messageLinkText is set before MessageStrip is initialized", function(assert) {
@@ -183,7 +254,7 @@ sap.ui.define([
 
 		this.oPromise.then(function() {
 			var oMsgStrp = this.oPlugin._oMessageStrip;
-			assert.equal(oMsgStrp.getText(), "Error");
+			assert.equal(oMsgStrp.getText(), "Error Message Text");
 			assert.equal(oMsgStrp.getType(), "Error");
 			assert.equal(this.oPlugin.getMessageLinkText(), "Test");
 			assert.ok(this.oPlugin._oLink, "Link control created");
@@ -227,7 +298,7 @@ sap.ui.define([
 
 		this.oPromise.then(function() {
 			var oMsgStrp = this.oPlugin._oMessageStrip;
-			assert.equal(oMsgStrp.getText(), "Error");
+			assert.equal(oMsgStrp.getText(), "Error Message Text");
 			assert.equal(oMsgStrp.getType(), "Error");
 			assert.notOk(this.oPlugin._oLink, "Link control not created yet");
 			assert.notOk(oMsgStrp.getLink(), "link aggreagtion not set for the MessageStrip");
