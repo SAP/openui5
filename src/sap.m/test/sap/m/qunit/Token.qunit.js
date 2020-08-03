@@ -357,7 +357,7 @@ sap.ui.define([
 		this.token._onTokenPress({});
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 0, "Token was not initially selected");
+		assert.strictEqual(oSpy.callCount, 1, "Token was not initially selected");
 
 		// Arrange
 		this.token.setTruncated(false);
@@ -366,7 +366,7 @@ sap.ui.define([
 		this.token._onTokenPress({});
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 1, "Token was selected.");
+		assert.strictEqual(oSpy.callCount, 2, "Token was selected.");
 		assert.strictEqual(oSpy.calledWith(true), true, "Correct parameter passed");
 	});
 

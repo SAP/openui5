@@ -2204,7 +2204,7 @@ function(
 			renderMode: TokenizerRenderMode.Narrow
 		}).attachTokenChange(this._handleTokenChange, this);
 
-		oTokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
+		// oTokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
 
 		oTokenizer.addEventDelegate({
 			onAfterRendering: this._onAfterRenderingTokenizer,

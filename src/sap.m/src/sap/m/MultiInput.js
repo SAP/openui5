@@ -248,7 +248,7 @@ function(
 
 		oTokenizer.attachTokenChange(this._onTokenChange, this);
 		oTokenizer.attachTokenUpdate(this._onTokenUpdate, this);
-		oTokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
+		// oTokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
 
 		oTokenizer.addEventDelegate({
 			onThemeChanged: this._handleInnerVisibility.bind(this),

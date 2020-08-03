@@ -1416,12 +1416,8 @@ sap.ui.define([
 	QUnit.test("Click on tokenizer should remove truncation", function(assert) {
 		// Arrange
 		var oToken = this.tokenizer.getTokens()[0],
-			oSpy = this.spy(),
-			oMockEvent = {
-				target: oToken.getDomRef()
-			};
+			oSpy = this.spy(this.tokenizer, "_togglePopup");
 
-		this.tokenizer._fnOnNMorePress = oSpy;
 		this.tokenizer._adjustTokensVisibility();
 		// await to set the truncation
 		this.clock.tick();
@@ -1430,7 +1426,7 @@ sap.ui.define([
 		assert.ok(oToken.getTruncated(), "Token should be truncated");
 
 		// Act
-		this.tokenizer.onclick(oMockEvent);
+		oToken.fireSelect();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "fnOnNMorePress should be called once.");
