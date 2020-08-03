@@ -99,7 +99,19 @@ sap.ui.define([
 			/**
 			 * Indicates if the token's text should be truncated.
 			 */
-			truncated : {type : "boolean", group : "Appearance", defaultValue : false, visibility: "hidden"}
+			truncated : {type : "boolean", group : "Appearance", defaultValue : false, visibility: "hidden"},
+
+			/**
+			 * Indicates the position of a token. Used for aria attributes.
+			 * @private
+			 */
+			posinset : { type: "int", visibility: "hidden" },
+
+			/**
+			 * Indicates the count of the token. Used for aria attributes.
+			 * @private
+			 */
+			setsize : { type: "int", visibility: "hidden" }
 		},
 		aggregations : {
 
@@ -125,7 +137,9 @@ sap.ui.define([
 			/**
 			 * This event is fired if the user clicks the token's delete icon.
 			 */
-			"delete" : {},
+			"delete" : {
+				enableEventBubbling: true
+			},
 
 			/**
 			 * This event is fired when the user clicks on the token.
@@ -238,29 +252,13 @@ sap.ui.define([
 		this._onTokenPress(oEvent);
 	};
 
-	/**
-	 * Function is called on keyboard backspace, deletes token
-	 *
-	 * @private
-	 * @param {jQuery.Event} oEvent The event object
-	 */
-	Token.prototype.onsapbackspace = function(oEvent) {
-		this._fireDeleteToken(oEvent);
-	};
-
-	/**
-	 * Function is called on keyboard delete, deletes token
-	 *
-	 * @private
-	 * @param {jQuery.Event} oEvent The event object
-	 */
-	Token.prototype.onsapdelete = function(oEvent) {
-		this._fireDeleteToken(oEvent);
-	};
-
-	Token.prototype._fireDeleteToken = function (oEvent) {
+	Token.prototype._fireDeleteToken = function (oEvent, bKey, bBackspace) {
 		if (this.getEditable() && this.getProperty("editableParent")) {
-			this.fireDelete({token: this});
+			this.fireDelete({
+				token: this,
+				byKeyboard: bKey,
+				backspace: bBackspace
+			});
 		}
 
 		oEvent.preventDefault();
@@ -316,12 +314,8 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.m.Tokenizer
 	 */
-	Token.prototype.setTruncated = function (bValue, bSkipInvalidation) {
-		if (this.getTruncated() === bValue) {
-			return this;
-		}
-
-		return this.setProperty("truncated", bValue, bSkipInvalidation);
+	Token.prototype.setTruncated = function (bValue) {
+		return this.setProperty("truncated", bValue);
 	};
 
 	return Token;
