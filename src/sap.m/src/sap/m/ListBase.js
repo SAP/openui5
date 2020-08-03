@@ -545,6 +545,7 @@ function(
 		this._aSelectedPaths = [];
 		this._iItemNeedsHighlight = 0;
 		this._iItemNeedsNavigated = 0;
+		this._bItemsBeingBound = false;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
@@ -596,7 +597,6 @@ function(
 	// TODO: if there is a network error this will not get called
 	// but we need to turn back to initial state
 	ListBase.prototype.updateItems = function(sReason, oEventInfo) {
-
 		// Special handling for "AutoExpandSelect" of the V4 ODataModel.
 		if (oEventInfo && oEventInfo.detailedReason === "AddVirtualContext") {
 			createVirtualItem(this);
@@ -604,6 +604,11 @@ function(
 		} else if (oEventInfo && oEventInfo.detailedReason === "RemoveVirtualContext") {
 			destroyVirtualItem(this);
 			return;
+		}
+
+		if (this._bItemsBeingBound) {
+			this._bItemsBeingBound = false;
+			this.invalidate();
 		}
 
 		if (this._oGrowingDelegate) {
@@ -659,6 +664,7 @@ function(
 	};
 
 	ListBase.prototype.bindAggregation = function(sName) {
+		this._bItemsBeingBound = sName === "items";
 		destroyVirtualItem(this);
 		Control.prototype.bindAggregation.apply(this, arguments);
 		return this;
@@ -727,7 +733,7 @@ function(
 		this.destroyAggregation("items", "KeepDom");
 
 		// invalidate to update the DOM on the next tick of the RenderManager
-		if (!bSuppressInvalidate) {
+		if (!bSuppressInvalidate && !this._bItemsBeingBound) {
 			this.invalidate();
 		}
 

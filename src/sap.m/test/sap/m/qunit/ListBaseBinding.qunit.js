@@ -813,4 +813,49 @@ sap.ui.define([
 		this.testVirtualContext(assert, true);
 	});
 
+	QUnit.module("Rebind");
+	QUnit.test("List should not invalidate before update on rebind", function(assert) {
+		var oMockServer = startMockServer(0),
+			oList = createList(),
+			oInvalidateSpy = this.spy(oList, "invalidate");
+
+		return new Promise(function(resolve) {
+			oList.attachEventOnce("updateFinished", resolve);
+		}).then(function() {
+			oInvalidateSpy.reset();
+			oList.bindItems(oList.getBindingInfo("items"));
+			return new Promise(function(resolve) {
+				oList.updateItems = resolve;
+			});
+		}).then(function() {
+			assert.ok(oInvalidateSpy.notCalled, "The list is not invalidated");
+			oList.destroy();
+			oMockServer.stop();
+		});
+	});
+
+	QUnit.test("List should invalidate on update if no items after rebind", function(assert) {
+		var oMockServer = startMockServer(0),
+			oList = createList(),
+			oInvalidateSpy = this.spy(oList, "invalidate");
+
+		return new Promise(function(resolve) {
+			oList.attachEventOnce("updateFinished", resolve);
+		}).then(function() {
+			oInvalidateSpy.reset();
+			oList.getBindingInfo("items").filters = [new Filter("Name", FilterOperator.EQ, "ThisTextShouldNotBeFound")];
+			oList.bindItems(oList.getBindingInfo("items"));
+			return new Promise(function(resolve) {
+				var fnUpdateItems = oList.updateItems;
+				oList.updateItems = function() {
+					fnUpdateItems.apply(oList, arguments);
+					resolve();
+				};
+			});
+		}).then(function() {
+			assert.ok(oInvalidateSpy.calledOnce, "The list is invalidated");
+			oList.destroy();
+			oMockServer.stop();
+		});
+	});
 });
