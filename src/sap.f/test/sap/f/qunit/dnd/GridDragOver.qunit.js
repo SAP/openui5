@@ -127,6 +127,28 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	QUnit.test("Simulate drag over interrupted by invalidation", function(assert) {
+		// Arrange
+		var $grid = this.oGrid.$(),
+			oTargetControl = this.oGrid.getItems()[0],
+			oFakeEvent = createFakeDragOverEvent(oTargetControl);
+
+		// Act
+		this.oGridDragOver.handleDragOver(oFakeEvent);
+		this.clock.tick(250); // wait 250ms and handle drag over again on same place
+		this.oGridDragOver.handleDragOver(oFakeEvent);
+
+		// Assert
+		assert.ok($grid.find(".sapUiDnDGridIndicator").length, "The indicator is shown inside the grid.");
+
+		// Act
+		this.oGrid.invalidate();
+		Core.applyChanges();
+
+		// Assert
+		assert.ok($grid.find(".sapUiDnDGridIndicator").length, "The indicator is restored after invalidation.");
+	});
+
 	QUnit.module("Drag over with custom drop indicator size", {
 		beforeEach: function () {
 			this.oGridDragOver = new GridDragOver();
