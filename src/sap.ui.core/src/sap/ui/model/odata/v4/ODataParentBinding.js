@@ -1023,6 +1023,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Recursively refreshes all dependent list bindings that have no own cache.
+	 *
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving when all dependent list bindings without own cache are refreshed
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.refreshDependentListBindingsWithoutCache = function () {
+		return SyncPromise.all(this.getDependentBindings().map(function (oDependentBinding) {
+			if (oDependentBinding.filter && oDependentBinding.oCache === null) {
+				return oDependentBinding.refreshInternal("");
+			}
+
+			if (oDependentBinding.refreshDependentListBindingsWithoutCache) {
+				return oDependentBinding.refreshDependentListBindingsWithoutCache();
+			}
+		}));
+	};
+
+	/**
 	 * Unlocks a ReadGroupLock and removes it from the binding.
 	 *
 	 * @private

@@ -1227,7 +1227,8 @@ sap.ui.define([
 			// Hash set of collection-valued navigation property meta paths (relative to the cache's
 			// root) which need to be refreshed, maps string to <code>true</code>
 			mNavigationPropertyPaths = {},
-			aPromises = [];
+			aPromises = [],
+			that = this;
 
 		/*
 		 * Adds an error handler to the given promise which reports errors to the model.
@@ -1251,7 +1252,9 @@ sap.ui.define([
 				this.visitSideEffects(sGroupId, aPaths, oContext, mNavigationPropertyPaths,
 					aPromises);
 
-				return SyncPromise.all(aPromises.map(reportError));
+				return SyncPromise.all(aPromises.map(reportError)).then(function () {
+					return that.refreshDependentListBindingsWithoutCache();
+				});
 			} catch (e) {
 				if (!e.message.startsWith("Unsupported collection-valued navigation property ")) {
 					throw e;
