@@ -62,9 +62,9 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/Device"],
 
 			oRm.class("sapUiDSCM");
 
-			if (oSideControl._iMcSpan) {
+			if (oSideControl.getProperty("mcSpan")) {
 				if (oSideControl.getShowSideContent() && oSideControl._SCVisible) {
-					oRm.class("sapUiDSCSpan" + oSideControl._iMcSpan);
+					oRm.class("sapUiDSCSpan" + oSideControl.getProperty("mcSpan"));
 				} else {
 					oRm.class("sapUiDSCSpan12");
 				}
@@ -93,9 +93,9 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/Device"],
 				role: "complementary"
 			});
 
-			if (oSideControl._iScSpan) {
+			if (oSideControl.getProperty("scSpan")) {
 				if (oSideControl.getShowMainContent() && oSideControl._MCVisible) {
-					oRm.class("sapUiDSCSpan" + oSideControl._iScSpan);
+					oRm.class("sapUiDSCSpan" + oSideControl.getProperty("scSpan"));
 				} else {
 					oRm.class("sapUiDSCSpan12");
 				}
