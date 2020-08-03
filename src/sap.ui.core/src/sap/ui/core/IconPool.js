@@ -709,7 +709,7 @@ sap.ui.define([
 				'megamenu': 0xe287,
 				'feedback': 0xe288,
 				'information': 0xe289,
-				'S/4HANA': 0x1e28A,
+				's4hana': 0x1e28A,
 				'translate': 0x1e28B
 			}
 		};
