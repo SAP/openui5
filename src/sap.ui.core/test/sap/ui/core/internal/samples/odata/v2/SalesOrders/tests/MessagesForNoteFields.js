@@ -2,10 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/test/opaQunit",
-	"sap/ui/test/Opa5"
-], function (opaTest, Opa5) {
+	"sap/ui/core/sample/common/Helper",
+	"sap/ui/test/opaQunit"
+], function (Helper, opaTest) {
 	"use strict";
+
+	Helper.qUnitModule(
+		"sap.ui.core.internal.samples.odata.v2.SalesOrders - Messages For Note Fields");
 
 	//*****************************************************************************
 	opaTest("Change note and check for messages", function (Given, When, Then) {
@@ -35,20 +38,20 @@ sap.ui.define([
 			When.onMainPage.changeItemNote(0, oFixture.messageKey);
 			When.onMainPage.pressSalesOrderSaveButton();
 			Then.onMainPage.checkMessageCountHasChangedBy(1);
-			Then.onMainPage.checkValueStateOfNoteField(0, oFixture.valueState,
-				oFixture.messageKey + "NoPrefix");
+			Then.onMainPage.checkValueStateOfField(0, "Note", oFixture.valueState,
+				oFixture.messageKey);
 			Then.onMainPage.checkTableRowHighlight(0, oFixture.valueState);
 
 			When.onMainPage.toggleMessagePopover();
 			Then.onMainPage.checkMessagePopoverOpen();
-			Then.onMainPage.checkMessageInPopover("010", oFixture.messageKey + "NoPrefix");
+			Then.onMainPage.checkMessageInPopover("010", oFixture.messageKey);
 			When.onMainPage.toggleMessagePopover();
 
 			When.onMainPage.changeItemNote(0, "none");
 			When.onMainPage.pressSalesOrderSaveButton();
 			Then.onMainPage.checkMessageCountHasChangedBy(-1);
 			When.onMainPage.toggleMessagePopover();
-			Then.onMainPage.checkMessageNotInPopover("010", oFixture.messageKey + "NoPrefix");
+			Then.onMainPage.checkMessageNotInPopover("010", oFixture.messageKey);
 			When.onMainPage.toggleMessagePopover();
 		});
 

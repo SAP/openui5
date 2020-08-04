@@ -7,20 +7,34 @@ sap.ui.define([
 	"use strict";
 
 	var iCurrentItemCount, iCurrentMessageCount, oSalesOrderDetails,
+		mColumn = {
+			SalesOrderID : 0,
+			ItemPosition : 1,
+			ProductID : 2,
+			Quantity : 3,
+			Note : 7,
+			Fix : 8
+		},
 		mMessageShort2Message = {
+			approval : "For a quantity greater than 1 you need an approval reason",
 			empty : "",
-			error : "Error: My error message",
-			errorNoPrefix : "My error message",
-			info : "Info: My info message",
-			infoNoPrefix : "My info message",
+			error : "My error message",
+			info : "My info message",
 			maintenance : "System maintenance starts in 2 hours",
-			none : "No message",
 			note : "Enter an Item Note",
 			order : "Order at least 2 EA of product 'HT-1000'",
+			success : "My success message",
+			updateSuccess : "Successfully updated the quantity",
+			warning : "My warning message"
+		},
+		mNoteShort2Note = {
+			error : "Error: My error message",
+			errorNoPrefix : "My error Message",
+			info : "Info: My info message",
+			none : "No message",
+			reason : "Reason: do it",
 			success : "Success: My success message",
-			successNoPrefix : "My success message",
-			warning : "Warning: My warning message",
-			warningNoPrefix : "My warning message"
+			warning : "Warning: My warning message"
 		},
 		rMessageDetails = /messageDetails/,
 		rObjectPage = /objectPage/,
@@ -51,7 +65,7 @@ sap.ui.define([
 
 				for (i = 0; i < aRows.length; i += 1) {
 					aCells = aRows[i].getCells();
-					sItemPosition = aCells[1].getValue();
+					sItemPosition = aCells[mColumn.ItemPosition].getValue();
 
 					fnCheckRow(aCells, sItemPosition);
 				}
@@ -69,20 +83,20 @@ sap.ui.define([
 			actions : {
 				/*
 				 * Changes the note of the item at the given position to a message from
-				 * <code>mMessageShort2Message</code>.
+				 * <code>mNoteShort2Note</code>.
 				 *
 				 * @param {number} iRow
 				 *   The item position in the table, with the top being 0
 				 * @param {string} sNewNote
-				 *   A message shortcut refering to <code>mMessageShort2Message</code>
+				 *   A message shortcut refering to <code>mNoteShort2Note</code>
 				 */
 				changeItemNote : function (iRow, sNewNote) {
 					return this.waitFor({
 						id : "ToLineItems",
 						matchers : function (oTable) {
-							return oTable.getRows()[iRow].getCells()[7];
+							return oTable.getRows()[iRow].getCells()[mColumn.Note];
 						},
-						actions : new EnterText({text : mMessageShort2Message[sNewNote]}),
+						actions : new EnterText({text : mNoteShort2Note[sNewNote]}),
 						viewName : sViewName
 					});
 				},
@@ -97,7 +111,7 @@ sap.ui.define([
 						actions : new EnterText({text : iNewQuantity}),
 						id : "ToLineItems",
 						matchers : function (oTable) {
-							return oTable.getRows()[iRow].getCells()[3];
+							return oTable.getRows()[iRow].getCells()[mColumn.Quantity];
 						},
 						viewName : sViewName
 					});
@@ -194,6 +208,25 @@ sap.ui.define([
 					return pressButton(this, "fixAllQuantities::ToLineItems");
 				},
 				/*
+				 * Presses the "Fix Quantity Issues" Button in the specified row.
+				 *
+				 * @param {number} iRow The row in which the fix button should be pressed
+				 */
+				pressFixQuantityInRow : function (iRow) {
+					return this.waitFor({
+						id : "ToLineItems",
+						success : function (oTable) {
+							var oFixButton = oTable.getRows()[iRow].getCells()[mColumn.Fix];
+
+							oFixButton.firePress();
+							Opa5.assert.ok(true,
+								"Fix Quantity button in row " + iRow + " has been pressed.");
+						},
+						viewName : sViewName,
+						visible : false
+					});
+				},
+				/*
 				 * Presses the "Show more details" button in the specified line in the table.
 				 *
 				 * @param {number} iRow The row in which the button should be pressed
@@ -205,7 +238,8 @@ sap.ui.define([
 							var i, oRow, oMoreDetailsButton;
 
 							for (i = 0; i < aElements.length; i += 1) {
-								if (aElements[i].sId.endsWith("showProductDetails::ToLineItems")) {
+								if (aElements[i].getId()
+										.endsWith("showProductDetails::ToLineItems")) {
 									oMoreDetailsButton = aElements[i];
 								} else if (typeof aElements[i].getRows === "function") {
 									oRow = aElements[i].getRows()[iRow];
@@ -276,9 +310,9 @@ sap.ui.define([
 
 							oSalesOrderDetails = {};
 							for (i = 0; i < aInputFields.length; i += 1) {
-								if (aInputFields[i].sId.includes("grossAmount")) {
+								if (aInputFields[i].getId().includes("grossAmount")) {
 									oSalesOrderDetails["grossAmount"] = aInputFields[i].getValue();
-								} else if (aInputFields[i].sId.includes("changedAt")) {
+								} else if (aInputFields[i].getId().includes("changedAt")) {
 									oSalesOrderDetails["changedAt"] = aInputFields[i].getValue();
 								}
 							}
@@ -329,7 +363,7 @@ sap.ui.define([
 						success : function (oFilter) {
 							var aItems = oFilter.getItems(),
 								mParameters = aItems.find(function (oItem) {
-									return oItem.mProperties.key === sFilterKey;
+									return oItem.getKey() === sFilterKey;
 								});
 
 							oFilter.setSelectedKey(sFilterKey);
@@ -382,7 +416,8 @@ sap.ui.define([
 								return oDialog.getTitle().includes(sTitleText);
 							});
 
-							Opa5.assert.ok(!oDialog.isOpen(), "Dialog not showing.");
+							Opa5.assert.ok(!oDialog.isOpen(),
+								"Dialog " + sTitleText + " not showing.");
 						},
 						visible : false
 					});
@@ -400,14 +435,14 @@ sap.ui.define([
 							var oDialog = aDialogs.find(function (oDialog) {
 								if (sSubHeader) {
 									return oDialog.getTitle().includes(sTitleText)
-										&& oDialog.getContent()[0].mProperties.text
-											.includes(sSubHeader);
+										&& oDialog.getContent()[mColumn.SalesOrderID]
+											.getText().includes(sSubHeader);
 								} else {
 									return oDialog.getTitle().includes(sTitleText);
 								}
 							});
 
-							Opa5.assert.ok(!!oDialog, "Correct dialog showing.");
+							Opa5.assert.ok(!!oDialog, "Dialog " + sTitleText + " showing.");
 						}
 					});
 				},
@@ -426,12 +461,12 @@ sap.ui.define([
 							for (i = 0; i < aControls.length; i++) {
 								oControl = aControls[i];
 
-								if (oControl.sId.includes("productID")) {
+								if (oControl.getId().includes("productID")) {
 									Opa5.assert.equal(oControl.getValue(), sProductId,
-										"Product ID in dialog correct");
-								} else if (oControl.sId.includes("name")) {
+										"Product ID " + sProductId + " in dialog correct");
+								} else if (oControl.getId().includes("name")) {
 									Opa5.assert.equal(oControl.getValue(), sProductName,
-										"Product name in dialog correct");
+										"Product " + sProductName + " name in dialog correct");
 								}
 							}
 						},
@@ -457,13 +492,13 @@ sap.ui.define([
 				 */
 				checkItemQuantities : function () {
 					return loopTableRows(this, function (aCells, sItemPosition) {
-						var sProductId = aCells[2].getValue(),
-							iQuantity = parseInt(aCells[3].getValue());
+						var sProductId = aCells[mColumn.ProductID].getValue(),
+							iQuantity = parseInt(aCells[mColumn.Quantity].getValue());
 
 						if (sProductId === "HT-1000") {
 							Opa5.assert.ok(iQuantity >= 2,
 								"Quantity for item " + sItemPosition + " is ok.");
-						} else {
+						} else if (sProductId !== "") {
 							Opa5.assert.ok(iQuantity >= 1,
 								"Quantity for item " + sItemPosition + " is ok.");
 						}
@@ -500,11 +535,11 @@ sap.ui.define([
 						var sValueState;
 
 						if (sItemPosition !== "") {
-							sValueState = aCells[0].getParent()
-								.mAggregations._settings.mProperties["highlight"];
+							sValueState = aCells[mColumn.SalesOrderID].getParent()
+								.getAggregation("_settings").getProperty("highlight");
 
 							if (Array.isArray(vAllowedValueState)) {
-								Opa5.assert.ok(vAllowedValueState.includes(sValueState),
+								Opa5.assert.ok(vAllowedValueState.indexOf(sValueState) >= 0,
 									sItemPosition + " has a correct value state.");
 							} else {
 								Opa5.assert.equal(sValueState, vAllowedValueState,
@@ -562,10 +597,10 @@ sap.ui.define([
 				 *
 				 * @param {string} [sItemPosition]
 				 *   The position of the item which will be searched for
-				 * @param {string} sMessage
+				 * @param {string} sMessageShort
 				 *   The whole message or a part of it, will be searched for
 				 */
-				checkMessageInPopover : function (sItemPosition, sMessage) {
+				checkMessageInPopover : function (sItemPosition, sMessageShort) {
 					return this.waitFor({
 						id : "messagePopover",
 						success : function (oPopover) {
@@ -573,20 +608,24 @@ sap.ui.define([
 
 							aMessages = (aMessages || []).filter(function (oMessage) {
 								return sItemPosition
-									? oMessage.getTitle() === mMessageShort2Message[sMessage]
-										&& oMessage.getProperty("subtitle").includes(sItemPosition)
-									: oMessage.getTitle() === mMessageShort2Message[sMessage];
+									? oMessage.getTitle() === mMessageShort2Message[sMessageShort]
+										&& oMessage.getSubtitle().includes(sItemPosition)
+									: oMessage.getTitle() === mMessageShort2Message[sMessageShort];
 							});
 
 							switch (aMessages.length) {
 								case 0:
-									Opa5.assert.ok(false, "No fitting message displayed");
+									Opa5.assert.ok(false,
+										"No fitting message displayed for message: "
+											+ sMessageShort);
 									break;
 								case 1:
-									Opa5.assert.ok(true, "A message is displayed");
+									Opa5.assert.ok(true,
+										"A message is displayed for message: " + sMessageShort);
 									break;
 								default:
-									Opa5.assert.ok(false, "Too many messages fit arguments");
+									Opa5.assert.ok(false,
+										"Too many messages match " + sMessageShort);
 									break;
 							}
 						},
@@ -598,32 +637,34 @@ sap.ui.define([
 				 * combination of item position and a message string.
 				 *
 				 * @param {string} sItemPosition The item position property
-				 * @param {string} sMessage The key of a message in
+				 * @param {string} [sMessageShort] The key of a message in
 				 *   <code>mMessageShort2Message</code> which should not be shown
 				 */
 				checkMessageNotInPopover : function (sItemPosition, sMessageShort) {
 					return this.waitFor({
 						id : "messagePopover",
 						success : function (oPopover) {
-							var aMessages = oPopover._oMessageView.mAggregations.items;
+							var aMessages = oPopover.getItems();
 
-							aMessages = (aMessages || []).filter(function (x) {
-								return x.mProperties.title === mMessageShort2Message[sMessageShort]
-									&& x.mProperties.subtitle.includes(sItemPosition);
+							aMessages = (aMessages || []).filter(function (oMessage) {
+								return sMessageShort
+									? oMessage.getTitle() === mMessageShort2Message[sMessageShort]
+										&& oMessage.getSubtitle().includes(sItemPosition)
+									: oMessage.getSubtitle().includes(sItemPosition);
 							});
 
 							switch (aMessages.length) {
 								case 0:
 									Opa5.assert.ok(true,
-										"No message displayed for item " + sItemPosition);
+										"No message displayed for message: " + sMessageShort);
 									break;
 								case 1:
-									Opa5.assert.notOk(
-										aMessages[0].mProperties.subtitle.includes(sItemPosition),
-										"A message is displayed for item " + sItemPosition);
+									Opa5.assert.ok(false,
+										"A message is displayed for message: " + sMessageShort);
 									break;
 								default:
-									Opa5.assert.ok(false, "Too many messages fit arguments");
+									Opa5.assert.ok(false,
+										"Too many messages match " + sMessageShort);
 									break;
 							}
 						},
@@ -637,7 +678,7 @@ sap.ui.define([
 					return this.waitFor({
 						id : "messagePopover",
 						success : function () {
-							Opa5.assert.ok(true, "The message popover has opened");
+							Opa5.assert.ok(true, "The message popover is open");
 						},
 						viewName : sViewName
 					});
@@ -650,13 +691,12 @@ sap.ui.define([
 				 */
 				checkMessageStrip : function (sExpectedMessageType) {
 					return this.waitFor({
-						controlType : "sap.m.plugins.DataStateIndicator",
+						controlType : "sap.m.MessageStrip",
 						success : function (aMatchedControls) {
-							var oMessageStrip = aMatchedControls[0]._oMessageStrip,
-								sMessageType = oMessageStrip.mProperties.type;
+							var sMessageType = aMatchedControls[0].getProperty("type");
 
 							Opa5.assert.strictEqual(sMessageType, sExpectedMessageType,
-								"Message strip shows correct Message");
+								"Message strip shows correct message: " + sExpectedMessageType);
 						},
 						viewName : sViewName,
 						visible : false
@@ -667,6 +707,7 @@ sap.ui.define([
 				 */
 				checkMessageToast : function () {
 					return this.waitFor({
+						autoWait : false,
 						check : function () {
 							return !!sap.ui.test.Opa5.getJQuery()(".sapMMessageToast").length;
 						},
@@ -689,10 +730,10 @@ sap.ui.define([
 								oNewSalesOrderDetails = {};
 
 							for (i = 0; i < aInputFields.length; i += 1) {
-								if (aInputFields[i].sId.includes("grossAmount")) {
+								if (aInputFields[i].getId().includes("grossAmount")) {
 									oNewSalesOrderDetails["grossAmount"]
 										= aInputFields[i].getValue();
-								} else if (aInputFields[i].sId.includes("changedAt")) {
+								} else if (aInputFields[i].getId().includes("changedAt")) {
 									oNewSalesOrderDetails["changedAt"] = aInputFields[i].getValue();
 								}
 							}
@@ -715,10 +756,12 @@ sap.ui.define([
 					return this.waitFor({
 						id : "ToLineItems",
 						success : function (oTable) {
-							var sValue = oTable.getRows()[0].getCells()[0].getValue();
+							var sValue =
+								oTable.getRows()[0].getCells()[mColumn.SalesOrderID].getValue();
 
 							Opa5.assert.strictEqual(sValue, sSalesOrderId,
-								"The sales order items have been loaded");
+								"The sales order items have been loaded for sales order "
+									+ sSalesOrderId);
 						},
 						viewName : sViewName
 					});
@@ -734,7 +777,7 @@ sap.ui.define([
 						id : "salesOrderID::objectPage",
 						success : function (oField) {
 							Opa5.assert.strictEqual(oField.getValue(), sSalesOrderId,
-								"The sales order has been loaded");
+								"The sales order " + sSalesOrderId + " has been loaded");
 						},
 						viewName : sViewName
 					});
@@ -750,39 +793,46 @@ sap.ui.define([
 						id : "ToLineItems",
 						success : function (oTable) {
 							var oRow = oTable.getRows()[iRow],
-								//Row doesn't have a method getValueState(), is there a better way
-								//to get the value state than the following?
 								sValueState =
-									oRow.mAggregations._settings.mProperties["highlight"];
+									oRow.getAggregation("_settings").getProperty("highlight");
 
-							//Does testing for the valueState suffice? Or should the css classes
-							//or similar be checked?
 							Opa5.assert.equal(sValueState, sExpectedValueState,
-								"The table row is highlighted in the correct color");
+								"The table row " + iRow +
+									" has the correct value state: " + sValueState);
 						},
 						viewName : sViewName
 					});
 				},
 				/*
-				 * Checks if the note field has the correct value state. If it has, the border
-				 * color and correct message will be displayed.
+				 * Checks if the specified field has the correct value state and value state text.
+				 * If it has, the border color and correct message will be displayed.
 				 *
-				 * @param {number} iRow The position of the item in the table
-				 * @param {string} sExpectedValueState The expected value state of the note field
-				 * @param {string} sMessageShort Key in <code>mMessageShort2Message</code> for the
-				 *   expected text below the note field
+				 * @param {number} iRow
+				 *   The position of the item in the table
+				 * @param {string} sField
+				 *   The field as key from <code>mColumn</code>
+				 * @param {string} sExpectedValueState
+				 *   The expected value state of the field
+				 * @param {string} [sMessageShort]
+				 *   Key in <code>mMessageShort2Message</code> for the expected text below the note
+				 *   field; leave empty if no message is expected
 				 */
-				checkValueStateOfNoteField : function (iRow, sExpectedValueState,
+				checkValueStateOfField : function (iRow, sField, sExpectedValueState,
 					sMessageShort) {
 					return this.waitFor({
 						id : "ToLineItems",
 						success : function (oTable) {
-							var oNoteField = oTable.getRows()[iRow].getCells()[7];
-							Opa5.assert.equal(oNoteField.getValueState(), sExpectedValueState,
-								"The note field has the correct value state");
-							Opa5.assert.equal(oNoteField.getValueStateText(),
+							var oSelectedField = oTable.getRows()[iRow].getCells()[mColumn[sField]];
+
+							sMessageShort = sMessageShort || "empty";
+
+							Opa5.assert.equal(oSelectedField.getValueState(), sExpectedValueState,
+								"The " + sField + " in row " + iRow +
+									" has the correct value state");
+							Opa5.assert.equal(oSelectedField.getValueStateText(),
 								mMessageShort2Message[sMessageShort],
-								"The note field has the correct value state");
+								"The " + sField + " in row " + iRow +
+									" has the correct value state");
 						},
 						viewName : sViewName
 					});

@@ -2,10 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/test/opaQunit",
-	"sap/ui/test/Opa5"
-], function (opaTest, Opa5) {
+	"sap/ui/core/sample/common/Helper",
+	"sap/ui/test/opaQunit"
+], function (Helper, opaTest) {
 	"use strict";
+
+	Helper.qUnitModule("sap.ui.core.internal.samples.odata.v2.SalesOrders - Transition Messages");
 
 	//*****************************************************************************
 	opaTest("Check if transition messages are working", function (Given, When, Then) {
@@ -32,7 +34,7 @@ sap.ui.define([
 
 		When.onMainPage.toggleMessagePopover();
 		Then.onMainPage.checkMessagePopoverOpen();
-		Then.onMainPage.checkMessageNotInPopover("050", "warningNoPrefix");
+		Then.onMainPage.checkMessageNotInPopover("050", "warning");
 		When.onMainPage.toggleMessagePopover();
 
 		When.onMainPage.scrollTable(1);
@@ -40,7 +42,7 @@ sap.ui.define([
 
 		When.onMainPage.toggleMessagePopover();
 		Then.onMainPage.checkMessagePopoverOpen();
-		Then.onMainPage.checkMessageInPopover("050", "warningNoPrefix");
+		Then.onMainPage.checkMessageInPopover("050", "warning");
 		When.onMainPage.toggleMessagePopover();
 
 		Given.iTeardownMyApp();

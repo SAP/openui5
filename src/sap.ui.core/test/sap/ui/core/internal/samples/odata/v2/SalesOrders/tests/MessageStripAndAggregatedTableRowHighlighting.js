@@ -2,10 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/test/opaQunit",
-	"sap/ui/test/Opa5"
-], function (opaTest, Opa5) {
+	"sap/ui/core/sample/common/Helper",
+	"sap/ui/test/opaQunit"
+], function (Helper, opaTest) {
 	"use strict";
+
+	Helper.qUnitModule(
+		"sap.ui.core.internal.samples.odata.v2.SalesOrders - Message Strip & Row Highlighting");
 
 	//*****************************************************************************
 	opaTest("Check item specific messages", function (Given, When, Then) {
@@ -37,7 +40,7 @@ sap.ui.define([
 
 		When.onMainPage.toggleMessagePopover();
 		Then.onMainPage.checkMessagePopoverOpen();
-		Then.onMainPage.checkMessageInPopover("020", "errorNoPrefix");
+		Then.onMainPage.checkMessageInPopover("020", "error");
 		When.onMainPage.toggleMessagePopover();
 		Then.onMainPage.checkTableRowHighlight(1, "Error");
 

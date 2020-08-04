@@ -178,7 +178,8 @@
 							<Label text="Actions" />
 							<t:template>
 								<Button enabled="{= ${ProductID} === 'HT-1000'}"
-									press="onFixQuantity" text="Fix" tooltip="Fix quantity issues"
+									id="fixQuantity::ToLineItems" press="onFixQuantity" text="Fix"
+									tooltip="Fix quantity issues"
 								/>
 							</t:template>
 						</t:Column>
