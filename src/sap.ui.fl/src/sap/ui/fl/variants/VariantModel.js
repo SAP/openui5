@@ -379,6 +379,32 @@ sap.ui.define([
 		return this.getVariant(sVariantReference).content.content[sProperty];
 	};
 
+	function handleInitialLoadScenario(sVMReference) {
+		var oVariantChangesForVariant = VariantManagementState.getVariantChangesForVariant({
+			vmReference: sVMReference,
+			reference: this.sFlexReference
+		});
+		var sCurrentVariantReference = this.oData[sVMReference].currentVariant;
+		var sDefaultVariantReference = this.oData[sVMReference].defaultVariant;
+		if (
+			this.oData[sVMReference]._executeOnSelectionForStandardDefault
+			&& sCurrentVariantReference === sDefaultVariantReference
+			&& sCurrentVariantReference === sVMReference
+			&& !oVariantChangesForVariant.setExecuteOnSelect
+		) {
+			var oVariant = VariantManagementState.getVariant({
+				reference: this.sFlexReference,
+				vmReference: sVMReference,
+				vReference: sVMReference
+			});
+			// set executeOnSelect in model and State without creating a change
+			oVariant.content.content.executeOnSelect = true;
+			this.oData[sVMReference].variants[0].originalExecuteOnSelect = true;
+			this.oData[sVMReference].variants[0].executeOnSelect = true;
+			return true;
+		}
+	}
+
 	/**
 	 * Saves a function that will be called after a variant has been applied with the new variant as parameter.
 	 * The function also performs a sanity check after the control has been rendered.
@@ -400,8 +426,10 @@ sap.ui.define([
 				this._oVariantAppliedListeners[sVMReference] = {};
 			}
 
-			// if the parameter callAfterInitialVariant is true call the function without check
-			if (mPropertyBag.callAfterInitialVariant) {
+			var bInitialLoad = handleInitialLoadScenario.call(this, sVMReference);
+
+			// if the parameter callAfterInitialVariant or initialLoad is true call the function without check
+			if (mPropertyBag.callAfterInitialVariant || bInitialLoad) {
 				var mParameters = {
 					appComponent: this.oAppComponent,
 					reference: this.sFlexReference,
@@ -1168,6 +1196,9 @@ sap.ui.define([
 
 		// original setting of control parameter 'editable' is needed
 		this.oData[sVariantManagementReference]._isEditable = oVariantManagementControl.getEditable();
+
+		// original setting of control parameter 'executeOnSelectionForStandardDefault' is needed
+		this.oData[sVariantManagementReference]._executeOnSelectionForStandardDefault = oVariantManagementControl.getExecuteOnSelectionForStandardDefault();
 
 		// only attachVariantApplied will set this to true
 		this.oData[sVariantManagementReference].showExecuteOnSelection = false;
