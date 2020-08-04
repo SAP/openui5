@@ -54,7 +54,7 @@ sap.ui.define(['sap/ui/base/Metadata', "sap/base/Log"], function(Metadata, Log) 
 
 	Segment.prototype.getContent = function () {
 
-		return this._aContent;
+		return this._aContent.slice();
 	};
 
 	Segment.prototype.indexOfContent = function (oControl) {
