@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/m/library', 'sap/ui/core/Core'],
-    function(Control, Button, SearchField, mobileLibrary, Core) {
+sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/m/library', 'sap/ui/core/Core', "sap/ui/model/json/JSONModel"],
+    function(Control, Button, SearchField, mobileLibrary, Core, JSONModel) {
     "use strict";
 
 		/**
@@ -19,7 +19,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
                 aggregations : {
                     _openingButton : {type: "sap.m.Button", multiple: false},
                     _closingButton : {type: "sap.m.Button", multiple: false},
-                    _searchField : {type: "sap.m.SearchField", multiple: false}
+                    _searchField : {type: "sap.m.SearchField", multiple: false},
+                    suggestionItems : {type : "sap.m.SuggestionItem", multiple : true, singularName : "suggestionItem", forwarding: {getter: "_lazyLoadSearchField", aggregation: "suggestionItems"}}
                 },
                 events : {
                     /**
@@ -53,7 +54,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
                              */
                             clearButtonPressed: {type: "boolean"}
                         }
-                    }
+                    },
+                    suggest : {
+                        parameters : {
+                            /**
+                             * Current search string of the search field.
+                             */
+                            suggestValue : {type : "string"}
+                        }
+					}
                 }
 			},
             renderer: {
@@ -96,6 +105,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
 
         Search.prototype._minimizeSearchField = function() {
             return this._resizeSearchField("10%");
+        };
+
+        Search.prototype.suggest = function() {
+            this._lazyLoadSearchField().suggest();
+        };
+
+        Search.prototype.attachSuggest = function() {
+            SearchField.prototype.attachSuggest.apply(this._lazyLoadSearchField(), arguments);
+            return this;
         };
 
         /**
@@ -168,6 +186,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
             if (!this.getAggregation("_searchField")) {
                 var oSrch = new SearchField(this.getId() + "-searchField", {
                     showSearchButton: true,
+                    enableSuggestions: true,
                     search: function(oEvent) {
 
                         var oParameters = oEvent.getParameters();
