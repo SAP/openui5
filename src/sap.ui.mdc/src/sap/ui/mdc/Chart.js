@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/mdc/Control",
+	"./chart/ChartSettings",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/mdc/util/loadModules",
 	"./ChartRenderer",
@@ -20,6 +21,7 @@ sap.ui.define([
 	function (
 		Core,
 		Control,
+		ChartSettings,
 		SyncPromise,
 		loadModules,
 		ChartRenderer,
@@ -62,6 +64,9 @@ sap.ui.define([
 		var Chart = Control.extend("sap.ui.mdc.Chart", /** @lends sap.ui.mdc.Chart.prototype */ {
 			metadata: {
 				library: "sap.ui.mdc",
+				interfaces: [
+					"sap.ui.mdc.IxState"
+				],
 				defaultAggregation: "items",
 				properties: {
 
@@ -338,7 +343,8 @@ sap.ui.define([
 					removeOperation: "removeItem",
 					moveOperation: "moveItem",
 					title: oResourceBundle.getText("chart.PERSONALIZATION_DIALOG_TITLE"),
-					panelPath: "sap/ui/mdc/p13n/panels/ChartItemPanel"
+					panelPath: "sap/ui/mdc/p13n/panels/ChartItemPanel",
+					additionalDeltaAttributes: ["role"]
 				}
 			});
 		};
@@ -1257,15 +1263,23 @@ sap.ui.define([
 			return this.oChartPromise;
 		};
 
+		/**
+		 * Returns a Promise that resolves after the chart has been initialized after being created and after changing the type.
+		 *
+		 * @returns {Promise} A Promise that resolves after the chart has been initialized
+		 * @public
+		 */
+		Chart.prototype.initialized = function() {
+			return this.oChartPromise;
+		};
+
 		var _getVisibleProperties = function (oChart) {
 			var aProperties = [];
 			if (oChart) {
 				oChart.getItems().forEach(function (oChartItem, iIndex) {
 					aProperties.push({
 						name: oChartItem.getKey(),
-						label: oChartItem.getLabel(),
-						role: oChartItem.getRole(),
-						position: iIndex
+						role: oChartItem.getRole()
 					});
 
 				});
@@ -1284,10 +1298,21 @@ sap.ui.define([
 		 * @returns {Object} Current state of the chart
 		 */
 		Chart.prototype.getCurrentState = function() {
-			return {
-				items: _getVisibleProperties(this),
-				sorters: _getSortedProperties(this)
-			};
+			var oState = {};
+			var aP13nMode = this.getP13nMode();
+
+			if (aP13nMode) {
+
+				if (aP13nMode.indexOf("Item") > -1) {
+					oState.items = _getVisibleProperties(this);
+				}
+
+				if (aP13nMode.indexOf("Sort") > -1) {
+					oState.sorters = _getSortedProperties(this);
+				}
+			}
+
+			return oState;
 		};
 
 		return Chart;

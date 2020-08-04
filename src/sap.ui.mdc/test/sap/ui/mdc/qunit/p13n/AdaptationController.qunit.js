@@ -385,6 +385,7 @@ sap.ui.define([
 	QUnit.module("AdaptationController API tests showP13n Chart", {
 		beforeEach: function () {
 			this.oChart = new Chart("TestChart", {
+				p13nMode: ['Item', 'Sort'],
 				items: [
 					new Dimension("item1",{
 						header:"item1",
@@ -449,8 +450,45 @@ sap.ui.define([
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.ChartItemPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems().length, this.aPropertyInfo.length, "correct amount of items has been set");
+			assert.equal(oInnerTable.getItems()[0].getCells()[2].getSelectedKey(), "category", "Correct role selected");
 			done();
 		}.bind(this));
+	});
+
+	QUnit.test("use 'createItemChanges' to create changes for a different role", function(assert){
+		var done = assert.async();
+
+		var aP13nData = [
+			{name:"item1", role: "series"}
+		];
+
+		this.oAdaptationController.createItemChanges(aP13nData).then(function(){
+			assert.ok(true, "Callback triggered");
+		});
+
+		this.oAdaptationController.setProperty("afterChangesCreated", function(oAC, aChanges){
+			assert.ok(aChanges, "changes created");
+			assert.equal(aChanges.length, 2, "two change created");
+			assert.equal(aChanges[0].changeSpecificData.changeType, "removeItem", "one 'removeItem' change created");
+			assert.equal(aChanges[1].changeSpecificData.changeType, "addItem", "one 'addItem' change created");
+			assert.equal(aChanges[1].changeSpecificData.content.role, "series", "Role has been changed in 'addItem' change");
+			done();
+		});
+	});
+
+	QUnit.test("use ChartItemPanel - getCurrentState returns different 'role'", function (assert) {
+		var done = assert.async();
+		var oBtn = new Button();
+
+		this.oChart.getItems()[0].setRole("series");
+
+		this.oAdaptationController.showP13n(oBtn, "Item").then(function(oP13nControl){
+
+			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+			assert.equal(oInnerTable.getItems()[0].getCells()[2].getSelectedKey(), "series", "Correct role selected");
+
+			done();
+		});
 	});
 
 	QUnit.test("check sorting in Chart", function (assert) {

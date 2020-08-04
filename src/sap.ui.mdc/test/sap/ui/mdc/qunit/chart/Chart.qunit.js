@@ -59,6 +59,8 @@ function(
 
 	QUnit.test("Instantiate", function(assert) {
 		assert.ok(this.oChart);
+		assert.ok(this.oChart.isA("sap.ui.mdc.IxState"));
+
 	});
 
 	QUnit.test("invoking the .getItemsByKeys() method should return the matching items", function(assert) {

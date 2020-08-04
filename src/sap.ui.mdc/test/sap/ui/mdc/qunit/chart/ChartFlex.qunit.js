@@ -30,7 +30,7 @@ sap.ui.define([
 							'\t\t  xmlns:mdc="sap.ui.mdc"\n' +
 							'\t\t  xmlns:state="sap.ui.mdc.base.state"\n' +
 							'\t\t  xmlns="sap.m">\n' +
-							'\t\t\t\t<mdc:Chart id="IDChartVisibility" delegate="{ \'name\': \'sap/ui/mdc/qunit/chart/Helper\' }">\n' +
+							'\t\t\t\t<mdc:Chart id="IDChartVisibility" p13nMode="{=[\'Sort\',\'Item\']}" delegate="{ \'name\': \'sap/ui/mdc/qunit/chart/Helper\' }">\n' +
 							'\t\t\t\t\t\t<mdc:items><chart:DimensionItem id="item0" key="Name" label="Name" role="category"></chart:DimensionItem>\n' +
 							'\t\t\t\t\t\t<chart:MeasureItem id="item1" key="agSalesAmount" label="Depth" role="axis1"></chart:MeasureItem>\n' +
 							'\t\t\t\t\t\t<chart:MeasureItem id="item2" key="SalesNumber" label="Width" role="axis2"></chart:MeasureItem></mdc:items>\n' +
@@ -188,7 +188,7 @@ sap.ui.define([
 							'\t\t  xmlns:mdc="sap.ui.mdc"\n' +
 							'\t\t  xmlns:state="sap.ui.mdc.base.state"\n' +
 							'\t\t  xmlns="sap.m">\n' +
-							'\t\t\t\t<mdc:Chart id="IDChartVisibility2" delegate="{ \'name\': \'sap/ui/mdc/qunit/chart/Helper\' }">\n' +
+							'\t\t\t\t<mdc:Chart id="IDChartVisibility2" p13nMode="{=[\'Sort\',\'Item\']}" delegate="{ \'name\': \'sap/ui/mdc/qunit/chart/Helper\' }">\n' +
 							'\t\t\t\t\t\t<mdc:items><chart:DimensionItem id="item0" key="Name" label="Name" role="category"></chart:DimensionItem>\n' +
 							'\t\t\t\t\t\t<chart:MeasureItem id="item1" key="agSalesAmount" label="Depth" role="axis1"></chart:MeasureItem>\n' +
 							'\t\t\t\t\t\t<chart:MeasureItem id="item2" key="SalesNumber" label="Width" role="axis2"></chart:MeasureItem></mdc:items>\n' +

@@ -53,7 +53,8 @@ sap.ui.define([
 		*			{name: "Country", visible: false}
 		*       ],
 		*       sorters: [
-		*			{name: "Category", "descending": false}
+		*			{name: "Category", "descending": false},
+		*			{name: "NoCategory", "descending": false, "sorted": false}
 		*       ]
 		* }
 		*/

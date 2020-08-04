@@ -247,7 +247,17 @@ sap.ui.define([
 			var oItemConfig = this.getItemConfig();
 
 			var fnSymbol = function (o) {
-				return o.name;
+
+				var sDiffRelevant = o.name;
+
+				//TODO: reconsider 'deltaRelevantAttributes' approach
+				if (oItemConfig && oItemConfig.additionalDeltaAttributes && oItemConfig.additionalDeltaAttributes instanceof Array) {
+					oItemConfig.additionalDeltaAttributes.forEach(function(sAttribute){
+						sDiffRelevant += o[sAttribute];
+					});
+				}
+
+				return sDiffRelevant;
 			};
 
 			var fFilter = function (oItem) {
