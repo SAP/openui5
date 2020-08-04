@@ -215,14 +215,25 @@ sap.ui.define([
 	 */
 	CardEditor.prototype.getChanges = function(oPropertyBag) {
 		return Promise.all([
-			this.getDeltaChangeDefinition(oPropertyBag),
+			this.getDeltaChangeDefinition(oPropertyBag)
+				.catch(function() {
+					return;
+				}),
 			this.getDesigntimeChangeDefinition(oPropertyBag)
-		]).then(function(aChanges) {
-			return {
-				runtimeChange: aChanges[0],
-				designtimeChange: aChanges[1]
-			};
-		});
+				.catch(function() {
+					return;
+				})
+		])
+			.then(function(aChanges) {
+				if (aChanges[0] === undefined && aChanges[1] === undefined) {
+					return Promise.reject("No changes");
+				}
+
+				return {
+					runtimeChange: aChanges[0],
+					designtimeChange: aChanges[1]
+				};
+			});
 	};
 
 	function createChangeDefinition(mParameters) {
@@ -244,7 +255,7 @@ sap.ui.define([
 	CardEditor.prototype.getDesigntimeChangeDefinition = function(oPropertyBag) {
 		var aChanges = [];
 		var oOldValue = Object.assign({}, this._oInitialDesigntimeMetadata);
-		var oNewValue = this.getDesigntimeMetadata();
+		var oNewValue = this._formatExportedDesigntimeMetadata(this.getDesigntimeMetadata());
 		each(oNewValue, function(sKey, vValue) {
 			if (oOldValue.hasOwnProperty(sKey)) {
 				if (!_isEqual(oOldValue[sKey], vValue)) {
@@ -274,6 +285,8 @@ sap.ui.define([
 		if (!aChanges.length) {
 			return Promise.reject("No Change");
 		}
+
+		this._oInitialDesigntimeMetadata = oNewValue;
 
 		var oCurrentJson = this.getJson();
 		var mParameters = merge({}, _omit(oPropertyBag, ["oldValue", "newValue"]));

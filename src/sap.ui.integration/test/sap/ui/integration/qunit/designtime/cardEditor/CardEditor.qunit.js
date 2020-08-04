@@ -52,6 +52,7 @@ sap.ui.define([
 			this.oPropertyBag = {
 				layer: "ADMIN"
 			};
+			sandbox.stub(this.oCardEditor, "_formatExportedDesigntimeMetadata").returnsArg(0);
 		},
 		afterEach: function() {
 			this.oCardEditor.destroy();
@@ -259,6 +260,72 @@ sap.ui.define([
 				assert.equal(oGetDesigntimeChangeStub.callCount, 1, "the function was called");
 				assert.equal(oGetDesigntimeChangeStub.lastCall.args[0], oPropertyBag, "the propertybag was properly passed");
 			});
+		});
+
+		QUnit.test("when getChanges is called multiple times", function (assert) {
+			// Create runtime change
+			this.oBaseJson["sap.card"].configuration.destinations.myDestination1.name = "myNewName1";
+			this.oCardEditor.setJson(this.oBaseJson);
+
+			// Create designtime change
+			var mInitialDesigntimeMetadata = {
+				"path/foo": "bar1"
+			};
+			var mNewDesigntimeMetadata = {
+				"path/foo": "baz"
+			};
+			this.oCardEditor._oInitialDesigntimeMetadata = mInitialDesigntimeMetadata;
+			this.oCardEditor.setDesigntimeMetadata(mNewDesigntimeMetadata);
+
+			return this.oCardEditor.getChanges(this.oPropertyBag)
+				.then(function(oChanges) {
+					assert.strictEqual(
+						oChanges.runtimeChange.content.configuration.destinations.myDestination1.name,
+						"myNewName1",
+						"then the runtime change is returned on first call"
+					);
+					assert.strictEqual(
+						oChanges.designtimeChange.content.entityPropertyChange.length,
+						1,
+						"then the designtime change is returned on first call"
+					);
+
+					// Call second time without new changes
+					return this.oCardEditor.getChanges(this.oPropertyBag)
+						.then(function() {
+							assert.ok(false, "should not go here");
+						})
+						.catch(function(sError) {
+							assert.ok(typeof sError === "string", "then no changes are returned on second call");
+						});
+				}.bind(this));
+		});
+
+		QUnit.test("when only one change type was made", function (assert) {
+			var mInitialDesigntimeMetadata = {
+				"path/foo": "bar1"
+			};
+			var mNewDesigntimeMetadata = {
+				"path/foo": "baz"
+			};
+			this.oCardEditor._oInitialDesigntimeMetadata = mInitialDesigntimeMetadata;
+			this.oCardEditor.setDesigntimeMetadata(mNewDesigntimeMetadata);
+
+			return this.oCardEditor.getChanges(this.oPropertyBag)
+				.then(function(oChanges) {
+					assert.strictEqual(oChanges.runtimeChange, undefined, "then no runtime change is returned");
+					assert.strictEqual(oChanges.designtimeChange.content.entityPropertyChange.length, 1, "then the runtime change is returned");
+				});
+		});
+
+		QUnit.test("when no changes were made", function (assert) {
+			return this.oCardEditor.getChanges(this.oPropertyBag)
+				.then(function() {
+					assert.ok(false, "should not go here");
+				})
+				.catch(function(sError) {
+					assert.ok(typeof sError === "string", "the function rejects with a text");
+				});
 		});
 	});
 
