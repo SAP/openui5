@@ -191,8 +191,8 @@ sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/
 	 * @since 1.46.0
 	 */
 	CalendarAppointment.prototype.setColor = function (sColor) {
-		if (sColor && sColor.match(/^#[0-9a-f]{6}$/i)) {
-			Log.warning("setColor accepts only full hex color value with pound symbol.");
+		if (sColor && !sColor.match(/^#[0-9a-f]{6}$/i)) {
+			Log.warning("setColor accepts only full hex color value with pound symbol, but value is '" + sColor + "'");
 		}
 		return this.setProperty("color", sColor);
 	};
