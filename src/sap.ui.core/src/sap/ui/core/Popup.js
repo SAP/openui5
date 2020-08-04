@@ -2882,6 +2882,8 @@ sap.ui.define([
 
 		// TODO all stuff done in 'open' is destroyed if the content was rerendered
 		$Ref.toggleClass("sapUiShd", this._bShadow);
+		Popup._clearSelection();
+		this._setupUserSelection();
 		$Ref.css("position", "absolute");
 
 		// set/update the identification properly
@@ -3175,9 +3177,21 @@ sap.ui.define([
 
 		if (this._bModal){
 			if (Popup.blStack.length > 0){
-				// mark the last popup in the stack as not user selectable
+				// determine the last popup in the stack
 				var oLastPopup = Popup.blStack[Popup.blStack.length - 1];
-				Popup._markAsNotUserSelectable(oLastPopup.popup._$(false, true), /* bForce */true);
+
+				var fnGetPopupId = function(oPopup){
+					return oPopup.popup.getId();
+				};
+
+				if (Popup.blStack.map(fnGetPopupId).indexOf(this.getId()) === -1){
+					// new current popup does not exist in the stack -> it will be added soon,
+					// lets mark the last popup in the stack as explicitly not user selectable
+					Popup._markAsNotUserSelectable(oLastPopup.popup._$(false, true), /* bForce */true);
+				} else if (oLastPopup.popup.getId() !== this.getId()){
+					// the current popup exists however its not at the top of the stack, so it should be marked as explicitly not user selectable
+					Popup._markAsNotUserSelectable($Ref, /* bForce */true);
+				}
 			} else {
 				// freeze the whole screen
 				Popup._markAsNotUserSelectable(jQuery("html"), /* bForce */true);
