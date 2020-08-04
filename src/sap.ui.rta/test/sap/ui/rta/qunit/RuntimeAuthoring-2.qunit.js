@@ -565,7 +565,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when personalized changes exist and user exits and started in FLP reloading the personalization...", function(assert) {
+		QUnit.test("when personalized changes exist and started in FLP reloading the personalization...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenHigherLayerChangesExist();
@@ -1372,7 +1372,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
 			this.oRta._oVersionsModel.setProperty("/draftAvailable", true);
 			this.oRta._oVersionsModel.setProperty("/dirtyChanges", true);
-			whenUserConfirmsMessage.call(this, "PERSONALIZATION_AND_WITHOUT_DRAFT", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT", assert);
 			return this.oRta._handleReloadOnExit()
 				.then(function (oReloadInfo) {
 					assert.equal(oReloadInfo.reloadMethod, "CROSS_APP_NAVIGATION", "then a cross app is triggered");

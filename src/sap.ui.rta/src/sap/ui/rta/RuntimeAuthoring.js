@@ -1585,7 +1585,7 @@ function(
 	 *
 	 * @param  {object}  oReloadInfo - Contains the information needed to return the correct reload message
 	 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if sap-ui-fl-max-layer parameter is present in the url
-	 * @param  {boolean} oReloadInfo.hasDirtyDraftChanges - Indicates if a draft is available
+	 * @param  {boolean} oReloadInfo.hasDraft - Indicates if a draft is available
 	 * @param  {boolean} oReloadInfo.changesNeedReload - Indicates if app descriptor changes need hard reload
 	 * @param  {boolean} oReloadInfo.initialDraftGotActivated - Indicates if a draft got activated and had a draft initially when entering UI adaptation
 
@@ -1594,23 +1594,29 @@ function(
 	 * @returns {string} sReason Reload message
 	 */
 	RuntimeAuthoring.prototype._getReloadMessageOnExit = function(oReloadInfo) {
-		var sReason;
 		var bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
 
 		if (oReloadInfo.hasHigherLayerChanges) {
-			if (oReloadInfo.hasDirtyDraftChanges) {
-				sReason = bIsCustomerLayer ? "PERSONALIZATION_AND_WITHOUT_DRAFT" : "MSG_RELOAD_WITH_ALL_CHANGES";
-			} else {
-				sReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
+			if (!bIsCustomerLayer) {
+				return "MSG_RELOAD_WITH_ALL_CHANGES";
 			}
-		} else if (oReloadInfo.initialDraftGotActivated) {
-			sReason = "MSG_RELOAD_ACTIVATED_DRAFT";
-		} else if (oReloadInfo.hasDraftChanges) {
-			sReason = "MSG_RELOAD_WITHOUT_DRAFT";
-		} else if (oReloadInfo.changesNeedReload) {
-			sReason = "MSG_RELOAD_NEEDED";
+			if (oReloadInfo.hasDraft) {
+				return "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT";
+			}
+			return "MSG_RELOAD_WITH_PERSONALIZATION";
 		}
-		return sReason;
+
+		if (oReloadInfo.initialDraftGotActivated) {
+			return "MSG_RELOAD_ACTIVATED_DRAFT";
+		}
+
+		if (oReloadInfo.hasDraft) {
+			return "MSG_RELOAD_WITHOUT_DRAFT";
+		}
+
+		if (oReloadInfo.changesNeedReload) {
+			return "MSG_RELOAD_NEEDED";
+		}
 	};
 
 	/**
