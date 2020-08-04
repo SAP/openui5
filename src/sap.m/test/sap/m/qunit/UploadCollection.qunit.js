@@ -404,14 +404,27 @@ sap.ui.define([
 		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-description").text(), sNoDataDescription, "default no data description is rendered in upload collection");
 	});
 
+	QUnit.test("No data rendering - Accessibility test", function(assert) {
+		//Arrange
+		var sUpdNoDataText = this.oUploadCollection.getNoDataText();
+		var sListNoDataText = this.oUploadCollection._oList.getNoDataText();
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(sUpdNoDataText, sListNoDataText, "Accessibility Nodata text matches ");
+	});
+
 	QUnit.test("No data rendering - with user specified no data text", function(assert) {
 		//Arrange
 		this.oUploadCollection.setNoDataText("myNoDataText");
+		var sUpdNoDataText = this.oUploadCollection.getNoDataText();
+		var sListNoDataText = this.oUploadCollection._oList.getNoDataText();
 		this.oUploadCollection.unbindAggregation("items");
 		//Act
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-text").text(), "myNoDataText", "The no data text set by user is rendered");
+		assert.equal(sUpdNoDataText, sListNoDataText, "Accessibility Nodata text matches after setter");
 	});
 
 	QUnit.test("No data rendering - with user specified no data description", function(assert) {
