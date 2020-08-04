@@ -227,5 +227,10 @@
   "status-suspending":"0xe08C",
   "status-terminated": "0xe08D",
   "status-terminating": "0xe08E",
-  "solution-not-licensed":"0xe08F"
+  "solution-not-licensed":"0xe08F",
+  "clear-all-mapping":"0xe090",
+  "map-all-fields":"0xe091",
+  "process-package":"0xe092",
+  "process-kpis":"0xe093",
+  "insights":"0xe094"
 }

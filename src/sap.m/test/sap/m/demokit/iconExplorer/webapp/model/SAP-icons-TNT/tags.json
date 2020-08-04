@@ -1198,5 +1198,55 @@
 			"empty",
 			"license"
 		]
+	},
+
+	"clear-all-mapping": {
+		"tags": [
+			"clear",
+			"remove",
+			"delete",
+			"map",
+			"cancel"
+		]
+	},
+
+	"map-all-fields": {
+		"tags": [
+			"link",
+			"source",
+			"target",
+			"text"
+		]
+	},
+
+	"process-package": {
+		"tags": [
+			"package",
+			"process",
+			"arrow",
+			"arrows",
+			"chevron"
+		]
+	},
+
+	"process-kpis": {
+		"tags": [
+			"process",
+			"kpi",
+			"chart",
+			"bulb",
+			"light",
+			"lamp"
+		]
+	},
+
+	"insights": {
+		"tags": [
+			"insights",
+			"chart",
+			"light",
+			"bulb",
+			"lamp"
+		]
 	}
 }

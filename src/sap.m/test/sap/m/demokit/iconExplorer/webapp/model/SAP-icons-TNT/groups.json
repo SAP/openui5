@@ -61,10 +61,12 @@
 		},
 		{
 			"name": "charts",
-			"text": "charts",
+			"text": "Charts",
 			"icons": [
 				{"name" : "throughput-backlog"},
-				{"name" : "spike-arrest"}
+				{"name" : "spike-arrest"},
+				{"name" : "process-kpis"},
+				{"name" : "insights"}
 			]
 		},
 		{
@@ -163,7 +165,8 @@
 				{"name" : "router"},
 				{"name" : "switch"},
 				{"name" : "satellite"},
-				{"name" : "system-2"}
+				{"name" : "system-2"},
+				{"name" : "process-package"}
 			]
 		},
 		{
@@ -207,7 +210,9 @@
 				{"name" : "business-service"},
 				{"name" : "application-service"},
 				{"name" : "network-node"},
-				{"name" : "network"}
+				{"name" : "network"},
+				{"name" : "clear-all-mapping"},
+				{"name" : "map-all-fields"}
 
 			]
 		},
