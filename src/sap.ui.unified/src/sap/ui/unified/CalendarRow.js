@@ -1562,6 +1562,11 @@ sap.ui.define([
 					$Appointment.css("right", oAppointment.end + "%");
 				}
 			}
+
+			// if it is possible to round off the appointment, it is necessary to replace its end value with its pre-calculated
+			if (bHorizontalFit) {
+				oAppointment.end = oAppointment.calculatedEnd;
+			}
 		}
 
 		// calculate levels
