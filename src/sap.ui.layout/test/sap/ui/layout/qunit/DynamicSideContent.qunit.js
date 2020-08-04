@@ -346,7 +346,7 @@ sap.ui.define([
 				this._oDSC._setResizeData(sBreakpoint, bIsInComparisonMode);
 
 				assert.strictEqual(
-						this._oDSC[sSpanPropertyName],
+						this._oDSC.getProperty(sSpanPropertyName),
 						bExpectedResult,
 						sContentName + " content span size is set to " + bExpectedResult + " when breakpoint is " + "'" + sBreakpoint + "'" + " and 'SideContentFallDown' property is set to " + sideContentFallDown
 				);
@@ -401,19 +401,19 @@ sap.ui.define([
 			// S breakpoint
 			this._oDSC._setResizeData(S, bIsInComparisonMode);
 
-			assert.strictEqual(this._oDSC._iMcSpan, SPAN_SIZE_12, "Main content span size is set to 12 when breakpoint is 'S'");
-			assert.strictEqual(this._oDSC._iScSpan, SPAN_SIZE_12, "Side content span size is set to 12 when breakpoint is 'S'.");
+			assert.strictEqual(this._oDSC.getProperty("mcSpan"), SPAN_SIZE_12, "Main content span size is set to 12 when breakpoint is 'S'");
+			assert.strictEqual(this._oDSC.getProperty("scSpan"), SPAN_SIZE_12, "Side content span size is set to 12 when breakpoint is 'S'.");
 			assert.strictEqual(this._oDSC._SCVisible, false, "Side content is not visible.");
 
 			// M breakpoint
-			this.assertOnContentSpanSize("Main", "_iMcSpan", M, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_12, false, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", M, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_12, false, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", M, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_12, false, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", M, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_12, false, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", M, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_12, false, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", M, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_12, false, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", M, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_12, false, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", M, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_12, false, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", M, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_8, false, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", M, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_4, false, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", M, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_8, false, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", M, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_4, false, assert);
 
 			this.assertOnSideContentVisibility(M, sap.ui.layout.SideContentVisibility.ShowAboveS, true, false, assert);
 			this.assertOnSideContentVisibility(M, sap.ui.layout.SideContentVisibility.AlwaysShow, true, false, assert);
@@ -422,14 +422,14 @@ sap.ui.define([
 			this.assertOnSideContentVisibility(M, sap.ui.layout.SideContentVisibility.ShowAboveM, false, false, assert);
 
 			// L breakpoint
-			this.assertOnContentSpanSize("Main", "_iMcSpan", L, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_12, false, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", L, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_12, false, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", L, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_12, false, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", L, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_12, false, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", L, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_8, false, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", L, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_4, false, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", L, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_8, false, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", L, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_4, false, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", L, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_8, false, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", L, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_4, false, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", L, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_8, false, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", L, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_4, false, assert);
 
 			this.assertOnSideContentVisibility(L, sap.ui.layout.SideContentVisibility.ShowAboveS, true, false, assert);
 			this.assertOnSideContentVisibility(L, sap.ui.layout.SideContentVisibility.ShowAboveM, true, false, assert);
@@ -438,14 +438,14 @@ sap.ui.define([
 			this.assertOnSideContentVisibility(L, sap.ui.layout.SideContentVisibility.NeverShow, false, false, assert);
 
 			// XL breakpoint
-			this.assertOnContentSpanSize("Main", "_iMcSpan", XL, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_9, false, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", XL, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_3, false, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", XL, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_9, false, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", XL, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_3, false, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", XL, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_9, false, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", XL, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_3, false, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", XL, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_9, false, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", XL, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_3, false, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", XL, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_9, false, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", XL, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_3, false, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", XL, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_9, false, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", XL, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_3, false, assert);
 
 			this.assertOnSideContentVisibility(XL, sap.ui.layout.SideContentVisibility.NeverShow, false, false, assert);
 			this.assertOnSideContentVisibility(XL, sap.ui.layout.SideContentVisibility.AlwaysShow, true, false, assert);
@@ -455,14 +455,14 @@ sap.ui.define([
 
 			// EqualSplit mode S breakpoint
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", S, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_12, true, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", S, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_12, true, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", S, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_12, true, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", S, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_12, true, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", S, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_12, true, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", S, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_12, true, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", S, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_12, true, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", S, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_12, true, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", S, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_12, true, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", S, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_12, true, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", S, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_12, true, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", S, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_12, true, assert);
 
 			// EqualSplit mode other than S
 			this.assertOnSideContentVisibility(S, sap.ui.layout.SideContentVisibility.NeverShow, false, true, assert);
@@ -476,32 +476,32 @@ sap.ui.define([
 			}, INVALID_BREAKPOINT_ERROR_MSG);
 
 			// EqualSplit mode other than S
-			this.assertOnContentSpanSize("Main", "_iMcSpan", M, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_6, true, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", M, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", M, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", M, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_6, true, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", M, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_6, true, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", M, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", M, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", M, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_6, true, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", M, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_6, true, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", M, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", M, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", M, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_6, true, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", L, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_6, true, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", L, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", L, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", L, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_6, true, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", L, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_6, true, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", L, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", L, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", L, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_6, true, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", L, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_6, true, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", L, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", L, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", L, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_6, true, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", XL, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_6, true, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", XL, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", XL, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", XL, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_6, true, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", XL, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_6, true, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", XL, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", XL, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", XL, sap.ui.layout.SideContentFallDown.BelowM, SPAN_SIZE_6, true, assert);
 
-			this.assertOnContentSpanSize("Main", "_iMcSpan", XL, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_6, true, assert);
-			this.assertOnContentSpanSize("Side", "_iScSpan", XL, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Main", "mcSpan", XL, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_6, true, assert);
+			this.assertOnContentSpanSize("Side", "scSpan", XL, sap.ui.layout.SideContentFallDown.BelowXL, SPAN_SIZE_6, true, assert);
 
 			this.assertOnSideContentVisibility(M, sap.ui.layout.SideContentVisibility.NeverShow, true, true, assert);
 			this.assertOnSideContentVisibility(M, sap.ui.layout.SideContentVisibility.AlwaysShow, true, true, assert);
@@ -549,8 +549,8 @@ sap.ui.define([
 			assert.ok(!$sideContent.hasClass("test1"), "Side content should not have 'test1' class");
 			assert.ok(!$sideContent.hasClass("test2"), "Side content should not have 'test2' class");
 
-			assert.ok($mainContent.hasClass("sapUiDSCSpan" + this._oDSC._iMcSpan), "Main content has class 'sapUiDSCSpan" + this._oDSC._iMcSpan + "' if both main and side content are visible");
-			assert.ok($sideContent.hasClass("sapUiDSCSpan" + this._oDSC._iScSpan), "Side content has class 'sapUiDSCSpan" + this._oDSC._iScSpan + "' if both main and side content are visible");
+			assert.ok($mainContent.hasClass("sapUiDSCSpan" + this._oDSC.getProperty("mcSpan")), "Main content has class 'sapUiDSCSpan" + this._oDSC.getProperty("mcSpan") + "' if both main and side content are visible");
+			assert.ok($sideContent.hasClass("sapUiDSCSpan" + this._oDSC.getProperty("scSpan")), "Side content has class 'sapUiDSCSpan" + this._oDSC.getProperty("scSpan") + "' if both main and side content are visible");
 
 			// both main and side content are hidden
 			this._oDSC._SCVisible = false;
@@ -602,26 +602,26 @@ sap.ui.define([
 		});
 
 		QUnit.test("Check if height should be set",function(assert) {
-			this._oDSC._iScSpan = SPAN_SIZE_6;
-			this._oDSC._iMcSpan = SPAN_SIZE_6;
+			this._oDSC.setProperty("scSpan", SPAN_SIZE_6);
+			this._oDSC.setProperty("mcSpan", SPAN_SIZE_6);
 			this._oDSC._MCVisible = true;
 			this._oDSC._SCVisible = true;
 			assert.ok(this._oDSC._shouldSetHeight(), "Height should be set if MCSpan and SCSPan equal 12 spans and both main and side content are visible.");
 
-			this._oDSC._iScSpan = SPAN_SIZE_3;
-			this._oDSC._iMcSpan = SPAN_SIZE_6;
+			this._oDSC.setProperty("scSpan", SPAN_SIZE_3);
+			this._oDSC.setProperty("mcSpan", SPAN_SIZE_6);
 			this._oDSC._MCVisible = true;
 			this._oDSC._SCVisible = true;
 			assert.ok(!this._oDSC._shouldSetHeight(), "Height should not be set if MCSpan and SCSPan do not equal 12 spans.");
 
-			this._oDSC._iScSpan = SPAN_SIZE_6;
-			this._oDSC._iMcSpan = SPAN_SIZE_6;
+			this._oDSC.setProperty("scSpan", SPAN_SIZE_6);
+			this._oDSC.setProperty("mcSpan", SPAN_SIZE_6);
 			this._oDSC._MCVisible = false;
 			this._oDSC._SCVisible = true;
 			assert.ok(this._oDSC._shouldSetHeight(), "Height should be set if either main or side is visible.");
 
-			this._oDSC._iScSpan = SPAN_SIZE_6;
-			this._oDSC._iMcSpan = SPAN_SIZE_6;
+			this._oDSC.setProperty("scSpan", SPAN_SIZE_6);
+			this._oDSC.setProperty("mcSpan", SPAN_SIZE_6);
 			this._oDSC._MCVisible = true;
 			this._oDSC._SCVisible = false;
 			assert.ok(this._oDSC._shouldSetHeight(), "Height should be set if either main or side is visible.");
@@ -641,8 +641,8 @@ sap.ui.define([
 		QUnit.test("Set main and side content span sizes",function(assert) {
 			this._oDSC._setSpanSize(SPAN_SIZE_3, SPAN_SIZE_9);
 
-			assert.strictEqual(this._oDSC._iMcSpan, SPAN_SIZE_9, "Main content span size should be equal to " + SPAN_SIZE_9);
-			assert.strictEqual(this._oDSC._iScSpan, SPAN_SIZE_3, "Side content span size should be equal to " + SPAN_SIZE_3);
+			assert.strictEqual(this._oDSC.getProperty("mcSpan"), SPAN_SIZE_9, "Main content span size should be equal to " + SPAN_SIZE_9);
+			assert.strictEqual(this._oDSC.getProperty("scSpan"), SPAN_SIZE_3, "Side content span size should be equal to " + SPAN_SIZE_3);
 		});
 
 		QUnit.module("Content Query", {
@@ -664,7 +664,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("On init with contentQuery _adjustToScreenSize method should be called", function (assert) {
-			assert.ok(this._oDSC._adjustToScreenSize.calledOnce, "The resize event handler is fired once initially");
+			assert.ok(this._oDSC._adjustToScreenSize.called, "The resize event handler is fired once initially");
 			assert.strictEqual(this._oDSC.getCurrentBreakpoint(), M, "The current breakpoint in this setup should be 'M'");
 		});
 
@@ -816,7 +816,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("breakpointChange event not fired initially", function(assert) {
-			var fnDone = assert.async(),
+			var fnDone = assert.async(2),
 				oDSC = new DynamicSideContent({containerQuery: true}),
 				oBreakpointChangedSpy = this.spy(oDSC, "fireBreakpointChanged"),
 				oContainer = document.getElementById("content"),
