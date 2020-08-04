@@ -56,7 +56,8 @@ sap.ui.define([
 						singularName: "ariaLabelledBy"
 					}
 				}
-			}
+			},
+			renderer: null // this is a popup control without a renderer
 		});
 
 	ColumnHeaderPopover.prototype.init = function() {

@@ -87,7 +87,8 @@ sap.ui.define([
 				 * If you want to change some of the button properties, you would need to bind them to a model.
 				 */
 				customAnchorBarButton: {type: "sap.m.Button", multiple: false}
-			}
+			},
+			renderer: null // control has no renderer (it is an abstract class)
 		}
 	});
 

@@ -190,7 +190,9 @@ sap.ui.define(['sap/ui/core/Control', './ExportColumn', './ExportRow', './Export
 				}
 			}
 
-		}
+		},
+
+		renderer: null // this control class has no renderer, it is a non-visual control
 
 	});
 

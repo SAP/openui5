@@ -59,7 +59,8 @@ sap.ui.define(['./Panel', './library', 'sap/ui/core/library'],
 			 * This property is not used. To identify the selected tab in a TabStrip selectedIndex is used.
 			 */
 			selected : {type : "boolean", group : "Behavior", defaultValue : false, deprecated: true}
-		}
+		},
+		renderer: null // this control has no own renderer, it is rendered by the TabStripRenderer
 	}});
 
 	/*

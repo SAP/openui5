@@ -33,7 +33,8 @@ sap.ui.define([
 		metadata: {
 			library: "sap.m",
 			properties: {}
-		}
+		},
+		renderer: null // this control has no renderer
 	});
 
 	return UploadCollectionToolbarPlaceholder;
