@@ -1819,6 +1819,7 @@ sap.ui.define([
 
 	Table.prototype._bindRows = function(oBindingInfo) {
 		initBindingFlags(this);
+		destroyVirtualRow(this);
 
 		// Temporary fix for the Support Assistant hacks. Support Assistant should implement a selection plugin.
 		// TODO: Before we recommend to implement a selection plugin -> Complete BLI CPOUIFTEAMB-1464
@@ -2371,21 +2372,33 @@ sap.ui.define([
 			return;
 		}
 
-		// Special handling for "AutoExpandSelect" of the V4 ODataModel.
 		if (oEventInfo.detailedReason === "AddVirtualContext") {
-			var oVirtualRow = this._getRowClone("virtual");
-			oVirtualRow.setBindingContext(this._getRowContexts(null, true)[0], this.getBindingInfo("rows").model);
-			this.addAggregation("rows", oVirtualRow,true);
-			this.removeAggregation("rows", oVirtualRow, true);
-			oVirtualRow.destroy();
+			createVirtualRow(this);
 			return;
 		} else if (oEventInfo.detailedReason === "RemoveVirtualContext") {
+			destroyVirtualRow(this);
 			return;
 		}
 
 		this._bContextsAvailable = true;
 		triggerRowsUpdate(this, sReason);
 	};
+
+	function createVirtualRow(oTable) {
+		var oVirtualContext = oTable._getRowContexts(null, true)[0];
+
+		destroyVirtualRow(oTable);
+		oTable._oVirtualRow = oTable._getRowClone("virtual");
+		oTable._oVirtualRow.setBindingContext(oVirtualContext, oTable.getBindingInfo("rows").model);
+		oTable.addAggregation("_hiddenDependents", oTable._oVirtualRow);
+	}
+
+	function destroyVirtualRow(oTable) {
+		if (oTable._oVirtualRow) {
+			oTable._oVirtualRow.destroy();
+			delete oTable._oVirtualRow;
+		}
+	}
 
 	/**
 	 * Triggers an update of the rows.

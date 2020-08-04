@@ -270,8 +270,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Control} oField Control to which the <code>FieldHelp</code> element is connected to
 	 * @returns {sap.ui.mdc.field.FieldHelpBase} Reference to <code>this</code> in order to allow method chaining
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.connect = function(oField) {
@@ -299,7 +299,8 @@ sap.ui.define([
 	 * This is the control set by the <code>connect</code> function or the parent.
 	 *
 	 * @returns {sap.ui.core.Control} Control to which the <code>FieldHelp</code> element is connected
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._getField = function() {
@@ -316,7 +317,8 @@ sap.ui.define([
 	 * Returns the control for which the suggestion is opened.
 	 *
 	 * @returns {sap.ui.core.Control} Control to which the <code>FieldHelp</code> element is connected
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._getControlForSuggestion = function() {
@@ -337,7 +339,8 @@ sap.ui.define([
 	 * This is taken from the connected field.
 	 *
 	 * @returns {string} FieldPath
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getFieldPath = function() {
@@ -415,8 +418,8 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bSuggestion Flag that determines whether field help is opened for suggestion or for complex help
 	 *
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.open = function(bSuggestion) {
@@ -468,8 +471,8 @@ sap.ui.define([
 	 * <b>Note:</b> This function must only be called by the control the <code>FieldHelp</code> element
 	 * belongs to, not by the application.
 	 *
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.close = function() {
@@ -501,8 +504,8 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bSuggestion Flag that determines whether field help is opened for suggestion or for complex help
 	 *
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.toggleOpen = function(bSuggestion) {
@@ -543,8 +546,8 @@ sap.ui.define([
 	 * @returns {boolean} true if open
 	 *
 	 * @since 1.66.0
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.isOpen = function(bCheckClosing) {
@@ -571,8 +574,8 @@ sap.ui.define([
 	 * belongs to, not by the application.
 	 *
 	 * @since 1.73.0
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.skipOpening = function() {
@@ -594,7 +597,8 @@ sap.ui.define([
 	 * To be used by an inherited FieldHelp, not from outside.
 	 *
 	 * @returns {sap.m.Popover} Popover
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._createPopover = function() {
@@ -651,7 +655,8 @@ sap.ui.define([
 	 * To be used by an inherited <code>FieldHelp</code> element, not from outside.
 	 *
 	 * @returns {sap.m.Popover} Popover
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._getPopover = function() {
@@ -672,7 +677,8 @@ sap.ui.define([
 	 * To be used by an inherited <code>FieldHelp</code> element, not from outside.
 	 *
 	 * @param {object} oEvent Event object
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._handleAfterOpen = function(oEvent) {
@@ -684,7 +690,8 @@ sap.ui.define([
 	 * To be used by an inherited <code>FieldHelp</code> element, not from outside.
 	 *
 	 * @param {object} oEvent Event object
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._handleAfterClose = function(oEvent) {
@@ -710,8 +717,8 @@ sap.ui.define([
 	 * belongs to, not by the application.
 	 *
 	 * @returns {boolean|Promise} if <code>true</code>, the field help should open by typing. If determined asynchronously, a <code>Promise</code> is returned
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.openByTyping = function() {
@@ -731,8 +738,8 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} If <code>true</code>, the field help should open when user clicks into the connected field
 	 * @since 1.81.0
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.openByClick = function() {
@@ -747,8 +754,8 @@ sap.ui.define([
 	 * @returns {boolean} if true, focus goes to the value help, if false it stays in the calling control.
 	 *
 	 * @since 1.75.0
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.isFocusInHelp = function() {
@@ -765,8 +772,8 @@ sap.ui.define([
 	 *
 	 * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
 	 *
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.navigate = function(iStep) {
@@ -803,8 +810,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. (Inside a table the <code>FieldHelp</code> element might be connected to a different row.)
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 *
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, oBindingContext) {
@@ -829,8 +836,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. (Inside a table the <code>FieldHelp</code> element might be connected to a different row.)
 	 * @returns {any|sap.ui.mdc.field.FieldHelpItem|Promise} Key for description or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 *
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getKeyForText = function(sText, oBindingContext) {
@@ -856,7 +863,8 @@ sap.ui.define([
 	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key, key for description or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 *
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @since 1.77.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -874,7 +882,8 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} Flag if backend requests are supported
 	 *
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @since 1.81.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -901,8 +910,8 @@ sap.ui.define([
 	 * @param {boolean} bCheckDescription If set, the field help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
 	 * @returns {sap.ui.mdc.field.FieldHelpItem|Promise} Object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 *
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
 	 * @since 1.77.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1008,8 +1017,8 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} True if field help can be used for input validation
 	 *
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.75.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1027,8 +1036,8 @@ sap.ui.define([
 	 * <b>Note:</b> This function must only be called by the control the <code>FieldHelp</code> element
 	 * belongs to, not by the application.
 	 *
-	 * @public
-	 * @restricted sap.ui.mdc.field.FieldBase
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.66.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1043,7 +1052,8 @@ sap.ui.define([
 	 *
 	 * @param {string} oContent Content control to be placed at the <code>Popover</code>
 	 * @returns {sap.ui.mdc.field.FieldHelpBase} Reference to <code>this</code> to allow method chaining
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._setContent = function(oContent) {
@@ -1119,7 +1129,8 @@ sap.ui.define([
 	 * @param {boolean} bSuggestion Flag if field help is opened for a suggestion or for ValueHelp
 	 * @param {function} fnCallback Callback function executed after asynchronous execution
 	 * @returns {boolean} True if the field help can be opened synchronously
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @sincs 1.77.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1141,7 +1152,8 @@ sap.ui.define([
 	 * @param {boolean} bSuggestion Flag if field help is opened for a suggestion or for ValueHelp
 	 * @param {function} fnCallback Callback function executed after asynchronous execution
 	 * @returns {boolean} True if the field help can be opened synchronously
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @sincs 1.77.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

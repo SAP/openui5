@@ -32,8 +32,8 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-	function _getChangesForVariantSwitch(mPropertyBag) {
-		var aCurrentVariantChanges = VariantManagementState.getVariantChanges(
+	function _getControlChangesForVariantSwitch(mPropertyBag) {
+		var aCurrentVariantChanges = VariantManagementState.getControlChangesForVariant(
 			Object.assign(
 				_pick(mPropertyBag, ["vmReference", "variantsMap", "reference"]), {
 					changeInstance: true,
@@ -41,7 +41,7 @@ sap.ui.define([
 				}
 			)
 		);
-		var aNewChanges = VariantManagementState.getVariantChanges(
+		var aNewChanges = VariantManagementState.getControlChangesForVariant(
 			Object.assign(
 				_pick(mPropertyBag, ["vmReference", "variantsMap", "reference"]), {
 					changeInstance: true,
@@ -119,7 +119,7 @@ sap.ui.define([
 				//TODO: should be a function in FlexState e.g. getUIChanges()
 				mPropertyBag.changesMap = mPropertyBag.flexController._oChangePersistence.getChangesMapForComponent().mChanges;
 				mPropertyBag.variantsMap = VariantManagementState.getContent(mPropertyBag.reference);
-				var mChangesToBeSwitched = _getChangesForVariantSwitch(mPropertyBag);
+				var mChangesToBeSwitched = _getControlChangesForVariantSwitch(mPropertyBag);
 
 				return Reverter.revertMultipleChanges(mChangesToBeSwitched.changesToBeReverted, mPropertyBag)
 				//TODO: apply variantChanges() should be moved out of flex controller

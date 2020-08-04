@@ -616,6 +616,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapenter = function(oEvent) {
+		var oTokenizer = this.getAggregation("tokenizer");
 		InputBase.prototype.onsapenter.apply(this, arguments);
 
 		// validate if an item is already selected
@@ -626,8 +627,8 @@ function(
 		}
 
 		//Open popover with items if in readonly mode and has Nmore indicator
-		if (!this.getEditable() && this.getAggregation("tokenizer").getHiddenTokensCount() && oEvent.target === this.getFocusDomRef()) {
-			this._handleIndicatorPress(oEvent);
+		if (!this.getEditable() && oTokenizer.getHiddenTokensCount() && oEvent.target === this.getFocusDomRef()) {
+			oTokenizer._togglePopup(oTokenizer.getTokensPopup());
 		}
 
 	};
@@ -856,7 +857,7 @@ function(
 			if (bEditable) {
 				this._togglePopover();
 			} else {
-				this._toggleReadonlyPopover(this.getDomRef());
+				this._handleIndicatorPress();
 			}
 			return;
 		}
@@ -1074,20 +1075,6 @@ function(
 	MultiComboBox.prototype.forwardEventHandlersToSuggPopover = function (oSuggPopover) {
 		ComboBoxBase.prototype.forwardEventHandlersToSuggPopover.apply(this, arguments);
 		oSuggPopover.setShowSelectedPressHandler(this._filterSelectedItems.bind(this));
-	};
-
-	/**
-	 * Returns a modified instance type of <code>sap.m.Popover</code> used in read-only mode.
-	 *
-	 * @returns {sap.m.Popover} The Popover instance
-	 * @private
-	 */
-	MultiComboBox.prototype._getReadOnlyPopover = function() {
-		if (!this._oReadOnlyPopover) {
-			this._oReadOnlyPopover = this._createReadOnlyPopover();
-		}
-
-		return this._oReadOnlyPopover;
 	};
 
 	/**
@@ -2125,29 +2112,21 @@ function(
 	/**
 	 * Handler for the press event on the N-more label.
 	 *
-	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
-	MultiComboBox.prototype._handleIndicatorPress = function(oEvent) {
+	MultiComboBox.prototype._handleIndicatorPress = function() {
 		var oPicker,
-			oTokenizer = this.getAggregation("tokenizer"),
-			aTokens = oTokenizer.getTokens();
-
-		if (aTokens.length === 1 && aTokens[0].getTruncated()) {
-			// this is needed as upon syncing and opening the picker new token is created
-			// and the width of its text should be calculated properly.
-			oTokenizer.setFirstTokenTruncated(false);
-		}
-
-		this.syncPickerContent();
-		this._filterSelectedItems(oEvent, true);
-		this.focus();
+			oTokenizer = this.getAggregation("tokenizer");
 
 		if (this.getEditable()) {
+			this.syncPickerContent();
+			this._filterSelectedItems({}, true);
+			this.focus();
+
 			oPicker = this.getPicker();
 			oPicker.open();
 		} else {
-			this._toggleReadonlyPopover(oTokenizer);
+			oTokenizer._togglePopup(oTokenizer.getTokensPopup());
 		}
 
 		if (this.isPickerDialog()) {
@@ -2176,24 +2155,6 @@ function(
 	};
 
 	/**
-	 * Close or open the suggestion read-only popover depending on the current state
-	 *
-	 * @private
-	 */
-	MultiComboBox.prototype._toggleReadonlyPopover = function(oOpenByControl) {
-		var oPopover = this._getReadOnlyPopover(),
-			oPopoverIsOpen = oPopover.isOpen();
-
-		if (oPopoverIsOpen) {
-			oPopover.close();
-		} else {
-			this.syncPickerContent(true);
-			this._updatePopoverBasedOnEditMode(false);
-			oPopover.openBy(oOpenByControl);
-		}
-	};
-
-	/**
 	 * Create an instance type of <code>sap.m.Tokenizer</code>.
 	 *
 	 * @returns {sap.m.Tokenizer} The tokenizer instance
@@ -2204,17 +2165,21 @@ function(
 			renderMode: TokenizerRenderMode.Narrow
 		}).attachTokenChange(this._handleTokenChange, this);
 
-		oTokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
+		oTokenizer.getTokensPopup()
+			.attachAfterOpen(function () {
+				if (oTokenizer.hasOneTruncatedToken()) {
+					oTokenizer.setFirstTokenTruncated(false);
+				}
+			})
+			.attachAfterClose(function () {
+				var aTokens = oTokenizer.getTokens();
+				if (aTokens.length === 1 && !aTokens[0].getTruncated()) {
+					oTokenizer.setFirstTokenTruncated(true);
+				}
+			});
 
 		oTokenizer.addEventDelegate({
-			onAfterRendering: this._onAfterRenderingTokenizer,
-			onfocusin: function (oEvent) {
-
-				// if a token is selected, the tokenizer should not scroll
-				if (this.getEditable() && (!oEvent.target.classList.contains("sapMToken"))) {
-					oTokenizer.setRenderMode(TokenizerRenderMode.Loose);
-				}
-			}
+			onAfterRendering: this._onAfterRenderingTokenizer
 		}, this);
 
 		return oTokenizer;
@@ -2227,6 +2192,11 @@ function(
 	 */
 	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
 		var oTokenizer = this.getAggregation("tokenizer");
+		if (this.getEditable()) {
+			oTokenizer.addStyleClass("sapMTokenizerIndicatorDisabled");
+		} else {
+			oTokenizer.removeStyleClass("sapMTokenizerIndicatorDisabled");
+		}
 		setTimeout(this._syncInputWidth.bind(this, oTokenizer), 0);
 		setTimeout(this._handleNMoreAccessibility.bind(this), 0);
 		setTimeout(oTokenizer["scrollToEnd"].bind(oTokenizer), 0);
@@ -2470,6 +2440,25 @@ function(
 			if (oEvent.srcControl === this) {
 				Tokenizer.prototype.onsapprevious.apply(this.getAggregation("tokenizer"), arguments);
 			}
+		}
+	};
+
+	/**
+	 * Handles control click event.
+	 *
+	 * @param oEvent
+	 * @protected
+	 */
+	MultiComboBox.prototype.onclick = function (oEvent) {
+		var bEditable = this.getEditable(),
+			bEnabled = this.getEnabled(),
+			bNMoreLableClick = oEvent.target.className.indexOf("sapMTokenizerIndicator") > -1,
+			bTruncatedTokenClick = oEvent.target.className.indexOf("sapMToken") > -1 && this.getAggregation("tokenizer").hasOneTruncatedToken();
+
+		if (bEditable && bEnabled && (bNMoreLableClick || bTruncatedTokenClick)) {
+
+			oEvent.preventDefault();
+			this._handleIndicatorPress();
 		}
 	};
 
@@ -3043,10 +3032,11 @@ function(
 	 * @override
 	 */
 	MultiComboBox.prototype.setEditable = function (bEditable) {
-		var oList = this._getList();
+		var oList = this._getList(),
+			oTokenizer = this.getAggregation("tokenizer");
 
 		ComboBoxBase.prototype.setEditable.apply(this, arguments);
-		this.getAggregation("tokenizer").setEditable(bEditable);
+		oTokenizer.setEditable(bEditable);
 
 		if (oList) {
 			this.syncPickerContent(true);
@@ -3065,19 +3055,14 @@ function(
 	 */
 	MultiComboBox.prototype._updatePopoverBasedOnEditMode = function (bEditable) {
 		var oList = this._getList(),
-			oSuggestionsPopover = this._getSuggestionsPopover(),
-			oReadOnlyPopover = this._getReadOnlyPopover();
+			oSuggestionsPopover = this._getSuggestionsPopover();
 
 		if (!oList) {
 			return;
 		}
 
 		if (bEditable) {
-			oList.setMode(ListMode.MultiSelect);
 			oSuggestionsPopover.addContent(oList);
-		} else if (!oReadOnlyPopover.getContent().length){
-			oList.setMode(ListMode.None);
-			oReadOnlyPopover.addContent(oList);
 		}
 	};
 

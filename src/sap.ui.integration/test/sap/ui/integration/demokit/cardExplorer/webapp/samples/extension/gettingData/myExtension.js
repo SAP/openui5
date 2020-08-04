@@ -5,22 +5,27 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 
 	// should return a promise
 	oExtension.getData = function () {
-		// Get information about trainings and the trainers and combine them in a way to be suitable for the card.
-		return Promise.all([this.getAvailableTrainings(), this.getTrainers()])
-				.then(function (aData) {
-					var aAvailableTrainings = aData[0],
-						aTrainers = aData[1];
+		// Get information about trainings, trainers, and locations, then combine them in a way that it suitable for the card.
+		return Promise.all([
+			this.getAvailableTrainings(),
+			this.getTrainers(),
+			this.getTrainingLocations()
+		]).then(function (aData) {
+			var aAvailableTrainings = aData[0],
+				aTrainers = aData[1],
+				aLocations = aData[2];
 
-					var aPreparedData = aAvailableTrainings.map(function (oTraining, i) {
-						return {
-							title: oTraining.training,
-							trainer: aTrainers[i].name
-						};
-					});
+			var aPreparedData = aAvailableTrainings.map(function (oTraining, i) {
+				return {
+					title: oTraining.training,
+					trainer: aTrainers[i].name,
+					location: aLocations[i].location
+				};
+			});
 
-					// what we assembled here will be used as data in the card
-					return aPreparedData;
-				});
+			// what we assembled here will be used as data in the card
+			return aPreparedData;
+		});
 	};
 
 	// Returns static info for trainings. In real scenario this would be a request to a backend service.
@@ -53,6 +58,20 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 				return {
 					name: oTrainer.FirstName + " " + oTrainer.LastName
 				};
+			});
+		});
+	};
+
+	// Requests XML data, then serializes it to an Object
+	oExtension.getTrainingLocations = function () {
+		return this.getCard().request({
+			"url": "samples/extension/gettingData/locations.xml",
+			"dataType": "xml"
+		}).then(function (oXMLDocument) {
+			var aLocations = oXMLDocument.querySelectorAll("Location");
+
+			return Array.prototype.map.call(aLocations, function (oLoc) {
+				return { location: oLoc.getAttribute("value") };
 			});
 		});
 	};

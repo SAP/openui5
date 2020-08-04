@@ -29,7 +29,21 @@ sap.ui.define([
 	 * @since 1.65
 	 * @alias sap.ui.integration.util.RequestDataProvider
 	 */
-	var RequestDataProvider = DataProvider.extend("sap.ui.integration.util.RequestDataProvider");
+	var RequestDataProvider = DataProvider.extend("sap.ui.integration.util.RequestDataProvider", {
+
+		metadata: {
+
+			/**
+			 * Defines whether it's possible to later provide a dataType property to the Request Configuration object, which declares the expected Content-Type of the response.
+			 * @since 1.81
+			 */
+			properties: {
+				allowCustomDataType: { type: "boolean", defaultValue: false }
+			}
+
+		}
+
+	});
 
 	/**
 	 * @override
@@ -78,10 +92,15 @@ sap.ui.define([
 				return;
 			}
 
+			if (!this.getAllowCustomDataType() && oRequestConfig.dataType) {
+				Log.error("To specify dataType property in the Request Configuration, first set allowCustomDataType to 'true'.");
+			}
+
 			var oRequest = {
 				"mode": oRequestConfig.mode || "cors",
 				"url": oRequestConfig.url,
 				"method": (oRequestConfig.method && oRequestConfig.method.toUpperCase()) || "GET",
+				"dataType": (this.getAllowCustomDataType() && oRequestConfig.dataType) || "json",
 				"data": oRequestConfig.parameters,
 				"headers": oRequestConfig.headers,
 				"timeout": 15000,
@@ -90,14 +109,9 @@ sap.ui.define([
 				}
 			};
 
-			if (oRequest.method === "GET") {
-				oRequest.dataType = "json";
-			}
-
 			if (this._isValidRequest(oRequest)) {
 				jQuery.ajax(oRequest).done(function (oData) {
-						resolve(oData);
-
+					resolve(oData);
 				}).fail(function (jqXHR, sTextStatus, sError) {
 					reject(sError);
 				});

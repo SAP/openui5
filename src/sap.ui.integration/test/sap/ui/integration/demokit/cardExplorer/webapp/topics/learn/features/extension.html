@@ -86,11 +86,11 @@
 
 			<h2 id="extensionApi">Extension API</h2>
 			<p>
-				In the Extension JavaScript module you can use <code>getCard()</code> method, which provides an interface to the card API.
+				In the Extension JavaScript module you can use <code>getCard()</code> method, which provides an <a id="linkToFacade" target="_blank">interface</a> to the card API.
 				For example you can resolve destinations or get access to the card parameters.
 				For detailed information about all the available methods, read the <a id="linkToExtension1" target="_blank">sap.ui.integration.Extension API.</a>
 			</p>
-	
+
 			<h2 id="extensionRequirements">
 				Extension Requirements
 			</h2>
@@ -160,9 +160,11 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 		var sPathToDemoKit = "../../../../../../../../../../#";
 
 		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+			document.getElementById("linkToFacade").href = sPathToDemoKitLocal + "/api/sap.ui.integration.widgets.CardFacade"
 			document.getElementById("linkToExtension1").href = sPathToDemoKitLocal + "/api/sap.ui.integration.Extension"
 			document.getElementById("linkToExtension2").href = sPathToDemoKitLocal + "/api/sap.ui.integration.Extension"
 		} else {
+			document.getElementById("linkToFacade").href = sPathToDemoKit + "/api/sap.ui.integration.widgets.CardFacade"
 			document.getElementById("linkToExtension1").href = sPathToDemoKit + "/api/sap.ui.integration.Extension";
 			document.getElementById("linkToExtension2").href = sPathToDemoKit + "/api/sap.ui.integration.Extension";
 		}

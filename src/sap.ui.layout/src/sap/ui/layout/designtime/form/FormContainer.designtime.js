@@ -4,11 +4,9 @@
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.FormContainer control
 sap.ui.define([
-	'sap/ui/fl/changeHandler/ChangeHandlerMediator',
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/layout/form/Form'
 ], function (
-	ChangeHandlerMediator,
 	jQuery,
 	Form
 ) {

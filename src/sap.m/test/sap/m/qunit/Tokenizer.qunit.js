@@ -325,6 +325,69 @@ sap.ui.define([
 		assert.strictEqual(sTokenizerWidth, 99 - iPaddingLeft, "When the maxWidth is set in pixels, the maxWidth property should be taken for calculation.");
 	});
 
+	QUnit.test("_mapTokenToListItem with not escaped strings does not throw an exception", function (assert) {
+		var sNotEscapedString = "asd{",
+			oToken = new Token();
+
+		oToken.setKey(sNotEscapedString);
+		oToken.setText(sNotEscapedString);
+		oToken.setTooltip(sNotEscapedString);
+
+		this.tokenizer._mapTokenToListItem(oToken);
+
+		assert.ok(true, "No exception is thrown");
+	});
+
+	QUnit.test("Handle mapping between List items and Tokens on Token deletion", function (assert) {
+		// Setup
+		var aItems, aTokens, oItem, oToken,
+			oModel = new sap.ui.model.json.JSONModel({
+				items: [{text: "Token 0"},
+					{text: "Token 1"},
+					{text: "Token 2"}
+				]
+			}),
+			oTokenizer = new Tokenizer({
+				tokens: {path: "/items", template: new Token({text: {path: "text"}})},
+				width: "200px",
+				renderMode: "Narrow"
+			})
+				.setModel(oModel)
+				.placeAt("content"),
+			oEvent = {
+				getParameter: function () {
+					return oTokenizer._getTokensList().getItems()[0];
+				}
+			};
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oModel.setData({
+			items: [
+				{text: "Token 1"},
+				{text: "Token 2"}
+			]
+		});
+
+		oTokenizer._handleNMoreIndicatorPress();
+		sap.ui.getCore().applyChanges();
+
+		oTokenizer._handleListItemDelete(oEvent);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		aItems = oTokenizer._getTokensList().getItems();
+		aTokens = oTokenizer.getTokens();
+		assert.strictEqual(aItems.length, aTokens.length, "List items and tokens should be equal:" + aItems.length);
+
+		oItem = aItems[0];
+		oToken = sap.ui.getCore().byId(oItem.data("tokenId"));
+		assert.strictEqual(oItem.getTitle(), oToken.getText(), "The first item in the list should be the same as the Token" + oItem.getTitle());
+
+		// Cleanup
+		oTokenizer.destroy();
+	});
+
 	QUnit.module("Setters", {
 		beforeEach : function() {
 			this.tokenizer = new Tokenizer();
@@ -1416,12 +1479,8 @@ sap.ui.define([
 	QUnit.test("Click on tokenizer should remove truncation", function(assert) {
 		// Arrange
 		var oToken = this.tokenizer.getTokens()[0],
-			oSpy = this.spy(),
-			oMockEvent = {
-				target: oToken.getDomRef()
-			};
+			oSpy = this.spy(this.tokenizer, "_togglePopup");
 
-		this.tokenizer._fnOnNMorePress = oSpy;
 		this.tokenizer._adjustTokensVisibility();
 		// await to set the truncation
 		this.clock.tick();
@@ -1430,7 +1489,7 @@ sap.ui.define([
 		assert.ok(oToken.getTruncated(), "Token should be truncated");
 
 		// Act
-		this.tokenizer.onclick(oMockEvent);
+		oToken.fireSelect();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "fnOnNMorePress should be called once.");

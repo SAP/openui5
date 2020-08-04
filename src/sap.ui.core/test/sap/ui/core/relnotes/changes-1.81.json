@@ -69,6 +69,46 @@
         "type": "FIX",
         "text": " FESR: collected records should be send every 60 seconds",
         "references": []
+      },
+      {
+        "id": "68d358827e48d27390f5943d0735a22a50434532",
+        "type": "FEATURE",
+        "text": " Show many shortcut hints",
+        "references": []
+      },
+      {
+        "id": "06fdafdd44528cb0e01349a25430c42230f96345",
+        "type": "FEATURE",
+        "text": " core.Component: Support for ui5:// pseudo-protocol URLs",
+        "references": []
+      },
+      {
+        "id": "22a0a31a53288c9e030c0489cf096a79122b80af",
+        "type": "FIX",
+        "text": " BindingParser: Log error when type can\u0027t be resolved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980221956"
+          }
+        ]
+      },
+      {
+        "id": "89807e8e0f6991ef0544021744e7450eda5b1de5",
+        "type": "FIX",
+        "text": " Core: allow leading digits in the segments of init-module IDs.",
+        "references": []
+      },
+      {
+        "id": "2ca2b59a359b388a7515e3c76124221b6933b50d",
+        "type": "FIX",
+        "text": " trace/FESR: Fix failing FESR qunit test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080288896"
+          }
+        ]
       }
     ]
   }

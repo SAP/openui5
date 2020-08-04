@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
-	'sap/ui/model/BindingMode'
+	'sap/ui/model/BindingMode',
+	'sap/ui/model/Context'
 ], function(
 		ManagedObjectObserver,
 		FieldBase,
@@ -24,7 +25,8 @@ sap.ui.define([
 		ConditionValidated,
 		deepEqual,
 		merge,
-		BindingMode
+		BindingMode,
+		Context
 	) {
 	"use strict";
 
@@ -143,6 +145,8 @@ sap.ui.define([
 			delete this._iConditionUpdateTimer;
 		}
 
+		this._oBindingContext = undefined;
+
 	};
 
 	Field.prototype.bindProperty = function(sName, oBindingInfo) {
@@ -163,9 +167,20 @@ sap.ui.define([
 
 		FieldBase.prototype._handleModelContextChange.apply(this, arguments);
 
-		if (!this._oDataType) {
-			var oBinding = this.getBinding("value");
-			if (oBinding) {
+		var oBinding = this.getBinding("value");
+		if (oBinding) {
+			var oBindingContext = oBinding.getContext();
+
+			if (Context.hasChanged(this._oBindingContext, oBindingContext)) {
+				// BindingContextChanged -> if parsing error trigger update to remove valueState and wrong input
+				this._oBindingContext = oBindingContext;
+				if (this._bParseError) {
+					this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates
+					this._bParseError = false;
+				}
+			}
+
+			if (!this._oDataType) {
 				this._oDataType = oBinding.getType();
 				this.invalidate(); // as new inner control might be needed
 			}

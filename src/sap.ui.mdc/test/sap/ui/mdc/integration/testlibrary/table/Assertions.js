@@ -7,6 +7,7 @@
 sap.ui.define([
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/matchers/AggregationContainsPropertyEqual",
 	"./Util",
 	"./waitForTable",
 	"sap/ui/mdc/integration/testlibrary/p13n/waitForP13nDialog",
@@ -15,6 +16,7 @@ sap.ui.define([
 ], function(
 	Ancestor,
 	Properties,
+	AggregationContainsPropertyEqual,
 	TableUtil,
 	waitForTable,
 	waitForP13nDialog,
@@ -120,15 +122,21 @@ sap.ui.define([
 		iShouldSeeARowWithData: function(iIndexOfRow, aExpectedData) {
 			return waitForTable.call(this, {
 				success: function(oTable) {
+					var aMatchers = [];
+					aMatchers.push(new AggregationContainsPropertyEqual({
+						aggregationName: "cells",
+						propertyName: "value",
+						propertyValue: aExpectedData[0]
+					}));
+					aMatchers.push(new Ancestor(oTable, false));
 					return this.waitFor({
 						controlType: "sap.m.ColumnListItem",
-						matchers: [
-							new Ancestor(oTable, false)
-						],
-						success: function(oRows) {
-							var aData = [];
-							oRows[iIndexOfRow].getCells().forEach(function(oCell) {
-								aData.push(oCell.getValue());
+						matchers: aMatchers,
+						success: function(aRows) {
+							var oRow = aRows[0];
+							QUnit.assert.equal(iIndexOfRow, oRow.getParent().indexOfItem(oRow), "Row found in correct index");
+							var aData = oRow.getCells().map(function(oCell) {
+								return oCell.getValue();
 							});
 							QUnit.assert.deepEqual(aData, aExpectedData, "The row with index " + iIndexOfRow + " contains the right data");
 						},

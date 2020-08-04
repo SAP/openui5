@@ -204,9 +204,7 @@ sap.ui.define([
 			bNewSelectedValue = !bSelected;
 		}
 
-		if (!this.getTruncated()) {
-			this.setSelected(bNewSelectedValue);
-		 }
+		this.setSelected(bNewSelectedValue);
 
 		this.firePress();
 

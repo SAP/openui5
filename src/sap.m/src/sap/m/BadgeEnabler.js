@@ -3,9 +3,12 @@
  */
 
 // Provides helper sap.m.BadgeEnabler
-sap.ui.define(
-	['sap/m/BadgeCustomData', 	'sap/base/Log'],
-	function(BadgeCustomData, Log) {
+sap.ui.define([
+		'sap/m/BadgeCustomData',
+		'sap/base/Log',
+		'sap/m/library'
+	],
+	function(BadgeCustomData, Log, library) {
 		"use strict";
 
 		var IBADGE_CSS_CLASS = "sapMBadge";
@@ -17,6 +20,8 @@ sap.ui.define(
 
 			inline: "sapMBadgeInline"
 		};
+
+		var IBADGE_STATE = library.BadgeState;
 
 		/**
 		 * @class A helper class for implementing the {@link sap.m.IBadge} interface.
@@ -55,7 +60,6 @@ sap.ui.define(
 				oDelegator.addEventDelegate({
 					onAfterRendering: _renderBadgeDom
 				}, this);
-
 			};
 
 			//Selects specific DOM element, for the badge to be applied in
@@ -96,7 +100,7 @@ sap.ui.define(
 
 			//removing badge DOM element
 			function _removeBadgeDom() {
-				var oBadgeElement = jQuery("#" + this.getId() + IBADGE_CSS_CLASS);
+				var oBadgeElement = _getBadgeElement.call(this);
 
 				this._isBadgeAttached = false;
 
@@ -104,13 +108,29 @@ sap.ui.define(
 				oBadgeElement.width();
 				oBadgeElement.addClass("sapMBadgeAnimationRemove");
 				oBadgeElement.attr("data-badge", "");
+
+				callHandler.call(this, "", IBADGE_STATE["Disappear"]);
+
 				return this;
+			}
+
+
+			//returns the badge DOM Element
+			function _getBadgeElement() {
+				return this.$(IBADGE_CSS_CLASS);
+			}
+
+			//returns the badge DOM Element ID
+			function _getBadgeId() {
+				return this.getId() + "-" + IBADGE_CSS_CLASS;
 			}
 
 			//removing badge DOM element
 			function _createBadgeDom() {
 				var _oNode,
-					oBadgeElement = jQuery('#' + this.getId() + IBADGE_CSS_CLASS);
+					sBadgeId = _getBadgeId.call(this),
+					oBadgeElement = _getBadgeElement.call(this),
+					sValue = this._oBadgeCustomData.getValue();
 				this._oBadgeContainer = this._oBadgeConfig && this._oBadgeConfig.selector ?
 					_getContainerDomElement(this._oBadgeConfig.selector, this) :
 					this.$();
@@ -119,32 +139,50 @@ sap.ui.define(
 				}
 
 				_oNode = jQuery('<div></div>').addClass(IBADGE_CSS_CLASS + "Indicator");
-				_oNode.attr("id", this.getId() + IBADGE_CSS_CLASS);
-				_oNode.attr("data-badge", this._oBadgeCustomData.getValue());
+				_oNode.attr("id", sBadgeId);
+				_oNode.attr("data-badge", sValue);
+				_oNode.attr("aria-label", getAriaLabelText.call(this));
 				_oNode.appendTo(this._oBadgeContainer);
 				_oNode.addClass("sapMBadgeAnimationAdd");
 
 				this._isBadgeAttached = true;
 				this._oBadgeContainer.addClass(IBADGE_CSS_CLASS);
+
+				callHandler.call(this, sValue, IBADGE_STATE["Appear"]);
 			}
 
 			//Manually updating the 'span', containing badge
 			this.updateBadge = function (sValue) {
-				var oBadgeElement = jQuery('#' + this.getId() + IBADGE_CSS_CLASS);
+				var oBadgeElement = _getBadgeElement.call(this);
 				oBadgeElement.removeClass("sapMBadgeAnimationUpdate");
 				if (isValidValue(sValue)) {
 					if (this._isBadgeAttached) {
 						oBadgeElement.attr("data-badge", sValue);
+						oBadgeElement.attr("aria-label", getAriaLabelText.call(this));
 						oBadgeElement.width();
 						oBadgeElement.addClass("sapMBadgeAnimationUpdate");
-					} else {
-						_createBadgeDom.call(this);
 
+						callHandler.call(this, sValue, IBADGE_STATE["Updated"]);
+					} else if (this.getDomRef()) {
+						_createBadgeDom.call(this);
 					}
 				} else if (this._isBadgeAttached) {
 					_removeBadgeDom.call(this);
 				}
 			};
+
+			function getAriaLabelText() {
+				var sAriaLabelGetter = this.getAriaLabelBadgeText;
+
+				return sAriaLabelGetter && typeof sAriaLabelGetter === "function" && sAriaLabelGetter.call(this);
+			}
+
+			function callHandler(value, state) {
+				if (this.onBadgeUpdate && typeof this.onBadgeUpdate === "function") {
+					var sBadgeId = _getBadgeId.call(this);
+					return this.onBadgeUpdate(value, state, sBadgeId);
+				}
+			}
 
 			//Validating the input for the badge
 			function isValidValue (sValue) {

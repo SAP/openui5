@@ -45,7 +45,7 @@ sap.ui.define([
 	 * @abstract
 	 *
 	 * @private
-	 * @restricted sap.ui.mdc.field.FieldValueHelp
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 */
 	var ValueHelpPanel = XMLComposite.extend("sap.ui.mdc.field.ValueHelpPanel", {
 		metadata: {

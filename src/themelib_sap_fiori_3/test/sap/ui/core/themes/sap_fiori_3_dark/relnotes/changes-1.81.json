@@ -79,6 +79,29 @@
             "reference": "2080266204"
           }
         ]
+      },
+      {
+        "id": "b567436964718592726d59147c782ccf5a5808a5",
+        "type": "FEATURE",
+        "text": " sap.m.IBadgeEnabler: Implement animations",
+        "references": []
+      },
+      {
+        "id": "fe94e64b6521720a1695a7eacfe36ad937bd256b",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Appointment text on 3 lines",
+        "references": []
+      },
+      {
+        "id": "cbb0fc2b10e1d5dc3689e06b3f90c0e0b9dea853",
+        "type": "FIX",
+        "text": " ObjectPageHeader: Fixed incorrect layout of the title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080248483"
+          }
+        ]
       }
     ]
   }

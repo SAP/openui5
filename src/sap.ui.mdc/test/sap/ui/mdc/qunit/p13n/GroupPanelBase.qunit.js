@@ -210,4 +210,14 @@ sap.ui.define([
         assert.ok(!oSecondPanel.getExpanded(), "Panel is collapsed when calling with 'false'' as second parameter");
     });
 
+
+    QUnit.test("Check 'onReset' Button visibility", function(assert){
+
+        assert.ok(!this.oPanel._oResetBtn.getVisible(), "No handler --> No Reset button");
+
+        this.oPanel.setOnReset(function(){});
+
+        assert.ok(this.oPanel._oResetBtn.getVisible(), "Once handler is provided, Button is visible");
+    });
+
 });

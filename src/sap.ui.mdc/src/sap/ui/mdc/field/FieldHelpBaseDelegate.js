@@ -16,8 +16,8 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @experimental
-	 * @restricted sap.ui.mdc.field.FieldHelpBase
 	 * @since 1.77.0
 	 * @alias sap.ui.mdc.field.FieldHelpBaseDelegate
 	 */

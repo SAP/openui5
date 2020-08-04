@@ -71,8 +71,7 @@ sap.ui.define([
 			placeholder: sLabel ? undefined : sKey,
 			type: "string",
 			enabled: this.getConfig().allowLabelChange,
-			itemKey: sKey,
-			allowBindings: false
+			itemKey: sKey
 		});
 
 		return oMapItemConfig;

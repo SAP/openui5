@@ -303,6 +303,28 @@ function(
 		oChart.destroy();
 	});
 
+	// BCP: 2080249537
+	QUnit.test("it should forward the actions to the inner toolbar aggregation", function(assert) {
+
+		// arrange
+		var done = assert.async();
+		var oButtonAction = new Button();
+
+		// act
+		var oChart = new Chart({
+			actions: [
+				oButtonAction
+			]
+		});
+
+		// assert
+		oChart.oChartPromise.finally(function() {
+			assert.ok(oChart.getActions()[0] === oButtonAction);
+			assert.ok(oChart.getAggregation("_toolbar").getActions()[0] === oButtonAction);
+			done();
+		});
+	});
+
 	QUnit.module("sap.ui.mdc.Chart: Items", {
 		beforeEach: function() {
 			var TestComponent = UIComponent.extend("test", {

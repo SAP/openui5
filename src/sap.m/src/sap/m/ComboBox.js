@@ -633,7 +633,7 @@ sap.ui.define([
 			if (this._oLastFocusedListItem) {
 				this._oLastFocusedListItem.removeStyleClass("sapMLIBFocused");
 				this._oLastFocusedListItem = null;
-			} else if (this.isOpen()) {
+			} else if (this.isOpen() && this.getFocusDomRef()) {
 				// Add aria-activedescendant because the control is not rerendered when focusing the initially selected item
 				this.getFocusDomRef().setAttribute("aria-activedescendant", oListItem.getId());
 			}
@@ -901,6 +901,10 @@ sap.ui.define([
 
 			this.synchronizeSelection();
 
+			if (!this.getOpen() && document.activeElement === this.getFocusDomRef()) {
+				this.addStyleClass("sapMFocus");
+			}
+
 			if (bFormattedTextHeaderFocused) {
 				oPseudoFocusedElement.addStyleClass("sapMPseudoFocus");
 				oList.removeStyleClass("sapMListFocus");
@@ -909,7 +913,6 @@ sap.ui.define([
 			} else if (oPseudoFocusedElement) {
 				oPseudoFocusedElement.removeStyleClass("sapMPseudoFocus");
 			}
-
 		};
 
 		/**

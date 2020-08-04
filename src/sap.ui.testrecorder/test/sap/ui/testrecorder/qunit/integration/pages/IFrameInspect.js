@@ -17,6 +17,7 @@ sap.ui.define([
 			actions: {
 				iSelectDialect: function (sDialect) {
 					this.waitFor({
+						asyncPolling: true,
 						matchers: function () {
 							return Opa5.getContext()._getRecorderControls({
 								controlType: "sap.m.Select"
@@ -25,6 +26,7 @@ sap.ui.define([
 						actions: new Press("arrow"),
 						success: function () {
 							return this.waitFor({
+								asyncPolling: true,
 								matchers: function () {
 									return Opa5.getContext()._getRecorderControls({
 										controlType: "sap.ui.core.Item",
@@ -62,6 +64,7 @@ sap.ui.define([
 				},
 				iSelectSettingCheckBox: function (sLabel, sPreference) {
 					this.waitFor({
+						asyncPolling: true,
 						matchers: function () {
 							return Opa5.getContext()._getRecorderControls({
 								controlType: "sap.m.CheckBox",
@@ -74,6 +77,7 @@ sap.ui.define([
 						actions: new Press(),
 						success: function () {
 							return this.waitFor({
+								asyncPolling: true,
 								matchers: function () {
 									return Opa5.getContext()._getRecorderControls({
 										controlType: "sap.m.Button",
@@ -105,6 +109,7 @@ sap.ui.define([
 				},
 				iSwitchMultiple: function () {
 					this.waitFor({
+						asyncPolling: true,
 						matchers: function () {
 							return Opa5.getContext()._getRecorderControls({
 								controlType: "sap.m.Switch"
@@ -121,6 +126,7 @@ sap.ui.define([
 					sAction = sAction || "Highlight";
 					var mData = testTreeAPI.getMockData(sId);
 					this.waitFor({
+						asyncPolling: true,
 						matchers: function () {
 							return Opa5.getContext()._getRecorderControls({
 								controlType: "sap.ui.codeeditor.CodeEditor",

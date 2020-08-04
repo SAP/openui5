@@ -1,0 +1,18 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "d7ea7c54019f275845e132a718fb181a53489e67",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Collapsed items are now read correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080224761"
+          }
+        ]
+      }
+    ]
+  }
+}

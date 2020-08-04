@@ -94,13 +94,13 @@ sap.ui.define([
 			var oAppComponent = flUtils.getAppComponentForControl(oControl);
 			var sControlId = oControl.getId();
 			sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
+			oOverlay.setVariantManagement(sVariantManagementReference);
 
 			// If "for" association is not valid
 			if (
 				!vAssociationElement
 				|| (Array.isArray(vAssociationElement) && vAssociationElement.length === 0)
 			) {
-				oOverlay.setVariantManagement(sVariantManagementReference);
 				return;
 			}
 

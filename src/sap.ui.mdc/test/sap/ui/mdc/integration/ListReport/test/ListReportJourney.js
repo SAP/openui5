@@ -364,7 +364,7 @@ sap.ui.define([
 		Then.onTheBooksListReportPage.iShouldSeeTheValueHelpDialog(sTitle);
 
 		var aValues = [
-			102,
+			"102",
 			"Gilman, Charlotte Perkins"
 		];
 
@@ -374,7 +374,10 @@ sap.ui.define([
 
 		var aConditions = [{
 			"operator": "EQ",
-			"values": aValues,
+			"values": [
+				102,
+				"Gilman, Charlotte Perkins"
+			],
 			"isEmpty": null,
 			"validated": "Validated"
 		}];

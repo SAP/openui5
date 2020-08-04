@@ -260,8 +260,9 @@ sap.ui.define([
 
 		// set "Number" column to invisible
 		oNameMenu.open();
+		var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
 		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-2", "click");
+		qutils.triggerMouseEvent(aSubmenuItems[2].$(), "click");
 
 		// delay execution to wait for visibility change
 		setTimeout(function() {
@@ -366,8 +367,9 @@ sap.ui.define([
 
 		// set "Number" column to invisible
 		oNameMenu.open();
+		var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
 		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-2", "click");
+		qutils.triggerMouseEvent(aSubmenuItems[2].$(), "click");
 
 		// delay execution to wait for visibility change
 		setTimeout(function() {

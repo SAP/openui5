@@ -829,7 +829,7 @@ sap.ui.define([
 	 *
 	 * @returns {string} fieldPath of the field
 	 * @private
-	 * @restricted sap.ui.mdc.field.FieldHelpBase
+	 * @ui5-restricted sap.ui.mdc.field.FieldHelpBase
 	 */
 	FieldBase.prototype.getFieldPath = function() {
 
@@ -1118,7 +1118,8 @@ sap.ui.define([
 	 * To be enhanced by <code>Field</code>, </code>FilterField</code>, or other inherited controls.
 	 *
 	 * @param {object} oChanges Changes
-	 * @protected
+	 * @private
+	 * @ui5-restricted to be enhanced by controls inherit from FieldBase
 	 */
 	FieldBase.prototype._observeChanges = function(oChanges) {
 
@@ -1266,7 +1267,7 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.core.Control} Control for value help
 	 * @private
-	 * @restricted sap.ui.mdc.field.FieldHelpBase
+	 * @ui5-restricted sap.ui.mdc.field.FieldHelpBase
 	 */
 	FieldBase.prototype.getControlForSuggestion = function() {
 
@@ -1289,7 +1290,7 @@ sap.ui.define([
 	 *
 	 * @returns {int} maxConditions used for valueHelp
 	 * @private
-	 * @restricted sap.ui.mdc.field.FieldHelpBase
+	 * @ui5-restricted sap.ui.mdc.field.FieldHelpBase
 	 */
 	FieldBase.prototype.getMaxConditionsForHelp = function() {
 
@@ -3230,7 +3231,7 @@ sap.ui.define([
 	 *
 	 * @returns {object} formatOptions of the field
 	 * @private
-	 * @restricted sap.ui.mdc.field.FieldHelpBase
+	 * @ui5-restricted sap.ui.mdc.field.FieldHelpBase
 	 */
 	FieldBase.prototype._getFormatOptions = function() {
 
@@ -3306,7 +3307,8 @@ sap.ui.define([
 	 *
 	 * @param {any} vValue Value to be checked
  	 * @returns {boolean} true if value is initial
-	 * @protected
+	 * @private
+	 * @ui5-restricted only for controls inherit from FieldBase
 	 */
 	FieldBase.prototype._checkValueInitial = function(vValue) {
 

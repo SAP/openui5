@@ -1596,5 +1596,27 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_2", "Should have the active page set to page #2...");
 	});
 
+
+	QUnit.module("No pages", {
+		beforeEach: function () {
+			this.oCarousel = new Carousel({
+			});
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCarousel.destroy();
+		}
+	});
+
+	QUnit.test("carousel.invalidate() doesn't throw error", function (assert) {
+		this.oCarousel.invalidate();
+		Core.applyChanges();
+
+		this.clock.tick(100);
+
+		assert.ok(true, 'error is not thrown');
+	});
+
 	return waitForThemeApplied();
 });

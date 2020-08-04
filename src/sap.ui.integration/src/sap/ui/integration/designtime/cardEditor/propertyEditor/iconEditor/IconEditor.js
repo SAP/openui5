@@ -4,25 +4,25 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
-	"sap/ui/core/ListItem",
 	"sap/ui/core/Fragment",
 	'sap/ui/unified/ColorPickerPopover',
 	'sap/ui/unified/library',
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/deepClone",
 	"sap/base/util/isPlainObject",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/core/IconPool"
 ], function (
 	BasePropertyEditor,
 	isValidBindingString,
-	ListItem,
 	Fragment,
 	ColorPickerPopover,
 	UnifiedLibrary,
 	JSONModel,
 	deepClone,
 	isPlainObject,
+	isEmptyObject,
 	_omit,
 	IconPool
 ) {
@@ -164,7 +164,8 @@ sap.ui.define([
 	};
 
 	IconEditor.prototype.setValue = function(mValue) {
-		BasePropertyEditor.prototype.setValue.call(this, mValue);
+		var vNextValue = isEmptyObject(mValue) ? undefined : mValue;
+		BasePropertyEditor.prototype.setValue.call(this, vNextValue);
 		this._oIconModel.setData(
 			Object.assign(
 				{},
@@ -177,10 +178,6 @@ sap.ui.define([
 	};
 
 	function getDefaultType(vValue) {
-		if (!vValue) {
-			return oDefaultIconModelData.type;
-		}
-
 		if (isPlainObject(vValue)) {
 			if (vValue.src) {
 				if (
@@ -197,6 +194,8 @@ sap.ui.define([
 				return "text";
 			}
 		}
+
+		return oDefaultIconModelData.type;
 	}
 
 	/**

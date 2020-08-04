@@ -5,6 +5,9 @@
 // Provides control sap.m.Tokenizer.
 sap.ui.define([
 	'./library',
+	'sap/m/List',
+	'sap/m/StandardListItem',
+	'sap/m/ResponsivePopover',
 	'sap/ui/core/Control',
 	'sap/ui/core/delegate/ScrollEnablement',
 	'sap/ui/Device',
@@ -21,6 +24,9 @@ sap.ui.define([
 ],
 	function(
 		library,
+		List,
+		StandardListItem,
+		ResponsivePopover,
 		Control,
 		ScrollEnablement,
 		Device,
@@ -35,7 +41,9 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var RenderMode = library.TokenizerRenderMode;
+	var RenderMode = library.TokenizerRenderMode,
+		PlacementType = library.PlacementType,
+		ListMode = library.ListMode;
 
 	/**
 	 * Constructor for a new Tokenizer.
@@ -231,8 +239,200 @@ sap.ui.define([
 	 * @param {function} fCallback The callback
 	 * @private
 	 */
-	Tokenizer.prototype._handleNMoreIndicatorPress = function(fCallback) {
-		this._fnOnNMorePress = fCallback;
+	Tokenizer.prototype._handleNMoreIndicatorPress = function () {
+		this._togglePopup(this.getTokensPopup());
+	};
+
+	/**
+	* Getter for the list containing tokens.
+	 *
+	 * @returns {sap.m.List} The list
+	 * @private
+	 */
+	Tokenizer.prototype._getTokensList = function () {
+		if (!this._oTokensList) {
+			this._oTokensList = new List({
+				width: "auto",
+				mode: ListMode.Delete
+			}).attachDelete(this._handleListItemDelete, this);
+		}
+
+		return this._oTokensList;
+	};
+
+	/**
+	 * Changes list mode.
+	 *
+	 * @param sMode {sap.m.ListMode}
+	 * @private
+	 */
+	Tokenizer.prototype._setPopoverMode = function (sMode) {
+		var oSettings = {},
+			oPopover = this.getTokensPopup();
+
+		switch (sMode) {
+			case ListMode.Delete:
+				oSettings = {
+					showArrow: false,
+					placement: PlacementType.VerticalPreferredBottom
+				};
+				break;
+			default:
+				oSettings = {
+					showArrow: true,
+					placement: PlacementType.Auto
+				};
+				break;
+		}
+		oPopover.setShowArrow(oSettings.showArrow);
+		oPopover.setPlacement(oSettings.placement);
+
+		this._getTokensList().setMode(sMode);
+	};
+
+	/**
+	 * Fills a list by creating new list items and mapping them to certain token.
+	 *
+	 * There might be a filtering function, so only certain tokens can be mapped to a ListItem.
+	 *
+	 * @param oList {sap.m.List}
+	 * @param fnFilter {function}
+	 * @private
+	 */
+	Tokenizer.prototype._fillTokensList = function (oList, fnFilter) {
+		oList.destroyItems();
+
+		fnFilter = fnFilter ? fnFilter : function () { return true; };
+
+		this.getTokens()
+			.filter(fnFilter)
+			.forEach(function (oToken) {
+				oList.addItem(this._mapTokenToListItem(oToken));
+			}, this);
+	};
+
+	/**
+	 * Handles token deletion from the List.
+	 *
+	 * @param oEvent
+	 * @private
+	 */
+	Tokenizer.prototype._handleListItemDelete = function (oEvent) {
+		var aListItems, oItemtoFocus, iItemIndex,
+			oListItem = oEvent.getParameter("listItem"),
+			sSelectedId = oListItem && oListItem.data("tokenId"),
+			oTokenToDelete;
+
+		oTokenToDelete = this.getTokens().filter(function(oToken){
+			return (oToken.getId() === sSelectedId) && oToken.getEditable();
+		})[0];
+
+		if (oTokenToDelete) {
+			this.fireTokenUpdate({
+				addedTokens: [],
+				removedTokens: [oTokenToDelete],
+				type: Tokenizer.TokenUpdateType.Removed
+			});
+
+			aListItems = this._getTokensList().getItems();
+			iItemIndex = aListItems.indexOf(oListItem);
+			oItemtoFocus = (iItemIndex === aListItems.length - 1) ?
+				aListItems[aListItems.length - 2] : aListItems[iItemIndex + 1];
+
+			oItemtoFocus && oItemtoFocus.focus();
+			this.removeAggregation("tokens", oTokenToDelete, true);
+			oListItem.destroy();
+			oTokenToDelete.destroy();
+
+			this._adjustTokensVisibility();
+		}
+	};
+
+	/**
+	 * Returns N-More Popover/Dialog.
+	 *
+	 * @private
+	 * @ui5-restricted for sap.m.MultiInput, sap.m.MultiComboBox
+	 * @returns {sap.m.ResponsivePopup}
+	 */
+	Tokenizer.prototype.getTokensPopup = function () {
+		if (this._oPopup) {
+			return this._oPopup;
+		}
+
+		this._oPopup = new ResponsivePopover({
+			showArrow: false,
+			showHeader: false,
+			placement: PlacementType.Auto,
+			offsetX: 0,
+			offsetY: 3,
+			horizontalScrolling: false,
+			content: this._getTokensList()
+		})
+			.attachBeforeOpen(function () {
+				var oPopup = this._oPopup;
+				if (oPopup.getContent && !oPopup.getContent().length) {
+					oPopup.addContent(this._getTokensList());
+				}
+				this._fillTokensList(this._getTokensList());
+			}, this);
+
+		this.addDependent(this._oPopup);
+
+		if (Device.system.phone) {
+			this._oPopup.setEndButton(new sap.m.Button({
+				text: oRb.getText("SUGGESTIONSPOPOVER_CLOSE_BUTTON"),
+				press: function () {
+					this._oPopup.close();
+				}.bind(this)
+			}));
+		}
+
+		return this._oPopup;
+	};
+
+	/**
+	 * Toggles the popover.
+	 *
+	 * @private
+	 * @ui5-restricted for sap.m.MultiInput, sap.m.MultiComboBox
+	 */
+	Tokenizer.prototype._togglePopup = function (oPopover) {
+		var oOpenByDom,
+			oDomRef = this.getDomRef(),
+			oPopoverIsOpen = oPopover.isOpen(),
+			bEditable = this.getEditable();
+
+		this._setPopoverMode(bEditable ? ListMode.Delete : ListMode.None);
+
+		if (oPopoverIsOpen) {
+			oPopover.close();
+		} else {
+			oOpenByDom = bEditable || this.hasOneTruncatedToken() ? oDomRef : this._oIndicator[0];
+			oOpenByDom = oOpenByDom && oOpenByDom.className.indexOf("sapUiHidden") === -1 ? oOpenByDom : oDomRef;
+			oPopover.openBy(oOpenByDom || oDomRef);
+		}
+	};
+
+	/**
+	 * Generates a StandardListItem from token.
+	 *
+	 * @param {sap.m.Token} oToken The token
+	 * @private
+	 * @returns {sap.m.StandardListItem | null} The generated ListItem
+	 */
+	Tokenizer.prototype._mapTokenToListItem = function (oToken) {
+		if (!oToken) {
+			return null;
+		}
+
+		var oListItem = new StandardListItem({
+			selected: true
+		}).data("tokenId", oToken.getId());
+
+		oListItem.setTitle(oToken.getText());
+
+		return oListItem;
 	};
 
 	/** Gets the width of the tokenizer that will be used for the calculation for hiding
@@ -1153,6 +1353,17 @@ sap.ui.define([
 			}.bind(this)
 		});
 
+		oToken.attachSelect(function () {
+			var oFocus = this.hasOneTruncatedToken() ? oToken : this;
+
+			if (!this.hasOneTruncatedToken() || this.hasStyleClass("sapMTokenizerIndicatorDisabled")) {
+				return;
+			}
+
+			this.getTokensPopup().setInitialFocus(oFocus);
+			this._togglePopup(this.getTokensPopup());
+		}.bind(this));
+
 		oToken.getAggregation("deleteIcon").attachPress(function () {
 			if (this.getEnabled()) {
 				this.handleTokenDeletion(oToken);
@@ -1173,6 +1384,10 @@ sap.ui.define([
 			token : oToken,
 			type : Tokenizer.TokenChangeType.Removed
 		});
+
+		if (this.getTokensPopup().isOpen()) {
+			this._fillTokensList(this._getTokensList());
+		}
 
 		return oToken;
 	};
@@ -1282,6 +1497,10 @@ sap.ui.define([
 		}
 
 		this.scrollToEnd();
+
+		if (this.getTokensPopup().isOpen()) {
+			this._fillTokensList(this._getTokensList());
+		}
 
 		this.fireTokenChange({
 			addedTokens : [],
@@ -1394,20 +1613,19 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The occuring event
 	 * @protected
 	 */
-	Tokenizer.prototype.onclick = function(oEvent) {
+	Tokenizer.prototype.onclick = function (oEvent) {
 		var bFireIndicatorHandler;
 
 		if (!this.getEnabled()) {
 			return;
 		}
 
-		bFireIndicatorHandler =
-			oEvent.target.classList.contains("sapMTokenizerIndicator") ||
-			oEvent.target === this.getFocusDomRef() ||
-			this.hasOneTruncatedToken();
+		bFireIndicatorHandler = !this.hasStyleClass("sapMTokenizerIndicatorDisabled") &&
+			(oEvent.target === this.getFocusDomRef()
+				|| oEvent.target.classList.contains("sapMTokenizerIndicator"));
 
 		if (bFireIndicatorHandler) {
-			this._fnOnNMorePress && this._fnOnNMorePress(oEvent);
+			this._handleNMoreIndicatorPress();
 		}
 	};
 
@@ -1435,6 +1653,25 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype.exit = function() {
 		this._deregisterResizeHandler();
+
+		if (this._oTokensList) {
+			this._oTokensList.destroy();
+			this._oTokensList = null;
+		}
+
+		if (this._oScroller) {
+			this._oScroller.destroy();
+			this._oScroller = null;
+		}
+
+		if (this._oPopup) {
+			this._oPopup.destroy();
+			this._oPopup = null;
+		}
+
+		this._oTokensWidthMap = null;
+		this._oIndicator = null;
+		this._aTokenValidators = null;
 	};
 
 	/**

@@ -14,6 +14,8 @@ sap.ui.define([
 	function(Device, ResizeHandler, library, FormLayout, ColumnLayoutRenderer, jQuery) {
 	"use strict";
 
+	/* global ResizeObserver */
+
 	/**
 	 * Constructor for a new <code>sap.ui.layout.form.ColumnLayout</code>.
 	 *
@@ -111,11 +113,16 @@ sap.ui.define([
 
 		this._resizeProxy = jQuery.proxy(_handleResize, this);
 
+		if (typeof ResizeObserver === "function") {
+			this._oResizeObserver = new ResizeObserver(this._resizeProxy);
+		}
+
 	};
 
 	ColumnLayout.prototype.exit = function(){
 
 		_cleanup.call(this);
+		this._oResizeObserver = undefined;
 
 	};
 
@@ -131,8 +138,15 @@ sap.ui.define([
 
 	ColumnLayout.prototype.onAfterRendering = function( oEvent ){
 
-		this._sResizeListener = ResizeHandler.register(this, this._resizeProxy);
-		_handleResize.call(this);
+		if (this._oResizeObserver) {
+			var oDomRef = this.getDomRef();
+			this._oResizeObserver.observe(oDomRef);
+		} else {
+			// resize handler fallback for old browsers (e.g. IE 11)
+			this._sResizeListener = ResizeHandler.register(this, this._resizeProxy);
+		}
+
+		_reflow.call(this);
 
 	};
 
@@ -544,6 +558,9 @@ sap.ui.define([
 
 	function _cleanup(){
 
+		if (this._oResizeObserver) {
+			this._oResizeObserver.disconnect();
+		}
 		if (this._sResizeListener) {
 			ResizeHandler.deregister(this._sResizeListener);
 			this._sResizeListener = undefined;
@@ -551,9 +568,15 @@ sap.ui.define([
 
 	}
 
-	function _handleResize(oEvent, bNoRowResize){
+	function _handleResize(oEvent, bNoRowResize) {
+		window.requestAnimationFrame(function() {
+			_reflow.call(this, oEvent, bNoRowResize);
+		}.bind(this));
+	}
 
+	function _reflow(oEvent, bNoRowResize) {
 		var oDomRef = this.getDomRef();
+
 		// Prove if DOM reference exist, and if not - clean up the references.
 		if (!oDomRef) {
 			_cleanup.call(this);
@@ -561,12 +584,18 @@ sap.ui.define([
 		}
 
 		var $DomRef = this.$();
+
 		if (!$DomRef.is(":visible")) {
+			return;
+		}
+
+		if (ResizeHandler.isSuspended(oDomRef, this._resizeProxy)) {
 			return;
 		}
 
 		var iWidth = oDomRef.clientWidth;
 		var iColumns = 1;
+
 		if (iWidth <= this._iBreakPointTablet) {
 			$DomRef.toggleClass("sapUiFormCLMedia-Std-Phone", true);
 			$DomRef.toggleClass("sapUiFormCLMedia-Std-Desktop", false).toggleClass("sapUiFormCLMedia-Std-Tablet", false).toggleClass("sapUiFormCLMedia-Std-LargeDesktop", false);
@@ -587,7 +616,6 @@ sap.ui.define([
 		var bWideColumns = this.getLabelCellsLarge() < 12 && iWidth / iColumns > this._iBreakPointTablet;
 		$DomRef.toggleClass("sapUiFormCLWideColumns", bWideColumns);
 		$DomRef.toggleClass("sapUiFormCLSmallColumns", !bWideColumns);
-
 	}
 
 	return ColumnLayout;

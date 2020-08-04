@@ -5294,6 +5294,62 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("onsapshow F4 - open the picker pop-up and remove the focus from the input", function (assert) {
+
+		// system under test
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new Item({
+					key: "1",
+					text: "item 1"
+				})
+			]
+		});
+
+		var oComboBox2 = new ComboBox({
+			items: [
+				new Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new Item({
+					key: "1",
+					text: "item 1"
+				})
+			]
+		});
+
+		// arrange
+		oComboBox.placeAt("content");
+		oComboBox2.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oComboBox.focus();
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick(300);
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(300);
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		this.clock.tick(300);
+
+		oComboBox2.focus();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oComboBox.getDomRef().classList.contains("sapMFocus"), "The input field should not have visual focus.");
+
+		// cleanup
+		oComboBox.destroy();
+		oComboBox2.destroy();
+	});
+
 	QUnit.test("onsapshow F4 - when F4 or Alt + DOWN keys are pressed and the control's field is not editable, the picker pop-up should not open", function (assert) {
 
 		// system under test
@@ -12580,6 +12636,23 @@ sap.ui.define([
 		// assert
 		assert.ok(oExpectedListItem.hasStyleClass("sapMLIBFocused"), "The item has visual focus");
 		assert.ok(!oExpectedListGroupHeader.hasStyleClass("sapMLIBFocused"), "The group header does not have visual focus");
+	});
+
+	QUnit.test("No exception should be thrown when setting the initial visual focus after picker opening", function (assert) {
+		// Act
+		this.oComboBox.open();
+
+		// Arrange
+		var oGetFocusDomRefStub = this.stub(this.oComboBox, "getFocusDomRef", function() { return null; });
+
+		// Act
+		this.oComboBox.handleListItemsVisualFocus();
+
+		// Assert
+		assert.ok(true, "item11", "No exception is thrown if no control has been rendered in the dom the but initial focus is tried to be added after opening");
+
+		// Cleanup
+		oGetFocusDomRefStub.restore();
 	});
 
 	QUnit.test("Grouping with models", function (assert) {

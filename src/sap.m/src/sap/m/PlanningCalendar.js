@@ -139,6 +139,9 @@ sap.ui.define([
 	// shortcut for sap.ui.unified.CalendarAppointmentHeight
 	var CalendarAppointmentHeight = unifiedLibrary.CalendarAppointmentHeight;
 
+	// shortcut for sap.ui.unified.CalendarAppointmentRoundWidth
+	var CalendarAppointmentRoundWidth = unifiedLibrary.CalendarAppointmentRoundWidth;
+
 	var DRAG_DROP_CONFIG_NAME = "DragDropConfig";
 	var RESIZE_CONFIG_NAME = "ResizeConfig";
 	var CREATE_CONFIG_NAME = "CreateConfig";
@@ -296,6 +299,14 @@ sap.ui.define([
 				 * @since 1.81.0
 				 */
 				appointmentHeight: { type: "sap.ui.unified.CalendarAppointmentHeight", group: "Appearance", defaultValue: CalendarAppointmentHeight.Regular },
+
+				/**
+				 * Defines rounding of the width <code>CalendarAppoinment<code>
+				 * <b>Note:</b> This property is applied, when the calendar interval type is day and the view shows more than 20 days
+				 * @experimental Since 1.81.0
+				 * @since 1.81.0
+				 */
+				appointmentRoundWidth: { type: "sap.ui.unified.CalendarAppointmentRoundWidth", group: "Appearance", defaultValue: CalendarAppointmentRoundWidth.None},
 
 				/**
 				 * Determines how the appointments are visualized depending on the used theme.
@@ -1895,6 +1906,18 @@ sap.ui.define([
 		return this;
 	};
 
+	PlanningCalendar.prototype.setAppointmentRoundWidth = function(sAppointmentRoundWidth) {
+		var aRows = this.getRows(),
+			i;
+		this.setProperty("appointmentRoundWidth", sAppointmentRoundWidth);
+		for (i = 0; i < aRows.length; i++) {
+			var oRow = aRows[i];
+			getRowTimeline(oRow).setAppointmentRoundWidth(sAppointmentRoundWidth);
+		}
+
+		return this;
+	};
+
 	PlanningCalendar.prototype.setAppointmentsVisualization = function(sAppointmentsVisualization){
 
 		this.setProperty("appointmentsVisualization", sAppointmentsVisualization, true);
@@ -1995,7 +2018,7 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype.addRow = function(oRow) {
-		this.addAggregation("rows", oRow, true);
+		this.addAggregation("rows", oRow);
 		this.getAggregation("table").addItem(this._createPlanningCalendarListItem(oRow));
 
 		return this;
@@ -3077,8 +3100,10 @@ sap.ui.define([
 		oRowTimeline.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
 		oRowTimeline.setGroupAppointmentsMode(this.getGroupAppointmentsMode());
 		oRowTimeline.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
+		oRowTimeline.setAppointmentRoundWidth(this.getAppointmentRoundWidth());
 		oRowTimeline.setLegend(this.getLegend());
 		oRowTimeline.setAppointmentsVisualization(this.getAppointmentsVisualization());
+		oRowTimeline.setAppointmentHeight(this.getAppointmentHeight());
 		oRowTimeline.attachEvent("select", handleAppointmentSelect, this);
 		oRowTimeline.attachEvent("startDateChange", this._handleStartDateChange, this);
 		oRowTimeline.attachEvent("leaveRow", handleLeaveRow, this);

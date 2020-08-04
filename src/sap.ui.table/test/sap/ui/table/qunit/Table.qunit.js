@@ -1322,7 +1322,7 @@ sap.ui.define([
 		oColumn = oTable.getColumns()[5];
 		oMenu = oColumn.getMenu();
 		oMenu.open();
-		assert.equal(oMenu.getItems().length, 1, "Column menu without sort has only one fitler item");
+		assert.equal(oMenu.getItems().length, 1, "Column menu without sort has only one filter item");
 		oMenu.close();
 
 		//Check column without filter
@@ -1330,6 +1330,23 @@ sap.ui.define([
 		oMenu = oColumn.getMenu();
 		oMenu.open();
 		assert.equal(oMenu.getItems().length, 2, "Column menu without filter has only two sort items");
+		oMenu.close();
+
+		var oRemoveAggregationSpy = sinon.spy(sap.ui.table.ColumnMenu.prototype, "removeAggregation");
+		oTable.setShowColumnVisibilityMenu(true);
+		sap.ui.getCore().applyChanges();
+		oColumn = oTable.getColumns()[5];
+		oMenu = oColumn.getMenu();
+		oMenu.open();
+		assert.equal(oMenu.getItems().length, 2, "Column menu has one filter item and one column visibility item");
+		assert.ok(oRemoveAggregationSpy.notCalled, "Initial creation of the column visibility submenu");
+		oMenu.close();
+
+		oColumn = oTable.getColumns()[6];
+		oMenu = oColumn.getMenu();
+		oMenu.open();
+		assert.ok(oRemoveAggregationSpy.withArgs("items", oTable._oColumnVisibilityMenuItem, true).calledOnce,
+			"The items aggregation is being removed before updating the visibility submenu");
 		oMenu.close();
 	});
 
@@ -1382,15 +1399,97 @@ sap.ui.define([
 
 		oMenu.open();
 		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-0", "click");
+		var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
+		qutils.triggerMouseEvent(aSubmenuItems[0].$(), "click");
 
 		assert.equal(oColumn0.getVisible(), true, "lastName column is still visible (preventDefault)");
 
 		oMenu.open();
 		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-1", "click");
+		qutils.triggerMouseEvent(aSubmenuItems[1].$(), "click");
 
 		assert.equal(oColumn1.getVisible(), false, "firstName column is invisible (no preventDefault)");
+	});
+
+	QUnit.test("Column Visibility Submenu: Icons and Enabled State", function(assert) {
+		function checkSubmenuIcons(oTable, assert) {
+			var aColumns = oTable.getColumns();
+			var aVisibleColumns = oTable._getVisibleColumns();
+			var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
+			var aSubmenuItems = oSubmenu.getItems();
+
+			for (var i = 0; i < aColumns.length; i++) {
+				var oColumn = aColumns[i];
+				var bVisible = aVisibleColumns.indexOf(oColumn) > -1;
+				assert.equal(aSubmenuItems[i].getIcon(), bVisible ? "sap-icon://accept" : "",
+					"The column visibility is correctly displayed in the submenu");
+			}
+		}
+
+		oTable.setShowColumnVisibilityMenu(true);
+		var aColumns = oTable.getColumns();
+		var oMenu = aColumns[0].getMenu();
+		oMenu.open();
+		var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
+		var aSubmenuItems = oSubmenu.getItems();
+		assert.ok(oSubmenu, "The Column Visibility Submenu exists");
+		assert.equal(aSubmenuItems.length, 8, "The Column Visibility Submenu has one item for each column");
+		checkSubmenuIcons(oTable, assert);
+
+		for (var i = 2; i < 8; i++) {
+			aColumns[i].setVisible(false);
+		}
+		oMenu.open();
+		checkSubmenuIcons(oTable, assert);
+
+		assert.ok(aSubmenuItems[0].getEnabled() && aSubmenuItems[1].getEnabled(), "Two visible columns left: both visibility menu items are enabled");
+		aColumns[1].setVisible(false);
+		oMenu.open();
+		aSubmenuItems = oSubmenu.getItems();
+		assert.notOk(aSubmenuItems[0].getEnabled(), "One visible column left: the corresponding menu item is disabled");
+		aColumns[1].setVisible(true);
+		oMenu.open();
+		assert.ok(aSubmenuItems[0].getEnabled() && aSubmenuItems[1].getEnabled(), "One more column made visible: both menu items are enabled");
+		oMenu.close();
+	});
+
+	QUnit.test("Column Visibility Submenu: Add/Remove/Reorder Columns", function(assert) {
+		function checkSubmenuItemsOrder(oTable, assert) {
+			var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
+			var aSubmenuItems = oSubmenu.getItems();
+			var aColumns = oTable.getColumns();
+			assert.equal(aSubmenuItems.length, aColumns.length, "The Column Visibility Submenu has one item for each column");
+
+			var bCorrectOrder = true;
+			for (var i = 0; i < aColumns.length; i++) {
+				if (aColumns[i].getLabel().mProperties["text"] !== aSubmenuItems[i].getText()) {
+					bCorrectOrder = false;
+					break;
+				}
+			}
+			assert.ok(bCorrectOrder, "The Column Visibility Submenu Items are in the correct order");
+		}
+
+		oTable.setShowColumnVisibilityMenu(true);
+		var aColumns = oTable.getColumns();
+		var oMenu = aColumns[0].getMenu();
+		oMenu.open();
+		checkSubmenuItemsOrder(oTable, assert);
+
+		for (var i = 7; i > 0; i = i - 2) {
+			oTable.removeColumn(aColumns[i]);
+		}
+		oMenu.open();
+		checkSubmenuItemsOrder(oTable, assert);
+
+		oTable.addColumn(aColumns[1]);
+		oTable.addColumn(aColumns[3]);
+		oTable.insertColumn(aColumns[5], 0);
+		oTable.insertColumn(aColumns[7], 3);
+
+		oMenu.open();
+		checkSubmenuItemsOrder(oTable, assert);
+		oMenu.close();
 	});
 
 	QUnit.test("CustomColumnMenu", function(assert) {
@@ -2796,12 +2895,14 @@ sap.ui.define([
 		oTable.bindRows("namedModel>" + oTable.getBindingInfo("rows").path);
 		oTable.setModel(oTable.getModel(), "namedModel");
 
-		//var iInitialRowCount = oTable.getRows().length;
+		var iInitialRowCount = oTable.getRows().length;
 		var oUpdateRowsHookSpy = sinon.spy();
 		var oInvalidateSpy = sinon.spy(oTable, "invalidate");
 		var oBinding = oTable.getBinding("rows");
 
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UpdateRows, oUpdateRowsHookSpy);
+
+		assert.notOk("_oVirtualRow" in oTable, "Virtual row does not exist");
 
 		// Fake the virtual context process.
 
@@ -2810,16 +2911,16 @@ sap.ui.define([
 			reason: "change"
 		});
 
-		//var oVirtualRow = oTable.getRows()[0];
+		var oVirtualRow = oTable._oVirtualRow;
 
 		assert.ok(oInvalidateSpy.notCalled, "AddVirtualContext: Table is not invalidated");
 		assert.ok(oUpdateRowsHookSpy.notCalled, "AddVirtualContext: UpdateRows hook is not called");
-		/*assert.ok(oTable.indexOfRow(oVirtualRow) > 0, "AddVirtualContext: Virtual row added");
+		assert.ok(oTable.indexOfAggregation("_hiddenDependents", oVirtualRow) >= 0, "AddVirtualContext: Virtual row added to hidden dependents");
 		assert.ok(oVirtualRow.getId().endsWith("-virtual"), "AddVirtualContext: Virtual row has the correct ID");
-		assert.strictEqual(oTable.getRows().length, iInitialRowCount + 1, "AddVirtualContext: Number of rows is correct");
+		assert.strictEqual(oTable.getRows().length, iInitialRowCount, "AddVirtualContext: Number of rows is correct");
 		assert.strictEqual(oVirtualRow.getBindingContext("namedModel"), oBinding.getContexts(0, 1)[0],
 			"AddVirtualContext: Virtual row has the correct context");
-		assert.notOk(oVirtualRow.bIsDestroyed, "RemoveVirtualContext: Virtual row is not destroyed");*/
+		assert.notOk(oVirtualRow.bIsDestroyed, "AddVirtualContext: Virtual row is not destroyed");
 		oInvalidateSpy.reset();
 		oUpdateRowsHookSpy.reset();
 
@@ -2830,8 +2931,22 @@ sap.ui.define([
 
 		assert.ok(oInvalidateSpy.notCalled, "RemoveVirtualContext: Table is not invalidated");
 		assert.ok(oUpdateRowsHookSpy.notCalled, "RemoveVirtualContext: UpdateRows hook is not called");
-		/*assert.ok(oTable.getRows().length === iInitialRowCount && oTable.indexOfRow(oVirtualRow) < 0, "RemoveVirtualContext: Virtual row removed");
-		assert.ok(oVirtualRow.bIsDestroyed, "RemoveVirtualContext: Virtual row is destroyed");*/
+		assert.ok(oTable.indexOfAggregation("_hiddenDependents", oVirtualRow) === -1,
+			"RemoveVirtualContext: Virtual row removed from hidden dependents");
+		assert.strictEqual(oTable.getRows().length, iInitialRowCount, "RemoveVirtualContext: Number of rows is correct");
+		assert.ok(oVirtualRow.bIsDestroyed, "RemoveVirtualContext: Virtual row is destroyed");
+		assert.notOk("_oVirtualRow" in oTable, "RemoveVirtualContext: Reference to virtual row removed from table");
+
+		oBinding.fireEvent("change", {
+			detailedReason: "AddVirtualContext",
+			reason: "change"
+		});
+		oVirtualRow = oTable._oVirtualRow;
+		oTable.bindRows(oTable.getBindingInfo("rows"));
+
+		assert.ok(oTable.indexOfAggregation("_hiddenDependents", oVirtualRow) === -1, "BindRows: Virtual row removed from hidden dependents");
+		assert.ok(oVirtualRow.bIsDestroyed, "BindRows: Virtual row is destroyed");
+		assert.notOk("_oVirtualRow" in oTable, "BindRows: Reference to virtual row removed from table");
 	});
 
 	QUnit.module("Callbacks", {

@@ -10,11 +10,11 @@ sap.ui.define([
     "sap/ui/core/Item",
     "sap/m/Toolbar",
     "sap/m/List",
-	"sap/m/VBox",
 	'sap/ui/model/Filter',
 	"sap/ui/layout/FixFlex",
-	"sap/m/Page"
-], function (BasePanel, Label, CustomListItem, Panel, Select, Item, Toolbar, List, VBox, Filter, FixFlex, Page) {
+	"sap/m/Page",
+	"sap/m/Button"
+], function (BasePanel, Label, CustomListItem, Panel, Select, Item, Toolbar, List, Filter, FixFlex, Page, Button) {
 	"use strict";
 
 	/**
@@ -64,12 +64,20 @@ sap.ui.define([
 	});
 
 	GroupPanelBase.prototype._setInnerLayout = function() {
+
+		this._oResetBtn = new Button(this.getId() + "-resetBtn", {
+			text: this.getResourceText("p13nDialog.RESET"),
+			visible: false,
+			type: "Transparent",
+			press: function(oEvt) {
+				this.getOnReset()();
+			}.bind(this)
+		}).addStyleClass("sapUiGroupPanelFloatRight");
+
 		var oContainer = new Page({
-			height:"100%",
 			showHeader: false,
 			content: [
 				new FixFlex({
-					height: "100%",
 					minFlexSize: 1,
 					fixContent: [
 						new Select({
@@ -85,6 +93,7 @@ sap.ui.define([
 							],
 							change: this._onGroupModeChange.bind(this)
 						}),
+						this._oResetBtn,
 						this._getSearchField()
 					],
 					flexContent: [
@@ -96,6 +105,18 @@ sap.ui.define([
 
 		this.addStyleClass("sapUiMDCGroupPanelBase");
 		this.setAggregation("_content", oContainer);
+	};
+
+	GroupPanelBase.prototype.setOnReset = function(fnOnReset) {
+		this.setProperty("onReset", fnOnReset);
+
+		if (fnOnReset instanceof Function) {
+			this._oResetBtn.setVisible(true);
+		} else {
+			this._oResetBtn.setVisible(false);
+		}
+
+		return this;
 	};
 
 	GroupPanelBase.prototype.setItemFactory = function (fnFactory) {
@@ -166,7 +187,7 @@ sap.ui.define([
 
     GroupPanelBase.prototype._createInnerListControl = function(){
 
-		var oBasePanelUI = new List("idBasePanelTable", {
+		var oBasePanelUI = new List(this.getId() + "-innerListControl", {
 			rememberSelections: false,
 			itemPress: [this._onItemPressed, this],
 			selectionChange: [this._onSelectionChange, this],
@@ -274,6 +295,7 @@ sap.ui.define([
 	GroupPanelBase.prototype.exit = function(){
 		BasePanel.prototype.exit.apply(this, arguments);
 		this._sSearchString = null;
+		this._oResetBtn = null;
 	};
 
 	return GroupPanelBase;

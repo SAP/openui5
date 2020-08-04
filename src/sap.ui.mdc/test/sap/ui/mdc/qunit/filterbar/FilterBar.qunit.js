@@ -208,7 +208,7 @@ sap.ui.define([
 	QUnit.test("check _handleConditionModelPropertyChange with liveMode=false and p13nValue=false", function (assert) {
 
 		sinon.spy(oFilterBar, "fireSearch");
-		sinon.stub(oFilterBar, "_getAssignedFilterNames").returns([]);
+		sinon.stub(oFilterBar, "getAssignedFilterNames").returns([]);
 		sinon.spy(oAdaptationController, "createConditionChanges");
 
 		var done = assert.async();
@@ -259,7 +259,7 @@ sap.ui.define([
 	QUnit.test("check _handleConditionModelPropertyChange  with liveMode=true  and p13nValue=false", function (assert) {
 
 		sinon.spy(oFilterBar, "triggerSearch");
-		sinon.stub(oFilterBar, "_getAssignedFilterNames").returns([]);
+		sinon.stub(oFilterBar, "getAssignedFilterNames").returns([]);
 		sinon.stub(oAdaptationController, "createConditionChanges");
 
 		oFilterBar.setLiveMode(true);
@@ -1156,7 +1156,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("check _getAssignedFilterNames", function (assert) {
+	QUnit.test("check getAssignedFilterNames", function (assert) {
 
 		var oProperty1 = {
 			name: "key1",
@@ -1198,7 +1198,7 @@ sap.ui.define([
 		oCM.addCondition("key1", Condition.createCondition("EQ", ["foo"]));
 
 		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty1, oProperty2, oProperty3, oProperty4, oProperty5, oProperty6, oProperty7]);
-		var aNames = oFilterBar._getAssignedFilterNames();
+		var aNames = oFilterBar.getAssignedFilterNames();
 		assert.ok(aNames);
 		assert.equal(aNames.length, 3);
 		assert.equal(aNames[0], oProperty1.name);
@@ -1208,7 +1208,7 @@ sap.ui.define([
 		oFilterBar.getPropertyInfoSet.restore();
 		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty7, oProperty6, oProperty5, oProperty4, oProperty3, oProperty2, oProperty1]);
 		oCM.addCondition("$search", Condition.createCondition("EQ", ["foo"]));
-		aNames = oFilterBar._getAssignedFilterNames();
+		aNames = oFilterBar.getAssignedFilterNames();
 		assert.ok(aNames);
 		assert.equal(aNames.length, 4);
 		assert.equal(aNames[0], "Search Terms");

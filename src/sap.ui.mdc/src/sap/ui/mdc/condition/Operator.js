@@ -239,8 +239,8 @@ sap.ui.define([
 		 * @param {string} sType Name of type
 		 * @returns {string} text
 		 *
-		 * @public
-		 * @restricted sap.ui.mdc.field.DefineConditionPanel
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.field.DefineConditionPanel
 		 */
 		Operator.prototype.getTypeText = function(sKey, sType) { // for DefineConditionPanel Select items
 
@@ -413,7 +413,8 @@ sap.ui.define([
 		 * @returns {string} single value
 		 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 		 *
-		 * @protected
+		 * @private
+		 * ui5-restricted to be enhanced by operators inherit from operator
 		 */
 		Operator.prototype._parseValue = function(sValue, oType) { // needed in EQ operator to be accessed from outside
 
@@ -476,7 +477,7 @@ sap.ui.define([
 		 * @param {string} sType Type name
 		 * @returns {sap.ui.model.SimpleType} data type
 		 * @private
-		 * @restricted sap.ui.mdc.field.DefineConditionPanel
+		 * @ui5-restricted sap.ui.mdc.field.DefineConditionPanel
 		 */
 		Operator.prototype._createLocalType = function(vType) {
 
@@ -588,8 +589,8 @@ sap.ui.define([
 		 *
 		 * @returns {object} True if only one value is used.
 		 * @since 1.75.0
-		 * @public
-		 * @restricted sap.ui.mdc.field.FieldBase
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.field.FieldBase
 		 */
 		Operator.prototype.isSingleValue = function() {
 

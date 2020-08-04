@@ -136,7 +136,8 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.updateRowAction = function(oTable, bNavigation) {
-		oTable._oTemplate.setType("Active");
+		var sType = oTable.hasListeners("rowPress") ? "Active" : "Inactive";
+		oTable._oTemplate.setType(sType);
 		if (bNavigation) {
 			this.updateNavigation(oTable);
 		}

@@ -157,6 +157,52 @@ sap.ui.define([
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	QUnit.test("Extension making request with custom dataType", function (assert) {
+		// arrange
+		var done = assert.async(),
+			deferred = new jQuery.Deferred();
+
+		this.stub(jQuery, "ajax").callsFake(function () {
+			return deferred.promise();
+		});
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test1"
+			},
+			"sap.card": {
+				"type": "List",
+				"extension": "./extensions/Extension1",
+				"content": {
+					"data": {
+						"extension": {
+							"method": "requestWithCustomDataType"
+						}
+					},
+					"item": {
+						"title": "{city}"
+					}
+				}
+			}
+		});
+
+		this.oCard.attachEvent("_ready", function () {
+			var aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+			// assert
+			assert.ok(aItems.length, "The data request is successful.");
+			assert.ok(jQuery.ajax.calledWithMatch({ dataType: "xml" }), "request was made with the expected dataType");
+
+			done();
+			jQuery.ajax.restore();
+		}.bind(this));
+
+		// act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		deferred.resolve(new DOMParser().parseFromString('<CitySet> <City Name="Paris"/> <City Name="Berlin" /> </CitySet>', "application/xml"));
+	});
+
 	QUnit.module("Custom Formatters", {
 		beforeEach: function () {
 			this.oCard = new Card({

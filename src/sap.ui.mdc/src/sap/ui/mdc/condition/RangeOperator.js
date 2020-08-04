@@ -90,8 +90,8 @@ sap.ui.define([
  		 * @param {sap.ui.model.Type} oType data type of the used filterfield
 		 * @return {string} static text
 		 *
-		 * @public
-		 * @restricted sap.ui.mdc.field.DefineConditionPanel
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.field.DefineConditionPanel
 		 */
 		RangeOperator.prototype.getStaticText = function(oType) {
 			var aRange = this._getRange(null, oType);

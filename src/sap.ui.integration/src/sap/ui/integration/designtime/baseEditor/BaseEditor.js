@@ -318,34 +318,46 @@ sap.ui.define([
 		}
 	};
 
-	BaseEditor.prototype.setConfig = function (oConfig) {
+	BaseEditor.prototype.setConfig = function (oConfig, bIsDefaultConfig) {
+		this._bIsDefaultConfig = bIsDefaultConfig;
+		oConfig = oConfig || {};
 		SET_CONFIG_PROMISE = SET_CONFIG_PROMISE.then(function() {
 			PropertyEditorFactory.deregisterAllTypes();
-			return PropertyEditorFactory.registerTypes(oConfig.propertyEditors);
-		}).then(function(mPropertyEditors) {
-			this._initValidators(oConfig.validators || {});
+			return PropertyEditorFactory.registerTypes(oConfig.propertyEditors || {});
+		})
+			.then(function(mPropertyEditors) {
+				this._initValidators(oConfig.validators || {});
 
-			// Backwards compatibility. If no i18n configuration specified, we use default one.
-			var oTarget = {};
-			if (!oConfig.i18n) {
-				oTarget.i18n = this.getMetadata().getProperty("config").getDefaultValue().i18n;
-			}
+				// Backwards compatibility. If no i18n configuration specified, we use default one.
+				var oTarget = {
+					propertyEditors: {},
+					properties: {}
+				};
+				if (!oConfig.i18n) {
+					oTarget.i18n = this.getMetadata().getProperty("config").getDefaultValue().i18n;
+				}
 
-			var oNewConfig = mergeConfig(oTarget, oConfig);
+				var oNewConfig = mergeConfig(oTarget, oConfig);
 
-			if (this._oSpecificConfig) {
-				oNewConfig = mergeSpecificConfig(oNewConfig, this._oSpecificConfig, mPropertyEditors);
-			}
+				if (this._oSpecificConfig) {
+					// If the provided config is the default config
+					// card specific config should always win
+					oNewConfig = bIsDefaultConfig
+						? this._oSpecificConfig
+						: mergeSpecificConfig(oNewConfig, this._oSpecificConfig, mPropertyEditors);
+				}
 
-			this.setProperty("config", oNewConfig, false);
-			this._initialize();
-		}.bind(this));
+
+				this.setProperty("config", oNewConfig, false);
+				this._initialize();
+			}.bind(this));
 		return SET_CONFIG_PROMISE;
 	};
 
-	BaseEditor.prototype.addConfig = function (oConfig) {
+	BaseEditor.prototype.addConfig = function (oConfig, bIsDefaultConfig) {
 		return this.setConfig(
-			mergeConfig(this.getConfig(), oConfig)
+			mergeConfig(this.getConfig(), oConfig),
+			bIsDefaultConfig
 		);
 	};
 
@@ -361,7 +373,7 @@ sap.ui.define([
 			this._oSpecificConfig = oSpecificConfig;
 
 			addMissingPropertyEditors(this.getConfig(), oSpecificConfig);
-			return this.setConfig(this.getConfig());
+			return this.setConfig(this.getConfig(), this._bIsDefaultConfig);
 		}.bind(this));
 	};
 
@@ -387,11 +399,11 @@ sap.ui.define([
 
 		// merge properties
 		oNewConfig.properties = {};
-		each(oSpecificConfig.properties, function(sPropertyName, oProperty) {
+		each(oCurrentConfig.properties, function(sPropertyName, oProperty) {
 			var sEditor = oCurrentConfig.propertyEditors[oProperty.type] && oCurrentConfig.propertyEditors[oProperty.type].split("/").join(".");
 			var oConfigMetadata = sEditor && mPropertyEditors[sEditor].configMetadata;
 
-			if (oConfigMetadata && oCurrentConfig.properties[sPropertyName]) {
+			if (oConfigMetadata && oSpecificConfig.properties[sPropertyName]) {
 				each(oProperty, function(sKey, vTargetValue) {
 					var vNewValue;
 					var sMergeStrategy = oConfigMetadata[sKey] && oConfigMetadata[sKey].mergeStrategy;
@@ -402,10 +414,10 @@ sap.ui.define([
 							if (vTargetValue === bMostRestrictiveValue) {
 								vNewValue = bMostRestrictiveValue;
 							} else {
-								vNewValue = oCurrentConfig.properties[sPropertyName][sKey];
+								vNewValue = oSpecificConfig.properties[sPropertyName][sKey];
 							}
 						} else if (sMergeStrategy === "intersection") {
-							vNewValue = _intersection(vTargetValue, oCurrentConfig.properties[sPropertyName][sKey]);
+							vNewValue = _intersection(vTargetValue, oSpecificConfig.properties[sPropertyName][sKey]);
 						}
 					} else {
 						vNewValue = vTargetValue;

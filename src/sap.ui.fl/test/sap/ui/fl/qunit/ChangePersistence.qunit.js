@@ -721,7 +721,7 @@ function(
 			});
 		});
 
-		QUnit.test("getChangesForVariant does nothing if entry in variant changes map is available", function(assert) {
+		QUnit.test("getControlChangesForVariant does nothing if entry in variant changes map is available", function(assert) {
 			var aStubChanges = [
 				{
 					fileName: "change1",
@@ -733,13 +733,13 @@ function(
 			];
 			var oStubGetChangesForComponent = sandbox.stub(this.oChangePersistence, "getChangesForComponent");
 			this.oChangePersistence._mVariantsChanges["SmartFilterBar"] = aStubChanges;
-			return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).then(function(aChanges) {
+			return this.oChangePersistence.getControlChangesForVariant("someProperty", "SmartFilterBar", {}).then(function(aChanges) {
 				assert.deepEqual(aChanges, aStubChanges);
 				sinon.assert.notCalled(oStubGetChangesForComponent);
 			});
 		});
 
-		QUnit.test("getChangesForVariant call getChangesForComponent and filter results after that if entry in variant changes map is not available", function(assert) {
+		QUnit.test("getControlChangesForVariant call getChangesForComponent and filter results after that if entry in variant changes map is not available", function(assert) {
 			var oPromise = new Promise(function(resolve) {
 				setTimeout(function() {
 					resolve({
@@ -799,8 +799,8 @@ function(
 				}, 100);
 			});
 			sandbox.stub(Cache, "getChangesFillingCache").returns(oPromise);
-			var oPromise1 = this.oChangePersistence.getChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true});
-			var oPromise2 = this.oChangePersistence.getChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true});
+			var oPromise1 = this.oChangePersistence.getControlChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true});
+			var oPromise2 = this.oChangePersistence.getControlChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true});
 			return Promise.all([oPromise1, oPromise2]).then(function(values) {
 				assert.ok(values[0] === values[1]);
 			});

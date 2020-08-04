@@ -660,12 +660,6 @@ sap.ui.define([
 					}
 				}
 			},
-			"changeHandler/ChangeHandlerMediator": {
-				group: "ChangeHandler",
-				coverage: {
-					only: ["sap/ui/fl/changeHandler/ChangeHandlerMediator"]
-				}
-			},
 			"changeHandler/HideControl": {
 				group: "ChangeHandler",
 				coverage: {

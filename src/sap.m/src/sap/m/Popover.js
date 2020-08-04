@@ -977,6 +977,10 @@ sap.ui.define([
 		/*                      begin: event handlers                  */
 		/* =========================================================== */
 		Popover.prototype._clearCSSStyles = function () {
+			if (!this.getDomRef()) {
+				return;
+			}
+
 			var oStyle = this.getDomRef().style,
 				$content = this.$("cont"),
 				$scrollArea = $content.children(".sapMPopoverScroll"),

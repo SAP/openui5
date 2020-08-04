@@ -545,6 +545,7 @@ function(
 		this._aSelectedPaths = [];
 		this._iItemNeedsHighlight = 0;
 		this._iItemNeedsNavigated = 0;
+		this._bItemsBeingBound = false;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
@@ -595,7 +596,21 @@ function(
 	// if there is no data this should get called anyway
 	// TODO: if there is a network error this will not get called
 	// but we need to turn back to initial state
-	ListBase.prototype.updateItems = function(sReason) {
+	ListBase.prototype.updateItems = function(sReason, oEventInfo) {
+		// Special handling for "AutoExpandSelect" of the V4 ODataModel.
+		if (oEventInfo && oEventInfo.detailedReason === "AddVirtualContext") {
+			createVirtualItem(this);
+			return;
+		} else if (oEventInfo && oEventInfo.detailedReason === "RemoveVirtualContext") {
+			destroyVirtualItem(this);
+			return;
+		}
+
+		if (this._bItemsBeingBound) {
+			this._bItemsBeingBound = false;
+			this.invalidate();
+		}
+
 		if (this._oGrowingDelegate) {
 			// inform growing delegate to handle
 			this._oGrowingDelegate.updateItems(sReason);
@@ -622,6 +637,23 @@ function(
 		}
 	};
 
+	function createVirtualItem(oList) {
+		var oBinding = oList.getBinding("items");
+		var oBindingInfo = oList.getBindingInfo("items");
+		var oVirtualContext = oBinding.getContexts(0, oList.getGrowing() ? oList.getGrowingThreshold() : oBindingInfo.length)[0];
+
+		destroyVirtualItem(oList);
+		oList._oVirtualItem = GrowingEnablement.createItem(oVirtualContext, oBindingInfo, "virtual");
+		oList.addAggregation("dependents", oList._oVirtualItem, true);
+	}
+
+	function destroyVirtualItem(oList) {
+		if (oList._oVirtualItem) {
+			oList._oVirtualItem.destroy();
+			delete oList._oVirtualItem;
+		}
+	}
+
 	ListBase.prototype.setBindingContext = function(oContext, sModelName) {
 		var sItemsModelName = (this.getBindingInfo("items") || {}).model;
 		if (sItemsModelName === sModelName) {
@@ -629,6 +661,13 @@ function(
 		}
 
 		return Control.prototype.setBindingContext.apply(this, arguments);
+	};
+
+	ListBase.prototype.bindAggregation = function(sName) {
+		this._bItemsBeingBound = sName === "items";
+		destroyVirtualItem(this);
+		Control.prototype.bindAggregation.apply(this, arguments);
+		return this;
 	};
 
 	ListBase.prototype._bindAggregation = function(sName, oBindingInfo) {
@@ -694,7 +733,7 @@ function(
 		this.destroyAggregation("items", "KeepDom");
 
 		// invalidate to update the DOM on the next tick of the RenderManager
-		if (!bSuppressInvalidate) {
+		if (!bSuppressInvalidate && !this._bItemsBeingBound) {
 			this.invalidate();
 		}
 
@@ -2493,9 +2532,7 @@ function(
 
 	// gets the sticky header position and scrolls the page so that the item is completely visible when focused
 	ListBase.prototype._handleStickyItemFocus = function(oItemDomRef) {
-		// when an item is focused and later focus is lost from the list control, the list control is scrolled and new item is focused,
-		// this resulted in unnecessary scroll jumping
-		if (!this._iStickyValue || this._sLastFocusedStickyItemId === oItemDomRef.id) {
+		if (!this._iStickyValue) {
 			return;
 		}
 
@@ -2545,8 +2582,6 @@ function(
 				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight]);
 			});
 		}
-
-		this._sLastFocusedStickyItemId = oItemDomRef.id;
 	};
 
 	ListBase.prototype.setHeaderToolbar = function(oHeaderToolbar) {

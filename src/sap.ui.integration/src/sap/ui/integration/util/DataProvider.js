@@ -90,7 +90,7 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 	};
 
 	/**
-	 * Gets the data settings for the <code>DataProvider</code>
+	 * Returns the data settings for the <code>DataProvider</code>
 	 *
 	 * @returns {Object} The data settings.
 	 */

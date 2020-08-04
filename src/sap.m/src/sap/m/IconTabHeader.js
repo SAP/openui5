@@ -227,11 +227,6 @@ sap.ui.define([
 			this._aTabKeys = null;
 		}
 
-		if (this._oPopover) {
-			this._oPopover.destroy();
-			this._oPopover = null;
-		}
-
 		if (this.getAggregation("_overflow")) {
 			this._getOverflow().removeEventDelegate(this._oOverflowEventDelegate);
 			this._oOverflowEventDelegate = null;
@@ -850,12 +845,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (this._oPopover) {
-			this._oPopover.close();
-		}
-
 		var iTabStripWidth = oTabStrip.offsetWidth,
-			oItem,
 			i,
 			oSelectedItemDomRef = (oSelectedItem._getRootTab() || oSelectedItem).getDomRef(),
 			aItems = this.getItems()
@@ -870,43 +860,80 @@ sap.ui.define([
 		aItems.forEach(function (oItem) {
 			oItem.style.width = "";
 			oItem.classList.remove("sapMITBFilterHidden");
+			oItem.classList.remove("sapMITBFilterTruncated");
 		});
 
-		oSelectedItemDomRef.classList.remove("sapMITBFilterTruncated");
-
 		// find all fitting items, start with selected item's width
-		var oSelectedItemStyle = window.getComputedStyle(oSelectedItemDomRef);
-		var iSumFittingItems = oSelectedItemDomRef.offsetWidth  + Number.parseInt(oSelectedItemStyle.marginLeft) + Number.parseInt(oSelectedItemStyle.marginRight);
-		aItems.splice(aItems.indexOf(oSelectedItemDomRef), 1);
+		var iSelectedItemIndex = aItems.indexOf(oSelectedItemDomRef),
+			iSelectedItemSize = this._getItemSize(oSelectedItemDomRef),
+			oSelectedSeparator,
+			iSelectedSeparatorSize = 0,
+			iSelectedCombinedSize;
 
-		if (iTabStripWidth < iSumFittingItems) {
+		if (aItems[iSelectedItemIndex - 1] && aItems[iSelectedItemIndex - 1].classList.contains("sapMITBSep")) {
+			oSelectedSeparator = aItems[iSelectedItemIndex - 1];
+			iSelectedSeparatorSize = this._getItemSize(oSelectedSeparator);
+		}
+
+		iSelectedCombinedSize = iSelectedItemSize + iSelectedSeparatorSize;
+
+		if (iTabStripWidth < iSelectedCombinedSize) {
 			// selected item can't fit fully, truncate it's text and put all other items in the overflow
-			oSelectedItemDomRef.style.width = iTabStripWidth - 20 + "px";
+			oSelectedItemDomRef.style.width = (iTabStripWidth - 20 - iSelectedSeparatorSize) + "px";
 			oSelectedItemDomRef.classList.add("sapMITBFilterTruncated");
 		}
 
-		var iLastVisible = -1;
-		// hide all items after the fitting items, selected item will take place as the last fitting item, if it's out of order
-		for (i = 0; i < aItems.length; i++) {
-			oItem = aItems[i];
-			var oStyle = window.getComputedStyle(oItem);
-			var iItemSize = oItem.offsetWidth + Number.parseInt(oStyle.marginLeft) + Number.parseInt(oStyle.marginRight);
+		aItems.splice(iSelectedItemIndex, 1);
 
-			if (iTabStripWidth > (iSumFittingItems + iItemSize)) {
-				iSumFittingItems += iItemSize;
-				iLastVisible = i;
-			} else {
-				break;
-			}
+		// if previous item is a separator - keep it
+		if (oSelectedSeparator) {
+			aItems.splice(iSelectedItemIndex - 1, 1);
 		}
 
+		var iLastVisible = this._findLastVisibleItem(aItems, iTabStripWidth, iSelectedCombinedSize);
 		for (i = iLastVisible + 1; i < aItems.length; i++) {
-			oItem = aItems[i];
-			oItem.classList.add("sapMITBFilterHidden");
+			aItems[i].classList.add("sapMITBFilterHidden");
 		}
 
 		this._getOverflow().$().toggleClass("sapMITHOverflowVisible", iLastVisible + 1 !== aItems.length);
 		this.$().toggleClass("sapMITHOverflowList", iLastVisible + 1 !== aItems.length);
+	};
+
+	IconTabHeader.prototype._findLastVisibleItem  = function (aItems, iTabStripWidth, iSumFittingItems) {
+		var iLastVisible = -1,
+			iInd,
+			oItem,
+			iItemSize,
+			oPrevItem;
+
+		// hide all items after the fitting items, selected item will take place as the last fitting item, if it's out of order
+		for (iInd = 0; iInd < aItems.length; iInd++) {
+			oItem = aItems[iInd];
+			iItemSize = this._getItemSize(oItem);
+
+			if (iTabStripWidth > (iSumFittingItems + iItemSize)) {
+				iSumFittingItems += iItemSize;
+				iLastVisible = iInd;
+			} else {
+				// if prev item is separator - hide it
+				oPrevItem = aItems[iInd - 1];
+				if (oPrevItem && oPrevItem.classList.contains("sapMITBSep")) {
+					iLastVisible -= 1;
+				}
+
+				break;
+			}
+		}
+
+		return iLastVisible;
+	};
+
+	IconTabHeader.prototype._getItemSize = function (oItemDomRef) {
+		var oStyle = window.getComputedStyle(oItemDomRef),
+			iWidth = oItemDomRef.offsetWidth,
+			iMargins = Number.parseInt(oStyle.marginLeft) + Number.parseInt(oStyle.marginRight);
+
+		return iWidth + iMargins;
 	};
 
 	/**

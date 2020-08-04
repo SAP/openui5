@@ -12,6 +12,23 @@
             "reference": "2080199392"
           }
         ]
+      },
+      {
+        "id": "32dc1fb845dbf3aae11d2e56a1990cdbd465f9e5",
+        "type": "FEATURE",
+        "text": " sap.ui.rta can show a version history",
+        "references": []
+      },
+      {
+        "id": "2fbe4dadd93774f967306867a2743c5027ca1702",
+        "type": "FIX",
+        "text": " sap.ui.rta - performance test FIX",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080268987"
+          }
+        ]
       }
     ]
   }

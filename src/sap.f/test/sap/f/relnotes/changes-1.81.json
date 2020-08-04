@@ -40,6 +40,34 @@
             "reference": "2080256635"
           }
         ]
+      },
+      {
+        "id": "bff06a06a569a908e9f0d224cec1f306da6e28a3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: visible property is now available in the manifest",
+        "references": []
+      },
+      {
+        "id": "148c9bbe1eedda487d42fefb9bc1b8a74c652926",
+        "type": "FIX",
+        "text": " sap.f.Card: Fixed spacing between title and subtitle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080286246"
+          }
+        ]
+      },
+      {
+        "id": "377dd72991abf0a39ab3d997afdf65c348a2bf39",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: GenerictTag with DynamicPageTitle fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070220678"
+          }
+        ]
       }
     ]
   }

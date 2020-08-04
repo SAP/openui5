@@ -42,4 +42,24 @@ describe("sap.m.PlanningCalendarAppointmentSize", function() {
 
 		expect(takeScreenshot()).toLookAs("calendar_appointment_reduced_height");
 	});
+
+	it("should render the whole months page", function() {
+		element(by.id("PC1-Header-ViewSwitch")).click();
+		element(by.cssContainingText(".sapMSelectListItem", "1 Month")).click();
+		element(by.id("select_width-label")).click();
+		element(by.id("select_width_item_0")).click();
+		expect(takeScreenshot(element(by.id("page1-cont")))).toLookAs("months_page");
+	});
+
+	it("should change the month page", function() {
+		element(by.id("PC1-Header-NavToolbar-NextBtn")).click();
+		expect(takeScreenshot(element(by.id("page1-cont")))).toLookAs("months_page");
+	});
+
+	it("should render the appointment with Half Size width", function() {
+		element(by.id("select_rounding")).click();
+		element(by.cssContainingText(".sapMSelectListItem", "Half-Row")).click();
+
+		expect(takeScreenshot()).toLookAs("calendar_appointment_half_size_width");
+	});
 });

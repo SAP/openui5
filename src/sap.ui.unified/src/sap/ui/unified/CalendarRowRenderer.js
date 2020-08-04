@@ -19,8 +19,6 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 
 	// shortcut for sap.ui.unified.CalendarAppointmentHeight
 	var CalendarAppointmentHeight = library.CalendarAppointmentHeight;
-
-
 	/**
 	 * CalendarRow renderer.
 	 * @namespace
