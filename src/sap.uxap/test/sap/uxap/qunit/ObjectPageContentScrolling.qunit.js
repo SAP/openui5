@@ -715,7 +715,10 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 
 					// assert context
 					iLastSectionSpacerHeight = oObjectPageLayout._$spacer.get(0).offsetHeight;
-					assert.notEqual(iLastSectionSpacerHeight, iFirstSectionSpacerHeight, "spacer for smaller section is different");
+					assert.equal(iLastSectionSpacerHeight, 0,
+						"spacer is 0");
+					assert.equal(iLastSectionSpacerHeight, iFirstSectionSpacerHeight,
+						"spacer for smaller section is the same when there is only one visible SubSection");
 
 					//Act: return to initial section
 					oObjectPageLayout.setSelectedSection(oFirstSection.getId());
@@ -779,10 +782,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
 
-			// Setup: snap the header to cause scrollbar to appear
-			// (as ObjectPage snaps by scrolling the header out of view)
 			oObjectPageLayout._snapHeader(true);
-			assert.strictEqual(hasScrollbar(), true, "has scrollbar");
 			oRequestAdjustLayoutSpy.reset();
 
 			// Act: unsnap the snapped header

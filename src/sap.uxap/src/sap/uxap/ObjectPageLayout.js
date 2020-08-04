@@ -2718,31 +2718,36 @@ sap.ui.define([
 		var iSpacerHeight,
 			iScrollableViewportHeight;
 
-		iScrollableViewportHeight = this._getScrollableViewportHeight(bStickyTitleMode);
-
-		if (bAllowSpaceToSnapViaScroll) {
-			// since different browsers have slightly different formats of rounding (ceil/round/floor)
-			// force rounding such that the spacer height is the biggest possible (enough to allow snap via scroll)
-			iScrollableViewportHeight = Math.ceil(iScrollableViewportHeight);
-			iLastVisibleHeight = Math.floor(iLastVisibleHeight);
+		// If there is only one visible section - no need to set spacer's height
+		if (Object.keys(this._oVisibleSubSections).length === 1 && this._bHeaderExpanded) {
+			iSpacerHeight =  0;
 		} else {
-			iLastVisibleHeight = this._$spacer.position().top; /* in expanded mode, all the content above lastSection bottom is visible */
-		}
+			iScrollableViewportHeight = this._getScrollableViewportHeight(bStickyTitleMode);
 
-		//calculate the required additional space for the last section only
-		if (iLastVisibleHeight < iScrollableViewportHeight) {
-
-			//the amount of space required is what is needed to get the latest position you can scroll to up to the "top"
-			//therefore we need to create enough space below the last subsection to get it displayed on top = the spacer
-			//the "top" is just below the sticky header + anchorBar, therefore we just need enough space to get the last subsection below these elements
-			iSpacerHeight = iScrollableViewportHeight - iLastVisibleHeight;
-
-			//take into account that we may need to scroll down to the positionMobile, thus we need to make sure we have enough space at the bottom
-			if (this._bMobileScenario) {
-				iSpacerHeight += (this._oSectionInfo[oLastVisibleSubSection.getId()].positionTopMobile - this._oSectionInfo[oLastVisibleSubSection.getId()].positionTop);
+			if (bAllowSpaceToSnapViaScroll) {
+				// since different browsers have slightly different formats of rounding (ceil/round/floor)
+				// force rounding such that the spacer height is the biggest possible (enough to allow snap via scroll)
+				iScrollableViewportHeight = Math.ceil(iScrollableViewportHeight);
+				iLastVisibleHeight = Math.floor(iLastVisibleHeight);
+			} else {
+				iLastVisibleHeight = this._$spacer.position().top; /* in expanded mode, all the content above lastSection bottom is visible */
 			}
-		} else {
-			iSpacerHeight = 0;
+
+			//calculate the required additional space for the last section only
+			if (iLastVisibleHeight < iScrollableViewportHeight) {
+
+				//the amount of space required is what is needed to get the latest position you can scroll to up to the "top"
+				//therefore we need to create enough space below the last subsection to get it displayed on top = the spacer
+				//the "top" is just below the sticky header + anchorBar, therefore we just need enough space to get the last subsection below these elements
+				iSpacerHeight = iScrollableViewportHeight - iLastVisibleHeight;
+
+				//take into account that we may need to scroll down to the positionMobile, thus we need to make sure we have enough space at the bottom
+				if (this._bMobileScenario) {
+					iSpacerHeight += (this._oSectionInfo[oLastVisibleSubSection.getId()].positionTopMobile - this._oSectionInfo[oLastVisibleSubSection.getId()].positionTop);
+				}
+			} else {
+				iSpacerHeight = 0;
+			}
 		}
 
 		if ((this.iFooterHeight > iSpacerHeight)) {
@@ -3627,7 +3632,7 @@ sap.ui.define([
 			// read the headerContentHeight ---------------------------
 			// Note: we are using getBoundingClientRect on the Dom reference to get the correct height taking into account
 			// possible browser zoom level. For more details BCP: 1780309606
-			this.iHeaderContentHeight = this._$headerContent.length ? Math.ceil(this._getDOMRefHeight(this._$headerContent[0])) : 0;
+			this.iHeaderContentHeight = this._$headerContent.length ? Math.round(this._getDOMRefHeight(this._$headerContent[0])) : 0;
 
 			//read the sticky headerContentHeight ---------------------------
 			this.iStickyHeaderContentHeight = this._$stickyHeaderContent.height();

@@ -3260,7 +3260,7 @@ function (
 			iSpacerNewHeight,
 			done = assert.async();
 
-			assert.expect(2);
+			assert.expect(1);
 
 		oObjectPage.setUseIconTabBar(false);
 		oObjectPage.setHeaderTitle(oFactory.getObjectPageDynamicHeaderTitle());
@@ -3275,10 +3275,8 @@ function (
 			iSpacerNewHeight = oObjectPage._$spacer.height();
 
 			// Assert
-			assert.notEqual(iSpacerInitialHeight, iSpacerNewHeight,
-				"Spacer height has been adjusted when unsnapping leads to change of content height");
-			assert.strictEqual(iSpacerNewHeight, iSpacerInitialHeight - (200 - 150),
-				"New height of spacer is equal to the old height minus the difference in content size");
+			assert.equal(iSpacerInitialHeight, iSpacerNewHeight,
+				"Spacer height remains 0 when unsnapping leads to change of content height and there is only one SubSection");
 			done();
 
 			// Cleanup
