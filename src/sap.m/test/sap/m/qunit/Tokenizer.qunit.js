@@ -106,6 +106,18 @@ sap.ui.define([
 		assert.strictEqual(oSpy.firstCall.args[0], false, "setFirstTokenTruncated was called with 'false'.");
 	});
 
+	QUnit.test("_handleResize should call _useCollapsedMode and scrollToEnd so as to show properly the tokens", function(assert) {
+		var oUseCollapsedModeSpy = sinon.spy(this.tokenizer, "_useCollapsedMode"),
+			oScrollToEndSpy = sinon.spy(this.tokenizer, "scrollToEnd");
+
+		// Act
+		this.tokenizer._handleResize();
+
+		// Assert
+		assert.strictEqual(oUseCollapsedModeSpy.callCount, 1, "_useCollapsedMode was called.");
+		assert.strictEqual(oScrollToEndSpy.callCount, 1, "scrollToEnd was called.");
+	});
+
 	QUnit.test("DestroyTokens should call setFirstTokenTruncated with 'false'", function (assert) {
 		// arrange
 		this.tokenizer.addToken(new Token());

@@ -656,6 +656,7 @@ sap.ui.define([
 
 	Tokenizer.prototype._handleResize = function(){
 		this._useCollapsedMode(this.getRenderMode());
+		this.scrollToEnd();
 	};
 
 	/**
