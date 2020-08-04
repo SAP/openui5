@@ -706,27 +706,25 @@ sap.ui.define([
 	 */
 	Element.prototype.focus = function (oFocusInfo) {
 		var oFocusDomRef = this.getFocusDomRef(),
-			aScrollHierarchy;
+			aScrollHierarchy = [];
 
 		oFocusInfo = oFocusInfo || {};
 
 		if (oFocusDomRef) {
 			// save the scroll position of all ancestor DOM elements
-			// before the focus is set
-			if (oFocusInfo.preventScroll === true) {
-				aScrollHierarchy = getAncestorScrollPositions(oFocusDomRef);
-			}
-
-			oFocusDomRef.focus();
-
-			if (aScrollHierarchy && aScrollHierarchy.length > 0) {
-				// restore the scroll position if it's changed after setting focus
-				if (Device.browser.safari || Device.browser.msie || Device.browser.edge) {
+			// before the focus is set, because preventScroll is not supported by the following browsers
+			if (Device.browser.safari || Device.browser.msie || Device.browser.edge) {
+				if (oFocusInfo.preventScroll === true) {
+					aScrollHierarchy = getAncestorScrollPositions(oFocusDomRef);
+				}
+				oFocusDomRef.focus();
+				if (aScrollHierarchy.length > 0) {
+					// restore the scroll position if it's changed after setting focus
 					// Safari, IE11 and Edge need a little delay to get the scroll position updated
 					setTimeout(restoreScrollPositions.bind(null, aScrollHierarchy), 0);
-				} else {
-					restoreScrollPositions(aScrollHierarchy);
 				}
+			} else {
+				oFocusDomRef.focus(oFocusInfo);
 			}
 		}
 	};
