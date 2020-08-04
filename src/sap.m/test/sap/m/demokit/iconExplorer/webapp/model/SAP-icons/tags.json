@@ -6444,13 +6444,12 @@
 			"notification"
 		]
 	},
-	"S/4HANA": {
+	"s4hana": {
 		"tags": [
+			"s4hana",
 			"S/4HANA",
-			"HANA",
-			"hana",
-			"s4",
 			"S/4",
+			"hana",
 			"product switch",
 			"product",
 			"switch"

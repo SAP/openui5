@@ -1179,7 +1179,7 @@
 				{ "name" : "table-column" },
 				{ "name" : "keyboard-and-mouse" },
 				{ "name" : "touch" },
-				{ "name" : "S/4HANA" }
+				{ "name" : "s4hana" }
 			]
 		},
 		{
