@@ -6,22 +6,22 @@ sap.ui.define([
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/ChartDelegate",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/mdc/odata/v4/BaseDelegate",
 	"./ODataMetaModelUtil",
 	"sap/base/util/merge",
 	'sap/ui/core/Core',
 	'sap/ui/mdc/util/FilterUtil',
-	'sap/ui/mdc/odata/v4/util/DelegateUtil'
+	'sap/ui/mdc/odata/v4/util/DelegateUtil',
+	'sap/ui/mdc/odata/v4/TypeUtil'
 ], function(
 	MDCLib,
 	BaseChartDelegate,
 	SyncPromise,
-	BaseDelegate,
 	MetaModelUtil,
 	merge,
 	Core,
 	FilterUtil,
-	DelegateUtil
+	DelegateUtil,
+	TypeUtil
 ) {
 	"use strict";
 
@@ -35,7 +35,7 @@ sap.ui.define([
 		this.name = aHeadData[0];
 		this.label = aHeadData[1] instanceof Object ? aHeadData[1]["$Path"] : aHeadData[1] || this.name;
 		this.textProperty = aHeadData[2];
-		this.type = BaseDelegate.getTypeUtil().getPrimitiveType(aHeadData[3]);
+		this.type = TypeUtil.getPrimitiveType(aHeadData[3]);
 
 		if (aHeadData[4] || aHeadData[5]) {
 			var sCalendarTag = aHeadData[4], sFiscalTag = aHeadData[5];
@@ -268,7 +268,7 @@ sap.ui.define([
 	 * @since 1.62
 	 * @author SAP SE
 	 */
-	var ChartDelegate = Object.assign({}, BaseChartDelegate, BaseDelegate);
+	var ChartDelegate = Object.assign({}, BaseChartDelegate);
 
 	/**
 	 * @inheritdoc
@@ -477,6 +477,10 @@ sap.ui.define([
 	 */
 	ChartDelegate.rebindChart = function(oMDCChart, oBindingInfo) {
 		BaseChartDelegate.rebindChart(oMDCChart, oBindingInfo);
+	};
+
+	ChartDelegate.getTypeUtil = function (oPayload) {
+		return TypeUtil;
 	};
 
 	return ChartDelegate;

@@ -10,11 +10,7 @@ sap.ui.define([
 	var oChartItemFlex = Object.assign({}, ItemBaseFlex);
 
 	oChartItemFlex.beforeAddItem = function(Delegate, sDataPropertyName, oControl, mPropertyBag, oChangeContent) {
-		return Delegate.beforeAddItem(sDataPropertyName, oControl, mPropertyBag, oChangeContent.role);
-	};
-
-	oChartItemFlex.afterRemoveItem = function(Delegate, oItem, oControl, mPropertyBag) {
-		return Delegate.afterRemoveItem(oItem, oControl, mPropertyBag);
+		return Delegate.addItem.call(Delegate, sDataPropertyName, oControl, mPropertyBag, oChangeContent.role);
 	};
 
 	oChartItemFlex.findItem = function(oModifier, aItems, sName) {

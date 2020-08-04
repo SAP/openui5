@@ -6,7 +6,7 @@
 // Delegate class used to help create content in the filterbar and fill relevant metadata
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
-sap.ui.define(["sap/ui/mdc/BaseDelegate"], function(BaseDelegate) {
+sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate"], function(AggregationBaseDelegate) {
 	"use strict";
 	/**
 	 * Base Delegate for {@link sap.ui.mdc.FilterBar FilterBar}. Extend this object in your project to use all functionalites of the {@link sap.ui.mdc.FilterBar FilterBar}.
@@ -18,21 +18,21 @@ sap.ui.define(["sap/ui/mdc/BaseDelegate"], function(BaseDelegate) {
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.FilterBarDelegate
 	 */
-	var FilterBarDelegate = Object.assign({}, BaseDelegate);
+	var FilterBarDelegate = Object.assign({}, AggregationBaseDelegate);
 
-	/**
-	 * Retrieves the relevant metadata for a given payload and returns the property info array.
-	 * @param {object} oFilterBar Instance of filter bar
-	 * @returns {Promise} Once resolved, an array of property info objects is returned
-	*/
-	FilterBarDelegate.fetchProperties = function(oFilterBar) {
-		return Promise.resolve([]);
+	FilterBarDelegate.addItem = function(sPropertyName, oFilterBar, mPropertyBag) {
+		return this.beforeAddFilterFlex.apply(this, arguments);
 	};
 
-
+	FilterBarDelegate.removeItem = function(sPropertyName, oFilterBar, mPropertyBag) {
+		return this.afterRemoveFilterFlex.apply(this, arguments);
+	};
 
 	/**
-	 * Creates an instance of the {@link sap.ui.mdc.FilterItem FilterItem}.
+	 *
+	 * @deprecated
+	 * <b>Note:</b> once all dependencies to the beforeAdd* and afterRemove* hooks have been changed,
+	 * this method should be removed. Please see: {@link  sap.ui.mdc.AggregationBaseDelegate AggregationBaseDelegate}
 	 *
 	 * @param {String} sPropertyName The name of the property info object/JSON
 	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of a filter bar
@@ -45,6 +45,11 @@ sap.ui.define(["sap/ui/mdc/BaseDelegate"], function(BaseDelegate) {
 	};
 
 	/**
+	 *
+	 * @deprecated
+	 * <b>Note:</b> once all dependencies to the beforeAdd* and afterRemove* hooks have been changed,
+	 * this method should be removed. Please see: {@link  sap.ui.mdc.AggregationBaseDelegate AggregationBaseDelegate}
+	 *
 	 * Triggers any necessary follow-up steps that need to be taken after the removal of filter items.
 	 * The returned Boolean value inside the <code>Promise</code> can be used to prevent the default follow-up behavior of the SAPUI5 flexibility handling.
 	 *

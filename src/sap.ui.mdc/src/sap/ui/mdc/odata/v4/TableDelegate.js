@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/TableDelegate", "sap/ui/mdc/odata/v4/BaseDelegate", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil', 'sap/ui/mdc/odata/v4/util/DelegateUtil', 'sap/ui/mdc/odata/v4/FilterBarDelegate', './ODataMetaModelUtil'
-], function(TableDelegate, BaseDelegate, Core, FilterUtil, DelegateUtil, FilterBarDelegate, ODataMetaModelUtil) {
+	"sap/ui/mdc/TableDelegate", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil', 'sap/ui/mdc/odata/v4/util/DelegateUtil', 'sap/ui/mdc/odata/v4/FilterBarDelegate', './ODataMetaModelUtil', 'sap/ui/mdc/odata/v4/TypeUtil'
+], function(TableDelegate, Core, FilterUtil, DelegateUtil, FilterBarDelegate, ODataMetaModelUtil, TypeUtil) {
 	"use strict";
 	/**
 	 * Helper class for sap.ui.mdc.Table.
@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @since 1.60
 	 * @alias sap.ui.mdc.odata.v4.TableDelegate
 	 */
-	var ODataTableDelegate = Object.assign({}, TableDelegate, BaseDelegate);
+	var ODataTableDelegate = Object.assign({}, TableDelegate);
 
 	/**
 	 * Fetches the relevant metadata for the table and returns property info array
@@ -164,6 +164,10 @@ sap.ui.define([
 				return FilterBarDelegate._createFilterField(oProperty, oTable);
 			}
 		};
+	};
+
+	ODataTableDelegate.getTypeUtil = function (oPayload) {
+		return TypeUtil;
 	};
 
 	return ODataTableDelegate;

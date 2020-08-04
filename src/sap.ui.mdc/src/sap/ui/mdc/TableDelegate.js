@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"./table/Column", "sap/m/Text", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil'
-], function(Column, Text, Core, FilterUtil) {
+	"sap/ui/mdc/AggregationBaseDelegate", "./table/Column", "sap/m/Text", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil'
+], function(AggregationBaseDelegate, Column, Text, Core, FilterUtil) {
 	"use strict";
 	/**
 	 * Delegate class for sap.ui.mdc.Table.<br>
@@ -20,15 +20,14 @@ sap.ui.define([
 	 * @since 1.60
 	 * @alias sap.ui.mdc.TableDelegate
 	 */
-	var TableDelegate = {
-		/**
-		 * Fetches the relevant metadata for the table and returns an array of the property metadata.
-		 *
-		 * @param {Object} oTable Instance of the table
-		 * @returns {Array} Array of property metadata
-		 */
-		fetchProperties: function(oTable) {
-			return Promise.resolve([]);
+	var TableDelegate = Object.assign(AggregationBaseDelegate, {
+
+		addItem: function(sPropertyName, oTable, mPropertyBag) {
+			return this.beforeAddColumnFlex.apply(this, arguments);
+		},
+
+		removeItem: function(sPropertyName, oTable, mPropertyBag) {
+			return this.afterRemoveColumnFlex.apply(this, arguments);
 		},
 
 		/**
@@ -137,6 +136,11 @@ sap.ui.define([
 		},
 
 		/**
+		 *
+		 * @deprecated
+		 * <b>Note:</b> once all dependencies to the beforeAdd* and afterRemove* hooks have been changed,
+		 * this method should be removed. Please see: {@link  sap.ui.mdc.AggregationBaseDelegate AggregationBaseDelegate}
+		 *
 		 * Can be used to create and returns the column (with a template) for the specified property info name.
 		 *
 		 * @param {Object} sPropertyInfoName The name of the property info object/json
@@ -153,6 +157,11 @@ sap.ui.define([
 		},
 
 		/**
+		 *
+		 * @deprecated
+		 * <b>Note:</b> once all dependencies to the beforeAdd* and afterRemove* hooks have been changed,
+		 * this method should be removed. Please see: {@link  sap.ui.mdc.AggregationBaseDelegate AggregationBaseDelegate}
+		 *
 		 * Can be used to trigger any necessary follow-up steps on removal of column. The returned boolean value inside the Promise can be used to
 		 * prevent default follow-up behaviour of Flex (which is to insert column to a dependent aggregation) *
 		 *
@@ -211,6 +220,7 @@ sap.ui.define([
 			// This may also needed to address duplicate property scenarios.
 			return Promise.resolve(new Text(this._getColumnTemplateInfo(oPropertyInfo)));
 		}
-	};
+	});
+
 	return TableDelegate;
 });

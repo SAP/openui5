@@ -5,7 +5,7 @@ sap.ui.define([
 
 	var oCustomDelegate = Object.assign({}, TableDelegate);
 
-	oCustomDelegate.beforeAddColumnFlex = function(sPropertyInfoName, oTable, mPropertyBag) {
+	oCustomDelegate.addItem = function(sPropertyInfoName, oTable, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var sId = mPropertyBag.id + "--" + sPropertyInfoName;
 

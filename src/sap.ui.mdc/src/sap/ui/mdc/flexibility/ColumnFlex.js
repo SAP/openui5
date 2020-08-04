@@ -25,14 +25,6 @@ sap.ui.define([
 		}
 	};
 
-	oColumnFlex.beforeAddItem = function(Delegate, sDataPropertyName, oControl, mPropertyBag) {
-		return Delegate.beforeAddColumnFlex(sDataPropertyName, oControl, mPropertyBag);
-	};
-
-	oColumnFlex.afterRemoveItem = function(Delegate, oColumn, oControl, mPropertyBag) {
-		return Delegate.afterRemoveColumnFlex(oColumn, oControl, mPropertyBag);
-	};
-
 	oColumnFlex.findItem = function(oModifier, aColumns, sName) {
 		return aColumns.find(function(oColumn) {
 			var aDataProperties = oModifier.getProperty(oColumn, "dataProperties");

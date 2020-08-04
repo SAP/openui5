@@ -14,7 +14,7 @@ sap.ui.define([
 
 		/**
 		 * Called during the apply of an <code>add</code> flexibility change, this should be used to
-		 * implement control delegate specific hooks such as <code>beforeColumnFlex</code> or <code>beforeFilterFlex</code>
+		 * implement control delegate specific hooks <code>addItem</code>
 		 *
 		 * @param {object} Delegate The control specific delegate
 		 * @param {string} sDataPropertyName The property name which should be added
@@ -22,13 +22,13 @@ sap.ui.define([
 		 * @param {object} oChangeContent The current change content
 		 * @param {object} mPropertyBag Instance of property bag from Flex change API
 		 */
-		beforeAddItem: function(Delegate, sDataPropertyName, oControl, mPropertyBag, oChangeContent) {
-			return;
+		beforeAddItem: function(Delegate, sDataPropertyName, oControl, mPropertyBag) {
+			return Delegate.addItem.call(Delegate, sDataPropertyName, oControl, mPropertyBag);
 		},
 
 		/**
 		 * Called during the apply of an <code>remove</code> flexibility change, this should be used to
-		 * implement control delegate specific hooks such as <code>afterRemoveColumnFlex</code> or <code>afterRemoveFilterFlex</code>
+		 * implement control delegate specific hooks <code>removeItem</code>
 		 *
 		 * @param {object} Delegate The control specific delegate
 		 * @param {object} oItem The item which should be removed
@@ -36,7 +36,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag Instance of property bag from Flex change API
 		 */
 		afterRemoveItem: function(Delegate, oItem, oControl, mPropertyBag) {
-			return;
+			return Delegate.removeItem.call(Delegate, oItem, oControl, mPropertyBag);
 		},
 
 		/**

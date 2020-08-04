@@ -83,7 +83,7 @@ sap.ui.define([
 		});
 	};
 
-	JSONFilterBarDelegate.beforeAddFilterFlex = function(sPropertyName, oFilterBar, mPropertyBag) {
+	JSONFilterBarDelegate.addItem = function(sPropertyName, oFilterBar, mPropertyBag) {
 		return JSONFilterBarDelegate.fetchProperties().then(function(aProperties) {
 
 			var oProperty = null;
@@ -112,7 +112,7 @@ sap.ui.define([
 	 * @param {Object} mPropertyBag Instance of property bag from Flex change API
 	 * @returns {Promise} Promise that resolves with true/false to allow/prevent default behavour of the change
 	 */
-	JSONFilterBarDelegate.afterRemoveFilterFlex =  function(oFilterField, oFilterBar, mPropertyBag) {
+	JSONFilterBarDelegate.removeItem =  function(oFilterField, oFilterBar, mPropertyBag) {
 		// return true within the Promise for default behaviour
 		return Promise.resolve(true);
 	};

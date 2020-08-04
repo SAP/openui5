@@ -7,9 +7,9 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	'sap/ui/mdc/odata/BaseDelegate' // TODO: FieldBase & Field currently expect odata types in default delegate!
+	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/odata/TypeUtil' // TODO: FieldBase & Field currently expect odata types in default delegate!
 ], function(
-	BaseDelegate
+	BaseDelegate, TypeUtil
 ) {
 	"use strict";
 
@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @deprecated please use sap.ui.mdc.util.TypeUtil.getDataTypeClass instead
 	 */
 	FieldBaseDelegate.getDataTypeClass = function(oPayload, sType) {
-		return BaseDelegate.getTypeUtil(oPayload).getDataTypeClassName(sType);
+		return TypeUtil.getDataTypeClassName(sType);
 	};
 
 	/**
@@ -53,7 +53,7 @@ sap.ui.define([
  	 * @deprecated please use sap.ui.mdc.util.TypeUtil.getBaseType instead
 	 */
 	FieldBaseDelegate.getBaseType = function(oPayload, sType, oFormatOptions, oConstraints) {
-		return BaseDelegate.getTypeUtil(oPayload).getBaseType(sType, oFormatOptions, oConstraints);
+		return TypeUtil.getBaseType(sType, oFormatOptions, oConstraints);
 	};
 
 	/**
@@ -215,6 +215,10 @@ sap.ui.define([
 
 		return {name: "sap/ui/mdc/field/FieldValueHelpDelegate", payload: {}};
 
+	};
+
+	FieldBaseDelegate.getTypeUtil = function (oPayload) {
+		return TypeUtil;
 	};
 
 	return FieldBaseDelegate;

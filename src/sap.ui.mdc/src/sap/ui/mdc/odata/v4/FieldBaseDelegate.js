@@ -7,11 +7,12 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	'sap/ui/mdc/field/FieldBaseDelegate',
-	"sap/ui/mdc/odata/v4/BaseDelegate"
+	"sap/ui/mdc/field/FieldBaseDelegate",
+	"sap/ui/mdc/odata/v4/TypeUtil"
+
 ], function(
 		FieldBaseDelegate,
-		BaseDelegate
+		TypeUtil
 ) {
 	"use strict";
 
@@ -26,7 +27,7 @@ sap.ui.define([
 	 * @since 1.74.0
 	 * @alias sap.ui.mdc.odata.v4.FieldBaseDelegate
 	 */
-	var ODataFieldBaseDelegate = Object.assign({}, FieldBaseDelegate, BaseDelegate);
+	var ODataFieldBaseDelegate = Object.assign({}, FieldBaseDelegate);
 
 	/**
 	 * Maps the Edm type names to real type names
@@ -39,7 +40,7 @@ sap.ui.define([
 	 * @deprecated please use sap.ui.mdc.odata.v4.TypeUtil.getDataTypeClass instead
 	 */
 	ODataFieldBaseDelegate.getDataTypeClass = function(oPayload, sType) {
-		return BaseDelegate.getTypeUtil().getDataTypeClassName(sType);
+		return TypeUtil.getDataTypeClassName(sType);
 	};
 
 	/**
@@ -56,7 +57,7 @@ sap.ui.define([
  	 * @deprecated please use sap.ui.mdc.odata.v4.TypeUtil.getBaseType instead
 	 */
 	ODataFieldBaseDelegate.getBaseType = function(oPayload, sType, oFormatOptions, oConstraints) {
-		return BaseDelegate.getTypeUtil().getBaseType(sType, oFormatOptions, oConstraints);
+		return TypeUtil.getBaseType(sType, oFormatOptions, oConstraints);
 	};
 
 
@@ -92,6 +93,10 @@ sap.ui.define([
 
 		return {name: "sap/ui/mdc/odata/v4/FieldValueHelpDelegate", payload: {}};
 
+	};
+
+	ODataFieldBaseDelegate.getTypeUtil = function (oPayload) {
+		return TypeUtil;
 	};
 
 	return ODataFieldBaseDelegate;

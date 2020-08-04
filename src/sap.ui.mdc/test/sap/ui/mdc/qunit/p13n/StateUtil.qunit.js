@@ -88,7 +88,7 @@ sap.ui.define([
 	QUnit.module("API tests for FilterBar", {
 		before: function(){
 			FilterBarDelegate.fetchProperties = fetchProperties;
-			FilterBarDelegate.beforeAddFilterFlex = createFilterItem;
+			FilterBarDelegate.addItem = createFilterItem;
 			this.oUiComponent = new UIComp("comp");
 
 			// Place component in container and display

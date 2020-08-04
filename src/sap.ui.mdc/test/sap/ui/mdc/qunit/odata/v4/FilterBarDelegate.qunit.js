@@ -81,24 +81,24 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test('Check beforeAddFilterFlex', function(assert) {
+	QUnit.test('Check addItem', function(assert) {
 		var done = assert.async();
 
 		createDataModel().then(function (oModel) {
 			this._oFilterBar.setModel(oModel, "sample");
-			FilterBarDelegate.beforeAddFilterFlex("String", this._oFilterBar, { modifier: JsControlTreeModifier, appComponent: this._oFilterBar} ).then(function(oFilterField) {
+			FilterBarDelegate.addItem("String", this._oFilterBar, { modifier: JsControlTreeModifier, appComponent: this._oFilterBar} ).then(function(oFilterField) {
 				assert.ok(oFilterField);
 				done();
 			});
 		}.bind(this));
 	});
 
-	QUnit.test('Check afterRemoveFilterFlex', function(assert) {
+	QUnit.test('Check removeItem', function(assert) {
 		var done = assert.async();
 
 		createDataModel().then(function (oModel) {
 			this._oFilterBar.setModel(oModel, "sample");
-			FilterBarDelegate.afterRemoveFilterFlex().then(function(bValue) {
+			FilterBarDelegate.removeItem().then(function(bValue) {
 				assert.ok(bValue);
 				done();
 			});
