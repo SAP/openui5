@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/MessageType",
+	"sap/ui/core/Core",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -14,6 +15,7 @@ function(
 	Fragment,
 	JSONModel,
 	MessageType,
+	Core,
 	sinon
 ) {
 	'use strict';
@@ -325,9 +327,16 @@ function(
 		}
 	}, function() {
 		QUnit.test("Given no dialog is created, when the version button is pressed and afterwards pressed a second time", function(assert) {
+			var done = assert.async();
 			var oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 			var oVersionButton = this.oToolbar.getControl("versionButton");
+
+			// force a rendering of the button for the Popover.openBy function
+			oVersionButton.placeAt("qunit-fixture");
+			Core.applyChanges();
+
 			var oAddDependentSpy = sandbox.spy(oVersionButton, "addDependent");
+			var oVersionsDialog;
 			var oEvent = {
 				getSource: function () {
 					return oVersionButton;
@@ -340,14 +349,17 @@ function(
 					return oFragmentLoadSpy.getCall(0).returnValue;
 				})
 				.then(this.oToolbar.oVersionDialogPromise)
-				.then(function (oVersionDialog) {
-					assert.ok(oVersionDialog, "and the dialog promise was assigned");
+				.then(function (oVersionDialogResolveValue) {
+					oVersionsDialog = oVersionDialogResolveValue;
+					assert.ok(oVersionsDialog, "and the dialog promise was assigned");
+					assert.equal(oVersionsDialog.isOpen(), true, "and the dialog was opened");
 					assert.equal(oAddDependentSpy.callCount, 1, "and the dialog is set as a dependent for the button");
+					oVersionsDialog.attachAfterClose(function () {
+						assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment is not loaded again");
+						done();
+					});
 				})
-				.then(this.oToolbar.showVersionHistory.bind(this.oToolbar, oEvent))
-				.then(function () {
-					assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment not loaded again");
-				});
+				.then(this.oToolbar.showVersionHistory.bind(this.oToolbar, oEvent));
 		});
 	});
 

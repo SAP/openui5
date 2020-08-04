@@ -213,14 +213,18 @@ function(
 					formatOriginalAppHighlight: this.formatOriginalAppHighlight.bind(this),
 					formatOriginalAppHighlightText: this.formatOriginalAppHighlightText.bind(this)
 				}
-			}).then(function (oVersionHistory) {
-				oVersionButton.addDependent(oVersionHistory);
-				return oVersionHistory;
+			}).then(function (oVersionsDialog) {
+				oVersionButton.addDependent(oVersionsDialog);
+				return oVersionsDialog;
 			});
 		}
 
 		return this.oVersionDialogPromise.then(function (oVersionsDialog) {
-			oVersionsDialog.openBy(oVersionButton);
+			if (!oVersionsDialog.isOpen()) {
+				oVersionsDialog.openBy(oVersionButton);
+			} else {
+				oVersionsDialog.close();
+			}
 		});
 	};
 
