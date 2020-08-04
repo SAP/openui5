@@ -126,7 +126,7 @@ sap.ui.define([
 	/**
 	 *
 	 * Interface for controls or entities which support the appliance of an externalized state representation.
-	 * The controls or entities have to implement the following APIs: <code>getCurrentState</code>, <code>getAdaptationConfig</code> & <code>initialized</code> methods.
+	 * The controls or entities have to implement the following APIs: <code>getCurrentState</code>, <code>getAdaptationConfigAttribute</code> & <code>initialized</code> methods.
 	 *
 	 * @since 1.75
 	 * @name sap.ui.mdc.IxState

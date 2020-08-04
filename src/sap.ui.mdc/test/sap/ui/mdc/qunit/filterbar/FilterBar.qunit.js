@@ -27,12 +27,13 @@ sap.ui.define([
 	"use strict";
 
 	var oFilterBar, oAdaptationController;
+
 	QUnit.module("FilterBar", {
 		beforeEach: function () {
 			oFilterBar = new FilterBar({
 				delegate: { name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate", payload: { modelName: undefined, collectionName: "test" } }
 			});
-			oAdaptationController = oFilterBar._getAdaptationController();
+
 			if (FlexUtil.handleChanges.restore){
 				FlexUtil.handleChanges.restore();
 			}
@@ -167,7 +168,6 @@ sap.ui.define([
 
 		assert.ok(oFilterBar._oInitialFiltersAppliedPromise);
 		oFilterBar._oInitialFiltersAppliedPromise.then(function () {
-
 			assert.ok(oFilterBar._applyInitialFilterConditions.called);
 			done();
 		});
@@ -202,6 +202,26 @@ sap.ui.define([
 			oFB.destroy();
 			done();
 		});
+	});
+
+	QUnit.module("FilterBar adaptation", {
+		beforeEach: function () {
+			oFilterBar = new FilterBar({
+				delegate: { name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate", payload: { modelName: undefined, collectionName: "test" } }
+			});
+
+			if (FlexUtil.handleChanges.restore){
+				FlexUtil.handleChanges.restore();
+			}
+
+			return oFilterBar.retrieveAdaptationController().then(function (oAdaptationControllerInstance) {
+				oAdaptationController = oAdaptationControllerInstance;
+			});
+		},
+		afterEach: function () {
+			oFilterBar.destroy();
+			oFilterBar = undefined;
+		}
 	});
 
 
@@ -679,6 +699,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("create multi valued change with 'filterConditions'", function (assert) {
+		var done = assert.async();
 
 		var oProperty = {
 			name: "key",
@@ -688,48 +709,47 @@ sap.ui.define([
 		};
 
 		var oFB = new FilterBar({ filterConditions: { key: [{ operator: "EQ", values: ["a"] }] }, p13nMode: ["Value"] });
-		oAdaptationController = oFB._getAdaptationController();
+		oFB.retrieveAdaptationController().then(function (oAdaptationController) {
+			var aResultingChanges = [];
+			var fnStoreChanges = function (aChanges) {
+				aResultingChanges = aChanges;
+			};
 
-		var aResultingChanges = [];
-		var fnStoreChanges = function (aChanges) {
-			aResultingChanges = aChanges;
-		};
-
-		var fnResolveInfo = new Promise(function(resolve){
-			oAdaptationController.aPropertyInfo = [oProperty];
-			resolve([oProperty]);
-		});
-
-		sinon.stub(oAdaptationController, "_retrievePropertyInfo").returns(fnResolveInfo);
-		var done = assert.async();
-
-		var oCondition1 = Condition.createCondition("EQ", ["a"]);
-		var oCondition2 = Condition.createCondition("EQ", ["foo"]);
-
-		sinon.stub(oFB, "getPropertyInfoSet").returns([oProperty]);
-		sinon.stub(oFB, "_isFlexSupported").returns(true);
-		sinon.stub(FlexUtil, 'handleChanges').callsFake(fnStoreChanges);
-
-		oFB._oInitialFiltersAppliedPromise.then(function () {
-
-			oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
-
-				FlexUtil.handleChanges(aChanges);
-
-				assert.equal(aResultingChanges.length, 1);
-				assert.equal(aResultingChanges[0].selectorElement, oFB);
-				assert.equal(aResultingChanges[0].changeSpecificData.changeType, "addCondition");
-				assert.equal(aResultingChanges[0].changeSpecificData.content.name, "key");
-				assert.deepEqual(aResultingChanges[0].changeSpecificData.content.condition, { operator: "EQ", values: ["foo"], validated: undefined});
-
-				oFB.destroy();
-				oAdaptationController = oFilterBar._getAdaptationController();
-				done();
-
+			var fnResolveInfo = new Promise(function(resolve){
+				oAdaptationController.aPropertyInfo = [oProperty];
+				resolve([oProperty]);
 			});
 
-			oFB._getConditionModel().addCondition("key", oCondition1);
-			oFB._getConditionModel().addCondition("key", oCondition2);
+			sinon.stub(oAdaptationController, "_retrievePropertyInfo").returns(fnResolveInfo);
+
+			var oCondition1 = Condition.createCondition("EQ", ["a"]);
+			var oCondition2 = Condition.createCondition("EQ", ["foo"]);
+
+			sinon.stub(oFB, "getPropertyInfoSet").returns([oProperty]);
+			sinon.stub(oFB, "_isFlexSupported").returns(true);
+			sinon.stub(FlexUtil, 'handleChanges').callsFake(fnStoreChanges);
+
+			oFB._oInitialFiltersAppliedPromise.then(function () {
+
+				oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
+
+					FlexUtil.handleChanges(aChanges);
+
+					assert.equal(aResultingChanges.length, 1);
+					assert.equal(aResultingChanges[0].selectorElement, oFB);
+					assert.equal(aResultingChanges[0].changeSpecificData.changeType, "addCondition");
+					assert.equal(aResultingChanges[0].changeSpecificData.content.name, "key");
+					assert.deepEqual(aResultingChanges[0].changeSpecificData.content.condition, { operator: "EQ", values: ["foo"], validated: undefined});
+
+					oFB.destroy();
+					oAdaptationController = oFilterBar.getAdaptationController();
+					done();
+
+				});
+
+				oFB._getConditionModel().addCondition("key", oCondition1);
+				oFB._getConditionModel().addCondition("key", oCondition2);
+			});
 		});
 	});
 

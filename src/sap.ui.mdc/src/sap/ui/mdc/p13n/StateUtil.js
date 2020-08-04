@@ -123,7 +123,7 @@ sap.ui.define([
 				//needs to be set in order to create and delta the changes as expected
 				oAdaptationController.setAdaptationControl(oControl);
 				oAdaptationController.setStateRetriever(oControl.getCurrentState);
-				oAdaptationController.setItemConfig(oControl.getAdaptationConfig("Item"));
+				oAdaptationController.setItemConfig(oControl.getAdaptationConfigAttribute("itemConfig"));
 
 				var bValidInterface = this.checkXStateInterface(oControl);
 

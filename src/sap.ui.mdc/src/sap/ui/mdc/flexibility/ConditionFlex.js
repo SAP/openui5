@@ -7,7 +7,7 @@ sap.ui.define([
 	"use strict";
 
 	var fDetermineFilterControl = function(oControl) {
-		var oFilterConfig = oControl.getAdaptationConfig ? oControl.getAdaptationConfig("Filter") : null;
+		var oFilterConfig = oControl.getAdaptationConfig ? oControl.getAdaptationConfigAttribute("filterConfig") : null;
 		return oFilterConfig ? oFilterConfig.filterControl : null;
 	};
 

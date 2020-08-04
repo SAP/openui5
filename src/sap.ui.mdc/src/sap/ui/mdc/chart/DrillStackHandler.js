@@ -93,7 +93,7 @@ sap.ui.define([
 				if (oListItem) {
 					//Call flex to capture current state before adding an item to the chart aggregation
 
-					var oAdaptationController = ChartSettings._getAdaptationController(oChart);
+					var oAdaptationController = oChart.getAdaptationController();
 					oAdaptationController.createItemChanges([{
 						name: oListItem.data("dim").name,
 						position: oChart.getItems().length
@@ -247,7 +247,7 @@ sap.ui.define([
 					};
 				});
 
-				ChartSettings._getAdaptationController(oChart).createItemChanges(aFlexItemChanges);
+				oChart.getAdaptationController().createItemChanges(aFlexItemChanges);
 
 				// don't forget to update the bread crumbs control itself
 				this._updateDrillBreadcrumbs(oChart, oDrillBreadcrumbs);

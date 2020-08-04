@@ -405,6 +405,11 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 					only: "[sap/ui/mdc/odata/v4]"
 				},
 				sinon: true
+			},
+			"AdaptationMixin": {
+				group: "Mixin",
+				module: "./mixin/AdaptationMixin.qunit",
+				sinon: true
 			}
 		}
 	};

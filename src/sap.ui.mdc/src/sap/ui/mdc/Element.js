@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Element", "sap/ui/mdc/mixin/DelegateMixin"
-], function(CoreElement, DelegateMixin) {
+	"sap/ui/core/Element", "sap/ui/mdc/mixin/DelegateMixin", "sap/ui/mdc/mixin/AdaptationMixin"
+], function(CoreElement, DelegateMixin, AdaptationMixin) {
 	"use strict";
 
 	/**
@@ -26,6 +26,12 @@ sap.ui.define([
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getPayload as getPayload
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeUtil as getTypeUtil
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.initControlDelegate as initControlDelegate
+	 *
+	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.retrieveAdaptationController as retrieveAdaptationController
+	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.enhanceAdaptationConfig as enhanceAdaptationConfig
+ 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getAdaptationController as getAdaptationController
+	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getAdaptationConfigAttribute as getAdaptationConfigAttribute
+	 *
 	 * @private
 	 * @experimental
 	 * @since 1.74
@@ -44,6 +50,17 @@ sap.ui.define([
 				delegate: {
 					type: "object",
 					group: "Data"
+				},
+				/**
+				 * Configuration for the inner {@link sap.ui.mdc.p13n.AdaptationController}.<br>
+				 * This object can be used to customize the personalization settings for the MDC Control instance.
+				 *
+				 * @experimental
+				 */
+				adaptationConfig: {
+					type: "object",
+					group: "Data",
+					visiblity: "hidden"
 				}
 			}
 		},
@@ -51,6 +68,7 @@ sap.ui.define([
 	});
 
 	DelegateMixin.call(Element.prototype);
+	AdaptationMixin.call(Element.prototype);
 
 	return Element;
 });

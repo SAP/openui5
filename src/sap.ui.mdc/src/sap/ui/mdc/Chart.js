@@ -328,7 +328,19 @@ sap.ui.define([
 
 			this._oManagedObjectModel = new ManagedObjectModel(this);
 			this.setModel(this._oManagedObjectModel, "$mdcChart");
+
 			Control.prototype.init.apply(this, arguments);
+
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			this.setProperty("adaptationConfig", {
+				itemConfig: {
+					addOperation: "addItem",
+					removeOperation: "removeItem",
+					moveOperation: "moveItem",
+					title: oResourceBundle.getText("chart.PERSONALIZATION_DIALOG_TITLE"),
+					panelPath: "sap/ui/mdc/p13n/panels/ChartItemPanel"
+				}
+			});
 		};
 
 		Chart.prototype.initModules = function(aModules) {
@@ -379,6 +391,11 @@ sap.ui.define([
 				}
 
 				return this.getControlDelegate().fetchProperties(this);
+			}.bind(this))
+			.then(function (aProperties) {
+				return this.retrieveAdaptationController().then(function () {
+					return aProperties;
+				});
 			}.bind(this))
 
 			.then(function createInnerChart(aProperties) {
@@ -675,11 +692,6 @@ sap.ui.define([
 
 		Chart.prototype.exit = function() {
 			Control.prototype.exit.apply(this, arguments);
-
-			if (this._oAdaptationController) {
-				this._oAdaptationController.destroy();
-				this._oAdaptationController = null;
-			}
 
 			this.oChartPromise = null;
 			this._oSelectionHandlerPromise = null;
@@ -1243,6 +1255,39 @@ sap.ui.define([
 
 		Chart.prototype.done = function () {
 			return this.oChartPromise;
+		};
+
+		var _getVisibleProperties = function (oChart) {
+			var aProperties = [];
+			if (oChart) {
+				oChart.getItems().forEach(function (oChartItem, iIndex) {
+					aProperties.push({
+						name: oChartItem.getKey(),
+						label: oChartItem.getLabel(),
+						role: oChartItem.getRole(),
+						position: iIndex
+					});
+
+				});
+			}
+			return aProperties;
+		};
+
+		var _getSortedProperties = function(oChart) {
+			return oChart.getSortConditions() ? oChart.getSortConditions().sorters : [];
+		};
+
+		/**
+		 * Fetches the current state of the chart (as a JSON)
+		 *
+		 * @protected
+		 * @returns {Object} Current state of the chart
+		 */
+		Chart.prototype.getCurrentState = function() {
+			return {
+				items: _getVisibleProperties(this),
+				sorters: _getSortedProperties(this)
+			};
 		};
 
 		return Chart;
