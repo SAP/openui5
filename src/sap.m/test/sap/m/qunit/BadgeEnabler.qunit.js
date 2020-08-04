@@ -63,33 +63,33 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(this.oCustomControl.getCustomData()[0].getValue(), "10", "Value is properly set on BadgeCustomData");
-		assert.equal(this.oCustomControl.getCustomData()[0].getKey(), "badge", "Key is properly set by default on BadgeCustomData");
+		assert.equal(this.oCustomControl.getCustomData()[0].getVisible(), true, "Badge is visible by default");
 
 		//Act
-		this.oCustomControl.getBadgeCustomData("badge").setKey("Nobadge");
-		//Assert
-		assert.equal(this.oCustomControl.getCustomData()[0].getKey(), "badge", "Key of BadgeCustomData stays unchanged");
-
-		//Act
-		this.oCustomControl.getBadgeCustomData("badge").setValue("");
+		this.oCustomControl.getBadgeCustomData().setVisible(false);
 
 		//Assert
 		assert.equal(this.oCustomControl._isBadgeAttached, false, "Badge Disappears with invalid data provided (empty string)");
 
 		//Act
-		this.oCustomControl.getBadgeCustomData("badge").setValue(undefined);
-
-		//Assert
-		assert.equal(this.oCustomControl._isBadgeAttached, false, "Badge Disappears with invalid data provided (undefined)");
+		this.oCustomControl.getBadgeCustomData().setVisible(true);
 
 		//Act
-		this.oCustomControl.getBadgeCustomData("badge").setValue("undefined");
+		this.oCustomControl.getBadgeCustomData().setValue("undefined");
 
 		//Assert
-		assert.equal(this.oCustomControl._isBadgeAttached, false, "Badge Disappears with invalid data provided ('undefined')");
+		assert.equal(this.oCustomControl.$("sapMBadge").attr("data-badge"), "", "Badge shows empty string when invalid data " +
+			"provided ('undefined')");
 
 		//Act
-		this.oCustomControl.getBadgeCustomData("badge").setValue("10");
+		this.oCustomControl.getBadgeCustomData().setValue("null");
+
+		//Assert
+		assert.equal(this.oCustomControl.$("sapMBadge").attr("data-badge"), "", "Badge shows empty string when invalid data " +
+			"provided (null)");
+
+		//Act
+		this.oCustomControl.getBadgeCustomData().setValue("10");
 		this.oCustomControl.removeAllCustomData();
 		Core.applyChanges();
 
@@ -131,24 +131,58 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(oUpdateFuncStub.calledOnce, true, "Update handler method called");
-		assert.equal(oUpdateFuncStub.calledWith("100", "Updated", "CustomControl-sapMBadge"), true, "Update handler method called with correct data" +
-			"- Updated");
+		assert.equal(oUpdateFuncStub.calledWith("100", "Appear", "CustomControl-sapMBadge"), true, "Update handler method called with correct data" +
+			" - Appeared");
+
+		//Act
+		this.oCustomControl.getBadgeCustomData().setValue("101");
+
+		//Assert
+		assert.equal(oUpdateFuncStub.calledWith("101", "Updated", "CustomControl-sapMBadge"), true, "Update handler method called with correct data" +
+			" - Updated");
+
+		//Act
+		this.oCustomControl.getBadgeCustomData().setVisible(false);
+
+		//Assert
+		assert.equal(oUpdateFuncStub.calledWith("", "Disappear", "CustomControl-sapMBadge"), true, "Update handler method called with correct data" +
+			" - Disappeared");
+
+		//Act
+		this.oCustomControl.getBadgeCustomData().setVisible(true);
+		this.oCustomControl.getBadgeCustomData().setValue("10");
+		this.oCustomControl.getBadgeCustomData().setVisible(false);
+
+		//Assert
+		assert.equal(this.oCustomControl.getBadgeCustomData().getValue(), "10", "Value is saved aside from visibility");
+
+		//Act
+		this.oCustomControl.getBadgeCustomData().setValue("13");
+
+		//Assert
+		assert.equal(this.oCustomControl.getBadgeCustomData().getValue(), "13", "Value is updated aside from visibility");
+
+		//Act
+		this.oCustomControl.getBadgeCustomData().setVisible(true);
+
+		//Assert
+		assert.equal(this.oCustomControl.getBadgeCustomData().getValue(), "13", "Value is kept aside from visibility");
 
 		//Act
 		this.oCustomControl.removeBadgeCustomData();
+		this.oCustomControl.addCustomData(new BadgeCustomData({visible: false, value: "100"}));
 
 		//Assert
-		assert.equal(oUpdateFuncStub.called, true, "Update handler method called");
-		assert.equal(oUpdateFuncStub.calledWith("", "Disappear", "CustomControl-sapMBadge"), true, "Update handler method called with correct data" +
-			"-Appeared");
+		assert.equal(this.oCustomControl.getBadgeCustomData().getValue(), "100", "Value is registered if the badge is" +
+			" invisible on initialisation");
 
 		//Act
-		this.oCustomControl.addCustomData(new BadgeCustomData({value: "100"}));
+		this.oCustomControl.getBadgeCustomData().setVisible(true);
 
 		//Assert
-		assert.equal(oUpdateFuncStub.called, true, "Update handler method called");
-		assert.equal(oUpdateFuncStub.calledWith("100", "Appear", "CustomControl-sapMBadge"), true, "Update handler method called with correct data" +
-			"-Disappeared");
+		assert.equal(this.oCustomControl.$("sapMBadge").attr("data-badge"), "100", "Value is applied when badge turns" +
+			"visible");
+
 	});
 
 	QUnit.module("ACC", {

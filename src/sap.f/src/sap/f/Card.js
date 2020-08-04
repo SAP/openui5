@@ -206,7 +206,7 @@ sap.ui.define([
 
 		var oBadgeCustomData = this.getBadgeCustomData();
 		if (oBadgeCustomData) {
-			oBadgeCustomData.setValue("");
+			oBadgeCustomData.setVisible(false);
 		}
 
 		this._iHideBadgeTimeout = null;

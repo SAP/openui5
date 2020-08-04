@@ -217,7 +217,7 @@ function (
 
 		this.clock.tick(4000);
 
-		assert.notOk(oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is not rendered");
+		assert.equal(oCard._isBadgeAttached, false, "Badge indicator is not rendered");
 
 		oCard.destroy();
 	});
