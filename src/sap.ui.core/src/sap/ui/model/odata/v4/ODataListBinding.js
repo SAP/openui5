@@ -2341,7 +2341,8 @@ sap.ui.define([
 			mNavigationPropertyPaths = {},
 			oPromise,
 			aPromises,
-			bSingle = oContext && oContext !== this.oHeaderContext;
+			bSingle = oContext && oContext !== this.oHeaderContext,
+			that = this;
 
 		/*
 		 * Adds an error handler to the given promise which reports errors to the model.
@@ -2380,7 +2381,9 @@ sap.ui.define([
 				this.visitSideEffects(sGroupId, aPaths, bSingle ? oContext : undefined,
 					mNavigationPropertyPaths, aPromises);
 
-				return SyncPromise.all(aPromises.map(reportError));
+				return SyncPromise.all(aPromises.map(reportError)).then(function () {
+					return that.refreshDependentListBindingsWithoutCache();
+				});
 			}
 		}
 		if (bSingle) {

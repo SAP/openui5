@@ -3780,6 +3780,39 @@ sap.ui.define([
 			mCacheQueryOptionsForPath
 		);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshDependentListBindingsWithoutCache", function (assert) {
+		var oBinding = new ODataParentBinding(),
+			oDependent1 = {
+				oCache : null,
+				filter : {},
+				refreshDependentListBindingsWithoutCache : function () {},
+				refreshInternal : function () {}
+			},
+			oDependent2 = {},
+			oDependent3 = {
+				filter : {},
+				refreshDependentListBindingsWithoutCache : function () {}
+			},
+			oPromise;
+
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
+			.returns([oDependent1, oDependent2, oDependent3]);
+		this.mock(oDependent1).expects("refreshInternal").withExactArgs("").resolves("~1");
+		this.mock(oDependent1).expects("refreshDependentListBindingsWithoutCache").never();
+		this.mock(oDependent3).expects("refreshDependentListBindingsWithoutCache").withExactArgs()
+			.resolves("~2");
+
+		// code under test
+		oPromise = oBinding.refreshDependentListBindingsWithoutCache().then(function (aResults) {
+			assert.deepEqual(aResults, ["~1", undefined, "~2"]);
+		});
+
+		assert.notOk(oPromise.isFulfilled());
+
+		return oPromise;
+	});
 });
 //TODO Fix issue with ODataModel.integration.qunit
 //  "suspend/resume: list binding with nested context binding, only context binding is adapted"
