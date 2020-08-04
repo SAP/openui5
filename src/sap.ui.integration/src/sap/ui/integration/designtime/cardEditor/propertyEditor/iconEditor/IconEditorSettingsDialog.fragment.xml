@@ -37,12 +37,8 @@
 							visible="{settings>/altVisible}"
 							tooltip="{i18n>BASE_EDITOR.ICON.INPUT_ALT}"/>
 						<Label
-							text="{i18n>BASE_EDITOR.ICON.SETTINGS_DIALOG_TEXT_LABEL}"
-							visible="{settings>/textVisible}">
-						</Label>
-						<Label
 							text="{i18n>BASE_EDITOR.ICON.SETTINGS_DIALOG_BACKGROUNDCOLOR_LABEL}"
-							visible="{settings>/backgroundcolorVisible}"
+							visible="{settings>/backgroundColorVisible}"
 						/>
 						<Input
 							type="Text"
