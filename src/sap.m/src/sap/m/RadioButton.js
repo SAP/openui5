@@ -219,6 +219,22 @@ function(
 	RadioButton.prototype.onBeforeRendering = function() {
 		this._updateGroupName();
 		this._updateLabelProperties();
+
+		var sGroupName = this.getGroupName(),
+			aControlsInGroup = this._groupNames[sGroupName],
+			iLength = aControlsInGroup && aControlsInGroup.length;
+
+		// If this radio button is selected and groupName is set, explicitly deselect the other radio buttons of the same group
+		if (!!this.getSelected() && sGroupName && sGroupName !== "") {
+			for (var i = 0; i < iLength; i++) {
+				var oControl = aControlsInGroup[i];
+
+				if (oControl instanceof RadioButton && oControl !== this && oControl.getSelected()) {
+					oControl.fireSelect({ selected: false });
+					oControl.setSelected(false);
+				}
+			}
+		}
 	};
 
 	/**
@@ -489,34 +505,6 @@ function(
 	 */
 	RadioButton.prototype.setValueStateText = function(sText) {
 		return this.setProperty("valueStateText", sText);
-	};
-
-	/**
-	 * Sets the state of the RadioButton to selected.
-	 * @param {boolean} bSelected - defines if the radio button is selected
-	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining
-	 * @public
-	 */
-	RadioButton.prototype.setSelected = function (bSelected) {
-		var sGroupName = this.getGroupName(),
-			aControlsInGroup = this._groupNames[sGroupName],
-			iLength = aControlsInGroup && aControlsInGroup.length;
-
-		this.setProperty("selected", bSelected);
-		this._updateGroupName();
-
-		if (!!bSelected && sGroupName && sGroupName !== "") { // If this radio button is selected and groupName is set, explicitly deselect the other radio buttons of the same group
-			for (var i = 0; i < iLength; i++) {
-				var oControl = aControlsInGroup[i];
-
-				if (oControl instanceof RadioButton && oControl !== this && oControl.getSelected()) {
-					oControl.fireSelect({ selected: false });
-					oControl.setSelected(false);
-				}
-			}
-		}
-
-		return this;
 	};
 
 	/**

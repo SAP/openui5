@@ -253,6 +253,8 @@ sap.ui.define([
 		// act
 		qutils.triggerEvent("tap", oRadioButton2.getId());
 
+		Core.applyChanges();
+
 		// assertions
 		assert.ok(!oRadioButton1.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
 		assert.ok(!oRadioButton3.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
@@ -268,7 +270,7 @@ sap.ui.define([
 		oRadioButton5.destroy();
 	});
 
-	QUnit.test("setSelected should update group name to avoid double selection", function (assert) {
+	QUnit.test("after calling setSelected, group name should be updated to avoid double selection", function (assert) {
 
 		// arrange
 		var oRadioButton1 = new RadioButton();
@@ -281,14 +283,16 @@ sap.ui.define([
 		// act
 		oRadioButton1.setSelected(true);
 
+		Core.applyChanges();
+
 		// assert
-		assert.ok(oUpdateGroupNameSpy.called, "_updateGroupName was called in setSelected method");
+		assert.ok(oUpdateGroupNameSpy.called, "_updateGroupName was called");
 
 		// cleanup
 		oRadioButton1.destroy();
 	});
 
-	QUnit.test("setSelected should check RadioButton and uncheck all other RadioButtons from the same group", function (assert) {
+	QUnit.test("after calling setSelected, all other RadioButtons from the same group should be unchecked", function (assert) {
 
 		// arrange
 		var oRadioButton1 = new RadioButton(),
@@ -301,8 +305,10 @@ sap.ui.define([
 
 		// act
 		oRadioButton1.setSelected(true);
-		oRadioButton2.setSelected(true);
+		Core.applyChanges();
 
+		oRadioButton2.setSelected(true);
+		Core.applyChanges();
 
 		// assert
 		assert.ok(!oRadioButton1.getSelected(), "RadioButton should not be selected");
@@ -311,6 +317,22 @@ sap.ui.define([
 		// cleanup
 		oRadioButton1.destroy();
 		oRadioButton2.destroy();
+	});
+
+	QUnit.test("Checked RB from one group, should not uncheck RB from another group", function (assert) {
+		var oRadioButton1 = new RadioButton({ groupName: "1", selected: true }),
+			oRadioButton2 = new RadioButton({ groupName: "1" }),
+			oRadioButton3 = new RadioButton({ groupName: "2", selected: true });
+
+		var RB1SetSelectedSpy = this.spy(oRadioButton1, "setSelected");
+
+		oRadioButton1.placeAt("qunit-fixture");
+		oRadioButton2.placeAt("qunit-fixture");
+		oRadioButton3.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(RB1SetSelectedSpy.callCount, 0, "Before initial rendering, a radio button in one group, does not uncheck radio buttons from another group.");
+		assert.notOk(RB1SetSelectedSpy.calledWith(false), "Other radio button does not get unchecked");
 	});
 
 	/* ------------------------------ */
@@ -327,7 +349,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assertions
-		assert.strictEqual(oRadioButton1.getText(), 'Foo', "The Radion Button should have text 'Foo' ");
+		assert.strictEqual(oRadioButton1.getText(), 'Foo', "The Radio Button should have text 'Foo' ");
 		assert.strictEqual(oRadioButton1.$('label').text(), 'Foo', "The Radio Button should have text 'Foo'");
 
 		// cleanup
@@ -387,7 +409,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assertions
-		assert.strictEqual(oRadioButton1.$().width(), 50, "Width of both RadioButton and Lable should be 50");
+		assert.strictEqual(oRadioButton1.$().width(), 50, "Width of both RadioButton and Label should be 50");
 
 		// cleanup
 		oRadioButton1.destroy();
@@ -510,9 +532,12 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeydown(oRadioButton2.getDomRef(), KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeydown(oRadioButton3.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerEvent("tap", oRadioButton1.getId());
+		Core.applyChanges();
+		qutils.triggerEvent("tap", oRadioButton2.getId());
+		Core.applyChanges();
+		qutils.triggerEvent("tap", oRadioButton3.getId());
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oRadioButton1.getSelected(), true, "RadioButton1 should be selected");
