@@ -412,16 +412,13 @@ sap.ui.define([
 	 */
 	GridContainer.prototype._reflectItemVisibilityToWrapper = function (oItem) {
 
-		var oItemDomRef = oItem.getDomRef(),
-			oInvisibleSpan = document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oItem)),
-			oItemWrapper,
+		var oItemWrapper = this._getItemWrapper(oItem),
 			$oItemWrapper;
 
-		if (!oItemDomRef && !oInvisibleSpan) {
+		if (!oItemWrapper) {
 			return false;
 		}
 
-		oItemWrapper = (oItemDomRef ? oItemDomRef : oInvisibleSpan).parentElement;
 		$oItemWrapper = jQuery(oItemWrapper);
 
 		// check if we actually change something. Needed to judge whether to trigger IE polyfill.
@@ -624,23 +621,24 @@ sap.ui.define([
 	 * @public
 	 */
 	GridContainer.prototype.insertItem = function (oItem, iIndex) {
-		if (!this.getDomRef() || !isGridSupportedByBrowser()) {
-			// if not rendered or not supported - insert aggregation and invalidate
-			return this.insertAggregation("items", oItem, iIndex);
+		this.insertAggregation("items", oItem, iIndex, true);
+
+		if (!this.getDomRef() || !isGridSupportedByBrowser() || !oItem.getVisible()) {
+			// if not rendered, not supported or an invisible item - we need to invalidate
+			this.invalidate();
+			return this;
 		}
 
 		var oRm = Core.createRenderManager(),
 			oWrapper = this._createItemWrapper(oItem),
-			oTarget = this._getItemAt(iIndex),
+			oNextItem = this._getItemAt(iIndex + 1),
 			oGridRef = this.getDomRef();
 
-		if (oTarget) {
-			oGridRef.insertBefore(oWrapper, oTarget.getDomRef().parentElement);
+		if (oNextItem) {
+			oGridRef.insertBefore(oWrapper, this._getItemWrapper(oNextItem));
 		} else {
 			oGridRef.insertBefore(oWrapper, oGridRef.lastChild);
 		}
-
-		this.insertAggregation("items", oItem, iIndex, true);
 
 		oItem.addStyleClass("sapFGridContainerItemInnerWrapper");
 		oRm.render(oItem, oWrapper);
@@ -1610,7 +1608,20 @@ sap.ui.define([
 	};
 
 	GridContainer.prototype._getItemWrapper = function (oItem) {
-		return oItem.getDomRef().parentElement;
+		var oItemDomRef = oItem.getDomRef(),
+			oInvisibleSpan;
+
+		if (oItemDomRef) {
+			return oItemDomRef.parentElement;
+		}
+
+		oInvisibleSpan = document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oItem));
+
+		if (oInvisibleSpan) {
+			return oInvisibleSpan.parentElement;
+		}
+
+		return null;
 	};
 
 	return GridContainer;
