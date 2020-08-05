@@ -10,8 +10,9 @@
 				inset="false"
 				id="idProductsTable">
 				<headerToolbar>
-					<OverflowToolbar
-						id="idCrumbToolbar" />
+					<OverflowToolbar id="idCrumbToolbar" >
+						<Breadcrumbs id="breadcrumb" />
+					</OverflowToolbar>
 				</headerToolbar>
 				<infoToolbar>
 					<OverflowToolbar visible="{Order>/hasCounts}">
