@@ -106,7 +106,7 @@ sap.ui.define([
 
 	QUnit.module("API");
 
-	QUnit.test("add command then addConfig", function(assert) {
+	QUnit.test("add command then add config", function(assert) {
 		return waitForViewReady().then(function(oView) {
 			var oCtrl = oView.byId("myControl");
 
@@ -159,7 +159,39 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("attached events", function(assert) {
+	QUnit.test("add config with an event that already has event handlers", function(assert) {
+		// arrange
+		var oMyControl = new lib.my.MyControl({ myEvent: function() { } });
+
+		// act
+		ShortcutHintsMixin.addConfig(oMyControl, { event: "myEvent" }, oMyControl);
+
+		// assert
+		assert.ok(true, "no exception");
+
+		// clean
+		oMyControl.destroy();
+	});
+
+	QUnit.test("add config then add command with an event that already has event handlers", function(assert) {
+		// arrange
+		var oMyControl = new lib.my.MyControl({ myEvent: function() { } });
+		var fnFakeCommandHandler = function() { };
+		fnFakeCommandHandler._sapui_commandName = "Save";
+
+		// act
+		ShortcutHintsMixin.addConfig(oMyControl, { event: "myEvent" }, oMyControl);
+		oMyControl.attachEvent("myEvent", fnFakeCommandHandler);
+
+		// assert
+		assert.ok(ShortcutHintsMixin.isControlRegistered(oMyControl.getId()),
+			"The control is registered to show a shortcut");
+
+		// clean
+		oMyControl.destroy();
+	});
+
+	QUnit.test("DOM events", function(assert) {
 		return waitForViewReady().then(function(oView) {
 			var oCtrl = oView.byId("myControl");
 
@@ -276,20 +308,6 @@ sap.ui.define([
 
 			assert.deepEqual(mShortcutsByDomNodes, mExpected, "The hint provider is ok");
 		});
-	});
-
-	QUnit.test("addConfig with an event that already has eventHandlers", function(assert) {
-		// arrange
-		var oMyControl = new lib.my.MyControl({ myEvent: function() { } });
-
-		// act
-		ShortcutHintsMixin.addConfig(oMyControl, { event: "myEvent" }, oMyControl);
-
-		// assert
-		assert.ok(true, "no exception");
-
-		// clean
-		oMyControl.destroy();
 	});
 
 	QUnit.module("integration");
