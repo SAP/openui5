@@ -3888,18 +3888,28 @@ sap.ui.define([
 			this._decreaseDeferredRequestCount(oRequest);
 
 			// update deep path of function import
-			if (oRequest.functionMetadata && oResponse.headers && oResponse.headers.location) {
-				sHeadersLocation = oResponse.headers.location;
-				iPos = sHeadersLocation.lastIndexOf(this.sServiceUrl);
-				if (iPos > -1) {
-					sCanonicalPath = sHeadersLocation.slice(iPos + this.sServiceUrl.length);
-					if (oRequest.functionTarget === sCanonicalPath) {
-						sDeepPath = this.getDeepPathForCanonicalPath(sCanonicalPath);
-						if (sDeepPath) {
-							oRequest.deepPath = sDeepPath;
+			if (oRequest.functionMetadata) {
+				if (oResponse.headers && oResponse.headers.location) {
+					sHeadersLocation = oResponse.headers.location;
+					iPos = sHeadersLocation.lastIndexOf(this.sServiceUrl);
+					if (iPos > -1) {
+						sCanonicalPath = sHeadersLocation.slice(iPos + this.sServiceUrl.length);
+						if (oRequest.functionTarget === sCanonicalPath) {
+							sDeepPath = this.getDeepPathForCanonicalPath(sCanonicalPath);
+							if (sDeepPath) {
+								oRequest.deepPath = sDeepPath;
+							}
 						}
+						oRequest.functionTarget = sCanonicalPath;
 					}
-					oRequest.functionTarget = sCanonicalPath;
+				}
+				if (oRequest.adjustDeepPath) {
+					oRequest.deepPath = oRequest.adjustDeepPath({
+						deepPath : sDeepPath || oRequest.functionTarget,
+						response : merge({}, oResponse)
+					});
+				} else if (!sDeepPath) {
+					oRequest.deepPath = oRequest.functionTarget;
 				}
 			}
 

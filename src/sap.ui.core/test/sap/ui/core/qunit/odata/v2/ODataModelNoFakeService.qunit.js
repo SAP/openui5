@@ -680,16 +680,16 @@ sap.ui.define([
 	functionMetadata : true,
 	headers : undefined,
 	result : {
-		// no changes: no headers given
-		deepPath : "/deep/path",
+		// no headers given; no deepPath calculation; deepPath is set to initial functionTarget
+		deepPath : "/function/target",
 		functionTarget : "/function/target"
 	}
 }, {
 	functionMetadata : true,
 	headers : {},
 	result : {
-		// no changes: no location header given
-		deepPath : "/deep/path",
+		// no headers given; no deepPath calculation; deepPath is set to initial functionTarget
+		deepPath : "/function/target",
 		functionTarget : "/function/target"
 	}
 }, {
@@ -697,8 +697,9 @@ sap.ui.define([
 	headers : {location : "/service/new/function/target"},
 	result : {
 		// functionTarget is updated by the new canonical path sliced out of locationHeader;
-		// locationHeader and functionTarget do not match -> no deep path calculation
-		deepPath : "/deep/path",
+		// locationHeader and functionTarget do not match -> no deep path calculation; deepPath is
+		// set to updated functionTarget
+		deepPath : "/new/function/target",
 		functionTarget : "/new/function/target"
 	}
 }, {
@@ -707,8 +708,9 @@ sap.ui.define([
 	result : {
 		// functionTarget is updated by the new canonical path sliced out of locationHeader;
 		// oModel.sServiceUrl is not a starting position of the locationHeader;
-		// locationHeader and functionTarget do not match -> no deep path calculation
-		deepPath : "/deep/path",
+		// locationHeader and functionTarget do not match -> no deep path calculation; deepPath is
+		// set to updated functionTarget
+		deepPath : "/new/function/target",
 		functionTarget : "/new/function/target"
 	}
 }, {
@@ -719,8 +721,9 @@ sap.ui.define([
 	functionMetadata : true,
 	headers : {location : "/service/function/target"},
 	result : {
-		// deepPath cannot be updated until getDeepPathForCanonicalPath returns a value
-		deepPath : "/deep/path",
+		// deepPath cannot be updated until getDeepPathForCanonicalPath returns a value; deepPath is
+		// set to functionTarget which is updated by the calculated canonical path
+		deepPath : "/function/target",
 		functionTarget : "/function/target"
 	}
 }, {
@@ -739,8 +742,52 @@ sap.ui.define([
 	functionMetadata : true,
 	headers : {location : "/otherservice/function/target"},
 	result : {
-		// no changes: locationHeader must contain oModel.sServiceUrl
-		deepPath : "/deep/path",
+		// locationHeader does not contain oModel.sServiceUrl; no canonical path and no deepPath can
+		// be calculated; deepPath is set to initial functionTarget
+		deepPath : "/function/target",
+		functionTarget : "/function/target"
+	}
+}, {
+	adjustDeepPath : {
+		inputDeepPath : "/function/target",
+		mock : function () {}
+	},
+	functionMetadata : true,
+	headers : undefined,
+	result : {
+		// deepPath is updated by calling adjustDeepPath; parameter mParameters.deepPath is taken
+		// from oRequest.functionTarget; no prior calculation since headers are not given
+		deepPath : "/correct/deep/path",
+		functionTarget : "/function/target"
+	}
+}, {
+	adjustDeepPath : {
+		inputDeepPath : "/different/function/target",
+		mock : function () {}
+	},
+	functionMetadata : true,
+	headers : {location : "/service/different/function/target"},
+	result : {
+		// deepPath is updated by calling adjustDeepPath; parameter mParameters.deepPath is taken
+		// from sCanonicalPath (oRequest.functionTarget) which is sliced out of the headers location
+		deepPath : "/correct/deep/path",
+		functionTarget : "/different/function/target"
+	}
+}, {
+	adjustDeepPath : {
+		inputDeepPath : "/new/deep/path",
+		mock : function () {}
+	},
+	getDeepPathForCanonicalPath : {
+		inputParam : "/function/target",
+		result : "/new/deep/path"
+	},
+	functionMetadata : true,
+	headers : {location : "/service/function/target"},
+	result : {
+		// deepPath is updated by calling adjustDeepPath; parameter mParameters.deepPath is taken
+		// from sDeepPath which is calculated using getDeepPathForCanonicalPath
+		deepPath : "/correct/deep/path",
 		functionTarget : "/function/target"
 	}
 }].forEach(function (oFixture, i) {
@@ -763,7 +810,9 @@ sap.ui.define([
 				getDeepPathForCanonicalPath : function () {}
 			},
 			oModelMock = this.mock(oModel),
+			mParameters,
 			oRequest = {
+				adjustDeepPath : oFixture.adjustDeepPath && oFixture.adjustDeepPath.mock,
 				data : "requestData",
 				deepPath : "/deep/path",
 				functionMetadata : oFixture.functionMetadata,
@@ -791,6 +840,14 @@ sap.ui.define([
 				.withExactArgs(oFixture.getDeepPathForCanonicalPath.inputParam)
 				.returns(oFixture.getDeepPathForCanonicalPath.result);
 		}
+		if (oFixture.adjustDeepPath) {
+			this.mock(oRequest).expects("adjustDeepPath")
+				.withExactArgs(sinon.match(function (mParameters0) {
+					mParameters = mParameters0;
+					return true;
+				}))
+				.returns("/correct/deep/path");
+		}
 		oModelMock.expects("_getEntity").withExactArgs(undefined).returns({__metadata : {}});
 		oModelMock.expects("_parseResponse").withExactArgs(oResponse, oRequest, {}, {});
 		oModelMock.expects("_updateETag").withExactArgs(oRequest, oResponse);
@@ -805,6 +862,14 @@ sap.ui.define([
 
 		assert.strictEqual(oRequest.deepPath, oFixture.result.deepPath);
 		assert.strictEqual(oRequest.functionTarget, oFixture.result.functionTarget);
+		if (oFixture.adjustDeepPath) {
+			assert.strictEqual(mParameters.deepPath, oFixture.adjustDeepPath.inputDeepPath);
+			assert.deepEqual(mParameters.response, oResponse);
+			assert.notStrictEqual(mParameters.response, oResponse);
+			// mParameters.response is a deep copy
+			mParameters.response.data.foo = "bar";
+			assert.notDeepEqual(mParameters.response, oResponse);
+		}
 	});
 });
 
