@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/base/util/UriParameters",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/BindingMode"
@@ -13,6 +14,7 @@ sap.ui.define([
 	Settings,
 	ChangePersistenceFactory,
 	Storage,
+	UriParameters,
 	JSONModel,
 	Utils,
 	BindingMode
@@ -38,12 +40,20 @@ sap.ui.define([
 			}
 		});
 
+		var sSwitchVersionsActive = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-versionSwitchActive");
+		var bSwitchVersionsActive = false;
+		if (sSwitchVersionsActive && (sSwitchVersionsActive !== "false")) {
+			bSwitchVersionsActive = true;
+		}
+
+
 		var oModel = new JSONModel({
 			versioningEnabled: bVersioningEnabled,
 			versions: aVersions,
 			backendDraft: bBackendDraft,
 			dirtyChanges: false,
-			draftAvailable: bBackendDraft
+			draftAvailable: bBackendDraft,
+			switchVersionsActive: bSwitchVersionsActive
 		});
 
 		oModel.setDefaultBindingMode(BindingMode.OneWay);
