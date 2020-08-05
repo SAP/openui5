@@ -82,7 +82,7 @@
                         id="sapUiRta_undo"
                         icon="sap-icon://undo"
                         press=".undo"
-                        enabled="false"
+                        enabled="{controls>/undoEnabled}"
                         type="Transparent"
                         tooltip="{i18n>BTN_UNDO}" >
                     <layoutData>
@@ -93,7 +93,7 @@
                         id="sapUiRta_redo"
                         icon="sap-icon://redo"
                         press=".redo"
-                        enabled="false"
+                        enabled="{controls>/redoEnabled}"
                         type="Transparent"
                         tooltip="{i18n>BTN_REDO}" >
                     <layoutData>
@@ -102,7 +102,8 @@
                 </Button>
                 <Button
                         id="sapUiRta_publish"
-                        enabled="false"
+                        enabled="{controls>/publishEnabled}"
+                        visible="{controls>/publishVisible}"
                         press=".publish"
                         type="Transparent"
                         text="{i18n>BTN_PUBLISH}" >
@@ -112,7 +113,7 @@
                 </Button>
                 <Button
                         id="sapUiRta_restore"
-                        enabled="false"
+                        enabled="{controls>/restoreEnabled}"
                         press=".restore"
                         type="Transparent"
                         text="{i18n>BTN_RESTORE}" >
@@ -123,8 +124,8 @@
                 <Button
                         id="sapUiRta_manageApps"
                         press=".manageApps"
-                        enabled="false"
-                        visible="false"
+                        enabled="{controls>/manageAppsEnabled}"
+                        visible="{controls>/manageAppsVisible}"
                         type="Transparent"
                         text="{i18n>BTN_MANAGE_APPS_TXT}" >
                     <layoutData>
@@ -133,8 +134,8 @@
                 </Button>
                 <MenuButton
                         id="sapUiRta_appVariantOverview"
-                        enabled="false"
-                        visible="false"
+                        enabled="{controls>/appVariantsOverviewEnabled}"
+                        visible="{controls>/appVariantsOverviewVisible}"
                         type="Transparent"
                         text="{i18n>BTN_MANAGE_APPS_TXT}" >
                     <menu>
@@ -155,8 +156,8 @@
                 </MenuButton>
                 <Button
                         id="sapUiRta_saveAs"
-                        visible="false"
-                        enabled="false"
+                        visible="{controls>/saveAsVisible}"
+                        enabled="{controls>/saveAsEnabled}"
                         press=".saveAs"
                         type="Transparent"
                         text="{i18n>BTN_SAVE_AS}" >

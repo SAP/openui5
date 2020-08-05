@@ -66,15 +66,5 @@ function(
 		return Promise.resolve();
 	};
 
-	Personalization.prototype.setUndoRedoEnabled = function() {
-	};
-
-	Personalization.prototype.setPublishEnabled = function() {
-	};
-
-	Personalization.prototype.setRestoreEnabled = function (bEnabled) {
-		this.getControl('restore').setEnabled(bEnabled);
-	};
-
 	return Personalization;
 }, true);

@@ -53,34 +53,10 @@ function(
 				discardDraft: {}
 			},
 			properties: {
-				/** Determines whether publish button is visible */
-				publishVisible: {
-					type: "boolean",
-					defaultValue: false
-				},
-
 				/** Defines value of the switcher SegmentedButton */
 				modeSwitcher: {
 					type: "string",
 					defaultValue: "adaptation"
-				},
-
-				/** Determines the visibility of the 'saveAs', 'manageApps' and 'appVariantsOverview' buttons */
-				appVariantsVisible: {
-					type: "boolean",
-					defaultValue: false
-				},
-
-				/** Determines the enablement of the 'saveAs', 'manageApps' and 'appVariantsOverview' buttons */
-				appVariantsEnabled: {
-					type: "boolean",
-					defaultValue: false
-				},
-
-				/** Determines if the 'appVariantOverview' or the 'manageApps' should be visible */
-				extendedManageAppVariants: {
-					type: "boolean",
-					defaultValue: false
 				}
 			}
 		}
@@ -303,7 +279,6 @@ function(
 				showVersionHistory: this.showVersionHistory.bind(this)
 			}
 		}).then(function (aControls) {
-			this.getControl("publish").setVisible(this.getPublishVisible());
 			this.getControl("modeSwitcher").setSelectedKey(this.getModeSwitcher());
 			return aControls;
 		}.bind(this));
@@ -357,19 +332,6 @@ function(
 		}.bind(this));
 	};
 
-	Adaptation.prototype.setUndoRedoEnabled = function (bCanUndo, bCanRedo) {
-		this.getControl("undo").setEnabled(bCanUndo);
-		this.getControl("redo").setEnabled(bCanRedo);
-	};
-
-	Adaptation.prototype.setPublishEnabled = function (bEnabled) {
-		this.getControl("publish").setEnabled(bEnabled);
-	};
-
-	Adaptation.prototype.setRestoreEnabled = function (bEnabled) {
-		this.getControl("restore").setEnabled(bEnabled);
-	};
-
 	Adaptation.prototype.setVersionButtonAccentColor = function (sType) {
 		var oVersionButton = this.getControl("versionButton");
 		if (sType === "draft") {
@@ -379,31 +341,6 @@ function(
 			oVersionButton.addStyleClass(ACTIVE_ACCENT_COLOR);
 			oVersionButton.removeStyleClass(DRAFT_ACCENT_COLOR);
 		}
-	};
-
-	Adaptation.prototype.setAppVariantsVisible = function (bVisible) {
-		this.setProperty("appVariantsVisible", bVisible, true);
-
-		this.getControl("saveAs").setVisible(bVisible);
-
-		var bExtendedManageAppVariants = this.getExtendedManageAppVariants();
-		this.getControl("appVariantOverview").setVisible(bVisible && bExtendedManageAppVariants);
-		this.getControl("manageApps").setVisible(bVisible && !bExtendedManageAppVariants);
-	};
-
-	Adaptation.prototype.setAppVariantsEnabled = function (bEnabled) {
-		this.setProperty("appVariantsEnabled", bEnabled, true);
-		this.getControl("saveAs").setEnabled(bEnabled);
-		this.getControl("appVariantOverview").setEnabled(bEnabled);
-		this.getControl("manageApps").setEnabled(bEnabled);
-	};
-
-	Adaptation.prototype.setExtendedManageAppVariants = function (bExtended) {
-		this.setProperty("extendedManageAppVariants", bExtended, true);
-
-		var bVisible = this.getAppVariantsVisible();
-		this.getControl("appVariantOverview").setVisible(bVisible && bExtended);
-		this.getControl("manageApps").setVisible(bVisible && !bExtended);
 	};
 
 	/* Methods propagation */

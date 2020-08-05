@@ -155,52 +155,6 @@ function(
 		});
 	});
 
-	QUnit.module('Custom setters', {
-		before: function() {
-			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
-			});
-			this.oToolbar.setModel(this.oVersionsModel, "versions");
-			this.oToolbar.sMode = Adaptation.modes.DESKTOP;
-		},
-		after: function() {
-			this.oToolbar.destroy();
-		}
-	}, function() {
-		QUnit.test("setUndoRedoEnabled", function(assert) {
-			assert.notOk(this.oToolbar.getControl("redo").getEnabled(), "the undo button is disabled");
-			assert.notOk(this.oToolbar.getControl("redo").getEnabled(), "the undo button is disabled");
-
-			this.oToolbar.setUndoRedoEnabled(true, true);
-			assert.ok(this.oToolbar.getControl("redo").getEnabled(), "the undo button is enabled");
-			assert.ok(this.oToolbar.getControl("redo").getEnabled(), "the undo button is enabled");
-
-			this.oToolbar.setUndoRedoEnabled(false, false);
-			assert.notOk(this.oToolbar.getControl("redo").getEnabled(), "the undo button is disabled");
-			assert.notOk(this.oToolbar.getControl("redo").getEnabled(), "the undo button is disabled");
-		});
-
-		QUnit.test("setPublishEnabled", function(assert) {
-			assert.notOk(this.oToolbar.getControl("publish").getEnabled(), "the undo button is disabled");
-
-			this.oToolbar.setPublishEnabled(true);
-			assert.ok(this.oToolbar.getControl("publish").getEnabled(), "the undo button is enabled");
-
-			this.oToolbar.setPublishEnabled(false);
-			assert.notOk(this.oToolbar.getControl("publish").getEnabled(), "the undo button is disabled");
-		});
-
-		QUnit.test("setRestoreEnabled", function(assert) {
-			assert.notOk(this.oToolbar.getControl("restore").getEnabled(), "the undo button is disabled");
-
-			this.oToolbar.setRestoreEnabled(true);
-			assert.ok(this.oToolbar.getControl("restore").getEnabled(), "the undo button is enabled");
-
-			this.oToolbar.setRestoreEnabled(false);
-			assert.notOk(this.oToolbar.getControl("restore").getEnabled(), "the undo button is disabled");
-		});
-	});
-
 
 	QUnit.module("Versions Model binding & formatter for the versions text", {
 		before: function () {
@@ -476,159 +430,73 @@ function(
 		});
 	});
 
-	function testAppVariantButtons (assert, oToolbar, mAssumptions) {
-		var oSaveAsButton = oToolbar.getControl("saveAs");
-		var oAppVariantOverview = oToolbar.getControl("appVariantOverview");
-		var oManageApps = oToolbar.getControl("manageApps");
-		assert.equal(oSaveAsButton.getVisible(), mAssumptions.saveAs.visible, "the 'saveAs' button visibility is correct");
-		if (mAssumptions.saveAs.enabled !== undefined) {
-			assert.equal(oSaveAsButton.getEnabled(), mAssumptions.saveAs.enabled, "the 'saveAs' button enablement is correct");
-		}
-		assert.equal(oAppVariantOverview.getVisible(), mAssumptions.appVariantOverview.visible, "the 'appVariantOverview' button visibility is correct");
-		if (mAssumptions.appVariantOverview.enabled !== undefined) {
-			assert.equal(oAppVariantOverview.getEnabled(), mAssumptions.appVariantOverview.enabled, "the 'appVariantOverview' button enablement is correct");
-		}
-		assert.equal(oManageApps.getVisible(), mAssumptions.manageApps.visible, "the 'manageApps' button visibility is correct");
-		if (mAssumptions.manageApps.enabled !== undefined) {
-			assert.equal(oManageApps.getEnabled(), mAssumptions.manageApps.enabled, "the 'manageApps' button enablement is correct");
-		}
-	}
-
 	QUnit.module("Setting AppVariant properties", {
 		beforeEach: function () {
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
+			this.oControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishEnabled: false,
+				restoreEnabled: false,
+				appVariantsOverviewVisible: false,
+				appVariantsOverviewEnabled: false,
+				saveAsVisible: false,
+				saveAsEnabled: false,
+				manageAppsVisible: false,
+				manageAppsEnabled: false
+			});
+			this.oToolbar.setModel(this.oControlsModel, "controls");
 		},
 		afterEach: function() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given a toolbar is created and app variants parameter are switched back and forth", function(assert) {
-			/* variantsVisible:            false
-			 * variantsEnabled:            false
-			 * extendedManageAppVariants:  false  */
-			testAppVariantButtons(assert, this.oToolbar, {
-				saveAs : {
-					visible : false
-				},
-				appVariantOverview : {
-					visible : false
-				},
-				manageApps : {
-					visible : false
-				}
-			});
-
-			this.oToolbar.setAppVariantsVisible(true);
-			/* variantsVisible:            true
-			 * variantsEnabled:            false
-			 * extendedManageAppVariants:  false  */
-			testAppVariantButtons(assert, this.oToolbar, {
-				saveAs : {
-					visible : true,
-					enabled : false
-				},
-				appVariantOverview : {
-					visible : false
-				},
-				manageApps : {
-					visible : true,
-					enabled : false
-				}
-			});
-
-			this.oToolbar.setAppVariantsEnabled(true);
-			/* variantsVisible:            true
-			 * variantsEnabled:            true
-			 * extendedManageAppVariants:  false  */
-			testAppVariantButtons(assert, this.oToolbar, {
-				saveAs : {
-					visible : true,
-					enabled : true
-				},
-				appVariantOverview : {
-					visible : false
-				},
-				manageApps : {
-					visible : true,
-					enabled : true
-				}
-			});
-
-			this.oToolbar.setExtendedManageAppVariants(true);
-			/* variantsVisible:            true
-			 * variantsEnabled:            true
-			 * extendedManageAppVariants:  true  */
-			testAppVariantButtons(assert, this.oToolbar, {
-				saveAs : {
-					visible : true,
-					enabled : true
-				},
-				appVariantOverview : {
-					visible : true,
-					enabled : true
-				},
-				manageApps : {
-					visible : false
-				}
-			});
-		});
-
-		QUnit.test("Given a toolbar is created and app variants are not visible while other app variant properties are switched back and forth", function(assert) {
-			// This situation will not happen within the current implementation of RuntimeAuthoring,
-			// but a proper handling of the buttons should be ensured.
-
-			this.oToolbar.setAppVariantsEnabled(true);
-			this.oToolbar.setExtendedManageAppVariants(true);
-			/* variantsVisible:            false
-			 * variantsEnabled:            true
-			 * extendedManageAppVariants:  true  */
-			testAppVariantButtons(assert, this.oToolbar, {
-				saveAs: {
-					visible: false
-				},
-				appVariantOverview: {
-					visible: false
-				},
-				manageApps: {
-					visible: false
-				}
-			});
-
-			this.oToolbar.setExtendedManageAppVariants(false);
-			/* variantsVisible:            false
-			 * variantsEnabled:            true
-			 * extendedManageAppVariants:  false  */
-			testAppVariantButtons(assert, this.oToolbar, {
-				saveAs: {
-					visible: false
-				},
-				appVariantOverview: {
-					visible: false
-				},
-				manageApps: {
-					visible: false
-				}
-			});
-
-			this.oToolbar.setAppVariantsEnabled(false);
-			/* variantsVisible:            false
-			 * variantsEnabled:            false
-			 * extendedManageAppVariants:  true  */
-			this.oToolbar.setExtendedManageAppVariants(true);
-			testAppVariantButtons(assert, this.oToolbar, {
-				saveAs: {
-					visible: false
-				},
-				appVariantOverview: {
-					visible: false
-				},
-				manageApps: {
-					visible: false
-				}
-			});
+		QUnit.test("Given a toolbar is created and app variants parameter in the model are switched back and forth", function(assert) {
+			this.oControlsModel.setProperty("/saveAsVisible", false);
+			this.oControlsModel.setProperty("/appVariantsOverviewVisible", false);
+			this.oControlsModel.setProperty("/manageAppsVisible", false);
+			this.oToolbar.animation = false;
+			return this.oToolbar.show()
+				.then(function() {
+					assert.notOk(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is not visible");
+					assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is not visible");
+					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
+					this.oControlsModel.setProperty("/saveAsVisible", true);
+					this.oControlsModel.setProperty("/saveAsEnabled", false);
+					this.oControlsModel.setProperty("/appVariantsOverviewVisible", false);
+					this.oControlsModel.setProperty("/manageAppsVisible", true);
+					this.oControlsModel.setProperty("/manageAppsEnabled", false);
+					assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
+					assert.notOk(this.oToolbar.getControl("saveAs").getEnabled(), "saveAs is not enabled");
+					assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is not visible");
+					assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
+					assert.notOk(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is not enabled");
+					this.oControlsModel.setProperty("/saveAsVisible", true);
+					this.oControlsModel.setProperty("/saveAsEnabled", true);
+					this.oControlsModel.setProperty("/appVariantsOverviewVisible", false);
+					this.oControlsModel.setProperty("/manageAppsVisible", true);
+					this.oControlsModel.setProperty("/manageAppsEnabled", true);
+					assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
+					assert.ok(this.oToolbar.getControl("saveAs").getEnabled(), "saveAs is enabled");
+					assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is not visible");
+					assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
+					assert.ok(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is enabled");
+					this.oControlsModel.setProperty("/saveAsVisible", true);
+					this.oControlsModel.setProperty("/saveAsEnabled", true);
+					this.oControlsModel.setProperty("/appVariantsOverviewVisible", true);
+					this.oControlsModel.setProperty("/appVariantsOverviewEnabled", true);
+					this.oControlsModel.setProperty("/manageAppsVisible", false);
+					this.oControlsModel.setProperty("/manageAppsEnabled", false);
+					assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
+					assert.ok(this.oToolbar.getControl("saveAs").getEnabled(), "saveAs is enabled");
+					assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is visible");
+					assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is enabled");
+					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
+					assert.notOk(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is not enabled");
+				}.bind(this));
 		});
 	});
 

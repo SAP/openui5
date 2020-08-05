@@ -1041,7 +1041,6 @@ sap.ui.define([
 		QUnit.test("when _onActivateDraft is called ", function(assert) {
 			var oActivateDraftStub;
 			var oShowMessageToastStub;
-			var oToolbarSetRestoreEnabledSpy;
 			var oRta = this.oRta;
 			var sVersionTitle = "aVersionTitle";
 			var oEvent = {
@@ -1054,7 +1053,6 @@ sap.ui.define([
 				oRta.bInitialDraftAvailable = true;
 				oActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").resolves(true);
 				oShowMessageToastStub = sandbox.stub(oRta, "_showMessageToast");
-				oToolbarSetRestoreEnabledSpy = sandbox.spy(oRta.getToolbar(), "setRestoreEnabled");
 			})
 			.then(oRta._onActivateDraft.bind(oRta, oEvent))
 			.then(function() {
@@ -1064,8 +1062,7 @@ sap.ui.define([
 				assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
 				assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
 				assert.equal(oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
-				assert.equal(oToolbarSetRestoreEnabledSpy.callCount, 2, "and the restore enabled is called");
-				assert.equal(oToolbarSetRestoreEnabledSpy.getCall(0).args[0], true, "to true");
+				assert.equal(oRta.getToolbar().getModel("controls").getProperty("/restoreEnabled"), true, "RestoreEnabled is correctly set in Model");
 				assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
 			}.bind(this));
 		});

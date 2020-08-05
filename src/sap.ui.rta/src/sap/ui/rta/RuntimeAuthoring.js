@@ -59,6 +59,7 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/util/validateFlexEnabled"
 ],
 function(
@@ -117,6 +118,7 @@ function(
 	Measurement,
 	Log,
 	KeyCodes,
+	JSONModel,
 	validateFlexEnabled
 ) {
 	"use strict";
@@ -823,13 +825,13 @@ function(
 		var bCanRedo = oCommandStack.canRedo();
 
 		if (this.getShowToolbars()) {
-			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
-			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled || bCanUndo);
-			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled || bCanUndo);
-
 			// TODO: move to the setter to the ChangesState
 			var oVersionsModel = this.getToolbar().getModel("versions");
 			oVersionsModel.setDirtyChanges(bCanUndo);
+			this._oToolbarControlsModel.setProperty("/undoEnabled", bCanUndo);
+			this._oToolbarControlsModel.setProperty("/redoEnabled", bCanRedo);
+			this._oToolbarControlsModel.setProperty("/publishEnabled", this.bInitialPublishEnabled || bCanUndo);
+			this._oToolbarControlsModel.setProperty("/restoreEnabled", this.bInitialResetEnabled || bCanUndo);
 		}
 		this.fireUndoRedoStackModified();
 	};
@@ -1002,7 +1004,7 @@ function(
 		}).then(function () {
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
 			this.bInitialResetEnabled = true;
-			this.getToolbar().setRestoreEnabled(true);
+			this._oToolbarControlsModel.setProperty("/restoreEnabled", true);
 			this.getCommandStack().removeAllCommands();
 		}.bind(this))
 		.catch(function (oError) {
@@ -1068,7 +1070,6 @@ function(
 			} else {
 				this.addDependent(new fnConstructor({
 					modeSwitcher: this.getMode(),
-					publishVisible: aButtonsVisibility.publishAvailable,
 					textResources: this._getTextResources(),
 					//events
 					exit: this.stop.bind(this, false, false),
@@ -1085,23 +1086,34 @@ function(
 				}), 'toolbar');
 			}
 
-			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled);
-			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled);
-
 			var bSaveAsAvailable = aButtonsVisibility.saveAsAvailable;
-			this.getToolbar().setAppVariantsVisible(bSaveAsAvailable);
-
 			var bExtendedOverview = bSaveAsAvailable && RtaAppVariantFeature.isOverviewExtended();
-			this.getToolbar().setExtendedManageAppVariants(bExtendedOverview);
+
+			this._oToolbarControlsModel = new JSONModel({
+				undoEnabled: false,
+				redoEnabled: false,
+				publishVisible: aButtonsVisibility.publishAvailable,
+				publishEnabled: this.bInitialPublishEnabled,
+				restoreEnabled: this.bInitialResetEnabled,
+				appVariantsOverviewVisible: bSaveAsAvailable && bExtendedOverview,
+				appVariantsOverviewEnabled: bSaveAsAvailable && bExtendedOverview,
+				saveAsVisible: bSaveAsAvailable,
+				saveAsEnabled: false,
+				manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
+				manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview
+			});
 
 			if (bSaveAsAvailable) {
 				RtaAppVariantFeature.isManifestSupported().then(function (bResult) {
-					this.getToolbar().setAppVariantsEnabled(bResult);
+					this._oToolbarControlsModel.setProperty("/saveAsEnabled", bResult);
+					this._oToolbarControlsModel.setProperty("/appVariantsOverviewEnabled", bResult);
+					this._oToolbarControlsModel.setProperty("/manageAppsEnabled", bResult);
 				}.bind(this));
 			}
 		}
 
 		this.getToolbar().setModel(this._oVersionsModel, "versions");
+		this.getToolbar().setModel(this._oToolbarControlsModel, "controls");
 	};
 
 	RuntimeAuthoring.prototype._onGetAppVariantOverview = function(oEvent) {
@@ -1193,8 +1205,8 @@ function(
 										layer: this.getLayer()
 									})
 									.then(function(oPublishAndResetInfo) {
-										this.getToolbar().setPublishEnabled(oPublishAndResetInfo.isPublishEnabled);
-										this.getToolbar().setRestoreEnabled(oPublishAndResetInfo.isResetEnabled);
+										this._oToolbarControlsModel.setProperty("/publishEnabled", oPublishAndResetInfo.isPublishEnabled);
+										this._oToolbarControlsModel.setProperty("/restoreEnabled", oPublishAndResetInfo.isResetEnabled);
 									}.bind(this));
 								}
 							}
