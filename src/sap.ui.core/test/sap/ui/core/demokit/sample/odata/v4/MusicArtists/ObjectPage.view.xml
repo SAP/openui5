@@ -64,6 +64,12 @@
 											value="{BreakupYear}" />
 									</f:fields>
 								</f:FormElement>
+								<f:FormElement label="Sibling" binding="{path : 'SiblingEntity',
+									parameters : {$$ownRequest : true}}">
+									<f:fields>
+										<Text text="{Name}" />
+									</f:fields>
+								</f:FormElement>
 <!-- TODO: enable this as soon as FIORITECHP1-9095 is done
 								<f:FormElement label="Last Changed">
 									<f:fields>

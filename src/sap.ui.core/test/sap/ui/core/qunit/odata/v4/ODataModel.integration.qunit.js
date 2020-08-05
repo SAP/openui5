@@ -1319,7 +1319,10 @@ sap.ui.define([
 			vRequest.headers = vRequest.headers || {};
 			vRequest.payload = vRequest.payload || undefined;
 			vRequest.responseHeaders = mResponseHeaders || {};
-			vRequest.response = oResponse || {/*null object pattern*/};
+			vRequest.response = oResponse
+					// With GET it must be visible that there is no content, with the other
+					// methods it must be possible to insert the ETag from the header
+					|| (vRequest.method === "GET" ? null : {});
 			vRequest.url = vRequest.url.replace(/ /g, "%20");
 			this.aRequests.push(vRequest);
 
@@ -27720,4 +27723,30 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Both the data request for an entity and the data request for a property return
+	// status 204 (No Content).
+	// BCP: 2080293614
+["$direct", "$auto"].forEach(function (sGroupId) {
+	QUnit.test("BCP: 2080293614, " + sGroupId, function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true, groupId : sGroupId}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistUUID=xyz,IsActiveEntity=false)/BestPublication}">\
+	<Text id="price" text="{Price}"/>\
+</FlexBox>\
+<Text id="currency" \
+	text="{/Artists(ArtistUUID=xyz,IsActiveEntity=false)/BestPublication/CurrencyCode}"/>';
+
+		this.expectRequest("Artists(ArtistUUID=xyz,IsActiveEntity=false)/BestPublication"
+			+ "?$select=Price,PublicationID")
+			.expectRequest("Artists(ArtistUUID=xyz,IsActiveEntity=false)/BestPublication"
+				+ "/CurrencyCode")
+			.expectChange("price", null)
+			.expectChange("currency", "");
+
+		return this.createView(assert, sView, oModel);
+	});
+});
+
 });
