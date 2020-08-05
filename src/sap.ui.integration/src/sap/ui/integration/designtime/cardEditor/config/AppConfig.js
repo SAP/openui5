@@ -117,7 +117,8 @@ sap.ui.define(function () {
 						{ "key": "ODataAnnotation" },
 						{ "key": "INA" },
 						{ "key": "XML" },
-						{ "key": "JSON" }
+						{ "key": "JSON" },
+						{ "key": "FHIR" }
 					],
 					"defaultValue": "OData",
 					"path": "type"
@@ -130,17 +131,20 @@ sap.ui.define(function () {
 						{ "key": "4.0" }
 					],
 					"defaultValue": "2.0",
-					"path": "settings/odataVersion"
+					"path": "settings/odataVersion",
+					"visible": "{= ${type} === 'OData' || ${type} === 'ODataAnnotation'}"
 				},
 				"localUri": {
 					"label": "{i18n>CARD_EDITOR.APP.DATASOURCES.SETTINGS.LOCALURI}",
 					"type": "string",
-					"path": "settings/localUri"
+					"path": "settings/localUri",
+					"visible": "{= ${type} === 'OData' || ${type} === 'ODataAnnotation'}"
 				},
 				"annotations": {
 					"label": "{i18n>CARD_EDITOR.APP.DATASOURCES.SETTINGS.ANNOTATIONS}",
 					"type": "list",
-					"path": "settings/annotations"
+					"path": "settings/annotations",
+					"visible": "{= ${type} === 'OData' || ${type} === 'ODataAnnotation'}"
 				},
 				"maxAge": {
 					"label": "{i18n>CARD_EDITOR.APP.DATASOURCES.SETTINGS.MAXAGE}",
