@@ -145,6 +145,16 @@ sap.ui.define([
 		sPressId = oEvent.oSource.getId();
 	};
 
+	var sSubmitId;
+	var iSubmitCount = 0;
+	var oSubmitPromise;
+
+	var _mySubmitHandler = function(oEvent) {
+		iSubmitCount++;
+		sSubmitId = oEvent.oSource.getId();
+		oSubmitPromise = oEvent.getParameter("promise");
+	};
+
 	var iParseError = 0;
 	var _myParseErrorHandler = function(oEvent) {
 		iParseError++;
@@ -1508,6 +1518,7 @@ sap.ui.define([
 			oField.attachEvent("change", _myChangeHandler);
 			oField.attachLiveChange(_myLiveChangeHandler);
 			oField.attachPress(_myPressHandler);
+			oField.attachSubmit(_mySubmitHandler);
 			oField.attachParseError(_myParseErrorHandler);
 			oField.attachValidationError(_myValidationErrorHandler);
 			oField.placeAt("content");
@@ -1526,6 +1537,9 @@ sap.ui.define([
 			sLiveValue = null;
 			iPressCount = 0;
 			sPressId = "";
+			iSubmitCount = 0;
+			sSubmitId = "";
+			oSubmitPromise = null;
 			iParseError = 0;
 			iValidationError = 0;
 			FieldBase._init();
@@ -1548,6 +1562,9 @@ sap.ui.define([
 		assert.equal(sValue, "X", "change event value");
 		assert.ok(bValid, "change event valid");
 		assert.ok(oPromise, "Promise returned");
+		assert.equal(iSubmitCount, 1, "submit event fired once");
+		assert.equal(sSubmitId, "F1", "submit event fired on Field");
+		assert.ok(oSubmitPromise, "submit: Promise returned");
 		oPromise.then(function(vResult) {
 			assert.ok(vResult, "Promise resolved");
 			var aConditions = oCM.getConditions("Name");
@@ -1560,57 +1577,73 @@ sap.ui.define([
 			var oToken = aTokens[0];
 			assert.equal(oToken && oToken.getText(), "=X", "Text on token set");
 
-			iCount = 0;
-			sId = ""; sValue = ""; bValid = undefined; oPromise = undefined;
-			jQuery(oContent.getFocusDomRef()).val("X");
-			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
-			setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
-				assert.equal(iCount, 1, "change event fired");
-				assert.notOk(bValid, "change event not valid");
-				assert.equal(sValue, "X", "change event value");
-				assert.ok(oPromise, "Promise returned");
-				oPromise.then(function(vResult) {
-					assert.notOk(true, "Promise must not be resolved");
-					fnDone();
-				}).catch(function(oException) {
-					var oTokenDeleteIcon = oToken.getAggregation("deleteIcon");
-					assert.ok(true, "Promise rejected");
-					assert.equal(oException, "X", "wrongValue");
-					aConditions = oCM.getConditions("Name");
-					assert.equal(aConditions.length, 1, "one condition in Codition model");
-					assert.equal(aConditions[0].values[0], "X", "condition value");
-					assert.equal(aConditions[0].operator, "EQ", "condition operator");
-					aTokens = oContent.getTokens ? oContent.getTokens() : [];
-					assert.equal(aTokens.length, 1, "MultiInput has one Token");
-					oToken = aTokens[0];
-					assert.equal(oToken && oToken.getText(), "=X", "Text on token set");
+			oSubmitPromise.then(function(vResult) {
+				assert.ok(vResult, "submit: Promise resolved");
+				assert.deepEqual(vResult, aConditions, "submit: Promise result");
 
-					// delete Token
-					iCount = 0;
-					sId = ""; sValue = ""; bValid = false; oPromise = undefined;
-					oTokenDeleteIcon.firePress();
-					assert.equal(iCount, 1, "change event fired once");
-					assert.equal(sId, "F1", "change event fired on Field");
-					assert.equal(sValue, "", "change event value");
-					assert.ok(bValid, "change event valid");
+				iCount = 0; sId = ""; sValue = ""; bValid = undefined; oPromise = undefined;
+				iSubmitCount = 0; sSubmitId = ""; oSubmitPromise = undefined;
+				jQuery(oContent.getFocusDomRef()).val("X");
+				qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+				setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
+					assert.equal(iCount, 1, "change event fired");
+					assert.notOk(bValid, "change event not valid");
+					assert.equal(sValue, "X", "change event value");
 					assert.ok(oPromise, "Promise returned");
+					assert.equal(iSubmitCount, 1, "submit event fired once");
+					assert.equal(sSubmitId, "F1", "submit event fired on Field");
+					assert.ok(oSubmitPromise, "submit: Promise returned");
 					oPromise.then(function(vResult) {
-						assert.ok(vResult, "Promise resolved");
-						aConditions = oCM.getConditions("Name");
-						assert.deepEqual(vResult, aConditions, "Promise result");
-						assert.equal(aConditions.length, 0, "no condition in Codition model after delete Token");
-						aTokens = oContent.getTokens ? oContent.getTokens() : [];
-						assert.equal(aTokens.length, 0, "MultiInput has no Token after delete");
-
-						//simulate liveChange by calling from internal control
-						oContent.fireLiveChange({ value: "Y" });
-						assert.equal(iLiveCount, 1, "liveChange event fired once");
-						assert.equal(sLiveId, "F1", "liveChange event fired on Field");
-						assert.equal(sLiveValue, "Y", "liveChange event value");
+						assert.notOk(true, "Promise must not be resolved");
 						fnDone();
+					}).catch(function(oException) {
+						var oTokenDeleteIcon = oToken.getAggregation("deleteIcon");
+						assert.ok(true, "Promise rejected");
+						assert.equal(oException, "X", "wrongValue");
+						aConditions = oCM.getConditions("Name");
+						assert.equal(aConditions.length, 1, "one condition in Codition model");
+						assert.equal(aConditions[0].values[0], "X", "condition value");
+						assert.equal(aConditions[0].operator, "EQ", "condition operator");
+						aTokens = oContent.getTokens ? oContent.getTokens() : [];
+						assert.equal(aTokens.length, 1, "MultiInput has one Token");
+						oToken = aTokens[0];
+						assert.equal(oToken && oToken.getText(), "=X", "Text on token set");
+
+						oSubmitPromise.then(function(vResult) {
+							assert.notOk(true, "submit: Promise must not be resolved");
+							fnDone();
+						}).catch(function(oException) {
+							assert.ok(true, "submit: Promise rejected");
+
+							// delete Token
+							iCount = 0; sId = ""; sValue = ""; bValid = undefined; oPromise = undefined;
+							iSubmitCount = 0; sSubmitId = ""; oSubmitPromise = undefined;
+							oTokenDeleteIcon.firePress();
+							assert.equal(iCount, 1, "change event fired once");
+							assert.equal(sId, "F1", "change event fired on Field");
+							assert.equal(sValue, "", "change event value");
+							assert.ok(bValid, "change event valid");
+							assert.ok(oPromise, "Promise returned");
+							assert.equal(iSubmitCount, 0, "submit event not fired");
+							oPromise.then(function(vResult) {
+								assert.ok(vResult, "Promise resolved");
+								aConditions = oCM.getConditions("Name");
+								assert.deepEqual(vResult, aConditions, "Promise result");
+								assert.equal(aConditions.length, 0, "no condition in Codition model after delete Token");
+								aTokens = oContent.getTokens ? oContent.getTokens() : [];
+								assert.equal(aTokens.length, 0, "MultiInput has no Token after delete");
+
+								//simulate liveChange by calling from internal control
+								oContent.fireLiveChange({ value: "Y" });
+								assert.equal(iLiveCount, 1, "liveChange event fired once");
+								assert.equal(sLiveId, "F1", "liveChange event fired on Field");
+								assert.equal(sLiveValue, "Y", "liveChange event value");
+								fnDone();
+							});
+						});
 					});
-				});
-			}, 0);
+				}, 0);
+			});
 		});
 
 	});
@@ -1791,6 +1824,9 @@ sap.ui.define([
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.equal(sValue, "X", "change event value");
 		assert.ok(bValid, "change event valid");
+		assert.equal(iSubmitCount, 1, "submit event fired once");
+		assert.equal(sSubmitId, "F1", "submit event fired on Field");
+		assert.ok(oSubmitPromise, "submit: Promise returned");
 		var aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0], "X", "condition value");
@@ -1958,6 +1994,9 @@ sap.ui.define([
 			assert.equal(sValue, "15", "change event value");
 			assert.notOk(bValid, "change event not valid");
 			assert.ok(oPromise, "Promise returned");
+			assert.equal(iSubmitCount, 1, "submit event fired once");
+			assert.equal(sSubmitId, "F1", "submit event fired on Field");
+			assert.ok(oSubmitPromise, "submit: Promise returned");
 			var aConditions = oCM.getConditions("Name");
 			assert.equal(aConditions.length, 0, "no condition in Codition model");
 			assert.equal(jQuery(oContent.getFocusDomRef()).val(), "15", "Value still in Input");
@@ -1977,7 +2016,13 @@ sap.ui.define([
 				fnDone();
 			}).catch(function(oException) {
 				assert.ok(true, "Promise must be rejected");
-				fnDone();
+				oSubmitPromise.then(function(vResult) {
+					assert.notOk(true, "submit: Promise must not be resolved");
+					fnDone();
+				}).catch(function(oException) {
+					assert.ok(true, "submit: Promise rejected");
+					fnDone();
+				});
 			});
 		}, 0);
 
@@ -2032,33 +2077,39 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
-		oContent.setValue("X"); // as onInput SearchField sets it's value
+		jQuery(oContent.getFocusDomRef()).val("X");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
 		qutils.triggerKeyup(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.equal(sValue, "X", "change event value");
 		assert.ok(bValid, "change event valid");
+		assert.equal(iSubmitCount, 1, "submit event fired once");
+		assert.equal(sSubmitId, "F1", "submit event fired on Field");
+		assert.ok(oSubmitPromise, "submit: Promise returned");
 		var aConditions = oCM.getConditions("$search");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "X", "condition value");
 		assert.equal(aConditions[0] && aConditions[0].operator, "Contains", "condition operator");
 
 		iCount = 0; sId = undefined; sValue = undefined; bValid = undefined;
+		iSubmitCount = 0; sSubmitId = ""; oSubmitPromise = undefined;
 		qutils.triggerTouchEvent("touchend", oContent.getId() + "-search");
-		assert.equal(iCount, 1, "change event fired once");
-		assert.equal(sId, "F1", "change event fired on Field");
-		assert.equal(sValue, "X", "change event value");
-		assert.ok(bValid, "change event valid");
+		assert.equal(iCount, 0, "change event not fired");
+		assert.equal(iSubmitCount, 1, "submit event fired once");
+		assert.equal(sSubmitId, "F1", "submit event fired on Field");
+		assert.ok(oSubmitPromise, "submit: Promise returned");
 		assert.equal(aConditions, oCM.getConditions("$search"), "Conditions not changed");
 
 		//simulate change by calling from internal control
 		iCount = 0; sId = undefined; sValue = undefined; bValid = undefined;
+		iSubmitCount = 0; sSubmitId = ""; oSubmitPromise = undefined;
 		oContent.fireChange({ value: "Y" });
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.equal(sValue, "Y", "change event value");
 		assert.ok(bValid, "change event valid");
+		assert.equal(iSubmitCount, 0, "submit event not fired ");
 		aConditions = oCM.getConditions("$search");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "Y", "condition value");
@@ -2099,6 +2150,11 @@ sap.ui.define([
 				assert.equal(iLiveCount, 1, "liveChange event fired once");
 				assert.equal(sLiveId, "F1", "liveChange event fired on Field");
 				assert.equal(sLiveValue, 71, "liveChange event value");
+
+				qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+				assert.equal(iSubmitCount, 1, "submit event fired once");
+				assert.equal(sSubmitId, "F1", "submit event fired on Field");
+				assert.ok(oSubmitPromise, "submit: Promise returned");
 
 				var oButton = new Button("B1");
 				oButton.bindProperty("text", { path: '$field>/conditions', type: new ConditionsType() });
@@ -2690,7 +2746,8 @@ sap.ui.define([
 				dataType: "sap.ui.model.type.String",
 				dataTypeConstraints: {search: '^[A-Za-z0-5]+$'}, // to test validation error
 				//				change: _myChangeHandler,
-				liveChange: _myLiveChangeHandler
+				liveChange: _myLiveChangeHandler,
+				submit: _mySubmitHandler
 			});
 			oField._fireChange = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
@@ -2717,6 +2774,9 @@ sap.ui.define([
 			iLiveCount = 0;
 			sLiveId = "";
 			sLiveValue = "";
+			iSubmitCount = 0;
+			sSubmitId = "";
+			oSubmitPromise = null;
 			FieldBase._init();
 		}
 	});
@@ -3198,6 +3258,8 @@ sap.ui.define([
 		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
 		oFieldHelp.getTextForKey.withArgs("I2").returns("Item2");
 		oFieldHelp.getKeyForText.withArgs("Item2").returns("I2");
+		oFieldHelp.getItemForValue.withArgs("I2").returns({key: "I2", description: "Item2"});
+		oFieldHelp.getItemForValue.withArgs("Item2").returns({key: "I2", description: "Item2"});
 
 		var oCM2 = new ConditionModel();
 		var oCondition = Condition.createCondition("EQ", ["I3"]);
@@ -3263,7 +3325,11 @@ sap.ui.define([
 				new Promise(function(fnResolve) {
 					fnResolve("I3");
 				}));
-		//		assert.ok(oFieldHelp.getTextForKey.calledWith("I2"), "getTextForKey called");
+		oFieldHelp.getItemForValue.withArgs("Item3").returns(
+				new Promise(function(fnResolve) {
+					fnResolve({key: "I3", description: "Item3"});
+				}));
+
 		var fnDone = assert.async();
 		oField.focus(); // as FieldHelp is connected with focus
 		var aContent = oField.getAggregation("_content");
@@ -3274,6 +3340,9 @@ sap.ui.define([
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.notOk(sValue, "change event has no value");
 		assert.ok(oPromise, "Promise returned");
+		assert.equal(iSubmitCount, 1, "submit event fired once");
+		assert.equal(sSubmitId, "F1", "submit event fired on Field");
+		assert.ok(oSubmitPromise, "submit: Promise returned");
 		oPromise.then(function(vResult) {
 			assert.ok(vResult, "Promise resolved");
 			var aConditions = oCM.getConditions("Name");
@@ -3288,7 +3357,15 @@ sap.ui.define([
 			assert.equal(oToken && oToken.getText(), "Item3", "Text on token set");
 			assert.ok(oFieldHelp.onFieldChange.calledOnce, "onFieldChange called on FieldHelp");
 			assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
-			fnDone();
+
+			oSubmitPromise.then(function(vResult) {
+				assert.ok(vResult, "submit: Promise resolved");
+				assert.deepEqual(vResult, aConditions, "submit: Promise result");
+				fnDone();
+			}).catch(function(oException) {
+				assert.notOk(true, "submit: Promise must not be rejected");
+				fnDone();
+			});
 		}).catch(function(oException) {
 			assert.notOk(true, "Promise must not be rejected");
 			fnDone();
@@ -3306,6 +3383,10 @@ sap.ui.define([
 		oFieldHelp.getKeyForText.withArgs("Item3").returns(
 				new Promise(function(fnResolve) {
 					fnResolve("I3");
+				}));
+		oFieldHelp.getItemForValue.withArgs("Item3").returns(
+				new Promise(function(fnResolve) {
+					fnResolve({key: "I3", description: "Item3"});
 				}));
 
 		var fnDone = assert.async();
@@ -4037,6 +4118,13 @@ sap.ui.define([
 			oStub.withArgs("Empty").returns("");
 			oStub.withArgs("Item1").returns("I1");
 			oStub.withArgs("Item2").returns("I2");
+			oStub = sinon.stub(oFieldHelp, "getItemForValue");
+			oStub.withArgs("").returns({key: "", description: "Empty"});
+			oStub.withArgs("I1").returns({key: "I1", description: "Item1"});
+			oStub.withArgs("I2").returns({key: "I2", description: "Item2"});
+			oStub.withArgs("Empty").returns({key: "", description: "Empty"});
+			oStub.withArgs("Item1").returns({key: "I1", description: "Item1"});
+			oStub.withArgs("Item2").returns({key: "I2", description: "Item2"});
 
 			oField = new FieldBase("F1", {
 				dataType: "sap.ui.model.odata.type.String",

@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enum/EditMode"
-], function(Controller, Filter, FilterOperator, JSONModel, Condition, EditMode) {
+	"sap/ui/mdc/enum/EditMode",
+	"sap/m/MessageToast"
+], function(Controller, Filter, FilterOperator, JSONModel, Condition, EditMode, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.field.Test", {
@@ -140,6 +141,19 @@ sap.ui.define([
 			oText.setText("Field: " + oField.getId() + " Press");
 			oIcon.setSrc("sap-icon://message-success");
 			oIcon.setColor("Positive");
+		},
+
+		handleSubmit: function(oEvent) {
+			var oField = oEvent.oSource;
+			var oPromise = oEvent.getParameter("promise");
+
+			if (oPromise) {
+				oPromise.then(function(sValue) {
+					MessageToast.show("ENTER on " + oField.getId() + " value: " + sValue);
+				}).catch(function(oException) {
+					MessageToast.show("ENTER wth error on " + oField.getId());
+				});
+			}
 		},
 
 		toggleDisplay: function(oEvent) {

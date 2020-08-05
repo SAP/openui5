@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Column",
 	"sap/m/Label",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/m/MessageToast"
 ], function(
 		Controller,
 		Filter,
@@ -29,7 +30,8 @@ sap.ui.define([
 		ColumnListItem,
 		Column,
 		Label,
-		Text
+		Text,
+		MessageToast
 		) {
 	"use strict";
 
@@ -188,20 +190,6 @@ sap.ui.define([
 			var oPromise = oEvent.getParameter("promise");
 			var oText = this.byId("MyText");
 			var oIcon = this.byId("MyIcon");
-			var fnConditionsToText = function(aConditions) {
-				var sText;
-				if (aConditions) {
-					for (var i = 0; i < aConditions.length; i++) {
-						var oCondition = aConditions[i];
-						if (sText) {
-							sText = sText + ", " + oCondition.values[0];
-						} else {
-							sText = oCondition.values[0];
-						}
-					}
-				}
-				return sText;
-			};
 
 			if (oPromise) {
 				this._iBusyIndicatorDelay = oField.getBusyIndicatorDelay();
@@ -287,6 +275,19 @@ sap.ui.define([
 			oText.setText("Field: " + oField.getId() + " Press");
 			oIcon.setSrc("sap-icon://message-success");
 			oIcon.setColor("Positive");
+		},
+
+		handleSubmit: function(oEvent) {
+			var oField = oEvent.oSource;
+			var oPromise = oEvent.getParameter("promise");
+
+			if (oPromise) {
+				oPromise.then(function(aConditions) {
+					MessageToast.show("ENTER on " + oField.getId() + " value: " + fnConditionsToText(aConditions));
+				}).catch(function(oException) {
+					MessageToast.show("ENTER wth error on " + oField.getId());
+				});
+			}
 		},
 
 		toggleDisplay: function(oEvent) {
@@ -375,4 +376,20 @@ sap.ui.define([
 		}
 
 	});
+
+	function fnConditionsToText(aConditions) {
+		var sText;
+		if (aConditions) {
+			for (var i = 0; i < aConditions.length; i++) {
+				var oCondition = aConditions[i];
+				if (sText) {
+					sText = sText + ", " + oCondition.values[0];
+				} else {
+					sText = oCondition.values[0];
+				}
+			}
+		}
+		return sText;
+	}
+
 }, true);
