@@ -122,9 +122,9 @@ sap.ui.define([
 			oAdaptationController.showP13n(oSource, "Sort");
 		},
 
-		_setFilterConfig: function(oControl) {
+		retrieveConfiguredFilter: function(oControl) {
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-			return oControl._retrieveP13nFilter().then(function(oAdaptationFilterBar){
+			return oControl.retrieveP13nFilter().then(function(oAdaptationFilterBar){
 				var oFilterConfig = {
 					filterControl: oAdaptationFilterBar,
 					title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
@@ -136,7 +136,7 @@ sap.ui.define([
 
 		showP13nFilter: function(oControl, oSource) {
 			var oAdaptationController = oControl.getAdaptationController();
-			TableSettings._setFilterConfig(oControl).then(function(){
+			TableSettings.retrieveConfiguredFilter(oControl).then(function(){
 				oAdaptationController.showP13n(oSource, "Filter");
 			});
 		},

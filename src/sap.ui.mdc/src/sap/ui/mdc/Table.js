@@ -2244,7 +2244,7 @@ sap.ui.define([
 
 	Table.prototype.checkAndRebindTable = function() {
 		if (this.isFilteringEnabled()) {
-			this._retrieveP13nFilter().then(function(oFilter) {
+			TableSettings.retrieveConfiguredFilter(this).then(function(oFilter) {
 				oFilter.initialized().then(function(){
 					oFilter.triggerSearch();
 				});
@@ -2281,8 +2281,9 @@ sap.ui.define([
 	 * Getter for the inner IFilter Control
 	 *
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
-	Table.prototype._retrieveP13nFilter = function() {
+	Table.prototype.retrieveP13nFilter = function() {
 		return new Promise(function(resolve, reject) {
 			if (!this._oP13nFilter) {
 				sap.ui.require(["sap/ui/mdc/filterbar/p13n/AdaptationFilterBar"], function(AdaptationFilterBar) {

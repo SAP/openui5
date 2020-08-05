@@ -252,6 +252,8 @@ sap.ui.define([
 
 		When.iPressDialogOk();
 
+		Then.iShouldSeeVisibleItemsInTable(2);
+
 		//create a new variant 'FilterVariantTest'
 		When.iSaveVariantAs("Standard", "FilterVariantTest");
 		Then.iShouldSeeSelectedVariant("FilterVariantTest");
@@ -268,14 +270,27 @@ sap.ui.define([
 
 	});
 
-	opaTest("Close 'FilterVariantTest' appliance after restart", function (Given, When, Then) {
+	opaTest("Switch Variant after restart without opening the dialog", function (Given, When, Then) {
+
 		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
 
 		//check default variant appliance
 		Then.iShouldSeeSelectedVariant("FilterVariantTest");
 
+		Then.iShouldSeeVisibleItemsInTable(2);
+
+		When.iSelectVariant("Standard");
+
+		Then.iShouldSeeVisibleItemsInTable(20);
+	});
+
+	opaTest("Close 'FilterVariantTest' appliance after restart", function (Given, When, Then) {
+		When.iSelectVariant("FilterVariantTest");
+
 		//Recheck default variant appliance
 		Then.iShouldSeeTableConditions(oTableConditions);
+
+		Then.iShouldSeeVisibleItemsInTable(2);
 
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
 
@@ -292,6 +307,8 @@ sap.ui.define([
 		Then.iShouldSeeP13nFilterItem("Name", 9, ["S"]);
 
 		When.iPressDialogOk();
+
+		Then.iShouldSeeVisibleItemsInTable(2);
 
 		//Check Table conditions
 		Then.iShouldSeeTableConditions(oTableConditions);
@@ -319,6 +336,8 @@ sap.ui.define([
 
 		When.iPressDialogOk();
 
+		Then.iShouldSeeVisibleItemsInTable(20);
+
 		Then.theVariantManagementIsDirty(false);
 	});
 
@@ -339,12 +358,12 @@ sap.ui.define([
 		//close dialogs
 		When.iPressDialogOk();
 
+		Then.iShouldSeeVisibleItemsInTable(2);
+
 		//tear down app
 		Then.iTeardownMyAppFrame();
 
 	});
-
-
 
 	// ----------------------------------------------------------------
 	// Methods

@@ -168,7 +168,7 @@ sap.ui.define([
 
 			this.oTable.retrieveAdaptationController().then(function(oAdaptationController) {
 				//prepare AdaptationController
-				TableSettings._setFilterConfig(this.oTable).then(function(oP13nFilter){
+				TableSettings.retrieveConfiguredFilter(this.oTable).then(function(oP13nFilter){
 					oAdaptationController.createP13n("Filter", aPropertyInfo).then(function(oP13nControl){
 
 						//sample condition

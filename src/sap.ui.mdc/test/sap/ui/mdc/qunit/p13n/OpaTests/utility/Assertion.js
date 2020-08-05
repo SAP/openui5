@@ -268,6 +268,23 @@ sap.ui.define([
 			});
 		},
 
+		iShouldSeeVisibleItemsInTable: function(iItems){
+			return this.waitFor({
+				controlType: "sap.m.Table",
+				matchers: {
+					ancestor: {
+						controlType: "sap.ui.mdc.Table"
+					}
+				},
+				success: function(aTable) {
+					var oTable = aTable[0];
+
+					Opa5.assert.equal(oTable.getItems().length, iItems, "The Table holds the correct amount of items:" + iItems + " items found");
+
+				}
+			});
+		},
+
 		iShouldSeeP13nFilterItems: function(aP13nFilterItems){
 			aP13nFilterItems.forEach(function(oP13nFilterItem, iIndex){
 				return this.iShouldSeeP13nFilterItem(oP13nFilterItem.p13nItem, iIndex, oP13nFilterItem.value);
