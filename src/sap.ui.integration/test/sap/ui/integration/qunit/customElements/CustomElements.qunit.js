@@ -156,6 +156,24 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Create a card tag and change badge", function (assert) {
+		// arrange
+		var done = assert.async();
+
+		testWhenDefined(function () {
+			var oElement = document.createElement("ui-integration-card");
+
+			// act
+			oElement.setAttribute("badge", "New");
+
+			// assert
+			assert.strictEqual(oElement.getAttribute("badge"), "New", "Attribute 'badge' correctly set on the element.");
+			assert.strictEqual(oElement.badge, "New", "Set attribute 'badge' reflects correctly on the element.");
+
+			done();
+		});
+	});
+
 	QUnit.test("Create a card tag and change property", function (assert) {
 		// arrange
 		var done = assert.async();

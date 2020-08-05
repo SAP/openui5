@@ -245,11 +245,16 @@ sap.ui.define([
 		oPrototype._mAllProperties = oPrototype._oMetadata.getAllProperties();
 		oPrototype._aAllProperties = []; // holds all properties and associations in "camelCase"
 
+		if (mSettings && mSettings.customProperties) {
+			oPrototype._mAllProperties = Object.assign(oPrototype._mAllProperties, mSettings.customProperties);
+		}
+
 		for (sKey in oPrototype._mAllProperties) {
 			if (mSettings && mSettings.privateProperties && mSettings.privateProperties.indexOf(sKey) !== -1) {
 				// do not expose property if it's passed as a private when defined
 				continue;
 			}
+
 			oPrototype._aAllProperties.push(sKey);
 		}
 
