@@ -23,6 +23,8 @@ sap.ui.define([
 
 		var IBADGE_STATE = library.BadgeState;
 
+		var IBADGE_STYLE = library.BadgeStyle;
+
 		var IBADGE_INVALID_VALUES = ["", "undefined", "null"];
 
 		/**
@@ -122,7 +124,8 @@ sap.ui.define([
 				var _oNode,
 					sBadgeId = _getBadgeId.call(this),
 					oBadgeElement = _getBadgeElement.call(this),
-					sValue = this._oBadgeCustomData.getValue();
+					sValue = this._oBadgeCustomData.getValue(),
+					sStyle = this._oBadgeConfig.style ? this._oBadgeConfig.style : IBADGE_STYLE.Default;
 				this._oBadgeContainer = this._oBadgeConfig && this._oBadgeConfig.selector ?
 					_getContainerDomElement(this._oBadgeConfig.selector, this) :
 					this.$();
@@ -131,6 +134,9 @@ sap.ui.define([
 				}
 
 				_oNode = jQuery('<div></div>').addClass(IBADGE_CSS_CLASS + "Indicator");
+
+				_oNode.addClass(IBADGE_CSS_CLASS + sStyle);
+
 				_oNode.attr("id", sBadgeId);
 				_oNode.attr("data-badge", sValue);
 				_oNode.attr("aria-label", getAriaLabelText.call(this));
@@ -249,6 +255,10 @@ sap.ui.define([
 
 			this.updateBadgeVisibility = function (bVisible) {
 				return bVisible ? _createBadgeDom.call(this) : _removeBadgeDom.call(this);
+			};
+
+			this._renderBadge = function () {
+				_renderBadgeDom.call(this);
 			};
 		};
 	return BadgeEnabler;

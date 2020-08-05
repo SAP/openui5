@@ -1970,6 +1970,11 @@
 		  "description": "This sample illustrates nested tabs with or without own content in their root-level tab."
 		},
 		{
+			"id": "sap.m.sample.IconTabBarBadges",
+			"name": "Icon Tab Bar - Badges",
+			"description": "This sample illustrates the possibility to add badges to the icon tab filters."
+		  },
+		{
 		  "id": "sap.m.sample.BusyIndicator",
 		  "name": "Busy Indicator",
 		  "description": "The Busy Indicator signals that some operation is going on and that the user must wait. It does not block the current UI screen so other operations could be triggered in parallel."

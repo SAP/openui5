@@ -16,7 +16,8 @@ sap.ui.define([
 	"./AccButton",
 	"sap/m/Button",
 	"sap/m/ResponsivePopover",
-	"sap/m/IconTabBarSelectList"
+	"sap/m/IconTabBarSelectList",
+	"sap/m/BadgeEnabler"
 ], function (
 	library,
 	coreLibrary,
@@ -30,7 +31,8 @@ sap.ui.define([
 	AccButton,
 	Button,
 	ResponsivePopover,
-	IconTabBarSelectList
+	IconTabBarSelectList,
+	BadgeEnabler
 ) {
 	"use strict";
 
@@ -51,6 +53,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.IconTabFilterDesign
 	var IconTabFilterDesign = library.IconTabFilterDesign;
+
+	// shortcut for sap.m.BadgeStyle
+	var BadgeStyle = library.BadgeStyle;
 
 	// shortcut for sap.ui.core.IconColor
 	var IconColor = coreLibrary.IconColor;
@@ -81,7 +86,8 @@ sap.ui.define([
 			"sap.m.IconTab",
 			// The IconTabBar doesn't have renderer. The sap.ui.core.PopupInterface is used to indicate
 			// that the IconTabFilter content is not rendered by the IconTabFilter, it is rendered by IconTabBar.
-			"sap.ui.core.PopupInterface"
+			"sap.ui.core.PopupInterface",
+			"sap.m.IBadge"
 		],
 		library : "sap.m",
 		designtime: "sap/m/designtime/IconTabFilter.designtime",
@@ -161,6 +167,8 @@ sap.ui.define([
 		}
 	}});
 
+	BadgeEnabler.call(IconTabFilter.prototype);
+
 	/**
 	 * Library internationalization resource bundle.
 	 *
@@ -207,12 +215,20 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabFilter.prototype.init = function () {
+
 		this._oDragEventDelegate = {
 			onlongdragover: this._handleOnLongDragOver,
 			ondragover: this._handleOnDragOver,
 			ondragleave: this._handleOnDragLeave,
 			ondrop: this._handleOnDrop
 		};
+
+		this.initBadgeEnablement({
+			style: BadgeStyle.Attention,
+			selector: {
+				selector: ".sapMITBBadgeHolder"
+			}
+		});
 	};
 
 	/**
@@ -390,7 +406,8 @@ sap.ui.define([
 			bShouldReadIconColor = oIconColor === 'Positive' || oIconColor === 'Critical' || oIconColor === 'Negative' || oIconColor === 'Neutral',
 			bHorizontalDesign = this.getDesign() === IconTabFilterDesign.Horizontal,
 			bTextOnly = oIconTabHeader._bTextOnly,
-			bInLine = oIconTabHeader._bInLine || oIconTabHeader.isInlineMode();
+			bInLine = oIconTabHeader._bInLine || oIconTabHeader.isInlineMode(),
+			bShowAll = this.getShowAll();
 
 		if (bHasIconTabBar) {
 			mAriaParams.controls = oIconTabBar.getId() + "-content";
@@ -443,7 +460,7 @@ sap.ui.define([
 			oRM.class("sapMITBVertical");
 		}
 
-		if (this.getShowAll()) {
+		if (bShowAll) {
 			oRM.class("sapMITBAll");
 		} else {
 			oRM.class("sapMITBFilter")
@@ -485,7 +502,7 @@ sap.ui.define([
 				.class("sapMITBTab")
 				.openEnd();
 
-			if (!this.getShowAll() || !oIcon) {
+			if (!bShowAll || !oIcon) {
 				if (bShouldReadIconColor) {
 					oRM.openStart("div", sId + "-iconColor")
 						.style("display", "none")
@@ -494,14 +511,14 @@ sap.ui.define([
 						.close("div");
 				}
 
-				oRM.renderControl(this._getImageControl(['sapMITBFilterIcon', 'sapMITBFilter' + oIconColor], oIconTabHeader, IconTabFilter._aAllIconColors));
+				oRM.renderControl(this._getImageControl(['sapMITBFilterIcon', "sapMITBBadgeHolder", 'sapMITBFilter' + oIconColor], oIconTabHeader, IconTabFilter._aAllIconColors));
 			}
 
-			if (!this.getShowAll() && !oIcon && !bTextOnly) {
+			if (!bShowAll && !oIcon && !bTextOnly) {
 				oRM.openStart("span").class("sapMITBFilterNoIcon").openEnd().close("span");
 			}
 
-			if (bHorizontalDesign && !this.getShowAll()) {
+			if (bHorizontalDesign && !bShowAll) {
 				oRM.close("div");
 
 				oRM.openStart("div")
@@ -510,8 +527,13 @@ sap.ui.define([
 			}
 
 			oRM.openStart("span", sId + "-count")
-				.class("sapMITBCount")
-				.openEnd();
+				.class("sapMITBCount");
+
+			if (bShowAll || (!oIcon && !sText.length)) {
+				oRM.class("sapMITBBadgeHolder");
+			}
+
+			oRM.openEnd();
 
 			if (sCount === "" && bHorizontalDesign) {
 				//this is needed for the correct placement of the text in the horizontal design
@@ -541,7 +563,19 @@ sap.ui.define([
 			}
 
 			oRM.openEnd();
-			oRM.openStart("span").class("sapMITHTextContent").openEnd().text(oIconTabHeader._getDisplayText(this));
+
+
+			oRM.openStart("span")
+				.class("sapMITHTextContent");
+
+			if (!oIcon && !bShowAll) {
+				oRM.class("sapMITBBadgeHolder");
+			}
+
+			oRM.openEnd();
+
+			oRM.text(oIconTabHeader._getDisplayText(this));
+
 			oRM.close("span");
 
 			if (this._bIsOverflow || this.getItems().length && oIconTabHeader._isUnselectable(this)) {
@@ -571,6 +605,8 @@ sap.ui.define([
 
 			oRM.renderControl(this._getExpandButton());
 		}
+
+
 
 		oRM.close("div");
 	};
@@ -669,7 +705,7 @@ sap.ui.define([
 		}
 
 		if (!bTextOnly) {
-			this._renderIcon(oRM);
+			this._renderIcon(oRM, bIconOnly);
 		}
 
 		if (!bIconOnly) {
@@ -678,11 +714,15 @@ sap.ui.define([
 		oRM.close("li");
 	};
 
+	IconTabFilter.prototype._onAfterParentRendering = function () {
+		this._renderBadge();
+	};
+
 	/**
 	 * Renders an icon.
 	 * @private
 	 */
-	IconTabFilter.prototype._renderIcon = function (oRM) {
+	IconTabFilter.prototype._renderIcon = function (oRM, bIconOnly) {
 		var oIcon = this.getIcon();
 		if (oIcon) {
 			var oIconInfo = IconPool.getIconInfo(oIcon),
@@ -690,6 +730,10 @@ sap.ui.define([
 
 			if (oIconInfo && !oIconInfo.suppressMirroring) {
 				aClasses.push("sapUiIconMirrorInRTL");
+			}
+
+			if (bIconOnly) {
+				aClasses.push("sapMITBBadgeHolder");
 			}
 
 			oRM.icon(oIcon, aClasses, {
@@ -715,7 +759,8 @@ sap.ui.define([
 			.attr("dir", "ltr")
 			.class("sapMText")
 			.class("sapMTextNoWrap")
-			.class("sapMITBText");
+			.class("sapMITBText")
+			.class("sapMITBBadgeHolder");
 
 		if (sTextDir !== TextDirection.Inherit){
 			oRM.attr('dir', sTextDir.toLowerCase());
@@ -1020,6 +1065,12 @@ sap.ui.define([
 		for (var i = 0; i < aItemsForList.length; i++) {
 			oItem = aItemsForList[i];
 			var oListItem = oItem.clone(undefined, undefined, { cloneChildren: false, cloneBindings: true });
+
+			// clone the badge custom data
+			if (oItem instanceof IconTabFilter && oItem.getBadgeCustomData()) {
+				oListItem.addCustomData(oItem.getBadgeCustomData().clone());
+			}
+
 			oListItem._oRealItem = oItem; // link list item to its underlying item from the items aggregation
 			oSelectList.addItem(oListItem);
 

@@ -115,7 +115,8 @@
 .sapMBadge {
 	overflow: visible;
 	position: relative;
-	.sapMBadgeIndicator {
+
+	.sapMBadgeDefault {
 		position: absolute;
 		top: -0.125rem;
 		right: -0.25rem;
@@ -187,26 +188,41 @@
 			top: 0;
 		}
 	}
+
+	/* The attention badge is a single dot, which does not contain text or icons. */
+	.sapMBadgeAttention {
+		position: absolute;
+		top: -0.25rem;
+		right: -0.25rem;
+		width: 0.5rem;
+		height: 0.5rem;
+
+		border-radius: 1.125rem;
+		background-color: @sapUiContentBadgeBackground;
+		border: 0.125rem solid @sapUiObjectHeaderBackground;
+	}
 }
 
- .sapMBadgeIndicator:after {
+.sapMBadgeIndicator.sapMBadgeDefault:after {
 	content: attr(data-badge);
 }
 
-.sapMBadgeAnimationAdd:after {
+.sapMBadgeAttention.sapMBadgeAnimationAdd,
+.sapMBadgeDefault.sapMBadgeAnimationAdd:after {
 	animation: sapMBadgeAppearBounce .1s;
 }
-.sapMBadgeAnimationAdd:before {
+.sapMBadgeDefault.sapMBadgeAnimationAdd:before {
 	content: attr(data-badge);
 	animation: sapMBadgeAppearPulse .2s;
 }
-.sapMBadgeAnimationRemove:after {
+.sapMBadgeAttention.sapMBadgeAnimationRemove,
+.sapMBadgeDefault.sapMBadgeAnimationRemove:after {
 	animation: sapMBadgeDisappear .1s;
 	animation-fill-mode: forwards;
 	transform-origin: center;
 }
 
-.sapMBadgeAnimationUpdate:after {
+.sapMBadgeDefault.sapMBadgeAnimationUpdate:after {
 	animation: sapMBadgeUpdate .1s;
 	animation-fill-mode: forwards;
 }

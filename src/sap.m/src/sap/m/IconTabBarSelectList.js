@@ -114,6 +114,13 @@ sap.ui.define([
 	 */
 	IconTabBarSelectList.prototype.onAfterRendering = function () {
 		this._initItemNavigation();
+
+		// notify items that they are rendered
+		this.getItems().forEach(function (oItem) {
+			if (oItem._onAfterParentRendering) {
+				oItem._onAfterParentRendering();
+			}
+		});
 	};
 
 	/**
