@@ -770,4 +770,39 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Async XML Fragment from string with binding error", function(assert) {
+		return Fragment.load({
+			definition:
+				'<Panel id="panel" xmlns="sap.m">'
+				+ '<Button id="button1"/>'
+				+ '<Button id="button2" text="{This should cause a parse error"/>'
+				+ '<Button id="button3"/>'
+				+ '</Panel>'
+		}).then(function() {
+			assert.ok(false, "should not succeed");
+		}, function(err) {
+			assert.deepEqual(err, new SyntaxError("no closing braces found in '{This should cause a parse error' after pos:0"));
+			/* currently fails: older siblings and grand children are not cleaned up (button 1 in this case)
+			assert.equal(sap.ui.getCore().byId("panel"), null);
+			assert.equal(sap.ui.getCore().byId("button1"), null);
+			assert.equal(sap.ui.getCore().byId("button2"), null);
+			assert.equal(sap.ui.getCore().byId("button3"), null);
+			*/
+		});
+	});
+
+	QUnit.test("Sync XML Fragment from string with binding error", function(assert) {
+		assert.throws(function() {
+			sap.ui.xmlfragment({
+				fragmentContent:
+					'<Panel id="panel" xmlns="sap.m">'
+					+ '<Button id="button1"/>'
+					+ '<Button id="button2" text="{This should cause a parse error"/>'
+					+ '<Button id="button3"/>'
+					+ '</Panel>'
+			}, new SyntaxError("no closing braces found in '{This should cause a parse error' after pos:0"),
+			"Fragment loading failed with a SyntaxError with the expected message.");
+		});
+	});
+
 });
