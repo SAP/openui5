@@ -39,7 +39,9 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 			};
 
 			this._oDropContainerDelegate = {
-				ondragleave: this._onDragLeave
+				ondragleave: this._onDragLeave,
+				onBeforeRendering: this._onDropContainerBeforeRendering,
+				onAfterRendering: this._onDropContainerAfterRendering
 			};
 		},
 
@@ -193,7 +195,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 			return;
 		}
 
-		this._$indicator.detach();
+		this._hideIndicator();
 
 		// this._oDragControl.setVisible(true); // todo
 		this._showDraggedItem();
@@ -205,7 +207,6 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 			indicator: this._$indicator
 		});
 
-		this._$indicator.attr("style", ""); // VirtualGrid sets position 'absolute' to the indicator, which breaks calculations in other containers, such as GridList
 		this._mDropIndicatorSize = null;
 		this._oDragControl = null;
 		this._oDropContainer = null;
@@ -298,6 +299,15 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 
 		// fire private event for handling IE specific layout fixes
 		this._oDropContainer.fireEvent("_gridPolyfillAfterDragOver", oEventData);
+	};
+
+	/**
+	 * Removes the indicator from the drop container.
+	 */
+	GridDragOver.prototype._hideIndicator = function() {
+		this._$indicator.detach();
+
+		this._$indicator.attr("style", ""); // VirtualGrid sets position 'absolute' to the indicator, which breaks calculations in other containers, such as GridList
 	};
 
 	/**
@@ -642,6 +652,34 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 		}
 	};
 
+	/**
+	 * Before drop container rendering.
+	 * Handles the case when the drop container is invalidated during drag and drop.
+	 */
+	GridDragOver.prototype._onDropContainerBeforeRendering = function() {
+		if (!this._isDragActive()) {
+			return;
+		}
+
+		// Hides the indicator from the drop container so it does not brake the semantic rendering.
+		this._hideIndicator();
+	};
+
+	/**
+	 * After drop container rendering.
+	 * Handles the case when the drop container is invalidated during drag and drop.
+	 */
+	GridDragOver.prototype._onDropContainerAfterRendering = function() {
+		if (!this._isDragActive()) {
+			return;
+		}
+
+		this._hideDraggedItem();
+
+		if (this._mLastDropPosition) {
+			this._showIndicator(this._mLastDropPosition);
+		}
+	};
 
 	/**
 	 * Holds the instance of the current drag.
