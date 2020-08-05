@@ -162,60 +162,61 @@ sap.ui.define([
 
 	QUnit.test("addCondition (via AdaptationFilterBar _oP13nFilter)", function(assert){
 		var done = assert.async();
-		var oAC = this.oTable.getAdaptationController();
 
 		//wait for Table initialization
 		this.oTable.initialized().then(function(){
 
-			//prepare AdaptationController
-			TableSettings._setFilterConfig(this.oTable).then(function(oP13nFilter){
-				oAC.createP13n("Filter", aPropertyInfo).then(function(oP13nControl){
+			this.oTable.retrieveAdaptationController().then(function(oAdaptationController) {
+				//prepare AdaptationController
+				TableSettings._setFilterConfig(this.oTable).then(function(oP13nFilter){
+					oAdaptationController.createP13n("Filter", aPropertyInfo).then(function(oP13nControl){
 
-					//sample condition
-					var mNewConditions = {
-						column0: [
-							{
-								operator: "EQ",
-								values: [
-									"Test"
-								],
-								validated: "NotValidated"
-							}
-						],
-						column1: [
-							{
-								operator: "EQ",
-								values: [
-									"ABC"
-								],
-								validated: "NotValidated"
-							}
-						]
-					};
+						//sample condition
+						var mNewConditions = {
+							column0: [
+								{
+									operator: "EQ",
+									values: [
+										"Test"
+									],
+									validated: "NotValidated"
+								}
+							],
+							column1: [
+								{
+									operator: "EQ",
+									values: [
+										"ABC"
+									],
+									validated: "NotValidated"
+								}
+							]
+						};
 
-					oP13nFilter.retrieveAdaptationController().then(function (oAdaptationController) {
-						//No FilterBarDelegate provided in test --> rereoute property info for change creation
-						oAdaptationController.setRetrievePropertyInfo(function(){return aPropertyInfo;});
-						oAdaptationController.setAfterChangesCreated(function(oAC, aChanges){
-							oP13nFilter.rerouteChangesBeforeAppliance(aChanges);
+						oP13nFilter.retrieveAdaptationController().then(function (oAdaptationController) {
+							//No FilterBarDelegate provided in test --> rereoute property info for change creation
+							oAdaptationController.setRetrievePropertyInfo(function(){return aPropertyInfo;});
+							oAdaptationController.setAfterChangesCreated(function(oAdaptationController, aChanges){
+								oP13nFilter.rerouteChangesBeforeAppliance(aChanges);
 
-							assert.equal(aChanges.length, 2, "Two condition based changes created");
+								assert.equal(aChanges.length, 2, "Two condition based changes created");
 
-							//check raw changes
-							assert.equal(aChanges[0].selectorElement, this.oTable, "Correct Selector");
-							assert.equal(aChanges[1].selectorElement, this.oTable, "Correct Selector");
+								//check raw changes
+								assert.equal(aChanges[0].selectorElement, this.oTable, "Correct Selector");
+								assert.equal(aChanges[1].selectorElement, this.oTable, "Correct Selector");
 
-							FlexUtil.handleChanges(aChanges).then(function(){
-								//check updates via changehandler
-								assert.deepEqual(this.oTable.getFilterConditions(), mNewConditions, "conditions are present on Table");
-								assert.deepEqual(this.oTable._oP13nFilter.getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");
+								FlexUtil.handleChanges(aChanges).then(function(){
+									//check updates via changehandler
+									assert.deepEqual(this.oTable.getFilterConditions(), mNewConditions, "conditions are present on Table");
+									assert.deepEqual(this.oTable._oP13nFilter.getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");
+								}.bind(this));
+
+								done();
 							}.bind(this));
 
-							done();
+							//create filter change to trigger 'afterChangesCreated' on AC
+							oAdaptationController.createConditionChanges(mNewConditions);
 						}.bind(this));
-
-						//create filter change to trigger 'afterChangesCreated' on AC
-						oAdaptationController.createConditionChanges(mNewConditions);
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
