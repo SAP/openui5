@@ -546,7 +546,10 @@ sap.ui.define([
 
 			if (this._bIsOverflow || this.getItems().length && oIconTabHeader._isUnselectable(this)) {
 				oRM.openStart("span", this.getId() + "-expandButton").class("sapMITHShowSubItemsIcon").openEnd();
-				oRM.icon(IconPool.getIconURI("slim-arrow-down"), [], {title: oResourceBundle.getText("ICONTABHEADER_OVERFLOW_MORE")});
+				oRM.icon(IconPool.getIconURI("slim-arrow-down"), null, {
+					"title": null,
+					"aria-hidden": true // icon is only decorative
+				});
 				oRM.close("span");
 			}
 
