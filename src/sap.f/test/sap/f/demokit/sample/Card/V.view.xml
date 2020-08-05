@@ -21,6 +21,7 @@
 				justifyContent="SpaceBetween">
 				<HBox justifyContent="SpaceBetween">
 					<ComboBox
+						width="120px"
 						placeholder="From City"
 						items="{
 							path: 'cities>/cities',
@@ -29,6 +30,7 @@
 						<core:Item key="{cities>key}" text="{cities>text}" />
 					</ComboBox>
 					<ComboBox
+						width="120px"
 						placeholder="To City"
 						items="{
 							path: 'cities>/cities',
@@ -38,7 +40,7 @@
 					</ComboBox>
 				</HBox>
 				<HBox renderType="Bare" justifyContent="SpaceBetween">
-					<DatePicker placeholder="Choose Date ..." />
+					<DatePicker width="200px" placeholder="Choose Date ..." />
 					<Button
 						text="Book"
 						press=".onBookPress"
