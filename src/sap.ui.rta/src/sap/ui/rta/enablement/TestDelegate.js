@@ -42,6 +42,10 @@ function(
 	 * @experimental Since 1.77
 	 * @since 1.77
 	 * @public
+	 * @borrows sap.ui.fl.interfaces.Delegate#getPropertyInfo as #getPropertyInfo
+	 * @borrows sap.ui.fl.interfaces.Delegate#createLabel as #createLabel
+	 * @borrows sap.ui.fl.interfaces.Delegate#createControlForProperty as #createControlForProperty
+	 * @borrows sap.ui.fl.interfaces.Delegate#createLayout as #createLayout
 	 */
 	var TestDelegate = /** @lends sap.ui.rta.enablement.TestDelegate */ {
 

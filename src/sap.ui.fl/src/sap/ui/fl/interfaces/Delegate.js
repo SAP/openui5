@@ -28,6 +28,9 @@ sap.ui.define([
 	 * @property {sap.ui.fl.interfaces.delegate.PropertyInfo[]} [properties] - Some properties can be nested (e.g.
 	 * 		based on complex types and navigation properties in OData). In this case the delegate can provide these
 	 * 		nested properties. However currently only nesting of one level is supported by adaptation dialogs.
+	 * @public
+	 * @experimental Since 1.78
+	 * @since 1.78
 	 */
 
 	 /**
@@ -38,6 +41,9 @@ sap.ui.define([
 	 * @property {string} id - Control ID that represents this metadata property
 	 * @property {string[]} bindingPaths - Binding path that represents this property, the binding path doesn't
 	 * 		need to be used in a real binding.
+	 * @public
+	 * @experimental Since 1.78
+	 * @since 1.78
 	 */
 
 	/**
@@ -48,6 +54,9 @@ sap.ui.define([
 	 * 		represents the models property that should be added, e.g. a <code>SmartField</code>
 	 * @property {sap.ui.base.ManagedObject|Element} valueHelp - Control representation for the value help, returned
 	 * 		if it needs to be added separately
+	 * @public
+	 * @experimental Since 1.78
+	 * @since 1.78
 	 */
 
 
@@ -60,26 +69,31 @@ sap.ui.define([
 	 * 		appropriate for the current placement in a generic container/layout
 	 * @property {sap.ui.base.ManagedObject|Element} valueHelp - Control representation for the value help, returned
 	 * 		if it needs to be added separately
+	 * @public
+	 * @experimental Since 1.78
+	 * @since 1.78
 	 */
 
 //TODO add link to app developer guide when it includes delegate description and test utility
+
+
 	/**
 	 * Interface for SAPUI5 flexibility delegates.
 	 * Such delegates can be attached to controls to let key users add additional properties from metadata.
 	 *
 	 * <h4>Example:</h4>
 	 * <pre>
-	 * <mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:fl="sap.ui.fl" >
-	 *     <f:Form id="idForm"
+	 * &ltmvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:fl="sap.ui.fl" &gt
+	 *     &ltf:Form id="idForm"
 	 *         fl:delegate='{
 	 *             "name":"some/library/DelegateName",
 	 *             "payload":{
 	 *                 "modelName":"Books"
 	 *             }
 	 *         }'
-	 *     >...</f:Form>
+	 *     &gt...&lt/f:Form&gt
 	 *     ...
-	 * </mvc:View>
+	 * &lt/mvc:View&gt
 	 * </pre>
 	 * @namespace sap.ui.fl.interfaces.Delegate
 	 * @experimental Since 1.78
@@ -88,8 +102,7 @@ sap.ui.define([
 	 * @public
 	 * @interface
 	 */
-
-	var Delegate = /** @lends sap.ui.fl.interfaces.Delegate */ {
+	return /** @lends sap.ui.fl.interfaces.Delegate */ {
 		/**
 		* Provides all properties that are available at the current binding context. In OData, this will probably
 		* be all properties of the entityType.
@@ -101,6 +114,7 @@ sap.ui.define([
 		* @param {object} mPropertyBag.payload - Payload parameter attached to the delegate, undefined if no payload
 		* 		was assigned
 		* @returns {Promise<sap.ui.fl.interfaces.delegate.PropertyInfo[]>} Metadata in a deep structure of nodes and properties
+		* @public
 		* @abstract
 		*/
 		getPropertyInfo: function(/*mPropertyBag*/) {
@@ -122,6 +136,7 @@ sap.ui.define([
 				Resolve an empty array if no property is represented at the moment.
 		* @experimental we still need some more use cases/pilot usage to finalize the API
 		* @abstract
+		* @public
 		*/
 		getRepresentedProperties: function(/*mPropertyBag*/) {
 			return Promise.reject("not implemented");
@@ -147,6 +162,7 @@ sap.ui.define([
 		* @param {string} mPropertyBag.aggregationName - Name of the aggregation for which delegate should create the label
 		* @returns {Promise<sap.ui.base.ManagedObject|Element>} Control representation of the label (e.g. <code>sap.m.Label</code>)
 		* @abstract
+		* @public
 		*/
 		createLabel: function(/*mPropertyBag*/) {
 			return Promise.reject("not implemented");
@@ -173,6 +189,7 @@ sap.ui.define([
 		* @param {string} mPropertyBag.aggregationName - Name of the aggregation for which delegate should create controls
 		* @returns {Promise<sap.ui.fl.interfaces.delegate.SpecificControlInfo>} Map containing the controls to add
 		* @abstract
+		* @public
 		*/
 		createControlForProperty: function(/*mPropertyBag*/) {
 			return Promise.reject("not implemented");
@@ -198,10 +215,10 @@ sap.ui.define([
 		* @param {string} mPropertyBag.aggregationName - Name of the aggregation for which delegate should create controls
 		* @returns {Promise<sap.ui.fl.interfaces.delegate.LayoutControlInfo>} Map containing the controls to add
 		* @abstract
+		* @public
 		*/
 		createLayout: function(/*mPropertyBag*/) {
 			return Promise.reject("not implemented");
 		}
 	};
-	return Delegate;
 });
