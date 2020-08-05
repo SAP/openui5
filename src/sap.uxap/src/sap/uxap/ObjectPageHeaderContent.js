@@ -42,7 +42,10 @@ sap.ui.define([
 		 * <ul>
 		 * <li>{@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}</li>
 		 * <li>{@link topic:0fecbce45e39406aa939bd25e89823f4 Object Page Classic Header}</li>
+		 * <li>{@link https://experience.sap.com/fiori-design-web/object-page/ UX Guidelines: Object Page}</li>
 		 * </ul>
+		 *
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/snapping-header/#header-content Object Page Header Content}
 		 *
 		 * @extends sap.ui.core.Control
 		 * @implements sap.uxap.IHeaderContent
@@ -89,7 +92,7 @@ sap.ui.define([
 
 					_objectImage: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
-					_placeholder: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
+					_placeholder: {type: "sap.m.Avatar", multiple: false, visibility: "hidden"}
 				}
 			}
 		});
@@ -124,7 +127,7 @@ sap.ui.define([
 		ObjectPageHeaderContent.prototype._getInternalBtnAggregation = function (sAggregationName, sBtnText, sBtnIdText, sBtnType) {
 			if (!this.getAggregation(sAggregationName)) {
 				var oBtn = new Button({
-					text: library.i18nModel.getResourceBundle().getText(sBtnText),
+					text: sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText(sBtnText),
 					type: sBtnType,
 					id: this.getId() + sBtnIdText
 				});
@@ -195,17 +198,26 @@ sap.ui.define([
 			}
 		};
 
+
+		ObjectPageHeaderContent.prototype.setVisible = function (bVisible) {
+			this.getParent() && this.getParent().toggleStyleClass("sapUxAPObjectPageLayoutNoHeaderContent", !bVisible);
+			return this.setProperty("visible", bVisible);
+		};
+
 		/**
 		 * Required by the {@link sap.uxap.IHeaderContent} interface.
 		 * @param aContent
 		 * @param bVisible
 		 * @param sContentDesign
+		 * @param bPinnable
+		 * @param sStableId
 		 */
-		ObjectPageHeaderContent.createInstance = function (aContent, bVisible, sContentDesign) {
+		ObjectPageHeaderContent.createInstance = function (aContent, bVisible, sContentDesign, bPinnable, sStableId) {
 			return new ObjectPageHeaderContent({
 				content: aContent,
 				visible: bVisible,
-				contentDesign: sContentDesign
+				contentDesign: sContentDesign,
+				id: sStableId
 			});
 		};
 

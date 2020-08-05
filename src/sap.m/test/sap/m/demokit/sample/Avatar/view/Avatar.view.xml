@@ -1,0 +1,368 @@
+<mvc:View
+		controllerName="sap.m.sample.Avatar.controller.Avatar"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		height="100%">
+
+	<ScrollContainer
+			height="100%"
+			width="100%"
+			horizontal="false"
+			vertical="true">
+		<Text
+				text="The Avatar Control allows usage of different shapes, sizes and content. Border can also be applied:"
+				width="100%"
+				class="sapUiSmallMarginTop sapUiSmallMarginBegin sapUiMediumMarginBottom"/>
+		<l:Grid
+				defaultSpan="XL2 L3 M6 S6">
+			<l:content>
+				<VBox alignItems="Center">
+					<Avatar
+							src="./test-resources/sap/f/images/Speakers_avatar_01.jpg"
+							displaySize="XL"
+							displayShape="Square"
+							showBorder="true"
+							press="onPress"/>
+					<Text
+							text="Avatar of a product with border"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="./test-resources/sap/f/images/Woman_avatar_01.png"
+							displaySize="XL"
+							showBorder="true"
+							press="onPress"/>
+					<Text
+							text="Avatar of a person with border"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							initials="IS"
+							displaySize="XL"
+							displayShape="Square"
+							press="onPress"/>
+					<Text
+							text="Square with initials"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="XL"
+							backgroundColor="Transparent"
+							press="onPress"/>
+					<Text
+							text="Transparent background"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							initials="IS"
+							displaySize="XL"
+							backgroundColor="TileIcon"
+							press="onPress"/>
+					<Text
+							text="TileIcon background"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="XL"
+							backgroundColor="Placeholder"
+							displayShape="Square"
+							press="onPress"/>
+					<Text
+							text="Placeholder background"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+			</l:content>
+		</l:Grid>
+		<Text
+				text="The Avatar can be set to a square or circular shape with a predefined size:"
+				width="100%"
+				class="sapUiSmallMarginBegin sapUiMediumMarginTop sapUiMediumMarginBottom"/>
+		<l:Grid
+				defaultSpan="XL2 L2 M3 S12">
+			<l:content>
+				<VBox
+						alignItems="Center"
+						alignContent="End">
+					<Avatar
+							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							displaySize="XL"
+							displayShape="Square"/>
+					<Text
+							text="XL"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox
+						alignItems="Center"
+						alignContent="End">
+					<Avatar
+							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							displaySize="L"
+							displayShape="Square"/>
+					<Text
+							text="L"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							displaySize="M"
+							displayShape="Square"/>
+					<Text
+							text="M"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							displaySize="S"
+							displayShape="Square"/>
+					<Text
+							text="S"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							displaySize="XS"
+							displayShape="Square"/>
+					<Text
+							text="XS"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+			</l:content>
+		</l:Grid>
+		<l:Grid
+				defaultSpan="XL2 L2 M3 S12"
+				class="sapUiMediumMarginTop">
+			<l:content>
+				<VBox alignItems="Center">
+					<Avatar
+							src="./test-resources/sap/f/images/Woman_avatar_02.png"
+							displaySize="XL"/>
+					<Text
+							text="XL"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="./test-resources/sap/f/images/Woman_avatar_02.png"
+							displaySize="L"/>
+					<Text
+							text="L"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="./test-resources/sap/f/images/Woman_avatar_02.png"
+							displaySize="M"/>
+					<Text
+							text="M"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="./test-resources/sap/f/images/Woman_avatar_02.png"
+							displaySize="S"/>
+					<Text
+							text="S"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="./test-resources/sap/f/images/Woman_avatar_02.png"
+							displaySize="XS"/>
+					<Text
+							text="XS"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+			</l:content>
+		</l:Grid>
+		<l:Grid
+				defaultSpan="XL2 L2 M3 S12"
+				class="sapUiMediumMarginTop">
+			<l:content>
+				<VBox alignItems="Center">
+					<Avatar
+							initials="IS"
+							displaySize="XL"
+							backgroundColor="Accent1"/>
+					<Text
+							text="XL"
+							class="sapUiSmallMarginTop"/>
+					<Text text="Accent1"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							initials="IS"
+							displaySize="L"
+							backgroundColor="Accent2"/>
+					<Text
+							text="L"
+							class="sapUiSmallMarginTop"/>
+					<Text text="Accent2"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							initials="IS"
+							displaySize="M"
+							backgroundColor="Accent3"/>
+					<Text
+							text="M"
+							class="sapUiSmallMarginTop"/>
+					<Text text="Accent3"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							initials="IS"
+							displaySize="S"
+							backgroundColor="Accent4"/>
+					<Text
+							text="S"
+							class="sapUiSmallMarginTop"/>
+					<Text text="Accent4"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							initials="IS"
+							displaySize="XS"
+							backgroundColor="Accent5"/>
+					<Text
+							text="XS"
+							class="sapUiSmallMarginTop"/>
+					<Text text="Accent5"/>
+				</VBox>
+			</l:content>
+		</l:Grid>
+		<l:Grid
+				defaultSpan="XL2 L2 M3 S12"
+				class="sapUiMediumMarginTop">
+			<l:content>
+				<VBox alignItems="Center">
+					<Avatar
+							src="sap-icon://lab"
+							displaySize="XL"
+							backgroundColor="Accent6"/>
+					<Text
+							text="XL"
+							class="sapUiSmallMarginTop"/>
+					<Text text="Accent6"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="sap-icon://lab"
+							displaySize="L"
+							backgroundColor="Accent7"/>
+					<Text
+							text="L"
+							class="sapUiSmallMarginTop"/>
+					<Text text="Accent7"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="sap-icon://lab"
+							displaySize="M"
+							backgroundColor="Accent8"/>
+					<Text
+							text="M"
+							class="sapUiSmallMarginTop"/>
+					<Text text="Accent8"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="sap-icon://lab"
+							displaySize="S"
+							backgroundColor="Accent9"/>
+					<Text
+							text="S"
+							class="sapUiSmallMarginTop"/>
+					<Text text="Accent9"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							src="sap-icon://lab"
+							displaySize="XS"
+							backgroundColor="Accent10"/>
+					<Text
+							text="XS"
+							class="sapUiSmallMarginTop"/>
+					<Text text="Accent10"/>
+				</VBox>
+			</l:content>
+		</l:Grid>
+		<l:Grid
+				defaultSpan="XL4 L5 M6 S12">
+			<l:content>
+				<VBox alignItems="Center">
+					<Text
+							text="The Avatar can be set to a custom size:"
+							width="100%"
+							class="sapUiMediumMarginTop sapUiMediumMarginBottom"/>
+					<Avatar
+							src="./test-resources/sap/f/images/Lamp_avatar_01.jpg"
+							displaySize="Custom"
+							customDisplaySize="250px"
+							displayShape="Square"/>
+					<Text
+							text="Avatar with custom Size"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox alignItems="Center">
+					<Text
+							text="If there is no image, icon or initials set, the Avatar displays a Placeholder.
+							If there is invalid image src, the control displays either initials (if provided) or icon Placeholder (if no initials are proivided):"
+							width="100%"
+							class="sapUiMediumMarginBottom sapUiMediumMarginTop"/>
+					<l:Grid
+							defaultSpan="XL4 L4 M6 S6">
+						<l:content>
+							<VBox alignItems="Center">
+								<Avatar
+										displaySize="L"
+										displayShape="Square"
+										backgroundColor="Random"/>
+								<Text
+										text="With product icon"
+										class="sapUiSmallMarginTop"/>
+							</VBox>
+							<VBox alignItems="Center">
+								<Avatar
+										displaySize="L"
+										backgroundColor="Random"/>
+								<Text
+										text="With person icon"
+										class="sapUiSmallMarginTop"/>
+							</VBox>
+							<VBox alignItems="Center">
+								<Avatar
+										displaySize="L"
+										displayShape="Square"
+										fallbackIcon="sap-icon://accelerated"
+										backgroundColor="Random"/>
+								<Text
+										text="With custom fallback icon"
+										class="sapUiSmallMarginTop"/>
+							</VBox>
+							<VBox alignItems="Center">
+								<Avatar
+										displaySize="L"
+										initials="PB"
+										src="images/cannotfind_Woman_avatar_01.png"
+										backgroundColor="Random"/>
+								<Text
+										text="With invalid image source, but initials provided"
+										class="sapUiSmallMarginTop"
+										textAlign="Center"/>
+							</VBox>
+						</l:content>
+					</l:Grid>
+				</VBox>
+			</l:content>
+		</l:Grid>
+	</ScrollContainer>
+</mvc:View>

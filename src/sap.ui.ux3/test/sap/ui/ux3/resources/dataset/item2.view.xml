@@ -1,4 +1,4 @@
-<core:View xmlns:core="sap.ui.core" xmlns:l="sap.ui.commons.layout"
+<mvc:View xmlns:core="sap.ui.core" xmlns:l="sap.ui.commons.layout"
 	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons" xmlns:html="http://www.w3.org/1999/xhtml">
 	<html:style type="text/css">
 		li {padding:10px; background:#ccc;
@@ -26,4 +26,4 @@
 	<html:div class="round">
 		<TextView text="{title}"></TextView>
 	</html:div>
-</core:View>
+</mvc:View>

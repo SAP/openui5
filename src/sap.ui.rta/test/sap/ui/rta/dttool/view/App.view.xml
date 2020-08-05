@@ -1,0 +1,43 @@
+<mvc:View
+	controllerName="sap.ui.rta.dttool.controller.App"
+	class="sapUiSizeCozy"
+	height="100%"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true">
+	<App id="app">
+		<pages>
+			<Page id="page">
+				<customHeader>
+					<OverflowToolbar class="sapMListHdrText" id="theBar">
+						<ToolbarSpacer/>
+						<ObjectHeader class="sapUiResponsivePadding" title="{i18n>pageTitle}"/>
+						<ToolbarSpacer/>
+					</OverflowToolbar>
+				</customHeader>
+				<content>
+					<l:Splitter class="sapUiDtToolSplitter" resize="onSplitterResize">
+						<l:Splitter orientation="Vertical">
+							<core:Fragment fragmentName="sap.ui.rta.dttool.view.fragments.Outline" type="XML"/>
+							<core:Fragment fragmentName="sap.ui.rta.dttool.view.fragments.Palette" type="XML"/>
+							<l:layoutData>
+								<l:SplitterLayoutData size="25%" minSize="200px"/>
+							</l:layoutData>
+						</l:Splitter>
+						<l:Splitter orientation="Vertical">
+							<core:Fragment fragmentName="sap.ui.rta.dttool.view.fragments.PreviewContainer" type="XML"/>
+							<App id="codeApp">
+								<layoutData>
+									<l:SplitterLayoutData size="50%" minSize="500px"/>
+								</layoutData>
+							</App>
+						</l:Splitter>
+						<core:Fragment fragmentName="sap.ui.rta.dttool.view.fragments.Properties" type="XML"/>
+					</l:Splitter>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

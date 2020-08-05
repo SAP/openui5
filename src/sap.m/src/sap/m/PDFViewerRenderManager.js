@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/m/library",
 	"sap/m/Dialog",
 	"sap/m/Button",
@@ -13,8 +12,17 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbarLayoutData"
-], function($, library, Dialog, Button, MessagePage, OverflowToolbar, OverflowToolbarButton, Title,
-	ToolbarSpacer, OverflowToolbarLayoutData) {
+], function(
+	library,
+	Dialog,
+	Button,
+	MessagePage,
+	OverflowToolbar,
+	OverflowToolbarButton,
+	Title,
+	ToolbarSpacer,
+	OverflowToolbarLayoutData
+) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -85,7 +93,7 @@ sap.ui.define([
 			 * @private
 			 */
 			PDFViewer.prototype._preparePopup = function (oPopup) {
-				var aButtons = $.merge([], this.getPopupButtons()),
+				var aButtons = this.getPopupButtons().slice(),
 					oCloseButton = this._objectsRegister.getPopupCloseButton(),
 					oDownloadButton = this._objectsRegister.getPopupDownloadButtonControl();
 				oCloseButton.setText(this._getLibraryResourceBundle().getText("PDF_VIEWER_POPUP_CLOSE_BUTTON"));
@@ -149,7 +157,7 @@ sap.ui.define([
 						oButton = that._objectsRegister.getToolbarDownloadButtonControl();
 
 					function setup() {
-						if (that.getShowDownloadButton()) {
+						if (that._isDisplayDownloadButton()) {
 							oOverflowToolbar.addContent(oButton);
 						} else {
 							oOverflowToolbar.removeContent(oButton);
@@ -212,7 +220,8 @@ sap.ui.define([
 
 				this._objectsRegister[sDownloadButtonFactoryFunctionName] = function () {
 					var oButton = new Button(sButtonId, {
-						text: that._getLibraryResourceBundle().getText("PDF_VIEWER_DOWNLOAD_TEXT")
+						text: that._getLibraryResourceBundle().getText("PDF_VIEWER_DOWNLOAD_TEXT"),
+						type: ButtonType.Emphasized
 					});
 					oButton.attachPress(that.downloadPDF.bind(that));
 					oButton.setEnabled(that._bRenderPdfContent);
@@ -231,6 +240,3 @@ sap.ui.define([
 
 	return oPDFViewerRenderManager;
 }, true);
-
-
-

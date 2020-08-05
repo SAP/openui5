@@ -1,0 +1,58 @@
+<mvc:View controllerName="sap.ui.layout.sample.GridXL.controller.GridXL"
+	xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:Grid binding="{/InformationCollection}" hSpacing="0"
+		defaultSpan="XL6 L6 M6 S12" class="sapUiSmallMargin">
+		<l:VerticalLayout class="sapUiTinyMarginEnd">
+			<Title level="H1" titleStyle="H1" text="Demo App"
+				class="sapUiMediumMarginBottom" />
+			<Text text="{0/introText1}" class="sapUiTinyMarginBottom" />
+			<Text text="{0/introText2}" class="sapUiTinyMarginBottom" />
+			<Text text="{0/introText3}" class="sapUiTinyMarginBottom" />
+		</l:VerticalLayout>
+		<Image src="resources/sap/ui/documentation/sdk/images/demoAppsTeaser.png"
+			densityAware="false" width="100%">
+			<layoutData>
+				<l:GridData visibleOnSmall="false" />
+			</layoutData>
+		</Image>
+	</l:Grid>
+
+	<l:Grid hSpacing="0" vSpacing="0" binding="{/InformationCollection}"
+		class="sapUiSmallMargin" defaultSpan="XL5 L5 M5 S12" defaultIndent="XL1 L1 M1">
+		<Title level="H2" titleStyle="H2" text="Products">
+			<layoutData>
+				<l:GridData span="XL12 L12 M12 S12" indent="XL0 L0 M0" />
+			</layoutData>
+		</Title>
+		<Image src="{3/ProductPicUrl2}" densityAware="false" width="100%">
+			<layoutData>
+				<l:GridData moveForward="M6" />
+			</layoutData>
+		</Image>
+		<Image src="{1/ProductPicUrl}" densityAware="false" width="100%">
+			<layoutData>
+				<l:GridData moveBackwards="M6" />
+			</layoutData>
+		</Image>
+	</l:Grid>
+
+	<l:Grid binding="{/InformationCollection}" hSpacing="0"
+		defaultSpan="XL3 L5 M5 S12" class="sapUiSmallMargin">
+		<Image src="{2/ProductPicUrl}" densityAware="false" width="100%">
+			<layoutData>
+				<l:GridData indent="XL1 L1 M1"/>
+			</layoutData>
+		</Image>
+		<l:VerticalLayout class="sapUiTinyMargin">
+			<Text text="{0/Description1}" class="sapUiTinyMarginBottom"/>
+			<Text text="{0/Description2}" />
+		</l:VerticalLayout>
+		<Image src="{1/ProductPicUrl2}" densityAware="false" width="100%">
+			<layoutData>
+				<l:GridData linebreakXL="false" linebreakL="true"
+					visibleOnMedium="false" visibleOnSmall="true" indent="L1"/>
+			</layoutData>
+		</Image>
+	</l:Grid>
+</mvc:View>

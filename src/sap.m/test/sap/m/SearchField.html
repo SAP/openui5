@@ -41,7 +41,7 @@
 				}
 			}),
 		endButton:
-			new sap.m.Button({
+			new sap.m.Button("reject", {
 				text: "Reject",
 				press : function() {
 					oDialog.close();
@@ -55,29 +55,20 @@
 		customHeader: new sap.m.Bar("P1Header", {
 			enableFlexBox: false,
 			contentLeft: [
-							new sap.m.Button({
-								text : "To Page 2",
-								press : function() { app.to("searchPage2", "show"); }
-							}),
-						],
-			contentRight: [
-				new sap.m.SearchField( "SFB1", {
-					tooltip: "Search for objects..",
-					search: onSearch,
-					liveChange: onLiveChange,
- 					layoutData: new sap.m.FlexItemData({growFactor: 1})
+				new sap.m.Button({
+					text : "To Page 2",
+					press : function() { app.to("searchPage2", "show"); }
 				})
 			]
 		}),
 		subHeader: new sap.m.Bar({
 			contentMiddle: [
 				new sap.m.SearchField( "SFB2", {
-					placeholder: "Search ... search.. search.. search.. search.. search.. search..",
+					placeholder: "Search",
 					showRefreshButton: true,
 					search: onSearch,
 					liveChange: onLiveChange,
 					width: "100%",
-					tooltip: "Search for objects..",
 					refreshButtonTooltip: "Refresh"
 				})
 			]
@@ -122,7 +113,7 @@
 			new sap.m.SearchField("SF7", { // showSearchButton = false
 					placeholder: "Without search button..", ariaDescribedBy: ["SF_AD"], showSearchButton: false, search:onSearch, liveChange:onLiveChange
 				}),
-			new sap.m.Button({
+			new sap.m.Button("openDialog", {
 					text: "Open a Dialog",
 					press : function() {
 						oDialog.open();

@@ -3,8 +3,8 @@
  */
 
 /* global console */
-sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/jquery"],
-	function(log, lazyProperty, jQuery) {
+sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/thirdparty/jquery"],
+	function(Log, defineLazyProperty, jQuery) {
 	"use strict";
 
 	// Make sure to initialize the jQuery.sap namespace to apply stubs
@@ -26,8 +26,7 @@ sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 					"denormalizeScrollBeginRTL",
 					"ownerWindow",
 					"scrollbarSize",
-					"syncStyleClass",
-					"replaceDOM"
+					"syncStyleClass"
 				],
 				"jquery.sap.encoder": [
 					"encodeHTML",
@@ -42,7 +41,8 @@ sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 					"addUrlWhitelist",
 					"removeUrlWhitelist",
 					"getUrlWhitelist",
-					"validateUrl"
+					"validateUrl",
+					"_sanitizeHTML"
 				],
 				"jquery.sap.events": [
 					"PseudoEvents",
@@ -56,9 +56,7 @@ sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 					"handleF6GroupNavigation",
 					"_FASTNAVIGATIONKEY",
 					"_refreshMouseEventDelayedFlag",
-					"isMouseEventDelayed",
-					"_suppressTriggerEvent",
-					"_releaseTriggerEvent"
+					"isMouseEventDelayed"
 				],
 				"jquery.sap.global": [
 					"Version",
@@ -74,7 +72,6 @@ sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 					"getObject",
 					"setObject",
 					"measure",
-					"syncPoint",
 					"getModulePath",
 					"getResourcePath",
 					"registerModulePath",
@@ -99,7 +96,6 @@ sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 				"jquery.sap.history": ["history"],
 				"jquery.sap.keycodes": ["KeyCodes"],
 				"jquery.sap.mobile": [
-					"simulateMobileOnDesktop",
 					"initMobile",
 					"setIcons",
 					"setMobileWebAppCapable"
@@ -170,17 +166,11 @@ sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 				]
 			}
 		},
-		"jQuery.support.": {
-			target: jQuery.support,
-			stubs: {
-				"jquery.sap.mobile": [
-					"retina"
-				]
-			}
-		},
 		"jQuery Plugin ": {
 			target: jQuery.fn,
 			stubs: {
+				"jquery.sap.ui": ["root", "uiarea", "sapui"],
+				"jquery.sap.dom": ["outerHTML"],
 				"sap/ui/dom/jquery/Aria": [
 					"addAriaLabelledBy",
 					"removeAriaLabelledBy",
@@ -195,16 +185,12 @@ sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 				],
 				"sap/ui/dom/jquery/getSelectedText": ["getSelectedText"],
 				"sap/ui/dom/jquery/hasTabIndex": ["hasTabIndex"],
-				"sap/ui/dom/jquery/outerHTML": ["outerHTML"],
 				"sap/ui/dom/jquery/parentByAttribute": ["parentByAttribute"],
 				"sap/ui/dom/jquery/rect": ["rect"],
 				"sap/ui/dom/jquery/rectContains": ["rectContains"],
-				"sap/ui/dom/jquery/root": ["root"],
-				"sap/ui/dom/jquery/sapui": ["sapui"],
 				"sap/ui/dom/jquery/scrollLeftRTL": ["scrollLeftRTL"],
 				"sap/ui/dom/jquery/scrollRightRTL": ["scrollRightRTL"],
 				"sap/ui/dom/jquery/selectText": ["selectText"],
-				"sap/ui/dom/jquery/uiarea": ["uiarea"],
 				"sap/ui/dom/jquery/zIndex": ["zIndex"],
 				"sap/ui/dom/jquery/Selection": [
 					"disableSelection",
@@ -212,25 +198,8 @@ sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 				]
 			}
 		},
-		"jQuery Event method ": {
-			target: jQuery.Event.prototype,
-			stubs: {
-				"sap/ui/events/jqueryEvent": [
-					"getPseudoTypes",
-					"isPseudoType",
-					"getOffsetX",
-					"getOffsetY",
-					"stopImmediatePropagation",
-					"isImmediateHandlerPropagationStopped",
-					"setMark",
-					"isMarked",
-					"getMark",
-					"setMarked"
-				]
-			}
-		},
 		"jQuery Selector :": {
-			target: jQuery.expr[":"],
+			target: jQuery.expr.pseudos,
 			stubs: {
 				"sap/ui/dom/jquery/Selectors": [
 					"focusable",
@@ -243,7 +212,12 @@ sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 
 	function lazyLoad(sModule, oTarget, sProperty, sTargetName) {
 		return function() {
-			log.debug("Lazy loading module \"" + sModule + "\" triggered by usage of " + sTargetName + sProperty, "jquery.sap.stubs");
+			Log.warning("Sync loading of module '" + sModule + "' due to usage of deprecated API '" + sTargetName + sProperty + "'", "jquery.sap.stubs", null, function() {
+				return {
+					type: "jquery.sap.stubs",
+					name: sTargetName + sProperty
+				};
+			});
 			sap.ui.requireSync(sModule);
 			return oTarget[sProperty];
 		};
@@ -258,18 +232,23 @@ sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 			var aProperties = mModuleToProp[sModule];
 			aProperties.forEach(function(sProperty) {
 				// Do not stub already defined properties
-				if (!oTarget[sProperty]) {
-					lazyProperty(oTarget, sProperty, lazyLoad(sModule, oTarget, sProperty, sTargetName));
+				if (oTarget && !oTarget[sProperty]) {
+					defineLazyProperty(oTarget, sProperty, lazyLoad(sModule, oTarget, sProperty, sTargetName), "jquery.sap.stubs");
 				}
 			});
 		});
 	}
 
-	log.debug("Applying lazy loading stubs for legacy APIs", "jquery.sap.stubs");
+	Log.debug("Applying lazy loading stubs for legacy APIs", "jquery.sap.stubs");
 	Object.keys(mStubs).forEach(function(sStubName) {
 		var oStub = mStubs[sStubName];
 		applyLazyProperties(sStubName, oStub.target, oStub.stubs);
 	});
+
+	// Export stubbing config for testing
+	if (typeof window === "object" && window["jquery.sap.stubs-test"]) {
+		window["jquery.sap.stubs-test"] = mStubs;
+	}
 
 	return jQuery;
 });

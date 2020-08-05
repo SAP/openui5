@@ -10,8 +10,25 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/fl/EventHistory"
-], function(FlexControllerFactory, Component, ChangeHandlerRegistration, ChangePersistenceFactory, MvcController, XMLView, EventHistory) {
+	"sap/ui/core/ExtensionPoint",
+	"sap/ui/fl/EventHistory",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor",
+	// the lower 2 are set as a callback in the "register...Processors" which are not detected as dependencies from the preload-building
+	"sap/ui/fl/PreprocessorImpl",
+	"sap/ui/fl/XmlPreprocessorImpl"
+], function(
+	FlexControllerFactory,
+	Component,
+	ChangeHandlerRegistration,
+	ChangePersistenceFactory,
+	MvcController,
+	XMLView,
+	ExtensionPoint,
+	EventHistory,
+	ManifestUtils,
+	Preprocessor
+) {
 	"use strict";
 
 	/**
@@ -27,61 +44,51 @@ sap.ui.define([
 	var RegistrationDelegator = {
 	};
 
-	/**
-	 * Registers the changes in the component
-	 *
-	 * @public
-	 */
-	RegistrationDelegator.registerChangesInComponent = function() {
+
+	function _registerChangesInComponent() {
 		Component._fnOnInstanceCreated = FlexControllerFactory.getChangesAndPropagate;
-	};
+	}
 
-	/**
-	 * Registers change handlers
-	 *
-	 * @public
-	 */
-	RegistrationDelegator.registerChangeHandlers = function() {
+
+	function _registerChangeHandlers() {
 		ChangeHandlerRegistration.getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs();
-	};
+	}
 
-	/**
-	 * Register the event handler
-	 *
-	 * @public
-	 */
-	RegistrationDelegator.registerLoadComponentEventHandler = function() {
+	function _registerLoadComponentEventHandler() {
 		Component._fnLoadComponentCallback = ChangePersistenceFactory._onLoadComponent.bind(ChangePersistenceFactory);
-	};
+	}
 
-	/**
-	 * Registers the extension provider
-	 *
-	 * @public
-	 */
-	RegistrationDelegator.registerExtensionProvider = function() {
+	function _registerExtensionProvider() {
 		MvcController.registerExtensionProvider("sap.ui.fl.PreprocessorImpl");
-	};
+	}
 
-	/**
-	 * Registers the xml preprocessor
-	 *
-	 * @public
-	 */
-	RegistrationDelegator.registerXMLPreprocessor = function() {
-		if (XMLView.registerPreprocessor){
+	function _registerXMLPreprocessor() {
+		if (XMLView.registerPreprocessor) {
 			XMLView.registerPreprocessor("viewxml", "sap.ui.fl.XmlPreprocessorImpl", true);
 		}
-	};
+	}
 
-	/**
-	 * Registers the event listener
-	 *
-	 * @public
-	 */
-	RegistrationDelegator.registerEventListener = function() {
+	function _registerEventListener() {
 		EventHistory.start();
-	};
+	}
+
+	function _registerDescriptorChangeHandler() {
+		Component._fnPreprocessManifest = Preprocessor.preprocessManifest;
+	}
+
+	function getExtensionPointProvider(oView) {
+		if (ManifestUtils.isFlexExtensionPointHandlingEnabled(oView)) {
+			return "sap/ui/fl/apply/_internal/extensionPoint/Processor";
+		}
+		if (sap.ui.getCore().getConfiguration().getDesignMode()) {
+			return "sap/ui/fl/write/_internal/extensionPoint/Processor";
+		}
+		return undefined;
+	}
+
+	function _registerExtensionPointProvider() {
+		ExtensionPoint.registerExtensionProvider(getExtensionPointProvider);
+	}
 
 	/**
 	 * Registers everything in one call
@@ -89,14 +96,15 @@ sap.ui.define([
 	 * @public
 	 */
 	RegistrationDelegator.registerAll = function() {
-		RegistrationDelegator.registerEventListener();
-		RegistrationDelegator.registerChangeHandlers();
-		RegistrationDelegator.registerLoadComponentEventHandler();
-		RegistrationDelegator.registerExtensionProvider();
-		RegistrationDelegator.registerChangesInComponent();
-		RegistrationDelegator.registerXMLPreprocessor();
+		_registerEventListener();
+		_registerChangeHandlers();
+		_registerLoadComponentEventHandler();
+		_registerExtensionProvider();
+		_registerChangesInComponent();
+		_registerXMLPreprocessor();
+		_registerDescriptorChangeHandler();
+		_registerExtensionPointProvider();
 	};
 
 	return RegistrationDelegator;
-
 }, /* bExport= */true);

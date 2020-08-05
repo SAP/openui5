@@ -4,32 +4,44 @@
 
 // intended to be used by all OPA modules that need to create a logger
 sap.ui.define([
-	"jquery.sap.global"
-], function ($) {
+	"sap/base/Log"
+], function (Log) {
 	"use strict";
 
+	// Set stored amount of log entries to unlimited
+	Log.setLogEntriesLimit(Infinity);
 	// component names of all loggers created by OPA components
 	var aLoggerComponents = [];
 	// DEBUG is the default maximum log level for OPA
-	var iLogLevel = $.sap.log.Level.DEBUG;
+	var sDefaultLevel = "DEBUG";
+	var sLogLevel = sDefaultLevel;
 
 	return {
 		// _OpaLogger might also be loaded in an iFrame. setLevel should be called for each iFrame
 		// $.sap.log reference changes depending on the contentWindow
 		setLevel: function (sNewLogLevel) {
-			var sLogLevel = sNewLogLevel && sNewLogLevel.toUpperCase();
-			var iNewLogLevel = sLogLevel && $.sap.log.Level[sLogLevel];
-			iLogLevel = iNewLogLevel || iLogLevel;
+			sNewLogLevel = sNewLogLevel && sNewLogLevel.toUpperCase();
+			if (sNewLogLevel && Log.Level[sNewLogLevel]) {
+				sLogLevel = sNewLogLevel;
+			}
 			aLoggerComponents.forEach(function (sComponent) {
-				$.sap.log.setLevel(iLogLevel, sComponent);
+				Log.setLevel(Log.Level[sLogLevel], sComponent);
 			});
 		},
 		getLogger: function (sComponent) {
 			aLoggerComponents.push(sComponent);
-			return $.sap.log.getLogger(sComponent, iLogLevel);
+			var logger = Log.getLogger(sComponent, Log.Level[sLogLevel]);
+			logger.timestamp = function (marker) {
+				/* eslint-disable no-console */
+				if (console.timeStamp && Log.Level[this.getLevel()] >= Log.Level[sDefaultLevel]) {
+					console.timeStamp(marker);
+				}
+				/* eslint-enable no-console */
+			};
+			return logger;
 		},
 		getLevel: function () {
-			return iLogLevel;
+			return sLogLevel;
 		}
 	};
 

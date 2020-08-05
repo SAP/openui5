@@ -26,23 +26,13 @@
 		jQuery(function() {
 			sap.ui.require(
 				[
-					"jquery.sap.global"
+					"jquery.sap.global",
+					"sap/ui/core/Element"
 				],
-				function(jQuery) {
-					var oCore,
-						iAllControls = 0,
+				function(jQuery, Element) {
+					var iAllControls = 0,
 						iFullyTestedControls = 0,
 						iTestedWithoutRenderingControls = 0;
-
-					// get access to the real core object to access the control list
-					sap.ui.getCore().registerPlugin({
-						startPlugin: function(oRealCore) {
-							oCore = oRealCore;
-						},
-						stopPlugin: function() {
-							oCore = undefined;
-						}
-					});
 
 					/**
 					 * Iterates over all loaded libraries, but also all available libraries and tries to load them and their control lists.
@@ -60,7 +50,7 @@
 							if (!mLoadedLibraries[sInfoLibName]) {
 								jQuery.sap.log.info("Library '" + sInfoLibName + "' is not loaded! Trying...");
 								try {
-									var oLibrary = oCore.loadLibrary(sInfoLibName);
+									var oLibrary = sap.ui.getCore().loadLibrary(sInfoLibName);
 									mLoadedLibraries[sInfoLibName] = oLibrary.controls;
 									jQuery.sap.log.info("Library '" + sInfoLibName + "...successfully.");
 								} catch (e) {
@@ -75,9 +65,9 @@
 					}
 
 
-					// gets the map of all currently registered controls from the Core
+					// gets a snapshot of all currently registered controls (keyed by their ID)
 					function getAllAliveControls() {
-						return jQuery.extend({}, oCore.mElements);
+						return Element.registry.all();
 					}
 
 
@@ -140,7 +130,6 @@
 							sControlName === "sap.m.TimePickerSliders" ||
 							sControlName === "sap.m.Wizard" ||
 							sControlName === "sap.tnt.NavigationList" ||
-							sControlName === "sap.ui.demokit.IndexLayout._Tile" ||
 							sControlName === "sap.ui.layout.BlockLayoutRow" ||
 							sControlName === "sap.ui.suite.TaskCircle" ||
 							sControlName === "sap.ui.ux3.ActionBar" ||
@@ -160,9 +149,7 @@
 							//sControlName === "sap.m.P13nSortPanel" || // Ticket: 1670353042
 							//sControlName === "sap.m.P13nConditionPanel" || // Ticket: 1670353042
 							sControlName === "sap.m.QuickViewPage" || // Ticket: 1670352810
-							sControlName === "sap.m.ViewSettingsPopover" || // Ticket: 1670352807
-							sControlName === "sap.ui.demokit.CodeSampleContainer" || // Ticket: none (Demokit Lib)
-							sControlName === "sap.ui.demokit.UI5EntityCueCard" // Ticket: none (Demokit Lib)
+							sControlName === "sap.m.ViewSettingsPopover" // Ticket: 1670352807
 						) { // known to be leaking
 							assert.ok(true, "WARNING: " + sControlName + " is known to have memory leaks and is ignored until they are fixed.");
 							return true;

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My app</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta charset="utf-8">
+
+	<script
+			id='sap-ui-bootstrap'
+			src='../../../resources/sap-ui-core.js'
+			data-sap-ui-theme='sap_belize'
+			data-sap-ui-libs='sap.m, sap.f'
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-resourceroots='{
+			"flexiblecolumnlayoutHighlighting" : "./flexiblecolumnlayoutHighlighting"
+		}' >
+	</script>
+
+	<script>
+		sap.ui.getCore().attachInit(function () {
+					sap.ui.require([
+						"sap/m/Shell",
+						"sap/ui/core/ComponentContainer"
+					], function (Shell, ComponentContainer) {
+
+						new Shell("Shell", {
+							title : "flexiblecolumnlayoutHighlighting demo",
+							app : new ComponentContainer({
+								name : 'flexiblecolumnlayoutHighlighting',
+								height : "100%",
+								settings : {
+									id : "flexiblecolumnlayoutHighlighting"
+								}
+							}),
+							backgroundOpacity: 0,
+							appWidthLimited: false //false
+						}).placeAt('content');
+					})
+				}
+		);
+	</script>
+
+</head>
+<body class='sapUiBody' id='content'>
+</body>
+</html>

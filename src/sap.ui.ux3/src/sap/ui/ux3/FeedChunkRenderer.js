@@ -3,8 +3,12 @@
  */
 
 // Provides default renderer for the sap.ui.ux3.FeedChunk
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([
+    "sap/ui/core/theming/Parameters",
+    "sap/base/security/encodeXML",
+    "sap/base/security/URLWhitelist"
+],
+	function(Parameters, encodeXML, URLWhitelist) {
 	"use strict";
 
 
@@ -18,13 +22,10 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oChunk an object representation of the control that should be rendered
 	 */
-	FeedChunkRenderer.render = function(oRenderManager, oControl){
-		// convenience variable
-		var rm = oRenderManager;
-		var oChunk = oControl;
+	FeedChunkRenderer.render = function(rm, oChunk){
 		// check if chunk is a comment (child) of an other chunk
 		if (oChunk.getParent() instanceof sap.ui.ux3.FeedChunk) {
 			oChunk.bComment = true;
@@ -33,7 +34,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		var sMyId = oChunk.getId();
 
-		rm.write('<ARTICLE');
+		rm.write('<article');
 		rm.writeControlData(oChunk);
 		rm.addClass('sapUiFeedChunk');
 		if (oChunk.bComment) {
@@ -47,7 +48,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write('<img id=' + sMyId + '-thumb');
 		var sThumbnail = oChunk.getThumbnailSrc();
 		if (!sThumbnail) {
-			sThumbnail = sap.ui.core.theming.Parameters._getThemeImage('_sap_ui_ux3_FeedChunk_PersonPlaceholder');
+			sThumbnail = Parameters._getThemeImage('_sap_ui_ux3_FeedChunk_PersonPlaceholder');
 		}
 		rm.writeAttributeEscaped('src', sThumbnail);
 		rm.writeAttributeEscaped('alt', oChunk.getSender());
@@ -55,7 +56,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write('>');
 
 		// text (starting with sender)
-		rm.write('<DIV class= "sapUiFeedChunkText" >');
+		rm.write('<div class= "sapUiFeedChunkText" >');
 		rm.write('<a id=' + sMyId + '-sender ');
 		rm.writeAttribute('href', '#');
 		rm.write('>');
@@ -68,27 +69,27 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		this.renderText(rm, oChunk);
-		rm.write('</DIV>');
+		rm.write('</div>');
 
 		// status icons
 		if (!oChunk.bComment) {
-			rm.write('<UL class= "sapUiFeedChunkStatusIcons" >');
+			rm.write('<ul class= "sapUiFeedChunkStatusIcons" >');
 			if (oChunk.getFlagged()) {
-				rm.write('<LI class= "sapUiFeedChunkFlagged" title="' + oChunk.rb.getText('FEED_FLAGGED') + '" >&#9873</LI>');
+				rm.write('<li class= "sapUiFeedChunkFlagged" title="' + oChunk.rb.getText('FEED_FLAGGED') + '" >&#9873</li>');
 			}
 			if (oChunk.getFavorite()) {
-				rm.write('<LI class= "sapUiFeedChunkFavorite" title="' + oChunk.rb.getText('FEED_FAVORITE') + '" >&#9733</LI>');
+				rm.write('<li class= "sapUiFeedChunkFavorite" title="' + oChunk.rb.getText('FEED_FAVORITE') + '" >&#9733</li>');
 			}
 			if (oChunk.getShared()) {
-				rm.write('<LI class= "sapUiFeedChunkShared" title="' + oChunk.rb.getText('FEED_SHARED') + '" >&#8635</LI>');
+				rm.write('<li class= "sapUiFeedChunkShared" title="' + oChunk.rb.getText('FEED_SHARED') + '" >&#8635</li>');
 			}
-			rm.write('</UL>');
+			rm.write('</ul>');
 		}
 
 		// date
-		rm.write('<SPAN class= "sapUiFeedChunkByline" >');
+		rm.write('<span class= "sapUiFeedChunkByline" >');
 		rm.writeEscaped(oChunk.getTimestamp());
-		rm.write('</SPAN>');
+		rm.write('</span>');
 
 		if (!oChunk.bComment) {
 			// action buttons (only if exists)
@@ -96,35 +97,35 @@ sap.ui.define(['jquery.sap.global'],
 				rm.renderControl(oChunk.oToolsButton);
 			}
 			if (oChunk.getEnableShare()) {
-				rm.write('<BUTTON type = "button" id=' + sMyId + '-ActShare class= "sapUiFeedChunkAct sapUiFeedChunkActShare" title="' + oChunk.rb.getText('FEED_ACT_SHARE') + '" >&#8635</BUTTON>');
+				rm.write('<button type = "button" id=' + sMyId + '-ActShare class= "sapUiFeedChunkAct sapUiFeedChunkActShare" title="' + oChunk.rb.getText('FEED_ACT_SHARE') + '" >&#8635</BUTTON>');
 			}
 			if (oChunk.getEnableInspect()) {
-				rm.write('<BUTTON type = "button" id=' + sMyId + '-ActInspect class= "sapUiFeedChunkAct sapUiFeedChunkActInspect" title="' + oChunk.rb.getText('FEED_ACT_INSPECT') + '" >i</BUTTON>');
+				rm.write('<button type = "button" id=' + sMyId + '-ActInspect class= "sapUiFeedChunkAct sapUiFeedChunkActInspect" title="' + oChunk.rb.getText('FEED_ACT_INSPECT') + '" >i</BUTTON>');
 			}
 			if (oChunk.getEnableFavorite()) {
-				rm.write('<BUTTON type = "button" id=' + sMyId + '-ActFavorite class= "sapUiFeedChunkAct sapUiFeedChunkActFavorite" title="' + oChunk.rb.getText('FEED_ACT_FAVORITE') + '" >&#9733</BUTTON>');
+				rm.write('<button type = "button" id=' + sMyId + '-ActFavorite class= "sapUiFeedChunkAct sapUiFeedChunkActFavorite" title="' + oChunk.rb.getText('FEED_ACT_FAVORITE') + '" >&#9733</BUTTON>');
 			}
 			if (oChunk.getEnableFlag()) {
-				rm.write('<BUTTON type = "button" id=' + sMyId + '-ActFlag class= "sapUiFeedChunkAct sapUiFeedChunkActFlag" title="' + oChunk.rb.getText('FEED_ACT_FLAG') + '" >&#9873</BUTTON>');
+				rm.write('<button type = "button" id=' + sMyId + '-ActFlag class= "sapUiFeedChunkAct sapUiFeedChunkActFlag" title="' + oChunk.rb.getText('FEED_ACT_FLAG') + '" >&#9873</BUTTON>');
 			}
 			if (oChunk.getEnableComment()) {
-				rm.write('<BUTTON type = "button" id=' + sMyId + '-ActComment class= "sapUiFeedChunkAct sapUiFeedChunkActComment" title="' + oChunk.rb.getText('FEED_ACT_COMMENT') + '" >C</BUTTON>');
+				rm.write('<button type = "button" id=' + sMyId + '-ActComment class= "sapUiFeedChunkAct sapUiFeedChunkActComment" title="' + oChunk.rb.getText('FEED_ACT_COMMENT') + '" >C</BUTTON>');
 			}
 		}
 
 		// delete button
 		if (oChunk.getDeletionAllowed() && oChunk.bComment) {
-			rm.write('<BUTTON type = "button" id=' + sMyId + '-delete class= "sapUiFeedChunkDel" title="' + oChunk.rb.getText('FEED_DELETE') + '" >X</BUTTON>');
+			rm.write('<button type = "button" id=' + sMyId + '-delete class= "sapUiFeedChunkDel" title="' + oChunk.rb.getText('FEED_DELETE') + '" >X</BUTTON>');
 		}
 
 		// comments
 		if (oChunk.getComments().length > 0 || oChunk.showCommentFeeder) {
-			rm.write("<SECTION>");
+			rm.write("<section>");
 			this.renderComments(rm, oChunk);
-			rm.write("</SECTION>");
+			rm.write("</section>");
 		}
 
-		rm.write('</ARTICLE>');
+		rm.write('</article>');
 	};
 
 	/*
@@ -159,24 +160,24 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeEscaped(sWord, true);
 				rm.write('</a>', sSpace);
 				i++;
-			} else if (/^(https?|ftp):\/\//i.test(sWord) && jQuery.sap.validateUrl(sWord)) {
+			} else if (/^(https?|ftp):\/\//i.test(sWord) && URLWhitelist.validate(sWord)) {
 				// web link - valid URL
 				rm.write('<a');
-				rm.writeAttribute('href', jQuery.sap.encodeHTML(sWord));
+				rm.writeAttribute('href', encodeXML(sWord));
 				rm.write('>');
 				rm.writeEscaped(sWord, true);
 				rm.write('</a>',sSpace);
-			} else if (/^(www\.)/i.test(sWord) && jQuery.sap.validateUrl("http://" + sWord)) {
+			} else if (/^(www\.)/i.test(sWord) && URLWhitelist.validate("http://" + sWord)) {
 				// web link without protocol -> use HTTP - valid URL
 				rm.write('<a');
-				rm.writeAttribute('href', jQuery.sap.encodeHTML("http://" + sWord));
+				rm.writeAttribute('href', encodeXML("http://" + sWord));
 				rm.write('>');
 				rm.writeEscaped(sWord, true);
 				rm.write('</a>',sSpace);
 			} else if (/^[\w\.=-]+@[\w\.-]+\.[\w]{2,5}$/.test(sWord)) {
 				//email - not 100% validity check and validation missing
 				rm.write('<a');
-				rm.writeAttribute('href', "mailto:" + jQuery.sap.encodeHTML(sWord));
+				rm.writeAttribute('href', "mailto:" + encodeXML(sWord));
 				rm.write('>');
 				rm.writeEscaped(sWord, true);
 				rm.write('</a>',sSpace);
@@ -197,7 +198,7 @@ sap.ui.define(['jquery.sap.global'],
 		var iLength = oComments.length;
 
 		// number of comments
-		rm.write('<HEADER class= "sapUiFeedChunkComments" >');
+		rm.write('<header class= "sapUiFeedChunkComments" >');
 		if (oChunk.rb) {
 			rm.write(oChunk.rb.getText('FEED_NO_COMMENTS', [iLength]));
 
@@ -213,7 +214,7 @@ sap.ui.define(['jquery.sap.global'],
 				rm.write('</a>');
 			}
 		}
-		rm.write("</HEADER>");
+		rm.write("</header>");
 
 		// comments are sorted from old to new. Newest comment is on the bottom
 		var iNumberChunks = iLength;

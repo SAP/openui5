@@ -1,0 +1,48 @@
+{
+  "1.70.0": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "e882e0f9da860549ca3b29bf199bee613f47a65e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: all settings in samples are shown on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970240395"
+          }
+        ]
+      },
+      {
+        "id": "9a56dbd77a5d8ede57fc6b0ac22b26779e2f044a",
+        "type": "FIX",
+        "text": " Core: incorporate feedback from SDK feedback channel (2019/4-7)",
+        "references": []
+      },
+      {
+        "id": "f94d862fe60bbea11fe93e034cb0b8a6db50dc6e",
+        "type": "FIX",
+        "text": " sap.m.CalendarDateInterval: Space auto-repeat on date selection removed",
+        "references": []
+      },
+      {
+        "id": "eb9217179697445140c599830e7209fb981eab31",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalettePopover: ColorPicker displayMode can now be controlled",
+        "references": []
+      },
+      {
+        "id": "da1ae41180ac64cf937c18c6a2ae6114f17497f0",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker: showFooter property added",
+        "references": []
+      },
+      {
+        "id": "69c71bac58793cb62a68221c35e6148f66650ac8",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Multiple months view navigation changed",
+        "references": []
+      }
+    ]
+  }
+}

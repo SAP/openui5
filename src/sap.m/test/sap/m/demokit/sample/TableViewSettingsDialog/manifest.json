@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TableViewSettingsDialog",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TableViewSettingsDialog.SettingsDialogView",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"SettingsDialogView.view.xml",
+					"SettingsDialogController.controller.js",
+					"SortDialog.fragment.xml",
+					"FilterDialog.fragment.xml",
+					"GroupDialog.fragment.xml",
+					"Formatter.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,392 +1,590 @@
 /*!
  * ${copyright}
  */
+
+ /* global XMLHttpRequest */
+
 sap.ui.define([
-	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Utils",
 	"sap/m/MessageBox",
-	"sap/ui/rta/Utils"
-	],
-	function(
-		DescriptorVariantFactory,
-		DescriptorInlineChangeFactory,
-		LrepConnector,
-		FlexUtils,
-		MessageBox,
-		RtaUtils
-	) {
+	"sap/ui/rta/Utils",
+	"sap/ui/core/BusyIndicator",
+	"sap/base/util/uid",
+	"sap/base/Log",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/AppVariantWriteAPI",
+	"sap/ui/fl/write/api/ChangesWriteAPI"
+],
+function(
+	FlexUtils,
+	MessageBox,
+	RtaUtils,
+	BusyIndicator,
+	uid,
+	Log,
+	PersistenceWriteAPI,
+	AppVariantWriteAPI,
+	ChangesWriteAPI
+) {
+	"use strict";
+	var AppVariantUtils = {};
 
-		"use strict";
-		var AppVariantUtils = {};
+	// S/4Hana Cloud Platform expects an ID of 56 characters
+	var HANA_CLOUD_ID_LENGTH = 56;
 
-		// S/4Hana Cloud Platform expects an ID of 56 characters
-		var HANA_CLOUD_ID_LENGTH = 56;
+	AppVariantUtils._newAppVariantId = null;
 
-		AppVariantUtils._newAppVariantId = null;
+	AppVariantUtils.getManifirstSupport = function(sRunningAppId) {
+		var sManifirstUrl = '/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=' + sRunningAppId;
 
-		AppVariantUtils.getManifirstSupport = function(sRunningAppId) {
-	        var sRoute = '/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=' + sRunningAppId;
-			var oLREPConnector = LrepConnector.createConnector();
-			return oLREPConnector.send(sRoute, 'GET');
-		};
+		return new Promise(function (resolve, reject) {
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", sManifirstUrl);
+			xhr.send();
 
-		AppVariantUtils.isStandAloneApp = function() {
-			if (sap.ushell_abap) {
-				return false;
+			xhr.onload = function() {
+				if (xhr.status >= 200 && xhr.status < 400) {
+					resolve(xhr.response);
+				} else {
+					reject({
+						status : xhr.status,
+						message : xhr.statusText
+					});
+				}
+			};
+		});
+	};
+
+	AppVariantUtils.getNewAppVariantId = function() {
+		return AppVariantUtils._newAppVariantId;
+	};
+
+	AppVariantUtils.setNewAppVariantId = function(sNewAppVariantID) {
+		AppVariantUtils._newAppVariantId = sNewAppVariantID;
+	};
+
+	AppVariantUtils.trimIdIfRequired = function(sId) {
+		if (sId.length > HANA_CLOUD_ID_LENGTH) {
+			var aIdStrings = sId.split('.');
+			var sTrimmedId;
+			var sGuidLength = aIdStrings[aIdStrings.length - 1].length;
+			var sGuidString = aIdStrings.pop();
+			sTrimmedId = aIdStrings.join(".");
+
+			if (sTrimmedId.length > sGuidLength) {
+				// If the length of GUID is smaller than the length of rest of the id(without GUID), then trim the rest of id with the length of GUID starting from right to left
+				sTrimmedId = sTrimmedId.substring(0, sTrimmedId.length - sGuidLength);
 			} else {
-				return true;
-			}
-		};
-
-		AppVariantUtils.getNewAppVariantId = function() {
-			return AppVariantUtils._newAppVariantId;
-		};
-
-		AppVariantUtils.setNewAppVariantId = function(sNewAppVariantID) {
-			AppVariantUtils._newAppVariantId = sNewAppVariantID;
-		};
-
-		AppVariantUtils.trimIdIfRequired = function(sId) {
-			return sId.substr(0, HANA_CLOUD_ID_LENGTH);
-		};
-
-		AppVariantUtils.getId = function(sBaseAppID) {
-			var sChangedId;
-			var aIdStrings = sBaseAppID.split('.');
-
-			if (aIdStrings[0] !== "customer") {
-				aIdStrings[0] = "customer." + aIdStrings[0];
+				// If the length of GUID is longer than the length of rest of the id(without GUID), then just trim the GUID so that the whole id length remains 56 characters
+				return sId.substr(0, HANA_CLOUD_ID_LENGTH);
 			}
 
-			var bRegFound = false;
-			var regex = /^id.*/i;
-
-			aIdStrings.forEach(function(sString, index, array) {
-				if (sString.match(regex)) {
-					sString = sString.replace(regex, jQuery.sap.uid().replace(/-/g, "_"));
-					array[index] = sString;
-					bRegFound = true;
-				}
-			});
-
-			sChangedId = aIdStrings.join(".");
-			if (!bRegFound) {
-				sChangedId = sChangedId + "." + jQuery.sap.uid().replace(/-/g, "_");
+			// After adjusting the id, if the last character of string has period '.', just append the guid string otherwise append period '.' in between
+			if (sTrimmedId[sTrimmedId.length - 1] === '.') {
+				sTrimmedId = sTrimmedId + sGuidString;
+			} else {
+				sTrimmedId = sTrimmedId + "." + sGuidString;
 			}
 
-			sChangedId = this.trimIdIfRequired(sChangedId);
-			this.setNewAppVariantId(sChangedId);
+			return this.trimIdIfRequired(sTrimmedId);
+		}
 
-			return sChangedId;
+		// No need of trimming -> less than 56 characters
+		return sId;
+	};
+
+	AppVariantUtils.getId = function(sBaseAppID) {
+		var sChangedId;
+		var aIdStrings = sBaseAppID.split('.');
+
+		if (aIdStrings[0] !== "customer") {
+			aIdStrings[0] = "customer." + aIdStrings[0];
+		}
+
+		var bRegFound = false;
+		var regex = /^id.*/i;
+
+		aIdStrings.forEach(function(sString, index, array) {
+			if (sString.match(regex)) {
+				sString = sString.replace(regex, uid().replace(/-/g, "_"));
+				array[index] = sString;
+				bRegFound = true;
+			}
+		});
+
+		sChangedId = aIdStrings.join(".");
+		if (!bRegFound) {
+			sChangedId = sChangedId + "." + uid().replace(/-/g, "_");
+		}
+
+		sChangedId = this.trimIdIfRequired(sChangedId);
+		this.setNewAppVariantId(sChangedId);
+
+		return sChangedId;
+	};
+
+	AppVariantUtils.createAppVariant = function(vSelector, mPropertyBag) {
+		mPropertyBag.version = "1.0.0"; // Application variant version should be 1.0.0 which is expected by backend
+		return AppVariantWriteAPI.saveAs(Object.assign({selector: vSelector}, mPropertyBag));
+	};
+
+	AppVariantUtils.getInlineChangeInput = function(sValue, sComment) {
+		return {
+			type: "XTIT",
+			maxLength: 50,
+			comment: sComment,
+			value: {
+				"": sValue
+			}
 		};
+	};
 
-		AppVariantUtils.createDescriptorVariant = function(mParameters){
-			mParameters.layer = FlexUtils.getCurrentLayer(false);
-			return DescriptorVariantFactory.createNew(mParameters);
-		};
+	AppVariantUtils.prepareTextsChange = function(sPropertyName, sPropertyValue) {
+		var sComment = "New " + sPropertyName + " entered by a key user via RTA tool";
+		return this.getInlineChangeInput(sPropertyValue, sComment);
+	};
 
-		AppVariantUtils.getInlineChangeInput = function(sValue, sComment){
-			return {
-				"type": "XTIT",
-				"maxLength": 50,
-				"comment": sComment,
-				"value": {
-					"": sValue
-				}
-			};
-		};
-
-		AppVariantUtils.getInlinePropertyChange = function(sPropertyName, sPropertyValue){
-			var sComment = "New " + sPropertyName + " entered by a key user via RTA tool";
-			return this.getInlineChangeInput(sPropertyValue, sComment);
-		};
-
-		AppVariantUtils.getInlineChangeInputIcon = function(sIconValue) {
-			return {
+	AppVariantUtils.getInlineChangeInputIcon = function(sIconValue) {
+		return {
+			content: {
 				icon: sIconValue
-			};
-		};
-
-		AppVariantUtils.getInlineChangeRemoveInbounds = function(sInboundValue) {
-			return {
-				"inboundId": sInboundValue
-			};
-		};
-
-		AppVariantUtils.getURLParsedHash = function() {
-			var oURLParser = sap.ushell.Container.getService("URLParsing");
-			if (oURLParser.parseShellHash && oURLParser.getHash){
-				return oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
 			}
 		};
+	};
 
-		AppVariantUtils.getInboundInfo = function(oInbounds) {
-			var oInboundInfo = {};
-			if (!oInbounds) {
+	AppVariantUtils.prepareRemoveAllInboundsExceptOneChange = function(sInboundValue) {
+		return {
+			content: {
+				inboundId: sInboundValue
+			}
+		};
+	};
+
+	AppVariantUtils.getInboundInfo = function(oInbounds) {
+		var oInboundInfo = {};
+		if (!oInbounds) {
+			oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
+			oInboundInfo.addNewInboundRequired = true;
+			return oInboundInfo;
+		}
+
+		var oParsedHash = FlexUtils.getParsedURLHash();
+		var aInbounds = Object.keys(oInbounds);
+		var aInboundsFound = [];
+
+		// This will only happen if app variants are created on top of app variants
+		if (aInbounds.length === 1 && aInbounds[0] === "customer.savedAsAppVariant") {
+			return {
+				currentRunningInbound: "customer.savedAsAppVariant",
+				addNewInboundRequired: false
+			};
+		}
+
+		aInbounds.forEach(function(sInboundId) {
+			if ((oInbounds[sInboundId].action === oParsedHash.action) && (oInbounds[sInboundId].semanticObject === oParsedHash.semanticObject)) {
+				aInboundsFound.push(sInboundId);
+			}
+		});
+
+		switch (aInboundsFound.length) {
+			case 0:
 				oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
 				oInboundInfo.addNewInboundRequired = true;
-				return oInboundInfo;
-			}
+				break;
+			case 1:
+				oInboundInfo.currentRunningInbound = aInboundsFound[0];
+				oInboundInfo.addNewInboundRequired = false;
+				break;
+			default:
+				oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
+				oInboundInfo.addNewInboundRequired = true;
+				break;
+		}
 
-			var oParsedHash = this.getURLParsedHash();
-			var aInbounds = Object.keys(oInbounds);
-			var aInboundsFound = [];
+		return oInboundInfo;
+	};
 
-			aInbounds.forEach(function(sInboundId) {
-				if ((oInbounds[sInboundId].action === oParsedHash.action) && (oInbounds[sInboundId].semanticObject === oParsedHash.semanticObject)) {
-					aInboundsFound.push(sInboundId);
+	AppVariantUtils.getInboundPropertiesKey = function(sAppVariantId, sCurrentRunningInboundId, sPropertyName) {
+		return sAppVariantId + "_sap.app.crossNavigation.inbounds." + sCurrentRunningInboundId + "." + sPropertyName;
+	};
+
+	AppVariantUtils.getInlineChangeForInboundPropertySaveAs = function(sCurrentRunningInboundId, sAppVariantId) {
+		return {
+			inboundId: sCurrentRunningInboundId,
+			entityPropertyChange: {
+				propertyPath: "signature/parameters/sap-appvar-id",
+				operation: "UPSERT",
+				propertyValue: {
+					required: true,
+					filter: {
+						value: sAppVariantId,
+						format: "plain"
+					},
+					launcherValue: {
+						value: sAppVariantId
+					}
 				}
-			});
-
-			switch (aInboundsFound.length) {
-				case 0:
-					oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
-					oInboundInfo.addNewInboundRequired = true;
-					break;
-				case 1:
-					oInboundInfo.currentRunningInbound = aInboundsFound[0];
-					oInboundInfo.addNewInboundRequired = false;
-					break;
-				default:
-					oInboundInfo = undefined;
-					break;
 			}
+		};
+	};
 
-			return oInboundInfo;
+	AppVariantUtils.prepareAddNewInboundChange = function(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData) {
+		var oParsedHash = FlexUtils.getParsedURLHash();
+		var oProperty = {
+			content: {
+				inbound: {}
+			},
+			texts: {}
 		};
 
-		AppVariantUtils.getInboundPropertiesKey = function(sAppVariantId, sCurrentRunningInboundId, sPropertyName) {
-			return sAppVariantId + "_sap.app.crossNavigation.inbounds." + sCurrentRunningInboundId + "." + sPropertyName;
-		};
+		var sInboundTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "title");
+		var sInboundSubTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "subTitle");
 
-		AppVariantUtils.getInlineChangesForInboundProperties = function(sCurrentRunningInboundId, sAppVariantId, sPropertyName, sPropertyValue) {
-			var oChangeInput = {
-				"inboundId": sCurrentRunningInboundId,
-				"entityPropertyChange": {
-					"propertyPath": sPropertyName,
-					"operation": "UPSERT",
-					"propertyValue": {}
-				},
-				"texts": {}
-			};
-
-			if (sPropertyName === "title" || sPropertyName === "subTitle") {
-				var sKey = this.getInboundPropertiesKey(sAppVariantId, sCurrentRunningInboundId, sPropertyName);
-				oChangeInput.entityPropertyChange.propertyValue = "{{" + sKey + "}}";
-				oChangeInput.texts[sKey] = this.getInlinePropertyChange(sPropertyName, sPropertyValue);
-			} else if (sPropertyName === "icon") {
-				oChangeInput.entityPropertyChange.propertyValue = sPropertyValue;
-			}
-
-			return oChangeInput;
-		};
-
-		AppVariantUtils.getInlineChangeForInboundPropertySaveAs = function(sCurrentRunningInboundId) {
-			return {
-				"inboundId": sCurrentRunningInboundId,
-				"entityPropertyChange": {
-					"propertyPath": "signature/parameters/sap-appvar-id",
-					"operation": "UPSERT",
-					"propertyValue": {
-						"required": true,
-						"filter": {
-							"value": this.getNewAppVariantId(),
-							"format": "plain"
+		// Filling change content
+		oProperty.content.inbound[sCurrentRunningInboundId] = {
+			semanticObject: oParsedHash.semanticObject,
+			action: oParsedHash.action,
+			title: "{{" + sInboundTitleKey + "}}",
+			subTitle: "{{" + sInboundSubTitleKey + "}}",
+			icon: oAppVariantSpecificData.icon,
+			signature: {
+				parameters: {
+					"sap-appvar-id": {
+						required: true,
+						filter: {
+							value: sAppVariantId,
+							format: "plain"
 						},
-						"launcherValue": {
-							"value": this.getNewAppVariantId()
+						launcherValue: {
+							value: sAppVariantId
 						}
 					}
-				}
-			};
-		};
-
-		AppVariantUtils.getInlineChangeCreateInbound = function(sCurrentRunningInboundId) {
-			var oParsedHash = this.getURLParsedHash();
-			var oProperty = {
-				"inbound": {}
-			};
-
-			oProperty.inbound[sCurrentRunningInboundId] = {
-				"semanticObject": oParsedHash.semanticObject,
-                "action": oParsedHash.action
-			};
-
-			return oProperty;
-		};
-
-		AppVariantUtils.createInlineChange = function(mParameters, sChange){
-			var mTexts;
-			if (sChange === "title"){
-				return DescriptorInlineChangeFactory.create_app_setTitle(mParameters);
-			} else if (sChange === "description" ){
-				return DescriptorInlineChangeFactory.create_app_setDescription(mParameters);
-			} else if (sChange === "subtitle" ){
-				return DescriptorInlineChangeFactory.create_app_setSubTitle(mParameters);
-			} else if (sChange === "icon" ){
-				return DescriptorInlineChangeFactory.create_ui_setIcon(mParameters);
-			} else if (sChange === "inbound" ){
-				return DescriptorInlineChangeFactory.create_app_changeInbound(mParameters);
-			} else if (sChange === "createInbound" ){
-				return DescriptorInlineChangeFactory.create_app_addNewInbound(mParameters);
-			} else if (sChange === "inboundTitle" ){
-				mTexts = mParameters.texts;
-				delete mParameters.texts;
-				return DescriptorInlineChangeFactory.create_app_changeInbound(mParameters, mTexts);
-			} else if (sChange === "inboundSubtitle" ){
-				mTexts = mParameters.texts;
-				delete mParameters.texts;
-				return DescriptorInlineChangeFactory.create_app_changeInbound(mParameters, mTexts);
-			} else if (sChange === "inboundIcon" ){
-				delete mParameters.texts;
-				return DescriptorInlineChangeFactory.create_app_changeInbound(mParameters);
-			} else if (sChange === "removeInbound"){
-				return DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne(mParameters);
-			}
-		};
-
-		AppVariantUtils.getTransportInput = function(sPackageName, sNameSpace, sName, sType) {
-			return {
-				getPackage : function(){
-					return sPackageName;
 				},
-				getNamespace : function(){
-					return sNameSpace;
-				},
-				getId : function(){
-					return sName;
-				},
-				getDefinition : function(){
-					return {
-						fileType: sType
-					};
-				}
-			};
-		};
-
-		AppVariantUtils.triggerCatalogAssignment = function(sAppVariantId, sOriginalId) {
-			var sRoute = '/sap/bc/lrep/appdescr_variants/' + sAppVariantId + '?action=assignCatalogs&assignFromAppId=' + sOriginalId;
-			var oLREPConnector = LrepConnector.createConnector();
-			return oLREPConnector.send(sRoute, 'POST');
-		};
-
-		AppVariantUtils.isS4HanaCloud = function(oSettings) {
-			return oSettings.isAtoEnabled() && oSettings.isAtoAvailable();
-		};
-
-		AppVariantUtils.copyId = function(sId) {
-			var textArea = document.createElement("textarea");
-			textArea.value = sId;
-			document.body.appendChild(textArea);
-			textArea.select();
-
-			document.execCommand('copy');
-			document.body.removeChild(textArea);
-
-			return true;
-		};
-
-		AppVariantUtils.getTextResources = function() {
-			return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		};
-
-		AppVariantUtils.getText = function(sMessageKey, sText) {
-			var oTextResources = this.getTextResources();
-			return sText ? oTextResources.getText(sMessageKey, sText) : oTextResources.getText(sMessageKey);
-		};
-
-		AppVariantUtils._getErrorMessageText = function(oError) {
-			var sErrorMessage;
-
-			if (oError.messages && oError.messages.length) {
-				sErrorMessage = oError.messages.map(function(oError) {
-					return oError.text;
-				}).join("\n");
-			} else if (oError.iamAppId) {
-				sErrorMessage = "IAM App Id: " + oError.iamAppId;
-			} else {
-				sErrorMessage = oError.stack || oError.message || oError.status || oError;
+				additionalParameters: "ignored"
 			}
-
-			return sErrorMessage;
 		};
 
-		AppVariantUtils.buildErrorInfo = function(sMessageKey, oError, sAppVariantId) {
-			var sErrorMessage = this._getErrorMessageText(oError);
-			var sMessage = AppVariantUtils.getText(sMessageKey) + "\n\n";
+		// Filling change texts
+		oProperty.texts[sInboundTitleKey] = this.prepareTextsChange("title", oAppVariantSpecificData.title);
+		oProperty.texts[sInboundSubTitleKey] = this.prepareTextsChange("subTitle", oAppVariantSpecificData.subTitle);
 
-			if (sAppVariantId) {
-				sMessage += AppVariantUtils.getText("MSG_APP_VARIANT_ID", sAppVariantId) + "\n";
-			}
+		return oProperty;
+	};
 
-			sMessage += AppVariantUtils.getText("MSG_TECHNICAL_ERROR", sErrorMessage);
-			jQuery.sap.log.error("App variant error: ", sErrorMessage);
-
-			return {
-				text: sMessage,
-				appVariantId: sAppVariantId
-			};
+	AppVariantUtils.prepareChangeInboundChange = function(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData) {
+		var oProperty = {
+			content: {},
+			texts: {}
 		};
 
-		AppVariantUtils.showRelevantDialog = function(oInfo, bSuccessful) {
-			var sTitle, sRightButtonText;
-			if (bSuccessful) {
-				sTitle = this.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE_TITLE");
-				sRightButtonText = this.getText("SAVE_APP_VARIANT_OK_TEXT");
-			} else {
-				sTitle = this.getText("HEADER_SAVE_APP_VARIANT_FAILED");
-				sRightButtonText = this.getText("SAVE_APP_VARIANT_CLOSE_TEXT");
-			}
+		var sInboundTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "title");
+		var sInboundSubTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "subTitle");
 
-			var sCopyIdButtonText;
-
-			var aActions = [];
-
-			if (oInfo.copyId) {
-				sCopyIdButtonText = this.getText("SAVE_APP_VARIANT_COPY_ID_TEXT");
-				aActions.push(sCopyIdButtonText);
-			}
-
-			aActions.push(sRightButtonText);
-
-			return new Promise(function(resolve, reject) {
-				var fnCallback = function (sAction) {
-					if (bSuccessful && sAction === sRightButtonText) {
-						resolve();
-					} else if (bSuccessful && sAction === sCopyIdButtonText) {
-						AppVariantUtils.copyId(oInfo.appVariantId);
-						resolve();
-					} else if (oInfo.overviewDialog && sAction === sRightButtonText) {
-						resolve(false);
-					} else if (sAction === sRightButtonText) {
-						reject();
-					} else if (sAction === sCopyIdButtonText) {
-						AppVariantUtils.copyId(oInfo.appVariantId);
-						reject();
+		// Filling change content
+		oProperty.content = {
+			inboundId: sCurrentRunningInboundId,
+			entityPropertyChange: [{
+				propertyPath: "signature/parameters/sap-appvar-id",
+				operation: "UPSERT",
+				propertyValue: {
+					required: true,
+					filter: {
+						value: sAppVariantId,
+						format: "plain"
+					},
+					launcherValue: {
+						value: sAppVariantId
 					}
+				}
+			}, {
+				propertyPath: "title",
+				operation: "UPSERT",
+				propertyValue: "{{" + sInboundTitleKey + "}}"
+			}, {
+				propertyPath: "subTitle",
+				operation: "UPSERT",
+				propertyValue: "{{" + sInboundSubTitleKey + "}}"
+			}, {
+				propertyPath: "icon",
+				operation: "UPSERT",
+				propertyValue: oAppVariantSpecificData.icon
+			}]
+		};
+
+		// Filling change texts
+		oProperty.texts[sInboundTitleKey] = this.prepareTextsChange("title", oAppVariantSpecificData.title);
+		oProperty.texts[sInboundSubTitleKey] = this.prepareTextsChange("subTitle", oAppVariantSpecificData.subTitle);
+
+		return oProperty;
+	};
+
+	AppVariantUtils.createInlineChange = function(oPropertyChange, sInlineChangeType, vSelector) {
+		var oChangeSpecificData = {
+			changeType: sInlineChangeType,
+			content: oPropertyChange.content
+		};
+
+		if (oPropertyChange.texts) {
+			oChangeSpecificData.texts = oPropertyChange.texts;
+		}
+
+		return ChangesWriteAPI.create({changeSpecificData: oChangeSpecificData, selector: vSelector});
+	};
+
+	AppVariantUtils.addChangesToPersistence = function(aAllInlineChanges, vSelector) {
+		aAllInlineChanges.forEach(function(oChange) {
+			return PersistenceWriteAPI.add({
+				change: oChange,
+				selector: vSelector
+			});
+		});
+
+		return Promise.resolve();
+	};
+
+	AppVariantUtils.getTransportInput = function(sPackageName, sNameSpace, sName, sType) {
+		return {
+			getPackage : function() {
+				return sPackageName;
+			},
+			getNamespace : function() {
+				return sNameSpace;
+			},
+			getId : function() {
+				return sName;
+			},
+			getDefinition : function() {
+				return {
+					fileType: sType
 				};
+			}
+		};
+	};
 
-				MessageBox.show(oInfo.text, {
-					icon: bSuccessful ? MessageBox.Icon.INFORMATION : MessageBox.Icon.ERROR,
-					onClose : fnCallback,
-					title: sTitle,
-					actions: aActions,
-					styleClass: RtaUtils.getRtaStyleClassName()
-				});
+	AppVariantUtils.triggerCatalogAssignment = function(sAppVariantId, sLayer, sReferenceAppId) {
+		return AppVariantWriteAPI.assignCatalogs({
+			selector: {
+				appId: sAppVariantId
+			},
+			action: "assignCatalogs",
+			assignFromAppId: sReferenceAppId,
+			layer: sLayer
+		});
+	};
+
+	AppVariantUtils.triggerCatalogUnAssignment = function(sAppVariantId, sLayer) {
+		return AppVariantWriteAPI.unassignCatalogs({
+			selector: {
+				appId: sAppVariantId
+			},
+			action: "unassignCatalogs",
+			layer: sLayer
+		});
+	};
+
+	AppVariantUtils.isS4HanaCloud = function(oSettings) {
+		return oSettings.isAtoEnabled() && oSettings.isAtoAvailable();
+	};
+
+	AppVariantUtils.copyId = function(sId) {
+		var textArea = document.createElement("textarea");
+		textArea.value = sId;
+		document.body.appendChild(textArea);
+		textArea.select();
+
+		document.execCommand('copy');
+		document.body.removeChild(textArea);
+
+		return true;
+	};
+
+	AppVariantUtils.getTextResources = function() {
+		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+	};
+
+	AppVariantUtils.getText = function(sMessageKey, sText) {
+		var oTextResources = this.getTextResources();
+		return sText ? oTextResources.getText(sMessageKey, sText) : oTextResources.getText(sMessageKey);
+	};
+
+	AppVariantUtils._getErrorMessageText = function(oError) {
+		var sErrorMessage;
+
+		if (oError.messages && oError.messages.length) {
+			sErrorMessage = oError.messages.map(function(oError) {
+				return oError.text;
+			}).join("\n");
+		} else if (oError.iamAppId) {
+			sErrorMessage = "IAM App Id: " + oError.iamAppId;
+		} else {
+			sErrorMessage = oError.stack || oError.message || oError.status || oError;
+		}
+
+		return sErrorMessage;
+	};
+
+	AppVariantUtils.buildErrorInfo = function(sMessageKey, oError, sAppVariantId) {
+		var sErrorMessage = this._getErrorMessageText(oError);
+		var sMessage = AppVariantUtils.getText(sMessageKey) + "\n\n";
+
+		if (sAppVariantId) {
+			sMessage += AppVariantUtils.getText("MSG_APP_VARIANT_ID", sAppVariantId) + "\n";
+		}
+
+		sMessage += AppVariantUtils.getText("MSG_TECHNICAL_ERROR", sErrorMessage);
+		Log.error("App variant error: ", sErrorMessage);
+
+		return {
+			text: sMessage,
+			appVariantId: sAppVariantId,
+			error: true
+		};
+	};
+
+	/**
+	 * Builds the success message text based on different platforms (i.e. S/4HANA Cloud and S/4HANA on Premise)
+	 * and based on from where the 'Save As' is triggered.
+	 */
+	AppVariantUtils.buildSuccessInfo = function(sAppVariantId, bSaveAsTriggeredFromRtaToolbar, bIsS4HanaCloud) {
+		var sSystemTag = bIsS4HanaCloud ? "CLOUD" : "ON_PREMISE";
+		var sOverviewList = bSaveAsTriggeredFromRtaToolbar ? "" : "_OVERVIEW_LIST";
+		var sText = bIsS4HanaCloud ? undefined : sAppVariantId;
+
+		var sMessage = AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE") + "\n\n";
+		sMessage += AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_" + sSystemTag + "_MESSAGE" + sOverviewList, sText);
+
+		return {
+			text: sMessage,
+			appVariantId: sAppVariantId,
+			copyId : !bIsS4HanaCloud
+		};
+	};
+
+	/**
+	 * Builds the final success message on S/4HANA Cloud.
+	 */
+	AppVariantUtils.buildFinalSuccessInfoS4HANACloud = function() {
+		var sMessage = AppVariantUtils.getText("MSG_SAVE_APP_VARIANT_NEW_TILE_AVAILABLE");
+		return { text: sMessage	};
+	};
+
+	AppVariantUtils.buildDeleteSuccessMessage = function(sAppVariantId, bIsS4HanaCloud) {
+		var sMessageTitle = bIsS4HanaCloud ? "DELETE_APP_VARIANT_SUCCESS_MESSAGE_CLOUD" : "DELETE_APP_VARIANT_SUCCESS_MESSAGE";
+		var sMessage = AppVariantUtils.getText(sMessageTitle, sAppVariantId);
+		return { text: sMessage	};
+	};
+
+	AppVariantUtils.showRelevantDialog = function(oInfo, bSuccessful) {
+		BusyIndicator.hide();
+		var sTitle;
+		var sRightButtonText;
+		var sOKButtonText;
+		var sCopyIdButtonText;
+		var aActions = [];
+
+		if (bSuccessful) {
+			sTitle = this.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE_TITLE");
+			sRightButtonText = this.getText("SAVE_APP_VARIANT_OK_TEXT");
+		} else {
+			sTitle = this.getText("HEADER_SAVE_APP_VARIANT_FAILED");
+			sRightButtonText = this.getText("SAVE_APP_VARIANT_CLOSE_TEXT");
+		}
+
+		if (oInfo && oInfo.copyId) {
+			sCopyIdButtonText = this.getText("SAVE_APP_VARIANT_COPY_ID_TEXT");
+			aActions.push(sCopyIdButtonText);
+		} else if (oInfo && oInfo.deleteAppVariant) {
+			sTitle = this.getText("DELETE_APP_VARIANT_INFO_MESSAGE_TITLE");
+			sOKButtonText = this.getText("DELETE_APP_VARIANT_OK_TEXT");
+			aActions.push(sOKButtonText);
+			sRightButtonText = this.getText("DELETE_APP_VARIANT_CLOSE_TEXT");
+		}
+
+		aActions.push(sRightButtonText);
+
+		return new Promise(function(resolve, reject) {
+			var fnCallback = function (sAction) {
+				if (sAction === sCopyIdButtonText) {
+					AppVariantUtils.copyId(oInfo.appVariantId);
+				}
+
+				if (bSuccessful) {
+					// The new app variant was saved... OK or CopyID & Close
+					resolve();
+				} else if (oInfo.overviewDialog) {
+					// ErrorInfo - Sorry, ... is temporarily not available. => Close
+					resolve(false);
+				} else if (oInfo.deleteAppVariant && sAction === sOKButtonText) {
+					// Do you really want to delete this app? => OK
+					resolve();
+				} else if (oInfo.deleteAppVariant && sAction === sRightButtonText) {
+					// Do you really want to delete this app? => Close
+					reject(oInfo.deleteAppVariant);
+				} else if (oInfo.error) {
+					// Error: Deletion/Creation failed => Close or CopyID & Close
+					reject(oInfo.error);
+				} else {
+					resolve();
+				}
+			};
+
+			MessageBox.show(oInfo.text, {
+				icon: (bSuccessful || oInfo.deleteAppVariant) ? MessageBox.Icon.INFORMATION : MessageBox.Icon.ERROR,
+				onClose : fnCallback,
+				title: sTitle,
+				actions: aActions,
+				styleClass: RtaUtils.getRtaStyleClassName()
 			});
-		};
+		});
+	};
 
-		AppVariantUtils.publishEventBus = function() {
-			sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
-		};
+	AppVariantUtils.closeOverviewDialog = function() {
+		sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
+	};
 
-		AppVariantUtils.triggerDeleteAppVariantFromLREP = function(sAppVariantId) {
-			return DescriptorVariantFactory.createDeletion(sAppVariantId).then(function(oAppVariantDescriptor) {
-				return oAppVariantDescriptor.submit();
-			});
-		};
+	/**
+	 * Navigates to the Fiorilaunchpad
+	 */
+	AppVariantUtils.navigateToFLPHomepage = function() {
+		var oApplication = sap.ushell.services.AppConfiguration.getCurrentApplication();
+		var oComponentInstance = oApplication.componentHandle.getInstance();
 
-		return AppVariantUtils;
+		if (oComponentInstance) {
+			FlexUtils.ifUShellContainerThen(function(aServices) {
+				var oCrossAppNav = aServices[0];
+				if (oCrossAppNav && oCrossAppNav.toExternal) {
+					oCrossAppNav.toExternal({target: {shellHash: "#"}}, oComponentInstance);
+				}
+			}, ["CrossApplicationNavigation"]);
+		}
+		return Promise.resolve();
+	};
+
+	AppVariantUtils.deleteAppVariant = function(vSelector, sLayer) {
+		BusyIndicator.hide();
+		return AppVariantWriteAPI.deleteAppVariant({
+			selector: vSelector,
+			layer: sLayer
+		});
+	};
+
+	AppVariantUtils.handleBeforeUnloadEvent = function () {
+		// oEvent.preventDefault();
+		var sMessage = AppVariantUtils.getText("MSG_DO_NOT_CLOSE_BROWSER");
+		return sMessage;
+	};
+
+	AppVariantUtils.showMessage = function(sMessageKey) {
+		var sMessage = AppVariantUtils.getText(sMessageKey);
+		var oInfo = { text: sMessage, copyId : false};
+		return AppVariantUtils.showRelevantDialog(oInfo, true);
+	};
+
+	AppVariantUtils.catchErrorDialog = function(oError, sMessageKey, sIAMId) {
+		BusyIndicator.hide();
+		var oErrorInfo = AppVariantUtils.buildErrorInfo(sMessageKey, oError, sIAMId);
+		return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+	};
+
+	return AppVariantUtils;
 }, /* bExport= */true);

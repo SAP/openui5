@@ -1,0 +1,80 @@
+{
+  "1.70.0": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "5da637bf789911c9b0ec005b7dd4806ddcfeb6a5",
+        "type": "FEATURE",
+        "text": "fl.VariantManagement: enhance unit test",
+        "references": []
+      },
+      {
+        "id": "9a56dbd77a5d8ede57fc6b0ac22b26779e2f044a",
+        "type": "FIX",
+        "text": " Core: incorporate feedback from SDK feedback channel (2019/4-7)",
+        "references": []
+      },
+      {
+        "id": "bc68eac773b587b9c951299e5b4bc3da238393b1",
+        "type": "FIX",
+        "text": " Flag change as read only when there is a source system mismatch",
+        "references": []
+      },
+      {
+        "id": "4acd74cecb7a47b9d31f06524d5868beb8272a30",
+        "type": "FIX",
+        "text": " VariantManagement: show default variant even when marked as non-favorite",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980318849"
+          }
+        ]
+      },
+      {
+        "id": "5a2865573a0036c191fe1e10227fc31c9343ef2a",
+        "type": "FIX",
+        "text": " sap.ui.fl: Fixing the version of UI changes (dirty) relevant for",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980319377"
+          }
+        ]
+      },
+      {
+        "id": "2dd7a64a81c48b3245891c382ab8b42109d1c386",
+        "type": "FIX",
+        "text": " Inline changes only relevant for Save As will be removed from",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980324271"
+          }
+        ]
+      },
+      {
+        "id": "63421667b94108535e8191716f31992b1c9a8fda",
+        "type": "FIX",
+        "text": " fl.VM : default variant always also marked as favorite",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980318849"
+          }
+        ]
+      },
+      {
+        "id": "2bf7a2f08ece725d7e31c45de23c732599d90200",
+        "type": "FIX",
+        "text": " sap.ui.rta: Fixed the namespace for UI changes(dirty) relevant for",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980324226"
+          }
+        ]
+      }
+    ]
+  }
+}

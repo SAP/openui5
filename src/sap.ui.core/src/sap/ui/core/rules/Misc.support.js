@@ -4,9 +4,16 @@
 /**
  * Defines miscellaneous support rules.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.support" ],
-	function(jQuery, SupportLib, CoreHelper) {
+sap.ui.define(["sap/ui/support/library", "./CoreHelper.support", "sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/control"], // jQuery Plugin "control"
+	function(SupportLib, CoreHelper, jQuery) {
 	"use strict";
+
+	// support rules can get loaded within a ui5 version which does not have module "sap/base/Log" yet
+	// therefore load the jQuery.sap.log fallback if not available
+	var Log = sap.ui.require("sap/base/Log");
+	if (!Log) {
+		Log = jQuery.sap.log;
+	}
 
 	// shortcuts
 	var Categories = SupportLib.Categories; // Accessibility, Performance, Memory, ...
@@ -34,9 +41,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.supp
 			var count = 0,
 				message = "";
 
-			var log = jQuery.sap.log.getLogEntries();
+			var log = Log.getLogEntries();
 			log.forEach(function(logEntry) {
-				if (logEntry.level === jQuery.sap.log.Level.ERROR) {
+				if (logEntry.level === Log.Level.ERROR) {
 					count++;
 					if (count <= 20) {
 						message += "- " + logEntry.message + "\n";
@@ -44,13 +51,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.supp
 				}
 			});
 
-			oIssueManager.addIssue({
-				severity: Severity.Low,
-				details: "Total error logs: " + count + "\n" + message,
-				context: {
-					id: "WEBPAGE"
-				}
-			});
+			if (count > 0) {
+				oIssueManager.addIssue({
+					severity: Severity.Low,
+					details: "Total error logs: " + count + "\n" + message,
+					context: {
+						id: "WEBPAGE"
+					}
+				});
+			}
 		}
 	};
 
@@ -101,7 +110,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.supp
 
 			if (foundIssues > 0) {
 				issueManager.addIssue({
-					severity: sap.ui.support.Severity.Medium,
+					severity: Severity.Medium,
 					details: cssFilesMessage,
 					context: {
 						id: "WEBPAGE"
@@ -143,6 +152,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.supp
 					matchedNodes.forEach(function (node) {
 						var hasUI5Parent = CoreHelper.nodeHasUI5ParentControl(node, oScope);
 						if (hasUI5Parent) {
+							// jQuery Plugin "control"
 							var ui5Control = jQuery(node).control()[0];
 
 							if (!controlCustomCssHashMap.hasOwnProperty(ui5Control.getId())) {
@@ -158,7 +168,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.supp
 
 			Object.keys(controlCustomCssHashMap).forEach(function(id) {
 				issueManager.addIssue({
-					severity: sap.ui.support.Severity.Low,
+					severity: Severity.Low,
 					details: "The following selector(s) " + controlCustomCssHashMap[id] + " affects standard style setting for control",
 					context: {
 						id: id
@@ -186,7 +196,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.supp
 		resolutionurls: [],
 		check: function(oIssueManager, oCoreFacade) {
 
-			var aLogEntries = jQuery.sap.log.getLog();
+			var aLogEntries = Log.getLogEntries();
 			var aMessages = [];
 			aLogEntries.forEach(function(oLogEntry) {
 				if (oLogEntry.component === "sap.ui.core.EventBus") {

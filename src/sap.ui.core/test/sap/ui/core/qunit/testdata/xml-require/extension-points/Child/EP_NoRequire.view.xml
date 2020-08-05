@@ -1,0 +1,3 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+	<Button id="noRequireBtn" text="Close" press="Toast.show('Do you really want to close?')" />
+</mvc:View>

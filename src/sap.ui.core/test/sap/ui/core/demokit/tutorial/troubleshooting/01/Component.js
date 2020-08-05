@@ -17,7 +17,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/index.html",
 							"webapp/manifest.json",
 							"webapp/model/models.js",
-							"webapp/view/App.view.xml"
+							"webapp/view/App.view.xml",
+							"ui5.yaml",
+							"package.json"
 						]
 					}
 				}

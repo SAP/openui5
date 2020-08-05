@@ -32,7 +32,7 @@ sap.ui.define(['sap/ui/commons/Button', 'sap/ui/commons/TextView', 'sap/ui/core/
 				        new TextView(that.createId("iShouldBeDestroyed1"), {text: "Extension point 44: Default Content"}),
 				        new TextView(that.createId("iShouldBeDestroyed2"), {text: "Extension point 44: Second Default Content"})
 				        ];
-			}
+			};
 			var ext4 = sap.ui.extensionpoint(this, "extension45", fnCreateDefaultContent2);
 
 			var fnCreateDefaultContent3 = function(){

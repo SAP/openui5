@@ -3,8 +3,15 @@
  */
 
 // Provides class sap.ui.model.odata.v2.ODataAnnotations
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/base/EventProvider', 'sap/ui/core/cache/CacheManager'],
-	function(jQuery, AnnotationParser, Device, EventProvider, CacheManager) {
+sap.ui.define([
+	'sap/ui/model/odata/AnnotationParser',
+	'sap/ui/Device',
+	'sap/ui/base/EventProvider',
+	'sap/ui/core/cache/CacheManager',
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
+],
+	function(AnnotationParser, Device, EventProvider, CacheManager, assert, jQuery) {
 	"use strict";
 
 	///////////////////////////////////////////////// Class Definition /////////////////////////////////////////////////
@@ -12,19 +19,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	/**
 	 * Creates a new instance of the ODataAnnotations annotation loader.
 	 *
-	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata Metadata object with the metadata information needed to parse the annotations
-	 * @param {map} mOptions Obligatory options
-	 * @param {string|map|string[]|map[]} mOptions.source One or several annotation sources. See {@link sap.ui.model.odata.v2.ODataAnnotations#addSource} for more details
-	 * @param {map} mOptions.headers A map of headers to be sent with every request. See {@link sap.ui.model.odata.v2.ODataAnnotations#setHeaders} for more details
-	 * @param {boolean} mOptions.skipMetadata If set to <code>true</code>, the metadata document will not be parsed for annotations;
-	 * @param {string} [mOptions.cacheKey] (optional) A valid cache key
+	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
+	 *   Metadata object with the metadata information needed to parse the annotations
+	 * @param {object} mOptions Obligatory options
+	 * @param {string|map|string[]|map[]} mOptions.source
+	 *   One or several annotation sources; see {@link #addSource} for more details
+	 * @param {Object<string,string>} mOptions.headers A map of headers to be sent with every request;
+	 *   see {@link #setHeaders} for more details
+	 * @param {boolean} mOptions.skipMetadata Whether the metadata document will not be parsed for
+	 *   annotations
+	 * @param {string} [mOptions.cacheKey] A valid cache key
 	 * @public
 	 *
 	 * @class Annotation loader for OData V2 services
 	 *
 	 * @author SAP SE
-	 * @version
-	 * ${version}
+	 * @version ${version}
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -35,23 +45,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 		constructor : function(oMetadata, mOptions) {
 			var that = this;
-			// Allow event substription in constructor options
+			// Allow event subscription in constructor options
 			EventProvider.apply(this, [ mOptions ]);
 			this._oMetadata = oMetadata;
-			// The promise to have (loaded,) parsed and merged the previously added source. This promise should never
-			// reject to assign another promise "pPromise" use alwaysResolve(pPromise)
+			// The promise to have (loaded,) parsed and merged the previously added source.
+			// This promise should never reject; to assign another promise "pPromise" use
+			// alwaysResolve(pPromise)
 			this._pLoaded = oMetadata.loaded();
 			this._mCustomHeaders = {};
 			this._mAnnotations = {};
+			this._hasErrors = false;
 
 			function writeCache(aResults) {
-				// write annotations to cache
-				// as aResults is an Array with additional properties we cannot stringify directly
-				var cacheObject = {
-					results: aResults,
-					annotations: aResults.annotations
-				};
-				CacheManager.set(that.sCacheKey, JSON.stringify(cacheObject));
+				// write annotations to cache if no errors occurred
+				if (!that._hasErrors) {
+					CacheManager.set(that.sCacheKey, JSON.stringify(aResults));
+				}
 			}
 
 			if (!mOptions || !mOptions.skipMetadata) {
@@ -72,7 +81,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 					data: oMetadata.loaded().then(function(mParams) {
 						return {
 							xml: mParams["metadataString"],
-							lastModified: mParams["lastModified"]
+							lastModified: mParams["lastModified"],
+							eTag: mParams["eTag"]
 						};
 					})
 				});
@@ -82,16 +92,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 				this.setHeaders(mOptions.headers);
 				if (this.sCacheKey) {
 					//check cache
-					this._pLoaded =	CacheManager.get(that.sCacheKey)
+					this._pLoaded = CacheManager.get(that.sCacheKey)
 						.then(function(sAnnotations){
+							var aResults;
 							if (sAnnotations) {
+								aResults = JSON.parse(sAnnotations);
+							}
+							//old cache entries are an object; invalidate the cache in this case
+							if (Array.isArray(aResults)) {
 								// restore return array structure
-								var oAnnotations = JSON.parse(sAnnotations);
-								that._mAnnotations = oAnnotations.annotations;
-								var aResults = oAnnotations.results;
-								// Add for Promise compatibility with v1 version:
-								aResults.annotations = that._mAnnotations;
-
+								aResults.annotations = {};
+								aResults.forEach(function(oAnnotation) {
+									AnnotationParser.restoreAnnotationsAtArrays(oAnnotation.annotations);
+									AnnotationParser.merge(aResults.annotations, oAnnotation.annotations);
+								});
+								that._mAnnotations = aResults.annotations;
 								// only valid loading was cached - fire loaded event in this case
 								that._fireSomeLoaded(aResults);
 								that._fireLoaded(aResults);
@@ -122,58 +137,55 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	////////////////////////////////////////////////// Public Methods //////////////////////////////////////////////////
 
 	/**
-	 * Returns the parsed and merged annotation data object
+	 * Returns the parsed and merged annotation data object.
 	 *
 	 * @public
-	 * @returns {object} returns annotations data
+	 * @returns {object} The annotation data
 	 */
 	ODataAnnotations.prototype.getData = function() {
 		return this._mAnnotations;
 	};
 
 	/**
-	 * V1 API Compatibility method. @see sap.ui.model.odata.v2.ODataAnnotations#getData
-	 * Returns the parsed and merged annotation data object
+	 * Returns the parsed and merged annotation data object.
 	 *
 	 * @public
-	 * @returns {object} returns annotations data
-	 * @deprecated
+	 * @returns {object} The annotation data
+	 * @deprecated As of version 1.37.0, only kept for compatibility with V1 API, use {@link #getData} instead.
 	 */
 	ODataAnnotations.prototype.getAnnotationsData = function() {
 		return this._mAnnotations;
 	};
 
 	/**
-	 * Returns a map of the headers that are sent with every request to an annotation URL
-	 *
-	 * @returns {map} A map of all headers that are sent with requests to annotation source URLs
+	 * Returns a map of custom headers that are sent with every request to an annotation URL.
+	 * @public
+	 * @returns {Object<string,string>} A map of all custom headers.
 	 */
 	ODataAnnotations.prototype.getHeaders = function() {
-		return jQuery.extend({}, this._mCustomHeaders, {
-			"Accept-Language": sap.ui.getCore().getConfiguration().getLanguageTag() // Always overwrite
-		});
+		return jQuery.extend({}, this._mCustomHeaders);
 	};
 
 	/**
 	 * Set custom headers which are provided in a key/value map. These headers are used for all requests.
 	 * The "Accept-Language" header cannot be modified and is set using the core's language setting.
 	 *
-	 * To remove these headers, simply set the <code>mHeaders</code> parameter to <code>{}</code>. Please also note that when calling this method
-	 * again all previous custom headers are removed unless they are specified again in the <code>mCustomHeaders</code> parameter.
+	 * To remove these headers, simply set the <code>mHeaders</code> parameter to <code>{}</code>. Note that when calling this method
+	 * again, all previous custom headers are removed, unless they are specified again in the <code>mCustomHeaders</code> parameter.
 	 *
-	 * @param {map} mHeaders the header name/value map.
+	 * @param {Object<string,string>} mHeaders the header name/value map.
 	 * @public
 	 */
 	ODataAnnotations.prototype.setHeaders = function(mHeaders) {
-		// Copy headers (dont use reference to mHeaders map)
+		// Copy headers (don't use reference to mHeaders map)
 		this._mCustomHeaders = jQuery.extend({}, mHeaders);
 	};
 
 	/**
-	 * Returns a promise that resolves when the annotation sources that were added up to this point were successfully
-	 * (loaded,) parsed and merged
+	 * Returns a promise that resolves when the added annotation sources were successfully
+	 * processed.
 	 *
-	 * @returns {Promise} The Promise that resolves/rejects after the last added sources have been processed
+	 * @returns {Promise} A promise that resolves after the last added sources have been processed
 	 * @public
 	 */
 	ODataAnnotations.prototype.loaded = function() {
@@ -183,14 +195,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	/**
 	 * An annotation source, containing either a URL to be loaded or an XML string to be parsed.
 	 *
-	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.Source
+	 * @typedef {object} sap.ui.model.odata.v2.ODataAnnotations.Source
 	 * @property {string} type The source type. Either "url" or "xml".
-	 * @property {string|Promise} data Either the data or a Promise that resolves with the data string as argument.
+	 * @property {string|Promise} data The data or a Promise that resolves with the data.
 	 *           In case the type is set to "url" the data must be a URL, in case it is set to "xml" the data must be
 	 *           an XML string.
 	 * @property {string} [xml] (Set internally, available in event-callback) The XML string of the annotation source
 	 * @property {Document} [document] (Set internally, available in event-callback) The parsed XML document of the annotation source
-	 * @property {map} [annotations] (Set internally, available in event-callback) The parsed Annotations object of the annotation source
+	 * @property {Object} [annotations] (Set internally, available in event-callback) The parsed Annotations object of the annotation source
 	 * @public
 	 */
 
@@ -199,12 +211,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * the previously added source has either been successfully merged or failed.
 	 *
 	 * @param {string|string[]|sap.ui.model.odata.v2.ODataAnnotations.Source|sap.ui.model.odata.v2.ODataAnnotations.Source[]} vSource One or several
-	 *        annotation source(s). Can be either a string or a map of the type <code>sap.ui.model.odata.v2.ODataAnnotations.Source</code> or an array
-	 *        containing several (either strings or source objects).
-	 * @returns {Promise} The promise to (load,) parse and merge the given source(s). The Promise resolves on success
-	 *          with an array of maps containing properties <code>source</code> and <code>data</code>. See the parameters of the <code>success</code>
-	 *          event for more details. The promise fails in case at least one source could not be (loaded,) parsed or
-	 *          merged with an array of objects containing Errors and/or Success objects.
+	 *   Annotation source or array of annotation sources; an annotation source is either a string
+	 *   containing a URL or an object of type
+	 *   {@link sap.ui.model.odata.v2.ODataAnnotations.Source}.
+	 * @returns {Promise} The promise to (load,) parse and merge the given source(s). The Promise
+	 *   resolves with an array of maps containing the properties <code>source</code> and
+	 *   <code>data</code>; see the parameters of the <code>success</code> event for more
+	 *   details. In case at least one source could not be (loaded,) parsed or merged, the promise
+	 *   fails with an array of objects containing Errors and/or Success objects.
 	 * @public
 	 */
 	ODataAnnotations.prototype.addSource = function(vSource) {
@@ -253,6 +267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 					return oResult instanceof Error;
 				});
 				if (aErrors.length > 0) {
+					that._hasErrors = true;
 					if (aErrors.length !== aResults.length) {
 						that._fireSomeLoaded(aResults);
 						that._fireFailed(aResults);
@@ -275,13 +290,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	/**
 	 * Parameters of the <code>success</code> event
 	 *
-	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.successParameters
+	 * @typedef {object} sap.ui.model.odata.v2.ODataAnnotations.successParameters
 	 * @property {sap.ui.model.odata.v2.ODataAnnotations.Source} result The source type. Either "url" or "xml".
 	 * @public
 	 */
 
 	/**
-	 * The 'success' event is fired, whenever a source has been successfully (loaded,) parsed and merged into the
+	 * The <code>success</code> event is fired, whenever a source has been successfully (loaded,) parsed and merged into the
 	 * annotation data.
 	 *
 	 * @name sap.ui.model.v2.ODataAnnotations#success
@@ -293,17 +308,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 */
 
 	/**
-	 * Attaches the given callback to the <code>success</code> event, which is fired whenever a source has been successfully
+	 * Attaches the given callback to the {@link #event:success success} event, which is fired whenever a source has been successfully
 	 * (loaded,) parsed and merged into the annotation data.
-	 * The following parameters will be set on the event object that is given to the callback function:
+	 *
+	 * The following parameters are set on the event object that is given to the callback function:
 	 *   <code>source</code> - A map containing the properties <code>type</code> - containing either "url" or "xml" - and <code>data</code> containing
 	 *              the data given as source, either a URL or an XML string depending on how the source was added.
 	 *
-	 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
-	 * @param {function} fnFunction The event callback. This function will be called in the context of the oListener
-	 *        object if given as the next argument.
-	 * @param {object} [oListener] Object to use as context of the callback. If empty, the global context is used.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} <code>this</code>-reference to allow method chaining.
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to this <code>sap.ui.model.odata.v2.ODataAnnotations</code> itself.
+	 *
+	 * @param {object}
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
+	 * @param {function}
+	 *            fnFunction The function to be called, when the event occurs
+	 * @param {object}
+	 *            [oListener] Context object to call the event handler with, defaults to this
+	 *            <code>ODataAnnotations</code> itself
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachSuccess = function(oData, fnFunction, oListener) {
@@ -312,11 +335,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 	/**
 	 * Detaches the given callback from the <code>success</code> event.
-	 * The passed function and listener object must match the ones previously used for attaching to the event.
 	 *
-	 * @param {function} fnFunction The event callback previously used with {@link sap.ui.model.odata.v2.ODataAnnotations#attachSuccess}.
-	 * @param {object} [oListener] The same (if any) context object that was used when attaching to the <code>success</code> event.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} <code>this</code>-reference to allow method chaining.
+	 * The passed function and listener object must match the ones used for event registration.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachSuccess = function(fnFunction, oListener) {
@@ -324,27 +348,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * Parameters of the <code>error</code> event
+	 * Parameters of the <code>error</code> event.
 	 *
-	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.errorParameters
-	 * @property {Error} result The error that occurred. Also contains the properties from sap.ui.model.odata.v2.ODataAnnotations.Source
+	 * @typedef {object} sap.ui.model.odata.v2.ODataAnnotations.errorParameters
+	 * @property {Error} result The error that occurred. Also contains the properties from {@link sap.ui.model.odata.v2.ODataAnnotations.Source}
 	 *           that could be filled up to that point
 	 * @public
 	 */
 
 	/**
-	 * Attaches the given callback to the <code>error</code> event, which is fired whenever a source cannot be loaded, parsed or
+	 * The <code>error</code> event is fired, whenever a source cannot be loaded, parsed or merged into the annotation data.
+	 *
+	 * @name sap.ui.model.v2.ODataAnnotations#error
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.errorParameters} oEvent.getParameters
+	 * @public
+	 */
+
+	/**
+	 * Attaches the given callback to the {@link #event:error error} event, which is fired whenever a source cannot be loaded, parsed or
 	 * merged into the annotation data.
+	 *
 	 * The following parameters will be set on the event object that is given to the callback function:
 	 *   <code>source</code> - A map containing the properties <code>type</code> - containing either "url" or "xml" - and <code>data</code> containing
 	 *              the data given as source, either a URL or an XML string depending on how the source was added.
 	 *   <code>error</code>  - An Error object describing the problem that occurred
 	 *
-	 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
-	 * @param {function} fnFunction The event callback. This function will be called in the context of the oListener
-	 *        object if given as the next argument.
-	 * @param {object} [oListener] Object to use as context of the callback. If empty, the global context is used.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} <code>this</code>-reference to allow method chaining
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to this <code>sap.ui.model.odata.v2.ODataAnnotations</code> itself.
+	 *
+	 * @param {object}
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
+	 * @param {function}
+	 *            fnFunction The function to be called, when the event occurs
+	 * @param {object}
+	 *            [oListener] Context object to call the event handler with, defaults to this
+	 *            <code>ODataAnnotations</code> itself
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachError = function(oData, fnFunction, oListener) {
@@ -353,11 +396,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 	/**
 	 * Detaches the given callback from the <code>error</code> event.
-	 * The passed function and listener object must match the ones previously used for attaching to the event.
 	 *
-	 * @param {function} fnFunction The event callback previously used with {@link sap.ui.model.odata.v2.ODataAnnotations#attachError}.
-	 * @param {object} [oListener] The same (if any) context object that was used when attaching to the <code>error</code> event.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} <code>this</code>-reference to allow method chaining.
+	 * The passed function and listener object must match the ones used for event registration.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachError = function(fnFunction, oListener) {
@@ -365,26 +409,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * Parameters of the <code>loaded</code> event
+	 * Parameters of the <code>loaded</code> event.
 	 *
-	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.loadedParameters
+	 * @typedef {object} sap.ui.model.odata.v2.ODataAnnotations.loadedParameters
 	 * @property {sap.ui.model.odata.v2.ODataAnnotations.Source[]|Error[]|any} result An array of results and Errors
 	 *           (@see sap.ui.model.v2.ODataAnnotations#success and @see sap.ui.model.v2.ODataAnnotations#error) that
 	 *           occurred while loading a group of annotations
 	 * @public
 	 */
 
+	/**
+	 * The <code>loaded</code> event is fired, when all annotations from a group of sources have been
+	 * (loaded,) parsed and merged successfully.
+	 *
+	 * @name sap.ui.model.v2.ODataAnnotations#loaded
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.loadedParameters} oEvent.getParameters
+	 * @public
+	 */
+
 	 /**
-	 * Attaches the given callback to the <code>loaded</code> event. This event is fired when all annotations from a group of
-	 * sources was successfully (loaded,) parsed and merged.
+	 * Attaches the given callback to the {@link #event:loaded loaded} event.
+	 *
+	 * This event is fired when all annotations from a group of sources was successfully (loaded,) parsed and merged.
 	 * The parameter <code>result</code> will be set on the event argument and contains an array of all loaded sources as well
 	 * as Errors in the order in which they had been added.
 	 *
-	 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
-	 * @param {function} fnFunction The event callback. This function will be called in the context of the oListener
-	 *        object if given as the next argument.
-	 * @param {object} [oListener] Object to use as context of the callback. If empty, the global context is used.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} <code>this</code>-reference to allow method chaining
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to this <code>sap.ui.model.odata.v2.ODataAnnotations</code> itself.
+	 *
+	 * @param {object}
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
+	 * @param {function}
+	 *            fnFunction The function to be called, when the event occurs
+	 * @param {object}
+	 *            [oListener] Context object to call the event handler with, defaults to this
+	 *            <code>ODataAnnotations</code> itself
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachLoaded = function(oData, fnFunction, oListener) {
@@ -393,11 +457,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 	/**
 	 * Detaches the given callback from the <code>loaded</code> event.
-	 * The passed function and listener object must match the ones previously used for attaching to the event.
 	 *
-	 * @param {function} fnFunction The event callback previously used with {@link sap.ui.model.odata.v2.ODataAnnotations#attachLoaded}.
-	 * @param {object} [oListener] The same (if any) context object that was used when attaching to the <code>error</code> event.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} <code>this</code>-reference to allow method chaining.
+	 * The passed function and listener object must match the ones used for event registration.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachLoaded = function(fnFunction, oListener) {
@@ -405,16 +470,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * Attaches the given callback to the <code>failed</code> event. This event is fired when at least one annotation from a group
-	 * of sources was not successfully (loaded,) parsed or merged.
+	 * Parameters of the <code>failed</code> event.
+	 *
+	 * @typedef {object} sap.ui.model.odata.v2.ODataAnnotations.failedParameters
+	 * @property {Error[]} result An array of Errors (@see sap.ui.model.v2.ODataAnnotations#error) that occurred while
+	 *           loading a group of annotations
+	 * @public
+	 */
+
+	/**
+	 * The <code>failed</code> event is fired when at least one annotation from a group of sources was not
+	 * successfully (loaded,) parsed or merged.
+	 *
+	 * @name sap.ui.model.v2.ODataAnnotations#failed
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.failedParameters} oEvent.getParameters
+	 * @public
+	 */
+
+	/**
+	 * Attaches the given callback to the {@link #event:failed failed} event.
+	 *
+	 * This event is fired when at least one annotation from a group of sources was not successfully (loaded,) parsed or merged.
 	 * The parameter <code>result</code> will be set on the event argument and contains an array of Errors in the order in which
 	 * the sources had been added.
 	 *
-	 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
-	 * @param {function} fnFunction The event callback. This function will be called in the context of the oListener
-	 *        object if given as the next argument.
-	 * @param {object} [oListener] Object to use as context of the callback. If empty, the global context is used.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} <code>this</code>-reference to allow method chaining
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to this <code>sap.ui.model.odata.v2.ODataAnnotations</code> itself.
+	 *
+	 * @param {object}
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
+	 * @param {function}
+	 *            fnFunction The function to be called, when the event occurs
+	 * @param {object}
+	 *            [oListener] Context object to call the event handler with, defaults to this
+	 *            <code>ODataAnnotations</code> itself
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachFailed = function(oData, fnFunction, oListener) {
@@ -423,11 +517,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 	/**
 	 * Detaches the given callback from the <code>failed</code> event.
-	 * The passed function and listener object must match the ones previously used for attaching to the event.
 	 *
-	 * @param {function} fnFunction The event callback previously used with {@link sap.ui.model.odata.v2.ODataAnnotations#attachFailed}.
-	 * @param {object} [oListener] The same (if any) context object that was used when attaching to the <code>error</code> event.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} <code>this</code>-reference to allow method chaining.
+	 * The passed function and listener object must match the ones used for event registration.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachFailed = function(fnFunction, oListener) {
@@ -435,17 +530,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * This event exists for compatibility with the old Annotation loader
-	 * Attaches the given callback to the <code>someLoaded</code> event. This event is fired when at least one annotation from a
-	 * group of sources was successfully (loaded,) parsed and merged.
-	 * The parameter <code>result</code> will be set on the event argument and contains an array of all loaded sources as well
-	 * as Errors in the order in which they had been added.
+	 * Attaches the given callback to the <code>someLoaded</code> event.
 	 *
-	 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
-	 * @param {function} fnFunction The event callback. This function will be called in the context of the oListener
-	 *        object if given as the next argument.
-	 * @param {object} [oListener] Object to use as context of the callback. If empty, the global context is used.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} <code>this</code>-reference to allow method chaining
+	 * This event exists for compatibility with the old annotation loader. It is fired when at least one annotation
+	 * from a group of sources was successfully (loaded,) parsed and merged.
+	 * The parameter <code>result</code> will be set on the event argument and contains an array of all loaded
+	 * sources as well as Errors in the order in which they had been added.
+	 *
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to this <code>sap.ui.model.odata.v2.ODataAnnotations</code> itself.
+	 *
+	 * @param {object}
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
+	 * @param {function}
+	 *            fnFunction The function to be called, when the event occurs
+	 * @param {object}
+	 *            [oListener] Context object to call the event handler with, defaults to this
+	 *            <code>ODataAnnotations</code> itself
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachSomeLoaded = function(oData, fnFunction, oListener) {
@@ -454,11 +557,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 	/**
 	 * Detaches the given callback from the <code>someLoaded</code> event.
-	 * The passed function and listener object must match the ones previously used for attaching to the event.
 	 *
-	 * @param {function} fnFunction The event callback previously used with {@link sap.ui.model.odata.v2.ODataAnnotations#attachSomeLoaded}.
-	 * @param {object} [oListener] The same (if any) context object that was used when attaching to the <code>error</code> event.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} <code>this</code>-reference to allow method chaining.
+	 * The passed function and listener object must match the ones used for event registration.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachSomeLoaded = function(fnFunction, oListener) {
@@ -466,17 +570,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * This event exists for compatibility with the old Annotation loader
-	 * Attaches the given callback to the <code>allFailed</code> event. This event is fired when no annotation from a group of
-	 * sources was successfully (loaded,) parsed and merged.
-	 * The parameter <code>result</code> will be set on the event argument and contains an array of Errors in the order in which
-	 * the sources had been added.
+	 * Attaches the given callback to the <code>allFailed</code> event.
 	 *
-	 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
-	 * @param {function} fnFunction The event callback. This function will be called in the context of the oListener
-	 *        object if given as the next argument.
-	 * @param {object} [oListener] Object to use as context of the callback. If empty, the global context is used.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} <code>this</code>-reference to allow method chaining
+	 * This event exists for compatibility with the old Annotation loader. It is fired when no annotation from a group
+	 * of sources was successfully (loaded,) parsed and merged.
+	 * The parameter <code>result</code> will be set on the event argument and contains an array of Errors in the order
+	 * in which the sources had been added.
+	 *
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to this <code>sap.ui.model.odata.v2.ODataAnnotations</code> itself.
+	 *
+	 * @param {object}
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
+	 * @param {function}
+	 *            fnFunction The function to be called, when the event occurs
+	 * @param {object}
+	 *            [oListener] Context object to call the event handler with, defaults to this
+	 *            <code>ODataAnnotations</code> itself
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachAllFailed = function(oData, fnFunction, oListener) {
@@ -485,36 +597,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 	/**
 	 * Detaches the given callback from the <code>allFailed</code> event.
-	 * The passed function and listener object must match the ones previously used for attaching to the event.
 	 *
-	 * @param {function} fnFunction The event callback previously used with {@link sap.ui.model.odata.v2.ODataAnnotations#attachFailed}.
-	 * @param {object} [oListener] The same (if any) context object that was used when attaching to the <code>error</code> event.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} <code>this</code>-reference to allow method chaining.
+	 * The passed function and listener object must match the ones used for event registration.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachAllFailed = function(fnFunction, oListener) {
 		return this.detachEvent("allFailed", fnFunction, oListener);
 	};
 
-	/**
-	 * Parameters of the <code>failed</code> event
-	 *
-	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.failedParameters
-	 * @property {Error[]} result An array of Errors (@see sap.ui.model.v2.ODataAnnotations#error) that occurred while
-	 *           loading a group of annotations
-	 * @public
-	 */
-
-
 
 	////////////////////////////////////////////////// Private Methods /////////////////////////////////////////////////
 
 	/**
-	 * Fires the <code>success</code> event whenever a source has sucessfull been (loaded,) parsed and merged into the annotation
+	 * Fires the <code>success</code> event whenever a source has successfully been (loaded,) parsed and merged into the annotation
 	 * data.
 	 *
-	 * @param {map} mResult The filled source-map of the successfull loading and parsing
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
+	 * @param {Object} mResult The filled source-map of the successful loading and parsing
+	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 */
 	ODataAnnotations.prototype._fireSuccess = function(mResult) {
@@ -535,7 +638,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 
 	/**
-	 * Fires the <code>loaded</code> event with an array of results in the result-parameter of the event
+	 * Fires the <code>loaded</code> event with an array of results in the result-parameter of the event.
 	 *
 	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source[]} aResults An array of results
 	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
@@ -546,7 +649,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * Fires the <code>failed</code> event with an array of results and errors in the result-parameter of the event
+	 * Fires the <code>failed</code> event with an array of results and errors in the result-parameter of the event.
 	 *
 	 * @param {Error[]} aErrors An array of Errors
 	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
@@ -557,7 +660,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * Fires the <code>someLoaded</code> event with an array of results and errors in the result-parameter of the event
+	 * Fires the <code>someLoaded</code> event with an array of results and errors in the result-parameter of the event.
 	 *
 	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source[]|Error[]|any} aResults An array of results and Errors
 	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
@@ -568,7 +671,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * Fires the <code>failed</code> event with an array of errors in the result-parameter of the event
+	 * Fires the <code>failed</code> event with an array of errors in the result-parameter of the event.
 	 *
 	 * @param {Error[]} aErrors An array of Errors
 	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
@@ -594,6 +697,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 				mSource.type = "xml";
 				mSource.xml = oData.xml;
 				mSource.lastModified = oData.lastModified;
+				mSource.eTag = oData.eTag;
 				return this._loadSource(mSource);
 			}.bind(this));
 		} else if (mSource.type === "xml") {
@@ -620,13 +724,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * @private
 	 */
 	ODataAnnotations.prototype._loadUrl = function(mSource) {
-		jQuery.sap.assert(mSource.type === "url", "Source type must be \"url\" in order to be loaded");
+		assert(mSource.type === "url", "Source type must be \"url\" in order to be loaded");
 
 		return new Promise(function(fnResolve, fnReject) {
 			var mAjaxOptions = {
 				url: mSource.data,
 				async: true,
-				headers: this.getHeaders(),
+				headers: this._getHeaders(),
 				beforeSend: function(oXHR) {
 					// Force text/plain so the XML parser does not run twice
 					oXHR.overrideMimeType("text/plain");
@@ -638,6 +742,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 				if (oXHR.getResponseHeader("Last-Modified")) {
 					mSource.lastModified = new Date(oXHR.getResponseHeader("Last-Modified"));
+				}
+
+				if (oXHR.getResponseHeader("eTag")) {
+					mSource.eTag = oXHR.getResponseHeader("eTag");
 				}
 
 				fnResolve(mSource);
@@ -662,13 +770,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * @private
 	 */
 	ODataAnnotations.prototype._parseSourceXML = function(mSource) {
-		jQuery.sap.assert(typeof mSource.xml === "string", "Source must contain XML string in order to be parsed");
+		assert(typeof mSource.xml === "string", "Source must contain XML string in order to be parsed");
 
 		return new Promise(function(fnResolve, fnReject) {
 			var oXMLDocument;
 			if (Device.browser.msie) {
 				// IE is a special case: Even though it supports DOMParser with the latest versions, the resulting
-				// document does not support the evaluate method, which leads to a differnt kind of XPath implementation
+				// document does not support the 'evaluate' method, which leads to a different kind of XPath implementation
 				// being used in the AnnotationParser. Thus IE (the MSXML implementation) must always be handled separately.
 				oXMLDocument = new window.ActiveXObject("Microsoft.XMLDOM");
 				oXMLDocument.preserveWhiteSpace = true;
@@ -724,12 +832,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 */
 	ODataAnnotations.prototype._parseSource = function(mSource) {
 		// On IE we have a special format for the XML documents on every other browser it must be a "Document" object.
-		jQuery.sap.assert(mSource.document instanceof window.Document || Device.browser.msie, "Source must contain a parsed XML document converted to an annotation object");
+		assert(mSource.document instanceof window.Document || Device.browser.msie, "Source must contain a parsed XML document converted to an annotation object");
 
 		return this._oMetadata.loaded()
 			.then(function() {
 				mSource.annotations
 					= AnnotationParser.parse(this._oMetadata, mSource.document, mSource.data);
+				//delete document as it is not needed anymore after parsing
+				delete mSource.document;
 				return mSource;
 			}.bind(this));
 	};
@@ -743,11 +853,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * @private
 	 */
 	ODataAnnotations.prototype._mergeSource = function(mSource) {
-		jQuery.sap.assert(typeof mSource.annotations === "object", "Source must contain an annotation object to be merged");
+		assert(typeof mSource.annotations === "object", "Source must contain an annotation object to be merged");
 
 		AnnotationParser.merge(this._mAnnotations, mSource.annotations);
 
 		return mSource;
+	};
+
+	/**
+	 * Returns a map of the public and private headers that are sent with every request to an annotation URL.
+	 * @private
+	 * @returns {Object<string,string>} A map of all public and private headers.
+	 */
+	ODataAnnotations.prototype._getHeaders = function() {
+		//The 'sap-cancel-on-close' header marks the OData annotation request as cancelable. This helps to save resources at the back-end.
+		return jQuery.extend({"sap-cancel-on-close": true}, this.getHeaders(), {
+			"Accept-Language": sap.ui.getCore().getConfiguration().getLanguageTag() // Always overwrite
+		});
 	};
 
 	///////////////////////////////////////////////////// End Class ////////////////////////////////////////////////////

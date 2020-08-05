@@ -129,10 +129,10 @@
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile DatePicker",
 			content : [
-				new sap.m.Label({text: "initial DatePicker", labelFor: "DP1"}),
-				new sap.m.DatePicker("DP1", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
+				new sap.m.Label({text: "Japanese DatePicker", labelFor: "DP1"}),
+				new sap.m.DatePicker("DP1", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation, displayFormatType: "Japanese", showFooter: false }),
 				new sap.m.Label({text: "initial DatePicker, initialFocusedDate new Date(2017, 5, 13)", labelFor: "DP1_v0"}),
-				new sap.m.DatePicker("DP1_v0", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation, initialFocusedDateValue: new Date(2017, 5, 13) }),
+				new sap.m.DatePicker("DP1_v0", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation, initialFocusedDateValue: new Date(2017, 5, 13), showFooter: true }),
 				new sap.m.Label({text: "DatePicker with given Value and Formatter", labelFor: "DP2"}),
 				new sap.m.DatePicker("DP2", { value: "2014-03-26", valueFormat: "yyyy-MM-dd", displayFormat: "long", fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
 				new sap.m.ToggleButton("TB1", { text: "specialDates", press: toggleSpecialDates}),
@@ -166,8 +166,10 @@
 				new sap.m.DatePicker("DP11", {
 					navigate: function (oEvent) {
 						var oRange = oEvent.getParameter("dateRange"),
+							bAfterPopupOpened = oEvent.getParameter("afterPopupOpened"),
 							oStartDate = oRange.getStartDate(),
-							oEndDate = oRange.getEndDate();
+							oEndDate = oRange.getEndDate(),
+							sFeedback = "Navigate event fired and new special dates marked";
 
 						// Generate some random dates within range
 						oStartDate.setDate(oStartDate.getDate() + Math.floor(Math.random() * 15));
@@ -192,10 +194,34 @@
 							})
 						);
 
+
+						// Indicate if the navigate event was fired, due to popup being opened
+						if (bAfterPopupOpened) {
+							sFeedback = "Popup opened - " + sFeedback;
+						}
+
 						// Give feedback
-						sap.m.MessageToast.show("Navigate event fired and new special dates marked");
+						sap.m.MessageToast.show(sFeedback);
 					}
-				})
+				}),
+				new sap.m.Label({text: "DatePicker with Formatter for month and year:", labelFor: "DP12"}),
+				new sap.m.DatePicker("DP12", {
+					dateValue: new Date("2014", "02", "26"),
+					displayFormat: "yyyy+++++MM",
+					change: handleChange
+				}),
+				new sap.m.Label({text: "DatePicker with Formatter for year:", labelFor: "DP13"}),
+				new sap.m.DatePicker("DP13", {
+					dateValue: new Date("2014", "02", "26"),
+					displayFormat: "----------------yyyyyyyyyy------------",
+					change: handleChange
+				}),
+				new sap.m.Label({text: "DatePicker for month and year in compact mode:", labelFor: "DP14"}),
+				new sap.m.DatePicker("DP14", {
+					dateValue: new Date("2014", "02", "26"),
+					displayFormat: "yyyy+++++MM",
+					change: handleChange
+				}).addStyleClass("sapUiSizeCompact")
 			],
 			footer: createFooter()
 		});

@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/ui/demo/nav/controller/BaseController"
-], function (BaseController) {
+	"sap/ui/demo/nav/controller/BaseController",
+	"sap/base/Log"
+], function(BaseController, Log) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.nav.controller.App", {
@@ -12,7 +13,7 @@ sap.ui.define([
 			// in order to see the debug info in the console, the log level needs to be explicitly
 			// set to INFO here.
 			// But for application development, the log level doesn't need to be set again in the code.
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.INFO);
+			Log.setLevel(Log.Level.INFO);
 
 			var oRouter = this.getRouter();
 
@@ -20,7 +21,7 @@ sap.ui.define([
 				var sHash = oEvent.getParameter("hash");
 				// do something here, i.e. send logging data to the backend for analysis
 				// telling what resource the user tried to access...
-				jQuery.sap.log.info("Sorry, but the hash '" + sHash + "' is invalid.", "The resource was not found.");
+				Log.info("Sorry, but the hash '" + sHash + "' is invalid.", "The resource was not found.");
 			});
 
 		}

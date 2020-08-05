@@ -4,10 +4,10 @@
 
 // Provides control sap.ui.commons.SegmentedButton.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     'sap/ui/core/Control',
     'sap/ui/core/delegate/ItemNavigation',
-    "./SegmentedButtonRenderer"
+    './SegmentedButtonRenderer'
 ],
 	function(jQuery, Control, ItemNavigation, SegmentedButtonRenderer) {
 	"use strict";
@@ -76,8 +76,6 @@ sap.ui.define([
 			}
 		}
 	}});
-
-	/* This file defines behavior for the SegmentedButton control */
 
 
 	/**
@@ -192,7 +190,7 @@ sap.ui.define([
 		var $content = this.$();
 		if ($content.length > 0) {
 			var rm = sap.ui.getCore().createRenderManager();
-			sap.ui.commons.SegmentedButtonRenderer.renderButtons(rm, this);
+			SegmentedButtonRenderer.renderButtons(rm, this);
 			rm.flush($content[0]);
 			rm.destroy();
 		}
@@ -246,7 +244,7 @@ sap.ui.define([
 		}
 		if (oButtonOld) {
 			oButtonOld.removeStyleClass("sapUiSegButtonSelected");
-			oButtonOld.$().blur();
+			oButtonOld.$().trigger("blur");
 		}
 		if (oButtonOld && oButtonOld._icon) {
 			oButtonOld.setIcon(oButtonOld._icon);
@@ -259,6 +257,8 @@ sap.ui.define([
 			}
 			oButton.addStyleClass("sapUiSegButtonSelected");
 		}
+
+		return this;
 	};
 
 	SegmentedButton.prototype.setEnabled = function(bEnabled) {
@@ -272,6 +272,7 @@ sap.ui.define([
 			this.addDelegate(this._oItemNavigation);
 		}
 		this.setProperty("enabled", bEnabled);
+		return this;
 	};
 
 	/*
@@ -287,7 +288,7 @@ sap.ui.define([
 			oButton.detachPress(this._buttonSelected, this);
 		}
 
-		var oClone = sap.ui.core.Element.prototype.clone.apply(this, arguments);
+		var oClone = Control.prototype.clone.apply(this, arguments);
 
 		for (i = 0; i < aButtons.length; i++) {
 			oButton = aButtons[i];
@@ -305,4 +306,4 @@ sap.ui.define([
 
 	return SegmentedButton;
 
-}, /* bExport= */ true);
+});

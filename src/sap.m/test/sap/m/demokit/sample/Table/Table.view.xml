@@ -12,13 +12,10 @@
 			}
 		}">
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<content>
 					<Title text="Products" level="H2"/>
 					<ToolbarSpacer />
-					<ToggleButton id="stickyColHdr"
-						text="Sticky Column Headers"
-						press="onToggleStickyColHdr" />
 					<ComboBox id="idPopinLayout"
 						placeholder="Popin layout options"
 						change="onPopinLayoutChanged">
@@ -31,9 +28,24 @@
 								key="GridSmall"/>
 						</items>
 					</ComboBox>
+					<Label text="Sticky options:" />
+					<CheckBox text="ColumnHeaders"
+						select="onSelect"/>
+					<CheckBox text="HeaderToolbar"
+						select="onSelect"/>
+					<CheckBox text="InfoToolbar"
+						select="onSelect"/>
+					<ToggleButton id="toggleInfoToolbar"
+						text="Hide/Show InfoToolbar"
+						press="onToggleInfoToolbar" />
 				</content>
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
+		<infoToolbar>
+			<OverflowToolbar>
+				<Label text="Wide range of available products"/>
+			</OverflowToolbar>
+		</infoToolbar>
 		<columns>
 			<Column
 				width="12em">

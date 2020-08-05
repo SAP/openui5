@@ -1,17 +1,21 @@
 /*global QUnit */
 
-sap.ui.require([], function() {
+sap.ui.define([], function() {
 	"use strict";
 
 	QUnit.module("Library", {});
 
 	QUnit.test("load", function(assert) {
-		try {
-			sap.ui.getCore().loadLibrary("sap.ui.table");
-		} catch (e) {
+		var done = assert.async();
+		var oPromise = sap.ui.getCore().loadLibrary("sap.ui.table", {async: true});
+		oPromise.then(function() {
+			assert.ok(!!sap.ui.table, "Table Lib loaded");
+			done();
+		});
+		oPromise["catch"](function() {
 			assert.ok(false, "Fail on load");
-		}
-		assert.ok(!!sap.ui.table, "Table Lib loaded");
+			done();
+		});
 	});
 
 	QUnit.test("TableHelper", function(assert) {

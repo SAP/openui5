@@ -5,7 +5,8 @@
 	xmlns="sap.m">
 	<List
 		headerText="Products"
-		items="{/ProductCollection}" >
+		items="{/ProductCollection}"
+        swipe="handleSwipe">
 		<StandardListItem
 			title="{Name}"
 			description="{ProductId}"
@@ -13,10 +14,7 @@
 			iconDensityAware="false"
 			iconInset="false" />
 		<swipeContent>
-			<Button
-				text="Delete Item"
-				type="Reject"
-				press="handleReject" />
+			<Button press="handleReject" />
 		</swipeContent>
 	</List>
 </mvc:View>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.m.ObjectIdentifier - Accessibility</title>
+
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+	</script>
+
+	<script>
+		"use strict";
+
+		// -----------------
+		// Utility functions
+		// -----------------
+
+		function onTitlePress(oEvent) {
+			sap.m.MessageToast.show(oEvent.getSource().getId() + " pressed")
+		}
+
+		function getTitle(sText) {
+			return new sap.m.Title({
+				text: sText,
+				titleStyle: sap.ui.core.TitleLevel.H3
+			}).addStyleClass("sapUiMediumMarginTop")
+		}
+
+		function getText(sText, bSuppressApplyingClasses) {
+			var oGeneratedText = new sap.m.Text({ text: sText });
+
+			if (!bSuppressApplyingClasses) {
+				oGeneratedText.addStyleClass("sapUiMediumMarginTop sapUiSmallMarginBottom");
+			}
+
+			return oGeneratedText;
+		}
+
+		function getObjectIdentifier(oProps, bShouldIndent) {
+			// Wraps the standard constructor call and provides an option to adds
+			// indentation, to avoid confusion visually in some cases
+			var oGeneratedObjectIdentifier = new sap.m.ObjectIdentifier(oProps);
+
+			if (bShouldIndent) {
+				oGeneratedObjectIdentifier.addStyleClass("sapUiMediumMarginBegin")
+			}
+
+			return oGeneratedObjectIdentifier;
+		}
+
+
+		// ------------------------------------
+		// Standalone ObjectIdentifier controls
+		// ------------------------------------
+
+		var oActiveObjectIdentifier = getObjectIdentifier({
+			title: "Notebook",
+			text: "Perfectly fine for daily use",
+			titleActive: true,
+			titlePress: onTitlePress
+		}, true);
+
+		var oObjectIdentifier = getObjectIdentifier({
+			title: "Gaming Notebook",
+			text: "Your wallet is going to feel this"
+		}, true);
+
+		var oActiveTextlessObjectIdentifier = getObjectIdentifier({
+			title: "Ultrawide monitor",
+			titleActive: true,
+			titlePress: onTitlePress
+		}, true);
+
+		var oTextlessObjectIdentifier = getObjectIdentifier({
+			title: "Standard monitor"
+		}, true);
+
+		var oTitlelessObjectIdentifier = getObjectIdentifier({
+			text: "Just a regular computer shop"
+		}, true);
+
+
+		// -------------------------------------
+		// Labelling ObjectIdentifiers controls
+		// -------------------------------------
+
+		var oAriaLabelledByText = new sap.m.Text({
+			text: "Text used for labelling"
+		}).addStyleClass("sapUiMediumMarginBegin sapUiTinyMarginBottom");	// Added for better visual representation
+
+		var oObjectIdentifierAriaLabelledBy = getObjectIdentifier({
+			title: "Gaming mouse",
+			text: "So many buttons to click...",
+			titleActive: true,
+			titlePress: onTitlePress,
+			ariaLabelledBy: oAriaLabelledByText
+		}, true);
+
+
+		// --------------------------
+		// ObjectIdentifiers in Table
+		// --------------------------
+
+		var oTable = new sap.m.Table({
+			columns: [
+				new sap.m.Column({
+					header: getText("Control", true)
+				}),
+				new sap.m.Column({
+					header: getText("Description", true)
+				})
+			],
+			items: [
+				new sap.m.ColumnListItem({
+					cells: [
+						oActiveObjectIdentifier.clone(),
+						getText("Active ObjectIdentifier with title and text", true)
+					]
+				}),
+				new sap.m.ColumnListItem({
+					cells: [
+						oObjectIdentifier.clone(),
+						getText("ObjectIdentifier with title and text", true)
+					]
+				}),
+				new sap.m.ColumnListItem({
+					cells: [
+						oActiveTextlessObjectIdentifier.clone(),
+						getText("Active ObjectIdentifier with title only", true)
+					]
+				}),
+				new sap.m.ColumnListItem({
+					cells: [
+						oTextlessObjectIdentifier.clone(),
+						getText("ObjectIdentifier with title only", true)
+					]
+				}),
+				new sap.m.ColumnListItem({
+					cells: [
+						oTitlelessObjectIdentifier.clone(),
+						getText("ObjectIdentifier with text only", true)
+					]
+				})
+			]
+		});
+
+
+		// ----------------
+		// Page's layout
+		// ----------------
+
+		var oLayout = new sap.ui.layout.VerticalLayout({
+			content: [
+				getTitle("Standalone ObjectIdentifiers"),
+
+				getText("Active ObjectIdentifier with title and text:"),
+				oActiveObjectIdentifier,
+				getText("ObjectIdentifier with title and text:"),
+				oObjectIdentifier,
+				getText("Active ObjectIdentifier with title only:"),
+				oActiveTextlessObjectIdentifier,
+				getText("ObjectIdentifier with title only:"),
+				oTextlessObjectIdentifier,
+				getText("ObjectIdentifier with text only:"),
+				oTitlelessObjectIdentifier,
+
+				getTitle("Labelling ObjectIdentifiers"),
+
+				getText("ObjectIdentifier with ariaLabelledBy:"),
+				oAriaLabelledByText,
+				oObjectIdentifierAriaLabelledBy,
+
+				getTitle("ObjectIdentifiers in Table"),
+
+				getText("Note: ObjectIdentifiers are cloned from the 'Standalone ObjectIdentifiers' section"),
+				oTable
+			]
+		}).addStyleClass("sapUiSmallMarginBegin");
+
+		oLayout.placeAt("content");
+	</script>
+
+	<style>
+		html, body {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
+<body id="content" class="sapUiBody">
+</body>
+</html>

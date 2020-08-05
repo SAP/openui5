@@ -1,10 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
-				'sap/ui/fl/Utils'
-], function(BaseCommand,
-			flUtils) {
+sap.ui.define([
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/fl/Utils"
+], function(
+	BaseCommand,
+	FlUtils
+) {
 	"use strict";
 
 	/**
@@ -44,34 +47,35 @@ sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
 	 */
 	CompositeCommand.prototype.execute = function() {
 		var aPromises = [];
-		this._forEachCommand(function(oCommand){
+		this._forEachCommand(function(oCommand) {
 			aPromises.push(oCommand.execute.bind(oCommand));
 		});
-		return flUtils.execPromiseQueueSequentially(aPromises, true)
+		return FlUtils.execPromiseQueueSequentially(aPromises, true)
 
 		.catch(function(e) {
-			// if a command has a restoreState function but no state, undoing it could cause errors.
-			// this happens when such a command didn't get executed yet (a command before failed)
 			var aCommands = this.getCommands();
 			aCommands.forEach(function(oCommand) {
 				if (oCommand instanceof sap.ui.rta.command.FlexCommand) {
-					if (oCommand.getFnRestoreState() && !oCommand.getState() || !oCommand._aRecordedUndo) {
+					if (!oCommand._aRecordedUndo) {
 						this.removeCommand(oCommand);
 					}
 				}
 			}.bind(this));
 
-			this.undo();
-			return Promise.reject(e);
+			return this.undo()
+
+			.then(function() {
+				return Promise.reject(e);
+			});
 		}.bind(this));
 	};
 
 	CompositeCommand.prototype.undo = function() {
 		var aPromises = [];
-		this._forEachCommandInReverseOrder(function(oCommand){
+		this._forEachCommandInReverseOrder(function(oCommand) {
 			aPromises.push(oCommand.undo.bind(oCommand));
 		});
-		return flUtils.execPromiseQueueSequentially(aPromises);
+		return FlUtils.execPromiseQueueSequentially(aPromises);
 	};
 
 	CompositeCommand.prototype._forEachCommand = function(fnDo) {
@@ -85,6 +89,41 @@ sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
 			fnDo.call(this, aCommands[i]);
 		}
 	};
-	return CompositeCommand;
 
-}, /* bExport= */true);
+	CompositeCommand.prototype._addCompositeIdToChange = function(oCommand) {
+		if (oCommand.getPreparedChange && oCommand.getPreparedChange()) {
+			var oChangeDefinition = oCommand.getPreparedChange().getDefinition();
+			if (!oChangeDefinition.support.compositeCommand) {
+				if (!this._sCompositeId) {
+					this._sCompositeId = FlUtils.createDefaultFileName("composite");
+				}
+				oChangeDefinition.support.compositeCommand = this._sCompositeId;
+			}
+		}
+	};
+
+	/**
+	 * @override
+	 * @param {object} oCommand The command to be added to the aggregation of the composite command
+	 * @param {boolean} bSuppressInvalidate if true, this CompositeCommand as well as the added child are not marked as changed
+	 * @returns {object} the composite command
+	 */
+	CompositeCommand.prototype.addCommand = function(oCommand, bSuppressInvalidate) {
+		this._addCompositeIdToChange(oCommand);
+		return this.addAggregation("commands", oCommand, bSuppressInvalidate);
+	};
+
+	/**
+	 * @override
+	 * @param {object} oCommand The command to be added to the aggregation of the composite command
+	 * @param {int} iIndex the index the command should be inserted at
+	 * @param {boolean} bSuppressInvalidate if true, this CompositeCommand as well as the added child are not marked as changed
+	 * @returns {object} the composite command
+	 */
+	CompositeCommand.prototype.insertCommand = function(oCommand, iIndex, bSuppressInvalidate) {
+		this._addCompositeIdToChange(oCommand);
+		return this.insertAggregation("commands", oCommand, iIndex, bSuppressInvalidate);
+	};
+
+	return CompositeCommand;
+});

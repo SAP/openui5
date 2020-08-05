@@ -1,33 +1,33 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	'sap/ui/dt/Overlay',
-	'sap/ui/dt/ElementOverlay',
-	'sap/ui/dt/AggregationOverlay',
-	'sap/ui/dt/AggregationDesignTimeMetadata',
-	'sap/m/Page',
-	'sap/m/Button',
-	'sap/m/Panel',
-	'jquery.sap.global'
+sap.ui.define([
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/dt/AggregationOverlay",
+	"sap/ui/dt/AggregationDesignTimeMetadata",
+	"sap/ui/dt/DOMUtil",
+	"sap/m/Page",
+	"sap/m/Button",
+	"sap/m/Panel",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	Overlay,
 	ElementOverlay,
 	AggregationOverlay,
 	AggregationDesignTimeMetadata,
+	DOMUtil,
 	Page,
 	Button,
 	Panel,
-	jQuery
+	jQuery,
+	sinon
 ) {
 	"use strict";
-
-	QUnit.start();
-
+	var sandbox = sinon.sandbox.create();
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation without domRef DT metadata and without children", {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			this.oPage = new Page();
 			this.oPage.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -46,12 +46,12 @@ function(
 	}, function () {
 		QUnit.test("when AggregationOverlay is initialized", function(assert) {
 			assert.strictEqual(this.oAggregationOverlay.getGeometry(), undefined, "geometry for the overlay is undefined when no children are given");
-			assert.strictEqual(this.oAggregationOverlay.$().is(":visible"), false, "aggregation is hidden because no children are given");
+			assert.strictEqual(DOMUtil.isVisible(this.oAggregationOverlay.getDomRef()), false, "aggregation is hidden because no children are given");
 		});
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation with domRef DT metadata", {
-		beforeEach: function(assert) {
+		beforeEach: function () {
 			this.oPage = new Page();
 			this.oPage.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -66,6 +66,8 @@ function(
 				})
 			});
 			Overlay.getOverlayContainer().append(this.oAggregationOverlay.render());
+
+			this.oAggregationOverlay.applyStyles();
 		},
 		afterEach: function() {
 			this.oPage.destroy();
@@ -75,11 +77,11 @@ function(
 	}, function () {
 		QUnit.test("when AggregationOverlay is initialized", function(assert) {
 			assert.strictEqual(this.oAggregationOverlay.getGeometry().domRef, this.oPage.$().find(">section").get(0), "domRef for the overlay is correct");
-			assert.strictEqual(this.oAggregationOverlay.$().is(":visible"), true, "aggregation is rendered");
+			assert.strictEqual(DOMUtil.isVisible(this.oAggregationOverlay.getDomRef()), true, "aggregation is rendered");
 		});
 	});
 
-	QUnit.module("Given that an AggregationOverlay is created for an aggregation without domRef DT metadata, but with children", {
+	QUnit.module("Given that an AggregationOverlay is created for an aggregation and a rendered child is added", {
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
@@ -108,24 +110,51 @@ function(
 			).then(function (aOverlays) {
 				this.oAggregationOverlay = new AggregationOverlay({
 					element: this.oPage,
-					designTimeMetadata : new AggregationDesignTimeMetadata(),
-					children: aOverlays,
+					isRoot: true,
+					designTimeMetadata: new AggregationDesignTimeMetadata(),
+					children: [aOverlays[0]],
 					init: function (oEvent) {
 						Overlay.getOverlayContainer().append(oEvent.getSource().render());
+						this.oAggregationOverlay.applyStyles();
 						fnDone();
-					}
+					}.bind(this)
 				});
+				this.oChildNotAdded = aOverlays[1];
 			}.bind(this));
 		},
 		afterEach: function() {
 			this.oPage.destroy();
 			this.oAggregationOverlay.destroy();
-			sap.ui.dt.Overlay.removeOverlayContainer();
+			Overlay.removeOverlayContainer();
 		}
 	}, function () {
 		QUnit.test("when AggregationOverlay is initialized", function(assert) {
-			assert.strictEqual(this.oAggregationOverlay.getGeometry().domRef, undefined, "domRef for the overlay is undefined");
-			assert.strictEqual(this.oAggregationOverlay.$().is(":visible"), true, "aggregation is rendered");
+			assert.strictEqual(DOMUtil.isVisible(this.oAggregationOverlay.getDomRef()), true, "aggregation is rendered");
+		});
+
+		QUnit.test("when an un-rendered ElementOverlay is added as child into the AggregationOverlay", function(assert) {
+			var done = assert.async();
+			this.oChildNotAdded.attachEventOnce("afterRendering", function(oEvent) {
+				assert.deepEqual(oEvent.getSource(), this.oChildNotAdded, "then 'afterRendering' event is fired for the added un-rendered ElementOverlay");
+				done();
+			}, this);
+			assert.notOk(this.oChildNotAdded.isRendered(), "then the child ElementOverlay to be added is not rendered");
+			this.oAggregationOverlay.addChild(this.oChildNotAdded);
+		});
+
+		QUnit.test("when a rendered ElementOverlay is added as child into the AggregationOverlay", function(assert) {
+			// render ElementOverlay to be added
+			this.oChildNotAdded.render();
+
+			sandbox.stub(this.oChildNotAdded, "fireEvent")
+				.callThrough()
+				.withArgs("afterRendering")
+				.callsFake(function() {
+					assert.ok(false, "then 'afterRendering' should not be called for a rendered ElementOverlay");
+				});
+
+			assert.ok(this.oChildNotAdded.isRendered(), "then the child ElementOverlay to be added is rendered");
+			this.oAggregationOverlay.addChild(this.oChildNotAdded);
 		});
 	});
 
@@ -191,7 +220,7 @@ function(
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation-like association", {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			this.oPage = new Page();
 
 			this.oAggregationLikeOverlay = new AggregationOverlay({
@@ -221,7 +250,48 @@ function(
 		});
 	});
 
-	QUnit.done(function( details ) {
+	QUnit.module("Given that an AggregationOverlay is created and is not rendered", {
+		beforeEach: function () {
+			this.oPage = new Page();
+
+			this.oAggregationOverlay = new AggregationOverlay({
+				id: "unRenderedAggregationOverlay",
+				element: this.oPage,
+				designTimeMetadata: new AggregationDesignTimeMetadata({
+					data: {
+						domRef : ":sap-domref > section"
+					}
+				})
+			});
+		},
+		afterEach: function() {
+			this.oPage.destroy();
+			this.oAggregationOverlay.destroy();
+			Overlay.removeOverlayContainer();
+		}
+	}, function () {
+		QUnit.test("when this AggregationOverlay is rendered later and two browser events exist for it", function(assert) {
+			var fnDone = assert.async(2);
+			var sMockText1 = "mockContextText1";
+			var sMockText2 = "mockContextText2";
+			var sEventName = "mockEvent";
+
+			var fnEventHandler = sandbox.stub()
+				.withArgs(sinon.match.any, sMockText1).callsFake(fnDone)
+				.withArgs(sinon.match.any, sMockText2).callsFake(fnDone);
+
+			this.oAggregationOverlay.attachEventOnce("afterRendering", function(oEvent) {
+				assert.ok(true, "then AggregationOverlay is rendered");
+				oEvent.getSource().$().trigger(sEventName, [sMockText1]);
+				oEvent.getSource().$().trigger(sEventName, [sMockText2]);
+			});
+
+			this.oAggregationOverlay.attachBrowserEvent(sEventName, fnEventHandler, this.oAggregationOverlay);
+			this.oAggregationOverlay.render();
+		});
+	});
+
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 });

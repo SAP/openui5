@@ -4,12 +4,11 @@
 
 // Provides control sap.ui.commons.form.GridLayout.
 sap.ui.define([
- 'jquery.sap.global',
  'sap/ui/commons/library',
  'sap/ui/layout/form/GridLayout',
- "./GridLayoutRenderer"
+ './GridLayoutRenderer'
 ],
-	function(jQuery, library, GridLayout1, GridLayoutRenderer) {
+	function(library, LayoutGridLayout, GridLayoutRenderer) {
 	"use strict";
 
 
@@ -37,16 +36,12 @@ sap.ui.define([
 	 * @alias sap.ui.commons.form.GridLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var GridLayout = GridLayout1.extend("sap.ui.commons.form.GridLayout", /** @lends sap.ui.commons.form.GridLayout.prototype */ { metadata : {
+	var GridLayout = LayoutGridLayout.extend("sap.ui.commons.form.GridLayout", /** @lends sap.ui.commons.form.GridLayout.prototype */ { metadata : {
 
 		deprecated : true,
 		library : "sap.ui.commons"
 	}});
 
-	/**
-	 * This file defines behavior for the control
-	 */
-
 	return GridLayout;
 
-}, /* bExport= */ true);
+});

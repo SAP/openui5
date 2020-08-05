@@ -1,34 +1,40 @@
-/*global QUnit,sinon*/
+/*global QUnit*/
 
-
-(function(QUnit) {
+sap.ui.define([
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration",
+	"sap/ui/fl/RegistrationDelegator"
+], function(
+	sinon,
+	jQuery,
+	Configuration,
+	RegistrationDelegator
+) {
 	"use strict";
-
-	jQuery.sap.registerModulePath("testComponent", "./testComponent");
-	jQuery.sap.registerModulePath("testComponentAsync", "./testComponentAsync");
 
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("sap.ui.fl.library", {
-		beforeEach: function() {
-		},
 		afterEach: function() {
 			sandbox.restore();
 		}
-	});
-
-	QUnit.test("triggers all its registrations", function (assert) {
-		var done = assert.async();
-
-		sap.ui.require(["sap/ui/fl/RegistrationDelegator"], function (RegistrationDelegator) {
-
+	}, function() {
+		QUnit.test("triggers all its registrations", function (assert) {
 			var oRegisterAllStub = sandbox.stub(RegistrationDelegator, "registerAll");
 
-			sap.ui.getCore().loadLibrary("sap/ui/fl");
-
-			assert.ok(oRegisterAllStub.calledOnce, "the registration is done");
-			done();
+			return new Promise(function(resolve) {
+				sap.ui.require(["sap/ui/fl/library"], function() {
+					assert.equal(oRegisterAllStub.callCount, 1, "the registration is done");
+					resolve();
+				});
+			});
 		});
 	});
 
-}(QUnit));
+
+
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
+	});
+});

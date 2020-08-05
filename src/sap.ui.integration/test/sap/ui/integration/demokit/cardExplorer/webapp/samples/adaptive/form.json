@@ -1,0 +1,194 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adativecard.embedded",
+		"type": "card",
+		"title": "Sample of an Adaptive Card with Form",
+		"subTitle": "Sample of an Adaptive Card with Form",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Adaptive",
+				"Card",
+				"Form",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"header": {
+			"title": "Form Card",
+			"subTitle": "Adaptive Card with sap.f.cards.Header",
+			"icon": {
+				"src": "sap-icon://form"
+			}
+		},
+		"type": "AdaptiveCard",
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+				{
+					"type": "TextBlock",
+					"text": "Your Name",
+					"isSubtle": true,
+					"size": "medium"
+				},
+				{
+					"type": "Input.Text",
+					"placeholder": "Last, First",
+					"style": "text",
+					"id": "SimpleVal"
+				},
+				{
+					"type": "TextBlock",
+					"text": "Email address",
+					"isSubtle": true,
+					"size": "medium"
+				},
+				{
+					"type": "Input.Text",
+					"placeholder": "youremail@example.com",
+					"style": "email",
+					"id": "EmailVal"
+				},
+				{
+					"type": "TextBlock",
+					"text": "Phone Number",
+					"isSubtle": true,
+					"size": "medium"
+				},
+				{
+					"type": "Input.Text",
+					"placeholder": "xxx.xxx.xxxx",
+					"style": "tel",
+					"id": "TelVal",
+					"maxLength": 10
+				},
+				{
+					"type": "TextBlock",
+					"text": "Age",
+					"isSubtle": true,
+					"size": "medium"
+				},
+				{
+					"type": "Input.Number",
+					"id": "NumVal",
+					"min": 0,
+					"max": 110,
+					"placeholder": "Age"
+				},
+				{
+					"type": "TextBlock",
+					"text": "Starting Date",
+					"isSubtle": true,
+					"size": "medium"
+				},
+				{
+					"type": "Input.Date",
+					"placeholder": "Start Date",
+					"id": "DateVal",
+					"value": "2017-09-20"
+				},
+				{
+					"type": "Input.Toggle",
+					"title": "I accept the terms and conditions",
+					"id": "Checked",
+					"wrap": true,
+					"value": "false",
+					"valueOn": "true",
+					"valueOff": "false"
+				}
+			],
+			"actions": [
+				{
+					"type": "Action.ShowCard",
+					"title": "Additional Information",
+					"card": {
+						"type": "AdaptiveCard",
+						"body": [
+							{
+								"type": "TextBlock",
+								"text": "Website",
+								"isSubtle": true,
+								"size": "medium"
+							},
+							{
+								"type": "Input.Text",
+								"placeholder": "Website Url",
+								"style": "url",
+								"id": "UrlVal"
+							},
+							{
+								"type": "TextBlock",
+								"text": "Description",
+								"isSubtle": true,
+								"size": "medium"
+							},
+							{
+								"type": "Input.Text",
+								"style": "text",
+								"isMultiline": true,
+								"id": "MultiLineVal"
+							},
+							{
+								"type": "TextBlock",
+								"text": "Do you have a driver's license?",
+								"isSubtle": true
+							},
+							{
+								"type": "Input.ChoiceSet",
+								"id": "SingleSelectVal",
+								"style": "expanded",
+								"choices": [
+									{
+										"title": "Yes",
+										"value": "1"
+									},
+									{
+										"title": "No",
+										"value": "2"
+									}
+								]
+							},
+							{
+								"type": "TextBlock",
+								"text": "How do you want to be notified?",
+								"isSubtle": true
+							},
+							{
+								"type": "Input.ChoiceSet",
+								"id": "MultiSelectVal",
+								"isMultiSelect": true,
+								"choices": [
+									{
+										"title": "Via mail",
+										"value": "1"
+									},
+									{
+										"title": "Via text message",
+										"value": "2"
+									},
+									{
+										"title": "Via Phone call",
+										"value": "3"
+									}
+								]
+							}
+						]
+					}
+				},
+				{
+					"type": "Action.Submit",
+					"title": "Submit"
+				}
+			]
+		}
+	}
+}

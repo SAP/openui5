@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.OverflowToolbarFooter",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.OverflowToolbarFooter.OverflowToolbar",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"OverflowToolbar.view.xml",
+					"OverflowToolbar.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,12 +1,18 @@
 {
-	"_version": "1.8.0",
+	"_version": "1.21.0",
 	"sap.app": {
 		"id": "sap.ui.demo.orderbrowser",
 		"type": "application",
 		"resources": "resources.json",
-		"i18n": "i18n/i18n.properties",
-		"title": "Order Browser",
-		"description": "Demo app using the master-detail pattern, allowing to browse through a list of orders",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -19,10 +25,6 @@
 					"localUri": "localService/metadata.xml"
 				}
 			}
-		},
-		"sourceTemplate": {
-			"id": "sap.ui.ui5-template-plugin.2masterdetail",
-			"version": "1.38.3"
 		}
 	},
 	"sap.ui": {
@@ -49,17 +51,11 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.38.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
-				"sap.ui.core": {
-					"minVersion": "1.38.0"
-				},
-				"sap.m": {
-					"minVersion": "1.38.0"
-				},
-				"sap.ui.layout": {
-					"minVersion": "1.38.0"
-				}
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.f": {}
 			}
 		},
 		"contentDensities": {
@@ -70,7 +66,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.orderbrowser.i18n.i18n"
+					"bundleName": "sap.ui.demo.orderbrowser.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			},
 			"": {
@@ -80,16 +80,13 @@
 		},
 		"routing": {
 			"config": {
-				"routerClass": "sap.m.routing.Router",
+				"routerClass": "sap.f.routing.Router",
 				"viewType": "XML",
 				"viewPath": "sap.ui.demo.orderbrowser.view",
-				"controlId": "idAppControl",
-				"controlAggregation": "detailPages",
+				"controlId": "layout",
+				"controlAggregation": "beginColumnPages",
 				"bypassed": {
-					"target": [
-						"master",
-						"notFound"
-					]
+					"target": "notFound"
 				},
 				"async": true
 			},
@@ -97,10 +94,7 @@
 				{
 					"pattern": "",
 					"name": "master",
-					"target": [
-						"object",
-						"master"
-					]
+					"target": "master"
 				},
 				{
 					"pattern": "Orders/{objectId}/:?query:",
@@ -115,21 +109,18 @@
 				"master": {
 					"viewName": "Master",
 					"viewLevel": 1,
-					"viewId": "master",
-					"controlAggregation": "masterPages"
+					"viewId": "master"
 				},
 				"object": {
 					"viewName": "Detail",
 					"viewId": "detail",
-					"viewLevel": 2
+					"viewLevel": 1,
+					"controlAggregation": "midColumnPages"
 				},
 				"detailObjectNotFound": {
 					"viewName": "DetailObjectNotFound",
-					"viewId": "detailObjectNotFound"
-				},
-				"detailNoObjectsAvailable": {
-					"viewName": "DetailNoObjectsAvailable",
-					"viewId": "detailNoObjectsAvailable"
+					"viewId": "detailObjectNotFound",
+					"controlAggregation": "midColumnPages"
 				},
 				"notFound": {
 					"viewName": "NotFound",

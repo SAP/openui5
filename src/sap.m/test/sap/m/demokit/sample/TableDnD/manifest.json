@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TableDnD",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.m.sample.TableDnD.View",
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"View.view.xml",
+					"Controller.controller.js",
+					"AvailableProducts.view.xml",
+					"AvailableProducts.controller.js",
+					"SelectedProducts.view.xml",
+					"SelectedProducts.controller.js",
+					"Utils.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

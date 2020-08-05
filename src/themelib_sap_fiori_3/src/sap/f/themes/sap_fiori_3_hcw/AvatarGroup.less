@@ -1,0 +1,19 @@
+/* ================================= */
+/* CSS for control sap.f/Avatar      */
+/* Quartz High Contrast White theme  */
+/* ================================= */
+
+html.sap-desktop .sapFAvatarGroup .sapFAvatarGroupMoreButton {
+	&.sapMBtn {
+		outline: none;
+
+		.sapMBtnInner {
+			border: 0.125rem solid @sapUiFieldBorderColor;
+			border-radius: 50%
+		}
+	}
+
+	&.sapMBtn:focus > .sapMFocusable {
+		outline: 0.0625rem dotted @sapUiContentFocusColor;
+	}
+}

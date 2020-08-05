@@ -4,14 +4,18 @@
 /* ================================== */
 
 .sapMBreadcrumbs {
-	margin: 0 0 0.5rem 0;
-	padding: 0;
 	white-space: nowrap;
-	list-style-type: none;
-	display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
-	display: -webkit-flex; /* NEW - Chrome */
-	display: flex;
 	outline: none;
+	margin: 0 0 0.5rem 0;
+
+	> ol {
+		display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+		display: -webkit-flex; /* NEW - Chrome */
+		display: flex;
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+	}
 
 	.sapMSlt {
 		border: 0;
@@ -29,11 +33,18 @@
 		}
 	}
 
-	.sapMSltIconOnly.sapMSltHoverable:hover, .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled),
-	.sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:not(.sapMSltState):hover,
-	.sapMSltPressed:not(.sapMSltDisabled), .sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:hover {
+	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem > 
+	.sapMSlt.sapMSltIconOnly.sapMSltWithIcon.sapMSltHoverable.sapMSltWithArrow {
 		background: transparent;
 		border: none;
+
+		&:focus,
+		&:hover {
+			.sapMSltIcon:before {
+				color: @sapUiLinkHover;
+				border-bottom: 0.0625rem solid @sapUiLinkHover;
+			}
+		}
 	}
 
 	.sapMSltIcon:before {
@@ -43,6 +54,7 @@
 		speak: none;
 		content: "...\e1ef";
 		font-size: @sapMFontMediumSize;
+		padding-bottom: 0.0625rem;
 	}
 
 	.sapMLnk, .sapMBreadcrumbsCurrentLocation, .sapMSlt, .sapMBreadcrumbsSeparator {
@@ -68,7 +80,12 @@
 
 	.sapMBreadcrumbsCurrentLocation {
 		font-weight: normal;
-		line-height: 1.4;
+		color: @sapUiContentLabelColor;
+
+		&:focus {
+			outline: 1px dotted @sapUiContentFocusColor;
+			outline-offset: -1px;
+		}
 	}
 
 	.sapMBreadcrumbsItem {
@@ -81,6 +98,7 @@
 
 	.sapMBreadcrumbsSeparator {
 		padding: 0 0.25rem;
+		font-size: @sapMFontMediumSize;
 	}
 
 	.sapMBreadcrumbsItem, .sapMBreadcrumbsSeparator {

@@ -1,0 +1,6 @@
+{
+	"@odata.context" : "../$metadata#SalesOrderList('0500000003')/SO_2_SCHDL(DeliveryDate,ScheduleKey)/$entity",
+	"@odata.metadataEtag" : "W/\"20191129135853\"",
+	"ScheduleKey" : "FA163E7AD4F11EE9B3F785B28B5E6A14",
+	"DeliveryDate" : "2019-09-11T23:00:00Z"
+}

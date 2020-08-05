@@ -1,0 +1,54 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.ServerDrivenPaging.Main"
+	xmlns="sap.m"
+	xmlns:t="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc">
+	<IconTabBar select=".onTabSelect">
+		<items>
+			<IconTabFilter id="list" text="m.Table">
+				<Table id="businessPartnerList" growing="true" growingThreshold="21">
+					<headerToolbar>
+						<Toolbar>
+							<Title id="businessPartnerListTitle" text="{$count} Business Partners"/>
+						</Toolbar>
+					</headerToolbar>
+					<columns>
+						<Column>
+							<Label text="Index" />
+						</Column>
+						<Column>
+							<Label text="ID"/>
+						</Column>
+						<Column>
+							<Label text="Company Name"/>
+						</Column>
+					</columns>
+				</Table>
+			</IconTabFilter>
+			<IconTabFilter id="table" text="table.Table">
+				<t:Table id="businessPartnerTable" selectionMode="None"
+						title="{$count} Business Partners" visibleRowCount="21">
+					<t:Column>
+						<Label text="Index"/>
+						<t:template>
+							<Text id="index::table" wrapping="false"/>
+						</t:template>
+					</t:Column>
+					<t:Column>
+						<Label text="ID"/>
+						<t:template>
+							<Text text="{BusinessPartnerID}" wrapping="false"/>
+						</t:template>
+					</t:Column>
+					<t:Column>
+						<Label text="Company Name"/>
+						<t:template>
+							<Text text="{CompanyName}" wrapping="false"/>
+						</t:template>
+					</t:Column>
+				</t:Table>
+			</IconTabFilter>
+		</items>
+	</IconTabBar>
+</mvc:View>

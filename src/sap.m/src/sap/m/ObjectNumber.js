@@ -33,6 +33,12 @@ sap.ui.define([
 	 * @class
 	 * The ObjectNumber control displays number and number unit properties for an object. The number can be displayed using semantic
 	 * colors to provide additional meaning about the object to the user.
+	 *
+	 *
+	 * With 1.63, large design of the control is supported by setting <code>sapMObjectNumberLarge</code> CSS class to the <code>ObjectNumber</code>.
+	 *
+	 * <b>Note:</b> To fulfill the design guidelines when you are using <code>sapMObjectNumberLarge</code> CSS class set the <code>emphasized</code> property to <code>false</code>.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent
 	 * @version ${version}
@@ -94,92 +100,18 @@ sap.ui.define([
 			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"}
-		}
+		},
+		dnd: { draggable: true, droppable: false }
 	}});
 
-	/**
-	 * String to prefix CSS class for number status to be used in.
-	 * controler and renderer
-	 *
-	 * @private
-	 */
-	ObjectNumber.prototype._sCSSPrefixObjNumberStatus = 'sapMObjectNumberStatus';
-
-	/**
-	 * Sets the ObjectNumber's value state.
-	 *
-	 * @override
-	 * @public
-	 * @param {sap.ui.core.ValueState} sState The state to be set to
-	 * @returns {sap.m.ObjectNumber} this pointer for chaining
-	 */
-	ObjectNumber.prototype.setState = function(sState) {
-		// no rerendering only when the current and new state are different from ValueState.None
-		// otherwise we have to rerender the control so we can have invisible text rendered and aria-labelledby set correctly
-		if (this.getState() !== ValueState.None && sState !== ValueState.None) {
-			//remove the current value state css class
-			this.$().removeClass(this._sCSSPrefixObjNumberStatus + this.getState());
-
-			//do suppress rerendering
-			this.setProperty("state", sState, true);
-
-			//now set the new css state class
-			this.$().addClass(this._sCSSPrefixObjNumberStatus + this.getState());
-
-			// update ARIA text
-			this._updateACCState();
-		} else {
-			this.setProperty("state", sState, false);
-		}
-
-		return this;
-	};
-
-	/**
-	 * Sets the text alignment of the control without re-rendering the whole ObjectNumber.
-	 *
-	 * @override
-	 * @public
-	 * @param {sap.ui.core.TextAlign} sAlign The new value
-	 * @returns {sap.m.ObjectNumber} <code>this</code> pointer for chaining
-	 */
-	ObjectNumber.prototype.setTextAlign = function(sAlign) {
-		var sAlignVal = Renderer.getTextAlign(sAlign, this.getTextDirection());
-
-		//do suppress rerendering
-		this.setProperty("textAlign", sAlign, true);
-
-		sAlignVal = sAlignVal || sAlign;
-		this.$().css("text-align", sAlign);
-		return this;
-	};
-
-	// updates inner html of the span which contains the state text read by the screen reader
-	ObjectNumber.prototype._updateACCState = function() {
-
-		return this.$("state").text(this._getStateText());
-
-	};
 
 	// returns translated text for the state
 	ObjectNumber.prototype._getStateText = function() {
 
-		var sARIAStateText,
+		var sState = this.getState(),
 			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-			switch (this.getState()) {
-				case ValueState.Error:
-					sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR");
-					break;
-				case ValueState.Warning:
-					sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_WARNING");
-					break;
-				case ValueState.Success:
-					sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_SUCCESS");
-					break;
-			}
-
-		return sARIAStateText;
+			return oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_" + sState.toUpperCase(), [], true);
 	};
 
 	return ObjectNumber;

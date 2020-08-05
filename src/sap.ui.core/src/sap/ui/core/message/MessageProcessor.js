@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all MessageProcessor implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
+	function(EventProvider, uid) {
 	"use strict";
 
 
@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			EventProvider.apply(this, arguments);
 
 			this.mMessages = null;
-			this.id = jQuery.sap.uid();
+			this.id = uid();
 			sap.ui.getCore().getMessageManager().registerMessageProcessor(this);
 		},
 
@@ -64,27 +64,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * The 'messageChange' event is fired, when the messages are changed
+	 * The <code>messageChange</code> event is fired when the messages are changed.
 	 *
-	 * @namesap.ui.core.messages.MessageProcessor#requestFailed
+	 * @name sap.ui.core.message.MessageProcessor#messageChange
 	 * @event
-	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.Event} oEvent
 	 * @public
 	 */
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'messageChange' event of this <code>sap.ui.core.message.MessageProcessor</code>.<br/>
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:messageChange messageChange} event of this
+	 * <code>sap.ui.core.message.MessageProcessor</code>.
 	 *
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to this <code>sap.ui.core.message.MessageProcessor</code> itself.
 	 *
 	 * @param {object}
-	 *            [oData] The object, that should be passed along with the event-object when firing the event.
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this MessageProcessor is used.
+	 *            [oListener] Context object to call the event handler with,
+	 *            defaults to this <code>MessageProcessor</code> itself
 	 *
-	 * @return {sap.ui.core.message.MessageProcessor} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.core.message.MessageProcessor} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	MessageProcessor.prototype.attachMessageChange = function(oData, fnFunction, oListener) {
@@ -93,15 +97,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'sap.ui.core.message.MessageProcessor' event of this <code>sap.ui.core.message.MessageProcessor</code>.<br/>
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:messageChange messageChange} event of this
+	 * <code>sap.ui.core.message.MessageProcessor</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.core.message.MessageProcessor} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.core.message.MessageProcessor} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	MessageProcessor.prototype.detachMessageChange = function(fnFunction, oListener) {
@@ -110,15 +115,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Fire event messageChange to attached listeners.
+	 * Fires event {@link #event:messageChange messageChange} to attached listeners.
 	 *
-	 * @param {object} [mArguments] the arguments to pass along with the event.
+	 * @param {object} [oParameters] Parameters to pass along with the event
 	 *
-	 * @return {sap.ui.core.message.MessageProcessor} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.core.message.MessageProcessor} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
-	MessageProcessor.prototype.fireMessageChange = function(mArguments) {
-		this.fireEvent("messageChange", mArguments);
+	MessageProcessor.prototype.fireMessageChange = function(oParameters) {
+		this.fireEvent("messageChange", oParameters);
 		return this;
 	};
 	// the 'abstract methods' to be implemented by child classes
@@ -127,9 +132,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Implement in inheriting classes
 	 * @abstract
 	 *
-	 * @name sap.ui.core.message.MessageProcessor.prototype.checkMessage
+	 * @name sap.ui.core.message.MessageProcessor.prototype.checkMessages
 	 * @function
-	 * @return {sap.ui.model.ListBinding}
 	 * @public
 	 */
 
@@ -139,7 +143,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @name sap.ui.core.message.MessageProcessor.prototype.setMessages
 	 * @function
-	 * @param {map}
+	 * @param {Object<string,array>}
 	 *         vMessages map of messages: {'target': [array of messages],...}
 	 * @public
 	 */

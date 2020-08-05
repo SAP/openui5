@@ -63,10 +63,10 @@
 				<End Role="Objects" Type="Master_Detail.Object" Multiplicity="1" />
 				<ReferentialConstraint>
 					<Principal Role="Objects">
-					<PropertyRef Name="ObjectID" />
+						<PropertyRef Name="ObjectID" />
 					</Principal>
 					<Dependent Role="LineItems">
-					<PropertyRef Name="ObjectID" />
+						<PropertyRef Name="ObjectID" />
 					</Dependent>
 				</ReferentialConstraint>
 			</Association>
@@ -82,10 +82,10 @@
 					sap:creatable="false" sap:updatable="false" sap:deletable="false"
 					sap:pageable="false" sap:content-version="1"
 					xmlns:sap="http://www.sap.com/Protocols/SAPData" />
-				 <AssociationSet Name="Master_Detail.FK_Object_LineItems" Association="Master_Detail.FK_Object_LineItems">
+				<AssociationSet Name="Master_Detail.FK_Object_LineItems" Association="Master_Detail.FK_Object_LineItems">
 					<End Role="LineItems" EntitySet="LineItems" />
 					<End Role="Objects" EntitySet="Objects" />
-				</AssociationSet>
+	 			</AssociationSet>
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>

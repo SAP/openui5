@@ -1,0 +1,155 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.table.card",
+		"type": "card",
+		"title": "Sample of a Table Card",
+		"subTitle": "Sample of a Table Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Table",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://table-view"
+		}
+	},
+	"sap.card": {
+		"type": "Table",
+		"data": {
+			"json": {
+				"results": [
+					{
+						"salesOrder": "5000010050",
+						"customerName": "Robert Brown Entertainment",
+						"netAmount": "2K USD",
+						"status": "Delivered",
+						"statusState": "Success"
+					},
+					{
+						"salesOrder": "5000010051",
+						"customerName": "Entertainment Argentinia",
+						"netAmount": "127k USD",
+						"status": "Canceled",
+						"statusState": "Error"
+					},
+					{
+						"salesOrder": "5000010052",
+						"customerName": "Brazil Technologies",
+						"netAmount": "8K USD",
+						"status": "In Progress",
+						"statusState": "Warning"
+					},
+					{
+						"salesOrder": "5000010053",
+						"customerName": "Quimica Madrilenos",
+						"netAmount": "25K USD",
+						"status": "Delivered",
+						"statusState": "Success"
+					},
+					{
+						"salesOrder": "5000010054",
+						"customerName": "Development Para O Governo",
+						"netAmount": "7K USD",
+						"status": "Delivered",
+						"statusState": "Success"
+					},
+					{
+						"salesOrder": "5000010050",
+						"customerName": "Robert Brown Entertainment",
+						"netAmount": "2K USD",
+						"status": "Delivered",
+						"statusState": "Success"
+					},
+					{
+						"salesOrder": "5000010051",
+						"customerName": "Entertainment Argentinia",
+						"netAmount": "127k USD",
+						"status": "Canceled",
+						"statusState": "Error"
+					},
+					{
+						"salesOrder": "5000010052",
+						"customerName": "Brazil Technologies",
+						"netAmount": "8K USD",
+						"status": "In Progress",
+						"statusState": "Warning"
+					},
+					{
+						"salesOrder": "5000010052",
+						"customerName": "Brazil Technologies",
+						"netAmount": "8K USD",
+						"status": "In Progress",
+						"statusState": "Warning"
+					}
+				],
+				"columns": [
+					{
+						"title": "Sales Order",
+						"visibleFlag": true,
+						"identifier": true
+					},
+					{
+						"title": "Customer",
+						"visibleFlag": true
+					},
+					{
+						"title": "Net Amount",
+						"visibleFlag": false
+					},
+					{
+						"title": "Status",
+						"visibleFlag": true
+					}
+				]
+			}
+		},
+		"header": {
+			"title": "Sales Orders for Key Accounts",
+			"subTitle": "Today"
+		},
+		"content": {
+			"data": {
+				"path": "/results"
+			},
+			"row": {
+				"columns": [
+					{
+						"title": "{/columns/0/title}",
+						"value": "{salesOrder}",
+						"identifier": "{/columns/0/identifier}",
+						"visible": "{/columns/0/visibleFlag}"
+					},
+					{
+						"title": "{/columns/1/title}",
+						"value": "{customerName}",
+						"visible": "{/columns/1/visibleFlag}"
+					},
+					{
+						"title": "{/columns/2/title}",
+						"value": "{netAmount}",
+						"hAlign": "End",
+						"visible": "{/columns/2/visibleFlag}"
+					},
+					{
+						"title": "{/columns/3/title}",
+						"value": "{status}",
+						"state": "{statusState}",
+						"visible": "{/columns/3/visibleFlag}"
+					}
+				]
+			}
+		}
+	}
+}

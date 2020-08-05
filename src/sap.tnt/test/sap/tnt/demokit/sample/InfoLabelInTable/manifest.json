@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.tnt.sample.InfoLabelInTable",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName" : "sap.tnt.sample.InfoLabelInTable.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.tnt": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"Formatter.js",
+					"model/data.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

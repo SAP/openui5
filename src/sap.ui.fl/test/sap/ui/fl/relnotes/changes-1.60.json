@@ -1,0 +1,127 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "0d702f9805ad01d4bcad3517bb9af2bba95a6ba9",
+        "type": "FIX",
+        "text": "Case sensitive view name validation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880499133"
+          }
+        ]
+      },
+      {
+        "id": "a1367b50239f872867878a2aac0d5803a1101033",
+        "type": "FIX",
+        "text": "sap.ui.fl - MoveControls change handler RevertData with id",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880499383"
+          }
+        ]
+      },
+      {
+        "id": "f07a5592fce0f599378f1e5ba24408e490569a0c",
+        "type": "FEATURE",
+        "text": "sap.ui.support: Use presets to filter rules",
+        "references": []
+      },
+      {
+        "id": "548316b5e05e1879999ae1a94c513dcbf987e94a",
+        "type": "FIX",
+        "text": "default variants have a correct namespace & version info",
+        "references": []
+      },
+      {
+        "id": "6429d24c809384062de470ed4fae18a2af8dc19c",
+        "type": "FIX",
+        "text": "sap.ui.fl : Caching of flex/settings request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870362666"
+          }
+        ]
+      },
+      {
+        "id": "18247f421f42dfb378db253fcada27c35077294b",
+        "type": "FIX",
+        "text": "sap.ui.fl.FakePromise - FakePromise in FakePromise handling added",
+        "references": []
+      },
+      {
+        "id": "5b19125732a96d461422148f9e51f8d4cebc6f78",
+        "type": "FIX",
+        "text": "sap.ui.core.util.reflection - UA cleanup",
+        "references": []
+      },
+      {
+        "id": "16553b086737025c9cd0c8d327b796b97e68f234",
+        "type": "FIX",
+        "text": "sap.ui.fl - Fixed switching variants with stashed controls",
+        "references": []
+      },
+      {
+        "id": "53ea1be8a68de032117115f5e75c4018d4ff9fcc",
+        "type": "FIX",
+        "text": "Prevent encoding of URL before hashing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870428480"
+          }
+        ]
+      },
+      {
+        "id": "9f3470181e659a132de8a59fd9850894bacdf57c",
+        "type": "FIX",
+        "text": "sap.ui.fl - Test for revert changes in stashed controls",
+        "references": []
+      },
+      {
+        "id": "822b1b8114f026b1fd5193d12f1d6fa8a6019aa9",
+        "type": "FEATURE",
+        "text": "Flexibility services requests can be disabled in the bootstrap",
+        "references": []
+      },
+      {
+        "id": "3595f3c33dc7eb46ca5f87f0bc94717e5a9a2890",
+        "type": "FIX",
+        "text": "CodeExtensionModules always return an array.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880589948"
+          }
+        ]
+      },
+      {
+        "id": "a3c3f478ff4f416d9d1bf0fb4efa7d65bbf5d74f",
+        "type": "FIX",
+        "text": "sap.ui.fl.FlexController: On control re-creation, initial dependencies from change persistence map are not copied for failing changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005198692018"
+          }
+        ]
+      },
+      {
+        "id": "4dacc66020fb863fa232a2473da046950fa02053",
+        "type": "FEATURE",
+        "text": "Flexibility services routes can be defined",
+        "references": []
+      },
+      {
+        "id": "0530c621b497dc8166609a79deb3b091044e5f4a",
+        "type": "FIX",
+        "text": "sap.ui.fl: Changes for VariantManagement are stored as instance",
+        "references": []
+      }
+    ]
+  }
+}

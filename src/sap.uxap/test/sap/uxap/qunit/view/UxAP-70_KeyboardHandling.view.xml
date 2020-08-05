@@ -1,5 +1,5 @@
-<core:View
-		xmlns:core="sap.ui.core"
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.uxap"
 		xmlns:m="sap.m"
 		xmlns:html="http://www.w3.org/1999/xhtml"
@@ -125,6 +125,7 @@
 							<m:Link text="lbl with other txt"/>
 							<m:Button id="interactive-el-single-sub-section" icon="sap-icon://pull-down"
 									  text="Interactive Element"/>
+							<m:Input id="input-single-sub-section"/>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
@@ -141,6 +142,7 @@
 							<m:Link text="denise-smith"/>
 							<m:Link text="lbl with other txt"/>
 							<m:Button icon="sap-icon://pull-down" text="Interactive Element"/>
+							<m:Input id="input-multiple-sub-section"/>
 						</blocks>
 					</ObjectPageSubSection>
 					<ObjectPageSubSection id="multiple-sub-section-2" title="Goal 1">
@@ -156,4 +158,4 @@
 			</ObjectPageSection>
 		</sections>
 	</ObjectPageLayout>
-</core:View>
+</mvc:View>

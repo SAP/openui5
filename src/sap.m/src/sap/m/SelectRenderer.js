@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/Device', 'sap/ui/core/library'],
-	function(Renderer, ValueStateSupport, IconPool, library, Device, coreLibrary) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/library'],
+	function(Renderer, IconPool, library, Device, InvisibleText, coreLibrary) {
 		"use strict";
 
 		// shortcut for sap.ui.core.TextDirection
@@ -19,7 +19,9 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 		 * Select renderer.
 		 * @namespace
 		 */
-		var SelectRenderer = {};
+		var SelectRenderer = {
+			apiVersion: 2
+		};
 
 		/**
 		 * CSS class to be applied to the HTML root element of the Select control.
@@ -35,69 +37,74 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.render = function(oRm, oSelect) {
-			var	sTooltip = ValueStateSupport.enrichTooltip(oSelect, oSelect.getTooltip_AsString()),
+			var	sTooltip = oSelect.getTooltip_AsString(),
 				sType = oSelect.getType(),
 				bAutoAdjustWidth = oSelect.getAutoAdjustWidth(),
+				bEditable = oSelect.getEditable(),
 				bEnabled = oSelect.getEnabled(),
 				sCSSWidth = oSelect.getWidth(),
 				bWidthPercentage = sCSSWidth.indexOf("%") > -1,
 				bSelectWithFlexibleWidth = bAutoAdjustWidth || sCSSWidth === "auto" || bWidthPercentage,
 				CSS_CLASS = SelectRenderer.CSS_CLASS;
 
-			oRm.write("<div");
+			oRm.openStart("div", oSelect);
 			this.addClass(oRm, oSelect);
-			oRm.addClass(CSS_CLASS);
-			oRm.addClass(CSS_CLASS + oSelect.getType());
+			oRm.class(CSS_CLASS);
+			oRm.class(CSS_CLASS + oSelect.getType());
+
+			if (oSelect.getRequired()) {
+				oRm.attr("required", "required");
+			}
 
 			if (!bEnabled) {
-				oRm.addClass(CSS_CLASS + "Disabled");
+				oRm.class(CSS_CLASS + "Disabled");
+			} else if (!bEditable) {
+				oRm.class(CSS_CLASS + "Readonly");
 			}
 
 			if (bSelectWithFlexibleWidth && (sType === SelectType.Default)) {
-				oRm.addClass(CSS_CLASS + "MinWidth");
+				oRm.class(CSS_CLASS + "MinWidth");
 			}
 
 			if (bAutoAdjustWidth) {
-				oRm.addClass(CSS_CLASS + "AutoAdjustedWidth");
+				oRm.class(CSS_CLASS + "AutoAdjustedWidth");
 			} else {
-				oRm.addStyle("width", sCSSWidth);
+				oRm.style("width", sCSSWidth);
 			}
 
 			if (oSelect.getIcon()) {
-				oRm.addClass(CSS_CLASS + "WithIcon");
+				oRm.class(CSS_CLASS + "WithIcon");
 			}
 
-			if (bEnabled && Device.system.desktop) {
-				oRm.addClass(CSS_CLASS + "Hoverable");
+			if (bEnabled && bEditable && Device.system.desktop) {
+				oRm.class(CSS_CLASS + "Hoverable");
 			}
 
-			oRm.addClass(CSS_CLASS + "WithArrow");
+			oRm.class(CSS_CLASS + "WithArrow");
 
 			if (oSelect.getValueState() !== ValueState.None) {
 				this.addValueStateClasses(oRm, oSelect);
 			}
 
-			oRm.addStyle("max-width", oSelect.getMaxWidth());
-			oRm.writeControlData(oSelect);
-			oRm.writeStyles();
-			oRm.writeClasses();
+			oRm.style("max-width", oSelect.getMaxWidth());
 			this.writeAccessibilityState(oRm, oSelect);
 
 			if (sTooltip) {
-				oRm.writeAttributeEscaped("title", sTooltip);
+				oRm.attr("title", sTooltip);
 			} else if (sType === SelectType.IconOnly) {
 				var oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
 
 				if (oIconInfo) {
-					oRm.writeAttributeEscaped("title", oIconInfo.text);
+					oRm.attr("title", oIconInfo.text);
 				}
 			}
 
 			if (bEnabled) {
-				oRm.writeAttribute("tabindex", "0");
+				oRm.attr("tabindex", "0");
 			}
 
-			oRm.write(">");
+			oRm.openEnd();
+			this.renderHiddenInput(oRm, oSelect);
 			this.renderLabel(oRm, oSelect);
 
 			switch (sType) {
@@ -122,7 +129,21 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 				this.renderInput(oRm, oSelect);
 			}
 
-			oRm.write("</div>");
+			oRm.close("div");
+		};
+
+		SelectRenderer.renderHiddenInput = function (oRm, oSelect) {
+			oRm.voidStart("input", oSelect.getId() + "-hiddenInput");
+
+			// Attributes
+			oRm.attr("aria-readonly", "true");
+			oRm.attr("tabindex", "-1");
+			oRm.attr("aria-hidden", "true");
+
+			// Classes
+			oRm.class("sapUiPseudoInvisibleText");
+
+			oRm.voidEnd();
 		};
 
 		/**
@@ -138,38 +159,41 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 				sTextAlign = Renderer.getTextAlign(oSelect.getTextAlign(), sTextDir),
 				CSS_CLASS = SelectRenderer.CSS_CLASS;
 
-			oRm.write("<label");
-			oRm.writeAttribute("id", oSelect.getId() + "-label");
-			oRm.writeAttribute("for", oSelect.getId());
-			oRm.writeAttribute("aria-live", "polite");
-			oRm.addClass(CSS_CLASS + "Label");
+			oRm.openStart("span", oSelect.getId() + "-label");
+			oRm.attr("aria-live", "polite");
+			oRm.class(CSS_CLASS + "Label");
 
 			if (oSelect.getValueState() !== ValueState.None) {
-				oRm.addClass(CSS_CLASS + "LabelState");
-				oRm.addClass(CSS_CLASS + "Label" + oSelect.getValueState());
+				oRm.class(CSS_CLASS + "LabelState");
+				oRm.class(CSS_CLASS + "Label" + oSelect.getValueState());
 			}
 
 			if (oSelect.getType() === SelectType.IconOnly) {
-				oRm.addClass("sapUiPseudoInvisibleText");
+				oRm.class("sapUiPseudoInvisibleText");
 			}
 
 			if (sTextDir !== TextDirection.Inherit) {
-				oRm.writeAttribute("dir", sTextDir.toLowerCase());
+				oRm.attr("dir", sTextDir.toLowerCase());
 			}
 
-			if (sTextAlign) {
-				oRm.addStyle("text-align", sTextAlign);
-			}
+			oRm.style("text-align", sTextAlign);
 
-			oRm.writeStyles();
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 
 			// write the text of the selected item only if it has not been removed or destroyed
 			// and when the Select isn't in IconOnly mode - BCP 1780431688
-			oRm.writeEscaped((oSelectedItem && oSelectedItem.getParent() && oSelect.getType() !== SelectType.IconOnly) ? oSelectedItem.getText() : "");
 
-			oRm.write("</label>");
+			if (oSelect.getType() !== SelectType.IconOnly) {
+				oRm.renderControl(oSelect._getValueIcon());
+				oRm.openStart("span", oSelect.getId() + "-labelText");
+				oRm.class("sapMSelectListItemText");
+				oRm.openEnd();
+
+				oRm.text(oSelectedItem && oSelectedItem.getParent() ? oSelectedItem.getText() : null);
+
+				oRm.close("span");
+			}
+			oRm.close("span");
 		};
 
 		/**
@@ -182,16 +206,14 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 		SelectRenderer.renderArrow = function(oRm, oSelect) {
 			var CSS_CLASS = SelectRenderer.CSS_CLASS;
 
-			oRm.write("<span");
-			oRm.addClass(CSS_CLASS + "Arrow");
+			oRm.openStart("span", oSelect.getId() + "-arrow");
+			oRm.class(CSS_CLASS + "Arrow");
 
 			if (oSelect.getValueState() !== ValueState.None) {
-				oRm.addClass(CSS_CLASS + "ArrowState");
+				oRm.class(CSS_CLASS + "ArrowState");
 			}
 
-			oRm.writeAttribute("id", oSelect.getId() + "-arrow");
-			oRm.writeClasses();
-			oRm.write("></span>");
+			oRm.openEnd().close("span");
 		};
 
 		/**
@@ -202,27 +224,28 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 		 * @private
 		 */
 		SelectRenderer.renderIcon = function(oRm, oSelect) {
-			oRm.writeIcon(oSelect.getIcon(), SelectRenderer.CSS_CLASS + "Icon", {
+			var sTooltip = oSelect.getTooltip_AsString();
+
+			oRm.icon(oSelect.getIcon(), SelectRenderer.CSS_CLASS + "Icon", {
 				id: oSelect.getId() + "-icon",
-				title: null
+				title: sTooltip || null
 			});
 		};
 
 		SelectRenderer.renderInput = function(oRm, oSelect) {
-			oRm.write("<input hidden");
-			oRm.writeAttribute("id", oSelect.getId() + "-input");
-			oRm.addClass(SelectRenderer.CSS_CLASS + "Input");
-			oRm.writeAttribute("aria-hidden", "true");
-			oRm.writeAttribute("tabindex", "-1");
+			oRm.voidStart("input", oSelect.getId() + "-input");
+			oRm.attr("type", "hidden");
+			oRm.class(SelectRenderer.CSS_CLASS + "Input");
+			oRm.attr("aria-hidden", "true");
+			oRm.attr("tabindex", "-1");
 
 			if (!oSelect.getEnabled()) {
-				oRm.write("disabled");
+				oRm.attr("disabled", "disabled");
 			}
 
-			oRm.writeClasses();
-			oRm.writeAttributeEscaped("name", oSelect.getName());
-			oRm.writeAttributeEscaped("value", oSelect.getSelectedKey());
-			oRm.write("/>");
+			oRm.attr("name", oSelect.getName());
+			oRm.attr("value", oSelect.getSelectedKey());
+			oRm.voidEnd();
 		};
 
 		/**
@@ -278,8 +301,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.addValueStateClasses = function(oRm, oSelect) {
-			oRm.addClass(SelectRenderer.CSS_CLASS + "State");
-			oRm.addClass(SelectRenderer.CSS_CLASS + oSelect.getValueState());
+			oRm.class(SelectRenderer.CSS_CLASS + "State");
+			oRm.class(SelectRenderer.CSS_CLASS + oSelect.getValueState());
 		};
 
 		/**
@@ -302,6 +325,27 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 		};
 
 		/**
+		 * Returns the id of the InvisibleText containing information about the value state of the Select
+		 * @param oSelect
+		 * @returns {string}
+		 * @private
+		 */
+		SelectRenderer._getValueStateString = function(oSelect) {
+			var sCoreLib = "sap.ui.core";
+
+			switch (oSelect.getValueState()) {
+				case ValueState.Success:
+					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS");
+				case ValueState.Warning:
+					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_WARNING");
+				case ValueState.Information:
+					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_INFORMATION");
+			}
+
+			return "";
+		};
+
+		/**
 		 * Writes the accessibility state.
 		 * To be overwritten by subclasses.
 		 *
@@ -309,15 +353,44 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.writeAccessibilityState = function(oRm, oSelect) {
-			oRm.writeAccessibilityState(oSelect, {
+			var sValueState = this._getValueStateString(oSelect),
+				oSelectedItem = oSelect.getSelectedItem(),
+				bIconOnly = oSelect.getType() === SelectType.IconOnly,
+				oValueIcon = oSelect._getValueIcon(),
+				oAriaLabelledBy,
+				sActiveDescendant,
+				sDesc;
+
+			if (sValueState) {
+				sValueState = " " + sValueState;
+			}
+
+			if (oSelect.isOpen() && oSelectedItem && oSelectedItem.getDomRef()) {
+				sActiveDescendant = oSelectedItem.getId();
+			}
+
+			if (oSelectedItem && !oSelectedItem.getText() && oSelectedItem.getIcon && oSelectedItem.getIcon()) {
+				var oIconInfo = IconPool.getIconInfo(oSelectedItem.getIcon());
+				if (oIconInfo) {
+					sDesc = oIconInfo.text || oIconInfo.name;
+				}
+			}
+
+			oAriaLabelledBy = {
+				value: (sDesc && oValueIcon) ? oValueIcon.getId() : oSelect.getId() + "-label" + sValueState,
+				append: true
+			};
+
+			oRm.accessibilityState(oSelect, {
 				role: this.getAriaRole(oSelect),
+				roledescription: oSelect._sAriaRoleDescription,
+				disabled: !oSelect.getEnabled(),
+				readonly: bIconOnly ? undefined : oSelect.getEnabled() && !oSelect.getEditable(),
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
-				labelledby: {
-					value: oSelect.getId() + "-label",
-					append: true
-				},
-				haspopup: (oSelect.getType() === SelectType.IconOnly) ? true : undefined
+				labelledby: bIconOnly ? undefined : oAriaLabelledBy,
+				activedescendant: sActiveDescendant,
+				haspopup: "listbox"
 			});
 		};
 

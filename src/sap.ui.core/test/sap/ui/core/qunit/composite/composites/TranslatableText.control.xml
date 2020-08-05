@@ -1,0 +1,6 @@
+<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core">
+	<m:VBox>
+		<m:Text id="myInnerTextControl" text="{$this>text}" visible="{= ${$this>text} !== ''}"/>
+		<m:Text id="myTranslatableTextControl" text="{$this.i18n>key}"/>
+	</m:VBox>
+</FragmentDefinition>

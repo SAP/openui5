@@ -78,7 +78,7 @@ var MELHighlightRules = function() {
                 next: 'pop' },
               { defaultToken: 'meta.function.mel' } ] }
               
-              ] }
+              ] };
     
     this.normalizeRules();
 };
@@ -109,8 +109,8 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
     
-    this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
-    this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
+    this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
+    this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
     this.tripleStarBlockCommentRe = /^\s*(\/\*\*\*).*\*\/\s*$/;
     this.startRegionRe = /^\s*(\/\*|\/\/)#?region\b/;
@@ -253,4 +253,11 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 
-});
+});                (function() {
+                    ace.require(["ace/mode/mel"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

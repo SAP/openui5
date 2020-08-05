@@ -1,0 +1,146 @@
+{
+  "1.72.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "e75674b37bc723679f85632c4d52ec73198e275f",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed incorrect click behaviour in Quartz Light",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970456784"
+          }
+        ]
+      },
+      {
+        "id": "35b2fc1eda70a234420300f05868a15c2736c1b8",
+        "type": "FIX",
+        "text": " sap.m.Switch: width set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980424023"
+          }
+        ]
+      },
+      {
+        "id": "e1d5b6f21238cd320b0c9ddda583266315cf1a67",
+        "type": "FEATURE",
+        "text": " sap.m.Wizard: backgroundDesign property added",
+        "references": []
+      },
+      {
+        "id": "5951be854154d27e1f87352e8213537a7249d2a0",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Styles are more specific now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970465987"
+          }
+        ]
+      },
+      {
+        "id": "b482453bda4405b2a92f8fd5d2a1b30900f500b2",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Scrolling and \"sticky headers\" are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970467496"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970467937"
+          }
+        ]
+      },
+      {
+        "id": "1bd8a21bb7c44ad4506e174b527feeb990da879a",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Icon focus is now correct in contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980423718"
+          }
+        ]
+      },
+      {
+        "id": "7f7e4327f9e6ca226f829bff4222f96440ca7ae8",
+        "type": "FEATURE",
+        "text": " sap.f.Avatar: Added more background color options",
+        "references": []
+      },
+      {
+        "id": "bf0a4518655d1041e1ef0f50ba031fb84c8cd3a3",
+        "type": "FEATURE",
+        "text": " sap.f.ProductSwitch: Implemented new control",
+        "references": []
+      },
+      {
+        "id": "c9546822eebe3d90fee50698c891f526571699a6",
+        "type": "FEATURE",
+        "text": " sap.m.Popover: Responsive paddings enablement",
+        "references": []
+      },
+      {
+        "id": "7318c03e38f3898f48df88a7f3c78b6f57fdd546",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Quartz Light accessibility improvement",
+        "references": []
+      },
+      {
+        "id": "d6d8f40af43f63a99745ef3e05a9007c2d05da6d",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Buttons are correctly positioned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970472565"
+          }
+        ]
+      },
+      {
+        "id": "77af4a08c2462796ba24b313b53b22fc761a1bc8",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: When in IconTabBar and in Split mode focus no longer goes outside the box",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980405114"
+          }
+        ]
+      },
+      {
+        "id": "1a1c9d9c1300a6bdc1a9bad1e4398c6cbf296be4",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: has correct paddings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980388311"
+          }
+        ]
+      },
+      {
+        "id": "a62971e50068cb564fdd154adad504d0cd56a474",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: SAP Quartz Light styles adjustment",
+        "references": []
+      },
+      {
+        "id": "95368ef424b6680110504d7d433991b7571abc63",
+        "type": "FIX",
+        "text": " uxap.ObjectPageSubSection: Title height corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980401916"
+          }
+        ]
+      }
+    ]
+  }
+}

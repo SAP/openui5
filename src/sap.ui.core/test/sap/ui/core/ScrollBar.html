@@ -46,7 +46,7 @@
 			oHSB.setContentSize($owner[0].scrollWidth +'px').bind($owner[0]);
 			$owner.scrollTop(oVSB.getScrollPosition()).scrollLeft(oHSB.getScrollPosition());
 
-		//	jQuery("#vertSB-sb").bind("scroll",function(){jQuery("#owner").scrollTop(oVSB.getScrollPosition());});
+		//	jQuery("#vertSB-sb").on("scroll",function(){jQuery("#owner").scrollTop(oVSB.getScrollPosition());});
 			//alert(jQuery("#owner").scrollTop());
 		//	jQuery("#testResult").html("StepSize (FF only): " + jQuery("#vertSB-ffsize").outerHeight());
 		});
@@ -54,7 +54,7 @@
 	</script>
 
 </head>
-	<body class="sapUiBody" role="application">
+	<body class="sapUiBody">
 		<h1>Test Page for <code>sap.ui.core.ScrollBar</code></h1>
 		<br> <h2>ScrollBar Control</h2>
 		<br>

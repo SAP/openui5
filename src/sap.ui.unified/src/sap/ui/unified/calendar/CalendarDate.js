@@ -3,8 +3,12 @@
  */
 
 // Provides class sap.ui.unified.calendar.CalendarDate
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
-	function (BaseObject, UniversalDate) {
+sap.ui.define([
+	'sap/ui/base/Object',
+	'sap/ui/core/date/UniversalDate',
+	"sap/ui/thirdparty/jquery"
+],
+	function(BaseObject, UniversalDate, jQuery) {
 		"use strict";
 
 		/*
@@ -129,11 +133,23 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 		 * equivalent month names for the given calendar).
 		 * If the specified value is is outside of the expected range, this method attempts to update the date information
 		 * accordingly. For example, if 12 is given as a month, the year will be incremented by 1, and 1 will be used for month.
+		 * @param {int} [date] An integer between 1 and 31, representing the day of the month, but other values are allowed.
+		 * 0 will result in the previous month's last day.
+		 * -1 will result in the day before the previous month's last day.
+		 * 32 will result in:
+		 * - first day of the next month if the current month has 31 days.
+		 * - second day of the next month if the current month has 30 days.
+		 * Other value will result in adding or subtracting days according to the given value.
 		 * @returns {sap.ui.unified.calendar.CalendarDate} <code>this</code> for method chaining.
 		 */
-		CalendarDate.prototype.setMonth = function (month) {
+		CalendarDate.prototype.setMonth = function (month, date) {
 			checkNumericLike(month, "Invalid month: " + month);
-			this._oUDate.setUTCMonth(month);
+			if (date) {
+				checkNumericLike(date, "Invalid date: " + date);
+				this._oUDate.setUTCMonth(month, date);
+			} else {
+				this._oUDate.setUTCMonth(month);
+			}
 			return this;
 		};
 
@@ -173,6 +189,14 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 		 */
 		CalendarDate.prototype.getCalendarType = function() {
 			return this._oUDate.sCalendarType;
+		};
+
+		/**
+		 * Retrieves the date era.
+		 * @returns {int} era
+		 */
+		CalendarDate.prototype.getEra = function() {
+			return this._oUDate.getUTCEra();
 		};
 
 		/**
@@ -284,11 +308,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 		CalendarDate.fromLocalJSDate = function (oJSDate, sCalendarType) {
 			// Cross frame check for a date should be performed here otherwise setDateValue would fail in OPA tests
 			// because Date object in the test is different than the Date object in the application (due to the iframe).
-			// We can use jQuery.type or this method:
-			// function isValidDate (date) {
-			//	return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
-			//}
-			if (jQuery.type(oJSDate) !== "date") {
+			if (!oJSDate || Object.prototype.toString.call(oJSDate) !== "[object Date]" || isNaN(oJSDate)) {
 				throw new Error("Date parameter must be a JavaScript Date object: [" + oJSDate + "].");
 			}
 			return new CalendarDate(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(), sCalendarType);
@@ -343,4 +363,3 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 		return CalendarDate;
 
 });
-

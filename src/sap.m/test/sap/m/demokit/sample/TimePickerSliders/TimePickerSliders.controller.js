@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/Fragment'],
 	function(Controller, Fragment) {
 		"use strict";
 
-		var TPSController = Controller.extend("sap.m.sample.TimePickerSliders.TimePickerSliders", {
+		return Controller.extend("sap.m.sample.TimePickerSliders.TimePickerSliders", {
 
 			onExit : function () {
 				if (this._oDialog) {
@@ -10,19 +10,26 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/Fragment'],
 				}
 			},
 
-			handleOpenDialog: function (oEvent) {
+			handleOpenDialog: function () {
 				// create popover
 				if (!this._oDialog) {
-					this._oDialog = sap.ui.xmlfragment("fragment", "sap.m.sample.TimePickerSliders.TimePickerSlidersDialog", this);
-					this.getView().addDependent(this._oDialog);
-					this._oDialog.attachAfterOpen(function () {
-						var oTP = Fragment.byId("fragment", "TPS2");
+					Fragment.load({
+						id: "fragment",
+						name: "sap.m.sample.TimePickerSliders.TimePickerSlidersDialog",
+						controller: this
+					}).then(function(oDialog){
+						this._oDialog = oDialog;
+						this.getView().addDependent(this._oDialog);
+						this._oDialog.attachAfterOpen(function () {
+							var oTP = Fragment.byId("fragment", "TPS2");
 
-						this._sOldValue = oTP.getValue();
+							this._sOldValue = oTP.getValue();
+						}.bind(this));
+						this._oDialog.open();
 					}.bind(this));
+				} else {
+					this._oDialog.open();
 				}
-
-				this._oDialog.open();
 			},
 
 			handleOKPress: function () {
@@ -42,7 +49,5 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/Fragment'],
 				this._oDialog.close();
 			}
 		});
-
-		return TPSController;
 
 	});

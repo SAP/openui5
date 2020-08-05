@@ -10,6 +10,7 @@
 .sapMPage,
 .sapMPage > section {
 	width: 100%;
+	box-sizing: border-box;
 }
 
 .sapMPage {
@@ -30,6 +31,7 @@
 
 .sapMPage > section.sapMPageEnableScrolling {
 	overflow-y: auto;
+	will-change: scroll-position;
 }
 
 // If there are subpages with disabled scrolling, then its content should overflow. I.e. reset overflow-y to defaults.
@@ -92,6 +94,11 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
   width: 100%;
 }
 
+.sapMPageFooter.sapMPageFloatingFooter {
+  left: 0;
+  right: 0;
+}
+
 .sapMPageFooter.sapUiHidden {
   bottom: auto;
 }
@@ -101,7 +108,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
   border-bottom-width: 0;
 }
 
-.sapMPageFloatingFooter .sapMPageFooter .sapMIBar-CTX.sapMFooter-CTX.sapMTB {
+.sapMPageWithFloatingFooter .sapMPageFooter .sapMIBar-CTX.sapMFooter-CTX.sapMTB {
   border-top-width: 0;
 }
 
@@ -155,7 +162,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
   bottom: 3rem;
 }
 
-.sapMPageFloatingFooter {
+.sapMPageWithFloatingFooter {
   > .sapMPageFooter {
     border-radius: 0.25rem;
     margin: 0.5rem;
@@ -168,7 +175,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
   }
 }
 
-.sapMPageFloatingFooter.sapMPageWithFooter > section {
+.sapMPageWithFloatingFooter.sapMPageWithFooter > section {
     bottom: 0;
 
     &:after {
@@ -180,12 +187,12 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
     }
 }
 
-.sapUiSizeCompact .sapMPageWithFooter.sapMPageFloatingFooter > section {
+.sapUiSizeCompact .sapMPageWithFooter.sapMPageWithFloatingFooter > section {
   bottom: 0;
   padding-bottom: 3.5rem;
 }
 
-html[data-sap-ui-animation='on'] .sapMPageFloatingFooter {
+html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
   .sapMPageFooterControlShow {
     -webkit-animation: bounceShow 0.35s forwards ease-in-out;
     animation: bounceShow 0.35s forwards ease-in-out;
@@ -245,6 +252,10 @@ html[data-sap-ui-animation='on'] .sapMPageFloatingFooter {
 /* page with header and subHeader */
 .sapMPage > .sapMPageHeader + .sapMPageSubHeader + section {
 	top: 6rem;
+}
+
+.sapMPage > .sapMPageHeader + .sapMPageSubHeader.sapMPageSubHeaderInfoBar + section {
+	top: 5rem;
 }
 
 /* page with header */
@@ -313,8 +324,23 @@ html.sap-desktop .sapUiFioriObjectPage > section {
 		top: 2rem;
 	}
 
-	.sapMPageWithHeader.sapMPageWithSubHeader > section {
-		top: 4.5rem;
+	.sapMPageWithHeader {
+		&.sapFShellBar-CTX > section {
+			top: 3rem;
+		}
+		&.sapMPageWithSubHeader.sapFShellBar-CTX > section {
+			top: 5rem;
+		}
+	}
+
+	.sapMPageWithHeader.sapMPageWithSubHeader {
+		> section {
+			top: 4.5rem;
+		}
+
+		.sapMPageSubHeader.sapMPageSubHeaderInfoBar + section {
+			top: 4.5rem;
+		}
 	}
 
 	.sapMBar-CTX .sapMBarLeft > .sapMImg.sapMPageAppIcon {
@@ -322,4 +348,13 @@ html.sap-desktop .sapUiFioriObjectPage > section {
 		max-width: 1rem;
 		margin: 0.5rem;
 	}
+}
+
+/*
+	In order to skip adding that to each control we decided to move that on Popup level
+	will-change property has been aded for performance improvements when having a huge scroll of the page (painting improvement)
+	Usually the Popover/Dialog does not have that much of a content and the scrolling performance is good
+*/
+.sapMPopup-CTX .sapMPage > section.sapMPageEnableScrolling {
+	will-change: unset; // fixes iOS and OS X issue - the content and the header sometimes get misplaced
 }

@@ -1,0 +1,126 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "92dcc676f1188b73a90e03969e4d3c61e983673e",
+        "type": "FIX",
+        "text": "set VariantModel to UI5-internal",
+        "references": []
+      },
+      {
+        "id": "05492f286d2d15a0a521b4fbf38c6207c0f0fba7",
+        "type": "FIX",
+        "text": "fl.VariantManagement: set focus on 'Cancel' after variant deletion",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870291949"
+          }
+        ]
+      },
+      {
+        "id": "1f9630cc34c5871f5ee30cd630ed8ae379508c90",
+        "type": "FIX",
+        "text": "Delete update of _mChangesEntries",
+        "references": []
+      },
+      {
+        "id": "f3666d0b4b2ecd82701439e470524c4e6b1fb36b",
+        "type": "FIX",
+        "text": "Variant URL parameters should be added depending on the VM control(s) on the current view",
+        "references": []
+      },
+      {
+        "id": "b10e31713834e6b9c99c88bb6b2f3f2a67c9148d",
+        "type": "FIX",
+        "text": "sap.ui.fl App variant version validity",
+        "references": []
+      },
+      {
+        "id": "314f252dca1e375eafd1a745ba707e97c4b1f790",
+        "type": "FIX",
+        "text": "update mChangesEntries in case this has not taken place",
+        "references": []
+      },
+      {
+        "id": "8c86bead81a3ebb54df97f66ea9520129071130c",
+        "type": "FIX",
+        "text": "sap.ui.fl - Undefined parsed URL causing dump in VariantUtil",
+        "references": []
+      },
+      {
+        "id": "0eba7e2133902e5d7e341f8a3dc7b16e567f382a",
+        "type": "FIX",
+        "text": "sap.ui.fl: Fix issues with variants and FLP navigation:",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880301259"
+          }
+        ]
+      },
+      {
+        "id": "1a1d07ef0dfd27686df2496eef5d824f999bb062",
+        "type": "FIX",
+        "text": "Issues with displaying error messages in case of failed save",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880353309"
+          }
+        ]
+      },
+      {
+        "id": "c2598768ee67da3087835a99399eeaa63cae7011",
+        "type": "FIX",
+        "text": ": Support UI Adaptation embedded components scenario",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003178522018"
+          }
+        ]
+      },
+      {
+        "id": "faf8487f38b6fc648efde1d2eb176aca78f37858",
+        "type": "FIX",
+        "text": "sap.ui.fl - FakeLrep returns changes sorted by layer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880409794"
+          }
+        ]
+      },
+      {
+        "id": "4f6142d15c07b404b51899c9c8eaee11f71b0756",
+        "type": "FIX",
+        "text": "sap.ui.fl - invalidate cache on exit rta",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880409794"
+          }
+        ]
+      },
+      {
+        "id": "37e7d8eb70345bd742f36e17954c583f3d28d601",
+        "type": "FEATURE",
+        "text": "sap.ui.fl Support content security policy",
+        "references": []
+      },
+      {
+        "id": "9fcdce02bc9c2aacb126d021113ab905983da85e",
+        "type": "FIX",
+        "text": "sap.ui.fl - fix explicit registered changeHandler load",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880467797"
+          }
+        ]
+      }
+    ]
+  }
+}

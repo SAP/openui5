@@ -4,12 +4,18 @@
 
 // Provides control sap.m.P13nSortPanel.
 sap.ui.define([
-	'./P13nConditionPanel', './P13nPanel', './library'
-], function(P13nConditionPanel, P13nPanel, library) {
+	'./library',
+	'./P13nConditionPanel',
+	'./P13nPanel',
+	'./P13nSortItem'
+], function(library, P13nConditionPanel, P13nPanel, P13nSortItem) {
 	"use strict";
 
 	// shortcut for sap.m.P13nPanelType
 	var P13nPanelType = library.P13nPanelType;
+
+	// shortcut for sap.m.P13nConditionOperation TODO: use enum in library.js or official API
+	var P13nConditionOperation = library.P13nConditionOperation;
 
 	/**
 	 * Constructor for a new P13nSortPanel.
@@ -92,35 +98,25 @@ sap.ui.define([
 				updateSortItem: {}
 			}
 		},
-		renderer: function(oRm, oControl) {
-			// Return immediately if control is invisible
-			if (!oControl.getVisible()) {
-				return;
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl){
+				oRm.openStart("section", oControl);
+				oRm.class("sapMSortPanel");
+				oRm.openEnd();
+
+				oRm.openStart("div");
+				oRm.class("sapMSortPanelContent");
+				oRm.class("sapMSortPanelBG");
+				oRm.openEnd();
+
+				oControl.getAggregation("content").forEach(function(oChildren){
+					oRm.renderControl(oChildren);
+				});
+
+				oRm.close("div");
+				oRm.close("section");
 			}
-
-			// start SortPanel
-			oRm.write("<section");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapMSortPanel");
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
-
-			// render content
-			oRm.write("<div");
-			oRm.addClass("sapMSortPanelContent");
-			oRm.addClass("sapMSortPanelBG");
-
-			oRm.writeClasses();
-			oRm.write(">");
-			var aChildren = oControl.getAggregation("content");
-			var iLength = aChildren.length;
-			for (var i = 0; i < iLength; i++) {
-				oRm.renderControl(aChildren[i]);
-			}
-			oRm.write("</div>");
-
-			oRm.write("</section>");
 		}
 	});
 
@@ -214,11 +210,10 @@ sap.ui.define([
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
 
 		this._aKeyFields = [];
-		this.addStyleClass("sapMSortPanel");
 
 		if (!this._aOperations) {
 			this.setOperations([
-				sap.m.P13nConditionOperation.Ascending, sap.m.P13nConditionOperation.Descending
+				P13nConditionOperation.Ascending, P13nConditionOperation.Descending
 			]);
 		}
 
@@ -282,9 +277,6 @@ sap.ui.define([
 			var aConditions = [];
 			sModelName = (this.getBindingInfo("sortItems") || {}).model;
 			this.getSortItems().forEach(function(oSortItem_) {
-				// Note: current implementation assumes that the length of sortItems aggregation is equal
-				// to the number of corresponding model items.
-				// Currently the model data is up-to-date so we need to resort to the Binding Context;
 				// the "sortItems" aggregation data - obtained via getSortItems() - has the old state !
 				var oContext = oSortItem_.getBindingContext(sModelName);
 				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
@@ -414,7 +406,7 @@ sap.ui.define([
 				that._notifyChange();
 			}
 			if (sOperation === "add") {
-				oSortItem = new sap.m.P13nSortItem({
+				oSortItem = new P13nSortItem({
 					key: sKey,
 					columnKey: oNewData.keyField,
 					operation: oNewData.operation

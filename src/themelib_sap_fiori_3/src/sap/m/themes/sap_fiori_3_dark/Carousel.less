@@ -1,0 +1,103 @@
+/* =============================== */
+/* CSS for control sap.m/Carousel  */
+/* Quartz Dark theme               */
+/* =============================== */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_m_Carousel_MinWidth: 15.5rem;
+@_sap_m_Carousel_ControlsNoArrowsHeight: 2.75rem;
+@_sap_m_Carousel_NumericIndicatorTextColor: @sapUiPageFooterTextColor;
+@_sap_m_Carousel_PrevAndNextSize: 2.125rem;
+@_sap_m_Carousel_PrevAndNextPosition: 0.5rem;
+@_sap_m_Carousel_PageIndicatorWidthSizeS: 9rem;
+@_sap_m_Carousel_PageIndicatorWidthSizeM: @_sap_m_Carousel_PageIndicatorWidthSizeS;
+@_sap_m_Carousel_PageIndicatorWidthSizeL: @_sap_m_Carousel_PageIndicatorWidthSizeS;
+@_sap_m_Carousel_PageIndicatorWidthSizeXL: @_sap_m_Carousel_PageIndicatorWidthSizeS;
+@_sap_m_Carousel_PageIndicatorContainerPadding: 0.5rem;
+
+.sapMCrsl {
+	background-color: @sapUiBaseBG;
+}
+
+/* Carousel controls: HUD */
+.sapMCrslHud a {
+	opacity: 0.5;
+	box-shadow: @sapUiShadowLevel1;
+}
+
+.sapMCrsl .sapMCrslHud a:hover,
+.sapMCrsl .sapMCrslHud a:focus {
+	box-shadow: @sapUiShadowLevel1;
+	border: 1px solid @sapUiButtonBorderColor;
+	background: @sapUiButtonHoverBackground;
+}
+
+.sapMCrsl .sapMCrslHud a:active {
+	box-shadow: @sapUiShadowLevel1;
+	background-color: @sapUiButtonActiveBackground;
+}
+
+.sapMCrsl:focus {
+	&:before {
+		border: 1px solid @sapUiContentFocusColor;
+		position: absolute;
+		content: " ";
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 2;
+		pointer-events: none;
+	}
+
+	&:after {
+		border: 1px dotted @sapUiContentContrastFocusColor;
+		position: absolute;
+		content: " ";
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 2;
+		pointer-events: none;
+	}
+}
+
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrsl:focus::after,// TODO remove after the end of support for Internet Explorer
+html[data-sap-ui-browser^='ed'].sap-desktop .sapMCrsl:focus::after {
+	border: 1px dashed @sapUiContentContrastFocusColor;
+}
+
+.sapMCrslPrev:focus,
+.sapMCrslNext:focus,
+.sapMCrslPrev .sapUiIcon:focus,
+.sapMCrslNext .sapUiIcon:focus {
+  outline: none;
+}
+
+html.sap-desktop .sapMCrslHud .sapMCrslPrev:focus,
+html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
+  	&::before {
+		content: "";
+		position: absolute;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
+		pointer-events: none;
+	}
+
+  	&::after {
+		content: "";
+		position: absolute;
+		top: -0.125rem;
+		right: -0.125rem;
+		bottom: -0.125rem;
+		left: -0.125rem;
+		pointer-events: none;
+		border: 1px dotted @sapUiContentFocusColor;
+	}
+}

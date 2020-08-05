@@ -13,6 +13,10 @@
       <libraryName>sap.ui.core</libraryName>
     </dependency>
     <dependency>
+      <libraryName>sap.ui.layout</libraryName>
+      <lazy>true</lazy>
+    </dependency>
+    <dependency>
       <libraryName>sap.ui.unified</libraryName>
       <lazy>true</lazy>
     </dependency>
@@ -59,6 +63,7 @@
                 <module>sap/m/HeaderContainer</module>
                 <module>sap/m/GenericTileMode</module>
                 <module>sap/m/GenericTileScope</module>
+                <module>sap/m/TileSizeBehavior</module>
                 <module>sap/m/Size</module>
                 <module>sap/m/ValueColor</module>
                 <module>sap/m/ValueCSSColor</module>
@@ -84,7 +89,13 @@
                 <module>sap/m/tutorial/Worklist-ManageProductStock</module>
             </modules>
         </component>
-         <component>
+        <component>
+            <name>CA-UI5-COR</name>
+            <modules>
+                <module>sap/m/tutorial/QuickStart</module>
+            </modules>
+        </component>
+        <component>
             <name>CA-UI5-CMP</name>
             <modules>
                 <module>sap/m/P13nDialog</module>
@@ -105,12 +116,14 @@
                 <module>sap/m/DisplayListItem</module>
                 <module>sap/m/GroupHeaderListItem</module>
                 <module>sap/m/InputListItem</module>
+                <module>sap/m/ActionListItem</module>
                 <module>sap/m/StandardListItem</module>
                 <module>sap/m/CustomListItem</module>
                 <module>sap/m/CustomTreeItem</module>
                 <module>sap/m/GrowingList</module>
                 <module>sap/m/Column</module>
                 <module>sap/m/ColumnListItem</module>
+                <module>sap/m/plugins/DataStateIndicator</module>
             </modules>
         </component>
     </ownership>

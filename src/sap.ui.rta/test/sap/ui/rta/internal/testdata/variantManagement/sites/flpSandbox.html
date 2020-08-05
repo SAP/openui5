@@ -49,7 +49,22 @@
 						"applicationType": "URL",
 						"url": "../",
 						"description": "Variant Management Test App",
-						"title": "UI Flexibility"
+						"title": "UI Flexibility",
+						"applicationDependencies": {
+							"self": { name: "sap.ui.rta.test.variantManagement" },
+							"manifest": true,
+							"asyncHints": {
+								"libs": [
+									{ "name": "sap.ui.core" },
+									{ "name": "sap.m" },
+									{ "name": "sap.ui.dt" },
+									{ "name": "sap.ui.rta" },
+									{ "name": "sap.ui.layout" },
+									{ "name": "sap.ui.comp" },
+									{ "name": "sap.uxap" }
+								]
+							}
+						}
 					}
 				},
 				services: {
@@ -78,17 +93,20 @@
 		</script>
 
 		<script>
-			window['sap-ui-config'] = window['sap-ui-config'] || {};
-			window['sap-ui-config'].theme = 'sap_belize';
-			window['sap-ui-config'].libs = 'sap.m,sap.ushell,sap.ui.rta';
-			window['sap-ui-config'].compatVersion = 'edge';
-			window['sap-ui-config'].frameOptions = 'allow';
-
-			document.write('<script src="' + __sPathPrefix + '/resources/sap-ui-core.js"><' + '/script>');
-		</script>
-
-		<script>
-			document.write('<script src="' + __sPathPrefix + '/test-resources/sap/ushell/bootstrap/standalone.js"><' + '/script>');
+			document.write('\
+				<script \
+					id="sap-ui-bootstrap" \
+					data-sap-ui-theme="sap_fiori_3" \
+					data-sap-ui-language="en" \
+					data-sap-ui-noConflict="true" \
+					data-sap-ui-async="true" \
+					data-sap-ui-libs="sap.m, sap.ushell, sap.ui.rta" \
+					data-sap-ui-xx-bindingSyntax="complex" \
+					data-sap-ui-flexibilityServices=\'[{"connector": "LocalStorageConnector"}]\' \
+					src="' +
+				document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
+				><' + '/script>'
+			);
 		</script>
 
 		<script type="text/javascript">
@@ -96,10 +114,19 @@
 				sap.ushell.Container.createRenderer().placeAt("content");
 			});
 		</script>
-
+        <style>
+            .sapUxAPObjectPageHeader .sapMBarRight {
+                overflow: visible;
+                margin: 0.375rem;
+            }
+            .sapUxAPObjectPageHeader .sapMBarRight > .sapMBarChild{
+                padding: 0.125rem;
+            }
+        </style>
 	</head>
 
 	<!-- UI Content -->
-	<body class="sapUiBody" id="content">
+	<body class="sapUiBody">
+		<div id="content"></div>
 	</body>
 </html>

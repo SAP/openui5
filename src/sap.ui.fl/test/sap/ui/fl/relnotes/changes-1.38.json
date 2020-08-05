@@ -12,7 +12,12 @@
 				"id": "51632ba709489f182fc5bf9a7f8d62d4bb6637fc",
 				"type": "FIX",
 				"text": "detect application variant mode in case of smart templating apps",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680008423"
+					}
+				]
 			}
 		]
 	}

@@ -1,0 +1,9 @@
+<mvc:View height="100%" controllerName="sap.ui.core.internal.samples.composite.xmlcomposite.exList.Test" 
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:mm="sap.m" 
+	xmlns:core="sap.ui.core" 
+	xmlns:fc="sap.ui.core.internal.samples.composite.xmlcomposite.exList.comp">
+	<fc:field texts="{/models}" class="heigth100percent">
+	       <core:Item text="{product}"/> 
+	</fc:field>
+</mvc:View>

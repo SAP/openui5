@@ -1,0 +1,182 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "65baa47fc74b201115acc2a235d6fef8295242da",
+        "type": "FIX",
+        "text": "sap.ui.dt: ElementOverlay QUnit test failures on IE11 browser",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880499852"
+          }
+        ]
+      },
+      {
+        "id": "15e9df5bfaa4fbb4c3214436ce81eec0e69e26a1",
+        "type": "FIX",
+        "text": "Smartlink not selectable after combine",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880522902"
+          }
+        ]
+      },
+      {
+        "id": "b7bf7d39f3562666bdc2d5c776287a86b816962a",
+        "type": "FIX",
+        "text": "sap.ui.dt - ScrollContainer Z-Index calculation fix",
+        "references": []
+      },
+      {
+        "id": "ff72e0fba42a304621196141e3dd8cab6b8ed34c",
+        "type": "FIX",
+        "text": "Control Enablement Report doesn't work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880469862"
+          }
+        ]
+      },
+      {
+        "id": "ba223d22673f3f3a89069924fb6f8849f043a45b",
+        "type": "FIX",
+        "text": "Revise test case for ManagedObjectObserver",
+        "references": []
+      },
+      {
+        "id": "b7eeeb75506baeb21e042552eac6463ff5e2cde4",
+        "type": "FIX",
+        "text": "sap.ui.dt: Consider real domRef for whiteList in MutationObserver",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870355193"
+          }
+        ]
+      },
+      {
+        "id": "3483c99ca85b7fad209515c60925f2e0ab4fee5a",
+        "type": "FIX",
+        "text": "sap.ui.dt: DesignTime can now handle UIComponents as RootControl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870355193"
+          }
+        ]
+      },
+      {
+        "id": "38db6be4089735b2846053a9c2a2a954a3460c35",
+        "type": "FIX",
+        "text": ": DT - avoid flickering on drag and drop",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870162805"
+          }
+        ]
+      },
+      {
+        "id": "dc76a1bd56b8b1a2cfb55d2a407e168d16d39607",
+        "type": "FIX",
+        "text": "sap.ui.dt - MiniMenu is now always placed correctly on touch screen",
+        "references": []
+      },
+      {
+        "id": "4cdbc6b4237559e6bc093995082a0268f6906c59",
+        "type": "FIX",
+        "text": ": RTA - improve visibility of MiniMenu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870253082"
+          }
+        ]
+      },
+      {
+        "id": "6876176aa7dfe5a960fa89a3baa0bde1fc5596f1",
+        "type": "FIX",
+        "text": "sap.ui.dt - Context menu closes when selection changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870378069"
+          }
+        ]
+      },
+      {
+        "id": "dc8ad7ea861a67f3052b42b41853d660f54f3cb2",
+        "type": "FIX",
+        "text": "sap.ui.dt - Context menu closes when selection changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870378069"
+          }
+        ]
+      },
+      {
+        "id": "f7b7d2b52bdb90dcb8ce0c6be2403d35c07aaaee",
+        "type": "FIX",
+        "text": ": DT - Context menu border correction",
+        "references": []
+      },
+      {
+        "id": "fe3468799aabf1ed39dde3b63f8bf3a85ed06183",
+        "type": "FIX",
+        "text": "sap.ui.dt - Expanded compact menu is now equal to context menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870401757"
+          }
+        ]
+      },
+      {
+        "id": "9535aca94ba2c70feb816897c4104cc091e59288",
+        "type": "FIX",
+        "text": ": DT - Context Menu size fix and Minimenu fix",
+        "references": []
+      },
+      {
+        "id": "7b6bf3fade5e462bafced5ebfbde82a116b03891",
+        "type": "FIX",
+        "text": ": DT - don't set focus after closing Contextmenu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880337694"
+          }
+        ]
+      },
+      {
+        "id": "24d4cd99c2c469a401d418551428ad96d79230a4",
+        "type": "FIX",
+        "text": ": DT-Contextmenu size and positioning",
+        "references": []
+      },
+      {
+        "id": "ba641671adce4b1a788a7d5f1350833aa4324b59",
+        "type": "FIX",
+        "text": ": Flickering Context Menu",
+        "references": []
+      },
+      {
+        "id": "025352ec81a94ad51590839e8b56f804d9a784a6",
+        "type": "FIX",
+        "text": ": RTA - Minimenu Arrow Border",
+        "references": []
+      },
+      {
+        "id": "5a9b8b0483d889aa28dbf8b4349e6071d21a8348",
+        "type": "FIX",
+        "text": ": RTA - Minimenu Top Positioning",
+        "references": []
+      }
+    ]
+  }
+}

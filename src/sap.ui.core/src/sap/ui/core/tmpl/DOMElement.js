@@ -4,13 +4,14 @@
 
 // Provides control sap.ui.core.tmpl.DOMElement.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/core/Control',
-    'sap/ui/core/library',
-    './DOMAttribute',
-    "./DOMElementRenderer"
+	'sap/ui/core/Control',
+	'sap/ui/core/library',
+	'./DOMAttribute',
+	"./DOMElementRenderer",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(jQuery, Control, library, DOMAttribute, DOMElementRenderer) {
+	function(Control, library, DOMAttribute, DOMElementRenderer, Log, jQuery) {
 	"use strict";
 
 
@@ -28,6 +29,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @since 1.15
+	 * @deprecated since 1.56
 	 * @alias sap.ui.core.tmpl.DOMElement
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -88,7 +90,7 @@ sap.ui.define([
 					}
 				});
 			} else {
-				jQuery.sap.log.warning("DOMElement#" + this.getId() + ": custom attributes in settings will be ignored since attributes are provided!");
+				Log.warning("DOMElement#" + this.getId() + ": custom attributes in settings will be ignored since attributes are provided!");
 			}
 		}
 
@@ -237,6 +239,7 @@ sap.ui.define([
 				$this.text(this.getProperty("text"));
 			}
 		}
+		return this;
 	};
 
 

@@ -12,7 +12,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 		 * @memberOf view.Detail
 		 */
 		onInit: function() {
-		},
+		}
 
 		/**
 		 * Similar to onAfterRendering, but this hook is invoked before the controller's View is re-rendered

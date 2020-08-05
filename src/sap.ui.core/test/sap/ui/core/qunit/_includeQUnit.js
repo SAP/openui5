@@ -2,10 +2,10 @@
  * Helper script that either loads QUnit 1.x or QUnit 2.x depending on the existence and value of a URL parameter sap-ui-qunitversion.
  */
 (function() {
-	/*global QUnit */
+	"use strict";
 
 	var param = /(?:\?|&)sap-ui-qunitversion=(\d+)(?:&|$)/.exec(window.location.search);
-	var version = param && parseInt( param[1], 10 ) || 1;
+	var version = param && parseInt( param[1]) || 1;
 	switch ( version ) {
 	case 1:
 		jQuery.sap.require("sap.ui.thirdparty.qunit");

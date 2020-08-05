@@ -1,0 +1,232 @@
+.sapMProcessStepBar {
+	margin: 0.5rem 0 0 0;
+}
+.sapMProcessStepBar>LI {
+	opacity: 1;
+	display: inline-block;
+	box-sizing: border-box;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-position: -10px -10px;
+	height: 90px;
+	position: relative;
+	min-width: 250px;
+	max-width: 300px;
+	cursor: default;
+}
+.sapMProcessStepBar>LI.begin {
+	padding: 0.85rem 40px 0.5rem 2rem;
+}
+.sapMProcessStepBar>LI.beginend {
+	padding: 0.85rem 40px 0.5rem 2rem;
+}
+
+.sapMProcessStepBar>LI.middle {
+	padding: 0.85rem 40px 0.5rem 3rem;
+	margin-left: -1.5rem;
+}
+.sapMProcessStepBar>LI.active, .sapMProcessStepBar>LI.active>div{
+	cursor: pointer;
+}
+.sapMProcessStepBar>LI.active.down, .sapMProcessStepBar>LI.active.down>div{
+	color: var(--sapBaseColor, #FFF);
+	text-shadow: none;
+}
+
+.sapMProcessStepBar>LI.end {
+	padding: 0.85rem 20px 0.5rem 3rem;
+	margin-left: -1.5rem;
+}
+
+.sapMProcessStepBar>LI.disabled {
+	opacity: 0.5;
+}
+.sapMProcessStepBar>LI.claimed {
+	opacity: 1;
+}
+
+.sapMProcessStepBar>LI>div {
+	display: block;
+	cursor: default;
+	-moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -o-user-select: none;
+   user-select: none;
+}
+
+.nextstep {
+	margin-left: 0px;
+}
+
+.sapMProcessStepDescription {
+	color: #6A6D6E;
+	margin-top: 0.5rem;
+}
+
+.sapMProcessLaneStep {
+	list-style: none;
+}
+.sapMProcessLaneStep.disabled {
+	opacity: 0.5;
+}
+
+.sapSquareS {
+	width: 2rem;
+	height: 2rem;
+	display: inline-block;
+	font-size: 1rem;
+	line-height: 2.3rem;
+	box-sizing: border-box;
+	vertical-align: middle;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.sapSquareM {
+	width: 3rem;
+	height: 3rem;
+	display: inline-block;
+	padding: 0.rem;
+	font-size: 1rem;
+	box-sizing: border-box;
+	vertical-align: middle;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.sapCircleOpen {
+	border-radius: 50%;
+	/*border-bottom-right-radius: 1px;
+			transform: rotate(45deg); /* Equal to rotateZ(45deg) */
+}
+
+.sapCircleClose {
+	border-radius: 50%;
+	/*border-bottom-right-radius: 1px;
+			transform: rotate(-45deg); /* Equal to rotateZ(45deg) */
+}
+
+.sapCircleOpen .sapUiIcon {
+	/*transform: rotate(-45deg); /* Equal to rotateZ(45deg) */
+}
+
+.sapCircleClose .sapUiIcon {
+	/*transform: rotate(45deg); /* Equal to rotateZ(45deg) */
+}
+
+.sapBorderS {
+	border: 1px solid transparent;
+	line-height: 2rem;
+}
+
+.sapDisabledBorder {
+	border-color: var(--sapContent_DisabledTextColor,rgba(50,54,58,0.6));
+}
+
+.sapActiveBG {
+	background-color: var(--sapHighlightColor, #0a6ed1);
+	color: var(--sapButton_Emphasized_TextColor, #FFF);
+	cursor: pointer;
+}
+.sapActiveBG .sapUiIcon {
+	cursor: pointer;
+}
+.sapActiveBG .sapUiIcon::before {
+	font-weight: 600;
+}
+
+.sapNormalBG {
+	background-color: var(--sapBaseColor, #FFF);
+	color: var(--sapTextColor, #32363a);
+	cursor: pointer;
+}
+.sapNormalBG .sapUiIcon {
+	cursor: pointer;
+}
+.sapSuccessBG {
+	background-color: var(--sapField_SuccessColor, #107e3e);
+	color: var(--sapField_SuccessBackground,#fff);
+}
+
+.sapDisabledBG {
+	background-color: #e0e0e0;
+	color: #333;
+}
+
+
+.sapMProcessLaneStepHeaderText {
+	box-sizing: border-box;
+	display: inline-block;
+	height: 1.5rem;
+	vertical-align: middle;
+	margin: 2px 0 0 1rem;
+}
+.sapMProcessLaneStepHeader.clickable:hover .sapMTitle {
+	color: var(--sapLink_Hover_Color, #0854a0);
+	cursor: pointer;
+}
+
+.sapMProcessLaneStepHeaderText .sapMTitle {
+	vertical-align: middle;
+	cursor: default;
+	-moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -o-user-select: none;
+   user-select: none;
+}
+
+
+.sapMProcessLaneStepContent .sapMText.description {
+	display: block;
+	width: 40%;
+}
+.sapMProcessLaneStepContent .sapMTB {
+	margin-top: 0.5rem;
+}
+
+.sapMProcessLaneStepHeaderText .sapMTitle {
+	font-weight: bold;
+}
+
+.sapMProcessLaneStepContent {
+	padding: 0.5rem 1rem 1rem 2.5rem;
+	margin-left: 1rem;
+}
+.sapMProcessLaneStepContent .placeholder {
+	margin-top: 0.5rem;
+	animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: transparent;
+    background: linear-gradient(to right, var(--sapLink_Hover_Color, #0854a0) 8%, transparent 50%, var(--sapLink_Hover_Color, #0854a0));
+    background-size: 800px 104px;
+	height: 2px;
+	border-radius: 50%;
+	width: 50%;
+    position: relative;
+}
+@keyframes placeHolderShimmer{
+    0%{
+        background-position: -468px 0
+    }
+    100%{
+        background-position: 468px 0
+    }
+}
+
+.sapMProcessLaneStepContent .sapUiFormCLContainer {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+.sapMProcessLaneStepContent .sapUiFormCLElement {
+	margin-left: -0.25rem;
+	margin-right: -0.25rem;
+}
+
+.sapMProcessLaneStepContent.nextSolid {
+	border-left: 1px solid #999
+}

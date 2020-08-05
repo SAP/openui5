@@ -1,0 +1,77 @@
+{
+  "1.63.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "ceb3e15dcfb3ff760faf949755d08a0e026cf9f8",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: month and year displayed in correct order in Japanese and Chinese when the calendar has more months",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000412732019"
+          }
+        ]
+      },
+      {
+        "id": "64c15ffe3fc4d5f195f1f6c435b89ee757b833bd",
+        "type": "FIX",
+        "text": "ui.unified.FileUploader: Accessibility description adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870537411"
+          }
+        ]
+      },
+      {
+        "id": "f150a47ec49ddb1d01dde561f51e1c9791e9f43d",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarOneMonthInterval: Now arrow navigation is correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000617722019"
+          }
+        ]
+      },
+      {
+        "id": "f37208dddf271cfbc2e8dc1335e4b483f93f2b04",
+        "type": "FIX",
+        "text": "FileUploader: include filetype into input accept attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970125350"
+          }
+        ]
+      },
+      {
+        "id": "adc18eb170bba2c132a02e8678c264e73ed0cb45",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Japanese eras are respected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970123874"
+          }
+        ]
+      },
+      {
+        "id": "d53babcb736c2179cd1ae87f9316cd3a9c05149e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Shift/Ctrl + Arrow is the same as Arrow",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2383"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970134913"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,15 +1,20 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
-sap.ui.define(['sap/ui/thirdparty/jquery', 'jquery.sap.global', 'sap/ui/Global'],
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Global'],
 	function(jQuery) {
 	"use strict";
 
-	/*
+	/**
+	 * This module provides the {@link jQuery#control} API.
+	 *
+	 * @namespace
+	 * @name module:sap/ui/dom/jquery/control
+	 * @public
+	 * @since 1.58
+	 */
+
+	/**
 	 * Extension function to the jQuery.fn which identifies SAPUI5 controls in the given jQuery context.
 	 *
 	 * @param {int} [iIndex] Optional parameter to return the control instance at the given index in the array.
@@ -17,7 +22,8 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'jquery.sap.global', 'sap/ui/Global']
 	 * @returns {sap.ui.core.Control[] | sap.ui.core.Control | null} Depending on the given context and index parameter an array of controls, an instance or null.
 	 * @name jQuery#control
 	 * @function
-	 * @private
+	 * @public
+	 * @requires module:sap/ui/dom/jquery/control
 	 */
 	jQuery.fn.control = function(iIndex, bIncludeRelated) {
 		var aControls = this.map(function() {

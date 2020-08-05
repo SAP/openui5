@@ -1,7 +1,8 @@
 // Provides control sap.ui.dt.test.controls.SimpleScrollControl
 /*globals sap*/
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
-	function(jQuery, Control) {
+sap.ui.define([
+	"sap/ui/core/Control"
+], function(Control) {
 	"use strict";
 
 	/**
@@ -25,6 +26,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 
 		metadata: {
 			properties: {
+				scrollcontainerEnabled: {
+					type: "boolean",
+					defaultValue: true
+				}
 			},
 
 			aggregations: {
@@ -50,60 +55,80 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 						}
 					}
 				},
-				scrollContainers : [{
-					domRef : "> .sapUiDtTestSSCScrollContainer",
-					aggregations : ["content1", "content2"]
-				}]
+				scrollContainers : [
+					{
+						domRef : "> .sapUiDtTestSSCScrollContainer",
+						aggregations : ["content1", "content2"]
+					}
+				],
+				actions: {
+					move: {
+						changeType: "moveControls"
+					}
+				}
 			}
 		},
 
-		renderer: function(oRm, oCtrl) {
-			oRm.write("<div");
-			oRm.writeControlData(oCtrl);
-			oRm.addClass("sapUiDtTestSSC");
-			oRm.writeClasses();
-			oRm.write(">");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				var sId;
+				var aContent;
+				oRm.openStart("div", oControl);
+				oRm.class("sapUiDtTestSSC");
+				oRm.openEnd();
 
-			oRm.write("<div id='scrollContainer'");
-			oRm.addClass("sapUiDtTestSSCScrollContainer");
-			oRm.addStyle("height", "700px");
-			oRm.addStyle("width", "450px");
-			oRm.addStyle("overflow", "scroll");
-			oRm.writeStyles();
-			oRm.writeClasses();
-			oRm.write(">");
+				function renderAggregations() {
+					sId = oControl.getId() + "-content1";
+					oRm.openStart("div", sId);
+					oRm.openEnd();
+					aContent = oControl.getAggregation("content1", []);
+					aContent.forEach(function(oControl) {
+						oRm.renderControl(oControl);
+					});
+					oRm.close("div");
 
-			var sId = oCtrl.getId() + "-content1";
-			oRm.write("<div id='" + sId + "'>");
-			var aContent = oCtrl.getAggregation("content1", []);
-			aContent.forEach(function(oCtrl){
-				oRm.renderControl(oCtrl);
-			});
-			oRm.write("</div>");
+					sId = oControl.getId() + "-content2";
+					oRm.openStart("div", sId);
+					oRm.openEnd();
+					aContent = oControl.getAggregation("content2", []);
+					aContent.forEach(function(oControl) {
+						oRm.renderControl(oControl);
+					});
+					oRm.close("div");
+				}
 
-			sId = oCtrl.getId() + "-content2";
-			oRm.write("<div id='" + sId + "'>");
-			aContent = oCtrl.getAggregation("content2", []);
-			aContent.forEach(function(oCtrl){
-				oRm.renderControl(oCtrl);
-			});
-			oRm.write("</div>");
+				if (oControl.getScrollcontainerEnabled()) {
+					oRm.openStart("div", oControl.getId() + "-scrollContainer");
+					oRm.class("sapUiDtTestSSCScrollContainer");
+					oRm.style("height", "600px");
+					oRm.style("width", "450px");
+					oRm.style("overflow", "auto");
+					oRm.openEnd();
 
-			//end scrollcontainer
-			oRm.write("</div>");
+					renderAggregations();
 
-			sId = oCtrl.getId() + "-footer";
-			oRm.write("<div id='" + sId + "'>");
-			aContent = oCtrl.getAggregation("footer", []);
-			aContent.forEach(function(oCtrl){
-				oRm.renderControl(oCtrl);
-			});
-			oRm.write("</div>");
-			oRm.write("</div>");
+					//end scrollcontainer
+					oRm.close("div");
+				} else {
+					renderAggregations();
+				}
+
+				sId = oControl.getId() + "-footer";
+				oRm.openStart("div", sId);
+				oRm.openEnd();
+
+				aContent = oControl.getAggregation("footer", []);
+				aContent.forEach(function(oControl) {
+					oRm.renderControl(oControl);
+				});
+				oRm.close("div");
+
+				oRm.close("div");
+			}
 		}
 
 	});
 
 	return SimpleScrollControl;
-
 }, /* bExport= */ true);

@@ -62,7 +62,7 @@ var TomlHighlightRules = function() {
             defaultToken: "string"
         }
     ]
-    }
+    };
 
 };
 
@@ -143,4 +143,11 @@ oop.inherits(Mode, TextMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
+});                (function() {
+                    ace.require(["ace/mode/toml"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

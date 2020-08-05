@@ -215,7 +215,7 @@
 			}
 		}));
 
-		oFooterBar.addContentMiddle(new sap.m.Button({
+		oFooterBar.addContentMiddle(new sap.m.Button("btnHideMC", {
 			text: "Hide MC",
 			press: function () {
 				DynamicSideContent.setShowMainContent(false);
@@ -248,7 +248,7 @@
 
 	</script>
 </head>
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 <div id="content"></div>
 </body>
 </html>

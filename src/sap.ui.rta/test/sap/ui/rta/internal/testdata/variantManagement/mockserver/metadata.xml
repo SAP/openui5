@@ -40,7 +40,7 @@
 				<Property Name="Property08" Type="Edm.String"
 					Nullable="false" MaxLength="25" sap:quickinfo="Property without sap:label"
 					sap:creatable="false" sap:sortable="false" />
-				<Property Name="EntityType01_Complex" Type="VariantManagement.ComplexType03"
+				<Property Name="EntityType01_Complex" Type="VariantManagement.ComplexType"
 					Nullable="false" />
 				<NavigationProperty Name="to_EntityType01Nav"
 					Relationship="VariantManagement.assoc_CF154B42F01DD8BEC0415968198AF5FE"

@@ -1,12 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
 	"sap/ui/test/TestUtils",
-	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
-], function (jQuery, _V4MetadataConverter, TestUtils/*, jQuerySapXml*/) {
+	"sap/ui/util/XMLHelper"
+], function (jQuery, Log, _V4MetadataConverter, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -44,7 +45,7 @@ sap.ui.require([
 	 * @returns {Document} the DOM document
 	 */
 	function xml(assert, sXml) {
-		var oDocument = jQuery.sap.parseXML(sXml);
+		var oDocument = XMLHelper.parse(sXml);
 		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
 		return oDocument;
 	}
@@ -53,7 +54,7 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.v4.lib._V4MetadataConverter", {
 		beforeEach : function () {
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/odata/v4/data", mFixture);
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
@@ -368,6 +369,7 @@ sap.ui.require([
 						"p1" : {
 							"$kind" : "Property",
 							"$Type" : "Edm.String",
+							"$DefaultValue" : "<a>",
 							"$Unicode" : false
 						},
 						"p2" : {
@@ -412,7 +414,8 @@ sap.ui.require([
 							<' + sType + ' Name="Worker">\
 								<Property Name="Salary" Type="Edm.Decimal" Precision="8"\
 									Scale="2"/>\
-								<Property Name="p1" Type="Edm.String" Unicode="false" />\
+								<Property Name="p1" Type="Edm.String" DefaultValue="&lt;a&gt;"\
+									Unicode="false" />\
 								<Property Name="p2" Type="Edm.String" Unicode="true" />\
 								<Property Name="p3" Type="Edm.Geometry" SRID="42" />\
 								<Property Name="p4" Type="Edm.Int32" DefaultValue="42"/>\
@@ -542,14 +545,14 @@ sap.ui.require([
 					<edmx:DataServices>\
 						<Schema Namespace="foo" Alias="f">\
 							<' + sRunnable + ' Name="Baz" EntitySetPath="Employees"\
-								IsBound="false" >\
+								IsBound="true" >\
 								<Parameter Name="p1" Type="f.Bar" Nullable="false"/>\
 								<Parameter Name="p2" Type="Collection(f.Bar)" MaxLength="10"\
 									Precision="2" Scale="variable" SRID="42"/>\
 								<ReturnType Type="Collection(Edm.String)" Nullable="false"\
 									MaxLength="10" Precision="2" Scale="variable" SRID="42"/>\
 							</' + sRunnable + '>\
-							<' + sRunnable + ' Name="Baz" IsComposable="true" IsBound="true"/>\
+							<' + sRunnable + ' Name="Baz" IsComposable="true" IsBound="false"/>\
 						</Schema>\
 					</edmx:DataServices>',
 				{
@@ -558,6 +561,7 @@ sap.ui.require([
 					},
 					"foo.Baz" : [{
 						"$kind" : sRunnable,
+						"$IsBound" : true,
 						"$EntitySetPath" : "Employees",
 						"$Parameter" : [{
 							"$Name" : "p1",
@@ -583,7 +587,6 @@ sap.ui.require([
 						}
 					},{
 						"$kind" : sRunnable,
-						"$IsBound" : true,
 						"$IsComposable" : true
 					}]
 				});
@@ -892,8 +895,8 @@ sap.ui.require([
 		testConversion(assert, '\
 				<edmx:DataServices>\
 					<Schema Namespace="foo" Alias="f">\
-						<Action Name="Action">\
-							<Parameter Name="Parameter" Type="Edm.String">\
+						<Action IsBound="true" Name="Action">\
+							<Parameter Name="_it" Type="Edm.String">\
 								<Annotation Term="f.Term" String="Parameter"/>\
 							</Parameter>\
 							<ReturnType Type="Edm.String">\
@@ -904,34 +907,99 @@ sap.ui.require([
 						<Action Name="Action">\
 							<Annotation Term="f.Term" String="Action2"/>\
 						</Action>\
+						<Action IsBound="true" Name="Action">\
+							<Parameter Name="_it" Type="Collection(f.Type)"/>\
+							<Parameter Name="NonBinding" Type="Edm.Int"/>\
+							<Annotation Term="f.Term" String="Action3"/>\
+						</Action>\
 						<Function Name="Function">\
-							<Annotation Term="f.Term" String="Function"/>\
+							<Annotation Term="f.Term" String="Function1"/>\
+						</Function>\
+						<Function IsBound="true" Name="Function">\
+							<Parameter Name="Parameter" Type="f.Type"/>\
+							<Annotation Term="f.Term" String="Function2"/>\
+						</Function>\
+						<Function IsBound="true" Name="Function">\
+							<Parameter Name="A" Type="f.Type"/>\
+							<Parameter Name="B" Type="Collection(f.Int)"/>\
+							<Annotation Term="f.Term" String="Function3"/>\
 						</Function>\
 					</Schema>\
 				</edmx:DataServices>',
 			{
 				"foo." : {
+					"$Annotations" : {
+						"foo.Action(Edm.String)" : {
+							"@foo.Term" : "Action1"
+						},
+						"foo.Action(Edm.String)/_it" : {
+							"@foo.Term" : "Parameter"
+						},
+						"foo.Action(Edm.String)/$ReturnType" : {
+							"@foo.Term" : "ReturnType"
+						},
+						"foo.Action()" : {
+							"@foo.Term" : "Action2"
+						},
+						"foo.Action(Collection(foo.Type))" : {
+							"@foo.Term" : "Action3"
+						},
+						"foo.Function()" : {
+							"@foo.Term" : "Function1"
+						},
+						"foo.Function(foo.Type)" : {
+							"@foo.Term" : "Function2"
+						},
+						"foo.Function(foo.Type,Collection(foo.Int))" : {
+							"@foo.Term" : "Function3"
+						}
+					},
 					"$kind" : "Schema"
 				},
 				"foo.Action" : [{
 					"$kind" : "Action",
+					"$IsBound" : true,
 					"$Parameter" : [{
-						"$Name" : "Parameter",
-						"$Type" : "Edm.String",
-						"@foo.Term" : "Parameter"
+						"$Name" : "_it",
+						"$Type" : "Edm.String"
 					}],
 					"$ReturnType" : {
-						"$Type" : "Edm.String",
-						"@foo.Term" : "ReturnType"
-					},
-					"@foo.Term" : "Action1"
+						"$Type" : "Edm.String"
+					}
+				}, {
+					"$kind" : "Action"
 				}, {
 					"$kind" : "Action",
-					"@foo.Term" : "Action2"
+					"$IsBound" : true,
+					"$Parameter" : [{
+						"$Name" : "_it",
+						"$Type" : "foo.Type",
+						"$isCollection" : true
+					}, {
+						"$Name" : "NonBinding",
+						"$Type" : "Edm.Int"
+					}]
 				}],
 				"foo.Function" : [{
+					"$kind" : "Function"
+				}, {
 					"$kind" : "Function",
-					"@foo.Term" : "Function"
+					"$IsBound" : true,
+					"$Parameter" : [{
+						"$Name" : "Parameter",
+						"$Type" : "foo.Type"
+					}]
+				}, {
+					"$kind" : "Function",
+					"$IsBound" : true,
+					"$Parameter" : [{
+						"$Name" : "A",
+						"$Type" : "foo.Type"
+					}, {
+						"$Name" : "B",
+						"$Type" : "foo.Int",
+						"$isCollection" : true
+					}]
 				}]
 			});
 	});
@@ -1121,6 +1189,153 @@ sap.ui.require([
 			jQuery.ajax("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/metadata.json")
 		]).then(function (aResults) {
 			assert.deepEqual(aResults[0], aResults[1]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("duplicate schema children; last one wins", function (assert) {
+		var that = this;
+
+		[
+			"Duplicate qualified name duplicates.",
+			"Duplicate qualified name $EntityContainer", // caused by "YetAnotherContainer"
+			"Duplicate qualified name duplicates.ArtistsType",
+			"Duplicate qualified name duplicates.Address",
+			"Duplicate qualified name duplicates.Enumeration",
+			"Duplicate qualified name duplicates.Term",
+			"Duplicate qualified name duplicates.TypeDefinition",
+			"Duplicate qualified name duplicates.GetDefaults",
+			"Duplicate qualified name duplicates.Container"
+		].forEach(function (sWarning) {
+			that.oLogMock.expects("warning").withExactArgs(sWarning, undefined,
+				"sap.ui.model.odata.v4.lib._MetadataConverter");
+		});
+
+		testConversion(assert, '\
+<edmx:DataServices>\
+	<Schema Namespace="duplicates"/>\
+	<Schema Namespace="duplicates">\
+		<ComplexType Name="ArtistsType"/>\
+		<EntityType Name="ArtistsType">\
+			<Key>\
+				<PropertyRef Name="ArtistID"/>\
+				<PropertyRef Name="IsActiveEntity"/>\
+			</Key>\
+			<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>\
+			<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>\
+		</EntityType>\
+\
+		<EntityType Name="Address"/>\
+		<ComplexType Name="Address">\
+			<Property Name="City" Type="Edm.String"/>\
+		</ComplexType>\
+\
+		<ComplexType Name="Enumeration"/>\
+		<EnumType Name="Enumeration" UnderlyingType="Edm.Int32">\
+			<Member Name="ENO"/>\
+		</EnumType>\
+\
+		<ComplexType Name="Term"/>\
+		<Term Name="Term" Type="Edm.String"/>\
+\
+		<ComplexType Name="TypeDefinition"/>\
+		<TypeDefinition Name="TypeDefinition" UnderlyingType="Edm.String"/>\
+\
+		<ComplexType Name="GetDefaults"/>\
+		<Function Name="GetDefaults" EntitySetPath="_it" IsBound="true">\
+			<Parameter Name="_it" Type="Collection(duplicates.ArtistsType)" Nullable="false"/>\
+			<ReturnType Type="duplicates.ArtistsType" Nullable="false"/>\
+		</Function>\
+		<Function Name="GetDefaults" EntitySetPath="_it" IsBound="true">\
+			<Parameter Name="_it" Type="duplicates.ArtistsType" Nullable="false"/>\
+			<ReturnType Type="duplicates.ArtistsType" Nullable="false"/>\
+		</Function>\
+\
+		<ComplexType Name="Container"/>\
+		<EntityContainer Name="YetAnotherContainer"/>\
+		<EntityContainer Name="Container">\
+			<EntitySet Name="Artists" EntityType="duplicates.ArtistsType"/>\
+		</EntityContainer>\
+	</Schema>\
+</edmx:DataServices>', {
+			"$EntityContainer" : "duplicates.Container",
+			"duplicates." : {
+				"$kind" : "Schema"
+			},
+			"duplicates.Address" : {
+				"$kind" : "ComplexType",
+				"City" : {
+					"$Type" : "Edm.String",
+					"$kind" : "Property"
+				}
+			},
+			"duplicates.ArtistsType" : {
+				"$Key" : [
+					"ArtistID",
+					"IsActiveEntity"
+				],
+				"$kind" : "EntityType",
+				"ArtistID" : {
+					"$Nullable" : false,
+					"$Type" : "Edm.String",
+					"$kind" : "Property"
+				},
+				"IsActiveEntity" : {
+					"$Nullable" : false,
+					"$Type" : "Edm.Boolean",
+					"$kind" : "Property"
+				}
+			},
+			"duplicates.Container" : {
+				"$kind" : "EntityContainer",
+				"Artists" : {
+					"$Type" : "duplicates.ArtistsType",
+					"$kind" : "EntitySet"
+				}
+			},
+			"duplicates.Enumeration" : {
+				"$kind" : "EnumType",
+				"ENO" : 0
+			},
+			"duplicates.GetDefaults" : [{
+				"$EntitySetPath" : "_it",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$Name" : "_it",
+					"$Nullable" : false,
+					"$Type" : "duplicates.ArtistsType",
+					"$isCollection" : true
+				}],
+				"$ReturnType" : {
+					"$Nullable" : false,
+					"$Type" : "duplicates.ArtistsType"
+				},
+				"$kind" : "Function"
+			}, {
+				"$EntitySetPath" : "_it",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$Name" : "_it",
+					"$Nullable" : false,
+					"$Type" : "duplicates.ArtistsType"
+				}],
+				"$ReturnType" : {
+					"$Nullable" : false,
+					"$Type" : "duplicates.ArtistsType"
+				},
+				"$kind" : "Function"
+			}],
+			"duplicates.Term" : {
+				"$Type" : "Edm.String",
+				"$kind" : "Term"
+			},
+			"duplicates.TypeDefinition" : {
+				"$UnderlyingType" : "Edm.String",
+				"$kind" : "TypeDefinition"
+			},
+			"duplicates.YetAnotherContainer" : {
+				"$kind" : "EntityContainer"
+			}
 		});
 	});
 });

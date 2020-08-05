@@ -4,7 +4,6 @@
 
 //Provides control sap.ui.unified.CalendarMonthInterval.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/delegate/ItemNavigation',
@@ -14,9 +13,11 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/library',
 	'sap/ui/core/Locale',
-	"./MonthsRowRenderer"
+	"./MonthsRowRenderer",
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/unified/DateRange"
 ], function(
-	jQuery,
 	Control,
 	LocaleData,
 	ItemNavigation,
@@ -26,8 +27,11 @@ sap.ui.define([
 	DateFormat,
 	coreLibrary,
 	Locale,
-	MonthsRowRenderer
-	) {
+	MonthsRowRenderer,
+	containsOrEquals,
+	jQuery,
+	DateRange
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.CalendarType
@@ -182,7 +186,7 @@ sap.ui.define([
 		}
 
 		if (this._sInvalidateMonths) {
-			jQuery.sap.clearDelayedCall(this._sInvalidateMonths);
+			clearTimeout(this._sInvalidateMonths);
 		}
 
 	};
@@ -198,7 +202,7 @@ sap.ui.define([
 
 	MonthsRow.prototype.onsapfocusleave = function(oEvent){
 
-		if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 			if (this._bMouseMove) {
 				_unbindMousemove.call(this, true);
 
@@ -220,7 +224,7 @@ sap.ui.define([
 	// overwrite invalidate to recognize changes on selectedDates
 	MonthsRow.prototype.invalidate = function(oOrigin) {
 
-		if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange))) {
+		if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof DateRange))) {
 			Control.prototype.invalidate.apply(this, arguments);
 		} else if (this.getDomRef() && !this._sInvalidateMonths) {
 			// DateRange changed -> only rerender months
@@ -228,7 +232,7 @@ sap.ui.define([
 			if (this._bInvalidateSync) { // set if calendar already invalidates in delayed call
 				_invalidateMonths.call(this);
 			} else {
-				this._sInvalidateMonths = jQuery.sap.delayedCall(0, this, _invalidateMonths);
+				this._sInvalidateMonths = setTimeout(_invalidateMonths.bind(this), 0);
 			}
 		}
 
@@ -515,6 +519,17 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Sets the parent control instance which contains the legend
+	 * to the MonthsRow control instance
+	 * @ui5-restricted sap.m.PlanningCalendar
+	 * @private
+	 * @param {*} oControl containing the legend
+	 */
+	MonthsRow.prototype._setLegendControlOrigin = function (oControl) {
+		this._oLegendControlOrigin = oControl;
+	};
+
 	/*
 	 * if used inside CalendarMonthInterval get the value from the parent
 	 * To don't have sync issues...
@@ -523,12 +538,27 @@ sap.ui.define([
 
 		var oParent = this.getParent();
 
+		if (this._oLegendControlOrigin) {
+			return this._oLegendControlOrigin.getLegend();
+		}
+
 		if (oParent && oParent.getLegend) {
 			return oParent.getLegend();
 		} else {
 			return this.getAssociation("ariaLabelledBy", []);
 		}
 
+	};
+
+	MonthsRow.prototype._setAriaRole = function(sRole){
+		this._ariaRole = sRole;
+
+		return this;
+	};
+
+	MonthsRow.prototype._getAriaRole = function(){
+
+		return this._ariaRole ? this._ariaRole : "gridcell";
 	};
 
 	/*
@@ -709,7 +739,7 @@ sap.ui.define([
 			for ( var i = 0; i < aDomRefs.length; i++) {
 				var $DomRef = jQuery(aDomRefs[i]);
 				if ($DomRef.attr("data-sap-month") == this._oFormatYyyymm.format(oFocusedDate.toUTCJSDate(), true)) {
-					$DomRef.focus();
+					$DomRef.trigger("focus");
 					break;
 				}
 			}
@@ -1173,7 +1203,7 @@ sap.ui.define([
 					oStartDate.setDate(1); // begin of month
 				}
 			} else {
-				oDateRange = new sap.ui.unified.DateRange();
+				oDateRange = new DateRange();
 				oAggOwner.addAggregation("selectedDates", oDateRange, true); // no re-rendering
 			}
 
@@ -1225,7 +1255,7 @@ sap.ui.define([
 					}
 				} else {
 					// not selected -> select
-					oDateRange = new sap.ui.unified.DateRange({startDate: oDate.toLocalJSDate()});
+					oDateRange = new DateRange({startDate: oDate.toLocalJSDate()});
 					oAggOwner.addAggregation("selectedDates", oDateRange, true); // no re-rendering
 				}
 				sYyyymm = this._oFormatYyyymm.format(oDate.toUTCJSDate(), true);
@@ -1480,14 +1510,14 @@ sap.ui.define([
 
 	function _bindMousemove(){
 
-		jQuery(window.document).bind('mousemove', this._mouseMoveProxy);
+		jQuery(window.document).on('mousemove', this._mouseMoveProxy);
 		this._bMouseMove = true;
 
 	}
 
 	function _unbindMousemove(){
 
-		jQuery(window.document).unbind('mousemove', this._mouseMoveProxy);
+		jQuery(window.document).off('mousemove', this._mouseMoveProxy);
 		this._bMouseMove = undefined;
 
 	}

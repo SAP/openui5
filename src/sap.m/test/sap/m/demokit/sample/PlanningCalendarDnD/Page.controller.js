@@ -15,7 +15,7 @@ sap.ui.define([
 					startDate: new Date("2017", "10", "13", "8", "0"),
 					people: [
 						{
-							pic: "test-resources/sap/ui/demokit/explored/img/John_Miller.png",
+							pic: "test-resources/sap/ui/documentation/sdk/images/John_Miller.png",
 							name: "John Miller",
 							role: "team member",
 							appointments: [
@@ -99,7 +99,7 @@ sap.ui.define([
 							]
 						},
 						{
-							pic: "test-resources/sap/ui/demokit/explored/img/Donna_Moore.jpg",
+							pic: "test-resources/sap/ui/documentation/sdk/images/Donna_Moore.jpg",
 							name: "Donna Moore",
 							role: "team member",
 							appointments: [
@@ -161,16 +161,140 @@ sap.ui.define([
 
 			},
 
+			roles: {
+				donna: "Donna Moore",
+				manager: "manager",
+				admin: "admin"
+			},
+
+			handleRoleChange: function () {
+				this.getView().getModel().refresh(true);
+			},
+
+			getUserRole: function() {
+				return this.roles[this.byId("userRole").getSelectedKey()];
+			},
+
+			canModifyAppointments: function(sRole) {
+				var sUserRole = this.getUserRole();
+
+				if (sUserRole === this.roles.manager || sUserRole === this.roles.admin || sUserRole === sRole) {
+					return true;
+				}
+			},
+
+			handleAppointmentDragEnter: function(oEvent) {
+				if (this.isAppointmentOverlap(oEvent, oEvent.getParameter("calendarRow"))) {
+					oEvent.preventDefault();
+				}
+			},
+
 			handleAppointmentDrop: function (oEvent) {
 				var oAppointment = oEvent.getParameter("appointment"),
-					startDate = oEvent.getParameter("startDate"),
-					endDate = oEvent.getParameter("endDate");
+					oStartDate = oEvent.getParameter("startDate"),
+					oEndDate = oEvent.getParameter("endDate"),
+					oCalendarRow = oEvent.getParameter("calendarRow"),
+					bCopy = oEvent.getParameter("copy"),
+					sTitle = oAppointment.getTitle(),
+					oModel = this.getView().getModel(),
+					oAppBindingContext = oAppointment.getBindingContext(),
+					oRowBindingContext = oCalendarRow.getBindingContext(),
+					handleAppointmentDropBetweenRows = function () {
+						var aPath = oAppBindingContext.getPath().split("/"),
+							iIndex = aPath.pop(),
+							sRowAppointmentsPath = aPath.join("/");
 
-				MessageToast.show("Appointment '" + oAppointment.getTitle() + "' now starts at " + startDate + ".");
+						oRowBindingContext.getObject().appointments.push(
+							oModel.getProperty(oAppBindingContext.getPath())
+						);
 
-				oAppointment
-					.setStartDate(startDate)
-					.setEndDate(endDate);
+						oModel.getProperty(sRowAppointmentsPath).splice(iIndex, 1);
+					};
+
+				if (bCopy) { // "copy" appointment
+					var oProps = Object.assign({}, oModel.getProperty(oAppointment.getBindingContext().getPath()));
+					oProps.start = oStartDate;
+					oProps.end = oEndDate;
+
+					oRowBindingContext.getObject().appointments.push(oProps);
+				} else { // "move" appointment
+					oModel.setProperty("start", oStartDate, oAppBindingContext);
+					oModel.setProperty("end", oEndDate, oAppBindingContext);
+
+					if (oAppointment.getParent() !== oCalendarRow) {
+						handleAppointmentDropBetweenRows();
+					}
+				}
+
+				oModel.refresh(true);
+
+				MessageToast.show(oCalendarRow.getTitle() + "'s '" + "Appointment '" + sTitle + "' now starts at \n" + oStartDate + "\n and end at \n" + oEndDate + ".");
+			},
+
+			handleAppointmentResize: function (oEvent) {
+				var oAppointment = oEvent.getParameter("appointment"),
+					oStartDate = oEvent.getParameter("startDate"),
+					oEndDate = oEvent.getParameter("endDate");
+
+				if (!this.isAppointmentOverlap(oEvent, oAppointment.getParent())) {
+					MessageToast.show("Appointment '" + oAppointment.getTitle() + "' now starts at \n" + oStartDate + "\n and end at \n" + oEndDate + ".");
+
+					oAppointment
+						.setStartDate(oStartDate)
+						.setEndDate(oEndDate);
+				} else {
+					MessageToast.show("As a manager you can not resize events if they overlap with another events");
+				}
+			},
+
+			handleAppointmentCreate: function (oEvent) {
+				var oStartDate = oEvent.getParameter("startDate"),
+					oEndDate = oEvent.getParameter("endDate"),
+					oPlanningCalendarRow = oEvent.getParameter("calendarRow"),
+					oModel = this.getView().getModel(),
+					sPath = oPlanningCalendarRow.getBindingContext().getPath();
+
+				oModel.getProperty(sPath).appointments.push({
+					title: "New Appointment",
+					start: oStartDate,
+					end: oEndDate
+				});
+
+				MessageToast.show("New Appointment is created at \n" + oStartDate + "\n and end at \n" + oEndDate + ".");
+
+				oModel.refresh(true);
+			},
+
+			isAppointmentOverlap: function (oEvent, oCalendarRow) {
+				var oAppointment = oEvent.getParameter("appointment"),
+					oStartDate = oEvent.getParameter("startDate"),
+					oEndDate = oEvent.getParameter("endDate"),
+					bAppointmentOverlapped;
+
+				if (this.getUserRole() === this.roles.manager) {
+					bAppointmentOverlapped = oCalendarRow.getAppointments().some(function (oCurrentAppointment) {
+						if (oCurrentAppointment === oAppointment) {
+							return;
+						}
+
+						var oAppStartTime = oCurrentAppointment.getStartDate().getTime(),
+							oAppEndTime = oCurrentAppointment.getEndDate().getTime();
+
+						if (oAppStartTime <= oStartDate.getTime() && oStartDate.getTime() < oAppEndTime) {
+							return true;
+						}
+
+						if (oAppStartTime < oEndDate.getTime() && oEndDate.getTime() <= oAppEndTime) {
+							return true;
+						}
+
+						if (oStartDate.getTime() <= oAppStartTime && oAppStartTime < oEndDate.getTime()) {
+							return true;
+						}
+					});
+				}
+
+				return bAppointmentOverlapped;
 			}
 
 		});

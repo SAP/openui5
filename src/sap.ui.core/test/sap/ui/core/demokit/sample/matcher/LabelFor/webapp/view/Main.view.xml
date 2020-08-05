@@ -1,60 +1,67 @@
 <mvc:View
 	id="mainView"
-	controllerName="webapp.controller.Main"
+	controllerName="appUnderTest.controller.Main"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:form="sap.ui.layout.form"
-	xmlns:h="http://www.w3.org/1999/xhtml">
-	<form:SimpleForm
-			id="form"
-			minWidth="600"
-			maxContainerCols="2"
-			editable="true"
-			layout="ResponsiveGridLayout" >
-		<Label
-				text="{i18n>NAME_LABEL}"
-				for="inputName" />
-		<Input
-				id="inputName"
-				type="Text"
-				placeholder="{i18n>NAME_PLACEHOLDER}"
-				valueStateText="{i18n>NAME_ERROR}"
-				value="{
-				path : '/name' ,
-				type : 'sap.ui.model.type.String',
-				constraints : {minLength: 1, maxLength: 30}
-			}" />
-		<Label
-				text="{i18n>ADDRESS_LABEL}"
-				for="inputAddress" />
-		<Input
-				id="inputAddress"
-				type="Text"
-				placeholder="{i18n>ADDRESS_PLACEHOLDER}"
-				valueStateText="{i18n>ADDRESS_ERROR}"
-				value="{
-				path : '/address' ,
-				type : 'sap.ui.model.type.String',
-				constraints : {
-					minLength: 1,
-					maxLength: 30
-				}
-			}" />
-		<Label
-				text="{i18n>MAIL_LABEL}"
-				for="inputMail" />
-		<Input
-				id="inputMail"
-				type="Email"
-				placeholder="{i18n>MAIL_PLACEHOLDER}"
-				valueStateText="{i18n>MAIL_ERROR}"
-				value="{
-				path : '/mail',
-				type : 'sap.ui.model.type.String',
-				constraints : {
-					minLength: 1,
-					contains: '@'
-				}
-			}" />
-	</form:SimpleForm>
+	xmlns:form="sap.ui.layout.form">
+	<Shell>
+		<App>
+			<Page title="List Page">
+				<content>
+					<form:SimpleForm
+							id="form"
+							minWidth="600"
+							maxContainerCols="2"
+							editable="true"
+							layout="ResponsiveGridLayout" >
+						<Label
+								text="{i18n>NAME_LABEL}"
+								labelFor="inputName" />
+						<Input
+								id="inputName"
+								type="Text"
+								placeholder="{i18n>NAME_PLACEHOLDER}"
+								valueStateText="{i18n>NAME_ERROR}"
+								value="{
+								path : '/name' ,
+								type : 'sap.ui.model.type.String',
+								constraints : {minLength: 1, maxLength: 30}
+							}" />
+						<Label
+								text="{i18n>ADDRESS_LABEL}"
+								labelFor="inputAddress" />
+						<Input
+								id="inputAddress"
+								type="Text"
+								placeholder="{i18n>ADDRESS_PLACEHOLDER}"
+								valueStateText="{i18n>ADDRESS_ERROR}"
+								value="{
+								path : '/address' ,
+								type : 'sap.ui.model.type.String',
+								constraints : {
+									minLength: 1,
+									maxLength: 30
+								}
+							}" />
+						<Label
+								text="{i18n>MAIL_LABEL}"
+								labelFor="inputMail" />
+						<Input
+								id="inputMail"
+								type="Email"
+								placeholder="{i18n>MAIL_PLACEHOLDER}"
+								valueStateText="{i18n>MAIL_ERROR}"
+								value="{
+								path : '/mail',
+								type : 'sap.ui.model.type.String',
+								constraints : {
+									minLength: 1,
+									contains: '@'
+								}
+							}" />
+					</form:SimpleForm>
+				</content>
+			</Page>
+		</App>
+	</Shell>
 </mvc:View>

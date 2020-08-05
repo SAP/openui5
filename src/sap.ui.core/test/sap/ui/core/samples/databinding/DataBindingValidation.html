@@ -109,14 +109,6 @@
     			filterProperty: "rating"
     		}));
 
-    		// eventing
-
-    		// override only for demo purposes to show the bubbling events
-    		sap.ui.base.ManagedObject.prototype.getEventingParent = function() {
-    			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event bubbled to " + this.toString()}));
-    			return this.oParent;
-			};
-
     		var bCancelBubble = true;
 
     		// validation

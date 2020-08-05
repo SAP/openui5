@@ -1,0 +1,119 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "341f097a5fa58597c26c6c3f22b6664c192c66cc",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Items' loading indicator returned back",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880494891"
+          }
+        ]
+      },
+      {
+        "id": "fdb8e9bf8d5e0bbd8355b5263b12d61f9304ef38",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880484945"
+          }
+        ]
+      },
+      {
+        "id": "5b85a4ba94a5a5a198d80b2116f66f9af18a889c",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Focus outline is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880543337"
+          }
+        ]
+      },
+      {
+        "id": "9420f87a91bc80aa2ccede39f175d5dd039e43a2",
+        "type": "FIX",
+        "text": "Calendar: Picker's selected month/year style overriding focus in HC fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870394831"
+          }
+        ]
+      },
+      {
+        "id": "b0745b8d2e28e04a7aafd88d10b7b563391e73cc",
+        "type": "FIX",
+        "text": "Variant Management Popover fixed for sap_belize_plus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880254859"
+          }
+        ]
+      },
+      {
+        "id": "74f1ed005017053e34c7af5f473f9afbebc40557",
+        "type": "FIX",
+        "text": "sap.m.StepInput: Focus is fixed in HCB and HCW themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870331616"
+          }
+        ]
+      },
+      {
+        "id": "da75e099528d7732b6ad720a84f33958c8dfb531",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Fixed header content transparency",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870428789"
+          }
+        ]
+      },
+      {
+        "id": "344e15ea29aec889151e40d4d33365564249dd7f",
+        "type": "FIX",
+        "text": "sap.m.themes.sap_belize.GenericTile.less: Focus changed from Dotted to Dashed to improve color contrast Ratio",
+        "references": []
+      },
+      {
+        "id": "d121ebdbc574cac47548516438004ab763a700e4",
+        "type": "FEATURE",
+        "text": "sap.m.CheckBox/Select/ProgressIndicator: 5th semantic color",
+        "references": []
+      },
+      {
+        "id": "572b358095a84f9bec8c7ca60bbad15e11f65881",
+        "type": "FEATURE",
+        "text": "sap.m.RadioButton: Introduced 5th semantic highlight color",
+        "references": []
+      },
+      {
+        "id": "7371695ce3800e61dab88be68f547a9a3924e9c6",
+        "type": "FEATURE",
+        "text": "sap.ui.core.ValueState: 5th semantic highlight color added",
+        "references": []
+      },
+      {
+        "id": "8df1dabe2eed012686d0356eba3cfef83528ed32",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPage: Actions and content are now aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870158382"
+          }
+        ]
+      }
+    ]
+  }
+}

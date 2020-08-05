@@ -1,0 +1,93 @@
+{
+	"_version": "1.21.0",
+	"start_url": "index.html",
+	"sap.app": {
+		"id": "test.sap.ui.mdc.field.Field",
+		"type": "application",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				"",
+				"en_US"
+			],
+			"fallbackLocale": ""
+		},
+		"title": "mdc.Field integration test app",
+		"description": "Integration tests app for mdc.Field",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"tags": {},
+		"ach": "CA-UI5-CMP",
+		"dataSources": {
+			"default": {
+				"uri": "http://localhost:8081/music/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": false,
+			"phone": false
+		}
+	},
+	"sap.ui5": {
+		"contentDensities" : {
+			"compact": true,
+			"cozy": true
+		},
+		"fullWidth": true,
+		"rootView": {
+			"viewName": "test.sap.ui.mdc.field.Field.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"handleValidation": true,
+		"dependencies": {
+			"minUI5Version": "1.65",
+				"libs": {
+					"sap.m": {
+						"lazy": true
+					},
+					"sap.ui.layout": {
+						"lazy": true
+					},
+					"sap.ui.mdc": {
+						"lazy": true
+					}
+				}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "test.sap.ui.mdc.field.Field.i18n.i18n",
+					"supportedLocales": [
+						"",
+						"en_US"
+					],
+					"fallbackLocale": ""
+				}
+			},
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"type": "sap.ui.model.odata.v4.ODataModel",
+				"uri": "http://localhost:8081/music/",
+				"settings": {
+					"autoExpandSelect": true,
+					"synchronizationMode": "None",
+					"operationMode": "Server",
+					"groupId": "$direct"
+				}
+			}
+		}
+	}
+}

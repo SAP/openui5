@@ -3,8 +3,8 @@
  */
 
 // Provides an abstraction for model bindings
-sap.ui.define(['sap/ui/base/Object'],
-	function(BaseObject) {
+sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
+	function(BaseObject, isPlainObject) {
 	"use strict";
 
 
@@ -34,7 +34,7 @@ sap.ui.define(['sap/ui/base/Object'],
 			this.oModel = oModel;
 			this.sPath = sPath;
 			this.bForceRefresh = false;
-
+			this.sDeepPath = "";
 		},
 
 		metadata : {
@@ -84,7 +84,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * @return {object} the context object
 	 */
 	Context.prototype.getObject = function(sPath, mParameters) {
-		if (jQuery.isPlainObject(sPath)) {
+		if (isPlainObject(sPath)) {
 			mParameters = sPath;
 			sPath = undefined;
 		}
@@ -124,7 +124,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	/**
 	 * This method returns, whether the context is preliminary.
 	 * @private
-	 * @sap-restricted sap.suite.ui.generic
+	 * @ui5-restricted sap.suite.ui.generic
 	 * @return {boolean} the preliminary flag
 	 */
 	Context.prototype.isPreliminary = function() {
@@ -178,6 +178,27 @@ sap.ui.define(['sap/ui/base/Object'],
 	 */
 	Context.prototype.toString = function() {
 		return this.sPath;
+	};
+
+	/**
+	 * Returns messages associated with this context, that is messages belonging to the object
+	 * referred to by this context or a child object of that object. The messages are sorted by
+	 * their {@link sap.ui.core.message.Message#getType type} according to the type's severity in a
+	 * way that messages with highest severity come first.
+	 *
+	 * @returns {sap.ui.core.message.Message[]}
+	 *   The messages associated with this context sorted by severity; empty array in case no
+	 *   messages exist
+	 * @throws {Error}
+	 *   In case the context's model does not implement the method
+	 *   {@link sap.ui.model.Model#getMessages}
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#getMessages
+	 * @since 1.76.0
+	 */
+	Context.prototype.getMessages = function () {
+		return this.oModel.getMessages(this);
 	};
 
 	return Context;

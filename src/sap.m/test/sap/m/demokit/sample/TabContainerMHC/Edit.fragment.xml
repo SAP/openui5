@@ -5,7 +5,6 @@
 
 		<f:SimpleForm editable="true"
 			    layout="ResponsiveGridLayout">
-			<f:content>
 				<Label text="Name"/>
 				<Input value="{/Name}" type="Text" />
 				<Label text="Supplier"/>
@@ -14,7 +13,6 @@
 				<Input value="{/Price}" type="Number" />
 				<Label text="Description"/>
 				<TextArea value="{/Description}"/>
-			</f:content>
 		</f:SimpleForm>
 
 </core:FragmentDefinition>

@@ -1,13 +1,11 @@
 sap.ui.require([
 	"sap/ui/test/Opa5",
-	"sap/ui/test/actions/Press",
-	"sap/ui/demo/iconexplorer/test/integration/pages/Common"
-], function(Opa5, Press, Common) {
+	"sap/ui/test/actions/Press"
+], function(Opa5, Press) {
 	"use strict";
 
 	Opa5.createPageObjects({
 		onTheNotFoundPage: {
-			baseClass: Common,
 
 			actions: {
 

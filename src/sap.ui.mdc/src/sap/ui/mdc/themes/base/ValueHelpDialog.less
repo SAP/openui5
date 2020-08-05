@@ -1,0 +1,101 @@
+// give all panels on the valueHelpPanel a left/right padding
+.sapMdcValueHelpPanel .sapMPanel {
+	padding-top: 0.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.sapMdcTokenizerPanel > .sapMPanelContent {
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	padding-bottom: 1rem;
+	overflow: hidden;
+}
+
+.sapMdcTablePanel > .sapMPanelContent {
+	padding-bottom: 0;
+}
+
+.sapMdcValueHelpPanel .sapMPanel.sapMdcTokenizerPanel {
+	background-color: @sapUiBaseBG;
+}
+
+.sapMdcTablePanel > .sapMPanelHdr,
+.sapMdcTokenizerPanel > .sapMPanelHdr,
+.sapMdcDefineconditionPanel > .sapMPanelHdr{
+	border: none;
+}
+
+.sapMdcTokenizer.sapMTokenizer {
+	width: 100%;
+	border: 1px solid @sapUiGroupContentBorderColor;
+	background-color: @sapUiFieldBackground;
+}
+
+// Tokenizer height in Compact mode
+.sapUiSizeCompact .sapMdcTokenizer > .sapMTokenizerScrollContainer {
+	height: 1.5rem;
+}
+
+// Tokenizer height in Cozy or Condenst mode
+.sapMdcTokenizer > .sapMTokenizerScrollContainer {
+	height: 2.25rem;
+}
+
+.sapMdcTokenizer > .sapMTokenizerScrollContainer {
+	overflow-y: hidden;
+}
+
+.sapMdcTokenizer .sapMToken{
+	white-space: nowrap;
+}
+
+// make the ITB header height 3rem
+.sapMdcValueHelpPanel .sapMITBHead {
+	margin-top: 0rem;
+}
+
+// make the toolbar height 3rem and add 2rem padding left/right
+.sapMdcValueHelpPanel .sapMTB {
+	height: 3rem;
+	padding-left: 1.75rem;
+	padding-right: 2rem;
+}
+
+// padding between the Define Condition value fields
+.sapMdcValueHelpPanel .sapUiSmallPaddingBegin {
+    padding-left: 1rem;
+}
+
+// makes the IconTab Header hidden when only one tabs exist
+.sapMdcValueHelpPanel .sapMdcNoHeader .sapMITH {
+    visibility: hidden;
+    height: 0px;
+}
+
+.sapUiMdcDefineConditionPanel .sapUiMdcDefineConditionGrid {
+	margin-bottom: 0.5rem;
+}
+
+// give the Filterbar the required padding and max height
+.sapMdcValueHelpPanelFilterbar {
+    margin-left: 2rem;
+    margin-right: 1rem;
+    margin-top: 1rem;
+	max-height: 13rem;
+}
+
+.sapUiSizeCompact .sapMdcValueHelpPanelFilterbar {
+	max-height: 10rem;
+}
+
+// hide the toolbar border and give some more top margin
+.sapMdcValueHelpPanel .sapMTBStandard {
+	margin-top: 0.5rem;
+    border-bottom: solid 1px transparent;
+}
+
+// hide the panel bottom border
+.sapMdcValueHelpPanel .sapMPanelContent:not(.sapMPanelBGTransparent) {
+    border-bottom: none;
+}

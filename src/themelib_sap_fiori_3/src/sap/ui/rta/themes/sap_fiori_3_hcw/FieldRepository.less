@@ -1,0 +1,21 @@
+/******************************************************************
+	Style of the RTA Add Fields Dialog  - sap_fiori_3_hcw Theme
+*******************************************************************/
+@_sap_ui_rta_FieldRepository_BGColor: @sapHC_HighlightBackground; //#ec8b46;
+
+.sapUiRtaMode {
+
+	.sapUIRtaFieldRepositoryDialog {
+		.sapMBtn:hover {
+			> .sapMBtnHoverable {
+				outline: none;
+			}
+		}
+		.sapMBtn:focus {
+			> .sapMFocusable {
+				outline: 0.125rem dotted @sapUiBlackBG; //2px
+				outline-offset: -0.125rem; //2px
+			}
+		}
+	}
+}

@@ -78,7 +78,7 @@ sap.ui.define([
 		executionScopeTitle: "Execution scope",
 		lastAnalysisElapsedTime: "",
 		analysisDurationTitle: "Last analysis duration",
-		costants: "",
+		constants: "",
 		executionScopeComponents: [],
 		persistingSettings: false,
 		loadingAdditionalRuleSets: false,
@@ -86,10 +86,25 @@ sap.ui.define([
 		selectedRules: true,
 		filteredIssues: null,
 		issuesCount: 0,
+		selectedRulesCount: 0,
 		visibleRowCount: 5,
 		supportAssistantOrigin: "",
 		supportAssistantVersion: "",
-		initialRulesLoading: true
+		initialRulesLoading: true,
+		selectionPresets: [
+			{
+				id: "MySelectionPreset",
+				title: "My Selection",
+				description: "My Current/Last Selection",
+				isMySelection: true,
+				selected: true,
+				disableDelete: true
+			}
+		],
+		customPresets: [
+			// presets added by the user via import
+		],
+		selectionPresetsCurrent: null
 	});
 
 	return model;

@@ -1,0 +1,296 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>MultiInput - sap.m</title>
+
+		<script src="shared-config.js"></script>
+		<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+		</script>
+
+		<script>
+
+		jQuery.sap.require("sap.m.MultiInput");
+		jQuery.sap.require("sap.m.Token");
+
+		//Default sample
+		var oMultiInputCustomValidator = new sap.m.MultiInput("multiInputCustomValidator",{
+			width:"50%",
+			ariaLabelledBy: "labelDefault"
+		});
+
+		oMultiInputCustomValidator.setTokens([
+			new sap.m.Token({text: "Token 1 with a much much much longer text than the rest", key: "0001"}),
+			new sap.m.Token({text: "Token 2", key: "0002"}),
+			new sap.m.Token({text: "Token 3", key: "0003"}),
+			new sap.m.Token({text: "Token 4", key: "0004"}),
+			new sap.m.Token({text: "Token 5", key: "0005"}),
+		]);
+
+		oMultiInputCustomValidator.addValidator(function(args){
+			var text = args.text;
+			return new sap.m.Token({key: text, text: "\""+text+"\""});
+		});
+
+		// data for tabular suggestions
+		var oSuggestionData = {
+			tabularSuggestionItems : [{
+				name : "Holter-di-polter",
+				qty : "10 EA",
+				limit : "15.00 Eur",
+				price : "12.00 EUR"
+			}, {
+				name : "Ha so was",
+				qty : "10 EA",
+				limit : "5.00 Eur",
+				price : "3.00 EUR"
+			}, {
+				name : "Hurra einp Produkt",
+				qty : "8 EA",
+				limit : "60.00 Eur",
+				price : "45.00 EUR"
+			}, {
+				name : "Hallo du tolles Ding",
+				qty : "2 EA",
+				limit : "40.00 Eur",
+				price : "15.00 EUR"
+			}, {
+				name : "Hier sollte ich zuschlagen",
+				qty : "10 EA",
+				limit : "90.00 Eur",
+				price : "55.00 EUR"
+			},{
+				name : "Hohoho",
+				qty : "18 EA",
+				limit : "29.00 Eur",
+				price : "7.00 EUR"
+			}, {
+				name : "Holla die Waldfee",
+				qty : "3 EA",
+				limit : "55.00 Eur",
+				price : "30.00 EUR"
+			}, {
+				name : "Hau Ruck",
+				qty : "5 EA",
+				limit : "2.00 Eur",
+				price : "1.00 EUR"
+			}, {
+				name : "Haste mal nen Euro?",
+				qty : "29 EA",
+				limit : "99.00 Eur",
+				price : "42.00 EUR"
+			}, {
+				name : "Hol es dir jetzt",
+				qty : "4 EA",
+				limit : "85.00 Eur",
+				price : "10.00 EUR"
+			}]
+		};
+
+		//Sample with tabular suggestions
+		var oTabularSuggestMultiInput = new sap.m.MultiInput("tabularSuggestMI", {
+			width: "50%",
+			ariaLabelledBy: "labelTabular",
+			tokens:[
+				new sap.m.Token({text: "Token 1", key: "0001"}),
+				new sap.m.Token({text: "Token 2", key: "0002"}),
+				new sap.m.Token({text: "Token 3", key: "0003"}),
+				new sap.m.Token({text: "Token 4", key: "0004"}),
+				new sap.m.Token({text: "Token 5", key: "0005"}),
+				new sap.m.Token({text: "Token 6", key: "0006"})
+			],
+			suggestionColumns : [
+				new sap.m.Column({
+					styleClass : "name",
+					hAlign : "Left",
+					header : new sap.m.Label({
+						text : "Name"
+					})
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "qty",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "Qty"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "limit",
+					width : "30%",
+					header : new sap.m.Label({
+						text : "Value"
+					}),
+					minScreenWidth : "XXSmall",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "Right",
+					styleClass : "price",
+					width : "30%",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "Price"
+					}),
+					minScreenWidth : "400px",
+					demandPopin : true
+				})
+			]
+		});
+
+		oTabularSuggestMultiInput.addValidator(function(args){
+			if (args.suggestionObject){
+				var key = args.suggestionObject.getCells()[0].getText();
+				var text = key + "("+args.suggestionObject.getCells()[3].getText()+")";
+
+				return new sap.m.Token({key: key, text: text});
+			}
+			return null;
+		});
+
+		var oTableItemTemplate = new sap.m.ColumnListItem({
+			type : "Active",
+			vAlign : "Middle",
+			cells : [
+				new sap.m.Label({
+					text : "{name}"
+				}),
+				new sap.m.Label({
+					text: "{qty}"
+				}), new sap.m.Label({
+					text: "{limit}"
+				}), new sap.m.Label({
+					text : "{price}"
+				})
+			]
+		}),
+			oModel = new sap.ui.model.json.JSONModel();
+
+		oModel.setData(oSuggestionData);
+		oTabularSuggestMultiInput.setModel(oModel);
+		oTabularSuggestMultiInput.bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate);
+
+		// Warning sample
+		var oWarningMultiInput = new sap.m.MultiInput("mIWarning", {
+			placeholder: "Placeholder",
+			valueState: "Warning",
+			valueStateText: "Simple value state warning text",
+			width: "50%",
+			ariaLabelledBy: "labelWarning"
+		}),
+
+		// Error sample
+			oErrorMultiInput = new sap.m.MultiInput("mIError", {
+				placeholder: "Placeholder",
+				valueStateText: "Simple value state error text",
+				valueState: "Error",
+				width: "50%",
+				ariaLabelledBy: "labelError"
+			});
+
+			oSuccessMultiInput =  new sap.m.MultiInput("mISuccess", {
+				placeholder: "Placeholder",
+				valueState: "Success",
+				width: "50%",
+				ariaLabelledBy: "labelSuccess"
+			});
+
+	   //Maximum three tokens
+			oMultiInput8 = new sap.m.MultiInput("multiInputNoPlaceholder", {
+				enableMultiLineMode: true,
+				maxTokens: 3,
+				width: "50%",
+				ariaLabelledBy: "labelMaxTokens"
+			});
+
+		oMultiInput8.addValidator(function(args){
+			var text = args.text;
+			return new sap.m.Token({key: text, text: text});
+		});
+
+		//Read-only
+		var oMultiInputReadOnly = new sap.m.MultiInput("multiInputReadOnlyInitial", {
+			width : "50%",
+			ariaLabelledBy: "labelReadOnly",
+			tokens : [
+				new sap.m.Token({text: "100", key: "0001"}),
+				new sap.m.Token({text: "101", key: "0002"}),
+				new sap.m.Token({text: "102", key: "0003"}),
+				new sap.m.Token({text: "103", key: "0004"}),
+				new sap.m.Token({text: "104", key: "0005"}),
+				new sap.m.Token({text: "105", key: "0006"}),
+				new sap.m.Token({text: "106", key: "0007"}),
+				new sap.m.Token({text: "107", key: "000800"}),
+				new sap.m.Token({text: "108", key: "000600"}),
+				new sap.m.Token({text: "109", key: "000700"}),
+				new sap.m.Token({text: "110", key: "000800"}),
+			]
+		}).setEditable(false),
+
+		//Disabled
+			oDisabledMultiInput = new sap.m.MultiInput("multiInputDisabled",{
+				width:"50%",
+				enabled: false,
+				ariaLabelledBy: "labelDisabled"
+			});
+
+		oDisabledMultiInput.setTokens([
+			new sap.m.Token({text: "Token 1 with a much much much longer text than the rest", key: "0001"}),
+			new sap.m.Token({text: "Token 2", key: "0002"}),
+			new sap.m.Token({text: "Token 3", key: "0003"}),
+			new sap.m.Token({text: "Token 4", key: "0004"})
+		]);
+
+		var oCompactMode = new sap.m.CheckBox("compactMode", {
+			text: "Compact Mode",
+			selected : false,
+			select : function() {
+				$("body").toggleClass("sapUiSizeCompact");
+				sap.ui.getCore().notifyContentDensityChanged();
+			}
+		});
+	   //******************************************
+		var app = new sap.m.App("myApp");
+
+		var oPage = new sap.m.Page("page1", {
+			title:"MultiInput Accessibility Test Page",
+			content : [
+				new sap.m.Label("labelDefault", {labelFor: oMultiInputCustomValidator.getId(), text: "Default sample", width: "100%"}),
+				oMultiInputCustomValidator,
+				new sap.m.Label("labelTabular", {labelFor: oTabularSuggestMultiInput.getId(), text: "Sample with tabular suggestions", width: "100%"}),
+				oTabularSuggestMultiInput,
+				new sap.m.Label("labelWarning", {labelFor: oWarningMultiInput.getId(), text: "Warning value state sample", width: "100%"}),
+				oWarningMultiInput,
+				new sap.m.Label("labelError", {labelFor: oErrorMultiInput.getId(), text: "Error value state sample", width: "100%"}),
+				oErrorMultiInput,
+				new sap.m.Label("labelSuccess", {labelFor: oSuccessMultiInput.getId(), text: "Success value state sample", width: "100%"}),
+				oSuccessMultiInput,
+				new sap.m.Label("labelMaxTokens", {labelFor: oMultiInput8.getId(), text:"Sample with maximum three tokens", width: "100%"}),
+				oMultiInput8,
+				new sap.m.Label("labelReadOnly", {labelFor: oMultiInputReadOnly.getId(), text:"Read only state sample", width: "100%"}),
+				oMultiInputReadOnly,
+				new sap.m.Label("labelDisabled", {labelFor: oDisabledMultiInput.getId(), text : "Not interactable sample", width: "100%"}),
+				oDisabledMultiInput
+			],
+			footer: new sap.m.Toolbar({
+						content: [
+							new sap.m.ToolbarSpacer(),
+							oCompactMode
+						]
+					})
+		});
+
+		app.addPage(oPage);
+
+		app.placeAt("body");
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

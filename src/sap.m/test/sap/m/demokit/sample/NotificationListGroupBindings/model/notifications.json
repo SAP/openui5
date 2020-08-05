@@ -1,0 +1,64 @@
+{
+	"NotificationGroups": [
+		{
+			"title": "Orders waiting for approval",
+			"creationDate": "1 hour ago",
+			"showEmptyGroup": true,
+			"showCloseButton": true,
+			"groupItems": [
+				{
+					"title": "New order (#2525)",
+					"description": "Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis.",
+					"priority": "High",
+					"unread": true,
+					"authorName": "Michael Muller",
+					"authorPicture": "sap-icon://person-placeholder",
+					"authorAvatarColor": "Accent2",
+					"itemButtons": [
+						{
+							"text": "Accept"
+						},
+						{
+							"text": "Reject"
+						}
+					]
+				},
+				{
+					"title": "New order (#2526)",
+					"description": "Lacinia ac ex at, vulputate dictum turpis.",
+					"priority": "Low",
+					"authorInitials": "JS",
+					"unread": true,
+					"itemButtons": [
+						{
+							"text": "Accept"
+						},
+						{
+							"text": "Reject"
+						}
+					]
+				}
+			],
+			"groupButtons": [
+				{
+					"text": "Accept All"
+				}
+			]
+		},
+		{
+			"title": "New order (#2527)",
+			"creationDate": "1 hour ago",
+			"showEmptyGroup": true,
+			"showCloseButton": true,
+			"groupItems": [],
+			"groupButtons": [
+				{
+					"text": "Accept All"
+				},
+				{
+					"text": "Reject All"
+				}
+			]
+		}
+	]
+}

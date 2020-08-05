@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.InputAssisted",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.InputAssisted.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"ValueHelpDialog.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

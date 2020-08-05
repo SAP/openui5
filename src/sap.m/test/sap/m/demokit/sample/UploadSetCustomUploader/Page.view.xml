@@ -1,0 +1,54 @@
+<mvc:View
+		height="100%"
+		controllerName="sap.m.sample.UploadSetCustomUploader.Page"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:upload="sap.m.upload">
+	<Page showHeader="false">
+		<upload:UploadSet
+				id="UploadSet"
+				instantUpload="true"
+				showIcons="true"
+				uploadEnabled="true"
+				terminationEnabled="true"
+				fileTypes="txt,doc,png"
+				maxFileNameLength="30"
+				maxFileSize="200"
+				mediaTypes="text/plain,application/msword,image/jpeg"
+				uploadUrl="../../../../upload"
+				items="{path: '/items', templateShareable: false}">
+			<upload:items>
+				<upload:UploadSetItem
+						fileName="{fileName}"
+						mediaType="{mediaType}"
+						url="{url}"
+						thumbnailUrl="{thumbnailUrl}"
+						attributes="{path: 'attributes', templateShareable: false}"
+						markers="{path: 'markers', templateShareable: false}"
+						statuses="{path: 'statuses', templateShareable: false}"
+						uploadState="{uploadState}">
+					<upload:attributes>
+						<ObjectAttribute
+								title="{title}"
+								text="{text}"
+								active="{active}"/>
+					</upload:attributes>
+					<upload:markers>
+						<ObjectMarker
+								type="{type}"
+								visibility="{visibility}"/>
+					</upload:markers>
+					<upload:statuses>
+						<ObjectStatus
+								title="{title}"
+								text="{text}"
+								state="{state}"
+								icon="{icon}"
+								active="{active}"/>
+					</upload:statuses>
+				</upload:UploadSetItem>
+			</upload:items>
+		</upload:UploadSet>
+		<List id="progressList"/>
+	</Page>
+</mvc:View>

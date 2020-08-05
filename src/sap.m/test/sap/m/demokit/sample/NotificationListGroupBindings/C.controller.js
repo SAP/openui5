@@ -1,114 +1,40 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/mvc/Controller',
-	'sap/m/MessageToast',
-	'sap/ui/model/json/JSONModel'
-], function (jQuery, Controller, MessageToast, JSONModel) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Priority",
+	"sap/m/MessageToast"
+], function (Controller, JSONModel, Priority, MessageToast) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.NotificationListGroupBindings.C", {
+	return Controller.extend("sap.m.sample.NotificationListGroupBindings.C", {
 
-		onInit : function (evt) {
-			var oData = {
-				"NotificationGroups": [
-					{
-						"title": "Orders waiting for approval",
-						"creationDate": "1 hour ago",
-						"showEmptyGroup": true,
-						"showCloseButton": true,
-						"groupItems": [
-							{
-								"title": "New order (#2525)",
-								"description": "Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis.",
-								"priority": sap.ui.core.Priority.High,
-								"unread": true,
-								"authorName": "Michael Muller",
-								"authorPicture": "sap-icon://person-placeholder",
-								"onItemClose": "onItemClose",
-								"onListItemPress": "onListItemPress",
-								"itemButtons": [
-									{
-										"text": 'Accept',
-										"type": "Accept",
-										"press": "onAcceptPress"
-									},
-									{
-										"text": 'Reject',
-										"type": "Reject",
-										"press": "onRejectPress"
-									}
-								]
-
-							},
-							{
-								"title": "New order (#2526)",
-								"description": "Lacinia ac ex at, vulputate dictum turpis.",
-								"priority": sap.ui.core.Priority.Low,
-								"unread": true,
-								"itemButtons": [
-									{
-										"text": 'Accept',
-										"type": "Accept",
-										"press": "onAcceptPress"
-									},
-									{
-										"text": 'Reject',
-										"type": "Reject",
-										"press": "onRejectPress"
-									}
-								]
-
-							}
-						],
-						"groupButtons": [
-							{
-								"text": 'Accept All',
-								"type": "Accept",
-								"press": "onAcceptPress"
-							},
-							{
-								"text": 'Reject All',
-								"type": "Reject",
-								"press": "onRejectPress"
-							}
-						]
-					},
-					{
-						"title": "New order (#2526)",
-						"creationDate": "1 hour ago",
-						"showEmptyGroup": true,
-						"showCloseButton": true,
-						"groupItems": [
-						],
-						"groupButtons": [
-							{
-								"text": 'Accept All',
-								"type": "Accept",
-								"press": "onAcceptPress"
-							},
-							{
-								"text": 'Reject All',
-								"type": "Reject",
-								"press": "onRejectPress"
-							}
-						]
-					}
-				]
-			};
-			var oModel = new JSONModel(oData);
+		onInit: function () {
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/NotificationListGroupBindings/model/notifications.json"));
 			this.getView().setModel(oModel);
+		},
+
+		priorityFormatter: function (sValue) {
+			if (sValue in Priority) {
+				return sValue;
+			}
+
+			return Priority.None;
+		},
+
+		onGroupClose: function (oEvent) {
+			MessageToast.show('Group Closed: ' + oEvent.getSource().getTitle());
 		},
 
 		onListItemPress: function (oEvent) {
 			MessageToast.show('Item Pressed: ' + oEvent.getSource().getTitle());
 		},
 
-		onRejectPress: function () {
-			MessageToast.show('Reject Button Pressed');
+		onItemButtonPress: function (oEvent) {
+			MessageToast.show("Item Button '" + oEvent.getSource().getText() + "' Pressed");
 		},
 
-		onAcceptPress: function () {
-			MessageToast.show('Accept Button Pressed');
+		onGroupButtonPress: function (oEvent) {
+			MessageToast.show("Group Button '" + oEvent.getSource().getText() + "' Pressed");
 		},
 
 		onItemClose: function (oEvent) {
@@ -116,11 +42,8 @@ sap.ui.define([
 				oList = oItem.getParent();
 
 			oList.removeItem(oItem);
-
-			MessageToast.show('Item Closed: ' + oEvent.getSource().getTitle());
+			MessageToast.show("Item Closed: " + oItem.getTitle());
 		}
+
 	});
-
-	return CController;
-
 });

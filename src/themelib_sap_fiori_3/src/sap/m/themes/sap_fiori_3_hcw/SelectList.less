@@ -1,0 +1,88 @@
+/* ================================= */
+/* CSS for control sap.m/SelectList  */
+/* Quartz High Contrast White theme  */
+/* ================================= */
+
+@_sap_m_SelectListItem_Height: 2.5rem;
+@_sap_m_SelectListItem_CompactHeight: 2rem;
+@_sap_m_SelectListItemBelizeFocus_Height: 0.375rem; // 2 borders * 0.125rem + 2 offsets (top and bottom) * 0.0625rem
+
+/* selected */
+.sapMSelectListItemBaseSelected {
+	background: @sapUiListSelectionBackgroundColor;
+	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
+}
+
+.sapMSelectListItemBaseHoverable:hover {
+	border-bottom: 0.0625rem solid @sapUiListBorderColor;
+}
+
+.sapMSelectListItemBaseSelected.sapMSelectListItemBaseHoverable:hover {
+	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
+}
+
+.sapMSltPicker {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected,
+/* focus */
+html.sap-desktop .sapMSelectListItemBase:focus {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
+}
+
+.sapMSelectListItemBase.sapMSelectListItemBasePressed .sapMSelectListItemIcon {
+	color: @sapUiContentContrastIconColor;
+}
+
+/* disabled */
+.sapMSelectListItemBaseDisabled {
+	opacity: 0.5;
+}
+
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+
+	.sapMSelectListItemBase:not(.sapMSelectListRow):focus::before {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
+
+	.sapMSltPicker-CTX,
+	.sapMComboBoxBasePicker-CTX {
+		.sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before {
+			border: 0.125rem dashed @sapUiContentFocusColor;
+		}
+	}
+
+	.sapMSelectListItemBase:focus,
+	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+		.sapMSelectListCell::before {
+			border-top: 0.125rem dashed @sapUiContentFocusColor;
+			border-bottom: 0.125rem dashed @sapUiContentFocusColor;
+			height: calc(@_sap_m_SelectListItem_Height ~" - " @_sap_m_SelectListItemBelizeFocus_Height);
+		}
+
+		.sapMSelectListFirstCell.sapMSelectListCell::before {
+			border-left: 0.125rem dashed @sapUiContentFocusColor;
+		}
+
+		.sapMSelectListLastCell.sapMSelectListCell::before {
+			border-right: 0.125rem dashed @sapUiContentFocusColor;
+		}
+	}
+
+	.sapUiSizeCompact {
+		.sapMSelectListItemBase:focus,
+		.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+		.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+			.sapMSelectListCell::before {
+				height: calc(@_sap_m_SelectListItem_CompactHeight ~" - " @_sap_m_SelectListItemBelizeFocus_Height);
+			}
+		}
+	}
+}

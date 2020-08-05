@@ -1,0 +1,131 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.FlatDataAggregation.FlatDataAggregation"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:table="sap.ui.table">
+
+	<Title text="Responsive Table" titleStyle="H1" />
+
+	<Table growing="true" growingThreshold="5" id="mTable" items="{path : '/BusinessPartners',
+			parameters : {
+				$$aggregation : {
+					aggregate : {
+						SalesAmount : {},
+						SalesNumber : {grandTotal : true}
+					},
+					group : {
+						Currency : {},
+						Region : {}
+					}
+				},
+				$count : true,
+				$filter : 'SalesNumber gt 0',
+				$orderby : 'Region desc'
+			}}">
+		<headerToolbar>
+			<Toolbar>
+				<Title id="title" text="Sales Number by Region ({headerContext>$count})"
+					titleStyle="H2" />
+				<Button icon="sap-icon://refresh" press="onRefreshResponsive" tooltip="Refresh"/>
+				<Button enabled="{ui>/bRealOData}" icon="sap-icon://sort-ascending"
+					press="onSortResponsive" tooltip="Sort Ascending"/>
+				<SearchField placeholder="Filter by sales number greater than..."
+					value="{path : 'ui>/sFilterResponsive'}"
+					visible="{ui>/bRealOData}" width="50%" search="onFilterResponsive" />
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column>
+				<Text text="Region" />
+			</Column>
+			<Column>
+				<Text text="Sales Amount" />
+			</Column>
+			<Column>
+				<Text text="Currency" />
+			</Column>
+			<Column>
+				<Text text="Sales Number" />
+			</Column>
+		</columns>
+		<ColumnListItem>
+			<Text text="{Region}" />
+			<Text text="{SalesAmount}" />
+			<Text text="{Currency}" />
+			<Text text="{SalesNumber}" />
+		</ColumnListItem>
+	</Table>
+
+	<Title text="Grid Table" titleStyle="H1" />
+
+	<table:Table fixedRowCount="1" firstVisibleRow="1" id="tTable"
+		rows="{path : '/BusinessPartners',
+			parameters : {
+				$$aggregation : {
+					aggregate : {
+						SalesAmountLocalCurrencyMUH : {grandTotal : true},
+						SalesAmountMUH  : {grandTotal : true},
+						SalesNumberSum : {grandTotal : true, name : 'SalesNumber', with : 'sum'}
+					},
+					group : {
+						Region : {}
+					}
+				},
+				$count : true,
+				$filter : 'SalesNumberSum gt 0',
+				$orderby : 'Region desc'
+			}}" selectionMode="None" threshold="0" visibleRowCount="5">
+		<table:extension>
+			<Toolbar class="sapMTBHeader-CTX">
+				<Title text="Sales Number by Region ({headerContext>$count})" titleStyle="H2" />
+				<Button icon="sap-icon://refresh" press="onRefreshGrid" tooltip="Refresh"/>
+				<Button enabled="{ui>/bRealOData}" icon="sap-icon://sort-ascending"
+					press="onSortGrid" tooltip="Sort Ascending"/>
+				<SearchField placeholder="Filter by sales number greater than..."
+					value="{path : 'ui>/sFilterGrid'}"
+					visible="{ui>/bRealOData}" width="50%" search="onFilterGrid" />
+			</Toolbar>
+		</table:extension>
+		<table:Column template="Region">
+			<Label text="Region"/>
+		</table:Column>
+		<table:Column hAlign="End">
+			<Label text="Sales Amount"/>
+			<table:template>
+				<Text text="{path : 'SalesAmountMUH', type : 'sap.ui.model.odata.type.Decimal'}" />
+			</table:template>
+		</table:Column>
+		<table:Column>
+			<Label text="Currency"/>
+			<table:template>
+				<!-- TODO how to derive type of instance annotation? -->
+				<Text text="{path : 'SalesAmountMUH@Analytics.AggregatedAmountCurrency',
+					type : 'sap.ui.model.odata.type.String'}" />
+			</table:template>
+		</table:Column>
+		<table:Column hAlign="End">
+			<Label text="Local Sales Amount"/>
+			<table:template>
+				<!-- TODO derive type from "SalesAmountLocalCurrencyMUH@odata.type" : "#Decimal" -->
+				<Text text="{path : 'SalesAmountLocalCurrencyMUH',
+					type : 'sap.ui.model.odata.type.Decimal'}" />
+			</table:template>
+		</table:Column>
+		<table:Column>
+			<Label text="Currency"/>
+			<table:template>
+				<!-- TODO how to derive type of instance annotation? -->
+				<Text text="{path : 'SalesAmountLocalCurrencyMUH@Analytics.AggregatedAmountCurrency',
+					type : 'sap.ui.model.odata.type.String'}" />
+			</table:template>
+		</table:Column>
+		<table:Column hAlign="End">
+			<Label text="Sales Number"/>
+			<table:template>
+				<!-- TODO derive type from "SalesNumberSum@odata.type" : "#Decimal" -->
+				<Text text="{path : 'SalesNumberSum', type : 'sap.ui.model.odata.type.Decimal'}" />
+			</table:template>
+		</table:Column>
+	</table:Table>
+</mvc:View>

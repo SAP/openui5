@@ -198,7 +198,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 				}
 			}
 		},
-		renderer: SemanticPageRenderer.render
+		renderer: SemanticPageRenderer
 	});
 
 	/*

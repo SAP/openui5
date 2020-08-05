@@ -1,0 +1,108 @@
+.sapUiLayoutCSSGrid {
+	box-sizing: border-box;
+}
+
+.sapUiLayoutCSSGridBoxLayoutPolyfill {
+	white-space: normal; // 1980317947
+
+	> .sapUiLayoutCSSGridItem {
+		display: inline-block;
+		vertical-align: top;
+		margin: 0 0.5rem 0.5rem 0;
+
+		.sapUiDnDGridIndicator {
+			display: inline-block;
+			margin: 0 0.5rem 0.5rem 0;
+		}
+	}
+
+	.sapMGHLI {
+		margin-bottom: 0.5rem;
+	}
+
+	.sapUiLayoutCSSGridBoxLayoutGenerateIEBreakpoints(S);
+	.sapUiLayoutCSSGridBoxLayoutGenerateIEBreakpoints(M);
+	.sapUiLayoutCSSGridBoxLayoutGenerateIEBreakpoints(L);
+	.sapUiLayoutCSSGridBoxLayoutGenerateIEBreakpoints(XL);
+}
+.sapUiLayoutCSSGridBoxLayoutContainer {
+	display: grid;
+	grid-auto-rows: 1fr;
+	grid-gap: 0.5rem 0.5rem;
+
+	.sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(S);
+	.sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(M);
+	.sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(L);
+	.sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(XL);
+}
+
+.sapUiLayoutCSSGridBoxLayoutContainer.sapFGridListGroup {
+	grid-auto-rows: auto;
+}
+
+/* Mixins */
+
+/* Mixin to generate breakpoints.
+ * Used for all browsers except IE11.
+ */
+.sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(@size, @counter: 0, @i: 1) when (@i =< 12) {
+	&.sapUiLayoutCSSGridBoxLayoutSize@{size}.sapUiLayoutCSSGridBoxLayoutSpan@{size}@{i} {
+		grid-template-columns: repeat(auto-fit, minmax(calc(~"(100% - @{counter} * 0.5rem - 1px) / @{i}"), 1fr));
+	}
+
+	.sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(@size, (@counter + 1), (@i + 1));
+}
+
+/* Mixin to generate IE breakpoints.
+ * Adding -0.1px to the calculation to avoid rounding errors.
+ */
+.sapUiLayoutCSSGridBoxLayoutGenerateIEBreakpoints(@size, @counter: 0, @i: 1) when (@i =< 12) {
+	&.sapUiLayoutCSSGridBoxLayoutSize@{size}.sapUiLayoutCSSGridBoxLayoutSpan@{size}@{i} {
+		@nselector: ~"@{i}n+1";
+
+			> .sapUiLayoutCSSGridItem {
+				width: calc(~"(100% - @{counter} * 0.5rem - 0.1px) / @{i}");
+			}
+	}
+
+	.sapUiLayoutCSSGridBoxLayoutGenerateIEBreakpoints(@size, (@counter + 1), (@i + 1));
+}
+
+.sapUiLayoutCSSGridItem.sapUiLayoutCSSGridItemLastOnRow {
+	margin-right: 0;
+}
+
+.sapUiLayoutCSSGrid .sapUiBlockLayerTabbable {
+	// There are "span" helpers, which purpose is to block navigation into the blocked controls content.
+	// If the focus reaches the span before the blocked/busy control it is forwarded to the one after the control.
+	// These spans should not be visible.
+	position: absolute;
+}
+
+/* ResponsiveColumnLayout */
+.sapUiLayoutCSSResponsiveColumnLayoutGrid {
+	.sapUiLayoutCSSResponsiveColumnLayoutS &,
+	.sapUiLayoutCSSResponsiveColumnLayoutS& {
+		grid-template-columns: repeat(4, minmax(0px, 1fr));
+		grid-gap: 0.5rem 0.5rem;
+	}
+	.sapUiLayoutCSSResponsiveColumnLayoutM &,
+	.sapUiLayoutCSSResponsiveColumnLayoutM& {
+		grid-template-columns: repeat(8, minmax(0px, 1fr));
+		grid-gap: 1rem 1rem;
+	}
+	.sapUiLayoutCSSResponsiveColumnLayoutL &,
+	.sapUiLayoutCSSResponsiveColumnLayoutL& {
+		grid-template-columns: repeat(12, minmax(0px, 1fr));
+		grid-gap: 1rem 1rem;
+	}
+	.sapUiLayoutCSSResponsiveColumnLayoutXL &,
+	.sapUiLayoutCSSResponsiveColumnLayoutXL& {
+		grid-template-columns: repeat(16, minmax(0px, 1fr));
+		grid-gap: 1rem 1rem;
+	}
+}
+
+.sapUiLayoutCSSResponsiveColumnLayoutGridPolyfill {
+	position: relative;
+}

@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
 	<QuickView id="quickView" navigate=".onNavigate" placement="Left">
 		<QuickViewPage
-				header="{i18n>QuickViewPageHeader}">
+			header="{i18n>QuickViewPageHeader}">
 			<QuickViewGroup>
 				<QuickViewGroupElement
 						label="{i18n>LabelQuickViewClass1}"

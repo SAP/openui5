@@ -1,0 +1,158 @@
+/* ================================== */
+/* CSS for control sap.m/RadioButton  */
+/* Quartz Dark theme                  */
+/* ================================== */
+
+.sapMRb {
+	height: 2.75rem;
+
+	.sapMRbBOut {
+		stroke-width: 0.125rem;
+	}
+
+	&:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo) {
+		.sapMRbBOut {
+			stroke-width: @sapUiFieldBorderWidth;
+		}
+	}
+}
+
+.sapMRb .sapMRbB {
+	height: 2.75rem;
+	line-height: 2.75rem;
+	width: 2.75rem;
+}
+
+.sapMRb > .sapMRbBLabel {
+	line-height: 2.75rem;
+	height: 2.75rem;
+	max-width: calc(~"100% - 2.75rem");
+}
+
+.sapMRbSvg {
+	margin: 0.6875rem;
+}
+
+.sapMRbHasLabel.sapMRb:focus:before {
+	bottom: .5rem;
+	top: 0.5rem;
+	left: 0.5rem;
+	right: -0.0625rem;
+}
+
+.sapMRbHasLabel .sapMRbB {
+	width: 2.75rem;
+}
+
+.sapUiSizeCompact {
+
+	.sapMRbB {
+		height:2rem;
+		line-height: 2rem;
+		width: 2rem;
+		}
+
+	.sapMRb > .sapMLabel {
+		height: 2rem;
+		line-height: 2rem;
+		max-width: calc(~"100% - 2rem");
+	}
+
+	.sapMRb:focus:before {
+		bottom: 0.325rem;
+		top: 0.325rem;
+		left: 0.325rem;
+		right: 0.325rem;
+	}
+}
+
+.sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo):not(.sapMRbSucc) .sapMRbHoverable:hover .sapMRbBOut {
+	stroke: @sapUiFieldHoverBorderColor;
+	fill: @sapUiFieldHoverBackground;
+}
+
+.sapMRb:focus:before {
+	border: 1px dotted @sapUiContentFocusColor;
+	bottom: 0.5rem;
+	top: 0.5rem;
+	left: 0.5rem;
+	right: 0.5rem;
+}
+
+.sapMLIBActive .sapMRbB .sapMRbBOut {
+	border: 1px solid @sapUiListActiveTextColor;
+}
+
+.sapMLIBActive .sapMRbSel .sapMRbBOut {
+	background-color: @sapUiListActiveBackground;
+}
+
+.sapMRbDis {
+	opacity: @sapUiContentDisabledOpacity;
+}
+
+/* Value states */
+
+.sapMRbErr.sapMRbSel,
+.sapMRbErr.sapMRbSel.sapMRbRo {
+	.sapMRbBInn {
+		fill: @sapUiFieldInvalidColor;
+		stroke: none;
+	}
+}
+
+.sapMRbErr,
+.sapMRbErr.sapMRbBTouched {
+	.sapMRbB .sapMRbBOut {
+		stroke: @sapUiFieldInvalidColor;
+		fill: @sapUiFieldInvalidBackground;
+	}
+}
+
+.sapMRbWarn.sapMRbSel,
+.sapMRbWarn.sapMRbSel.sapMRbRo {
+	.sapMRbBInn {
+		fill: @sapUiFieldTextColor;
+		stroke: none;
+	}
+}
+
+.sapMRbWarn,
+.sapMRbWarn.sapMRbBTouched {
+	.sapMRbB .sapMRbBOut {
+		stroke: @sapUiFieldWarningColor;
+		fill: @sapUiFieldWarningBackground;
+	}
+}
+
+.sapMRbSucc.sapMRbSel,
+.sapMRbSucc.sapMRbSel.sapMRbRo {
+	.sapMRbBInn {
+		fill: @sapUiFieldSuccessColor;
+		stroke: none;
+	}
+}
+
+.sapMRbSucc,
+.sapMRbSucc.sapMRbBTouched {
+	.sapMRbB .sapMRbBOut {
+		stroke: @sapUiFieldSuccessColor;
+		fill: @sapUiFieldSuccessBackground;
+	}
+}
+
+.sapMRbInfo.sapMRbSel,
+.sapMRbInfo.sapMRbSel.sapMRbRo {
+	.sapMRbBInn {
+		fill: @sapUiFieldInformationColor;
+		stroke: none;
+	}
+}
+
+.sapMRbInfo,
+.sapMRbInfo.sapMRbBTouched {
+	.sapMRbB .sapMRbBOut {
+		stroke: @sapUiFieldInformationColor;
+		fill: @sapUiFieldInformationBackground;
+	}
+}

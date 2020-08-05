@@ -18,7 +18,7 @@
 			<MessageStrip id="StateMessage" visible="true"
 					text="Currently Simulating a Client Model (no dirty or laundering handling)"
 					tooltip="Client Models have no laundering or dirty state handling as they apply changed data directly to the model and do not wait for server responses."
-					type="Info"
+					type="Information"
 					showIcon="true" showCloseButton="false" close="onMsgStripClose">
 				</MessageStrip>
 			</l:VerticalLayout>

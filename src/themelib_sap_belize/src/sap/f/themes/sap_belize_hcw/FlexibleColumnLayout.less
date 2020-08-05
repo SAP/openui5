@@ -28,21 +28,23 @@
 
 .sapFFCL {
 	.sapFFCLNavigationButton {
-		.sapMBtnInner .sapMBtnIcon {
-			width: auto;
-		}
+		.sapMBtnInner {
+			border: 1px solid @sapUiButtonBorderColor;
 
-		&.sapFFCLNavigationButtonLeft {
-			.sapMBtnInner {
-				border: 1px solid @sapUiButtonBorderColor;
-				border-radius: 0 0.375rem 0.375rem 0;
+			&:before,
+			&:after {
+				background-size: 0.125rem 100%;
+				background-position-x: calc(50% - 0.0625rem);
 			}
-		}
+			&:before {
+				background-image: linear-gradient(to top, @sapUiGroupContentBorderColor, @sapUiGroupContentBorderColor);
+			}
 
-		&.sapFFCLNavigationButtonRight {
-			.sapMBtnInner {
-				border: 1px solid @sapUiButtonBorderColor;
-				border-radius: 0.375rem 0 0 0.375rem;
+			&:after {
+				background-image: linear-gradient(to bottom, @sapUiGroupContentBorderColor, @sapUiGroupContentBorderColor);
+			}
+			.sapMBtnIcon {
+				width: auto;
 			}
 		}
 	}

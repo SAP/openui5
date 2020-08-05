@@ -3,16 +3,8 @@
 /* Base theme                                */
 /* ========================================= */
 
-.sapMVSDUpperList {
-	border-bottom: 2px solid @sapUiToolbarSeparatorColor;
-}
-
 .sapMVSD.sapMDialog .sapMDialogScrollCont{
 	padding: 0;
-}
-
-.sapUiSizeCompact .sapMVSD.sapMDialog .sapMBarLeft {
-	height: 2rem;
 }
 
 .sapMTB.sapMVSDFilterHeaderToolbar {
@@ -70,6 +62,9 @@ html.sap-desktop .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
 .sapUiSizeCompact .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
 	.sapMLabel.sapMCbLabel {
 		font-size: @sapMFontMediumSize;
+	}
+	.sapMCb.sapMBarChild:only-child {
+		padding-left: 2rem;
 	}
 }
 

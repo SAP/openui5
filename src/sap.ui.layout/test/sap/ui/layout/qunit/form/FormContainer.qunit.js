@@ -1,22 +1,22 @@
 /* global QUnit, sinon */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/core/Title",
+	"sap/m/library",
 	"sap/m/Toolbar"
 	],
 	function(
+			qutils,
 			FormContainer,
 			FormElement,
 			Title,
+			mLibrary,
 			Toolbar
 	) {
 	"use strict";
-
-	QUnit.start();
 
 	var oFormContainer;
 
@@ -75,7 +75,7 @@ sap.ui.require([
 	function expanderCreated(assert) {
 		var oButton = oFormContainer.getAggregation("_expandButton");
 		assert.ok(oButton, "expander created");
-		assert.equal(oButton.getType(), sap.m.ButtonType.Transparent, "Button type");
+		assert.equal(oButton.getType(), mLibrary.ButtonType.Transparent, "Button type");
 		oFormContainer.setExpandable(false);
 		var oButton2 = oButton = oFormContainer.getAggregation("_expandButton");
 		assert.ok(oButton, "Expand button still exist");
@@ -184,8 +184,8 @@ sap.ui.require([
 		var oToolbar = new Toolbar("TB1");
 		oFormContainer.setToolbar(oToolbar);
 		assert.equal(oFormContainer.getToolbar(), oToolbar, "Toolbar set");
-		assert.equal(oToolbar.getActiveDesign(), sap.m.ToolbarDesign.Transparent, "Toolbar Auto-design set");
-		assert.equal(oToolbar.getDesign(), sap.m.ToolbarDesign.Auto, "Toolbar design not changed");
+		assert.equal(oToolbar.getActiveDesign(), mLibrary.ToolbarDesign.Transparent, "Toolbar Auto-design set");
+		assert.equal(oToolbar.getDesign(), mLibrary.ToolbarDesign.Auto, "Toolbar design not changed");
 	});
 
 	QUnit.module("FormElements", {
@@ -358,18 +358,22 @@ sap.ui.require([
 		assert.equal(oFormContainer.getElementRenderedDomRef(), "X", "Value returned from Form");
 	});
 
-	QUnit.test("invalidateLabels", function(assert) {
+	QUnit.test("_setEditable", function(assert) {
+		assert.notOk(oFormContainer.getProperty("_editable"), "Default: not editable");
+
 		var oFormElement1 = new FormElement("FE1");
 		var oFormElement2 = new FormElement("FE2");
+		sinon.spy(oFormElement1, "_setEditable");
+		sinon.spy(oFormElement2, "_setEditable");
+
 		oFormContainer.addFormElement(oFormElement1);
+
+		oFormContainer._setEditable(true);
+		assert.ok(oFormContainer.getProperty("_editable"), "Default: editable set");
+		assert.ok(oFormElement1._setEditable.calledWith(true), "_setEditable on FormElement1");
+
 		oFormContainer.addFormElement(oFormElement2);
-
-		sinon.spy(oFormElement1, "invalidateLabel");
-		sinon.spy(oFormElement2, "invalidateLabel");
-
-		oFormContainer.invalidateLabels();
-		assert.ok(oFormElement1.invalidateLabel.called, "invalidateLabel on FormElement1");
-		assert.ok(oFormElement2.invalidateLabel.called, "invalidateLabel on FormElement2");
+		assert.ok(oFormElement2._setEditable.calledWith(true), "_setEditable on FormElement2");
 	});
 
 });

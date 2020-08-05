@@ -23,6 +23,7 @@
 				"name": "Currency",
 				"category": "Display",
 				"since": "1.22",
+				"formFactors": "SML",
 				"samples": [
 					"sap.ui.unified.sample.Currency",
 					"sap.ui.unified.sample.CurrencyInTable"
@@ -34,7 +35,10 @@
 				"category": "User Input",
 				"since": "1.48",
 				"samples": [
-					"sap.ui.unified.sample.ColorPicker"
+					"sap.ui.unified.sample.ColorPicker",
+					"sap.ui.unified.sample.ColorPickerLarge",
+					"sap.ui.unified.sample.ColorPickerSimplified",
+					"sap.ui.unified.sample.ColorPickerPopover"
 				]
 			},
 			{
@@ -59,7 +63,8 @@
 					"sap.ui.unified.sample.CalendarSpecialDaysLegend",
 					"sap.ui.unified.sample.CalendarMultipleMonth",
 					"sap.ui.unified.sample.CalendarCalendarType",
-					"sap.ui.unified.sample.CalendarMinMax"
+					"sap.ui.unified.sample.CalendarMinMax",
+					"sap.ui.unified.sample.CalendarDateDeselection"
 				]
 			},
 			{
@@ -113,8 +118,23 @@
 			},
 			{
 				"id": "sap.ui.unified.sample.ColorPicker",
-				"name": "Color Picker",
+				"name": "Color Picker - displayMode: Default",
 				"description": "Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device."
+			},
+			{
+				"id": "sap.ui.unified.sample.ColorPickerLarge",
+				"name": "Color Picker - displayMode: Large",
+				"description": "Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device."
+			},
+			{
+				"id": "sap.ui.unified.sample.ColorPickerSimplified",
+				"name": "Color Picker - displayMode: Simplified",
+				"description": "Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device."
+			},
+			{
+				"id": "sap.ui.unified.sample.ColorPickerPopover",
+				"name": "Color Picker Popover",
+				"description": "Example of ColorPicker in a popover using the thin wrapper control <code>sap.ui.unified.ColorPickerPopover</code>."
 			},
 			{
 				"id": "sap.ui.unified.sample.FileUploaderBasic",
@@ -134,12 +154,12 @@
 			{
 				"id": "sap.ui.unified.sample.CalendarSingleIntervalSelection",
 				"name": "Single Interval Selection",
-				"description": "Calendar where the user can select an interval"
+				"description": "Calendar where the user can select an interval or entire week (either by selecting its week number or by using SHIFT + Space)."
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarMultipleDaySelection",
 				"name": "Multiple Day Selection",
-				"description": "Calendar where the user can select multiple days"
+				"description": "Calendar where the user can select multiple days, entire weeks (either by selecting its week number or by using SHIFT + Space) and ranges (using SHIFT + ENTER/Left mouse click)."
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarSpecialDaysLegend",
@@ -160,6 +180,11 @@
 				"id": "sap.ui.unified.sample.CalendarMinMax",
 				"name": "calendar - min., max., disabled and show/hide week numbers",
 				"description": "Calendar with minimum date 2000-01-01 and maximum date 2050-12-31, some disabled days (in January 2016) and ability to show or hide week numbers."
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarDateDeselection",
+				"name": "Date Deselection",
+				"description": "An example of recommended implementation of deselection logic when the calendar is in single selection mode."
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarDateIntervalBasic",

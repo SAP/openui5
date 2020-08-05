@@ -5,24 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent','sap/ui/core/mvc/XMLView'],
 	var Component = UIComponent.extend("sap.m.sample.Table.Component", {
 
 		metadata : {
-			publicMethods : [
+		    publicMethods : [
 				"getTable"
 			],
-			dependencies : {
-				libs : [
-					"sap.m",
-					"sap.ui.layout"
-				]
-			},
-			config : {
-				sample : {
-					files : [
-						"Table.view.xml",
-						"Table.controller.js",
-						"Formatter.js"
-					]
-				}
-			}
+
+			manifest: "json"
 		},
 
 		getTable : function () {

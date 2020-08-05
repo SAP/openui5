@@ -1,0 +1,73 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:layout="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="sap.m.sample.ComparisonPattern.app.controller.Main">
+	<Page title="First Page">
+		<content>
+			<Table id="idProductsTable"
+				selectionChange="onSelection"
+				mode="MultiSelect"
+				inset="false"
+				items="{
+					path: '/ProductCollection',
+					sorter: {
+						path: 'Name'
+					}
+				}">
+				<headerToolbar>
+					<Toolbar>
+						<Title text="Laptops" level="H2" />
+						<ToolbarSpacer />
+						<Button id="compareBtn" visible="false" press="onToNextPage" />
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="Product" />
+					</Column>
+					<Column
+						hAlign="Center"
+						width="12em"
+						minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="Quantity" />
+					</Column>
+					<Column
+						minScreenWidth="Tablet"
+						demandPopin="true"
+						hAlign="Center">
+						<Text text="Weight" />
+					</Column>
+					<Column
+						hAlign="End">
+						<Text text="Unit Price" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem vAlign="Middle" type="Inactive">
+						<cells>
+							<ObjectIdentifier
+								title="{Name}"
+								text="{ProductId}" />
+							<Input value="{Quantity}"
+									type="{Text}"
+									description="{UoM}"
+									fieldWidth="{60%}" />
+							<ObjectNumber
+								number="{WeightMeasure}"
+								unit="{WeightUnit}" />
+							<ObjectNumber
+								number="{
+									parts:[{path:'Price'},{path:'CurrencyCode'}],
+									type: 'sap.ui.model.type.Currency',
+									formatOptions: {showMeasure: false}
+								}"
+								unit="{CurrencyCode}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+	</Page>
+</mvc:View>

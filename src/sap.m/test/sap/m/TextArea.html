@@ -183,7 +183,20 @@
 							rows: 5,
 							growing: true,
 							width: "100%"
-						})
+						}),
+						ta12 = new sap.m.TextArea({
+							id: "showExceededTextWithHeight",
+							showExceededText: true,
+							maxLength: 50,
+							value: 'This is some text to test the showExceededText + height',
+							width: '100%',
+							height: '100px'
+						}),
+						ta13 = new sap.m.TextArea({
+							maxLength: 50,
+							value: 'This is some text to test the upper textArea',
+							width: '100%',
+						}),
 					]
 				});
 

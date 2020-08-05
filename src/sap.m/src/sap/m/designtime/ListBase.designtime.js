@@ -33,10 +33,7 @@ sap.ui.define([],
 					domRef: ":sap-domref > .sapMListHdrTBar"
 				},
 				infoToolbar: {
-					domRef: ":sap-domref > .sapMListInfoTBar"
-				},
-				dragDropConfig: {
-					ignore: true
+					domRef: ":sap-domref .sapMListInfoTBar"
 				},
 				contextMenu: {
 					ignore: true
@@ -52,4 +49,4 @@ sap.ui.define([],
 			}
 		};
 
-	}, /* bExport= */ false);
+	});

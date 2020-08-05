@@ -1,0 +1,313 @@
+{
+  "1.63.0": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "08d469c76f3d141a86ce7448539d2bd40a4aa4c6",
+        "type": "FIX",
+        "text": "ManagedObject.bindAggregation returns 'this' even when forwarded",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2378"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970047588"
+          }
+        ]
+      },
+      {
+        "id": "40a2bb89528a96e15c247a7ae20d5ece8201e7c3",
+        "type": "FIX",
+        "text": "util/Storage: fixed removeAll function",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970007379"
+          }
+        ]
+      },
+      {
+        "id": "9e5d11154afb05c7c7566b1d874de27618f1d900",
+        "type": "FEATURE",
+        "text": "Introduction of Metric Less Parameters",
+        "references": []
+      },
+      {
+        "id": "02ea8f02c85bcf8501545d489af98f0a5b9ffa81",
+        "type": "FEATURE",
+        "text": "Opa: utility functions in test library",
+        "references": []
+      },
+      {
+        "id": "6bf72e9fed8dc6d5527d26c7daac259789d28cdd",
+        "type": "FEATURE",
+        "text": "PasteHelper: new Validation API for parsed data.",
+        "references": []
+      },
+      {
+        "id": "a224955edbb3c5f492598ca5dd3d46d60a9ec41e",
+        "type": "FIX",
+        "text": "Added missing RJS converter method to Core",
+        "references": []
+      },
+      {
+        "id": "5c23f5226de3caa40fe1601e856321c88e9f8c74",
+        "type": "FIX",
+        "text": "Control/UIArea: cleanup field group code and JSDoc",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2377"
+          }
+        ]
+      },
+      {
+        "id": "22bc81d309156b2065f28ed039b16de07b5ef6c7",
+        "type": "FIX",
+        "text": "DateFormat: Wrong pattern when formatting same date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970072645"
+          }
+        ]
+      },
+      {
+        "id": "17660164569f4c175c3e7b623431bdf7fe3d00ff",
+        "type": "FIX",
+        "text": "Fix support-rule about preload recommendations",
+        "references": []
+      },
+      {
+        "id": "0d2e9317bedf7873228b895e065c031bdae7bafe",
+        "type": "FIX",
+        "text": "ODataModel: memory leak",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970044943"
+          }
+        ]
+      },
+      {
+        "id": "9d045a7ea7e61484de145e7bc5093bb75a3a627b",
+        "type": "FIX",
+        "text": "core.DateFormat: fix am/pm parsing with pattern which contains \".\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006279892018"
+          }
+        ]
+      },
+      {
+        "id": "06f62bd1713532a8055a1aad0f5fd66af2bec2ca",
+        "type": "FIX",
+        "text": "syncXHRBootstrap(Debug).qunit.js - IE support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970031005"
+          }
+        ]
+      },
+      {
+        "id": "ee80c158c80ec6f484681f5c308ccee3d9c90e67",
+        "type": "FIX",
+        "text": "trace/Interaction.js: fixed header length calculation",
+        "references": []
+      },
+      {
+        "id": "3ba97c7c8fe99ae1bac9f0436ee71933d471ce87",
+        "type": "FEATURE",
+        "text": "CLDR: Support misc patterns for numbers",
+        "references": []
+      },
+      {
+        "id": "ecf126cdb226d4c10b15ed757463327e8891d6b0",
+        "type": "FEATURE",
+        "text": "Opa: fragmentId in view-relative control search",
+        "references": []
+      },
+      {
+        "id": "acdea2aa99cbfb8268a2331418bf38773b55e66d",
+        "type": "FEATURE",
+        "text": "m.ColumnHeaderPopover: new control to Table ColumnBehavior",
+        "references": []
+      },
+      {
+        "id": "c272ff76f5a303aa6e5e793a21cf8148e79e45c6",
+        "type": "FIX",
+        "text": "Core: lazy stub for constructors should behave like ctor itself",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870379428"
+          }
+        ]
+      },
+      {
+        "id": "e3152d90546aafa0f28adbc87d0ffae82947a4c0",
+        "type": "FIX",
+        "text": "JSONModel: sorting a binding of a flat number array fails on zeros",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2394"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970084437"
+          }
+        ]
+      },
+      {
+        "id": "bdf52f0be653250958c8366042099623db3c3c94",
+        "type": "FIX",
+        "text": "ODataMessageParser: support 'transition' flag",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970053675"
+          }
+        ]
+      },
+      {
+        "id": "8db84af48f09b7701ac960d0fe1914460ebc69d2",
+        "type": "FIX",
+        "text": "ODataModel: Don't send CSRF token for GET requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006276072018"
+          }
+        ]
+      },
+      {
+        "id": "b5592e5f26125110c4b1245923e236a309dba2c8",
+        "type": "FIX",
+        "text": "syncXHRBootstrap(Debug).qunit.js - IE support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970031005"
+          }
+        ]
+      },
+      {
+        "id": "659712b797c1728a69044f09c9ee2381c0e82cfe",
+        "type": "FIX",
+        "text": "v2.ODataModel: resolve canonical shouldn't return undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970086952"
+          }
+        ]
+      },
+      {
+        "id": "674d942519241beac2b8374ed8587e5778a81b21",
+        "type": "FIX",
+        "text": "v2.ODataModel: submitChanges",
+        "references": []
+      },
+      {
+        "id": "e3e58f02011d346657bcd2bc7fb52dc01dfd3952",
+        "type": "FEATURE",
+        "text": "Control.extend: allow to specify ready-made renderers",
+        "references": []
+      },
+      {
+        "id": "5a756f6848004634a55e4c19eb8313a77688f923",
+        "type": "FEATURE",
+        "text": "DateFormat: Allow DateInterval to handle single date",
+        "references": []
+      },
+      {
+        "id": "dd0c46d0ca7988332af627119893a570dead7acd",
+        "type": "FEATURE",
+        "text": "Enhance custom currencies for individual instances",
+        "references": []
+      },
+      {
+        "id": "ad66567b9b6b62c292e1183135153686b9c4479d",
+        "type": "FEATURE",
+        "text": "ManagedObject: Support handling of properties by value",
+        "references": []
+      },
+      {
+        "id": "25e5db5ed37fdf35a64f430824b3c3119be50c5e",
+        "type": "FIX",
+        "text": "CanonicalRequest.qunit: breaks in IE",
+        "references": []
+      },
+      {
+        "id": "89730e56ede38e6a765af01f709aa3bfbaa66e26",
+        "type": "FIX",
+        "text": "MockServer does not forward request headers inside a $batch",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2182"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870415800"
+          }
+        ]
+      },
+      {
+        "id": "b7fa6c68a53dc6cca0dec173c3c4b00a69319ab7",
+        "type": "FIX",
+        "text": "v2.ODataModel: Missing instance check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970111005"
+          }
+        ]
+      },
+      {
+        "id": "ad728851cf3ec3d26f865c2df1bb11108a2ecff4",
+        "type": "FEATURE",
+        "text": "Enhance custom currencies for individual instances",
+        "references": []
+      },
+      {
+        "id": "675e20ecb3df3ed9c33862dc8f26dd8000b1b13a",
+        "type": "FIX",
+        "text": "DateInterval: Check if start date is before end date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970072645"
+          }
+        ]
+      },
+      {
+        "id": "7ed00156f77fb22bfae0830c56c9d39e91a9318a",
+        "type": "FIX",
+        "text": "ManagedObject: Detect value property in binding info",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970054467"
+          }
+        ]
+      },
+      {
+        "id": "0887e7432c8afe2a8e60b6943bea6ba27536bbe8",
+        "type": "FIX",
+        "text": "ODataUtils: Check for empty Filter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970056905"
+          }
+        ]
+      }
+    ]
+  }
+}

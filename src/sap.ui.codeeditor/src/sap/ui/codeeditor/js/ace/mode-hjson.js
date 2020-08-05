@@ -162,7 +162,7 @@ var HjsonHighlightRules = function() {
         }, {
             include: "#ustring"
         }]
-    }
+    };
 
     this.normalizeRules();
 };
@@ -174,7 +174,7 @@ HjsonHighlightRules.metaData = {
     keyEquivalent: "^~J",
     name: "Hjson",
     scopeName: "source.hjson"
-}
+};
 
 
 oop.inherits(HjsonHighlightRules, TextHighlightRules);
@@ -203,8 +203,8 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
     
-    this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
-    this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
+    this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
+    this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
     this.tripleStarBlockCommentRe = /^\s*(\/\*\*\*).*\*\/\s*$/;
     this.startRegionRe = /^\s*(\/\*|\/\/)#?region\b/;
@@ -339,8 +339,15 @@ oop.inherits(Mode, TextMode);
 (function() {
     this.lineCommentStart = "//";
     this.blockComment = { start: "/*", end: "*/" };
-    this.$id = "ace/mode/hjson"
+    this.$id = "ace/mode/hjson";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
+});                (function() {
+                    ace.require(["ace/mode/hjson"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

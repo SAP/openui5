@@ -1,17 +1,14 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
+	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
-	"sap/ui/test/actions/Press",
-	"sap/ui/test/Opa5"
-],
-function (Helper, EnterText, Press, Opa5) {
+	"sap/ui/test/actions/Press"
+], function (Helper, Opa5, EnterText, Press) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.ViewTemplate.types.Types";
-
-	Opa5.extendConfig({autoWait : true});
 
 	Opa5.createPageObjects({
 		onTheMainPage : {
@@ -29,136 +26,89 @@ function (Helper, EnterText, Press, Opa5) {
 						viewName : sViewName
 					});
 				},
-				changeMinMaxField : function (sValue) {
+				enterDateTimePickerValue : function (sId, sValue) {
 					return this.waitFor({
-						actions : new EnterText({ clearTextFirst : true, text : sValue }),
-						controlType : "sap.m.Input",
-						id : "decimalInput",
+						controlType : "sap.m.DateTimePicker",
+						id : sId,
 						success : function (oControl) {
-							Opa5.assert.ok(true, "Value = " + sValue);
-							oControl.attachValidationError(function(oEvent) {
-								Opa5.assert.strictEqual(oEvent.getId(), "validationError",
-								"Validation error raised: " + oEvent.getParameter("message") +
-								" Entered value:" + oEvent.getParameter("newValue"));
-							});
+							oControl.setValue(sValue);
+							Opa5.assert.strictEqual(oControl.getValue(), sValue,
+								"Control: " + sId + " Value is: " + oControl.getValue());
 						},
 						viewName : sViewName
 					});
 				},
-				enterBoolean : function (sValue) {
+				enterInputValue : function (sId, sValue, sViewName0) {
 					return this.waitFor({
-						actions : new EnterText({ clearTextFirst : true, text : sValue }),
+						actions : new EnterText({clearTextFirst : true, text : sValue}),
 						controlType : "sap.m.Input",
-						id : "booleanInput",
+						id : sId,
 						success : function (oControl) {
-							if (sValue !== true && sValue !== false) {
-								oControl.attachEventOnce("parseError", function(oEvent) {
-									Opa5.assert.strictEqual(oEvent.getId(), "parseError",
-										"Parse error is raised: " + oEvent.getParameter("message") +
-										" Entered value:" + oEvent.getParameter("newValue"));
-								});
-							}
+							Opa5.assert.strictEqual(oControl.getValue(), sValue,
+								"Control: " + sId + " Value is: " + oControl.getValue());
+						},
+						viewName : sViewName0 || sViewName
+					});
+				},
+				enterStepInputValue : function (sId, sValue) {
+					return Helper.changeStepInputValue(this, sViewName, sId, sValue);
+				},
+				enterStepInputValueInteger : function (sId, fValue) {
+					this.waitFor({
+						actions : new EnterText({clearTextFirst : true, text : fValue}),
+						controlType : "sap.m.StepInput",
+						id : sId,
+						viewName : sViewName
+					});
+					return this.waitFor({
+						controlType : "sap.m.StepInput",
+						id : sId,
+						success : function (oControl) {
+							Opa5.assert.strictEqual(oControl.getValue(), Math.round(fValue),
+								"Control: " + sId + " Value is: " + oControl.getValue());
 						},
 						viewName : sViewName
 					});
 				},
-				pressButton : function (sID) {
-					return this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : sID,
-						success : function () {
-							Opa5.assert.ok(true, "Button with ID: " + sID + " pressed");
-						},
-						viewName : sViewName
-					});
-				},
-				pressV4Button : function () {
-					return this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : "toggleV4",
-						success : function () {
-							Opa5.assert.ok(true, "switched to V4 model");
-						},
-						viewName : sViewName
-					});
+				pressButton : function (sId) {
+					return Helper.pressButton(this, sViewName, sId);
 				}
 			},
 			assertions : {
-				checkBooleanValue : function (bValue) {
+				checkDateTimePickerValueState : function (sId, sState) {
 					return this.waitFor({
-						controlType : "sap.m.Input",
-						id : "booleanInput",
-						success : function (oControl) {
-							Opa5.assert.strictEqual(
-								oControl.getBinding("value").getValue(), bValue,
-								"Value is: " + bValue);
+						controlType : "sap.m.DateTimePicker",
+						id : sId,
+						success : function (oInput) {
+							Opa5.assert.strictEqual(oInput.getValueState(), sState,
+								"checkDateTimePickerValueState('" + sId + "', '" + sState + "')");
 						},
 						viewName : sViewName
 					});
 				},
-				checkControlIsDirty : function (sID, bIsDirty) {
+				checkInputIsDirty : function (sId, bIsDirty, sViewName0) {
+					return Helper.checkInputIsDirty(this, sViewName0 || sViewName, sId, bIsDirty);
+				},
+				checkInputValue : function (sId, vValue, sViewName0) {
+					return Helper.checkInputValue(this, sViewName0 || sViewName, sId, vValue);
+				},
+				checkInputValueState : function (sId, sState, sMessage, sViewName0) {
+					return Helper.checkInputValueState(this, sViewName0 || sViewName, sId, sState,
+						sMessage);
+				},
+				checkStepInputValueState : function (sId, sState, sMessage) {
 					return this.waitFor({
-						controlType : "sap.m.Input",
-						id : sID,
-						success : function (oControl) {
-							Opa5.assert.strictEqual(
-								oControl.getBinding("value").getDataState().isControlDirty(),
-									bIsDirty, "Control: " + sID + " is " +
-									(bIsDirty ? "dirty" : "clean"));
+						controlType : "sap.m.StepInput",
+						id : sId,
+						success : function (oStepInput) {
+							Opa5.assert.strictEqual(oStepInput.getValueState(), sState,
+								"checkStepInputValueState('" + sId + "', '" + sState + "')");
+							if (sMessage) {
+								Opa5.assert.strictEqual(oStepInput.getValueStateText(), sMessage,
+									"ValueStateText: " + sMessage);
+							}
 						},
 						viewName : sViewName
-					});
-				},
-				checkLog : function (aExpected) {
-					return this.waitFor({
-						success : function (oControl) {
-							function isExpected(oLog) {
-								if (!aExpected) {
-									return false;
-								}
-								return aExpected.some(function (oExpected, i) {
-									if (oLog.component === oExpected.component &&
-											oLog.level === oExpected.level &&
-											oLog.message.indexOf(oExpected.message) >= 0) {
-										aExpected.splice(i, 1);
-										return true;
-									}
-								});
-							}
-
-							jQuery.sap.log.getLogEntries()
-								.forEach(function (oLog) {
-									var sComponent = oLog.component || "";
-
-									if (Helper.isRelevantLog(oLog)) {
-										if (isExpected(oLog)) {
-											Opa5.assert.ok(true,
-												"Expected Warning or error found: " + sComponent
-												+ " Level: " + oLog.level
-												+ " Message: " + oLog.message );
-										} else {
-											Opa5.assert.ok(false,
-												"Unexpected warning or error found: " + sComponent
-												+ " Level: " + oLog.level
-												+ " Message: " + oLog.message );
-										}
-									}
-								});
-							if (aExpected) {
-								aExpected.forEach(function (oExpected) {
-									var bIsLoggable = jQuery.sap.log.isLoggable(oExpected.level,
-											oExpected.component);
-									Opa5.assert.notOk(bIsLoggable,
-										"Expected warning or error not logged: "
-											+ oExpected.component
-											+ " Level: " + oExpected.level
-											+ " Message: " + oExpected.message );
-								});
-							}
-							Opa5.assert.ok(true, "Log checked");
-						}
 					});
 				}
 			}

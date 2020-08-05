@@ -1,19 +1,20 @@
 /*!
  *{copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
-	"sap/ui/model/type/Float",
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/model/type/Float",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Control, NumberFormat, FormatException, ParseException, ValidateException,
-		Float, Decimal, ODataType, TestUtils) {
+], function (jQuery, Log, Control, NumberFormat, FormatException, ParseException, ValidateException,
+		Decimal, ODataType, Float, TestUtils) {
 	/*global QUnit, sap, sinon */
 	"use strict";
 
@@ -22,7 +23,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Decimal", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
@@ -131,6 +132,23 @@ sap.ui.require([
 			.returns("string");
 		assert.strictEqual(oType.formatValue("123456", "sap.ui.core.CSSSize"), "123,456.000");
 	});
+
+	//*********************************************************************************************
+[
+	{i : "1.10", o : "1.1"},
+	{i : "100", o : "100"},
+	{i : "1.00", o : "1"},
+	//FIXME some automated tests call formatValue with a number -> fix tests
+	//  for now, support number in order to keep the fix small
+	{i : 77, o : "77"}
+].forEach(function (oFixture, i) {
+	QUnit.test("BCP 188109/2020: format removes trailing zeroes, " + i, function (assert) {
+		var oType = new Decimal({minFractionDigits : 0, maxFractionDigits : 2});
+
+		// code under test
+		assert.strictEqual(oType.formatValue(oFixture.i, "string"), oFixture.o);
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("parse", function (assert) {
@@ -279,6 +297,7 @@ sap.ui.require([
 			error : "EnterNumberFraction 1"},
 		{value : "12.3", constraints : {precision : 3, scale : 2},
 			error : "EnterNumberInteger 1"},
+		{value : "12", constraints : {precision : 1}, error : "EnterMaximumOfDigits 1"},
 		{value : "12.34", constraints : {precision : 3, scale : "variable"},
 			error : "EnterNumberPrecision 3"},
 		{value : "1.2", error : "EnterInt"},
@@ -286,7 +305,7 @@ sap.ui.require([
 			error : "EnterNumberIntegerFraction 2 1"},
 		// excess zeros are treated as error (parseValue removes them)
 		{value : "1.0", error : "EnterInt"},
-		{value : "012", constraints : {precision : 2}, error : "EnterNumberInteger 2"},
+		{value : "012", constraints : {precision : 2}, error : "EnterMaximumOfDigits 2"},
 		{value : "99", constraints : {minimum : "100"},
 			error : "EnterNumberMin 100"},
 		{value : "99.999", constraints : {precision : 6, scale : 3, minimum : "100"},

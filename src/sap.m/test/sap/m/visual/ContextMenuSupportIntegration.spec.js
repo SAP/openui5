@@ -42,20 +42,13 @@ describe("sap.m.ContextMenuSupportIntegration", function() {
 
 	aTestElements.forEach(function (oElement) {
 		it("should open content menu for " + oElement.name + ".", function () {
-			var oElementRef = element(by.id(oElement.id));
 			if (bDesktop) {
+			var oElementRef = element(by.id(oElement.id));
 				// right-click for desktop
 				browser.actions().mouseMove(oElementRef).perform();
 				browser.actions().click(protractor.Button.RIGHT).perform();
 
 				expect(takeScreenshot()).toLookAs(oElement.id + "-contextMenu");
-			} else {
-				// long press on mobile devices
-				browser.actions().mouseDown(oElementRef).perform();
-				browser.sleep(1000);
-				browser.actions().mouseUp(oElementRef).perform();
-
-				expect(takeScreenshot()).toLookAs(oElement.id + "-contextMenu-mobile");
 			}
 		});
 	});

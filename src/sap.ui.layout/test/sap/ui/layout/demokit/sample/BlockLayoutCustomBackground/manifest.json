@@ -1,0 +1,40 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.BlockLayoutCustomBackground",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.BlockLayoutCustomBackground.Block",
+			"type": "XML",
+			"async": true
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "resources/sample.css"
+				}
+			]
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Block.view.xml",
+					"Block.controller.js",
+					"resources/sample.css",
+					"resources/Night_sky.jpg",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

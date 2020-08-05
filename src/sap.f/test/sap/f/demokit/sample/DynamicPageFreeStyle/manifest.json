@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.DynamicPageFreeStyle",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.DynamicPageFreeStyle.view.DynamicPageFreeStyle",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.f": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"controller/DynamicPageFreeStyle.controller.js",
+					"view/DynamicPageFreeStyle.view.xml",
+					"view/Card.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.FlexibleColumnLayoutSimple",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.FlexibleColumnLayoutSimple.view.FlexibleColumnLayout",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.f": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Component.js",
+					"controller/FlexibleColumnLayout.controller.js",
+					"view/FlexibleColumnLayout.view.xml",
+					"controller/Master.controller.js",
+					"view/Master.view.xml",
+					"controller/Detail.controller.js",
+					"view/Detail.view.xml",
+					"view/DetailDetail.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

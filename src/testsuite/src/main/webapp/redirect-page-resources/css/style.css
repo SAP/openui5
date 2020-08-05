@@ -1,0 +1,565 @@
+/*
+=====================================
+Font "72"
+=====================================
+*/
+
+@font-face {
+	font-family: '72';
+	font-style: normal;
+	font-weight: 400;
+	src: local('72'),
+	url('../fonts/72-Regular.woff2') format('woff2'),
+	url('../fonts/72-Regular.woff') format('woff');
+}
+
+@font-face {
+	font-family: '72';
+	font-style: normal;
+	font-weight: 700;
+	src: local('72-Bold'),
+	url('../fonts/72-Bold.woff2') format('woff2'),
+	url('../fonts/72-Bold.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'SAP-Icons';
+	font-style: normal;
+	font-weight: 400;
+	src: local('SAP-icons'),
+	url('../fonts/SAP-icons.woff') format('woff'),
+	url('../fonts/SAP-icons.woff2') format('woff2'),
+	url('../fonts/SAP-icons.ttf') format('ttf');
+}
+
+* {
+	font-family: "72", Arial, Helvetica, sans-serif !important;
+}
+
+/*
+=====================================
+GENERIC STYLES
+=====================================
+*/
+
+html, body {
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+div, header, p, h2, h3 {
+	margin: 0;
+	padding: 0;
+	font-weight: inherit;
+}
+
+body {
+	position: relative;
+	overflow-y: hidden;
+}
+
+#scrollable-content {
+	position: absolute;
+	top: 3rem;
+	left: 0;
+	height: calc(100% - 3rem);
+	width: 100%;
+	overflow-y: auto;
+	z-index: 1
+}
+
+section {
+	color: rgb(51, 51, 51);
+}
+
+/*
+=====================================
+SCROLLBAR STYLES
+=====================================
+*/
+
+::-webkit-scrollbar {
+	width: 0.75rem;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #b2b2b2;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: #ababab;
+}
+
+/*
+=====================================
+NAVBAR STYLES
+=====================================
+*/
+
+#navigation {
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#navigation-list {
+	position: relative;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 3rem;
+	background-color: #2f3c48;
+
+	/* Add this to achieve pixel-perfect CSS */
+	border: 1px solid #2f3c48;
+	box-sizing: border-box;
+}
+
+.navigation-list-item {
+	height: 100%;
+	float: left;
+	padding: 0 1rem;
+	box-sizing: border-box;
+}
+
+.navigation-list-item:not(:first-of-type) {
+	padding-top: 0.85rem;
+}
+
+#navigation-logo-item {
+	line-height: 3rem;
+	margin-right: 2px;
+	margin-bottom: 0;
+	padding-right: 0.25rem;
+}
+
+#navigation-logo {
+	height: 2rem;
+	cursor: pointer;
+	vertical-align: middle;
+	padding-bottom: 0.25rem;
+}
+
+.navigation-link {
+	color: #fafafa;
+	text-shadow: 0 0 0.125rem #000000;
+	text-decoration: none;
+	font-size: 1rem;
+}
+
+#hamburger-menu-item {
+	display: none;
+	position: absolute;
+	color: #fff;
+	top: 0;
+	right: 0.25rem;
+	padding-top: 0;
+}
+
+#hamburger-icon {
+	cursor: pointer;
+}
+
+#hamburger-icon:before {
+	font-family: 'SAP-Icons';
+	font-size: 1.5rem;
+	line-height: 3rem;
+	content: '\e1de';
+}
+
+/* ----- PHONE SIZE ----- */
+@media (max-width: 600px) {
+	#navigation-logo-item {
+		visibility: hidden;
+	}
+
+	#hamburger-menu-item {
+		display: block;
+	}
+
+	.navigation-list-item {
+		float: none;
+		display: block;
+	}
+
+	#navigation-list.responsive-menu-opened {
+		height: auto;
+		z-index: 2;
+	}
+
+	#navigation-list.responsive-menu-opened .navigation-list-item {
+		line-height: 3rem;
+		padding-top: 0;
+	}
+}
+
+/*
+=====================================
+HEADER STYLES
+=====================================
+*/
+
+#main-header {
+	position: relative;
+	background-image: url("../img/Home_M_and_L_cropped.jpg");
+	background-size: cover;
+	height: 23.5rem;
+	width: 100%;
+}
+
+#main-headline-wrapper {
+	position: absolute;
+	width: 100%;
+	top: 70%;
+	margin-top: -10rem;
+	text-align: center;
+}
+
+#main-headline-text {
+	font-size: 4rem;
+	font-weight: bold;
+	color: #fff;
+	text-shadow: 0 0 0.125rem #000;
+	margin-bottom: 2rem;
+	text-align: center;
+}
+
+.headline-button {
+	padding: 0 0.875rem 0.1875rem 0.875rem;
+	height: 3.25rem;
+	min-width: 2rem;
+	font-size: 1.375rem;
+	line-height: 3.25rem;
+	border-width: 1px;
+	border-radius: 0.2rem;
+	box-sizing: border-box;
+	cursor: pointer;
+}
+
+.headline-button:focus {
+	outline: 1px dotted #ffffff;
+	outline-offset: -3px;
+}
+
+#get-started-button {
+	background-color: #5496cd;
+	border-color: #418ac7;
+	color: #fff;
+	text-shadow: 0 0 0.125rem #000000;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+#get-started-button:hover {
+	background-color: #418AC7;
+}
+
+#download-button {
+	background-color: transparent;
+	border-color: rgba(202, 228, 251, 0.5);
+	color: #cae4fb;
+	text-shadow: 0 0 0.125rem #000000;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	margin-left: 0.675rem;
+}
+
+#download-button:hover {
+	background-color: rgba(202, 228, 251, 0.2);
+}
+
+/* ----- PHONE AND TABLET SIZE ----- */
+@media (max-width: 1024px) {
+	#main-headline-text {
+		font-size: 1.625rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.headline-button {
+		height: 2.375rem;
+		line-height: 2.375rem;
+		font-size: 1.1rem;
+	}
+}
+
+/*
+=====================================
+DEMOKIT MOVED INFORMATION STYLES
+=====================================
+*/
+
+#demokit-moved-information {
+	padding: 1rem 3rem 1.25rem;
+	font-size: 0.875rem;
+}
+
+#disclaimer-message {
+	color: #333333;
+	background-color: #ffe4e4;
+	border: 1px solid #ee0000;
+	border-radius: 0.1875rem;
+	box-sizing: border-box;
+	padding: 0.4375rem 1rem;
+	min-height: 2rem;
+}
+
+#disclaimer-message-text {
+	position: relative;
+	padding-left: 1.5rem;
+}
+
+#disclaimer-message-text:before {
+	font-family: 'SAP-Icons';
+	content: '\e0b1';
+	position: absolute;
+	color: #bb0000;
+	left: 0;
+}
+
+/*
+=====================================
+HEADLINES STYLES
+=====================================
+*/
+
+.section-headline {
+	padding: 1.25rem 3rem;
+}
+
+.section-headline-text {
+	font-size: 1.625rem;
+	color: rgb(51, 51, 51);
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
+
+/*
+=====================================
+GENERAL GRID STYLES
+=====================================
+*/
+
+.two-column-grid {
+	display: grid;
+	width: 100%;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: repeat(2, 1fr);
+}
+
+.four-column-grid {
+	display: grid;
+	width: 100%;
+	grid-template-columns: repeat(4, 1fr);
+	grid-template-rows: 1fr;
+}
+
+.grid-cell {
+	padding: 2rem 3rem;
+	font-size: 0.875rem;
+}
+
+.grid-cell-header {
+	margin-bottom: 1.625rem;
+}
+
+.grid-cell-link {
+	color: rgb(0, 112, 177);
+	text-shadow: none;
+	text-decoration: none;
+	font-size: 1.375rem;
+}
+
+.grid-cell-link:hover {
+	text-decoration: underline;
+}
+
+.grid-cell-list {
+	padding: 0;
+	margin-top: 1rem;
+}
+
+.grid-cell-list-item {
+	list-style: none;
+	line-height: normal;
+}
+
+.grid-cell-list-item:before {
+	font-family: 'SAP-Icons';
+	font-size: 0.875rem;
+	content: '\e05b';
+	color: #346187;
+	margin: 0 1rem 0 0.5rem;
+}
+
+.social-cell {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.social-cell-logo {
+	width: 2.5rem;
+	margin-top: 0.25rem;
+}
+
+.social-cell-title {
+	box-sizing: border-box;
+	margin: 1rem 0.5rem 0.625rem 1rem;
+}
+
+/* ----- PHONE SIZE ----- */
+@media (max-width: 600px) {
+	.two-column-grid {
+		grid-template-columns: 1fr;
+		grid-template-rows: repeat(4, 1fr);
+	}
+
+	.four-column-grid {
+		grid-template-columns: 1fr;
+		grid-template-rows: repeat(4, 1fr);
+	}
+}
+
+/* ----- TABLET SIZE ----- */
+@media (min-width: 600px) and (max-width: 1024px) {
+	.four-column-grid {
+		grid-template-columns: repeat(2, 1fr);
+		grid-template-rows: repeat(2, 1fr);
+	}
+}
+
+/*
+=====================================
+KEY FEATURES GRID STYLES
+=====================================
+*/
+
+#responsiveness-cell {
+	color: #fff;
+	background-color: #365892;
+}
+
+#concepts-cell {
+	background-color: #BBD0E6;
+}
+
+#toolkit-cell {
+	background-color: #D5E2EF;
+}
+
+#design-cell {
+	background-color: #EFF4F9;
+}
+
+#responsiveness-cell .grid-cell-link {
+	color: inherit;
+}
+
+#responsiveness-cell .grid-cell-link:hover {
+	color: #7ed0ff;
+}
+
+/*
+=====================================
+CHOOSE YOUR SCENARIO GRID STYLES
+=====================================
+*/
+
+#cloud-platform-cell {
+	background-color: #BBD0E6;
+}
+
+#on-premise-cell {
+	background-color: #D5E2EF;
+}
+
+#open-source-cell {
+	background-color: #EFF4F9;
+}
+
+#cdn-cell {
+	background-color: #CADBEB;
+}
+
+/*
+=====================================
+JOIN THE COMMUNITY GRID STYLES
+=====================================
+*/
+
+#icon-placeholder:before {
+	font-family: 'SAP-Icons';
+	font-size: 2.5rem;
+	content: '\e0b4';
+	color: #346187;
+}
+
+#sap-community-cell {
+	background-color: #EFF4F9;
+}
+
+#stackoverflow-cell {
+	background-color: #D5E2EF;
+}
+
+#youtube-cell {
+	background-color: #CADBEB;
+}
+
+#twitter-cell {
+	background-color: #BBD0E6;
+}
+
+/*
+=====================================
+FOOTER STYLES
+=====================================
+*/
+
+#page-footer {
+	display: flex;
+	justify-content: space-between;
+	padding: 1rem 3rem;
+	box-sizing: border-box;
+	font-size: 0.875rem;
+	height: 4rem;
+	background-color: #2f3c48;
+}
+
+#page-footer-logo {
+	width: 4.25rem;
+	height: 2rem;
+}
+
+#footer-links-wrapper {
+	margin-bottom: 0.5rem;
+	margin-top: 0.5rem;
+}
+
+.page-footer-link {
+	color: rgb(126, 208, 255);
+	text-decoration: none;
+	margin-right: 2.75rem;
+}
+
+.page-footer-link:last-of-type {
+	margin-right: 0;
+}
+
+.page-footer-link:hover {
+	text-decoration: underline;
+}
+
+/* ----- PHONE SIZE ----- */
+@media (max-width: 600px) {
+	#page-footer {
+		padding: 1rem;
+	}
+
+	.page-footer-link {
+		margin-right: 1.5rem;
+	}
+}

@@ -1,270 +1,50 @@
-/* global QUnit,sinon*/
-
-(function ($, QUnit, sinon, DynamicPage, DynamicPageTitle, DynamicPageHeader) {
+/*global QUnit, sinon*/
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"qunit/DynamicPageUtil",
+	"sap/f/DynamicPage",
+	"sap/f/DynamicPageTitle",
+	"sap/f/DynamicPageHeader",
+	"sap/ui/Device",
+	"sap/ui/core/Core",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/Configuration",
+	"sap/m/OverflowToolbarButton",
+	"sap/m/library",
+	"sap/f/DynamicPageAccessibleLandmarkInfo",
+	"sap/ui/core/mvc/XMLView",
+	'sap/ui/core/Control',
+	'sap/ui/core/IntervalTrigger',
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes"
+],
+function (
+	$,
+	DynamicPageUtil,
+	DynamicPage,
+	DynamicPageTitle,
+	DynamicPageHeader,
+	Device,
+	Core,
+	ComponentContainer,
+	UIComponent,
+	Configuration,
+	OverflowToolbarButton,
+	mLibrary,
+	DynamicPageAccessibleLandmarkInfo,
+	XMLView,
+	Control,
+	IntervalTrigger,
+	QUnitUtils,
+	KeyCodes
+) {
 	"use strict";
 
-	sinon.config.useFakeTimers = false;
-	$.sap.require("sap.f.DynamicPage");
-	$.sap.require("sap.f.DynamicPageHeader");
-
-	var core = sap.ui.getCore(),
-		TESTS_DOM_CONTAINER = "qunit-fixture",
-		oFactory = {
-			getResourceBundle: function () {
-				return sap.ui.getCore().getLibraryResourceBundle("sap.f");
-			},
-			getDynamicPage: function () {
-				return new DynamicPage({
-					showFooter: true,
-					title: this.getDynamicPageTitle(),
-					header: this.getDynamicPageHeader(),
-					content: this.getContent(100),
-					footer: this.getFooter()
-				});
-			},
-			getDynamicPageWithBigContent: function () {
-				return new DynamicPage({
-					showFooter: true,
-					title: this.getDynamicPageTitle(),
-					header: this.getDynamicPageHeader(),
-					content: this.getContent(300),
-					footer: this.getFooter()
-				});
-			},
-			getDynamicPageWithBigHeaderContent: function () {
-				var oBigHeaderContent = [ new sap.m.Panel({ height: "900px"}) ];
-				return new DynamicPage({
-					title: this.getDynamicPageTitle(),
-					header: this.getDynamicPageHeader(oBigHeaderContent),
-					content: this.getContent(900)
-				});
-			},
-			getDynamicPageWithPreserveHeaderOnScroll: function () {
-				return new DynamicPage({
-					preserveHeaderStateOnScroll: true,
-					title: this.getDynamicPageTitle(),
-					header: this.getDynamicPageHeader(),
-					content: this.getContent(100)
-				});
-			},
-			getDynamicPageWithEmptyHeader: function () {
-				return new DynamicPage({
-					title: this.getDynamicPageTitle(),
-					header: this.getDynamicPageHeader([]),
-					content: this.getContent(100)
-				});
-			},
-			getDynamicPageNoHeader: function () {
-				return new DynamicPage({
-					title: this.getDynamicPageTitle(),
-					content: this.getContent(100)
-				});
-			},
-			getDynamicPageNoTitle: function () {
-				return new DynamicPage({
-					header: this.getDynamicPageHeader(),
-					content: this.getContent(100)
-				});
-			},
-			getDynamicPageWithExpandSnapContent: function () {
-				return new DynamicPage({
-					title: this.getDynamicPageTitleWithExpandSnapContent(),
-					header: this.getDynamicPageHeader(),
-					content: this.getContent(200),
-					footer: this.getFooter()
-				});
-			},
-			getDynamicPageWithBreadCrumbs: function () {
-				return new DynamicPage({
-					title: this.getDynamicPageTitleWithBreadCrumbs(),
-					header: this.getDynamicPageHeader(),
-					content: this.getContent(200),
-					footer: this.getFooter()
-				});
-			},
-			getDynamicPageWithNavigationActions: function () {
-				return new DynamicPage({
-					title: this.getDynamicPageTitleWithNavigationActions(),
-					header: this.getDynamicPageHeader(),
-					content: this.getContent(200),
-					footer: this.getFooter()
-				});
-			},
-			getDynamicPageWithNavigationActionsAndBreadcrumbs: function () {
-				return new DynamicPage({
-					title: this.getDynamicPageTitleWithNavigationActionsAndBreadcrumbs(),
-					header: this.getDynamicPageHeader(),
-					content: this.getContent(200),
-					footer: this.getFooter()
-				});
-			},
-			getDynamicPageNoTitleAndHeader: function () {
-				return new DynamicPage({
-					content: this.getContent(20)
-				});
-			},
-			getDynamicPageTitle: function () {
-				return new DynamicPageTitle({
-					heading:  this.getTitle()
-				});
-			},
-			getDynamicPageTitleWithBreadCrumbs: function () {
-				return new DynamicPageTitle({
-					heading: this.getTitle(),
-					breadcrumbs: new sap.m.Breadcrumbs({
-						links: [
-							new sap.m.Link({text: "link1"}),
-							new sap.m.Link({text: "link2"}),
-							new sap.m.Link({text: "link3"}),
-							new sap.m.Link({text: "link4"})
-						]
-					})
-				});
-			},
-			getDynamicPageTitleWithNavigationActions:  function () {
-				return new DynamicPageTitle({
-					heading:  this.getTitle(),
-					navigationActions: [
-						this.getAction(),
-						this.getAction(),
-						this.getAction()
-					]
-				});
-			},
-			getDynamicPageTitleWithNavigationActionsAndBreadcrumbs: function () {
-				return new DynamicPageTitle({
-					heading:  this.getTitle(),
-					breadcrumbs: new sap.m.Breadcrumbs({
-						links: [
-							new sap.m.Link({text: "link1"}),
-							new sap.m.Link({text: "link2"}),
-							new sap.m.Link({text: "link3"}),
-							new sap.m.Link({text: "link4"})
-						]
-					}),
-					navigationActions: [
-						this.getAction(),
-						this.getAction(),
-						this.getAction()
-					]
-				});
-			},
-			getDynamicPageTitleWithExpandSnapContent: function () {
-				return new DynamicPageTitle({
-					heading: this.getTitle(),
-					snappedContent: [
-						this.getLabel("Snapped Content")
-					],
-					expandedContent: [
-						this.getLabel("Expanded Content")
-					],
-					content: [this.getLabel("Content1"), this.getLabel("Content2")]
-				});
-			},
-			getDynamicPageHeader: function (aContent) {
-				return new DynamicPageHeader({
-					pinnable: true,
-					content: aContent || this.getContent(5)
-				});
-			},
-			getFooter: function () {
-				return new sap.m.OverflowToolbar({
-					content: [
-						new sap.m.ToolbarSpacer(),
-						new sap.m.Button({
-							text: "Accept",
-							type: "Accept"
-						}),
-						new sap.m.Button({
-							text: "Reject",
-							type: "Reject"
-						})
-					]
-				});
-			},
-			getContent: function (iNumber) {
-				return new sap.ui.layout.Grid({
-					defaultSpan: "XL2 L3 M4 S6",
-					content: this.getMessageStrips(iNumber)
-				});
-			},
-			getMessageStrip: function (iNumber) {
-				return new sap.m.MessageStrip({
-					text: "Content " + ++iNumber
-				});
-			},
-			getMessageStrips: function (iNumber) {
-				var aMessageStrips = [];
-
-				for (var i = 0; i < iNumber; i++) {
-					aMessageStrips.push(this.getMessageStrip(i));
-				}
-				return aMessageStrips;
-			},
-			getAction: function () {
-				return new sap.m.Button({
-					text: "Action"
-				});
-			},
-			getLabel: function (sText) {
-				return new sap.m.Label({
-					text: sText
-				});
-			},
-			getTitle: function () {
-				return new sap.m.Title({
-					text: "Anna Maria Luisa"
-				});
-			},
-			getOverflowToolbar: function () {
-				return new sap.m.OverflowToolbar({
-					content: [
-						this.getLabel("Label 1"),
-						this.getLabel("Label 2")
-					]
-				});
-			}
-		},
-		oUtil = {
-			renderObject: function (oObject) {
-				oObject.placeAt(TESTS_DOM_CONTAINER);
-				core.applyChanges();
-				return oObject;
-			},
-			exists: function (vObject) {
-				if (arguments.length === 1) {
-					return vObject && ("length" in vObject) ? vObject.length > 0 : !!vObject;
-				}
-
-				return Array.prototype.slice.call(arguments).every(function (oObject) {
-					return this.exists(oObject);
-				});
-			},
-			toMobileMode: function () {
-				$("html").removeClass("sapUiMedia-Std-Desktop")
-					.removeClass("sapUiMedia-Std-Tablet")
-					.addClass("sapUiMedia-Std-Phone");
-				sap.ui.Device.system.desktop = false;
-				sap.ui.Device.system.tablet = false;
-				sap.ui.Device.system.phone = true;
-			},
-			toTabletMode: function () {
-				$("html").removeClass("sapUiMedia-Std-Desktop")
-					.removeClass("sapUiMedia-Std-Phone")
-					.addClass("sapUiMedia-Std-Tablet");
-				sap.ui.Device.system.desktop = false;
-				sap.ui.Device.system.phone = false;
-				sap.ui.Device.system.tablet = true;
-			},
-			toDesktopMode: function () {
-				$("html").addClass("sapUiMedia-Std-Desktop")
-					.removeClass("sapUiMedia-Std-Tablet")
-					.removeClass("sapUiMedia-Std-Phone");
-				sap.ui.Device.system.desktop = true;
-				sap.ui.Device.system.tablet = false;
-				sap.ui.Device.system.phone = false;
-			}
-		};
+	var TESTS_DOM_CONTAINER = DynamicPageUtil.sTestsDomContainer,
+		oFactory = DynamicPageUtil.oFactory,
+		oUtil = DynamicPageUtil.oUtil,
+		PageBackgroundDesign = mLibrary.PageBackgroundDesign;
 
 	/* --------------------------- DynamicPage API -------------------------------------- */
 	QUnit.module("DynamicPage - API ", {
@@ -309,347 +89,87 @@
 		assert.ok(!oStateChangeListener.called, "stateChange event was not fired");
 	});
 
-	/* --------------------------- DynamicPage Title API ---------------------------------- */
-	QUnit.module("DynamicPage Title - API ", {
+	QUnit.test("DynamicPage landmark info is set correctly", function (assert) {
+		var oLandmarkInfo = new DynamicPageAccessibleLandmarkInfo({
+			rootRole: "Region",
+			rootLabel: "Root",
+			contentRole: "Main",
+			contentLabel: "Content",
+			headerRole: "Banner",
+			headerLabel: "Header",
+			footerRole: "Region",
+			footerLabel: "Footer"
+		});
+
+		this.oDynamicPage.setLandmarkInfo(oLandmarkInfo);
+		Core.applyChanges();
+
+		assert.strictEqual(this.oDynamicPage.$().attr("role"), "region", "Root role is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$().attr("aria-label"), "Root", "Root label is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("content").attr("role"), "main", "Content role is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("content").attr("aria-label"), "Content", "Content label is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("header").attr("role"), "banner", "Header role is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("header").attr("aria-label"), "Header", "Header label is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("footerWrapper").attr("role"), "region", "Footer role is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("footerWrapper").attr("aria-label"), "Footer", "Footer label is set correctly.");
+	});
+
+	QUnit.test("DynamicPage - backgroundDesign property", function(assert) {
+		var oDynamicPage = this.oDynamicPage,
+				$oDomRef = oDynamicPage.$wrapper;
+
+		// assert
+		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.Standard, "Should have backgroundDesign property = 'Standard'");
+		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperStandard"), "Should have sapFDynamicPageContentWrapperStandard class");
+
+		// act
+		oDynamicPage.setBackgroundDesign("Solid");
+		Core.applyChanges();
+
+		// assert
+		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperSolid"), "Should have sapFDynamicPageContentWrapperSolid class");
+		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.Solid, "Should have backgroundDesign property = 'Solid'");
+
+		// act
+		oDynamicPage.setBackgroundDesign("Standard");
+		Core.applyChanges();
+
+		// assert
+		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperSolid"), "Should not have sapFDynamicPageContentWrapperSolid class");
+		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperStandard"), "Should have sapFDynamicPageContentWrapperStandard class");
+		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.Standard, "Should have backgroundDesign property = 'Standard'");
+
+		// act
+		oDynamicPage.setBackgroundDesign("List");
+		Core.applyChanges();
+
+		// assert
+		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperStandard"), "Should not have sapFDynamicPageContentWrapperStandard class");
+		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperList"), "Should have sapFDynamicPageContentWrapperList class");
+		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.List, "Should have backgroundDesign property = 'List'");
+
+		// act
+		oDynamicPage.setBackgroundDesign("Transparent");
+		Core.applyChanges();
+
+		// assert
+		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperList"), "Should not have sapFDynamicPageContentWrapperList class");
+		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperTransparent"), "Should have sapFDynamicPageContentWrapperTransparent class");
+		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.Transparent, "Should have backgroundDesign property = 'Transparent'");
+
+		// act
+		oDynamicPage.setBackgroundDesign(null);
+		Core.applyChanges();
+
+		// assert
+		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperTransparent"), "Should not have sapFDynamicPageContentWrapperTransparent class");
+		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperStandard"), "Should have sapFDynamicPageContentWrapperStandard class");
+		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.Standard, "Should have backgroundDesign property = 'Standard', which is default");
+	});
+
+	QUnit.module("DynamicPage - API - header initially snapped", {
 		beforeEach: function () {
-			sinon.config.useFakeTimers = true;
-			this.oDynamicPage = oFactory.getDynamicPage();
-			this.oDynamicPageTitle = this.oDynamicPage.getTitle();
-			oUtil.renderObject(this.oDynamicPage);
-		},
-		afterEach: function () {
-			sinon.config.useFakeTimers = false;
-			this.oDynamicPage.destroy();
-			this.oDynamicPage = null;
-			this.oDynamicPageTitle = null;
-		}
-	});
-
-	QUnit.test("Add/Remove dynamically Snapped content", function (assert) {
-		var oLabel = oFactory.getLabel("New Label"),
-			iExpectedSnappedContentNumber = 0,
-			iActualSnappedContentNumber = this.oDynamicPageTitle.getExpandedContent().length;
-
-		assert.equal(iActualSnappedContentNumber, iExpectedSnappedContentNumber, "No Snapped Content");
-
-		// Add label
-		iExpectedSnappedContentNumber++;
-		this.oDynamicPageTitle.addSnappedContent(oLabel);
-		core.applyChanges();
-		iActualSnappedContentNumber = this.oDynamicPageTitle.getSnappedContent().length;
-
-		assert.equal(iActualSnappedContentNumber, iExpectedSnappedContentNumber, "Snapped Content added successfully");
-
-
-		// Remove label
-		iExpectedSnappedContentNumber--;
-		this.oDynamicPageTitle.removeSnappedContent(oLabel);
-		core.applyChanges();
-		iActualSnappedContentNumber = this.oDynamicPageTitle.getSnappedContent().length;
-
-		assert.equal(iActualSnappedContentNumber, iExpectedSnappedContentNumber, "Snapped Content removed successfully");
-	});
-
-	QUnit.test("Add/Remove dynamically Expanded content", function (assert) {
-		var oLabel = oFactory.getLabel("New Label"),
-			iExpectedExpandedContentNumber = 0,
-			iActualExpandedContentNumber = this.oDynamicPageTitle.getExpandedContent().length;
-
-		assert.equal(iActualExpandedContentNumber, iExpectedExpandedContentNumber, "No Expanded Content");
-
-		// Add label
-		iExpectedExpandedContentNumber++;
-		this.oDynamicPageTitle.addExpandedContent(oLabel);
-		iActualExpandedContentNumber = this.oDynamicPageTitle.getExpandedContent().length;
-
-		assert.equal(iActualExpandedContentNumber, iExpectedExpandedContentNumber, "Expanded Content added successfully");
-
-
-		// Remove label
-		iExpectedExpandedContentNumber--;
-		this.oDynamicPageTitle.removeExpandedContent(oLabel);
-		iActualExpandedContentNumber = this.oDynamicPageTitle.getExpandedContent().length;
-
-		assert.equal(iActualExpandedContentNumber, iExpectedExpandedContentNumber, "Expanded Content removed successfully");
-	});
-
-	QUnit.test("Add/Remove dynamically actions", function (assert) {
-		var oAction = oFactory.getAction(),
-			oAction1 = oFactory.getAction(),
-			oAction2 = oFactory.getAction(),
-			iExpectedActionsNumber = 0,
-			iActualActionsNumber = this.oDynamicPageTitle.getActions().length,
-			vResult = null;
-
-		// Assert default state
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "There are no actions.");
-
-		// Act: add Action
-		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.addAction(oAction);
-		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
-
-		// Assert
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is added successfully.");
-		assert.equal(this.oDynamicPageTitle.getActions()[0].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
-		assert.equal(oAction.getParent().getId(), this.oDynamicPageTitle.getId(), "The action returns the correct parent.");
-		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
-
-		// Act: insert action at the end
-		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertAction(oAction, 1);
-		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
-
-		// Assert
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation");
-		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
-
-		// Act: insert action at the beginning
-		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertAction(oAction, 0);
-		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
-
-		// Assert
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getActions()[0].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
-		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
-
-		// Act: insert action in the middle
-		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertAction(oAction, 1);
-		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
-
-		// Assert
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
-		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
-
-		// Act: remove Action
-		vResult = this.oDynamicPageTitle.removeAction(oAction);
-		iExpectedActionsNumber--;
-		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
-
-		// Assert
-		assert.equal(oAction.getParent(), null, "The action returns no parent after removed from the DynamicPageTitle.");
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is removed successfully.");
-		assert.equal(vResult, oAction, "The action is returned after removal.");
-
-		// Act: add actions and remove All actions
-		this.oDynamicPageTitle.addAction(oAction1);
-		this.oDynamicPageTitle.addAction(oAction2);
-		this.oDynamicPageTitle.removeAllActions();
-		iExpectedActionsNumber = 0;
-		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
-
-		// Assert
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "All Actions are removed successfully.");
-
-		// Act: add two actions and then destroy all actions
-		this.oDynamicPageTitle.addAction(oAction1);
-		this.oDynamicPageTitle.addAction(oAction2);
-		vResult = this.oDynamicPageTitle.destroyActions();
-		iExpectedActionsNumber = 0;
-		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
-
-		// Assert
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "All actions are destroyed successfully.");
-		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
-		assert.equal(oAction1.bIsDestroyed, true, "The action is destroyed successfully.");
-		assert.equal(oAction1.bIsDestroyed, true, "The action is destroyed successfully.");
-
-		// clean
-		vResult = null;
-	});
-
-	QUnit.test("Add/Remove dynamically navigationActions", function (assert) {
-		var oAction = oFactory.getAction(),
-			oAction1 = oFactory.getAction(),
-			oAction2 = oFactory.getAction(),
-			iExpectedActionsNumber = 0,
-			iExpectedIndex = 0,
-			iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length,
-			vResult = null;
-
-		// Assert default state
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "There are no navActions.");
-
-		// Act: add Action
-		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.addNavigationAction(oAction);
-		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
-
-		// Assert
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action added successfully.");
-		assert.equal(this.oDynamicPageTitle.indexOfNavigationAction(oAction), iExpectedIndex, "The action is correctly positioned in the aggregation");
-		assert.equal(oAction.getParent().getId(), this.oDynamicPageTitle.getId(), "The action returns the correct parent");
-		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
-
-		// Act: insert action at the end
-		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction, 1);
-		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
-
-		// Assert
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getNavigationActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
-		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
-
-		// Act: insert action at the beginning
-		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction, 0);
-		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
-
-		// Assert
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getNavigationActions()[0].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
-		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
-
-		// Act: insert action in the middle
-		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction, 1);
-		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
-
-		// Assert
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getNavigationActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
-		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
-
-		// Act: remove Action
-		iExpectedActionsNumber--;
-		vResult = this.oDynamicPageTitle.removeNavigationAction(oAction);
-		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
-
-		// Assert
-		assert.equal(oAction.getParent(), null, "The action returns no parent after removed from the DynamicPageTitle.");
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "One action removed successfully.");
-		assert.equal(vResult, oAction, "The action is returned after removal.");
-
-		// Act: add actions and remove All actions
-		this.oDynamicPageTitle.addNavigationAction(oAction1);
-		this.oDynamicPageTitle.addNavigationAction(oAction2);
-		this.oDynamicPageTitle.removeAllNavigationActions();
-		iExpectedActionsNumber = 0;
-		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
-
-		// Assert
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "All actions removed successfully.");
-
-		// Act: add two actions and then destroy all actions
-		this.oDynamicPageTitle.addNavigationAction(oAction1);
-		this.oDynamicPageTitle.addNavigationAction(oAction2);
-		vResult = this.oDynamicPageTitle.destroyNavigationActions();
-		iExpectedActionsNumber = 0;
-		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
-
-		// Assert
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "All Actions are destroyed successfully.");
-		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
-		assert.equal(oAction1.bIsDestroyed, true, "The action is destroyed successfully.");
-		assert.equal(oAction1.bIsDestroyed, true, "The action is destroyed successfully.");
-
-		// clean
-		vResult = null;
-	});
-
-	QUnit.test("test primaryArea", function (assert) {
-		var oDynamicPageTitle = this.oDynamicPageTitle,
-			sBeginArea = sap.f.DynamicPageTitleArea.Begin;
-
-		// Assert default: primary area is "Begin"
-		assert.equal(oDynamicPageTitle.getPrimaryArea(), sBeginArea, "is the default one");
-	});
-
-	QUnit.test("test areaShrinkRatio", function (assert) {
-		var oDynamicPageTitle = this.oDynamicPageTitle;
-
-		// Assert default: Heading:Content:Actions - "1:1.6:1.6"
-		assert.equal(oDynamicPageTitle.getAreaShrinkRatio(), "1:1.6:1.6", "is the default one");
-
-		// Act
-		oDynamicPageTitle.setAreaShrinkRatio("0:0:0");
-
-		// Assert
-		assert.equal(oDynamicPageTitle.getAreaShrinkRatio(), "0:0:0", "shrink factors are correct");
-	});
-
-	QUnit.test("Adding an OverflowToolbar to the content sets flex-basis and removing it resets it", function (assert) {
-		var oToolbar = oFactory.getOverflowToolbar();
-
-		// Act
-		this.oDynamicPageTitle.addContent(oToolbar);
-		core.applyChanges();
-		this.clock.tick(1000);
-
-		// Assert
-		var sFlexBasis = this.oDynamicPageTitle.$("content").css("flex-basis");
-		assert.notEqual(sFlexBasis, "auto", "Adding an OverflowToolbar sets flex-basis");
-
-		// Act
-		this.oDynamicPageTitle.removeAllContent();
-		core.applyChanges();
-		this.clock.tick(1000);
-
-		// Assert
-		var sFlexBasis = this.oDynamicPageTitle.$("content").css("flex-basis");
-		assert.equal(sFlexBasis, "auto", "Removing an OverflowToolbar resets flex-basis");
-	});
-
-	QUnit.test("Adding a control, other than OverflowToolbar to the content does not set flex-basis", function (assert) {
-		var oLabel = oFactory.getLabel("test");
-
-		// Act
-		this.oDynamicPageTitle.addContent(oLabel);
-		core.applyChanges();
-		this.clock.tick(1000);
-
-		// Assert
-		var sFlexBasis = this.oDynamicPageTitle.$("content").css("flex-basis");
-		assert.equal(sFlexBasis, "auto", "No flex-basis set");
-	});
-
-	QUnit.test("Actions toolbar is extended when its label content extends", function (assert) {
-		var oLabel = oFactory.getLabel("");
-		this.oDynamicPageTitle.addAction(oLabel);
-		core.applyChanges();
-		this.clock.tick(1000);
-
-		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
-
-		// Act
-		oLabel.setText("Some non-empty text");
-		core.applyChanges();
-		this.clock.tick(1000);
-
-		// Assert
-		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
-		assert.ok(sFlexBasisAfter > iFlexBasisBefore + 50, "Flex-basis increased to show the new text");
-	});
-
-	QUnit.test("Actions toolbar is extended when its link content extends", function (assert) {
-		var oLink = new sap.m.Link();
-		this.oDynamicPageTitle.addAction(oLink);
-		core.applyChanges();
-		this.clock.tick(1000);
-
-		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
-
-		// Act
-		oLink.setText("Some non-empty text");
-		core.applyChanges();
-		this.clock.tick(1000);
-
-		// Assert
-		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
-		assert.ok(sFlexBasisAfter > iFlexBasisBefore + 50, "Flex-basis increased to show the new text");
-	});
-
-
-	/* --------------------------- DynamicPage Header API ---------------------------------- */
-	QUnit.module("DynamicPage Header - API ", {
-		beforeEach: function () {
-			this.oDynamicPage = oFactory.getDynamicPage();
-			oUtil.toDesktopMode(); //ensure the test will execute correctly even on mobile devices
+			this.oDynamicPage = oFactory.getDynamicPageHeaderSnapped();
 			oUtil.renderObject(this.oDynamicPage);
 		},
 		afterEach: function () {
@@ -658,171 +178,66 @@
 		}
 	});
 
-	QUnit.test("DynamicPage Header pinnable and not pinnable", function (assert) {
-		var oHeader = this.oDynamicPage.getHeader(),
-			oPinButton = oHeader.getAggregation("_pinButton");
+	// BCP: 1880276579 - tests if initially snapped header is excluded from tab chain
+	QUnit.test("DynamicPage headerExpanded=false header excluded from tab chain", function (assert) {
+		var $oDynamicPageHeader = this.oDynamicPage.getHeader().$();
 
-		oHeader.setPinnable(false);
-		core.applyChanges();
-
-		assert.ok(!oPinButton.$()[0],
-			"The DynamicPage Header Pin Button not rendered");
-
-		oHeader.setPinnable(true);
-		core.applyChanges();
-
-		assert.ok(oPinButton.$()[0],
-			"The DynamicPage Header Pin Button rendered");
-
-		assert.equal(oPinButton.$().hasClass("sapUiHidden"), false,
-			"The DynamicPage Header Pin Button is visible");
-	});
-
-	QUnit.test("DynamicPage Header - expanding/collapsing through the API", function (assert) {
-		var oDynamicPage = this.oDynamicPage,
-			$oDynamicPageHeader = oDynamicPage.getHeader().$(),
-			sSnappedClass = "sapFDynamicPageTitleSnapped",
-			oSetPropertySpy = this.spy(oDynamicPage, "setProperty"),
-			sExpandedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "EXPANDED_HEADER")
-				+ " " + sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER"),
-			sCollapsedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "COLLAPSED_HEADER")
-				+ " " + sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER");
-
-		this.oDynamicPage._bHeaderInTitleArea = true;
-
-		assert.ok(oDynamicPage.getHeaderExpanded(), "initial value for the headerExpanded prop is true");
-		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sExpandedHeaderARIAReferences, "Initial aria-labelledby references indicate that the header is expanded");
-
-		oDynamicPage.setHeaderExpanded(false);
-		assert.equal(oDynamicPage.getHeaderExpanded(), false, "setting it to false under regular conditions works");
-		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass));
-		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
-		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
-		oSetPropertySpy.reset();
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sCollapsedHeaderARIAReferences, "aria-labelledby should indicate that the header is snapped after the call");
-
-		oDynamicPage.setHeaderExpanded(true);
-		assert.ok(oDynamicPage.getHeaderExpanded(), "header converted to expanded");
-		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
-		assert.ok(oSetPropertySpy.calledWith("headerExpanded", true, true));
-		assert.strictEqual($oDynamicPageHeader.css("visibility"), "visible", "Header should be included in the tab chain again");
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sExpandedHeaderARIAReferences, "aria-labelledby should be back to it's original value");
-
-		oSetPropertySpy.reset();
-
-		oDynamicPage._snapHeader();
-		assert.equal(oDynamicPage.getHeaderExpanded(), false, "setting it to false via user interaction");
-		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass));
-		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
 	});
 
-	QUnit.test("DynamicPage Header - expanding/collapsing by clicking the title", function (assert) {
+	QUnit.test("DynamicPage headerExpanded=false pin button visibility", function (assert) {
+		var $oPinButton = this.oDynamicPage.getHeader()._getPinButton().$();
 
-		var oDynamicPage = this.oDynamicPage,
-			$oDynamicPageHeader = oDynamicPage.getHeader().$(),
-			oDynamicPageTitle = oDynamicPage.getTitle(),
-			$oDynamicPageTitle = oDynamicPageTitle.$(),
-			oFakeEvent = {
-				srcControl: oDynamicPageTitle
-			},
-			sExpandedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "EXPANDED_HEADER")
-				+ " " + sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER"),
-			sCollapsedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "COLLAPSED_HEADER")
-				+ " " + sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER");
+		assert.ok($oPinButton.hasClass("sapUiHidden"), "Pin header button should not be visible initially");
 
-		this.oDynamicPage._bHeaderInTitleArea = true;
+		this.oDynamicPage.setHeaderExpanded(true);
+		assert.notOk($oPinButton.hasClass("sapUiHidden"), "Pin header button should be visible again");
 
-		assert.equal(oDynamicPage.getHeaderExpanded(), true, "Initially the header is expanded");
-		assert.equal(oDynamicPage.getToggleHeaderOnTitleClick(), true, "Initially toggleHeaderOnTitleClick = true");
-		assert.equal($oDynamicPageTitle.attr("tabindex"), 0, "Initially the header title is focusable");
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sExpandedHeaderARIAReferences, "Initial aria-labelledby references indicate that the header is expanded");
-
-		oDynamicPageTitle.ontap(oFakeEvent);
-
-		assert.equal(oDynamicPage.getHeaderExpanded(), false, "After one click, the header is collapsed");
-		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sCollapsedHeaderARIAReferences, "aria-labelledby should indicate that the header is collapsed");
-
-		oDynamicPage.setToggleHeaderOnTitleClick(false);
-
-		oDynamicPageTitle.ontap(oFakeEvent);
-		assert.equal(oDynamicPage.getHeaderExpanded(), false, "The header is still collapsed, because toggleHeaderOnTitleClick = false");
-		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be still excluded from the tab chain");
-		assert.equal($oDynamicPageTitle.attr("tabindex"), undefined, "The header title is not focusable");
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sCollapsedHeaderARIAReferences, "aria-labelledby should still indicate that the header is collapsed");
-
-		oDynamicPage.setToggleHeaderOnTitleClick(true);
-
-		oDynamicPageTitle.ontap(oFakeEvent);
-		assert.equal(oDynamicPage.getHeaderExpanded(), true, "After restoring toggleHeaderOnTitleClick to true, the header again expands on click");
-		assert.strictEqual($oDynamicPageHeader.css("visibility"), "visible", "Header should be included in the tab chain again");
-		assert.equal($oDynamicPageTitle.attr("tabindex"), 0, "The header title is focusable again");
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sExpandedHeaderARIAReferences, "aria-labelledby should be back to it's initial value");
+		this.oDynamicPage.setHeaderExpanded(false);
+		assert.ok($oPinButton.hasClass("sapUiHidden"), "Pin header button should be hidden again");
 	});
 
-	QUnit.test("DynamicPage toggle header indicators visibility", function (assert) {
-		var oDynamicPageTitle = this.oDynamicPage.getTitle(),
-			oDynamicPageHeader = this.oDynamicPage.getHeader(),
-			oCollapseButton = oDynamicPageHeader.getAggregation("_collapseButton"),
-			oExpandButton = oDynamicPageTitle.getAggregation("_expandButton"),
-			$oCollapseButton = oCollapseButton.$(),
-			$oExpandButton = oExpandButton.$();
+	QUnit.test("DynamicPage headerExpanded=false expand via header should reset the property value", function (assert) {
+		// act
+		this.oDynamicPage.setHeaderExpanded(null);
 
-		// Assert: toggleHeaderOnTitleClick=true, headerExpanded=true, pinned=false
-		assert.equal(oDynamicPageTitle._getShowExpandButton(), false, "The Expand button should not be visible");
-		assert.equal(oDynamicPageHeader._getShowCollapseButton(), true, "The Collapse button should be visible");
-		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "The Expand Button is not visible");
-		assert.equal($oCollapseButton.hasClass("sapUiHidden"), false, "The Collapse button is visible");
+		// asert
+		assert.ok(this.oDynamicPage.getHeaderExpanded(), "DynamicPage headerExpanded value is default");
 
-		// Act
-		this.oDynamicPage.setToggleHeaderOnTitleClick(false);
+		// act
+		this.oDynamicPage.setHeaderExpanded(false);
 
-		// Assert: toggleHeaderOnTitleClick=false, headerExpanded=true, pinned=false
-		// Expected is both the buttons to be hidden
-		assert.equal(oDynamicPageTitle._getShowExpandButton(), false, "The Expand button should not be visible");
-		assert.equal(oDynamicPageHeader._getShowCollapseButton(), false, "The Collapse button should not be visible");
-		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "Title click is not enabled, the Collapse button is not visible");
-		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Title click is not enabled, the Expand button is not visible");
+		// asert
+		assert.notOk(this.oDynamicPage.getHeaderExpanded(), "DynamicPage header is snapped");
 
-		// Act
-		this.oDynamicPage.setToggleHeaderOnTitleClick(true);
-		this.oDynamicPage._pin();
+		// act
+		this.oDynamicPage.setHeaderExpanded(undefined);
 
-		// Assert: toggleHeaderOnTitleClick=true, headerExpanded=true, pinned=true
-		// Expected is both the buttons to be hidden
+		// asert
+		assert.ok(this.oDynamicPage.getHeaderExpanded(), "DynamicPage headerExpanded value is default");
+	});
 
-		// Act: re-render the Title and Header
-		oDynamicPageTitle.rerender();
-		oDynamicPageHeader.rerender();
-		$oCollapseButton = oCollapseButton.$();
-		$oExpandButton = oExpandButton.$();
+	QUnit.module("DynamicPage - API - header initially snapped without content", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageHeaderSnappedNoContent();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
 
-		// Assert: toggleHeaderOnTitleClick=true, headerExpanded=true, pinned=true
-		// Expected is both the buttons to be hidden, after the Title and Header re-rendering
-		assert.equal(oDynamicPageHeader._getShowCollapseButton(), false, "The Collapse button should not be visible");
-		assert.equal(oDynamicPageTitle._getShowExpandButton(), false, "The Expand button should not be visible");
-		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Header is pinned, the Expand button is not visible");
-		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "Header is pinned, the Collapse button is not visible");
+	// BCP: 1880249493 - tests if initially empty page with snapped header expands correctly on click
+	QUnit.test("DynamicPage headerExpanded=false expand header with click", function (assert) {
+		// setup
+		this.oDynamicPage.setContent(oFactory.getContent(500));
+		Core.applyChanges();
+		this.oDynamicPage.getHeader().$().addClass("sapFDynamicPageHeaderHidden");
+		this.oDynamicPage._titleExpandCollapseWhenAllowed(true);
 
-		// Act
-		this.oDynamicPage._unPin();
-		this.oDynamicPage._snapHeader();
-
-		// Assert: toggleHeaderOnTitleClick=true, headerExpanded=false, pinned=false;
-		// Expected: Expand button to be visible and Collapse button to be hidden
-		assert.equal(oDynamicPageTitle._getShowExpandButton(), true, "The Expand button should be visible");
-		assert.equal(oDynamicPageHeader._getShowCollapseButton(), false, "The Collapse button should not be visible");
-		assert.equal($oExpandButton.hasClass("sapUiHidden"), false, "Header is collapsed, the Expand button is visible");
-		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Header is collapsed, the Collapse button is not visible");
+		// assert
+		assert.notOk(this.oDynamicPage.getHeader().$().hasClass("sapFDynamicPageHeaderHidden"), "DynamicPage header is shown correctly");
 	});
 
 	/* --------------------------- DynamicPage Rendering ---------------------------------- */
@@ -870,6 +285,27 @@
 		assert.ok(this.oDynamicPage.$("vertSB")[0], "DynamicPage ScrollBar has rendered successfully");
 	});
 
+	QUnit.test("BCP: 1870261908 Header title cursor CSS reset is applied", function (assert) {
+		// Arrange
+		var $MainHeading = this.oDynamicPage.$().find(".sapFDynamicPageTitleMainHeading"),
+			$MainContent = this.oDynamicPage.$().find(".sapFDynamicPageTitleMainContent"),
+			$MainActions = this.oDynamicPage.$().find(".sapFDynamicPageTitleMainActions");
+
+		/**
+		 * Asserts if proper CSS reset for cursor is applied to provided DOM element
+		 * @param {object} assert object
+		 * @param {object} oDomElement DOM element to be tested
+		 */
+		function assertCSSReset(assert, oDomElement) {
+			assert.strictEqual(window.getComputedStyle(oDomElement).cursor, "default",
+				"Proper CSS reset is applied to element");
+		}
+
+		// Assert
+		assertCSSReset(assert, $MainHeading[0]);
+		assertCSSReset(assert, $MainContent[0]);
+		assertCSSReset(assert, $MainActions[0]);
+	});
 
 	QUnit.module("DynamicPage - Rendering - No Title", {
 		beforeEach: function () {
@@ -885,6 +321,24 @@
 	QUnit.test("DynamicPage Title not rendered", function (assert) {
 		assert.ok(!oUtil.exists(this.oDynamicPageNoTitle.getTitle()), "The DynamicPage Title has not rendered");
 		assert.ok(this.oDynamicPageNoTitle.getHeader()._getCollapseButton().$().hasClass("sapUiHidden"), "Header collapse button is hidden");
+	});
+
+	QUnit.test("DynamicPage with no Title is rendered without error", function (assert) {
+		var oDeviceStub = this.stub(Device, "system",  {
+					desktop: false,
+					phone: true,
+					tablet: false
+				}),
+			oHeaderExpandedStub = this.stub(this.oDynamicPageNoTitle, "getHeaderExpanded", function () {
+				return false;
+			});
+
+		this.oDynamicPageNoTitle.rerender();
+
+		assert.ok(true, "No error is thrown");
+
+		oDeviceStub.restore();
+		oHeaderExpandedStub.restore();
 	});
 
 	QUnit.test("DynamicPage pin button does not toggle collapse arrow visibility", function (assert) {
@@ -904,7 +358,7 @@
 
 			this.oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oDynamicPage.destroy();
@@ -923,7 +377,7 @@
 
 			this.oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oDynamicPage.destroy();
@@ -933,6 +387,49 @@
 
 	QUnit.test("DynamicPage Invisible Header", function (assert) {
 		assert.ok(this.oDynamicPage.getTitle()._getExpandButton().$().hasClass("sapUiHidden"), "Title expand button is hidden");
+	});
+
+
+	QUnit.module("DynamicPage - Rendering - Expand/collapse buttons", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPage();
+			this.oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("Removed Header content", function (assert) {
+		this.oDynamicPage.getHeader().removeAllContent();
+
+		assert.ok(this.oDynamicPage.getTitle()._getExpandButton().$().hasClass("sapUiHidden"), "Title expand button is hidden");
+		assert.ok(this.oDynamicPage.getHeader()._getCollapseButton().$().hasClass("sapUiHidden"), "Header collapse button is hidden");
+	});
+
+	QUnit.test("no cut-off buttons", function (assert) {
+		var iSnapPosition = this.oDynamicPage._getSnappingHeight(),
+			oHeader = this.oDynamicPage.getHeader(),
+			iScrollTop,
+			iButtonOffsetTop;
+
+		// assert initial setup (in the context of which the final check is valid)
+		assert.notEqual(getComputedStyle( oHeader.getDomRef()).position, "static", "the header is css-positioned");
+		assert.notEqual(getComputedStyle( this.oDynamicPage.$wrapper.get(0)).position, "static", "the scroll-container is css-positioned");
+
+		// Act:
+		// scroll just before snap
+		// so that only the bottommost area of the headerContent is visible
+		this.oDynamicPage._setScrollPosition(iSnapPosition - 5);
+
+		// Check:
+		// obtain the amount of top pixels that are in the overflow (i.e. pixels that are scrolled out of view)
+		iScrollTop = this.oDynamicPage.$wrapper.scrollTop();
+		// obtain the distance of the expand button from the top of the scrollable content
+		iButtonOffsetTop = oHeader._getCollapseButton().getDomRef().offsetTop + oHeader.getDomRef().offsetTop;
+		assert.ok(iButtonOffsetTop >= iScrollTop, "snap button is not in the overflow");
 	});
 
 	QUnit.module("DynamicPage - Rendering - Header State Preserved On Scroll", {
@@ -956,9 +453,70 @@
 	QUnit.test("DynamicPage Pin button is hidden", function (assert) {
 		var $pinButton = this.oDynamicPageWithPreserveHeaderStateOnScroll.getHeader().getAggregation("_pinButton").$();
 
+		// assert
 		assert.ok($pinButton.hasClass("sapUiHidden"), "The DynamicPage Header Pin Button not rendered");
+
+		// act
+		this.oDynamicPageWithPreserveHeaderStateOnScroll._snapHeader();
+		this.oDynamicPageWithPreserveHeaderStateOnScroll._expandHeader();
+
+		// assert
+		assert.ok($pinButton.hasClass("sapUiHidden"), "The DynamicPage Header Pin Button is hidden");
 	});
 
+	QUnit.module("DynamicPage - Rendering lifecycle", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageWithPreserveHeaderOnScroll();
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("resizeListener is not called before the control is rerendered", function (assert) {
+
+		var oDynamicPage = this.oDynamicPage,
+			oSpy = sinon.spy(this.oDynamicPage, "_onChildControlsHeightChange"),
+			iHeightBeforeResize,
+			oDummyControl,
+			done = assert.async(),
+			DummyControl = Control.extend("sap.m.DummyControl", {
+				renderer: function(oRm) {
+					oRm.write("<div></div>");
+				}
+			});
+
+		DummyControl.prototype.onAfterRendering = function() {
+			// will cause the <code>ResizeHandler.prototype.checkSizes<code>
+			// to be executed *synchronously*
+			IntervalTrigger.addListener(function() {
+				// content non important
+			});
+		};
+
+		this.oDynamicPage.addEventDelegate({
+			"onAfterRendering": function() {
+				iHeightBeforeResize = oDynamicPage.getDomRef().offsetHeight;
+				oDummyControl = new DummyControl();
+				oDummyControl.addEventDelegate({
+					"onAfterRendering": function() {
+						// assert
+						assert.strictEqual(oSpy.callCount, 0, "dynamicPage resize listener not called");
+						done();
+					}
+				});
+
+				oDynamicPage.getHeader().addContent(oDummyControl);
+				oDynamicPage.getDomRef().style.height = (iHeightBeforeResize / 2) + "px";
+				oSpy.reset();
+				oDynamicPage.invalidate();
+				oDynamicPage.rerender();
+				oDynamicPage.removeEventDelegate(this);
+			}
+		});
+		this.oDynamicPage.placeAt("qunit-fixture");
+	});
 
 	QUnit.module("DynamicPage - Rendering - No Header", {
 		beforeEach: function () {
@@ -972,8 +530,16 @@
 	});
 
 	QUnit.test("DynamicPage Header not rendered", function (assert) {
+		var oTitle = this.oDynamicPageNoHeader.getTitle();
+
 		assert.ok(!oUtil.exists(this.oDynamicPageNoHeader.getHeader()), "The DynamicPage Header does not exist.");
-		assert.ok(this.oDynamicPageNoHeader.getTitle()._getExpandButton().$().hasClass("sapUiHidden"), "Title expand button is hidden");
+		assert.ok(oTitle._getExpandButton().$().hasClass("sapUiHidden"), "Title expand button is hidden");
+		assert.equal(oTitle._getFocusSpan().is(":hidden"), true, "Focus span should be excluded from the tab chain");
+		assert.notOk(this.oDynamicPageNoHeader.$().hasClass("sapFDynamicPageTitleClickEnabled"), "No DynamicPage Header - sapFDynamicPageTitleClickEnabled not added");
+
+		this.oDynamicPageNoHeader.setToggleHeaderOnTitleClick(true);
+		assert.equal(oTitle._getFocusSpan().is(":hidden"), true, "Focus span should still be excluded from the tab chain");
+		assert.notOk(this.oDynamicPageNoHeader.$().hasClass("sapFDynamicPageTitleClickEnabled"), "No DynamicPage Header - sapFDynamicPageTitleClickEnabled not added");
 	});
 
 	QUnit.module("DynamicPage - Rendering - Empty Header", {
@@ -1015,446 +581,95 @@
 		assert.ok(!oUtil.exists(this.oDynamicPageNoTitleAndHeader.getHeader()), "The DynamicPage Header has not rendered ");
 	});
 
-
-	QUnit.module("DynamicPage - Rendering - Title", {
-		beforeEach: function () {
-			this.oDynamicPage = oFactory.getDynamicPageWithExpandSnapContent();
-			oUtil.renderObject(this.oDynamicPage);
-		},
-		afterEach: function () {
-			this.oDynamicPage.destroy();
-			this.oDynamicPage = null;
-		}
-	});
-	QUnit.test("DynamicPage Title - Expanded/Snapped Content initial visibility", function (assert) {
-		var $titleSnap = this.oDynamicPage.getTitle().$("snapped-wrapper"),
-			$titleExpand = this.oDynamicPage.getTitle().$("expand-wrapper");
-
-		assert.equal($titleSnap.hasClass("sapUiHidden"), true, "Snapped Content is not visible initially");
-		assert.equal($titleExpand.hasClass("sapUiHidden"), false, "Expanded Content is visible initially");
-	});
-
-	QUnit.test("DynamicPage Title - Content", function (assert) {
-		var oTitle = this.oDynamicPage.getTitle();
-
-		// Assert: DynamicPageTitle content aggregation is not empty
-		assert.equal(oTitle.$().hasClass("sapFDynamicPageTitleWithoutContent"), false,
-			"The css class hasn`t been added as the content aggregation is not empty");
-
-		// Act: remove the content
-		oTitle.removeAllContent();
-		core.applyChanges();
-
-		// Assert: DynamicPageTitle content aggregation is empty
-		assert.equal(oTitle.$("main").hasClass("sapFDynamicPageTitleMainNoContent"), true,
-			"The css class has been added as the content aggregation is empty");
-	});
-
-	QUnit.module("DynamicPage - Rendering - Title with Breadcrumbs", {
-		beforeEach: function () {
-			this.oDynamicPage = oFactory.getDynamicPageWithBreadCrumbs();
-			oUtil.renderObject(this.oDynamicPage);
-		},
-		afterEach: function () {
-			this.oDynamicPage.destroy();
-			this.oDynamicPage = null;
-		}
-	});
-
-	QUnit.test("DynamicPage - Rendering - Title with Breadcrumbs", function (assert) {
-		var oTitle = this.oDynamicPage.getTitle(),
-			oBreadcrumbs = oTitle.getAggregation("breadcrumbs"),
-			$oTitleTopDOM = oTitle.$("top");
-
-		// Assert: DynamicPageTitle content aggregation is not empty
-		assert.equal($oTitleTopDOM.length > 0, true, "sapFDynamicPageTitleTop element is rendered");
-		assert.equal($oTitleTopDOM.hasClass("sapFDynamicPageTitleTop"), true, "sapFDynamicPageTitleTop class is added");
-		assert.equal(oBreadcrumbs.$().length > 0, true, "Title Breadcrumbs DOM is rendered");
-		assert.equal($oTitleTopDOM.hasClass("sapFDynamicPageTitleTopBreadCrumbsOnly"), true, "sapFDynamicPageTitleNavActionsOnly class is added");
-
-		// Act: remove breadCrumbs aggregation
-		oTitle.setBreadcrumbs(null);
-		core.applyChanges();
-
-		// Assert: DynamicPageTitle content aggregation is empty
-		assert.equal(oTitle.$("top").length > 0, false, "Title top DOM element is not rendered");
-	});
-
-	QUnit.module("DynamicPage - Rendering - Title with navigationActions", {
-		beforeEach: function () {
-			this.oDynamicPage = oFactory.getDynamicPageWithNavigationActions();
-			this.oDynamicPageTitle = this.oDynamicPage.getTitle();
-			oUtil.renderObject(this.oDynamicPage);
-		},
-		afterEach: function () {
-			this.oDynamicPage.destroy();
-			this.oDynamicPage = null;
-			this.oDynamicPageTitle = null;
-		}
-	});
-
-	QUnit.test("DOM elements and classes", function (assert) {
-		var oTitle = this.oDynamicPageTitle,
-			$oTitleTopDOM = oTitle.$("top"),
-			$oTitleTopNavigationAreaDOM = oTitle.$("topNavigationArea"),
-			$oTitleMainNavigationAreaDOM = oTitle.$("mainNavigationArea");
-
-		assert.equal($oTitleTopDOM.length > 0, true,
-			"sapFDynamicPageTitleTop element is rendered.");
-		assert.equal($oTitleTopDOM.hasClass("sapFDynamicPageTitleTop"), true,
-			"sapFDynamicPageTitleTop class is added.");
-		assert.equal($oTitleTopNavigationAreaDOM.length > 0, true,
-			"top navigation area element is rendered.");
-		assert.equal($oTitleMainNavigationAreaDOM.length > 0, true,
-			"main navigation area element is rendered.");
-		assert.equal($oTitleTopNavigationAreaDOM.hasClass("sapFDynamicPageTitleTopRight"), true,
-			"sapFDynamicPageTitleTopRight class is add.");
-		assert.equal($oTitleMainNavigationAreaDOM.hasClass("sapFDynamicPageTitleMainNavigationAreaInner"), true,
-			"sapFDynamicPageTitleMainNavigationAreaInner class is added.");
-		assert.equal($oTitleTopDOM.hasClass("sapFDynamicPageTitleTopNavActionsOnly"), true,
-			"sapFDynamicPageTitleNavActionsOnly class is added.");
-	});
-
-	QUnit.test("Separator visibility on resize", function (assert) {
-		var oTitle = this.oDynamicPageTitle,
-			oTitlePressSpy = this.spy(sap.f.DynamicPageTitle.prototype, "_toggleNavigationActionsPlacement"),
-			iTitleLargeWidth = 1400,
-			iTitleSmallWidth = 900,
-			oSeparator = oTitle.getAggregation("_navActionsToolbarSeparator"),
-			$oSeparator = oSeparator.$();
-
-		// Arrange
-		// Ensure the Title is bigger than 1280px, then navigationAction are in the Title`s main area.
-		oTitle._onResize(iTitleLargeWidth);
-
-		// Assert
-		// Separator should be rendered.
-		// Separator should not be visible as there are no actions added.
-		assert.equal($oSeparator.length > 0, true, "Toolbar Separator element is rendered.");
-		assert.equal($oSeparator.hasClass("sapUiHidden"), true, "Toolbar Separator element is not visible.");
-
-		// Act: Add an action.
-		oTitle.addAction(oFactory.getAction());
-
-		// Assert: Separator should be visible as there are both actions and navigationActions
-		assert.equal(oTitle._shouldShowSeparator(), true,
-			"Toolbar Separator should be visible, there are actions and navigationActions.");
-		assert.equal($oSeparator.hasClass("sapUiHidden"), false, "Toolbar Separator element is visible.");
-
-		// Act: Simulate shrinking of the Page`s width to less than 1280px.
-		oTitlePressSpy.reset();
-		oTitle._onResize(iTitleSmallWidth);
-
-		// Assert
-		// Title`s width is less than 1280px,
-		// the navigationActions are in the Title`s top area and the separator should not be visible.
-		assert.ok(oTitlePressSpy.calledOnce, "Actions layout is toggled.");
-		assert.equal(oTitle._shouldShowSeparator(), false, "Toolbar Separator should not be visible.");
-		assert.equal($oSeparator.hasClass("sapUiHidden"), true,
-			"Toolbar Separator element is not visible, when the navigationActions are in top area.");
-
-		// Act: Remove all actions.
-		oTitlePressSpy.reset();
-		oTitle.removeAllNavigationActions();
-		oTitle._onResize(iTitleLargeWidth);
-
-		// Assert: if there are no navigation actions -> no toggling
-		assert.ok(!oTitlePressSpy.calledOnce, "Actions layout is not toggled.");
-	});
-
-	QUnit.test("Separator visibility upon actions and navigation actions change", function (assert) {
-		var oTitle = this.oDynamicPageTitle,
-			oAction1 = oFactory.getAction(),
-			oAction2 = oFactory.getAction(),
-			oAction3 = oFactory.getAction(),
-			oSeparator = oTitle.getAggregation("_navActionsToolbarSeparator"),
-			$oSeparator = oSeparator.$(),
-			iTitleLargeWidth = 1400;
-
-		// Arrange:
-		oTitle.addAction(oAction1);
-		oTitle.addAction(oAction2);
-		// Ensure the Title is bigger than 1280px, then navigationAction are in the Title`s main area.
-		oTitle._onResize(iTitleLargeWidth);
-
-		// Assert
-		assert.equal(oTitle._shouldShowSeparator(), true,
-			"Toolbar Separator should be visible, there are both actions and navigationActions.");
-
-		// Act: hide both actions (oAction1 and oAction2)
-		oAction1.setVisible(false);
-		oAction2.setVisible(false);
-
-		// Assert
-		assert.equal(oTitle._shouldShowSeparator(), false,
-			"Toolbar Separator should not be visible, there are no visible actions.");
-		assert.equal($oSeparator.hasClass("sapUiHidden"), true, "Toolbar Separator element is not visible.");
-
-
-		// Act: show one of the action (oAction1)
-		oAction1.setVisible(true);
-		// Ensure the Title is bigger than 1280px, then navigationAction are in the Title`s main area.
-		oTitle._onResize(iTitleLargeWidth);
-
-		// Assert
-		assert.equal(oTitle._shouldShowSeparator(), true,
-			"Toolbar Separator should be visible, there are both actions (although 1) and navigationActions.");
-		assert.equal($oSeparator.hasClass("sapUiHidden"), false, "Toolbar Separator element is visible.");
-
-
-		// Act: remove all navigationActions
-		oTitle.removeAllNavigationActions();
-
-		// Assert
-		assert.equal(oTitle._shouldShowSeparator(), false,
-			"Toolbar Separator should not be visible, there are actions, but no navigationActions.");
-		assert.equal($oSeparator.hasClass("sapUiHidden"), true, "Toolbar Separator element is not visible.");
-
-
-		// Act: add a navigationAction (oAction3)
-		oTitle.addNavigationAction(oAction3);
-		// Ensure the Title is bigger than 1280px, then navigationAction are in the Title`s main area.
-		oTitle._onResize(iTitleLargeWidth);
-
-		// Assert
-		assert.equal(oTitle._shouldShowSeparator(), true,
-			"Toolbar Separator should be visible, there are one action and one navigationAction.");
-		assert.equal($oSeparator.hasClass("sapUiHidden"), false, "Toolbar Separator element is visible.");
-
-
-		// Act: hide the navigationAction (oAction3)
-		oAction3.setVisible(false);
-
-		// Assert
-		assert.equal(oTitle._shouldShowSeparator(), false,
-			"Toolbar Separator should be visible, there are one visible action, but no visible navigationAction.");
-		assert.equal($oSeparator.hasClass("sapUiHidden"), true, "Toolbar Separator element is not visible.");
-
-		// Clean
-		oAction1.destroy();
-		oAction2.destroy();
-		oAction3.destroy();
-	});
-
-	QUnit.module("DynamicPage - Rendering - Title with navigationActions and breadcrumbs", {
-		beforeEach: function () {
-			this.oDynamicPage = oFactory.getDynamicPageWithNavigationActionsAndBreadcrumbs();
-			this.oDynamicPageTitle = this.oDynamicPage.getTitle();
-			oUtil.renderObject(this.oDynamicPage);
-		},
-		afterEach: function () {
-			this.oDynamicPage.destroy();
-			this.oDynamicPage = null;
-			this.oDynamicPageTitle = null;
-		}
-	});
-
-	QUnit.test("Top area visibility upon breadcrumbs change", function (assert) {
-		var oTitle = this.oDynamicPageTitle,
-			oBreadcrumbs = oTitle.getBreadcrumbs(),
-			$TitleTopArea = oTitle.$("top"),
-			$TitleMainArea = oTitle.$("main"),
-			iTitleLargeWidth = 1400,
-			iTitleSmallWidth = 900;
-
-		// Ensure the Title is bigger than 1280px, then navigationAction are in the Title`s main area.
-		oTitle._onResize(iTitleLargeWidth);
-
-		// Assert
-		assert.equal($TitleTopArea.hasClass("sapUiHidden"), false, "Large screen: Top area should be visible when there are visible breadcrumbs.");
-		assert.equal($TitleMainArea.has(".sapFDynamicPageTitleActionsBar").length, 1, "Large screen: Navigation actions should be in the main title area");
-
-		// Act
-		oBreadcrumbs.setVisible(false);
-
-		// Assert
-		assert.equal($TitleTopArea.hasClass("sapUiHidden"), true, "Large screen: Top area should not be visible when there are no visible breadcrumbs.");
-
-		// Act
-		oTitle._onResize(iTitleSmallWidth);
-
-		// Assert
-		assert.equal($TitleTopArea.hasClass("sapUiHidden"), true,
-				"Small screen: Top area should not be visible when there are no visible breadcrumbs and actions");
-		assert.equal($TitleMainArea.has(".sapFDynamicPageTitleActionsBar").length, 1, "Small screen: Navigation actions should be in the main title area");
-
-		// Act
-		oBreadcrumbs.setVisible(true);
-
-		// Assert
-		assert.equal($TitleTopArea.has(".sapFDynamicPageTitleActionsBar").length, 1,
-				"Small screen: Navigation actions should be in the top title area when there are visible breadcrumbs");
-	});
-
-	QUnit.test("Top area visibility upon navigation actions aggregation change", function (assert) {
-		var oTitle = this.oDynamicPageTitle,
-			$TitleTopArea = oTitle.$("top"),
-			iTitleSmallWidth = 900;
-
-		// Ensure the Title is smaller than 1280px, then navigationAction are in the Title`s top area.
-		oTitle._onResize(iTitleSmallWidth);
-
-		// Act
-		oTitle.setBreadcrumbs(null);
-		oTitle.removeAllNavigationActions();
-
-		// Assert
-		assert.equal($TitleTopArea.hasClass("sapUiHidden"), true, "Top area should not be visible when all aggregations are removed");
-	});
-
-	QUnit.module("DynamicPage - Rendering - Title heading, snappedHeading and expandedHeading");
-
-	QUnit.test("No heading at all", function (assert) {
-		var oDynamicPageTitle = new DynamicPageTitle({}),
-			oDynamicPage = new DynamicPage({
-				title: oDynamicPageTitle,
-				header: oFactory.getDynamicPageHeader(),
-				content: oFactory.getContent(100),
-				footer: oFactory.getFooter()
-			});
-		oUtil.renderObject(oDynamicPage);
-
-		var $heading = oDynamicPageTitle.$("left-inner").find(".sapFDynamicPageTitleMainHeadingInner");
-		assert.ok($heading.length === 1, "Heading area is rendered");
-		assert.ok($heading.children().length === 0, "Heading area is empty");
-
-		oDynamicPage.destroy();
-	});
-
-	QUnit.test("Only heading given", function (assert) {
-		var oTitle = oFactory.getTitle(),
-			oDynamicPageTitle = new DynamicPageTitle({
-				heading: oTitle
-			}),
-			oDynamicPage = new DynamicPage({
-				title: oDynamicPageTitle,
-				header: oFactory.getDynamicPageHeader(),
-				content: oFactory.getContent(100),
-				footer: oFactory.getFooter()
-			});
-		oUtil.renderObject(oDynamicPage);
-
-		var $heading = oDynamicPageTitle.$("left-inner").find(".sapFDynamicPageTitleMainHeadingInner");
-		assert.ok($heading.length === 1, "Heading area is rendered");
-		assert.ok($heading.children().length === 1, "Heading area has one child rendered");
-		assert.ok($heading.children()[0] === oTitle.getDomRef(), "This child is the title");
-
-		oDynamicPage.destroy();
-	});
-
-	QUnit.test("heading in combination with snappedHeading/expandedHeading given", function (assert) {
-		var oTitle = oFactory.getTitle(),
-			oDynamicPageTitle = new DynamicPageTitle({
-				heading: oTitle,
-				expandedHeading: oFactory.getTitle(),
-				snappedHeading: oFactory.getTitle()
-			}),
-			oDynamicPage = new DynamicPage({
-				title: oDynamicPageTitle,
-				header: oFactory.getDynamicPageHeader(),
-				content: oFactory.getContent(100),
-				footer: oFactory.getFooter()
-			});
-		oUtil.renderObject(oDynamicPage);
-
-		var $heading = oDynamicPageTitle.$("left-inner").find(".sapFDynamicPageTitleMainHeadingInner");
-		assert.ok($heading.length === 1, "Heading area is rendered");
-		assert.ok($heading.children().length === 1, "Heading area has one child rendered");
-		assert.ok($heading.children()[0] === oTitle.getDomRef(), "This child is the title");
-
-		oDynamicPage.destroy();
-	});
-
-	QUnit.test("Only snappedHeading given", function (assert) {
-		var oDynamicPageTitle = new DynamicPageTitle({
-				snappedHeading: oFactory.getTitle()
-			}),
-			oDynamicPage = new DynamicPage({
-				title: oDynamicPageTitle,
-				header: oFactory.getDynamicPageHeader(),
-				content: oFactory.getContent(100),
-				footer: oFactory.getFooter()
-			});
-		oUtil.renderObject(oDynamicPage);
-
-		assert.ok(oDynamicPageTitle.$("snapped-heading-wrapper").length === 1, "Snapped heading wrapper is rendered");
-		assert.ok(oDynamicPageTitle.$("snapped-heading-wrapper").hasClass("sapUiHidden"), "Snapped heading wrapper is hidden");
-
-		oDynamicPage.destroy();
-	});
-
-	QUnit.test("Only expandedHeading given", function (assert) {
-		var oDynamicPageTitle = new DynamicPageTitle({
-				expandedHeading: oFactory.getTitle()
-			}),
-			oDynamicPage = new DynamicPage({
-				title: oDynamicPageTitle,
-				header: oFactory.getDynamicPageHeader(),
-				content: oFactory.getContent(100),
-				footer: oFactory.getFooter()
-			});
-		oUtil.renderObject(oDynamicPage);
-
-		assert.ok(oDynamicPageTitle.$("expand-heading-wrapper").length === 1, "Expanded heading wrapper is rendered");
-		assert.ok(!oDynamicPageTitle.$("expand-heading-wrapper").hasClass("sapUiHidden"), "Expanded heading wrapper is visible");
-
-		oDynamicPage.destroy();
-	});
-
-	QUnit.test("Both snappedHeading and expandedHeading given", function (assert) {
-		var oDynamicPageTitle = new DynamicPageTitle({
-				snappedHeading: oFactory.getTitle(),
-				expandedHeading: oFactory.getTitle()
-			}),
-			oDynamicPage = new DynamicPage({
-				title: oDynamicPageTitle,
-				header: oFactory.getDynamicPageHeader(),
-				content: oFactory.getContent(100),
-				footer: oFactory.getFooter()
-			});
-		oUtil.renderObject(oDynamicPage);
-
-		assert.ok(oDynamicPageTitle.$("snapped-heading-wrapper").length === 1, "Snapped heading wrapper is rendered");
-		assert.ok(oDynamicPageTitle.$("snapped-heading-wrapper").hasClass("sapUiHidden"), "Snapped heading wrapper is hidden");
-
-		assert.ok(oDynamicPageTitle.$("expand-heading-wrapper").length === 1, "Expanded heading wrapper is rendered");
-		assert.ok(!oDynamicPageTitle.$("expand-heading-wrapper").hasClass("sapUiHidden"), "Expanded heading wrapper is visible");
-
-		oDynamicPage.destroy();
-	});
-
 	QUnit.module("DynamicPage - Rendering - Footer Visibility", {
 		beforeEach: function () {
-			sinon.config.useFakeTimers = true;
 			this.oDynamicPage = oFactory.getDynamicPage();
 			oUtil.renderObject(this.oDynamicPage);
 		},
 		afterEach: function () {
-			sinon.config.useFakeTimers = false;
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
 		}
 	});
 
 	QUnit.test("DynamicPage Footer visibility", function (assert) {
-		var $footerWrapper = this.oDynamicPage.$("footerWrapper"),
+		// Arrange
+		var $footerWrapper = this.oDynamicPage.$footerWrapper,
 			oFooter = this.oDynamicPage.getFooter(),
 			$footer = oFooter.$();
 
-		assert.equal($footerWrapper.hasClass("sapUiHidden"), false, "Footer is visible initially");
+		// Assert
+		assert.notOk($footerWrapper.hasClass("sapUiHidden"), "Footer is visible initially");
 
-		this.oDynamicPage.setShowFooter(false);
-		this.clock.tick(1000);
-		core.applyChanges();
-
-		assert.equal($footerWrapper.hasClass("sapUiHidden"), true, "Footer is not visible");
-		assert.equal($footer.hasClass("sapFDynamicPageActualFooterControlHide"), true, "Footer is not visible");
-
+		// Act - Trigger show animation
 		this.oDynamicPage.setShowFooter(true);
-		this.clock.tick(1000);
-		core.applyChanges();
 
-		assert.equal($footerWrapper.hasClass("sapUiHidden"), false, "Footer is visible again");
+		// Assert
+		assert.notOk($footerWrapper.hasClass("sapUiHidden"), "Footer is visible at the beginning of the show animation.");
+		assert.ok($footer.hasClass(DynamicPage.SHOW_FOOTER_CLASS_NAME),
+		"Footer has the " + DynamicPage.SHOW_FOOTER_CLASS_NAME + " CSS class at the beginning of the show animation");
+
+		// Act - Simulate end of animation
+		this.oDynamicPage._onToggleFooterAnimationEnd(oFooter);
+
+		// Assert
+		assert.notOk($footerWrapper.hasClass("sapUiHidden"), "Footer is visible at the end of the show animation.");
+		assert.notOk($footer.hasClass(DynamicPage.SHOW_FOOTER_CLASS_NAME),
+		"Footer hasn't applied " + DynamicPage.SHOW_FOOTER_CLASS_NAME + " CSS class at end of the show animation");
+
+		// Act - Trigger hide animation
+		this.oDynamicPage.setShowFooter(false);
+
+		// Assert
+		assert.notOk($footerWrapper.hasClass("sapUiHidden"), "Footer is visible at the beginning of the hide animation.");
+		assert.ok($footer.hasClass(DynamicPage.HIDE_FOOTER_CLASS_NAME),
+		"Footer has the " + DynamicPage.HIDE_FOOTER_CLASS_NAME + " CSS class at the beginning of the hide animation");
+
+		// Act - Simulate end of animation
+		this.oDynamicPage._onToggleFooterAnimationEnd(oFooter);
+
+		// Assert
+		assert.ok($footerWrapper.hasClass("sapUiHidden"), "Footer is not visible at the end of the hide animation.");
+		assert.notOk($footer.hasClass(DynamicPage.HIDE_FOOTER_CLASS_NAME),
+		"Footer hasn't applied " + DynamicPage.HIDE_FOOTER_CLASS_NAME + " CSS class at end of the hide animation");
+	});
+
+	QUnit.test("DynamicPage Footer visibility when animations disabled", function (assert) {
+		var $footerWrapper = this.oDynamicPage.$("footerWrapper"),
+			sOriginalMode = Core.getConfiguration().getAnimationMode();
+
+		//setup
+		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+
+		// Act: toggle to 'true'
+		this.oDynamicPage.setShowFooter(true);
+
+		// Check
+		assert.ok(!$footerWrapper.hasClass("sapUiHidden"), "footer is shown when the Animation mode is 'none'");
+
+		// Act: toggle to 'false'
+		this.oDynamicPage.setShowFooter(false);
+
+		// Check
+		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden when the Animation mode is 'none'");
+
+		//setup
+		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.minimal);
+
+		// Act: toggle to 'true'
+		this.oDynamicPage.setShowFooter(true);
+
+		// Check
+		assert.ok(!$footerWrapper.hasClass("sapUiHidden"), "footer is shown when the Animation mode is 'minimal'");
+
+		// Act: toggle to 'false'
+		this.oDynamicPage.setShowFooter(false);
+
+		// Check
+		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden when the Animation mode is 'minimal'");
+
+		// Clean up
+		Core.getConfiguration().setAnimationMode(sOriginalMode);
 	});
 
 	/* --------------------------- DynamicPage Mobile Rendering ---------------------------------- */
@@ -1487,7 +702,7 @@
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 
 		oUtil.renderObject(this.oDynamicPage);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick();
 
 		oDynamicPage.$().height(1000);
@@ -1526,7 +741,7 @@
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 
 		oUtil.renderObject(this.oDynamicPage);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick();
 
 		oDynamicPage.$().height(1000);
@@ -1558,13 +773,72 @@
 	});
 
 	QUnit.test("DynamicPage On Title Press: title press handler should be called", function (assert) {
-		var oTitlePressSpy = this.spy(sap.f.DynamicPage.prototype, "_titleExpandCollapseWhenAllowed"),
+		var oTitlePressSpy = this.spy(DynamicPage.prototype, "_titleExpandCollapseWhenAllowed"),
 			oTitle = this.oDynamicPage.getTitle();
 
 		oUtil.renderObject(this.oDynamicPage);
 		oTitle.fireEvent("_titlePress");
 
 		assert.ok(oTitlePressSpy.calledOnce, "Title Pin Press Handler is called");
+	});
+
+	QUnit.test("DynamicPage On Title Press: onsapenter event", function (assert) {
+		var oTitlePressListenerSpy = sinon.spy(),
+			oTitle = this.oDynamicPage.getTitle();
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+		oTitle._focus();
+		this.oDynamicPage.getTitle().attachEvent("_titlePress", oTitlePressListenerSpy);
+
+		QUnitUtils.triggerKeydown(oTitle.getDomRef(), KeyCodes.ENTER);
+
+		assert.ok(oTitlePressListenerSpy.calledOnce, "Event was fired when ENTER key is pressed");
+	});
+
+	QUnit.test("DynamicPage On Title Press: onsapspace event", function (assert) {
+		var oTitlePressListenerSpy = sinon.spy(),
+			oTitle = this.oDynamicPage.getTitle();
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+		oTitle._focus();
+		this.oDynamicPage.getTitle().attachEvent("_titlePress", oTitlePressListenerSpy);
+
+		QUnitUtils.triggerKeyup(oTitle.getDomRef(), KeyCodes.SPACE);
+
+		assert.ok(oTitlePressListenerSpy.calledOnce, "Event was fired when SPACE key is pressed");
+	});
+
+	QUnit.test("DynamicPage On Title Press: onsapspace event with shift", function (assert) {
+		var oTitlePressListenerSpy = sinon.spy(),
+			oTitle = this.oDynamicPage.getTitle();
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+		oTitle._focus();
+		this.oDynamicPage.getTitle().attachEvent("_titlePress", oTitlePressListenerSpy);
+
+		QUnitUtils.triggerKeyup(oTitle.getDomRef(), KeyCodes.SPACE, true /*Shift*/);
+
+		assert.strictEqual(oTitlePressListenerSpy.callCount, 0, "Event was not fired when ENTER key is pressed");
+	});
+
+	QUnit.test("preventDefault is not called when event target is not the title of the DynamicPage", function (assert) {
+		// Arrange
+		var oTitle = this.oDynamicPage.getTitle(),
+			oInput = new sap.m.Input(),
+			oEventMock = {
+				srcControl: oInput,
+				preventDefault: function () {}
+			},
+			oEventSpy = sinon.spy(oEventMock, "preventDefault");
+
+		// Act
+		oTitle.onsapspace(oEventMock);
+
+		// Assert
+		assert.ok(oEventSpy.notCalled, "preventDefault is not called");
 	});
 
 	QUnit.test("DynamicPage On Title Press: stateChange event is fired", function (assert) {
@@ -1581,7 +855,7 @@
 	});
 
 	QUnit.test("DynamicPage On Pin Button Press", function (assert) {
-		var oPinPressSpy = this.spy(sap.f.DynamicPage.prototype, "_onPinUnpinButtonPress"),
+		var oPinPressSpy = this.spy(DynamicPage.prototype, "_onPinUnpinButtonPress"),
 			oPinButton = this.oDynamicPage.getHeader()._getPinButton();
 
 		oUtil.renderObject(this.oDynamicPage);
@@ -1591,8 +865,8 @@
 	});
 
 	QUnit.test("DynamicPage On Collapse Button Press", function (assert) {
-		var oCollapseButtonPressSpy = this.spy(sap.f.DynamicPage.prototype, "_onCollapseHeaderVisualIndicatorPress"),
-			oCollapseButtonPressSpy2 = this.spy(sap.f.DynamicPageHeader.prototype, "_onCollapseButtonPress"),
+		var oCollapseButtonPressSpy = this.spy(DynamicPage.prototype, "_onCollapseHeaderVisualIndicatorPress"),
+			oCollapseButtonPressSpy2 = this.spy(DynamicPageHeader.prototype, "_onCollapseButtonPress"),
 			oCollapseButton = this.oDynamicPage.getHeader()._getCollapseButton();
 
 		// Arrange
@@ -1621,26 +895,43 @@
 		assert.ok(oStateChangeListenerSpy.calledOnce, "stateChange event was fired once when expand button was pressed");
 	});
 
-	QUnit.test("DynamicPage On Collapse Button Press 2", function (assert) {
+	QUnit.test("DynamicPage On Snap Header when not enough scrollHeight to snap with scroll and scrollTop > 0", function (assert) {
+		var sHeight = "400px",
+			aAcceptableValues = Device.browser.edge ? [0, 1] : [0]; // due to different MS browsers calculation
+
+		this.oDynamicPage.setContent(oFactory.getContent(1)); // not enough content to snap on scroll
 		// Arrange
 		oUtil.renderObject(this.oDynamicPage);
 
-		var oDetachScrollHandlerSpy = this.spy(sap.f.DynamicPage.prototype, "_detachScrollHandler"),
-			oAttachScrollHandlerSpy = this.spy(sap.f.DynamicPage.prototype, "_attachScrollHandler");
+		// Arrange state:
+		this.oDynamicPage.$().height(sHeight); // ensure not enough scrollHeight to snap with scrolling
+		this.oDynamicPage.$().width("300px");
+		this.oDynamicPage._setScrollPosition(10); // scrollTop > 0
 
-		// Act
+		// Assert state arranged as expected:
+		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), true, "header is expanded");
+		assert.ok(!this.oDynamicPage._canSnapHeaderOnScroll(), "not enough scrollHeight to snap with scroll");
+		assert.equal(this.oDynamicPage._needsVerticalScrollBar(), true, "enough scrollHeight to scroll");
+
+		// Act: toggle title to snap the header
 		this.oDynamicPage._titleExpandCollapseWhenAllowed();
 
-		this.clock.tick(1);
+		// Assert context changed as expected:
+		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is snapped");
+		assert.ok(!this.oDynamicPage._needsVerticalScrollBar(), "not enough scrollHeight to scroll");//because header was hidden during snap
+		assert.ok(aAcceptableValues.indexOf(this.oDynamicPage._getScrollPosition()) !== -1,
+			"Page is scrolled to top"); // because no more scrolled-out content
+
+		// explicitly call the onscroll listener (to save a timeout in the test):
+		this.oDynamicPage._toggleHeaderOnScroll({target: {scrollTop: 0}});
 
 		// Assert
-		assert.strictEqual(oDetachScrollHandlerSpy.callCount, 1, "detachScrollHandler was called");
-		assert.strictEqual(oAttachScrollHandlerSpy.callCount, 1, "attachScrollHandler was called");
+		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is still snapped");
 	});
 
 	QUnit.test("DynamicPage On Collapse Button MouseOver", function (assert) {
-		var oCollapseButtonMouseOverSpy = this.spy(sap.f.DynamicPage.prototype, "_onVisualIndicatorMouseOver"),
-			oCollapseButtonMouseOverSpy2 = this.spy(sap.f.DynamicPageHeader.prototype, "_onCollapseButtonMouseOver"),
+		var oCollapseButtonMouseOverSpy = this.spy(DynamicPage.prototype, "_onVisualIndicatorMouseOver"),
+			oCollapseButtonMouseOverSpy2 = this.spy(DynamicPageHeader.prototype, "_onCollapseButtonMouseOver"),
 			oCollapseButton = this.oDynamicPage.getHeader()._getCollapseButton(),
 			$oDynamicPage;
 
@@ -1658,8 +949,8 @@
 	});
 
 	QUnit.test("DynamicPage On Collapse Button MouseOut", function (assert) {
-		var oCollapseButtonMouseOutSpy = this.spy(sap.f.DynamicPage.prototype, "_onVisualIndicatorMouseOut"),
-			oCollapseButtonMouseOutSpy2 = this.spy(sap.f.DynamicPageHeader.prototype, "_onCollapseButtonMouseOut"),
+		var oCollapseButtonMouseOutSpy = this.spy(DynamicPage.prototype, "_onVisualIndicatorMouseOut"),
+			oCollapseButtonMouseOutSpy2 = this.spy(DynamicPageHeader.prototype, "_onCollapseButtonMouseOut"),
 			oCollapseButton = this.oDynamicPage.getHeader()._getCollapseButton(),
 			$oDynamicPage;
 
@@ -1677,8 +968,8 @@
 	});
 
 	QUnit.test("DynamicPage On Expand Button Press", function (assert) {
-		var oExpandButtonPressSpy = this.spy(sap.f.DynamicPage.prototype, "_onExpandHeaderVisualIndicatorPress"),
-			oExpandButtonPressSpy2 = this.spy(sap.f.DynamicPageTitle.prototype, "_onExpandButtonPress"),
+		var oExpandButtonPressSpy = this.spy(DynamicPage.prototype, "_onExpandHeaderVisualIndicatorPress"),
+			oExpandButtonPressSpy2 = this.spy(DynamicPageTitle.prototype, "_onExpandButtonPress"),
 			oExpandButton = this.oDynamicPage.getTitle()._getExpandButton();
 
 		// Arrange
@@ -1707,8 +998,8 @@
 	});
 
 	QUnit.test("DynamicPage Title MouseOver", function (assert) {
-		var oTitleMouseOverSpy = this.spy(sap.f.DynamicPage.prototype, "_onTitleMouseOver"),
-			oTitleMouseOverSpy2 = this.spy(sap.f.DynamicPageTitle.prototype, "onmouseover"),
+		var oTitleMouseOverSpy = this.spy(DynamicPage.prototype, "_onTitleMouseOver"),
+			oTitleMouseOverSpy2 = this.spy(DynamicPageTitle.prototype, "onmouseover"),
 			oTitle = this.oDynamicPage.getTitle(),
 			$oDynamicPage;
 
@@ -1716,7 +1007,7 @@
 		oUtil.renderObject(this.oDynamicPage);
 
 		// Act
-		oTitle.$().trigger("mouseover");
+		oTitle.onmouseover();
 		$oDynamicPage = this.oDynamicPage.$();
 
 		// Assert
@@ -1726,8 +1017,8 @@
 	});
 
 	QUnit.test("DynamicPage Title MouseOut", function (assert) {
-		var oTitleMouseOverSpy = this.spy(sap.f.DynamicPage.prototype, "_onTitleMouseOut"),
-			oTitleMouseOverSpy2 = this.spy(sap.f.DynamicPageTitle.prototype, "onmouseout"),
+		var oTitleMouseOverSpy = this.spy(DynamicPage.prototype, "_onTitleMouseOut"),
+			oTitleMouseOverSpy2 = this.spy(DynamicPageTitle.prototype, "onmouseout"),
 			oTitle = this.oDynamicPage.getTitle(),
 			$oDynamicPage;
 
@@ -1735,13 +1026,79 @@
 		oUtil.renderObject(this.oDynamicPage);
 
 		// Act
-		oTitle.$().trigger("mouseout");
+		oTitle.onmouseout();
 		$oDynamicPage = this.oDynamicPage.$();
 
 		// Assert
 		assert.ok(oTitleMouseOverSpy.calledOnce, "DP: Expand Header Visual Indicator MouseOut Handler is called");
 		assert.ok(oTitleMouseOverSpy2.calledOnce, "DPTitle: Expand Header Visual Indicator MouseOut Handler is called");
 		assert.ok(!$oDynamicPage.hasClass("sapFDynamicPageTitleForceHovered"), "DPageTitle hover state removed");
+	});
+
+	QUnit.test("DynamicPage is not attached to MouseOut/MouseOver events of title on tablet/phone device", function (assert) {
+		oUtil.toMobileMode();
+		// Setup
+		var oVisualIndicatorMouseoOverSpy = this.spy(this.oDynamicPage, "_attachVisualIndicatorMouseOverHandlers"),
+			oTitleMouseOverSpy = this.spy(this.oDynamicPage, "_attachTitleMouseOverHandlers");
+
+		// Act
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Assert
+		assert.ok(oVisualIndicatorMouseoOverSpy.notCalled, "DynamicPage is not attached to MouseOut/MouseOver events of snap/expand button");
+		assert.ok(oTitleMouseOverSpy.notCalled, "DynamicPage is not attached to MouseOut/MouseOver events of title");
+
+		oUtil.toDesktopMode();
+	});
+
+
+	QUnit.test("DynamicPage header resize", function (assert) {
+		var oHeader = this.oDynamicPage.getHeader(),
+			$oDynamicPage,
+			isHeaderSnappedWithScroll = function () {
+				return this.oDynamicPage._getScrollPosition() >= this.oDynamicPage._getSnappingHeight();
+			}.bind(this);
+
+		oHeader.addContent(new sap.m.Panel({height: "100px"}));
+
+		// setup
+		oUtil.renderObject(this.oDynamicPage);
+		this.oDynamicPage.setHeaderExpanded(false);
+
+		// assert init state
+		assert.ok(isHeaderSnappedWithScroll(), "header is snapped with scroll");
+
+		//Act
+		$oDynamicPage = this.oDynamicPage.$();
+		$oDynamicPage.find('.sapMPanel').get(0).style.height = "300px";
+		// explicitly call to avoid waiting for resize handler to detect change
+		this.oDynamicPage._onChildControlsHeightChange({target: oHeader.getDomRef(), size: {}, oldSize: {}});
+
+		// Check
+		assert.ok(isHeaderSnappedWithScroll(), "header is still snapped with scroll");
+	});
+
+	QUnit.test("DynamicPage header resize with invalidation", function (assert) {
+		var oHeader = this.oDynamicPage.getHeader(),
+			oDeregisterSpy = this.spy(this.oDynamicPage, "_deRegisterResizeHandler"),
+			oAdaptScrollPositionSpy = this.spy(this.oDynamicPage, "_adaptScrollPositionOnHeaderChange");
+
+		oHeader.addContent(new sap.m.Panel({height: "100px"}));
+
+		// setup
+		oUtil.renderObject(this.oDynamicPage);
+		this.oDynamicPage.setHeaderExpanded(false);
+
+		//Act
+		oDeregisterSpy.reset();
+		oHeader.removeAllContent();
+		Core.applyChanges();
+
+		// Check
+		assert.ok(oDeregisterSpy.notCalled, "resize handler is not deregistered");
+		// explicitly call to avoid waiting for resize handler to detect change
+		this.oDynamicPage._onChildControlsHeightChange({target: oHeader.getDomRef(), size: {}, oldSize: {}});
+		assert.ok(oAdaptScrollPositionSpy.called, "scroll position is adaptation is called");
 	});
 
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
@@ -1770,7 +1127,7 @@
 		assert.ok(!oHeader.$().hasClass("sapFDynamicPageHeaderHidden"), "Header expanded and visible again");
 	});
 
-	QUnit.module("DynamicPage On Title Press when Header height bigger than page height", {
+	QUnit.module("DynamicPage when Header height bigger than page height", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPageWithBigHeaderContent();
 		},
@@ -1800,6 +1157,89 @@
 		assert.equal(oDynamicPage._getScrollPosition(), 0, "scroll position is correct");
 	});
 
+	QUnit.test("Expand header updates scrollbar", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oTitle = oDynamicPage.getTitle(),
+			oScrollSpy = this.spy(oDynamicPage, "_onWrapperScroll"),
+			done = assert.async();
+
+		assert.expect(2);
+
+		oDynamicPage.setHeaderExpanded(false);
+		oUtil.renderObject(oDynamicPage);
+
+		oDynamicPage.$().outerHeight("800px"); // set page height smaller than header height
+
+		oDynamicPage._setScrollPosition(100);
+
+		assert.equal(oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true, "header is bigger than allowed to be expanded in title");
+
+		oScrollSpy.reset();
+
+		//act
+		oTitle.fireEvent("_titlePress");
+		setTimeout(function() {
+			assert.equal(oScrollSpy.callCount, 1, "listener for updating the custom scrollBar position is called");
+			done();
+		}, 0);
+	});
+
+	QUnit.test("expand shows the visual indicator", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oExpandButton = oDynamicPage.getTitle()._getExpandButton(),
+			oCollapseButton = oDynamicPage.getHeader()._getCollapseButton(),
+			oSpy = this.spy(oDynamicPage, "_scrollBellowCollapseVisualIndicator"),
+			iCollapseButtonBottom,
+			iDynamicPageBottom;
+
+		oDynamicPage.setHeaderExpanded(false);
+		oUtil.renderObject(oDynamicPage);
+
+		oDynamicPage.$().outerHeight("800px"); // set page height smaller than header height
+
+		oDynamicPage._setScrollPosition(100);
+
+		assert.equal(oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true, "header is bigger than allowed to be expanded in title");
+
+		//act: expand via the 'expand' visual indicator
+		oExpandButton.firePress();
+
+		// check
+		assert.equal(oSpy.callCount, 1, "scroll to show the 'collapse' visual indicator is called");
+
+		iCollapseButtonBottom =  Math.round(Math.abs(oCollapseButton.getDomRef().getBoundingClientRect().bottom));
+		iDynamicPageBottom = Math.round(Math.abs(this.oDynamicPage.getDomRef().getBoundingClientRect().bottom));
+
+		// check position
+		assert.ok(Math.abs(iCollapseButtonBottom - iDynamicPageBottom) <= 1, "CollapseButton is at the bottom of the page, pos: " + iCollapseButtonBottom);
+	});
+
+	QUnit.test("Expand button of snapped header preserved on resize", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oStubCanScroll = this.stub(this.oDynamicPage, "_canSnapHeaderOnScroll", function () {
+				return false;
+			}),
+			oStubHeaderHeight = this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToBeExpandedInTitleArea", function () {
+				return true;
+			}),
+			oMockResizeWidthEvent = {size:{width: 100}};
+
+		// Final setup step: snap header => the expand button should become visible after rendering
+		oDynamicPage.setHeaderExpanded(false);
+
+		oUtil.renderObject(oDynamicPage);
+
+		// Act
+		oDynamicPage._onResize(oMockResizeWidthEvent);
+
+		assert.ok(!oDynamicPage.getTitle()._getExpandButton().$().hasClass('sapUiHidden'), "expand button is visible");
+
+		//cleanup
+		oStubCanScroll.restore();
+		oStubHeaderHeight.restore();
+	});
+
+
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
 	QUnit.module("DynamicPage - Private functions", {
 		beforeEach: function () {
@@ -1810,6 +1250,30 @@
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
 		}
+	});
+
+	QUnit.test("DynamicPage _shouldOverridePreserveHeaderStateOnScroll() should return 'true' for Desktop when needed", function (assert) {
+		// Arrange
+		var oPreserveHeaderStateStub = this.stub(this.oDynamicPage, "_preserveHeaderStateOnScroll", function () {
+				return true;
+			}),
+			oBiggerHeaderStub = this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToBeFixed", function () {
+				return true;
+			}),
+			oDeviceStub = this.stub(Device, "system", {
+					desktop: true,
+					tablet: false,
+					phone: false
+			});
+
+			// Assert
+			assert.strictEqual(this.oDynamicPage._shouldOverridePreserveHeaderStateOnScroll(), true,
+				"Preserving header state on scroll is overriden for desktop too, when it is too big");
+
+			// Clean up
+			oPreserveHeaderStateStub.restore();
+			oBiggerHeaderStub.restore();
+			oDeviceStub.restore();
 	});
 
 	QUnit.test("DynamicPage _expandHeader() should hide Snapped Content and show Expand Content", function (assert) {
@@ -1965,7 +1429,7 @@
 		assert.ok(oPinSpy.called, "The ScrollBar is updated");
 		assert.equal($oDynamicPage.hasClass("sapFDynamicPageHeaderPinned"), true, "Header is pinned, Pinned class applied to DynamicPage root element");
 		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "Header is pinned, the Expand Button is not visible");
-		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Header is pinned, the Collapse button is not visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), false, "Header is pinned, the Collapse Button is visible");
 
 		// Act
 		this.oDynamicPage._unPin();
@@ -1982,12 +1446,12 @@
 		assert.equal(this.oDynamicPage._canSnapHeaderOnScroll(), true, "The header can snap");
 	});
 
-	QUnit.test("DynamicPage _shouldExpand() returns false initially", function (assert) {
-		assert.equal(this.oDynamicPage._shouldExpand(), false, "DynamicPage should not expand initially");
+	QUnit.test("DynamicPage _shouldExpandOnScroll() returns false initially", function (assert) {
+		assert.equal(this.oDynamicPage._shouldExpandOnScroll(), false, "DynamicPage should not expand initially");
 	});
 
-	QUnit.test("DynamicPage _shouldSnap() returns false initially", function (assert) {
-		assert.equal(this.oDynamicPage._shouldSnap(), false, "DynamicPage should not snap initially");
+	QUnit.test("DynamicPage _shouldSnapOnScroll() returns false initially", function (assert) {
+		assert.equal(this.oDynamicPage._shouldSnapOnScroll(), false, "DynamicPage should not snap initially");
 	});
 
 	QUnit.test("DynamicPage _getTitleHeight() returns the correct Title height", function (assert) {
@@ -2004,7 +1468,7 @@
 	QUnit.test("DynamicPage _getSnappingHeight() returns the correct Snapping position", function (assert) {
 		var $HeaderDom = this.oDynamicPage.getHeader().getDomRef(),
 			$TitleDom = this.oDynamicPage.getTitle().getDomRef(),
-			iSnappingPosition = getElementHeight($HeaderDom, true /* ceil */) || getElementHeight($TitleDom, true /* ceil */);
+			iSnappingPosition = (getElementHeight($HeaderDom, true /* ceil */) || getElementHeight($TitleDom, true /* ceil */)) - this.oDynamicPage._iHeaderContentPaddingBottom;
 
 		assert.equal(this.oDynamicPage._getSnappingHeight(), iSnappingPosition, "DynamicPage snapping position is correct");
 	});
@@ -2088,6 +1552,44 @@
 		assert.equal(oScrollPositionSpy.called, false, "scrollBar scrollPosition setter is not called again");
 	});
 
+	QUnit.test("DynamicPage preserves scroll position after rerendering", function (assert) {
+		var iExpectedScrollPosition = 500,
+			oDynamicPage = this.oDynamicPage,
+			oSetScrollPositionSpy;
+
+		//arrange
+		oDynamicPage.setHeaderExpanded(false);
+		oDynamicPage.$wrapper.scrollTop(iExpectedScrollPosition);
+		oDynamicPage._onWrapperScroll({target: {scrollTop: iExpectedScrollPosition}});
+		oSetScrollPositionSpy = this.spy(oDynamicPage, "_setScrollPosition");
+		//act
+		oDynamicPage.rerender();
+
+		//assert
+		assert.ok(oSetScrollPositionSpy.calledWith, iExpectedScrollPosition,
+			"DynamicPage Scroll position is correct after rerender");
+	});
+
+	QUnit.test("DynamicPage preserves scroll position when navigating to another page and then comming back", function (assert) {
+		var iExpectedScrollPosition = 500,
+			oDynamicPage = this.oDynamicPage,
+			oStub = this.stub(this.oDynamicPage, "_getScrollPosition", function () {
+				return 0;
+			}); // Scroll position of wrapper is set to 0 when navigating to another page
+
+		//arrange
+		oDynamicPage.$wrapper.scrollTop(iExpectedScrollPosition);
+		oDynamicPage._onWrapperScroll({target: {scrollTop: iExpectedScrollPosition}});
+
+		//act
+		oDynamicPage._offsetContentOnMoveHeader();
+		oStub.restore(); // restore getScrollPosition to return the real scroll value
+
+		//assert
+		assert.equal(oDynamicPage._getScrollPosition(), iExpectedScrollPosition,
+			"DynamicPage Scroll position is correct after navigating to another page and then comming back");
+	});
+
 	QUnit.test("DynamicPage _headerSnapAllowed() returns the correct value", function (assert) {
 		var oDynamicPage = this.oDynamicPage;
 
@@ -2122,7 +1624,7 @@
 		assert.ok(!oDynamicPage._headerScrolledOut(), "Header is not scrolled out initially");
 
 		oDynamicPage._setScrollPosition(iScrolledOutPoint);
-		core.applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oDynamicPage._headerScrolledOut(), "Header is scrolled out after scrolling to the header`s very bottom");
 	});
@@ -2133,12 +1635,17 @@
 			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
 				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight);
 				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
-			};
+			},
+			fnSpy = this.spy(DynamicPage.prototype, "_togglePinButtonVisibility");
 
 		fnStubConfig(700, 999);
 
 		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToPin(), true,
 			"DynamicPage Header is bigger than allowed");
+
+		oDynamicPage._expandHeader();
+
+		assert.ok(fnSpy.notCalled, "_togglePinButtonVisibility should not be called");
 
 		oSandBox.restore();
 
@@ -2146,6 +1653,110 @@
 
 		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToPin(), false,
 			"DynamicPage Header is not bigger than allowed");
+
+		oDynamicPage._expandHeader();
+
+		assert.ok(fnSpy.calledOnce, "_togglePinButtonVisibility should be called");
+	});
+
+	QUnit.test("DynamicPage _headerBiggerThanAllowedToPin() is called on child resize", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oSandBox = sinon.sandbox.create(),
+			fnSpy = oSandBox.spy(oDynamicPage, "_headerBiggerThanAllowedToPin");
+
+		oSandBox.stub(oDynamicPage, "_canSnapHeaderOnScroll").returns(false);
+
+		// Act: resize the header (call the resize listener synchronously to save timeout in the test)
+		oDynamicPage._onChildControlsHeightChange({target: oDynamicPage.getHeader().getDomRef(), size: {}, oldSize: {}});
+
+		assert.ok(fnSpy.called, "_headerBiggerThanAllowedToPin is called");
+
+		oSandBox.restore();
+	});
+
+	QUnit.test("DynamicPage _headerBiggerThanAllowedToBeExpandedInTitleArea() returns the correct value on desktop", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oSandBox = sinon.sandbox.create(),
+			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
+				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight);
+				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
+			},
+			iSmallHeaderHeight = 700,
+			iLargeHeaderHeight = 1100,
+			iPageHeight = 1000,
+			iNoHeaderHeight = 0,
+			iNoPageHeight = 0;
+
+		// act (1) -  Header`s height is smaller than the Page`s height.
+		fnStubConfig(iSmallHeaderHeight, iPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), false,
+			"DynamicPage Header is not bigger than allowed to be expanded in the non-scrollable area");
+
+		oSandBox.restore();
+
+		// act (2) - Header`s height is bigger than the Page`s height.
+		fnStubConfig(iLargeHeaderHeight, iPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true,
+			"DynamicPage Header is bigger than allowed to be expanded in the non-scrollable area");
+
+		oSandBox.restore();
+
+		// act (3) - Header`s height and Page`s height are 0.
+		fnStubConfig(iNoHeaderHeight, iNoPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), false,
+			"When Header is not on the page return false");
+
+		oSandBox.restore();
+	});
+
+	QUnit.test("DynamicPage _headerBiggerThanAllowedToBeExpandedInTitleArea() returns the correct value on mobile", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oSandBox = sinon.sandbox.create(),
+			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
+				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight);
+				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
+			},
+			iSmallHeaderHeight = 100,
+			iLargeHeaderHeight = 400,
+			iPageHeight = 1000,
+			iNoHeaderHeight = 0,
+			iNoPageHeight = 0;
+
+		// act (1) -  Header`s height is smaller than the Page`s height.
+		oUtil.toMobileMode();
+		fnStubConfig(iSmallHeaderHeight, iPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), false,
+			"DynamicPage Header is not bigger than allowed to be expanded in the non-scrollable area");
+
+		oSandBox.restore();
+
+		// act (2) - Header`s height is bigger than 1/3 (0.3) of the Page`s height.
+		fnStubConfig(iLargeHeaderHeight, iPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true,
+			"DynamicPage Header is bigger than allowed to be expanded in the non-scrollable area");
+
+		oSandBox.restore();
+
+		// act (3) - Header`s height and Page`s height are 0.
+		fnStubConfig(iNoHeaderHeight, iNoPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), false,
+			"When Header is not on the page return false");
+
+		// cleanup
+		oSandBox.restore();
+		oUtil.toDesktopMode();
 	});
 
 	QUnit.test("DynamicPage _getEntireHeaderHeight() return correct values", function (assert) {
@@ -2244,11 +1855,11 @@
 		var oDynamicPage = this.oDynamicPage,
 			$header = this.oDynamicPage.getHeader().$(),
 			$wrapper = oDynamicPage.$wrapper,
-			iHeaderHeight = $header.outerHeight();
+			iSnappingHeight = this.oDynamicPage._getSnappingHeight();
 
 		//setup
 		oDynamicPage._moveHeaderToTitleArea();
-		$wrapper.scrollTop(iHeaderHeight - 10); // scroll to expand
+		$wrapper.scrollTop(iSnappingHeight - 10); // scroll to expand
 
 		//act
 		oDynamicPage._toggleHeaderOnScroll();
@@ -2515,7 +2126,7 @@
 					assertHeaderSnapped(assert, !bHeaderInContent, oDynamicPage, iExpectedScrollPosition);
 					oDynamicPage.removeEventDelegate(oDelegateFirstRendering);
 					oDynamicPage.setPreserveHeaderStateOnScroll(true); // causes invalidation, so check in next rendering:
-					core.applyChanges();
+					Core.applyChanges();
 					assertHeaderSnapped(assert, !bHeaderInContent, oDynamicPage, iExpectedScrollPosition);
 					done();
 				}
@@ -2559,6 +2170,40 @@
 		oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
 	});
 
+	QUnit.test("hidden title", function (assert) {
+		//arrange
+		this.oDynamicPage.setHeaderExpanded(false);
+		this.oDynamicPage.getTitle().setVisible(false);
+		this.oDynamicPage.getTitle().addSnappedContent(new sap.m.Text());
+
+		//act
+		try {
+			oUtil.renderObject(this.oDynamicPage);
+			assert.ok(true, "no error upon rendering");
+		} catch (e) {
+			assert.notOk(e, "error upon rendering");
+		}
+	});
+
+	QUnit.module("DynamicPage - toggleHeaderOnTitleClick", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageToggleHeaderFalse();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage toggleHeaderOnTitleClick initial behavior", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			$oDynamicPageTitleSpan = oDynamicPage.getTitle()._getFocusSpan();
+
+		assert.equal(oDynamicPage.getToggleHeaderOnTitleClick(), false, "Initially toggleHeaderOnTitleClick = false");
+		assert.equal($oDynamicPageTitleSpan.is(":hidden"), true, "Initially the header title is not focusable");
+	});
+
 	/* --------------------------- DynamicPage ARIA ---------------------------------- */
 	QUnit.module("DynamicPage - ARIA State", {
 		beforeEach: function () {
@@ -2571,23 +2216,12 @@
 		}
 	});
 
-	QUnit.test("DynamicPage Title has the correct Aria state", function (assert) {
-		var $title = this.oDynamicPage.getTitle().$(),
-			sRole = "heading",
-			sLevel = "2";
-
-		assert.equal($title.attr("role"), sRole,
-			"DynamicPage Title role 'heading'");
-		assert.equal($title.attr("aria-level"), sLevel,
-			"DynamicPage Title is heading level 2");
-	});
-
 	QUnit.test("DynamicPage Header has the correct Aria state", function (assert) {
 		var $header = this.oDynamicPage.getHeader().$(),
 			sRole = "region",
 			sAriaExpandedValue = "true",
 			sAriaLabelValue = oFactory.getResourceBundle().getText("EXPANDED_HEADER");
-		this.stub(this.oDynamicPage, "_shouldSnap", function () {
+		this.stub(this.oDynamicPage, "_shouldSnapOnScroll", function () {
 			return true;
 		});
 		this.stub(this.oDynamicPage, "_canSnapHeaderOnScroll", function () {
@@ -2602,7 +2236,7 @@
 			"DynamicPage Header aria-label is 'Header expanded'");
 
 		sAriaExpandedValue = "false";
-		sAriaLabelValue = oFactory.getResourceBundle().getText("COLLAPSED_HEADER");
+		sAriaLabelValue = oFactory.getResourceBundle().getText("SNAPPED_HEADER");
 		this.oDynamicPage._toggleHeaderOnScroll();
 
 		assert.equal($header.attr("aria-expanded"), sAriaExpandedValue,
@@ -2650,18 +2284,18 @@
 			"The tooltip is correct");
 
 		this.oDynamicPage.setPreserveHeaderStateOnScroll(true);
-		core.applyChanges();
+		Core.applyChanges();
 		assert.equal(oPinButton.getTooltip(), sUnPinTooltip,
 			"The tooltip is correct: unchanged when preserveHeaderStateOnScroll is true");
 
 		this.oDynamicPage.setPreserveHeaderStateOnScroll(false);
-		core.applyChanges();
+		Core.applyChanges();
 		assert.equal(oPinButton.getTooltip(), sPinTooltip,
 			"The tooltip is correct: resetted when preserveHeaderStateOnScroll is false");
 	});
 
 	QUnit.module("Title responsiveness", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
 
 			var oXmlString = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" displayBlock="true" height="100%">',
@@ -2721,30 +2355,36 @@
 				'</mvc:View>'
 			].join('');
 
-			var Comp = sap.ui.core.UIComponent.extend("test"	, {
-				metadata: {
-					manifest : {
-						"sap.app": {
-							"id": "test",
-							"type": "application"
+			var Comp,
+				done = assert.async();
+
+			XMLView.create({
+				id: "comp---view",
+				definition: oXmlString
+			}).then(function (oView) {
+				Comp = UIComponent.extend("test", {
+					metadata: {
+						manifest : {
+							"sap.app": {
+								"id": "test",
+								"type": "application"
+							}
 						}
+					},
+					createContent : function() {
+						return oView;
 					}
-				},
-				createContent : function() {
-					return sap.ui.xmlview({
-						id : this.createId("view"),
-						viewContent : oXmlString
-					});
-				}
-			});
+				});
 
-			this.oUiComponent = new Comp("comp");
-			this.oUiComponentContainer = new sap.ui.core.ComponentContainer({
-				component : this.oUiComponent
-			});
+				this.oUiComponent = new Comp("comp");
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
 
-			this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
-			sap.ui.getCore().applyChanges();
+				this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 
 		afterEach: function() {
@@ -2754,7 +2394,7 @@
 
 	QUnit.test("Test flex-basis styles are set", function(assert) {
 		// arrange
-		var oTitle = sap.ui.getCore().byId("comp---view--DynamicPageTitle");
+		var oTitle = Core.byId("comp---view--DynamicPageTitle");
 
 		// assert
 		assert.notEqual(oTitle.$("content").css("flex-basis"), "auto", "FlexBasis must be set on 'content' div.");
@@ -2763,26 +2403,26 @@
 
 	QUnit.test("Test flex-basis styles change when an action is added", function(assert) {
 		// arrange
-		var oTitle = sap.ui.getCore().byId("comp---view--DynamicPageTitle"),
-			nOldFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis"), 10),
+		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
+			nOldFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis")),
 			nNewFlexBasis;
 
 		// act
-		oTitle.addAction(new sap.m.OverflowToolbarButton({
+		oTitle.addAction(new OverflowToolbarButton({
 			type: "Transparent",
 			icon: "sap-icon://copy"
 		}));
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		nNewFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis"), 10);
+		nNewFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis"));
 
 		// assert
 		assert.ok(nNewFlexBasis > nOldFlexBasis, "New flex-basis value should be greater since an action was added.");
 	});
 
 	QUnit.module("Title responsiveness shrink factors", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
 
 			var oXmlString = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" displayBlock="true" height="100%">',
@@ -2842,32 +2482,37 @@
 				'</mvc:View>'
 			].join('');
 
-			var Comp = sap.ui.core.UIComponent.extend("test"	, {
-				metadata: {
-					manifest : {
-						"sap.app": {
-							"id": "test",
-							"type": "application"
+			var Comp,
+				done = assert.async();
+
+			XMLView.create({
+				id: "comp---view",
+				definition: oXmlString
+			}).then(function (oView) {
+				Comp = UIComponent.extend("test", {
+					metadata: {
+						manifest : {
+							"sap.app": {
+								"id": "test",
+								"type": "application"
+							}
 						}
+					},
+					createContent : function() {
+						return oView;
 					}
-				},
-				createContent : function() {
-					return sap.ui.xmlview({
-						id : this.createId("view"),
-						viewContent : oXmlString
-					});
-				}
-			});
+				});
 
-			this.oUiComponent = new Comp("comp");
-			this.oUiComponentContainer = new sap.ui.core.ComponentContainer({
-				component : this.oUiComponent
-			});
+				this.oUiComponent = new Comp("comp");
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
 
-			this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
-			sap.ui.getCore().applyChanges();
+				this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
-
 		afterEach: function() {
 			this.oUiComponentContainer.destroy();
 		}
@@ -2875,7 +2520,7 @@
 
 	QUnit.test("Test flex-basis styles when primaryArea=Middle", function(assert) {
 		// arrange
-		var oTitle = sap.ui.getCore().byId("comp---view--DynamicPageTitle"),
+		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
 			oHeading = oTitle.$("left-inner"),
 			oContent = oTitle.$("content"),
 			oActions = oTitle.$("mainActions");
@@ -2883,7 +2528,7 @@
 		// act
 		oTitle.setPrimaryArea("Middle");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(parseFloat(oHeading.css("flex-shrink")).toFixed(1), 1.6, "Heading shrink factor is correct");
@@ -2893,7 +2538,7 @@
 
 	QUnit.test("Test flex-basis styles when primaryArea=Begin and areaShrinkRatio is set", function(assert) {
 		// arrange
-		var oTitle = sap.ui.getCore().byId("comp---view--DynamicPageTitle"),
+		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
 			oHeading = oTitle.$("left-inner"),
 			oContent = oTitle.$("content"),
 			oActions = oTitle.$("mainActions");
@@ -2901,7 +2546,7 @@
 		// act
 		oTitle.setAreaShrinkRatio("1:2:4");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(parseFloat(oHeading.css("flex-shrink")).toFixed(1), 1, "Heading shrink factor is correct");
@@ -2911,7 +2556,7 @@
 
 	QUnit.test("Test flex-basis styles when primaryArea=Middle and areaShrinkRatio is set", function(assert) {
 		// arrange
-		var oTitle = sap.ui.getCore().byId("comp---view--DynamicPageTitle"),
+		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
 			oHeading = oTitle.$("left-inner"),
 			oContent = oTitle.$("content"),
 			oActions = oTitle.$("mainActions");
@@ -2920,11 +2565,94 @@
 		oTitle.setPrimaryArea("Middle");
 		oTitle.setAreaShrinkRatio("1:2:4");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(parseFloat(oHeading.css("flex-shrink")).toFixed(1), 1, "Heading shrink factor is correct");
 		assert.equal(parseFloat(oContent.css("flex-shrink")).toFixed(1), 2, "Content shrink factor is correct");
 		assert.equal(parseFloat(oActions.css("flex-shrink")).toFixed(1), 4, "Actions shrink factor is correct");
 	});
-}(jQuery, QUnit, sinon, sap.f.DynamicPage, sap.f.DynamicPageTitle, sap.f.DynamicPageHeader));
+
+
+	QUnit.module("DynamicPage - Preserving scroll position", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPage();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("Toggling page visibility preserves the scroll", function(assert) {
+		var SCROLL_POSITION = 200,
+			oDynamicPageDOMElement = document.getElementById(this.oDynamicPage.getId()),
+			iActualSetScrollPosition;
+
+		// arrange - store the actual reached scroll position, as the container might not have enough scroll height
+		this.oDynamicPage._setScrollPosition(SCROLL_POSITION);
+		iActualSetScrollPosition = this.oDynamicPage._getScrollPosition();
+
+
+		// act
+		oDynamicPageDOMElement.style.display = 'none';
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._getHeight(this.oDynamicPage), 0,
+			"Dynamic Page is hidden");
+
+		// act
+		oDynamicPageDOMElement.style.display = 'flex';
+
+		// assert
+		assert.notEqual(this.oDynamicPage._getHeight(this.oDynamicPage), 0,
+			"DynamicPage is visible again");
+		assert.strictEqual(this.oDynamicPage._getScrollPosition(), iActualSetScrollPosition,
+			"Scroll position " + iActualSetScrollPosition + "is preserved.");
+	});
+
+	QUnit.test("Calling _updateMedia with falsy value should not take action", function(assert) {
+		// setup
+		var oUpdateMediaStyleSpy = sinon.spy(this.oDynamicPage, "_updateMediaStyle");
+
+		// act
+		this.oDynamicPage._updateMedia(0);
+
+		// assert
+		assert.ok(oUpdateMediaStyleSpy.notCalled, "Media styles were not changed");
+	});
+
+	/* --------------------------- Accessibility -------------------------------------- */
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPage();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("ARIA attributes", function(assert) {
+		// Arrange
+		var $oDynamicPage = this.oDynamicPage.$(),
+		    sExpectedRoleDescription = Core.getLibraryResourceBundle("sap.f")
+			    .getText(DynamicPage.ARIA_ROLE_DESCRIPTION);
+
+		// Assert
+		assert.strictEqual($oDynamicPage.attr('aria-roledescription'),sExpectedRoleDescription, "aria-roledescription is set");
+	});
+
+	QUnit.test("_setAriaRoleDescription/_getAriaRoleDescription", function(assert) {
+		// Arrange
+		var sRoleDescription = "Some Role Description";
+
+		// Act
+		this.oDynamicPage._setAriaRoleDescription(sRoleDescription);
+
+		// Assert
+		assert.strictEqual(this.oDynamicPage._getAriaRoleDescription(), sRoleDescription);
+	});
+});

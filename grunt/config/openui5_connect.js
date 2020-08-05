@@ -26,7 +26,7 @@ module.exports = function(grunt, config) {
 
 			options: {
 
-				appresources: config.testsuite.path + '/src/main/webapp',
+				appresources: [config.testsuite.path + '/src/main/webapp', 'target/openui5-sdk/'],
 
 				resources: aLibraries.map(function(lib) {
 					return lib.src;

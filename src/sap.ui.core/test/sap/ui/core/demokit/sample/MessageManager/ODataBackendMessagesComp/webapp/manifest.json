@@ -1,10 +1,15 @@
 {
-	"_version": "1.1.0",
+	"_version": "1.21.0",
 	"sap.app": {
-		"_version": "1.1.0",
 		"id": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
@@ -23,7 +28,6 @@
 		}
 	},
 	"sap.ui": {
-		"_version": "1.1.0",
 		"technology": "UI5",
 		"deviceTypes": {
 			"desktop": true,
@@ -33,7 +37,6 @@
 		"supportedThemes": ["sap_belize"]
   	},
 	"sap.ui5": {
-		"_version": "1.1.0",
 		"rootView": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.view.App",
 		"handleValidation"  : true,
 		"dependencies": {
@@ -48,7 +51,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.i18n.i18n"
+					"bundleName": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			},
 			"": {

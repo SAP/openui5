@@ -1,0 +1,68 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+	<Page>
+		<customHeader>
+			<OverflowToolbar class="sapUiResponsivePadding">
+				<Title class="sapMListHdrText" text="{i18n>palette}"></Title>
+				<ToolbarSpacer/>
+				<SearchField width="50%" liveChange="onPaletteSearch" placeholder="{i18n>paletteSearch}"/>
+				<Button id="addControlButton" icon="sap-icon://add" press="onAddControlToPalette"/>
+			</OverflowToolbar>
+		</customHeader>
+		<List
+			id="palette"
+			noDataText="{i18n>loading}"
+			items="{
+				path: 'palette>/groups',
+				sorter: {
+					path: 'groupName'
+				}
+			}">
+			<CustomListItem visible="{= ${palette>number} ? true : false}">
+				<Panel
+				expandable="true"
+				expandAnimation="true"
+				expand="onPanelExpand"
+				class="sapUiDtToolPanel">
+					<headerToolbar>
+						<OverflowToolbar class="" active="true" press="expandPallete">
+							<Title text="{palette>groupName}"/>
+							<ToolbarSpacer/>
+							<ObjectNumber number="{palette>number}"/>
+						</OverflowToolbar>
+					</headerToolbar>
+					<Table
+						app:group="{palette>groupName}"
+						items="{
+							path: 'palette>controls',
+							templateShareable: false,
+							sorter: {
+								path: 'name'
+							}
+						}">
+						<columns>
+							<Column width="2.5rem"/>
+							<Column/>
+						</columns>
+						<ColumnListItem>
+							<Image
+								src="{
+									path: 'palette>icon',
+									formatter: '.formatter'
+								}"
+								width="1.5rem"
+								height="1.5rem"/>
+							<Title text="{palette>name}" tooltip="{palette>description}"/>
+						</ColumnListItem>
+					</Table>
+				</Panel>
+			</CustomListItem>
+			<layoutData>
+				<l:SplitterLayoutData size="50%" minSize="200px"/>
+			</layoutData>
+		</List>
+	</Page>
+</core:FragmentDefinition>

@@ -1,0 +1,45 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:l="sap.ui.layout"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Using sap.ui.layout.Splitter as container" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<Panel>
+			<l:Splitter id="container" height="600px">
+				<l:Splitter orientation="Vertical">
+					<w:Card
+						id="default2x2"
+						manifest="{manifests>/splitter/card1}"
+						width="100%"
+						height="100%" />
+					<w:Card
+						id="default4x2withcomponent"
+						manifest="./cardsdemo/cardcontent/listcomponent/manifest.json" />
+				</l:Splitter>
+
+				<l:Splitter orientation="Vertical">
+					<w:Card
+						id="default1x1"
+						manifest="{manifests>/splitter/card2}"
+						width="100%"
+						height="100%" />
+					<w:Card
+						id="default2x1"
+						manifest="{manifests>/splitter/card3}"
+						width="100%"
+						height="100%" />
+				</l:Splitter>
+			</l:Splitter>
+		</Panel>
+	</Page>
+</mvc:View>

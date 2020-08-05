@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/ui/core/InvisibleText',
-	'./SplitButtonRenderer'
+	'./SplitButtonRenderer',
+	"sap/ui/events/KeyCodes"
 ],
 function(
 	library,
@@ -25,7 +26,8 @@ function(
 	coreLibrary,
 	Device,
 	InvisibleText,
-	SplitButtonRenderer
+	SplitButtonRenderer,
+	KeyCodes
 	) {
 		"use strict";
 
@@ -49,8 +51,8 @@ function(
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @sap-restricted sap.m.MenuButton,sap.ui.richtextEditor.ToolbarWrapper
 		 * @private
+		 * @ui5-restricted sap.m.MenuButton,sap.ui.richtextEditor.ToolbarWrapper
 		 * @alias sap.m.SplitButton
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -143,13 +145,6 @@ function(
 
 		EnabledPropagator.call(SplitButton.prototype);
 
-		SplitButton.prototype.exit = function() {
-			if (this._oInvisibleTooltipInfoLabel) {
-				this._oInvisibleTooltipInfoLabel.destroy();
-				this._oInvisibleTooltipInfoLabel = null;
-			}
-		};
-
 		SplitButton.prototype.onAfterRendering = function() {
 			var $textButtonRef = this._getTextButton().$(),
 				$arrowButtonRef = this._getArrowButton().$();
@@ -224,23 +219,6 @@ function(
 			return oCtrl;
 		};
 
-		/**
-		 * Sets the tooltip for the <code>SplitButton</code>.
-		 * Can either be an instance of a TooltipBase subclass or a simple string.
-		 * @param {sap.ui.core.TooltipBase} vTooltip The tooltip that should be shown.
-		 * @returns {*} this instance
-		 * @public
-		 */
-		SplitButton.prototype.setTooltip = function(vTooltip) {
-			var sTooltip;
-			Control.prototype.setTooltip.apply(this, arguments);
-
-			sTooltip = this.getTooltip_AsString();
-			this.getTooltipInfoLabel(sTooltip);
-
-			return this;
-		};
-
 		SplitButton.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
 			if (sPropertyName === "type"
 				&& (oValue === ButtonType.Up
@@ -274,12 +252,20 @@ function(
 			return sText.charAt(0).toUpperCase() + sText.slice(1);
 		}
 
-		SplitButton.prototype.onsapenter = function(oEvent) {
-			this._getTextButton().firePress();
+		SplitButton.prototype.onkeydown = function(oEvent) {
+			if (oEvent.which === KeyCodes.SPACE) {
+				oEvent.preventDefault();
+			}
+
+			if (oEvent.which === KeyCodes.ENTER) {
+				this._getTextButton().firePress({/* no parameters */ });
+			}
 		};
 
-		SplitButton.prototype.onsapspace = function(oEvent) {
-			this._getTextButton().firePress();
+		SplitButton.prototype.onkeyup = function(oEvent) {
+			if (oEvent.which === KeyCodes.SPACE) {
+				this._getTextButton().firePress({/* no parameters */ });
+			}
 		};
 
 		SplitButton.prototype.onsapup = function(oEvent) {
@@ -311,17 +297,6 @@ function(
 		SplitButton.prototype.getButtonTypeAriaLabelId = function() {
 			var sButtonType = this._getTextButton().getType();
 			return ButtonRenderer.getButtonTypeAriaLabelId(sButtonType);
-		};
-
-		SplitButton.prototype.getTooltipInfoLabel = function(sTooltip) {
-			if (!this._oInvisibleTooltipInfoLabel) {
-				this._oInvisibleTooltipInfoLabel = new InvisibleText();
-				this._oInvisibleTooltipInfoLabel.toStatic();
-			}
-
-			this._oInvisibleTooltipInfoLabel.setText(sTooltip);
-
-			return this._oInvisibleTooltipInfoLabel;
 		};
 
 		SplitButton.prototype.getTitleAttributeValue = function() {

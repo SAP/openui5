@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../css/topic.css">
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
+
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+</head>
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">Integrate Destinations</h1>
+			<h2 id="overview">
+				Overview
+			</h2>
+
+			<p>
+				Destinations that are listed in the <code>configuration</code> part of the <code>manifest</code>
+				should be resolved by the application with the help of <a data-demokit-href="/api/sap.ui.integration.Host" target="_blank"><code>sap.ui.integration.Host</code></a>.
+				The host application developer should use the <code>resolveDestination</code> property in the constructor
+				to pass a callback function to resolve a destination name to the corresponding URL.
+				The card calls this function when it needs to send a request to the destination.
+				The function returns the URL to which the request will be sent.
+				If a card depends on a destination, but this callback is not implemented, an error will be logged.
+				The callback receives <code>destinationName</code> as parameter and returns a string with the URL.
+				Or alternatively the callback may return a <code>Promise</code> which resolves with the URL as argument.
+			</p>
+
+			<h2 id="examples">
+				Example
+			</h2>
+
+			Controller
+<pre class="prettyprint  lang-js">
+var oHost = new sap.ui.integration.Host({
+	resolveDestination: function(sDestinationName) {
+		switch (sDestinationName) {
+			case "Northwind":
+				return "https://services.odata.org/V3/Northwind/Northwind.svc";
+				// or with a promise
+				return Promise.resolve("https://services.odata.org/V3/Northwind/Northwind.svc");
+			break;
+			default:
+				console.error("Unknown destination.");
+			break;
+		}
+	}
+});
+
+this.getView().byId('card1').setHost(oHost);</pre>
+
+XML View
+<pre class="prettyprint  lang-js">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card id="card1" manifest="./manifest.json" /&gt;
+&lt;/mvc:View&gt;</pre>
+			<a class="try-button" href="../../index.html#/explore/destinations" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#example">Example</a></div>
+		</div>
+	</div>
+
+	<script src="../../scripts/topic.js"></script>
+</body>
+</html>

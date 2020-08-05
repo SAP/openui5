@@ -18,11 +18,6 @@
 	jQuery.sap.require("sap.m.OverflowToolbar");
 	jQuery.sap.require("sap.m.OverflowToolbarLayoutData");
 
-	// for behaviour testing
-	if (oUriParameters.get("oldFlex")) {
-		sap.m.ToolbarRenderer.hasNewFlexBoxSupport = false;
-	}
-
 	var sAddIconURI = sap.ui.core.IconPool.getIconURI("add");
 	var sDeleteIconURI = sap.ui.core.IconPool.getIconURI("delete");
 	var sChangeIconURI = sap.ui.core.IconPool.getIconURI("cause");
@@ -626,14 +621,12 @@
 		}),
 		new sap.m.Label({
 			text : "G2 First Label",
-			labelFor: "labelledInput",
 			layoutData: new sap.m.OverflowToolbarLayoutData({
 				group: 2
 			})
 		}),
 		new sap.m.Label({
 			text : "G2 Second Label",
-			labelFor: "labelledInput",
 			layoutData: new sap.m.OverflowToolbarLayoutData({
 				group: 2
 			})
@@ -686,6 +679,160 @@
 		})
 	];
 
+	var toolbarContent10 = [
+		new sap.m.Label({
+			id: "labelNoLayout",
+			text : "Label no LayoutData"
+		}),
+		new sap.m.Button({
+			text: "Button no LayoutData"
+		}),
+		new sap.m.Label({
+			id: "labelLayoutData",
+			text : "Shrinkable LayoutData",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "100px"
+			})
+		}),
+		new sap.m.Button({
+			text: "Shrinkable LayoutData",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "50px"
+			})
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.SearchField("searchLayoutData",
+		{
+			width:"25%",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "100px"
+			})
+		}),
+		new sap.m.Label({
+			text : "Language:",
+			labelFor: "selectLanguage"
+		}),
+		new sap.m.Select("selectLanguage", {
+			name: "select-language",
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "French"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "English"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "German"
+				})
+			],
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "100px"
+			})
+		}),
+		new sap.m.Input({
+			placeholder: "Input",
+			width: "10%",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "100px"
+			})
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.CheckBox({
+			text : "Checkbox",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "100px"
+			})
+		}),
+		new sap.m.Label({
+			text : "Items:",
+			labelFor: "comboBox"
+		}),
+		new sap.m.ComboBox("comboBox", {
+			placeholder: "Choose item",
+			items: [
+						new sap.ui.core.Item({
+								key: "0",
+								text: "item 0"
+						}),
+						new sap.ui.core.Item({
+							key: "1",
+							text: "item 1",
+						}),
+						new sap.ui.core.Item({
+							key: "2",
+							text: "item 2"
+						})
+					],
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "50px"
+			})
+		})
+	];
+
+	var toolbarContent11 = [
+		new sap.m.GenericTag({
+			text : "Shortage Expected",
+			status: "Warning"
+		}),
+		new sap.m.GenericTag({
+			text : "Project Cost",
+			status: "Error"
+		}),
+		new sap.m.GenericTag({
+			text : "In Stock",
+			status: "Success"
+		}),
+		new sap.m.GenericTag({
+			text : "Total Cost",
+			valueState: "Error"
+		}),
+		new sap.m.GenericTag({
+			text : "Shortage Expected",
+			status: "Warning"
+		}),
+		new sap.m.GenericTag({
+			text : "Project Cost",
+			status: "Error"
+		}),
+		new sap.m.GenericTag({
+			text : "In Stock",
+			status: "Success"
+		}),
+		new sap.m.GenericTag({
+			text : "Total Cost",
+			valueState: "Error"
+		}),
+		new sap.m.GenericTag({
+			text : "Shortage Expected",
+			status: "Warning"
+		}),
+		new sap.m.GenericTag({
+			text : "Project Cost",
+			status: "Error"
+		}),
+		new sap.m.GenericTag({
+			text : "In Stock",
+			status: "Success"
+		}),
+		new sap.m.GenericTag({
+			text : "Total Cost",
+			valueState: "Error"
+		}),
+		new sap.m.ToolbarSpacer()
+	];
+
 	var toolbarContentFooter = [
 		new sap.m.Label({
 			text : "When the toolbar is in the footer, the action sheet opens above it."
@@ -711,7 +858,7 @@
 					text: "Footer Select 1"
 				}),
 				new sap.ui.core.Item({
-					key: "0",
+					key: "1",
 					text: "Footer Select 2"
 				})
 			]
@@ -778,20 +925,27 @@
 			content: toolbarContent9
 		}),
 
+		new sap.m.OverflowToolbar("otb10", {
+			width: 'auto',
+			content: toolbarContent10
+		}),
+
+		new sap.m.OverflowToolbar("otb11", {
+			width: 'auto',
+			content: toolbarContent11
+		}),
 		new sap.m.OverflowToolbar("otbFooter", {
 			width: 'auto',
 			content : toolbarContentFooter
 		})
 	];
 
-
 	var oPage = new sap.m.Page("toolbar-page", {
 		title : "Overflow Toolbar - the buttons that do not fit go to an action sheet",
+		titleLevel: "H1",
 		enableScrolling : true,
 		subHeader: aAllToolbars[0],
 		content: [
-
-
 			new sap.m.Slider({
 				value: 100,
 				liveChange: function(oControlEvent) {
@@ -811,10 +965,34 @@
 					});
 
 				}
-			})
+			}),
 
+			aAllToolbars.slice(1, aAllToolbars.length - 1),
 
-		].concat(aAllToolbars.slice(1, aAllToolbars.length - 1)),
+			new sap.m.MessageStrip({
+				text: "Change page width",
+				showIcon: true
+			}).addStyleClass("sapUiSmallMargin"),
+
+			new sap.m.HBox({
+				justifyContent: sap.m.FlexJustifyContent.Center,
+				wrap: sap.m.FlexWrap.Wrap,
+				items: [
+					new sap.m.Button("size_btn", {
+						text : "Change page width to 480px",
+						press : function() { jQuery("#toolbar-page").width("480px"); }
+					}).addStyleClass("sapUiSmallMargin"),
+					new sap.m.Button("size_btn2", {
+						text : "Change page width to 700px",
+						press : function() { jQuery("#toolbar-page").width("700px"); }
+					}).addStyleClass("sapUiSmallMargin"),
+					new sap.m.Button("size_btn3", {
+						text : "Change page width to 100%",
+						press : function() { jQuery("#toolbar-page").width("100%"); }
+					}).addStyleClass("sapUiSmallMargin")
+				]
+			}),
+		],
 	footer: aAllToolbars[aAllToolbars.length - 1]
 	});
 
@@ -865,20 +1043,6 @@
 	});
 
 	oApp.addPage(oPage).placeAt("content");
-
-	var oB = new sap.m.Button("size_btn", {
-		text : "Change page size to 480px",
-		press : function() { jQuery("#toolbar-page").width("480px"); }
-	});
-
-	var oB2 = new sap.m.Button("size_btn2", {
-		text : "Change page size to 700px",
-		press : function() { jQuery("#toolbar-page").width("700px"); }
-	});
-
-	oB2.placeAt("content");
-	oB.placeAt("content");
-
 </script>
 </head>
 <body id="body" class="sapUiBody">

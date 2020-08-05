@@ -28,6 +28,8 @@
 
 		//*******************************
 		var oTokenizer1 = new sap.m.Tokenizer("editableTokenizer", {
+			renderMode: "Narrow",
+			width: "400px",
 			tokens: [
 			         new sap.m.Token({text: "Token 1", key: "0001"}),
 			         new sap.m.Token({text: "Token 2", key: "0002"}),
@@ -106,7 +108,25 @@
 			press : function() {
 				oTokenizer5.setEditable(!oTokenizer5.getEditable());
 			}
+
 		});
+
+		var oTokenizer7 = new sap.m.Tokenizer("tokenizerLongToken", {
+			width: "200px",
+			tokens: [
+				new sap.m.Token({text:"Veru long long long long long long long text"})
+			],
+		});
+		oTokenizer7.setRenderMode(sap.m.TokenizerRenderMode.Narrow);
+
+		var oTokenizer8 = new sap.m.Tokenizer("tokenizerReadOnlyLongToken", {
+			width: "200px",
+			editable: false,
+			tokens: [
+				new sap.m.Token({text:"Veru long long long long long long long text"})
+			],
+		});
+		oTokenizer8.setRenderMode(sap.m.TokenizerRenderMode.Narrow);
 
 		var app = new sap.m.App("myApp");
 
@@ -127,7 +147,11 @@
 					oTokenizer5,
 				    new sap.m.Label({ text : "Tokenizer with editable and non-editable tokens", width: "100%"}),
 					oTokenizer6,
-					toggleReadOnlyBtn
+					toggleReadOnlyBtn,
+					new sap.m.Label({ text : "Tokenizer with single long token.", width: "100%"}),
+					oTokenizer7,
+					new sap.m.Label({ text : "Tokenizer with single long token - read only.", width: "100%"}),
+					oTokenizer8
 			]
 		});
 

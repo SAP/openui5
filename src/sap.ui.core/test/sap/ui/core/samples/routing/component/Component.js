@@ -1,11 +1,13 @@
 // define a root UIComponent which exposes the main view
 sap.ui.define([
-		'jquery.sap.global',
+		'sap/ui/core/library',
 		'sap/ui/core/UIComponent',
 		'sap/ui/core/mvc/View',
 		'sap/ui/core/routing/Router'
-	], function(jQuery, UIComponent, View, Router) {
+	], function(coreLibrary, UIComponent, View, Router) {
 	"use strict";
+
+	var ViewType = coreLibrary.mvc.ViewType;
 
 	// new Component
 	var Component = UIComponent.extend("NavigationWithoutMasterDetailPattern.Component", {
@@ -80,7 +82,7 @@ sap.ui.define([
 		createContent : function() {
 
 			var oView = sap.ui.view({
-				type : sap.ui.core.mvc.ViewType.XML,
+				type : ViewType.XML,
 				viewName : "NavigationWithoutMasterDetailPattern.MainXML"
 			});
 			return oView;

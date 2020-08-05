@@ -4,35 +4,61 @@
 
 sap.ui.define([
 	'./library',
+	'sap/ui/core/Core',
+	'sap/ui/Device',
 	'./NotificationListBase',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/IconPool',
+	'sap/ui/core/Icon',
 	'sap/ui/core/ResizeHandler',
-	'sap/m/Button',
+	'sap/ui/core/library',
+	'sap/m/Link',
+	'sap/m/Avatar',
+	"sap/ui/events/KeyCodes",
 	'./NotificationListItemRenderer'
 ],
 function(
 	library,
+	Core,
+	Device,
 	NotificationListBase,
 	InvisibleText,
 	IconPool,
+	Icon,
 	ResizeHandler,
-	Button,
+	coreLibrary,
+	Link,
+	Avatar,
+	KeyCodes,
 	NotificationListItemRenderer
 	) {
 	'use strict';
 
-	// shortcut for sap.m.ButtonType
-	var ButtonType = library.ButtonType;
+	var RESOURCE_BUNDLE = Core.getLibraryResourceBundle('sap.m'),
+		EXPAND_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE'),
+		COLLAPSE_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_SHOW_LESS'),
+		READ_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_READ'),
+		UNREAD_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_UNREAD');
+
+	var maxTruncationHeight = 44;
+
+	// shortcut for sap.m.AvatarSize
+	var AvatarSize = library.AvatarSize;
+
+	// shortcut for sap.m.AvatarColor
+	var AvatarColor = library.AvatarColor;
+
+	// shortcut for sap.ui.core.Priority
+	var Priority = coreLibrary.Priority;
 
 	/**
-	 * Constructor for a new NotificationListItem.
+	 * Constructor for a new <code>NotificationListItem<code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The NotificationListItem control shows notifications to the user.
+	 * The NotificationListItem control shows notification to the user.
 	 * <h4>Structure</h4>
 	 * The notification item holds properties for the following elements:
 	 * <ul>
@@ -62,6 +88,11 @@ function(
 				description: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 				/**
+				 * Defines the displayed author initials.
+				 */
+				authorInitials: {type: "string", group: "Data", defaultValue: null},
+
+				/**
 				 * Determines if the text in the title and the description of the notification are truncated to the first two lines.
 				 */
 				truncate: {type: 'boolean', group: 'Appearance', defaultValue: true},
@@ -69,396 +100,229 @@ function(
 				/**
 				 * Determines if the "Show More" button should be hidden.
 				 */
-				hideShowMoreButton: {type: 'boolean', group: 'Appearance', defaultValue: false}
+				hideShowMoreButton: {type: 'boolean', group: 'Appearance', defaultValue: false},
+
+				/**
+				 * Determines the background color of the avatar of the author.
+				 *
+				 * <b>Note:</b> By using background colors from the predefined sets,
+				 * your colors can later be customized from the Theme Designer.
+				 */
+				authorAvatarColor: {type: "sap.m.AvatarColor", group: "Appearance", defaultValue: AvatarColor.Accent6}
 			},
 			aggregations: {
 				/**
 				 * The sap.m.MessageStrip control that holds the information about any error that may occur when pressing the notification buttons
 				 */
 				processingMessage: {type: 'sap.m.MessageStrip', multiple: false},
+
 				/**
-				 * The text control that holds the description text of the NotificationListItem.
+				 * The "Show More" button of the notification item.
 				 * @private
 				 */
-				_bodyText: {type: 'sap.m.Text', multiple: false, visibility: "hidden"}
+				_showMoreButton: {type: 'sap.m.Link', multiple: false, visibility: "hidden"}
 			}
 		}
 	});
 
 	/**
-	 * Sets initial values for the control.
+	 * Handles the internal event init.
 	 *
-	 * @public
+	 * @private
 	 */
-	NotificationListItem.prototype.init = function () {
-		NotificationListBase.prototype.init.call(this);
-
-		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
-		this._expandText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE');
-		this._collapseText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_LESS');
-		this._closeText = resourceBundle.getText('NOTIFICATION_LIST_BASE_CLOSE');
-
-		//set it to an active ListItemBase to the press and tap events are fired
+	NotificationListItem.prototype.init = function() {
+		// set it to an active ListItemBase to the press and tap events are fired
 		this.setType('Active');
-
-		/**
-		 * @type {sap.m.Button}
-		 * @private
-		 */
-		var _closeButton = new Button(this.getId() + '-closeButton', {
-			type: ButtonType.Transparent,
-			icon: IconPool.getIconURI('decline'),
-			tooltip: this._closeText,
-			press: function () {
-				this.close();
-			}.bind(this)
-		});
-
-		this.setAggregation("_closeButton", _closeButton, true);
-
-		/**
-		 * @type {sap.m.Button}
-		 * @private
-		 */
-		var _collapseButton = new Button({
-			type: ButtonType.Transparent,
-			text: this.getTruncate() ? this._expandText : this._collapseText,
-			id: this.getId() + '-expandCollapseButton',
-			press: function () {
-				this._deregisterResize();
-				this.setProperty("truncate", !this.getTruncate(), true);
-				_collapseButton.setText(this.getTruncate() ? this._expandText : this._collapseText);
-
-				this.$().find('.sapMNLI-Header').toggleClass('sapMNLI-TitleWrapper--is-expanded');
-				this.$().find('.sapMNLI-TextWrapper').toggleClass('sapMNLI-TextWrapper--is-expanded', this.getDescription());
-
-				this._registerResize();
-			}.bind(this)
-		});
-
-		this.setAggregation("_collapseButton", _collapseButton, true);
-
-		/**
-		 * InvisibleText used to implement the ARIA specification.
-		 * @private
-		 */
-		this._ariaDetailsText = new InvisibleText({
-			id: this.getId() + '-info'
-		}).toStatic();
+		this._footerIvisibleText = new InvisibleText({id: this.getId() + "-invisibleFooterText"});
 	};
 
-	//================================================================================
-	// Overwritten setters and getters
-	//================================================================================
-
-	/**
-	 * Sets the description.
-	 *
-	 * @public
-	 * @param {string} description Description.
-	 * @returns {sap.m.NotificationListItem} NotificationListItem reference for chaining.
-	 */
-	NotificationListItem.prototype.setDescription = function (description) {
-		var result = this.setProperty('description', description);
-
-		this._getDescriptionText().setText(description);
-
-		return result;
-	};
-
-	/**
-	 * Sets the DateTime.
-	 *
-	 * @public
-	 * @param {object} dateTime DateTime.
-	 * @returns {sap.m.NotificationListBase} NotificationListBase reference for chaining.
-	 */
-	NotificationListItem.prototype.setDatetime = function (dateTime) {
-		var result = NotificationListBase.prototype.setDatetime.call(this, dateTime);
-		this._updateAriaAdditionalInfo();
-
-		return result;
-	};
-
-	/**
-	 * Sets the unread text.
-	 *
-	 * @public
-	 * @param {boolean} unread Indication of unread list item.
-	 * @returns {sap.m.NotificationListItem} NotificationListItem reference for chaining.
-	 */
-	NotificationListItem.prototype.setUnread = function (unread) {
-		/* @type {sap.m.NotificationListItem} Reference to <code>this</code> to allow method chaining */
-		var result = this.setProperty('unread', unread, true);
-		/* @type {sap.m.Title} */
-		var title = this.getAggregation('_headerTitle');
-		if (title) {
-			title.toggleStyleClass('sapMNLI-Unread', this.getUnread());
-		}
-
-		return result;
-	};
-
-	/**
-	 * Sets the priority of the list item.
-	 *
-	 * @public
-	 * @param {string} priority Priority of the list item.
-	 * @param {boolean} suppressInvalidation Indication for suppressing invalidation.
-	 * @returns {sap.m.NotificationListItem} NotificationListItem reference for chaining.
-	 */
-	NotificationListItem.prototype.setPriority = function (priority, suppressInvalidation) {
-		var result = this.setProperty('priority', priority, suppressInvalidation);
-
-		this._updateAriaAdditionalInfo();
-
-		return result;
-	};
-
-	/**
-	 * Sets the author picture for list item.
-	 *
-	 * @public
-	 * @param {string} authorPicture Picture url in string format.
-	 * @param {boolean} suppressInvalidation Indication for suppressing invalidation.
-	 * @returns {sap.m.NotificationListItem} NotificationListItem reference for chaining.
-	 */
-	NotificationListItem.prototype.setAuthorPicture = function (authorPicture, suppressInvalidation) {
-		var result = this.setProperty('authorPicture', authorPicture, suppressInvalidation);
-
-		this._getAuthorImage().setSrc(authorPicture);
-
-		return result;
-	};
-
-	/**
-	 * Clones list item.
-	 *
-	 * @public
-	 * @returns {sap.m.NotificationListItem} NotificationListItem reference for chaining.
-	 */
-	NotificationListItem.prototype.clone = function () {
-		return NotificationListBase.prototype.clone.apply(this, arguments);
-	};
-
-	//================================================================================
-	// Control methods
-	//================================================================================
-
-	/**
-	 * Overwrites onBeforeRendering
-	 *
-	 * @public
-	 */
-	NotificationListItem.prototype.onBeforeRendering = function () {
-		this._updateAriaAdditionalInfo();
-		this._deregisterResize();
-	};
-
-	/**
-	 * Overwrites onAfterRendering
-	 *
-	 * @public
-	 */
-	NotificationListItem.prototype.onAfterRendering = function () {
-		this._registerResize();
-	};
-
-	/**
-	 * Called when the control is destroyed.
-	 *
-	 * @private
-	 */
-	NotificationListItem.prototype.exit = function () {
-		this._deregisterResize();
-
-		if (this._ariaDetailsText) {
-			this._ariaDetailsText.destroy();
-			this._ariaDetailsText = null;
-		}
-	};
-
-	//================================================================================
-	// Private getters and setters
-	//================================================================================
-
-	/**
-	 * Returns the sap.m.Text control used in the NotificationListItem's description.
-	 *
-	 * @private
-	 * @returns {sap.m.Text} The notification description text
-	 */
-	NotificationListItem.prototype._getDescriptionText = function () {
-		var bodyText = this.getAggregation('_bodyText');
-
-		if (!bodyText) {
-			bodyText = new sap.m.Text({
-				id: this.getId() + '-body',
-				text: this.getDescription(),
-				maxLines: 2
-			}).addStyleClass('sapMNLI-Text');
-
-			this.setAggregation("_bodyText", bodyText, true);
-		}
-
-		return bodyText;
-	};
-
-	//================================================================================
-	// Private and protected internal methods
-	//================================================================================
-
-	/**
-	 * Overrides the ListItemBase class toggling.
-	 *
-	 * @private
-	 */
-	NotificationListItem.prototype._activeHandling = function () {
-		this.$().toggleClass("sapMNLIActive", this._active);
-	};
-
-	/**
-	 * Updates the hidden text, used for the ARIA support.
-	 *
-	 * @private
-	 */
-	NotificationListItem.prototype._updateAriaAdditionalInfo = function () {
-		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
-		var readUnreadText = this.getUnread() ?
-			resourceBundle.getText('NOTIFICATION_LIST_ITEM_UNREAD') : resourceBundle.getText('NOTIFICATION_LIST_ITEM_READ');
-		var dueAndPriorityString = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY',
-			[this.getDatetime(), this.getPriority()]);
-		var authorName = this.getAuthorName();
-		var ariaText = readUnreadText + ' ';
-
-		if (authorName) {
-			ariaText += resourceBundle.getText('NOTIFICATION_LIST_ITEM_CREATED_BY') + ' ' + this.getAuthorName() + ' ';
-		}
-
-		ariaText += dueAndPriorityString;
-		this._ariaDetailsText.setText(ariaText);
-	};
-
-	/**
-	 * Returns true if the text in the title or the text in the description is longer than two lines.
-	 *
-	 * @private
-	 * @returns {boolean} Whether the control should be truncated.
-	 */
-	NotificationListItem.prototype._canTruncate = function () {
-		var titleHeight = this.getDomRef('title').offsetHeight;
-		var titleWrapperHeight = this.getDomRef('title').parentElement.offsetHeight;
-		var textHeight;
-		var textWrapperHeight;
-		if (this._getDescriptionText().getText()) {
-			textHeight = this.getDomRef("body").offsetHeight;
-			textWrapperHeight = this.getDomRef("body").parentElement.offsetHeight;
-		}
-
-
-		return textHeight > textWrapperHeight || titleHeight > titleWrapperHeight;
-	};
-
-	/**
-	 * Shows and hides truncate button.
-	 *
-	 * @private
-	 */
-	NotificationListItem.prototype._showHideTruncateButton = function () {
-		var notificationDomRef = this.getDomRef();
-
-		if (this._canTruncate() && (!this.getHideShowMoreButton())) { // if the Notification has long text
-			// show the truncate button
-			this.getDomRef('expandCollapseButton').classList.remove('sapMNLI-CollapseButtonHide');
-
-			// set the truncate button text && toggle 'collapse' class
-			if (this.getTruncate()) {
-				this.getAggregation('_collapseButton').setText(this._expandText);
-				notificationDomRef.querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--is-expanded');
-
-				if (this.getDescription()) {
-					notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--is-expanded');
-				}
-			} else {
-				this.getAggregation('_collapseButton').setText(this._collapseText);
-				this.$().find('.sapMNLI-TextWrapper').toggleClass('sapMNLI-TextWrapper--is-expanded', this.getDescription());
-
-				notificationDomRef.querySelector('.sapMNLI-Header').classList.add('sapMNLI-TitleWrapper--is-expanded');
+	NotificationListItem.prototype._getAuthorAvatar = function() {
+		if (this.getAuthorInitials() || this.getAuthorPicture()) {
+			if (!this._avatar) {
+				this._avatar = new Avatar({
+					displaySize: AvatarSize.XS
+				});
 			}
 
-		} else {
-			// hide the truncate button
-			this.getDomRef('expandCollapseButton').classList.add('sapMNLI-CollapseButtonHide');
-		}
+			this._avatar.setInitials(this.getAuthorInitials());
+			this._avatar.setSrc(this.getAuthorPicture());
+			this._avatar.setBackgroundColor(this.getAuthorAvatarColor());
 
-		// remove classes used only to calculate text size
-		if (this.getDescription()) {
-			notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--initial-overwrite');
-		}
-
-		if (this.getTitle()) {
-			notificationDomRef.querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--initial-overwrite');
+			return this._avatar;
 		}
 	};
 
 	/**
-	 * Deregisters resize handler.
+	 * Handles the internal event onBeforeRendering.
 	 *
 	 * @private
 	 */
-	NotificationListItem.prototype._deregisterResize = function () {
-		if (this._sNotificationResizeHandler) {
-			ResizeHandler.deregister(this._sNotificationResizeHandler);
-			this._sNotificationResizeHandler = null;
+	NotificationListItem.prototype.onBeforeRendering = function() {
+		NotificationListBase.prototype.onBeforeRendering.call(this);
+
+		if (this._resizeListenerId) {
+			ResizeHandler.deregister(this._resizeListenerId);
+			this._resizeListenerId = null;
 		}
 	};
 
-	/**
-	 * Registers resize handler.
-	 *
-	 * @public
-	 */
-	NotificationListItem.prototype._registerResize = function () {
-		var that = this;
-		var notificationDomRef = this.getDomRef();
-		if (!notificationDomRef) {
-			//exit for invisible items
+	NotificationListItem.prototype.onAfterRendering = function() {
+		if (this.getHideShowMoreButton()) {
 			return;
 		}
 
-		that._resizeNotification();
+		this._updateShowMoreButtonVisibility();
 
-		this._sNotificationResizeHandler = ResizeHandler.register(notificationDomRef, function () {
-			that._resizeNotification();
-		});
+		if (this.getDomRef()) {
+			this._resizeListenerId = ResizeHandler.register(this.getDomRef(),  this._onResize.bind(this));
+		}
 	};
 
 	/**
-	 * Resize handler for the NotificationListItem.
+	 * Handles the <code>focusin</code> event.
+	 *
+	 * @param {jQuery.Event} event The event object.
+	 */
+	NotificationListItem.prototype.onfocusin = function (event) {
+		NotificationListBase.prototype.onfocusin.apply(this, arguments);
+
+		if (!Device.browser.msie) {
+			return;
+		}
+
+		// in IE the elements inside can get the focus (IE issue)
+		// https://stackoverflow.com/questions/18259754/ie-click-on-child-does-not-focus-parent-parent-has-tabindex-0
+		// in that case just focus the whole item
+		var target = event.target;
+
+		if (target !== this.getDomRef() &&
+			!target.classList.contains('sapMBtn') &&
+			!target.classList.contains('sapMLnk')) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			this.focus();
+		}
+	};
+
+	NotificationListItem.prototype.onkeydown = function(event) {
+
+		if (event.target !== this.getDomRef()) {
+			return;
+		}
+
+		var notificationGroup = this.getParent(),
+			visibleItems,
+			groupIndex;
+
+		if (!notificationGroup || !notificationGroup.isA('sap.m.NotificationListGroup')) {
+			return;
+		}
+
+		visibleItems = notificationGroup.getVisibleItems();
+		groupIndex = visibleItems.indexOf(this);
+
+		switch (event.which) {
+			case KeyCodes.ARROW_UP:
+				if (groupIndex === 0) {
+					return;
+				}
+
+				var previousIndex = groupIndex - 1;
+				visibleItems[previousIndex].focus();
+				break;
+			case KeyCodes.ARROW_DOWN:
+				var nextIndex = groupIndex + 1;
+				if (nextIndex === visibleItems.length) {
+					return;
+				}
+
+				visibleItems[nextIndex].focus();
+				break;
+		}
+	};
+
+	NotificationListItem.prototype.exit = function() {
+		NotificationListBase.prototype.exit.apply(this, arguments);
+		if (this._resizeListenerId) {
+			ResizeHandler.deregister(this._resizeListenerId);
+			this._resizeListenerId = null;
+		}
+
+		if (this._footerIvisibleText) {
+			this._footerIvisibleText.destroy();
+			this._footerIvisibleText = null;
+		}
+
+		if (this._avatar) {
+			this._avatar.destroy();
+			this._avatar = null;
+		}
+	};
+
+	NotificationListItem.prototype._onResize = function () {
+		this._updateShowMoreButtonVisibility();
+	};
+
+	NotificationListItem.prototype._updateShowMoreButtonVisibility = function () {
+		var $this = this.$(),
+			title = $this.find('.sapMNLITitleText')[0],
+			description = $this.find('.sapMNLIDescription')[0],
+			canTruncate;
+
+		if ($this.length > 0) {
+			canTruncate = title.scrollHeight > maxTruncationHeight || description.scrollHeight > maxTruncationHeight;
+		}
+
+		this._getShowMoreButton().setVisible(canTruncate);
+	};
+
+	NotificationListItem.prototype._getShowMoreButton = function() {
+		var showMoreButton = this.getAggregation('_showMoreButton');
+
+		if (!showMoreButton) {
+			showMoreButton = new Link(this.getId() + '-showMoreButton', {
+				text: this.getTruncate() ? EXPAND_TEXT : COLLAPSE_TEXT,
+				press: function () {
+					var truncate = !this.getTruncate();
+					this._getShowMoreButton().setText(truncate ? EXPAND_TEXT : COLLAPSE_TEXT);
+					this.setTruncate(truncate);
+				}.bind(this)
+			});
+
+			this.setAggregation("_showMoreButton", showMoreButton, true);
+		}
+
+		return showMoreButton;
+	};
+
+	/**
+	 * Updates invisible text.
 	 *
 	 * @private
 	 */
-	NotificationListItem.prototype._resizeNotification = function () {
-		var notificationDomRef = this.getDomRef();
-		var core = sap.ui.getCore();
+	NotificationListItem.prototype._getFooterInvisibleText = function() {
 
-		if (notificationDomRef.offsetWidth >= 640) {
-			notificationDomRef.classList.add('sapMNLI-LSize');
-		} else {
-			notificationDomRef.classList.remove('sapMNLI-LSize');
-		}
-		if (this._getDescriptionText().getText()) {
-			notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--is-expanded');
-			notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.add('sapMNLI-TextWrapper--initial-overwrite');
-		}
-		notificationDomRef.querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--is-expanded');
-		notificationDomRef.querySelector('.sapMNLI-Header').classList.add('sapMNLI-TitleWrapper--initial-overwrite');
+		var readUnreadText = this.getUnread() ? UNREAD_TEXT : READ_TEXT,
+			authorName = this.getAuthorName(),
+			dateTime = this.getDatetime(),
+			priority = this.getPriority(),
+			ariaTexts = [readUnreadText];
 
-		if (core.isThemeApplied()) {
-			this._showHideTruncateButton();
-		} else {
-			core.attachThemeChanged(this._showHideTruncateButton, this);
+		if (authorName) {
+			authorName = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_CREATED_BY');
+			ariaTexts.push(authorName);
+			ariaTexts.push(this.getAuthorName());
 		}
+
+		if (dateTime) {
+			ariaTexts.push( RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_DATETIME', [dateTime]));
+		}
+
+		if (priority !== Priority.None) {
+			ariaTexts.push(RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_PRIORITY', [priority]));
+		}
+
+		return this._footerIvisibleText.setText(ariaTexts.join(' '));
 	};
 
 	return NotificationListItem;

@@ -1,0 +1,56 @@
+/******************************************************************
+	Style of the RTA Add Fields Dialog  - sap_fiori_3 Theme
+*******************************************************************/
+@sap_ui_rta_FieldRepository_ListSelect: darken(@sapList_Active_TextColor, 10%); //#e6e6e6
+@sap_ui_rta_FieldRepository_ListHoverText: @sapPrimary6; //#32363a
+@sap_ui_rta_FieldRepository_ListHoverBG: @sapUiListSelectionHoverBackground; //#dde8f1
+@sap_ui_rta_FieldRepository_ButtonEmphasizedBG: @sapUiButtonEmphasizedBackground; //#0a6ed1
+@sap_ui_rta_FieldRepository_ButtonEmphasizedText: @sapUiButtonEmphasizedTextColor; //#ffffff
+@sap_ui_rta_FieldRepository_ButtonEmphasizedHoverBG: @sapUiButtonHoverBackground; //#ebf5fe
+@sap_ui_rta_FieldRepository_FocusColor: @sapContent_FocusColor; //#000000
+
+.sapUiRtaMode {
+
+	.sapUIRtaFieldRepositoryDialog {
+
+		.sapMBtn {
+			&:hover:not(focus) {
+				.sapMBtnInner {
+					border: 0.0625rem solid @sap_ui_rta_FieldRepository_ButtonEmphasizedBG; //1px
+				}
+				.sapMBtnHoverable {
+					outline: none;
+				}
+			}
+
+			> .sapMBtnInner {
+				border: 0.0625rem solid @sap_ui_rta_FieldRepository_ButtonEmphasizedText; //1px
+			}
+
+			&:focus {
+				&:not(:hover) > .sapMFocusable {
+					border: 0.0625rem dotted @sap_ui_rta_FieldRepository_FocusColor; //1px
+					outline: none;
+				}
+				&:hover > .sapMFocusable {
+					border: 0.0625rem solid; //1px
+					outline: 0.0625rem dotted; //1px
+					outline-offset: -0.25rem; //4px
+				}
+			}
+		}
+
+		.sapMLIBHoverable {
+			&:hover {
+				background: @sap_ui_rta_FieldRepository_ListSelect;
+			}
+			&.sapMLIBSelected:hover {
+				background: @sap_ui_rta_FieldRepository_ListHoverBG;
+			}
+		}
+
+		.sapMLIB.sapMLIBSelected {
+			border-color: transparent;
+		}
+	}
+}

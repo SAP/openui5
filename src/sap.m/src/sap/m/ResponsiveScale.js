@@ -4,9 +4,10 @@
 
 sap.ui.define([
 		'./library',
+		'./SliderUtilities',
 		'sap/ui/core/Element'
 	],
-	function (library, Element) {
+	function (library, SliderUtilities, Element) {
 		"use strict";
 
 		/**
@@ -64,11 +65,11 @@ sap.ui.define([
 		 *
 		 * @returns {number} The max number of possible tickmarks
 		 */
-		Scale.prototype.calcNumTickmarks = function (fSize, fStep, iTickmarksThreshold) {
-			var iMaxPossible = Math.floor(fSize / fStep); //How many tickmarks would be there if we show one for each step?
+		Scale.prototype.calcNumberOfTickmarks = function (fSize, fStep, iTickmarksThreshold) {
+			var iMaxPossible = Math.floor(fSize / fStep) + 1; //How many tickmarks would be there if we show one for each step?
 
 			iMaxPossible = iTickmarksThreshold && (iMaxPossible > iTickmarksThreshold) ?
-				this._runStepsOptimization(iTickmarksThreshold, iMaxPossible) : iMaxPossible;
+				this._runStepsOptimization(iTickmarksThreshold, iMaxPossible - 1) : iMaxPossible;
 
 			return Math.floor(iMaxPossible);
 		};
@@ -95,27 +96,6 @@ sap.ui.define([
 			}
 
 			return iTickmarksCount;
-		};
-
-		/**
-		 * Calculate the distance between tickmarks.
-		 *
-		 * Actually this calculates the distance between the first and the second tickmark, but as it's
-		 * assumed that the tickmarks are spread evenly, it doesn't matter.
-		 *
-		 * @param {int} iTickmarksCount Number of tickmarks that'd be drawn
-		 * @param {float} fStart The start value of the scale.
-		 * @param {float} fEnd The end value of the scale.
-		 * @param {float} fStep The step walking from start to end.
-		 * @returns {float} The distance between tickmarks
-		 * @private
-		 */
-		Scale.prototype.calcTickmarksDistance = function (iTickmarksCount, fStart, fEnd, fStep) {
-			var fScaleSize = Math.abs(fStart - fEnd),
-				iMaxPossibleTickmarks = Math.floor(fScaleSize / fStep),
-				iStepsCount = Math.ceil(iMaxPossibleTickmarks / iTickmarksCount);
-
-			return fStart + (iStepsCount * fStep);
 		};
 
 		/**
@@ -200,6 +180,50 @@ sap.ui.define([
 			}
 
 			return aHiddenLabelsIndices;
+		};
+
+		/**
+		 * Shows/hides tickmarks when some limitations are met.
+		 * Implements responsiveness of the tickmarks.
+		 *
+		 * @param {jQuery.Event} oEvent The event object passed.
+		 * @private
+		 * @ui5-restricted sap.m.Slider
+		 */
+		Scale.prototype.handleResize = function (oEvent) {
+			var aLabelsInDOM, fOffsetLeftPct, fOffsetLeftPx, aHiddenLabels, oSiblingTickmark,
+				$oSlider = oEvent.control.$(),
+				aTickmarksInDOM = $oSlider.find(".sapMSliderTick"),
+				iScaleWidth = $oSlider.find(".sapMSliderTickmarks").width(),
+				bShowTickmarks = (iScaleWidth / aTickmarksInDOM.length) >= SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.SMALL;
+
+			//Small tickmarks should get hidden if their width is less than _SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.SMALL
+			aTickmarksInDOM.css("visibility", bShowTickmarks ? '' /* visible */ : 'hidden');
+
+			// Tickmarks with labels responsiveness
+			aLabelsInDOM = $oSlider.find(".sapMSliderTickLabel");
+			// The distance between the first and second label in % of Scale's width
+			fOffsetLeftPct = parseFloat(aLabelsInDOM[1].style.left);
+			// Convert to PX
+			fOffsetLeftPx = iScaleWidth * fOffsetLeftPct / 100;
+			// Get which labels should become hidden
+			aHiddenLabels = this.getHiddenTickmarksLabels(iScaleWidth, aLabelsInDOM.length, fOffsetLeftPx, SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.WITH_LABEL);
+
+			aLabelsInDOM.each(function (iIndex, oElem) {
+				// All the labels are positioned prior the corresponding tickmark, except for the last label.
+				// That's why we're using the  previousSibling property
+				oSiblingTickmark = oElem.nextSibling || oElem.previousSibling || {style: {visibility: null}};
+
+				// As tickmarks are separated from the lables, we should ensure that if a label is visible,
+				// the corresponding tickmark should be visible too and vice versa.
+				if (aHiddenLabels[iIndex] && !bShowTickmarks) {
+					oElem.style.display = "none";
+					oSiblingTickmark.style.visibility = 'hidden'; //visible- inherit from CSS
+				} else {
+					oElem.style.display = ""; //inline-block- inherit from CSS
+					oSiblingTickmark.style.visibility = ''; //visible- inherit from CSS
+				}
+			});
 		};
 
 		return Scale;

@@ -1,0 +1,37 @@
+{
+	"sap.app": {
+		"id": "sap.uxap.sample.ObjectPageFormLayout",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.uxap.sample.ObjectPageFormLayout.view.ObjectPageFormLayout",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/ObjectPageFormLayout.view.xml",
+					"controller/ObjectPageFormLayout.controller.js",
+					"controller/blocks/PersonalFormBlock.js",
+					"view/blocks/PersonalFormBlock.view.xml",
+					"controller/blocks/BlockBlue.js",
+					"view/blocks/BlockBlue.view.xml",
+					"controller/blocks/BlockJobInfo.js",
+					"view/blocks/BlockJobInfo.view.xml",
+                    "../SharedJSONData/HRData.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

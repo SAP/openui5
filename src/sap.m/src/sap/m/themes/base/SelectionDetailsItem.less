@@ -77,7 +77,7 @@
 
 	padding: 0.25rem;
 	box-sizing: border-box;
-	font-size: @sapUiChartPopoverDataItemFontSize;
+	font-size: smaller;
 	min-width: 0; //explicitly allow items to shrink to 0
 	word-wrap: break-word;
 }
@@ -85,6 +85,14 @@
 .sapMSDItem .sapMSDItemLineLabel {
 	margin-right: 1rem;
 	color: @sapUiContentLabelColor;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sapMSDWrapLabels .sapMSDItem .sapMSDItemLineLabel {
+  white-space: normal;
+  text-overflow: clip;
 }
 
 .sapMSDItem .sapMSDItemLineValue {

@@ -1,0 +1,11 @@
+{
+	"cwd": "test-resources/sap/m/demokit/tutorial/quickstart/03/",
+	"files" : [
+		"webapp/App.controller.js",
+		"webapp/App.view.xml",
+		"webapp/index.html",
+		"webapp/index.js",
+		"ui5.yaml",
+		"package.json"
+	]
+}

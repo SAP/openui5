@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>sap.m.QuickView</title>
+	<title>sap.m.QuickViewCard</title>
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
@@ -218,10 +218,12 @@
 					title: "{title}",
 					description: "{description}",
 					groups : {
+						templateShareable: false,
 						path : 'groups',
 						template : new sap.m.QuickViewGroup({
 							heading : '{heading}',
 							elements : {
+								templateShareable: false,
 								path : 'elements',
 								template : new sap.m.QuickViewGroupElement({
 									label: "{label}",
@@ -251,10 +253,12 @@
 					title: "Title - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
 					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
 					groups : {
+						templateShareable: false,
 						path : 'groups',
 						template : new sap.m.QuickViewGroup({
 							heading : 'Heading - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.',
 							elements : {
+								templateShareable: false,
 								path : 'elements',
 								template : new sap.m.QuickViewGroupElement({
 									label: "{label}",
@@ -285,10 +289,12 @@
 					title: "Title - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
 					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
 					groups : {
+						templateShareable: false,
 						path : 'groups',
 						template : new sap.m.QuickViewGroup({
 							heading : 'Heading - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.',
 							elements : {
+								templateShareable: false,
 								path : 'elements',
 								template : new sap.m.QuickViewGroupElement({
 									label: "{label}",
@@ -303,6 +309,79 @@
 				})
 			}
 		});
+
+		var oQuickViewCard4 = new sap.m.QuickViewCard("QVC4", {
+			afterNavigate : function (oEvent) {
+				if (oButton) {
+					oButton.setEnabled(!oEvent.getParameter('isTopPage'));
+				}
+			},
+			pages : {
+				path : '/pages',
+				template : new sap.m.QuickViewPage({
+					pageId : "{pageId}",
+					icon: "",
+					title: "Not so long title",
+					titleUrl: "https://www.sap.com",
+					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					groups : {
+						templateShareable: false,
+						path : 'groups',
+						template : new sap.m.QuickViewGroup({
+							heading : 'Heading - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.',
+							elements : {
+								templateShareable: false,
+								path : 'elements',
+								template : new sap.m.QuickViewGroupElement({
+									label: "{label}",
+									value: "{value}",
+									url: "{url}",
+									type: "{elementType}",
+									pageLinkId: "{pageLinkId}"
+								})
+							}
+						})
+					}
+				})
+			}
+		});
+
+		var oQuickViewCard5 = new sap.m.QuickViewCard("QVC5", {
+			afterNavigate : function (oEvent) {
+				if (oButton) {
+					oButton.setEnabled(!oEvent.getParameter('isTopPage'));
+				}
+			},
+			pages : {
+				path : '/pages',
+				template : new sap.m.QuickViewPage({
+					pageId : "{pageId}",
+					icon: "",
+					title: "Title - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					titleUrl: "https://www.sap.com",
+					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					groups : {
+						templateShareable: false,
+						path : 'groups',
+						template : new sap.m.QuickViewGroup({
+							heading : 'Heading - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.',
+							elements : {
+								templateShareable: false,
+								path : 'elements',
+								template : new sap.m.QuickViewGroupElement({
+									label: "{label}",
+									value: "{value}",
+									url: "{url}",
+									type: "{elementType}",
+									pageLinkId: "{pageLinkId}"
+								})
+							}
+						})
+					}
+				})
+			}
+		});
+
 		var oButton = new sap.m.Button("BackBtn", {
 			text : 'Back',
 			enabled : false,
@@ -314,21 +393,27 @@
 		var oHideScrollButton = new sap.m.Button("HideBtn", {
 			text : 'Hide ScrollBar',
 			press : function () {
-				oQuickViewCard.setShowVerticalScrollBar(false);
+				if (oQuickViewCard.getShowVerticalScrollBar() === true) {
+					oQuickViewCard.setShowVerticalScrollBar(false);
+					oButton.setEnabled(false); // QuickViewCards gets rerendered (first page is opened) - there is no need of "Back" button (BCP: 1870329300)
+				}
 			}
 		});
 
 		var oShowScrollButton = new sap.m.Button("ShowBtn", {
 			text : 'Show ScrollBar',
 			press : function () {
-				oQuickViewCard.setShowVerticalScrollBar(true);
+				if (oQuickViewCard.getShowVerticalScrollBar() === false) {
+					oQuickViewCard.setShowVerticalScrollBar(true);
+					oButton.setEnabled(false); // QuickViewCards gets rerendered (first page is opened) - there is no need of "Back" button (BCP: 1870329300)
+				}
 			}
 		});
 
 		var oShowFullHeightButton = new sap.m.Button("FullHeightBtn", {
 			text : 'Show full height',
 			press : function () {
-				oPanel.setHeight("490px");
+				oPanel.setHeight("540px");
 			}
 		});
 
@@ -359,6 +444,24 @@
 			]
 		});
 
+		var oPanel4 = new sap.m.Panel('quickViewCardPanel4', {
+			width : '320px',
+			height : '292px',
+			headerText : 'Store 4 - Test link as title on ONE line',
+			content : [
+				oQuickViewCard4
+			]
+		});
+
+		var oPanel5 = new sap.m.Panel('quickViewCardPanel5', {
+			width : '320px',
+			height : '292px',
+			headerText : 'Store 5 - Test link as title on TWO lines',
+			content : [
+				oQuickViewCard5
+			]
+		});
+
 		// create and add a page
 		var page = new sap.m.Page("quickViewPage", {
 			title : "Quick View Card",
@@ -369,13 +472,17 @@
 				oShowFullHeightButton,
 				oPanel,
 				oPanel2,
-				oPanel3
+				oPanel3,
+				new sap.m.Button("vizTestsHelperButton1", {text: "helper 1"}),
+				oPanel4,
+				new sap.m.Button("vizTestsHelperButton2", {text: "helper 2"}),
+				oPanel5
 			]
 		});
 		app.addPage(page);
 
 	</script>
 </head>
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 </body>
 </html>

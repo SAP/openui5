@@ -1,9 +1,25 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
-	function(jQuery, Device, UIArea) {
+sap.ui.define([
+	"sap/ui/Device",
+	"../UIArea",
+	'sap/base/util/extend',
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
+],
+function(Device, UIArea, extend, jQuery) {
 	"use strict";
+
+	/**
+	 * Contains classes and helpers related to drag & drop functionality.
+	 *
+	 * @name sap.ui.core.dnd
+	 * @namespace
+	 * @public
+	 * @since 1.52
+	 */
 
 	var DnD = {},
 		oDragControl = null,		// the control being dragged
@@ -13,9 +29,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 		aValidDropInfos = [],		// valid DropInfos configured for the current drop target
 		oDragSession = null,		// stores active drag session throughout a drag activity
 		$DropIndicator,				// drop position indicator
+		$DropIndicatorWrapper,		//  drop position indicator wrapper
 		$GhostContainer,			// container to place custom ghosts
 		sCalculatedDropPosition,	// calculated position of the drop action relative to the valid dropped control.
-		iTargetEnteringTime;		// timestamp of drag enter
+		iTargetEnteringTime,		// timestamp of drag enter
+		mLastIndicatorStyle = {},	// holds the last style settings of the indicator
+		oDraggableAncestorNode;		// reference to ancestor node that has draggable=true attribute
 
 
 	function addStyleClass(oElement, sStyleClass) {
@@ -51,6 +70,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 		var oNewEvent = jQuery.Event(null, oEvent);
 		oNewEvent.type = sEventName;
 		oControl.getUIArea()._handleEvent(oNewEvent);
+	}
+
+	function isSelectableElement(oElement) {
+		return !oElement.disabled && /^(input|textarea)$/.test(oElement.localName);
 	}
 
 	function setDragGhost(oDragControl, oEvent) {
@@ -91,12 +114,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 		 * The drag session can be used to transfer data between applications or between dragged and dropped controls.
 		 * Please see provided APIs for more details.
 		 *
-		 * <b>Note:</b> This object only exists during a drag-and-drop operation.
+		 * <b>Note:</b> An implementation of this interface is provided by the framework during drag-and-drop operations
+		 * and is exposed as <code>dragSession</code> parameter of the different drag and drop events.
 		 *
-		 * @namespace
+		 * <b>Note:</b> This interface is not intended to be implemented by controls, applications or test code.
+		 * Extending it with additional methods in future versions will be regarded as a compatible change.
+		 *
+		 * @interface
 		 * @name sap.ui.core.dnd.DragSession
-		 * @static
-		 * @abstract
 		 * @public
 		 */
 		return /** @lends sap.ui.core.dnd.DragSession */ {
@@ -159,6 +184,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			 *
 			 * @param {string} sKey The key of the data
 			 * @param {any} vData Data
+			 * @public
 			 */
 			setComplexData: function(sKey, vData) {
 				mData[sKey] = vData;
@@ -257,8 +283,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 	}
 
 	function closeDragSession(oEvent) {
-		hideDropIndicator();
-		removeStyleClass(oDragControl, "sapUiDnDDragging");
 		oDragControl = oDropControl = oValidDropControl = oDragSession = null;
 		sCalculatedDropPosition = "";
 		aValidDragInfos = [];
@@ -270,14 +294,26 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			return $DropIndicator;
 		}
 
+		// not adding the div wrapper around DndIndicator as it prevents IE from scrolling
+		if (!Device.browser.msie) {
+			$DropIndicatorWrapper = jQuery("<div class='sapUiDnDIndicatorWrapper'></div>");
+		}
+
 		$DropIndicator = jQuery("<div class='sapUiDnDIndicator'></div>");
-		jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicator);
+
+		if (!$DropIndicatorWrapper) {
+			jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicator);
+		} else {
+			jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicatorWrapper);
+			$DropIndicator.appendTo($DropIndicatorWrapper);
+		}
 		return $DropIndicator;
 	}
 
 	function hideDropIndicator() {
 		if ($DropIndicator) {
 			$DropIndicator.removeAttr("style").hide();
+			mLastIndicatorStyle = {};
 		}
 	}
 
@@ -292,96 +328,100 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			iPageXOffset = window.pageXOffset,
 			$Indicator = getDropIndicator(),
 			sRelativePosition,
-			mDropRect = jQuery.extend({
+			mStyle = {},
+			mDropRect = {
 				top: mClientRect.top + iPageYOffset,
 				bottom: mClientRect.bottom + iPageYOffset,
 				left: mClientRect.left + iPageXOffset,
 				right: mClientRect.right + iPageXOffset,
 				width: mClientRect.width,
 				height: mClientRect.height
-			}, mIndicatorConfig);
+			};
 
 		if (!sDropPosition || sDropPosition == "On") {
 			sRelativePosition = "On";
+			sDropLayout = "";
 		} else if (sDropLayout == "Horizontal") {
 			var iCursorX = oEvent.pageX - mDropRect.left;
-			$Indicator.attr("data-drop-layout", "horizontal").css({
-				height: mDropRect.height,
-				top: mDropRect.top
-			});
+			mStyle.height = mDropRect.height;
+			mStyle.top = mDropRect.top;
 
 			if (sDropPosition == "Between") {
-				$Indicator.attr("data-drop-position", "between").css("width", "");
+				mStyle.width = "";
 				if (iCursorX < mDropRect.width * 0.5) {
 					sRelativePosition = "Before";
-					$Indicator.css("left", mDropRect.left);
+					mStyle.left = mDropRect.left;
 				} else {
 					sRelativePosition = "After";
-					$Indicator.css("left", mDropRect.right);
+					mStyle.left = mDropRect.right;
 				}
 			} else if (sDropPosition == "OnOrBetween") {
 				if (iCursorX < mDropRect.width * 0.25) {
 					sRelativePosition = "Before";
-					$Indicator.attr("data-drop-position", "between").css({
-						left: mDropRect.left,
-						width: ""
-					});
+					mStyle.left = mDropRect.left;
+					mStyle.width = "";
 				} else if (iCursorX > mDropRect.width * 0.75) {
 					sRelativePosition = "After";
-					$Indicator.attr("data-drop-position", "between").css({
-						left: mDropRect.right,
-						width: ""
-					});
+					mStyle.left = mDropRect.right;
+					mStyle.width = "";
 				} else {
 					sRelativePosition = "On";
 				}
 			}
+			if (sRelativePosition != "On" && sap.ui.getCore().getConfiguration().getRTL()) {
+				sRelativePosition = (sRelativePosition == "After") ? "Before" : "After";
+			}
 		} else {
 			var iCursorY = oEvent.pageY - mDropRect.top;
-			$Indicator.attr("data-drop-layout", "vertical").css({
-				width: mDropRect.width,
-				left: mDropRect.left
-			});
+			mStyle.width = mDropRect.width;
+			mStyle.left = mDropRect.left;
 
 			if (sDropPosition == "Between") {
-				$Indicator.attr("data-drop-position", "between").css("height", "");
+				mStyle.height = "";
 				if (iCursorY < mDropRect.height * 0.5) {
 					sRelativePosition = "Before";
-					$Indicator.css("top", mDropRect.top);
+					mStyle.top = mDropRect.top;
 				} else {
 					sRelativePosition = "After";
-					$Indicator.css("top", mDropRect.bottom);
+					mStyle.top = mDropRect.bottom;
 				}
 			} else if (sDropPosition == "OnOrBetween") {
 				if (iCursorY < mDropRect.height * 0.25) {
 					sRelativePosition = "Before";
-					$Indicator.attr("data-drop-position", "between").css({
-						top: mDropRect.top,
-						height: ""
-					});
+					mStyle.top = mDropRect.top;
+					mStyle.height = "";
 				} else if (iCursorY > mDropRect.height * 0.75) {
 					sRelativePosition = "After";
-					$Indicator.attr("data-drop-position", "between").css({
-						top: mDropRect.bottom,
-						height: ""
-					});
+					mStyle.top = mDropRect.bottom;
+					mStyle.height = "";
 				} else {
 					sRelativePosition = "On";
 				}
 			}
 		}
 
-		if (sRelativePosition == "On") {
-			$Indicator.attr("data-drop-position", "on").css({
-				top: mDropRect.top,
-				left: mDropRect.left,
-				width: mDropRect.width,
-				height: mDropRect.height
-			});
+		if (mIndicatorConfig && mIndicatorConfig.display == "none") {
+			return sRelativePosition;
 		}
 
-		if (sRelativePosition) {
-			$Indicator.show();
+		if (sRelativePosition == "On") {
+			mStyle.top = mDropRect.top;
+			mStyle.left = mDropRect.left;
+			mStyle.width = mDropRect.width;
+			mStyle.height = mDropRect.height;
+			sDropPosition = sRelativePosition;
+		} else {
+			sDropPosition = "Between";
+		}
+
+		if (mLastIndicatorStyle.top != mStyle.top ||
+			mLastIndicatorStyle.left != mStyle.left ||
+			mLastIndicatorStyle.width != mStyle.width ||
+			mLastIndicatorStyle.height != mStyle.height) {
+			$Indicator.attr("data-drop-layout", sDropLayout);
+			$Indicator.attr("data-drop-position", sDropPosition);
+			$Indicator.css(extend(mStyle, mIndicatorConfig)).show();
+			mLastIndicatorStyle = mStyle;
 		}
 
 		return sRelativePosition;
@@ -408,7 +448,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 
 		return aDragDropConfigs.filter(function(oDragOrDropInfo) {
 			// DragDropInfo defined at the drop target is irrelevant we only need DropInfos
-			return !oDragOrDropInfo.getMetadata().isInstanceOf("sap.ui.core.dnd.IDragInfo");
+			return !oDragOrDropInfo.isA("sap.ui.core.dnd.IDragInfo");
 		}).concat(aDragInfos).filter(function(oDropInfo) {
 			if (!oDropInfo.isDroppable(oDropControl, oEvent)) {
 				return false;
@@ -444,22 +484,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 		}
 
 		// whether the current DOM element corresponds to the configured aggregation
-		var oTargetDomRef, sDropPosition = oDropInfo.getDropPosition();
-		if (oValidDropControl.getAggregationDomRef) {
-			var oAggregationDomRef = oValidDropControl.getAggregationDomRef(sTargetAggregation);
-			if (oAggregationDomRef && oAggregationDomRef.contains(oEvent.target)) {
-				oTargetDomRef = oAggregationDomRef;
-				sDropPosition = "On";
-			}
+		var oTargetDomRef;
+		if (oEvent.getMark("DragWithin") == sTargetAggregation) {
+			oTargetDomRef = oValidDropControl.getDomRefForSetting(sTargetAggregation);
 		}
 
 		// not dragging over an aggregated child of the element
-		if (!oTargetDomRef) {
-			oTargetDomRef = oValidDropControl.getDomRef();
-		}
+		oTargetDomRef = oTargetDomRef || oValidDropControl.getDomRef();
 
 		// let the user know the drop position
-		return showDropIndicator(oEvent, oTargetDomRef, sDropPosition, oDropInfo.getDropLayout());
+		return showDropIndicator(oEvent, oTargetDomRef, oDropInfo.getDropPosition(true), oDropInfo.getDropLayout(true));
 	}
 
 	// before controls handle UIArea events
@@ -483,6 +517,22 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 		}
 	};
 
+	DnD.onbeforemousedown = function(oEvent) {
+		// text selection workaround since preventDefault on dragstart does not help
+		// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/10375756/
+		// https://bugzilla.mozilla.org/show_bug.cgi?id=800050
+		if ((Device.browser.msie || Device.browser.firefox || Device.browser.edge) && isSelectableElement(oEvent.target)) {
+			oDraggableAncestorNode = jQuery(oEvent.target).closest("[data-sap-ui-draggable=true]").prop("draggable", false)[0];
+		}
+	};
+
+	DnD.onbeforemouseup = function(oEvent) {
+		if (oDraggableAncestorNode) {
+			oDraggableAncestorNode.draggable = true;
+			oDraggableAncestorNode = null;
+		}
+	};
+
 	DnD.onbeforedragstart = function(oEvent) {
 		// draggable implicitly
 		if (!oEvent.target.draggable) {
@@ -490,7 +540,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 		}
 
 		// the text inside input fields should still be selectable
-		if (/^(input|textarea)$/i.test(document.activeElement.tagName)) {
+		if (isSelectableElement(document.activeElement)) {
+			oEvent.target.getAttribute("data-sap-ui-draggable") && oEvent.preventDefault();
 			return;
 		}
 
@@ -539,6 +590,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 
 		// set dragging class of the drag source
 		addStyleClass(oDragControl, "sapUiDnDDragging");
+
+		// prevent HTML element from scrolling during drag-and-drop
+		jQuery("html").addClass("sapUiDnDNoScrolling");
 	};
 
 	DnD.onbeforedragenter = function(oEvent) {
@@ -555,7 +609,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 		oValidDropControl = oControl;
 
 		// find the first valid drop control and corresponding valid DropInfos at the control hierarchy
-		for (var i = 0; i < 10 && oValidDropControl; i++, oValidDropControl = oValidDropControl.getParent()) {
+		for (var i = 0; i < 20 && oValidDropControl; i++, oValidDropControl = oValidDropControl.getParent()) {
 			aDropInfos = getValidDropInfos(oValidDropControl, aValidDragInfos, oEvent);
 			if (aDropInfos.length) {
 				break;
@@ -618,11 +672,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			return;
 		}
 
+		// fire dragover events of valid DropInfos
+		aValidDropInfos.forEach(function(oDropInfo) {
+			oDropInfo.fireDragOver(oEvent);
+		});
+
 		// browsers drop effect must be set on dragover always
 		setDropEffect(oEvent, oValidDropInfo);
 
 		// drop position is set already at dragenter it should not be changed for DropPosition=On
-		if (oValidDropInfo && oValidDropInfo.getDropPosition() == "On") {
+		if (oValidDropInfo && oValidDropInfo.getDropPosition(true) == "On") {
 			return;
 		}
 
@@ -632,20 +691,39 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 
 	DnD.onbeforedrop = function(oEvent) {
 		// prevent default action
-		oEvent.preventDefault();
+		if (aValidDropInfos.length) {
+			oEvent.preventDefault();
+		}
 	};
 
 	DnD.onafterdrop = function(oEvent) {
-		// finally fire drop events of valid DropInfos
+		// fire drop events of valid DropInfos
 		aValidDropInfos.forEach(function(oDropInfo) {
-			return oDropInfo.fireDrop(oEvent);
+			oDropInfo.fireDrop(oEvent);
 		});
 
-		// finalize drag session
-		closeDragSession();
+		// dragend event is not dispatched if the dragged element is removed
+		this.iDragEndTimer = window.requestAnimationFrame(this.onafterdragend.bind(this, oEvent));
 	};
 
 	DnD.onafterdragend = function(oEvent) {
+		// cleanup the timer if there is a waiting job on the queue
+		this.iDragEndTimer = window.cancelAnimationFrame(this.iDragEndTimer);
+
+		// fire dragend event of valid DragInfos
+		aValidDragInfos.forEach(function(oDragInfo) {
+			oDragInfo.fireDragEnd(oEvent);
+		});
+
+		// remove the dragging class of the dragged control
+		removeStyleClass(oDragControl, "sapUiDnDDragging");
+
+		// retain the scrolling behavior of the html element after dragend
+		jQuery("html").removeClass("sapUiDnDNoScrolling");
+
+		// hide the indicator
+		hideDropIndicator();
+
 		// finalize drag session
 		closeDragSession();
 	};

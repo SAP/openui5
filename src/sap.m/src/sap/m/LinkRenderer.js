@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
- sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/LabelEnablement', 'sap/ui/core/library'],
-	function(Renderer, LabelEnablement, coreLibrary) {
+ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
+	function(Renderer, coreLibrary) {
 	"use strict";
 
 
@@ -16,6 +16,7 @@
 	 * @namespace
 	 */
 	var LinkRenderer = {
+			apiVersion: 2
 	};
 
 
@@ -28,89 +29,81 @@
 	LinkRenderer.render = function(oRm, oControl) {
 		var sTextDir = oControl.getTextDirection(),
 			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
-			bShouldHaveOwnLabelledBy = oControl.getAriaLabelledBy().indexOf(oControl.getId()) === -1 &&
-							(oControl.getAriaLabelledBy().length > 0 ||
-							LabelEnablement.getReferencingLabels(oControl).length > 0 ||
-							(oControl.getParent() && oControl.getParent().enhanceAccessibilityState)),
+			bShouldHaveOwnLabelledBy = oControl._determineSelfReferencePresence(),
+			sHref = oControl.getHref(),
 			oAccAttributes =  {
-				role: 'link',
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
 			},
-			sHref = oControl.getHref(),
-			bIsValid = sHref && oControl._isHrefValid(sHref);
+			bIsValid = sHref && oControl._isHrefValid(sHref),
+			bEnabled = oControl.getEnabled(),
+			sTypeSemanticInfo = "";
 
 		// Link is rendered as a "<a>" element
-		oRm.write("<a");
-		oRm.writeControlData(oControl);
+		oRm.openStart("a", oControl);
 
-		oRm.addClass("sapMLnk");
+		oRm.class("sapMLnk");
 		if (oControl.getSubtle()) {
-			oRm.addClass("sapMLnkSubtle");
-
-			//Add aria-describedby for the SUBTLE announcement
-			if (oAccAttributes.describedby) {
-				oAccAttributes.describedby += " " + oControl._sAriaLinkSubtleId;
-			} else {
-				oAccAttributes.describedby = oControl._sAriaLinkSubtleId;
-			}
+			oRm.class("sapMLnkSubtle");
+			sTypeSemanticInfo += oControl._sAriaLinkSubtleId;
 		}
 
 		if (oControl.getEmphasized()) {
-			oRm.addClass("sapMLnkEmphasized");
-
-			//Add aria-describedby for the EMPHASIZED announcement
-			if (oAccAttributes.describedby) {
-				oAccAttributes.describedby += " " + oControl._sAriaLinkEmphasizedId;
-			} else {
-				oAccAttributes.describedby = oControl._sAriaLinkEmphasizedId;
-			}
+			oRm.class("sapMLnkEmphasized");
+			sTypeSemanticInfo += " " + oControl._sAriaLinkEmphasizedId;
 		}
 
-		if (!oControl.getEnabled()) {
-			oRm.addClass("sapMLnkDsbl");
-			oRm.writeAttribute("disabled", "true");
-			oRm.writeAttribute("tabIndex", "-1"); // still focusable by mouse click, but not in the tab chain
-		} else if (oControl.getText()) {
-			oRm.writeAttribute("tabIndex", "0");
-		} else {
-			oRm.writeAttribute("tabIndex", "-1");
+		oAccAttributes.describedby = sTypeSemanticInfo ? {value: sTypeSemanticInfo.trim(), append: true} : undefined;
+
+		if (!bEnabled) {
+			oRm.class("sapMLnkDsbl");
+			oRm.attr("aria-disabled", "true");
 		}
+		oRm.attr("tabindex", oControl._getTabindex());
+
 		if (oControl.getWrapping()) {
-			oRm.addClass("sapMLnkWrapping");
+			oRm.class("sapMLnkWrapping");
 		}
 
 		if (oControl.getTooltip_AsString()) {
-			oRm.writeAttributeEscaped("title", oControl.getTooltip_AsString());
+			oRm.attr("title", oControl.getTooltip_AsString());
 		}
 
 		/* set href only if link is enabled - BCP incident 1570020625 */
-		if (bIsValid && oControl.getEnabled()) {
-			oRm.writeAttributeEscaped("href", sHref);
+		if (bIsValid && bEnabled) {
+			oRm.attr("href", sHref);
+		} else if (oControl.getText()) {
+			// Add href only if there's text. Otherwise virtual cursor would stop on the empty link. BCP 2070055617
+			oRm.attr("href", "");
 		}
 
 		if (oControl.getTarget()) {
-			oRm.writeAttributeEscaped("target", oControl.getTarget());
+			oRm.attr("target", oControl.getTarget());
 		}
 
 		if (oControl.getWidth()) {
-			oRm.addStyle("width", oControl.getWidth());
+			oRm.style("width", oControl.getWidth());
 		} else {
-			oRm.addClass("sapMLnkMaxWidth");
+			oRm.class("sapMLnkMaxWidth");
 		}
 
 		if (sTextAlign) {
-			oRm.addStyle("text-align", sTextAlign);
+			oRm.style("text-align", sTextAlign);
 		}
 
 		// check if textDirection property is not set to default "Inherit" and add "dir" attribute
 		if (sTextDir !== TextDirection.Inherit) {
-			oRm.writeAttribute("dir", sTextDir.toLowerCase());
+			oRm.attr("dir", sTextDir.toLowerCase());
 		}
 
-		oRm.writeAccessibilityState(oControl, oAccAttributes);
-		oRm.writeClasses();
-		oRm.writeStyles();
-		oRm.write(">"); // opening <a> tag
+		oControl.getDragDropConfig().forEach(function (oDNDConfig) {
+			if (!oDNDConfig.getEnabled()) {
+				oRm.attr("draggable", false);
+			}
+		});
+
+		oRm.accessibilityState(oControl, oAccAttributes);
+		// opening <a> tag
+		oRm.openEnd();
 
 		if (this.writeText) {
 			this.writeText(oRm, oControl);
@@ -118,7 +111,7 @@
 			this.renderText(oRm, oControl);
 		}
 
-		oRm.write("</a>");
+		oRm.close("a");
 	};
 
 	/**
@@ -128,9 +121,8 @@
 	 * @param {sap.m.Link} oControl An object representation of the control that should be rendered.
 	 */
 	LinkRenderer.renderText = function(oRm, oControl) {
-		oRm.writeEscaped(oControl.getText());
+		oRm.text(oControl.getText());
 	};
-
 
 	return LinkRenderer;
 

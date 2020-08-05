@@ -3,13 +3,12 @@
  */
 
 sap.ui.define([
-    'sap/ui/core/Control',
-    './library',
-    'jquery.sap.global',
-    'sap/ui/core/ResizeHandler',
-    "./BlockLayoutRenderer"
+	'sap/ui/core/Control',
+	'./library',
+	'sap/ui/core/ResizeHandler',
+	"./BlockLayoutRenderer"
 ],
-	function(Control, library, jQuery, ResizeHandler, BlockLayoutRenderer) {
+	function(Control, library, ResizeHandler, BlockLayoutRenderer) {
 		"use strict";
 
 		/**
@@ -24,21 +23,24 @@ sap.ui.define([
 		 * The BlockLayout uses horizontal and vertical subdivisions, and full-width banners to display a set of elements.
 		 * By placing pictorial and textual elements side-by-side in different blocks, you can establish a visual connection between blocks and between similar elements.
 		 * <h3>Structure</h3>
-		 * The BlockLayout comes in five predefined types for background colors:
-		 * <ul>
-		 * <li>Layout only (default) - a layout scheme and no background colors</li>
-		 * <li>Bright - a layout scheme with bright colors</li>
-		 * <li>Accent - a layout scheme with four pre-defined color sets</li>
-		 * <li>Dashboard - a layout scheme with additional borders and no background colors</li>
-		 * <li>Mixed - a layout scheme with a mix of light and dark colors</li>
-		 * </ul>
-		 * Background colors are attached directly to the blocks of the layout.
+		 * The BlockLayout contains BlockLayout cells. Every cell consists of a title and content. The title can be text or a link.
 		 *
 		 * Special full-width sections of the BlockLayout allow horizontal scrolling through a set of blocks.
 		 *
-		 * <b>Note:</b> With version 1.48 colors can be set for each individual {@link sap.ui.layout.BlockLayoutCell cell}. There are 10 pre-defined color sets, each with 4 different shades.
+		 * The BlockLayout comes in five predefined types for background colors:
+		 * <ul>
+		 * <li>Layout only (default) - a layout scheme and no background colors</li>
+		 * <li>Light - a layout scheme with light colors</li>
+		 * <li>Accent - a layout scheme with 11 pre-defined color sets</li>
+		 * <li>Dashboard - a layout scheme with additional borders and no background colors</li>
+		 * </ul>
+		 * Background colors are attached directly to the blocks of the layout.
+		 *
+		 * <b>Note:</b> With version 1.48 colors can be set for each individual {@link sap.ui.layout.BlockLayoutCell cell}. There are 11 pre-defined color sets, each with 4 different shades for the Belize theme and 6 different shades for the Fiori 3 theme.
 		 * The main colors of the sets can be changed in Theme Designer. To change the background of a particular cell, set <code>backgroundColorSet</code> (main color)
 		 * and <code>backgroundColorShade</code> (shade).
+		 *
+		 * <b>Note:</b> Usage of disabled, emphasized or subtle links as titles is not recommended. Dark background designs, for example Accent, are not fully supported with regards to Accessibility when used with links as titles.
 		 *
 		 * <h3>Usage</h3>
 		 * <h4>When to use</h4>
@@ -120,30 +122,6 @@ sap.ui.define([
 		BlockLayout.prototype.onAfterRendering = function () {
 			this._onParentResize();
 			this._notifySizeListeners();
-		};
-		/**
-		 * Changes background type
-		 *
-		 * @public
-		 * @param {string} sNewBackground Background's style of type sap.ui.layout.BlockBackgroundType
-		 * @returns {sap.ui.layout.BlockLayout} BlockLayout instance. Allows method chaining
-		 */
-		BlockLayout.prototype.setBackground = function (sNewBackground) {
-			var sCurBackground = this.getBackground(),
-			// Apply here so if there's an exception the code bellow won't be executed
-				oObject = Control.prototype.setProperty.apply(this, ["background"].concat(Array.prototype.slice.call(arguments)));
-
-			if (this.hasStyleClass("sapUiBlockLayoutBackground" + sCurBackground)) {
-				this.removeStyleClass("sapUiBlockLayoutBackground" + sCurBackground, true);
-			}
-
-			sNewBackground = sNewBackground ? sNewBackground : "Default";
-			this.addStyleClass("sapUiBlockLayoutBackground" + sNewBackground, true);
-
-			// Invalidate the whole block layout as the background dependencies, row color sets and accent cells should be resolved properly
-			this.invalidate();
-
-			return oObject;
 		};
 
 		/**

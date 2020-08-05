@@ -1,58 +1,61 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"mycompany/myapp/test/integration/pages/Common"
+	"./Common"
 ], function(Opa5, PropertyStrictEquals, Common) {
 	"use strict";
 
+	var sViewName = "App",
+		sAppId = "app";
+
 	Opa5.createPageObjects({
-		onTheAppPage: {
-			baseClass: Common,
+		onTheAppPage : {
+			baseClass : Common,
 
-			actions: {
+			actions : {
 
-				iWaitUntilTheAppBusyIndicatorIsGone: function() {
+				iCloseTheMessageBox : function () {
 					return this.waitFor({
-						id: "app",
-						viewName: "App",
-						// inline-matcher directly as function
-						matchers: function(oAppControl) {
-							// we set the view busy, so we need to query the parent of the app
-							return oAppControl.getParent() && oAppControl.getParent().getBusy() === false;
-						},
-						errorMessage: "Did not find the App control"
+						id : "serviceErrorMessageBox",
+						autoWait: false,
+						success : function (oMessageBox) {
+							oMessageBox.destroy();
+							Opa5.assert.ok(true, "The MessageBox was closed");
+						}
 					});
 				}
 			},
 
-			assertions: {
+			assertions : {
 
-				iShouldSeeTheBusyIndicatorForTheWholeApp: function() {
-					return this.waitFor({
-						id: "app",
-						viewName: "App",
-						matchers: new PropertyStrictEquals({
-							name: "busy",
-							value: true
+				iShouldSeeTheBusyIndicatorForTheWholeApp : function () {
+						return this.waitFor({
+						id : sAppId,
+						viewName : sViewName,
+						matchers : new PropertyStrictEquals({
+							name : "busy",
+							value : true
 						}),
-						success: function() {
+						autoWait: false,
+						pollingInterval: 100,
+						success : function () {
 							// we set the view busy, so we need to query the parent of the app
-							Opa5.assert.ok(true, "The rootview is busy");
+							Opa5.assert.ok(true, "The app is busy");
 						},
-						errorMessage: "Did not find the App control"
+						errorMessage : "The App is not busy"
 					});
 				},
 
-				iShouldSeeTheMessageBox: function(sMessageBoxId) {
+				iShouldSeeTheMessageBox : function () {
 					return this.waitFor({
-						id: sMessageBoxId,
-						success: function() {
+						id : "serviceErrorMessageBox",
+						autoWait: false,
+						success : function () {
 							Opa5.assert.ok(true, "The correct MessageBox was shown");
 						}
 					});
 				}
 			}
-
 		}
 
 	});

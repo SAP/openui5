@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.QuickViewNavOrigin",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.QuickViewNavOrigin.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"QuickViewNavOrigin.fragment.xml",
+					"model/CardData.json",
+					"model/EmployeeData.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

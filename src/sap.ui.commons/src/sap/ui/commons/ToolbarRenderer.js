@@ -3,9 +3,13 @@
  */
 
 // Provides default renderer for control sap.ui.commons.Toolbar
-sap.ui.define(['jquery.sap.global'],
-function(jQuery) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/Log', 'sap/base/assert', './library', './ToolbarSeparator'],
+function(jQuery, Log, assert, library, ToolbarSeparator) {
 	"use strict";
+
+
+	// shortcut for sap.ui.commons.ToolbarSeparatorDesign
+	var ToolbarSeparatorDesign = library.ToolbarSeparatorDesign;
 
 
 	/**
@@ -17,14 +21,13 @@ function(jQuery) {
 	/**
 	 * Renders the HTML for the given toolbar using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.ui.commons.Toolbar} oToolbar An object representation of the control that should be rendered.
 	 */
-	ToolbarRenderer.render = function(oRenderManager, oToolbar) {
-		var rm = oRenderManager;
+	ToolbarRenderer.render = function(rm, oToolbar) {
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
-		jQuery.sap.assert(oToolbar instanceof sap.ui.commons.Toolbar, "ToolbarRenderer.render: oToolbar must be a toolbar");
+		assert(oToolbar && oToolbar.isA("sap.ui.commons.Toolbar"), "ToolbarRenderer.render: oToolbar must be a toolbar");
 
 		rm.write("<div role='toolbar' tabindex='0'"); // Tab index required for ItemNavigation, the Toolbar is actually not tabable
 		rm.writeControlData(oToolbar);
@@ -65,10 +68,10 @@ function(jQuery) {
 		for (var i = 0; i < iLength; i++) {
 			var oToolbarItem = aItems[i];
 			if (oToolbarItem) {
-				jQuery.sap.assert(oToolbarItem.getMetadata().isInstanceOf("sap.ui.commons.ToolbarItem"), "ToolbarRenderer.render: oToolbarItem must be a ToolbarItem");
+				assert(oToolbarItem.getMetadata().isInstanceOf("sap.ui.commons.ToolbarItem"), "ToolbarRenderer.render: oToolbarItem must be a ToolbarItem");
 
 				// Render ToolbarSeparator elements internally, dispatch rendering of real controls
-				if (oToolbarItem instanceof sap.ui.commons.ToolbarSeparator) {
+				if (oToolbarItem instanceof ToolbarSeparator) {
 					ToolbarRenderer.renderSeparator(rm, oToolbarItem);
 				} else {
 					rm.renderControl(oToolbarItem);
@@ -87,9 +90,9 @@ function(jQuery) {
 			for (var i = 0; i < iRightItemsLength; i++) {
 				var oToolbarItem = aRightItems[i];
 				if (oToolbarItem) {
-					jQuery.sap.assert(oToolbarItem.getMetadata().isInstanceOf("sap.ui.commons.ToolbarItem"), "ToolbarRenderer.render: oToolbarItem must be a ToolbarItem");
+					assert(oToolbarItem.getMetadata().isInstanceOf("sap.ui.commons.ToolbarItem"), "ToolbarRenderer.render: oToolbarItem must be a ToolbarItem");
+					if (oToolbarItem instanceof ToolbarSeparator) {
 					// Render ToolbarSeparator elements internally, dispatch rendering of real controls
-					if (oToolbarItem instanceof sap.ui.commons.ToolbarSeparator) {
 						ToolbarRenderer.renderSeparator(rm, oToolbarItem);
 					} else {
 						rm.renderControl(oToolbarItem);
@@ -115,7 +118,7 @@ function(jQuery) {
 		if (oToolbarItem.getDisplayVisualSeparator()) {
 			oRm.write("<span ");
 			oRm.writeElementData(oToolbarItem);
-			if (oToolbarItem.getDesign() === sap.ui.commons.ToolbarSeparatorDesign.FullHeight) {
+			if (oToolbarItem.getDesign() === ToolbarSeparatorDesign.FullHeight) {
 				oRm.write(" class='sapUiTbSeparator sapUiTbSepFullHeight' role='separator'></span>");
 			} else {
 				oRm.write(" class='sapUiTbSeparator' role='separator'></span>");
@@ -223,7 +226,7 @@ function(jQuery) {
 				oContext    = oPopupHolder;
 				sMethod     = 'removeChild';
 			} else {
-				jQuery.sap.log.error("The renderer 'sap.ui.commons.ToolbarRenderer' cannot empty the toolbar overflow popup.");
+				Log.error("The renderer 'sap.ui.commons.ToolbarRenderer' cannot empty the toolbar overflow popup.");
 
 				return;
 			}

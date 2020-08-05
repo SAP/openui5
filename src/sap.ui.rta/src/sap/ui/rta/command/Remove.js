@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
+sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	"use strict";
 
 	/**
@@ -44,5 +44,4 @@ sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
 	};
 
 	return Remove;
-
-}, /* bExport= */true);
+});

@@ -85,20 +85,20 @@
 
 					},
 
-					renderer: function(oRm, oMyList) {
+					renderer: {
+						apiVersion: 2,
+						render: function(oRm, oMyList) {
 
-						oRm.write("<div");
-						oRm.writeControlData(oMyList);
+							oRm.openStart("div", oMyList).openEnd();
+	
+							var oItems = oMyList.getItems();
+							for (var i = 0; i < oItems.length; i++) {
+								oRm.renderControl(oItems[i]);
+							}
+	
+							oRm.close("div");
 
-						oRm.write(">");
-
-						var oItems = oMyList.getItems();
-						for (var i = 0; i < oItems.length; i++) {
-							oRm.renderControl(oItems[i]);
 						}
-
-						oRm.write("</div>");
-
 					}
 				});
 
@@ -127,7 +127,7 @@
 		</script>
 
 	</head>
-	<body class="sapUiBody" role="application">
+	<body class="sapUiBody">
 		<h1>Test Page for sap.ui.base.ManagedObjectObserver</h1>
 
 		<h2>Observing an Input control</h2>

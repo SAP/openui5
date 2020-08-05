@@ -9,7 +9,7 @@
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-trace="false"
-				data-sap-ui-libs="sap.ui.unified"
+				data-sap-ui-libs="sap.m, sap.ui.unified, sap.ui.layout"
 				src="../../../../../resources/sap-ui-core.js"
 		>
 		</script>
@@ -19,6 +19,7 @@
 
 			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
 
+			//TODO: These special days are for fix dates during 2015 - this should be made dynamic (like in our samples).
 			var aSpecialDays = [["20150101",undefined,"Neujahr",1],
 			                    ["20150106",undefined,"Heilige Drei Könige",1],
 			                    ["20150214",undefined,"Valentinstag",2],
@@ -53,9 +54,14 @@
 			                    ["20160101",undefined,"Neujahr",1],
 			                    ["20160106",undefined,"Heilige Drei Könige",1]];
 
-			var oCal = new sap.ui.unified.Calendar("Cal1",{
-				ariaLabelledBy: ["H-C1"]
-			}).placeAt("sample1");
+
+			// Single Day Selection
+			var oSingleDaySelectionLabel = new sap.m.Label({
+				text: "Single Day Selection"
+			});
+			var oSingleDaySelectionCalendar = new sap.ui.unified.Calendar({
+				ariaLabelledBy: oSingleDaySelectionLabel
+			});
 
 			for (var i = 0; i < aSpecialDays.length; i++) {
 				var aSpecialDay = aSpecialDays[i];
@@ -65,7 +71,7 @@
 				}else {
 					sType = "Type"+aSpecialDay[3];
 				}
-				sap.ui.getCore().byId("Cal1").addSpecialDate(new sap.ui.unified.DateTypeRange({
+				oSingleDaySelectionCalendar.addSpecialDate(new sap.ui.unified.DateTypeRange({
 					startDate: oFormatYyyymmdd.parse(aSpecialDay[0]),
 					endDate: oFormatYyyymmdd.parse(aSpecialDay[1]),
 					type: sType,
@@ -75,56 +81,65 @@
 
 			var oDate = new Date();
 			oDate.setDate(oDate.getDate() + 2);
-			oCal.addDisabledDate(new sap.ui.unified.DateRange({
+			oSingleDaySelectionCalendar.addDisabledDate(new sap.ui.unified.DateRange({
 				startDate: oDate
 			}));
 
-			// single interval selection
-			oCal = new sap.ui.unified.Calendar("Cal2",{
-				intervalSelection: true,
-				ariaLabelledBy: ["H-C2"]
-			}).placeAt("sample2");
 
-			oCal = new sap.ui.unified.Calendar("Cal3",{
+			// Single Interval Selection
+			var oSingleIntervalSelectionLabel = new sap.m.Label({
+				text: "Single Interval Selection"
+			});
+			var oSingleIntervalSelectionCalendar = new sap.ui.unified.Calendar({
+				intervalSelection: true,
+				ariaLabelledBy: oSingleIntervalSelectionLabel
+			});
+
+
+			// Multiple Days Selection
+			var oMultipleDaysSelectionLabel = new sap.m.Label({
+				text: "Multiple Days Selection"
+			});
+			var oMultipleDaysSelectionCalendar = new sap.ui.unified.Calendar({
 				intervalSelection: false,
 				singleSelection: false,
-				ariaLabelledBy: ["H-C3"]
-			}).placeAt("sample3");
+				ariaLabelledBy: oMultipleDaysSelectionLabel
+			});
 
-			oCal = new sap.ui.unified.Calendar("Cal4",{
+
+			// With Multiple Months
+			var oWithMultipleMonthsLabel = new sap.m.Label({
+				text: "With Multiple Months"
+			});
+			var oWithMultipleMonthsCalendar = new sap.ui.unified.Calendar({
 				months: 3,
-				ariaLabelledBy: ["H-C2"]
-			}).placeAt("sample4");
+				ariaLabelledBy: oWithMultipleMonthsLabel
+			});
 
+			var oPageLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					oSingleDaySelectionLabel.addStyleClass("sapUiSmallMarginTopBottom"),
+					oSingleDaySelectionCalendar,
+					oSingleIntervalSelectionLabel.addStyleClass("sapUiSmallMarginTopBottom"),
+					oSingleIntervalSelectionCalendar,
+					oMultipleDaysSelectionLabel.addStyleClass("sapUiSmallMarginTopBottom"),
+					oMultipleDaysSelectionCalendar,
+					oWithMultipleMonthsLabel.addStyleClass("sapUiSmallMarginTopBottom"),
+					oWithMultipleMonthsCalendar
+				]
+			});
+
+			var oApp = new sap.m.App();
+			var oPage = new sap.m.Page({
+				title: "Calendar Accessibility Test Page",
+				content: oPageLayout
+			});
+
+			oApp.addPage(oPage);
+			oApp.placeAt("content");
 		</script>
 
 	</head>
-	<body class="sapUiBody" role="application">
-
-		<h1>Test Page for <code>sap.ui.unified.Calendar</code></h1>
-		<h2 id="H-C1">Single day Selection Calendar</h2>
-		<br>
-		<div>
-			<div id="sample1" style="display:inline-block;"></div>
-		</div>
-		<br>
-		<h2 id="H-C2">Single interval Selection Calendar</h2>
-		<br>
-		<div>
-			<div id="sample2" style="display:inline-block;" class="sapUiSizeCompact"></div>
-		</div>
-		<br>
-		<h2 id="H-C3">multiple day Selection Calendar</h2>
-		<br>
-		<div>
-			<div id="sample3" style="display:inline-block;"></div>
-		</div>
-		<br>
-		<h2 id="H-C4">Calendar with multiple months</h2>
-		<br>
-		<div>
-			<div id="sample4" style="display:inline-block;"></div>
-		</div>
-
+	<body id="content" class="sapUiBody">
 	</body>
 </html>

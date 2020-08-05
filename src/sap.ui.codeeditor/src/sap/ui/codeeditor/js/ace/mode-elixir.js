@@ -363,7 +363,7 @@ var ElixirHighlightRules = function() {
               'comment.line.number-sign.elixir' ],
            regex: '(?:^|\\s)(#)(\\s[[a-zA-Z0-9,. \\t?!-][^\\x00-\\x7F]]*$)',
            originalRegex: '(?<=^|\\s)(#)\\s[[a-zA-Z0-9,. \\t?!-][^\\x{00}-\\x{7F}]]*$',
-           comment: 'We are restrictive in what we allow to go after the comment character to avoid false positives, since the availability of comments depend on regexp flags.' } ] }
+           comment: 'We are restrictive in what we allow to go after the comment character to avoid false positives, since the availability of comments depend on regexp flags.' } ] };
     
     this.normalizeRules();
 };
@@ -375,7 +375,7 @@ ElixirHighlightRules.metaData = { comment: 'Textmate bundle for Elixir Programmi
       foldingStopMarker: '^\\s*((\\}|\\]|after|else|catch|rescue)\\s*$|end\\b)',
       keyEquivalent: '^~E',
       name: 'Elixir',
-      scopeName: 'source.elixir' }
+      scopeName: 'source.elixir' };
 
 
 oop.inherits(ElixirHighlightRules, TextHighlightRules);
@@ -487,8 +487,15 @@ oop.inherits(Mode, TextMode);
 
 (function() {
     this.lineCommentStart = "#";
-    this.$id = "ace/mode/elixir"
+    this.$id = "ace/mode/elixir";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
+});                (function() {
+                    ace.require(["ace/mode/elixir"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

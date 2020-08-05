@@ -1,58 +1,40 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"mycompany/myapp/test/integration/pages/Common"
+	"./Common"
 ], function(Opa5, PropertyStrictEquals, Common) {
 	"use strict";
 
 	Opa5.createPageObjects({
-		onTheAppPage: {
-			baseClass: Common,
+		onTheAppPage : {
+			baseClass : Common,
 
-			actions: {
+			actions : {
 
-				iWaitUntilTheAppBusyIndicatorIsGone: function() {
+				iCloseTheMessageBox : function () {
 					return this.waitFor({
-						id: "app",
-						viewName: "App",
-						// inline-matcher directly as function
-						matchers: function(oAppControl) {
-							// we set the view busy, so we need to query the parent of the app
-							return oAppControl.getParent() && oAppControl.getParent().getBusy() === false;
-						},
-						errorMessage: "Did not find the App control"
+						id : "serviceErrorMessageBox",
+						autoWait: false,
+						success : function (oMessageBox) {
+							oMessageBox.destroy();
+							Opa5.assert.ok(true, "The MessageBox was closed");
+						}
 					});
 				}
 			},
 
-			assertions: {
+			assertions : {
 
-				iShouldSeeTheBusyIndicatorForTheWholeApp: function() {
+				iShouldSeeTheMessageBox : function () {
 					return this.waitFor({
-						id: "app",
-						viewName: "App",
-						matchers: new PropertyStrictEquals({
-							name: "busy",
-							value: true
-						}),
-						success: function() {
-							// we set the view busy, so we need to query the parent of the app
-							Opa5.assert.ok(true, "The rootview is busy");
-						},
-						errorMessage: "Did not find the App control"
-					});
-				},
-
-				iShouldSeeTheMessageBox: function(sMessageBoxId) {
-					return this.waitFor({
-						id: sMessageBoxId,
-						success: function() {
+						id : "serviceErrorMessageBox",
+						autoWait: false,
+						success : function () {
 							Opa5.assert.ok(true, "The correct MessageBox was shown");
 						}
 					});
 				}
 			}
-
 		}
 
 	});

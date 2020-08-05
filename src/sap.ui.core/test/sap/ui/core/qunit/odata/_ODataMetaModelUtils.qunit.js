@@ -1,11 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/_ODataMetaModelUtils"
-], function (jQuery, _AnnotationHelperBasics, Utils) {
+], function (jQuery, Log, _AnnotationHelperBasics, Utils) {
 	/*global QUnit, sinon */
 	"use strict";
 
@@ -435,17 +436,21 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata._ODataMetaModelUtils", {
+		before : function () {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
+
 		beforeEach : function () {
-			this.iOldLogLevel = jQuery.sap.log.getLevel(sLoggingModule);
+			this.iOldLogLevel = Log.getLevel(sLoggingModule);
 			// do not rely on ERROR vs. DEBUG due to minified sources
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sLoggingModule);
-			this.oLogMock = this.mock(jQuery.sap.log);
+			Log.setLevel(Log.Level.ERROR, sLoggingModule);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			jQuery.sap.log.setLevel(this.iOldLogLevel, sLoggingModule);
+			Log.setLevel(this.iOldLogLevel, sLoggingModule);
 		}
 	});
 	//*********************************************************************************************
@@ -563,7 +568,7 @@ sap.ui.require([
 				oProperty = { "name" : "bar", "sap:semantics" : sSemanticsValue };
 
 			this.oLogMock.expects("isLoggable").exactly(bLogExpected ? 1 : 0)
-				.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
+				.withExactArgs(Log.Level.WARNING, sLoggingModule)
 				.returns(true);
 			this.oLogMock.expects("warning").exactly(bLogExpected ? 1 : 0)
 				.withExactArgs("Unsupported type for sap:semantics: " + oFixture.oExpectedMessage,
@@ -716,7 +721,7 @@ sap.ui.require([
 				});
 
 				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
+					.withExactArgs(Log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
 				this.oLogMock.expects("warning")
 					// do not construct arguments in vain!
@@ -751,7 +756,7 @@ sap.ui.require([
 					Utils.liftSAPData(oProperty, "Property");
 				});
 				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
+					.withExactArgs(Log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
 				this.oLogMock.expects("warning")
 					// do not construct arguments in vain!
@@ -856,7 +861,7 @@ sap.ui.require([
 					};
 
 				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
+					.withExactArgs(Log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
 				this.oLogMock.expects("warning")
 					// do not construct arguments in vain!
@@ -1388,5 +1393,41 @@ sap.ui.require([
 
 		// code under test
 		Utils.calculateEntitySetAnnotations(oEntitySet, oEntityType);
+	});
+
+	//*********************************************************************************************
+	[
+		{ aArray : null, vValue : "foo", iResult : -1 },
+		{ aArray : undefined, vValue : "foo", iResult : -1 },
+		{ aArray : [], vValue : "foo", iResult : -1 },
+		{ aArray : [], sPropertyName : "bar", vValue : "foo", iResult : -1 },
+		{ aArray : [{ name : "bar" }, { name : "foo" }], vValue : "foo", iResult : 1 },
+		{
+			aArray : [{
+				bar : "foo"
+			}, {
+				bar : "foo"
+			}],
+			sPropertyName : "bar",
+			vValue : "foo",
+			iResult : 0 // take the first one that matches
+		}
+
+	].forEach(function (oFixture, i) {
+		QUnit.test("findIndex: " + i, function (assert) {
+			// code under test
+			assert.strictEqual(
+				Utils.findIndex(oFixture.aArray, oFixture.vValue, oFixture.sPropertyName),
+				oFixture.iResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("findIndex: vExpectedPropertyValue is same object", function (assert) {
+		var oValue = {},
+			aArray = [{ foo : {} }, { foo : oValue }, { foo : {} }];
+
+		// code under test
+		assert.strictEqual(Utils.findIndex(aArray, oValue, "foo"), 1);
 	});
 });

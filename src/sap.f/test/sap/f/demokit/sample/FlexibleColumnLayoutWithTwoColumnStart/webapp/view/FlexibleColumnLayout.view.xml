@@ -1,0 +1,3 @@
+<mvc:View xmlns="sap.f" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutWithTwoColumnStart.controller.FlexibleColumnLayout" height="100%">
+	<FlexibleColumnLayout id="fcl" stateChange="onStateChanged"	layout="{/layout}" backgroundDesign="Translucent"/>
+</mvc:View>

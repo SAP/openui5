@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ViewSettingsDialog",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.ViewSettingsDialog.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {},
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"Dialog.fragment.xml",
+					"DialogPreselected.fragment.xml",
+					"DialogPreset.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

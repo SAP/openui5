@@ -3,189 +3,85 @@
 /* Base theme                                  */
 /* =========================================== */
 
-@_sap_m_NotificationListBase_ContainerPaddingLeft: 1.5rem;
-@_sap_m_NotificationListBase_ContainerPadding: 1rem;
-@_sap_m_NotificationListBase_CloseButtonSize: 2.5rem;
-@_sap_m_NotificationListBase_CloseButtonCompactSize: 1.625rem;
-@_sap_m_NotificationListBase_CloseButtonCozyPosition: 0.25rem;
-@_sap_m_NotificationListBase_CloseButtonCompactPosition: 0.5rem;
-
-/* ==========================================================================
-   Notification List Base
-  ========================================================================== */
-
-.sapMLIB.sapMNLB {
-	border-radius: 0.25rem;
-	display: block;
-	padding: 0 0 @_sap_m_NotificationListBase_ContainerPadding;
-	margin: 0 0.25rem 0.5rem;
-	overflow: hidden;
-	border: none;
-}
-
-.sapMLIB.sapMNLB:first-of-type {
-	margin-top: 0.125rem;
-}
-
-/* ==========================================================================
-   Priority styles
-  ========================================================================== */
-
-.sapMNLB-Priority {
-	height: 100%;
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	top: 0;
-	width: 0.375rem;
-	z-index: 1;
-}
-
-.sapMNLB-None {
-	background: @sapUiNeutralBorder;
-}
-
-.sapMNLB-Low {
-	background: @sapUiSuccessBorder;
-}
-
-.sapMNLB-Medium {
-	background: @sapUiWarningBorder;
-}
-
-.sapMNLB-High {
-	background: @sapUiErrorBorder;
-}
-
-/* ==========================================================================
-   Header styles
-  ========================================================================== */
-
-.sapMNLB-Header, .sapMNLB-SubHeader {
-	padding: @_sap_m_NotificationListBase_ContainerPadding @_sap_m_NotificationListBase_ContainerPadding 0 @_sap_m_NotificationListBase_ContainerPaddingLeft;
+.sapMNLIB {
 	position: relative;
-}
 
-/* Close button styles
-  ========================================================================== */
-
-.sapMNLB-CloseButton {
-	background: none;
-	box-sizing: border-box;
-	cursor: pointer;
-	height: auto;
-	margin-top: -@_sap_m_NotificationListBase_ContainerPadding;
-	padding: @_sap_m_NotificationListBase_ContainerPadding 0 0;
-	position: absolute;
-	right: @_sap_m_NotificationListBase_CloseButtonCozyPosition;
-	top: @_sap_m_NotificationListBase_CloseButtonCozyPosition;
-	transition: opacity;
-	width: @_sap_m_NotificationListBase_CloseButtonSize;
-	z-index: 2;
-
-	.sapMBtnInner {
-		min-width: @_sap_m_NotificationListBase_CloseButtonSize;
-
-		.sapMBtnIcon {
-			max-height: @_sap_m_NotificationListBase_CloseButtonSize;
-		}
-	}
-}
-
-.sapMNLB-CloseButton .sapMBtnIcon {
-	cursor: pointer;
-	font-size: 1rem;
-}
-
-/* ==========================================================================
-   Body styles
-  ========================================================================== */
-
-/* Author picture styles
-  ========================================================================== */
-
-.sapMNLB-AuthorPicture {
-	display: block;
-	height: 2rem;
-	margin-right: 0.75rem;
-	text-align: center;
-	width: 2rem;
-}
-
-.sapMNLB-AuthorPicture .sapMImg {
-	border-radius: 50%;
-	max-height: 2rem;
-	max-width: 2rem;
-}
-
-.sapMNLB-AuthorPicture .sapUiIcon {
-	color: @sapUiContentIconColor;
-	font-size: 1.5rem;
-}
-
-/* ==========================================================================
-   Datetime text styles
-  ========================================================================== */
-
-.sapMLIB.sapMNLB .sapMText.sapMNLI-Datetime {
-	display: inline;
-}
-
-/* ==========================================================================
-   Footer styles
-  ========================================================================== */
-
-.sapMNLB-Footer, .sapMNLB-SubHeader {
-	line-height: 3rem;
-	padding: 0.25rem 0 0 1rem;
-
+	.sapMIBar.sapMTB .sapMBarChild:only-child,
 	.sapMTB {
-		border: none;
-		display: -webkit-box;
-		display: -webkit-flex;
-		display: flex;
-		-webkit-box-pack: end;
-		-webkit-justify-content: flex-end;
-		justify-content: flex-end;
-		background: none;
+		padding-right: 0;
+	}
+
+	.sapMNLICloseBtn {
+		margin-left: 0.5rem
 	}
 }
 
-/* Bullet styles
-  ========================================================================== */
+html.sap-desktop {
+	.sapMNLIB:focus {
+		outline: none;
+	}
 
-.sapMNLB-Bullet {
-	color: @sapUiContentLabelColor;
-	margin-left: 0.5rem;
-	margin-right: 0.5rem;
-}
-
-/* ==========================================================================
-   Compact mode styles
-  ========================================================================== */
-
-.sapUiSizeCompact .sapMNLB-CloseButton {
-	height: @_sap_m_NotificationListBase_CloseButtonCompactSize;
-	padding: 0;
-	right: @_sap_m_NotificationListBase_CloseButtonCompactPosition;
-	top: @_sap_m_NotificationListBase_CloseButtonCompactPosition + @_sap_m_NotificationListBase_ContainerPadding;
-	width: @_sap_m_NotificationListBase_CloseButtonCompactSize;
-
-	.sapMBtnInner {
-		min-width: 1.625rem;
-		.sapMBtnIcon {
-			max-height: 1.625rem;
-		}
+	.sapMNLIB:focus::before {
+		content: " ";
+		border: 1px dotted @sapUiContentFocusColor;
+		position: absolute;
+		top: 1px;
+		right: 1px;
+		bottom: 1px;
+		left: 1px;
+		z-index: 2;
+		pointer-events: none;
 	}
 }
 
-.sapUiSizeCompact .sapMNLB-CloseButton .sapMBtnIcon {
-	font-size: 0.75rem;
-	margin: 0;
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMNLIB:focus::before {
+		border-style: dashed;
+	}
 }
 
-.sapUiSizeCompact {
-	.sapMNLB-Footer, .sapMNLB-SubHeader {
-		padding: 0.25rem;
+// Priority icons
+
+.sapMNLIBPriority {
+	padding-right: 0.5rem;
+
+	.sapUiIcon {
+		font-size: 1rem;
+		line-height: 1rem;
+	}
+}
+
+.sapMNLIBPriorityLow .sapUiIcon {
+	color: @sapUiSuccessBorder;
+
+	&::before {
+		content: '\e203';
+	}
+}
+
+.sapMNLIBPriorityMedium .sapUiIcon {
+	color: @sapUiWarningBorder;
+
+	&::before {
+		content: '\e201';
+	}
+}
+
+.sapMNLIBPriorityHigh .sapUiIcon {
+	color: @sapUiErrorBorder;
+
+	&::before {
+		content: '\e0b1';
+	}
+}
+
+.sap-phone {
+	.sapMNLIBPriority {
+		padding-right: 0.25rem;
+	}
+
+	.sapMNLIBHiddenButton {
+		display: none;
 	}
 }

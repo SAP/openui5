@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../css/topic.css">
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
+
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+</head>
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">Integration Cards API</h1>
+			<p>
+				Card API is used by the host environment to:
+				<ul>
+					<li>Set manifest URL or manifest object and base URL to create the card</li>
+					<li>Provide handlers for different user interaction events</li>
+					<li>Pass parameters needed by the card</li>
+					<li>Set width and height which would work for the layout used in the host environment</li>
+					<li>Manage card state</li>
+				</ul>
+			</p>
+
+			<h1 id="handlingActions">Handling on-action events</h2>
+			<p>
+				A card instance can trigger an <code>action</code> event. This event should be handled by the host environment to make the card interactions fully functional.
+				The type of <code>action</code> event, determines the purpose of the action.
+				Currently the types of actions are limited to <code>Navigation</code>.
+				Actions are defined inside the card manifest. For more information, see <a target="_top" href="../../index.html#/learn/features/cardActions">actions in Learn section</a>
+			</p>
+			<p>
+				For all supported parameters, see <a data-demokit-href="/api/sap.ui.integration.widgets.Card/events/action" target="_blank">action event API</a>.
+			</p>
+
+			<h2>When using UI5</h2>
+			<p>
+				Adding handler for <code>action</code> event in the XML View
+			</p>
+<pre class="prettyprint  lang-xml">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" action="onActionLog"/&gt;
+&lt;/mvc:View&gt;
+</pre>
+			<p>
+				on <code>action</code> handler code in the controller.
+			</p>
+<pre class="prettyprint  lang-js">
+...
+onActionLog: function (oEvent) {
+	console.log(oEvent.getParameter("type")); // The type of the action
+	console.log(JSON.stringify(oEvent.getParameter("parameters"), null, 2)); // The action parameters passed from the card to the host environment
+	console.log(oEvent.getParameter("actionSource")); // The source of the action
+}
+...
+</pre>
+
+			<h2>When using &lt;ui-integration-card&gt; custom element</h2>
+<pre class="prettyprint  lang-xml">
+&lt;body&gt;
+	&lt;ui-integration-card id="cardWithActions"
+		manifest="./some/location/my/card/manifest.json"&gt;
+	&lt;/ui-integration-card&gt;
+
+	&lt;script&gt;
+		document.getElementById("cardWithActions").addEventListener("action", function (event) {
+			console.log(event.detail.getParameter("type") + " Action triggered! for card with ID cardWithActions");
+		});
+	&lt;/script&gt;
+&lt;/body&gt;
+</pre>
+
+			<h1 id="passingParameters">Passing parameters</h2>
+			<p>
+				A card developer can add parameters to the cards manifest. Such parameters are often optional and allow to influence the cards content. Some parameters are mandatory, because the card relies on this information to work properly. If a card needs to load data, one parameter might be the url that should be used to trigger a data request. Parameters are card specific and are declared in the corresponding cards manifest.
+				For an example with parameters usage in a manifest, see <a target="_top" href="../../index.html#/explore/parameters">parameters in Explore section</a>.
+			</p>
+
+			<h2>When using UI5</h2>
+<pre class="prettyprint  lang-js">
+var oCard = new Card();
+// This manifest expects a city parameter to render a card with information for that city.
+oCard.setManifest("./manifest.json");
+var oParameters = {
+	"city": "Waldorf,de"
+};
+oCard.setParameters(oParameters);
+</pre>
+
+			<h2>When using &lt;ui-integration-card&gt; custom element</h2>
+<pre class="prettyprint  lang-js">
+var parameters = {
+	"city": "Waldorf,de"
+};
+var card = document.createElement("ui-integration-card");
+card.setAttribute('id', "myCard");
+card.setAttribute("manifest", "./some/location/my/card/manifest.json");
+card.setAttribute("parameters", JSON.stringify(parameters));
+document.body.appendChild(card);
+</pre>
+
+			<h1 id="managingState">Managing card state</h1>
+
+			<h2 id="dataMode">Card data mode</h2>
+			<p>
+				To control if the card should make requests or not the developer can set the <code>dataMode</code> property of the card.
+				If the <code>dataMode</code> is set to <code>Active</code> the card will be able to load its manifest, resources and data.
+				Setting the <code>dataMode</code> to <code>Inactive</code> will stop any further requests and loading.
+				Some cards can refresh their data in a certain interval. This property provides control to the host environment to disable/enable any further requests.
+			</p>
+			<p>
+				For more information, see <a data-demokit-href="/api/sap.ui.integration.CardDataMode" target="_blank"><code>dataMode</code> property API</a>.
+			</p>
+
+			<h3>When using UI5</h3>
+<pre class="prettyprint  lang-js">
+// Make card inactive for 10 seconds
+var oCard = sap.ui.getCore().byId("myCard");
+oCard.setDataMode("Inactive");
+setTimeout(function () {
+	oCard.setDataMode("Active");
+}, 10000);
+</pre>
+
+			<h3>When using &lt;ui-integration-card&gt; custom element</h3>
+<pre class="prettyprint  lang-js">
+// Make card inactive for 10 seconds
+var card = document.getElementById("myCard");
+card.setAttribute("data-mode", "Inactive");
+setTimeout(function () {
+	card.setAttribute("data-mode", "Active");
+}, 10000);
+</pre>
+
+			<h2 id="refreshingCards">Refreshing cards</h2>
+			<p>
+				In certain cases, the host environment detects that the card is no longer displaying up-to-date information and a card refresh is needed.
+				To do that, the developer must call the <code>refresh</code> function of the card. It rerenders the card, reapplies the manifest and retriggers all data requests.
+				This functionality depends on the <code>dataMode</code> property of the card, and only works if set to <code>Active</code>.
+			</p>
+			<p>
+				For more information, see <a data-demokit-href="/api/sap.ui.integration.widgets.Card/methods/refresh" target="_blank"><code>refresh</code> method API</a>.
+			</p>
+
+			<h3>When using UI5</h3>
+<pre class="prettyprint  lang-js">
+oCard.refresh();
+</pre>
+
+			<h3>When using &lt;ui-integration-card&gt; custom element</h3>
+<pre class="prettyprint  lang-js">
+customElements.whenDefined("ui-integration-card").then(function () {
+	var oCard = document.getElementById("myCard");
+	oCard.refresh();
+});
+</pre>
+
+			<h1 id="settingDimensions">Configuring card dimensions</h1>
+			<p>
+				To configure the height and width of the card, you can set any value that the CSS properties <code>height</code> and <code>width</code> would accept.
+			</p>
+			<h3>When using UI5</h3>
+			<p>
+				To modify the height and width of the Card, set its respective attributes <code>height</code> and <code>width</code>.
+			</p>
+<pre class="prettyprint  lang-xml">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" width="360px" height="auto"/&gt;
+&lt;/mvc:View&gt;
+</pre>
+			<h3>When using &lt;ui-integration-card&gt; custom element</h3>
+			<p>
+				Set the height and width using CSS as you would usually style any other aspect of your web application.
+				The default <code>display</code> property of the custom element is <code>inline-block</code>.
+			</p>
+			<p>
+				<em>The attributes <code>height</code> and <code>width</code> are not available on the custom element.</em>
+			</p>
+<pre class="prettyprint  lang-xml">
+.myCard {
+	width: 380px;
+	height: 16rem;
+}
+...
+&lt;ui-integration-card class="myCard" manifest="./manifest.json"&gt;
+&lt;/ui-integration-card&gt;
+</pre>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Card API</a></div>
+			<div><a href="#handlingActions">Handling events</a></div>
+			<div><a href="#passingParameters">Passing parameters</a></div>
+			<div><a href="#managingState">Managing card state</a></div>
+			<div><a href="#settingDimensions">Configuring card dimensions</a></div>
+		</div>
+	</div>
+
+	<script src="../../scripts/topic.js"></script>
+</body>
+</html>

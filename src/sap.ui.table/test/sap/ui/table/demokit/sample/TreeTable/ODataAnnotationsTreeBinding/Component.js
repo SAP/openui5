@@ -2,37 +2,14 @@ sap.ui.define([
     "sap/ui/core/UIComponent",
     "sap/ui/model/odata/v2/ODataModel",
     "sap/ui/table/sample/TreeTable/ODataAnnotationsTreeBinding/localService/mockserver"
-], function (UIComponent, ODataModel, mockserver) {
+], function(UIComponent, ODataModel, mockserver) {
     "use strict";
 
-    return  UIComponent.extend("sap.ui.table.sample.TreeTable.ODataAnnotationsTreeBinding.Component", {
+    return UIComponent.extend("sap.ui.table.sample.TreeTable.ODataAnnotationsTreeBinding.Component", {
         metadata: {
-            rootView: {
-                "viewName": "sap.ui.table.sample.TreeTable.ODataAnnotationsTreeBinding.View",
-                "type": "XML",
-                "async": true
-            },
-            dependencies: {
-                libs: [
-                    "sap.ui.table",
-                    "sap.ui.unified",
-                    "sap.m"
-                ]
-            },
-            config: {
-                sample: {
-                    stretch: true,
-                    files: [
-                        "localService/mockdata/Nodes.json",
-                        "localService/metadata.xml",
-                        "localService/mockserver.js",
-                        "Component.js",
-                        "View.view.xml"
-                    ]
-                }
-            }
-        },
-        init : function (){
+			manifest: "json"
+		},
+        init : function(){
             // call the init function of the parent
             UIComponent.prototype.init.apply(this, arguments);
 

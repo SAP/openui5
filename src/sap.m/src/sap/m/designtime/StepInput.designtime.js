@@ -18,4 +18,4 @@ sap.ui.define([],
 				create: "sap/m/designtime/StepInput.create.fragment.xml"
 			}
 		};
-	}, /* bExport= */ false);
+	});

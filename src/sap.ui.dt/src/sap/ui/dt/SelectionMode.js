@@ -6,7 +6,6 @@
  * Initialization Code and shared classes of library sap.ui.dt.
  */
 sap.ui.define(function() {
-
 	"use strict";
 
 	/**
@@ -19,9 +18,7 @@ sap.ui.define(function() {
 	 * @experimental This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @private
 	 */
-
 	return {
-
 		/**
 		 * Select multiple overlays at a time.
 		 * @public
@@ -35,5 +32,4 @@ sap.ui.define(function() {
 		Single : "Single"
 
 	};
-
 }, /* bExport= */ true);

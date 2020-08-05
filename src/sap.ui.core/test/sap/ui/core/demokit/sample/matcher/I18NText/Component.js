@@ -5,24 +5,7 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.ui.core.sample.matcher.I18NText.Component", {
 		metadata: {
-			dependencies: {
-				libs: [
-					"sap.m"
-				]
-			},
-			config: {
-				sample: {
-					iframe: "Opa.html?opaExecutionDelay=700",
-					stretch: true,
-					files: [
-						"Opa.html",
-						"webapp/i18n/i18n.properties",
-						"webapp/view/Main.view.xml",
-						"webapp/controller/Main.controller.js",
-						"webapp/index.html"
-					]
-				}
-			}
+			manifest: "json"
 		}
 	});
 });

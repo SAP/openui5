@@ -1,0 +1,10 @@
+/******************************************************************
+	Style of Dialogs shown in RTA - sap_fiori_3 Theme
+*******************************************************************/
+@_sap_ui_rta_Border_LightColor: @sapUiWhite; //#fff
+@_sap_ui_rta_Border_DarkColor: @sapPrimary1; //#354a5f
+
+.sapMDialog.sapUiRTABorder {
+	border: 0.1875rem solid @_sap_ui_rta_Border_LightColor; //3px
+	border-image: repeating-linear-gradient( -45deg, @_sap_ui_rta_Border_DarkColor, @_sap_ui_rta_Border_DarkColor 5px, @_sap_ui_rta_Border_LightColor 5px, @_sap_ui_rta_Border_LightColor 10px) 4;
+}

@@ -1,0 +1,14 @@
+{
+	"_version": "0.0.1",
+	"sap.app": {
+		"id": "testdata.xml-require.extension-points.Parent"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "testdata.xml-require.extension-points.Parent.Main",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		}
+	}
+}

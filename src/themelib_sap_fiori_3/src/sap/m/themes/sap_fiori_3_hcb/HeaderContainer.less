@@ -1,0 +1,34 @@
+/* ====================================== */
+/* CSS for control sap.m/HeaderContainer  */
+/* Quartz High Contrast Black theme       */
+/* ====================================== */
+
+.sapMHdrCntrBtn.sapMBtn {
+	background-color: transparent;
+}
+
+.sapMHdrCntrBtn .sapMBtnIcon {
+	color: @sapUiContentIconColor;
+	font-size: 22px;
+}
+
+.sapMHrdrCntrInner:focus:not ([tabindex]) {
+	outline: none;
+}
+
+.sapMHrdrCntrDvdrs.Horizontal .sapMHrdrCntrInner::after {
+	border-left: 1px solid @sapUiHcReducedAltForeground;
+}
+
+.sapMHrdrCntrDvdrs.Vertical .sapMHrdrCntrInner::after {
+	border-top: 1px solid @sapUiHcReducedAltForeground;
+}
+
+.sapMHrdrCntrInner {
+    border: 2px solid transparent;
+}
+
+html.sap-desktop .sapMHrdrCntrInner:focus {
+    outline: none;
+    border: 2px dotted @sapUiContentFocusColor;
+}

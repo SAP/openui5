@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.Avatar",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.Avatar.view.Avatar",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/Avatar.view.xml",
+					"controller/Avatar.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

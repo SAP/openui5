@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 
 describe('sap.m.Dialog', function() {
 	"use strict";
@@ -71,10 +71,87 @@ describe('sap.m.Dialog', function() {
 		element(by.id('dialogWithCustomHeadersDialogCloseButton')).click();
 	});
 
+	it('should open warning state dialog', function() {
+		element(by.id('dialogWithStateButton')).click();
+		var dialogWarningState = element(by.id('dialog1'));
+		expect(takeScreenshot(dialogWarningState)).toLookAs('warning-state-dialog');
+		element(by.id('closeWarningDialog')).click();
+	});
+
 	it('should open error state dialog', function() {
 		element(by.id('dialogWithErrorStateButton')).click();
 		var dialogErrorState = element(by.id('dialogErrorState'));
 		expect(takeScreenshot(dialogErrorState)).toLookAs('error-state-dialog');
 		element(by.id('oDialogErrorStateOKButton')).click();
+	});
+
+	it('should open success state dialog', function() {
+		element(by.id('dialogWithSuccessStateButton')).click();
+		var dialogSuccessState = element(by.id('dialogSuccessState'));
+		expect(takeScreenshot(dialogSuccessState)).toLookAs('success-state-dialog');
+		element(by.id('oDialogSuccessStateOKButton')).click();
+	});
+
+	it('should open information state dialog', function() {
+		element(by.id('dialogWithInformationStateButton')).click();
+		var dialogHighlightState = element(by.id('dialogInformationState'));
+		expect(takeScreenshot(dialogHighlightState)).toLookAs('information-state-dialog');
+		element(by.id('oDialogInformationStateOKButton')).click();
+	});
+
+	it('should open dialog with subHeader and infoBar', function() {
+		browser.executeScript("document.getElementById('SubHeaderInfoBarButton').scrollIntoView()").then(function() {
+			element(by.id('SubHeaderInfoBarButton')).click();
+			var dialog = element(by.id('subHeaderInfoBarDialog'));
+			expect(takeScreenshot(dialog)).toLookAs('subHeader-infoBar-dialog');
+		});
+		element(by.id('oDialogSubHeaderInfoBarClose')).click();
+
+		browser.executeScript("document.getElementById('compactMode').scrollIntoView()").then(function() {
+			element(by.id('compactMode-CbBg')).click();
+		});
+
+		browser.executeScript("document.getElementById('SubHeaderInfoBarButton').scrollIntoView()").then(function() {
+			element(by.id('SubHeaderInfoBarButton')).click();
+			var dialogCompact = element(by.id('subHeaderInfoBarDialog'));
+			expect(takeScreenshot(dialogCompact)).toLookAs('subHeader-infoBar-dialog-compact');
+		});
+		element(by.id('oDialogSubHeaderInfoBarClose')).click();
+
+		browser.executeScript("document.getElementById('compactMode').scrollIntoView()").then(function() {
+			element(by.id('compactMode-CbBg')).click();
+		});
+	});
+
+	it('should open dialog with subHeader and no header', function() {
+		browser.executeScript("document.getElementById('SubHeaderNoHeaderButton').scrollIntoView()").then(function() {
+			element(by.id('SubHeaderNoHeaderButton')).click();
+			var dialog = element(by.id('subHeaderNoHeaderDialog'));
+			expect(takeScreenshot(dialog)).toLookAs('subHeader-no-header-dialog');
+		});
+		element(by.id('oDialogSubHeaderNoHeaderClose')).click();
+
+		browser.executeScript("document.getElementById('compactMode').scrollIntoView()").then(function() {
+			element(by.id('compactMode-CbBg')).click();
+		});
+
+		browser.executeScript("document.getElementById('SubHeaderNoHeaderButton').scrollIntoView()").then(function() {
+			element(by.id('SubHeaderNoHeaderButton')).click();
+			var dialogCompact = element(by.id('subHeaderNoHeaderDialog'));
+			expect(takeScreenshot(dialogCompact)).toLookAs('subHeader-no-header-dialog-compact');
+		});
+		element(by.id('oDialogSubHeaderNoHeaderClose')).click();
+
+		browser.executeScript("document.getElementById('compactMode').scrollIntoView()").then(function() {
+			element(by.id('compactMode-CbBg')).click();
+		});
+	});
+
+	it('should open dialog with responsive paddings enabled (SAP Quartz themes only)', function () {
+		browser.executeScript('document.getElementById("buttonDialogResponsivePadding").scrollIntoView()').then(function() {
+			element(by.id("buttonDialogResponsivePadding")).click();
+			var oDialogResponsivePadding = element(by.id("dialogResponsivePadding"));
+			expect(takeScreenshot(oDialogResponsivePadding)).toLookAs("responsive-paddings-dialog-quartz-only");
+		});
 	});
 });

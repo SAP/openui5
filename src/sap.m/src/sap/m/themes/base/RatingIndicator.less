@@ -11,8 +11,9 @@
 	padding: 0;
 	margin: 0.8125rem 0;
 
+	/* TODO remove after the end of support for Internet Explorer */
 	/* IE Windows 8 */
-	/* This elements receives events when not panning in vertial direction */
+	/* This elements receives events when not panning in vertical direction */
 	touch-action: pan-y;
 	-ms-touch-action: pan-y;
 }
@@ -27,11 +28,6 @@ html.sap-tablet .sapMRI:focus {
 	background: transparent;
 	width: 100%;
 	height: 100%;
-}
-
-/* ie9 fix for transparent divs */
-html[data-sap-ui-browser*='ie'] .sapMRISelector {
-	background-color: rgba(255,255,255,0.01);
 }
 
 .sapMRISel {
@@ -75,7 +71,7 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
   margin: 0;
 }
 
-.sapUiSizeCondensed .sapUiTableCell > .sapMRI {
+.sapUiSizeCondensed .sapUiTableDataCell > .sapUiTableCellInner > .sapMRI {
 	box-sizing: content-box;
 	padding: 0;
 	margin: 0 0.5rem;
@@ -155,8 +151,8 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 	}
 }
 /* Condensed mode */
-.sapUiSizeCondensed .sapUiTableCell .sapMRI .sapUiIcon,
-.sapUiSizeCondensed .sapUiTableCell .sapMRI .sapMImg{
+.sapUiSizeCondensed .sapUiTableDataCell .sapMRI .sapUiIcon,
+.sapUiSizeCondensed .sapUiTableDataCell .sapMRI .sapMImg{
 	vertical-align: top;
 }
 

@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.GridListDragAndDrop",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.GridListDragAndDrop.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.f": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"model/data.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

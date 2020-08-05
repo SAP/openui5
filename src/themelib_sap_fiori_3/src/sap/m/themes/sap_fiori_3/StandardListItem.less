@@ -1,0 +1,35 @@
+/* ======================================= */
+/* CSS for control sap.m/StandardListItem  */
+/* Fiori 3 theme                           */
+/* ======================================= */
+
+@_sap_m_StandardListItem_TextShadowColor: none;
+@_sap_m_StandardListItem_SelectedLabelColor: @sapUiContentLabelColor;
+
+.sapMSLIInfo {
+	text-shadow: @_sap_m_StandardListItem_TextShadowColor;
+}
+
+.sapMSLI {
+	height: 2.75rem;
+}
+
+.sapMSLI.sapMSLIWrapping {
+	min-height: 2.75rem;
+}
+
+.sapMSLIImgIcon {
+	height: 2.75rem;
+	width: 2.75rem;
+	font-size: 1.25rem;
+}
+
+.sapMSLIImgNoInset,
+.sapMSLIImg {
+	border-radius: 0.25rem;
+}
+
+/* Compact Size */
+.sapUiSizeCompact .sapMSLIImgIcon {
+	height: 2rem;
+}

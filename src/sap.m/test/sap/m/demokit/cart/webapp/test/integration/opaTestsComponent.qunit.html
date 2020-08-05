@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Opa tests for Shopping Cart Journeys with Component</title>
+	<meta charset="utf-8">
+
+	<!-- The namespace Startup is used to run the IFrame or the component without changes to the test code -->
+	<script
+		id="sap-ui-bootstrap"
+		src="../../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-resourceroots='{
+			"Startup": "./arrangements/component/Startup",
+			"sap.ui.demo.cart" : "../../",
+			"sap.ui.demo.mock": "./../../../../../../../../test-resources/sap/ui/documentation/sdk/"
+		}'
+		data-sap-ui-theme='sap_fiori_3'
+		data-sap-ui-language="en"
+		data-sap-ui-animation="false"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-async="true">
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
+
+	<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+	<script src="opaTests.qunit.js"></script>
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

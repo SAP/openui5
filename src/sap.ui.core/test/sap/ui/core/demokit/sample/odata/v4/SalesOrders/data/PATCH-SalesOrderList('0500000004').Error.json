@@ -1,0 +1,10 @@
+{
+	"error" : {
+		"code" : "OO/000",
+		"message" : "Property `Note` value `RAISE_ERROR` not allowed!",
+		"@SAP__common.numericSeverity" : 4,
+		"@SAP__Common.longtextUrl" : "",
+		"target" : "Note",
+		"details" : []
+	}
+}

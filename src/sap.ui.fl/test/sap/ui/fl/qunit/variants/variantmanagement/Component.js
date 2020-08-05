@@ -3,7 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/UIComponent', 'sap/ui/fl/FakeLrepConnectorLocalStorage'
+	"sap/ui/core/UIComponent",
+	"sap/ui/fl/FakeLrepConnectorLocalStorage"
 ], function(UIComponent, FakeLrepConnectorLocalStorage) {
 	"use strict";
 	return UIComponent.extend("sap.ui.fl.sample.variantmanagement.Component", {

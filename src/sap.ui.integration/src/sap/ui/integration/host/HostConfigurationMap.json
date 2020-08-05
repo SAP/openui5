@@ -1,0 +1,214 @@
+{
+	"less": {
+		"@sapUiCardBackgroundColor": {
+			"path": "/card/default/backgroundColor"
+		},
+		"@sapUiCardBorderSize": {
+			"path": "/card/border/lineThickness",
+			"unit": "px"
+		},
+		"@sapUiCardBorderColor": {
+			"path": "/card/border/lineColor"
+		},
+		"@sapUiCardBorderRadius": {
+			"path": "/card/border/radius",
+			"unit": "px"
+		},
+		"@sapUiCardFontColorDefaultDefault": {
+			"path": "/card/default/foregroundColors/default/default"
+		},
+		"@sapUiCardFontColorDefaultSubtle": {
+			"path": "/card/default/foregroundColors/default/subtle"
+		},
+		"@sapUiCardFontColorAccentDefault": {
+			"path": "/card/default/foregroundColors/accent/default"
+		},
+		"@sapUiCardFontColorAccentSubtle": {
+			"path": "/card/default/foregroundColors/accent/subtle"
+		},
+		"@sapUiCardFontColorAttentionDefault": {
+			"path": "/card/default/foregroundColors/attention/default"
+		},
+		"@sapUiCardFontColorAttentionSubtle": {
+			"path": "/card/default/foregroundColors/attention/subtle"
+		},
+		"@sapUiCardFontColorGoodDefault": {
+			"path": "/card/default/foregroundColors/good/default"
+		},
+		"@sapUiCardFontColorGoodSuble": {
+			"path": "/card/default/foregroundColors/good/subtle"
+		},
+		"@sapUiCardFontColorWarningDefault": {
+			"path": "/card/default/foregroundColors/warning/default"
+		},
+		"@sapUiCardFontColorWarningSuble": {
+			"path": "/card/default/foregroundColors/warning/subtle"
+		},
+
+		"@sapUiCardFSDefaultFontFamily": {
+			"path": "/fontStyles/default/fontFamily"
+		},
+		"@sapUiCardFSDefaultSizeDefault": {
+			"path": "/fontStyles/default/fontSizes/default",
+			"unit": "pt"
+		},
+		"@sapUiCardFSDefaultSizeSmall": {
+			"path": "/fontStyles/default/fontSizes/small",
+			"unit": "pt"
+		},
+		"@sapUiCardFSDefaultSizeMedium": {
+			"path": "/fontStyles/default/fontSizes/medium",
+			"unit": "pt"
+		},
+		"@sapUiCardFSDefaultSizeLarge": {
+			"path": "/fontStyles/default/fontSizes/large",
+			"unit": "pt"
+		},
+		"@sapUiCardFSDefaultSizeXLarge": {
+			"path": "/fontStyles/default/fontSizes/extraLarge",
+			"unit": "pt"
+		},
+		"@sapUiCardFSDefaultWeightDefault": {
+			"path": "/fontStyles/default/fontWeights/default"
+		},
+		"@sapUiCardFSDefaultWeightLighter": {
+			"path": "/fontStyles/default/fontWeights/lighter"
+		},
+		"@sapUiCardFSDefaultWeightBolder": {
+			"path": "/fontStyles/default/fontWeights/bolder"
+		},
+
+		"@sapUiCardFSDisplayFontFamily": {
+			"path": "/fontStyles/display/fontFamily"
+		},
+		"@sapUiCardFSDisplaySizeDefault": {
+			"path": "/fontStyles/display/fontSizes/default",
+			"unit": "pt"
+		},
+		"@sapUiCardFSDisplaySizeSmall": {
+			"path": "/fontStyles/display/fontSizes/small",
+			"unit": "pt"
+		},
+		"@sapUiCardFSDisplaySizeMedium": {
+			"path": "/fontStyles/display/fontSizes/medium",
+			"unit": "pt"
+		},
+		"@sapUiCardFSDisplaySizeLarge": {
+			"path": "/fontStyles/display/fontSizes/large",
+			"unit": "pt"
+		},
+		"@sapUiCardFSDisplaySizeXLarge": {
+			"path": "/fontStyles/display/fontSizes/extraLarge",
+			"unit": "pt"
+		},
+		"@sapUiCardFSDisplayWeightDefault": {
+			"path": "/fontStyles/display/fontWeights/default"
+		},
+		"@sapUiCardFSDisplayWeightLighter": {
+			"path": "/fontStyles/display/fontWeights/lighter"
+		},
+		"@sapUiCardFDisplayWeightBolder": {
+			"path": "/fontStyles/display/fontWeights/bolder"
+		},
+
+		"@sapUiCardFSMonoFontFamily": {
+			"path": "/fontStyles/monospace/fontFamily"
+		},
+		"@sapUiCardFSMonoSizeDefault": {
+			"path": "/fontStyles/monospace/fontSizes/default",
+			"unit": "pt"
+		},
+		"@sapUiCardFSMonotSizeSmall": {
+			"path": "/fontStyles/monospace/fontSizes/small",
+			"unit": "pt"
+		},
+		"@sapUiCardFSMonoSizeMedium": {
+			"path": "/fontStyles/monospace/fontSizes/medium",
+			"unit": "pt"
+		},
+		"@sapUiCardFSMonoSizeLarge": {
+			"path": "/fontStyles/monospace/fontSizes/large",
+			"unit": "pt"
+		},
+		"@sapUiCardFSMonoSizeXLarge": {
+			"path": "/fontStyles/monospace/fontSizes/extraLarge",
+			"unit": "pt"
+		},
+		"@sapUiCardFSMonoWeightDefault": {
+			"path": "/fontStyles/monospace/fontWeights/default"
+		},
+		"@sapUiCardFSMonoWeightLighter": {
+			"path": "/fontStyles/monospace/fontWeights/lighter"
+		},
+		"@sapUiCardFMonoWeightBolder": {
+			"path": "/fontStyles/monospace/fontWeights/bolder"
+		}
+	},
+	"vizProperties": {
+		"plotArea/dataLabel/style/color": {
+			"path": "/card/default/foregroundColors/default/default"
+		},
+		"plotArea/dataLabel/style/fontSize": {
+			"path": "/fontStyles/default/fontSizes/small",
+			"unit": "pt"
+		},
+		"plotArea/dataLabel/style/fontFamily": {
+			"path": "/fontStyles/default/fontFamily"
+		},
+		"plotArea/dataLabel/style/fontWeight": {
+			"path": "/fontStyles/default/fontWeights/default"
+		},
+		"plotArea/gridline/color": {
+			"path": "/card/default/foregroundColors/default/subtle"
+		},
+		"plotArea/gridline/zeroLine/color": {
+			"path": "/card/default/foregroundColors/default/subtle"
+		},
+		"plotArea/referenceLine/defaultStyle/color": {
+			"path": "/card/default/foregroundColors/default/subtle"
+		},
+		"plotArea/defaultStyle/defaultStyle/label/color": {
+			"path": "/card/default/foregroundColors/default/default"
+		},
+		"plotArea/dataPoint/stroke/color": {
+			"path": "/card/default/foregroundColors/default/subtle"
+		},
+		"plotArea/colorPalette_commented": [{
+			"path": "/card/default/foregroundColors/default/subtle"
+		}, {
+			"path": "/card/default/foregroundColors/default/subtle"
+		}, {
+			"path": "/card/default/foregroundColors/default/subtle"
+		}, {
+			"path": "/card/default/foregroundColors/default/subtle"
+		}],
+		"title/style/color": {
+			"path": "/card/default/foregroundColors/default/default"
+		},
+		"title/style/fontFamily": {
+			"path": "/fontStyles/default/fontFamily"
+		},
+		"title/style/fontSize": {
+			"path": "/fontStyles/default/fontSizes/large",
+			"unit": "pt"
+		},
+		"valueAxis/color": {
+			"path": "/card/default/foregroundColors/default/default"
+		},
+		"valueAxis/label/style/color": {
+			"path": "/card/default/foregroundColors/default/subtle"
+		},
+		"valueAxis/label/style/fontFamily": {
+			"path": "/fontStyles/default/fontFamily"
+		},
+		"legend/label/style/color": {
+			"path": "/card/default/foregroundColors/default/subtle"
+		},
+		"legend/label/style/fontFamily": {
+			"path": "/fontStyles/default/fontFamily"
+		}
+
+
+
+	}
+}

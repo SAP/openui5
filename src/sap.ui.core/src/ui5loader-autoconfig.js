@@ -17,14 +17,14 @@
 	 *  - ui5loader-autoconfig.js
 	 */
 
-	/*global console, document, jQuery, sap, window */
+	/*global console, document, ES6Promise, jQuery, sap, window */
 	"use strict";
 
-	var _ui5loader = window.sap && window.sap.ui && window.sap.ui._ui5loader,
-		oCfg = window['sap-ui-config'],
+	var ui5loader = window.sap && window.sap.ui && window.sap.ui.loader,
+		oCfg = window['sap-ui-config'] || {},
 		sBaseUrl, bNojQuery,
 		aScripts, rBootScripts, i,
-		oBootstrapScript, sBootstrapUrl, bNoConflict = false;
+		oBootstrapScript, sBootstrapUrl, bExposeAsAMDLoader = false;
 
 	function findBaseUrl(oScript, rUrlPattern) {
 		var sUrl = oScript && oScript.getAttribute("src"),
@@ -33,41 +33,32 @@
 			sBaseUrl = oMatch[1] || "";
 			oBootstrapScript = oScript;
 			sBootstrapUrl = sUrl;
-			bNojQuery = /sap-ui-core-nojQuery\.js(?:\?|#|$)/.test(sUrl);
+			bNojQuery = /sap-ui-core-nojQuery\.js(?:[?#]|$)/.test(sUrl);
 			return true;
 		}
 	}
 
 	function ensureSlash(path) {
-		return path && path[path.length] !== '/' ? path + '/' : path;
+		return path && path[path.length - 1] !== '/' ? path + '/' : path;
 	}
 
-	if (_ui5loader == null) {
+	if (ui5loader == null) {
 		throw new Error("ui5loader-autoconfig.js: ui5loader is needed, but could not be found");
 	}
 
 	// Prefer script tags which have the sap-ui-bootstrap ID
 	// This prevents issues when multiple script tags point to files named
 	// "sap-ui-core.js", for example when using the cache buster for UI5 resources
-	if ( !findBaseUrl(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), /^((?:.*\/)?resources\/)/ ) ) {
+	if ( !findBaseUrl(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), /^((?:[^?#]*\/)?resources\/)/ ) ) {
 
 		// only when there's no such script tag, check all script tags
-		rBootScripts = /^(.*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-\w*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
+		rBootScripts = /^([^?#]*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-[^?#/]*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
 		aScripts = document.scripts;
 		for ( i = 0; i < aScripts.length; i++ ) {
 			if ( findBaseUrl(aScripts[i], rBootScripts) ) {
 				break;
 			}
 		}
-	}
-
-	var sNoConflictBootstrapValue = oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-noloaderconflict");
-	if (sNoConflictBootstrapValue) {
-		bNoConflict = /^(?:true|x|X)$/.test(sNoConflictBootstrapValue);
-	}
-	var aNoConflictURLMatches = window.location.search.match(/(?:^\?|&)sap-ui-noLoaderConflict=(true|x|X|false)(?:&|$)/);
-	if (aNoConflictURLMatches) {
-		bNoConflict = aNoConflictURLMatches[1] != "false";
 	}
 
 	// configuration via window['sap-ui-config'] always overrides an auto detected base URL
@@ -80,6 +71,38 @@
 	if (sBaseUrl == null) {
 		throw new Error("ui5loader-autoconfig.js: could not determine base URL. No known script tag and no configuration found!");
 	}
+
+	/**
+	 * Determine whether a bootstrap reboot URL is set to reboot UI5 from a different URL
+	 */
+	(function() {
+		var sRebootUrl;
+		try { // Necessary for FF when Cookies are disabled
+			sRebootUrl = window.localStorage.getItem("sap-ui-reboot-URL");
+		} catch (e) { /* no warning, as this will happen on every startup, depending on browser settings */ }
+
+		/*
+		* Determine whether sap-bootstrap-debug is set, run debugger statement
+		* to allow early debugging in browsers with broken dev tools
+		*/
+		if (/sap-bootstrap-debug=(true|x|X)/.test(location.search)) {
+			/*eslint-disable no-debugger */
+			debugger;
+			/*eslint-enable no-debugger */
+		}
+
+		if (sRebootUrl) {
+			var sDebugRebootPath = ensureSlash(sBaseUrl) + 'sap/ui/core/support/debugReboot.js';
+
+			// This won't work in case this script is loaded async (e.g. dynamic script tag)
+			document.write("<script src=\"" + sDebugRebootPath + "\"></script>");
+
+			var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and rebooting from: " + sRebootUrl);
+			oRestart.name = "Restart";
+			throw oRestart;
+		}
+
+	})();
 
 	/**
 	 * Determine whether to use debug sources depending on URL parameter, local storage
@@ -119,11 +142,16 @@
 		// export resulting debug mode under legacy property
 		window["sap-ui-debug"] = vDebugInfo;
 
+		// check for optimized sources by testing variable names in a local function
+		// (check for native API ".location" to make sure that the function's source can be retrieved)
+		window["sap-ui-optimized"] = window["sap-ui-optimized"] ||
+			(/\.location/.test(_getOption) && !/oBootstrapScript/.test(_getOption));
+
 		if ( window["sap-ui-optimized"] && vDebugInfo ) {
 			// if current sources are optimized and any debug sources should be used, enable the "-dbg" suffix
 			window['sap-ui-loaddbg'] = true;
-			// if debug sources should be used in general, restart with debug URL
-			if ( vDebugInfo === true ) {
+			// if debug sources should be used in general, restart with debug URL (if not disabled, e.g. by test runner)
+			if ( vDebugInfo === true && !window["sap-ui-debug-no-reboot"] ) {
 				var sDebugUrl;
 				if ( sBootstrapUrl != null ) {
 					sDebugUrl = sBootstrapUrl.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/, "/$1-dbg.js");
@@ -132,8 +160,20 @@
 					// debug boot script from it, so fall back to a default debug boot script
 					sDebugUrl = ensureSlash(sBaseUrl) + 'sap-ui-core.js';
 				}
+				// revert changes to global names
+				ui5loader.config({
+					amd:false
+				});
 				window["sap-ui-optimized"] = false;
-				document.write("<script src=\"" + sDebugUrl + "\"></script>");
+
+				if (ui5loader.config().async) {
+					var script = document.createElement("script");
+					script.src = sDebugUrl;
+					document.head.appendChild(script);
+				} else {
+					document.write("<script src=\"" + sDebugUrl + "\"></script>");
+				}
+
 				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and restarting from: " + sDebugUrl);
 				oRestart.name = "Restart";
 				throw oRestart;
@@ -163,7 +203,7 @@
 				return rFilter.test(sModuleName);
 			};
 
-			_ui5loader.logger.debug("Modules that should be excluded from preload: '" + sPattern + "'");
+			ui5loader._.logger.debug("Modules that should be excluded from preload: '" + sPattern + "'");
 
 		} else if (vDebugInfo === true) {
 
@@ -171,22 +211,57 @@
 				return true;
 			};
 
-			_ui5loader.logger.debug("All modules should be excluded from preload");
+			ui5loader._.logger.debug("All modules should be excluded from preload");
 
 		}
 
-		_ui5loader.config({
+		ui5loader.config({
 			debugSources: !!window['sap-ui-loaddbg'],
 			ignoreBundledResources: fnIgnorePreload
 		});
 
 	})();
 
+	function _getOption(name, defaultValue, pattern) {
+		// check for an URL parameter ...
+		var match = window.location.search.match(new RegExp("(?:^\\??|&)sap-ui-" + name + "=([^&]*)(?:&|$)"));
+		if ( match && (pattern == null || pattern.test(match[1])) ) {
+			return match[1];
+		}
+		// ... or an attribute of the bootstrap tag
+		var attrValue = oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-" + name.toLowerCase());
+		if ( attrValue != null && (pattern == null || pattern.test(attrValue)) ) {
+			return attrValue;
+		}
+		// ... or an entry in the global config object
+		if ( Object.prototype.hasOwnProperty.call(oCfg, name) && (pattern == null || pattern.test(oCfg[name])) ) {
+			return oCfg[name];
+		}
+		// compat fallback
+		if ( name.slice(0,3) !== "xx-" ) {
+			return _getOption("xx-" + name, defaultValue, pattern);
+		}
+		// if no valid config value is found, fall back to a system default value
+		return defaultValue;
+	}
 
-	_ui5loader.config({
+	function _getBooleanOption(name, defaultValue) {
+		return /^(?:true|x|X)$/.test( _getOption(name, defaultValue, /^(?:true|x|X|false)$/) );
+	}
+
+	if ( _getBooleanOption("async", false) ) {
+		ui5loader.config({
+			async: true
+		});
+	}
+
+	// support legacy switch 'noLoaderConflict', but 'amdLoader' has higher precedence
+	bExposeAsAMDLoader = _getBooleanOption("amd", !_getBooleanOption("noLoaderConflict", true));
+
+	ui5loader.config({
 		baseUrl: sBaseUrl,
 
-		noConflict: bNoConflict,
+		amd: bExposeAsAMDLoader,
 
 		map: {
 			"*": {
@@ -206,11 +281,15 @@
 				'signals': 'sap/ui/thirdparty/signals',
 				'URI': 'sap/ui/thirdparty/URI',
 				'URITemplate': 'sap/ui/thirdparty/URITemplate',
-				'esprima': 'sap/ui/demokit/js/esprima'
+				'esprima': 'sap/ui/documentation/sdk/thirdparty/esprima'
 			}
 		},
 
 		shim: {
+			'sap/ui/thirdparty/bignumber': {
+				amd: true,
+				exports: 'BigNumber'
+			},
 			'sap/ui/thirdparty/blanket': {
 				amd: true,
 				exports: 'blanket' // '_blanket', 'esprima', 'falafel', 'inBrowser', 'parseAndModify'
@@ -265,14 +344,49 @@
 				amd: true,
 				exports: 'jQuery'
 			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-datepicker': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-core'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-draggable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-droppable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse', 'sap/ui/thirdparty/jqueryui/jquery-ui-draggable'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-effect': {
+				deps: ['sap/ui/thirdparty/jquery'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-mouse': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-core', 'sap/ui/thirdparty/jqueryui/jquery-ui-widget'],
+				exports: 'jQuery'
+			},
 			'sap/ui/thirdparty/jqueryui/jquery-ui-position': {
-				amd: true,
+				deps: ['sap/ui/thirdparty/jquery'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-resizable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-selectable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-sortable': {
+				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-mouse'],
+				exports: 'jQuery'
+			},
+			'sap/ui/thirdparty/jqueryui/jquery-ui-widget': {
 				deps: ['sap/ui/thirdparty/jquery'],
 				exports: 'jQuery'
 			},
 			'sap/ui/thirdparty/jquery-mobile-custom': {
 				amd: true,
-				deps: ['sap/ui/thirdparty/jquery'],
+				deps: ['sap/ui/thirdparty/jquery', 'sap/ui/Device'],
 				exports: 'jQuery.mobile'
 			},
 			'sap/ui/thirdparty/jszip': {
@@ -294,6 +408,11 @@
 			'sap/ui/thirdparty/punycode': {
 				amd: true,
 				exports: 'punycode'
+			},
+			'sap/ui/thirdparty/RequestRecorder': {
+				amd: true,
+				exports: 'RequestRecorder',
+				deps: ['sap/ui/thirdparty/URI', 'sap/ui/thirdparty/sinon']
 			},
 			'sap/ui/thirdparty/require': {
 				exports: 'define' // 'require', 'requirejs'
@@ -347,55 +466,61 @@
 				amd: true,
 				exports: 'esprima'
 			},
-			'sap/ui/thirdparty/RequestRecorder': {
+			'sap/ui/documentation/sdk/thirdparty/esprima': {
 				amd: true,
-				exports: 'RequestRecorder',
-				deps: ['sap/ui/thirdparty/URI', 'sap/ui/thirdparty/sinon.js']
+				exports: 'esprima'
+			},
+			'sap/viz/libs/canvg': {
+				deps: ['sap/viz/libs/rgbcolor']
+			},
+			'sap/viz/libs/rgbcolor': {
 			},
 			'sap/viz/libs/sap-viz': {
-				amd: true
-			},
-			'sap/viz/libs/sap-viz-info-framework': {
-				amd: true
+				deps: ['sap/viz/library', 'sap/ui/thirdparty/jquery', 'sap/ui/thirdparty/d3', 'sap/viz/libs/canvg']
 			},
 			'sap/viz/libs/sap-viz-info-charts': {
-				amd: true
+				deps: ['sap/viz/libs/sap-viz-info-framework']
 			},
-			'sap/viz/container/libs/sap-viz-controls-vizcontainer': {
-				amd: true
+			'sap/viz/libs/sap-viz-info-framework': {
+				deps: ['sap/ui/thirdparty/jquery', 'sap/ui/thirdparty/d3']
 			},
-			'sap/viz/controls/libs/sap-viz-vizframe': {
-				amd: true
+			'sap/viz/ui5/container/libs/sap-viz-controls-vizcontainer': {
+				deps: ['sap/viz/libs/sap-viz', 'sap/viz/ui5/container/libs/common/libs/rgbcolor/rgbcolor_static']
 			},
-			'sap/viz/controls/libs/sap-viz-vizservices': {
-				amd: true
+			'sap/viz/ui5/controls/libs/sap-viz-vizframe/sap-viz-vizframe': {
+				deps: ['sap/viz/libs/sap-viz-info-charts']
+			},
+			'sap/viz/ui5/controls/libs/sap-viz-vizservices/sap-viz-vizservices': {
+				deps: ['sap/viz/libs/sap-viz-info-charts']
+			},
+			'sap/viz/resources/chart/templates/standard_fiori/template': {
+				deps: ['sap/viz/libs/sap-viz-info-charts']
 			}
 		}
 	});
 
-	// hide sap.ui.define calls from dependency analyzers
-	var _define = sap['ui']['define'];
+	var defineModuleSync = ui5loader._.defineModuleSync;
+	defineModuleSync('sap/ui/thirdparty/baseuri.js', null);
+	if ( typeof ES6Promise !== 'undefined' ) {
+		defineModuleSync('sap/ui/thirdparty/es6-promise.js', ES6Promise);
+	}
+	defineModuleSync('sap/ui/thirdparty/es6-shim-nopromise.js', null);
 
-	// @evo-todo introduce an internal API for these registrations as the declarations should be synchronous
-	_define('ui5loader', function() {
-		return undefined;
-	});
-
-	_define('ui5loader-autoconfig', function() {
-		return undefined;
-	});
+	defineModuleSync('ui5loader.js', null);
+	defineModuleSync('ui5loader-autoconfig.js', null);
 
 	if (bNojQuery && typeof jQuery === 'function') {
 		// when we're executed in the context of the sap-ui-core-noJQuery file,
 		// we try to detect an existing jQuery / jQuery position plugin and register them as modules
-		_define('sap/ui/thirdparty/jquery', function() {
-			return jQuery;
-		});
-		if (jQuery.prototype.position) {
-			_define('sap/ui/thirdparty/jqueryui/jquery-ui-position', function() {
-				return jQuery;
-			});
+		defineModuleSync('sap/ui/thirdparty/jquery.js', jQuery);
+		if (jQuery.ui && jQuery.ui.position) {
+			defineModuleSync('sap/ui/thirdparty/jqueryui/jquery-ui-position.js', jQuery);
 		}
+	}
+
+	var sMainModule = oBootstrapScript && oBootstrapScript.getAttribute('data-sap-ui-main');
+	if ( sMainModule ) {
+		sap.ui.require(sMainModule.trim().split(/\s*,\s*/));
 	}
 
 }());

@@ -4,11 +4,12 @@
 
 //Provides class sap.ui.model.odata.v4.lib._MetadataRequestor
 sap.ui.define([
-	"jquery.sap.global",
 	"./_Helper",
 	"./_V2MetadataConverter",
-	"./_V4MetadataConverter"
-], function (jQuery, _Helper, _V2MetadataConverter, _V4MetadataConverter) {
+	"./_V4MetadataConverter",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function (_Helper, _V2MetadataConverter, _V4MetadataConverter, Log, jQuery) {
 	"use strict";
 
 	return {
@@ -20,13 +21,14 @@ sap.ui.define([
 		 *   The version of the OData service. Supported values are "2.0" and "4.0".
 		 * @param {object} [mQueryParams={}]
 		 *   A map of query parameters as described in
-		 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}
+		 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}. Note that "sap-context-token"
+		 *   is deleted(!) after the first <code>read</code> for a metadata document.
 		 * @returns {object}
 		 *   A new MetadataRequestor object
 		 */
 		create : function (mHeaders, sODataVersion, mQueryParams) {
 			var mUrl2Promise = {},
-				sQueryStr = _Helper.buildQuery(mQueryParams);
+				sQuery = _Helper.buildQuery(mQueryParams);
 
 			return {
 				/**
@@ -62,7 +64,7 @@ sap.ui.define([
 							oData = oJSON.$XML;
 
 						delete oJSON.$XML; // be nice to the garbage collector
-						return jQuery.extend(new Converter().convertXMLMetadata(oData, sUrl),
+						return Object.assign(new Converter().convertXMLMetadata(oData, sUrl),
 							oJSON);
 					}
 
@@ -74,7 +76,7 @@ sap.ui.define([
 						delete mUrl2Promise[sUrl];
 					} else {
 						oPromise = new Promise(function (fnResolve, fnReject) {
-							jQuery.ajax(bAnnotations ? sUrl : sUrl + sQueryStr, {
+							jQuery.ajax(bAnnotations ? sUrl : sUrl + sQuery, {
 								method : "GET",
 								headers : mHeaders
 							}).then(function (oData, sTextStatus, jqXHR) {
@@ -94,12 +96,17 @@ sap.ui.define([
 								}
 								fnResolve(oJSON);
 							}, function (jqXHR, sTextStatus, sErrorMessage) {
-								var oError = _Helper.createError(jqXHR);
+								var oError = _Helper.createError(jqXHR, "Could not load metadata");
 
-								jQuery.sap.log.error("GET " + sUrl, oError.message,
+								Log.error("GET " + sUrl, oError.message,
 									"sap.ui.model.odata.v4.lib._MetadataRequestor");
 								fnReject(oError);
 							});
+							if (!bAnnotations
+								&& mQueryParams && "sap-context-token" in mQueryParams) {
+								delete mQueryParams["sap-context-token"];
+								sQuery = _Helper.buildQuery(mQueryParams);
+							}
 						});
 						if (bPrefetch) {
 							mUrl2Promise[sUrl] = oPromise;

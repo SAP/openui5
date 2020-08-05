@@ -6,6 +6,15 @@
 .sapUxAPObjectPageSection {
 	margin-left: 0;
 	margin-bottom: 0;
+	overflow-anchor: none;
+}
+
+html[data-sap-ui-browser^="ff"] section.sapUxAPObjectPageSection {
+	overflow-anchor: none;
+
+	&[tabindex="0"]:last-of-type {
+		overflow-anchor: auto;
+	}
 }
 
 .sapUxAPObjectPageSectionTitleUppercase {
@@ -19,20 +28,23 @@
 	padding: 0 3rem 0 3rem;
 }
 
-.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSectionHeader,
-.sapUiMedia-Std-Tablet .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSectionHeader,
-html .sapUiContainer-Medium .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSectionHeader {
-	padding-left: 2rem;
+/* header height is involved in calculation of the scroll position
+so we reset it when the section header is hidden */
+.sapUxAPObjectPageSectionHeaderHidden {
+	overflow: hidden;
+	height: 0 !important;
+	padding: 0 !important;
+	border: none !important;
 }
 
-.sapUiMedia-Std-Tablet .sapUxAPObjectPageSectionHeader,
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSectionHeader,
 html .sapUiContainer-Medium .sapUxAPObjectPageSectionHeader {
-	padding: 0 2rem 0 2rem;
+	padding: 0 0 0.5rem 2rem;
 }
 
-.sapUiMedia-Std-Phone .sapUxAPObjectPageSectionHeader,
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSectionHeader,
 html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
-	padding: 0 1rem 0 1rem;
+	padding: 0 0 0.5rem 1rem;
 }
 
 .sapUxAPObjectPageSectionTitle {
@@ -69,9 +81,13 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
 	line-height: 2rem;
 }
 
-/* IE and Edge ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUxAPObjectPageSection:focus {
+	outline-style: dashed;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"].sap-desktop {
 	.sapUxAPObjectPageSection:focus {
 		outline: none;
 		position: relative;

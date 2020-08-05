@@ -1,0 +1,31 @@
+<mvc:View controllerName="test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.controller.MainView" xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true" xmlns="sap.m">
+	<Shell id="shell">
+		<App id="app">
+			<pages>
+				<Page id="page" title="{i18n>title}">
+					<content>
+						<VBox id="vbox" class="sapUiMediumMargin">
+							<Button id="resetAllButton" icon="sap-icon://reset" text="Reset All" press=".resetAllPersonalization" />
+							<ObjectStatus id="overallPersStatus" text="{parts: [
+												  	{path:'/changes'},
+												  	{path:'/firstView/label'},
+												  	{path:'/firstView/variantLabel'},
+												  	{path:'/secondView/label'},
+												  	{path:'/secondView/variantLabel'}
+												  	], formatter:'.formatStatusText'}"
+										  state="{parts: [
+												  	{path:'/changes'},
+												  	{path:'/firstView/label'},
+												  	{path:'/firstView/variantLabel'},
+												  	{path:'/secondView/label'},
+												  	{path:'/secondView/variantLabel'}
+												  	], formatter:'.formatStatusState'}" />
+							<mvc:XMLView id="firstView" viewName="test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.view.FirstSubView"/>
+						</VBox>
+					</content>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>

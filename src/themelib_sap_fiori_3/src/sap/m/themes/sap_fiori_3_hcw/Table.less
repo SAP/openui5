@@ -1,0 +1,64 @@
+/* ================================= */
+/* CSS for control sap.m/Table       */
+/* Quartz High Contrast White theme  */
+/* ================================= */
+
+@_sap_m_Table_SelNavColWidth: 2.75rem;
+
+html[data-sap-ui-browser='ie11'] .sapMListTbl,
+html[data-sap-ui-browser^='ed'] .sapMListTbl,
+.sapMSticky > .sapMListTbl {
+	padding: 2px; /* outline must be visible */
+}
+
+.sapMListTblHeader,
+.sapMListTblFooter {
+	background: @sapUiListBackground;
+}
+
+.sapMListTbl {
+	/* HCB Additional Style */
+	border: 1px solid @sapUiListHeaderBorderColor;
+}
+
+.sapMSticky .sapMTB-Info-CTX.sapMTB.sapMListInfoTBar {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.sapMSticky .sapMListInfoTBarContainer {
+	padding: 2px 0;
+}
+
+/* table column header */
+.sapMListTbl th {
+	border-bottom: 0.125rem solid @sapUiListHeaderBorderColor;
+}
+
+// to ensure that the bottom focus outline is visible on the table header row,
+// the <th> bottom border color is made transparent
+.sapMLIBFocusable:focus > th {
+	border-bottom-color: transparent;
+}
+
+.sapMColumnHeaderActive:focus {
+	outline-width: 3px;
+}
+
+/* table footer */
+.sapMListTblFooter > td {
+	border-top: 0.125rem solid @sapUiListTableFooterBorder;
+}
+
+/* Moved due to new default vertical-align regardless of density */
+.sapMListTblNavCol,
+.sapMListTblCell {
+  vertical-align: top;
+}
+
+.sapUiSizeCompact{
+  .sapMListTblNavCol,
+  .sapMListTblCell {
+    vertical-align: middle;
+  }
+}

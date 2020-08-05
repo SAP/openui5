@@ -2,10 +2,48 @@
  * ${copyright}
  */
 
+// Ensure that sap.ui.unified is loaded before the module dependencies will be required.
+// Loading it synchronously is the only compatible option and doesn't harm when sap.ui.unified
+// already has been loaded asynchronously (e.g. via a dependency declared in the manifest)
+sap.ui.getCore().loadLibrary("sap.ui.unified");
+
 // Provides control sap.m.Menu.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Button', './Dialog', './NavContainer', './List', './Page', './MenuListItem', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/Device', 'sap/ui/core/EnabledPropagator'],
-	function(jQuery, library, Control, Button, Dialog, NavContainer, List, Page, MenuListItem, UfdMenu, UfdMenuItem, Device, EnabledPropagator) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Control',
+	'./Button',
+	'./Dialog',
+	'./NavContainer',
+	'./List',
+	'./Page',
+	'./MenuListItem',
+	'sap/ui/unified/Menu',
+	'sap/ui/unified/MenuItem',
+	'sap/ui/Device',
+	'sap/ui/core/EnabledPropagator',
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Popup"
+],
+	function(
+		library,
+		Control,
+		Button,
+		Dialog,
+		NavContainer,
+		List,
+		Page,
+		MenuListItem,
+		UfdMenu,
+		UfdMenuItem,
+		Device,
+		EnabledPropagator,
+		jQuery,
+		Popup
+	) {
 		"use strict";
+
+		// shortcut for sap.ui.core.Popup.Dock
+		var Dock = Popup.Dock;
 
 		// shortcut for sap.m.ListType
 		var ListType = library.ListType;
@@ -94,7 +132,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		/**
 		 * Map of all available properties in the sap.ui.unified.MenuItem.
 		 * Needed when syncs between sap.m.MenuItem and unified.MenuItem are performed.
-		 * @type {map}
+		 * @type {Object<string,Object>}
 		 * @private
 		 */
 		Menu.UNFIFIED_MENU_ITEMS_PROPS = UfdMenuItem.getMetadata().getAllProperties();
@@ -110,7 +148,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		/**
 		 * Map of all available properties in the sap.m.MenuListItem
 		 * Needed when syncs between sap.m.MenuItem and sap.m.MenuListItem are performed.
-		 * @type {map}
+		 * @type {Object<string,Object>}
 		 * @private
 		 */
 		Menu.MENU_LIST_ITEMS_PROPS = MenuListItem.getMetadata().getAllProperties();
@@ -169,9 +207,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		 * Opens the <code>Menu</code> next to the given control.
 		 * @param {object} oControl The control that defines the position for the menu
 		 * @param {boolean} bWithKeyboard Whether the menu is opened with a shortcut or not
+		 * @param {sap.ui.core.Dock} [sDockMy=sap.ui.core.Popup.Dock.BeginTop] The reference docking location
+		 * of the <code>Menu</code> for positioning the menu on the screen
+		 * @param {sap.ui.core.Dock} [sDockAt=sap.ui.core.Popup.Dock.BeginBottom] The <code>oControl</code>
+		 * reference docking location for positioning the menu on the screen
+		 * @param {string} [sOffset="0 -2"] The offset relative to the docking point,
+		 * specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right).
+		 * If the docking of both "my" and "at" is RTL-sensitive ("begin" or "end"), this offset is automatically mirrored in the RTL case as well.
 		 * @public
 		 */
-		Menu.prototype.openBy = function(oControl, bWithKeyboard) {
+		Menu.prototype.openBy = function(oControl, bWithKeyboard, sDockMy, sDockAt, sOffset) {
 			if (Device.system.phone) {
 				this._openDialog();
 			} else {
@@ -180,8 +225,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 					this._bIsInitialized = true;
 				}
 
-				var eDock = sap.ui.core.Popup.Dock;
-				this._getMenu().open(bWithKeyboard, oControl, eDock.BeginTop, eDock.BeginBottom, oControl, "0 -2");
+				if (!sDockMy) {
+					sDockMy = Dock.BeginTop;
+				}
+				if (!sDockAt) {
+					sDockAt = Dock.BeginBottom;
+				}
+				if (!sOffset) {
+					sOffset = "0 -2";
+				}
+				this._getMenu().open(bWithKeyboard, oControl, sDockMy, sDockAt, oControl, sOffset);
 			}
 		};
 
@@ -214,6 +267,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 			// remove padding for the menu on phone
 			oDialog.removeStyleClass("sapUiPopupWithPadding");
 			this.setAggregation("_dialog", oDialog, true);
+			oDialog.attachAfterClose(this._menuClosed, this);
 		};
 
 		/**
@@ -244,8 +298,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 			this._initMenuForItems(this.getItems());
 		};
 
+		/*
+		 * Allows for any custom function to be called back when accessibility attributes
+		 * of underlying menu are about to be rendered.
+		 * The function is called once per MenuItem
+		 *
+		 * @param {function} fn The callback function
+		 * @private
+		 * @ui5-restricted ObjectPageLayoutABHelper
+		 * @returns void
+		 */
+		Menu.prototype._setCustomEnhanceAccStateFunction = function(fn) {
+			this._fnEnhanceUnifiedMenuAccState = fn;
+		};
+
 		Menu.prototype._initMenuForItems = function(aItems, oParentMenuItem) {
 			var oMenu = new UfdMenu();
+			oMenu._setCustomEnhanceAccStateFunction(this._fnEnhanceUnifiedMenuAccState);
 			oMenu.isCozy = this._isMenuCozy.bind(this, oMenu);
 
 			// Keep in mind that we are adding the style class to sap.m.Menu as the CustomStyleClassSupport is sync
@@ -392,15 +461,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		};
 
 		Menu.prototype._createVisualMenuItemFromItem = function(oItem) {
-			return new UfdMenuItem({
-				id  : this._generateUnifiedMenuItemId(oItem.getId()),
+			var oUfMenuItem = new UfdMenuItem({
+				id: this._generateUnifiedMenuItemId(oItem.getId()),
 				icon: oItem.getIcon(),
 				text: oItem.getText(),
 				startsSection: oItem.getStartsSection(),
 				tooltip: oItem.getTooltip(),
 				visible: oItem.getVisible(),
 				enabled: oItem.getEnabled()
-			});
+			}),
+			i,
+			aCustomData = oItem.getCustomData();
+
+			for (i = 0; i < aCustomData.length; i++) {
+				oItem._addCustomData(oUfMenuItem, aCustomData[i]);
+			}
+
+			return oUfMenuItem;
 		};
 
 		Menu.prototype._addVisualMenuItemFromItem = function(oItem, oMenu, iIndex) {
@@ -735,6 +812,34 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				case 'items':
 					this._onItemsAggregationChanged(oEvent);
 					break;
+				case 'tooltip':
+					this._onTooltipAggregationChanged(oEvent);
+					break;
+			}
+		};
+
+		/**
+		 * Handle the event of changing the "tooltip" aggregation of any menu items and sub-items.
+		 * @param {object} oEvent The event data object
+		 * @private
+		 */
+		Menu.prototype._onTooltipAggregationChanged = function(oEvent) {
+			var sVisualItemId = oEvent.getSource()._getVisualControl(),
+				methodName = oEvent.getParameter("methodName"),
+				methodParams = oEvent.getParameter("methodParams"),
+				oVisualItem;
+
+			if (!sVisualItemId) {
+				return;
+			}
+
+			oVisualItem = sap.ui.getCore().byId(sVisualItemId);
+
+			if (methodName === "set") {
+				oVisualItem.setTooltip(methodParams.item);
+			}
+			if (methodName === "destroy") {
+				oVisualItem.destroyTooltip();
 			}
 		};
 
@@ -821,8 +926,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		/**
 		 * Opens the menu as a context menu.
-		 * @param {object} oEvent The event that is fired
+		 * @param {jQuery.Event | object} oEvent The event object or an object containing offsetX, offsetY
+		 * values and left, top values of the element's position
 		 * @param {object} oOpenerRef The reference of the opener
+		 * @public
 		 */
 		Menu.prototype.openAsContextMenu = function(oEvent, oOpenerRef) {
 

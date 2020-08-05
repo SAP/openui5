@@ -1,0 +1,97 @@
+{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"data": {
+			"json": {
+				"items": [
+					{
+						"title": "Laurent Dubois",
+						"icon": "../images/Elena_Petrova.png",
+						"description": "I am Laurent. I put great attention to detail.",
+						"infoState": "Error",
+						"info": "Manager",
+						"highlight": "Success",
+						"action": {
+							"url": "https://www.w3schools.com"
+						}
+					},
+					{
+						"title": "Alain Chevalier",
+						"icon": "../images/Alain_Chevalier.png",
+						"description": "I am Alain. I put great attention to detail.",
+						"infoState": "Success",
+						"info": "Credit Analyst",
+						"highlight": "Error"
+					},
+					{
+						"title": "Alain Chevalier",
+						"icon": "../images/Monique_Legrand.png",
+						"description": "I am Alain. I put great attention to detail.",
+						"infoState": "Information",
+						"info": "Configuration Expert",
+						"highlight": "Information"
+					},
+					{
+						"title": "Alain Chevalier",
+						"icon": "../images/Alain_Chevalier.png",
+						"description": "I am Alain. I put great attention to detail.",
+						"highlight": "Warning"
+					},
+					{
+						"title": "Laurent Dubois",
+						"icon": "../images/Elena_Petrova.png",
+						"description": "I am Laurent. I put great attention to detail.",
+						"infoState": "Error",
+						"info": "Manager",
+						"highlight": "Success",
+						"action": {
+							"url": "https://www.w3schools.com"
+						}
+					}
+				],
+				"count": 115
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Test default translations",
+			"icon": {
+				"src": "sap-icon://business-objects-experience"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"maxItems": 2,
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"value": "{title}"
+				},
+				"description": {
+					"value": "{description}"
+				},
+				"highlight": "{highlight}",
+				"info": {
+					"state": "{infoState}"
+				}
+			}
+		}
+	}
+}

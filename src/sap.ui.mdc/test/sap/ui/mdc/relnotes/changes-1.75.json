@@ -1,0 +1,77 @@
+{
+  "1.75.0": {
+    "date": "January 2020",
+    "notes": [
+      {
+        "id": "ba1a2d42a193f0070011d5661129fc683b663cd0",
+        "type": "FIX",
+        "text": " Field: bind external set control only on rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080020467"
+          }
+        ]
+      },
+      {
+        "id": "0908a0faee781e9701775146780e64e3a7433871",
+        "type": "FEATURE",
+        "text": " FilterOperatorUtil : DateRange operators added",
+        "references": []
+      },
+      {
+        "id": "7f99b2b5bd7eaa4a145d421096ab0a5624d1ee2a",
+        "type": "FIX",
+        "text": " Field: if no dialog but suggestion opened via icon - no change",
+        "references": []
+      },
+      {
+        "id": "61396f1801be1f74b29b4e6fe3b0b6346ce1d3f5",
+        "type": "FIX",
+        "text": " FieldBase: added check for existing FH",
+        "references": []
+      },
+      {
+        "id": "5adf7a84fbfc122bc7fa32290c7cff09f8446915",
+        "type": "FIX",
+        "text": ": FieldDelegate: better error handling if unknown data type",
+        "references": []
+      },
+      {
+        "id": "73828174227b0b377d2418fea6a7e06f52bbeb1a",
+        "type": "FIX",
+        "text": " ConditionModel: removing unknown condition removes all conditions",
+        "references": []
+      },
+      {
+        "id": "f43ee1dae6fb6fa625616e466885620e69a19bb3",
+        "type": "FIX",
+        "text": " FieldValueHelp: no Tokenizer and Multiselect",
+        "references": []
+      },
+      {
+        "id": "3f14e6cea63227edd80844a8f6060bdae4196a0f",
+        "type": "FIX",
+        "text": ": wrong filter to determine description if InParameter empty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080102969"
+          }
+        ]
+      },
+      {
+        "id": "72f738da78279299de7ce6eab3cf515177ccb5f0",
+        "type": "FEATURE",
+        "text": " FilterField: use default field help for operators",
+        "references": []
+      },
+      {
+        "id": "78ca3fe1cc11b3a4de3b9a0b65e99df2a133eb64",
+        "type": "FIX",
+        "text": " ConditionType: Date validation - use pattern of original type",
+        "references": []
+      }
+    ]
+  }
+}

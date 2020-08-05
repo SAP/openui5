@@ -7,7 +7,7 @@
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.m">
+				data-sap-ui-libs="sap.m, sap.ui.layout">
 		</script>
 		<style type="text/css">
 			.customLabel {
@@ -56,8 +56,7 @@
 				labelFor: oSwitchAcceptRejectLabelled
 			}).addStyleClass("customLabel");
 
-			new sap.m.App().addPage(new sap.m.Page({
-				title: "sap.m.Switch",
+			var oVLayout = new sap.ui.layout.VerticalLayout("switch_page", {
 				content: [
 					new sap.ui.core.HTML({ content: "<h3>Default</h3>" }),
 					oLabel,
@@ -80,6 +79,28 @@
 					oLabelAcceptReject,
 					oSwitchAcceptRejectLabelled,
 					new sap.ui.core.HTML({ content: "<hr>" })
+				]
+			});
+
+			var oVLayout2 = new sap.m.VBox("switch_page2", {
+				renderType: "Bare",
+				items:[
+					new sap.ui.core.HTML({ content: "<h3>In VBox with renderType Bare </h3>" }),
+					new sap.m.Switch({
+						id: "switch_vbox",
+						change: function(oControlEvent) {
+							jQuery.sap.log.info("Event fired: 'change' state property " + this.getState() + " on", this);
+						}
+					}),
+					new sap.ui.core.HTML({ content: "<hr>" })
+				]
+			});
+
+			new sap.m.App().addPage(new sap.m.Page({
+				title: "sap.m.Switch",
+				content: [
+					oVLayout,
+					oVLayout2
 				]
 			}).addStyleClass("sapUiContentPadding")).placeAt("body");
 		</script>

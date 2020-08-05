@@ -31,7 +31,7 @@ sap.ui.define([
 	 * </ul>
 	 * Other usages are not supported.
 	 *
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.unified.calendar.DatesRow
 	 * @version ${version}
 	 *
 	 * @constructor
@@ -44,6 +44,8 @@ sap.ui.define([
 			library : "sap.ui.unified"
 		}
 	});
+
+	OneMonthDatesRow.apiVersion = 2;
 
 	OneMonthDatesRow.prototype.init = function() {
 		DatesRow.prototype.init.apply(this, arguments);
@@ -64,7 +66,7 @@ sap.ui.define([
 			}
 
 			//clear or set to first of the month
-			oSelectedDates[0].setProperty('startDate', oStartDate, true);
+			oSelectedDates[0].setProperty('startDate', oStartDate);
 		}
 
 		return this;
@@ -106,6 +108,13 @@ sap.ui.define([
 		return this;
 	};
 
+	OneMonthDatesRow.prototype.getDays = function() {
+		if (this.iMode === 2) {
+			return 31;
+		} else {
+			return CalendarUtils._daysInMonth(CalendarDate.fromLocalJSDate(this.getStartDate()));
+		}
+	};
 
 	/**
 	 * Displays a given date.

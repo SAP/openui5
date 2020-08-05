@@ -129,30 +129,99 @@ sap.ui.define(["sap/ui/core/library"],
 		 */
 		Consistency: "Consistency",
 		/**
+		 * Fiori Guidelines issue category.
+		 * @public
+		 */
+		FioriGuidelines : "FioriGuidelines",
+		/**
 		 * Functionality issue category.
 		 * @public
 		 */
-		Functionality : "Functionality",
+		Functionality: "Functionality",
 		/**
 		 * Usability issue category.
 		 * @public
 		 */
-		Usability : "Usability",
+		Usability: "Usability",
 		/**
 		 * DataModel issue category.
 		 * @public
 		 */
 		DataModel: "DataModel",
 		/**
+		 * Modularization issue category.
+		 * @public
+		 */
+		Modularization: "Modularization",
+		/**
 		 * Usage issue category.
 		 * @public
 		 */
 		Usage: "Usage",
 		/**
-		 * Accessibility issue category.
+		 * Other issue category.
 		 * @public
 		 */
 		Other: "Other"
+	};
+
+	/**
+	 * Analysis history formats.
+	 * @enum {string}
+	 * @since ${version}
+	 * @public
+	 */
+	sap.ui.support.HistoryFormats = {
+		/**
+		 * ABAP history format.
+		 * @public
+		 */
+		Abap: "Abap",
+		/**
+		 * String history format.
+		 * @public
+		 */
+		String: "String"
+	};
+
+	/**
+	 * Contains the available system presets.
+	 * @enum {object}
+	 * @since ${version}
+	 * @public
+	 */
+	sap.ui.support.SystemPresets = {
+		/**
+		 * The accessibility preset.
+		 *
+		 * @public
+		 */
+		Accessibility : {
+			id: "Accessibility",
+			title: "Accessibility",
+			description: "Accessibility related rules",
+			selections: [
+				// Grouped by library
+				// Public
+				{ruleId: "dialogAriaLabelledBy", libName: "sap.m"},
+				{ruleId: "onlyIconButtonNeedsTooltip", libName: "sap.m"},
+				{ruleId: "inputNeedsLabel", libName: "sap.m"},
+				{ruleId: "titleLevelProperty", libName: "sap.m"},
+				{ruleId: "formTitleOrAriaLabel", libName: "sap.ui.layout"},
+				{ruleId: "formTitleInToolbarAria", libName: "sap.ui.layout"},
+				{ruleId: "formMissingLabel", libName: "sap.ui.layout"},
+				{ruleId: "gridTableAccessibleLabel", libName: "sap.ui.table"},
+				{ruleId: "gridTableColumnTemplateIcon", libName: "sap.ui.table"},
+				{ruleId: "smartFormLabelOrAriaLabel", libName: "sap.ui.comp"},
+				// Internal
+				{ruleId: "icontabbarlabels", libName: "sap.m"},
+				{ruleId: "labeltooltip", libName: "sap.m"},
+				{ruleId: "labelfor", libName: "sap.m"},
+				{ruleId: "labelInDisplayMode", libName: "sap.m"},
+				{ruleId: "texttooltip", libName: "sap.m"},
+				{ruleId: "rbText", libName: "sap.m"}
+			]
+		}
 	};
 
 	return sap.ui.support;

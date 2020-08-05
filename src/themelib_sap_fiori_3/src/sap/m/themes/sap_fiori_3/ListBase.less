@@ -1,0 +1,24 @@
+/* =============================== */
+/* CSS for control sap.m/ListBase  */
+/* Fiori 3 theme                   */
+/* =============================== */
+
+/* Growing feature */
+.sapMGrowingList > .sapMCLI.sapMLIB:not(.sapMLIBActive) {
+	background: @sapUiButtonActionSelectBackground;
+	border-color: @sapUiButtonActionSelectBorderColor;
+}
+
+.sapMGrowingList > .sapMCLI.sapMLIBHoverable:hover {
+	background: @sapUiButtonLiteActionSelectHoverBackground;
+}
+
+.sapMGrowingListDescription,
+.sapMGrowingListTriggerText > .sapMSLITitle {
+	text-shadow: @sapUiShadowText;
+}
+
+.sapMSticky > .sapMListHdrText,
+.sapMSticky > .sapMListHdrTBar.sapMTB-Transparent-CTX {
+	background: lighten(@sapUiListHeaderBackground, 2);
+}

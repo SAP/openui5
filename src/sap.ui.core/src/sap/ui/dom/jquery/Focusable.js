@@ -1,37 +1,24 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
-sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], function(jQuery, domHasTabIndex) {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/hasTabIndex",
+	"sap/ui/dom/isHidden"
+], function(jQuery, domHasTabIndex, isHidden) {
 	"use strict";
 
 	/**
-	 * @exports sap/ui/dom/Focusable
+	 * This module provides the following API:
+	 * <ul>
+	 * <li>{@link jQuery#firstFocusableDomRef}</li>
+	 * <li>{@link jQuery#lastFocusableDomRef}</li>
+	 * <ul>
+	 * @namespace
+	 * @name module:sap/ui/dom/jquery/Focusable
+	 * @public
+	 * @since 1.58
 	 */
-	var Focusable = Object.create(null);
-
-	/**
-	 * Checks whether an Element is invisible for the end user.
-	 *
-	 * This is a combination of jQuery's :hidden selector (but with a slightly
-	 * different semantic, see below) and a check for CSS visibility 'hidden'.
-	 *
-	 * Since jQuery 2.x, inline elements (SPAN etc.) might be considered 'visible'
-	 * although they have zero dimensions (e.g. an empty span). In jQuery 1.x such
-	 * elements had been treated as 'hidden'.
-	 *
-	 * As some UI5 controls rely on the old behavior, this method restores it.
-	 *
-	 * @param {Element} oElem Element to check the dimensions for
-	 * @returns {boolean} Whether the Element either has only zero dimensions or has visiblity:hidden (CSS)
-	 * @private
-	 */
-	function isHidden(oElem) {
-		return (oElem.offsetWidth <= 0 && oElem.offsetHeight <= 0) || jQuery.css(oElem, 'visibility') === 'hidden';
-	}
 
 	/**
 	 * Searches for a descendant of the given node that is an Element and focusable and visible.
@@ -70,16 +57,18 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], fun
 		return null;
 	}
 
-
 	/**
 	 * Returns the first focusable domRef in a given container (the first element of the collection)
 	 *
 	 * @return {Element} The domRef
-	 * @private
+	 * @public
 	 * @author SAP SE
+	 * @since 0.9.0
 	 * @function
+	 * @name jQuery#firstFocusableDomRef
+	 * @requires module:sap/ui/dom/jquery/Focusable
 	 */
-	Focusable.firstDomRef = function() {
+	jQuery.fn.firstFocusableDomRef = function() {
 		var oContainerDomRef = this.get(0);
 
 		if ( !oContainerDomRef || isHidden(oContainerDomRef) ) {
@@ -89,16 +78,18 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], fun
 		return findFocusableDomRef(oContainerDomRef, /* search forward */ true);
 	};
 
-
 	/**
 	 * Returns the last focusable domRef in a given container
 	 *
 	 * @return {Element} The last domRef
-	 * @private
+	 * @public
+	 * @name jQuery#lastFocusableDomRef
 	 * @author SAP SE
+	 * @since 0.9.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/Focusable
 	 */
-	Focusable.lastDomRef = function() {
+	jQuery.fn.lastFocusableDomRef = function() {
 		var oContainerDomRef = this.get(0);
 
 		if ( !oContainerDomRef || isHidden(oContainerDomRef) ) {
@@ -107,10 +98,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], fun
 
 		return findFocusableDomRef(oContainerDomRef, /* search backwards */ false);
 	};
-
-
-	jQuery.fn.firstFocusableDomRef = Focusable.firstDomRef;
-	jQuery.fn.lastFocusableDomRef = Focusable.lastDomRef;
 
 	return jQuery;
 

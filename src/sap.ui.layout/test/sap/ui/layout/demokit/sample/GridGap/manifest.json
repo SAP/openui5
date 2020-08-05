@@ -1,0 +1,39 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.GridGap",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.GridGap.GridGap",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/main.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"GridGap.view.xml",
+					"GridGap.controller.js",
+					"css/main.css",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

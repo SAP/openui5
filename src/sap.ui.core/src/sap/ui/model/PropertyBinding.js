@@ -3,10 +3,16 @@
  */
 
 // Provides an abstract property binding.
-sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
-	function(jQuery, Binding, SimpleType, DataState) {
+sap.ui.define([
+	'./Binding',
+	'./SimpleType',
+	'./DataState',
+	"sap/ui/base/SyncPromise",
+	"sap/base/Log",
+	"sap/base/assert"
+],
+	function(Binding, SimpleType, DataState, SyncPromise, Log, assert) {
 	"use strict";
-
 
 	/**
 	 * Constructor for PropertyBinding
@@ -46,7 +52,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 	 *
 	 * @function
 	 * @name sap.ui.model.PropertyBinding.prototype.getValue
-	 * @return {object} the current value of the bound target
+	 * @return {any} the current value of the bound target
 	 *
 	 * @public
 	 */
@@ -57,139 +63,222 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 	 *
 	 * @function
 	 * @name sap.ui.model.PropertyBinding.prototype.setValue
-	 * @param {object} oValue the value to set for this binding
+	 * @param {any} vValue the value to set for this binding
 	 *
 	 * @public
 	 */
+
+	/**
+	 * Returns a value, after it has formatted using the given function
+	 *
+	 * @param {function} fnFormat the function to format the value
+	 *
+	 * @private
+	 */
+	PropertyBinding.prototype._getBoundValue = function(fnFormat) {
+		var vValue = this.getValue();
+		return fnFormat(vValue);
+	};
+
+	/**
+	 * Sets a value, after it has been parsed and validated using the given function
+	 *
+	 * @param {any} vValue the value to set for this binding
+	 * @param {function} fnParse the function to parse the value
+	 *
+	 * @throws sap.ui.model.ParseException
+	 * @throws sap.ui.model.ValidateException
+	 *
+	 * @private
+	 */
+	PropertyBinding.prototype._setBoundValue = function(vValue, fnParse) {
+		var oDataState = this.getDataState(),
+			that = this;
+
+		if (this.oType) {
+			return SyncPromise.resolve(vValue).then(function(vValue) {
+				return fnParse(vValue);
+			}).then(function(vValue) {
+				return SyncPromise.all([vValue, that.oType.validateValue(vValue)]);
+			}).then(function(aResult) {
+				return aResult[0];
+			}).then(function(vValue) {
+				oDataState.setInvalidValue(undefined);
+				that.setValue(vValue);
+			}).catch(function(oException) {
+				oDataState.setInvalidValue(vValue);
+				that.checkDataState(); //data ui state is dirty inform the control
+				throw oException;
+			}).unwrap();
+		} else {
+			oDataState.setInvalidValue(undefined);
+			that.setValue(vValue);
+		}
+	};
+
+	/** Convert raw to external representation
+	 *  @param vValue raw value
+	 * 	@return external value
+	 * 	@private
+	 */
+	PropertyBinding.prototype._rawToExternal = function(vValue) {
+		if (this.oType) {
+			vValue = this.oType.formatValue(vValue, this.sInternalType);
+		}
+		if (this.fnFormatter) {
+			vValue = this.fnFormatter(vValue);
+		}
+		return vValue;
+	};
+
+	/** Convert external to raw representation
+	 *  @param vValue external value
+	 * 	@return raw value
+	 * 	@private
+	 */
+	PropertyBinding.prototype._externalToRaw = function(vValue) {
+		// formatter doesn't support two way binding
+		if (this.oType) {
+			vValue = this.oType.parseValue(vValue, this.sInternalType);
+		}
+		return vValue;
+	};
+
+	/** Convert raw to internal representation
+	 *  @param vValue raw value
+	 * 	@return internal value
+	 * 	@private
+	 */
+	PropertyBinding.prototype._rawToInternal = function(vValue) {
+		var oFormat;
+		if (this.oType && vValue !== null && vValue !== undefined) {
+			oFormat = this.oType.getModelFormat();
+			assert(oFormat && typeof oFormat.parse === "function", "The input format of " + this.oType + " should be an object with the 'parse' method");
+			vValue = oFormat.parse(vValue);
+		}
+		return vValue;
+	};
+
+	/** Convert internal to raw representation
+	 *  @param vValue internal value
+	 * 	@return raw value
+	 * 	@private
+	 */
+	PropertyBinding.prototype._internalToRaw = function(vValue) {
+		var oFormat;
+		if (vValue !== null && vValue !== undefined) {
+			oFormat = this.oType.getModelFormat();
+			assert(oFormat && typeof oFormat.format === "function", "The model format of " + this.oType + " should be an object with the 'format' method");
+			vValue = oFormat.format(vValue);
+		}
+		return vValue;
+	};
 
 	/**
 	 * Returns the current external value of the bound target which is formatted via a type or formatter function.
 	 *
 	 * @throws sap.ui.model.FormatException
 	 *
-	 * @return {object} the current value of the bound target
+	 * @return {any} the current value of the bound target
 	 *
 	 * @public
 	 */
 	PropertyBinding.prototype.getExternalValue = function() {
-		return this._toExternalValue(this.getValue());
-	};
-
-	/**
-	 * Returns the current external value of the given value which is formatted via a type or formatter function.
-	 *
-	 * @throws sap.ui.model.FormatException
-	 *
-	 * @return {object} the current value of the bound target
-	 *
-	 * @private
-	 */
-	PropertyBinding.prototype._toExternalValue = function(oValue) {
-		if (this.oType) {
-			oValue = this.oType.formatValue(oValue, this.sInternalType);
+		switch (this.sInternalType) {
+			case "raw":
+				return this.getRawValue();
+			case "internal":
+				return this.getInternalValue();
+			default:
+				return this._getBoundValue(this._rawToExternal.bind(this));
 		}
-		if (this.fnFormatter) {
-			oValue = this.fnFormatter(oValue);
-		}
-		return oValue;
 	};
-
 
 	/**
 	 * Sets the value for this binding. The value is parsed and validated against its type and then set to the binding.
 	 * A model implementation should check if the current default binding mode permits
 	 * setting the binding value and if so set the new value also in the model.
 	 *
-	 * @param {object} oValue the value to set for this binding
-	 *
+	 * @param {any} vValue the value to set for this binding
+	 * @return {undefined|Promise} a Promise in case asynchronous parsing/validation is done
 	 * @throws sap.ui.model.ParseException
 	 * @throws sap.ui.model.ValidateException
 	 *
 	 * @public
 	 */
-	PropertyBinding.prototype.setExternalValue = function(oValue) {
-		// formatter doesn't support two way binding
-		if (this.fnFormatter) {
-			jQuery.sap.log.warning("Tried to use twoway binding, but a formatter function is used");
-			return;
+	PropertyBinding.prototype.setExternalValue = function(vValue) {
+		switch (this.sInternalType) {
+			case "raw":
+				return this.setRawValue(vValue);
+			case "internal":
+				return this.setInternalValue(vValue);
+			default:
+				if (this.fnFormatter) {
+					Log.warning("Tried to use twoway binding, but a formatter function is used");
+					return;
+				}
+				return this._setBoundValue(vValue, this._externalToRaw.bind(this));
 		}
-
-		var oDataState = this.getDataState();
-		try {
-			if (this.oType) {
-				oValue = this.oType.parseValue(oValue, this.sInternalType);
-				this.oType.validateValue(oValue);
-			}
-		} catch (oException) {
-			oDataState.setInvalidValue(oValue);
-			this.checkDataState(); //data ui state is dirty inform the control
-			throw oException;
-		}
-		// if no type specified set value directly
-		oDataState.setInvalidValue(undefined);
-		this.setValue(oValue);
 	};
 
 	/**
 	 * Returns the related JavaScript primitive value of the bound target which is parsed by the {@link sap.ui.model.SimpleType#getModelFormat model format} of this binding's type.
 	 * If this binding doesn't have a type, the original value which is stored in the model is returned.
 	 *
-	 * This method will be used when it's included in a {@link sap.ui.model.CompositeBinding CompositeBinding} and the CompositeBinding needs to have the related
+	 * This method will be used when targetType if set to "internal" or it's included in a {@link sap.ui.model.CompositeBinding CompositeBinding} and the CompositeBinding needs to have the related
 	 * JavaScript primitive values for its type or formatter.
 	 *
-	 * @return {object} the value which is parsed by the model format of the bound target or the original value in case of no type.
+	 * @return {any} the value which is parsed by the model format of the bound target or the original value in case of no type.
 	 *
 	 * @public
 	 */
 	PropertyBinding.prototype.getInternalValue = function() {
-		var oValue = this.getValue();
-		var oFormat;
-
-		if (this.oType && oValue !== null && oValue !== undefined) {
-			oFormat = this.oType.getModelFormat();
-
-			jQuery.sap.assert(oFormat && typeof oFormat.parse === "function", "The input format of " + this.oType + " should be an object with the 'parse' method");
-			return oFormat.parse(oValue);
-		}
-
-		return oValue;
+		return this._getBoundValue(this._rawToInternal.bind(this));
 	};
 
 	/**
 	 * Sets the value for this binding with the related JavaScript primitive type. The value is formatted with the {@link sap.ui.model.SimpleType#getModelFormat model format} and validated against its type and then set to the model.
 	 *
-	 * @param {object} oValue the value to set for this binding
+	 * @param {any} vValue the value to set for this binding
 	 *
 	 * @throws sap.ui.model.ValidateException
 	 *
 	 * @public
 	 */
-	PropertyBinding.prototype.setInternalValue = function(oValue) {
-		var oFormat;
-		// formatter doesn't support two way binding
-		if (this.fnFormatter) {
-			jQuery.sap.log.warning("Tried to use twoway binding, but a formatter function is used");
-			return;
-		}
+	PropertyBinding.prototype.setInternalValue = function(vValue) {
+		return this._setBoundValue(vValue, this._internalToRaw.bind(this));
+	};
 
-		var oDataState = this.getDataState();
-		try {
-			if (this.oType && oValue !== null && oValue !== undefined) {
-				oFormat = this.oType.getModelFormat();
+	/**
+	 * Returns the raw model value, as it exists in the model dataset
+	 *
+	 * This method will be used when targetType of a binding is set to "raw" or it's included in a {@link sap.ui.model.CompositeBinding CompositeBinding} and the CompositeBinding needs to have the related
+	 * JavaScript primitive values for its type or formatter.
+	 *
+	 * @return {any} the value which is parsed by the model format of the bound target or the original value in case of no type.
+	 *
+	 * @public
+	 */
+	PropertyBinding.prototype.getRawValue = function() {
+		return this._getBoundValue(function(vValue) {
+			return vValue;
+		});
+	};
 
-				jQuery.sap.assert(oFormat && typeof oFormat.format === "function", "The model format of " + this.oType + " should be an object with the 'format' method");
-				oValue = oFormat.format(oValue);
-
-				this.oType.validateValue(oValue);
-			}
-		} catch (oException) {
-			oDataState.setInvalidValue(oValue);
-			this.checkDataState(); //data ui state is dirty inform the control
-			throw oException;
-		}
-		// if no type specified set value directly
-		oDataState.setInvalidValue(undefined);
-		this.setValue(oValue);
+	/**
+	 * Sets the value for this binding with the raw model value. This setter will perform type
+	 * validation, in case a type is defined on the binding.
+	 *
+	 * @param {any} vValue the value to set for this binding
+	 *
+	 * @throws sap.ui.model.ValidateException
+	 *
+	 * @public
+	 */
+	PropertyBinding.prototype.setRawValue = function(vValue) {
+		return this._setBoundValue(vValue, function(vValue) {
+			return vValue;
+		});
 	};
 
 	/**
@@ -263,42 +352,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 	PropertyBinding.prototype.resume = function() {
 		this.bSuspended = false;
 		this.checkUpdate(true);
-	};
-
-	/**
-	 * Checks whether an update of the data state of this binding is required.
-	 *
-	 * @param {map} mPaths A Map of paths to check if update needed
-	 * @private
-	 */
-	PropertyBinding.prototype.checkDataState = function(mPaths) {
-		var sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null,
-			oDataState = this.getDataState(),
-			that = this;
-
-		function fireChange() {
-			that.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
-			oDataState.changed(false);
-			that._sDataStateTimout = null;
-		}
-
-		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
-			if (sResolvedPath) {
-				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
-			}
-			if (oDataState && oDataState.changed()) {
-				if (this.mEventRegistry["DataStateChange"]) {
-					this.fireEvent("DataStateChange", { dataState: oDataState });
-				}
-				if (this.bIsBeingDestroyed) {
-					fireChange();
-				} else if (this.mEventRegistry["AggregatedDataStateChange"]) {
-					if (!this._sDataStateTimout) {
-						this._sDataStateTimout = setTimeout(fireChange, 0);
-					}
-				}
-			}
-		}
 	};
 
 	return PropertyBinding;

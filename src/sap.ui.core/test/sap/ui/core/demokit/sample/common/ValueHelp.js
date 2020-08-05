@@ -2,29 +2,32 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/m/Button',
-	'sap/m/Column',
-	'sap/m/ColumnListItem',
-	'sap/m/ComboBox',
-	'sap/m/Input',
-	'sap/m/PlacementType',
-	'sap/m/Popover',
-	'sap/m/Table',
-	'sap/m/Text',
+	"sap/base/Log",
+	"sap/m/Button",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/ComboBox",
+	"sap/m/Input",
+	"sap/m/library",
+	"sap/m/ResponsivePopover",
+	"sap/m/Table",
+	"sap/m/Text",
 	"sap/ui/core/Control",
 	"sap/ui/core/Item",
 	"sap/ui/model/odata/v4/ValueListType"
-], function(Button, Column, ColumnListItem, ComboBox, Input,  PlacementType, Popover, Table, Text,
-		Control, Item, ValueListType) {
+], function (Log, Button, Column, ColumnListItem, ComboBox, Input, library, ResponsivePopover,
+		Table, Text, Control, Item, ValueListType) {
 	"use strict";
 
-	var ValueHelp;
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
 
-	ValueHelp = Control.extend("sap.ui.core.sample.common.ValueHelp", {
+	return Control.extend("sap.ui.core.sample.common.ValueHelp", {
 		metadata : {
 			interfaces : ["sap.ui.core.IFormContent"],
 			properties : {
 				enabled : {type: "boolean", defaultValue: true, bindable: "bindable"},
+				qualifier : {type: "string", defaultValue: "", bindable: "bindable"},
 				value: {type: "string", group: "Data", defaultValue: null, bindable: "bindable"}
 			},
 			aggregations : {
@@ -45,13 +48,11 @@ sap.ui.define([
 		},
 
 		renderer : {
+			apiVersion: 2,
 			render : function(oRm, oValueHelp) {
-				oRm.write("<div");
-				oRm.writeControlData(oValueHelp);
-				oRm.writeClasses(oValueHelp);
-				oRm.write(">");
+				oRm.openStart("div", oValueHelp).openEnd();
 				oRm.renderControl(oValueHelp.getAggregation("field"));
-				oRm.write("</div>");
+				oRm.close("div");
 			}
 		},
 
@@ -63,10 +64,17 @@ sap.ui.define([
 		addAssociation : function() {
 			var oField = this.getAggregation("field");
 
+			Control.prototype.addAssociation.apply(this, arguments);
 			if (oField) {
 				oField.addAssociation.apply(oField, arguments);
-			} // else: will be called again later
+			}
 			return this;
+		},
+
+		getAccessibilityInfo : function() {
+			var oField = this.getAggregation("field");
+
+			return oField && oField.getAccessibilityInfo();
 		},
 
 		removeAssociation : function() {
@@ -75,6 +83,7 @@ sap.ui.define([
 			if (oField) {
 				oField.removeAssociation.apply(oField, arguments);
 			}
+			Control.prototype.removeAssociation.apply(this, arguments);
 			return this;
 		},
 
@@ -118,6 +127,7 @@ sap.ui.define([
 							});
 					}
 					that.setAggregation("field", oField);
+					that.getAriaLabelledBy().forEach(oField.addAriaLabelledBy.bind(oField));
 				});
 			}
 		},
@@ -127,7 +137,7 @@ sap.ui.define([
 				oComboBox = this.getAggregation("field"),
 				that = this;
 
-			oBinding.requestValueListInfo().then(function (mValueListInfo) {
+			oBinding.requestValueListInfo(true).then(function (mValueListInfo) {
 				var oItem = new Item(),
 					oValueListMapping = mValueListInfo[""],
 					aParameters = oValueListMapping.Parameters,
@@ -154,9 +164,8 @@ sap.ui.define([
 					template : oItem
 				});
 				oComboBox.attachSelectionChange(onSelectionChange);
-			}, function (oError) {
-				jQuery.sap.log.error(oError, undefined,
-					"sap.ui.core.sample.common.ValueHelp");
+			}).catch(function (oError) {
+				Log.error(oError, undefined, "sap.ui.core.sample.common.ValueHelp");
 			});
 		},
 
@@ -169,14 +178,13 @@ sap.ui.define([
 				oInput = this.getAggregation("field"),
 				that = this;
 
-			oBinding.requestValueListInfo().then(function (mValueListInfo) {
+			oBinding.requestValueListInfo(true).then(function (mValueListInfo) {
 				var oButton = new Button({
 						icon : "sap-icon://decline",
 						tooltip : "Close"
 					}),
 					oColumnListItem = new ColumnListItem(),
-					oPopover = new Popover({
-						contentMinWidth : "20em",
+					oPopover = new ResponsivePopover({
 						endButton : oButton,
 						modal : true,
 						placement : PlacementType.Auto
@@ -186,7 +194,7 @@ sap.ui.define([
 						growing : true,
 						mode : "SingleSelectMaster"
 					}),
-					oValueListMapping = mValueListInfo[""]; // TODO not necessarily correct
+					oValueListMapping = mValueListInfo[that.getQualifier()];
 
 				function onClose() {
 					oPopover.close();
@@ -199,17 +207,12 @@ sap.ui.define([
 					oPopover.close();
 				}
 
-				// TODO use Label annotation
-				oPopover.setTitle("Value Help: " + oValueListMapping.CollectionPath);
-				oTable.setModel(oValueListMapping.$model);
-				oTable.bindItems({
-					path : "/" + oValueListMapping.CollectionPath,
-					template : oColumnListItem
-				});
+				oPopover.setTitle("Value Help: "
+					+ (oValueListMapping.Label || oValueListMapping.CollectionPath));
 				oValueListMapping.Parameters.forEach(function (oParameter) {
 					var sParameterPath = oParameter.ValueListProperty;
 
-					// TODO use Label annotation
+					// TODO label from the property
 					oTable.addColumn(new Column({
 						header : new Text({
 							text : sParameterPath,
@@ -218,15 +221,19 @@ sap.ui.define([
 					}));
 					oColumnListItem.addCell(new Text({text : "{" + sParameterPath + "}"}));
 				});
+				oTable.bindItems({
+					path : "/" + oValueListMapping.CollectionPath,
+					template : oColumnListItem
+				});
+				oTable.setModel(oValueListMapping.$model);
 				oTable.attachSelectionChange(onSelectionChange);
 				oButton.attachPress(onClose);
 				oPopover.addContent(oTable);
 				oPopover.data("openedBy", oInput);
+				oPopover.setInitialFocus(oTable);
 				oPopover.openBy(oInput);
-
-			}, function (oError) {
-				jQuery.sap.log.error(oError, undefined,
-					"sap.ui.core.sample.common.ValueHelp");
+			}).catch(function (oError) {
+				Log.error(oError, undefined, "sap.ui.core.sample.common.ValueHelp");
 			});
 		},
 
@@ -245,6 +252,4 @@ sap.ui.define([
 			}
 		}
 	});
-
-	return ValueHelp;
 });

@@ -1,0 +1,29 @@
+{
+  "1.71.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "dc46258a8937665ae512fdab79550d6ff5b03bcb",
+        "type": "FIX",
+        "text": " REG: Adapt UI ObjectPageLayout exception is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980328772"
+          }
+        ]
+      },
+      {
+        "id": "12da1543908689e75266015a727889216e2a7637",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Prevent redundant calculations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980336508"
+          }
+        ]
+      }
+    ]
+  }
+}

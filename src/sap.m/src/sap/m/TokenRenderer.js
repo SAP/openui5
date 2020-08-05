@@ -17,6 +17,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 	 * @namespace
 	 */
 	var TokenRenderer = {
+		apiVersion: 2
 	};
 
 
@@ -27,57 +28,61 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenRenderer.render = function(oRm, oControl){
-		// write the HTML into the render manager
-		oRm.write("<div tabindex=\"-1\"");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMToken");
+		var sTooltip = oControl._getTooltip(oControl, oControl.getEditable() && oControl.getProperty("editableParent")),
+			oDeleteIcon = oControl.getAggregation("deleteIcon"),
+			aAccDescribebyValues = [], // additional accessibility attributes
+			oAccAttributes = {
+				role: "option"
+			};
 
-		oRm.writeAttribute("role", "listitem");
-		oRm.writeAttribute("aria-readonly", !oControl.getEditable());
-		oRm.writeAttribute("aria-selected", oControl.getSelected());
+		// write the HTML into the render manager
+		oRm.openStart("div", oControl).attr("tabindex", "-1").class("sapMToken");
 
 		if (oControl.getSelected()) {
-			oRm.addClass("sapMTokenSelected");
+			oRm.class("sapMTokenSelected");
 		}
 
 		if (!oControl.getEditable()) {
-			oRm.addClass("sapMTokenReadOnly");
+			oRm.class("sapMTokenReadOnly");
 		}
 
-		oRm.writeClasses();
+		if (oControl.getTruncated()) {
+			oRm.class("sapMTokenTruncated");
+		}
 
 		// add tooltip if available
-		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 
-		var oAccAttributes = {}; // additional accessibility attributes
+		// ARIA attributes
+		aAccDescribebyValues.push(InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_LABEL"));
+
+		if (oControl.getEditable() && oControl.getProperty("editableParent")) {
+			aAccDescribebyValues.push(InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE"));
+		}
+
+		if (oControl.getSelected()) {
+			aAccDescribebyValues.push(InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_SELECTED"));
+		}
 
 		//ARIA attributes
 		oAccAttributes.describedby = {
-			value: InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_LABEL"),
+			value: aAccDescribebyValues.join(" "),
 			append: true
 		};
 
-		if (oControl.getEditable()) {
-			oAccAttributes.describedby = {
-				value: InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE"),
-				append: true
-			};
-		}
+		oRm.accessibilityState(oControl, oAccAttributes);
 
-		oRm.writeAccessibilityState(oControl, oAccAttributes);
-
-		oRm.write(">");
+		oRm.openEnd();
 
 		TokenRenderer._renderInnerControl(oRm, oControl);
 
-		if (oControl.getEditable()) {
-			oRm.renderControl(oControl._deleteIcon);
+		if (oControl.getEditable() && oDeleteIcon) {
+			oRm.renderControl(oDeleteIcon);
 		}
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	/**
@@ -89,20 +94,18 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 	TokenRenderer._renderInnerControl = function(oRm, oControl){
 		var sTextDir = oControl.getTextDirection();
 
-		oRm.write("<span");
-		oRm.addClass("sapMTokenText");
-		oRm.writeClasses();
+		oRm.openStart("span").class("sapMTokenText");
 		// set text direction
 		if (sTextDir !== TextDirection.Inherit) {
-			oRm.writeAttribute("dir", sTextDir.toLowerCase());
+			oRm.attr("dir", sTextDir.toLowerCase());
 		}
-		oRm.write(">");
+		oRm.openEnd();
 
 		var title = oControl.getText();
 		if (title) {
-			oRm.writeEscaped(title);
+			oRm.text(title);
 		}
-		oRm.write("</span>");
+		oRm.close("span");
 	};
 
 

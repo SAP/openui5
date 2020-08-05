@@ -4,13 +4,16 @@
 
 // Provides control sap.m.Shell.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
+	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
-	'sap/m/ShellRenderer'
+	'sap/m/ShellRenderer',
+	"sap/ui/util/Mobile",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(jQuery, library, Control, coreLibrary, ShellRenderer) {
+	function(library, Core, Control, coreLibrary, ShellRenderer, Mobile, Log, jQuery) {
 		"use strict";
 
 
@@ -146,17 +149,18 @@ sap.ui.define([
 
 		Shell.prototype.init = function() {
 			// theme change might change the logo
-			sap.ui.getCore().attachThemeChanged(jQuery.proxy(function(){
+			Core.attachThemeChanged(jQuery.proxy(function(){
 				var $hdr = this.$("hdr");
 				if ($hdr.length) {
 					$hdr.find(".sapMShellLogo").remove(); // remove old logo, if present
-					var html = ShellRenderer.getLogoImageHtml(this);
+					var rm = Core.createRenderManager();
+					var html = ShellRenderer.getLogoImageHtml(rm, this);
 					$hdr.prepend(jQuery(html)); // insert new logo
 				}
 			}, this));
 
 
-			jQuery.sap.initMobile({
+			Mobile.init({
 				statusBar: "default",
 				hideBrowser: true
 			});
@@ -216,7 +220,7 @@ sap.ui.define([
 
 		Shell.prototype.setBackgroundOpacity = function(fOpacity) {
 			if (fOpacity > 1 || fOpacity < 0) {
-				jQuery.sap.log.warning("Invalid value " + fOpacity + " for Shell.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
+				Log.warning("Invalid value " + fOpacity + " for Shell.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
 				return this;
 			}
 			this.$("BG").css("opacity", fOpacity);
@@ -225,7 +229,7 @@ sap.ui.define([
 
 		Shell.prototype.setHomeIcon = function(oIcons) {
 			this.setProperty("homeIcon", oIcons, true); // no rerendering
-			jQuery.sap.setIcons(oIcons);
+			Mobile.setIcons(oIcons);
 			return this;
 		};
 

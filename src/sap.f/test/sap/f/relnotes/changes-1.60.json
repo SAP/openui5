@@ -1,0 +1,141 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "bed3d6d5d26b256c85bd3e476173616092f866e5",
+        "type": "FIX",
+        "text": "FlexibleColumnLayout: LocalBusyIndicator's z-index is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880527737"
+          }
+        ]
+      },
+      {
+        "id": "7b0230f2240b84a2c7ea4918e2470d62d7929053",
+        "type": "FIX",
+        "text": "DynamicPage: Initially snapped header excluded from tab chain",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880276579"
+          }
+        ]
+      },
+      {
+        "id": "2cadbbbd92e87b4625dfdb5372d7a4b0ae62f84d",
+        "type": "FIX",
+        "text": "FlexibleColumnLayout: Fixed disappearing of navigation actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880300169"
+          }
+        ]
+      },
+      {
+        "id": "af6ce1472b964b642ada273beafd1fa68ae62d1b",
+        "type": "FIX",
+        "text": "FlexibleColumnLayout: Updated test page",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870345835"
+          }
+        ]
+      },
+      {
+        "id": "9e27e3efb4b38c34216e6babb798dcc341ce2903",
+        "type": "FEATURE",
+        "text": "Card",
+        "references": []
+      },
+      {
+        "id": "7f92b122f7b24493a8bdeccb73899ec335c82839",
+        "type": "FIX",
+        "text": "SemanticPage: Content padding CSS classes are now passed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870372984"
+          }
+        ]
+      },
+      {
+        "id": "4bab8534e0625303b3d991a703ff6e51cb577f11",
+        "type": "FEATURE",
+        "text": "Card Implementation",
+        "references": []
+      },
+      {
+        "id": "49288c64d1c1c1d924a9b4772944105f36b615ee",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Preserved scroll position on show/hide",
+        "references": []
+      },
+      {
+        "id": "45bf56e8c3286e50a82e0fdca1b0e617076c59d9",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Expand/Collapse buttons tolltip fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870375315"
+          }
+        ]
+      },
+      {
+        "id": "39adada22add74b1446aba4c9098fbd77421ba6e",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Fixed unit test failure",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880594762"
+          }
+        ]
+      },
+      {
+        "id": "a84ddd6423d0f6d3575fe81cd735eb168d48e30c",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Fixed unit test failure in Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880594762"
+          }
+        ]
+      },
+      {
+        "id": "0d85f4b0668faee4c070e5f5d9b2b1c849aea7fe",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Header without content title issues fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880566620"
+          }
+        ]
+      },
+      {
+        "id": "d2e8b6ed7a4685856a619225398c8119c8db7aae",
+        "type": "FEATURE",
+        "text": "sap.f.GridList: New List based control",
+        "references": []
+      },
+      {
+        "id": "6d67fc01e82b806399829c38db46181d9f1ef573",
+        "type": "FIX",
+        "text": "API Documentation: Documentation is improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880546926"
+          }
+        ]
+      }
+    ]
+  }
+}

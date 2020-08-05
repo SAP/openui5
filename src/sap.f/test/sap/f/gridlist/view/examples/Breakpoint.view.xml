@@ -1,0 +1,88 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f"
+    controllerName="sap.f.gridlist.controller.Main">
+
+    <f:GridList
+		headerText="GridList with breakpoint layouts"
+		items="{ path: '/' }">
+
+		<f:customLayout>
+            <grid:GridResponsiveLayout layoutChange="onLayoutChange">
+                <grid:layoutS>
+                    <grid:GridSettings
+                        gridTemplateColumns="repeat(auto-fit, 8rem)"
+                        gridGap="0.25rem 0.25rem">
+                    </grid:GridSettings>
+                </grid:layoutS>
+                <grid:layoutM>
+                    <grid:GridSettings
+                        gridTemplateColumns="repeat(auto-fit, 12rem)"
+                        gridGap="0.5rem 0.5rem">
+                    </grid:GridSettings>
+                </grid:layoutM>
+                <grid:layoutL>
+                    <grid:GridSettings
+                        gridTemplateColumns="repeat(auto-fit, 16rem)"
+                        gridGap="0.75rem 0.75rem">
+                    </grid:GridSettings>
+                </grid:layoutL>
+                <grid:layoutXL>
+                    <grid:GridSettings
+                        gridTemplateColumns="repeat(auto-fit, 20rem)"
+                        gridGap="1rem 1rem">
+                    </grid:GridSettings>
+                </grid:layoutXL>
+            </grid:GridResponsiveLayout>
+        </f:customLayout>
+
+		<CustomListItem>
+			<VBox height="100%">
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" />
+					</layoutData>
+					<Title text="{title} (Click me)" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</VBox>
+		</CustomListItem>
+    </f:GridList>
+
+    <f:GridList
+		headerText="GridList with breakpoint layout for size 'S' and default for the other sizes"
+		items="{ path: '/' }">
+
+        <f:customLayout>
+            <grid:GridResponsiveLayout layoutChange="onLayoutChange">
+                <grid:layoutS>
+                    <grid:GridSettings
+                        gridTemplateColumns="repeat(auto-fit, 8rem)"
+                        gridGap="0.25rem 0.25rem">
+                    </grid:GridSettings>
+                </grid:layoutS>
+                <grid:layout>
+                    <grid:GridSettings
+                        gridTemplateColumns="repeat(auto-fit, 20rem)"
+                        gridGap="1rem 1rem">
+                    </grid:GridSettings>
+                </grid:layout>
+            </grid:GridResponsiveLayout>
+        </f:customLayout>
+
+		<CustomListItem>
+			<VBox height="100%">
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<Title text="{title} (Click me)" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</VBox>
+		</CustomListItem>
+    </f:GridList>
+
+</mvc:View>

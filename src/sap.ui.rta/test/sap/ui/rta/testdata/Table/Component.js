@@ -1,17 +1,12 @@
 sap.ui.define([
-	'sap/ui/core/UIComponent',
-	'sap/ui/core/mvc/XMLView',
-	"sap/ui/fl/FakeLrepConnectorLocalStorage"
+	"sap/ui/core/UIComponent"
 ],
 function(
-	UIComponent,
-	XMLView,
-	FakeLrepConnectorLocalStorage
+	UIComponent
 ) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.m.sample.Table.Component", {
-
 		metadata : {
 			manifest: "json",
 			publicMethods : [
@@ -40,8 +35,6 @@ function(
 	});
 
 	Component.prototype.createContent = function () {
-		this._createFakeLrep();
-
 		var oApp = new sap.m.App();
 
 		var oPage = sap.ui.view(this.createId("idMain1"), {
@@ -54,10 +47,5 @@ function(
 		return oApp;
 	};
 
-	Component.prototype._createFakeLrep = function () {
-		FakeLrepConnectorLocalStorage.enableFakeConnector();
-	};
-
 	return Component;
-
 });

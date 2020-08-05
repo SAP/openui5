@@ -1,0 +1,30 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.WizardCurrentStep.controller.Branching"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Wizard
+		id="BranchingWizard"
+		enableBranching="true"
+		class="sapUiResponsivePadding--header sapUiResponsivePadding--content">
+		<WizardStep validated="false" id="A" title="A" subsequentSteps="B1, B2">
+
+			<RadioButtonGroup id="PathSelection" select="discardAndApplyPath">
+				<buttons>
+					<RadioButton text="A->B1->C->D->E->F1->F2->G"/>
+					<RadioButton text="A->B2->C->D->E->F1->G" />
+					<RadioButton text="A->B1->B2->C->D->E" />
+				</buttons>
+			</RadioButtonGroup>
+
+		</WizardStep>
+		<WizardStep validated="false" id="B1" title="B1" nextStep="C" />
+		<WizardStep validated="false" id="B2" title="B2" nextStep="C" />
+		<WizardStep validated="false" id="C" title="C" nextStep="D" />
+		<WizardStep validated="false" id="D" title="D" nextStep="E" />
+		<WizardStep validated="false" id="E" title="E" subsequentSteps="F1, F2" />
+		<WizardStep validated="false" id="F1" title="F1" nextStep="G" />
+		<WizardStep validated="false" id="F2" title="F2" nextStep="G" />
+		<WizardStep validated="false" id="G" title="G" />
+	</Wizard>
+</mvc:View>

@@ -1,0 +1,4 @@
+<mvc:View controllerName="mvc.testdata.ControllerExtensionTest.Test2.Test" xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
+	<m:Button text="Click me"></m:Button>
+</mvc:View>

@@ -28,6 +28,7 @@ sap.ui.define(["sap/m/library"], function (library) {
 	var classNameFooterTitle = 'sapMLightBoxTitle';
 	var classNameFooterSubtitle = 'sapMLightBoxSubtitle';
 	var classNameFooterTwoLines = 'sapMLightBoxFooterTwoLines';
+	var classNameTopCornersRadius = 'sapMLightBoxTopCornersRadius';
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -45,10 +46,15 @@ sap.ui.define(["sap/m/library"], function (library) {
 
 		oRm.write('<div');
 		oRm.writeControlData(oControl);
+		oRm.writeAttribute("tabindex", "-1");
 		oRm.addClass(className);
 
 		if (lightBoxItem.getSubtitle()) {
 			oRm.addClass(classNameTwoLines);
+		}
+
+		if (oControl._isLightBoxBiggerThanMinDimensions) {
+			oRm.addClass(classNameTopCornersRadius);
 		}
 
 		if (imageState !== LightBoxLoadingStates.Error) {
@@ -60,6 +66,7 @@ sap.ui.define(["sap/m/library"], function (library) {
 
 		oRm.writeAccessibilityState({
 			role: 'dialog',
+			modal: true,
 			labelledby: invisiblePopupText && invisiblePopupText.getId()
 		});
 

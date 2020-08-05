@@ -1,0 +1,18 @@
+{
+	"demo": {},
+	"explored": {
+		"entitiesDefaults": {
+			"formFactors": "ML"
+		},
+		"samplesRef": [
+			{
+				"namespace": "sap.ui.mdc.sample",
+				"ref": "test-resources/sap/ui/mdc/demokit/sample"
+			}
+		],
+		"entities": [
+		],
+		"samples": [
+		]
+	}
+}

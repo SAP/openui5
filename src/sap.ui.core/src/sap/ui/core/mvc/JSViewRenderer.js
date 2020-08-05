@@ -14,50 +14,28 @@ sap.ui.define(['./ViewRenderer'],
 	 * @alias sap.ui.core.mvc.JSViewRenderer
 	 */
 	var JSViewRenderer = {
+		apiVersion: 2
 	};
 
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	JSViewRenderer.render = function(oRenderManager, oControl){
-		// convenience variable
-		var rm = oRenderManager;
-
-		// write the HTML into the render manager
-		rm.write("<div");
-		rm.writeControlData(oControl);
-		rm.addClass("sapUiView");
-		rm.addClass("sapUiJSView");
+	JSViewRenderer.render = function(rm, oControl){
+		rm.openStart("div", oControl);
+		rm.class("sapUiView");
+		rm.class("sapUiJSView");
 		ViewRenderer.addDisplayClass(rm, oControl);
-		if (oControl.getWidth()) {
-			rm.addStyle("width", oControl.getWidth());
-		}
-		if (oControl.getHeight()) {
-			rm.addStyle("height", oControl.getHeight());
-		}
-		rm.writeStyles();
-		rm.writeClasses();
-		rm.write(">");
+		rm.style("width", oControl.getWidth());
+		rm.style("height", oControl.getHeight());
+		rm.openEnd();
 
-		var content = oControl.getContent();
-		if (content) {
-			if (Array.isArray(content)) {
-				// looks like an Array
-				for (var i = 0; i < content.length; i++) {
-					rm.renderControl(content[i]);
-				}
+		oControl.getContent().forEach(rm.renderControl, rm);
 
-			} else if (content) {
-				// should be a Control
-				rm.renderControl(content);
-			}
-		}
-
-		rm.write("</div>");
+		rm.close("div");
 	};
 
 

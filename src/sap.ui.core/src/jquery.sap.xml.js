@@ -5,9 +5,8 @@
 // Provides xml parsing and error checking functionality.
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/xml/XMLParser',
-	'sap/ui/xml/serializeXML'
-], function(jQuery, XMLParser, serializeXML) {
+	'sap/ui/util/XMLHelper'
+], function(jQuery, XMLHelper) {
 	"use strict";
 
 	/**
@@ -23,8 +22,9 @@ sap.ui.define([
 	 *         getParseError. An error occurred if the errorCode property of the parseError is != 0.
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/util/XMLHelper.parse} instead
 	 */
-	jQuery.sap.parseXML = XMLParser.parse;
+	jQuery.sap.parseXML = XMLHelper.parse;
 
 	/**
 	 * Serializes the specified XML document into a string representation.
@@ -33,6 +33,7 @@ sap.ui.define([
 	 *            oXMLDocument the XML document object to be serialized as string
 	 * @return {object} the serialized XML string
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/util/XMLHelper.serialize} instead
 	 */
 	jQuery.sap.serializeXML = function(oXMLDocument) {
 		var sXMLString = "";
@@ -43,11 +44,14 @@ sap.ui.define([
 			}
 		}
 		if (window.XMLSerializer) {
-			return serializeXML(oXMLDocument);
+			return XMLHelper.serialize(oXMLDocument);
 		}
 		return sXMLString;
 	};
 
+	/**
+	 * @deprecated since 1.58 use native <code>Node#isEqualNode</code> instead
+	 */
 	jQuery.sap.isEqualNode = function(oNode1, oNode2) {
 		if (oNode1 === oNode2) {
 			return true;
@@ -107,8 +111,9 @@ sap.ui.define([
 	 * @return oParseError if errors were found, or an object with an errorCode of 0 only
 	 * @private
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/util/XMLHelper.getParseError} instead
 	 */
-	jQuery.sap.getParseError = XMLParser.getParseError;
+	jQuery.sap.getParseError = XMLHelper.getParseError;
 
 	return jQuery;
 

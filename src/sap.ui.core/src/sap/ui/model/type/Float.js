@@ -3,8 +3,24 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, NumberFormat, SimpleType, FormatException, ParseException, ValidateException) {
+sap.ui.define([
+	'sap/ui/core/format/NumberFormat',
+	'sap/ui/model/SimpleType',
+	'sap/ui/model/FormatException',
+	'sap/ui/model/ParseException',
+	'sap/ui/model/ValidateException',
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isEmptyObject"
+],
+	function(
+		NumberFormat,
+		SimpleType,
+		FormatException,
+		ParseException,
+		ValidateException,
+		jQuery,
+		isEmptyObject
+	) {
 	"use strict";
 
 
@@ -135,7 +151,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		var oSourceOptions = this.oFormatOptions.source;
 		this.oOutputFormat = NumberFormat.getFloatInstance(this.oFormatOptions);
 		if (oSourceOptions) {
-			if (jQuery.isEmptyObject(oSourceOptions)) {
+			if (isEmptyObject(oSourceOptions)) {
 				oSourceOptions = {
 					groupingEnabled: false,
 					groupingSeparator: ",",

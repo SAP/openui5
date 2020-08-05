@@ -1,6 +1,8 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function(Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/m/ObjectListItem",
+	"sap/m/ObjectAttribute"
+], function(Controller, ObjectListItem, ObjectAttribute) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.MockServer.controller.App", {
@@ -9,7 +11,7 @@ sap.ui.define([
 		 * Upon pressing, we bind the items aggregation of the list to the "Meetups" entityset.
 		 * We pass a custom URL parameter "first=3" (assuming our OData BE knows how to process it).
 		 */
-		onPressAction: function() {
+		onPress: function() {
 			var oList = this.byId("list");
 			oList.bindItems({
 				path: "/Meetups",
@@ -18,7 +20,7 @@ sap.ui.define([
 						first: "3"
 					}
 				},
-				template: new sap.m.ObjectListItem({
+				template: new ObjectListItem({
 					title: "{Title}",
 					number: {
 						path: 'EventDate',
@@ -28,7 +30,7 @@ sap.ui.define([
 						}
 					},
 					attributes: [
-						new sap.m.ObjectAttribute({
+						new ObjectAttribute({
 							text: "{Description}"
 						})
 					]

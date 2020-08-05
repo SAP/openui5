@@ -3,21 +3,19 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Renderer',
-	'sap/m/ToolbarRenderer'
+	"sap/ui/core/Renderer",
+	"sap/m/HBoxRenderer"
 ],
 function(
 	Renderer,
-	ToolbarRenderer
+	HBoxRenderer
 ) {
 	"use strict";
 
-	var BaseRenderer = Renderer.extend('sap.ui.rta.toolbar.BaseRenderer', ToolbarRenderer);
+	var BaseRenderer = Renderer.extend.call(HBoxRenderer, 'sap.ui.rta.toolbar.BaseRenderer');
 
-	BaseRenderer.decorateRootElement = function (oRM, oControl) {
-		// base CSS classes
+	BaseRenderer.render = function (oRM, oControl) {
 		oRM.addClass('sapUiRtaToolbar');
-		oRM.addClass('sapContrastPlus'); // for 'sap_belize_plus' theme
 		oRM.addClass("color_" + oControl.getColor());
 
 		// setting type if exists
@@ -27,7 +25,7 @@ function(
 		var iZIndex = oControl.getZIndex();
 		iZIndex && oRM.addStyle("z-index", iZIndex);
 
-		ToolbarRenderer.decorateRootElement(oRM, oControl);
+		HBoxRenderer.render(oRM, oControl);
 	};
 
 

@@ -16,4 +16,4 @@ sap.ui.define([
 	TextButton.prototype.onPress = function() {
 	};
 	return TextButton;
-}, /* bExport= */true);
+});

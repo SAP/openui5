@@ -8,17 +8,21 @@ sap.ui.define([], function () {
 	"use strict";
 
 	return {
-		"doSomething": {
+		doSomething: {
 			applyChange: function () {
 			},
-			completeChangeInfo: function () {
+			completeChangeContent: function () {
+			},
+			revertChange: function() {
 			},
 			dummyId: "testChangeHandler-doSomething"
 		},
-		"doSomethingElse": {
+		doSomethingElse: {
 			applyChange: function () {
 			},
-			completeChangeInfo: function () {
+			completeChangeContent: function () {
+			},
+			revertChange: function() {
 			}
 		}
 	};

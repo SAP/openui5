@@ -44,9 +44,9 @@ sap.ui.define([
 			}
 
 			//delay because addDependent will do a async rerendering and the actionSheet will immediately close without it.
-			jQuery.sap.delayedCall(0, this, function () {
+			setTimeout(function () {
 				this._actionSheet.openBy(oButton);
-			});
+			}.bind(this), 0);
 		},
 
 		onPress: function (oEvent) {

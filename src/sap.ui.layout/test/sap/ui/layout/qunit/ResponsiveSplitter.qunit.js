@@ -1,30 +1,51 @@
-/*global QUnit,sinon*/
-
-(function () {
+/*global QUnit sinon */
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	'jquery.sap.global',
+	'sap/ui/layout/SplitPane',
+	'sap/ui/layout/PaneContainer',
+	'sap/ui/layout/ResponsiveSplitter',
+	'sap/ui/layout/SplitterLayoutData',
+	'sap/m/Button',
+	'sap/m/Text',
+	'sap/m/ScrollContainer',
+	'sap/ui/core/HTML'
+], function(
+	qutils,
+	jQuery,
+	SplitPane,
+	PaneContainer,
+	ResponsiveSplitter,
+	SplitterLayoutData,
+	Button,
+	Text,
+	ScrollContainer,
+	HTML
+) {
 	"use strict";
 
-	jQuery.sap.require("sap.ui.qunit.qunit-css");
-	jQuery.sap.require("sap.ui.thirdparty.qunit");
-	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	jQuery.sap.require("sap.ui.qunit.QUnitUtils");
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 	window._setTimeout = window.setTimeout;
-	sinon.config.useFakeTimers = true;
+
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	function initSetup() {
-		this.oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter({ height: "300px" });
-		this.oScrollContainer = new sap.m.ScrollContainer({ horizontal: false, content: this.oResponsiveSplitter, width: "500px" });
-		this.oButton1 = new sap.m.Button({ text: "first" });
-		this.oButton2 = new sap.m.Button({ text: "second"});
-		this.oButton3 = new sap.m.Button();
-		this.oSplitPane1 = new sap.ui.layout.SplitPane("first", { content: this.oButton1, requiredParentWidth: 400 });
-		this.oSplitPane2 = new sap.ui.layout.SplitPane("second", { content: this.oButton2, requiredParentWidth: 400 });
-		this.oSplitPane3 = new sap.ui.layout.SplitPane("third", { content: this.oButton3, requiredParentWidth: 1200 });
-		this.oPaneContainer2 = new sap.ui.layout.PaneContainer({ orientation: "Vertical", panes: [this.oSplitPane2, this.oSplitPane3]});
-		this.oPaneContainer1 = new sap.ui.layout.PaneContainer({ panes: [this.oSplitPane1, this.oPaneContainer2]});
+		this.oResponsiveSplitter = new ResponsiveSplitter({height: "300px"});
+		this.oScrollContainer = new ScrollContainer({
+			horizontal: false,
+			content: this.oResponsiveSplitter,
+			width: "500px"
+		});
+		this.oButton1 = new Button({text: "first"});
+		this.oButton2 = new Button({text: "second"});
+		this.oButton3 = new Button();
+		this.oSplitPane1 = new SplitPane("first", {content: this.oButton1, requiredParentWidth: 400});
+		this.oSplitPane2 = new SplitPane("second", {content: this.oButton2, requiredParentWidth: 400});
+		this.oSplitPane3 = new SplitPane("third", {content: this.oButton3, requiredParentWidth: 1200});
+		this.oPaneContainer2 = new PaneContainer({
+			orientation: "Vertical",
+			panes: [this.oSplitPane2, this.oSplitPane3]
+		});
+		this.oPaneContainer1 = new PaneContainer({panes: [this.oSplitPane1, this.oPaneContainer2]});
 		this.oResponsiveSplitter.setRootPaneContainer(this.oPaneContainer1);
 		this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
 		sap.ui.getCore().applyChanges();
@@ -32,7 +53,7 @@
 
 	QUnit.module("Initial rendering", {
 		beforeEach: function () {
-			this.oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter();
+			this.oResponsiveSplitter = new ResponsiveSplitter();
 
 			this.oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
@@ -49,7 +70,7 @@
 	});
 
 	QUnit.test("Rendering of ResponsiveSplitter with a View and without panes", function (assert) {
-		this.oResponsiveSplitter.setRootPaneContainer(new sap.ui.layout.PaneContainer());
+		this.oResponsiveSplitter.setRootPaneContainer(new PaneContainer());
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(!!this.oResponsiveSplitter.getDomRef(), true, "Should be rendered");
@@ -58,8 +79,8 @@
 	});
 
 	QUnit.test("Rendering of ResponsiveSplitter with a View and a Pane", function (assert) {
-		var oPaneContainer = new sap.ui.layout.PaneContainer();
-		oPaneContainer.addPane(new sap.ui.layout.SplitPane("default", { content: new sap.m.Button() }));
+		var oPaneContainer = new PaneContainer();
+		oPaneContainer.addPane(new SplitPane("default", {content: new Button()}));
 		this.oResponsiveSplitter.setRootPaneContainer(oPaneContainer);
 		this.oResponsiveSplitter.setAssociation("defaultPane", "default");
 
@@ -71,13 +92,20 @@
 
 	QUnit.module("Rendering and pagination", {
 		beforeEach: function () {
-			this.oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter();
-			this.oScrollContainer = new sap.m.ScrollContainer({ horizontal: false, content: this.oResponsiveSplitter, width: "500px" });
-			this.oButton1 = new sap.m.Button();
-			this.oButton2 = new sap.m.Button();
-			this.oSplitPane1 = new sap.ui.layout.SplitPane("first", { content: this.oButton1, requiredParentWidth: 400 });
-			this.oSplitPane2 = new sap.ui.layout.SplitPane("second", { content: this.oButton2, requiredParentWidth: 400 });
-			this.oPaneContainer = new sap.ui.layout.PaneContainer({ panes: [this.oSplitPane1, this.oSplitPane2]});
+			this.oResponsiveSplitter = new ResponsiveSplitter();
+			this.oScrollContainer = new ScrollContainer({
+				horizontal: false,
+				content: this.oResponsiveSplitter,
+				width: "500px"
+			});
+			this.oButton1 = new Button();
+			this.oButton2 = new Button();
+			this.oSplitPane1 = new SplitPane("first", {content: this.oButton1, requiredParentWidth: 400});
+			this.oSplitPane2 = new SplitPane("second", {
+				content: this.oButton2,
+				requiredParentWidth: 400
+			});
+			this.oPaneContainer = new PaneContainer({panes: [this.oSplitPane1, this.oSplitPane2]});
 			this.oResponsiveSplitter.setRootPaneContainer(this.oPaneContainer);
 			this.oResponsiveSplitter.setAssociation("defaultPane", "first");
 			this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
@@ -90,17 +118,16 @@
 		}
 	});
 
-
 	QUnit.test("Rendering of two demand panes", function (assert) {
 		var done = assert.async();
 
-		window._setTimeout(function() {
+		window._setTimeout(function () {
 			assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "0px", "Paginator's height should be 0");
 			assert.strictEqual(this.oResponsiveSplitter._currentInterval.aPages.length, 1, "Current interval's aPages should be 1");
 			assert.strictEqual(Array.isArray(this.oResponsiveSplitter._currentInterval.aPages[0]), true, "First page should be an Array of two pages");
 			assert.strictEqual(this.oResponsiveSplitter.getRootPaneContainer()._oSplitter.getAssociatedContentAreas().length, 2, "The internal Splitter should have 2 contentAreas");
 			done();
-		}.bind(this), 500 /* IE needs more time to render properly */);
+		}.bind(this), 500 /* IE needs more time to render properly */);// TODO remove after the end of support for Internet Explorer
 	});
 
 	QUnit.test("One demand true and one demand false panes first in range", function (assert) {
@@ -111,11 +138,11 @@
 		this.oSplitPane2.setRequiredParentWidth(600);
 		sap.ui.getCore().applyChanges();
 
-		window._setTimeout(function() {
+		window._setTimeout(function () {
 			assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "0px", "Paginator's height should be 0");
 			assert.strictEqual(this.oResponsiveSplitter.getRootPaneContainer()._oSplitter.getAssociatedContentAreas().length, 1, "The internal Splitter should have 2 contentAreas");
 			done();
-		}.bind(this), 500 /* IE needs more time to render properly */);
+		}.bind(this), 500 /* IE needs more time to render properly */);// TODO remove after the end of support for Internet Explorer
 	});
 
 	QUnit.test("Demand true panes first in range second not", function (assert) {
@@ -125,13 +152,13 @@
 		this.oSplitPane2.setRequiredParentWidth(600);
 		sap.ui.getCore().applyChanges();
 
-		window._setTimeout(function() {
+		window._setTimeout(function () {
 			assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "40px", "Paginator's height should be 40");
 			assert.strictEqual(this.oResponsiveSplitter.getRootPaneContainer()._oSplitter.getAssociatedContentAreas().length, 1, "The internal Splitter should have 1 contentArea");
 			assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div").length, 2, "Two buttons should be rendered");
 			assert.strictEqual(jQuery(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div")[0]).hasClass("sapUiResponsiveSplitterPaginatorSelectedButton"), true, "The first button should be selected");
 			done();
-		}.bind(this), 500 /* IE needs more time to render properly */);
+		}.bind(this), 500 /* IE needs more time to render properly */);// TODO remove after the end of support for Internet Explorer
 	});
 
 	QUnit.test("Demand false panes both not in range second default", function (assert) {
@@ -144,24 +171,37 @@
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "0px", "Paginator's height should be 0");
-		assert.strictEqual(this.oResponsiveSplitter.getAggregation("_pages")[0].getVisible(), true, "The first page sohuld be visible");
-		assert.strictEqual(this.oResponsiveSplitter.getAggregation("_pages")[0].getContent(), this.oButton2, "The first page's content should be button from the defaultPane");
+		assert.strictEqual(this.oResponsiveSplitter.getAggregation("_pages")[0].getVisible(), true, "The first page should be visible");
+		assert.strictEqual(sap.ui.getCore().byId(this.oResponsiveSplitter.getAggregation("_pages")[0].getContent()), this.oButton2, "The first page's content should be button from the defaultPane");
 		assert.ok(this.oButton2.getDomRef(), "Second button should be visible");
 		assert.ok(!this.oButton1.getDomRef(), "First button should be visible");
 	});
 
 	QUnit.module("Interaction with paginator", {
 		beforeEach: function () {
-			this.oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter();
-			this.oScrollContainer = new sap.m.ScrollContainer({ horizontal: false, content: this.oResponsiveSplitter, width: "500px" });
-			this.oButton1 = new sap.m.Button({ text: "first" });
-			this.oButton2 = new sap.m.Button({ text: "second"});
-			this.oButton3 = new sap.m.Button();
-			this.oSplitPane1 = new sap.ui.layout.SplitPane("first", { content: this.oButton1, requiredParentWidth: 400 });
-			this.oSplitPane2 = new sap.ui.layout.SplitPane("second", { content: this.oButton2, requiredParentWidth: 800 });
-			this.oSplitPane3 = new sap.ui.layout.SplitPane("third", { content: this.oButton3, requiredParentWidth: 1200 });
-			this.oPaneContainer2 = new sap.ui.layout.PaneContainer({ orientation: "Vertical", panes: [this.oSplitPane2, this.oSplitPane3]});
-			this.oPaneContainer1 = new sap.ui.layout.PaneContainer({ panes: [this.oSplitPane1, this.oPaneContainer2]});
+			this.oResponsiveSplitter = new ResponsiveSplitter();
+			this.oScrollContainer = new ScrollContainer({
+				horizontal: false,
+				content: this.oResponsiveSplitter,
+				width: "500px"
+			});
+			this.oButton1 = new Button({text: "first"});
+			this.oButton2 = new Button({text: "second"});
+			this.oButton3 = new Button();
+			this.oSplitPane1 = new SplitPane("first", {content: this.oButton1, requiredParentWidth: 400});
+			this.oSplitPane2 = new SplitPane("second", {
+				content: this.oButton2,
+				requiredParentWidth: 800
+			});
+			this.oSplitPane3 = new SplitPane("third", {
+				content: this.oButton3,
+				requiredParentWidth: 1200
+			});
+			this.oPaneContainer2 = new PaneContainer({
+				orientation: "Vertical",
+				panes: [this.oSplitPane2, this.oSplitPane3]
+			});
+			this.oPaneContainer1 = new PaneContainer({panes: [this.oSplitPane1, this.oPaneContainer2]});
 			this.oResponsiveSplitter.setRootPaneContainer(this.oPaneContainer1);
 			this.oResponsiveSplitter.setAssociation("defaultPane", "first");
 
@@ -293,7 +333,7 @@
 
 	QUnit.module("SplitPane API", {
 		beforeEach: function () {
-			this.oSplitPane = new sap.ui.layout.SplitPane();
+			this.oSplitPane = new SplitPane();
 		},
 		afterEach: function () {
 			this.oSplitPane.destroy();
@@ -321,23 +361,22 @@
 	QUnit.module("Aria support", {
 		beforeEach: function () {
 			initSetup.call(this);
-			var oPaneContainer = new sap.ui.layout.PaneContainer({
+			var oPaneContainer = new PaneContainer({
 				orientation: "Vertical",
-				panes: [new sap.ui.layout.SplitPane({
+				panes: [new SplitPane({
 					requiredParentWidth: 300,
-					content: new sap.m.Button()
-				}), new sap.ui.layout.SplitPane({
+					content: new Button()
+				}), new SplitPane({
 					requiredParentWidth: 300,
-					content: new sap.m.Button()
+					content: new Button()
 				})]
 			});
 
 			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 			sinon.stub(this.oResourceBundle, "getText")
-				.withArgs("RESPONSIVE_SPLITTER_RESIZE").returns("Resize split screen between pane")
-				.withArgs("RESPONSIVE_SPLITTER_PANES", [1, 2]).returns("1 and pane 2")
-				.withArgs("RESPONSIVE_SPLITTER_PANES", [2, 3]).returns("2 and pane 3")
-				.withArgs("RESPONSIVE_SPLITTER_PANES", ["3.1", "3.2"]).returns("3.1 and pane 3.2")
+				.withArgs("RESPONSIVE_SPLITTER_RESIZE", [1, 2]).returns("Resize between pane 1 and pane 2")
+				.withArgs("RESPONSIVE_SPLITTER_RESIZE", [2, 3]).returns("Resize between pane 2 and pane 3")
+				.withArgs("RESPONSIVE_SPLITTER_RESIZE", ["3.1", "3.2"]).returns("Resize between pane 3.1 and pane 3.2")
 				.withArgs("RESPONSIVE_SPLITTER_HOME").returns("Go to split screen")
 				.withArgs("RESPONSIVE_SPLITTER_AND").returns("and")
 				.withArgs("RESPONSIVE_SPLITTER_GOTO").returns("Go to screen")
@@ -355,9 +394,9 @@
 	QUnit.test("SplitterBars' tooltip", function (assert) {
 		var aSplitterBars = this.oResponsiveSplitter.$().find(".sapUiLoSplitterBar");
 
-		assert.strictEqual(aSplitterBars[0].getAttribute("title"), "Resize split screen between pane 1 and pane 2");
-		assert.strictEqual(aSplitterBars[1].getAttribute("title"), "Resize split screen between pane 2 and pane 3");
-		assert.strictEqual(aSplitterBars[2].getAttribute("title"), "Resize split screen between pane 3.1 and pane 3.2");
+		assert.strictEqual(aSplitterBars[0].getAttribute("title"), "Resize between pane 1 and pane 2");
+		assert.strictEqual(aSplitterBars[1].getAttribute("title"), "Resize between pane 2 and pane 3");
+		assert.strictEqual(aSplitterBars[2].getAttribute("title"), "Resize between pane 3.1 and pane 3.2");
 	});
 
 	QUnit.test("Paginator button's tooltip", function (assert) {
@@ -405,30 +444,30 @@
 
 	QUnit.test("Inserting panel inside panel should trigger 'manual' resize.", function (assert) {
 		// Setup
-		var oPane = new sap.ui.layout.PaneContainer({
+		var oPane = new PaneContainer({
 			id: "leftPaneCont",
-			panes: [new sap.ui.layout.SplitPane({
+			panes: [new SplitPane({
 				id: "leftPane",
-				content: [new sap.m.Text({text: "This text should have automatic word wrap, as the size of the left area is resized via resize handler of the splitter. But when the text control is removed from the splitter aggregation and added again, then the previous width is remembered and compared with the new width. As the width did not change the left area is not resized correctly and the text is not wrapped anymore correctly."})]
+				content: [new Text({text: "This text should have automatic word wrap, as the size of the left area is resized via resize handler of the splitter. But when the text control is removed from the splitter aggregation and added again, then the previous width is remembered and compared with the new width. As the width did not change the left area is not resized correctly and the text is not wrapped anymore correctly."})]
 			})],
-			layoutData: new sap.ui.layout.SplitterLayoutData({
+			layoutData: new SplitterLayoutData({
 				size: "20%"
 			})
 		});
 
-		var defaultPaneContainer = new sap.ui.layout.PaneContainer({
+		var defaultPaneContainer = new PaneContainer({
 			id: "middlePaneCont",
-			panes: [new sap.ui.layout.SplitPane({
+			panes: [new SplitPane({
 				id: "middlePane",
-				content: [new sap.m.Text({text: "Middle"})]
+				content: [new Text({text: "Middle"})]
 			})],
-			layoutData: new sap.ui.layout.SplitterLayoutData({
+			layoutData: new SplitterLayoutData({
 				size: "80%"
 			})
 		});
 
-		var oSplitter = new sap.ui.layout.ResponsiveSplitter({
-			rootPaneContainer: new sap.ui.layout.PaneContainer({
+		var oSplitter = new ResponsiveSplitter({
+			rootPaneContainer: new PaneContainer({
 				id: "rootPaneCont",
 				panes: [
 					defaultPaneContainer
@@ -456,30 +495,30 @@
 
 	QUnit.test("Removing panel inside panel should trigger 'manual' resize.", function (assert) {
 		// Setup
-		var oPane = new sap.ui.layout.PaneContainer({
+		var oPane = new PaneContainer({
 			id: "leftPaneCont",
-			panes: [new sap.ui.layout.SplitPane({
+			panes: [new SplitPane({
 				id: "leftPane",
-				content: [new sap.m.Text({text: "This text should have automatic word wrap, as the size of the left area is resized via resize handler of the splitter. But when the text control is removed from the splitter aggregation and added again, then the previous width is remembered and compared with the new width. As the width did not change the left area is not resized correctly and the text is not wrapped anymore correctly."})]
+				content: [new Text({text: "This text should have automatic word wrap, as the size of the left area is resized via resize handler of the splitter. But when the text control is removed from the splitter aggregation and added again, then the previous width is remembered and compared with the new width. As the width did not change the left area is not resized correctly and the text is not wrapped anymore correctly."})]
 			})],
-			layoutData: new sap.ui.layout.SplitterLayoutData({
+			layoutData: new SplitterLayoutData({
 				size: "20%"
 			})
 		});
 
-		var defaultPaneContainer = new sap.ui.layout.PaneContainer({
+		var defaultPaneContainer = new PaneContainer({
 			id: "middlePaneCont",
-			panes: [new sap.ui.layout.SplitPane({
+			panes: [new SplitPane({
 				id: "middlePane",
-				content: [new sap.m.Text({text: "Middle"})]
+				content: [new Text({text: "Middle"})]
 			})],
-			layoutData: new sap.ui.layout.SplitterLayoutData({
+			layoutData: new SplitterLayoutData({
 				size: "80%"
 			})
 		});
 
-		var oSplitter = new sap.ui.layout.ResponsiveSplitter({
-			rootPaneContainer: new sap.ui.layout.PaneContainer({
+		var oSplitter = new ResponsiveSplitter({
+			rootPaneContainer: new PaneContainer({
 				id: "rootPaneCont",
 				panes: [
 					oPane,
@@ -505,4 +544,166 @@
 		oSplitter.destroy();
 		oSplitter = null;
 	});
-})();
+
+	QUnit.test("Resizing responsive splitter should respect panes minSize", function (assert) {
+		// Setup
+
+		var iMinSize = 280;
+
+		var oLeftPane = new SplitPane({
+			content: [new Text({text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."})],
+			layoutData: new SplitterLayoutData({
+				size: "20%",
+				minSize: iMinSize
+			})
+		});
+
+		var oMiddlePane = new SplitPane({
+			content: [new Text({text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."})],
+			layoutData: new SplitterLayoutData({
+				size: "auto",
+				minSize: 300
+			})
+		});
+
+		var oRightPane = new SplitPane({
+			content: [new Text({
+				id: "righText",
+				text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+			})],
+			layoutData: new SplitterLayoutData({
+				size: "20%",
+				minSize: iMinSize
+			})
+		});
+
+
+		var oPaneContainer = new PaneContainer({
+			panes: [
+				oLeftPane,
+				oMiddlePane,
+				oRightPane
+			]
+		});
+
+		var oResponsiveSplitter = new ResponsiveSplitter({
+			rootPaneContainer: oPaneContainer,
+			defaultPane: oMiddlePane,
+			height: "100%"
+		});
+
+		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oResponsiveSplitter.setWidth("1050px");
+		sap.ui.getCore().applyChanges();
+
+		var iActualWidth = jQuery("#righText").width();
+
+		// Assert
+		assert.ok(iActualWidth >= iMinSize, "'minSize' property should not let panes to get lower width");
+
+		//Cleanup
+		oResponsiveSplitter.destroy();
+		oResponsiveSplitter = null;
+	});
+
+	QUnit.test("Order of SplitPane's 'content' and 'layoutData' shouldn't matter.", function (assert) {
+		// Setup
+		var oPaneContainer = new PaneContainer({
+			panes: [
+				new SplitPane({
+					content: [new Text("leftContent", {
+						text: "Content set before layout data"
+					})],
+					layoutData: new SplitterLayoutData({
+						size: "200px"
+					})
+				}),
+				new SplitPane({
+					layoutData: new SplitterLayoutData({
+						size: "350px"
+					}),
+					content: [new Text("rightContent", {
+						text: "Content set after layout data"
+					})]
+				})
+			]
+		});
+
+		var oResponsiveSplitter = new ResponsiveSplitter({
+			rootPaneContainer: oPaneContainer
+		});
+
+		// Act
+		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+
+		var iLeftWidth = jQuery("#leftContent").parent().width(),
+			iRightWidth = jQuery("#rightContent").parent().width();
+
+		// Assert
+		assert.ok(iLeftWidth === 200, "'size' from layoutData should be applied");
+		assert.ok(iRightWidth === 350, "'size' from layoutData should be applied");
+
+		// Cleanup
+		oResponsiveSplitter.destroy();
+		oResponsiveSplitter = null;
+	});
+
+	QUnit.test("Should not throw error if svg is clicked inside splitter", function (assert) {
+		// Arrange
+		// when svg is clicked inside a splitter on IE, the event target (the svg) has no classList and we have an error
+		var oSplitter = new ResponsiveSplitter({
+			rootPaneContainer: new PaneContainer({
+				panes: [
+					new SplitPane({
+						content: new HTML({content: '<svg id="testSvg"></svg>'})
+					})
+				]
+			})
+		});
+		oSplitter.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oSplitter.$().find("#testSvg").tap();
+
+		// Assert
+		assert.ok(true, "Error is not thrown when clicked on svg.");
+
+		// Clean up
+		oSplitter.destroy();
+	});
+
+	QUnit.test("Should preserve HTML elements", function (assert) {
+		// Arrange
+		var oHTMLElement = new HTML("elementThatShouldBePreseved", {content: "<button id='elementThatShouldBePreseved'>HTML button</button>"}),
+			oSplitter = new ResponsiveSplitter({
+			rootPaneContainer: new PaneContainer({
+				panes: [
+					new SplitPane({
+						content: oHTMLElement
+					})
+				]
+			})
+		});
+
+		oSplitter.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oHTMLElement.getDomRef().innerText = "changed content";
+		oSplitter.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oHTMLElement.getDomRef().innerText, "changed content", "HTML element content should be preserved.");
+
+		// Clean up
+		oSplitter.destroy();
+	});
+
+});

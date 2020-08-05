@@ -7,26 +7,30 @@
 /* arrow                          */
 /* ------------------------------ */
 
-/* hover */
-html.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
-	background: @sapUiButtonLiteHoverBackground;
+.sapMComboBoxBase.sapMInputBaseReadonly .sapMInputBaseIcon {
+	display: none;
 }
 
-/* pressed */
-/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
-.sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
-html.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
-	background: @sapUiToggleButtonPressedBackground;
-}
-
-/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
-.sapMComboBoxBasePressed .sapMComboBoxBaseArrow::before {
-	color: @sapUiToggleButtonPressedTextColor;
-}
-	/* ------------------------------ */
+/* ------------------------------ */
 /* dialog                         */
 /* ------------------------------ */
 
 div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 	padding: 0;
+}
+
+/* ------------------------------ */
+/* list                           */
+/* ------------------------------ */
+
+.sapMComboBoxBaseList.sapUiLocalBusy {
+	min-height: 2rem;
+}
+
+.sapMComboBoxBaseList .sapMSLITitleOnly {
+	font-size: 0.875rem;
+}
+
+.sapMComboBoxBaseList .sapMSLI {
+	height: 2.5rem;
 }

@@ -1,0 +1,187 @@
+{
+  "_version": "1.14.0",
+  "sap.app": {
+	"id": "card.explorer.simple.calendar.card",
+	"type": "card",
+	"title": "Sample of a List with Highlight",
+	"subTitle": "Sample of a Calendar with Highlight",
+	"applicationVersion": {
+	  "version": "1.0.0"
+	},
+	"shortTitle": "A short title for this Card",
+	"info": "Additional information about this Card",
+	"description": "A long description for this Card",
+	"tags": {
+	  "keywords": [
+		"Calendar",
+		"Highlight",
+		"Card",
+		"Sample"
+	  ]
+	}
+  },
+  "sap.card": {
+	"type": "Calendar",
+	"data": {
+	  "json": {
+		"item": [
+		  {
+			"visualization": "blocker",
+			"start": "2019-09-02T09:00",
+			"end": "2019-09-02T10:00",
+			"title": "Payment reminder",
+			"icon": "sap-icon://desktop-mobile",
+			"type": "Type06"
+		  },
+		  {
+			"visualization": "blocker",
+			"start": "2019-09-02T17:00",
+			"end": "2019-09-02T17:30",
+			"title": "Private appointment",
+			"icon": "sap-icon://desktop-mobile",
+			"type": "Type07"
+		  },
+		  {
+			"visualization": "appointment",
+			"start": "2019-09-02T12:00",
+			"end": "2019-09-02T13:00",
+			"title": "Lunch",
+			"text": "working",
+			"icon": "sap-icon://desktop-mobile",
+			"type": "Type03"
+		  },
+		  {
+			"visualization": "appointment",
+			"start": "2019-09-01T08:30",
+			"end": "2019-09-03T17:30",
+			"title": "Workshop",
+			"text": "Out of office",
+			"icon": "sap-icon://sap-ui5",
+			"type": "Type07"
+		  },
+		  {
+			"visualization": "appointment",
+			"start": "2019-09-02T14:00",
+			"end": "2019-09-02T16:30",
+			"title": "Discussion with clients",
+			"text": "working",
+			"icon": "sap-icon://desktop-mobile"
+		  },
+		  {
+			"visualization": "appointment",
+			"start": "2019-09-02T11:00",
+			"end": "2019-09-02T12:00",
+			"title": "Team meeting",
+			"text": "online meeting",
+			"icon": "sap-icon://sap-ui5",
+			"type": "Type04"
+		  }
+		],
+		"specialDate": [
+		  {
+			"start": "2019-09-13",
+			"end": "2019-09-14",
+			"type": "Type08"
+		  },
+		  {
+			"start": "2019-09-24",
+			"end": "2019-09-24",
+			"type": "Type13"
+		  }
+		],
+		"legendItem": [
+		  {
+			"category": "calendar",
+			"text": "Team building",
+			"type": "Type08"
+		  },
+		  {
+			"category": "calendar",
+			"text": "Public holliday",
+			"type": "Type13"
+		  },
+		  {
+			"category": "appointment",
+			"text": "Reminder",
+			"type": "Type06"
+		  },
+		  {
+			"category": "appointment",
+			"text": "Private appointment",
+			"type": "Type07"
+		  },
+		  {
+			"category": "appointment",
+			"text": "Out of office",
+			"type": "Type03"
+		  },
+		  {
+			"category": "appointment",
+			"text": "Collaboration with other team members",
+			"type": "Type07"
+		  }
+		]
+	  }
+	},
+	"header": {
+	  "title": "My calendar",
+	  "subTitle": "Team Balkan",
+	  "status": {
+		"text":  {
+		  "format": {
+			"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+			"parts": [
+			  "parameters>/visibleItems",
+			  "parameters>/allItems"
+			]
+		  }
+		}
+	  }
+	},
+	"content": {
+	  "date": "2019-09-02",
+	  "maxItems": 5,
+	  "maxLegendItems": 3,
+	  "noItemsText": "You have nothing planned for that day",
+	  "item": {
+		"template": {
+		  "visualization": "{visualization}",
+		  "startDate": "{start}",
+		  "endDate": "{end}",
+		  "title": "{title}",
+		  "text": "{text}",
+		  "icon": {
+			"src": "{icon}"
+		  },
+		  "type": "{type}"
+		},
+		"path": "/item"
+	  },
+	  "specialDate": {
+		"template": {
+		  "startDate": "{start}",
+		  "endDate": "{end}",
+		  "type": "{type}"
+		},
+		"path": "/specialDate"
+	  },
+	  "legendItem": {
+		"template": {
+		  "category": "{category}",
+		  "text": "{text}",
+		  "type": "{type}"
+		},
+		"path": "/legendItem"
+	  },
+	  "moreItems": {
+		"actions": [
+		  {
+			"type": "Navigation",
+			"enabled": true,
+			"url": "http://sap.com"
+		  }
+		]
+	  }
+	}
+  }
+}

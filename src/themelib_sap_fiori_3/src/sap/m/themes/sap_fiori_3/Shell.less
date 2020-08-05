@@ -1,0 +1,36 @@
+/* ============================ */
+/* CSS for control sap.m/Shell  */
+/* Fiori 3 theme                */
+/* ============================ */
+
+/* background color class for Shell header */
+.sapMShellBackgroundColorOnlyIfDefaultMixin() when not (@sapUiGlobalBackgroundImage = '') {
+	background-color: @sapUiShellBackgroundImage; /* custom BG image... just hide the background */
+}
+
+.sapMShellBackgroundColorOnlyIfDefaultMixin() when (@sapUiGlobalBackgroundImage = '') {
+	background-color: @sapUiShellBackgroundGradient; /* default BG image - display the default background color */
+}
+
+.sapMShellBackgroundColorOnlyIfDefault {
+	.sapMShellBackgroundColorOnlyIfDefaultMixin;
+}
+
+html.sap-desktop .sapMShellCentralBox {
+	box-shadow: none;
+}
+
+.sapMShellBrandingBar {
+	background-color: transparent;
+}
+
+.sapMShellGlobalOuterBackground {
+	background: @sapUiShellBackground;
+}
+
+html.sap-desktop {
+	.sapMShellLogo,
+	.sapMShellAppWidthLimited .sapMShellLogo {
+		margin: 1rem 1rem 0 0;
+	}
+}

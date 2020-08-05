@@ -6,7 +6,7 @@
 	<Page
 		title="{i18n>detailPageTitle}"
 		showNavButton="true"
-		navButtonPress="onNavBack">
+		navButtonPress=".onNavBack">
 		<ObjectHeader
 			responsive="true"
 			fullScreenOptimized="true"
@@ -34,7 +34,7 @@
 					}"/>
 			</attributes>
 		</ObjectHeader>
-		<wt:ProductRating id="rating" class="sapUiSmallMarginBeginEnd" change="onRatingChange"/>
+		<wt:ProductRating id="rating" class="sapUiSmallMarginBeginEnd" change=".onRatingChange"/>
 	</Page>
 </mvc:View>
 

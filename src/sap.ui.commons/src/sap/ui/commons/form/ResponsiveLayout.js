@@ -4,12 +4,11 @@
 
 // Provides control sap.ui.commons.form.ResponsiveLayout.
 sap.ui.define([
- 'jquery.sap.global',
  'sap/ui/commons/library',
  'sap/ui/layout/form/ResponsiveLayout',
- "./ResponsiveLayoutRenderer"
+ './ResponsiveLayoutRenderer'
 ],
-	function(jQuery, library, ResponsiveLayout1, ResponsiveLayoutRenderer) {
+	function(library, LayoutResponsiveLayout, ResponsiveLayoutRenderer) {
 	"use strict";
 
 
@@ -35,16 +34,12 @@ sap.ui.define([
 	 * @alias sap.ui.commons.form.ResponsiveLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ResponsiveLayout = ResponsiveLayout1.extend("sap.ui.commons.form.ResponsiveLayout", /** @lends sap.ui.commons.form.ResponsiveLayout.prototype */ { metadata : {
+	var ResponsiveLayout = LayoutResponsiveLayout.extend("sap.ui.commons.form.ResponsiveLayout", /** @lends sap.ui.commons.form.ResponsiveLayout.prototype */ { metadata : {
 
 		deprecated : true,
 		library : "sap.ui.commons"
 	}});
 
-	/**
-	 * This file defines behavior for the control,
-	 */
-
 	return ResponsiveLayout;
 
-}, /* bExport= */ true);
+});

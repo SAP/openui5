@@ -1,3 +1,4 @@
+/* eslint strict:0 */
 jQuery.sap.registerPreloadedModules({
 "name":"sap/test/mycomp/Component-preload",
 "version":"2.0",

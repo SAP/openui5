@@ -3,15 +3,36 @@
  */
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.FormContainer control
-sap.ui.define(['sap/ui/fl/changeHandler/ChangeHandlerMediator'],
-	function(ChangeHandlerMediator) {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/layout/form/Form'
+], function (
+	jQuery,
+	Form
+) {
 	"use strict";
 
-	function _allFormElementsInvisible(oFormContainer){
-
-		return oFormContainer.getFormElements().every(function(oFormElement){
+	function _allFormElementsInvisible(oFormContainer) {
+		return oFormContainer.getFormElements().every(function (oFormElement) {
 			return oFormElement.getVisible() === false;
 		});
+	}
+
+	function fnFindForm(oElement) {
+		if (oElement && !(oElement instanceof Form)) {
+			return fnFindForm(oElement.getParent());
+		}
+		return oElement;
+	}
+
+	function fnIsLayoutSupported(oFormContainer) {
+		var oForm = fnFindForm(oFormContainer);
+		if (oForm &&
+			oForm.getLayout() &&
+			oForm.getLayout().getMetadata().getName() === "sap.ui.layout.form.GridLayout") {
+			return false;
+		}
+		return true;
 	}
 
 	return {
@@ -21,57 +42,85 @@ sap.ui.define(['sap/ui/fl/changeHandler/ChangeHandlerMediator'],
 				svg: "sap/ui/layout/designtime/form/FormContainer.icon.svg"
 			}
 		},
-		isVisible: function(oFormContainer) {
+		isVisible: function (oFormContainer) {
 			return oFormContainer.isVisible();
 		},
 		actions: {
-			remove: {
-				changeType: "hideControl"
+			remove: function (oFormContainer) {
+				if (fnIsLayoutSupported(oFormContainer)) {
+					return {
+						changeType: "hideControl"
+					};
+				} else {
+					return null;
+				}
 			},
-			rename: {
-				changeType: "renameGroup",
-				domRef: function (oFormContainer) {
-					return jQuery(oFormContainer.getRenderedDomRef()).find(".sapUiFormTitle")[0];
-				},
-				isEnabled : function (oFormContainer) {
-					return !(oFormContainer.getToolbar() || !oFormContainer.getTitle());
+			rename: function (oFormContainer) {
+				if (fnIsLayoutSupported(oFormContainer)) {
+					return {
+						changeType: "renameGroup",
+						domRef: function (oFormContainer) {
+							if (!oFormContainer.getRenderedDomRef()) {
+								var oTitleOrToolbar = oFormContainer.getTitle() || oFormContainer.getToolbar();
+								return oTitleOrToolbar.getDomRef();
+							}
+							return jQuery(oFormContainer.getRenderedDomRef()).find(".sapUiFormTitle")[0];
+						},
+						isEnabled: function (oFormContainer) {
+							return !(oFormContainer.getToolbar() || !oFormContainer.getTitle());
+						}
+					};
+				} else {
+					return null;
 				}
 			}
 		},
-		aggregations : {
-			formElements : {
-				childNames : {
-					singular : "FIELD_CONTROL_NAME",
-					plural : "FIELD_CONTROL_NAME_PLURAL"
+		aggregations: {
+			formElements: {
+				childNames: {
+					singular: "FIELD_CONTROL_NAME",
+					plural: "FIELD_CONTROL_NAME_PLURAL"
 				},
 				domRef: function (oFormContainer) {
-					var oDomRef = oFormContainer.getDomRef();
+					var oDomRef = oFormContainer.getRenderedDomRef();
 					var oHeader = oFormContainer.getTitle() || oFormContainer.getToolbar();
-					if (!oDomRef && (oFormContainer.getFormElements().length === 0 || _allFormElementsInvisible(oFormContainer)) && oHeader instanceof sap.ui.core.Element) {
-						return oHeader.getDomRef();
-					} else if (typeof oHeader === "string") {
-						return jQuery(oDomRef).find(".sapUiFormTitle").get(0);
-					} else {
+					if (oDomRef) {
 						return oDomRef;
 					}
-				},
-				actions: {
-					move: "moveControls",
-					addODataProperty : function (oFormContainer) {
-						var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldWithLabelSettings(oFormContainer);
-
-						if (mChangeHandlerSettings){
-							return {
-								changeType: "addFormField",
-								changeOnRelevantContainer : true,
-								changeHandlerSettings : mChangeHandlerSettings
-							};
+					if (oFormContainer.getFormElements().length === 0 || _allFormElementsInvisible(oFormContainer)) {
+						if (oHeader instanceof sap.ui.core.Element) {
+							return oHeader.getDomRef();
+						}
+						if (typeof oHeader === "string") {
+							return jQuery(oDomRef).find(".sapUiFormTitle").get(0);
 						}
 					}
-
+					return undefined;
+				},
+				actions: {
+					move: function (oFormContainer) {
+						if (fnIsLayoutSupported(oFormContainer)) {
+							return {
+								changeType: "moveControls"
+							};
+						} else {
+							return null;
+						}
+					},
+					add: {
+						delegate: function (oFormContainer) {
+							if (fnIsLayoutSupported(oFormContainer)) {
+								return {
+									changeType: "addFormField",
+									changeOnRelevantContainer: true,
+									supportsDefaultDelegate: true
+								};
+							}
+						}
+					}
 				}
 			},
-			toolbar : {
+			toolbar: {
 				domRef: function (oFormContainer) {
 					var oToolbar = oFormContainer.getToolbar();
 					if (oToolbar) {
@@ -86,4 +135,4 @@ sap.ui.define(['sap/ui/fl/changeHandler/ChangeHandlerMediator'],
 		}
 	};
 
-}, /* bExport= */ false);
+});

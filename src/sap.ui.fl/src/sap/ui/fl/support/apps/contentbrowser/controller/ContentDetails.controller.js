@@ -7,10 +7,26 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Text",
 	"sap/m/Button",
+	"sap/m/Input",
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
-	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils"
-], function (Controller, Dialog, Text, Button, LRepConnector, DataUtils) {
+	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils",
+	"sap/ui/fl/Layer",
+	"sap/m/library"
+], function (
+	Controller,
+	Dialog,
+	Text,
+	Button,
+	Input,
+	LRepConnector,
+	DataUtils,
+	Layer,
+	mobileLibrary
+) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	/**
 	 * Controller for displaying detail of content in Content Browser.
@@ -101,9 +117,9 @@ sap.ui.define([
 						oPage.setBusy(false);
 					}
 				);
-			} else {
-				return Promise().resolve();
 			}
+
+			return Promise.resolve();
 		},
 
 		/**
@@ -120,7 +136,7 @@ sap.ui.define([
 			var oCore = sap.ui.getCore();
 			var sIconTabBarId = this.getView().createId("contentDetailsIconTabBar");
 			var oIconTabBar = oCore.getElementById(sIconTabBarId);
-			if (oIconTabBar){
+			if (oIconTabBar) {
 				var oFirstIconTabBarItem = oIconTabBar.getItems()[0];
 				if (oIconTabBar.getSelectedKey() !== oFirstIconTabBarItem.getId()) {
 					oIconTabBar.setSelectedItem(oFirstIconTabBarItem);
@@ -139,10 +155,10 @@ sap.ui.define([
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 
 			oRouter.navTo("ContentDetailsEdit", {
-				"layer": oContentData.layer,
-				"namespace": encodeURIComponent(oContentData.namespace),
-				"fileName": oContentData.fileName,
-				"fileType": oContentData.fileType
+				layer: oContentData.layer,
+				namespace: encodeURIComponent(oContentData.namespace),
+				fileName: oContentData.fileName,
+				fileType: oContentData.fileType
 			});
 		},
 
@@ -160,10 +176,10 @@ sap.ui.define([
 				content: new Text({text: "{i18n>questionFileDeletion}"}),
 				beginButton: new Button({
 					text: "{i18n>confirm}",
-					type: sap.m.ButtonType.Reject,
+					type: ButtonType.Reject,
 					press: function () {
-						that._deleteFile();
 						oDialog.close();
+						that._selectTransportAndDeleteFile();
 					}
 				}),
 				endButton: new Button({
@@ -183,15 +199,18 @@ sap.ui.define([
 		},
 
 		/**
-		 * Handler if a deletion was confirmed.
-		 * @returns {Promise} - <code>LRepConnector</code> "deleteFile" promise
+		 * Select correct transport id (through a dialog if necessary) and trigger deletion of file.
 		 * @private
 		 */
-		_deleteFile: function () {
+		_selectTransportAndDeleteFile: function () {
+			var that = this;
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
 			var oContentData = oSelectedContentModel.getData();
 			var sSelectedLayer = oContentData.layer;
 			var sContentLayer = "";
+			var sTransportIdFromContent;
+			var sPackageFromContent;
+			var sTransportId;
 
 			oContentData.metadata.some(function (mMetadata) {
 				if (mMetadata.name === "layer") {
@@ -199,19 +218,79 @@ sap.ui.define([
 					return true;
 				}
 			});
+			oContentData.metadata.some(function (mMetadata) {
+				if (mMetadata.name === "transportId") {
+					sTransportIdFromContent = mMetadata.value;
+					return true;
+				}
+			});
+			try {
+				sPackageFromContent = JSON.parse(oContentData.data).packageName;
+			} catch (e) {
+				//when content is not in JSON format, package is undefined but does not break the code.
+			}
 
 			var sNamespace = oContentData.namespace;
 			var sFileName = oContentData.fileName;
 			var sFileType = oContentData.fileType;
 
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-
-			return LRepConnector.deleteFile(sContentLayer, sNamespace, sFileName, sFileType).then(function () {
-				oRouter.navTo("LayerContentMaster", {
-					"layer": sSelectedLayer,
-					"namespace": encodeURIComponent(sNamespace)
+			if ((sContentLayer === Layer.USER) ||
+				(sContentLayer === "LOAD") ||
+				(sContentLayer === "VENDOR_LOAD") ||
+				(!sTransportIdFromContent && (!sPackageFromContent || sPackageFromContent === "$TMP"))) {
+				//USER, LOAD (and VENDOR_LOAD) layers together with non-ABAP and local ABAP content do not need transport
+				sTransportId = undefined;
+				that._deleteFile(sContentLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer);
+			} else if (sTransportIdFromContent === "ATO_NOTIFICATION") {
+				//ATO_NOTIFICATION content
+				sTransportId = sTransportIdFromContent;
+				that._deleteFile(sContentLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer);
+			} else {
+				//Bring up an simple transport input dialog
+				var oTransportInput = new Input({placeholder: "Transport ID or ATO_NOTIFICATION" });
+				var oDialog = new Dialog({
+					title: "{i18n>transportInput}",
+					type: "Message",
+					content: [
+						new Text({text: "{i18n>transportInputDescription}"}),
+						oTransportInput],
+					beginButton: new Button({
+						text: "{i18n>confirm}",
+						type: ButtonType.Accept,
+						press: function () {
+							sTransportId = oTransportInput.getValue();
+							oDialog.close();
+							that._deleteFile(sContentLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer);
+						}
+					}),
+					endButton: new Button({
+						text: "{i18n>cancel}",
+						press: function () {
+							oDialog.close();
+						}
+					}),
+					afterClose: function () {
+						oDialog.destroy();
+					}
 				});
-			});
+				this.getView().addDependent(oDialog);
+				oDialog.open();
+			}
+		},
+
+		/**
+		 * Handler if a deletion was confirmed.
+		 * @returns {Promise} - <code>LRepConnector</code> "deleteFile" promise
+		 * @private
+		 */
+		_deleteFile: function (sLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer) {
+			return LRepConnector.deleteFile(sLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer).then(function () {
+				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+				oRouter.navTo("LayerContentMaster", {
+					layer: sSelectedLayer,
+					namespace: encodeURIComponent(sNamespace)
+				});
+			}.bind(this));
 		}
 	});
 });

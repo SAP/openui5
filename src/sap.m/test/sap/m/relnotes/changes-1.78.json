@@ -1,0 +1,496 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "331a1048f259916eb971d6f514c9759eda5df3b2",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: Added new public setter",
+        "references": []
+      },
+      {
+        "id": "cd223c07d90ac8434388c8e351310cbe0e3a98ae",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: filtering is now performed corretly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070127802"
+          }
+        ]
+      },
+      {
+        "id": "7ace90823d62c3b1bbbcb738c909ff14a6e3e15f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: selectedKey property now works with nested item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070135711"
+          }
+        ]
+      },
+      {
+        "id": "2139aee6d24ca74b754926cdc74e8a1e1bfea125",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Arrow up now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070147690"
+          }
+        ]
+      },
+      {
+        "id": "f171e8fde6491d40ed9d5ca0f5a30281fe5a2996",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: sap.m.IconTabBar alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070043278"
+          }
+        ]
+      },
+      {
+        "id": "0338f0100aad91f247f10ca3a449655c9ab314c3",
+        "type": "FIX",
+        "text": " P13nConditionPanel: add empty condition option text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070136267"
+          }
+        ]
+      },
+      {
+        "id": "1348c30a236c2ef79825dfb7311d8d28cfca1de5",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: mutating the visible property has effect in the UI",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070155044"
+          }
+        ]
+      },
+      {
+        "id": "84b54eee539a01da6ad74535d6c0cfb6e35731a8",
+        "type": "FIX",
+        "text": " sap.m.Panel: Documentation improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070154349"
+          }
+        ]
+      },
+      {
+        "id": "21fbf325b119d9f4d296d151afdef2bff39c93fd",
+        "type": "FIX",
+        "text": " sap.m.Select: Corrected aria-activedescendant",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070099054"
+          }
+        ]
+      },
+      {
+        "id": "be09a2129232702aaaf8b94f47a623958f58cef8",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: filter detail items without a key cannot be selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123388"
+          }
+        ]
+      },
+      {
+        "id": "7370162eadb830594fb7954b95b23b35e2fecfe5",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: filter detail items without a key cannot be selected",
+        "references": []
+      },
+      {
+        "id": "d9f59f7ac21e985c86bd234db6b5c1a0cd7cfd1c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: GenericTags overflow correctly now",
+        "references": []
+      },
+      {
+        "id": "1be7ecad154e5b7fc60424dd8739633fc4ac48f9",
+        "type": "FIX",
+        "text": " sap.m.Button: Focus enhanced on Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070154431"
+          }
+        ]
+      },
+      {
+        "id": "7205ec82a9885ed1c8eb88a8ec4cb4e93be19558",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: Add new property ariaTexts",
+        "references": []
+      },
+      {
+        "id": "2d13b79f405ade40c98b3f119466e0bf5c94e229",
+        "type": "FIX",
+        "text": " sap.m.Bar: Focus handling in middle section for Internet Explorer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070118503"
+          }
+        ]
+      },
+      {
+        "id": "4d68a68a6adc5f57d0189219d65c9206cce3b6a9",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: change parent DomRef in Design Time Metadata",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070171880"
+          }
+        ]
+      },
+      {
+        "id": "db746057b6a390195b7334865f63fefe6db3ce39",
+        "type": "FIX",
+        "text": " sap.m.Input: Clone method fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123110"
+          }
+        ]
+      },
+      {
+        "id": "3928b005838bd5a4c742fe19f83eccf78a1491ef",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: sap.m.IconTabBar alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070043278"
+          }
+        ]
+      },
+      {
+        "id": "8448a30d6bffa08dc7b0e777229d08691650f99e",
+        "type": "FIX",
+        "text": " sap.m.Select: reinforced check now added inside control renderer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070173532"
+          }
+        ]
+      },
+      {
+        "id": "3fb18dcb7d3805caf163d1a3dc773de0c25c757d",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Preventing wheel in disabled and readonly states",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070157892"
+          }
+        ]
+      },
+      {
+        "id": "436060fc38d773b0ac029adfdef64be283eb3cfa",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: async selection of a filterItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070146104"
+          }
+        ]
+      },
+      {
+        "id": "ff4a2a818fd7002ee44d4e5897e2e52c9a1c1487",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fiori theme special dates visualization adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070126624"
+          }
+        ]
+      },
+      {
+        "id": "0a5d7075f0a775941c72ae486a7773e560dcf93a",
+        "type": "FIX",
+        "text": " sap.m.ActionSelect: Accessibility test page adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193003"
+          }
+        ]
+      },
+      {
+        "id": "3ca98043ff72ac5e0a382e0abe281c8e08b36de5",
+        "type": "FIX",
+        "text": " sap.m.Bar: Preventing lost focus of input elements in middle content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070118503"
+          }
+        ]
+      },
+      {
+        "id": "36af2e87bbef9cc912544e730d81ff90d012596b",
+        "type": "FIX",
+        "text": " sap.m.Button: Icon and text are center-aligned inside the button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123105"
+          }
+        ]
+      },
+      {
+        "id": "94d0566e0a3ef6434664107803f6f760bb5e31c1",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Accessibility sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193116"
+          }
+        ]
+      },
+      {
+        "id": "8c000afa3a21c691c88d95e271ce887ba4e98d8a",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Aria-activedescendant is set on focus change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "207010908"
+          }
+        ]
+      },
+      {
+        "id": "8ba8452123fbfda0e03a95c913d7bdb690f23f31",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Disable text selection for selected option on tablets",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000275092 2020"
+          }
+        ]
+      },
+      {
+        "id": "cfea31439f0b1bd25d2b1afa68c7cceea0b6ba7d",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Exception in OData v4 fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001689492020"
+          }
+        ]
+      },
+      {
+        "id": "bb1c567056eb07268c1ffb36c127bd440acbe850",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Fixed scrollbar showing while zoomed in Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070153642"
+          }
+        ]
+      },
+      {
+        "id": "ec4aef14ba762a8ff706f173c3121b5826bf4c2f",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Revert \u0027Fixed scrollbar showing while zoomed in Safari\u0027",
+        "references": []
+      },
+      {
+        "id": "cf52c0e35b9c799782421a47ee2be4ac2b9edd56",
+        "type": "FIX",
+        "text": " sap.m.FactFilter: selected items text in the facet buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070160117"
+          }
+        ]
+      },
+      {
+        "id": "db74094ea64a686ee68b6ae953d9eb9740fedec5",
+        "type": "FIX",
+        "text": " sap.m.Input: Accessibility sample adjusted",
+        "references": []
+      },
+      {
+        "id": "bd284bc1ec4142966418deab9b381d8df7336c2b",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Accessibility sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193376"
+          }
+        ]
+      },
+      {
+        "id": "8ebfad4bca2781dfa271a18cca1d28d5a4e20a42",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: align the implementation to the current VD specs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070131385"
+          }
+        ]
+      },
+      {
+        "id": "0ca8d5d78e8a81bc8d9ba724fe7c1199b1ab6e6b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: cellPress event now fired corretly on month view",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070195311"
+          }
+        ]
+      },
+      {
+        "id": "66a3d17d55d026467db416c560588ce182132dcf",
+        "type": "FIX",
+        "text": " sap.m.Slider: Aria-labelledby correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193472"
+          }
+        ]
+      },
+      {
+        "id": "26a407ea50c305d7be44fa50c2e0ebd014d5c996",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Improve highlightSuggestionItems performance",
+        "references": []
+      },
+      {
+        "id": "a6f55e815b498cbab943d0861ded7a255bce9947",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: setShowAddNewButton method now works as expected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070197325"
+          }
+        ]
+      },
+      {
+        "id": "518e06dfedb93a7ad21eace6482610fc96cfdd1b",
+        "type": "FIX",
+        "text": " sap.m.VBox: Default Column direction is now set properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002620552020"
+          }
+        ]
+      },
+      {
+        "id": "5d5e614d0bfc51b83d2e67b76ac89e7e6bf545a3",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: reset button enablement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070029347"
+          }
+        ]
+      },
+      {
+        "id": "25fc2a64c14870400b3a3c7d8a2f6fac57117b59",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: setSelectedFilterCompoundKeys() method now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070146104"
+          }
+        ]
+      },
+      {
+        "id": "62d016f66e59bc22424440a040e87a90b0a6cc18",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: Filters with sub tabs with or without own content differentiated",
+        "references": []
+      },
+      {
+        "id": "b78feb626b4a87f4432ff26b1c392dea365b24fc",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.DynamicSideContent: Support Scrolling related functionality",
+        "references": []
+      },
+      {
+        "id": "4a52cc6118b08ba55cf72ddf740536dbf53d5f16",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: QUnit test in IE 11 fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070208747"
+          }
+        ]
+      },
+      {
+        "id": "be7b5dcf32cb2ced5cc91db3f24f5f81fe490aec",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Visual focus adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070188251"
+          }
+        ]
+      },
+      {
+        "id": "60a8384c8c85f89e84414711fca068dc63a1b83d",
+        "type": "FIX",
+        "text": " sap.m.Input: ValueState popup no longer opened on dialog close",
+        "references": []
+      },
+      {
+        "id": "460aff6b2842828ee040ba1dbf8928a3024f1e1d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: interval toolbar now has correct hidden label defining it\u0027s purpose",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080043381"
+          }
+        ]
+      },
+      {
+        "id": "04c181e13ce74d28eb6662e7ff81143899acc5b6",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar, sap.m.PlanningCalendar, sap.m.SinglePlanningCalendar - visual issues fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070040553"
+          }
+        ]
+      }
+    ]
+  }
+}

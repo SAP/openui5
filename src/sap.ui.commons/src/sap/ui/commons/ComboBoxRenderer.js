@@ -3,9 +3,13 @@
  */
 
 // Provides default renderer for control sap.ui.commons.ComboBox
-sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, TextFieldRenderer, Renderer) {
+sap.ui.define(['./TextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/library'],
+	function(TextFieldRenderer, Renderer, coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 	/**
@@ -17,8 +21,8 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 	/**
 	 * Renders the attributes of the outer &lt;div&gt; for the ComboBox to the TextField
 	 *
-	 * @param {sap.ui.fw.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.fw.Control} oCmb an object representation of the ComboBox that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oCmb an object representation of the ComboBox that should be rendered
 	 */
 	ComboBoxRenderer.renderOuterAttributes = function(rm, oCmb) {
 		rm.addClass("sapUiTfCombo");
@@ -28,8 +32,8 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 	/**
 	 * Renders additional HTML for the ComboBox to the TextField before the INPUT element (sets the icon)
 	 *
-	 * @param {sap.ui.fw.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.fw.Control} oCmb an object representation of the ComboBox that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oCmb an object representation of the ComboBox that should be rendered
 	 */
 	ComboBoxRenderer.renderOuterContentBefore = function(rm, oCmb){
 
@@ -92,8 +96,8 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 	/**
 	 * Renders the inner &lt;div&gt; for the ComboBox to the TextField
 	 *
-	 * @param {sap.ui.fw.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.fw.Control} oCmb an object representation of the ComboBox that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oCmb an object representation of the ComboBox that should be rendered
 	 */
 	ComboBoxRenderer.renderInnerAttributes = function(rm, oCmb) {
 
@@ -106,8 +110,8 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 
 	/*
 	 * Renders ARIA information for the combobox (outer &lt;div&gt;)
-	 * @param {sap.ui.fw.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.fw.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 * @private
 	 */
 	ComboBoxRenderer.renderComboARIAInfo = function(rm, oCmb) {
@@ -135,8 +139,8 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 	/*
 	 * Renders ARIA information for the given input field (called from 'parent'-renderer, i.e. sap.ui.commons.TextFieldRenderer)
 	 * As the input tag has the focus all controls aria attributes should be here
-	 * @param {sap.ui.fw.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.fw.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 * @private
 	 */
 	ComboBoxRenderer.renderARIAInfo = function(rm, oCmb) {
@@ -159,7 +163,7 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 				posinset: (iPosInSet >= 0) ? iPosInSet : undefined
 		};
 
-		if (oCmb.getValueState() == sap.ui.core.ValueState.Error) {
+		if (oCmb.getValueState() == ValueState.Error) {
 			mProps["invalid"] = true;
 		}
 

@@ -4,14 +4,17 @@
 
 // Provides control sap.m.FacetFilterList.
 sap.ui.define([
-	'jquery.sap.global',
 	'./List',
 	'./library',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Filter',
-	'./FacetFilterListRenderer'
+	'./FacetFilterListRenderer',
+	'./FacetFilterItem',
+	"sap/base/Log",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType"
 ],
-	function(jQuery, List, library, ChangeReason, Filter, FacetFilterListRenderer) {
+	function(List, library, ChangeReason, Filter, FacetFilterListRenderer, FacetFilterItem, Log, FilterOperator, FilterType) {
 	"use strict";
 
 
@@ -52,7 +55,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.FacetFilterList
-	 * @see {@link topic:395392f30f2a4c4d80d110d5f923da77/ Facet Filter List}
+	 * @see {@link topic:395392f30f2a4c4d80d110d5f923da77 Facet Filter List}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FacetFilterList = List.extend("sap.m.FacetFilterList", /** @lends sap.m.FacetFilterList.prototype */ { metadata : {
@@ -79,6 +82,11 @@ sap.ui.define([
 
 			/**
 			 * Indicates that the list is displayed as a button when the FacetFilter type is set to <code>Simple</code>.
+			 *
+			 * <b>Note:</b> Set the <code>showPersonalization</code> property of the
+			 * <code>FacetFilter</code> to <code>true</code> when this property is set to
+			 * <code>false</code>. This is needed, as the non-active lists are not displayed,
+			 * and without a personalization button they can't be selected by the user.
 			 */
 			active : {type : "boolean", group : "Behavior", defaultValue : true},
 
@@ -147,6 +155,27 @@ sap.ui.define([
 					 */
 					selectedKeys : {type : "object"}
 				}
+			},
+
+			/**
+			 * Triggered after the Search button is pressed or by pressing Enter in search input field.
+			 *
+			 * The default filtering behavior of the control can be prevented by calling <code>sap.ui.base.Event.prototype.preventDefault</code>
+			 * function in the <code>search</code> event handler function.
+			 * Preventing the default behavior is useful in cases when items aggregation could be taking long time fetching from the OData model.
+			 * As a result, no list items are loaded initially.
+			 * If the default filtering behavior is prevented then filtering behavior has to be defined at application level
+			 * inside the <code>search</code> event handler function.
+			 * @since 1.76
+			 */
+			search: {
+				allowPreventDefault : true,
+				parameters : {
+					/**
+					 * Value received as user input in the <code>sap.m.SearchField</code>, and taken as a JavaScript string object.
+					 */
+					term: {type: "string"}
+				}
 			}
 		}
 	}});
@@ -195,11 +224,15 @@ sap.ui.define([
 	};
 
 	FacetFilterList.prototype._applySearch = function() {
-		var searchVal = this._getSearchValue();
-		if (searchVal != null) {
-			this._search(searchVal, true);
-			this._updateSelectAllCheckBox();
+		var sSearchVal = this._getSearchValue();
+
+		if (sSearchVal === null) {
+			return;
 		}
+
+		this._bSearchEventDefaultBehavior && this._search(sSearchVal, true);
+
+		this._updateSelectAllCheckBox();
 	};
 
 	/**
@@ -212,12 +245,12 @@ sap.ui.define([
 		var aSelectedItems = [];
 		// Track which items are added from the aggregation so that we don't add them again when adding the remaining selected key items
 		var oCurrentSelectedItemsMap = {};
-		var aCurrentSelectedItems = sap.m.ListBase.prototype.getSelectedItems.apply(this, arguments);
+		var aCurrentSelectedItems = List.prototype.getSelectedItems.apply(this, arguments);
 
 		// First add items according to what is selected in the 'items' aggregation. This maintains indexes of currently selected items in the returned array.
 		aCurrentSelectedItems.forEach(function(oItem) {
 
-			aSelectedItems.push(new sap.m.FacetFilterItem({
+			aSelectedItems.push(new FacetFilterItem({
 				text: oItem.getText(),
 				key: oItem.getKey(),
 				selected: true
@@ -235,7 +268,7 @@ sap.ui.define([
 			aSelectedKeys.forEach(function(sKey) {
 
 				if (!oCurrentSelectedItemsMap[sKey]) {
-					aSelectedItems.push(new sap.m.FacetFilterItem({
+					aSelectedItems.push(new FacetFilterItem({
 						text: oSelectedKeys[sKey],
 						key: sKey,
 						selected: true
@@ -255,10 +288,10 @@ sap.ui.define([
 	 */
 	FacetFilterList.prototype.getSelectedItem = function() {
 
-		var oItem = sap.m.ListBase.prototype.getSelectedItem.apply(this, arguments);
+		var oItem = List.prototype.getSelectedItem.apply(this, arguments);
 		var aSelectedKeys = Object.getOwnPropertyNames(this.getSelectedKeys());
 		if (!oItem && aSelectedKeys.length > 0) {
-			oItem = new sap.m.FacetFilterItem({
+			oItem = new FacetFilterItem({
 				text: this.getSelectedKeys()[aSelectedKeys[0]],
 				key: aSelectedKeys[0],
 				selected: true
@@ -277,7 +310,7 @@ sap.ui.define([
 		// See _resetItemsBinding to understand why we override the ListBase method
 		if (this._allowRemoveSelections) {
 
-			bAll ? this.setSelectedKeys() : sap.m.ListBase.prototype.removeSelections.call(this, bAll);
+			bAll ? this.setSelectedKeys() : List.prototype.removeSelections.call(this, bAll);
 		}
 		return this;
 	};
@@ -323,10 +356,12 @@ sap.ui.define([
 			bKeyAdded = true;
 		}, this);
 		if (bKeyAdded) {
-			this.setActive(true);
+			if (this.getMode() === ListMode.MultiSelect) {
+				this.setActive(true);
+			}
 			this._selectItemsByKeys();
 		} else {
-			sap.m.ListBase.prototype.removeSelections.call(this);
+			List.prototype.removeSelections.call(this);
 		}
 	};
 
@@ -380,13 +415,13 @@ sap.ui.define([
 	 */
 	FacetFilterList.prototype.removeSelectedKeys = function() {
 		this._oSelectedKeys = {};
-		sap.m.ListBase.prototype.removeSelections.call(this, true);
+		List.prototype.removeSelections.call(this, true);
 	};
 
 	FacetFilterList.prototype.removeItem = function(vItem) {
 
 		// Update the selected keys cache if an item is removed
-		var oItem = sap.m.ListBase.prototype.removeItem.apply(this, arguments);
+		var oItem = List.prototype.removeItem.apply(this, arguments);
 		if (!this._filtering) {
 			oItem && oItem.getSelected() && this.removeSelectedKey(oItem.getKey(), oItem.getText());
 			return oItem;
@@ -401,6 +436,7 @@ sap.ui.define([
 	 */
 	FacetFilterList.prototype.init = function(){
 		this._firstTime = true;
+		this._bSearchEventDefaultBehavior = true;
 		this._saveBindInfo;
 
 
@@ -415,7 +451,7 @@ sap.ui.define([
 		this.setRememberSelections(false);
 
 		// Remember the search value so that it can be seeded into the search field
-		this._searchValue = null;
+		this._searchValue = "";
 
 		// Select items set from a variant when the growing list is updated
 		this.attachUpdateFinished(function(oEvent) {
@@ -436,9 +472,7 @@ sap.ui.define([
 				if (oModel && oModel.getProperty(oBinding.getPath())) {
 					this._iAllItemsCount = oModel.getProperty(oBinding.getPath()).length || 0; //if the model is different than a simple array of objects
 				}
-			}
 
-			if (sUpdateReason !== "growing" && sUpdateReason !== ChangeReason.Filter.toLowerCase()) {
 				this._oSelectedKeys = {};
 				this._getNonGroupItems().forEach(function(item) {
 					if (item.getSelected()) {
@@ -454,7 +488,6 @@ sap.ui.define([
 			this._updateFacetFilterButtonText();
 			//need to check if the visible items represent all of the items in order to handle the select all check box
 			this._updateSelectAllCheckBox();
-
 		});
 
 		this._allowRemoveSelections = true;
@@ -479,7 +512,7 @@ sap.ui.define([
 	 * This presents a dilemma for applications that load items from a listOpen event handler by setting the model. In
 	 * that scenario it would be impossible to restore selections from a variant since selected keys must be set outside
 	 * of the listOpen handler (otherwise the facet button or summary bar would not display pre-selected items until after
-	 * the list was opened and then closed).
+	 * the list was opened and then closed`).
 	 *
 	 * @private
 	 */
@@ -487,9 +520,9 @@ sap.ui.define([
 
 		if (this.isBound("items")) {
 
-			this._searchValue = null; // Clear the search value since items are being reinitialized
+			this._setSearchValue(""); // Clear the search value since items are being reinitialized
 			this._allowRemoveSelections = false;
-			sap.m.ListBase.prototype._resetItemsBinding.apply(this, arguments);
+			List.prototype._resetItemsBinding.apply(this, arguments);
 			this._allowRemoveSelections = true;
 		}
 	};
@@ -513,9 +546,9 @@ sap.ui.define([
 		});
 	};
 
-
 	/**
 	 * Sets this list active if at least one list item is selected, or the all checkbox is selected.
+	 * Used in MultiSelect mode of the list.
 	 *
 	 * @private
 	 */
@@ -527,7 +560,6 @@ sap.ui.define([
 		}
 	};
 
-
 	/**
 	 * Handles both liveChange and search events.
 	 * @param {object} oEvent The event which is fired
@@ -536,10 +568,17 @@ sap.ui.define([
 	FacetFilterList.prototype._handleSearchEvent = function(oEvent) {
 
 		var sSearchVal = oEvent.getParameters()["query"];
+
 		if (sSearchVal === undefined) {
 			sSearchVal = oEvent.getParameters()["newValue"];
 		}
-		this._search(sSearchVal);
+
+		this._bSearchEventDefaultBehavior = this.fireSearch({
+			term: sSearchVal,
+			clearButtonPressed: oEvent.getParameters()["clearButtonPressed"]
+		});
+
+		this._bSearchEventDefaultBehavior ? this._search(sSearchVal) : this._setSearchValue(sSearchVal);
 
 		// If search was cleared and a selected item is made visible, make sure to set the
 		// checkbox accordingly.
@@ -557,60 +596,75 @@ sap.ui.define([
 
 	FacetFilterList.prototype._search = function(sSearchVal, force) {
 
-		var bindingInfoaFilters;
-		var numberOfsPath = 0;
+		var bindingInfoaFilters, aBindingParts, aUserFilters,
+			oUserFilter, sPath,
+			oFinalFilter, oPartsFilters, oFacetFilterItem,
+			numberOfsPath = 0,
+			oBinding = this.getBinding("items"),
+			oBindingInfo = this.getBindingInfo("items");
 
-		//Checks whether given model is one of the OData Model(s)
+		// Checks whether given model is one of the OData Models
 		function isODataModel(oModel) {
-			return oModel instanceof sap.ui.model.odata.ODataModel || oModel instanceof sap.ui.model.odata.v2.ODataModel;
+			return oModel instanceof sap.ui.model.odata.ODataModel ||
+				oModel instanceof sap.ui.model.odata.v2.ODataModel ||
+				oModel instanceof sap.ui.model.odata.v4.ODataModel;
 		}
 
 		if (force || (sSearchVal !== this._searchValue)) {
 			this._searchValue = sSearchVal;
-			var oBinding = this.getBinding("items");
-			var oBindingInfo = this.getBindingInfo("items");
 			if (oBindingInfo && oBindingInfo.binding) {
 				bindingInfoaFilters = oBindingInfo.binding.aFilters;
 				if (bindingInfoaFilters.length > 0) {
 					numberOfsPath = bindingInfoaFilters[0].aFilters.length;
 					if (this._firstTime) {
-						this._saveBindInfo = bindingInfoaFilters[0].aFilters[0];
+						this._saveBindInfo = bindingInfoaFilters[0].aFilters[0][0];
 						this._firstTime = false;
 					}
 				}
 			}
-			if (oBinding) { // There will be no binding if the items aggregation has not been bound to a model, so search is not
-				// possible
+
+			 // There will be no binding if the items aggregation has not been bound to a model, so search is not possible
+			if (oBinding) {
 				if (sSearchVal || numberOfsPath > 0) {
-					var path = this.getBindingInfo("items").template.getBindingInfo("text").parts[0].path;
-					if (path) {
-						var oUserFilter = new Filter(path, sap.ui.model.FilterOperator.Contains, sSearchVal);
+					oFacetFilterItem = oBindingInfo.template ? oBindingInfo.template : oBindingInfo.factory();
+					aBindingParts = oFacetFilterItem.getBindingInfo("text").parts;
+					sPath = aBindingParts[0].path;
+					// sPath="" will be resolved relativelly to the parent, i.e. actual path will match the parent's one.
+					if (sPath || sPath === "") {
+						aUserFilters = [];
+
+						// Add Filters for every parts from the model except the first one because the array is already
+						// predefined with a first item the first binding part
+						aBindingParts.forEach(function(oBindingPart) {
+							aUserFilters.push(new Filter(oBindingPart.path, FilterOperator.Contains, sSearchVal));
+						});
+
 						if (this.getEnableCaseInsensitiveSearch() && isODataModel(oBinding.getModel())){
-							//notice the single quotes wrapping the value from the UI control!
-							var sEncodedString = "'" + String(sSearchVal).replace(/'/g, "''") + "'";
-							sEncodedString = sEncodedString.toLowerCase();
-							oUserFilter = new Filter("tolower(" + path + ")", sap.ui.model.FilterOperator.Contains, sEncodedString);
+							aUserFilters.forEach(function(oFilter) {
+								oFilter.bCaseSensitive = false;
+							});
 						}
+						oPartsFilters = new Filter(aUserFilters, false);
 						if (numberOfsPath > 1) {
-							var oFinalFilter = new Filter([oUserFilter, this._saveBindInfo], true);
+							oFinalFilter = new Filter([oPartsFilters, this._saveBindInfo], true);
 						} else {
 							if (this._saveBindInfo > "" && oUserFilter.sPath != this._saveBindInfo.sPath) {
-								var oFinalFilter = new Filter([oUserFilter, this._saveBindInfo], true);
+								oFinalFilter = new Filter([oPartsFilters, this._saveBindInfo], true);
 							} else {
 								if (sSearchVal == "") {
-									var oFinalFilter = [];
+									oFinalFilter = [];
 								} else {
-									var oFinalFilter = new Filter([oUserFilter], true);
+									oFinalFilter = new Filter([oPartsFilters], true);
 								}
 							}
 						}
-						oBinding.filter(oFinalFilter, sap.ui.model.FilterType.Control);
+						oBinding.filter(oFinalFilter, FilterType.Control);
 					}
 				} else {
-					oBinding.filter([], sap.ui.model.FilterType.Control);
+					oBinding.filter([], FilterType.Control);
 				}
 			} else {
-				jQuery.sap.log.warning("No filtering performed", "The list must be defined with a binding for search to work",
+				Log.warning("No filtering performed", "The list must be defined with a binding for search to work",
 					this);
 			}
 		}
@@ -657,7 +711,7 @@ sap.ui.define([
 	 */
 	FacetFilterList.prototype._addSelectedKey = function(sKey, sText){
 		if (!sKey && !sText) {
-			jQuery.sap.log.error("Both sKey and sText are not defined. At least one must be defined.");
+			Log.error("Both sKey and sText are not defined. At least one must be defined.");
 			return;
 		}
 		if (this.getMode() === ListMode.SingleSelectMaster) {
@@ -680,7 +734,7 @@ sap.ui.define([
 	FacetFilterList.prototype._removeSelectedKey = function(sKey, sText) {
 
 		if (!sKey && !sText) {
-			jQuery.sap.log.error("Both sKey and sText are not defined. At least one must be defined.");
+			Log.error("Both sKey and sText are not defined. At least one must be defined.");
 			return false;
 		}
 
@@ -740,9 +794,12 @@ sap.ui.define([
 	 * @private
 	 */
 	FacetFilterList.prototype._handleSelectAllClick = function(bSelected) {
-		var bActive;
+		var bActive,
+			bAtLeastOneItemIsSelected,
+			aItems = this._getNonGroupItems(),
+			iItemsCount = aItems.length;
 
-		this._getNonGroupItems().forEach(function (oItem) {
+		aItems.forEach(function (oItem) {
 			if (bSelected) {
 				this._addSelectedKey(oItem.getKey(), oItem.getText());
 			} else {
@@ -751,10 +808,17 @@ sap.ui.define([
 			oItem.setSelected(bSelected, true);
 		}, this);
 
-		// At least one item needs to be selected to consider the list as active or it appeared as active once
-		bActive = this._getOriginalActiveState() || bSelected;
-		this.setActive(bActive);
-		jQuery.sap.delayedCall(0, this, this._updateSelectAllCheckBox);
+		function isSelected(oItem) {
+			return oItem.getSelected();
+		}
+
+		if (this.getMode() === ListMode.MultiSelect) {
+			// At least one item needs to be selected to consider the list as active or it appeared as active once
+			bAtLeastOneItemIsSelected = iItemsCount > 0 && iItemsCount === aItems.filter(isSelected).length;
+			bActive = this._getOriginalActiveState() || (bSelected && bAtLeastOneItemIsSelected);
+			this.setActive(bActive);
+		}
+		setTimeout(this._updateSelectAllCheckBox.bind(this), 0);
 	};
 
 	/**
@@ -763,7 +827,7 @@ sap.ui.define([
 	FacetFilterList.prototype.onItemTextChange = function(oItem, sNewValue) {
 		var sKeyName = oItem.getKey();
 
-		if (this._oSelectedKeys[sKeyName] && sNewValue) {
+		if (this._oSelectedKeys[sKeyName] && sNewValue && !this._filtering) {
 			this._oSelectedKeys[sKeyName] = sNewValue;
 		}
 	};
@@ -784,20 +848,21 @@ sap.ui.define([
 		} else {
 			this._removeSelectedKey(oItem.getKey(), oItem.getText());
 		}
-		sap.m.ListBase.prototype.onItemSelectedChange.apply(this, arguments);
+		List.prototype.onItemSelectedChange.apply(this, arguments);
 
-		/* At least one item needs to be selected to consider the list as active.
-		 When selectedItems == 1 and bSelect is false, that means this is the last item currently being deselected */
-		bActive = this._getOriginalActiveState() || bSelect || this.getSelectedItems().length > 1;
-		this.setActive(bActive);
+		if (this.getMode() === ListMode.MultiSelect) {
+			/* At least one item needs to be selected to consider the list as active.
+			 When selectedItems == 1 and bSelect is false, that means this is the last item currently being deselected */
+			bActive = this._getOriginalActiveState() || bSelect || this.getSelectedItems().length > 1;
+			this.setActive(bActive);
+		}
 
 		!this.getDomRef() && this.getParent() && this.getParent().getDomRef() && this.getParent().invalidate();
 
 		// Postpone the _updateSelectAllCheckBox, as the oItem(type ListItemBase) has not yet set it's 'selected' property
 		// See ListItemBase.prototype.setSelected
-		jQuery.sap.delayedCall(0, this, this._updateSelectAllCheckBox);
+		setTimeout(this._updateSelectAllCheckBox.bind(this), 0);
 	};
-
 
 	/**
 	 * This method overrides runs when the list updates its items.
@@ -806,15 +871,25 @@ sap.ui.define([
 	 * @param {String} sReason reason for update
 	 */
 	FacetFilterList.prototype.updateItems = function(sReason) {
-	  this._filtering = sReason === ChangeReason.Filter;
-	  sap.m.ListBase.prototype.updateItems.apply(this,arguments);
-	  this._filtering = false;
-	  // If this list is not set to growing or it has been filtered then we must make sure that selections are
-	  // applied to items matching keys contained in the selected keys cache.  Selections
-	  // in a growing list are handled by the updateFinished handler.
-	  if (!this.getGrowing() || sReason === ChangeReason.Filter) {
-	  this._selectItemsByKeys();
-	  }
+		var oPrevActiveElement = document.activeElement;
+
+		this._filtering = sReason === ChangeReason.Filter;
+		List.prototype.updateItems.apply(this,arguments);
+		this._filtering = false;
+
+		// When the list is filtered so that the focused list item disappears from the DOM
+		// then focus can't be reapplied inside the list and if the FacetFilterList is inside a popover
+		// then the popover closes unexpectedly.
+		if (oPrevActiveElement && oPrevActiveElement.getAttribute("id") !== document.activeElement.getAttribute("id")) {
+			this.focus();
+		}
+
+		// If this list is not set to growing or it has been filtered then we must make sure that selections are
+		// applied to items matching keys contained in the selected keys cache.  Selections
+		// in a growing list are handled by the updateFinished handler.
+		if (!this.getGrowing() || sReason === ChangeReason.Filter) {
+			this._selectItemsByKeys();
+		}
 	};
 
 	FacetFilterList.prototype._getOriginalActiveState = function() {
@@ -823,6 +898,16 @@ sap.ui.define([
 
 	FacetFilterList.prototype._preserveOriginalActiveState = function () {
 		this._bOriginalActiveState = this.getActive();
+	};
+
+	FacetFilterList.prototype._showBusyIndicator = function() {
+		List.prototype._showBusyIndicator.apply(this, arguments);
+		this.fireEvent("listItemsChange");
+	};
+
+	FacetFilterList.prototype._hideBusyIndicator = function() {
+		List.prototype._hideBusyIndicator.apply(this, arguments);
+		this.fireEvent("listItemsChange");
 	};
 
 	return FacetFilterList;

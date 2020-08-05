@@ -4,30 +4,17 @@
 /* =================================== */
 
 /* ------------------------------ */
-/* text field                     */
-/* ------------------------------ */
-
-/* hover */
-
-.sapMComboBoxBasePressed:not(.sapMComboBoxTextFieldReadonly):not(.sapMComboBoxTextFieldState):not(.sapMComboBoxTextFieldDisabled) {
-	border-color: @sapUiFieldActiveBorderColor;
-}
-
-/* ------------------------------ */
-/* list                           */
-/* ------------------------------ */
-
-.sapMComboBoxBaseList.sapUiLocalBusy {
-	min-height: 2rem;
-}
-
-/* ------------------------------ */
 /* picker                         */
 /* ------------------------------ */
 
 div.sapMComboBoxBasePicker {
 	box-shadow: 0 0.0625rem 0.1875rem fade(@sapUiContentShadowColor, 50);
 	border: none;
+}
+
+.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
 }
 
 /* ------------------------------ */

@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TablePerso",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TablePerso.Table",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Table.view.xml",
+					"Table.controller.js",
+					"DemoPersoService.js",
+					"Formatter.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,138 @@
+<mvc:View
+	controllerName="sap.ui.demo.cardExplorer.controller.ExploreSamples"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+	xmlns:editor="sap.ui.codeeditor"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:cardExplorer="sap.ui.demo.cardExplorer.controls"
+>
+	<l:ResponsiveSplitter id="splitView">
+		<l:PaneContainer orientation="Horizontal">
+			<l:SplitPane id="cardPane" requiredParentWidth="1">
+				<Page>
+					<customHeader>
+						<Bar>
+							<contentLeft>
+								<Title class="sapUiSmallMarginBegin" text="{/sample/title}"></Title>
+							</contentLeft>
+							<contentRight>
+								<ComboBox
+									id="subSample"
+									selectedKey="{/subSample/key}"
+									items="{/sample/subSamples}"
+									visible="{= ${/sample/subSamples} ? true : false }"
+									selectionChange="onSubSampleChange">
+									<core:Item key="{key}" text="{title}" />
+								</ComboBox>
+							</contentRight>
+						</Bar>
+					</customHeader>
+					<MessageStrip
+						text="This type of card is in a beta state - incompatible API changes in the manifest may be done before its official public release."
+						visible="{= !!${/sample/experimental} || !!${/subSample/experimental} }"
+						showIcon="true"
+						type="Warning"
+						class="sapUiSmallMargin"/>
+					<f:GridContainer id="cardContainer" visible="{= !${settings>/useIFrame} }">
+						<w:Card id="cardSample" action="._onCardAction"/>
+					</f:GridContainer>
+					<core:HTML
+						id="iframeWrapper"
+						visible="{= ${settings>/useIFrame} }"
+						preferDOM="false"
+						content='&lt;div style="height:100%; overflow-y: hidden; overflow-x:auto;"&gt;
+								 &lt;/div&gt;'></core:HTML>
+				</Page>
+			</l:SplitPane>
+			<l:SplitPane requiredParentWidth="1">
+				<Page id="editPage">
+					<customHeader>
+						<OverflowToolbar>
+							<Button
+								class="sapUiSmallMarginBegin"
+								text="Run"
+								type="Emphasized"
+								icon="sap-icon://media-play"
+								press="onRunPressed"
+								enabled="{settings>/editable}"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="High" />
+								</layoutData>
+							</Button>
+							<CheckBox
+								text="Auto Run"
+								selected="{settings>/autoRun}"
+								enabled="{settings>/editable}"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</CheckBox>
+							<CheckBox
+								text="Schema Validation"
+								selected="{settings>/schemaValidation}"
+								enabled="{settings>/editable}"
+								select=".onSchemaValidationCheck"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</CheckBox>
+							<ToolbarSpacer />
+							<MenuButton
+								id="downloadSampleButton"
+								icon="sap-icon://download"
+								tooltip="Download"
+								text="Download"
+								type="Transparent"
+							>
+								<menu>
+									<Menu>
+										<MenuItem text="Manifest File" icon="sap-icon://document-text" press="onDownloadManifestFile" />
+										<MenuItem text="{= ${settings>/isApplication} ? 'All files as .zip' : 'Bundle as card.zip'}" icon="sap-icon://attachment-zip-file" press="onDownloadZip" />
+									</Menu>
+								</menu>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="High" />
+								</layoutData>
+							</MenuButton>
+							<Button
+								press="onChangeEditorClick"
+								tooltip="Design-time editor"
+								icon="sap-icon://developer-settings"
+								enabled="{settings>/editable}"
+								type="Transparent"
+								visible="{= ${settings>/editable} &amp;&amp; ${settings>/designtime} }"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</Button>
+							<Button
+								class="orientationBtn"
+								press="onChangeSplitterOrientation"
+								tooltip="Change position"
+								icon="sap-icon://header"
+								type="Transparent"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</Button>
+						</OverflowToolbar>
+					</customHeader>
+					<cardExplorer:FileEditor
+						id="fileEditor"
+						manifestChange="onFileEditorManifestChange"
+						fileSwitch="onFileSwitch"
+						visible="{= ${settings>/editorType} === 'text' }"
+					/>
+				</Page>
+			</l:SplitPane>
+		</l:PaneContainer>
+	</l:ResponsiveSplitter>
+</mvc:View>

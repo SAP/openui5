@@ -3,17 +3,24 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/registry/Settings",
+	"sap/base/util/merge",
+	"sap/base/Log"
 ], function (
 	jQuery,
 	ManagedObject,
+	Layer,
 	Utils,
-	Settings
+	LayerUtils,
+	Settings,
+	merge,
+	Log
 ) {
-
 	"use strict";
 
 	/**
@@ -28,19 +35,18 @@ sap.ui.define([
 	 * @alias sap.ui.fl.Variant
 	 * @experimental Since 1.52.0
 	 */
-	var Variant = ManagedObject.extend("sap.ui.fl.Variant", /** @lends sap.ui.fl.Variant.prototype */
-	{
-		constructor : function(oFile){
+	var Variant = ManagedObject.extend("sap.ui.fl.Variant", /** @lends sap.ui.fl.Variant.prototype */ {
+		constructor : function(oFile) {
 			ManagedObject.apply(this);
 
 			if (!jQuery.isPlainObject(oFile)) {
-				Utils.log.error("Constructor : sap.ui.fl.Variant : oFile is not defined");
+				Log.error("Constructor : sap.ui.fl.Variant : oFile is not defined");
 			}
 
 			this._oDefinition = oFile;
-			this._oOriginDefinition = jQuery.extend(true, {}, oFile);
+			this._oOriginDefinition = merge({}, oFile);
 			this._sRequest = '';
-			this._bUserDependent = (oFile.content.layer === "USER");
+			this._bUserDependent = (oFile.content.layer === Layer.USER);
 			this._vRevertData = null;
 			this.setState(Variant.states.NEW);
 		},
@@ -82,7 +88,7 @@ sap.ui.define([
 	Variant.prototype._isValidState = function(sState) {
 		//new state have to be in the Variant.states value list
 		var bStateFound = false;
-		Object.keys(Variant.states).some(function(sKey){
+		Object.keys(Variant.states).some(function(sKey) {
 			if (Variant.states[sKey] === sState) {
 				bStateFound = true;
 			}
@@ -140,6 +146,10 @@ sap.ui.define([
 	 */
 	Variant.prototype.isVariant = function () {
 		return true;
+	};
+
+	Variant.prototype.getDefinitionWithChanges = function () {
+		return this._oDefinition;
 	};
 
 	/**
@@ -240,7 +250,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Variant.prototype.getContent = function () {
-		return this._oDefinition.content;
+		return this._oDefinition.content.content;
 	};
 
 	/**
@@ -251,7 +261,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Variant.prototype.setContent = function (oContent) {
-		this._oDefinition.content = oContent;
+		this._oDefinition.content.content = oContent;
 		this.setState(Variant.states.DIRTY);
 	};
 
@@ -296,7 +306,7 @@ sap.ui.define([
 	 */
 	Variant.prototype.getText = function (sTextId) {
 		if (typeof (sTextId) !== "string") {
-			Utils.log.error("sap.ui.fl.Variant.getTexts : sTextId is not defined");
+			Log.error("sap.ui.fl.Variant.getTexts : sTextId is not defined");
 		}
 		if (this._oDefinition.content.texts) {
 			if (this._oDefinition.content.texts[sTextId]) {
@@ -317,7 +327,7 @@ sap.ui.define([
 	 */
 	Variant.prototype.setText = function (sTextId, sNewText) {
 		if (typeof (sTextId) !== "string") {
-			Utils.log.error("sap.ui.fl.Variant.setTexts : sTextId is not defined");
+			Log.error("sap.ui.fl.Variant.setTexts : sTextId is not defined");
 			return;
 		}
 		if (this._oDefinition.content.texts) {
@@ -373,7 +383,7 @@ sap.ui.define([
 	 */
 	Variant.prototype._isReadOnlyDueToLayer = function () {
 		var sCurrentLayer;
-		sCurrentLayer = Utils.getCurrentLayer(this._bUserDependent);
+		sCurrentLayer = LayerUtils.getCurrentLayer(this._bUserDependent);
 		return (this._oDefinition.content.layer !== sCurrentLayer);
 	};
 
@@ -387,7 +397,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Variant.prototype._isReadOnlyDueToOriginalLanguage = function () {
-		var sCurrentLanguage, sOriginalLanguage;
+		var sCurrentLanguage;
+		var sOriginalLanguage;
 
 		sOriginalLanguage = this.getOriginalLanguage();
 		if (!sOriginalLanguage) {
@@ -416,7 +427,7 @@ sap.ui.define([
 	 */
 	Variant.prototype.setRequest = function (sRequest) {
 		if (typeof (sRequest) !== "string") {
-			Utils.log.error("sap.ui.fl.Variant.setRequest : sRequest is not defined");
+			Log.error("sap.ui.fl.Variant.setRequest : sRequest is not defined");
 		}
 		this._sRequest = sRequest;
 	};
@@ -560,7 +571,7 @@ sap.ui.define([
 	 * @param {Object}  [oPropertyBag] property bag
 	 * @param {Object}  [oPropertyBag.content] content of the new change
 	 * @param {String}  [oPropertyBag.content.fileName] name/id of the file. if not set implicitly created
-	 * @param {String}  [oPropertyBag.content.title] title of the variant
+	 * @param {String}  [oPropertyBag.content.content.title] title of the variant
 	 * @param {String}  [oPropertyBag.content.fileType] file type of a variant
 	 * @param {String}  [oPropertyBag.content.variantManagementReference] Reference to the variant management control
 	 * @param {String}  [oPropertyBag.content.variantReference] Reference to another variant
@@ -582,7 +593,6 @@ sap.ui.define([
 	 * @public
 	 */
 	Variant.createInitialFileContent = function (oPropertyBag) {
-
 		if (!oPropertyBag) {
 			oPropertyBag = {};
 		}
@@ -597,11 +607,9 @@ sap.ui.define([
 				variantReference: oPropertyBag.content.variantReference || "",
 				reference: oPropertyBag.content.reference || "",
 				packageName: oPropertyBag.content.packageName || "",
-				content: {
-					title: oPropertyBag.content.content.title || ""
-				},
+				content: {title: oPropertyBag.content.content.title || ""},
 				self: sNamespace + sFileName + "." + "ctrl_variant",
-				layer: oPropertyBag.content.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
+				layer: oPropertyBag.content.layer || LayerUtils.getCurrentLayer(oPropertyBag.isUserDependent),
 				texts: oPropertyBag.content.texts || {},
 				namespace: sNamespace, //TODO: we need to think of a better way to create namespaces from Adaptation projects.
 				creation: "",
@@ -613,10 +621,10 @@ sap.ui.define([
 					user: "",
 					sapui5Version: sap.ui.version
 				},
-				validAppVersions: oPropertyBag.validAppVersions || {}
+				validAppVersions: oPropertyBag.content.validAppVersions || {}
 			},
 			controlChanges: oPropertyBag.controlChanges || [],
-			variantChanges: {}
+			variantChanges: {} //should be empty for new variant
 		};
 
 		return oNewFile;

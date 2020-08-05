@@ -6,10 +6,8 @@
 	<l:VerticalLayout
 		class="sapUiContentPadding"
 		width="100%">
-		<l:content>
-			<Button
-				text="Open View Settings Dialog"
-				press="handleOpenDialog" />
-		</l:content>
+		<Button
+			text="Open View Settings Dialog"
+			press="handleOpenDialog" />
 	</l:VerticalLayout>
 </mvc:View>

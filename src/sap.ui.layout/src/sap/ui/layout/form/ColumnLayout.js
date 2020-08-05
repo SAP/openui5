@@ -3,10 +3,18 @@
  */
 
 // Provides control sap.ui.layout.form.ColumnLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
-               'sap/ui/Device', 'sap/ui/core/ResizeHandler', './ColumnLayoutRenderer'],
-	function(jQuery, library, FormLayout, Device, ResizeHandler, ColumnLayoutRenderer) {
+sap.ui.define([
+	'sap/ui/Device',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/layout/library',
+	'./FormLayout',
+	'./ColumnLayoutRenderer',
+	"sap/ui/thirdparty/jquery"
+],
+	function(Device, ResizeHandler, library, FormLayout, ColumnLayoutRenderer, jQuery) {
 	"use strict";
+
+	/* global ResizeObserver */
 
 	/**
 	 * Constructor for a new <code>sap.ui.layout.form.ColumnLayout</code>.
@@ -105,11 +113,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 
 		this._resizeProxy = jQuery.proxy(_handleResize, this);
 
+		if (typeof ResizeObserver === "function") {
+			this._oResizeObserver = new ResizeObserver(this._resizeProxy);
+		}
+
 	};
 
 	ColumnLayout.prototype.exit = function(){
 
 		_cleanup.call(this);
+		this._oResizeObserver = undefined;
 
 	};
 
@@ -125,8 +138,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 
 	ColumnLayout.prototype.onAfterRendering = function( oEvent ){
 
-		this._sResizeListener = ResizeHandler.register(this, this._resizeProxy);
-		_handleResize.call(this);
+		if (this._oResizeObserver) {
+			var oDomRef = this.getDomRef();
+			this._oResizeObserver.observe(oDomRef);
+		} else {
+			// resize handler fallback for old browsers (e.g. IE 11)
+			this._sResizeListener = ResizeHandler.register(this, this._resizeProxy);
+		}
+
+		_reflow.call(this);
 
 	};
 
@@ -193,7 +213,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 	ColumnLayout.prototype._getContainerSize = function(oContainer) {
 
 		var oForm = this.getParent();
-		var oLD = this.getLayoutDataForElement(oContainer, "sap/ui/layout/form/ColumnContainerData");
+		var oLD = this.getLayoutDataForElement(oContainer, "sap.ui.layout.form.ColumnContainerData");
 		var aContainers = oForm.getVisibleFormContainers();
 		var iContainers = aContainers.length;
 		var iColumnsM = this.getColumnsM();
@@ -258,7 +278,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 					iContainer = i;
 					oOtherLD = oLD;
 				} else {
-					oOtherLD = this.getLayoutDataForElement(aContainers[i], "sap/ui/layout/form/ColumnContainerData");
+					oOtherLD = this.getLayoutDataForElement(aContainers[i], "sap.ui.layout.form.ColumnContainerData");
 				}
 
 				if (!oOtherLD) {
@@ -334,7 +354,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 					if (oContainer === aContainers[i]) {
 						oOtherLD = oLD;
 					} else {
-						oOtherLD = this.getLayoutDataForElement(aContainers[i], "sap/ui/layout/form/ColumnContainerData");
+						oOtherLD = this.getLayoutDataForElement(aContainers[i], "sap.ui.layout.form.ColumnContainerData");
 					}
 
 					calculateLineBreak(oSizes.M, iColumnsM, (oOtherLD ? oOtherLD.getColumnsM() : 0));
@@ -374,7 +394,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 	ColumnLayout.prototype._getFieldSize = function(oField) {
 
 		var iColumns = 12;
-		var oLD = this.getLayoutDataForElement(oField, "sap/ui/layout/form/ColumnElementData");
+		var oLD = this.getLayoutDataForElement(oField, "sap.ui.layout.form.ColumnElementData");
 		var oOptions = {S: {Size: iColumns, Break: false, Space: 0}, L: {Size: iColumns, Break: false, Space: 0}};
 		var iLabelSizeS = iColumns;
 		var iLabelSizeL = this.getLabelCellsLarge();
@@ -393,13 +413,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 				oOptions.L.Size = iLabelSizeL;
 			}
 		} else {
-			var aFields = oElement.getFields();
+			var aFields = oElement.getFieldsForRendering();
 			var iFields = aFields.length;
 			var iColumnsS = iColumns;
 			var iColumnsL = iColumns - this.getEmptyCellsLarge();
 
 			if (oLabel) {
-				var oLabelLD = this.getLayoutDataForElement(oLabel, "sap/ui/layout/form/ColumnElementData");
+				var oLabelLD = this.getLayoutDataForElement(oLabel, "sap.ui.layout.form.ColumnElementData");
 				if (oLabelLD) {
 					iLabelSizeS = oLabelLD.getCellsSmall();
 					iLabelSizeL = oLabelLD.getCellsLarge();
@@ -481,7 +501,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 				// determine rows and available cells
 				for (i = 0; i < iFields; i++) {
 					if (oField !== aFields[i]) {
-						oOtherLD = this.getLayoutDataForElement(aFields[i], "sap/ui/layout/form/ColumnElementData");
+						oOtherLD = this.getLayoutDataForElement(aFields[i], "sap.ui.layout.form.ColumnElementData");
 					} else {
 						oOtherLD = oLD;
 						iField = i;
@@ -538,6 +558,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 
 	function _cleanup(){
 
+		if (this._oResizeObserver) {
+			this._oResizeObserver.disconnect();
+		}
 		if (this._sResizeListener) {
 			ResizeHandler.deregister(this._sResizeListener);
 			this._sResizeListener = undefined;
@@ -545,9 +568,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 
 	}
 
-	function _handleResize(oEvent, bNoRowResize){
+	function _handleResize(oEvent, bNoRowResize) {
+		window.requestAnimationFrame(function() {
+			_reflow.call(this, oEvent, bNoRowResize);
+		}.bind(this));
+	}
 
+	function _reflow(oEvent, bNoRowResize) {
 		var oDomRef = this.getDomRef();
+
 		// Prove if DOM reference exist, and if not - clean up the references.
 		if (!oDomRef) {
 			_cleanup.call(this);
@@ -555,12 +584,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 		}
 
 		var $DomRef = this.$();
+
 		if (!$DomRef.is(":visible")) {
+			return;
+		}
+
+		if (ResizeHandler.isSuspended(oDomRef, this._resizeProxy)) {
 			return;
 		}
 
 		var iWidth = oDomRef.clientWidth;
 		var iColumns = 1;
+
 		if (iWidth <= this._iBreakPointTablet) {
 			$DomRef.toggleClass("sapUiFormCLMedia-Std-Phone", true);
 			$DomRef.toggleClass("sapUiFormCLMedia-Std-Desktop", false).toggleClass("sapUiFormCLMedia-Std-Tablet", false).toggleClass("sapUiFormCLMedia-Std-LargeDesktop", false);
@@ -581,7 +616,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 		var bWideColumns = this.getLabelCellsLarge() < 12 && iWidth / iColumns > this._iBreakPointTablet;
 		$DomRef.toggleClass("sapUiFormCLWideColumns", bWideColumns);
 		$DomRef.toggleClass("sapUiFormCLSmallColumns", !bWideColumns);
-
 	}
 
 	return ColumnLayout;

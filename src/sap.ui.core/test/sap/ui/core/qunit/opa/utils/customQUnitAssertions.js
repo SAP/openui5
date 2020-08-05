@@ -1,18 +1,16 @@
+/*global QUnit */
 (function () {
 	"use strict";
 
 	function contains (sStringValue, vStringOrRegex) {
 		var bContains = false;
 
-		switch ($.type(vStringOrRegex)) {
-			case "string":
-				bContains = sStringValue.indexOf(vStringOrRegex) !== -1;
-				break;
-			case "regexp":
-				bContains = vStringOrRegex.test(sStringValue);
-				break;
-			default:
-				throw new Error("Unsupported type '" +  vStringOrRegex + "' needs to be string or Regex")
+		if (typeof vStringOrRegex === "string" || vStringOrRegex instanceof String) {
+			bContains = sStringValue.indexOf(vStringOrRegex) !== -1;
+		} else if (vStringOrRegex instanceof RegExp) {
+			bContains = vStringOrRegex.test(sStringValue);
+		} else {
+			throw new Error("Unsupported type '" +  vStringOrRegex + "' needs to be string or Regex");
 		}
 
 		return bContains;

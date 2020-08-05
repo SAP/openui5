@@ -1,13 +1,13 @@
 /*global QUnit */
 
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/TablePersoController",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/table/TablePersoController",
-	"sap/ui/model/json/JSONModel",
-	"sap/m/Label"
-], function(qutils, Table, Column, TablePersoController, JSONModel, Label) {
+	"sap/ui/model/json/JSONModel"
+], function(TableQUnitUtils, TablePersoController, qutils, Table, Column, JSONModel) {
 	"use strict";
 
 	var oController = null, oTable = null;
@@ -30,15 +30,22 @@ sap.ui.require([
 		// Table settings
 		mTableSettings.showColumnVisibilityMenu = true;
 		mTableSettings.columns = jQuery.map(oData.cols, function(colname) {
-			return new Column(colname, {
-				label: new Label({text: colname}),
+			var oAggregations = {
+				label: new TableQUnitUtils.TestControl({text: colname}),
 				visible: colname === "Color" ? false : true, // Color column should be invisible by default
-				template: new Label({
+				template: new TableQUnitUtils.TestControl({
 					text: {
 						path: colname.toLowerCase()
 					}
 				})
-			});
+			};
+			if (colname !== "Number") {
+				oAggregations.multiLabels = [
+					new TableQUnitUtils.TestControl({text: "First level header"}),
+					new TableQUnitUtils.TestControl({text: colname + " - Second level header"})
+				];
+			}
+			return new Column(colname, oAggregations);
 		});
 
 		// Controller settings
@@ -181,7 +188,8 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("Column visibility (autoSave)", 16, function(assert) {
+	QUnit.test("Column visibility (autoSave)", function(assert) {
+		assert.expect(16);
 		var done = assert.async();
 		var getPersDataCalls = 0;
 
@@ -252,8 +260,9 @@ sap.ui.require([
 
 		// set "Number" column to invisible
 		oNameMenu.open();
+		var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
 		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-2", "click");
+		qutils.triggerMouseEvent(aSubmenuItems[2].$(), "click");
 
 		// delay execution to wait for visibility change
 		setTimeout(function() {
@@ -285,7 +294,8 @@ sap.ui.require([
 		}, 0);
 	});
 
-	QUnit.test("Column visibility (no autoSave)", 19, function(assert) {
+	QUnit.test("Column visibility (no autoSave)", function(assert) {
+		assert.expect(19);
 		var done = assert.async();
 		var getPersDataCalls = 0;
 
@@ -357,8 +367,9 @@ sap.ui.require([
 
 		// set "Number" column to invisible
 		oNameMenu.open();
+		var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
 		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-2", "click");
+		qutils.triggerMouseEvent(aSubmenuItems[2].$(), "click");
 
 		// delay execution to wait for visibility change
 		setTimeout(function() {
@@ -381,8 +392,8 @@ sap.ui.require([
 			oController.savePersonalizations();
 
 			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), true, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible again.");
+			assert.equal(oColorColumn.getVisible(), true, "Color column should be visible again.");
+			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible.");
 
 			// clearing and refreshing the data should put the columns in the initial state (time when the table was set as association)
 			oController.getPersoService().delPersData();
@@ -489,6 +500,15 @@ sap.ui.require([
 		assert.equal(oTable.indexOfColumn(oNumberColumn), 0, "Number column should be on index 0.");
 		assert.equal(oTable.indexOfColumn(oNameColumn), 1, "Name column should be on index 1.");
 		assert.equal(oTable.indexOfColumn(oColorColumn), 2, "Color column should be on index 2.");
+	});
+
+	QUnit.test("Column multiLabels", function(assert) {
+		createController();
+
+		var oTablePersoData = oController._getCurrentTablePersoData(true);
+		assert.equal(oTablePersoData.aColumns[0].text, "Name - Second level header", "Name column has the correct label in TablePersoDialog");
+		assert.equal(oTablePersoData.aColumns[1].text, "Color - Second level header", "Color column has the correct label in TablePersoDialog");
+		assert.equal(oTablePersoData.aColumns[2].text, "Number", "Number column has the correct label in TablePersoDialog");
 	});
 
 	QUnit.module("Personalization via CustomDataKey", {

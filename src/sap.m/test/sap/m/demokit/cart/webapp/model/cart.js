@@ -1,8 +1,9 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/m/MessageBox',
-	'sap/m/MessageToast'
-], function ($, MessageBox, MessageToast) {
+	"sap/m/MessageBox",
+	"sap/m/MessageToast"
+], function (
+	MessageBox,
+	MessageToast) {
 	"use strict";
 
 	return {
@@ -63,12 +64,12 @@ sap.ui.define([
 		 */
 		_updateCartItem: function (oBundle, oProductToBeAdded, oCartModel) {
 			// find existing entry for product
-			var oCollectionEntries = $.extend({}, oCartModel.getData()["cartEntries"]);
+			var oCollectionEntries = Object.assign({}, oCartModel.getData()["cartEntries"]);
 			var oCartEntry =  oCollectionEntries[oProductToBeAdded.ProductId];
 
 			if (oCartEntry === undefined) {
 				// create new entry
-				oCartEntry = $.extend({}, oProductToBeAdded);
+				oCartEntry = Object.assign({}, oProductToBeAdded);
 				oCartEntry.Quantity = 1;
 				oCollectionEntries[oProductToBeAdded.ProductId] = oCartEntry;
 			} else {
@@ -76,7 +77,7 @@ sap.ui.define([
 				oCartEntry.Quantity += 1;
 			}
 			//update the cart model
-			oCartModel.setProperty("/cartEntries", $.extend({}, oCollectionEntries));
+			oCartModel.setProperty("/cartEntries", Object.assign({}, oCollectionEntries));
 			oCartModel.refresh(true);
 			MessageToast.show(oBundle.getText("productMsgAddedToCart", [oProductToBeAdded.Name] ));
 		}

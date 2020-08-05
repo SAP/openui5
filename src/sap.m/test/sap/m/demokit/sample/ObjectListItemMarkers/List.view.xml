@@ -4,85 +4,75 @@
 	xmlns="sap.m">
 	<List
 		headerText="Products">
-		<items>
-			<ObjectListItem
-					title="Gladiator MX"
-					type="Active"
-					press="onListItemPress"
-					number="87.50"
-					numberUnit="EUR">
-				<firstStatus>
-					<ObjectStatus
-						text="Available"
-						state="Success" />
-				</firstStatus>
-				<attributes>
-					<ObjectAttribute text="125 g" />
-					<ObjectAttribute text="145 x 140 x 360 cm" />
-				</attributes>
-				<markers>
-					<ObjectMarker type="Favorite" />
-					<ObjectMarker type="Flagged" />
-				</markers>
-			</ObjectListItem>
-			<ObjectListItem
-					title="Hurricane GX"
-					type="Active"
-					press="onListItemPress"
-					number="235"
-					numberUnit="EUR">
-				<firstStatus>
-					<ObjectStatus
-						text="Out of stock"
-						state="Warning" />
-				</firstStatus>
-				<attributes>
-					<ObjectAttribute text="34 g" />
-					<ObjectAttribute text="45 x 14 x 36 cm" />
-				</attributes>
-				<markers>
-					<ObjectMarker type="Flagged" />
-					<ObjectMarker type="Locked" />
-				</markers>
-			</ObjectListItem>
-			<ObjectListItem
-					title="Power Projector 4713"
-					type="Active"
-					press="onListItemPress"
-					number="135"
-					numberUnit="EUR">
-				<firstStatus>
-					<ObjectStatus
-						text="Discontinued"
-						state="Error" />
-				</firstStatus>
-				<attributes>
-					<ObjectAttribute text="67 g" />
-					<ObjectAttribute text="425 x 35 x 30 cm" />
-				</attributes>
-				<markers>
-					<ObjectMarker type="Favorite" />
-					<ObjectMarker type="Locked" />
-					<ObjectMarker type="Draft" />
-				</markers>
-			</ObjectListItem>
-			<ObjectListItem
-					title="Webcam"
-					type="Active"
-					press="onListItemPress"
-					number="15"
-					numberUnit="EUR">
-				<firstStatus>
-					<ObjectStatus text="New" />
-				</firstStatus>
-				<attributes>
-					<ObjectAttribute text="67 g" />
-					<ObjectAttribute text="15 x 15 x 10 cm" />
-				</attributes>
-				<markers>
-					<ObjectMarker type="Unsaved" />
-				</markers>
-			</ObjectListItem>
-		</items>
+		<ObjectListItem
+				title="Gladiator MX"
+				type="Active"
+				press="onListItemPress"
+				number="87.50"
+				numberUnit="EUR">
+			<firstStatus>
+				<ObjectStatus
+					text="Available"
+					state="Success" />
+			</firstStatus>
+			<ObjectAttribute text="125 g" />
+			<ObjectAttribute text="145 x 140 x 360 cm" />
+			<markers>
+				<ObjectMarker type="Favorite" />
+				<ObjectMarker type="Flagged" />
+			</markers>
+		</ObjectListItem>
+		<ObjectListItem
+				title="Hurricane GX"
+				type="Active"
+				press="onListItemPress"
+				number="235"
+				numberUnit="EUR">
+			<firstStatus>
+				<ObjectStatus
+					text="Out of stock"
+					state="Warning" />
+			</firstStatus>
+			<ObjectAttribute text="34 g" />
+			<ObjectAttribute text="45 x 14 x 36 cm" />
+			<markers>
+				<ObjectMarker type="Flagged" />
+				<ObjectMarker type="Locked" />
+			</markers>
+		</ObjectListItem>
+		<ObjectListItem
+				title="Power Projector 4713"
+				type="Active"
+				press="onListItemPress"
+				number="135"
+				numberUnit="EUR">
+			<firstStatus>
+				<ObjectStatus
+					text="Discontinued"
+					state="Error" />
+			</firstStatus>
+			<ObjectAttribute text="67 g" />
+			<ObjectAttribute text="425 x 35 x 30 cm" />
+			<markers>
+				<ObjectMarker type="Favorite" />
+				<ObjectMarker type="Locked" />
+				<ObjectMarker type="Draft" />
+			</markers>
+		</ObjectListItem>
+		<ObjectListItem
+				title="Webcam"
+				type="Active"
+				press="onListItemPress"
+				number="15"
+				numberUnit="EUR">
+			<firstStatus>
+				<ObjectStatus text="New" />
+			</firstStatus>
+			<ObjectAttribute text="67 g" />
+			<ObjectAttribute text="15 x 15 x 10 cm" />
+			<markers>
+				<ObjectMarker type="Unsaved" />
+			</markers>
+		</ObjectListItem>
 	</List>
 </mvc:View>

@@ -6,12 +6,10 @@
 	height="100%">
 	<l:FixFlex class="fixFlexHorizontal" vertical="false">
 		<l:fixContent>
-			<Image
-				src="{img>/products/pic1}"
-				densityAware="true" />
+			<Image src="{img>/products/pic1}" densityAware="true" />
 		</l:fixContent>
 		<l:flexContent>
-			<Text class="column1" text="This container is flexible and it will adapts its size to fill the remaining size in the FixFlex contol"></Text>
+			<Text class="column1" text="This container is flexible and it will adapts its size to fill the remaining size in the FixFlex control" />
 		</l:flexContent>
 	</l:FixFlex>
 </mvc:View>

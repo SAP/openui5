@@ -2,9 +2,25 @@
  * ${copyright}
  */
 
+/* global XMLHttpRequest */
+
 // Provides client-based DataBinding implementation
-sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBinding', './ClientPropertyBinding', './ClientTreeBinding', './Model'],
-	function(jQuery, ClientContextBinding, ClientListBinding, ClientPropertyBinding, ClientTreeBinding, Model) {
+sap.ui.define([
+	'./ClientContextBinding',
+	'./ClientListBinding',
+	'./ClientPropertyBinding',
+	'./ClientTreeBinding',
+	'./Model',
+	"sap/ui/thirdparty/jquery"
+],
+	function(
+		ClientContextBinding,
+		ClientListBinding,
+		ClientPropertyBinding,
+		ClientTreeBinding,
+		Model,
+		jQuery
+	) {
 	"use strict";
 
 
@@ -44,19 +60,16 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 
 	/**
 	 * Returns the current data of the model.
+	 *
 	 * Be aware that the returned object is a reference to the model data so all changes to that data will also change the model data.
 	 *
-	 * @return the data object
+	 * @returns {any} the data object
 	 * @public
 	 */
 	ClientModel.prototype.getData = function(){
 		return this.oData;
 	};
 
-	/**
-	 * @see sap.ui.model.Model.prototype.bindElement
-	 *
-	 */
 	/**
 	 * @see sap.ui.model.Model.prototype.createBindingContext
 	 *
@@ -94,9 +107,11 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 		function wrapHandler(fn) {
 			return function() {
 				// request finished, remove request handle from pending request array
-				var iIndex = jQuery.inArray(oRequestHandle, that.aPendingRequestHandles);
-				if (iIndex > -1) {
-					that.aPendingRequestHandles.splice(iIndex, 1);
+				if (that.aPendingRequestHandles){
+					var iIndex = that.aPendingRequestHandles.indexOf(oRequestHandle);
+					if (iIndex > -1) {
+						that.aPendingRequestHandles.splice(iIndex, 1);
+					}
 				}
 
 				// call original handler method
@@ -115,7 +130,6 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 		if (oParameters.async) {
 			this.aPendingRequestHandles.push(oRequestHandle);
 		}
-
 	};
 
 	/**
@@ -172,7 +186,5 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 		this.bCache = !bForceNoCache;
 	};
 
-
 	return ClientModel;
-
 });

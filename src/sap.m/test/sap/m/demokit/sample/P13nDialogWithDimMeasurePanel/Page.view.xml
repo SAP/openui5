@@ -1,4 +1,4 @@
-<core:View height="100%" xmlns:core="sap.ui.core" xmlns="sap.m" class="sapUiContentPadding"
+<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" class="sapUiContentPadding"
 		   controllerName="sap.m.sample.P13nDialogWithDimMeasurePanel.Page">
 	<Button text="Show Personalization Dialog" press="onPersonalizationDialogPress"/>
-</core:View>
+</mvc:View>

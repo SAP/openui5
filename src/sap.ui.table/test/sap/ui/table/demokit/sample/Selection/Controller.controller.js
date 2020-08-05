@@ -1,28 +1,34 @@
 sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/table/library",
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/format/DateFormat"
-], function(Controller, MessageToast, JSONModel, DateFormat) {
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/thirdparty/jquery"
+], function(Log, library, Controller, MessageToast, JSONModel, DateFormat, jQuery) {
 	"use strict";
+
+	var SelectionBehavior = library.SelectionBehavior,
+		SelectionMode = library.SelectionMode;
 
 	return Controller.extend("sap.ui.table.sample.Selection.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			var oView = this.getView();
 			oView.setModel(oJSONModel);
 
 			var aSelectionModes = [];
-			jQuery.each(sap.ui.table.SelectionMode, function(k, v){
-				if (k != sap.ui.table.SelectionMode.Multi) {
+			jQuery.each(SelectionMode, function(k, v){
+				if (k != SelectionMode.Multi) {
 					aSelectionModes.push({key: k, text: v});
 				}
 			});
 
 			var aSelectionBehaviors = [];
-			jQuery.each(sap.ui.table.SelectionBehavior, function(k, v){
+			jQuery.each(SelectionBehavior, function(k, v){
 				aSelectionBehaviors.push({key: k, text: v});
 			});
 
@@ -40,20 +46,20 @@ sap.ui.define([
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					var aTemp1 = [];
 					var aTemp2 = [];
 					var aSuppliersData = [];
 					var aCategoryData = [];
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
-						if (oProduct.SupplierName && jQuery.inArray(oProduct.SupplierName, aTemp1) < 0) {
+						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
 						}
-						if (oProduct.Category && jQuery.inArray(oProduct.Category, aTemp2) < 0) {
+						if (oProduct.Category && aTemp2.indexOf(oProduct.Category) < 0) {
 							aTemp2.push(oProduct.Category);
 							aCategoryData.push({Name: oProduct.Category});
 						}
@@ -68,8 +74,8 @@ sap.ui.define([
 
 					oModel.setData(oData);
 				},
-				error: function () {
-					jQuery.sap.log.error("failed to load json");
+				error: function() {
+					Log.error("failed to load json");
 				}
 			});
 
@@ -95,7 +101,7 @@ sap.ui.define([
 			oTable.setEnableSelectAll(oEvent.getParameter("state"));
 		},
 
-		getSelectedIndices: function (evt) {
+		getSelectedIndices: function(evt) {
 			var aIndices = this.byId("table1").getSelectedIndices();
 			var sMsg;
 			if (aIndices.length < 1) {
@@ -106,7 +112,7 @@ sap.ui.define([
 			MessageToast.show(sMsg);
 		},
 
-		getContextByIndex: function (evt) {
+		getContextByIndex: function(evt) {
 			var oTable = this.byId("table1");
 			var iIndex = oTable.getSelectedIndex();
 			var sMsg;
@@ -118,11 +124,11 @@ sap.ui.define([
 			MessageToast.show(sMsg);
 		},
 
-		clearSelection: function (evt) {
+		clearSelection: function(evt) {
 			this.byId("table1").clearSelection();
 		},
 
-		formatAvailableToObjectState : function (bAvailable) {
+		formatAvailableToObjectState : function(bAvailable) {
 			return bAvailable ? "Success" : "Error";
 		},
 

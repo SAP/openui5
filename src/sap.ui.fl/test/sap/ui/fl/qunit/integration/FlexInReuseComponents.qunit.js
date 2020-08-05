@@ -1,182 +1,96 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"sap/ui/fl/FlexController",
+sap.ui.define([
+	"sap/m/Input",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/Persistence",
-	"sap/ui/core/Control",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/changeHandler/HideControl",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
-	"sap/ui/fl/changeHandler/XmlTreeModifier",
-	"sap/ui/fl/context/ContextManager",
-	"sap/ui/core/Component"
-],
-function (
-	FlexController,
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils"
+], function(
+	Input,
+	jQuery,
+	Component,
+	ManifestUtils,
+	FlexControllerFactory,
 	Change,
-	ChangeRegistry,
-	Persistence,
-	Control,
-	Utils,
-	HideControl,
-	ChangePersistenceFactory,
-	JsControlTreeModifier,
-	XmlTreeModifier,
-	ContextManager,
-	Component
+	Layer,
+	Utils
 ) {
-	'use strict';
-	QUnit.start();
-
-	sinon.config.useFakeTimers = false;
-
-	jQuery.sap.registerModulePath("sap.ui.fl.qunit.integration", "./");
-
-	sinon.stub(sap.ui.fl.LrepConnector.prototype, "loadChanges").returns(
-		Promise.resolve({
-			"changes": [],
-			"contexts": [],
-			"variantSection": {},
-			"settings": {
-				"isKeyUser": true,
-				"isAtoAvailable": false,
-				"isAtoEnabled": false,
-				"isProductiveSystem": false
-			}
-		})
-	);
+	"use strict";
 
 	QUnit.module("Creation of the first change without a registered propagationListener", {
-		beforeEach: function () {
-			this.oComponent = sap.ui.component({
+		beforeEach: function() {
+			return Component.create({
 				name: "sap.ui.fl.qunit.integration.testComponentComplex",
 				id: "sap.ui.fl.qunit.integration.testComponentComplex",
 				manifestFirst: true,
-				"metadata": {
-					"manifest": "json"
+				metadata: {
+					manifest: "json"
 				}
-			});
-
-			// simulate a to late loaded fl library... resulting in a not registered propagationListener
-			this.oComponent.aPropagationListeners = [];
+			})
+			.then(function(oComponent) {
+				this.oComponent = oComponent;
+				// simulate a too late loaded fl library... resulting in a not registered propagationListener
+				this.oComponent.aPropagationListeners = [];
+			}.bind(this));
 		},
-
-		afterEach: function (assert) {
+		afterEach: function() {
 			this.oComponent.destroy();
 		}
-	});
+	}, function() {
+		QUnit.test("applies the change after the recreation of the changed control - Promises/FakePromises is intercepted", function(assert) {
+			var oNewFieldInstance;
+			var sFlexReference = ManifestUtils.getFlexReference({manifest: this.oComponent.getManifest()});
+			var oComponentContainer = this.oComponent.getRootControl();
+			var sEmbeddedComponentId = oComponentContainer.getAssociation("component");
+			var oEmbeddedComponent = Component.get(sEmbeddedComponentId);
+			var oView = oEmbeddedComponent.getRootControl();
+			var oForm = oView.byId("myForm");
+			var oInitialFieldInstance = oView.byId("myGroupField");
 
-	QUnit.test("applies the change after the recreation of the changed control - without Promises/FakePromises", function (assert) {
-		var sFlexReference = this.oComponent.getManifest()["sap.app"].id + ".Component";
-		var oComponentContainer = this.oComponent.getRootControl();
-		var sEmbeddedComponentId = oComponentContainer.getAssociation("component");
-		var oEmbeddedComponent = sap.ui.getCore().getComponent(sEmbeddedComponentId);
-		var oView = oEmbeddedComponent.getRootControl();
-		var oForm = oView.byId("myForm");
-		var oInitialFieldInstance = oView.byId("myGroupField");
+			var oChangeContent = {
+				fileType: "change",
+				layer: Layer.VENDOR,
+				fileName: "a",
+				namespace: "b",
+				packageName: "c",
+				changeType: "hideControl",
+				reference: sFlexReference,
+				content: ""
+			};
 
-		var oChangeContent = {
-			"fileType": "change",
-			"layer": "VENDOR",
-			"fileName": "a",
-			"namespace": "b",
-			"packageName": "c",
-			"changeType": "hideControl",
-			"reference": sFlexReference,
-			"content": ""
-		};
+			// simulate no component loaded callback (no loaded fl library)
+			Component._fnLoadComponentCallback = undefined;
 
-		// simulate no component loaded callback (no loaded fl library)
-		Component._fnLoadComponentCallback = undefined;
+			// create a hide control change
+			var sAppVersion = Utils.getAppVersionFromManifest(this.oComponent.getManifest());
+			var oFlexController = FlexControllerFactory.create(sFlexReference, sAppVersion);
+			return oFlexController.createAndApplyChange(oChangeContent, oInitialFieldInstance)
 
-		// create a hide control change
-		var sAppVersion = Utils.getAppVersionFromManifest(this.oComponent.getManifest());
-		var oFlexController = sap.ui.fl.FlexControllerFactory.create(sFlexReference, sAppVersion);
-		return oFlexController.createAndApplyChange(oChangeContent, oInitialFieldInstance)
+			.then(function(oChange) {
+				assert.deepEqual(oInitialFieldInstance.getVisible(), false, "the label is hidden");
 
-		.then(function() {
-			assert.deepEqual(oInitialFieldInstance.getVisible(), false, "the label is hidden");
+				// simulate an event destroying the field
+				oInitialFieldInstance.destroy();
 
-			// simulate an event destroying the field
-			oInitialFieldInstance.destroy();
+				// simulate a recreation of the control
+				var oChangeApplyPromise = oChange.addChangeProcessingPromise(Change.operations.APPLY);
+				oNewFieldInstance = new Input(oView.createId("myGroupField"));
+				oForm.addContent(oNewFieldInstance);
+				return oChangeApplyPromise;
+			})
 
-			// simulate a recreation of the control
-			var oNewFieldInstance = new sap.m.Input(oView.createId("myGroupField"));
-			oForm.addContent(oNewFieldInstance);
-			return oNewFieldInstance;
-		})
-
-		.then(function(oNewFieldInstance) {
-			// final check
-			assert.deepEqual(oNewFieldInstance.getVisible(), false, "the label is still hidden");
+			.then(function() {
+				// final check
+				assert.deepEqual(oNewFieldInstance.getVisible(), false, "the label is still hidden");
+			});
 		});
-
 	});
 
-	QUnit.test("applies the change after the recreation of the changed control - with Promises/FakePromises", function (assert) {
-		var sFlexReference = this.oComponent.getManifest()["sap.app"].id + ".Component";
-		var oComponentContainer = this.oComponent.getRootControl();
-		var sEmbeddedComponentId = oComponentContainer.getAssociation("component");
-		var oEmbeddedComponent = sap.ui.getCore().getComponent(sEmbeddedComponentId);
-		var oView = oEmbeddedComponent.getRootControl();
-		var oForm = oView.byId("myForm");
-		var oInitialFieldInstance = oView.byId("myGroupField");
-
-		var oChangeContent = {
-			"fileType": "change",
-			"layer": "VENDOR",
-			"fileName": "a",
-			"namespace": "b",
-			"packageName": "c",
-			"changeType": "hideControl",
-			"reference": sFlexReference,
-			"content": ""
-		};
-
-		// simulate no component loaded callback (no loaded fl library)
-		Component._fnLoadComponentCallback = undefined;
-
-		// create a hide control change
-		var sAppVersion = Utils.getAppVersionFromManifest(this.oComponent.getManifest());
-		var oFlexController = sap.ui.fl.FlexControllerFactory.create(sFlexReference, sAppVersion);
-		oFlexController.createAndApplyChange(oChangeContent, oInitialFieldInstance);
-
-		assert.deepEqual(oInitialFieldInstance.getVisible(), false, "the label is hidden");
-
-		// simulate an event destroying the field
-		oInitialFieldInstance.destroy();
-
-		// simulate a recreation of the control
-		var oNewFieldInstance = new sap.m.Input(oView.createId("myGroupField"));
-		oForm.addContent(oNewFieldInstance);
-
-		// final check if the reapplication of the change is done
-        // oForm.addContent > core.ManagedObject.setParent > core.ManagedObject.propagateProperties > FlexController.applyChangesOnControl
-		assert.deepEqual(oNewFieldInstance.getVisible(), false, "the label is still hidden");
-	});
-
-	QUnit.module("adding of the propagationListener", {
-		beforeEach: function () {
-			this.oComponent = sap.ui.component({
-				name: "integration/testComponentComplex",
-				id: "testComponentComplex",
-				manifestFirst: true,
-				"metadata": {
-					"manifest": "json"
-				}
-			});
-
-			// simulate a to late loaded fl library... resulting in a not registered propagationListener
-			this.oComponent.aPropagationListeners = [];
-		},
-
-		afterEach: function (assert) {
-			this.oComponent.destroy();
-		}
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
 });

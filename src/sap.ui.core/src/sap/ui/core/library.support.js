@@ -4,13 +4,15 @@
 /**
  * Adds support rules to the core
  */
-sap.ui.define(["jquery.sap.global",
-		"./rules/Misc.support",
-		"./rules/Config.support",
-		"./rules/Model.support",
-		"./rules/View.support",
-		"./rules/App.support"],
-	function(jQuery, MiscSupport, ConfigSupport, ModelSupport, ViewSupport, AppSupport) {
+sap.ui.define([
+	"./rules/Misc.support",
+	"./rules/Config.support",
+	"./rules/Model.support",
+	"./rules/View.support",
+	"./rules/App.support",
+	"./rules/Rendering.support"
+],
+	function(MiscSupport, ConfigSupport, ModelSupport, ViewSupport, AppSupport, RenderingSupport) {
 	"use strict";
 
 	return {
@@ -21,7 +23,8 @@ sap.ui.define(["jquery.sap.global",
 			ConfigSupport,
 			ModelSupport,
 			ViewSupport,
-			AppSupport
+			AppSupport,
+			RenderingSupport
 		]
 	};
 }, true);

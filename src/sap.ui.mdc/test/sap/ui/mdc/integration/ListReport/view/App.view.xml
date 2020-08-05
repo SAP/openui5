@@ -1,0 +1,16 @@
+<mvc:View controllerName="sap.ui.v4demo.controller.App"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:tnt="sap.tnt">
+	<tnt:ToolHeader>
+		<IconTabHeader selectedKey="{app>/routeName}" id="iconTabHeader" select=".onNavigate">
+			<items>
+				<IconTabFilter key="books" text="Manage Books" />
+				<IconTabFilter key="orders" text="Manage Orders" />
+				<IconTabFilter key="authors" text="Manage Authors"/>
+			</items>
+		</IconTabHeader>
+	</tnt:ToolHeader>
+       <App id="app">
+	</App>
+</mvc:View>

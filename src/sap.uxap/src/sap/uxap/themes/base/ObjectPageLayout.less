@@ -15,6 +15,17 @@
 	isolation: isolate;
 	z-index: 0;
 	white-space: normal; // BCP: 1780382804
+
+	/* ObjectAttribute will not truncate inside ObjectPage but rather will go on more lines */
+	.sapUxAPObjectPageHeaderDetails {
+		.sapMObjectAttributeActive .sapMObjectAttributeTitle,
+		.sapMObjectAttributeActive .sapMObjectAttributeText {
+			display: inline;
+			position: relative;
+			white-space: pre-line;
+			word-wrap: break-word;
+		}
+	}
 }
 
 body > .sapUxAPObjectPageLayout,
@@ -25,6 +36,14 @@ body > .sapUxAPObjectPageLayout,
 .sapUxAPObjectPageHeaderTitle {
     flex-shrink: 0;
     -webkit-flex-shrink: 0;
+}
+
+.sapUxAPObjectPageLayoutTitleClickEnabled > .sapUxAPObjectPageHeaderStickied > .sapFDynamicPageTitle {
+	box-shadow: @sapUiShadowHeader;
+}
+
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutTitleClickEnabled) .sapFDynamicPageHeaderPinButton {
+	margin-left: -1.25rem;
 }
 
 .sapUxAPObjectPageSubSectionPromoted:not(:first-of-type) {
@@ -45,6 +64,15 @@ body > .sapUxAPObjectPageLayout,
 	many platforms. When will-change becomes widely adopted than it's better to use it rather than translate3d */
 	-webkit-transform: translate3d(0, 0, 0);
 	transform: translate3d(0, 0, 0);
+}
+
+/*Transform translate3d causes problems on IE11 with Windows 10.
+The issue can be observed while scrolling some nested controls.
+BCP: 0020751294 0000432437 2019
+BCP: 1980095977
+*/
+html[data-sap-ui-browser^="ie"] .sapUxAPObjectPageWrapperTransform {
+	transform: none;
 }
 
 .sapUxAPObjectPageScroll {
@@ -108,45 +136,12 @@ body > .sapUxAPObjectPageLayout,
 	background: @sapUiObjectHeaderBorderColor;
 }
 
-// title hover
-.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) {
-  .sapFDynamicPageTitle:hover,
-  &.sapUxAPObjectPageTitleForceHovered .sapFDynamicPageTitle {
-    cursor: pointer;
-  }
-}
-
-/* ============================== */
-/* Toggle Header Visual Indicator */
-/* ============================== */
-.sapFDynamicPageToggleHeaderIndicator.sapMBtn {
-  position: absolute;
-  left: 50%;
-  padding: 0;
-
-  .sapMBtnInner {
-    position: absolute !important;
-    bottom: 0;
-    border-radius: 0 0 0.1875rem 0.1875rem;
-  }
-}
-
-.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutWithNavigation .sapFDynamicPageToggleHeaderIndicator {
-  bottom: -4.5rem; // -1.5 by default and -3 the height of the AnchorBar
-}
-
-/* Phone */
-.sap-phone {
-  .sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutWithNavigation .sapFDynamicPageToggleHeaderIndicator {
-    bottom: -4.25rem; // -1.25 by default and -3 the height of the AnchorBar
-  }
-}
-
-/* Compact */
-.sapUiSizeCompact {
-  .sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutWithNavigation .sapFDynamicPageToggleHeaderIndicator {
-    bottom: -3rem; // -1 by default and -2 the height of the AnchorBar
-  }
+.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled {
+	// title hover
+	.sapFDynamicPageTitle:hover,
+	&.sapUxAPObjectPageTitleForceHovered .sapFDynamicPageTitle {
+		cursor: pointer;
+	}
 }
 
 // footer
@@ -160,6 +155,7 @@ body > .sapUxAPObjectPageLayout,
 		margin-left: 0.5rem;
 		margin-right: 0.5rem;
 		margin-bottom: 0.5rem;
+		z-index:1001;
 
 		.sapUxAPObjectPageFloatingFooter {
 			border: 1px solid;
@@ -171,6 +167,15 @@ body > .sapUxAPObjectPageLayout,
 .sapUiSizeCompact .sapUxAPObjectPageLayout .sapUxAPObjectPageFooter {
 	.sapUxAPObjectPageFloatingFooter {
 		height: 2.5rem;
+
+		&.sapMBar-CTX {
+			// BCP: 1870106645
+			// When sap.m.Bar is used as footer (in compact) setting 2.5rem height
+			// breaks the Bar`s content vertical alignment.
+			// Fixing this internally in the sap.m.Bar (in the context of flaoting footer)
+			// will require significant effort, so we set height of 2rem (the expected Bar height by the visual spec).
+			height: 2rem;
+		}
 	}
 	height: 2.5rem;
 }
@@ -231,21 +236,12 @@ html[data-sap-ui-animation='on'] .sapUxAPObjectPageLayout {
  in the sapMShell and the one in the objectPageWrapper.
  Also the z-index causes the scroll bars of the table to show in the headerTitle.
  For more information see internal incident 1670194272. */
-html[data-sap-ui-browser^="ie"][data-sap-ui-os^="win8"] .sapMShell {
-
-  .sapUxAPObjectPageWrapperTransform {
-    transform: none;
-  }
+ /* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"] .sapMShell {
 
   .sapUxAPObjectPageHeaderTitle {
     z-index: 3;
   }
-}
-
-.sap-desktop .sapUxAPObjectPageCustomScroller {
-    right: 0px;
-    position: absolute;
-    z-index: 100;
 }
 
 .ui-helper-clearfix:before,

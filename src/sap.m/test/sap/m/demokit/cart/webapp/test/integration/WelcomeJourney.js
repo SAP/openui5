@@ -2,7 +2,12 @@
  global QUnit
  */
 sap.ui.define([
-	'sap/ui/test/opaQunit'
+	"sap/ui/test/opaQunit",
+	"./pages/Home",
+	"./pages/Welcome",
+	"./pages/Product",
+	"./pages/Category",
+	"./pages/Cart"
 ], function (opaTest) {
 	"use strict";
 
@@ -24,9 +29,23 @@ sap.ui.define([
 		Then.onTheCategory.iShouldSeeSomeEntriesInTheProductList();
 	});
 
+	opaTest("Should press the image and see the LightBox item", function (Given, When, Then) {
+		//Actions
+		When.onTheProduct.iPressOnTheProductPicture();
+		//Assertions
+		Then.onTheProduct.iShouldSeeALightBox();
+	});
+
+	opaTest("Should press the close button and see the product view", function (Given, When, Then) {
+		//Actions
+		When.onTheProduct.iPressTheCloseButtonOfTheLightBox();
+		//Assertions
+		Then.onTheProduct.iShouldSeeTheProductPage();
+	});
+
 	opaTest("Should press back button and navigate to welcome view", function (Given, When, Then) {
 		// Actions
-		When.onTheCategory.iPressTheBackButtonInProduct();
+		When.onTheCategory.iPressTheBackButtonInCategory();
 		// Assertions
 		Then.onTheWelcomePage.iShouldSeeTheWelcomePage();
 	});
@@ -35,17 +54,11 @@ sap.ui.define([
 		// Actions
 		When.onHome.iPressOnTheFlatScreensCategory();
 		When.onTheWelcomePage.iPressOnTheCartButton();
-		When.onTheCategory.iGoToTheCartPage();
+		When.onTheWelcomePage.iToggleTheCart();
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart();
-	});
-
-	opaTest("Should press the first product in viewed items and see it in light box ", function (Given, When, Then) {
-		// Actions
-		When.onTheWelcomePage.iPressTheProductImage();
-		// Assertions
-		Then.onTheWelcomePage.iShouldSeeTheProductInLightBox();
-		When.onTheWelcomePage.iPressTheCloseButtonOfTheLightBox().and.iTeardownMyApp();
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 });

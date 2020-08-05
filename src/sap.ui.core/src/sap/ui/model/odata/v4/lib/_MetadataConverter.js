@@ -2,10 +2,15 @@
  * ${copyright}
  */
 
+//Provides class sap.ui.model.odata.v4.lib._MetadataConverter
 sap.ui.define([
-	"./_Helper"
-], function (_Helper) {
+	"./_Helper",
+	"sap/base/Log",
+	"sap/ui/performance/Measurement"
+], function (_Helper, Log, Measurement) {
 	"use strict";
+
+	var sClassName = "sap.ui.model.odata.v4.lib._MetadataConverter";
 
 	/**
 	 * Creates the base class for the metadata converters.
@@ -35,6 +40,22 @@ sap.ui.define([
 	// namespaces
 	MetadataConverter.prototype.sEdmNamespace = "http://docs.oasis-open.org/odata/ns/edm";
 	MetadataConverter.prototype.sEdmxNamespace = "http://docs.oasis-open.org/odata/ns/edmx";
+
+	/**
+	 * Adds a name/value pair with the given qualified name and given value to the result. Warns
+	 * about duplicate names.
+	 *
+	 * @param {string} sQualifiedName
+	 *   Qualified name
+	 * @param {any} vValue
+	 *   Value
+	 */
+	MetadataConverter.prototype.addToResult = function (sQualifiedName, vValue) {
+		if (sQualifiedName in this.result) {
+			Log.warning("Duplicate qualified name " + sQualifiedName, undefined, sClassName);
+		}
+		this.result[sQualifiedName] = vValue;
+	};
 
 	/**
 	 * This function is called by each annotatable entity to define a place for the
@@ -69,11 +90,11 @@ sap.ui.define([
 		}
 		this.oAnnotatable = {
 			parent : this.oAnnotatable, // The parent annotatable (note that <Annotation>
-		                                // is also annotatable, so in postProcessAnnotation
-		                                // the annotatable to modify is the parent)
+										// is also annotatable, so in postProcessAnnotation
+										// the annotatable to modify is the parent)
 			path : sPath, // the annotation path if externalized
 			prefix : sPrefix || "", // the prefix to put before the "@" and the term (used e.g.
-		                            // for annotated annotations)
+									// for annotated annotations)
 			qualifiedName : undefined, // the qualified name of the annotation
 			qualifier : sQualifier, // the annotation qualifier
 			target : vTarget // the target to add the annotation to or its name
@@ -94,7 +115,7 @@ sap.ui.define([
 	MetadataConverter.prototype.convertXMLMetadata = function (oDocument, sUrl) {
 		var oElement;
 
-		jQuery.sap.measure.average("convertXMLMetadata", "",
+		Measurement.average("convertXMLMetadata", "",
 			"sap.ui.model.odata.v4.lib._V4MetadataConverter");
 
 		oElement = oDocument.documentElement;
@@ -112,7 +133,7 @@ sap.ui.define([
 
 		this.finalize();
 
-		jQuery.sap.measure.end("convertXMLMetadata");
+		Measurement.end("convertXMLMetadata");
 		return this.result;
 	};
 
@@ -120,7 +141,8 @@ sap.ui.define([
 	 * Finalizes the conversion after having traversed the XML completely.
 	 *
 	 * @abstract
-	 * @name MetadataConverter#finalize
+	 * @function
+	 * @name sap.ui.model.odata.v4.lib._MetadataConverter#finalize
 	 */
 
 	/**
@@ -159,7 +181,7 @@ sap.ui.define([
 				return sValue === "true";
 			case "EnumMember":
 				aValues = sValue.trim().replace(/ +/g, " ").split(" ");
-				for (i = 0; i < aValues.length; i++) {
+				for (i = 0; i < aValues.length; i += 1) {
 					aValues[i] = this.resolveAliasInPath(aValues[i]);
 				}
 				return {$EnumMember : aValues.join(" ")};
@@ -169,7 +191,7 @@ sap.ui.define([
 				}
 				return parseFloat(sValue);
 			case "Int":
-				vValue = parseInt(sValue, 10);
+				vValue = parseInt(sValue);
 				return _Helper.isSafeInteger(vValue) ? vValue : {$Int : sValue};
 			case "String":
 				return sValue;
@@ -192,7 +214,7 @@ sap.ui.define([
 			vValue;
 
 		// check the last attribute first, this is typically the one with the annotation value
-		for (i = oAttributeList.length - 1; i >= 0; i--) {
+		for (i = oAttributeList.length - 1; i >= 0; i -= 1) {
 			oAttribute = oAttributeList.item(i);
 			vValue = this.getAnnotationValue(oAttribute.name, oAttribute.value);
 			if (vValue !== undefined) {
@@ -408,7 +430,7 @@ sap.ui.define([
 		if (oType) {
 			oResult.$Type = this.resolveAlias(oType);
 		}
-		for (i = 0; i < aResult.length; i++) {
+		for (i = 0; i < aResult.length; i += 1) {
 			oPropertyValue = aResult[i];
 			oResult[oPropertyValue.property] = oPropertyValue.value;
 		}
@@ -483,7 +505,7 @@ sap.ui.define([
 	 * @param {Element} oElement The element
 	 */
 	MetadataConverter.prototype.processAnnotations = function (oElement) {
-		this.annotatable(this.resolveAliasInPath(oElement.getAttribute("Target")),
+		this.annotatable(this.resolveAliasInPath(oElement.getAttribute("Target"), true),
 			undefined, // no prefix
 			oElement.getAttribute("Qualifier"));
 	};
@@ -519,7 +541,8 @@ sap.ui.define([
 	 * @param {function} [fnProcessor] The processor
 	 *
 	 * @abstract
-	 * @name MetadataConverter#processElement
+	 * @function
+	 * @name sap.ui.model.odata.v4.lib._MetadataConverterMetadataConverter#processElement
 	 */
 
 	/**
@@ -586,7 +609,7 @@ sap.ui.define([
 		var iDot = sName.indexOf("."),
 			sNamespace;
 
-		if (iDot >= 0 && sName.indexOf(".", iDot + 1) < 0) { // if there is exactly one dot
+		if (iDot >= 0 && !sName.includes(".", iDot + 1)) { // if there is exactly one dot
 			sNamespace = this.aliases[sName.slice(0, iDot)];
 			if (sNamespace) {
 				return sNamespace + sName.slice(iDot + 1);
@@ -596,15 +619,43 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resolves an alias in the given path segment.
+	 *
+	 * @param {boolean} bHandleParentheses
+	 *   Whether parentheses in the path segment should be handled specially for alias replacement,
+	 *   for example to address a bound action's specific overload
+	 * @param {string} sSegment The path segment
+	 * @returns {string} The path segment with aliases resolved (if there were any)
+	 */
+	MetadataConverter.prototype.resolveAliasInParentheses = function (bHandleParentheses,
+			sSegment) {
+		var iParentheses = bHandleParentheses ? sSegment.indexOf("(") : -1;
+
+		if (iParentheses >= 0) {
+			return this.resolveAlias(sSegment.slice(0, iParentheses))
+				+ "("
+				+ sSegment.slice(iParentheses + 1, -1)
+					.split(",")
+					.map(this.resolveAliasInParentheses.bind(this, bHandleParentheses))
+					.join(",")
+				+ ")";
+		}
+		return this.resolveAlias(sSegment);
+	};
+
+	/**
 	 * Resolves all aliases in the given path.
 	 *
 	 * @param {string} sPath The path
-	 * @returns {string} The path with the alias resolved (if there was one)
+	 * @param {boolean} [bHandleParentheses=false]
+	 *   Whether parentheses in a path segment should be handled specially for alias replacement,
+	 *   for example to address a bound action's specific overload
+	 * @returns {string} The path with aliases resolved (if there were any)
 	 */
-	MetadataConverter.prototype.resolveAliasInPath = function (sPath) {
-		var iAt, i, aSegments, sTerm = "";
+	MetadataConverter.prototype.resolveAliasInPath = function (sPath, bHandleParentheses) {
+		var iAt, sTerm = "";
 
-		if (sPath.indexOf(".") < 0) {
+		if (!sPath.includes(".")) {
 			return sPath; // no dot -> nothing to do
 		}
 		iAt = sPath.indexOf("@");
@@ -612,11 +663,8 @@ sap.ui.define([
 			sTerm = "@" + this.resolveAlias(sPath.slice(iAt + 1));
 			sPath = sPath.slice(0, iAt);
 		}
-		aSegments = sPath.split("/");
-		for (i = 0; i < aSegments.length; i++) {
-			aSegments[i] = this.resolveAlias(aSegments[i]);
-		}
-		return aSegments.join("/") + sTerm;
+		return sPath.split("/").map(this.resolveAliasInParentheses.bind(this, bHandleParentheses))
+			.join("/") + sTerm;
 	};
 
 	/**
@@ -648,7 +696,7 @@ sap.ui.define([
 	 * @returns {number} The value as number or undefined
 	 */
 	MetadataConverter.prototype.setNumber = function (sValue) {
-		return sValue ? parseInt(sValue, 10) : undefined;
+		return sValue ? parseInt(sValue) : undefined;
 	};
 
 	/**
@@ -711,14 +759,14 @@ sap.ui.define([
 			oConfig.__processor.call(this, oElement);
 		}
 
-		for (i = 0; i < oChildList.length; i++) {
+		for (i = 0; i < oChildList.length; i += 1) {
 			oChildNode = oChildList.item(i);
 			if (oChildNode.nodeType === 1) { // Node.ELEMENT_NODE
 				sName = oChildNode.localName;
 				oChildConfig = oConfig[sName];
 				if (!oChildConfig && oConfig.__include) {
 					aIncludes = oConfig.__include;
-					for (j = 0; j < aIncludes.length; j++) {
+					for (j = 0; j < aIncludes.length; j += 1) {
 						oChildConfig = aIncludes[j][sName];
 						if (oChildConfig) {
 							break;

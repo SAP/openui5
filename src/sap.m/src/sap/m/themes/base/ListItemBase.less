@@ -3,6 +3,15 @@
 /* Base theme                          */
 /* =================================== */
 
+@_sap_m_ListItemBase_DeleteIcon: sys-cancel;
+@_sap_m_ListItemBase_ButtonMarginTop: auto;
+@_sap_m_ListItemBase_SelectionControlWidth: 3rem;
+@_sap_m_ListItemBase_SelectionControlHeight: 3rem;
+@_sap_m_ListItemBase_compact_SelectionControlHeight: 2rem;
+@_sap_m_ListItemBase_Highlight_InformationColor: @sapUiInformationBorder;
+@_sap_m_ListItemBase_Navigated: @sapUiSelected;
+@_sap_m_ListItemBase_Detail_Delete_MarginLeft: 0.125rem;
+
 .sapMLIB,
 .sapMLIBImgNav {
 	box-sizing: border-box;
@@ -21,7 +30,7 @@
 
 .sapMLIBIconDet,
 .sapMLIBIconDel {
-	margin-left: 0.125rem;
+	margin-left: @_sap_m_ListItemBase_Detail_Delete_MarginLeft;
 }
 
 .sapMLIBContent {
@@ -32,7 +41,15 @@
 
 .sapMLIBFocusable:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
+	outline-offset: -2px;
+}
+
+/* makes the focus outline visible when hightlight is used */
+.sapMLIBFocusable:focus .sapMLIBHighlight {
+	width: 0.25rem;
+	left: 2px;
+	bottom: 1px;
+	top: 2px;
 }
 
 .sapMLIB:not(.sapMLIBFocusable):focus,
@@ -61,8 +78,7 @@
 .sapMLIBActionable,
 .sapMLIBActionable > .sapMLIBImgNav,
 .sapMListTblNavCol > .sapMLIBImgNav,
-.sapMLIBActionable .sapMSLIImgThumb,
-.sapMLIBActionable .sapMSLIImgThumbIcon,
+.sapMLIBActionable .sapMSLIThumbnail,
 .sapMLIBActionable .sapMSLIImgIcon {
 	cursor: pointer;
 }
@@ -94,7 +110,8 @@
 
 .sapMLIBSelectS,
 .sapMLIBSelectM {
-	width: 3rem;
+	width: @_sap_m_ListItemBase_SelectionControlWidth;
+	height: @_sap_m_ListItemBase_SelectionControlHeight;
 	margin-left: 0;
 	padding-left: 0;
 }
@@ -112,16 +129,41 @@
 }
 
 .sapMLIBHighlightInformation {
-	background: @sapUiHighlight
+	background: @_sap_m_ListItemBase_Highlight_InformationColor;
 }
 .sapMLIBHighlightSuccess {
-	background: @sapUiSuccessBorder
+	background: @sapUiSuccessBorder;
 }
 .sapMLIBHighlightWarning {
-	background: @sapUiWarningBorder
+	background: @sapUiWarningBorder;
 }
 .sapMLIBHighlightError {
-	background: @sapUiErrorBorder
+	background: @sapUiErrorBorder;
+}
+
+.sapMLIBHighlightIndication01 {
+	background: @sapUiIndication1;
+}
+.sapMLIBHighlightIndication02 {
+	background: @sapUiIndication2;
+}
+.sapMLIBHighlightIndication03 {
+	background: @sapUiIndication3;
+}
+.sapMLIBHighlightIndication04 {
+	background: @sapUiIndication4;
+}
+.sapMLIBHighlightIndication05 {
+	background: @sapUiIndication5;
+}
+.sapMLIBHighlightIndication06 {
+	background: @sapUiIndication6;
+}
+.sapMLIBHighlightIndication07 {
+	background: @sapUiIndication7;
+}
+.sapMLIBHighlightIndication08 {
+	background: @sapUiIndication8;
 }
 
 /* IE ignores outline-offset. Use an overlay: */
@@ -248,7 +290,7 @@
 }
 
 .sapMLIBImgNav {
-	width: 3rem;
+	width: @sapUiElementLineHeight;
 	font-size: 0.75rem;
 	color: @sapUiContentNonInteractiveIconColor;
 }
@@ -257,12 +299,6 @@
 	color: @sapUiListActiveTextColor;
 }
 
-/* Overrides strong Button rule to enforce correct color */
-.sapMLIB :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnIcon,
-.sapMLIBActive .sapMBtnTransparent > .sapMBtnIcon {
-	color: @sapUiListActiveTextColor !important;
-	text-shadow: none;
-}
 
 .sapMListBGTransparent .sapMLIB {
 	background: fade(@sapUiListBackground, 0);
@@ -294,18 +330,37 @@
 	color: @sapUiListActiveTextColor;
 }
 
+.sapMLIBNavigated {
+	width: 0.1875rem;
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background-color: @_sap_m_ListItemBase_Navigated;
+}
+
+// to make the focus outline visible when navigated=true
+.sapMLIBFocusable:focus .sapMLIBNavigated {
+	width: 0.09375rem;
+	right: 2px;
+	bottom: 1px;
+	top: 2px;
+}
+
 /* Compact size */
 .sapUiSizeCompact .sapMLIBSelectS,
 .sapUiSizeCompact .sapMLIBSelectM {
-	width: 2rem;
-}
-
-.sapUiSizeCompact .sapMLIB .sapMLIBIconDet,
-.sapUiSizeCompact .sapMLIB .sapMLIBIconDel {
-	margin-top: auto;
+	height: @_sap_m_ListItemBase_compact_SelectionControlHeight;
 }
 
 .sapUiSizeCompact .sapMLIB > .sapMLIBSelectS:first-child,
 .sapUiSizeCompact .sapMLIB > .sapMLIBSelectM:first-child {
+	margin-left: -0.5rem;
+}
+
+// Correct alignment of the selection control according to the specs.
+// 1rem padding-left (.sapMLIB) - 0.5rem margin-left (.sapMLIBSelectM) + 3rem width (.sapMLIBSelectM) - 0.5rem margin-left (.sapMLIBSelectM + .sapMLIBContent) = 3rem
+.sapUiSizeCompact .sapMLIB > .sapMLIBSelectM + .sapMLIBContent,
+.sapUiSizeCompact .sapMLIB > .sapMLIBSelectS + .sapMLIBContent {
 	margin-left: -0.5rem;
 }

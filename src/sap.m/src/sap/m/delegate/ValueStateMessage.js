@@ -2,8 +2,25 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/Popup', 'sap/ui/core/library'],
-	function(jQuery, Device, BaseObject, ValueStateSupport, Popup, coreLibrary) {
+sap.ui.define([
+	'sap/ui/Device',
+	'sap/ui/base/Object',
+	'sap/ui/core/Core',
+	'sap/ui/core/ValueStateSupport',
+	'sap/ui/core/Popup',
+	'sap/ui/core/library',
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/Aria" // jQuery Plugin "addAriaDescribedBy", "removeAriaDescribedBy"
+],
+	function(
+		Device,
+		BaseObject,
+		Core,
+		ValueStateSupport,
+		Popup,
+		coreLibrary,
+		jQuery
+	) {
 		"use strict";
 
 		// shortcut for sap.ui.core.ValueState
@@ -74,11 +91,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				oPopup = this.getPopup(),
 				oMessageDomRef = this.createDom(),
 				mDock = Popup.Dock,
-				$Control = jQuery(oControl.getDomRefForValueStateMessage());
+				$Control;
 
-			if (!oControl || !oPopup || !oMessageDomRef) {
+			if (!oControl || !oControl.getDomRef() || !oPopup || !oMessageDomRef) {
 				return;
 			}
+
+			$Control = jQuery(oControl.getDomRefForValueStateMessage());
 
 			oPopup.setContent(oMessageDomRef);
 			oPopup.close(0);
@@ -116,7 +135,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		 */
 		ValueStateMessage.prototype.close = function() {
 			var oControl = this._oControl,
-				oPopup = this.getPopup();
+				oPopup = this._oPopup;
 
 			if (oPopup) {
 				oPopup.close(0);
@@ -162,8 +181,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 
 			this._oPopup = new Popup(document.createElement("span"), false, false, false);
 			this._oPopup.attachClosed(function() {
-				jQuery.sap.byId(sID).remove();
+				jQuery(document.getElementById(sID)).remove();
 			});
+			this._oPopup.attachOpened(function () {
+				var content = this._oPopup.getContent(),
+					bControlWithValueStateTextInIE = Device.browser.msie &&
+						this._oControl && this._oControl.getFormattedValueStateText && !!this._oControl.getFormattedValueStateText();
+
+				/* z-index of the popup is not calculated correctly by this._getCorrectZIndex() in IE, causing it
+				to be "under" the "blind layer" and links to be unreachable (unclickable) in IE */
+				if (content && !bControlWithValueStateTextInIE) {
+					content.style.zIndex = this._getCorrectZIndex();
+				}
+			}.bind(this));
 
 			return this._oPopup;
 		};
@@ -195,39 +225,65 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				return null;
 			}
 
-			var sState = oControl.getValueState(),
-				sText = oControl.getValueStateText() || ValueStateSupport.getAdditionalText(oControl),
-				sClass = "sapMValueStateMessage sapMValueStateMessage" + sState,
-				oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var sID = this.getId(),
+				oMessageDomRef = document.createElement("div"),
+				sState = oControl.getValueState(),
+				bIsIE = Device.browser.msie,
+				oFormattedValueState = oControl.getFormattedValueStateText ? oControl.getFormattedValueStateText() : null,
+				oTextDomRef,
+				oRB,
+				oAccDomRef,
+				sText;
 
-			if (sState === ValueState.Success || sState === ValueState.None) {
-				sClass = "sapUiInvisibleText";
-				sText = "";
-			}
-
-			var sID = this.getId();
-			var oMessageDomRef = document.createElement("div");
 			oMessageDomRef.id = sID;
-			oMessageDomRef.className = sClass;
 			oMessageDomRef.setAttribute("role", "tooltip");
 			oMessageDomRef.setAttribute("aria-live", "assertive");
 
-			var oAccDomRef = document.createElement("span");
-			oAccDomRef.id = sID + "hidden";
-			oAccDomRef.className = "sapUiHidden";
-			oAccDomRef.setAttribute("aria-hidden", "true");
+			if (sState === ValueState.Success || sState === ValueState.None) {
+				oMessageDomRef.className = "sapUiInvisibleText";
+			} else {
+				oMessageDomRef.className = "sapMValueStateMessage sapMValueStateMessage" + sState;
+			}
+
+			oRB = Core.getLibraryResourceBundle("sap.m");
+			oAccDomRef = document.createElement("span");
+			oAccDomRef.id = sID + "-hidden";
+
+			if (bIsIE) {
+				oAccDomRef.className = "sapUiHidden";
+				oAccDomRef.setAttribute("aria-hidden", "true");
+			} else {
+				oAccDomRef.className = "sapUiPseudoInvisibleText";
+			}
 
 			if (sState !== ValueState.None) {
 				oAccDomRef.appendChild(document.createTextNode(oRB.getText("INPUTBASE_VALUE_STATE_" + sState.toUpperCase())));
 			}
 
-			var oTextDomRef = document.createElement("span");
-			oTextDomRef.id = sID + "-text";
-			oTextDomRef.setAttribute("aria-hidden", "true");
-			oTextDomRef.appendChild(document.createTextNode(sText));
-
 			oMessageDomRef.appendChild(oAccDomRef);
-			oMessageDomRef.appendChild(oTextDomRef);
+
+			if (!oFormattedValueState || !oFormattedValueState.getHtmlText()) {
+				sText = sState === ValueState.Success || sState === ValueState.None ? "" :  oControl.getValueStateText() || ValueStateSupport.getAdditionalText(oControl);
+
+				oTextDomRef = document.createElement("span");
+				oTextDomRef.id = sID + "-text";
+
+				oTextDomRef.appendChild(document.createTextNode(sText));
+				oMessageDomRef.appendChild(oTextDomRef);
+			} else if (sState !== ValueState.Success && sState !== ValueState.None) {
+				Core.getRenderManager().render(oFormattedValueState, oMessageDomRef);
+				oMessageDomRef.lastElementChild.setAttribute("id", sID + "-text");
+			}
+
+			if (!oControl.isA('sap.m.Select') && bIsIE) {
+				// If ValueState Message is sap.m.FormattedText
+				if (!oTextDomRef) {
+					oMessageDomRef.lastElementChild.setAttribute("id", sID + "-text");
+				} else {
+					oTextDomRef.setAttribute("aria-hidden", "true");
+				}
+			}
+
 			return oMessageDomRef;
 		};
 
@@ -239,6 +295,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			}
 
 			this._oControl = null;
+		};
+
+		/**
+		 * Gets the z-index of the popup, so it won't be shown above some other popups.
+		 * @return {int} The correct z-index
+		 * @private
+		 */
+		ValueStateMessage.prototype._getCorrectZIndex = function() {
+
+			var aParents = this._oControl.$().parents().filter(function() {
+				var sZIndex = jQuery(this).css('z-index');
+				return sZIndex && sZIndex !== 'auto' && sZIndex !== '0';
+			});
+
+			if (!aParents.length) {
+				return 1;
+			}
+
+			var iHighestZIndex = 0;
+
+			aParents.each(function () {
+				var iZIndex = parseInt(jQuery(this).css('z-index'));
+
+				if (iZIndex > iHighestZIndex) {
+					iHighestZIndex = iZIndex;
+				}
+			});
+
+			return iHighestZIndex + 1;
 		};
 
 		return ValueStateMessage;

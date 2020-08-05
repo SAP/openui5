@@ -3,8 +3,10 @@
  */
 
 // Provides control sap.ui.layout.form.GridElementData.
-sap.ui.define(['sap/ui/core/LayoutData', 'sap/ui/layout/library'],
-	function(LayoutData, library) {
+sap.ui.define([
+	'sap/ui/core/LayoutData',
+	'sap/ui/layout/library'
+	], function(LayoutData, library) {
 	"use strict";
 
 	/**
@@ -50,13 +52,6 @@ sap.ui.define(['sap/ui/core/LayoutData', 'sap/ui/layout/library'],
 			vCells : {type : "int", group : "Appearance", defaultValue : 1}
 		}
 	}});
-
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.commons.form.GridElementData.prototype.init = function(){
-	//   // do something for initialization...
-	//};
 
 	return GridElementData;
 

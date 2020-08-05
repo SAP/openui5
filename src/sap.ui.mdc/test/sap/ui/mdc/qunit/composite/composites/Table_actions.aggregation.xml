@@ -1,0 +1,5 @@
+<core:FragmentDefinition
+    xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+    xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:t="composites">
+    <t:Action id="inner" call="sap.ui.getCore().byId('{$view>id}').byId('{this>id}').handler($event)" text="inner" />
+</core:FragmentDefinition>

@@ -3,10 +3,10 @@
  */
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/base/log",
+	"sap/base/Log",
 	"sap/base/util/uid",
 	"sap/base/strings/escapeRegExp"
-], function(jQuery, log, uid, escapeRegExp) {
+], function(jQuery, Log, uid, escapeRegExp) {
 	"use strict";
 
 	(function(window){ // TODO remove inner scope function
@@ -82,7 +82,7 @@ sap.ui.define([
 		 * By providing the hash saved from the return value of calling jQuery.sap.history.addHistory, jQuery.sap.history.backToHash will navigate back directly to the
 		 * history state with the same hash. <br/><br/>
 		 *
-		 * Please use jQuery.sap.history.back() to go one step back in the history stack instead of using window.history.back(), because it handles the empty history stack
+		 * Please use {@link jQuery.sap.history#back}() to go one step back in the history stack instead of using window.history.back(), because it handles the empty history stack
 		 * situation and will call the defaultHandler for this case. <br/><br/>
 		 *
 		 *
@@ -122,9 +122,9 @@ sap.ui.define([
 					//using href instead of hash to avoid the escape problem in firefox
 					sHash = (window.location.href.split("#")[1] || "");
 
-				jWindowDom.bind('hashchange', detectHashChange);
+				jWindowDom.on('hashchange', detectHashChange);
 
-				if (jQuery.isArray(mSettings.routes)) {
+				if (Array.isArray(mSettings.routes)) {
 					var i, route;
 					for (i = 0 ; i < mSettings.routes.length ; i++) {
 						route = mSettings.routes[i];
@@ -277,7 +277,7 @@ sap.ui.define([
 				if (iSteps < 0) {
 					window.history.go(iSteps);
 				} else {
-					log.error("jQuery.sap.history.backToHash: " + sHash + "is not in the history stack or it's after the current hash");
+					Log.error("jQuery.sap.history.backToHash: " + sHash + "is not in the history stack or it's after the current hash");
 				}
 			}
 		};
@@ -307,7 +307,7 @@ sap.ui.define([
 				if (iSteps < 0) {
 					window.history.go(iSteps);
 				} else {
-					log.error("jQuery.sap.history.backThroughPath: there's no history state which has the " + sPath + " identifier in the history stack before the current hash");
+					Log.error("jQuery.sap.history.backThroughPath: there's no history state which has the " + sPath + " identifier in the history stack before the current hash");
 				}
 			}
 		};
@@ -341,6 +341,7 @@ sap.ui.define([
 		 * @enum {string}
 		 * @public
 		 * @alias jQuery.sap.history.NavType
+		 * @deprecated since 1.19.1. Please use {@link sap.ui.core.routing.HistoryDirection} instead.
 		 */
 		jQuery.sap.history.NavType = {
 
@@ -382,7 +383,7 @@ sap.ui.define([
 		 * @private
 		 */
 		function calculateStepsToHash(sCurrentHash, sToHash, bPrefix){
-			var iCurrentIndex = jQuery.inArray(sCurrentHash, hashHistory),
+			var iCurrentIndex = hashHistory.indexOf(sCurrentHash),
 				iToIndex,
 				i,
 				tempHash;
@@ -395,7 +396,7 @@ sap.ui.define([
 						}
 					}
 				} else {
-					iToIndex = jQuery.inArray(sToHash, hashHistory);
+					iToIndex = hashHistory.indexOf(sToHash);
 
 					//When back to home is needed, and application is started with nonempty hash but it's nonbookmarkable
 					if ((iToIndex === -1) && sToHash.length === 0) {
@@ -503,7 +504,7 @@ sap.ui.define([
 		 * @private
 		 */
 		function getAppendId(sHash){
-			var iIndex = jQuery.inArray(currentHash, hashHistory),
+			var iIndex = hashHistory.indexOf(currentHash),
 				i, sHistory;
 			if (iIndex > -1) {
 				for (i = 0 ; i < iIndex + 1 ; i++) {
@@ -523,7 +524,7 @@ sap.ui.define([
 		 * @private
 		 */
 		function reorganizeHistoryArray(sHash){
-			var iIndex = jQuery.inArray(currentHash, hashHistory);
+			var iIndex = hashHistory.indexOf(currentHash);
 
 			if ( !(iIndex === -1 || iIndex === hashHistory.length - 1) ) {
 				hashHistory.splice(iIndex + 1, hashHistory.length - 1 - iIndex);
@@ -546,7 +547,7 @@ sap.ui.define([
 		 * @private
 		 */
 		function calcStepsToRealHistory(sCurrentHash, bForward){
-			var iIndex = jQuery.inArray(sCurrentHash, hashHistory),
+			var iIndex = hashHistory.indexOf(sCurrentHash),
 				i;
 
 			if (iIndex !== -1) {
@@ -660,7 +661,7 @@ sap.ui.define([
 							oRoute.action.apply(null, [oParsedHash.oStateData, sNavType]);
 						}
 					} else {
-						log.error("hash format error! The current Hash: " + sHash);
+						Log.error("hash format error! The current Hash: " + sHash);
 					}
 
 				}

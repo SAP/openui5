@@ -3,10 +3,8 @@
 sap.ui.define([
 	"sap/ui/demo/iconexplorer/controller/App.controller",
 	"sap/ui/core/Control",
-	"sap/ui/core/mvc/Controller",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
-], function(AppController, Control, Controller) {
+	"sap/ui/core/mvc/Controller"
+], function (AppController, Control, Controller) {
 	"use strict";
 
 	QUnit.module("App controller tests", {
@@ -15,7 +13,7 @@ sap.ui.define([
 			this.oViewStub = new Control();
 			this.oComponentStub = new Control();
 
-			this.fnMetadataThen = jQuery.noop;
+			this.fnMetadataThen = function() {};
 
 			this.oComponentStub.iconsLoaded = function () {
 				return {
@@ -42,7 +40,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should set the control busy without delay", function (assert) {
+	QUnit.test("Should set the app view busy without delay", function (assert) {
 		// Arrange
 		var oModelData,
 			oAppController;
@@ -57,7 +55,7 @@ sap.ui.define([
 		assert.strictEqual(oModelData.busy, true, "The root view is busy.");
 	});
 
-	QUnit.test("Should set the control not busy and reset the delay", function (assert) {
+	QUnit.test("Should set the app view not busy and reset the delay", function (assert) {
 		var oModelData,
 			oAppController;
 

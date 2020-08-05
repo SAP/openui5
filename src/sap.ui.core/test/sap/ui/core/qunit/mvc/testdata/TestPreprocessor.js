@@ -3,16 +3,16 @@
 */
 
 // Provides object TestPreprocessor
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
-	function(jQuery, BaseObject) {
+sap.ui.define(['sap/base/Log', 'sap/ui/base/Object'],
+	function(Log, BaseObject) {
 		'use strict';
 
 		var TestPreprocessor = BaseObject.extend("sap.ui.core.qunit.mvc.TestPreprocessor", {});
 
 		TestPreprocessor.process = function(vSource, sCaller, mSettings) {
-			jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
+			Log.debug("[TEST] " + mSettings.message, sCaller);
 			mSettings.assert(true, "TestPreprocessor executed");
-			if(mSettings.attach) {
+			if (mSettings.attach) {
 				vSource.attachAfterInit(mSettings.attach);
 			}
 			return Promise.resolve(vSource);
@@ -24,4 +24,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 		return TestPreprocessor;
 
-	}, /* bExport= */ true);
+	});

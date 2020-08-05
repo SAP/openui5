@@ -25,7 +25,7 @@
 						<Button
 							id="refresh"
 							icon="sap-icon://refresh"
-							press="onRefresh"
+							press=".onRefresh"
 							tooltip="{i18n>refreshButtonTooltip}"/>
 					</Toolbar>
 				</headerToolbar>

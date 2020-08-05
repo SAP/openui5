@@ -13,15 +13,15 @@
  * All measurement activities get recorded by jquery.sap.measure, which is located in jquery.sap.global. As the initial
  * interaction is the app startup, we need the measuring capability already before this module is loaded.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2ETrace/Passport', 'sap/ui/performance/Interaction', 'sap/ui/performance/FESR', 'sap/base/log', 'sap/ui/Global'],
-function(jQuery, URI, Device, Passport, Interaction, FESR, log) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/trace/Passport', 'sap/ui/performance/trace/Interaction', 'sap/ui/performance/trace/FESR', 'sap/base/Log', 'sap/ui/Global'],
+function(jQuery, URI, Device, Passport, Interaction, FESR, Log) {
 	"use strict";
 
 
 	function logSupportWarning() {
 		// in case we do not have this API measurement is superfluous due to insufficient performance data
 		if (!(window.performance && window.performance.getEntries)) {
-			log.warning("Interaction tracking is not supported on browsers with insufficient performance API");
+			Log.warning("Interaction tracking is not supported on browsers with insufficient performance API");
 		}
 	}
 
@@ -43,6 +43,7 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, log) {
 	 * @static
 	 * @public
 	 * @since 1.36
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/Interaction} instead
 	 */
 	jQuery.sap.interaction = {};
 
@@ -126,7 +127,7 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, log) {
 	/**
 	 * @namespace FESR API, consumed by E2eTraceLib instead of former EppLib.js <br>
 	 *<p>
-	 * Provides functionalities for creating the headers for the frontend-subrecords which will be sent with each
+	 * Provides functionality for creating the headers for the frontend-subrecords which will be sent with each
 	 * first request of an interaction. The headers have a specific format, you may have a look at the createFESR
 	 * methods.<br>
 	 *</p><p>
@@ -142,6 +143,7 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, log) {
 	 * @name jQuery.sap.fesr
 	 * @static
 	 * @private
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/FESR} instead
 	 */
 	jQuery.sap.fesr = {};
 
@@ -188,13 +190,14 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, log) {
 	/**
 	 * @namespace Passport implementation, former EppLib.js <br>
 	 *
-	 * Provides functionalities which where former located in the EppLib.js, but as the PASSPORT header is mandatory
+	 * Provides functionality which was former located in the EppLib.js, but as the PASSPORT header is mandatory
 	 * for correct assignment of the FESR headers some functionality had to be moved to here. The actual tracing
 	 * functionality of EppLib.js remained in the original file.
 	 *
 	 * @name jQuery.sap.passport
 	 * @static
 	 * @private
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/trace/Passport} instead
 	 */
 	jQuery.sap.passport = {};
 

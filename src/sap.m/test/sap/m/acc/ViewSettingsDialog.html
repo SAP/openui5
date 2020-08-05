@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.m.ViewSettingsDialog - Accessibility</title>
+
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+	<script>
+		function handleConfirm(oEvent) {
+			if (oEvent.getParameters().filterString) {
+				sap.m.MessageToast.show(oEvent.getParameter("filterString"));
+			}
+		}
+
+		function handleViewSettingsButtonPress() {
+			if (!window.oViewSettingsDialog) {
+				window.oViewSettingsDialog = new sap.m.ViewSettingsDialog({
+					title: "Some title",
+					confirm: handleConfirm,
+					sortItems: [
+						new sap.m.ViewSettingsItem({
+							text: "Sort Field 1",
+							key: "1",
+							selected: true
+						}),
+						new sap.m.ViewSettingsItem({
+							text: "Sort Field 2",
+							key: "2"
+						}),
+						new sap.m.ViewSettingsItem({
+							text: "Sort Field 3",
+							key: "3"
+						})
+					],
+					groupItems: [
+						new sap.m.ViewSettingsItem({
+							text: "Group Field 1",
+							key: "1",
+							selected: true
+						}),
+						new sap.m.ViewSettingsItem({
+							text: "Group Field 2",
+							key: "2"
+						}),
+						new sap.m.ViewSettingsItem({
+							text: "Group Field 3",
+							key: "3"
+						})
+					],
+					filterItems: [
+						new sap.m.ViewSettingsFilterItem({
+							text: "Filter Field 1",
+							key: "1",
+							items: [
+								new sap.m.ViewSettingsItem({
+									text: "Value A",
+									key: "1a"
+								}),
+								new sap.m.ViewSettingsItem({
+									text: "Value B",
+									key: "1b"
+								}),
+								new sap.m.ViewSettingsItem({
+									text: "Value C",
+									key: "1c"
+								})
+							]
+						}),
+						new sap.m.ViewSettingsFilterItem({
+							text: "Filter Field 2",
+							key: "2",
+							items: [
+								new sap.m.ViewSettingsItem({
+									text: "Value A",
+									key: "2a"
+								}),
+								new sap.m.ViewSettingsItem({
+									text: "Value B",
+									key: "2b"
+								}),
+								new sap.m.ViewSettingsItem({
+									text: "Value C",
+									key: "2c"
+								})
+							]
+						}),
+						new sap.m.ViewSettingsFilterItem({
+							text: "Filter Field 3",
+							key: "3",
+							items: [
+								new sap.m.ViewSettingsItem({
+									text: "Value A",
+									key: "3a"
+								}),
+								new sap.m.ViewSettingsItem({
+									text: "Value B",
+									key: "3b"
+								}),
+								new sap.m.ViewSettingsItem({
+									text: "Value C",
+									key: "3c"
+								})
+							]
+						})
+					],
+					customTabs: [
+						new sap.m.ViewSettingsCustomTab({
+							tooltip: "Custom tab",
+							content: [
+								new sap.m.Button({
+									text: "Something random"
+								})
+							]
+						})
+					]
+
+				})
+			}
+
+			window.oViewSettingsDialog.open();
+		}
+
+		var oViewSettingsDialogButton = new sap.m.Button({
+			text: "Open View Settings Dialog",
+			press: handleViewSettingsButtonPress
+		});
+
+		oViewSettingsDialogButton.placeAt("content");
+	</script>
+
+	<style>
+		html, body {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
+<body id="content" class="sapUiBody">
+</body>
+</html>

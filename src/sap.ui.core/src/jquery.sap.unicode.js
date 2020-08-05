@@ -3,7 +3,7 @@
  */
 
 /**
- * Provides Unicode related functionalities. This module is not public, as the feature may only be temporarily and
+ * Provides Unicode related functionality. This module is not public, as the feature may only be temporarily and
  * could removed as soon as the thirdparty lib unorm offers a quickcheck for normalization forms.
  *
  * <strong>Note</strong>: This module does not support mobile browsers
@@ -19,7 +19,7 @@ sap.ui.define([
 
 	// only use unorm and apply polyfill if needed and when not in a mobile browser
 	if (!String.prototype.normalize && !Device.browser.mobile) {
-		NormalizePolyfill = sap.ui.requireSync('sap/base/strings/normalize-polyfill');
+		NormalizePolyfill = sap.ui.requireSync('sap/base/strings/NormalizePolyfill');
 		NormalizePolyfill.apply();
 		fnIsStringNFC = NormalizePolyfill.isStringNFC;
 	} else {
@@ -39,6 +39,7 @@ sap.ui.define([
 	 * @return {boolean} indicating whether s is or maybe NFC
 	 * @private
 	 * @static
+	 * @deprecated since 1.58
 	 */
 	jQuery.sap.isStringNFC = fnIsStringNFC;
 

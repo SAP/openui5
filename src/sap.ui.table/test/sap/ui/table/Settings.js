@@ -9,7 +9,7 @@
 
 	window.TABLESETTINGS.listTestData = [
 		{lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Success"},
-		{lastName: "Friese", name: "Andrew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", objStatusText: "Name partly OK Text", objStatusTitle: "Name partly OK Title", objStatusState: "Warning", highlightState: "Warning"},
+		{lastName: "Friese", name: "Andrew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", objStatusText: "Name partly OK Text", objStatusTitle: "Name partly OK Title", objStatusState: "Warning", highlightState: "Warning", navigatedState: true},
 		{lastName: "Mann", name: "Sarah", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "images/Person.png", gender: "female", rating: 3, money: 1345.212, birthday: "1987-04-01", currency: "EUR", objStatusText: "Name not OK Text", objStatusTitle: "Name not OK Title", objStatusState: "Error", highlightState: "Error"},
 		{lastName: "Berry", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 4, money: 1.1, birthday: "2001-05-09", currency: "USD", objStatusText: "Status unknown Text", objStatusTitle: "Status unknown Title", objStatusState: "None", highlightState: "Information"},
 		{lastName: "Open", name: "Jenny", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 2, money: 55663.1, birthday: "1953-03-03", currency: "USD", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "None", highlightState: "None"},
@@ -25,7 +25,7 @@
 		{lastName: "Ander", name: "Corey", checked: false, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 5, money: 563.2, birthday: "1968-04-01", currency: "JPY", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Success"},
 		{lastName: "Early", name: "Boris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 3, money: 8564.4, birthday: "1968-07-07", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "None"},
 		{lastName: "Noring", name: "Cory", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "female", rating: 4, money: 3563, birthday: "1968-01-01", currency: "USD", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "None"},
-		{lastName: "O'Lantern", name: "Jacob", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-06-09", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "None"},
+		{lastName: "O'Lantern", name: "Jacob", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-06-09", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Error", highlightState: "Indication01"},
 		{lastName: "Tress", name: "Matthew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "None"},
 		{lastName: "Summer", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Information"}
 	];
@@ -279,19 +279,31 @@
 						NONE: {
 							text: "None",
 							action: function(oTable) {
-								oTable.setSelectionMode("None");
+								if (oTable._hasSelectionPlugin()) {
+									oTable._getSelectionPlugin().setSelectionMode("None");
+								} else {
+									oTable.setSelectionMode("None");
+								}
 							}
 						},
 						SINGLE: {
 							text: "Single",
 							action: function(oTable) {
-								oTable.setSelectionMode("Single");
+								if (oTable._hasSelectionPlugin()) {
+									oTable._getSelectionPlugin().setSelectionMode("Single");
+								} else {
+									oTable.setSelectionMode("Single");
+								}
 							}
 						},
 						MULTITOGGLE: {
 							text: "MultiToggle",
 							action: function(oTable) {
-								oTable.setSelectionMode("MultiToggle");
+								if (oTable._hasSelectionPlugin()) {
+									oTable._getSelectionPlugin().setSelectionMode("MultiToggle");
+								} else {
+									oTable.setSelectionMode("MultiToggle");
+								}
 							}
 						}
 					}
@@ -321,6 +333,32 @@
 							}
 						}
 					}
+				},
+				SELECTIONPLUGIN: {
+					text: "Selection Plugin",
+					value: function(oTable) {
+						return (oTable._getSelectionPlugin().isA("sap.ui.table.plugins.MultiSelectionPlugin") ? "MULTISELECTION" : "NONE");
+					},
+					choice: {
+						NONE: {
+							text: "None",
+							action: function(oTable) {
+								oTable.removeAllPlugins();
+							}
+						},
+						MULTISELECTION: {
+							text: "MultiSelection",
+							action: function(oTable) {
+								var MultiSelectionPlugin = sap.ui.requireSync("sap/ui/table/plugins/MultiSelectionPlugin");
+								var oPlugin = new MultiSelectionPlugin({
+									limit: 20,
+									enableNotification: true
+								});
+								oTable.addPlugin(oPlugin);
+								sap.ui.getCore().byId("__select5").setSelectedKey(oPlugin.getSelectionMode().toUpperCase());
+							}
+						}
+					}
 				}
 			}
 		},
@@ -330,7 +368,7 @@
 				DENSITY: {
 					text: "Density",
 					value: function(oTable) {
-						var sDensity = sap.ui.table.TableUtils.getContentDensity(oTable);
+						var sDensity = sap.ui.table.utils.TableUtils.getContentDensity(oTable);
 						if (!sDensity || sDensity.indexOf("sapUiSize") === -1) {
 							return null;
 						}
@@ -390,7 +428,7 @@
 						return oTable.getVisibleRowCount();
 					},
 					action: function(oTable, sValue) {
-						oTable.setVisibleRowCount(parseInt(sValue, 10) || 0);
+						oTable.setVisibleRowCount(parseInt(sValue) || 0);
 					}
 				}
 			}
@@ -474,7 +512,7 @@
 						return oColumn.getMinWidth();
 					},
 					action: function(oColumn, vValue) {
-						oColumn.setMinWidth(parseInt(vValue, 10) || 0);
+						oColumn.setMinWidth(parseInt(vValue) || 0);
 					}
 				}
 			}
@@ -606,7 +644,7 @@
 						return oTable.getFixedColumnCount();
 					},
 					action: function(oTable, sValue) {
-						oTable.setFixedColumnCount(parseInt(sValue, 10) || 0);
+						oTable.setFixedColumnCount(parseInt(sValue) || 0);
 					}
 				},
 				FIXEDROWS: {
@@ -616,7 +654,7 @@
 						return oTable.getFixedRowCount();
 					},
 					action: function(oTable, sValue) {
-						oTable.setFixedRowCount(parseInt(sValue, 10) || 0);
+						oTable.setFixedRowCount(parseInt(sValue) || 0);
 					}
 				},
 				FIXEDBOTTOMROWS: {
@@ -626,7 +664,7 @@
 						return oTable.getFixedBottomRowCount();
 					},
 					action: function(oTable, sValue) {
-						oTable.setFixedBottomRowCount(parseInt(sValue, 10) || 0);
+						oTable.setFixedBottomRowCount(parseInt(sValue) || 0);
 					}
 				},
 				ROWACTIONS: {
@@ -738,6 +776,41 @@
 							}
 						}
 					}
+				},
+				CREATIONROW: {
+					text: "Creation Row",
+					value: function(oTable) {
+						return oTable.getCreationRow() != null;
+					},
+					input: "boolean",
+					action: function(oTable, bValue) {
+						if (bValue) {
+							sap.ui.require(["sap/ui/table/CreationRow"], function(CreationRow) {
+								var oBinding = oTable.getBinding("rows");
+								var oModel = oBinding ? oBinding.getModel() : null;
+								var oCreationContext = oModel ? oModel.createBindingContext("/new") : null;
+
+								if (oModel) {
+									oModel.setProperty("", {}, oCreationContext);
+								}
+
+								oTable.setCreationRow(new CreationRow({
+									bindingContexts: {
+										undefined: oCreationContext
+									},
+									apply: function(oEvent) {
+										var oData = oModel.getObject(oBinding.getPath());
+
+										oData.push(oCreationContext.getObject());
+										oModel.setProperty("", {}, oCreationContext);
+										oTable.setFirstVisibleRow(oTable._getMaxFirstVisibleRowIndex());
+									}
+								}));
+							});
+						} else {
+							oTable.destroyCreationRow();
+						}
+					}
 				}
 			}
 		},
@@ -747,19 +820,27 @@
 				HIGHLIGHTS: {
 					text: "Highlights",
 					value: function(oTable) {
-						return sap.ui.table.TableUtils.hasRowHighlights(oTable);
+						return sap.ui.table.utils.TableUtils.hasRowHighlights(oTable);
 					},
 					input: "boolean",
 					action: function(oTable, bValue) {
-						if (bValue) {
-							oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-								highlight: "{highlightState}"
-							}));
-						} else {
-							oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-								highlight: sap.ui.core.MessageType.None
-							}));
-						}
+						oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+							highlight: bValue ? "{highlightState}" : sap.ui.core.MessageType.None,
+							navigated: sap.ui.table.utils.TableUtils.hasRowNavigationIndicators(oTable) ? "{navigatedState}" : false
+						}));
+					}
+				},
+				NAVINDICATORS: {
+					text: "Navigation Indicators",
+					value: function(oTable) {
+						return sap.ui.table.utils.TableUtils.hasRowNavigationIndicators(oTable);
+					},
+					input: "boolean",
+					action: function(oTable, bValue) {
+						oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+							highlight: sap.ui.table.utils.TableUtils.hasRowHighlights(oTable) ? "{highlightState}" : sap.ui.core.MessageType.None,
+							navigated: bValue ? "{navigatedState}" : false
+						}));
 					}
 				}
 			}
@@ -767,7 +848,7 @@
 		GROUPING: {
 			text: "Grouping",
 			value: function(oTable) {
-				if (sap.ui.table.TableUtils.isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
+				if (oTable.isA("sap.ui.table.TreeTable")) {
 					return oTable.getUseGroupMode();
 				} else {
 					return oTable.getEnableGrouping();
@@ -775,7 +856,7 @@
 			},
 			input: "boolean",
 			action: function(oTable, bValue) {
-				if (sap.ui.table.TableUtils.isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
+				if (oTable.isA("sap.ui.table.TreeTable")) {
 					oTable.setUseGroupMode(bValue);
 				} else {
 					oTable.setEnableGrouping(bValue);
@@ -821,6 +902,24 @@
 							oTable.attachCellClick(TABLESETTINGS.actions.EVENTS.group.CELLCLICK._cellClickHandler);
 						} else {
 							oTable.detachCellClick(TABLESETTINGS.actions.EVENTS.group.CELLCLICK._cellClickHandler);
+						}
+					}
+				},
+				PASTE: {
+					text: "Paste",
+					value: function(oTable) {
+						return oTable.hasListeners("paste");
+					},
+					input: "boolean",
+					_pasteHandler: function(oEvent) {
+						jQuery.sap.require("sap.m.MessageToast");
+						sap.m.MessageToast.show("Paste data: " + oEvent.getParameter("data"));
+					},
+					action: function(oTable, bValue) {
+						if (bValue) {
+							oTable.attachPaste(TABLESETTINGS.actions.EVENTS.group.PASTE._pasteHandler);
+						} else {
+							oTable.detachPaste(TABLESETTINGS.actions.EVENTS.group.PASTE._pasteHandler);
 						}
 					}
 				}
@@ -875,7 +974,7 @@
 				if (bIsBoolean) {
 					sValue = oActionValue ? "X" : null;
 				} else {
-					sValue = oActionValue != null ? (oActionValue + "") : null;
+					sValue = oActionValue ? (oActionValue + "") : null;
 				}
 				oItem = new sap.ui.unified.MenuTextFieldItem({value: sValue, label: mActions[item].text, visible: !mActions[item].hidden, enabled: !mActions[item].disabled});
 				oItem._action = mActions[item].action;
@@ -938,7 +1037,7 @@
 				}
 			} else if (oAction.input === "boolean") {
 				oClass = sap.m.CheckBox;
-				mSettings.selected = oActionValue != null ? !!oActionValue : false;
+				mSettings.selected = oActionValue ? !!oActionValue : false;
 				mSettings.select = function(oEvent) {
 					if (oEvent.getSource()._action) {
 						oEvent.getSource()._action(TABLESETTINGS.table, !!oEvent.getParameter("selected"));
@@ -946,7 +1045,7 @@
 				};
 			} else if (oAction.input) {
 				oClass = sap.m.Input;
-				mSettings.value = oActionValue != null ? (oActionValue + "") : null;
+				mSettings.value = oActionValue ? (oActionValue + "") : null;
 				mSettings.change = function(oEvent) {
 					if (oEvent.getSource()._action) {
 						oEvent.getSource()._action(TABLESETTINGS.table, oEvent.getParameter("value"));
@@ -1400,25 +1499,42 @@
 		}
 	};
 
-	TABLESETTINGS.getAnalyticalService = function() {
-		if (!TABLESETTINGS.oStorage) {
-			jQuery.sap.require("jquery.sap.storage");
-			TABLESETTINGS.oStorage = jQuery.sap.storage(jQuery.sap.storage.Type.local);
-		}
-		return {url: TABLESETTINGS.oStorage.get("ANALYTICALSERVICETESTURL"), collection: TABLESETTINGS.oStorage.get("ANALYTICALSERVICETESTCOLLECTION")};
-	};
+	TABLESETTINGS.addServiceSettings = function(oTable, sKey, fnUpdate) {
+		var mServiceSettings = JSON.parse(window.localStorage.getItem(sKey));
 
-	TABLESETTINGS.setAnalyticalService = function(sUrl, sCollection) {
-		if (!TABLESETTINGS.oStorage) {
-			jQuery.sap.require("jquery.sap.storage");
-			TABLESETTINGS.oStorage = jQuery.sap.storage(jQuery.sap.storage.Type.local);
+		oTable.addExtension(new sap.m.Toolbar({
+			content: [
+				new sap.m.Input("TableSettings_ServiceUrl", {
+					value: mServiceSettings ? mServiceSettings.url : undefined,
+					tooltip: "Service Url",
+					placeholder: "Enter Service Url"
+				}),
+				new sap.m.Input("TableSettings_Collection", {
+					value: mServiceSettings ? mServiceSettings.collection : undefined,
+					tooltip: "Service Collection",
+					placeholder: "Enter Service Collection"
+				}),
+				new sap.m.Button({
+					tooltip: "Go",
+					icon: "sap-icon://restart",
+					press: function() {
+						var mNewServiceSettings = {
+							url: sap.ui.getCore().byId("TableSettings_ServiceUrl").getValue(),
+							collection: sap.ui.getCore().byId("TableSettings_Collection").getValue()
+						};
+
+						mNewServiceSettings.defaultProxyUrl = "../../../../proxy/" + mNewServiceSettings.url.replace("://", "/");
+
+						window.localStorage.setItem(sKey, JSON.stringify(mNewServiceSettings));
+						fnUpdate(mNewServiceSettings);
+					}
+				})
+			]
+		}));
+
+		if (mServiceSettings) {
+			fnUpdate(mServiceSettings);
 		}
-		if (sUrl && sCollection) {
-			TABLESETTINGS.oStorage.put("ANALYTICALSERVICETESTURL", sUrl);
-			TABLESETTINGS.oStorage.put("ANALYTICALSERVICETESTCOLLECTION", sCollection);
-			return true;
-		}
-		return false;
 	};
 
 	//*************************
@@ -1489,16 +1605,16 @@
 			contentWidth: "1000px",
 			content: [oSettingsTable],
 			endButton: new sap.m.Button({
-				text: "Cancel", press: function () { oDialog.close(); }
+				text: "Cancel", press: function() { oDialog.close(); }
 			}),
 			beginButton: new sap.m.Button({
 				text: "Ok",
-				press: function () {
+				press: function() {
 					changeSettings();
 					oDialog.close();
 				}
 			}),
-			afterClose: function () { oDialog.destroy(); }
+			afterClose: function() { oDialog.destroy(); }
 		});
 		oDialog.open();
 	}

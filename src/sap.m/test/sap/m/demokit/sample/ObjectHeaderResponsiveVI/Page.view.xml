@@ -27,11 +27,9 @@
 		markFavorite="true"
 		numberState="Success"
 		backgroundDesign="Translucent">
-		<attributes>
-			<ObjectAttribute
-				title="Manufacturer"
-				text="{SupplierName}"/>
-		</attributes>
+		<ObjectAttribute
+			title="Manufacturer"
+			text="{SupplierName}"/>
 		<statuses>
 			<ObjectStatus
 				title="Approval"

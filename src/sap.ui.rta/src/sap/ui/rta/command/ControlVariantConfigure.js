@@ -2,10 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/fl/changeHandler/BaseTreeModifier',
-	'sap/ui/fl/Utils'
-], function(BaseCommand, BaseTreeModifier, flUtils) {
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/Utils"
+], function(
+	BaseCommand,
+	JsControlTreeModifier,
+	flUtils
+) {
 	"use strict";
 
 	/**
@@ -36,46 +40,46 @@ sap.ui.define([
 		}
 	});
 
-	ControlVariantConfigure.prototype.MODEL_NAME = "$FlexVariants";
-
 	/**
 	 * @override
 	 */
-	ControlVariantConfigure.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
+	ControlVariantConfigure.prototype.prepare = function(mFlexSettings) {
 		this.sLayer = mFlexSettings.layer;
 		return true;
 	};
 
 	ControlVariantConfigure.prototype.getPreparedChange = function() {
 		if (!this._aPreparedChanges) {
-			jQuery.sap.log.error("No prepared change available for ControlVariantConfigure");
+			return undefined;
 		}
 		return this._aPreparedChanges;
 	};
 
 	/**
-	 * @public Triggers the configuration of a variant
+	 * Triggers the configuration of a variant.
+	 * @public
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantConfigure.prototype.execute = function() {
 		var oVariantManagementControl = this.getControl();
 		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
-		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
-		this.sVariantManagementReference = BaseTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
+		this.oModel = this.oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
+		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
 
 		this._aPreparedChanges = [];
 		this.getChanges().forEach(function(mChangeProperties) {
 			mChangeProperties.appComponent = this.oAppComponent;
-			this._aPreparedChanges.push(this.oModel._setVariantProperties(this.sVariantManagementReference, mChangeProperties, true));
+			this._aPreparedChanges.push(this.oModel.setVariantProperties(this.sVariantManagementReference, mChangeProperties, true));
 		}.bind(this));
 
-		return Promise.resolve().then(function(){
+		return Promise.resolve().then(function() {
 			this.oModel.checkUpdate(true);
 		}.bind(this));
 	};
 
 	/**
-	 * @public Undo logic for the execution
+	 * Undo logic for the execution.
+	 * @public
 	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantConfigure.prototype.undo = function() {
@@ -83,7 +87,7 @@ sap.ui.define([
 		this.getChanges().forEach(function(mChangeProperties, index) {
 			mPropertyBag = {};
 			Object.keys(mChangeProperties).forEach(function(sProperty) {
-				var sOriginalProperty = "original" + sProperty.charAt(0).toUpperCase() +  sProperty.substr(1);
+				var sOriginalProperty = "original" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1);
 				if (sProperty === "visible") {
 					mPropertyBag[sProperty] = true; /*visibility of the variant always set back to true on undo*/
 				} else if (mChangeProperties[sOriginalProperty]) {
@@ -94,15 +98,14 @@ sap.ui.define([
 				}
 			});
 			mPropertyBag.change = this._aPreparedChanges[index];
-			this.oModel._setVariantProperties(this.sVariantManagementReference, mPropertyBag, false);
+			this.oModel.setVariantProperties(this.sVariantManagementReference, mPropertyBag, false);
 		}.bind(this));
 
-		return Promise.resolve().then(function(){
+		return Promise.resolve().then(function() {
 			this.oModel.checkUpdate(true);
 			this._aPreparedChanges = null;
 		}.bind(this));
 	};
 
 	return ControlVariantConfigure;
-
-}, /* bExport= */true);
+});

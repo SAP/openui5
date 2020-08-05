@@ -11,13 +11,12 @@ sap.ui.define([], function () {
 		LIST_VARYING: "sapMWizardProgressNavListVarying",
 		LIST_NO_TITLES: "sapMWizardProgressNavListNoTitles",
 		STEP: "sapMWizardProgressNavStep",
-		ANCHOR: "sapMWizardProgressNavAnchor",
-		ANCHOR_CIRCLE: "sapMWizardProgressNavAnchorCircle",
-		ANCHOR_TITLE: "sapMWizardProgressNavAnchorTitle",
-		ANCHOR_TITLE_OPTIONAL_TITLE: "sapMWizardProgressNavAnchorTitleOptional",
-		ANCHOR_TITLE_OPTIONAL_LABEL: "sapMWizardProgressNavAnchorLabelOptional",
-		ANCHOR_ICON: "sapMWizardProgressNavAnchorIcon",
-		ANCHOR_TITLE_CONTAINER: "sapMWizardProgressNavAnchorTitleContainer"
+		STEP_CIRCLE: "sapMWizardProgressNavStepCircle",
+		STEP_TITLE: "sapMWizardProgressNavStepTitle",
+		STEP_TITLE_OPTIONAL_TITLE: "sapMWizardProgressNavStepTitleOptional",
+		STEP_TITLE_OPTIONAL_LABEL: "sapMWizardProgressNavStepLabelOptional",
+		STEP_ICON: "sapMWizardProgressNavStepIcon",
+		STEP_TITLE_CONTAINER: "sapMWizardProgressNavStepTitleContainer"
 	};
 
 	var ATTRIBUTES = {
@@ -28,11 +27,12 @@ sap.ui.define([], function () {
 		OPEN_STEP: "data-sap-ui-wpn-step-open",
 		OPEN_STEP_PREV: "data-sap-ui-wpn-step-open-prev",
 		OPEN_STEP_NEXT: "data-sap-ui-wpn-step-open-next",
-		ARIA_LABEL: "aria-label",
+		ARIA_CURRENT: "aria-current",
 		ARIA_DISABLED: "aria-disabled"
 	};
 
 	var WizardProgressNavigatorRenderer = {
+			apiVersion: 2,
 			CLASSES: CLASSES,
 			ATTRIBUTES: ATTRIBUTES
 		},
@@ -47,18 +47,17 @@ sap.ui.define([], function () {
 	};
 
 	WizardProgressNavigatorRenderer.startNavigator = function (oRm, oControl) {
-		var sWizardLabelText = oResourceBundle.getText("WIZARD_LABEL");
+		var sWizardRoleDescriptionText = oResourceBundle.getText("WIZARD_PROGRESS_NAVIGATOR_ARIA_ROLE_DESCRIPTION");
 
-		oRm.write("<nav");
-		oRm.writeControlData(oControl);
-		oRm.addClass(CLASSES.NAVIGATION + " sapContrastPlus");
-		oRm.writeClasses();
-		oRm.writeAttribute(ATTRIBUTES.STEP_COUNT, oControl.getStepCount());
-		oRm.writeAccessibilityState({
-			"role": "navigation",
-			"label": sWizardLabelText
-		});
-		oRm.write(">");
+		oRm.openStart("nav", oControl)
+			.class(CLASSES.NAVIGATION)
+			.class("sapContrastPlus")
+			.attr(ATTRIBUTES.STEP_COUNT, oControl.getStepCount())
+			.accessibilityState({
+				role: "navigation",
+				roledescription: sWizardRoleDescriptionText
+			})
+			.openEnd();
 	};
 
 	WizardProgressNavigatorRenderer.renderList = function (oRm, oControl) {
@@ -70,97 +69,95 @@ sap.ui.define([], function () {
 	WizardProgressNavigatorRenderer.startList = function (oRm, oControl) {
 		var aStepTitles = oControl.getStepTitles();
 
-		oRm.write("<ul");
-
+		oRm.openStart("ul");
 		if (oControl.getVaryingStepCount()) {
-			oRm.addClass(CLASSES.LIST_VARYING);
+			oRm.class(CLASSES.LIST_VARYING);
 		} else {
-			oRm.addClass(CLASSES.LIST);
+			oRm.class(CLASSES.LIST);
 		}
 
 		if (!aStepTitles.length) {
-			oRm.addClass(CLASSES.LIST_NO_TITLES);
+			oRm.class(CLASSES.LIST_NO_TITLES);
 		}
 
-		oRm.writeAccessibilityState({
-			"role": "list"
+		oRm.accessibilityState({
+			role: "list"
 		});
 
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 	};
 
 	WizardProgressNavigatorRenderer.renderSteps = function (oRm, oControl) {
 		var iStepCount = oControl.getStepCount(),
 			aStepTitles = oControl.getStepTitles(),
-			aStepOptionalIndication = oControl._stepOptionalIndication,
+			aStepOptionalIndication = oControl._aStepOptionalIndication,
 			aStepIcons = oControl.getStepIcons(),
 			sOptionalLabel = oResourceBundle.getText("WIZARD_STEP_OPTIONAL_STEP_TEXT");
 
 		for (var i = 1; i <= iStepCount; i++) {
 			var sLabel = aStepOptionalIndication[i - 1] ? sOptionalLabel : "";
-			this.startStep(oRm, i);
-			this.renderAnchor(oRm, oControl, i, aStepTitles[i - 1], aStepIcons[i - 1], sLabel);
+			this.startStep(oRm, oControl, i, aStepTitles[i - 1], aStepIcons[i - 1], sLabel);
 			this.endStep(oRm);
 		}
 	};
 
-	WizardProgressNavigatorRenderer.startStep = function (oRm, iStepNumber) {
-		oRm.write("<li");
-		oRm.writeAttribute("class", CLASSES.STEP);
-		oRm.writeAttribute(ATTRIBUTES.STEP, iStepNumber);
-
-		oRm.writeAccessibilityState({
-			"role": "listitem"
-		});
-
-		oRm.write(">");
-	};
-
-	WizardProgressNavigatorRenderer.renderAnchor = function (oRm, oControl, iStepNumber, sStepTitle, sIconUri, sOptionalLabel) {
-		var aSteps = oControl._cachedSteps,
+	WizardProgressNavigatorRenderer.startStep = function (oRm, oControl, iStepNumber, sStepTitle, sIconUri, sOptionalLabel) {
+		var aSteps = oControl._aCachedSteps,
 			oCurrentStep = aSteps[iStepNumber];
 
-		// write link opening tag
-		oRm.write("<a tabindex='-1' ");
+		oRm.openStart("li")
+			.class(CLASSES.STEP)
+			.attr(ATTRIBUTES.STEP, iStepNumber)
+			.attr("tabindex", "-1")
+			.accessibilityState({
+				role: "listitem",
+				roledescription: this.writeStepRoleDescription(oRm, sStepTitle, sOptionalLabel, iStepNumber),
+				label: null
+			});
 
-		// write attributes for the link
-		if (!oCurrentStep || !!parseInt(oCurrentStep.style.zIndex, 10)) {
-			oRm.write("aria-disabled='true'");
+		if (!oCurrentStep || !!parseInt(oCurrentStep.style.zIndex)) {
+			oRm.attr("aria-disabled", "true");
 		}
-		oRm.writeAttribute("class", CLASSES.ANCHOR);
-		this.writeAnchorTooltip(oRm, sStepTitle, sOptionalLabel, iStepNumber);
 
-		// close link opening tag
-		oRm.write(">");
+		oRm.attr("aria-posinset", iStepNumber);
 
-		// render anchor circle
-		this.renderAnchorCircle(oRm, sIconUri, iStepNumber);
+		if (!oControl.getVaryingStepCount()) {
+			oRm.attr("aria-setsize", oControl.getStepCount());
+		} else {
+			oRm.attr("aria-setsize", "-1");
+		}
+
+		oRm.openEnd();
+
+		oRm.openStart("div").class("sapMWizardProgressNavStepContainer");
+		oRm.openEnd();
+
+		// render step circle
+		this.renderStepCircle(oRm, sIconUri, iStepNumber);
 
 		// render step title
 		if (sStepTitle) {
-			this.renderAnchorTitle(oRm, sStepTitle, sOptionalLabel);
+			this.renderStepTitle(oRm, sStepTitle, sOptionalLabel);
 		}
 
-		// close link
-		oRm.write("</a>");
+		oRm.close("div");
 	};
 
-	WizardProgressNavigatorRenderer.renderAnchorCircle = function (oRm, sIconUri, iStepNumber) {
-		oRm.write("<span");
-		oRm.writeAttribute("class", CLASSES.ANCHOR_CIRCLE);
-		oRm.write(">");
+	WizardProgressNavigatorRenderer.renderStepCircle = function (oRm, sIconUri, iStepNumber) {
+		oRm.openStart("span")
+			.class(CLASSES.STEP_CIRCLE)
+			.openEnd();
 
 		if (sIconUri) {
-			oRm.writeIcon(sIconUri, [CLASSES.ANCHOR_ICON], {title: null});
+			oRm.icon(sIconUri, [CLASSES.STEP_ICON], {title: null});
 		} else {
-			oRm.write(iStepNumber);
+			oRm.text(iStepNumber);
 		}
 
-		oRm.write("</span>");
+		oRm.close("span");
 	};
 
-	WizardProgressNavigatorRenderer.writeAnchorTooltip = function (oRm, sStepTitle, sOptionalLabel, iStepNumber) {
+	WizardProgressNavigatorRenderer.writeStepRoleDescription = function (oRm, sStepTitle, sOptionalLabel, iStepNumber) {
 		var sStepText = oResourceBundle.getText("WIZARD_PROG_NAV_STEP_TITLE"),
 			sTitleAttribute;
 
@@ -175,45 +172,44 @@ sap.ui.define([], function () {
 			sTitleAttribute += " (" + sOptionalLabel + ")";
 		}
 
-		oRm.writeAttributeEscaped("title", sTitleAttribute);
+		return sTitleAttribute;
 	};
 
-	WizardProgressNavigatorRenderer.renderAnchorTitle = function (oRm, sStepTitle, sOptionalLabel) {
-		oRm.write("<span");
-		oRm.writeAttribute("class", CLASSES.ANCHOR_TITLE_CONTAINER);
-		oRm.write(">");
+	WizardProgressNavigatorRenderer.renderStepTitle = function (oRm, sStepTitle, sOptionalLabel) {
+		oRm.openStart("span")
+			.class(CLASSES.STEP_TITLE_CONTAINER)
+			.openEnd();
 
-		oRm.write("<span");
-		oRm.addClass(CLASSES.ANCHOR_TITLE);
+		oRm.openStart("span")
+			.class(CLASSES.STEP_TITLE);
 		if (sOptionalLabel) {
-			oRm.addClass(CLASSES.ANCHOR_TITLE_OPTIONAL_TITLE);
+			oRm.class(CLASSES.STEP_TITLE_OPTIONAL_TITLE);
 		}
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.writeEscaped(sStepTitle);
-		oRm.write("</span>");
+		oRm.openEnd()
+			.text(sStepTitle)
+			.close("span");
 
 		if (sOptionalLabel) {
-			oRm.write("<span");
-			oRm.writeAttribute("class", CLASSES.ANCHOR_TITLE_OPTIONAL_LABEL);
-			oRm.write(">");
-			oRm.writeEscaped("(" + sOptionalLabel + ")");
-			oRm.write("</span>");
+			oRm.openStart("span")
+				.class(CLASSES.STEP_TITLE_OPTIONAL_LABEL)
+				.openEnd()
+				.text("(" + sOptionalLabel + ")")
+				.close("span");
 		}
 
-		oRm.write("</span>");
+		oRm.close("span");
 	};
 
 	WizardProgressNavigatorRenderer.endStep = function (oRm) {
-		oRm.write("</li>");
+		oRm.close("li");
 	};
 
 	WizardProgressNavigatorRenderer.endList = function (oRm) {
-		oRm.write("</ul>");
+		oRm.close("ul");
 	};
 
 	WizardProgressNavigatorRenderer.endNavigator = function (oRm) {
-		oRm.write("</nav>");
+		oRm.close("nav");
 	};
 
 	return WizardProgressNavigatorRenderer;

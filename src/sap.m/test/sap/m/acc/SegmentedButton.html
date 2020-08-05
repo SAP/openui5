@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.m.SegmentedButton - Accessibility</title>
+
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+	</script>
+
+	<script>
+		// ----------------
+		// Utility functions
+		// ----------------
+
+		function getText(sText) {
+			return new sap.m.Text({ text: sText }).addStyleClass("sapUiTinyMarginTop");
+		}
+
+		function getTitle(sText) {
+			return new sap.m.Title({
+				text: sText,
+				titleStyle: "H3"
+			}).addStyleClass("sapUiMediumMarginTop")
+		}
+
+
+		// -----------------------------------
+		// Standalone SegmentedButtons section
+		// -----------------------------------
+
+		var oSegmentedButtonTwoItems = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "First"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Second"
+				})
+			]
+		});
+
+		var oSegmentedButtonThreeItems = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "First"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Second"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Third"
+				})
+			]
+		});
+
+		var oSegmentedButtonThreeItemsMiddleHidden = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "First"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Second",
+					visible: false
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Third"
+				})
+			]
+		});
+
+		var oSegmentedButtonExplicitSelection = new sap.m.SegmentedButton({
+			selectedKey: "3",
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "First",
+					key: "1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Second",
+					key: "2"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Third",
+					key: "3"
+				})
+			]
+		});
+
+		var oIconOnlySegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://accelerated",
+					tooltip: "First tooltip"
+				}),
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://account",
+					tooltip: "Second tooltip"
+				})
+			]
+		});
+
+		var oCombinedSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "First",
+					icon: "sap-icon://accelerated"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Second",
+					icon: "sap-icon://account"
+				})
+			]
+		});
+
+
+		// ----------------------------------
+		// Disabling SegmentedButtons section
+		// ----------------------------------
+
+		var oDisabledSegmentedButton = new sap.m.SegmentedButton({
+			enabled: false,
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "First",
+					icon: "sap-icon://accelerated"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Second",
+					icon: "sap-icon://account"
+				})
+			]
+		});
+
+		var oSegmentedButtonMiddleItemDisabled = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://accelerated",
+					tooltip: "First tooltip"
+				}),
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://negative",
+					tooltip: "Tooltip for disabled item",
+					enabled: false
+				}),
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://account",
+					tooltip: "Last tooltip"
+				})
+			]
+		});
+
+
+		// ---------------------------------------------------
+		// SegmentedButton with additional information section
+		// ---------------------------------------------------
+
+		var oSegmentedButtonLabel = new sap.m.Label({
+			text: "Some information provided by this label",
+			labelFor: "labelled-segmentedbutton"
+		}).addStyleClass("sapUiTinyMarginTop");			// Apply this class for better visual representation
+
+		var oLabelledSegmentedButton = new sap.m.SegmentedButton("labelled-segmentedbutton", {
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "First"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Second"
+				})
+			]
+		});
+
+		var oAriaLabelledByText = new sap.m.Text({
+			text: "Text used for labelling"
+		}).addStyleClass("sapUiTinyMarginTop");		// Apply this class for better visual representation
+
+		var oSegmentedButtonAriaLabelledBy = new sap.m.SegmentedButton({
+			ariaLabelledBy: oAriaLabelledByText,
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "First"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Second"
+				})
+			]
+		});
+
+		var oAriaDescribedByText = new sap.m.Text({
+			text: "Text used for describing"
+		}).addStyleClass("sapUiTinyMarginTop");		// Apply this class for better visual representation
+
+		var oSegmentedButtonAriaDescribedBy = new sap.m.SegmentedButton({
+			ariaDescribedBy: oAriaDescribedByText,
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "First"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Second"
+				})
+			]
+		});
+
+
+		// ------
+		// Example Layout
+		// ------
+
+		var oLayout = new sap.ui.layout.VerticalLayout({
+			content: [
+				getTitle("Standalone SegmentedButtons"),
+
+				getText("SegmentedButton with two items:"),
+				oSegmentedButtonTwoItems,
+				getText("SegmentedButton with three items:"),
+				oSegmentedButtonThreeItems,
+				getText("SegmentedButton with three items, where the middle one is hidden:"),
+				oSegmentedButtonThreeItemsMiddleHidden,
+				getText("SegmentedButton with explicit item selection:"),
+				oSegmentedButtonExplicitSelection,
+				getText("Icon-only SegmentedButton:"),
+				oIconOnlySegmentedButton,
+				getText("Combined (icon + text) SegmentedButtons:"),
+				oCombinedSegmentedButton,
+
+
+				getTitle("Disabling SegmentedButtons"),
+
+				getText("Disabled SegmentedButton"),
+				oDisabledSegmentedButton,
+				getText("SegmentedButton with the middle item being disabled:"),
+				oSegmentedButtonMiddleItemDisabled,
+
+
+				getTitle("SegmentedButton with additional information"),
+
+				getText("SegmentedButton and sap.m.Label:"),
+				oSegmentedButtonLabel,
+				oLabelledSegmentedButton,
+				getText("SegmentedButton with ariaLabelledBy association:"),
+				oAriaLabelledByText,
+				oSegmentedButtonAriaLabelledBy,
+				getText("SegmentedButton with ariaDescribedBy association:"),
+				oAriaDescribedByText,
+				oSegmentedButtonAriaDescribedBy
+			]
+		}).addStyleClass("sapUiSmallMarginBegin");
+
+
+		oLayout.placeAt("content");
+	</script>
+
+	<style>
+		html, body {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
+<body id="content" class="sapUiBody"></body>
+</html>

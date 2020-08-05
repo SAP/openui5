@@ -1,0 +1,24 @@
+{
+  "@odata.context": "$metadata#SalesDenormalized(ProductName,Amount)",
+  "@odata.metadataEtag": "W/\"YUSu2I9/FvD7c+fuUIYoe41AgnIMQ6G9rT1QvopTpNk=\"",
+  "value": [
+	{
+	  "@odata.id": null,
+	  "ProductName": "Coffee",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "12"
+	},
+	{
+	  "@odata.id": null,
+	  "ProductName": "Paper",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "8"
+	},
+	{
+	  "@odata.id": null,
+	  "ProductName": "Sugar",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "4"
+	}
+  ]
+}

@@ -1,0 +1,21 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.MultiComboBoxDefaultFiltering.controller.MultiComboBoxDefaultFiltering"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<Label text="MultiComboBox with &quot;starts with per term&quot; filtering: enter a search term, e.g. &quot;N&quot;, and see filtering results."/>
+		<MultiComboBox
+			maxWidth="650px"
+			items="{
+				path: '/ProductCollection',
+				sorter: { path: 'Name' }
+			}">
+			<core:Item key="{ProductId}" text="{Name}" />
+		</MultiComboBox>
+	</l:VerticalLayout>
+</mvc:View>

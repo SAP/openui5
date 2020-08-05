@@ -1,12 +1,14 @@
 /*
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
 	"sap/ui/test/TestUtils",
-	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
-], function (jQuery, _V2MetadataConverter, TestUtils/*, jQuerySapXml*/) {
+	"sap/ui/util/XMLHelper"
+], function (jQuery, Log, _Helper, _V2MetadataConverter, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -97,7 +99,7 @@ sap.ui.require([
 	 * @returns {Document} the DOM document
 	 */
 	function xml(assert, sXml) {
-		var oDocument = jQuery.sap.parseXML(sXml);
+		var oDocument = XMLHelper.parse(sXml);
 		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
 		return oDocument;
 	}
@@ -106,7 +108,7 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.v4.lib._V2MetadataConverter", {
 		beforeEach : function () {
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/model", mFixture);
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
@@ -554,12 +556,11 @@ sap.ui.require([
 	["DELETE", "GET", "MERGE", "PATCH", "POST", "PUT"].forEach(function (sHttpMethod) {
 		QUnit.test("convert: FunctionImport, Method=" + sHttpMethod, function (assert) {
 			var sWhat = sHttpMethod !== "GET" ? "Action" : "Function",
-				sMethodAttribute = sHttpMethod ? ' m:HttpMethod="' + sHttpMethod + '"' : "",
 				sXml = '\
 					<Schema Namespace="foo" Alias="f">\
 						<EntityContainer Name="Container">\
 							<FunctionImport Name="Baz" ReturnType="Collection(Edm.String)"'
-									+ sMethodAttribute + '>\
+									+ ' m:HttpMethod="' + sHttpMethod + '">\
 								<Parameter Name="p1" Type="f.Bar" Nullable="false"/>\
 								<Parameter Name="p2" Type="Collection(f.Bar)" MaxLength="10"\
 									Precision="2" FixedLength="false"/>\
@@ -674,29 +675,29 @@ sap.ui.require([
 					</EntityType>\
 				</Schema>',
 			{
-				"$EntityContainer": "foo.Container",
-				"foo.": {
+				"$EntityContainer" : "foo.Container",
+				"foo." : {
 					// Note: no "$Annotations"!
-					"$kind": "Schema"
+					"$kind" : "Schema"
 				},
 				"foo.Bar" : [{
 					"$kind" : "Function"
 				}],
-				"foo.SalesOrderLineItem": {
-					"$Key": [
+				"foo.SalesOrderLineItem" : {
+					"$Key" : [
 						"SalesOrderID",
 						"ItemPosition"
 					],
-					"$kind": "EntityType",
-					"ItemPosition": {
-						"$Nullable": false,
-						"$Type": "Edm.String",
-						"$kind": "Property"
+					"$kind" : "EntityType",
+					"ItemPosition" : {
+						"$Nullable" : false,
+						"$Type" : "Edm.String",
+						"$kind" : "Property"
 					},
-					"SalesOrderID": {
-						"$Nullable": false,
-						"$Type": "Edm.String",
-						"$kind": "Property"
+					"SalesOrderID" : {
+						"$Nullable" : false,
+						"$Type" : "Edm.String",
+						"$kind" : "Property"
 					}
 				},
 				"foo.SalesOrderLineItemAction" : [{
@@ -938,7 +939,7 @@ sap.ui.require([
 
 			// no expectedAnnotationsV4 so there is no need for $annotations at the schema
 			if (!oFixture.expectedAnnotationsV4) {
-				delete oExpectedResult["GWSAMPLE_BASIC.0001."]["$Annotations"];
+				delete oExpectedResult["GWSAMPLE_BASIC.0001."].$Annotations;
 			}
 			testConversion(assert, sXML, oExpectedResult);
 		});
@@ -1485,7 +1486,7 @@ sap.ui.require([
 		var sTitle = "convert: V2 annotation at EntitySet: " + oFixture.annotationsV2;
 
 		QUnit.test(sTitle, function (assert) {
-			var mAnnotations = jQuery.extend({
+			var mAnnotations = Object.assign({
 					'@Org.OData.Capabilities.V1.SearchRestrictions' : {
 						"Searchable" : false
 					}
@@ -1520,7 +1521,7 @@ sap.ui.require([
 
 			// no expectedAnnotationsV4 so there is no need for $annotations at the schema
 			if (!oFixture.expectedAnnotationsV4) {
-				delete oExpectedResult["GWSAMPLE_BASIC."]["$Annotations"];
+				delete oExpectedResult["GWSAMPLE_BASIC."].$Annotations;
 			}
 			if (oFixture.message) {
 				this.oLogMock.expects("warning")
@@ -2043,7 +2044,7 @@ sap.ui.require([
 			oExpectedResult = {
 				"GWSAMPLE_BASIC.0001." : {
 					"$Annotations" : {
-						"GWSAMPLE_BASIC.0001.Container/Customers" : jQuery.extend(true, {
+						"GWSAMPLE_BASIC.0001.Container/Customers" : _Helper.merge({
 							// converted from V2 annotations at EntitySet itself
 							"@Org.OData.Capabilities.V1.InsertRestrictions" : {
 								"Insertable" : false
@@ -2328,6 +2329,107 @@ sap.ui.require([
 				$kind : "Schema",
 				"@Org.Odata.Core.V1.SchemaVersion" : "1"
 			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("duplicate schema children; last one wins", function (assert) {
+		var that = this;
+
+		[
+			"Duplicate qualified name duplicates.",
+			"Duplicate qualified name duplicates.ArtistsType",
+			"Duplicate qualified name duplicates.Address",
+			"Duplicate qualified name duplicates.GetDefaults",
+			"Duplicate qualified name duplicates.Container"
+		].forEach(function (sWarning) {
+			that.oLogMock.expects("warning").withExactArgs(sWarning, undefined,
+				"sap.ui.model.odata.v4.lib._MetadataConverter");
+		});
+
+		testConversion(assert, '\
+<Schema Namespace="duplicates"/>\
+<Schema Namespace="duplicates">\
+	<ComplexType Name="ArtistsType"/>\
+	<EntityType Name="ArtistsType">\
+		<Key>\
+			<PropertyRef Name="ArtistID"/>\
+			<PropertyRef Name="IsActiveEntity"/>\
+		</Key>\
+		<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>\
+		<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>\
+	</EntityType>\
+	<EntityType Name="Address"/>\
+	<ComplexType Name="Address">\
+		<Property Name="City" Type="Edm.String"/>\
+	</ComplexType>\
+	<ComplexType Name="GetDefaults"/>\
+	<ComplexType Name="Container"/>\
+	<EntityContainer Name="Container">\
+		<EntitySet Name="Artists" EntityType="duplicates.ArtistsType"/>\
+		<FunctionImport Name="GetDefaults" ReturnType="duplicates.ArtistsType" m:HttpMethod="GET">\
+			<Parameter Name="_it" Type="Collection(duplicates.ArtistsType)" Nullable="false"/>\
+		</FunctionImport>\
+	</EntityContainer>\
+</Schema>', {
+			"$EntityContainer" : "duplicates.Container",
+			"duplicates." : {
+				"$Annotations" : {
+					"duplicates.Container/Artists" : {
+						"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+							"Searchable" : false
+						}
+					}
+				},
+				"$kind" : "Schema"
+			},
+			"duplicates.Address" : {
+				"$kind" : "ComplexType",
+				"City" : {
+					"$Type" : "Edm.String",
+					"$kind" : "Property"
+				}
+			},
+			"duplicates.ArtistsType" : {
+				"$Key" : [
+					"ArtistID",
+					"IsActiveEntity"
+				],
+				"$kind" : "EntityType",
+				"ArtistID" : {
+					"$Nullable" : false,
+					"$Type" : "Edm.String",
+					"$kind" : "Property"
+				},
+				"IsActiveEntity" : {
+					"$Nullable" : false,
+					"$Type" : "Edm.Boolean",
+					"$kind" : "Property"
+				}
+			},
+			"duplicates.Container" : {
+				"$kind" : "EntityContainer",
+				"Artists" : {
+					"$Type" : "duplicates.ArtistsType",
+					"$kind" : "EntitySet"
+				},
+				"GetDefaults" : {
+					"$Function" : "duplicates.GetDefaults",
+					"$kind" : "FunctionImport"
+				}
+			},
+			"duplicates.GetDefaults" : [{
+				"$Parameter" : [{
+					"$Name" : "_it",
+					"$Nullable" : false,
+					"$Type" : "duplicates.ArtistsType",
+					"$isCollection" : true
+				}],
+				"$ReturnType" : {
+					"$Type" : "duplicates.ArtistsType"
+				},
+				"$kind" : "Function"
+			}]
 		});
 	});
 });

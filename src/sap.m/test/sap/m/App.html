@@ -15,7 +15,8 @@
 			var app = new sap.m.App("myApp", {initialPage:"page1"});
 
 			var page1 = new sap.m.Page("page1", {
-				title:"Page 1",
+				title: "Page 1",
+				titleLevel: "H1",
 				content : [
 					new sap.m.Button({
 						id : "show-footer-btn",
@@ -58,16 +59,17 @@
 				}),
 				footer: new sap.m.Bar({
 					id: 'page1-footer',
-					contentMiddle: [new sap.m.Button({icon:"images/iconCompetitors.png", tooltip: "Trophy"} ),
-									new sap.m.Button({icon:"images/iconCompetitors.png", tooltip: "Trophy"} ),
-									new sap.m.Button({icon:"images/iconCompetitors.png", tooltip: "Trophy"} ),
-									new sap.m.Button({icon:"images/iconCompetitors.png", tooltip: "Trophy"} )]
+					contentMiddle: [new sap.m.Button({icon:"images/iconCompetitors.png", iconDensityAware: false, tooltip: "Trophy"} ),
+									new sap.m.Button({icon:"images/iconCompetitors.png", iconDensityAware: false, tooltip: "Trophy"} ),
+									new sap.m.Button({icon:"images/iconCompetitors.png", iconDensityAware: false, tooltip: "Trophy"} ),
+									new sap.m.Button({icon:"images/iconCompetitors.png", iconDensityAware: false, tooltip: "Trophy"} )]
 				})
 
 			});
 
 			var page2 = new sap.m.Page("page2", {
-				title:"Page 2",
+				title: "Page 2",
+				titleLevel: "H1",
 				backgroundDesign:"Standard",
 				showNavButton: true,
 				navButtonText: "Page 1",

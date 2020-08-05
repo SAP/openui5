@@ -5,8 +5,8 @@
 		xmlns:f="sap.ui.layout.form"
 		xmlns:html="http://www.w3.org/1999/xhtml">
 			<f:SimpleForm editable="false" title="Hash">
-				<Label for="current" text="Current hash"></Label>
-				<Text for="hash" text="{
+				<Label labelFor="current" text="Current hash"></Label>
+				<Text text="{
 					path: '/currentHash',
 					formatter: '.formatHash'
 				}"></Text>
@@ -29,7 +29,7 @@
 			<Table items="{/patterns}">
 				<headerToolbar>
 					<Toolbar>
-						<Label for="pattern" text="Pattern"></Label>
+						<Label labelFor="pattern" text="Pattern"></Label>
 						<ToolbarSpacer></ToolbarSpacer>
 						<Input
 								id="pattern"

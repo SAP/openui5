@@ -38,7 +38,7 @@
     <!-- excludes for the library-preload.js -->
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <all-in-one>
-        <exclude name="sap/ui/rta/test/controlEnablingCheck.js" />
+        <exclude name="sap/ui/rta/enablement/controlValidator.js" />
       </all-in-one>
     </packaging>
     <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"

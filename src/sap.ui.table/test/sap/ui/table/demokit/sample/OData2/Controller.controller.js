@@ -14,15 +14,15 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.OData2.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			this.oMockServer = new MockServer({
 				rootUri : sServiceUrl
 			});
 
 			MockServer.config({autoRespondAfter: 2000});
 
-			this.oMockServer.simulate(jQuery.sap.getModulePath("sap.ui.table.sample.OData2") + "/metadata.xml", {
-				sMockdataBaseUrl : jQuery.sap.getModulePath("sap.ui.table.sample.OData"),
+			this.oMockServer.simulate(sap.ui.require.toUrl("sap/ui/table/sample/") + "OData2" + "/metadata.xml", {
+				sMockdataBaseUrl : sap.ui.require.toUrl("sap/ui/table/sample/") + "OData",
 				bGenerateMissingMockData : true
 			});
 
@@ -47,7 +47,7 @@ sap.ui.define([
 			});
 		},
 
-		onExit : function () {
+		onExit : function() {
 			this.oMockServer.destroy();
 			this.oMockServer = null;
 			MockServer.config({autoRespondAfter: 0});
@@ -73,7 +73,7 @@ sap.ui.define([
 				return null;
 			}
 
-			iLen = iLen ? parseInt(iLen, 10) : 10;
+			iLen = iLen ? parseInt(iLen) : 10;
 
 			if (iLen > 50) {
 				sColumnWidth = "15rem";
@@ -88,7 +88,7 @@ sap.ui.define([
 				width: sColumnWidth,
 				label: new sap.m.Label({text: "{/#Product/" + sName + "/@sap:label}"}),
 				hAlign: sType && sType.indexOf("Decimal") >= 0 ? "End" : "Begin",
-				template: specialTemplate() || new Text({text: {path: sName}})
+				template: specialTemplate() || new Text({text: {path: sName}, wrapping: false})
 			});
 		}
 

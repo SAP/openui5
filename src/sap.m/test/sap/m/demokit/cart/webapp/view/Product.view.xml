@@ -4,9 +4,7 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
-		title="{Name}"
-		showNavButton="{device>/system/phone}"
-		navButtonPress="onNavButtonPress" >
+		backgroundDesign="Solid">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				rootRole="Region"
@@ -16,26 +14,42 @@
 				headerRole="Region"
 				headerLabel="{i18n>Product_headerLabel}"
 				footerRole="Region"
-				footerLabel="{i18n>Product_footerLabel}" />
+				footerLabel="{i18n>Product_footerLabel}"/>
 		</landmarkInfo>
-		<headerContent>
-			<Button
-				icon="sap-icon://cart"
-				visible="{device>/system/phone}"
-				tooltip="{i18n>toCartButtonTooltip}"
-				press="onCartButtonPress" />
-			<ToolbarSpacer/>
-			<Button
-				icon="sap-icon://customer"
-				press="onAvatarPress"
-				tooltip="{i18n>avatarButtonTooltip}"/>
-		</headerContent>
+		<customHeader>
+			<Bar>
+				<contentLeft>
+					<Button
+						type="Back"
+						visible="{appView>/smallScreenMode}"
+						press=".onBack"/>
+				</contentLeft>
+				<contentMiddle>
+					<Title
+						level="H2"
+						text="{Name}"/>
+				</contentMiddle>
+				<contentRight>
+					<Button
+						icon="sap-icon://customer"
+						press=".onAvatarPress"
+						tooltip="{i18n>avatarButtonTooltip}"/>
+					<ToggleButton
+						icon="sap-icon://cart"
+						pressed="{= ${appView>/layout}.startsWith('ThreeColumns') }"
+						tooltip="{i18n>toCartButtonTooltip}"
+						press=".onToggleCart">
+					</ToggleButton>
+				</contentRight>
+			</Bar>
+		</customHeader>
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Button
-					icon="sap-icon://cart-3"
-					press="onAddButtonPress" />
+					text="{i18n>addToCartShort}"
+					type="Emphasized"
+					press=".onAddToCart" />
 			</Toolbar>
 		</footer>
 		<content>
@@ -50,10 +64,10 @@
 				<attributes>
 					<ObjectAttribute
 						title="{i18n>productSupplierAttributeText}"
-						text="{SupplierName}" />
+						text="{SupplierName}"/>
 					<ObjectAttribute
 						title="{i18n>productDescriptionAttributeText}"
-						text="{ShortDescription}" />
+						text="{ShortDescription}"/>
 					<ObjectAttribute
 						title="{i18n>productWeightAttributeText}"
 						text="{Weight} {WeightUnit}"/>
@@ -70,34 +84,31 @@
 						state="{
 							path : 'Status',
 							formatter : '.formatter.statusState'
-						}" />
+						}"/>
 				</statuses>
 			</ObjectHeader>
 			<VBox
 				alignItems="Center"
 				renderType="Div">
-					<Image
-						id = "productImage"
-						src= "{
-							path : 'PictureUrl',
-							formatter : '.formatter.pictureUrl'
-						}"
-						decorative="true"
-						class="sapUiSmallMargin"
-						press="onPicturePress"
-						width="100%"
-					/>
+				<Image
+					id="productImage"
+					src="{path : 'PictureUrl', formatter : '.formatter.pictureUrl'}"
+					decorative="true"
+					densityAware="false"
+					class="sapUiSmallMargin"
+					width="100%"
+					height="100%">
+					<detailBox>
+						<LightBox id="lightBox">
+							<imageContent>
+								<LightBoxItem
+									imageSrc="{path : 'PictureUrl', formatter : '.formatter.pictureUrl'}"
+									title="{Name}"/>
+							</imageContent>
+						</LightBox>
+					</detailBox>
+				</Image>
 			</VBox>
 		</content>
-
-		<dependents>
-			<LightBox id="lightBox">
-				<imageContent>
-					<LightBoxItem
-						imageSrc="{PictureUrl}"
-						title="{Name}"/>
-				</imageContent>
-			</LightBox>
-		</dependents>
 	</Page>
 </mvc:View>

@@ -1,169 +1,80 @@
-/*global QUnit*/
+/* global QUnit */
+QUnit.config.autostart = false;
 
-sap.ui.define([
-	"sap/ui/test/Opa5",
-	"sap/ui/test/opaQunit",
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function (Opa5, opaTest, PropertyStrictEquals) {
+sap.ui.getCore().attachInit(function () {
 	"use strict";
 
-	QUnit.module("EditSave");
+	sap.ui.require([
+		"sap/ui/test/Opa5",
+		"sap/ui/test/opaQunit",
+		"sap/ui/layout/sample/tests/actions/formTests",
+		"sap/ui/layout/sample/tests/assertions/formTests"
+	], function (Opa5, opaTest, Actions, Assertions) {
+		var sSampleName = document.querySelector("[data-sample-component]").dataset.sampleComponent;
 
-	opaTest("Should go to the edit page", function(Given, When, Then) {
-
-		// Arrange
-		Given.iStartTheFormSample();
-
-		// Act
-		When.iPressOnEdit();
-
-		// Assert
-		Then.iShouldBeOnTheEditPage();
-	});
-
-	opaTest("Should persist the values", function(Given, When, Then) {
-
-		// Act
-		When.iChangeValuesInTheForm().
-			and.iPressOnSave();
-
-		// Assert
-		Then.theValuesShouldBePersisted().
-			and.iTeardownMyAppFrame();
-	});
-
-	QUnit.module("EditCancel");
-
-	opaTest("Should go to the edit page", function(Given, When, Then) {
-
-		// Arrange
-		Given.iStartTheFormSample();
-
-		// Act
-		When.iPressOnEdit();
-
-		// Assert
-		Then.iShouldBeOnTheEditPage();
-	});
-
-	opaTest("Should restore the values", function(Given, When, Then) {
-
-		// Act
-		When.iChangeValuesInTheForm().
-			and.iPressOnCancel();
-
-		// Assert
-		Then.theValuesShouldNotBePersisted().
-			and.iTeardownMyAppFrame();
-	});
-
-	Opa5.extendConfig({
-		viewName : "Page",
-		actions : new Opa5({
-			_pressOnButton : function (sId) {
-				return this.waitFor({
-					id : sId,
-					matchers: new PropertyStrictEquals({name: "enabled", value: true}),
-					success : function (oButton) {
-						oButton.$().trigger("tap");
-					},
-					errorMessage : "did not find the " + sId + " button"
-				});
-			},
-
-			iPressOnEdit : function () {
-
-				return this._pressOnButton("edit");
-
-			},
-
-			iPressOnSave : function () {
-
-				return this._pressOnButton("save");
-
-			},
-
-			iPressOnCancel : function () {
-
-				return this._pressOnButton("cancel");
-
-			},
-
-			iChangeValuesInTheForm : function () {
-
-				return this.waitFor({
-					id : ["name" , "country"],
-					success : function (aInputs) {
-						var oName = aInputs[0],
-							oCountry = aInputs[1];
-
-						var sName = oName.getValue();
-						oName.setValue("Foobar");
-
-						// helper function to select anything else except the currently selected item
-						function generateRandomExcept(iMin, iMax, iIndex) {
-							var iNum = Math.floor(Math.random() * (iMax - iMin + 1)) + iMin;
-							return (iNum === iIndex ? generateRandomExcept(iMin, iMax, iIndex) : iNum);
+		Opa5.extendConfig({
+			viewNamespace: sSampleName + ".",
+			arrangements: new Opa5({
+				iStartTheFormSample: function () {
+					return this.iStartMyUIComponent({
+						componentConfig: {
+							name: sSampleName,
+							manifest: true
 						}
+					});
+				}
+			}),
+			autoWait: true,
+			viewName: "Page",
+			actions: Actions,
+			assertions: Assertions
+		});
 
-						var iSelectedIndex = oCountry.getSelectedIndex();
-						var iAnotherIndex = generateRandomExcept(0, oCountry.getItems().length - 1, iSelectedIndex);
-						var sSelectedCountry = oCountry.getSelectedItem().getText();
-						var oAnotherCountry = oCountry.getItems()[iAnotherIndex];
-						var sAnotherCountry = oAnotherCountry.getText();
+		QUnit.module("EditSave");
 
-						this.getContext().sSelectedCountry = sSelectedCountry;
-						this.getContext().sAnotherCountry = sAnotherCountry;
-						this.getContext().sName = sName;
-						oCountry.setSelectedKey(oAnotherCountry.getKey());
+		opaTest("Should go to the edit page", function (Given, When, Then) {
+			// Arrange
+			Given.iStartTheFormSample();
 
-						Opa5.assert.ok(true, "Selected the item with key '" + oAnotherCountry.getKey() + "'");
-					},
-					errorMessage : "did not find the inputs name and country"
-				});
+			// Act
+			When.iPressOnEdit();
 
-			}
-		}),
-		assertions : new Opa5({
-			iShouldBeOnTheEditPage : function () {
-				return this.waitFor({
-					controlType: "sap.ui.layout.form.Form",
-					success : function () {
-						Opa5.assert.ok("Did navigate to the edit page");
-					},
-					errorMessage : "did not navigate to the edit page"
-				});
-			},
+			// Assert
+			Then.iShouldBeOnTheEditPage();
+		});
 
-			theValuesShouldBePersisted : function () {
-				return this.waitFor({
-					id : ["nameText" , "countryText"],
-					success : function (aInputs) {
-						var oName = aInputs[0],
-						oCountry = aInputs[1];
+		opaTest("Should persist the values", function (Given, When, Then) {
+			// Act
+			When.iChangeValuesInTheForm().
+				and.iPressOnSave();
 
-						Opa5.assert.strictEqual(oName.getText(), "Foobar", "the name text was correct");
-						Opa5.assert.strictEqual(oCountry.getText(), this.getContext().sAnotherCountry, "the country text was correct");
-					},
-					errorMessage : "did not find the texts for country and name"
-				});
-			},
+			// Assert
+			Then.theValuesShouldBePersisted().
+				and.iTeardownMyUIComponent();
+		});
 
-			theValuesShouldNotBePersisted : function () {
-				return this.waitFor({
-					id : ["nameText" , "countryText"],
-					success : function (aInputs) {
-						var oName = aInputs[0],
-						oCountry = aInputs[1];
+		QUnit.module("EditCancel");
 
-						Opa5.assert.strictEqual(oName.getText(), this.getContext().sName, "the name text was restored");
-						Opa5.assert.strictEqual(oCountry.getText(), this.getContext().sSelectedCountry, "the country text was restored");
-					},
-					errorMessage : "did not find the texts for country and name"
-				});
-			}
-		})
+		opaTest("Should go to the edit page", function (Given, When, Then) {
+			// Arrange
+			Given.iStartTheFormSample();
+
+			// Act
+			When.iPressOnEdit();
+
+			// Assert
+			Then.iShouldBeOnTheEditPage();
+		});
+
+		opaTest("Should restore the values", function (Given, When, Then) {
+			// Act
+			When.iChangeValuesInTheForm().
+				and.iPressOnCancel();
+
+			// Assert
+			Then.theValuesShouldNotBePersisted().
+				and.iTeardownMyUIComponent();
+		});
+		QUnit.start();
 	});
-
-
-}, /* bExport= */ true);
+});

@@ -3,19 +3,48 @@
  */
 
 // Provides control sap.m.IconTabFilter.
-sap.ui.define(['./library', 'sap/ui/core/Item',
-		'sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', 'sap/ui/core/library', 'sap/ui/core/Control'],
-	function(library, Item,
-			Renderer, IconPool, InvisibleText, coreLibrary, Control) {
+sap.ui.define([
+	"./library",
+	"sap/ui/core/library",
+	"sap/ui/core/Core",
+	"sap/ui/core/Item",
+	"sap/ui/core/Renderer",
+	"sap/ui/core/IconPool",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Control",
+	'sap/ui/Device',
+	"./AccButton",
+	"sap/m/Button",
+	"sap/m/ResponsivePopover",
+	"sap/m/IconTabBarSelectList"
+], function (
+	library,
+	coreLibrary,
+	Core,
+	Item,
+	Renderer,
+	IconPool,
+	InvisibleText,
+	Control,
+	Device,
+	AccButton,
+	Button,
+	ResponsivePopover,
+	IconTabBarSelectList
+) {
 	"use strict";
-
-
 
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
 
 	// shortcut for sap.m.ImageHelper
 	var ImageHelper = library.ImageHelper;
@@ -25,8 +54,6 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 
 	// shortcut for sap.ui.core.IconColor
 	var IconColor = coreLibrary.IconColor;
-
-
 
 	/**
 	 * Constructor for a new IconTabFilter.
@@ -70,7 +97,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 			 * <b>Note:</b> You can use this property when you use <code>IconTabBar</code> as a filter.
 			 * In order for it to be displayed correctly, the other tabs in the filter should consist of an icon, text and an optional count.
 			 * It can be set to true for the first tab filter.
-			 * You can find more detailed guidelines at https://experience.sap.com/fiori-design-web/icontabbar/#tabs-as-filters.
+			 * You can find more detailed information in the {@link https://experience.sap.com/fiori-design-web/icontabbar/#tabs-as-filters UX Guidelines}.
 			 */
 			showAll : {type : "boolean", group : "Misc", defaultValue : false},
 
@@ -117,9 +144,29 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 			 * If this content is set, it is displayed instead of the general content inside the IconTabBar.
 			 * @since 1.15.0
 			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
+			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
+
+			/**
+			 * The sub items of this filter (optional).
+			 * @since 1.77
+			 * @experimental As of 1.77
+			 */
+			items : {type : "sap.m.IconTab", multiple : true, singularName : "item"},
+
+			/**
+			 * The expand icon if there are sub filters
+			 * @since 1.77
+			 */
+			_expandButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"}
 		}
 	}});
+
+	/**
+	 * Library internationalization resource bundle.
+	 *
+	 * @type {module:sap/base/i18n/ResourceBundle}
+	 */
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 	/**
 	 * Array of all available icon color CSS classes
@@ -155,6 +202,20 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 	};
 
 	/**
+	 * Function is called when the element is initialized.
+	 *
+	 * @private
+	 */
+	IconTabFilter.prototype.init = function () {
+		this._oDragEventDelegate = {
+			onlongdragover: this._handleOnLongDragOver,
+			ondragover: this._handleOnDragOver,
+			ondragleave: this._handleOnDragLeave,
+			ondrop: this._handleOnDrop
+		};
+	};
+
+	/**
 	 * Function is called when exiting the element.
 	 *
 	 * @private
@@ -172,6 +233,20 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 			this._invisibleText.destroy();
 			this._invisibleText = null;
 		}
+
+		if (this._oPopover) {
+			this._oPopover.destroy();
+			this._oPopover = null;
+		}
+
+		if (this._oExpandButton) {
+			this._oExpandButton.removeEventDelegate(this._oDragEventDelegate);
+			this._oExpandButton.destroy();
+			this._oExpandButton = null;
+		}
+
+		this.removeEventDelegate(this._oDragEventDelegate);
+		this._oDragEventDelegate = null;
 	};
 
 	IconTabFilter.prototype.invalidate = function() {
@@ -202,7 +277,6 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 	};
 
 	IconTabFilter.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
-
 		// invalidate only the IconTabHeader if a property change
 		// doesn't affect the IconTabBar content
 		switch (sPropertyName) {
@@ -241,7 +315,6 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 	 * @private
 	 */
 	IconTabFilter.prototype._getNonEmptyKey = function () {
-
 		// BCP: 1482007468
 		var sKey = this.getKey();
 
@@ -253,300 +326,375 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 	};
 
 	/**
+	 * @returns {sap.m.IconTabFilter} the underlying instance of a tab
+	 * @private
+	 */
+	IconTabFilter.prototype._getRealTab = function () {
+		return this._oRealItem || this;
+	};
+
+	/**
+	 * @returns {sap.m.IconTabFilter} the top-level tab, if this instance item is nested, or itself, if it's not nested
+	 * @private
+	 */
+	IconTabFilter.prototype._getRootTab = function () {
+		var oTab = this._getRealTab(),
+			oParent = oTab.getParent();
+
+		while (oParent && oParent.isA("sap.m.IconTabFilter")) {
+			oTab = oParent;
+			oParent = oParent.getParent();
+		}
+
+		return oTab;
+	};
+
+	/**
+	 * @returns {int} the level at which this item has been nested, or 1 if an item has not been nested
+	 * @private
+	 */
+	IconTabFilter.prototype._getNestedLevel = function () {
+		var oParent = this._getRealTab().getParent(),
+			iLevel;
+
+		for (iLevel = 1; oParent && oParent.isA("sap.m.IconTabFilter"); iLevel++) {
+			oParent = oParent.getParent();
+		}
+
+		return iLevel;
+	};
+
+	/**
 	 * Renders this item in the IconTabHeader.
-	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {int} visibleIndex the visible index within the parent control
-	 * @param {int} visibleItemsCount the visible items count
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {int} iVisibleIndex the visible index within the parent control
+	 * @param {int} iVisibleItemsCount the visible items count
 	 * @protected
 	 */
-	IconTabFilter.prototype.render = function (rm, visibleIndex, visibleItemsCount) {
-		var that = this;
-
-		if (!that.getVisible()) {
+	IconTabFilter.prototype.render = function (oRM, iVisibleIndex, iVisibleItemsCount) {
+		if (!this.getVisible()) {
 			return;
 		}
 
-		var iconTabHeader = this.getParent(),
-			iconTabBar = iconTabHeader.getParent(),
-			hasIconTabBar = iconTabBar instanceof sap.m.IconTabBar,
-			resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
-			ariaParams = 'role="tab"',
-			id = that.getId(),
-			count = that.getCount(),
-			text = that.getText(),
-			icon = that.getIcon(),
-			design = that.getDesign(),
-			iconColor = that.getIconColor(),
-			isIconColorRead = iconColor === 'Positive' || iconColor === 'Critical' || iconColor === 'Negative',
-			isHorizontalDesign = design === IconTabFilterDesign.Horizontal,
-			isUpperCase = hasIconTabBar && iconTabBar.getUpperCase(),
-			isTextOnly = iconTabHeader._bTextOnly,
-			isInLine = iconTabHeader._bInLine || iconTabHeader.isInlineMode();
+		this._prepareDragEventDelegate();
 
-		if (hasIconTabBar) {
-			ariaParams += ' aria-controls="' + iconTabBar.sId + '-content" ';
+		var oIconTabHeader = this.getParent(),
+			oIconTabBar = oIconTabHeader.getParent(),
+			bHasIconTabBar = oIconTabHeader._isInsideIconTabBar(),
+			mAriaParams = { role: "tab" },
+			sId = this.getId(),
+			sCount = this.getCount(),
+			sText = this.getText(),
+			oIcon = this.getIcon(),
+			oIconColor = this.getIconColor(),
+			bShouldReadIconColor = oIconColor === 'Positive' || oIconColor === 'Critical' || oIconColor === 'Negative' || oIconColor === 'Neutral',
+			bHorizontalDesign = this.getDesign() === IconTabFilterDesign.Horizontal,
+			bTextOnly = oIconTabHeader._bTextOnly,
+			bInLine = oIconTabHeader._bInLine || oIconTabHeader.isInlineMode();
+
+		if (bHasIconTabBar) {
+			mAriaParams.controls = oIconTabBar.getId() + "-content";
 		}
 
-		if (text.length ||
-			count !== '' ||
-			icon) {
-			ariaParams += 'aria-labelledby="';
-			var ids = [];
-
-			if (text.length) {
-				ids.push(id + '-text');
-			}
-			if (count !== '') {
-				ids.push(id + '-count');
-			}
-			if (icon) {
-				ids.push(id + '-icon');
-			}
-			if (isIconColorRead) {
-				ids.push(id + '-iconColor');
-			}
-
-			ariaParams += ids.join(' ');
-			ariaParams += '"';
+		if (this.getItems().length) {
+			mAriaParams.roledescription = oResourceBundle.getText("ICONTABFILTER_SPLIT_TAB");
 		}
 
-		rm.write('<div ' + ariaParams + ' ');
+		if (sText.length ||
+			sCount !== "" ||
+			oIcon) {
 
-		if (visibleIndex !== undefined && visibleItemsCount !== undefined) {
-			rm.writeAccessibilityState({
-				posinset: visibleIndex + 1,
-				setsize: visibleItemsCount
+			var aId = [];
+
+			if (sCount !== "") {
+				aId.push(sId + "-count");
+			}
+			if (sText.length) {
+				aId.push(sId + "-text");
+			}
+			if (oIcon) {
+				aId.push(sId + "-icon");
+			}
+			if (bShouldReadIconColor) {
+				aId.push(sId + "-iconColor");
+			}
+
+			mAriaParams.labelledby = aId.join(" ");
+		}
+
+		if (iVisibleIndex !== undefined && iVisibleItemsCount !== undefined) {
+			Object.assign(mAriaParams, {
+				posinset: iVisibleIndex + 1,
+				setsize: iVisibleItemsCount
 			});
 		}
 
-		rm.writeElementData(that);
-		rm.addClass('sapMITBItem');
+		oRM.openStart("div", this)
+			.accessibilityState(mAriaParams)
+			.class("sapMITBItem");
 
-		if (!count) {
-			rm.addClass('sapMITBItemNoCount');
+		if (!sCount) {
+			oRM.class("sapMITBItemNoCount");
 		}
 
-		if (isHorizontalDesign) {
-			rm.addClass('sapMITBHorizontal');
+		if (bHorizontalDesign) {
+			oRM.class("sapMITBHorizontal");
 		} else {
-			rm.addClass('sapMITBVertical');
+			oRM.class("sapMITBVertical");
 		}
 
-		if (that.getShowAll()) {
-			rm.addClass('sapMITBAll');
+		if (this.getShowAll()) {
+			oRM.class("sapMITBAll");
 		} else {
-			rm.addClass('sapMITBFilter');
-			rm.addClass('sapMITBFilter' + iconColor);
+			oRM.class("sapMITBFilter")
+				.class("sapMITBFilter" + oIconColor);
 		}
 
-		if (!that.getEnabled()) {
-			rm.addClass('sapMITBDisabled');
-			rm.writeAttribute('aria-disabled', true);
+		if (oIconTabHeader._isUnselectable(this)) {
+			oRM.class("sapMITHUnselectable");
 		}
 
-		rm.writeAttribute('aria-selected', false);
+		if (this.getItems().length > 0) {
+			oRM.class("sapMITBFilterWithItems");
+		}
 
-		var sTooltip = that.getTooltip_AsString();
+		if (!this.getEnabled()) {
+			oRM.class("sapMITBDisabled")
+				.attr("aria-disabled", true);
+		}
+
+		oRM.attr("aria-selected", false);
+
+		var sTooltip = this.getTooltip_AsString();
 		if (sTooltip) {
-			rm.writeAttributeEscaped('title', sTooltip);
+			oRM.attr("title", sTooltip);
 		}
 
-		rm.writeClasses();
-		rm.write('>');
+		if (this._bIsOverflow || this.getItems().length) {
+			oRM.attr("aria-haspopup", "menu");
+		}
 
-		if (!isInLine) {
-			rm.write('<div id="' + id + '-tab" class="sapMITBTab">');
+		oRM.openEnd();
 
-			if (!that.getShowAll() || !icon) {
-				if (isIconColorRead) {
-					rm.write('<div id="' + id + '-iconColor" style="display: none;">' + resourceBundle.getText('ICONTABBAR_ICONCOLOR_' + iconColor.toUpperCase()) + '</div>');
+		oRM.openStart("div")
+			.class("sapMITBFilterWrapper")
+			.openEnd();
+
+		if (!bInLine) {
+			oRM.openStart("div", sId + "-tab")
+				.class("sapMITBTab")
+				.openEnd();
+
+			if (!this.getShowAll() || !oIcon) {
+				if (bShouldReadIconColor) {
+					oRM.openStart("div", sId + "-iconColor")
+						.style("display", "none")
+						.openEnd()
+						.text(oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + oIconColor.toUpperCase()))
+						.close("div");
 				}
 
-				rm.renderControl(that._getImageControl(['sapMITBFilterIcon', 'sapMITBFilter' + iconColor], iconTabHeader, IconTabFilter._aAllIconColors));
+				oRM.renderControl(this._getImageControl(['sapMITBFilterIcon', 'sapMITBFilter' + oIconColor], oIconTabHeader, IconTabFilter._aAllIconColors));
 			}
 
-			if (!that.getShowAll() && !icon && !isTextOnly) {
-				rm.write('<span class="sapMITBFilterNoIcon"> </span>');
+			if (!this.getShowAll() && !oIcon && !bTextOnly) {
+				oRM.openStart("span").class("sapMITBFilterNoIcon").openEnd().close("span");
 			}
 
-			if (isHorizontalDesign && !that.getShowAll()) {
-				rm.write('</div>');
-				rm.write('<div class="sapMITBHorizontalWrapper">');
+			if (bHorizontalDesign && !this.getShowAll()) {
+				oRM.close("div");
+
+				oRM.openStart("div")
+					.class("sapMITBHorizontalWrapper")
+					.openEnd();
 			}
 
-			rm.write('<span id="' + id + '-count" ');
-			rm.addClass('sapMITBCount');
-			rm.writeClasses();
-			rm.write('>');
+			oRM.openStart("span", sId + "-count")
+				.class("sapMITBCount")
+				.openEnd();
 
-			if (count === '' && isHorizontalDesign) {
+			if (sCount === "" && bHorizontalDesign) {
 				//this is needed for the correct placement of the text in the horizontal design
-				rm.write('&nbsp;');
+				oRM.unsafeHtml("&nbsp;");
 			} else {
-				rm.writeEscaped(count);
+				oRM.text(sCount);
 			}
 
-			rm.write('</span>');
+			oRM.close("span");
 
-			if (!isHorizontalDesign) {
-				rm.write('</div>');
+			if (!bHorizontalDesign) {
+				oRM.close("div");
 			}
 		}
 
-		if (text.length) {
-			rm.write('<div id="' + id + '-text" ');
-			rm.addClass('sapMITBText');
+		if (sText.length) {
+			oRM.openStart("div", sId + "-text")
+				.class("sapMITBText");
+
 			// Check for upperCase property on IconTabBar
-			if (isUpperCase) {
-				rm.addClass('sapMITBTextUpperCase');
+			if (bHasIconTabBar && oIconTabBar.getUpperCase()) {
+				oRM.class("sapMITBTextUpperCase");
 			}
 
-			if (isInLine) {
-				rm.writeAttribute('dir', 'ltr');
+			if (bInLine) {
+				oRM.attr("dir", "ltr");
 			}
 
-			rm.writeClasses();
-			rm.write('>');
-			rm.writeEscaped(iconTabHeader._getDisplayText(that));
-			rm.write('</div>');
+			oRM.openEnd();
+			oRM.openStart("span").class("sapMITHTextContent").openEnd().text(oIconTabHeader._getDisplayText(this));
+			oRM.close("span");
+
+			if (this._bIsOverflow || this.getItems().length && oIconTabHeader._isUnselectable(this)) {
+				oRM.openStart("span", this.getId() + "-expandButton").class("sapMITHShowSubItemsIcon").openEnd();
+				oRM.icon(IconPool.getIconURI("slim-arrow-down"), [], {title: oResourceBundle.getText("ICONTABHEADER_OVERFLOW_MORE")});
+				oRM.close("span");
+			}
+
+			oRM.close("div");
 		}
 
-		if (!isInLine && isHorizontalDesign) {
-			rm.write('</div>');
+		if (!bInLine && bHorizontalDesign) {
+			oRM.close("div");
 		}
 
-		rm.write('<div class="sapMITBContentArrow"></div>');
+		oRM.openStart("div").class("sapMITBContentArrow").openEnd().close("div");
+		oRM.close("div");
 
-		rm.write('</div>');
+		if (this.getItems().length && !oIconTabHeader._isUnselectable(this)) {
+			oRM.openStart("span")
+				.accessibilityState({ role: "separator" })
+				.openEnd()
+			.close("span");
+
+			oRM.renderControl(this._getExpandButton());
+		}
+
+		oRM.close("div");
 	};
 
 	/**
 	 * Renders this item in the IconTabSelectList.
-	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.IconTabBarSelectList} selectList the select list in which this filter is rendered
-	 * @param {int} visibleIndex the visible index within the parent control
-	 * @param {int} visibleItemsCount the visible items count
+	 * @param {sap.ui.core.RenderManager} oRM RenderManager used for writing to the render output buffer
+	 * @param {sap.m.IconTabBarSelectList} oSelectList the select list in which this filter is rendered
+	 * @param {int} iIndexInSet this item's index within the aggregation of items
+	 * @param {int} iSetSize total length of the aggregation of items
+	 * @param {float} fPaddingValue the padding with which the item should be indented
 	 * @protected
 	 */
-	IconTabFilter.prototype.renderInSelectList = function (rm, selectList, visibleIndex, visibleItemsCount) {
-		var that = this;
-
-		// destroy the invisible text if exists
+	IconTabFilter.prototype.renderInSelectList = function (oRM, oSelectList, iIndexInSet, iSetSize, fPaddingValue) {
 		if (this._invisibleText) {
 			this._invisibleText.destroy();
 			this._invisibleText = null;
 		}
 
-		if (!that.getVisible()) {
+		if (!this.getVisible()) {
 			return;
 		}
 
-		var isTextOnly = true,
-			isIconOnly,
-			iconTabHeader = selectList._iconTabHeader,
-			resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		var bTextOnly = true,
+			bIconOnly = oSelectList._bIconOnly,
+			oIconTabHeader = oSelectList._oIconTabHeader;
 
-		if (iconTabHeader) {
-			isTextOnly = iconTabHeader._bTextOnly;
-			isIconOnly = selectList._bIconOnly;
+		if (oIconTabHeader) {
+			bTextOnly = oIconTabHeader._bTextOnly;
 		}
 
-		rm.write('<li');
-		rm.writeElementData(that);
+		oRM.openStart("li", this)
+			.class("sapMITBSelectItem")
+			.attr("tabindex", "-1")
+			.attr("role", "menuitem");
 
-		rm.writeAttribute('tabindex', '-1');
-		rm.writeAttribute('role', 'option');
-
-		if (visibleIndex !== undefined && visibleItemsCount !== undefined) {
-			rm.writeAttribute('aria-posinset', visibleIndex + 1);
-			rm.writeAttribute('aria-setsize', visibleItemsCount);
+		if (fPaddingValue) {
+			oRM.style("padding-left", fPaddingValue + "rem");
 		}
 
-		var tooltip = that.getTooltip_AsString();
-		if (tooltip) {
-			rm.writeAttributeEscaped('title', tooltip);
+		if (iIndexInSet !== undefined && iSetSize !== undefined) {
+			oRM.attr("aria-posinset", iIndexInSet + 1);
+			oRM.attr("aria-setsize", iSetSize);
+			oRM.attr("aria-level", this._getNestedLevel());
 		}
 
-		if (!that.getEnabled()) {
-			rm.addClass('sapMITBDisabled');
-			rm.writeAttribute('aria-disabled', true);
+		var sTooltip = this.getTooltip_AsString();
+		if (sTooltip) {
+			oRM.attr("title", sTooltip);
 		}
 
-		rm.addClass('sapMITBSelectItem');
-
-		if (selectList.getSelectedItem() == that) {
-			rm.addClass('sapMITBSelectItemSelected');
-			rm.writeAttribute('aria-selected', true);
+		if (oIconTabHeader._isUnselectable(this)) {
+			oRM.class("sapMITHUnselectable");
 		}
 
-		var iconColor = that.getIconColor();
-		rm.addClass('sapMITBFilter' + iconColor);
-
-		rm.writeClasses();
-
-		var itemId = that.getId(),
-			iiconColorRead = iconColor == 'Positive' || iconColor == 'Critical' || iconColor == 'Negative';
-
-		var labelledBy = ' aria-labelledby="';
-
-		if (!isIconOnly) {
-			labelledBy += itemId + '-text ';
+		if (!this.getEnabled()) {
+			oRM.class("sapMITBDisabled")
+				.attr("aria-disabled", true);
 		}
 
-		if (!isTextOnly && that.getIcon()) {
-			labelledBy += itemId + '-icon ';
+
+		if (oSelectList.getSelectedItem() == this) {
+			oRM.class("sapMITBSelectItemSelected");
+			oRM.attr("aria-selected", true);
 		}
 
-		if (iiconColorRead) {
+		var oIconColor = this.getIconColor();
+		oRM.class("sapMITBFilter" + oIconColor);
 
+
+		var sItemId = this.getId(),
+			bShouldReadIconColor = oIconColor == 'Positive' || oIconColor == 'Critical' || oIconColor == 'Negative' || oIconColor == 'Neutral',
+			aLabelledByIds = [];
+
+		if (!bIconOnly) {
+			aLabelledByIds.push(sItemId + "-text");
+		}
+
+		if (!bTextOnly && this.getIcon()) {
+			aLabelledByIds.push(sItemId + "-icon");
+		}
+
+		if (bShouldReadIconColor) {
 			this._invisibleText = new InvisibleText({
-				text: resourceBundle.getText('ICONTABBAR_ICONCOLOR_' + iconColor.toUpperCase())
+				text: oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + oIconColor.toUpperCase())
 			});
 
-			labelledBy += this._invisibleText.getId();
+			aLabelledByIds.push(this._invisibleText.getId());
 		}
 
-		labelledBy += '"';
-
-		rm.write(labelledBy + '>');
+		oRM.accessibilityState({ labelledby: aLabelledByIds.join(" ") })
+			.openEnd();
 
 		if (this._invisibleText) {
-			rm.renderControl(this._invisibleText);
+			oRM.renderControl(this._invisibleText);
 		}
 
-		if (!isTextOnly) {
-			this._renderIcon(rm);
+		if (!bTextOnly) {
+			this._renderIcon(oRM);
 		}
 
-		if (!isIconOnly) {
-			this._renderText(rm);
+		if (!bIconOnly) {
+			this._renderText(oRM);
 		}
-
-		rm.write('</li>');
+		oRM.close("li");
 	};
 
 	/**
 	 * Renders an icon.
 	 * @private
 	 */
-	IconTabFilter.prototype._renderIcon =  function(rm) {
+	IconTabFilter.prototype._renderIcon = function (oRM) {
+		var oIcon = this.getIcon();
+		if (oIcon) {
+			var oIconInfo = IconPool.getIconInfo(oIcon),
+				aClasses = ["sapMITBSelectItemIcon"];
 
-		var icon = this.getIcon();
-
-		if (icon) {
-			var iconInfo = IconPool.getIconInfo(icon);
-			var classes = ['sapMITBSelectItemIcon'];
-
-			if (iconInfo && !iconInfo.suppressMirroring) {
-				classes.push('sapUiIconMirrorInRTL');
+			if (oIconInfo && !oIconInfo.suppressMirroring) {
+				aClasses.push("sapUiIconMirrorInRTL");
 			}
 
-			rm.writeIcon(icon, classes, {
-				id: this.getId() + '-icon',
-				'aria-hidden': true
+			oRM.icon(oIcon, aClasses, {
+				id: this.getId() + "-icon",
+				"aria-hidden": true
 			});
 		} else {
-			rm.write('<span class="sapUiIcon"></span>');
+			oRM.openStart("span").class("sapUiIcon").openEnd().close("span");
 		}
 	};
 
@@ -554,46 +702,362 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 	 * Renders a text.
 	 * @private
 	 */
-	IconTabFilter.prototype._renderText =  function(rm) {
-		var text = this.getText(),
-			count = this.getCount(),
-			isRtl = sap.ui.getCore().getConfiguration().getRTL(),
-			textDir = this.getTextDirection();
+	IconTabFilter.prototype._renderText =  function (oRM) {
+		var sText = this.getText(),
+			sCount = this.getCount(),
+			bRTL = Core.getConfiguration().getRTL(),
+			sTextDir = this.getTextDirection();
 
-		rm.write('<span');
+		oRM.openStart("span", this.getId() + "-text")
+			.attr("dir", "ltr")
+			.class("sapMText")
+			.class("sapMTextNoWrap")
+			.class("sapMITBText");
 
-		rm.writeAttribute('id', this.getId() + '-text');
-		rm.writeAttribute('dir', 'ltr');
-
-		rm.addClass('sapMText');
-		rm.addClass('sapMTextNoWrap');
-		rm.addClass('sapMITBText');
-
-		rm.writeClasses();
-
-		if (textDir !== TextDirection.Inherit){
-			rm.writeAttribute('dir', textDir.toLowerCase());
+		if (sTextDir !== TextDirection.Inherit){
+			oRM.attr('dir', sTextDir.toLowerCase());
 		}
 
-		var textAlign = Renderer.getTextAlign(TextAlign.Begin, textDir);
-		if (textAlign) {
-			rm.addStyle('text-align', textAlign);
-			rm.writeStyles();
+		var sTextAlign = Renderer.getTextAlign(TextAlign.Begin, sTextDir);
+		if (sTextAlign) {
+			oRM.style("text-align", sTextAlign);
 		}
 
-		if (count) {
-			if (isRtl) {
-				text = '(' + count + ') ' + text;
+		if (sCount) {
+			if (bRTL) {
+				sText = '(' + sCount + ') ' + sText;
 			} else {
-				text += ' (' + count + ')';
+				sText += ' (' + sCount + ')';
 			}
 		}
 
-		rm.write('>');
-		rm.writeEscaped(text);
-		rm.write('</span>');
+		oRM.openEnd()
+			.text(sText)
+			.close("span");
+	};
+
+	IconTabFilter.prototype._getSelectList = function () {
+		if (!this._oSelectList) {
+			this._oSelectList = new IconTabBarSelectList({
+				selectionChange: function (oEvent) {
+					var oTarget = oEvent.getParameter("selectedItem");
+					this._oIconTabHeader.setSelectedItem(oTarget._getRealTab());
+					this._oTabFilter._closePopover();
+				}
+			});
+			this._oSelectList._oIconTabHeader = this.getParent();
+			this._oSelectList._oTabFilter = this;
+		}
+		return this._oSelectList;
+	};
+
+	/**
+	 * Sets the appropriate drag and drop event delegate
+	 * based on whether or not the IconTabFilter is unselectable.
+	 *
+	 * @private
+	 */
+	IconTabFilter.prototype._prepareDragEventDelegate = function () {
+
+		if (this.getEnabled()) {
+			this.addEventDelegate(this._oDragEventDelegate, this);
+		} else {
+			this.removeEventDelegate(this._oDragEventDelegate);
+		}
+	};
+
+	/**
+	 * Returns the expand button for this instance.
+	 * This button is conditionally shown in the DOM
+	 * based on whether or not the IconTabFilter is unselectable.
+	 * @private
+	 */
+	IconTabFilter.prototype._getExpandButton = function () {
+		this._oExpandButton = this.getAggregation("_expandButton");
+
+		if (!this._oExpandButton) {
+			this._oExpandButton = new AccButton(this.getId() + "-expandButton", {
+				type: ButtonType.Transparent,
+				icon: IconPool.getIconURI("slim-arrow-down"),
+				tooltip: oResourceBundle.getText("ICONTABHEADER_OVERFLOW_MORE"),
+				tabIndex: "-1",
+				press: this._expandButtonPress.bind(this)
+			}).addStyleClass("sapMITBFilterExpandBtn");
+
+			this.setAggregation("_expandButton", this._oExpandButton);
+		}
+
+		return this._oExpandButton;
+	};
+
+	/**
+	 * Handles the expand button's "press" event
+	 * @private
+	 */
+	IconTabFilter.prototype._expandButtonPress = function () {
+		if (!this.getEnabled()) {
+			return;
+		}
+
+		// prepare the next focus if the select list gets closed if no item was selected
+		this.$().trigger("focus");
+
+		if (!this._oPopover) {
+			this._oPopover = new ResponsivePopover({
+				showArrow: false,
+				showHeader: false,
+				offsetY: 0,
+				offsetX: 0,
+				placement: PlacementType.VerticalPreferredBottom
+			}).addStyleClass("sapMITBFilterPopover");
+
+			this._oPopover.attachBeforeClose(function () {
+				this._getSelectList().destroyItems();
+			}, this);
+
+			if (Device.system.phone) {
+				this._oPopover._oControl.addButton(this._createPopoverCloseButton());
+			}
+
+			this.addDependent(this._oPopover);
+
+			this._oPopover._oControl._adaptPositionParams = function () {
+				var bCompact = this.$().parents().hasClass("sapUiSizeCompact");
+				this._arrowOffset = 0;
+				if (bCompact) {
+					this._offsets = ["0 0", "0 0", "0 4", "0 0"];
+				} else {
+					this._offsets = ["0 0", "0 0", "0 5", "0 0"];
+				}
+				this._atPositions = ["end top", "end top", "end bottom", "begin top"];
+				this._myPositions = ["end bottom", "begin top", "end top", "end top"];
+			};
+		}
+
+		var bHasSelectedItem = this._setSelectListItems();
+		var oSelectList = this._getSelectList();
+
+		this._oPopover.removeAllContent();
+
+		if (this.getItems().length || this._bIsOverflow) {
+			this._oPopover.addContent(oSelectList);
+			this._oPopover.setInitialFocus(bHasSelectedItem ? oSelectList.getSelectedItem() : oSelectList.getVisibleTabFilters()[0]);
+			this._oPopover.openBy(this);
+		}
+	};
+
+	/**
+	 * Returns all the items of an IconTabFilter and its sub-items recursively.
+	 *
+	 * @private
+	 * @returns {sap.m.IconTab[]} All sub items in the hierarchy
+	 */
+	IconTabFilter.prototype._getAllSubItems = function () {
+		var aResult = [];
+
+		this._getRealTab().getItems().forEach(function (oItem) {
+			if (oItem.isA("sap.m.IconTabFilter")) {
+				aResult = aResult.concat(oItem, oItem._getAllSubItems());
+			} else {
+				aResult = aResult.concat(oItem);
+			}
+		});
+
+		return aResult;
+	};
+
+	/**
+	 * Returns all the filters of an IconTabFilter and their sub-items recursively.
+	 *
+	 * @private
+	 * @returns {sap.m.IconTabFilter[]} All sub items in the hierarchy
+	 */
+	IconTabFilter.prototype._getAllSubFilters = function () {
+		return this._getAllSubItems().filter(function (oItem) {
+			return oItem.isA("sap.m.IconTabFilter");
+		});
+	};
+
+	IconTabFilter.prototype._getAllSubFiltersDomRefs = function () {
+		return this._getAllSubFilters()
+			.filter(function (oSubItem) { return Boolean(oSubItem._getRealTab().getDomRef()); })
+			.map(function (oSubItem) { return oSubItem._getRealTab().getDomRef(); });
+	};
+
+	/**
+	 * @private
+	 * @returns {sap.m.IconTabFilter} Returns first available SubFilter that is visible and has content
+	 */
+	IconTabFilter.prototype._getFirstAvailableSubFilter = function () {
+		var aItems = this._getAllSubFilters();
+		for (var i = 0; i < aItems.length; i++) {
+			var oItem = aItems[i];
+			if (oItem.getContent().length && oItem.getVisible()) {
+				return oItem;
+			}
+		}
+		// no inner items available
+		return this;
+	};
+
+	IconTabFilter.prototype._isParentOf = function (oChild) {
+		var aChildren = this._getAllSubFilters();
+		for (var i = 0; i < aChildren.length; i++) {
+			if (aChildren[i]._getRealTab() === oChild) {
+				return true;
+			}
+		}
+		return false;
+	};
+
+	IconTabFilter.prototype._createPopoverCloseButton = function () {
+		return new Button({
+			text: oResourceBundle.getText("SELECT_CANCEL_BUTTON"),
+			press: this._closePopover.bind(this)
+		});
+	};
+
+	/**
+	 * Closes the popover
+	 * @private
+	 */
+	IconTabFilter.prototype._closePopover = function () {
+		if (this._oPopover) {
+			this._oPopover.close();
+			this._oPopover.removeAllContent();
+		}
+
+		if (this._bIsOverflow && this.getParent().oSelectedItem) {
+			(this.getParent()._oSelectedRootItem || this.getParent().oSelectedItem).$().focus();
+		}
+	};
+
+
+	/** Handles onDragOver.
+	* @private
+	* @param {jQuery.Event} oEvent The jQuery drag over event
+	*/
+	IconTabFilter.prototype._handleOnDragOver = function (oEvent) {
+		if (!this._bIsOverflow && !this._getIconTabHeader().getMaxNestingLevel()) {
+			return;
+		}
+		this.getDomRef().classList.add("sapMITHDragOver");
+		oEvent.preventDefault(); // allow drop, so that the cursor is correct
+	};
+
+	/** Handles onLongDragOver.
+	* @private
+	*/
+	IconTabFilter.prototype._handleOnLongDragOver = function () {
+		if (!this._bIsOverflow && !this._getIconTabHeader().getMaxNestingLevel()) {
+			return;
+		}
+
+		if (this._oPopover && this._oPopover.isOpen()) {
+			return;
+		}
+
+		this._expandButtonPress();
+	};
+
+	/**
+	 * Handles onDrop.
+	 * @private
+	 */
+	IconTabFilter.prototype._handleOnDrop = function () {
+		this.getDomRef().classList.remove("sapMITHDragOver");
+	};
+
+	/**
+	 * Handles onDragLeave.
+	 * @private
+	 */
+	IconTabFilter.prototype._handleOnDragLeave = function () {
+		this.getDomRef().classList.remove("sapMITHDragOver");
+	};
+
+	/**
+	 * Populates the IconTabBarSelectList with the context of this instance's items
+	 *
+	 * @returns {boolean} True if a there is selected item in the list, false if the list has no selected items
+	 * @private
+	 */
+	IconTabFilter.prototype._setSelectListItems = function () {
+		var oIconTabHeader = this.getParent(),
+			oSelectList = this._getSelectList(),
+			aItemsForList = this._getAllSubItems(),
+			oPrevSelectedItem = oIconTabHeader.oSelectedItem,
+			bHasSelectedItem = false,
+			oItem;
+
+		if (this._bIsOverflow) {
+			var aHeaderItems = oIconTabHeader.getItems();
+			var aItemsInStrip = oIconTabHeader._getItemsInStrip();
+			aItemsForList = [];
+
+			aHeaderItems.forEach(function (oItem) {
+				// If tab is an overflow tab and oItem is already in Tab Strip, do not add it to list
+				// on a mobile device, this behaviour doesn't occur, and all items are shown
+				if (!Device.system.phone && aItemsInStrip.indexOf(oItem) > -1) {
+					return;
+				}
+
+				aItemsForList.push(oItem);
+				if (oItem.isA("sap.m.IconTabFilter")) {
+					oItem._getAllSubItems().forEach(function (oSubItem) {
+						aItemsForList.push(oSubItem);
+					});
+				}
+			});
+		}
+
+		oSelectList.destroyItems();
+		oSelectList.setSelectedItem(null);
+
+		for (var i = 0; i < aItemsForList.length; i++) {
+			oItem = aItemsForList[i];
+			var oListItem = oItem.clone(undefined, undefined, { cloneChildren: false, cloneBindings: true });
+			oListItem._oRealItem = oItem; // link list item to its underlying item from the items aggregation
+			oSelectList.addItem(oListItem);
+
+			if (oItem.isA("sap.m.IconTabSeparator")) {
+				continue;
+			}
+
+			if (oListItem._getRealTab() === oPrevSelectedItem) {
+				oSelectList.setSelectedItem(oListItem);
+				bHasSelectedItem = true;
+				continue;
+			}
+
+			if (oListItem._getRealTab()._isParentOf(oPrevSelectedItem)) {
+				oSelectList.setSelectedItem(oPrevSelectedItem._getRealTab());
+				bHasSelectedItem = true;
+			}
+		}
+
+		return bHasSelectedItem;
+	};
+
+	/**
+	 * Returns the IconTabHeader instance which holds all the TabFilters.
+	 */
+	IconTabFilter.prototype._getIconTabHeader = function () {
+		return this._getRootTab().getParent();
+	};
+
+	IconTabFilter.prototype.onsapdown = function (oEvent) {
+		if (!this.getEnabled()) {
+			return;
+		}
+
+		if (this._bIsOverflow ||
+				((this._getNestedLevel() === 1 && this._getRealTab() === this) && this._getRealTab().getItems().length !== 0)) {
+
+					oEvent.stopImmediatePropagation();
+					this._expandButtonPress();
+		}
 	};
 
 	return IconTabFilter;
-
 });

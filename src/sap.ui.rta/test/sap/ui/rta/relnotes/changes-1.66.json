@@ -1,0 +1,58 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "7d03d2ccfe29b8e9c59f5525bd2c353a61cd4db1",
+        "type": "FIX",
+        "text": "sap.ui.rta - revised binding related utils functions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980120689"
+          }
+        ]
+      },
+      {
+        "id": "33646015a98b1fad2bacfc6e57c2163a63956cbe",
+        "type": "FIX",
+        "text": "sap.ui.rta - fix combine command creation with binding template as selector",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980115924"
+          }
+        ]
+      },
+      {
+        "id": "59f47f19252b9136684b5161a1ab1c5b9347e8e9",
+        "type": "FIX",
+        "text": "sap.ui.rta - fixed combine two fields with incompatible bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980120689"
+          }
+        ]
+      },
+      {
+        "id": "f384ae6f348509763fcbeef5218f0d2cf392120d",
+        "type": "FIX",
+        "text": "sap.ui.rta - rta utils removed circular dependency",
+        "references": []
+      },
+      {
+        "id": "81e312e67bd052a328041e2dd66e0ac9554e73c4",
+        "type": "FIX",
+        "text": ": RTA ACC Color fixes",
+        "references": []
+      },
+      {
+        "id": "a35746676e1a37b2fbc4ca31d7324724735ad12a",
+        "type": "FEATURE",
+        "text": "\"Delete app variants\" feature for S4/HANA cloud systems",
+        "references": []
+      }
+    ]
+  }
+}

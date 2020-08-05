@@ -1,9 +1,15 @@
 {
-	"_version": "1.8.0",
+	"_version": "1.21.0",
 	"sap.app": {
 		"id": "sap.ui.fl.support.apps.contentbrowser.app",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+		  "bundleUrl": "i18n/i18n.properties",
+		  "supportedLocales": [
+		    ""
+		  ],
+		  "fallbackLocale": ""
+		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
@@ -24,6 +30,7 @@
 		"rootView": {
 			"viewName": "sap.ui.fl.support.apps.contentbrowser.view.MainView",
 			"type": "XML",
+			"id": "rootView",
 			"async": true
 		},
 		"dependencies": {
@@ -37,7 +44,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.fl.support.apps.contentbrowser.i18n.i18n"
+					"bundleName": "sap.ui.fl.support.apps.contentbrowser.i18n.i18n",
+					"supportedLocales": [
+					  ""
+					],
+					"fallbackLocale": ""
 				}
 			},
 			"@i18n": {
@@ -52,7 +63,7 @@
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
 				"viewPath": "sap.ui.fl.support.apps.contentbrowser.view",
-				"controlId": "sap.ui.fl.support.apps.contentbrowser.App",
+				"controlId": "container-contentbrowser---rootView--splitApp",
 				"controlAggregation": "masterPages",
 				"async": true
 			},

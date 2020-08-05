@@ -8,17 +8,17 @@
  * @version @version@
  */
 sap.ui.define([
-		'sap/ui/core/UIComponent',
-		'sap/ui/test/TestUtils',
-		'sap/ui/thirdparty/sinon'
-	], function (UIComponent, TestUtils, sinon) {
+	"sap/ui/core/UIComponent",
+	"sap/ui/test/TestUtils",
+	"sap/ui/thirdparty/sinon"
+], function (UIComponent, TestUtils, sinon) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.core.sample.common.Component", {
 		exit : function () {
 			var i;
 
-			for (i = 0; i < this.aMockServers.length; i++) {
+			for (i = 0; i < this.aMockServers.length; i += 1) {
 				this.aMockServers[i].destroy();
 			}
 			this.oSandbox.restore();

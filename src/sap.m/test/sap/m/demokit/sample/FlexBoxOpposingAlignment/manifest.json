@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.FlexBoxOpposingAlignment",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.FlexBoxOpposingAlignment.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

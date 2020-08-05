@@ -4,13 +4,25 @@
 
 // Provides control sap.ui.commons.RadioButton.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     './library',
     'sap/ui/core/Control',
-    "./RadioButtonRenderer"
+    './RadioButtonRenderer',
+    'sap/ui/core/library',
+    'sap/ui/Device',
+    // jQuery custom selectors ":sapFocusable"
+    "sap/ui/dom/jquery/Selectors"
 ],
-	function(jQuery, library, Control, RadioButtonRenderer) {
+	function(jQuery, library, Control, RadioButtonRenderer, coreLibrary, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 
@@ -70,7 +82,7 @@ sap.ui.define([
 			 *
 			 * Enumeration sap.ui.core.ValueState provides state values Error, Success, Warning and None.
 			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
+			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
 
 			/**
 			 * Determines the control width. By default, it depends on the text length. Alternatively, CSS sizes in % or px can be set.
@@ -82,7 +94,7 @@ sap.ui.define([
 			 * Defines the text direction - options are left-to-right (LTR) and right-to-left (RTL). Alternatively, the control can
 			 * inherit the text direction from its parent container.
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Defines the name of the RadioButtonGroup, in which the current RadioButton belongs to. You can define a new name for
@@ -140,8 +152,8 @@ sap.ui.define([
 			this.focus();
 		}
 
-		if (!!sap.ui.Device.browser.internet_explorer && (/*!this.getEditable() ||*/ !this.getEnabled())) { //According to CSN2581852 2012 a readonly CB should be in the tabchain
-			// in IE tabindex = -1 hides focus, so in readOnly case tabindex must be set to 0
+		if (Device.browser.msie && (/*!this.getEditable() ||*/ !this.getEnabled())) { //According to CSN2581852 2012 a readonly CB should be in the tabchain
+			// in IE tabindex = -1 hides focus, so in readOnly case tabindex must be set to 0 // TODO remove after the end of support for Internet Explorer
 			// as long as RadioButton is clicked on
 			this.$().attr("tabindex", 0).toggleClass("sapUiRbFoc");
 		}
@@ -165,6 +177,7 @@ sap.ui.define([
 		this.userSelect(oEvent);
 	};
 
+	// TODO remove after the end of support for Internet Explorer
 	/**
 	 * Event handler, called when the focus is set on a RadioButton.
 	 * Problem in HCB: Focus is set in IE8 to bullet, and not to the whole control.
@@ -174,7 +187,7 @@ sap.ui.define([
 	 */
 	RadioButton.prototype.onsaptabnext = function(oEvent) {
 
-		if (!!sap.ui.Device.browser.internet_explorer) {
+		if (Device.browser.msie) {
 			this.bTabPressed = true;
 			var that = this;
 			window.setTimeout(function(){that.bTabPressed = false;}, 100);
@@ -192,7 +205,8 @@ sap.ui.define([
 
 		if (this.getEnabled() && oEvent.target.id == (this.getId() + "-RB")) {
 			if (this.bTabPressed) {
-				// this only occurs in IE in HCB mode
+				// this only occurs in IE in HCB mode // TODO remove after the end of support for Internet Explorer
+				// jQuery custom selectors ":sapFocusable"
 				var aFocusableElements = jQuery(":sapFocusable"),
 					bFound = false;
 				for (var i = 0; i < aFocusableElements.length; i++) {
@@ -220,8 +234,8 @@ sap.ui.define([
 	 */
 	RadioButton.prototype.onfocusout = function(oEvent) {
 
-		if (!!sap.ui.Device.browser.internet_explorer && (/*!this.getEditable() ||*/ !this.getEnabled())) { //According to CSN2581852 2012 a readonly CB should be in the tabchain
-			// in IE tabindex = -1 hides focus, so in readOnly case tabindex must be set to 0
+		if (Device.browser.msie && (/*!this.getEditable() ||*/ !this.getEnabled())) { //According to CSN2581852 2012 a readonly CB should be in the tabchain
+			// in IE tabindex = -1 hides focus, so in readOnly case tabindex must be set to 0 // TODO remove after the end of support for Internet Explorer
 			// as long as RadioButton is clicked on
 			this.$().attr("tabindex", -1).toggleClass("sapUiRbFoc");
 		}
@@ -316,4 +330,4 @@ sap.ui.define([
 
 	return RadioButton;
 
-}, /* bExport= */ true);
+});

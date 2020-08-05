@@ -1,10 +1,16 @@
 {
-	"_version": "1.8.0",
+	"_version": "1.21.0",
 
 	"sap.app": {
-	"id": "sap.ui.demo.iconexplorer",
+		"id": "sap.ui.demo.iconexplorer",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
@@ -13,7 +19,7 @@
 	},
 
 	"sap.ui": {
-	"technology": "UI5",
+		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://image-viewer",
 			"favIcon": "",
@@ -30,7 +36,7 @@
 	},
 
 	"sap.ui5": {
-	"rootView": {
+		"rootView": {
 			"viewName": "sap.ui.demo.iconexplorer.view.App",
 			"type": "XML",
 			"async": true,
@@ -38,16 +44,15 @@
 		},
 
 		"dependencies": {
-			"minUI5Version": "1.36.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
 				"sap.ui.core": {
-					"minVersion": "1.36.0"
 				},
 				"sap.m": {
-					"minVersion": "1.36.0"
+				},
+				"sap.f": {
 				},
 				"sap.ui.layout" : {
-					"minVersion": "1.36.0"
 				}
 			}
 		},
@@ -69,7 +74,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.iconexplorer.i18n.i18n"
+					"bundleName": "sap.ui.demo.iconexplorer.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			}
 		},
@@ -82,24 +91,39 @@
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
-					"target": ["notFound"]
+					"target": "notFound"
 				},
 				"async": true
 			},
 
 			"routes": [
 				{
+					"pattern": "",
+					"name": "home",
+					"target": "home"
+				},
+				{
 					"pattern": ":?query:",
-					"name": "overview",
+					"name": "legacy",
 					"target": ["overview"]
+				},
+				{
+					"pattern": "overview/:fontName:/:?query:",
+					"name": "overview",
+					"target": "overview"
 				}
 			],
 
 			"targets": {
+				"home": {
+					"viewName": "Home",
+					"viewId": "home",
+					"viewLevel": 1
+				},
 				"overview": {
 					"viewName": "Overview",
 					"viewId": "overview",
-					"viewLevel": 1
+					"viewLevel": 2
 				},
 				"notFound": {
 					"viewName": "NotFound",

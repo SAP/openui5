@@ -1,4 +1,11 @@
 var fs = require('fs');
+var url = require('url');
+var cspMiddleware = require('@ui5/server').middlewareRepository.getMiddleware("csp");
+if (cspMiddleware.middleware) {
+	// ui5-server 2.0 returns the middleware as an attribute of an object
+	cspMiddleware = cspMiddleware.middleware;
+}
+
 
 module.exports = function(grunt, config) {
 
@@ -88,6 +95,86 @@ module.exports = function(grunt, config) {
 						res.end();
 
 					} ]);
+
+					middlewares.unshift(function (req, res, next) {
+						var sRequestUrl = req.url;
+
+						if (
+							/\/documentation\/test-resources\/\S*/.test(sRequestUrl) ||
+							/\/documentation\/resources\/\S*/.test(sRequestUrl) ||
+							/\/docs\/api\/\S*/.test(sRequestUrl) ||
+							/\/docs\/topics\/\S*/.test(sRequestUrl)
+						) {
+							req.url = sRequestUrl.replace("/documentation/", "/");
+							next();
+							return;
+						}
+
+						if (
+							/^\/testsuite\/documentation\/?$/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/api(\/?$)?\S*/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/controls\/?$/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/controls\/filter\/\S+/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/entity\/\S+/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/sample\/\S+/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/demoapps(\/?$)?\S*/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/topic(\/?$)?\S*/.test(sRequestUrl)
+						) {
+							fs.readFile(sapUiTestsuiteBasePath + '/src/main/webapp/documentation-index.tmpl', { encoding: 'utf-8' } , function(err, data) {
+								if (err) {
+									res.writeHead(404);
+									res.end();
+									return;
+								} else {
+									res.writeHead(200, { 'Content-Type': 'text/html' });
+									res.write(data);
+									res.end();
+									return;
+								}
+							});
+						}
+
+						next();
+					});
+
+					var oCspConfig = {
+						allowDynamicPolicySelection: true,
+						allowDynamicPolicyDefinition: true,
+						defaultPolicyIsReportOnly: true,
+						definedPolicies: {
+							"sap-target-level-1":
+								"default-src 'self'; " +
+								"script-src  'self' 'unsafe-eval'; " +
+								"style-src   'self' 'unsafe-inline'; " +
+								"font-src    'self' data:; " +
+								"img-src     'self' * data: blob:; " +
+								"frame-src   'self' https: data: blob:; " +
+								"child-src   'self' https: data: blob:; " +
+								"connect-src 'self' https: wss:;",
+							"sap-target-level-2":
+								"default-src 'self'; " +
+								"script-src  'self'; " +
+								"style-src   'self' 'unsafe-inline'; " +
+								"font-src    'self' data:; " +
+								"img-src     'self' * data: blob:; " +
+								"frame-src   'self' https: data: blob:; " +
+								"child-src   'self' https: data: blob:; " +
+								"connect-src 'self' https: wss:;"
+						}
+					};
+					middlewares.unshift(cspMiddleware("sap-ui-xx-csp-policy", oCspConfig));
+
+					// Make sure .xml files are served with Content-Type application/xml instead of text/xml
+					// as it causes issues with OData / datajs.
+					// The new tooling (https://github.com/SAP/ui5-tooling) already uses the correct header.
+					middlewares.unshift(function(req, res, next) {
+						var sFilePath = url.parse(req.url).pathname;
+						if (sFilePath && sFilePath.endsWith(".xml")) {
+							res.setHeader("Content-Type", "application/xml");
+						}
+						next();
+					});
+
 					return middlewares;
 				}
 

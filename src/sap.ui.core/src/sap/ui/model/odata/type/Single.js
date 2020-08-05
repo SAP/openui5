@@ -2,22 +2,17 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
-		'sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataType',
-		'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, NumberFormat, FormatException, ODataType, ParseException, ValidateException) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/thirdparty/jquery"
+], function (Log, NumberFormat, FormatException, ParseException, ValidateException, ODataType,
+		jQuery) {
 	"use strict";
-
-	// Math.fround polyfill
-	if (!Math.fround) { // sap-ui-cover-browser msie
-		// IE 10+
-		var aArray = new window.Float32Array(1);
-
-		Math.fround = function (fValue) {
-			aArray[0] = fValue;
-			return aArray[0];
-		};
-	}
 
 	/**
 	 * Returns the locale-dependent error message for the type.
@@ -75,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 			if (vNullable === false || vNullable === "false") {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 		}
 
@@ -135,7 +130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *   for this type.
 	 * @public
 	 */
-	Single.prototype.formatValue = function(vValue, sTargetType) {
+	Single.prototype.formatValue = function (vValue, sTargetType) {
 		var fValue;
 
 		if (vValue === null || vValue === undefined) {
@@ -185,7 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 * @public
 	 * @since 1.29.0
 	 */
-	Single.prototype.parseValue = function(vValue, sSourceType) {
+	Single.prototype.parseValue = function (vValue, sSourceType) {
 		var fResult;
 
 		if (vValue === null || vValue === "") {
@@ -223,7 +218,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *
 	 * @param {number} fValue
 	 *   the value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 * @since 1.29.0

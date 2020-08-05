@@ -1,0 +1,34 @@
+/**
+	Content of this file inserts automatically into the page when RTA starts
+ */
+
+.sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:after {
+	right: %scrollWidth%;
+}
+
+.sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:after {
+	bottom: %scrollWidth%;
+}
+
+.sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:focus:before {
+	right: calc(%scrollWidth% + 2px);
+}
+.sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:focus:before {
+	bottom: calc(%scrollWidth% + 2px);
+}
+
+.sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:focus:before {
+	right: calc(%scrollWidth% + 2px);
+}
+.sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:focus:before {
+	bottom: calc(%scrollWidth% + 2px);
+}
+
+.sapUiRta .sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:focus:before,
+.sapUiRta .sapUiRtaOverlayHover.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:after {
+	bottom: %scrollWidth%;
+}
+.sapUiRta .sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:focus:before,
+.sapUiRta .sapUiRtaOverlayHover.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:after {
+	right: %scrollWidth%;
+}

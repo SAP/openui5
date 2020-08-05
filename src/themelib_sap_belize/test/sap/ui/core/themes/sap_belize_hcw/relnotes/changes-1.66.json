@@ -1,0 +1,58 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "06391995448dc65ea9badf743202b8ea9e76bfb6",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Arrow icons for appointments are added",
+        "references": []
+      },
+      {
+        "id": "306a4b840345e31660d8bc2e89683c0f10bfd04d",
+        "type": "FIX",
+        "text": "sap.m.Button: remove overstyling inside Bar for Fiori 3 theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980158602"
+          }
+        ]
+      },
+      {
+        "id": "99125a90a1670c5133f269feb9a32a93f6f19c38",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Implemented special dates",
+        "references": []
+      },
+      {
+        "id": "5b6d8e0268984cd51f03b3f98265c56b2b227d15",
+        "type": "FIX",
+        "text": "FeedListItem: Increase focus border size of FeedListItem image in HCB/HCB theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870491117"
+          }
+        ]
+      },
+      {
+        "id": "dd24500c971563434e498c88132763dcbfd20592",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageTitle: Fixed focus width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980194711"
+          }
+        ]
+      },
+      {
+        "id": "81e312e67bd052a328041e2dd66e0ac9554e73c4",
+        "type": "FIX",
+        "text": ": RTA ACC Color fixes",
+        "references": []
+      }
+    ]
+  }
+}

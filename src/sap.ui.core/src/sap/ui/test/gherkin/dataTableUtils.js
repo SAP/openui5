@@ -4,7 +4,7 @@
 
 /* eslint-disable no-loop-func */
 
-sap.ui.define(["jquery.sap.global"], function($) {
+sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQueryDOM) {
   "use strict";
 
   /**
@@ -268,7 +268,7 @@ sap.ui.define(["jquery.sap.global"], function($) {
         // else if we are adding an object for a key that already contains an object
         } else {
           // then merge the new object with the existing one
-          $.extend(oResult[sKey], vValue);
+          jQueryDOM.extend(oResult[sKey], vValue);
         }
 
       });
@@ -335,24 +335,18 @@ sap.ui.define(["jquery.sap.global"], function($) {
 
       var sErrorMessage = "dataTableUtils." + sFunc + ": parameter 'vNorm' must be either a Function or a String with the value 'titleCase', 'pascalCase', 'camelCase', 'hyphenated' or 'none'";
 
-      switch ($.type(vFun)) {
-
-        case "string":
-          var fnNormalize = this.normalization[vFun];
-          if (fnNormalize === undefined) {
-            throw new Error(sErrorMessage);
-          }
-          return fnNormalize;
-
-        case "function":
-          return vFun;
-
-        case "undefined":
-        case "null":
-          return this.normalization.none;
-
-        default:
+      if (typeof vFun === "string" || vFun instanceof String) {
+        var fnNormalize = this.normalization[vFun];
+        if (fnNormalize === undefined) {
           throw new Error(sErrorMessage);
+        }
+        return fnNormalize;
+      } else if (typeof vFun === "function") {
+        return vFun;
+      } else if (vFun === undefined || vFun === null) {
+        return this.normalization.none;
+      } else {
+        throw new Error(sErrorMessage);
       }
     },
 
@@ -365,7 +359,7 @@ sap.ui.define(["jquery.sap.global"], function($) {
      * @private
      */
     _testNormalizationInput: function(sString, sNormalizationFunction) {
-      if ($.type(sString) !== "string") {
+      if (typeof sString !== "string" && !(sString instanceof String)) {
         throw new Error("dataTableUtils.normalization." + sNormalizationFunction + ": parameter 'sString' must be a valid string");
       }
     },
@@ -382,12 +376,12 @@ sap.ui.define(["jquery.sap.global"], function($) {
 
       var sErrorMessage = "dataTableUtils." + sFunc + ": parameter 'aData' must be an Array of Array of Strings";
 
-      if ($.type(aArray) !== "array") {
+      if (!Array.isArray(aArray)) {
         throw new Error(sErrorMessage);
       }
 
       if (!aArray.every(function(a) {
-            return ($.type(a) === "array") && (a.every(function(s){return ($.type(s) === "string");}));
+            return Array.isArray(a) && (a.every(function(s){return (typeof s === "string" || s instanceof String);}));
           })) {
         throw new Error(sErrorMessage);
       }

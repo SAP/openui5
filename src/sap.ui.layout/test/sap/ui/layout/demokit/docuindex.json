@@ -82,9 +82,9 @@
 				"since" : "1.12",
 				"formFactors" : "-",
 				"samples" : [
+					"sap.ui.layout.sample.GridProperties",
+					"sap.ui.layout.sample.GridData",
 					"sap.ui.layout.sample.GridInfo",
-					"sap.ui.layout.sample.GridTasks",
-					"sap.ui.layout.sample.GridTiles",
 					"sap.ui.layout.sample.GridXL"
 				]
 			},
@@ -126,17 +126,35 @@
 				"formFactors" : "-",
 				"samples" : [
 					"sap.ui.layout.sample.BlockLayoutDefault",
-					"sap.ui.layout.sample.BlockLayoutCustomBackground"
+					"sap.ui.layout.sample.BlockLayoutCustomBackground",
+					"sap.ui.layout.sample.BlockLayoutLinkTitle"
 				]
 			},
 			{
 				"id" : "sap.ui.layout.ResponsiveSplitter",
-				"name" : "ResponsiveSplitter ",
+				"name" : "Responsive Splitter ",
 				"category" : "Layout",
 				"since" : "1.38",
 				"formFactors" : "-",
 				"samples" : [
 					"sap.ui.layout.sample.ResponsiveSplitter"
+				]
+			},
+			{
+				"id" : "sap.ui.layout.cssgrid.CSSGrid",
+				"name" : "CSSGrid",
+				"category" : "Layout",
+				"since" : "1.60",
+				"formFactors" : "-",
+				"samples" : [
+					"sap.ui.layout.sample.CSSGrid",
+					"sap.ui.layout.sample.NestedGrids",
+					"sap.ui.layout.sample.GridAutoFlow",
+					"sap.ui.layout.sample.GridGap",
+					"sap.ui.layout.sample.GridTemplateRows",
+					"sap.ui.layout.sample.GridAutoRows",
+					"sap.ui.layout.sample.GridResponsiveness",
+					"sap.ui.layout.sample.GridResponsiveColumnLayout"
 				]
 			}
 		],
@@ -312,19 +330,19 @@
 			  "description": "Shows a FixFlex control where the minFlexSize is set to 400px."
 			},
 			{
+			  "id": "sap.ui.layout.sample.GridProperties",
+			  "name": "Grid - Own properties",
+			  "description": "You can see how the different properties of the sap.ui.layout.Grid affect it's final appearance."
+			},
+			{
+			  "id": "sap.ui.layout.sample.GridData",
+			  "name": "Grid - Using GridData",
+			  "description": "Take advantage of sap.ui.layout.GridData to control the appearance of individual Grid children."
+			},
+			{
 				"id": "sap.ui.layout.sample.GridInfo",
 				"name": "Grid - Info Layout",
 				"description": "You can use the Grid control to make responsive table-free layouts; here we are using a default indent and span, and specifying the Small settings such that the image and text will stack on a small display."
-			},
-			{
-				"id": "sap.ui.layout.sample.GridTiles",
-				"name": "Grid - Tile-based Layout",
-				"description": "There is a lot of flexibility with the Grid control's content; here we are using Object List Items to represent products, with some being third/half-width, and others being half/full-width, depending on the available screen size."
-			},
-			{
-				"id": "sap.ui.layout.sample.GridTasks",
-				"name": "Grid - Task Display",
-				"description": "Using the Grid control, with appropriate values for the Large/Medium/Small span settings, you can set some elements to be fixed (like the Active, Inactive and Failed titles here) and some to flow."
 			},
 			{
 				"id": "sap.ui.layout.sample.GridXL",
@@ -358,18 +376,63 @@
 			},
 			{
 				"id": "sap.ui.layout.sample.BlockLayoutDefault",
-				"name": "Block Layout ",
-				"description": "The Block Layout  is intended to be used with rows and cells. The cells have predefined width, the rows have predefined rendering modes - scrollable/vertical/horizontal."
+				"name": "Block Layout",
+				"description": "The BlockLayout is intended to be used with rows and cells. The cells have predefined width, the rows have predefined rendering modes - scrollable/vertical/horizontal."
 			},
 			{
 				"id": "sap.ui.layout.sample.BlockLayoutCustomBackground",
-				"name": "BlockLayout with custom background for the cells",
+				"name": "Block Layout with custom background for the cells",
 				"description": "The BlockLayout could be used with different backgrounds for its cells."
+			},
+			{
+				"id": "sap.ui.layout.sample.BlockLayoutLinkTitle",
+				"name": "Block Layout with links as titles",
+				"description": "The BlockLayout Cells can have links as titles. The link text overwrites the title text."
 			},
 			{
 				"id": "sap.ui.layout.sample.ResponsiveSplitter",
 				"name": "Responsive Splitter",
 				"description": "ResponsiveSplitter is used to visually divide the content of its parent. It consists of PaneContainers that further  agregate other PaneContainers and SplitPanes. SplitPanes can be moved to the pagination when a minimum width of their parent is reached."
+			},
+			{
+				"id": "sap.ui.layout.sample.CSSGrid",
+				"name": "CSSGrid",
+				"description": "CSSGrid example for page layout."
+			},
+			{
+				"id": "sap.ui.layout.sample.NestedGrids",
+				"name": "Nested Example",
+				"description": "CSSGrid example nested grids."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridAutoFlow",
+				"name": "Controlling Empty Spaces Within the Grid",
+				"description": "Example of setting the gridAutoFlow property."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridGap",
+				"name": "Grid Gap and Layout Data",
+				"description": "Example of setting the gridGap property and using of Layout Data."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridTemplateRows",
+				"name": "Configuring Rows and Columns",
+				"description": "Example of setting gridTemplateRows and gridTemplateColumns properties."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridAutoRows",
+				"name": "Automatic Sizing for Additional Rows and Columns",
+				"description": "Example of setting gridAutoRows and gridAutoColumns properties."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridResponsiveness",
+				"name": "Responsiveness",
+				"description": "Example of setting customLayout for different layout (screen) sizes."
+			},
+			{
+			  "id": "sap.ui.layout.sample.GridResponsiveColumnLayout",
+			  "name": "Responsive Column Layout",
+			  "description": "Example of using ResponsiveColumnLayout."
 			}
 		]
 	}

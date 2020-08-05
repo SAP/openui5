@@ -1,12 +1,12 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(Controller, JSONModel) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/ui/core/format/DateFormat'],
+	function(Controller, JSONModel, DateFormat) {
 	"use strict";
 
-	var CalendarMinMaxController = Controller.extend("sap.ui.unified.sample.CalendarMinMax.CalendarMinMax", {
+	return Controller.extend("sap.ui.unified.sample.CalendarMinMax.CalendarMinMax", {
 		oFormatYyyymmdd: null,
 
 		onInit: function() {
-			this.oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({style: "long"});
+			this.oFormatYyyymmdd = DateFormat.getInstance({style: "long"});
 
 			var oModel = new JSONModel();
 			oModel.setData({
@@ -21,27 +21,21 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 		},
 
 		handleCalendarSelect: function(oEvent) {
-			var oCalendar = oEvent.oSource;
-			var oText = this.byId("selectedDate");
-			var aSelectedDates = oCalendar.getSelectedDates();
-			var oDate;
-			if (aSelectedDates.length > 0 ) {
+			var oCalendar = oEvent.getSource(),
+				oText = this.byId("selectedDate"),
+				aSelectedDates = oCalendar.getSelectedDates(),
 				oDate = aSelectedDates[0].getStartDate();
-				oText.setText(this.oFormatYyyymmdd.format(oDate));
-			} else {
-				oText.setValue("No Date Selected");
-			}
+
+			oText.setText(this.oFormatYyyymmdd.format(oDate));
 		},
 
 		handleShowWeekNumbers: function(oEvent) {
-			var oCalendar = this.byId('calendar');
-			var bShowWeekNumbers = oEvent.getParameter("state");
+			var oCalendar = this.byId('calendar'),
+				bShowWeekNumbers = oEvent.getParameter("state");
 
 			oCalendar.setShowWeekNumbers(bShowWeekNumbers);
 		}
 
 	});
-
-	return CalendarMinMaxController;
 
 });

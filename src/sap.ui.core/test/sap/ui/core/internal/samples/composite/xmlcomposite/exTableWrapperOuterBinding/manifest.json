@@ -1,0 +1,11 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.internal.samples.composite.xmlcomposite.exTableWrapperOuterBinding",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.ui.core.internal.samples.composite.xmlcomposite.exTableWrapperOuterBinding.Test"
+	}
+}

@@ -4,38 +4,44 @@
 /* ============================================== */
 
 .sapUiFlVarMngmt {
-	display: inline;
+	display: inline-block;
 	text-align: center;
 }
 
 .sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle {
 	padding-top: 0rem;
+	vertical-align: top;
 }
 
-.sapUiSizeCompact .sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle {		
-	padding-top: 0.4rem;
+.sapUiSizeCompact .sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle {
+	padding-top: 0.5rem;
 }
 
-.sapMFlexBox .sapUiFlVarMngmt .sapUiFlVarMngmtTitle {
-	padding-top: 0.9rem; 
+.sapUiSizeCozy .sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle {
+	padding-top: 0.5rem;
 }
 
-.sapUiSizeCompact .sapMFlexBox .sapUiFlVarMngmt .sapUiFlVarMngmtTitle {
-	padding-top: 0.4rem; 
+.sapUiSizeCompact .sapFDynamicPageTitle .sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle {
+	padding-top: 0.3rem;
 }
 
-.sapUiSizeCompact .sapUxAPObjectPageHeader .sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle {		
-	padding-top: 0rem;
+.sapUiSizeCozy .sapFDynamicPageTitle .sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle {
+	padding-top: 0.7rem;
 }
 
-.sapUiSizeCozy .sapUxAPObjectPageHeader .sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle {		
-	padding-top: 0rem;
+.sapUiSizeCompact .sapUxAPObjectPageSubSection .sapUiMdcTable .sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle {
+	padding-top: 0.5rem;
 }
 
+.sapUiSizeCozy .sapUxAPObjectPageSubSection .sapUiMdcTable .sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle {
+	padding-top: 0.9rem;
+}
 
+/*
 .sapMIBar .sapUiFlVarMngmt.sapMBarChild {
     margin-left: 0rem;
 }
+*/
 
 .sapUiFlVarMngmtModified {
 	color: @sapUiGroupTitleTextColor;
@@ -93,4 +99,12 @@
 
 .sapUiFlVarMngmtFavColor {
 	color: @sapUiButtonIconColor;
+}
+
+.sapUiFlVarMngmtSaveDialog .sapUiFlVarMngmtSaveDialogLabel.sapMLabel::after {
+	content: ":";
+}
+
+.sapUiFlVarMngmtSaveDialog .sapUiFlVarMngmtSaveDialogLabel.sapMLabel::after {
+	content: ":";
 }

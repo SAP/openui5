@@ -1,4 +1,4 @@
-<core:View
+<mvc:View
 	xmlns="sap.ui.commons"
 	xmlns:core="sap.ui.core"
 	xmlns:commons="sap.ui.commons"
@@ -21,4 +21,4 @@
 		</Button>
 
 	</layout:VerticalLayout>
-</core:View>
+</mvc:View>

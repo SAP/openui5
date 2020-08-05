@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.ui.integration.sample.HostConfigurationUsage",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.integration.sample.HostConfigurationUsage.Main",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.integration": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Main.view.xml",
+					"host/dark.json",
+					"host/color.json",
+					"host/white.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

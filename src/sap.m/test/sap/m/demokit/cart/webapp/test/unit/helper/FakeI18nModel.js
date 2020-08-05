@@ -1,6 +1,9 @@
 sap.ui.define([
-	"sap/ui/model/Model"
-], function (Model) {
+	"sap/ui/model/Model",
+	"sap/base/strings/formatMessage"
+], function (
+	Model,
+	formatMessage) {
 	"use strict";
 
 
@@ -14,7 +17,7 @@ sap.ui.define([
 		getResourceBundle : function () {
 			return {
 				getText : function (sTextName) {
-					return jQuery.sap.formatMessage.call(this, this.mTexts[sTextName], [].slice.call(arguments, 1));
+					return formatMessage.call(this, this.mTexts[sTextName], [].slice.call(arguments, 1));
 				}.bind(this)
 			};
 		}

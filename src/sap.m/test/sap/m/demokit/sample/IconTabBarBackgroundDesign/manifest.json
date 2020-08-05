@@ -1,0 +1,41 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.IconTabBarBackgroundDesign",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.IconTabBarBackgroundDesign.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
+			},
+			"components": {
+				"sap.m.sample.Table": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

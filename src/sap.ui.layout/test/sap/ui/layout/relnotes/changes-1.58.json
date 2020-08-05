@@ -1,0 +1,90 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "a790137214ad7538ac8434ad937ba342b21c63c7",
+        "type": "FIX",
+        "text": "sap.ui.layout.HorizontalLayout: fix wrapping inside Splitter",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2017"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870253920"
+          }
+        ]
+      },
+      {
+        "id": "1d8c2be426c377552d2946c52f2ad04147c929f4",
+        "type": "FIX",
+        "text": "sap.ui.layout - SimpleForm rename undo issue",
+        "references": []
+      },
+      {
+        "id": "fa56eb32eb9e72996938d2f4583cb8d4d61e3794",
+        "type": "FIX",
+        "text": "AlignedFlowLayout: incorrect arrangement of items fixed",
+        "references": []
+      },
+      {
+        "id": "aff8d0a044bafef09d2c4545503567574bafb082",
+        "type": "FIX",
+        "text": "AlignedFlowLayout: maxItemWidth property evaluated for all items",
+        "references": []
+      },
+      {
+        "id": "4154788ced73af49cffa19e5334b8b5d3dda9bea",
+        "type": "FIX",
+        "text": "AlignedFlowLayout: Uncaught error fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880394379"
+          }
+        ]
+      },
+      {
+        "id": "cd8d965626e4efd1967012a99effddc62572c2ad",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Resize tooltips are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880313384"
+          }
+        ]
+      },
+      {
+        "id": "62be638b652256fb4260e071406884802cc7c7cf",
+        "type": "FIX",
+        "text": "Form: F6 navigation don't work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870038330"
+          }
+        ]
+      },
+      {
+        "id": "252636a7174f401f04b1fca6787201667ef125af",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter: Pane width is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880405321"
+          }
+        ]
+      },
+      {
+        "id": "266def302e0f14b040a4c4f921c15fba07dd5092",
+        "type": "FEATURE",
+        "text": "Form: allow Switch to be used as Form content",
+        "references": []
+      }
+    ]
+  }
+}

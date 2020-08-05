@@ -3,20 +3,20 @@
 /* Belize High Contrast White theme               */
 /* ============================================== */
 
-.sapMWizardProgressNavAnchor:focus {
+.sapMWizardProgressNavStep:focus .sapMWizardProgressNavStepContainer {
 	outline: 2px dotted @sapUiContentFocusColor;
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
-	& .sapMWizardProgressNavAnchor::after {
+	.sapMWizardProgressNavStepContainer::after {
 		background: @sapUiObjectHeaderBorderColor;
 	}
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
 
-	/* anchors in all steps after the active one have inactive style */
-	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorCircle {
+	/* all steps after the active one have inactive style */
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavStepCircle {
 		background: @sapUiHcReducedBackground;
 		border-color: @sapUiHcReducedAltForeground;
 		color: @sapUiHcReducedAltForeground;

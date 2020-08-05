@@ -1,0 +1,93 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.ui.demo.fiori2",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.fiori2.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "fcl"
+		},
+		"dependencies": {
+			"minUI5Version": "1.60.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.f": {},
+				"sap.uxap": {}
+			}
+		},
+		"config": {
+			"fullWidth": true
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.f.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.demo.fiori2.view",
+				"controlId": "flexibleColumnLayout",
+				"transition": "slide",
+				"bypassed": {
+				},
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "page2",
+					"name": "page2",
+					"target": "page2",
+					"layout": "EndColumnFullScreen"
+				},
+				{
+					"pattern": ":layout:",
+					"name": "master",
+					"target": [
+						"master",
+						"detail"
+					]
+				},
+				{
+					"pattern": "detail/{product}/{layout}",
+					"name": "detail",
+					"target": [
+						"master",
+						"detail"
+					]
+				},
+				{
+					"pattern": "detail/{product}/detailDetail/{supplier}/{layout}",
+					"name": "detailDetail",
+					"target": [
+						"master",
+						"detail",
+						"detailDetail"
+					]
+				}
+			],
+			"targets": {
+				"master": {
+					"viewName": "Master",
+					"controlAggregation": "beginColumnPages"
+				},
+				"detail": {
+					"viewName": "Detail",
+					"controlAggregation": "midColumnPages"
+				},
+				"detailDetail": {
+					"viewName": "DetailDetail",
+					"controlAggregation": "endColumnPages"
+				},
+				"page2": {
+					"viewName": "AboutPage",
+					"controlAggregation": "endColumnPages"
+				}
+			}
+		}
+	}
+}

@@ -2,119 +2,144 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-    function () {
-        'use strict';
+sap.ui.define([
+	"sap/ui/core/Core"
+], function (Core) {
+	"use strict";
 
-        /**
-         * SideNavigation renderer.
-         * @namespace
-         */
-        var SideNavigationRenderer = {};
+	/**
+	 * SideNavigation renderer.
+	 * @namespace
+	 */
+	var SideNavigationRenderer = {
+		apiVersion: 2
+	};
 
-        /**
-         * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-         *
-         * @param {sap.ui.core.RenderManager}
-         *          rm the RenderManager that can be used for writing to the render output buffer
-         * @param {sap.ui.core.Control}
-         *          control an object representation of the control that should be rendered
-         */
-        SideNavigationRenderer.render = function (rm, control) {
-            this.startSideNavigation(rm, control);
+	// load resource bundle
+	var oRB = Core.getLibraryResourceBundle("sap.tnt");
 
-            this.renderArrowUp(rm, control);
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} control an object representation of the control that should be rendered
+	 */
+	SideNavigationRenderer.render = function (rm, control) {
+		this.startSideNavigation(rm, control);
 
-            this.renderItem(rm, control);
+		this.renderArrowUp(rm, control);
 
-            this.renderArrowDown(rm, control);
+		this.renderItem(rm, control);
 
-            this.renderFixedItem(rm, control);
+		this.renderArrowDown(rm, control);
 
-            this.renderFooter(rm, control);
+		this.renderFixedItem(rm, control);
 
-            this.endSideNavigation(rm, control);
-        };
+		this.renderFooter(rm, control);
 
-        SideNavigationRenderer.startSideNavigation = function (rm, control) {
-            var itemAggregation = control.getAggregation('item');
-            var fixedItemAggregation = control.getAggregation('fixedItem');
-            var isExpanded = control.getExpanded();
+		this.endSideNavigation(rm, control);
+	};
 
-            rm.write('<div');
-            rm.writeControlData(control);
+	SideNavigationRenderer.startSideNavigation = function (rm, control) {
+		var itemAggregation = control.getAggregation('item');
+		var fixedItemAggregation = control.getAggregation('fixedItem');
+		var isExpanded = control.getExpanded();
 
-            rm.writeAttribute("role", 'navigation');
+		rm.openStart('div', control);
 
-            rm.addClass('sapTntSideNavigation');
-            rm.addClass("sapContrast sapContrastPlus");
+		rm.attr("role", 'navigation');
+		rm.attr('aria-roledescription', oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION"));
 
-            if (!isExpanded) {
-                rm.addClass('sapTntSideNavigationNotExpanded');
-                rm.addClass('sapTntSideNavigationNotExpandedWidth');
-            }
+		rm.class('sapTntSideNavigation');
+		rm.class("sapContrast");
+		rm.class("sapContrastPlus");
 
-            if (!isExpanded && itemAggregation) {
-                itemAggregation.setExpanded(false);
-            }
+		if (!isExpanded) {
+			rm.class('sapTntSideNavigationNotExpanded');
+			rm.class('sapTntSideNavigationNotExpandedWidth');
+		}
 
-            if (!isExpanded && fixedItemAggregation) {
-                fixedItemAggregation.setExpanded(false);
-            }
+		if (!isExpanded && itemAggregation) {
+			itemAggregation.setExpanded(false);
+		}
 
-            rm.writeClasses();
-            rm.write('>');
-        };
+		if (!isExpanded && fixedItemAggregation) {
+			fixedItemAggregation.setExpanded(false);
+		}
 
-        SideNavigationRenderer.endSideNavigation = function (rm, control) {
-            rm.write('</div>');
-        };
+		rm.openEnd();
+	};
 
-        SideNavigationRenderer.renderArrowUp = function (rm, control){
+	SideNavigationRenderer.endSideNavigation = function (rm, control) {
+		rm.close('div');
+	};
 
-                rm.renderControl(control._getTopArrowControl());
-        };
+	SideNavigationRenderer.renderArrowUp = function (rm, control){
 
-        SideNavigationRenderer.renderArrowDown = function (rm, control){
+		rm.renderControl(control._getTopArrowControl());
+	};
 
-                rm.renderControl(control._getBottomArrowControl());
-        };
+	SideNavigationRenderer.renderArrowDown = function (rm, control){
 
-        SideNavigationRenderer.renderItem = function (rm, control) {
-            var itemAggregation = control.getAggregation('item');
+		rm.renderControl(control._getBottomArrowControl());
+	};
 
-            rm.write('<div id="' + control.getId() + '-Flexible" tabindex="-1" class="sapTntSideNavigationFlexible sapTntSideNavigationVerticalScrolling">');
-            rm.write('<div id="' + control.getId() + '-Flexible-Content" class="sapTntSideNavigationFlexibleContent">');
-            rm.renderControl(itemAggregation);
-            rm.write('</div></div>');
-        };
+	SideNavigationRenderer.renderItem = function (rm, control) {
+		var itemAggregation = control.getAggregation('item');
 
-        SideNavigationRenderer.renderFixedItem = function (rm, control) {
-            var fixedItemAggregation = control.getAggregation('fixedItem');
+		rm.openStart('div', control.getId() + '-Flexible');
+		rm.attr('tabindex', '-1');
+		rm.class('sapTntSideNavigationFlexible');
+		rm.class('sapTntSideNavigationVerticalScrolling');
+		rm.openEnd();
 
-            if (fixedItemAggregation === null) {
-                return;
-            }
+		rm.openStart('div', control.getId() + '-Flexible-Content');
+		rm.class('sapTntSideNavigationFlexibleContent');
+		rm.openEnd();
 
-            if (fixedItemAggregation.getExpanded() === false) {
-                fixedItemAggregation.setExpanded(false);
-            }
+		rm.renderControl(itemAggregation);
 
-            rm.write('<div class="sapTntSideNavigationSeparator" role="separator" aria-orientation="horizontal"></div>');
+		rm.close('div');
+		rm.close('div');
+	};
 
-            rm.write('<div class="sapTntSideNavigationFixed">');
-            rm.renderControl(fixedItemAggregation);
-            rm.write('</div>');
-        };
+	SideNavigationRenderer.renderFixedItem = function (rm, control) {
+		var fixedItemAggregation = control.getAggregation('fixedItem');
 
-        SideNavigationRenderer.renderFooter = function (rm, control) {
-            if (control.getAggregation('footer')) {
-                rm.write('<footer class="sapTntSideNavigationFooter">');
-                rm.renderControl(control.getAggregation('footer'));
-                rm.write('</footer>');
-            }
-        };
+		if (fixedItemAggregation === null) {
+			return;
+		}
 
-        return SideNavigationRenderer;
+		if (fixedItemAggregation.getExpanded() === false) {
+			fixedItemAggregation.setExpanded(false);
+		}
 
-    }, /* bExport= */ true);
+		rm.openStart('div');
+		rm.attr('role', 'separator');
+		rm.attr('aria-roledescription', oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION_SEPARATOR"));
+		rm.attr('aria-orientation', 'horizontal');
+		rm.class('sapTntSideNavigationSeparator');
+		rm.openEnd();
+		rm.close('div');
+
+		rm.openStart('div');
+		rm.class('sapTntSideNavigationFixed');
+		rm.openEnd();
+
+		rm.renderControl(fixedItemAggregation);
+		rm.close('div');
+	};
+
+	SideNavigationRenderer.renderFooter = function (rm, control) {
+		if (control.getAggregation('footer')) {
+			rm.openStart('footer');
+			rm.class('sapTntSideNavigationFooter');
+			rm.openEnd();
+			rm.renderControl(control.getAggregation('footer'));
+			rm.close('footer');
+		}
+	};
+
+	return SideNavigationRenderer;
+
+}, /* bExport= */ true);

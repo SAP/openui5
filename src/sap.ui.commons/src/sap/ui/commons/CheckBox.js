@@ -4,13 +4,22 @@
 
 // Provides control sap.ui.commons.CheckBox.
 sap.ui.define([
- 'jquery.sap.global',
  './library',
  'sap/ui/core/Control',
- "./CheckBoxRenderer"
+ './CheckBoxRenderer',
+ 'sap/ui/core/library',
+ 'sap/ui/Device'
 ],
-	function(jQuery, library, Control, CheckBoxRenderer) {
+	function(library, Control, CheckBoxRenderer, coreLibrary, Device) {
 	"use strict";
+
+
+
+	 // shortcut for sap.ui.core.TextDirection
+	 var TextDirection = coreLibrary.TextDirection;
+
+	 // shortcut for sap.ui.core.ValueState
+	 var ValueState = coreLibrary.ValueState;
 
 
 
@@ -63,7 +72,7 @@ sap.ui.define([
 			/**
 			 * Accepts the core enumeration ValueState.type that supports 'None', 'Error', 'Warning' and 'Success'.
 			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
+			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
 
 			/**
 			 * The width can be set to an absolute value. If no value is set, the control width results from the text length.
@@ -73,7 +82,7 @@ sap.ui.define([
 			/**
 			 * The value can be set to LTR or RTL. Otherwise, the control inherits the text direction from its parent control.
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * The 'name' property to be used in the HTML code, for example for HTML forms that send data to the server via submit.
@@ -125,7 +134,7 @@ sap.ui.define([
 		// End of 2013 is have to be again in the tabchain.
 		// But not in the Form. But this is handled in the FromLayout control
 		// Let's see what happens 2014... ;-)
-		if (!!sap.ui.Device.browser.internet_explorer && !this.getEnabled()) {
+		if (Device.browser.msie && !this.getEnabled()) {
 			// in IE tabindex = -1 hides focus, so in readOnly/disabled case tabindex must be temporarily set to 0
 			// as long as CheckBox is focused
 			this.$().attr("tabindex", 0).addClass("sapUiCbFoc"); // the CSS class itself is not used, but IE only draws the standard focus outline when it is added
@@ -145,7 +154,7 @@ sap.ui.define([
 		// End of 2013 is have to be again in the tabchain.
 		// But not in the Form. But this is handled in the FromLayout control
 		// Let's see what happens 2014... ;-)
-		if (!!sap.ui.Device.browser.internet_explorer && !this.getEnabled()) {
+		if (Device.browser.msie && !this.getEnabled()) {
 			// in IE tabindex = -1 hides focus, so in readOnly/disabled case tabindex must be temporarily set to 0
 			// as long as CheckBox is focused - now unset this again
 			this.$().attr("tabindex", -1).removeClass("sapUiCbFoc");
@@ -214,4 +223,4 @@ sap.ui.define([
 
 	return CheckBox;
 
-}, /* bExport= */ true);
+});

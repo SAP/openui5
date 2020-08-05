@@ -6,7 +6,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
 
-	<Toolbar>
+	<OverflowToolbar>
 		<ComboBox change="onChange" selectionChange="onChange" id="oComboBox"
 		 items="{ path: '/ProductCollectionStats/Filters/1/values'}">
 			<core:Item text="{text}" />
@@ -22,6 +22,6 @@
 			<Button icon="sap-icon://settings" />
 		</SegmentedButton>
 
-	</Toolbar>
+	</OverflowToolbar>
  	<l:VerticalLayout id="tableLayout"/>
 </mvc:View>

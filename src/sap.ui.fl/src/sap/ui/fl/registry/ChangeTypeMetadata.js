@@ -3,8 +3,14 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils", "jquery.sap.global"
-], function(Utils, jQuery) {
+	"sap/base/Log",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/requireAsync"
+], function(
+	Log,
+	Utils,
+	requireAsync
+) {
 	"use strict";
 
 	/**
@@ -24,13 +30,13 @@ sap.ui.define([
 	 * @experimental Since 1.27.0
 	 *
 	 */
-		var ChangeTypeMetadata = function(mParam) {
-			if (!mParam.name) {
-				Utils.log.error("sap.ui.fl.registry.ChangeType: Name required");
-			}
-			if (!mParam.changeHandler) {
-				Utils.log.error("sap.ui.fl.registry.ChangeType: ChangeHandler required");
-			}
+	var ChangeTypeMetadata = function(mParam) {
+		if (!mParam.name) {
+			Log.error("sap.ui.fl.registry.ChangeType: Name required");
+		}
+		if (!mParam.changeHandler) {
+			Log.error("sap.ui.fl.registry.ChangeType: ChangeHandler required");
+		}
 
 		this._name = mParam.name;
 		this._changeHandler = mParam.changeHandler;
@@ -68,12 +74,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get the full qualified name of the change handler function
-	 * @returns {String} Returns the full qualified name of the change handler function
+	 * Get the change handler object.
+	 * @returns {Promise<object>} Full qualified name of the change handler object wrapped into a Promise/FakePromise
 	 * @public
 	 */
 	ChangeTypeMetadata.prototype.getChangeHandler = function() {
-		return this._changeHandler;
+		var oPromise = new Utils.FakePromise();
+		if (typeof this._changeHandler === "string") {
+			// load the module asynchronously
+			oPromise = requireAsync(this._changeHandler.replace(/\./g, "/"))
+				.then(function (oChangeHandlerImpl) {
+					this._changeHandler = oChangeHandlerImpl;
+				}.bind(this));
+		}
+
+		return oPromise.then(function () {
+			if (
+				!this._changeHandler
+				|| typeof this._changeHandler.completeChangeContent !== "function"
+				|| typeof this._changeHandler.applyChange !== "function"
+				|| typeof this._changeHandler.revertChange !== "function"
+			) {
+				// FakePromise catch is not compatible to Promise catch.
+				// When FakePromise is called in a Promise scope then Async reject is required.
+				return Promise.reject(
+					new Error("The ChangeHandler is either not available or does not fulfill all needed requirements")
+				);
+			}
+			return this._changeHandler;
+		}.bind(this));
 	};
 
 	/**

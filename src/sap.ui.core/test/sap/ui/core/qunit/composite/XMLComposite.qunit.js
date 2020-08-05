@@ -1,47 +1,28 @@
-/*!
- * ${copyright}
- */
-setBlanketFilters("sap/ui/core/XMLComposite.js");
-
-/**
- * setBlanketFilters
- * @param {string} sFilters comma separated strings to filter the paths for blanket
- */
-function setBlanketFilters(sFilters) {
-	if (top === window) { //only in local environment
-		top["blanket.filter.only"] = sFilters;
-	}
-}
-
-sinon.config.useFakeTimers = true;
-
-sap.ui.require([
-	"jquery.sap.global"
-], function (jQuery) {
+sap.ui.define([
+	"jquery.sap.global", "sap/ui/qunit/QUnitUtils", "sap/ui/core/Core",
+	"sap/ui/core/util/XMLPreprocessor", "sap/ui/core/XMLComposite", "sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel", "sap/ui/core/Item", "sap/m/Text", "composites/SimpleText",
+	"composites/SortedList", "composites/TextButton", "composites/TextList",
+	"composites/ForwardText", "composites/Field", "composites/HiddenMetadata",
+	"composites/TemplateTest", "composites/ChildOfAbstract", "composites/TextToggleButton",
+	"composites/TextToggleButtonNested", "composites/TextToggleButtonForwarded",
+	"composites/WrapperLayouter", "composites/TranslatableText", "composites/TranslatableTextLib",
+	"composites/TranslatableTextBundle"
+], function (jQuery, QUnitUtils, Core, XMLPreprocessor, XMLComposite, Controller, JSONModel, Item,
+			 Text, SimpleText, SortedList, TextButton, TextList, ForwardText, Field, HiddenMetadata,
+			 TemplateTest, ChildOfAbstract, TextToggleButton, TextToggleButtonNested,
+			 TextToggleButtonForwarded, WrapperLayouter, TranslatableText, TranslatableTextLib,
+			 TranslatableTextBundle) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
-	jQuery.sap.registerModulePath("composites", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites");
-	jQuery.sap.require("composites.SimpleText");
-	jQuery.sap.require("composites.TextButton");
-	jQuery.sap.require("composites.TextList");
-	jQuery.sap.require("composites.ForwardText");
-	jQuery.sap.require("composites.Field");
-	jQuery.sap.require("composites.TemplateTest");
-	jQuery.sap.require("composites.ChildOfAbstract");
-	jQuery.sap.require("composites.TextToggleButton");
-	jQuery.sap.require("composites.TextToggleButtonNested");
-	jQuery.sap.require("composites.TextToggleButtonForwarded");
-	jQuery.sap.require("composites.LabelButtonTemplate");
-	jQuery.sap.require("composites.LabelButtonsTemplate");
-	jQuery.sap.require("composites.WrapperLayouter");
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Simple Text XMLComposite Control", {
 		beforeEach: function () {
-			this.oXMLComposite = new composites.SimpleText();
-			this.oXMLComposite.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			this.oXMLComposite = new SimpleText();
+			this.oXMLComposite.placeAt("qunit-fixture");
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oXMLComposite.destroy();
@@ -56,9 +37,9 @@ sap.ui.require([
 		assert.strictEqual(this.oXMLComposite.bIsDestroyed, true, "The XMLComposite control is destroyed");
 		assert.strictEqual(oInnerText.bIsDestroyed, true, "The text is destroyed");
 		assert.strictEqual(oInnerText.getParent(), undefined, "Inner Control has no parent anymore");
-		assert.strictEqual(sap.ui.getCore().byId(oInnerText.getId()), undefined, "Inner Control is destroyed");
+		assert.strictEqual(Core.byId(oInnerText.getId()), undefined, "Inner Control is destroyed");
 		try {
-			oInnerText.placeAt("content");
+			oInnerText.placeAt("qunit-fixture");
 			assert.ok(false, "This is not supposed to happen");
 		} catch (ex) {
 			assert.ok(true, "Inner Control cannot be used anymore (" + ex.message + ")");
@@ -67,14 +48,14 @@ sap.ui.require([
 
 	QUnit.test("properties", function (assert) {
 		assert.strictEqual(this.oXMLComposite.getText(), "Default Text", "Default Text is set");
-		assert.strictEqual(composites.SimpleText.getMetadata().getProperty("text").defaultValue, "Default Text", "Default Text is set");
+		assert.strictEqual(SimpleText.getMetadata().getProperty("text").defaultValue, "Default Text", "Default Text is set");
 		assert.strictEqual(this.oXMLComposite.setText("Hello"), this.oXMLComposite, "Instance returned");
 		assert.strictEqual(this.oXMLComposite.getText(), "Hello", "Text is set");
 	});
 
 	QUnit.test("inner control", function (assert) {
 		var oInnerText = this.oXMLComposite.getAggregation("_content");
-		assert.ok(oInnerText instanceof sap.m.Text, "_content is set correctly");
+		assert.ok(oInnerText instanceof Text, "_content is set correctly");
 		assert.strictEqual(oInnerText.getParent(), this.oXMLComposite, "Parent is the XMLComposite control");
 		assert.strictEqual(oInnerText.getText(), this.oXMLComposite.getText(), "Text is propagated");
 		assert.strictEqual(oInnerText.getBinding("text").getModel(), this.oXMLComposite._getManagedObjectModel(), "_getManagedObjectModel is set and propagated correctly");
@@ -97,10 +78,10 @@ sap.ui.require([
 	QUnit.test("data binding", function (assert) {
 		var oInnerText = this.oXMLComposite.getAggregation("_content");
 
-		var oGlobalModel = new sap.ui.model.json.JSONModel({
+		var oGlobalModel = new JSONModel({
 			text: "Global Model Text"
 		});
-		var oLocalModel = new sap.ui.model.json.JSONModel({
+		var oLocalModel = new JSONModel({
 			text: "Local Model Text"
 		});
 
@@ -111,7 +92,7 @@ sap.ui.require([
 		assert.strictEqual(oInnerText.getText(), "Check", "Text is not yet propagated");
 
 		//global model
-		sap.ui.getCore().setModel(oGlobalModel, "model");
+		Core.setModel(oGlobalModel, "model");
 		assert.strictEqual(oInnerText.getText(), "Global Model Text", "Text is set from the global model");
 
 		this.oXMLComposite.setText("SetModelTextGlobal");
@@ -124,7 +105,7 @@ sap.ui.require([
 			path: "model>/text"
 		});
 		assert.strictEqual(oInnerText.getText(), "SetModelTextGlobal", "Text is again bound");
-		sap.ui.getCore().setModel(null, "model");
+		Core.setModel(null, "model");
 		assert.strictEqual(oInnerText.getText(), "SetModelTextGlobal", "Text is not propagated anymore but stays SetModelText because its still bound???");
 
 		//local model
@@ -132,7 +113,7 @@ sap.ui.require([
 		assert.strictEqual(oInnerText.getText(), "Local Model Text", "Text is set from the local model");
 
 		//set global model again
-		sap.ui.getCore().setModel(oGlobalModel, "model");
+		Core.setModel(oGlobalModel, "model");
 		assert.strictEqual(oInnerText.getText(), "Local Model Text", "Text is still set from local model");
 
 		this.oXMLComposite.setText("SetModelText");
@@ -148,21 +129,43 @@ sap.ui.require([
 		this.oXMLComposite.setModel(null, "model");
 
 		//set the global model again
-		sap.ui.getCore().setModel(oGlobalModel, "model");
+		Core.setModel(oGlobalModel, "model");
 		assert.strictEqual(oInnerText.getText(), "SetModelTextGlobal", "Text is now propagated from oGlobalModel");
+	});
+
+	QUnit.module("sap.ui.core.XMLComposite: Hidden properties & aggregations", {
+		beforeEach: function() {
+			this.oXMLComposite = new HiddenMetadata();
+			this.oXMLComposite.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oXMLComposite.destroy();
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("properties", function (assert) {
+		assert.strictEqual(this.oXMLComposite.getProperty("_text"),
+			"The hidden text", "Default Text is set");
+		assert.strictEqual(HiddenMetadata.getMetadata().getManagedProperty("_text").defaultValue,
+			"The hidden text", "Default Text is set");
+		assert.strictEqual(this.oXMLComposite.setProperty("_text", "Hello"),
+			this.oXMLComposite, "Instance returned");
+		assert.strictEqual(this.oXMLComposite.getProperty("_text"), "Hello", "Text is set");
 	});
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: ForwardText XMLComposite Control with single aggregation", {
 		beforeEach: function () {
-			this.oText = new sap.m.Text({
+			this.oText = new Text({
 				text: "text"
 			});
-			this.oXMLComposite = new composites.ForwardText({
+			this.oXMLComposite = new ForwardText({
 				text: this.oText
 			});
-			this.oXMLComposite.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			this.oXMLComposite.placeAt("qunit-fixture");
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oXMLComposite.destroy();
@@ -183,9 +186,9 @@ sap.ui.require([
 		this.oText.destroy();
 		assert.strictEqual(this.oXMLComposite.getText(), null, "The text is destroyed and the forwarded is null");
 		assert.strictEqual(this.oText.getParent(), undefined, "Inner Control has no parent anymore"); //remember: oInnerText===oText
-		assert.strictEqual(sap.ui.getCore().byId(this.oText.getId()), undefined, "Inner Control is destroyed");
+		assert.strictEqual(Core.byId(this.oText.getId()), undefined, "Inner Control is destroyed");
 		try {
-			this.oText.placeAt("content");
+			this.oText.placeAt("qunit-fixture");
 			assert.ok(false);
 		} catch (ex) {
 			assert.ok(true);
@@ -202,7 +205,7 @@ sap.ui.require([
 
 	QUnit.test("data binding", function (assert) {
 		var oInnerText = this.oXMLComposite.getAggregation("_content").getItems()[1].getContent();
-		var oModel = new sap.ui.model.json.JSONModel({
+		var oModel = new JSONModel({
 			text: "Model Text"
 		});
 		this.oText.bindProperty("text", {
@@ -234,20 +237,20 @@ sap.ui.require([
 		beforeEach: function () {
 			this.aTexts = [];
 			for (var i = 0; i < 5; i++) {
-				this.aTexts.push(new sap.m.Text({
+				this.aTexts.push(new Text({
 					text: "text" + i
 				}));
 			}
-			this.oXMLComposite = new composites.ForwardText({
+			this.oXMLComposite = new ForwardText({
 				textItems: this.aTexts
 			});
-			this.oXMLComposite.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			this.oXMLComposite.placeAt("qunit-fixture");
+			Core.applyChanges();
 		},
 		afterEach: function () {
-			//	this.oXMLComposite.destroy();  TODO: why do this destroy lead to 
-			// 	
-			// TypeError: Cannot read property 'destroyItems' of undefined at Aggregation.destroy 
+			//	this.oXMLComposite.destroy();  TODO: why do this destroy lead to
+			//
+			// TypeError: Cannot read property 'destroyItems' of undefined at Aggregation.destroy
 		}
 	});
 	//*********************************************************************************************
@@ -272,9 +275,9 @@ sap.ui.require([
 				assert.strictEqual(this.oXMLComposite.getTextItems()[j], oInnerVBox.getItems()[j], "Forwarding has reflected the destroy correctly");
 			}
 			assert.strictEqual(this.aTexts[i].getParent(), undefined, "Inner Control has no parent anymore");
-			assert.strictEqual(sap.ui.getCore().byId(this.aTexts[i].getId()), undefined, "Inner Control is destroy");
+			assert.strictEqual(Core.byId(this.aTexts[i].getId()), undefined, "Inner Control is destroy");
 			try {
-				this.aTexts[i].placeAt("content");
+				this.aTexts[i].placeAt("qunit-fixture");
 			} catch (ex) {
 				assert.ok(true, "Inner Control cannot be used anymore (" + ex.message + ")");
 			}
@@ -282,7 +285,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("data binding", function (assert) {
-		var oModel = new sap.ui.model.json.JSONModel({
+		var oModel = new JSONModel({
 			texts: [
 				{
 					text: "Model Text0"
@@ -306,7 +309,7 @@ sap.ui.require([
 
 		this.oXMLComposite.bindAggregation("textItems", {
 			path: "model1>/texts",
-			template: new sap.m.Text({
+			template: new Text({
 				text: {
 					path: "model1>text"
 				}
@@ -314,14 +317,14 @@ sap.ui.require([
 		});
 
 		// model / -
-		sap.ui.getCore().setModel(oModel, "model1");
+		Core.setModel(oModel, "model1");
 		assert.strictEqual(this.oXMLComposite.getTextItems()[0].getText(), "Model Text0", "Text is set from model");
 
 		// Rendering Parent inner <VBox>
 		assert.strictEqual(this.oXMLComposite.getTextItems()[0].getParent(), this.oXMLComposite.getAggregation("_content").getItems()[0], "Rendering Parent is the inner VBox control");
 
 		// null / -
-		sap.ui.getCore().setModel(null, "model");
+		Core.setModel(null, "model");
 		assert.strictEqual(this.oXMLComposite.getTextItems().length, 5, "Unbound global model");  // TODO: should it be zero instead of 5?
 
 		// null / model
@@ -333,16 +336,16 @@ sap.ui.require([
 		assert.strictEqual(this.oXMLComposite.getTextItems().length, 5, "Unbound model");  // TODO: should it be zero instead of 5?
 
 		// model / null
-		sap.ui.getCore().setModel(oModel, "model");
+		Core.setModel(oModel, "model");
 		assert.strictEqual(this.oXMLComposite.getTextItems()[0].getText(), "Model Text0", "Text is set from global model");
 	});
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: XMLComposite Control in XMLComposite Control", {
 		beforeEach: function () {
-			this.oXMLComposite = new composites.Field();
-			this.oXMLComposite.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			this.oXMLComposite = new Field();
+			this.oXMLComposite.placeAt("qunit-fixture");
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oXMLComposite.destroy();
@@ -399,8 +402,8 @@ sap.ui.require([
 	//*********************************************************************************************
 
 	QUnit.test("inner", function (assert) {
-		var fnFirePressHandlerSpy = sinon.spy(composites.TextButton.prototype, "onPress");
-		var oXMLComposite = new composites.TextButton();
+		var fnFirePressHandlerSpy = sinon.spy(TextButton.prototype, "onPress");
+		var oXMLComposite = new TextButton();
 
 		oXMLComposite.getAggregation("_content").getItems()[1].firePress();
 		assert.ok(fnFirePressHandlerSpy.calledOnce);
@@ -410,9 +413,9 @@ sap.ui.require([
 	});
 
 	QUnit.test("outer", function (assert) {
-		var oXMLComposite = new composites.TextToggleButton();
-		oXMLComposite.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		var oXMLComposite = new TextToggleButton();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
 		var done = assert.async();
 
 		oXMLComposite.attachTextChanged(function () {
@@ -428,10 +431,10 @@ sap.ui.require([
 	});
 
 	QUnit.test("nested - event from deep inner to outer", function (assert) {
-		var fnFireTextChangedSpy = sinon.spy(composites.TextToggleButtonNested.prototype, "fireTextChanged");
-		var oXMLComposite = new composites.TextToggleButtonNested();
-		oXMLComposite.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		var fnFireTextChangedSpy = sinon.spy(TextToggleButtonNested.prototype, "fireTextChanged");
+		var oXMLComposite = new TextToggleButtonNested();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
 
 		// act: Click on ToggleButton
 		sap.ui.test.qunit.triggerTouchEvent("tap", oXMLComposite.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getDomRef());
@@ -444,9 +447,9 @@ sap.ui.require([
 	});
 
 	QUnit.test("nested - event from inner to outer", function (assert) {
-		var oXMLComposite = new composites.TextToggleButtonNested();
-		oXMLComposite.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		var oXMLComposite = new TextToggleButtonNested();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
 		var done = assert.async();
 
 		// Initial state of the nested controls
@@ -476,13 +479,13 @@ sap.ui.require([
 	});
 
 	QUnit.test("forwarded - event from deep inner to outer", function (assert) {
-		var oTextToggleButton = new composites.TextToggleButton();
-		var fnFireTextChangedSpy = sinon.spy(composites.TextToggleButtonForwarded.prototype, "fireTextChanged");
-		var oXMLComposite = new composites.TextToggleButtonForwarded({
+		var oTextToggleButton = new TextToggleButton();
+		var fnFireTextChangedSpy = sinon.spy(TextToggleButtonForwarded.prototype, "fireTextChanged");
+		var oXMLComposite = new TextToggleButtonForwarded({
 			textToggleButton: oTextToggleButton
 		});
-		oXMLComposite.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
 
 		// act: Click on ToggleButton
 		sap.ui.test.qunit.triggerTouchEvent("tap", oTextToggleButton.getAggregation("_content").getItems()[1].getDomRef());
@@ -495,11 +498,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("forwarded - event from inner to outer", function (assert) {
-		var oXMLComposite = new composites.TextToggleButtonForwarded({
-			textToggleButton: new composites.TextToggleButton()
+		var oXMLComposite = new TextToggleButtonForwarded({
+			textToggleButton: new TextToggleButton()
 		});
-		oXMLComposite.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
 		var done = assert.async();
 
 		// Initial state of controls
@@ -536,12 +539,12 @@ sap.ui.require([
 	//*********************************************************************************************
 
 	QUnit.test("Aggregation", function (assert) {
-		var oXMLComposite = new composites.ForwardText();
+		var oXMLComposite = new ForwardText();
 
-		oXMLComposite.addTextItem(new sap.m.Text({
+		oXMLComposite.addTextItem(new Text({
 			text: "text1"
 		}));
-		oXMLComposite.insertTextItem(new sap.m.Text({
+		oXMLComposite.insertTextItem(new Text({
 			text: "text0"
 		}), 0);
 		assert.equal(oXMLComposite.getTextItems().length, 2);
@@ -556,196 +559,26 @@ sap.ui.require([
 	});
 
 	QUnit.test("Abstract", function (assert) {
-		var oXMLComposite = new composites.ChildOfAbstract();
-		oXMLComposite.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		var oXMLComposite = new ChildOfAbstract();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
 		assert.ok(oXMLComposite);
 		oXMLComposite.destroy();
 	});
 
 	QUnit.test("Test to check if we have an invalidate setting in the core", function (assert) {
-		var oXMLComposite = new composites.TemplateTest();
-		oXMLComposite.placeAt("content");
+		var oXMLComposite = new TemplateTest();
+		oXMLComposite.placeAt("qunit-fixture");
 		var oMetadataPropertyText = oXMLComposite.getMetadata().getProperty("text");
 		assert.strictEqual(oMetadataPropertyText.appData.invalidate, "template", "This test should fail once core also has an invalidate");
 		oXMLComposite.destroy();
 	});
 
-	//*********************************************************************************************
-	QUnit.module("sap.ui.core.XMLComposite: templating", {
-		beforeEach: function () {
-		},
-		afterEach: function () {
-		}
-	});
-	//*********************************************************************************************
-	sap.ui.define([
-		"sap/ui/core/mvc/Controller"
-	], function (Controller) {
-		"use strict";
-		return Controller.extend("composites.TestComponent", {});
-	});
-	sap.ui.define("my/composite/Component", [
-		"sap/ui/core/UIComponent"
-	], function (UIComponent) {
-		return UIComponent.extend("my.composite.Component", {
-			metadata: {
-				rootView: "composites.TestComponent"
-			},
-			createContent: function () {
-				sap.ui.core.util.XMLPreprocessor.plugIn(function (oNode, oVisitor) {
-					sap.ui.core.XMLComposite.initialTemplating(oNode, oVisitor, "composites.LabelButtonTemplate");
-				}, "composites", "LabelButtonTemplate");
-
-				// For pre-templating we use here metadata model called "models.preprocessor". Via binding to
-				// the property 'labelFirst' we can control if-condition in templating.
-				return sap.ui.xmlview({
-					async: false,
-					viewContent: '<View height="100%" xmlns:m="sap.m" xmlns="sap.ui.core" xmlns:f="composites"> <m:VBox> <f:LabelButtonTemplate id="IDLabelButtonTemplate" label="{/label}" value="{/value}" labelFirst="{preprocessor>/labelFirst}"/></m:VBox></View>',
-					preprocessors: {
-						xml: {
-							models: {
-								preprocessor: new sap.ui.model.json.JSONModel({
-									labelFirst: false,
-									value: "preprocessor"
-								})
-							}
-						}
-					}
-				});
-			}
-		});
-	});
-
-	QUnit.test("property", function (assert) {
-		var fnInitialTemplatingSpy = sinon.spy(sap.ui.core.XMLComposite, "initialTemplating");
-
-		var oComponentContainer = new sap.ui.core.ComponentContainer({
-			component: new my.composite.Component()
-		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(fnInitialTemplatingSpy.calledOnce);
-
-		var oView = oComponentContainer.getComponentInstance().getRootControl();
-		var oXMLComposite = oView.byId("IDLabelButtonTemplate");
-
-		var fnFragmentRetemplatingSpy = sinon.spy(oXMLComposite, "fragmentRetemplating");
-
-		// Now we define another model in order to fill properties in the XMLComposite control
-		oView.setModel(new sap.ui.model.json.JSONModel({
-			label: "Click",
-			value: "Me"
-		}));
-
-		assert.equal(fnFragmentRetemplatingSpy.called, false);
-		// act: change the order to 'label' after 'button'
-		oXMLComposite.setLabelFirst(false);
-		this.clock.tick(500);
-
-		assert.ok(fnFragmentRetemplatingSpy.calledOnce);
-
-		assert.ok(oView);
-		assert.equal(oView.$().find("div").find("span.sapMLabel" || "label.sapMLabel")[0].textContent, "Click");
-		assert.equal(oView.$().find("div").find("button.sapMBtn")[0].textContent, "Me");
-
-		assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
-		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "BUTTON");
-		assert.ok(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "LABEL" || "SPAN");
-
-		// act: change the order to 'label' before 'button'
-		oXMLComposite.setLabelFirst(true);
-		this.clock.tick(500);
-
-		assert.ok(oView);
-		assert.equal(oView.$().find("div").find("span.sapMLabel" || "label.sapMLabel")[0].textContent, "Click");
-		assert.equal(oView.$().find("div").find("button.sapMBtn")[0].textContent, "Me");
-
-		assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
-		assert.ok(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "LABEL" || "SPAN");
-		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "BUTTON");
-
-		oComponentContainer.destroy();
-	});
-
-	sap.ui.define([
-		"sap/ui/core/mvc/Controller"
-	], function (Controller) {
-		"use strict";
-		return Controller.extend("composites.TestComponent2", {});
-	});
-	sap.ui.define("my/composite2/Component", [
-		"sap/ui/core/UIComponent", 'composites/Helper'
-	], function (UIComponent, Helper) {
-		return UIComponent.extend("my.composite2.Component", {
-			Helper: Helper,
-			metadata: {
-				rootView: "composites.TestComponent2"
-			},
-			createContent: function () {
-				sap.ui.core.util.XMLPreprocessor.plugIn(function (oNode, oVisitor) {
-					sap.ui.core.XMLComposite.initialTemplating(oNode, oVisitor, "composites.LabelButtonsTemplate");
-				}, "composites", "LabelButtonsTemplate");
-
-				return sap.ui.xmlview({
-					async: false,
-					viewContent: '<View height="100%" xmlns:m="sap.m" xmlns="sap.ui.core" xmlns:f="composites"><m:VBox><f:LabelButtonsTemplate id="IDLabelButtonsTemplate" items="{path:&quot;preprocessor>/items&quot;}"/></m:VBox></View>',
-					preprocessors: {
-						xml: {
-							models: {
-								preprocessor: new sap.ui.model.json.JSONModel({
-									items: [
-										{
-											text: "first"
-										}, {
-											text: 'second'
-										}
-									]
-								})
-							}
-						}
-					}
-				});
-			}
-		});
-	});
-
-	//we want to use metadataContexts so we should still dicuss here
-	/*	QUnit.test("aggregation with pretemplating model only", function(assert) {
-			var oComponentContainer = new sap.ui.core.ComponentContainer({
-				component: new my.composite2.Component()
-			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
-			this.clock.tick(500);
-	
-			var oView = oComponentContainer.getComponentInstance().getRootControl();
-	
-			assert.ok(oView);
-			assert.equal(oView.$().find(".IDLabelButtonsTemplate").children().length, 4);
-			assert.ok(oView.$().find(".IDLabelButtonsTemplate").children()[0].firstChild.nodeName === "LABEL" || "SPAN");
-			assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[1].firstChild.nodeName, "BUTTON");
-			assert.ok(oView.$().find(".IDLabelButtonsTemplate").children()[2].firstChild.nodeName === "LABEL" || "SPAN");
-			assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[3].firstChild.nodeName, "BUTTON");
-	
-			// ER: this 'act' should work in the future
-	
-			// // act: change the order to 'label' after 'button'
-			// oView.byId("IDLabelButtonsTemplate").setLabelFirst(false);
-			// this.clock.tick(500);
-			//
-			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children().length, 4);
-			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[0].firstChild.nodeName, "BUTTON");
-			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[1].firstChild.nodeName, "LABEL");
-			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[2].firstChild.nodeName, "BUTTON");
-			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[3].firstChild.nodeName, "LABEL");
-	
-			oComponentContainer.destroy();
-		});
-	*/
 	QUnit.module("clone");
 
 	QUnit.test("simple", function (assert) {
-		var oXMLComposite = new composites.TextToggleButton("Frag1");
+		var done = assert.async();
+		var oXMLComposite = new TextToggleButton("Frag1"), oButton, oText;
 		var sId;
 		var iCount = 0;
 
@@ -754,36 +587,61 @@ sap.ui.require([
 			sId = oEvent.oSource.getId();
 		});
 
-		var fnVBoxCloneSpy = sinon.spy(oXMLComposite.getAggregation("_content"), "clone");
+		//TEMP-CLONE-ISSUE var fnVBoxCloneSpy = sinon.spy(oXMLComposite.getAggregation("_content"), "clone");
 
 		var oClone = oXMLComposite.clone("MyClone");
 		assert.equal(oClone.getId(), "Frag1-MyClone", "XMLComposite cloned");
-		var oContent = oClone.getAggregation("_content");
-		assert.notOk(fnVBoxCloneSpy.called, "VBox clone function not called");
-		assert.equal(oContent.getId(), "Frag1-MyClone--myVBox", "VBox created, not cloned");
+		setTimeout(function() {
+			var oContent = oClone._getCompositeAggregation();
+			//TEMP-CLONE-ISSUE assert.notOk(fnVBoxCloneSpy.called, "VBox clone function not called");
+			//TEMP-CLONE-ISSUE assert.equal(oContent.getId(), "Frag1-MyClone--myVBox", "VBox created, not cloned");
 
-		oXMLComposite.placeAt("content");
-		oClone.placeAt("content");
-		sap.ui.getCore().applyChanges();
+			oXMLComposite.placeAt("qunit-fixture");
+			oClone.placeAt("qunit-fixture");
+			Core.applyChanges();
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
-		assert.equal(sId, "Frag1-MyClone", "Event fired on clone");
-		assert.equal(iCount, 1, "Event fired only once");
+			//Id access
+			oButton = oXMLComposite.byId("myButton");
+			oText = oXMLComposite.byId("myText");
+			assert.ok(oButton, "The button is accessed from the original control");
+			assert.ok(oText, "The text is accessed from the original control");
+			assert.ok(oButton.getId().endsWith("myButton"), "the button has the correct suffix");
+			assert.ok(oText.getId().endsWith("myText"), "the text has the correct suffix");
 
-		oXMLComposite.destroy();
-		oClone.destroy();
+			oButton = oClone.byId("myButton");
+			oText = oClone.byId("myText");
+			assert.ok(oButton, "The button is accessed from the the clone");
+			assert.ok(oText, "The text is accessed from the clone");
+			assert.ok(oButton.getId().endsWith("myButton"), "the button has the correct suffix");
+			assert.ok(oText.getId().endsWith("myText"), "the text has the correct suffix");
+
+			//Eventing
+			sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
+			assert.equal(iCount, 1, "Event fired only once");
+			assert.equal(sId, oClone.getId(), "The event is really fired from the clone");
+
+			//To be sure fire from the template
+			oContent = oXMLComposite._getCompositeAggregation();
+			sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
+			assert.equal(iCount, 2, "Event fired again");
+			assert.equal(sId, oXMLComposite.getId(), "The event is fired from the template");
+
+			oXMLComposite.destroy();
+			oClone.destroy();
+			done();
+		}, 500);
 	});
 
 	QUnit.test("list", function (assert) {
-		var oXMLComposite = new composites.TextList("Frag1", {
+		var oXMLComposite = new TextList("Frag1", {
 			texts: [
-				new sap.ui.core.Item("I1", {
+				new Item("I1", {
 					key: "K1",
 					text: "Text 1"
-				}), new sap.ui.core.Item("I2", {
+				}), new Item("I2", {
 					key: "K2",
 					text: "Text 2"
-				}), new sap.ui.core.Item("I3", {
+				}), new Item("I3", {
 					key: "K3",
 					text: "Text 3"
 				})
@@ -805,25 +663,25 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Wrapper default properties", {
-		beforeEach: function() {
-			var Wrapper = sap.ui.core.XMLComposite.extend("Wrapper", {
+		beforeEach: function () {
+			var Wrapper = XMLComposite.extend("Wrapper", {
 				constructor: function (sId, mSettings) {
-					sap.ui.core.XMLComposite.apply(this, arguments);
+					XMLComposite.apply(this, arguments);
 				},
 				fragment: "composites.wrapper",
 				renderer: "sap.ui.core.XMLCompositeRenderer"
 			});
 			this.oWrapper = new Wrapper("layout");
-			this.oWrapper.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			this.oWrapper.placeAt("qunit-fixture");
+			Core.applyChanges();
 		},
-		afterEach: function() {
+		afterEach: function () {
 			this.oWrapper.destroy();
 		}
 	});
 	//*********************************************************************************************
 
-	QUnit.test("default properties", function(assert) {
+	QUnit.test("default properties", function (assert) {
 		assert.strictEqual(this.oWrapper.getHeight(), "", "Default height is undefined");
 		assert.strictEqual(this.oWrapper.getWidth(), "100%", "Default width is 100%");
 		assert.strictEqual(this.oWrapper.getDisplayBlock(), true, "Default displayBlock is true");
@@ -831,28 +689,28 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Wrapper properties", {
-		beforeEach: function() {
-			var Wrapper = sap.ui.core.XMLComposite.extend("Wrapper", {
+		beforeEach: function () {
+			var Wrapper = XMLComposite.extend("Wrapper", {
 				constructor: function (sId, mSettings) {
-					sap.ui.core.XMLComposite.apply(this, arguments);
+					XMLComposite.apply(this, arguments);
 				},
 				fragment: "composites.wrapper",
 				renderer: "sap.ui.core.XMLCompositeRenderer"
 			});
 			this.oWrapper = new Wrapper("layout");
-			this.oWrapper.placeAt("content");
+			this.oWrapper.placeAt("qunit-fixture");
 			this.oWrapper.setHeight("100%");
 			this.oWrapper.setWidth("200px");
 			this.oWrapper.setDisplayBlock(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
-		afterEach: function() {
+		afterEach: function () {
 			this.oWrapper.destroy();
 		}
 	});
 	//*********************************************************************************************
 
-	QUnit.test("properties", function(assert) {
+	QUnit.test("properties", function (assert) {
 		assert.strictEqual(this.oWrapper.getHeight(), "100%", "Height is 100%");
 		assert.strictEqual(this.oWrapper.getWidth(), "200px", "Width is 200px");
 		assert.strictEqual(this.oWrapper.getDisplayBlock(), false, "DisplayBlock is false");
@@ -862,5 +720,359 @@ sap.ui.require([
 		assert.strictEqual(this.oWrapper.getHeight(), "100%", "Height is 100%");
 		assert.strictEqual(this.oWrapper.getWidth(), "200px", "Width is 200px");
 		assert.strictEqual(this.oWrapper.getDisplayBlock(), false, "DisplayBlock is false");
+	});
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: Translatable Texts from default lib", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function (assert) {
+		var done = assert.async();
+		var oXMLComposite = new TranslatableText();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
+		assert.equal(oXMLComposite.bUsesI18n, true, "The i18n resource model is used");
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				assert.strictEqual(oXMLComposite.byId("myTranslatableTextControl").getText(), "Translatable Text", "Text was read from messagemodel via binding (lib)");
+				assert.strictEqual(oBundle.getText("key"), "Translatable Text", "Text was read from messagebundle via API (lib)");
+				var oContent = oXMLComposite._getCompositeAggregation();
+				assert.strictEqual(oContent.getModel("$" + oXMLComposite.alias + ".i18n").getProperty("key"), "Translatable Text", "Text was read from messagemodel via getProperty (lib)");
+				oXMLComposite.destroy();
+				done();
+			});
+		}
+	});
+
+	QUnit.test("positive tests - not in root", function (assert) {
+		var done = assert.async();
+
+		var sFragmentContent = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout">'
+			+ '<layout:HorizontalLayout><Input id="innerInput" placeholder="{$this>/placeholder}" />'
+			+ '<Button id="myTranslatableTextControl" text="{$this.i18n>buttonText}" press="handleSearch" /></layout:HorizontalLayout></core:FragmentDefinition>';
+		var oXml = new DOMParser().parseFromString(sFragmentContent, "text/xml").documentElement;
+
+		var TextInButton = XMLComposite.extend("composites.TextInButton", {
+			metadata: {
+				properties: {
+					placeholder: { type: "string", defaultValue: "Enter Search Term..." }
+				}
+			},
+			fragmentContent: oXml
+		});
+
+		var oXMLComposite = new TextInButton({placeholder: "custom placeholder"});
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
+		assert.equal(oXMLComposite.bUsesI18n, true, "The i18n resource model is used");
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				assert.strictEqual(oXMLComposite.byId("myTranslatableTextControl").getText(), "My Text", "Text was read from messagemodel via binding (lib)");
+				assert.strictEqual(oBundle.getText("buttonText"), "My Text", "Text was read from messagebundle via API (lib)");
+				var oContent = oXMLComposite._getCompositeAggregation();
+				assert.strictEqual(oContent.getModel("$" + oXMLComposite.alias + ".i18n").getProperty("key"), "Translatable Text", "Text was read from messagemodel via getProperty (lib)");
+				oXMLComposite.destroy();
+				done();
+			});
+		}
+	});
+
+	QUnit.test("positive tests - in root", function (assert) {
+		var done = assert.async();
+		var sFragmentContent = '<m:Panel id="myTranslatableTextControl" headerText="{$this.i18n>panelText}" xmlns:m="sap.m"><m:Input id="innerInput" placeholder="{$this>/placeholder}" />'
+			+ '<m:Button text="{$this>/buttonText}" press="handleSearch" /></m:Panel>';
+		var oXml = new DOMParser().parseFromString(sFragmentContent, "text/xml").documentElement;
+
+		var TextInRoot = XMLComposite.extend("composites.TextInRoot", {
+			metadata: {
+				properties: {
+					placeholder: { type: "string", defaultValue: "Enter Search Term..." },
+					buttonText: {type: "string", defaultValue: "My Text"}
+				}
+			},
+			fragmentContent: oXml
+		});
+
+		var oXMLComposite = new TextInRoot({placeholder: "custom placeholder"});
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
+		assert.equal(oXMLComposite.bUsesI18n, true, "The i18n resource model is used");
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				assert.strictEqual(oXMLComposite.byId("myTranslatableTextControl").getHeaderText(), "My Panel Text", "Text was read from messagemodel via binding (lib)");
+				assert.strictEqual(oBundle.getText("panelText"), "My Panel Text", "Text was read from messagebundle via API (lib)");
+				var oContent = oXMLComposite._getCompositeAggregation();
+				assert.strictEqual(oContent.getModel("$" + oXMLComposite.alias + ".i18n").getProperty("key"), "Translatable Text", "Text was read from messagemodel via getProperty (lib)");
+				oXMLComposite.destroy();
+				done();
+			});
+		}
+	});
+
+	QUnit.test("negative test lib not loaded when not used", function (assert) {
+		var oXMLComposite = new TextToggleButton();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
+		var oContent = oXMLComposite._getCompositeAggregation();
+		assert.equal(oXMLComposite.bUsesI18n, false, "No reference for the i18n resource model is found");
+		assert.notOk(oContent.getModel("$" + oXMLComposite.alias + ".i18n"), "there is no i18n Model");
+
+	});
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: Translatable Texts from this.lib", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function (assert) {
+		var done = assert.async();
+		var oXMLComposite = new TranslatableTextLib();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				assert.strictEqual(oXMLComposite.byId("myTranslatableTextControl").getText(), "Translatable Text from composites2", "Text was read from messagemodel via binding (lib)");
+				assert.strictEqual(oBundle.getText("key"), "Translatable Text from composites2", "Text was read from messagebundle via API (lib)");
+				var oContent = oXMLComposite.getAggregation(oXMLComposite.getMetadata().getCompositeAggregationName());
+				assert.strictEqual(oContent.getModel("$" + oXMLComposite.alias + ".i18n").getProperty("key"), "Translatable Text from composites2", "Text was read from messagemodel via getProperty (lib)");
+				oXMLComposite.destroy();
+				done();
+			});
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: resource model on hidden aggregation and only there", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function (assert) {
+		var done = assert.async();
+		var oXMLComposite = new TranslatableText();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				assert.notEqual(oXMLComposite.getAggregation("_content").getModel("$this.i18n"), undefined, "resource model is available on the hidden aggregation");
+				assert.strictEqual(oXMLComposite.getModel("$this.i18n"), undefined, "resource model is not available on the XMLComposite itself");
+				oXMLComposite.destroy();
+				done();
+			});
+		}
+	});
+	//*********************************************************************************************
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: Translatable Texts from this.messagebundle", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function (assert) {
+		var done = assert.async();
+		var oXMLComposite = new TranslatableTextBundle();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				assert.strictEqual(oXMLComposite.byId("myTranslatableTextControl").getText(), "Translatable Text 2", "Text was read from messagemodel via binding");
+				assert.strictEqual(oBundle.getText("key2"), "Translatable Text 2", "Text was read from messagebundle via API");
+				var oContent = oXMLComposite.getAggregation(oXMLComposite.getMetadata().getCompositeAggregationName());
+				assert.strictEqual(oContent.getModel("$" + oXMLComposite.alias + ".i18n").getProperty("key2"), "Translatable Text 2", "Text was read from messagemodel via getProperty");
+				oXMLComposite.destroy();
+				done();
+			});
+		}
+	});
+	//*********************************************************************************************
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: destroy test", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function (assert) {
+		var done = assert.async();
+		var oXMLComposite = new TranslatableTextBundle();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				var oResourceModel = oXMLComposite._getResourceModel();
+				oXMLComposite.destroy();
+				assert.ok(oResourceModel.bDestroyed, "Resource Model was destroyed");
+				done();
+			});
+		}
+	});
+	//*********************************************************************************************
+
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: reuse test", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function (assert) {
+		var done = assert.async();
+		var oXMLComposite0 = new TranslatableTextLib();
+		var oXMLComposite1 = new TranslatableTextLib();
+		oXMLComposite0.placeAt("qunit-fixture");
+		oXMLComposite1.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		//async loading of resource bundle
+		var p0 = oXMLComposite0.getResourceBundle();
+		var p1 = oXMLComposite0.getResourceBundle();
+		Promise.all([p0, p1]).then(function (values) {
+			p0 = values[0];
+			p1 = values[1];
+			assert.strictEqual(p0, p1, "Resource Model is reused");
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: create from given fragmentContent", {
+		beforeEach: function () {
+			this.sFragmentContent = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout">'
+				+ '<layout:HorizontalLayout><Input id="innerInput" placeholder="{$this>/placeholder}" />'
+				+ '<Button text="{$this>/buttonText}" press="handleSearch" /></layout:HorizontalLayout></core:FragmentDefinition>';
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("create from string", function (assert) {
+		var SearchFieldFromString = XMLComposite.extend("control.SearchFieldFromString", {
+			metadata: {
+				properties: {
+					placeholder: { type: "string", defaultValue: "Enter Search Term..." },
+					buttonText: { type: "string", defaultValue: "Search" }
+				}
+			},
+			fragmentContent: this.sFragmentContent
+		});
+
+		var oSearchField = new SearchFieldFromString({placeholder: "custom placeholder"});
+
+		assert.ok(oSearchField, "Composite instance should be created");
+		assert.strictEqual(oSearchField.getPlaceholder(), "custom placeholder", "Property value should be applied");
+		assert.strictEqual(oSearchField.getButtonText(), "Search", "Default property value should be applied");
+	});
+	//*********************************************************************************************
+	QUnit.test("create from XML tree", function (assert) {
+		var oXml = new DOMParser().parseFromString(this.sFragmentContent, "text/xml").documentElement;
+
+		var SearchFieldFromXml = XMLComposite.extend("control.SearchFieldFromXml", {
+			metadata: {
+				properties: {
+					placeholder: { type: "string", defaultValue: "Enter Search Term..." },
+					buttonText: { type: "string", defaultValue: "Search" }
+				}
+			},
+			fragmentContent: oXml
+		});
+
+		var oSearchField = new SearchFieldFromXml({placeholder: "custom placeholder"});
+
+		assert.ok(oSearchField, "Composite instance should be created");
+		assert.strictEqual(oSearchField.getPlaceholder(), "custom placeholder", "Property value should be applied");
+		assert.strictEqual(oSearchField.getButtonText(), "Search", "Default property value should be applied");
+	});
+
+	//************************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: accessibility", {
+		before: function (assert) {
+			this.content = null;
+			return new Promise( function( resolve, reject ) {
+				var oField = new Field("accessible");
+				sap.ui.require(["sap/m/Label", "sap/m/HBox"], function (Label, HBox) {
+					var oLabel = new Label("label", {text: "test", labelFor: oField});
+					var oAdditionalLabel = new Label("additional", {text: "additional"});
+					oField.addAriaLabelledBy(oAdditionalLabel);
+					this.content = new HBox({items: [oLabel,oField, oAdditionalLabel]});
+					this.content.placeAt("qunit-fixture");
+					Core.applyChanges();
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		},
+		after: function (assert) {
+		}
+	});
+
+	QUnit.test("accessibility", function(assert) {
+		var oField = this.content.getItems()[1];
+		assert.equal(oField.getFocusDomRef().id, "accessible--focus", "FocusDomRef");
+		assert.equal(jQuery("#label").attr("for"), "accessible--focus", "Label points to focusable DomRef");
+		assert.equal(jQuery("#accessible").attr("aria-labelledby"), "label additional", "The focusable dom ref is also labelled by the additional label");
+	});
+
+	QUnit.test("BCP: 002075129400001541162020", function (assert) {
+		var aItems,
+			oModel,
+			oSortedList;
+
+		// preparation
+		oModel = new JSONModel({
+			data : [{key : 2, text : "2"}, {key : 1, text : "1"}, {key : 3, text : "3"}]
+		});
+
+		oSortedList = new SortedList({
+			sortedItems : {
+				path : '/data',
+				template : new Item({text : {path : "text", key : "key"}})
+			}
+		});
+		oSortedList.setModel(oModel);
+
+		// code under test - data sorted in the inner control
+		aItems = oSortedList.byId("sorted").getItems();
+		assert.strictEqual(aItems.length, 3);
+		assert.strictEqual(aItems[0].getTitle(), "1");
+		assert.strictEqual(aItems[1].getTitle(), "2");
+		assert.strictEqual(aItems[2].getTitle(), "3");
+
+		// code under test - now simulate data change
+		oModel.setProperty("/data", [{key : 1, text : "1"}, {key : 3, text : "3"}]);
+		aItems = oSortedList.byId("sorted").getItems();
+
+		// code under test - data still sorted in the inner control
+		assert.strictEqual(aItems.length, 2);
+		assert.strictEqual(aItems[0].getTitle(), "1");
+		assert.strictEqual(aItems[1].getTitle(), "3");
 	});
 });

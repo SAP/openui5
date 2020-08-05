@@ -2,40 +2,42 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/m/OverflowToolbarRenderer', 'sap/m/BarInPageEnabler'],
-	function(Renderer, OverflowToolbarRenderer, BarInPageEnabler) {
-		"use strict";
+sap.ui.define([
+	"sap/ui/core/Renderer",
+	"sap/m/OverflowToolbarRenderer",
+	"sap/m/BarInPageEnabler"
+], function (Renderer, OverflowToolbarRenderer, BarInPageEnabler) {
+	"use strict";
 
+	/**
+	 * ToolHeaderRenderer renderer.
+	 * @namespace
+	 */
+	var ToolHeaderRenderer = Renderer.extend(OverflowToolbarRenderer);
 
-		/**
-		 * ToolHeaderRenderer renderer.
-		 * @namespace
-		 */
-		var ToolHeaderRenderer = Renderer.extend(OverflowToolbarRenderer);
+	ToolHeaderRenderer.apiVersion = 2;
 
-		ToolHeaderRenderer.renderBarContent = function(rm, toolbar) {
+	ToolHeaderRenderer.renderBarContent = function (oRM, oToolbar) {
+		var bOverflowToolbarRendered = false,
+			bIsUtilitySeparator;
 
-			var overflowToolbarRendered = false;
-			var isUtilitySeparator;
+		oToolbar._getVisibleContent().forEach(function (oControl) {
 
-			toolbar._getVisibleContent().forEach(function(control) {
+			bIsUtilitySeparator = oControl.isA("sap.tnt.ToolHeaderUtilitySeparator");
 
-				isUtilitySeparator = control.getMetadata().getName() == 'sap.tnt.ToolHeaderUtilitySeparator';
-
-				if (!overflowToolbarRendered && isUtilitySeparator && toolbar._getOverflowButtonNeeded()) {
-					ToolHeaderRenderer.renderOverflowButton(rm, toolbar);
-					overflowToolbarRendered = true;
-				}
-
-				BarInPageEnabler.addChildClassTo(control, toolbar);
-				rm.renderControl(control);
-			});
-
-			if (!overflowToolbarRendered && toolbar._getOverflowButtonNeeded()) {
-				ToolHeaderRenderer.renderOverflowButton(rm, toolbar);
+			if (!bOverflowToolbarRendered && bIsUtilitySeparator && oToolbar._getOverflowButtonNeeded()) {
+				ToolHeaderRenderer.renderOverflowButton(oRM, oToolbar);
+				bOverflowToolbarRendered = true;
 			}
-		};
 
-		return ToolHeaderRenderer;
+			BarInPageEnabler.addChildClassTo(oControl, oToolbar);
+			oRM.renderControl(oControl);
+		});
 
-	}, /* bExport= */ true);
+		if (!bOverflowToolbarRendered && oToolbar._getOverflowButtonNeeded()) {
+			ToolHeaderRenderer.renderOverflowButton(oRM, oToolbar);
+		}
+	};
+
+	return ToolHeaderRenderer;
+}, /* bExport= */ true);

@@ -1,0 +1,97 @@
+/* ================================= */
+/* CSS for control sap.m/Dialog      */
+/* Quartz High Contrast White theme  */
+/* ================================= */
+
+// ==========================================================================
+// Variables
+// ==========================================================================
+
+@_sap_m_Dialog_MarginHeight: 6%;
+@_sap_m_Dialog_BarHeight: 2.75rem;
+@_sap_m_Dialog_SubHeaderHeight: 2.75rem;
+@_sap_m_Dialog_InfoDesignBarHeight: 2.75rem;
+
+@_sap_m_Dialog_NoStateHeaderShadow: @sapUiShadowHeader;
+@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.125rem @sapUiSuccessBorder;
+@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.125rem @sapUiErrorBorder;
+@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.125rem @sapUiWarningBorder;
+@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.125rem @sapUiInformationBorder;
+
+.sapMDialog.sapMPopup-CTX > header .sapMHeader-CTX,
+.sapMDialog.sapMPopup-CTX > header .sapMSubHeader-CTX {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMDialog > header.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
+	font-size: 1rem;
+}
+
+.sapMDialogResizeHandler::before {
+	content: attr(data-sap-ui-icon-content);
+	color: @sapUiButtonLiteTextColor;
+}
+
+.sapMDialogBeginButton, .sapMDialogEndButton {
+	min-width: 4rem;
+}
+
+.sapMDialogTitle {
+	z-index: 3; // to hide the shadow from the header when there is sub-header
+}
+
+// buttons on phone must be to the right side (in LTR mode)
+html.sap-phone .sapMDialog {
+	& > footer .sapMFooter-CTX {
+		justify-content: flex-end;
+	}
+}
+
+// ==========================================================================
+// header, sub-header, footer
+// ==========================================================================
+
+.sapMDialog {
+	header .sapMBarLeft,
+	header .sapMBarPH {
+		padding-left: 1rem;
+	}
+
+	header .sapMBarRight,
+	header .sapMBarPH {
+		padding-right: 1rem;
+	}
+
+	header .sapMTB,
+	footer .sapMTB {
+		padding: 0 1rem;
+	}
+}
+
+.sapMDialogTitle, .sapMDialogSubHeader {
+	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
+	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
+		&.sapMIBar {
+			.sapMBarMiddle .sapMBarPH {
+				padding-left: 0;
+				padding-right: 0;
+			}
+
+			.sapMBarLeft {
+				padding-left: inherit;
+
+				.sapMBarChild {
+					padding-right: 0.5rem;
+				}
+			}
+
+			.sapMBarRight {
+				padding-right: inherit;
+
+				.sapMBarChild {
+					padding-left: 0.5rem;
+				}
+			}
+		}
+	}
+}

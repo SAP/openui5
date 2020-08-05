@@ -22,8 +22,7 @@
 
   <appData>
     <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
-      <exclude name="sap.ui.documentation.sdk.thirdparty.google-code-prettify." />
-      <exclude name="sap.ui.documentation.sdk.thirdparty.jsanalyzer." />
+      <exclude name="sap.ui.documentation.sdk.thirdparty." />
     </jsdoc>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
@@ -36,6 +35,7 @@
         <raw-module name="sap/ui/documentation/sdk/thirdparty/google-code-prettify/lang-css.js" depends="sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js" />
         <raw-module name="sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"/>
         <raw-module name="sap/ui/documentation/sdk/thirdparty/google-code-prettify/run_prettify.js"/>
+        <raw-module name="sap/ui/documentation/sdk/thirdparty/elasticlunr.js" />
       </module-infos>
       <all-in-one>
         <exclude name="sap/ui/documentation/sdk/thirdparty/google-code-prettify/run_prettify.js" />
@@ -48,6 +48,9 @@
       </lib>
       <lib name="google-code-prettify" displayName="google-code-prettify" homepage="https://code.google.com/p/google-code-prettify/">
         <license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache License Version 2.0" file="./thirdparty/licenses/google-code-prettify-Apache-LICENSE.txt" />
+      </lib>
+      <lib name="elasticlunr" displayName="Elasticlunr" homepage="http://elasticlunr.com/">
+        <license url="https://github.com/weixsong/elasticlunr.js/blob/v0.9.5/LICENSE" type="MIT License" file="./thirdparty/licenses/elasticlunr-LICENSE.txt" />
       </lib>
     </thirdparty>
 	<!-- TO BE DONE

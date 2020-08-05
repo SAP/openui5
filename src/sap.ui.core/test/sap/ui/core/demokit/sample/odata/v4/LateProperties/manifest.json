@@ -1,0 +1,55 @@
+{
+	"_version" : "1.14.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR-OD4",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "Test OData V4 late properties",
+		"dataSources" : {
+			"default" : {
+				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/?custom-option=value",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "4.0"
+				}
+			}
+		},
+		"id" : "sap.ui.core.sample.odata.v4.LateProperties",
+		"title" : "EPM Business Partners",
+		"type" : "application"
+	},
+	"sap.ui5" : {
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.73",
+			"libs" : {
+				"sap.m" : {}
+			}
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"autoExpandSelect" : true,
+					"earlyRequests": true,
+					"operationMode" : "Server",
+					"synchronizationMode" : "None",
+					"updateGroupId" : "UpdateGroup"
+				},
+				"type" : "sap.ui.core.sample.odata.v4.LateProperties.SandboxModel",
+				"uriSettingName" : "serviceUrl"
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"type" : "XML",
+			"viewName" : "sap.ui.core.sample.odata.v4.LateProperties.Main"
+		}
+	}
+}

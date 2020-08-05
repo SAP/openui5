@@ -1,7 +1,9 @@
 /**
  * Control which contains Simple aggregations
  */
-sap.ui.define(['sap/ui/core/Control'], function(Control){
+sap.ui.define(['sap/ui/core/Control'], function(Control) {
+	"use strict";
+
 	var SimpleAggregationsControl = Control.extend("sap.ui.core.qunit.mvc.viewprocessing.SimpleAggregationsControl", {
 		library: "sap.ui.core.qunit.mvc.viewprocessing",
 		metadata: {
@@ -11,23 +13,22 @@ sap.ui.define(['sap/ui/core/Control'], function(Control){
 				alternativeContent: {type: "sap.ui.core.Control", multiple: true}
 			}
 		},
-		renderer: function (oRM, oControl) {
-			oRM.write("<div");
-			oRM.writeControlData(oControl);
-			oRM.addClass("myTestAggrs");
-			oRM.writeClasses();
-			oRM.write(">");
+		renderer: {
+			apiVersion: 2,
+			render: function (oRM, oControl) {
+				oRM.openStart("div", oControl).class("myTestAggrs").openEnd();
 
-			var renderCtrls = function(aCtrls){
-				if (aCtrls){
-					aCtrls.forEach(function(oCtrl) {
-						oRM.renderControl(oCtrl);
-					});
-				}
-			};
+				var renderCtrls = function(aCtrls){
+					if (aCtrls){
+						aCtrls.forEach(function(oCtrl) {
+							oRM.renderControl(oCtrl);
+						});
+					}
+				};
 
-			renderCtrls(oControl.getAggregation("alternativeContent"));
-			oRM.write("</div>");
+				renderCtrls(oControl.getAggregation("alternativeContent"));
+				oRM.close("div");
+			}
 		}
 	});
 

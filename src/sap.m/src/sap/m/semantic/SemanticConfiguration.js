@@ -11,11 +11,12 @@
 
 // Provides class sap.m.semantic.SemanticConfiguration
 sap.ui.define([
-	"sap/ui/base/Metadata",
+	"sap/ui/base/Object",
 	"sap/m/library",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/ui/core/IconPool"
-], function(Metadata, library, OverflowToolbarLayoutData, IconPool) {
+	"sap/ui/core/IconPool",
+	"sap/ui/core/InvisibleText"
+], function(BaseObject, library, OverflowToolbarLayoutData, IconPool, InvisibleText) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -40,8 +41,10 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
-	var SemanticConfiguration = Metadata.createClass("sap.m.semantic.SemanticConfiguration", {
-
+	var SemanticConfiguration = BaseObject.extend("sap.m.semantic.SemanticConfiguration", {
+		getInterface: function() {
+			return this; // no facade
+		}
 	});
 
 	/*
@@ -321,7 +324,7 @@ sap.ui.define([
 			getEventDelegates: function(oContext) {
 				return {
 					onAfterRendering: function () {
-						this.$().attr({"aria-haspopup": true, "role": ""});
+						this.$().attr({"aria-haspopup": "listbox"});
 					}.bind(oContext)
 				};
 			},
@@ -348,6 +351,13 @@ sap.ui.define([
 					type: "IconOnly",
 					autoAdjustWidth: true,
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_FILTER")
+				};
+			},
+			getEventDelegates: function(oContext) {
+				return {
+					onAfterRendering: function () {
+						this.$().attr({"aria-haspopup": "listbox"});
+					}.bind(oContext)
 				};
 			},
 			constraints: "IconOnly"
@@ -379,7 +389,7 @@ sap.ui.define([
 			getEventDelegates: function(oContext) {
 				return {
 					onAfterRendering: function () {
-						this.$().attr({"aria-haspopup": true, "role": ""});
+						this.$().attr({"aria-haspopup": "listbox"});
 					}.bind(oContext)
 				};
 			},
@@ -459,6 +469,8 @@ sap.ui.define([
 		oTypeConfigs["sap.m.semantic.MessagesIndicator"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
 			getSettings: function() {
+				var sTooltipId = InvisibleText.getStaticId("sap.m", "SEMANTIC_CONTROL_MESSAGES_INDICATOR");
+
 				return {
 					icon: IconPool.getIconURI("message-popup"),
 					text: {
@@ -468,6 +480,7 @@ sap.ui.define([
 						}
 					},
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR"),
+					ariaLabelledBy: sTooltipId,
 					type: ButtonType.Emphasized,
 					visible: {
 						path: "message>/",
@@ -497,4 +510,4 @@ sap.ui.define([
 	})();
 
 	return SemanticConfiguration;
-}, /* bExport= */ false);
+});

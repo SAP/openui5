@@ -25,7 +25,7 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 	 *
 	 * @class
 	 * OverflowToolbarAssociativePopover is a version of Popover that uses an association in addition to the aggregation
-	 * @extends sap.ui.core.Popover
+	 * @extends sap.m.Popover
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -58,16 +58,6 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 		Popover.prototype.onBeforeRendering.apply(this, arguments);
 		this.addStyleClass("sapMOTAPopover");
 		this.addStyleClass("sapMOverflowToolbarMenu-CTX");
-
-		var bHasButtonsWithIcons = this._getAllContent().some(function(oControl) {
-			return oControl.hasStyleClass("sapMOTAPButtonWithIcon");
-		});
-
-		if (bHasButtonsWithIcons) {
-			this.addStyleClass("sapMOTAPButtonsWithIcons");
-		} else {
-			this.removeStyleClass("sapMOTAPButtonsWithIcons");
-		}
 	};
 
 	/* Override API methods */

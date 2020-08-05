@@ -1,0 +1,159 @@
+<mvc:View
+		controllerName="sap.f.sample.DynamicPageWithStickySubheader.controller.DynamicPageWithStickySubheader"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:f="sap.f"
+		xmlns:layout="sap.ui.layout"
+		height="100%">
+		<f:DynamicPage id="dynamicPageId"
+			stickySubheaderProvider="iconTabBar"
+			class="sapUiNoContentPadding"
+			toggleHeaderOnTitleClick="{/titleClickable}">
+			<!-- DynamicPage Title -->
+			<f:title>
+				<f:DynamicPageTitle>
+					<f:heading>
+						<Title text="Header Title"/>
+					</f:heading>
+					<f:breadcrumbs>
+						<Breadcrumbs>
+							<Link text="Home" />
+							<Link text="Page 1" />
+							<Link text="Page 2" />
+							<Link text="Page 3" />
+							<Link text="Page 4" />
+							<Link text="Page 5" />
+						</Breadcrumbs>
+					</f:breadcrumbs>
+					<f:expandedContent>
+						<Label text="This is a subheading"/>
+					</f:expandedContent>
+					<f:snappedContent>
+						<Label text="This is a subheading"/>
+					</f:snappedContent>
+					<f:snappedTitleOnMobile>
+						<Title text="Header Title On Phone"/>
+					</f:snappedTitleOnMobile>
+					<f:content>
+						<OverflowToolbar>
+							<GenericTag text="SR"
+								status="Error"
+								press="onGenericTagPress"
+								design="StatusIconHidden">
+								<ObjectNumber number="2"
+									unit="M"
+									emphasized="false"
+									state="Error"/>
+							</GenericTag>
+						</OverflowToolbar>
+					</f:content>
+					<f:actions>
+						<Button text="Edit" type="Emphasized"/>
+						<Button text="Delete" type="Transparent"/>
+						<Button text="Copy" type="Transparent"/>
+						<Button text="Toggle Footer" type="Transparent" press="onToggleFooter"/>
+						<Button icon="sap-icon://action" type="Transparent"/>
+					</f:actions>
+					<f:navigationActions>
+						<Button icon="sap-icon://full-screen" type="Transparent" />
+						<Button icon="sap-icon://exit-full-screen" type="Transparent" />
+						<Button icon="sap-icon://decline" type="Transparent" />
+					</f:navigationActions>
+				</f:DynamicPageTitle>
+			</f:title>
+			<!-- DynamicPage Header -->
+			<f:header>
+				<f:DynamicPageHeader pinnable="true">
+					<layout:HorizontalLayout allowWrapping="true">
+						<layout:VerticalLayout class="sapUiMediumMarginEnd">
+							<ObjectAttribute title="Location" text="Warehouse A"/>
+							<ObjectAttribute title="Halway" text="23L"/>
+							<ObjectAttribute title="Rack" text="34"/>
+						</layout:VerticalLayout>
+
+						<layout:VerticalLayout>
+							<ObjectAttribute title="Availability"/>
+							<ObjectStatus text="In Stock" state="Success" />
+						</layout:VerticalLayout>
+					</layout:HorizontalLayout>
+				</f:DynamicPageHeader>
+			</f:header>
+			<f:content>
+				<IconTabBar id="iconTabBar" class="sapUiResponsiveContentPadding">
+					<items>
+						<IconTabFilter text="Products">
+							<Table id="idProductsTable"
+								inset="false"
+								sticky="HeaderToolbar,ColumnHeaders"
+								items="{
+										path: '/ProductCollection',
+										sorter: {
+											path: 'Name'
+										}
+									}"
+								class="sapFDynamicPageAlignContent"
+								width="auto">
+								<headerToolbar>
+									<Toolbar>
+										<Label text="Cars"></Label>
+									</Toolbar>
+								</headerToolbar>
+								<columns>
+									<Column width="12em">
+										<Text text="Product" />
+									</Column>
+									<Column minScreenWidth="Tablet" demandPopin="true">
+										<Text text="Supplier" />
+									</Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
+										<Text text="Dimensions" />
+									</Column>
+									<Column hAlign="End">
+										<Text text="Price" />
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<ObjectIdentifier title="{Name}" text="{ProductId}"/>
+											<Text text="{SupplierName}" />
+											<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
+											<ObjectNumber
+												number="{
+													parts:[{path:'Price'},{path:'CurrencyCode'}],
+													type: 'sap.ui.model.type.Currency',
+													formatOptions: {showMeasure: false}
+												}"
+												unit="{CurrencyCode}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</IconTabFilter>
+						<IconTabFilter text="Attachments">
+							<Text text="Attachments go here ..." />
+						</IconTabFilter>
+						<IconTabFilter text="Notes">
+							<Text text="Notes go here ..." />
+						</IconTabFilter>
+						<IconTabFilter text="People">
+							<Text text="People content goes here ..." />
+						</IconTabFilter>
+					</items>
+				</IconTabBar>
+			</f:content>
+			<!-- DynamicPage Footer -->
+			<f:footer>
+				<OverflowToolbar>
+					<Button icon="sap-icon://message-popup"
+						text="{/messagesLength}"
+						type="Emphasized"
+						press="onMessageButtonPress"
+						visible="{= !!${/messagesLength}}"/>
+					<ToolbarSpacer/>
+					<Button type="Accept" text="Accept"/>
+					<Button type="Reject" text="Reject"/>
+				</OverflowToolbar>
+			</f:footer>
+		</f:DynamicPage>
+</mvc:View>

@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.ui.table.sample.TreeTable.ODataAnnotationsTreeBinding",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.table.sample.TreeTable.ODataAnnotationsTreeBinding.View",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.table": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"localService/mockdata/Nodes.json",
+					"localService/metadata.xml",
+					"localService/mockserver.js",
+					"Component.js",
+					"View.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -5,7 +5,6 @@
 		xmlns:layout="sap.ui.layout"
 		xmlns:m="sap.m"
 		xmlns:html="http://www.w3.org/1999/xhtml"
-
 		height="100%">
 
 			<ObjectPageLayout
@@ -17,7 +16,7 @@
 					upperCaseAnchorBar="false">
 
 				<headerTitle>
-					<ObjectPageHeader objectTitle="Change Log"/>
+					<ObjectPageHeader objectTitle="{i18n>RELEASE_NOTES_TITLE}"/>
 				</headerTitle>
 
 				<headerContent>
@@ -38,7 +37,13 @@
 					<ObjectPageSection title="{library}" titleUppercase="false">
 						<ObjectPageSubSection titleUppercase="false">
 							<layout:VerticalLayout content="{path: 'versions', templateShareable: false}" width="100%">
-								<m:Panel headerText="{version}" content="{path: 'notes', templateShareable: false}" expandable="true" expanded="true">
+								<m:Panel
+									headerText="{version}"
+									content="{path: 'notes', templateShareable: false}"
+									expandable="true"
+									expanded="true"
+									class="sapUxAPObjectPageSubSectionAlignContent"
+									width="auto">
 									<m:Text width="100%" text="[{type}] {text}"/>
 								</m:Panel>
 							</layout:VerticalLayout>

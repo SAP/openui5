@@ -37,6 +37,7 @@ html.sap-desktop .sapMSltIconOnly:not(.sapMSltExpanded):not(.sapMSltDisabled).sa
 	outline-color: @sapUiContentContrastFocusColor;
 }
 
+/* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):focus {
@@ -75,6 +76,10 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 .sapMSltState {
 	border-width: 2px;
+}
+
+div.sapMSltPicker .sapMSltPickerValueState {
+	box-shadow: inset 0 -0.0625rem @_sap_m_Dialog_HeaderShadowColor;
 }
 
 /* disabled */

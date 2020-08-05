@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.BusyDialog",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.BusyDialog.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"BusyDialog.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,24 +1,33 @@
 <mvc:View
 	id="mainView"
-	controllerName="webapp.controller.Main"
+	controllerName="appUnderTest.controller.Main"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-	<App>
-		<Page title="List Page">
-			<content>
-				<List
-					id="productList"
-					headerText="Product List"
-					items="{/ProductCollection}"
-					mode="MultiSelect"
-					includeItemInSelection="true">
-					<items>
-						<StandardListItem
-							title="{Name}"
-							description="{ProductId}"/>
-					</items>
-				</List>
-			</content>
-		</Page>
-	</App>
+	<Shell>
+		<App>
+			<Page title="List Page">
+				<content>
+					<Text text="{/ProductCollection/0/MainCategory}">
+					</Text>
+					<List
+						id="productList"
+						headerText="Product List"
+						items="{/ProductCollection}"
+						includeItemInSelection="true">
+						<items>
+							<CustomListItem>
+								<HBox>
+									<CheckBox selected="{= ${Status} === 'Available' }"/>
+									<VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" >
+										<Text text="{Name}"></Text>
+										<Label text="{ProductId}"/>
+									</VBox>
+								</HBox>
+							</CustomListItem>
+						</items>
+					</List>
+				</content>
+			</Page>
+		</App>
+	</Shell>
 </mvc:View>

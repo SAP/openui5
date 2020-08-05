@@ -1,0 +1,62 @@
+{
+  "@odata.context": "$metadata#SalesDenormalized(Date,ProductName,Amount)",
+  "@odata.metadataEtag": "W/\"YUSu2I9/FvD7c+fuUIYoe41AgnIMQ6G9rT1QvopTpNk=\"",
+  "value": [
+	{
+	  "@odata.id": null,
+	  "Date": "2012-01-03",
+	  "ProductName": "Coffee",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "8"
+	},
+	{
+	  "@odata.id": null,
+	  "Date": "2012-01-03",
+	  "ProductName": "Paper",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "1"
+	},
+	{
+	  "@odata.id": null,
+	  "Date": "2012-04-01",
+	  "ProductName": "Sugar",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "2"
+	},
+	{
+	  "@odata.id": null,
+	  "Date": "2012-04-10",
+	  "ProductName": "Sugar",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "2"
+	},
+	{
+	  "@odata.id": null,
+	  "Date": "2012-08-06",
+	  "ProductName": "Paper",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "1"
+	},
+	{
+	  "@odata.id": null,
+	  "Date": "2012-08-07",
+	  "ProductName": "Coffee",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "4"
+	},
+	{
+	  "@odata.id": null,
+	  "Date": "2012-11-09",
+	  "ProductName": "Paper",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "4"
+	},
+	{
+	  "@odata.id": null,
+	  "Date": "2012-11-22",
+	  "ProductName": "Paper",
+	  "Amount@odata.type": "#Decimal",
+	  "Amount": "2"
+	}
+  ]
+}

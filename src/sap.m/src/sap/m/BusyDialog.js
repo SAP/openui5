@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.BusyDialog.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIndicator', 'sap/m/Label', 'sap/m/Button'],
-	function (jQuery, library, Control, Dialog, BusyIndicator, Label, Button, Popup, Parameters) {
+sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIndicator', 'sap/m/Label', 'sap/m/Button', "sap/base/Log", 'sap/ui/core/Core'],
+	function (library, Control, Dialog, BusyIndicator, Label, Button, Log, Core) {
 		"use strict";
 
 		/**
@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 				},
 				events: {
 					/**
-					 * Fires when the busy dialog is closed.
+					 * Fires when the busy dialog is closed. Note: the BusyDialog will not be closed by the InstanceManager.closeAllDialogs method
 					 */
 					close: {
 						parameters: {
@@ -127,7 +127,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 			// requires a dummy render function to avoid loading of separate
 			// renderer file and in case of usage in control tree a render
 			// function has to be available to not crash the rendering
-			renderer: function(oRm, oControl) { /* just do nothing */ }
+			renderer: {
+				apiVersion: 2,
+				render: function(oRm, oControl) { /* just do nothing */ }
+			}
 
 		});
 
@@ -144,12 +147,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 				visible: true
 			});
 
-			function onOpen() {
-				if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-					this._$content.attr('role', 'application');
-				}
-			}
-
 			/**
 			 * Creates the dialog with its class.
 			 * @private
@@ -157,8 +154,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 			this._oDialog = new Dialog(this.getId() + '-Dialog', {
 				content: this._busyIndicator,
 				showHeader: false,
-				afterOpen: onOpen,
-				initialFocus: this._busyIndicator
+				afterClose: this._fnCloseHandler.bind(this),
+				initialFocus: this._busyIndicator.getId() + '-busyIndicator'
 			}).addStyleClass('sapMBusyDialog');
 
 
@@ -233,7 +230,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.open = function () {
-			jQuery.sap.log.debug("sap.m.BusyDialog.open called at " + new Date().getTime());
+			Log.debug("sap.m.BusyDialog.open called at " + new Date().getTime());
 
 			if (this.getAriaLabelledBy() && !this._oDialog._$dialog) {
 				var that = this;
@@ -243,7 +240,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 			}
 
 			//if the code is not ready yet (new sap.m.BusyDialog().open()) wait 50ms and then try ot open it.
-			if (!document.body || !sap.ui.getCore().isInitialized()) {
+			if (!document.body || !Core.isInitialized()) {
 				setTimeout(function() {
 					this.open();
 				}.bind(this), 50);
@@ -262,14 +259,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 		 * @returns {sap.m.BusyDialog} The modified BusyDialog.
 		 */
 		BusyDialog.prototype.close = function (isClosedFromUserInteraction) {
-			//fire the close event with 'cancelPressed' = true/false depending on how the busyDialog is closed
-			this.fireClose({cancelPressed: isClosedFromUserInteraction || false});
+			this._isClosedFromUserInteraction = isClosedFromUserInteraction;
 
 			// the instance "close" method is overridden,
 			// so call the prototype close method
 			Dialog.prototype.close.call(this._oDialog);
 
 			return this;
+		};
+
+		/**
+		 * Fire close of the BusyDialog only after the Dialog close is fired.
+		 *
+		 * @private
+		 */
+		BusyDialog.prototype._fnCloseHandler = function () {
+			//fire the close event with 'cancelPressed' = true/false depending on how the busyDialog is closed
+			this.fireClose({cancelPressed: this._isClosedFromUserInteraction || false});
 		};
 
 		/**
@@ -301,15 +307,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 		};
 
 		/**
-		 * Gets the tooltip for the BusyDialog.
+		 * Gets the tooltip of the BusyDialog.
 		 *
 		 * @public
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * @return {string|sap.ui.core.TooltipBase} The tooltip of the BusyDialog.
+		 * @override
 		 */
 		BusyDialog.prototype.getTooltip = function () {
-			this._oDialog.getTooltip();
-
-			return this;
+			return this._oDialog.getTooltip();
 		};
 
 		/**
@@ -458,7 +463,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 		["addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass"].forEach(function (sActionName) {
 			BusyDialog.prototype[sActionName] = function () {
 				if (this._oDialog && this._oDialog[sActionName]) {
-					return this._oDialog[sActionName].apply(this._oDialog, arguments);
+					this._oDialog[sActionName].apply(this._oDialog, arguments);
+
+					return this;
 				}
 			};
 		});
@@ -483,7 +490,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 		 */
 		BusyDialog.prototype._getCancelButton = function () {
 			var cancelButtonText = this.getCancelButtonText();
-			cancelButtonText = cancelButtonText ? cancelButtonText : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUSYDIALOG_CANCELBUTTON_TEXT");
+			cancelButtonText = cancelButtonText ? cancelButtonText : Core.getLibraryResourceBundle("sap.m").getText("BUSYDIALOG_CANCELBUTTON_TEXT");
 
 			return this._cancelButton ? this._cancelButton : this._cancelButton = new Button(this.getId() + 'busyCancelBtn', {
 				text: cancelButtonText,

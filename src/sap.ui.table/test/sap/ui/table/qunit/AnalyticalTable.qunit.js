@@ -1,23 +1,28 @@
-/*!
- * ${copyright}
- */
-sap.ui.require([
-	"sap/ui/table/TableUtils",
-	"sap/ui/qunit/QUnitUtils",
+
+sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/AnalyticalTable",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
 	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts",
-	"sap/ui/table/AnalyticalTable"
-], function (TableUtils, qutils, ODataModel, ODataModelV2, o4aFakeService, AnalyticalTable) {
+	"sap/ui/model/analytics/ODataModelAdapter",
+	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
+	"sap/ui/model/TreeAutoExpandMode",
+	"sap/ui/table/AnalyticalColumn",
+	"sap/ui/model/type/Float",
+	"sap/ui/table/Row",
+	"sap/ui/table/library",
+	"sap/ui/core/TooltipBase"
+], function(TableQUnitUtils, AnalyticalTable, TableUtils, ODataModel, ODataModelV2,
+			o4aFakeService, TBA_ServiceDocument, ATBA_Batch_Contexts, ODataModelAdapter, AnalyticalTreeBindingAdapter,
+			TreeAutoExpandMode, AnalyticalColumn, FloatType, Row, library, TooltipBase) {
 	/*global QUnit,sinon*/
 	"use strict";
 
 	// ************** Preparation Code **************
-
-	jQuery.sap.require("sap.ui.model.analytics.ODataModelAdapter");
-	jQuery.sap.require("sap.ui.model.analytics.AnalyticalTreeBindingAdapter");
 
 	//start the fake service
 	var sServiceURI = "http://o4aFakeService:8080/";
@@ -30,8 +35,8 @@ sap.ui.require([
 
 	function attachEventHandler(oControl, iSkipCalls, fnHandler, that) {
 		var iCalled = 0;
-		var fnEventHandler = function () {
-			var fnTest = function () {
+		var fnEventHandler = function() {
+			var fnTest = function() {
 				iCalled++;
 				if (iSkipCalls === iCalled) {
 					oControl.detachEvent("_rowsUpdated", fnEventHandler);
@@ -41,12 +46,16 @@ sap.ui.require([
 			Promise.resolve().then(fnTest.bind(this));
 		};
 
-		oControl.attachEvent("_rowsUpdated", fnEventHandler);
+		if (iSkipCalls === 0) {
+			oControl.attachEventOnce("_rowsUpdated", fnHandler, that);
+		} else {
+			oControl.attachEvent("_rowsUpdated", fnEventHandler);
+		}
 	}
 
 	function performTestAfterTableIsUpdated(doTest, done) {
-		this.oModel.metadataLoaded().then(function () {
-			attachEventHandler(this.oTable, 1, function () {
+		this.oModel.metadataLoaded().then(function() {
+			attachEventHandler(this.oTable, 0, function() {
 				doTest(this.oTable);
 				if (done) {
 					done();
@@ -58,20 +67,19 @@ sap.ui.require([
 
 
 	function createColumn(mSettings) {
-		return new sap.ui.table.AnalyticalColumn({
+		return new AnalyticalColumn({
 			grouped: mSettings.grouped || false,
 			summed: mSettings.summed || false,
 			visible: true,
-			template: new sap.m.Label({
+			template: new TableQUnitUtils.TestControl({
 				text: {
 					path: mSettings.name
-				},
-				textAlign: "End"
+				}
 			}),
 			sortProperty: mSettings.name,
 			filterProperty: mSettings.name,
-			filterType: mSettings.summed ? new sap.ui.model.type.Float() : undefined,
-			groupHeaderFormatter: function (value, value2) {
+			filterType: mSettings.summed ? new FloatType() : undefined,
+			groupHeaderFormatter: function(value, value2) {
 				return "|" + value + "-" + value2 + "|";
 			},
 			leadingProperty: mSettings.name,
@@ -103,7 +111,7 @@ sap.ui.require([
 			showColumnVisibilityMenu: true,
 			enableColumnFreeze: true,
 			enableCellFilter: true,
-			selectionMode: sap.ui.table.SelectionMode.MultiToggle
+			selectionMode: library.SelectionMode.MultiToggle
 		};
 
 		//maybe override some initial settings
@@ -111,7 +119,7 @@ sap.ui.require([
 			mParams[sKey] = mSettings[sKey];
 		}
 
-		var oTable = new sap.ui.table.AnalyticalTable("analytical_table0", mParams);
+		var oTable = new AnalyticalTable("analytical_table0", mParams);
 		oTable.setModel(this.oModel);
 		oTable.placeAt("qunit-fixture");
 
@@ -122,35 +130,29 @@ sap.ui.require([
 	//************** Test Code **************
 
 	QUnit.module("Properties & Functions", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("SelectionMode", function (assert) {
-		assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.MultiToggle, "SelectionMode.MultiToggle");
-		this.oTable.setSelectionMode(sap.ui.table.SelectionMode.Single);
-		assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.Single, "SelectionMode.Single");
-		this.oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
-		assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.MultiToggle, "SelectionMode.Multi defaulted to MultiToggle");
-		this.oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
-		assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.None, "SelectionMode.None");
+	QUnit.test("Selection Plugin", function(assert) {
+		assert.ok(this.oTable._getSelectionPlugin().isA("sap.ui.table.plugins.BindingSelection"), "BindingSelection plugin is initialized");
 	});
 
-	QUnit.test("SelectionBehavior", function (assert) {
-		assert.equal(this.oTable.getSelectionBehavior(), sap.ui.table.SelectionBehavior.RowSelector, "SelectionBehavior.RowSelector");
-		this.oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
-		assert.equal(this.oTable.getSelectionBehavior(), sap.ui.table.SelectionBehavior.Row, "SelectionBehavior.Row");
-		this.oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
-		assert.equal(this.oTable.getSelectionBehavior(), sap.ui.table.SelectionBehavior.RowOnly, "SelectionBehavior.RowOnly");
+	QUnit.test("SelectionBehavior", function(assert) {
+		assert.equal(this.oTable.getSelectionBehavior(), library.SelectionBehavior.RowSelector, "SelectionBehavior.RowSelector");
+		this.oTable.setSelectionBehavior(library.SelectionBehavior.Row);
+		assert.equal(this.oTable.getSelectionBehavior(), library.SelectionBehavior.Row, "SelectionBehavior.Row");
+		this.oTable.setSelectionBehavior(library.SelectionBehavior.RowOnly);
+		assert.equal(this.oTable.getSelectionBehavior(), library.SelectionBehavior.RowOnly, "SelectionBehavior.RowOnly");
 	});
 
-	QUnit.test("Dirty", function (assert) {
+	QUnit.test("Dirty", function(assert) {
 		assert.equal(this.oTable.getDirty(), false, "Default dirty");
 		assert.equal(this.oTable.getShowOverlay(), false, "Default showOverlay");
 		this.oTable.setDirty(true);
@@ -158,13 +160,13 @@ sap.ui.require([
 		assert.equal(this.oTable.getShowOverlay(), true, "ShowOverlay set");
 	});
 
-	QUnit.test("FixedRowCount", function (assert) {
+	QUnit.test("FixedRowCount", function(assert) {
 		assert.equal(this.oTable.getFixedRowCount(), 0, "Default fixedRowCount");
 		this.oTable.setFixedRowCount(5);
 		assert.equal(this.oTable.getFixedRowCount(), 0, "FixedRowCount cannot be changed");
 	});
 
-	QUnit.test("FixedBottomRowCount", function (assert) {
+	QUnit.test("FixedBottomRowCount", function(assert) {
 		var done = assert.async();
 
 		function doTest(oTable) {
@@ -176,19 +178,19 @@ sap.ui.require([
 		performTestAfterTableIsUpdated.call(this, doTest, done);
 	});
 
-	QUnit.test("EnableGrouping", function (assert) {
+	QUnit.test("EnableGrouping", function(assert) {
 		assert.equal(this.oTable.getEnableGrouping(), false, "Default enableGrouping");
 		this.oTable.setEnableGrouping(true);
 		assert.equal(this.oTable.getEnableGrouping(), false, "EnableGrouping cannot be changed");
 	});
 
-	QUnit.test("getTotalSize", function (assert) {
+	QUnit.test("getTotalSize", function(assert) {
 		assert.expect(3);
 		var done = assert.async();
 
 		function doTest(oTable) {
 			var oBinding = oTable.getBinding("rows");
-			oBinding.getTotalSize = function () {
+			oBinding.getTotalSize = function() {
 				assert.ok(true, "getTotalSize on Binding called");
 				return 5;
 			};
@@ -201,14 +203,14 @@ sap.ui.require([
 		performTestAfterTableIsUpdated.call(this, doTest);
 	});
 
-	QUnit.test("CollapseRecursive", function (assert) {
+	QUnit.test("CollapseRecursive", function(assert) {
 		assert.expect(7);
 		var done = assert.async();
 
 		function doTest(oTable) {
 			var oBinding = oTable.getBinding("rows");
 			var bCollapseRecursive = false;
-			oBinding.setCollapseRecursive = function (bParam) {
+			oBinding.setCollapseRecursive = function(bParam) {
 				assert.equal(bParam, bCollapseRecursive, "setCollapseRecursive on Binding called");
 			};
 
@@ -227,34 +229,14 @@ sap.ui.require([
 		performTestAfterTableIsUpdated.call(this, doTest);
 	});
 
-	QUnit.test("_isRowSelectable", function (assert) {
-		assert.expect(5);
-		var done = assert.async();
-
-		function doTest(oTable) {
-			var oBinding = oTable.getBinding("rows");
-			oBinding.isIndexSelectable = function (iRowIndex) {
-				assert.ok(true, "isIndexSelectable on Binding called");
-				return iRowIndex === 5;
-			};
-			assert.equal(oTable._isRowSelectable(5), true, "Result of Binding");
-			assert.equal(oTable._isRowSelectable(4), false, "Result of Binding");
-			oTable.unbindRows();
-			assert.equal(oTable._isRowSelectable(5), false, "No Binding");
-			done();
-		}
-
-		performTestAfterTableIsUpdated.call(this, doTest);
-	});
-
-	QUnit.test("collapseAll", function (assert) {
+	QUnit.test("collapseAll", function(assert) {
 		assert.expect(6);
 		var done = assert.async();
 
 		function doTest(oTable) {
 			oTable.setFirstVisibleRow(2);
 			var oBinding = oTable.getBinding("rows");
-			oBinding.collapseToLevel = function (iLevel) {
+			oBinding.collapseToLevel = function(iLevel) {
 				assert.ok(true, "collapseToLevel on Binding called ...");
 				assert.equal(iLevel, 0, "... with level 0");
 			};
@@ -270,15 +252,39 @@ sap.ui.require([
 		performTestAfterTableIsUpdated.call(this, doTest);
 	});
 
-	QUnit.test("BindRows", function (assert) {
-		var spy = this.spy(sap.ui.table.AnalyticalTable.prototype, "bindRows");
-		var oTable = new sap.ui.table.AnalyticalTable({
+	QUnit.test("expandAll", function(assert) {
+		assert.expect(5);
+		var done = assert.async();
+
+		function doTest(oTable) {
+			var oBinding = oTable.getBinding("rows");
+			var oExpandLevelSpy = sinon.spy(oBinding, "expandToLevel");
+			var oClearSelectionSpy = sinon.spy(oTable._getSelectionPlugin(), "clearSelection");
+
+			oTable.setFirstVisibleRow(2);
+			assert.ok(oTable.expandAll() === oTable, "ExpandAll returns a reference to the table");
+			assert.ok(oExpandLevelSpy.calledOnce, "expandToLevel on Binding called once");
+			assert.ok(oExpandLevelSpy.calledWith(3), "called with the correct parameter value");
+			assert.ok(oClearSelectionSpy.calledOnce, "clearSelection called once");
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row");
+			oTable.unbindRows();
+			done();
+		}
+
+		performTestAfterTableIsUpdated.call(this, doTest);
+	});
+
+	QUnit.test("BindRows", function(assert) {
+		var oInnerBindRows = this.spy(AnalyticalTable.prototype, "_bindRows");
+		var oTable = new AnalyticalTable({
 			rows: {path: "/modelData"},
-			columns: [new sap.ui.table.AnalyticalColumn()]
+			columns: [new AnalyticalColumn()]
 		});
 
-		assert.ok(spy.calledOnce, "bindRows was called");
+		assert.ok(oInnerBindRows.calledOnce, "bindRows was called");
 		assert.ok(!!oTable.getBindingInfo("rows"), "BindingInfo available");
+
+		oInnerBindRows.restore();
 	});
 
 	QUnit.test("BindRows - Update columns", function(assert) {
@@ -287,8 +293,8 @@ sap.ui.require([
 
 		function testRun(mTestSettings) {
 			return new Promise(function(resolve) {
-				var oTable = new sap.ui.table.AnalyticalTable({
-					columns: [new sap.ui.table.AnalyticalColumn()]
+				var oTable = new AnalyticalTable({
+					columns: [new AnalyticalColumn()]
 				});
 
 				if (mTestSettings.renderTable) {
@@ -420,59 +426,49 @@ sap.ui.require([
 	});
 
 	QUnit.module("GroupHeaderMenu", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("Menu", function (assert) {
+	QUnit.test("Mobile", function(assert) {
 		var done = assert.async();
 
+		var oShowGroupMenuButton = sinon.stub(TableUtils.Grouping, "showGroupMenuButton");
+		oShowGroupMenuButton.returns(true);
+		this.oTable.invalidate();
+		sap.ui.getCore().applyChanges();
+
 		function doTest(oTable) {
-			/*eslint-disable new-cap */
-			var oEvent = jQuery.Event({type: "contextmenu"});
-			/*eslint-enable new-cap */
-			oEvent.target = oTable.getDomRef("rows-row0-col4");
-			oTable._onContextMenu(oEvent);
-			assert.ok(oTable._getGroupHeaderMenu().bOpen, "Menu is open");
+			oTable.$().find(".sapUiTableGroupMenuButton").trigger("click");
+			assert.ok(oTable._oCellContextMenu.bOpen, "Menu is open");
+			oShowGroupMenuButton.restore();
 			done();
 		}
 
 		performTestAfterTableIsUpdated.call(this, doTest);
 	});
 
-	QUnit.test("Localization", function (assert) {
+	QUnit.test("Localization", function(assert) {
 		var done = assert.async();
 
 		function doTest(oTable) {
-			assert.ok(!oTable._oGroupHeaderMenu, "Group header menu does not exist");
-			assert.ok(!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item does not exist");
-			assert.ok(!oTable._oGroupHeaderMoveUpItem, "Group header menu up item does not exist");
-			assert.ok(!oTable._oGroupHeaderMoveDownItem, "Group header menu down item does not exist");
+			assert.strictEqual(oTable._mGroupHeaderMenuItems, null, "Group header menu items do not exist");
 
-			oTable._getGroupHeaderMenu();
-			assert.ok(!!oTable._oGroupHeaderMenu, "Group header menu exists");
-			assert.ok(!!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item exists");
-			assert.ok(!!oTable._oGroupHeaderMoveUpItem, "Group header menu up item exists");
-			assert.ok(!!oTable._oGroupHeaderMoveDownItem, "Group header menu down item exists");
+			TableUtils.Menu.openContextMenu(oTable, oTable.getRows()[0].getCells()[4].getDomRef());
+			assert.notEqual(oTable._mGroupHeaderMenuItems, null, "Group header menu items exist");
 
 			oTable._adaptLocalization(true, false).then(function() {
-				assert.ok(!!oTable._oGroupHeaderMenu, "Group header menu exists");
-				assert.ok(!!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item exists");
-				assert.ok(!!oTable._oGroupHeaderMoveUpItem, "Group header menu up item exists");
-				assert.ok(!!oTable._oGroupHeaderMoveDownItem, "Group header menu down item exists");
+				assert.notEqual(oTable._mGroupHeaderMenuItems, null, "Group header menu items exist");
 			}).then(function() {
 				return oTable._adaptLocalization(false, true);
 			}).then(function() {
-				assert.ok(!oTable._oGroupHeaderMenu, "Group header menu does not exist");
-				assert.ok(!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item does not exist");
-				assert.ok(!oTable._oGroupHeaderMoveUpItem, "Group header menu up item does not exist");
-				assert.ok(!oTable._oGroupHeaderMoveDownItem, "Group header menu down item does not exist");
+				assert.strictEqual(oTable._mGroupHeaderMenuItems, null, "Group header menu items do not exist");
 				done();
 			});
 		}
@@ -482,20 +478,20 @@ sap.ui.require([
 
 
 	QUnit.module("AnalyticalTable with ODataModel v2", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("getAnalyticalInfoOfRow", function (assert) {
+	QUnit.test("getAnalyticalInfoOfRow", function(assert) {
 		var done = assert.async();
-		this.oModel.metadataLoaded().then(function () {
+		this.oModel.metadataLoaded().then(function() {
 			this.oTable = createTable.call(this);
 
-			var fnHandler1 = function () {
+			var fnHandler1 = function() {
 				var oInfo = this.oTable.getAnalyticalInfoOfRow(this.oTable.getRows()[0]);
 				assert.equal(oInfo.grandTotal, false, "Group: grandTotal flag");
 				assert.equal(oInfo.group, true, "Group: group flag");
@@ -516,14 +512,14 @@ sap.ui.require([
 				oInfo = this.oTable.getAnalyticalInfoOfRow(this.oTable.getRows()[10]);
 				assert.ok(!oInfo, "Row has no context");
 
-				oInfo = this.oTable.getAnalyticalInfoOfRow(new sap.ui.table.Row());
+				oInfo = this.oTable.getAnalyticalInfoOfRow(new Row());
 				assert.ok(!oInfo, "Row does not belong to the table");
 
 				attachEventHandler(this.oTable, 1, fnHandler2, this);
 				this.oTable.expand(0);
 			};
 
-			var fnHandler2 = function () {
+			var fnHandler2 = function() {
 				var oInfo = this.oTable.getAnalyticalInfoOfRow(this.oTable.getRows()[13]);
 				assert.equal(oInfo.grandTotal, false, "GroupTotal: grandTotal flag");
 				assert.equal(oInfo.group, false, "GroupTotal: group flag");
@@ -540,30 +536,29 @@ sap.ui.require([
 				done();
 			};
 
-			attachEventHandler(this.oTable, 1, fnHandler1, this);
+			attachEventHandler(this.oTable, 0, fnHandler1, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
 		}.bind(this));
 	});
 
-	QUnit.test("TreeAutoExpandMode", function (assert) {
+	QUnit.test("TreeAutoExpandMode", function(assert) {
 		var done = assert.async();
-		jQuery.sap.require("sap.ui.model.TreeAutoExpandMode");
-		var oExpandMode = sap.ui.model.TreeAutoExpandMode;
+		var oExpandMode = TreeAutoExpandMode;
 
 		function checkMode(mode, text) {
 			assert.equal(mode.Bundled, "Bundled", text + " - Mode Bundled");
 			assert.equal(mode.Sequential, "Sequential", text + " - Mode Sequential");
 		}
 
-		sap.ui.require(["sap/ui/table/TreeAutoExpandMode"], function (oMode) {
+		sap.ui.require(["sap/ui/table/TreeAutoExpandMode"], function(oMode) {
 			checkMode(oMode, "Module sap/ui/table/TreeAutoExpandMode");
 			assert.ok(sap.ui.table.TreeAutoExpandMode === oMode, "Namespace sap.ui.table.TreeAutoExpandMode");
 			assert.ok(sap.ui.table.TreeAutoExpandMode === oExpandMode, "sap.ui.table.TreeAutoExpandMode === sap.ui.model.TreeAutoExpandMode");
 			done();
 		});
 
-		this.oTable = new sap.ui.table.AnalyticalTable();
+		this.oTable = new AnalyticalTable();
 		var oBindingInfo = {};
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Default");
@@ -588,8 +583,8 @@ sap.ui.require([
 		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Wrong");
 	});
 
-	QUnit.test("SumOnTop", function (assert) {
-		this.oTable = new sap.ui.table.AnalyticalTable();
+	QUnit.test("SumOnTop", function(assert) {
+		this.oTable = new AnalyticalTable();
 		var oBindingInfo = {};
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.sumOnTop, false, "Property SumOnTop - Default");
@@ -604,8 +599,8 @@ sap.ui.require([
 		assert.equal(oBindingInfo.parameters.sumOnTop, true, "Property SumOnTop - Custom");
 	});
 
-	QUnit.test("NumberOfExpandedLevels", function (assert) {
-		this.oTable = new sap.ui.table.AnalyticalTable();
+	QUnit.test("NumberOfExpandedLevels", function(assert) {
+		this.oTable = new AnalyticalTable();
 		var oBindingInfo = {};
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels - Default");
@@ -633,15 +628,15 @@ sap.ui.require([
 		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels (no grouped columns) - Custom");
 	});
 
-	QUnit.test("Simple expand/collapse", function (assert) {
+	QUnit.test("Simple expand/collapse", function(assert) {
 		var done = assert.async();
-		this.oModel.metadataLoaded().then(function () {
+		this.oModel.metadataLoaded().then(function() {
 			this.oTable = createTable.call(this);
 
-			var fnHandler1 = function () {
+			var fnHandler1 = function() {
 				var oBinding = this.oTable.getBinding("rows");
 
-				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels should be disabled (=0)");
+				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "NumberOfExpandedLevels is 0");
 
 				var oContext = this.oTable.getContextByIndex(0);
 				assert.equal(oContext.getProperty("ActualCosts"), "1588416", "First row data is correct");
@@ -656,7 +651,7 @@ sap.ui.require([
 				this.oTable.expand(0);
 			};
 
-			var fnHandler2 = function () {
+			var fnHandler2 = function() {
 				assert.ok(this.oTable.isExpanded(0), "First row is now expanded");
 				var oContext = this.oTable.getContextByIndex(0);
 				var oSumContext = this.oTable.getContextByIndex(13);
@@ -667,18 +662,18 @@ sap.ui.require([
 				done();
 			};
 
-			attachEventHandler(this.oTable, 1, fnHandler1, this);
+			attachEventHandler(this.oTable, 0, fnHandler1, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
 		}.bind(this));
 	});
 
-	QUnit.test("ProvideGrandTotals = false: No Sum row available", function (assert) {
+	QUnit.test("ProvideGrandTotals = false: No Sum row available", function(assert) {
 		var done = assert.async();
-		this.oModel.metadataLoaded().then(function () {
+		this.oModel.metadataLoaded().then(function() {
 			this.oTable = createTable.call(this);
 
-			var fnHandler1 = function () {
+			var fnHandler1 = function() {
 				var oContext = this.oTable.getContextByIndex(0);
 				assert.equal(oContext.getProperty("ActualCosts"), "1588416", "First row data is correct");
 
@@ -693,7 +688,7 @@ sap.ui.require([
 				this.oTable.expand(0);
 			};
 
-			var fnHandler2 = function () {
+			var fnHandler2 = function() {
 				assert.ok(this.oTable.isExpanded(0), "First row is now expanded");
 
 				var oContext = this.oTable.getContextByIndex(0);
@@ -706,7 +701,7 @@ sap.ui.require([
 				done();
 			};
 
-			attachEventHandler(this.oTable, 1, fnHandler1, this);
+			attachEventHandler(this.oTable, 0, fnHandler1, this);
 			this.oTable.bindRows({
 				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
 				parameters: {
@@ -719,28 +714,36 @@ sap.ui.require([
 
 
 	QUnit.module("AnalyticalColumn", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("getTooltip_AsString", function (assert) {
+	QUnit.test("getTooltip_AsString / getTooltip_Text", function(assert) {
 		var done = assert.async();
-		this.oModel.metadataLoaded().then(function () {
+		this.oModel.metadataLoaded().then(function() {
 			this.oTable = createTable.call(this);
 
-			var fnHandler = function () {
+			var fnHandler = function() {
 				var oColumn = this.oTable.getColumns()[1];
-				assert.equal(oColumn.getTooltip_AsString(), "Cost Center", "Default Tooltip");
+				assert.equal(oColumn.getTooltip_AsString(), "Cost Center", "getTooltip_AsString: Default Tooltip");
+				assert.equal(oColumn.getTooltip_Text(), "Cost Center", "getTooltip_Text: Default Tooltip");
 				oColumn.setTooltip("Some other tooltip");
-				assert.equal(oColumn.getTooltip_AsString(), "Some other tooltip", "Custom Tooltip");
+				assert.equal(oColumn.getTooltip_AsString(), "Some other tooltip", "getTooltip_AsString: Custom String Tooltip");
+				assert.equal(oColumn.getTooltip_Text(), "Some other tooltip", "getTooltip_Text: Custom String Tooltip");
+				oColumn.setTooltip(new TooltipBase());
+				assert.ok(!oColumn.getTooltip_AsString(), "getTooltip_AsString: Custom Object Tooltip without text");
+				assert.equal(oColumn.getTooltip_Text(), "Cost Center", "getTooltip_Text: Custom Object Tooltip without text");
+				oColumn.getTooltip().setText("Again some other tooltip");
+				assert.ok(!oColumn.getTooltip_AsString(), "getTooltip_AsString: Custom Object Tooltip with text");
+				assert.equal(oColumn.getTooltip_Text(), "Again some other tooltip", "getTooltip_Text: Custom Object Tooltip with text");
 				done();
 			};
 
-			attachEventHandler(this.oTable, 1, fnHandler, this);
+			attachEventHandler(this.oTable, 0, fnHandler, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
 		}.bind(this));
@@ -748,15 +751,15 @@ sap.ui.require([
 
 
 	QUnit.module("AnalyticalColumn - Column Menu", {
-		beforeEach: function () {
-			this._oTable = new sap.ui.table.AnalyticalTable();
+		beforeEach: function() {
+			this._oTable = new AnalyticalTable();
 
-			this._oTable.removeColumn = function (oColumn) {
+			this._oTable.removeColumn = function(oColumn) {
 				return this.removeAggregation('columns', oColumn);
 			};
 
 			// no real binding is required here. Instead mock a binding object
-			this._oTable.getBinding = function () {
+			sinon.stub(this._oTable, "getBinding", function() {
 				var oBinding = {};
 				var aProperties = [
 					{name: "m1", type: "measure", filterable: false},
@@ -765,7 +768,7 @@ sap.ui.require([
 					{name: "d2_filterable", type: "dimension", filterable: true}
 				];
 
-				oBinding.isMeasure = function (sPropertyName) {
+				oBinding.isMeasure = function(sPropertyName) {
 					for (var i = 0; i < aProperties.length; i++) {
 						if (aProperties[i].name === sPropertyName && aProperties[i].type === "measure") {
 							return true;
@@ -774,7 +777,7 @@ sap.ui.require([
 					return false;
 				};
 
-				oBinding.getProperty = function (sPropertyName) {
+				oBinding.getProperty = function(sPropertyName) {
 					for (var i = 0; i < aProperties.length; i++) {
 						if (aProperties[i].name === sPropertyName) {
 							return aProperties[i];
@@ -782,7 +785,7 @@ sap.ui.require([
 					}
 				};
 
-				oBinding.getFilterablePropertyNames = function () {
+				oBinding.getFilterablePropertyNames = function() {
 					var aPropertyNames = [];
 					for (var i = 0; i < aProperties.length; i++) {
 						if (aProperties[i].filterable === true) {
@@ -793,16 +796,17 @@ sap.ui.require([
 				};
 
 				return oBinding;
-			};
-			this._oColumn = new sap.ui.table.AnalyticalColumn();
+			});
+			this._oColumn = new AnalyticalColumn();
 		},
-		afterEach: function () {
+		afterEach: function() {
+			this._oTable.getBinding.restore();
 			this._oColumn.destroy();
 			this._oTable.destroy();
 		}
 	});
 
-	QUnit.test("Pre-Check Menu Item Creation without Parent", function (assert) {
+	QUnit.test("Pre-Check Menu Item Creation without Parent", function(assert) {
 
 		//######################################################################################################
 		// Filter menu item
@@ -865,7 +869,7 @@ sap.ui.require([
 	});
 
 
-	QUnit.test("Pre-Check Menu Item Creation with Parent", function (assert) {
+	QUnit.test("Pre-Check Menu Item Creation with Parent", function(assert) {
 
 		//######################################################################################################
 		// Filter menu item
@@ -930,9 +934,9 @@ sap.ui.require([
 			"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
 	});
 
-	QUnit.test("Menu Creation", function (assert) {
+	QUnit.test("Menu Creation", function(assert) {
 		var oMenu = this._oColumn._createMenu();
-		assert.ok(oMenu instanceof sap.ui.table.AnalyticalColumnMenu, "Menu available");
+		assert.ok(oMenu.isA("sap.ui.table.AnalyticalColumnMenu"), "Menu available");
 		assert.equal(oMenu.getId(), this._oColumn.getId() + "-menu", "Menu Id");
 	});
 });

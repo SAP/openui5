@@ -4,8 +4,8 @@
 /**
  * Defines support rules for the FileUploader control of sap.ui.unified library.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
-	function(jQuery, SupportLib) {
+sap.ui.define(["sap/ui/support/library"],
+	function(SupportLib) {
 	"use strict";
 
 	// shortcuts
@@ -73,7 +73,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		check: function (oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName("sap.ui.unified.FileUploader")
 				.forEach(function(oElement) {
-					if (oElement.getParameters()
+					if (oElement.getParameters().length
+						&& !oElement.getHeaderParameters().length
 						&& oElement.getSendXHR()) {
 
 						var sElementId = oElement.getId(),
@@ -110,7 +111,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		check: function (oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName("sap.ui.unified.FileUploader")
 				.forEach(function(oElement) {
-					if (oElement.getHeaderParameters()
+					if (oElement.getHeaderParameters().length
+						&& !oElement.getParameters().length
 						&& !oElement.getSendXHR()) {
 
 						var sElementId = oElement.getId(),

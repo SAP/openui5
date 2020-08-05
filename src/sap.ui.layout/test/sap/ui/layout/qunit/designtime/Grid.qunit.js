@@ -1,15 +1,20 @@
-(function () {
+sap.ui.define([
+	"sap/ui/layout/Grid",
+	"sap/m/Text",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+],
+function (
+	Grid,
+	Text,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/ui/layout/Grid",
-		"sap/m/Text",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, Grid, Text, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.ui.layout.Grid",
 			create: function () {
 				return new Grid({
@@ -19,12 +24,8 @@
 				});
 			}
 		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function() {
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("text1").getId(),
@@ -37,7 +38,7 @@
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for Grid control", {
+		elementActionTest("Checking the move action for Grid control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 				'<l:Grid id="myGrid">' +
 					'<m:Text text="Text 1" id="text1" />' +
@@ -81,7 +82,7 @@
 			assert.strictEqual(oViewAfterAction.byId("myGrid").getVisible(), true, "then the Grid element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for Grid", {
+		elementActionTest("Checking the remove action for Grid", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">"' +
 				'<l:Grid id="myGrid">' +
 					'<m:Text text="Text 1" id="text1" />' +
@@ -97,7 +98,7 @@
 			afterRedo: fnConfirmGridIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a Grid", {
+		elementActionTest("Checking the reveal action for a Grid", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">"' +
 				'<l:Grid id="myGrid" visible="false">' +
 					'<m:Text text="Text 1" id="text1" />' +
@@ -113,4 +114,4 @@
 			afterRedo: fnConfirmGridIsVisible
 		});
 	});
-})();
+});

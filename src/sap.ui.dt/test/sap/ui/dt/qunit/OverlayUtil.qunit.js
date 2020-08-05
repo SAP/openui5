@@ -1,51 +1,39 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
-	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/dt/DesignTimeMetadata",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/m/VBox",
 	"sap/m/Button",
-	"sap/m/List",
-	"sap/m/CustomListItem",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
+	jQuery,
 	ElementOverlay,
 	OverlayRegistry,
 	OverlayUtil,
-	ElementUtil,
 	DesignTime,
 	VerticalLayout,
-	DesignTimeMetadata,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
 	VBox,
 	Button,
-	List,
-	CustomListItem,
-	JSONModel,
 	sinon
 ) {
-	'use strict';
-	QUnit.start();
+	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that an Overlay is created for a control", {
 		beforeEach : function(assert) {
-
 			//	Layout2
 			//		Layout1
 			//			Layout0
@@ -90,7 +78,7 @@ function(
 				]
 			});
 			this.oLayout2.placeAt("qunit-fixture");
-
+			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout2]
@@ -138,6 +126,8 @@ function(
 
 			oNextOverlay = OverlayUtil.getNextOverlay(this.oButtonOverlay31);
 			assert.strictEqual(oNextOverlay, undefined, "oButtonOverlay31 -> undefined");
+			// call getNextOverlay without an Overlay
+			assert.strictEqual(OverlayUtil.getNextOverlay(), undefined, "() -> undefined");
 		});
 
 		QUnit.test("when Overlays are created and the getPreviousOverlay function is called", function(assert) {
@@ -158,6 +148,8 @@ function(
 
 			oPreviousOverlay = OverlayUtil.getPreviousOverlay(this.oLayoutOverlay2);
 			assert.strictEqual(oPreviousOverlay, undefined, "oLayoutOverlay2 -> undefined");
+			// call getPreviousOverlay without an Overlay
+			assert.strictEqual(OverlayUtil.getPreviousOverlay(), undefined, "() -> undefined");
 		});
 
 		QUnit.test("when Overlays are created and the getAllChildOverlays function is called", function(assert) {
@@ -233,9 +225,34 @@ function(
 				"and function-parameter is 'undefined' -> throws error");
 		});
 
-		QUnit.test("when Overlays are created and the getRootOverlay function is called", function(assert) {
-			var oRootOverlay = OverlayUtil.getRootOverlay(this.oButtonOverlay02);
-			assert.strictEqual(oRootOverlay, this.oLayoutOverlay2, "with the second button overlay, then the layout root overlay is returned");
+		QUnit.test("when Overlays are created and the getLastDescendantByCondition function is called", function(assert) {
+			var aSelectableOverlays = [
+				this.oButtonOverlay01,
+				this.oButtonOverlay02,
+				this.oButtonOverlay21
+			];
+			var fnCondition = function(oOverlay) {
+				return aSelectableOverlays.indexOf(oOverlay) >= 0;
+			};
+
+			var oChildOverlay = OverlayUtil.getLastDescendantByCondition(this.oLayoutOverlay0, fnCondition);
+			assert.strictEqual(oChildOverlay, this.oButtonOverlay02, "oLayoutOverlay0 -> oButtonOverlay02 is the last overlay which fulfill the condition");
+
+			oChildOverlay = OverlayUtil.getLastDescendantByCondition(this.oLayoutOverlay2, fnCondition);
+			assert.strictEqual(oChildOverlay, this.oButtonOverlay21, "oLayoutOverlay2 -> oButtonOverlay21 is the last overlay which fulfill the condition");
+
+			oChildOverlay = OverlayUtil.getLastDescendantByCondition(this.oButtonOverlay01, fnCondition);
+			assert.strictEqual(oChildOverlay, undefined, "oButtonOverlay01 has no children and returns 'undefined'");
+
+			oChildOverlay = OverlayUtil.getLastDescendantByCondition(this.oLayoutOverlay3, fnCondition);
+			assert.strictEqual(oChildOverlay, undefined, "oLayoutOverlay3 children do not fulfill the condition and returns 'undefined'");
+
+			oChildOverlay = OverlayUtil.getLastDescendantByCondition(undefined, fnCondition);
+			assert.strictEqual(oChildOverlay, undefined, "and overlay-parameter is 'undefined' -> returns 'undefined'");
+
+			assert.throws(function() { OverlayUtil.getLastDescendantByCondition(this.oLayoutOverlay0); },
+				/expected condition is 'undefined' or not a function/,
+				"and function-parameter is 'undefined' -> throws error");
 		});
 
 		QUnit.test("when getParentInformation is requested for a control with a parent ", function(assert) {
@@ -262,9 +279,15 @@ function(
 		});
 
 		QUnit.test("when findAllOverlaysInContainer is called", function(assert) {
-			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay01, this.oLayoutOverlay0).length, 3, "then it returns the correct overlays ");
-			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oLayoutOverlay0, this.oLayoutOverlay1).length, 2, "then it returns the correct overlays ");
-			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oLayoutOverlay1, this.oLayoutOverlay2).length, 4, "then it returns the correct overlays");
+			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay01).length, 3, "then it returns the correct overlays");
+			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oLayoutOverlay0).length, 2, "then it returns the correct overlays");
+			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oLayoutOverlay1).length, 4, "then it returns the correct overlays");
+		});
+
+		// This is the case in VisualEditor
+		QUnit.test("when findAllOverlaysInContainer is called and the relevant container overlay was destroyed", function(assert) {
+			this.oLayoutOverlay0.destroy();
+			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay01).length, 0, "then it returns an empty array");
 		});
 	});
 
@@ -345,7 +368,9 @@ function(
 				this.oSubSectionOverlay1 = OverlayRegistry.getOverlay(this.oSubSection1);
 				this.oSubSectionOverlay2 = OverlayRegistry.getOverlay(this.oSubSection2);
 				this.oButtonOverlay0 = OverlayRegistry.getOverlay(this.oButton0);
+				this.oButtonOverlay1 = OverlayRegistry.getOverlay(this.oButton1);
 				this.oButtonOverlay2 = OverlayRegistry.getOverlay(this.oButton2);
+				this.oButtonOverlay3 = OverlayRegistry.getOverlay(this.oButton3);
 				this.oButtonOverlay4 = OverlayRegistry.getOverlay(this.oButton4);
 				this.oButtonOverlay6 = OverlayRegistry.getOverlay(this.oButton6);
 				this.oButtonOverlay7 = OverlayRegistry.getOverlay(this.oButton7);
@@ -359,9 +384,8 @@ function(
 
 				fnDone();
 			}.bind(this));
-
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.oVBox0.destroy();
 			this.oDesignTime.destroy();
@@ -390,8 +414,7 @@ function(
 			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay8).length, 1, "then the overlay without DT Metadata is not returned");
 		});
 
-
-		QUnit.test("when findAllSiblingOverlaysInContainer is called", function(assert){
+		QUnit.test("when findAllSiblingOverlaysInContainer is called", function(assert) {
 			assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oVBoxOverlay0, this.oVBoxOverlay0).length, 0, "then it returns no overlays");
 
 			assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oLayoutOverlay0, this.oVBoxOverlay0).length, 1, "then it returns the correct overlays");
@@ -411,7 +434,7 @@ function(
 			assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay8, this.oSubSectionOverlay1).length, 1, "then it returns the correct overlays");
 		});
 
-		QUnit.test("when findAllUniqueAggregationOverlaysInContainer is called", function(assert){
+		QUnit.test("when findAllUniqueAggregationOverlaysInContainer is called", function(assert) {
 			assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oVBoxOverlay0, this.oVBoxOverlay0).length, 0, "then it returns no overlays");
 
 			assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oLayoutOverlay0, this.oVBoxOverlay0).length, 1, "then it returns the correct overlays");
@@ -427,70 +450,110 @@ function(
 			assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oButtonOverlay6, this.oSubSectionOverlay2).length, 1, "then it returns the correct overlays");
 			assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oButtonOverlay8, this.oSubSectionOverlay1).length, 1, "then it returns the correct overlays");
 		});
+
+		QUnit.test("when isInTargetZoneAggregation is called", function(assert) {
+			assert.equal(OverlayUtil.isInTargetZoneAggregation(this.oButtonOverlay0), false, "then it returns false if Targetzone is false");
+			this.oButtonOverlay0.getParent().setTargetZone(true);
+			assert.equal(OverlayUtil.isInTargetZoneAggregation(this.oButtonOverlay0), true, "then it returns true if Targetzone is true");
+			assert.equal(OverlayUtil.isInTargetZoneAggregation(this.oVBoxOverlay0), false, "then it returns false if Element has no Parentaggregation");
+		});
+
+		QUnit.test("when getNextSiblingOverlay function is called", function(assert) {
+			var oNextSiblingOverlay = OverlayUtil.getNextSiblingOverlay(this.oVBoxOverlay0);
+			assert.strictEqual(oNextSiblingOverlay, undefined, "oVBoxOverlay0 -> undefined");
+
+			oNextSiblingOverlay = OverlayUtil.getNextSiblingOverlay(this.oSectionOverlay0);
+			assert.strictEqual(oNextSiblingOverlay, this.oSectionOverlay1, "oSectionOverlay0 ->oSectionOverlay1");
+
+			oNextSiblingOverlay = OverlayUtil.getNextSiblingOverlay(this.oButtonOverlay3);
+			assert.strictEqual(oNextSiblingOverlay, this.oButtonOverlay8, "oButtonOverlay3 -> oButtonOverlay8");
+
+			// call getNextSiblingOverlay without an Overlay
+			assert.strictEqual(OverlayUtil.getNextSiblingOverlay(), undefined, "() -> undefined");
+		});
+
+		QUnit.test("when getPreviousSiblingOverlay function is called", function(assert) {
+			var oPreviousSiblingOverlay = OverlayUtil.getPreviousSiblingOverlay(this.oVBoxOverlay0);
+			assert.strictEqual(oPreviousSiblingOverlay, undefined, "oVBoxOverlay0 -> undefined");
+
+			oPreviousSiblingOverlay = OverlayUtil.getPreviousSiblingOverlay(this.oButtonOverlay1);
+			assert.strictEqual(oPreviousSiblingOverlay, this.oButtonOverlay0, "oButtonOverlay1 -> oButtonOverlay0");
+
+			oPreviousSiblingOverlay = OverlayUtil.getPreviousSiblingOverlay(this.oButtonOverlay8);
+			assert.strictEqual(oPreviousSiblingOverlay, this.oButtonOverlay3, "oButtonOverlay8 -> oButtonOverlay3");
+
+			// call getPreviousSiblingOverlay without an Overlay
+			assert.strictEqual(OverlayUtil.getPreviousSiblingOverlay(), undefined, "() -> undefined");
+		});
+
+		QUnit.test("when iterateOverlayElementTree function is called", function(assert) {
+			var oSpy = sandbox.spy();
+			OverlayUtil.iterateOverlayElementTree(this.oVBoxOverlay0, oSpy);
+			assert.strictEqual(oSpy.callCount, 21, "callback was called 21 times for oVBoxOverlay0");
+			oSpy.reset();
+			OverlayUtil.iterateOverlayElementTree(this.oSectionOverlay0, oSpy);
+			assert.strictEqual(oSpy.callCount, 4, "callback was called 4 times for oSectionOverlay0");
+			assert.strictEqual(oSpy.args.length, 4, "number of Arguments is correct");
+			assert.strictEqual(oSpy.args[0][0], this.oSectionOverlay0, "first Argument for oSectionOverlay0 is correct");
+			assert.strictEqual(oSpy.args[1][0], this.oSubSectionOverlay0, "second Argument for oSectionOverlay0 is correct");
+		});
 	});
 
-	QUnit.module("Given a List with bound items and a List with unbound items", {
-		beforeEach : function(assert) {
-			var done = assert.async();
+	function createGeometryObject(iWidth, iHeight, iLeft, iTop, bVisible) {
+		return {
+			size: {
+				width: iWidth,
+				height: iHeight
+			},
+			position: {
+				left: iLeft,
+				top: iTop
+			},
+			visible: bVisible
+		};
+	}
 
-			// create list with bound items
-			var oData = [
-				{text: "item1-bound"},
-				{text: "item2-bound"}
-			];
-			var oModel = new JSONModel(oData);
-			this.oBoundList = new List("boundlist").setModel(oModel);
-			this.oBoundList.bindAggregation("items", "/", function(sId, oContext) {
-				return new CustomListItem(sId, {content: [new Button(sId + "-btn",{text:'{text}'})]});
-			});
+	QUnit.module("Given some geometry objects", {}, function() {
+		QUnit.test("when getGeometry is called with different overlays", function(assert) {
+			var oGeometry0 = createGeometryObject(20, 100, 5, 100, true);
+			var oGeometry1 = createGeometryObject(200, 200, 6, 300, true);
+			var oGeometry2 = createGeometryObject(0, 0, 0, 0, true);
+			var oGeometry3 = createGeometryObject(0, 0, 0, 0, false);
 
-			//create list with unbound items
-			this.oUnboundList = new List("unboundlist");
-			this.oUnboundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn",{text:'item1-unbound'})]}));
-			this.oUnboundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn",{text:'item2-unbound'})]}));
-
-			//create a HorizontalLayout containing the two lists
-			this.oVerticalLayout = new VerticalLayout("verticalLayout0",{
-				content: [this.oBoundList, this.oUnboundList]
-			});
-			this.oVerticalLayout.placeAt("qunit-fixture");
-
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oBoundOverlay = OverlayRegistry.getOverlay(this.oBoundList.getItems()[0]);
-				this.oBoundChildOverlay = OverlayRegistry.getOverlay(this.oBoundList.getItems()[0].getContent()[0]);
-				this.oUnboundOverlay = OverlayRegistry.getOverlay(this.oUnboundList.getItems()[0]);
-				this.oUnboundChildOverlay = OverlayRegistry.getOverlay(this.oUnboundList.getItems()[0].getContent()[0]);
-				done();
-			}.bind(this));
-
-		},
-		afterEach : function(assert) {
-			this.oVerticalLayout.destroy();
-			this.oDesignTime.destroy();
-			sandbox.restore();
-		}
-	}, function(){
-		QUnit.test("when 'isInAggregationBinding' is called", function(assert) {
-			assert.strictEqual(
-				OverlayUtil.isInAggregationBinding(this.oBoundOverlay, this.oBoundOverlay.getElement().sParentAggregationName),
-				true,
-				"... then for the bound Item it returns true");
-			assert.strictEqual(
-				OverlayUtil.isInAggregationBinding(this.oBoundChildOverlay, this.oBoundChildOverlay.getElement().sParentAggregationName),
-				true,
-				"... then for the bound Item content it returns true");
-			assert.strictEqual(
-				OverlayUtil.isInAggregationBinding(this.oUnboundOverlay, this.oUnboundOverlay.getElement().sParentAggregationName),
-				false,
-				"... then for the unbound Item it returns false");
-			assert.strictEqual(
-				OverlayUtil.isInAggregationBinding(this.oUnboundChildOverlay, this.oUnboundChildOverlay.getElement().sParentAggregationName),
-				false,
-				"... then for the unbound Item content it returns false");
+			assert.deepEqual(
+				OverlayUtil.getGeometry([oGeometry0, oGeometry1, oGeometry2, oGeometry3]),
+				createGeometryObject(206, 500, 0, 0, true),
+				"the geometry was correctly calculated"
+			);
+			assert.deepEqual(
+				OverlayUtil.getGeometry([oGeometry0, oGeometry1, oGeometry2]),
+				createGeometryObject(206, 500, 0, 0, true),
+				"the geometry was correctly calculated"
+			);
+			assert.deepEqual(
+				OverlayUtil.getGeometry([oGeometry0, oGeometry1, oGeometry3]),
+				createGeometryObject(201, 400, 5, 100, true),
+				"the geometry was correctly calculated"
+			);
+			assert.deepEqual(
+				OverlayUtil.getGeometry([oGeometry0]),
+				oGeometry0,
+				"the Geometry is the same"
+			);
+			assert.deepEqual(
+				OverlayUtil.getGeometry([oGeometry2]),
+				oGeometry2,
+				"the Geometry is the same"
+			);
+			assert.deepEqual(
+				OverlayUtil.getGeometry([oGeometry3]),
+				undefined,
+				"nothing is returned because it's invisible"
+			);
 		});
+	});
+
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
 });

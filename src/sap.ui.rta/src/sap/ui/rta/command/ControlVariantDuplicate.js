@@ -2,10 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/fl/changeHandler/BaseTreeModifier',
-	'sap/ui/fl/Utils'
-], function(BaseCommand, BaseTreeModifier, flUtils) {
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/Utils"
+], function(
+	BaseCommand,
+	JsControlTreeModifier,
+	flUtils
+) {
 	"use strict";
 
 	/**
@@ -39,71 +43,77 @@ sap.ui.define([
 		}
 	});
 
-	ControlVariantDuplicate.prototype.MODEL_NAME = "$FlexVariants";
-
 	/**
 	 * @override
 	 */
-	ControlVariantDuplicate.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
+	ControlVariantDuplicate.prototype.prepare = function(mFlexSettings) {
 		this.sLayer = mFlexSettings.layer;
 		return true;
 	};
 
 	ControlVariantDuplicate.prototype.getPreparedChange = function() {
 		if (!this._aPreparedChanges) {
-			jQuery.sap.log.error("No prepared change available for ControlVariantDuplicate");
+			return undefined;
 		}
 		return this._aPreparedChanges;
 	};
 
 	/**
-	 * @public Triggers the duplication of a variant
+	 * Triggers the duplication of a variant.
+	 * @public
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantDuplicate.prototype.execute = function() {
-		var oVariantManagementControl = this.getElement(),
-		sSourceVariantReference = this.getSourceVariantReference(),
-		sNewVariantReference = this.getNewVariantReference();
+		var oVariantManagementControl = this.getElement();
+		var sSourceVariantReference = this.getSourceVariantReference();
+		var sNewVariantReference = this.getNewVariantReference();
 		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
 
 		if (!sNewVariantReference) {
-			sNewVariantReference = flUtils.createDefaultFileName("Copy");
+			sNewVariantReference = flUtils.createDefaultFileName();
 			this.setNewVariantReference(sNewVariantReference);
 		}
 
-		this.sVariantManagementReference = BaseTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
-		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
+		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
+		this.oModel = this.oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
 
 		var mPropertyBag = {
-				variantManagementReference : this.sVariantManagementReference,
-				appComponent : this.oAppComponent,
-				layer : this.sLayer,
-				newVariantReference : sNewVariantReference,
-				sourceVariantReference : sSourceVariantReference,
-				title: this.getNewVariantTitle()
+			variantManagementReference : this.sVariantManagementReference,
+			appComponent : this.oAppComponent,
+			layer : this.sLayer,
+			newVariantReference : sNewVariantReference,
+			sourceVariantReference : sSourceVariantReference,
+			title: this.getNewVariantTitle()
 		};
 
-		return this.oModel._copyVariant(mPropertyBag)
-			.then(function(aChanges){
+		return this.oModel.copyVariant(mPropertyBag)
+			.then(function(aChanges) {
 				this._oVariantChange = aChanges[0];
 				this._aPreparedChanges = aChanges;
 			}.bind(this));
 	};
 
 	/**
-	 * @public Undo logic for the execution
+	 * Undo logic for the execution.
+	 * @public
 	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantDuplicate.prototype.undo = function() {
 		if (this._oVariantChange) {
-			return this.oModel.removeVariant(this._oVariantChange, this.getSourceVariantReference(), this.sVariantManagementReference)
+			var mPropertyBag = {
+				variant: this._oVariantChange,
+				sourceVariantReference: this.getSourceVariantReference(),
+				variantManagementReference: this.sVariantManagementReference,
+				component: this.oAppComponent
+			};
+			return this.oModel.removeVariant(mPropertyBag)
 				.then(function() {
 					this._oVariantChange = null;
 					this._aPreparedChanges = null;
 				}.bind(this));
 		}
+		return Promise.resolve();
 	};
 
 	return ControlVariantDuplicate;
-
-}, /* bExport= */true);
+});

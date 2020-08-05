@@ -1,0 +1,59 @@
+<mvc:View
+xmlns="sap.m"
+xmlns:mvc="sap.ui.core.mvc"
+xmlns:grid="sap.ui.layout.cssgrid"
+xmlns:core="sap.ui.core"
+xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
+
+<Slider value="100" app:mydata="gridLayout"  liveChange="onSliderMoved" />
+<Panel id="gridLayout" width="100%" class="sapUiResponsiveMargin">
+	<headerToolbar>
+		<Toolbar height="3rem">
+			<Title text=" CssGrid Layout Example"/>
+		</Toolbar>
+	</headerToolbar>
+	<content>
+		<grid:CSSGrid id="grid1">
+			<grid:customLayout>
+				<grid:GridBasicLayout
+						gridTemplateColumns="repeat(auto-fit, 8rem)"
+						gridAutoRows="1fr"
+						gridGap="0.25rem 0.25rem">
+				</grid:GridBasicLayout>
+			</grid:customLayout>
+			<grid:items>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;0. Simple 2Header Text&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;1. Text 2525&lt;/div&gt;'>
+					<core:layoutData>
+						<grid:GridItemLayoutData
+								gridRow="span 2"
+								gridColumn="span 2"/>
+					</core:layoutData>
+				</core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;2. Text&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;3. Text 2525 Text 2525&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;4. Some text&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;5. Text 2525&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;6. Text&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;7. Text 2525 Text 2525&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;8. Text 2525jghj ggg&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;9. Text&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;10. Text 2525 Text 2525&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;11. Text 2525jghj ggg&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;12. Text 2525&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;13. Text&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;14. Text 2525 Text 2525&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;15. Text 2525jghj ggg&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;16. Text&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;17. Text 2525 Text 2525Text 2525 Text 2525 Text 2525 Text 2525&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;18. Text 2525jghj ggg&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;19. Text 2525&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;20. Text&lt;/div&gt;'></core:HTML>
+				<core:HTML content='&lt;div class=&quot;sapUiSmallMargin demoBox&quot;&gt;21. Text 2525 Text 2525&lt;/div&gt;'></core:HTML>
+			</grid:items>
+		</grid:CSSGrid>
+	</content>
+</Panel>
+
+</mvc:View>

@@ -3,15 +3,14 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/m/Text',
 	'sap/ui/Device',
 	'./FeedContentRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, library, Control, Text, Device, FeedContentRenderer) {
+	function(library, Control, Text, Device, FeedContentRenderer, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -99,13 +98,13 @@ sap.ui.define([
 	};
 
 	FeedContent.prototype.onBeforeRendering = function() {
-		this.$().unbind("mouseenter", this._addTooltip);
-		this.$().unbind("mouseleave", this._removeTooltip);
+		this.$().off("mouseenter");
+		this.$().off("mouseleave");
 	};
 
 	FeedContent.prototype.onAfterRendering = function() {
-		this.$().bind("mouseenter", this._addTooltip.bind(this));
-		this.$().bind("mouseleave", this._removeTooltip.bind(this));
+		this.$().on("mouseenter", this._addTooltip.bind(this));
+		this.$().on("mouseleave", this._removeTooltip.bind(this));
 	};
 
 	FeedContent.prototype.exit = function() {
@@ -186,7 +185,7 @@ sap.ui.define([
 	 */
 	FeedContent.prototype.ontap = function(oEvent) {
 		if (Device.browser.msie) {
-			this.$().focus();
+			this.$().trigger("focus");
 		}
 		this.firePress();
 	};
@@ -196,7 +195,7 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent which was triggered
 	 */
 	FeedContent.prototype.onkeydown = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.ENTER || oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if (oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.SPACE) {
 			this.firePress();
 			oEvent.preventDefault();
 		}

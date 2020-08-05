@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.RefreshResponsive",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.RefreshResponsive.view.RefreshResponsive",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/RefreshResponsive.view.xml",
+					"controller/RefreshResponsive.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

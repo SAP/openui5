@@ -3,8 +3,15 @@
  */
 
 // Provides the JSON model implementation of a list binding
-sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/model/SorterProcessor', 'sap/ui/model/FilterProcessor', 'sap/ui/model/FilterType'],
-	function(jQuery, ChangeReason, TreeBinding, SorterProcessor, FilterProcessor, FilterType) {
+sap.ui.define([
+	'./ChangeReason',
+	'./TreeBinding',
+	'sap/ui/model/SorterProcessor',
+	'sap/ui/model/FilterProcessor',
+	'sap/ui/model/FilterType',
+	"sap/ui/thirdparty/jquery"
+],
+	function(ChangeReason, TreeBinding, SorterProcessor, FilterProcessor, FilterType, jQuery) {
 	"use strict";
 
 
@@ -25,6 +32,11 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/m
 	 * @class
 	 * Tree binding implementation for client models.
 	 *
+	 * Please Note that a hierarchy's "state" (i.e. the information about expanded, collapsed, selected, and deselected nodes) may become
+	 * inconsistent when the structure of the model data is changed at runtime. This is because each node is identified internally by its
+	 * index position relative to its parent, plus its parent's ID. Therefore, inserting or removing a node in the model data will likely
+	 * lead to a shift in the index positions of other nodes, causing them to lose their state and/or to gain the state of another node.
+	 *
 	 * @alias sap.ui.model.ClientTreeBinding
 	 * @extends sap.ui.model.TreeBinding
 	 * @protected
@@ -40,6 +52,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/m
 			this.filterInfo = {};
 			this.filterInfo.aFilteredContexts = [];
 			this.filterInfo.oParentContext = {};
+			this.oCombinedFilter = null;
+			this.mNormalizeCache = {};
 
 			if (aApplicationFilters) {
 				this.oModel.checkFilterOperation(aApplicationFilters);
@@ -209,10 +223,10 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/m
 	 * @param {string} sContextPath the path to be checked
 	 */
 	ClientTreeBinding.prototype._sanitizePath = function (sContextPath) {
-		if (!jQuery.sap.endsWith(sContextPath,"/")) {
+		if (!sContextPath.endsWith("/")) {
 			sContextPath = sContextPath + "/";
 		}
-		if (!jQuery.sap.startsWith(sContextPath,"/")) {
+		if (!sContextPath.startsWith("/")) {
 			sContextPath = "/" + sContextPath;
 		}
 		return sContextPath;
@@ -223,8 +237,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/m
 		if (oNode && typeof oNode == "object") {
 			var oNodeContext = this.oModel.getContext(sContextPath + sName);
 			// check if there is a filter on this level applied
-			if (this.aAllFilters && !this.bIsFiltering) {
-				if (jQuery.inArray(oNodeContext, this.filterInfo.aFilteredContexts) != -1) {
+			if (this.oCombinedFilter && !this.bIsFiltering) {
+				if (this.filterInfo.aFilteredContexts.indexOf(oNodeContext) != -1) {
 					aContexts.push(oNodeContext);
 				}
 			} else {
@@ -271,11 +285,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/m
 		}
 
 
-		aFilters = this.aFilters.concat(this.aApplicationFilters);
-		if (aFilters.length == 0) {
-			this.aAllFilters = null;
-		} else {
-			this.aAllFilters = aFilters;
+		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
+		if (this.oCombinedFilter) {
 			this.applyFilter();
 		}
 		this._mLengthsCache = {};
@@ -308,7 +319,7 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/m
 		var that = this,
 			aFilteredContexts = [];
 
-		if (jQuery.isEmptyObject(this.aAllFilters)) {
+		if (!this.oCombinedFilter) {
 			return;
 		}
 
@@ -331,9 +342,9 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/m
 				that._applyFilterRecursive(oContext);
 			});
 
-			aFilteredContexts = FilterProcessor.apply(aUnfilteredContexts, this.aAllFilters, function (oContext, sPath) {
+			aFilteredContexts = FilterProcessor.apply(aUnfilteredContexts, this.oCombinedFilter, function (oContext, sPath) {
 				return that.oModel.getProperty(sPath, oContext);
-			});
+			}, this.mNormalizeCache);
 
 			if (aFilteredContexts.length > 0) {
 				jQuery.merge(this.filterInfo.aFilteredContexts, aFilteredContexts);
@@ -341,7 +352,7 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/m
 				this.filterInfo.oParentContext = oParentContext;
 			}
 			// push additionally parentcontexts if any children are already included in filtered contexts
-			if (jQuery.inArray(this.filterInfo.oParentContext, aUnfilteredContexts) != -1) {
+			if (aUnfilteredContexts.indexOf(this.filterInfo.oParentContext) != -1) {
 				this.filterInfo.aFilteredContexts.push(oParentContext);
 				// set the parent context which was added to be the new parent context
 				this.filterInfo.oParentContext = oParentContext;

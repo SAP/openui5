@@ -1,14 +1,19 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
-	'sap/ui/base/BindingParser',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/model/odata/_AnnotationHelperBasics',
-	'sap/ui/model/odata/_AnnotationHelperExpression'
-], function (jQuery, BindingParser, ManagedObject, JSONModel, Basics, Expression) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/util/deepEqual",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/_AnnotationHelperBasics",
+	"sap/ui/model/odata/_AnnotationHelperExpression",
+	"sap/ui/performance/Measurement"
+], function (Log, deepEqual, BindingParser, ManagedObject, CalendarType, DateFormat, JSONModel,
+		Basics, Expression, Measurement) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -20,9 +25,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata._AnnotationHelperExpression", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.sDefaultCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+		},
+		afterEach : function () {
+			sap.ui.getCore().getConfiguration().setCalendarType(this.sDefaultCalendarType);
 		},
 
 		/**
@@ -1103,10 +1112,10 @@ sap.ui.require([
 			aResults = ["binding", "constant"];
 
 		function isActiveCase(o1, o2) {
-			return (jQuery.sap.equal(o1, oP11) && jQuery.sap.equal(o2, oP12))
-				|| (jQuery.sap.equal(o1, oP21) && jQuery.sap.equal(o2, oP22))
-				|| (jQuery.sap.equal(o1, oP31) && jQuery.sap.equal(o2, oP32))
-				|| (jQuery.sap.equal(o1, oP41) && jQuery.sap.equal(o2, oP42));
+			return (deepEqual(o1, oP11) && deepEqual(o2, oP12))
+				|| (deepEqual(o1, oP21) && deepEqual(o2, oP22))
+				|| (deepEqual(o1, oP31) && deepEqual(o2, oP32))
+				|| (deepEqual(o1, oP41) && deepEqual(o2, oP42));
 		}
 
 		aResults.forEach(function (sResult1) {
@@ -1580,12 +1589,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("parseDate", function (assert) {
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		Expression._setDateTimeFormatter();
+
 		assert.strictEqual(Expression.parseDate("2015-03-08").getTime(), Date.UTC(2015, 2, 8));
 		assert.strictEqual(Expression.parseDate("2015-02-30"), null);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("parseDateTimeOffset", function (assert) {
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		Expression._setDateTimeFormatter();
+
 		assert.strictEqual(
 			Expression.parseDateTimeOffset("2015-03-08T19:32:56.123456789012+02:00").getTime(),
 			Date.UTC(2015, 2, 8, 17, 32, 56, 123));
@@ -1595,6 +1610,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("parseTimeOfDay", function (assert) {
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		Expression._setDateTimeFormatter();
+
 		assert.strictEqual(Expression.parseTimeOfDay("23:59:59.123").getTime(),
 			Date.UTC(1970, 0, 1, 23, 59, 59, 123));
 		assert.strictEqual(Expression.parseTimeOfDay("23:59:59.123456789012").getTime(),
@@ -1631,10 +1649,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getExpression: Performance measurement points", function (assert) {
-		var oAverageSpy = this.spy(jQuery.sap.measure, "average")
+		var oAverageSpy = this.spy(Measurement, "average")
 				.withArgs("sap.ui.model.odata.AnnotationHelper/getExpression", "",
 					["sap.ui.model.odata.AnnotationHelper"]),
-			oEndSpy = this.spy(jQuery.sap.measure, "end")
+			oEndSpy = this.spy(Measurement, "end")
 				.withArgs("sap.ui.model.odata.AnnotationHelper/getExpression"),
 			oInterface = {
 				getPath : function () { return "/my/path"; }
@@ -1656,5 +1674,37 @@ sap.ui.require([
 		Expression.getExpression(oInterface, oRawValue, bWithPath);
 		assert.strictEqual(oAverageSpy.callCount, 2, "getExpression start measurement");
 		assert.strictEqual(oEndSpy.callCount, 2, "getExpression end measurement");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setDateTimeFormatter", function (assert) {
+		var oDateFormatMock = this.mock(DateFormat);
+
+		oDateFormatMock.expects("getDateInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern: "yyyy-MM-dd",
+				strictParsing : true,
+				UTC : true
+			})
+			.callThrough();
+		oDateFormatMock.expects("getDateTimeInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+				strictParsing : true
+			})
+			.callThrough();
+		oDateFormatMock.expects("getTimeInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern : "HH:mm:ss.SSS",
+				strictParsing : true,
+				UTC : true
+			})
+			.callThrough();
+
+		// code under test
+		Expression._setDateTimeFormatter();
 	});
 });

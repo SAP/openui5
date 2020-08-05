@@ -4,16 +4,16 @@
 
 // Provides control sap.m.IconTabBar.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
+	"sap/ui/core/Core",
 	'sap/ui/core/Control',
-	'sap/ui/base/ManagedObject',
-	'./IconTabBarRenderer'
+	'./IconTabBarRenderer',
+	'./IconTabHeader',
+	"sap/ui/core/util/ResponsivePaddingsEnablement",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(jQuery, library, Control, ManagedObject, IconTabBarRenderer) {
+	function(library, Core, Control, IconTabBarRenderer, IconTabHeader, ResponsivePaddingsEnablement, jQuery) {
 	"use strict";
-
-
 
 	// shortcut for sap.m.IconTabHeaderMode
 	var IconTabHeaderMode = library.IconTabHeaderMode;
@@ -21,7 +21,8 @@ sap.ui.define([
 	// shortcut for sap.m.BackgroundDesign
 	var BackgroundDesign = library.BackgroundDesign;
 
-
+	// shortcut for sap.m.IconTabDensityMode
+	var IconTabDensityMode = library.IconTabDensityMode;
 
 	/**
 	 * Constructor for a new IconTabBar.
@@ -41,9 +42,9 @@ sap.ui.define([
 	 * <h3>Structure</h3>
 	 * The IconTabBar can hold two types of entities {@link sap.m.IconTabFilter sap.m.IconTabFilter} and {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
 	 *
-	 * The IconTabBarFilter holds all information on an item - text, icon and count.
+	 * The IconTabFilter holds all information on an item - text, icon and count.
 	 *
-	 * The IconTabBarSeparator holds an icon that can be used to show a process that runs from item to item.
+	 * The IconTabSeparator holds an icon that can be used to show a process that runs from item to item.
 	 *<h3>Usage</h3>
 	 *<h4>Text only</h4>
 	 *Uses text labels as tabs with optional counter
@@ -78,10 +79,11 @@ sap.ui.define([
 	 *<li>Text-only tabs are never truncated.</li>
 	 *<li>Use the <code>expandable</code> property to specify whether users can collapse the tab container (default = true).</li>
 	 *<li>On desktop, tabs can be dragged and dropped (property <code>enableTabReordering</code>).</li>
-	 *<li>If you have a large number of tabs, you can scroll through them with the arrows. Additionally all tabs are available in an overflow button (property <code>showOverflowSelectList</code>).</li>
+	 *<li>If you have a large number of tabs, only the tabs that can fit on screen will be visible. All other tabs that can't fit on the screen are available in an overflow tab "More".</li>
 	 *</ul>
+	 * When using the <code>sap.m.IconTabBar</code> in SAP Quartz themes, the breakpoints and layout paddings could be determined by the Icon Tab Bar's width. To enable this concept and add responsive paddings to an element of the Icon Tab Bar control, you have to add the following classes depending on your use case: <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--content</code>.
 	 * @extends sap.ui.core.Control
-	 * @implements sap.m.ObjectHeaderContainer
+	 * @implements sap.m.ObjectHeaderContainer, sap.f.IDynamicPageStickyContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -94,7 +96,8 @@ sap.ui.define([
 	var IconTabBar = Control.extend("sap.m.IconTabBar", /** @lends sap.m.IconTabBar.prototype */ { metadata : {
 
 		interfaces : [
-			"sap.m.ObjectHeaderContainer"
+			"sap.m.ObjectHeaderContainer",
+			"sap.f.IDynamicPageStickyContent"
 		],
 		library : "sap.m",
 		properties : {
@@ -174,8 +177,9 @@ sap.ui.define([
 			 * The overflow select list represents a list, where all tab filters are displayed,
 			 * so the user can select specific tab filter easier.
 			 * @since 1.42
+			 * @deprecated As of 1.77
 			 */
-			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false},
+			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 			/**
 			 * Specifies the background color of the header.
@@ -189,9 +193,41 @@ sap.ui.define([
 
 			/**
 			 * Specifies whether tab reordering is enabled. Relevant only for desktop devices.
+			 * The {@link sap.m.IconTabSeparator sap.m.IconTabSeparator} cannot be dragged and dropped
+			 * Items can be moved around {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
 			 * @since 1.46
 			 */
-			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false}
+			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Specifies the allowed level of tabs nesting within one another using drag and drop.
+			 * Default value is 0 which means nesting via interaction is not allowed. Maximum value is 100.
+			 * This property allows nesting via user interaction only, and does not restrict adding items
+			 * to the <code>items</code> aggregation of {@link sap.m.IconTabFilter sap.m.IconTabFilter}.
+			 * @since 1.79
+			 */
+			maxNestingLevel: { type: "int", group : "Behavior", defaultValue: 0},
+
+			/**
+			 * Specifies the visual density mode of the tabs.
+			 *
+			 * The values that can be applied are <code>Cozy</code>, <code>Compact</code> and <code>Inherit</code>.
+			 * <code>Cozy</code> and <code>Compact</code> render the control in one of these modes independent of the global density settings.
+			 * The <code>Inherit</code> value follows the global density settings which are applied.
+			 * For compatibility reasons, the default value is <code>Cozy</code>.
+			 * @since 1.56
+			 */
+			tabDensityMode : {type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy},
+
+			/**
+			 * Specifies optional texts for the screen reader.
+			 *
+			 * The given object can contain the following keys:
+			 * <code>headerLabel</code> - text to serve as a label for the header,
+			 * <code>headerDescription</code> - text to serve as a description for the header.
+			 * @since 1.78
+			 */
+			ariaTexts : {type : "object", group : "Accessibility", defaultValue : null}
 		},
 		aggregations : {
 
@@ -273,21 +309,18 @@ sap.ui.define([
 		designtime: "sap/m/designtime/IconTabBar.designtime"
 	}});
 
+	ResponsivePaddingsEnablement.call(IconTabBar.prototype, {
+		header: { selector: ".sapMITH" },
+		content: { suffix: "content" }
+	});
 
 	/**
-	 * Clones the IconTabBar.
+	 * Initialization lifecycle method.
 	 *
-	 * @public
-	 * @returns {sap.m.IconTabBar} The cloned IconTabBar.
+	 * @private
 	 */
-	IconTabBar.prototype.clone = function () {
-		var oClone = Control.prototype.clone.apply(this, arguments);
-
-		// "_header" aggregation is hidden and it is not cloned by default
-		var oIconTabHeader = this._getIconTabHeader();
-		oClone.setAggregation("_header", oIconTabHeader.clone(), true);
-
-		return oClone;
+	IconTabBar.prototype.init = function () {
+		this._initResponsivePaddingsEnablement();
 	};
 
 	/**
@@ -309,19 +342,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the tabs as collapsible and expandable without re-rendering the control.
-	 *
-	 * @public
-	 * @param {boolean} bExpandable New parameter value.
-	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
-	 */
-	IconTabBar.prototype.setExpandable = function (bExpandable) {
-		// set internal property
-		this.setProperty("expandable", bExpandable, true);
-		return this;
-	};
-
-	/**
 	 * Sets the header mode.
 	 *
 	 * @public
@@ -333,6 +353,22 @@ sap.ui.define([
 		this.setProperty("headerMode", mode, true);
 
 		this._getIconTabHeader().setMode(mode);
+
+		return this;
+	};
+
+	/**
+	 * Sets the tab density mode.
+	 *
+	 * @public
+	 * @param {sap.m.IconTabHeaderMode} mode New parameter value.
+	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 */
+	IconTabBar.prototype.setTabDensityMode = function (mode) {
+		// set internal property
+		this.setProperty("tabDensityMode", mode);
+
+		this._getIconTabHeader().setTabDensityMode(mode);
 
 		return this;
 	};
@@ -355,22 +391,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the showOverflowSelectList property.
-	 *
-	 * @public
-	 * @param {boolean} value New value for showOverflowSelectList.
-	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
-	 */
-	IconTabBar.prototype.setShowOverflowSelectList = function (value) {
-		// set internal property
-		this.setProperty("showOverflowSelectList", value, true);
-
-		this._getIconTabHeader().setShowOverflowSelectList(value);
-
-		return this;
-	};
-
-	/**
 	 * Sets the enableTabReordering property.
 	 *
 	 * @public
@@ -387,20 +407,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the ariaTexts property.
+	 *
+	 * @public
+	 * @param {object} oAriaTexts New value for ariaTexts.
+	 * @returns {sap.m.IconTabBar} this Reference to this in order to allow method chaining
+	 */
+	IconTabBar.prototype.setAriaTexts = function (oAriaTexts) {
+		// set internal property
+		this.setProperty("ariaTexts", oAriaTexts, true);
+
+		this._getIconTabHeader().setAriaTexts(oAriaTexts);
+
+		return this;
+	};
+
+	/**
 	 * Re-renders only the displayed content of the IconTabBar.
 	 *
 	 * @private
 	 * @param oContent Content, which should be rendered.
 	 */
-	IconTabBar.prototype._rerenderContent = function(oContent) {
+	IconTabBar.prototype._rerenderContent = function (oContent) {
 		var $content = this.$("content");
 		if (oContent && ($content.length > 0)) {
-			var rm = sap.ui.getCore().createRenderManager();
+			var oRM = Core.createRenderManager();
 			for (var i = 0; i < oContent.length; i++) {
-				rm.renderControl(oContent[i]);
+				oRM.renderControl(oContent[i]);
 			}
-			rm.flush($content[0]);
-			rm.destroy();
+			oRM.flush($content[0]);
+			oRM.destroy();
 		}
 	};
 
@@ -499,7 +535,6 @@ sap.ui.define([
 		return this;
 	};
 
-
 	/* =========================================================== */
 	/*           end: event handlers                               */
 	/* =========================================================== */
@@ -514,13 +549,52 @@ sap.ui.define([
 		var oControl = this.getAggregation("_header");
 
 		if (!oControl) {
-			oControl = new sap.m.IconTabHeader(this.getId() + "--header", {
+			oControl = new IconTabHeader(this.getId() + "--header", {
 			});
 			this.setAggregation("_header", oControl, true);
 		}
 		return oControl;
 	};
 
+	IconTabBar.prototype._getStickyContent = function () {
+		var oIconTabHeader = this._getIconTabHeader();
+
+		IconTabBar._CLASSES_TO_COPY.forEach(function (sClassName) {
+			if (this.hasStyleClass(sClassName)) {
+				oIconTabHeader.addStyleClass(sClassName);
+			}
+		}.bind(this));
+
+		return oIconTabHeader;
+	};
+
+	IconTabBar.prototype._returnStickyContent = function () {
+		if (this.bIsDestroyed) {
+			return;
+		}
+
+		this._getStickyContent().$().prependTo(this.$());
+	};
+
+	IconTabBar.prototype._setStickySubheaderSticked = function (bIsInStickyContainer) {
+		this._bStickyContentSticked = bIsInStickyContainer;
+	};
+
+	IconTabBar.prototype._getStickySubheaderSticked = function () {
+		return this._bStickyContentSticked;
+	};
+
+	IconTabBar.prototype.onBeforeRendering = function () {
+		var oITH = this._getIconTabHeader(),
+			$ITH = oITH.$();
+
+		oITH.setMaxNestingLevel(this.getMaxNestingLevel());
+
+		if (this._bStickyContentSticked && $ITH) {
+			delete this._bStickyContentSticked;
+			this._getIconTabHeader().$().remove();
+		}
+	};
 	/* =========================================================== */
 	/*           begin: reflectors for header properties           */
 	/* =========================================================== */
@@ -577,7 +651,7 @@ sap.ui.define([
 	 * @param {sap.m.IconTabFilter} oItem Item to be selected.
 	 * @return {sap.m.IconTabHeader} this IconTabBar reference for chaining.
 	 */
-	IconTabBar.prototype.setSelectedItem = function(oItem, bAPIchange) {
+	IconTabBar.prototype.setSelectedItem = function (oItem, bAPIchange) {
 		return this._getIconTabHeader().setSelectedItem(oItem, bAPIchange);
 	};
 
@@ -585,6 +659,8 @@ sap.ui.define([
 	/*           end: reflectors for header properties             */
 	/* =========================================================== */
 
-	return IconTabBar;
+	// List of classes to copy from IconTabBar to IconTabHeader when used as a sticky header inside a DynamicPage.
+	IconTabBar._CLASSES_TO_COPY = ["sapUiResponsiveContentPadding", "sapUiNoContentPadding", "sapUiContentPadding"];
 
+	return IconTabBar;
 });

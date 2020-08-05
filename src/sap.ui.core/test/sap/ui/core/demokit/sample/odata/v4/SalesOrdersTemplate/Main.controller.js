@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/Sorter'
-	], function(Controller, Sorter) {
+	"sap/ui/core/sample/common/Controller",
+	"sap/ui/model/Sorter"
+], function (Controller, Sorter) {
 	"use strict";
 
 	var MainController = Controller.extend("sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main", {

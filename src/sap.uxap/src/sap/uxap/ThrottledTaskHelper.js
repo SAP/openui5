@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/base/Object'
 ], function (jQuery, BaseObject) {
 	"use strict";
@@ -39,7 +39,7 @@ sap.ui.define([
 			var oReturnPromise = this._getPromise();
 
 			if (this._iTimer) {
-				jQuery.sap.clearDelayedCall(this._iTimer);
+				clearTimeout(this._iTimer);
 				this._iTimer = null;
 			}
 
@@ -52,12 +52,12 @@ sap.ui.define([
 			}
 
 			// throttle
-			this._iTimer = jQuery.sap.delayedCall(this._iDelay, this, function () {
+			this._iTimer = setTimeout(function () {
 				if (this._oPromise) {
 					var bSuccess = this._fnTask.call(this._oContext, this._oTaskOptions);
 					this._completePromise(bSuccess);
 				}
-			}.bind(this));
+			}.bind(this), this._iDelay);
 
 			return oReturnPromise;
 		},

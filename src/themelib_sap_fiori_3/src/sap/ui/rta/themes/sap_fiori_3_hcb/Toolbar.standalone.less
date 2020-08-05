@@ -1,0 +1,12 @@
+/**********************************************************************
+	Style of the RTA Toolbar (type: standalone) - sap_fiori_3_hcb Theme
+***********************************************************************/
+@_sap_ui_rta_Toolbar_Standalone_BaseColor: @sapUiBlackBG; //#000000
+@_sap_ui_rta_Toolbar_Standalone_TextColor: @sapUiWhite; //#ffffff
+@_sap_ui_rta_Toolbar_Standalone_BorderColor: transparent;
+
+.sapUiRtaToolbar.type_standalone.color_default .sapMBtn:focus .sapMFocusable {
+	outline: 0.125rem dotted @_sap_ui_rta_Toolbar_Standalone_TextColor;  //2px
+	outline-offset: -0.125rem;  //2px
+	border-color: @_sap_ui_rta_Toolbar_Standalone_BorderColor;
+}

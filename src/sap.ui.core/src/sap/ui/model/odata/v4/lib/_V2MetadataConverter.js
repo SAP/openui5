@@ -2,11 +2,12 @@
  * ${copyright}
  */
 
+//Provides class sap.ui.model.odata.v4.lib._V2MetadataConverter
 sap.ui.define([
-	"jquery.sap.global",
 	"./_Helper",
-	"./_MetadataConverter"
-], function (jQuery, _Helper, _MetadataConverter) {
+	"./_MetadataConverter",
+	"sap/base/Log"
+], function (_Helper, _MetadataConverter, Log) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
@@ -450,8 +451,7 @@ sap.ui.define([
 				sValue = oAnnotatable.consume(sName);
 				if (oAnnotatable.peek(sConflictingV2Annotation)) {
 					oAnnotatable.convert(sName, false);
-					jQuery.sap.log.warning(
-						"Inconsistent metadata in '" + this.url + "'",
+					Log.warning("Inconsistent metadata in '" + this.url + "'",
 						"Use either 'sap:" + sConflictingV2Annotation + "' or 'sap:"
 							+ sConflictingV2Annotation + "-path'"
 							+ " at entity set '" + oAnnotatable.sPath + "'",
@@ -602,8 +602,8 @@ sap.ui.define([
 							if (sTargetType) {
 								aResult.push(oV2toV4ComplexSemantic.v4EnumType + "/" + sTargetType);
 							} else {
-								jQuery.sap.log.warning("Unsupported semantic type: " + sType,
-									undefined, sClassName);
+								Log.warning("Unsupported semantic type: " + sType, undefined,
+									sClassName);
 							}
 						});
 						if (aResult.length > 0) {
@@ -652,7 +652,7 @@ sap.ui.define([
 
 		for (sAnnotatablePath in mConvertedV2Annotations) {
 			if (sAnnotatablePath in mV4Annotations) {
-				mV4Annotations[sAnnotatablePath] = jQuery.extend(
+				mV4Annotations[sAnnotatablePath] = Object.assign(
 					mConvertedV2Annotations[sAnnotatablePath],
 					mV4Annotations[sAnnotatablePath]);
 			} else {
@@ -684,8 +684,7 @@ sap.ui.define([
 					continue;
 				}
 				sTarget = sEntityContainerName + "/" + sEntitySetName;
-				mAnnotations = jQuery.extend(true,
-					this.convertedV2Annotations[sTarget] || {},
+				mAnnotations = _Helper.merge(this.convertedV2Annotations[sTarget] || {},
 					this.mEntityType2EntitySetAnnotation[oEntitySet.$Type]);
 				if (Object.keys(mAnnotations).length) {
 					this.convertedV2Annotations[sTarget] = mAnnotations;
@@ -821,9 +820,8 @@ sap.ui.define([
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name");
 
 		this.mEntityContainersOfSchema[sQualifiedName]
-			= this.result[sQualifiedName] = this.entityContainer = {
-			"$kind" : "EntityContainer"
-		};
+			= this.entityContainer = {"$kind" : "EntityContainer"};
+		this.addToResult(sQualifiedName, this.entityContainer);
 		if (oElement.getAttributeNS(sMicrosoftNamespace, "IsDefaultEntityContainer") === "true") {
 			this.defaultEntityContainer = sQualifiedName;
 		}
@@ -945,7 +943,7 @@ sap.ui.define([
 			this.processTypedCollection(sReturnType, oReturnType);
 		}
 		if (!rHttpMethods.test(sHttpMethod)) {
-			jQuery.sap.log.warning("Unsupported HttpMethod at FunctionImport '" + sName
+			Log.warning("Unsupported HttpMethod at FunctionImport '" + sName
 				+ "', removing this FunctionImport", undefined, sClassName);
 			this.consumeSapAnnotation("action-for");
 			this.consumeSapAnnotation("applicable-path");
@@ -956,7 +954,7 @@ sap.ui.define([
 			}
 
 			// add operation to the result
-			this.result[sQualifiedName] = [oOperation];
+			this.addToResult(sQualifiedName, [oOperation]);
 
 			sAnnotationActionFor = this.consumeSapAnnotation("action-for");
 			if (sAnnotationActionFor) {
@@ -1050,9 +1048,8 @@ sap.ui.define([
 		var sSchemaVersion = this.consumeSapAnnotation("schema-version");
 
 		this.namespace = oElement.getAttribute("Namespace") + ".";
-		this.result[this.namespace] = this.schema = {
-			"$kind" : "Schema"
-		};
+		this.schema = {"$kind" : "Schema"};
+		this.addToResult(this.namespace, this.schema);
 		if (sSchemaVersion) {
 			this.schema["@Org.Odata.Core.V1.SchemaVersion"] = sSchemaVersion;
 		}
@@ -1068,7 +1065,8 @@ sap.ui.define([
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name");
 
 		this.sTypeName = sQualifiedName;
-		this.result[sQualifiedName] = this.type = oType;
+		this.type = oType;
+		this.addToResult(sQualifiedName, oType);
 		this.v2annotatable(sQualifiedName);
 	};
 
@@ -1161,7 +1159,7 @@ sap.ui.define([
 		if (sCreatable) {
 			oNavigationPropertyPath = {"$NavigationPropertyPath" : sName};
 			if (sCreatablePath) {
-				jQuery.sap.log.warning("Inconsistent metadata in '" + this.url + "'",
+				Log.warning("Inconsistent metadata in '" + this.url + "'",
 					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property '"
 					+ this.oAnnotatable.sPath + "'", sClassName);
 			} else if (sCreatable === "true") {
@@ -1224,9 +1222,9 @@ sap.ui.define([
 				vHere = that.getOrCreateArray(vHere, sProperty);
 				vHere.push({"$PropertyPath" : sName});
 			} else {
-				jQuery.sap.log.warning("Unsupported SAP annotation at a complex type in '"
-					+ that.url + "'", "sap:" + sAnnotation + " at property '"
-					+ oAnnotatable.sPath + "'", sClassName);
+				Log.warning("Unsupported SAP annotation at a complex type in '"
+					+ that.url + "'", "sap:" + sAnnotation + " at property '" + oAnnotatable.sPath
+					+ "'", sClassName);
 			}
 		}
 
@@ -1261,7 +1259,7 @@ sap.ui.define([
 					sEnumMember = "SingleValue";
 					break;
 				default:
-					jQuery.sap.log.warning("Inconsistent metadata in '" + this.url + "'",
+					Log.warning("Inconsistent metadata in '" + this.url + "'",
 						"Unsupported sap:filter-restriction=\"" + sFilterRestriction
 						+ "\" at property '" + oAnnotatable.sPath + "'", sClassName);
 			}
@@ -1279,7 +1277,7 @@ sap.ui.define([
 						"Property" : {"$PropertyPath" : sName}
 					});
 				} else {
-					jQuery.sap.log.warning("Unsupported SAP annotation at a complex type in '"
+					Log.warning("Unsupported SAP annotation at a complex type in '"
 						+ this.url + "'", "sap:filter-restriction at property '"
 						+ oAnnotatable.sPath + "'", sClassName);
 				}
@@ -1337,12 +1335,12 @@ sap.ui.define([
 				i,
 				n = aUnitPathSegments.length;
 
-			for (i = 0; i < n; i++) {
+			for (i = 0; i < n; i += 1) {
 				oType = that.result[sTypeName];
 				oUnitProperty = oType[aUnitPathSegments[i]];
 				if (!oUnitProperty) {
-					jQuery.sap.log.warning("Path '" + sUnitPath
-						+ "' for sap:unit cannot be resolved", sPropertyPath, sClassName);
+					Log.warning("Path '" + sUnitPath + "' for sap:unit cannot be resolved",
+						sPropertyPath, sClassName);
 					return;
 				}
 				if (i < n - 1) {
@@ -1352,7 +1350,7 @@ sap.ui.define([
 			sUnitSemantics = that.mProperty2Semantics[
 				sTypeName + "/" + aUnitPathSegments[n - 1]];
 			if (!sUnitSemantics) {
-				jQuery.sap.log.warning("Unsupported sap:semantics at sap:unit='" + sUnitPath
+				Log.warning("Unsupported sap:semantics at sap:unit='" + sUnitPath
 					+ "'; expected 'currency-code' or 'unit-of-measure'", sPropertyPath,
 					sClassName);
 				return;
@@ -1505,7 +1503,7 @@ sap.ui.define([
 	 */
 	V2MetadataConverter.prototype.warnUnsupportedSapAnnotations = function (oElement) {
 		Object.keys(this.mSapAnnotations).forEach(function (sName) {
-			jQuery.sap.log.warning("Unsupported annotation 'sap:" + sName + "'",
+			Log.warning("Unsupported annotation 'sap:" + sName + "'",
 				serializeSingleElement(oElement), sClassName);
 		});
 	};
@@ -1516,6 +1514,7 @@ sap.ui.define([
 	 * @param {object} $$ The prototype for V4MetadataConverter
 	 */
 	(function ($$) {
+		// Note: this function is executed at load time only!
 		var oStructuredTypeConfig;
 
 		$$.sRootNamespace = sEdmxNamespace;

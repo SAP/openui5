@@ -51,7 +51,7 @@
 		myView.placeAt("content");
 		//sap.ui.template({
 		//});
-		jQuery.sap.registerModulePath('test', './');
+		sap.ui.loader.config({paths: {'test': './'}});
 
 		setTimeout(function(){
 			sap.ui.template({
@@ -61,7 +61,7 @@
 	</script>
 
 	</head>
-	<body class="sapUiBody" role="application">
+	<body class="sapUiBody">
 		<h1>Test Page for sap.ui.core.Template</h1>
 
 		<div id="content"></div>

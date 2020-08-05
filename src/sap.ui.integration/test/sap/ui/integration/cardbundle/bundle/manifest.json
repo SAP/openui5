@@ -1,0 +1,17 @@
+{
+	"sap.app": {
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"id": "my.card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "{{appTitle}}",
+			"subTitle": "{{appDescription}}",
+			"icon": {
+				"src": "./icons/edit.png"
+			}
+		}
+	}
+}

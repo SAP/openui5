@@ -5,19 +5,29 @@
 // This module provides internal functions for dynamic expressions in OData V4 annotations. It is a
 // helper module for sap.ui.model.odata.AnnotationHelper.
 sap.ui.define([
-	'jquery.sap.global', './_AnnotationHelperBasics', 'sap/ui/base/BindingParser',
-	'sap/ui/base/ManagedObject', 'sap/ui/core/format/DateFormat', 'sap/ui/model/odata/ODataUtils'
-], function(jQuery, Basics, BindingParser, ManagedObject, DateFormat, ODataUtils) {
+	"./_AnnotationHelperBasics",
+	"sap/base/Log",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/performance/Measurement"
+], function (Basics, Log, BindingParser, ManagedObject, CalendarType, DateFormat, ODataUtils,
+		Measurement) {
 	'use strict';
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
 	var sAnnotationHelper = "sap.ui.model.odata.AnnotationHelper",
+		oDateFormatter,
+		oDateTimeOffsetFormatter,
 		sDateValue = "\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])",
 		sDecimalValue = "[-+]?\\d+(?:\\.\\d+)?",
 		sMaxSafeInteger = "9007199254740991",
 		sMinSafeInteger = "-" + sMaxSafeInteger,
 		aPerformanceCategories = [sAnnotationHelper],
 		sPerformanceGetExpression = sAnnotationHelper + "/getExpression",
+		oTimeFormatter,
 		sTimeOfDayValue = "(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(\\.\\d{1,12})?)?",
 		mEdmType2RegExp = {
 			Bool : /^true$|^false$/i,
@@ -119,6 +129,31 @@ sap.ui.define([
 	 * </ul>
 	 */
 	Expression = {
+		/**
+		 * Sets the static date and time formatter instances.
+		 *
+		 * @private
+		 */
+		_setDateTimeFormatter : function () {
+			oDateFormatter = DateFormat.getDateInstance({
+				calendarType : CalendarType.Gregorian,
+				pattern : "yyyy-MM-dd",
+				strictParsing : true,
+				UTC : true
+			});
+			oDateTimeOffsetFormatter = DateFormat.getDateTimeInstance({
+				calendarType : CalendarType.Gregorian,
+				pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+				strictParsing : true
+			});
+			oTimeFormatter = DateFormat.getTimeInstance({
+				calendarType : CalendarType.Gregorian,
+				pattern : "HH:mm:ss.SSS",
+				strictParsing : true,
+				UTC : true
+			});
+		},
+
 		/**
 		 * Adjusts the second operand so that both have the same category, if possible.
 		 *
@@ -464,12 +499,11 @@ sap.ui.define([
 				return undefined;
 			}
 
-			jQuery.sap.measure.average(sPerformanceGetExpression, "", aPerformanceCategories);
+			Measurement.average(sPerformanceGetExpression, "", aPerformanceCategories);
 
 			if ( !Expression.simpleParserWarningLogged &&
 					ManagedObject.bindingParser === BindingParser.simpleParser) {
-				jQuery.sap.log.warning("Complex binding syntax not active", null,
-					sAnnotationHelper);
+				Log.warning("Complex binding syntax not active", null, sAnnotationHelper);
 				Expression.simpleParserWarningLogged = true;
 			}
 
@@ -480,10 +514,10 @@ sap.ui.define([
 					value : oRawValue,
 					withType : bWithType
 				});
-				jQuery.sap.measure.end(sPerformanceGetExpression);
+				Measurement.end(sPerformanceGetExpression);
 				return Basics.resultToString(oResult, false, bWithType);
 			} catch (e) {
-				jQuery.sap.measure.end(sPerformanceGetExpression);
+				Measurement.end(sPerformanceGetExpression);
 				if (e instanceof SyntaxError) {
 					return "Unsupported: "
 						+ BindingParser.complexParser.escape(Basics.toErrorString(oRawValue));
@@ -641,11 +675,7 @@ sap.ui.define([
 		 *   the JavaScript Date value or <code>null</code> in case the input could not be parsed
 		 */
 		parseDate : function (sValue) {
-			return DateFormat.getDateInstance({
-					pattern : "yyyy-MM-dd",
-					strictParsing : true,
-					UTC : true
-				}).parse(sValue);
+			return oDateFormatter.parse(sValue);
 		},
 
 		/**
@@ -663,10 +693,7 @@ sap.ui.define([
 				sValue = sValue.replace(aMatches[1], aMatches[1].slice(0, 4));
 			}
 
-			return DateFormat.getDateTimeInstance({
-				pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSX",
-				strictParsing : true
-			}).parse(sValue.toUpperCase());
+			return oDateTimeOffsetFormatter.parse(sValue.toUpperCase());
 		},
 
 		/**
@@ -683,11 +710,7 @@ sap.ui.define([
 				sValue = sValue.slice(0, 12);
 			}
 
-			return DateFormat.getTimeInstance({
-				pattern : "HH:mm:ss.SSS",
-				strictParsing : true,
-				UTC : true
-			}).parse(sValue);
+			return oTimeFormatter.parse(sValue);
 		},
 
 		/**
@@ -709,8 +732,12 @@ sap.ui.define([
 				oMinMaxAnnotation,
 				oModel = oInterface.getModel(),
 				oPathValueInterface = {
-					getModel : function () { return oModel; },
-					getPath : function () { return oPathValue.path; }
+					getModel : function () {
+						return oModel;
+					},
+					getPath : function () {
+						return oPathValue.path;
+					}
 				},
 				oProperty,
 				oResult = {result : "binding", value : sBindingPath},
@@ -772,8 +799,8 @@ sap.ui.define([
 				}
 				oResult.constraints = oConstraints;
 			} else {
-				jQuery.sap.log.warning("Could not find property '" + sBindingPath
-					+ "' starting from '" + oPathValue.path + "'", null, sAnnotationHelper);
+				Log.warning("Could not find property '" + sBindingPath + "' starting from '"
+					+ oPathValue.path + "'", null, sAnnotationHelper);
 			}
 
 			return oResult;
@@ -827,7 +854,7 @@ sap.ui.define([
 				return sPath;
 			}
 			// continue after the schema index
-			for (var i = 4; i < aParts.length; i++) {
+			for (var i = 4; i < aParts.length; i += 1) {
 				sObjectPath = sObjectPath + "/" + aParts[i];
 				// if there is an index, first try a query for "name"
 				if (rInteger.test(aParts[i]) && !processProperty("name", i)) {
@@ -912,6 +939,7 @@ sap.ui.define([
 		}
 	};
 
-	return Expression;
+	Expression._setDateTimeFormatter();
 
+	return Expression;
 }, /* bExport= */ false);

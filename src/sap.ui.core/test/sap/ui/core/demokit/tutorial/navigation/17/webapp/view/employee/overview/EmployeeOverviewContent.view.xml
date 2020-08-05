@@ -3,14 +3,14 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Table id="employeesTable"
-		   items="{/Employees}"
-		   itemPress="onItemPressed">
+		items="{/Employees}"
+		itemPress=".onItemPressed">
 		<headerToolbar>
 			<Toolbar>
 				<Title text="{i18n>Employees}" level="H2"/>
 				<ToolbarSpacer />
-				<SearchField id="searchField" search="onSearchEmployeesTable" width="50%"/>
-				<Button icon="sap-icon://sort" press="onSortButtonPressed" />
+				<SearchField id="searchField" search=".onSearchEmployeesTable" width="50%"/>
+				<Button icon="sap-icon://sort" press=".onSortButtonPressed"/>
 			</Toolbar>
 		</headerToolbar>
 		<columns>

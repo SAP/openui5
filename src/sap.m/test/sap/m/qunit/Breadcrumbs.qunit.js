@@ -1,23 +1,28 @@
-/*global QUnit,sinon*/
-
-(function ($, QUnit, sinon, Breadcrumbs) {
+/*global QUnit */
+sap.ui.define([
+	"sap/ui/dom/units/Rem",
+	"sap/ui/core/theming/Parameters",
+	"sap/m/Breadcrumbs",
+	"sap/m/Link",
+	"sap/m/Text",
+	"sap/m/library"
+],
+function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 	"use strict";
-	var core, oFactory, helpers;
+	var core, oFactory, helpers, $ = jQuery;
 
-	$.sap.require("sap.m.Breadcrumbs");
 
-	sinon.config.useFakeTimers = true;
 
 	core = sap.ui.getCore();
 	oFactory = {
 		getLink: function (sText, sHref) {
-			return new sap.m.Link({
+			return new Link({
 				text: sText || "Page 1 long link",
 				href: sHref || "http://go.sap.com/index.html"
 			});
 		},
 		getText: function (sText) {
-			return new sap.m.Text({
+			return new Text({
 				text: sText || "Current Location Text"
 			});
 		},
@@ -32,7 +37,7 @@
 			return aLinks;
 		},
 		getBreadCrumbControlWithLinks: function (iLinkCount, sCurrentLocationText) {
-			return new sap.m.Breadcrumbs({
+			return new Breadcrumbs({
 				links: [this.getLinks(iLinkCount)],
 				currentLocationText: sCurrentLocationText
 			});
@@ -44,7 +49,7 @@
 
 	helpers = {
 		verifyFocusOnKeyDown: function (assert, iKeyCode, oItemToStartWith, oExpectedItemToBeFocused, sMessage) {
-			oItemToStartWith.$().focus();
+			oItemToStartWith.$().trigger("focus");
 			sap.ui.test.qunit.triggerKeydown(oItemToStartWith.getId(), iKeyCode);
 			assert.ok(oExpectedItemToBeFocused.jQuery().is(':focus'), sMessage);
 		},
@@ -52,7 +57,7 @@
 			core.applyChanges();
 		},
 		countChildren: function (oControl){
-			return oControl.$().children().length;
+			return oControl.$().find("li").length;
 		},
 		renderObject: function (oSapUiObject) {
 			oSapUiObject.placeAt("qunit-fixture");
@@ -182,9 +187,27 @@
 
 		assert.ok(oStandardBreadCrumbsControl.getCurrentLocationText(), "has current location text setted");
 		assert.ok(oStandardBreadCrumbsControl._getCurrentLocation(), "has current location text control instantiated");
+		assert.ok(oStandardBreadCrumbsControl._getCurrentLocation().hasStyleClass("sapMBreadcrumbsCurrentLocation"), "current location has a correct class");
 
 		oStandardBreadCrumbsControl.setCurrentLocationText(sNewCurrentLocationVal);
 		assert.strictEqual(oStandardBreadCrumbsControl.getCurrentLocationText(), sNewCurrentLocationVal, "current location value changed to sNewCurrentLocationVal");
+	});
+
+	QUnit.test("Instantiation", function (assert) {
+		var oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(0, null),
+			$currentLocationText;
+
+		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		$currentLocationText = oStandardBreadCrumbsControl.$("currentText");
+		assert.strictEqual($currentLocationText.length, 0, "has " + 0 + " links");
+
+		oStandardBreadCrumbsControl.setCurrentLocationText("Test");
+		sap.ui.getCore().applyChanges();
+
+		$currentLocationText = oStandardBreadCrumbsControl.$("currentText");
+		assert.strictEqual($currentLocationText.length, 1, "has " + 1 + " links");
 	});
 
 	QUnit.test("Current location not set", function (assert) {
@@ -220,6 +243,51 @@
 
 		// assert
 		assert.ok(oStandardBreadCrumbsControl._getSelectWidth() === 0, "Select is not rendered");
+	});
+
+	var testSeparatorStyleSymbols = function (oControl, sStyle, assert) {
+		//arrange
+		var sAppliedSymbol,
+			sExpectedSymbol;
+
+		oControl.setSeparatorStyle(sStyle);
+		sap.ui.getCore().applyChanges();
+
+		//act
+		sAppliedSymbol = oControl.$().find(".sapMBreadcrumbsSeparator").first().text();
+		sExpectedSymbol = Breadcrumbs.STYLE_MAPPER[oControl.getSeparatorStyle()];
+
+		// assert
+		assert.equal(sAppliedSymbol, sExpectedSymbol, sStyle + " separator loaded");
+	};
+
+	QUnit.test("Custom separator (String Rendering)", function (assert) {
+		Object.keys(library.BreadcrumbsSeparatorStyle).forEach( function (sStyle) {
+			// arrange
+			// using a new control each time enforces initial string rendering
+			var oControl = oFactory.getBreadCrumbControlWithLinks(4, oFactory.getText());
+			oControl.placeAt("qunit-fixture");
+
+			// assert
+			testSeparatorStyleSymbols(oControl, sStyle, assert);
+
+			// clean up
+			oControl.destroy();
+			sap.ui.getCore().applyChanges();
+		} );
+	});
+
+	QUnit.test("Custom separator (DOM Patching)", function (assert) {
+		//arrange
+		var oControl = this.oStandardBreadCrumbsControl;
+		oControl.placeAt("qunit-fixture");
+		// initial rendering is always string rendering, later re-renderings will use DOM patching
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		Object.keys(library.BreadcrumbsSeparatorStyle).forEach( function (sStyle) {
+			testSeparatorStyleSymbols(oControl, sStyle, assert);
+		} );
 	});
 
 	/*------------------------------------------------------------------------------------*/
@@ -271,6 +339,9 @@
 		var $lastSeparator = this.oStandardBreadCrumbsControl.$().find("li.sapMBreadcrumbsItem:last-child > span.sapMBreadcrumbsSeparator");
 
 		assert.ok($lastSeparator.length, "There is a '/' separator after last link");
+		assert.strictEqual(Math.ceil(parseFloat($lastSeparator.css("fontSize"))),
+			DomUnitsRem.toPx(Parameters.get("sapMFontMediumSize")),
+			"Font-size of the separator is 14px");
 	});
 
 	QUnit.test("Only current location", function (assert) {
@@ -284,8 +355,8 @@
 	});
 
 	QUnit.test("Prevent dependency bug with select's popover", function (assert) {
-		var pickerAfterOpenSpy = this.spy(sap.m.Breadcrumbs.prototype, "_removeItemNavigation"),
-			pickerBeforeCloseSpy = this.spy(sap.m.Breadcrumbs.prototype, "_restoreItemNavigation");
+		var pickerAfterOpenSpy = this.spy(Breadcrumbs.prototype, "_removeItemNavigation"),
+			pickerBeforeCloseSpy = this.spy(Breadcrumbs.prototype, "_restoreItemNavigation");
 		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(15, "Current location text");
 
 		helpers.renderObject(this.oStandardBreadCrumbsControl);
@@ -295,6 +366,26 @@
 
 		assert.ok(pickerAfterOpenSpy.calledOnce, "Popover after open event is handled");
 		assert.ok(pickerBeforeCloseSpy.calledOnce, "Popover after before close event is handled");
+	});
+
+	QUnit.test("No invalidation when creating the select", function (assert) {
+		var createSelectSpy = this.spy(Breadcrumbs.prototype, "_getSelect"),
+			afterRenderingSpy = this.spy(Breadcrumbs.prototype, "onAfterRendering"),
+			invalidateSpy = this.spy(Breadcrumbs.prototype, "invalidate");
+		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(15, "Current location text");
+
+		this.oStandardBreadCrumbsControl.addEventDelegate({
+			onBeforeRendering: function() {
+				invalidateSpy.reset();
+			}
+		});
+
+		// Act
+		helpers.renderObject(this.oStandardBreadCrumbsControl);
+
+		// Check if invalidation upon select creation during rendering
+		assert.ok(createSelectSpy.calledBefore(afterRenderingSpy), "select is created during rendering");
+		assert.ok(invalidateSpy.notCalled, "breadcrumb is not invalidated during rendering");
 	});
 
 	QUnit.module("Breadcrumbs - private functions", {
@@ -405,7 +496,26 @@
 			sExpectedText = oFactory.getResourceBundle().getText("BREADCRUMB_LABEL");
 
 		helpers.renderObject(oStandardBreadCrumbsControl);
+		assert.strictEqual(oStandardBreadCrumbsControl.$()[0].tagName, "NAV", "Breadcrumbs is rendered in nav HTML element");
 		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("aria-label"), sExpectedText, "has correct 'aria-label'");
+		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("role"), undefined, "Role shouldn't be defined for the nav element");
+
+		oStandardBreadCrumbsControl.$().find("li").each(function (index, item) {
+			assert.strictEqual(jQuery(item).attr("role"), undefined, "Role shouldn't be defined for the li element");
+		});
+	});
+
+	QUnit.test("Current location aria attributes", function (assert) {
+		// Arrange
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
+			oCurrentLocation = oStandardBreadCrumbsControl._getCurrentLocation();
+
+		// Act
+		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
+		helpers.waitForUIUpdates();
+
+		// Assert
+		assert.strictEqual(oCurrentLocation.$().attr("aria-current"), "page", "Current location should have correct aria attribute");
 	});
 
 	QUnit.test("Keyboard Handling", function (assert) {
@@ -421,5 +531,4 @@
 
 		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("tabindex"), undefined, "Tabindex should not be set for empty breadcrumbs");
 	});
-
-}(jQuery, QUnit, sinon, sap.m.Breadcrumbs));
+});

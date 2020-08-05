@@ -1,0 +1,189 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "fdb1083cb70d0a81fd1a5038db0af341defbb381",
+        "type": "FIX",
+        "text": " sap.m.SlideTile Quartz Light and Dark theme adjustments",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "4ec5e49b906db04e142734d83cc59613257a84f3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar/OverflowToolbar: Fixed items adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970591185"
+          }
+        ]
+      },
+      {
+        "id": "206852b02b632acd48530a7932b45f7afba9de5d",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Unnecessary focus is now removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970611339"
+          }
+        ]
+      },
+      {
+        "id": "1bc938e7d9a102d977756a9dd7f2821ac77ac81e",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection: ability to select Month ranges added",
+        "references": []
+      },
+      {
+        "id": "4eb47cd388305573a26f102d22ac061a2f0faed1",
+        "type": "FIX",
+        "text": " sap.m.Popover: Header shadow fixed",
+        "references": []
+      },
+      {
+        "id": "ddd067291bf80999dd36475577a4c61427cd9486",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed visibility of the header content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980361124"
+          }
+        ]
+      },
+      {
+        "id": "00f1cd98c20ee84b84e58e1a296fe0a66ecf262c",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection: ability to select year ranges is now added",
+        "references": []
+      },
+      {
+        "id": "deb763a9db43e483b03712d34dbb26b714d115f4",
+        "type": "FEATURE",
+        "text": " sap.tnt.InfoLabel: New \"icon\" property implemented",
+        "references": []
+      },
+      {
+        "id": "5d3788ac1eabed46ddc2c42f99e63d4bacdbf199",
+        "type": "FEATURE",
+        "text": " sap.ui.fl: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "12bb68de6854e84406841bb76637872a10fadb4f",
+        "type": "FEATURE",
+        "text": " sap.ui.suite: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "8527e0b1a84695e54472ea92cd273d9a2d479177",
+        "type": "FEATURE",
+        "text": " sap_fiori_3 themes: add \"72-Light\" font",
+        "references": []
+      },
+      {
+        "id": "299ad9fbb693f698cbb7d235678b02805c90e634",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectHeader: Responsive paddings enablement",
+        "references": []
+      },
+      {
+        "id": "0b4b2cc2d2edbc16892113b1bdebc997a70cfea5",
+        "type": "FEATURE",
+        "text": " sap.m.TabContainer: Parameter changes for Dark themes",
+        "references": []
+      },
+      {
+        "id": "690ac732f3c6dc579fef2f4428e0f0330ece53a3",
+        "type": "FEATURE",
+        "text": " sap.ui.commons: new sap_fiori_3_dark theme",
+        "references": []
+      },
+      {
+        "id": "db850499a67e736430733348e905c125b0f6f0d1",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.ColorPicker: Parameter changes for Quartz Light\u0026Dark themes",
+        "references": []
+      },
+      {
+        "id": "a7f30bdbc12185ab2d1bbad2f2df95a4e4494a81",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Menu: Vertical alignment Icon to text",
+        "references": []
+      },
+      {
+        "id": "f021f967aac9e76d5c69420a81c34834aa263f1f",
+        "type": "FIX",
+        "text": " @sapUiChartDataLineColor for the Fiori 3.0 dark theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980437095"
+          }
+        ]
+      },
+      {
+        "id": "fe73a55d0ad195fda9c9698490e6e441d1c8c7fa",
+        "type": "FIX",
+        "text": " Align GenericTile \u0026 SlideTile with Fiori 3.0 visual specs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980488808"
+          }
+        ]
+      },
+      {
+        "id": "3e529db675116795e9918874e8b587f78f2629c9",
+        "type": "FIX",
+        "text": " CSS of OneByOne tile with NewsContent + add to samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080016544"
+          }
+        ]
+      },
+      {
+        "id": "5d98ab6f5954ed69fb395f51d2948400475d7fa0",
+        "type": "FIX",
+        "text": " Fiori 3.0 shadow levels \u0026 GenericTile focus/hover/active states",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980488808"
+          }
+        ]
+      },
+      {
+        "id": "de1ffe73c52a6ef19d804846d233397e805a2fde",
+        "type": "FIX",
+        "text": " sap.m.ActionSelect button height fix for SAP Quartz themes",
+        "references": []
+      },
+      {
+        "id": "ad476cdb3325e7e844076d102323a8a7ee475b74",
+        "type": "FIX",
+        "text": " sap.m.Page: Missing border fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980513150"
+          }
+        ]
+      },
+      {
+        "id": "03f5decc9c8249c0494d2a69963327304a5be458",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Vertical alignment Icon to text in all themes",
+        "references": []
+      }
+    ]
+  }
+}

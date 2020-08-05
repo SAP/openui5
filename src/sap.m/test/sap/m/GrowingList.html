@@ -12,7 +12,7 @@
 
 <script>
 	jQuery.sap.require("sap.ui.core.util.MockServer");
-	jQuery.sap.require("sap.ui.model.odata.ODataModel");
+	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
 
 	var sServiceURI = "/ProductSet/" ;
 	var sMetaDataURI = "mockdata/";
@@ -84,7 +84,7 @@
 	oPage.setModel(oGrowingModel, "growing");
 
 	// odata model
-	var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, true);
+	var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, true);
 	oList.setModel(oModel, "product");
 
 	// bind Aggregation

@@ -20,9 +20,50 @@
 	.sapUiIcon {
 		text-shadow: 1px 1px rgba(0, 0, 0, 0.3);
 	}
+
+	.sapCoreSampleControl {
+		background: #FFFFFF;
+		margin: 5px;
+		padding: 5px;
+		text-align: center;
+	}
+
+	.sapCoreSampleControl .sapUiBlockLayerOnly {
+		background: rgba(255, 0, 132, 0.214);
+	}
 </style>
 
 <script>
+
+	/**
+	 * Sample Control.
+	 * Renders a text and has a marker class for styling the Blocking Layer.
+	 */
+	sap.ui.define("sap.ui.core.SampleControl", ["sap/ui/core/Control"], function (Control) {
+		var SampleControl = Control.extend("sap.ui.core.SampleControl", {
+			metadata: {
+				properties: {
+					text : {type : "string", defaultValue : ""},
+				}
+			},
+			renderer: {
+				apiVersion: 2,
+				render: function (oRm, oControl) {
+					oRm.openStart("div", oControl);
+					oRm.class("sapCoreSampleControl");
+					oRm.openEnd();
+					var sText = oControl.getText().replace(/\\t/g,"\t");
+					oRm.text(sText);
+					oRm.close("div");
+				}
+			}
+		});
+
+		return SampleControl;
+	}, true);
+
+	var oSC = new sap.ui.core.SampleControl({text: "Styled Block Layer"});
+	oSC.placeAt("uiArea0");
 
 	var oMyListBox = new sap.ui.commons.ListBox({
 		tooltip : "Country",
@@ -104,7 +145,14 @@
 	/**
 	 * Small Busy Indicator test
 	 */
-	var oIcon = new sap.ui.core.Icon({src: "sap-icon://nutrition-activity", size: "3rem", color:"#DD0000"});
+	var oIcon = new sap.ui.core.Icon({
+		src: "sap-icon://nutrition-activity",
+		size: "3rem",
+		color:"#DD0000",
+		decorative: false,
+		// an empty function to make the icon rendered as role="button"
+		press: function() {}
+	});
 	oIcon.placeAt("icon");
 	oIcon.setBusyIndicatorDelay(0);
 
@@ -112,21 +160,45 @@
 	oMButton.placeAt("mButton");
 	oMButton.setBusyIndicatorDelay(0);
 
+	var oInput = new sap.m.Input();
+	oInput.placeAt("input");
+	oInput.setBusyIndicatorDelay(0);
+
 	/*
 	 * Toggle All button
 	 */
 	var oToggleAllButton = new sap.m.Button({
-		text: "Toggle Busy All",
+		text: "Toggle All - Busy",
 		press: function () {
 			oMyListBox.setBusy(!oMyListBox.getBusy());
 			oMyTable.setBusy(!oMyTable.getBusy());
 			oIcon.setBusy(!oIcon.getBusy());
 			oMButton.setBusy(!oMButton.getBusy());
+			oInput.setBusy(!oInput.getBusy());
 			oPanel.setBusy(!oPanel.getBusy());
 			oPanel2.setBusy(!oPanel2.getBusy());
+			oSC.setBusy(!oSC.getBusy());
 		}
 	});
 	oToggleAllButton.placeAt("toggleAll");
+
+	/*
+	 * Toggle All Blocked Button
+	 */
+	 var oToggleAllBlockedButton = new sap.m.Button({
+		text: "Toggle All - Blocked",
+		press: function () {
+			oMyListBox.setBlocked(!oMyListBox.getBlocked());
+			oMyTable.setBlocked(!oMyTable.getBlocked());
+			oIcon.setBlocked(!oIcon.getBlocked());
+			oMButton.setBlocked(!oMButton.getBlocked());
+			oInput.setBlocked(!oInput.getBlocked());
+			oPanel.setBlocked(!oPanel.getBlocked());
+			oPanel2.setBlocked(!oPanel2.getBlocked(), "header");
+			oSC.setBlocked(!oSC.getBlocked());
+		}
+	});
+	oToggleAllBlockedButton.placeAt("toggleAll");
 
 	/**
 	 * Binding Test
@@ -154,7 +226,7 @@
 
 </script>
 </head>
-<body class="sapUiBody" role="application">
+<body class="sapUiBody">
 	<h1 id="header">
 		Test Page for
 		<code>sap.ui.core.LocalBusyIndicator</code>
@@ -162,6 +234,8 @@
 
 	<div id="toggleAll"></div>
 	<hr/>
+	<div id="uiArea0"></div>
+	<hr />
 	<div>Call with a delay of 1000ms (default)</div>
 	<div id="button1"></div>
 	<div id="uiArea1"></div>
@@ -172,6 +246,7 @@
 	<div id="icon"></div>
 	<hr/>
 	<div id="mButton"></div>
+	<div id="input"></div>
 	<hr/>
 	<div id="mPanel"></div>
 	<hr/>

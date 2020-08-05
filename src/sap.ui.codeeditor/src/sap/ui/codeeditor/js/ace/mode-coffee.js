@@ -13,7 +13,7 @@ ace.define("ace/mode/coffee_highlight_rules",["require","exports","module","ace/
             "this|throw|then|try|typeof|super|switch|return|break|by|continue|" +
             "catch|class|in|instanceof|is|isnt|if|else|extends|for|own|" +
             "finally|function|while|when|new|no|not|delete|debugger|do|loop|of|off|" +
-            "or|on|unless|until|and|yes"
+            "or|on|unless|until|and|yes|yield|export|import|default"
         );
 
         var langConstant = (
@@ -21,8 +21,8 @@ ace.define("ace/mode/coffee_highlight_rules",["require","exports","module","ace/
         );
 
         var illegal = (
-            "case|const|default|function|var|void|with|enum|export|implements|" +
-            "interface|let|package|private|protected|public|static|yield"
+            "case|const|function|var|void|with|enum|implements|" +
+            "interface|let|package|private|protected|public|static"
         );
 
         var supportClass = (
@@ -389,4 +389,11 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 
-});
+});                (function() {
+                    ace.require(["ace/mode/coffee"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

@@ -1,0 +1,7 @@
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml">
+	<Button></Button>
+	<html:div style="background: #FF0085;">
+		<mvc:XMLView id="xmlViewInHTML" viewName="testdata.fragments.XMLViewWithFragments" />
+	</html:div>
+	<Input></Input>
+</mvc:XMLView>

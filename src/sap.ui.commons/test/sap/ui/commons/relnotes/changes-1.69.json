@@ -1,0 +1,22 @@
+{
+  "1.69.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "c782ce9be8cbd71201e19ba3cb4c0e81e439b71f",
+        "type": "FIX",
+        "text": "All libraries: apply migration tooling again",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2584"
+          },
+          {
+            "type": "GitHub",
+            "reference": "2585"
+          }
+        ]
+      }
+    ]
+  }
+}

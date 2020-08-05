@@ -1,0 +1,103 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.ComboBoxValueState.controller.ComboBoxValueState"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page showHeader="false" class="sapUiContentPadding">
+		<content>
+			<l:VerticalLayout>
+				<Label text="ComboBox in a Success state" labelFor="idComboBoxSuccess"></Label>
+				<ComboBox class="sapUiSmallMarginBottom"
+					id="idComboBoxSuccess"
+					valueState="Success"
+						items="{
+						path: '/CountriesCollection',
+						sorter: { path: 'text' },
+						suspended: true
+					}"
+						loadItems="handleLoadItems">
+					<core:ListItem key="{key}" text="{text}"/>
+				</ComboBox>
+				<Label text="ComboBox in an Information state" labelFor="idComboBoxInformation"></Label>
+				<ComboBox class="sapUiSmallMarginBottom"
+					id="idComboBoxInformation"
+					valueState="Information"
+						items="{
+						path: '/CountriesCollection',
+						sorter: { path: 'text' },
+						suspended: true
+					}"
+						loadItems="handleLoadItems">
+					<core:ListItem key="{key}" text="{text}"/>
+				</ComboBox>
+				<Label text="Information state message with a link." labelFor="idComboBoxInformationWithLink"></Label>
+				<ComboBox class="sapUiSmallMarginBottom"
+					id="idComboBoxInformationWithLink"
+					valueState="Information"
+					valueStateText="Warning message. Extra long text used as a warning message. Extra long text used as a warning message - 2. Extra long text used as a warning message - 3."
+					items="{
+						path: '/CountriesCollection',
+						sorter: { path: 'text' },
+						suspended: true
+					}"
+					loadItems="handleLoadItems">
+					<core:ListItem key="{key}" text="{text}"/>
+					<formattedValueStateText>
+						<FormattedText htmlText="Warning message. Long text used as a warning message with a %%0." >
+							<controls>
+								<Link text="link" href="" press=".handleValueStateLinkPress" />
+							</controls>
+						</FormattedText>
+					</formattedValueStateText>
+				</ComboBox>
+				<Label text="ComboBox in a Warning state" labelFor="idComboBoxWarning"></Label>
+				<ComboBox class="sapUiSmallMarginBottom"
+					id="idComboBoxWarning"
+					valueState="Warning"
+					valueStateText="Warning message. Extra long text used as a warning message. Extra long text used as a warning message - 2. Extra long text used as a warning message - 3."
+					items="{
+						path: '/CountriesCollection',
+						sorter: { path: 'text' },
+						suspended: true
+					}"
+					loadItems="handleLoadItems">
+					<core:ListItem key="{key}" text="{text}"/>
+				</ComboBox>
+				<Label text="Warning state with multiple links." labelFor="idComboWarningWithLinks"></Label>
+				<ComboBox class="sapUiSmallMarginBottom"
+					id="idComboBoxWarningWithLinks"
+					valueState="Warning"
+						items="{
+						path: '/CountriesCollection',
+						sorter: { path: 'text' },
+						suspended: true
+					}"
+						loadItems="handleLoadItems">
+					<core:ListItem key="{key}" text="{text}"/>
+					<formattedValueStateText>
+						<FormattedText htmlText="Error message. Long text used as an error message with %%0 %%1." >
+							<controls>
+								<Link text="multiple" href="" press=".handleValueStateLinkPress" />
+								<Link text="links" href="" press=".handleValueStateLinkPress" />
+							</controls>
+						</FormattedText>
+					</formattedValueStateText>
+				</ComboBox>
+				<Label text="ComboBox in an Error state" labelFor="idComboBoxError"></Label>
+				<ComboBox class="sapUiSmallMarginBottom"
+					id="idComboBoxError"
+					valueState="Error"
+						items="{
+						path: '/CountriesCollection',
+						sorter: { path: 'text' },
+						suspended: true
+					}"
+						loadItems="handleLoadItems">
+					<core:ListItem key="{key}" text="{text}"/>
+				</ComboBox>
+			</l:VerticalLayout>
+		</content>
+	</Page>
+</mvc:View>

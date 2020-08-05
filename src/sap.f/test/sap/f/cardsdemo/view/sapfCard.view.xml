@@ -1,0 +1,147 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.sapFCard"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="sap.f.Card example" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<f:Card
+			id="card1"
+			width="300px"
+			height="auto"
+			class="sapUiMediumMargin">
+			<f:header>
+				<card:Header
+					title="Some title"
+					subtitle="Some long subtitle"
+					iconSrc="sap-icon://accept" />
+			</f:header>
+			<f:content>
+				<List items="{listItems>/ProductCollection}" headerText="Products">
+					<StandardListItem
+						title="{listItems>Name}"
+						description="{listItems>ProductId}"
+						icon="{listItems>ProductPicUrl}"
+						iconDensityAware="false"
+						iconInset="false" />
+				</List>
+			</f:content>
+		</f:Card>
+
+		<f:Card
+			id="card2"
+			width="300px"
+			height="auto"
+			class="sapUiMediumMargin">
+			<f:header>
+				<card:Header
+					title="Activity items"
+					subtitle="Recent activities"
+					iconSrc="sap-icon://activity-items" />
+			</f:header>
+			<f:content>
+				<Table items="{tableData>/Names}">
+					<columns>
+						<Column>
+							<Text text="First Name" />
+						</Column>
+						<Column>
+							<Text text="Last Name" />
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem type="Navigation">
+							<Text text="{tableData>firstName}" />
+							<Text text="{tableData>lastName}" />
+						</ColumnListItem>
+					</items>
+				</Table>
+			</f:content>
+		</f:Card>
+
+		<f:Card
+			id="card3"
+			width="auto"
+			class="sapUiMediumMargin">
+			<f:header>
+				<card:Header
+					title="Donna Moore"
+					subtitle="Sales executive"
+					iconSrc="./cardsdemo/images/Woman_avatar_01.png" />
+			</f:header>
+			<f:content>
+				<HBox>
+					<VBox class="sapUiMediumMargin">
+						<Title text="Contact details" class="sapUiTinyMarginBottom" />
+						<Label text="First Name" />
+						<Text text="Donna" class="sapUiTinyMarginBottom" />
+						<Label text="Last Name" />
+						<Text text="Moore" class="sapUiTinyMarginBottom" />
+						<Label text="Phone" />
+						<Text text="+1 202 555 5555" />
+					</VBox>
+					<VBox class="sapUiMediumMargin">
+						<Title text="Organizational Details" class="sapUiTinyMarginBottom" />
+						<HBox>
+							<f:Avatar src="./cardsdemo/images/Woman_avatar_02.png" />
+							<Text text="John Miller" />
+						</HBox>
+					</VBox>
+					<VBox class="sapUiMediumMargin">
+						<Title text="Company Details" class="sapUiTinyMarginBottom" />
+						<Label text="Company Name" />
+						<Text text="Company A" class="sapUiTinyMarginBottom" />
+						<Text text="481 West Street, Anytown OH 45066, USA" class="sapUiTinyMarginBottom" />
+						<Link text="www.company_a.example.com" />
+					</VBox>
+				</HBox>
+			</f:content>
+		</f:Card>
+
+		<f:Card
+			id="card4"
+			width="auto"
+			class="sapUiMediumMargin">
+			<f:header>
+				<card:Header
+					title="Donna Moore"
+					subtitle="Sales executive"
+					iconSrc="./cardsdemo/images/Woman_avatar_01.png" />
+			</f:header>
+			<f:content>
+				<HBox>
+					<VBox class="sapUiMediumMargin">
+						<Title text="Contact details" class="sapUiTinyMarginBottom" />
+						<Label text="First Name" />
+						<Text text="Donna" class="sapUiTinyMarginBottom" />
+						<Label text="Last Name" />
+						<Text text="Moore" class="sapUiTinyMarginBottom" />
+						<Label text="Phone" />
+						<Text text="+1 202 555 5555" />
+						<Title text="Company Details" class="sapUiTinyMarginBottom sapUiLargeMarginTop" />
+						<Label text="Company Name" />
+						<Text text="Company A" class="sapUiTinyMarginBottom" />
+						<Text text="481 West Street, Anytown OH 45066, USA" class="sapUiTinyMarginBottom" />
+						<Link text="www.company_a.example.com" />
+					</VBox>
+					<VBox class="sapUiMediumMargin">
+						<Title text="Organizational Details" class="sapUiTinyMarginBottom" />
+						<HBox>
+							<f:Avatar src="./cardsdemo/images/Woman_avatar_02.png" />
+							<Text text="John Miller" />
+						</HBox>
+					</VBox>
+				</HBox>
+			</f:content>
+		</f:Card>
+	</Page>
+</mvc:View>

@@ -1,0 +1,86 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:baseEditor="sap.ui.integration.designtime.baseEditor"
+>
+	<VBox>
+		<VBox
+			items="{ path: 'itemsModel>/', templateShareable: false}"
+			visible="{= !!${itemsModel>/}.length }"
+		>
+			<VBox>
+				<Bar
+					visible="{= ${config/allowSorting} || ${config/allowAddAndRemove} || ${config/showItemLabel}}"
+				>
+					<contentLeft>
+						<Label
+							text="{itemsModel>itemLabel}"
+							visible="{config/showItemLabel}"
+						/>
+					</contentLeft>
+					<contentRight>
+						<Button
+							icon="sap-icon://navigation-up-arrow"
+							tooltip="{i18n>BASE_EDITOR.MOVEUP}"
+							press="_moveUp"
+							enabled="{= ${itemsModel>index} !== 0}"
+							visible="{config/allowSorting}"
+						>
+							<customData>
+								<core:CustomData
+									key="index"
+									value="{itemsModel>index}"
+								/>
+							</customData>
+						</Button>
+						<Button
+							icon="sap-icon://navigation-down-arrow"
+							tooltip="{i18n>BASE_EDITOR.MOVEDOWN}"
+							press="_moveDown"
+							enabled="{= ${itemsModel>total} - 1 !== ${itemsModel>index}}"
+							visible="{config/allowSorting}"
+						>
+							<customData>
+								<core:CustomData
+									key="index"
+									value="{itemsModel>index}"
+								/>
+							</customData>
+						</Button>
+						<Button
+							icon="sap-icon://delete"
+							tooltip="{i18n>BASE_EDITOR.ARRAY.REMOVE}"
+							press="_removeItem"
+							visible="{config/allowAddAndRemove}"
+						>
+							<customData>
+								<core:CustomData
+									key="index"
+									value="{itemsModel>index}"
+								/>
+							</customData>
+						</Button>
+					</contentRight>
+				</Bar>
+				<baseEditor:PropertyEditors
+					init="wrapperInit"
+					propertyEditorsChange="_propertyEditorsChange"
+					config="{itemsModel>properties}"
+				/>
+			</VBox>
+		</VBox>
+		<Button
+			text="{
+				parts: [
+					'i18n>BASE_EDITOR.ARRAY.ADD',
+					'config/addItemLabel',
+					'i18n>BASE_EDITOR.ARRAY.ITEM_LABEL'
+				],
+				formatter: '.formatAddItemText'
+			}"
+			enabled="{= !${config/maxItems} || (Array.isArray(${itemsModel>/}) &amp;&amp; ${itemsModel>/} || []).length &lt; ${config/maxItems} }"
+			press="_addItem"
+			visible="{config/allowAddAndRemove}"
+		/>
+	</VBox>
+</core:FragmentDefinition>

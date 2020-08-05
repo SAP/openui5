@@ -1,0 +1,123 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f"
+	controllerName="sap.f.gridlist.controller.Main">
+
+	<f:GridList
+		headerText="Sizes and Placement"
+		mode="MultiSelect">
+
+		<f:customLayout>
+			<grid:GridBasicLayout
+				gridTemplateColumns="repeat(12, 6rem)"
+				gridAutoRows="5rem"
+				gridGap="0.5rem"/>
+		</f:customLayout>
+
+		<f:GridListItem
+			highlight="Success"
+			type="Detail">
+			<f:layoutData>
+				<grid:GridItemLayoutData gridColumn="span 4" gridRow="span 4"/>
+			</f:layoutData>
+			<VBox class="sapUiSmallMargin">
+				<HBox>
+					<Image src="../images/Woman_avatar_01.png" />
+					<VBox>
+						<Title text="Patagonia Men's Triolet Jacket" wrapping="true"/>
+						<Label text="{Patagonia" wrapping="true"/>
+						<Text wrapping="true" text="The PowSlaer Hacket is lightweight, packable, optimized for backcountry touring and features a minimalist design.
+													The GORE-Text Pro fabric package includes the first ever 100% recycled nylon face fabric to deliver the highest
+													level of durable waterproof/breathable"/>
+					</VBox>
+				</HBox>
+				<MessageStrip type="Success" text="This product is eligble for free shipping"/>
+			</VBox>
+		</f:GridListItem>
+
+		<f:GridListItem highlight="Success" type="Detail">
+			<f:layoutData>
+				<grid:GridItemLayoutData gridColumn="span 3" gridRow="span 3"/>
+			</f:layoutData>
+			<HBox class="sapUiSmallMargin">
+				<Image src="../images/Woman_avatar_01.png" />
+				<VBox>
+					<Title text="Patagonia Men's Triolet Jacket" wrapping="true"/>
+					<Label text="{Patagonia" wrapping="true"/>
+					<Text wrapping="true" text="The PowSlaer Hacket is lightweight, packable, optimized for backcountry touring and features a minimalist design.."/>
+				</VBox>
+			</HBox>
+		</f:GridListItem>
+
+		<f:GridListItem highlight="Success" type="Detail">
+			<f:layoutData>
+				<grid:GridItemLayoutData gridColumn="span 3" gridRow="span 3"/>
+			</f:layoutData>
+				<HBox class="sapUiSmallMargin">
+					<Image src="../images/Woman_avatar_01.png" />
+					<VBox>
+						<Title text="Patagonia Men's Triolet Jacket" wrapping="true"/>
+						<Label text="{Patagonia" wrapping="true"/>
+						<Text wrapping="true" text="The PowSlaer Hacket is lightweight, packable, optimized for backcountry touring and features a minimalist design.."/>
+					</VBox>
+				</HBox>
+		</f:GridListItem>
+
+		<f:GridListItem highlight="Success" type="Detail">
+			<f:layoutData>
+				<grid:GridItemLayoutData gridColumn="span 2" gridRow="span 3"/>
+			</f:layoutData>
+			<VBox class="sapUiSmallMargin">
+				<Title text="Patagonia Men's Triolet Jacket" wrapping="true"/>
+				<Label text="{Patagonia" wrapping="true"/>
+				<Text wrapping="true" text="The PowSlaer Hacket is lightweight, packable, optimized for backcountry touring and features a minimalist design.."/>
+			</VBox>
+		</f:GridListItem>
+
+		<f:GridListItem type="Detail">
+			<f:layoutData>
+				<grid:GridItemLayoutData gridColumn="span 3" gridRow="span 3"/>
+			</f:layoutData>
+			<VBox height="100%">
+				<Title text="Freya" wrapping="true" />
+				<Label text="Fox" wrapping="true" />
+				<Image src="../images/Woman_avatar_01.png"/>
+			</VBox>
+		</f:GridListItem>
+
+		<f:GridListItem>
+			<f:layoutData>
+				<grid:GridItemLayoutData gridColumn="8 / 10" gridRow="span 2"/>
+			</f:layoutData>
+			<Image src="../images/Woman_avatar_01.png" />
+		</f:GridListItem>
+
+		<f:GridListItem>
+			<f:layoutData>
+				<grid:GridItemLayoutData gridColumn="8 / 10" gridRow="span 2"/>
+			</f:layoutData>
+			<Image src="../images/Woman_avatar_01.png" />
+		</f:GridListItem>
+
+		<f:GridListItem>
+			<f:layoutData>
+				<grid:GridItemLayoutData gridColumn="8 / 10" gridRow="span 2"/>
+			</f:layoutData>
+			<Image src="../images/Woman_avatar_01.png"/>
+		</f:GridListItem>
+
+		<f:GridListItem type="Detail">
+			<f:layoutData>
+				<grid:GridItemLayoutData gridColumn="11 / 13" gridRow="4 / 6"/>
+			</f:layoutData>
+			<VBox height="100%" class="sapUiSmallMargin">
+				<Title text="M's Torrentshell Jacket" wrapping="true" />
+				<Label text="Patagonia" wrapping="true" />
+				<Text text="Patagonia is a durable and breathable waterproof shell"/>
+			</VBox>
+		</f:GridListItem>
+	</f:GridList>
+
+</mvc:View>

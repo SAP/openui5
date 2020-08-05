@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.HyphenationAPI",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.core.sample.HyphenationAPI.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

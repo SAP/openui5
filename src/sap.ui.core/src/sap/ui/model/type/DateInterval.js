@@ -3,8 +3,22 @@
  */
 
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/model/CompositeType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, DateFormat, CompositeType, FormatException, ParseException, ValidateException) {
+sap.ui.define([
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/model/CompositeType',
+	'sap/ui/model/FormatException',
+	'sap/ui/model/ParseException',
+	'sap/ui/model/ValidateException',
+	"sap/base/util/isEmptyObject"
+],
+	function(
+		DateFormat,
+		CompositeType,
+		FormatException,
+		ParseException,
+		ValidateException,
+		isEmptyObject
+	) {
 	"use strict";
 
 
@@ -69,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 			case "any":
-				if (!aValues[0] || !aValues[1]) {
+				if (!aValues[0] || (!aValues[1] && !this.oFormatOptions.singleIntervalValue)) {
 					return "";
 				}
 				if (this.oInputFormat) {
@@ -80,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 								if (isNaN(oValue)) {
 									throw new FormatException("Cannot format date: " + oValue + " is not a valid Timestamp");
 								} else {
-									oValue = parseInt(oValue, 10);
+									oValue = parseInt(oValue);
 								}
 							}
 							oValue = new Date(oValue);
@@ -116,7 +130,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @public
 	 */
 	DateInterval.prototype.parseValue = function(sValue, sInternalType) {
-		var aDates, oBundle;
+		var aDates;
+
+		function throwParseException(sName) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+			throw new ParseException(oBundle.getText(sName + ".Invalid"));
+		}
+
 		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				if (sValue === "") {
@@ -124,9 +144,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				}
 
 				aDates = this.oOutputFormat.parse(sValue);
-				if (!aDates[0] || !aDates[1]) {
-					oBundle = sap.ui.getCore().getLibraryResourceBundle();
-					throw new ParseException(oBundle.getText(this.sName + ".Invalid"));
+
+				if (!aDates[0] || (!aDates[1] && !this.oFormatOptions.singleIntervalValue)) {
+					// at least one single date should be returned
+					throwParseException(this.sName);
 				}
 
 				if (this.oInputFormat) {
@@ -163,15 +184,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 
 			Object.keys(this.oConstraints).forEach(function(sKey) {
 				var oCompareValue = this.oConstraints[sKey];
+				var bValid = true;
+
 				switch (sKey) {
 					case "minimum":
-						if (aValues[0] < oCompareValue || aValues[1] < oCompareValue) {
+						if (this.oFormatOptions.singleIntervalValue && aValues[1] === null) {
+							if (aValues[0] < oCompareValue) {
+								bValid = false;
+							}
+						} else if (aValues[0] < oCompareValue || aValues[1] < oCompareValue) {
+							bValid = false;
+						}
+
+						if (bValid === false) {
 							aViolatedConstraints.push("minimum");
 							aMessages.push(oBundle.getText("Date.Minimum", [oCompareValue]));
 						}
 						break;
 					case "maximum":
-						if (aValues[0] > oCompareValue || aValues[1] > oCompareValue) {
+						if (this.oFormatOptions.singleIntervalValue && aValues[1] === null) {
+							if (aValues[0] > oCompareValue) {
+								bValid = false;
+							}
+						} else if (aValues[0] > oCompareValue || aValues[1] > oCompareValue) {
+							bValid = false;
+						}
+
+						if (bValid === false) {
 							aViolatedConstraints.push("maximum");
 							aMessages.push(oBundle.getText("Date.Maximum", [oCompareValue]));
 						}
@@ -208,7 +247,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		this.oFormatOptions.interval = true;
 		this.oOutputFormat = DateFormat.getDateInstance(this.oFormatOptions);
 		if (oSourceOptions) {
-			if (jQuery.isEmptyObject(oSourceOptions)) {
+			if (isEmptyObject(oSourceOptions)) {
 				// set the default pattern if oSourceOptions is given as an empty object
 				oSourceOptions = {pattern: "yyyy-MM-dd"};
 			}

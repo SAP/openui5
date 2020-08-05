@@ -3,7 +3,7 @@
  */
 
 // Provides class sap.uxap.BlockBaseMetadata
-sap.ui.define(["jquery.sap.global", "sap/ui/core/ElementMetadata"], function (jQuery, ElementMetadata) {
+sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/core/ElementMetadata", "sap/base/Log"], function (jQuery, ElementMetadata, Log) {
 	"use strict";
 
 
@@ -18,6 +18,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/ElementMetadata"], function (jQ
 	 * @version ${version}
 	 * @since 1.26
 	 * @alias sap.uxap.BlockBaseMetadata
+	 * @extends sap.ui.core.ElementMetadata
 	 */
 	var BlockBaseMetadata = function (sClassName, oClassInfo) {
 
@@ -28,7 +29,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/ElementMetadata"], function (jQ
 	};
 
 	//chain the prototypes
-	BlockBaseMetadata.prototype = jQuery.sap.newObject(ElementMetadata.prototype);
+	BlockBaseMetadata.prototype = Object.create(ElementMetadata.prototype);
+	BlockBaseMetadata.prototype.constructor = BlockBaseMetadata;
 
 	BlockBaseMetadata.prototype.applySettings = function (oClassInfo) {
 		var vRenderer = oClassInfo.hasOwnProperty("renderer") ? (oClassInfo.renderer || "") : undefined;
@@ -48,7 +50,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/ElementMetadata"], function (jQ
 		//if we have not resolved the renderer yet
 		if (!this._sBlockRenderer) {
 			this._sBlockRenderer = this._resolveRendererName();
-			jQuery.sap.log.debug("BlockBaseMetadata :: " + this.getName() + " is renderer with " + this._sBlockRenderer);
+			Log.debug("BlockBaseMetadata :: " + this.getName() + " is renderer with " + this._sBlockRenderer);
 		}
 
 		return this._sBlockRenderer;

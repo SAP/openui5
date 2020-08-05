@@ -8,12 +8,7 @@
 				margin: 0.4375em 0.4375em 0em 0.4375em;
 			}
 			#text4 {
-				padding: 0em 0.4375em 0em 0.4375em;
-				border-width: 1px;
-				border-color: red;
-				border-style: solid;
-				color: blue;
-				background-color: #FFFFDD;
+				font-weight: bold;
 			}
 
 			#heading {
@@ -34,9 +29,8 @@
 
 			// create and add a page with texts
 			var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
-			var loremLineBreaks = "Lorem ipsum dolor sit amet,\r consetetur sadipscing elitr,\n sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,\r\n sed diam voluptua.";
+			var loremLineBreaks = "Lorem ipsum dolor sit amet\rNew line\nNew line\n\rNew line\r\nNew line";
 			var form = new sap.ui.layout.form.SimpleForm({
-				minWidth : 1024,
 				maxContainerCols : 2,
 				editable: false,
 				content : [
@@ -83,7 +77,7 @@
 					}),
 					new sap.m.Text("text3", {
 						text: "[3. FIXED WIDTH in em] " + lorem,
-						width: "45em"
+						width: "15em"
 					}),
 					new sap.m.Text("text3a", {
 						text: "[3a. FIXED WIDTH in %] " + lorem,
@@ -91,10 +85,10 @@
 					}),
 					new sap.m.Text("text3b", {
 						text: "[3b. FIXED WIDTH in px] " + lorem,
-						width: "600px"
+						width: "250px"
 					}),
 					new sap.m.Text("text4", {
-						text: "[4. STYLED] " + lorem
+						text: "[4. CUSTOM STYLED] " + lorem
 					}),
 					new sap.m.Text("text5", {
 						text: "[5. ALIGN RIGHT] " + lorem,
@@ -154,15 +148,30 @@
 						renderWhitespace:true,
 						wrapping:true
 					}),
-					form
-
-
+					new sap.m.Text("text13", {
+						text: "Text [13. Escaping characters examples] C:\\newFolder C:\\NewFolder C:\\TestFolder C:\\testFolder",
+						width: "100%"
+					}),
+					new sap.m.Text("text14", {
+						text: "Text [14. Hyphenation] An aggregation is a special relation between two UI element types. It is used to define the parent-child relationship within the tree structure. The parent end of the aggregation has cardinality 0..1, while the child end may have 0..1 or 0..*. The element's API offers convenient and consistent methods to deal with aggregations (e.g. to get, set, or remove target elements). Examples are table rows and cells, or the content of a table cell.",
+						wrappingType: "Hyphenated",
+						width: "200px"
+					}),
+					form,
+					new sap.m.Toolbar({
+						design: "Transparent",
+						content: [
+							new sap.m.Text({
+								text: "Text in Toolbar with Transparent design."
+							})
+						]
+					})
 				]
 			});
 			app.addPage(initialPage);
 
 		</script>
 	</head>
-	<body id="body" class="sapUiBody" role="application">
+	<body id="body" class="sapUiBody">
 	</body>
 </html>

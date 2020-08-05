@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.form.GridElementData.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/form/GridElementData'],
-	function(jQuery, library, GridElementData1) {
+sap.ui.define(['sap/ui/commons/library', 'sap/ui/layout/form/GridElementData'],
+	function(library, LayoutGridElementData) {
 	"use strict";
 
 
@@ -31,20 +31,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/for
 	 * @alias sap.ui.commons.form.GridElementData
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var GridElementData = GridElementData1.extend("sap.ui.commons.form.GridElementData", /** @lends sap.ui.commons.form.GridElementData.prototype */ { metadata : {
+	var GridElementData = LayoutGridElementData.extend("sap.ui.commons.form.GridElementData", /** @lends sap.ui.commons.form.GridElementData.prototype */ { metadata : {
 
 		deprecated : true,
 		library : "sap.ui.commons"
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.commons.form.GridElementData.prototype.init = function(){
-	//   // do something for initialization...
-	//};
-
 
 	return GridElementData;
 
-}, /* bExport= */ true);
+});

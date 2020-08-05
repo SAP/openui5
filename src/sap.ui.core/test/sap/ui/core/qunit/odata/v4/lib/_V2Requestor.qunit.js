@@ -1,27 +1,37 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/lib/_V2Requestor"
-], function (jQuery, SyncPromise, DateFormat, ODataUtils, _Helper, _Parser, _Requestor,
-		asV2Requestor) {
+], function (Log, SyncPromise, CalendarType, DateFormat, ODataUtils, _Helper, _Parser, _Requestor,
+		asV2Requestor0) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
+	function asV2Requestor(oRequestor) {
+		oRequestor.oModelInterface = oRequestor.oModelInterface || {};
+		asV2Requestor0(oRequestor);
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._V2Requestor", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.sDefaultCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+		},
+		afterEach : function () {
+			sap.ui.getCore().getConfiguration().setCalendarType(this.sDefaultCalendarType);
 		}
 	});
 
@@ -42,16 +52,15 @@ sap.ui.require([
 		}
 	}].forEach(function (oRequestor) {
 		QUnit.test("check headers (V2): ", function (assert) {
+			// code under test
 			asV2Requestor(oRequestor);
 
 			assert.deepEqual(oRequestor.mFinalHeaders, {
 				"Content-Type" : "application/json;charset=UTF-8"
 			});
-
 			assert.deepEqual(oRequestor.mPredefinedPartHeaders, {
 				"Accept" : "application/json"
 			});
-
 			assert.deepEqual(oRequestor.mPredefinedRequestHeaders, {
 				"Accept" : "application/json",
 				"MaxDataServiceVersion" : "2.0",
@@ -68,23 +77,35 @@ sap.ui.require([
 			"d" : {
 				"__count" : "3",
 				"__next" : "...?$skiptoken=12",
-				"results" : [{"String" : "foo"}, {"Boolean" : true}]
+				"results" : [{
+					"__metadata" : {},
+					"String" : "foo"
+				}, {
+//					"__metadata" : {},
+					"Boolean" : true
+				}]
 			}
 		},
 		oExpectedResult : {
 			"@odata.count" : "3", // Note: v4.ODataModel uses IEEE754Compatible=true
 			"@odata.nextLink" : "...?$skiptoken=12",
-			"value" : [{"String" : "foo"}, {"Boolean" : true}]
+			"value" : [{"__metadata" : {}, "String" : "foo"}, {"Boolean" : true}]
 		}
 	}, {
 		bIsCollection : true,
 		oResponsePayload : {
 			"d" : {
-				"results" : [{"String" : "foo"}, {"Boolean" : true}]
+				"results" : [{
+					"__metadata" : {},
+					"String" : "foo"
+				}, {
+//					"__metadata" : {},
+					"Boolean" : true
+				}]
 			}
 		},
 		oExpectedResult : {
-			"value" : [{"String" : "foo"}, {"Boolean" : true}]
+			"value" : [{"__metadata" : {}, "String" : "foo"}, {"Boolean" : true}]
 		}
 	}, {
 		bIsCollection : false,
@@ -107,7 +128,7 @@ sap.ui.require([
 		oExpectedResult : {"__metadata" : {}, "results" : "foo"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doConvertResponse, " + i, function (assert) {
-			var oRequestor = {fnFetchEntityContainer : function () {}},
+			var oRequestor = {fetchEntityContainer : function () {}},
 				oRequestorMock = this.mock(oRequestor);
 
 			asV2Requestor(oRequestor);
@@ -182,7 +203,7 @@ sap.ui.require([
 			sOutput = "2017-08-10T00:00:00Z",
 			oProperty = {},
 			oRequestor = {
-				oModelInterface : {fnFetchMetadata : function () {}}
+				oModelInterface : {fetchMetadata : function () {}}
 			},
 			oResponsePayload = {
 				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
@@ -193,7 +214,7 @@ sap.ui.require([
 			};
 
 		asV2Requestor(oRequestor);
-		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 			.withExactArgs(sMetaPath)
 			.returns(SyncPromise.resolve(oProperty));
 		this.mock(oRequestor).expects("convertPrimitive")
@@ -226,6 +247,64 @@ sap.ui.require([
 		assert.deepEqual(
 			oRequestor.doConvertResponse(oResponsePayload, sMetaPath),
 			{value : null});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.5 collection of primitives", function (assert) {
+		var sMetaPath = "/__FAKE__GetAllFlightDates/@$ui5.overload/0/$ReturnType",
+			sOutput0 = "2017-08-10T00:00:00Z",
+			sOutput1 = "2017-08-10T00:00:01Z",
+			oProperty = {},
+			oRequestor = {
+				oModelInterface : {fetchMetadata : function () {}}
+			},
+			oRequestorMock = this.mock(oRequestor),
+			oResponsePayload = {
+				"d" : { // Note: DataServiceVersion : 2.0
+					"results" : [
+						"/Date(1502323200000)/",
+						"/Date(1502323201000)/"
+					]
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata").withExactArgs(sMetaPath)
+			.returns(SyncPromise.resolve(oProperty));
+		oRequestorMock.expects("convertNonPrimitive").never();
+		oRequestorMock.expects("convertPrimitive").withExactArgs(oResponsePayload.d.results[0],
+				sinon.match.same(oProperty), sMetaPath, "")
+			.returns(sOutput0);
+		oRequestorMock.expects("convertPrimitive").withExactArgs(oResponsePayload.d.results[1],
+				sinon.match.same(oProperty), sMetaPath, "")
+			.returns(sOutput1);
+
+		// code under test
+		assert.deepEqual(
+			oRequestor.doConvertResponse(oResponsePayload, sMetaPath),
+			{value : [sOutput0, sOutput1]});
+	});
+	//TODO test with __count/__next?
+
+	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.5 empty collection", function (assert) {
+		var sMetaPath = "/__FAKE__GetAllFlightDates/@$ui5.overload/0/$ReturnType",
+			oRequestor = {},
+			oRequestorMock = this.mock(oRequestor),
+			oResponsePayload = {
+				"d" : { // Note: DataServiceVersion : 2.0
+					"results" : []
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		oRequestorMock.expects("convertNonPrimitive").never();
+		oRequestorMock.expects("convertPrimitive").never();
+
+		// code under test
+		assert.deepEqual(
+			oRequestor.doConvertResponse(oResponsePayload, sMetaPath),
+			{value : []});
 	});
 
 	//*********************************************************************************************
@@ -445,6 +524,9 @@ sap.ui.require([
 
 		asV2Requestor(oRequestor);
 
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		asV2Requestor0._setDateTimeFormatter();
+
 		// code under test
 		assert.strictEqual(oRequestor.convertDate("\/Date(1395705600000)\/"), "2014-03-25");
 
@@ -514,6 +596,9 @@ sap.ui.require([
 			var oRequestor = {};
 
 			asV2Requestor(oRequestor);
+
+			sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+			asV2Requestor0._setDateTimeFormatter();
 
 			// code under test
 			assert.strictEqual(oRequestor.convertDateTimeOffset(oFixture.input,
@@ -1052,6 +1137,10 @@ sap.ui.require([
 			// {value : "13:47:26.123", type : "Edm.TimeOfDay", v2type: "Edm.Time",
 			// 	result : "time'PT13H47M26.123S'"},
 		].forEach(function (oFixture) {
+
+			sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+			asV2Requestor0._setDateTimeFormatter();
+
 			assert.strictEqual(oRequestor.formatPropertyAsLiteral(oFixture.value, {
 					$Type : oFixture.type,
 					$v2Type : oFixture.v2type
@@ -1122,12 +1211,12 @@ sap.ui.require([
 				sMetaPath = "/MyEntitySet",
 				oProperty = {$Type : oFixture.type, $v2Type : oFixture.v2type},
 				oRequestor = {
-					oModelInterface : {fnFetchMetadata : function () {}}
+					oModelInterface : {fetchMetadata : function () {}}
 				};
 
 			asV2Requestor(oRequestor);
 
-			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+			this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 				.withExactArgs(sMetaPath + "/foo/bar")
 				.returns(SyncPromise.resolve(oProperty));
 
@@ -1212,14 +1301,14 @@ sap.ui.require([
 		QUnit.test("convertFilter: " + oFixture.v4, function (assert) {
 			var oProperty = {$Type : "Edm.Double"},
 				oRequestor = {
-					oModelInterface : {fnFetchMetadata : function () {}}
+					oModelInterface : {fetchMetadata : function () {}}
 				},
 				sResourcePath = "MyEntitySet";
 
 			asV2Requestor(oRequestor);
 
 			// simply declare all properties to be Edm.Double so that a conversion is necessary
-			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata").atLeast(0)
+			this.mock(oRequestor.oModelInterface).expects("fetchMetadata").atLeast(0)
 				.returns(SyncPromise.resolve(oProperty));
 
 			// code under test
@@ -1248,12 +1337,12 @@ sap.ui.require([
 		QUnit.test("convertFilter: " + oFixture.error, function (assert) {
 			var sMetaPath = "/MyEntitySet",
 				oRequestor = {
-					oModelInterface : {fnFetchMetadata : function () {}}
+					oModelInterface : {fetchMetadata : function () {}}
 				};
 
 			asV2Requestor(oRequestor);
 
-			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+			this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 				.withExactArgs(sMetaPath + "/foo/bar")
 				.returns(SyncPromise.resolve(oFixture.property));
 
@@ -1268,14 +1357,14 @@ sap.ui.require([
 	QUnit.test("ready()", function (assert) {
 		var oRequestor = {
 				oModelInterface : {
-					fnFetchEntityContainer : function () {}
+					fetchEntityContainer : function () {}
 				}
 			},
 			oSyncPromise;
 
 		asV2Requestor(oRequestor);
 
-		this.mock(oRequestor.oModelInterface).expects("fnFetchEntityContainer")
+		this.mock(oRequestor.oModelInterface).expects("fetchEntityContainer")
 			.returns(SyncPromise.resolve(Promise.resolve({})));
 
 		// code under test
@@ -1290,13 +1379,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getTypeForName", function (assert) {
 		var oRequestor = {
-				oModelInterface : {fnFetchMetadata : function () {}}
+				oModelInterface : {fetchMetadata : function () {}}
 			},
 			oType = {};
 
 		asV2Requestor(oRequestor);
 
-		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 			.withExactArgs("/my.Type").returns(SyncPromise.resolve(oType));
 
 		// code under test
@@ -1310,6 +1399,10 @@ sap.ui.require([
 		mHeaders : { "DataServiceVersion" : "2.0" },
 		bVersionOptional : true
 	}, {
+		iCallCount : 1,
+		mHeaders : { "DataServiceVersion" : "2.0;fooBar" },
+		bVersionOptional : true
+	}, {
 		iCallCount : 2,
 		mHeaders : {},
 		bVersionOptional : true
@@ -1321,9 +1414,13 @@ sap.ui.require([
 		iCallCount : 1,
 		mHeaders : { "DataServiceVersion" : "1.0" },
 		bVersionOptional : true
+	}, {
+		iCallCount : 1,
+		mHeaders : { "DataServiceVersion" : "1.0;fooBar" },
+		bVersionOptional : true
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, success cases - " + i, function (assert) {
-			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+			var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0"),
 				fnGetHeader = this.spy(function (sHeaderKey) {
 					return oFixture.mHeaders[sHeaderKey];
 				});
@@ -1346,12 +1443,16 @@ sap.ui.require([
 		sError : "value 'foo' in response for /Foo('42')/Bar",
 		mHeaders : { "DataServiceVersion" : "foo" }
 	}, {
+		iCallCount : 1,
+		sError : "value '1.00' in response for /Foo('42')/Bar",
+		mHeaders : { "DataServiceVersion" : "1.00" }
+	}, {
 		iCallCount : 2,
 		sError : "'OData-Version' header with value 'baz' in response for /Foo('42')/Bar",
 		mHeaders : { "OData-Version" : "baz" }
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, error cases - " + i, function (assert) {
-			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+			var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0"),
 				fnGetHeader = this.spy(function (sHeaderKey) {
 					return oFixture.mHeaders[sHeaderKey];
 				});
@@ -1373,7 +1474,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getPathAndAddQueryOptions: OperationImport", function (assert) {
 		var oModelInterface = {
-				fnFetchMetadata : null // do not call!
+				fetchMetadata : null // do not call!
 			},
 			oOperationMetadata = {
 				"$Parameter" : [{
@@ -1409,7 +1510,7 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var oEntity = {"Foo" : 42, "ID" : "1"},
-				oModelInterface = {fnFetchMetadata : function () {}},
+				oModelInterface = {fetchMetadata : function () {}},
 				oOperationMetadata = {
 					"$IsBound" : true,
 					"$Parameter" : [{ // "$Name" : null, "$Nullable" : false,
@@ -1434,7 +1535,7 @@ sap.ui.require([
 					}
 				};
 
-			this.mock(oModelInterface).expects("fnFetchMetadata")
+			this.mock(oModelInterface).expects("fetchMetadata")
 				.withExactArgs("/com.sap.ui5.OData.EdmTypes")
 				.returns(SyncPromise.resolve(oTypeMetadata));
 			oRequestorMock.expects("formatPropertyAsLiteral").withExactArgs("1", oTypeMetadata.ID)
@@ -1460,7 +1561,7 @@ sap.ui.require([
 	QUnit.test("getPathAndAddQueryOptions: Operation w/o parameters", function (assert) {
 		var oOperationMetadata = {},
 			mParameters = {foo : "bar"},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		this.mock(oRequestor).expects("formatPropertyAsLiteral").never();
 
@@ -1476,7 +1577,7 @@ sap.ui.require([
 	QUnit.test("getPathAndAddQueryOptions: $v2HttpMethod", function (assert) {
 		var oOperationMetadata = {$v2HttpMethod : "PUT"},
 			mParameters = {foo : "bar"},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		assert.strictEqual(
 			// code under test
@@ -1488,8 +1589,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getPathAndAddQueryOptions: collection parameter", function (assert) {
-		var oOperationMetadata = {$Parameter : [{$Name : "foo", $IsCollection : true}]},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+		var oOperationMetadata = {$Parameter : [{$Name : "foo", $isCollection : true}]},
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		assert.throws(function () {
 			// code under test
@@ -1500,14 +1601,14 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("isChangeSetOptional", function (assert) {
-		var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+		var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		assert.strictEqual(oRequestor.isChangeSetOptional(), false);
 	});
 
 	//*****************************************************************************************
 	QUnit.test("isActionBodyOptional", function (assert) {
-		var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+		var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		assert.strictEqual(oRequestor.isActionBodyOptional(), true);
 	});
@@ -1518,7 +1619,7 @@ sap.ui.require([
 				$Key : ["KeyProperty"],
 				KeyProperty : {$Type : "Edm.String"}
 			},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		this.mock(_Helper).expects("getMetaPath")
 			.withExactArgs("/my/path('foo')").returns("/my/path");
@@ -1536,7 +1637,7 @@ sap.ui.require([
 				$Key : ["KeyProperty"],
 				KeyProperty : {$Type : "Edm.Foo"}
 			},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		this.mock(_Helper).expects("getMetaPath")
 			.withExactArgs("/my/path(42)").returns("/my/path");
@@ -1557,7 +1658,7 @@ sap.ui.require([
 				$Key : ["føø"],
 				"føø" : {$Type : "Edm.Foo"}
 			},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
 		this.mock(_Helper).expects("getMetaPath")
 			.withExactArgs("/my/path(f%C3%B8%C3%B8=42)").returns("/my/path");
@@ -1586,7 +1687,7 @@ sap.ui.require([
 			},
 			oHelperMock = this.mock(_Helper),
 			oParserMock = this.mock(_Parser),
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0"),
 			oRequestorMock = this.mock(oRequestor);
 
 		this.mock(_Helper).expects("getMetaPath")
@@ -1612,7 +1713,7 @@ sap.ui.require([
 	//*****************************************************************************************
 	["", "?$select=*"].forEach(function (sQuery) {
 		QUnit.test("convertResourcePath: query=" + sQuery, function (assert) {
-			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+			var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0"),
 				oRequestorMock = this.mock(oRequestor);
 
 			oRequestorMock.expects("convertKeyPredicate")
@@ -1624,6 +1725,81 @@ sap.ui.require([
 
 			assert.strictEqual(oRequestor.convertResourcePath("Foo/Bar(42)/Baz/Qux(23)" + sQuery),
 				"Foo/Bar(~42~)/Baz/Qux(~23~)" + sQuery);
+		});
+	});
+
+	//*****************************************************************************************
+	QUnit.test("reportUnboundMessages does not call model", function (assert) {
+		var fnReportUnboundMessages = this.spy(),
+			oModelInterface = {reportUnboundMessages : fnReportUnboundMessages},
+			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0");
+
+		// code under test
+		oRequestor.reportUnboundMessagesAsJSON('[]');
+
+		assert.notOk(fnReportUnboundMessages.called);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("reportBoundMessages does not call model", function (assert) {
+		var fnReportBoundMessages = this.spy(),
+			oModelInterface = {reportBoundMessages : fnReportBoundMessages},
+			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0");
+
+		// code under test
+		oRequestor.getModelInterface().reportBoundMessages("Teams('42')", {/*mPathToMessages*/});
+
+		assert.notOk(fnReportBoundMessages.called);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setDateTimeFormatter", function (assert) {
+		var oDateFormatMock = this.mock(DateFormat);
+
+		oDateFormatMock.expects("getDateInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern: "yyyy-MM-dd",
+				UTC : true
+			})
+			.callThrough();
+		oDateFormatMock.expects("getDateTimeInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+			})
+			.callThrough();
+		oDateFormatMock.expects("getTimeInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern: "HH:mm:ss",
+				UTC : true
+			})
+			.callThrough();
+
+		// code under test
+		asV2Requestor0._setDateTimeFormatter();
+	});
+
+	//*****************************************************************************************
+	QUnit.test("checkHeaderNames", function (assert) {
+		var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
+
+		// code under test
+		oRequestor.checkHeaderNames({allowed : "123"});
+		oRequestor.checkHeaderNames({"OData-Version" : "123"}); // V4 specific headers are allowed
+
+		["Accept", "Content-ID", "Content-Transfer-Encoding", "Content-Type", "DataServiceVersion",
+			"If-Match", "If-None-Match", "MaxDataServiceVersion", "SAP-ContextId", "X-HTTP-Method"
+		].forEach(function (sHeaderName) {
+			var mHeaders = {};
+
+			mHeaders[sHeaderName] = "123";
+
+			assert.throws(function () {
+				// code under test
+				oRequestor.checkHeaderNames(mHeaders);
+			}, new Error("Unsupported header: " + sHeaderName));
 		});
 	});
 });

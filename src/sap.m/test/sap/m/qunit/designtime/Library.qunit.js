@@ -1,11 +1,14 @@
-/*global QUnit*/
-
-QUnit.config.autostart = false;
+/*global QUnit */
 
 /**
- * General consistency checks on designtime metadata of controls in the sap.m library
+ * General consistency checks on designtime metadata of controls in the sap.f library
  */
-sap.ui.require(["sap/ui/dt/test/LibraryTest"], function (LibraryTest) {
+sap.ui.define([
+	"sap/ui/dt/enablement/libraryTest"
+], function (
+	libraryValidator
+) {
 	"use strict";
-	LibraryTest("sap.m", QUnit);
+
+	return libraryValidator("sap.m", QUnit);
 });

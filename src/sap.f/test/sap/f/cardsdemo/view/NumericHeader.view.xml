@@ -1,0 +1,58 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:cards="sap.f.cards"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Card with Numeric Header" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<Panel>
+			<grid:CSSGrid>
+				<grid:customLayout>
+					<grid:GridBoxLayout boxMinWidth="400px" />
+				</grid:customLayout>
+
+				<f:Card id="fcard1" width="300px">
+					<f:header>
+						<cards:NumericHeader
+							title="Project Cloud Transformation"
+							subtitle="Revenue"
+							unitOfMeasurement="Currency"
+							details="Q1, 2018"
+							number="65.3454"
+							scale="K"
+							trend="Down"
+							state="Error">
+							<cards:sideIndicators>
+								<cards:NumericSideIndicator
+									title="Target"
+									number="100"
+									unit="K" />
+								<cards:NumericSideIndicator
+									title="Deviation"
+									number="34.7"
+									unit="%" />
+							</cards:sideIndicators>
+						</cards:NumericHeader>
+					</f:header>
+				</f:Card>
+
+				<w:Card id="kpicard1" manifest="{manifests>/kpiManifests/kpicard1}" />
+				<w:Card id="kpicard2" manifest="{manifests>/kpiManifests/kpicard2}" />
+				<w:Card id="kpicard3" manifest="{manifests>/kpiManifests/kpicard3}" />
+				<w:Card id="kpicard4" manifest="{manifests>/kpiManifests/kpicard4}" />
+				<w:Card id="tablecard1" manifest="{manifests>/kpiManifests/tablecard1}" />
+				<w:Card id="tablecard123" manifest="{manifests>/kpiManifests/tablecard123}" />
+			</grid:CSSGrid>
+		</Panel>
+	</Page>
+</mvc:View>

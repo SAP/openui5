@@ -4,13 +4,15 @@
 
 // Provides control sap.ui.commons.AutoComplete.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     './ComboBox',
     './library',
-    "./AutoCompleteRenderer",
-    'jquery.sap.strings'
+    './AutoCompleteRenderer',
+    './TextField',
+    'sap/ui/events/KeyCodes',
+    'jquery.sap.strings' // provides jQuery.sap.startsWithIgnoreCase
 ],
-	function(jQuery, ComboBox, library, AutoCompleteRenderer /*, jQuerySap */) {
+	function(jQuery, ComboBox, library, AutoCompleteRenderer, TextField, KeyCodes) {
 	"use strict";
 
 
@@ -114,8 +116,8 @@ sap.ui.define([
 
 	AutoComplete.prototype.onkeypress = function(oEvent) {
 		var iKC = oEvent.which || oEvent.keyCode;
-		if (iKC === jQuery.sap.KeyCodes.ESCAPE) {
-			sap.ui.commons.TextField.prototype.onkeypress.apply(this, arguments);
+		if (iKC === KeyCodes.ESCAPE) {
+			TextField.prototype.onkeypress.apply(this, arguments);
 			jQuery(this.getInputDomRef()).removeAttr("aria-posinset");
 		}
 	};
@@ -217,7 +219,7 @@ sap.ui.define([
 				case "keypress":
 					// in Firefox escape is handled on keypress
 					iKC = oEvent.which || oEvent.keyCode;
-					if (iKC === jQuery.sap.KeyCodes.ESCAPE) {
+					if (iKC === KeyCodes.ESCAPE) {
 						this._close();
 						break;
 					}
@@ -401,7 +403,7 @@ sap.ui.define([
 
 
 	/**
-	 * @deprecated NOT SUPPORTED
+	 * @deprecated As of version 1.10.0, NOT SUPPORTED
 	 * @public
 	 * @name sap.ui.commons.AutoComplete#getListBox
 	 * @function
@@ -409,7 +411,7 @@ sap.ui.define([
 
 
 	/**
-	 * @deprecated NOT SUPPORTED
+	 * @deprecated As of version 1.10.0, NOT SUPPORTED
 	 * @public
 	 */
 	AutoComplete.prototype.setListBox = function(){
@@ -418,7 +420,7 @@ sap.ui.define([
 
 
 	/**
-	 * @deprecated NOT SUPPORTED
+	 * @deprecated As of version 1.10.0, NOT SUPPORTED
 	 * @public
 	 * @name sap.ui.commons.AutoComplete#getSelectedKey
 	 * @function
@@ -426,7 +428,7 @@ sap.ui.define([
 
 
 	/**
-	 * @deprecated NOT SUPPORTED
+	 * @deprecated As of version 1.10.0, NOT SUPPORTED
 	 * @public
 	 */
 	AutoComplete.prototype.setSelectedKey = function(){
@@ -435,7 +437,7 @@ sap.ui.define([
 
 
 	/**
-	 * @deprecated NOT SUPPORTED
+	 * @deprecated As of version 1.10.0, NOT SUPPORTED
 	 * @public
 	 * @name sap.ui.commons.AutoComplete#getSelectedItemId
 	 * @function
@@ -443,7 +445,7 @@ sap.ui.define([
 
 
 	/**
-	 * @deprecated NOT SUPPORTED
+	 * @deprecated As of version 1.10.0, NOT SUPPORTED
 	 * @public
 	 */
 	AutoComplete.prototype.setSelectedItemId = function(){
@@ -452,4 +454,4 @@ sap.ui.define([
 
 	return AutoComplete;
 
-}, /* bExport= */ true);
+});

@@ -14,7 +14,6 @@ sap.ui.define(['sap/ui/commons/Button', 'sap/ui/commons/TextView', 'sap/ui/commo
 		 * @returns {sap.ui.cre.Control}
 		 */
 		createContent: function(oController) {
-			var c = sap.ui.commons;
 			var aControls = [];
 			var oText = new TextView({text:"JS View with a Button attached to a controller function:"});
 			var oButton = new Button(this.createId("myButton"), {text:"Press Me"});

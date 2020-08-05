@@ -1,9 +1,9 @@
+/*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/Device",
 	"sap/ui/test/autowaiter/_utils",
-	"sap/ui/test/opaQunit"
-], function ($, Device, _utils) {
+	"sap/ui/thirdparty/URI",
+	"sap/ui/test/opaQunit" // only used implicitly
+], function (_utils, URI) {
 	"use strict";
 
 	QUnit.module("AutoWaiter - utils");
@@ -18,10 +18,8 @@ sap.ui.define([
 		assert.ok(!sTrace.match(/^Error\n/));
 	});
 
-	["false", "true", undefined].forEach(function (paramValue, index) {
-		QUnit.test("Should handle stack trace in IE if opaFrameIEStackTrace is " + paramValue, function (assert) {
-			var fnDone = assert.async();
-			$.sap.unloadResources("sap/ui/test/autowaiter/_utils.js", false, true, true);
+	["false", "true", undefined].forEach(function (paramValue) {
+		QUnit.test("Should handle stack trace in IE if opaFrameIEStackTrace is " + paramValue, function callingFunction (assert) {
 			var fnOrig = URI.prototype.search;
 			var oSearchStub = sinon.stub(URI.prototype, "search", function(query) {
 				if ( query === true ) {
@@ -29,26 +27,27 @@ sap.ui.define([
 				}
 				return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
 			});
-			sap.ui.require(["sap/ui/test/autowaiter/_utils"], function callingFunction (_utils) {
-				var sTrace = _utils.resolveStackTrace();
-				assert.contains(sTrace, new Error().stack || paramValue === "true" ? "callingFunction" : "No stack trace available");
-				oSearchStub.restore();
-				fnDone();
-			});
+			var sTrace = _utils.resolveStackTrace();
+			assert.contains(sTrace, new Error().stack || paramValue === "true" ? "callingFunction" : "No stack trace available");
+			oSearchStub.restore();
 		});
 	});
 
 	QUnit.test("Should get function string representation", function (assert) {
+		/* eslint-disable no-console */
 		var sFunc = _utils.functionToString(function foo (bar) {
 			console.log("foo", bar);
 		});
+		/* eslint-enable no-console */
 		assert.ok(sFunc.match(/^function ?foo ?\(bar\) ?{\n\t\t\tconsole.log\('foo', bar\);\n\t\t}$/));
 	});
 
 	QUnit.test("Should get array-like object string representation", function (assert) {
+		/* eslint-disable no-console */
 		var fnTestFunc = function foo (bar) {
 			console.log("foo", bar);
 		};
+		/* eslint-enable no-console */
 		var Foo = function () {};
 		assert.strictEqual(argumentsToString(), "", "Should handle no args");
 		assert.strictEqual(argumentsToString("fooBar"), "'fooBar'", "Should handle string in args");

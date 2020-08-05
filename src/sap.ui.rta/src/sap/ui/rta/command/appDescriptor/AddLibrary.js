@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/AppDescriptorCommand'
+	"sap/ui/rta/command/AppDescriptorCommand"
 ], function(
 	AppDescriptorCommand
 ) {
@@ -12,7 +12,7 @@ sap.ui.define([
 	 * Implementation of a command for Add Library change on App Descriptor
 	 *
 	 * @class
-	 * @extends sap.ui.rta.command.appDescriptor.AppDescriptorCommand
+	 * @extends sap.ui.rta.command.AppDescriptorCommand
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -39,12 +39,12 @@ sap.ui.define([
 	 * Execute the change (load the required libraries)
 	 * @return {Promise} resolved if libraries could be loaded; rejected if not
 	 */
-	AddLibrary.prototype.execute = function(){
+	AddLibrary.prototype.execute = function() {
 		var aPromises = [];
 
-		if (this.getParameters().libraries){
+		if (this.getParameters().libraries) {
 			var aLibraries = Object.keys(this.getParameters().libraries);
-			aLibraries.forEach(function(sLibrary){
+			aLibraries.forEach(function(sLibrary) {
 				aPromises.push(sap.ui.getCore().loadLibrary(sLibrary, true));
 			});
 		}
@@ -53,5 +53,4 @@ sap.ui.define([
 	};
 
 	return AddLibrary;
-
 }, /* bExport= */true);

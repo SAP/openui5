@@ -1,0 +1,38 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.ui.integration.sample.CardsLayout.componentCard",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.integration.sample.CardsLayout.componentCard.View",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		}
+	},
+	"sap.card": {
+		"type": "Component",
+		"header": {
+			"title": "Site Visit - Peach Valley",
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "/peachValley"
+					}
+				}
+			]
+		}
+	}
+}

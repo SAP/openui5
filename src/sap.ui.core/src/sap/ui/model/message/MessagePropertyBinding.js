@@ -3,8 +3,12 @@
  */
 
 // Provides the JSON model implementation of a property binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/ClientPropertyBinding'],
-	function(jQuery, ChangeReason, ClientPropertyBinding) {
+sap.ui.define([
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/ClientPropertyBinding',
+	"sap/base/util/deepEqual"
+],
+	function(ChangeReason, ClientPropertyBinding, deepEqual) {
 	"use strict";
 
 
@@ -26,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
 	MessagePropertyBinding.prototype.setValue = function(oValue){
-		if (!jQuery.sap.equal(this.oValue, oValue)) {
+		if (!deepEqual(this.oValue, oValue)) {
 			// the binding value will be updated by the model. The model calls checkupdate on all bindings after updating its value.
 			this.oModel.setProperty(this.sPath, oValue, this.oContext);
 		}
@@ -41,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 */
 	MessagePropertyBinding.prototype.checkUpdate = function(bForceupdate){
 		var oValue = this._getValue();
-		if (!jQuery.sap.equal(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
+		if (!deepEqual(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
 			this.oValue = oValue;
 			this._fireChange({reason: ChangeReason.Change});
 		}

@@ -12,8 +12,6 @@ sap.ui.define([
 		},
 
 		onInit : function (evt) {
-			var fsf = FileSizeFormat.getInstance(100);
-			var fsData = {"fileSize" : fsf};
 			var oModel = new JSONModel(this._data);
 			this.getView().setModel(oModel);
 		}

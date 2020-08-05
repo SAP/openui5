@@ -14,7 +14,9 @@ sap.ui.define(["sap/ui/core/library"],
 	 * ProgressIndicator renderer.
 	 * @namespace
 	 */
-	var ProgressIndicatorRenderer = {};
+	var ProgressIndicatorRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -26,7 +28,7 @@ sap.ui.define(["sap/ui/core/library"],
 		var fPercentValue = oControl.getPercentValue(),
 			iWidthControl = oControl.getWidth(),
 			iHeightControl = oControl.getHeight(),
-			sPercentValueClassName = oControl._getCSSClassByPercentValue(fPercentValue),
+			aPercentValueClassName = oControl._getCSSClassByPercentValue(fPercentValue),
 			sTextValue = oControl.getDisplayValue(),
 			bShowText = oControl.getShowValue(),
 			sState = oControl.getState(),
@@ -34,29 +36,26 @@ sap.ui.define(["sap/ui/core/library"],
 			sControlId = oControl.getId();
 
 		// PI container
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMPI");
-		oRm.addClass(sPercentValueClassName);
-		oRm.addStyle("width", iWidthControl);
+		oRm.openStart("div", oControl);
+		oRm.class("sapMPI");
+		oRm.style("width", iWidthControl);
+		aPercentValueClassName.forEach(function (sClass) {
+			oRm.class(sClass);
+		});
 
-		if (iHeightControl) {
-			oRm.addStyle("height", iHeightControl);
-		}
+		oRm.style("height", iHeightControl);
 
 		if (oControl.getEnabled()) {
-			oRm.writeAttribute('tabIndex', '-1');
+			oRm.attr('tabindex', '-1');
 		} else {
-			oRm.addClass("sapMPIBarDisabled");
+			oRm.class("sapMPIBarDisabled");
 		}
 
 		if (oControl.getDisplayOnly()) {
-			oRm.addClass("sapMPIDisplayOnly");
+			oRm.class("sapMPIDisplayOnly");
 		}
 
-		oRm.writeClasses();
-		oRm.writeStyles();
-		oRm.writeAccessibilityState(oControl, {
+		oRm.accessibilityState(oControl, {
 			role: "progressbar",
 			valuemin: 0,
 			valuenow: fPercentValue,
@@ -68,74 +67,75 @@ sap.ui.define(["sap/ui/core/library"],
 		});
 
 		if (oControl.getTooltip_AsString()) {
-			oRm.writeAttributeEscaped("title", oControl.getTooltip_AsString());
+			oRm.attr("title", oControl.getTooltip_AsString());
 		}
 
-		oRm.write(">");
+		oRm.openEnd();
 
 		// PI progress bar
-		oRm.write("<div");
-		oRm.addClass("sapMPIBar");
+		oRm.openStart("div", sControlId + "-bar");
+		oRm.class("sapMPIBar");
 
 		switch (sState) {
 		case ValueState.Warning:
-			oRm.addClass("sapMPIBarCritical");
+			oRm.class("sapMPIBarCritical");
 			break;
 		case ValueState.Error:
-			oRm.addClass("sapMPIBarNegative");
+			oRm.class("sapMPIBarNegative");
 			break;
 		case ValueState.Success:
-			oRm.addClass("sapMPIBarPositive");
+			oRm.class("sapMPIBarPositive");
+			break;
+		case ValueState.Information:
+			oRm.class("sapMPIBarInformation");
 			break;
 		default:
-			oRm.addClass("sapMPIBarNeutral");
+			oRm.class("sapMPIBarNeutral");
 			break;
 		}
 
-		oRm.writeClasses();
-		oRm.writeAttribute("id", sControlId + "-bar");
-		oRm.writeAttribute("style", "flex-basis:" + fPercentValue + "%");
-		oRm.write(">");
+		oRm.style("flex-basis", fPercentValue + "%");
+		oRm.openEnd();
 
 		// PI text in progress bar
 		ProgressIndicatorRenderer._renderDisplayText(oRm, sTextDirectionLowerCase, "Left", sControlId);
 
 		if (bShowText) {
-			oRm.writeEscaped(sTextValue);
+			oRm.text(sTextValue);
 		}
 
-		oRm.write("</span>");
-		oRm.write("</div>"); // div element pi bar
+		oRm.close("span");
+		oRm.close("div"); // div element pi bar
 
 		// PI remaining bar div
-		oRm.write("<div");
-		oRm.addClass("sapMPIBarRemaining");
+		oRm.openStart("div", sControlId + "-remainingBar");
+		oRm.class("sapMPIBarRemaining");
 
-		oRm.writeAttribute("id", sControlId + "-remainingBar");
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 
 		// PI text in remaining bar
 		ProgressIndicatorRenderer._renderDisplayText(oRm, sTextDirectionLowerCase, "Right", sControlId);
 
 		if (bShowText) {
-			oRm.writeEscaped(sTextValue);
+			oRm.text(sTextValue);
 		}
 
-		oRm.write("</span>");
-		oRm.write("</div>"); // PI Remaining bar div end
+		oRm.close("span");
+		oRm.close("div"); // PI Remaining bar div end
 
-		oRm.write("</div>"); // PI container end
+		oRm.close("div"); // PI container end
 	};
 
 	ProgressIndicatorRenderer._renderDisplayText = function(oRm, sTextDirectionLowerCase, sTextAlign, oControlId){
-		oRm.write("<span class='sapMPIText sapMPIText" + sTextAlign + "' id='" + oControlId + "-text" + sTextAlign + "'");
+		oRm.openStart("span", oControlId + "-text" + sTextAlign);
+		oRm.class("sapMPIText");
+		oRm.class("sapMPIText" + sTextAlign);
 
 		if (sTextDirectionLowerCase !== "inherit") {
-			oRm.writeAttribute("dir", sTextDirectionLowerCase);
+			oRm.attr("dir", sTextDirectionLowerCase);
 		}
 
-		oRm.write('>');
+		oRm.openEnd();
 	};
 
 	return ProgressIndicatorRenderer;

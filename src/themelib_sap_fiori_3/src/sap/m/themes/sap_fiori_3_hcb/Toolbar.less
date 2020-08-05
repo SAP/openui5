@@ -1,0 +1,33 @@
+/* ================================= */
+/* CSS for control sap.m/Toolbar     */
+/* Quartz High Contrast Black theme  */
+/* ================================= */
+
+html.sap-desktop .sapMTBActive:focus {
+	outline: 0.125rem dotted @sapUiContentContrastFocusColor;
+	outline-offset: -0.3125rem;
+}
+
+.sapMTB {
+	height: 2.75rem;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"].sap-desktop {
+	.sapMTBActive:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapMTBActive:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: calc(~'100% - 0.0625rem');
+		height: calc(~'100% - 0.0625rem');
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.125rem dotted @sapUiContentContrastFocusColor;
+		pointer-events: none;
+	}
+}

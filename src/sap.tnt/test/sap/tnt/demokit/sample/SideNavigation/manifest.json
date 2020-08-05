@@ -1,0 +1,40 @@
+{
+	"sap.app": {
+		"id": "sap.tnt.sample.SideNavigation",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.tnt.sample.SideNavigation.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.tnt": {},
+				"sap.m": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"css/style.css",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

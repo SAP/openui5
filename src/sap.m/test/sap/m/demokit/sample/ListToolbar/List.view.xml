@@ -4,7 +4,7 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<List items="{/ProductCollection}" >
+	<List id="productList" items="{/ProductCollection}" >
 		<items>
 			<StandardListItem
 				title="{Name}"
@@ -14,9 +14,23 @@
 				iconInset="false" />
 		</items>
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<Title text="Products" level="H2" />
 				<ToolbarSpacer />
+				<MultiComboBox id="idSticky"
+					placeholder="Sticky options"
+					selectionFinish="onSelectionFinish"
+					width="15%">
+					<items>
+						<core:Item  text="Header Toolbar"
+							key="HeaderToolbar"/>
+						<core:Item  text="Info Toolbar"
+							key="InfoToolbar"/>
+					</items>
+				</MultiComboBox>
+				<ToggleButton id="toggleInfoToolbar"
+					text="Hide/Show InfoToolbar"
+					press="onToggleInfoToolbar" />
 				<Button
 					icon="sap-icon://settings"
 					press="handleButtonPress" />
@@ -26,14 +40,14 @@
 				<Button
 					icon="sap-icon://drop-down-list"
 					press="handleButtonPress" />
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<infoToolbar>
-			<Toolbar
+			<OverflowToolbar
 				active="true"
 				press="handleInfobarPress" >
 				<Label text="This is the info bar" />
-			</Toolbar>
+			</OverflowToolbar>
 		</infoToolbar>
 	</List>
 </mvc:View>

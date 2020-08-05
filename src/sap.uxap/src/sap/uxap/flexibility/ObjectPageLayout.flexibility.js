@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/uxap/changeHandler/MoveObjectPageSection'
-], function (MoveObjectPageSection) {
+	'sap/uxap/changeHandler/MoveObjectPageSection',
+	'sap/uxap/changeHandler/AddIFrameObjectPageLayout'
+], function (MoveObjectPageSection, AddIFrameObjectPageLayout) {
 	"use strict";
 
 	return {
@@ -13,6 +14,9 @@ sap.ui.define([
 			"layers": {
 				"USER": true
 			}
+		},
+		"addIFrame": {
+			"changeHandler": AddIFrameObjectPageLayout
 		}
 	};
 }, /* bExport= */ true);

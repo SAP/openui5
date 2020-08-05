@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
+/*global describe,it,element,by,takeScreenshot,expect,browser,protractor*/
 
 describe('sap.m.MultiInput', function() {
 	"use strict";
@@ -91,9 +91,91 @@ describe('sap.m.MultiInput', function() {
 		expect(takeScreenshot(element(by.id("multiInputNotEditable")))).toLookAs("multi-input-not-editable");
 	});
 
+
+	//Show multi input with N-more and whole N-more label
+	it("should show multiInput with N-more and reduced width", function () {
+		browser.executeScript('document.getElementById("minWidthMI").scrollIntoView()').then(function() {
+			expect(takeScreenshot(element(by.id("minWidthMI")))).toLookAs("multi-input-min-width");
+		});
+	});
+
+	//Multiinput read-only
+	it("should show multiInput in read-only-state", function () {
+		browser.executeScript('document.getElementById("multiInputReadOnlyInitial").scrollIntoView()').then(function() {
+			expect(takeScreenshot(element(by.id("multiInputReadOnlyInitial")))).toLookAs("multi-input-readonly-initial");
+		});
+	});
+
 	//Show selected multi input no placeholder
-	it("should show   multiInput no placeholder", function () {
-		element(by.id("multiInputNotEditable")).click();
-		expect(takeScreenshot(element(by.id("multiInputNotEditable")))).toLookAs("multi-input-not-editable-selected");
+	it("should show multiInput no placeholder", function () {
+		browser.executeScript('document.getElementById("multiInputNotEditable").scrollIntoView()').then(function() {
+			element(by.id("multiInputNotEditable")).click();
+			expect(takeScreenshot(element(by.id("multiInputNotEditable")))).toLookAs("multi-input-not-editable-selected");
+		});
+	});
+
+	it("multiinput should be in condensed mode", function() {
+		browser.executeScript('document.getElementById("condensed-table").scrollIntoView()').then(function() {
+			expect(takeScreenshot(element(by.id("condensed-table")))).toLookAs("table-in-condensed-mode");
+		});
+	});
+
+	it("should visualize MultiInput with cropped tokens and focus outline", function () {
+		var oMultiInputInner = element(by.id("multiInput7-inner"));
+		oMultiInputInner.click();
+		expect(takeScreenshot(element(by.id("multiInput7")))).toLookAs("cropped_focused_tokens");
+	});
+
+	it("should invalidate the MultiInput, so all MI elements are there", function () {
+		browser.executeScript('sap.ui.getCore().byId("dataBoundMultiInput").getTokens()[1].setText("Lorem ipsulum")').then(function () {
+			expect(takeScreenshot(element(by.id("dataBoundMultiInput")))).toLookAs("token-update-text");
+		});
+	});
+
+	it("Should visualize input with suggestions", function () {
+		var oMultiInput = element(by.id("mIWithSuggestions"));
+		browser.executeScript("document.getElementById('mIWithSuggestions').scrollIntoView()").then(function() {
+			oMultiInput.click();
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_suggestions_focused");
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot()).toLookAs("suggestions_visible");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot()).toLookAs("group_header_focused");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot()).toLookAs("first_suggestion_focused");
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot()).toLookAs("input_field_focused");
+		});
+	});
+
+	it("Should truncate one long token and not show the n-more label", function () {
+		var oMultiInput = element(by.id("multiInputWithOneLongToken"));
+		browser.executeScript("document.getElementById('multiInputWithOneLongToken').scrollIntoView()").then(function() {
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_one_long_token");
+
+			oMultiInput.click();
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_one_long_token_focused_in");
+		});
+	});
+
+	it("Should visualize multiInput with sticky header suggestions", function () {
+		var oMultiInput = element(by.id("multiInputWithStickySuggestions"));
+		browser.executeScript("document.getElementById('multiInputWithStickySuggestions').scrollIntoView()").then(function() {
+			oMultiInput.click();
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_sticky_suggestions_focused");
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_sticky_suggestions_text_inserted");
+
+			for (var index = 0; index < 25; index++) {
+				browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			}
+
+			expect(takeScreenshot()).toLookAs("MI_with_sticky_suggestions_table_visible");
+		});
 	});
 });

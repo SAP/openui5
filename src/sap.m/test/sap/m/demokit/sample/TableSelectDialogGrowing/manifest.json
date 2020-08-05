@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TableSelectDialogGrowing",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TableSelectDialogGrowing.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"Dialog.fragment.xml",
+					"Formatter.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -15,20 +15,17 @@
 			data-sap-ui-resourceroots='{
 				"appUnderTest": "./",
 				"view": "./view"
-			}' >
-		</script>
-
-		<script>
-			new sap.m.Shell("Shell", {
-				title: "Application under test",
-				app: new sap.ui.core.ComponentContainer({
-					name: 'appUnderTest'
-				})
-			}).placeAt('content');
+			}'
+			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-async="false"
+			data-sap-ui-frameOptions="trusted" >
 		</script>
 
 	</head>
 
-	<body class='sapUiBody' id='content'></body>
+	<body class='sapUiBody'>
+		<div data-sap-ui-component data-name="appUnderTest" data-id="container" data-settings='{"id" : "appUnderTest"}'></div>
+	</body>
 
 </html>

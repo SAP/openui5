@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.layout.MatrixLayoutRow.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/CustomStyleClassSupport', 'sap/ui/core/Element'],
-	function(jQuery, library, CustomStyleClassSupport, Element) {
+sap.ui.define(['sap/ui/commons/library', 'sap/ui/core/CustomStyleClassSupport', 'sap/ui/core/Element'],
+	function(library, CustomStyleClassSupport, Element) {
 	"use strict";
 
 
@@ -124,4 +124,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Custo
 
 	return MatrixLayoutRow;
 
-}, /* bExport= */ true);
+});

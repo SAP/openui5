@@ -1,0 +1,6 @@
+<mvc:View controllerName="mvc.testdata.ControllerExtensionTest.Test1.Test" xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
+	<m:Input value="3" id="inp"></m:Input>
+	<m:Button text="double" press="double"></m:Button>
+	<m:Button text="triple" press="triple"></m:Button>
+</mvc:View>

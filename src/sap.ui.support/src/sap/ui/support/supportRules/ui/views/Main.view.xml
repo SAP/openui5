@@ -1,5 +1,6 @@
 <mvc:View
 		height="100%"
+		viewName="sap.ui.support.supportRules.ui.views.Main"
 		controllerName="sap.ui.support.supportRules.ui.controllers.Main"
 		xmlns="sap.m"
 		xmlns:mvc="sap.ui.core.mvc"
@@ -16,7 +17,7 @@
 					</contentMiddle>
 				</Bar>
 
-				<Bar class="sapContrast" design="SubHeader">
+				<Bar id="supportAssistantHeader" class="sapContrast" design="SubHeader">
 					<contentLeft>
 						<!--<c:Icon src="sap-icon://sap-ui5" />-->
 						<Image src="../ui/images/Logo_O_22x22.png" densityAware="false"></Image>
@@ -48,7 +49,7 @@
 									visible="{= ${/analyzePressed} === true &amp;&amp; ${/coreStateChanged} === false &amp;&amp; ${/showProgressIndicator} === false }"
 									text='{/analysisDurationTitle}: {/lastAnalysisElapsedTime}'>
 							</Text>
-							<Text
+							<Text      id="persistingSettingLbl"
 									 visible="{= ${/persistingSettings} === true &amp;&amp;  ${/analyzePressed} === false &amp;&amp; ${/showProgressIndicator} === false }"
 									 text='There are settings persisted from your previous session'>
 							</Text>
@@ -58,15 +59,15 @@
 					<contentRight>
 					<Toolbar
 							id="navToolbar">
-							<Button id="issuesBtn" text="{= 'Issues (' + ${/issuesCount} + ')' }" enabled="{= ${/analyzedFinish} === true}" press="goToIssues"/>
+							<Button id="issuesBtn" text="Issues ({/issuesCount})" enabled="{= ${/analyzedFinish} === true}" press="goToIssues"/>
 
-							<Button id="analysisBtn" text="{path: '/libraries', formatter: '.setRulesLabel'}" press="goToAnalysis" type="Emphasized"/>
+							<Button id="analysisBtn" text="Rules ({/selectedRulesCount})" press="goToAnalysis" type="Emphasized"/>
 
-							<c:Icon width="100%" src="sap-icon://settings" press="onSettings" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin"/>
+							<c:Icon id="settingsIcon" src="sap-icon://settings" press="onSettings" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin"/>
 
-							<c:Icon width="100%"  src="sap-icon://sys-help" press="goToWiki" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin" tooltip="Open Documentation" />
+							<c:Icon src="sap-icon://sys-help" press="goToWiki" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin" tooltip="Open Documentation" />
 
-							<c:Icon width="100%" src="sap-icon://minimize" press="toggleHide" class="STCustomHeaderInfo sapUiTinyMargin" visible="{/hasNoOpener}"/>
+							<c:Icon src="sap-icon://minimize" press="toggleHide" class="STCustomHeaderInfo sapUiTinyMargin" visible="{/hasNoOpener}"/>
 
 							<Button icon="sap-icon://down" press="resizeDown"  visible="{/hasNoOpener}"/>
 

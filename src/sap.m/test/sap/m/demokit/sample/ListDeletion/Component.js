@@ -5,26 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.ListDeletion.Component", {
 
 		metadata : {
-			rootView : {
-				"viewName": "sap.m.sample.ListDeletion.List",
-				"type": "XML",
-				"async": true
-			},
-			dependencies : {
-				libs : [
-					"sap.m",
-					"sap.ui.layout"
-				]
-			},
-			config : {
-				sample : {
-					files : [
-						"List.view.xml",
-						"List.controller.js",
-						"MockServer.js"
-					]
-				}
-			}
+			manifest: "json"
 		}
 	});
 

@@ -1,0 +1,79 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "57cd9718a68f3a26e28a92b4e24e5837641e7760",
+        "type": "FIX",
+        "text": "ObjectPageHeader: corrected search by id",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970113301"
+          }
+        ]
+      },
+      {
+        "id": "ca8b90b03562f418b45ab2ae50e9677696bee4c0",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Filtering of lazy loaded sections fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970115549"
+          }
+        ]
+      },
+      {
+        "id": "136e7ad0e801568c0df745ddc6d2e3961847c473",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Corrected search by id",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970155047"
+          }
+        ]
+      },
+      {
+        "id": "19db549783e2ee6ccf9c2b19738f84ec2295c050",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Adjusted height of single fullscreen section",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970113301"
+          }
+        ]
+      },
+      {
+        "id": "8f44e197250c61cc18742a6cc5201ab613c4c238",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSection: New title of section is shown on reveal",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970093334"
+          }
+        ]
+      },
+      {
+        "id": "f45b9088fe930b065c8b105c64fd658d9ee96919",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: wraps in Table correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005041000000126732019"
+          }
+        ]
+      },
+      {
+        "id": "5e84afc81a451c0390c84b28324a75a6052fbdff",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageDynamicHeaderTitle: Single-line title on phone",
+        "references": []
+      }
+    ]
+  }
+}

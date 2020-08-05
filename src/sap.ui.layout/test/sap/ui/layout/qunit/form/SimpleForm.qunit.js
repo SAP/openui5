@@ -2,32 +2,34 @@
 
 /*eslint max-nested-callbacks: [2, 5]*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/layout/library",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/layout/GridData",
+	"sap/ui/layout/ResponsiveFlowLayoutData",
+	"sap/ui/core/VariantLayoutData",
 	"sap/ui/core/Title",
 	"sap/m/Toolbar",
 	"sap/m/Label",
-	"sap/m/Input",
-	"sap/ui/layout/GridData",
-	"sap/ui/core/VariantLayoutData"
+	"sap/m/Input"
 	],
 	function(
+		library,
+		qutils,
 		SimpleForm,
+		GridData,
+		ResponsiveFlowLayoutData,
+		VariantLayoutData,
 		Title,
 		Toolbar,
 		Label,
-		Input,
-		GridData,
-		VariantLayoutData
+		Input
 	) {
 	"use strict";
 
 	// use no check with instanceof for layout or LayoutData to let the SimpleForm load the
 	// files async
-
-	QUnit.start();
 
 	var oSimpleForm;
 	var oForm;
@@ -65,7 +67,7 @@ sap.ui.require([
 			          new Input("I5"),
 			          new Input("I6")
 			          ]
-		}).placeAt("content");
+		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		oForm = oSimpleForm.getAggregation("form");
 		oFormLayout = oForm.getLayout();
@@ -73,7 +75,6 @@ sap.ui.require([
 
 	function initTestWithContentRL() {
 		initTestWithContent("ResponsiveLayout");
-		jQuery.sap.require("sap.ui.layout.ResponsiveFlowLayoutData");
 	}
 
 	function initTestWithContentRGL() {
@@ -136,13 +137,13 @@ sap.ui.require([
 		assert.ok(oSimpleForm, "SimpleForm is created");
 		assert.ok(oForm, "internal Form is created");
 		assert.notOk(oFormLayout, "no FormLayout is created before rendering if no Layout is set");
-		assert.equal(oSimpleForm.getLayout(), sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout, "ResponsiveLayout is default");
+		assert.equal(oSimpleForm.getLayout(), library.form.SimpleFormLayout.ResponsiveLayout, "ResponsiveLayout is default");
 		var aContent = oSimpleForm.getContent();
 		assert.equal(aContent.length, 0, "SimpleForm has no content");
 		var aFormContainers = oForm.getFormContainers();
 		assert.equal(aFormContainers.length, 0, "Form has no FormContainers");
 
-		oSimpleForm.placeAt("content");
+		oSimpleForm.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		oFormLayout = oForm.getLayout();
 
@@ -150,7 +151,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("width", function(assert) {
-		oSimpleForm.placeAt("content");
+		oSimpleForm.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		assert.ok(!/width:/.test(oSimpleForm.$().attr("style")), "SimpleForm2: no width set");
 
@@ -195,11 +196,27 @@ sap.ui.require([
 
 	QUnit.test("AriaLabelledBy", function(assert) {
 		oSimpleForm.addAriaLabelledBy("XXX");
-		oSimpleForm.placeAt("content");
+		oSimpleForm.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oForm.getAriaLabelledBy(), "XXX", "Form getAriaLabelledBy");
 		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "XXX", "aria-labelledby");
+	});
+
+	QUnit.test("_suggestTitleId", function(assert) {
+		oSimpleForm._suggestTitleId("ID1");
+		oSimpleForm.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "ID1", "aria-labelledby points to TitleID");
+
+		var oTitle = new Title("T1", {text: "Test"});
+		oSimpleForm.setTitle(oTitle);
+		sap.ui.getCore().applyChanges();
+		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
+
+		oSimpleForm.addAriaLabelledBy("X");
+		sap.ui.getCore().applyChanges();
+		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "X T1", "aria-labelledby points to AriaLabel and Title");
 	});
 
 	QUnit.module("addContent", {
@@ -1516,7 +1533,7 @@ sap.ui.require([
 	});
 
 	function customLayoutDataOnContent(assert) {
-		var oLayoutData = new sap.ui.layout.ResponsiveFlowLayoutData("LD2", {linebreak: true, weight: 8});
+		var oLayoutData = new ResponsiveFlowLayoutData("LD2", {linebreak: true, weight: 8});
 		var oField = sap.ui.getCore().byId("I2");
 		oField.setLayoutData(oLayoutData);
 		sap.ui.getCore().applyChanges();
@@ -1537,7 +1554,7 @@ sap.ui.require([
 		assert.equal(oLayoutData.getId(), "LD2", "Field custom LayoutData set");
 		assert.equal(oLayoutData.getWeight(), 8, "Field LayoutData weight");
 
-		oLayoutData = new sap.ui.layout.ResponsiveFlowLayoutData("LD4", {weight: 3});
+		oLayoutData = new ResponsiveFlowLayoutData("LD4", {weight: 3});
 		oField = sap.ui.getCore().byId("I4");
 		oField.setLayoutData(oLayoutData);
 		sap.ui.getCore().applyChanges();
@@ -1559,7 +1576,7 @@ sap.ui.require([
 
 		oField = sap.ui.getCore().byId("I4");
 		oField.destroyLayoutData();
-		oLayoutData = new sap.ui.layout.ResponsiveFlowLayoutData("LD5", {linebreak: true, weight: 3});
+		oLayoutData = new ResponsiveFlowLayoutData("LD5", {linebreak: true, weight: 3});
 		oField = sap.ui.getCore().byId("I5");
 		oField.setLayoutData(oLayoutData);
 		sap.ui.getCore().applyChanges();
@@ -1580,7 +1597,7 @@ sap.ui.require([
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 5, "Field LayoutData weight");
 
-		oLayoutData = new sap.ui.layout.ResponsiveFlowLayoutData("LD3", {linebreak: true, weight: 8});
+		oLayoutData = new ResponsiveFlowLayoutData("LD3", {linebreak: true, weight: 8});
 		oField = sap.ui.getCore().byId("I3");
 		oField.setLayoutData(oLayoutData);
 		sap.ui.getCore().applyChanges();
@@ -1592,7 +1609,7 @@ sap.ui.require([
 
 		oField = sap.ui.getCore().byId("I6");
 		oSimpleForm.removeContent(oField);
-		oLayoutData = new sap.ui.layout.ResponsiveFlowLayoutData("LD6", {linebreak: true, weight: 8});
+		oLayoutData = new ResponsiveFlowLayoutData("LD6", {linebreak: true, weight: 8});
 		oField.setLayoutData(oLayoutData);
 		oSimpleForm.addContent(oField);
 		sap.ui.getCore().applyChanges();
@@ -1738,14 +1755,14 @@ sap.ui.require([
 	});
 
 	function RlBackgroundDesign(assert) {
-		assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "default value");
-		assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "value on Layout");
+		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Translucent, "default value");
+		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "value on Layout");
 
-		oSimpleForm.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Transparent);
+		oSimpleForm.setBackgroundDesign(library.BackgroundDesign.Transparent);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on SimpleForm");
-		assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on Layout");
+		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on SimpleForm");
+		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on Layout");
 	}
 
 	QUnit.test("backgroundDesign", function(assert) {
@@ -1830,14 +1847,14 @@ sap.ui.require([
 	});
 
 	function GlBackgroundDesign(assert) {
-		assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "default value");
-		assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "value on Layout");
+		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Translucent, "default value");
+		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "value on Layout");
 
-		oSimpleForm.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Transparent);
+		oSimpleForm.setBackgroundDesign(library.BackgroundDesign.Transparent);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on SimpleForm");
-		assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on Layout");
+		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on SimpleForm");
+		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on Layout");
 	}
 
 	QUnit.test("backgroundDesign", function(assert) {
@@ -1879,14 +1896,14 @@ sap.ui.require([
 	});
 
 	function RGlBackgroundDesign(assert) {
-		assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "default value");
-		assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "value on Layout");
+		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Translucent, "default value");
+		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "value on Layout");
 
-		oSimpleForm.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Transparent);
+		oSimpleForm.setBackgroundDesign(library.BackgroundDesign.Transparent);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on SimpleForm");
-		assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on Layout");
+		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on SimpleForm");
+		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on Layout");
 	}
 
 	QUnit.test("backgroundDesign", function(assert) {
@@ -2024,14 +2041,14 @@ sap.ui.require([
 	});
 
 	function ClBackgroundDesign(assert) {
-		assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "default value");
-		assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "value on Layout");
+		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Translucent, "default value");
+		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "value on Layout");
 
-		oSimpleForm.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Transparent);
+		oSimpleForm.setBackgroundDesign(library.BackgroundDesign.Transparent);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on SimpleForm");
-		assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on Layout");
+		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on SimpleForm");
+		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on Layout");
 	}
 
 	QUnit.test("backgroundDesign", function(assert) {
@@ -2189,7 +2206,7 @@ sap.ui.require([
 
 	function clone(assert) {
 		var oClone = oSimpleForm.clone("MyClone");
-		oClone.placeAt("content");
+		oClone.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		var aContent = oClone.getContent();
@@ -2268,7 +2285,7 @@ sap.ui.require([
 		var fnDone = assert.async();
 
 		setTimeout( function(){ // to wait for rendeing
-			jQuery("#content").attr("style", "width: 50%");
+			jQuery("#qunit-fixture").attr("style", "width: 50%");
 			setTimeout( function(){ // to wait for resize handler
 				assert.ok(oSimpleForm._applyLinebreaks.called, "linebreaks calculation called");
 				jQuery("#content").removeAttr("style");

@@ -3,8 +3,12 @@
  */
 
 // Provides control sap.ui.layout.form.Form.
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', './FormRenderer'],
-	function(Control, library, FormRenderer) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	'sap/ui/base/ManagedObjectObserver',
+	'sap/ui/layout/library',
+	'./FormRenderer'
+	], function(Control, ManagedObjectObserver, library, FormRenderer) {
 	"use strict";
 
 	/**
@@ -65,9 +69,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', './FormRenderer']
 			 * <b>Note:</b> The setting of this property does not change the content of the form.
 			 * For example, <code>Input</code> controls in a form with <code>editable</code> set to false are still editable.
 			 *
-			 * <b>Warning:</b> If this property is set wrong this could lead to visual issues, the labels are fields could be misaligned,
-			 * the labels could be rendered in the wrong mode, the spacing between the single controls could be wrong and control, not
-			 * fitting to the mode, could be rendered incorrect.
+			 * <b>Warning:</b> If this property is wrongly set, this might lead to visual issues.
+			 * The labels and fields might be misaligned, the labels might be rendered in the wrong mode,
+			 * and the spacing between the single controls might be wrong.
+			 * Also, controls that do not fit the mode might be rendered incorrectly.
 			 * @since 1.20.0
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : false}
@@ -116,6 +121,24 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', './FormRenderer']
 		designtime: "sap/ui/layout/designtime/form/Form.designtime"
 	}});
 
+	Form.prototype.init = function(){
+
+		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
+
+		this._oObserver.observe(this, {
+			properties: ["editable"],
+			aggregations: ["formContainers"]
+		});
+
+	};
+
+	Form.prototype.exit = function(){
+
+		this._oObserver.disconnect();
+		this._oObserver = undefined;
+
+	};
+
 	Form.prototype.toggleContainerExpanded = function(oContainer){
 
 		var oLayout = this.getLayout();
@@ -160,8 +183,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', './FormRenderer']
 
 	Form.prototype.setEditable = function(bEditable) {
 
-		var bOldEditable = this.getEditable();
 		this.setProperty("editable", bEditable, true);
+
+		return this;
+
+	};
+
+	function _setEditable(bEditable, bOldEditable) {
 
 		if (bEditable != bOldEditable && this.getDomRef()) {
 			if (bEditable) {
@@ -171,21 +199,18 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', './FormRenderer']
 				this.$().removeClass("sapUiFormEdit").removeClass("sapUiFormEdit-CTX");
 				this.$().attr("aria-readonly", "true");
 			}
-
-			// invalidate Labels
-			var aFormContainers = this.getFormContainers();
-			for (var i = 0; i < aFormContainers.length; i++) {
-				var oFormContainer = aFormContainers[i];
-				oFormContainer.invalidateLabels();
-			}
-
 		}
 
-		return this;
+		// update edit mode to FormElement (invalidate Labels)
+		var aFormContainers = this.getFormContainers();
+		for (var i = 0; i < aFormContainers.length; i++) {
+			var oFormContainer = aFormContainers[i];
+			oFormContainer._setEditable(bEditable);
+		}
 
-	};
+	}
 
-	Form.prototype.setToolbar = function(oToolbar) {
+	Form.prototype.setToolbar = function(oToolbar) { // don't use observer as library function needs to be called before aggregation update
 
 		// for sap.m.Toolbar Auto-design must be set to transparent
 		oToolbar = library.form.FormHelper.setToolbar.call(this, oToolbar);
@@ -267,6 +292,43 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', './FormRenderer']
 		return aVisibleContainers;
 
 	};
+
+	/**
+	 * Method used to propagate the <code>Title</code> control ID of a container control
+	 * (like a <code>Dialog</code> control) to use it as aria-label in the <code>Form</code>.
+	 * So the <code>Form</code> must not have an own title.
+	 * @param {string} sTitleID <code>Title</code> control ID
+	 * @private
+	 * @return {sap.ui.layout.form.Form} Reference to <code>this</code> to allow method chaining
+	 */
+	Form.prototype._suggestTitleId = function (sTitleID) {
+
+		this._sSuggestedTitleId = sTitleID;
+		if (this.getDomRef()) {
+			this.invalidate();
+		}
+
+		return this;
+
+	};
+
+	function _observeChanges(oChanges){
+
+		if (oChanges.name === "editable") {
+			_setEditable.call(this, oChanges.current, oChanges.old);
+		} else if (oChanges.name === "formContainers") {
+			_formContainerChanged.call(this, oChanges.mutation, oChanges.child);
+		}
+
+	}
+
+	function _formContainerChanged(sMutation, oFormContainer) {
+
+		if (sMutation === "insert") {
+			oFormContainer._setEditable(this.getEditable());
+		}
+
+	}
 
 	return Form;
 

@@ -6,24 +6,22 @@
 		xmlns="sap.m"
 		class="viewPadding">
 	<l:VerticalLayout>
-		<l:content>
-			<u:Calendar
-					id="calendar"
-					select="handleCalendarSelect"
-					intervalSelection="false"
-					singleSelection="false" />
-			<Button
-					press="handleRemoveSelection"
-					text="Remove All Selected Dates" />
-			<List
-					id="selectedDatesList"
-					class="labelMarginLeft"
-					noDataText="No Dates Selected"
-					headerText="Selected Dates (yyyy-mm-dd)"
-					items="{path: '/selectedDates'}">
-				<StandardListItem
-						title="{Date}" />
-			</List>
-		</l:content>
+		<u:Calendar
+				id="calendar"
+				select="handleCalendarSelect"
+				intervalSelection="false"
+				singleSelection="false" />
+		<Button
+				press="handleRemoveSelection"
+				text="Remove All Selected Dates" />
+		<List
+				id="selectedDatesList"
+				class="labelMarginLeft"
+				noDataText="No Dates Selected"
+				headerText="Selected Dates (yyyy-mm-dd)"
+				items="{path: '/selectedDates'}">
+			<StandardListItem
+					title="{Date}" />
+		</List>
 	</l:VerticalLayout>
 </mvc:View>

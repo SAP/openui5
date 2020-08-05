@@ -1,16 +1,19 @@
 /* global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	'sap/ui/dt/Util'
+sap.ui.define([
+	"sap/ui/dt/Util",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
-	Util
+	Util,
+	ManagedObject,
+	jQuery,
+	sinon
 ) {
 	'use strict';
-
-	QUnit.start();
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module('wrapError()', function () {
 		QUnit.test("string as parameter", function (assert) {
@@ -172,8 +175,22 @@ function(
 		});
 	});
 
+	QUnit.module('getObjectType()', function () {
+		QUnit.test("when called with a ManagedObject object", function (assert) {
+			var oObject = new ManagedObject();
+			var sType = Util.getObjectType(oObject);
+			assert.ok(sType.includes(oObject.getMetadata().getName()));
+			assert.ok(sType.includes(oObject.getId()));
+			oObject.destroy();
+		});
+
+		QUnit.test("when called with a string", function (assert) {
+			assert.strictEqual(Util.getObjectType("foo"), "string");
+		});
+	});
+
 	QUnit.module('printf()', function () {
-		QUnit.test("basic functionality", function(assert){
+		QUnit.test("basic functionality", function(assert) {
 			assert.equal(
 				Util.printf("Arg1: {0}, Arg2: {1}", "Val1", "Val2"),
 				"Arg1: Val1, Arg2: Val2",
@@ -182,20 +199,8 @@ function(
 		});
 	});
 
-	QUnit.module('curry()', function () {
-		QUnit.test("curry()", function(assert){
-			var fnOriginalFunction = function(sPar1, sPar2){
-				return sPar1 + sPar2;
-			};
-			var fnCurriedFunction = Util.curry(fnOriginalFunction);
-
-			assert.ok(jQuery.isFunction(fnCurriedFunction), "function has been returned");
-			assert.equal(fnCurriedFunction("Curried")("Test"), "CurriedTest", "the function has been properly curried");
-		});
-	});
-
 	QUnit.module('objectValues()', function () {
-		QUnit.test("objectValues()", function(assert){
+		QUnit.test("objectValues()", function(assert) {
 			var sValue1 = "test1";
 			var sValue2 = "test2";
 			var mObject = {
@@ -207,17 +212,8 @@ function(
 		});
 	});
 
-	QUnit.module('intersection()', function () {
-		QUnit.test("basic functionality", function(assert){
-			var aArray1 = [0, 1, 2, 3];
-			var aArray2 = [1, 3, 5, 6];
-
-			assert.deepEqual(Util.intersection(aArray1, aArray2), [1, 3], "only those, which are presented in both arrays, are returned");
-		});
-	});
-
 	QUnit.module('isInteger()', function () {
-		QUnit.test("basic functionality", function(assert){
+		QUnit.test("basic functionality", function(assert) {
 			assert.ok(Util.isInteger(0), "zero is an integer");
 			assert.ok(Util.isInteger(1.0), "real number pretended as integer is an integer");
 			assert.notOk(Util.isInteger("0"), "string of zero is not an integer");
@@ -230,7 +226,7 @@ function(
 	});
 
 	QUnit.module('castArray()', function () {
-		QUnit.test("castArray()", function(assert){
+		QUnit.test("castArray()", function(assert) {
 			var sValue = "test1";
 			var nValue = 7;
 			var aValue = ["xyz", 1, {text: "test"}];
@@ -244,5 +240,156 @@ function(
 			assert.deepEqual(Util.castArray(mObject), [mObject], "the correct object in an array is returned");
 			assert.deepEqual(Util.castArray(), [], "the correct empty array is returned");
 		});
+	});
+
+	QUnit.module('wrapIntoPromise()', function () {
+		QUnit.test("basic functionality", function (assert) {
+			assert.ok(jQuery.isFunction(Util.wrapIntoPromise(function () {})));
+			assert.ok(Util.wrapIntoPromise(function () {})() instanceof Promise);
+			assert.ok(Util.wrapIntoPromise(function () {})() instanceof Promise);
+		});
+		QUnit.test("promise resolve with certain value", function (assert) {
+			return Util.wrapIntoPromise(function () {
+				return 'value';
+			})().then(function (vValue) {
+				assert.strictEqual(vValue, 'value');
+			});
+		});
+		QUnit.test("nested promises resolve with certain value", function (assert) {
+			return Util.wrapIntoPromise(function () {
+				return Promise.resolve('value');
+			})().then(function (vValue) {
+				assert.strictEqual(vValue, 'value');
+			});
+		});
+		QUnit.test("non-function is passed", function (assert) {
+			assert.throws(function () {
+				Util.wrapIntoPromise({});
+			});
+		});
+	});
+
+	QUnit.module('waitForSynced()', {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when waitForSynced is called with the DT in 'syncing' status which later turns to 'synced'", function(assert) {
+			assert.expect(7);
+			var fnToBeResolved = sandbox.stub();
+			var oDesignTime = {
+				getStatus: sandbox.stub().returns("syncing"),
+				attachEventOnce: function(sEventName, fnHandler) {
+					if (sEventName === "synced") {
+						assert.ok(true, "then the handler was attached to the synced event");
+						fnToBeResolved.callsFake(fnHandler);
+					} else if (sEventName === "syncFailed") {
+						assert.ok(true, "then the handler was attached to the syncFailed event");
+					}
+				}
+			};
+			var aMockParams = ["mockParam1", "mockParam2"];
+
+			// Original function
+			var fnOriginalStub = sandbox.stub().resolves("returnObject");
+
+			// Wrapper function
+			var fnReturn = Util.waitForSynced(oDesignTime, fnOriginalStub);
+			assert.ok(typeof fnReturn === "function", "then a function was returned");
+
+			var oReturnPromise = fnReturn.apply(null, aMockParams);
+			assert.strictEqual(fnToBeResolved.callCount, 0, "then the 'synced' callback function was not called");
+			setTimeout(fnToBeResolved, 50);
+			return oReturnPromise.then(function(sReturn) {
+				assert.ok(fnToBeResolved.calledOnce, "then the wrapper function returns a resolved promise only after the 'synced' callback function was called");
+				return fnOriginalStub().then(function(sExpectedReturn) {
+					assert.strictEqual(sExpectedReturn, sReturn, "then calling the returned function returns the correct value");
+					assert.ok(fnOriginalStub.calledWith(aMockParams[0], aMockParams[1]), "then the returned function was called with the correct arguments");
+				});
+			});
+		});
+
+		QUnit.test("when waitForSynced is called without function with the DT in 'syncing' status which later turns to 'synced'", function(assert) {
+			assert.expect(5);
+			var fnToBeResolved = sandbox.stub();
+			var oDesignTime = {
+				getStatus: sandbox.stub().returns("syncing"),
+				attachEventOnce: function(sEventName, fnHandler) {
+					if (sEventName === "synced") {
+						assert.ok(true, "then the handler was attached to the synced event");
+						fnToBeResolved.callsFake(fnHandler);
+					} else if (sEventName === "syncFailed") {
+						assert.ok(true, "then the handler was attached to the syncFailed event");
+					}
+				}
+			};
+			var aMockParams = ["mockParam1", "mockParam2"];
+
+			// Wrapper function
+			var fnReturn = Util.waitForSynced(oDesignTime);
+			assert.ok(typeof fnReturn === "function", "then a function was returned");
+
+			var oReturnPromise = fnReturn.apply(null, aMockParams);
+			assert.strictEqual(fnToBeResolved.callCount, 0, "then the 'synced' callback function was not called");
+			setTimeout(fnToBeResolved, 50);
+			return oReturnPromise.then(function() {
+				assert.ok(fnToBeResolved.calledOnce, "then the wrapper function returns a resolved promise only after the 'synced' callback function was called");
+			});
+		});
+
+		QUnit.test("when waitForSynced is called with the DT in 'synced' status", function(assert) {
+			var oDesignTime = {
+				getStatus: sandbox.stub().returns("synced"),
+				attachEventOnce: function(sEventName) {
+					if (sEventName === "synced") {
+						assert.ok(false, "this should never be called");
+					} else if (sEventName === "syncFailed") {
+						assert.ok(false, "this should never be called");
+					}
+				}
+			};
+			var aMockParams = ["mockParam1", "mockParam2"];
+
+			// Original function
+			var fnOriginalStub = sandbox.stub().resolves("returnObject");
+
+			// Wrapper funcion
+			var fnReturn = Util.waitForSynced(oDesignTime, fnOriginalStub);
+			assert.ok(typeof fnReturn === "function", "then a function was returned");
+
+			return fnReturn.apply(null, aMockParams).then(function(sReturn) {
+				return fnOriginalStub().then(function(sExpectedReturn) {
+					assert.strictEqual(sExpectedReturn, sReturn, "then calling the returned function returns the correct value");
+					assert.ok(fnOriginalStub.calledWith(aMockParams[0], aMockParams[1]), "then the returned function was called with the correct arguments");
+				});
+			});
+		});
+
+		QUnit.test("when waitForSynced is called with the DT in 'syncing' status which later turns to 'syncFailed'", function(assert) {
+			assert.expect(4);
+			var oDesignTime = {
+				getStatus: sandbox.stub().returns("syncing"),
+				attachEventOnce: function(sEventName, fnHandler) {
+					if (sEventName === "synced") {
+						assert.ok(true, "then the handler was attached to the synced event");
+					} else if (sEventName === "syncFailed") {
+						assert.ok(true, "then the handler was attached to the syncFailed event");
+						fnHandler(); // callback
+					}
+				}
+			};
+			var fnPassed = function () {
+				return "returnObject";
+			};
+			var fnReturn = Util.waitForSynced(oDesignTime, fnPassed);
+			assert.ok(typeof fnReturn === "function", "then a function was returned");
+			return fnReturn().catch(function() {
+				assert.ok(true, "then a Promise.reject() was returned");
+			});
+		});
+	});
+
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
 });

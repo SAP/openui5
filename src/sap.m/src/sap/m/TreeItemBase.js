@@ -4,15 +4,14 @@
 
 // Provides control sap.m.StandardListItem.
 sap.ui.define([
-	'jquery.sap.global',
 	'./ListItemBase',
 	'./library',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/Icon',
 	'./TreeItemBaseRenderer',
-	'jquery.sap.keycodes'
+	'sap/ui/events/KeyCodes'
 ],
-	function(jQuery, ListItemBase, library, IconPool, Icon, TreeItemBaseRenderer) {
+	function(ListItemBase, library, IconPool, Icon, TreeItemBaseRenderer, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -46,7 +45,7 @@ sap.ui.define([
 
 	TreeItemBase.prototype.getTree = function() {
 		var oParent = this.getParent();
-		if (oParent instanceof sap.m.Tree) {
+		if (oParent && oParent.isA("sap.m.Tree")) {
 			return oParent;
 		}
 	};
@@ -63,13 +62,15 @@ sap.ui.define([
 	 */
 	TreeItemBase.prototype.getItemNodeContext = function() {
 		var oTree = this.getTree();
-		var oContext = null;
-		var oBinding = null;
-		if (oTree) {
+		var oNode = null;
+		var oBinding = oTree ? oTree.getBinding("items") : null;
+
+		if (oTree && oBinding) {
 			oBinding = oTree.getBinding("items");
-			oContext = oBinding.getNodeByIndex(oTree.indexOfItem(this));
+			oNode = oBinding.getNodeByIndex(oTree.indexOfItem(this));
 		}
-		return oContext;
+
+		return oNode;
 	};
 
 	/**
@@ -123,7 +124,10 @@ sap.ui.define([
 	 * @since 1.42.0
 	 */
 	TreeItemBase.prototype.isLeaf = function() {
-		return (this.getItemNodeContext() || {}).isLeaf;
+		var oTree = this.getTree(),
+			oNode = this.getItemNodeContext();
+
+		return oNode ? !oTree.getBinding("items").nodeHasChildren(oNode) : false;
 	};
 
 	/**
@@ -156,11 +160,14 @@ sap.ui.define([
 	 * @since 1.42.0
 	 */
 	TreeItemBase.prototype.getExpanded = function() {
-		var bExpanded = false;
-		if (this.getItemNodeContext() && this.getItemNodeContext().nodeState) {
-			bExpanded = this.getItemNodeContext().nodeState.expanded;
+		var oTree = this.getTree();
+		if (!oTree) {
+			return false;
 		}
-		return bExpanded;
+
+		var iIndex = oTree.indexOfItem(this);
+		var oBinding = oTree.getBinding("items");
+		return (oBinding && oBinding.isExpanded(iIndex));
 	};
 
 	TreeItemBase.prototype.setSelected = function (bSelected) {
@@ -168,11 +175,10 @@ sap.ui.define([
 
 		// update the binding context
 		var oTree = this.getTree();
-		var oBinding = null;
+		var oBinding = oTree ? oTree.getBinding("items") : null;
 		var iIndex = -1;
 
-		if (oTree) {
-			oBinding = oTree.getBinding("items");
+		if (oTree && oBinding) {
 			iIndex = oTree.indexOfItem(this);
 			if (oTree.getMode() === ListMode.SingleSelect) {
 				oBinding.setSelectedIndex(iIndex);
@@ -197,20 +203,25 @@ sap.ui.define([
 	 * @since 1.42.0
 	 */
 	TreeItemBase.prototype._getExpanderControl = function() {
-		var sSrc = "";
-		if (!this.isLeaf()) {
-			sSrc = this.getExpanded() ? this.ExpandedIconURI : this.CollapsedIconURI;
+		var sSrc = this.CollapsedIconURI,
+			oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sIconTooltip = oBundle.getText("TREE_ITEM_EXPAND_NODE");
+
+		if (this.getExpanded()) {
+			sSrc = this.ExpandedIconURI;
+			sIconTooltip = oBundle.getText("TREE_ITEM_COLLAPSE_NODE");
 		}
 
 		if (this._oExpanderControl) {
 			this._oExpanderControl.setSrc(sSrc);
+			this._oExpanderControl.setTooltip(sIconTooltip);
 			return this._oExpanderControl;
 		}
 
 		this._oExpanderControl = new Icon({
 			id: this.getId() + "-expander",
 			src: sSrc,
-			useIconTooltip: false,
+			tooltip: sIconTooltip,
 			noTabStop: true
 		}).setParent(this, null, true).addStyleClass("sapMTreeItemBaseExpander").attachPress(function(oEvent) {
 			this.informTree("ExpanderPressed");
@@ -220,32 +231,64 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets expander information.
+	 * Updates the item by assigning the relavant expander, styles and attributes.
 	 *
 	 * @private
 	 * @since 1.46.0
 	 */
-	TreeItemBase.prototype._updateExpander = function() {
+	TreeItemBase.prototype._updateItem = function() {
+		if (this._bInvalidated) {
+			return;
+		}
+
+		var oTree = this.getTree();
+		if (oTree && oTree._bInvalidated) {
+			return;
+		}
+
 		if (this._oExpanderControl) {
-			var sSrc = "";
-			if (!this.isLeaf()) {
-				sSrc = this.getExpanded() ? this.ExpandedIconURI : this.CollapsedIconURI;
+			var sSrc = this.CollapsedIconURI;
+			if (this.getExpanded()) {
+				sSrc = this.ExpandedIconURI;
 			}
 			this._oExpanderControl.setSrc(sSrc);
-			this.$().attr("aria-expanded", this.getExpanded());
+
+			// make the expander visible
+			var $this = this.$();
+			// adapt the tree items styles and the expander
+			if (!this.isLeaf()) {
+				$this.removeClass("sapMTreeItemBaseLeaf");
+				$this.attr("aria-expanded", this.getExpanded());
+			} else {
+				$this.addClass("sapMTreeItemBaseLeaf");
+				$this.removeAttr("aria-expanded");
+			}
+			$this.toggleClass("sapMTreeItemBaseChildren", !this.isTopLevel());
+			// adapt aria-level (in cases like sorting of the tree items is performed)
+			$this.attr("aria-level", this.getLevel() + 1);
 
 			// update the indentation again
 			var iIndentation = this._getPadding(),
 				sStyleRule = sap.ui.getCore().getConfiguration().getRTL() ? "paddingRight" : "paddingLeft";
-			this.$().css(sStyleRule, iIndentation + "rem");
+			$this.css(sStyleRule, iIndentation + "rem");
 
 		}
+
+	};
+
+	TreeItemBase.prototype.invalidate = function() {
+		ListItemBase.prototype.invalidate.apply(this, arguments);
+		this._bInvalidated = true;
+	};
+
+	TreeItemBase.prototype.onAfterRendering = function() {
+		ListItemBase.prototype.onAfterRendering.apply(this, arguments);
+		this._bInvalidated = false;
 	};
 
 	TreeItemBase.prototype.setBindingContext = function() {
 		ListItemBase.prototype.setBindingContext.apply(this, arguments);
-		this._updateExpander();
-
+		this._updateItem();
 		return this;
 	};
 
@@ -262,8 +305,15 @@ sap.ui.define([
 		iIndentation = 0,
 		iDeepestLevel;
 
+		// use number count from hierarchy binding
 		if (oTree) {
 			iDeepestLevel = oTree.getDeepestLevel();
+		}
+
+		// for add node
+		if (iDeepestLevel < iNodeLevel) {
+			oTree._iDeepestLevel = iNodeLevel;
+			iDeepestLevel = oTree._iDeepestLevel;
 		}
 
 		if (iDeepestLevel < 2) {
@@ -303,7 +353,7 @@ sap.ui.define([
 	 * @param {jQuery.Event} The event object.
 	 */
 	TreeItemBase.prototype.onsapright = function(oEvent) {
-		if (this.isLeaf()) {
+		if (oEvent.srcControl !== this || this.isLeaf()) {
 			return;
 		}
 
@@ -311,7 +361,7 @@ sap.ui.define([
 			this.informTree("ExpanderPressed", true);
 		} else {
 			// Change the keyCode so that the item navigation handles the down navigation.
-			oEvent.keyCode = jQuery.sap.KeyCodes.ARROW_DOWN;
+			oEvent.keyCode = KeyCodes.ARROW_DOWN;
 		}
 
 	};
@@ -322,7 +372,7 @@ sap.ui.define([
 	 * @param {jQuery.Event} The event object.
 	 */
 	TreeItemBase.prototype.onsapleft = function(oEvent) {
-		if (this.isTopLevel() && !this.getExpanded()) {
+		if (oEvent.srcControl !== this || this.isTopLevel() && !this.getExpanded()) {
 			return;
 		}
 
@@ -344,9 +394,16 @@ sap.ui.define([
 	 * @param {jQuery.Event} The event object.
 	 */
 	TreeItemBase.prototype.onsapbackspace = function(oEvent) {
-		if (!this.isTopLevel()) {
-			this.getParentNode().focus();
+		// Only set focus on parent when the event is fired by item itself.
+		// Prevent miss-set when the content of CustomTreeItem fires event.
+		if (oEvent.srcControl !== this) {
+			return;
 		}
+
+		if (!this.isTopLevel()) {
+				this.getParentNode().focus();
+		}
+
 	};
 
 	TreeItemBase.prototype.getAccessibilityType = function(oBundle) {

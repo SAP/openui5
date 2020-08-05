@@ -1,8 +1,8 @@
  /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
-	function(jQuery, coreLibrary) {
+sap.ui.define(['sap/ui/core/library', "sap/base/security/encodeCSS"],
+	function(coreLibrary, encodeCSS) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Orientation
@@ -24,9 +24,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 		var sTooltip = oControl.getTooltip_AsString();
 		var sOrientationClass = oControl.getOrientation();
 		if (sOrientationClass) {
-			sOrientationClass = jQuery.sap.encodeCSS(sOrientationClass);
+			sOrientationClass = encodeCSS(sOrientationClass);
 		}
-		var sBackgroundClass = jQuery.sap.encodeCSS("sapMHdrCntrBG" + oControl.getBackgroundDesign());
+		var sBackgroundClass = encodeCSS("sapMHdrCntrBG" + oControl.getBackgroundDesign());
 		// write the HTML into the render manager
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 		for (var i = 0; aContent && i < aContent.length; i++) {
 			sDesc += aContent[i].getId() + " ";
 		}
-		oRm.writeAttribute("aria-labelledby", sDesc);
+		oRm.writeAttribute("role", "list");
 		oRm.write(">");
 
 		oRm.write("<div");
@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 		oRm.write("<div");
 		oRm.writeAttribute("id", oControl.getId() + "-after");
 		oRm.writeAttribute("tabindex", "0");
-		oRm.write("/>");
+		oRm.write("></div>");
 		oRm.write("</div>");
 	};
 

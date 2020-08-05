@@ -3,16 +3,20 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
-	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/ParseException",
-	"sap/ui/model/ValidateException"
-], function (jQuery, DateFormat, FormatException, ODataType, ParseException, ValidateException) {
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/thirdparty/jquery"
+], function (Log, DateFormat, FormatException, ParseException, ValidateException, ODataType,
+		jQuery) {
 	"use strict";
 
-	var oDemoDate = new Date(2014, 10, 27, 13, 47, 26);
+	var iFullYear = new Date().getFullYear(),
+		oDemoDate = new Date(Date.UTC(iFullYear, 11, 31)), // UTC
+		oDemoDateTime = new Date(iFullYear, 11, 31, 23, 59, 58); // local time
 
 	/*
 	 * Returns true if the type uses only the date.
@@ -35,7 +39,7 @@ sap.ui.define([
 	function getErrorMessage(oType) {
 		return sap.ui.getCore().getLibraryResourceBundle().getText(
 			isDateOnly(oType) ? "EnterDate" : "EnterDateTime",
-				[oType.formatValue(oDemoDate, "string")]);
+				[oType.formatValue(isDateOnly(oType) ? oDemoDate : oDemoDateTime, "string")]);
 	}
 
 	/*
@@ -79,7 +83,7 @@ sap.ui.define([
 			if (vNullable === false || vNullable === "false") {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 
 			if (oConstraints.isDateOnly === true) {
@@ -93,8 +97,7 @@ sap.ui.define([
 					oType.oConstraints = oType.oConstraints || {};
 					oType.oConstraints.precision = iPrecision;
 				} else if (iPrecision !== 0) {
-					jQuery.sap.log.warning("Illegal precision: " + iPrecision, null,
-						oType.getName());
+					Log.warning("Illegal precision: " + iPrecision, null, oType.getName());
 				} // else: 0 is the default!
 			}
 		}
@@ -148,8 +151,8 @@ sap.ui.define([
 	 *   The value to be formatted, which is represented in the model as a <code>Date</code>
 	 *   instance (OData V2)
 	 * @param {string} sTargetType
-	 *   The target type, may be "any", "string", or a type with one of these types as its
-	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
+	 *   The target type, may be "any", "object" (since 1.69.0), "string", or a type with one of
+	 *   these types as its {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {Date|string}
 	 *   The formatted output value in the target type; <code>undefined</code> or <code>null</code>
@@ -166,28 +169,30 @@ sap.ui.define([
 			return null;
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
-		case "any":
-			return oValue;
-		case "string":
-			if (!(oValue instanceof Date)) {
-				throw new FormatException("Illegal " + this.getName() + " value: " + oValue);
-			}
-			return getFormatter(this).format(oValue);
-		default:
-			throw new FormatException("Don't know how to format " + this.getName() + " to "
-				+ sTargetType);
+			case "any":
+			case "object":
+				return oValue;
+			case "string":
+				if (!(oValue instanceof Date)) {
+					throw new FormatException("Illegal " + this.getName() + " value: " + oValue);
+				}
+				return getFormatter(this).format(oValue);
+			default:
+				throw new FormatException("Don't know how to format " + this.getName() + " to "
+					+ sTargetType);
 		}
 	};
 
 	/**
 	 * Parses the given value to a <code>Date</code> instance (OData V2).
 	 *
-	 * @param {string} sValue
+	 * @param {string|Date} vValue
 	 *   The value to be parsed; the empty string and <code>null</code> are parsed to
 	 *   <code>null</code>
 	 * @param {string} sSourceType
-	 *   The source type (the expected type of <code>sValue</code>), must be "string", or a type
-	 *   with "string" as its {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
+	 *   The source type (the expected type of <code>vValue</code>), must be
+	 *   "object" (since 1.69.0), "string", or a type with one of these types as its
+	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {Date}
 	 *   The parsed value
@@ -198,22 +203,24 @@ sap.ui.define([
 	 * @public
 	 * @since 1.27.0
 	 */
-	DateTimeBase.prototype.parseValue = function (sValue, sSourceType) {
+	DateTimeBase.prototype.parseValue = function (vValue, sSourceType) {
 		var oResult;
 
-		if (sValue === null || sValue === "") {
+		if (vValue === null || vValue === "") {
 			return null;
 		}
 		switch (this.getPrimitiveType(sSourceType)) {
-		case "string":
-			oResult = getFormatter(this).parse(sValue);
-			if (!oResult) {
-				throw new ParseException(getErrorMessage(this));
-			}
-			return oResult;
-		default:
-			throw new ParseException("Don't know how to parse " + this.getName() + " from "
-				+ sSourceType);
+			case "object":
+				return vValue;
+			case "string":
+				oResult = getFormatter(this).parse(vValue);
+				if (!oResult) {
+					throw new ParseException(getErrorMessage(this));
+				}
+				return oResult;
+			default:
+				throw new ParseException("Don't know how to parse " + this.getName() + " from "
+					+ sSourceType);
 		}
 	};
 
@@ -232,7 +239,6 @@ sap.ui.define([
 	 *
 	 * @param {Date} oValue
 	 *   The value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException}
 	 *   If the value is not valid
 	 *
@@ -246,6 +252,9 @@ sap.ui.define([
 			}
 			return;
 		} else if (oValue instanceof Date) {
+			if (oValue.getFullYear() === 0) {
+				throw new ValidateException(getErrorMessage(this));
+			}
 			return;
 		}
 		throw new ValidateException("Illegal " + this.getName() + " value: " + oValue);

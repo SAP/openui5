@@ -1,3 +1,4 @@
+/*eslint strict: 0 */
 // Provides control sap.ui.testlib.TestButton.
 jQuery.sap.declare("sap.ui.testlib.TestButton");
 jQuery.sap.require("sap.ui.testlib.library");

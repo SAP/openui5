@@ -12,10 +12,10 @@ sap.ui.define([],
 				rename: {
 					changeType: "rename",
 					domRef: function (oControl) {
-						return oControl.$().find(".sapMLIBContent > .sapMSLITitleDiv > .sapMSLITitleOnly")[0] || oControl.$().find(".sapMLIBContent > .sapMSLIDiv > .sapMSLITitleDiv > .sapMSLITitle")[0];
+						return oControl.$().find(".sapMLIBContent > .sapMSLIDiv > .sapMSLITitleOnly")[0] || oControl.$().find(".sapMLIBContent > .sapMSLIDiv > .sapMSLITitle")[0];
 					}
 				}
 			}
 		};
 
-	}, /* bExport= */ false);
+	});

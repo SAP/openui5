@@ -1,0 +1,155 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "4b7e58262127319ed1798376e44dcd00fe376cb4",
+        "type": "FIX",
+        "text": " FieldValueHelp: Pending updates of in- and out-parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080230646"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080208502"
+          }
+        ]
+      },
+      {
+        "id": "8abc5e70c7cf649a62db52dedb7208021c7da8f5",
+        "type": "FEATURE",
+        "text": " ListFieldHelp: sap.m.Select-like behavior enabled",
+        "references": []
+      },
+      {
+        "id": "bbf933e34594a7548ff7e24e29a5edee8649f9c8",
+        "type": "FIX",
+        "text": " Field: [object Promise] shown while keybord navigation in help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080226074"
+          }
+        ]
+      },
+      {
+        "id": "df607756b9f187ed6299dbe4b3684c523c1a8b4f",
+        "type": "FIX",
+        "text": " FieldValueHelp: unneeded get call to determine item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080208502"
+          }
+        ]
+      },
+      {
+        "id": "97ff36d7c43b377b8baa0e935ef84a2212890dd3",
+        "type": "FIX",
+        "text": " DefineConditionPanel: use select like Field for Operator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070006006"
+          }
+        ]
+      },
+      {
+        "id": "d0933f591ef62d83d76ecc6e91b477f8e1db4154",
+        "type": "FIX",
+        "text": " FieldHelp: item navigated with keyboard not visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080226206"
+          }
+        ]
+      },
+      {
+        "id": "e90e942c89fbb697222873e68310beb4142d34fa",
+        "type": "FIX",
+        "text": " mdc.FilterBar: CSS tweaks",
+        "references": []
+      },
+      {
+        "id": "8349a6439edf0e04926038181b19e9ab510e6218",
+        "type": "FEATURE",
+        "text": " Field: enhance screen reader support for help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080166094"
+          }
+        ]
+      },
+      {
+        "id": "f91116f5c09352ef02b5d97d8a621e8565f43d10",
+        "type": "FIX",
+        "text": " Field: Unit or currency fails if no units provided for type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080254688"
+          }
+        ]
+      },
+      {
+        "id": "fac649fe97a04cf01623b6495523856878a98727",
+        "type": "FIX",
+        "text": " Field: arrow keys not working if external content control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080304790"
+          }
+        ]
+      },
+      {
+        "id": "f86464114278f797524f82f65f85938d88da854e",
+        "type": "FIX",
+        "text": " Field: forward aria label to extrenal context control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970564583"
+          }
+        ]
+      },
+      {
+        "id": "2d596da25e29709a581f905266a8c336d3f92e25",
+        "type": "FIX",
+        "text": " Field: if same value is entered again, it is ignored",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080249445"
+          }
+        ]
+      },
+      {
+        "id": "a9e57179305022cada7913e67668ca7603afd8b4",
+        "type": "FIX",
+        "text": " mdc.Chart: Binding info propagated to the delegate initially",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080265917"
+          }
+        ]
+      },
+      {
+        "id": "225b529279b97809925d349dba923feee1573937",
+        "type": "FIX",
+        "text": " mdc.FilterBarBase: return a copy of the filters conditions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080288427"
+          }
+        ]
+      }
+    ]
+  }
+}

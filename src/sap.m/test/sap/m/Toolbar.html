@@ -19,13 +19,10 @@
 	jQuery.sap.require("sap.m.Toolbar");
 	jQuery.sap.require("sap.ui.core.IconPool");
 
-	// for behaviour testing
-	if (oUriParameters.get("oldFlex")) {
-		sap.m.ToolbarRenderer.hasNewFlexBoxSupport = false;
-	}
-
 	var oApp = new sap.m.App();
 	var sAddIconURI = sap.ui.core.IconPool.getIconURI("add");
+
+    new sap.ui.core.InvisibleText("SF_AD", {text: "Search"}).toStatic();
 
 	function getToolbarContent (sText, sSelId) {
 		return [
@@ -34,6 +31,7 @@
 			new sap.m.Button({text : "Test"}),
 			new sap.m.Label({
 				text: "Choose:",
+				tooltip: "Choose:",
 				labelFor: sSelId
 			}),
 			new sap.m.Select(sSelId, {
@@ -44,13 +42,14 @@
 							text: "item 0"
 						}),
 					new sap.ui.core.Item({
-							key: "0",
+							key: "1",
 							text: "loooooooooooooong item"
 					})
 				]
 			}),
 			new sap.m.SearchField({
 				placeholder : "Search",
+                ariaDescribedBy: ["SF_AD"],
 				width : "200px"
 			}),
 			new sap.m.SegmentedButton({
@@ -88,16 +87,17 @@
 						text: "item 0"
 					}),
 					new sap.ui.core.Item({
-						key: "0",
+						key: "1",
 						text: "loooooooooooooong item"
 					})
 				]
 			}),
 			new sap.m.ToolbarSpacer(),
-			new sap.m.Label({ text : sText }),
+			new sap.m.Label({ text : sText, tooltip : sText }),
 			new sap.m.ToolbarSpacer(),
 			new sap.m.Label({
 				text: "Choose:",
+				tooltip: "Choose:",
 				labelFor: sSelId + 'innerSelect'
 			}),
 			new sap.m.Select(sSelId + 'innerSelect', {
@@ -107,7 +107,7 @@
 						text: "item 0"
 					}),
 					new sap.ui.core.Item({
-						key: "0",
+						key: "1",
 						text: "loooooooooooooong item"
 					})
 				]
@@ -118,7 +118,8 @@
 	function getInputToolbarContent () {
 		return [
 			new sap.m.Label({
-				text : "Input controls"
+				text : "Input controls",
+				tooltip : "Input controls"
 			}),
 			new sap.m.ToolbarSpacer(),
 			new sap.m.ToggleButton({
@@ -166,7 +167,8 @@
 				headerToolbar : new sap.m.Toolbar({
 					content : [
 						new sap.m.Label({
-							text : "This is a header"
+							text : "This is a header",
+							tooltip : "This is a header"
 						}),
 						new sap.m.ToolbarSpacer(),
 						new sap.m.Button({
@@ -189,6 +191,8 @@
  		})
 	});
 
+	var iMessageToastDuration = 500;
+
 	// add toolbars to the page
 	var oPage = new sap.m.Page("toolbar-page", {
 		customHeader : TBHeader,
@@ -205,24 +209,30 @@
 		content : [
 			new sap.m.Toolbar("info_bar", {
 				active : true,
+				ariaHasPopup: "dialog",
 				design : sap.m.ToolbarDesign.Info,
 				tooltip : "This is a info bar",
 				content : [
-					new sap.m.Label({
-						text : "Plain old infobar"
-					}),
-					new sap.m.Label({text: "Text"}),
-					new sap.m.Label({text: "Text"}),
-					new sap.m.ToolbarSpacer(),
-					new sap.m.Label({text: "Text"}),
-					new sap.m.Label({text: "Text"}),
-					new sap.ui.core.Icon({
-						src : "sap-icon://collaborate",
-						width : "2rem"
-					})
+					new sap.m.Label({text : "Label", tooltip: "Label"}),
+					new sap.m.Text({text: "Text"}),
+					new sap.m.Title({text: "Title", level: sap.ui.core.TitleLevel.H1}),
+					new sap.ui.core.Icon({src : "sap-icon://collaborate"})
 				]
 			}).attachPress(function(oEvent) {
-				sap.m.MessageToast.show("InfoBar Pressed! Sorce: " + oEvent.getParameter("srcControl").getId());
+				sap.m.MessageToast.show("InfoBar Pressed! Sorce: " + oEvent.getParameter("srcControl").getId(), {
+					duration: iMessageToastDuration
+				});
+			}),
+			new sap.m.Toolbar("info_bar2", {
+				active : false,
+				design : sap.m.ToolbarDesign.Info,
+				tooltip : "This is a info bar",
+				content : [
+					new sap.m.Label({text : "Label", tooltip: "Label"}),
+					new sap.m.Text({text: "Text"}),
+                    new sap.m.Title({text: "Title", level: sap.ui.core.TitleLevel.H1}),
+                    new sap.ui.core.Icon({src : "sap-icon://collaborate"})
+				]
 			}),
 			new sap.m.Toolbar({
 				design : sap.m.ToolbarDesign.Solid,
@@ -230,6 +240,7 @@
 				content : [
 					new sap.m.Label({
 						text : "This text should never get shrink.",
+						tooltip : "This text should never get shrink.",
 						layoutData : new sap.m.ToolbarLayoutData({
 							shrinkable : false
 						})
@@ -244,7 +255,8 @@
 						}),
 						press : function() {
 							sap.m.MessageToast.show("Shrinkable button is pressed.",  {
-								at: "center center"
+								at: "center center",
+								duration: iMessageToastDuration
 							});
 						}
 					})
@@ -255,11 +267,14 @@
 				content : [
 					new sap.m.Label({
 						text : "Percent Width Controls",
+						tooltip : "Percent Width Controls",
 						labelFor: "searchField",
+                        ariaDescribedBy: ["SF_AD"],
 						width: "15%"
 					}),
 					new sap.m.ToolbarSpacer(),
 					new sap.m.SearchField("searchField", {
+                        ariaDescribedBy: ["SF_AD"],
 						placeholder : "This has 100% width by default"
 					})
 				]
@@ -269,7 +284,8 @@
 				design : sap.m.ToolbarDesign.Transparent,
 				content : [
 					new sap.m.Label({
-						text : "Segmented Button"
+						text : "Segmented Button",
+						tooltip : "Segmented Button"
 					}),
 					new sap.m.ToolbarSpacer(),
 					new sap.m.SegmentedButton({
@@ -293,7 +309,8 @@
 				design : sap.m.ToolbarDesign.Transparent,
 				content : [
 					new sap.m.Label({
-						text : "Lots of Buttons"
+						text : "Lots of Buttons",
+						tooltip : "Lots of Buttons"
 					}),
 					new sap.m.ToolbarSpacer(),
 					new sap.m.Button({
@@ -346,6 +363,7 @@
 				content : [
 					new sap.m.Label({
 						text : "This text should never get shrink This text should never get shrink",
+						tooltip : "This text should never get shrink This text should never get shrink",
 						layoutData : new sap.m.ToolbarLayoutData({
 							shrinkable : false
 						})
@@ -363,7 +381,7 @@
 						layoutData : new sap.m.ToolbarLayoutData({
 							shrinkable : true,
 							minWidth: "100px",
-							maxWidth: "250px"
+							maxWidth: "300px"
 						})
 					})
 				]

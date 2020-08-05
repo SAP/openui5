@@ -1,14 +1,15 @@
 sap.ui.define([
 	"sap/ui/demo/iconexplorer/model/Sorter",
 	"sap/ui/model/json/JSONModel",
-	"jquery.sap.storage"
-], function(Sorter, JSONModel, jQuery) {
+	"sap/ui/util/Storage",
+	"sap/base/Log"
+], function(Sorter, JSONModel, Storage, Log) {
 	"use strict";
 
 	return JSONModel.extend("sap.ui.demo.iconexplorer.model.FavoriteModel", {
 
 		_STORAGE_KEY : "ICON_EXPLORER_FAVORITES",
-		_storage : jQuery.sap.storage(jQuery.sap.storage.Type.local),
+		_storage : new Storage(Storage.Type.local),
 
 		/**
 		 * Fetches the favorites from local storage and sets up the JSON model
@@ -28,7 +29,7 @@ sap.ui.define([
 			try {
 				oData = JSON.parse(sJSON);
 			} catch (oException) {
-				jQuery.sap.log.warning("FavoriteModel: Could not parse the data read from local storage");
+				Log.warning("FavoriteModel: Could not parse the data read from local storage");
 			}
 
 			// default data if storage is empty

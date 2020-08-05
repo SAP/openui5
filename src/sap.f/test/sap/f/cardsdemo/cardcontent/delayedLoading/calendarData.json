@@ -1,0 +1,99 @@
+{
+  "item": [
+	{
+	  "visualization": "blocker",
+	  "start": "2019-9-2/09:00",
+	  "end": "2019-9-2/10:00",
+	  "title": "Payment reminder",
+	  "icon": "sap-icon://desktop-mobile",
+	  "type": "Type06"
+	},
+	{
+	  "visualization": "blocker",
+	  "start": "2019-9-2/17:00",
+	  "end": "2019-9-2/17:30",
+	  "title": "Private appointment",
+	  "icon": "sap-icon://desktop-mobile",
+	  "type": "Type07"
+	},
+	{
+	  "visualization": "appointment",
+	  "start": "2019-9-2/12:00",
+	  "end": "2019-9-2/13:00",
+	  "title": "Lunch",
+	  "text": "working",
+	  "icon": "sap-icon://desktop-mobile",
+	  "type": "Type03"
+	},
+	{
+	  "visualization": "appointment",
+	  "start": "2019-9-1/08:30",
+	  "end": "2019-9-3/17:30",
+	  "title": "Workshop",
+	  "text": "Out of office",
+	  "icon": "sap-icon://sap-ui5",
+	  "type": "Type07"
+	},
+	{
+	  "visualization": "appointment",
+	  "start": "2019-9-2/14:00",
+	  "end": "2019-9-2/16:30",
+	  "title": "Discussion with clients",
+	  "text": "working",
+	  "icon": "sap-icon://desktop-mobile"
+	},
+	{
+	  "visualization": "appointment",
+	  "start": "2019-9-2/11:00",
+	  "end": "2019-9-2/12:00",
+	  "title": "Team meeting",
+	  "text": "online meeting",
+	  "icon": "sap-icon://sap-ui5",
+	  "type": "Type04"
+	}
+  ],
+  "specialDate": [
+	{
+	  "start": "2019-9-13",
+	  "end": "2019-9-14",
+	  "type": "Type08"
+	},
+	{
+	  "start": "2019-9-24",
+	  "end": "2019-9-24",
+	  "type": "Type13"
+	}
+  ],
+  "legendItem": [
+	{
+	  "category": "calendar",
+	  "text": "Team building",
+	  "type": "Type08"
+	},
+	{
+	  "category": "calendar",
+	  "text": "Public holliday",
+	  "type": "Type13"
+	},
+	{
+	  "category": "appointment",
+	  "text": "Reminder",
+	  "type": "Type06"
+	},
+	{
+	  "category": "appointment",
+	  "text": "Private appointment",
+	  "type": "Type07"
+	},
+	{
+	  "category": "appointment",
+	  "text": "Out of office",
+	  "type": "Type03"
+	},
+	{
+	  "category": "appointment",
+	  "text": "Collaboration with other team members",
+	  "type": "Type07"
+	}
+  ]
+}

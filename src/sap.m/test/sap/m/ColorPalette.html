@@ -151,8 +151,35 @@
 				expanded: true,
 				content: [
 					new Input({placeholder: " focus placeholder"}),
-					new ColorPalette({
-						colorSelect: handleColorSelect
+					new HBox({
+						items: [
+							new ColorPalette({
+								colorSelect: handleColorSelect
+							}),
+							new ColorPalette({
+								colorSelect: handleColorSelect,
+								colors: [
+									"red",
+									"#ffff00"
+								]
+							}),
+							new ColorPalette({
+								colorSelect: handleColorSelect,
+								colors: [
+									"red",
+									"#ffff00",
+									"green",
+									"hsl(350, 60%, 60%)",
+									"lightblue",
+									"#a811ff",
+									"hsl(120, 80%, 80%)",
+									"black",
+									"#ffaa00",
+									"hsl(20, 100%, 70%)",
+									"white",
+									"aqua"
+								]
+							})]
 					})
 				]
 			}).placeAt("content");
@@ -346,6 +373,7 @@
 				oColorPalette._setDefaultColor("#FFFBBB");
 				oColorPalette._setShowDefaultColorButton(true);
 				oColorPalette._setShowMoreColorsButton(true);
+				oColorPalette._setShowRecentColorsSection(true);
 
 				oSimpleForm = new sap.ui.layout.form.SimpleForm("SF2", {
 					maxContainerCols: 3,
@@ -426,6 +454,24 @@
 									oCPPop.setShowMoreColorsButton(oEvent.getParameter("selected"))
 								}
 							}),
+							new CheckBox({
+								text: "Recent Colors",
+								selected: true,
+								select: function (oEvent) {
+									oCPPop.setShowRecentColorsSection(oEvent.getParameter("selected"))
+								}
+							}),
+							new Select("settingsDisplayModeoCPPop", {
+								selectedKey: "Default",
+								items: [
+									new Item({key: "Default", text: "Default"}),
+									new Item({key: "Simplified", text: "Simplified"}),
+									new Item({key: "Large", text: "Large"})
+								],
+								change: function (oEvent) {
+									oCPPop.setDisplayMode(oEvent.getParameter("selectedItem").getKey());
+								}
+							}),
 							new Button({
 								text: "Open",
 								press: function () {
@@ -451,12 +497,37 @@
 									oCPPop2Colors.setShowMoreColorsButton(oEvent.getParameter("selected"))
 								}
 							}),
+							new CheckBox({
+								text: "Recent Colors",
+								selected: true,
+								select: function (oEvent) {
+									oCPPop2Colors.setShowRecentColorsSection(oEvent.getParameter("selected"))
+								}
+							}),
+							new Select("settingsDisplayModeoCPPop2Colors", {
+								selectedKey: "Default",
+								items: [
+									new Item({key: "Default", text: "Default"}),
+									new Item({key: "Simplified", text: "Simplified"}),
+									new Item({key: "Large", text: "Large"})
+								],
+								change: function (oEvent) {
+									oCPPop2Colors.setDisplayMode(oEvent.getParameter("selectedItem").getKey());
+								}
+							}),
 							new Button({
 								text: "Open 2",
 								press: function () {
 									oCPPop2Colors.openBy(this);
 								}
-							})
+							}),
+							new Button({
+								text: "Set color to: ",
+								press: function () {
+									oCPPop2Colors.setColorPickerSelectedColor(sap.ui.getCore().byId("colorSelectInput").getValue());
+								}
+							}),
+							new Input({id:"colorSelectInput", placeholder: "Write a color.."}),
 						]
 					}),
 
@@ -474,6 +545,24 @@
 								selected: false,
 								select: function (oEvent) {
 									oCPPop7Colors.setShowMoreColorsButton(oEvent.getParameter("selected"))
+								}
+							}),
+							new CheckBox({
+								text: "Recent Colors",
+								selected: false,
+								select: function (oEvent) {
+									oCPPop7Colors.setShowRecentColorsSection(oEvent.getParameter("selected"))
+								}
+							}),
+							new Select("settingsDisplayModeoCPPop7Colors", {
+								selectedKey: "Default",
+								items: [
+									new Item({key: "Default", text: "Default"}),
+									new Item({key: "Simplified", text: "Simplified"}),
+									new Item({key: "Large", text: "Large"})
+								],
+								change: function (oEvent) {
+									oCPPop7Colors.setDisplayMode(oEvent.getParameter("selectedItem").getKey());
 								}
 							}),
 							new Button({

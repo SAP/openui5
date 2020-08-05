@@ -1,0 +1,13 @@
+{
+  "1.52.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "76be212f2b64f7ab3ff9758f5bacb22d8747add1",
+        "type": "FEATURE",
+        "text": "Field: add multiple lines mode",
+        "references": []
+      }
+    ]
+  }
+}

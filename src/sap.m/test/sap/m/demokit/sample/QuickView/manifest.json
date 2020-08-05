@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.QuickView",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.QuickView.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"QuickView.fragment.xml",
+					"model/CompanyData.json",
+					"model/EmployeeData.json",
+					"model/GenericData.json",
+					"model/GenericDataNoHeader.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

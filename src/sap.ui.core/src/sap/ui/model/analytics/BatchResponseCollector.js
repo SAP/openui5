@@ -46,7 +46,7 @@ sap.ui.define(function() {
 	 *
 	 * @public
 	 * @param {object} [mParams] optional Setup-Parameter
-	 * @param {array} mParams.executedRequests an Array with detail informations for all executed batch sub-requests
+	 * @param {array} mParams.executedRequests an Array with detail information for all executed batch sub-requests
 	 * @param {object} mParams.binding a reference to the AnalyticalBinding which started the batch request
 	 * @param {int} mParams.lastAnalyticalInfoVersion the analyticalInfo version at the time of the creation of this
 	 * 			BatchResponseCollector instance, this may change during the process of a pending request. Typically changed

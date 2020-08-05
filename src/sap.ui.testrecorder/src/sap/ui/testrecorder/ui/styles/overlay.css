@@ -1,0 +1,86 @@
+@import url("ControlTree.css");
+
+body {
+	background: #fff;
+}
+
+.ttPageBar {
+	height: 2rem !important;
+	background-color: #354a5f !important;
+}
+
+.sapUiFixFlexFixed .sapMBarLeft,
+.sapUiFixFlexFixed .sapMBarRight,
+.sapUiFixFlexFixed .sapMBarMiddle,
+.sapUiFixFlexFixed .sapMBarPH {
+	height: 2rem;
+	line-height: 2rem;
+	color: #fff;
+}
+
+.sapUiFixFlexFixed .sapMBarLeft .sapMText,
+.sapUiFixFlexFixed .sapMBarMiddle .sapMText,
+.sapUiFixFlexFixed .sapMBarRight .sapMText,
+.sapUiFixFlexFixed .sapMBarRight .sapUiIcon,
+.sapUiFixFlexFixed .sapMBarRight .sapMBtnInner {
+	color: #fff;
+	vertical-align: middle;
+}
+
+.sapUiFixFlexFixed .sapMBarLeft .sapMText {
+	font-size: 1rem;
+}
+
+.sapUiFixFlexFixed .ttStandardPageBar .sapMBarMiddle {
+	float: right;
+	width: 36rem;
+}
+
+.sapUiFixFlexFixed .sapMBarMiddle .sapMText {
+	font-size: .8rem;
+	margin: 0 1rem;
+}
+
+.sapUiFixFlexFixed .sapMBarRight > span,
+.sapUiFixFlexFixed .sapMBarRight > button {
+	margin-left: 1rem;
+}
+
+.sapMListInsetBG {
+	padding: 1rem !important;
+}
+
+#content {
+	height: 100%;
+}
+
+.sapUiHLayout  {
+	width: 100%;
+}
+
+.sapUiHLayoutChildWrapper {
+	display: block;
+	width: 50%;
+}
+
+.ttCommonInfoPanel.sapMPanel {
+	height: 100% !important;
+	overflow: scroll !important;
+}
+
+.ttCommonInfoPanel .sapMITH {
+	padding: 0 !important;
+}
+
+.ttCommonInfoPanel .sapMITB.sapUiResponsiveContentPadding > .sapMITBContainerContent > .sapMITBContent {
+	padding: 1rem 0 !important;
+}
+
+/* .sapMPanelContent:not(.sapMPanelBGTransparent) {
+	border-bottom: none !important;
+	transform: none !important;
+}
+
+.sapMPanelContent:not(.sapMPanelBGTransparent) .sapMITBContent {
+	border-bottom: none !important;
+} */

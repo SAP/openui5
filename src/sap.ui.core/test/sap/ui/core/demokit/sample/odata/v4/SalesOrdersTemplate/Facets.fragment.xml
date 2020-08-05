@@ -4,7 +4,7 @@
 	xmlns:scenario="sap.ui.core.sample.ViewTemplate.scenario"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<!-- Note: "facets>" MUST point to Collection(com.sap.vocabularies.UI.v1.Facet) -->
-	<template:alias name=".AH" value="sap.ui.model.odata.v4.AnnotationHelper">
+	<template:alias name="AH" value="sap.ui.model.odata.v4.AnnotationHelper">
 		<template:repeat list="{facets>}" var="facet">
 			<template:if test="{:= ${facet>$Type} === 'com.sap.vocabularies.UI.v1.CollectionFacet' }">
 				<template:then>
@@ -18,10 +18,10 @@
 				</template:then>
 				<template:else>
 					<!-- if test="{:= ${facet>$Type} === 'com.sap.vocabularies.UI.v1.ReferenceFacet' }" -->
-					<!-- Note: alias ".AH" is used only once to test both ways! -->
+					<!-- Note: alias "AH" is used only once to test both ways! -->
 					<Text text="Facet: {facet>Label},
 					 Target: {facet>Target/$AnnotationPath},
-					 isMultiple: {facet>Target/$AnnotationPath@@.AH.isMultiple},
+					 isMultiple: {facet>Target/$AnnotationPath@@AH.isMultiple},
 					 getNavigationPath: {facet>Target/$AnnotationPath@@sap.ui.model.odata.v4.AnnotationHelper.getNavigationPath}"/>
 				</template:else>
 			</template:if>

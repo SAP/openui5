@@ -1,0 +1,81 @@
+{
+  "1.63.0": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "a13f2a8e999d0dfcb20ad9f46899988db6db7801",
+        "type": "FEATURE",
+        "text": "sap.f.Avatar: Fallback image behavior added",
+        "references": []
+      },
+      {
+        "id": "10ae8ed63c7c172d2b77a2964579290c983deea6",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPageTitle: Added snappedTitleOnMobile aggregation",
+        "references": []
+      },
+      {
+        "id": "76c50df7ede3853beea4eb6cf8ac154a53ffef58",
+        "type": "FEATURE",
+        "text": "sap.f.SemanticPage: Implemented single-line title on phone",
+        "references": []
+      },
+      {
+        "id": "6abdf1218f2772b27cb0a5b2dc9940ab0a514a66",
+        "type": "FIX",
+        "text": "sap.f/sap.m.SemanticPage: Messages indicator reading improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970030274"
+          }
+        ]
+      },
+      {
+        "id": "4c245726eebbf77334c149e1d94a126ebd5f2a07",
+        "type": "FIX",
+        "text": "sap.m.DynamicPageTitle: Fixed qUnit tests on all browsers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970079153"
+          }
+        ]
+      },
+      {
+        "id": "aa414aee7de03c2bdcffc91ab86d6b2bfd588213",
+        "type": "FIX",
+        "text": "sap.f.Avatar: Fallback content is hidden when image is transparent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970092270"
+          }
+        ]
+      },
+      {
+        "id": "1c71357af02668cfffb8483d8b297ecc207d0ba2",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Fixed back navigation in sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870465989"
+          }
+        ]
+      },
+      {
+        "id": "284ea572a930ff8f5fd7d2f6627c510011f7a1c6",
+        "type": "FEATURE",
+        "text": "sap.f.FlexibleColumnLayout: Conceal effect implemented",
+        "references": []
+      },
+      {
+        "id": "6b3bdfff8c608081467bd3c9f07daf8c120fa25b",
+        "type": "FEATURE",
+        "text": "sap.f.ShellBar - new experimental control added",
+        "references": []
+      }
+    ]
+  }
+}

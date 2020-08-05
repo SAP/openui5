@@ -1,0 +1,103 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "06391995448dc65ea9badf743202b8ea9e76bfb6",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Arrow icons for appointments are added",
+        "references": []
+      },
+      {
+        "id": "fd9e70d802f5643388a76aa840a18b85e77a4a2d",
+        "type": "FIX",
+        "text": "sap.m.Button: Back type is displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980183607"
+          }
+        ]
+      },
+      {
+        "id": "306a4b840345e31660d8bc2e89683c0f10bfd04d",
+        "type": "FIX",
+        "text": "sap.m.Button: remove overstyling inside Bar for Fiori 3 theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980158602"
+          }
+        ]
+      },
+      {
+        "id": "801124547ff356f98a5859d69ccd0b118984e193",
+        "type": "FIX",
+        "text": "sap.m.Popover: Fiori 3 adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980118451"
+          }
+        ]
+      },
+      {
+        "id": "2e815dfd4bfbb0e36eea6160cc008c67550da582",
+        "type": "FIX",
+        "text": "sap.m.TextArea: Growing property is now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1940164068"
+          }
+        ]
+      },
+      {
+        "id": "99125a90a1670c5133f269feb9a32a93f6f19c38",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Implemented special dates",
+        "references": []
+      },
+      {
+        "id": "597d05bff8e28ff12e97cc08503dfb218e468f12",
+        "type": "FIX",
+        "text": "sap.m.Page: Add shadows for header and subheader in Fiori 3",
+        "references": []
+      },
+      {
+        "id": "81d7d964864c3868106328fae31b4ca630aa801d",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Shadow in Bar adjusted for Quartz theme",
+        "references": []
+      },
+      {
+        "id": "81e312e67bd052a328041e2dd66e0ac9554e73c4",
+        "type": "FIX",
+        "text": ": RTA ACC Color fixes",
+        "references": []
+      },
+      {
+        "id": "c5a66000a7feb59703affd87e95b16be74fc0e65",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Corrected sizing in Fiori3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980202708"
+          }
+        ]
+      },
+      {
+        "id": "fc35e8f6fde59de2acc1559beecde9bd16b1191b",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: Unnecessary padding removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980211449"
+          }
+        ]
+      }
+    ]
+  }
+}

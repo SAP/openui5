@@ -1,16 +1,16 @@
+/*global QUnit,sinon*/
 sap.ui.define([
 	"jquery.sap.global",
-	"test/TestControl",
+	"./TestControl",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/core/dnd/DropInfo",
-	"sap/ui/core/dnd/DragDropInfo"
+	"sap/ui/core/dnd/DragDropInfo",
+	"./DragInfo.qunit",
+	"./DropInfo.qunit"
 ], function(jQuery, TestControl, DragInfo, DropInfo, DragDropInfo) {
 	"use strict";
 
-	/*global QUnit,sinon*/
-
 	QUnit.test("Basics", function(assert) {
-		var oDragInfo = new DragInfo();
 		var oDragDropInfo = new DragDropInfo();
 
 		assert.strictEqual(oDragDropInfo.getSourceAggregation(), "", "Default value of sourceAggregation is correct");
@@ -22,6 +22,19 @@ sap.ui.define([
 
 		oDragDropInfo.setGroupName("Something");
 		assert.strictEqual(oDragDropInfo.getGroupName(), "", "groupName property cannot be set on DragDropInfo");
+
+		oDragDropInfo.destroy();
+	});
+
+	QUnit.test("invalidation", function(assert) {
+		var oDragDropInfo = new DragDropInfo();
+		var fnInvalidateSpy = sinon.spy(oDragDropInfo, "invalidate");
+
+		oDragDropInfo.setGroupName("abc");
+		assert.strictEqual(fnInvalidateSpy.callCount, 0, "Invalidation has not happened for groupName property");
+
+		oDragDropInfo.setEnabled(false);
+		assert.strictEqual(fnInvalidateSpy.callCount, 1, "Invalidation has happened for enabled property");
 
 		oDragDropInfo.destroy();
 	});
@@ -63,7 +76,7 @@ sap.ui.define([
 		var oDragDropInfo = new DragDropInfo({
 			targetElement: "doesNotExist"
 		});
-		var oParent = new TestControl({
+		/*var oParent =*/ new TestControl({
 			children: oControl,
 			dragDropConfig: oDragDropInfo
 		});

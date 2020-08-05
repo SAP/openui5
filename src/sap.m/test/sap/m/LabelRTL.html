@@ -1,0 +1,306 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Label - sap.m</title>
+		<script src="shared-config.js"></script>
+		<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+		</script>
+		<script>
+			jQuery.sap.initMobile({preventScroll : false});
+			sap.ui.getCore().getConfiguration().setRTL(true);
+			var oModel = new sap.ui.model.json.JSONModel({
+				"globalRequired": false
+			});
+
+
+			var sLabelWidth = "100%";
+
+			var oVL = new sap.ui.layout.VerticalLayout("oVL", {
+				content:[
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Label with text set:",
+						design: "Bold"
+					}),
+
+					new sap.m.Label("lbl1", {
+						 required: "{/globalRequired}",
+						 text:'mobile standard label '
+					}),
+				
+					new sap.m.Label("lbl2", {
+						 required: true,
+						 text:'required label'
+					}),
+
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Label with design property set: ",
+						design: "Bold"
+					}),
+				
+					new sap.m.Label("lbl3", {
+						required: "{/globalRequired}",
+						text: "mobile bold label",
+						design: "Bold"
+					}),
+
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Label with textDirection property set:",
+						design: "Bold"
+					}),
+
+					new sap.m.Label("lbl4", {
+ 						required: "{/globalRequired}",
+						text: "mobile LTR label",
+						textDirection: "LTR",
+						width: sLabelWidth
+					}),
+				
+					new sap.m.Label("lbl5", {
+ 						required: "{/globalRequired}",
+						text: "mobile RTL label",
+						textDirection: "RTL",
+						width: sLabelWidth
+					}),
+				
+					new sap.m.Label("lbl6", {
+ 						required: "{/globalRequired}",
+						text: "mobile Inherit label",
+						textDirection: "Inherit",
+						width: sLabelWidth
+					}),
+
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Label with textAlign property set:",
+						design: "Bold"
+					}),
+
+					new sap.m.Label("lbl7", {
+ 						required: "{/globalRequired}",
+						text: "mobile begin label",
+						width: sLabelWidth,
+						textAlign: "Begin"
+					}),
+				
+					new sap.m.Label("lbl8", {
+ 						required: "{/globalRequired}",
+						text: "mobile center label",
+						width: sLabelWidth,
+						textAlign: "Center"
+					}),
+				
+					new sap.m.Label("lbl9", {
+ 						required: "{/globalRequired}",
+						text: "mobile end label",
+						width: sLabelWidth,
+						textAlign: "End"
+					}),
+				
+					new sap.m.Label("lbl10", {
+ 						required: "{/globalRequired}",
+						text: "mobile left label",
+						width: sLabelWidth,
+						textAlign: "Left"
+					}),
+				
+					new sap.m.Label("lbl11", {
+ 						required: "{/globalRequired}",
+						text: "mobile right label",
+						width: sLabelWidth,
+						textAlign: "Right"
+					}),
+
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Label with no text:",
+						design: "Bold"
+					}),
+				
+					new sap.m.Label("lbl12", {
+ 						required: "{/globalRequired}",
+						text: ""
+					}),
+
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Label with width property set:",
+						design: "Bold"
+					}),
+				
+					new sap.m.Label("lbl13", {
+ 						required: "{/globalRequired}",
+						text: "mobile label with width set to 250px with loooooooooooooooooooooooooooooooong content",
+						width: "250px"
+					}),
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: 'Label with displayOnly property set to "true":',
+						design: "Bold"
+					}),
+				
+					new sap.m.Label("lbl8a", {
+ 						required: "{/globalRequired}",
+						text: "mobile label in display mode",
+						displayOnly: true
+					}),
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: 'Label with wrappingType property set to "Hyphenated":',
+						design: "Bold"
+					}),
+				
+					new sap.m.Label("lbl14", {
+ 						required: "{/globalRequired}",
+						text: 'mobile label with loooooooooooooooooooooooooooooooong words, wrappingType property set to "Hyphenated" and wrapping set to "true"',
+						width: "100px",
+						wrapping: true,
+						wrappingType: "Hyphenated"
+					})
+				]
+			});
+
+			var oVL2 = new sap.ui.layout.VerticalLayout("oVL2", {
+				content:[
+					new sap.m.Text("heading", {
+						text: '\n Below are examples for testing the right-to-left special cases such as numerals, phone numbers, etc. To switch the page direction to right-to-left, please paste the following parameter at the end of the URL -> &sap-ui-rtl=true'
+					}),
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Default behavior:",
+						width: '100%',
+						design: "Bold"
+					}),
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: '(012) 345 678',
+						width: '100%'
+					}),
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: 'LTR content direction, wrong default alignment:',
+						width: '100%',
+						design: "Bold"
+					}),
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: '(012) 345 678',
+						textDirection: 'LTR',
+						width: '100%'
+					}),
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: 'LTR content direction, right alignment:',
+						width: '100%',
+						design: "Bold"
+					}),
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: '(012) 345 678',
+						textDirection: 'LTR',
+						textAlign: 'Right',
+						width: '100%'
+					}),
+					new sap.m.Label("truncatedRequiredLabel", {
+						text: "Simple Label Simple LabelSimple LabelSimple LabelSimple",
+						width: "200px",
+						required: "{/globalRequired}"
+					})
+				]
+			});
+			var sf = new sap.ui.layout.form.SimpleForm("simpleForm", {
+				layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
+				editable: true,
+				title: "Simple Form",
+				content:[
+					new sap.m.Label("requiredTruncated", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true}),
+					new sap.m.Input,
+					new sap.m.Label("truncated", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label"}),
+					new sap.m.Input,
+					new sap.m.Label("requiredOnly",  {text:"Simple Label", required: true}),
+					new sap.m.Input,
+					new sap.m.Label("requiredTruncatedNoWrap", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: "{/globalRequired}", wrapping: false}),
+					new sap.m.Input
+				]
+			});
+			var sf2 = new sap.ui.layout.form.SimpleForm("simpleForm2", {
+				width: "300px",
+				layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
+				editable: true,
+				title: "Small Simple Form",
+				content:[
+					new sap.m.Label("requiredTruncated2", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true}),
+					new sap.m.Input,
+					new sap.m.Label("truncated2", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label"}),
+					new sap.m.Input,
+					new sap.m.Label("requiredOnly2",  {text:"Simple Label", required: true}),
+					new sap.m.Input,
+					new sap.m.Label("requiredTruncatedNoWrap2", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: "{/globalRequired}", wrapping: false}),
+					new sap.m.Input
+				]
+			});
+
+
+			var oPage = new sap.m.Page("myPage", {
+				title: "sap.m.Label Test Page",
+				subHeader: new sap.m.Toolbar({
+					content: [
+						new sap.m.Switch("requiredSwitch", {
+							state: false,
+							customTextOn: "*",
+							customTextOff: "No *",
+							change: function (oEvent) {
+								oModel.setProperty("/globalRequired", oEvent.getParameter("state"));
+							}
+						}),
+						new sap.m.Switch("RTLSwitch", {
+							state: false,
+							customTextOn: "RTL",
+							customTextOff: "LTR",
+							change: function (oEvent) {
+								sap.ui.getCore().getConfiguration().setRTL(oEvent.getParameter("state"));
+							}
+						}),
+						new sap.m.Switch("cozySwitch",{
+							state: false,
+							customTextOn: "COZ",
+							customTextOff: "COM",
+							change: function() {
+								$("body").toggleClass("sapUiSizeCompact");
+							}
+						})
+					]
+				}),
+				content: [
+                    new sap.ui.layout.VerticalLayout ({
+						width: "100%",
+                        content: [
+							oVL,
+							oVL2,
+                            sf, sf2
+                        ]
+                    })
+                ]
+			});
+
+			oPage.addContent(new sap.m.Label({text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true, wrapping: false}));
+			oPage.addContent(new sap.m.Label({text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true, wrapping: false}));
+
+			var oApp = new sap.m.App("myApp", {
+				initialPage:"myPage"
+			});
+			oApp.addPage(oPage);
+
+			oApp.setModel(oModel);
+
+			oApp.placeAt("body");
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

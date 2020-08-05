@@ -1,14 +1,10 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/rta/test/SmartLinkUtil",
-	"sap/ui/rta/util/UrlParser",
 	"sap/ui/core/CustomData"
 ], function(
 	UIComponent,
-	FakeLrepConnectorLocalStorage,
 	SmartLinkUtil,
-	UrlParser,
 	CustomData
 ) {
 	"use strict";
@@ -30,11 +26,7 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Control} the content
 		 */
 		createContent : function() {
-
 			SmartLinkUtil.mockUShellServices();
-
-			// app specific setup
-			this._createFakeLrep();
 
 			var oApp = new sap.m.App({
 				id : this.createId("app"),
@@ -64,18 +56,6 @@ sap.ui.define([
 			oApp.addPage(oPage);
 
 			return oApp;
-
-		},
-
-		/**
-		 * Create the FakeLrep with localStorage
-		 * @private
-		 */
-		_createFakeLrep: function () {
-			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
-				FakeLrepConnectorLocalStorage.enableFakeConnector();
-			}
 		}
-
 	});
 });

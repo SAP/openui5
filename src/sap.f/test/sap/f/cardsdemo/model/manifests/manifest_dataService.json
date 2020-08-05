@@ -1,0 +1,46 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.ui5": {
+		"services": {
+			"UserRecent": {
+				"factoryName": "cardsdemo.service.UserRecentFactory"
+			}
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Request List Content Card",
+			"subTitle": "Card Subtitle",
+			"icon": {
+				"src": "sap-icon://accept"
+			},
+			"status": "100 of 200"
+		},
+		"content": {
+			"data": {
+				"service": {
+					"name": "UserRecent",
+					"parameters": {
+						"somekey2": "somevalue2"
+					}
+				},
+				"path": "/"
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"value": "{title}"
+				},
+				"description": {
+					"value": "{description}"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,81 @@
+<mvc:View
+	controllerName="sap.m.sample.InputGrouping.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Label text="Input with grouped suggestions" labelFor="productInputWithList" />
+		<Input
+			id="productInputWithList"
+			placeholder="Enter product"
+			showSuggestion="true"
+			suggestionItems="{
+				path: '/ProductCollection',
+				sorter: {
+					path: 'SupplierName',
+					group: true,
+					ascending: false
+				}
+			}">
+			<suggestionItems>
+				<core:Item text="{Name}" />
+			</suggestionItems>
+		</Input>
+
+		<Label text="Input with grouped tabular suggestions" labelFor="productInputWithTable" />
+		<Input
+			id="productInputWithTable"
+			placeholder="Enter product"
+			showSuggestion="true"
+			showTableSuggestionValueHelp="false"
+			suggestionRows="{
+				path: '/ProductCollection',
+				sorter: {
+					path: 'SupplierName',
+					group: true,
+					ascending: false
+				}
+			}">
+			<suggestionColumns>
+				<Column
+					popinDisplay="Inline"
+					demandPopin="true">
+					<Label text="Name" />
+				</Column>
+				<Column
+					hAlign="Center"
+					popinDisplay="Inline"
+					demandPopin="true"
+					minScreenWidth="Tablet">
+					<Label text="Product ID" />
+				</Column>
+				<Column
+					hAlign="Center"
+					popinDisplay="Inline"
+					minScreenWidth="Tablet">
+					<Label text="Supplier Name" />
+				</Column>
+				<Column
+					hAlign="End"
+					popinDisplay="Inline"
+					demandPopin="true">
+					<Label text="Price" />
+				</Column>
+			</suggestionColumns>
+
+			<suggestionRows>
+				<ColumnListItem>
+					<Label text="{Name}"/>
+					<Label text="{ProductId}"/>
+					<Label text="{SupplierName}"/>
+					<Label text="{
+						parts:[{path:'Price'}, {path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: true}
+					}" />
+				</ColumnListItem>
+			</suggestionRows>
+		</Input>
+	</l:VerticalLayout>
+</mvc:View>

@@ -1,0 +1,19 @@
+<core:View xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:l="sap.ui.layout"
+		   xmlns:mdc="sap.ui.mdc" xmlns:mdcField="sap.ui.mdc.field"
+		   controllerName="sap.ui.mdc.acc.link.LinkAccessibility">
+	<App defaultTransitionName="show">
+		<ScrollContainer height="100%" width="100%" horizontal="false" vertical="true" focusable="true">
+			<l:VerticalLayout class="sapUiContentPadding" width="100%">
+				<l:content>
+					<mdc:Field id="IDField_MNACI" value="{Name}" editMode="Display">
+						<mdc:fieldInfo>
+							<mdc:Link 
+								sourceControl="IDField_MNACI"
+								delegate='{ name: "sap/ui/mdc/acc/link/LinkDelegate", payload: {} }'/>
+						</mdc:fieldInfo>
+					</mdc:Field>
+				</l:content>
+			</l:VerticalLayout>
+		</ScrollContainer>
+	</App>
+</core:View>

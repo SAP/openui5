@@ -17,7 +17,6 @@
 			intervalSelect="handleIntervalSelect">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
-				<ToolbarSpacer/>
 				<Select
 						change="handleSortChange"
 						width="230px">
@@ -32,8 +31,8 @@
 					icon="{pic}"
 					title="{name}"
 					text="{role}"
-					appointments="{path : 'appointments', templateShareable: 'true'}"
-					intervalHeaders="{path: 'headers', templateShareable: 'true'}">
+					appointments="{path : 'appointments', templateShareable: true}"
+					intervalHeaders="{path: 'headers', templateShareable: true}">
 					<appointments>
 						<unified:CalendarAppointment
 							startDate="{start}"

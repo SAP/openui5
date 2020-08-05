@@ -216,19 +216,34 @@
 				"id": "203bf7029ff102941d7643ab8468bdd44013e696",
 				"type": "FIX",
 				"text": "Less Parameter @sapUiFieldRequiredColor contrast issue",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570862997"
+					}
+				]
 			},
 			{
 				"id": "c40f68462e1eb53161b02141bbbccad6cbb5c583",
 				"type": "FIX",
 				"text": "m.IconTabBar: windows 10 rules added",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670168457"
+					}
+				]
 			},
 			{
 				"id": "bf0459db67030cee221ab2823e2e36137be3ba67",
 				"type": "FIX",
 				"text": "sap.m.ActionSheet: Dialog's \"Cancel\" button is now positioned correctly on IE",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680008807"
+					}
+				]
 			},
 			{
 				"id": "4019e687395c4ec084c109383ca15bf4de2fb8ec",
@@ -240,31 +255,56 @@
 				"id": "68c90a75a2bc163584fee40f5fd1013bcdcdc6e7",
 				"type": "FIX",
 				"text": "sap.m.Button: Emphasized button has sufficient contrast ratio of the focus",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680021221"
+					}
+				]
 			},
 			{
 				"id": "2f41ee778bf2781aec17d266a6e755798afd093e",
 				"type": "FIX",
 				"text": "sap.m.Carousel: Fixed nav arrows on combi devices",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670121451"
+					}
+				]
 			},
 			{
 				"id": "373a5366152f8d953904fe1f3f470854ed7211d6",
 				"type": "FIX",
 				"text": "sap.m.IconTaBar: count in RTL is right aligned",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670163085"
+					}
+				]
 			},
 			{
 				"id": "913fdf09e73a97ec42b34f3e58606a57603c5632",
 				"type": "FIX",
 				"text": "sap.m.IconTaBar: scroll arrows in Text-only mode are aligned with the text now",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670015003"
+					}
+				]
 			},
 			{
 				"id": "535dc6a0f3e09290fa419d23325e94f7e69bb71f",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar: padding on phone fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670120798"
+					}
+				]
 			},
 			{
 				"id": "f224fd2a87635dbc998ba4ea0d959e3e42133aa0",
@@ -282,7 +322,12 @@
 				"id": "54e0380d58b69de1e7871fac3f9aec5bf6343b1e",
 				"type": "FIX",
 				"text": "sap.m.NotificationListItem: Box shadow corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670289766"
+					}
+				]
 			},
 			{
 				"id": "f76262a53aafdd0114ff571943fc2dc380deb1fd",
@@ -294,19 +339,38 @@
 				"id": "03de0b82050ebaf46fdb58c1e9d19fe53a16718f",
 				"type": "FIX",
 				"text": "sap.m.SearchField - placeholder is not completely visible",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670317106"
+					}
+				]
 			},
 			{
 				"id": "3e0fc67f935ba9582fb825dc447186f8f9c9ecb2",
 				"type": "FIX",
 				"text": "sap.m.Select: remove the margin inside the table cell",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670334763"
+					}
+				]
 			},
 			{
 				"id": "69cbcb09a15cbd3e7215618ed131140d9776b0b0",
 				"type": "FIX",
 				"text": "sap.m.StandardListItem: Update Icon correctly.",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670320921"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670314180"
+					}
+				]
 			},
 			{
 				"id": "2f3b1bbec01b8d45febc0f7af204615378377246",
@@ -330,7 +394,12 @@
 				"id": "47123cd5e9f74c2be76122de39a839d7af67939f",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670208916"
+					}
+				]
 			},
 			{
 				"id": "945b5767ff55d0f431578de210b14f1dd0510a4a",
@@ -365,7 +434,12 @@
 				"id": "06e9ccca394d479f266269ac7e42e13d03019577",
 				"type": "FIX",
 				"text": "sap.m.CheckBox: focus outline was cut when put in a Grid",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680020740"
+					}
+				]
 			},
 			{
 				"id": "210412017ff2d098b088422a3454dc178d8e117f",
@@ -383,7 +457,12 @@
 				"id": "188f804fb1be1a62783e1151971c94e00d485146",
 				"type": "FIX",
 				"text": "sap.m.Table: insufficient contrast of focus outline",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680089765"
+					}
+				]
 			}
 		]
 	},
@@ -400,31 +479,60 @@
 				"id": "ad683101a8f91ce141bcf9c8777060de13b33a61",
 				"type": "FIX",
 				"text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670295059"
+					}
+				]
 			},
 			{
 				"id": "3466e221497492c7ac3306f2c05395ce2eb3e8e7",
 				"type": "FIX",
 				"text": "sap.m.ObjectHeader: ObjectAttribute is verticaly aligned correctly",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680058747"
+					}
+				]
 			},
 			{
 				"id": "82eb12ca87030031015ad761a9ae78dbd3ef8148",
 				"type": "FIX",
 				"text": "sap.m.ObjectHeader: Transparent background works in Belize",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680132141"
+					},
+					{
+						"type": "BCP",
+						"reference": "1680131801"
+					}
+				]
 			},
 			{
 				"id": "727bf4f49e69b9c580aa0472bbb33700072359e8",
 				"type": "FIX",
 				"text": "sap.m.QuickView: Page sub title now can have 2 lines in Belize",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680120902"
+					}
+				]
 			},
 			{
 				"id": "a14ba608f9a5ae3ac7628ae8946e5bc7f9526eaa",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: Fix focus visualization on group headers",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670335892"
+					}
+				]
 			}
 		]
 	},
@@ -435,31 +543,60 @@
 				"id": "330d603b6d2dab27a0f30a895f890c486ebf5327",
 				"type": "FIX",
 				"text": "sap.m.Button: Emphasized button has sufficient contrast ratio",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680021221"
+					}
+				]
 			},
 			{
 				"id": "1b85f3d180b792f6a869d7b43d16b56ec1ee56fb",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar: Downport Belize styles to 1.40",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680140177"
+					},
+					{
+						"type": "BCP",
+						"reference": "1680128526"
+					}
+				]
 			},
 			{
 				"id": "b1f6b020b9365e2093789e7bf8444ca80e6d73bc",
 				"type": "FIX",
 				"text": "sap.m.Link: Focus visualization within table cell",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680084755"
+					}
+				]
 			},
 			{
 				"id": "059d6a5dfcddbb951c2457f0e68604b76fcb834c",
 				"type": "FIX",
 				"text": "sap.m.MessagePopover: Styles for markup description improved",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680154117"
+					}
+				]
 			},
 			{
 				"id": "e94fcbe3fc55f39f64cfa5951383f47a00638988",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: fix group header background for Belize",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680039579"
+					}
+				]
 			}
 		]
 	}

@@ -1,16 +1,16 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press"
-], function (Opa5, PropertyStrictEquals, AggregationLengthEquals, EnterText, Press) {
+], function (Opa5, AggregationLengthEquals, EnterText, Press) {
 	"use strict";
 
-	// access properties configured by the consumer test
-	var sListView = Opa5.getTestLibConfig('testLibrary').listViewName;
+	// access properties set by the consumer test
+	var sListView = Opa5.getTestLibConfig('sampleLibrary').listViewName;
 
-	// simple example of a page object provided by the test library
+	// simple example of a page object provided by a test library and registered to OPA5 when the library is loaded.
+	// all methods defined here can be accessed on the page objects' Given, When and Then clauses (eg: Given.onTheListPage.iSetTheFilter())
 	Opa5.createPageObjects({
 
 		onTheListPage: {
@@ -36,9 +36,10 @@ sap.ui.define([
 						},
 						actions: new Press(),
 						errorMessage: "There are no rows with " + sColumnName + " value " + sItemName
-	 				});
+					});
 				}
 			},
+
 			assertions: {
 				theResultListIsVisible: function (iListLength) {
 					return this.waitFor({

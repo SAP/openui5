@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.SemanticPageFreeStyle",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.SemanticPageFreeStyle.view.SemanticPageFreeStyle",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/SemanticPageFreeStyle.view.xml",
+					"controller/SemanticPageFreeStyle.controller.js",
+					"model/model.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.GridProperties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.GridProperties.view.GridProperties",
+			"type": "XML",
+			"async": true
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "resources/styles.css"
+				}
+			]
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"view/GridProperties.view.xml",
+					"controller/GridProperties.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

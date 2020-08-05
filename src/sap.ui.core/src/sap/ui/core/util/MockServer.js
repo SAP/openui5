@@ -5,12 +5,23 @@
 // Provides class sap.ui.core.util.MockServer for mocking a server
 sap.ui
 	.define(
-		['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/ManagedObject', 'sap/ui/thirdparty/sinon', 'jquery.sap.sjax'],
-		function(jQuery, Device, ManagedObject, sinon /* jQuerySapSjax*/) {
+		[
+			'jquery.sap.global',
+			'sap/ui/Device',
+			'sap/ui/base/ManagedObject',
+			'sap/ui/thirdparty/sinon',
+			"sap/base/Log",
+			'jquery.sap.sjax'
+		],
+		function(jQuery, Device, ManagedObject, sinon /* jQuerySapSjax*/, Log) {
 			"use strict";
 
 			if (Device.browser.msie) {
-				jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+
+				if (window.sinon.log) { // sinon has no version property, but 'log' was removed with 2.x)
+					sap.ui.requireSync("sap/ui/thirdparty/sinon-ie");
+				}
+
 				// sinon internally checks the transported data to be an instance
 				// of FormData and this fails in case of IE9! - therefore we
 				// add a dummy function to enable instanceof check
@@ -28,7 +39,7 @@ sap.ui
 			 * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new object
 			 * @param {object} [oScope] scope object for resolving string based type and formatter references in bindings
 			 *
-			 * @class Class to mock http requests made to a remote server
+			 * @class Class to mock http requests made to a remote server.
 			 * @extends sap.ui.base.ManagedObject
 			 * @abstract
 			 * @author SAP SE
@@ -101,7 +112,7 @@ sap.ui
 						 *
 						 * Default value is is <code>[]</code>
 						 *
-						 * Each array entry should consist of an array with the following properties / values:
+						 * Each array entry should consist of an object with the following properties / values:
 						 *
 						 * <ul>
 						 * <li><b>method <string>: "GET"|"POST"|"DELETE|"PUT"</b>
@@ -174,7 +185,8 @@ sap.ui
 					INVALID_KEY_NAME: "Invalid key name in key predicate. Expected name is ##",
 					INVALID_KEY_PREDICATE_QUANTITY: "Invalid key predicate. The quantity of provided keys does not match the expected value",
 					INVALID_KEY_TYPE: "Invalid key predicate. The key literal for key property ## does not match its type."
-				}
+				},
+				_oRandomSeed: {}
 
 			});
 
@@ -185,20 +197,29 @@ sap.ui
 			 * the seed is fixed, so the generated random sequence is always the same
 			 * each property type has a own seed. Valid types are:
 			 * String, DateTime, Int, Decimal, Boolean, Byte, Double, Single, SByte, Time, Guid, Binary, DateTimeOffset
-			 * @public
+			 * @private
 			 * @param {string} specific property type of random mock value to be generated
 			 * @return (number) pseudo-random number
 			 */
 			MockServer.prototype._getPseudoRandomNumber = function (sType) {
-				if (!this._iRandomSeed) {
-					this._iRandomSeed = {};
+				if (!this._oRandomSeed) {
+					this._oRandomSeed = {};
 				}
-				if (!this._iRandomSeed.hasOwnProperty(sType)) {
-					this._iRandomSeed[sType] = 0;
+				if (!this._oRandomSeed.hasOwnProperty(sType)) {
+					this._oRandomSeed[sType] = 0;
 				}
-				this._iRandomSeed[sType] = (this._iRandomSeed[sType] + 11 ) * 25214903917 % 281474976710655;
-				return this._iRandomSeed[sType] / 281474976710655;
+				this._oRandomSeed[sType] = (this._oRandomSeed[sType] + 11 ) * 25214903917 % 281474976710655;
+				return this._oRandomSeed[sType] / 281474976710655;
 			};
+
+			/**
+			 * reset seed of pseudo-random number generator
+			 * @private
+			 */
+			MockServer.prototype._resetPseudoRandomNumberGenerator = function () {
+					this._oRandomSeed = {};
+			};
+
 
 			/**
 			 * Starts the server.
@@ -315,7 +336,7 @@ sap.ui
 				if (this._oMockdata && this._oMockdata.hasOwnProperty(sEntitySetName)) {
 					aCopiedMockdata = jQuery.extend(true, [], that._oMockdata[sEntitySetName]);
 				} else {
-					jQuery.sap.log.error("Unrecognized EntitySet name: " + sEntitySetName);
+					Log.error("Unrecognized EntitySet name: " + sEntitySetName);
 				}
 				return aCopiedMockdata;
 			};
@@ -330,7 +351,7 @@ sap.ui
 				if (this._oMockdata && this._oMockdata.hasOwnProperty(sEntitySetName)) {
 					this._oMockdata[sEntitySetName] = aData;
 				} else {
-					jQuery.sap.log.error("Unrecognized EntitySet name: " + sEntitySetName);
+					Log.error("Unrecognized EntitySet name: " + sEntitySetName);
 				}
 			};
 
@@ -601,9 +622,7 @@ sap.ui
 					}
 
 					var aExp1Parts = rExp1.exec(sODataQueryValue);
-					// remove brackets around values
 					if (aExp1Parts === null) {
-						sODataQueryValue = sODataQueryValue.replace(/[\(\)]/g, "");
 						return this._getOdataQueryFilter(aDataSet, this._trim(sODataQueryValue));
 					}
 					var sExpression = aExp1Parts[1];
@@ -689,6 +708,10 @@ sap.ui
 						sValue = that._trim(aODataFilterValues[iValueIndex + 2]);
 						sPath = that._trim(aODataFilterValues[iPathIndex + 2]);
 					}
+					// remove brackets around value (if value is present)
+					if (/^\(.+\)$/.test(sValue)) {
+						sValue = sValue.replace(/^\(|\)$/g, "");
+					}
 					//TODO do the check using the property type and not value
 					// remove number suffixes from EDM types decimal, Int64, Single
 					var sTypecheck = sValue[sValue.length - 1];
@@ -719,7 +742,7 @@ sap.ui
 						if (aDataSet[0][sComplexType]) {
 							if (!aDataSet[0][sComplexType].hasOwnProperty(sPropName)) {
 								var sErrorMessage = that._oErrorMessages.PROPERTY_NOT_FOUND.replace("##", "'" + sPropName + "'");
-								jQuery.sap.log.error("MockServer: navigation property '" + sComplexType + "' was not expanded, so " + sErrorMessage);
+								Log.error("MockServer: navigation property '" + sComplexType + "' was not expanded, so " + sErrorMessage);
 								return aDataSet;
 							}
 						} else {
@@ -936,7 +959,7 @@ sap.ui
                     };
 
 					// in case of $select=* return the data as is
-					if (jQuery.inArray("*", aProperties) !== -1) {
+					if (aProperties.indexOf("*") !== -1) {
 						return aDataSet;
 					}
 
@@ -1051,7 +1074,7 @@ sap.ui
 						var aNavEntry = oRecord[sNavProp].results || oRecord[sNavProp];
 						if (!aNavEntry || !!aNavEntry.__deferred) {
 							aNavEntry = jQuery.extend(true, [], that._resolveNavigation(sEntitySetName, oRecord, sNavProp, oRecord));
-						} else if (!jQuery.isArray(aNavEntry)) {
+						} else if (!Array.isArray(aNavEntry)) {
 							aNavEntry = [aNavEntry];
 						}
 
@@ -1097,7 +1120,7 @@ sap.ui
 					this._generateMockdata(this._mEntitySets, this._oMetadata);
 				} else {
 					// check the mockdata base URL to end with a slash
-					if (!jQuery.sap.endsWith(this._sMockdataBaseUrl, "/") && !jQuery.sap.endsWith(this._sMockdataBaseUrl, ".json")) {
+					if (!this._sMockdataBaseUrl.endsWith("/") && !this._sMockdataBaseUrl.endsWith(".json")) {
 						this._sMockdataBaseUrl += "/";
 					}
 					// load the mockdata
@@ -1133,7 +1156,7 @@ sap.ui
 						dataType: "text"
 					}).data;
 					if (!sMetadata) {
-						jQuery.sap.log.error("MockServer: The metadata for url \"" + sMetadata + "\" could not be found!");
+						Log.error("MockServer: The metadata for url \"" + sMetadata + "\" could not be found!");
 					}
 				}
 
@@ -1141,7 +1164,7 @@ sap.ui
 				try {
 					this._oMetadata = jQuery.parseXML(sMetadata);
 				} catch (oError) {
-					jQuery.sap.log.error("MockServer: Invalid metadata XML! Reason: " + oError);
+					Log.error("MockServer: Invalid metadata XML! Reason: " + oError);
 				}
 				return this._oMetadata;
 			};
@@ -1369,27 +1392,27 @@ sap.ui
 							if (oResponse.data.d.results) {
 								mData[oEntitySet.name] = oResponse.data.d.results;
 							} else {
-								jQuery.sap.log.error("The mock data format for entity set \"" + oEntitySet.name + "\" invalid");
+								Log.error("The mock data format for entity set \"" + oEntitySet.name + "\" invalid");
 							}
 						} else {
-							if (jQuery.isArray(oResponse.data)) {
+							if (Array.isArray(oResponse.data)) {
 								mData[oEntitySet.name] = oResponse.data;
 							} else {
-								jQuery.sap.log.error("The mock data for entity set \"" + oEntitySet.name + "\" could not be loaded due to wrong format!");
+								Log.error("The mock data for entity set \"" + oEntitySet.name + "\" could not be loaded due to wrong format!");
 								return false;
 							}
 						}
 						return true;
 					} else {
 						if (oResponse.status === "parsererror") {
-							jQuery.sap.log.error("The mock data for entity set \"" + oEntitySet.name + "\" could not be loaded due to a parsing error!");
+							Log.error("The mock data for entity set \"" + oEntitySet.name + "\" could not be loaded due to a parsing error!");
 						}
 						return false;
 					}
 				};
 
 				// load all the mock data in one single file
-				if (jQuery.sap.endsWith(sBaseUrl, ".json")) {
+				if (sBaseUrl.endsWith(".json")) {
 					var oResponse = jQuery.sap.sjax({
 						url: sBaseUrl,
 						dataType: "json"
@@ -1397,7 +1420,7 @@ sap.ui
 					if (oResponse.success) {
 						mData = oResponse.data;
 					} else {
-						jQuery.sap.log.warning("The mock data for all the entity types could not be found at \"" + sBaseUrl + "\"!");
+						Log.warning("The mock data for all the entity types could not be found at \"" + sBaseUrl + "\"!");
 					}
 				} else {
 					var oEntitySets = {};
@@ -1421,10 +1444,10 @@ sap.ui
 							// the entity set name
 							var sEntitySetUrl = sBaseUrl + oEntitySet.name + ".json";
 							if (!fnLoadMockData(sEntitySetUrl, oEntitySet)) {
-								jQuery.sap.log.warning("The mock data for entity set \"" + oEntitySet.name + "\" could not be found at \"" + sBaseUrl + "\"!");
+								Log.warning("The mock data for entity set \"" + oEntitySet.name + "\" could not be found at \"" + sBaseUrl + "\"!");
 								var sEntityTypeUrl = sBaseUrl + oEntitySet.type + ".json";
 								if (!fnLoadMockData(sEntityTypeUrl, oEntitySet)) {
-									jQuery.sap.log.warning("The mock data for entity type \"" + oEntitySet.type + "\" could not be found at \"" + sBaseUrl + "\"!");
+									Log.warning("The mock data for entity type \"" + oEntitySet.type + "\" could not be found at \"" + sBaseUrl + "\"!");
 									// generate random
 									// mock data
 									if (that._bGenerateMissingMockData) {
@@ -1915,7 +1938,7 @@ sap.ui
 			};
 
 			/**
-			 * Simulates an existing OData service by sepcifiying the metadata URL and the base URL for the mockdata. The server
+			 * Simulates an existing OData service by sepcifying the metadata URL and the base URL for the mockdata. The server
 			 * configures the request handlers depending on the service metadata. The mockdata needs to be stored individually for
 			 * each entity type in a separate JSON file. The name of the JSON file needs to match the name of the entity type. If
 			 * no base url for the mockdata is specified then the mockdata are generated from the metadata
@@ -1923,8 +1946,8 @@ sap.ui
 			 * @param {string} sMetadataString Either the URL to the service metadata document or the metadata document as xml string itself (starting with "<?xml")
 			 * @param {string|object} [vMockdataSettings] (optional) base url which contains the path to the mockdata, or an object which contains the following properties: sMockdataBaseUrl, bGenerateMissingMockData, aEntitySetsNames. See below for descriptions of these parameters. Ommit this parameter to produce random mock data based on the service metadata.
 			 * @param {string} [vMockdataSettings.sMockdataBaseUrl] base url which contains the mockdata as single .json files or the .json file containing the complete mock data
-			 * @param {boolean} [vMockdataSettings.bGenerateMissingMockData] true for the MockServer to generate mock data for missing .json files that are not found in sMockdataBaseUrl. Default value is false.
-			 * @param {array} [vMockdataSettings.aEntitySetsNames] list of entity set names to fetch. This parameter should be used to improve performance in case there are a lot of entity sets but only a few are needed to be fetched. Default value is empty - in this case all entity sets will be retrieved.
+			 * @param {boolean} [vMockdataSettings.bGenerateMissingMockData=false] if the MockServer should generate mock data for missing .json files that are not found in sMockdataBaseUrl
+			 * @param {array} [vMockdataSettings.aEntitySetsNames=[]] list of entity set names to fetch. If the list is empty or <code>undefined</code>, all entity sets will be retrieved. This parameter should be used to improve performance in case there are a lot of entity sets but only a few are needed to be fetched.
 			 *
 			 * @since 1.13.2
 			 * @public
@@ -1952,6 +1975,7 @@ sap.ui
 					var DraftEnabledMockServer = sap.ui.requireSync("sap/ui/core/util/DraftEnabledMockServer");
 					DraftEnabledMockServer.handleDraft(oAnnotations, this);
 				}
+				this._resetPseudoRandomNumberGenerator();
 				this._refreshData(true);
 
 				// helper to handle xsrf token
@@ -1984,7 +2008,7 @@ sap.ui
 							var aKeyVal = aRequestedKeys[i].split('=');
 							var sKey = that._trim(aKeyVal[0]);
 							//key doesn't match, continue to next entry
-							if (jQuery.inArray(sKey, aKeys) === -1) {
+							if (!aKeys || aKeys.indexOf(sKey) === -1) {
 								return true; // = continue
 							}
 
@@ -2152,15 +2176,15 @@ sap.ui
 					method: "GET",
 					path: new RegExp("\\$metadata([?#].*)?"),
 					response: function(oXhr) {
-						jQuery.sap.require("jquery.sap.xml");
-						jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
+						sap.ui.requireSync("jquery.sap.xml");
+						Log.debug("MockServer: incoming request for url: " + oXhr.url);
 						var mHeaders = {
 							"Content-Type": "application/xml;charset=utf-8"
 						};
 						fnHandleXsrfTokenHeader(oXhr, mHeaders);
 
 						oXhr.respond(200, mHeaders, that._sMetadata);
-						jQuery.sap.log.debug("MockServer: response sent with: 200, " + that._sMetadata);
+						Log.debug("MockServer: response sent with: 200, " + that._sMetadata);
 						return true;
 					}
 				});
@@ -2170,13 +2194,13 @@ sap.ui
 					method: "HEAD",
 					path: new RegExp("$"),
 					response: function(oXhr) {
-						jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
+						Log.debug("MockServer: incoming request for url: " + oXhr.url);
 						var mHeaders = {
 							"Content-Type": "application/json;charset=utf-8"
 						};
 						fnHandleXsrfTokenHeader(oXhr, mHeaders);
 						oXhr.respond(200, mHeaders);
-						jQuery.sap.log.debug("MockServer: response sent with: 200");
+						Log.debug("MockServer: response sent with: 200");
 						return true;
 					}
 				});
@@ -2186,7 +2210,7 @@ sap.ui
 					method: "GET",
 					path: new RegExp("$"),
 					response: function(oXhr) {
-						jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
+						Log.debug("MockServer: incoming request for url: " + oXhr.url);
 						var mHeaders = {
 							"Content-Type": "application/json;charset=utf-8"
 						};
@@ -2201,7 +2225,7 @@ sap.ui
 						oXhr.respond(200, mHeaders, JSON.stringify({
 							d: oResponse
 						}));
-						jQuery.sap.log.debug("MockServer: response sent with: 200, " + JSON.stringify({
+						Log.debug("MockServer: response sent with: 200, " + JSON.stringify({
 							d: oResponse
 						}));
 						return true;
@@ -2214,7 +2238,7 @@ sap.ui
 						method: "POST",
 						path: new RegExp("\\$batch([?#].*)?"),
 						response: function(oXhr) {
-							jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
+							Log.debug("MockServer: incoming request for url: " + oXhr.url);
 							var fnResovleStatus = function(oResponse) {
 								switch (oResponse.statusCode) {
 									case 200:
@@ -2277,18 +2301,33 @@ sap.ui
 
 							};
 
-							var fnCUDRequest = function(sUrl, sData, sType,aChangesetResponses) {
+							var fnCUDRequest = function(sUrl, sData, sType,aChangesetResponses, mHeaders) {
 								var oResponse;
 								var fnAjaxSuccess = function(data, textStatus, xhr){
-									oResponse = { success : true, data : data, status : textStatus, statusCode : xhr && xhr.status, responseHeaders : xhr && xhr.getAllResponseHeaders() };
+									oResponse = {
+										success: true,
+										data: data,
+										status: textStatus,
+										statusCode: xhr && xhr.status,
+										responseHeaders: xhr && xhr.getAllResponseHeaders()
+									};
 								};
 								var fnAjaxError = function(xhr, textStatus, error) {
-									oResponse = { success : false, data : undefined, status : textStatus, error : error, statusCode : xhr.status, errorResponse :  xhr.responseText, responseHeaders : xhr && xhr.getAllResponseHeaders()};
+									oResponse = {
+										success: false,
+										data: undefined,
+										status: textStatus,
+										error: error,
+										statusCode: xhr.status,
+										errorResponse:  xhr.responseText,
+										responseHeaders: xhr && xhr.getAllResponseHeaders()
+									};
 								};
 								jQuery.ajax({
 									type: sType,
 									async: false,
 									url: sUrl,
+									headers: mHeaders,
 									data: sData,
 									dataType: "json",
 									success: fnAjaxSuccess,
@@ -2307,10 +2346,24 @@ sap.ui
 								var oResponse;
 								var sResponseString;
 								var fnAjaxSuccess = function(data, textStatus, xhr){
-									oResponse = { success : true, data : data, status : textStatus, statusCode : xhr && xhr.status, responseHeaders : xhr && xhr.getAllResponseHeaders() };
+									oResponse = {
+										success: true,
+										data: data,
+										status: textStatus,
+										statusCode: xhr && xhr.status,
+										responseHeaders: xhr && xhr.getAllResponseHeaders()
+									};
 								};
 								var fnAjaxError = function(xhr, textStatus, error) {
-									oResponse = { success : false, data : undefined, status : textStatus, error : error, statusCode : xhr.status, errorResponse :  xhr.responseText, responseHeaders : xhr && xhr.getAllResponseHeaders()};
+									oResponse = {
+										success: false,
+										data: undefined,
+										status: textStatus,
+										error: error,
+										statusCode: xhr.status,
+										errorResponse:  xhr.responseText,
+										responseHeaders: xhr && xhr.getAllResponseHeaders()
+									};
 								};
 								jQuery.ajax({
 									async: false,
@@ -2327,6 +2380,18 @@ sap.ui
 								}
 								aBatchBodyResponse.push("\r\nContent-Type: application/http\r\n" + "Content-Length: " + sResponseString.length + "\r\n" +
 									"content-transfer-encoding: binary\r\n\r\n" + sResponseString);
+							};
+
+							var fnParseHeaders = function (sChangesetRequest) {
+								var mHeaders = {};
+								sChangesetRequest.split("HTTP/1.1")[1].split("{")[0].split("\n").forEach(function (headerLine) {
+									if (headerLine.indexOf(":") !== -1) {
+										var headerPair = headerLine.split(":");
+										mHeaders[headerPair[0].trim()] = headerPair[1].trim();
+									}
+								});
+								delete mHeaders["Content-Length"];
+								return mHeaders;
 							};
 
 							// START BATCH HANDLING
@@ -2353,7 +2418,7 @@ sap.ui
 										//In case of POST, PUT or DELETE not in ChangeSet
 										if (rPut.test(sBatchRequest) || rPost.test(sBatchRequest) || rDelete.test(sBatchRequest)) {
 											oXhr.respond(400, null, "The Data Services Request could not be understood due to malformed syntax");
-											jQuery.sap.log.debug("MockServer: response sent with: 400");
+											Log.debug("MockServer: response sent with: 400");
 											return true;
 										}
 										fnRRequest(sServiceURL + rGet.exec(sBatchRequest)[1], aBatchBodyResponse);
@@ -2379,26 +2444,31 @@ sap.ui
 													oXhr
 														.respond(400, null,
 															"The Data Services Request could not be understood due to malformed syntax");
-													jQuery.sap.log.debug("MockServer: response sent with: 400");
+													Log.debug("MockServer: response sent with: 400");
 													return;
-												} else if (rPut.test(sChangesetRequest)) {
-													// PUT
-													sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
-														sChangesetRequest.lastIndexOf("}") + 1);
-													fnCUDRequest(sServiceURL + rPut.exec(sChangesetRequest)[1], sData, 'PUT', aChangesetResponses);
-												} else if (rMerge.test(sChangesetRequest)) {
-													// MERGE
-													sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
-														sChangesetRequest.lastIndexOf("}") + 1);
-													fnCUDRequest(sServiceURL + rMerge.exec(sChangesetRequest)[1], sData, 'MERGE', aChangesetResponses);
-												} else if (rPost.test(sChangesetRequest)) {
-													// POST
-													sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
-														sChangesetRequest.lastIndexOf("}") + 1);
-													fnCUDRequest(sServiceURL + rPost.exec(sChangesetRequest)[1], sData, 'POST', aChangesetResponses);
-												} else if (rDelete.test(sChangesetRequest)) {
-													// DELETE
-													fnCUDRequest(sServiceURL + rDelete.exec(sChangesetRequest)[1], sData, 'DELETE', aChangesetResponses);
+												} else {
+													var sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
+															sChangesetRequest.lastIndexOf("}") + 1),
+														mHeaders = fnParseHeaders(sChangesetRequest),
+														sRelativeUrl,
+														sVerb;
+													if (rPut.test(sChangesetRequest)) {
+														sVerb = "PUT";
+														sRelativeUrl = rPut.exec(sChangesetRequest)[1];
+													} else if (rMerge.test(sChangesetRequest)) {
+														sVerb = "MERGE";
+														sRelativeUrl = rMerge.exec(sChangesetRequest)[1];
+													} else if (rPost.test(sChangesetRequest)) {
+														// POST
+														sVerb = "POST";
+														sRelativeUrl = rPost.exec(sChangesetRequest)[1];
+													} else if (rDelete.test(sChangesetRequest)) {
+														// DELETE
+														sVerb = "DELETE";
+														sData = undefined;
+														sRelativeUrl = rDelete.exec(sChangesetRequest)[1];
+													}
+													fnCUDRequest(sServiceURL + sRelativeUrl, sData, sVerb, aChangesetResponses, mHeaders);
 												}
 											} //END ChangeSets FOR
 											var sChangesetRespondData = "\r\nContent-Type: multipart/mixed; boundary=ejjeeffe1\r\n\r\n--ejjeeffe1";
@@ -2432,7 +2502,7 @@ sap.ui
 								};
 								fnHandleXsrfTokenHeader(oXhr, mHeaders);
 								oXhr.respond(202, mHeaders, sRespondData);
-								jQuery.sap.log.debug("MockServer: response sent with: 202, " + sRespondData);
+								Log.debug("MockServer: response sent with: 202, " + sRespondData);
 								//no boundary is defined
 							} else {
 								oXhr.respond(202);
@@ -2451,7 +2521,7 @@ sap.ui
 								method: "GET",
 								path: new RegExp("(" + sEntitySetName + ")/\\$count/?(.*)?"),
 								response: function(oXhr, sEntitySetName, sUrlParams) {
-									jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
+									Log.debug("MockServer: incoming request for url: " + oXhr.url);
 									//trigger the before callback funtion
 									that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
 										oXhr: oXhr,
@@ -2497,7 +2567,7 @@ sap.ui
 
 											oXhr.respond(200, mHeaders, "" + oFilteredData.results.length);
 
-											jQuery.sap.log.debug("MockServer: response sent with: 200, " +
+											Log.debug("MockServer: response sent with: 200, " +
 												oFilteredData.results.length);
 
 										} else {
@@ -2508,8 +2578,8 @@ sap.ui
 										if (e.error) {
 											oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
 										} else {
-											jQuery.sap.log.error("MockServer: request failed due to invalid system query options value!");
-											oXhr.respond(parseInt(e.message || e.number, 10));
+											Log.error("MockServer: request failed due to invalid system query options value!");
+											oXhr.respond(parseInt(e.message || e.number));
 										}
 									}
 									return true;
@@ -2523,7 +2593,7 @@ sap.ui
 									path: new RegExp(
 										"(" + sEntitySetName + ")/?(\\?(.*))?"),
 									response: function(oXhr, sEntitySetName, sUrlParams) {
-										jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
+										Log.debug("MockServer: incoming request for url: " + oXhr.url);
 
 										//trigger the before callback funtion
 										that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
@@ -2570,7 +2640,7 @@ sap.ui
 												oXhr.respond(200, mHeaders, JSON.stringify({
 													d: oFilteredData
 												}));
-												jQuery.sap.log.debug("MockServer: response sent with: 200, " + JSON.stringify({
+												Log.debug("MockServer: response sent with: 200, " + JSON.stringify({
 													d: oFilteredData
 												}));
 											} else {
@@ -2580,8 +2650,8 @@ sap.ui
 											if (e.error) {
 												oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
 											} else {
-												jQuery.sap.log.debug("MockServer: response sent with: " + parseInt(e.message || e.number, 10));
-												oXhr.respond(parseInt(e.message || e.number, 10));
+												Log.debug("MockServer: response sent with: " + parseInt(e.message || e.number));
+												oXhr.respond(parseInt(e.message || e.number));
 											}
 										}
 										return true;
@@ -2595,7 +2665,7 @@ sap.ui
 									path: new RegExp(
 										"(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(\\?(.*))?"),
 									response: function(oXhr, sEntitySetName, sKeys, sUrlParams) {
-										jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
+										Log.debug("MockServer: incoming request for url: " + oXhr.url);
 
 										//trigger the before callback funtion
 										that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
@@ -2642,7 +2712,7 @@ sap.ui
 												oXhr.respond(200, mHeaders, JSON.stringify({
 													d: oEntry.entry
 												}));
-												jQuery.sap.log.debug("MockServer: response sent with: 200, " + JSON.stringify({
+												Log.debug("MockServer: response sent with: 200, " + JSON.stringify({
 													d: oEntry.entry
 												}));
 											} else {
@@ -2652,8 +2722,8 @@ sap.ui
 											if (e.error) {
 												oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
 											} else {
-												jQuery.sap.log.debug("MockServer: response sent with: " + parseInt(e.message || e.number, 10));
-												oXhr.respond(parseInt(e.message || e.number, 10));
+												Log.debug("MockServer: response sent with: " + parseInt(e.message || e.number));
+												oXhr.respond(parseInt(e.message || e.number));
 											}
 										}
 										return true;
@@ -2670,7 +2740,7 @@ sap.ui
 											method: "GET",
 											path: new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/(" + sNavName + ")/\\$count/?(.*)?"),
 											response: function(oXhr, sEntitySetName, sKeys, sNavProp, sUrlParams) {
-												jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
+												Log.debug("MockServer: incoming request for url: " + oXhr.url);
 
 												//trigger the before callback funtion
 												that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
@@ -2757,7 +2827,7 @@ sap.ui
 																200,
 																mHeaders, "" + oFilteredData.results.length);
 
-														jQuery.sap.log
+														Log
 															.debug("MockServer: response sent with: 200, " + oFilteredData.results.length);
 
 													} else {
@@ -2767,8 +2837,8 @@ sap.ui
 													if (e.error) {
 														oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
 													} else {
-														jQuery.sap.log.debug("MockServer: response sent with: " + parseInt(e.message || e.number, 10));
-														oXhr.respond(parseInt(e.message || e.number, 10));
+														Log.debug("MockServer: response sent with: " + parseInt(e.message || e.number));
+														oXhr.respond(parseInt(e.message || e.number));
 													}
 												}
 												return true;
@@ -2782,7 +2852,7 @@ sap.ui
 												path: new RegExp(
 													"(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/(" + sNavName + ")/?(\\?(.*))?"),
 												response: function(oXhr, sEntitySetName, sKeys, sNavProp, sUrlParams) {
-													jQuery.sap.log
+													Log
 														.debug("MockServer: incoming request for url: " + oXhr.url);
 
 													//trigger the before callback funtion
@@ -2871,7 +2941,7 @@ sap.ui
 																		d: oFilteredData
 																	}));
 
-															jQuery.sap.log
+															Log
 																.debug("MockServer: response sent with: 200, " + JSON.stringify({
 																	d: oFilteredData
 																}));
@@ -2882,10 +2952,9 @@ sap.ui
 														if (e.error) {
 															oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
 														} else {
-															oXhr.respond(parseInt(e.message || e.number, 10));
-															jQuery.sap.log
-																.debug("MockServer: response sent with: " + parseInt(e.message || e.number,
-																	10));
+															oXhr.respond(parseInt(e.message || e.number));
+															Log
+																.debug("MockServer: response sent with: " + parseInt(e.message || e.number));
 														}
 													}
 													return true;
@@ -2904,7 +2973,7 @@ sap.ui
 									if (oXhr.requestHeaders["x-http-method"] === "MERGE") {
 										bMerge = true;
 									}
-									jQuery.sap.log.debug("MockServer: incoming create request for url: " + oXhr.url);
+									Log.debug("MockServer: incoming create request for url: " + oXhr.url);
 									//trigger the before callback funtion
 									that.fireEvent(MockServer.HTTPMETHOD.POST + sEntitySetName + ":before", {
 										oXhr: oXhr,
@@ -2963,7 +3032,7 @@ sap.ui
 										}
 
 										oXhr.respond(iResult, sRespondContentType, sRespondData);
-										jQuery.sap.log
+										Log
 											.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
 
 									} catch (e) {
@@ -2973,10 +3042,9 @@ sap.ui
 											};
 											oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
 										} else {
-											oXhr.respond(parseInt(e.message || e.number, 10));
-											jQuery.sap.log
-												.debug("MockServer: response sent with: " + parseInt(e.message || e.number,
-													10));
+											oXhr.respond(parseInt(e.message || e.number));
+											Log
+												.debug("MockServer: response sent with: " + parseInt(e.message || e.number));
 										}
 
 									}
@@ -2989,7 +3057,7 @@ sap.ui
 								method: "PUT",
 								path: new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(.*)?"),
 								response: function(oXhr, sEntitySetName, sKeys, sNavName) {
-									jQuery.sap.log.debug("MockServer: incoming update request for url: " + oXhr.url);
+									Log.debug("MockServer: incoming update request for url: " + oXhr.url);
 
 									//trigger the before callback funtion
 									that.fireEvent(MockServer.HTTPMETHOD.PUT + sEntitySetName + ":before", {
@@ -3032,7 +3100,7 @@ sap.ui
 										}
 
 										oXhr.respond(iResult, sRespondContentType, sRespondData);
-										jQuery.sap.log
+										Log
 											.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
 									} catch (e) {
 										if (e.error) {
@@ -3041,10 +3109,9 @@ sap.ui
 											};
 											oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
 										} else {
-											oXhr.respond(parseInt(e.message || e.number, 10));
-											jQuery.sap.log
-												.debug("MockServer: response sent with: " + parseInt(e.message || e.number,
-													10));
+											oXhr.respond(parseInt(e.message || e.number));
+											Log
+												.debug("MockServer: response sent with: " + parseInt(e.message || e.number));
 										}
 									}
 									return true;
@@ -3056,7 +3123,7 @@ sap.ui
 								method: "MERGE",
 								path: new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(.*)?"),
 								response: function(oXhr, sEntitySetName, sKeys, sNavName) {
-									jQuery.sap.log.debug("MockServer: incoming merge update request for url: " + oXhr.url);
+									Log.debug("MockServer: incoming merge update request for url: " + oXhr.url);
 									//trigger the before callback funtion
 									that.fireEvent(MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":before", {
 										oXhr: oXhr,
@@ -3098,7 +3165,7 @@ sap.ui
 										}
 
 										oXhr.respond(iResult, sRespondContentType, sRespondData);
-										jQuery.sap.log
+										Log
 											.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
 									} catch (e) {
 										if (e.error) {
@@ -3107,8 +3174,8 @@ sap.ui
 											};
 											oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
 										} else {
-											oXhr.respond(parseInt(e.message || e.number, 10));
-											jQuery.sap.log.debug("MockServer: response sent with: " + parseInt(e.message || e.number, 10));
+											oXhr.respond(parseInt(e.message || e.number));
+											Log.debug("MockServer: response sent with: " + parseInt(e.message || e.number));
 										}
 									}
 									return true;
@@ -3120,7 +3187,7 @@ sap.ui
 								method: "PATCH",
 								path: new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(.*)?"),
 								response: function(oXhr, sEntitySetName, sKeys, sNavName) {
-									jQuery.sap.log.debug("MockServer: incoming patch update request for url: " + oXhr.url);
+									Log.debug("MockServer: incoming patch update request for url: " + oXhr.url);
 									//trigger the before callback funtion
 									that.fireEvent(MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":before", {
 										oXhr: oXhr,
@@ -3162,7 +3229,7 @@ sap.ui
 										}
 
 										oXhr.respond(iResult, sRespondContentType, sRespondData);
-										jQuery.sap.log
+										Log
 											.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
 
 									} catch (e) {
@@ -3172,9 +3239,9 @@ sap.ui
 											};
 											oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
 										} else {
-											oXhr.respond(parseInt(e.message || e.number, 10));
-											jQuery.sap.log
-												.debug("MockServer: response sent with: " + parseInt(e.message || e.number, 10));
+											oXhr.respond(parseInt(e.message || e.number));
+											Log
+												.debug("MockServer: response sent with: " + parseInt(e.message || e.number));
 										}
 									}
 									return true;
@@ -3186,7 +3253,7 @@ sap.ui
 								method: "DELETE",
 								path: new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(.*)?"),
 								response: function(oXhr, sEntitySetName, sKeys, sUrlParams) {
-									jQuery.sap.log.debug("MockServer: incoming delete request for url: " + oXhr.url);
+									Log.debug("MockServer: incoming delete request for url: " + oXhr.url);
 									//trigger the before callback funtion
 									that.fireEvent(MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":before", {
 										oXhr: oXhr
@@ -3211,7 +3278,7 @@ sap.ui
 											oXhr: oXhr
 										});
 										oXhr.respond(iResult, null, null);
-										jQuery.sap.log.debug("MockServer: response sent with: " + iResult);
+										Log.debug("MockServer: response sent with: " + iResult);
 									} catch (e) {
 										if (e.error) {
 											var mHeaders = {
@@ -3220,8 +3287,8 @@ sap.ui
 
 											oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
 										} else {
-											oXhr.respond(parseInt(e.message || e.number, 10));
-											jQuery.sap.log.debug("MockServer: response sent with: " + parseInt(e.message || e.number, 10));
+											oXhr.respond(parseInt(e.message || e.number));
+											Log.debug("MockServer: response sent with: " + parseInt(e.message || e.number));
 										}
 									}
 									return true;
@@ -3242,37 +3309,39 @@ sap.ui
 			MockServer.prototype._orderQueryOptions = function(aUrlParams) {
 				var iFilterIndex, iInlinecountIndex, iSkipIndex, iTopIndex, iOrderbyIndex, iSelectindex, iExpandIndex, iFormatIndex, iSearchIndex, iSearchFocusIndex, aOrderedUrlParams = [];
 				var that = this;
+
 				jQuery.each(aUrlParams, function(iIndex, sQuery) {
+					var iQueryIndex = aUrlParams.indexOf(sQuery);
 					switch (sQuery.split('=')[0]) {
 						case "$top":
-							iTopIndex = jQuery.inArray(sQuery, aUrlParams);
+							iTopIndex = iQueryIndex;
 							break;
 						case "$skip":
-							iSkipIndex = jQuery.inArray(sQuery, aUrlParams);
+							iSkipIndex = iQueryIndex;
 							break;
 						case "$orderby":
-							iOrderbyIndex = jQuery.inArray(sQuery, aUrlParams);
+							iOrderbyIndex = iQueryIndex;
 							break;
 						case "$expand":
-							iExpandIndex = jQuery.inArray(sQuery, aUrlParams);
+							iExpandIndex = iQueryIndex;
 							break;
 						case "$filter":
-							iFilterIndex = jQuery.inArray(sQuery, aUrlParams);
+							iFilterIndex = iQueryIndex;
 							break;
 						case "$select":
-							iSelectindex = jQuery.inArray(sQuery, aUrlParams);
+							iSelectindex = iQueryIndex;
 							break;
 						case "$inlinecount":
-							iInlinecountIndex = jQuery.inArray(sQuery, aUrlParams);
+							iInlinecountIndex = iQueryIndex;
 							break;
 						case "$format":
-							iFormatIndex = jQuery.inArray(sQuery, aUrlParams);
+							iFormatIndex = iQueryIndex;
 							break;
 						case "search-focus":
-							iSearchFocusIndex = jQuery.inArray(sQuery, aUrlParams);
+							iSearchFocusIndex = iQueryIndex;
 							break;
 						case "search":
-							iSearchIndex = jQuery.inArray(sQuery, aUrlParams);
+							iSearchIndex = iQueryIndex;
 							break;
 						default:
 							if (sQuery.split('=')[0].indexOf('$') === 0) {
@@ -3379,7 +3448,7 @@ sap.ui
 				this._oServer.respondWith(sMethod, oRegExp, fnResponse);
 
 				// some debug logging to see what is registered and how the regex look like
-				jQuery.sap.log.debug("MockServer: adding " + sMethod + " request handler for pattern " + oRegExp);
+				Log.debug("MockServer: adding " + sMethod + " request handler for pattern " + oRegExp);
 
 			};
 
@@ -3470,12 +3539,12 @@ sap.ui
 				}
 				var fnNoOffset = function(s) {
 					var day = jQuery.map(s.slice(0, -5).split(/\D/), function(itm) {
-						return parseInt(itm, 10) || 0;
+						return parseInt(itm) || 0;
 					});
 					day[1] -= 1;
 					day = new Date(Date.UTC.apply(Date, day));
 					var offsetString = s.slice(-5);
-					var offset = parseInt(offsetString, 10) / 100;
+					var offset = parseInt(offsetString) / 100;
 					if (offsetString.slice(0, 1) === "+") {
 						offset *= -1;
 					}
@@ -3529,7 +3598,7 @@ sap.ui
 				if (sErrorMessage.indexOf('##') > -1 && sParam) {
 					sErrorMessage = sErrorMessage.replace("##", "'" + sParam + "'");
 				}
-				jQuery.sap.log.error("MockServer: " + sErrorMessage);
+				Log.error("MockServer: " + sErrorMessage);
 				throw {
 					error: {
 						code: iErrorStatus,
@@ -3544,7 +3613,7 @@ sap.ui
 			/**
 			 * Cleans up the resources associated with this object and all its aggregated children.
 			 *
-			 * After an object has been destroyed, it can no longer be used in!
+			 * After an object has been destroyed, it can no longer be used!
 			 *
 			 * Applications should call this method if they don't need the object any longer.
 			 *
@@ -3557,7 +3626,7 @@ sap.ui
 				ManagedObject.prototype.destroy.apply(this, arguments);
 				this.stop();
 				var aServers = MockServer._aServers;
-				var iIndex = jQuery.inArray(this, aServers);
+				var iIndex = aServers.indexOf(this);
 				aServers.splice(iIndex, 1);
 			};
 
@@ -3671,15 +3740,10 @@ sap.ui
 			 * Removes a filter function.
 			 *
 			 * @param {function} fnFilter the filter function to remove
-			 * @return {boolean} whether the filter was removed or not
 			 * @private
 			 */
 			MockServer._removeFilter = function(fnFilter) {
-				var iIndex = jQuery.inArray(fnFilter, this._aFilters);
-				if (iIndex !== -1) {
-					this._aFilters.splice(iIndex, 1);
-				}
-				return iIndex !== -1;
+				this._aFilters.splice(this._aFilters.indexOf(fnFilter), 1);
 			};
 
 			/**
@@ -3706,11 +3770,6 @@ sap.ui
 			// ================================
 
 			window.sinon.FakeXMLHttpRequest.useFilters = true;
-
-			// In case of <=IE9 UI5 enables the CORS support in jQuery to allow the usage
-			// of jQuery.ajax function / sinon also needs to be synchronized with this
-			// adoption by applying the CORS support flag from jQuery to sinon!
-			window.sinon.xhr.supportsCORS = jQuery.support.cors;
 
 			window.sinon.FakeXMLHttpRequest.addFilter(function(sMethod, sUri, bAsync, sUsername, sPassword) {
 				var aFilters = MockServer._aFilters;

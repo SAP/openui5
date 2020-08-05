@@ -3,13 +3,56 @@
  */
 
 // Provides the base class for all controls and UI elements.
-sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', '../Device', 'jquery.sap.strings', 'jquery.sap.trace'],
-	function(jQuery, BaseObject, ManagedObject, ElementMetadata, Device/* , jQuerySap */) {
+sap.ui.define([
+	'../base/DataType',
+	'../base/Object',
+	'../base/ManagedObject',
+	'../base/ManagedObjectRegistry',
+	'./ElementMetadata',
+	'../Device',
+	"sap/ui/performance/trace/Interaction",
+	"sap/base/Log",
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/F6Navigation",
+	"./RenderManager"
+],
+	function(
+		DataType,
+		BaseObject,
+		ManagedObject,
+		ManagedObjectRegistry,
+		ElementMetadata,
+		Device,
+		Interaction,
+		Log,
+		assert,
+		jQuery,
+		F6Navigation,
+		RenderManager
+	) {
 	"use strict";
 
 	/**
 	 * Constructs and initializes a UI Element with the given <code>sId</code> and settings.
 	 *
+	 *
+	 * <h3>Uniqueness of IDs</h3>
+	 *
+	 * Each <code>Element</code> must have an ID. If no <code>sId</code> or <code>mSettings.id</code> is
+	 * given at construction time, a new ID will be created automatically. The IDs of all elements that exist
+	 * at the same time in the same window must be different. Providing an ID which is already used by another
+	 * element throws an error.
+	 *
+	 * When an element is created from a declarative source (e.g. XMLView), then an ID defined in that
+	 * declarative source needs to be unique only within the declarative source. Declarative views will
+	 * prefix that ID with their own ID (and some separator) before constructing the element.
+	 * Programmatically created views (JSViews) can do the same with the {@link sap.ui.core.mvc.View#createId} API.
+	 * Similarly, UIComponents can prefix the IDs of elements created in their context with their own ID.
+	 * Also see {@link sap.ui.core.UIComponent#getAutoPrefixId UIComponent#getAutoPrefixId}.
+	 *
+	 *
+	 * <h3>Settings</h3>
 	 * If the optional <code>mSettings</code> are given, they must be a JSON-like object (object literal)
 	 * that defines values for properties, aggregations, associations or events keyed by their name.
 	 *
@@ -19,12 +62,6 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * names documented in the JSDoc for the properties, aggregations, associations and events
 	 * of the control and its base classes. Note that for  0..n aggregations and associations this
 	 * usually is the plural name, whereas it is the singular name in case of 0..1 relations.
-	 *
-	 * If a key name is ambiguous for a specific control class (e.g. a property has the same
-	 * name as an event), then this method prefers property, aggregation, association and
-	 * event in that order. To resolve such ambiguities, the keys can be prefixed with
-	 * <code>aggregation:</code>, <code>association:</code> or <code>event:</code>.
-	 * In that case the keys must be quoted due to the ':'.
 	 *
 	 * Each subclass should document the set of supported names in its constructor documentation.
 	 *
@@ -50,7 +87,41 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new element
 	 *
 	 * @abstract
-	 * @class Base Class for Elements.
+	 *
+	 * @class Base Class for UI Elements.
+	 *
+	 * <code>Element</code> is the most basic building block for UI5 UIs. An <code>Element</code> has state like a
+	 * <code>ManagedObject</code>, it has a unique ID by which the framework remembers it. It can have associated
+	 * DOM, but it can't render itself. Only {@link sap.ui.core.Control Controls} can render themselves and also
+	 * take care of rendering <code>Elements</code> that they aggregate as children. If an <code>Element</code>
+	 * has been rendered, its related DOM gets the same ID as the <code>Element</code> and thereby can be retrieved
+	 * via API. When the state of an <code>Element</code> changes, it informs its parent <code>Control</code> which
+	 * usually re-renders then.
+	 *
+	 * <h3>Dispatching Events</h3>
+	 *
+	 * The UI5 framework already registers generic listeners for common browser events, such as <code>click</code>
+	 * or <code>keydown</code>. When called, the generic listener first determines the corresponding target element
+	 * using {@link jQuery#control}. Then it checks whether the element has an event handler method for the event.
+	 * An event handler method by convention has the same name as the event, but prefixed with "on": Method
+	 * <code>onclick</code> is the handler for the <code>click</code> event, method <code>onkeydown</code> the handler
+	 * for the <code>keydown</code> event and so on. If there is such a method, it will be called with the original
+	 * event as the only parameter. If the element has a list of delegates registered, their handler functions will
+	 * be called the same way, where present. The set of implemented handlers might differ between element and
+	 * delegates. Not each handler implemented by an element has to be implemented by its delegates, and delegates
+	 * can implement handlers that the corresponding element doesn't implement.
+	 *
+	 * A list of browser events that are handled that way can be found in {@link module:sap/ui/events/ControlEvents}.
+	 * Additionally, the framework dispatches pseudo events ({@link module:sap/ui/events/PseudoEvents}) using the same
+	 * naming convention. Last but not least, some framework events are also dispatched that way, e.g.
+	 * <code>BeforeRendering</code>, <code>AfterRendering</code> (only for controls) and <code>ThemeChanged</code>.
+	 *
+	 * If further browser events are needed, controls can register listeners on the DOM using native APIs in their
+	 * <code>onAfterRendering</code> handler. If needed, they can do this for their aggregated elements as well.
+	 * If events might fire often (e.g. <code>mousemove</code>), it is best practice to register them only while
+	 * needed, and deregister afterwards. Anyhow, any registered listeners must be cleaned up in the
+	 * <code>onBeforeRendering</code> listener and before destruction in the <code>exit</code> hook.
+	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
 	 * @version ${version}
@@ -70,7 +141,28 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 				/**
 				 * The tooltip that should be shown for this Element.
 				 *
-				 * Can either be an instance of a TooltipBase subclass or a simple string.
+				 * In the most simple case, a tooltip is a string that will be rendered by the control and
+				 * displayed by the browser when the mouse pointer hovers over the control's DOM. In this
+				 * variant, <code>tooltip</code> behaves like a simple control property.
+				 *
+				 * Controls need to explicitly support this kind of tooltip as they have to render it,
+				 * but most controls do. Exceptions will be documented for the corresponding controls
+				 * (e.g. <code>sap.ui.core.HTML</code> does not support tooltips).
+				 *
+				 * Alternatively, <code>tooltip</code> can act like a 0..1 aggregation and can be set to a
+				 * tooltip control (an instance of a subclass of <code>sap.ui.core.TooltipBase</code>). In
+				 * that case, the framework will take care of rendering the tooltip control in a popup-like
+				 * manner. Such a tooltip control can display arbitrary content, not only a string.
+				 *
+				 * UI5 currently does not provide a recommended implementation of <code>TooltipBase</code>
+				 * as the use of content-rich tooltips is discouraged by the Fiori Design Guidelines.
+				 * Existing subclasses of <code>TooltipBase</code> therefore have been deprecated.
+				 * However, apps can still subclass from <code>TooltipBase</code> and create their own
+				 * implementation when needed (potentially taking the deprecated implementations as a
+				 * starting point).
+				 *
+				 * See the section {@link https://experience.sap.com/fiori-design-web/using-tooltips/ Using Tooltips}
+				 * in the Fiori Design Guideline.
 				 */
 				tooltip : {name : "tooltip", type : "sap.ui.core.TooltipBase", altTypes : ["string"], multiple : false},
 
@@ -90,7 +182,15 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 				 * Dependents are not rendered, but their databinding context and lifecycle are bound to the aggregating Element.
 				 * @since 1.19
 				 */
-				dependents : {name : "dependents", type : "sap.ui.core.Element", multiple : true}
+				dependents : {name : "dependents", type : "sap.ui.core.Element", multiple : true},
+
+				/**
+				 * Defines the drag-and-drop configuration.
+				 * <b>Note:</b> This configuration might be ignored due to control {@link sap.ui.core.Element.extend metadata} restrictions.
+				 *
+				 * @since 1.56
+				 */
+				dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
 			}
 		},
 
@@ -102,13 +202,32 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 
 	}, /* Metadata constructor */ ElementMetadata);
 
+	// apply the registry mixin
+	ManagedObjectRegistry.apply(Element, {
+		onDuplicate: function(sId, oldElement, newElement) {
+			if ( oldElement._sapui_candidateForDestroy ) {
+				Log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
+				oldElement.destroy();
+			} else {
+				var sMsg = "adding element with duplicate id '" + sId + "'";
+				// duplicate ID detected => fail or at least log a warning
+				if (sap.ui.getCore().getConfiguration().getNoDuplicateIds()) {
+					Log.error(sMsg);
+					throw new Error("Error: " + sMsg);
+				} else {
+					Log.warning(sMsg);
+				}
+			}
+		}
+	});
+
 	/**
 	 * Creates metadata for a UI Element by extending the Object Metadata.
 	 *
 	 * @param {string} sClassName name of the class to build the metadata for
 	 * @param {object} oStaticInfo static information used to build the metadata
-	 * @param {function} [fnMetaImpl] constructor to be used for the metadata
-	 * @return {object} the created metadata
+	 * @param {function} [fnMetaImpl=sap.ui.core.ElementMetadata] constructor to be used for the metadata
+	 * @return {sap.ui.core.ElementMetadata} the created metadata
 	 * @static
 	 * @public
 	 * @deprecated Since 1.3.1. Use the static <code>extend</code> method of the desired base class (e.g. {@link sap.ui.core.Element.extend})
@@ -125,6 +244,60 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	Element.prototype.getInterface = function() {
 		return this;
 	};
+
+	/**
+	 * Defines a new subclass of Element with the name <code>sClassName</code> and enriches it with
+	 * the information contained in <code>oClassInfo</code>.
+	 *
+	 * <code>oClassInfo</code> can contain the same information that {@link sap.ui.base.ManagedObject.extend} already accepts,
+	 * plus the following <code>dnd</code> property to configure drag-and-drop behavior in the metadata object literal:
+	 *
+	 * Example:
+	 * <pre>
+	 * Element.extend('sap.mylib.MyElement', {
+	 *   metadata : {
+	 *     library : 'sap.mylib',
+	 *     properties : {
+	 *       value : 'string',
+	 *       width : 'sap.ui.core.CSSSize'
+	 *     },
+	 *     dnd : { draggable: true, droppable: false },
+	 *     aggregations : {
+	 *       items : { type: 'sap.ui.core.Control', multiple : true, dnd : {draggable: false, dropppable: true, layout: "Horizontal" } },
+	 *       header : {type : "sap.ui.core.Control", multiple : false, dnd : true },
+	 *     }
+	 *   }
+	 * });
+	 * </pre>
+	 *
+	 * <h3><code>dnd</code> key as a metadata property</h3>
+	 *
+	 * <b>dnd</b>: <i>object|boolean</i><br>
+	 * Defines draggable and droppable configuration of the element.
+	 * The following keys can be provided via <code>dnd</code> object literal to configure drag-and-drop behavior of the element:
+	 * <ul>
+	 *  <li><code>[draggable=false]: <i>boolean</i></code> Defines whether the element is draggable or not. The default value is <code>false</code>.</li>
+	 *  <li><code>[droppable=false]: <i>boolean</i></code> Defines whether the element is droppable (it allows being dropped on by a draggable element) or not. The default value is <code>false</code>.</li>
+	 * </ul>
+	 * If <code>dnd</code> property is of type Boolean, then the <code>draggable</code> and <code>droppable</code> configuration are set to this Boolean value.
+	 *
+	 * <h3><code>dnd</code> key as an aggregation metadata property</h3>
+	 *
+	 * <b>dnd</b>: <i>object|boolean</i><br>
+	 * In addition to draggable and droppable configuration, the layout of the aggregation can be defined as a hint at the drop position indicator.
+	 * <ul>
+	 *  <li><code>[layout="Vertical"]: </code> The arrangement of the items in this aggregation. This setting is recommended for the aggregation with multiplicity 0..n (<code>multiple: true</code>). Possible values are <code>Vertical</code> (e.g. rows in a table) and <code>Horizontal</code> (e.g. columns in a table). It is recommended to use <code>Horizontal</code> layout if the arrangement is multidimensional.</li>
+	 * </ul>
+	 *
+	 * @param {string} sClassName fully qualified name of the class that is described by this metadata object
+	 * @param {object} oStaticInfo static info to construct the metadata from
+	 * @returns {function} Created class / constructor function
+	 *
+	 * @public
+	 * @static
+	 * @name sap.ui.core.Element.extend
+	 * @function
+	 */
 
 	/**
 	 * Dispatches the given event, usually a browser event or a UI5 pseudo event.
@@ -165,31 +338,6 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	};
 
 
-	// Element is granted "friend" access by Core for (de-)registration
-	/**
-	 * Registers this instance of <code>sap.ui.core.Element</code> with the Core.
-	 *
-	 * The implementation of this method is provided with "friend" access by Core.
-	 * @see sap.ui.core.Core#constructor
-	 *
-	 * @function
-	 * @name sap.ui.core.Element.prototype.register
-	 * @private
-	 */
-	//sap.ui.core.Element.prototype.register = function() {...}
-
-	/**
-	 * Deregisters this instance of <code>sap.ui.core.Element</code> from the Core.
-	 *
-	 * The implementation of this method is provided with "friend" access by Core.
-	 * @see sap.ui.core.Core#constructor
-	 *
-	 * @function
-	 * @name sap.ui.core.Element.prototype.deregister
-	 * @private
-	 */
-	//sap.ui.core.Element.prototype.deregister = function() {...}
-
 	/**
 	 * Initializes the element instance after creation.
 	 *
@@ -206,12 +354,26 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	};
 
 	/**
-	 * Cleans up the element instance before destruction.
+	 * Hook method for cleaning up the element instance before destruction.
 	 *
 	 * Applications must not call this hook method directly, it is called by the framework
 	 * when the element is {@link #destroy destroyed}.
 	 *
 	 * Subclasses of Element should override this hook to implement any necessary cleanup.
+	 *
+	 * <pre>
+	 * exit: function() {
+	 *     // ... do any further cleanups of your subclass e.g. detach events...
+	 *     this.$().off("click", this.handleClick);
+	 *
+	 *     if (Element.prototype.exit) {
+	 *         Element.prototype.exit.apply(this, arguments);
+	 *     }
+	 * }
+	 * </pre>
+	 *
+	 * For a more detailed description how to to use the exit hook, see Section
+	 * {@link topic:d4ac0edbc467483585d0c53a282505a5 exit() Method} in the documentation.
 	 *
 	 * @protected
 	 */
@@ -268,7 +430,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @protected
 	 */
 	Element.prototype.getDomRef = function(sSuffix) {
-		return jQuery.sap.domById(sSuffix ? this.getId() + "-" + sSuffix : this.getId());
+		return document.getElementById(sSuffix ? this.getId() + "-" + sSuffix : this.getId());
 	};
 
 	/**
@@ -325,11 +487,13 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	};
 
 	Element.prototype.insertDependent = function(oElement, iIndex) {
-		return this.insertAggregation("dependents", oElement, iIndex, true);
+		this.insertAggregation("dependents", oElement, iIndex, true);
+		return this; // explicitly return 'this' to fix controls that override insertAggregation wrongly
 	};
 
 	Element.prototype.addDependent = function(oElement) {
-		return this.addAggregation("dependents", oElement, true);
+		this.addAggregation("dependents", oElement, true);
+		return this; // explicitly return 'this' to fix controls that override addAggregation wrongly
 	};
 
 	Element.prototype.removeDependent = function(vElement) {
@@ -341,7 +505,8 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	};
 
 	Element.prototype.destroyDependents = function() {
-		return this.destroyAggregation("dependents", true);
+		this.destroyAggregation("dependents", true);
+		return this; // explicitly return 'this' to fix controls that override destroyAggregation wrongly
 	};
 
 
@@ -381,40 +546,61 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * Applications should call this method if they don't need the element any longer.
 	 *
 	 * @param {boolean}
-	 *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
+	 *            [bSuppressInvalidate] if true, the UI element is removed from DOM synchronously and parent will not be invalidated.
 	 * @public
 	 */
 	Element.prototype.destroy = function(bSuppressInvalidate) {
+		// ignore repeated calls
+		if (this.bIsDestroyed) {
+			return;
+		}
 
-		// update the focus information (potentionally) stored by the central UI5 focus handling
+		// determine whether parent exists or not
+		var bHasNoParent = !this.getParent();
+
+		// update the focus information (potentially) stored by the central UI5 focus handling
 		Element._updateFocusInfo(this);
 
 		ManagedObject.prototype.destroy.call(this, bSuppressInvalidate);
 
-		// determine whether to remove the control from the DOM or not
-		// controls that implement marker interface sap.ui.core.PopupInterface are by contract
-		// not rendered by their parent so we cannot keep the DOM of these controls
-		if (bSuppressInvalidate !== "KeepDom" ||
-			this.getMetadata().isInstanceOf("sap.ui.core.PopupInterface")) {
-			this.$().remove();
+		// wrap custom data API to avoid creating new objects
+		this.data = noCustomDataAfterDestroy;
+
+		// exit early if there is no control DOM to remove
+		var oDomRef = this.getDomRef();
+		if (!oDomRef) {
+			return;
+		}
+
+		// Determine whether to remove the control DOM from the DOM Tree or not:
+		// If parent invalidation is not possible, either bSuppressInvalidate=true or there is no parent to invalidate then we must remove the control DOM synchronously.
+		// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent so we cannot keep the DOM of these controls.
+		// If the control is destroyed while its content is in the preserved area then we must remove DOM synchronously since we cannot invalidate the preserved area.
+		var bKeepDom = (bSuppressInvalidate === "KeepDom");
+		if (bSuppressInvalidate === true || (!bKeepDom && bHasNoParent) || this.isA("sap.ui.core.PopupInterface") || RenderManager.isPreservedContent(oDomRef)) {
+			jQuery(oDomRef).remove();
 		} else {
-			jQuery.sap.log.debug("DOM is not removed on destroy of " + this);
+			// Make sure that the control DOM won't get preserved after it is destroyed (even if bSuppressInvalidate="KeepDom")
+			oDomRef.removeAttribute("data-sap-ui-preserve");
+			if (!bKeepDom) {
+				// On destroy we do not remove the control DOM synchronously and just let the invalidation happen on the parent.
+				// At the next tick of the RenderManager, control DOM nodes will be removed via rerendering of the parent anyway.
+				// To make this new behavior more compatible we are changing the id of the control's DOM and all child nodes that start with the control id.
+				oDomRef.id = "sap-ui-destroyed-" + this.getId();
+				for (var i = 0, aDomRefs = oDomRef.querySelectorAll('[id^="' + this.getId() + '-"]'); i < aDomRefs.length; i++) {
+					aDomRefs[i].id = "sap-ui-destroyed-" + aDomRefs[i].id;
+				}
+			}
 		}
 	};
 
-
-	/**
-	 * Fires the given event and notifies all listeners. Listeners must not change
-	 * the content of the event.
-	 *
-	 * @param {string} sEventId the event id
-	 * @param {object} mParameters the parameter map
-	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
-	 * @protected
+	/*
+	 * Class <code>sap.ui.core.Element</code> intercepts fireEvent calls to enforce an 'id' property
+	 * and to notify others like interaction detection etc.
 	 */
 	Element.prototype.fireEvent = function(sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling) {
 		if (this.hasListeners(sEventId)) {
-			jQuery.sap.interaction.notifyStepStart(this);
+			Interaction.notifyStepStart(this);
 		}
 
 		// get optional parameters right
@@ -427,9 +613,27 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 		mParameters = mParameters || {};
 		mParameters.id = mParameters.id || this.getId();
 
+		if (Element._interceptEvent) {
+			Element._interceptEvent(sEventId, this, mParameters);
+		}
+
 		return ManagedObject.prototype.fireEvent.call(this, sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling);
 	};
 
+	/**
+	 * Intercepts an event. This method is meant for private usages. Apps are not supposed to used it.
+	 * It is created for an experimental purpose.
+	 * Implementation should be injected by outside.
+	 *
+	 * @param {string} sEventId the name of the event
+	 * @param {sap.ui.core.Element} oElement the element itself
+	 * @param {object} mParameters The parameters which complement the event. Hooks must not modify the parameters.
+	 * @function
+	 * @private
+	 * @ui5-restricted
+	 * @experimental Since 1.58
+	 */
+	Element._interceptEvent = undefined;
 
 	/**
 	 * Adds a delegate that listens to the events of this element.
@@ -442,13 +646,13 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *
 	 * @param {object} oDelegate the delegate object
 	 * @param {boolean} [bCallBefore=false] if true, the delegate event listeners are called before the event listeners of the element; default is "false". In order to also set bClone, this parameter must be given.
-	 * @param {object} [oThis] if given, this object will be the "this" context in the listener methods; default is the delegate object itself
+	 * @param {object} [oThis=oDelegate] if given, this object will be the "this" context in the listener methods; default is the delegate object itself
 	 * @param {boolean} [bClone=false] if true, this delegate will also be attached to any clones of this element; default is "false"
 	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @private
 	 */
 	Element.prototype.addDelegate = function (oDelegate, bCallBefore, oThis, bClone) {
-		jQuery.sap.assert(oDelegate, "oDelegate must be not null or undefined");
+		assert(oDelegate, "oDelegate must be not null or undefined");
 
 		if (!oDelegate) {
 			return this;
@@ -501,25 +705,50 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 
 
 	/**
-	 * Adds a delegate that listens to the events that are fired on this element (as opposed to events which are fired BY this element).
+	 * Adds a delegate that can listen to the browser-, pseudo- and framework events that are handled by this
+	 * <code>Element</code> (as opposed to events which are fired by this <code>Element</code>).
 	 *
-	 * When this element is cloned, the same delegate will be added to all clones. This behavior is well-suited for applications which want to add delegates
-	 * that also work with templates in aggregation bindings.
-	 * For control development the internal "addDelegate" method which does not clone delegates by default may be more suitable, as typically each control instance takes care of its own delegates.
+	 * Delegates are simple objects that can have an arbitrary number of event handler methods. See the section
+	 * "Handling of Events" in the {@link #constructor} documentation to learn how events will be dispatched
+	 * and how event handler methods have to be named to be found.
 	 *
-	 * To avoid double registrations, all registrations of the given delegate are first
-	 * removed and then the delegate is added.
+	 * If multiple delegates are registered for the same element, they will be called in the order of their
+	 * registration. Double registrations are prevented. Before a delegate is added, all registrations of the same
+	 * delegate (no matter what value for <code>oThis</code> was used for their registration) are removed and only
+	 * then the delegate is added. Note that this might change the position of the delegate in the list of delegates.
 	 *
-	 * <strong>Important:</strong> If event delegates were added the delegate will still be called even if
+	 * When an element is cloned, all its event delegates will be added to the clone. This behavior is well-suited
+	 * for applications which want to add delegates that also work with templates in aggregation bindings.
+	 * For control development, the internal <code>addDelegate</code> method may be more suitable. Delegates added
+	 * via that method are not cloned automatically, as typically each control instance takes care of adding its
+	 * own delegates.
+	 *
+	 * <strong>Important:</strong> If event delegates were added, the delegate will still be called even if
 	 * the event was processed and/or cancelled via <code>preventDefault</code> by the Element or another event delegate.
 	 * <code>preventDefault</code> only prevents the event from bubbling.
 	 * It should be checked e.g. in the event delegate's listener whether an Element is still enabled via <code>getEnabled</code>.
 	 * Additionally there might be other things that delegates need to check depending on the event
 	 * (e.g. not adding a key twice to an output string etc.).
 	 *
-	 * @param {object} oDelegate the delegate object
-	 * @param {object} [oThis] if given, this object will be the "this" context in the listener methods; default is the delegate object itself
-	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+	 * See {@link topic:bdf3e9818cd84d37a18ee5680e97e1c1 Event Handler Methods} for a general explanation of
+	 * event handling in controls.
+	 *
+	 * @example <caption>Adding a delegate for the keydown and afterRendering event</caption>
+	 * <pre>
+	 * var oDelegate = {
+	 *   onkeydown: function(){
+	 *     // Act when the keydown event is fired on the element
+	 *   },
+	 *   onAfterRendering: function(){
+	 *     // Act when the afterRendering event is fired on the element
+	 *   }
+	 * };
+	 * oElement.addEventDelegate(oDelegate);
+	 * </pre>
+	 *
+	 * @param {object} oDelegate The delegate object which consists of the event handler names and the corresponding event handler functions
+	 * @param {object} [oThis=oDelegate] If given, this object will be the "this" context in the listener methods; default is the delegate object itself
+	 * @returns {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @since 1.9.0
 	 * @public
 	 */
@@ -532,7 +761,19 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *
 	 * This method will remove all registrations of the given delegate, not only one.
 	 *
-	 * @param {object} oDelegate the delegate object
+	 * @example <caption>Removing a delegate for the keydown and afterRendering event. The delegate object which was used when adding the event delegate</caption>
+	 * <pre>
+	 * var oDelegate = {
+	 *   onkeydown: function(){
+	 *     // Act when the keydown event is fired on the element
+	 *   },
+	 *   onAfterRendering: function(){
+	 *     // Act when the afterRendering event is fired on the element
+	 *   }
+	 * };
+	 * oElement.removeEventDelegate(oDelegate);
+	 * </pre>
+	 * @param {object} oDelegate The delegate object which consists of the event handler names and the corresponding event handler functions
 	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @since 1.9.0
 	 * @public
@@ -553,12 +794,68 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 		return this.getDomRef() || null;
 	};
 
+	function getAncestorScrollPositions(oDomRef) {
+		var oParentDomRef,
+			aScrollHierarchy = [];
+
+		oParentDomRef = oDomRef.parentNode;
+		while (oParentDomRef) {
+			aScrollHierarchy.push({
+				node: oParentDomRef,
+				scrollLeft: oParentDomRef.scrollLeft,
+				scrollTop: oParentDomRef.scrollTop
+			});
+			oParentDomRef = oParentDomRef.parentNode;
+		}
+
+		return aScrollHierarchy;
+	}
+
+	function restoreScrollPositions(aScrollHierarchy) {
+		aScrollHierarchy.forEach(function(oScrollInfo) {
+			var oDomRef = oScrollInfo.node;
+
+			if (oDomRef.scrollLeft !== oScrollInfo.scrollLeft) {
+				oDomRef.scrollLeft = oScrollInfo.scrollLeft;
+			}
+
+			if (oDomRef.scrollTop !== oScrollInfo.scrollTop) {
+				oDomRef.scrollTop = oScrollInfo.scrollTop;
+			}
+		});
+	}
+
 	/**
 	 * Sets the focus to the stored focus DOM reference
+	 *
+	 * @param {object} oFocusInfo
+	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 if it's set to true, the focused
+	 *   element won't be shifted into the viewport if it's not completely visible before the focus is set
 	 * @public
 	 */
-	Element.prototype.focus = function () {
-		jQuery.sap.focus(this.getFocusDomRef());
+	Element.prototype.focus = function (oFocusInfo) {
+		var oFocusDomRef = this.getFocusDomRef(),
+			aScrollHierarchy = [];
+
+		oFocusInfo = oFocusInfo || {};
+
+		if (oFocusDomRef) {
+			// save the scroll position of all ancestor DOM elements
+			// before the focus is set, because preventScroll is not supported by the following browsers
+			if (Device.browser.safari || Device.browser.msie || Device.browser.edge) {
+				if (oFocusInfo.preventScroll === true) {
+					aScrollHierarchy = getAncestorScrollPositions(oFocusDomRef);
+				}
+				oFocusDomRef.focus();
+				if (aScrollHierarchy.length > 0) {
+					// restore the scroll position if it's changed after setting focus
+					// Safari, IE11 and Edge need a little delay to get the scroll position updated
+					setTimeout(restoreScrollPositions.bind(null, aScrollHierarchy), 0);
+				}
+			} else {
+				oFocusDomRef.focus(oFocusInfo);
+			}
+		}
 	};
 
 	/**
@@ -578,10 +875,12 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * To be overwritten by the specific control method.
 	 *
 	 * @param {object} oFocusInfo
+	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 if it's set to true, the focused
+	 *   element won't be shifted into the viewport if it's not completely visible before the focus is set
 	 * @protected
 	 */
 	Element.prototype.applyFocusInfo = function (oFocusInfo) {
-		this.focus();
+		this.focus(oFocusInfo);
 		return this;
 	};
 
@@ -591,18 +890,15 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @private
 	 */
 	Element.prototype._refreshTooltipBaseDelegate = function (oTooltip) {
-		var TooltipBase = sap.ui.require('sap/ui/core/TooltipBase');
-		if ( TooltipBase ) {
-			var oOldTooltip = this.getTooltip();
-			// if the old tooltip was a Tooltip object, remove it as a delegate
-			if (oOldTooltip instanceof TooltipBase) {
-				this.removeDelegate(oOldTooltip);
-			}
-			// if the new tooltip is a Tooltip object, add it as a delegate
-			if (oTooltip instanceof TooltipBase) {
-				oTooltip._currentControl = this;
-				this.addDelegate(oTooltip);
-			}
+		var oOldTooltip = this.getTooltip();
+		// if the old tooltip was a Tooltip object, remove it as a delegate
+		if (BaseObject.isA(oOldTooltip, "sap.ui.core.TooltipBase")) {
+			this.removeDelegate(oOldTooltip);
+		}
+		// if the new tooltip is a Tooltip object, add it as a delegate
+		if (BaseObject.isA(oTooltip, "sap.ui.core.TooltipBase")) {
+			oTooltip._currentControl = this;
+			this.addDelegate(oTooltip);
 		}
 	};
 
@@ -699,150 +995,303 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 */
 	// sap.ui.core.Element.prototype.getMetadata = sap.ui.base.Object.ABSTRACT_METHOD;
 
-	//data container
+	// ---- data container ----------------------------------
 
-	(function(){
+	// Note: the real class documentation can be found in sap/ui/core/CustomData so that the right module is
+	// shown in the API reference. A reduced copy of the class documentation and the documentation of the
+	// settings has to be provided here, close to the runtime metadata to allow extracting the metadata.
+	/**
+	 * @class
+	 * Contains a single key/value pair of custom data attached to an <code>Element</code>.
+	 * @public
+	 * @alias sap.ui.core.CustomData
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @synthetic
+	 */
+	var CustomData = Element.extend("sap.ui.core.CustomData", /** @lends sap.ui.core.CustomData.prototype */ { metadata : {
 
-		/**
-		 * Returns the data object with the given key
-		 */
-		var getDataObject = function(element, key) {
-			var aData = element.getAggregation("customData");
+		library : "sap.ui.core",
+		properties : {
+
+			/**
+			 * The key of the data in this CustomData object.
+			 * When the data is just stored, it can be any string, but when it is to be written to HTML
+			 * (<code>writeToDom == true</code>) then it must also be a valid HTML attribute name.
+			 * It must conform to the {@link sap.ui.core.ID} type and may contain no colon. To avoid collisions,
+			 * it also may not start with "sap-ui". When written to HTML, the key is prefixed with "data-".
+			 * If any restriction is violated, a warning will be logged and nothing will be written to the DOM.
+			 */
+			key : {type : "string", group : "Data", defaultValue : null},
+
+			/**
+			 * The data stored in this CustomData object.
+			 * When the data is just stored, it can be any JS type, but when it is to be written to HTML
+			 * (<code>writeToDom == true</code>) then it must be a string. If this restriction is violated,
+			 * a warning will be logged and nothing will be written to the DOM.
+			 */
+			value : {type : "any", group : "Data", defaultValue : null},
+
+			/**
+			 * If set to "true" and the value is of type "string" and the key conforms to the documented restrictions,
+			 * this custom data is written to the HTML root element of the control as a "data-*" attribute.
+			 * If the key is "abc" and the value is "cde", the HTML will look as follows:
+			 *
+			 * <pre>
+			 *   &lt;SomeTag ... data-abc="cde" ... &gt;
+			 * </pre>
+			 *
+			 * Thus the application can provide stable attributes by data binding which can be used for styling or
+			 * identification purposes.
+			 *
+			 * <b>ATTENTION:</b> use carefully to not create huge attributes or a large number of them.
+			 * @since 1.9.0
+			 */
+			writeToDom : {type : "boolean", group : "Data", defaultValue : false}
+		},
+		designtime: "sap/ui/core/designtime/CustomData.designtime"
+	}});
+
+	CustomData.prototype.setValue = function(oValue) {
+		this.setProperty("value", oValue, true);
+
+		var oControl = this.getParent();
+		if (oControl && oControl.getDomRef()) {
+			var oCheckResult = this._checkWriteToDom(oControl);
+			if (oCheckResult) {
+				// update DOM directly
+				oControl.$().attr(oCheckResult.key, oCheckResult.value);
+			}
+		}
+		return this;
+	};
+
+	CustomData.prototype._checkWriteToDom = function(oRelated) {
+		if (!this.getWriteToDom()) {
+			return null;
+		}
+
+		var key = this.getKey();
+		var value = this.getValue();
+
+		function error(reason) {
+			Log.error("CustomData with key " + key + " should be written to HTML of " + oRelated + " but " + reason);
+			return null;
+		}
+
+		if (typeof value != "string") {
+			return error("the value is not a string.");
+		}
+
+		var ID = DataType.getType("sap.ui.core.ID");
+
+		if (!(ID.isValid(key)) || (key.indexOf(":") != -1)) {
+			return error("the key is not valid (must be a valid sap.ui.core.ID without any colon).");
+		}
+
+		if (key == F6Navigation.fastNavigationKey) {
+			value = /^\s*(x|true)\s*$/i.test(value) ? "true" : "false"; // normalize values
+		} else if (key.indexOf("sap-ui") == 0) {
+			return error("the key is not valid (may not start with 'sap-ui').");
+		}
+
+		return {key: "data-" + key, value: value};
+
+	};
+
+	/**
+	 * Returns the data object with the given key
+	 */
+	function findCustomData(element, key) {
+		var aData = element.getAggregation("customData");
+		if (aData) {
+			for (var i = 0; i < aData.length; i++) {
+				if (aData[i].getKey() == key) {
+					return aData[i];
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Contains the data modification logic
+	 */
+	function setCustomData(element, key, value, writeToDom) {
+
+		// DELETE
+		if (value === null) { // delete this property
+			var dataObject = findCustomData(element, key);
+			if (!dataObject) {
+				return;
+			}
+
+			var dataCount = element.getAggregation("customData").length;
+			if (dataCount == 1) {
+				element.destroyAggregation("customData", true); // destroy if there is no other data
+			} else {
+				element.removeAggregation("customData", dataObject, true);
+				dataObject.destroy();
+			}
+
+			// ADD or CHANGE
+		} else {
+			var dataObject = findCustomData(element, key);
+			if (dataObject) {
+				dataObject.setValue(value);
+				dataObject.setWriteToDom(writeToDom);
+			} else {
+				var dataObject = new CustomData({key:key,value:value, writeToDom:writeToDom});
+				element.addAggregation("customData", dataObject, true);
+			}
+		}
+	}
+
+	/**
+	 * Retrieves, modifies or removes custom data attached to an <code>Element</code>.
+	 *
+	 * Usages:
+	 * <h4>Setting the value for a single key</h4>
+	 * <pre>
+	 *    data("myKey", myData)
+	 * </pre>
+	 * Attaches <code>myData</code> (which can be any JS data type, e.g. a number, a string, an object, or a function)
+	 * to this element, under the given key "myKey". If the key already exists,the value will be updated.
+	 *
+	 *
+	 * <h4>Setting a value for a single key (rendered to the DOM)</h4>
+	 * <pre>
+	 *    data("myKey", myData, writeToDom)
+	 * </pre>
+	 * Attaches <code>myData</code> to this element, under the given key "myKey" and (if <code>writeToDom</code>
+	 * is true) writes key and value to the HTML. If the key already exists,the value will be updated.
+	 * While <code>oValue</code> can be any JS data type to be attached, it must be a string to be also
+	 * written to DOM. The key must also be a valid HTML attribute name (it must conform to <code>sap.ui.core.ID</code>
+	 * and may contain no colon) and may not start with "sap-ui". When written to HTML, the key is prefixed with "data-".
+	 *
+	 *
+	 * <h4>Getting the value for a single key</h4>
+	 * <pre>
+	 *    data("myKey")
+	 * </pre>
+	 * Retrieves whatever data has been attached to this element (using the key "myKey") before.
+	 *
+	 *
+	 * <h4>Removing the value for a single key</h4>
+	 * <pre>
+	 *    data("myKey", null)
+	 * </pre>
+	 * Removes whatever data has been attached to this element (using the key "myKey") before.
+	 *
+	 *
+	 * <h4>Removing all custom data for all keys</h4>
+	 * <pre>
+	 *    data(null)
+	 * </pre>
+	 *
+	 *
+	 * <h4>Getting all custom data values as a plain object</h4>
+	 * <pre>
+	 *    data()
+	 * </pre>
+	 * Returns all data, as a map-like object, property names are keys, property values are values.
+	 *
+	 *
+	 * <h4>Setting multiple key/value pairs in a single call</h4>
+	 * <pre>
+	 *    data({"myKey1": myData, "myKey2": null})
+	 * </pre>
+	 * Attaches <code>myData</code> (using the key "myKey1" and removes any data that had been
+	 * attached for key "myKey2".
+	 *
+	 * @see See chapter {@link topic:91f0c3ee6f4d1014b6dd926db0e91070 Custom Data - Attaching Data Objects to Controls}
+	 *    in the documentation.
+	 *
+	 * @param {string|Object<string,any>|null} [vKeyOrData]
+	 *     Single key to set or remove, or an object with key/value pairs or <code>null</code> to remove
+	 *     all custom data
+	 * @param {string|any} [vValue]
+	 *     Value to set or <code>null</code> to remove the corresponding custom data
+	 * @param {boolean} [bWriteToDom=false]
+	 *     Whether this custom data entry should be written to the DOM during rendering
+	 * @returns {Object<string,any>|any|null|sap.ui.core.Element}
+	 *     A map with all custom data, a custom data value for a single specified key or <code>null</code>
+	 *     when no custom data exists for such a key or this element when custom data was to be removed.
+	 * @throws {TypeError}
+	 *     When the type of the given parameters doesn't match any of the documented usages
+	 * @public
+	 */
+	Element.prototype.data = function() {
+		var argLength = arguments.length;
+
+		if (argLength == 0) {                    // return ALL data as a map
+			var aData = this.getAggregation("customData"),
+				result = {};
 			if (aData) {
 				for (var i = 0; i < aData.length; i++) {
-					if (aData[i].getKey() == key) {
-						return aData[i];
-					}
+					result[aData[i].getKey()] = aData[i].getValue();
 				}
 			}
-			return null;
-		};
+			return result;
 
-		/**
-		 * Contains the data modification logic
-		 */
-		var setData = function(element, key, value, writeToDom) {
+		} else if (argLength == 1) {
+			var arg0 = arguments[0];
 
-			// DELETE
-			if (value === null) { // delete this property
-				var dataObject = getDataObject(element, key);
-				if (!dataObject) {
-					return;
-				}
-
-				var dataCount = element.getAggregation("customData").length;
-				if (dataCount == 1) {
-					element.destroyAggregation("customData", true); // destroy if there is no other data
-				} else {
-					element.removeAggregation("customData", dataObject, true);
-					dataObject.destroy();
-				}
-
-				// ADD or CHANGE
-			} else {
-				var CustomData = sap.ui.requireSync('sap/ui/core/CustomData');
-				var dataObject = getDataObject(element, key);
-				if (dataObject) {
-					dataObject.setValue(value);
-					dataObject.setWriteToDom(writeToDom);
-				} else {
-					var dataObject = new CustomData({key:key,value:value, writeToDom:writeToDom});
-					element.addAggregation("customData", dataObject, true);
-				}
-			}
-		};
-
-		/**
-		 * Attaches custom data to an <code>Element</code> or retrieves attached data.
-		 *
-		 * Usage:
-		 * <pre>
-		 *    data("myKey", myData)
-		 * </pre>
-		 * Attaches <code>myData</code> (which can be any JS data type, e.g. a number, a string, an object, or a function)
-		 * to this element, under the given key "myKey". If the key already exists,the value will be updated.
-		 *
-		 * <pre>
-		 *    data("myKey", myData, writeToDom)
-		 * </pre>
-		 * Attaches <code>myData</code> to this element, under the given key "myKey" and (if <code>writeToDom</code>
-		 * is true) writes key and value to the HTML. If the key already exists,the value will be updated.
-		 * While <code>oValue</code> can be any JS data type to be attached, it must be a string to be also
-		 * written to DOM. The key must also be a valid HTML attribute name (it must conform to <code>sap.ui.core.ID</code>
-		 * and may contain no colon) and may not start with "sap-ui". When written to HTML, the key is prefixed with "data-".
-		 *
-		 * <pre>
-		 *    data("myKey")
-		 * </pre>
-		 * Retrieves whatever data has been attached to this element (using the key "myKey") before
-		 *
-		 * <pre>
-		 *    data("myKey", null)
-		 * </pre>
-		 * Removes whatever data has been attached to this element (using the key "myKey") before
-		 *
-		 * <pre>
-		 *    data(null)
-		 * </pre>
-		 * Removes all data
-		 *
-		 * <pre>
-		 *    data()
-		 * </pre>
-		 * Returns all data, as a map
-		 *
-		 * @public
-		 */
-		Element.prototype.data = function() {
-			var argLength = arguments.length;
-
-			if (argLength == 0) {                    // return ALL data as a map
-				var aData = this.getAggregation("customData"),
-					result = {};
-				if (aData) {
-					for (var i = 0; i < aData.length; i++) {
-						result[aData[i].getKey()] = aData[i].getValue();
-					}
-				}
-				return result;
-
-			} else if (argLength == 1) {
-				var arg0 = arguments[0];
-
-				if (arg0 === null) {                  // delete ALL data
-					this.destroyAggregation("customData", true); // delete whole map
-					return this;
-
-				} else if (typeof arg0 == "string") { // return requested data element
-					var dataObject = getDataObject(this, arg0);
-					return dataObject ? dataObject.getValue() : null;
-
-				} else if (typeof arg0 == "object") { // should be a map - set multiple data elements
-					for (var key in arg0) { // TODO: improve performance and avoid executing setData multiple times
-						setData(this, key, arg0[key]);
-					}
-					return this;
-
-				} else {
-					// error, illegal argument
-					throw new Error("When data() is called with one argument, this argument must be a string, an object or null, but is " + (typeof arg0) + ":" + arg0 + " (on UI Element with ID '" + this.getId() + "')");
-				}
-
-			} else if (argLength == 2) {            // set or remove one data element
-				setData(this, arguments[0], arguments[1]);
+			if (arg0 === null) {                  // delete ALL data
+				this.destroyAggregation("customData", true); // delete whole map
 				return this;
 
-			} else if (argLength == 3) {            // set or remove one data element
-				setData(this, arguments[0], arguments[1], arguments[2]);
+			} else if (typeof arg0 == "string") { // return requested data element
+				var dataObject = findCustomData(this, arg0);
+				return dataObject ? dataObject.getValue() : null;
+
+			} else if (typeof arg0 == "object") { // should be a map - set multiple data elements
+				for (var key in arg0) { // TODO: improve performance and avoid executing setData multiple times
+					setCustomData(this, key, arg0[key]);
+				}
 				return this;
 
 			} else {
-				// error, illegal arguments
-				throw new Error("data() may only be called with 0-3 arguments (on UI Element with ID '" + this.getId() + "')");
+				// error, illegal argument
+				throw new TypeError("When data() is called with one argument, this argument must be a string, an object or null, but is " + (typeof arg0) + ":" + arg0 + " (on UI Element with ID '" + this.getId() + "')");
 			}
-		};
 
-	})();
+		} else if (argLength == 2) {            // set or remove one data element
+			setCustomData(this, arguments[0], arguments[1]);
+			return this;
+
+		} else if (argLength == 3) {            // set or remove one data element
+			setCustomData(this, arguments[0], arguments[1], arguments[2]);
+			return this;
+
+		} else {
+			// error, illegal arguments
+			throw new TypeError("data() may only be called with 0-3 arguments (on UI Element with ID '" + this.getId() + "')");
+		}
+	};
+
+	/**
+	 * Expose CustomData class privately
+	 * @private
+	 */
+	Element._CustomData = CustomData;
+
+	/*
+	 * Alternative implementation of <code>Element#data</code> which is applied after an element has been
+	 * destroyed. It prevents the creation of new CustomData instances.
+	 *
+	 * See {@link sap.ui.core.Element.prototype.destroy}
+	 */
+	function noCustomDataAfterDestroy() {
+		// Report and ignore only write calls; read and remove calls are well-behaving
+		var argLength = arguments.length;
+		if ( argLength === 1 && arguments[0] !== null && typeof arguments[0] == "object"
+			 || argLength > 1 && argLength < 4 && arguments[1] !== null ) {
+			Log.error("Cannot create custom data on an already destroyed element '" + this + "'");
+			return this;
+		}
+		return Element.prototype.data.apply(this, arguments);
+	}
+
 
 	/**
 	 * Create a clone of this Element.
@@ -851,8 +1300,8 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *
 	 * @param {string} [sIdSuffix] Suffix to be appended to the cloned element ID
 	 * @param {string[]} [aLocalIds] Array of local IDs within the cloned hierarchy (internally used)
-	 * @return {sap.ui.core.Element} reference to the newly created clone
-	 * @protected
+	 * @returns {sap.ui.core.Element} reference to the newly created clone
+	 * @public
 	 */
 	Element.prototype.clone = function(sIdSuffix, aLocalIds){
 
@@ -870,7 +1319,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 		}
 
 		if (this._sapui_declarativeSourceInfo) {
-			oClone._sapui_declarativeSourceInfo = jQuery.extend({}, this._sapui_declarativeSourceInfo);
+			oClone._sapui_declarativeSourceInfo = Object.assign({}, this._sapui_declarativeSourceInfo);
 		}
 
 		return oClone;
@@ -926,7 +1375,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	/**
 	 * Allows the parent of a control to enhance the aria information during rendering.
 	 *
-	 * This function is called by the RenderManager's writeAccessibilityState method
+	 * This function is called by the RenderManager's
+	 * {@link sap.ui.core.RenderManager#accessibilityState accessibilityState} and
+	 * {@link sap.ui.core.RenderManager#writeAccessibilityState writeAccessibilityState} methods
 	 * for the parent of the currently rendered control - if the parent implements it.
 	 *
 	 * @function
@@ -1031,7 +1482,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @returns {Element} The first matching DOM Element for the setting or <code>null</code>
 	 * @throws {SyntaxError} When the selector string in the metadata is not a valid CSS selector group
 	 * @private
-	 * @sap-restricted internal usage for drag and drop and sap.ui.dt
+	 * @ui5-restricted internal usage for drag and drop and sap.ui.dt
 	 */
 	Element.prototype.getDomRefForSetting = function (sSettingsName) {
 		var oSetting = this.getMetadata().getAllSettings()[sSettingsName];
@@ -1054,7 +1505,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * Returns the contextual width of an element, if set, or <code>undefined</code> otherwise
 	 * @returns {*}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Element.prototype._getMediaContainerWidth = function () {
 		if (typeof this._oContextualSettings === "undefined") {
@@ -1068,9 +1519,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * Returns the current media range of the Device or the closest media container
 	 *
 	 * @param {string} sName
-	 * @returns {map}
+	 * @returns {object}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Element.prototype._getCurrentMediaContainerRange = function (sName) {
 		var iWidth = this._getMediaContainerWidth();
@@ -1124,7 +1575,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @param {object} oListener
 	 * @param {string} sName
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Element.prototype._attachMediaContainerWidthChange = function (fnFunction, oListener, sName) {
 		sName = sName || Device.media.RANGESETS.SAP_STANDARD;
@@ -1150,7 +1601,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @param {object} oListener
 	 * @param {string} sName
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Element.prototype._detachMediaContainerWidthChange = function (fnFunction, oListener, sName) {
 		var oL;
@@ -1176,6 +1627,123 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 			}
 		}
 	};
+
+	/**
+	 * Registry of all <code>sap.ui.core.Element</code>s that currently exist.
+	 *
+	 * @namespace sap.ui.core.Element.registry
+	 * @public
+	 */
+
+	/**
+	 * Number of existing elements.
+	 *
+	 * @type {int}
+	 * @readonly
+	 * @name sap.ui.core.Element.registry.size
+	 * @public
+	 */
+
+	/**
+	 * Return an object with all instances of <code>sap.ui.core.Element</code>,
+	 * keyed by their ID.
+	 *
+	 * Each call creates a new snapshot object. Depending on the size of the UI,
+	 * this operation therefore might be expensive. Consider to use the <code>forEach</code>
+	 * or <code>filter</code> method instead of executing similar operations on the returned
+	 * object.
+	 *
+	 * <b>Note</b>: The returned object is created by a call to <code>Object.create(null)</code>,
+	 * and therefore lacks all methods of <code>Object.prototype</code>, e.g. <code>toString</code> etc.
+	 *
+	 * @returns {Object<sap.ui.core.ID,sap.ui.core.Element>} Object with all elements, keyed by their ID
+	 * @name sap.ui.core.Element.registry.all
+	 * @function
+	 * @public
+	 */
+
+	/**
+	 * Retrieves an Element by its ID.
+	 *
+	 * When the ID is <code>null</code> or <code>undefined</code> or when there's no element with
+	 * the given ID, then <code>undefined</code> is returned.
+	 *
+	 * @param {sap.ui.core.ID} id ID of the element to retrieve
+	 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
+	 * @name sap.ui.core.Element.registry.get
+	 * @function
+	 * @public
+	 */
+
+	/**
+	 * Calls the given <code>callback</code> for each element.
+	 *
+	 * The expected signature of the callback is
+	 * <pre>
+	 *    function callback(oElement, sID)
+	 * </pre>
+	 * where <code>oElement</code> is the currently visited element instance and <code>sID</code>
+	 * is the ID of that instance.
+	 *
+	 * The order in which the callback is called for elements is not specified and might change between
+	 * calls (over time and across different versions of UI5).
+	 *
+	 * If elements are created or destroyed within the <code>callback</code>, then the behavior is
+	 * not specified. Newly added objects might or might not be visited. When an element is destroyed during
+	 * the filtering and was not visited yet, it might or might not be visited. As the behavior for such
+	 * concurrent modifications is not specified, it may change in newer releases.
+	 *
+	 * If a <code>thisArg</code> is given, it will be provided as <code>this</code> context when calling
+	 * <code>callback</code>. The <code>this</code> value that the implementation of <code>callback</code>
+	 * sees, depends on the usual resolution mechanism. E.g. when <code>callback</code> was bound to some
+	 * context object, that object wins over the given <code>thisArg</code>.
+	 *
+	 * @param {function(sap.ui.core.Element,sap.ui.core.ID)} callback
+	 *        Function to call for each element
+	 * @param {Object} [thisArg=undefined]
+	 *        Context object to provide as <code>this</code> in each call of <code>callback</code>
+	 * @throws {TypeError} If <code>callback</code> is not a function
+	 * @name sap.ui.core.Element.registry.forEach
+	 * @function
+	 * @public
+	 */
+
+	/**
+	 * Returns an array with elements for which the given <code>callback</code> returns a value that coerces
+	 * to <code>true</code>.
+	 *
+	 * The expected signature of the callback is
+	 * <pre>
+	 *    function callback(oElement, sID)
+	 * </pre>
+	 * where <code>oElement</code> is the currently visited element instance and <code>sID</code>
+	 * is the ID of that instance.
+	 *
+	 * If elements are created or destroyed within the <code>callback</code>, then the behavior is
+	 * not specified. Newly added objects might or might not be visited. When an element is destroyed during
+	 * the filtering and was not visited yet, it might or might not be visited. As the behavior for such
+	 * concurrent modifications is not specified, it may change in newer releases.
+	 *
+	 * If a <code>thisArg</code> is given, it will be provided as <code>this</code> context when calling
+	 * <code>callback</code>. The <code>this</code> value that the implementation of <code>callback</code>
+	 * sees, depends on the usual resolution mechanism. E.g. when <code>callback</code> was bound to some
+	 * context object, that object wins over the given <code>thisArg</code>.
+	 *
+	 * This function returns an array with all elements matching the given predicate. The order of the
+	 * elements in the array is not specified and might change between calls (over time and across different
+	 * versions of UI5).
+	 *
+	 * @param {function(sap.ui.core.Element,sap.ui.core.ID):boolean} callback
+	 *        predicate against which each element is tested
+	 * @param {Object} [thisArg=undefined]
+	 *        context object to provide as <code>this</code> in each call of <code>callback</code>
+	 * @returns {sap.ui.core.Element[]}
+	 *        Array of elements matching the predicate; order is undefined and might change in newer versions of UI5
+	 * @throws {TypeError} If <code>callback</code> is not a function
+	 * @name sap.ui.core.Element.registry.filter
+	 * @function
+	 * @public
+	 */
 
 	return Element;
 

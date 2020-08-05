@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'sap/ui/dt/DesignTimeMetadata'
+	"sap/ui/dt/DesignTimeMetadata"
 ],
 function (
 	DesignTimeMetadata
@@ -18,7 +18,7 @@ function (
 	 *
 	 * @class
 	 * The AggregationDesignTimeMetadata is a wrapper for the AggregationDesignTimeMetadata of the associated element
-	 * @extends sap.ui.core.DesignTimeMetadata
+	 * @extends sap.ui.dt.DesignTimeMetadata
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -35,5 +35,17 @@ function (
 		}
 	});
 
+	/**
+	 * Returns "label" from aggregation designtime metadata
+	 * @param {sap.ui.core.Element} oElement element for which label should be retrieved
+	 * @param {string} [sAggregationName] aggregation name responsible for the aggregation designtime metadata
+	 *
+	 * @return {string|undefined} Returns the label as string or undefined
+	 * @public
+	 */
+	AggregationDesignTimeMetadata.prototype.getLabel = function(oElement, sAggregationName) {
+		return DesignTimeMetadata.prototype.getLabel.apply(this, arguments) || sAggregationName;
+	};
+
 	return AggregationDesignTimeMetadata;
-}, /* bExport= */ true);
+});

@@ -2,8 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/theming/Parameters", "sap/ui/layout/form/Form"],
-	function(library, coreLibrary, themingParameters, Form) {
+sap.ui.define([
+	'sap/ui/core/library',
+	'sap/ui/core/theming/Parameters',
+	'sap/ui/layout/library',
+	'sap/ui/layout/form/Form'
+	], function(coreLibrary, themingParameters, library, Form) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -158,7 +162,7 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 			rm.renderControl(oLabel);
 		}
 
-		var aFields = oElement.getFields();
+		var aFields = oElement.getFieldsForRendering();
 		if (aFields && aFields.length > 0) {
 			for (var k = 0, kl = aFields.length; k < kl; k++) {
 				var oField = aFields[k];
@@ -255,8 +259,9 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 		var oToolbar = oContainer.getToolbar();
 		if (oToolbar) {
 			if (!oContainer.getAriaLabelledBy() || oContainer.getAriaLabelledBy().length == 0) {
-				// no aria-label -> use complete Toolbar as fallback
-				mAriaProps["labelledby"] = {value: oToolbar.getId(), append: true};
+				// no aria-label -> use Title of Toolbar
+				var sToolbarTitleID = library.form.FormHelper.getToolbarTitle(oToolbar);
+				mAriaProps["labelledby"] = {value: sToolbarTitleID, append: true};
 			}
 		} else if (oTitle) {
 			var sId = "";

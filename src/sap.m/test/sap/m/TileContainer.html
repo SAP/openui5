@@ -31,24 +31,13 @@
 						info : "28 days left",
 						infoState : "Success",
 						title : "Create Leave Request",
-						removable: false,
-						tooltip: "This tile cannot be removed"
+						removable: false
 					}),
 					new sap.m.StandardTile({
 						icon : "images/action.png",
 						title : "Leave Request History",
 						type: "Monitor"
 					}),
-					new sap.m.CustomTile({
-						content: new sap.m.VBox({
-							height: "100%",
-							items: [
-								new sap.m.Input({
-									placeholder: "type something "
-								})
-							]
-						})
-					}).addStyleClass("whiteView"),
 					new sap.m.StandardTile({
 						icon : "images/travel_expense_report.png",
 						info : "Waiting for Approval",
@@ -62,16 +51,6 @@
 						title : "Travel Reimbursement History",
 						type: "Monitor"
 					}),
-					new sap.m.CustomTile({
-						content: new sap.m.VBox({
-							height: "100%",
-							items: [
-								new sap.m.Button({
-									text: "Press me"
-								})
-							]
-						})
-					}).addStyleClass("whiteView"),
 					new sap.m.StandardTile({
 						type : "Create",
 						info : "On Hold",
@@ -87,8 +66,7 @@
 						icon : "images/analytics_grey_64.png",
 						title : "Team Report",
 						type: "Monitor",
-						removable: false,
-						tooltip: "This tile cannot be removed"
+						removable: false
 					}),
 					new sap.m.StandardTile({
 						type : "Create",
@@ -101,18 +79,6 @@
 						title : "Leave Request History",
 						type: "Monitor"
 					}),
-					new sap.m.CustomTile({
-						content: new sap.m.VBox({
-							height: "100%",
-							items: [
-								new sap.m.Input({
-									placeholder: "type something "
-								})
-							]
-						}),
-						removable: false,
-						tooltip: "This tile cannot be removed"
-					}).addStyleClass("whiteView"),
 					new sap.m.StandardTile({
 						icon : "images/travel_expense_report.png",
 						info : "Waiting for Approval",
@@ -126,16 +92,6 @@
 						title : "Travel Reimbursement History",
 						type: "Monitor"
 					}),
-					new sap.m.CustomTile({
-						content: new sap.m.VBox({
-							height: "100%",
-							items: [
-								new sap.m.Button({
-									text: "Press me"
-								})
-							]
-						})
-					}).addStyleClass("whiteView"),
 					new sap.m.StandardTile({
 						type : "Create",
 						info : "On Hold",
@@ -163,16 +119,6 @@
 						title : "Leave Request History",
 						type: "Monitor"
 					}),
-					new sap.m.CustomTile({
-						content: new sap.m.VBox({
-							height: "100%",
-							items: [
-								new sap.m.Input({
-									placeholder: "type something "
-								})
-							]
-						})
-					}).addStyleClass("whiteView"),
 					new sap.m.StandardTile({
 						icon : "images/travel_expense_report.png",
 						info : "Waiting for Approval",
@@ -186,16 +132,6 @@
 						title : "Travel Reimbursement History",
 						type: "Monitor"
 					}),
-					new sap.m.CustomTile({
-						content: new sap.m.VBox({
-							height: "100%",
-							items: [
-								new sap.m.Button({
-									text: "Press me"
-								})
-							]
-						})
-					}).addStyleClass("whiteView"),
 					new sap.m.StandardTile({
 						type : "Create",
 						info : "On Hold",
@@ -211,7 +147,7 @@
 						icon : "images/analytics_grey_64.png",
 						title : "Team Report",
 						type: "Monitor"
-					}),
+					})
 				],
 				tileDelete: function(evt){
 					var tile = evt.getParameter("tile");

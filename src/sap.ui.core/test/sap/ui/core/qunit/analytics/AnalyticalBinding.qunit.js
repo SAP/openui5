@@ -1,15 +1,21 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/model/analytics/odata4analytics",
 	"sap/ui/model/analytics/AnalyticalBinding",
 	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
 	"sap/ui/model/analytics/ODataModelAdapter",
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
+	'sap/ui/model/FilterProcessor',
+	'sap/ui/model/Sorter',
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
+	'sap/ui/model/TreeAutoExpandMode',
 	"sap/ui/core/qunit/analytics/o4aMetadata",
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
 	"sap/ui/core/qunit/analytics/TBA_NoBatch",
@@ -17,14 +23,14 @@ sap.ui.require([
 	"sap/ui/core/qunit/analytics/TBA_Batch_ExpandCollapseToggle",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Filter",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Sort"
-], function (jQuery, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
-		ODataModelAdapter, FilterOperator, ODataModelV1, ODataModelV2, o4aFakeService) {
+], function (jQuery, Log, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
+		ODataModelAdapter, ChangeReason, Filter, FilterOperator, FilterProcessor, Sorter,
+		ODataModelV1, ODataModelV2, TreeAutoExpandMode, o4aFakeService) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0 */
-	/*eslint no-warning-comments: 0 */
+	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
 
-	var sClassName = "sap.ui.model.analytics.AnalyticalBinding",
+	var iGroupMembersQueryType = AnalyticalBinding._requestType.groupMembersQuery,
 		sServiceURL = "http://o4aFakeService:8080/",
 		// Analytical info for dimensions
 		oCostCenterGrouped = {
@@ -37,13 +43,13 @@ sap.ui.require([
 			visible: true
 		},
 		oControllingArea = {
-				name: "ControllingArea",
-				grouped: false,
-				inResult: false,
-				sortOrder: "Ascending",
-				sorted: false,
-				total: false,
-				visible: true
+			name: "ControllingArea",
+			grouped: false,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
 		},
 		oCostCenterUngrouped = {
 			name: "CostCenter",
@@ -90,6 +96,42 @@ sap.ui.require([
 			total: false,
 			visible: true
 		},
+		oControllingAreaNoTextGrouped = {
+			name: "ControllingAreaNoText",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oControllingAreaNoTextNoLabelGrouped = {
+			name: "ControllingAreaNoTextNoLabel",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oControllingAreaNoTextEmptyLabelGrouped = {
+			name: "ControllingAreaNoTextEmptyLabel",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oControllingAreaWithTextEmptyLabelGrouped = {
+			name: "ControllingAreaWithTextEmptyLabel",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
 		// Analytical info for measures
 		oActualCostsTotal = {
 			name: "ActualCosts",
@@ -128,6 +170,15 @@ sap.ui.require([
 			visible: true
 		},
 		// Analytical info for other properties
+		oControllingAreaText2 = {
+			name: "ControllingAreaText2",
+			grouped: false,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
 		oCostElementText = {
 			name: "CostElementText",
 			grouped: false,
@@ -212,8 +263,12 @@ sap.ui.require([
 			+ "P_CostCenterTo='999-9999')/Results",
 		sPathHierarchy = "/TypeWithHierarchiesResults";
 
+	/*
+	 * If <code>iVersion !== 1 && !fnODataV2Callback</code>, a <code>Promise</code> is returned that
+	 * resolves with the new binding as soon as metadata has been loaded.
+	 */
 	function setupAnalyticalBinding(iVersion, mParameters, fnODataV2Callback, aAnalyticalInfo,
-			sBindingPath, bSkipInitialize) {
+			sBindingPath, bSkipInitialize, aSorters, aFilters) {
 		var oBinding,
 			oModel;
 
@@ -221,7 +276,6 @@ sap.ui.require([
 		aAnalyticalInfo = aAnalyticalInfo
 			|| [oCostCenterGrouped, oCostElementGrouped, oCurrencyGrouped, oActualCostsTotal];
 
-		mParameters = mParameters || {};
 		if (iVersion === 1) {
 			oModel = new ODataModelV1(sServiceURL, {
 				json: true,
@@ -236,14 +290,20 @@ sap.ui.require([
 		}
 
 		ODataModelAdapter.apply(oModel);
-		oBinding = new AnalyticalBinding(oModel, sBindingPath || sPath, null, [], [],
-			/*mParameters*/ {
+		oBinding = new AnalyticalBinding(oModel, sBindingPath || sPath, null, aSorters || [],
+			aFilters || [], /*mParameters*/ {
 				analyticalInfo : aAnalyticalInfo,
-				useBatchRequests: true,
+				autoExpandMode : mParameters.autoExpandMode,
+				custom: mParameters.custom || undefined,
 				numberOfExpandedLevels: mParameters.numberOfExpandedLevels || 0,
 				noPaging: mParameters.noPaging || false,
-				custom: mParameters.custom || undefined,
-				select: mParameters.select
+				provideGrandTotals : "provideGrandTotals" in mParameters
+					? mParameters.provideGrandTotals
+					: undefined,
+				select: mParameters.select,
+				useBatchRequests: "useBatchRequests" in mParameters
+					? mParameters.useBatchRequests
+					: true
 			}
 		);
 		AnalyticalTreeBindingAdapter.apply(oBinding);
@@ -256,12 +316,19 @@ sap.ui.require([
 			return {
 				binding : oBinding,
 				model : oModel};
-		} else {
+		} else if (fnODataV2Callback) {
 			oModel.attachMetadataLoaded(function () {
 				if (!bSkipInitialize) {
 					oBinding.initialize();
 				}
 				fnODataV2Callback(oBinding, oModel);
+			});
+		} else {
+			return oModel.metadataLoaded().then(function () {
+				if (!bSkipInitialize) {
+					oBinding.initialize();
+				}
+				return oBinding;
 			});
 		}
 	}
@@ -271,11 +338,15 @@ sap.ui.require([
 		afterEach : function (assert) {
 			// this would ruin AnalyticalTable.qunit.js in testsuite4analytics
 //			XMLHttpRequest.restore();
-			this.oLogMock.verify();
+			this._oSandbox.verifyAndRestore();
 		},
 
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this._oSandbox = sinon.sandbox.create({
+				injectInto : this,
+				properties : ["mock", "spy", "stub"]
+			});
+			this.oLogMock = this.mock(AnalyticalBinding.Logger);
 			this.oLogMock.expects("warning").atMost(1)
 				.withExactArgs("default count mode is ignored; OData requests will include"
 					+ " $inlinecout options");
@@ -298,9 +369,9 @@ sap.ui.require([
 			oRequestCompletedSpy,
 			oSetupBinding;
 
-		this.oLogMock.expects("warning")
-			.withExactArgs("EventProvider sap.ui.model.odata.ODataModel "
-				+ "path /$metadata should be absolute if no Context is set");
+		// this.oLogMock.expects("warning")
+		// 	.withExactArgs("EventProvider sap.ui.model.odata.ODataModel "
+		// 		+ "path /$metadata should be absolute if no Context is set");
 
 
 		oSetupBinding = setupAnalyticalBinding(1, {});
@@ -422,6 +493,26 @@ sap.ui.require([
 				done();
 			}
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("No $batch used, but percent encoding for spaces", function (assert) {
+		var sBindingPath = "/ActualPlannedCosts(P_ControllingArea='US 1'"
+				+ ",P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+			sExpectedPath = "/ActualPlannedCosts(P_ControllingArea='US%201'"
+				+ ",P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+			done = assert.async();
+
+		setupAnalyticalBinding(2, {useBatchRequests: false}, function (oBinding, oModel) {
+			sinon.stub(oModel, "read", function (sPath) {
+				assert.strictEqual(sPath, sExpectedPath, "percent encoding of space done");
+
+				oModel.read.restore();
+				done();
+			});
+
+			oBinding.getContexts();
+		}, undefined/*aAnalyticalInfo*/, sBindingPath);
 	});
 
 	//*********************************************************************************************
@@ -653,6 +744,144 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getDownloadURL: replace spaces with %20", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {
+				custom: {
+					"search": "AB Test String"
+				}
+			}, function (oBinding) {
+				var sURL = oBinding.getDownloadUrl();
+
+				assert.ok(sURL.indexOf("search=AB%20Test%20String") > 0,
+					"Replaces spaces in custom paramters of URL " + sURL);
+				assert.ok(sURL.indexOf("$orderby=CostCenter%20desc") > 0,
+					"Replaces spaces in $orderby of URL " + sURL);
+				assert.ok(sURL.indexOf("$filter=(CostCenter%20gt%20%271234%27)") > 0,
+					"Replaces spaces in $filter of URL " + sURL);
+
+				//just start() the test after the URL has been checked
+				done();
+			}, /*aAnalyticalInfo*/ null, /*sBindingPath*/ null, /*bSkipInitialize*/ false,
+			[new Sorter("CostCenter", true)],
+			[new Filter({
+				operator : FilterOperator.GT,
+				path : "CostCenter",
+				value1 : "1234"
+			})]);
+	});
+
+	//*********************************************************************************************
+	[{
+		expectedFilter : "((CostCenter%20lt%20%271%27%20or%20CostCenter%20gt%20%274%27))",
+		filters: [new Filter({
+			operator : FilterOperator.NB, path : "CostCenter", value1 : "1", value2 : "4"
+		})]
+	}, {
+		expectedFilter : "((CostCenter%20ge%20%271%27%20and%20CostCenter%20le%20%274%27))",
+		filters: [new Filter({
+			operator : FilterOperator.BT, path : "CostCenter", value1 : "1", value2 : "4"
+		})]
+	}, {
+		expectedFilter : "(not%20substringof(%271%27,CostCenter))",
+		filters: [new Filter({
+			operator : FilterOperator.NotContains, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(substringof(%271%27,CostCenter))",
+		filters: [new Filter({
+			operator : FilterOperator.Contains, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(not%20startswith(CostCenter,%271%27))",
+		filters: [new Filter({
+			operator : FilterOperator.NotStartsWith, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(startswith(CostCenter,%271%27))",
+		filters: [new Filter({
+			operator : FilterOperator.StartsWith, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(not%20endswith(CostCenter,%271%27))",
+		filters: [new Filter({
+			operator : FilterOperator.NotEndsWith, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(endswith(CostCenter,%271%27))",
+		filters: [new Filter({
+			operator : FilterOperator.EndsWith, path : "CostCenter", value1 : "1"
+		})]
+	}].forEach(function (oFixture) {
+		QUnit.test("filter operators: " + oFixture.filters[0].sOperator, function (assert) {
+			var done = assert.async();
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+					var sURL = oBinding.getDownloadUrl(),
+						sFilterPart = sURL.slice(sURL.lastIndexOf("=") + 1);
+
+					assert.strictEqual(sFilterPart, oFixture.expectedFilter, sFilterPart);
+
+					done();
+				}, /*aAnalyticalInfo*/ null, /*sBindingPath*/ null, /*bSkipInitialize*/ false,
+				[/*aSorters*/],
+				oFixture.filters
+			);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter operators: combine all", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+				var sExpectedFilterPart = "("
+						+ "endswith(CostCenter,%271%27)%20"
+						+ "or%20not%20endswith(CostCenter,%271%27)%20"
+						+ "or%20startswith(CostCenter,%271%27)%20"
+						+ "or%20not%20startswith(CostCenter,%271%27)%20"
+						+ "or%20substringof(%271%27,CostCenter)%20"
+						+ "or%20not%20substringof(%271%27,CostCenter)%20"
+						+ "or%20(CostCenter%20ge%20%271%27%20and%20CostCenter%20le%20%274%27)%20"
+						+ "or%20(CostCenter%20lt%20%271%27%20or%20CostCenter%20gt%20%274%27)"
+						+ ")",
+					sURL = oBinding.getDownloadUrl(),
+					sFilterPart = sURL.slice(sURL.lastIndexOf("=") + 1);
+
+				assert.strictEqual(sFilterPart, sExpectedFilterPart, sFilterPart);
+
+				done();
+			}, /*aAnalyticalInfo*/ null, /*sBindingPath*/ null, /*bSkipInitialize*/ false,
+			[/*aSorters*/],
+			[new Filter({
+				operator : FilterOperator.EndsWith, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.NotEndsWith, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.StartsWith, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.NotStartsWith, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.Contains, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.NotContains, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.BT, path : "CostCenter", value1 : "1", value2 : "4"
+			}),
+			new Filter({
+				operator : FilterOperator.NB, path : "CostCenter", value1 : "1", value2 : "4"
+			})]
+		);
+	});
+
+	//*********************************************************************************************
 	[{
 		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oActualCostsTotal,
 			oCurrencyGrouped, oPlannedCostsTotal, oCurrencyGrouped],
@@ -731,6 +960,67 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getGroupName: dimension with text and empty label", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+
+			var oContext = {
+					getProperty : function () {}
+				},
+				oContextMock = sinon.mock(oContext),
+				sGroupProperty = "ControllingAreaWithTextEmptyLabel",
+				sTextProperty = "ControllingAreaText2";
+
+			oContextMock.expects("getProperty").withExactArgs(sGroupProperty).returns("foo");
+			oContextMock.expects("getProperty").withExactArgs(sTextProperty).returns("bar");
+
+			// Code under test
+			assert.strictEqual(oBinding.getGroupName(oContext, 1), "foo - bar");
+
+			oContextMock.verify();
+			done();
+		}, [oControllingAreaWithTextEmptyLabelGrouped, oControllingAreaText2, oActualCostsTotal]);
+	});
+
+	//*********************************************************************************************
+	[{
+		oDimension : oControllingAreaNoTextGrouped,
+		sGroupName : "Controlling Area: foo"
+	}, {
+		oDimension : oControllingAreaNoTextNoLabelGrouped,
+		sGroupName : "foo"
+	}, {
+		oDimension : oControllingAreaNoTextEmptyLabelGrouped,
+		sGroupName : "foo"
+	}].forEach(function (oFixture) {
+		var oDimension = oFixture.oDimension,
+			sTitle = "getGroupName: dimension without text for dimension: "
+				+ oDimension.name;
+
+		QUnit.test(sTitle, function (assert) {
+			var done = assert.async();
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+
+				var oContext = {
+						getProperty : function () {}
+					},
+					oContextMock = sinon.mock(oContext);
+
+				oContextMock.expects("getProperty")
+					.withExactArgs(oDimension.name).returns("foo");
+
+				// Code under test
+				assert.strictEqual(oBinding.getGroupName(oContext, 1), oFixture.sGroupName);
+
+				oContextMock.verify();
+				done();
+			}, [oDimension, oActualCostsTotal]);
+		});
+	});
+
+	//*********************************************************************************************
 	// CostCenterText can be added in select binding parameter because the associated dimension
 	// CostCenter is already contained
 	[{ // issues with dimensions
@@ -756,7 +1046,8 @@ sap.ui.require([
 			// automatically selected by the binding
 		select : "CostCenter,Currency,ActualCosts,CostCenterText",
 		warnings : [
-			"it does not contain the property 'CostElement'", // only the associated property is contained in analytical info
+			// only the associated property is contained in analytical info
+			"it does not contain the property 'CostElement'",
 			"it does not contain the property 'CostElementText'"
 		]
 	}, {
@@ -861,14 +1152,14 @@ sap.ui.require([
 		QUnit.test("updateAnalyticalInfo: select causes warnings #" + i, function (assert) {
 			var oBinding,
 				done = assert.async(),
-				oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURL, {
+				oModel = new ODataModelV2(sServiceURL, {
 					tokenHandling : false,
 					json : true
 				}),
 				that = this;
 
-			sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
-			oBinding = new sap.ui.model.analytics.AnalyticalBinding(oModel, sPath, null, [], [], {
+			ODataModelAdapter.apply(oModel);
+			oBinding = new AnalyticalBinding(oModel, sPath, null, [], [], {
 				analyticalInfo : oFixture.analyticalInfo,
 				useBatchRequests : true,
 				numberOfExpandedLevels : 0,
@@ -879,7 +1170,7 @@ sap.ui.require([
 			// code under test - constructor initializes aAdditionalSelects
 			assert.deepEqual(oBinding.aAdditionalSelects, []);
 
-			sap.ui.model.analytics.AnalyticalTreeBindingAdapter.apply(oBinding);
+			AnalyticalTreeBindingAdapter.apply(oBinding);
 
 			oModel.attachMetadataLoaded(function () {
 				var oMeasure;
@@ -887,7 +1178,7 @@ sap.ui.require([
 				oFixture.warnings.forEach(function (sText) {
 					that.oLogMock.expects("warning")
 						.withExactArgs("Ignored the 'select' binding parameter, because " + sText,
-							sPath, sClassName);
+							sPath);
 				});
 
 				// metadata does not contain associated properties for measures, so simulate it
@@ -945,20 +1236,20 @@ sap.ui.require([
 		QUnit.test("updateAnalyticalInfo: additional selects - " + i, function (assert) {
 			var oBinding,
 				done = assert.async(),
-				oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURL, {
+				oModel = new ODataModelV2(sServiceURL, {
 					tokenHandling : false,
 					json : true
 				});
 
-			sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
-			oBinding = new sap.ui.model.analytics.AnalyticalBinding(oModel, sPath, null, [], [], {
+			ODataModelAdapter.apply(oModel);
+			oBinding = new AnalyticalBinding(oModel, sPath, null, [], [], {
 				analyticalInfo : oFixture.analyticalInfo,
 				useBatchRequests : true,
 				numberOfExpandedLevels : 0,
 				noPaging : false,
 				select : oFixture.select
 			});
-			sap.ui.model.analytics.AnalyticalTreeBindingAdapter.apply(oBinding);
+			AnalyticalTreeBindingAdapter.apply(oBinding);
 
 			oModel.attachMetadataLoaded(function () {
 				// Code under test
@@ -1020,12 +1311,12 @@ sap.ui.require([
 			var oBinding,
 				done = assert.async(),
 				aExpectedSelects = oFixture.expectedSelects.slice(),
-				oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURL, {
+				oModel = new ODataModelV2(sServiceURL, {
 					tokenHandling : false,
 					json : true
 				});
 
-			sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
+			ODataModelAdapter.apply(oModel);
 
 			// mock read to check whether $select is properly computed
 			oModel.read = function () {
@@ -1047,14 +1338,14 @@ sap.ui.require([
 				return {};
 			};
 
-			oBinding = new sap.ui.model.analytics.AnalyticalBinding(oModel, sPath, null, [], [], {
+			oBinding = new AnalyticalBinding(oModel, sPath, null, [], [], {
 				analyticalInfo : oFixture.analyticalInfo,
 				useBatchRequests : oFixture.useBatchRequests,
 				numberOfExpandedLevels : oFixture.numberOfExpandedLevels,
 				noPaging : false,
 				select : oFixture.select
 			});
-			sap.ui.model.analytics.AnalyticalTreeBindingAdapter.apply(oBinding);
+			AnalyticalTreeBindingAdapter.apply(oBinding);
 
 			oModel.attachMetadataLoaded(function () {
 				oBinding.initialize();
@@ -1193,8 +1484,7 @@ sap.ui.require([
 			"empty mHierarchyDetailsByName, ignore group ID");
 
 		this.oLogMock.expects("error")
-			.withExactArgs("Hierarchy cannot be requested for members of a group", "/foo/",
-				sClassName);
+			.withExactArgs("Hierarchy cannot be requested for members of a group", "/foo/");
 
 		oAnalyticalBinding.mHierarchyDetailsByName = {
 			property0 : {
@@ -1643,9 +1933,9 @@ sap.ui.require([
 			setupAnalyticalBinding(2, {}, function (oBinding) {
 				if (oFixture.message) {
 					that.oLogMock.expects("isLoggable")
-						.withExactArgs(jQuery.sap.log.Level.INFO, sClassName)
+						.withExactArgs(Log.Level.INFO)
 						.returns(true);
-					that.oLogMock.expects("info").withExactArgs(oFixture.message, "", sClassName);
+					that.oLogMock.expects("info").withExactArgs(oFixture.message, "");
 				}
 
 				// code under test
@@ -1709,5 +1999,1080 @@ sap.ui.require([
 
 			done();
 		}, aInitialColumns, undefined, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAnalyticalInfo: only formatters changed", function (assert) {
+		var aInitialColumns = [{
+				formatter : "formatter0",
+				grouped : "grouped0",
+				inResult : "inResult0",
+				level : "level0",
+				name : "name0",
+				// Note: these appear in test code and real life, but are ignored by our code
+//				sorted : "sorted0",
+//				sortOrder : "sortOrder0",
+				total : "total0",
+				visible : "visible0"
+			}, {
+				formatter : "formatter1",
+				grouped : "grouped1",
+				inResult : "inResult1",
+				level : "level1",
+				name : "name1",
+//				sorted : "sorted1",
+//				sortOrder : "sortOrder1",
+				total : "total1",
+				visible : "visible1"
+			}],
+			that = this;
+
+		return setupAnalyticalBinding(2, {}, /*fnODataV2Callback*/null, aInitialColumns)
+		.then(function (oBinding) {
+			var mAnalyticalInfoByProperty
+					= jQuery.extend(true, {}, oBinding.mAnalyticalInfoByProperty),
+				iAnalyticalInfoVersionNumber = oBinding.iAnalyticalInfoVersionNumber,
+				fnDeepEqualExpectation,
+				aInitialColumnsAfterUpdate = [{
+					formatter : null,
+					grouped : "grouped0",
+					inResult : "inResult0",
+					level : "level0",
+					name : "name0",
+					total : "total0",
+					visible : "visible0"
+				}, {
+					formatter : "formatter1 - CHANGED",
+					grouped : "grouped1",
+					inResult : "inResult1",
+					level : "level1",
+					name : "name1",
+					total : "total1",
+					visible : "visible1"
+				}],
+				fnResolve;
+
+			assert.strictEqual(oBinding.isInitial(), false);
+			assert.deepEqual(oBinding._aLastChangedAnalyticalInfo, aInitialColumns);
+			oBinding.attachChange(function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+				fnResolve();
+			});
+			fnDeepEqualExpectation = that.mock(odata4analytics.helper).expects("deepEqual")
+				// Note: aInitialColumns has been remembered as a clone!
+				.withExactArgs(aInitialColumns, sinon.match.same(aInitialColumnsAfterUpdate),
+					sinon.match.func)
+				.returns(1);
+
+			// code under test
+			oBinding.updateAnalyticalInfo(aInitialColumnsAfterUpdate);
+
+			assert.strictEqual(oBinding.iAnalyticalInfoVersionNumber, iAnalyticalInfoVersionNumber,
+				"version number unchanged");
+			assert.deepEqual(oBinding._aLastChangedAnalyticalInfo, aInitialColumnsAfterUpdate,
+				"columns remembered");
+			assert.deepEqual(oBinding.mAnalyticalInfoByProperty, mAnalyticalInfoByProperty,
+				"formatters still unchanged");
+
+			// code under test: call back fnFormatterChanged
+			fnDeepEqualExpectation.args[0][2](aInitialColumnsAfterUpdate[0]);
+
+			assert.strictEqual(oBinding.mAnalyticalInfoByProperty.name0.formatter, null);
+
+			// code under test: call back fnFormatterChanged
+			fnDeepEqualExpectation.args[0][2](aInitialColumnsAfterUpdate[1]);
+
+			assert.strictEqual(oBinding.mAnalyticalInfoByProperty.name1.formatter,
+				"formatter1 - CHANGED");
+
+			return new Promise(function (resolve) {
+				fnResolve = resolve;
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("bApplySortersToGroups: Constructor and initialization", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var bApplySortersToGroups = {/* true or false */};
+
+			assert.ok(oBinding.bApplySortersToGroups, "constructor sets bApplySortersToGroups");
+			assert.ok("sLastAutoExpandMode" in oBinding, "sLastAutoExpandMode defined");
+			assert.strictEqual(oBinding.sLastAutoExpandMode, undefined);
+
+			oBinding.bApplySortersToGroups = bApplySortersToGroups;
+
+			// code under test
+			oBinding.updateAnalyticalInfo([oCostCenterGrouped, oCurrencyGrouped,
+				oActualCostsTotal]);
+
+			assert.strictEqual(oBinding.bApplySortersToGroups, bApplySortersToGroups,
+				"initial binding - no reset of bApplySortersToGroups");
+
+			// code under test
+			oBinding.initialize(); // calls updateAnalyticalInfo with value of last call
+
+			assert.strictEqual(oBinding.bApplySortersToGroups, true,
+				"after initialization bApplySortersToGroups is set to true");
+
+			done();
+		}, [], undefined, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAnalyticalInfo: bApplySortersToGroups", function (assert) {
+		var done = assert.async();
+
+		// with default columns:
+		// [oCostCenterGrouped, oCostElementGrouped, oCurrencyGrouped, oActualCostsTotal]
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var bApplySortersToGroups = {/* true or false */},
+				oColumn;
+
+			assert.ok(oBinding.bApplySortersToGroups, true, "true after initialization");
+
+			oBinding.bApplySortersToGroups = bApplySortersToGroups;
+
+			// code under test - dimension list changed
+			oBinding.updateAnalyticalInfo([oCostCenterGrouped, oCurrencyGrouped,
+				oActualCostsTotal]);
+
+			assert.strictEqual(oBinding.bApplySortersToGroups, true, "true after dimension change");
+
+			oBinding.bApplySortersToGroups = bApplySortersToGroups;
+
+			// code under test - measure list changed
+			oBinding.updateAnalyticalInfo([oCostCenterGrouped, oCurrencyGrouped,
+				oActualCostsTotal, oPlannedCostsTotal]);
+
+			assert.strictEqual(oBinding.bApplySortersToGroups, true, "true after measure change");
+
+			oBinding.bApplySortersToGroups = bApplySortersToGroups;
+			oColumn = jQuery.extend({}, oPlannedCostsTotal,
+				{sorted : true, sortOrder : "Descending"});
+
+			// code under test - measure properties sorted and sortOrder changed
+			oBinding.updateAnalyticalInfo([oCostCenterGrouped, oCurrencyGrouped,
+				oActualCostsTotal, oColumn]);
+
+			assert.strictEqual(oBinding.bApplySortersToGroups, bApplySortersToGroups,
+				"unchanged no measure or dimension added/removed");
+
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter: resets bApplySortersToGroups", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var oBindingMock = sinon.mock(oBinding);
+
+			oBindingMock.expects("_fireRefresh").withExactArgs(sinon.match(function (mParameters) {
+				assert.strictEqual(oBinding.bApplySortersToGroups, true,
+					"ensure that bApplySortersToGroups is reset before _fireRefresh is called");
+				return mParameters.reason === ChangeReason.Filter;
+			}));
+			oBinding.bApplySortersToGroups = {/* true or false */};
+
+			// code under test
+			oBinding.filter();
+
+			oBindingMock.verify();
+			done();
+		}, [], undefined, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFilterInfo", function (assert) {
+		var aApplicationFilter = [new Filter({
+				operator : FilterOperator.EndsWith, path : "CostCenter", value1 : "1"})],
+			oAst = {},
+			oCombinedFilter = {
+				getAST : function () {}
+			},
+			aControlFilter = [new Filter({
+				operator : FilterOperator.StartsWith, path : "CostCenter", value1 : "5"})],
+			done = assert.async(),
+			bIncludeOrigin = {/*true or false*/};
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var oCombinedFilterMock = sinon.mock(oCombinedFilter),
+				oFilterProcessorMock = sinon.mock(FilterProcessor);
+
+			oBinding.filter(aControlFilter);
+
+			oFilterProcessorMock.expects("combineFilters")
+				.withExactArgs(sinon.match.same(aControlFilter),
+					sinon.match.same(aApplicationFilter))
+				.returns(oCombinedFilter);
+			oCombinedFilterMock.expects("getAST")
+				.withExactArgs(sinon.match.same(bIncludeOrigin))
+				.returns(oAst);
+
+			// code under test
+			assert.strictEqual(oBinding.getFilterInfo(bIncludeOrigin), oAst);
+
+			oFilterProcessorMock.verify();
+			oCombinedFilterMock.verify();
+			done();
+		}, /*aAnalyticalInfo*/ null, /*sBindingPath*/ null, /*bSkipInitialize*/ false,
+			[/*aSorters*/],
+			aApplicationFilter
+		);
+	});
+
+	//*********************************************************************************************
+	[{
+		applicationFilter : undefined,
+		controlFilter : undefined,
+		expectedAst : null
+	}, {
+		applicationFilter : [new Filter({
+			operator : FilterOperator.EndsWith, path : "CostCenter", value1 : "1"})],
+		controlFilter : undefined,
+		expectedAst : {
+			"args": [{
+				"path": "CostCenter",
+				"type": "Reference"
+			}, {
+				"type": "Literal",
+				"value": "1"
+			}],
+			"name": "endswith",
+			"type": "Call"
+		}
+	}, {
+		applicationFilter : undefined,
+		controlFilter : [new Filter({
+			operator : FilterOperator.StartsWith, path : "CostCenter", value1 : "5"})],
+		expectedAst : {
+			"args": [
+				{"path": "CostCenter", "type": "Reference"},
+				{"type": "Literal", "value": "5"}
+			],
+			"name": "startswith",
+			"type": "Call"
+		}
+	}, {
+		applicationFilter : [new Filter({
+			operator : FilterOperator.EndsWith, path : "CostCenter", value1 : "1"})],
+		controlFilter : [new Filter({
+			operator : FilterOperator.StartsWith, path : "CostCenter", value1 : "5"})],
+		expectedAst : {
+			"left": {
+				"args": [
+					{"path": "CostCenter", "type": "Reference"},
+					{"type": "Literal", "value": "5"}
+				],
+				"name": "startswith",
+				"type": "Call"
+			},
+			"op": "&&",
+			"right": {
+				"args": [{
+					"path": "CostCenter",
+					"type": "Reference"
+				}, {
+					"type": "Literal",
+					"value": "1"
+				}],
+				"name": "endswith",
+				"type": "Call"
+			},
+			"type": "Logical"
+		}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("getFilterInfo: combine control and application filters: " + i,
+				function (assert) {
+			var done = assert.async();
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+
+				if (oFixture.controlFilter) {
+					oBinding.filter(oFixture.controlFilter);
+				}
+
+				// code under test
+				assert.deepEqual(oBinding.getFilterInfo(), oFixture.expectedAst);
+
+				done();
+			}, /*aAnalyticalInfo*/ null, /*sBindingPath*/ null, /*bSkipInitialize*/ false,
+				[/*aSorters*/],
+				oFixture.applicationFilter
+			);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		// input
+		bApplySortersToGroups: false,
+		sAutoExpandMode : TreeAutoExpandMode.Sequential,
+		// output
+		bResult : false
+	}, {
+		// input
+		bApplySortersToGroups: true,
+		sAutoExpandMode : undefined,
+		// output
+		bResult : false,
+		bWarning : false // no warning as there are no sorters, sLastAutoExpandMode does not change
+	}, {
+		// input
+		bApplySortersToGroups: true,
+		sAutoExpandMode : undefined,
+		aSorter : [{}],
+		// output
+		sLastAutoExpandMode : undefined,
+		bResult : false,
+		bWarning : true
+	}, {
+		// input
+		bApplySortersToGroups: true,
+		sAutoExpandMode : TreeAutoExpandMode.Bundled,
+		// output
+		bResult : false,
+		bWarning : false // no warning as there are no sorters, sLastAutoExpandMode does not change
+	}, {
+		// input
+		bApplySortersToGroups: true,
+		sAutoExpandMode : TreeAutoExpandMode.Bundled,
+		aSorter : [{}],
+		// output
+		sLastAutoExpandMode : TreeAutoExpandMode.Bundled,
+		bResult : false,
+		bWarning : true
+	}, {
+		// input
+		bApplySortersToGroups: true,
+		sAutoExpandMode : TreeAutoExpandMode.Sequential,
+		// output
+		bResult : true // there are no sorters, so do not change sLastAutoExpandMode
+	}, {
+		// input
+		bApplySortersToGroups: true,
+		sAutoExpandMode : TreeAutoExpandMode.Sequential,
+		aSorter : [{}],
+		// output
+		sLastAutoExpandMode : TreeAutoExpandMode.Sequential,
+		bResult : true
+	}].forEach(function (oFixture) {
+		QUnit.test("_canApplySortersToGroups: " + JSON.stringify(oFixture), function (assert) {
+			var done = assert.async(),
+				that = this;
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+				var sOldLastAutoExpandMode = {/* any string different to the current mode */},
+					sExpectedLastAutoExpandMode = "sLastAutoExpandMode" in oFixture
+						? oFixture.sLastAutoExpandMode
+						: sOldLastAutoExpandMode;
+
+				oBinding.bApplySortersToGroups = oFixture.bApplySortersToGroups;
+				oBinding._autoExpandMode = oFixture.sAutoExpandMode;
+				oBinding.sLastAutoExpandMode = sOldLastAutoExpandMode;
+				oBinding.aSorter = oFixture.aSorter || [];
+
+				if (oFixture.bWarning) {
+					that.oLogMock.expects("warning")
+						.withExactArgs("Applying sorters to groups is only possible with auto"
+								+ " expand mode 'Sequential'; current mode is: "
+								+ oFixture.sAutoExpandMode,
+							sPath);
+				}
+
+				// code under test
+				assert.strictEqual(oBinding._canApplySortersToGroups(), oFixture.bResult);
+
+				assert.strictEqual(oBinding.sLastAutoExpandMode, sExpectedLastAutoExpandMode);
+
+				// code under test - no warning if called with the same auto expand mode
+				assert.strictEqual(oBinding._canApplySortersToGroups(), oFixture.bResult);
+
+				assert.strictEqual(oBinding.sLastAutoExpandMode, sExpectedLastAutoExpandMode);
+
+				done();
+			}, [], undefined, true);
+		});
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bApplySortersToGroups) {
+		QUnit.test("_addSorters: " + bApplySortersToGroups, function (assert) {
+			var done = assert.async();
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+				var oBindingMock = sinon.mock(oBinding),
+				aGroupingSorters = [{
+					sPath : "fooGrouping", bDescending : true
+				}, {
+					sPath : "barGrouping", bDescending : false
+				}],
+				oSortExpression = { addSorter : function () {} },
+				oSortExpressionMock = sinon.mock(oSortExpression),
+				oExpectation0 = oSortExpressionMock.expects("addSorter")
+					.withExactArgs("fooExternal", odata4analytics.SortOrder.Descending),
+				oExpectation1 = oSortExpressionMock.expects("addSorter")
+					.withExactArgs("barExternal", odata4analytics.SortOrder.Ascending),
+				oExpectation2 = oSortExpressionMock.expects("addSorter")
+					.withExactArgs("fooGrouping", odata4analytics.SortOrder.Descending),
+				oExpectation3 = oSortExpressionMock.expects("addSorter")
+					.withExactArgs("barGrouping", odata4analytics.SortOrder.Ascending);
+
+				oBinding.aSorter = [{
+					sPath : "fooExternal", bDescending : true
+				}, {
+					sPath : "barExternal", bDescending : false
+				}];
+				oBindingMock.expects("_canApplySortersToGroups")
+					.withExactArgs()
+					.returns(bApplySortersToGroups);
+
+				// code under test
+				oBinding._addSorters(oSortExpression, aGroupingSorters);
+
+				assert.ok(oExpectation0.calledBefore(oExpectation1),
+					"fooExternal before barExternal");
+				assert.ok(oExpectation2.calledBefore(oExpectation3),
+					"fooGrouping before barGrouping");
+				if (bApplySortersToGroups) {
+					assert.ok(oExpectation1.calledBefore(oExpectation2),
+						"barExternal before fooGrouping");
+				} else {
+					assert.ok(oExpectation3.calledBefore(oExpectation0),
+						"barGrouping before fooExternal");
+				}
+
+				oBindingMock.verify();
+				oSortExpressionMock.verify();
+				done();
+			}, [], undefined, true);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_prepareGroupMembersQueryRequest: calls _addSorters", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var oBindingMock = sinon.mock(oBinding),
+				oSortExpressionMock = sinon.mock(odata4analytics.SortExpression.prototype);
+
+			oBindingMock.expects("_addSorters")
+				.withExactArgs(sinon.match.instanceOf(odata4analytics.SortExpression),
+					[{sPath : "CostCenter", bDescending : false}]);
+			oBindingMock.expects("_canApplySortersToGroups").never();
+			oSortExpressionMock.expects("addSorter").never();
+
+			// code under test
+			oBinding._prepareGroupMembersQueryRequest(iGroupMembersQueryType, "/");
+
+			oSortExpressionMock.verify();
+			oBindingMock.verify();
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		bApplySorters : true,
+		aSorter : [],
+		bExpectGrandTotalRequest : false
+	}, {
+		bApplySorters : true,
+		aSorter : [{}],
+		bExpectGrandTotalRequest : true
+	}, {
+		bApplySorters : false,
+		aSorter : [],
+		bExpectGrandTotalRequest : false
+	}, {
+		bApplySorters : false,
+		aSorter : [{}],
+		bExpectGrandTotalRequest : false
+	}].forEach(function (oFixture) {
+		var sTitle = "_prepareGroupMembersQueryRequest: grand total request if needed"
+				+ JSON.stringify(oFixture);
+
+		QUnit.test(sTitle, function (assert) {
+			var done = assert.async();
+
+			setupAnalyticalBinding(2, {provideGrandTotals : false}, function (oBinding) {
+				var oBindingMock = sinon.mock(oBinding),
+					oQueryResultRequestSpy = sinon.spy(odata4analytics.QueryResultRequest.prototype,
+						"setMeasures");
+
+				oBinding.aSorter = oFixture.aSorter;
+				oBindingMock.expects("_addSorters").never();
+				oBindingMock.expects("_canApplySortersToGroups")
+					.withExactArgs()
+					.returns(oFixture.bApplySorters);
+
+				// code under test
+				oBinding._prepareGroupMembersQueryRequest(iGroupMembersQueryType, null);
+
+				assert.strictEqual(oQueryResultRequestSpy.callCount,
+					oFixture.bExpectGrandTotalRequest ? 1 : 0);
+				if (oFixture.bExpectGrandTotalRequest) {
+					assert.ok(oQueryResultRequestSpy.calledWithExactly(["ActualCosts"]));
+				}
+				oBindingMock.verify();
+				oQueryResultRequestSpy.restore();
+				done();
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_processGroupMembersQueryResponse: calls refresh in multi-unit case if sorters"
+			+ " have been applyed to groups", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var bApplySortersToGroups = {/* true or false*/},
+				oBindingMock = sinon.mock(oBinding),
+				oData = {
+					"__count" : "2",
+					"results":[{}, {}]
+				},
+				oRefreshSpy = sinon.spy(oBinding, "refresh"),
+				oRequestDetails = {
+					sGroupId : null,
+					oKeyIndexMapping : {
+						iIndex : 0,
+						iServiceKeyIndex : 0
+					},
+					iRequestType : iGroupMembersQueryType,
+					aSelectedUnitPropertyName : ["Currency"]
+				};
+
+			oBinding.aSorter = [{}];
+			oBinding.bApplySortersToGroups = bApplySortersToGroups;
+			oBindingMock.expects("_canApplySortersToGroups").withExactArgs().returns(true);
+			oBindingMock.expects("_getServiceKeys").never();
+			oBindingMock.expects("_warnNoSortingOfGroups").withExactArgs("binding is refreshed");
+
+			oBinding.attachRefresh(function (oEvent) {
+				assert.strictEqual(oRefreshSpy.callCount, 1);
+				assert.ok(oRefreshSpy.calledWithExactly());
+				assert.ok(oRefreshSpy.calledOn(oBinding));
+
+				oRefreshSpy.restore();
+				oBindingMock.verify();
+				done();
+			});
+
+			// code under test
+			oBinding._processGroupMembersQueryResponse(oRequestDetails, oData);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_processGroupMembersQueryResponse: no refresh in multi-unit case if sorters"
+			+ " have *not* been applyed to groups", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var oBindingMock = sinon.mock(oBinding),
+				oData = {
+					"__count" : "2",
+					"results":[{
+						ActualCosts : "1234.00",
+						Currency : "EUR",
+						__metadata : {
+							uri : "foo"
+						}
+					}, {
+						ActualCosts : "9875.00",
+						Currency : "USD",
+						__metadata : {
+							uri : "bar"
+						}
+					}]
+				},
+				oRequestDetails = {
+					aAggregationLevel : 0,
+					sGroupId : null,
+					oKeyIndexMapping : {
+						sGroupId : null,
+						iIndex : 0,
+						iServiceKeyIndex : 0
+					},
+					iRequestType : iGroupMembersQueryType,
+					aSelectedUnitPropertyName : ["Currency"]
+				};
+
+			oBinding.aSorter = [];
+			oBindingMock.expects("_canApplySortersToGroups").withExactArgs().returns(true);
+			oBindingMock.expects("refresh").withExactArgs().never();
+			oBindingMock.expects("_getServiceKeys").withExactArgs(null, -1);
+			// once in global check for group null
+			oBindingMock.expects("_warnNoSortingOfGroups").withExactArgs(undefined);
+			// and once while processing the data
+			oBindingMock.expects("_warnNoSortingOfGroups").withExactArgs();
+
+			// code under test
+			oBinding._processGroupMembersQueryResponse(oRequestDetails, oData);
+
+			oBindingMock.verify();
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_processGroupMembersQueryResponse: no refresh in non-multi-unit case if sorters"
+			+ " have been applyed to groups", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var bApplySortersToGroups = {/* true or false*/},
+				oBindingMock = sinon.mock(oBinding),
+				oData = {
+					"__count" : "1",
+					"results":[{
+						ActualCosts : "1234.00",
+						Currency : "EUR",
+						__metadata : {
+							uri : "foo"
+						}
+					}]
+				},
+				oRequestDetails = {
+					aAggregationLevel : 0,
+					sGroupId : null,
+					oKeyIndexMapping : {
+						sGroupId : null,
+						iIndex : 0,
+						iServiceKeyIndex : 0
+					},
+					iRequestType : iGroupMembersQueryType,
+					aSelectedUnitPropertyName : ["Currency"]
+				};
+
+			oBinding.bApplySortersToGroups = bApplySortersToGroups;
+			oBindingMock.expects("_canApplySortersToGroups").never();
+			oBindingMock.expects("refresh").withExactArgs().never();
+			oBindingMock.expects("_getServiceKeys").withExactArgs(null, -1);
+
+			// code under test
+			oBinding._processGroupMembersQueryResponse(oRequestDetails, oData);
+
+			assert.strictEqual(oBinding.bApplySortersToGroups, bApplySortersToGroups);
+
+			oBindingMock.verify();
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_processGroupMembersQueryResponse: _canApplySortersToGroups is not called for a"
+			+ " group different to null", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var bApplySortersToGroups = {/* true or false*/},
+				oBindingMock = sinon.mock(oBinding),
+				oData = {
+					"__count" : "2",
+					"results":[{
+						ActualCosts : "1588416",
+						CostCenter : "100-1000",
+						Currency : "EUR",
+						__metadata : {
+							uri : "foo"
+						}
+					}, {
+						ActualCosts : "1398408",
+						CostCenter : "100-1000",
+						Currency : "USD",
+						__metadata : {
+							uri : "bar"
+						}
+					}]
+				},
+				oRequestDetails = {
+					aAggregationLevel : ["CostCenter"],
+					sGroupId : "/",
+					oKeyIndexMapping : {
+						sGroupId : "/",
+						iIndex : 0,
+						iServiceKeyIndex : 0
+					},
+					iRequestType : iGroupMembersQueryType,
+					aSelectedUnitPropertyName : ["Currency"]
+				};
+
+			oBinding.bApplySortersToGroups = bApplySortersToGroups;
+			oBindingMock.expects("_canApplySortersToGroups").never();
+			oBindingMock.expects("refresh").withExactArgs().never();
+			oBindingMock.expects("_warnNoSortingOfGroups").withExactArgs();
+
+			// code under test
+			oBinding._processGroupMembersQueryResponse(oRequestDetails, oData);
+
+			assert.strictEqual(oBinding.bApplySortersToGroups, bApplySortersToGroups);
+
+			oBindingMock.verify();
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_createMultiUnitRepresentativeEntry: URI encoded multi unit entry key parts",
+			function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var oExpectedMultiUnitEntry = {
+					oEntry: {
+						"ActualCosts" : null,
+						"CostCenter" : "100/1000%2F",
+						"Currency" : "EUR",
+						"^~volatile" : true,
+						"__metadata" : {
+							"uri" :
+								",,,,,100%2F1000%252F,,EUR,,,,,,-multiple-units-not-dereferencable"
+						}
+					},
+					bIsNewEntry: true,
+					aReloadMeasurePropertyName: ["ActualCosts"]
+				},
+				oMultiUnitEntry,
+				oReferenceEntry = {
+					ActualCosts : "1588416",
+					CostCenter : "100/1000%2F",
+					Currency : "EUR",
+					__metadata : {
+						uri : "foo"
+					}
+				};
+
+			// code under test
+			oMultiUnitEntry = oBinding._createMultiUnitRepresentativeEntry("/", oReferenceEntry,
+				[], [], true);
+
+			assert.deepEqual(oMultiUnitEntry, oExpectedMultiUnitEntry);
+
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		oContext : {},
+		bRelative : false
+	}, {
+		oContext : {},
+		bRelative : true,
+		bResolved : false
+	}, {
+		oContext : {},
+		bRelative : true,
+		bResolved : true
+	}, {
+		oContext : undefined,
+		bRelative : true,
+		bResolved : false
+	}].forEach(function (oFixture) {
+		QUnit.test("setContext: " + JSON.stringify(oFixture), function (assert) {
+			var done = assert.async();
+
+			setupAnalyticalBinding(2, {}, function (oBinding, oModel) {
+				var bApplySortersToGroups = {/* true or false*/},
+					oBindingMock = sinon.mock(oBinding),
+					oDataState = {},
+					bInitial = {/*true or false*/},
+					oModelMock = sinon.mock(oModel),
+					sResolvedPath = "/~";
+
+				oBinding.bApplySortersToGroups = bApplySortersToGroups;
+				oBinding.oDataState = oDataState;
+				oBinding.iTotalSize = 42;
+				oBinding.bInitial = bInitial;
+				oBindingMock.expects("isRelative").withExactArgs().returns(oFixture.bRelative);
+				oBindingMock.expects("_abortAllPendingRequests").exactly(oFixture.bRelative ? 1 : 0)
+					.withExactArgs();
+				oModelMock.expects("resolve")
+					.withExactArgs("~", sinon.match.same(oFixture.oContext))
+					.exactly(oFixture.bRelative ? 1 : 0)
+					.returns(oFixture.bResolved ? sResolvedPath : undefined);
+				if (oFixture.bResolved) {
+					oBindingMock.expects("resetData").withExactArgs();
+					oBindingMock.expects("_initialize").withExactArgs();
+					oBindingMock.expects("_fireChange")
+						.withExactArgs({reason : ChangeReason.Context});
+				}
+
+				assert.strictEqual(oBinding.oContext, null, "no context set");
+
+				// code under test
+				oBinding.setContext(oFixture.oContext);
+
+				assert.strictEqual(oBinding.oContext, oFixture.oContext, "new context set");
+				assert.strictEqual(oBinding.oDataState, oFixture.bRelative ? null : oDataState);
+				assert.strictEqual(oBinding.bApplySortersToGroups,
+					oFixture.bRelative ? true : bApplySortersToGroups);
+				assert.strictEqual(oBinding.iTotalSize, oFixture.bRelative ? -1 : 42);
+				assert.strictEqual(oBinding.bInitial,
+					oFixture.bRelative && !oFixture.bResolved ? true : bInitial);
+
+				// ********** set same context again - no changes and no additional function calls
+				oBinding.bApplySortersToGroups = bApplySortersToGroups;
+				oBinding.oDataState = oDataState;
+
+				// code under test
+				oBinding.setContext(oFixture.oContext);
+
+				assert.strictEqual(oBinding.bApplySortersToGroups, bApplySortersToGroups,
+					"bApplySortersToGroups not reset if context is the same as already set");
+				assert.strictEqual(oBinding.oDataState, oDataState,
+					"oDataState not reset if context is the same as already set");
+				assert.strictEqual(oBinding.oContext, oFixture.oContext, "context not changed");
+
+				oBindingMock.verify();
+				oModelMock.verify();
+				done();
+			}, [], "~");
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		bApplySortersToGroups : false
+	}, {
+		bApplySortersToGroups : true,
+		sWarning : "Detected a multi-unit case, so sorting is only possible on leaves"
+	}, {
+		bApplySortersToGroups : false,
+		sDetails : "foo"
+	}, {
+		bApplySortersToGroups : true,
+		sDetails : "foo",
+		sWarning : "Detected a multi-unit case, so sorting is only possible on leaves; foo"
+	}].forEach(function (oFixture) {
+		QUnit.test("_warnNoSortingOfGroups: " + JSON.stringify(oFixture), function (assert) {
+			var done = assert.async(),
+			that = this;
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+				oBinding.bApplySortersToGroups = oFixture.bApplySortersToGroups;
+				that.oLogMock.expects("warning")
+					.withExactArgs(oFixture.sWarning, sPath)
+					.exactly("sWarning" in oFixture ? 1 : 0);
+
+				// code under test
+				oBinding._warnNoSortingOfGroups(oFixture.sDetails);
+
+				assert.strictEqual(oBinding.bApplySortersToGroups, false);
+
+				done();
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_calculateRequiredGroupSection: no data", function (assert) {
+		var that = this;
+
+		return setupAnalyticalBinding().then(function (oBinding) {
+
+			that.mock(oBinding).expects("_getKeys").atLeast(0).withExactArgs("/")
+				.returns();
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 0, 101, 0),
+				{startIndex : 0, length : 101});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 50, 101, 50),
+				{startIndex : 0, length : 50 + 101 + 50});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 42, 101, 50),
+				{startIndex : 0, length : 42 + 101 + 50});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_calculateRequiredGroupSection: gap ]118, 148[", function (assert) {
+		var that = this;
+
+		return setupAnalyticalBinding().then(function (oBinding) {
+
+			that.mock(oBinding).expects("_getKeys").atLeast(0).withExactArgs("/")
+				.returns(function (iIndex) {
+					return iIndex <= 118 || iIndex >= 148 && iIndex < 264;
+				});
+			oBinding.mFinalLength["/"] = true;
+			oBinding.mLength["/"] = 264;
+
+			// code under test
+			assert.strictEqual(
+				oBinding._calculateRequiredGroupSection("/", 0, 101, 0).length,
+				0); // length === 0, don't care about startIndex
+
+			// code under test
+			assert.strictEqual(
+				oBinding._calculateRequiredGroupSection("/", 10, 101, 0).length,
+				0); // length === 0, don't care about startIndex
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 119, 29, 0),
+				{startIndex : 119, length : 29});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 100, 29, 0),
+				{startIndex : 119, length : 10});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 0, 264, 0),
+				{startIndex : 119, length : 148 - 119});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 0, 101, 100),
+				{startIndex : 119, length : 148 - 119});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 150, 1, 50),
+				{startIndex : 119, length : 148 - 119});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 150, 100, 100),
+				{startIndex : 119, length : 148 - 119});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_calculateRequiredGroupSection: gap ]118, 264[", function (assert) {
+		var that = this;
+
+		return setupAnalyticalBinding().then(function (oBinding) {
+
+			that.mock(oBinding).expects("_getKeys").atLeast(0).withExactArgs("/")
+				.returns(function (iIndex) {
+					return iIndex <= 118;
+				});
+			oBinding.mFinalLength["/"] = true;
+			oBinding.mLength["/"] = 264;
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 245, 19, 100),
+				{startIndex : 145, length : 264 - 145});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_calculateRequiredGroupSection: gaps [30, 40] and [60, 70]", function (assert) {
+		var that = this;
+
+		return setupAnalyticalBinding().then(function (oBinding) {
+
+			that.mock(oBinding).expects("_getKeys").atLeast(0).withExactArgs("/")
+				.returns(function (iIndex) {
+					return iIndex < 30 || iIndex > 40 && iIndex < 60 || iIndex > 70 && iIndex < 100;
+				});
+			oBinding.mFinalLength["/"] = true;
+			oBinding.mLength["/"] = 100;
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 20, 70, 0),
+				{startIndex : 30, length : 71 - 30});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 42, 15, 10),
+				{startIndex : 32, length : 42 + 15 + 10 - 32});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 34, 2, 3),
+				{startIndex : 34 - 3, length : 3 + 2 + 3});
+		});
+	});
+
+	//*********************************************************************************************
+	// BCP: 1980533509
+	QUnit.test("_prepareGroupMembersAutoExpansionQueryRequest/prepareLevelMembersQueryRequest:"
+			+ " Allow expansion of all dimensions", function (assert) {
+
+		return setupAnalyticalBinding(2, {
+					autoExpandMode : "Bundled",
+					numberOfExpandedLevels : 2,
+					useBatchRequests : true,
+					sumOnTop : false
+				},
+				/*fnODataV2Callback*/null,
+				[oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal]
+			).then(function (oBinding) {
+				var oGroupExpansionFirstMissingMember = {
+						groupId_Missing : "/",
+						startIndex_Missing : 0,
+						length_Missing : 35
+					},
+					oResult;
+
+				// code under test
+				oResult = oBinding._prepareGroupMembersAutoExpansionQueryRequest(/*iRequestType*/ 3,
+					/*sGroupId*/ "/", oGroupExpansionFirstMissingMember, /*iLength*/ 35,
+					/*iNumberOfExpandedLevels*/ 2);
+
+				assert.strictEqual(oResult.iRequestType, 3);
+				assert.strictEqual(oResult.aRequestId.length, 3);
+				assert.strictEqual(oResult.sGroupId, "/");
+				assert.strictEqual(oResult.iLength, 35);
+				assert.strictEqual(oResult.aGroupMembersAutoExpansionRequestDetails.length, 3);
+				assert.deepEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[0].aAggregationLevel,
+					["CostCenter"]);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[0].iLength, 12);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[0].iLevel, 1);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[0].iRequestType, 4);
+				assert.deepEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[0].aSelectedUnitPropertyName,
+					["Currency"]);
+
+				assert.deepEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[1].aAggregationLevel,
+					["CostCenter", "Currency"]);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[1].iLength, 17);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[1].iLevel, 2);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[1].iRequestType, 4);
+				assert.deepEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[1].aSelectedUnitPropertyName,
+					[]);
+
+				assert.deepEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[2].aAggregationLevel,
+					["CostCenter", "Currency"]);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[2].iLength, 32);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[2].iLevel, 3);
+				assert.strictEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[2].iRequestType, 4);
+				assert.deepEqual(
+					oResult.aGroupMembersAutoExpansionRequestDetails[2].aSelectedUnitPropertyName,
+					[]);
+			});
 	});
 });

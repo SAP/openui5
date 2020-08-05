@@ -1,0 +1,100 @@
+[
+	{
+		"id": "id_1_renameField",
+		"changeType": "renameField",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"texts": {
+			"fieldLabel": {
+				"value": "Doc Number",
+				"type": "XFLD"
+			}
+		},
+		"creation": "2019-12-18T12:22:31.863Z"
+	},
+	{
+		"id": "id_2_combineFields",
+		"changeType": "combineFields",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"combineFieldSelectors": [
+				{
+					"id": "idMain1--GeneralLedgerDocument.Name",
+					"idIsLocal": true
+				},
+				{
+					"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+					"idIsLocal": true
+				}
+			],
+			"sourceSelector": {
+				"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+				"idIsLocal": true
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"texts": {
+			"fieldLabel0": {
+				"value": "Document Number",
+				"type": "XFLD"
+			},
+			"fieldLabel1": {
+				"value": "Code",
+				"type": "XFLD"
+			}
+		},
+		"creation": "2019-12-18T12:22:31.864Z"
+	},
+	{
+		"id": "id_3_renameField",
+		"changeType": "renameField",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"texts": {
+			"fieldLabel": {
+				"value": "Mix Data",
+				"type": "XFLD"
+			}
+		},
+		"creation": "2019-12-18T12:22:31.865Z"
+	},
+	{
+		"id": "id_4_splitField",
+		"changeType": "splitField",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"newElementIds": [
+				"Comp1---idMain1--id-1576671746128-48",
+				"Comp1---idMain1--id-1576671746128-49"
+			],
+			"sourceSelector": {
+				"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+				"idIsLocal": true
+			},
+			"parentSelector": {
+				"id": "idMain1--GeneralLedgerDocument",
+				"idIsLocal": true
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-18T12:22:31.866Z"
+	}
+]

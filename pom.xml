@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>reactor</artifactId>
-	<version>1.55.0-SNAPSHOT</version>
+	<version>1.82.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 
@@ -46,16 +46,22 @@
 		<module>src/sap.ui.documentation</module>
 		<module>src/sap.ui.dt</module>
 		<module>src/sap.tnt</module>
-		<module>src/sap.ui.demokit</module>
 		<module>src/sap.uxap</module>
 		<module>src/sap.ui.fl</module>
+		<module>src/sap.ui.mdc</module>
 		<module>src/sap.ui.rta</module>
 		<module>src/sap.ui.codeeditor</module>
 		<module>src/sap.ui.support</module>
+		<module>src/sap.ui.integration</module>
+		<module>src/sap.ui.testrecorder</module>
 
 		<!-- theme libraries -->
 		<module>src/themelib_sap_bluecrystal</module>
 		<module>src/themelib_sap_belize</module>
+		<module>src/themelib_sap_fiori_3</module>
+
+		<!-- JSDoc template -->
+		<module>lib/jsdoc</module>
 
 	</modules>
 
@@ -76,8 +82,8 @@
 
 		<!-- filtering properties -->
 		<version>${project.version}</version>
-		<copyright><![CDATA[UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+		<copyright><![CDATA[OpenUI5
+ * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
 ]]></copyright>
 		<buildtime>${maven.build.timestamp}</buildtime>
@@ -85,6 +91,13 @@
 
 		<!-- JSLint/ESLint report path -->
 		<sonar.javascript.jslint.reportPath>target/jslint/jslint.xml</sonar.javascript.jslint.reportPath>
+
+		<!-- Maven build phase in which npm-sources should be packaged     -->
+		<!-- Set to 'package' to enable packaging for a project in general -->
+		<npm.package.phase>never</npm.package.phase>
+
+		<!-- internal properties, do not modify -->
+		<effective.npm.package.phase>${npm.package.phase}</effective.npm.package.phase>
 
  	</properties>
 
@@ -110,15 +123,57 @@
 						<extension>gif</extension>
 						<extension>png</extension>
 						<extension>ico</extension>
+						<extension>swf</extension>
+						<extension>wav</extension>
 						<extension>properties</extension><!-- excluded as those files don't use UTF-8 encoding and as no filtering is needed -->
 						<extension>woff</extension>
 						<extension>woff2</extension>
+						<extension>hpb</extension><!-- hyphenation pattern binary (introduced by OSS component 'hyphenopoly') -->
+						<extension>wasm</extension><!-- web assembly, compiled binary -->
 					</nonFilteredFileExtensions>
+
+					<!--
+						With the default delimiter settings, filtering fails for lines with an odd number of delimiter chars
+						like in
+
+						  @version @version@
+
+						We therefore disable the defaults and use only ${*}.
+
+					  -->
+					<useDefaultDelimiters>false</useDefaultDelimiters>
 					<delimiters>
 						<delimiter>${*}</delimiter>
 					</delimiters>
-					<useDefaultDelimiters>false</useDefaultDelimiters>
+
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<executions>
+					<execution>
+						<id>npm-resources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<!-- we use the 'phase' as a substitute for the missing 'skip' property of the jar-plugin           -->
+						<!-- for non-library projects and for all builds other than the nightly build, it is set to 'never' -->
+						<phase>${effective.npm.package.phase}</phase>
+						<configuration>
+							<classesDirectory>${project.basedir}</classesDirectory>
+							<classifier>npm-resources</classifier>
+							<includes>
+								<include>package.json</include>
+								<include>ui5.yaml</include>
+								<include>src/**/*</include>
+								<include>test/**/*</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 		</plugins>
@@ -168,75 +223,6 @@
 								</configuration>
 							</execution>
 						</executions>
-					</plugin>
-
-				</plugins>
-
-			</build>
-
-		</profile>
-
-		<!-- internal build related plugins & configuration -->
-		<profile>
-
-			<id>internal.build</id>
-
-			<properties>
-				<sap.ui5.translationArea>073003</sap.ui5.translationArea>
-				<sap.ui5.translationDomain>BC</sap.ui5.translationDomain>
-				<sap.ui5.translationDeveloper></sap.ui5.translationDeveloper>
-				<sap.ui5.translationCollection>SAPUI5 UI library</sap.ui5.translationCollection>
-				<sap.ui5.translationLanguages></sap.ui5.translationLanguages>
-			</properties>
-
-			<build>
-
-				<pluginManagement>
-					<plugins>
-
-						<!-- legacy migration helper (for internal use) -->
-						<plugin>
-							<groupId>com.sap.ui5.tools.build</groupId>
-							<artifactId>ui5builder-maven-plugin</artifactId>
-							<version>1.55.0-SNAPSHOT</version>
-						</plugin>
-
-						<!-- translation support (for internal use) -->
-						<plugin>
-							<groupId>com.sap.ldi</groupId>
-							<artifactId>translation-plugin</artifactId>
-							<version>0.21.0</version>
-							<configuration>
-								<translationArea>${sap.ui5.translationArea}</translationArea>
-								<translationDomain>${sap.ui5.translationDomain}</translationDomain>
-								<translationDeveloper>${sap.ui5.translationDeveloper}</translationDeveloper>
-								<translationCollection>${sap.ui5.translationCollection}</translationCollection>
-								<languages>${sap.ui5.translationLanguages}</languages>
-								<!-- only consider the sources -->
-								<useDefaultTranslationResourceDirs>false</useDefaultTranslationResourceDirs>
-								<translationResources>
-									<translationResource>src</translationResource>
-								</translationResources>
-								<!-- do not change developer English -->
-								<!-- skipUpdateDeveloperEnglish>true</skipUpdateDeveloperEnglish -->
-							</configuration>
-						</plugin>
-
-					</plugins>
-				</pluginManagement>
-
-				<plugins>
-
-					<!-- translation support (specify non-existent path to ignore it) -->
-					<plugin>
-						<groupId>com.sap.ldi</groupId>
-						<artifactId>translation-plugin</artifactId>
-						<inherited>false</inherited>
-						<configuration>
-							<translationResources>
-								<translationResource>nonexistentpath</translationResource>
-							</translationResources>
-						</configuration>
 					</plugin>
 
 				</plugins>
@@ -329,6 +315,12 @@
 
 			<id>nightly.build</id>
 
+			<activation>
+				<property>
+					<name>ldi.releaseBuild</name>
+				</property>
+			</activation>
+
 			<properties>
 
 				<!-- validate all files for the nightly build (attention: profile nightly.build must stay after eslint.build!) -->
@@ -339,7 +331,24 @@
 		</profile>
 
 		<profile>
+			<id>fast.voter.build</id>
+			<properties>
+				<!-- fast.voter.build profile does not have to generate the npm-resources package
+					 (has to be kept in sync with sapui5.runtime poms)                    -->
+				<effective.npm.package.phase>never</effective.npm.package.phase>
+			</properties>
+		</profile>
 
+		<profile>
+			<id>documentation.build</id>
+			<properties>
+				<!-- documentation.build profile does not have to generate the npm-resources package
+					 (has to be kept in sync with sapui5.runtime poms)                    -->
+				<effective.npm.package.phase>never</effective.npm.package.phase>
+			</properties>
+		</profile>
+
+		<profile>
 			<id>testsuite.build</id>
 
 			<activation>

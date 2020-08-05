@@ -4,16 +4,25 @@
 
 // Provides control sap.ui.unified.ShellOverlay.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
 	'./library',
 	'sap/ui/core/theming/Parameters',
 	'./ShellOverlayRenderer',
-	'jquery.sap.script',
-	'jquery.sap.dom'],
-	function(jQuery, Device, Control, Popup, library, Parameters, ShellOverlayRenderer/* , jQueryScript, jQueryDom */) {
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/dom/jquery/rect', // jQuery Plugin "rect"
+	'sap/ui/dom/jquery/Selectors' // jQuery custom selectors ":sapTabbable"
+],
+	function(
+		Device,
+		Control,
+		Popup,
+		library,
+		Parameters,
+		ShellOverlayRenderer,
+		jQuery
+	) {
 	"use strict";
 
 
@@ -99,14 +108,14 @@ sap.ui.define([
 		this._opening = false;
 
 		if (this._getAnimActive()) {
-			jQuery.sap.delayedCall(50, this, function(){
-				jQuery.sap.byId("sap-ui-blocklayer-popup").toggleClass("sapUiUfdShellOvrlyBlyTp", false);
-			});
+			setTimeout(function(){
+				jQuery(document.getElementById("sap-ui-blocklayer-popup")).toggleClass("sapUiUfdShellOvrlyBlyTp", false);
+			}, 50);
 		}
 
-		jQuery.sap.delayedCall(this._getAnimDuration(true), this, function(){
+		setTimeout(function(){
 			this.$().toggleClass("sapUiUfdShellOvrlyOpening", false);
-		});
+		}.bind(this), this._getAnimDuration(true));
 	};
 
 	/**
@@ -123,19 +132,19 @@ sap.ui.define([
 
 		this._setSearchWidth();
 
-		jQuery.sap.delayedCall(Math.max(this._getAnimDuration(false) - this._getBLAnimDuration(), 0), this, function(){
-			var $Bl = jQuery.sap.byId("sap-ui-blocklayer-popup");
+		setTimeout(function(){
+			var $Bl = jQuery(document.getElementById("sap-ui-blocklayer-popup"));
 			if (Popup.blStack.length == 1 && this._getAnimActive() && $Bl.hasClass("sapUiUfdShellOvrlyBly")) {
 				$Bl.toggleClass("sapUiUfdShellOvrlyBlyTp", true);
 			}
-		});
+		}.bind(this), Math.max(this._getAnimDuration(false) - this._getBLAnimDuration(), 0));
 
-		jQuery.sap.delayedCall(this._getAnimDuration(false), this, function(){
+		setTimeout(function(){
 			this._getPopup().close(0);
 			this.$().remove();
 			this._forceShellHeaderVisible();
 			this.fireClosed();
-		});
+		}.bind(this), this._getAnimDuration(false));
 	};
 
 	ShellOverlay.prototype.setShell = function(vShell){
@@ -225,10 +234,10 @@ sap.ui.define([
 			this._setSearchWidth();
 		}
 
-		jQuery.sap.delayedCall(10, this, function(){
+		setTimeout(function(){
 			this.$().toggleClass("sapUiUfdShellOvrlyCntntHidden", false);
 			this.$("search").css("width", "");
-		});
+		}.bind(this), 10);
 	};
 
 	ShellOverlay.prototype.onclick = function(oEvent){
@@ -263,7 +272,7 @@ sap.ui.define([
 		}
 
 		if (oDomRef) {
-			jQuery.sap.focus(oDomRef);
+			oDomRef.focus();
 		}
 	};
 
@@ -271,7 +280,7 @@ sap.ui.define([
 	/**** Private Helpers ****/
 
 	ShellOverlay.prototype._getAnimDurationThemeParam = function(sParam, bClearIfNotActive){
-		var val = parseInt(Parameters.get(sParam), 10);
+		var val = parseInt(Parameters.get(sParam));
 		if (!this._getAnimActive() && bClearIfNotActive) {
 			val = 0;
 		}

@@ -1,0 +1,222 @@
+<mvc:View
+	controllerName="sap.m.sample.IconTabBarTabDensityMode.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form">
+	<Panel>
+		<f:SimpleForm
+			editable="true"
+			labelSpanXL="2"
+			labelSpanL="2"
+			labelSpanM="3"
+			labelSpanS="5"
+			layout="ResponsiveGridLayout">
+			<Label text="Tab Density Mode" />
+			<RadioButtonGroup columns="3" select=".onTabDensityModeSelect">
+				<RadioButton text="Cozy" />
+				<RadioButton text="Compact" />
+				<RadioButton text="Inherit" />
+			</RadioButtonGroup>
+		</f:SimpleForm>
+
+		<IconTabBar
+			id="idIconTabBar0"
+			enableTabReordering="true"
+			class="sapUiResponsiveContentPadding" />
+
+		<IconTabBar id="idIconTabBar3" class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter key="info" text="Info">
+					<Text text="Info content goes here ..." />
+				</IconTabFilter>
+				<IconTabFilter key="attachments" text="Attachments">
+					<Text text="Attachments go here ..." />
+				</IconTabFilter>
+				<IconTabFilter key="notes" text="Notes">
+					<Text text="Notes go here ..." />
+				</IconTabFilter>
+				<IconTabFilter key="people" text="People">
+					<Text text="People content goes here ..." />
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+
+		<IconTabBar
+			id="idIconTabBar6"
+			headerMode="Inline"
+			class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter
+					key="info"
+					text="Info"
+					count="3">
+					<Text text="Info content goes here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="attachments"
+					text="Attachments"
+					count="4321">
+					<Text text="Attachments go here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="notes"
+					text="Notes"
+					count="333">
+					<Text text="Notes go here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="people"
+					text="People"
+					count="34">
+					<Text text="People content goes here ..." />
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+
+		<IconTabBar id="idIconTabBar7" class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter
+					key="info"
+					text="Info"
+					count="3">
+					<Text text="Info content goes here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="attachments"
+					text="Attachments"
+					count="4321">
+					<Text text="Attachments go here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="notes"
+					text="Notes"
+					count="333">
+					<Text text="Notes go here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="people"
+					text="People"
+					count="34">
+					<Text text="People content goes here ..." />
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+
+		<IconTabBar id="idIconTabBar4" class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter key="info" icon="sap-icon://hint">
+					<Text text="Info content goes here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="attachments"
+					icon="sap-icon://attachment"
+					count="3">
+					<Text text="Attachments go here ..." />
+				</IconTabFilter>
+				<IconTabFilter
+					key="notes"
+					icon="sap-icon://notes"
+					count="12">
+					<Text text="Notes go here ..." />
+				</IconTabFilter>
+				<IconTabFilter key="people" icon="sap-icon://group">
+					<Text text="People content goes here ..." />
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+		<IconTabBar id="idIconTabBar1" class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter
+					key="info"
+					icon="sap-icon://hint"
+					iconColor="Critical">
+					<Text text="Info content goes here ..." />
+				</IconTabFilter>
+				<IconTabSeparator icon="" />
+				<IconTabFilter
+					key="attachments"
+					icon="sap-icon://attachment"
+					iconColor="Neutral"
+					count="3">
+					<Text text="Attachments go here ..." />
+				</IconTabFilter>
+				<IconTabSeparator icon="sap-icon://vertical-grip" />
+				<IconTabFilter
+					key="notes"
+					icon="sap-icon://notes"
+					iconColor="Positive"
+					count="12">
+					<Text text="Notes go here ..." />
+				</IconTabFilter>
+				<IconTabSeparator icon="sap-icon://process" />
+				<IconTabFilter
+					key="people"
+					icon="sap-icon://group"
+					iconColor="Negative">
+					<Text text="People content goes here ..." />
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+
+		<IconTabBar id="idIconTabBar2" class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter
+					icon="sap-icon://begin"
+					iconColor="Positive"
+					design="Horizontal"
+					count="53 of 123"
+					text="Confirm Ok"
+					key="Ok" >
+					<Text text="Filtered items goes here ..." />
+				</IconTabFilter>
+				<IconTabSeparator icon="sap-icon://open-command-field" />
+				<IconTabFilter
+					icon="sap-icon://compare"
+					iconColor="Critical"
+					design="Horizontal"
+					count="51 of 123"
+					text="Check Heavys"
+					key="Heavy" />
+				<IconTabSeparator icon="sap-icon://open-command-field" />
+				<IconTabFilter
+					icon="sap-icon://inventory"
+					iconColor="Negative"
+					design="Horizontal"
+					count="19 of 123"
+					text="Claim Overweights"
+					key="Overweight" />
+			</items>
+		</IconTabBar>
+
+		<IconTabBar id="idIconTabBar5" class="sapUiResponsiveContentPadding">
+			<items>
+				<IconTabFilter
+					showAll="true"
+					count="123"
+					text="Products"
+					key="All" >
+					<Text text="Filtered items goes here ..." />
+				</IconTabFilter>
+				<IconTabSeparator />
+				<IconTabFilter
+					icon="sap-icon://begin"
+					iconColor="Positive"
+					count="53"
+					text="Ok"
+					key="Ok" />
+				<IconTabFilter
+					icon="sap-icon://compare"
+					iconColor="Critical"
+					count="51"
+					text="Heavy"
+					key="Heavy" />
+				<IconTabFilter
+					icon="sap-icon://inventory"
+					iconColor="Negative"
+					count="19"
+					text="Overweight"
+					key="Overweight" />
+			</items>
+		</IconTabBar>
+	</Panel>
+</mvc:View>

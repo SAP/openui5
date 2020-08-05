@@ -33,29 +33,33 @@ sap.ui.define([
 		Then.onTheTutorialPage.theTableShouldStartWith("Alfred");
 	});
 
-	opaTest("Should be able to start adding a user", function (Given, When, Then) {
+	opaTest("Should be able to start adding users", function (Given, When, Then) {
 		//Actions
 		When.onTheTutorialPage.iPressOnAdd().
 			and.iEnterSomeData("a");
+		When.onTheTutorialPage.iPressOnAdd().
+			and.iEnterSomeData("b");
 		// Assertions
 		Then.onTheTutorialPage.thePageFooterShouldBeVisible(true).
 			and.theTableToolbarItemsShouldBeEnabled(false).
-			and.theTableShouldShowTotalUsers(iTotalUsers + 1);
+			and.theTableShouldShowTotalUsers(iTotalUsers + 2);
 	});
 
-	opaTest("Should be able to save the new user", function (Given, When, Then) {
+	opaTest("Should be able to save the new users", function (Given, When, Then) {
 		//Actions
 		When.onTheTutorialPage.iPressOnSave();
 		// Assertions
-		Then.onTheTutorialPage.theTableShouldStartWith("a").
-			and.theTableShouldShowTotalUsers(iTotalUsers + 1).
+		Then.onTheTutorialPage.theTableShouldStartWith("b").
+			and.theTableShouldShowTotalUsers(iTotalUsers + 2).
 			and.theTableToolbarItemsShouldBeEnabled(true).
 			and.thePageFooterShouldBeVisible(false);
 	});
 
-	opaTest("Should be able to delete the new user", function (Given, When, Then) {
+	opaTest("Should be able to delete the new users", function (Given, When, Then) {
 		//Actions
 		When.onTheTutorialPage.iSelectUser("a").
+			and.iPressOnDelete();
+		When.onTheTutorialPage.iSelectUser("b").
 			and.iPressOnDelete();
 		// Assertions
 		Then.onTheTutorialPage.theMessageToastShouldShow("deletionSuccessMessage").
@@ -95,6 +99,6 @@ sap.ui.define([
 		Then.onTheTutorialPage.theTableToolbarItemsShouldBeEnabled(true).
 			and.thePageFooterShouldBeVisible(false);
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 });

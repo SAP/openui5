@@ -1,0 +1,29 @@
+{
+	"error" : {
+		"code" : "SY/530",
+		"message" : {
+			"lang" : "en",
+			"value" : "No key table found for content-id-reference 'id-1591698780557-31'"
+		},
+		"innererror" : {
+			"application" : {
+				"component_id" : "",
+				"service_namespace" : "/SAP/",
+				"service_id" : "ZUI5_GWSAMPLE_BASIC",
+				"service_version" : "0001"
+			},
+			"transactionid" : "B5D8524E18950210E005ED6EDB56062B",
+			"timestamp" : "",
+			"errordetails" : [
+				{
+					"code" : "/IWBEP/CX_MGW_TECH_EXCEPTION",
+					"message" : "No key table found for content-id-reference 'id-1591698780557-31'",
+					"propertyref" : "",
+					"severity" : "error",
+					"transition" : false,
+					"target" : ""
+				}
+			]
+		}
+	}
+}

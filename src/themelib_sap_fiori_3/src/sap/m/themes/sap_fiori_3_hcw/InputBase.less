@@ -1,0 +1,111 @@
+/* ================================ */
+/* CSS for control sap.m/InputBase  */
+/* Quartz High Contrast White theme */
+/* ================================ */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_m_InputBase_InnerMinWidth: 2.75rem;
+@_sap_m_InputBase_InnerPadding: 0 0.625rem;
+@_sap_m_InputBase_Height: 2.25rem;
+@_sap_m_InputBase_DisabledOpacity: @sapUiContentDisabledOpacity;
+@_sap_m_InputBase_IconLineHeight: 2.125rem;
+@_sap_m_InputBase_IconWidth: 2.125rem;
+@_sap_m_InputBase_IconMinWidth: 2.125rem;
+
+.sapMInputBaseInner {
+	color: @sapUiFieldTextColor;
+}
+
+.sapMInputBaseContentWrapper {
+	border: 1px solid @sapUiFieldBorderColor;
+	background: @sapUiFieldBackground;
+	border-radius: @sapUiFieldBorderCornerRadius;
+
+	&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
+
+		/* calculated line-height excluding the top and bottom borders */
+		.sapMInputBaseIcon {
+			line-height: 2rem;
+		}
+
+		.sapMTokenizer .sapMToken {
+			margin-top: 0.1875rem;
+		}
+	}
+}
+
+.sapMInputBaseIconContainer .sapMInputBaseIcon {
+	box-sizing: border-box;
+	color: @sapUiContentIconColor;
+
+	&:hover {
+		background: @sapUiButtonLiteHoverBackground;
+		border-left: 1px solid @sapUiListSelectionBorderColor;
+	}
+
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+		color: @sapUiButtonActiveTextColor;
+		border-left: 1px solid @sapUiListSelectionBorderColor;
+	}
+}
+
+.sapMInputBaseIconPressed .sapMInputBaseIcon {
+	background: @sapUiButtonSelectedBackground;
+	border-left: 1px solid @sapUiListSelectionBorderColor;
+}
+
+.sapMInputBaseDisabledWrapper .sapMInputBaseIcon {
+	color: @sapUiContentIconColor;
+
+	&:hover {
+		background: transparent;
+	}
+}
+
+.sapMInputBaseContentWrapperWarning {
+	background: @sapUiFieldWarningBackground;
+	border: 2 * @sapUiFieldBorderWidth dashed @sapUiFieldWarningColor;
+}
+
+.sapMInputBaseContentWrapperSuccess {
+	background: @sapUiFieldSuccessBackground;
+	border-color: @sapUiFieldSuccessColor;
+}
+
+.sapMILI-CTX .sapMInputBaseContentWrapperError,
+.sapMInputBaseContentWrapperError {
+	background: @sapUiFieldInvalidBackground;
+	border: 2 * @sapUiFieldBorderWidth dashed @sapUiFieldInvalidColor;
+}
+
+.sapMInputBaseContentWrapperInformation {
+	background: @sapUiFieldInformationBackground;
+	border: @sapUiFieldBorderWidth dashed @sapUiFieldInformationColor;
+}
+
+.sapMInputBaseContentWrapperWarning, .sapMInputBaseContentWrapperError {
+	.sapMInputBaseInner {
+		font-style: italic;
+		font-weight: bold;
+	}
+}
+
+.sapMInputBaseInner::-webkit-input-placeholder {
+	font-style: normal;
+}
+
+.sapMInputBaseInner::-moz-placeholder {
+	font-style: normal;
+}
+
+.sapMInputBaseInner:-ms-input-placeholder {
+	font-style: normal;
+}
+
+.sapUiSizeCompact .sapMInputBaseContentWrapper.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) .sapMInputBaseIcon {
+	line-height: 1.375rem;
+}

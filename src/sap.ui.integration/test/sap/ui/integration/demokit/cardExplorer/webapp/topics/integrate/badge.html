@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../../css/topic.css">
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
+
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+</head>
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Overview</h1>
+			<div class="messageStripWarning">
+				This feature is experimental. The API may change.
+			</div>
+			<p>
+				Badges can be used to display very short and important
+				information, that attracts the user attention.
+				<br />
+				<br />
+				Typical usages in the case of cards are:
+				<ul>
+					<li>The card is new in the user's home page.</li>
+					<li>The card is added to the home page by the user.</li>
+					<li>The card is added to the user's home page by an admin or key user.</li>
+				</ul>
+				<br />
+				<img src="../images/Badge.PNG" height="329" width="380" alt="Badge"/>
+			</p>
+			<h2 id="usage">When to Use</h2>
+			<p>
+				Use a badge to display if:
+				<ul>
+					<li>The card is new in the user's home page.</li>
+					<li>The card is added to the user's home page by an admin, key user or the user himself.</li>
+				</ul>
+				Do not use a badge if:
+				<ul>
+					<li>You want to display the message text 'temporarily unavailable'. Use the disabled state of the card instead.</li>
+					<li>The card should not be visible or used by the user. Don’t display the card in the home page in this case.</li>
+					<li>To display a message to the user.</li>
+					<li>You want to display a counter. Use the numeric header of the card instead.</li>
+				</ul>
+			</p>
+			<h2 id="behavior">Behavior and Interaction</h2>
+			<p>
+				The badge automatically disappears when the
+				user activates (e.g. clicks, taps) the card,
+				or when the focus is on the card (or the card's content)
+				for more than 3 seconds.
+			</p>
+			<h2 id="example">Example</h2>
+			To display a Badge in a Card, you need to create a BadgeCustomData
+			with a specific text and add it to the "customData" aggregation of the Card.
+			<br />
+			<br />
+			For more information, see <a data-demokit-href="/api/sap.m.BadgeCustomData" target="_blank"><code>BadgeCustomData</code></a>
+			<p>
+				An example with a Card with a Badge would look like:
+<pre class="prettyprint lang-xml">
+&lt;mvc:View xmlns="sap.m" xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card id="card1" manifest="./manifest.json"&gt;
+		&lt;w:customData&gt;
+			&lt;BadgeCustomData value="New Card" /&gt;
+		&lt;/w:customData&gt;
+	&lt;/w:Card&gt;
+&lt;/mvc:View&gt;</pre>
+			<br />
+			<br />
+			A typical usage using a data binding would look like:
+			<br />
+			<br />
+			Controller:
+			<pre class="prettyprint lang-js">
+var model = new sap.ui.model.json.JSONModel();
+model.setData({
+	badgeText: "New"
+});
+this.getView().setModel(model);
+</pre>
+
+			XML View:
+			<pre class="prettyprint lang-xml">
+&lt;mvc:View xmlns="sap.m" xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card id="card1" manifest="./manifest.json"&gt;
+		&lt;w:customData&gt;
+			&lt;BadgeCustomData value="{/badgeText}" /&gt;
+		&lt;/w:customData&gt;
+	&lt;/w:Card&gt;
+&lt;/mvc:Viewd&gt;</pre>
+
+			<a class="try-button" href="../../index.html#/explore/badge" target="_parent">Try it Out</a>
+			</p>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#usage">Usage</a></div>
+			<div><a href="#behavior">Behavior and Interaction</a></div>
+			<div><a href="#example">Example</a></div>
+		</div>
+	</div>
+	<script src="../../scripts/topic.js"></script>
+</body>
+</html>

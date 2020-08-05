@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta charset="UTF-8">
+
+    <title>QUnit: XMLComposite - sap.ui.mdc</title>
+
+    <base href="../../../../../../">
+	<script src="test-resources/sap/ui/mdc/shared-config.js"></script>
+    <script id="sap-ui-bootstrap"
+            src="resources/sap-ui-core.js"
+            data-sap-ui-noConflict="true"
+            data-sap-ui-compatversion="edge"
+            data-sap-ui-libs="sap.m"
+            data-sap-ui-async="true"
+            data-sap-ui-bindingSyntax="complex">
+    </script>
+
+    <link rel="stylesheet"
+          type="text/css"
+          href="resources/sap/ui/thirdparty/qunit-2.css"/>
+
+    <script src="resources/sap/ui/thirdparty/qunit-2.js"></script>
+    <script src="resources/sap/ui/thirdparty/sinon-4.js"></script>
+    <script src="resources/sap/ui/qunit/qunit-junit.js"></script>
+    <script src="resources/sap/ui/qunit/QUnitUtils.js"></script>
+    <script src="resources/sap/ui/qunit/sinon-qunit-bridge.js"></script>
+    <script src="resources/sap/ui/qunit/qunit-coverage.js" data-cover-flags="branchTracking"
+    data-sap-ui-cover-only="sap/ui/mdc/XMLComposite"></script>
+    <script src="resources/sap/ui/test/BranchTracking.js" data-threshold="40"></script>
+
+    <script src="test-resources/sap/ui/mdc/qunit/composite/XMLComposite.qunit.js"></script>
+
+</head>
+
+    <script id="view" type="application/xml">
+        <mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:t="composites" xmlns="sap.m">
+            <t:Table id="table">
+                <t:actions>
+                    <t:Action call=".handler" text="Outer" id="outer" />
+                </t:actions>
+                <t:columns>
+                    <t:Column id="OWN" label="Own" path="any" key="own" />
+                </t:columns>
+                <t:footer>
+                    <Text text="My own footer" />
+                </t:footer>
+            </t:Table>
+        </mvc:View>
+    </script>
+    <script id="clone" type="application/xml">
+        <mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:t="composites" xmlns="sap.m">
+            <t:Cell asLink="true" id="asLink"/>
+            <t:MDCCell metadataContexts="{model: 'prep', path: '/columns/0', name: 'column'}" id="column0"/>
+            <t:MDCCell metadataContexts="{model: 'prep', path: '/columns/1', name: 'column'}" id="column1"/>
+        </mvc:View>
+    </script>
+<body>
+<div id="qunit"></div>
+<div id="content"></div>
+</body>
+
+</html>

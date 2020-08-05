@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.uxap.sample.ObjectPageSubSectionMultiView",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.uxap.sample.ObjectPageSubSectionMultiView.view.ObjectPageSubSectionMultiView",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"controller/blocks/BlockEmpty.js",
+					"view/blocks/BlockEmpty.view.xml",
+                    "controller/ObjectPageSubSectionMultiView.controller.js",
+                    "view/ObjectPageSubSectionMultiView.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

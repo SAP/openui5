@@ -9,12 +9,9 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 	 * @class HeaderBase renderer.
 	 * @static
 	 */
-	var ObjectPageHeaderRenderer = {};
-
-	function lazyInstanceof(o, sModule) {
-		var FNClass = sap.ui.require(sModule);
-		return typeof FNClass === 'function' && (o instanceof FNClass);
-	}
+	var ObjectPageHeaderRenderer = {
+		apiVersion: 2
+	};
 
 	ObjectPageHeaderRenderer.render = function (oRm, oControl) {
 
@@ -25,42 +22,38 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 			oObjectImage = oControl._lazyLoadInternalAggregation("_objectImage", true),
 			oPlaceholder,
 			bIsDesktop = Device.system.desktop,
-			bIsHeaderContentVisible = oParent && lazyInstanceof(oParent, "sap/uxap/ObjectPageLayout") && ((oParent.getHeaderContent()
+			bIsHeaderContentVisible = oParent && oParent.isA("sap.uxap.ObjectPageLayout") && ((oParent.getHeaderContent()
 				&& oParent.getHeaderContent().length > 0 && oParent.getShowHeaderContent()) ||
 			(oParent.getShowHeaderContent() && oParent.getShowTitleInHeaderContent()));
 
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.addClass('sapUxAPObjectPageHeader');
-		oRm.addClass('sapUxAPObjectPageHeaderDesign-' + oControl.getHeaderDesign());
-		oRm.writeClasses();
-		oRm.write(">");
-		// if a navigationBar has been provided display it
+		oRm.openStart("div", oControl)
+			.class('sapUxAPObjectPageHeader')
+			.class('sapUxAPObjectPageHeaderDesign-' + oControl.getHeaderDesign())
+			.openEnd();
 
+		// if a navigationBar has been provided display it
 		if (oNavigationBar) {
-			oRm.write("<div");
-			oRm.addClass('sapUxAPObjectPageHeaderNavigation');
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div")
+				.class("sapUxAPObjectPageHeaderNavigation")
+				.openEnd();
 			oRm.renderControl(oNavigationBar);
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 
 		// first line
-		oRm.write("<div");
-		oRm.writeAttributeEscaped("id", oControl.getId() + "-identifierLine");
-		oRm.addClass('sapUxAPObjectPageHeaderIdentifier');
-		if (bTitleVisible) {
-			oRm.addClass('sapUxAPObjectPageHeaderIdentifierForce');
-		}
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("div", oControl.getId() + "-identifierLine")
+			.class('sapUxAPObjectPageHeaderIdentifier');
 
-		if (oParent && lazyInstanceof(oParent, "sap/uxap/ObjectPageLayout") && oParent.getIsChildPage()) {
-			oRm.write("<div");
-			oRm.addClass('sapUxAPObjectChildPage');
-			oRm.writeClasses();
-			oRm.write("></div>");
+		if (bTitleVisible) {
+			oRm.class('sapUxAPObjectPageHeaderIdentifierForce');
+		}
+		oRm.openEnd();
+
+		if (oParent && oParent.isA("sap.uxap.ObjectPageLayout") && oParent.getIsChildPage()) {
+			oRm.openStart("div")
+				.class("sapUxAPObjectChildPage")
+				.openEnd()
+				.close("div");
 		}
 
 		if (oControl.getShowPlaceholder()) {
@@ -77,23 +70,20 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 			sBaseClass: 'sapUxAPObjectPageHeaderObjectImageContainer'
 		});
 
-		oRm.write("<span ");
-		oRm.writeAttributeEscaped("id", oControl.getId() + "-identifierLineContainer");
-		oRm.addClass('sapUxAPObjectPageHeaderIdentifierContainer');
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("span", oControl.getId() + "-identifierLineContainer")
+			.class('sapUxAPObjectPageHeaderIdentifierContainer')
+			.openEnd();
 
 		this._renderObjectPageTitle(oRm, oControl);
-		oRm.write("</span>");
+		oRm.close("span");
 
-		oRm.write("<span");
-		oRm.writeAttributeEscaped("id", oControl.getId() + "-actions");
-		oRm.addClass('sapUxAPObjectPageHeaderIdentifierActions');
+		oRm.openStart("span", oControl.getId() + "-actions")
+			.class('sapUxAPObjectPageHeaderIdentifierActions');
+
 		if (oControl.getIsActionAreaAlwaysVisible()) {
-			oRm.addClass('sapUxAPObjectPageHeaderIdentifierActionsForce');
+			oRm.class('sapUxAPObjectPageHeaderIdentifierActionsForce');
 		}
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 
 		// Render the expand button only if there is a content to expand and we are on desktop
 		if (bIsDesktop && bIsHeaderContentVisible) {
@@ -112,11 +102,11 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 
 		this._renderSideContentBtn(oRm, oControl);
 
-		oRm.write("</span>");
+		oRm.close("span");
 
-		oRm.write("</div>");
+		oRm.close("div");
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 
@@ -131,32 +121,37 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 	ObjectPageHeaderRenderer._renderObjectPageTitle = function (oRm, oControl, bTitleInContent) {
 		var sOHTitle = oControl.getObjectTitle(),
 			bMarkers = (oControl.getShowMarkers() && (oControl.getMarkFavorite() || oControl.getMarkFlagged())),
-			oBreadCrumbsAggregation = oControl._getBreadcrumbsAggregation();
+			oBreadCrumbsAggregation = oControl._getBreadcrumbsAggregation(),
+			sTooltip = oControl.getTooltip_Text(),
+			sIdSuffix = bTitleInContent ? "-content" : "";
 
 		if (!bTitleInContent && oBreadCrumbsAggregation) {
 			oRm.renderControl(oBreadCrumbsAggregation);
 		}
 
-		oRm.write("<h1");
-		oRm.addClass('sapUxAPObjectPageHeaderIdentifierTitle');
+		oRm.openStart("h2", oControl.getId() + "-title" + sIdSuffix)
+			.class('sapUxAPObjectPageHeaderIdentifierTitle');
+
 		if (oControl.getIsObjectTitleAlwaysVisible()) {
-			oRm.addClass('sapUxAPObjectPageHeaderIdentifierTitleForce');
+			oRm.class('sapUxAPObjectPageHeaderIdentifierTitleForce');
 		}
 		if (bTitleInContent) {
-			oRm.addClass('sapUxAPObjectPageHeaderIdentifierTitleInContent');
+			oRm.class('sapUxAPObjectPageHeaderIdentifierTitleInContent');
 		}
 		if (oControl.getShowTitleSelector()) { // if we have arrow to render, the subtitle should have smaller top margin
-			oRm.addClass('sapUxAPObjectPageHeaderTitleFollowArrow');
+			oRm.class('sapUxAPObjectPageHeaderTitleFollowArrow');
+		}
+		oRm.openEnd();
+
+		oRm.openStart("span", oControl.getId() + "-innerTitle" + sIdSuffix)
+			.class("sapUxAPObjectPageHeaderTitleText")
+			.class("sapUxAPObjectPageHeaderTitleTextWrappable");
+
+		if (sTooltip) {
+			oRm.attr("title", sTooltip);
 		}
 
-		oRm.writeClasses();
-		oRm.writeAttributeEscaped("id", oControl.getId() + "-title");
-		oRm.write(">");
-		oRm.write("<span");
-		oRm.addClass("sapUxAPObjectPageHeaderTitleTextWrappable");
-		oRm.writeClasses();
-		oRm.writeAttributeEscaped("id", oControl.getId() + "-innerTitle");
-		oRm.write(">");
+		oRm.openEnd();
 
 		// if we have markers or arrow we have to cut the last word and bind it to the markers and arrow so that the icons never occur in one line but are accompanied by the last word of the title.
 
@@ -168,17 +163,22 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 				sOHTitleEnd = sOHTitle;
 				sOHTitleStart = '';
 			}
+			oRm.text(sOHTitleStart);
+			oRm.close("span");
 
-			oRm.writeEscaped(sOHTitleStart);
-			oRm.write("</span>");
-			oRm.write("<span");
-			oRm.addClass('sapUxAPObjectPageHeaderNowrapMarkers');
+			oRm.openStart("span")
+				.class('sapUxAPObjectPageHeaderNowrapMarkers');
+
 			if (oControl.getMarkLocked() || oControl.getMarkChanges()) {
-				oRm.addClass('sapUxAPObjectPageHeaderMarks');
+				oRm.class('sapUxAPObjectPageHeaderMarks');
 			}
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.writeEscaped(sOHTitleEnd);
+			oRm.openEnd();
+
+			oRm.openStart("span")
+				.class("sapUxAPObjectPageHeaderTitleText")
+				.openEnd()
+				.text(sOHTitleEnd)
+				.close("span");
 
 			this._renderMarkers(oRm, oControl);
 
@@ -190,26 +190,26 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 			}
 
 			this._renderSelectTitleArrow(oRm, oControl, bTitleInContent);
-			oRm.write("</span>");
+			oRm.close("span");
 		} else {
-			oRm.writeEscaped(sOHTitle);
-			oRm.write("</span>");
+			oRm.text(sOHTitle);
+			oRm.close("span");
 		}
-		oRm.write("</h1>");
 
-		oRm.write("<span");
-		oRm.addClass('sapUxAPObjectPageHeaderIdentifierDescription');
+		oRm.close("h2");
+
+		oRm.openStart("div", oControl.getId() + "-subtitle" + sIdSuffix)
+			.class('sapUxAPObjectPageHeaderIdentifierDescription');
+
 		if (oControl.getIsObjectSubtitleAlwaysVisible() && oControl.getObjectSubtitle()) {
-			oRm.addClass('sapUxAPObjectPageHeaderIdentifierDescriptionForce');
+			oRm.class('sapUxAPObjectPageHeaderIdentifierDescriptionForce');
 		}
 		if (bTitleInContent) {
-			oRm.addClass('sapUxAPObjectPageHeaderIdentifierSubTitleInContent');
+			oRm.class('sapUxAPObjectPageHeaderIdentifierSubTitleInContent');
 		}
-		oRm.writeClasses();
-		oRm.writeAttributeEscaped("id", oControl.getId() + "-subtitle");
-		oRm.write(">");
-		oRm.writeEscaped(oControl.getObjectSubtitle());
-		oRm.write("</span>");
+		oRm.openEnd();
+		oRm.text(oControl.getObjectSubtitle());
+		oRm.close("div");
 	};
 	/**
 	 * Renders the SelectTitleArrow icon.
@@ -225,16 +225,16 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 	 */
 	ObjectPageHeaderRenderer._renderSelectTitleArrow = function (oRm, oControl, bTitleInContent) {
 		if (oControl.getShowTitleSelector()) { // render select title arrow
-			oRm.write("<span"); // Start title arrow container
-			oRm.addClass("sapUxAPObjectPageHeaderTitleArrow");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("span")
+				.class("sapUxAPObjectPageHeaderTitleArrow")
+				.openEnd();
+
 			if (bTitleInContent) {
 				oRm.renderControl(oControl._oTitleArrowIconCont);
 			} else {
 				oRm.renderControl(oControl._oTitleArrowIcon);
 			}
-			oRm.write("</span>"); // end title arrow container
+			oRm.close("span");
 		}
 	};
 
@@ -252,16 +252,17 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 		var oSideBtn = oControl.getSideContentButton();
 
 		if (oSideBtn) { // render sideContent button and separator
-			oRm.write("<span"); // Start button and separator container
-			oRm.addClass("sapUxAPObjectPageHeaderSideContentBtn");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.write("<span");
-			oRm.addClass("sapUxAPObjectPageHeaderSeparator");
-			oRm.writeClasses();
-			oRm.write("></span>");
+			oRm.openStart("span"); // Start button and separator container
+			oRm.class("sapUxAPObjectPageHeaderSideContentBtn");
+			oRm.openEnd();
+
+			oRm.openStart("span")
+				.class("sapUxAPObjectPageHeaderSeparator")
+				.openEnd()
+				.close("span");
+
 			oRm.renderControl(oSideBtn);
-			oRm.write("</span>"); // end container
+			oRm.close("span");
 		}
 	};
 
@@ -279,17 +280,18 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 	 * @private
 	 */
 	ObjectPageHeaderRenderer._renderMarkChanges = function (oRm, oControl, bTitleInContent) {
-		oRm.write("<span");
-		oRm.addClass("sapUxAPObjectPageHeaderChangesBtn");
-		oRm.addClass("sapUiSizeCompact");
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("span")
+			.class("sapUxAPObjectPageHeaderChangesBtn")
+			.class("sapUiSizeCompact")
+			.openEnd();
+
 		if (bTitleInContent) {
 			oRm.renderControl(oControl._oChangesIconCont);
 		} else {
 			oRm.renderControl(oControl._oChangesIcon);
 		}
-		oRm.write("</span>");
+
+		oRm.close("span");
 	};
 
 	/**
@@ -301,17 +303,18 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 	 * @private
 	 */
 	ObjectPageHeaderRenderer._renderLock = function (oRm, oControl, bTitleInContent) {
-		oRm.write("<span");
-		oRm.addClass("sapUxAPObjectPageHeaderLockBtn");
-		oRm.addClass("sapUiSizeCompact");
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("span")
+			.class("sapUxAPObjectPageHeaderLockBtn")
+			.class("sapUiSizeCompact")
+			.openEnd();
+
 		if (bTitleInContent) {
 			oRm.renderControl(oControl._oLockIconCont);
 		} else {
 			oRm.renderControl(oControl._oLockIcon);
 		}
-		oRm.write("</span>");
+
+		oRm.close("span");
 	};
 
 	/**
@@ -336,18 +339,16 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 			this._renderMarkersAria(oRm, oControl); // render hidden aria description of flag and favorite icons
 
 			// render icons
-			oRm.write("<span");
-			oRm.addClass("sapMObjStatusMarker");
+			oRm.openStart("span", oControl.getId() + "-markers")
+				.class("sapMObjStatusMarker")
+				.attr("aria-describedby", oControl.getId() + "-markers-aria")
+				.openEnd();
 
-			oRm.writeClasses();
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-markers");
-			oRm.writeAttributeEscaped("aria-describedby", oControl.getId() + "-markers-aria");
-
-			oRm.write(">");
 			for (var i = 0; i < aIcons.length; i++) {
 				oRm.renderControl(aIcons[i]);
 			}
-			oRm.write("</span>");
+
+			oRm.close("span");
 		}
 	};
 
@@ -378,16 +379,13 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 		// if there is a description render ARIA node
 		if (sAriaDescription !== "") {
 			// BEGIN ARIA hidden node
-			oRm.write("<div");
 
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-markers-aria");
-			oRm.writeAttribute("aria-hidden", "false");
-			oRm.addClass("sapUiHidden");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.writeEscaped(sAriaDescription);
-
-			oRm.write("</div>");
+			oRm.openStart("div", oControl.getId() + "-markers-aria")
+				.attr("aria-hidden", "false")
+				.class("sapUiHidden")
+				.openEnd()
+				.text(sAriaDescription)
+				.close("div");
 			// END ARIA hidden node
 		}
 	};

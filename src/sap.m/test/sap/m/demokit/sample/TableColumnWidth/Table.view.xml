@@ -50,9 +50,9 @@
 			path: 'columns>/'
 		}">
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<Title text="Products (Wrong Usage)" level="H2"/>
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<columns>
 			<Column width="{columns>width}" styleClass="{columns>styleClass}" demandPopin="{columns>demandPopin}" minScreenWidth="{columns>minScreenWidth}" popinDisplay="WithoutHeader">

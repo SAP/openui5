@@ -1,26 +1,19 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/core/sample/odata/v4/SalesOrders/tests/TypeDeterminationAndDelete",
 	"sap/ui/test/opaQunit"
-], function (TypeDeterminationAndDeleteTest, opaTest) {
-	/*global QUnit */
+], function (Helper, TypeDeterminationAndDeleteTest, opaTest) {
 	"use strict";
 
-	QUnit.config.testTimeout = 180000;
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders - Type Determination and Delete");
+	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrders - Type Determination and Delete");
 
 	//*****************************************************************************
 	opaTest("Type Determination, Delete Sales Orders", function (Given, When, Then) {
 
-		Given.iStartMyUIComponent({
-			componentConfig : {
-				name : "sap.ui.core.sample.odata.v4.SalesOrders"
-			}
-		});
 		TypeDeterminationAndDeleteTest.typeDeterminationAndDelete(Given, When, Then);
 
-		Then.iTeardownMyUIComponent();
 	});
 });

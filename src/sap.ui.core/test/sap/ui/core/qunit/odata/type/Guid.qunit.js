@@ -1,15 +1,16 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/Guid",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, FormatException, ParseException, ValidateException, Guid, ODataType,
+], function (jQuery, Log, FormatException, ParseException, ValidateException, Guid, ODataType,
 		TestUtils) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0*/
@@ -18,7 +19,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Guid", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
@@ -76,15 +77,16 @@ sap.ui.require([
 
 		assert.strictEqual(oType.formatValue(undefined, "foo"), null, "undefined");
 		assert.strictEqual(oType.formatValue(null, "foo"), null, "null");
-		assert.strictEqual(oType.formatValue("0050568D-393C-1ED4-9D97-E65F0F3FCC23", "string"),
-			"0050568D-393C-1ED4-9D97-E65F0F3FCC23", "target type string");
-		assert.strictEqual(oType.formatValue("0050568D-393C-1ED4-9D97-E65F0F3FCC23", "any"),
-			"0050568D-393C-1ED4-9D97-E65F0F3FCC23", "target type any");
+		// Note: case is preserved!
+		assert.strictEqual(oType.formatValue("0050568d-393C-1ed4-9D97-E65F0F3FCC23", "string"),
+			"0050568d-393C-1ed4-9D97-E65F0F3FCC23", "target type string");
+		assert.strictEqual(oType.formatValue("0050568d-393C-1ed4-9D97-E65F0F3FCC23", "any"),
+			"0050568d-393C-1ed4-9D97-E65F0F3FCC23", "target type any");
 
 		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
 			.returns("string");
-		assert.strictEqual(oType.formatValue("0050568D-393C-1ED4-9D97-E65F0F3FCC23",
-			"sap.ui.core.CSSSize"), "0050568D-393C-1ED4-9D97-E65F0F3FCC23");
+		assert.strictEqual(oType.formatValue("0050568d-393C-1ed4-9D97-E65F0F3FCC23",
+			"sap.ui.core.CSSSize"), "0050568d-393C-1ed4-9D97-E65F0F3FCC23");
 	});
 
 	//*********************************************************************************************
@@ -110,25 +112,24 @@ sap.ui.require([
 		assert.strictEqual(oType.parseValue(null, "string"), null, "null");
 		assert.strictEqual(oType.parseValue("", "string"), null,
 			"empty string is converted to null");
-		assert.strictEqual(oType.parseValue("0050568D-393C-1ED4-9D97-E65F0F3FCC23", "string"),
-			"0050568D-393C-1ED4-9D97-E65F0F3FCC23", "real GUID");
-		assert.strictEqual(oType.parseValue("0050568D393C1ED49D97E65F0F3FCC23", "string"),
-			"0050568D-393C-1ED4-9D97-E65F0F3FCC23", "real GUID without '-'");
-		assert.strictEqual(oType.parseValue("-005--05-68D3-93C1E-D49D97E65F0F3FCC23-", "string"),
-			"0050568D-393C-1ED4-9D97-E65F0F3FCC23", "GUID with separators at wrong places");
-		assert.strictEqual(oType.parseValue("0050568d-393c-1ed4-9d97-e65f0f3fcc23", "string"),
-			"0050568D-393C-1ED4-9D97-E65F0F3FCC23", "real GUID lower case");
-		assert.strictEqual(oType.parseValue("  0050\uFEFF568D 393C\t1ED49D97-E65F0F3FCC23 \n",
-			"string"), "0050568D-393C-1ED4-9D97-E65F0F3FCC23", "real GUID");
-		assert.strictEqual(oType.parseValue("0050568D-393C-1", "string"),
-			"0050568D-393C-1", "parse invalid GUID");
-		assert.strictEqual(oType.parseValue("005X568D-393C-1ED4-9D97-E65F0F3FCC23", "string"),
-			"005X568D-393C-1ED4-9D97-E65F0F3FCC23", "invalid character X");
+		// Note: case is preserved
+		assert.strictEqual(oType.parseValue("0050568d-393C-1ed4-9D97-E65F0F3FCC23", "string"),
+			"0050568d-393C-1ed4-9D97-E65F0F3FCC23", "real GUID, mixed case");
+		assert.strictEqual(oType.parseValue("0050568d393C1ed49D97E65F0F3FCC23", "string"),
+			"0050568d-393C-1ed4-9D97-E65F0F3FCC23", "real GUID without '-'");
+		assert.strictEqual(oType.parseValue("-005--05-68d3-93C1e-d49D97E65F0F3FCC23-", "string"),
+			"0050568d-393C-1ed4-9D97-E65F0F3FCC23", "GUID with separators at wrong places");
+		assert.strictEqual(oType.parseValue("  0050\uFEFF568d 393C\t1ed49D97-E65F0F3FCC23 \n",
+			"string"), "0050568d-393C-1ed4-9D97-E65F0F3FCC23", "real GUID");
+		assert.strictEqual(oType.parseValue("0050568D-393c-1", "string"),
+			"0050568D-393c-1", "parse invalid GUID");
+		assert.strictEqual(oType.parseValue("005X568d-393C-1ed4-9D97-E65F0F3FCC23", "string"),
+			"005X568d-393C-1ed4-9D97-E65F0F3FCC23", "invalid character X");
 
 		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
 			.returns("string");
-		assert.strictEqual(oType.parseValue("0050568D-393C-1ED4-9D97-E65F0F3FCC23",
-			"sap.ui.core.CSSSize"), "0050568D-393C-1ED4-9D97-E65F0F3FCC23");
+		assert.strictEqual(oType.parseValue("0050568d-393C-1ed4-9D97-E65F0F3FCC23",
+			"sap.ui.core.CSSSize"), "0050568d-393C-1ed4-9D97-E65F0F3FCC23");
 	});
 
 	//*********************************************************************************************
@@ -154,7 +155,8 @@ sap.ui.require([
 	QUnit.test("validate success", function (assert) {
 		var oType = new Guid();
 
-		[null, "0050568D-393C-1ED4-9D97-E65F0F3FCC23"].forEach(function (sValue) {
+		// Note: case is ignored
+		[null, "0050568d-393C-1ed4-9D97-E65F0F3FCC23"].forEach(function (sValue) {
 			oType.validateValue(sValue);
 		});
 	});

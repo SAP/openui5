@@ -17,6 +17,9 @@ sap.ui.define([],
 		aggregations : {
 			items : {
 				domRef : ":sap-domref"
+			},
+			picker: {
+				ignore: true
 			}
 		},
 		templates: {
@@ -24,4 +27,4 @@ sap.ui.define([],
 		}
 	};
 
-}, /* bExport= */ false);
+});

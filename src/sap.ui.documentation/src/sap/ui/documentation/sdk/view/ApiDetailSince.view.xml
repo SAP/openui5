@@ -1,0 +1,32 @@
+<mvc:View controllerName="sap.ui.documentation.sdk.controller.ApiDetailIndexDeprecatedExperimental"
+		  xmlns="sap.uxap"
+		  xmlns:m="sap.m"
+		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:custom="sap.ui.documentation"
+		  xmlns:blocks="sap.ui.documentation.sdk.blocks"
+		  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+	<ObjectPageLayout id="objectPage"
+					  enableLazyLoading="true"
+					  showAnchorBarPopover="true"
+					  upperCaseAnchorBar="false"
+					  useIconTabBar="true"
+					  sections="{/}">
+		<headerTitle>
+			<ObjectPageHeader objectTitle="{i18n>API_DETAIL_SINCE_TITLE}"/>
+		</headerTitle>
+
+		<ObjectPageSection
+				titleUppercase="false"
+				title="{
+					parts: [
+						'i18n>API_DETAIL_AS_OF_VERSION',
+						'name'
+					],
+					formatter: '.formatMessage'
+				}">
+			<ObjectPageSubSection>
+				<blocks:IndexEntry></blocks:IndexEntry>
+			</ObjectPageSubSection>
+		</ObjectPageSection>
+	</ObjectPageLayout>
+</mvc:View>

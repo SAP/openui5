@@ -8,13 +8,13 @@
   */
 // Provides control sap.m.Title.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'./library',
 	'sap/ui/core/library',
-	'./TitleRenderer'
+	'./TitleRenderer',
+	"sap/m/HyphenationSupport"
 ],
-	function(jQuery, Control, library, coreLibrary, TitleRenderer) {
+	function(Control, library, coreLibrary, TitleRenderer, HyphenationSupport) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -23,6 +23,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
+	// shortcut for sap.m.WrappingType
+	var WrappingType = library.WrappingType;
+
 	/**
 	 * Constructor for a new Title control.
 	 *
@@ -30,7 +33,32 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The Title control represents a single line of text with explicit header / title semantics.
+	 * A simple, large-sized text with explicit header / title semantics.
+	 *
+	 * <h3>Overview</h3>
+ 	 * The <code>Title</code> control is a simple, large-sized text containing additional
+ 	 * semantic information for accessibility purposes.
+	 *
+	 * As of version 1.52, you can truncate or wrap long titles if the screen is narrower
+	 * than the full title by using the with the use of the <code>wrapping</code>
+	 * property.
+	 *
+	 * As of version 1.60, you can hyphenate the label's text with the use of the
+	 * <code>wrappingType</code> property. For more information, see
+	 * {@link topic:6322164936f047de941ec522b95d7b70 Text Controls Hyphenation}.
+	 *
+ 	 * <h3>Usage</h3>
+ 	 * <h4>When to use</h4>
+	 * <ul>
+	 * <li>If you want to set the title above a table or form.</li>
+	 * <li>If you want to show text in the page header.</li>
+	 * </ul>
+	 * <h4>When not to use</h4>
+	 * <ul>
+	 * <li>If the text is inside a text block.</li>
+	 * <li>If The text is inside a form element.</li>
+	 * </ul>
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable
 	 *
@@ -48,7 +76,8 @@ sap.ui.define([
 
 		library : "sap.m",
 		interfaces : [
-			 "sap.ui.core.IShrinkable"
+			 "sap.ui.core.IShrinkable",
+			 "sap.m.IHyphenation"
 		],
 		properties : {
 
@@ -89,7 +118,17 @@ sap.ui.define([
 			 * <b>Note:</b> Wrapping must only be activated if the surrounding container allows flexible heights.
 			 * @since 1.52
 			 */
-			wrapping : {type : "boolean", group : "Appearance", defaultValue : false}
+			wrapping : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Defines the type of text wrapping to be used (hyphenated or normal).
+			 *
+			 * <b>Note:</b> This property takes effect only when the <code>wrapping</code>
+			 * property is set to <code>true</code>.
+			 *
+			 * @since 1.60
+			 */
+			wrappingType : {type: "sap.m.WrappingType", group : "Appearance", defaultValue : WrappingType.Normal}
 
 		},
 		associations : {
@@ -104,26 +143,6 @@ sap.ui.define([
 		designtime: "sap/m/designtime/Title.designtime"
 
 	}});
-
-	/**
-	 * Sets text within the title.
-	 *
-	 * @name sap.m.Title.setText
-	 * @method
-	 * @public
-	 * @param {string} sText Text that will be set for the title.
-	 * @returns {sap.m.Title} this Title reference for chaining.
-	 */
-	Title.prototype.setText = function(sText) {
-		var oRef = this.getDomRef("inner");
-		var bPatchDom = oRef && !this._getTitle();
-		this.setProperty("text", sText, bPatchDom);
-		if (bPatchDom) {
-			oRef.innerHTML = jQuery.sap.encodeHTML(this.getText() || "");
-		}
-		return this;
-	};
-
 
 	/**
 	 * Gets the currently set title.
@@ -214,6 +233,54 @@ sap.ui.define([
 			focusable: false
 		};
 	};
+
+	/**
+	 * Gets a map of texts which should be hyphenated.
+	 *
+	 * @private
+	 * @returns {Object<string,string>} The texts to be hyphenated.
+	 */
+	Title.prototype.getTextsToBeHyphenated = function () {
+		var oTitleAssociation = this._getTitle();
+		return {
+			"main": oTitleAssociation ? oTitleAssociation.getText() : this.getText()
+		};
+	};
+
+	/**
+	 * Gets the DOM refs where the hyphenated texts should be placed.
+	 *
+	 * @private
+	 * @returns {map|null} The elements in which the hyphenated texts should be placed
+	 */
+	Title.prototype.getDomRefsForHyphenatedTexts = function () {
+		var oDomRefs;
+		if (!this._getTitle()) {
+			oDomRefs = {
+				"main": this.getDomRef("inner")
+			};
+		}
+		return oDomRefs;
+	};
+
+	/**
+	 * Turns property <code>titleStyle</code> to aria level. If it is not set, the default level is 2.
+	 * @private
+	 * @returns {int} The aria level.
+	 */
+	Title.prototype._getAriaLevel = function () {
+		var iLevel = 2,
+			LEVEL_POSITION = 1;
+
+		if (this.getTitleStyle() !== TitleLevel.Auto) {
+			iLevel = parseInt(this.getTitleStyle()[LEVEL_POSITION]);
+		}
+
+		return iLevel;
+	};
+
+	// Add hyphenation to Title functionality
+	HyphenationSupport.mixInto(Title.prototype);
 
 	return Title;
 

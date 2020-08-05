@@ -1,0 +1,111 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "ae2d300f3f4e1c1fb778316edecec534b36fe447",
+        "type": "FIX",
+        "text": "sap.ui.rta - Change Handler error for instance-specific flexibility",
+        "references": []
+      },
+      {
+        "id": "f80f3635055498cc8c43ec1f67f161f72a6a22d9",
+        "type": "FIX",
+        "text": "sap.ui.rta - Check for aggregation binding only for overlays",
+        "references": []
+      },
+      {
+        "id": "e9d8dba745b53786b9db1b7b7ff9b336e7a6a021",
+        "type": "FIX",
+        "text": "sap.ui.rta - Evaluate AddOData Action after MetaModel is loaded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880499137"
+          }
+        ]
+      },
+      {
+        "id": "88480d7accd91bea28a38a80ff3d348269296fa5",
+        "type": "FIX",
+        "text": "Suppress undefined selector in composite command",
+        "references": []
+      },
+      {
+        "id": "a7fdfd623e34cea5c34df5e02f3650efaf6f98a8",
+        "type": "FIX",
+        "text": "sap.ui.rta - Combine plugin not considering triggering element",
+        "references": []
+      },
+      {
+        "id": "7d86af0a8e64ef5116a31796a82155e5646b651c",
+        "type": "FIX",
+        "text": "Setting the tooltip for every icon on App variant overview",
+        "references": []
+      },
+      {
+        "id": "cea62422cec6680c6501c6c4211eff10054e2f21",
+        "type": "FIX",
+        "text": "sap.ui.layout - Flexibility: Check actions based on form layout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880536682"
+          }
+        ]
+      },
+      {
+        "id": "e97a17d737235ed6a9f9c162a6df9bf41502a0c9",
+        "type": "FIX",
+        "text": "sap.ui.rta - Actions no longer available for wrong aggregations",
+        "references": []
+      },
+      {
+        "id": "b8450b04f281d3e1aa70ee1ad70cdad98bd76a8f",
+        "type": "FIX",
+        "text": "AdditionalElementsAnalyzer - filter limitation for invisible elements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880498671"
+          }
+        ]
+      },
+      {
+        "id": "b822ff17f819e675015a054eb145bb4282195cb7",
+        "type": "FIX",
+        "text": "sap.ui.rta - outline test cleanup",
+        "references": []
+      },
+      {
+        "id": "fe3effe44fa6244e2d2f1e29d7c708a5733533fc",
+        "type": "FIX",
+        "text": "sap.ui.rta - outline.qunit extended with static designtime metadata",
+        "references": []
+      },
+      {
+        "id": "f4880d108f3c5caabc09ef447278ea04c5aaff22",
+        "type": "FIX",
+        "text": "Fixing CSP problem in sap.ui.rta",
+        "references": []
+      },
+      {
+        "id": "0be0c638ebd159e9c76f95b156948b872ab24514",
+        "type": "FIX",
+        "text": "sap.ui.rta: enabld undo/redo via keyboard with opened contextMenu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880561344"
+          }
+        ]
+      },
+      {
+        "id": "0530c621b497dc8166609a79deb3b091044e5f4a",
+        "type": "FIX",
+        "text": "sap.ui.fl: Changes for VariantManagement are stored as instance",
+        "references": []
+      }
+    ]
+  }
+}

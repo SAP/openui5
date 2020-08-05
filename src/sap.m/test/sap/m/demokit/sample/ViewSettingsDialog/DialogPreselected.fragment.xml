@@ -1,0 +1,45 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ViewSettingsDialog
+		title="Preselected Settings"
+		sortDescending="true"
+		groupDescending="true"
+		confirm="handleConfirm">
+		<sortItems>
+			<ViewSettingsItem text="Field 1" key="1" />
+			<ViewSettingsItem text="Field 2" key="2" />
+			<ViewSettingsItem text="Field 3" key="3" selected="true" />
+		</sortItems>
+		<groupItems>
+			<ViewSettingsItem text="Field 1" key="1" />
+			<ViewSettingsItem text="Field 2" key="2" selected="true" />
+			<ViewSettingsItem text="Field 3" key="3" />
+		</groupItems>
+		<filterItems>
+			<ViewSettingsFilterItem text="Field1" key="1">
+				<items>
+					<ViewSettingsItem text="Value A" key="1a" selected="true" />
+					<ViewSettingsItem text="Value B" key="1b" />
+					<ViewSettingsItem text="Value C" key="1c" />
+					<ViewSettingsItem text="Value D" key="1d" />
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="Field2" key="2">
+				<items>
+					<ViewSettingsItem text="Value A" key="2a" selected="true" />
+					<ViewSettingsItem text="Value B" key="2b" selected="true" />
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="Field3" key="3">
+				<items>
+					<ViewSettingsItem text="Value A" key="3a" selected="true" />
+					<ViewSettingsItem text="Value B" key="3b" selected="true" />
+					<ViewSettingsItem text="Value C" key="3c" selected="true" />
+					<ViewSettingsItem text="Value D" key="3d"  />
+					<ViewSettingsItem text="Value E" key="3e"  />
+				</items>
+			</ViewSettingsFilterItem>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

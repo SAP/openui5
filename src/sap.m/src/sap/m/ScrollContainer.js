@@ -4,20 +4,20 @@
 
 // Provides control sap.m.ScrollContainer
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/core/Element",
-	"./ScrollContainerRenderer"
+	"./ScrollContainerRenderer",
+	"sap/ui/dom/denormalizeScrollBeginRTL"
 ],
 	function(
-		jQuery,
 		library,
 		Control,
 		ScrollEnablement,
 		Element,
-		ScrollContainerRenderer
+		ScrollContainerRenderer,
+		denormalizeScrollBeginRTL
 	) {
 		"use strict";
 
@@ -89,6 +89,7 @@ sap.ui.define([
 					 */
 					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
 				},
+				dnd: { draggable: false, droppable: true },
 				designtime: "sap/m/designtime/ScrollContainer.designtime"
 			}
 		});
@@ -142,9 +143,9 @@ sap.ui.define([
 		 *         The vertical pixel position to scroll to.
 		 *         Scrolling down happens with positive values.
 		 *         If only horizontal scrolling is enabled, give 0 as value.
-		 * @param {int} time
-		 *         The duration of animated scrolling.
-		 *         To scroll immediately without animation, give 0 as value. 0 is also the default value, when this optional parameter is omitted.
+		 * @param {int} [time=0]
+		 *         The duration of animated scrolling in milliseconds.
+		 *         The value <code>0</code> results in immediate scrolling without animation.
 		 * @returns {sap.m.ScrollContainer} <code>this</code> to facilitate method chaining
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -156,7 +157,7 @@ sap.ui.define([
 				if (oDomRef) {
 					// only if rendered
 					if (sap.ui.getCore().getConfiguration().getRTL()) {
-						x = jQuery.sap.denormalizeScrollBeginRTL(x, oDomRef);
+						x = denormalizeScrollBeginRTL(x, oDomRef);
 					}
 					this._oScroller.scrollTo(x, y, time);
 				} else {
@@ -187,16 +188,5 @@ sap.ui.define([
 			return this;
 		};
 
-		ScrollContainer.prototype.setHorizontal = function (horizontal) {
-			this._oScroller.setHorizontal(horizontal);
-			return this.setProperty("horizontal", horizontal, true);
-		};
-
-		ScrollContainer.prototype.setVertical = function (vertical) {
-			this._oScroller.setVertical(vertical);
-			return this.setProperty("vertical", vertical, true);
-		};
-
 		return ScrollContainer;
-
 	});

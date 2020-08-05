@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global"
+	"sap/base/Log"
 ], function(
-	jQuery
+	Log
 ) {
 	"use strict";
 
@@ -29,10 +29,9 @@ sap.ui.define([
 	 * @public
 	 */
 	StashControl.applyChange = function(oChange, oControl, mPropertyBag) {
-		oChange.setRevertData({
-			originalValue: mPropertyBag.modifier.getStashed(oControl)
-		});
-
+		var bStashed = mPropertyBag.modifier.getStashed(oControl);
+		var iOriginalIndex = mPropertyBag.modifier.findIndexInParentAggregation(oControl);
+		this.setChangeRevertData(oChange, bStashed, iOriginalIndex);
 		mPropertyBag.modifier.setStashed(oControl, true);
 		return true;
 	};
@@ -51,10 +50,19 @@ sap.ui.define([
 		var mRevertData = oChange.getRevertData();
 
 		if (mRevertData) {
-			mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue);
+			var oUnstashedControl = mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue, mPropertyBag.appComponent);
+			if (oUnstashedControl) {
+				var iUnstashedIndex = mPropertyBag.modifier.findIndexInParentAggregation((oUnstashedControl));
+				if (iUnstashedIndex !== mRevertData.originalIndex) {
+					var oParent = mPropertyBag.modifier.getParent(oUnstashedControl);
+					var sAggregationName = mPropertyBag.modifier.getParentAggregationName(oUnstashedControl);
+					mPropertyBag.modifier.removeAggregation(oParent, sAggregationName, oUnstashedControl);
+					mPropertyBag.modifier.insertAggregation(oParent, sAggregationName, oUnstashedControl, mRevertData.originalIndex);
+				}
+			}
 			oChange.resetRevertData();
 		} else {
-			jQuery.sap.log.error("Attempt to revert an unapplied change.");
+			Log.error("Attempt to revert an unapplied change.");
 			return false;
 		}
 
@@ -68,8 +76,29 @@ sap.ui.define([
 	 * @param {object} oSpecificChangeInfo as an empty object since no additional attributes are required for this operation
 	 * @public
 	 */
-	StashControl.completeChangeContent = function(oChange, oSpecificChangeInfo) {
+	StashControl.completeChangeContent = function() {
+	};
 
+	StashControl.setChangeRevertData = function(oChange, bValue, iOriginalIndex) {
+		oChange.setRevertData({
+			originalValue: bValue,
+			originalIndex: iOriginalIndex
+		});
+	};
+
+	/**
+	 * Retrieves the condenser-specific information.
+	 *
+	 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+	 * @returns {object} - Condenser-specific information
+	 * @public
+	 */
+	StashControl.getCondenserInfo = function(oChange) {
+		return {
+			affectedControl: oChange.getSelector(),
+			classification: sap.ui.fl.condenser.Classification.Reverse,
+			uniqueKey: "stashed"
+		};
 	};
 
 	return StashControl;

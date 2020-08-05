@@ -1,13 +1,18 @@
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessageToast"
-], function(Controller, JSONModel, MessageToast) {
+	"sap/ui/table/RowAction",
+	"sap/ui/table/RowActionItem",
+	"sap/ui/table/RowSettings",
+	"sap/m/MessageToast",
+	"sap/ui/thirdparty/jquery"
+], function(Log, Controller, JSONModel, RowAction, RowActionItem, RowSettings, MessageToast, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.RowAction.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			this.getView().setModel(oJSONModel);
@@ -19,8 +24,8 @@ sap.ui.define([
 					key: "Navigation",
 					text: "Navigation",
 					handler: function(){
-						var oTemplate = new sap.ui.table.RowAction({items: [
-							new sap.ui.table.RowActionItem({
+						var oTemplate = new RowAction({items: [
+							new RowActionItem({
 								type: "Navigation",
 								press: fnPress,
 								visible: "{Available}"
@@ -32,13 +37,13 @@ sap.ui.define([
 					key: "NavigationDelete",
 					text: "Navigation & Delete",
 					handler: function(){
-						var oTemplate = new sap.ui.table.RowAction({items: [
-							new sap.ui.table.RowActionItem({
+						var oTemplate = new RowAction({items: [
+							new RowActionItem({
 								type: "Navigation",
 								press: fnPress,
 								visible: "{Available}"
 							}),
-							new sap.ui.table.RowActionItem({type: "Delete", press: fnPress})
+							new RowActionItem({type: "Delete", press: fnPress})
 						]});
 						return [2, oTemplate];
 					}
@@ -46,13 +51,13 @@ sap.ui.define([
 					key: "NavigationCustom",
 					text: "Navigation & Custom",
 					handler: function(){
-						var oTemplate = new sap.ui.table.RowAction({items: [
-							new sap.ui.table.RowActionItem({
+						var oTemplate = new RowAction({items: [
+							new RowActionItem({
 								type: "Navigation",
 								press: fnPress,
 								visible: "{Available}"
 							}),
-							new sap.ui.table.RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnPress})
+							new RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnPress})
 						]});
 						return [2, oTemplate];
 					}
@@ -60,11 +65,11 @@ sap.ui.define([
 					key: "Multi",
 					text: "Multiple Actions",
 					handler: function(){
-						var oTemplate = new sap.ui.table.RowAction({items: [
-							new sap.ui.table.RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnPress}),
-							new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "Search", press: fnPress}),
-							new sap.ui.table.RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnPress}),
-							new sap.ui.table.RowActionItem({icon: "sap-icon://line-chart", text: "Analyze", press: fnPress})
+						var oTemplate = new RowAction({items: [
+							new RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnPress}),
+							new RowActionItem({icon: "sap-icon://search", text: "Search", press: fnPress}),
+							new RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnPress}),
+							new RowActionItem({icon: "sap-icon://line-chart", text: "Analyze", press: fnPress})
 						]});
 						return [2, oTemplate];
 					}
@@ -84,28 +89,44 @@ sap.ui.define([
 		initSampleDataModel : function() {
 			var oModel = new JSONModel();
 
-			jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
 						oProduct.Available = oProduct.Status == "Available" ? true : false;
+						if (i === 1) {
+							oProduct.NavigatedState = true;
+						}
 					}
 					oModel.setData(oData);
 				},
-				error: function () {
-					jQuery.sap.log.error("failed to load json");
+				error: function() {
+					Log.error("failed to load json");
 				}
 			});
 
 			return oModel;
 		},
 
-		onBehaviourModeChange : function (oEvent) {
+		onNavIndicatorsToggle: function(oEvent) {
+			var oTable = this.byId("table");
+			var oToggleButton = oEvent.getSource();
+
+			if (oToggleButton.getPressed()) {
+				oTable.setRowSettingsTemplate(new RowSettings({
+					navigated: "{NavigatedState}"
+				}));
+			} else {
+				oTable.setRowSettingsTemplate(null);
+			}
+		},
+
+		onBehaviourModeChange : function(oEvent) {
 			this.switchState(oEvent.getParameter("selectedItem").getKey());
 		},
 
-		switchState : function (sKey) {
+		switchState : function(sKey) {
 			var oTable = this.byId("table");
 			var iCount = 0;
 			var oTemplate = oTable.getRowActionTemplate();

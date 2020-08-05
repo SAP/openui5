@@ -11,7 +11,7 @@
 		showIcon="true">
 	</MessageStrip>
 
-	<Slider value="100" liveChange="onSliderMoved"/>
+	<Slider value="{/viewPortPercentWidth}" liveChange="onSliderMoved"/>
 
 	<MessageStrip
 		class="sapUiTinyMargin"
@@ -222,12 +222,57 @@
 	</OverflowToolbar>
 
 	<MessageStrip
+			class="sapUiTinyMargin"
+			text="Toolbar separators are shown as horizontal lines in the overflow area. If the separator happens to be
+				the first or the last element in the overflow area, it won't be displayed. It is recommended to use
+				the separator within group, so it won't be left behind in an inappropriate positions."
+			type="Information"
+			showIcon="true">
+	</MessageStrip>
+
+	<OverflowToolbar id="otb6">
+		<Label text="Buttons within separated groups:"/><Label/>
+		<ToolbarSpacer/>
+		<Button text="Never" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+						priority="NeverOverflow"/>
+			</layoutData>
+		</Button>
+		<Button text="Group 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData group="1"/>
+			</layoutData>
+		</Button>
+		<Button text="Group 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData group="1"/>
+			</layoutData>
+		</Button>
+		<ToolbarSeparator>
+			<layoutData>
+				<OverflowToolbarLayoutData group="2"/>
+			</layoutData>
+		</ToolbarSeparator>
+		<Button text="Group 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData group="2"/>
+			</layoutData>
+		</Button>
+		<Button text="Group 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData group="2"/>
+			</layoutData>
+		</Button>
+	</OverflowToolbar>
+
+	<MessageStrip
 		class="sapUiTinyMargin"
 		text="Segmented buttons are shown as Selects when in the overflow area."
 		type="Information" showIcon="true">
 	</MessageStrip>
 
-	<OverflowToolbar id="otb6">
+	<OverflowToolbar id="otb7">
 		<ToolbarSpacer/>
 		<Select>
 			<items>
@@ -249,6 +294,144 @@
 		<Button text="Button 4" type="Transparent"/>
 	</OverflowToolbar>
 
+	<MessageStrip
+		class="sapUiTinyMargin"
+		text="Toolbar items with shrinkable LayoutData and minWidth"
+		type="Information"
+		showIcon="true">
+	</MessageStrip>
+	<OverflowToolbar id="otb8">
+		<Label text="Buttons:"/>
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "100px"/>
+			</layoutData>
+		<Label/>
+		<Button text="Min width 50px" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "50px"/>
+			</layoutData>
+		</Button>
+		<Button text="Min width 100px" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "100px"/>
+			</layoutData>
+		</Button>
+		<ToolbarSpacer/>
+		<Select>
+			<items>
+				<core:Item key="1" text="Option 1"/>
+				<core:Item key="2" text="Option 2"/>
+				<core:Item key="3" text="Option 3"/>
+				<core:Item key="4" text="Option 4"/>
+				<core:Item key="5" text="Option 5"/>
+			</items>
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "150px"/>
+			</layoutData>
+		</Select>
+		<Input width="10%" placeholder="Input">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "50px"/>
+			</layoutData>
+		</Input>
+		<SearchField width="10%" placeholder="Search">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "100px"/>
+			</layoutData>
+		</SearchField>
+		<ToolbarSpacer/>
+		<CheckBox text="I'm a CheckBox!">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "30px"/>
+			</layoutData>
+		</CheckBox>
+		<RadioButton text="I'm a radio button!">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "100px"/>
+			</layoutData>
+		</RadioButton>
+	</OverflowToolbar>
 
+	<MessageStrip
+		class="sapUiTinyMargin"
+		text="Overflow Toolbar with grouped elements: Label with Select and Label with Input.
+			Grouped elements move inside Overflow Toolbar in pairs."
+		type="Information"
+		showIcon="true">
+	</MessageStrip>
+	<OverflowToolbar id="otb9">
+		<Label text="Grouping:"/>
+		<ToolbarSpacer />
+		<Label text="Select:" labelFor="labeledSelectGroup1">
+			<layoutData>
+				<OverflowToolbarLayoutData group="1" />
+			</layoutData>
+		</Label>
+		<Select width="20%" id="labeledSelectGroup1">
+			<items>
+				<core:Item key="1" text="Option 1"/>
+				<core:Item key="2" text="Option 2"/>
+				<core:Item key="3" text="Option 3"/>
+				<core:Item key="4" text="Option 4"/>
+				<core:Item key="5" text="Option 5"/>
+			</items>
+			<layoutData>
+				<OverflowToolbarLayoutData group="1" shrinkable="true" minWidth="150px"/>
+			</layoutData>
+		</Select>
+		<Label text="Input:" labelFor="labeledInputGroup2">
+			<layoutData>
+				<OverflowToolbarLayoutData group="2" />
+			</layoutData>
+		</Label>
 
+		<Input width="20%" placeholder="Input" id="labeledInputGroup2">
+			<layoutData>
+				<OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="150px"/>
+			</layoutData>
+		</Input>
+	</OverflowToolbar>
+	<MessageStrip
+		class="sapUiTinyMargin"
+		text="Generic Tag controls in Overflow Toolbar"
+		type="Information"
+		showIcon="true">
+	</MessageStrip>
+	<OverflowToolbar id="otb10">
+		<Label text="Multiple Generic Tag instances:"/>
+		<ToolbarSpacer />
+		<GenericTag text="Project Cost" design="StatusIconHidden" status="Error">
+			<ObjectNumber state="Error" emphasized="false" number="3.5M" numberUnit="EUR"/>
+		</GenericTag>
+
+		<GenericTag text="Shortage Expected" status="Warning">
+		</GenericTag>
+
+		<GenericTag text="Project Cost"  design="StatusIconHidden" status="Success">
+			<ObjectNumber state="Success" emphasized="false" number="96" numberUnit="%" />
+			<layoutData>
+				<OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>
+			</layoutData>
+		</GenericTag>
+		<GenericTag text="In Stock" status="Success">
+		</GenericTag>
+	</OverflowToolbar>
+
+	<Slider class="sapUiTinyMarginTopBottom" value="{/viewPortPercentWidth}" liveChange="onSliderMoved"/>
 </mvc:View>

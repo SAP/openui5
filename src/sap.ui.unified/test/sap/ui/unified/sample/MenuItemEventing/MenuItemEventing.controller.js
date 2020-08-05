@@ -1,15 +1,16 @@
 sap.ui.define([
 		'sap/m/MessageToast',
 		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller'
-	], function(MessageToast, Fragment, Controller) {
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/core/Popup'
+	], function(MessageToast, Fragment, Controller, Popup) {
 	"use strict";
 
-	var MenuItemEventingController = Controller.extend("sap.ui.unified.sample.MenuItemEventing.MenuItemEventing", {
+	return Controller.extend("sap.ui.unified.sample.MenuItemEventing.MenuItemEventing", {
 
 		onInit: function(){
 			this.byId("openMenu").attachBrowserEvent("tab keyup", function(oEvent){
-				this._bKeyboard = oEvent.type == "keyup";
+				this._bKeyboard = oEvent.type === "keyup";
 			}, this);
 		},
 
@@ -18,29 +19,27 @@ sap.ui.define([
 
 			// create menu only once
 			if (!this._menu) {
-				this._menu = sap.ui.xmlfragment(
-					"sap.ui.unified.sample.MenuItemEventing.MenuItemEventing",
-					this
-				);
-				this.getView().addDependent(this._menu);
+				Fragment.load({
+					name: "sap.ui.unified.sample.MenuItemEventing.MenuItemEventing",
+					controller: this
+				}).then(function(oMenu){
+					this._menu = oMenu;
+					this.getView().addDependent(this._menu);
+					this._menu.open(this._bKeyboard, oButton, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oButton);
+				}.bind(this));
+			} else {
+				this._menu.open(this._bKeyboard, oButton, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oButton);
 			}
-
-			var eDock = sap.ui.core.Popup.Dock;
-			this._menu.open(this._bKeyboard, oButton, eDock.BeginTop, eDock.BeginBottom, oButton);
 		},
 
 		handleMenuItemPress: function(oEvent) {
-			var msg = "'" + oEvent.getParameter("item").getText() + "' pressed";
-			MessageToast.show(msg);
+			MessageToast.show("'" + oEvent.getParameter("item").getText() + "' pressed");
 		},
 
 		handleTextFieldItemPress: function(oEvent) {
-			var msg = "'" + oEvent.getParameter("item").getValue() + "' entered";
-			MessageToast.show(msg);
+			MessageToast.show("'" + oEvent.getParameter("item").getValue() + "' entered");
 		}
 
 	});
-
-	return MenuItemEventingController;
 
 });

@@ -1,0 +1,18 @@
+<mvc:View
+
+		xmlns:forms="sap.ui.layout.form"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
+		xmlns="sap.m"
+		width="100%">
+
+	<forms:SimpleForm
+			maxContainerCols="2"
+			layout="ResponsiveGridLayout"
+			editable="false">
+		<core:Title text="my Block"/>
+		<Label text="Content"/>
+		<Text text="some content goes here..."/>
+	</forms:SimpleForm>
+
+</mvc:View>

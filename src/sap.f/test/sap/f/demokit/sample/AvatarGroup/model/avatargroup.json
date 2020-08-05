@@ -1,0 +1,19 @@
+{
+	"totalCount": 15,
+	"content": [
+	{ "initials": "JD", "name": "John Doe", "jobPosition": "Marketing Manager", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "SP", "name": "Sarah Parker", "jobPosition": "Visual Designer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "JG", "name": "Jason Goldwell", "jobPosition": "Software Developer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "name": "Christian Bow", "jobPosition": "Marketing Manager", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "src": "./test-resources/sap/f/images/Woman_avatar_01.png", "name": "Jessica Parker", "jobPosition": "Visual Designer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "JB", "name": "Jonathan Bale", "jobPosition": "Software Developer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "GS", "name": "Gordon Smith", "jobPosition": "Marketing Manager", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "fallbackIcon": "sap-icon://person-placeholder", "name": "Simon Jason", "jobPosition": "Visual Designer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "JS", "name": "Jason Swan", "jobPosition": "Software Developer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "JC", "name": "John Carter", "jobPosition": "Marketing Manager", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "src": "./test-resources/sap/f/images/Woman_avatar_02.png", "name": "Whitney Parker", "jobPosition": "Visual Designer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "fallbackIcon": "sap-icon://person-placeholder", "name": "Jason Goldwell", "jobPosition": "Software Developer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "CD", "name": "Chris Doe", "jobPosition": "Marketing Manager", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "SS", "name": "Sarah Smith", "jobPosition": "Visual Designer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" },
+	{ "initials": "DC", "name": "David Copper", "jobPosition": "Software Developer", "mobile": "+89181818181", "phone": "+2828282828", "email": "blabla@blabla" }]
+}

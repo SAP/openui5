@@ -1,35 +1,31 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/Button',
-		'sap/m/Dialog',
-		'sap/m/List',
-		'sap/m/StandardListItem',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Button, Dialog, List, StandardListItem, Controller, JSONModel) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/IconPool",
+	"sap/m/Dialog",
+	"sap/m/DialogType",
+	"sap/m/Button",
+	"sap/m/ButtonType",
+	"sap/m/List",
+	"sap/m/StandardListItem",
+	"sap/m/Text"
+], function (Controller, JSONModel, IconPool, Dialog, DialogType, Button, ButtonType, List, StandardListItem, Text) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.Dialog.C", {
 
 		onInit: function () {
-			// set explored app's demo model on this sample
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 		},
 
-		pressDialog: null,
-		fixedSizeDialog: null,
-		resizableDialog: null,
-		draggableDialog: null,
-		escapePreventDialog: null,
-		confirmEscapePreventDialog: null,
-		onDialogPress: function () {
-			if (!this.pressDialog) {
-				this.pressDialog = new Dialog({
-					title: 'Available Products',
+		onDefaultDialogPress: function () {
+			if (!this.oDefaultDialog) {
+				this.oDefaultDialog = new Dialog({
+					title: "Available Products",
 					content: new List({
 						items: {
-							path: '/ProductCollection',
+							path: "/ProductCollection",
 							template: new StandardListItem({
 								title: "{Name}",
 								counter: "{Quantity}"
@@ -37,147 +33,152 @@ sap.ui.define([
 						}
 					}),
 					beginButton: new Button({
-						text: 'Close',
+						type: ButtonType.Emphasized,
+						text: "OK",
 						press: function () {
-							this.pressDialog.close();
+							this.oDefaultDialog.close();
+						}.bind(this)
+					}),
+					endButton: new Button({
+						text: "Close",
+						press: function () {
+							this.oDefaultDialog.close();
 						}.bind(this)
 					})
 				});
 
-				//to get access to the global model
-				this.getView().addDependent(this.pressDialog);
+				// to get access to the controller's model
+				this.getView().addDependent(this.oDefaultDialog);
 			}
 
-			this.pressDialog.open();
+			this.oDefaultDialog.open();
 		},
 
-		onResizableDialog: function () {
-			if (!this.resizableDialog) {
-				this.resizableDialog = new Dialog({
-					title: 'Resizable Available Products',
+		onDialogWithSizePress: function () {
+			if (!this.oFixedSizeDialog) {
+				this.oFixedSizeDialog = new Dialog({
+					title: "Available Products",
+					contentWidth: "550px",
+					contentHeight: "300px",
+					content: new List({
+						items: {
+							path: "/ProductCollection",
+							template: new StandardListItem({
+								title: "{Name}",
+								counter: "{Quantity}"
+							})
+						}
+					}),
+					endButton: new Button({
+						text: "Close",
+						press: function () {
+							this.oFixedSizeDialog.close();
+						}.bind(this)
+					})
+				});
+
+				//to get access to the controller's model
+				this.getView().addDependent(this.oFixedSizeDialog);
+			}
+
+			this.oFixedSizeDialog.open();
+		},
+
+		onResizableDialogPress: function () {
+			if (!this.oResizableDialog) {
+				this.oResizableDialog = new Dialog({
+					title: "Resizable Available Products",
 					contentWidth: "550px",
 					contentHeight: "300px",
 					resizable: true,
 					content: new List({
 						items: {
-							path: '/ProductCollection',
+							path: "/ProductCollection",
 							template: new StandardListItem({
 								title: "{Name}",
 								counter: "{Quantity}"
 							})
 						}
 					}),
-					beginButton: new Button({
-						text: 'Close',
+					endButton: new Button({
+						text: "Close",
 						press: function () {
-							this.resizableDialog.close();
+							this.oResizableDialog.close();
 						}.bind(this)
 					})
 				});
 
-				//to get access to the global model
-				this.getView().addDependent(this.resizableDialog);
+				//to get access to the controller's model
+				this.getView().addDependent(this.oResizableDialog);
 			}
 
-			this.resizableDialog.open();
+			this.oResizableDialog.open();
 		},
 
-		onDraggableDialog: function () {
-			if (!this.draggableDialog) {
-				this.draggableDialog = new Dialog({
-					title: 'Draggable Available Products',
+		onDraggableDialogPress: function () {
+			if (!this.oDraggableDialog) {
+				this.oDraggableDialog = new Dialog({
+					title: "Draggable Available Products",
 					contentWidth: "550px",
 					contentHeight: "300px",
 					draggable: true,
 					content: new List({
 						items: {
-							path: '/ProductCollection',
+							path: "/ProductCollection",
 							template: new StandardListItem({
 								title: "{Name}",
 								counter: "{Quantity}"
 							})
 						}
 					}),
-					beginButton: new Button({
-						text: 'Close',
+					endButton: new Button({
+						text: "Close",
 						press: function () {
-							this.draggableDialog.close();
+							this.oDraggableDialog.close();
 						}.bind(this)
 					})
 				});
 
-				//to get access to the global model
-				this.getView().addDependent(this.draggableDialog);
+				//to get access to the controller's model
+				this.getView().addDependent(this.oDraggableDialog);
 			}
 
-			this.draggableDialog.open();
+			this.oDraggableDialog.open();
 		},
 
-		onDialogWithSizePress: function (oEvent) {
-			if (!this.fixedSizeDialog) {
-				this.fixedSizeDialog = new Dialog({
-					title: 'Available Products',
-					contentWidth: "550px",
-					contentHeight: "300px",
-					content: new List({
-						items: {
-							path: '/ProductCollection',
-							template: new StandardListItem({
-								title: "{Name}",
-								counter: "{Quantity}"
-							})
-						}
-					}),
-					beginButton: new Button({
-						text: 'Close',
-						press: function () {
-							this.fixedSizeDialog.close();
-						}.bind(this)
-					})
-				});
-
-				//to get access to the global model
-				this.getView().addDependent(this.fixedSizeDialog);
-			}
-
-			this.fixedSizeDialog.open();
-		},
-
-		onEscapePreventDialog: function() {
-			if (!this.escapePreventDialog) {
-				this.escapePreventDialog = new sap.m.Dialog({
-					title: 'Try closing me with ESCAPE',
+		onEscapePreventDialogPress: function () {
+			if (!this.oEscapePreventDialog) {
+				this.oEscapePreventDialog = new Dialog({
+					title: "Dialog with prevent close",
+					content: new Text({ text: "Try to close this Dialog with the Escape key" }),
+					type: DialogType.Message,
 					buttons: [
-						new sap.m.Button({
-							text : "Simply close",
-							press : function() {
-								this.escapePreventDialog.close();
+						new Button({
+							text: "Simply close",
+							press: function () {
+								this.oEscapePreventDialog.close();
 							}.bind(this)
 						})
 					],
-					escapeHandler: function(oPromise) {
-						if (!this.confirmEscapePreventDialog) {
-							this.confirmEscapePreventDialog = new sap.m.Dialog({
-								icon : sap.ui.core.IconPool.getIconURI("message-information"),
-								title : "Are you sure?",
-								content : [
-									new sap.m.Text({
-										text : "Your unsaved changes will be lost"
-									})
-								],
-								type : sap.m.DialogType.Message,
-								buttons : [
-									new sap.m.Button({
-										text : "Yes",
-										press : function() {
-											this.confirmEscapePreventDialog.close();
+					escapeHandler: function (oPromise) {
+						if (!this.oConfirmEscapePreventDialog) {
+							this.oConfirmEscapePreventDialog = new Dialog({
+								title: "Are you sure?",
+								content: new Text({ text: "Your unsaved changes will be lost" }),
+								type: DialogType.Message,
+								icon: IconPool.getIconURI("message-information"),
+								buttons: [
+									new Button({
+										text: "Yes",
+										press: function () {
+											this.oConfirmEscapePreventDialog.close();
 											oPromise.resolve();
 										}.bind(this)
 									}),
-									new sap.m.Button({
-										text : "No",
-										press : function() {
-											this.confirmEscapePreventDialog.close();
+									new Button({
+										text: "No",
+										press: function () {
+											this.oConfirmEscapePreventDialog.close();
 											oPromise.reject();
 										}.bind(this)
 									})
@@ -185,12 +186,55 @@ sap.ui.define([
 							});
 						}
 
-						this.confirmEscapePreventDialog.open();
+						this.oConfirmEscapePreventDialog.open();
 					}.bind(this)
 				});
 			}
 
-			this.escapePreventDialog.open();
+			this.oEscapePreventDialog.open();
+		},
+
+		onResponsivePaddingDialogPress: function () {
+			if (!this.oResponsivePaddingDialog) {
+				this.oResponsivePaddingDialog = new Dialog({
+					title: "On SAP Quartz themes, the padding will adjust based on the width of the Dialog",
+					contentWidth: "680px",
+					contentHeight: "450px",
+					resizable: true,
+					draggable: true,
+					content: new List({
+						items: {
+							path: "/ProductCollection",
+							template: new StandardListItem({
+								title: "{Name}",
+								counter: "{Quantity}"
+							})
+						}
+					}),
+					beginButton: new Button({
+						type: ButtonType.Emphasized,
+						text: "OK",
+						press: function () {
+							this.oResponsivePaddingDialog.close();
+						}.bind(this)
+					}),
+					endButton: new Button({
+						text: "Close",
+						press: function () {
+							this.oResponsivePaddingDialog.close();
+						}.bind(this)
+					})
+				});
+
+				// Enable responsive padding by adding the appropriate classes to the control
+				this.oResponsivePaddingDialog.addStyleClass("sapUiResponsivePadding--content sapUiResponsivePadding--header sapUiResponsivePadding--footer sapUiResponsivePadding--subHeader");
+
+				//to get access to the controller's model
+				this.getView().addDependent(this.oResponsivePaddingDialog);
+			}
+
+			this.oResponsivePaddingDialog.open();
 		}
+
 	});
 });

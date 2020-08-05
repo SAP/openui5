@@ -1,0 +1,46 @@
+{
+  "1.79.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "fd079dcefd4334113f523f78b7ccf7a8e919bd1f",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.DynamicSideContent: Support Scrolling related functionality",
+        "references": []
+      },
+      {
+        "id": "4fc7518ba8d67645d9932dc46c27f16cc32c8cfd",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: Visibility issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070227066"
+          }
+        ]
+      },
+      {
+        "id": "6a6900d76bbe016b9650093867b81e7ed1053d0c",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: getScrollDelegate() method now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070219620"
+          }
+        ]
+      },
+      {
+        "id": "d307baa1521107cf8be563d109af4cafdc246bdc",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent - now renders with proper CSS classes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070127815"
+          }
+        ]
+      }
+    ]
+  }
+}

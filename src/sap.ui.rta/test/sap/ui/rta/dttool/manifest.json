@@ -1,0 +1,112 @@
+{
+	"_version": "1.21.0",
+	"sap.app": {
+		"id": "sap.ui.rta.dttool",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": false,
+			"phone": false
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.rta.dttool.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.54.0",
+			"libs": {
+				"sap.ui.core": {
+					"minVersion": "1.54.0"
+				},
+				"sap.m": {
+					"minVersion": "1.54.0"
+				},
+				"sap.ui.layout": {
+					"minVersion": "1.54.0"
+				},
+				"sap.ui.codeeditor": {
+					"minVersion": "1.54.0"
+				},
+				"sap.ui.rta": {
+					"minVersion": "1.54.0"
+				},
+				"sap.ui.dt": {
+					"minVersion": "1.54.0"
+				}
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.rta.dttool.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
+				},
+				"preload": true
+			}
+		},
+		"resources": {
+			"css": [{
+				"uri": "css/style.css"
+			}]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.rta.dttool.view",
+				"controlId": "codeApp",
+				"controlAggregation": "pages",
+				"transition": "show",
+				"async": true,
+				"bypassed": {
+					"target": "notFound"
+				}
+			},
+			"routes": [{
+					"pattern": "",
+					"name": "home",
+					"target": "home"
+				}, {
+					"pattern": "sample/{codeID}",
+					"name": "sample",
+					"target": "sample"
+				},
+				{
+					"pattern": "404",
+					"name": "notFound",
+					"target": "notFound"
+				}
+			],
+			"targets": {
+				"home": {
+					"viewId": "code",
+					"viewName": "Code",
+					"viewLevel": 1
+				},
+				"notFound": {
+					"viewId": "fileNotFound",
+					"viewName": "FileNotFound"
+				},
+				"sample": {
+					"viewId": "code",
+					"viewName": "Code",
+					"viewLevel": 1
+				}
+			}
+		}
+	}
+}

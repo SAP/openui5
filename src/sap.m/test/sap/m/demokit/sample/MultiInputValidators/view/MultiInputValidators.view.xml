@@ -1,0 +1,21 @@
+<mvc:View height="100%" controllerName="sap.m.sample.MultiInputValidators.controller.MultiInputValidators"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<items>
+			<Label text="MultiInput using two validators:" labelFor="multiInput1"/>
+			<Label text="First validator creates token where the text is the same as input value; second validator adds symbol to token." labelFor="multiInput1" class="sapUiSmallMarginTop"/>
+			<HBox renderType="Bare">
+				<items>
+					<MultiInput id="multiInput1" width="50%" showValueHelp="false"/>
+					<CheckBox id="checkbox1" text="Validate?" selected="true"/>
+				</items>
+			</HBox>
+			<Label text="MultiInput using asynchronous validator: add token by callback validation" width="100%" labelFor="multiInput2" class="sapUiSmallMarginTop"/>
+			<MultiInput id="multiInput2" width="50%" showValueHelp="false"/>
+
+			<Label text="MultiInput with asynchronously validation" labelFor="multiInput3" class="sapUiSmallMarginTop"/>
+			<MultiInput id="multiInput3" width="50%"  placeholder= "tokens get validated asynchronously after 500ms" showValueHelp="false"/>
+		</items>
+	</VBox>
+</mvc:View>

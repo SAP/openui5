@@ -7,8 +7,6 @@
 		binding="{/ProductCollection/0}"
 		class="sapUiContentPadding"
 		width="100%">
-		<l:content>
-			<ObjectIdentifier title="{Name}" text="{Description}" titleActive="true" titlePress="titleClicked"/>
-		</l:content>
+		<ObjectIdentifier title="{Name}" text="{Description}" titleActive="true" titlePress="titleClicked"/>
 	</l:VerticalLayout>
 </mvc:View>

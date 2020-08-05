@@ -1,0 +1,391 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "b3d36b04ec1162cac66e2c98f4afd7413a5ea601",
+        "type": "FEATURE",
+        "text": "sap.m.TimePicker/DateTimePicker: OK button is now emphasized",
+        "references": []
+      },
+      {
+        "id": "b1ef834b54988b3a89735539409eab41f93c3b89",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: bottom padding is correct now for Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980118454"
+          }
+        ]
+      },
+      {
+        "id": "aa7af7b34d904a7b6e45efd949124dd0bfd884aa",
+        "type": "FEATURE",
+        "text": "HeaderContainer - mobile swipe support",
+        "references": []
+      },
+      {
+        "id": "06391995448dc65ea9badf743202b8ea9e76bfb6",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Arrow icons for appointments are added",
+        "references": []
+      },
+      {
+        "id": "cc0d811051d27f39f590a723ce6bf907250c53d2",
+        "type": "FIX",
+        "text": "JSDoc: incorporate feedback from SDK feedback channel (2019/3)",
+        "references": []
+      },
+      {
+        "id": "d1c6fc746aab94b6845a842dbc077f2cb5411d83",
+        "type": "FIX",
+        "text": "P13nDialog: navigation displaying improvements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980147525"
+          }
+        ]
+      },
+      {
+        "id": "fd9e70d802f5643388a76aa840a18b85e77a4a2d",
+        "type": "FIX",
+        "text": "sap.m.Button: Back type is displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980183607"
+          }
+        ]
+      },
+      {
+        "id": "306a4b840345e31660d8bc2e89683c0f10bfd04d",
+        "type": "FIX",
+        "text": "sap.m.Button: remove overstyling inside Bar for Fiori 3 theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980158602"
+          }
+        ]
+      },
+      {
+        "id": "4b41e0c991850f4bd799273a6926462863b6e684",
+        "type": "FIX",
+        "text": "sap.m.DateRangeSelection: including invalid value doesn't make the control throw an error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980191021"
+          }
+        ]
+      },
+      {
+        "id": "874a0fbb93feae6f58a7c312e16d1f0e9804bc68",
+        "type": "FIX",
+        "text": "sap.m.DateRangeSelection: range now covers all hours from last day",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980065741"
+          }
+        ]
+      },
+      {
+        "id": "4c1ab7ca7e0bf9a7a32b5e0092211fc6a3cbe872",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: CountMode=None should not jump to the first item after more button is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980065598"
+          }
+        ]
+      },
+      {
+        "id": "27c80120af431d4c65cb32f3521fd063b0044a1d",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Tokenizer`s width calculation fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980187106"
+          }
+        ]
+      },
+      {
+        "id": "a96fb63873a4354a0b1a96e67c000a4bb84dd4b1",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Preserving hours on navigating in custom views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002177802019"
+          }
+        ]
+      },
+      {
+        "id": "2e2efa0bb460e56cf52a00b94f94e1d64c6dca45",
+        "type": "FIX",
+        "text": "sap.m.Popover: Adjust content width when scrollbar is added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870501379"
+          }
+        ]
+      },
+      {
+        "id": "09678e91c589ef73070b64967fec5589fbbce362",
+        "type": "FIX",
+        "text": "sap.m.SelectDialog: Correct CSS selector",
+        "references": []
+      },
+      {
+        "id": "b0251665854be08289795f929445bc35cb0f2b1e",
+        "type": "FIX",
+        "text": "sap.m.SelectDialog: Remove unnecessary padding",
+        "references": []
+      },
+      {
+        "id": "2e815dfd4bfbb0e36eea6160cc008c67550da582",
+        "type": "FIX",
+        "text": "sap.m.TextArea: Growing property is now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1940164068"
+          }
+        ]
+      },
+      {
+        "id": "b462a89d01bb640336620ff5db6ee571ecb7b9bd",
+        "type": "FEATURE",
+        "text": "sap.m.Select: Control can now be both disabled and focusable",
+        "references": []
+      },
+      {
+        "id": "ac00a514dd4bab12bbd0f88ca02c2c5da2a1bdcd",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Custom views introduced",
+        "references": []
+      },
+      {
+        "id": "99125a90a1670c5133f269feb9a32a93f6f19c38",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Implemented special dates",
+        "references": []
+      },
+      {
+        "id": "63aa7717b7c416fada1034942c3f38e63d4e4355",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Longer appointments text supported",
+        "references": []
+      },
+      {
+        "id": "879ec97774a8032a954b76af58dbedf8b9fc82ed",
+        "type": "FIX",
+        "text": "sap.m.GenericTag: Accessibility label optimized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980196199"
+          }
+        ]
+      },
+      {
+        "id": "fbc9f46c44375b46a21ddb2b662420b00d1fe8b9",
+        "type": "FIX",
+        "text": "sap.m.Input: Additional check for existing list in attachAfterClose",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980163134"
+          }
+        ]
+      },
+      {
+        "id": "69d2bca637300aa45a05e6ad8604cd107153cd36",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Read-only control should have focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980195024"
+          }
+        ]
+      },
+      {
+        "id": "6b02996847a5108893583c786a438ade35a4b171",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Use list in delete mode for N-more popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970156490"
+          }
+        ]
+      },
+      {
+        "id": "bc7967eee54803d3213bfe6fe33a0f9cd19e8223",
+        "type": "FIX",
+        "text": "sap.m.Popover: _includeScrollWidth adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980193022"
+          }
+        ]
+      },
+      {
+        "id": "ddc6b8852ec6a039023b52196c043da40e79c764",
+        "type": "FIX",
+        "text": "sap.m.TextArea: Failing test in FF corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980193025"
+          }
+        ]
+      },
+      {
+        "id": "e2159e723e3fc087c76e4edc2878d624fda5f5a2",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Keyboard handling (Alt+Down, F4) improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980207109"
+          }
+        ]
+      },
+      {
+        "id": "428743d089afc926a7cde31867ffbc0e019e3224",
+        "type": "FIX",
+        "text": "sap.m.MessageView: Restore items type after navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980206444"
+          }
+        ]
+      },
+      {
+        "id": "d575eb97fc3fa51683c44c0f049cd844d0dc6bc3",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Remove duplicate class",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980206839"
+          }
+        ]
+      },
+      {
+        "id": "db6bf3db94b2b9e4c8f02401bf761bbef507358d",
+        "type": "FEATURE",
+        "text": "sap.m.DateRangeSelection: Change date range with keyboard handling is added",
+        "references": []
+      },
+      {
+        "id": "d01ea07aa8d57842d84d7aaef8ce06168d052cf4",
+        "type": "FEATURE",
+        "text": "sap.m.ObjectStatus: now supports inverted state and indication colors",
+        "references": []
+      },
+      {
+        "id": "3672a9e854d7a5037f6990a9cc3102b594ed9d23",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Next/Previous buttons now have tooltips",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980211008"
+          }
+        ]
+      },
+      {
+        "id": "960a75e8dd04177da1016c9c0f78739452cee0e9",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Input now selected on arrow down",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980153441"
+          }
+        ]
+      },
+      {
+        "id": "8d0d2692436596906838de417dbf7167c0ec9993",
+        "type": "FIX",
+        "text": "sap.m.GenericTag: Fixed tooltip rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980210776"
+          }
+        ]
+      },
+      {
+        "id": "46acc2b9b208af8fb3058bfa863196ed37b8f7bd",
+        "type": "FIX",
+        "text": "sap.m.IconTabHeader: Do not trigger scroll when space is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980197050"
+          }
+        ]
+      },
+      {
+        "id": "b22f9d8e00da67ec93d8d0574672bb024f9312bb",
+        "type": "FIX",
+        "text": "sap.m.Input: Description is now read by JAWS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980211096"
+          }
+        ]
+      },
+      {
+        "id": "88b1e6f8dc3f1d5c34a4983ca61dbd465d169f26",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Cleans side effects of lazy list instantiation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980207494"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980198372"
+          }
+        ]
+      },
+      {
+        "id": "6c9b4225f7f23c6868d4ba7dafa9e1a595d21b3c",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Refresh N-more list on token deletion",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970156490"
+          }
+        ]
+      },
+      {
+        "id": "7fcb48c7f2ebb620002e7730e5bbce1439d4c538",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: unbindAggregation clears calendar rows now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980098410"
+          }
+        ]
+      }
+    ]
+  }
+}

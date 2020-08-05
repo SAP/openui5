@@ -1,0 +1,28 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.InputListItem",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.InputListItem.List",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"List.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,7 +1,7 @@
 {
 	"explored": {
 		"entitiesDefaults": {
-			"formFactors": "ML"
+			"formFactors": "SML"
 		},
 		"samplesRef": {
 			"namespace": "sap.ui.table.sample",
@@ -16,6 +16,7 @@
 				"samples": [
 					"sap.ui.table.sample.Basic",
 					"sap.ui.table.sample.Selection",
+					"sap.ui.table.sample.MultiSelectionPlugin",
 					"sap.ui.table.sample.Sorting",
 					"sap.ui.table.sample.Filtering",
 					"sap.ui.table.sample.Aggregations",
@@ -30,18 +31,18 @@
 					"sap.ui.table.sample.DnD"
 				]
 			},
-		  	{
+			{
 				"id": "sap.ui.table.TreeTable",
 				"name": "Tree Table",
 				"category": "List",
 				"since": "1.36",
 				"samples": [
-			  	    "sap.ui.table.sample.TreeTable.JSONTreeBinding",
+					"sap.ui.table.sample.TreeTable.JSONTreeBinding",
 					"sap.ui.table.sample.TreeTable.BasicODataTreeBinding",
 					"sap.ui.table.sample.TreeTable.ODataAnnotationsTreeBinding",
-                    "sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding"
+					"sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding"
 				]
-		  	}
+			}
 		],
 		"samples": [
 			{
@@ -52,6 +53,10 @@
 				"id": "sap.ui.table.sample.Selection",
 				"name": "Selection",
 				"description": "Selection example showing selection modes and selection behaviors of table."
+			},{
+				"id": "sap.ui.table.sample.MultiSelectionPlugin",
+				"name": "MultiSelectionPlugin",
+				"description": "Example showing the behavior of MultiSelectionPlugin"
 			},{
 				"id": "sap.ui.table.sample.Sorting",
 				"name": "Sorting",
@@ -93,10 +98,10 @@
 				"name": "Row Actions",
 				"description": "Shows how row actions can be used."
 			},{
-			  "id": "sap.ui.table.sample.TreeTable.JSONTreeBinding",
-			  "name": "JSONTreeBinding",
-			  "description": "Basic example showing how a TreeTable can be build by using a JSONModel"
-		  	},{
+				"id": "sap.ui.table.sample.TreeTable.JSONTreeBinding",
+				"name": "JSONTreeBinding",
+				"description": "Basic example showing how a TreeTable can be build by using a JSONModel"
+			},{
 				"id": "sap.ui.table.sample.TreeTable.BasicODataTreeBinding",
 				"name": "Basic OData TreeBinding",
 				"description": "Illustrates how to bind to data from an OData model without using $metadata annotations or navigation properties. Instead, treeAnnotationProperties is filled for the TreeBinding."

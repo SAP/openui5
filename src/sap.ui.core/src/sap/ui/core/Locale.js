@@ -3,8 +3,8 @@
  */
 
 //Provides the locale object sap.ui.core.Locale
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
-	function(jQuery, BaseObject) {
+sap.ui.define(['sap/ui/base/Object', "sap/base/assert"],
+	function(BaseObject, assert) {
 	"use strict";
 
 
@@ -191,7 +191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			},
 
 			hasPrivateUseSubtag : function(sSubtag) {
-				jQuery.sap.assert(sSubtag && sSubtag.match(/^[0-9A-Z]{1,8}$/i), "subtag must be a valid BCP47 private use tag");
+				assert(sSubtag && sSubtag.match(/^[0-9A-Z]{1,8}$/i), "subtag must be a valid BCP47 private use tag");
 				return this.getPrivateUseSubtags().indexOf(sSubtag) >= 0;
 			},
 
@@ -306,7 +306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * List of locales for which translated texts have been bundled with the UI5 runtime.
 		 * @private
 		 */
-		Locale._coreI18nLocales = getDesigntimePropertyAsArray("$core-i18n-locales:,ar,bg,ca,cs,da,de,el,en,es,et,fi,fr,hi,hr,hu,it,iw,ja,ko,lt,lv,nl,no,pl,pt,ro,ru,sh,sk,sl,sv,th,tr,uk,vi,zh_CN,zh_TW$");
+		Locale._coreI18nLocales = getDesigntimePropertyAsArray("$core-i18n-locales:,ar,bg,ca,cs,da,de,el,en,es,et,fi,fr,hi,hr,hu,it,iw,ja,kk,ko,lt,lv,ms,nl,no,pl,pt,ro,ru,sh,sk,sl,sv,th,tr,uk,vi,zh_CN,zh_TW$");
 
 		/**
 		 * Checks whether the given language tag implies a character orientation

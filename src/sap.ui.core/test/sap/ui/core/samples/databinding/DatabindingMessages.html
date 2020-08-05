@@ -1,23 +1,27 @@
 <!DOCTYPE HTML>
 
 <html>
- <head>
- 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-   <title>Data binding test page</title>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <!-- ********************************************************************** -->
-    <!-- JavaScript Bootstrap:                                                  -->
-    <!-- Extend the "libs" property if you like to import additional libraries  -->
-    <!-- ********************************************************************** -->
-    <script id="sap-ui-bootstrap"
-        src="../../../../../../resources/sap-ui-core.js"
-        data-sap-ui-libs="sap.ui.layout,sap.m"
-        data-sap-ui-messaging="false">
-    </script>
+	<title>Data binding test page</title>
+
+	<!-- ********************************************************************** -->
+	<!-- JavaScript Bootstrap:                                                  -->
+	<!-- Extend the "libs" property if you like to import additional libraries  -->
+	<!-- ********************************************************************** -->
+	<script id="sap-ui-bootstrap" src="../../../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.m" data-sap-ui-messaging="false">
+	</script>
 
 	<script>
-		sap.ui.localResources("message");
+		sap.ui.loader.config({
+			paths: {
+				"message": "./message"
+			}
+		});
+
+		var oMessageManager = sap.ui.getCore().getMessageManager();
 		// Model
 		var oModel = new sap.ui.model.json.JSONModel({
 			form: {
@@ -35,7 +39,7 @@
 		var oButton1 = new sap.m.Button({
 			text: "add Warning",
 			press: function() {
-				sap.ui.getCore().getMessageManager().addMessages(
+				oMessageManager.addMessages(
 					new sap.ui.core.message.Message({
 						message: "Invalid order of characters in this name!",
 						type: sap.ui.core.MessageType.Warning,
@@ -48,7 +52,7 @@
 		var oButton2 = new sap.m.Button({
 			text: "add Info",
 			press: function() {
-				sap.ui.getCore().getMessageManager().addMessages(
+				oMessageManager.addMessages(
 					new sap.ui.core.message.Message({
 						message: "Nice last name!",
 						type: sap.ui.core.MessageType.Information,
@@ -60,7 +64,7 @@
 		var oButton3 = new sap.m.Button({
 			text: "add Success",
 			press: function() {
-				sap.ui.getCore().getMessageManager().addMessages(
+				oMessageManager.addMessages(
 					new sap.ui.core.message.Message({
 						message: "City sucessfully updated",
 						type: sap.ui.core.MessageType.Success,
@@ -73,7 +77,7 @@
 		var oButton5 = new sap.m.Button({
 			text: "add Success for ZIP",
 			press: function() {
-				sap.ui.getCore().getMessageManager().addMessages(
+				oMessageManager.addMessages(
 					new sap.ui.core.message.Message({
 						message: "de Zip is gut!",
 						type: sap.ui.core.MessageType.Success,
@@ -87,7 +91,7 @@
 		var oButton4 = new sap.m.Button({
 			text: "clear Messages",
 			press: function() {
-				sap.ui.getCore().getMessageManager().removeAllMessages();
+				oMessageManager.removeAllMessages();
 			}
 		});
 
@@ -95,26 +99,26 @@
 		var oMessagePopoverButton = new sap.m.Button({
 			text: 'Show MessagePopover',
 			type: 'Accept',
-			press: function () {
+			press: function() {
 				oMP.openBy(this);
 			}
 		});
 
 		var oMP = new sap.m.MessagePopover({
 			items: {
-					path:"message>/",
-					template: new sap.m.MessagePopoverItem({
-						description: "{message>description}",
-						type: "{message>type}",
-						title:"{message>message}",
-						subtitle: {
-							path: 'message>additionalText'
-						}
-					})
+				path: "message>/",
+				template: new sap.m.MessagePopoverItem({
+					description: "{message>description}",
+					type: "{message>type}",
+					title: "{message>message}",
+					subtitle: {
+						path: 'message>additionalText'
+					}
+				})
 			}
 		});
 
-		oMP.setModel(sap.ui.getCore().getMessageManager().getMessageModel(),"message");
+		oMP.setModel(oMessageManager.getMessageModel(), "message");
 
 		var oCompCont = new sap.ui.core.ComponentContainer("CompCont", {
 			name: "message",
@@ -138,15 +142,15 @@
 
 		var oPage = new sap.m.Page({
 			title: 'DataBinding Messages',
-			content: [ oCompCont , oCompCont2, oCompCont3, oCompCont4, oButton1, oButton2, oButton3, oButton4, oButton5],
-			footer:	new sap.m.Toolbar({
+			content: [oCompCont, oCompCont2, oCompCont3, oCompCont4, oButton1, oButton2, oButton3, oButton4, oButton5],
+			footer: new sap.m.Toolbar({
 				content: [
 					new sap.m.ToolbarSpacer(),
 					oMessagePopoverButton,
-					sap.m.CheckBox({
+					new sap.m.CheckBox({
 						selected: false,
 						text: "Compact mode",
-						select : function() {
+						select: function() {
 							jQuery("body").toggleClass("sapUiSizeCompact");
 						}
 					}),
@@ -155,7 +159,9 @@
 			})
 		});
 
-		var app = new sap.m.App("myApp", { initialPage: oPage });
+		var app = new sap.m.App("myApp", {
+			initialPage: oPage
+		});
 
 		app.addPage(oPage).placeAt('content');
 
@@ -173,9 +179,11 @@
 		});
 	</script>
 </head>
+
 <body class="sapUiBody">
 	<div id="content"></div>
 	<div id="buttons"></div>
 	<div id="messages"></div>
 </body>
+
 </html>

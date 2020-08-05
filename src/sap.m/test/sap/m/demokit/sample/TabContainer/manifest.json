@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TabContainer",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TabContainer.TabContainer",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"TabContainer.view.xml",
+					"TabContainer.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

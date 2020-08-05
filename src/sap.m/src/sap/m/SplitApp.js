@@ -4,13 +4,14 @@
 
 // Provides control sap.m.SplitApp.
 sap.ui.define([
-	'jquery.sap.global',
 	'./SplitContainer',
 	'./library',
 	'sap/ui/Device',
-	'./SplitAppRenderer'
+	'./SplitAppRenderer',
+	"sap/ui/util/Mobile",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(jQuery, SplitContainer, library, Device, SplitAppRenderer) {
+	function(SplitContainer, library, Device, SplitAppRenderer, Mobile, jQuery) {
 	"use strict";
 
 	/**
@@ -44,6 +45,9 @@ sap.ui.define([
 	 * On narrow screens for phones (or tablet devices in portrait mode), the master list and the details are split into two separate pages.
 	 *
 	 * The user can navigate between the list and details, and see all the available information for each area.
+	 *
+	 * <b>Note:</b> The SplitApp should be used only as a root element of an application. It cannot be used as a child
+	 * control of some container.
 	 * @extends sap.m.SplitContainer
 	 *
 	 * @author SAP SE
@@ -84,7 +88,7 @@ sap.ui.define([
 			 *
 			 * On Android, these icons may or may not be used by the device. Chances can be improved by adding glare effect, rounded corners, setting the file name to end with "-precomposed.png", and setting the homeIconPrecomposed property to true.
 			 */
-			homeIcon : {type : "any", group : "Misc", defaultValue : null}
+			homeIcon : {type : "any", group : "Misc", defaultValue : null} // TODO remove after the end of support for Internet Explorer
 		},
 		events : {
 
@@ -119,7 +123,7 @@ sap.ui.define([
 			SplitContainer.prototype.init.apply(this, arguments);
 		}
 		this.addStyleClass("sapMSplitApp");
-		jQuery.sap.initMobile({
+		Mobile.init({
 			viewport: !this._debugZoomAndScroll,
 			statusBar: "default",
 			hideBrowser: true,
@@ -137,7 +141,7 @@ sap.ui.define([
 		if (SplitContainer.prototype.onBeforeRendering) {
 			SplitContainer.prototype.onBeforeRendering.apply(this, arguments);
 		}
-		jQuery.sap.initMobile({
+		Mobile.init({
 			homeIcon: this.getHomeIcon()
 		});
 	};
@@ -154,18 +158,15 @@ sap.ui.define([
 
 		var ref = this.getDomRef().parentNode;
 		// set all parent elements to 100% height this *should* be done by the application in CSS, but people tend to forget it...
-		if (ref && !ref._sapui5_heightFixed) {
-			ref._sapui5_heightFixed = true;
-			while (ref && ref !== document.documentElement) {
-				var $ref = jQuery(ref);
-				if ($ref.attr("data-sap-ui-root-content")) { // Shell as parent does this already
-					break;
-				}
-				if (!ref.style.height) {
-					ref.style.height = "100%";
-				}
-				ref = ref.parentNode;
+		while (ref && ref !== document.documentElement) {
+			var $ref = jQuery(ref);
+			if ($ref.attr("data-sap-ui-root-content")) { // Shell as parent does this already
+				break;
 			}
+			if (!ref.style.height) {
+				ref.style.height = "100%";
+			}
+			ref = ref.parentNode;
 		}
 	};
 

@@ -23,6 +23,7 @@
 
 .sapMTitle.sapMTitleWrap {
 	white-space: pre-line;
+	word-wrap: break-word;
 }
 
 .sapMTitle.sapMTitleNoWrap {
@@ -41,7 +42,7 @@
 	text-align: start;
 }
 
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapMTitleAlignBegin,
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapMTitleAlignBegin,// TODO remove after the end of support for Internet Explorer
 html[dir=rtl][data-sap-ui-browser^="ed"] .sapMTitleAlignBegin {
 	text-align: right;
 }
@@ -55,7 +56,7 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMTitleAlignBegin {
 	text-align: end;
 }
 
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapMTitleAlignEnd,
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapMTitleAlignEnd,// TODO remove after the end of support for Internet Explorer
 html[dir=rtl][data-sap-ui-browser^="ed"] .sapMTitleAlignEnd {
 	text-align: left;
 }
@@ -79,13 +80,6 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMTitleAlignEnd {
 
 .sapMTB-Transparent-CTX > .sapMTitleTB.sapMTitleStyleAuto {
 	font-size: @sapMFontHeader4Size;
-}
-
-.sapMTB-Info-CTX > .sapMTitle {
-	font-size: @sapMFontHeader6Size;
-	font-style: italic;
-	text-shadow: none;
-	color: @sapUiContentContrastTextColor;
 }
 
 /* Level H1 */

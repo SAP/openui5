@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.dt.plugin.MouseSelection.
 sap.ui.define([
-	'sap/ui/dt/Plugin'
+	"sap/ui/dt/Plugin"
 ],
 function(Plugin) {
 	"use strict";
@@ -30,9 +30,6 @@ function(Plugin) {
 	 */
 	var MouseSelection = Plugin.extend("sap.ui.dt.plugin.MouseSelection", /** @lends sap.ui.dt.plugin.MouseSelection.prototype */ {
 		metadata : {
-			// ---- object ----
-
-			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
 			},
@@ -67,7 +64,7 @@ function(Plugin) {
 	/*
 	 * @private
 	 */
-	 MouseSelection.prototype._onClick = function(oEvent) {
+	MouseSelection.prototype._onClick = function(oEvent) {
 		this.setSelected(!this.getSelected());
 
 		oEvent.preventDefault();
@@ -75,4 +72,4 @@ function(Plugin) {
 	};
 
 	return MouseSelection;
-}, /* bExport= */ true);
+});

@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/demo/walkthrough/controller/HelloDialog"
-], function (UIComponent, JSONModel, HelloDialog) {
+	"./controller/HelloDialog",
+	"sap/base/Log"
+], function (UIComponent, JSONModel, HelloDialog, Log) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.walkthrough.Component", {
@@ -12,7 +13,6 @@ sap.ui.define([
 		},
 
 		init: function () {
-
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 
@@ -31,15 +31,16 @@ sap.ui.define([
 			// open support window (only for demonstration purpose)
 			if (sap.ui.Device.system.desktop) {
 				setTimeout(function () {
-					jQuery.sap.log.info("opening support window");
-					jQuery.sap.require("sap.ui.core.support.Support");
-					var oSupport = sap.ui.core.support.Support.getStub("APPLICATION");
-					oSupport.openSupportTool();
+					Log.info("opening support window");
+					sap.ui.require(["sap/ui/core/support/Support"], function (Support) {
+						var oSupport = Support.getStub("APPLICATION");
+						oSupport.openSupportTool();
+					});
 				}, 3000);
 			}
 		},
 
-		exit : function() {
+		exit : function () {
 			this._helloDialog.destroy();
 			delete this._helloDialog;
 		},

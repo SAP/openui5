@@ -5,8 +5,8 @@
 /**
  * Initialization Code and shared classes of library sap.ui.core.
  */
-sap.ui.define(['sap/ui/base/DataType', './Core'],
-	function(DataType) {
+sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
+	function(DataType, CalendarType) {
 	"use strict";
 
 	// delegate further initialization of this library to the Core
@@ -43,6 +43,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 			"sap.ui.core.ID",
 			"sap.ui.core.IconColor",
 			"sap.ui.core.ImeMode",
+			"sap.ui.core.IndicationColor",
 			"sap.ui.core.MessageType",
 			"sap.ui.core.OpenState",
 			"sap.ui.core.Orientation",
@@ -50,6 +51,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 			"sap.ui.core.Priority",
 			"sap.ui.core.ScrollBarAction",
 			"sap.ui.core.Scrolling",
+			"sap.ui.core.SortOrder",
 			"sap.ui.core.TextAlign",
 			"sap.ui.core.TextDirection",
 			"sap.ui.core.TitleLevel",
@@ -57,6 +59,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 			"sap.ui.core.ValueState",
 			"sap.ui.core.VerticalAlign",
 			"sap.ui.core.Wrapping",
+			"sap.ui.core.InvisibleMessageMode",
 			"sap.ui.core.dnd.DropEffect",
 			"sap.ui.core.dnd.DropLayout",
 			"sap.ui.core.dnd.DropPosition",
@@ -83,7 +86,6 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 			"sap.ui.core.LocalBusyIndicator",
 			"sap.ui.core.ScrollBar",
 			"sap.ui.core.TooltipBase",
-			"sap.ui.core.UIComponent",
 			"sap.ui.core.XMLComposite",
 			"sap.ui.core.mvc.HTMLView",
 			"sap.ui.core.mvc.JSONView",
@@ -92,8 +94,8 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 			"sap.ui.core.mvc.View",
 			"sap.ui.core.mvc.XMLView",
 			"sap.ui.core.tmpl.DOMElement",
-			"sap.ui.core.tmpl.Template",
-			"sap.ui.core.tmpl.TemplateControl"
+			"sap.ui.core.tmpl.TemplateControl",
+			"sap.ui.core.util.Export"
 		],
 		elements: [
 			"sap.ui.core.CustomData",
@@ -111,7 +113,9 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 			"sap.ui.core.dnd.DragDropInfo",
 			"sap.ui.core.search.OpenSearchProvider",
 			"sap.ui.core.search.SearchProvider",
-			"sap.ui.core.tmpl.DOMAttribute"
+			"sap.ui.core.tmpl.DOMAttribute",
+			"sap.ui.core.util.ExportCell",
+			"sap.ui.core.InvisibleMessage"
 		],
 		extensions: {
 			"sap.ui.support" : {
@@ -598,7 +602,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 
 	/**
 	 * Defines the accessible landmark roles for ARIA support. This enumeration is used with the AccessibleRole control property.
-	 * For more information, goto "Roles for Accessible Rich Internet Applications (WAI-ARIA Roles)" at the www.w3.org homepage.
+	 * For more information, go to "Roles for Accessible Rich Internet Applications (WAI-ARIA Roles)" at the www.w3.org homepage.
 	 *
 	 * @enum {string}
 	 * @public
@@ -668,12 +672,30 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 		 *
 		 * @public
 		 */
-		Complementary : "Complementary"
+		Complementary : "Complementary",
+
+		/**
+		 * Represents the ARIA role <code>form</code>.
+		 *
+		 * A region that contains a collection of items and objects that, as a whole, combine to create a form.
+		 *
+		 * @public
+		 */
+		Form : "Form",
+
+		/**
+		 * Represents the ARIA role <code>contentinfo</code>.
+		 *
+		 * A region that contains information about the content on the page.
+		 *
+		 * @public
+		 */
+		ContentInfo : "ContentInfo"
 
 	};
 
 	/**
-	 * Configuration options for the colors of a progress bar
+	 * Configuration options for the colors of a progress bar.
 	 *
 	 * @enum {string}
 	 * @public
@@ -708,7 +730,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	};
 
 	/**
-	 * Configuration options for the BusyIndicator size
+	 * Configuration options for the <code>BusyIndicator</code> size.
 	 *
 	 * @enum {string}
 	 * @public
@@ -740,39 +762,9 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 		Large : "Large"
 	};
 
-	/**
-	 * The types of Calendar
-	 *
-	 * @enum {string}
-	 * @public
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	thisLib.CalendarType = {
-
-		/**
-		 * The Gregorian calendar
-		 * @public
-		 */
-		Gregorian: "Gregorian",
-
-		/**
-		 * The Islamic calendar
-		 * @public
-		 */
-		Islamic: "Islamic",
-
-		/**
-		 * The Japanese emperor calendar
-		 * @public
-		 */
-		Japanese: "Japanese",
-
-		/**
-		 * The Persian Jalali calendar
-		 * @public
-		 */
-		Persian: "Persian"
-	};
+	// Note: the imported module sap/ui/core/CalendarType already defines the global sap.ui.core.CalendarType,
+	// this assignment here is only kept as a reminder
+	// thisLib.CalendarType = CalendarType;
 
 	/**
 	 * @classdesc A string type that represents CSS color values.
@@ -806,7 +798,9 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 * The CSS specifications calls this the <code>'&lt;length&gt; type'</code>.
 	 * Allowed values are CSS sizes like "1px" or "2em" or "50%". The special values <code>auto</code>
 	 * and <code>inherit</code> are also accepted as well as mathematical expressions using the CSS3
-	 * <code>calc(<i>expression</i>)</code> operator.
+	 * <code>calc(<i>expression</i>)</code> operator. Furthermore, length units representing a percentage of the
+	 * current viewport dimensions: width (vw), height (vh), the smaller of the two (vmin), or the larger of the two (vmax)
+	 * can also be defined as a CSS size.
 	 *
 	 * Note that CSS does not allow all these values for every CSS property representing a size.
 	 * E.g. <code>padding-left</code> doesn't allow the value <code>auto</code>. So even if a value is
@@ -816,8 +810,9 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 *
 	 * <b>Units</b>
 	 *
-	 * Valid font-relative units are <code>em, ex</code> and <code>rem</code>. Supported absolute units
-	 * are <code>cm, mm, in, pc, pt</code> and <code>px</code>. Other units are not supported yet.
+	 * Valid font-relative units are <code>em, ex</code> and <code>rem</code>. Viewport relative units
+	 * <code>vw, vh, vmin, vmax</code> are also valid. Supported absolute units are <code>cm, mm, in, pc, pt</code>
+	 * and <code>px</code>.Other units are not supported yet.
 	 *
 	 *
 	 * <b>Mathematical Expressions</b>
@@ -849,7 +844,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 				// Note: the following regexp by intention is a single regexp literal.
 				// It could be made much more readable by constructing it out of (reused) sub-expressions (strings)
 				// but this would not be parseable by the metamodel recovery tooling that is used inside SAP
-				return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%))|calc\(\s*(\(\s*)*[-+]?(([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)?)(\s*(\)\s*)*(\s[-+]\s|[*\/])\s*(\(\s*)*([-+]?(([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)?)))*\s*(\)\s*)*\))$/.test(vValue);
+				return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|[vV][wW]|[vV][hH]|[vV][mM][iI][nN]|[vV][mM][aA][xX]|%))|calc\(\s*(\(\s*)*[-+]?(([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|[vV][wW]|[vV][hH]|[vV][mM][iI][nN]|[vV][mM][aA][xX]|%)?)(\s*(\)\s*)*(\s[-+]\s|[*\/])\s*(\(\s*)*([-+]?(([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|[vV][wW]|[vV][hH]|[vV][mM][iI][nN]|[vV][mM][aA][xX]|%)?)))*\s*(\)\s*)*\))$/.test(vValue);
 			}
 		},
 		DataType.getType('string')
@@ -902,7 +897,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * Font design for texts
+	 * Font design for texts.
 	 *
 	 * @enum {string}
 	 * @public
@@ -949,7 +944,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * Configuration options for horizontal alignments of controls
+	 * Configuration options for horizontal alignments of controls.
 	 *
 	 * @enum {string}
 	 * @public
@@ -991,7 +986,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * @classdesc A string type representing an Id or a name.
+	 * @classdesc A string type representing an ID or a name.
 	 *
 	 * Allowed is a sequence of characters (capital/lowercase), digits, underscores, dashes, points and/or colons.
 	 * It may start with a character or underscore only.
@@ -1065,7 +1060,34 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 		 * Neutral color.
 		 * @public
 		 */
-		Neutral : "Neutral"
+		Neutral : "Neutral",
+
+		/**
+		 * Contrast color.
+		 * @public
+		 */
+		Contrast : "Contrast",
+
+		/**
+		 * Color that indicates an icon which isn't interactive
+		 * @public
+		 * @since 1.76
+		 */
+		NonInteractive : "NonInteractive",
+
+		/**
+		 * Color for icon used in a Tile
+		 * @public
+		 * @since 1.76
+		 */
+		Tile : "Tile",
+
+		/**
+		 * Color for icon used as a marker
+		 * @public
+		 * @since 1.76
+		 */
+		Marker : "Marker"
 
 	};
 
@@ -1115,12 +1137,75 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
-
 	/**
-	 * Defines the different message types of a message
+	 * Colors to highlight certain UI elements.
+	 *
+	 * In contrast to the <code>ValueState</code>, the semantic meaning must be defined by the application.
 	 *
 	 * @enum {string}
 	 * @public
+	 * @since 1.62.0
+	 * @see {@link fiori:/how-to-use-semantic-colors/ Semantic Colors}
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.IndicationColor = {
+
+		/**
+		 * Indication Color 1
+		 * @public
+		 */
+		Indication01 : "Indication01",
+
+		/**
+		 * Indication Color 2
+		 * @public
+		 */
+		Indication02 : "Indication02",
+
+		/**
+		 * Indication Color 3
+		 * @public
+		 */
+		Indication03 : "Indication03",
+
+		/**
+		 * Indication Color 4
+		 * @public
+		 */
+		Indication04 : "Indication04",
+
+		/**
+		 * Indication Color 5
+		 * @public
+		 */
+		Indication05 : "Indication05",
+
+		/**
+		 * Indication Color 6
+		 * @public
+		 */
+		Indication06 : "Indication06",
+
+		/**
+		 * Indication Color 7
+		 * @public
+		 */
+		Indication07 : "Indication07",
+
+		/**
+		 * Indication Color 8
+		 * @public
+		 */
+		Indication08 : "Indication08"
+	};
+
+
+	/**
+	 * Defines the different message types.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.10
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.MessageType = {
@@ -1196,7 +1281,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * Orientation of a UI element
+	 * Orientation of a UI element.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1285,7 +1370,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * Actions are: Click on track, button, drag of thumb, or mouse wheel click
+	 * Actions are: Click on track, button, drag of thumb, or mouse wheel click.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1352,6 +1437,38 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 		 * @public
 		 */
 		Hidden : "Hidden"
+
+	};
+
+
+	/**
+	 * Sort order of a column.
+	 *
+	 * @version ${version}
+	 * @enum {string}
+	 * @public
+	 * @since 1.61.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.SortOrder = {
+
+		/**
+		 * Sorting is not applied.
+		 * @public
+		 */
+		None : "None",
+
+		/**
+		 * Sorting is done in ascending order.
+		 * @public
+		 */
+		Ascending : "Ascending",
+
+		/**
+		 * Sorting is done in descending order.
+		 * @public
+		 */
+		Descending : "Descending"
 
 	};
 
@@ -1503,7 +1620,8 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 
 	/**
 	 * Marker interface for controls that can serve as a context menu.
-	 * Implementation of this interface should implement <li><code>openAsContextMenu</code></li> method.
+	 *
+	 * Implementation of this interface should implement the <code>openAsContextMenu</code> method.
 	 *
 	 * @name sap.ui.core.IContextMenu
 	 * @interface
@@ -1538,6 +1656,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 * @name sap.ui.core.IDScope
 	 * @interface
 	 * @private
+	 * @ui5-restricted
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
@@ -1554,8 +1673,9 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	/**
 	 * Opens the control by given opener ref.
 	 * @param {string} oEvent oncontextmenu event
-	 * @param {sap.ui.core.Element|DOMRef} oOpenerRef The element which will get the focus back again after the menu was closed.
+	 * @param {sap.ui.core.Element|Element} oOpenerRef The element which will get the focus back again after the menu was closed.
 	 *
+	 * @public
 	 * @function
 	 * @name sap.ui.core.IContextMenu.openAsContextMenu
 	 */
@@ -1575,15 +1695,19 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 */
 
 	/**
-	 * In the <code>Form</code> control all content controls are positioned on a grid cell base. By default
+	 * Whether a control wants to keep its original width even when used in a <code>Form</code>.
+	 *
+	 * In the <code>Form</code> control, all content controls are positioned on a grid cell base. By default,
 	 * the controls use the full width of the used grid cell. But for some controls (like image controls),
 	 * this is not the desired behavior. In this case the control must keep its original width.
+	 *
+	 * This is an optional method. When not defined, the width of the control might be adjusted.
 	 *
 	 * @return {boolean} true if the <code>Form</code> is not allowed to adjust the width of the control to use the cell's width
 	 * @since 1.48.0
 	 * @public
 	 * @function
-	 * @name sap.ui.core.IFormContent.getFormDoNotAdjustWidth
+	 * @name sap.ui.core.IFormContent.getFormDoNotAdjustWidth?
 	 */
 
 	/**
@@ -1608,7 +1732,9 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 *
 	 * @enum {string}
 	 * @public
+	 * @see {@link fiori:/how-to-use-semantic-colors/ Semantic Colors}
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @since 1.0
 	 */
 	thisLib.ValueState = {
 
@@ -1629,6 +1755,13 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 		 * @public
 		 */
 		Success : "Success",
+
+		/**
+		 * State is informative.
+		 * @public
+		 * @since 1.61
+		 */
+		Information : "Information",
 
 		/**
 		 * State is not specified.
@@ -1759,6 +1892,11 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.dnd.DropLayout = {
+		/**
+		 * Default {@link sap.ui.core.Element.extend layout} definition of the aggregations.
+		 * @public
+		 */
+		Default: "Default",
 
 		/**
 		 * Droppable controls are arranged vertically.
@@ -1812,7 +1950,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	thisLib.mvc = thisLib.mvc || {};
 
 	/**
-	 * Specifies possible view types
+	 * Specifies possible view types.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1856,7 +1994,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	thisLib.routing = thisLib.routing || {};
 
 	/**
-	 * Enumaration for different HistoryDirections
+	 * Enumeration for different HistoryDirections.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1865,25 +2003,25 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	thisLib.routing.HistoryDirection = {
 
 		/**
-		 * The page has already been navigated to and it was the successor of the previous page
+		 * The page has already been navigated to and it was the successor of the previous page.
 		 * @public
 		 */
 		Forwards : "Forwards",
 
 		/**
-		 * The page has already been navigated to and it was the precessor of the previous page
+		 * The page has already been navigated to and it was the predecessor of the previous page.
 		 * @public
 		 */
 		Backwards : "Backwards",
 
 		/**
-		 * A new Entry is added to the history
+		 * A new entry is added to the history.
 		 * @public
 		 */
 		NewEntry : "NewEntry",
 
 		/**
-		 * A Navigation took place, but it could be any of the other three states
+		 * A navigation took place, but it could be any of the other three states.
 		 * @public
 		 */
 		Unknown : "Unknown"
@@ -1891,8 +2029,8 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	};
 
 	/**
-	 * Enumeration for different lifecycle behaviors of Components created by the
-	 * ComponentContainer.
+	 * Enumeration for different lifecycle behaviors of components created by the
+	 * <code>ComponentContainer</code>.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1901,28 +2039,55 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	sap.ui.core.ComponentLifecycle =  {
 
 		/**
-		 * Legacy lifecycle means that the ComponentContainer takes care
-		 * to destroy the Component which is associated with the
-		 * ComponentContainer once the ComponentContainer is destroyed but
-		 * not when a new Component is associated.
+		 * Legacy lifecycle means that the <code>ComponentContainer</code> takes care
+		 * to destroy the component which is associated with the
+		 * <code>ComponentContainer</code> once the <code>ComponentContainer</code> is destroyed,
+		 * but not when a new component is associated.
 		 * @public
 		 */
 		Legacy : "Legacy",
 
 		/**
-		 * Application managed lifecycle means that the Application takes care
-		 * to destroy the Components associated with the ComponentContainer.
+		 * Application managed lifecycle means that the application takes care
+		 * to destroy the components associated with the <code>ComponentContainer</code>.
 		 * @public
 		 */
 		Application : "Application",
 
 		/**
-		 * Container managed lifecycle means that the ComponentContainer takes
-		 * care to destroy the Components associated with the ComponentContainer
-		 * once the ComponentContainer is destroyed or a new Component is associated.
+		 * Container managed lifecycle means that the <code>ComponentContainer</code> takes
+		 * care to destroy the components associated with the <code>ComponentContainer</code>
+		 * once the <code>ComponentContainer</code> is destroyed or a new component is associated.
 		 * @public
 		 */
 		Container : "Container"
+
+	};
+
+
+	/**
+	 * Enumeration for different mode behaviors of the <code>InvisibleMessage</code>.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @experimental Since 1.73.
+	 * @since 1.78
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.core.InvisibleMessageMode =  {
+
+		/**
+		 * Indicates that updates to the region should be presented at the next graceful opportunity,
+		 * such as at the end of reading the current sentence, or when the user pauses typing.
+		 * @public
+		 */
+		Polite : "Polite",
+
+		/**
+		 * Indicates that updates to the region have the highest priority and should be presented to the user immediately.
+		 * @public
+		 */
+		Assertive : "Assertive"
 
 	};
 
@@ -1941,7 +2106,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	// lazy imports
 	lazy("sap.ui.core.BusyIndicator", "show hide attachOpen detachOpen attachClose detachClose");
 	lazy("sap.ui.core.tmpl.Template", "registerType unregisterType");
-	lazy("sap.ui.core.Fragment", "registerType");
+	lazy("sap.ui.core.Fragment", "registerType byId createId");
 	lazy("sap.ui.core.IconPool", "createControlByURI addIcon getIconURI getIconInfo isIconURI getIconCollectionNames getIconNames getIconForMimeType");
 	lazy("sap.ui.core.service.ServiceFactoryRegistry", "register unregister get");
 
@@ -1962,8 +2127,8 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 
 	each("sap.ui.model.", ["Filter","Sorter","json.JSONModel","resource.ResourceModel","odata.ODataModel","odata.v2.ODataModel","odata.v4.ODataModel","xml.XMLModel"]);
 	each("sap.ui.model.type.", ["Boolean","Integer","Float","String","Date","Time","DateTime","FileSize","Currency","Unit","DateInterval", "DateTimeInterval", "TimeInterval"]);
-	each("sap.ui.model.odata.type.", ["Boolean","Byte","Date","DateTime","DateTimeOffset","Double","Decimal","Guid","Int16","Int32","Int64","Raw","SByte","Single","Stream","String","Time","TimeOfDay"]);
-	each("sap.ui.core.", ["Locale","LocaleData","mvc.Controller"]);
+	each("sap.ui.model.odata.type.", ["Boolean","Byte","Currency","Date","DateTime","DateTimeOffset","Double","Decimal","Guid","Int16","Int32","Int64","Raw","SByte","Single","Stream","String","Time","TimeOfDay","Unit"]);
+	each("sap.ui.core.", ["Locale","LocaleData","mvc.Controller", "UIComponent"]);
 	each("sap.ui.core.mvc.", ["Controller", "View", "JSView", "JSONView", "XMLView", "HTMLView", "TemplateView"], "sap.ui");
 	each("sap.ui.core.", ["Component"], "sap.ui");
 	each("sap.ui.core.tmpl.", ["Template"], "sap.ui");

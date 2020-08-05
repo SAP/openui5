@@ -165,7 +165,7 @@ sap.ui.require(['jquery.sap.global', 'sap/ui/model/json/JSONModel', 'sap/ui/mode
 			return {};
 		}
 
-		$("#export").click(function() {
+		$("#export").on("click", function() {
 			var oExport = new Export(getSettings());
 
 			function destroyExportObject() {
@@ -179,7 +179,7 @@ sap.ui.require(['jquery.sap.global', 'sap/ui/model/json/JSONModel', 'sap/ui/mode
 			.then(destroyExportObject, destroyExportObject);
 		});
 
-		$("#download").click(function() {
+		$("#download").on("click", function() {
 			$("#result").html('');
 
 			var oExport = new Export(getSettings());
@@ -193,7 +193,7 @@ sap.ui.require(['jquery.sap.global', 'sap/ui/model/json/JSONModel', 'sap/ui/mode
 
 		var $json = $(".data-source-json"),
 			$odata = $(".data-source-odata");
-		$("#data-source").change(function() {
+		$("#data-source").on("change", function() {
 			if ($(this).val() === 'json') {
 				$odata.css('display', 'none');
 				$json.css('display', '');

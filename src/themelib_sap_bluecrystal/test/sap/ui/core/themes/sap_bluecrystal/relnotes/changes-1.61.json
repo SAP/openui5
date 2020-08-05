@@ -1,0 +1,30 @@
+{
+  "1.61.0": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "4c10b3788df69446b9b58d7833369c933b0343b3",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: hover on selected non-working date is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880630530"
+          }
+        ]
+      },
+      {
+        "id": "03672d0230007db636eddd6562fb7255f49bb736",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: fix border CSS for BC, HCB and HCW themes",
+        "references": []
+      },
+      {
+        "id": "bf890ed36239d151b6b256f08877a0088599c81a",
+        "type": "FEATURE",
+        "text": "Introduction of Indication less parameters",
+        "references": []
+      }
+    ]
+  }
+}

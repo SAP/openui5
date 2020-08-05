@@ -1,0 +1,49 @@
+/* ================================================= */
+/* CSS for control sap.ui.commons/ApplicationHeader  */
+/* Quartz Dark theme                                 */
+/* ================================================= */
+
+.sapUiAppHdr {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	-moz-box-shadow: 0 0 8px @sapUiContentShadowColor;
+	background-image: -moz-linear-gradient(top center, lighten(@sapUiContentForegroundColor, 46), lighten(@sapUiContentForegroundColor, 70));
+	background-image: -webkit-gradient(linear, left top, left bottom, from(lighten(@sapUiContentForegroundColor, 46)), to(lighten(@sapUiContentForegroundColor, 70)));
+	background-image: -webkit-linear-gradient(top center, lighten(@sapUiContentForegroundColor, 46), lighten(@sapUiContentForegroundColor, 70));
+	background-image: -ms-linear-gradient(lighten(@sapUiContentForegroundColor, 46), lighten(@sapUiContentForegroundColor, 70)); /* starting with IE10 this works in IE */
+	background-image: linear-gradient(top center, lighten(@sapUiContentForegroundColor, 46), lighten(@sapUiContentForegroundColor, 70));
+	background-position: left top;
+	background-size: 100% 110px;
+	text-shadow: 1px 1px 2px darken(@sapUiContentShadowColor, 20);
+	color: @sapUiContentContrastTextColor;
+	border: 0px solid @sapUiBrand;
+	border-top-width: 8px;
+}
+
+.sapUiAppHdr .sapUiTv {
+	font-size: 13px;
+}
+
+.sapUiAppHdr .sapUiBtn.sapUiBtnS.sapUiBtnLite{
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapUiAppHdr .sapUiBtn.sapUiBtnS.sapUiBtnLite:focus{
+	color: @sapUiContentContrastTextColor;
+	background-color: transparent;
+	outline: 1px dotted @sapUiContentContrastFocusColor;
+	outline-offset: -1px;
+}
+
+.sapUiAppHdrWelcomeLogoffArea > .sapUiBtn.sapUiBtnS.sapUiBtnLite.sapUiBtnAct{
+	background-color: @sapUiButtonHoverBackground;
+}
+
+.sapUiAppHdrWelcomeLogoffArea > .sapUiTbSeparator {
+	display: inline-block;
+	vertical-align: top;
+	height: 10px;
+	width: 1px;
+	background-color: lighten(@sapUiContentForegroundBorderColor, 15);
+	margin: 4px 6px 0 6px;
+}

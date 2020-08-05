@@ -132,10 +132,39 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	vertical-align: middle;
 }
 
+.sapMBarLeft > .sapMBarChild,
+.sapMBarRight > .sapMBarChild {
+	flex-shrink: 0;
+}
+
+.sapMBarLeft > .sapMBarChild.sapMPI,
+.sapMBarRight > .sapMBarChild.sapMPI {
+	flex-shrink: 1;
+}
+
+.sapMBarLeft {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.sapMBarPH {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sapMBarRight {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-end;
+}
+
 /* Compact size */
 .sapUiSizeCompact{
 	.sapMBar {
 		height: 2rem;
+		line-height: 2rem;
 	}
 	.sapMBarLeft, .sapMBarRight, .sapMBarPH {
 		height: 2rem;
@@ -143,10 +172,17 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 }
 
-/*don't use margins on the childs to keep the calculation of the bar correct*/
-.sapMBarRight,
-.sapMBarRight > .sapMBarChild:last-child {
+.sapMBarRight > .sapMBarChild:not(.sapMTB) {
+	margin-top: 0;
+	margin-bottom: 0;
 	margin-right: 0;
+}
+
+.sapUiSizeCompact{
+	.sapMBarRight > .sapMBarChild:not(.sapMTB) {
+		margin-bottom: 0;
+		margin-right: 0;
+	}
 }
 
 .sapMBarLeft,
@@ -174,4 +210,29 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 .sapMIBar > .sapMBarLeft > .sapMBarChild:last-child,
 .sapMIBar .sapMBarPH > .sapMBarChild:last-child {
 	margin-right: 0;
+}
+
+.sapMIBar > .sapMBarLeft > .sapMBarChild.sapMGenericTag:last-child {
+	margin-right: 0.0625rem;
+}
+
+/* Bar Title Alignment */
+.sapMBarTitleStart .sapMBarPH {
+	justify-content: flex-start;
+}
+
+html[data-sap-ui-browser^="ff"].sap-desktop .sapMBarTitleStart .sapMBarPH {
+	justify-content: start;
+}
+
+html[data-sap-ui-browser^="ie"] .sapMBarTitleStart .sapMBarPH,
+html[data-sap-ui-browser^="ie"] .sapMBarTitleStart .sapMBarMiddle,
+html[data-sap-ui-browser^="ed"] .sapMBarTitleStart .sapMBarPH {
+	text-align: left;
+}
+
+html[dir="rtl"][data-sap-ui-browser^="ie"] .sapMBarTitleStart .sapMBarPH,
+html[dir="rtl"][data-sap-ui-browser^="ie"] .sapMBarTitleStart .sapMBarMiddle,
+html[dir="rtl"][data-sap-ui-browser^="ed"] .sapMBarTitleStart .sapMBarPH {
+	text-align: right;
 }

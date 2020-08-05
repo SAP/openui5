@@ -1,37 +1,41 @@
 /*!
  *{copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/odata/type/DateTimeBase",
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Control, DateFormat, FormatException, JSONModel, ParseException,
-		ValidateException, DateTime, DateTimeBase, DateTimeOffset, ODataType, TestUtils) {
+], function (jQuery, Log, CalendarType, Control, DateFormat, FormatException, ParseException,
+	ValidateException, JSONModel, DateTime, DateTimeBase, DateTimeOffset, ODataType, TestUtils) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
-		oDateOnly = new Date(Date.UTC(2014, 10, 27, 0, 0, 0, 0)),
+	var oDateOnly = new Date(Date.UTC(2014, 10, 27, 0, 0, 0, 0)),
 		oDateTime = new Date(2014, 10, 27, 13, 47, 26),
 		sDateTimeOffset = "2014-11-27T13:47:26" + getTimezoneOffset(oDateTime),
+		sDateTimeOffsetWithMS = "2014-11-27T13:47:26.456" + getTimezoneOffset(oDateTime),
+		sDateTimeOffsetYear0 = "0000-11-27T13:47:26" + getTimezoneOffset(oDateTime),
+		oDateTimeUTC = new Date(Date.UTC(2014, 10, 27, 13, 47, 26)),
 		oDateTimeWithMS = new Date(2014, 10, 27, 13, 47, 26, 456),
 		sFormattedDateOnly = "Nov 27, 2014",
 		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
-		sDateTimeOffsetWithMS = "2014-11-27T13:47:26.456" + getTimezoneOffset(oDateTime),
 //		sFormattedDateTimeWithMS = "Nov 27, 2014, 1:47:26.456 PM",
+		iFullYear = new Date().getFullYear(),
 		oMessages = {
-			"EnterDateTime" : "EnterDateTime Nov 27, 2014, 1:47:26 PM",
-			"EnterDate" : "EnterDate Nov 27, 2014"
+			"EnterDateTime" : "EnterDateTime Dec 31, " + iFullYear + ", 11:59:58 PM",
+			"EnterDate" : "EnterDate Dec 31, " + iFullYear
 		};
 
 	function createInstance(sTypeName, oFormatOptions, oConstraints) {
@@ -74,13 +78,21 @@ sap.ui.require([
 	function module(sTitle) {
 		QUnit.module(sTitle, {
 			beforeEach : function () {
-				this.oLogMock = this.mock(jQuery.sap.log);
+				var oConfiguration = sap.ui.getCore().getConfiguration();
+
+				this.sDefaultCalendarType = oConfiguration.getCalendarType();
+				this.sDefaultLanguage = oConfiguration.getLanguage();
+				this.oLogMock = this.mock(Log);
 				this.oLogMock.expects("warning").never();
 				this.oLogMock.expects("error").never();
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+				oConfiguration.setCalendarType(CalendarType.Gregorian);
+				oConfiguration.setLanguage("en-US");
 			},
 			afterEach : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+				var oConfiguration = sap.ui.getCore().getConfiguration();
+
+				oConfiguration.setCalendarType(this.sDefaultCalendarType);
+				oConfiguration.setLanguage(this.sDefaultLanguage);
 			}
 		});
 	}
@@ -119,7 +131,8 @@ sap.ui.require([
 	 * Tests the validation for a DateTime with the given constraints.
 	 */
 	function validate(assert, sTypeName, oConstraints, sExpectedErrorKey) {
-		var oType = createInstance(sTypeName, undefined, oConstraints);
+		var oDate = new Date(),
+			oType = createInstance(sTypeName, undefined, oConstraints);
 
 		oType.validateValue(null);
 
@@ -136,6 +149,8 @@ sap.ui.require([
 				assert.strictEqual(e.message, "Illegal " + sTypeName + " value: " + vValue, vValue);
 			}
 		});
+		oDate.setFullYear(0);
+		validateError(assert, oType, oDate, sExpectedErrorKey, "year 0");
 		oType.validateValue(new Date());
 	}
 
@@ -360,8 +375,8 @@ sap.ui.require([
 			function (assert) {
 					var oType = new DateTime(oFixture.oFormatOptions, oFixture.oConstraints),
 					oSpy = (oFixture.oConstraints) ?
-						this.spy(sap.ui.core.format.DateFormat, "getDateInstance") :
-						this.spy(sap.ui.core.format.DateFormat, "getDateTimeInstance");
+						this.spy(DateFormat, "getDateInstance") :
+						this.spy(DateFormat, "getDateTimeInstance");
 
 				assert.deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
 					"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");
@@ -419,6 +434,7 @@ sap.ui.require([
 		{i : {precision : 0.9}, o : undefined, warning : "Illegal precision: 0.9"},
 		{i : {precision : 3.14}, o : undefined, warning : "Illegal precision: 3.14"},
 		{i : {precision : 12.1}, o : undefined, warning : "Illegal precision: 12.1"},
+		{i : {nullable : "false", precision : 3}, o : {nullable : false, precision : 3}},
 		{i : {V4 : undefined}, o : undefined},
 		{i : {V4 : false}, o : undefined},
 		{i : {V4 : true}, o : undefined}, // not stored inside oConstraints
@@ -450,7 +466,7 @@ sap.ui.require([
 		QUnit.test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
 			function (assert) {
 				var oType = new DateTimeOffset(oFixture.oFormatOptions, {}),
-					oSpy = this.spy(sap.ui.core.format.DateFormat, "getDateTimeInstance");
+					oSpy = this.spy(DateFormat, "getDateTimeInstance");
 
 				assert.deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
 					"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");
@@ -462,6 +478,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("setV4", function (assert) {
 		var oDateTimeOffsetV4 = new DateTimeOffset(undefined, {precision : 7}).setV4(),
+			sDateTimeOffsetFromObjectSource = oDateTimeOffsetV4.parseValue(oDateTime, "object"),
 			sDateTimeOffsetParsed = oDateTimeOffsetV4.parseValue(sFormattedDateTime, "string"),
 			sDateTimeOffsetWithPrecision = "2014-11-27T13:47:26.0000000"
 				+ getTimezoneOffset(oDateTime),
@@ -470,6 +487,8 @@ sap.ui.require([
 
 		assert.strictEqual(typeof sDateTimeOffset, "string");
 		assert.strictEqual(sDateTimeOffsetParsed, sDateTimeOffsetWithPrecision);
+		assert.strictEqual(sDateTimeOffsetFromObjectSource, sDateTimeOffsetWithPrecision);
+
 		assert.ok(oDateTimeOffsetAsDate instanceof Date);
 
 		assert.throws(function () {
@@ -499,6 +518,8 @@ sap.ui.require([
 		assert.strictEqual(oControl.getTooltip(), sFormattedDateTime);
 
 		oDateTimeOffsetV4.validateValue(sDateTimeOffset);
+		oDateTimeOffsetV4.validateValue(sDateTimeOffsetYear0);
+
 		oControl.getBinding("tooltip").getType().validateValue(sDateTimeOffset);
 	});
 
@@ -506,6 +527,12 @@ sap.ui.require([
 	QUnit.test("V4: formatValue", function (assert) {
 		var oDateTimeOffset = new DateTimeOffset();
 
+		assert.deepEqual(oDateTimeOffset.formatValue(oDateTimeUTC, "object"),
+			oDateTime, "JS date-object can be formatted");
+		assert.deepEqual(oDateTimeOffset.formatValue("foo", "object"), null);
+		assert.deepEqual(oDateTimeOffset.formatValue(undefined, "object"), null);
+		assert.deepEqual(oDateTimeOffset.formatValue(null, "object"), null);
+		assert.deepEqual(oDateTimeOffset.formatValue("", "object"), null);
 		assert.strictEqual(oDateTimeOffset.formatValue(sDateTimeOffset, "string"),
 			sFormattedDateTime, "V4 values can be formatted");
 		assert.strictEqual(oDateTimeOffset.formatValue("2014-11-27T12:47:26Z", "any"),
@@ -518,7 +545,7 @@ sap.ui.require([
 			"Illegal sap.ui.model.odata.type.DateTimeOffset value: 2000-02-30T00:00:00Z"));
 		// Note: We support duck typing! If it is not a string, it must have getTime()...
 
-		this.mock(oDateTimeOffset).expects("getPrimitiveType").twice().
+		this.mock(oDateTimeOffset).expects("getPrimitiveType").thrice().
 			withExactArgs("sap.ui.core.CSSSize").returns("string");
 		assert.strictEqual(oDateTimeOffset.formatValue(sDateTimeOffset, "sap.ui.core.CSSSize"),
 				sFormattedDateTime);
@@ -587,20 +614,55 @@ sap.ui.require([
 	QUnit.test("V4: format option UTC", function (assert) {
 		var oType = new DateTimeOffset({UTC : true}, {V4 : true}),
 			sDateTime = "2014-11-27T13:47:26Z",
-			sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM";
+			sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
+			oFormattedDateTime = new Date(Date.UTC(2014, 10, 27, 13, 47, 26));
+
+		oType._resetModelFormatter();
+		this.mock(DateFormat).expects("getDateInstance") // getModelFormatter
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern : "yyyy-MM-dd'T'HH:mm:ssX",
+				strictParsing : true,
+				UTC : oType.oFormatOptions && oType.oFormatOptions.UTC
+			})
+			.callThrough();
 
 		assert.strictEqual(oType.formatValue(sDateTime, "string"), sFormattedDateTime);
 		assert.strictEqual(oType.parseValue(sFormattedDateTime, "string"), sDateTime);
+
+		assert.deepEqual(oType.formatValue(sDateTime, "object"), oFormattedDateTime);
+		assert.deepEqual(oType.parseValue(oFormattedDateTime, "object"), sDateTime);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("V4: getModelFormat", function (assert) {
-		var oDateTimeOffset = new DateTimeOffset(undefined, {precision : 3}).setV4(),
-			oFormat = oDateTimeOffset.getModelFormat(),
-			oParsedDate = oFormat.parse(sDateTimeOffsetWithMS);
+	QUnit.test("V4: getModelFormat uses Gregorian calendar type", function (assert) {
+		var oFormat,
+			oParsedDate,
+			oType = new DateTimeOffset(undefined, {precision : 3}).setV4();
 
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		oType._resetModelFormatter();
+
+		// code under test
+		oFormat = oType.getModelFormat();
+
+		oParsedDate = oFormat.parse(sDateTimeOffsetWithMS);
 		assert.ok(oParsedDate instanceof Date, "parse delivers a Date");
 		assert.strictEqual(oParsedDate.getTime(), oDateTimeWithMS.getTime(), "parse value");
 		assert.strictEqual(oFormat.format(oParsedDate), sDateTimeOffsetWithMS, "format");
+		assert.strictEqual(oFormat.oFormatOptions.calendarType, CalendarType.Gregorian);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_resetModelFormatter", function (assert) {
+		var oType = new DateTimeOffset().setV4(),
+			oFormat = oType.getModelFormat();
+
+		assert.strictEqual(oFormat, oType.getModelFormat());
+
+		// code under test
+		oType._resetModelFormatter();
+
+		assert.notStrictEqual(oFormat, oType.getModelFormat());
 	});
 });

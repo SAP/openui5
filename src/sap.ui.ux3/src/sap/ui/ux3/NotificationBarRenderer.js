@@ -1,10 +1,20 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Icon'],
-	function(jQuery, Icon) {
+sap.ui.define([
+    "sap/ui/thirdparty/jquery",
+    'sap/ui/core/Icon',
+    "sap/ui/ux3/library"
+],
+	function(jQuery, Icon, library) {
 	"use strict";
 
+
+	// shortcut for sap.ui.ux3.NotificationBarStatus
+	var NotificationBarStatus = library.NotificationBarStatus;
+
+	// lazy dependency to avoid cycle
+	var NotificationBar;
 
 	/**
 	 * NotificationBar renderer.
@@ -12,10 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Icon'],
 	 */
 	var NotificationBarRenderer = {};
 
-	/*
-	 * Set all methods into a close to prevent any abuse of helping methods
-	 */
-	(function() {
+
 		/**
 		 * Renders the HTML for the given control, using the provided
 		 * {@link sap.ui.core.RenderManager}.
@@ -28,6 +35,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Icon'],
 		 *            be rendered
 		 */
 		NotificationBarRenderer.render = function(oRm, oControl) {
+
+			// resolve lazy dependency
+			NotificationBar = NotificationBar || sap.ui.require("sap/ui/ux3/NotificationBar");
+
 			fnWriteHeader(oRm, oControl);
 			fnWriteItems(oRm, oControl);
 			fnWriteFooter(oRm, oControl);
@@ -41,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Icon'],
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 
-			if (oControl.getVisibleStatus() === sap.ui.ux3.NotificationBarStatus.None) {
+			if (oControl.getVisibleStatus() === NotificationBarStatus.None) {
 				if (oControl.$().length > 0) {
 					// if NotiBar is already rendered
 					if (oControl._resizeFrom) {
@@ -76,8 +87,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Icon'],
 			 * This ensures the maximize and minimize animation
 			 */
 			if (oControl._resizeTo) {
-				if (oControl._resizeFrom == sap.ui.ux3.NotificationBarStatus.Max) {
-					if (oControl._resizeTo == sap.ui.ux3.NotificationBarStatus.Default) {
+				if (oControl._resizeFrom == NotificationBarStatus.Max) {
+					if (oControl._resizeTo == NotificationBarStatus.Default) {
 						// Resizing from maximize back to default (class will be
 						// removed in 'afterRendering')
 						oRm.addClass("sapUiNotificationBarMaximized");
@@ -196,7 +207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Icon'],
 
 			var sStatus = oControl.getVisibleStatus();
 			if (sStatus === "Min") {
-				oRm.addStyle("top", "-" + sap.ui.ux3.NotificationBar.HOVER_ITEM_HEIGHT + "px");
+				oRm.addStyle("top", "-" + NotificationBar.HOVER_ITEM_HEIGHT + "px");
 				oRm.addStyle("display", "block");
 			} else {
 				oRm.addStyle("display", "none");
@@ -224,7 +235,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Icon'],
 			}
 
 			if (oControl.hasItems()) {
-				if (oControl.getVisibleStatus() == sap.ui.ux3.NotificationBarStatus.Max) {
+				if (oControl.getVisibleStatus() == NotificationBarStatus.Max) {
 					fnWriteItemsMaximized(oRm, oControl);
 				} else {
 					fnWriteItemsDefault(oRm, oControl);
@@ -378,7 +389,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Icon'],
 		};
 
 		var fnCreateNotifierViewMaximized = function(sId, oNotifier) {
-			var oNotifierView = new sap.ui.ux3.NotificationBar.NotifierView(sId, {
+			var oNotifierView = new NotificationBar.NotifierView(sId, {
 				title : oNotifier.getTitle(),
 				renderMode : "maximized"
 			});
@@ -390,7 +401,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Icon'],
 			var aMessages = oNotifier.getMessages();
 			for ( var i = 0; i < aMessages.length; i++) {
 				var oMessage = aMessages[i];
-				var oMessageView = new sap.ui.ux3.NotificationBar.MessageView(sId + "-messageView-" + oMessage.getId(), {
+				var oMessageView = new NotificationBar.MessageView(sId + "-messageView-" + oMessage.getId(), {
 					text : oMessage.getText(),
 					timestamp : oMessage.getTimestamp()
 				});
@@ -507,7 +518,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Icon'],
 				oRm.write("</li>");
 			}
 		};
-	}());
 
 
 	return NotificationBarRenderer;

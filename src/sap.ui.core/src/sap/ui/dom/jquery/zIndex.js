@@ -8,6 +8,15 @@
 sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
+	/**
+	 * This module provides the {@link jQuery#zIndex} API.
+	 *
+	 * @namespace
+	 * @name module:sap/ui/dom/jquery/zIndex
+	 * @public
+	 * @since 1.58
+	 */
+
 	// Using "Object.getOwnPropertyDescriptor" to not trigger the "getter" - see jquery.sap.stubs
 	function getValue(oTarget, sProperty) {
 		var descriptor = Object.getOwnPropertyDescriptor(oTarget, sProperty);
@@ -15,14 +24,15 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	}
 
 	if (!getValue(jQuery.fn, "zIndex")) {
-		/*
+		/**
 		 * Get the z-index for an element.
 		 *
-		 * @function
-		 * @param {Integer} zIndex The z-index to set
+		 * @param {int} zIndex The z-index to set
 		 * @returns {number} The z-index
-		 * @exports sap/ui/dom/jquery/zIndex
-		 * @private
+		 * @public
+		 * @name jQuery#zIndex
+		 * @function
+	 	 * @requires module:sap/ui/dom/jquery/zIndex
 		 */
 		var fnzIndex = function( zIndex ) {
 			if ( zIndex !== undefined ) {
@@ -41,7 +51,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 						// other browsers return a string
 						// we ignore the case of nested elements with an explicit value of 0
 						// <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
-						value = parseInt( elem.css( "zIndex" ), 10 );
+						value = parseInt( elem.css( "zIndex" ));
 						if ( !isNaN( value ) && value !== 0 ) {
 							return value;
 						}
@@ -62,7 +72,6 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 		 * http://jquery.org/license
 		 *
 		 * http://api.jqueryui.com/category/ui-core/
-		 * @deprecated since 1.48 use {@link sap/ui/dom/jquery/zIndex} instead
 		 */
 		jQuery.fn.zIndex = fnzIndex;
 	}

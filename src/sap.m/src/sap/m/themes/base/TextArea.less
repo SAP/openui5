@@ -3,6 +3,11 @@
 /* Base theme                      */
 /* =============================== */
 
+@_sapMTextAreaPadding: 0.625rem 0.75rem;
+@_sapMTextAreaPadding_Compact: 0.1875rem 0.5rem;
+@_sapMTextAreaValueStatePadding: 0.5625rem 0.6875rem;
+@_sapMTextAreaValueStatePadding_Compact: 0.125rem 0.4375rem;
+
 /* uses sapMInputBase styles */
 
 .sapMTextAreaInner {
@@ -12,11 +17,12 @@
 	margin: 0;
 }
 
-.sapMTextArea .sapMInputDivWrapper {
+.sapMTextArea .sapMInputBaseContentWrapper {
 	-webkit-overflow-scrolling: touch;
 	height: 100%;
 	width: 100%;
 	line-height: 0;
+	display: block;
 }
 
 .sapMTextArea .sapMTextAreaInner {
@@ -26,43 +32,76 @@
 	width: 100%;
 }
 
-.sapMTextAreaGrow {
-	/* should not grow more than screen size */
-	max-height: calc(~"100vh - 6rem");
-	overflow: hidden;
-}
-
 .sapMTextAreaWithCounter {
 	& .sapMTextAreaCounter {
 		float:right;
 		overflow: hidden;
 		font-family: @sapUiFontFamily;
 		font-size: @sapMFontSmallSize;
-		padding: 0.125rem 0.125rem 0.5rem;
-		height: 1.5rem;
+		color: @sapUiContentLabelColor;
+		padding: 0.3725rem 0.125rem 0.5rem;
 	}
 
-	& .sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):hover {
-		background: transparent;
-		border-color: transparent;
+	& .sapMInputBaseContentWrapper {
+		height: calc(~"100% - 1.5rem");
 	}
+}
 
+.sapMTextAreaGrow {
+	overflow: hidden;
+	position: absolute;
+	height: 100%;
+	top: 0;
+}
+
+/* ensure that the mirror div has the same styles like the inner text area */
+.sapMTextAreaMirror {
+	/* should not grow more than screen size */
+	max-height: calc(100vh - 6rem);
+	white-space: pre-wrap;
+	border: none;
+	overflow: hidden;
+	line-height: 1.4;
+	visibility: hidden;
+	word-break: break-word;
+	font-size: 14px;
+	padding: @_sapMTextAreaPadding;
 }
 
 .sapMInputBase.sapMTextArea {
 	height: auto;
-	min-width: 6rem;
 	min-height: 2.5rem;
+	min-width: 6rem;
 
 	.sapMTextAreaInner {
 		line-height: 1.4;
-		padding: 0.625rem 0.75rem;
+		padding: @_sapMTextAreaPadding;
 		-webkit-overflow-scrolling: touch; /* IOS only */
 	}
 }
 
-.sapMInputBase.sapMTextArea.sapMInputBaseState .sapMTextAreaInner {
-	padding: 0.5625rem 0.6875rem;
+.sapMInputBase.sapMTextArea .sapMInputBaseContentWrapperState {
+	.sapMTextAreaInner, .sapMTextAreaMirror {
+		padding: @_sapMTextAreaValueStatePadding;
+	}
+}
+
+.sapMFocus.sapMTextArea {
+	& .sapMInputBaseContentWrapper {
+		outline: none;
+
+		.sapMInputBaseInner {
+			outline: 1px dotted @sapUiContentFocusColor;
+			outline-offset: -2px;
+		}
+	}
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMFocus.sapMTextArea .sapMInputBaseContentWrapper .sapMInputBaseInner {
+		outline: none;
+	}
 }
 
 /**** Compact Size ****/
@@ -70,14 +109,34 @@
 	.sapMInputBase.sapMTextArea {
 		min-height: 1.625rem;
 		margin: 0.1875rem 0;
+	}
 
-		.sapMTextAreaInner {
-			line-height: 1.4;
-			padding: 0.1875rem 0.5rem;
+	.sapMTextAreaWithCounter {
+		& .sapMTextAreaCounter {
+			padding-top: 0.3125rem;
 		}
 	}
 }
 
-.sapUiSizeCompact .sapMInputBase.sapMTextArea.sapMInputBaseState .sapMTextAreaInner {
-	padding: 0.125rem 0.4375rem;
+.sapUiSizeCompact .sapMInputBase.sapMTextArea {
+	.sapMTextAreaInner, .sapMTextAreaMirror {
+		padding: @_sapMTextAreaPadding_Compact;
+	}
+	.sapMInputBaseContentWrapperState {
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStatePadding_Compact;
+		}
+	}
+}
+
+/**
+	Fix for iOS. When growing is enabled, the mirrored, hidden content should have pixel perfect proportions
+	as the textarea. Otherwise, words could break differently and this would lead to inconsistent height.
+	For some reason iOS devices need wider padding on left & right in order to have this consistency.
+ */
+html.sap-tablet, html.sap-phone {
+	&[data-sap-ui-os*="iOS"] .sapMInputBase.sapMTextArea .sapMTextAreaMirror {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
 }

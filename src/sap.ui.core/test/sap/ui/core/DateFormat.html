@@ -26,13 +26,13 @@
 	}catch(e){
 		alert("This test page requires the library 'sap.m' and 'sap.ui.layout' which are not available.");
 		throw(e);
-	} 
+	}
 	</script>
 	<script type="text/javascript" src="FormatHelper.js"></script>
 
 	<script>
 	jQuery.sap.require("sap.ui.core.format.DateFormat");
-	
+
 	var aSamples = [
 			{key: "custom", text: "Custom", type: "Date", sample: {} },
 			{key: "shortdate", text: "Short date", type: "Date", sample: {style: "short"} },
@@ -98,11 +98,11 @@
 			},
 			calendarType: {
 				type: "enum",
-				values: ["Gregorian", "Japanese", "Islamic", "Persian"],
-				help: "Allowed values are \"Gregprian\", \"Japanese\", \"Islamic\" and \"Persian\""
+				values: ["Gregorian", "Japanese", "Islamic", "Persian", "Buddhist"],
+				help: "Allowed values are \"Gregprian\", \"Japanese\", \"Islamic\", \"Persian\" and \"Buddhist\""
 			}
 		};
-	
+
 	var oModel = new sap.ui.model.json.JSONModel({
 		date: new Date(),
 		todate: new Date(),
@@ -195,7 +195,7 @@
 												text: "Type"
 											}),
 											new sap.m.Select({
-												selectedKey: "{/type}",		
+												selectedKey: "{/type}",
 												items: [
 													new sap.ui.core.Item({key: "Date", text: "Date"}),
 													new sap.ui.core.Item({key: "Time", text: "Time"}),
@@ -209,7 +209,7 @@
 												text: "Sample"
 											}),
 											new sap.m.Select({
-												selectedKey: "{/sample}",		
+												selectedKey: "{/sample}",
 												items: {
 													path: "/samples",
 													template: new sap.ui.core.Item({key: "{key}", text: "{text}"})
@@ -228,6 +228,7 @@
 												value: {
 													path: "/date",
 													type: new sap.ui.model.type.DateTime({
+														calendarType: "Gregorian",
 														pattern: "yyyy-MM-dd HH:mm:ss"
 													})
 												}
@@ -245,6 +246,7 @@
 												value: {
 													path: "/todate",
 													type: new sap.ui.model.type.DateTime({
+														calendarType: "Gregorian",
 														pattern: "yyyy-MM-dd HH:mm:ss"
 													})
 												},
@@ -294,15 +296,15 @@
 						]
 					})
 				]
-			}) 
+			})
 		]
 	}).placeAt("content");
-	
+
 	sap.ui.getCore().getMessageManager().registerObject(oApp, true);
 	</script>
 
 </head>
-<body class="sapUiBody" role="application" id="content">
+<body class="sapUiBody" id="content">
 
 </body>
 </html>

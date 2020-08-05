@@ -1,10 +1,9 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"test/sap/m/qunit/PDFViewerTestUtils",
-	"sap/m/PDFViewer",
+	"./PDFViewerTestUtils",
 	"sap/m/PDFViewerRenderer"
-], function (TestUtils, PDFViewer, PDFViewerRenderer) {
+], function (TestUtils, PDFViewerRenderer) {
 	"use strict";
 
 	var oPdfViewer = null;
@@ -25,7 +24,7 @@ sap.ui.define([
 		var loadDone = assert.async();
 
 		var oOptions = {
-			"source": "./pdfviewer/sample-file.pdf",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
 				loadDone();
@@ -62,8 +61,8 @@ sap.ui.define([
 			loadAsyncAssert4();
 		};
 
-		var sourcePath1 = "./pdfviewer/sample-file.pdf";
-		var sourcePath2 = "./pdfviewer/sample-file2.pdf";
+		var sourcePath1 = "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf";
+		var sourcePath2 = "test-resources/sap/m/qunit/pdfviewer/sample-file2.pdf";
 
 		var oOptions = {
 			"source": sourcePath1,

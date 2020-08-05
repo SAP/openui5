@@ -74,7 +74,7 @@
 						<c:Item key="{}" text="{}" />
 					</m:MultiComboBox>
 					<m:Label text="Title" />
-					<m:Input type="Text" value="{/editRule/title}"  required = "true" />
+					<m:Input value="{/editRule/title}"  required = "true" />
 					<m:Label text="Description" />
 					<m:TextArea value="{/editRule/description}"  required = "true"/>
 					<m:Label text="Resolution" />
@@ -84,8 +84,8 @@
 					<m:Label text="Resolution URLS" />
 					<l:VerticalLayout>
 						<l:HorizontalLayout>
-							<m:Input type="text" placeholder="Text" value="{/tempLink/text}" />
-							<m:Input type="text" placeholder="Href" value="{/tempLink/href}" />
+							<m:Input placeholder="Text" value="{/tempLink/text}" />
+							<m:Input placeholder="Href" value="{/tempLink/href}" />
 							<m:Button text="Add Link" press="addLinkToRule" icon="sap-icon://add" />
 						</l:HorizontalLayout>
 						<l:VerticalLayout
@@ -204,7 +204,7 @@
 						<c:Item key="{}" text="{}" />
 					</m:MultiComboBox>
 					<m:Label text="Title" />
-					<m:Input type="Text" value="{/newRule/title}"  required = "true"/>
+					<m:Input value="{/newRule/title}"  required = "true"/>
 					<m:Label text="Description" />
 					<m:TextArea value="{/newRule/description}"  required = "true"/>
 					<m:Label text="Resolution" />
@@ -214,8 +214,8 @@
 					<m:Label text="Resolution URLS" />
 					<l:VerticalLayout>
 						<l:HorizontalLayout>
-							<m:Input type="text" placeholder="Text" value="{/tempLink/text}" />
-							<m:Input type="text" placeholder="Href" value="{/tempLink/href}" />
+							<m:Input placeholder="Text" value="{/tempLink/text}" />
+							<m:Input placeholder="Href" value="{/tempLink/href}" />
 							<m:Button text="Add" press="addLinkToRule" icon="sap-icon://add" />
 						</l:HorizontalLayout>
 						<l:VerticalLayout

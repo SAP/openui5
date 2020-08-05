@@ -17,10 +17,13 @@ sap.ui.define([
 						"webapp/model/models.js",
 						"webapp/Component.js",
 						"webapp/index.html",
+						"webapp/initMockServer.js",
 						"webapp/manifest.json",
 						"webapp/localService/mockdata/people.json",
 						"webapp/localService/metadata.xml",
-						"webapp/localService/mockserver.js"
+						"webapp/localService/mockserver.js",
+						"ui5.yaml",
+						"package.json"
 					]
 				}
 			}

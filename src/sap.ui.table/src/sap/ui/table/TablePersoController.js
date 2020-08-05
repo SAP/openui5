@@ -3,8 +3,14 @@
  */
 
 // Provides TablePersoController
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
-	function(jQuery, ManagedObject) {
+sap.ui.define([
+	'sap/ui/base/ManagedObject',
+	"sap/ui/core/syncStyleClass",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
+	'./utils/TableUtils'
+],
+	function(ManagedObject, syncStyleClass, Log, jQuery, TableUtils) {
 	"use strict";
 
 
@@ -120,8 +126,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 		delete this._oInitialPersoData;
 
-		delete this._oDialog;
-
+		if (this._oDialog) {
+			this._oDialog.destroy();
+			delete this._oDialog;
+		}
 	};
 
 	TablePersoController.prototype.setPersoService = function(oService) {
@@ -228,15 +236,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		var oService = this.getPersoService();
 		if (oService) {
 			return oService.getPersData().done(function(oServiceData) {
-				var oData = (oServiceData && jQuery.isArray(oServiceData.aColumns))
+				var oData = (oServiceData && Array.isArray(oServiceData.aColumns))
 						? oServiceData
 						: that._oInitialPersoData; // use initial column definitions
 				that._adjustTable(oData);
 			}).fail(function() {
-				jQuery.sap.log.error("Problem reading persisted personalization data.");
+				Log.error("Problem reading persisted personalization data.");
 			});
 		} else {
-			jQuery.sap.log.error("The Personalization Service is not available!");
+			Log.error("The Personalization Service is not available!");
 			// return a dummy promise and reject it immediately
 			var oDeferred = jQuery.Deferred();
 			oDeferred.reject();
@@ -258,11 +266,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			oData[this._schemaProperty] = this._schemaVersion;
 
 			return oService.setPersData(oData).fail(function() {
-				jQuery.sap.log.error("Problem persisting personalization data.");
+				Log.error("Problem persisting personalization data.");
 			});
 
 		} else {
-			jQuery.sap.log.error("The Personalization Service is not available!");
+			Log.error("The Personalization Service is not available!");
 			// return a dummy promise and reject it immediately
 			var oDeferred = jQuery.Deferred();
 			oDeferred.reject();
@@ -272,7 +280,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 	TablePersoController.prototype._adjustTable = function(oData) {
 		var oTable = this._getTable();
-		if (!oTable || !oData || !jQuery.isArray(oData.aColumns)) {
+		if (!oTable || !oData || !Array.isArray(oData.aColumns)) {
 			return;
 		}
 
@@ -307,7 +315,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 								oColumn.setProperty(sProperty, oColumnInfo[sProperty]);
 							}
 						} catch (ex) {
-							jQuery.sap.log.error("sap.ui.table.TablePersoController: failed to apply the value \"" + oColumn[sProperty] + "\" for the property + \"" + sProperty + "\".");
+							Log.error("sap.ui.table.TablePersoController: failed to apply the value \"" + oColumn[sProperty] + "\" for the property + \"" + sProperty + "\".");
 						}
 					}
 				}
@@ -355,7 +363,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				}
 			}
 			if (bForDialog) {
-				oColumnInfo.text = oColumn.getLabel() && oColumn.getLabel().getText() || sPersoKey;
+				oColumnInfo.text = TableUtils.Column.getHeaderText(oTable, i) || sPersoKey;
 			}
 			oData.aColumns.push(oColumnInfo);
 		}
@@ -376,7 +384,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		if (!sPersoKey) {
 			sPersoKey = oControl.getId();
 			if (sPersoKey.indexOf(sap.ui.getCore().getConfiguration().getUIDPrefix()) === 0) {
-				jQuery.sap.log.warning("Generated IDs should not be used as personalization keys! The stability cannot be ensured! (Control: \"" + oControl.getId() + "\")");
+				Log.warning("Generated IDs should not be used as personalization keys! The stability cannot be ensured! (Control: \"" + oControl.getId() + "\")");
 			}
 		}
 		return sPersoKey;
@@ -394,21 +402,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 * @experimental since 1.21.2 - API might change / feature requires the sap.m library!
 	 */
 	TablePersoController.prototype.openDialog = function(mSettings) {
-		if (!this._oDialog) {
-			var that = this;
+		var that = this;
 
+		function _open() {
+			if (that._oDialog) {
+				syncStyleClass("sapUiSizeCompact", that._getTable(), that._oDialog._oDialog);
+				that._oDialog.open();
+			}
+		}
+
+		if (!this._oDialog) {
 			// include the mobile library to re-use the sap.m.TablePersoDialog
 			sap.ui.getCore().loadLibrary("sap.m", {async: true}).then(function() {
-				sap.ui.require("sap/m/TablePersoDialog", function(TablePersoDialog) {
+				sap.ui.require(["sap/m/TablePersoDialog"], function(TablePersoDialog) {
 					// create and open the dialog
-					that._oDialog = new TablePersoDialog({
-						persoService: this.getPersoService(),
+					that._oDialog = new TablePersoDialog(that._getTable().getId() + "-PersoDialog", {
+						persoService: that.getPersoService(),
 						showSelectAll: true,
 						showResetAll: true,
-						grouping: false,
+						hasGrouping: false,
 						contentWidth: mSettings && mSettings.contentWidth,
 						contentHeight: mSettings && mSettings.contentHeight || "20rem",
-						initialColumnState: this._oInitialPersoData.aColumns,
+						initialColumnState: that._oInitialPersoData.aColumns,
 						columnInfoCallback: function(oTable, mPersoMap, oPersoService) {
 							return that._getCurrentTablePersoData(true).aColumns;
 						},
@@ -420,11 +435,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 						}
 					});
 					that._oDialog._oDialog.removeStyleClass("sapUiPopupWithPadding"); // otherwise height calculation doesn't work properly!
-					jQuery.sap.syncStyleClass("sapUiSizeCompact", this._getTable(), this._oDialog._oDialog);
 
-					that._oDialog.open();
+					_open();
 				});
 			});
+		} else {
+			_open();
 		}
 	};
 

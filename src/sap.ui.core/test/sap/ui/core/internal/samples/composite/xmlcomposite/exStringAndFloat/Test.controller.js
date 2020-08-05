@@ -12,7 +12,7 @@ sap.ui.define([
 			},
 
 			handlePress: function (oEvent) {
-				var oFloatModel = oEvent.getSource().getModel("floatModel")
+				var oFloatModel = oEvent.getSource().getModel("floatModel");
 				oFloatModel.setProperty("/value", oFloatModel.getProperty("/value") * 0.9);
 
 				var oStringModel = oEvent.getSource().getModel("stringModel");

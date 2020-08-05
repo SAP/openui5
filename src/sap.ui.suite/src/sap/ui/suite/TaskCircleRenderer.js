@@ -3,8 +3,8 @@
  */
 
 // provides default renderer for sap.ui.suite.TaskCircle
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './library'],
-	function(jQuery, Core, library) {
+sap.ui.define(['sap/ui/core/Core', './library'],
+	function(Core, library) {
 	"use strict";
 
 
@@ -76,7 +76,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './library'],
 	    }
 	    var plarge = 62;
 
-	    var circlesize = parseInt(Math.sqrt((value - minvalue) / (maxvalue - minvalue) * (plarge * plarge - psmall * psmall) + psmall * psmall), 10);
+	    var circlesize = parseInt(Math.sqrt((value - minvalue) / (maxvalue - minvalue) * (plarge * plarge - psmall * psmall) + psmall * psmall));
 
 	    var digits = (value + '').length;
 	    var fontsize = circlesize * 0.55;
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './library'],
 		// write the HTML into the render manager
 	    rm.write("<div");
 	    rm.writeControlData(oControl);
-	    rm.writeAttribute('tabIndex', '0');
+	    rm.writeAttribute('tabindex', '0');
 
 		if (oControl.getTooltip_AsString()) {
 			rm.writeAttributeEscaped("title", oControl.getTooltip_AsString());
@@ -108,7 +108,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './library'],
 		rm.addStyle("width", circlesize + "px");
 		rm.addStyle("height", circlesize + "px");
 		rm.addStyle("line-height", circlesize + "px");
-		rm.addStyle("font-size", parseInt(fontsize, 10) + "px");
+		rm.addStyle("font-size", parseInt(fontsize) + "px");
 		rm.addStyle("border-radius", circlesize + "px");
 		rm.addStyle("-moz-border-radius", circlesize + "px");
 	    rm.writeClasses();

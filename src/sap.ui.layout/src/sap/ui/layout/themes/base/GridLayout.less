@@ -24,6 +24,7 @@
 
 /* Internet Explorer / Edge  does not support "text-align: start"!
 Therefore the title needs to be positioned separately for RTL and LTR mode */
+/* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^=ie] .sapUiGrid th > .sapUiFormTitle,
 html[data-sap-ui-browser^=ie] .sapUiGrid td > .sapUiFormTitle,
 html[data-sap-ui-browser^=ed] .sapUiGrid th > .sapUiFormTitle,
@@ -97,7 +98,7 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiGrid td > .sapUiFormTitle {
 }
 
 .sapUiGrid > tbody > tr > td.sapUiFormElementLbl {
-	padding-right: 0.25rem;
+	padding-right: 0.75rem;
 }
 
 .sapUiGrid > tbody > tr > td.sapUiGridLabelFull {
@@ -115,21 +116,6 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiGrid td > .sapUiFormTitle {
 .sapUiFormEdit.sapUiFormM >.sapUiGrid > tbody > tr:first-child > td.sapUiFormElementLbl, /* if no Form title */
 .sapUiFormEdit[aria-labelledby].sapUiFormM > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormElementLbl {
 	padding-top: 2rem;
-}
-
-html[data-sap-ui-browser^="ff"] {
-	.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiFormElementLbl {
-		padding-top: 0.9375rem;
-	}
-
-	.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr.sapUiGridConteinerFirstRow > td.sapUiFormElementLbl {
-		padding-top: 2.9375rem;
-	}
-
-	.sapUiFormEdit.sapUiFormM >.sapUiGrid > tbody > tr:first-child > td.sapUiFormElementLbl, /* if no Form title */
-	.sapUiFormEdit[aria-labelledby].sapUiFormM > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormElementLbl {
-		padding-top: 1.9375rem;
-	}
 }
 
 .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiFormElementLbl {

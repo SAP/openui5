@@ -6,9 +6,18 @@ Mobify.UI = Mobify.UI || { classPrefix: '' };
 (function($, document) {
     $.support = $.support || {};
 
-    $.extend($.support, {
+    // SAP MODIFICATION
+    var support = {
         'touch': 'ontouchend' in document
-    });
+    };
+
+    // => if the device API is loaded we override the touch detection
+    if (window.sap && sap.ui && sap.ui.Device && sap.ui.Device.support) {
+        support.touch = sap.ui.Device.support.touch
+    }
+
+    $.extend($.support, support);
+    // SAP MODIFICATION END
 
 })(Mobify.$, document);
 
@@ -160,7 +169,7 @@ Mobify.UI.Carousel = (function($, Utils) {
     Carousel.defaults = defaults;
 
     Carousel.prototype.setOptions = function(opts) {
-        var options = this.options || $.extend({}, defaults, opts);
+        var options = $.extend(this.options || {}, defaults, opts);
 
         /* classNames requires a deep copy */
         options.classNames = $.extend({}, options.classNames, opts.classNames || {});
@@ -197,7 +206,7 @@ Mobify.UI.Carousel = (function($, Utils) {
     Carousel.prototype.initAnimation = function() {
         this.animating = false;
         this.dragging = false;
-        this.hasActiveTransition = false;
+        this._hasActiveTransition = false;
         this._needsUpdate = false;
         this._sTransitionEvents = 'transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd';
         this._enableAnimation();
@@ -243,12 +252,22 @@ Mobify.UI.Carousel = (function($, Utils) {
     }
 
     Carousel.prototype._update = function() {
-        if (!this._needsUpdate) {
-            return;
-        }
+		var $current,
+			currentOffset,
+			x;
 
-        var x = Math.round(this._offset + this._offsetDrag);
-        if(this.$inner) {
+		if (!this._needsUpdate) {
+            return;
+		}
+
+		$current = this.$items.eq(this._index - 1);
+		currentOffset = $current.prop('offsetLeft') + $current.prop('clientWidth') * this._alignment,
+			 startOffset = this.$start.prop('offsetLeft') + this.$start.prop('clientWidth') * this._alignment
+
+		this._offset = -(currentOffset - startOffset);
+        x = Math.round(this._offset + this._offsetDrag);
+
+		if(this.$inner) {
         	Utils.translateX(this.$inner[0], x);
         }
 
@@ -281,7 +300,7 @@ Mobify.UI.Carousel = (function($, Utils) {
 	    		sTransitionEvents = 'transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd';
 
 	    	var fnCleanUpTransition = function(){
-				$carouselInner.unbind(sTransitionEvents, fnCleanUpTransition);
+				$carouselInner.off(sTransitionEvents, fnCleanUpTransition);
 				$carouselInner.removeClass(sTransitionClass);
 				//Exexute callback function if there is one.
 				if(fnCallback) {
@@ -290,7 +309,7 @@ Mobify.UI.Carousel = (function($, Utils) {
 			}
 
 	    	$carouselInner.addClass(sTransitionClass);
-			$carouselInner.bind(sTransitionEvents, fnCleanUpTransition);
+			$carouselInner.on(sTransitionEvents, fnCleanUpTransition);
     	}
     }
 
@@ -299,12 +318,6 @@ Mobify.UI.Carousel = (function($, Utils) {
     Carousel.prototype.resize = function() {
     	this.changeAnimation('sapMCrslHideNonActive');
 
-        var $current = this.$items.eq(this._index - 1);
-
-        var currentOffset = $current.prop('offsetLeft') + $current.prop('clientWidth') * this._alignment
-            , startOffset = this.$start.prop('offsetLeft') + this.$start.prop('clientWidth') * this._alignment
-
-        this._offset = -(currentOffset - startOffset);
         this.update();
     }
 
@@ -312,7 +325,7 @@ Mobify.UI.Carousel = (function($, Utils) {
     	if(this._fnStart) {
     		this._fnStart.call(this, e);
     	} else {
-    		jQuery.sap.log.warning("Mobify's 'start' method not available yet.")
+    		jQuery.sap.log.warning("Mobify's 'start' method not available yet.");
     	}
     }
 
@@ -496,6 +509,8 @@ Mobify.UI.Carousel = (function($, Utils) {
         });
 
         $element.on('afterSlide', function(e, previousSlide, nextSlide) {
+			var iFirstElement = nextSlide - 1,
+				sActiveClass = self._getClass('active');
 
             // The event might bubble up from another carousel inside of this one.
             // In this case we ignore the event.
@@ -507,7 +522,10 @@ Mobify.UI.Carousel = (function($, Utils) {
                 sPageIndicatorId = sId.replace(/(:|\.)/g,'\\$1') + '-pageIndicator';
 
             // self.$items.eq(previousSlide - 1).removeClass(self._getClass('active'));
-            self.$items.eq(nextSlide - 1).addClass(self._getClass('active'));
+			for (var i = iFirstElement; i < iFirstElement + self.options.numberOfItemsToShow; i++) {
+				var element = self.$items.eq(i);
+				element.addClass(sActiveClass);
+			}
 
             self.$element.find('#' + sPageIndicatorId + ' > [data-slide=\'' + previousSlide + '\']').removeClass(self._getClass('active'));
             self.$element.find('#' + sPageIndicatorId + ' > [data-slide=\'' + nextSlide + '\']').addClass(self._getClass('active'));
@@ -531,7 +549,7 @@ Mobify.UI.Carousel = (function($, Utils) {
 
     // SAP MODIFICATION BEGIN
     Carousel.prototype.onTransitionComplete = function() {
-        this.$inner.unbind(this._sTransitionEvents, this.onTransitionComplete);
+        this.$inner.off(this._sTransitionEvents, this.onTransitionComplete);
 
 		var sActiveClass = this._getClass('active'),
 			i;
@@ -542,8 +560,15 @@ Mobify.UI.Carousel = (function($, Utils) {
 			}
 		}
 
-        this.hasActiveTransition = false;
-    };
+        this._hasActiveTransition = false;
+
+		// Trigger afterSlide event
+		this.$element.trigger('afterSlide', [this._prevIndex, this._index]);
+	};
+
+	Carousel.prototype.hasActiveTransition = function() {
+		return this._hasActiveTransition;
+	};
     // SAP MODIFICATION ENDS
 
 	Carousel.prototype.destroy = function() {
@@ -555,13 +580,15 @@ Mobify.UI.Carousel = (function($, Utils) {
         this.$element = null;
         this.$inner = null;
         this.$start = null;
-        this.$current = null;
+		this.$current = null;
+
+		this._needsUpdate = false;
     }
 
     Carousel.prototype.move = function(newIndex, opts) {
     	//if list is empty or transition is in process , return
     	//SAP MODIFICATION
-    	if(this._length === 0 || this.hasActiveTransition == true) {
+    	if(this._length === 0 || this._hasActiveTransition == true) {
     		return;
     	}
 
@@ -574,6 +601,14 @@ Mobify.UI.Carousel = (function($, Utils) {
             , index = this._index;
 
         opts = opts || {};
+
+		// SAP MODIFICATION
+		// prevent loop when carousel shows more pages than 1
+		if (this.getLoop() && this.options.numberOfItemsToShow !== 1 &&
+				(newIndex < 1 || newIndex > this._length)) { // new index out of range - will cause loop
+			return;
+		}
+		// SAP MODIFICATION END
 
         // Bound Values between [1, length];
         if (newIndex < 1) {
@@ -594,7 +629,11 @@ Mobify.UI.Carousel = (function($, Utils) {
         	} else {
         		newIndex = length;
         	}
-        }
+		}
+
+		if (newIndex + this.options.numberOfItemsToShow > this._length) {
+			newIndex = this._length - this.options.numberOfItemsToShow + 1;
+		}
 
         // Bail out early if no move is necessary.
         var bTriggerEvents = true;
@@ -609,29 +648,16 @@ Mobify.UI.Carousel = (function($, Utils) {
         	$element.trigger('beforeSlide', [index, newIndex]);
         }
 
-        // Index must be decremented to convert between 1- and 0-based indexing.
-        this.$current = $current = $items.eq(newIndex - 1);
-
-        var currentOffset = $current.prop('offsetLeft') + $current.prop('clientWidth') * this._alignment
-            , startOffset = $start.prop('offsetLeft') + $start.prop('clientWidth') * this._alignment;
-
-        var transitionOffset = -(currentOffset - startOffset);
-
-        this._offset = transitionOffset;
         this._offsetDrag = 0;
+        this._prevIndex = this._index;
         this._index = newIndex;
         this.update();
 
         //SAP MODIFICATION
         if(bTriggerEvents) {
             // This indicate that transition has started
-            this.hasActiveTransition = true;
+            this._hasActiveTransition = true;
             $inner.bind(this._sTransitionEvents, jQuery.proxy(this.onTransitionComplete, this));
-        }
-
-        // Trigger afterSlide event
-        if(bTriggerEvents) {
-            $element.trigger('afterSlide', [index, newIndex]);
         }
     };
 
@@ -658,7 +684,7 @@ Mobify.UI.Carousel = (function($, Utils) {
         @param {Object} [options] Options passed to the action.
     */
     $.fn.carousel = function (action, options) {
-        var initOptions = $.extend({}, $.fn.carousel.defaults);
+        var initOptions = $.extend({}, $.fn.carousel.defaults, options);
 
         // Handle different calling conventions
         if (typeof action == 'object') {
@@ -671,9 +697,14 @@ Mobify.UI.Carousel = (function($, Utils) {
             var $this = $(this)
               , carousel = this._carousel;
 
-
             if (!carousel) {
                 carousel = new Mobify.UI.Carousel(this, initOptions);
+            } else {
+                carousel.setOptions(initOptions);
+                carousel.initElements(this);
+                carousel.initOffsets();
+                carousel.initAnimation();
+                carousel.bind();
             }
 
             if (action) {

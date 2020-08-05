@@ -1,13 +1,13 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"jquery.sap.storage"
-], function(JSONModel, jQuery) {
+	"sap/ui/util/Storage"
+], function(JSONModel, Storage) {
 	"use strict";
 
 	return JSONModel.extend("sap.ui.demo.cart.model.CartModel", {
 
 		_STORAGE_KEY : "LOCALSTORAGE_MODEL",
-		_storage : jQuery.sap.storage(jQuery.sap.storage.Type.local),
+		_storage : new Storage(Storage.Type.local),
 
 		/**
 		 * Fetches the favorites from local storage and sets up the JSON model

@@ -3,24 +3,25 @@
  */
 
 // Provides class sap.ui.core.date.UniversalDate
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
-	function(BaseObject, LocaleData) {
+sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
+	function(BaseObject, LocaleData, _Calendars) {
 	"use strict";
 
 
 	/**
-	 * Constructor for UniversalDate
+	 * Constructor for UniversalDate.
 	 *
 	 * @class
-	 * The Date is the base class of calendar date instances. It contains the static methods to create calendar
+	 * The UniversalDate is the base class of calendar date instances. It contains the static methods to create calendar
 	 * specific instances.
 	 *
-	 * The member variable this.oData contains the JS Date object, which is the source value of the date information.
+	 * The member variable <code>this.oData</code> contains the JS Date object, which is the source value of the date information.
 	 * The prototype is containing getters and setters of the JS Date and is delegating them to the internal date object.
 	 * Implementations for specific calendars may override methods needed for their specific calendar (e.g. getYear
-	 * and getEra for japanese emperor calendar);
+	 * and getEra for Japanese emperor calendar);
 	 *
 	 * @private
+	 * @ui5-restricted
 	 * @alias sap.ui.core.date.UniversalDate
 	 */
 	var UniversalDate = BaseObject.extend("sap.ui.core.date.UniversalDate", /** @lends sap.ui.core.date.UniversalDate.prototype */ {
@@ -87,7 +88,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
 		if (!sCalendarType) {
 			sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 		}
-		return sap.ui.requireSync("sap/ui/core/date/" + sCalendarType);
+		return _Calendars.get(sCalendarType);
 	};
 
 	/*
@@ -336,13 +337,13 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
 			iYear, iMonth, iDay;
 		if (aParts[0] == "") {
 			// negative year
-			iYear = -parseInt(aParts[1], 10);
-			iMonth = parseInt(aParts[2], 10) - 1;
-			iDay = parseInt(aParts[3], 10);
+			iYear = -parseInt(aParts[1]);
+			iMonth = parseInt(aParts[2]) - 1;
+			iDay = parseInt(aParts[3]);
 		} else {
-			iYear = parseInt(aParts[0], 10);
-			iMonth = parseInt(aParts[1], 10) - 1;
-			iDay = parseInt(aParts[2], 10);
+			iYear = parseInt(aParts[0]);
+			iMonth = parseInt(aParts[1]) - 1;
+			iDay = parseInt(aParts[2]);
 		}
 		return {
 			timestamp: new Date(0).setUTCFullYear(iYear, iMonth, iDay),

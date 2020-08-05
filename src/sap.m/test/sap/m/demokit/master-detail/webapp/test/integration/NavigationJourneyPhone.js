@@ -1,7 +1,10 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Master",
+	"./pages/Browser",
+	"./pages/Detail"
 ], function (opaTest) {
 	"use strict";
 
@@ -9,19 +12,16 @@ sap.ui.define([
 
 	opaTest("Should see the objects list", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp();
-
-		//Actions
-		When.onTheMasterPage.iLookAtTheScreen();
+		Given.iStartMyApp();
 
 		// Assertions
 		Then.onTheMasterPage.iShouldSeeTheList();
 		Then.onTheBrowserPage.iShouldSeeAnEmptyHash();
 	});
 
-	opaTest("Should react on hashchange", function (Given, When, Then) {
+	opaTest("Should react on hash change", function (Given, When, Then) {
 		// Actions
-		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(3);
+		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(1);
 		When.onTheBrowserPage.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
@@ -29,9 +29,6 @@ sap.ui.define([
 	});
 
 	opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
-		// Actions
-		When.onTheDetailPage.iLookAtTheScreen();
-
 		// Assertions
 		Then.onTheDetailPage.iShouldSeeTheObjectLineItemsList().
 			and.theLineItemsListShouldHaveTheCorrectNumberOfItems().
@@ -40,13 +37,15 @@ sap.ui.define([
 
 	opaTest("Should navigate on press", function (Given, When, Then) {
 		// Actions
-		When.onTheDetailPage.iPressTheBackButton();
+		When.onTheDetailPage.iPressTheHeaderActionButton("closeColumn");
 		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(2).
 			and.iPressOnTheObjectAtPosition(2);
 
 		// Assertions
-		Then.onTheDetailPage.iShouldSeeTheRememberedObject().
-			and.iTeardownMyAppFrame();
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 });

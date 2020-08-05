@@ -11,15 +11,18 @@
 		//extract base URL from script to attach the qunit-redirect script
 		var aScripts = document.getElementsByTagName("script"),
 				sBaseUrl = null,
+				sTestTimeout,
 				sOrigin = window.location.origin ? window.location.origin : (window.location.protocol + "//" + window.location.host),
 				sTestUrl = window.location.href.substr(sOrigin.length);
 
 		for (var i = 0; i < aScripts.length; i++) {
-			var sSrc = aScripts[i].getAttribute("src");
+			var oScript = aScripts[i];
+			var sSrc = oScript.getAttribute("src");
 			if (sSrc) {
 				var aBaseUrl = sSrc.match(/(.*)resources\/sap\/ui\/qunit\/qunit-redirect\.js$/i);
 				if (aBaseUrl && aBaseUrl.length > 1) {
 					sBaseUrl = aBaseUrl[1];
+					sTestTimeout = oScript.getAttribute("data-test-timeout");
 					break;
 				}
 			}
@@ -30,7 +33,10 @@
 		}
 
 		// forward the testpage to the testrunner
-		window.location = sBaseUrl + "test-resources/sap/ui/qunit/testrunner.html?testpage=" + encodeURIComponent(sTestUrl) + "&autostart=true";
+		window.location = sBaseUrl +
+			"test-resources/sap/ui/qunit/testrunner.html?testpage=" + encodeURIComponent(sTestUrl) +
+			"&autostart=true" +
+			(sTestTimeout ? "&test-timeout=" + encodeURIComponent(sTestTimeout) : "");
 
 	}
 

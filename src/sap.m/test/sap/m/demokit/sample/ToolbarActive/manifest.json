@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ToolbarActive",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.ToolbarActive.Toolbar",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Toolbar.view.xml",
+					"Toolbar.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

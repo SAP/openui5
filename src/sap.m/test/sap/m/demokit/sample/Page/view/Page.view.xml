@@ -1,0 +1,32 @@
+<mvc:View
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		title="Title"
+		class="sapUiContentPadding sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer"
+		showNavButton="true" >
+		<headerContent>
+			<Button icon="sap-icon://action" tooltip="Share" />
+		</headerContent>
+		<subHeader>
+			<OverflowToolbar>
+				<SearchField />
+			</OverflowToolbar>
+		</subHeader>
+		<content>
+			<VBox>
+				<Text text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
+			</VBox>
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<ToolbarSpacer/>
+				<Button text="Accept" type="Accept" />
+				<Button text="Reject" type="Reject" />
+				<Button text="Edit" />
+				<Button text="Delete" />
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>

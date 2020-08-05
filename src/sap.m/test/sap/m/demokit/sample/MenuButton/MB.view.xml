@@ -1,27 +1,65 @@
 <mvc:View controllerName="sap.m.sample.MenuButton.MB"
 			height="100%"
 			xmlns:mvc="sap.ui.core.mvc"
+			xmlns:core="sap.ui.core"
 			xmlns="sap.m">
+
+	<Toolbar>
+		<ToolbarSpacer/>
+		<Label text = "In a toolbar"/>
+		<MenuButton text="File">
+			<menu>
+				<Menu>
+					<MenuItem text="Edit" icon="sap-icon://edit" press="onPress">
+						<customData>
+							<core:CustomData
+								key="target"
+								value="p1" />
+						</customData>
+					</MenuItem>
+					<MenuItem text="Save" icon="sap-icon://save" press="onPress" />
+					<MenuItem text="Open" icon="sap-icon://open-folder" press="onPress" />
+				</Menu>
+			</menu>
+		</MenuButton>
+		<MenuButton text="Calculator" buttonMode="Split" useDefaultActionOnly="true">
+			<menu>
+				<Menu itemSelected="onMenuAction">
+					<MenuItem text="basic" icon="sap-icon://chalkboard">
+						<items>
+							<MenuItem text="add" icon="sap-icon://add" />
+							<MenuItem text="subtract" icon="sap-icon://less" />
+							<MenuItem text="multiply" icon="sap-icon://decline" />
+						</items>
+					</MenuItem>
+					<MenuItem text="complex" icon="sap-icon://display">
+						<items>
+							<MenuItem text="square" icon="sap-icon://status-completed" />
+						</items>
+					</MenuItem>
+				</Menu>
+			</menu>
+		</MenuButton>
+		<ToolbarSpacer/>
+	</Toolbar>
 
 	<VBox class="sapUiSmallMargin">
 		<Label text = "With a complex menu"/>
 		<MenuButton text="Calculator" buttonMode="Split" useDefaultActionOnly="true">
 			<menu>
 				<Menu itemSelected="onMenuAction">
-					<items>
-						<MenuItem text="basic" icon="sap-icon://chalkboard">
-							<items>
-								<MenuItem text="add" icon="sap-icon://add" />
-								<MenuItem text="subtract" icon="sap-icon://less" />
-								<MenuItem text="multiply" icon="sap-icon://decline" />
-							</items>
-						</MenuItem>
-						<MenuItem text="complex" icon="sap-icon://display">
-							<items>
-								<MenuItem text="square" icon="sap-icon://status-completed" />
-							</items>
-						</MenuItem>
-					</items>
+					<MenuItem text="basic" icon="sap-icon://chalkboard">
+						<items>
+							<MenuItem text="add" icon="sap-icon://add" />
+							<MenuItem text="subtract" icon="sap-icon://less" />
+							<MenuItem text="multiply" icon="sap-icon://decline" />
+						</items>
+					</MenuItem>
+					<MenuItem text="complex" icon="sap-icon://display">
+						<items>
+							<MenuItem text="square" icon="sap-icon://status-completed" />
+						</items>
+					</MenuItem>
 				</Menu>
 			</menu>
 		</MenuButton>
@@ -30,11 +68,9 @@
 		<MenuButton text="File">
 			<menu>
 				<Menu itemSelected="onMenuAction">
-					<items>
-						<MenuItem text="Edit" icon="sap-icon://edit" />
-						<MenuItem text="Save" icon="sap-icon://save" />
-						<MenuItem text="Open" icon="sap-icon://open-folder" />
-					</items>
+					<MenuItem text="Edit" icon="sap-icon://edit" />
+					<MenuItem text="Save" icon="sap-icon://save" />
+					<MenuItem text="Open" icon="sap-icon://open-folder" />
 				</Menu>
 			</menu>
 		</MenuButton>
@@ -43,11 +79,9 @@
 		<MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction">
 			<menu>
 				<Menu itemSelected="onMenuAction">
-					<items>
-						<MenuItem text="Edit" icon="sap-icon://edit" />
-						<MenuItem text="Save" icon="sap-icon://save" />
-						<MenuItem text="Open" icon="sap-icon://open-folder" />
-					</items>
+					<MenuItem text="Edit" icon="sap-icon://edit" />
+					<MenuItem text="Save" icon="sap-icon://save" />
+					<MenuItem text="Open" icon="sap-icon://open-folder" />
 				</Menu>
 			</menu>
 		</MenuButton>
@@ -56,11 +90,9 @@
 		<MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction">
 			<menu>
 				<Menu itemSelected="onMenuAction">
-					<items>
-						<MenuItem text="Edit" icon="sap-icon://edit" />
-						<MenuItem text="Save" icon="sap-icon://save" />
-						<MenuItem text="Open" icon="sap-icon://open-folder" />
-					</items>
+					<MenuItem text="Edit" icon="sap-icon://edit" />
+					<MenuItem text="Save" icon="sap-icon://save" />
+					<MenuItem text="Open" icon="sap-icon://open-folder" />
 				</Menu>
 			</menu>
 		</MenuButton>
@@ -69,11 +101,9 @@
 		<MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction" useDefaultActionOnly="true">
 			<menu>
 				<Menu itemSelected="onMenuAction">
-					<items>
-						<MenuItem text="Edit" icon="sap-icon://edit" />
-						<MenuItem text="Save" icon="sap-icon://save" />
-						<MenuItem text="Open" icon="sap-icon://open-folder" />
-					</items>
+					<MenuItem text="Edit" icon="sap-icon://edit" />
+					<MenuItem text="Save" icon="sap-icon://save" />
+					<MenuItem text="Open" icon="sap-icon://open-folder" />
 				</Menu>
 			</menu>
 		</MenuButton>
@@ -82,11 +112,40 @@
 		<MenuButton text="Accept" buttonMode="Split" type="Accept" defaultAction="onDefaultActionAccept" useDefaultActionOnly="true">
 			<menu>
 				<Menu itemSelected="onMenuAction">
-					<items>
-						<MenuItem text="Send the response now" icon="sap-icon://response" />
-						<MenuItem text="Edit the response before sending" icon="sap-icon://edit-outside" />
-						<MenuItem text="Do not send a response" icon="sap-icon://action" />
-					</items>
+					<MenuItem text="Send the response now" icon="sap-icon://response" />
+					<MenuItem text="Edit the response before sending" icon="sap-icon://edit-outside" />
+					<MenuItem text="Do not send a response" icon="sap-icon://action" />
+				</Menu>
+			</menu>
+		</MenuButton>
+
+		<Label text = "Menu button with menuPosition set to Right Bottom which in RTL will stay on the Right"/>
+		<MenuButton text="File Menu" defaultAction="onDefaultAction" useDefaultActionOnly="true" menuPosition="RightBottom">
+			<menu>
+				<Menu itemSelected="onMenuAction">
+					<MenuItem text="Edit" icon="sap-icon://edit" />
+					<MenuItem text="Save" icon="sap-icon://save" />
+					<MenuItem text="Open" icon="sap-icon://open-folder" />
+				</Menu>
+			</menu>
+		</MenuButton>
+
+	<Label text = "Menu button with menuPosition set to Begin Bottom. This way the menu in LTR will be positioned on the left and in RTL on the Right."/>
+		<MenuButton text="Calculator" useDefaultActionOnly="true" menuPosition="BeginBottom">
+			<menu>
+				<Menu itemSelected="onMenuAction">
+					<MenuItem text="basic" icon="sap-icon://chalkboard">
+						<items>
+							<MenuItem text="add" icon="sap-icon://add" />
+							<MenuItem text="subtract" icon="sap-icon://less" />
+							<MenuItem text="multiply" icon="sap-icon://decline" />
+						</items>
+					</MenuItem>
+					<MenuItem text="complex" icon="sap-icon://display">
+						<items>
+							<MenuItem text="square" icon="sap-icon://status-completed" />
+						</items>
+					</MenuItem>
 				</Menu>
 			</menu>
 		</MenuButton>

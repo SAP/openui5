@@ -1,0 +1,75 @@
+<mvc:View
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:uxap="sap.uxap">
+
+	<uxap:ObjectPageLayout
+			id="objectPageLayout"
+			useIconTabBar="false"
+			subSectionLayout="TitleOnTop">
+
+		<uxap:sections>
+
+			<uxap:ObjectPageSection id="section_1" title="Section 1">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection id="sub_section_1_1" title="Title 1">
+						<Button text="Btn"/>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<uxap:ObjectPageSection id="section_2" title="Section 2" visible="true">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection id="sub_section_2_1" title="Title 2">
+						<Button text="Btn"/>
+					</uxap:ObjectPageSubSection>
+
+					<uxap:ObjectPageSubSection id="sub_section_2_2" title="Title 3">
+						<Button text="Btn"/>
+					</uxap:ObjectPageSubSection>
+
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<uxap:ObjectPageSection id="section_3">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection id="sub_section_3_1" title="Title 4">
+						<Button text="Btn1"/>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<uxap:ObjectPageSection id="section_4" title="Developers">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection id="sub_section_4_1" title="Title 5">
+						<Button text="Btn1"/>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+		</uxap:sections>
+	</uxap:ObjectPageLayout>
+
+	<uxap:ObjectPageLayout
+			id="objectPageLayout2"
+			useIconTabBar="false"
+			subSectionLayout="TitleOnTop">
+
+		<uxap:sections>
+
+			<uxap:ObjectPageSection title="Section 1">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection id="op2_sub_section_1_1" title="Title 1">
+						<Button text="Btn"/>
+					</uxap:ObjectPageSubSection>
+					<uxap:ObjectPageSubSection title="Title 3">
+						<Button text="Btn"/>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+		</uxap:sections>
+	</uxap:ObjectPageLayout>
+
+</mvc:View>

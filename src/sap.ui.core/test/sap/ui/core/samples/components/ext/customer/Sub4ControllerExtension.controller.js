@@ -1,11 +1,11 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(/* Controller */) {
+sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller'],
+	function(MessageToast /*, Controller */) {
 	"use strict";
 
 	sap.ui.controller("samples.components.ext.customer.Sub4ControllerExtension", {
 
 		customerAction: function() {
-			alert("This is a customer Action");
+			MessageToast.show("This is a customer Action");
 		}
 
 	});

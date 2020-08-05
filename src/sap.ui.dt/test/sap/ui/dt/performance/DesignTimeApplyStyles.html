@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>DesignTime - Apply Styles Test</title>
+		<script src="../shared-config.js"></script>
+		<script
+			id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+			data-sap-ui-resourceroots='{"dt.performance": "./"}'
+		></script>
+		<script>
+			window.wpp = {
+				customMetrics: {}
+			};
+			window.fnResolve;
+			window.onAppReady = new Promise(function (fnResolve) {
+				window.fnResolve = fnResolve;
+			});
+
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require([
+					"dt/performance/PerformanceTestUtil",
+					"sap/m/Panel",
+					"sap/m/Button"
+				], function(
+					PerformanceTestUtil,
+					Panel,
+					Button
+				){
+					var oPanel = new Panel("Panel", {
+						width: "2000px",
+						height: "2000px"
+					});
+					oPanel.placeAt("content");
+					var oLastElement = new Button("button", {text: "sampleButton"});
+					PerformanceTestUtil.createNestedPanels(oPanel, "content", 50, oLastElement);
+					sap.ui.getCore().applyChanges();
+					fnResolve(PerformanceTestUtil.startDesignTime(oPanel, "button"));
+				});
+			});
+
+			window.measureApplyStylesSync = function () {
+				sap.ui.require([
+					"sap/ui/dt/OverlayRegistry",
+					"sap/base/Log"
+				], function(
+					OverlayRegistry,
+					BaseLog
+				){
+					var oRootOverlay = OverlayRegistry.getOverlay("Panel");
+
+					oRootOverlay.attachEventOnce("geometryChanged", function () {
+						window.performance.mark("applyStyles.stop");
+						window.performance.measure("ApplyStylesSync", "applyStyles.start", "applyStyles.stop");
+						window.wpp.customMetrics.applyStylesSync = window.performance.getEntriesByName("ApplyStylesSync")[0].duration;
+						BaseLog.info("ApplyStylesSync = ", window.wpp.customMetrics.applyStylesSync + "ms");
+					});
+
+					oRootOverlay.attachEventOnce("beforeGeometryChanged", function () {
+						window.performance.mark("applyStyles.start");
+					});
+
+					oRootOverlay.getElement().setWidth("2500px");
+				});
+			}
+
+			window.measureApplyStylesAsync = function () {
+				sap.ui.require([
+					"sap/ui/dt/OverlayRegistry",
+					"sap/base/Log"
+				], function (
+					OverlayRegistry,
+					BaseLog
+				) {
+					var oRootOverlay = OverlayRegistry.getOverlay("Panel");
+					oRootOverlay.attachEventOnce("geometryChanged", function () {
+						oRootOverlay.attachEventOnce("beforeGeometryChanged", function () {
+							window.performance.mark("applyStyles.start");
+						});
+						oRootOverlay.getElement().$('content').get(0).scrollTop = 200;
+						oRootOverlay.getElement().setWidth("2100px");
+						oRootOverlay.attachEventOnce("geometryChanged", function() {
+							window.performance.mark("applyStyles.stop");
+							window.performance.measure("ApplyStylesAsync", "applyStyles.start", "applyStyles.stop");
+							window.wpp.customMetrics.applyStylesAsync = window.performance.getEntriesByName("ApplyStylesAsync")[0].duration;
+							BaseLog.info("ApplyStylesAsync = ", window.wpp.customMetrics.applyStylesAsync + "ms");
+						});
+					});
+
+					oRootOverlay.getElement().getContent()[0].setHeight("2500px");
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<div id="content"></div>
+	</body>
+</html>

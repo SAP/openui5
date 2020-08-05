@@ -120,11 +120,7 @@ var Split = function(container, theme, splits) {
         var s = new EditSession(session.getDocument(), session.getMode());
 
         var undoManager = session.getUndoManager();
-        if (undoManager) {
-            var undoManagerProxy = new UndoManagerProxy(undoManager, s);
-            s.setUndoManager(undoManagerProxy);
-        }
-        s.$informUndoManager = lang.delayedCall(function() { s.$deltas = []; });
+        s.setUndoManager(undoManager);
         s.setTabSize(session.getTabSize());
         s.setUseSoftTabs(session.getUseSoftTabs());
         s.setOverwrite(session.getOverwrite());
@@ -194,44 +190,6 @@ var Split = function(container, theme, splits) {
 
 }).call(Split.prototype);
 
- 
-function UndoManagerProxy(undoManager, session) {
-    this.$u = undoManager;
-    this.$doc = session;
-}
-
-(function() {
-    this.execute = function(options) {
-        this.$u.execute(options);
-    };
-
-    this.undo = function() {
-        var selectionRange = this.$u.undo(true);
-        if (selectionRange) {
-            this.$doc.selection.setSelectionRange(selectionRange);
-        }
-    };
-
-    this.redo = function() {
-        var selectionRange = this.$u.redo(true);
-        if (selectionRange) {
-            this.$doc.selection.setSelectionRange(selectionRange);
-        }
-    };
-
-    this.reset = function() {
-        this.$u.reset();
-    };
-
-    this.hasUndo = function() {
-        return this.$u.hasUndo();
-    };
-
-    this.hasRedo = function() {
-        return this.$u.hasRedo();
-    };
-}).call(UndoManagerProxy.prototype);
-
 exports.Split = Split;
 });
 
@@ -239,8 +197,11 @@ ace.define("ace/ext/split",["require","exports","module","ace/split"], function(
 "use strict";
 module.exports = require("../split");
 
-});
-                (function() {
-                    ace.require(["ace/ext/split"], function() {});
+});                (function() {
+                    ace.require(["ace/ext/split"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
                 })();
             

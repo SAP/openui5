@@ -61,10 +61,12 @@ sap.ui.define([
 			},
 
 			onNavToSample: function (oEvt) {
-				var sPath = oEvt.getSource().getBindingContext().getPath();
-				var oSample = this.getView().getModel().getProperty(sPath);
+				var sPath = oEvt.getSource().getBindingContext().getPath(),
+					oSample = this.getView().getModel().getProperty(sPath);
+
 				this.router.navTo("sample", {
-					id: oSample.id
+					entityId: this._sNewId,
+					sampleId: oSample.id
 				});
 			},
 
@@ -115,7 +117,7 @@ sap.ui.define([
 							sRoute = "api";
 						}
 
-						return '<a class="jsdoclink" href="#/' + sRoute + '/' + sTarget + '">' + sText + '</a>';
+						return '<a class="jsdoclink" href="' + sRoute + '/' + sTarget + '">' + sText + '</a>';
 
 					}
 				});
@@ -147,9 +149,9 @@ sap.ui.define([
 
 					this._switchPageTab();
 
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						this._oObjectPage.setBusy(false);
-					});
+					}.bind(this), 0);
 				}
 
 				// set data model
@@ -219,6 +221,8 @@ sap.ui.define([
 					bShouldShowSamplesSection = false,
 					iSamplesCount = 0;
 
+				oData.show.introLink = false;
+
 				if (oEntity) {
 
 					// show the description as intro text if the entity is not deprecated
@@ -230,13 +234,19 @@ sap.ui.define([
 						oData.baseName = oEntity.name;
 					}
 
+					// make intro text active if a documentation link is set
+					if (oEntity.docuLink) {
+						oData.show.introLink = true;
+						oData.docuLink = oEntity.docuLink.replace("docs/guide", "topic").replace(/\.html$/, "");
+						oData.docuLinkText = oData.baseName;
+					}
+
 					bShouldShowSamplesSection = oEntity.samples.length > 0;
 					iSamplesCount = oEntity.samples.length;
 				}
 
 				// apply entity related stuff
 				oData.show.samples = bShouldShowSamplesSection;
-				oData.show.introLink = false;
 				oData.count.samples = iSamplesCount;
 				oData.entity = oEntity;
 
@@ -244,7 +254,7 @@ sap.ui.define([
 					// make intro text active if a documentation link is set
 					if (oDoc.docuLink) {
 						oData.show.introLink = true;
-						oData.docuLink = "#/topic/" + oDoc.docuLink;
+						oData.docuLink = "topic/" + oDoc.docuLink;
 						oData.docuLinkText = oDoc.docuLinkText;
 					}
 
@@ -341,7 +351,8 @@ sap.ui.define([
 			 * Converts the deprecated boolean to a human readable text
 			 */
 			_createDeprecatedMark: function (sDeprecated) {
-				return (sDeprecated) ? "Deprecated" : "";
+				var oResourceBundle = this.getModel("i18n").getResourceBundle();
+				return (sDeprecated) ? oResourceBundle.getText("ENTITY_DEPRECATED") : "";
 			},
 
 			_switchPageTab: function () {
@@ -358,6 +369,8 @@ sap.ui.define([
 			},
 
 			_getHeaderLayoutUtil: function () {
+				var oResourceBundle;
+
 				if (!this._oHeaderLayoutUtil) {
 					var _getObjectAttributeBlock = function (sTitle, sText) {
 							return new ObjectAttribute({
@@ -384,16 +397,18 @@ sap.ui.define([
 							return oHBox;
 						};
 
+					oResourceBundle = this.getModel("i18n").getResourceBundle();
+
 					this._oHeaderLayoutUtil = {
 
 						_getApiReferenceBlock: function (oData) {
 							return _getHBox({
 								items: [
-									_getLabel({design: "Bold", text: "API Reference:"}),
+									_getLabel({design: "Bold", text: oResourceBundle.getText("ENITITY_API")}),
 									_getLink({
 										emphasized: true,
 										text: oData.name,
-										href: "#/api/" + oData.name
+										href: "api/" + oData.name
 									})
 								]
 							}, true);
@@ -401,7 +416,7 @@ sap.ui.define([
 						_getDocumentationBlock: function (oData) {
 							return _getHBox({
 								items: [
-									_getLabel({design: "Bold", text: "Documentation:"}),
+									_getLabel({design: "Bold", text: oResourceBundle.getText("ENTITY_DOCUMENTATION")}),
 									_getLink({
 										emphasized: true,
 										text: oData.docuLinkText,
@@ -413,7 +428,7 @@ sap.ui.define([
 						_getUXGuidelinesBlock: function (oData) {
 							return _getHBox({
 								items: [
-									_getLabel({design: "Bold", text: "UX Guidelines:"}),
+									_getLabel({design: "Bold", text: oResourceBundle.getText("ENTITY_UX")}),
 									_getLink({
 										emphasized: true,
 										text: oData.uxGuidelinesLinkText,
@@ -426,10 +441,10 @@ sap.ui.define([
 						_getExtendsBlock: function (oData) {
 							return _getHBox({
 								items: [
-									_getLabel({text: "Extends:"}),
+									_getLabel({text: oResourceBundle.getText("ENTITY_EXTENDS")}),
 									_getLink({
 										text: oData.baseTypeText,
-										href: "#/entity/" + oData.baseType,
+										href: "entity/" + oData.baseType,
 										visible: !!oData.baseTypeNav
 									}),
 									_getText({text: "N/A", visible: !oData.baseTypeNav || !oData.baseType})
@@ -437,16 +452,16 @@ sap.ui.define([
 							}, true);
 						},
 						_getApplicationComponentBlock: function (oData) {
-							return _getObjectAttributeBlock("Application Component", oData.appComponent);
+							return _getObjectAttributeBlock(oResourceBundle.getText("ENTITY_COMPONENT"), oData.appComponent);
 						},
 						_getAvailableSinceBlock: function (oData) {
-							return _getObjectAttributeBlock("Available since", oData.entity.since);
+							return _getObjectAttributeBlock(oResourceBundle.getText("ENTITY_SINCE"), oData.entity.since);
 						},
 						_getCategoryBlock: function (oData) {
-							return _getObjectAttributeBlock("Category", oData.entity.category);
+							return _getObjectAttributeBlock(oResourceBundle.getText("ENTITY_CATEGORY"), oData.entity.category);
 						},
 						_getContentDensityBlock: function (oData) {
-							return _getObjectAttributeBlock("Content Density", oData.entity.formFactors);
+							return _getObjectAttributeBlock(oResourceBundle.getText("ENTITY_DENSITY"), oData.entity.formFactors);
 						}
 					};
 				}

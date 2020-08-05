@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.Slider",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.Slider.view.Slider",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"view/Slider.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

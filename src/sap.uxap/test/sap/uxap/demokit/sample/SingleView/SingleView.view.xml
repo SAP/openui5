@@ -1,6 +1,5 @@
-<core:View height="100%" xmlns:core="sap.ui.core" xmlns:m="sap.m"
-		   xmlns="sap.uxap" xmlns:sample="sap.uxap.sample.SingleView.blocks"
-		   xmlns:blockcolor="sap.uxap.sample.SharedBlocks">
+<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc"
+           xmlns="sap.uxap" xmlns:blockcolor="sap.uxap.sample.SharedBlocks">
 
 	<ObjectPageLayout id="ObjectPageLayout">
 		<headerTitle>
@@ -8,10 +7,10 @@
 		</headerTitle>
 
 		<sections>
-			<ObjectPageSection title="example">
+			<ObjectPageSection titleUppercase="false" title="example">
 				<subSections>
 
-					<ObjectPageSubSection title="Example">
+					<ObjectPageSubSection title="Example" titleUppercase="false">
 						<blocks>
 							<blockcolor:BlockBlue id="b1"/>
 						</blocks>
@@ -20,4 +19,4 @@
 			</ObjectPageSection>
 		</sections>
 	</ObjectPageLayout>
-</core:View>
+</mvc:View>

@@ -1,0 +1,39 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:dt="sap.ui.rta.dttool"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout">
+	<Page>
+		<customHeader>
+			<OverflowToolbar class="sapUiResponsivePadding">
+				<Title class="sapMListHdrText" text="{i18n>outline}"></Title>
+			</OverflowToolbar>
+		</customHeader>
+		<dt:controls.OutlineTree
+			id="Tree"
+			noDataText="{i18n>loading}"
+			mode="SingleSelectMaster"
+			selectionChange="onSelectionChange"
+			items="{path:'outline>/', parameters: {arrayNames:['elements']}}">
+			<CustomTreeItem app:id="{outline>id}" tooltip="{outline>type}">
+				<content>
+					<HBox>
+						<Image
+							src="{
+								path: 'outline>icon',
+								formatter: '.formatter'
+							}"
+							width="1.2rem"
+							height="1.2rem"
+							class="sapUiTinyMarginEnd"/>
+						<Title text="{outline>technicalName}"/>
+					</HBox>
+				</content>
+			</CustomTreeItem>
+			<dt:layoutData>
+				<l:SplitterLayoutData size="50%" minSize="200px"/>
+			</dt:layoutData>
+		</dt:controls.OutlineTree>
+	</Page>
+</core:FragmentDefinition>

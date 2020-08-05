@@ -27,6 +27,12 @@
 	border: 1px solid @sapUiFieldBorderColor;
 }
 
+.sapMPIBarInformation {
+	background: @sapUiHighlight;
+	box-sizing: border-box;
+	border: 1px solid @sapUiFieldBorderColor;
+}
+
 /* HCB Additional Styles */
 .sapMPIText::before {
 	font-family: 'SAP-icons';
@@ -40,28 +46,38 @@
 	vertical-align: top;
 }
 
+.sapMPIDisplayOnly:not(.sapMPIBarDisabled) .sapMPIBarNeutral {
+	background: @sapUiHighlight;
+}
+
 .sapMPITextLeft::before {
 	margin-left: 0.25rem;
 }
 
 .sapMPIBarPositive > .sapMPITextLeft::before,
 .sapMPIBarPositive + .sapMPIBarRemaining > .sapMPITextRight::before {
-	content: '\e1ab';
+	content: '\e203';
 }
 
 .sapMPIBarNegative > .sapMPITextLeft::before,
 .sapMPIBarNegative + .sapMPIBarRemaining > .sapMPITextRight::before {
-	content: '\e1ac';
+	content: '\e0b1';
 }
 
 .sapMPIBarCritical > .sapMPITextLeft::before,
 .sapMPIBarCritical + .sapMPIBarRemaining > .sapMPITextRight::before {
-	content: '\e1ae';
+	content: '\e201';
+}
+
+.sapMPIBarInformation > .sapMPITextLeft::before,
+.sapMPIBarInformation + .sapMPIBarRemaining > .sapMPITextRight::before {
+	content: '\e202';
 }
 
 .sapMPIBarPositive + .sapMPIBarRemaining > .sapMPITextRight::before,
 .sapMPIBarNegative + .sapMPIBarRemaining > .sapMPITextRight::before,
-.sapMPIBarCritical + .sapMPIBarRemaining > .sapMPITextRight::before {
+.sapMPIBarCritical + .sapMPIBarRemaining > .sapMPITextRight::before,
+.sapMPIBarInformation + .sapMPIBarRemaining > .sapMPITextRight::before {
 	color: @sapUiContentForegroundTextColor;
 }
 
@@ -78,7 +94,8 @@
 	.sapMPIBarNeutral,
 	.sapMPIBarPositive,
 	.sapMPIBarNegative,
-	.sapMPIBarCritical {
+	.sapMPIBarCritical,
+	.sapMPIBarInformation {
 		background: @sapUiHcReducedBackground;
 		border-color: @sapUiHcReducedForeground;
 	}

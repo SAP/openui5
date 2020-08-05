@@ -1,19 +1,26 @@
+/*global QUnit, sinon */
 sap.ui.define([
+	'sap/base/i18n/ResourceBundle',
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/RenderManager',
 	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/layout/VerticalLayout',
 	'sap/ui/commons/Button',
 	'sap/ui/commons/Panel',
 	'./AnyView.qunit',
 	'jquery.sap.sjax'
-], function(coreLibrary, View, XMLView, RenderManager, JSONModel, VerticalLayout, Button, Panel, testsuite) {
+], function(ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, Button, Panel, testsuite) {
+	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = coreLibrary.mvc.ViewType;
 
 	// shortcut
 	function isPreserved(oDomRef) {
-		return RenderManager.isPreservedContent(oDomRef)
+		return RenderManager.isPreservedContent(oDomRef);
 	}
 
 	function isInPreservedArea(oDomRef) {
@@ -42,7 +49,7 @@ sap.ui.define([
 	// run the full testset for a view created from a string
 	testsuite(oConfig, "XMLView creation via XML string", function() {
 		// load the XML without parsing
-		var xml = jQuery.sap.syncGetText(jQuery.sap.getModulePath("example.mvc.test", ".view.xml"), null, undefined); // '<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">	<table id="localTableId" border="5">		<tr><td>Hello</td><td>Hello</td><td>Hello</td></tr>		<tr><td>Hello</td><td>Hello</td><td><phx:Button id="Button1" text="HEY!" press="doIt"></phx:Button></td></tr>	</table>	plain text node as direct child of view	<phx:Panel>		<phx:Button id="Button2" text="HEY default aggregation!" tooltip="hello tooltip" press="doIt"></phx:Button>		<div style="border:1px solid red;background-color:yellow;width:200px;height:10px;">text node in nested HTML in default aggregation</div>		<phx:content>			<div style="border:1px solid red;background-color:blue;width:200px;height:10px;">text node in HTML in named aggregation</div>			<phx:Button id="Button3" text="HEY named aggregation!" press="doIt"></phx:Button>			<mvc:JSONView id="MyJSONView" viewName="example.mvc.test2"></mvc:JSONView>			<mvc:JSView id="MyJSView" viewName="example.mvc.test2"></mvc:JSView>		</phx:content>	</phx:Panel></core:View>';
+		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined);
 		// let the XMLView parse it
 		return sap.ui.xmlview({viewContent:xml});
 	});
@@ -50,7 +57,7 @@ sap.ui.define([
 	// run the full testset for a view created from a XML document
 	testsuite(oConfig, "XMLView creation via XML document", function() {
 		// load the XML without parsing
-		var xml = jQuery.sap.syncGetText(jQuery.sap.getModulePath("example.mvc.test", ".view.xml"), null, undefined); // '<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">	<table id="localTableId" border="5">		<tr><td>Hello</td><td>Hello</td><td>Hello</td></tr>		<tr><td>Hello</td><td>Hello</td><td><phx:Button id="Button1" text="HEY!" press="doIt"></phx:Button></td></tr>	</table>	plain text node as direct child of view	<phx:Panel>		<phx:Button id="Button2" text="HEY default aggregation!" tooltip="hello tooltip" press="doIt"></phx:Button>		<div style="border:1px solid red;background-color:yellow;width:200px;height:10px;">text node in nested HTML in default aggregation</div>		<phx:content>			<div style="border:1px solid red;background-color:blue;width:200px;height:10px;">text node in HTML in named aggregation</div>			<phx:Button id="Button3" text="HEY named aggregation!" press="doIt"></phx:Button>			<mvc:JSONView id="MyJSONView" viewName="example.mvc.test2"></mvc:JSONView>			<mvc:JSView id="MyJSView" viewName="example.mvc.test2"></mvc:JSView>		</phx:content>	</phx:Panel></core:View>';
+		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined);
 		// parse it and pass the XML document
 		return sap.ui.xmlview({
 			viewContent: jQuery.sap.parseXML(xml)
@@ -60,7 +67,7 @@ sap.ui.define([
 	// run the full testset for a view created from a XML document
 	testsuite(oConfig, "XMLView creation via XML node", function() {
 		// load the XML without parsing
-		var xml = jQuery.sap.syncGetText(jQuery.sap.getModulePath("example.mvc.test", ".view.xml"), null, undefined); // '<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">	<table id="localTableId" border="5">		<tr><td>Hello</td><td>Hello</td><td>Hello</td></tr>		<tr><td>Hello</td><td>Hello</td><td><phx:Button id="Button1" text="HEY!" press="doIt"></phx:Button></td></tr>	</table>	plain text node as direct child of view	<phx:Panel>		<phx:Button id="Button2" text="HEY default aggregation!" tooltip="hello tooltip" press="doIt"></phx:Button>		<div style="border:1px solid red;background-color:yellow;width:200px;height:10px;">text node in nested HTML in default aggregation</div>		<phx:content>			<div style="border:1px solid red;background-color:blue;width:200px;height:10px;">text node in HTML in named aggregation</div>			<phx:Button id="Button3" text="HEY named aggregation!" press="doIt"></phx:Button>			<mvc:JSONView id="MyJSONView" viewName="example.mvc.test2"></mvc:JSONView>			<mvc:JSView id="MyJSView" viewName="example.mvc.test2"></mvc:JSView>		</phx:content>	</phx:Panel></core:View>';
+		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined);
 		// parse it and pass the XML document
 		return sap.ui.xmlview({
 			xmlNode: jQuery.sap.parseXML(xml).documentElement
@@ -69,14 +76,24 @@ sap.ui.define([
 
 	// run the full testset for a view created via the generic factory method
 	testsuite(oConfig, "XMLView creation using generic view factory", function() {
-		return sap.ui.view({type:sap.ui.core.mvc.ViewType.XML,viewName:"example.mvc.test",viewData:{test:"testdata"}});
+		return sap.ui.view({type:ViewType.XML,viewName:"example.mvc.test",viewData:{test:"testdata"}});
 	}, true);
 
 
-	QUnit.module("Apply settings");
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+
+	QUnit.module("Apply settings", {
+		beforeEach : function () {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+		},
+		afterEach : function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		}
+	});
+
 	// Settings can be provided at the constructor call or in the according view source. View source wins.
 
-	QUnit.test("sync loading", function() {
+	QUnit.test("sync loading", function(assert) {
 		// although settings are provided here, the resulting view should have the setting stated in the view source
 		var oView = sap.ui.xmlview({
 			viewName: 'example.mvc.test',
@@ -86,7 +103,7 @@ sap.ui.define([
 		oView.destroy();
 	});
 
-	QUnit.test("async loading", function() {
+	QUnit.test("async loading", function(assert) {
 		var oView = sap.ui.xmlview({
 			viewName: 'example.mvc.test',
 			async: true,
@@ -98,6 +115,29 @@ sap.ui.define([
 			oView.destroy();
 		});
 	});
+
+	QUnit.test("async loading new Factory with resource bundle", function(assert) {
+		var oResourceBundleCreateSpy = sinon.spy(ResourceBundle, "create");
+		var oViewPromise = XMLView.create({definition: "" +
+				"<mvc:View resourceBundleName=\"testdata.mvc.text\"\n" +
+				"\t\t   resourceBundleAlias=\"i18n\"\n" +
+				"\t\t   xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.ui.commons\" xmlns:html=\"http://www.w3.org/1999/xhtml\">\n" +
+				"\t<Panel id=\"aPanel\">\n" +
+				"\t\t<Button id=\"Button1\" text=\"{i18n>TEXT_CLOSE}\" press=\"doIt\"></Button>\n" +
+				"\t</Panel>\n" +
+				"</mvc:View>" +
+				""});
+
+		return oViewPromise.then(function(oView) {
+			var oCreateCall = oResourceBundleCreateSpy.getCall(0);
+			assert.ok(oCreateCall.args[0].async, "async call");
+			oResourceBundleCreateSpy.restore();
+			assert.ok(oView.getModel("i18n") instanceof ResourceModel, "has model with the expected alias");
+			oView.destroy();
+		});
+	});
+
+
 
 	QUnit.module("Preserve DOM");
 
@@ -222,7 +262,7 @@ sap.ui.define([
 			var xmlviewPlaceholderNode = jQuery.sap.domById('sap-ui-invisible-xmlview');
 			var btnAfterNode = jQuery.sap.domById('btnAfter');
 
-			assert.ok(vLayout, "vLayout be rendered");
+			assert.ok(vLayoutNode, "vLayout be rendered");
 			assert.ok(btnBeforeNode, "btnBefore should be rendered");
 			assert.ok(btnAfterNode, "btnBefore should be rendered");
 			assert.ok(xmlviewNode, "xmlview should be rendered");
@@ -234,12 +274,12 @@ sap.ui.define([
 			}
 
 			if ( bVisible ) {
-				assert.ok(vLayout.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview should be a descendant of vLayout" + sMsgSuffix);
+				assert.ok(vLayoutNode.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview should be a descendant of vLayout" + sMsgSuffix);
 				assert.ok(btnBeforeNode.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_FOLLOWING, "xmlview should follow the btnBeforeNode" + sMsgSuffix);
 				assert.ok(btnAfterNode.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_PRECEDING, "xmlview should preced the btnAfterNode" + sMsgSuffix);
 			} else {
-				assert.ok(!(vLayout.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_CONTAINED_BY), "xmlview should not be a descendant of vLayout" + sMsgSuffix);
-				assert.ok(vLayout.compareDocumentPosition(xmlviewPlaceholderNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview placeholder should be a descendant of vLayout" + sMsgSuffix);
+				assert.ok(!(vLayoutNode.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_CONTAINED_BY), "xmlview should not be a descendant of vLayout" + sMsgSuffix);
+				assert.ok(vLayoutNode.compareDocumentPosition(xmlviewPlaceholderNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview placeholder should be a descendant of vLayout" + sMsgSuffix);
 				assert.ok(btnBeforeNode.compareDocumentPosition(xmlviewPlaceholderNode) & Node.DOCUMENT_POSITION_FOLLOWING, "xmlview placeholder should follow the btnBeforeNode" + sMsgSuffix);
 				assert.ok(btnAfterNode.compareDocumentPosition(xmlviewPlaceholderNode) & Node.DOCUMENT_POSITION_PRECEDING, "xmlview placeholder should preced the btnAfterNode" + sMsgSuffix);
 			}
@@ -385,23 +425,107 @@ sap.ui.define([
 		assert.ok(!RenderManager.getPreserveAreaRef().hasChildNodes(), "Nothing got preserved");
 
 		// Cleanup
-		var oDomRef = oView.getDomRef();
+		oDomRef = oView.getDomRef();
 		oDomRef.parentElement.removeChild(oDomRef);
 	});
+
+	QUnit.test("Directly Nested XMLViews", function(assert) {
+		sap.ui.require.preload({
+			"nested/views/outer.view.xml":
+				"<View xmlns=\"sap.ui.core.mvc\">" +
+					"<Text id=\"before\" text=\"another control before the nested view\" xmlns=\"sap.m\" />" +
+					"<XMLView viewName=\"nested.views.middle\" id=\"middle\" />" +
+					"<Text id=\"after\" text=\"another control after the nested view\" xmlns=\"sap.m\" />" +
+				"</View>",
+			"nested/views/middle.view.xml":
+				"<View xmlns=\"sap.ui.core.mvc\">" +
+					"<Text id=\"before\" text=\"another control before the nested view\" xmlns=\"sap.m\" />" +
+					"<VBox id=\"vbox\" xmlns=\"sap.m\">" +
+						"<XMLView viewName=\"nested.views.inner\" id=\"indirect-inner\" xmlns=\"sap.ui.core.mvc\" />" +
+					"</VBox>" +
+					"<XMLView viewName=\"nested.views.inner\" id=\"direct-inner\" xmlns=\"sap.ui.core.mvc\" />" +
+					"<Text id=\"after\" text=\"another control before the nested view\" xmlns=\"sap.m\" />" +
+				"</View>",
+			"nested/views/inner.view.xml":
+				"<View xmlns=\"sap.ui.core.mvc\">" +
+					"<Text id=\"inside\" text=\"another control inside the view\" xmlns=\"sap.m\" />" +
+				"</View>"
+		});
+		var expectedControls = [
+			"outer",
+				"outer--before",
+				"outer--middle",
+					"outer--middle--before",
+					"outer--middle--vbox",
+						"outer--middle--indirect-inner",
+							"outer--middle--indirect-inner--inside",
+					"outer--middle--direct-inner",
+						"outer--middle--direct-inner--inside",
+					"outer--middle--after",
+				"outer--after"
+		];
+
+		// load and place view, force rendering
+		var oView = sap.ui.xmlview("outer", { viewName: "nested.views.outer"}).placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		expectedControls.forEach(function(sId) {
+			var oControl = sap.ui.getCore().byId(sId);
+			assert.ok(oControl, "control with id '" + sId + "' should exist");
+			assert.ok(oControl.getDomRef(), "control with id '" + sId + "' should have DOM");
+		});
+
+		// install delegates on each control to assert later that all have been rendered
+		var count = 0;
+		expectedControls.forEach(function(sId) {
+			var oControl = sap.ui.getCore().byId(sId);
+			oControl.addDelegate({
+				onBeforeRendering: function() {
+					count += 100;
+				},
+				onAfterRendering: function() {
+					count += 1;
+				}
+			});
+		});
+
+		// Act: force a re-rerendering of the outer view
+		oView.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		// Assert: everythging has been rendered again
+		assert.equal(count, 101 * expectedControls.length, "all controls should have participated in the rendering");
+		expectedControls.forEach(function(sId) {
+			var oControl = sap.ui.getCore().byId(sId);
+			assert.ok(oControl, "control with id '" + sId + "' should exist");
+			assert.ok(oControl.getDomRef(), "control with id '" + sId + "' should have DOM");
+			assert.notOk(document.getElementById(RenderManager.RenderPrefixes.Dummy + sId), "there should be no more Dummy-Element for id '" + sId + "'");
+			assert.notOk(document.getElementById(RenderManager.RenderPrefixes.Temporary + sId), "there should be no more Temporary-Element for id '" + sId + "'");
+		});
+
+		oView.destroy();
+		expectedControls.forEach(function(sId) {
+			var oControl = sap.ui.getCore().byId(sId);
+			assert.notOk(oControl, "control with id '" + sId + "' should no longer exist");
+			assert.notOk(document.getElementById(sId), "there should be no more DOM with id '" + sId + "'");
+		});
+
+	});
+
+
 
 	QUnit.module("Additional tests:");
 
 	// error
 	QUnit.test("Error in template - no default aggregation defined", function(assert) {
 		var sXml = [
-				'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib" xmlns="http://www.w3.org/1999/xhtml">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns="http://www.w3.org/1999/xhtml">',
 				'	<test:TestButton>',
 				'		<test:Error/>',
 				'	</test:TestButton>',
-				'</core:View>'
+				'</mvc:View>'
 			].join(''),
-			sError = "Cannot add direct child without default aggregation defined for control sap.ui.testlib.TestButton",
-			view;
+			sError = "Cannot add direct child without default aggregation defined for control sap.ui.testlib.TestButton";
 
 		assert.throws(function() {
 			sap.ui.xmlview("erroneous_view_1", {viewContent:sXml});
@@ -410,26 +534,25 @@ sap.ui.define([
 
 	QUnit.test("Error in template - text in aggregation", function(assert) {
 		var sXml = [
-				'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib" xmlns="http://www.w3.org/1999/xhtml">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns="http://www.w3.org/1999/xhtml">',
 				'	<test:TestButton>',
 				'		Error',
 				'	</test:TestButton>',
-				'</core:View>'
+				'</mvc:View>'
 			].join(''),
-			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error",
-			view;
+			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error";
 
 		assert.throws(function() {
 			sap.ui.xmlview("erroneous_view_2", {viewContent:sXml});
 		}, Error(sError), "Must throw an error");
 	});
 
-	QUnit.test("Error in controller", function() {
+	QUnit.test("Error in controller", function(assert) {
 		var sXml = [
-				'<core:View controllerName="example.mvc.test.error" xmlns:core="sap.ui.core">',
-				'</core:View>'
-			].join(''),
-			view;
+				'<mvc:View controllerName="example.mvc.test.error" xmlns:mvc="sap.ui.core.mvc">',
+				'</mvc:View>'
+			].join('');
+
 		// define erroneous controller
 		sap.ui.controller("example.mvc.test.error", {
 			onInit: function() {
@@ -445,14 +568,14 @@ sap.ui.define([
 	QUnit.test("Encoding", function(assert) {
 
 		var xmlWithHTMLFragment = [
-			'<core:View xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="http://www.w3.org/1999/xhtml">',
 			'  <div title="&quot;&gt;&lt;span id=&quot;broken1&quot;&gt;broken1&lt;/span&gt;&lt;x y=&quot;">',
 			'    <span id="valid1"></span>',
 			'    <span id="valid2">',
 			'      &lt;span id=&quot;broken2&quot;&gt;broken2&lt;/span&gt;',
 			'    </span>',
 			'  </div>',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 
 		var view = sap.ui.xmlview("view", {viewContent:xmlWithHTMLFragment});
@@ -473,9 +596,9 @@ sap.ui.define([
 			integerValue: 8015,
 			stringValue : 'Text1',
 			data: {
-				booleanValue : true,
-				integerValue: 8015,
-				stringValue : 'Text1'
+				booleanValue: false,
+				integerValue: 4242,
+				stringValue: 'Text2'
 			}
 		});
 		var oModel2 = new JSONModel({
@@ -485,30 +608,30 @@ sap.ui.define([
 		});
 
 		var xmlWithBindings = [
-			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
 			'  <test:TestButton id="btn" enabled="{/booleanValue}" text="{/stringValue}" width="{/integerValue}" />',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 
 		var xmlWithNamedBindings = [
-			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
 			'  <test:TestButton id="btn" enabled="{model2>/booleanValue}" text="{model1>/stringValue}" width="{/integerValue}" />',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 
 		var xmlWithElementBinding = [
-			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
-			'  <test:TestButton id="btn" binding="{data}" enabled="{booleanValue}" text="{stringValue}" width="{integerValue}" />',
-			'</core:View>'
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
+			'  <test:TestButton id="btn" binding="{/data}" enabled="{booleanValue}" text="{stringValue}" width="{integerValue}" />',
+			'</mvc:View>'
 		].join('');
 
 		var xmlWithoutBindings = [
-			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
 			'  <test:TestButton id="btn1" enabled="true" text="The following set is empty: \\{\\}" width="67" />',
 			'  <test:TestButton id="btn2" enabled="false" text="\\{\\} is an empty set" width="42" />',
 			'  <test:TestButton id="btn3" enabled="true" text="The following array is empty: []" width="67" />',
 			'  <test:TestButton id="btn4" enabled="false" text="[] is an empty array" width="42" />',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 
 		var oViewWithBindings1 = sap.ui.xmlview({viewContent:xmlWithBindings});
@@ -524,17 +647,18 @@ sap.ui.define([
 		assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithNamedBindings = sap.ui.xmlview({viewContent:xmlWithNamedBindings});
+		oViewWithNamedBindings.setModel(oModel2);
 		oViewWithNamedBindings.setModel(oModel1, "model1");
 		oViewWithNamedBindings.setModel(oModel2, "model2");
 		assert.equal(oViewWithNamedBindings.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
 		assert.equal(oViewWithNamedBindings.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
-		assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
+		assert.equal(oViewWithNamedBindings.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithElementBinding = sap.ui.xmlview({viewContent:xmlWithElementBinding});
-		oViewWithBindings1.setModel(oModel1);
-		assert.equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
-		assert.equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().data.stringValue, "Check 'text' property of button 'btn'");
-		assert.equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().data.integerValue, "Check 'width' property of button 'btn'");
+		oViewWithElementBinding.setModel(oModel1);
+		assert.equal(oViewWithElementBinding.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
+		assert.equal(oViewWithElementBinding.byId("btn").getText(), oModel1.getData().data.stringValue, "Check 'text' property of button 'btn'");
+		assert.equal(oViewWithElementBinding.byId("btn").getWidth(), oModel1.getData().data.integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithoutBindings = sap.ui.xmlview({viewContent:xmlWithoutBindings});
 		oViewWithoutBindings.setModel(oModel1);
@@ -553,9 +677,9 @@ sap.ui.define([
 		});
 
 		var xmlWithBindings = [
-			'<core:View controllerName="example.mvc.test" xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">',
+			'<mvc:View controllerName="example.mvc.test" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">',
 			'  <test:TestButton id="btn" app:myKey1="myValue1" app:myKey2="{/value}" app:myKey3="{path: \'/value\', formatter:\'.valueFormatter\'}" />',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 
 		var oView = sap.ui.xmlview({viewContent:xmlWithBindings});
@@ -591,7 +715,7 @@ sap.ui.define([
 					preprocessors: {
 						xml:preprocessor,
 						viewxml: preprocessor
-					},
+					}
 				});
 			}.bind(this);
 		},
@@ -618,14 +742,13 @@ sap.ui.define([
 
 	QUnit.test("sync / no execution", function(assert) {
 		assert.expect(1);
-		var bCalled,
-			preprocessorSpy = sinon.spy();
+		var preprocessorSpy = sinon.spy();
 
 		sap.ui.xmlview({
 			viewContent: this.sViewContent,
 			preprocessors: {
 				xml: this.fnGetConfig(preprocessorSpy)
-			},
+			}
 		});
 
 		sinon.assert.notCalled(preprocessorSpy);
@@ -673,7 +796,7 @@ sap.ui.define([
 			oPreprocessors[sType] = this.fnGetConfig(preprocessorSpy, true);
 		} else {
 			oPreprocessors[sType] = [];
-			for(var i = 0; i < iCount; i++) {
+			for (var i = 0; i < iCount; i++) {
 				oPreprocessors[sType][i] = this.fnGetConfig(preprocessorSpy, true);
 			}
 		}
@@ -695,7 +818,7 @@ sap.ui.define([
 			}),
 			fnAssert = function(e) {
 				assert.strictEqual(e, oError, "error was processed");
-			}.bind(this);
+			};
 
 		assert.expect(1);
 

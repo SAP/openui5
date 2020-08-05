@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="../cases/$metadata">
+		<edmx:Include Namespace="special.cases"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.srvd_f4.i_aivs_countrycode.v0001" Alias="SAP__self">
+			<EntityType Name="I_AIVS_CountryCodeType">
+				<Key>
+					<PropertyRef Name="CountryCode"/>
+				</Key>
+				<Property Name="CountryCode" Type="Edm.String" Nullable="false" MaxLength="3"/>
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="I_AIVS_CountryCode" EntityType="com.sap.gateway.srvd_f4.i_aivs_countrycode.v0001.I_AIVS_CountryCodeType"/>
+			</EntityContainer>
+			<Annotations Target="special.cases.Create/Countryoforigin">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListMapping">
+					<Record>
+						<PropertyValue Property="Label" String="Country Code Value Help"/>
+						<PropertyValue Property="CollectionPath" String="I_AIVS_CountryCode"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="Countryoforigin"/>
+									<PropertyValue Property="ValueListProperty" String="CountryCode"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

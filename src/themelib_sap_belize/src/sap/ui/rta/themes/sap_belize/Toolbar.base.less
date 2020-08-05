@@ -1,0 +1,38 @@
+/******************************************************************
+	Style of the RTA Toolbar (all types) - sap_belize Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG: lighten(saturate(@sapPrimary2, 40%), 42%); //#CAE4FB
+@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiWhite; //#fff
+@_sap_ui_rta_Toolbar_Base_BaseColor: darken(@sapPrimary1,8); //#2F3C48
+@_sap_ui_rta_Toolbar_Base_BtnHover: fade(lighten(@sapPrimary1, 18%), 50%); //rgba(99, 127, 153, 0.5)
+
+.sapUiRtaMode {
+	.sapUiRtaToolbar {
+		background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
+		height: 3rem; //48px
+
+		.sapMBtn {
+			&.sapMBtnDisabled .sapMBtnInner {
+				opacity: 1.0;
+			}
+		}
+	}
+}
+
+.sapUiSizeCozy {
+	.sapUiRtaToolbar {
+		.sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel {
+			& .sapMSegBBtnInner:after {
+				left: 1rem; //16px
+				right: 1rem; //16px
+			}
+		}
+	}
+}
+
+.sapUiRtaToolbar .sapMBtn:hover:not(.sapMBtnDisabled) > .sapMBtnHoverable.sapMBtnTransparent:not(.sapMBtnActive):not(.sapMToggleBtnPressed) > .sapMBtnIcon,
+.sapUiRtaToolbar *.sapMBtn:hover:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnTransparent:not(.sapMBtnActive):not(.sapMToggleBtnPressed) > .sapMBtnIcon,
+.sapUiRtaToolbar :not(.sapMBtnDisabled):not(.sapMSBActive) > span.sapMBtnInner.sapMBtnTransparent:not(.sapMBtnActive):not(.sapMToggleBtnPressed):hover > .sapMBtnIcon,
+.sapUiRtaToolbar .sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) bdi {
+	color: @_sap_ui_rta_Toolbar_Base_TextColor;
+}

@@ -18,9 +18,9 @@
 				enableCellFilter="{ui>/cellFilterOn}"
 				filter="filterPrice"
 				ariaLabelledBy="title">
-				<toolbar>
-					<m:Toolbar>
-						<m:Title id="title" text="Products"></m:Title>
+				<extension>
+					<m:OverflowToolbar>
+						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:ToggleButton
 							icon="sap-icon://complete"
@@ -41,8 +41,8 @@
 							value="{ui>/globalFilter}"
 							search="filterGlobally"
 							width="15rem"/>
-					</m:Toolbar>
-				</toolbar>
+					</m:OverflowToolbar>
+				</extension>
 				<columns>
 					<Column
 						width="11rem"
@@ -106,13 +106,7 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:Toolbar>
-						<m:ToolbarSpacer/>
-						<m:Button
-							icon="sap-icon://hint"
-							tooltip="Show information"
-							press="showInfo"/>
-					</m:Toolbar>
+					<m:OverflowToolbar id="infobar"></m:OverflowToolbar>
 				</footer>
 			</Table>
 		</m:content>

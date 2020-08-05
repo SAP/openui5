@@ -1,0 +1,49 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f"
+    controllerName="sap.f.gridlist.controller.Main">
+
+    <f:GridList
+		headerText="GridList with a basic layout"
+		items="{ path: '/' }">
+
+        <f:customLayout>
+            <grid:GridBasicLayout
+				gridTemplateColumns="repeat(auto-fit, 8rem)"
+
+				gridGap="0.25rem 0.25rem">
+            </grid:GridBasicLayout>
+        </f:customLayout>
+
+		<CustomListItem>
+			<VBox height="100%">
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<Title text="{title} (Click me)" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</VBox>
+		</CustomListItem>
+    </f:GridList>
+
+    <f:GridList
+		headerText="GridList with default grid layout"
+		items="{ path: '/' }">
+
+		<CustomListItem>
+			<VBox height="100%">
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<Title text="{title} (Click me)" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</VBox>
+		</CustomListItem>
+    </f:GridList>
+</mvc:View>

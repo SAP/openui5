@@ -1,0 +1,41 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<Page>
+		<customHeader>
+			<Toolbar class="sapUiResponsivePadding">
+				<Input
+					id="sampleInput"
+					type="Text"
+					placeholder="{i18n>controlSearch}"
+					valueLiveUpdate="true"
+					showSuggestion="true"
+					showValueHelp="true"
+					suggestionItemSelected="goToPage">
+					<suggestionItems>
+					</suggestionItems>
+				</Input>
+				<ToolbarSpacer/>
+				<SegmentedButton selectionChange="onToggleRTA" class="sapUiTinyMarginEnd">
+					<items>
+						<SegmentedButtonItem id="startRTA" text="{i18n>startRTA}"/>
+						<SegmentedButtonItem id="stopRTA" text="{i18n>stopRTA}"/>
+					</items>
+				</SegmentedButton>
+				<Button id="undo" enabled="false" icon="sap-icon://undo" press="onUndo"/>
+				<Button id="redo" enabled="false" icon="sap-icon://redo" press="onRedo"/>
+			</Toolbar>
+		</customHeader>
+		<html:IFrame
+			align="middle"
+			id="theIFrame"
+			frameborder="false"
+			border="0"
+			height="100%" width="100%" style=""/>
+		<layoutData>
+			<l:SplitterLayoutData size="50%" minSize="500px"/>
+		</layoutData>
+	</Page>
+</core:FragmentDefinition>

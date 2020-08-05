@@ -1,15 +1,21 @@
 {
-	"_version": "1.8.0",
+	"_version": "1.21.0",
 	"sap.app": {
 		"id": "sap.ui.demo.bulletinboard",
 		"type": "application",
-		"i18n": "webapp/i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
 		"title": "",
 		"description": "",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
-		"ach": "CA-UI5-FST",
+		"resources": "resources.json",
 		"dataSources": {
 			"mainService": {
 				"uri": "/here/goes/your/serviceUrl/",
@@ -40,7 +46,7 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.30.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},
@@ -51,7 +57,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.bulletinboard.i18n.i18n"
+					"bundleName": "sap.ui.demo.bulletinboard.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			},
 			"": {
@@ -77,15 +87,27 @@
 					"pattern": "",
 					"name": "worklist",
 					"target": "worklist"
+				},
+				{
+					"pattern": "Post/{postId}",
+					"name": "post",
+					"target": "post"
 				}
+
 			],
 			"targets": {
 				"worklist": {
 					"viewName": "Worklist",
 					"viewId": "worklist",
 					"viewLevel": 1
+				},
+				"post": {
+					"viewName": "Post",
+					"viewId": "post",
+					"viewLevel": 2
 				}
 			}
+
 		}
 	}
 }

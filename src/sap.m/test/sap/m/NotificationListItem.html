@@ -8,6 +8,10 @@
 			#content {
 				padding: 30px 0 0 30px;
 			}
+
+			.smallNotif {
+				width:150px;
+			}
 		</style>
 
 		<script src="shared-config.js"></script>
@@ -17,12 +21,16 @@
 		</script>
 
 		<script>
+
+			var app = new sap.m.App("myApp", {initialPage:"tabBarPage"});
+			app.placeAt("body");
+
 			var compactSizeButton = new sap.m.Button('toggleCompactModeButton', {
 				text : 'Toggle Compact mode',
 				press : function() {
 					jQuery('body').toggleClass('sapUiSizeCompact');
 				}
-			}).placeAt('content');
+			});
 
 			var listItem = new sap.m.NotificationListItem('firstNotification', {
 				title : 'Notification List Title Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel',
@@ -34,11 +42,27 @@
 				unread : true,
 				authorName : 'Jean Doe',
 				authorPicture : 'images/Woman_04.png',
-				priority: sap.ui.core.Priority.None
+				priority: sap.ui.core.Priority.None,
+				buttons: [
+					new sap.m.Button({
+						text: 'Accept',
+						type: sap.m.ButtonType.Accept,
+						press: function () {
+							sap.m.MessageToast.show('Accept button pressed');
+						}
+					}),
+					new sap.m.Button({
+						text: 'Cancel',
+						type: sap.m.ButtonType.Reject,
+						press: function () {
+							listItem2.close();
+						}
+					})
+				]
 			});
 
 			var listItem2 = new sap.m.NotificationListItem('secondNotification', {
-				title: 'Notification List Title',
+				title: 'Notification List Long Title',
 				description : 'Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis.',
 				showCloseButton : false,
 				datetime : '3 days',
@@ -50,63 +74,70 @@
 						id: 'button1',
 						text: 'Accept',
 						type: sap.m.ButtonType.Accept,
-						tap: function () {
+						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
-						}
-					}),
-					new sap.m.Button('notificationCancelButton', {
-						id: 'button2',
-						text: 'Cancel',
-						type: sap.m.ButtonType.Reject,
-						tap: function () {
-							listItem2.close();
 						}
 					})
 				]
 			});
 
-			var listItem3 = new sap.m.NotificationListItem({
+			var listItem2A = new sap.m.NotificationListItem('notificationNoButtons', {
+				title: 'Notification List Title',
+				description : 'Notification List Item with no "Accept" and no "Reject" buttons.',
+				showButtons: false,
+				showCloseButton : true,
+				datetime : '3 days',
+				priority : sap.ui.core.Priority.Low,
+				authorName : 'Office Notification',
+				authorAvatarColor: sap.m.AvatarColor.Accent8,
+				authorInitials: 'SC',
+				buttons: [
+					new sap.m.Button({
+						id: 'button356',
+						text: 'OK',
+						type: sap.m.ButtonType.Accept,
+						press: function () {
+							sap.m.MessageToast.show('Accept button pressed');
+						}
+					})
+				]
+			});
+
+			var listItem3 = new sap.m.NotificationListItem("notificationOnlyOneActionButton", {
 				title: 'Notification List Title',
 				description : 'Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis.',
 				showCloseButton : true,
 				datetime : '3 days',
 				unread : true,
 				priority : sap.ui.core.Priority.Medium,
+				authorInitials: 'JM',
+				authorAvatarColor: sap.m.AvatarColor.Accent1,
 				buttons: [
 					new sap.m.Button({
 						id: 'button3',
-						text: 'Accept',
-						type: sap.m.ButtonType.Accept,
-						tap: function () {
+						text: 'OK',
+						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
-						}
-					}),
-					new sap.m.Button({
-						id: 'button4',
-						text: 'Cancel',
-						type: sap.m.ButtonType.Reject,
-						tap: function () {
-							listItem2.close();
 						}
 					})
 				]
 			});
 
-			var listItem4 = new sap.m.NotificationListItem({
+			var listItem4 = new sap.m.NotificationListItem("notificationNoDescription", {
 				title: 'Notification List Title',
-				description : 'Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis.',
 				showCloseButton : true,
 				datetime : '3 days',
 				unread : true,
 				priority : sap.ui.core.Priority.High,
 				authorName : 'John Smith',
 				authorPicture : 'images/headerImg2.jpg',
+				authorInitials: 'AM',
 				buttons: [
 					new sap.m.Button({
 						id: 'button5',
 						text: 'Accept',
 						type: sap.m.ButtonType.Accept,
-						tap: function () {
+						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
 					}),
@@ -114,7 +145,7 @@
 						id: 'button6',
 						text: 'Cancel',
 						type: sap.m.ButtonType.Reject,
-						tap: function () {
+						press: function () {
 							listItem2.close();
 						}
 					})
@@ -125,15 +156,19 @@
 				showClose : true,
 				buttons : [
 					{
-						buttonText : "Accept",
+						buttonText : "Action1",
 						buttonType : sap.m.ButtonType.Accept
 					},
 					{
-						buttonText : "Consider",
+						buttonText : "Action2",
 						buttonType : sap.m.ButtonType.Default
 					},
 					{
-						buttonText : "Reject",
+						buttonText : "Action3",
+						buttonType : sap.m.ButtonType.Reject
+					},
+					{
+						buttonText : "Action4",
 						buttonType : sap.m.ButtonType.Reject
 					}
 				]
@@ -149,16 +184,31 @@
 				type : "{buttonType}"
 			});
 
-			var listItem5 = new sap.m.NotificationListItem({
+			var listItem5 = new sap.m.NotificationListItem("notificationBinding", {
 				id : "lastNotification",
-				title : 'Item with binding',
+				title : 'Item with binding - ' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.',
 				description : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
 				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
 				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.',
 				showCloseButton : "{showClose}",
 				datetime : '1 hour',
 				unread : true,
-				authorName : 'Jean Doe',
+				authorName : 'Jean Doedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoe',
 				authorPicture : 'images/Woman_04.png',
 				priority: sap.ui.core.Priority.None,
 				buttons: {
@@ -167,17 +217,145 @@
 				}
 			});
 
+			var listItem6 = new sap.m.NotificationListItem("notificationNoShowMoreButton", {
+				id : "lastNotification2",
+				title : 'Item with binding AND no "show more" option - ' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.',
+				description : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.',
+				showCloseButton : "{showClose}",
+				hideShowMoreButton: true,
+				datetime : '1 hour',
+				unread : true,
+				showButtons: false,
+				authorName : 'Jean Doedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoe',
+				authorPicture : 'images/Woman_04.png',
+				priority: sap.ui.core.Priority.None,
+				buttons: {
+					path : "/buttons",
+					template : oButtonTemplate
+				}
+			});
+
+			var listItem7 = new sap.m.NotificationListItem("notificationNoTruncation", {
+				id : "lastNotification3",
+				title : 'Item with binding AND no truncation - ' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.',
+				description : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.' +
+				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.',
+				showCloseButton : "{showClose}",
+				truncate: false,
+				datetime : '1 hour',
+				unread : true,
+				authorName : 'Jean Doedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoe',
+				authorPicture : 'images/Woman_04.png',
+				priority: sap.ui.core.Priority.None,
+				buttons: {
+					path : "/buttons",
+					template : oButtonTemplate
+				}
+			});
+
+			var listItem8 = new sap.m.NotificationListItem({
+				title: 'Busy Notification List Title',
+				showCloseButton : true,
+				// busy: true,
+				datetime : '3 days',
+				unread : true,
+				priority : sap.ui.core.Priority.High,
+				authorName : 'John Smith',
+				authorPicture : 'images/headerImg2.jpg',
+				buttons: [
+					new sap.m.Button({
+						id: 'button51',
+						text: 'Accept',
+						type: sap.m.ButtonType.Accept,
+						press: function () {
+							sap.m.MessageToast.show('Accept button pressed');
+						}
+					}),
+					new sap.m.Button({
+						id: 'button61',
+						text: 'Cancel',
+						type: sap.m.ButtonType.Reject,
+						press: function () {
+							listItem8.close();
+						}
+					})
+				]
+			});
+
+			var listItem9 = new sap.m.NotificationListItem({
+				title: 'Hidden Notification',
+				showCloseButton : true,
+				visible: false,
+				busy: true,
+				datetime : '3 days',
+				unread : true,
+				priority : sap.ui.core.Priority.High,
+				authorName : 'John Smith',
+				authorPicture : 'images/headerImg2.jpg',
+			});
+
 			var list = new sap.m.List("listId", {
 				items: [
 					listItem,
 					listItem2,
+					listItem2A,
 					listItem3,
 					listItem4,
-					listItem5
+					listItem5,
+					listItem6,
+					listItem7,
+					listItem8,
+					listItem9
 				]
 			});
 
-			list.setWidth("480px").placeAt("content");
+			// BCP: 2080142709
+			 var smallNotif = new sap.m.NotificationListItem("smallNotif", {
+				description: "Hello World Honorificabilitudinitatibus",
+				title: "Data migration results available.",
+				showCloseButton: false,
+				truncate: false
+			}).addStyleClass("smallNotif");
+
+			var initialPage = new sap.m.Page("tabBarPage", {
+				showHeader: false,
+				content: [compactSizeButton, list, smallNotif]
+			});
+
+			app.addPage(initialPage);
 		</script>
 	</head>
 

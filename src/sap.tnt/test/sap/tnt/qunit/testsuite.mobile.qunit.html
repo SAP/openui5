@@ -1,35 +1,12 @@
+<!DOCTYPE html>
 <html>
 <head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<base href="../../../../">
 	<title>QUnit TestSuite for sap.tnt</title>
-	<script src="../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
-	<script src="../shared-config.js"></script>
-	<script
-		id="sap-ui-bootstrap"
-		src='../../../../resources/sap-ui-core.js'>
-	</script>
-	<script>
-
-		/**
-		 * Add test pages to this test suite function.
-		 * Please order alphabetically
-		 */
-		function suite() {
-			var suite = new parent.jsUnitTestSuite();
-			var contextPath = "/" + window.location.pathname.split("/")[1];
-
-			suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/ExploredSamples.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/NavigationList.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/SideNavigation.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/ToolHeader.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/ToolPage.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/InfoLabel.qunit.html");
-
-			// toolpage demo app integration tests
-			suite.addTestPage(contextPath + "/test-resources/sap/tnt/demokit/toolpageapp/webapp/test/integration/opaTests.qunit.html");
-
-			return suite;
-		}
-	</script>
+	<script src="resources/sap/ui/test/starter/createSuite.js"
+			data-sap-ui-testsuite="test-resources/sap/tnt/qunit/testsuite.mobile.qunit"></script>
 </head>
 <body>
 </body>

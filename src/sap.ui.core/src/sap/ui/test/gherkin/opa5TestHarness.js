@@ -7,19 +7,32 @@
 
 // Load synchronously to avoid QUnit issue where tests run before QUnit is loaded
 // Only load QUnit if it has not been loaded via script tag
-if (!window.QUnit) {
+if (!window.QUnit || !window.QUnit.test) {
   jQuery.sap.require("sap.ui.thirdparty.qunit");
 }
 
 // put qunit-coverage last so library files don't get measured
 sap.ui.define([
-  "jquery.sap.global", "sap/ui/test/opaQunit", "sap/ui/test/Opa5",
+  "jquery.sap.global", "sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/test/opaQunit", "sap/ui/test/Opa5",
   "sap/ui/test/gherkin/GherkinTestGenerator", "sap/ui/test/gherkin/dataTableUtils", "sap/ui/test/gherkin/StepDefinitions",
   "sap/ui/test/launchers/componentLauncher", "sap/ui/test/launchers/iFrameLauncher", "sap/ui/qunit/qunit-css",
   "sap/ui/qunit/qunit-junit", "sap/ui/qunit/qunit-coverage"
-], function($, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, StepDefinitions, componentLauncher,
+], function($, Log, ObjectPath, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, StepDefinitions, componentLauncher,
   iFrameLauncher) {
   "use strict";
+
+  QUnit.config.urlConfig.splice(0, 0, {
+    id: "closeFrame",
+    label: "Close Frame",
+    tooltip: "Closes the application-under-test's frame after all tests have executed",
+    value: "true"
+  });
+
+  QUnit.done(function() {
+    if (jQuery.sap.getUriParameters().get("closeFrame")) {
+      Opa5.emptyQueue();
+    }
+  });
 
   /**
    * Dynamically generates and executes Opa5 tests based on a Gherkin feature file and step definitions.
@@ -41,24 +54,39 @@ sap.ui.define([
     _fnAlternateTestStepGenerator: function(oStep) {
       // Automatically generates test steps from Opa Page Objects, only used when args.generateMissingSteps is true
 
-      var sToEval = oStep.keyword + ".";
+      var sContext = oStep.keyword;
       var sFinalFunction = oStep.text;
       var aMatch = oStep.text.match(/(.*?)\s*:\s*(.*)/);
       if (aMatch) {
-        sToEval += dataTableUtils.normalization.camelCase(aMatch[1]) + ".";
+        sContext += "." + dataTableUtils.normalization.camelCase(aMatch[1]);
         sFinalFunction = aMatch[2];
       }
-      sToEval += dataTableUtils.normalization.camelCase(sFinalFunction) + "();";
+      sFinalFunction = dataTableUtils.normalization.camelCase(sFinalFunction);
+      var sToEval = sContext + "." + sFinalFunction + "();";
+      var func;
+      if ( /^(Given|When|Then)(\.[a-zA-Z_$][a-zA-Z0-9_$]*)*$/.test(sContext) && /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(sFinalFunction) ) {
+        func = function(Given, When, Then) {
+          Log.info("[GHERKIN] Generated Step: " + sToEval);
+          var oContext = ObjectPath.get(sContext, {Given: Given, When: When, Then: Then});
+          if ( oContext && typeof oContext[sFinalFunction] === "function" ) {
+              oContext[sFinalFunction]();
+          } else {
+            throw new TypeError(sContext + "." + sFinalFunction + " is not a function");
+          }
+        };
+      } else {
+        func = function(Given, When, Then) {
+          Log.info("[GHERKIN] Generated Step (eval): " + sToEval);
+          eval(sToEval);
+        };
+      }
 
       return {
         isMatch: true,
         text: oStep.text,
         regex: /Generated Step/,
         parameters: [],
-        func: function(Given, When, Then) {
-          $.sap.log.info("[GHERKIN] Generated Step: " + sToEval);
-          eval(sToEval);
-        },
+        func: func,
         _sToEval: sToEval // exposing this for testability
       };
     },
@@ -94,15 +122,16 @@ sap.ui.define([
      */
     test: function(args) {
 
-      if ($.type(args) !== "object") {
+      // args is mandatory
+      if (!args || typeof args !== "object") {
         throw new Error("opa5TestHarness.test: input all arguments via a single object");
       }
 
-      if ($.type(args.featurePath) !== "string") {
+      if (typeof args.featurePath !== "string" && !(args.featurePath instanceof String)) {
         throw new Error("opa5TestHarness.test: parameter 'featurePath' must be a valid string");
       }
 
-      if (args.steps && (($.type(args.steps) !== "function") || !((new args.steps())._generateTestStep))) {
+      if (args.steps && ((typeof args.steps !== "function") || !((new args.steps())._generateTestStep))) {
         throw new Error("opa5TestHarness.test: if specified, parameter 'steps' must be a valid StepDefinitions constructor");
       }
 
@@ -110,7 +139,7 @@ sap.ui.define([
         throw new Error("opa5TestHarness.test: if parameter 'generateMissingSteps' is not true then parameter 'steps' must be a valid StepDefinitions constructor");
       }
 
-      if (args.generateMissingSteps && ($.type(args.generateMissingSteps) !== "boolean")) {
+      if (args.generateMissingSteps && (typeof args.generateMissingSteps !== "boolean")) {
         throw new Error("opa5TestHarness.test: if specified, parameter 'generateMissingSteps' must be a valid boolean");
       }
 
@@ -132,29 +161,22 @@ sap.ui.define([
           if (this._oOpa5.hasAppStarted()) {
             this._oOpa5.iTeardownMyApp();
           }
-
-          // Add a link to the page to allow the user to close the frame
-          if ($("#frame-close-link").length === 0) {
-            $("#qunit-header").append('<input id="frame-close-link" type="button"' +
-                'onclick="sap.ui.test.Opa5.emptyQueue(); $(\'#frame-close-link\').remove();" style="float: right; ' +
-                'margin-right: 0.5em; margin-top: -0.4em;" value="Close &#13;&#10;Frame"></input>');
-          }
           oTestGenerator.tearDown();
         }.bind(this)
       });
 
-      $.sap.log.info("[GHERKIN] Running feature: '" + oFeatureTest.name + "'");
+      Log.info("[GHERKIN] Running feature: '" + oFeatureTest.name + "'");
       oFeatureTest.testScenarios.forEach(function(oTestScenario) {
         var fnTestFunction = (!oFeatureTest.skip && !oTestScenario.skip) ? this._opaTest : QUnit.skip;
         fnTestFunction(oTestScenario.name, function(Given, When, Then) {
-          $.sap.log.info("[GHERKIN] Running scenario: '" + oTestScenario.name + "'");
+          Log.info("[GHERKIN] Running scenario: '" + oTestScenario.name + "'");
           oTestScenario.testSteps.forEach(function(oTestStep) {
             // Put test execution inside a waitFor so that they are executed in order, even if the user fails to put
             // a waitFor statement in one of the test steps
             this._oOpa5.waitFor({
               viewName: "",
               success: function() {
-                $.sap.log.info("[GHERKIN] Running step: text='" + oTestStep.text + "' regex='" + oTestStep.regex + "'");
+                Log.info("[GHERKIN] Running step: text='" + oTestStep.text + "' regex='" + oTestStep.regex + "'");
                 Opa5.assert.ok(oTestStep.isMatch, oTestStep.text);
                 if (oTestStep.isMatch) {
                   QUnit.config.current.assertions.pop(); // don't break QUnit expect() behaviour

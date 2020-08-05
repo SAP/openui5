@@ -1,0 +1,28 @@
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+	<edmx:DataServices m:DataServiceVersion="1.0" m:MaxDataServiceVersion="3.0"
+			xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+		<Schema Namespace="NorthwindModel" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Invoice">
+				<Key>
+					<PropertyRef Name="ProductName"/>
+					<PropertyRef Name="Quantity"/>
+					<PropertyRef Name="ShipperName"/>
+				</Key>
+				<Property Name="ShipperName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false"
+							Unicode="true"/>
+				<Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" FixedLength="false"
+							Unicode="true"/>
+				<Property Name="Quantity" Type="Edm.Int16" Nullable="false"/>
+				<Property Name="ExtendedPrice" Type="Edm.Decimal" Precision="19" Scale="4"/>
+				<Property Name="Status" Type="Edm.String" Nullable="false" MaxLength="1" FixedLength="false"
+							Unicode="true"/>
+			</EntityType>
+		</Schema>
+		<Schema Namespace="ODataWebV2.Northwind.Model" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityContainer Name="NorthwindEntities" m:IsDefaultEntityContainer="true" p6:LazyLoadingEnabled="true"
+					xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+				<EntitySet Name="Invoices" EntityType="NorthwindModel.Invoice"/>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,36 @@
+<core:FragmentDefinition xmlns:mdcLink="sap.ui.mdc.link" xmlns:m="sap.m" xmlns:core="sap.ui.core"
+						 xmlns:l="sap.ui.layout">
+
+	<l:VerticalLayout width="calc(100% - 2rem)" class="mdcbaseinfoPanel">
+		<m:VBox id="idSectionAdditionalContent" fitContainer="false"/>
+
+		<m:VBox fitContainer="false" class="mdcbaseinfoPanelSeparator"
+				visible="{= ${$sapuimdclinkPanel>/countAdditionalContent} > 0 &amp;&amp; ${$sapuimdcLink>/metadata}.length > 0}"/>
+
+		<!-- Determination of 'visible' property of PanelListItem rely on some prerequisites:                           -->
+		<!-- If link personalization is not enabled we have to show all links independent whether they are valid or not -->
+		<!-- The item without valid <code>key</code> property should always be shown.                                   -->
+		<m:VBox id="idSectionLinks" fitContainer="false" class="mdcbaseinfoPanelSectionLinks"
+				items="{
+					path:'$sapuimdclinkPanel>/runtimeItems',
+					templateShareable:false
+				}">
+			<mdcLink:PanelListItem key="{$sapuimdclinkPanel>id}"
+									   visible="{$sapuimdclinkPanel>visible}"
+									   text="{$sapuimdclinkPanel>text}"
+									   description="{$sapuimdclinkPanel>description}"
+									   href="{$sapuimdclinkPanel>href}"
+									   icon="{$sapuimdclinkPanel>icon}"
+									   target="{$sapuimdclinkPanel>target}"
+									   pressLink="onPressLink"
+			/>
+		</m:VBox>
+
+		<m:HBox visible="{= ${$sapuimdcLink>/metadata}.length > 0}"
+			id="idSectionPersonalizationButton" justifyContent="End" class="mdcbaseinfoPanelPersonalizationButton">
+			<m:Button id="idPersonalizationButton" type="Transparent" text="{$this.i18n>info.POPOVER_DEFINE_LINKS}"
+					  press="onPressLinkPersonalization"/>
+		</m:HBox>
+
+	</l:VerticalLayout>
+</core:FragmentDefinition>

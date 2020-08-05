@@ -1,43 +1,36 @@
 <mvc:View
 	controllerName="sap.m.sample.InputChecked.C"
+	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Label text="Name" labelFor="nameInput"/>
-			<Input
-				id="nameInput"
-				class="sapUiSmallMarginBottom"
-				type="Text"
-				placeholder="Enter Name ..."
-				valueStateText="Name must not be empty. Maximum 10 characters."
-				value="{
-					path : '/name',
-					type : 'sap.ui.model.type.String',
-					constraints : {
-						minLength: 1,
-						maxLength: 10
-					}
-				}"/>
+	xmlns:mvc="sap.ui.core.mvc">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Label text="Name" labelFor="nameInput" />
+		<Input
+			id="nameInput"
+			class="sapUiSmallMarginBottom"
+			placeholder="Enter name"
+			valueStateText="Name must not be empty. Maximum 10 characters."
+			value="{
+				path : '/name',
+				type : 'sap.ui.model.type.String',
+				constraints : {
+					minLength: 1,
+					maxLength: 10
+				}
+			}"
+			change= ".onNameChange" />
 
-			<Label text="EMail" labelFor="emailInput"/>
-			<Input
-				id="emailInput"
-				class="sapUiSmallMarginBottom"
-				type="Email"
-				placeholder="Enter E-Mail ..."
-				valueStateText="E-Mail must be a valid email address."
-				value="{
-					path : '/email',
-					type : '.customEMailType'
-				}"/>
-
-			<Button
-				text="Continue"
-				press="onContinue"/>
-		</l:content>
+		<Label text="E-mail" labelFor="emailInput" />
+		<Input
+			id="emailInput"
+			class="sapUiSmallMarginBottom"
+			type="Email"
+			placeholder="Enter email"
+			valueStateText="E-mail must be a valid email address."
+			value="{
+				path: '/email',
+				type: '.customEMailType'
+			}" />
+		<Button text="Submit" press=".onSubmit" />
 	</l:VerticalLayout>
 </mvc:View>

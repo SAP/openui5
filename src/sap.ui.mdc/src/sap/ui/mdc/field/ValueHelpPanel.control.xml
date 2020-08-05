@@ -1,0 +1,87 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:fl="sap.ui.fl.variants"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:l="sap.ui.layout">
+	<VBox id="rootVBox" fitContainer= "true" class="sapMdcValueHelpPanel">
+		<IconTabBar id="iconTabBar" expandable="false" upperCase="true" stretchContentHeight="true" class="sapUiNoContentPadding" select="iconTabSelect">
+			<layoutData>
+				<FlexItemData growFactor= "1" shrinkFactor= "1"/>
+			</layoutData>
+			<items>
+				<IconTabFilter id="fromList" text="{parts: ['$i18n>valuehelp.SELECTFROMLIST', '$this>/conditions'], formatter: '._formatListTabTitle'}" key="selectFromList" visible="false">
+					<l:FixFlex>
+						<l:fixContent>
+							<Toolbar id="toolbar" width="100%" visible="{= ${$this>/searchEnabled} || ${$this>/showFilterbar}}">
+								<!-- <fl:VariantManagement id="VHPVariantManagementCtrl" modelName="VHPSearchTemplates" editable="false" visible="false" class="sapUiTinyMarginBegin"/> -->
+								<mdc:FilterField
+									id="SearchField"
+									dataType="sap.ui.model.type.String"
+									maxConditions="1"
+									conditions="{path: '$this>/filterConditions'}"
+									placeholder="{$i18n>filterbar.SEARCH}"
+									width="50%"
+									visible="{$this>/searchEnabled}"
+									change="_handleSearch"/>
+								<ToolbarSpacer/>
+								<Button id="AdvancedFilter" type="Transparent" press="_onToggleAdvancedFilter" visible="{$this>/showFilterbar}">
+									<layoutData>
+										<ToolbarLayoutData shrinkable="true"/>
+									</layoutData>
+								</Button>
+								<Button id="Go" press="_onGo" text="{$i18n>filterbar.GO}" type="Emphasized"
+									visible="{$this>/showFilterbar}"/>
+							</Toolbar>
+							<ScrollContainer height="calc(100% - 3rem)" width="100%" vertical="true" horizontal="false">
+								<VBox id="filterbarVBox" visible="{$this>/_filterBarVisible}">
+									<!-- container for the Filterbar / advanced FilterFields -->
+								</VBox>
+							</ScrollContainer>
+						</l:fixContent>
+
+						<l:flexContent>
+							<Panel id="tablePanel" headerText="{parts: ['$i18n>valuehelp.TABLETITLE'], formatter: '._formatTableTitle'}" class="sapMdcTablePanel" expanded="true" height="100%">
+								<layoutData>
+									<FlexItemData growFactor="1" shrinkFactor="1" minHeight="100%"/>
+								</layoutData>
+								<!-- container for the Table Scrollcontainer / at the moment the Scrollbar around the m.Table doe snot work -->
+							</Panel>
+						</l:flexContent>
+					</l:FixFlex>
+				</IconTabFilter>
+
+				<IconTabFilter id="defineCondition" text="{parts: ['$i18n>valuehelp.DEFINECONDITIONS', '$this>/conditions'], formatter: '._formatDefineTabTitle'}" key="defineCondition" visible="false">
+					<Panel id="defineConditionPanel" headerText="{parts: ['$i18n>valuehelp.DEFINECONDITIONS', '$this>/conditions'], formatter: '._formatDefineConditionTitle'}" class="sapMdcDefineconditionPanel" expanded="true" height="100%"  backgroundDesign="Transparent">
+						<!-- container for the DefineConditionPanel -->
+					</Panel>
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+
+		<Panel id="VHPTokenizerPanel" class="sapMdcTokenizerPanel" backgroundDesign="Transparent"
+			expanded="true"
+			headerText="{parts: ['$i18n>valuehelp.TOKENIZERTITLE', '$this>/conditions'], formatter: '._formatTokenizerTitle'}">
+			<HBox fitContainer="true" width="100%">
+				<items>
+					<Tokenizer id="VHPTokenizer" class="sapMdcTokenizer" width="100%"
+						visible="{path: '$this>/showTokenizer'}"
+						tokenUpdate="_handleTokenUpdate"
+						tokens="{path: '$this>/conditions', filters:[{path:'isEmpty', operator:'NE', value1:true}], templateShareable: false}">
+						<Token id="VHPToken" text="{path: '$this>', type: 'sap.ui.mdc.field.ConditionType'}"/>
+						<layoutData>
+							<FlexItemData growFactor="1" maxWidth="calc(100% - 2rem)"/>
+						</layoutData>
+					</Tokenizer>
+					<Button id="removeAllBtn" press="_onRemoveAllConditions" type="Transparent" icon="sap-icon://sys-cancel" tooltip="{$i18n>valuehelp.REMOVEALLTOKEN}" class="sapUiTinyMarginBegin">
+						<layoutData>
+							<FlexItemData growFactor="0" baseSize="2rem"/>
+						</layoutData>
+					</Button>
+				</items>
+			</HBox>
+		</Panel>
+	</VBox>
+
+</core:FragmentDefinition>

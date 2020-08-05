@@ -1,0 +1,26 @@
+<mvc:View
+	controllerName="sap.ui.rta.dttool.controller.Code"
+	xmlns="sap.m"
+	xmlns:ce="sap.ui.codeeditor"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true">
+
+	<IconTabHeader
+		id="tabHead"
+		items="{/files}"
+		select="onTabSelect"
+		selectedKey="{/fileName}">
+		<items>
+			<IconTabFilter
+				key="{name}"
+				text="{name}"/>
+		</items>
+	</IconTabHeader>
+	<ce:CodeEditor
+		height="100%"
+		id="codeEditor"
+		type="xml"
+		liveChange="onCodeEditorLiveChange" />
+</mvc:View>

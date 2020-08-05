@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Support Assistant API</title>
+
+	<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-libs="sap.m, sap.ui.support">
+	</script>
+	<script>
+		sap.ui.require(["sap/ui/support/Bootstrap",
+					"sap/ui/support/RuleAnalyzer"],
+				function (bootstrap, RuleAnalyzer) {
+			bootstrap.initSupportRules(["true", "silent"]);
+
+			var oPanel = new sap.m.Panel({
+				id: "rootPanel",
+				content: [
+					new sap.m.Panel({
+						id: "innerPanel1",
+						content: [
+							new sap.m.Button({
+								id: "innerButton",
+								icon: "sap-icon://task"
+							}),
+							new sap.m.Text({
+								id: "innerText"
+							}),
+							new sap.m.Link({
+								href: 'www.google.com',
+								press: function () {
+
+								}
+							})
+						]
+					}),
+					new sap.m.Panel({
+						id: "innerPanel2",
+						content: [
+							new sap.m.Button({
+								id: "innerButton2",
+								icon: "sap-icon://task"
+							}),
+							new sap.m.Input()
+						]
+					})
+
+				]
+			}).placeAt('content');
+
+			var list = new sap.m.List();
+
+			var btn = new sap.m.Button({
+				text:'Analyze',
+				press: function() {
+
+					RuleAnalyzer.analyze({
+						type : 'global'
+					}, "Accessibility").then(function () {
+						var history = RuleAnalyzer.getLastAnalysisHistory();
+
+						list.destroyItems();
+
+						for (var issueId in history.issues) {
+							var issue = history.issues[issueId];
+
+							var listItem = new sap.m.StandardListItem({
+								title: issue.severity,
+								description: issue.details
+							});
+
+							list.addItem(listItem);
+						}
+					});
+
+				}
+			});
+
+			list.placeAt('analyze');
+			btn.placeAt('analyze');
+		});
+	</script>
+</head>
+<body class="sapUiBody">
+	<div id="content"></div>
+	<div id="analyze"></div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "App.view.xml": "<mvc:View\n controllerName=\"HelloWorld.App\"\n xmlns:mvc=\"sap.ui.core.mvc\"\n xmlns=\"sap.m\">\n <Page title=\"My App\"/>\n    <Button\n        id=\"helloButton\"\n        type=\"Emphasized\"\n        icon=\"sap-icon://sap-ui5\"\n        text=\"Say Hello\"\n        press=\"onShowHello\"\n        class=\"sapUiSmallMargin\"/>\n</mvc:View>",
+
+  "App.controller.js": "sap.ui.define([\n             \"sap/ui/core/mvc/Controller\",\n             \"sap/m/MessageToast\"\n         ], function (Controller, MessageToast) {\n             \"use strict\";\n             return Controller.extend(\"HelloWorld.App\", {\n                 onShowHello : function () {\n                     MessageToast.show(\"Hello World\");\n                 }\n             });\n         });",
+
+  "index.js": "sap.ui.getCore().attachInit(function () {\n  sap.ui.require([\"sap/ui/core/mvc/XMLView\"], function(XMLView) {\n   XMLView.create({\n   viewName: \"HelloWorld.App\"}).then(function(myView) {\n       myView.placeAt(\"content\");\n    });\n   });\n});",
+
+  "index.html": "// the html part of the sample is non-editable\n\n<!DOCTYPE html>\n <html>\n <head>\n     <title>OpenUI5 Hello World App</title>\n     <script\n             id=\"sap-ui-bootstrap\"\n             src=\"resources/sap-ui-core.js\"\n             data-sap-ui-theme=\"sap_belize\"\n             data-sap-ui-libs=\"sap.m\"\n             data-sap-ui-resourceroots='{\"HelloWorld\": \"./\"}'\n             data-sap-ui-onInit=\"module:HelloWorld/index\"\n             displayBlock=\"true\">\n     <&sol;script>\n  </head>\n <body class=\"sapUiBody\" id=\"content\">\n </body>\n </html>"
+}

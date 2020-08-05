@@ -1,0 +1,19 @@
+{
+	"@odata.context": "$metadata#BusinessPartners(Region,SalesAmount)",
+	"@odata.metadataEtag": "W/\"Duc//nz26REDKz1VewX3aHn97ENagrS7a7IXM958u4s=\"",
+	"@odata.count": 7,
+	"value": [
+		{
+			"@odata.id": null,
+			"Region": "Bavaria",
+			"SalesAmount@odata.type": "#Decimal",
+			"SalesAmount": 5857115
+		},
+		{
+			"@odata.id": null,
+			"Region": "Baden-Württemberg",
+			"SalesAmount@odata.type": "#Decimal",
+			"SalesAmount": 4416538
+		}
+	]
+}

@@ -8,7 +8,7 @@
 	position: relative;
 	display: inline-block;
 	font-size: 0;
-	border-radius: 0.125rem;
+	border-radius: 0.25rem;
 	outline: none;
 	box-shadow: @sapUiShadowLevel0;
 
@@ -113,10 +113,6 @@ html.sap-tablet .sapMGTHvrOutln:active {
 	height: 11rem;
 }
 
-.sapMST .sapMGT {
-	border: 0.125rem;
-}
-
 .sapMSTFocusDiv {
 	position: absolute;
 	pointer-events: none;
@@ -187,7 +183,8 @@ html.sap-desktop .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMS
 	position: absolute;
 
 	.sapUiIcon {
-		width: 2rem;
+      width: 2rem;
+      line-height: inherit;
 	}
 }
 

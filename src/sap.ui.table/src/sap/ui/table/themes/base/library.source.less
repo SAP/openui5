@@ -1,23 +1,70 @@
 /*!
  * ${copyright}
  */
-
 @import "../../../../../sap/ui/core/themes/base/base.less";
 @import "../../../../../sap/ui/core/themes/base/global.less";
 
-/* shared local library less parameters */
-@_sap_ui_table_RowBorderWidth: 1px;
+// Note: The units might not be stable. Therefore, do not rely on Less internal math, but use CSS calc() to make calculations.
+
+@_sap_ui_table_BaseSize: @_sap_ui_table_BaseSizeCompact; // Default, if no density is defined.
+@_sap_ui_table_BaseSizeCozy: 3rem; //@sapUiElementLineHeight;
+@_sap_ui_table_BaseSizeCompact: 2rem;
+@_sap_ui_table_BaseSizeCondensed: 1.5rem;
+@_sap_ui_table_BaseBorderWidth: @sapUiElementBorderWidth;
+
+@_sap_ui_table_ColumnHeaderHeight: @_sap_ui_table_BaseSize;
+@_sap_ui_table_ColumnHeaderHeightCozy: @_sap_ui_table_BaseSizeCozy;
+
+@_sap_ui_table_RowHeight: calc(@_sap_ui_table_BaseSize ~"+" @_sap_ui_table_BaseBorderWidth);
+@_sap_ui_table_RowHeightCozy: calc(@_sap_ui_table_BaseSizeCozy ~"+" @_sap_ui_table_BaseBorderWidth);
+@_sap_ui_table_RowHeightCondensed: calc(@_sap_ui_table_BaseSizeCondensed ~"+" @_sap_ui_table_BaseBorderWidth);
+
+@_sap_ui_table_RowHighlightWidth: 6px;
+@_sap_ui_table_NavIndicatorWidth: 0.1875rem;
+
+@_sap_ui_table_RowSelectorWidth: @_sap_ui_table_BaseSize;
+@_sap_ui_table_RowSelectorWidthCozy: @_sap_ui_table_BaseSizeCozy;
+@_sap_ui_table_RowSelectorWidthCondensed: @_sap_ui_table_BaseSizeCompact;
+
+@_sap_ui_table_RowActionItemSize: calc(@_sap_ui_table_BaseSize ~"-" 0.375rem);
+@_sap_ui_table_RowActionItemSizeCozy: calc(@_sap_ui_table_BaseSizeCozy ~"-" 0.5rem);
+@_sap_ui_table_RowActionItemSizeCondensed: calc(@_sap_ui_table_BaseSizeCondensed ~"-" 0.125rem);
+@_sap_ui_table_RowActionPadding: 0.25rem;
+@_sap_ui_table_RowActionColumnWidth: calc(~"2 *" @_sap_ui_table_RowActionItemSize ~"+ 2 *" @_sap_ui_table_RowActionPadding ~"+ 2 *" @_sap_ui_table_BaseBorderWidth);
+@_sap_ui_table_RowActionColumnWidthCozy: calc(~"2 *" @_sap_ui_table_RowActionItemSizeCozy ~"+ 2 *" @_sap_ui_table_RowActionPadding ~"+ 2 *" @_sap_ui_table_BaseBorderWidth);
+@_sap_ui_table_RowActionColumnWidthCondensed: calc(~"2 *" @_sap_ui_table_RowActionItemSizeCondensed ~"+ 2 *" @_sap_ui_table_RowActionPadding ~"+ 2 *" @_sap_ui_table_BaseBorderWidth);
+@_sap_ui_table_RowActionColumnSmallWidth: calc(@_sap_ui_table_RowActionItemSize ~"+ 2 *" @_sap_ui_table_RowActionPadding ~"+ 2 *" @_sap_ui_table_BaseBorderWidth);
+@_sap_ui_table_RowActionColumnSmallWidthCozy: calc(@_sap_ui_table_RowActionItemSizeCozy ~"+ 2 *" @_sap_ui_table_RowActionPadding ~"+ 2 *" @_sap_ui_table_BaseBorderWidth);
+@_sap_ui_table_RowActionColumnSmallWidthCondensed: calc(@_sap_ui_table_RowActionItemSizeCondensed ~"+ 2 *" @_sap_ui_table_RowActionPadding ~"+ 2 *" @_sap_ui_table_BaseBorderWidth);
+
+@_sap_ui_table_NavigationIcon: navigation-right-arrow;
+@_sap_ui_table_DeleteIcon: sys-cancel;
+@_sap_ui_table_ResetIcon: undo;
+
 @_sap_ui_table_FocusOutlineWidth: 1px;
-@_sap_ui_table_RowHdrWidth: 2rem;
-@_sap_ui_table_RowHdrWidthCozy: 3rem;
-@_sap_ui_table_RowHdrWidthCondensed: 2rem;
-@_sap_ui_table_RowHeight: calc(~"2rem + "@_sap_ui_table_RowBorderWidth);
-@_sap_ui_table_RowHeightCozy: calc(~"3rem + "@_sap_ui_table_RowBorderWidth);
-@_sap_ui_table_RowHeightCondensed: calc(~"1.5rem + "@_sap_ui_table_RowBorderWidth);
+
+// Internet Explorer does not support nested calc().
+@_sap_ui_table_RowHeightForIECalc: ~"(" @_sap_ui_table_BaseSize ~"+" @_sap_ui_table_BaseBorderWidth ~")";
+@_sap_ui_table_RowHeightCozyForIECalc: ~"(" @_sap_ui_table_BaseSizeCozy ~"+" @_sap_ui_table_BaseBorderWidth ~")";
+@_sap_ui_table_RowHeightCondensedForIECalc: ~"(" @_sap_ui_table_BaseSizeCondensed ~"+" @_sap_ui_table_BaseBorderWidth ~")";
+@_sap_ui_table_RowActionItemSizeForIECalc: ~"(" @_sap_ui_table_BaseSize ~"-" 0.375rem ~")";
+@_sap_ui_table_RowActionItemSizeCozyForIECalc: ~"(" @_sap_ui_table_BaseSizeCozy ~"-" 0.5rem ~")";
+@_sap_ui_table_RowActionItemSizeCondensedForIECalc: ~"(" @_sap_ui_table_BaseSizeCondensed ~"-" 0.125rem ~")";
+@_sap_ui_table_RowActionColumnWidthForIECalc: ~"(2 *" @_sap_ui_table_RowActionItemSizeForIECalc ~"+ 2 *" @_sap_ui_table_RowActionPadding ~"+ 2 *" @_sap_ui_table_BaseBorderWidth ~")";
+@_sap_ui_table_RowActionColumnWidthCozyForIECalc: ~"(2 *" @_sap_ui_table_RowActionItemSizeCozyForIECalc ~"+ 2 *" @_sap_ui_table_RowActionPadding ~"+ 2 *" @_sap_ui_table_BaseBorderWidth ~")";
+@_sap_ui_table_RowActionColumnWidthCondensedForIECalc: ~"(2 *" @_sap_ui_table_RowActionItemSizeCondensedForIECalc ~"+ 2 *" @_sap_ui_table_RowActionPadding ~"+ 2 *" @_sap_ui_table_BaseBorderWidth ~")";
+@_sap_ui_table_RowActionColumnSmallWidthForIECalc: ~"(" @_sap_ui_table_RowActionItemSizeForIECalc ~"+ 2 *" @_sap_ui_table_RowActionPadding ~"+ 2 *" @_sap_ui_table_BaseBorderWidth ~")";
+@_sap_ui_table_RowActionColumnSmallWidthCozyForIECalc: ~"(" @_sap_ui_table_RowActionItemSizeCozyForIECalc ~"+ 2 *" @_sap_ui_table_RowActionPadding ~"+ 2 *" @_sap_ui_table_BaseBorderWidth ~")";
+@_sap_ui_table_RowActionColumnSmallWidthCondensedForIECalc: ~"(" @_sap_ui_table_RowActionItemSizeCondensedForIECalc ~"+ 2 *" @_sap_ui_table_RowActionPadding ~"+ 2 *" @_sap_ui_table_BaseBorderWidth ~")";
 
 @import "Table.less";
+@import "Row.less";
+@import "CreationRow.less";
+@import "Cell.less";
+@import "RowHighlight.less";
+@import "RowSelection.less";
+@import "RowAction.less";
 @import "Scrolling.less";
 @import "DragDrop.less";
 @import "Grouping.less";
 @import "AnalyticalTable.less";
-@import "RowAction.less";

@@ -10,6 +10,18 @@
   background-color: @sapUiGlobalBackgroundColor;
 }
 
+.sapUxAPObjectPageNavigation {
+	background: @sapUiObjectHeaderBackground;
+
+	&.sapUxAPObjectPageNavigationTransparent {
+		background: transparent;
+	}
+
+	&.sapUxAPObjectPageNavigationTranslucent {
+		background: lighten(@sapUiObjectHeaderBackground, 10);
+	}
+}
+
 .sapUxAPObjectPageHeaderDetails {
 	.sapMObjectNumberEmph.sapMObjectNumber {
 		> .sapMObjectNumberText {
@@ -49,21 +61,23 @@
 	height: 1.9375rem;
 }
 
-// title hover
-.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) .sapFDynamicPageTitle:hover {
-	background-color: darken(@sapUiObjectHeaderBackground, 3);
-}
-
-
 /* ======================================== */
 /* Title and Toggle Header Visual Indicator */
 /* ======================================== */
 .sapUxAPObjectPageLayout {
-  &.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) {
-    .sapFDynamicPageTitle:hover,
+  &.sapUxAPObjectPageLayoutTitleClickEnabled {
+
     &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
-      background-color: darken(@sapUiObjectHeaderBackground, 3);
-    }
+      .title-hover(@sapUiObjectHeaderBackground);
+	}
+
+	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitleTranslucent {
+		.title-hover(lighten(@sapUiObjectHeaderBackground, 10));
+	}
+
+	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitleTransparent {
+		.title-hover(transparent);
+	}
 
     &.sapUxAPObjectPageLayoutTitleForceHovered {
       .sapFDynamicPageToggleHeaderIndicator {
@@ -89,6 +103,7 @@
     }
 
     // active state
+    & > .sapMBtnInner.sapMFocusable.sapMBtnActive,
     &:focus > .sapMBtnInner.sapMFocusable.sapMBtnActive {
       background: @sapUiSelected;
       color: @sapUiButtonActiveBackground;
@@ -102,4 +117,8 @@
 	color: @sapUiPageFooterTextColor;
 	box-shadow: @sapUiShadowLevel1;
 	border-color: transparent;
+}
+
+.title-hover(@backgroundColor) {
+	background-color: darken(@backgroundColor, 3);
 }

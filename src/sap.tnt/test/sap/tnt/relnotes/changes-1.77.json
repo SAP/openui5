@@ -1,0 +1,18 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "132c4bd15a63d35b9b3dabdf8e8991811b8df0ed",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: aria-pressed attribute is now removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980430276"
+          }
+        ]
+      }
+    ]
+  }
+}

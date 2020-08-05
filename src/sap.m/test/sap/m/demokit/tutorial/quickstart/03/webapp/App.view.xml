@@ -1,0 +1,48 @@
+<mvc:View
+	controllerName="Quickstart.App"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:tnt="sap.tnt">
+	<App id="app">
+		<Page title="My App">
+			<Button
+				icon="sap-icon://sap-ui5"
+				text="Go!"
+				press=".onPress"
+				type="Emphasized"
+				class="sapUiSmallMargin"/>
+		</Page>
+		<Page id="intro" title="Create Enterprise-Ready Web Apps with Ease">
+			<l:BlockLayout background="Light">
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell>
+						<core:Icon color="#1873B4" src="sap-icon://sap-ui5" size="20rem" class="sapUiMediumMarginBottom" width="100%"/>
+						<Title level="H1" titleStyle="H1" text="This is UI5!" width="100%" textAlign="Center"/>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell>
+						<FlexBox items="{/features}" justifyContent="Center" wrap="Wrap" class="sapUiSmallMarginBottom">
+							<tnt:InfoLabel text="{}" class="sapUiSmallMarginTop sapUiSmallMarginEnd"/>
+						</FlexBox>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell>
+						<Panel headerText="Are you ready?" expandable="true">
+							<Switch change=".onChange" customTextOn="yes" customTextOff="no"/>
+							<l:HorizontalLayout id="ready" visible="false" class="sapUiSmallMargin">
+								<Text text="Ok, let's get you started!" class="sapUiTinyMarginEnd"/>
+								<Link text="Learn more" href="https://openui5.hana.ondemand.com/"/>
+							</l:HorizontalLayout>
+						</Panel>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+			</l:BlockLayout>
+		</Page>
+	</App>
+</mvc:View>

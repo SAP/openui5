@@ -1,49 +1,51 @@
-(function() {
+/* global QUnit, sinon */
+sap.ui.define([
+	"sap/ui/core/ContextMenuSupport",
+	"sap/ui/core/Control",
+	"sap/ui/core/Element",
+	"sap/ui/qunit/QUnitUtils"
+], function(ContextMenuSupport, Control, Element, QUnitUtils) {
 	"use strict";
 
-	jQuery.sap.require("sap.ui.qunit.qunit-css");
-	jQuery.sap.require("sap.ui.thirdparty.qunit");
-	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	jQuery.sap.require("sap.ui.qunit.QUnitUtils");
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-	jQuery.sap.require("sap.ui.core.ContextMenuSupport");
+	var MyControl = Control.extend("my.lib.MyControl", {
+		metadata : {
+			aggregations: { content: {type: "sap.ui.core.Control", multiple: false} }
+		},
+
+		renderer : {
+			apiVersion: 2,
+			render: function(oRenderManager, oControl) {
+				oRenderManager.openStart("span", oControl).openEnd();
+				oRenderManager.renderControl(oControl.getContent());
+				oRenderManager.close("span");
+			}
+		}
+	});
+
+	var MyMenuControl = Control.extend("my.lib.MyMenuControl", {
+		metadata : {
+			interfaces: [
+				"sap.ui.core.IContextMenu"
+			],
+			aggregations: { content: {type: "sap.ui.core.Control", multiple: false} }
+		},
+
+		renderer : {
+			apiVersion: 2,
+			render: function(oRenderManager, oControl) {
+				oRenderManager.openStart("span").openEnd().close("span");
+			}
+		}
+	});
+	MyMenuControl.prototype.openAsContextMenu = function(){};
+
+	ContextMenuSupport.apply(MyControl.prototype);
+
 
 	QUnit.module("ContextMenuSupport", {
 		beforeEach: function() {
-			sap.ui.core.Control.extend("my.lib.MyControl", {
-				metadata : {
-					aggregations: { content: {type: "sap.ui.core.Control", multiple: false} }
-				},
-
-				renderer : function(oRenderManager, oControl) {
-					oRenderManager.write("<span");
-					oRenderManager.writeControlData(oControl);
-					oRenderManager.write(">");
-					oRenderManager.renderControl(oControl.getContent());
-					oRenderManager.write("</span>");
-				}
-			});
-
-			var MyMenuControl = sap.ui.core.Control.extend("my.lib.MyMenuControl", {
-				metadata : {
-					interfaces: [
-						"sap.ui.core.IContextMenu"
-					],
-					aggregations: { content: {type: "sap.ui.core.Control", multiple: false} }
-				},
-
-				renderer : function(oRenderManager, oControl) {
-					oRenderManager.write("<span></span>");
-				}
-			});
-			MyMenuControl.prototype.openAsContextMenu = function(){};
-
-			sap.ui.core.ContextMenuSupport.apply(my.lib.MyControl.prototype);
-
-			this.myControl = new my.lib.MyControl("myControl");
-			this.myMenuControl = new my.lib.MyMenuControl("myMenu");
+			this.myControl = new MyControl("myControl");
+			this.myMenuControl = new MyMenuControl("myMenu");
 
 			this.myControl.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -60,12 +62,12 @@
 	});
 
 	QUnit.test('setContextMenu twice should open the second menu', function(assert) {
-		var oOpenStub = sinon.stub(my.lib.MyMenuControl.prototype, "openAsContextMenu"),
+		var oOpenStub = sinon.stub(MyMenuControl.prototype, "openAsContextMenu"),
 			oSecondMenuControl = this.myMenuControl.clone();
 
 		this.myControl.setContextMenu(this.myMenuControl);
 		this.myControl.setContextMenu(oSecondMenuControl);
-		sap.ui.test.qunit.triggerMouseEvent(this.myControl.getDomRef(), "contextmenu");
+		QUnitUtils.triggerMouseEvent(this.myControl.getDomRef(), "contextmenu");
 
 		assert.notOk(oOpenStub.calledOn(this.myMenuControl), "first menu should not be opened");
 		assert.ok(oOpenStub.calledOn(oSecondMenuControl), "second menu should be opened");
@@ -75,12 +77,12 @@
 	});
 
 	QUnit.test("setContextMenu with null should remove the Context Menu", function(assert) {
-		var oOpenStub = sinon.stub(my.lib.MyMenuControl.prototype, "openAsContextMenu");
+		var oOpenStub = sinon.stub(MyMenuControl.prototype, "openAsContextMenu");
 
 		this.myControl.setContextMenu(this.myMenuControl);
 		this.myControl.setContextMenu(null);
 
-		sap.ui.test.qunit.triggerMouseEvent(this.myControl.getDomRef(), "contextmenu");
+		QUnitUtils.triggerMouseEvent(this.myControl.getDomRef(), "contextmenu");
 
 		assert.notOk(oOpenStub.calledOn(this.myMenuControl), "first menu should not be opened");
 
@@ -88,7 +90,7 @@
 	});
 
 	QUnit.test("addEventDelegate should be called", function(assert) {
-		var oAddEventDelegateStub = sinon.stub(my.lib.MyControl.prototype, "addEventDelegate");
+		var oAddEventDelegateStub = sinon.stub(MyControl.prototype, "addEventDelegate");
 
 		this.myControl.setContextMenu(this.myMenuControl);
 
@@ -99,7 +101,7 @@
 
 	QUnit.test("addEventDelegate should not be called", function(assert) {
 		var oFakeMenu = { "fake": "object" },
-			oAddEventDelegateStub = sinon.stub(my.lib.MyControl.prototype, "addEventDelegate");
+			oAddEventDelegateStub = sinon.stub(MyControl.prototype, "addEventDelegate");
 
 		this.myControl.setContextMenu(oFakeMenu);
 
@@ -110,13 +112,13 @@
 	});
 
 	QUnit.test("addEventDelegate should not be called on elements that do not implement IContextMenu", function(assert) {
-		sap.ui.core.Element.extend("my.lib.MyElement", {
+		var MyElement = Element.extend("my.lib.MyElement", {
 			metadata : {}
 		});
 
-		sap.ui.core.ContextMenuSupport.apply(my.lib.MyElement.prototype);
+		ContextMenuSupport.apply(MyElement.prototype);
 
-		var oElement = new my.lib.MyElement("oElement");
+		var oElement = new MyElement("oElement");
 
 		assert.notOk(oElement.setContextMenu, "Should not have a setter for ContextMenu");
 		assert.notOk(oElement.getContextMenu, "Should not have a getter for ContextMenu");
@@ -126,10 +128,10 @@
 
 	QUnit.test("oncontextmenu should open ContextMenu", function(assert) {
 		var oFakeEvent = jQuery.Event("oncontextmenu", { srcControl:  this.myControl }),
-			oOpenStub = sinon.stub(my.lib.MyMenuControl.prototype, "openAsContextMenu");
+			oOpenStub = sinon.stub(MyMenuControl.prototype, "openAsContextMenu");
 
 		this.myControl.setContextMenu(this.myMenuControl);
-		sap.ui.test.qunit.triggerMouseEvent(this.myControl.getDomRef(), "contextmenu");
+		QUnitUtils.triggerMouseEvent(this.myControl.getDomRef(), "contextmenu");
 
 		assert.ok(oOpenStub.called, "open should be called");
 
@@ -143,4 +145,4 @@
 
 		assert.strictEqual(this.myControl.getContextMenu(), this.myMenuControl, "ContextMenu should be returned");
 	});
-})();
+});

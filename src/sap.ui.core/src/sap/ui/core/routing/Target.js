@@ -3,19 +3,36 @@
  */
 
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventProvider', 'sap/ui/core/mvc/View', 'sap/ui/core/routing/async/Target', 'sap/ui/core/routing/sync/Target'],
-	function(jQuery, Control, EventProvider, View, asyncTarget, syncTarget) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	'sap/ui/base/EventProvider',
+	'sap/ui/core/mvc/View',
+	'sap/ui/core/routing/async/Target',
+	'sap/ui/core/routing/sync/Target',
+	"sap/base/util/UriParameters",
+	"sap/base/Log"
+],
+	function(
+		Control,
+		EventProvider,
+		View,
+		asyncTarget,
+		syncTarget,
+		UriParameters,
+		Log
+	) {
 		"use strict";
 
 		/**
-		 * Provides a convenient way for placing views into the correct containers of your application.<br/>
-		 * The main benefit of Targets is lazy loading: you do not have to create the views until you really need them.<br/>
 		 * <b>Don't call this constructor directly</b>, use {@link sap.ui.core.routing.Targets} instead, it will create instances of a Target.<br/>
 		 * If you are using the mobile library, please use the {@link sap.m.routing.Targets} constructor, please read the documentation there.<br/>
 		 *
 		 * @class
+		 * Provides a convenient way for placing views into the correct containers of your application.
+		 *
+		 * The main benefit of Targets is lazy loading: you do not have to create the views until you really need them.
 		 * @param {object} oOptions all of the parameters defined in {@link sap.m.routing.Targets#constructor} are accepted here, except for children you need to specify the parent.
-		 * @param {sap.ui.core.routing.Views} oViews All views required by this target will get created by the views instance using {@link sap.ui.core.routing.Views#getView}
+		 * @param {sap.ui.core.routing.TargetCache} oCache All views required by this target will get created by the views instance using {@link sap.ui.core.routing.Views#getView}
 		 * @param {sap.ui.core.routing.Target} [oParent] the parent of this target. Will also get displayed, if you display this target. In the config you have the fill the children property {@link sap.m.routing.Targets#constructor}
 		 * @public
 		 * @since 1.28.1
@@ -24,11 +41,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 		 */
 		var Target = EventProvider.extend("sap.ui.core.routing.Target", /** @lends sap.ui.core.routing.Target.prototype */ {
 
-			constructor : function(oOptions, oViews) {
+			constructor : function(oOptions, oCache) {
+				var sErrorMessage;
 				// temporarily: for checking the url param
 				function checkUrl() {
-					if (jQuery.sap.getUriParameters().get("sap-ui-xx-asyncRouting") === "true") {
-						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Target");
+					if (UriParameters.fromQuery(window.location.search).get("sap-ui-xx-asyncRouting") === "true") {
+						Log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Target");
 						return true;
 					}
 					return false;
@@ -39,8 +57,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 					oOptions._async = checkUrl();
 				}
 
-				this._oOptions = oOptions;
-				this._oViews = oViews;
+				if (oOptions.type === "Component" && !oOptions._async) {
+					sErrorMessage = "sap.ui.core.routing.Target doesn't support loading component in synchronous mode, please switch routing to async";
+					Log.error(sErrorMessage);
+					throw new Error(sErrorMessage);
+				}
+
+				this._updateOptions(oOptions);
+
+				this._oCache = oCache;
 				EventProvider.apply(this, arguments);
 
 				if (this._oOptions.title) {
@@ -56,6 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 				}
 
 				this._bIsDisplayed = false;
+				this._bIsLoaded = false;
 			},
 
 			/**
@@ -67,7 +93,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 			destroy : function () {
 				this._oParent = null;
 				this._oOptions = null;
-				this._oViews = null;
+				this._oCache = null;
 				if (this._oTitleProvider) {
 					this._oTitleProvider.destroy();
 				}
@@ -106,13 +132,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 			 */
 
 			/**
-			 * Attach event-handler <code>fnFunction</code> to the 'display' event of this <code>sap.ui.core.routing.Target</code>.<br/>
-			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
-			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
-			 * oListener-instance (if present) or in a 'static way'.
-			 * @param {object} [oListener] Object on which to call the given function.
+			 * Attaches event handler <code>fnFunction</code> to the {@link #event:display display} event of this
+			 * <code>sap.ui.core.routing.Target</code>.
 			 *
-			 * @return {sap.ui.core.routing.Target} <code>this</code> to allow method chaining
+			 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+			 * if specified, otherwise it will be bound to this <code>sap.ui.core.routing.Target</code> itself.
+			 *
+			 * @param {object}
+			 *            [oData] An application-specific payload object that will be passed to the event handler along with the event object when firing the event
+			 * @param {function}
+			 *            fnFunction The function to be called, when the event occurs
+			 * @param {object}
+			 *            [oListener] Context object to call the event handler with. Defaults to this
+			 *            <code>sap.ui.core.routing.Target</code> itself
+			 *
+			 * @returns {sap.ui.core.routing.Target} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			attachDisplay : function(oData, fnFunction, oListener) {
@@ -120,13 +154,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 			},
 
 			/**
-			 * Detach event-handler <code>fnFunction</code> from the 'display' event of this <code>sap.ui.core.routing.Target</code>.<br/>
+			 * Detaches event handler <code>fnFunction</code> from the {@link #event:display display} event of this
+			 * <code>sap.ui.core.routing.Target</code>.
 			 *
-			 * The passed function and listener object must match the ones previously used for event registration.
+			 * The passed function and listener object must match the ones used for event registration.
 			 *
-			 * @param {function} fnFunction The function to call, when the event occurs.
-			 * @param {object} oListener Object on which the given function had to be called.
-			 * @return {sap.ui.core.routing.Target} <code>this</code> to allow method chaining
+			 * @param {function} fnFunction The function to be called, when the event occurs
+			 * @param {object} [oListener] Context object on which the given function had to be called
+			 * @returns {sap.ui.core.routing.Target} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			detachDisplay : function(fnFunction, oListener) {
@@ -134,28 +169,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 			},
 
 			/**
-			 * Fire event created to attached listeners.
+			 * Fires event {@link #event:created created} to attached listeners.
 			 *
-			 * @param {object} [mArguments] the arguments to pass along with the event.
-			 * @return {sap.ui.core.routing.Target} <code>this</code> to allow method chaining
+			 * @param {object} [oParameters] Parameters to pass along with the event
+			 * @returns {sap.ui.core.routing.Target} Reference to <code>this</code> in order to allow method chaining
 			 * @protected
 			 */
-			fireDisplay : function(mArguments) {
+			fireDisplay : function(oParameters) {
 				var sTitle = this._oTitleProvider && this._oTitleProvider.getTitle();
 				if (sTitle) {
 					this.fireTitleChanged({
-						name: this._oOptions.name,
+						name: this._oOptions._name,
 						title: sTitle
 					});
 				}
 
 				this._bIsDisplayed = true;
 
-				return this.fireEvent(this.M_EVENTS.DISPLAY, mArguments);
+				return this.fireEvent(this.M_EVENTS.DISPLAY, oParameters);
 			},
 
 			/**
-			 * Will be fired when the title of this Target has been changed.
+			 * Will be fired when the title of this <code>Target</code> has been changed.
 			 *
 			 * @name sap.ui.core.routing.Target#titleChanged
 			 * @event
@@ -168,18 +203,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 			 */
 
 			/**
-			 * Attach event-handler <code>fnFunction</code> to the 'titleChanged' event of this <code>sap.ui.core.routing.Target</code>.<br/>
+			 * Attaches event handler <code>fnFunction</code> to the {@link #event:titleChanged titleChanged} event of this
+			 * <code>sap.ui.core.routing.Target</code>.
+			 *
+			 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+			 * if specified, otherwise it will be bound to this <code>sap.ui.core.routing.Target</code> itself.
 			 *
 			 * When the first event handler is registered later than the last title change, it's still called with the last changed title because
 			 * when title is set with static text, the event is fired synchronously with the instantiation of this Target and the event handler can't
 			 * be registered before the event is fired.
 			 *
-			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
-			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
-			 * oListener-instance (if present) or in a 'static way'.
-			 * @param {object} [oListener] Object on which to call the given function.
+			 * @param {object}
+			 *            [oData] An application-specific payload object that will be passed to the event handler along with the event object when firing the event
+			 * @param {function}
+			 *            fnFunction The function to be called, when the event occurs
+			 * @param {object} [oListener]
+			 *            Context object to call the event handler with. Defaults to this
+			 *            <code>sap.ui.core.routing.Target</code> itself
 			 *
-			 * @return {sap.ui.core.routing.Target} <code>this</code> to allow method chaining
+			 * @returns {sap.ui.core.routing.Target} Reference to <code>this</code> in order to allow method chaining
 			 * @private
 			 */
 			attachTitleChanged : function(oData, fnFunction, oListener) {
@@ -190,7 +232,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 				// in case the title is changed before the first event listener is attached, we need to notify, too
 				if (!bHasListener && sTitle && this._bIsDisplayed) {
 					this.fireTitleChanged({
-						name: this._oOptions.name,
+						name: this._oOptions._name,
 						title: sTitle
 					});
 				}
@@ -198,13 +240,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 			},
 
 			/**
-			 * Detach event-handler <code>fnFunction</code> from the 'titleChanged' event of this <code>sap.ui.core.routing.Target</code>.<br/>
+			 * Detaches event handler <code>fnFunction</code> from the {@link #event:titleChanged titleChanged} event of this
+			 * <code>sap.ui.core.routing.Target</code>.
 			 *
-			 * The passed function and listener object must match the ones previously used for event registration.
+			 * The passed function and listener object must match the ones used for event registration.
 			 *
-			 * @param {function} fnFunction The function to call, when the event occurs.
-			 * @param {object} oListener Object on which the given function had to be called.
-			 * @return {sap.ui.core.routing.Target} <code>this</code> to allow method chaining
+			 * @param {function} fnFunction The function to be called, when the event occurs
+			 * @param {object} [oListener] Context object on which the given function had to be called
+			 * @returns {sap.ui.core.routing.Target} Reference to <code>this</code> in order to allow method chaining
 			 * @private
 			 */
 			detachTitleChanged : function(fnFunction, oListener) {
@@ -212,18 +255,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 			},
 
 			// private
-			fireTitleChanged : function(mArguments) {
-				return this.fireEvent(this.M_EVENTS.TITLE_CHANGED, mArguments);
+			fireTitleChanged : function(oParameters) {
+				return this.fireEvent(this.M_EVENTS.TITLE_CHANGED, oParameters);
 			},
 
-			_getEffectiveViewName : function (sViewName) {
-				var sViewPath = this._oOptions.viewPath;
+			_getEffectiveObjectName : function (sName) {
+				var sPath = this._oOptions.path;
 
-				if (sViewPath) {
-					sViewName = sViewPath + "." + sViewName;
+				if (sPath) {
+					sName = sPath + "." + sName;
 				}
 
-				return sViewName;
+				return sName;
+			},
+
+			_updateOptions: function (oOptions) {
+				// convert the legacy syntax to the new one
+				// if "viewName" is set, it's converted to "type" and "name"
+				// meanwhile, the "viewPath" is also set to "path" and the
+				// "viewId" is also set to "id"
+				if (oOptions.viewName) {
+					// if the target's name is given under the "name" property,
+					// copy it to "_name" before overwritting it with the "viewName"
+					if (oOptions.name) {
+						oOptions._name = oOptions.name;
+					}
+					oOptions.type = "View";
+					oOptions.name = oOptions.viewName;
+
+					if (oOptions.viewPath) {
+						oOptions.path = oOptions.viewPath;
+					}
+
+					if (oOptions.viewId) {
+						oOptions.id = oOptions.viewId;
+					}
+				}
+
+				this._oOptions = oOptions;
 			},
 
 			_bindTitleInTitleProvider : function(oView) {
@@ -246,7 +315,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 				if (oOldParent) {
 					oOldParent.removeDependent(this._oTitleProvider);
 				}
-				oView.addDependent(this._oTitleProvider);
+				if (oView instanceof View) {
+					oView.addDependent(this._oTitleProvider);
+				}
 			},
 
 			/**
@@ -256,7 +327,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 			 * together with the later aggregation change.
 			 *
 			 * @protected
-			 * @param {object} mArguments
+			 * @param {object} mArguments the object containing the arguments
 			 * @param {sap.ui.core.Control} mArguments.container the container where the view will be added
 			 * @param {sap.ui.core.Control} mArguments.view the view which will be added to the container
 			 * @param {object} [mArguments.data] the data passed from {@link sap.ui.core.routing.Target#display} method
@@ -297,7 +368,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 		 * @param {object} mSettings configuration object for the TitleProvider
 		 * @param {object} mSettings.target Target for which the TitleProvider is created
 		 * @private
-		 * @extends sap.ui.base.Control
+		 * @extends sap.ui.core.Control
 		 */
 		var TitleProvider = Control.extend("sap.ui.core.routing.Target.TitleProvider", /** @lends sap.ui.core.routing.TitleProvider.prototype */ {
 			metadata: {
@@ -322,9 +393,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 				// Setting title property should not trigger two way change in model
 				this.setProperty("title", sTitle, true);
 
-				if (this._oTarget._bIsDisplayed) {
+				if (this._oTarget._bIsDisplayed && sTitle) {
 					this._oTarget.fireTitleChanged({
-						name: this._oTarget._oOptions.name,
+						name: this._oTarget._oOptions._name,
 						title: sTitle
 					});
 				}

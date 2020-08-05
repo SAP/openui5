@@ -4,13 +4,13 @@
 
 // Provides control sap.ui.core.mvc.TemplateView.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/core/library',
-    './View',
-    "./TemplateViewRenderer"
+	'sap/ui/core/library',
+	'./View',
+	"./TemplateViewRenderer",
+	"sap/base/Log"
 ],
-	function(jQuery, library, View, TemplateViewRenderer) {
-	"use strict";
+function(library, View, TemplateViewRenderer, Log) {
+"use strict";
 
 
 	// shortcut for enum(s)
@@ -30,7 +30,8 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @public
-	 * @since 1.16.0
+	 * @deprecated Since version 1.56.0, use {@link sap.ui.core.mvc.XMLView} in combination with
+	 *             {@link topic:5ee619fc1370463ea674ee04b65ed83b XML Templating} instead.
 	 * @alias sap.ui.core.mvc.TemplateView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -61,8 +62,11 @@ sap.ui.define([
 		 * @public
 		 * @static
 		 * @return {sap.ui.core.mvc.TemplateView | undefined} the created TemplateView instance in the creation case, otherwise undefined
+		 * @deprecated since 1.56 use {@link sap.ui.core.mvc.XMLView} in combination with {@link topic:5ee619fc1370463ea674ee04b65ed83b XML Templating} instead
+		 * @ui5-global-only
 		 */
 		sap.ui.templateview = function(sId, vView) {
+			Log.warning("sap.ui.core.mvc.TemplateView is deprecated. Use XMLView or JSView instead.");
 			return sap.ui.view(sId, vView, ViewType.Template);
 		};
 
@@ -93,7 +97,7 @@ sap.ui.define([
 		 * @static
 		 */
 		TemplateView._getViewUrl = function(sTemplateName) {
-			return jQuery.sap.getModulePath(sTemplateName, ".view.tmpl");
+			return sap.ui.require.toUrl(sTemplateName.replace(/\./g, "/")) + ".view.tmpl";
 		};
 
 		/**

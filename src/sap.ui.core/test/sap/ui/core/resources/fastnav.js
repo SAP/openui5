@@ -1,29 +1,34 @@
-(function(){
-
-	jQuery.sap.require("sap.ui.core.Popup");
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Popup",
+	"sap/ui/dom/includeStylesheet",
+	"sap/ui/events/F6Navigation",
+	"require"
+], function(jQuery, Popup, includeStylesheet, F6Navigation, require) {
+	"use strict";
 
 	var counter = 0;
 
 	function uid(){
-		var id = "id"+counter;
+		var id = "id" + counter;
 		counter++;
 		return id;
 	}
 
 	function container(bGroup, sStyle, sTooltip, aContent, bDefaultContent, sDefaultStyle){
 		var res = jQuery("<div/>");
-		if(sStyle){
+		if (sStyle){
 			res.attr("style", sStyle);
 		}
-		if(sTooltip){
+		if (sTooltip){
 			res.attr("title", sTooltip);
 		}
-		if(bGroup){
-			res.attr("data-"+jQuery.sap._FASTNAVIGATIONKEY, "true");
+		if (bGroup){
+			res.attr("data-" + F6Navigation.fastNavigationKey, "true");
 		}
 		res.attr("id", uid());
 
-		if(bDefaultContent){
+		if (bDefaultContent){
 			res.append(tabbable(true, false, sDefaultStyle)).append(nl());
 			res.append(tabbable(true, true, sDefaultStyle)).append(nl());
 			res.append(tabbable(true, false, sDefaultStyle, -1)).append(nl());
@@ -31,7 +36,7 @@
 			res.append(tabbable(false, false, sDefaultStyle, -1));
 		}
 
-		for(var i=0; i<aContent.length; i++){
+		for (var i = 0; i < aContent.length; i++){
 			res.append(aContent[i]);
 		}
 
@@ -40,17 +45,17 @@
 
 	function tabbable(bInput, bDisabled, sStyle, iTabIndex){
 		var res = jQuery(bInput ? "<input/>" : "<div/>");
-		if(bDisabled === true && bInput){
+		if (bDisabled === true && bInput){
 			res.attr("disabled", "disabled");
 		}
-		if(sStyle){
+		if (sStyle){
 			res.attr("style", sStyle);
 		}
-		if(!bInput){
+		if (!bInput){
 			res.attr("class", "TabbableDiv");
 		}
-		if(typeof iTabIndex === "number"){
-			res.attr("tabindex", ""+iTabIndex);
+		if (typeof iTabIndex === "number"){
+			res.attr("tabindex", "" + iTabIndex);
 		}
 		res.attr("id", uid());
 		return res;
@@ -61,67 +66,68 @@
 	}
 
 	function popup(i, bModal, bDock, bAutoClose, sMode, aAdditionalContent) {
-		var $Button = jQuery("<button id='openPopup"+i+"'></button>");
+		var $Button = jQuery("<button id='openPopup" + i + "'></button>");
 
 		bAutoClose = !bModal && bAutoClose;
 
 		var sText = (!bModal ? "non-" : "") + "modal " + (bDock ? "docked " : "") + (bAutoClose ? "auto-close " : "") + "Popup (NavMode: " + sMode + ")";
 
-		var oPopup = window["oPopup"+i];
-		if(!oPopup){
+		var oPopup = window["oPopup" + i];
+		if (!oPopup){
 			aAdditionalContent = aAdditionalContent ? aAdditionalContent : [];
 
-			if(bModal){
+			if (bModal){
 				var oClose = jQuery("<button>Close</button>");
-				oClose.click(function(){
+				oClose.on("click", function(){
 					oPopup.close(0);
 				});
 				aAdditionalContent.push(nl());
 				aAdditionalContent.push(oClose);
 			}
 
-			oPopup = new sap.ui.core.Popup(container(false, "background:yellow;", "", [
-     			    container(true, null, "", [], true), nl(),
-      			 	container(true, null, "", aAdditionalContent, true)
-      		]), bModal, true, bAutoClose);
+			oPopup = new Popup(container(false, "background:yellow;", "", [
+					container(true, null, "", [], true), nl(),
+					container(true, null, "", aAdditionalContent, true)
+			]), bModal, true, bAutoClose);
 			oPopup.setNavigationMode(sMode);
 
-			window["oPopup"+i] = oPopup;
+			window["oPopup" + i] = oPopup;
 		}
 
-		$Button.text(sText).click(function(){
-			var oPopup = window["oPopup"+i];
+		$Button.text(sText).on("click", function(){
+			var oPopup = window["oPopup" + i];
 
 			if (bModal) {
-				if(bDock){
-					oPopup.open(0, sap.ui.core.Popup.Dock.LeftTop, sap.ui.core.Popup.Dock.LeftBottom, $Button);
-				}else{
+				if (bDock) {
+					oPopup.open(0, Popup.Dock.LeftTop, Popup.Dock.LeftBottom, $Button);
+				} else {
 					oPopup.open(0);
 				}
-			}else{
-				if(oPopup.isOpen()){
-					oPopup.close(0);
-				}else{
-					if(bDock){
-						oPopup.open(0, sap.ui.core.Popup.Dock.LeftTop, sap.ui.core.Popup.Dock.LeftBottom, $Button);
-					}else{
-						oPopup.open(0);
-					}
-				}
+			} else if (oPopup.isOpen()) {
+				oPopup.close(0);
+			} else if (bDock) {
+				oPopup.open(0, Popup.Dock.LeftTop, Popup.Dock.LeftBottom, $Button);
+			} else {
+				oPopup.open(0);
 			}
 		});
 
 		return $Button;
 	}
 
-
+	includeStylesheet( require.toUrl("./fastnav.css") );
 
 	jQuery(function(){
+
+		// create anchors in DOM
+		if ( jQuery("#scope").length === 0 ) {
+			jQuery('<div id="scope"><div id="content"></div><div id="content2"></div><div id="content3"></div></div>').appendTo(document.body);
+		}
 
 		var oRoot = jQuery("#content");
 		var sStyle = null;
 
-		oRoot.attr("data-"+jQuery.sap._FASTNAVIGATIONKEY, "true");
+		oRoot.attr("data-" + F6Navigation.fastNavigationKey, "true");
 
 		oRoot.append(container(true, null, "Visible", [nl(),
 		    popup(1, false, false, false, "NONE", []),
@@ -188,4 +194,4 @@
 		}, 0);
 	});
 
-})();
+});

@@ -4,14 +4,15 @@
 
 // Provides control sap.m.RatingIndicator.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/theming/Parameters',
 	'./RatingIndicatorRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(jQuery, library, Control, Parameters, RatingIndicatorRenderer) {
+	function(library, Control, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery) {
 	"use strict";
 
 
@@ -156,10 +157,6 @@ sap.ui.define([
 		designtime: "sap/m/designtime/RatingIndicator.designtime"
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-
 	/* =========================================================== */
 	/*           temporary flags for jslint syntax check           */
 	/* =========================================================== */
@@ -168,6 +165,10 @@ sap.ui.define([
 	/* =========================================================== */
 	/*           begin: API methods                                */
 	/* =========================================================== */
+
+	RatingIndicator.sizeMapppings = {};
+	RatingIndicator.iconPaddingMappings = {};
+	RatingIndicator.paddingValueMappping = {};
 
 	/**
 	 * Initializes the control.
@@ -203,44 +204,19 @@ sap.ui.define([
 
 		// check for valid numbers
 		if (isNaN(fValue)) {
-			jQuery.sap.log.warning('Ignored new rating value "' + fValue + '" because it is NAN');
+			Log.warning('Ignored new rating value "' + fValue + '" because it is NAN');
 
 		// check if the number is in the range 0-maxValue (only if control is rendered)
 		// if control is not rendered it is handled by onBeforeRendering()
 		} else if (this.$().length && (fValue > this.getMaxValue())) {
-			jQuery.sap.log.warning('Ignored new rating value "' + fValue + '" because it is out  of range (0-' + this.getMaxValue() + ')');
+			Log.warning('Ignored new rating value "' + fValue + '" because it is out  of range (0-' + this.getMaxValue() + ')');
 		} else {
 			fValue = this._roundValueToVisualMode(fValue);
-			this.setProperty("value", fValue, true);
+			this.setProperty("value", fValue);
 
 			// always set hover value to current value to allow keyboard / mouse / touch navigation
 			this._fHoverValue = fValue;
-
-			// if control is already rendered reflect the changes in the UI as well
-			if (this.$().length) {
-				this._updateUI(fValue);
-			}
 		}
-		return this;
-	};
-
-	/**
-	 * Sets the icon size value. The method automatically updates the UI components if the control has been rendered before.
-	 *
-	 * @param {sap.ui.core.CSSSize} sIconSize The size of the icon
-	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @override
-	 * @public
-	 */
-	RatingIndicator.prototype.setIconSize = function (sIconSize) {
-
-		// if control is already rendered we calculate the new pixel values for the icon size once
-		if (this.$().length) {
-			this._iPxIconSize = this._toPx(sIconSize) || 16;
-		}
-
-		// then update the property and rerender since updating all widths would be too complex here
-		this.setProperty("iconSize", sIconSize, false);
 		return this;
 	};
 
@@ -259,32 +235,71 @@ sap.ui.define([
 	 * @private
 	 */
 	RatingIndicator.prototype.onBeforeRendering = function () {
-		var fVal = this.getValue(),
-			iMVal = this.getMaxValue(),
-			sIconSizeLessParameter;
+		var fVal = this.getValue();
+		var iMVal = this.getMaxValue();
+		var oSizes = {};
 
 		if (fVal > iMVal) {
 			this.setValue(iMVal);
-			jQuery.sap.log.warning("Set value to maxValue because value is > maxValue (" + fVal + " > " + iMVal + ").");
+			Log.warning("Set value to maxValue because value is > maxValue (" + fVal + " > " + iMVal + ").");
 		} else if (fVal < 0) {
 			this.setValue(0);
-			jQuery.sap.log.warning("Set value to 0 because value is < 0 (" + fVal + " < 0).");
+			Log.warning("Set value to 0 because value is < 0 (" + fVal + " < 0).");
 		}
 
-		if (this.getIconSize()) {
-			this._iPxIconSize = this._toPx(this.getIconSize());
-			sIconSizeLessParameter = "sapUiRIIconPadding" + this._getIconSizeLabel(this._iPxIconSize);
-			this._iPxPaddingSize = this._toPx(Parameters.get(sIconSizeLessParameter));
+		var sIconSize = this.getIconSize();
+
+		if (sIconSize) {
+			oSizes = this._getRegularSizes(sIconSize);
+		} else if (this.getDisplayOnly()) {
+			oSizes = this._getDisplayOnlySizes();
 		} else {
-			if (this.getDisplayOnly()) {
-				this._iPxIconSize = this._toPx(Parameters.get("sapUiRIIconSizeDisplayOnly"));
-				this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPaddingDisplayOnly"));
-			} else {
-				var sDensityMode = this._getDensityMode();
-				this._iPxIconSize = this._toPx(Parameters.get("sapUiRIIconSize" + sDensityMode));
-				this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPadding" + sDensityMode));
-			}
+			oSizes = this._getContentDensitySizes();
 		}
+
+		this._iPxIconSize = oSizes.icon;
+		this._iPxPaddingSize = oSizes.padding;
+	};
+
+	RatingIndicator.prototype._getDisplayOnlySizes = function () {
+		RatingIndicator.sizeMapppings["displayOnly"] = RatingIndicator.sizeMapppings["displayOnly"] || this._toPx(Parameters.get("sapUiRIIconSizeDisplayOnly"));
+		RatingIndicator.paddingValueMappping["displayOnlyPadding"] = RatingIndicator.paddingValueMappping["displayOnlyPadding"] || this._toPx(Parameters.get("sapUiRIIconPaddingDisplayOnly"));
+
+		return {
+			icon: RatingIndicator.sizeMapppings["displayOnly"],
+			padding: RatingIndicator.paddingValueMappping["displayOnlyPadding"]
+		};
+	};
+
+	RatingIndicator.prototype._getContentDensitySizes = function () {
+		var sDensityMode = this._getDensityMode();
+		var sSizeKey = "sapUiRIIconSize" + sDensityMode;
+		var sPaddingKey = "sapUiRIIconPadding" + sDensityMode;
+
+		RatingIndicator.sizeMapppings[sSizeKey] = RatingIndicator.sizeMapppings[sSizeKey] || this._toPx(Parameters.get(sSizeKey));
+		RatingIndicator.paddingValueMappping[sPaddingKey] = RatingIndicator.paddingValueMappping[sPaddingKey] || this._toPx(Parameters.get(sPaddingKey));
+
+		return {
+			icon: RatingIndicator.sizeMapppings[sSizeKey],
+			padding: RatingIndicator.paddingValueMappping[sPaddingKey]
+		};
+	};
+
+	RatingIndicator.prototype._getRegularSizes = function (sIconSize) {
+		RatingIndicator.sizeMapppings[sIconSize] = RatingIndicator.sizeMapppings[sIconSize] || this._toPx(sIconSize);
+
+		var iPxIconSize = RatingIndicator.sizeMapppings[sIconSize];
+
+		RatingIndicator.iconPaddingMappings[iPxIconSize] = RatingIndicator.iconPaddingMappings[iPxIconSize] || "sapUiRIIconPadding" + this._getIconSizeLabel(iPxIconSize);
+
+		var paddingClass = RatingIndicator.iconPaddingMappings[iPxIconSize];
+
+		RatingIndicator.paddingValueMappping[paddingClass] = RatingIndicator.paddingValueMappping[paddingClass] || this._toPx(Parameters.get(paddingClass));
+
+		return {
+			icon: RatingIndicator.sizeMapppings[sIconSize],
+			padding: RatingIndicator.paddingValueMappping[paddingClass]
+		};
 	};
 
 	/**
@@ -350,11 +365,11 @@ sap.ui.define([
 		switch (true) {
 			case (iPxIconSize >= 32):
 				return "L";
-			case (this._iPxIconSize >= 22):
+			case (iPxIconSize >= 22):
 				return "M";
-			case (this._iPxIconSize >= 16):
+			case (iPxIconSize >= 16):
 				return "S";
-			case (this._iPxIconSize >= 12):
+			case (iPxIconSize >= 12):
 				return "XS";
 			default:
 				return "M";
@@ -366,7 +381,7 @@ sap.ui.define([
 			scopeTest;
 
 		if (isNaN(scopeVal)) {
-			if (RegExp("^(auto|0)$|^[+-]?[0-9].?([0-9]+)?(px|em|rem|ex|%|in|cm|mm|pt|pc)$").test(cssSize)) {
+			if (RegExp("^(auto|0)$|^[+-\.]?[0-9].?([0-9]+)?(px|em|rem|ex|%|in|cm|mm|pt|pc)$").test(cssSize)) {
 				scopeTest = jQuery('<div style="display: none; width: ' + cssSize + '; margin: 0; padding:0; height: auto; line-height: 1; font-size: 1; border:0; overflow: hidden">&nbsp;</div>').appendTo(sap.ui.getCore().getStaticAreaRef());
 				scopeVal = scopeTest.width();
 				scopeTest.remove();
@@ -425,7 +440,7 @@ sap.ui.define([
 			$SelectedDiv.show();
 		}
 
-		jQuery.sap.log.debug("Updated rating UI with value " + fValue + " and hover mode " + bHover);
+		Log.debug("Updated rating UI with value " + fValue + " and hover mode " + bHover);
 	};
 
 	/**
@@ -522,8 +537,10 @@ sap.ui.define([
 		if (bInputMode) { // we only support full selection of stars
 			if (fValue < 0.25) { // to be able to also select 0 stars
 				fValue = 0;
-			} else if (fValue < this.getMaxValue() - 0.25) { // to optimize selection behaviour
-				fValue += 0.25;
+			} else if (fValue < this.getMaxValue() - 0.4) { // to optimize selection behaviour
+				//threshold is increased to take into account the font's stroke width
+				// BCP: 1870119890
+				fValue += 0.4;
 			}
 			fValue = Math.round(fValue);
 		} else { // for display we round to the correct behavior
@@ -593,7 +610,7 @@ sap.ui.define([
 				}
 				break;
 			default:
-				jQuery.sap.log.warning("VisualMode not supported", sVisualMode);
+				Log.warning("VisualMode not supported", sVisualMode);
 		}
 
 		return fStep;
@@ -796,44 +813,44 @@ sap.ui.define([
 		}
 
 		switch (oEvent.which) {
-			case jQuery.sap.KeyCodes.DIGIT_0:
-			case jQuery.sap.KeyCodes.NUMPAD_0:
+			case KeyCodes.DIGIT_0:
+			case KeyCodes.NUMPAD_0:
 				this.setValue(0);
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_1:
-			case jQuery.sap.KeyCodes.NUMPAD_1:
+			case KeyCodes.DIGIT_1:
+			case KeyCodes.NUMPAD_1:
 				this.setValue(1);
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_2:
-			case jQuery.sap.KeyCodes.NUMPAD_2:
+			case KeyCodes.DIGIT_2:
+			case KeyCodes.NUMPAD_2:
 				this.setValue(Math.min(2, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_3:
-			case jQuery.sap.KeyCodes.NUMPAD_3:
+			case KeyCodes.DIGIT_3:
+			case KeyCodes.NUMPAD_3:
 				this.setValue(Math.min(3, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_4:
-			case jQuery.sap.KeyCodes.NUMPAD_4:
+			case KeyCodes.DIGIT_4:
+			case KeyCodes.NUMPAD_4:
 				this.setValue(Math.min(4, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_5:
-			case jQuery.sap.KeyCodes.NUMPAD_5:
+			case KeyCodes.DIGIT_5:
+			case KeyCodes.NUMPAD_5:
 				this.setValue(Math.min(5, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_6:
-			case jQuery.sap.KeyCodes.NUMPAD_6:
+			case KeyCodes.DIGIT_6:
+			case KeyCodes.NUMPAD_6:
 				this.setValue(Math.min(6, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_7:
-			case jQuery.sap.KeyCodes.NUMPAD_7:
+			case KeyCodes.DIGIT_7:
+			case KeyCodes.NUMPAD_7:
 				this.setValue(Math.min(7, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_8:
-			case jQuery.sap.KeyCodes.NUMPAD_8:
+			case KeyCodes.DIGIT_8:
+			case KeyCodes.NUMPAD_8:
 				this.setValue(Math.min(8, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_9:
-			case jQuery.sap.KeyCodes.NUMPAD_9:
+			case KeyCodes.DIGIT_9:
+			case KeyCodes.NUMPAD_9:
 				this.setValue(Math.min(9, iMaxValue));
 				break;
 		}

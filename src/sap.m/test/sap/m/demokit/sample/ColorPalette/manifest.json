@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ColorPalette",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.ColorPalette.ColorPalette",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"ColorPalette.view.xml",
+					"ColorPalette.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

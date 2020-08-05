@@ -1,0 +1,172 @@
+[
+	{
+		"id": "id_1576490260883_39_renameField",
+		"changeType": "renameField",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"layer": "VENDOR",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"texts": {
+			"fieldLabel": {
+				"value": "Number",
+				"type": "XFLD"
+			}
+		},
+		"creation": "2019-12-16T09:58:40.596Z"
+	},
+	{
+		"id": "id_1576490267699_40_renameField",
+		"changeType": "renameField",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"layer": "VENDOR",
+		"selector": {
+			"id": "idMain1--Victim",
+			"idIsLocal": true
+		},
+		"texts": {
+			"fieldLabel": {
+				"value": "Button",
+				"type": "XFLD"
+			}
+		},
+		"creation": "2019-12-16T09:58:40.597Z"
+	},
+	{
+		"id": "id_1576490271933_41_renameField",
+		"changeType": "renameField",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"layer": "VENDOR",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"texts": {
+			"fieldLabel": {
+				"value": "Code",
+				"type": "XFLD"
+			}
+		},
+		"creation": "2019-12-16T09:58:40.598Z"
+	},
+	{
+		"id": "id_1576490280160_42_renameField",
+		"changeType": "renameField",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"layer": "VENDOR",
+		"selector": {
+			"id": "idMain1--Victim",
+			"idIsLocal": true
+		},
+		"texts": {
+			"fieldLabel": {
+				"value": "Just a button",
+				"type": "XFLD"
+			}
+		},
+		"creation": "2019-12-16T09:58:40.599Z"
+	},
+	{
+		"id": "id_2_propertyChange",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"property": "fieldLabel",
+			"newValue": "DNumber"
+		},
+		"layer": "VENDOR",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1576490291953_44_propertyChange",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"property": "fieldLabel",
+			"newValue": "CCode"
+		},
+		"layer": "VENDOR",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1576490301337_45_renameField",
+		"changeType": "renameField",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"layer": "VENDOR",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.Name",
+			"idIsLocal": true
+		},
+		"texts": {
+			"fieldLabel": {
+				"value": "Doc Number",
+				"type": "XFLD"
+			}
+		},
+		"creation": "2019-12-16T09:58:40.602Z"
+	},
+	{
+		"id": "id_1576490309078_46_renameField",
+		"changeType": "renameField",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"layer": "VENDOR",
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"idIsLocal": true
+		},
+		"texts": {
+			"fieldLabel": {
+				"value": "Company-Code",
+				"type": "XFLD"
+			}
+		},
+		"creation": "2019-12-16T09:58:40.603Z"
+	},
+	{
+		"id": "id_1576490317689_47_renameField",
+		"changeType": "renameField",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"originalControlType": "sap.ui.comp.smartform.GroupElement"
+		},
+		"layer": "VENDOR",
+		"selector": {
+			"id": "idMain1--Victim",
+			"idIsLocal": true
+		},
+		"texts": {
+			"fieldLabel": {
+				"value": "Button",
+				"type": "XFLD"
+			}
+		},
+		"creation": "2019-12-16T09:58:40.604Z"
+	}
+]

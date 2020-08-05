@@ -25,7 +25,7 @@ DocCommentHighlightRules.getTagRule = function(start) {
         token : "comment.doc.tag.storage.type",
         regex : "\\b(?:TODO|FIXME|XXX|HACK)\\b"
     };
-}
+};
 
 DocCommentHighlightRules.getStartRule = function(start) {
     return {
@@ -181,7 +181,8 @@ var JavaScriptHighlightRules = function(options) {
                 next  : "property"
             }, {
                 token : "storage.type",
-                regex : /=>/
+                regex : /=>/,
+                next  : "start"
             }, {
                 token : "keyword.operator",
                 regex : /--|\+\+|\.{3}|===|==|=|!=|!==|<+=?|>+=?|!|&&|\|\||\?:|[!$%&*+\-~\/^]=?/,
@@ -582,8 +583,8 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
     
-    this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
-    this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
+    this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
+    this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
     this.tripleStarBlockCommentRe = /^\s*(\/\*\*\*).*\*\/\s*$/;
     this.startRegionRe = /^\s*(\/\*|\/\/)#?region\b/;
@@ -797,11 +798,10 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var WollokHighlightRules = function() {
     var keywords = (
-    "test|package|inherits|false|import|else|or|class|and|not|native|override|program|this|try|val|var|catch|object|super|throw|if|null|return|true|new|method"
+    "test|describe|package|inherits|false|import|else|or|class|and|not|native|override|program|self|try|const|var|catch|object|super|throw|if|null|return|true|new|constructor|method|mixin"
     );
 
     var buildinConstants = ("null|assert|console");
-
 
     var langClasses = (
         "Object|Pair|String|Boolean|Number|Integer|Double|Collection|Set|List|Exception|Range" +
@@ -809,7 +809,7 @@ var WollokHighlightRules = function() {
     );
 
     var keywordMapper = this.createKeywordMapper({
-        "variable.language": "this",
+        "variable.language": "self",
         "keyword": keywords,
         "constant.language": buildinConstants,
         "support.function": langClasses
@@ -902,4 +902,11 @@ oop.inherits(Mode, JavaScriptMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
+});                (function() {
+                    ace.require(["ace/mode/wollok"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

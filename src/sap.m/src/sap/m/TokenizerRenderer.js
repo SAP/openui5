@@ -11,6 +11,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 	 * @namespace
 	 */
 	var TokenizerRenderer = {
+		apiVersion: 2
 	};
 
 
@@ -23,67 +24,73 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 	TokenizerRenderer.render = function(oRm, oControl){
 		//write the HTML into the render manager
 		if (oControl.getParent() && (oControl.getParent() instanceof sap.m.MultiInput || oControl.getParent() instanceof sap.m.MultiComboBox)) {
-			oRm.write("<div ");
+			oRm.openStart("div", oControl);
 		} else {
-			oRm.write("<div tabindex=\"0\"");
+			oRm.openStart("div", oControl).attr("tabindex", "0");
 		}
 
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMTokenizer");
+		oRm.class("sapMTokenizer");
 
 		if (!oControl.getEditable()) {
-			oRm.addClass("sapMTokenizerReadonly");
+			oRm.class("sapMTokenizerReadonly");
+		}
+
+		if (!oControl.getEnabled()) {
+			oRm.class("sapMTokenizerDisabled");
 		}
 
 		var aTokens = oControl.getTokens();
 		if (!aTokens.length) {
-			oRm.addClass("sapMTokenizerEmpty");
+			oRm.class("sapMTokenizerEmpty");
 		}
+
+		oRm.style("max-width", oControl.getMaxWidth());
+
 		var sPixelWdth = oControl.getWidth();
 		if (sPixelWdth) {
-			oRm.addStyle("width", sPixelWdth);
-			oRm.writeStyles();
+			oRm.style("width", sPixelWdth);
 		}
 
-		oRm.writeClasses();
-
-		oRm.writeAttribute("role", "list");
-
-		var oAccAttributes = {}; // additional accessibility attributes
+		var oAccAttributes = {
+			role: "listbox"
+		}; // additional accessibility attributes
 
 		//ARIA attributes
 		oAccAttributes.labelledby = {
 			value: InvisibleText.getStaticId("sap.m", "TOKENIZER_ARIA_LABEL"),
 			append: true
 		};
+		// aria-readonly is not valid for the current role of the tokenizer.
 
-		oRm.writeAccessibilityState(oControl, oAccAttributes);
+		oRm.accessibilityState(oControl, oAccAttributes);
 
-		oRm.write(">"); // div element
+		oRm.openEnd(); // div element
 		oRm.renderControl(oControl.getAggregation("_tokensInfo"));
 
 		oControl._bCopyToClipboardSupport = false;
 
 		if ((Device.system.desktop || Device.system.combi) && aTokens.length) {
-			oRm.write("<div id='" + oControl.getId() + "-clip' class='sapMTokenizerClip'");
+			oRm.openStart("div", oControl.getId() + "-clip").class("sapMTokenizerClip");
 			if (window.clipboardData) { //IE
-				oRm.writeAttribute("contenteditable", "true");
-				oRm.writeAttribute("tabindex", "-1");
+				oRm.attr("contenteditable", "true");
+				oRm.attr("tabindex", "-1");
 			}
-			oRm.write(">&nbsp;</div>");
+			oRm.openEnd();
+			oRm.unsafeHtml("&nbsp");
+			oRm.close("div");
+
 			oControl._bCopyToClipboardSupport = true;
 		}
 
-		var sClass = "class=\"sapMTokenizerScrollContainer\">";
-		var sSpace = " ";
-
-		var sIdScrollContainer = "id=" + oControl.getId() + "-scrollContainer";
-		oRm.write("<div" + sSpace + sIdScrollContainer + sSpace + sClass);
+		oRm.openStart("div", oControl.getId() + "-scrollContainer");
+		oRm.class("sapMTokenizerScrollContainer");
+		oRm.openEnd();
 
 		TokenizerRenderer._renderTokens(oRm, oControl);
 
-		oRm.write("</div>");
-		oRm.write("</div>");
+		oRm.close("div");
+		TokenizerRenderer._renderIndicator(oRm, oControl);
+		oRm.close("div");
 	};
 
 	/**
@@ -97,15 +104,24 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 			tokens = oControl.getTokens(),
 			length = tokens.length;
 
-		if (oControl.getReverseTokens()) {
-			for (i = length - 1; i > -1; i--) {
-				oRm.renderControl(tokens[i]);
-			}
-		} else {
-			for (i = 0; i < length; i++) {
-				oRm.renderControl(tokens[i]);
-			}
+		for (i = 0; i < length; i++) {
+			oRm.renderControl(tokens[i]);
 		}
+	};
+
+	/**
+	 * Renders the N-more indicator
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 */
+	TokenizerRenderer._renderIndicator = function(oRm, oControl){
+		oRm.openStart("span");
+		oRm.class("sapMTokenizerIndicator");
+		if (oControl.getHiddenTokensCount() === 0) {
+			oRm.class("sapUiHidden");
+		}
+		oRm.openEnd().close("span");
 	};
 
 	return TokenizerRenderer;

@@ -33,6 +33,7 @@ sap.ui.define(["./library", "./ListBase", "./ListRenderer"],
 	 * @constructor
 	 * @public
 	 * @alias sap.m.List
+	 * @see {@link fiori:/list-overview/ List}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var List = ListBase.extend("sap.m.List", /** @lends sap.m.List.prototype */ { metadata : {

@@ -1,19 +1,17 @@
 <mvc:View
 	controllerName="sap.ui.codeeditor.sample.CodeEditorIconTabHeader.CodeEditor"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:m="sap.m"
-	xmlns="sap.ui.codeeditor"
+	xmlns:ce="sap.ui.codeeditor"
 	height="100%">
-
-	<m:IconTabHeader id="iconTabHeader"
+	<IconTabHeader
+		id="iconTabHeader"
 		selectedKey="invalidKey"
-		select="onSelectTab">
-		<m:items>
-			<m:IconTabFilter text="A" key="A"></m:IconTabFilter>
-			<m:IconTabFilter text="B" key="B"></m:IconTabFilter>
-		</m:items>
-	</m:IconTabHeader>
-
-	<CodeEditor id="aCodeEditor" height="300px" type="javascript" />
-
+		select=".onSelectTab">
+		<items>
+			<IconTabFilter text="A" key="A" />
+			<IconTabFilter text="B" key="B" />
+		</items>
+	</IconTabHeader>
+	<ce:CodeEditor id="aCodeEditor" height="300px" type="javascript" />
 </mvc:View>

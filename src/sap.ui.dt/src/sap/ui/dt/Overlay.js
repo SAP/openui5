@@ -2,19 +2,20 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.dt.Overlay.
+/* global Map */
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/Element',
-	'sap/ui/dt/MutationObserver',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/DOMUtil',
-	'sap/ui/dt/ScrollbarSynchronizer',
-	'sap/ui/dt/Util',
-	'sap/ui/dt/Map'
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Element",
+	"sap/ui/dt/MutationObserver",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/ScrollbarSynchronizer",
+	"sap/ui/dt/Util",
+	"sap/base/Log",
+	"sap/ui/dt/util/ZIndexManager"
 ],
-function(
+function (
 	jQuery,
 	Element,
 	MutationObserver,
@@ -23,7 +24,8 @@ function(
 	DOMUtil,
 	ScrollbarSynchronizer,
 	Util,
-	Map
+	Log,
+	ZIndexManager
 ) {
 	"use strict";
 
@@ -39,7 +41,7 @@ function(
 	 *
 	 * @class
 	 * The Overlay allows to create an absolute positioned DIV above the associated element.
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -81,10 +83,10 @@ function(
 			},
 			associations: {
 				/**
-				 * Element associated with an overlay
+				 * ManagedObject associated with an overlay
 				 */
 				element: {
-					type: "sap.ui.core.Element"
+					type: "sap.ui.base.ManagedObject"
 				}
 			},
 			aggregations: {
@@ -167,6 +169,23 @@ function(
 							type: "boolean"
 						}
 					}
+				},
+				/**
+				 * Event fired before geometryChanged event is fired
+				 */
+				beforeGeometryChanged : {},
+				/**
+				 * Event fired when the styles applying is required
+				 */
+				applyStylesRequired: {
+					parameters: {
+						type: {
+							type : "string"
+						},
+						targetOverlay: {
+							type : "sap.ui.dt.ElementOverlay"
+						}
+					}
 				}
 			}
 		},
@@ -178,7 +197,13 @@ function(
 			Element.apply(this, arguments);
 
 			if (!this.getElement()) {
-				throw new Error("sap.ui.dt: can't create overlay without element");
+				throw Util.createError(
+					"Overlay#constructor",
+					Util.printf(
+						"Cannot create overlay without a valid element. Expected a descendant of sap.ui.core.Element or sap.ui.core.Component, but {0} was given",
+						Util.getObjectType(arguments[0].element)
+					)
+				);
 			}
 
 			this.asyncInit()
@@ -197,19 +222,28 @@ function(
 					}
 				}.bind(this))
 				.catch(function(vError) {
-					var oError = Util.wrapError(vError);
-
-					// adding payload for external errors
-					if (Util.isForeignError(oError)) {
-						var sLocation = 'sap.ui.dt.Overlay#asyncInit';
-						oError.name = 'Error in ' + sLocation;
-						oError.message = Util.printf("{0} / Can't initialize overlay (id='{1}') properly: {2}", sLocation, this.getId(), oError.message);
-					}
+					var oError = Util.propagateError(
+						vError,
+						"Overlay#asyncInit",
+						Util.printf(
+							"Can't initialize overlay (id='{0}') properly. Original error: {1}",
+							this.getId(),
+							Util.wrapError(vError).message
+						)
+					);
 
 					this.fireInitFailed({
 						error: oError
 					});
 				}.bind(this));
+
+			// Attach stored browser events
+			this.attachEventOnce('afterRendering', function (oEvent) {
+				var $DomRef = jQuery(oEvent.getParameter('domRef'));
+				this._aBindParameters.forEach(function (mBrowserEvent) {
+					$DomRef.on(mBrowserEvent.sEventType, mBrowserEvent.fnProxy);
+				});
+			}, this);
 		},
 
 		/**
@@ -231,7 +265,7 @@ function(
 		 * @type {jQuery}
 		 * @private
 		 */
-		_$domRef: null,
+		_$DomRef: null,
 
 		/**
 		 * Stores CSS classes for overlay. Please do not mutate this array manually.
@@ -311,10 +345,10 @@ function(
 	 */
 	Overlay.prototype._getAttributes = function () {
 		return {
-			"id": this.getId(),
+			id: this.getId(),
 			"data-sap-ui": this.getId(),
 			"class": this._aStyleClasses.join(" "),
-			"tabindex": this.isFocusable() ? 0 : null
+			tabindex: this.isFocusable() ? 0 : null
 		};
 	};
 
@@ -330,23 +364,23 @@ function(
 			return this.getDomRef();
 		}
 
-		this._$domRef = jQuery('<div/>').attr(this._getAttributes());
+		this._$DomRef = jQuery('<div/>').attr(this._getAttributes());
 
-		this._$children = jQuery('<div/>').attr({
+		this._$Children = jQuery('<div/>').attr({
 			"class": "sapUiDtOverlayChildren"
-		}).appendTo(this._$domRef);
+		}).appendTo(this._$DomRef);
 
-		this._$children.append(this._renderChildren());
+		this._$Children.append(this._renderChildren());
 
 		this._bRendered = true;
 
 		if (!bSuppressEvent) {
 			this.fireAfterRendering({
-				domRef: this._$domRef.get(0)
+				domRef: this._$DomRef.get(0)
 			});
 		}
 
-		return this._$domRef;
+		return this._$DomRef;
 	};
 
 	Overlay.prototype.isInit = function () {
@@ -402,7 +436,7 @@ function(
 
 	Overlay.prototype.destroy = function () {
 		if (this.bIsDestroyed) {
-			jQuery.sap.log.error('FIXME: Do not destroy overlay twice (overlayId = ' + this.getId() + ')!');
+			Log.error('FIXME: Do not destroy overlay twice (overlayId = ' + this.getId() + ')!');
 			return;
 		}
 
@@ -424,7 +458,7 @@ function(
 		this.$().remove();
 		delete this._bInit;
 		delete this._bShouldBeDestroyed;
-		delete this._$domRef;
+		delete this._$DomRef;
 		delete this._oScrollbarSynchronizers;
 		this.fireDestroyed();
 	};
@@ -446,13 +480,17 @@ function(
 		return this.$().get(0);
 	};
 
+	Overlay.prototype.getChildrenDomRef = function () {
+		return this._$Children.get(0);
+	};
+
 	/**
 	 * Retrieves reference to the DOM Element wrapped into jQuery object
 	 * @return {jQuery} - jQuery with DOM Element inside
 	 * @public
 	 */
 	Overlay.prototype.$ = function () {
-		return this._$domRef || jQuery();
+		return this._$DomRef || jQuery();
 	};
 
 	/**
@@ -493,7 +531,7 @@ function(
 	};
 
 	Overlay.prototype.focus = function() {
-		this.$().focus();
+		this.$().trigger("focus");
 	};
 
 	/**
@@ -533,15 +571,19 @@ function(
 	 * Calculate and update CSS styles for the Overlay's DOM
 	 * The calculation is based on original associated DOM state and parent overlays
 	 * This method also calls "applyStyles" method for every child Overlay of this Overlay (cascade)
-	 * @param {boolean} bInvalidateGeometry
+	 * @param {boolean} bForceScrollbarSync - `true` to force a scrollbars synchronisation if there are any
 	 * @public
 	 */
-	Overlay.prototype.applyStyles = function(bInvalidateGeometry) {
-		if (!(typeof bInvalidateGeometry === 'boolean')) {
-			bInvalidateGeometry = true;
+	Overlay.prototype.applyStyles = function (bForceScrollbarSync) {
+		this.fireBeforeGeometryChanged();
+
+		if (!this.isRendered() || this._bIsBeingDestroyed || this.getShouldBeDestroyed()) {
+			return Promise.resolve();
 		}
+
+		var oGeometryChangedPromise = Promise.resolve();
 		if (this.isVisible()) {
-			var oGeometry = this.getGeometry(bInvalidateGeometry);
+			var oGeometry = this.getGeometry(true);
 
 			if (oGeometry && oGeometry.visible) {
 				this._setSize(this.$(), oGeometry);
@@ -549,27 +591,26 @@ function(
 
 				if (!this.isRoot()) {
 					var aPromises = [];
-					this.getParent()._oScrollbarSynchronizers.forEach(function(oShr) {
-						if (oShr._bSyncing) {
+					this.getParent()._oScrollbarSynchronizers.forEach(function(oScrollbarSynchronizer) {
+						if (oScrollbarSynchronizer.isSyncing()) {
 							aPromises.push(
 								new Promise(function (fnResolve) {
-									oShr.attachEventOnce('synced', fnResolve);
+									oScrollbarSynchronizer.attachEventOnce('synced', fnResolve);
+									oScrollbarSynchronizer.attachEventOnce('destroyed', fnResolve);
 								})
 							);
 						}
 					});
 					if (aPromises.length) {
-						Promise.all(aPromises).then(function () {
-							this._applySizes(oGeometry, $RenderingParent);
-							this.fireGeometryChanged();
+						oGeometryChangedPromise = Promise.all(aPromises).then(function () {
+							return this._applySizes(oGeometry, $RenderingParent, bForceScrollbarSync);
 						}.bind(this));
 					} else {
-						this._applySizes(oGeometry, $RenderingParent);
+						oGeometryChangedPromise = this._applySizes(oGeometry, $RenderingParent, bForceScrollbarSync);
 					}
 				} else {
-					this._applySizes(oGeometry, $RenderingParent);
+					oGeometryChangedPromise = this._applySizes(oGeometry, $RenderingParent, bForceScrollbarSync);
 				}
-
 			} else {
 				this.$().css("display", "none");
 			}
@@ -578,20 +619,56 @@ function(
 		}
 
 		// TODO: refactor geometryChanged event
-		if (!aPromises || !aPromises.length) {
-			this.fireGeometryChanged();
-		}
+		return oGeometryChangedPromise
+			.catch(function (vError) {
+				Log.error(Util.createError(
+					'Overlay#applyStyles',
+					'Error occured during applySizes calculation: ' + vError
+				));
+			})
+			.then(function () {
+				this.fireGeometryChanged();
+			}.bind(this));
 	};
 
-	Overlay.prototype._applySizes = function (oGeometry, $RenderingParent) {
-		this._setPosition(this.$(), oGeometry, $RenderingParent);
+	Overlay.prototype._applySizes = function (oGeometry, $RenderingParent, bForceScrollbarSync) {
+		this._setPosition(this.$(), oGeometry, $RenderingParent, bForceScrollbarSync);
 		if (oGeometry.domRef) {
-			this._handleOverflowScroll(oGeometry, this.$(), this.getParent());
+			this._setZIndex(oGeometry, this.$());
 		}
+		// We need to know when all our children have correct positions
+		var aPromises = this.getChildren()
+			.filter(function (oChild) {
+				return oChild.isRendered();
+			})
+			.map(function(oChild) {
+				var mParameters = {};
+				mParameters.bForceScrollbarSync = bForceScrollbarSync;
+				return new Promise(function (fnResolve) {
+					oChild.attachEventOnce('geometryChanged', fnResolve);
+					oChild.fireApplyStylesRequired(mParameters);
+				});
+			});
+		return Promise.all(aPromises);
+	};
 
-		this.getChildren().forEach(function(oChild) {
-			oChild.applyStyles();
-		});
+	/**
+	 * Sets z-index to specified DOM element.
+	 * If no pre-existing z-index value exists for a root element,
+	 * then ZIndexManager is used to calculate a z-index value lower than open popups and higher than other controls.
+	 * @see sap.ui.core.util.ZIndexManager
+	 * @param {object} oGeometry - Geometry object to get reference z-index from
+	 * @param {jQuery} $overlayDomRef - DOM Element to receive the z-index
+	 */
+	Overlay.prototype._setZIndex = function (oGeometry, $overlayDomRef) {
+		var oOriginalDomRef = oGeometry.domRef;
+		var iZIndex = DOMUtil.getZIndex(oOriginalDomRef);
+		if (Util.isInteger(iZIndex)) {
+			$overlayDomRef.css("z-index", iZIndex);
+		} else if (this.isRoot()) {
+			this._iZIndex = this._iZIndex || ZIndexManager.getZIndexBelowPopups();
+			$overlayDomRef.css("z-index", this._iZIndex);
+		}
 	};
 
 	/**
@@ -607,7 +684,7 @@ function(
 		var mSize = oGeometry.size;
 
 		// ASSIGN SIZE
-		$Target.css("width" , mSize.width + "px");
+		$Target.css("width", mSize.width + "px");
 		$Target.css("height", mSize.height + "px");
 	};
 
@@ -619,26 +696,14 @@ function(
 	 * @protected
 	 */
 	Overlay.prototype._setPosition = function($Target, oGeometry, $Parent) {
-		var bRTL = sap.ui.getCore().getConfiguration().getRTL();
-
-		var iParentScrollTop = $Parent ? $Parent.scrollTop() : null;
-		var iParentScrollLeft = $Parent ? $Parent.scrollLeft() : null;
-		var mParentOffset = $Parent ? $Parent.offset() : null;
-
-		var mPosition = DOMUtil.getOffsetFromParent(oGeometry.position, mParentOffset, iParentScrollTop, iParentScrollLeft);
-
-		if (bRTL) {
-			var iParentWidth = this.isRoot() ? jQuery(window).width() : $Parent.width();
-			mPosition.left = mPosition.left - (iParentWidth - oGeometry.size.width);
-		}
-
+		var mPosition = DOMUtil.getOffsetFromParent(oGeometry, $Parent ? $Parent.get(0) : null);
 		$Target.css("transform", "translate(" + mPosition.left + "px, " + mPosition.top + "px)");
 	};
 
 	Overlay.prototype.attachBrowserEvent = function(sEventType, fnHandler, oListener) {
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
 			if (typeof fnHandler === "function") {   // also do nothing if the second parameter is not a function
-				// store the parameters for bind()
+				// store the parameters for on()
 				if (!this._aBindParameters) {
 					this._aBindParameters = [];
 				}
@@ -654,8 +719,8 @@ function(
 					fnProxy : fnProxy
 				});
 
-				// if control is rendered, directly call bind()
-				this.$().bind(sEventType, fnProxy);
+				// if control is rendered, directly call on()
+				this.$().on(sEventType, fnProxy);
 			}
 		}
 
@@ -676,21 +741,21 @@ function(
 	Overlay.prototype.detachBrowserEvent = function(sEventType, fnHandler, oListener) {
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
 			if (typeof (fnHandler) === "function") {   // also do nothing if the second parameter is not a function
-				var $ = this.$(),i,oParamSet;
 				oListener = oListener || this;
 
 				// remove the bind parameters from the stored array
 				if (this._aBindParameters) {
-					for (i = this._aBindParameters.length - 1; i >= 0; i--) {
+					var $ = this.$();
+					var oParamSet;
+					for (var i = this._aBindParameters.length - 1; i >= 0; i--) {
 						oParamSet = this._aBindParameters[i];
-						if ( oParamSet.sEventType === sEventType  && oParamSet.fnHandler === fnHandler  &&  oParamSet.oListener === oListener ) {
+						if (oParamSet.sEventType === sEventType && oParamSet.fnHandler === fnHandler && oParamSet.oListener === oListener) {
 							this._aBindParameters.splice(i, 1);
-							// if control is rendered, directly call unbind()
-							$.unbind(sEventType, oParamSet.fnProxy);
+							// if control is rendered, directly call off()
+							$.off(sEventType, oParamSet.fnProxy);
 						}
 					}
 				}
-
 			}
 		}
 
@@ -698,22 +763,29 @@ function(
 	};
 
 	/**
+	 * Cleans up when scrolling is no longer needed in the overlay
+	 * @param {jQuery} $TargetDomRef - DOM reference to the element where dummy container is located
+	 * @param {sap.ui.dt.ElementOverlay} [oTargetOverlay]
+	 *        Overlay which holds scrollbar padding via CSS classes. In case of root overlay, the target is undefined.
+	 *
 	 * @private
 	 */
-	Overlay.prototype._deleteDummyContainer = function($Overlay) {
-		var $DummyScrollContainer = $Overlay.find(">.sapUiDtDummyScrollContainer");
-
+	Overlay.prototype._deleteDummyContainer = function($TargetDomRef, oTargetOverlay) {
+		var $DummyScrollContainer = $TargetDomRef.find(">.sapUiDtDummyScrollContainer");
 		if ($DummyScrollContainer.length) {
 			$DummyScrollContainer.remove();
-			if (this.getParent() && this.getParent().$) { // FIXME: replace with isRoot() check?
-				var $Parent = this.getParent().$();
-				$Parent.removeClass("sapUiDtOverlayWithScrollBar");
-				$Parent.removeClass("sapUiDtOverlayWithScrollBarVertical");
-				$Parent.removeClass("sapUiDtOverlayWithScrollBarHorizontal");
+			this._oScrollbarSynchronizers.get($TargetDomRef.get(0)).destroy();
+			this._oScrollbarSynchronizers.delete($TargetDomRef.get(0));
+			if (
+				oTargetOverlay._oScrollbarSynchronizers.size === 0
+				&& !oTargetOverlay.getChildren().some(function (oAggregationOverlay) {
+					return oAggregationOverlay._oScrollbarSynchronizers.size > 0;
+				})
+			) {
+				oTargetOverlay.removeStyleClass("sapUiDtOverlayWithScrollBar");
+				oTargetOverlay.removeStyleClass("sapUiDtOverlayWithScrollBarVertical");
+				oTargetOverlay.removeStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
 			}
-
-			this._oScrollbarSynchronizers.get($Overlay.get(0)).destroy();
-			this._oScrollbarSynchronizers.delete($Overlay.get(0));
 		}
 	};
 
@@ -721,19 +793,15 @@ function(
 	 * Handle overflow from controls and sync with overlay
 	 * @private
 	 */
-	Overlay.prototype._handleOverflowScroll = function(oGeometry, $overlayDomRef, oOverlayParent) {
+	Overlay.prototype._handleOverflowScroll = function(oGeometry, $TargetDomRef, oTargetOverlay, bForceScrollbarSync) {
 		var oOriginalDomRef = oGeometry.domRef;
 		var mSize = oGeometry.size;
-		var iZIndex = DOMUtil.getZIndex(oOriginalDomRef);
-		if (iZIndex) {
-			$overlayDomRef.css("z-index", iZIndex);
-		}
 
 		// OVERFLOW & SCROLLING
 		var oOverflows = DOMUtil.getOverflows(oOriginalDomRef);
 
-		$overlayDomRef.css("overflow-x", oOverflows.overflowX);
-		$overlayDomRef.css("overflow-y", oOverflows.overflowY);
+		$TargetDomRef.css("overflow-x", oOverflows.overflowX);
+		$TargetDomRef.css("overflow-y", oOverflows.overflowY);
 
 		var iScrollHeight = oOriginalDomRef.scrollHeight;
 		var iScrollWidth = oOriginalDomRef.scrollWidth;
@@ -742,7 +810,8 @@ function(
 		// example: iScrollHeight = 24px, mSize.height = 23.98375. Both should be the same.
 		if (iScrollHeight > Math.ceil(mSize.height) || iScrollWidth > Math.ceil(mSize.width)) {
 			// TODO: save ref to DummyScrollContainer somewhere to avoid "find" selector
-			var oDummyScrollContainer = $overlayDomRef.find("> .sapUiDtDummyScrollContainer");
+			var oDummyScrollContainer = $TargetDomRef.find("> .sapUiDtDummyScrollContainer");
+			var oScrollbarSynchronizer;
 			if (!oDummyScrollContainer.length) {
 				oDummyScrollContainer = jQuery("<div/>", {
 					css: {
@@ -752,32 +821,45 @@ function(
 				});
 				oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
 
-				if (oOverlayParent && DOMUtil.hasVerticalScrollBar(oOriginalDomRef)) {
-					oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBar");
-					oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBarVertical");
+				if (
+					oTargetOverlay
+					&& DOMUtil.hasVerticalScrollBar(oOriginalDomRef)
+					&& oTargetOverlay._hasSameSize(oGeometry, 'height')
+				) {
+					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
+					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBarVertical");
 				}
-				if (oOverlayParent && DOMUtil.hasHorizontalScrollBar(oOriginalDomRef)) {
-					oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBar");
-					oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBarHorizontal");
+
+				if (
+					oTargetOverlay
+					&& DOMUtil.hasHorizontalScrollBar(oOriginalDomRef)
+					&& oTargetOverlay._hasSameSize(oGeometry, 'width')
+				) {
+					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
+					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
 				}
-				$overlayDomRef.append(oDummyScrollContainer);
-				var oScrollbarSynchronizer = new ScrollbarSynchronizer({
+				$TargetDomRef.append(oDummyScrollContainer);
+				oScrollbarSynchronizer = new ScrollbarSynchronizer({
 					synced: this.fireScrollSynced.bind(this)
 				});
-				oScrollbarSynchronizer.addTarget(oOriginalDomRef, $overlayDomRef.get(0));
-				this._oScrollbarSynchronizers.set($overlayDomRef.get(0), oScrollbarSynchronizer);
+				oScrollbarSynchronizer.addTarget(oOriginalDomRef, $TargetDomRef.get(0));
+				this._oScrollbarSynchronizers.set($TargetDomRef.get(0), oScrollbarSynchronizer);
 			} else {
 				oDummyScrollContainer.css({
-					"height": iScrollHeight,
-					"width" : iScrollWidth
+					height: iScrollHeight,
+					width : iScrollWidth
 				});
-				var oScrollbarSynchronizer = this._oScrollbarSynchronizers.get($overlayDomRef.get(0));
+				oScrollbarSynchronizer = this._oScrollbarSynchronizers.get($TargetDomRef.get(0));
 				if (!oScrollbarSynchronizer.hasTarget(oOriginalDomRef)) {
 					oScrollbarSynchronizer.addTarget(oOriginalDomRef);
 				}
 			}
+
+			if (bForceScrollbarSync) {
+				oScrollbarSynchronizer.sync(oOriginalDomRef, true);
+			}
 		} else {
-			this._deleteDummyContainer($overlayDomRef);
+			this._deleteDummyContainer($TargetDomRef, oTargetOverlay);
 		}
 	};
 
@@ -865,5 +947,15 @@ function(
 		return this.getIsRoot();
 	};
 
+	/**
+	 * Returns true if the overlay should be destroyed
+	 *
+	 * @return {boolean} - true if overlay is scheduled to be destroyed
+	 * @public
+	 */
+	Overlay.prototype.getShouldBeDestroyed = function() {
+		return this._bShouldBeDestroyed;
+	};
+
 	return Overlay;
-}, /* bExport= */ true);
+});

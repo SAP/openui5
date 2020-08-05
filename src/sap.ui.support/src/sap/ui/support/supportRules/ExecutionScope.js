@@ -26,25 +26,22 @@
  * @class sap.ui.support.ExecutionScope
  */
 sap.ui.define(
-	["jquery.sap.global"],
-	function (jQuery) {
+	["jquery.sap.global", "sap/ui/core/Component", "sap/ui/core/Element"],
+	function (jQuery, Component, Element) {
 		"use strict";
 
-		var coreInstance = null,
-			_context = null,
+		var _context = null,
 			elements = [];
 
 		var globalContext = {
 			setScope: function () {
-				for (var i in coreInstance.mElements) {
-					elements.push(coreInstance.mElements[i]);
-				}
+				elements = Element.registry.filter(function() { return true;});
 			}
 		};
 
 		var subtreeContext = {
 			setScope: function () {
-				var parent = sap.ui.getCore().byId(_context.parentId);
+				var parent = Element.registry.get(_context.parentId);
 				//TODO: Handle parent not found
 				elements = parent.findAggregatedObjects(true);
 			}
@@ -54,7 +51,7 @@ sap.ui.define(
 			setScope: function () {
 				var set = {};
 				_context.components.forEach(function (componentId) {
-					var component = coreInstance.mObjects.component[componentId],
+					var component = Component.registry.get(componentId),
 						aggregations = component.findAggregatedObjects(true);
 
 					aggregations.forEach(function (agg) {
@@ -155,7 +152,6 @@ sap.ui.define(
 		}
 
 		function ExecutionScope(core, context) {
-			coreInstance = core;
 			elements = [];
 			_context = context;
 
@@ -169,6 +165,10 @@ sap.ui.define(
 				 * not public aggregations
 				 * @param {boolean} oConfig.cloned Option to exclude elements that are
 				 * clones of list bindings
+				 * @public
+				 * @function
+				 * @returns {Array} Array of matched elements
+				 * @alias sap.ui.support.ExecutionScope.getElements
 				 */
 				getElements: function (oConfig) {
 					var that = this;
@@ -234,16 +234,23 @@ sap.ui.define(
 
 					return elements;
 				},
+				/**
+				 * Returns all public elements, i.e. elements that are part of public API
+				 * aggregations
+				 * @public
+				 * @function
+				 * @returns {Array} Array of matched elements
+				 * @alias sap.ui.support.ExecutionScope.getPublicElements
+				 */
 				getPublicElements: function () {
 					var aPublicElements = [];
-					var mComponents = core.mObjects.component;
 					var mUIAreas = core.mUIAreas;
 
-					for (var i in mComponents) {
+					Component.registry.forEach(function(oComponent) {
 						aPublicElements = aPublicElements.concat(
-							getPublicElementsInside(mComponents[i])
+							getPublicElementsInside(oComponent)
 						);
-					}
+					});
 
 					for (var key in mUIAreas) {
 						aPublicElements = aPublicElements.concat(
@@ -259,6 +266,7 @@ sap.ui.define(
 				 * @function
 				 * @param {string|function} classNameSelector Either string or function
 				 * to be used when selecting a subset of elements
+				 * @returns {Array} Array of matched elements
 				 * @alias sap.ui.support.ExecutionScope.getElementsByClassName
 				 */
 				getElementsByClassName: function (classNameSelector) {
@@ -279,11 +287,12 @@ sap.ui.define(
 				 * @public
 				 * @function
 				 * @param {any} type Type of logged objects
+				 * @returns {Array} Array of logged objects
 				 * @alias sap.ui.support.ExecutionScope.getLoggedObjects
 				 */
 				getLoggedObjects: function (type) {
 					var log = jQuery.sap.log.getLogEntries(),
-						loggedObjects = [];
+						loggedObjects = [], elemIds;
 
 					// Add logEntries that have support info object,
 					// and that have the same type as the type provided
@@ -292,9 +301,11 @@ sap.ui.define(
 							return;
 						}
 
-						var elemIds = elements.map(function (element) {
-							return element.getId();
-						});
+						if (!elemIds){
+							elemIds = elements.map(function (element) {
+								return element.getId();
+							});
+						}
 
 						var hasElemId = !!logEntry.supportInfo.elementId,
 							typeMatch =
@@ -318,7 +329,14 @@ sap.ui.define(
 
 					return loggedObjects;
 				},
-				_getType: function () {
+				/**
+				 * Gets the type of the execution scope
+				 * @public
+				 * @function
+				 * @returns {string} The type of the execution scope. Possible values are <code>global</code>, <code>subtree</code> or <code>components</code>.
+				 * @alias sap.ui.support.ExecutionScope.getType
+				 */
+				getType: function () {
 					return _context.type;
 				},
 				_getContext: function () {

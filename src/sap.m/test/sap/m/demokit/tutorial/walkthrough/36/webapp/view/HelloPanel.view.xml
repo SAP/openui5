@@ -10,13 +10,14 @@
 		expanded="{= !${device>/system/phone} }">
 		<content>
 			<Button
+				id="helloDialogButton"
 				icon="sap-icon://world"
 				text="{i18n>openDialogButtonText}"
-				press="onOpenDialog"
+				press=".onOpenDialog"
 				class="sapUiSmallMarginEnd sapUiVisibleOnlyOnDesktop"/>
 			<Button
 				text="{i18n>showHelloButtonText}"
-				press="onShowHello"
+				press=".onShowHello"
 				class="myCustomButton"/>
 			<Input
 				value="{/recipient/name}"

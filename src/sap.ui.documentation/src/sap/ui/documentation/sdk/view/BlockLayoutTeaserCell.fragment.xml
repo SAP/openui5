@@ -2,7 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
-	xmlns:custom="sap.ui.documentation.sdk.controls">
+	xmlns:custom="sap.ui.documentation">
 <l:BlockLayoutCell
 	width="4">
 	<l:Grid
@@ -10,7 +10,7 @@
 		defaultSpan="L6 M12 S12">
 		<l:VerticalLayout class="sapUiTinyMarginEnd" width="100%">
 			<core:Icon
-				src="{icon}"
+				src="sap-icon://{icon}"
 				size="2rem"
 				color="Default">
 			</core:Icon>
@@ -39,7 +39,7 @@
 			<l:HorizontalLayout>
 				<Label
 					design="Bold"
-					text="{i18n>demoAppTileLibrary}"
+					text="{i18n>DEMO_APPS_LIBRARY}"
 					class="sapUiTinyMarginEnd"/>
 				<Link
 					text="sap.m"

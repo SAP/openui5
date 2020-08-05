@@ -1,0 +1,272 @@
+[
+	{
+						"id": "testComponent",
+						"technicalName": "MockController",
+						"editable": false,
+						"type": "element",
+						"visible": true,
+						"elements": [
+							{
+								"id": "testComponent",
+								"technicalName": "rootControl",
+								"editable": false,
+								"type": "aggregation",
+								"elements": [
+									{
+										"id": "mainPage",
+										"technicalName": "sap.m.Page",
+										"editable": true,
+										"type": "element",
+										"name": "Page",
+										"icon": "sap/m/designtime/Page.icon.svg",
+										"visible": true,
+										"elements": [
+											{
+												"id": "mainPage",
+												"technicalName": "content",
+												"editable": false,
+												"type": "aggregation",
+												"elements": [
+													{
+														"id": "objPage",
+														"technicalName": "sap.uxap.ObjectPageLayout",
+														"editable": true,
+														"type": "element",
+														"name": "LAYOUT_CONTROL_NAME",
+														"visible": true,
+														"elements": [
+															{
+																"id": "objPage",
+																"technicalName": "sections",
+																"editable": false,
+																"type": "aggregation",
+																"elements": [
+																	{
+																		"id": "objSection",
+																		"technicalName": "sap.uxap.ObjectPageSection",
+																		"editable": true,
+																		"type": "element",
+																		"name": "Section",
+																		"icon": "sap/uxap/designtime/ObjectPageSection.icon.svg",
+																		"visible": true,
+																		"instanceName": "Section Title",
+																		"elements": [
+																			{
+																				"id": "objSection",
+																				"technicalName": "customAnchorBarButton",
+																				"editable": false,
+																				"type": "aggregation"
+																			},
+																			{
+																				"id": "objSection",
+																				"technicalName": "subSections",
+																				"editable": false,
+																				"type": "aggregation",
+																				"elements": [
+																					{
+																						"id": "objSubSection",
+																						"technicalName": "sap.uxap.ObjectPageSubSection",
+																						"editable": true,
+																						"type": "element",
+																						"icon": "sap/uxap/designtime/ObjectPageSubSection.icon.svg",
+																						"visible": true,
+																						"instanceName": "Subsection Title",
+																						"elements": [
+																							{
+																								"id": "objSubSection",
+																								"technicalName": "customAnchorBarButton",
+																								"editable": false,
+																								"type": "aggregation"
+																							},
+																							{
+																								"id": "objSubSection",
+																								"technicalName": "blocks",
+																								"editable": false,
+																								"type": "aggregation",
+																								"elements": [
+																									{
+																										"id": "layout1",
+																										"technicalName": "sap.ui.layout.VerticalLayout",
+																										"editable": true,
+																										"type": "element",
+																										"instanceName": "Vertical Layout Label",
+																										"name": "Vertical Container",
+																										"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
+																										"visible": true,
+																										"elements": [
+																											{
+																												"id": "layout1",
+																												"technicalName": "content",
+																												"editable": false,
+																												"type": "aggregation",
+																												"elements": [
+																													{
+																														"id": "button1",
+																														"technicalName": "sap.m.Button",
+																														"editable": true,
+																														"type": "element",
+																														"icon": "sap/m/designtime/Button.icon.svg",
+																														"visible": true
+																													}
+																												]
+																											}
+																										]
+																									}
+																								]
+																							},
+																							{
+																								"id": "objSubSection",
+																								"technicalName": "moreBlocks",
+																								"editable": false,
+																								"type": "aggregation"
+																							},
+																							{
+																								"id": "objSubSection",
+																								"technicalName": "actions",
+																								"editable": false,
+																								"type": "aggregation"
+																							}
+																						]
+																					}
+																				]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																"id": "objPage",
+																"technicalName": "headerTitle",
+																"editable": false,
+																"type": "aggregation"
+															},
+															{
+																"id": "objPage",
+																"technicalName": "headerContent",
+																"editable": false,
+																"type": "aggregation"
+															},
+															{
+																"id": "objPage",
+																"technicalName": "footer",
+																"editable": false,
+																"type": "aggregation"
+															},
+															{
+																"id": "objPage",
+																"technicalName": "landmarkInfo",
+																"editable": false,
+																"type": "aggregation"
+															},
+															{
+																"id": "objPage",
+																"technicalName": "_anchorBar",
+																"editable": false,
+																"type": "aggregation",
+																"elements": [
+																	{
+																		"id": "objPage-anchBar",
+																		"technicalName": "sap.uxap.AnchorBar",
+																		"editable": true,
+																		"type": "element",
+																		"visible": false,
+																		"elements": [
+																			{
+																			"id": "objPage-anchBar",
+																			"technicalName": "content",
+																			"editable": false,
+																			"type": "aggregation"
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													}
+												]
+											},
+											{
+												"id": "mainPage",
+												"technicalName": "customHeader",
+												"editable": false,
+												"type": "aggregation"
+											},
+											{
+												"id": "mainPage",
+												"technicalName": "footer",
+												"editable": false,
+												"type": "aggregation"
+											},
+											{
+												"id": "mainPage",
+												"technicalName": "subHeader",
+												"editable": false,
+												"type": "aggregation"
+											},
+											{
+												"id": "mainPage",
+												"technicalName": "headerContent",
+												"editable": false,
+												"type": "aggregation"
+											}
+										]
+									}
+								]
+							}
+						]
+					},
+	{
+		"id": "layout2",
+		"technicalName": "sap.ui.layout.VerticalLayout",
+		"editable": true,
+		"type": "element",
+		"name": "Vertical Container",
+		"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
+		"visible": true,
+		"elements": [
+			{
+				"id": "layout2",
+				"technicalName": "content",
+				"editable": false,
+				"type": "aggregation",
+				"elements": [
+					{
+						"id": "button2",
+						"technicalName": "sap.m.Button",
+						"editable": true,
+						"type": "element",
+						"icon": "sap/m/designtime/Button.icon.svg",
+						"visible": true
+					},
+					{
+						"editable": true,
+						"elements": [
+							{
+								"editable": false,
+								"elements": [
+									{
+										"editable": true,
+										"icon": "sap/m/designtime/Button.icon.svg",
+										"id": "button3",
+										"technicalName": "sap.m.Button",
+										"type": "element",
+										"visible": false
+									}
+								],
+								"id": "layout3",
+								"technicalName": "content",
+								"type": "aggregation"
+							}
+						],
+						"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
+						"id": "layout3",
+						"name": "Vertical Container",
+						"technicalName": "sap.ui.layout.VerticalLayout",
+						"type": "element",
+						"visible": false
+					}
+				]
+			}
+		]
+	}
+]

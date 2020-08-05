@@ -1,0 +1,55 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.DataService"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Data service" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<Panel>
+			<VBox>
+				<HBox class="sapUiMediumMarginLeft">
+					<Text class="sapUiMediumMarginRight" text="Cards using the same data service. Calling add data of the data service automatically updates both cards." />
+					<Button text="Add data" press=".onPress" />
+				</HBox>
+				<HBox>
+					<w:Card
+						width="400px"
+						manifest="./cardsdemo/model/manifests/manifest_dataService.json"
+						class="sapUiMediumMargin" />
+					<w:Card
+						manifest="./cardsdemo/model/manifests/manifest_dataService2.json"
+						width="400px"
+						class="sapUiMediumMargin" />
+				</HBox>
+				<HBox class="sapUiMediumMarginLeft">
+					<Text class="sapUiMediumMarginRight" text="Card refresh function. Can be called to retrigger backend requests manually." />
+					<Button text="Refresh Sales Orders" press=".onRefresh" />
+				</HBox>
+				<HBox>
+					<w:Card
+						id="SalesOrdersCard"
+						manifest="./cardsdemo/model/manifests/manifest_refresh.json"
+						width="400px"
+						class="sapUiMediumMargin" />
+				</HBox>
+				<HBox class="sapUiMediumMarginLeft">
+					<Text class="sapUiMediumMarginRight" text="Card data refreshing interval. The card below is triggering requests every 5 seconds." />
+				</HBox>
+				<HBox>
+					<w:Card
+						manifest="./cardsdemo/model/manifests/manifest_updateInterval.json"
+						width="400px"
+						class="sapUiMediumMargin" />
+				</HBox>
+			</VBox>
+		</Panel>
+	</Page>
+</mvc:View>

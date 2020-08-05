@@ -1,0 +1,43 @@
+{
+  "1.54.0": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "1a202284d85a4342cbdac9814d6faae81252747a",
+        "type": "FEATURE",
+        "text": "Field: add FieldFinfo",
+        "references": []
+      },
+      {
+        "id": "e922a2c1b8b67b5f6d20efb900dfa823d65bc04d",
+        "type": "FEATURE",
+        "text": "CustomFieldInfo for Field",
+        "references": []
+      },
+      {
+        "id": "550c2c3d5d11aa37aa7d7567377f5293ac3da083",
+        "type": "FIX",
+        "text": "MDC: Adapter wrong method call for entity set calculation",
+        "references": []
+      },
+      {
+        "id": "1d21953d14719ad92d2f15419daac19b5c3927a6",
+        "type": "FEATURE",
+        "text": "mdc:Filterbar enablePersonalization option for Adapt Filters",
+        "references": []
+      },
+      {
+        "id": "35a67e39fc3ddb3181e0017d973ed0f7363dde94",
+        "type": "FEATURE",
+        "text": "mdc:VHD Search Template Implementation(reusing filterbar)",
+        "references": []
+      },
+      {
+        "id": "38843fe8f905783ebc9f5035010dd16087700175",
+        "type": "FIX",
+        "text": "mdc:Table Getting Column Header in VHD table",
+        "references": []
+      }
+    ]
+  }
+}

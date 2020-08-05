@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['./TreeItemBaseRenderer', 'sap/ui/core/Renderer'],
+sap.ui.define(["./TreeItemBaseRenderer", "sap/ui/core/Renderer"],
 	function(TreeItemBaseRenderer, Renderer) {
 	"use strict";
 
@@ -11,6 +11,7 @@ sap.ui.define(['./TreeItemBaseRenderer', 'sap/ui/core/Renderer'],
 	 * @namespace
 	 */
 	var StandardTreeItemRenderer = Renderer.extend(TreeItemBaseRenderer);
+	StandardTreeItemRenderer.apiVersion = 2;
 
 	StandardTreeItemRenderer.renderLIContent = function(rm, oLI) {
 
@@ -19,13 +20,13 @@ sap.ui.define(['./TreeItemBaseRenderer', 'sap/ui/core/Renderer'],
 			rm.renderControl(oLI._getIconControl());
 		}
 
-		rm.writeEscaped(oLI.getTitle());
+		rm.text(oLI.getTitle());
 
 	};
 
 	StandardTreeItemRenderer.renderLIAttributes = function(rm, oLI) {
 		TreeItemBaseRenderer.renderLIAttributes.apply(this, arguments);
-		rm.addClass("sapMSTI");
+		rm.class("sapMSTI");
 	};
 
 	return StandardTreeItemRenderer;

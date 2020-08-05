@@ -40,19 +40,24 @@ describe("sap.m.RatingIndicator", function() {
 	});
 
 	it('Should show Rating Table', function() {
-		expect(takeScreenshot(element(by.id('items')))).toLookAs('rating-table');
+		browser.executeScript('document.getElementById("items").scrollIntoView()').then(function() {
+			expect(takeScreenshot(element(by.id('items')))).toLookAs('rating-table');
+		});
 	});
 
 	it('Should show Rating List', function() {
-		element(by.id('ratingList')).click();
-		expect(takeScreenshot(element(by.id('ratingList')))).toLookAs('ratingList');
+		browser.executeScript('document.getElementById("ratingList").scrollIntoView()').then(function() {
+			element(by.id('ratingList')).click();
+			expect(takeScreenshot(element(by.id('ratingList')))).toLookAs('ratingList');
+		});
 	});
 
 	it('Should show RatingIndicator with automatically updated label', function() {
-		element(by.id('automaticRIwithLabel')).click();
-		expect(takeScreenshot(element(by.id('automaticRIwithLabel')))).toLookAs('RI-not-changed');
-		element(by.id('automaticRI')).click();
-		expect(takeScreenshot(element(by.id('automaticRIwithLabel')))).toLookAs('RI-changed');
+		browser.executeScript('document.getElementById("automaticRIwithLabel").scrollIntoView()').then(function() {
+			element(by.id('automaticRIwithLabel')).click();
+			expect(takeScreenshot(element(by.id('automaticRIwithLabel')))).toLookAs('RI-not-changed');
+			element(by.id('automaticRI')).click();
+			expect(takeScreenshot(element(by.id('automaticRIwithLabel')))).toLookAs('RI-changed');
+		});
 	});
-
 });

@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ObjectListItemMarkers",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.ObjectListItemMarkers.List",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"List.view.xml",
+					"List.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

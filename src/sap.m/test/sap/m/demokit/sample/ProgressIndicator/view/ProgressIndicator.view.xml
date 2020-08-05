@@ -1,0 +1,123 @@
+<mvc:View
+	controllerName="sap.m.sample.ProgressIndicator.controller.ProgressIndicator"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+			<Text text="Regular Mode" class="sapUiSmallMarginBottom" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="30"
+				displayValue="30%"
+				showValue="true"
+				state="None" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="50"
+				showValue="false"
+				state="Error" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="99"
+				displayValue="0.99GB of 1GB"
+				showValue="true"
+				state="Success" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="25"
+				displayValue="25%"
+				showValue="true"
+				state="Warning" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="40"
+				displayValue="40%"
+				showValue="true"
+				state="Information" />
+			<Text text="Invalid percent values" class="sapUiSmallMarginBottom" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="-20"
+				displayValue="-20"
+				showValue="true"
+				state="None" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="120"
+				displayValue="120"
+				showValue="true"
+				state="None" />
+			<Text text="Display Only Mode" class="sapUiSmallMarginBottom" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="30"
+				displayValue="30%"
+				showValue="true"
+				state="None"
+				displayOnly="true" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="50"
+				showValue="false"
+				state="Error"
+				displayOnly="true" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="99"
+				displayValue="0.99GB of 1GB"
+				showValue="true"
+				state="Success"
+				displayOnly="true" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="25"
+				displayValue="25%"
+				showValue="true"
+				state="Warning"
+				displayOnly="true" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="40"
+				displayValue="40%"
+				showValue="true"
+				state="Information"
+				displayOnly="true" />
+			<Text text="Set the ProgressIndicator to 100% with animation" class="sapUiSmallMarginBottom" />
+			<ProgressIndicator
+				id="pi-with-animation"
+				class="sapUiSmallMarginBottom"
+				displayValue="0%"
+				state="Success"
+				displayOnly="true"/>
+			<FlexBox>
+				<Button id="pi-with-animation-button0"
+				        class="sapUiSmallMarginEnd"
+				        text="Set to 0%"
+				        press="onPIChangeValueButtonPressed"/>
+				<Button id="pi-with-animation-button100"
+				        text="Set to 100%"
+				        press="onPIChangeValueButtonPressed"/>
+			</FlexBox>
+			<Text text="Set the ProgressIndicator to 100% without animation" class="sapUiSmallMarginBottom" />
+			<ProgressIndicator
+				id="pi-without-animation"
+				class="sapUiSmallMarginBottom"
+				displayValue="0%"
+				state="Success"
+				displayOnly="true"
+				displayAnimation= "false" />
+			<FlexBox>
+				<Button id="pi-without-animation-button0"
+				        class="sapUiSmallMarginEnd"
+				        text="Set to 0%"
+				        press="onPIChangeValueButtonPressed"/>
+				<Button id="pi-without-animation-button100"
+				        text="Set to 100%"
+				        press="onPIChangeValueButtonPressed"/>
+			</FlexBox>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

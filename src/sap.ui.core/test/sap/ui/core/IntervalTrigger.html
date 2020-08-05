@@ -43,16 +43,17 @@
 			}
 		},
 
-		renderer : function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sampleListener");
-			oRm.writeClasses();
-			oRm.write(">");
-
-			oRm.write("Lorem Ipsum")
-
-			oRm.write("</div>");
+		renderer : {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("div", oControl);
+				oRm.class("sampleListener");
+				oRm.openEnd();
+	
+				oRm.text("Lorem Ipsum")
+	
+				oRm.close("div");
+			}
 		},
 
 		onclick : function(oEvent) {
@@ -119,7 +120,7 @@
 	}).placeAt("attachIntervalBtn");
 </script>
 </head>
-<body class="sapUiBody" role="application">
+<body class="sapUiBody">
 	<h1>Test Page for sap.ui.core.IntervalTrigger</h1>
 
 	<div id="attachIntervalBtn"></div>

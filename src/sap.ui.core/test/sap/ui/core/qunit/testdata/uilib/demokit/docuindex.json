@@ -1,0 +1,28 @@
+{
+  "explored": {
+    "entitiesDefaults": {
+      "appComponent": "DEF-AU-LT",
+      "formFactors": "ML"
+    },
+    "samplesRef": {
+      "namespace": "sap.ui.testlib.sample",
+      "ref": "test-resources/sap/ui/core/qunit/testdata/uilib/demokit/sample"
+    },
+    "entities": [
+      {
+        "id": "sap.ui.testlib.TestButton",
+        "name": "Test Button",
+        "category": "Button",
+        "since": "1.0",
+        "samples": ["sap.ui.testlib.sample.TestButton"]
+      }
+    ],
+    "samples": [
+      {
+        "id": "sap.ui.testlib.sample.TestButton",
+        "name": "Test Button Sample",
+        "description": "Sample with Test Button."
+      }
+    ]
+  }
+}

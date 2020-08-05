@@ -1,8 +1,8 @@
-<View xmlns="sap.m" controllerName="sap.ui.core.sample.TargetsStandalone.targetsApp.controller.View1">
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" controllerName="sap.ui.core.sample.TargetsStandalone.targetsApp.controller.View1">
 	<Page
 		title="First Page">
 		<content>
 			<Button text="To the second page" press="onToView2"/>
 		</content>
 	</Page>
-</View>
+</mvc:View>

@@ -4,33 +4,39 @@
 
 // Provides control sap.m.Page.
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/m/Title",
 	"sap/m/Button",
 	"sap/m/Bar",
+	'sap/m/TitleAlignmentMixin',
 	"sap/ui/core/ContextMenuSupport",
+	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/ui/core/Element",
-	"./PageRenderer"
+	"./TitlePropagationSupport",
+	"./PageRenderer",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	ScrollEnablement,
 	Title,
 	Button,
 	Bar,
+	TitleAlignmentMixin,
 	ContextMenuSupport,
+	ResponsivePaddingsEnablement,
 	coreLibrary,
 	Device,
 	Element,
-	PageRenderer
-	) {
+	TitlePropagationSupport,
+	PageRenderer,
+	jQuery
+) {
 		"use strict";
 
 
@@ -45,6 +51,9 @@ function(
 
 		// shortcut for sap.ui.core.TitleLevel
 		var TitleLevel = coreLibrary.TitleLevel;
+
+		// shortcut for sap.m.TitleAlignment
+		var TitleAlignment = library.TitleAlignment;
 
 		var DIV = "div";
 		var HEADER = "header";
@@ -75,7 +84,10 @@ function(
 		 * This is enabled with the <code>floatingFooter</code> property.
 		 *
 		 * <b>Note:</b> All accessibility information for the different areas and their corresponding ARIA roles is set in the aggregation <code>landmarkInfo</code> of type {@link sap.m.PageAccessibleLandmarkInfo}
-		 *
+		 * <h3>Responsive Behavior</h3>
+		 * When using the sap.m.Page in SAP Quartz theme, the breakpoints and layout paddings could be determined by the container's width.
+		 * To enable this concept and add responsive paddings to an element of the Page control, you may add the following classes depending on your use case:
+		 * <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--subHeader</code>, <code>sapUiResponsivePadding--content</code>, <code>sapUiResponsivePadding--footer</code>, <code>sapUiResponsivePadding--floatingFooter</code>.
 		 * @extends sap.ui.core.Control
 		 * @mixes sap.ui.core.ContextMenuSupport
 		 * @author SAP SE
@@ -190,7 +202,16 @@ function(
 					 * Decides whether the footer can float.
 					 * When set to true, the footer is not fixed below the content area anymore, but rather floats over it with a slight offset from the bottom.
 					 */
-					floatingFooter: {type: "boolean", group:"Appearance", defaultValue: false }
+					floatingFooter: {type: "boolean", group:"Appearance", defaultValue: false },
+
+					/**
+					 * Specifies the Title alignment (theme specific).
+					 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+					 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+					 * @since 1.72
+					 * @public
+					 */
+					titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
 				},
 				defaultAggregation: "content",
 				aggregations: {
@@ -249,13 +270,32 @@ function(
 					 */
 					navButtonPress: {}
 				},
+				dnd: { draggable: false, droppable: true },
 				designtime: "sap/m/designtime/Page.designtime"
 			}
 		});
 
 		ContextMenuSupport.apply(Page.prototype);
 
+		ResponsivePaddingsEnablement.call(Page.prototype, {
+			header: {suffix: "intHeader"},
+			subHeader: {selector: ".sapMPageSubHeader .sapMIBar"},
+			content: {suffix: "cont"},
+			footer: {selector: ".sapMPageFooter:not(.sapMPageFloatingFooter) .sapMIBar"},
+			floatingFooter: {selector: ".sapMPageFloatingFooter.sapMPageFooter"}
+		});
+
+		// Add title propagation support
+		TitlePropagationSupport.call(Page.prototype, "content", function () {
+			return this._headerTitle ? this._headerTitle.getId() : false;
+		});
+
 		Page.FOOTER_ANIMATION_DURATION = 350;
+
+		Page.prototype.init = function () {
+			this._initTitlePropagationSupport();
+			this._initResponsivePaddingsEnablement();
+		};
 
 		// Return true if scrolling is allowed
 		Page.prototype._hasScrolling = function () {
@@ -277,10 +317,16 @@ function(
 			if (this._headerTitle) {
 				this._headerTitle.setLevel(this.getTitleLevel());
 			}
+
+			this._ensureNavButton(); // creates this._navBtn, if required
 		};
 
 		Page.prototype.onAfterRendering = function () {
-			jQuery.sap.delayedCall(10, this, this._adjustFooterWidth);
+			this.$().toggleClass("sapMPageBusyCoversAll", !this.getContentOnlyBusy());
+
+			// If contentOnlyBusy property is set, then the busy indicator should cover only the content area
+			// Otherwise all clicks in the footer, header and subheader might be suppressed
+			this._sBusySection = this.getContentOnlyBusy() ? 'cont' : null;
 		};
 
 		/**
@@ -332,25 +378,24 @@ function(
 		};
 
 		Page.prototype._ensureNavButton = function () {
+
+			if (!this.getShowNavButton()) {
+				return;
+			}
+
 			var sBackText = this.getNavButtonTooltip() || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PAGE_NAVBUTTON_TEXT"); // any other types than "Back" do not make sense anymore in Blue Crystal
 
 			if (!this._navBtn) {
-				var sNavButtonType = this.getNavButtonType();
-
 				this._navBtn = new Button(this.getId() + "-navButton", {
-					press: jQuery.proxy(function () {
+					press: function () {
 						this.fireNavButtonPress();
 						this.fireNavButtonTap();
-					}, this)
+					}.bind(this)
 				});
-
-				if (Device.os.android && sNavButtonType == ButtonType.Back) {
-					this._navBtn.setType(ButtonType.Up);
-				} else {
-					this._navBtn.setType(sNavButtonType);
-				}
 			}
 
+			this._navBtn.setType(this.getNavButtonType());
+			this._navBtn.setText(this.getNavButtonText());
 			this._navBtn.setTooltip(sBackText);
 		};
 
@@ -400,69 +445,14 @@ function(
 			}
 
 			if (useAnimation) {
-				jQuery.sap.delayedCall(Page.FOOTER_ANIMATION_DURATION, this, function () {
-					$footer.toggleClass("sapUiHidden", bShowFooter);
-				});
+				setTimeout(function () {
+					$footer.toggleClass("sapUiHidden", !bShowFooter);
+				}, Page.FOOTER_ANIMATION_DURATION);
 			} else {
-				$footer.toggleClass("sapUiHidden", bShowFooter);
+				$footer.toggleClass("sapUiHidden", !bShowFooter);
 			}
 
 			return this;
-		};
-
-		Page.prototype.setNavButtonType = function (sNavButtonType) {
-			this._ensureNavButton(); // creates this._navBtn, if required
-			if (!Device.os.ios && sNavButtonType == ButtonType.Back) {
-				// internal conversion from Back to Up for non-iOS platform
-				this._navBtn.setType(ButtonType.Up);
-			} else {
-				this._navBtn.setType(sNavButtonType);
-			}
-			this.setProperty("navButtonType", sNavButtonType, true);
-			return this;
-		};
-
-		Page.prototype.setNavButtonText = function (sText) {
-			this._ensureNavButton(); // creates this._navBtn, if required
-			this.setProperty("navButtonText", sText, true);
-			return this;
-		};
-
-		Page.prototype.setNavButtonTooltip = function (sText) {
-			this.setProperty("navButtonTooltip", sText, true);
-			this._ensureNavButton(); // creates this._navBtn, if required
-			return this;
-		};
-
-		Page.prototype.setIcon = function (sIconSrc) {
-			var sOldValue = this.getIcon();
-			if (sOldValue === sIconSrc) {
-				return this;
-			}
-
-			this.setProperty("icon", sIconSrc, true);
-			return this;
-		};
-
-		Page.prototype._adjustFooterWidth = function () {
-			if (!this.getShowFooter() || !this.getFloatingFooter() || !this.getFooter()) {
-				return;
-			}
-
-			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last();
-
-			if (this._contentHasScroll()) {
-				$footer.css("right", jQuery.position.scrollbarWidth() + "px");
-				$footer.css("width", "initial");
-			} else {
-				$footer.css("right", 0);
-				$footer.css("width", "");
-			}
-		};
-
-		Page.prototype._contentHasScroll = function () {
-			var $section = jQuery.sap.byId(this.getId() + "-cont", this.getDomRef());
-			return $section[0].scrollHeight > $section.innerHeight();
 		};
 
 		/**
@@ -530,6 +520,9 @@ function(
 			if (!oInternalHeader) {
 				this.setAggregation("_internalHeader", new Bar(this.getId() + "-intHeader"), true); // don"t invalidate - this is only called before/during rendering, where invalidation would lead to double rendering,  or when invalidation anyway happens
 				oInternalHeader = this.getAggregation("_internalHeader");
+
+				// call the method that registers this Bar for alignment
+				this._setupBarTitleAlignment(oInternalHeader, this.getId() + "_internalHeader");
 
 				if (this.getShowNavButton() && this._navBtn) {
 					this._updateHeaderContent(this._navBtn, "left", 0);
@@ -644,7 +637,7 @@ function(
 		 * Scrolls to the given position. Only available if enableScrolling is set to "true".
 		 *
 		 * @param {int} y The vertical pixel position to scroll to. Scrolling down happens with positive values.
-		 * @param {int} time The duration of animated scrolling. To scroll immediately without animation, give 0 as value. 0 is also the default value, when this optional parameter is omitted.
+		 * @param {int} [time=0] The duration of animated scrolling in milliseconds. The value <code>0</code> results in immediate scrolling without animation.
 		 * @returns {sap.m.Page} <code>this</code> to facilitate method chaining.
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -657,33 +650,35 @@ function(
 		};
 
 		/**
-		 * Scrolls to an element(DOM or sap.ui.core.Element) within the page if the element is rendered.
+		 * Scrolls to an element (DOM or sap.ui.core.Element) within the page if the element is rendered.
 		 * @param {HTMLElement | sap.ui.core.Element} oElement The element to which should be scrolled.
-		 * @param {int} [iTime=0] The duration of animated scrolling. To scroll immediately without animation, give 0 as value or leave it default.
+		 * @param {int} [iTime=0]
+		 *           The duration of animated scrolling in milliseconds. To scroll immediately without animation,
+		 *           give 0 as value.
+		 * @param {int[]} [aOffset=[0,0]]
+		 *           Specifies an additional left and top offset of the target scroll position, relative to
+		 *           the upper left corner of the DOM element
 		 * @returns {sap.m.Page} <code>this</code> to facilitate method chaining.
 		 * @since 1.30
 		 * @public
 		 */
-		Page.prototype.scrollToElement = function (oElement, iTime) {
+		Page.prototype.scrollToElement = function (oElement, iTime, aOffset) {
 			if (oElement instanceof Element) {
 				oElement = oElement.getDomRef();
 			}
 
 			if (this._oScroller) {
-				this._oScroller.scrollToElement(oElement, iTime);
+				this._oScroller.scrollToElement(oElement, iTime, aOffset);
 			}
-			return this;
-		};
-
-		Page.prototype.setContentOnlyBusy = function (bContentOnly) {
-			this.setProperty("contentOnlyBusy", bContentOnly, true); // no re-rendering
-			this.$().toggleClass("sapMPageBusyCoversAll", !bContentOnly);
 			return this;
 		};
 
 		Page.prototype.setCustomHeader = function(oHeader) {
 
 			this.setAggregation("customHeader", oHeader);
+
+			this.toggleStyleClass("sapFShellBar-CTX", oHeader && oHeader.isA("sap.f.ShellBar"));
+
 			/*
 			 * Runs Fiori 2.0 adaptation for the header
 			 */
@@ -700,6 +695,9 @@ function(
 		Page.prototype._getAdaptableContent = function () {
 			return this._getAnyHeader();
 		};
+
+		// enrich the control functionality with TitleAlignmentMixin
+		TitleAlignmentMixin.mixInto(Page.prototype);
 
 		return Page;
 	});

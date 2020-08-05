@@ -1,0 +1,159 @@
+<mvc:View
+xmlns="sap.m"
+xmlns:mvc="sap.ui.core.mvc"
+xmlns:grid="sap.ui.layout.cssgrid"
+xmlns:core="sap.ui.core"
+xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
+<Panel  id="CssLayOut" width="100%" class="sapUiResponsiveMargin">
+	<headerToolbar>
+		<Toolbar height="3rem">
+			<Title text=" CssGrid basic examples"/>
+		</Toolbar>
+	</headerToolbar>
+	<content>
+		<Panel id="panel1" width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
+			<headerToolbar>
+				<Toolbar height="3rem">
+					<Title text=" CssGrid with properties: gridTemplateColumns=repeat(auto-fit, 8rem), gridAutoRows=1fr, gridGap=0.25rem 0.25rem"/>
+				</Toolbar>
+			</headerToolbar>
+			<content>
+				<Slider value="100" app:mydata="grid1" liveChange="onSliderMoved" />
+				<grid:CSSGrid
+						id="grid1"
+						gridTemplateColumns="repeat(auto-fit, 8rem)"
+						gridAutoRows="1fr"
+						gridGap="     0.25rem     0.25rem    "
+						items="{ path: '/' }">
+
+					<VBox height="100%">
+						<VBox class="sapUiSmallMargin demoBox">
+							<layoutData>
+								<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+							</layoutData>
+							<Title text="{title} (Click me)" wrapping="true" />
+							<Label text="{subtitle}" wrapping="true" />
+						</VBox>
+					</VBox>
+				</grid:CSSGrid>
+			</content>
+		</Panel>
+
+		<Panel id="panel2" width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
+			<headerToolbar>
+				<Toolbar height="3rem">
+					<Title text=" CssGrid as a container: no grid properties"/>
+				</Toolbar>
+			</headerToolbar>
+			<content>
+				<Slider value="100" app:mydata="grid2" liveChange="onSliderMoved" />
+				<grid:CSSGrid items="{ path: '/' }" id="grid2">
+					<VBox class="sapUiSmallMargin">
+						<layoutData>
+							<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+						</layoutData>
+						<Title text="{title} (Click me)" wrapping="true" />
+						<Label text="{subtitle}" wrapping="true" />
+					</VBox>
+				</grid:CSSGrid>
+			</content>
+		</Panel>
+
+		<Panel id="panel3" width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
+			<headerToolbar>
+				<Toolbar height="3rem">
+					<Title text=" CssGrid: gridTemplateColumns=1fr 2fr gridGap=0.25rem 0.25rem"/>
+				</Toolbar>
+			</headerToolbar>
+			<content>
+				<Slider value="100" app:mydata="grid3" liveChange="onSliderMoved" />
+				<grid:CSSGrid items="{ path: '/' }" id="grid3">
+					<grid:customLayout>
+						<grid:GridBasicLayout
+								gridTemplateColumns="1fr 2fr"
+								gridGap="0.25rem 0.25rem">
+						</grid:GridBasicLayout>
+					</grid:customLayout>
+					<VBox class="sapUiSmallMargin">
+						<layoutData>
+							<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+						</layoutData>
+						<Title text="{title} (Click me)" wrapping="true" />
+						<Label text="{subtitle}" wrapping="true" />
+					</VBox>
+				</grid:CSSGrid>
+			</content>
+		</Panel>
+		<Panel id="panel4" width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
+			<headerToolbar>
+				<Toolbar height="3rem">
+					<Title text=" CssGrid: gridTemplateRows=1fr 2fr gridGap=0.25rem 0.25rem"/>
+				</Toolbar>
+			</headerToolbar>
+			<content>
+				<Slider value="100" app:mydata="grid4" liveChange="onSliderMoved" />
+				<grid:CSSGrid id="grid4">
+					<grid:customLayout>
+						<grid:GridBasicLayout
+								gridTemplateRows="2fr 1fr"
+								gridGap="0.25rem 0.25rem">
+						</grid:GridBasicLayout>
+					</grid:customLayout>
+					<VBox class="sapUiSmallMargin">
+						<layoutData>
+							<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+						</layoutData>
+						<Title text="Tile 1" wrapping="true" />
+						<Label text="Tile 1 subtitle" wrapping="true" />
+					</VBox>
+					<VBox class="sapUiSmallMargin">
+						<layoutData>
+							<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+						</layoutData>
+						<Title text="Tile 2" wrapping="true" />
+						<Label text="Tile 2 subtitle" wrapping="true" />
+					</VBox>
+				</grid:CSSGrid>
+			</content>
+		</Panel>
+		<Panel id="panel5" width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
+			<headerToolbar>
+				<Toolbar height="3rem">
+					<Title text=" CssGrid: Page Layout"/>
+				</Toolbar>
+			</headerToolbar>
+			<content>
+				<Slider value="100" app:mydata="grid5" liveChange="onSliderMoved" />
+				<grid:CSSGrid id="grid5" class="sapUiSmallMarginTop">
+					<grid:customLayout>
+						<grid:GridBasicLayout
+								gridTemplateColumns="auto 1fr"
+								gridTemplateRows="repeat(3, 2fr)"
+								gridGap="1rem">
+						</grid:GridBasicLayout>
+					</grid:customLayout>
+					<grid:items>
+						<core:HTML content='&lt;header class=&quot;sapUiSmallMarginBottom stylePageLayout&quot;&gt;Header&lt;/header&gt;'>
+							<core:layoutData>
+								<grid:GridItemLayoutData
+										gridColumn="1 / 4"/>
+							</core:layoutData>
+						</core:HTML>
+						<core:HTML content='&lt;aside  class=&quot;sapUiSmallMarginBottom stylePageLayout&quot;&gt;Left Side Bar&lt;/aside &gt;'>
+						</core:HTML>
+						<core:HTML content='&lt;article class=&quot;sapUiSmallMarginBottom stylePageLayout&quot;&gt;Main Content&lt;/article&gt;'>
+						</core:HTML>
+						<core:HTML content='&lt;footer class=&quot;sapUiSmallMarginBottom stylePageLayout&quot;&gt;Footer&lt;/footer&gt;'>
+							<core:layoutData>
+								<grid:GridItemLayoutData
+										gridColumn="1 / 4"/>
+							</core:layoutData>
+						</core:HTML>
+					</grid:items>
+				</grid:CSSGrid>
+			</content>
+		</Panel>
+	</content>
+</Panel>
+</mvc:View>

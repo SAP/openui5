@@ -1,0 +1,756 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "122558c2eab78703f321a308ccc7e859bf5962be",
+        "type": "FEATURE",
+        "text": "ExtensionPoint: Add new fully async load() API",
+        "references": []
+      },
+      {
+        "id": "982432236665d6777abbff723a94f6f2b5124bfc",
+        "type": "FIX",
+        "text": "View.create: Create view with owner component",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870259005"
+          }
+        ]
+      },
+      {
+        "id": "b451ba7171c982f46f455149dce189688cea0eb4",
+        "type": "FIX",
+        "text": "ui5loader: fix sync module loading on file protocol",
+        "references": []
+      },
+      {
+        "id": "c5334995b42f6808cad0a09cbbda9d179153be00",
+        "type": "FEATURE",
+        "text": "Adapter: Base Framework for adapter",
+        "references": []
+      },
+      {
+        "id": "696747cbac99374520c293581667bc22da8854a6",
+        "type": "FEATURE",
+        "text": "Modifier: applySettings",
+        "references": []
+      },
+      {
+        "id": "6f868d3fa0fa1f4f28a509ba24935d5e69c79329",
+        "type": "FEATURE",
+        "text": "Opa: configure frame size",
+        "references": []
+      },
+      {
+        "id": "ccd7cb6f0e5e8897f5112e3423adc1c26b81710d",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: Reuse XSRF token for services on same server",
+        "references": []
+      },
+      {
+        "id": "4c42535cbca6dd5262c64df4a9e4fb2733b018a4",
+        "type": "FIX",
+        "text": "CompositeBinding: Use validation of nested bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870235627"
+          }
+        ]
+      },
+      {
+        "id": "2d5a55c25648c5f1cc082cd03ecee17f1d0bbd9c",
+        "type": "FIX",
+        "text": "Controller: extension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870290800"
+          }
+        ]
+      },
+      {
+        "id": "5b2f10e6a78aa42825b88e7ae286fddf9fbf2376",
+        "type": "FIX",
+        "text": "ControllerExtension throws error",
+        "references": []
+      },
+      {
+        "id": "1cfa4c649d6fc559b9bf4679092db071dc62997d",
+        "type": "FIX",
+        "text": "sap.m.Input: Input width is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870182720"
+          }
+        ]
+      },
+      {
+        "id": "a36181b51fa475d9597275bfa385be4b72328ffe",
+        "type": "FIX",
+        "text": "Aggregation Forwarding: no exception when there is already content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870324891"
+          }
+        ]
+      },
+      {
+        "id": "33c0a9324f6b90075910e767ef5f7289ea41165c",
+        "type": "FIX",
+        "text": "Core: enable support for \"-\" and \".\" for initial modules",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2040"
+          }
+        ]
+      },
+      {
+        "id": "d70eee2985e72454981a8788cd989e6756b0e220",
+        "type": "FIX",
+        "text": "ODataTreeBinding: Add missing support for count mode \"InlineRepeat\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870142439"
+          }
+        ]
+      },
+      {
+        "id": "e9cc6031c2aed2e01ed1e644d5400db4639dba9d",
+        "type": "FIX",
+        "text": "Rebooting UI5 from another location (follow-up)",
+        "references": []
+      },
+      {
+        "id": "9a8831b0ad8bc811aa02ac640f297f7cdaf6795c",
+        "type": "FIX",
+        "text": "XMLComposite: Cloning and Creating",
+        "references": []
+      },
+      {
+        "id": "78a958ca5271687efaceae95d6a569e7aebbfccf",
+        "type": "FIX",
+        "text": "XMLComposite: Urgent fix duplicated retemplating",
+        "references": []
+      },
+      {
+        "id": "9cd5bddb9a2a9461ab28fbcfcc854500227f655c",
+        "type": "FIX",
+        "text": "qunit-junit reporter: Add null-check for qunit DOM node",
+        "references": []
+      },
+      {
+        "id": "13aeef9ad7168ec1fdf94b562415bf932b67d4c0",
+        "type": "FIX",
+        "text": "sap.ui.diagnostics: Binding path is not shown as \"invalid\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880230303"
+          }
+        ]
+      },
+      {
+        "id": "84efb2d8582fa1c36ec724552ffd9cd5cd140ae6",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.v4.lib._Requestor: OData-Version Header is optional for DELETE responses",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870241726"
+          }
+        ]
+      },
+      {
+        "id": "54fd1e9cdbceee177aab4b7f4859aa7606035514",
+        "type": "FIX",
+        "text": "ui5loader: don't modify global define/require props by default",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870246244"
+          }
+        ]
+      },
+      {
+        "id": "43bdd3c4ae02d772d7f8437476275df5155b4c93",
+        "type": "FEATURE",
+        "text": "Component: declarative API for initial components",
+        "references": []
+      },
+      {
+        "id": "1edcdbfc137f12a3a5f0452ca6feb259344587d1",
+        "type": "FEATURE",
+        "text": "Core: add Object.assign polyfill",
+        "references": []
+      },
+      {
+        "id": "47bcee4ed462a9a701ba0b42ebd7544be6db5892",
+        "type": "FEATURE",
+        "text": "ManagedObjectModel: Change privacy of the class to public",
+        "references": []
+      },
+      {
+        "id": "51b25aba71930e97f522778677015a993a4188be",
+        "type": "FEATURE",
+        "text": "core.CSSSize: Type validator now accepts viewport units",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1535"
+          }
+        ]
+      },
+      {
+        "id": "00b6bd10fa9f68d82ef3d56e426a946bf38294c1",
+        "type": "FEATURE",
+        "text": "sap.m.App: Exposed new mobileWebAppCapable property for iOS devices",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1866"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880176570"
+          }
+        ]
+      },
+      {
+        "id": "68bfec9524fa0c383b89205d76c602fec5461b3a",
+        "type": "FIX",
+        "text": "XMLCompositeMetadata: Take extension in account when caching",
+        "references": []
+      },
+      {
+        "id": "a03128928c7a4a3c69066e0637abafeaf7b73134",
+        "type": "FIX",
+        "text": "core.Popup: modal popup should blur the previous DOM after open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880224957"
+          }
+        ]
+      },
+      {
+        "id": "dd543bf8487ac18822f9f39a4a2592c2fa7820d4",
+        "type": "FIX",
+        "text": "ODataAnnotations: don't cache xml document",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880255457"
+          }
+        ]
+      },
+      {
+        "id": "3667c3e47dd66d943ce9c9e66bfd0f9b6fd23e99",
+        "type": "FIX",
+        "text": "Select: do not circumvent aggregation forwarding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880272104"
+          }
+        ]
+      },
+      {
+        "id": "60d15005a9ef5b972e2823c61cd95a79c1c4fda8",
+        "type": "FIX",
+        "text": "XMLComposite: Allow templating inside the composite",
+        "references": []
+      },
+      {
+        "id": "a3fb79e8d94609ab66415d689a03fc20fe16d400",
+        "type": "FIX",
+        "text": "sap.ui.model.analytics.AnalyticalBinding#getDownloadUrl: ensure all spaces are encoded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880277616"
+          }
+        ]
+      },
+      {
+        "id": "c538d5bee119fe1f0b4cc0295de8b52d8106455b",
+        "type": "FIX",
+        "text": "ui5loader: Add Missing slash for JSDoc in closing code tag",
+        "references": []
+      },
+      {
+        "id": "20693b9b2baab603ce9d4c02bd33c7aaca642686",
+        "type": "FIX",
+        "text": "ControllerMetadata: don't delete public methods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880318209"
+          }
+        ]
+      },
+      {
+        "id": "c1cd5165851c9a8b6d0efdb935e756fc03c82b1f",
+        "type": "FIX",
+        "text": "LocaleData: Return Islamic as preferred calendar for ar_SA",
+        "references": []
+      },
+      {
+        "id": "5fa29f148977e4d532a170e923c74f542d341100",
+        "type": "FIX",
+        "text": "ManagedObjectModel: Update in case aggregation gets removed",
+        "references": []
+      },
+      {
+        "id": "2c9f437e7d20519513ab9c762dcca12bc8f51b5c",
+        "type": "FIX",
+        "text": "core/Router: adapted JSDOC for #getTarget to be public",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2031"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880272477"
+          }
+        ]
+      },
+      {
+        "id": "b4ff9dbeab78e6fc2c2f6cef7802c57ab9deadad",
+        "type": "FIX",
+        "text": "sap.ui.model.analytics.AnalyticalBinding#_createMultiUnitRepresentativeEntry",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880292532"
+          }
+        ]
+      },
+      {
+        "id": "13c3f3cebdca499b608ef61f8c3a2c02ed6e43d7",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.AnnotationParser: better support annotations at arrays",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870310640"
+          }
+        ]
+      },
+      {
+        "id": "b3b397f85a3195111eebbe51c05d52074fd0eea0",
+        "type": "FEATURE",
+        "text": "Buddhist: Support Thai solar buddhist calendar",
+        "references": []
+      },
+      {
+        "id": "dcc0e7f468ff3eec8ef3607620d508895a1d09bd",
+        "type": "FIX",
+        "text": "Component: Make url-objects working again in asyncHints.libs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880339873"
+          }
+        ]
+      },
+      {
+        "id": "a98f94d60b7f9c858dedeee3cd24401227ca27aa",
+        "type": "FIX",
+        "text": "sap.m.BusyIndicator: Outline for focused busy indicator improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880276739"
+          }
+        ]
+      },
+      {
+        "id": "f0221df90769b7ffcae752eed4e512ecc6e42b81",
+        "type": "FIX",
+        "text": "sap/ui/dom/ActiveElementFix: empty object document.activeElement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880306217"
+          }
+        ]
+      },
+      {
+        "id": "e5c018680c5c41b07c1cd7ae2caade5cacbeef99",
+        "type": "FEATURE",
+        "text": "ui5loader: Add AMD compliant require.config()",
+        "references": []
+      },
+      {
+        "id": "837827ee30f44b949afb625e60fb275204762e46",
+        "type": "FEATURE",
+        "text": "ui5loader: Enable async loading when switching to amd mode",
+        "references": []
+      },
+      {
+        "id": "9336ec8959dbc4df78fcf4ab8ca0036bb1ba3ad3",
+        "type": "FIX",
+        "text": "Component: asyncHints with \"final\" flag",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880339873"
+          }
+        ]
+      },
+      {
+        "id": "3f4013953f146f725380457e905bc4848e21016a",
+        "type": "FIX",
+        "text": "Configuration: Ensure gregorian calendar for legacy patterns 1-6",
+        "references": []
+      },
+      {
+        "id": "f868d491437a5b1fc9eb7f1e0779c23d4971c753",
+        "type": "FIX",
+        "text": "ManagedObject: detach DS only if attached",
+        "references": []
+      },
+      {
+        "id": "56c2e86b7bcd3cd0fa190754f0c7e4d81ae49fa8",
+        "type": "FIX",
+        "text": "NumberFormat: Fix currency short format for RTL languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880305750"
+          }
+        ]
+      },
+      {
+        "id": "339cfff4812065bf354278feb3c8ab21cd1830b9",
+        "type": "FIX",
+        "text": "Promise Polyfill: Use native Promise in Safari / Edge",
+        "references": []
+      },
+      {
+        "id": "ca3b4482a521ff7f439e6faf772eccf0d82ad900",
+        "type": "FIX",
+        "text": "Theming Parameters: Improve inline parameters decoding",
+        "references": []
+      },
+      {
+        "id": "3b4b778d2c840038c7d33d005dc91d38d790bfa7",
+        "type": "FIX",
+        "text": "XMLComposite: Callback getResult now a Promise",
+        "references": []
+      },
+      {
+        "id": "41287985940af1f1ffab7854dbc3830a7d21d7ab",
+        "type": "FIX",
+        "text": "sap.ui.model.base.ManagedObjectModel",
+        "references": []
+      },
+      {
+        "id": "e59c866f898eae8cb8cd436321b9e08b6ee153cf",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.AnnotationParser: better support annotations at arrays",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880348376"
+          }
+        ]
+      },
+      {
+        "id": "57e0bdb76a4cd97153bf621d0a52ce2c0ada7bbf",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.type.Date/Time: use end of current year as example",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880272948"
+          }
+        ]
+      },
+      {
+        "id": "4001273c9bc5154c9de74773871703a9f80e1bd0",
+        "type": "FIX",
+        "text": "test/launchers/iFrameLauncher: fixed loader config access",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880373042"
+          }
+        ]
+      },
+      {
+        "id": "09434ce403775258e8f752699479292fcb531fe6",
+        "type": "FEATURE",
+        "text": "ODataAnnotations: expose eTag header",
+        "references": []
+      },
+      {
+        "id": "763c200157791337bc0d6dab99556d2ac5f3e279",
+        "type": "FEATURE",
+        "text": "OverflowToolbar: shrinking of controls is enabled",
+        "references": []
+      },
+      {
+        "id": "44e9000fa60d010148f02fefdf71f34ef7b6007b",
+        "type": "FEATURE",
+        "text": "adding sap.ui.core.IconColor.Contrast",
+        "references": []
+      },
+      {
+        "id": "8958b6baf77e9f91cfadca4e7942df140be49ab2",
+        "type": "FIX",
+        "text": "Component.getService(): Promise not rejecting",
+        "references": []
+      },
+      {
+        "id": "690b94d22ebcc83bb27ed421b378a91b2ab60819",
+        "type": "FIX",
+        "text": "QUnit: EnterText for number input was improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880332233"
+          }
+        ]
+      },
+      {
+        "id": "b2f62abe5c6663bd4c56901efc330b1db2c9ff4c",
+        "type": "FIX",
+        "text": "XMLComposite: Event propagation in cloning",
+        "references": []
+      },
+      {
+        "id": "7c121b646cc55b5b809e1d7db55f6ad19d2aaa46",
+        "type": "FIX",
+        "text": "jQuery.sap.loadResource: ignore URL params",
+        "references": []
+      },
+      {
+        "id": "ec9d5d3b732518b6b2b9392ec17e2f02c9f3256c",
+        "type": "FIX",
+        "text": "model.ODataUtils: Complement toupper on all filter operators",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880379389"
+          }
+        ]
+      },
+      {
+        "id": "afe894e1db2a172b1828481465f67009c28c93e2",
+        "type": "FIX",
+        "text": "sap/ui/dom/getComputedStyleFix: document.body is not there yet",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500003153742018"
+          }
+        ]
+      },
+      {
+        "id": "7f880b3805a40813ba4c4c3abf4385098c18f68f",
+        "type": "FIX",
+        "text": "sap/ui/model/Model: Force update refresh fix",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2038"
+          }
+        ]
+      },
+      {
+        "id": "8cfd719562ae7b32909341597991fc0e2aaf574b",
+        "type": "FEATURE",
+        "text": "XMLComposite: provide fragment content directly (string/xml)",
+        "references": []
+      },
+      {
+        "id": "228ce8fda6fb4a3c66d0a74b3af4e1eea4e30708",
+        "type": "FIX",
+        "text": "Core: Trigger ThemeCheck when a library has been initialized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870314182"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770568826"
+          }
+        ]
+      },
+      {
+        "id": "435071bf663424d0f44bd83f90e718853ecff29d",
+        "type": "FIX",
+        "text": "Fix aggregation forwarding issue with move in hierarchy",
+        "references": []
+      },
+      {
+        "id": "9f7735d15aabbbd8c8f413758ded46358ebfd96c",
+        "type": "FIX",
+        "text": "List/TreeBinding: Application filter vs control filter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880369677"
+          }
+        ]
+      },
+      {
+        "id": "1d957d861cac2b914f27b237b494799417572093",
+        "type": "FIX",
+        "text": "List/TreeBinding: Application filter vs control filter",
+        "references": []
+      },
+      {
+        "id": "a14a139c5bb8638e26a1ffe477b68366d9c5186d",
+        "type": "FIX",
+        "text": "List/TreeBinding: Application filter vs control filter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880369677"
+          }
+        ]
+      },
+      {
+        "id": "b7d9298346554026e8d613b8f79896496119a02b",
+        "type": "FIX",
+        "text": "NumberFormat: Several fixes for short currency formatting",
+        "references": []
+      },
+      {
+        "id": "533678d7eb0d6b673ed0e02399b02ad98fad565c",
+        "type": "FIX",
+        "text": "ODataAnnotations: restore cached arrays",
+        "references": []
+      },
+      {
+        "id": "53f7bbc2ba1c81adbaf656c3d5730994b295555e",
+        "type": "FIX",
+        "text": "Opa: parse boolean URL parameters",
+        "references": []
+      },
+      {
+        "id": "cd43a71560a273b3809433197b18c3d2aac78c74",
+        "type": "FEATURE",
+        "text": "CLDR: Upgrade to version 33.0.0",
+        "references": []
+      },
+      {
+        "id": "40a943f14426982cfcc5f9bf89d33cdea7bd8fd1",
+        "type": "FEATURE",
+        "text": "ODataTreeBinding: Add expand node to level API",
+        "references": []
+      },
+      {
+        "id": "cd4cf7d15b6fa2411daeb0c23ca158b9fba83b3f",
+        "type": "FIX",
+        "text": "XMLComposite: Bug in cloning events",
+        "references": []
+      },
+      {
+        "id": "c6aa071b8f297f1e897816051a1e38186f51e0a4",
+        "type": "FIX",
+        "text": "XMLComposite: Repairing of listeners for alternative types",
+        "references": []
+      },
+      {
+        "id": "7b654202ebbbae561d6eb68d3de7f5c39d0d5098",
+        "type": "FIX",
+        "text": "events/F6Navigation: Navigation not activated",
+        "references": []
+      },
+      {
+        "id": "44a8a279a0c8a5a3614f1c6b23a5f69d2739e806",
+        "type": "FIX",
+        "text": "performance/trace/FESR: reenabled FESR activation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880434071"
+          }
+        ]
+      },
+      {
+        "id": "3f29c79cb73acd5af890024a03edebd01ca5d6bb",
+        "type": "FIX",
+        "text": "sap.m.Carousel: pageChange event is now fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880419609"
+          }
+        ]
+      },
+      {
+        "id": "00d60f42042068a9096c98d374ad898a3a53e824",
+        "type": "FEATURE",
+        "text": "routing: add 'match' function to Router and Route to test a URL hash",
+        "references": []
+      },
+      {
+        "id": "2bbb20c42fc05c44bad3f723f891048a1a86dac0",
+        "type": "FEATURE",
+        "text": "thirdparty: update es6-promise polyfill to version 4.2.4",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2095"
+          }
+        ]
+      },
+      {
+        "id": "e606e682edd3d83a25599ba8cb70c5eefb659b09",
+        "type": "FIX",
+        "text": "AppCacheBuster: ignore query parameter for index lookup",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2116"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880439767"
+          }
+        ]
+      },
+      {
+        "id": "f499a6b468e12707ca8795db231e2c52ea069053",
+        "type": "FEATURE",
+        "text": "XMLComposite: Accessibility and focus",
+        "references": []
+      },
+      {
+        "id": "5e432e282024acb8105fa521635451901702fa06",
+        "type": "FIX",
+        "text": "FilterProcessor: Consider bCaseSensitive even if fnCompare is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002662642018"
+          }
+        ]
+      },
+      {
+        "id": "c05b084b4f64171d9b053a395a8450f3a21d0b63",
+        "type": "FIX",
+        "text": "Core: Library types don't reset their module value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880498399"
+          }
+        ]
+      }
+    ]
+  }
+}

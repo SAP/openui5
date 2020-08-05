@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 
@@ -18,18 +18,17 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	ImageMapRenderer.render = function(oImageRenderManager, oImageMap){
+	ImageMapRenderer.render = function(rm, oImageMap){
 	    // convenience variable
-		var rm = oImageRenderManager;
 		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
-		rm.write('<SPAN id="' + oImageMap.getId() + '-Descr" style="visibility: hidden; display: none; outline: none;">');
+		rm.write('<span id="' + oImageMap.getId() + '-Descr" style="visibility: hidden; display: none; outline: none;">');
 		rm.writeEscaped(rb.getText("IMAGEMAP_DSC"));
-		rm.write('</SPAN>');
+		rm.write('</span>');
 
 		rm.write("<map tabindex='-1'");
 		rm.writeControlData(oImageMap);
@@ -91,7 +90,7 @@ sap.ui.define(['jquery.sap.global'],
 
 
 
-				rm.writeAttribute("tabIndex", 0);
+				rm.writeAttribute("tabindex", 0);
 				rm.write(">");
 			} // end of for
 

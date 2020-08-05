@@ -1,0 +1,35 @@
+/* ======================================= */
+/* CSS for control sap.m/BrowserScrollbar  */
+/* Quartz High Contrast Black theme        */
+/* ======================================= */
+
+html.sap-desktop ::-webkit-scrollbar {
+	border: 1px solid @sapUiScrollBarBorderColor;
+}
+
+html.sap-desktop ::-webkit-scrollbar-thumb:horizontal {
+	border-left: none;
+	border-top: 1px solid @sapUiScrollBarBorderColor;
+	border-bottom: 1px solid @sapUiScrollBarBorderColor;
+}
+
+html.sap-desktop ::-webkit-scrollbar-thumb:vertical {
+	border-left: 1px solid @sapUiScrollBarBorderColor;
+	border-right: 1px solid @sapUiScrollBarBorderColor;
+}
+
+::-webkit-scrollbar-button:vertical {
+	background-color: @sapUiScrollBarFaceColor;
+	height: 1px;
+}
+
+::-webkit-scrollbar-button:horizontal {
+	background-color: @sapUiScrollBarFaceColor;
+	width: 1px;
+}
+
+::-webkit-scrollbar-corner {
+	background-color: @sapUiHcStandardBackground;
+	border-right: 1px solid @sapUiScrollBarBorderColor;
+	border-bottom: 1px solid @sapUiScrollBarBorderColor;
+}

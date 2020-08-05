@@ -1,13 +1,11 @@
 sap.ui.require([
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/DesignTime"
 ],
 function(
 	Button,
 	VerticalLayout,
-	ElementOverlay,
 	DesignTime
 ) {
 	"use strict";

@@ -1,0 +1,53 @@
+<mvc:View controllerName="sap.m.sample.TabContainerIcons.TabContainerIcons"
+		height="100%"
+		xmlns:f="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<TabContainer items="{ path: '/employees' }" id="myTabContainer"
+					showAddNewButton="true"
+					class="sapUiResponsiveContentPadding sapUiResponsivePadding--header"
+					addNewButtonPress="addNewButtonPressHandler" itemClose="itemCloseHandler">
+		<items>
+			<TabContainerItem
+				name="{name}"
+				additionalText="{position}"
+				icon="{icon}"
+				iconTooltip="iconTooltip"
+				modified="{modified}">
+				<content>
+					<f:Form editable="false">
+						<f:title>
+							<core:Title text="Employee" />
+						</f:title>
+						<f:layout>
+								<f:ResponsiveGridLayout/>
+						</f:layout>
+						<f:FormContainer>
+							<f:FormElement label="First Name">
+								<f:fields>
+									<Text text="{empFirstName}"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Last Name">
+								<f:fields>
+									<Text text="{empLastName}" />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Position">
+								<f:fields>
+									<Text text="{position}" />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Salary">
+								<f:fields>
+									<Text text="{salary} EUR"/>
+								</f:fields>
+							</f:FormElement>
+						</f:FormContainer>
+					</f:Form>
+				</content>
+			</TabContainerItem>
+		</items>
+	</TabContainer>
+</mvc:View>

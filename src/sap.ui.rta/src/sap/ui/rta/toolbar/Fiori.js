@@ -3,14 +3,16 @@
  */
 
 sap.ui.define([
-	'sap/m/Image',
-	'./Adaptation',
-	'../Utils'
+	"sap/m/Image",
+	"./Adaptation",
+	"../Utils",
+	"sap/base/Log"
 ],
 function(
 	Image,
 	Adaptation,
-	Utils
+	Utils,
+	Log
 ) {
 	"use strict";
 
@@ -37,15 +39,14 @@ function(
 	 * @experimental Since 1.48. This class is experimental. API might be changed in future.
 	 */
 	var Fiori = Adaptation.extend("sap.ui.rta.toolbar.Fiori", {
-		renderer: 'sap.ui.rta.toolbar.BaseRenderer',
+		renderer: 'sap.ui.rta.toolbar.AdaptationRenderer',
 		type: 'fiori'
 	});
 
 	Fiori.prototype.init = function () {
-		Adaptation.prototype.init.apply(this, arguments);
-
 		this._oRenderer = Utils.getFiori2Renderer();
 		this._oFioriHeader = this._oRenderer.getRootControl().getOUnifiedShell().getHeader();
+		Adaptation.prototype.init.apply(this, arguments);
 	};
 
 	Fiori.prototype.show = function () {
@@ -55,38 +56,41 @@ function(
 	};
 
 	Fiori.prototype.buildControls = function () {
-		var aControls = Adaptation.prototype.buildControls.apply(this, arguments);
-		var sLogoPath = this._oFioriHeader.getLogo();
+		return Adaptation.prototype.buildControls.apply(this, arguments).then(function (aControls) {
+			var sLogoPath = this._oFioriHeader.getLogo();
 
-		if (this._oFioriHeader.getShowLogo() && sLogoPath) {
-			// Unstable: if FLP changes ID of <img/> element, logo could be not found
-			var $logo = this._oFioriHeader.$().find('#shell-header-icon');
-			var iWidth, iHeight;
+			if (this._oFioriHeader.getShowLogo() && sLogoPath) {
+				// Unstable: if FLP changes ID of <img/> element, logo could be not found
+				var $logo = this._oFioriHeader.$().find('#shell-header-icon');
+				var iWidth;
+				var iHeight;
 
-			if ($logo.length) {
-				iWidth = $logo.width();
-				iHeight = $logo.height();
-				this._checkLogoSize($logo, iWidth, iHeight);
+				if ($logo.length) {
+					iWidth = $logo.width();
+					iHeight = $logo.height();
+					this._checkLogoSize($logo, iWidth, iHeight);
+				}
+
+				this.getControl("iconSpacer").setWidth("10%");
+
+				// first control is the left HBox
+				this.getControl("iconBox").addItem(
+					new Image(this.getId() + "_fragment--sapUiRta_icon", {
+						src: sLogoPath,
+						width: iWidth ? iWidth + 'px' : iWidth,
+						height: iHeight ? iHeight + 'px' : iHeight
+					})
+				);
 			}
-
-			aControls.unshift(
-				new Image({
-					src: sLogoPath,
-					width: iWidth ? iWidth + 'px' : iWidth,
-					height: iHeight ? iHeight + 'px' : iHeight
-				}).data('name', 'logo')
-			);
-		}
-
-		return aControls;
+			return aControls;
+		}.bind(this));
 	};
 
 	Fiori.prototype.hide = function () {
-		return Adaptation.prototype
-			.hide.apply(this, arguments)
-			.then(function () {
-				this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
-			}.bind(this));
+		return Adaptation.prototype.hide.apply(this, arguments)
+		.then(function () {
+			this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
+		}.bind(this));
 	};
 
 	Fiori.prototype._checkLogoSize = function($logo, iWidth, iHeight) {
@@ -94,7 +98,7 @@ function(
 		var iNaturalHeight = $logo.get(0).naturalHeight;
 
 		if (iWidth !== iNaturalWidth || iHeight !== iNaturalHeight) {
-			jQuery.sap.log.error([
+			Log.error([
 				"sap.ui.rta: please check Fiori Launchpad logo, expected size is",
 				iWidth + "x" + iHeight + ",",
 				"but actual is " + iNaturalWidth + "x" + iNaturalHeight
@@ -113,5 +117,4 @@ function(
 	};
 
 	return Fiori;
-
 }, true);

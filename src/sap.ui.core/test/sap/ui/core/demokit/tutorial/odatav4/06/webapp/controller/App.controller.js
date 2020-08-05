@@ -53,10 +53,6 @@ sap.ui.define([
 					"Age" : "18"
 				});
 
-			oContext.created().then(function () {
-				oBinding.refresh();
-			});
-
 			this._setUIChanges(true);
 			this.getView().getModel("appView").setProperty("/usernameEmpty", true);
 

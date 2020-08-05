@@ -3,9 +3,14 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/XMLPreprocessor",
-	"./testdata/TestPreprocessor"
-], function(View, XMLView, XMLPreprocessor, TestPreprocessor) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/library",
+	"./testdata/TestPreprocessor",
+	"sap/base/Log"
+], function(View, XMLView, XMLPreprocessor, JSONModel, coreLibrary, TestPreprocessor, Log) {
 	"use strict";
+
+	var ViewType = coreLibrary.mvc.ViewType;
 
 	QUnit.module("sap.ui.core.mvc.View");
 
@@ -26,7 +31,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.core.mvc.View#runPreprocessor(sync)", {
 		beforeEach: function() {
-			this.mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
+			this.mock = sinon.mock(XMLPreprocessor);
 			this.expectProcess = this.mock.expects("process");
 			this._mPreprocessors = jQuery.extend(true, {}, View._mPreprocessors);
 			View.PreprocessorType = { "Foo": "foo" };
@@ -204,7 +209,7 @@ sap.ui.define([
 					}]
 				}
 			}),
-			logSpy = this.spy(jQuery.sap.log, "debug");
+			logSpy = this.spy(Log, "debug");
 
 		try {
 			oView.runPreprocessor("xml", oSource, true);
@@ -218,7 +223,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.core.mvc.View#runPreprocessor (async)", {
 		beforeEach: function() {
-			this.mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
+			this.mock = sinon.mock(XMLPreprocessor);
 			this.expectProcess = this.mock.expects("process");
 			this._mPreprocessors = jQuery.extend(true, {}, View._mPreprocessors);
 			View.PreprocessorType = { "Foo": "foo" };
@@ -433,8 +438,7 @@ sap.ui.define([
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
 			].join('');
 			this.oPreprocessor = function(vSource, sCaller, mSettings) {
-				jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-				assert.ok(true, "Preprocessor executed");
+				assert.ok(true, "Preprocessor executed with message: '" + mSettings.message + "' from '" + sCaller + "'");
 				return new Promise(function(resolve) {
 					resolve(vSource);
 				});
@@ -549,8 +553,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oLocalPreprocessor = function(vSource, sCaller, mSettings) {
 			// async test part
-			jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-			assert.ok(true, "Local preprocessor executed");
+			assert.ok(true, "Local Preprocessor executed with message: '" + mSettings.message + "' from '" + sCaller + "'");
 			return new Promise(function(resolve) {
 				resolve(vSource);
 			});
@@ -652,7 +655,7 @@ sap.ui.define([
 		assert.expect(4);
 		var done = assert.async();
 
-		var logSpy = sinon.spy(jQuery.sap.log, "debug");
+		var logSpy = sinon.spy(Log, "debug");
 
 		// call via init
 		var oView = sap.ui.xmlview({
@@ -699,7 +702,7 @@ sap.ui.define([
 			assert: assert.ok.bind(assert)
 		};
 
-		XMLView.registerPreprocessor("controls", "test.sap.ui.core.qunit.mvc.testdata.TestPreprocessor", true, mSettings);
+		XMLView.registerPreprocessor("controls", "test-resources.sap.ui.core.qunit.mvc.testdata.TestPreprocessor", true, mSettings);
 
 		// call via init
 		var oView = sap.ui.xmlview({
@@ -781,4 +784,98 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("View.create API");
+
+	QUnit.test("Simple XMLView + Databinding", function (assert) {
+		var done = assert.async();
+		var oModel1 = new JSONModel({
+			booleanValue : true,
+			integerValue: "8015px",
+			stringValue : 'Text1',
+			data: {
+				booleanValue : true,
+				integerValue: 8015,
+				stringValue : 'Text1'
+			}
+		});
+		var oModel2 = new JSONModel({
+			booleanValue : false,
+			integerValue: "4711px",
+			stringValue : '1txeT'
+		});
+
+		var xmlWithBindings = [
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">',
+			'  <m:Button id="btn" enabled="{/booleanValue}" text="{/stringValue}" width="{/integerValue}" />',
+			'</mvc:View>'
+		].join('');
+
+		View.create({
+			type: ViewType.XML,
+			definition:xmlWithBindings}
+		).then(function (oViewWithBindings1) {
+			oViewWithBindings1.setModel(oModel1);
+			assert.equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+			assert.equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
+			assert.equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().integerValue, "Check 'width' property of button 'btn'");
+			// same view with ID
+			View.create({
+				id: "create",
+				type: ViewType.XML,
+				definition:xmlWithBindings
+			}).then(function (oViewWithBindings2) {
+				oViewWithBindings2.setModel(oModel2);
+				assert.equal(oViewWithBindings2.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+				assert.equal(oViewWithBindings2.byId("btn").getText(), oModel2.getData().stringValue, "Check 'text' property of button 'btn'");
+				assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
+
+				// check for correct ID handover
+				assert.strictEqual(oViewWithBindings2.byId("create--btn"), oViewWithBindings2.byId("btn"), "Button is adressable by fully qualified ID");
+
+				done();
+			});
+		});
+	});
+
+	QUnit.test("Owner component propagation", function (assert) {
+		var done = assert.async();
+		sap.ui.require([
+			"sap/ui/core/Component"
+		], function(Component) {
+			var sDefinition = [
+				"<mvc:View xmlns=\"sap.ui.core\" xmlns:mvc=\"sap.ui.core.mvc\">",
+				"  <HTML />",
+				"</mvc:View>"
+			].join("");
+
+			sap.ui.predefine("test/viewFactory/Component", [
+				"sap/ui/core/Component"
+			], function(Component) {
+				return Component.extend("test.viewFactory.component", {
+					metadata: {
+						manifest: {
+							"sap.app" : {
+								"id" : "test.viewFactory"
+							},
+							"sap.ui5" : {}
+						}
+					}
+				});
+			});
+
+			sap.ui.require(["test/viewFactory/Component"], function(TestViewFactoryComponent) {
+				var oComponent = new TestViewFactoryComponent();
+
+				oComponent.runAsOwner(function() {
+					View.create({
+						type: ViewType.XML,
+						definition: sDefinition
+					}).then(function(oView) {
+						assert.strictEqual(Component.getOwnerComponentFor(oView), oComponent, "View should be created with component as owner");
+						done();
+					});
+				});
+			});
+		});
+	});
 });

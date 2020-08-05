@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/UIComponent', 'sap/ui/model/control/ControlModel'],
-	function(jQuery, Button, UIComponent, ControlModel) {
+sap.ui.define(['sap/ui/commons/Button', 'sap/ui/core/UIComponent', 'sap/ui/model/base/ManagedObjectModel'],
+	function(Button, UIComponent, ManagedObjectModel) {
 	"use strict";
 
 
@@ -24,12 +24,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/UIComp
 
 	Component.prototype.init = function(){
 		UIComponent.prototype.init.apply(this);
-		jQuery.sap.require("sap.ui.model.control.ControlModel");
-		this.getRootControl().setModel(new ControlModel(this));
+		this.getRootControl().setModel(new ManagedObjectModel(this));
 	};
 
 	Component.prototype.createContent = function(){
-		return new Button(this.createId("mybutn"), {text: "{text}"});
+		return new Button(this.createId("mybutn"), {text: "{/text}"});
 	};
 
 	return Component;

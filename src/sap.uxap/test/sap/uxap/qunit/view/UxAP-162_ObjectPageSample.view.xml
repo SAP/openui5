@@ -1,14 +1,14 @@
-<core:View xmlns:core="sap.ui.core"
-		   xmlns:m="sap.m"
-		   xmlns="sap.uxap"
-		   xmlns:layout="sap.ui.layout"
-		   height="100%"
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:m="sap.m"
+		  xmlns="sap.uxap"
+		  xmlns:layout="sap.ui.layout"
+		  height="100%"
 		>
-	<ObjectPageLayout id="objectPage162" title="">
+	<ObjectPageLayout id="objectPage162">
 		<headerTitle id="header162">
 			<ObjectPageHeader
 					objectTitle="Denise Smith"
-					objectImageURI="../img/imageID_275314.png"
+					objectImageURI="test-resources/sap/uxap/qunit/img/imageID_275314.png"
 					isObjectIconAlwaysVisible="true"/>
 		</headerTitle>
 		<headerContent>
@@ -59,4 +59,4 @@
 			</m:OverflowToolbar>
 		</footer>
 	</ObjectPageLayout>
-</core:View>
+</mvc:View>

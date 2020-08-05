@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ActionSheet",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.ActionSheet.view.ActionSheet",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"view/ActionSheet.view.xml",
+					"controller/ActionSheet.controller.js",
+					"view/ActionSheet.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,16 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core">
+	<Panel id="Panel">
+		<Button id="button1"></Button>
+		<core:ExtensionPoint name="EP1" />
+		<core:ExtensionPoint name="EP2">
+			<core:Fragment id="defaultFragment" fragmentName="sap.ui.fl.qunit.extensionPoint.testApp.fragments.Default" type="XML" />
+		</core:ExtensionPoint>
+		<Button id="button2"></Button>
+		<core:ExtensionPoint name="EP3" />
+		<Button id="button3"></Button>
+		<Button id="button4"></Button>
+	</Panel>
+</mvc:View>

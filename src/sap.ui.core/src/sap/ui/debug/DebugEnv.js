@@ -3,8 +3,8 @@
  */
 
 // A core plugin that bundles debug features and connects with an embedding testsuite
-sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList'],
-	function(jQuery, Interface, ControlTree, LogViewer, PropertyList) {
+sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList', "sap/base/Log", "sap/ui/thirdparty/jquery"],
+	function(Interface, ControlTree, LogViewer, PropertyList, Log, jQuery) {
 	"use strict";
 
 
@@ -40,17 +40,17 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 		try {
 			this.bRunsEmbedded = typeof window.top.testfwk == "undefined"; // window || !top.frames["sap-ui-TraceWindow"]; // check only with ==, not === as the test otherwise fails on IE8
 
-			jQuery.sap.log.info("Starting DebugEnv plugin (" + (this.bRunsEmbedded ? "embedded" : "testsuite") + ")");
+			Log.info("Starting DebugEnv plugin (" + (this.bRunsEmbedded ? "embedded" : "testsuite") + ")");
 
 			// initialize only if running in testsuite or when debug views are not disabled via URL parameter
 			if (!this.bRunsEmbedded || oCore.getConfiguration().getInspect()) {
 				this.init(bOnInit);
 			}
 			if (!this.bRunsEmbedded || oCore.getConfiguration().getTrace()) {
-				this.initLogger(jQuery.sap.log, bOnInit);
+				this.initLogger(Log, bOnInit);
 			}
 		} catch (oException) {
-			jQuery.sap.log.warning("DebugEnv plugin can not be started outside the Testsuite.");
+			Log.warning("DebugEnv plugin can not be started outside the Testsuite.");
 		}
 	};
 
@@ -59,7 +59,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	 * @public
 	 */
 	DebugEnv.prototype.stopPlugin = function() {
-		jQuery.sap.log.info("Stopping DebugEnv plugin.");
+		Log.info("Stopping DebugEnv plugin.");
 		this.oCore = null;
 	};
 
@@ -87,14 +87,14 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 			div.style.zIndex = 5;
 			div.style.opacity = '0.2';
 			div.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(opacity=20)';
-			jQuery(div).bind("click",function(evt) {
+			jQuery(div).on("click",function(evt) {
 				alert("click!");
 			});
 			/ *
-			jQuery(div).bind("mouseover",function(evt) {
+			jQuery(div).on("mouseover",function(evt) {
 				alert("click!");
 			});
-			jQuery(div).bind("mouseout",function(evt) {
+			jQuery(div).on("mouseout",function(evt) {
 				alert("click!");
 			}); * /
 			this.oWindow.document.body.appendChild(div);
@@ -177,8 +177,9 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	 */
 	DebugEnv.prototype.initLogger = function(oLogger, bOnInit) {
 		this.oLogger = oLogger;
+		this.oLogger.setLogEntriesLimit(Infinity);
 		if ( !this.bRunsEmbedded ) {
-			// attach test suite log viewer to our jQuery.sap.log
+			// attach test suite log viewer to our Log
 			this.oTraceWindow = top.frames["sap-ui-TraceWindow"];
 			this.oTraceViewer = this.oTraceWindow.oLogViewer = new LogViewer(this.oTraceWindow, 'sap-ui-TraceWindowRoot');
 			this.oTraceViewer.sLogEntryClassPrefix = "lvl"; // enforce use of CSS instead of DOM styles
@@ -263,8 +264,8 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	 * Will be called to show the TraceWindow
 	 */
 	DebugEnv.prototype.showTraceWindow = function() {
-		if ( !this.oTraceWindow && jQuery && jQuery.sap && jQuery.sap.log ) {
-			this.initLogger(jQuery.sap.log, false);
+		if ( !this.oTraceWindow ) {
+			this.initLogger(Log, false);
 		}
 		var oLogViewer = this.oTraceWindow && this.oTraceWindow.document.getElementById('sap-ui-TraceWindowRoot');
 		if ( oLogViewer ) {
@@ -313,7 +314,10 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	(function(){
 		var oThis = new DebugEnv();
 		sap.ui.getCore().registerPlugin(oThis);
-		DebugEnv.getInstance = jQuery.sap.getter(new Interface(oThis, ["isRunningEmbedded", "isControlTreeShown", "showControlTree", "hideControlTree", "isTraceWindowShown", "showTraceWindow", "hideTraceWindow", "isPropertyListShown", "showPropertyList", "hidePropertyList"]));
+		var oInterface = new Interface(oThis, ["isRunningEmbedded", "isControlTreeShown", "showControlTree", "hideControlTree", "isTraceWindowShown", "showTraceWindow", "hideTraceWindow", "isPropertyListShown", "showPropertyList", "hidePropertyList"]);
+		DebugEnv.getInstance = function() {
+			return oInterface;
+		};
 	}());
 
 	return DebugEnv;

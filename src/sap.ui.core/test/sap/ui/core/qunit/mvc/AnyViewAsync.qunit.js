@@ -1,5 +1,4 @@
-/*global sinon */
-
+/*global QUnit, sinon */
 sap.ui.define([
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/JSONView',
@@ -7,6 +6,12 @@ sap.ui.define([
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/mvc/HTMLView'
 ], function(View, JSONView, JSView, XMLView, HTMLView) {
+	"use strict";
+
+	// create content div
+	var oDIV = document.createElement("div");
+	oDIV.id = "content";
+	document.body.appendChild(oDIV);
 
 	QUnit.module("Start-up");
 
@@ -20,16 +25,15 @@ sap.ui.define([
 
 	function asyncTestsuite(sCaption, oConfig) {
 
-		var sSource, sType, fnReceiveSource, fnFactory, sUrl, xhr;
+		var sSource, sType, fnFactory, xhr;
 
-		fnReceiveSource = oConfig.receiveSource;
 		fnFactory = oConfig.factory;
 
 		sType = oConfig.type.toLowerCase();
 
 		// preload the view source
 		jQuery.ajax({
-			url : "testdata/Async.view." + sType,
+			url : sap.ui.require.toUrl("testdata/mvc/Async.view." + sType),
 			success : function(data) {
 				sSource = oConfig.receiveSource(data);
 			},
@@ -45,7 +49,7 @@ sap.ui.define([
 
 		xhr.onCreate = function(request) {
 			request.onSend = function() {
-				if(!request.async) {
+				if (!request.async) {
 					request.respond(200,  {"Content-Type" : "application/" + sType}, sSource);
 				} else {
 					setTimeout(function() {
@@ -56,13 +60,13 @@ sap.ui.define([
 		};
 
 		QUnit.module(sCaption, {
-			beforeEach : function() {
+			beforeEach: function() {
 				this.oAfterInitSpy = sinon.spy(View.prototype, "fireAfterInit");
-				this.oView;
+				this.oView = null;
 			},
-			afterEach : function() {
+			afterEach: function() {
 				this.oAfterInitSpy.restore();
-				if(this.oView) {
+				if (this.oView) {
 					this.oView.destroy();
 				}
 			}

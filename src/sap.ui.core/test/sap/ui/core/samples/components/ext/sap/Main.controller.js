@@ -1,13 +1,13 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
-	function(jQuery, Controller) {
+sap.ui.define(['sap/base/Log', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
+	function(Log, Controller, JSONModel) {
 	"use strict";
 
 	var MainController = Controller.extend("samples.components.ext.sap.Main", {
 
 		onInit : function () {
-			jQuery.sap.log.info("samples.components.ext.sap.Main - onInit");
+			Log.info("samples.components.ext.sap.Main - onInit");
 
-			var model = new sap.ui.model.json.JSONModel();
+			var model = new JSONModel();
 			model.setData({
 				number: 42
 			});

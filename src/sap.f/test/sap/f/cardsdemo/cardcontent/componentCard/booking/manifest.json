@@ -1,0 +1,43 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.f.cardsdemo.cardcontent.componentCard.booking",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.cardsdemo.cardcontent.componentCard.booking.View",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Card.controller.js",
+					"View.view.xml"
+				]
+			}
+		}
+	},
+	"sap.card": {
+		"type": "Component",
+		"header": {
+			"icon": {
+				"src": "sap-icon://bus-public-transport"
+			},
+			"title": "Buy your bus ticket online",
+			"subTitle": "You’ll receive an email with a QR code. No need to print!"
+		}
+	}
+}

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 
@@ -17,12 +17,11 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the Callout that should be rendered
 	 */
-	CalloutBaseRenderer.render = function(oRenderManager, oControl){
+	CalloutBaseRenderer.render = function(rm, oControl){
 
-		var rm = oRenderManager;
 		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
 		var sId = oControl.getId();
 
@@ -54,7 +53,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write(">");
 
 		//first focusable control to provide tab loop
-		rm.write("<span id=\"" + sId + "-fhfe\" tabIndex=\"0\"></span>");
+		rm.write("<span id=\"" + sId + "-fhfe\" tabindex=\"0\"></span>");
 
 		// content container
 		rm.write("<div");
@@ -90,7 +89,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("></div>");
 
 		//last focusable control to provide tab loop
-		rm.write("<span id=\"" + sId + "-fhee\" tabIndex=\"0\"></span>");
+		rm.write("<span id=\"" + sId + "-fhee\" tabindex=\"0\"></span>");
 
 		rm.write("</div>");// container
 

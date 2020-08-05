@@ -4,8 +4,8 @@
 /*global Promise */// declare unusual global vars for JSLint/SAPUI5 validation
 
 // Provides class sap.ui.core.util.Export
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './ExportRow', './ExportType', './File'],
-	function(jQuery, Control, ExportColumn, ExportRow, ExportType, File) {
+sap.ui.define(['sap/ui/core/Control', './ExportColumn', './ExportRow', './ExportType', './File', "sap/base/Log"],
+	function(Control, ExportColumn, ExportRow, ExportType, File, Log) {
 	'use strict';
 
 	// Utility functions to add jQuery Promise methods to a standard ES6 Promise object for compatibility reasons
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 	}
 
 	function printJqPromiseDeprecationWarning(sMethodName) {
-		jQuery.sap.log.warning("Usage of deprecated jQuery Promise method: '" + sMethodName + "'. " +
+		Log.warning("Usage of deprecated jQuery Promise method: '" + sMethodName + "'. " +
 			"Please use the standard Promise methods 'then' / 'catch' instead!", "", "sap.ui.core.util.Export");
 	}
 
@@ -136,6 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 	 * @since 1.22.0
 	 *
 	 * @public
+	 * @deprecated Since version 1.73
 	 * @alias sap.ui.core.util.Export
 	 */
 	var Export = Control.extend('sap.ui.core.util.Export', {
@@ -320,7 +321,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 	 * jQuery specific Promise methods ('done', 'fail', 'always', 'pipe' and 'state') are still available but should not be used.
 	 * Please use only the standard methods 'then' and 'catch'!</b></p>
 	 *
-	 * @param {string} [sFileName] file name, defaults to 'data'
+	 * @param {string} [sFileName="data"] The file name
 	 * @return {Promise} Promise object
 	 *
 	 * @public

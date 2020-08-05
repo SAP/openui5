@@ -1,34 +1,43 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/m/MessageToast',
-	'sap/ui/core/Fragment',
-	'sap/ui/core/mvc/Controller'
-], function (jQuery, MessageToast, Fragment, Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/Fragment",
+	"sap/ui/core/syncStyleClass",
+	"sap/m/MessageToast"
+], function (Controller, Fragment, syncStyleClass, MessageToast) {
 	"use strict";
 
-	var _timeout;
+	var iTimeoutId;
 
-	var CController = Controller.extend("sap.m.sample.BusyDialog.C", {
+	return Controller.extend("sap.m.sample.BusyDialog.C", {
 
-		onOpenDialog: function (oEvent) {
-			// instantiate dialog
-			if (!this._dialog) {
-				this._dialog = sap.ui.xmlfragment("sap.m.sample.BusyDialog.BusyDialog", this);
-				this.getView().addDependent(this._dialog);
+		onOpenDialog: function () {
+			// load BusyDialog fragment asynchronously
+			if (!this._oBusyDialog) {
+				Fragment.load({
+					name: "sap.m.sample.BusyDialog.BusyDialog",
+					controller: this
+				}).then(function (oFragment) {
+					this._oBusyDialog = oFragment;
+					this.getView().addDependent(this._oBusyDialog);
+					syncStyleClass("sapUiSizeCompact", this.getView(), this._oBusyDialog);
+					this._oBusyDialog.open();
+					this.simulateServerRequest();
+				}.bind(this));
+			} else {
+				this._oBusyDialog.open();
+				this.simulateServerRequest();
 			}
+		},
 
-			// open dialog
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._dialog);
-			this._dialog.open();
-
-			// simulate end of operation
-			_timeout = jQuery.sap.delayedCall(3000, this, function () {
-				this._dialog.close();
-			});
+		simulateServerRequest: function () {
+			// simulate a longer running operation
+			iTimeoutId = setTimeout(function() {
+				this._oBusyDialog.close();
+			}.bind(this), 3000);
 		},
 
 		onDialogClosed: function (oEvent) {
-			jQuery.sap.clearDelayedCall(_timeout);
+			clearTimeout(iTimeoutId);
 
 			if (oEvent.getParameter("cancelPressed")) {
 				MessageToast.show("The operation has been cancelled");
@@ -36,8 +45,6 @@ sap.ui.define([
 				MessageToast.show("The operation has been completed");
 			}
 		}
+
 	});
-
-	return CController;
-
 });

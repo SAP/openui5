@@ -1,0 +1,10 @@
+{
+	"error" : {
+		"code" : "SEPM_BO_COMMON/022",
+		"message" : "Value must be greater than 0",
+		"@SAP__common.numericSeverity" : 4,
+		"@SAP__Common.longtextUrl" : "",
+		"target" : "Quantity",
+		"details" : []
+	}
+}

@@ -1,25 +1,20 @@
 <mvc:View
 	controllerName="sap.m.sample.InputSuggestionsDynamic.C"
-	xmlns:l="sap.ui.layout"
-	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Label text="Product" labelFor="productInput"/>
-			<Input
-				id="productInput"
-				type="Text"
-				placeholder="Enter Product ..."
-				showSuggestion="true"
-				suggest="handleSuggest"
-				suggestionItems="{/ProductCollection}" >
-				<suggestionItems>
-					<core:Item text="{Name}" />
-				</suggestionItems>
-			</Input>
-		</l:content>
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Label text="Product" labelFor="productInput" />
+		<Input
+			id="productInput"
+			placeholder="Enter product"
+			showSuggestion="true"
+			suggest=".onSuggest"
+			suggestionItems="{/ProductCollection}" >
+			<suggestionItems>
+				<core:Item text="{Name}" />
+			</suggestionItems>
+		</Input>
 	</l:VerticalLayout>
 </mvc:View>

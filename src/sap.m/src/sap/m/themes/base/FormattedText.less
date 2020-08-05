@@ -6,7 +6,25 @@
 .sapMFT {
 	font-family: @sapUiFontFamily;
 	vertical-align: top;
-	overflow: auto;
+	font-size: @sapMFontMediumSize;
+
+	/* BCP: 1870022567 - Reset sapMLnk font-size and wrapping specifics */
+	.sapMLnk {
+		font-size: inherit;
+		display: initial;
+		white-space: initial;
+		overflow: initial;
+		text-overflow: initial;
+		word-wrap: initial;
+	}
+}
+
+.sapMFTOverflowWidth {
+	overflow-x: auto;
+}
+
+.sapMFTOverflowHeight {
+	overflow-y: auto;
 }
 
 /* If control is used on black/dark background */

@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.Accordion
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['./AccordionSection', 'sap/ui/Device'],
+	function(AccordionSection, Device) {
 	"use strict";
 
 
@@ -16,14 +16,10 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oAccordion An object representation of the control that is rendered
 	 */
-	AccordionRenderer.render = function(oRenderManager, oAccordion){
-
-		// convenience variable
-		var rm = oRenderManager;
-
+	AccordionRenderer.render = function(rm, oAccordion){
 
 		// write the HTML into the render manager
 		rm.write("<div");
@@ -39,7 +35,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeStyles();
 		rm.write(">"); // SPAN element
 
-		rm.write("<div id='" + oAccordion.getId() + "-dropTarget" + "' style='width:" + oAccordion.getWidth() + "' tabIndex='-1' class='sapUiAcd-droptarget'></div>");
+		rm.write("<div id='" + oAccordion.getId() + "-dropTarget" + "' style='width:" + oAccordion.getWidth() + "' tabindex='-1' class='sapUiAcd-droptarget'></div>");
 
 		var aSections = oAccordion.getSections();
 		var aDefaultSections = oAccordion.getOpenedSectionsId().split(",");
@@ -49,7 +45,7 @@ sap.ui.define(['jquery.sap.global'],
 			// Open the section if the section is part of the default opened section
 			if (oAccordion.bInitialRendering) {
 
-				if (jQuery.inArray(aSections[i].getId(),aDefaultSections) != -1) {
+				if (aDefaultSections.indexOf(aSections[i].getId()) != -1) {
 					aSections[i]._setCollapsed(false);
 				} else {
 					aSections[i]._setCollapsed(true);
@@ -61,9 +57,9 @@ sap.ui.define(['jquery.sap.global'],
 
 		}
 
-		rm.write('<SPAN id="' + oAccordion.getId() + '-Descr" style="visibility: hidden; display: none;">');
+		rm.write('<span id="' + oAccordion.getId() + '-Descr" style="visibility: hidden; display: none;">');
 		rm.write(oAccordion.rb.getText("ACCORDION_DSC"));
-		rm.write('</SPAN>');
+		rm.write('</span>');
 
 		rm.write("</div>");
 
@@ -72,13 +68,11 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 
-	AccordionRenderer.renderSection = function(oRenderManager, oControl) {
-
-		var rm = oRenderManager;
+	AccordionRenderer.renderSection = function(rm, oControl) {
 		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
 
-		var heightSet = sap.ui.commons.AccordionSection._isSizeSet(oControl.getMaxHeight());
-		var widthSet = sap.ui.commons.AccordionSection._isSizeSet(oControl.getParent().getWidth());
+		var heightSet = AccordionSection._isSizeSet(oControl.getMaxHeight());
+		var widthSet = AccordionSection._isSizeSet(oControl.getParent().getWidth());
 
 		// root element and classes
 		rm.write("<div");
@@ -155,12 +149,12 @@ sap.ui.define(['jquery.sap.global'],
 			//Disabled --> Unavailable annoucement
 			if (oControl.getEnabled()) {
 				rm.writeAttribute("aria-disabled", "false");
-				if (!sap.ui.Device.browser.internet_explorer) {
+				if (!Device.browser.msie) {// TODO remove after the end of support for Internet Explorer
 					rm.writeAttribute("aria-grabbed", "false");
 				}
 			} else {
 				rm.writeAttribute("aria-disabled", "true");
-				if (!sap.ui.Device.browser.internet_explorer) {
+				if (!Device.browser.msie) {// TODO remove after the end of support for Internet Explorer
 					rm.writeAttribute("aria-grabbed", "");
 				}
 			}
@@ -208,7 +202,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (heightSet && widthSet) {
 				rm.write(" style='position:absolute;'");
 			} else {
-				rm.write(" style='position:relative;top:0px;'"); // for IE7, when Panel contains relatively positioned elements
+				rm.write(" style='position:relative;top:0px;'"); // for IE7, when Panel contains relatively positioned elements// TODO remove after the end of support for Internet Explorer
 			}
 
 			if ( sap.ui.getCore().getConfiguration().getAccessibility()) {

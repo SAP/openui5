@@ -3,8 +3,24 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, DateFormat, SimpleType, FormatException, ParseException, ValidateException) {
+sap.ui.define([
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/model/SimpleType',
+	'sap/ui/model/FormatException',
+	'sap/ui/model/ParseException',
+	'sap/ui/model/ValidateException',
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isEmptyObject"
+],
+	function(
+		DateFormat,
+		SimpleType,
+		FormatException,
+		ParseException,
+		ValidateException,
+		jQuery,
+		isEmptyObject
+	) {
 	"use strict";
 
 
@@ -95,6 +111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				aViolatedConstraints = [],
 				aMessages = [],
 				oInputFormat = this.oInputFormat,
+				sContent,
 				that = this;
 
 			// convert date into date object to compare
@@ -106,18 +123,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				if (oInputFormat) {
 					oContent = oInputFormat.parse(oContent);
 				}
+				sContent = that.oOutputFormat.format(oContent);
+
 				switch (sName) {
 					case "minimum":
 						if (oValue < oContent) {
 							aViolatedConstraints.push("minimum");
-							aMessages.push(oBundle.getText(that.sName + ".Minimum", [oContent]));
+							aMessages.push(oBundle.getText(that.sName + ".Minimum", [sContent]));
 						}
 						break;
 					case "maximum":
 						if (oValue > oContent) {
 							aViolatedConstraints.push("maximum");
-							aMessages.push(oBundle.getText(that.sName + ".Maximum", [oContent]));
+							aMessages.push(oBundle.getText(that.sName + ".Maximum", [sContent]));
 						}
+						break;
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
@@ -138,7 +158,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				if (isNaN(oValue)) {
 					throw new FormatException("Cannot format date: " + oValue + " is not a valid Timestamp");
 				} else {
-					oValue = parseInt(oValue, 10);
+					oValue = parseInt(oValue);
 				}
 			}
 			oValue = new Date(oValue);
@@ -188,7 +208,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		var oSourceOptions = this.oFormatOptions.source;
 		this.oOutputFormat = DateFormat.getInstance(this.oFormatOptions);
 		if (oSourceOptions) {
-			if (jQuery.isEmptyObject(oSourceOptions)) {
+			if (isEmptyObject(oSourceOptions)) {
 				oSourceOptions = {pattern: "yyyy-MM-dd"};
 			}
 			this.oInputFormat = DateFormat.getInstance(oSourceOptions);

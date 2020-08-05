@@ -1,20 +1,16 @@
 sap.ui.define([
-	"sap/ui/Device",
+	"sap/ui/Device"
 ], function (Device) {
 	"use strict";
 
 	return {
 		supportsStacktraces: function () {
-			if (Device.browser.phantomJS) {
-				return false;
-			}
-
 			//Incident 1580223677: IOS does not support stacktraces
 			if (Device.os.ios) {
 				return false;
 			}
 
-			if(Device.browser.safari) {
+			if (Device.browser.safari) {
 				return false;
 			}
 

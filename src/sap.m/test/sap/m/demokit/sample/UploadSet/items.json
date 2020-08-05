@@ -1,0 +1,76 @@
+{
+	"items": [
+		{
+			"fileName": "Business Plan Agenda.doc",
+			"mediaType": "application/msword",
+			"url": "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Agenda.doc",
+			"uploadState": "Complete",
+			"attributes": [
+				{
+					"title": "Uploaded By",
+					"text": "Jane Burns",
+					"active": true
+				},
+				{
+					"title": "Uploaded On",
+					"text": "2014-07-28",
+					"active": false
+				},
+				{
+					"title": "File Size",
+					"text": "25",
+					"active": false
+				},
+				{
+					"title": "Lorem ipsum dolor sit amet",
+					"text": "consectetur adipisici elit",
+					"active": false
+				}
+			],
+			"markers": [
+				{
+					"type": "Draft"
+				},
+				{
+					"type": "Favorite"
+				},
+				{
+					"type": "Flagged"
+				},
+				{
+					"type": "Locked"
+				},
+				{
+					"type": "Unsaved"
+				}
+			],
+			"statuses": [
+				{
+					"title": "Basic",
+					"text": "Error",
+					"state": "Error"
+				},
+				{
+					"title": "Advanced",
+					"text": "Success",
+					"state": "Success",
+					"icon": "sap-icon://message-success"
+				},
+				{
+					"title": "Ultimate",
+					"text": "Warning",
+					"state": "Warning",
+					"active": true
+				}
+			],
+			"selected": false
+		},
+		{
+			"fileName": "Picture of a woman.png",
+			"mimeType": "image/png",
+			"thumbnailUrl": "test-resources/sap/m/images/Woman_04.png",
+			"url": "test-resources/sap/m/images/Woman_04.png",
+			"uploadState": "Complete"
+		}
+	]
+}

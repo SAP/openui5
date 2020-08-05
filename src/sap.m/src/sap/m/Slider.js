@@ -3,33 +3,37 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
-	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
-	'./SliderTooltipContainer',
-	'./SliderTooltip',
-	'./SliderUtilities',
-	'./ResponsiveScale',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/library',
 	'sap/ui/core/ResizeHandler',
-	'./SliderRenderer'
+	'sap/base/Log',
+	'./library',
+	'./SliderTooltipContainer',
+	'./SliderTooltip',
+	'./SliderUtilities',
+	'./SliderRenderer',
+	'./ResponsiveScale',
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"
 ],
 function(
-	jQuery,
-	library,
 	Control,
 	EnabledPropagator,
-	SliderTooltipContainer,
-	SliderTooltip,
-	SliderUtilities,
-	ResponsiveScale,
 	InvisibleText,
 	coreLibrary,
 	ResizeHandler,
-	SliderRenderer
-	) {
+	log,
+	library,
+	SliderTooltipContainer,
+	SliderTooltip,
+	SliderUtilities,
+	SliderRenderer,
+	ResponsiveScale,
+	jQuery,
+	KeyCodes
+) {
 		"use strict";
 
 		// shortcut for sap.m.touch
@@ -42,18 +46,19 @@ function(
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * <strong><i>Overview</i></strong>
+		 * <h3>Overview</h3>
 		 *
 		 * A {@link sap.m.Slider} control represents a numerical range and a handle.
 		 * The purpose of the control is to enable visual selection of a value in a continuous numerical range by moving an adjustable handle.
 		 *
-		 * <strong>Notes:</strong>
+		 * <b>Notes:</b>
 		 * <ul><li>Only horizontal sliders are possible. </li>
 		 * <li>The handle can be moved in steps of predefined size. This is done with the <code>step</code> property. </li>
-		 * <li>Setting the property <code>showAdvancedTooltips</code> shows an input field above the handle</li>
+		 * <li>Setting the property <code>showAdvancedTooltip</code> shows an input field above the handle</li>
 		 * <li>Setting the property <code>inputsAsTooltips</code> enables the user to enter a specific value in the handle's tooltip. </li>
 		 * </ul>
-		 * <strong><i>Structure</i></strong>
+		 *
+		 * <h3>Structure</h3>
 		 *
 		 * The most important properties of the Slider are:
 		 * <ul>
@@ -65,14 +70,15 @@ function(
 		 * </ul>
 		 * These properties determine the visualization of the tooltips:
 		 * <ul>
-		 * <li> showAdvancedTooltips - Determines if a tooltip should be displayed above the handle</li>
-		 * <li> inputsAsTooltips - Determines if the tooltip displayed above the slider's handle should include an input field</li>
+		 * <li> <code>showAdvancedTooltip</code> - Determines if a tooltip should be displayed above the handle</li>
+		 * <li> <code>inputsAsTooltips</code> - Determines if the tooltip displayed above the slider's handle should include an input field</li>
 		 * </ul>
-		 * <strong><i>Usage</i></strong>
+		 *
+		 * <h3>Usage</h3>
 		 *
 		 * The most common usecase is to select values on a continuous numerical scale (e.g. temperature, volume, etc. ).
 		 *
-		 * <strong><i>Responsive Behavior</i></strong>
+		 * <h3>Responsive Behavior</h3>
 		 *
 		 * The <code>sap.m.Slider</code> control adjusts to the size of its parent container by recalculating and resizing the width of the control.
 		 * You can move the slider handle in several different ways:
@@ -157,7 +163,7 @@ function(
 
 				/**
 				 * Indicate whether the handle's advanced tooltip is shown. <b>Note:</b> Setting this option to <code>true</code>
-				 * will ignore the value set in <code>showHandleTooltips</code>. This will cause only the advanced tooltip to be shown.
+				 * will ignore the value set in <code>showHandleTooltip</code>. This will cause only the advanced tooltip to be shown.
 				 * @since 1.42
 				 *
 				 */
@@ -165,7 +171,7 @@ function(
 
 				/**
 				 * Indicates whether input fields should be used as tooltips for the handles. <b>Note:</b> Setting this option to <code>true</code>
-				 * will only work if <code>showAdvancedTooltips</code> is set to <code>true</code>.
+				 * will only work if <code>showAdvancedTooltip</code> is set to <code>true</code>.
 				 * @since 1.42
 				 */
 				inputsAsTooltips: {type: "boolean", group: "Appearance", defaultValue: false},
@@ -192,13 +198,28 @@ function(
 				 * @since 1.46
 				 */
 				scale: { type: "sap.m.IScale", multiple: false, singularName: "scale" },
+				/**
+				 * Default scale for visualisation of tickmarks, if scale aggregation is not provided
+				 *
+				 * @since 1.56
+				 */
+				_defaultScale: { type: "sap.m.ResponsiveScale", multiple: false, visibility: "hidden" },
 
 				/**
 				 * Multiple Aggregation for Tooltips
 				 *
-				 * @since 1.54
+				 * @since 1.56
 				 */
-				_tooltips: { type: "sap.m.ISliderTooltip", multiple: true, visibility: "hidden" },
+				_defaultTooltips: { type: "sap.m.SliderTooltipBase", multiple: true, visibility: "hidden" },
+
+				/**
+				 * Aggregation for user-defined tooltips.
+				 * <b>Note:</b> In case of Slider, only the first tooltip of the aggregation is used. In the RangeSlider case - the first two.
+				 * If no custom tooltips are provided, the default are used
+				 *
+				 * @since 1.56
+				 */
+				customTooltips: { type: "sap.m.SliderTooltipBase", multiple: true },
 
 				/**
 				 * Invisible text for handles and progress announcement
@@ -256,6 +277,39 @@ function(
 		/* Private methods                                             */
 		/* ----------------------------------------------------------- */
 
+		/**
+		 * Returns the scale control that is used when tickmarks are enabled
+		 *
+		 * @private
+		 * @returns {sap.m.IScale|undefined} The scale that is used or undefined,
+		 * if tickmarks are not enabled
+		 */
+		Slider.prototype._getUsedScale = function () {
+			if (!this.getEnableTickmarks()) {
+				return;
+			}
+
+			return this.getAggregation('scale') || this.getAggregation('_defaultScale');
+		};
+
+		Slider.prototype._syncScaleUsage = function () {
+			var bEnabledTickmarks = this.getEnableTickmarks(),
+				oUserDefinedScale = this.getAggregation('scale'),
+				oDefaultScale = this.getAggregation("_defaultScale");
+
+
+			// if the default scale was set, but later on the user adds a scale
+			// or set the enableTickmarks property to false, we should destroy the default one
+			if ((oDefaultScale && !bEnabledTickmarks) || (oUserDefinedScale && oDefaultScale)) {
+				this.destroyAggregation("_defaultScale", true);
+			}
+
+			// if there is no scale set, fall back to the default scale
+			if (bEnabledTickmarks && !oUserDefinedScale && !oDefaultScale) {
+				this.setAggregation("_defaultScale", new ResponsiveScale(), true);
+			}
+		};
+
 		Slider.prototype._showTooltipsIfNeeded = function () {
 			if (this.getShowAdvancedTooltip()) {
 				this.getAggregation("_tooltipContainer").show(this);
@@ -306,18 +360,18 @@ function(
 			if (fMin >= fMax) {
 				bMinbiggerThanMax = true;
 				bError = true;
-				jQuery.sap.log.warning("Warning: " + "Property wrong min: " + fMin + " >= max: " + fMax + " on ", this);
+				log.warning("Warning: " + "Property wrong min: " + fMin + " >= max: " + fMax + " on ", this);
 			}
 
 			// if the step is negative or 0, set to 1 and log a warning
 			if (fStep <= 0) {
-				jQuery.sap.log.warning("Warning: " + "The step could not be negative on ", this);
+				log.warning("Warning: " + "The step could not be negative on ", this);
 			}
 
 			// the step can't be bigger than slider range, log a warning
 			if (fStep > (fMax - fMin) && !bMinbiggerThanMax) {
 				bError = true;
-				jQuery.sap.log.warning("Warning: " + "Property wrong step: " + fStep + " > max: " + fMax + " - " + "min: " + fMin + " on ", this);
+				log.warning("Warning: " + "Property wrong step: " + fStep + " > max: " + fMax + " - " + "min: " + fMin + " on ", this);
 			}
 
 			return bError;
@@ -362,7 +416,7 @@ function(
 			}
 
 			if (typeof iStep !== "number") {
-				jQuery.sap.log.warning('Warning: "iStep" needs to be a number', this);
+				log.warning('Warning: "iStep" needs to be a number', this);
 				return 0;
 			}
 
@@ -370,7 +424,7 @@ function(
 				return iStep;
 			}
 
-			jQuery.sap.log.warning('Warning: "iStep" needs to be a finite interger', this);
+			log.warning('Warning: "iStep" needs to be a finite interger', this);
 
 			return 0;
 		};
@@ -380,46 +434,16 @@ function(
 		 *
 		 * @private
 		 */
-		Slider.prototype._handleSliderResize = function () {
-			if (this.getEnableTickmarks()) {
-				this._handleTickmarksResponsiveness();
+		Slider.prototype._handleSliderResize = function (oEvent) {
+			var oScale = this._getUsedScale();
+
+			if (this.getEnableTickmarks() && oScale && oScale.handleResize) {
+				oScale.handleResize(oEvent);
 			}
 
 			if (this.getShowAdvancedTooltip()) {
 				this._handleTooltipContainerResponsiveness();
 			}
-		};
-
-		/**
-		 * Shows/hides tickmarks when some limitations are met.
-		 *
-		 * @private
-		 */
-		Slider.prototype._handleTickmarksResponsiveness = function () {
-			var aLabelsInDOM, fOffsetLeftPct, fOffsetLeftPx, aHiddenLabels,
-				oScale = this.getAggregation("scale"),
-				aTickmarksInDOM = this.$().find(".sapMSliderTick"),
-				iScaleWidth = this.$().find(".sapMSliderTickmarks").width(),
-				bShowTickmarks = (iScaleWidth / aTickmarksInDOM.size()) >= SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.SMALL;
-
-			//Small tickmarks should get hidden if their width is less than _SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.SMALL
-			if (this._bTickmarksLastVisibilityState !== bShowTickmarks) {
-				aTickmarksInDOM.toggle(bShowTickmarks);
-				this._bTickmarksLastVisibilityState = bShowTickmarks;
-			}
-
-			// Tickmarks with labels responsiveness
-			aLabelsInDOM = this.$().find(".sapMSliderTickLabel").toArray();
-			// The distance between the first and second label in % of Scale's width
-			fOffsetLeftPct = parseFloat(aLabelsInDOM[1].style.left);
-			// Convert to PX
-			fOffsetLeftPx = iScaleWidth * fOffsetLeftPct / 100;
-			// Get which labels should become hidden
-			aHiddenLabels = oScale.getHiddenTickmarksLabels(iScaleWidth, aLabelsInDOM.length, fOffsetLeftPx, SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.WITH_LABEL);
-
-			aLabelsInDOM.forEach(function (oElem, iIndex) {
-				oElem.style.display = aHiddenLabels[iIndex] ? "none" : "inline-block";
-			});
 		};
 
 		Slider.prototype._handleTooltipContainerResponsiveness = function () {
@@ -492,7 +516,9 @@ function(
 		};
 
 		Slider.prototype.setDomValue = function(sNewValue) {
-			var oDomRef = this.getDomRef();
+			var oDomRef = this.getDomRef(),
+				sScaleLabel = this._formatValueByCustomElement(sNewValue),
+				oTooltipContainer = this.getAggregation("_tooltipContainer");
 
 			if (!oDomRef) {
 				return;
@@ -503,7 +529,7 @@ function(
 				oHandleDomRef = this.getDomRef("handle");
 
 			if (!!this.getName()) {
-				this.getDomRef("input").setAttribute("value", sNewValue);
+				this.getDomRef("input").setAttribute("value", sScaleLabel);
 			}
 
 			if (this.getProgress()) {
@@ -516,18 +542,98 @@ function(
 			oHandleDomRef.style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = sPerValue;
 
 			// update the position of the advanced tooltip
-			if (this.getShowAdvancedTooltip()) {
+			if (this.getShowAdvancedTooltip() && oTooltipContainer.getDomRef()) {
 				this.updateAdvancedTooltipDom(sNewValue);
 			}
 
 			if (this.getShowHandleTooltip() && !this.getShowAdvancedTooltip()) {
 
 				// update the tooltip
-				oHandleDomRef.title = sNewValue;
+				oHandleDomRef.title = sScaleLabel;
 			}
 
+			this._updateHandleAriaAttributeValues(oHandleDomRef, sNewValue, sScaleLabel);
+		};
+
+		/**
+		 * Updates the aria-valuenow and aria-valuetext.
+		 *
+		 * @param {object} oHandleDomRef The DOM reference of the slider handle
+		 * @param {string} sValue The current value
+		 * @param {string} sScaleLabel The label of the tickmark label
+		 * @private
+		 */
+		Slider.prototype._updateHandleAriaAttributeValues = function (oHandleDomRef, sValue, sScaleLabel) {
 			// update the ARIA attribute value
-			oHandleDomRef.setAttribute("aria-valuenow", sNewValue);
+			if (this._isElementsFormatterNotNumerical(sValue)) {
+				oHandleDomRef.setAttribute("aria-valuenow", sValue);
+				oHandleDomRef.setAttribute("aria-valuetext", sScaleLabel);
+			} else {
+				oHandleDomRef.setAttribute("aria-valuenow", sScaleLabel);
+				oHandleDomRef.removeAttribute("aria-valuetext");
+			}
+		};
+
+		/**
+		 * Format the value from the Scale or Tooltip callback.
+		 *
+		 * As the scale might want to display something else, but not numbers, we need to ensure that the format
+		 * would be populated to the relevant parts of the Slider:
+		 * - Handle tooltips
+		 * - Accessibility values
+		 * - Advanced tooltips are not taken into consideration as they need to implement their own formatting function.
+		 * That way we'd keep components as loose as possible.
+		 *
+		 * @param {float} fValue The value to be formatted
+		 * @param {string} sPriority Default priority is:
+		 *    1) Float value from the Slider,
+		 *    2) Scale formatter,
+		 *    3) Tooltips formatter so #3 always overwrites the rest.
+		 *    Priorities could be changed, so some formatter to prevail the others. Possible values are:
+		 *    - 'slider' (uses default value from the Slider),
+		 *    - 'scale' (use the Scale formatter),
+		 *    - null/undefined (use the Tooltips' formatter)
+		 *
+		 * @returns {string} The formatted value
+		 * @private
+		 */
+		Slider.prototype._formatValueByCustomElement = function (fValue, sPriority) {
+			var oScale = this._getUsedScale(),
+				oTooltip = this.getUsedTooltips()[0],
+				sFormattedValue = "" + fValue;
+
+			if (sPriority === 'slider') {
+				return sFormattedValue;
+			}
+
+			// If there's a labelling for the scale, use it
+			if (this.getEnableTickmarks() && oScale && oScale.getLabel) {
+				sFormattedValue = "" + oScale.getLabel(fValue, this);
+			}
+
+			if (sPriority === 'scale') {
+				return sFormattedValue;
+			}
+
+			// If there's a labelling for the tooltips, use it and overwrite previous
+			if (this.getShowAdvancedTooltip() && oTooltip && oTooltip.getLabel) {
+				sFormattedValue = "" + oTooltip.getLabel(fValue, this);
+			}
+
+			return sFormattedValue;
+		};
+
+		/**
+		 * Checks whether the scale has a numerical label defined for a certain value
+		 * of the slider.
+		 *
+		 * @param {float} fValue
+		 * @returns {boolean} Returns true, when the scale has a not numerical label defined.
+		 * @private
+		 */
+		Slider.prototype._isElementsFormatterNotNumerical = function (fValue) {
+			var vValue = this._formatValueByCustomElement(fValue);
+			return isNaN(vValue);
 		};
 
 		/**
@@ -537,10 +643,37 @@ function(
 		 * @protected
 		 */
 		Slider.prototype.updateAdvancedTooltipDom = function (sNewValue) {
-			var oTooltipsContainer = this.getAggregation("_tooltipContainer"),
-				aTooltips = this.getAggregation("_tooltips");
+			var aTooltips = this.getUsedTooltips();
 
-			aTooltips[0].setValue(parseFloat(sNewValue));
+			this.updateTooltipsPositionAndState(aTooltips[0], parseFloat(sNewValue));
+		};
+
+		/**
+		 * Gets the tooltips that should be shown.
+		 * Returns custom tooltips if provided. Otherwise - default tooltips
+		 *
+		 * @protected
+		 * @returns {sap.m.SliderTooltipBase[]} SliderTooltipBase instances.
+		 */
+		Slider.prototype.getUsedTooltips = function () {
+			var aCustomTooltips = this.getCustomTooltips(),
+				aDefaultTooltips = this.getAggregation("_defaultTooltips") || [];
+
+			return aCustomTooltips.length ? aCustomTooltips : aDefaultTooltips;
+		};
+
+		/**
+		 * Updates values of Slider and repositions tooltips.
+		 *
+		 * @param {string} oTooltip Tooltip to be changed
+		 * @param {float} fValue New value of the Slider
+		 * @private
+		 * @ui5-restricted sap.m.SliderTooltipBase
+		 */
+		Slider.prototype.updateTooltipsPositionAndState = function (oTooltip, fValue) {
+			var oTooltipsContainer = this.getAggregation("_tooltipContainer");
+
+			oTooltip.setValue(fValue);
 			oTooltipsContainer.repositionTooltips(this.getMin(), this.getMax());
 		};
 
@@ -625,11 +758,35 @@ function(
 			this._fireChangeAndLiveChange({ value: fNewValue });
 		};
 
+		/**
+		 * Register the ResizeHandler
+		 *
+		 * @private
+		 */
+		Slider.prototype._registerResizeHandler = function () {
+			if (!this._parentResizeHandler) {
+				this._parentResizeHandler = ResizeHandler.register(this, this._handleSliderResize.bind(this));
+			}
+		};
+
+		/**
+		 * Deregister the ResizeHandler
+		 *
+		 * @private
+		 */
+		Slider.prototype._deregisterResizeHandler = function () {
+			if (this._parentResizeHandler) {
+				ResizeHandler.deregister(this._parentResizeHandler);
+				this._parentResizeHandler = null;
+			}
+		};
+
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
-		Slider.prototype.init = function() {
+		Slider.prototype.init = function () {
+			var oSliderLabel;
 
 			// used to track the id of touch points
 			this._iActiveTouchId = -1;
@@ -643,22 +800,14 @@ function(
 
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-			var oTooltipContainer = new SliderTooltipContainer(),
-				oTooltip = new SliderTooltip(this.getId() + "-" + "leftTooltip", {
-					change: this.handleTooltipChange.bind(this)
-				});
+			// a reference to the SliderTooltipContainer
+			this._oTooltipContainer = null;
 
-			oTooltipContainer.addAssociation("associatedTooltips", oTooltip);
-
-			var oSliderLabel = new InvisibleText({
+			oSliderLabel = new InvisibleText({
 				text: this._oResourceBundle.getText("SLIDER_HANDLE")
 			});
 
-			oTooltip.addAriaLabelledBy(oSliderLabel);
-
 			this.addAggregation("_handlesLabels", oSliderLabel);
-			this.addAggregation("_tooltips", oTooltip);
-			this.setAggregation("_tooltipContainer", oTooltipContainer);
 		};
 
 		Slider.prototype.exit = function () {
@@ -666,13 +815,10 @@ function(
 				this._oResourceBundle = null;
 			}
 
-			if (this._parentResizeHandler) {
-				ResizeHandler.deregister(this._parentResizeHandler);
-				this._parentResizeHandler = null;
-			}
+			this._deregisterResizeHandler();
 		};
 
-		Slider.prototype.onBeforeRendering = function() {
+		Slider.prototype.onBeforeRendering = function () {
 			var bError = this._validateProperties();
 
 			// update the value only if there aren't errors
@@ -685,27 +831,139 @@ function(
 			}
 
 			if (this.getShowAdvancedTooltip()) {
-				this._forwardProperties(["enabled"], this.getAggregation("_tooltipContainer"));
-				this._forwardPropertiesToTooltip(this.getAggregation("_tooltips")[0]);
+				this.initAndSyncTooltips(["leftTooltip"]);
 			}
 
-			// For backwards compatibility when tickmarks are enabled, should be visible
-			if (this.getEnableTickmarks() && !this.getAggregation("scale")) {
-				this.setAggregation("scale", new ResponsiveScale(), true);
-			}
+			this._deregisterResizeHandler();
+
+			// set the correct scale aggregation, if needed
+			this._syncScaleUsage();
 		};
 
-		Slider.prototype._forwardProperties = function (aProperties, oControl) {
+		/**
+		 * Forwards properties to a given control
+		 * @param {Array} [aProperties] Array of properties to forward
+		 * @param {sap.ui.core.Element} [oControl] Control to which should be forward
+		 * @protected
+		 */
+		Slider.prototype.forwardProperties = function (aProperties, oControl) {
 			aProperties.forEach(function (sProperty) {
 				oControl.setProperty(sProperty, this.getProperty(sProperty), true);
 			}, this);
 		};
 
-		Slider.prototype._forwardPropertiesToTooltip = function (oTooltip) {
-			this._forwardProperties(["min", "max", "step"], oTooltip);
+		/**
+		 * Forwards properties to default tooltips
+		 *
+		 * @param {number} [iTooltipCount] Count of the tooltips
+		 * @protected
+		 */
+		Slider.prototype.forwardPropertiesToDefaultTooltips = function (iTooltipCount) {
+			var aDefaultTooltips = this.getAggregation("_defaultTooltips") || [];
 
-			oTooltip.setProperty("width", this._getMaxTooltipWidth() + "px", true);
-			oTooltip.setProperty("editable", this.getInputsAsTooltips(), true);
+			for (var index = 0; index < iTooltipCount; index++) {
+				this.forwardProperties(["min", "max", "step"], aDefaultTooltips[index]);
+
+				aDefaultTooltips[index].setProperty("width", this._getMaxTooltipWidth() + "px", true);
+				aDefaultTooltips[index].setProperty("editable", this.getInputsAsTooltips(), true);
+			}
+		};
+
+		/**
+		 * Creates custom tooltips, if needed, and forwards properties to them
+		 *
+		 * @param {number} [iTooltipCount] Count of the tooltips
+		 * @protected
+		 */
+		Slider.prototype.associateCustomTooltips = function (iTooltipCount) {
+			// destroy all default tooltips
+			this.destroyAggregation("_defaultTooltips", true);
+
+			// prevent invalidation of the children before rendering
+			this._oTooltipContainer.removeAllAssociation("associatedTooltips", true);
+
+			for (var index = 0; index < iTooltipCount; index++) {
+				this._oTooltipContainer.addAssociation("associatedTooltips", this.getCustomTooltips()[index], true);
+			}
+		};
+
+		/**
+		 * Creates default tooltips, if needed, and forwards properties to them
+		 *
+		 * @param {Array} [aTooltipIds] Array of strings for ID generation
+		 * @protected
+		 */
+		Slider.prototype.assignDefaultTooltips = function (aTooltipIds) {
+			var aDefaultTooltips = this.getAggregation("_defaultTooltips") || [];
+
+			// skip init tooltips if they are already there
+			if (aDefaultTooltips.length === 0) {
+				// clear the assoctiated tooltips from the container
+				this._oTooltipContainer.removeAllAssociation("associatedTooltips", true);
+
+				aTooltipIds.forEach(function (sId) {
+					this.initDefaultTooltip(sId);
+				}, this);
+			}
+
+			// forward properties to the default tooltips
+			this.forwardProperties(["enabled"], this._oTooltipContainer);
+			this.forwardPropertiesToDefaultTooltips(aTooltipIds.length);
+		};
+
+		/**
+		 * Assigns tooltips and forwards properties to them
+		 *
+		 * @param {Array}[aTooltipIds] Array of strings for ID generation
+		 * @protected
+		 */
+		Slider.prototype.initAndSyncTooltips = function (aTooltipIds) {
+			var aCustomTooltips = this.getCustomTooltips(),
+				iCustomTooltipsCount = aCustomTooltips.length,
+				iMaxCustomTooltipCount = aTooltipIds.length;
+
+			this.initTooltipContainer();
+
+			// validates the count of passed tooltips and takes the needed count or fallbacks to default tooltips
+			if (iCustomTooltipsCount < iMaxCustomTooltipCount) {
+				this.assignDefaultTooltips(aTooltipIds);
+			} else {
+
+				// log a warning if tooltips are more than one for Slider or more than two for RangeSlider
+				if (iCustomTooltipsCount > iMaxCustomTooltipCount) {
+					log.warning("Warning: More than " + iMaxCustomTooltipCount + " Custom Tooltips are provided. Only the first will be used.");
+				}
+
+				// we use the first 2 tooltips of the aggregation
+				this.associateCustomTooltips(iMaxCustomTooltipCount);
+			}
+		};
+
+		/**
+		 * Creates a default SliderTooltip instance and adds it as an aggregation
+		 *
+		 * @param {string}[sId] The tooltip ID
+		 * @protected
+		 */
+		Slider.prototype.initDefaultTooltip = function (sId) {
+			var oTooltip = new SliderTooltip(this.getId() + "-" + sId, {
+				change: this.handleTooltipChange.bind(this)
+			});
+
+			this.getAggregation("_tooltipContainer").addAssociation("associatedTooltips", oTooltip, true);
+			this.addAggregation("_defaultTooltips", oTooltip, true);
+		};
+
+		/**
+		 * Creates a SliderTooltipContainer
+		 *
+		 * @protected
+		 */
+		Slider.prototype.initTooltipContainer = function () {
+			if (!this._oTooltipContainer) {
+				this._oTooltipContainer = new SliderTooltipContainer();
+				this.setAggregation("_tooltipContainer", this._oTooltipContainer, true);
+			}
 		};
 
 		Slider.prototype._getMaxTooltipWidth = function () {
@@ -720,12 +978,8 @@ function(
 				this._recalculateStyles();
 				this._handleTooltipContainerResponsiveness();
 			}
-
-			if (!this._parentResizeHandler) {
-				jQuery.sap.delayedCall(0, this, function () {
-					this._parentResizeHandler = ResizeHandler.register(this, this._handleSliderResize.bind(this));
-				});
-			}
+			this._handleSliderResize({control: this});
+			this._registerResizeHandler();
 		};
 
 		/* =========================================================== */
@@ -781,7 +1035,7 @@ function(
 			if (oTouch.target !== oNearestHandleDomRef) {
 
 				// set the focus to the nearest slider handle
-				jQuery.sap.delayedCall(0, oNearestHandleDomRef, "focus");
+				setTimeout(oNearestHandleDomRef["focus"].bind(oNearestHandleDomRef), 0);
 			}
 
 			// recalculate some styles,
@@ -911,7 +1165,22 @@ function(
 
 			if (this.getShowAdvancedTooltip()) {
 				this.getAggregation("_tooltipContainer").show(this);
+				this._setAriaControls();
 				this.updateAdvancedTooltipDom(this.getValue());
+			}
+		};
+
+		/**
+		 * Adds aria-controls attribute, when the tooltips are rendered.
+		 *
+		 * @private
+		 */
+		Slider.prototype._setAriaControls = function () {
+			var oTooltip = this.getUsedTooltips()[0],
+				oHandle = this.getFocusDomRef();
+
+			if (this.getInputsAsTooltips() && oTooltip && oTooltip.getDomRef()) {
+				oHandle.setAttribute("aria-controls", oTooltip.getId());
 			}
 		};
 
@@ -929,7 +1198,6 @@ function(
 			var bSliderFocused = jQuery.contains(this.getDomRef(), oEvent.relatedTarget),
 				bTooltipFocused = jQuery.contains(this.getAggregation("_tooltipContainer").getDomRef(), oEvent.relatedTarget);
 
-
 			if (bSliderFocused || bTooltipFocused) {
 				return;
 			}
@@ -945,6 +1213,7 @@ function(
 
 				oTooltipContainer = this.getAggregation("_tooltipContainer");
 				bTooltipFocused = jQuery.contains(oTooltipContainer.getDomRef(), document.activeElement);
+				this._setAriaControls();
 
 				// do not update Tooltip's value if it is already focused
 				if (bTooltipFocused) {
@@ -991,10 +1260,14 @@ function(
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		Slider.prototype.onkeydown = function (oEvent) {
-			var oTooltip = this.getAggregation("_tooltips")[0];
+			var aTooltips = this.getUsedTooltips();
 
-			if (oEvent.keyCode === SliderUtilities.CONSTANTS.F2_KEYCODE && oTooltip && oTooltip.getEditable()) {
-				oTooltip.focus();
+			if (oEvent.keyCode === SliderUtilities.CONSTANTS.F2_KEYCODE && aTooltips[0] && this.getInputsAsTooltips()) {
+				aTooltips[0].focus();
+			}
+
+			if (oEvent.keyCode === KeyCodes.SPACE) {
+				oEvent.preventDefault();
 			}
 		};
 
@@ -1006,11 +1279,6 @@ function(
 		Slider.prototype.onsapincrease = function(oEvent) {
 			var fValue,
 				fNewValue;
-
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
-				return;
-			}
 
 			// note: prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
@@ -1038,14 +1306,14 @@ function(
 		 */
 		Slider.prototype.onsapincreasemodifiers = function(oEvent) {
 
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this || oEvent.altKey) {
+			if (oEvent.altKey) {
 				return;
 			}
 
 			// note: prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
+
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
@@ -1061,11 +1329,6 @@ function(
 		Slider.prototype.onsapdecrease = function(oEvent) {
 			var fValue,
 				fNewValue;
-
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
-				return;
-			}
 
 			// note: prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
@@ -1093,14 +1356,14 @@ function(
 		 */
 		Slider.prototype.onsapdecreasemodifiers = function(oEvent) {
 
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this || oEvent.altKey) {
+			if (oEvent.altKey) {
 				return;
 			}
 
 			// note: prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
+
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
@@ -1117,11 +1380,6 @@ function(
 		Slider.prototype.onsapplus = function(oEvent) {
 			var fValue,
 				fNewValue;
-
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
-				return;
-			}
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -1148,11 +1406,6 @@ function(
 		Slider.prototype.onsapminus = function(oEvent) {
 			var fValue,
 				fNewValue;
-
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
-				return;
-			}
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -1204,11 +1457,6 @@ function(
 		 */
 		Slider.prototype.onsaphome = function(oEvent) {
 
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
-				return;
-			}
-
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
@@ -1231,11 +1479,6 @@ function(
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		Slider.prototype.onsapend = function(oEvent) {
-
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
-				return;
-			}
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();

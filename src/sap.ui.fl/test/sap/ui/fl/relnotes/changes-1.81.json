@@ -1,0 +1,35 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "f6abe8c7fbd0900ccadcc9825535228d2c19fdd0",
+        "type": "FIX",
+        "text": " fl.VariantManagement: avoid multiple clicks on \u0027Save View\u0027 dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080270402"
+          }
+        ]
+      },
+      {
+        "id": "32dc1fb845dbf3aae11d2e56a1990cdbd465f9e5",
+        "type": "FEATURE",
+        "text": " sap.ui.rta can show a version history",
+        "references": []
+      },
+      {
+        "id": "cd8a1db5e815857480c9ab3bc7a77be17f700fcd",
+        "type": "FIX",
+        "text": " fl.VariantManagement: remove the variantBusy handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080273826"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -5,27 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TableViewSettingsDialog.Component", {
 
 		metadata : {
-			rootView : {
-				"viewName": "sap.m.sample.TableViewSettingsDialog.V",
-				"type": "XML",
-				"async": true
-			},
-			dependencies : {
-				libs : [
-					"sap.m",
-					"sap.ui.layout"
-				]
-			},
-			config : {
-				sample : {
-					files : [
-						"V.view.xml",
-						"C.controller.js",
-						"Dialog.fragment.xml",
-						"Formatter.js"
-					]
-				}
-			}
+			manifest: "json"
 		}
 	});
 

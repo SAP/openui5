@@ -1,6 +1,7 @@
-<View
+<mvc:View
 	xmlns="sap.m"
 	xmlns:layout="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
 	controllerName="sap.ui.core.sample.RoutingMasterDetail.routingApp.controller.Master">
 	<Page
 		title="Orders List">
@@ -15,4 +16,4 @@
 			</items>
 		</List>
 	</Page>
-</View>
+</mvc:View>

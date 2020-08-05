@@ -1,5 +1,5 @@
 /*global sinon, QUnit */
-sap.ui.define(['sap/ui/performance/XHRInterceptor', 'sap/base/log'], function(XHRInterceptor, log) {
+sap.ui.define(['sap/ui/performance/XHRInterceptor'], function(XHRInterceptor) {
 	"use strict";
 
 	QUnit.module("XHRInterceptor", {
@@ -89,7 +89,7 @@ sap.ui.define(['sap/ui/performance/XHRInterceptor', 'sap/base/log'], function(XH
 	});
 
 	QUnit.test("unregister an unknown function", function(assert) {
-		assert.notOk(XHRInterceptor.unregister("test", "open"), "Unregister failed");
+		assert.ok(XHRInterceptor.unregister("test", "open"), "Unregistered function not present anymore");
 
 	});
 

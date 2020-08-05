@@ -93,26 +93,52 @@
 				}
 			},
 
-			renderer: function(oRm, oControl) {
-				var sId = oControl.getId();
-
-				oRm.write("<div");
-				oRm.writeControlData(oControl);
-				oRm.writeClasses();
-				oRm.addStyle("width", "100%");
-				oRm.addStyle("height", "100%");
-				oRm.addStyle("padding", "1rem");
-				oRm.addStyle("margin-bottom", "1rem");
-				oRm.writeAttribute("title", "Age: " + oControl.getAge());
-				oRm.writeStyles();
-				oRm.write(">");
-
-				var fAge = Math.round((Date.now() - oControl.getAge()) / 1000);
-				oRm.write("<div id=\"" + sId + "-label\" style=\"display: inline-block; width: 28%;\">" + oControl.getLabel() + "</div>")
-				oRm.write("<div id=\"" + sId + "-value\" style=\"display: inline-block; width: 28%;\">" + oControl.getValue() + "</div>")
-				oRm.write("<div id=\"" + sId + "-age\" style=\"display: inline-block; width: 28%;\">Age: " + fAge + "s</div>")
-				oRm.write("<button id=\"" + sId + "-refresh\" style=\"display: inline-block; width: 10%;\">Refresh</button>");
-				oRm.write("</div>");
+			renderer: {
+				apiVersion: 2,
+				render: function(oRm, oControl) {
+					var sId = oControl.getId();
+	
+					oRm.openStart("div", oControl);
+					oRm.style("width", "100%");
+					oRm.style("height", "100%");
+					oRm.style("padding", "1rem");
+					oRm.style("margin-bottom", "1rem");
+					oRm.attr("title", "Age: " + oControl.getAge());
+					oRm.openEnd();
+	
+						var fAge = Math.round((Date.now() - oControl.getAge()) / 1000);
+						oRm.openStart("div", sId + "-label");
+						oRm.style("display", "inline-block");
+						oRm.style("width", "28%");
+						oRm.openEnd();
+						oRm.text(oControl.getLabel());
+						oRm.close("div");
+	
+						oRm.openStart("div", sId + "-value");
+						oRm.style("display", "inline-block");
+						oRm.style("width", "28%");
+						oRm.openEnd();
+						oRm.text(oControl.getValue());
+						oRm.close("div");
+	
+						oRm.openStart("div", sId + "-age");
+						oRm.style("display", "inline-block");
+						oRm.style("width", "28%");
+						oRm.openEnd();
+						oRm.text("Age:");
+						oRm.text(oControl.getValue());
+						oRm.text("s");
+						oRm.close("div");
+	
+						oRm.openStart("button", sId + "-refresh");
+						oRm.style("display", "inline-block");
+						oRm.style("width", "10%");
+						oRm.openEnd();
+						oRm.text("Refresh");
+						oRm.close("button");
+	
+					oRm.close("div");
+				}
 			},
 
 			onBeforeRendering: function() {
@@ -189,7 +215,7 @@
 
 	</script>
 </head>
-<body class="sapUiBody" role="application">
+<body class="sapUiBody">
 	<h1>Test Page for sap.ui.model.odata.v2.ODataModel: BindableResponseHeaders</h1>
 	<div id="content"></div>
 </body>

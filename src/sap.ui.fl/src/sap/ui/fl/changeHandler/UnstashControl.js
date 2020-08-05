@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global"
+	"sap/base/Log"
 ], function(
-	jQuery
+	Log
 ) {
 	"use strict";
 
@@ -30,21 +30,23 @@ sap.ui.define([
 	UnstashControl.applyChange = function(oChange, oControl, mPropertyBag) {
 		var mContent = oChange.getContent();
 		var oModifier = mPropertyBag.modifier;
+		var bStashed = false;
 
 		oChange.setRevertData({
 			originalValue: mPropertyBag.modifier.getStashed(oControl)
 		});
 
-		oModifier.setStashed(oControl, false);
+		var oUnstashedControl = oModifier.setStashed(oControl, bStashed, mPropertyBag.appComponent) || oControl;
 
-		if (mContent.parentAggregationName){
-			//old way including move, new way will have separate move change
+		//old way including move, new way will have separate move change
+		//only applicable for XML modifier
+		if (mContent.parentAggregationName) {
 			var sTargetAggregation = mContent.parentAggregationName;
-			var oTargetParent = oModifier.getParent(oControl);
-			oModifier.removeAggregation(oTargetParent, sTargetAggregation, oControl);
-			oModifier.insertAggregation(oTargetParent, sTargetAggregation, oControl, mContent.index, mPropertyBag.view);
+			var oTargetParent = oModifier.getParent(oUnstashedControl);
+			oModifier.removeAggregation(oTargetParent, sTargetAggregation, oUnstashedControl);
+			oModifier.insertAggregation(oTargetParent, sTargetAggregation, oUnstashedControl, mContent.index, mPropertyBag.view);
 		}
-		return true;
+		return oUnstashedControl;
 	};
 
 	/**
@@ -64,7 +66,7 @@ sap.ui.define([
 			mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue);
 			oChange.resetRevertData();
 		} else {
-			jQuery.sap.log.error("Attempt to revert an unapplied change.");
+			Log.error("Attempt to revert an unapplied change.");
 			return false;
 		}
 
@@ -79,14 +81,27 @@ sap.ui.define([
 	 * @public
 	 */
 	UnstashControl.completeChangeContent = function(oChange, oSpecificChangeInfo) {
-
 		var oChangeJson = oChange.getDefinition();
 
 		if (oSpecificChangeInfo.content) {
 			//old way including move, new way will have seperate move change
 			oChangeJson.content = oSpecificChangeInfo.content;
 		}
+	};
 
+	/**
+	 * Retrieves the condenser-specific information.
+	 *
+	 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+	 * @returns {object} - Condenser-specific information
+	 * @public
+	 */
+	UnstashControl.getCondenserInfo = function(oChange) {
+		return {
+			affectedControl: oChange.getSelector(),
+			classification: sap.ui.fl.condenser.Classification.Reverse,
+			uniqueKey: "stashed"
+		};
 	};
 
 	return UnstashControl;

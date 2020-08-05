@@ -4,23 +4,25 @@
 /**
  * Defines support rules related to the model.
  */
-sap.ui.define(["jquery.sap.global",
-		"sap/ui/support/library",
-		"sap/ui/support/supportRules/util/StringAnalyzer",
-		"sap/ui/model/ListBinding",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/model/odata/ODataMetadata",
-		"sap/ui/model/CompositeBinding",
-		"sap/ui/model/PropertyBinding"],
+sap.ui.define([
+	"sap/ui/support/library",
+	"sap/ui/support/supportRules/util/StringAnalyzer",
+	"sap/ui/model/ListBinding",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/ODataMetadata",
+	"sap/ui/model/CompositeBinding",
+	"sap/ui/model/PropertyBinding"
+],
 	function(
-		jQuery,
 		SupportLib,
 		StringAnalyzer,
 		ListBinding,
 		JSONModel,
 		ODataMetadata,
-		CompositeBinding) {
+		CompositeBinding
+	) {
 	"use strict";
+	/*eslint max-nested-callbacks: 0 */
 
 	// shortcuts
 	var Categories = SupportLib.Categories; // Accessibility, Performance, Memory, ...
@@ -44,8 +46,8 @@ sap.ui.define(["jquery.sap.global",
 	// Rule Definitions
 	//**********************************************************
 	/**
-	 * Checks whether there are bindings for models where the model is available but a binding has no result
-	 * It checks the path structure and checks for typos
+	 * Checks whether there are bindings for models where the model is available but a binding has no result.
+	 * It checks the path structure and checks for typos.
 	 */
 	var oBindingPathSyntaxValidation = {
 		id: "bindingPathSyntaxValidation",

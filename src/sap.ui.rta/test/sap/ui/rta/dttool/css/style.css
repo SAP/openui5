@@ -1,0 +1,37 @@
+.sapUiDtToolPanel>.sapMPanelContent  {
+	padding: 0px !important;
+}
+
+.sapMOHTitle h1 .sapMText {
+	color:white;
+}
+
+#__component0---app--theBar {
+	background-color: #0f3861;
+}
+
+#__component0---code--codeEditor {
+	border: 1px solid lightgray;
+	margin: auto;
+	height: 300px;
+	width: 80%;
+}
+.scrollmargin {
+    height: 80px;
+    text-align: center;
+}
+
+.sapMILILabel {
+    font-size: 1em;
+}
+
+.sapMTB-Transparent-CTX > .sapMTitleTB.sapMTitleStyleAuto {
+    font-size: 1em;
+}
+
+.sapMLIB{
+    padding: 0 0.5rem 0 0.5rem;
+}
+
+
+

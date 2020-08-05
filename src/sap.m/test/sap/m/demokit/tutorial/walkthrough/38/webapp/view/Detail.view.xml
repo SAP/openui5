@@ -1,0 +1,52 @@
+<mvc:View
+	controllerName="sap.ui.demo.walkthrough.controller.Detail"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:wt="sap.ui.demo.walkthrough.control">
+	<Page
+		title="{i18n>detailPageTitle}"
+		showNavButton="true"
+		navButtonPress=".onNavBack">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>Detail_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>Detail_contentLabel}"
+				headerRole="Banner"
+				headerLabel="{i18n>Detail_headerLabel}"/>
+		</landmarkInfo>
+		<ObjectHeader
+			responsive="true"
+			fullScreenOptimized="true"
+			number="{
+					parts: [{path: 'invoice>ExtendedPrice'}, {path: 'view>/currency'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {
+						showMeasure: false
+					}
+				}"
+			numberUnit="{view>/currency}"
+			intro="{invoice>ShipperName}"
+			title="{invoice>ProductName}">
+			<attributes>
+				<ObjectAttribute title="{i18n>quantityTitle}" text="{invoice>Quantity}"></ObjectAttribute>
+				<ObjectAttribute title="{i18n>dateTitle}" text="{
+					path: 'invoice>ShippedDate',
+					type: 'sap.ui.model.type.Date',
+					formatOptions: {
+						style: 'long',
+						source: {
+						pattern: 'yyyy-MM-ddTHH:mm:ss'
+						}
+					}
+					}"/>
+			</attributes>
+		</ObjectHeader>
+		<Panel
+				headerText="{i18n>ratingTitle}"
+				accessibleRole="Region">
+				<wt:ProductRating id="rating" class="sapUiSmallMarginBeginEnd" change=".onRatingChange"/>
+		</Panel>
+	</Page>
+</mvc:View>

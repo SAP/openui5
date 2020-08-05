@@ -1,9 +1,8 @@
-sap.ui.define(function() {
+sap.ui.define(function () {
 	"use strict";
 
-	var Formatter = {
-
-		weightState :  function (fMeasure, sUnit) {
+	return {
+		weightState :  function (fMeasure) {
 			var fMaxWeightSuccess = 3;
 			var fMaxWeightWarning = 4;
 			var fAdjustedMeasure = parseFloat(fMeasure);
@@ -21,7 +20,7 @@ sap.ui.define(function() {
 				}
 			}
 		},
-		addClass: function (sValue) {
+		addClass : function (sValue) {
 			switch (sValue) {
 			case "1":
 				return ("Class: 1");
@@ -38,6 +37,4 @@ sap.ui.define(function() {
 		}
 	};
 
-	return Formatter;
-
-}, /* bExport= */ true);
+});

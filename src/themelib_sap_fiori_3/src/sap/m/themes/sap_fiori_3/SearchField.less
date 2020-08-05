@@ -1,0 +1,48 @@
+/* ================================== */
+/* CSS for control sap.m/SearchField  */
+/* Fiori 3 theme                      */
+/* ================================== */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_m_SearchField_Height: 2.75rem;
+@_sap_m_SearchField_FormHeight: 2.25rem;
+@_sap_m_SearchField_InputHeight: 2.125rem;
+@_sap_m_SearchField_ButtonSize: 2.125rem;
+@_sap_m_SearchField_ButtonFontSize: 1rem;
+@_sap_m_SearchField_NoSearchButtonPadding: 2.25rem;
+@_sap_m_SearchField_Compact_FormPaddingLeft: 0.5rem;
+@_sap_m_SearchField_ResetIcon: "\e03e";
+
+.sapMSFF {
+	border-radius: @sapUiFieldBorderCornerRadius;
+}
+
+.sapMSFDisabled {
+	opacity: 0.5;
+}
+
+/* custom buttons */
+.sapMSFB:focus {
+	outline: none;
+}
+
+.sapMBarChild > .sapMSFF > .sapMSFB {
+	text-shadow: none;
+}
+
+.sapMFocus>.sapMSFF>.sapMSFB {
+	color: @sapUiHighlight;
+}
+
+.sapMSFB:hover{
+	background-color: @sapUiButtonLiteHoverBackground;
+}
+
+.sapMSFF>.sapMSFB:not(.sapMSFBF):active,
+.sapMSFF>.sapMSFB.sapMSFBA {
+	background-color: @sapUiButtonLiteActiveBackground;
+	color: @sapUiContentContrastIconColor;
+}

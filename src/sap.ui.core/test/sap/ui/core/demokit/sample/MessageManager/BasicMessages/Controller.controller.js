@@ -3,11 +3,16 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/BindingMode",
     "sap/ui/core/message/Message",
-    "sap/ui/core/MessageType",
-    "sap/ui/core/ValueState",
-    "sap/m/MessageToast"
-], function(Controller, JSONModel, BindingMode, Message, MessageType, ValueState, MessageToast) {
+    "sap/m/MessageToast",
+    "sap/ui/core/library"
+], function(Controller, JSONModel, BindingMode, Message, MessageToast, library) {
     "use strict";
+
+    // shortcut for sap.ui.core.ValueState
+    var ValueState = library.ValueState;
+
+    // shortcut for sap.ui.core.MessageType
+    var MessageType = library.MessageType;
 
     return Controller.extend("sap.ui.core.sample.MessageManager.BasicMessages.Controller", {
 
@@ -95,7 +100,7 @@ sap.ui.define([
         _getMessagePopover : function () {
             // create popover lazily (singleton)
             if (!this._oMessagePopover) {
-                this._oMessagePopover = sap.ui.xmlfragment(this.getView().getId(),"sap.ui.core.sample.MessageManager.BasicODataMessages.MessagePopover", this);
+                this._oMessagePopover = sap.ui.xmlfragment(this.getView().getId(),"sap.ui.core.sample.MessageManager.BasicMessages.MessagePopover", this);
                 this.getView().addDependent(this._oMessagePopover);
             }
             return this._oMessagePopover;

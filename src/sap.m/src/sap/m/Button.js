@@ -4,26 +4,29 @@
 
 // Provides control sap.m.Button.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
+	'sap/ui/core/ShortcutHintsMixin',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
 	'sap/ui/core/ContextMenuSupport',
 	'sap/ui/core/library',
 	'./ButtonRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/LabelEnablement"
 ], function(
-	jQuery,
 	library,
 	Control,
+	ShortcutHintsMixin,
 	EnabledPropagator,
 	IconPool,
 	Device,
 	ContextMenuSupport,
 	coreLibrary,
-	ButtonRenderer
+	ButtonRenderer,
+	KeyCodes,
+	LabelEnablement
 ) {
 	"use strict";
 
@@ -32,6 +35,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.m.ButtonAccessibilityType
+	var ButtonAccessibilityType = library.ButtonAccessibilityType;
 
 	/**
 	 * Constructor for a new <code>Button</code>.
@@ -82,7 +88,7 @@ sap.ui.define([
 			/**
 			 * Determines the text of the <code>Button</code>.
 			 */
-			text : {type : "string", group : "Misc", defaultValue : null},
+			text : {type : "string", group : "Misc", defaultValue: "" },
 
 			/**
 			 * Defines the <code>Button</code> type.
@@ -104,7 +110,7 @@ sap.ui.define([
 			 * Defines the icon to be displayed as graphical element within the <code>Button</code>.
 			 * It can be an image or an icon from the icon font.
 			 */
-			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
+			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue: "" },
 
 			/**
 			 * Determines whether the icon is displayed before the text.
@@ -156,7 +162,8 @@ sap.ui.define([
 			 */
 			press : {}
 		},
-		designtime: "sap/m/designtime/Button.designtime"
+		designtime: "sap/m/designtime/Button.designtime",
+		dnd: { draggable: true, droppable: false }
 	}});
 
 
@@ -169,6 +176,17 @@ sap.ui.define([
 
 	EnabledPropagator.call(Button.prototype);
 	ContextMenuSupport.apply(Button.prototype);
+
+	Button.prototype.init = function() {
+		this._onmouseenter = this._onmouseenter.bind(this);
+		this._buttonPressed = false;
+
+		ShortcutHintsMixin.addConfig(this, {
+				event: "press",
+				position: "0 4",
+				addAccessibilityLabel: true
+			}, this);
+	};
 
 	/**
 	 * Function is called when exiting the control.
@@ -185,6 +203,26 @@ sap.ui.define([
 		if (this._iconBtn) {
 			this._iconBtn.destroy();
 		}
+
+		this.$().off("mouseenter", this._onmouseenter);
+	};
+
+	Button.prototype.setType = function(sButtonType) {
+		this.setProperty("type", sButtonType, false);
+
+		if (sButtonType === ButtonType.Critical) {
+			this._sTypeIconURI = "sap-icon://message-warning";
+		} else if (sButtonType === ButtonType.Negative) {
+			this._sTypeIconURI = "sap-icon://message-error";
+		} else if (sButtonType === ButtonType.Success) {
+			this._sTypeIconURI = "sap-icon://message-success";
+		} else if (sButtonType === ButtonType.Neutral) {
+			this._sTypeIconURI = "sap-icon://message-information";
+		} else {
+			this._sTypeIconURI = null;
+		}
+
+		return this;
 	};
 
 	/*
@@ -192,11 +230,12 @@ sap.ui.define([
 	 */
 	Button.prototype.onBeforeRendering = function() {
 		this._bRenderActive = this._bActive;
+
+		this.$().off("mouseenter", this._onmouseenter);
 	};
 
 	/*
 	 * Restore active state if the button was depressed before re-rendering.
-	 * Save _bRenderActive to treate the next mouseup as a tap event.
 	 */
 	Button.prototype.onAfterRendering = function() {
 		if (this._bRenderActive) {
@@ -204,6 +243,8 @@ sap.ui.define([
 			// now, this._bActive may be false if the button was disabled
 			this._bRenderActive = this._bActive;
 		}
+
+		this.$().on("mouseenter", this._onmouseenter);
 	};
 
 	/**
@@ -222,18 +263,25 @@ sap.ui.define([
 		// change the source only when the first finger is on the control, the
 		// following fingers doesn't affect
 		if (oEvent.targetTouches.length === 1) {
-
+			this._buttonPressed = true;
 			// set active button state
 			this._activeButton();
 		}
 
 		if (this.getEnabled() && this.getVisible()) {
-			// Safari doesn't set the focus to the clicked button tag but to the nearest parent DOM which is focusable
-			// This behavior has to be stopped by calling prevent default when the original event is 'mousedown'
-			// and set the focus explicitly to the button.
-			if (Device.browser.safari && (oEvent.originalEvent && oEvent.originalEvent.type === "mousedown")) {
-				this.focus();
-				oEvent.preventDefault();
+			// Safari and Firefox doesn't set the focus to the clicked button tag but to the nearest parent DOM which is focusable
+			// That is why we re-set the focus manually after the browser sets the focus.
+			if ((Device.browser.safari || Device.browser.firefox) && (oEvent.originalEvent && oEvent.originalEvent.type === "mousedown")) {
+				this._setButtonFocus();
+			}
+			if (!sap.ui.Device.browser.msie) {
+				// set the tag ID where the touch event started
+				this._sTouchStartTargetId = oEvent.target.id.replace(this.getId(), '');
+			}
+		} else {
+			if (!sap.ui.Device.browser.msie) {
+				// clear the starting tag ID in case the button is not enabled and visible
+				this._sTouchStartTargetId = '';
 			}
 		}
 	};
@@ -244,17 +292,33 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype.ontouchend = function(oEvent) {
+		var sEndingTagId;
+
+		this._buttonPressed = oEvent.originalEvent && oEvent.originalEvent.buttons & 1;
 
 		// set inactive button state
 		this._inactiveButton();
 
-		// if the button was re-rendered being in depressed state, the tap event won't come. Simulate it:
 		if (this._bRenderActive) {
 			delete this._bRenderActive;
-			if (oEvent.originalEvent && oEvent.originalEvent.type in {mouseup:1, touchend:1}) {
-				this.ontap(oEvent);
+			this.ontap(oEvent, true);
+		}
+
+		if (!sap.ui.Device.browser.msie) {
+			// get the tag ID where the touch event ended
+			sEndingTagId = oEvent.target.id.replace(this.getId(), '');
+			// there are some cases when tap event won't come. Simulate it:
+			if (this._buttonPressed === 0
+				&& ((this._sTouchStartTargetId === "-BDI-content"
+						&& (sEndingTagId === '-content' || sEndingTagId === '-inner' || sEndingTagId === '-img'))
+					|| (this._sTouchStartTargetId === "-content" && (sEndingTagId === '-inner' || sEndingTagId === '-img'))
+					|| (this._sTouchStartTargetId === '-img' && sEndingTagId !== '-img'))) {
+				this.ontap(oEvent, true);
 			}
 		}
+
+		// clear the starting target
+		this._sTouchStartTargetId = '';
 	};
 
 	/**
@@ -262,7 +326,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype.ontouchcancel = function() {
-
+		this._buttonPressed = false;
+		this._sTouchStartTargetId = '';
 		// set inactive button state
 		this._inactiveButton();
 	};
@@ -272,10 +337,14 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent - the touch event.
 	 * @private
 	 */
-	Button.prototype.ontap = function(oEvent) {
-
+	Button.prototype.ontap = function(oEvent, bFromTouchEnd) {
 		// mark the event for components that needs to know if the event was handled by the button
 		oEvent.setMarked();
+		delete this._bRenderActive;
+
+		if (this.bFromTouchEnd) {
+			return;
+		}
 
 		// fire tap event
 		if (this.getEnabled() && this.getVisible()) {
@@ -285,7 +354,15 @@ sap.ui.define([
 			}
 
 			this.fireTap({/* no parameters */}); // (This event is deprecated, use the "press" event instead)
-			this.firePress({/* no parameters */});
+			this.firePress({/* no parameters */ });
+		}
+
+		this.bFromTouchEnd = bFromTouchEnd;
+
+		if (this.bFromTouchEnd) {
+			setTimeout(function() {
+				delete this.bFromTouchEnd;
+			}.bind(this), 0);
 		}
 	};
 
@@ -298,18 +375,39 @@ sap.ui.define([
 	 */
 	Button.prototype.onkeydown = function(oEvent) {
 
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.ESCAPE || oEvent.which === KeyCodes.SHIFT) {
 
-			// mark the event for components that needs to know if the event was handled by the button
-			oEvent.setMarked();
+			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
+				// mark the event for components that needs to know if the event was handled by the button
+				oEvent.setMarked();
 
-			// set active button state
-			this._activeButton();
+				// set active button state
+				this._activeButton();
+			}
+
+			if (oEvent.which === KeyCodes.ENTER) {
+				this.firePress({/* no parameters */});
+			}
+
+			if (oEvent.which === KeyCodes.SPACE) {
+				this._bPressedSpace = true;
+			}
+
+			// set inactive state of the button and marked ESCAPE or SHIFT as pressed only if SPACE was pressed before it
+			if (this._bPressedSpace) {
+				if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+					this._bPressedEscapeOrShift = true;
+					// set inactive button state
+					this._inactiveButton();
+				}
+			}
+
+		} else {
+			if (this._bPressedSpace) {
+				oEvent.preventDefault();
+			}
 		}
 
-		if (oEvent.which === jQuery.sap.KeyCodes.ENTER) {
-			this.firePress({/* no parameters */});
-		}
 	};
 
 	/**
@@ -320,8 +418,7 @@ sap.ui.define([
 	 */
 	Button.prototype.onkeyup = function(oEvent) {
 
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
-
+		if (oEvent.which === KeyCodes.ENTER) {
 			// mark the event for components that needs to know if the event was handled by the button
 			oEvent.setMarked();
 
@@ -329,8 +426,28 @@ sap.ui.define([
 			this._inactiveButton();
 		}
 
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE) {
-			this.firePress({/* no parameters */});
+		if (oEvent.which === KeyCodes.SPACE) {
+			if (!this._bPressedEscapeOrShift) {
+				// mark the event for components that needs to know if the event was handled by the button
+				oEvent.setMarked();
+
+				// set inactive button state
+				this._inactiveButton();
+				this.firePress({/* no parameters */});
+			} else {
+				this._bPressedEscapeOrShift = false;
+			}
+			this._bPressedSpace = false;
+		}
+
+		if (oEvent.which === KeyCodes.ESCAPE){
+			this._bPressedSpace = false;
+		}
+	};
+
+	Button.prototype._onmouseenter = function(oEvent) {
+		if (this._buttonPressed && oEvent.originalEvent && oEvent.originalEvent.buttons & 1) {
+			this._activeButton();
 		}
 	};
 
@@ -340,7 +457,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype.onfocusout = function() {
-
+		this._buttonPressed = false;
+		this._sTouchStartTargetId = '';
 		// set inactive button state
 		this._inactiveButton();
 	};
@@ -358,7 +476,7 @@ sap.ui.define([
 		// handling active icon
 		this._bActive = this.getEnabled();
 		if (this._bActive) {
-			if (this.getIcon() && this.getActiveIcon() && this._image) {
+			if (this._getAppliedIcon() && this.getActiveIcon() && this._image) {
 				this._image.setSrc(this.getActiveIcon());
 			}
 		}
@@ -377,8 +495,8 @@ sap.ui.define([
 		// handling active icon
 		this._bActive = false;
 		if (this.getEnabled()) {
-			if (this.getIcon() && this.getActiveIcon() && this._image) {
-				this._image.setSrc(this.getIcon());
+			if (this._getAppliedIcon() && this.getActiveIcon() && this._image) {
+				this._image.setSrc(this._getAppliedIcon());
 			}
 		}
 	};
@@ -404,25 +522,27 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype._getImage = function(sImgId, sSrc, sActiveSrc, bIconDensityAware) {
+		var bIsIconURI = IconPool.isIconURI(sSrc),
+			bIconFirst;
 
-		// check if image source has changed - if yes destroy and reset image control
-		if (this._image && (this._image.getSrc() !== sSrc)) {
+		// check if image control type and src match - destroy it, if they don't
+		if (this._image instanceof sap.m.Image && bIsIconURI ||
+			this._image instanceof sap.ui.core.Icon && !bIsIconURI) {
 			this._image.destroy();
 			this._image = undefined;
 		}
 
 		// update or create image control
-		var oImage = this._image;
-		var bIconFirst = this.getIconFirst();
+		bIconFirst = this.getIconFirst();
 
-		if (!!oImage) {
-			oImage.setSrc(sSrc);
-			if (oImage instanceof sap.m.Image) {
-				oImage.setActiveSrc(sActiveSrc);
-				oImage.setDensityAware(bIconDensityAware);
+		if (this._image) {
+			this._image.setSrc(sSrc);
+			if (this._image instanceof sap.m.Image) {
+				this._image.setActiveSrc(sActiveSrc);
+				this._image.setDensityAware(bIconDensityAware);
 			}
 		} else {
-			oImage = IconPool.createControlByURI({
+			this._image = IconPool.createControlByURI({
 				id: sImgId,
 				src : sSrc,
 				activeSrc : sActiveSrc,
@@ -435,13 +555,12 @@ sap.ui.define([
 		}
 
 		// add style classes to the object
-		oImage.addStyleClass("sapMBtnIcon");
+		this._image.addStyleClass("sapMBtnIcon");
 
 		// check and set absolute position depending on icon and icon position
-		oImage.toggleStyleClass("sapMBtnIconLeft", bIconFirst);
-		oImage.toggleStyleClass("sapMBtnIconRight", !bIconFirst);
+		this._image.toggleStyleClass("sapMBtnIconLeft", bIconFirst);
+		this._image.toggleStyleClass("sapMBtnIconRight", !bIconFirst);
 
-		this._image = oImage;
 		return this._image;
 	};
 
@@ -495,63 +614,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Property setter for the text
-	 *
-	 * @param {string} sText - new value of the Text attribute
-	 * @return {sap.m.Button} this to allow method chaining
-	 * @public
-	 */
-	Button.prototype.setText = function(sText) {
-		var sValue = this.getText();
-
-		if (sText === null || sText === undefined) {
-			sText = "";
-		}
-
-		if (sValue !== sText) {
-			var oDomRef = this.getDomRef("content");
-			var bShouldSupressRendering = !!oDomRef;
-
-			// Render control if element is not available in the DOM
-			this.setProperty("text", sText, bShouldSupressRendering);
-
-			if (bShouldSupressRendering) {
-				// Get text to have the type conversation for non-string values done by the framework
-				sText = this.getText();
-				oDomRef.innerHTML = jQuery.sap.encodeHTML(sText);
-				this.$("inner").toggleClass("sapMBtnText", !!sText);
-			}
-		}
-
-		return this;
-	};
-
-	/**
-	 * Property setter for the icon
-	 *
-	 * @param {sap.ui.core.URI} sIcon - new value of the Icon property
-	 * @return {sap.m.Button} this to allow method chaining
-	 * @public
-	 */
-	Button.prototype.setIcon = function(sIcon) {
-		var sValue = this.getIcon() || "";
-		sIcon = sIcon || "";
-
-		if (sValue !== sIcon) {
-			var bSupressRendering = !!sValue && !!sIcon && IconPool.isIconURI(sIcon) === IconPool.isIconURI(sValue);
-			this.setProperty("icon", sIcon, bSupressRendering);
-			if (bSupressRendering && this._image) {
-				this._image.setSrc(sIcon);
-			}
-		}
-		return this;
-	};
-
-	/**
 	 * Defines to which DOM reference the Popup should be docked
 	 *
 	 * @protected
-	 * @return {DomNode} the DOM reference that Popup should dock to
+	 * @return {Element} the DOM reference that Popup should dock to
 	 */
 	Button.prototype.getPopupAnchorDomRef = function() {
 		return this.getDomRef("inner");
@@ -564,20 +630,32 @@ sap.ui.define([
 
 	// A hook to be used by controls that extend sap.m.Button and want to display the tooltip in a different way
 	Button.prototype._getTooltip = function() {
+		var sTooltip,
+			oIconInfo;
 
-		var sTooltip = this.getTooltip_AsString();
+		sTooltip = this.getTooltip_AsString();
 
 		if (!sTooltip && !this.getText()) {
 			// get icon-font info. will return null if the icon is an image
-			var oIconInfo = IconPool.getIconInfo(this.getIcon());
+			oIconInfo = IconPool.getIconInfo(this._getAppliedIcon());
 
 			// add tooltip if available
-			if (oIconInfo && oIconInfo.text) {
-				sTooltip = oIconInfo.text;
+			if (oIconInfo) {
+				// Fall back to the icon's name if there's no semantic text
+				sTooltip = oIconInfo.text ? oIconInfo.text : oIconInfo.name;
 			}
 		}
 
 		return sTooltip;
+	};
+
+	/**
+	 * Gets the icon, if none - gets the icon implied from the type.
+	 *
+	 * @private
+	 */
+	Button.prototype._getAppliedIcon = function() {
+		return this.getIcon() || this._sTypeIconURI;
 	};
 
 	/**
@@ -587,8 +665,8 @@ sap.ui.define([
 	 */
 	Button.prototype.getAccessibilityInfo = function() {
 		var sDesc = this.getText() || this.getTooltip_AsString();
-		if (!sDesc && this.getIcon()) {
-			var oIconInfo = IconPool.getIconInfo(this.getIcon());
+		if (!sDesc && this._getAppliedIcon()) {
+			var oIconInfo = IconPool.getIconInfo(this._getAppliedIcon());
 			if (oIconInfo) {
 				sDesc = oIconInfo.text || oIconInfo.name;
 			}
@@ -601,6 +679,70 @@ sap.ui.define([
 			focusable: this.getEnabled(),
 			enabled: this.getEnabled()
 		};
+	};
+
+	/*
+	* Helper function which sets the focus on the button manually.
+	*
+	* @private
+	*/
+	Button.prototype._setButtonFocus = function() {
+		setTimeout(function() { this.focus(); }.bind(this), 0);
+	};
+
+	/*
+	* Determines whether self-reference should be added.
+	*
+	* @returns {boolean}
+	* @private
+	*/
+	Button.prototype._determineSelfReferencePresence = function() {
+		var aAriaLabelledBy = this.getAriaLabelledBy(),
+			bAlreadyHasSelfReference = aAriaLabelledBy.indexOf(this.getId()) !== -1,
+			bHasReferencingLabels = LabelEnablement.getReferencingLabels(this).length > 0,
+			oParent = this.getParent(),
+			bAllowEnhancingByParent = !!(oParent && oParent.enhanceAccessibilityState);
+
+		return !bAlreadyHasSelfReference && this._getText() &&
+			(aAriaLabelledBy.length > 0 || bHasReferencingLabels || bAllowEnhancingByParent);
+	};
+
+	/*
+	 * Determines what combination of labels/descriptions does the Button have.
+	 *
+	 * @returns {string}
+	 * @private
+	 */
+	Button.prototype._determineAccessibilityType = function () {
+		var bHasAriaLabelledBy = this.getAriaLabelledBy().length > 0,
+			bHasAriaDescribedBy = this.getAriaDescribedBy().length > 0,
+			bHasReferencingLabels = LabelEnablement.getReferencingLabels(this).length > 0,
+			bHasSemanticType = this.getType() !== ButtonType.Default,
+			bHasLabelling = bHasAriaLabelledBy || bHasReferencingLabels,
+			bHasDescription = bHasAriaDescribedBy || bHasSemanticType,
+			sAccType;
+
+		// Conditions are separated instead of grouped to improve readability afterwards.
+		if (!bHasLabelling && !bHasDescription) {
+			sAccType = ButtonAccessibilityType.Default;
+		} else if (bHasLabelling && !bHasDescription) {
+			sAccType = ButtonAccessibilityType.Labelled;
+		} else if (!bHasLabelling && bHasDescription) {
+			sAccType = ButtonAccessibilityType.Described;
+		} else if (bHasLabelling && bHasDescription) {
+			sAccType = ButtonAccessibilityType.Combined;
+		}
+
+		return sAccType;
+	};
+
+	Button.prototype._getHintAccessibility = function() {
+			return ShortcutHintsMixin.getHintAccessibility(this);
+	};
+
+	//gets the title attribute for the given dom node id
+	Button.prototype._getTitleAttribute = function(sDOMID) {
+		return this.getTooltip();
 	};
 
 	return Button;

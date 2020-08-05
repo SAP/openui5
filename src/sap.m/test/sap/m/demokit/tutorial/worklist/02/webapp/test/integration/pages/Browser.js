@@ -1,63 +1,46 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"mycompany/myapp/test/integration/pages/Common"
+	"./Common"
 ], function(Opa5, Common) {
 	"use strict";
 
 	Opa5.createPageObjects({
-		onTheBrowser: {
-			baseClass: Common,
+		onTheBrowser : {
+			baseClass : Common,
 
-			actions: {
+			actions : {
 
-				iPressOnTheBackwardsButton: function() {
+				iPressOnTheBackwardsButton : function () {
 					return this.waitFor({
-						success: function() {
+						success : function () {
 							// manipulate history directly for testing purposes
 							Opa5.getWindow().history.back();
 						}
 					});
 				},
 
-				iPressOnTheForwardsButton: function() {
+				iPressOnTheForwardsButton : function () {
 					return this.waitFor({
-						success: function() {
+						success : function () {
 							// manipulate history directly for testing purposes
 							Opa5.getWindow().history.forward();
 						}
 					});
 				},
 
-				iChangeTheHashToSomethingInvalid: function() {
+				iChangeTheHashToSomethingInvalid : function () {
 					return this.waitFor({
-						success: function() {
-							Opa5.getHashChanger().setHash("/somethingInvalid");
+						success : function () {
+							Opa5.getHashChanger().setHash("somethingInvalid");
 						}
 					});
 				},
 
-				iChangeTheHashToTheRememberedItem: function() {
+				iChangeTheHashToTheRememberedItem : function () {
 					return this.waitFor({
-						success: function() {
-							var sObjectId = this.getContext().currentItemId;
-							Opa5.getHashChanger().setHash("/Products/" + sObjectId);
-						}
-					});
-				},
-
-				iRestartTheAppWithTheRememberedItem: function(oOptions) {
-					var sObjectId;
-					this.waitFor({
-						success: function() {
-							sObjectId = this.getContext().currentItemId;
-							this.iTeardownMyAppFrame();
-						}
-					});
-
-					return this.waitFor({
-						success: function() {
-							oOptions.hash = "/Products/" + encodeURIComponent(sObjectId);
-							this.iStartMyApp(oOptions);
+						success : function () {
+							var sObjectId = this.getContext().currentItem.id;
+							Opa5.getHashChanger().setHash("Products/" + sObjectId);
 						}
 					});
 				}
@@ -67,4 +50,5 @@ sap.ui.define([
 		}
 
 	});
+
 });

@@ -5,14 +5,15 @@
 sap.ui.define([
 	"sap/ui/support/supportRules/ui/controllers/BaseController",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/support/supportRules/WindowCommunicationBus",
+	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
 	"sap/ui/thirdparty/URI",
-	"sap/m/library"
-], function (BaseController, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI, mLibrary) {
+	"sap/ui/support/supportRules/ui/models/Documentation",
+	"sap/ui/VersionInfo"
+], function (BaseController, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI, Documentation, VersionInfo) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.support.supportRules.ui.controllers.Main", {
@@ -27,6 +28,7 @@ sap.ui.define([
 			this.model.setProperty("/constants", constants);
 			this.updateShowButton();
 			this._setContextSettings();
+			this._zoomUI();
 
 			this.bAdditionalViewLoaded = false;
 			CommunicationBus.subscribe(channelNames.UPDATE_SUPPORT_RULES, function () {
@@ -37,15 +39,36 @@ sap.ui.define([
 			}, this);
 		},
 
+		_zoomUI: function () {
+			try {
+				var sZoomUI = window.localStorage.getItem("support-assistant-zoom-ui");
+				var sFontSize = "100%";
+
+				switch (sZoomUI) {
+					case "S":
+						sFontSize = "90%";
+						break;
+					default:
+						// noop
+				}
+
+				document.querySelector("html").style.fontSize = sFontSize;
+			} catch (oError) {
+				// Swallow "Access Denied" exceptions in cross-origin scenarios.
+			}
+		},
+
 		loadAdditionalUI: function () {
 			this._issuesPage = sap.ui.xmlview(this.getView().getId() + "--issues", "sap.ui.support.supportRules.ui.views.Issues");
 			this.byId("navCon").insertPage(this._issuesPage);
 		},
 
 		onAfterRendering: function () {
-			CommunicationBus.publish(channelNames.POST_UI_INFORMATION, {
-				version: sap.ui.getVersionInfo(),
-				location: new URI(jQuery.sap.getModulePath("sap.ui.support"), window.location.origin + window.location.pathname).toString()
+			VersionInfo.load({ library: "sap.ui.core" }).then(function (oCoreLibInfo) {
+				CommunicationBus.publish(channelNames.POST_UI_INFORMATION, {
+					version: oCoreLibInfo,
+					location: new URI(jQuery.sap.getModulePath("sap.ui.support"), window.location.origin + window.location.pathname).toString()
+				});
 			});
 		},
 
@@ -162,67 +185,9 @@ sap.ui.define([
 		goToIssues: function (oEvent) {
 			this._setActiveView("issues");
 		},
-		_pingUrl: function (sUrl) {
-			return jQuery.ajax({
-				type: "HEAD",
-				async:true,
-				context: this,
-				url: sUrl
-			});
-		},
-
-		/**
-		 * Pings the passed url for checking that this is valid path and if the ping is
-		 * success redirects to passed url. If something goes wrong it fallback
-		 * to default public url
-		 * @param sUrl URL that needs to be ping and redirect to.
-		 * @private
-		 */
-		_redirectToUrlWithFallback:function (sUrl) {
-			this._pingUrl(sUrl).then(function success() {
-				mLibrary.URLHelper.redirect(sUrl, true);
-			}, function error() {
-				jQuery.sap.log.info("Support Assistant tried to load documentation link in " + sUrl + "but fail");
-				sUrl = "https://ui5.sap.com/#/topic/57ccd7d7103640e3a187ed55e1d2c163";
-				mLibrary.URLHelper.redirect(sUrl, true);
-			});
-		},
 
 		goToWiki: function () {
-			var sUrl = "",
-				sVersion = "",
-				sFullVersion = sap.ui.getVersionInfo().version,
-				iMajorVersion = jQuery.sap.Version(sFullVersion).getMajor(),
-				iMinorVersion = jQuery.sap.Version(sFullVersion).getMinor(),
-				sOrigin = window.location.origin;
-
-			//This check is to make sure that version is even. Example: 1.53 will back down to 1.52
-			// This is used to generate the correct path to demokit
-			if (iMinorVersion % 2 !== 0) {
-				iMinorVersion--;
-			}
-
-			sVersion += String(iMajorVersion) + "." + String(iMinorVersion);
-
-			if (sOrigin.indexOf("veui5infra") !== -1) {
-				sUrl = sOrigin + "/sapui5-sdk-internal/#/topic/57ccd7d7103640e3a187ed55e1d2c163";
-			} else {
-				sUrl = sOrigin + "/demokit-" + sVersion + "/#/topic/57ccd7d7103640e3a187ed55e1d2c163";
-			}
-
-			this._redirectToUrlWithFallback(sUrl);
-		},
-
-		setRulesLabel: function (libs) {
-			var selectedCounter = 0;
-			if (libs === null) {
-				return "Rules (" + selectedCounter + ")";
-			} else {
-				libs.forEach(function (lib, libIndex) {
-					selectedCounter += lib.rules.length;
-				});
-				return "Rules (" + selectedCounter + ")";
-			}
+			Documentation.openTopic("57ccd7d7103640e3a187ed55e1d2c163");
 		},
 
 		updateShowButton: function () {

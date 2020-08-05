@@ -30,13 +30,27 @@
 				"id": "52e76864f9feb2cb1bb634f8a12611684581ef59",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670021664"
+					}
+				]
 			},
 			{
 				"id": "83b505a8191ff828ea30ecf158bde2564289d8c6",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.Form: double role \"form\" if only one container",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "908"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670177663"
+					}
+				]
 			},
 			{
 				"id": "22a6d56c45f1ff0012b07221e0931d9cc8e4fbe1",
@@ -48,7 +62,12 @@
 				"id": "47123cd5e9f74c2be76122de39a839d7af67939f",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670208916"
+					}
+				]
 			},
 			{
 				"id": "a2567b89ce2ddb03f0050ddf1ce34670729baa23",
@@ -60,19 +79,38 @@
 				"id": "b050b347e4628f938060af72aa35f8ee17e18364",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.ResponsiveGridLayout: 1st container invisible",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670108114"
+					}
+				]
 			},
 			{
 				"id": "77175b448808ef45ef31704c22fad751558b71bb",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670153084"
+					}
+				]
 			},
 			{
 				"id": "a608106e829bb8a4e9be646977b6ad60481a8c57",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.SimpleForm: errors by changing content",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670231450"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670244684"
+					}
+				]
 			},
 			{
 				"id": "8a84899cd550472d3a7431e5c7d51e9b95848afc",
@@ -89,7 +127,12 @@
 				"id": "7449e00f213d891354851d6859a9ffdf06d7648a",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.ResponsiveLayout: change order of FormElement",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670301032"
+					}
+				]
 			}
 		]
 	},
@@ -112,7 +155,12 @@
 				"id": "ae3f17cae2e431fdf5a35559b1c68de6757810e6",
 				"type": "FIX",
 				"text": "sap.ui.layout.ResponsiveFlowLayout: when used in SimpleForm items' height is calculated consistent for all browsers.",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "002075129500001241092016"
+					}
+				]
 			}
 		]
 	}

@@ -147,7 +147,8 @@
   // Allow the "shortcut" format $(elem).hashchange( fn ) for binding and
   // $(elem).hashchange() for triggering, like jQuery does for built-in events.
   $.fn[ str_hashchange ] = function( fn ) {
-    return fn ? this.bind( str_hashchange, fn ) : this.trigger( str_hashchange );
+	// SAP MODIFICATION: replace deprecated API .bind -> .on
+    return fn ? this.on( str_hashchange, fn ) : this.trigger( str_hashchange );
   };
 
   // Property: jQuery.fn.hashchange.delay
@@ -196,9 +197,7 @@
   // Fired when location.hash changes. In browsers that support it, the native
   // HTML5 window.onhashchange event is used, otherwise a polling loop is
   // initialized, running every <jQuery.fn.hashchange.delay> milliseconds to
-  // see if the hash has changed. In IE6/7 (and IE8 operating in "IE7
-  // compatibility" mode), a hidden Iframe is created to allow the back button
-  // and hash-based history to work.
+  // see if the hash has changed.
   //
   // Usage as described in <jQuery.fn.hashchange>:
   //
@@ -262,8 +261,7 @@
 
   // fake_onhashchange does all the work of triggering the window.onhashchange
   // event for browsers that don't natively support it, including creating a
-  // polling loop to watch for hash changes and in IE 6/7 creating a hidden
-  // Iframe to enable back and forward.
+  // polling loop to watch for hash changes.
   fake_onhashchange = (function() {
     var self = {},
       timeout_id,
@@ -305,95 +303,7 @@
       timeout_id = setTimeout( poll, $.fn[ str_hashchange ].delay );
     };
 
-    // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    // vvvvvvvvvvvvvvvvvvv REMOVE IF NOT SUPPORTING IE6/7/8 vvvvvvvvvvvvvvvvvvv
-    // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    window.attachEvent && !window.addEventListener && !supports_onhashchange && (function() {
-      // Not only do IE6/7 need the "magical" Iframe treatment, but so does IE8
-      // when running in "IE7 compatibility" mode.
-
-      var iframe,
-        iframe_src;
-
-      // When the event is bound and polling starts in IE 6/7, create a hidden
-      // Iframe for history handling.
-      self.start = function() {
-        if ( !iframe ) {
-          iframe_src = $.fn[ str_hashchange ].src;
-          iframe_src = iframe_src && iframe_src + get_fragment();
-
-          // Create hidden Iframe. Attempt to make Iframe as hidden as possible
-          // by using techniques from http://www.paciellogroup.com/blog/?p=604.
-          iframe = $('<iframe tabindex="-1" title="empty"/>').hide()
-
-            // When Iframe has completely loaded, initialize the history and
-            // start polling.
-            .one( 'load', function() {
-              iframe_src || history_set( get_fragment() );
-              poll();
-            })
-
-            // Load Iframe src if specified, otherwise nothing.
-            .attr( 'src', iframe_src || 'javascript:0' )
-
-            // Append Iframe after the end of the body to prevent unnecessary
-            // initial page scrolling (yes, this works).
-            .insertAfter( 'body' )[0].contentWindow;
-
-          // Whenever `document.title` changes, update the Iframe's title to
-          // prettify the back/next history menu entries. Since IE sometimes
-          // errors with "Unspecified error" the very first time this is set
-          // (yes, very useful) wrap this with a try/catch block.
-          doc.onpropertychange = function() {
-            try {
-              if ( event.propertyName === 'title' ) {
-                iframe.document.title = doc.title;
-              }
-            } catch(e) {}
-          };
-
-        }
-      };
-
-      // Override the "stop" method since an IE6/7 Iframe was created. Even
-      // if there are no longer any bound event handlers, the polling loop
-      // is still necessary for back/next to work at all!
-      self.stop = fn_retval;
-
-      // Get history by looking at the hidden Iframe's location.hash.
-      history_get = function() {
-        return get_fragment( iframe.location.href );
-      };
-
-      // Set a new history item by opening and then closing the Iframe
-      // document, *then* setting its location.hash. If document.domain has
-      // been set, update that as well.
-      history_set = function( hash, history_hash ) {
-        var iframe_doc = iframe.document,
-          domain = $.fn[ str_hashchange ].domain;
-
-        if ( hash !== history_hash ) {
-          // Update Iframe with any initial `document.title` that might be set.
-          iframe_doc.title = doc.title;
-
-          // Opening the Iframe's document after it has been closed is what
-          // actually adds a history entry.
-          iframe_doc.open();
-
-          // Set document.domain for the Iframe document as well, if necessary.
-          domain && iframe_doc.write( '<script>document.domain="' + domain + '"</script>' );
-
-          iframe_doc.close();
-
-          // Update the Iframe's hash, for great justice.
-          iframe.location.hash = hash;
-        }
-      };
-
-    })();
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    // ^^^^^^^^^^^^^^^^^^^ REMOVE IF NOT SUPPORTING IE6/7/8 ^^^^^^^^^^^^^^^^^^^
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	//SAP MODIFICATION - IE 6/7/8compat support was removed.
 
     return self;
   })();
@@ -527,7 +437,8 @@ jQuery.mobile.orientationChangeEnabled = true;
 
 		// Scroll page vertically: scroll to 0 to hide iOS address bar, or pass a Y value
 		silentScroll: function( ypos ) {
-			if ( $.type( ypos ) !== "number" ) {
+			// SAP MODIFICATION: replace deprecated API
+			if ( typeof ypos !== "number" ) {
 				ypos = $.mobile.defaultHomeScroll;
 			}
 
@@ -796,7 +707,9 @@ jQuery.mobile.orientationChangeEnabled = true;
 		};
 		// SAP MODIFICATION
 		// => if the device API is loaded we override the touch detection
-		if (window.sap && sap.ui && sap.ui.Device && sap.ui.Device.support) {
+		// MS Internet Explorer and MS Edge do not fire 'touchstart' and 'touchend' events
+		// Therefore $.mobile.support should not be overriden with the actual device screen capability
+		if (window.sap && sap.ui && sap.ui.Device && sap.ui.Device.support && !(sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
 			support.touch = sap.ui.Device.support.touch
 		}
 
@@ -893,29 +806,7 @@ function transform3dTest() {
 	return ( !!ret && ret !== "none" );
 }
 
-// Test for dynamic-updating base tag support ( allows us to avoid href,src attr rewriting )
-function baseTagTest() {
-	var fauxBase = location.protocol + "//" + location.host + location.pathname + "ui-dir/",
-		base = $( "head base" ),
-		fauxEle = null,
-		href = "",
-		link, rebase;
-
-	if ( !base.length ) {
-		base = fauxEle = $( "<base>", { "href": fauxBase }).appendTo( "head" );
-	} else {
-		href = base.attr( "href" );
-	}
-
-	link = $( "<a href='testurl' />" ).prependTo( fakeBody );
-	rebase = link[ 0 ].href;
-	base[ 0 ].href = href || location.pathname;
-
-	if ( fauxEle ) {
-		fauxEle.remove();
-	}
-	return rebase.indexOf( fauxBase ) === 0;
-}
+// ##### MODIFIED BY SAP - Removed base tag support check function, because this function leads to CSP violations in some browsers.
 
 // Thanks Modernizr
 function cssPointerEventsTest() {
@@ -1020,7 +911,7 @@ $.extend( $.support, {
 		"scrollTop" in document.documentElement ||
 		"scrollTop" in fakeBody[ 0 ]) && !webos && !operamini,
 
-	dynamicBaseTag: baseTagTest(),
+	dynamicBaseTag: true, // ##### MODIFIED BY SAP - Removed base tag support check function, because this function leads to CSP violations in some browsers.
 	cssPointerEvents: cssPointerEventsTest(),
 	boundingRect: boundingRect()
 });
@@ -1168,10 +1059,12 @@ if ( !$.support.boxShadow ) {
 
 			if( self.isPushStateEnabled() ) {
 				self.originalEventName = "popstate";
-				$win.bind( "popstate.navigate", self.popstate );
+				// SAP MODIFICATION: replace deprecated API .bind -> .on
+				$win.on( "popstate.navigate", self.popstate );
 			} else if ( self.isHashChangeEnabled() ){
 				self.originalEventName = "hashchange";
-				$win.bind( "hashchange.navigate", self.hashchange );
+				// SAP MODIFICATION: replace deprecated API .bind -> .on
+				$win.on( "hashchange.navigate", self.hashchange );
 			}
 		}
 	};
@@ -1183,10 +1076,12 @@ if ( !$.support.boxShadow ) {
 	(function( $ ) {
 		$.event.special.throttledresize = {
 			setup: function() {
-				$( this ).bind( "resize", handler );
+				// SAP MODIFICATION: replace deprecated API .bind -> .on
+				$( this ).on( "resize", handler );
 			},
 			teardown: function() {
-				$( this ).unbind( "resize", handler );
+				// SAP MODIFICATION: replace deprecated API .unbind -> .off
+				$( this ).off( "resize", handler );
 			}
 		};
 
@@ -1286,7 +1181,8 @@ if ( !$.support.boxShadow ) {
 
 			// Because the orientationchange event doesn't exist, simulate the
 			// event by testing window dimensions on resize.
-			win.bind( "throttledresize", handler );
+			// SAP MODIFICATION: replace deprecated API .bind -> .on
+			win.on( "throttledresize", handler );
 		},
 		teardown: function() {
 			// If the event is not supported natively, return false so that
@@ -1297,7 +1193,8 @@ if ( !$.support.boxShadow ) {
 
 			// Because the orientationchange event doesn't exist, unbind the
 			// resize event handler.
-			win.unbind( "throttledresize", handler );
+			// SAP MODIFICATION: replace deprecated API .unbind -> .off
+			win.off( "throttledresize", handler );
 		},
 		add: function( handleObj ) {
 			// Save a reference to the bound event handler.
@@ -1349,7 +1246,8 @@ if ( !$.support.boxShadow ) {
 	};
 
 	$.fn[ event_name ] = function( fn ) {
-		return fn ? this.bind( event_name, fn ) : this.trigger( event_name );
+		// SAP MODIFICATION: replace deprecated API .bind -> .on
+		return fn ? this.on( event_name, fn ) : this.trigger( event_name );
 	};
 
 	// jQuery < 1.8
@@ -1382,7 +1280,13 @@ var dataPropertyName = "virtualMouseBindings",
 	virtualEventNames = "vmouseover vmousedown vmousemove vmouseup vclick vmouseout vmousecancel".split( " " ),
 	touchEventProps = "clientX clientY pageX pageY screenX screenY".split( " " ),
 	mouseHookProps = $.event.mouseHooks ? $.event.mouseHooks.props : [],
-	mouseEventProps = $.event.props.concat( mouseHookProps ),
+	// ##### BEGIN: MODIFIED BY SAP
+	// Replace the usage of $.event.props because it's removed since jQuery version 3.x.x
+	// Code is partically taken from jquery.mobile/js/vmouse.js version 1.4.5
+	generalProps = ( "altKey bubbles cancelable ctrlKey currentTarget detail eventPhase " +
+		"metaKey relatedTarget shiftKey target timeStamp view which" ).split( " " ),
+	mouseEventProps = generalProps.concat( mouseHookProps ),
+	// ##### END: MODIFIED BY SAP
 	activeDocHandlers = {},
 	resetTimerID = 0,
 	startX = 0,
@@ -1419,7 +1323,11 @@ function createVirtualEvent( event, eventType ) {
 	event.type = eventType;
 
 	oe = event.originalEvent;
-	props = $.event.props;
+	// ##### BEGIN: MODIFIED BY SAP
+	// Replace the usage of $.event.props because it's removed since jQuery version 3.x.x
+	// Code is partically taken from jquery.mobile/js/vmouse.js version 1.4.5
+	props = generalProps;
+	// ##### END: MODIFIED BY SAP
 
 	// addresses separation of $.event.props in to $.event.mouseHook.props and Issue 3280
 	// https://github.com/jquery/jquery-mobile/issues/3280
@@ -1735,14 +1643,16 @@ function getSpecialEventObject( eventType ) {
 			activeDocHandlers[ eventType ] = ( activeDocHandlers[ eventType ] || 0 ) + 1;
 
 			if ( activeDocHandlers[ eventType ] === 1 ) {
-				$document.bind( realType, mouseEventCallback );
+				// SAP MODIFICATION: replace deprecated API .bind -> .on
+				$document.on( realType, mouseEventCallback );
 			}
 
 			// Some browsers, like Opera Mini, won't dispatch mouse/click events
 			// for elements unless they actually have handlers registered on them.
 			// To get around this, we register dummy handlers on the elements.
 
-			$( this ).bind( realType, dummyMouseHandler );
+			// SAP MODIFICATION: replace deprecated API .bind -> .on
+			$( this ).on( realType, dummyMouseHandler );
 
 			// For now, if event capture is not supported, we rely on mouse handlers.
 			if ( eventCaptureSupported ) {
@@ -1752,8 +1662,9 @@ function getSpecialEventObject( eventType ) {
 				activeDocHandlers[ "touchstart" ] = ( activeDocHandlers[ "touchstart" ] || 0) + 1;
 
 				if ( activeDocHandlers[ "touchstart" ] === 1 ) {
-					$document.bind( "touchstart", handleTouchStart )
-						.bind( "touchend", handleTouchEnd )
+					// SAP MODIFICATION: replace deprecated API .bind -> .on
+					$document.on( "touchstart", handleTouchStart )
+						.on( "touchend", handleTouchEnd )
 
 						// On touch platforms, touching the screen and then dragging your finger
 						// causes the window content to scroll after some distance threshold is
@@ -1765,10 +1676,12 @@ function getSpecialEventObject( eventType ) {
 						// we need to watch both scroll and touchmove events to figure out whether
 						// or not a scroll happenens before the touchend event is fired.
 
-						.bind( "touchmove", handleTouchMove );
+						// SAP MODIFICATION: replace deprecated API .bind -> .on
+						.on( "touchmove", handleTouchMove );
 					//TODO: investigate and find out why tapping on listitem triggers a scroll event
 					// which prevents the tap event from being fired.
-//						.bind( "scroll", handleScroll );
+					// SAP MODIFICATION: replace deprecated API .bind -> .on
+//						.on( "scroll", handleScroll );
 				}
 			}
 		},
@@ -1780,7 +1693,8 @@ function getSpecialEventObject( eventType ) {
 			--activeDocHandlers[ eventType ];
 
 			if ( !activeDocHandlers[ eventType ] ) {
-				$document.unbind( realType, mouseEventCallback );
+				// SAP MODIFICATION: replace deprecated API .unbind -> .off
+				$document.off( realType, mouseEventCallback );
 			}
 
 			if ( eventCaptureSupported ) {
@@ -1790,10 +1704,11 @@ function getSpecialEventObject( eventType ) {
 				--activeDocHandlers[ "touchstart" ];
 
 				if ( !activeDocHandlers[ "touchstart" ] ) {
-					$document.unbind( "touchstart", handleTouchStart )
-						.unbind( "touchmove", handleTouchMove )
-						.unbind( "touchend", handleTouchEnd )
-						.unbind( "scroll", handleScroll );
+					// SAP MODIFICATION: replace deprecated API .unbind -> .off
+					$document.off( "touchstart", handleTouchStart )
+						.off( "touchmove", handleTouchMove )
+						.off( "touchend", handleTouchEnd )
+						.off( "scroll", handleScroll );
 				}
 			}
 
@@ -1811,7 +1726,8 @@ function getSpecialEventObject( eventType ) {
 
 			// Unregister the dummy event handler.
 
-			$this.unbind( realType, dummyMouseHandler );
+			// SAP MODIFICATION: replace deprecated API .unbind -> .off
+			$this.off( realType, dummyMouseHandler );
 
 			// If this is the last virtual mouse binding on the
 			// element, remove the binding data from the element.
@@ -1948,7 +1864,8 @@ if ( eventCaptureSupported ) {
 		"scrollstart scrollstop" ).split( " " ), function( i, name ) {
 
 		$.fn[ name ] = function( fn ) {
-			return fn ? this.bind( name, fn ) : this.trigger( name );
+			// SAP MODIFICATION: replace deprecated API .bind -> .on
+			return fn ? this.on( name, fn ) : this.trigger( name );
 		};
 
 		// jQuery < 1.8
@@ -1991,7 +1908,8 @@ if ( eventCaptureSupported ) {
 			}
 
 			// iPhone triggers scroll after a small delay; use touchmove instead
-			$this.bind( scrollEvent, function( event ) {
+			// SAP MODIFICATION: replace deprecated API .bind -> .on
+			$this.on( scrollEvent, function( event ) {
 
 				if ( !$.event.special.scrollstart.enabled ) {
 					return;
@@ -2015,65 +1933,115 @@ if ( eventCaptureSupported ) {
 
 		setup: function() {
 			var thisObject = this,
-				$this = $( thisObject );
+				$this = $( thisObject ),
+				// SAP MODIFICATION: the variable declarations are moved out of the "mousedown" event handler because
+				// the handlers where the variables are used are moved out
+				mouseDownTarget,
+				mouseDownEvent,
+				timer;
 
-			$this.bind( "vmousedown", function( event ) {
+			// SAP MODIFICATION: Workaround for an Edge browser issue which occurs with EdgeHTML 14 and higher.
+			// The root cause are inconsistent event targets of fired events, when a button is tapped.
 
+			/**
+			 * Detects whether edge browser special tap handling is necessary.
+			 *
+			 * Inconsistent event targets for the sap.m.Button control:
+			 * EdgeHTML v.| 14 | 15 | 16 | 17 |
+			 * ----------------------------------
+			 * mousedown  |   S|   S|   B|   S|
+			 * mouseup    |   B|   B|   B|   B|
+			 * click      |   S| S/B|   S| S/B|
+			 * ----------------------------------
+			 * S = SPAN, B = BUTTON
+			 *
+			 * @param {object} event either mouseup or click event.
+			 * @returns {boolean} Returns true, when a button was pressed in edge browser with inconsistent event targets.
+			 */
+			function buttonTappedInEdgeBrowser( event ) {
+				var eventTarget = event.target;
+				var browser = sap.ui.Device.browser;
+
+				return browser.edge && browser.version >= 14 &&
+					(eventTarget.tagName.toLowerCase() === "button" &&
+						eventTarget.contains(mouseDownTarget) ||
+						mouseDownTarget.tagName.toLowerCase() === "button" &&
+						mouseDownTarget.contains(eventTarget));
+			}
+
+			// SAP MODIFICATION: the following event handlers are moved out of the "mousedown" event handler to make it
+			// possible to be deregistered in a later time point
+			function clearTapTimer() {
+				clearTimeout( timer );
+			}
+
+			function clearTapHandlers() {
+				clearTapTimer();
+
+				// SAP MODIFICATION: remove the mark because the tap event runs to the end
+				$this.removeData("__tap_event_in_progress");
+
+				// SAP MODIFICATION: replace deprecated API .unbind -> .off
+				$this.off( "vclick", clickHandler )
+					.off( "vmouseup", clearTapTimer );
+				$document.off( "vmousecancel", clearTapHandlers )
+				// SAP MODIFICATION: deregister the function of clearing handlers from 'mouseup' event
+				// on document
+					.off( "vmouseup", checkAndClearTapHandlers );
+			}
+
+			// SAP MODIFICATION: terminate the firing of 'tap' event if 'mouseup' event occurs
+			// out of the 'mousedown' target
+			function checkAndClearTapHandlers( mouseUpEvent ) {
+				// if the mouseup event occurs out of the origin target of the mousedown event,
+				// unbind all of the listeners
+				if (mouseUpEvent.target !== mouseDownTarget && !$.contains(mouseDownTarget, mouseUpEvent.target) && !buttonTappedInEdgeBrowser( mouseUpEvent )) {
+					clearTapHandlers();
+				}
+			}
+
+			function clickHandler( event ) {
+				clearTapHandlers();
+
+				// ONLY trigger a 'tap' event if the start target is
+				// the same as the stop target.
+				if ( mouseDownTarget === event.target || buttonTappedInEdgeBrowser( event )) {
+					triggerCustomEvent( thisObject, "tap", event );
+				}
+			}
+
+
+			// SAP MODIFICATION: replace deprecated API .bind -> .on
+			$this.on( "vmousedown", function( event ) {
 				if ( event.which && event.which !== 1 ) {
 					// SAP MODIFICATION: 'return false' is changed with 'return' to let the event
 					// still propagate to the parent DOMs.
 					return;
 				}
 
-				var origTarget = event.target,
-					origEvent = event.originalEvent,
-					timer;
+				mouseDownTarget = event.target;
+				mouseDownEvent = event.originalEvent;
 
-				function clearTapTimer() {
-					clearTimeout( timer );
-				}
-
-				function clearTapHandlers() {
-					clearTapTimer();
-
-					$this.unbind( "vclick", clickHandler )
-						.unbind( "vmouseup", clearTapTimer );
-					$document.unbind( "vmousecancel", clearTapHandlers )
-					// SAP MODIFICATION: deregister the function of clearing handlers from 'mouseup' event
-					// on document
-						.unbind( "vmouseup", checkAndClearTapHandlers );
-				}
-
-				// SAP MODIFICATION: terminate the firing of 'tap' event if 'mouseup' event occurs
-				// out of the 'mousedown' target
-				function checkAndClearTapHandlers( event ) {
-					// if the mouseup event occurs out of the origin target of the mousedown event,
-					// unbind all of the listeners
-					if ( event.target !== origTarget && !$.contains(origTarget, event.target) ) {
-						clearTapHandlers();
-					}
-				}
-
-				function clickHandler( event ) {
+				// SAP MODIFICATION: if the previous event handlers aren't cleared due to missing "mouseup" event, first
+				// clear the event handlers
+				if ($this.data("__tap_event_in_progress")) {
 					clearTapHandlers();
-
-					// ONLY trigger a 'tap' event if the start target is
-					// the same as the stop target.
-					if ( origTarget === event.target ) {
-						triggerCustomEvent( thisObject, "tap", event );
-					}
 				}
+				// SAP MODIFICATION: set the mark that the tap event is in progress
+				$this.data("__tap_event_in_progress", "X");
 
-				$this.bind( "vmouseup", clearTapTimer )
-					.bind( "vclick", clickHandler );
-				$document.bind( "vmousecancel", clearTapHandlers )
+				// SAP MODIFICATION: replace deprecated API .bind -> .on
+				$this.on( "vmouseup", clearTapTimer )
+					.on( "vclick", clickHandler );
+				$document.on( "vmousecancel", clearTapHandlers )
 				// SAP MODIFICATION: register the function of clearing handlers to 'mouseup' event
 				// on document
-					.bind( "vmouseup", checkAndClearTapHandlers );
+				// SAP MODIFICATION: replace deprecated API .bind -> .on
+					.on( "vmouseup", checkAndClearTapHandlers );
 
 				timer = setTimeout( function() {
 					// SAP MODIFICATION: create the custom taphold event from the original event in order to preserve the properties
-					var oTapholdEvent = $.event.fix(origEvent);
+					var oTapholdEvent = $.event.fix(mouseDownEvent);
 					oTapholdEvent.type = "taphold";
 					triggerCustomEvent( thisObject, "taphold", oTapholdEvent );
 				}, $.event.special.tap.tapholdThreshold );
@@ -2126,7 +2094,8 @@ if ( eventCaptureSupported ) {
 			var thisObject = this,
 				$this = $( thisObject );
 
-			$this.bind( touchStartEvent, function( event ) {
+			// SAP MODIFICATION: replace deprecated API .bind -> .on
+			$this.on( touchStartEvent, function( event ) {
 				// SAP MODIFICATION: mark touch events, so only the lowest UIArea within the hierarchy will create a swipe event
 				if (event.isMarked("swipestartHandled")) {
 					return;
@@ -2146,7 +2115,7 @@ if ( eventCaptureSupported ) {
 					// prevent scrolling
 					// SAP MODIFICATION: skip this behavior on chrome+desktop, as it prevents text selection on non-input fields (CSN #3696977/2013)
 					// NOTE: other browsers (Firefox, IE, Safari) don't stop the text selection when calling preventDefault, so we only alter the behaviour for Chrome to be as close to the original implementation of jQuery
-					if (!sap.ui.Device.system.desktop || sap.ui.Device.browser.name !== "cr") {
+					if (event.cancelable && (!sap.ui.Device.system.desktop || sap.ui.Device.browser.name !== "cr")) {
 						if (!sap.ui.Device.os.blackberry && Math.abs( start.coords[ 0 ] - stop.coords[ 0 ] ) > $.event.special.swipe.scrollSupressionThreshold ) {
 							event.preventDefault();
 						}
@@ -2157,8 +2126,9 @@ if ( eventCaptureSupported ) {
 				// Because touchcancel is used together with touchend, jQuery.fn.bind is used to replace
 				// jQuery.fn.one due to the fact that jQuery.fn.one doesn't work for multiple events.
 				function stopHandler( event ) {
-					$this.unbind( touchMoveEvent, moveHandler )
-						.unbind( touchStopEvent, stopHandler );
+					// SAP MODIFICATION: replace deprecated API .unbind -> .off
+					$this.off( touchMoveEvent, moveHandler )
+						.off( touchStopEvent, stopHandler );
 
 					if ( start && stop ) {
 						$.event.special.swipe.handleSwipe( start, stop );
@@ -2166,8 +2136,9 @@ if ( eventCaptureSupported ) {
 					start = stop = undefined;
 				}
 
-				$this.bind( touchMoveEvent, moveHandler )
-					.bind( touchStopEvent, stopHandler );
+				// SAP MODIFICATION: replace deprecated API .bind -> .on
+				$this.on( touchMoveEvent, moveHandler )
+					.on( touchStopEvent, stopHandler );
 			});
 		}
 	};
@@ -2180,7 +2151,8 @@ if ( eventCaptureSupported ) {
 
 		$.event.special[ event ] = {
 			setup: function() {
-				$( this ).bind( sourceEvent, $.noop );
+				// SAP MODIFICATION: replace deprecated API .bind -> .on
+				$( this ).on( sourceEvent, $.noop );
 			}
 		};
 	});

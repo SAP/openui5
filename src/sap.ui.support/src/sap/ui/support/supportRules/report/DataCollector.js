@@ -5,8 +5,8 @@
 /**
  * Provides methods for information retrieval from the core.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI"],
-	function (jQuery, ToolsAPI, URI) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Component", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI"],
+	function (jQuery, Component, ToolsAPI, URI) {
 	"use strict";
 
 	/**
@@ -61,16 +61,23 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thir
 	};
 
 	/**
-	 * @returns {Array} All loaded manifest.json files.
+	 * @returns {Array} All 'sap.app' and 'sap.fiori' entries from all loaded manifest.json files.
 	 */
 	DataCollector.prototype.getAppInfo = function() {
-		var appInfos = [];
-		for (var componentName in this._oCore.mObjects.component) {
-			var component = this._oCore.mObjects.component[componentName];
-			var sapApp = component.getMetadata().getManifestEntry('sap.app');
-			appInfos.push(sapApp);
-		}
-		return appInfos;
+		var aAppInfos = [];
+		Component.registry.forEach(function(oComponent) {
+			var oSapApp = oComponent.getMetadata().getManifestEntry("sap.app"),
+				oSapFiori = oComponent.getMetadata().getManifestEntry("sap.fiori");
+
+			if (oSapApp) {
+				aAppInfos.push(oSapApp);
+			}
+
+			if (oSapFiori) {
+				aAppInfos.push(oSapFiori);
+			}
+		});
+		return aAppInfos;
 	};
 
 	/**
@@ -120,6 +127,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thir
 		var mLibraries = this._oCore.getLoadedLibraries();
 		aResults = [];
 		for (var n in mLibraries) {
+			if (n === "") {
+				// Ignoring "unnamed" libraries.
+				// This might happen when a control without namespace is defined
+				// (e.g. "MyControl" instead of "com.example.MyControl").
+				continue;
+			}
 			var sPath = this._oCore._getThemePath(n, this._oCore.oConfiguration.theme);
 			aResults.push({
 				theme : this._oCore.oConfiguration.theme,

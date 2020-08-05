@@ -2,17 +2,16 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.rta.plugin.Split.
 sap.ui.define([
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/rta/Utils',
-	'sap/ui/fl/Utils'
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/dt/Util",
+	"sap/ui/fl/Utils",
+	"sap/base/util/uid"
 ], function(
 	Plugin,
-	OverlayRegistry,
-	Utils,
-	FlexUtils
+	DtUtil,
+	FlexUtils,
+	uid
 ) {
 	"use strict";
 
@@ -29,12 +28,8 @@ sap.ui.define([
 	 * @alias sap.ui.rta.plugin.Split
 	 * @experimental Since 1.46. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var Split = Plugin.extend("sap.ui.rta.plugin.Split", /** @lends sap.ui.rta.plugin.Split.prototype */
-	{
+	var Split = Plugin.extend("sap.ui.rta.plugin.Split", /** @lends sap.ui.rta.plugin.Split.prototype */ {
 		metadata: {
-			// ---- object ----
-
-			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties: {},
 			associations: {},
@@ -43,38 +38,44 @@ sap.ui.define([
 	});
 
 	/**
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay to be checked for editable
-	 * @returns {boolean} true if it's editable
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay to be checked for editable
+	 * @return {Promise.<boolean>|boolean} <code>true</code> if it's editable wrapped in a promise.
 	 * @private
 	 */
-	Split.prototype._isEditable = function(oOverlay) {
+	Split.prototype._isEditable = function (oOverlay) {
 		var oSplitAction = this.getAction(oOverlay);
 		if (oSplitAction && oSplitAction.changeType && oSplitAction.changeOnRelevantContainer) {
-			return this.hasStableId(oOverlay) && this.hasChangeHandler(oSplitAction.changeType, oOverlay.getRelevantContainer());
-		} else {
-			return false;
+			var oRelevantContainer = oOverlay.getRelevantContainer();
+			return this.hasChangeHandler(oSplitAction.changeType, oRelevantContainer)
+				.then(function(bHasChangeHandler) {
+					return bHasChangeHandler
+						&& this.hasStableId(oOverlay)
+						&& this._checkRelevantContainerStableID(oSplitAction, oOverlay);
+				}.bind(this));
 		}
+		return false;
 	};
 
 	/**
 	 * Checks if Split is available for oOverlay
 	 *
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if available
 	 * @public
 	 */
-	Split.prototype.isAvailable = function(oOverlay) {
-		if (!this._isEditableByPlugin(oOverlay)) {
+	Split.prototype.isAvailable = function (aElementOverlays) {
+		if (aElementOverlays.length !== 1) {
 			return false;
 		}
 
-		var aSelectedOverlays = this.getSelectedOverlays();
-		if (aSelectedOverlays.length !== 1) {
+		var oElementOverlay = aElementOverlays[0];
+
+		if (!this._isEditableByPlugin(oElementOverlay)) {
 			return false;
 		}
 
-		var vSplitAction = this.getAction(oOverlay);
-		var oElement = aSelectedOverlays[0].getElement();
+		var vSplitAction = this.getAction(oElementOverlay);
+		var oElement = oElementOverlay.getElement();
 		if (vSplitAction && vSplitAction.getControlsCount(oElement) <= 1) {
 			return false;
 		}
@@ -85,15 +86,16 @@ sap.ui.define([
 	/**
 	 * Checks if Split is enabled for oOverlay
 	 *
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if enabled
 	 * @public
 	 */
-	Split.prototype.isEnabled = function(oOverlay) {
+	Split.prototype.isEnabled = function (aElementOverlays) {
+		var oElementOverlay = aElementOverlays[0];
 
 		// check that each selected element has an enabled action
-		var oAction = this.getAction(oOverlay);
-		if (!oAction || !this.isAvailable(oOverlay)) {
+		var oAction = this.getAction(oElementOverlay);
+		if (!oAction || !this.isAvailable(aElementOverlays)) {
 			return false;
 		}
 
@@ -101,7 +103,7 @@ sap.ui.define([
 		var bActionIsEnabled = true;
 		if (typeof oAction.isEnabled !== "undefined") {
 			if (typeof oAction.isEnabled === "function") {
-				 bActionIsEnabled = oAction.isEnabled(oOverlay.getElement());
+				bActionIsEnabled = oAction.isEnabled(oElementOverlay.getElement());
 			} else {
 				bActionIsEnabled = oAction.isEnabled;
 			}
@@ -110,62 +112,70 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param  {any} oSplitElement selected element
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - element overlay to split
 	 */
-	Split.prototype.handleSplit = function(oSplitElement) {
+	Split.prototype.handleSplit = function (oElementOverlay) {
+		var oSplitElement = oElementOverlay.getElement();
 		var oParent = oSplitElement.getParent();
-		var oElementOverlay = OverlayRegistry.getOverlay(oSplitElement);
 		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
 
-		var iFieldsLength = this.getAction(oElementOverlay).getControlsCount(oSplitElement);
+		var iElementsCount = this.getAction(oElementOverlay).getControlsCount(oSplitElement);
 		var oView = FlexUtils.getViewForControl(oSplitElement);
 		var aNewElementIds = [];
-		// Split needs iFieldsLength controls, only one is available so far
-		for (var i = 0; i < iFieldsLength - 1; i++){
-			aNewElementIds.push(oView.createId(jQuery.sap.uid()));
+
+		for (var i = 0; i < iElementsCount; i++) {
+			aNewElementIds.push(oView.createId(uid()));
 		}
 
 		var oSplitAction = this.getAction(oElementOverlay);
 		var sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oSplitAction);
 
-		var oSplitCommand = this.getCommandFactory().getCommandFor(oSplitElement, "split", {
+		return this.getCommandFactory().getCommandFor(oSplitElement, "split", {
 			newElementIds : aNewElementIds,
 			source : oSplitElement,
 			parentElement : oParent
-		}, oDesignTimeMetadata, sVariantManagementReference);
-		this.fireElementModified({
-			"command" : oSplitCommand
-		});
+		}, oDesignTimeMetadata, sVariantManagementReference)
 
+		.then(function(oSplitCommand) {
+			this.fireElementModified({
+				command : oSplitCommand
+			});
+		}.bind(this))
+
+		.catch(function(vError) {
+			throw DtUtil.propagateError(
+				vError,
+				"Split#handleSplit",
+				"Error occured during handleSplit execution",
+				"sap.ui.rta.plugin"
+			);
+		});
 	};
 
 	/**
 	 * Retrieve the context menu item for the action.
-	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
-	 * @return {object[]}          Returns array containing the items with required data
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - overlays for which actions are requested
+	 * @return {object[]} - array of the items with required data
 	 */
-	Split.prototype.getMenuItems = function(oOverlay){
-		return this._getMenuItems(oOverlay, {pluginId : "CTX_UNGROUP_FIELDS", rank : 100, icon : "sap-icon://screen-split-two"});
+	Split.prototype.getMenuItems = function (vElementOverlays) {
+		return this._getMenuItems(vElementOverlays, {pluginId : "CTX_UNGROUP_FIELDS", rank : 100, icon : "sap-icon://split"});
 	};
 
 	/**
 	 * Get the name of the action related to this plugin.
 	 * @return {string} Returns the action name
 	 */
-	Split.prototype.getActionName = function(){
+	Split.prototype.getActionName = function() {
 		return "split";
 	};
 
 	/**
 	 * Trigger the plugin execution.
-	 * @param  {sap.ui.dt.ElementOverlay[]} aOverlays Selected overlays; targets of the action
-	 * @param  {any} oEventItem ContextMenu item which triggers the event
-	 * @param  {any} oContextElement Element where the action is triggered
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 */
-	Split.prototype.handler = function(aOverlays, mPropertyBag){
-		//TODO: Handle "Stop Cut & Paste" depending on alignment with Dietrich!
-		this.handleSplit(mPropertyBag.contextElement);
+	Split.prototype.handler = function (aElementOverlays) {
+		this.handleSplit(aElementOverlays[0]);
 	};
 
 	return Split;
-}, /* bExport= */true);
+});

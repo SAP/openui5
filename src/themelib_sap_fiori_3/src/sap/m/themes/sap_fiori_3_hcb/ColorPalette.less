@@ -1,0 +1,65 @@
+/* =================================== */
+/* CSS for control sap.m/ColorPalette  */
+/* Quartz High Contrast Black theme    */
+/* =================================== */
+
+.sapMColorPalette .sapMColorPaletteSquare:hover > div,
+.sapMColorPalette .sapMColorPaletteSquare,
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare:hover > div,
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
+	border-radius: 0.25rem;
+}
+
+.sapMColorPalette .sapMColorPaletteSquare div {
+	border-radius: 0.125rem;
+}
+
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
+	&:focus:before {
+		border: none;
+	}
+	&:hover {
+		border: 0;
+		> div {
+			border: 0.125rem solid @sapUiContentForegroundBorderColor;
+		}
+	}
+	&:focus:after {
+		content: "";
+		position: absolute;
+		box-sizing: border-box;
+		left:0.125rem;
+		top: 0.125rem;
+		right: 0.125rem;
+		bottom: 0.125rem;
+		border: 0.0625rem dotted @sapUiContentContrastFocusColor;
+		pointer-events: none;
+	}
+}
+.sap-desktop .sapMColorPalette .sapMBtn:focus {
+	&:after {
+		border-color: @sapUiContentFocusColor;
+	}
+}
+html:not(.sap-phone) .sapMColorPalette
+.sap-desktop .sapContrast,
+.sap-desktop.sapContrast {
+	.sapMColorPalette .sapMBtn {
+		&:focus:after {
+			border-color: @sapUiContentFocusColor;
+
+		}
+		&:active,
+		> .sapMBtnActive,
+		&:hover > .sapMBtnActive,
+		&:active > .sapMBtnActive {
+			color: @sapUiListTextColor;
+		}
+	}
+}
+
+.sap-phone .sapMColorPaletteSquare {
+	&:active > div {
+		box-shadow: inset 0 0 0 0.125rem @sapUiContentForegroundBorderColor;
+	}
+}

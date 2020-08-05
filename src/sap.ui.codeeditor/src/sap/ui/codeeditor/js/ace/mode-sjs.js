@@ -25,7 +25,7 @@ DocCommentHighlightRules.getTagRule = function(start) {
         token : "comment.doc.tag.storage.type",
         regex : "\\b(?:TODO|FIXME|XXX|HACK)\\b"
     };
-}
+};
 
 DocCommentHighlightRules.getStartRule = function(start) {
     return {
@@ -181,7 +181,8 @@ var JavaScriptHighlightRules = function(options) {
                 next  : "property"
             }, {
                 token : "storage.type",
-                regex : /=>/
+                regex : /=>/,
+                next  : "start"
             }, {
                 token : "keyword.operator",
                 regex : /--|\+\+|\.{3}|===|==|=|!=|!==|<+=?|>+=?|!|&&|\|\||\?:|[!$%&*+\-~\/^]=?/,
@@ -582,8 +583,8 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
     
-    this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
-    this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
+    this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
+    this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
     this.tripleStarBlockCommentRe = /^\s*(\/\*\*\*).*\*\/\s*$/;
     this.startRegionRe = /^\s*(\/\*|\/\/)#?region\b/;
@@ -973,7 +974,7 @@ var SJSHighlightRules = function() {
             regex: "\\)"
         })
     ].concat(embeddableRules);
-}
+};
 oop.inherits(SJSHighlightRules, TextHighlightRules);
 
 exports.SJSHighlightRules = SJSHighlightRules;
@@ -998,9 +999,16 @@ oop.inherits(Mode, JSMode);
 (function() {
     this.createWorker = function(session) {
         return null;
-    }
+    };
     this.$id = "ace/mode/sjs";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
+});                (function() {
+                    ace.require(["ace/mode/sjs"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

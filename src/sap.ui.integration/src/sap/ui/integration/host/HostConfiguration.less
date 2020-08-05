@@ -1,0 +1,255 @@
+/* ======================================== */
+/* CSS for generation of a host config css  */
+/* ======================================== */
+
+/* HOSTCONFIG PARAMETERS */
+
+#hostConfigName.sapFCard {
+	background: @sapUiCardBackgroundColor;
+	border: @sapUiCardBorderSize solid @sapUiCardBorderColor;
+	border-radius: @sapUiCardBorderRadius;
+	font-family: @sapUiCardFSDefaultFontFamily;
+	font-weight: @sapUiCardFSDefaultWeightDefault;
+	color: @sapUiCardFontColorDefaultDefault;
+}
+
+#hostConfigName.sapFCard .sapFCardHeader {
+	background: @sapUiCardBackgroundColor;
+	border-bottom: 1px solid contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 20%), darken(@sapUiCardBackgroundColor, 20%));
+
+	&.sapFCardHeaderClickable:hover {
+		background: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 5), darken(@sapUiCardBackgroundColor, 5));
+	}
+
+	&.sapFCardHeaderClickable:active {
+		background: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 3), darken(@sapUiCardBackgroundColor, 3));
+	}
+
+	.sapFCardHeaderText {
+		.sapFCardTitle {
+			font-family: @sapUiCardFSDefaultFontFamily;
+			font-size: @sapUiCardFSDefaultSizeLarge;
+			font-weight: @sapUiCardFSDefaultWeightBolder;
+			color: @sapUiCardFontColorDefaultDefault;
+		}
+
+		.sapFCardSubtitle {
+			font-family: @sapUiCardFSDefaultFontFamily;
+			font-size: @sapUiCardFSDefaultSizeMedium;
+			font-weight: @sapUiCardFSDefaultWeightDefault;
+			color: @sapUiCardFontColorDefaultDefault;
+		}
+
+	}
+
+	.sapFCardStatus {
+		font-family: @sapUiCardFSDefaultFontFamily;
+		font-size: @sapUiCardFSDefaultSizeSmall;
+		color: @sapUiCardFontColorDefaultSubtle;
+	}
+}
+
+#hostConfigName.sapFCard .sapFCardHeader.sapFCardNumericHeader {
+
+	.sapFCardSubtitle {
+		.sapFCardHeaderUnitOfMeasurement {
+			border-left: 1px solid @sapUiCardFontColorDefaultDefault;
+		}
+	}
+
+	.sapFCardHeaderText .sapFCardSubtitle .sapMText {
+		font-family: @sapUiCardFSDefaultFontFamily;
+		font-size: @sapUiCardFSDefaultSizeSmall;
+		color: @sapUiCardFontColorDefaultDefault;
+	}
+
+	.sapFCardHeaderDetails {
+		font-family: @sapUiCardFSDefaultFontFamily;
+		font-size: @sapUiCardFSDefaultSizeSmall;
+		color: @sapUiCardFontColorDefaultDefault;
+	}
+}
+
+#hostConfigName .sapFCardHeaderSideIndicator {
+	.sapFCardHeaderSITitle {
+		font-size: @sapUiCardFSDefaultSizeSmall;
+		color: @sapUiCardFontColorDefaultDefault;
+	}
+
+	.sapFCardHeaderSINumber,
+	.sapFCardHeaderSINumber .sapMText {
+		font-size: @sapUiCardFSDefaultSizeSmall;
+		color: @sapUiCardFontColorDefaultDefault;
+	}
+}
+
+#hostConfigName.sapFCard .sapMSLIDescription {
+	color: @sapUiCardFontColorDefaultSubtle;
+	font-size: @sapUiCardFSDefaultSizeSmall;
+}
+
+#hostConfigName.sapFCard .sapMSLITitle {
+	color: @sapUiCardFontColorDefaultDefault;
+	font-size: @sapUiCardFSDefaultSizeDefault;
+}
+
+#hostConfigName.sapFCard .sapMLIB {
+	background-color: @sapUiCardBackgroundColor;
+}
+
+#hostConfigName.sapFCard .sapMLIB .sapMSLIImgIcon {
+	color: @sapUiCardFontColorDefaultSubtle  !important
+}
+
+#hostConfigName.sapFCard .sapMLIBFocusable:focus {
+	outline: 1px dotted #FFF - @sapUiCardBackgroundColor;
+}
+
+#hostConfigName.sapFCard .sapMLIB {
+	.sapMLIBHighlightError {
+		background-color: @sapUiCardFontColorAttentionDefault;
+	}
+
+	.sapMLIBHighlightSuccess {
+		background-color: @sapUiCardFontColorGoodDefault;
+	}
+
+	.sapMLIBHighlightWarning {
+		background-color: @sapUiCardFontColorWarningDefault;
+	}
+
+	.sapMLIBHighlightInformation {
+		background-color: @sapUiCardFontColorAccentDefault;
+	}
+}
+
+#hostConfigName.sapFCard .sapFCardNumericHeader {
+	.sapMNCScale.Good {
+		color: @sapUiCardFontColorGoodDefault;
+		font-size: @sapUiCardFSDefaultSizeSmall;
+	}
+
+	.sapMNCIndicator.Good {
+		color: @sapUiCardFontColorGoodDefault;
+		font-size: @sapUiCardFSDefaultSizeMedium;
+	}
+
+	.sapMNCValue.Good {
+		color: @sapUiCardFontColorGoodDefault;
+		font-size: @sapUiCardFSDefaultSizeXLarge;
+	}
+}
+
+#hostConfigName.sapFCard .sapFCardNumericHeader {
+	.sapMNCScale.Critical {
+		color: @sapUiCardFontColorWarningDefault;
+		font-size: @sapUiCardFSDefaultSizeSmall;
+	}
+
+	.sapMNCIndicator.Critical {
+		color: @sapUiCardFontColorWarningDefault;
+		font-size: @sapUiCardFSDefaultSizeMedium;
+	}
+
+	.sapMNCValue.Critical {
+		color: @sapUiCardFontColorWarningDefault;
+		font-size: @sapUiCardFSDefaultSizeXLarge;
+	}
+}
+
+#hostConfigName.sapFCard .sapFCardNumericHeader {
+	.sapMNCScale.Error {
+		color: @sapUiCardFontColorAttentionDefault;
+		font-size: @sapUiCardFSDefaultSizeSmall;
+	}
+
+	.sapMNCIndicator.Error {
+		color: @sapUiCardFontColorAttentionDefault;
+		font-size: @sapUiCardFSDefaultSizeMedium;
+	}
+
+	.sapMNCValue.Error {
+		color: @sapUiCardFontColorAttentionDefault;
+		font-size: @sapUiCardFSDefaultSizeXLarge;
+	}
+}
+
+#hostConfigName.sapFCard .sapFCardTableContent .sapMListTblCell {
+	background-color: @sapUiCardBackgroundColor;
+	border-top-color: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 5), darken(@sapUiCardBackgroundColor, 5))
+}
+
+#hostConfigName.sapFCard .sapFCardTableContent .sapMListTblHeaderCell {
+	background-color: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 10), darken(@sapUiCardBackgroundColor, 10));
+	border-bottom-color: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 5), darken(@sapUiCardBackgroundColor, 5))
+}
+
+
+
+#hostConfigName.sapFCard .sapFCardTableContent .sapMText {
+	font-size: @sapUiCardFSDefaultSizeSmall;
+	color: @sapUiCardFontColorDefaultDefault;
+}
+
+#hostConfigName.sapFCard .sapFCardHeader .sapFCardHeaderSideIndicator .sapMText {
+	font-family: @sapUiCardFSDefaultFontFamily;
+	font-size: @sapUiCardFSDefaultSizeSmall;
+	color: @sapUiCardFontColorDefaultDefault;
+}
+
+#hostConfigName.sapFCard .sapFAvatarIcon .sapUiIcon {
+	color: @sapUiCardFontColorDefaultSubtle  !important
+}
+
+#hostConfigName.sapFCard .sapFCardObjectGroup {
+	& .sapMTitle {
+		color: @sapUiCardFontColorDefaultDefault;
+		text-shadow: none;
+	}
+
+	& .sapMText {
+		color: @sapUiCardFontColorDefaultDefault
+	}
+
+	& .sapMLabel {
+		color: @sapUiCardFontColorDefaultDefault
+	}
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineBarIcon {
+	color: @sapUiCardFontColorDefaultSubtle  !important
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemArrow {
+	background: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 10), darken(@sapUiCardBackgroundColor, 10));
+	border-color: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 20%), darken(@sapUiCardBackgroundColor, 20%));
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemBox {
+	background: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 10), darken(@sapUiCardBackgroundColor, 10));
+	border-color: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 20%), darken(@sapUiCardBackgroundColor, 20%));
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemShellHdr,
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemShellUser {
+	color: @sapUiCardFontColorDefaultDefault;
+	font-family: @sapUiCardFSDefaultFontFamily;
+	font-size: @sapUiCardFSDefaultSizeMedium;
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemShellDateTime {
+	color: @sapUiCardFontColorDefaultSubtle;
+	font-family: @sapUiCardFSDefaultFontFamily;
+	font-size: @sapUiCardFSDefaultSizeSmall;
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemTextWrapper {
+	color: @sapUiCardFontColorDefaultDefault;
+	font-family: @sapUiCardFSDefaultFontFamily;
+	font-size: @sapUiCardFSDefaultSizeMedium;
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemBarV,
+.sapSuiteUiCommonsTimelineItemBarH {
+	background-color: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 20%), darken(@sapUiCardBackgroundColor, 20%));
+}

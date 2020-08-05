@@ -1,9 +1,8 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/core/routing/HashChanger',
-		'jquery.sap.script'
-	], function(jQuery, JSONModel, HashChanger/*, jQuerySapScript*/) {
+		'sap/base/util/uid'
+	], function(JSONModel, HashChanger, createUID) {
 	"use strict";
 
 	var Pattern = JSONModel.extend("patternApp.model.Pattern", {
@@ -64,7 +63,7 @@ sap.ui.define([
 		 */
 		addPattern: function (sPattern) {
 			var iPosition = this._aPatterns.length,
-				sName = jQuery.sap.uid();
+				sName = createUID();
 
 			this._aPatterns.push({pattern : sPattern, matched : false, parameters: "Did not match!"});
 

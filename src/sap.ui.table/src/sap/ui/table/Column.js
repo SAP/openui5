@@ -3,16 +3,60 @@
  */
 
 // Provides control sap.ui.table.Column.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library', 'sap/ui/core/Popup',
-		'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/model/FilterType', 'sap/ui/model/Sorter', 'sap/ui/model/Type',
-		'sap/ui/model/type/String', './TableUtils', './library', './ColumnMenu'],
-function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType, Sorter, Type, StringType, TableUtils, library, ColumnMenu) {
+sap.ui.define([
+	'sap/ui/core/Element',
+	'sap/ui/core/library',
+	'sap/ui/core/Popup',
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
+	'sap/ui/model/FilterType',
+	'sap/ui/model/Sorter',
+	'sap/ui/model/Type',
+	'sap/ui/model/type/String',
+	'./utils/TableUtils',
+	'./library',
+	'./ColumnMenu',
+	'sap/base/util/ObjectPath',
+	"sap/base/util/JSTokenizer",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+function(
+	Element,
+	coreLibrary,
+	Popup,
+	Filter,
+	FilterOperator,
+	FilterType,
+	Sorter,
+	Type,
+	StringType,
+	TableUtils,
+	library,
+	ColumnMenu,
+	ObjectPath,
+	JSTokenizer,
+	Log,
+	jQuery
+) {
 	"use strict";
 
 	// shortcuts
 	var HorizontalAlign = coreLibrary.HorizontalAlign,
 		SortOrder = library.SortOrder,
 		ValueState = coreLibrary.ValueState;
+
+	var TemplateType = {
+		Standard: "Standard",
+		Creation: "Creation"
+	};
+
+	/**
+	 * Map from cell to column.
+	 *
+	 * @type {WeakMapConstructor}
+	 */
+	var CellMap = new window.WeakMap();
 
 	/**
 	 * Constructor for a new Column.
@@ -64,7 +108,7 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 			 * @deprecated As of version 1.44 this property has no effect. Use the property <code>minWidth</code> in combination with the property
 			 * <code>width="auto"</code> instead.
 			 */
-			flexible : {type : "boolean", group : "Behavior", defaultValue : true},
+			flexible : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true},
 
 			/**
 			 * If set to true, the column can be resized either using the resize bar (by mouse) or using
@@ -80,7 +124,7 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 
 			/**
 			 * Indicates if the column is sorted. This property only controls if a sort indicator is displayed in the
-			 * column header - it does not trigger the sort function. The column has to be sorted by calling <code>Column.sort()</code>
+			 * column header - it does not trigger the sort function. The column can be sorted using {@link sap.ui.table.Table#sort}.
 			 */
 			sorted : {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -104,7 +148,7 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 
 			/**
 			 * Indicates if the column is filtered. This property only controls if a filter indicator is displayed in the
-			 * column header - it does not trigger the filter function. The column has to be filtered by calling <code>Column.sort()</code>
+			 * column header - it does not trigger the filter function. The column can be filtered using {@link sap.ui.table.Table#filter}.
 			 */
 			filtered : {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -153,15 +197,17 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 			defaultFilterOperator : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
-			 * Type of Filter. This is used to transform the search term to the specified type,
-			 * to make sure that the right columns are displayed. This should be the same as defined
-			 * in binding for this column. As an alternative you can pass a function which does the conversion.
-			 * The function receives the entered filter value as parameter and returns the proper
-			 * value for the filter expression. Another option is to pass the class name of the type,
-			 * e.g.: <code>sap.ui.model.type.Date</code> or an expression similar to the binding syntax,
+			 * Type of filter. It is used to transform the search term into the specified type and should be the same as
+			 * defined in the binding for the column template.
+			 * Default value is <code>sap.ui.model.type.String</code>.
+			 * It can be set to the class name of the type,
+			 * e.g.: <code>sap.ui.model.type.Date</code>,
+			 * or an expression similar to the binding syntax,
 			 * e.g.: <code>"\{type: 'sap.ui.model.type.Date', formatOptions: \{UTC: true\}, constraints: \{\} \}"</code>.
 			 * Here the escaping is mandatory to avoid handling by the binding parser.
-			 * By default the filter type is <code>sap.ui.model.type.String</code>.
+			 * As an alternative, a function can be passed that takes over the conversion. This cannot be done in the
+			 * XMLView, use {@link #setFilterType} instead.
+			 *
 			 * @since 1.9.2
 			 */
 			filterType : {type : "any", group : "Misc", defaultValue : null},
@@ -177,8 +223,8 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * The name of the column which is used in the column visibility menu item as text.
-			 * If not set as a fallback the column menu tries to get the text from the nested Label.
+			 * The name of the column which is used for the text representation of this column, for example, in menus.
+			 * If not set, the text from the multiLabels aggregation or the label aggregation (in that order) is used as a fallback option.
 			 * @since 1.11.1
 			 */
 			name : {type : "string", group : "Appearance", defaultValue : null},
@@ -200,6 +246,12 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 			 * which are part of the header will be moved. The <code>headerSpan</code> can be either an integer or an array of
 			 * integers (if you use the multi header feature of the table). If you only specify an integer, this span is
 			 * applied for all header rows, with multiple integers you can specify a separate span for each header row.
+			 * <b>Note:</b> Only columns with a span equal to 1 can have a column menu. When setting a column to fixed, all
+			 * columns which are part of the header with the greatest span will be set to fixed.
+			 * @example <caption>Example of usage: header with 3 subheaders, each of them with span = 1</caption>
+			 * <code>headerSpan = [3, 1] // for the first column
+			 * headerSpan = [2, 1] // for the second column
+			 * headerSpan = [1, 1] // or not set for the third column</code>
 			 */
 			headerSpan : {type : "any", group : "Behavior", defaultValue : 1},
 
@@ -209,7 +261,7 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 			 * Currently only implemented to work with the following controls:
 			 * <code>sap.m.Text, sap.m.Label, sap.m.Link, sap.m.Input,
 			 * sap.ui.commons.TextView, sap.ui.commons.Label, sap.ui.commons.Link and sap.ui.commons.TextField,
-			 * sap.ui.commons.Checkbox, sap.m.Checkbox</code>
+			 * sap.ui.commons.Checkbox, sap.m.CheckBox</code>
 			 * @since 1.21.1
 			 */
 			autoResizable : {type : "boolean", group : "Behavior", defaultValue : false}
@@ -232,17 +284,31 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 			multiLabels : {type : "sap.ui.core.Control", multiple : true, singularName : "multiLabel"},
 
 			/**
-			 * Template (cell renderer) of this column. A template is decoupled from the column. Each time
-			 * the template's properties or aggregations have been changed, the template has to be applied again via
-			 * <code>setTemplate</code> for the changes to take effect.
+			 * Template (cell renderer) of this column.
+			 * A template is decoupled from the column. Each time the template's properties or aggregations have been changed, the template has to be
+			 * applied again via <code>setTemplate</code> for the changes to take effect.
 			 * If a string is defined, a default text control will be created with its text property bound to the value of the string. The default
 			 * template depends on the libraries loaded.
 			 * If there is no template, the column will not be rendered in the table.
-			 * The set of supported controls is limited. See section "{@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I Choose?}"
-			 * in the documentation for more details. While it is technically possible to also use other controls, doing so might lead to issues with regards
-			 * to scrolling, alignment, condensed mode, screen reader support, and keyboard support.
+			 * The set of supported controls is limited. See section "{@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I
+			 * Choose?}" in the documentation for more details. While it is technically possible to also use other controls, doing so might lead to
+			 * issues with regards to scrolling, alignment, condensed mode, screen reader support, and keyboard support.
 			 */
 			template : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
+
+			/*
+			 * Creation template (cell renderer) of this column. This template is used only to create the cells
+			 * of the {@link sap.ui.table.CreationRow} that is added to the table.
+			 * A template is decoupled from the column. Each time the template's properties or aggregations have been changed, the template has to
+			 * be applied again via <code>setCreationTemplate</code> for the changes to take effect.
+			 * The set of supported controls is limited. See section "{@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I
+			 * Choose?}" in the documentation for more details. While it is technically possible to also use other controls, doing so might lead to
+			 * issues with regards to scrolling, alignment, condensed mode, screen reader support, and keyboard support.
+			 *
+			 * @private
+			 * @ui5-restricted sap.ui.mdc
+			 */
+			creationTemplate : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
 
 			/**
 			 * The menu used by the column. By default the {@link sap.ui.table.ColumnMenu} is used.
@@ -280,12 +346,28 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	 * called when the column is initialized
 	 */
 	Column.prototype.init = function() {
+		// Skip propagation of properties (models and bindingContexts).
+		this.mSkipPropagation = {
+			template: true,
+			creationTemplate: true
+		};
+
 		this._oSorter = null;
 
-		// Skip proppagation of databinding properties to the template
-		this.mSkipPropagation = {template: true};
 		// for performance reasons, the cloned column templates shall be stored for later reuse
-		this._aTemplateClones = [];
+		this._initTemplateClonePool();
+	};
+
+	/**
+	 * Initializes the template clone pool where clones of every template type are stored for reuse.
+	 *
+	 * @private
+	 */
+	Column.prototype._initTemplateClonePool = function() {
+		this._mTemplateClones = Object.keys(TemplateType).reduce(function(oTemplatePool, sTemplateType) {
+			oTemplatePool[sTemplateType] = [];
+			return oTemplatePool;
+		}, {});
 	};
 
 	/**
@@ -299,12 +381,13 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	 * called when the column's parent is set
 	 */
 	Column.prototype.setParent = function(oParent, sAggregationName, bSuppressRerendering) {
-		Element.prototype.setParent.apply(this, arguments);
+		var vReturn = Element.prototype.setParent.apply(this, arguments);
 		var oMenu = this.getAggregation("menu");
 		if (oMenu && typeof oMenu._updateReferences === "function") {
 			//if menu is set update menus internal references
 			oMenu._updateReferences(this);
 		}
+		return vReturn;
 	};
 
 	/*
@@ -313,7 +396,7 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	Column.prototype.invalidate = function(oOrigin) {
 		// prevent changes in the template (especially the databinding ones)
 		//  - what about exchanging the template? => implemented in setTemplate
-		//  - what about modifiying properties? => developer must call invalidate!
+		//  - what about modifying properties? => developer must call invalidate!
 		// The problem is that we just need to prevent databinding changes. The
 		// problem here is that the databinding bindings are created ones the template
 		// is created and has its own model. If now changes are done in the model
@@ -324,7 +407,7 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 		 * connection to its data (also for the template of the column!) and this
 		 * finally invalidates the Table which triggers the re-rendering. One
 		 * option is to complete decouple the template from the Table by
-		 * supressing the invalidate. But this finally also decouples the Table
+		 * suppressing the invalidate. But this finally also decouples the Table
 		 * from any changes on the template after the template has been applied
 		 * to the Column. But when re-rendering it would update the column cells.
 		 * To notify the Table on proper changes one has to call the method
@@ -335,8 +418,11 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 		 * rerendered. This is a popup and we use the instance check because of the
 		 * menu behind the getMenu function is lazy created when first accessed.
 		 */
-		if (oOrigin !== this.getTemplate() && !TableUtils.isInstanceOf(oOrigin, "sap/ui/table/ColumnMenu")) {
-			// changes on the template require to call invalidate on the column or table
+		if (oOrigin !== this.getTemplate()
+			&& oOrigin !== this.getCreationTemplate()
+			&& !TableUtils.isA(oOrigin, "sap.ui.table.ColumnMenu")) {
+
+			// changes on the templates require to call invalidate on the column or table
 			Element.prototype.invalidate.apply(this, arguments);
 		}
 	};
@@ -358,18 +444,102 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	 */
 	Column.prototype.setTemplate = function(vTemplate) {
 		var oTemplate = vTemplate;
-		if (typeof (vTemplate) === "string") {
+		var oTable = this._getTable();
+		var oOldTemplate = this.getTemplate();
+
+		if (typeof vTemplate === "string") {
 			oTemplate = library.TableHelper.createTextView().bindProperty("text", vTemplate);
 		}
-		this.setAggregation("template", oTemplate);
+
+		this.setAggregation("template", oTemplate, true);
+
 		// manually invalidate the Column (because of the invalidate decoupling to
 		// prevent invalidations from the databinding part)
-		this.invalidate();
-		this._destroyTemplateClones();
-		var oTable = this.getParent();
-		if (oTable && oTable.invalidateRowsAggregation && this.getVisible() == true) {
-			oTable.invalidateRowsAggregation();
+		if (this.getVisible()) {
+			this.invalidate();
 		}
+
+		// The clones are removed from the cells aggregation of the rows when destroyed.
+		this._destroyTemplateClones("Standard");
+
+		if (oTable && this.getVisible()) {
+			if (oTemplate) {
+				oTable.invalidateRowsAggregation();
+			}
+
+			if (!oOldTemplate || !oTemplate) {
+				var oCreationRow = oTable.getCreationRow();
+				if (oCreationRow) {
+					oCreationRow._update();
+				}
+			}
+		}
+
+		return this;
+	};
+
+	/*
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+	Column.prototype.destroyTemplate = function() {
+		this.destroyAggregation("template");
+		this._destroyTemplateClones("Standard");
+
+		var oTable = this._getTable();
+		var oCreationRow = oTable ? oTable.getCreationRow() : null;
+
+		if (oCreationRow) {
+			oCreationRow._update();
+		}
+
+		return this;
+	};
+
+	/**
+	 * Sets the creation template.
+	 *
+	 * @param {sap.ui.core.Control} oCreationTemplate Instance of the creation template control
+	 * @returns {sap.ui.table.Column} Reference to <code>this</code> in order to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Column.prototype.setCreationTemplate = function(oCreationTemplate) {
+		var oTable = this._getTable();
+
+		this.setAggregation("creationTemplate", oCreationTemplate, true);
+		this._destroyTemplateClones("Creation");
+
+		if (oCreationTemplate && oTable && this.getVisible()) {
+			var oCreationRow = oTable.getCreationRow();
+			if (oCreationRow) {
+				oCreationRow._update();
+			}
+		}
+
+		return this;
+	};
+
+	/**
+	 * Gets the creation template.
+	 *
+	 * @returns {sap.ui.core.Control} Instance of the creation template control
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Column.prototype.getCreationTemplate = function() {
+		return this.getAggregation("creationTemplate");
+	};
+
+	/**
+	 * Destroys the creation template.
+	 *
+	 * @returns {sap.ui.table.Column} Reference to <code>this</code> in order to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Column.prototype.destroyCreationTemplate = function() {
+		this.destroyAggregation("creationTemplate", true);
+		this._destroyTemplateClones("Creation");
 		return this;
 	};
 
@@ -407,19 +577,26 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	 */
 	Column.prototype._menuHasItems = function() {
 		var oMenu = this.getAggregation("menu");
-		var oTable = this.getParent();
-		var fnMenuHasItems = function() {
-			return (
-				this.isSortableByMenu() || // Sorter
-				this.isFilterableByMenu() || // Filter
-				this.isGroupable() || // Grouping
-				(oTable && oTable.getEnableColumnFreeze()) || // Column Freeze
-				(oTable && oTable.getShowColumnVisibilityMenu()) // Column Visibility Menu
-			);
+		var oTable = this._getTable();
+		var bHasOwnItems = this.isSortableByMenu()
+						   || this.isFilterableByMenu()
+						   || this.isGroupable()
+						   || (oTable && oTable.getEnableColumnFreeze())
+						   || (oTable && oTable.getShowColumnVisibilityMenu());
 
-		}.bind(this);
+		var bNotificationExpired = false;
+		var bHooksProvideMenuItems = false;
+		var fnNotifyAboutMenuItems = function() {
+			if (bNotificationExpired) {
+				throw new Error(TableUtils.Hook.Keys.Column.MenuItemNotification + " hook:"
+								+ " The notification function cannot be called asynchronously.");
+			}
+			bHooksProvideMenuItems = true;
+		};
+		TableUtils.Hook.call(oTable, TableUtils.Hook.Keys.Column.MenuItemNotification, this, fnNotifyAboutMenuItems);
+		bNotificationExpired = true;
 
-		return !!((oMenu && oMenu.getItems().length > 0) || fnMenuHasItems());
+		return !!((oMenu && oMenu.getItems().length > 0) || bHasOwnItems || bHooksProvideMenuItems);
 	};
 
 	/**
@@ -471,7 +648,7 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	 */
 	Column.prototype.setMenu = function(oMenu) {
 		this.setAggregation("menu", oMenu, true);
-		this._bMenuIsColumnMenu = TableUtils.isInstanceOf(oMenu, "sap/ui/table/ColumnMenu");
+		this._bMenuIsColumnMenu = TableUtils.isA(oMenu, "sap.ui.table.ColumnMenu");
 		return this;
 	};
 
@@ -485,35 +662,6 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 			this._defaultMenu = new ColumnMenu(this.getId() + "-menu", {ariaLabelledBy: this});
 		}
 		return this._defaultMenu;
-	};
-
-	Column.prototype._setAppDefault = function(sProperty, mValue) {
-		if (!this._appDefaults) {
-			this._appDefaults = {};
-		}
-
-		if (sProperty == "sorted") {
-			this._appDefaults.sorted = mValue;
-		} else if (sProperty == "sortOrder") {
-			this._appDefaults.sortOrder = mValue;
-		} else if (sProperty == "filtered") {
-			this._appDefaults.filtered = mValue;
-		} else if (sProperty == "filterValue") {
-			this._appDefaults.filterValue = mValue;
-		} else if (sProperty == "filterOperator") {
-			this._appDefaults.filterOperator = mValue;
-		}
-	};
-
-	Column.prototype._restoreAppDefaults = function() {
-		if (this._appDefaults) {
-			this.setProperty("sorted", this._appDefaults.sorted, true);
-			this.setProperty("sortOrder", this._appDefaults.sortOrder, true);
-			this.setProperty("filtered", this._appDefaults.filtered, true);
-			this.setProperty("filterValue", this._appDefaults.filterValue, true);
-			this.setProperty("filterOperator", this._appDefaults.filterOperator, true);
-			this._updateIcons();
-		}
 	};
 
 	/*
@@ -530,7 +678,6 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	 */
 	Column.prototype.setSorted = function(bFlag) {
 		this.setProperty("sorted", bFlag, true);
-		this._setAppDefault("sorted", bFlag);
 		this._updateIcons();
 		return this;
 	};
@@ -540,7 +687,6 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	 */
 	Column.prototype.setSortOrder = function(tSortOrder) {
 		this.setProperty("sortOrder", tSortOrder, true);
-		this._setAppDefault("sortOrder", tSortOrder);
 		this._updateIcons();
 		return this;
 	};
@@ -558,7 +704,6 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	 */
 	Column.prototype.setFiltered = function(bFlag) {
 		this.setProperty("filtered", bFlag, true);
-		this._setAppDefault("filtered", bFlag);
 		this._updateIcons();
 		return this;
 	};
@@ -568,7 +713,6 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	 */
 	Column.prototype.setFilterValue = function(sValue) {
 		this.setProperty("filterValue", sValue, true);
-		this._setAppDefault("filterValue", sValue);
 
 		var oMenu = this.getMenu();
 		if (this._bMenuIsColumnMenu) {
@@ -582,18 +726,22 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Column.prototype.setFilterOperator = function(sValue) {
-		this._setAppDefault("filterOperator", sValue);
 		return this.setProperty("filterOperator", sValue, true);
 	};
 
 	/**
 	 * Open the column menu.
 	 * @param {Object} [oDomRef] DOM reference of the element to which the menu should be visually attached. Fallback is the focused DOM reference.
-	 * @param {boolean} [bWithKeyboard=false] Indicates whether or not the first item shall be highlighted when the menu is opened.
+	 * @returns {boolean} Whether the menu was opened.
 	 * @private
 	 */
-	Column.prototype._openMenu = function(oDomRef, bWithKeyboard) {
+	Column.prototype._openMenu = function(oDomRef) {
 		var oMenu = this.getMenu();
+
+		if (!this._menuHasItems()) {
+			return false;
+		}
+
 		var bExecuteDefault = this.fireColumnMenuOpen({
 			menu: oMenu
 		});
@@ -605,7 +753,10 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 				oDomRef = this.getDomRef();
 				oFocusDomRef = this.getFocusDomRef();
 			}
-			oMenu.open(!!bWithKeyboard, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef, "none none");
+			oMenu.open(null, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef);
+			return true;
+		} else {
+			return true; // We do not know whether the event handler opens a context menu or not, so we just assume it is done.
 		}
 	};
 
@@ -613,7 +764,6 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	/**
 	 * Toggles the sort order of the column.
 	 *
-	 * @type sap.ui.table.Column
 	 * @public
 	 * @deprecated Since version 1.5.1.
 	 * Please use the function "sap.ui.Table.prototype.sort".
@@ -626,14 +776,12 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 
 
 	/**
-	 * sorts the current column ascending or descending
+	 * Sorts the current column ascending or descending.
 	 *
-	 * @param {boolean} bDescending
-	 *         sort order of the column (if undefined the default will be ascending)
-	 * @type sap.ui.table.Column
+	 * @param {boolean} bDescending Sort order of the column (if undefined the default will be ascending)
+	 * @returns {sap.ui.table.Column} Reference to <code>this</code> in order to allow method chaining
 	 * @public
-	 * @deprecated Since version 1.5.1.
-	 * Please use the function "sap.ui.Table.prototype.sort".
+	 * @deprecated Since version 1.5.1. Please use the function "sap.ui.Table.prototype.sort".
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Column.prototype.sort = function(bDescending, bAdd) {
@@ -657,11 +805,11 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 
 				// reset the sorting status of all columns which are not sorted anymore
 				for (var i = 0, l = aColumns.length; i < l; i++) {
-					if (jQuery.inArray(aColumns[i], aSortedCols) < 0) {
+					if (aSortedCols.indexOf(aColumns[i]) < 0) {
 						// column is not sorted anymore -> reset default and remove sorter
 						aColumns[i].setProperty("sorted", false, true);
 						aColumns[i].setProperty("sortOrder", SortOrder.Ascending, true);
-						aColumns[i]._updateIcons();
+						aColumns[i]._updateIcons(true);
 						delete aColumns[i]._oSorter;
 					}
 				}
@@ -674,9 +822,12 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 				// add sorters of all sorted columns to one sorter-array and update sort icon rendering for sorted columns
 				var aSorters = [];
 				for (var i = 0, l = aSortedCols.length; i < l; i++) {
-					aSortedCols[i]._updateIcons();
+					aSortedCols[i]._updateIcons(true);
 					aSorters.push(aSortedCols[i]._oSorter);
 				}
+
+				oTable._resetColumnHeaderHeights();
+				oTable._updateRowHeights(oTable._collectRowHeights(true), true);
 
 				var oBinding = oTable.getBinding("rows");
 				if (oBinding) {
@@ -692,14 +843,14 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 					oBinding.sort(aSorters);
 
 				} else {
-					jQuery.sap.log.warning("Sorting not performed because no binding present", this);
+					Log.warning("Sorting not performed because no binding present", this);
 				}
 			}
 		}
 		return this;
 	};
 
-	Column.prototype._updateIcons = function() {
+	Column.prototype._updateIcons = function(bSkipUpdateRowHeights) {
 		var oTable = this.getParent(),
 			bSorted = this.getSorted(),
 			bFiltered = this.getFiltered();
@@ -710,15 +861,17 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 
 		this.$()
 			.parents(".sapUiTableCHT")
-			.find('td[data-sap-ui-colindex="' + this.getIndex() + '"]') // all td cells in this column header
-			.filter(":not([colspan]):visible") // only visible without a colspan
-			.first()
-			.find(".sapUiTableColCell")
-			.toggleClass("sapUiTableColSF", bSorted || bFiltered)
+			.find('td[data-sap-ui-colindex="' + this.getIndex() + '"]:not([colspan]):not(.sapUiTableHidden):first')
 			.toggleClass("sapUiTableColFiltered", bFiltered)
 			.toggleClass("sapUiTableColSorted", bSorted)
 			.toggleClass("sapUiTableColSortedD", bSorted && this.getSortOrder() === SortOrder.Descending);
+
 		oTable._getAccExtension().updateAriaStateOfColumn(this);
+
+		if (!bSkipUpdateRowHeights) {
+			oTable._resetColumnHeaderHeights();
+			oTable._updateRowHeights(oTable._collectRowHeights(true), true);
+		}
 	};
 
 	Column.prototype._renderSortIcon = function() {
@@ -858,13 +1011,10 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 				oTable.getBinding("rows").filter(aFilters, FilterType.Control);
 
 				this._updateIcons();
-
 			}
-
 		}
 
 		return this;
-
 	};
 
 	Column.prototype._parseFilterValue = function(sValue) {
@@ -881,10 +1031,6 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 		return sValue;
 	};
 
-	Column.prototype._restoreIcons = function() {
-		this._updateIcons();
-	};
-
 	/**
 	 * Returns whether the column should be rendered.
 	 * @returns {boolean} Returns <code>true</code>, if the column should be rendered
@@ -894,45 +1040,64 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 		return this.getVisible() && !this.getGrouped() && this.getTemplate() != null;
 	};
 
-	Column.PROPERTIES_FOR_ROW_INVALIDATION = {visible: true, flexible: true, headerSpan: true};
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Column.prototype.setProperty = function(sName, vValue) {
-		var oTable = this.getParent();
+		var oTable = this._getTable();
+		var bNeedRowsUpdate = oTable && sName === "visible" && this.getProperty(sName) != vValue;
+		var vReturn = Element.prototype.setProperty.apply(this, arguments);
 
-		if (oTable &&
-			oTable.invalidateRowsAggregation &&
-			this.getProperty(sName) != vValue &&
-			Column.PROPERTIES_FOR_ROW_INVALIDATION[sName] && (this.getVisible() || sName == "visible")) {
-
+		if (bNeedRowsUpdate) {
 			oTable.invalidateRowsAggregation();
+
+			var oCreationRow = oTable.getCreationRow();
+			if (oCreationRow) {
+				oCreationRow._update();
+			}
 		}
 
-		return Element.prototype.setProperty.apply(this, arguments);
+		return vReturn;
 	};
 
-	/*
-	 * support the declarative usage of the filter type
-	 * @see JSDoc generated by SAPUI5 control API generator
+	/**
+	 * The filter type can be the class name of a type, an expression similar to the binding syntax, or a function.
+	 * A function receives the entered filter value as a parameter and should return the appropriate value for the filter expression.
+	 *
+	 * @param {any} vType The filter type
+	 * @returns {sap.ui.table.Column} Reference to <code>this</code> in order to allow method chaining
+	 * @public
+	 *
+	 * @example <caption>Class name of a type.</caption>
+	 * oColumn.setFilterType("sap.ui.model.type.Date");
+	 *
+	 * @example <caption>Binding expression similar to the binding syntax.</caption>
+	 * // The escaping is mandatory to avoid handling by the binding parser.
+	 * oColumn.setFilterType("\{type: 'sap.ui.model.type.Date', formatOptions: \{UTC: true\}, constraints: \{\} \}");
+	 *
+	 * @example <caption>A function that takes over the conversion.</caption>
+	 * // Converts the entered filter value to type Boolean.
+	 * oColumn.setFilterType(function(oValue) {
+	 *   return oValue == 1
+	 * });
 	 */
 	Column.prototype.setFilterType = function(vType) {
 		var oType = vType;
 		if (typeof (vType) === "string") {
 			try {
 				// similar to BindingParser allow to specify formatOptions and constraints for types
-				var mConfig = jQuery.sap.parseJS(vType);
+				var mConfig = JSTokenizer.parseJS(vType);
 				if (typeof (mConfig.type) === "string") {
-					var fnType = jQuery.sap.getObject(mConfig.type);
+					var fnType = ObjectPath.get(mConfig.type);
 					oType = fnType && new fnType(mConfig.formatOptions, mConfig.constraints);
 				}
 			} catch (ex) {
-				var fnType = jQuery.sap.getObject(vType);
+				var fnType = ObjectPath.get(vType);
 				oType = fnType && new fnType();
 			}
 			// check for a valid type
 			if (!(oType instanceof Type)) {
-				jQuery.sap.log.error("The filter type is not an instance of sap.ui.model.Type! Ignoring the filter type!");
+				Log.error("The filter type is not an instance of sap.ui.model.Type! Ignoring the filter type!");
 				oType = undefined;
 			}
 		}
@@ -957,18 +1122,24 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	/**
 	 * Returns an unused column template clone. Unused means, it does not have a parent.
 	 *
-	 * @returns {sap.ui.core.Control|null} Column template clone, or <code>null</code> if all clones have parents
+	 * @param {string} sTemplateType The template type for which a free clone should be retrieved from the clone pool.
+	 * @returns {sap.ui.core.Control|null} Column template clone, or <code>null</code> if all clones have parents.
 	 * @private
 	 */
-	Column.prototype._getFreeTemplateClone = function() {
+	Column.prototype._getFreeTemplateClone = function(sTemplateType) {
+		var aTemplateClones = this._mTemplateClones[sTemplateType];
 		var oFreeTemplateClone = null;
 
-		for (var i = 0; i < this._aTemplateClones.length; i++) {
-			if (this._aTemplateClones[i] == null || this._aTemplateClones[i].bIsDestroyed) {
-				this._aTemplateClones.splice(i, 1); // Remove the reference to a destroyed clone.
+		if (!aTemplateClones) {
+			return null;
+		}
+
+		for (var i = 0; i < aTemplateClones.length; i++) {
+			if (!aTemplateClones[i] || aTemplateClones[i].bIsDestroyed) {
+				aTemplateClones.splice(i, 1); // Remove the reference to a destroyed clone.
 				i--;
-			} else if (oFreeTemplateClone === null && this._aTemplateClones[i].getParent() == null) {
-				oFreeTemplateClone = this._aTemplateClones[i];
+			} else if (!oFreeTemplateClone && !aTemplateClones[i].getParent()) {
+				oFreeTemplateClone = aTemplateClones[i];
 			}
 		}
 
@@ -976,37 +1147,38 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	};
 
 	/**
-	 * Returns a column template clone. It either finds an unused clone or clones a new one from the column template.
+	 * Returns a template clone. It either finds an unused clone or clones a new one from the template.
 	 *
-	 * @param {int} iIndex Index of the column in the column aggregation of the table
-	 * @returns {sap.ui.core.Control|null} Clone of the column template, or <code>null</code> if no column template is defined
+	 * @param {int} iIndex Index of the column in the columns aggregation of the table
+	 * @returns {sap.ui.core.Control|null} Clone of the template, or <code>null</code> if no template is defined
 	 * @protected
 	 */
-	Column.prototype.getTemplateClone = function(iIndex) {
+	Column.prototype.getTemplateClone = function(iIndex, sPreferredTemplateType) {
 		// For performance reasons, the index of the column in the column aggregation must be provided by the caller.
 		// Otherwise the columns aggregation would be looped over and over again to figure out the index.
-		if (iIndex == null) {
+		if (typeof iIndex !== "number" || this.getTemplate() == null) {
 			return null;
 		}
 
-		var oClone = this._getFreeTemplateClone();
+		var sTemplateType = sPreferredTemplateType == null ? "Standard" : sPreferredTemplateType;
+		var oClone = this._getFreeTemplateClone(sTemplateType);
 
-		if (oClone === null) {
+		if (!oClone && TemplateType.hasOwnProperty(sTemplateType)) {
 			// No free template clone available, create one.
-			var oTemplate = this.getTemplate();
+			var fnGetTemplate = this["get" + (sTemplateType === "Standard" ? "" : sTemplateType) + "Template"];
+			var oTemplate = fnGetTemplate.call(this);
+
 			if (oTemplate) {
 				oClone = oTemplate.clone();
-				this._aTemplateClones.push(oClone);
+				this._mTemplateClones[sTemplateType].push(oClone);
 			}
 		}
 
-		if (oClone != null) {
-			// Update sap-ui-* as the column index in the column aggregation may have changed.
-			oClone.data("sap-ui-colindex", iIndex);
-			oClone.data("sap-ui-colid", this.getId());
+		if (oClone) {
+			CellMap.set(oClone, this);
 
 			var oTable = this.getParent();
-			if (oTable != null) {
+			if (oTable) {
 				oTable._getAccExtension().addColumnHeaderLabel(this, oClone);
 			}
 		}
@@ -1014,18 +1186,60 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 		return oClone;
 	};
 
+	function destroyClones(aClones) {
+		for (var i = 0; i < aClones.length; i++) {
+			if (aClones[i] != null && !aClones[i].bIsDestroyed) {
+				aClones[i].destroy();
+			}
+		}
+	}
+
 	/**
 	 * Destroys all column template clones and clears the clone stack.
 	 *
+	 * @param {string} [sTemplateType] The template type of clones to destroy. If not defined, all clones are destroyed.
 	 * @private
 	 */
-	Column.prototype._destroyTemplateClones = function() {
-		for (var i = 0; i < this._aTemplateClones.length; i++) {
-			if (this._aTemplateClones[i] != null && !this._aTemplateClones[i].bIsDestroyed) {
-				this._aTemplateClones[i].destroy();
+	Column.prototype._destroyTemplateClones = function(sTemplateType) {
+		if (sTemplateType == null) {
+			for (var sType in TemplateType) {
+				destroyClones(this._mTemplateClones[sType]);
 			}
+			this._initTemplateClonePool();
+		} else {
+			destroyClones(this._mTemplateClones[sTemplateType]);
+			this._mTemplateClones[sTemplateType] = [];
 		}
-		this._aTemplateClones = [];
+	};
+
+	Column.prototype._closeMenu = function() {
+		var oMenu = this.getAggregation("menu");
+		if (oMenu) {
+			oMenu.close();
+		}
+	};
+
+	/**
+	 * Gets the table this column is inside.
+	 *
+	 * @returns {sap.ui.table.Table|null} The instance of the table or <code>null</code>, if this column is not inside a table.
+	 * @private
+	 */
+	Column.prototype._getTable = function() {
+		var oParent = this.getParent();
+		return TableUtils.isA(oParent, "sap.ui.table.Table") ? oParent : null;
+	};
+
+	/**
+	 * Returns the corresponding column of a table cell.
+	 *
+	 * @param {sap.ui.core.Control} oCell The table cell
+	 * @returns {sap.ui.table.Column | null} The column
+	 * @private
+	 * @static
+	 */
+	Column.ofCell = function(oCell) {
+		return CellMap.get(oCell) || null;
 	};
 
 	return Column;

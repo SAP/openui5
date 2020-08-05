@@ -3,35 +3,41 @@
 		xmlns:l="sap.ui.layout"
 		xmlns:core="sap.ui.core">
 	<Dialog
-			title="Settings"
+			title="{i18n>APP_SETTINGS_DIALOG_TITLE}"
 			class="sapUiPopupWithPadding"
 			contentWidth="350px"
 			id="AppSettingsDialog">
 		<content>
 			<VBox class="sapUiTinyMarginTop">
-					<Label text="Theme:" design="Standard" labelFor="ThemeSelect" />
-					<Select id="ThemeSelect" width="100%">
+					<Label text="{i18n>APP_SETTINGS_DIALOG_THEME}" design="Standard" labelFor="ThemeSelect" />
+					<Select id="ThemeSelect" width="100%" class="sapUiSmallMarginBottom">
+						<core:Item key="sap_fiori_3" text="Quartz Light"/>
+						<core:Item key="sap_fiori_3_dark" text="Quartz Dark"/>
 						<core:Item key="sap_belize" text="Belize"/>
 						<core:Item key="sap_belize_plus" text="Belize Deep"/>
-						<core:Item key="sap_belize_hcb" text="High Contrast Black"/>
-						<core:Item key="sap_belize_hcw" text="High Contrast White"/>
+						<core:Item key="sap_fiori_3_hcb" text="High Contrast Black"/>
+						<core:Item key="sap_fiori_3_hcw" text="High Contrast White"/>
 					</Select>
 
+					<Label text="{i18n>APP_SETTINGS_DIALOG_DENSITY}" design="Standard"  labelFor="CompactModeSwitch" />
+					<Select id="DensityModeSwitch" width="100%">
+						<core:Item text="Cozy" key="cozy"/>
+						<core:Item text="Compact" key="compact"/>
+						<core:Item text="Condensed" key="condensed"/>
+					</Select>
+					<Link text="{i18n>APP_SETTINGS_DIALOG_READ_MORE" href="topic/e54f729da8e3405fae5e4fe8ae7784c1" target="_blank" class="sapUiTinyMarginTop"/>
+
 					<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
-						<Label text="Compact Content Density:" design="Standard"  labelFor="CompactModeSwitch" />
-						<Switch id="CompactModeSwitch" state="false" />
-					</HBox>
-					<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
-						<Label text="Right To Left Mode:" design="Standard" labelFor="RTLSwitch" />
+						<Label text="{i18n>APP_SETTINGS_DIALOG_RTL}" design="Standard" labelFor="RTLSwitch" />
 						<Switch id="RTLSwitch" state="false" />
 					</HBox>
 			</VBox>
 		</content>
 		<beginButton>
-			<Button text="OK" press="handleSaveAppSettings"/>
+			<Button text="{i18n>APP_SETTINGS_DIALOG_OK_BTN}" press="handleSaveAppSettings" type="Emphasized"/>
 		</beginButton>
 		<endButton>
-			<Button text="Cancel" press="handleCloseAppSettings"/>
+			<Button text="{i18n>APP_SETTINGS_DIALOG_CANCEL_BTN}" press="handleCloseAppSettings"/>
 		</endButton>
 	</Dialog>
 </core:FragmentDefinition>

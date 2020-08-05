@@ -38,4 +38,4 @@ sap.ui.define([],
 				create: "sap/m/designtime/MenuButton.create.fragment.xml"
 			}
 		};
-	}, /* bExport= */ false);
+	});

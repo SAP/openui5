@@ -1,0 +1,224 @@
+{
+	"tablecard1": {
+		"sap.app": {
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Table Card",
+				"subTitle": "Table Card subtitle"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/tableitems.json"
+					},
+					"path": "/names"
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Avatar",
+							"width": "12%",
+							"icon": {
+								"src": "{icon}"
+							}
+						},
+						{
+							"title": "First Name",
+							"value": "{firstName}"
+						},
+						{
+							"title": "Last Name",
+							"value": "{lastName}"
+						},
+						{
+							"title": "Link",
+							"value": "{urlText}",
+							"url": "{url}"
+						},
+						{
+							"title": "Progress",
+							"progressIndicator": {
+								"percent": "{percent}",
+								"text": "{percentValue}",
+								"state": "{progressState}"
+							}
+						}
+					]
+				}
+			}
+		}
+	},
+	"tablecard2": {
+		"sap.app": {
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Table Card with Static Content",
+				"subTitle": "Table Card subtitle"
+			},
+			"content": {
+				"columns": [
+					{
+						"title": "Avatar",
+						"width": "15%"
+					},
+					{
+						"title": "First Name"
+					},
+					{
+						"title": "Last Name"
+					},
+					{
+						"title": "Progress"
+					}
+				],
+				"rows": [
+					{
+						"cells": [
+							{
+								"icon": {
+									"src": "./images/Woman_avatar_01.png"
+								}
+							},
+							{
+								"value": "Petra"
+							},
+							{
+								"value": "Maier"
+							},
+							{
+								"progressIndicator": {
+									"percent": 70,
+									"text": "70 of 100",
+									"state": "Success"
+								}
+							}
+						]
+					},
+					{
+						"cells": [
+							{
+								"width": "12%",
+								"icon": {
+									"src": "./images/Woman_avatar_02.png"
+								}
+							},
+							{
+								"value": "Anna"
+							},
+							{
+								"value": "Smith"
+							},
+							{
+								"progressIndicator": {
+									"percent": 30,
+									"text": "40 of 100",
+									"state": "Warning"
+								}
+							}
+						],
+						"actions": [
+							{
+								"type": "Navigation",
+								"url": "https://www.sap.com"
+							}
+						]
+					}
+				]
+			}
+		}
+	},
+	"tablecard3": {
+		"sap.app": {
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "New Purchase Orders"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/tableitems.json"
+					},
+					"path": "/tableCard3"
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Order ID",
+							"width": "25%",
+							"value": "{orderId}",
+							"url": "{orderUrl}"
+						},
+						{
+							"title": "Avatar",
+							"width": "15%",
+							"icon": {
+								"src": "{icon}",
+								"shape": "Square"
+							}
+						},
+						{
+							"title": "Created By",
+							"value": "{name}"
+						},
+						{
+							"title": "Status",
+							"width": "20%",
+							"value": "{status}",
+							"state": "{statusState}"
+						}
+					]
+				}
+			}
+		}
+	},
+	"tablecard4": {
+		"sap.app": {
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Sales Orders for Key Accounts"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/tableitems.json"
+					},
+					"path": "/tableCard4"
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"title": "Customer",
+							"value": "{name}"
+						},
+						{
+							"title": "Net Amount",
+							"value": "{netAmount}"
+						},
+						{
+							"title": "Status",
+							"value": "{status}",
+							"state": "{statusState}"
+						}
+					]
+				}
+			}
+		}
+	}
+}

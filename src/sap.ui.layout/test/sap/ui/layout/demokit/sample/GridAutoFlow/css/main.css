@@ -1,0 +1,8 @@
+.sapMFlexBox.demoBox {
+	border-radius: 10px;
+	background-color: #427cac;
+	text-align: center;
+}
+.demoBox .sapMText {
+	color: #fff;
+}

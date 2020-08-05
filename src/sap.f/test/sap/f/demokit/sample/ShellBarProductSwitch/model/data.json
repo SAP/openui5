@@ -1,0 +1,68 @@
+{
+	"items": [
+		{
+			"src": "sap-icon://home",
+			"title": "Home",
+			"subTitle": "Central Home"
+		},
+		{
+			"src": "sap-icon://business-objects-experience",
+			"title": "Analytics Cloud",
+			"subTitle": "Analytics Cloud"
+		},
+		{
+			"src": "sap-icon://contacts",
+			"title": "Catalog",
+			"subTitle": "Ariba"
+		},
+		{
+			"src": "sap-icon://credit-card",
+			"title": "Guided Buying"
+		},
+		{
+			"src": "sap-icon://cart-3",
+			"title": "Strategic Procurement"
+		},
+		{
+			"src": "sap-icon://flight",
+			"title": "Travel & Expense",
+			"subTitle": "Concur"
+		},
+		{
+			"src": "sap-icon://shipping-status",
+			"title": "Vendor Management",
+			"subTitle": "Fieldglass"
+		},
+		{
+			"src": "sap-icon://customer",
+			"title": "Human Capital Management"
+		},
+		{
+			"src": "sap-icon://sales-notification",
+			"title": "Sales Cloud",
+			"subTitle": "Sales Cloud"
+		},
+		{
+			"src": "sap-icon://retail-store",
+			"title": "Commerce Cloud",
+			"subTitle": "Commerce cloud"
+		},
+		{
+			"src": "sap-icon://marketing-campaign",
+			"title": "Marketing Cloud",
+			"subTitle": "Marketing Cloud"
+		},
+		{
+			"src": "sap-icon://family-care",
+			"title": "Service Cloud"
+		},
+		{
+			"src": "sap-icon://customer-briefing",
+			"title": "Customer Data Cloud"
+		},
+		{
+			"src": "sap-icon://batch-payments",
+			"title": "S/4HANA"
+		}
+	]
+}

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.ColorPicker.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/unified/ColorPicker'],
-	function(jQuery, library, Control, UnifiedColorPicker) {
+sap.ui.define(['./library', 'sap/ui/unified/ColorPicker', "sap/base/Log"],
+	function(library, UnifiedColorPicker, Log) {
 	"use strict";
 
 
@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @class
 	 * This control gives the user the opportunity to choose a color. The color can be defined using HEX-, RGB- or HSV-values or a CSS colorname.
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.unified.ColorPicker
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -39,10 +39,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	try {
 		sap.ui.getCore().loadLibrary("sap.ui.unified");
 	} catch (e) {
-		jQuery.sap.log.error("The control 'sap.ui.commons.ColorPicker' needs library 'sap.ui.unified'.");
+		Log.error("The control 'sap.ui.commons.ColorPicker' needs library 'sap.ui.unified'.");
 		throw (e);
 	}
 
 	return ColorPicker;
 
-}, /* bExport= */ true);
+});

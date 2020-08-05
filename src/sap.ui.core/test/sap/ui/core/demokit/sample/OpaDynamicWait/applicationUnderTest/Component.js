@@ -8,7 +8,7 @@ sap.ui.define([
 	return UIComponent.extend("appUnderTest.Component", {
 
 		metadata: {
-			rootView: "appUnderTest.view.Main"
+			manifest: "json"
 		},
 
 		init : function() {

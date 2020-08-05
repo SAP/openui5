@@ -1,27 +1,31 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/appVariant/AppVariantOverviewDialog",
 	"sap/ui/rta/appVariant/Utils",
-	"sap/ui/thirdparty/sinon"
-],
-function(
+	"sap/ui/rta/appVariant/AppVariantUtils",
+	"sap/ui/fl/Utils",
+	"sap/ui/thirdparty/sinon-4"
+], function (
+	jQuery,
 	AppVariantOverviewDialog,
 	AppVariantOverviewUtils,
-	sinon) {
+	AppVariantUtils,
+	FlUtils,
+	sinon
+) {
 	"use strict";
 
-	QUnit.start();
-
-	var oAppVariantOverviewDialog;
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that a AppVariantOverviewDialog is available", {
-		afterEach : function(assert) {
-			oAppVariantOverviewDialog.destroy();
+		afterEach: function () {
+			this.oAppVariantOverviewDialog.destroy();
 			sandbox.restore();
+		},
+		after: function() {
+			jQuery("#sapUiBusyIndicator").hide();
 		}
 	}, function() {
 		QUnit.test("when AppVariantOverviewDialog gets opened from an original app and a key user has already created app variants based on an original app,", function(assert) {
@@ -31,7 +35,7 @@ function(
 					id: "id1"
 				}
 			};
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
 
 			var aAppVariantOverviewAttributes = [
 				{
@@ -69,14 +73,14 @@ function(
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
-			oAppVariantOverviewDialog = new AppVariantOverviewDialog({
+			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog({
 				idRunningApp: "id1"
 			});
 
-			oAppVariantOverviewDialog.open();
-			oAppVariantOverviewDialog.oPopup.attachOpened(function() {
+			this.oAppVariantOverviewDialog.open();
+			this.oAppVariantOverviewDialog.oPopup.attachOpened(function() {
 				assert.ok(true, "then the app variant overview dialog displays an original (currently adapting) app and app variant entries");
 				done();
 			});
@@ -90,7 +94,7 @@ function(
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
 
 			var aAppVariantOverviewAttributes = [
 				{
@@ -106,14 +110,14 @@ function(
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
-			oAppVariantOverviewDialog = new AppVariantOverviewDialog({
+			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog({
 				idRunningApp: "id1"
 			});
 
-			oAppVariantOverviewDialog.open();
-			oAppVariantOverviewDialog.oPopup.attachOpened(function() {
+			this.oAppVariantOverviewDialog.open();
+			this.oAppVariantOverviewDialog.oPopup.attachOpened(function() {
 				assert.ok(true, "then the app variant overview dialog displays an original app (Currently Adapting) entry only");
 				done();
 			});
@@ -127,7 +131,7 @@ function(
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
 
 			var aAppVariantOverviewAttributes = [
 				{
@@ -162,14 +166,14 @@ function(
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
-			oAppVariantOverviewDialog = new AppVariantOverviewDialog({
+			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog({
 				idRunningApp: "id1"
 			});
 
-			oAppVariantOverviewDialog.open();
-			oAppVariantOverviewDialog.oPopup.attachOpened(function() {
+			this.oAppVariantOverviewDialog.open();
+			this.oAppVariantOverviewDialog.oPopup.attachOpened(function() {
 				assert.ok(true, "then the app variant overview dialog displays the app variant (currently adapting) and other app variants grouping");
 				done();
 			});
@@ -183,7 +187,7 @@ function(
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
 
 			var aAppVariantOverviewAttributes = [
 				{
@@ -209,19 +213,23 @@ function(
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
-			oAppVariantOverviewDialog = new AppVariantOverviewDialog({
+			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog({
 				idRunningApp: "id1"
 			});
 
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "getNewAppVariantId").returns("id2");
+			sandbox.stub(AppVariantUtils, "getNewAppVariantId").returns("id2");
 
-			oAppVariantOverviewDialog.open();
-			oAppVariantOverviewDialog.oPopup.attachOpened(function() {
+			this.oAppVariantOverviewDialog.open();
+			this.oAppVariantOverviewDialog.oPopup.attachOpened(function() {
 				assert.ok(true, "then the app variant overview dialog displays the reference app (currently adapting) entry and a new created app variant with blue highlighter");
 				done();
 			});
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

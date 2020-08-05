@@ -1,0 +1,45 @@
+{
+    "includes": {
+        "controls": [
+            "src/sap.f/**/*",
+            "src/sap.m/**/*",
+            "src/sap.tnt/**/*",
+            "src/sap.ui.codeeditor/**/*",
+            "src/sap.ui.commons/**/*",
+            "src/sap.ui.documentation/**/*",
+            "src/sap.ui.integration/**/*",
+            "src/sap.ui.layout/**/*",
+            "src/sap.ui.support/**/*",
+            "src/sap.ui.unified/**/*",
+            "src/sap.ui.ux3/**/*",
+            "src/sap.uxap/**/*",
+            "src/sap.ui.testrecorder/**/*"
+        ],
+        "core": [
+            "/*",
+            "grunt/**/*",
+            "lib/**/*",
+            "src/sap.ui.core/**/*",
+            "src/testsuite-utils/**/*",
+            "src/testsuite/**/*"
+        ],
+        "suite-controls": [
+            "src/sap.ui.suite/**/*"
+        ],
+        "tables": [
+            "src/sap.ui.table/**/*"
+        ],
+        "flex": [
+            "src/sap.ui.dt/**/*",
+            "src/sap.ui.fl/**/*",
+            "src/sap.ui.rta/**/*"
+        ],
+        "smart-controls": [
+            "src/sap.ui.mdc/**/*"
+        ]
+    },
+    "excludes": [
+        "docs/**/*",
+        "src/themelib_*/**/*"
+    ]
+}

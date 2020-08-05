@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
@@ -16,10 +15,13 @@ sap.ui.define([
 	'./InstanceManager',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/library',
-	'./LightBoxRenderer'
+	'./LightBoxRenderer',
+	'sap/m/BusyIndicator',
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/core/Core',
+	'sap/ui/dom/units/Rem'
 ],
 	function(
-		jQuery,
 		library,
 		Control,
 		Popup,
@@ -32,10 +34,17 @@ sap.ui.define([
 		InstanceManager,
 		InvisibleText,
 		coreLibrary,
-		LightBoxRenderer
+		LightBoxRenderer,
+		BusyIndicator,
+		jQuery,
+		Core,
+		DomUnitsRem
 	) {
 
 		'use strict';
+
+		// shortcut for sap.ui.core.OpenState
+		var OpenState = coreLibrary.OpenState;
 
 		// shortcut for sap.ui.core.TextAlign
 		var TextAlign = coreLibrary.TextAlign;
@@ -87,6 +96,8 @@ sap.ui.define([
 		 * <h3>Additional Information</h3>
 		 *
 		 * Check out the <a href="/#docs/api/symbols/sap.m.LightBox.html" >API Reference</a>.
+		 * @extends sap.ui.core.Control
+		 *
 		 * @author SAP SE
 		 * @version ${version}
 		 *
@@ -187,18 +198,23 @@ sap.ui.define([
 		LightBox.prototype.onBeforeRendering = function () {
 			var oImageContent = this._getImageContent(),
 				oNativeImage = oImageContent._getNativeImage(),
-				sState = oImageContent._getImageState();
+				sImageSrc = oImageContent.getImageSrc(),
+				sState = oImageContent._getImageState(),
+				oInvisiblePopupText = this.getAggregation('_invisiblePopupText'),
+				sInvisiblePopupText = this._rb.getText("LIGHTBOX_ARIA_ENLARGED", [oImageContent.getTitle(), oImageContent.getSubtitle()]),
+				errorMessageTitle = this._rb.getText('LIGHTBOX_IMAGE_ERROR'),
+				errorMessageSubtitle = this._rb.getText('LIGHTBOX_IMAGE_ERROR_DETAILS');
 
 			this._createErrorControls();
 
 			// Prevents image having 0 width and height when the LightBox rendered
 			// busy state first and then loaded the image in the meantime
-			if (!oNativeImage.src) {
-				oNativeImage.src = oImageContent.getImageSrc();
+			if (oNativeImage.getAttribute('src') !== sImageSrc) {
+				oNativeImage.src = sImageSrc;
 			}
 
 			if (this._resizeListenerId) {
-				Device.resize.detachHandler(this._onResize);
+				Device.resize.detachHandler(this._onResizeHandler);
 				ResizeHandler.deregister(this._resizeListenerId);
 				this._resizeListenerId = null;
 			}
@@ -215,14 +231,14 @@ sap.ui.define([
 					break;
 				case LightBoxLoadingStates.Error:
 					clearTimeout(this._timeoutId);
+					sInvisiblePopupText += " " +  errorMessageTitle + " " + errorMessageSubtitle;
 					break;
 				default:
 					break;
 			}
 
-			var oInvisiblePopupText = this.getAggregation('_invisiblePopupText');
 			if (oImageContent && oInvisiblePopupText) {
-				oInvisiblePopupText.setText(this._rb.getText("LIGHTBOX_ARIA_ENLARGED", oImageContent.getTitle()));
+				oInvisiblePopupText.setText(sInvisiblePopupText);
 			}
 
 			this._isRendering = true;
@@ -386,7 +402,7 @@ sap.ui.define([
 			var busyIndicator = this.getAggregation("_busy");
 
 			if (!busyIndicator) {
-				busyIndicator = new sap.m.BusyIndicator();
+				busyIndicator = new BusyIndicator();
 				this.setAggregation("_busy", busyIndicator, true);
 			}
 
@@ -426,6 +442,8 @@ sap.ui.define([
 		 */
 		LightBox.prototype._fnOpened = function() {
 			var that = this;
+			that._onResize();
+
 			jQuery('#sap-ui-blocklayer-popup').on("click", function() {
 				that.close();
 			});
@@ -492,8 +510,7 @@ sap.ui.define([
 				lightBoxContainer = this.getDomRef(),
 				lightBoxWidth,
 				lightBoxHeight,
-				minimumOffset = calculateOffset(),
-				hcbBorderSize = 2;
+				minimumOffset = calculateOffset();
 
 			if (oImageContent._getImageState() === LightBoxLoadingStates.Loaded) {
 				this._calculateSizes(oImageContent._getNativeImage());
@@ -518,10 +535,6 @@ sap.ui.define([
 				marginTop = Math.round(-lightBoxHeight / 2);
 			}
 
-			if (sap.ui.getCore().getConfiguration().getTheme() === 'sap_hcb') {
-				marginTop -= hcbBorderSize;
-				marginLeft -= hcbBorderSize;
-			}
 
 			this._$lightBox.css({
 				'top' : top,
@@ -560,20 +573,20 @@ sap.ui.define([
 		 * @returns {int} The height of the footer.
 		 */
 		LightBox.prototype._calculateFooterHeightInPx = function () {
-			var compact = this.$().parents().hasClass('sapUiSizeCompact');
-			var subtitle = this._getImageContent().getSubtitle();
+			var bCompact = this.$().parents().hasClass('sapUiSizeCompact');
+			var oSubtitle = this._getImageContent().getSubtitle();
 
-			var footerHeightRem = 2.5; // base height of the footer in rem
+			var iFooterHeightRem = 3; // base height of the footer in rem
 
-			if (!compact) {
-				footerHeightRem += 0.5;
+			if (bCompact && !oSubtitle) {
+				iFooterHeightRem -= 0.5;
 			}
 
-			if (subtitle) {
-				footerHeightRem += 1.5;
+			if (oSubtitle) {
+				iFooterHeightRem += 0.5;
 			}
 
-			return footerHeightRem * 16; // 1rem == 16px
+			return DomUnitsRem.toPx(iFooterHeightRem); // 1rem * iFooterHeightRem
 		};
 
 		/**
@@ -584,14 +597,18 @@ sap.ui.define([
 		 */
 		LightBox.prototype._calculateAndSetLightBoxSize = function (image) {
 			var imageHeight,
+				imageWidth,
 				lightBoxMinWidth = (20 /*rem*/ * 16 /*px*/),
 				lightBoxMinHeight = (18 /*rem*/ * 16 /*px*/),
 				iFooterHeightPx = this._calculateFooterHeightInPx();
 
 			imageHeight = this._pxToNumber(image.getHeight());
+			imageWidth = this._pxToNumber(image.getWidth());
 
-			this._width = Math.max(lightBoxMinWidth, this._pxToNumber(image.getWidth()));
+			this._width = Math.max(lightBoxMinWidth, imageWidth);
 			this._height = Math.max(lightBoxMinHeight, imageHeight + iFooterHeightPx);
+
+			this._isLightBoxBiggerThanMinDimensions = (imageWidth >= lightBoxMinWidth) && (imageHeight >= (lightBoxMinHeight - iFooterHeightPx));
 		};
 
 		/**
@@ -604,10 +621,18 @@ sap.ui.define([
 		 */
 		LightBox.prototype._setImageSize = function (image, imageWidth, imageHeight) {
 			var footerHeight = this._calculateFooterHeightInPx(),
-				dimensions = this._getDimensions(imageWidth, imageHeight, footerHeight);
+				dimensions = this._getDimensions(imageWidth, imageHeight, footerHeight),
+				width = dimensions.width + 'px',
+				height = dimensions.height + 'px',
+				imgDomRef = image.getDomRef();
 
-			image.setWidth(dimensions.width + 'px');
-			image.setHeight(dimensions.height + 'px');
+			image.setProperty('width', width, true);
+			image.setProperty('height', height, true);
+
+			if (imgDomRef) {
+				imgDomRef.style.width = width;
+				imgDomRef.style.height = height;
+			}
 		};
 
 		/**
@@ -698,8 +723,29 @@ sap.ui.define([
 				return 2 /*rem*/ * 16 /*px*/;
 			}
 
+			if (system.phone && Device.resize.width > 320) {
+				return 1 /*rem*/ * 16 /*px*/;
+			}
+
 			return 0;
 		}
+
+		/**
+		 * Event handler for the escape key pressed event.
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 * @private
+		 */
+		LightBox.prototype.onsapescape = function(oEvent) {
+			var eOpenState = this._oPopup.getOpenState();
+			if (eOpenState !== OpenState.CLOSED && eOpenState !== OpenState.CLOSING) {
+				this.close();
+				//event should not trigger any further actions
+				oEvent.stopPropagation();
+			}
+
+		};
+
 
 		return LightBox;
 	});

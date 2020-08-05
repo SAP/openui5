@@ -1,0 +1,46 @@
+{
+  "1.79.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "0a5f5925d56820511c156116bbe39f63595bef0f",
+        "type": "FIX",
+        "text": " Opa: allow equal key and value in I18NText matcher",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070175878"
+          }
+        ]
+      },
+      {
+        "id": "fb728765e4962e61a4ff362337cfe7ab44b82eda",
+        "type": "FIX",
+        "text": " hasher.js: replace hash should not affect the path in href",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070234256"
+          }
+        ]
+      },
+      {
+        "id": "14b0dfbf0e609d09241750002764a82861668cf6",
+        "type": "FIX",
+        "text": " Opa: add more logging in binding path matcher",
+        "references": []
+      },
+      {
+        "id": "1d632104f4ae4126640b86f8c9f97a4b1806852d",
+        "type": "FIX",
+        "text": " sap.ui.core.cache.CacheManager: Now is not stop work with disabled cookies in Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080150712"
+          }
+        ]
+      }
+    ]
+  }
+}

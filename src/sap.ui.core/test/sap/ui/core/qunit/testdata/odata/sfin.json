@@ -1,0 +1,164 @@
+{
+    "results": [
+        {
+            "__metadata": {
+                "id":
+                    "A",
+                "uri":
+                    "A",
+                "type": "ZTJ_G4_C_GLHIER_CDS.ZTJ_G4_C_GLHIERResult"
+            },
+            "GLAccount_NodeID": "GLAccountHierarchy:001",
+            "GLAccount_NodeText": "hierarchy state 01",
+            "GLAccount_ParentID": "",
+            "GLAccount_Level": 0,
+            "GLAccount_Drillstate": "expanded",
+            "GLAccount_Nodecount": 35,
+            "GLAccount_T": ""
+        },
+        {
+            "__metadata": {
+                "id":
+                    "B",
+                "uri":
+                    "B",
+                "type": "ZTJ_G4_C_GLHIER_CDS.ZTJ_G4_C_GLHIERResult"
+            },
+            "GLAccount_NodeID": "FinancialStatementItem:001",
+            "GLAccount_NodeText": "001/Not assigned",
+            "GLAccount_ParentID": "GLAccountHierarchy:001",
+            "GLAccount_Level": 1,
+            "GLAccount_Drillstate": "expanded",
+            "GLAccount_Nodecount": 1,
+            "GLAccount_T": ""
+        },
+        {
+            "__metadata": {
+                "id":
+                    "C",
+                "uri":
+                    "C",
+                "type": "ZTJ_G4_C_GLHIER_CDS.ZTJ_G4_C_GLHIERResult"
+            },
+            "GLAccount_NodeID": ":CACNY0000000000",
+            "GLAccount_NodeText": "CACN/Y/0",
+            "GLAccount_ParentID": "FinancialStatementItem:001",
+            "GLAccount_Level": 2,
+            "GLAccount_Drillstate": "leaf",
+            "GLAccount_Nodecount": 0,
+            "GLAccount_T": "CACN/Y/0"
+        },
+        {
+            "__metadata": {
+                "id":
+                    "D",
+                "uri":
+                    "D",
+                "type": "ZTJ_G4_C_GLHIER_CDS.ZTJ_G4_C_GLHIERResult"
+            },
+            "GLAccount_NodeID": "FinancialStatementItem:001",
+            "GLAccount_NodeText": "001/1",
+            "GLAccount_ParentID": "GLAccountHierarchy:001",
+            "GLAccount_Level": 1,
+            "GLAccount_Drillstate": "expanded",
+            "GLAccount_Nodecount": 1,
+            "GLAccount_T": ""
+        },
+        {
+            "__metadata": {
+                "id":
+                    "E",
+                "uri":
+                    "E",
+                "type": "ZTJ_G4_C_GLHIER_CDS.ZTJ_G4_C_GLHIERResult"
+            },
+            "GLAccount_NodeID": "FinancialStatementItem:003",
+            "GLAccount_NodeText": "CACN/Y/0",
+            "GLAccount_ParentID": "GLAccountHierarchy:001",
+            "GLAccount_Level": 2,
+            "GLAccount_Drillstate": "expanded",
+            "GLAccount_Nodecount": 1,
+            "GLAccount_T": "CACN/Y/0"
+        },
+        {
+            "__metadata": {
+                "id":
+                    "H",
+                "uri":
+                    "H",
+                "type": "ZTJ_G4_C_GLHIER_CDS.ZTJ_G4_C_GLHIERResult"
+            },
+            "GLAccount_NodeID": "FinancialStatementItem:001 3",
+            "GLAccount_NodeText": "001/3",
+            "GLAccount_ParentID": "GLAccountHierarchy:001",
+            "GLAccount_Level": 1,
+            "GLAccount_Drillstate": "expanded",
+            "GLAccount_Nodecount": 1,
+            "GLAccount_T": ""
+        },
+        {
+            "__metadata": {
+                "id":
+                    "I",
+                "uri":
+                    "I",
+                "type": "ZTJ_G4_C_GLHIER_CDS.ZTJ_G4_C_GLHIERResult"
+            },
+            "GLAccount_NodeID": ":CACNY0000000000",
+            "GLAccount_NodeText": "CACN/Y/0",
+            "GLAccount_ParentID": "FinancialStatementItem:003",
+            "GLAccount_Level": 2,
+            "GLAccount_Drillstate": "leaf",
+            "GLAccount_Nodecount": 0,
+            "GLAccount_T": "CACN/Y/0"
+        },
+        {
+            "__metadata": {
+                "id":
+                    "K",
+                "uri":
+                    "K",
+                "type": "ZTJ_G4_C_GLHIER_CDS.ZTJ_G4_C_GLHIERResult"
+            },
+            "GLAccount_NodeID": "FinancialStatementItem:001 5",
+            "GLAccount_NodeText": "001/5",
+            "GLAccount_ParentID": "GLAccountHierarchy:001",
+            "GLAccount_Level": 1,
+            "GLAccount_Drillstate": "expanded",
+            "GLAccount_Nodecount": 1,
+            "GLAccount_T": ""
+        },
+        {
+            "__metadata": {
+                "id":
+                    "L",
+                "uri":
+                    "L",
+                "type": "ZTJ_G4_C_GLHIER_CDS.ZTJ_G4_C_GLHIERResult"
+            },
+            "GLAccount_NodeID": ":CACNY0000000000",
+            "GLAccount_NodeText": "CACN/Y/0",
+            "GLAccount_ParentID": "FinancialStatementItem:001",
+            "GLAccount_Level": 2,
+            "GLAccount_Drillstate": "leaf",
+            "GLAccount_Nodecount": 0,
+            "GLAccount_T": "CACN/Y/0"
+        },
+        {
+            "__metadata": {
+                "id":
+                    "M",
+                "uri":
+                    "M",
+                "type": "ZTJ_G4_C_GLHIER_CDS.ZTJ_G4_C_GLHIERResult"
+            },
+            "GLAccount_NodeID": "FinancialStatementItem:001 6",
+            "GLAccount_NodeText": "Liability",
+            "GLAccount_ParentID": "GLAccountHierarchy:001",
+            "GLAccount_Level": 1,
+            "GLAccount_Drillstate": "expanded",
+            "GLAccount_Nodecount": 14,
+            "GLAccount_T": ""
+        }
+    ]
+}

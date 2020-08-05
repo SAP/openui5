@@ -1,8 +1,6 @@
 <mvc:View controllerName="sap.m.sample.TimePicker.TimePicker"
 	height="100%"
-
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 
 	<VBox class="sapUiSmallMargin">

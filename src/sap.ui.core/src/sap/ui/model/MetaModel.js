@@ -74,15 +74,6 @@ sap.ui.define(['./Model'],
 		// TODO: what todo here?
 	};
 
-	/**
-	 * Returns the module path to the model specific adapter factory
-	 *
-	 * @see sap.ui.model.meta.AdapterFactory
-	 *
-	 * @return {string} the module path to a factory class that is tailored to create context specific adapters
-	 */
-	MetaModel.prototype.getAdapterFactoryModulePath = null;
-
 	return MetaModel;
 
 });

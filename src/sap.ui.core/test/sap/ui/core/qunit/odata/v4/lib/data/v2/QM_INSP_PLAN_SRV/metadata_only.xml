@@ -1,0 +1,3251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+		   xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+		   xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Validation.V1" Alias="Validation"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+	</edmx:Reference>
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="QM_INSP_PLAN_SRV" xml:lang="en" sap:schema-version="1"
+				xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="C_InspectionPlanType" sap:label="Inspection Plan Version"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspectionPlanGroup"/>
+					<PropertyRef Name="InspectionPlan"/>
+					<PropertyRef Name="InspectionPlanInternalVersion"/>
+					<PropertyRef Name="DraftUUID"/>
+					<PropertyRef Name="IsActiveEntity"/>
+				</Key>
+				<Property Name="Activation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="Copy_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="Edit_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="Editwithkeydate_ac" Type="Edm.Boolean"
+						  sap:label="Dyn. Action Control" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Preparation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="Validation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="BillOfOperationsStatus_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="BillOfOperationsUsage_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="CustIsConsideredForDynModif_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspectionLotDynamicLevel_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspectionPlanForEdit_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspectionPlanGroupForEdit_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspLotDynamicRule_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="MatlIsConsideredForDynModif_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="MfrIsConsideredForDynModif_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Plant_fc" Type="Edm.Byte" sap:label="Dyn. Field Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="SuplrIsConsideredForDynModif_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspectionPlanGroup" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="UpperCase" sap:label="Group"
+						  sap:quickinfo="Key for Task List Group"/>
+				<Property Name="InspectionPlan" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Group Counter"/>
+				<Property Name="InspectionPlanInternalVersion" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="Counter"
+						  sap:quickinfo="Internal counter"/>
+				<Property Name="InspectionPlanGroupForEdit" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspectionPlanGroupForEdit_fc" sap:label="Group"
+						  sap:quickinfo="Key for Task List Group"/>
+				<Property Name="InspectionPlanForEdit" Type="Edm.String" MaxLength="2"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspectionPlanForEdit_fc" sap:label="Group Counter"/>
+				<Property Name="IsDeleted" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Deletion Indicator"/>
+				<Property Name="KeyDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date"
+						  sap:label="Key Date"/>
+				<Property Name="BillOfOperationsDesc" Type="Edm.String" MaxLength="40"
+						  sap:label="Description"/>
+				<Property Name="Plant" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:field-control="Plant_fc"
+						  sap:label="Plant" sap:value-list="standard"/>
+				<Property Name="BillOfOperationsUsage" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase"
+						  sap:field-control="BillOfOperationsUsage_fc"
+						  sap:text="BillOfOperationsUsage_Text" sap:label="Usage"
+						  sap:quickinfo="Task list usage" sap:value-list="standard"/>
+				<Property Name="BillOfOperationsUsage_Text" Type="Edm.String" MaxLength="20"
+						  sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="BillOfOperationsStatus" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase"
+						  sap:field-control="BillOfOperationsStatus_fc"
+						  sap:text="BillOfOperationsStatus_Text" sap:label="Overall Status"
+						  sap:quickinfo="Status" sap:value-list="standard"/>
+				<Property Name="BillOfOperationsStatus_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Status Description" sap:quickinfo="Description of the Status"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="MinimumLotSizeQuantity" Type="Edm.Decimal" Precision="13" Scale="3"
+						  sap:unit="BillOfOperationsUnit" sap:label="Lot Size From"
+						  sap:quickinfo="Minimum Lot Size"/>
+				<Property Name="MaximumLotSizeQuantity" Type="Edm.Decimal" Precision="13" Scale="3"
+						  sap:unit="BillOfOperationsUnit" sap:label="Lot Size To"
+						  sap:quickinfo="Maximum Lot Size"/>
+				<Property Name="BillOfOperationsUnit" Type="Edm.String" MaxLength="3"
+						  sap:label="Unit of Measure" sap:quickinfo="Task List Unit of Measure"
+						  sap:value-list="standard" sap:semantics="unit-of-measure"/>
+				<Property Name="InspSubsetFieldCombination" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase" sap:label="Inspection Points"
+						  sap:quickinfo="Identification for the Inspection Point Field Combination"
+						  sap:value-list="standard"/>
+				<Property Name="InspectionPartialLotAssignment" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Partial Lot Assignment"
+						  sap:quickinfo="Partial Lot Assignment in an Inspection During Production"/>
+				<Property Name="InspectionLotDynamicLevel" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspectionLotDynamicLevel_fc"
+						  sap:label="Dynamic Modification Level"
+						  sap:quickinfo="Level at Which Dynamic Modification Parameters Are Defined"
+						  sap:value-list="standard"/>
+				<Property Name="InspLotDynamicRule" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase" sap:field-control="InspLotDynamicRule_fc"
+						  sap:label="Modification Rule" sap:quickinfo="Dynamic Modification Rule"
+						  sap:value-list="standard"/>
+				<Property Name="MatlIsConsideredForDynModif" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="MatlIsConsideredForDynModif_fc" sap:label="Material"
+						  sap:quickinfo="Material Considered for Dynamic Modification"/>
+				<Property Name="SuplrIsConsideredForDynModif" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="SuplrIsConsideredForDynModif_fc" sap:label="Supplier"
+						  sap:quickinfo="Supplier Considered for Dynamic Modification"/>
+				<Property Name="MfrIsConsideredForDynModif" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="MfrIsConsideredForDynModif_fc" sap:label="Manufacturer"
+						  sap:quickinfo="Manufacturer Considered for Dynamic Modification"/>
+				<Property Name="CustIsConsideredForDynModif" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="CustIsConsideredForDynModif_fc" sap:label="Customer"
+						  sap:quickinfo="Customer Considered for Dynamic Modification"/>
+				<Property Name="CreationDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Created On"
+						  sap:quickinfo="Date Record Created On" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="CreatedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:text="CreatedByUserFullName"
+						  sap:label="Created By" sap:quickinfo="Created By User"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="LastChangeDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Changed On"
+						  sap:quickinfo="Date of Last Change" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:text="LastChangedByUserFullName"
+						  sap:label="Changed By" sap:quickinfo="Last Changed By User"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="ValidityStartDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid-From Date"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="ValidityEndDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid-To Date" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="ChangedDateTime" Type="Edm.DateTimeOffset" Precision="0"
+						  sap:label="Short Time Stamp"
+						  sap:quickinfo="UTC Time Stamp in Short Form (YYYYMMDDhhmmss)"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="CreatedByUserFullName" Type="Edm.String" MaxLength="80"
+						  sap:label="Description" sap:quickinfo="User Description"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="LastChangedByUserFullName" Type="Edm.String" MaxLength="80"
+						  sap:label="Description" sap:quickinfo="User Description"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="HasDraftEntity" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Has Draft" sap:heading="" sap:quickinfo=""
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DraftUUID" Type="Edm.Guid" Nullable="false" sap:label="Key"
+						  sap:heading="" sap:quickinfo="" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="DraftEntityCreationDateTime" Type="Edm.DateTimeOffset" Precision="7"
+						  sap:label="Draft Created On" sap:heading="" sap:quickinfo=""
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DraftEntityLastChangeDateTime" Type="Edm.DateTimeOffset"
+						  Precision="7" sap:label="Draft Last Changed On" sap:heading=""
+						  sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="HasActiveEntity" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Has active" sap:heading="" sap:quickinfo=""
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"
+						  sap:display-format="UpperCase" sap:label="Is active" sap:heading=""
+						  sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+				<NavigationProperty Name="DraftAdministrativeData"
+									Relationship="QM_INSP_PLAN_SRV.assoc_F81CDD579459B05A26A7BA84F8ED5B85"
+									FromRole="FromRole_assoc_F81CDD579459B05A26A7BA84F8ED5B85"
+									ToRole="ToRole_assoc_F81CDD579459B05A26A7BA84F8ED5B85"/>
+				<NavigationProperty Name="SiblingEntity"
+									Relationship="QM_INSP_PLAN_SRV.assoc_7574645399F8CEAA4B9F09145FB1812C"
+									FromRole="FromRole_assoc_7574645399F8CEAA4B9F09145FB1812C"
+									ToRole="ToRole_assoc_7574645399F8CEAA4B9F09145FB1812C"/>
+				<NavigationProperty Name="to_BillOfOperationsStatus"
+									Relationship="QM_INSP_PLAN_SRV.assoc_54B7FCED6F2D0FDFDC39B7CBFFAC2526"
+									FromRole="FromRole_assoc_54B7FCED6F2D0FDFDC39B7CBFFAC2526"
+									ToRole="ToRole_assoc_54B7FCED6F2D0FDFDC39B7CBFFAC2526"/>
+				<NavigationProperty Name="to_BillOfOperationsUnit"
+									Relationship="QM_INSP_PLAN_SRV.assoc_0BA9B571C213F6442996037C06AF25F8"
+									FromRole="FromRole_assoc_0BA9B571C213F6442996037C06AF25F8"
+									ToRole="ToRole_assoc_0BA9B571C213F6442996037C06AF25F8"/>
+				<NavigationProperty Name="to_BillOfOperationsUsage"
+									Relationship="QM_INSP_PLAN_SRV.assoc_DC89F63CCE8BAD3C00FA80288166DD25"
+									FromRole="FromRole_assoc_DC89F63CCE8BAD3C00FA80288166DD25"
+									ToRole="ToRole_assoc_DC89F63CCE8BAD3C00FA80288166DD25"/>
+				<NavigationProperty Name="to_InspectionLotDynamicLevel"
+									Relationship="QM_INSP_PLAN_SRV.assoc_8A5D3CCDF13A811AD039BEF1AF2F6B07"
+									FromRole="FromRole_assoc_8A5D3CCDF13A811AD039BEF1AF2F6B07"
+									ToRole="ToRole_assoc_8A5D3CCDF13A811AD039BEF1AF2F6B07"/>
+				<NavigationProperty Name="to_InspLotDynamicRule"
+									Relationship="QM_INSP_PLAN_SRV.assoc_2C35F7B14EF60CD75ADB3A4B0C7F6CBE"
+									FromRole="FromRole_assoc_2C35F7B14EF60CD75ADB3A4B0C7F6CBE"
+									ToRole="ToRole_assoc_2C35F7B14EF60CD75ADB3A4B0C7F6CBE"/>
+				<NavigationProperty Name="to_InspPlanMaterialAssgmtTP"
+									Relationship="QM_INSP_PLAN_SRV.assoc_6C7863270386AA43A9AB292F5C65EA2C"
+									FromRole="FromRole_assoc_6C7863270386AA43A9AB292F5C65EA2C"
+									ToRole="ToRole_assoc_6C7863270386AA43A9AB292F5C65EA2C"/>
+				<NavigationProperty Name="to_InspPlanOp"
+									Relationship="QM_INSP_PLAN_SRV.assoc_08F22BD3701877B58A34472D01B16153"
+									FromRole="FromRole_assoc_08F22BD3701877B58A34472D01B16153"
+									ToRole="ToRole_assoc_08F22BD3701877B58A34472D01B16153"/>
+				<NavigationProperty Name="to_InspSubsetFieldCombination"
+									Relationship="QM_INSP_PLAN_SRV.assoc_53386E39F94FF9D87548B48312730B8C"
+									FromRole="FromRole_assoc_53386E39F94FF9D87548B48312730B8C"
+									ToRole="ToRole_assoc_53386E39F94FF9D87548B48312730B8C"/>
+				<NavigationProperty Name="to_Plant"
+									Relationship="QM_INSP_PLAN_SRV.assoc_DA823EAF8192289B65BF295A768F367D"
+									FromRole="FromRole_assoc_DA823EAF8192289B65BF295A768F367D"
+									ToRole="ToRole_assoc_DA823EAF8192289B65BF295A768F367D"/>
+			</EntityType>
+			<EntityType Name="C_InspPlanMatlAssgmtType"
+						sap:label="Insp Plan Version-Material Assignment" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspectionPlanGroup"/>
+					<PropertyRef Name="InspectionPlan"/>
+					<PropertyRef Name="InspectionPlanInternalVersion"/>
+					<PropertyRef Name="Material"/>
+					<PropertyRef Name="Plant"/>
+					<PropertyRef Name="InspPlanMatlAssignment"/>
+					<PropertyRef Name="InspPlanMatlAssgmtIntVersion"/>
+					<PropertyRef Name="DraftUUID"/>
+					<PropertyRef Name="IsActiveEntity"/>
+				</Key>
+				<Property Name="Preparation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="Validation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="InspectionPlanGroup" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="UpperCase" sap:label="Group"
+						  sap:quickinfo="Key for Task List Group" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="InspectionPlan" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Group Counter"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="InspectionPlanInternalVersion" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative"
+						  sap:text="BillOfOperationsDesc" sap:label="Counter"
+						  sap:quickinfo="Internal counter"/>
+				<Property Name="Material" Type="Edm.String" Nullable="false" MaxLength="40"
+						  sap:display-format="UpperCase" sap:text="to_Product/Material_Text"
+						  sap:label="Material" sap:quickinfo="Material Number"
+						  sap:value-list="standard"/>
+				<Property Name="Plant" Type="Edm.String" Nullable="false" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Plant"/>
+				<Property Name="InspPlanMatlAssignment" Type="Edm.String" Nullable="false"
+						  MaxLength="7" sap:display-format="NonNegative"
+						  sap:label="Add. crit. counter"
+						  sap:quickinfo="Counter for additional criteria"/>
+				<Property Name="InspPlanMatlAssgmtIntVersion" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="Counter"
+						  sap:quickinfo="Internal counter"/>
+				<Property Name="MaterialForEdit" Type="Edm.String" MaxLength="40"
+						  sap:display-format="UpperCase" sap:label="Material"
+						  sap:quickinfo="Material Number" sap:value-list="standard"/>
+				<Property Name="PlantForEdit" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Plant"
+						  sap:value-list="standard"/>
+				<Property Name="BillOfOperationsDesc" Type="Edm.String" MaxLength="40"
+						  sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="IsValid" Type="Edm.String" MaxLength="1"/>
+				<Property Name="ValidityStartDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid From"
+						  sap:quickinfo="Valid-From Date" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="ValidityEndDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid to"
+						  sap:quickinfo="Valid-to date" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="CreationDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Created On"
+						  sap:quickinfo="Date Record Created On" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="CreatedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:label="Created By"
+						  sap:quickinfo="Created By User" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="LastChangeDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Changed On"
+						  sap:quickinfo="Date of Last Change" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:label="Changed By"
+						  sap:quickinfo="Last Changed By User" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="IsDeleted" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Deletion Indicator"/>
+				<Property Name="MaterialName" Type="Edm.String" MaxLength="40"
+						  sap:label="Material Description" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="Supplier" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:text="SupplierName"
+						  sap:label="Supplier" sap:quickinfo="Supplier's Account Number"
+						  sap:value-list="standard"/>
+				<Property Name="SupplierName" Type="Edm.String" MaxLength="35" sap:label="Name"
+						  sap:quickinfo="Name 1" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="Customer" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:text="CustomerName"
+						  sap:label="Customer" sap:quickinfo="Account number of customer"
+						  sap:value-list="standard"/>
+				<Property Name="CustomerName" Type="Edm.String" MaxLength="80"
+						  sap:label="Customer Name" sap:quickinfo="Name of Customer"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="BOOSearchText" Type="Edm.String" MaxLength="20"
+						  sap:display-format="UpperCase" sap:label="Search field"
+						  sap:quickinfo="Search Field for Customer-Specific Task List Selection"/>
+				<Property Name="HasDraftEntity" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Has Draft" sap:heading="" sap:quickinfo=""
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DraftUUID" Type="Edm.Guid" Nullable="false" sap:label="Key"
+						  sap:heading="" sap:quickinfo="" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="ParentDraftUUID" Type="Edm.Guid" sap:label="Key" sap:heading=""
+						  sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DraftEntityCreationDateTime" Type="Edm.DateTimeOffset" Precision="7"
+						  sap:label="Draft Created On" sap:heading="" sap:quickinfo=""
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DraftEntityLastChangeDateTime" Type="Edm.DateTimeOffset"
+						  Precision="7" sap:label="Draft Last Changed On" sap:heading=""
+						  sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="HasActiveEntity" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Has active" sap:heading="" sap:quickinfo=""
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"
+						  sap:display-format="UpperCase" sap:label="Is active" sap:heading=""
+						  sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+				<NavigationProperty Name="DraftAdministrativeData"
+									Relationship="QM_INSP_PLAN_SRV.assoc_4189EA54EA0B849B95178ED282E17100"
+									FromRole="FromRole_assoc_4189EA54EA0B849B95178ED282E17100"
+									ToRole="ToRole_assoc_4189EA54EA0B849B95178ED282E17100"/>
+				<NavigationProperty Name="SiblingEntity"
+									Relationship="QM_INSP_PLAN_SRV.assoc_C6D0F874EFE0FA4339528F8FF50506C8"
+									FromRole="FromRole_assoc_C6D0F874EFE0FA4339528F8FF50506C8"
+									ToRole="ToRole_assoc_C6D0F874EFE0FA4339528F8FF50506C8"/>
+				<NavigationProperty Name="to_Customer"
+									Relationship="QM_INSP_PLAN_SRV.assoc_C11836E36861E41A505A7AA164C277C8"
+									FromRole="FromRole_assoc_C11836E36861E41A505A7AA164C277C8"
+									ToRole="ToRole_assoc_C11836E36861E41A505A7AA164C277C8"/>
+				<NavigationProperty Name="to_Product"
+									Relationship="QM_INSP_PLAN_SRV.assoc_030FFB03B6D9EADAB962FD09DDF03087"
+									FromRole="FromRole_assoc_030FFB03B6D9EADAB962FD09DDF03087"
+									ToRole="ToRole_assoc_030FFB03B6D9EADAB962FD09DDF03087"/>
+				<NavigationProperty Name="to_ProductForEdit"
+									Relationship="QM_INSP_PLAN_SRV.assoc_BA363AEE3EAC6FE124327C9BB4892913"
+									FromRole="FromRole_assoc_BA363AEE3EAC6FE124327C9BB4892913"
+									ToRole="ToRole_assoc_BA363AEE3EAC6FE124327C9BB4892913"/>
+				<NavigationProperty Name="to_Supplier"
+									Relationship="QM_INSP_PLAN_SRV.assoc_4ADD84A147145CDAF795CF51930F2BED"
+									FromRole="FromRole_assoc_4ADD84A147145CDAF795CF51930F2BED"
+									ToRole="ToRole_assoc_4ADD84A147145CDAF795CF51930F2BED"/>
+			</EntityType>
+			<EntityType Name="C_InspPlanMatlPlantVHType" sap:label="Material-Plant Value Help"
+						sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Material"/>
+					<PropertyRef Name="Plant"/>
+				</Key>
+				<Property Name="Material" Type="Edm.String" Nullable="false" MaxLength="40"
+						  sap:display-format="UpperCase" sap:label="Material"
+						  sap:quickinfo="Material Number" sap:value-list="standard"/>
+				<Property Name="Plant" Type="Edm.String" Nullable="false" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Plant"/>
+				<Property Name="MaterialName" Type="Edm.String" MaxLength="40"
+						  sap:label="Material Description"/>
+			</EntityType>
+			<EntityType Name="C_InspPlanOpCharcType"
+						sap:label="Inspection Plan Characteristic Version" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspectionPlanGroup"/>
+					<PropertyRef Name="InspectionPlan"/>
+					<PropertyRef Name="InspectionPlanInternalVersion"/>
+					<PropertyRef Name="BOOOperationInternalID"/>
+					<PropertyRef Name="BOOOpInternalVersionCounter"/>
+					<PropertyRef Name="BOOCharacteristic"/>
+					<PropertyRef Name="BOOCharacteristicVersion"/>
+					<PropertyRef Name="DraftUUID"/>
+					<PropertyRef Name="IsActiveEntity"/>
+				</Key>
+				<Property Name="Preparation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="Validation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="BOOCharacteristic_fc" Type="Edm.Byte" sap:label="Dyn. Field Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="BOOCharcSampleQuantity_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="CustIsConsideredForDynModif_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspCharacteristicSampleUnit_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspCharcDynModifRef_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspectionMethod_fc" Type="Edm.Byte" sap:label="Dyn. Field Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="InspectionMethodPlant_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspectionMethodVersion_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspectionScope_fc" Type="Edm.Byte" sap:label="Dyn. Field Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="InspectionSpecification_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspectionSpecificationPlant_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspectionSpecificationText_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspectionSpecificationUnit_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspectionSpecificationVersion_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspLotDynamicRule_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspResultIsDocumentationRqd_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAdditionalCatalog2_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAdditionalCatalog3_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAdditionalCatalog4_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAdditionalCatalog5_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAdditionalCodeGroup2_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAdditionalCodeGroup3_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAdditionalCodeGroup4_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAdditionalCodeGroup5_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAdditionalSelectedSet5_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAdditionalSelectedSet3_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAdditionalSelectedSet2_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAdditionalSelectedSet4_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAddlSeldCodeSetPlant3_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAddlSeldCodeSetPlant5_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAddlSeldCodeSetPlant4_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecAddlSeldCodeSetPlant2_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecCharacteristicType_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecCharcCategory_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecDecimalPlaces_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecDefectCodeGrpRjcnLower_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecDefectCodeGrpRjcnUpper_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecDefectCodeGrpRejection_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecDefectCodeRejection_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecDefectCodeRjcnLower_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecDefectCodeRjcnUpper_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecHasFixedCtrlIndicators_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecImportanceCode_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecInformationField1_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecInformationField2_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecInformationField3_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsChgDocRequired_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsControlChartUsed_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsDefectsRecgAutomatic_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsDestructive_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsLongTermInspection_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsLowerLimitRequired_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsMeasuredValueRqd_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsQuantitative_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsSampleQtyAdditive_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsSamplingProcedRqd_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsScrapRelevant_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsSelectedSetRequired_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsTargetValueInLimit_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecIsUpperLimitRequired_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecLowerLimit_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecPrintControl_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecRecordingType_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecResultCalculation_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecTargetValue_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspSpecUpperLimit_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspToleranceSpecification_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="MatlIsConsideredForDynModif_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="MfrIsConsideredForDynModif_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="QltyCtrlChartAggrgnCriterion_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="SamplingProcedure_fc" Type="Edm.Byte" sap:label="Dyn. Field Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="SelectedCodeSet_fc" Type="Edm.Byte" sap:label="Dyn. Field Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="SelectedCodeSetPlant_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="SuplrIsConsideredForDynModif_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="InspectionPlanGroup" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="UpperCase" sap:label="Group"
+						  sap:quickinfo="Key for Task List Group"/>
+				<Property Name="InspectionPlan" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Group Counter"/>
+				<Property Name="InspectionPlanInternalVersion" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative"
+						  sap:text="BillOfOperationsDesc" sap:label="Counter"
+						  sap:quickinfo="Internal counter"/>
+				<Property Name="BOOOperationInternalID" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="Task List Node"
+						  sap:quickinfo="Number of the Task List Node"/>
+				<Property Name="BOOOpInternalVersionCounter" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:text="OperationText"
+						  sap:label="Counter" sap:quickinfo="Internal counter"/>
+				<Property Name="BOOCharacteristic" Type="Edm.String" Nullable="false" MaxLength="4"
+						  sap:display-format="NonNegative" sap:field-control="BOOCharacteristic_fc"
+						  sap:label="Inspection Characteristics"
+						  sap:quickinfo="Inspection Characteristic Number"/>
+				<Property Name="BOOCharacteristicVersion" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="Counter"
+						  sap:quickinfo="Internal counter"/>
+				<Property Name="OperationText" Type="Edm.String" MaxLength="40"
+						  sap:label="Operation Short Text"/>
+				<Property Name="Operation" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Activity"
+						  sap:quickinfo="Operation/Activity Number"/>
+				<Property Name="BillOfOperationsDesc" Type="Edm.String" MaxLength="40"
+						  sap:label="Description"/>
+				<Property Name="IsValid" Type="Edm.String" MaxLength="1"/>
+				<Property Name="IsDeleted" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Deletion Indicator"/>
+				<Property Name="InspectionMethod" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase" sap:field-control="InspectionMethod_fc"
+						  sap:label="Inspection Method" sap:value-list="standard"/>
+				<Property Name="InspectionMethodVersion" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspectionMethodVersion_fc"
+						  sap:label="Inspection Method Version"
+						  sap:quickinfo="Version Number of Inspection Method"
+						  sap:value-list="standard"/>
+				<Property Name="InspectionMethodPlant" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspectionMethodPlant_fc"
+						  sap:label="Inspection Method Plant"
+						  sap:quickinfo="Plant for Inspection Method" sap:value-list="standard"/>
+				<Property Name="InspSpecImportanceCode" Type="Edm.String" MaxLength="2"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecImportanceCode_fc"
+						  sap:label="Weighting of Charac."
+						  sap:quickinfo="Weighting of Characteristic" sap:value-list="standard"/>
+				<Property Name="InspectionSpecification" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspectionSpecification_fc"
+						  sap:label="Master Inspection Characteristics"
+						  sap:quickinfo="Master Inspection Characteristic"
+						  sap:value-list="standard"/>
+				<Property Name="InspectionSpecificationVersion" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspectionSpecificationVersion_fc" sap:label="Version"
+						  sap:quickinfo="Version Number of Master Inspection Characteristic"
+						  sap:value-list="standard"/>
+				<Property Name="InspectionSpecificationPlant" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspectionSpecificationPlant_fc" sap:label="Plant"
+						  sap:quickinfo="Plant for the Master Inspection Characteristic"
+						  sap:value-list="standard"/>
+				<Property Name="InspSpecTransferType" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Copy Model/Reference"
+						  sap:quickinfo="Copy Model/Reference Characteristic"/>
+				<Property Name="BOOCharcHasInspSpecReference" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Ref. to charact."
+						  sap:quickinfo="Reference to Master Insp. Characteristic in Task List"/>
+				<Property Name="InspSpecInformationField1" Type="Edm.String" MaxLength="10"
+						  sap:field-control="InspSpecInformationField1_fc" sap:label="Info Field 1"
+						  sap:quickinfo="Text Line for Additional Information"/>
+				<Property Name="InspSpecInformationField2" Type="Edm.String" MaxLength="20"
+						  sap:field-control="InspSpecInformationField2_fc" sap:label="Info Field 2"
+						  sap:quickinfo="Text Line for Additional Information"/>
+				<Property Name="InspSpecInformationField3" Type="Edm.String" MaxLength="40"
+						  sap:field-control="InspSpecInformationField3_fc" sap:label="Info Field 3"
+						  sap:quickinfo="Text Line for Additional Information"/>
+				<Property Name="InspectionSpecificationText" Type="Edm.String" MaxLength="40"
+						  sap:field-control="InspectionSpecificationText_fc" sap:label="Description"
+						  sap:quickinfo="Short Text for Inspection Characteristic"/>
+				<Property Name="InspSpecControlIndicators" Type="Edm.String" MaxLength="30"
+						  sap:display-format="UpperCase" sap:label="Char. control ind."
+						  sap:quickinfo="Cntrl Indicator String for Insp. Char./Master Insp. Char."
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="InspSpecIsQuantitative" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsQuantitative_fc"
+						  sap:label="Quantitative Charc"
+						  sap:quickinfo="Quantitative Characteristic"/>
+				<Property Name="InspSpecCharacteristicType" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecCharacteristicType_fc"
+						  sap:label="Characteristic Type"
+						  sap:quickinfo="Characteristic Type (Quantitative/Qualitative)"/>
+				<Property Name="InspSpecIsMeasuredValueRqd" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsMeasuredValueRqd_fc"
+						  sap:label="Measured Value Must Be Recorded"
+						  sap:quickinfo="Measured Values Must Be Recorded"/>
+				<Property Name="InspSpecIsSelectedSetRequired" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsSelectedSetRequired_fc"
+						  sap:label="Characteristic Attribute"
+						  sap:quickinfo="Reference to Characteristic Attribute Required"/>
+				<Property Name="InspSpecIsUpperLimitRequired" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsUpperLimitRequired_fc"
+						  sap:label="Upper Specification Limit"/>
+				<Property Name="InspSpecIsLowerLimitRequired" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsLowerLimitRequired_fc"
+						  sap:label="Lower Specification Limit"/>
+				<Property Name="InspSpecIsTargetValueInLimit" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsTargetValueInLimit_fc"
+						  sap:label="Check Target Value"/>
+				<Property Name="InspectionScope" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:field-control="InspectionScope_fc"
+						  sap:label="Inspection Scope"/>
+				<Property Name="InspSpecIsLongTermInspection" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsLongTermInspection_fc"
+						  sap:label="Long-Term Inspection"/>
+				<Property Name="InspSpecRecordingType" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecRecordingType_fc" sap:label="Recording Type"/>
+				<Property Name="InspResultIsDocumentationRqd" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspResultIsDocumentationRqd_fc"
+						  sap:label="Document Results"
+						  sap:quickinfo="Documentation Required for Inspection Results"/>
+				<Property Name="InspSpecCharcCategory" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecCharcCategory_fc"
+						  sap:label="Characteristic Category"/>
+				<Property Name="InspSpecIsSampleQtyAdditive" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsSampleQtyAdditive_fc"
+						  sap:label="Additive Sample"
+						  sap:quickinfo="Inspection Sample Quantity Is Added"/>
+				<Property Name="InspSpecIsDestructive" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsDestructive_fc"
+						  sap:label="Destructive Inspection"/>
+				<Property Name="InspSpecResultCalculation" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecResultCalculation_fc"
+						  sap:label="Characteristic Result Calculation"
+						  sap:quickinfo="Calculated Characteristic"/>
+				<Property Name="InspSpecIsSamplingProcedRqd" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsSamplingProcedRqd_fc"
+						  sap:label="Sampling Procedure"
+						  sap:quickinfo="Sampling Procedure Is Required"/>
+				<Property Name="InspSpecIsScrapRelevant" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsScrapRelevant_fc"
+						  sap:label="Characteristic Is Scrap Relevant"
+						  sap:quickinfo="Characteristic Is Relevant for Quality Score and Scrap Share"/>
+				<Property Name="InspSpecHasFixedCtrlIndicators" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecHasFixedCtrlIndicators_fc"
+						  sap:label="Fixed Indicators"
+						  sap:quickinfo="Default Control Indicators Cannot Be Changed"/>
+				<Property Name="InspSpecIsDefectsRecgAutomatic" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsDefectsRecgAutomatic_fc"
+						  sap:label="Automatic Defects Recording"
+						  sap:quickinfo="Defects Recording Automatically Called Up"/>
+				<Property Name="InspSpecIsChgDocRequired" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsChgDocRequired_fc"
+						  sap:label="Change Documents at Results Recording"
+						  sap:quickinfo="Create Change Documents During Results Recording"/>
+				<Property Name="InspSpecIsControlChartUsed" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecIsControlChartUsed_fc"
+						  sap:label="SPC Characteristic"/>
+				<Property Name="InspSpecPrintControl" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:field-control="InspSpecPrintControl_fc"
+						  sap:label="Print Control" sap:quickinfo="Print"/>
+				<Property Name="InspToleranceSpecification" Type="Edm.String" MaxLength="4"
+						  sap:field-control="InspToleranceSpecification_fc"
+						  sap:label="Tolerance Key"/>
+				<Property Name="InspSpecDecimalPlaces" Type="Edm.Byte"
+						  sap:field-control="InspSpecDecimalPlaces_fc" sap:label="Decimal Places"
+						  sap:quickinfo="Number of Places to the Right of a Decimal Point (Accuracy)"/>
+				<Property Name="InspectionSpecificationUnit" Type="Edm.String" MaxLength="3"
+						  sap:field-control="InspectionSpecificationUnit_fc"
+						  sap:label="Unit Of Measure"
+						  sap:quickinfo="Unit of Measurement in Which Quantitative Data Is Stored"
+						  sap:value-list="standard" sap:semantics="unit-of-measure"/>
+				<Property Name="InspSpecTargetValue" Type="Edm.Double"
+						  sap:field-control="InspSpecTargetValue_fc"
+						  sap:unit="InspectionSpecificationUnit" sap:label="Target Value"
+						  sap:quickinfo="Target Value for a Quantitative Characteristic"/>
+				<Property Name="InspSpecHasTargetValue" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Not Initial"
+						  sap:quickinfo="Value Not Initial if Set" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="InspSpecUpperLimit" Type="Edm.Double"
+						  sap:field-control="InspSpecUpperLimit_fc"
+						  sap:unit="InspectionSpecificationUnit"
+						  sap:label="Upper Specification Limit"/>
+				<Property Name="InspSpecLowerLimit" Type="Edm.Double"
+						  sap:field-control="InspSpecLowerLimit_fc"
+						  sap:unit="InspectionSpecificationUnit"
+						  sap:label="Lower Specification Limit"/>
+				<Property Name="InspSpecHasLowerLimit" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Not Initial"
+						  sap:quickinfo="Value Not Initial if Set" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="InspSpecHasUpperLimit" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Not Initial"
+						  sap:quickinfo="Value Not Initial if Set" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="InspSpecDefectCodeGrpRejection" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecDefectCodeGrpRejection_fc"
+						  sap:label="Defect Code Group for Rejection"
+						  sap:quickinfo="Defect Code Group for General Rejection"
+						  sap:value-list="standard"/>
+				<Property Name="InspSpecDefectCodeRejection" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecDefectCodeRejection_fc"
+						  sap:label="Defect Code for Rejection"
+						  sap:quickinfo="Defect Code for Rejection: General"
+						  sap:value-list="standard"/>
+				<Property Name="InspSpecDefectCodeGrpRjcnUpper" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecDefectCodeGrpRjcnUpper_fc"
+						  sap:label="Defect Code Group at Upper Tolerance"
+						  sap:quickinfo="Defect Code Group for Rejection at Upper Tolerance"
+						  sap:value-list="standard"/>
+				<Property Name="InspSpecDefectCodeRjcnUpper" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecDefectCodeRjcnUpper_fc"
+						  sap:label="Defect Code Type at Upper Tolerance"
+						  sap:quickinfo="Defect Code for Rejection at Upper Specification Limit"
+						  sap:value-list="standard"/>
+				<Property Name="InspSpecDefectCodeGrpRjcnLower" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecDefectCodeGrpRjcnLower_fc"
+						  sap:label="Defect Code Group at Lower Tolerance"
+						  sap:quickinfo="Defect Code Group for Rejection at Lower Tolerance"
+						  sap:value-list="standard"/>
+				<Property Name="InspSpecDefectCodeRjcnLower" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecDefectCodeRjcnLower_fc"
+						  sap:label="Defect Code Type at Lower Tolerance"
+						  sap:quickinfo="Defect Code for Rejection at Lower Specification Limit"
+						  sap:value-list="standard"/>
+				<Property Name="SelectedCodeSet" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase" sap:field-control="SelectedCodeSet_fc"
+						  sap:label="Selected Set"
+						  sap:quickinfo="Assigned Code Group or Selected Set"
+						  sap:value-list="standard"/>
+				<Property Name="SelectedCodeSetPlant" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:field-control="SelectedCodeSetPlant_fc"
+						  sap:label="Selected Set Plant"
+						  sap:quickinfo="Plant of the Assigned Selected Set"/>
+				<Property Name="InspSpecAdditionalCatalog2" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAdditionalCatalog2_fc"
+						  sap:label="Additional Catalog 2"
+						  sap:quickinfo="Catalog Type of Assigned Code Group or Selected Set"/>
+				<Property Name="InspSpecAdditionalSelectedSet2" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAdditionalSelectedSet2_fc"
+						  sap:label="Additional Selected Set 2"
+						  sap:quickinfo="Assigned Code Group or Selected Set"
+						  sap:value-list="standard"/>
+				<Property Name="InspSpecAdditionalCodeGroup2" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAdditionalCodeGroup2_fc"
+						  sap:label="Additional Code Group 2"
+						  sap:quickinfo="Assigned Code Group or Selected Set"/>
+				<Property Name="InspSpecAddlSeldCodeSetPlant2" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAddlSeldCodeSetPlant2_fc" sap:label="Plant"
+						  sap:quickinfo="Plant of the Assigned Selected Set"/>
+				<Property Name="InspSpecAdditionalCatalog3" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAdditionalCatalog3_fc"
+						  sap:label="Additional Catalog 3"
+						  sap:quickinfo="Catalog Type of Assigned Code Group or Selected Set"/>
+				<Property Name="InspSpecAdditionalSelectedSet3" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAdditionalSelectedSet3_fc"
+						  sap:label="Additional Selected Set3"
+						  sap:quickinfo="Assigned Code Group or Selected Set"
+						  sap:value-list="standard"/>
+				<Property Name="InspSpecAdditionalCodeGroup3" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAdditionalCodeGroup3_fc"
+						  sap:label="Additional Code Group 3"
+						  sap:quickinfo="Assigned Code Group or Selected Set"/>
+				<Property Name="InspSpecAddlSeldCodeSetPlant3" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAddlSeldCodeSetPlant3_fc" sap:label="Plant"
+						  sap:quickinfo="Plant of the Assigned Selected Set"/>
+				<Property Name="InspSpecAdditionalCatalog4" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAdditionalCatalog4_fc"
+						  sap:label="Additional Catalog 4"
+						  sap:quickinfo="Catalog Type of Assigned Code Group or Selected Set"/>
+				<Property Name="InspSpecAdditionalSelectedSet4" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAdditionalSelectedSet4_fc"
+						  sap:label="Additional Selected Set 4"
+						  sap:quickinfo="Assigned Code Group or Selected Set"
+						  sap:value-list="standard"/>
+				<Property Name="InspSpecAdditionalCodeGroup4" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAdditionalCodeGroup4_fc"
+						  sap:label="Additional Code Group 4"
+						  sap:quickinfo="Assigned Code Group or Selected Set"/>
+				<Property Name="InspSpecAddlSeldCodeSetPlant4" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAddlSeldCodeSetPlant4_fc" sap:label="Plant"
+						  sap:quickinfo="Plant of the Assigned Selected Set"/>
+				<Property Name="InspSpecAdditionalCatalog5" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAdditionalCatalog5_fc"
+						  sap:label="Additional Catalog 5"
+						  sap:quickinfo="Catalog Type of Assigned Code Group or Selected Set"/>
+				<Property Name="InspSpecAdditionalSelectedSet5" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAdditionalSelectedSet5_fc"
+						  sap:label="Additional Selected Set 5"
+						  sap:quickinfo="Assigned Code Group or Selected Set"
+						  sap:value-list="standard"/>
+				<Property Name="InspSpecAdditionalCodeGroup5" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAdditionalCodeGroup5_fc"
+						  sap:label="Additional Code Group 5"
+						  sap:quickinfo="Assigned Code Group or Selected Set"/>
+				<Property Name="InspSpecAddlSeldCodeSetPlant5" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSpecAddlSeldCodeSetPlant5_fc" sap:label="Plant"
+						  sap:quickinfo="Plant of the Assigned Selected Set"/>
+				<Property Name="SamplingProcedure" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase" sap:field-control="SamplingProcedure_fc"
+						  sap:label="Sampling Procedure"
+						  sap:quickinfo="Sampling Procedure in Inspection Characteristic"
+						  sap:value-list="standard"/>
+				<Property Name="InspCharacteristicSampleUnit" Type="Edm.String" MaxLength="3"
+						  sap:field-control="InspCharacteristicSampleUnit_fc"
+						  sap:label="Sample Unit Of Measure" sap:quickinfo="Sample Unit of Measure"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="BOOCharcSampleQuantity" Type="Edm.Decimal" Precision="5" Scale="2"
+						  sap:field-control="BOOCharcSampleQuantity_fc"
+						  sap:unit="InspCharacteristicSampleUnit" sap:label="Base Sample Quantity"
+						  sap:quickinfo="Sample Quantity Factor for Sample(Mult. Sample Unit of Msr.)"/>
+				<Property Name="QltyCtrlChartAggrgnCriterion" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase"
+						  sap:field-control="QltyCtrlChartAggrgnCriterion_fc"
+						  sap:label="SPC Criterion" sap:value-list="fixed-values"/>
+				<Property Name="InspLotDynamicRule" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase" sap:field-control="InspLotDynamicRule_fc"
+						  sap:label="Modification Rule" sap:quickinfo="Dynamic Modification Rule"
+						  sap:value-list="standard"/>
+				<Property Name="InspCharcDynModifRef" Type="Edm.String" MaxLength="4"
+						  sap:display-format="NonNegative"
+						  sap:field-control="InspCharcDynModifRef_fc"
+						  sap:label="DynMod. as for char."
+						  sap:quickinfo="Characteristic (in Plan) whose Q-Level Will Be Copied"/>
+				<Property Name="MatlIsConsideredForDynModif" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="MatlIsConsideredForDynModif_fc" sap:label="Material"
+						  sap:quickinfo="Material Considered for Dynamic Modification"/>
+				<Property Name="SuplrIsConsideredForDynModif" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="SuplrIsConsideredForDynModif_fc" sap:label="Supplier"
+						  sap:quickinfo="Supplier Considered for Dynamic Modification"/>
+				<Property Name="MfrIsConsideredForDynModif" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="MfrIsConsideredForDynModif_fc" sap:label="Manufacturer"
+						  sap:quickinfo="Manufacturer Considered for Dynamic Modification"/>
+				<Property Name="CustIsConsideredForDynModif" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="CustIsConsideredForDynModif_fc" sap:label="Customer"
+						  sap:quickinfo="Customer Considered for Dynamic Modification"/>
+				<Property Name="ValidityStartDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid From"
+						  sap:quickinfo="Valid-From Date" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="ValidityEndDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid to"
+						  sap:quickinfo="Valid-to date" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="CreatedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:label="Created By"
+						  sap:quickinfo="User Who Created Record" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="CreationDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Created On"
+						  sap:quickinfo="System Date on Which Data Record Was Created"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:label="Changed By"
+						  sap:quickinfo="Name of User Who Last Changed Data Record"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="LastChangeDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Changed On"
+						  sap:quickinfo="System Date on Which Data Record Was Changed"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="BillOfOperationsVersion" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Routing Version"/>
+				<Property Name="HasDraftEntity" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Has Draft" sap:heading="" sap:quickinfo=""
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DraftUUID" Type="Edm.Guid" Nullable="false" sap:label="Key"
+						  sap:heading="" sap:quickinfo="" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="ParentDraftUUID" Type="Edm.Guid" sap:label="Key" sap:heading=""
+						  sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="RootDraftUUID" Type="Edm.Guid" sap:label="Key" sap:heading=""
+						  sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DraftEntityCreationDateTime" Type="Edm.DateTimeOffset" Precision="7"
+						  sap:label="Draft Created On" sap:heading="" sap:quickinfo=""
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DraftEntityLastChangeDateTime" Type="Edm.DateTimeOffset"
+						  Precision="7" sap:label="Draft Last Changed On" sap:heading=""
+						  sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="HasActiveEntity" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Has active" sap:heading="" sap:quickinfo=""
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"
+						  sap:display-format="UpperCase" sap:label="Is active" sap:heading=""
+						  sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+				<NavigationProperty Name="DraftAdministrativeData"
+									Relationship="QM_INSP_PLAN_SRV.assoc_C2A943A553D28B8148F21A569E4B23DF"
+									FromRole="FromRole_assoc_C2A943A553D28B8148F21A569E4B23DF"
+									ToRole="ToRole_assoc_C2A943A553D28B8148F21A569E4B23DF"/>
+				<NavigationProperty Name="SiblingEntity"
+									Relationship="QM_INSP_PLAN_SRV.assoc_FD22FD8DF0EA8DD10E129CA2EC8CFE9D"
+									FromRole="FromRole_assoc_FD22FD8DF0EA8DD10E129CA2EC8CFE9D"
+									ToRole="ToRole_assoc_FD22FD8DF0EA8DD10E129CA2EC8CFE9D"/>
+			</EntityType>
+			<EntityType Name="C_InspPlanOperationType" sap:label="Inspection Plan Operation"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspectionPlanGroup"/>
+					<PropertyRef Name="InspectionPlan"/>
+					<PropertyRef Name="InspectionPlanInternalVersion"/>
+					<PropertyRef Name="BOOOperationInternalID"/>
+					<PropertyRef Name="BOOOpInternalVersionCounter"/>
+					<PropertyRef Name="DraftUUID"/>
+					<PropertyRef Name="IsActiveEntity"/>
+				</Key>
+				<Property Name="Preparation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="Validation_ac" Type="Edm.Boolean" sap:label="Dyn. Action Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="InspSbstCompletionConfirmation_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="OperationControlProfile_fc" Type="Edm.Byte"
+						  sap:label="Dyn. Field Control" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Plant_fc" Type="Edm.Byte" sap:label="Dyn. Field Control"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="InspectionPlanGroup" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="UpperCase" sap:label="Group"
+						  sap:quickinfo="Key for Task List Group" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="InspectionPlan" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Group Counter"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="InspectionPlanInternalVersion" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="Counter"
+						  sap:quickinfo="Internal counter" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="BOOOperationInternalID" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="Operation ID"
+						  sap:quickinfo="Number of the Task List Node"/>
+				<Property Name="BOOOpInternalVersionCounter" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative" sap:label="Counter"
+						  sap:quickinfo="Internal counter" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="BOOSqncOpAssgmtIntVersionCntr" Type="Edm.String" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Counter"
+						  sap:quickinfo="Internal counter"/>
+				<Property Name="OperationText" Type="Edm.String" MaxLength="40"
+						  sap:label="Description" sap:quickinfo="Operation Short Text"/>
+				<Property Name="ValidityStartDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid-From Date"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="ValidityEndDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid-To Date" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="IsValid" Type="Edm.String" MaxLength="1"/>
+				<Property Name="IsDeleted" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Deletion Indicator"/>
+				<Property Name="IsImplicitlyDeleted" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Deletion Indicator"/>
+				<Property Name="ChangeNumber" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:label="Change Number"/>
+				<Property Name="CreationDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Created On"
+						  sap:quickinfo="Date Record Created On" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="CreatedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:label="Created By"
+						  sap:quickinfo="Created By User" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="LastChangeDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Changed On"
+						  sap:quickinfo="Date of Last Change" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:label="Changed By"
+						  sap:quickinfo="Last Changed By User" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="Operation" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Operation"
+						  sap:quickinfo="Operation/Activity Number"/>
+				<Property Name="Plant" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:field-control="Plant_fc"
+						  sap:label="Plant" sap:value-list="standard"/>
+				<Property Name="WorkCenter" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Work Center"
+						  sap:value-list="standard"/>
+				<Property Name="OperationReferenceQuantity" Type="Edm.Decimal" Precision="13"
+						  Scale="3" sap:unit="OperationUnit" sap:label="Base Quantity"/>
+				<Property Name="OperationUnit" Type="Edm.String" MaxLength="3"
+						  sap:label="Unit of Measure"
+						  sap:quickinfo="Unit of Measure for Activity/Operation"
+						  sap:value-list="standard" sap:semantics="unit-of-measure"/>
+				<Property Name="OperationControlProfile" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase"
+						  sap:field-control="OperationControlProfile_fc" sap:label="Control Key"
+						  sap:value-list="standard"/>
+				<Property Name="OpQtyToBaseQtyDnmntr" Type="Edm.Decimal" Precision="5" Scale="0"
+						  sap:label="Operation"
+						  sap:quickinfo="Denominator for Converting Routing and Operation UoM"/>
+				<Property Name="OpQtyToBaseQtyNmrtr" Type="Edm.Decimal" Precision="5" Scale="0"
+						  sap:label="Header"
+						  sap:quickinfo="Numerator for Converting Routing and Operation UoM"/>
+				<Property Name="BillOfOperationsUnit" Type="Edm.String" MaxLength="3"
+						  sap:label="Unit of Measure" sap:quickinfo="Task List Unit of Measure"
+						  sap:creatable="false" sap:updatable="false" sap:value-list="standard"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="BillOfOperationsStatus" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase" sap:label="Overall Status"
+						  sap:quickinfo="Status"/>
+				<Property Name="BillOfOperationsUsage" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase" sap:label="Usage"
+						  sap:quickinfo="Task list usage"/>
+				<Property Name="InspSbstCompletionConfirmation" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:field-control="InspSbstCompletionConfirmation_fc"
+						  sap:label="Inspection Point Completion"
+						  sap:quickinfo="Flow Variants for Inspection Point Completion"/>
+				<Property Name="HasDraftEntity" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Has Draft" sap:heading="" sap:quickinfo=""
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DraftUUID" Type="Edm.Guid" Nullable="false" sap:label="Key"
+						  sap:heading="" sap:quickinfo="" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="ParentDraftUUID" Type="Edm.Guid" sap:label="Key" sap:heading=""
+						  sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DraftEntityCreationDateTime" Type="Edm.DateTimeOffset" Precision="7"
+						  sap:label="Draft Created On" sap:heading="" sap:quickinfo=""
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="DraftEntityLastChangeDateTime" Type="Edm.DateTimeOffset"
+						  Precision="7" sap:label="Draft Last Changed On" sap:heading=""
+						  sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="HasActiveEntity" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Has active" sap:heading="" sap:quickinfo=""
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"
+						  sap:display-format="UpperCase" sap:label="Is active" sap:heading=""
+						  sap:quickinfo="" sap:creatable="false" sap:updatable="false"/>
+				<NavigationProperty Name="DraftAdministrativeData"
+									Relationship="QM_INSP_PLAN_SRV.assoc_13956AD0162C0CACCF644D2FA5242F3D"
+									FromRole="FromRole_assoc_13956AD0162C0CACCF644D2FA5242F3D"
+									ToRole="ToRole_assoc_13956AD0162C0CACCF644D2FA5242F3D"/>
+				<NavigationProperty Name="SiblingEntity"
+									Relationship="QM_INSP_PLAN_SRV.assoc_DB683E8EEC13B88366FA3127100B395D"
+									FromRole="FromRole_assoc_DB683E8EEC13B88366FA3127100B395D"
+									ToRole="ToRole_assoc_DB683E8EEC13B88366FA3127100B395D"/>
+				<NavigationProperty Name="to_InspPlanCharc"
+									Relationship="QM_INSP_PLAN_SRV.assoc_6A87588FE62F98C6A3117FE528CAA78D"
+									FromRole="FromRole_assoc_6A87588FE62F98C6A3117FE528CAA78D"
+									ToRole="ToRole_assoc_6A87588FE62F98C6A3117FE528CAA78D"/>
+			</EntityType>
+			<EntityType Name="C_InspPlanSamplingProcedureVHType"
+						sap:label="C view for Insp Plan Sampling Procedure" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SamplingProcedure"/>
+				</Key>
+				<Property Name="SamplingProcedure" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Sampling Procedure"/>
+				<Property Name="InspectionPlanGroup" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Group"
+						  sap:quickinfo="Key for Task List Group"/>
+				<Property Name="InspectionPlan" Type="Edm.String" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Group Counter"/>
+				<Property Name="BOOOperationInternalID" Type="Edm.String" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Nodes"
+						  sap:quickinfo="Node Number"/>
+				<Property Name="BOOCharacteristic" Type="Edm.String" MaxLength="4"
+						  sap:display-format="NonNegative" sap:label="Insp. Characteristic"
+						  sap:quickinfo="Inspection Characteristic Number"/>
+				<Property Name="InspectionSpecification" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Master Insp. Charac."
+						  sap:quickinfo="Master Inspection Characteristic"/>
+				<Property Name="InspectionSpecificationVersion" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase" sap:label="Version"
+						  sap:quickinfo="Version Number"/>
+				<Property Name="InspectionSpecificationPlant" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Plant"
+						  sap:quickinfo="Plant for the Master Inspection Characteristic"/>
+				<Property Name="SamplingProcedureText" Type="Edm.String" MaxLength="40"
+						  sap:label="Short Text"/>
+			</EntityType>
+			<EntityType Name="C_InspPlnCharcUoMVHType"
+						sap:label="Inspection Plan Charac UoM Value Help" sap:value-list="true"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="UnitOfMeasure"/>
+				</Key>
+				<Property Name="UnitOfMeasure" Type="Edm.String" Nullable="false" MaxLength="3"
+						  sap:text="UnitOfMeasure_Text" sap:label="Unit of Measure"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="UnitOfMeasure_Text" Type="Edm.String" MaxLength="30"
+						  sap:label="UoM Text"
+						  sap:quickinfo="Unit of Measurement Text (Maximum 30 Characters)"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="UnitOfMeasureISOCode" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase" sap:label="ISO code"
+						  sap:quickinfo="ISO code for unit of measurement"/>
+				<Property Name="UnitOfMeasure_E" Type="Edm.String" MaxLength="3"
+						  sap:label="Commercial"
+						  sap:quickinfo="External Unit of Measurement in Commercial Format (3-Char.)"/>
+			</EntityType>
+			<EntityType Name="C_InspSubsetFldCombnVHType"
+						sap:label="Insp Subset Field Combination Value Help" sap:value-list="true"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspSubsetFieldCombination"/>
+				</Key>
+				<Property Name="InspSubsetFieldCombination" Type="Edm.String" Nullable="false"
+						  MaxLength="3" sap:display-format="UpperCase"
+						  sap:text="InspSubsetFieldCombination_Text" sap:label="Inspection Point"
+						  sap:quickinfo="Identifier for Inspection Point Field Combination"
+						  sap:value-list="standard"/>
+				<Property Name="InspSubsetFieldCombination_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Short Text" sap:creatable="false" sap:updatable="false"/>
+			</EntityType>
+			<EntityType Name="C_QltyCtrlChtAggrgnCritrnVHType"
+						sap:label="Value-help for Quality Control Chart Aggregation"
+						sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="QltyCtrlChartAggrgnCriterion"/>
+				</Key>
+				<Property Name="QltyCtrlChartAggrgnCriterion" Type="Edm.String" Nullable="false"
+						  MaxLength="3" sap:display-format="UpperCase"
+						  sap:text="QltyCtrlChtAggrgnCriterionTxt" sap:label="SPC Criterion"/>
+				<Property Name="QltyCtrlChtAggrgnCriterionTxt" Type="Edm.String" MaxLength="40"
+						  sap:label="Short Text"/>
+			</EntityType>
+			<EntityType Name="I_BillOfOperationsStatusType"
+						sap:label="Bill of Operations Status Code" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BillOfOperationsStatus"/>
+				</Key>
+				<Property Name="BillOfOperationsStatus" Type="Edm.String" Nullable="false"
+						  MaxLength="3" sap:display-format="UpperCase"
+						  sap:text="BillOfOperationsStatus_Text" sap:label="Overall Status"
+						  sap:quickinfo="Status"/>
+				<Property Name="BillOfOperationsStatus_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Status Description" sap:quickinfo="Description of the Status"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="IsReleased" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Release Indicator" sap:quickinfo="Indicator: released"/>
+			</EntityType>
+			<EntityType Name="I_BillOfOperationsUsageType" sap:label="Bill of Operations Usage"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BillOfOperationsUsage"/>
+				</Key>
+				<Property Name="BillOfOperationsUsage" Type="Edm.String" Nullable="false"
+						  MaxLength="3" sap:display-format="UpperCase"
+						  sap:text="BillOfOperationsUsage_Text" sap:label="BOO Usage"
+						  sap:quickinfo="Bill of Operations Usage"/>
+				<Property Name="BillOfOperationsUsage_Text" Type="Edm.String" MaxLength="20"
+						  sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+			</EntityType>
+			<EntityType Name="I_CapacityStdVHType" sap:label="Capacity Header" sap:value-list="true"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="CapacityInternalID"/>
+				</Key>
+				<Property Name="CapacityInternalID" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="NonNegative" sap:text="CapacityInternalID_Text"
+						  sap:label="Capacity ID"/>
+				<Property Name="CapacityInternalID_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Capacity Text" sap:quickinfo="Capacity Short Text"
+						  sap:creatable="false" sap:updatable="false"/>
+			</EntityType>
+			<EntityType Name="I_ChangeMasterStdVHType" sap:label="Change Number"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ChangeNumber"/>
+				</Key>
+				<Property Name="ChangeNumber" Type="Edm.String" Nullable="false" MaxLength="12"
+						  sap:display-format="UpperCase" sap:text="ChangeNumberDescription"
+						  sap:label="Change Number"/>
+				<Property Name="ChangeNumberDescription" Type="Edm.String" MaxLength="40"
+						  sap:label="Description" sap:quickinfo="Change Number Description"/>
+			</EntityType>
+			<EntityType Name="I_CharcAttribSeldCodeSetStdVHType"
+						sap:label="Selected set of codes for characteristic attributes"
+						sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SelectedCodeSetPlant"/>
+					<PropertyRef Name="SelectedCodeSet"/>
+				</Key>
+				<Property Name="SelectedCodeSetPlant" Type="Edm.String" Nullable="false"
+						  MaxLength="4" sap:display-format="UpperCase" sap:label="Plant"/>
+				<Property Name="SelectedCodeSet" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Selected Set"/>
+			</EntityType>
+			<EntityType Name="I_Customer_VHType" sap:label="Value Help for Customer"
+						sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Customer"/>
+				</Key>
+				<Property Name="Customer" Type="Edm.String" Nullable="false" MaxLength="10"
+						  sap:display-format="UpperCase" sap:text="CustomerName"
+						  sap:label="Customer" sap:quickinfo="Customer Number"/>
+				<Property Name="OrganizationBPName1" Type="Edm.String" MaxLength="35"
+						  sap:label="Name 1"/>
+				<Property Name="OrganizationBPName2" Type="Edm.String" MaxLength="35"
+						  sap:label="Name 2"/>
+				<Property Name="Country" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase" sap:label="Country"
+						  sap:quickinfo="Country Key"/>
+				<Property Name="CityName" Type="Edm.String" MaxLength="35" sap:label="City"/>
+				<Property Name="StreetName" Type="Edm.String" MaxLength="35" sap:label="Street"
+						  sap:quickinfo="House number and street"/>
+				<Property Name="CustomerName" Type="Edm.String" MaxLength="80"
+						  sap:label="Customer Name" sap:quickinfo="Name of Customer"/>
+				<Property Name="CustomerAccountGroup" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Account Group"
+						  sap:quickinfo="Customer Account Group"/>
+				<Property Name="AuthorizationGroup" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Authorization"
+						  sap:quickinfo="Authorization Group"/>
+				<Property Name="IsBusinessPurposeCompleted" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Purpose Complete Flag"
+						  sap:quickinfo="Business Purpose Completed Flag"/>
+			</EntityType>
+			<EntityType Name="I_DefectCodeGroupStdVHType" sap:label="Defect Code Group"
+						sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="DefectCodeGroup"/>
+				</Key>
+				<Property Name="DefectCodeGroup" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="UpperCase" sap:text="DefectCodeGroup_Text"
+						  sap:label="Defect Code Group"/>
+				<Property Name="DefectCodeGroup_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Defect Code Group Text"
+						  sap:quickinfo="Text for Defect Code Group" sap:creatable="false"
+						  sap:updatable="false"/>
+			</EntityType>
+			<EntityType Name="I_DefectCodeStdVHType" sap:label="Defect Code" sap:value-list="true"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="DefectCodeGroup"/>
+					<PropertyRef Name="DefectCode"/>
+				</Key>
+				<Property Name="DefectCodeGroup" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Defect Code Group"/>
+				<Property Name="DefectCode" Type="Edm.String" Nullable="false" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Defect Code"/>
+				<Property Name="DefectCodeText" Type="Edm.String" MaxLength="40"
+						  sap:label="Short Text for Code"/>
+			</EntityType>
+			<EntityType Name="I_DraftAdministrativeDataType" sap:label="Draft Administration Data"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="DraftUUID"/>
+				</Key>
+				<Property Name="DraftUUID" Type="Edm.Guid" Nullable="false"
+						  sap:label="Draft (Technical ID)"/>
+				<Property Name="DraftEntityType" Type="Edm.String" MaxLength="30"
+						  sap:display-format="UpperCase" sap:label="Draft Entity ID"/>
+				<Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7"
+						  sap:label="Draft Created On"/>
+				<Property Name="CreatedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:text="CreatedByUserDescription"
+						  sap:label="Draft Created By"/>
+				<Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"
+						  sap:label="Draft Last Changed On"/>
+				<Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:text="LastChangedByUserDescription"
+						  sap:label="Draft Last Changed By"/>
+				<Property Name="DraftAccessType" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Draft Access Type"/>
+				<Property Name="ProcessingStartDateTime" Type="Edm.DateTimeOffset" Precision="7"
+						  sap:label="Draft In Process Since"/>
+				<Property Name="InProcessByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:text="InProcessByUserDescription"
+						  sap:label="Draft In Process By"/>
+				<Property Name="DraftIsKeptByUser" Type="Edm.Boolean" sap:display-format="UpperCase"
+						  sap:label="Draft Is Kept By User"/>
+				<Property Name="EnqueueStartDateTime" Type="Edm.DateTimeOffset" Precision="7"
+						  sap:label="Draft Locked Since"/>
+				<Property Name="DraftIsCreatedByMe" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Draft Created By Me"/>
+				<Property Name="DraftIsLastChangedByMe" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Draft Last Changed By Me"/>
+				<Property Name="DraftIsProcessedByMe" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Draft In Process By Me"/>
+				<Property Name="CreatedByUserDescription" Type="Edm.String" MaxLength="80"
+						  sap:label="Draft Created By (Description)"/>
+				<Property Name="LastChangedByUserDescription" Type="Edm.String" MaxLength="80"
+						  sap:label="Draft Last Changed By (Description)"/>
+				<Property Name="InProcessByUserDescription" Type="Edm.String" MaxLength="80"
+						  sap:label="Draft In Process By (Description)"/>
+			</EntityType>
+			<EntityType Name="I_InspectionLotDynamicLevelType"
+						sap:label="Dynamic modification level" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspectionLotDynamicLevel"/>
+				</Key>
+				<Property Name="InspectionLotDynamicLevel" Type="Edm.String" Nullable="false"
+						  MaxLength="1" sap:display-format="UpperCase"
+						  sap:text="InspectionLotDynamicLevel_Text"
+						  sap:label="Dynamic Modification Level"
+						  sap:quickinfo="Level at Which Dynamic Modification Parameters Are Defined"/>
+				<Property Name="InspectionLotDynamicLevel_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Short Text" sap:creatable="false" sap:updatable="false"/>
+			</EntityType>
+			<EntityType Name="I_InspectionMethodVersionType" sap:label="Inspection Method Version"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspectionMethodPlant"/>
+					<PropertyRef Name="InspectionMethod"/>
+					<PropertyRef Name="InspectionMethodVersion"/>
+				</Key>
+				<Property Name="InspectionMethodPlant" Type="Edm.String" Nullable="false"
+						  MaxLength="4" sap:display-format="UpperCase"
+						  sap:label="Inspection Method Plant"
+						  sap:quickinfo="Plant for Inspection Method"/>
+				<Property Name="InspectionMethod" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Inspection Method"/>
+				<Property Name="InspectionMethodVersion" Type="Edm.String" Nullable="false"
+						  MaxLength="6" sap:display-format="UpperCase"
+						  sap:label="Inspection Method Version"
+						  sap:quickinfo="Version Number of Inspection Method"/>
+				<Property Name="InspectionMethodValidFromDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid From"
+						  sap:quickinfo="Valid-From Date"/>
+				<Property Name="InspectionMethodSearchField" Type="Edm.String" MaxLength="40"
+						  sap:display-format="UpperCase" sap:label="Search Field"/>
+				<Property Name="InspectionMethodStatus" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Inspection Method Status"
+						  sap:quickinfo="Status of Master Record"/>
+				<Property Name="InspectorQualification" Type="Edm.String" MaxLength="5"
+						  sap:display-format="UpperCase" sap:label="Inspector Qualification"
+						  sap:value-list="standard"/>
+				<Property Name="InspMethInformationField1" Type="Edm.String" MaxLength="10"
+						  sap:label="Info Field 1"
+						  sap:quickinfo="Text Line for Additional Information"/>
+				<Property Name="InspMethInformationField2" Type="Edm.String" MaxLength="20"
+						  sap:label="Info Field 2"
+						  sap:quickinfo="Text Line for Additional Information"/>
+				<Property Name="InspMethInformationField3" Type="Edm.String" MaxLength="40"
+						  sap:label="Info Field 3"
+						  sap:quickinfo="Text Line for Additional Information"/>
+				<Property Name="QltyMstrDataAuthorizationGroup" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Authorization Group"
+						  sap:quickinfo="Authorization Group QM Basic Data"/>
+				<Property Name="CreatedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:label="Created By"
+						  sap:quickinfo="Name of User Who Created the Data Record"/>
+				<Property Name="CreationDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Created On"
+						  sap:quickinfo="System Date on Which Data Record Was Created"/>
+				<Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:label="Changed By"
+						  sap:quickinfo="Name of User Who Last Changed Data Record"/>
+				<Property Name="LastChangeDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Changed On"
+						  sap:quickinfo="System Date on Which Data Record Was Changed"/>
+				<Property Name="ChangedDateTime" Type="Edm.DateTimeOffset" Precision="0"
+						  sap:label="Short Time Stamp"
+						  sap:quickinfo="UTC Time Stamp in Short Form (YYYYMMDDhhmmss)"/>
+			</EntityType>
+			<EntityType Name="I_InspectorQualificationStdVHType" sap:label="Inspector Qualification"
+						sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspectorQualification"/>
+				</Key>
+				<Property Name="InspectorQualification" Type="Edm.String" Nullable="false"
+						  MaxLength="5" sap:display-format="UpperCase"
+						  sap:label="Inspector Qualific." sap:quickinfo="Inspector Qualification"/>
+				<Property Name="InspectorQualificationText" Type="Edm.String" MaxLength="40"
+						  sap:label="Short Text"/>
+			</EntityType>
+			<EntityType Name="I_InspExtNumberingOfValuesType"
+						sap:label="Ext. Numbering of Units to Be Inspected" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspExternalNumberingOfValues"/>
+				</Key>
+				<Property Name="InspExternalNumberingOfValues" Type="Edm.String" Nullable="false"
+						  MaxLength="1" sap:display-format="UpperCase"
+						  sap:text="InspExternalNumberingOfValues_Text"
+						  sap:label="External Numbering"
+						  sap:quickinfo="External Numbering of Units to Be Inspected"/>
+				<Property Name="InspExternalNumberingOfValues_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Short Text" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="InspValueHasNoNumber" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="No ext. numbering"
+						  sap:quickinfo="No External Numbering of Units to Be Inspected"/>
+				<Property Name="InspValueNumberIsOptional" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Ext. numbering opt."
+						  sap:quickinfo="External Numbering of Units to Be Inspected is Optional"/>
+				<Property Name="InspValueNumberIsRequired" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Ext. numbering req."
+						  sap:quickinfo="External Numbering of Units to Be Inspected is required"/>
+				<Property Name="InspValueNumberIsEquipment" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Equipment check"
+						  sap:quickinfo="Check of External Number Against Equipment"/>
+				<Property Name="InspValueNumberIsUnique" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Uniqueness check"
+						  sap:quickinfo="Check External Numbering to Ensure Uniqueness"/>
+			</EntityType>
+			<EntityType Name="I_InspLotDynamicRuleType" sap:label="Dynamic modification rule"
+						sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspLotDynamicRule"/>
+				</Key>
+				<Property Name="InspLotDynamicRule" Type="Edm.String" Nullable="false" MaxLength="3"
+						  sap:display-format="UpperCase" sap:text="InspLotDynamicRule_Text"
+						  sap:label="Dynamic Modification Rule"/>
+				<Property Name="InspLotDynamicRule_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Short Text" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="InspLotDynRuleInitStage" Type="Edm.String" MaxLength="4"
+						  sap:display-format="NonNegative" sap:label="Initial insp. stage"
+						  sap:quickinfo="Initial Inspection Stage"/>
+			</EntityType>
+			<EntityType Name="I_InspMethForInspSpecVHType"
+						sap:label="Insp Meth Value Help for Insp Spec" sap:value-list="true"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspectionMethod"/>
+					<PropertyRef Name="InspectionMethodPlant"/>
+					<PropertyRef Name="InspectionMethodVersion"/>
+					<PropertyRef Name="InspectionSpecification"/>
+					<PropertyRef Name="InspectionSpecificationPlant"/>
+					<PropertyRef Name="InspectionSpecificationVersion"/>
+				</Key>
+				<Property Name="InspectionMethod" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Inspection Method"/>
+				<Property Name="InspectionMethodPlant" Type="Edm.String" Nullable="false"
+						  MaxLength="4" sap:display-format="UpperCase" sap:label="Plant"
+						  sap:quickinfo="Plant of the Inspection Method"/>
+				<Property Name="InspectionMethodVersion" Type="Edm.String" Nullable="false"
+						  MaxLength="6" sap:display-format="UpperCase" sap:label="Version"
+						  sap:quickinfo="Version Number of Inspection Method"/>
+				<Property Name="InspectionSpecification" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="UpperCase"
+						  sap:label="Master Inspection Characteristic"/>
+				<Property Name="InspectionSpecificationPlant" Type="Edm.String" Nullable="false"
+						  MaxLength="4" sap:display-format="UpperCase" sap:label="Plant"
+						  sap:quickinfo="Plant for the Master Inspection Characteristic"/>
+				<Property Name="InspectionSpecificationVersion" Type="Edm.String" Nullable="false"
+						  MaxLength="6" sap:display-format="UpperCase" sap:label="Version"
+						  sap:quickinfo="Version Number of Master Inspection Characteristic"/>
+				<Property Name="InspMethInformationField1" Type="Edm.String" MaxLength="10"
+						  sap:label="Info Field 1"
+						  sap:quickinfo="Text Line for Additional Information"/>
+				<Property Name="InspMethInformationField2" Type="Edm.String" MaxLength="20"
+						  sap:label="Info Field 2"
+						  sap:quickinfo="Text Line for Additional Information"/>
+				<Property Name="InspMethInformationField3" Type="Edm.String" MaxLength="40"
+						  sap:label="Info Field 3"
+						  sap:quickinfo="Text Line for Additional Information"/>
+			</EntityType>
+			<EntityType Name="I_InspMethVersStdVHType" sap:label="Inspection Method Version"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspectionMethodPlant"/>
+					<PropertyRef Name="InspectionMethod"/>
+					<PropertyRef Name="InspectionMethodVersion"/>
+				</Key>
+				<Property Name="InspectionMethodPlant" Type="Edm.String" Nullable="false"
+						  MaxLength="4" sap:display-format="UpperCase"
+						  sap:label="Insp. Method Plant"
+						  sap:quickinfo="Plant for Inspection Method"/>
+				<Property Name="InspectionMethod" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Inspection Method"/>
+				<Property Name="InspectionMethodVersion" Type="Edm.String" Nullable="false"
+						  MaxLength="6" sap:display-format="UpperCase" sap:label="Version"
+						  sap:quickinfo="Version Number of Inspection Method"/>
+				<Property Name="InspectionMethodValidFromDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid From"
+						  sap:quickinfo="Valid-From Date"/>
+			</EntityType>
+			<EntityType Name="I_InspSpecificationVersionVHType"
+						sap:label="Master Inspection Characteristic Version"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspectionSpecificationPlant"/>
+					<PropertyRef Name="InspectionSpecification"/>
+					<PropertyRef Name="InspectionSpecificationVersion"/>
+				</Key>
+				<Property Name="InspectionSpecificationPlant" Type="Edm.String" Nullable="false"
+						  MaxLength="4" sap:display-format="UpperCase" sap:label="Plant"
+						  sap:quickinfo="Plant for the Master Inspection Characteristic"/>
+				<Property Name="InspectionSpecification" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="UpperCase"
+						  sap:text="InspectionSpecification_Text"
+						  sap:label="Master Inspection Characteristic"/>
+				<Property Name="InspectionSpecification_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Master Characteristic Text" sap:quickinfo="Short Text"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="InspectionSpecificationVersion" Type="Edm.String" Nullable="false"
+						  MaxLength="6" sap:display-format="UpperCase" sap:label="Version"
+						  sap:quickinfo="Version Number of Master Inspection Characteristic"/>
+				<Property Name="ValidityStartDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid From"
+						  sap:quickinfo="Valid-From Date"/>
+				<Property Name="InspectionSpecificationSrchTxt" Type="Edm.String" MaxLength="40"
+						  sap:display-format="UpperCase" sap:label="Search Field"/>
+				<Property Name="InspectionSpecificationStatus" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Status"
+						  sap:quickinfo="Status of Master Record"/>
+				<Property Name="InspSpecTransferType" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Copy Model/Reference"
+						  sap:quickinfo="Copy Model/Reference Characteristic"/>
+				<Property Name="InspSpecCharacteristicType" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Characteristic Type"/>
+				<Property Name="QltyMstrDataAuthorizationGroup" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Authorization Group"
+						  sap:quickinfo="Authorization Group QM Basic Data"/>
+			</EntityType>
+			<EntityType Name="I_InspSpecImportanceCodeType"
+						sap:label="Importance/Weighting of inspection characteristic"
+						sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspSpecImportanceCode"/>
+				</Key>
+				<Property Name="InspSpecImportanceCode" Type="Edm.String" Nullable="false"
+						  MaxLength="2" sap:display-format="UpperCase"
+						  sap:text="InspSpecImportanceCodeText" sap:label="Char. Weighting"
+						  sap:quickinfo="Characteristic Weighting"/>
+				<Property Name="InspSpecImportanceCodeText" Type="Edm.String" MaxLength="40"
+						  sap:label="Short Text"/>
+			</EntityType>
+			<EntityType Name="I_InspSpecVersReldVHType"
+						sap:label="Insp Specification Released Versions VH" sap:value-list="true"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspectionSpecification"/>
+					<PropertyRef Name="InspectionSpecificationPlant"/>
+					<PropertyRef Name="InspectionSpecificationVersion"/>
+				</Key>
+				<Property Name="InspectionSpecification" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="UpperCase"
+						  sap:label="Master Inspection Characteristic"/>
+				<Property Name="InspectionSpecificationPlant" Type="Edm.String" Nullable="false"
+						  MaxLength="4" sap:display-format="UpperCase" sap:label="Plant"
+						  sap:quickinfo="Plant for the Master Inspection Characteristic"/>
+				<Property Name="InspectionSpecificationVersion" Type="Edm.String" Nullable="false"
+						  MaxLength="6" sap:display-format="UpperCase" sap:label="Version"
+						  sap:quickinfo="Version Number of Master Inspection Characteristic"/>
+				<Property Name="ValidityStartDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid From"
+						  sap:quickinfo="Valid-From Date"/>
+				<Property Name="InspectionSpecificationSrchTxt" Type="Edm.String" MaxLength="40"
+						  sap:display-format="UpperCase" sap:label="Search Field"/>
+				<Property Name="InspectionSpecificationStatus" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Status"
+						  sap:quickinfo="Status of Master Record"/>
+				<Property Name="InspSpecTransferType" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Copy Model/Reference"
+						  sap:quickinfo="Copy Model/Reference Characteristic"/>
+				<Property Name="InspSpecCharacteristicType" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Characteristic Type"/>
+				<Property Name="QltyMstrDataAuthorizationGroup" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Authorization Group"
+						  sap:quickinfo="Authorization Group QM Basic Data"/>
+			</EntityType>
+			<EntityType Name="I_InspSubsetFieldCombinationType"
+						sap:label="Inspection Point Field Combination" sap:value-list="true"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="InspSubsetFieldCombination"/>
+				</Key>
+				<Property Name="InspSubsetFieldCombination" Type="Edm.String" Nullable="false"
+						  MaxLength="3" sap:display-format="UpperCase"
+						  sap:text="InspSubsetFieldCombination_Text"
+						  sap:label="User Field Combinat."
+						  sap:quickinfo="Identifier for Inspection Point Field Combination"/>
+				<Property Name="InspSubsetFieldCombination_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Short Text" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="InspectionSubsetType" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Insp. point type"
+						  sap:quickinfo="Inspection Point Type"/>
+				<Property Name="InspSbstFieldCombnIsLastValid" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Last Sample"
+						  sap:quickinfo="Last Inspected Sample Is Valid"/>
+				<Property Name="SamplingProcedureInspSubset" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Inspection Points"
+						  sap:quickinfo="Sampling Procedure for Inspection Points"/>
+				<Property Name="InspSbstLongTxtFldProperty" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="User field active"
+						  sap:quickinfo="Field Active"/>
+				<Property Name="InspSbstShrtTxtFldProperty" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="User field active"
+						  sap:quickinfo="Field Active"/>
+				<Property Name="InspSbstLongNmbrFldProperty" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="User field active"
+						  sap:quickinfo="Field Active"/>
+				<Property Name="InspSbstShrtNmbrFldProperty" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="User field active"
+						  sap:quickinfo="Field Active"/>
+				<Property Name="InspSbstDateFldProperty" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="User field active"
+						  sap:quickinfo="Field Active"/>
+				<Property Name="InspSbstTimeFldProperty" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="User field active"
+						  sap:quickinfo="Field Active"/>
+				<Property Name="SelectedCodeSet" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Selected Set"
+						  sap:quickinfo="Selected Set for Inspection Point Valuation"/>
+				<Property Name="SelectedCodeSetPlant" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Plant"
+						  sap:quickinfo="Plant of Selected Set for Inspection Point Valuation"/>
+			</EntityType>
+			<EntityType Name="I_MaterialStdVHType" sap:label="Material" sap:value-list="true"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Material"/>
+				</Key>
+				<Property Name="Material" Type="Edm.String" Nullable="false" MaxLength="40"
+						  sap:display-format="UpperCase" sap:text="Material_Text"
+						  sap:label="Material" sap:quickinfo="Material Number"/>
+				<Property Name="Material_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Material Description" sap:creatable="false"
+						  sap:updatable="false"/>
+			</EntityType>
+			<EntityType Name="I_OperationControlProfileType" sap:label="Operation Control Profile"
+						sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="OperationControlProfile"/>
+				</Key>
+				<Property Name="OperationControlProfile" Type="Edm.String" Nullable="false"
+						  MaxLength="4" sap:display-format="UpperCase"
+						  sap:text="OperationControlProfile_Text" sap:label="Control Profile"
+						  sap:quickinfo="Operation Control Profile"/>
+				<Property Name="OperationControlProfile_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Control Profile Name"
+						  sap:quickinfo="Operation Control Profile Name" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="OperationExternalProcessing" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="External Processing Type"
+						  sap:quickinfo="Operation External Processing Type"/>
+				<Property Name="OperationIsProcessedExternally" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="External Processing"
+						  sap:quickinfo="Indicator: Operation is Processed Externally"/>
+				<Property Name="OperationIsProcessedInternally" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Internal Processing"
+						  sap:quickinfo="Activity is an Internally Processed (Work) Activity"/>
+				<Property Name="OperationIsMilestone" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Milestone Indicator"
+						  sap:quickinfo="Indicator: Operation is a Milestone"/>
+				<Property Name="ConfirmationIsRequired" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Confirmation Required"
+						  sap:quickinfo="Indicator: Confirmation is Required"/>
+				<Property Name="ConfirmationIsNotPossible" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Confirmation Not Possible"
+						  sap:quickinfo="Indicator: Confirmation is not Possible"/>
+				<Property Name="ConfirmationIsOptional" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Confirmation Is Optional"
+						  sap:quickinfo="Indicator: Confirmation is Optional"/>
+				<Property Name="OperationIsScheduled" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Scheduling"
+						  sap:quickinfo="Indicator: Scheduling"/>
+				<Property Name="OperationIsPrinted" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Print"
+						  sap:quickinfo="Indicator: Print"/>
+				<Property Name="OperationIsIncludedInCosting" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Cost"/>
+				<Property Name="OperationIsReworkOperation" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Rework"
+						  sap:quickinfo="Indicator: Rework operation"/>
+				<Property Name="GRIsPostedAutomatically" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Automatic GR"
+						  sap:quickinfo="Indicator: Post Goods Receipt Automatically"/>
+				<Property Name="CapacityRequirementsAreDtmnd" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Det. Cap. Reqmnts"
+						  sap:quickinfo="Indicator: Determine capacity requirements"/>
+				<Property Name="InspCharacteristicIsRequired" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Insp. Char. Required"
+						  sap:quickinfo="Inspection Characteristics for Operation Required"/>
+				<Property Name="OperationIsNotMESRelevant" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Not Relevant for MES"
+						  sap:quickinfo="Not Relevant for External Manufacturing Execution System"/>
+			</EntityType>
+			<EntityType Name="I_PlantType" sap:label="Plant" sap:value-list="true"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Plant"/>
+				</Key>
+				<Property Name="Plant" Type="Edm.String" Nullable="false" MaxLength="4"
+						  sap:display-format="UpperCase" sap:text="PlantName" sap:label="Plant"/>
+				<Property Name="PlantName" Type="Edm.String" MaxLength="30" sap:label="Plant Name"/>
+				<Property Name="ValuationArea" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Valuation Area"/>
+				<Property Name="PlantCustomer" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Customer No Plant"
+						  sap:quickinfo="Customer Number of Plant" sap:value-list="standard"/>
+				<Property Name="PlantSupplier" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Sppl. No. Plnt"
+						  sap:quickinfo="Supplier Number of Plant" sap:value-list="standard"/>
+				<Property Name="FactoryCalendar" Type="Edm.String" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Factory Calendar"
+						  sap:quickinfo="Factory calendar key"/>
+				<Property Name="DefaultPurchasingOrganization" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Purch. Organization"
+						  sap:quickinfo="Purchasing Organization"/>
+				<Property Name="SalesOrganization" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Sales Organization"
+						  sap:quickinfo="Sales Organization for Intercompany Billing"/>
+				<Property Name="AddressID" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Address"/>
+				<Property Name="PlantCategory" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="Plant cat."
+						  sap:quickinfo="Plant category"/>
+				<Property Name="DistributionChannel" Type="Edm.String" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Distrib.channel"
+						  sap:quickinfo="Distribution channel for intercompany billing"/>
+				<Property Name="Division" Type="Edm.String" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Int.co billing div."
+						  sap:quickinfo="Division for intercompany billing"/>
+				<Property Name="Language" Type="Edm.String" MaxLength="2" sap:label="Language Key"/>
+			</EntityType>
+			<EntityType Name="I_QltyCtrlChartAggrgnCriterionType"
+						sap:label="Quality Control Chart Aggregation Criterion"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="QltyCtrlChartAggrgnCriterion"/>
+				</Key>
+				<Property Name="QltyCtrlChartAggrgnCriterion" Type="Edm.String" Nullable="false"
+						  MaxLength="3" sap:display-format="UpperCase"
+						  sap:text="QltyCtrlChartAggrgnCriterion_Text" sap:label="SPC Criterion"/>
+				<Property Name="QltyCtrlChartAggrgnCriterion_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Short Text" sap:creatable="false" sap:updatable="false"/>
+			</EntityType>
+			<EntityType Name="I_SamplingProcedureStdVHType"
+						sap:label="Value Help for Sampling procedure" sap:value-list="true"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SamplingProcedure"/>
+				</Key>
+				<Property Name="SamplingProcedure" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Sampling Procedure"/>
+				<Property Name="SamplingProcedureText" Type="Edm.String" MaxLength="40"
+						  sap:label="Short Text"/>
+			</EntityType>
+			<EntityType Name="I_Supplier_VHType" sap:label="Value Help for Supplier"
+						sap:value-list="true" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Supplier"/>
+				</Key>
+				<Property Name="Supplier" Type="Edm.String" Nullable="false" MaxLength="10"
+						  sap:display-format="UpperCase" sap:text="SupplierName"
+						  sap:label="Supplier" sap:quickinfo="Account Number of Supplier"/>
+				<Property Name="SupplierName" Type="Edm.String" MaxLength="35" sap:label="Name"
+						  sap:quickinfo="Name 1"/>
+				<Property Name="AuthorizationGroup" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Authorization"
+						  sap:quickinfo="Authorization Group"/>
+				<Property Name="SupplierAccountGroup" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Account Group"
+						  sap:quickinfo="Supplier Account Group"/>
+				<Property Name="IsBusinessPurposeCompleted" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase" sap:label="PurposeComplete Flag"
+						  sap:quickinfo="Business Purpose Completed Flag"/>
+			</EntityType>
+			<EntityType Name="I_UnitOfMeasureType" sap:label="Unit of Measure"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="UnitOfMeasure"/>
+				</Key>
+				<Property Name="UnitOfMeasure" Type="Edm.String" Nullable="false" MaxLength="3"
+						  sap:text="UnitOfMeasure_Text" sap:label="Unit of Measure"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="UnitOfMeasure_Text" Type="Edm.String" MaxLength="30"
+						  sap:label="UoM Text"
+						  sap:quickinfo="Unit of Measurement Text (Maximum 30 Characters)"
+						  sap:creatable="false" sap:updatable="false"/>
+				<Property Name="UnitOfMeasureSAPCode" Type="Edm.String" MaxLength="3"
+						  sap:label="Internal SAP Code"
+						  sap:quickinfo="Unit of Measurement, Internal SAP Code (No Conversion)"/>
+				<Property Name="UnitOfMeasureISOCode" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase" sap:label="ISO code"
+						  sap:quickinfo="ISO code for unit of measurement"/>
+				<Property Name="IsPrimaryUnitForISOCode" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Primary code"
+						  sap:quickinfo="Selection field for conversion from ISO code to int. code"/>
+				<Property Name="UnitOfMeasureNumberOfDecimals" Type="Edm.Int16"
+						  sap:label="Decimal Rounding"
+						  sap:quickinfo="No. of decimal places for rounding"/>
+				<Property Name="UnitOfMeasureIsCommercial" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Commercial meas.unit"
+						  sap:quickinfo="Commercial measurement unit ID"/>
+				<Property Name="UnitOfMeasureDimension" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase" sap:label="Dimension"
+						  sap:quickinfo="Dimension key"/>
+				<Property Name="SIUnitCnvrsnRateNumerator" Type="Edm.Int32" sap:label="Numerator"
+						  sap:quickinfo="Numerator for conversion to SI unit"/>
+				<Property Name="SIUnitCnvrsnRateDenominator" Type="Edm.Int32"
+						  sap:label="Denominator"
+						  sap:quickinfo="Denominator for conversion into SI unit"/>
+				<Property Name="SIUnitCnvrsnRateExponent" Type="Edm.Int16" sap:label="Exponent"
+						  sap:quickinfo="base ten exponent for conversion to SI unit"/>
+				<Property Name="SIUnitCnvrsnAdditiveValue" Type="Edm.Decimal" Precision="9"
+						  Scale="6" sap:label="Additive constant"
+						  sap:quickinfo="Additive constant for conversion to SI unit"/>
+				<Property Name="UnitOfMeasureDspExponent" Type="Edm.Int16"
+						  sap:label="float. point exp."
+						  sap:quickinfo="Base ten exponent for floating-point display"/>
+				<Property Name="UnitOfMeasureDspNmbrOfDcmls" Type="Edm.Int16"
+						  sap:label="Decimal Places"
+						  sap:quickinfo="Number of decimal places for number display"/>
+				<Property Name="UnitOfMeasureTemperature" Type="Edm.Double"
+						  sap:unit="UnitOfMeasureTemperatureUnit" sap:label="Temperature"/>
+				<Property Name="UnitOfMeasureTemperatureUnit" Type="Edm.String" MaxLength="3"
+						  sap:label="Temperature unit" sap:semantics="unit-of-measure"/>
+				<Property Name="UnitOfMeasurePressure" Type="Edm.Double"
+						  sap:unit="UnitOfMeasurePressureUnit" sap:label="Pressure Value"/>
+				<Property Name="UnitOfMeasurePressureUnit" Type="Edm.String" MaxLength="3"
+						  sap:label="Unit of Pressure" sap:semantics="unit-of-measure"/>
+			</EntityType>
+			<EntityType Name="I_WorkCenterType" sap:label="Work Center" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="WorkCenterInternalID"/>
+					<PropertyRef Name="WorkCenterTypeCode"/>
+				</Key>
+				<Property Name="WorkCenterInternalID" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative"
+						  sap:text="WorkCenterInternalID_Text" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource"/>
+				<Property Name="WorkCenterInternalID_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Work Center Text" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="WorkCenterTypeCode" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Object Type"
+						  sap:quickinfo="Object types of the CIM resource"/>
+				<Property Name="WorkCenter" Type="Edm.String" MaxLength="8"
+						  sap:display-format="UpperCase" sap:label="Work Center"
+						  sap:value-list="standard"/>
+				<Property Name="WorkCenterIsToBeDeleted" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Deletion Flag"
+						  sap:quickinfo="Deletion flag for work center"/>
+				<Property Name="WorkCenterIsLocked" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Locked"
+						  sap:quickinfo="Indicator: Work center is locked"/>
+				<Property Name="WorkCenterIsMntndForCosting" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Costing"
+						  sap:quickinfo="Indicator: Work center is maintained for costing"/>
+				<Property Name="WorkCenterIsMntndForScheduling" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Scheduling"
+						  sap:quickinfo="Indicator: Work center is maintained for scheduling"/>
+				<Property Name="NumberOfConfirmationSlips" Type="Edm.String" MaxLength="3"
+						  sap:display-format="NonNegative" sap:label="No. of Conf. Slips"
+						  sap:quickinfo="Number of Confirmation Slips"/>
+				<Property Name="AdvancedPlanningIsSupported" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Advanced Planning"
+						  sap:quickinfo="Indicator for Advanced Planning"/>
+				<Property Name="WorkCenterLastChangedBy" Type="Edm.String" MaxLength="12"
+						  sap:display-format="UpperCase" sap:label="User name"
+						  sap:quickinfo="User Name"/>
+				<Property Name="WorkCenterLastChangeDateTime" Type="Edm.DateTimeOffset"
+						  Precision="7" sap:label="Date and Time of Last Change"/>
+				<Property Name="WorkCenterCategoryCode" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Work Center Category"/>
+				<Property Name="WorkCenterLocation" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Location"
+						  sap:quickinfo="Work center location"/>
+				<Property Name="WorkCenterLocationGroup" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Location Group"/>
+				<Property Name="WorkCenterUsage" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase" sap:label="Work Center Usage"
+						  sap:quickinfo="Work Center Usage in Bill of Operations"/>
+				<Property Name="WorkCenterResponsible" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase" sap:label="Person Responsible"
+						  sap:quickinfo="Person Responsible for the Work Center"/>
+				<Property Name="Plant" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Plant"/>
+				<Property Name="SupplyArea" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Prodn Supply Area"
+						  sap:quickinfo="Production Supply Area"/>
+				<Property Name="CapacityInternalID" Type="Edm.String" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Capacity ID"
+						  sap:value-list="standard"/>
+				<Property Name="MachineType" Type="Edm.String" MaxLength="10"
+						  sap:display-format="UpperCase" sap:label="Machine Type"/>
+				<Property Name="OperationControlProfile" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Control Profile"
+						  sap:quickinfo="Operation Control Profile"/>
+				<Property Name="MatlCompIsMarkedForBackflush" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Backflush"
+						  sap:quickinfo="Indicator: Backflushing"/>
+				<Property Name="WorkCenterSetupType" Type="Edm.String" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Setup Type"
+						  sap:quickinfo="Work Center Setup Type"/>
+				<Property Name="FreeDefinedTableFieldSemantic" Type="Edm.String" MaxLength="7"
+						  sap:display-format="UpperCase" sap:label="Freely Defined Field"
+						  sap:quickinfo="Free Defined Table Field Semantic ID"/>
+				<Property Name="ObjectInternalID" Type="Edm.String" MaxLength="22"
+						  sap:display-format="UpperCase" sap:label="Object Number"/>
+				<Property Name="StandardTextInternalID" Type="Edm.String" MaxLength="7"
+						  sap:display-format="UpperCase" sap:label="Operation Standard Text ID"
+						  sap:quickinfo="Operation Standard Text Internal ID"/>
+				<Property Name="EmployeeWageType" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Employee Wage Type"/>
+				<Property Name="EmployeeWageGroup" Type="Edm.String" MaxLength="3"
+						  sap:display-format="UpperCase" sap:label="Employee Wage Group"/>
+				<Property Name="EmployeeSuitability" Type="Edm.String" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Employee Suitability"/>
+				<Property Name="NumberOfTimeTickets" Type="Edm.Decimal" Precision="3" Scale="0"
+						  sap:label="No. of Time Tickets" sap:quickinfo="Number of Time Tickets"/>
+				<Property Name="PlanVersion" Type="Edm.String" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Plan Version"/>
+				<Property Name="WrkCtrHumRsceObjID" Type="Edm.String" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Object ID"/>
+				<Property Name="ValidityStartDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid-From Date"/>
+				<Property Name="ValidityEndDate" Type="Edm.DateTime" Precision="0"
+						  sap:display-format="Date" sap:label="Valid-To Date"/>
+				<Property Name="StandardTextIDIsReferenced" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Std Text Referenced"
+						  sap:quickinfo="Indicator: Standard Text ID is Referenced"/>
+				<Property Name="EmployeeWageTypeIsReferenced" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Wage Type Referenced"
+						  sap:quickinfo="Indicator: Wage Type is Referenced"/>
+				<Property Name="NmbrOfTimeTicketsIsReferenced" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="No. Time Ticktes Ref"
+						  sap:quickinfo="Indicator: Number of Time Tickets is Referenced"/>
+				<Property Name="EmployeeWageGroupIsReferenced" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Wage Group Referencd"
+						  sap:quickinfo="Indicator: Wage Group is Referenced"/>
+				<Property Name="EmplSuitabilityIsReferenced" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Suitability Ref."
+						  sap:quickinfo="Indicator: Suitability is Referenced"/>
+				<Property Name="WorkCenterSetpTypeIsReferenced" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Setup Type Ref."
+						  sap:quickinfo="Indicator: Setup Type Key is Referenced"/>
+				<Property Name="OpControlProfileIsReferenced" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Control Profile Ref."
+						  sap:quickinfo="Indicator: Control Profile is Referenced"/>
+				<Property Name="NumberOfConfSlipsIsReferenced" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="No. Conf. Slips Ref."
+						  sap:quickinfo="Indicator: Number of Confirmation Slips is Referenced"/>
+				<Property Name="WorkCenterStdQueueDurnUnit" Type="Edm.String" MaxLength="3"
+						  sap:label="Std Queue Time Unit"
+						  sap:quickinfo="Unit for the Standard Queue Time"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WorkCenterStandardQueueDurn" Type="Edm.Decimal" Precision="9"
+						  Scale="3" sap:label="Standard Queue Time"/>
+				<Property Name="WorkCenterMinimumQueueDurnUnit" Type="Edm.String" MaxLength="3"
+						  sap:label="Min. Queue Time Unit"
+						  sap:quickinfo="Unit for the Minimum Queue Time"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WorkCenterMinimumQueueDuration" Type="Edm.Decimal" Precision="9"
+						  Scale="3" sap:label="Minimum Queue Time"/>
+				<Property Name="WorkCenterStandardWorkQtyUnit1" Type="Edm.String" MaxLength="3"
+						  sap:label="Work Quantity Unit 1"
+						  sap:quickinfo="Standard Work Quantity Unit 1"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WorkCenterStandardWorkQtyUnit2" Type="Edm.String" MaxLength="3"
+						  sap:label="Work Quantity Unit 2"
+						  sap:quickinfo="Standard Work Quantity Unit 2"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WorkCenterStandardWorkQtyUnit3" Type="Edm.String" MaxLength="3"
+						  sap:label="Work Quantity Unit 3"
+						  sap:quickinfo="Standard Work Quantity Unit 3"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WorkCenterStandardWorkQtyUnit4" Type="Edm.String" MaxLength="3"
+						  sap:label="Work Quantity Unit 4"
+						  sap:quickinfo="Standard Work Quantity Unit 4"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WorkCenterStandardWorkQtyUnit5" Type="Edm.String" MaxLength="3"
+						  sap:label="Work Quantity Unit 5"
+						  sap:quickinfo="Standard Work Quantity Unit 5"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WorkCenterStandardWorkQtyUnit6" Type="Edm.String" MaxLength="3"
+						  sap:label="Work Quantity Unit 6"
+						  sap:quickinfo="Standard Work Quantity Unit 6"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="StandardWorkQuantityUnit" Type="Edm.String" MaxLength="3"
+						  sap:label="Work Unit" sap:quickinfo="Unit of Measure of Work"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="StandardWorkFormulaParamGroup" Type="Edm.String" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Standard Value Key"/>
+				<Property Name="LaborTrackingIsRequired" Type="Edm.Boolean"
+						  sap:display-format="UpperCase" sap:label="Labor Tracking"
+						  sap:quickinfo="Indicates Whether Labor Tracking is Required for Execution"/>
+				<Property Name="WorkCenterFormulaParam1" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase" sap:label="Formula Parameter 1"
+						  sap:quickinfo="Work Center Formula Parameter 1"/>
+				<Property Name="WorkCenterFormulaParam2" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase" sap:label="Formula Parameter 2"
+						  sap:quickinfo="Work Center Formula Parameter 2"/>
+				<Property Name="WorkCenterFormulaParam3" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase" sap:label="Formula Parameter 3"
+						  sap:quickinfo="Work Center Formula Parameter 3"/>
+				<Property Name="WorkCenterFormulaParam4" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase" sap:label="Formula Parameter 4"
+						  sap:quickinfo="Work Center Formula Parameter 4"/>
+				<Property Name="WorkCenterFormulaParam5" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase" sap:label="Formula Parameter 5"
+						  sap:quickinfo="Work Center Formula Parameter 5"/>
+				<Property Name="WorkCenterFormulaParam6" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase" sap:label="Formula Parameter 6"
+						  sap:quickinfo="Work Center Formula Parameter 6"/>
+				<Property Name="WorkCenterFmlaParamValue1" Type="Edm.Decimal" Precision="9"
+						  Scale="3" sap:unit="WorkCenterFmlaParamUnit1"
+						  sap:label="Formula Parameter Value 1"
+						  sap:quickinfo="Work Center Formula Parameter Value 1"/>
+				<Property Name="WorkCenterFmlaParamValue2" Type="Edm.Decimal" Precision="9"
+						  Scale="3" sap:unit="WorkCenterFmlaParamUnit2"
+						  sap:label="Formula Parameter Value 2"
+						  sap:quickinfo="Work Center Formula Parameter Value 2"/>
+				<Property Name="WorkCenterFmlaParamValue3" Type="Edm.Decimal" Precision="9"
+						  Scale="3" sap:unit="WorkCenterFmlaParamUnit3"
+						  sap:label="Formula Parameter Value 3"
+						  sap:quickinfo="Work Center Formula Parameter Value 3"/>
+				<Property Name="WorkCenterFmlaParamValue4" Type="Edm.Decimal" Precision="9"
+						  Scale="3" sap:unit="WorkCenterFmlaParamUnit4"
+						  sap:label="Formula Parameter Value 4"
+						  sap:quickinfo="Work Center Formula Parameter Value 4"/>
+				<Property Name="WorkCenterFmlaParamValue5" Type="Edm.Decimal" Precision="9"
+						  Scale="3" sap:unit="WorkCenterFmlaParamUnit5"
+						  sap:label="Formula Parameter Value 5"
+						  sap:quickinfo="Work Center Formula Parameter Value 5"/>
+				<Property Name="WorkCenterFmlaParamValue6" Type="Edm.Decimal" Precision="9"
+						  Scale="3" sap:unit="WorkCenterFmlaParamUnit6"
+						  sap:label="Formula Parameter Value 6"
+						  sap:quickinfo="Work Center Formula Parameter Value 6"/>
+				<Property Name="WorkCenterFmlaParamUnit1" Type="Edm.String" MaxLength="3"
+						  sap:label="Formula Parameter Unit 1"
+						  sap:quickinfo="Work Center Formula Parameter Unit 1"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WorkCenterFmlaParamUnit2" Type="Edm.String" MaxLength="3"
+						  sap:label="Formula Parameter Unit 2"
+						  sap:quickinfo="Work Center Formula Parameter Unit 2"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WorkCenterFmlaParamUnit3" Type="Edm.String" MaxLength="3"
+						  sap:label="Formula Parameter Unit 3"
+						  sap:quickinfo="Work Center Formula Parameter Unit 3"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WorkCenterFmlaParamUnit4" Type="Edm.String" MaxLength="3"
+						  sap:label="Formula Parameter Unit 4"
+						  sap:quickinfo="Work Center Formula Parameter Unit 4"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WorkCenterFmlaParamUnit5" Type="Edm.String" MaxLength="3"
+						  sap:label="Formula Parameter Unit 5"
+						  sap:quickinfo="Work Center Formula Parameter Unit 5"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WorkCenterFmlaParamUnit6" Type="Edm.String" MaxLength="3"
+						  sap:label="Formula Parameter Unit 6"
+						  sap:quickinfo="Work Center Formula Parameter Unit 6"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="WrkCtrStdValMaintRule1" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:label="Standard Value Maintenance Rule 1"/>
+				<Property Name="WrkCtrStdValMaintRule2" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:label="Standard Value Maintenance Rule 2"/>
+				<Property Name="WrkCtrStdValMaintRule3" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:label="Standard Value Maintenance Rule 3"/>
+				<Property Name="WrkCtrStdValMaintRule4" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:label="Standard Value Maintenance Rule 4"/>
+				<Property Name="WrkCtrStdValMaintRule5" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:label="Standard Value Maintenance Rule 5"/>
+				<Property Name="WrkCtrStdValMaintRule6" Type="Edm.String" MaxLength="1"
+						  sap:display-format="UpperCase"
+						  sap:label="Standard Value Maintenance Rule 6"/>
+				<Property Name="WrkCtrSetupSchedgFmla" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase" sap:label="Duration of Setup"
+						  sap:quickinfo="Formula for setup time"/>
+				<Property Name="WrkCtrProcgSchedgFmla" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase" sap:label="Processing Duration"
+						  sap:quickinfo="Formula for the duration of processing time"/>
+				<Property Name="WrkCtrTeardownSchedgFmla" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase" sap:label="Duration of Teardown"
+						  sap:quickinfo="Formula for teardown time"/>
+				<Property Name="WrkCtrIntProcgSchedgFmla" Type="Edm.String" MaxLength="6"
+						  sap:display-format="UpperCase" sap:label="Internal Processing Duration"
+						  sap:quickinfo="Formula for the Internal Processing Duration"/>
+			</EntityType>
+			<EntityType Name="I_WorkCenterStdVHType" sap:label="Work Center"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="WorkCenterInternalID"/>
+					<PropertyRef Name="WorkCenterTypeCode"/>
+				</Key>
+				<Property Name="WorkCenterInternalID" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:display-format="NonNegative"
+						  sap:text="WorkCenterInternalID_Text" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource"/>
+				<Property Name="WorkCenterInternalID_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Work Center Text" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="WorkCenterTypeCode" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:display-format="UpperCase" sap:label="Object Type"
+						  sap:quickinfo="Object types of the CIM resource"/>
+			</EntityType>
+			<EntityType Name="I_WrkCtrBySemanticKeyStdVHType"
+						sap:label="Work Center By Semantic Key" sap:value-list="true"
+						sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Plant"/>
+					<PropertyRef Name="WorkCenter"/>
+				</Key>
+				<Property Name="Plant" Type="Edm.String" Nullable="false" MaxLength="4"
+						  sap:display-format="UpperCase" sap:label="Plant"/>
+				<Property Name="WorkCenter" Type="Edm.String" Nullable="false" MaxLength="8"
+						  sap:display-format="UpperCase" sap:text="WorkCenter_Text"
+						  sap:label="Work Center"/>
+				<Property Name="WorkCenter_Text" Type="Edm.String" MaxLength="40"
+						  sap:label="Work Center Text" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="WorkCenterInternalID" Type="Edm.String" MaxLength="8"
+						  sap:display-format="NonNegative" sap:label="Object ID"
+						  sap:quickinfo="Object ID of the resource"/>
+			</EntityType>
+			<ComplexType Name="ITINSPPLANEDIT">
+				<Property Name="KEY" Type="Edm.Guid" Nullable="false" sap:label="NodeID"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="PARENT_KEY" Type="Edm.Guid" Nullable="false" sap:label="NodeID"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="ROOT_KEY" Type="Edm.Guid" Nullable="false" sap:label="NodeID"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false"
+						  sap:filterable="false"/>
+				<Property Name="INSPECTIONPLANGROUP" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:label="Group" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="INSPECTIONPLAN" Type="Edm.String" Nullable="false" MaxLength="2"
+						  sap:label="Group Counter" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="INSPECTIONPLANINTERNALVERSION" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:label="Counter" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="INSPECTIONPLANGROUPFOREDIT" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:label="Group" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="INSPECTIONPLANFOREDIT" Type="Edm.String" Nullable="false"
+						  MaxLength="2" sap:label="Group Counter" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="KEYDATE" Type="Edm.DateTime" Nullable="false" Precision="0"
+						  sap:label="Key Date" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="ISDELETED" Type="Edm.Boolean" Nullable="false"
+						  sap:label="Deletion Ind." sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="BILLOFOPERATIONSDESC" Type="Edm.String" Nullable="false"
+						  MaxLength="40" sap:label="Description" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="PLANT" Type="Edm.String" Nullable="false" MaxLength="4"
+						  sap:label="Plant" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="BILLOFOPERATIONSUSAGE" Type="Edm.String" Nullable="false"
+						  MaxLength="3" sap:label="Usage" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="BILLOFOPERATIONSSTATUS" Type="Edm.String" Nullable="false"
+						  MaxLength="3" sap:label="Status" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="RESPONSIBLEPLANNERGROUP" Type="Edm.String" Nullable="false"
+						  MaxLength="3" sap:label="Planner Group" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="MINIMUMLOTSIZEQUANTITY" Type="Edm.Decimal" Nullable="false"
+						  Precision="13" Scale="13" sap:unit="BILLOFOPERATIONSUNIT"
+						  sap:label="Lot Size From" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="MAXIMUMLOTSIZEQUANTITY" Type="Edm.Decimal" Nullable="false"
+						  Precision="13" Scale="13" sap:unit="BILLOFOPERATIONSUNIT"
+						  sap:label="Lot Size To" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="BILLOFOPERATIONSUNIT" Type="Edm.String" Nullable="false"
+						  MaxLength="3" sap:label="Task List Unit" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"
+						  sap:semantics="unit-of-measure"/>
+				<Property Name="INSPSUBSETFIELDCOMBINATION" Type="Edm.String" Nullable="false"
+						  MaxLength="3" sap:label="User Field Combination" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="INSPECTIONPARTIALLOTASSIGNMENT" Type="Edm.String" Nullable="false"
+						  MaxLength="1" sap:label="Partial Lot Assignment" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="SMPLDRAWINGPROCEDURE" Type="Edm.String" Nullable="false"
+						  MaxLength="8" sap:label="Sample-Drawing Procedure" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="SMPLDRAWINGPROCEDUREVERSION" Type="Edm.String" Nullable="false"
+						  MaxLength="6" sap:label="Version" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="INSPECTIONLOTDYNAMICLEVEL" Type="Edm.String" Nullable="false"
+						  MaxLength="1" sap:label="Dynamic Modification Level" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="INSPLOTDYNAMICRULE" Type="Edm.String" Nullable="false" MaxLength="3"
+						  sap:label="Dyn. Mod. Rule" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="INSPEXTERNALNUMBERINGOFVALUES" Type="Edm.String" Nullable="false"
+						  MaxLength="1" sap:label="Ext. Numbering" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="MATLISCONSIDEREDFORDYNMODIF" Type="Edm.String" Nullable="false"
+						  MaxLength="1" sap:label="Material" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="SUPLRISCONSIDEREDFORDYNMODIF" Type="Edm.String" Nullable="false"
+						  MaxLength="1" sap:label="Supplier" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="CUSTISCONSIDEREDFORDYNMODIF" Type="Edm.String" Nullable="false"
+						  MaxLength="1" sap:label="Customer" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="CREATIONDATE" Type="Edm.DateTime" Nullable="false" Precision="0"
+						  sap:label="Created On" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="CREATEDBYUSER" Type="Edm.String" Nullable="false" MaxLength="12"
+						  sap:label="Created By" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="LASTCHANGEDATE" Type="Edm.DateTime" Precision="0"
+						  sap:label="Changed On" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="LASTCHANGEDBYUSER" Type="Edm.String" Nullable="false" MaxLength="12"
+						  sap:label="Changed By" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="CHANGENUMBER" Type="Edm.String" Nullable="false" MaxLength="12"
+						  sap:label="Change Number" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="VALIDITYSTARTDATE" Type="Edm.DateTime" Nullable="false"
+						  Precision="0" sap:label="Valid-From Date" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="VALIDITYENDDATE" Type="Edm.DateTime" Nullable="false" Precision="0"
+						  sap:label="Valid-To Date" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="CHANGEDDATETIME" Type="Edm.DateTimeOffset" Nullable="false"
+						  Precision="0" sap:label="Time Stamp" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="HASACTIVEENTITY" Type="Edm.Boolean" Nullable="false"
+						  sap:label="Has active" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DRAFTENTITYLASTCHANGEDATETIME" Type="Edm.DateTimeOffset"
+						  Precision="7" sap:label="Draft Last Changed On" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DRAFTADMINISTRATIVEDATAUUID" Type="Edm.Guid" Nullable="false"
+						  sap:label="Draft Adminv Data ID" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DRAFTENTITYCONSISTENCYSTATUS" Type="Edm.String" Nullable="false"
+						  MaxLength="1" sap:label="Draft Consistency Status" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DRAFTENTITYOPERATIONCODE" Type="Edm.String" Nullable="false"
+						  MaxLength="1" sap:label="Draft - Operation Code" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="ISACTIVEENTITY" Type="Edm.Boolean" Nullable="false"
+						  sap:label="Is active" sap:creatable="false" sap:updatable="false"
+						  sap:sortable="false" sap:filterable="false"/>
+				<Property Name="OPERATIONDRAFTDATAUUID" Type="Edm.Guid" Nullable="false"
+						  sap:label="Draft Adminv Data ID" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="CHARDRAFTDATAUUID" Type="Edm.Guid" Nullable="false"
+						  sap:label="Draft Adminv Data ID" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="MFRISCONSIDEREDFORDYNMODIF" Type="Edm.String" Nullable="false"
+						  MaxLength="1" sap:label="Manufacturer" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+			</ComplexType>
+			<ComplexType Name="ValidationFunctionResult">
+				<Property Name="IsValid" Type="Edm.Boolean" sap:label="Is valid"/>
+			</ComplexType>
+			<Association Name="assoc_4189EA54EA0B849B95178ED282E17100" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType" Multiplicity="1"
+					 Role="FromRole_assoc_4189EA54EA0B849B95178ED282E17100"/>
+				<End Type="QM_INSP_PLAN_SRV.I_DraftAdministrativeDataType" Multiplicity="0..1"
+					 Role="ToRole_assoc_4189EA54EA0B849B95178ED282E17100"/>
+			</Association>
+			<Association Name="assoc_C6D0F874EFE0FA4339528F8FF50506C8" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType" Multiplicity="1"
+					 Role="FromRole_assoc_C6D0F874EFE0FA4339528F8FF50506C8"/>
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType" Multiplicity="0..1"
+					 Role="ToRole_assoc_C6D0F874EFE0FA4339528F8FF50506C8"/>
+			</Association>
+			<Association Name="assoc_C11836E36861E41A505A7AA164C277C8" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType" Multiplicity="1"
+					 Role="FromRole_assoc_C11836E36861E41A505A7AA164C277C8"/>
+				<End Type="QM_INSP_PLAN_SRV.I_Customer_VHType" Multiplicity="0..1"
+					 Role="ToRole_assoc_C11836E36861E41A505A7AA164C277C8"/>
+				<ReferentialConstraint>
+					<Principal Role="ToRole_assoc_C11836E36861E41A505A7AA164C277C8">
+						<PropertyRef Name="Customer"/>
+					</Principal>
+					<Dependent Role="FromRole_assoc_C11836E36861E41A505A7AA164C277C8">
+						<PropertyRef Name="Customer"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="assoc_030FFB03B6D9EADAB962FD09DDF03087" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType" Multiplicity="1"
+					 Role="FromRole_assoc_030FFB03B6D9EADAB962FD09DDF03087"/>
+				<End Type="QM_INSP_PLAN_SRV.I_MaterialStdVHType" Multiplicity="0..1"
+					 Role="ToRole_assoc_030FFB03B6D9EADAB962FD09DDF03087"/>
+				<ReferentialConstraint>
+					<Principal Role="ToRole_assoc_030FFB03B6D9EADAB962FD09DDF03087">
+						<PropertyRef Name="Material"/>
+					</Principal>
+					<Dependent Role="FromRole_assoc_030FFB03B6D9EADAB962FD09DDF03087">
+						<PropertyRef Name="Material"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="assoc_BA363AEE3EAC6FE124327C9BB4892913" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType" Multiplicity="1"
+					 Role="FromRole_assoc_BA363AEE3EAC6FE124327C9BB4892913"/>
+				<End Type="QM_INSP_PLAN_SRV.I_MaterialStdVHType" Multiplicity="0..1"
+					 Role="ToRole_assoc_BA363AEE3EAC6FE124327C9BB4892913"/>
+			</Association>
+			<Association Name="assoc_4ADD84A147145CDAF795CF51930F2BED" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType" Multiplicity="1"
+					 Role="FromRole_assoc_4ADD84A147145CDAF795CF51930F2BED"/>
+				<End Type="QM_INSP_PLAN_SRV.I_Supplier_VHType" Multiplicity="0..1"
+					 Role="ToRole_assoc_4ADD84A147145CDAF795CF51930F2BED"/>
+				<ReferentialConstraint>
+					<Principal Role="ToRole_assoc_4ADD84A147145CDAF795CF51930F2BED">
+						<PropertyRef Name="Supplier"/>
+					</Principal>
+					<Dependent Role="FromRole_assoc_4ADD84A147145CDAF795CF51930F2BED">
+						<PropertyRef Name="Supplier"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="assoc_13956AD0162C0CACCF644D2FA5242F3D" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanOperationType" Multiplicity="1"
+					 Role="FromRole_assoc_13956AD0162C0CACCF644D2FA5242F3D"/>
+				<End Type="QM_INSP_PLAN_SRV.I_DraftAdministrativeDataType" Multiplicity="0..1"
+					 Role="ToRole_assoc_13956AD0162C0CACCF644D2FA5242F3D"/>
+			</Association>
+			<Association Name="assoc_DB683E8EEC13B88366FA3127100B395D" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanOperationType" Multiplicity="1"
+					 Role="FromRole_assoc_DB683E8EEC13B88366FA3127100B395D"/>
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanOperationType" Multiplicity="0..1"
+					 Role="ToRole_assoc_DB683E8EEC13B88366FA3127100B395D"/>
+			</Association>
+			<Association Name="assoc_6A87588FE62F98C6A3117FE528CAA78D" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanOperationType" Multiplicity="1"
+					 Role="FromRole_assoc_6A87588FE62F98C6A3117FE528CAA78D">
+					<OnDelete Action="Cascade"/>
+				</End>
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType" Multiplicity="*"
+					 Role="ToRole_assoc_6A87588FE62F98C6A3117FE528CAA78D"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_assoc_6A87588FE62F98C6A3117FE528CAA78D">
+						<PropertyRef Name="BOOOpInternalVersionCounter"/>
+						<PropertyRef Name="BOOOperationInternalID"/>
+						<PropertyRef Name="InspectionPlanInternalVersion"/>
+						<PropertyRef Name="InspectionPlan"/>
+						<PropertyRef Name="InspectionPlanGroup"/>
+					</Principal>
+					<Dependent Role="ToRole_assoc_6A87588FE62F98C6A3117FE528CAA78D">
+						<PropertyRef Name="BOOOpInternalVersionCounter"/>
+						<PropertyRef Name="BOOOperationInternalID"/>
+						<PropertyRef Name="InspectionPlanInternalVersion"/>
+						<PropertyRef Name="InspectionPlan"/>
+						<PropertyRef Name="InspectionPlanGroup"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="assoc_7574645399F8CEAA4B9F09145FB1812C" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspectionPlanType" Multiplicity="1"
+					 Role="FromRole_assoc_7574645399F8CEAA4B9F09145FB1812C"/>
+				<End Type="QM_INSP_PLAN_SRV.C_InspectionPlanType" Multiplicity="0..1"
+					 Role="ToRole_assoc_7574645399F8CEAA4B9F09145FB1812C"/>
+			</Association>
+			<Association Name="assoc_54B7FCED6F2D0FDFDC39B7CBFFAC2526" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspectionPlanType" Multiplicity="1"
+					 Role="FromRole_assoc_54B7FCED6F2D0FDFDC39B7CBFFAC2526"/>
+				<End Type="QM_INSP_PLAN_SRV.I_BillOfOperationsStatusType" Multiplicity="0..1"
+					 Role="ToRole_assoc_54B7FCED6F2D0FDFDC39B7CBFFAC2526"/>
+			</Association>
+			<Association Name="assoc_0BA9B571C213F6442996037C06AF25F8" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspectionPlanType" Multiplicity="1"
+					 Role="FromRole_assoc_0BA9B571C213F6442996037C06AF25F8"/>
+				<End Type="QM_INSP_PLAN_SRV.I_UnitOfMeasureType" Multiplicity="0..1"
+					 Role="ToRole_assoc_0BA9B571C213F6442996037C06AF25F8"/>
+			</Association>
+			<Association Name="assoc_DC89F63CCE8BAD3C00FA80288166DD25" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspectionPlanType" Multiplicity="1"
+					 Role="FromRole_assoc_DC89F63CCE8BAD3C00FA80288166DD25"/>
+				<End Type="QM_INSP_PLAN_SRV.I_BillOfOperationsUsageType" Multiplicity="0..1"
+					 Role="ToRole_assoc_DC89F63CCE8BAD3C00FA80288166DD25"/>
+			</Association>
+			<Association Name="assoc_8A5D3CCDF13A811AD039BEF1AF2F6B07" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspectionPlanType" Multiplicity="1"
+					 Role="FromRole_assoc_8A5D3CCDF13A811AD039BEF1AF2F6B07"/>
+				<End Type="QM_INSP_PLAN_SRV.I_InspectionLotDynamicLevelType" Multiplicity="0..1"
+					 Role="ToRole_assoc_8A5D3CCDF13A811AD039BEF1AF2F6B07"/>
+			</Association>
+			<Association Name="assoc_2C35F7B14EF60CD75ADB3A4B0C7F6CBE" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspectionPlanType" Multiplicity="1"
+					 Role="FromRole_assoc_2C35F7B14EF60CD75ADB3A4B0C7F6CBE"/>
+				<End Type="QM_INSP_PLAN_SRV.I_InspLotDynamicRuleType" Multiplicity="0..1"
+					 Role="ToRole_assoc_2C35F7B14EF60CD75ADB3A4B0C7F6CBE"/>
+			</Association>
+			<Association Name="assoc_6C7863270386AA43A9AB292F5C65EA2C" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspectionPlanType" Multiplicity="1"
+					 Role="FromRole_assoc_6C7863270386AA43A9AB292F5C65EA2C">
+					<OnDelete Action="Cascade"/>
+				</End>
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType" Multiplicity="*"
+					 Role="ToRole_assoc_6C7863270386AA43A9AB292F5C65EA2C"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_assoc_6C7863270386AA43A9AB292F5C65EA2C">
+						<PropertyRef Name="InspectionPlanInternalVersion"/>
+						<PropertyRef Name="InspectionPlan"/>
+						<PropertyRef Name="InspectionPlanGroup"/>
+					</Principal>
+					<Dependent Role="ToRole_assoc_6C7863270386AA43A9AB292F5C65EA2C">
+						<PropertyRef Name="InspectionPlanInternalVersion"/>
+						<PropertyRef Name="InspectionPlan"/>
+						<PropertyRef Name="InspectionPlanGroup"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="assoc_08F22BD3701877B58A34472D01B16153" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspectionPlanType" Multiplicity="1"
+					 Role="FromRole_assoc_08F22BD3701877B58A34472D01B16153">
+					<OnDelete Action="Cascade"/>
+				</End>
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanOperationType" Multiplicity="*"
+					 Role="ToRole_assoc_08F22BD3701877B58A34472D01B16153"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_assoc_08F22BD3701877B58A34472D01B16153">
+						<PropertyRef Name="InspectionPlanInternalVersion"/>
+						<PropertyRef Name="InspectionPlan"/>
+						<PropertyRef Name="InspectionPlanGroup"/>
+					</Principal>
+					<Dependent Role="ToRole_assoc_08F22BD3701877B58A34472D01B16153">
+						<PropertyRef Name="InspectionPlanInternalVersion"/>
+						<PropertyRef Name="InspectionPlan"/>
+						<PropertyRef Name="InspectionPlanGroup"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="assoc_53386E39F94FF9D87548B48312730B8C" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspectionPlanType" Multiplicity="1"
+					 Role="FromRole_assoc_53386E39F94FF9D87548B48312730B8C"/>
+				<End Type="QM_INSP_PLAN_SRV.I_InspSubsetFieldCombinationType" Multiplicity="0..1"
+					 Role="ToRole_assoc_53386E39F94FF9D87548B48312730B8C"/>
+			</Association>
+			<Association Name="assoc_DA823EAF8192289B65BF295A768F367D" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspectionPlanType" Multiplicity="1"
+					 Role="FromRole_assoc_DA823EAF8192289B65BF295A768F367D"/>
+				<End Type="QM_INSP_PLAN_SRV.I_PlantType" Multiplicity="0..1"
+					 Role="ToRole_assoc_DA823EAF8192289B65BF295A768F367D"/>
+			</Association>
+			<Association Name="assoc_F81CDD579459B05A26A7BA84F8ED5B85" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspectionPlanType" Multiplicity="1"
+					 Role="FromRole_assoc_F81CDD579459B05A26A7BA84F8ED5B85"/>
+				<End Type="QM_INSP_PLAN_SRV.I_DraftAdministrativeDataType" Multiplicity="0..1"
+					 Role="ToRole_assoc_F81CDD579459B05A26A7BA84F8ED5B85"/>
+			</Association>
+			<Association Name="assoc_C2A943A553D28B8148F21A569E4B23DF" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType" Multiplicity="1"
+					 Role="FromRole_assoc_C2A943A553D28B8148F21A569E4B23DF"/>
+				<End Type="QM_INSP_PLAN_SRV.I_DraftAdministrativeDataType" Multiplicity="0..1"
+					 Role="ToRole_assoc_C2A943A553D28B8148F21A569E4B23DF"/>
+			</Association>
+			<Association Name="assoc_FD22FD8DF0EA8DD10E129CA2EC8CFE9D" sap:content-version="1">
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType" Multiplicity="1"
+					 Role="FromRole_assoc_FD22FD8DF0EA8DD10E129CA2EC8CFE9D"/>
+				<End Type="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType" Multiplicity="0..1"
+					 Role="ToRole_assoc_FD22FD8DF0EA8DD10E129CA2EC8CFE9D"/>
+			</Association>
+			<EntityContainer Name="QM_INSP_PLAN_SRV_Entities" m:IsDefaultEntityContainer="true"
+							 sap:message-scope-supported="true"
+							 sap:supported-formats="atom json xlsx">
+				<EntitySet Name="C_InspectionPlan"
+						   EntityType="QM_INSP_PLAN_SRV.C_InspectionPlanType" sap:searchable="true"
+						   sap:content-version="1"/>
+				<EntitySet Name="C_InspPlanMatlAssgmt"
+						   EntityType="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="C_InspPlanMatlPlantVH"
+						   EntityType="QM_INSP_PLAN_SRV.C_InspPlanMatlPlantVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="C_InspPlanOpCharc"
+						   EntityType="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType"
+						   sap:content-version="1"/>
+				<EntitySet Name="C_InspPlanOperation"
+						   EntityType="QM_INSP_PLAN_SRV.C_InspPlanOperationType"
+						   sap:content-version="1"/>
+				<EntitySet Name="C_InspPlanSamplingProcedureVH"
+						   EntityType="QM_INSP_PLAN_SRV.C_InspPlanSamplingProcedureVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="C_InspPlnCharcUoMVH"
+						   EntityType="QM_INSP_PLAN_SRV.C_InspPlnCharcUoMVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="C_InspSubsetFldCombnVH"
+						   EntityType="QM_INSP_PLAN_SRV.C_InspSubsetFldCombnVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="C_QltyCtrlChtAggrgnCritrnVH"
+						   EntityType="QM_INSP_PLAN_SRV.C_QltyCtrlChtAggrgnCritrnVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="I_BillOfOperationsStatus"
+						   EntityType="QM_INSP_PLAN_SRV.I_BillOfOperationsStatusType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="I_BillOfOperationsUsage"
+						   EntityType="QM_INSP_PLAN_SRV.I_BillOfOperationsUsageType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_CapacityStdVH" EntityType="QM_INSP_PLAN_SRV.I_CapacityStdVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_ChangeMasterStdVH"
+						   EntityType="QM_INSP_PLAN_SRV.I_ChangeMasterStdVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_CharcAttribSeldCodeSetStdVH"
+						   EntityType="QM_INSP_PLAN_SRV.I_CharcAttribSeldCodeSetStdVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_Customer_VH" EntityType="QM_INSP_PLAN_SRV.I_Customer_VHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="I_DefectCodeGroupStdVH"
+						   EntityType="QM_INSP_PLAN_SRV.I_DefectCodeGroupStdVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="I_DefectCodeStdVH"
+						   EntityType="QM_INSP_PLAN_SRV.I_DefectCodeStdVHType" sap:creatable="false"
+						   sap:updatable="false" sap:deletable="false" sap:searchable="true"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_DraftAdministrativeData"
+						   EntityType="QM_INSP_PLAN_SRV.I_DraftAdministrativeDataType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:addressable="false" sap:content-version="1"/>
+				<EntitySet Name="I_InspectionLotDynamicLevel"
+						   EntityType="QM_INSP_PLAN_SRV.I_InspectionLotDynamicLevelType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_InspectionMethodVersion"
+						   EntityType="QM_INSP_PLAN_SRV.I_InspectionMethodVersionType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_InspectorQualificationStdVH"
+						   EntityType="QM_INSP_PLAN_SRV.I_InspectorQualificationStdVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_InspExtNumberingOfValues"
+						   EntityType="QM_INSP_PLAN_SRV.I_InspExtNumberingOfValuesType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_InspLotDynamicRule"
+						   EntityType="QM_INSP_PLAN_SRV.I_InspLotDynamicRuleType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_InspMethForInspSpecVH"
+						   EntityType="QM_INSP_PLAN_SRV.I_InspMethForInspSpecVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_InspMethVersStdVH"
+						   EntityType="QM_INSP_PLAN_SRV.I_InspMethVersStdVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_InspSpecificationVersionVH"
+						   EntityType="QM_INSP_PLAN_SRV.I_InspSpecificationVersionVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="I_InspSpecImportanceCode"
+						   EntityType="QM_INSP_PLAN_SRV.I_InspSpecImportanceCodeType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_InspSpecVersReldVH"
+						   EntityType="QM_INSP_PLAN_SRV.I_InspSpecVersReldVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="I_InspSubsetFieldCombination"
+						   EntityType="QM_INSP_PLAN_SRV.I_InspSubsetFieldCombinationType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_MaterialStdVH" EntityType="QM_INSP_PLAN_SRV.I_MaterialStdVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="I_OperationControlProfile"
+						   EntityType="QM_INSP_PLAN_SRV.I_OperationControlProfileType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="I_Plant" EntityType="QM_INSP_PLAN_SRV.I_PlantType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="I_QltyCtrlChartAggrgnCriterion"
+						   EntityType="QM_INSP_PLAN_SRV.I_QltyCtrlChartAggrgnCriterionType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_SamplingProcedureStdVH"
+						   EntityType="QM_INSP_PLAN_SRV.I_SamplingProcedureStdVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_Supplier_VH" EntityType="QM_INSP_PLAN_SRV.I_Supplier_VHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="I_UnitOfMeasure" EntityType="QM_INSP_PLAN_SRV.I_UnitOfMeasureType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<EntitySet Name="I_WorkCenter" EntityType="QM_INSP_PLAN_SRV.I_WorkCenterType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:content-version="1"/>
+				<EntitySet Name="I_WorkCenterStdVH"
+						   EntityType="QM_INSP_PLAN_SRV.I_WorkCenterStdVHType" sap:creatable="false"
+						   sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+				<EntitySet Name="I_WrkCtrBySemanticKeyStdVH"
+						   EntityType="QM_INSP_PLAN_SRV.I_WrkCtrBySemanticKeyStdVHType"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:searchable="true" sap:content-version="1"/>
+				<AssociationSet Name="assoc_C11836E36861E41A505A7AA164C277C8"
+								Association="QM_INSP_PLAN_SRV.assoc_C11836E36861E41A505A7AA164C277C8"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspPlanMatlAssgmt"
+						 Role="FromRole_assoc_C11836E36861E41A505A7AA164C277C8"/>
+					<End EntitySet="I_Customer_VH"
+						 Role="ToRole_assoc_C11836E36861E41A505A7AA164C277C8"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_C6D0F874EFE0FA4339528F8FF50506C8"
+								Association="QM_INSP_PLAN_SRV.assoc_C6D0F874EFE0FA4339528F8FF50506C8"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspPlanMatlAssgmt"
+						 Role="FromRole_assoc_C6D0F874EFE0FA4339528F8FF50506C8"/>
+					<End EntitySet="C_InspPlanMatlAssgmt"
+						 Role="ToRole_assoc_C6D0F874EFE0FA4339528F8FF50506C8"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_DA823EAF8192289B65BF295A768F367D"
+								Association="QM_INSP_PLAN_SRV.assoc_DA823EAF8192289B65BF295A768F367D"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspectionPlan"
+						 Role="FromRole_assoc_DA823EAF8192289B65BF295A768F367D"/>
+					<End EntitySet="I_Plant" Role="ToRole_assoc_DA823EAF8192289B65BF295A768F367D"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_FD22FD8DF0EA8DD10E129CA2EC8CFE9D"
+								Association="QM_INSP_PLAN_SRV.assoc_FD22FD8DF0EA8DD10E129CA2EC8CFE9D"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspPlanOpCharc"
+						 Role="FromRole_assoc_FD22FD8DF0EA8DD10E129CA2EC8CFE9D"/>
+					<End EntitySet="C_InspPlanOpCharc"
+						 Role="ToRole_assoc_FD22FD8DF0EA8DD10E129CA2EC8CFE9D"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_030FFB03B6D9EADAB962FD09DDF03087"
+								Association="QM_INSP_PLAN_SRV.assoc_030FFB03B6D9EADAB962FD09DDF03087"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspPlanMatlAssgmt"
+						 Role="FromRole_assoc_030FFB03B6D9EADAB962FD09DDF03087"/>
+					<End EntitySet="I_MaterialStdVH"
+						 Role="ToRole_assoc_030FFB03B6D9EADAB962FD09DDF03087"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_4ADD84A147145CDAF795CF51930F2BED"
+								Association="QM_INSP_PLAN_SRV.assoc_4ADD84A147145CDAF795CF51930F2BED"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspPlanMatlAssgmt"
+						 Role="FromRole_assoc_4ADD84A147145CDAF795CF51930F2BED"/>
+					<End EntitySet="I_Supplier_VH"
+						 Role="ToRole_assoc_4ADD84A147145CDAF795CF51930F2BED"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_53386E39F94FF9D87548B48312730B8C"
+								Association="QM_INSP_PLAN_SRV.assoc_53386E39F94FF9D87548B48312730B8C"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspectionPlan"
+						 Role="FromRole_assoc_53386E39F94FF9D87548B48312730B8C"/>
+					<End EntitySet="I_InspSubsetFieldCombination"
+						 Role="ToRole_assoc_53386E39F94FF9D87548B48312730B8C"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_F81CDD579459B05A26A7BA84F8ED5B85"
+								Association="QM_INSP_PLAN_SRV.assoc_F81CDD579459B05A26A7BA84F8ED5B85"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspectionPlan"
+						 Role="FromRole_assoc_F81CDD579459B05A26A7BA84F8ED5B85"/>
+					<End EntitySet="I_DraftAdministrativeData"
+						 Role="ToRole_assoc_F81CDD579459B05A26A7BA84F8ED5B85"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_7574645399F8CEAA4B9F09145FB1812C"
+								Association="QM_INSP_PLAN_SRV.assoc_7574645399F8CEAA4B9F09145FB1812C"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspectionPlan"
+						 Role="FromRole_assoc_7574645399F8CEAA4B9F09145FB1812C"/>
+					<End EntitySet="C_InspectionPlan"
+						 Role="ToRole_assoc_7574645399F8CEAA4B9F09145FB1812C"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_BA363AEE3EAC6FE124327C9BB4892913"
+								Association="QM_INSP_PLAN_SRV.assoc_BA363AEE3EAC6FE124327C9BB4892913"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspPlanMatlAssgmt"
+						 Role="FromRole_assoc_BA363AEE3EAC6FE124327C9BB4892913"/>
+					<End EntitySet="I_MaterialStdVH"
+						 Role="ToRole_assoc_BA363AEE3EAC6FE124327C9BB4892913"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_2C35F7B14EF60CD75ADB3A4B0C7F6CBE"
+								Association="QM_INSP_PLAN_SRV.assoc_2C35F7B14EF60CD75ADB3A4B0C7F6CBE"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspectionPlan"
+						 Role="FromRole_assoc_2C35F7B14EF60CD75ADB3A4B0C7F6CBE"/>
+					<End EntitySet="I_InspLotDynamicRule"
+						 Role="ToRole_assoc_2C35F7B14EF60CD75ADB3A4B0C7F6CBE"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_4189EA54EA0B849B95178ED282E17100"
+								Association="QM_INSP_PLAN_SRV.assoc_4189EA54EA0B849B95178ED282E17100"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspPlanMatlAssgmt"
+						 Role="FromRole_assoc_4189EA54EA0B849B95178ED282E17100"/>
+					<End EntitySet="I_DraftAdministrativeData"
+						 Role="ToRole_assoc_4189EA54EA0B849B95178ED282E17100"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_8A5D3CCDF13A811AD039BEF1AF2F6B07"
+								Association="QM_INSP_PLAN_SRV.assoc_8A5D3CCDF13A811AD039BEF1AF2F6B07"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspectionPlan"
+						 Role="FromRole_assoc_8A5D3CCDF13A811AD039BEF1AF2F6B07"/>
+					<End EntitySet="I_InspectionLotDynamicLevel"
+						 Role="ToRole_assoc_8A5D3CCDF13A811AD039BEF1AF2F6B07"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_6C7863270386AA43A9AB292F5C65EA2C"
+								Association="QM_INSP_PLAN_SRV.assoc_6C7863270386AA43A9AB292F5C65EA2C"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspectionPlan"
+						 Role="FromRole_assoc_6C7863270386AA43A9AB292F5C65EA2C"/>
+					<End EntitySet="C_InspPlanMatlAssgmt"
+						 Role="ToRole_assoc_6C7863270386AA43A9AB292F5C65EA2C"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_DC89F63CCE8BAD3C00FA80288166DD25"
+								Association="QM_INSP_PLAN_SRV.assoc_DC89F63CCE8BAD3C00FA80288166DD25"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspectionPlan"
+						 Role="FromRole_assoc_DC89F63CCE8BAD3C00FA80288166DD25"/>
+					<End EntitySet="I_BillOfOperationsUsage"
+						 Role="ToRole_assoc_DC89F63CCE8BAD3C00FA80288166DD25"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_54B7FCED6F2D0FDFDC39B7CBFFAC2526"
+								Association="QM_INSP_PLAN_SRV.assoc_54B7FCED6F2D0FDFDC39B7CBFFAC2526"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspectionPlan"
+						 Role="FromRole_assoc_54B7FCED6F2D0FDFDC39B7CBFFAC2526"/>
+					<End EntitySet="I_BillOfOperationsStatus"
+						 Role="ToRole_assoc_54B7FCED6F2D0FDFDC39B7CBFFAC2526"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_C2A943A553D28B8148F21A569E4B23DF"
+								Association="QM_INSP_PLAN_SRV.assoc_C2A943A553D28B8148F21A569E4B23DF"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspPlanOpCharc"
+						 Role="FromRole_assoc_C2A943A553D28B8148F21A569E4B23DF"/>
+					<End EntitySet="I_DraftAdministrativeData"
+						 Role="ToRole_assoc_C2A943A553D28B8148F21A569E4B23DF"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_0BA9B571C213F6442996037C06AF25F8"
+								Association="QM_INSP_PLAN_SRV.assoc_0BA9B571C213F6442996037C06AF25F8"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspectionPlan"
+						 Role="FromRole_assoc_0BA9B571C213F6442996037C06AF25F8"/>
+					<End EntitySet="I_UnitOfMeasure"
+						 Role="ToRole_assoc_0BA9B571C213F6442996037C06AF25F8"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_DB683E8EEC13B88366FA3127100B395D"
+								Association="QM_INSP_PLAN_SRV.assoc_DB683E8EEC13B88366FA3127100B395D"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspPlanOperation"
+						 Role="FromRole_assoc_DB683E8EEC13B88366FA3127100B395D"/>
+					<End EntitySet="C_InspPlanOperation"
+						 Role="ToRole_assoc_DB683E8EEC13B88366FA3127100B395D"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_6A87588FE62F98C6A3117FE528CAA78D"
+								Association="QM_INSP_PLAN_SRV.assoc_6A87588FE62F98C6A3117FE528CAA78D"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspPlanOperation"
+						 Role="FromRole_assoc_6A87588FE62F98C6A3117FE528CAA78D"/>
+					<End EntitySet="C_InspPlanOpCharc"
+						 Role="ToRole_assoc_6A87588FE62F98C6A3117FE528CAA78D"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_08F22BD3701877B58A34472D01B16153"
+								Association="QM_INSP_PLAN_SRV.assoc_08F22BD3701877B58A34472D01B16153"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspectionPlan"
+						 Role="FromRole_assoc_08F22BD3701877B58A34472D01B16153"/>
+					<End EntitySet="C_InspPlanOperation"
+						 Role="ToRole_assoc_08F22BD3701877B58A34472D01B16153"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_13956AD0162C0CACCF644D2FA5242F3D"
+								Association="QM_INSP_PLAN_SRV.assoc_13956AD0162C0CACCF644D2FA5242F3D"
+								sap:creatable="false" sap:updatable="false" sap:deletable="false"
+								sap:content-version="1">
+					<End EntitySet="C_InspPlanOperation"
+						 Role="FromRole_assoc_13956AD0162C0CACCF644D2FA5242F3D"/>
+					<End EntitySet="I_DraftAdministrativeData"
+						 Role="ToRole_assoc_13956AD0162C0CACCF644D2FA5242F3D"/>
+				</AssociationSet>
+				<FunctionImport Name="Edit_InspPlan" ReturnType="QM_INSP_PLAN_SRV.ITINSPPLANEDIT"
+								m:HttpMethod="POST">
+					<Parameter Name="Booopinternalversioncounter" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="Boooperationinternalid" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="Boocharacteristicversion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="Boocharacteristic" Type="Edm.String" Mode="In" MaxLength="4"/>
+					<Parameter Name="PreserveChanges" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+				</FunctionImport>
+				<FunctionImport Name="C_InspectionPlanActivation"
+								ReturnType="QM_INSP_PLAN_SRV.C_InspectionPlanType"
+								EntitySet="C_InspectionPlan" m:HttpMethod="POST"
+								sap:action-for="QM_INSP_PLAN_SRV.C_InspectionPlanType"
+								sap:applicable-path="Activation_ac">
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+				</FunctionImport>
+				<FunctionImport Name="C_InspectionPlanCopy"
+								ReturnType="QM_INSP_PLAN_SRV.C_InspectionPlanType"
+								EntitySet="C_InspectionPlan" m:HttpMethod="POST"
+								sap:action-for="QM_INSP_PLAN_SRV.C_InspectionPlanType"
+								sap:applicable-path="Copy_ac">
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="Completecopy" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="Inspectionplanheader" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="Inspectionplanoperation" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="Inspectionplancharacteristics" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="Inspectionplanmaterial" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="KeyDate" Type="Edm.DateTime" Mode="In" Precision="0"/>
+				</FunctionImport>
+				<FunctionImport Name="C_InspectionPlanEdit"
+								ReturnType="QM_INSP_PLAN_SRV.C_InspectionPlanType"
+								EntitySet="C_InspectionPlan" m:HttpMethod="POST"
+								sap:action-for="QM_INSP_PLAN_SRV.C_InspectionPlanType"
+								sap:applicable-path="Edit_ac">
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="PreserveChanges" Type="Edm.Boolean" Mode="In" Nullable="true"/>
+				</FunctionImport>
+				<FunctionImport Name="C_InspectionPlanEditwithkeydate"
+								ReturnType="QM_INSP_PLAN_SRV.C_InspectionPlanType"
+								EntitySet="C_InspectionPlan" m:HttpMethod="POST"
+								sap:action-for="QM_INSP_PLAN_SRV.C_InspectionPlanType"
+								sap:applicable-path="Editwithkeydate_ac">
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="KeyDate" Type="Edm.String" Mode="In" MaxLength="8"/>
+				</FunctionImport>
+				<FunctionImport Name="C_InspectionPlanPreparation"
+								ReturnType="QM_INSP_PLAN_SRV.C_InspectionPlanType"
+								EntitySet="C_InspectionPlan" m:HttpMethod="POST"
+								sap:action-for="QM_INSP_PLAN_SRV.C_InspectionPlanType"
+								sap:applicable-path="Preparation_ac">
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="SideEffectsQualifier" Type="Edm.String" Mode="In"
+							   Nullable="true"/>
+				</FunctionImport>
+				<FunctionImport Name="C_InspectionPlanValidation"
+								ReturnType="QM_INSP_PLAN_SRV.ValidationFunctionResult"
+								m:HttpMethod="GET"
+								sap:action-for="QM_INSP_PLAN_SRV.C_InspectionPlanType"
+								sap:applicable-path="Validation_ac">
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="SideEffectsQualifier" Type="Edm.String" Mode="In"
+							   Nullable="true"/>
+				</FunctionImport>
+				<FunctionImport Name="C_InspPlanMatlAssgmtPreparation"
+								ReturnType="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType"
+								EntitySet="C_InspPlanMatlAssgmt" m:HttpMethod="POST"
+								sap:action-for="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType"
+								sap:applicable-path="Preparation_ac">
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="Material" Type="Edm.String" Mode="In" MaxLength="40"/>
+					<Parameter Name="Plant" Type="Edm.String" Mode="In" MaxLength="4"/>
+					<Parameter Name="InspPlanMatlAssignment" Type="Edm.String" Mode="In"
+							   MaxLength="7"/>
+					<Parameter Name="InspPlanMatlAssgmtIntVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="SideEffectsQualifier" Type="Edm.String" Mode="In"
+							   Nullable="true"/>
+				</FunctionImport>
+				<FunctionImport Name="C_InspPlanMatlAssgmtValidation"
+								ReturnType="QM_INSP_PLAN_SRV.ValidationFunctionResult"
+								m:HttpMethod="GET"
+								sap:action-for="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType"
+								sap:applicable-path="Validation_ac">
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="Material" Type="Edm.String" Mode="In" MaxLength="40"/>
+					<Parameter Name="Plant" Type="Edm.String" Mode="In" MaxLength="4"/>
+					<Parameter Name="InspPlanMatlAssignment" Type="Edm.String" Mode="In"
+							   MaxLength="7"/>
+					<Parameter Name="InspPlanMatlAssgmtIntVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="SideEffectsQualifier" Type="Edm.String" Mode="In"
+							   Nullable="true"/>
+				</FunctionImport>
+				<FunctionImport Name="C_InspPlanOpCharcPreparation"
+								ReturnType="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType"
+								EntitySet="C_InspPlanOpCharc" m:HttpMethod="POST"
+								sap:action-for="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType"
+								sap:applicable-path="Preparation_ac">
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="BOOOperationInternalID" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="BOOOpInternalVersionCounter" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="BOOCharacteristic" Type="Edm.String" Mode="In" MaxLength="4"/>
+					<Parameter Name="BOOCharacteristicVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="SideEffectsQualifier" Type="Edm.String" Mode="In"
+							   Nullable="true"/>
+				</FunctionImport>
+				<FunctionImport Name="C_InspPlanOpCharcValidation"
+								ReturnType="QM_INSP_PLAN_SRV.ValidationFunctionResult"
+								m:HttpMethod="GET"
+								sap:action-for="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType"
+								sap:applicable-path="Validation_ac">
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="BOOOperationInternalID" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="BOOOpInternalVersionCounter" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="BOOCharacteristic" Type="Edm.String" Mode="In" MaxLength="4"/>
+					<Parameter Name="BOOCharacteristicVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="SideEffectsQualifier" Type="Edm.String" Mode="In"
+							   Nullable="true"/>
+				</FunctionImport>
+				<FunctionImport Name="C_InspPlanOperationPreparation"
+								ReturnType="QM_INSP_PLAN_SRV.C_InspPlanOperationType"
+								EntitySet="C_InspPlanOperation" m:HttpMethod="POST"
+								sap:action-for="QM_INSP_PLAN_SRV.C_InspPlanOperationType"
+								sap:applicable-path="Preparation_ac">
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="BOOOperationInternalID" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="BOOOpInternalVersionCounter" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="SideEffectsQualifier" Type="Edm.String" Mode="In"
+							   Nullable="true"/>
+				</FunctionImport>
+				<FunctionImport Name="C_InspPlanOperationValidation"
+								ReturnType="QM_INSP_PLAN_SRV.ValidationFunctionResult"
+								m:HttpMethod="GET"
+								sap:action-for="QM_INSP_PLAN_SRV.C_InspPlanOperationType"
+								sap:applicable-path="Validation_ac">
+					<Parameter Name="InspectionPlanGroup" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="InspectionPlan" Type="Edm.String" Mode="In" MaxLength="2"/>
+					<Parameter Name="InspectionPlanInternalVersion" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="BOOOperationInternalID" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="BOOOpInternalVersionCounter" Type="Edm.String" Mode="In"
+							   MaxLength="8"/>
+					<Parameter Name="DraftUUID" Type="Edm.Guid" Mode="In"/>
+					<Parameter Name="IsActiveEntity" Type="Edm.Boolean" Mode="In"/>
+					<Parameter Name="SideEffectsQualifier" Type="Edm.String" Mode="In"
+							   Nullable="true"/>
+				</FunctionImport>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

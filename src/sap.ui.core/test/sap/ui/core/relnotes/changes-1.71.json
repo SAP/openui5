@@ -1,0 +1,181 @@
+{
+  "1.71.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "19c0134ffb5794ba982cde52f8b5e464bd25948a",
+        "type": "FIX",
+        "text": " CommandExecution fails on destroy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980346096"
+          }
+        ]
+      },
+      {
+        "id": "004bf53f29a745d9b1fa2e0d787202ce8a454870",
+        "type": "FIX",
+        "text": " CommandExecution: fix exception during destroy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980346096"
+          }
+        ]
+      },
+      {
+        "id": "d7c0b7bbe4835d8ef03d1fc942e2bf3d786b3305",
+        "type": "FIX",
+        "text": " ODataMessageParser: Resolve multiple nav props",
+        "references": []
+      },
+      {
+        "id": "960015d4640002c554aeed4ea71822f021eed963",
+        "type": "FEATURE",
+        "text": " Messaging: Message propagation for lists",
+        "references": []
+      },
+      {
+        "id": "5af4df25a24c3d7efc4f56e0aafda12600720f94",
+        "type": "FEATURE",
+        "text": " sap/base/util: Add extend/deepExtend modules",
+        "references": []
+      },
+      {
+        "id": "a7abf994af0b9514d55b56f90add4c6df431528b",
+        "type": "FIX",
+        "text": " ClientPropertyBinding: Make __name__ work again",
+        "references": []
+      },
+      {
+        "id": "0e2dfb688a012d2e2d5be2e3f9d5293401d6b69e",
+        "type": "FIX",
+        "text": " Device: Touch detection for Firefox desktop",
+        "references": []
+      },
+      {
+        "id": "b60e58cb2ff843a31cc8dd47e9708b41513be9e8",
+        "type": "FIX",
+        "text": " EventProvider: Allow detachEvent after attachEventOnce",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980358991"
+          }
+        ]
+      },
+      {
+        "id": "b3f65deac1841d3bf032157f0212690a53b2843b",
+        "type": "FIX",
+        "text": " ManagedObject: Destroy part bindings when calling unbindProperty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970322502"
+          }
+        ]
+      },
+      {
+        "id": "b3b1525fb7b868cc9474e1acf38354776caf3051",
+        "type": "FIX",
+        "text": " ODataMetadata: isFunction flag is set correctly",
+        "references": []
+      },
+      {
+        "id": "257872544847bf94cb287e8c55306e84fdb5f76d",
+        "type": "FIX",
+        "text": " SAP-icons: Add \"soccer\" as alias for \"soccor\" (typo)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980361059"
+          }
+        ]
+      },
+      {
+        "id": "5f7185de4284df5986ed74ec4aa54a52e9c6dcbc",
+        "type": "FIX",
+        "text": " events.PasteEventFix: fix wrongly fired paste event on non-editable elements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970213111"
+          }
+        ]
+      },
+      {
+        "id": "32d0e875f50b1410667cf8de624b9674c48bd8e0",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Changing pages with keys fast is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980357464"
+          }
+        ]
+      },
+      {
+        "id": "cec7ba1908dc6793850e9c7764c58b09c10c19b1",
+        "type": "FIX",
+        "text": " v2/ODataModel: getContext override deepPath",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970418311"
+          }
+        ]
+      },
+      {
+        "id": "9aff9caa4ffd5fbfe249c0a911b86e47112d0e8c",
+        "type": "FEATURE",
+        "text": " SAP Icons v4.5 update",
+        "references": []
+      },
+      {
+        "id": "9974cb10c80446923b813be6970ed4b83db56fb5",
+        "type": "FIX",
+        "text": " FilterProcessor: Cache normalized values for better performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980413848"
+          }
+        ]
+      },
+      {
+        "id": "7ccb18e11a03d6703fd47889ce030b5be3a7a523",
+        "type": "FIX",
+        "text": " sap.m.Carousel: visiblePagesCount now stops loop in all directions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980360836"
+          }
+        ]
+      },
+      {
+        "id": "b9c90b420926d85d7e0b7203d4113bb8bac3262e",
+        "type": "FIX",
+        "text": " sap.ui.core.date.Islamic: Customization fall-back format is always A",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "364899"
+          }
+        ]
+      },
+      {
+        "id": "6109672602f34fc93d0ea4eace25fb22ffa43d03",
+        "type": "FIX",
+        "text": " v2/ODataModel: Canonical resolving of preliminary context paths",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970399395"
+          }
+        ]
+      }
+    ]
+  }
+}

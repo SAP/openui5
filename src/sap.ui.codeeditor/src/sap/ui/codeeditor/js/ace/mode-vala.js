@@ -399,7 +399,7 @@ var ValaHighlightRules = function() {
       '#values': 
        [ { include: '#strings' },
          { include: '#object-types' },
-         { include: '#constants-and-special-vars' } ] }
+         { include: '#constants-and-special-vars' } ] };
     
     this.normalizeRules();
 };
@@ -410,7 +410,7 @@ ValaHighlightRules.metaData = {
       foldingStartMarker: '(\\{\\s*(//.*)?$|^\\s*// \\{\\{\\{)',
       foldingStopMarker: '^\\s*(\\}|// \\}\\}\\}$)',
       name: 'Vala',
-      scopeName: 'source.vala' }
+      scopeName: 'source.vala' };
 
 
 oop.inherits(ValaHighlightRules, TextHighlightRules);
@@ -439,8 +439,8 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
     
-    this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
-    this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
+    this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
+    this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
     this.tripleStarBlockCommentRe = /^\s*(\/\*\*\*).*\*\/\s*$/;
     this.startRegionRe = /^\s*(\/\*|\/\/)#?region\b/;
@@ -662,8 +662,15 @@ oop.inherits(Mode, TextMode);
     this.autoOutdent = function(state, doc, row) {
         this.$outdent.autoOutdent(doc, row);
     };
-    this.$id = "ace/mode/vala"
+    this.$id = "ace/mode/vala";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
+});                (function() {
+                    ace.require(["ace/mode/vala"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

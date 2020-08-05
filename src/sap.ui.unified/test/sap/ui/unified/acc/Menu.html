@@ -7,70 +7,142 @@
 		<script src="../shared-config.js"></script>
 		<script src="../../../../../resources/sap-ui-core.js"
 				id="sap-ui-bootstrap"
-				data-sap-ui-libs="sap.ui.unified"
-				data-sap-ui-theme="sap_bluecrystal">
+				data-sap-ui-libs="sap.ui.unified, sap.m, sap.ui.layout">
 		</script>
 
 		<script>
-			try{
-				sap.ui.getCore().loadLibrary("sap.ui.commons");
-			}catch(e){
-				alert("This test page requires the library 'sap.ui.commons' which is not available.");
-				throw(e);
+			// -----------------
+			// Utility functions
+			// -----------------
+
+			function handleMenuItemPress (oEvent) {
+				var oItem = oEvent.getParameter("item"),
+					sMsg;
+
+				if (oItem.getSubmenu()) {
+					return;
+				}
+
+				if (oItem.isA("sap.ui.unified.MenuTextFieldItem")) {
+					sMsg ="'" + oItem.getValue() + "' entered";
+				} else {
+					sMsg = "'" + oItem.getText() + "' pressed";
+				}
+
+				sap.m.MessageToast.show(sMsg)
 			}
 
-			function fillMenuButtonMenu(oMenuButton, bIcon) {
-				var aItems = [
-					{text: "View Settings", items: [], tooltip: "View settings details"},
-					{text: "Create Settings", items: [], disabled: true},
-					{text: "Create Settings", items: [], icon: "sap-icon://create" },
-					{text: "Modify Settings", divider: true, icon: "sap-icon://edit", items: [
-						{text: "Edit", items: [], tooltip: "Edit settings"},
-						{text: "Delete", items: [], tooltip: "Delete settings"},
-						{text: "Edit Metadata", items: [], tooltip: "Edit settings metadata"}
-					]}
-				];
+			function handleMenuButtonPress(oEvent) {
+				var oSource = oEvent.getSource(),
+					oMenu = getMenu();
 
-				var fillMenu = function(aItems, oMenu){
-					for(var i=0; i<aItems.length; i++){
-						var oMenuItem = new sap.ui.unified.MenuItem({text: aItems[i].text, tooltip: aItems[i].tooltip, startsSection: !!aItems[i].divider, icon: aItems[i].icon, enabled: !aItems[i].disabled});
-						oMenu.addItem(oMenuItem);
-						if(aItems[i].items.length > 0){
-							var oSubMenu = new sap.ui.unified.Menu();
-							oMenuItem.setSubmenu(oSubMenu);
-							fillMenu(aItems[i].items, oSubMenu);
-						}else{
-							var f = function(sText){
-								return function(){alert("You selected menu item '" + sText +"'.");};
-							};
-							oMenuItem.attachSelect(f(oMenuItem.getText()));
-						}
-					}
-				};
-
-				var oMenu = new sap.ui.unified.Menu({ariaDescription: "Settings"});
-				fillMenu(aItems, oMenu);
-				oMenu.addItem(new sap.ui.unified.MenuTextFieldItem({label: "Filter:", enabled: true, startsSection: true, icon: "sap-icon://filter", select: function(oEvent){
-					alert("Filter: "+oEvent.getParameter("item").getValue());
-				}}));
-				oMenu.addItem(new sap.ui.unified.MenuTextFieldItem({value: "FilterValue", label: "Another Filter:", icon: "sap-icon://filter", enabled: false, select: function(oEvent){
-					alert("Filter: "+oEvent.getParameter("item").getValue());
-				}}));
-				oMenu.addItem(new sap.ui.unified.MenuItem({text: "Clear Filter", select: function(oEvent){
-					alert("Clear Filter triggered");
-				}}));
-				oMenuButton.setMenu(oMenu);
+				oMenu.open(window.bIsKeyboardPress, oSource, sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.BeginBottom, oSource);
 			}
 
-			var oMenuButton = new sap.ui.commons.MenuButton("demoButton", {text: "Settings", tooltip: "Press the button to show the Menu"});
-			fillMenuButtonMenu(oMenuButton);
-			oMenuButton.placeAt("content");
+			function getMenu() {
+				if (!window.oMenu) {
+					window.oMenu = new sap.ui.unified.Menu({
+						itemSelect: handleMenuItemPress,
+						items: [
+							new sap.ui.unified.MenuItem({
+								text: "View Settings"
+							}),
+							new sap.ui.unified.MenuItem({
+								text: "Create Settings",
+								enabled: false
+							}),
+							new sap.ui.unified.MenuItem({
+								text: "Create Settings",
+								icon: "sap-icon://create"
+							}),
+							new sap.ui.unified.MenuItem({
+								text: "Item with ariaLabelledBy",
+								icon: "sap-icon://blank-tag",
+								ariaLabelledBy: "labelling-text"
+							}),
+							new sap.ui.unified.MenuItem({
+								text: "Modify Settings",
+								startsSection: true,
+								icon: "sap-icon://edit",
+								submenu: new sap.ui.unified.Menu({
+									itemSelect: handleMenuItemPress,
+									items: [
+										new sap.ui.unified.MenuItem({
+											text: "Edit"
+										}),
+										new sap.ui.unified.MenuItem({
+											text: "Delete"
+										}),
+										new sap.ui.unified.MenuItem({
+											text: "Edit Metadata",
+											enabled: false
+										})
+									]
+								})
+							}),
+							new sap.ui.unified.MenuTextFieldItem({
+								icon: "sap-icon://filter",
+								label: "Filter",
+								startsSection: true,
+								select: handleMenuItemPress
+							}),
+							new sap.ui.unified.MenuTextFieldItem({
+								icon: "sap-icon://filter",
+								label: "Another Filter",
+								value: "FilterValue",
+								enabled: false,
+								select: handleMenuItemPress
+							}),
+							new sap.ui.unified.MenuItem({
+								text: "Clear filter"
+							})
+						]
+					});
+				}
 
+				return window.oMenu;
+			}
+
+
+			// -------------------
+			// Control preparation
+			// -------------------
+
+			var oTextForLabelling = new sap.m.Text("labelling-text", {
+				text: "This text will be used as a label for one menu item"
+			});
+
+			var oMenuButton = new sap.m.Button({
+				text: "Open settings menu",
+				press: handleMenuButtonPress
+			});
+
+			oMenuButton.attachBrowserEvent("tap keyup", function (oEvent) {
+				window.bIsKeyboardPress = (oEvent.type === "keyup");
+			});
+
+
+			// -------------
+			// Page's layout
+			// -------------
+
+			var oLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					oTextForLabelling,
+					oMenuButton
+				]
+			});
+
+			oLayout.placeAt("content");
 		</script>
+
+		<style>
+			html, body {
+				width: 100%;
+				height: 100%;
+			}
+		</style>
 	</head>
-	<body class="sapUiBody" role="application">
-		<h2 style="margin:5px;margin-bottom:15px">sap.ui.unified.Menu</h2>
-		<h3 style="margin:5px">Menu with items in all different states (enabled/disabled, with/without icon, with/without sub menu, filter field item)</h3>
-		<div style="padding:5px" id="content"></div>
+	<body id="content" class="sapUiBody">
 	</body>
 </html>

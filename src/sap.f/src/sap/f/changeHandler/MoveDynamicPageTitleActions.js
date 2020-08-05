@@ -36,11 +36,14 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 			var oMovedElement = oModifier.bySelector(oMovedElementInfo.selector, oAppComponent, oView),
 				iTargetIndex = oMovedElementInfo.targetIndex;
 
-			oModifier.getAggregation(oControl, ACTION_AGGREGATION_NAME).forEach(function(oButton){
+			oModifier.getAggregation(oControl, ACTION_AGGREGATION_NAME).forEach(function(oButton, iIndex) {
 				if (oModifier.getId(oButton) === oModifier.getId(oMovedElement)) {
 					oModifier.removeAggregation(oControl, ACTION_AGGREGATION_NAME, oButton);
-
 					oModifier.insertAggregation(oControl, "dependents", oButton, undefined, oView);
+
+					oChange.setRevertData({
+						index: iIndex
+					});
 				}
 			});
 
@@ -62,10 +65,11 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 			var oModifier = mPropertyBag.modifier,
 				oView = mPropertyBag.view,
 				oAppComponent = mPropertyBag.appComponent,
-				oMovedElementInfo = oChange.getDefinition().content.movedElements[0];
+				oMovedElementInfo = oChange.getDefinition().content.movedElements[0],
+				oRevertData = oChange.getRevertData();
 
 			var oMovedElement = oModifier.bySelector(oMovedElementInfo.selector, oAppComponent, oView),
-				iTargetIndex = oMovedElementInfo.targetIndex,
+				iTargetIndex = oRevertData ? oRevertData.index : oMovedElementInfo.targetIndex,
 				iSourceIndex = oMovedElementInfo.sourceIndex;
 
 			oModifier.removeAggregation(oControl, ACTION_AGGREGATION_NAME, oMovedElement, iTargetIndex, oView);
@@ -85,7 +89,6 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 		 * @public
 		 */
 		MoveActions.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
-
 			var oModifier = mPropertyBag.modifier,
 				oAppComponent = mPropertyBag.appComponent,
 				oChangeData = oChange.getDefinition();

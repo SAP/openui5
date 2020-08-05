@@ -1,0 +1,52 @@
+/* ================================= */
+/* CSS for control sap.m/Panel       */
+/* Quartz High Contrast Black theme  */
+/* ================================= */
+
+.sapMPanel {
+	min-height: 2.5rem;
+}
+
+.sapMPanelBGSolid {
+	background-color: @sapUiBaseBG;
+}
+
+.sapMPanelBGTranslucent {
+	/* In order to avoid over-styling, we need to change the default behavior to transparent for belize.
+	We cannot change it via the design property, because this change will be backward incompatible.*/
+	background-color: @sapUiBaseBG;
+}
+
+.sapMPanelBGTransparent {
+	background-color: @sapUiBaseBG;
+}
+
+/* if Panel is not expandable, we do wish header to come with own border */
+.sapMPanel > .sapMPanelHdr,
+/* notice: sapMPanelWrappingDiv is available if Panel is expandable */
+.sapMPanelWrappingDiv,
+/* do not want border if expanded and if only header text */
+.sapMPanelWrappingDivTb {
+	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+}
+
+.sapMPanelContent:not(.sapMPanelBGTransparent) {
+	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+}
+
+.sapMPanel .sapMPanelHdr {
+	line-height: 2.75rem;
+	height: 2.75rem;
+	font-family: @sapUiFontHeaderFamily;
+	font-size: @sapMFontHeader4Size;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiGroupTitleTextColor;
+}
+
+.sapMPanelWrappingDiv .sapUiIcon {
+	width: 2.25rem;
+}
+
+.sapUiSizeCompact .sapMPanelWrappingDiv .sapUiIcon {
+	width: 2rem;
+}

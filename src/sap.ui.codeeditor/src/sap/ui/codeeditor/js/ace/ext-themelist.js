@@ -1,6 +1,5 @@
-ace.define("ace/ext/themelist",["require","exports","module","ace/lib/fixoldbrowsers"], function(require, exports, module) {
+ace.define("ace/ext/themelist",["require","exports","module"], function(require, exports, module) {
 "use strict";
-require("ace/lib/fixoldbrowsers");
 
 var themeData = [
     ["Chrome"         ],
@@ -21,6 +20,7 @@ var themeData = [
     ["Ambiance"             ,"ambiance"                ,  "dark"],
     ["Chaos"                ,"chaos"                   ,  "dark"],
     ["Clouds Midnight"      ,"clouds_midnight"         ,  "dark"],
+    ["Dracula"              ,""                        ,  "dark"],
     ["Cobalt"               ,"cobalt"                  ,  "dark"],
     ["Gruvbox"              ,"gruvbox"                 ,  "dark"],
     ["Green on Black"       ,"gob"                     ,  "dark"],
@@ -55,8 +55,11 @@ exports.themes = themeData.map(function(data) {
     return theme;
 });
 
-});
-                (function() {
-                    ace.require(["ace/ext/themelist"], function() {});
+});                (function() {
+                    ace.require(["ace/ext/themelist"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
                 })();
             

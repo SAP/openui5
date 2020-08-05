@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head lang="en">
+		<meta charset="UTF-8">
+		<title>sap.f.GridListItem test page</title>
+
+		<script type="text/javascript"
+				src="../../../resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.f, sap.m"
+				data-sap-ui-theme="sap_belize">
+		</script>
+
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/f/GridList",
+					"sap/ui/layout/cssgrid/GridBoxLayout",
+					"sap/m/CustomListItem",
+					"sap/m/VBox",
+					"sap/m/Text",
+					"sap/m/GroupHeaderListItem",
+					"sap/ui/model/json/JSONModel",
+					"sap/ui/model/Sorter"
+				], function (
+						GridList,
+						GridBoxLayout,
+						CustomListItem,
+						VBox,
+						Text,
+						GroupHeaderListItem,
+						JSONModel,
+						Sorter
+				) {
+					var oGrid = new GridList({
+						growing: true,
+						growingThreshold: 4,
+						customLayout: new GridBoxLayout({
+							minBoxWidth: "200px"
+						}),
+						items: {
+							path: "/Objects",
+							sorter: new Sorter("Category", false, true),
+							groupHeaderFactory: function (oGroup) {
+								return new GroupHeaderListItem({
+									title: oGroup.key
+								});
+							},
+							template: new CustomListItem({
+								content: new VBox({
+									items: new Text({
+										text: "{Name}"
+									})
+								})
+							})
+						}
+					});
+
+					var oData = {
+						Objects: [
+							{ Name: "1", Category: "A" },
+							{ Name: "2 ashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfash", Category: "B" },
+							{ Name: "3", Category: "A" },
+							{ Name: "4", Category: "B" },
+							{ Name: "5 ashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfash ashfash ashfash", Category: "B" },
+							{ Name: "6", Category: "B" },
+							{ Name: "7", Category: "A" },
+							{ Name: "8", Category: "A" },
+							{ Name: "9", Category: "A" },
+							{ Name: "10", Category: "A" },
+							{ Name: "11", Category: "B" },
+							{ Name: "12 ashfash ashfash ashfash ashfash ashfashasg asga sga sg ", Category: "B" },
+							{ Name: "13", Category: "B" },
+							{ Name: "14", Category: "B" },
+							{ Name: "25", Category: "B" }
+						]
+					};
+					var oModel = new JSONModel();
+					oModel.setData(oData);
+
+					oGrid.setModel(oModel);
+
+					oGrid.placeAt('body');
+				});
+			});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

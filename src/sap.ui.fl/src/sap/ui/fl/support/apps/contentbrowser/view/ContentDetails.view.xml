@@ -1,8 +1,6 @@
-<core:View xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc"
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m" controllerName="sap.ui.fl.support.apps.contentbrowser.controller.ContentDetails"
-	xmlns:f="sap.ui.layout.form"
-	xmlns:html="http://www.w3.org/1999/xhtml">
+	xmlns:f="sap.ui.layout.form">
 	<Page
 		title="{path: 'selectedContent>/', formatter: '.oDataUtils.formatItemTitle'}">
 		<IconTabBar id="contentDetailsIconTabBar">
@@ -52,4 +50,4 @@
 			</Toolbar>
 		</footer>
 	</Page>
-</core:View>
+</mvc:View>

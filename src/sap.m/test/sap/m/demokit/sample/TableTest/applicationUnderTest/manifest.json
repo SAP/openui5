@@ -1,0 +1,25 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TableTest.applicationUnderTest",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"./view/Table.view.xml",
+					"./view/Table.controller.js",
+					"./view/Formatter.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

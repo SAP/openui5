@@ -1,0 +1,100 @@
+<mvc:View
+	controllerName="sap.ui.layout.sample.GridResponsiveness.GridResponsiveness"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:form="sap.ui.layout.form">
+	<ToggleButton
+		id="revealGrid"
+		text="Reveal Grid"
+		press="onRevealGrid"
+		class="sapUiSmallMargin"/>
+	<Slider
+		value="100"
+		liveChange=".onSliderMoved"
+		class="sapUiSmallMarginBottom" />
+	<Panel id="panelCSSGrid">
+		<headerToolbar>
+			<OverflowToolbar height="3rem">
+				<Title text="GridResponsiveness example" />
+			</OverflowToolbar>
+		</headerToolbar>
+		<Text class="message sapUiSmallMarginBottom" id="infoTxt" width="100%" text="Layout size is: " />
+		<Text text="Responsive behaviour is fully configurable by the developer. It is possible to pass a GridResponsiveLayout to the customLayout aggregation of the CSSGrid and configure how it will look in different breakpoints (S, M, L, XL). The breakpoints can be calculated either by the screen size or by the grid container (with containerQuery property)." />
+		<HBox alignItems="Center" renderType="Bare" class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+			<Text text="GridResponsiveLayout containerQuery:" class="sapUiTinyMarginEnd" />
+			<SegmentedButton selectionChange="onSegmentedButtonChange" selectedKey="false">
+				<items>
+					<SegmentedButtonItem key="true" text="true" />
+					<SegmentedButtonItem key="false" text="false" />
+				</items>
+			</SegmentedButton>
+		</HBox>
+		<grid:CSSGrid id="grid1">
+			<grid:customLayout>
+				<grid:GridResponsiveLayout layoutChange="onLayoutChange">
+					<grid:layoutS>
+						<grid:GridSettings
+							gridTemplateColumns="repeat(auto-fit, 8rem)"
+							gridAutoRows="5rem"
+							gridRowGap="1rem"
+							gridColumnGap="1rem">
+						</grid:GridSettings>
+					</grid:layoutS>
+					<grid:layout>
+						<grid:GridSettings
+							gridTemplateColumns="repeat(auto-fit, 12rem)"
+							gridAutoRows="5rem"
+							gridRowGap="1rem"
+							gridColumnGap="1rem">
+						</grid:GridSettings>
+					</grid:layout>
+					<grid:layoutXL>
+						<grid:GridSettings
+							gridTemplateColumns="repeat(auto-fit, 20rem)"
+							gridAutoRows="5rem"
+							gridRowGap="1rem"
+							gridColumnGap="1rem">
+						</grid:GridSettings>
+					</grid:layoutXL>
+				</grid:GridResponsiveLayout>
+			</grid:customLayout>
+			<VBox class="demoBox">
+				<Text text="A" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="B" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="C" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="D" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="E" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="F" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="G" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="H" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="I" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="J" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="K" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="L" wrapping="true" />
+			</VBox>
+		</grid:CSSGrid>
+	</Panel>
+</mvc:View>

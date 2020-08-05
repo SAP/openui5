@@ -4,18 +4,18 @@
 
 // Provides class sap.ui.dt.AggregationOverlay.
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/dt/Overlay',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/Util'
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/Util",
+	"sap/base/util/merge"
 ],
 function(
 	jQuery,
 	Overlay,
-	OverlayRegistry,
 	ElementUtil,
-	Util
+	Util,
+	merge
 ) {
 	"use strict";
 
@@ -28,7 +28,7 @@ function(
 	 * @class
 	 * The AggregationOverlay allows to create an absolute positioned DIV above the aggregation
 	 * of an element.
-	 * @extends sap.ui.core.Overlay
+	 * @extends sap.ui.dt.Overlay
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -77,8 +77,7 @@ function(
 	 * @override
 	 */
 	AggregationOverlay.prototype._getAttributes = function () {
-		return jQuery.extend(
-			true,
+		return merge(
 			{},
 			Overlay.prototype._getAttributes.apply(this, arguments),
 			{
@@ -141,27 +140,33 @@ function(
 
 			if (this.isRendered()) {
 				var iPositionInDom = this._getChildIndex(oChild);
-				var $Child = oChild.isRendered() ? oChild.$() : oChild.render(true);
-				var iCurrentPosition = this._$children.find('>').index($Child);
+				var bChildRendered = oChild.isRendered();
+				var $Child = bChildRendered ? oChild.$() : oChild.render(true);
+				var $Children = jQuery(this.getChildrenDomRef());
+				var iCurrentPosition = $Children.find('>').index($Child);
 				var iInsertIndex;
 
 				if (iCurrentPosition !== iPositionInDom) {
 					if (iPositionInDom > 0) {
 						iInsertIndex = iCurrentPosition > -1 && iCurrentPosition < iPositionInDom ? iPositionInDom : iPositionInDom - 1;
-						this._$children.find('>').eq(iInsertIndex).after($Child);
+						$Children.find('>').eq(iInsertIndex).after($Child);
 					} else {
 						iInsertIndex = iPositionInDom; // === 0
-						this._$children.prepend($Child);
+						$Children.prepend($Child);
 					}
 				}
 
-				oChild.fireAfterRendering({
-					domRef: $Child.get(0)
-				});
+				if (!bChildRendered) {
+					oChild.fireAfterRendering({
+						domRef: $Child.get(0)
+					});
+				}
 			}
 
 			this.fireChildAdded();
+			return true;
 		}
+		return false;
 	};
 
 	/**
@@ -190,9 +195,20 @@ function(
 	 */
 	AggregationOverlay.prototype._getRenderingParent = function () {
 		if (Util.isInteger(this.getScrollContainerId())) {
-			return this.getParent().getScrollContainerByIndex(this.getScrollContainerId());
-		} else {
-			return Overlay.prototype._getRenderingParent.apply(this, arguments);
+			return this.getParent().getScrollContainerById(this.getScrollContainerId());
+		}
+		return Overlay.prototype._getRenderingParent.apply(this, arguments);
+	};
+
+	/**
+	 * @override
+	 */
+	AggregationOverlay.prototype._setPosition = function ($Target, oGeometry, $Parent, bForceScrollbarSync) {
+		// Apply Overlay position first, then extra logic based on this new position
+		Overlay.prototype._setPosition.apply(this, arguments);
+
+		if (oGeometry.domRef && !Util.isInteger(this.getScrollContainerId())) {
+			this._handleOverflowScroll(oGeometry, this.$(), this.getParent(), bForceScrollbarSync);
 		}
 	};
 
@@ -250,4 +266,4 @@ function(
 	};
 
 	return AggregationOverlay;
-}, /* bExport= */ true);
+});

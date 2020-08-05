@@ -2,7 +2,7 @@
  * STYLE ADAPTATIONS OF COMMONS CONTROLS FOR SAP.UI.TABLE.TABLE
  ******************************************************************************/
 
-.sapUiTableCell {
+.sapUiTableDataCell > .sapUiTableCellInner {
 
 	> .sapUiTv,
 	> .sapUiLbl,
@@ -16,7 +16,7 @@
 		font-weight: normal;
 		font-size: 12px;
 	}
-	
+
 	> .sapUiTf,
 	> .sapUiSearchField,
 	> .sapUiSearchField > .sapUiTfCombo,
@@ -65,8 +65,8 @@
 
 }
 
-html[data-sap-ui-browser^="ie"] .sapUiTableCell,
-html[data-sap-ui-browser^="ed"] .sapUiTableCell {
+html[data-sap-ui-browser^="ie"] .sapUiTableDataCell > .sapUiTableCellInner,
+html[data-sap-ui-browser^="ed"] .sapUiTableDataCell > .sapUiTableCellInner {
 
 	> .sapUiLnk:focus {
 		outline: none;
@@ -87,11 +87,11 @@ html[data-sap-ui-browser^="ed"] .sapUiTableCell {
 
 }
 
-.sapUiAnalyticalTable .sapUiTableCell > .sapUiTv {
+.sapUiAnalyticalTable .sapUiTableDataCell > .sapUiTableCellInner > .sapUiTv {
 	font-size: 0.875rem;
 }
 
-.sapUiTableRowHidden .sapUiTableCell > .sapUiImg {
+.sapUiTableRowHidden .sapUiTableDataCell > .sapUiTableCellInner > .sapUiImg {
 	display: none; /* images will be removed to avoid pushing the height of the line */
 }
 
@@ -121,7 +121,7 @@ tr.sapUiTableRowHvr {
 	background-color: @sapUiListBackground;
 }
 
-.sapUiTableColCell {
+.sapUiTableHeaderCell {
 
 	.sapUiLbl {
 		border: none;
@@ -139,11 +139,11 @@ tr.sapUiTableRowHvr {
 	}
 }
 
-.sapUiAnalyticalTable .sapUiTableColCell .sapUiLbl {
+.sapUiAnalyticalTable .sapUiTableHeaderCell .sapUiLbl {
 	font-weight: bold;
 }
 
-.sapUiTableCol:hover {
+.sapUiTableHeaderCell:hover {
 
 	.sapUiLbl,
 	.sapUiTf,

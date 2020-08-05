@@ -6,28 +6,29 @@
  * @version @version@
  */
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/FlexItemData',
-		'sap/m/HBox',
-		'sap/m/MessageBox',
-		'sap/ui/core/mvc/View', // sap.ui.view()
-		'sap/ui/core/mvc/ViewType',
-		'sap/ui/core/sample/common/Component',
-		'sap/ui/model/BindingMode',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/odata/AnnotationHelper',
-		'sap/ui/model/odata/v2/ODataModel',
-		'sap/ui/model/odata/v4/ODataModel',
-		'sap/ui/test/TestUtils',
-		'jquery.sap.script'
-	], function(jQuery, FlexItemData, HBox, MessageBox, View, ViewType, BaseComponent, BindingMode,
-		JSONModel, AnnotationHelper, ODataModelV2, ODataModelV4, TestUtils /*, jQuerySapScript*/) {
+	"sap/m/FlexItemData",
+	"sap/m/MessageBox",
+	"sap/ui/core/library",
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/mvc/View", // sap.ui.view()
+	"sap/ui/core/sample/common/Component",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/test/TestUtils"
+], function (FlexItemData, MessageBox, library, LocaleData, View, BaseComponent, BindingMode,
+		JSONModel, ODataModelV2, ODataModelV4, TestUtils) {
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = library.mvc.ViewType;
 
 	return BaseComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
 		metadata : "json",
 		createContent : function () {
-			var oModelV2,
+			var oLocaleData = new LocaleData(sap.ui.getCore().getConfiguration().getLocale()),
+				oModelV2,
 				oModelV4,
 				bRealOData = TestUtils.isRealOData(),
 				oRootView,
@@ -65,8 +66,7 @@ sap.ui.define([
 			}
 
 			oModelV2 = new ODataModelV2({
-				annotationURI : jQuery.sap.getModulePath(
-					"sap.ui.core.sample.ViewTemplate.types.data", "/") + "annotationsV2.xml",
+				annotationURI : sap.ui.require.toUrl("sap/ui/core/sample/ViewTemplate/types/data/annotationsV2.xml"),
 				defaultBindingMode : BindingMode.TwoWay,
 				serviceUrl : sUriV2,
 				useBatch : bRealOData
@@ -79,49 +79,69 @@ sap.ui.define([
 			});
 
 			oModelV2.getMetaModel().loaded().then(function () {
-				var oMetaModel = oModelV2.getMetaModel(),
-					oView = sap.ui.view({
-						preprocessors : {
-							xml : {
-								bindingContexts : {meta : oMetaModel.createBindingContext(
-									"/dataServices/schema/0/entityType/0")
-								},
-								models : {meta : oMetaModel}
-							}
-						},
-						type : ViewType.XML,
-						viewName : "sap.ui.core.sample.ViewTemplate.types.TemplateV2"
+				var oMetaModel = oModelV2.getMetaModel();
+
+				View.create({
+					preprocessors : {
+						xml : {
+							bindingContexts : {meta : oMetaModel.createBindingContext(
+								"/dataServices/schema/0/entityType/0")
+							},
+							models : {meta : oMetaModel}
+						}
+					},
+					type : ViewType.XML,
+					viewName : "sap.ui.core.sample.ViewTemplate.types.TemplateV2"
+				}).then(function (oView) {
+					oView.setLayoutData(new FlexItemData({growFactor : 1.0, baseSize : "0%"}));
+					oRootView.loaded().then(function() {
+						oRootView.byId("identificationBox").addItem(oView);
 					});
-				oView.setLayoutData(new FlexItemData({growFactor : 1.0, baseSize : "0%"}));
-				oRootView.byId("identificationBox").addItem(oView);
-				mViews["false"] = oView;
+					mViews["false"] = oView;
+				});
 			}, onError);
 
 			oModelV4.getMetaModel()
 				.requestObject("/com.sap.gateway.default.zui5_edm_types_v4.v0001.EdmTypes")
 				.then(function () {
-					var oMetaModel = oModelV4.getMetaModel(),
-						oView = sap.ui.view({
-							preprocessors : {
-								xml : {
-									bindingContexts : {meta : oMetaModel.createBindingContext(
-										"/com.sap.gateway.default.zui5_edm_types_v4.v0001.EdmTypes")
-									},
-									models : {meta : oMetaModel}
-								}
-							},
-							type : ViewType.XML,
-							viewName : "sap.ui.core.sample.ViewTemplate.types.TemplateV4"
-						});
-					oView.setLayoutData(new FlexItemData({growFactor : 1.0, baseSize : "0%"}));
-					mViews["true"] = oView;
+					var oMetaModel = oModelV4.getMetaModel();
+
+					View.create({
+						preprocessors : {
+							xml : {
+								bindingContexts : {meta : oMetaModel.createBindingContext(
+									"/com.sap.gateway.default.zui5_edm_types_v4.v0001.EdmTypes")
+								},
+								models : {meta : oMetaModel}
+							}
+						},
+						type : ViewType.XML,
+						viewName : "sap.ui.core.sample.ViewTemplate.types.TemplateV4"
+					}).then(function (oView) {
+						oView.setLayoutData(new FlexItemData({growFactor : 1.0, baseSize : "0%"}));
+						mViews["true"] = oView;
+					});
 				}, onError);
 
 			oRootView = sap.ui.view({
+				async : true,
 				models : {
 					undefined : oModelV2,
 					ui : new JSONModel({
-						codeVisible : false,
+						sCode : "",
+						bCodeVisible : false,
+						iMessages : 0,
+						patterns : {
+							dateMedium : oLocaleData.getDatePattern("medium"),
+							dateShort : oLocaleData.getDatePattern("short"),
+							dateTimeLong :
+								oLocaleData.getCombinedDateTimePattern("long", "long"),
+							dateTimeMedium :
+								oLocaleData.getCombinedDateTimePattern("medium", "medium"),
+							timeLong : oLocaleData.getTimePattern("long"),
+							timeMedium : oLocaleData.getTimePattern("medium"),
+							timeShort : oLocaleData.getTimePattern("short")
+						},
 						realOData : bRealOData,
 						v2 : true,
 						v4 : false

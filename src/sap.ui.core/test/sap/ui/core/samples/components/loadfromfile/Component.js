@@ -4,8 +4,8 @@
 
 /* USED IN COMPONENTS QUNIT TEST, DO NOT CHANGE METADATA WITHOUT REFLECTING CHANGES IN Component.qunit.html!!!*/
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Component', 'sap/ui/core/UIComponent'],
-	function(jQuery, Component1, UIComponent) {
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
 	"use strict";
 
 

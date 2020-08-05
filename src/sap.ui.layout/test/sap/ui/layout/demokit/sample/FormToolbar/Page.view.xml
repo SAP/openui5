@@ -11,7 +11,7 @@
 			ariaLabelledBy="Title1">
 			<f:toolbar>
 				<Toolbar id="TB1">
-					<Title id="Title1" text="Address" level="H4" titleStyle="H4"/>
+					<Title id="Title1" text="Address"/>
 					<ToolbarSpacer />
 					<Button icon="sap-icon://settings"/>
 					<Button icon="sap-icon://drop-down-list" />
@@ -37,7 +37,7 @@
 				<f:FormContainer ariaLabelledBy="Title2">
 					<f:toolbar>
 						<Toolbar>
-							<Title id="Title2" text="Office" level="H5" titleStyle="H5"/>
+							<Title id="Title2" text="Office"/>
 							<ToolbarSpacer />
 							<Button icon="sap-icon://settings"/>
 						</Toolbar>
@@ -84,7 +84,7 @@
 				<f:FormContainer ariaLabelledBy="Title3">
 					<f:toolbar>
 						<Toolbar>
-							<Title id="Title3" text="Online" level="H5" titleStyle="H5"/>
+							<Title id="Title3" text="Online"/>
 							<ToolbarSpacer />
 							<Button icon="sap-icon://settings"/>
 						</Toolbar>

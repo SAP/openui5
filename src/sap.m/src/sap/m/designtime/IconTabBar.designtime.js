@@ -20,7 +20,7 @@ sap.ui.define([],
 			},
 			aggregations: {
 				items: {
-					domRef: ":sap-domref > .sapMITH > .sapMITBScrollContainer > .sapMITBHead",
+					domRef: ":sap-domref > .sapMITH",
 					actions: {
 						move: "moveControls"
 					}
@@ -45,4 +45,4 @@ sap.ui.define([],
 			}
 		};
 
-	}, /* bExport= */ false);
+	});

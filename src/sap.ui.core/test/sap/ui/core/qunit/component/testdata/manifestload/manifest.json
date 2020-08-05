@@ -1,0 +1,15 @@
+{
+	"sap.app": {
+		"id": "sap.ui.test.manifestload"
+	},
+	"sap.ui5": {
+		"someValue": "someValue456",
+		"dependencies": {
+			"libs": {
+			},
+			"components": {
+				"sap.ui.test.manifestload": {}
+			}
+		}
+	}
+}

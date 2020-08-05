@@ -4,22 +4,22 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/OperationMode",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, MockServer, ODataModel, JSONModel, OperationMode, TableExampleUtils) {
+	"sap/m/ToolbarSpacer"
+], function(Controller, MockServer, ODataModel, JSONModel, OperationMode, ToolbarSpacer) {
 	"use strict";
 
 	var sServiceUrl = "http://my.test.service.com/";
 
 	return Controller.extend("sap.ui.table.sample.OData.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			this.oMockServer = new MockServer({
 				rootUri : sServiceUrl
 			});
 
 			MockServer.config({autoRespondAfter: 2000});
 
-			var sMockDataPath = jQuery.sap.getModulePath("sap.ui.table.sample.OData");
+			var sMockDataPath = sap.ui.require.toUrl("sap/ui/table/sample/") + "OData";
 			this.oMockServer.simulate(sMockDataPath + "/metadata.xml", {
 				sMockdataBaseUrl : sMockDataPath,
 				bGenerateMissingMockData : true
@@ -41,9 +41,15 @@ sap.ui.define([
 				oUiData.operationModes.push({name: OperationMode[mode]});
 			}
 			oView.setModel(new JSONModel(oUiData), "ui");
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/OData"));
+			}, function(oError){/*ignore*/});
 		},
 
-		onExit : function () {
+		onExit : function() {
 			this.oBusyIndicator.destroy();
 			this.oBusyIndicator = null;
 
@@ -70,7 +76,7 @@ sap.ui.define([
 		onOperationModeChange : function(oEvent) {
 			this.getTable().bindRows({
 				path: "/ProductSet",
-				parameters: {operationMode: oEvent.getParameter("key")}
+				parameters: {operationMode: oEvent.getParameter("item").getKey()}
 			});
 			this.initBindingEventHandler();
 			this.onModelRefresh();
@@ -87,10 +93,6 @@ sap.ui.define([
 			oBinding.attachDataReceived(function(){
 				oTable.setNoData(null); //Use default again ("No Data" in case no data is available)
 			});
-		},
-
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.OData", "/info.json"), oEvent.getSource());
 		}
 
 	});

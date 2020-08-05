@@ -5,18 +5,18 @@ sap.ui.define([
 ], function (Controller, JSONModel, ResourceModel) {
 	"use strict";
 
-	return Controller.extend("webapp.controller.Main", {
+	return Controller.extend("appUnderTest.controller.Main", {
 
 		onInit: function () {
 			// set I18N model
-			var oI18NModel = new ResourceModel({ bundleName: "webapp.i18n.i18n"});
+			var oI18NModel = new ResourceModel({ bundleName: "appUnderTest.i18n.i18n"});
 			this.getView().setModel(oI18NModel, "i18n");
 		},
 
 		onLoadProducts : function () {
 			if (!this.getView().getModel()) {
 				// set products model
-				var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+				var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 				this.getView().setModel(oModel);
 			}
 		},

@@ -12,23 +12,26 @@
 
 // Provides class sap.m.semantic.ShareMenu
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/base/Metadata',
+	'sap/ui/base/Object',
 	'sap/ui/base/ManagedObjectObserver',
+	'sap/m/library',
 	'sap/m/Button',
 	'sap/m/OverflowToolbarLayoutData',
 	'sap/ui/core/IconPool',
 	'sap/m/OverflowToolbarButton',
-	'sap/m/OverflowToolbarPriority'],
-	function(jQuery,
-			 Metadata,
+	"sap/base/Log"],
+	function(BaseObject,
 			 ManagedObjectObserver,
+			 library,
 			 Button,
 			 OverflowToolbarLayoutData,
 			 IconPool,
 			 OverflowToolbarButton,
-			 OverflowToolbarPriority) {
+			 Log) {
 	"use strict";
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 	/**
 	 * Constructor for an sap.m.semantic.ShareMenu.
@@ -44,11 +47,11 @@ sap.ui.define([
 	 * @alias sap.m.semantic.ShareMenu
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ShareMenu = Metadata.createClass("sap.m.semantic.ShareMenu", {
+	var ShareMenu = BaseObject.extend("sap.m.semantic.ShareMenu", {
 
 		constructor : function(oActionSheet) {
 			if (!oActionSheet) {
-				jQuery.sap.log.error("missing argumment: constructor expects an actionsheet reference", this);
+				Log.error("missing argumment: constructor expects an actionsheet reference", this);
 				return;
 			}
 
@@ -56,6 +59,10 @@ sap.ui.define([
 			this._oContentObserver = new ManagedObjectObserver(this._updateShareBtnVisibility.bind(this));
 
 			this._setMode(ShareMenu._Mode.initial);
+		},
+
+		getInterface: function() {
+			return this; // no facade
 		}
 
 	});
@@ -339,7 +346,7 @@ sap.ui.define([
 	ShareMenu.prototype._setMode = function (sMode, bSuppressInvalidate, oBaseButton) {
 
 		if (!ShareMenu._Mode[sMode]) {
-			jQuery.sap.log.error("unknown shareMenu mode " + sMode, this);
+			Log.error("unknown shareMenu mode " + sMode, this);
 			return this;
 		}
 
@@ -404,7 +411,7 @@ sap.ui.define([
 
 			this._oShareMenuBtn.addEventDelegate({
 				onAfterRendering: function() {
-					that._oShareMenuBtn.$().attr("aria-haspopup", true);
+					that._oShareMenuBtn.$().attr("aria-haspopup", "menu");
 				}
 			});
 		}
@@ -487,4 +494,4 @@ sap.ui.define([
 
 	return ShareMenu;
 
-}, /* bExport= */ false);
+});

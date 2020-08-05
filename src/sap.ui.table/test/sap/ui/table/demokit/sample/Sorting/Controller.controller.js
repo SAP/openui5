@@ -1,16 +1,21 @@
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/table/SortOrder",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, SortOrder, Sorter, JSONModel, DateFormat, TableExampleUtils) {
+	"sap/m/ToolbarSpacer",
+	"sap/ui/table/library",
+	"sap/ui/thirdparty/jquery"
+], function(Log, Controller, Sorter, JSONModel, DateFormat, ToolbarSpacer, library, jQuery) {
 	"use strict";
+
+	// shortcut for sap.ui.table.SortOrder
+	var SortOrder = library.SortOrder;
 
 	return Controller.extend("sap.ui.table.sample.Sorting.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			var oView = this.getView();
@@ -19,6 +24,12 @@ sap.ui.define([
 			//Initial sorting
 			var oProductNameColumn = oView.byId("name");
 			oView.byId("table").sort(oProductNameColumn, SortOrder.Ascending);
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Sorting"));
+			}, function(oError){/*ignore*/});
 		},
 
 		initSampleDataModel : function() {
@@ -26,20 +37,20 @@ sap.ui.define([
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					var aTemp1 = [];
 					var aTemp2 = [];
 					var aSuppliersData = [];
 					var aCategoryData = [];
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
-						if (oProduct.SupplierName && jQuery.inArray(oProduct.SupplierName, aTemp1) < 0) {
+						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
 						}
-						if (oProduct.Category && jQuery.inArray(oProduct.Category, aTemp2) < 0) {
+						if (oProduct.Category && aTemp2.indexOf(oProduct.Category) < 0) {
 							aTemp2.push(oProduct.Category);
 							aCategoryData.push({Name: oProduct.Category});
 						}
@@ -54,8 +65,8 @@ sap.ui.define([
 
 					oModel.setData(oData);
 				},
-				error: function () {
-					jQuery.sap.log.error("failed to load json");
+				error: function() {
+					Log.error("failed to load json");
 				}
 			});
 
@@ -132,10 +143,6 @@ sap.ui.define([
 			for (var i = 0; i < aColumns.length; i++) {
 				aColumns[i].setSorted(false);
 			}
-		},
-
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Sorting", "/info.json"), oEvent.getSource());
 		}
 
 	});

@@ -2,11 +2,12 @@
 
 sap.ui.define(
 	[
-		"sap/m/NavContainer",
-		"sap/m/SplitContainer",
-		"qunit/routing/async/helpers"
+	    "sap/m/NavContainer",
+	    "sap/m/SplitContainer",
+	    "./helpers",
+	    "sap/ui/Device"
 	],
-	function (NavContainer, SplitContainer, helpers) {
+	function(NavContainer, SplitContainer, helpers, Device) {
 		"use strict";
 
 		return {
@@ -60,7 +61,7 @@ sap.ui.define(
 						}
 					});
 
-					this.stub(sap.ui.Device.system, "phone", false);
+					this.stub(Device.system, "phone").value(false);
 
 					helpers.setViewDelays({
 						MasterDummy: 100,
@@ -122,7 +123,7 @@ sap.ui.define(
 						}
 					});
 
-					this.stub(sap.ui.Device.system, "phone", false);
+					this.stub(Device.system, "phone").value(false);
 
 					helpers.setViewDelays({
 						SecondMaster: 70,
@@ -222,7 +223,7 @@ sap.ui.define(
 						}
 					});
 
-					this.stub(sap.ui.Device.system, "phone", false);
+					this.stub(Device.system, "phone").value(false);
 
 					helpers.setViewDelays({
 						SecondMaster: 70,

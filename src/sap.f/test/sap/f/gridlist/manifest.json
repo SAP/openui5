@@ -1,0 +1,16 @@
+{
+	"sap.app": {
+		"id": "sap.f.gridlist",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.gridlist.view.Main",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		}
+	}
+}

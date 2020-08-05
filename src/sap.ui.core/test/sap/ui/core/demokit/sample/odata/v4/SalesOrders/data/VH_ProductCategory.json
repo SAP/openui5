@@ -1,5 +1,5 @@
 {
-	"@odata.context" : "$metadata#H_EPM_PD_CATS_SH_SET",
+	"@odata.context" : "$metadata#H_EPM_PD_CATS_SH_Set",
 	"value" : [{
 		"CATEGORY" : "Accessories"
 	}, {

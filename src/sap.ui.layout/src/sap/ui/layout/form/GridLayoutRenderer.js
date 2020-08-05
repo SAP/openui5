@@ -2,8 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRenderer'],
-	function(jQuery, Renderer, FormLayoutRenderer) {
+sap.ui.define([
+	'sap/ui/core/Renderer',
+	'sap/ui/core/theming/Parameters',
+	'./FormLayoutRenderer',
+	"sap/base/Log"
+	], function(Renderer, themingParameters, FormLayoutRenderer, Log) {
 	"use strict";
 
 
@@ -85,7 +89,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 
 			var sSize;
 			if (!oToolbar) {
-				sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
+				sSize = themingParameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
 			}
 			this.renderHeader(rm, oToolbar, oTitle, undefined, false, sSize, oForm.getId());
 			rm.write("</th></tr>");
@@ -365,7 +369,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 
 		var oLabel = oElement.getLabelControl(); // do not use getLabel() because it returns just text if only text is maintained
 		var iLabelFromRowspan = 0;
-		var aFields = oElement.getFields();
+		var aFields = oElement.getFieldsForRendering();
 		var iCellsUsed = 0;
 		var iAutoCellsUsed = 0;
 		var bMiddleSet = false;
@@ -377,7 +381,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			// field must be full size - render label in a separate row
 			if (aReservedCells.length > 0 && aReservedCells[0] != "full") {
 				// already rowspans left -> ignore full line and raise error
-				jQuery.sap.log.error("Element \"" + oElement.getId() + "\" - Too much fields for one row!", "Renderer", "GridLayout");
+				Log.error("Element \"" + oElement.getId() + "\" - Too much fields for one row!", "Renderer", "GridLayout");
 				return aReservedCells;
 			}
 			if (bSeparatorColumn) {
@@ -427,7 +431,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 				if (oElementData) {
 					sColspan = oElementData.getHCells();
 					if (sColspan != "auto" && sColspan != "full") {
-						iLabelCells = parseInt(sColspan, 10);
+						iLabelCells = parseInt(sColspan);
 					}
 				}
 			}
@@ -451,7 +455,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 				oField = aFields[i];
 				oElementData = this.getElementData(oLayout, oField);
 				if (oElementData && oElementData.getHCells() != "auto") {
-					iAutoCells = iAutoCells - parseInt(oElementData.getHCells(), 10);
+					iAutoCells = iAutoCells - parseInt(oElementData.getHCells());
 					iAutoFields = iAutoFields - 1;
 				}
 			}
@@ -484,12 +488,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 						iColspan = 1;
 					}
 				} else {
-					iColspan = parseInt(sColspan, 10);
+					iColspan = parseInt(sColspan);
 				}
 				iCellsUsed = iCellsUsed + iColspan;
 				if (iCellsUsed > iCells) {
 					// too much cells
-					jQuery.sap.log.error("Element \"" + oElement.getId() + "\" - Too much fields for one row!", "Renderer", "GridLayout");
+					Log.error("Element \"" + oElement.getId() + "\" - Too much fields for one row!", "Renderer", "GridLayout");
 					iCellsUsed = iCellsUsed - iColspan; // to add empty dummy cell
 					break;
 				}
@@ -548,7 +552,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 
 	GridLayoutRenderer.checkFullSizeElement = function(oLayout, oElement){
 
-		var aFields = oElement.getFields();
+		var aFields = oElement.getFieldsForRendering();
 
 		if (aFields.length == 1 && this.getElementData(oLayout, aFields[0]) && this.getElementData(oLayout, aFields[0]).getHCells() == "full") {
 			return true;
@@ -560,13 +564,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 
 	GridLayoutRenderer.getContainerData = function(oLayout, oContainer){
 
-		return oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/form/GridContainerData");
+		return oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.form.GridContainerData");
 
 	};
 
 	GridLayoutRenderer.getElementData = function(oLayout, oControl){
 
-		return oLayout.getLayoutDataForElement(oControl, "sap/ui/layout/form/GridElementData");
+		return oLayout.getLayoutDataForElement(oControl, "sap.ui.layout.form.GridElementData");
 
 	};
 

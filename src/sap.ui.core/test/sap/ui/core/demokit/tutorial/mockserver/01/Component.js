@@ -16,7 +16,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/test/mockServer.html",
 							"webapp/view/App.view.xml",
 							"webapp/Component.js",
-							"webapp/manifest.json"
+							"webapp/manifest.json",
+							"ui5.yaml",
+							"package.json"
 						]
 					}
 				}

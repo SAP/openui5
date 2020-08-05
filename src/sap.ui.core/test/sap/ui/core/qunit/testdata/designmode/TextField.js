@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 				css: "TextField.designtime.css",
 				icon: "TextField.png",
 				name: "{name}",
-				description: "{description}",
+				description: "{description}"
 			}
 
 		}
@@ -24,4 +24,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 
 	return TextField;
 
-}, /* bExport= */ true);
+});

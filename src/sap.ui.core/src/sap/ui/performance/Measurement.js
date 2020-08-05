@@ -6,26 +6,34 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 /*global XMLHttpRequest, document, location, window */
-sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
-], function(log, URI, now) {
+sap.ui.define(['sap/base/Log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
+], function(Log, URI, now) {
 
 	"use strict";
 
-	// @evo-todo this is fully browser dependent due to performance API. create a dummy for node.js?
-
-	// @evo-todo module also reads configuration from location.search
-
-	// @evo-todo: jQuery.sap.measure function documentation in global? Or use jsdoc-alias
-
-	// @evo-todo dependencies to thirdparty modules have to be clarified.
-	// Our shim doesn't work within AMD and pure AMD doesn't work with our thirdparty package
-
-	// evo-todo: check activation of methods depending on url param... config?
-
 	var URI = window.URI;
 
+	/**
+	 * Performance Measurement API.
+	 *
+	 * @namespace
+	 * @since 1.58
+	 * @name module:sap/ui/performance/Measurement
+	 * @public
+	 */
 	function PerfMeasurement() {
 
+		/**
+		 * Single Measurement Entry.
+		 *
+		 * @public
+		 * @typedef {object} module:sap/ui/performance/Measurement.Entry
+		 * @property {string} sId ID of the measurement
+		 * @property {string} sInfo Info for the measurement
+		 * @property {int} iStart Start time
+		 * @property {int} iEnd End time
+		 * @property {string | string[]} [aCategories="javascript"] An optional list of categories for the measure
+		 */
 		function Measurement(sId, sInfo, iStart, iEnd, aCategories) {
 			this.id = sId;
 			this.info = sInfo;
@@ -89,9 +97,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 * Gets the current state of the performance measurement functionality.
 		 *
 		 * @return {boolean} current state of the performance measurement functionality
-		 * @name getActive
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.getActive
 		 * @function
-		 * @private
 		 */
 		this.getActive = function() {
 			return bActive;
@@ -105,9 +113,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 * @param {boolean} bOn - state of the performance measurement functionality to set
 		 * @param {string | string[]} aCategories - An optional list of categories that should be measured
 		 * @return {boolean} current state of the performance measurement functionality
-		 * @name setActive
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.setActive
 		 * @function
-		 * @private
 		 */
 		this.setActive = function(bOn, aCategories) {
 			var fnEnd,
@@ -171,9 +179,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 * @param {string} sInfo Info for the measurement
 		 * @param {string | string[]} [aCategories="javascript"] An optional list of categories for the measure
 		 * @return {object} current measurement containing id, info and start-timestamp (false if error)
-		 * @name start
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.start
 		 * @function
-		 * @private
 		 */
 		mMethods["start"] = function(sId, sInfo, aCategories) {
 			if (!bActive) {
@@ -186,15 +194,15 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 			}
 
 			var iTime = now(),
-				oMeasurement = new Measurement( sId, sInfo, iTime, 0, aCategories);
+				oMeasurement = new Measurement(sId, sInfo, iTime, 0, aCategories);
 
 			// create timeline entries if available
 			/*eslint-disable no-console */
-			if (log.getLevel("sap.ui.Performance") >= 4 && window.console && console.time) {
+			if (Log.getLevel("sap.ui.Performance") >= 4 && window.console && console.time) {
 				console.time(sInfo + " - " + sId);
 			}
 			/*eslint-enable no-console */
-			log.info("Performance measurement start: " + sId + " on " + iTime);
+			Log.info("Performance measurement start: " + sId + " on " + iTime);
 
 			if (oMeasurement) {
 				mMeasurements[sId] = oMeasurement;
@@ -209,9 +217,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 *
 		 * @param {string} sId ID of the measurement
 		 * @return {object} current measurement containing id, info and start-timestamp, pause-timestamp (false if error)
-		 * @name pause
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.pause
 		 * @function
-		 * @private
 		 */
 		mMethods["pause"] = function(sId) {
 			if (!bActive) {
@@ -237,7 +245,7 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 			}
 
 			if (oMeasurement) {
-				log.info("Performance measurement pause: " + sId + " on " + iTime + " duration: " + oMeasurement.duration);
+				Log.info("Performance measurement pause: " + sId + " on " + iTime + " duration: " + oMeasurement.duration);
 				return this.getMeasurement(oMeasurement.id);
 			} else {
 				return false;
@@ -249,9 +257,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 *
 		 * @param {string} sId ID of the measurement
 		 * @return {object} current measurement containing id, info and start-timestamp, resume-timestamp (false if error)
-		 * @name resume
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.resume
 		 * @function
-		 * @private
 		 */
 		mMethods["resume"] = function(sId) {
 			if (!bActive) {
@@ -268,7 +276,7 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 			}
 
 			if (oMeasurement) {
-				log.info("Performance measurement resume: " + sId + " on " + iTime + " duration: " + oMeasurement.duration);
+				Log.info("Performance measurement resume: " + sId + " on " + iTime + " duration: " + oMeasurement.duration);
 				return this.getMeasurement(oMeasurement.id);
 			} else {
 				return false;
@@ -280,9 +288,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 *
 		 * @param {string} sId ID of the measurement
 		 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
-		 * @name end
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.end
 		 * @function
-		 * @private
 		 */
 		mMethods["end"] = function(sId) {
 			if (!bActive) {
@@ -292,9 +300,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 			var iTime = now();
 
 			var oMeasurement = mMeasurements[sId];
-			log.info("Performance measurement end: " + sId + " on " + iTime);
 
 			if (oMeasurement && !oMeasurement.end) {
+				Log.info("Performance measurement end: " + sId + " on " + iTime);
 				oMeasurement.end = iTime;
 				if (oMeasurement.end >= oMeasurement.resume && oMeasurement.resume > 0) {
 					oMeasurement.duration = oMeasurement.duration + oMeasurement.end - oMeasurement.resume;
@@ -320,7 +328,7 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 			if (oMeasurement) {
 				// end timeline entry
 				/*eslint-disable no-console */
-				if (log.getLevel("sap.ui.Performance") >= 4 && window.console && console.timeEnd) {
+				if (Log.getLevel("sap.ui.Performance") >= 4 && window.console && console.timeEnd) {
 					console.timeEnd(oMeasurement.info + " - " + sId);
 				}
 				/*eslint-enable no-console */
@@ -333,9 +341,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		/**
 		 * Clears all performance measurements.
 		 *
-		 * @name clear
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.clear
 		 * @function
-		 * @private
 		 */
 		mMethods["clear"] = function() {
 			mMeasurements = {};
@@ -345,9 +353,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 * Removes a performance measure.
 		 *
 		 * @param {string} sId ID of the measurement
-		 * @name remove
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.remove
 		 * @function
-		 * @private
 		 */
 		mMethods["remove"] = function(sId) {
 			delete mMeasurements[sId];
@@ -365,9 +373,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 * @param {int} iDuration effective time in milliseconds
 		 * @param {string | string[]} [aCategories="javascript"] An optional list of categories for the measure
 		 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
-		 * @name add
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.add
 		 * @function
-		 * @private
 		 */
 		mMethods["add"] = function(sId, sInfo, iStart, iEnd, iTime, iDuration, aCategories) {
 			if (!bActive) {
@@ -399,9 +407,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 * @param {string} sInfo Info for the measurement
 		 * @param {string | string[]} [aCategories="javascript"] An optional list of categories for the measure
 		 * @return {object} current measurement containing id, info and start-timestamp (false if error)
-		 * @name average
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.average
 		 * @function
-		 * @private
 		 */
 		mMethods["average"] = function(sId, sInfo, aCategories) {
 			if (!bActive) {
@@ -433,10 +441,10 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 * Gets a performance measure.
 		 *
 		 * @param {string} sId ID of the measurement
-		 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
-		 * @name getMeasurement
+		 * @return {module:sap/ui/performance/Measurement.Entry} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.getMeasurement
 		 * @function
-		 * @private
 		 */
 		this.getMeasurement = function(sId) {
 
@@ -458,10 +466,10 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 * Gets all performance measurements.
 		 *
 		 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned
-		 * @return {object[]} current array with measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories
-		 * @name getAllMeasurements
+		 * @return {module:sap/ui/performance/Measurement.Entry} current array with measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.getAllMeasurements
 		 * @function
-		 * @private
 		 */
 		this.getAllMeasurements = function(bCompleted) {
 			return this.filterMeasurements(function(oMeasurement) {
@@ -483,10 +491,10 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 * @param {boolean|undefined} [bCompleted] Optional parameter to determine if either completed or incomplete measurements should be returned (both if not set or undefined)
 		 * @param {string[]} [aCategories] The function returns only measurements which match these specified categories
 		 *
-		 * @return {object} [] filtered array with measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
-		 * @name filterMeasurements
+		 * @return {module:sap/ui/performance/Measurement.Entry[]} filtered array with measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.filterMeasurements
 		 * @function
-		 * @private
 		 */
 		this.filterMeasurements = function() {
 			var oMeasurement, bValid,
@@ -515,9 +523,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 * @param {string} sMethod the name of the method
 		 * @param {string[]} [aCategories=["javascript"]] An optional categories list for the measurement
 		 * @returns {boolean} true if the registration was successful
-		 * @name registerMethod
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.registerMethod
 		 * @function
-		 * @private
 		 */
 		this.registerMethod = function(sId, oObject, sMethod, aCategories) {
 			var fnMethod = oObject[sMethod];
@@ -536,7 +544,7 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 					return true;
 				}
 			} else {
-				log.debug(sMethod + " in not a function. Measurement.register failed");
+				Log.debug(sMethod + " in not a function. Measurement.register failed");
 			}
 			return false;
 		};
@@ -548,9 +556,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 * @param {object} oObject the object of the method
 		 * @param {string} sMethod the name of the method
 		 * @returns {boolean} true if the unregistration was successful
-		 * @name unregisterMethod
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.unregisterMethod
 		 * @function
-		 * @private
 		 */
 		this.unregisterMethod = function(sId, oObject, sMethod) {
 			var fnFunction = oObject[sMethod],
@@ -567,9 +575,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		/**
 		 * Unregisters all average measurements.
 		 *
-		 * @name unregisterAllMethods
+		 * @public
+		 * @name module:sap/ui/performance/Measurement.unregisterAllMethods
 		 * @function
-		 * @private
 		 */
 		this.unregisterAllMethods = function() {
 			while (aOriginalMethods.length > 0) {

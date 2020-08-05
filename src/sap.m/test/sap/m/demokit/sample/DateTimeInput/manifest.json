@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.DateTimeInput",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.DateTimeInput.DateTimeInputGroup",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"DateTimeInputGroup.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

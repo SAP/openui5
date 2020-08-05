@@ -1,0 +1,68 @@
+{
+	"sap.app": {
+		"id": "card.explorer.dataSources.topProducts",
+		"type": "card"
+	},
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"numberOfProducts": {
+					"value": 2,
+					"type": "integer"
+				}
+			},
+			"filters": {
+				"category": {
+					"value": "notebooks",
+					"type": "string",
+					"label": "Category",
+					"description": "Filter the products by category.",
+					"items":  [
+						{
+							"title": "Flat Screen Monitors",
+							"key": "flat_screens"
+						},
+						{
+							"title": "Notebooks",
+							"key": "notebooks"
+						}
+					]
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "test-resources/sap/ui/integration/qunit/manifests/items_{{filters.category}}.json"
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Products by category",
+			"subTitle": "Category {{filters.category}}",
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{ProductCategory}"
+			},
+			"maxItems": "{{parameters.numberOfProducts}}"
+		}
+	}
+}

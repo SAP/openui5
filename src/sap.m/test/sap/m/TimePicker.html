@@ -13,7 +13,7 @@
 </script>
 
 </head>
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 	<script>
 		jQuery.sap.require("sap.ui.core.HTML");
 		jQuery.sap.require("sap.ui.core.IconPool");
@@ -50,6 +50,7 @@
 			{
 				id: "TP5",
 				value: "09:15:16 PM",
+				localeId: "en_US",
 				title: "Departure time"
 			},
 			{
@@ -73,11 +74,13 @@
 			{
 				id: "TP10",
 				value: "21 March 2013 5:21 PM",
+				localeId: "en_US",
 				valueFormat: "dd MMMM yyyy h:mm a"
 			},
 			{
 				id: "TP11",
 				value: "04:33 PM 17 May",
+				localeId: "en_US",
 				valueFormat: "hh:mm a dd MMMM"
 			},
 			{
@@ -88,6 +91,7 @@
 			{
 				id: "TP13",
 				value: "09:17:16 PM",
+				localeId: "en_US",
 				displayFormat: "mm",
 				minutesStep: 20
 			}
@@ -95,6 +99,7 @@
 			{
 				id: "TP14",
 				value: "09:15:16 PM",
+				localeId: "en_US",
 				displayFormat: "HH:mm"
 			},
 			{
@@ -138,12 +143,12 @@
 				aControls = [],
 				sInfo,
 				oBar,
-			    oTp;
+				oTp;
 
 			for (i = 0; i < options.length; i++) {
 				options[i].change = handleChange;
 				if (options[i].value && options[i].value.path) { //data binding
-					oBar = new sap.m.Toolbar({
+					oBar = new sap.m.Toolbar(options[i].id + "-toolbar", {
 						content: [
 							new sap.m.TimePicker(options[i]),
 							new sap.m.Text({
@@ -155,9 +160,9 @@
 						]
 					});
 				} else {
-                	oTp = new sap.m.TimePicker(options[i]);
+					oTp = new sap.m.TimePicker(options[i]);
 					sInfo =  JSON.stringify(options[i]).split("\"").join("").replace("{", "").replace(",", " ").replace("}", "") + ", id: " + oTp.getId();
-					oBar = new sap.m.Toolbar({
+					oBar = new sap.m.Toolbar(options[i].id + "-toolbar", {
 						content: [
 							oTp,
 							new sap.m.Text({ text: sInfo })

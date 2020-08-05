@@ -1,12 +1,11 @@
-/*global history*/
-
 sap.ui.define([
-	'sap/ui/demo/bulletinboard/controller/BaseController',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/demo/bulletinboard/model/formatter',
-	'sap/ui/demo/bulletinboard/model/FlaggedType'
-], function (BaseController, JSONModel, formatter, FlaggedType) {
-	"use strict";
+    './BaseController',
+    'sap/ui/model/json/JSONModel',
+    '../model/formatter',
+    '../model/FlaggedType',
+    'sap/m/library'
+], function(BaseController, JSONModel, formatter, FlaggedType, mobileLibrary) {
+    "use strict";
 
 	return BaseController.extend("sap.ui.demo.bulletinboard.controller.Worklist", {
 		types : {
@@ -104,12 +103,11 @@ sap.ui.define([
 		 */
 		onShareEmailPress: function () {
 			var oViewModel = this.getModel("worklistView");
-			sap.m.URLHelper.triggerEmail(
+			mobileLibrary.URLHelper.triggerEmail(
 				null,
 				oViewModel.getProperty("/shareSendEmailSubject"),
 				oViewModel.getProperty("/shareSendEmailMessage")
 			);
 		}
 	});
-
 });

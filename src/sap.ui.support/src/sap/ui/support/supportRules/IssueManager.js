@@ -16,12 +16,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 		var _aIssues = [];
 
 		/**
-		 * @type {object[]} _aHistory Array of history objects which contain issues key that has an array of issues.
-		 * @private
-		 */
-		var _aHistory = [];
-
-		/**
 		 * Converts Issue Object to a ViewModel that can be used by the IssueManager.
 		 * @param {object} oIssue Issue Object that is to be converted
 		 * @returns {object} Converted Issue Object
@@ -104,54 +98,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 				_aIssues = [];
 			},
 
-			/**
-			 * Saves a new history object with the current issues.
-			 * @public
-			 * @method
-			 * @name sap.ui.support.IssueManager.saveHistory
-			 * @returns {void}
-			 */
-			saveHistory: function () {
-				_aHistory.push({
-					issues: _aIssues.slice()
-				});
+			getIssues: function () {
+				return _aIssues.slice();
 			},
-
-			/**
-			 * Gets history objects with current issues. Each history object has an issues key that contains an array of issues.
-			 * @public
-			 * @method
-			 * @name sap.ui.support.IssueManager.getHistory
-			 * @returns {object[]} Current history in the IssueManager.
-			 */
-			getHistory: function () {
-				// Copy and return history
-				return _aHistory.slice();
-			},
-
-			/**
-			 * Gets grouped history containing <code>ViewModel</code>. Each history object has an issues key that contains the issues grouped by library and rule in ViewModel format.
-			 * @public
-			 * @method
-			 * @name sap.ui.support.IssueManager.getConvertedHistory
-			 * @returns {object[]} convertedHistory Grouped issue history object containing converted issues to ViewModel format.
-			 */
-			getConvertedHistory: function () {
-				var that = this,
-					issueHistory = that.getHistory(),
-					convertedHistory = [],
-					issues = null;
-
-				issueHistory.forEach(function (run) {
-					issues = that.groupIssues(
-						that.convertToViewModel(run.issues)
-					);
-					convertedHistory.push({ issues: issues });
-				});
-
-				return convertedHistory;
-			},
-
 			/**
 			 * Converts the issues inside the IssueManager.
 			 * @public
@@ -259,31 +208,36 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 					innerIndex = 0,
 					treeTableModel = {},
 					rulesViewModel,
-					rule;
+					rule,
+					rules = [];
 
 				rulesViewModel = this.getRulesViewModel(oRules, [], []);
 				for (var libraryName in rulesViewModel) {
 					treeTableModel[index] = {
 						name: libraryName,
+						id: libraryName + " " + index,
+						selected: true,
 						type: "lib",
-						rules: []
+						nodes: rules
 					};
 
 					for (var ruleName in rulesViewModel[libraryName]) {
 						rule = rulesViewModel[libraryName][ruleName];
-						treeTableModel[index][innerIndex] = {
+						rules.push({
 							name: rule.title,
 							description: rule.description,
 							id: rule.id,
-							audiences: rule.audiences,
-							categories: rule.categories,
+							audiences: rule.audiences.toString(),
+							categories: rule.categories.toString(),
 							minversion: rule.minversion,
 							resolution: rule.resolution,
 							title:  rule.title,
-							libName: libraryName
-						};
+							libName: libraryName,
+							selected: true
+						});
 						innerIndex++;
 					}
+					rules = [];
 					index++;
 				}
 				return treeTableModel;
@@ -320,7 +274,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 
 						oSortedSeverityCount = this._sortSeverityIssuesByPriority(issuesModel[libName][rule]);
 						treeTableModel[index][innerIndex] = {
-							formatedName: issuesModel[libName][rule][0].name + " (<span style=\"color:" + constants.SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR +  ";\"> " +  oSortedSeverityCount.high + " H, </span> " + "<span style=\"color:" + constants.SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR +  ";\"> " +  oSortedSeverityCount.medium + " M, </span> " + "<span style=\"color:" + constants.SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR +  ";\"> " +  oSortedSeverityCount.low + " L) </span>",
+							formattedName: this._getFormattedName({
+								name: issuesModel[libName][rule][0].name,
+								highCount: oSortedSeverityCount.high,
+								mediumCount: oSortedSeverityCount.medium,
+								lowCount: oSortedSeverityCount.low,
+								highName: 'H',
+								mediumName: 'M',
+								lowName: 'L'}),
 							name: issuesModel[libName][rule][0].name,
 							showAudiences: true,
 							showCategories: true,
@@ -346,7 +307,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 					}
 
 
-					treeTableModel[index].formatedName = treeTableModel[index].name + " (" + "<span style=\"color: " + constants.SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR +  "; \"> " +  iHighSeverityCount + " High, </span> " + "<span style=\"color:  " + constants.SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR +  ";\"> " +  iMediumSeverityCount + " Medium, </span> " + "<span style=\"color " + constants.SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR +  ";\"> " +  iLowSeverityCount + " Low </span>)";
+					treeTableModel[index].formattedName = this._getFormattedName({
+						name: treeTableModel[index].name,
+						highCount: iHighSeverityCount,
+						mediumCount: iMediumSeverityCount,
+						lowCount: iLowSeverityCount,
+						highName: 'High',
+						mediumName: 'Medium',
+						lowName: 'Low'
+					});
 					treeTableModel[index].name += " (" + issueCount + " issues)";
 					treeTableModel[index].issueCount = issueCount;
 					issueCount = 0;
@@ -358,6 +327,36 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 				}
 
 				return treeTableModel;
+			},
+
+			/**
+			 * Builds a string containing the formatted name e.g. (1 H, 0 M, 0 L ).
+			 * @private
+			 * @param {object} oValues
+			 * @name sap.ui.support.IssueManager._getFormattedName
+			 * @returns {string} String containing the formatted name.
+			 */
+			_getFormattedName: function(oValues) {
+				var sHighColor = "",
+					sMediumColor = "",
+					sLowColor = "";
+
+				if (oValues.highCount > 0) {
+					sHighColor = "color: " + constants.SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR + ";";
+				}
+
+				if (oValues.mediumCount > 0) {
+					sMediumColor = "color: " + constants.SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR + ";";
+				}
+
+				if (oValues.lowCount > 0) {
+					sLowColor = "color: " + constants.SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR + ";";
+				}
+
+				return oValues.name +
+					" (<span style=\"" + sHighColor + "\"> " + oValues.highCount + " " + oValues.highName + ", </span> " +
+					"<span style=\"" + sMediumColor + "\"> " + oValues.mediumCount + " " + oValues.mediumName + ", </span> " +
+					"<span style=\"" + sLowColor + "\"> " + oValues.lowCount + " " + oValues.lowName + "</span> )";
 			},
 
 			/**
@@ -386,17 +385,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 				});
 
 				return {high: iHighIssues, medium: iMediumIssues, low: iLowIssues};
-			},
-
-			/**
-			 * Clears the history object within the IssueManager.
-			 * @public
-			 * @method
-			 * @name sap.ui.support.IssueManager.clearHistory
-			 * @returns {void}
-			 */
-			clearHistory: function () {
-				_aHistory = [];
 			},
 
 			/**

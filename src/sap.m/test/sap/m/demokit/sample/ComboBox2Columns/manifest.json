@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ComboBox2Columns",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.ComboBox2Columns.view.ComboBox2Columns",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/ComboBox2Columns.view.xml",
+					"controller/ComboBox2Columns.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

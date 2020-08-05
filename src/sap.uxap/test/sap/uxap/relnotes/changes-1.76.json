@@ -1,0 +1,88 @@
+{
+  "1.76.0": {
+    "date": "February 2020",
+    "notes": [
+      {
+        "id": "e3e12cc21af6c7280e665aeb2870d09f5358e3c8",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Removed unstable ids",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080120183"
+          }
+        ]
+      },
+      {
+        "id": "e3147ec2fab945c105e9889ce6105e2227f39d52",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected section focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000676252020"
+          }
+        ]
+      },
+      {
+        "id": "889cf02734fbbc98505b37977ffdb5a447c033bc",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Ensure snap with scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970448827"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970589680"
+          }
+        ]
+      },
+      {
+        "id": "e4b902c42d6689e4ec6c2741934106bdd43b12b4",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: IconTabBar only visible section show title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080090841"
+          }
+        ]
+      },
+      {
+        "id": "ae768510b1246f58d73c7ff186fe7b58a60b3197",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Improved accessibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000277352020"
+          }
+        ]
+      },
+      {
+        "id": "845290914e0b782df3a7424f4464fb5733429745",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Renaming section with new VM is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970518207"
+          }
+        ]
+      },
+      {
+        "id": "e779561c41855a88e4dde3042c5df1d0ae822027",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Prevent error on setParent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001466132020"
+          }
+        ]
+      }
+    ]
+  }
+}

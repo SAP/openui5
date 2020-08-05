@@ -1,0 +1,103 @@
+{
+  "1.61.0": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "bb7716530598190eaa1c1b7c2b105539040899c7",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPage/SemanticPage: landmarkInfo enablement",
+        "references": []
+      },
+      {
+        "id": "c7aab3f093b23938284662b38eb9482943eb4e22",
+        "type": "FEATURE",
+        "text": "sap.f.ListCard: initial commit",
+        "references": []
+      },
+      {
+        "id": "882de51788ba2db5dadccedee80db88e567c6da3",
+        "type": "FEATURE",
+        "text": "sap.f.content.List: manifest is now up to date with the new schema",
+        "references": []
+      },
+      {
+        "id": "e00f8fb9ab62b5d360967d5662c63e6794f66581",
+        "type": "FIX",
+        "text": "sap.f.Avatar: Accessibility sample improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880704855"
+          }
+        ]
+      },
+      {
+        "id": "5153164f24f1d124c4dad4da8a57ffa5e8c84e35",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageTitle: Fixed CSS styles in snapped/expanded content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880687150"
+          }
+        ]
+      },
+      {
+        "id": "6bc632f604dab2e71fafaa8bc45a4793e1062e0c",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageTitle: Fixed CSS styles in snapped/expanded content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880687150"
+          }
+        ]
+      },
+      {
+        "id": "0a279aac6134f052ff073cc30dcba201f81a5c91",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Fixed Fiori 2.0 tutorial",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880673013"
+          }
+        ]
+      },
+      {
+        "id": "d9e0816292f498b89d6333f2dae6898b242842ff",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Last page in Sample fixed",
+        "references": []
+      },
+      {
+        "id": "a8c3fe74814815a624dff7bf38465588f341d758",
+        "type": "FIX",
+        "text": "sap.f.Avatar: Initials are now read by JAWS if defined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880704853"
+          }
+        ]
+      },
+      {
+        "id": "e1ea8c0be8069c8bff90f051aaff8c0b350577d3",
+        "type": "FIX",
+        "text": "tutorial.fiori2: Product parameter is now transmitted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880673013"
+          }
+        ]
+      },
+      {
+        "id": "5be434cfb50dc472ea7d4d27cb7edd5033481d84",
+        "type": "FIX",
+        "text": "Cleanup internally created elements of sap.f.Card",
+        "references": []
+      }
+    ]
+  }
+}

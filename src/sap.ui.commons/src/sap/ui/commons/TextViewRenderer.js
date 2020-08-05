@@ -3,9 +3,15 @@
  */
 
 // Provides default renderer for control sap.ui.commons.TextView
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function(jQuery, Renderer) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/commons/library'],
+	function(Renderer, library) {
 	"use strict";
+
+	// shortcut for sap.ui.commons.TextViewDesign
+	var TextViewDesign = library.TextViewDesign;
+
+	// shortcut for sap.ui.commons.TextViewColor
+	var TextViewColor = library.TextViewColor;
 
 	/**
 	 * TextView renderer.
@@ -17,17 +23,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.ui.core.Control} oTextView An object representation of the control that should be rendered.
 	 */
-	TextViewRenderer.render = function(oRenderManager, oTextView) {
-		var rm = oRenderManager;
-
+	TextViewRenderer.render = function(rm, oTextView) {
 		//Sets the text as enables/disabled and applies if any semantic colors are set
-		this.applyEnabledStyles(oRenderManager, oTextView);
+		this.applyEnabledStyles(rm, oTextView);
 
 		// Sets the styles of the TextView
-		this.applyTextDesign(oRenderManager, oTextView);
+		this.applyTextDesign(rm, oTextView);
 
 		if (!oTextView.getWrapping()) {
 			rm.addClass("sapUiTvWrap");
@@ -67,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		// Set Accessible Role
 		rm.writeAccessibilityState(oTextView, {
 			role: oTextView.getAccessibleRole() ? oTextView.getAccessibleRole().toLowerCase() : undefined,
-			invalid: oTextView.getSemanticColor() == sap.ui.commons.TextViewColor.Negative,
+			invalid: oTextView.getSemanticColor() == TextViewColor.Negative,
 			disabled: !oTextView.getEnabled()
 		});
 
@@ -86,7 +90,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 */
 	TextViewRenderer.applyTextDesign = function(oRm, oTextView) {
 		var oDesign = oTextView.getDesign();
-		var TextViewDesign = sap.ui.commons.TextViewDesign;
 
 		if (oDesign == TextViewDesign.Standard) {
 		    return;
@@ -145,13 +148,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			// Show error/warning states if they are enabled
 			// error/warning state
 			switch (oTextView.getSemanticColor()) {
-				case (sap.ui.commons.TextViewColor.Negative) :
+				case (TextViewColor.Negative) :
 					oRm.addClass('sapUiTvErr');
 					break;
-				case (sap.ui.commons.TextViewColor.Positive) :
+				case (TextViewColor.Positive) :
 					oRm.addClass('sapUiTvSucc');
 					break;
-				case (sap.ui.commons.TextViewColor.Critical) :
+				case (TextViewColor.Critical) :
 					oRm.addClass('sapUiTvWarn');
 					break;
 				// no default

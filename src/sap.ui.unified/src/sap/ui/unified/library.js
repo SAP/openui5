@@ -6,12 +6,17 @@
  * Initialization Code and shared classes of library sap.ui.unified.
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Core',
 	'sap/ui/base/Object',
-	'jquery.sap.dom',
-	'jquery.sap.script'
-], function(jQuery, Core, BaseObject/* jQuerySapDom,jQuerySapScript*/) {
+	"./ColorPickerDisplayMode",
+	"./FileUploaderHttpRequestMethod",
+	'sap/ui/core/library'
+], function(
+	Core,
+	BaseObject,
+	ColorPickerDisplayMode,
+	FileUploaderHttpRequestMethod
+) {
 
 	"use strict";
 
@@ -22,10 +27,17 @@ sap.ui.define([
 		dependencies : ["sap.ui.core"],
 		designtime: "sap/ui/unified/designtime/library.designtime",
 		types: [
+			"sap.ui.unified.CalendarAppointmentVisualization",
 			"sap.ui.unified.CalendarDayType",
-			"sap.ui.unified.GroupAppointmentsMode",
+			"sap.ui.unified.CalendarIntervalType",
+			"sap.ui.unifief.CalendarAppointmentHeight",
+			"sap.ui.unifief.CalendarAppointmentRoundWidth",
+			"sap.ui.unified.ColorPickerDisplayMode",
+			"sap.ui.unified.ColorPickerMode",
 			"sap.ui.unified.ContentSwitcherAnimation",
-			"sap.ui.unified.ColorPickerMode"
+			"sap.ui.unified.GroupAppointmentsMode",
+			"sap.ui.unified.FileUploaderHttpRequestMethod",
+			"sap.ui.unified.StandardCalendarLegendItem"
 		],
 		interfaces: [
 			"sap.ui.unified.IProcessableBlobs"
@@ -38,6 +50,7 @@ sap.ui.define([
 			"sap.ui.unified.calendar.MonthsRow",
 			"sap.ui.unified.calendar.TimesRow",
 			"sap.ui.unified.calendar.YearPicker",
+			"sap.ui.unified.calendar.YearRangePicker",
 			"sap.ui.unified.Calendar",
 			"sap.ui.unified.CalendarDateInterval",
 			"sap.ui.unified.CalendarWeekInterval",
@@ -47,6 +60,7 @@ sap.ui.define([
 			"sap.ui.unified.CalendarRow",
 			"sap.ui.unified.ContentSwitcher",
 			"sap.ui.unified.ColorPicker",
+			"sap.ui.unified.ColorPickerPopover",
 			"sap.ui.unified.Currency",
 			"sap.ui.unified.FileUploader",
 			"sap.ui.unified.Menu",
@@ -251,25 +265,25 @@ sap.ui.define([
 	thisLib.StandardCalendarLegendItem = {
 		/**
 		 * Type used for visualization of the current date.
-         * @public
+		 * @public
 		 */
 		Today: "Today",
 
 		/**
 		 * Type used for visualization of the regular work days.
-         * @public
+		 * @public
 		 */
 		WorkingDay: "WorkingDay",
 
 		/**
 		 * Type used for visualization of the non-working days.
-         * @public
+		 * @public
 		 */
 		NonWorkingDay: "NonWorkingDay",
 
 		/**
 		 * Type used for visualization of the currently selected day.
-         * @public
+		 * @public
 		 */
 		Selected: "Selected"
 	};
@@ -323,6 +337,69 @@ sap.ui.define([
 	};
 
 	/**
+	 * Types of a calendar appointment display mode
+	 *
+	 * @enum {string}
+	 * @alias sap.ui.unified.CalendarAppointmentHeight
+	 * @public
+	 * @since 1.80.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.CalendarAppointmentHeight = {
+
+		/**
+		 * HalfSize display mode.
+		 * @public
+		 */
+		HalfSize : "HalfSize",
+
+		/**
+		 * Regular display mode.
+		 * @public
+		 */
+		Regular : "Regular",
+
+		/**
+		 * Large display mode.
+		 * @public
+		 */
+		Large : "Large",
+
+		/**
+		 * Automatic display mode.
+		 * @public
+		 */
+		Automatic : "Automatic"
+
+	};
+
+	/**
+	 * Types of a calendar appointment display mode
+	 *
+	 * @enum {string}
+	 * @alias sap.ui.unified.CalendarAppointmentRoundWidth
+	 * @public
+	 * @experimental Since 1.81.0
+	 * @since 1.81.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.CalendarAppointmentRoundWidth = {
+
+		/**
+		 * HalfRow display mode.
+		 * @public
+		 */
+		HalfColumn : "HalfColumn",
+
+		/**
+		 * None display mode.
+		 * @public
+		 */
+		None : "None"
+
+	};
+
+	/**
 	 * Types of display mode for overlapping appointments.
 	 *
 	 * @enum {string}
@@ -345,6 +422,17 @@ sap.ui.define([
 		Expanded : "Expanded"
 
 	};
+
+	/**
+	 * Types of HTTP request methods.
+	 *
+	 * @enum {string}
+	 * @alias sap.ui.unified.FileUploaderHttpRequestMethod
+	 * @public
+	 * @since 1.81.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.FileUploaderHttpRequestMethod = FileUploaderHttpRequestMethod;
 
 	/**
 	 * Visualization types for {@link sap.ui.unified.CalendarAppointment}.
@@ -449,6 +537,9 @@ sap.ui.define([
 
 	};
 
+	// expose imported enum as property of library namespace, for documentation see module
+	thisLib.ColorPickerDisplayMode = ColorPickerDisplayMode;
+
 	/**
 	 * Marker interface for controls that process instances of <code>window.Blob</code>, such as <code>window.File</code>.
 	 * The implementation of this Interface should implement the following Interface methods:
@@ -468,8 +559,8 @@ sap.ui.define([
 	 * One use case could be to create and upload zip archives based on the passed Blobs.
 	 * The default implementation of this API should simply resolve with the received Blobs (parameter <code>aBlobs</code>).
 	 * @public
-         * @since 1.52
-         * @param {Blob[]} aBlobs The initial Blobs which can be used to determine a new array of Blobs for further processing.
+	 * @since 1.52
+	 * @param {Blob[]} aBlobs The initial Blobs which can be used to determine a new array of Blobs for further processing.
 	 * @return {Promise} A Promise that resolves with an array of Blobs which is used for the final uploading.
 	 * @function
 	 * @name sap.ui.unified.IProcessableBlobs.getProcessedBlobsFromArray
@@ -493,7 +584,7 @@ sap.ui.define([
 			delete this._cb;
 			delete this._ctrl;
 			if (this._rerenderTimer) {
-				jQuery.sap.clearDelayedCall(this._rerenderTimer);
+				clearTimeout(this._rerenderTimer);
 				delete this._rerenderTimer;
 			}
 			BaseObject.prototype.destroy.apply(this, arguments);
@@ -505,14 +596,13 @@ sap.ui.define([
 			}
 
 			if (this._rerenderTimer) {
-				jQuery.sap.clearDelayedCall(this._rerenderTimer);
+				clearTimeout(this._rerenderTimer);
 			}
 
-			this._rerenderTimer = jQuery.sap.delayedCall(0, this, function(){
-				var $content = jQuery.sap.byId(this._id);
-				var doRender = $content.length > 0;
+			this._rerenderTimer = setTimeout(function(){
+				var oContent = document.getElementById(this._id);
 
-				if (doRender) {
+				if (oContent) {
 					if (typeof (this._cntnt) === "string") {
 						var aContent = this._ctrl.getAggregation(this._cntnt, []);
 						for (var i = 0; i < aContent.length; i++) {
@@ -521,11 +611,11 @@ sap.ui.define([
 					} else {
 						this._cntnt(this._rm);
 					}
-					this._rm.flush($content[0]);
+					this._rm.flush(oContent);
 				}
 
-				this._cb(doRender);
-			});
+				this._cb(!!oContent);
+			}.bind(this), 0);
 		}
 	});
 
@@ -552,7 +642,7 @@ sap.ui.define([
 		thisLib.FileUploaderHelper = {
 			createTextField: function(sId){ throw new Error("no TextField control available!"); }, /* must return a TextField control */
 			setTextFieldContent: function(oTextField, sWidth){ throw new Error("no TextField control available!"); },
-			createButton: function(){ throw new Error("no Button control available!"); }, /* must return a Button control */
+			createButton: function(sId){ throw new Error("no Button control available!"); }, /* must return a Button control */
 			addFormClass: function(){ return null; },
 			bFinal: false /* if true, the helper must not be overwritten by an other library */
 		};

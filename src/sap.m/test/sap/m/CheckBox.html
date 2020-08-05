@@ -34,25 +34,29 @@
 						id:"cb_selected_enabled",
 						visible: true,
 						selected:true,
-						enabled: true
+						enabled: true,
+						tooltip: "Checkbox"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_selected_disabled",
 						visible: true,
 						selected: true,
-						enabled: false
+						enabled: false,
+						tooltip: "Checkbox"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_deselected_enabled",
 						visible: true,
 						selected: false,
-						enabled: true
+						enabled: true,
+						tooltip: "Checkbox"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_disabled_deselected",
 						visible: true,
 						selected: false,
-						enabled: false
+						enabled: false,
+						tooltip: "Checkbox"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_with_label_size",
@@ -95,7 +99,7 @@
 						displayOnly: true,
 						editable: true,
 						selected: false,
-						text: "Disabled and Display Only"
+						text: "Disabled and Display Only (has no effect)"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_enabled_editable_and_display_only",
@@ -132,6 +136,24 @@
 						valueState: "Warning"
 					}),
 					new sap.m.CheckBox({
+						id:"cb_success_deselected",
+						text: "Success",
+						valueState: "Success"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_success_selected",
+						text: "Success checked",
+						selected: true,
+						valueState: "Success"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_success_selected_disabled",
+						text: "Success disabled",
+						selected: true,
+						enabled: false,
+						valueState: "Success"
+					}),
+					new sap.m.CheckBox({
 						id:"cb_error_deselected",
 						text: "Error",
 						valueState: "Error"
@@ -150,6 +172,30 @@
 						valueState: "Error"
 					}),
 					new sap.m.CheckBox({
+						id:"cb_information_deselected",
+						text: "Information",
+						valueState: "Information"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_information_selected",
+						text: "Information checked",
+						selected: true,
+						valueState: "Information"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_information_selected_disabled",
+						text: "Information disabled",
+						selected: true,
+						enabled: false,
+						valueState: "Information"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_partially_selected",
+						selected: true,
+						partiallySelected: true,
+						text: "Partially Selected"
+					}),
+					new sap.m.CheckBox({
 						id:"cb_enable_disable_toolbar",
 						visible:true,
 						selected: true,
@@ -161,11 +207,11 @@
 					}),
 					oToolbar,
 					new sap.ui.layout.form.SimpleForm({
-						title: "Form containing a CheckBox",
+						id: "sf_with_checkbox",
+						title: new sap.ui.core.Title({text: "Form containing a CheckBox", level: sap.ui.core.TitleLevel.H2}),
 						editable : true,
 						content : [
-							new sap.m.Label({text:"CheckBox in a Form"}),
-							new sap.m.CheckBox({selected:true})
+							new sap.m.CheckBox({id: "cb_in_a_form", selected:true, text:"CheckBox in a Form"})
 						]
 					}),
 					// RTL sapmple - set page in rtl mode to explore (sap-ui-rtl='true')
@@ -205,6 +251,8 @@
 			new sap.m.App({
 				pages : [
 					new sap.m.Page({
+						title: "sap.m.CheckBox",
+						titleLevel: "H1",
 						content : [
 							createContent()
 						]
@@ -213,7 +261,7 @@
 			}).placeAt('content');
 		</script>
 	</head>
-	<body id="body" class="sapUiBody" role="application">
+	<body id="body" class="sapUiBody">
 		<div id="content" class="holder"></div>
 	</body>
 </html>

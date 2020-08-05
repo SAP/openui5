@@ -3,7 +3,16 @@
  */
 
 // Provides control sap.uxap.ObjectPageSectionBase.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library", "./library", "jquery.sap.keycodes"], function (jQuery, Control, coreLibrary, library) {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Control",
+	"sap/ui/core/library",
+	"./library",
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes",
+	// jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
+], function(jQuery, Control, coreLibrary, library, Log, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -34,7 +43,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 			properties: {
 
 				/**
-				 * Section Title
+				 * Defines the title of the respective section/subsection.
+				 *
+				 * <b>Note:</b> If a subsection is the only one (or the only one visible) within a section, its title is
+				 * displayed instead of the section title. This behavior is true even if the <code>showTitle</code>
+				 * propeprty of {@link sap.uxap.ObjectPageSubSection} is set to <code>false</code>.
 				 */
 				title: {type: "string", group: "Appearance", defaultValue: null},
 
@@ -104,7 +117,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	ObjectPageSectionBase.prototype.onAfterRendering = function () {
 		if (this._getObjectPageLayout()) {
 			this._getObjectPageLayout()._requestAdjustLayout().catch(function () {
-				jQuery.sap.log.debug("ObjectPageSectionBase :: cannot adjustLayout", this);
+				Log.debug("ObjectPageSectionBase :: cannot adjustLayout", this);
 			});
 			this._getObjectPageLayout()._setSectionsFocusValues();
 		}
@@ -276,6 +289,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	});
 
 	ObjectPageSectionBase.prototype.setVisible = function (bValue, bSuppressInvalidate) {
+		if (this.getVisible() === bValue) {
+			return this;
+		}
+
 		if (!this._getObjectPageLayout()) {
 			return this.setProperty("visible", bValue, bSuppressInvalidate);
 		}
@@ -357,8 +374,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	 */
 
 	ObjectPageSectionBase.prototype.onkeydown = function (oEvent) {
+		// Prevent browser scrolling in case of SPACE key
+		if (oEvent.keyCode === KeyCodes.SPACE && oEvent.srcControl.isA("sap.uxap.ObjectPageSection")) {
+			oEvent.preventDefault();
+		}
+
 		// Filter F7 key down
-		if (oEvent.keyCode === jQuery.sap.KeyCodes.F7) {
+		if (oEvent.keyCode === KeyCodes.F7) {
 			var aSubSections = this.getSubSections(),
 				oFirstSubSection = aSubSections[0],
 				oLastFocusedEl;
@@ -366,13 +388,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 			if (aSubSections.length === 1) {
 				oLastFocusedEl = oFirstSubSection._oLastFocusedControlF7;
 				if (oLastFocusedEl) {
-					oLastFocusedEl.$().focus();
+					oLastFocusedEl.$().trigger("focus");
 				} else {
 					oFirstSubSection.$().firstFocusableDomRef().focus();
 				}
 			} else {
 				if (oFirstSubSection.getActions().length) {
-					oFirstSubSection.getActions()[0].$().focus();
+					oFirstSubSection.getActions()[0].$().trigger("focus");
 				}
 			}
 		}
@@ -387,10 +409,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	};
 
 	ObjectPageSectionBase.prototype._handleFocusing = function (oEvent, oElementToReceiveFocus) {
+		var aSections;
+
 		if (this._targetIsCorrect(oEvent) && oElementToReceiveFocus) {
+			aSections = jQuery(oEvent.currentTarget).parent().children();
 			oEvent.preventDefault();
 			oElementToReceiveFocus.focus();
-			this._scrollParent(jQuery(oElementToReceiveFocus).attr("id"));
+			if (aSections.length > 1) {
+				this._scrollParent(jQuery(oElementToReceiveFocus).attr("id"));
+			}
 		}
 	};
 
@@ -471,7 +498,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 			focusedSectionId = jQuery(aSections[0]).attr("id");
 		}
 
-		this._scrollParent(focusedSectionId);
+		if (aSections.length > 1) {
+			this._scrollParent(focusedSectionId);
+		}
 	};
 
 	/**
@@ -506,7 +535,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 			focusedSectionId = jQuery(aSections[aSections.length - 1]).attr("id");
 		}
 
-		this._scrollParent(focusedSectionId);
+		if (aSections.length > 1) {
+			this._scrollParent(focusedSectionId);
+		}
 	};
 
 	/**

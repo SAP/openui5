@@ -1,0 +1,43 @@
+{
+	"sap.app": {
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"city": {
+					"value": "Vratza"
+				},
+				"country": {
+					"value": "Bulgaria"
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Default Manifest Parameters",
+			"subTitle": "Default parameter from manifest"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./cardsdemo/cardcontent/someitems.json"
+				}
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"label": "{{title_label}}",
+					"value": "{Name}, {{parameters.TODAY_ISO}}"
+				},
+				"description": {
+					"value": "Stationed in: {{parameters.city}}, {{parameters.country}}"
+				},
+				"highlight": "{state}"
+			}
+		}
+	}
+}

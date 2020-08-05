@@ -1,0 +1,10 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<core:ExtensionPoint name="EP9001">
+		<core:Fragment id="ep9001" fragmentName="testdata.customizing.customer.ext.Default" type="XML" />
+	</core:ExtensionPoint>
+	<Button id="button0" xmlns="sap.m" text="This Button0" />
+	<Input id="input0" xmlns="sap.m" value="I am input0!" />
+	<Input id="input1" xmlns="sap.m" value="I am input1!" />
+</core:FragmentDefinition>

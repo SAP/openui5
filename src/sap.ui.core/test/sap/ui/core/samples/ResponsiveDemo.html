@@ -113,10 +113,10 @@ html[dir="rtl"] .CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle >
 //Initialize the Model
 var data = {selectionIdx: -1, filter: "", products:[]};
 var aTitles = ["Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
-               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
-               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
-               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
-               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS"];
+			   "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+			   "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			   "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			   "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS"];
 for(var i=0; i<aTitles.length; i++){
 	var sTitle = aTitles[i];
 	var oProduct = {id: ""+i, price: Math.floor((Math.random()*1000))+1+" $", category: "PC",
@@ -288,61 +288,69 @@ function initializeDataset(bSingleRow){
 	loadLib("sap.ui.ux3");
 
 	sap.ui.core.Control.extend("ItemLayout", {
-	    metadata : {
-	        aggregations : {
+		metadata : {
+			aggregations : {
 				"link" : {type : "sap.ui.commons.Link", multiple : false},
 				"image" : {type : "sap.ui.commons.Image", multiple : false},
 				"form" : {type : "sap.ui.commons.form.Form", multiple : false},
-	        }
-	    },
+			}
+		},
 
-		renderer: function(rm, ctrl){
-			rm.write("<div");
-			rm.writeControlData(ctrl);
-			rm.writeAttribute("class", "CustomItemLayout");
-			rm.write("><div");
-			rm.writeAttribute("class", "CustomItemLayoutInner");
-			rm.write("><div");
-			rm.writeAttribute("class", "CustomItemLayoutTitle");
-			rm.write(">");
-			rm.renderControl(ctrl.getImage());
-			rm.write("<div>");
-			rm.renderControl(ctrl.getLink());
-			rm.write("</div></div><div");
-			rm.writeAttribute("class", "CustomItemLayoutCntnt");
-			rm.write(">");
-			rm.renderControl(ctrl.getForm());
-			rm.write("</div></div></div>");
-	    },
+		renderer: {
+			apiVersion: 2,
+			render: function(rm, ctrl){
+				rm.openStart("div", ctrl);
+				.class("CustomItemLayout");
+				rm.openEnd();
+					rm.openStart("div");
+					rm.class("CustomItemLayoutInner");
+					rm.openEnd();
+						rm.openStart("div");
+						rm.class("CustomItemLayoutTitle");
+						rm.openEnd();
+							rm.renderControl(ctrl.getImage());
+							rm.openStart("div").openEnd();
+								rm.renderControl(ctrl.getLink());
+							rm.close("div");
+						rm.close("div");
+						rm.openStart("div");
+						rm.class("CustomItemLayoutCntnt");
+						rm.openEnd();
+							rm.renderControl(ctrl.getForm());
+						rm.close("div");
+					rm.close("div");
+				rm.close("div");
+			}
+		},
 
-	    onBeforeRendering : function(){
-	    	if(this.resizeTimer){
-	    		clearTimeout(this.resizeTimer);
-	    		this.resizeTimer = null;
-	    	}
-	    },
+		onBeforeRendering : function(){
+			if(this.resizeTimer){
+				clearTimeout(this.resizeTimer);
+				this.resizeTimer = null;
+			}
+		},
 
-	    onAfterRendering : function(){
-	    	var $This = this.$();
-	    	if($This.parent().parent().hasClass("sapUiUx3DSSVSingleRow")){
-	    		this._resize();
-	    	}else{
-	    		$This.addClass("CustomItemLayoutSmall");
-	    	}
-	    },
+		onAfterRendering : function(){
+			var $This = this.$();
+			if($This.parent().parent().hasClass("sapUiUx3DSSVSingleRow")){
+				this._resize();
+			}else{
+				$This.addClass("CustomItemLayoutSmall");
+			}
+		},
 
-	    _resize: function(){
-	    	if(!this.getDomRef()){
-	    		return;
-	    	}
-	    	var $This = this.$();
-	    	if($This.outerWidth() >= 440){
-	    		$This.removeClass("CustomItemLayoutSmall").addClass("CustomItemLayoutLarge");
-	    	}else{
-	    		$This.removeClass("CustomItemLayoutLarge").addClass("CustomItemLayoutSmall");
-	    	}
-	    	setTimeout(jQuery.proxy(this._resize, this), 300);
-	    }
+		_resize: function(){
+			if(!this.getDomRef()){
+				return;
+			}
+			var $This = this.$();
+			if($This.outerWidth() >= 440){
+				$This.removeClass("CustomItemLayoutSmall").addClass("CustomItemLayoutLarge");
+			}else{
+				$This.removeClass("CustomItemLayoutLarge").addClass("CustomItemLayoutSmall");
+			}
+			setTimeout(jQuery.proxy(this._resize, this), 300);
+		}
 	});
 
 	function createTemplate(){
@@ -509,7 +517,7 @@ sap.ui.Device.media.initRangeSet('myPoints', aPoints);
 
 </head>
 
-<body class="sapUiBody" role="application">
+<body class="sapUiBody">
 	<div id="root"></div>
 </body>
 </html>

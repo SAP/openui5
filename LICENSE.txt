@@ -215,7 +215,7 @@ OpenUI5 includes the following subcomponents that are subject to separate licens
 Your use of these subcomponents is subject to the separate license terms applicable to
 each subcomponent.
 
-Component: ace 1.2.8
+Component: ace 1.4.4
 Licensor: Ajax.org B.V.
 Website: https://ace.c9.io/
 License: BSD 3-clause "New" or "Revised" License
@@ -277,12 +277,25 @@ License: MIT License
 <year> = unspecified
 <copyright holders> = Microsoft
 
-Component: es6-promise 2.3.0 - a tiny implementation of Promises/A+.
-Licensor: Jake Archibald
-Website: https://github.com/jakearchibald/es6-promise
+Component: Element getAttributeNames Method
+Licensor: Mozilla Developer Network
+Website: https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNames#Polyfill
+License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+
+Component: es6-promise v4.2.4 - a tiny implementation of Promises/A+.
+Licensor: Stefan Penner
+Website: https://github.com/stefanpenner/es6-promise
 License: MIT License
 <year> = 2014
 <copyright holders> = Yehuda Katz, Tom Dale, Stefan Penner, Jake Archibald and contributors
+
+Component: Esprima
+Licensor: Ariya Hidayat
+Website: http://esprima.org/
+License: BSD 2-clause "Simplified" License
+<YEAR> = 2011-2013
+<OWNER> = Ariya Hidayat and other contributors
+<COPYRIGHT HOLDER> = Ariya Hidayat and other contributors
 
 Component: Flexie 1.0.3
 Licensor: Richard Herrera
@@ -296,14 +309,6 @@ Licensor: Mozilla Developer Network
 Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
 License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
 
-Component: Esprima
-Licensor: Ariya Hidayat
-Website: http://esprima.org/
-License: BSD 2-clause "Simplified" License
-<YEAR> = 2011-2013
-<OWNER> = Ariya Hidayat and other contributors
-<COPYRIGHT HOLDER> = Ariya Hidayat and other contributors
-
 Component: google-caja Build 4884
 Licensor: Various
 Website: http://code.google.com/p/google-caja/
@@ -314,11 +319,11 @@ Licensor: Various
 Website: http://code.google.com/p/google-code-prettify/
 License: Apache License 2.0
 
-Component: Handlebars 4.0.5
+Component: Handlebars 4.4.3
 Licensor: Yehuda Katz
 Website: http://handlebarsjs.com/
 License: MIT License
-<year> = 2011-2015
+<year> = 2011-2017
 <copyright holders> = Yehuda Katz
 
 Component: Hasher 1.2.0
@@ -336,6 +341,13 @@ License: MIT License
 <copyright holders> = Matteo Spinelli
 
 Component: jQuery 2.2.3
+Licensor: jQuery Foundation and other contributors
+Website: http://jquery.com/
+License: MIT License
+<year> = 2016
+<copyright holders> = jQuery Foundation and other contributors
+
+Component: jQuery 3.1.1
 Licensor: jQuery Foundation and other contributors
 Website: http://jquery.com/
 License: MIT License
@@ -432,6 +444,11 @@ License: ISC License
 <year> = 2015
 <copyright holders> = Isaac Z. Schlueter and Contributors
 
+Component: Object assign Method
+Licensor: Mozilla Developer Network
+Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
+License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+
 Component: punycode.js 1.2.3
 Licensor: Acid Media
 Website: http://github.com/bestiejs/punycode.js/
@@ -483,7 +500,7 @@ License: BSD 3-clause "New" or "Revised" License
 <ORGANIZATION> = Christian Johansen
 <YEAR> = 2010-2014
 
-Component: Sinon.JS 4.1.3
+Component: Sinon.JS 4.4.6
 Licensor: Christian Johansen
 Website: http://github.com/cjohansen/Sinon.JS/
 License: BSD 3-clause "New" or "Revised" License
@@ -557,7 +574,7 @@ License: MIT License
 <copyright holders> = Bjarke Walling
 <year> = 2014
 
-Component: URI.js 1.11.2
+Component: URI.js 1.19.1
 Licensor: Rodney Rehm
 Website: http://github.com/medialize/URI.js/
 License: MIT License
@@ -585,7 +602,91 @@ License: MIT License
 <copyright holders> = Behrang Noruzi Niya
 <year> = unspecified
 
+Component: bignumber.js 6.0.0
+Licensor: Michael Mclaughlin
+Website: https://github.com/MikeMcl/bignumber.js/
+License: MIT License
+<year> = 2018
+<copyright holders> = Michael Mclaughlin
 
+Component: lodash 4.17.15
+Licensor: JS Foundation and other contributors
+Website: https://github.com/lodash/lodash
+License: MIT License
+<year> = 2019
+<copyright holders> = JS Foundation and other contributors
+
+Component: mnater/Hyphenopoly 2.4.0
+Licensor: Mathias Nater
+Website: https://github.com/mnater/Hyphenopoly/
+License: MIT License
+<year> = 2018
+<copyright holders> = Mathias Nater
+
+Component: es6-shim v0.35.4 - ECMAScript 6 compatibility shims for legacy JavaScript engines
+Licensor: Paul Miller (http://paulmillr.com) and contributors
+Website: https://github.com/paulmillr/es6-shim
+License: MIT License
+<year> = 2013-2016
+<copyright holders> = Paul Miller (http://paulmillr.com) and contributors
+
+Component: elasticlunr 0.9.5
+Licensor: Wei Song
+Website: http://elasticlunr.com/
+License: MIT License
+<year> = 2013-2015
+<copyright holders> = Wei Song and Oliver Nightingale
+
+Component: CustomEvent Polyfill
+Licensor: Mozilla Developer Network
+Website: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill
+License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+
+Component: Webcomponentsjs 1.0.2
+Licensor: The Polymer Project
+Website: https://github.com/webcomponents/webcomponentsjs
+License: BSD 3-clause "New" or "Revised" License
+<OWNER> = The Polymer Authors
+<ORGANIZATION>: Polymer Project
+<YEAR> = 2015
+
+Component: Adaptive Cards
+Licensor: Microsoft
+Website: https://github.com/microsoft/AdaptiveCards
+License: MIT License
+
+Component: Markdown-it
+Licensor: Vitaly Puzrin, Alex Kocharin
+Website: https://github.com/markdown-it/markdown-it
+License: MIT License
+<year> = 2014
+<copyright holders> = Vitaly Puzrin, Alex Kocharin
+
+Component: UI5 Web Components
+Licensor: SAP
+Website: https://sap.github.io/ui5-webcomponents/
+License: Apache License 2.0
+
+Component: ajv 6.10.2
+Licensor: Evgeny Poberezkin
+Website: https://ajv.js.org/
+License: MIT License
+<year> = 2015-2017
+<copyright holders> = Evgeny Poberezkin
+
+Component: p-cancelable 2.0.0
+Licensor: Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
+Website: https://github.com/sindresorhus/p-cancelable
+License: MIT License
+<year> = unspecified
+<copyright holders> = Sindre Sorhus
+
+Component: @babel/helpers 7.10.4
+Licensor: Sebastian McKenzie and other contributors
+Website: https://babeljs.io/
+License: MIT License
+<year> = 2014-...
+<copyright holders> = Sebastian McKenzie and other contributors
 --------------------------------------------------------------------------------------------------------------------------
 
 CC0 1.0 Universal (CCO 1.0) Public Domain Dedication

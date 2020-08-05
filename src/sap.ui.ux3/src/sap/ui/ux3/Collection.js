@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.ux3.Collection.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/SelectionModel', './library'],
-	function(jQuery, Element, SelectionModel, library) {
+sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/SelectionModel', './library'],
+	function(Element, SelectionModel, library) {
 	"use strict";
 
 
@@ -106,6 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 	Collection.prototype.setEditable = function(bEditable) {
 		this.setProperty("editable",bEditable,true);
 		this.firePropertyChanged();
+		return this;
 	};
 
 	/*
@@ -117,6 +118,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 	Collection.prototype.setTitle = function(sTitle) {
 		this.setProperty("title",sTitle);
 		this.fireEvent('_titleChanged', { newTitle: this.getProperty("title") });
+		return this;
 	};
 
 
@@ -135,7 +137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 		} else {
 			oSelectedItem = sap.ui.getCore().byId(vSelectedItem);
 		}
-		if (jQuery.inArray(oSelectedItem.getId(),this.getSelectedItems()) >= 0) {
+		if (this.getSelectedItems().indexOf(oSelectedItem.getId()) >= 0) {
 			return this;
 		}
 		var iIndex = this.indexOfItem(oSelectedItem);
@@ -192,4 +194,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 
 	return Collection;
 
-}, /* bExport= */ true);
+});

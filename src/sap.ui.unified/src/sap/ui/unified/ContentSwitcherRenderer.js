@@ -1,8 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/library'],
-	function(jQuery, library) {
+sap.ui.define([
+	'sap/ui/unified/library',
+	"sap/base/security/encodeXML"
+],
+	function(library, encodeXML) {
 	"use strict";
 
 
@@ -37,7 +40,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/library'],
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapUiUfdCSwitcher");
-		oRm.addClass("sapUiUfdCSwitcherAnimation" + jQuery.sap.encodeHTML(sAnimation));
+		oRm.addClass("sapUiUfdCSwitcherAnimation" + encodeXML(sAnimation));
 		oRm.writeClasses();
 		oRm.write(">");
 

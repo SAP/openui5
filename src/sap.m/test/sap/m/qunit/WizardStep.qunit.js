@@ -1,19 +1,20 @@
-/*global QUnit,sinon*/
-
-(function () {
+/*global QUnit, sinon */
+sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/QUnitUtils"], function(WizardStep, QUnitUtils) {
 	"use strict";
+
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	QUnit.module("WizardStep API", {
 		beforeEach: function () {
-			this.wizardStep = new sap.m.WizardStep();
+			this.wizardStep = new WizardStep();
 		},
 		afterEach: function () {
 			this.wizardStep.destroy();
 			this.wizardStep = null;
 		},
 		addSubSteps: function () {
-			this.wizardStep.addSubsequentStep(new sap.m.WizardStep());
-			this.wizardStep.addSubsequentStep(new sap.m.WizardStep());
+			this.wizardStep.addSubsequentStep(new WizardStep());
+			this.wizardStep.addSubsequentStep(new WizardStep());
 		}
 	});
 
@@ -34,7 +35,7 @@
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(this.wizardStep.$().attr("role"), "region", "Role should be region");
 		assert.strictEqual(this.wizardStep.$().attr("aria-labelledby"),
-			this.wizardStep.getId() + "-Title", "Region should be labelled by the title");
+			this.wizardStep.getId() + "-NumberedTitle", "Region should be labelled by the title and position");
 	});
 
 	QUnit.test("_isLeaf() should return TRUE WHEN NO SUBSEQUENT step are defined", function (assert) {
@@ -63,7 +64,7 @@
 
 	QUnit.module("WizardStep Events", {
 		beforeEach: function () {
-			this.wizardStep = new sap.m.WizardStep();
+			this.wizardStep = new WizardStep();
 		},
 		afterEach: function () {
 			this.wizardStep.destroy();
@@ -88,4 +89,42 @@
 
 		assert.strictEqual(spy.calledOnce, true, "complete event is fired once");
 	});
-}());
+
+	QUnit.test("_setNumberInvisibleText / _getNumberInvisibleText", function (assert) {
+		var sTitle = "Sample title",
+			iPosition = 1,
+			oStep = new WizardStep({
+				title: sTitle
+			});
+
+		assert.strictEqual(oStep._setNumberInvisibleText(iPosition).getText(),
+			oRb.getText("WIZARD_STEP") + iPosition + " " + sTitle,
+			"The invisible text is updated correctly.");
+
+		assert.strictEqual(oStep._setNumberInvisibleText(iPosition),
+			oStep._getNumberInvisibleText(),
+			"The correct object is returned from the getter.");
+
+		// Cleanup
+		oStep.destroy();
+	});
+
+	QUnit.module("Title ID propagation");
+
+	QUnit.test("_initTitlePropagationSupport is called on init", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(WizardStep.prototype, "_initTitlePropagationSupport"),
+			oControl;
+
+		// Act
+		oControl = new WizardStep();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "Method _initTitlePropagationSupport called on init of control");
+		assert.ok(oSpy.calledOn(oControl), "The spy is called on the tested control instance");
+
+		// Cleanup
+		oSpy.restore();
+		oControl.destroy();
+	});
+});

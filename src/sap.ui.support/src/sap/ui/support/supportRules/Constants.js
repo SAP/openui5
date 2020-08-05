@@ -52,6 +52,21 @@ sap.ui.define([],
 			LOCAL_STORAGE_SELECTED_CONTEXT_COMPONENT_KEY: "support-assistant-settings-selected-context-components",
 
 			/**
+			 * Stores the visible column setting
+			 */
+			LOCAL_STORAGE_SELECTED_VISIBLE_COLUMN_KEY: "support-assistant-visible-column-setting",
+
+			/**
+			 * Stores selections presets list
+			 */
+			LOCAL_STORAGE_SELECTION_PRESETS_KEY: "support-assistant-selection-presets",
+
+			/**
+			 * Stores custom presets list
+			 */
+			LOCAL_STORAGE_CUSTOM_PRESETS_KEY: "support-assistant-custom-presets",
+
+			/**
 			 * The name of the persistence cookie.
 			 */
 			COOKIE_NAME: "persistence-cookie",
@@ -99,8 +114,19 @@ sap.ui.define([],
 			/**
 			 * Copy text for ruleset loading indicator
 			 */
-			RULESET_LOADING: "Loading ruleset files:"
+			RULESET_LOADING: "Loading ruleset files:",
 
+			/**
+			 * Initial value of all filters in Support Assistant views
+			 */
+			FILTER_VALUE_ALL: "All",
+
+			/**
+			 * Name of file produced by selection export
+			 */
+			RULE_SELECTION_EXPORT_FILE_NAME: "sa-rule-preset",
+
+			HIGHLIGHTER_ID: "ui5-highlighter"
 		};
 
 

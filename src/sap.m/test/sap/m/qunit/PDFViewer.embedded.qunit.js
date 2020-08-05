@@ -1,12 +1,16 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"test/sap/m/qunit/PDFViewerTestUtils",
-	"sap/m/PDFViewer",
+	"jquery.sap.global",
+	"./PDFViewerTestUtils",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/PDFViewerRenderer"
-], function (TestUtils, PDFViewer, JSONModel, PDFViewerRenderer) {
+	"sap/m/PDFViewerRenderer",
+	"sap/m/library"
+], function (jQuery, TestUtils, JSONModel, PDFViewerRenderer, library) {
 	"use strict";
+
+	// shortcut for sap.m.PDFViewerDisplayType
+	var PDFViewerDisplayType = library.PDFViewerDisplayType;
 
 	var oPdfViewer = null;
 
@@ -27,7 +31,7 @@ sap.ui.define([
 		var sTitle = "My Title";
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
 		});
 
 		var fnCheckControlStructure = function () {
@@ -69,7 +73,7 @@ sap.ui.define([
 		var sTitle = "My Title";
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
 		});
 
 		var fnCheckControlStructure = function () {
@@ -111,7 +115,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf"
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
 		});
 
 		var fnCheckControlStructure = function () {
@@ -150,7 +154,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oModel = new JSONModel({
-			source: "./pdfviewer/sample-file.pdf",
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			showDownloadButton: false
 		});
 
@@ -201,6 +205,59 @@ sap.ui.define([
 				assert.ok(oDownloadButton.length === 0, 'Download button should be hidden');
 				done();
 			});
+	});
+
+	QUnit.test("DisplayTypes tests", function (assert) {
+		assert.expect(10);
+		var done = assert.async();
+		var sTitle = "My Title";
+
+		var oModel = new JSONModel({
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
+		});
+
+		var fnIsContentDisplayed = function () {
+			return jQuery(".sapMPDFViewerContent").length === 1 || jQuery(".sapMPDFViewerEmbeddedContent").length === 1;
+		};
+
+		var fnCheckControlStructure = function () {
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Auto, "Default value of displayType is Auto");
+			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Auto mode");
+			assert.ok(fnIsContentDisplayed(), "Content is displayed in Auto mode");
+
+			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
+			TestUtils.rerender();
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Embedded, "Set displayType to Embedded mode");
+			assert.ok(fnIsContentDisplayed(), "Content is displayed in Embedded mode");
+
+			oPdfViewer.setDisplayType(PDFViewerDisplayType.Link);
+			TestUtils.rerender();
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Link, "Set displayType to Link mode");
+			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode");
+			assert.notOk(fnIsContentDisplayed(), "Content is not displayed in Link mode");
+
+			oPdfViewer.setShowDownloadButton(false);
+			oPdfViewer.rerender();
+			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode always");
+
+			oPdfViewer.setDisplayType(PDFViewerDisplayType.Auto);
+			oPdfViewer.rerender();
+			assert.notOk(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is not displayed in Auto mode");
+
+			done();
+		};
+
+		var oOptions = {
+			source: "{/source}",
+			title: sTitle
+		};
+
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+		oPdfViewer.setModel(oModel);
+		TestUtils.renderPdfViewer(oPdfViewer);
+
+		TestUtils.wait(1000)()
+			.then(fnCheckControlStructure);
 	});
 
 });

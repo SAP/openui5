@@ -1,0 +1,115 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "4c1602b88c7d750398a71aaaa0ee19977f04761a",
+        "type": "FIX",
+        "text": " routing.History: fix the failing test in IE 11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080225990"
+          }
+        ]
+      },
+      {
+        "id": "7b5e5594d4ab6bee4f3adb50cfb5081884dd6b91",
+        "type": "FIX",
+        "text": " sap.ui.core.cache.CacheManager: stopping the support for Mozilla Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070220619"
+          }
+        ]
+      },
+      {
+        "id": "15f1f43e4bc532664522c13219842a603c12d532",
+        "type": "FIX",
+        "text": " Opa: fix binding path selector for named models",
+        "references": []
+      },
+      {
+        "id": "589e288b535bd15c8148557de369a09d5f3e9cb9",
+        "type": "FIX",
+        "text": " routing.Targets: avoid misleading error log when add new target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080034913"
+          }
+        ]
+      },
+      {
+        "id": "6d72922d235f26827e6c66393b991ec5d32abe66",
+        "type": "FIX",
+        "text": " trace/Interaction: checkCompression with no responseUrl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080261661"
+          }
+        ]
+      },
+      {
+        "id": "0a7f4f000cef79d634ce20a772b9b558058e29b8",
+        "type": "FEATURE",
+        "text": " Opa: regex in bindingPath matcher",
+        "references": []
+      },
+      {
+        "id": "f8b32d73a65642d98f83fde033f27ba76cd38525",
+        "type": "FEATURE",
+        "text": " core.IconPool: make SAP-icons available for external consumption",
+        "references": []
+      },
+      {
+        "id": "fcfa8797b8f32878b19d09611f18cd290f25a7e2",
+        "type": "FIX",
+        "text": " FESR: collected records should be send every 60 seconds",
+        "references": []
+      },
+      {
+        "id": "68d358827e48d27390f5943d0735a22a50434532",
+        "type": "FEATURE",
+        "text": " Show many shortcut hints",
+        "references": []
+      },
+      {
+        "id": "06fdafdd44528cb0e01349a25430c42230f96345",
+        "type": "FEATURE",
+        "text": " core.Component: Support for ui5:// pseudo-protocol URLs",
+        "references": []
+      },
+      {
+        "id": "22a0a31a53288c9e030c0489cf096a79122b80af",
+        "type": "FIX",
+        "text": " BindingParser: Log error when type can\u0027t be resolved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980221956"
+          }
+        ]
+      },
+      {
+        "id": "89807e8e0f6991ef0544021744e7450eda5b1de5",
+        "type": "FIX",
+        "text": " Core: allow leading digits in the segments of init-module IDs.",
+        "references": []
+      },
+      {
+        "id": "2ca2b59a359b388a7515e3c76124221b6933b50d",
+        "type": "FIX",
+        "text": " trace/FESR: Fix failing FESR qunit test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080288896"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+<div style="overflow:auto;width:200;height:200">
+	<b data-sap-ui-test="true">
+		Text
+		<div id="control1">
+			Simple Text
+			<span id="control2">Control 2</span>
+			<div id="control3" tabindex="0">Control 3</div>
+			<div id="control4" tabindex="0">Control 4</div>
+			<input id="textinput" type="text" value="hello world">
+			<a name="control5" href="#">Control 5</a>
+			<a id="control6" href="#">Control 6</a>
+			Simple Text
+		</div>
+	</b>
+	<!-- container to test first/lastFocusableItem -->
+	<div id="container1">
+		<div id="container1-item1" tabindex="0" style="visibility:hidden;">
+			<div id="container1-item1-child1" tabindex="0"></div>
+		</div>
+		Some text node to verify that only Elements are checked
+		<div id="container1-item2">
+			<!-- some comment node -->
+			<button id="container1-item2-button">Button (Container1)</button>
+			Some text node to verify that only Elements are checked
+		</div>
+		<!-- some comment node -->
+		<div id="container1-item3" tabindex="0" style="visibility:hidden;">
+			<div id="container1-item3-child1" tabindex="0"></div>
+		</div>
+	</div>
+	<div style="visibility:hidden;">
+		<!-- another container to test first/lastFocusableItem (inside a hidden ancestor!) -->
+		<div id="container2">
+			<div id="container2-item1" tabindex="0" style="visibility:hidden;">
+				<div id="container2-item1-child1" tabindex="0"></div>
+			</div>
+			Some text node to verify that only Elements are checked
+			<div id="container2-item2">
+				<!-- some comment node -->
+				<button id="container2-item2-button">Button (Container2)</button>
+				Some text node to verify that only Elements are checked
+			</div>
+			<!-- some comment node -->
+			<div id="container2-item3" tabindex="0" style="visibility:hidden;">
+				<div id="container2-item3-child1" tabindex="0"></div>
+			</div>
+		</div>
+	</div>
+	<input id="testsel" value="Selection Test">
+</div>
+<div id="control4" tabIndex="0">Control 4</div>
+<div style="position:absolute;top:10px;left:10px;height:100px;width:200px" id="PositionedSpan">Position</div>
+<div id="invisibleDiv" style="display:none"></div>

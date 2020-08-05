@@ -1,0 +1,120 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "74656f1c4c54a201a3ad19756f7c58edbab59b34",
+        "type": "FIX",
+        "text": "sap.m.SinglePlanningCalendar: stickyMode works correctly when start date changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002592952019"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980126804"
+          }
+        ]
+      },
+      {
+        "id": "9dac9b678e5a6e2340ed61b8d5056445e5dea8a6",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Changing month works with minDate and maxDate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970083810"
+          }
+        ]
+      },
+      {
+        "id": "dbfdd5eeed741d8db1385503b106a3ef08268dea",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Two months displayed correctly in Compact mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376600002631922019"
+          }
+        ]
+      },
+      {
+        "id": "8f7a005baf2075b6d39a16de7b1d731a2727ed65",
+        "type": "FIX",
+        "text": "sap.ui.unified.ColorPicker: Now the width of the inputs is correct",
+        "references": []
+      },
+      {
+        "id": "e8884dc9cdd78f1439d89bb70a1ade0a814ad066",
+        "type": "FIX",
+        "text": "sap.ui.unified.calendar.DatesRow: showDayNamesLine=false now works correctly in compact mode for all themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980088691"
+          }
+        ]
+      },
+      {
+        "id": "47d0be57df12171816e6f128b6b958196eaf0698",
+        "type": "FIX",
+        "text": "sap.ui.unified.calendar.Month: Now dates are not selected via right click",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980116734"
+          }
+        ]
+      },
+      {
+        "id": "9fb27fae0390aa820fe357ce5a1e6754ab262ad2",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: selected day border shown correctly now",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2513"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980271814"
+          }
+        ]
+      },
+      {
+        "id": "c3a8d26c04c9707c4723c629f871fcfe568dbd89",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Role placement adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980184089"
+          }
+        ]
+      },
+      {
+        "id": "9b0cf23b9cb81e68587b43f02f0e9fd63aec9fb4",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Support rule corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980250253"
+          }
+        ]
+      },
+      {
+        "id": "5ec6dc4600036a0a5d15f8a51caf0ef05cfed0c0",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Tooltip and placeholder now get properly updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980281750"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -34,11 +34,14 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/view/NotFound.view.xml",
 							"webapp/Component.js",
 							"webapp/index.html",
+							"webapp/initMockServer.js",
 							"webapp/manifest.json",
 							"webapp/localService/mockdata/Employees.json",
 							"webapp/localService/metadata.xml",
 							"webapp/localService/mockdata/Resumes.json",
-							"webapp/localService/mockserver.js"
+							"webapp/localService/mockserver.js",
+							"ui5.yaml",
+							"package.json"
 						]
 					}
 				}

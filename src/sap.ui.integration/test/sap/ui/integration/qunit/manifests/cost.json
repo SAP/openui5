@@ -1,0 +1,32 @@
+{
+  "milk": [{
+	"Store Name": "24-Seven",
+	"Revenue": 345292.06,
+	"Fat Percentage": "2 Percent"
+  },
+	{
+	  "Store Name": "A&A",
+	  "Revenue": 1564235.29,
+	  "Fat Percentage": "2 Percent"
+	},
+	{
+	  "Store Name": "Alexei's Specialities",
+	  "Revenue": 1085567.22,
+	  "Fat Percentage": "2 Percent"
+	},
+	{
+	  "Store Name": "24-Seven",
+	  "Revenue": 82922.07,
+	  "Fat Percentage": "1 Percent"
+	},
+	{
+	  "Store Name": "A&A",
+	  "Revenue": 157913.07,
+	  "Fat Percentage": "1 Percent"
+	},
+	{
+	  "Store Name": "Alexei's Specialities",
+	  "Revenue": 245609.486884,
+	  "Fat Percentage": "1 Percent"
+	}]
+}

@@ -1,0 +1,232 @@
+<mvc:View
+	controllerName="sap.f.sample.DynamicPageWithWizard.controller.DynamicPageWithWizard"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:layout="sap.ui.layout"
+	height="100%">
+	<NavContainer id="navContainer">
+		<pages>
+			<f:DynamicPage id="dynamicPage" toggleHeaderOnTitleClick="{/titleClickable}"
+			               class="sapUiNoContentPadding" showFooter="true" fitContent="true">
+				<!-- DynamicPage Title -->
+				<f:title>
+					<f:DynamicPageTitle>
+						<f:heading>
+							<Title text="Header Title"/>
+						</f:heading>
+					</f:DynamicPageTitle>
+				</f:title>
+				<!-- DynamicPage Header -->
+				<f:content>
+					<Wizard id="ShoppingCartWizard"
+					        class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
+					        complete="completedHandler"
+					        enableBranching="true">
+						<WizardStep
+							id="ContentsStep"
+							nextStep="PaymentTypeStep"
+							title="Shopping cart contents"
+							icon="sap-icon://cart">
+							<ObjectHeader
+								title="Total"
+								number="{/ProductsTotalPrice}"
+								numberUnit="EUR">
+								<attributes>
+									<ObjectAttribute text="This is the list of items in your shopping cart"/>
+								</attributes>
+							</ObjectHeader>
+							<List mode="Delete"
+							      items="{/ProductCollection}"
+							      enableBusyIndicator="true"
+							      delete="handleDelete"
+							      headerText="Items">
+								<StandardListItem
+									title="{Name}"
+									type="Active"
+									description="{Description}"
+									icon="{ProductPicUrl}"
+									info="{Price} {CurrencyCode}"
+									iconDensityAware="false"
+									iconInset="false"/>
+							</List>
+						</WizardStep>
+						<WizardStep
+							id="PaymentTypeStep"
+							title="Payment type"
+							subsequentSteps="CreditCardStep, BankAccountStep, CashOnDeliveryStep"
+							complete="goToPaymentStep"
+							icon="sap-icon://money-bills">
+							<Text class="sapUiSmallMarginBottom"
+							      text="We accept all major credit cards. No extra cost will be charged when paying with a credit card. Bank transfer and Cash on delivery are only possible for inland deliveries. A service charge of 2.99 EUR will be charged for these types of deliveries. Be aware, that for Bank transfers, the shipping will start on the day after the payment is received."/>
+							<HBox
+								alignItems="Center"
+								justifyContent="Center"
+								width="100%">
+								<SegmentedButton selectionChange="setPaymentMethod" id="paymentMethodSelection"
+								                 selectedKey="{/selectedPayment}">
+									<items>
+										<SegmentedButtonItem key="Credit Card" icon="sap-icon://credit-card"
+										                     text="Credit card"/>
+										<SegmentedButtonItem key="Bank Transfer" icon="sap-icon://official-service"
+										                     text="Bank transfer"/>
+										<SegmentedButtonItem key="Cash on Delivery" icon="sap-icon://money-bills"
+										                     text="Cash on delivery"/>
+									</items>
+								</SegmentedButton>
+							</HBox>
+						</WizardStep>
+						<WizardStep
+							id="CreditCardStep"
+							title="Credit card info"
+							nextStep="BillingStep"
+							activate="checkCreditCardStep"
+							icon="sap-icon://credit-card">
+							<MessageStrip text="Enter at least 3 symbols for credit card name."/>
+							<form:SimpleForm
+								editable="true">
+								<Label text="Name on card" required="true"/>
+								<Input value="{/CreditCard/Name}" liveChange="checkCreditCardStep"
+								       valueLiveUpdate="true"/>
+								<Label text="Card number"/>
+								<Input value="{/CardNumber}"/>
+								<Label text="Security code"/>
+								<Input value="{/CreditCard/SecurityCode}"/>
+								<Label text="Expiration date"/>
+								<DatePicker value="{/CreditCard/Expire}"/>
+							</form:SimpleForm>
+						</WizardStep>
+						<WizardStep
+							id="BankAccountStep"
+							title="Beneficial bank info"
+							nextStep="BillingStep"
+							icon="sap-icon://official-service">
+							<Panel>
+								<headerToolbar>
+									<Toolbar height="0rem">
+										<Title text=""/>
+									</Toolbar>
+								</headerToolbar>
+								<layout:Grid
+									defaultSpan="L6 M6 S10"
+									hSpacing="2">
+									<Label text="Beneficiary Name" design="Bold"/>
+									<Label text="Singapore Hardware e-Commerce LTD"/>
+									<Label text="Beneficiary Bank" design="Bold"/>
+									<Label text="CITY BANK, SINGAPORE BRANCH"/>
+									<Label text="Beneficiary Account Number" design="Bold"/>
+									<Label text="06110702027218"/>
+									<Label text="Bank Phone Number" design="Bold"/>
+									<Label text="+65-6224-2622"/>
+									<Label text="Bank Email Address" design="Bold"/>
+									<Label text="customerservice@citybank.com"/>
+								</layout:Grid>
+							</Panel>
+						</WizardStep>
+						<WizardStep
+							id="CashOnDeliveryStep"
+							title="Cash on delivery info"
+							nextStep="BillingStep"
+							activate="checkCashOnDeliveryStep"
+							icon="sap-icon://money-bills">
+							<MessageStrip text="Enter at least 3 symbols for first name."/>
+							<form:SimpleForm
+								editable="true">
+								<Label text="First Name" required="true"/>
+								<Input value="{/CashOnDelivery/FirstName}" liveChange="checkCashOnDeliveryStep"
+								       valueLiveUpdate="true"/>
+								<Label text="Last Name"/>
+								<Input value="{/CashOnDelivery/LastName}"/>
+								<Label text="Phone Number"/>
+								<Input value="{/CashOnDelivery/Phone Number}"/>
+								<Label text="Email address"/>
+								<Input value="{/CashOnDelivery/Email}"/>
+							</form:SimpleForm>
+						</WizardStep>
+						<WizardStep
+							id="BillingStep"
+							title="Billing address"
+							subsequentSteps="DeliveryAddressStep, DeliveryTypeStep"
+							activate="checkBillingStep"
+							complete="billingAddressComplete"
+							icon="sap-icon://sales-quote">
+							<MessageStrip text="Enter at least 3 symbols for each required field"/>
+							<form:SimpleForm
+								editable="true">
+								<Label text="Delivery address is different"/>
+								<CheckBox
+									selected="{/differentDeliveryAddress}"
+									select="setDifferentDeliveryAddress"/>
+								<Label text="Address" required="true"/>
+								<Input value="{/BillingAddress/Address}" liveChange="checkBillingStep"
+								       valueLiveUpdate="true"/>
+								<Label text="City" required="true"/>
+								<Input value="{/BillingAddress/City}" liveChange="checkBillingStep"
+								       valueLiveUpdate="true"/>
+								<Label text="Zip Code" required="true"/>
+								<Input value="{/BillingAddress/ZipCode}" liveChange="checkBillingStep"
+								       valueLiveUpdate="true"/>
+								<Label text="Country" required="true"/>
+								<Input value="{/BillingAddress/Country}" liveChange="checkBillingStep"
+								       valueLiveUpdate="true"/>
+								<Label text="Note" required="false"/>
+								<TextArea rows="8" value="{/BillingAddress/Note}"/>
+							</form:SimpleForm>
+						</WizardStep>
+						<WizardStep
+							id="DeliveryAddressStep"
+							title="Delivery address"
+							nextStep="DeliveryTypeStep"
+							icon="sap-icon://sales-quote">
+							<form:SimpleForm
+								editable="true">
+								<Label text="Address"/>
+								<Input/>
+								<Label text="City"/>
+								<Input/>
+								<Label text="Zip Code"/>
+								<Input/>
+								<Label text="Country"/>
+								<Input/>
+								<Label text="Note"/>
+								<TextArea rows="8"/>
+							</form:SimpleForm>
+						</WizardStep>
+						<WizardStep
+							id="DeliveryTypeStep"
+							title="Delivery type"
+							icon="sap-icon://insurance-car">
+							<Text class="sapUiSmallMarginBottom"
+							      text="Standard delivery will be delivered within 5 workdays. Be aware, that around high-season sales, standard delivery may take up to one additional day. Express delivery is delivered within 36 hours. A service fee of 5.49 EUR is charged for Express delivery on a workday. For a holiday delivery, the service fee is 8,00 EUR. Express delivery is only available for inland deliveries. All service fees vary for deliveries  abroad."/>
+							<HBox
+								alignItems="Center"
+								justifyContent="Center"
+								width="100%">
+								<SegmentedButton selectedKey="{/selectedDeliveryMethod}">
+									<items>
+										<SegmentedButtonItem key="Standard Delivery" text="Standard"/>
+										<SegmentedButtonItem key="Express Delivery" text="Express"/>
+									</items>
+								</SegmentedButton>
+							</HBox>
+						</WizardStep>
+					</Wizard>
+				</f:content>
+				<!-- DynamicPage Footer -->
+				<f:footer>
+					<OverflowToolbar>
+						<Button icon="sap-icon://message-popup"
+						        text="messagesLength}"
+						        type="Emphasized"
+						        press="onMessageButtonPress"
+						        visible="{= !!$messagesLength}}"/>
+						<ToolbarSpacer/>
+						<Button type="Accept" text="Accept"/>
+						<Button type="Reject" text="Reject"/>
+					</OverflowToolbar>
+				</f:footer>
+			</f:DynamicPage>
+		</pages>
+	</NavContainer>
+</mvc:View>

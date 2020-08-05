@@ -1,0 +1,33 @@
+<mvc:View
+		controllerName="sap.f.sample.AvatarGroup.controller.AvatarGroup"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.f"
+		xmlns:m="sap.m"
+		xmlns:l="sap.ui.layout"
+		height="100%">
+			<m:Slider id="slider" value="{/viewPortPercentWidth}" liveChange="onSliderMoved"/>
+			<l:VerticalLayout id="vl1" width="100%" class="sapUiContentPadding">
+				<m:Label text="AvatarGroup control in Individual mode"
+					class="sapUiSmallMarginBottom sapUiMediumMarginTop" />
+				<AvatarGroup id="avatarGroup"
+					groupType="Individual"
+					avatarDisplaySize="S"
+					press="onIndividualPress"
+					items="{path: 'items>/content'}">
+						<AvatarGroupItem
+						initials="{items>initials}" 
+						fallbackIcon="{items>fallbackIcon}"
+						src="{items>src}"/>
+				</AvatarGroup>
+				<m:Label text="AvatarGroup control in Group mode"
+					class="sapUiSmallMarginBottom sapUiMediumMarginTop" />
+				<AvatarGroup groupType="Group"
+					avatarDisplaySize="M"
+					press="onGroupPress"
+					items="{path: 'items>/content'}">
+					<AvatarGroupItem initials="{items>initials}"
+						fallbackIcon="{items>fallbackIcon}"
+						src="{items>src}" />
+				</AvatarGroup>
+			</l:VerticalLayout>
+</mvc:View>

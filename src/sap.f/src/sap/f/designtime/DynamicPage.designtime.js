@@ -20,11 +20,20 @@ sap.ui.define([],
 			},
 			footer : {
 				domRef : ":sap-domref .sapFDynamicPageActualFooterControl"
+			},
+			landmarkInfo: {
+				ignore: true
 			}
 		},
 		scrollContainers : [{
 				domRef : "> .sapFDynamicPageContentWrapper",
-				aggregations : ["header", "content"]
+				aggregations : function(oElement) {
+					if (oElement._bHeaderInTitleArea || oElement._bPinned || oElement.getPreserveHeaderStateOnScroll()) {
+						return ["content"];
+					} else {
+						return ["header", "content"];
+					}
+				}
 			},
 			{
 				domRef : function(oElement) {
@@ -36,4 +45,4 @@ sap.ui.define([],
 		}
 	};
 
-}, /* bExport= */ false);
+});

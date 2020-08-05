@@ -6,7 +6,7 @@
 
 // Load synchronously to avoid QUnit issue where tests run before QUnit is loaded
 // Only load QUnit if it has not been loaded via script tag
-if (!window.QUnit) {
+if (!window.QUnit || !window.QUnit.test) {
   jQuery.sap.require("sap.ui.thirdparty.qunit");
 }
 
@@ -48,15 +48,16 @@ sap.ui.define([
      */
     test: function(args) {
 
-      if ($.type(args) !== "object") {
+      // args is mandatory
+      if (!args || typeof args !== "object") {
         throw new Error("qUnitTestHarness.test: input all arguments via a single object");
       }
 
-      if ($.type(args.featurePath) !== "string") {
+      if (typeof args.featurePath !== "string" && !(args.featurePath instanceof String)) {
         throw new Error("qUnitTestHarness.test: parameter 'featurePath' must be a valid string");
       }
 
-      if (($.type(args.steps) !== "function") || !((new args.steps())._generateTestStep)) {
+      if ((typeof args.steps !== "function") || !((new args.steps())._generateTestStep)) {
         throw new Error("qUnitTestHarness.test: parameter 'steps' must be a valid StepDefinitions constructor");
       }
 

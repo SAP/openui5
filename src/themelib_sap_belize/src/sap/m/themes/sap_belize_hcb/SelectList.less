@@ -3,7 +3,7 @@
 /* Belize High Contrast Black theme  */
 /* ================================= */
 
-@_sap_m_SelectListItemBelizeHCBFocus_Height: 7px; // 2 borders * 2px + 2 offsets (top and bottom) * 1px + 1px due to browser rendering issues
+@_sap_m_SelectList_ItemBelizeHCBFocus_Height: 7px; // 2 borders * 2px + 2 offsets (top and bottom) * 1px + 1px due to browser rendering issues
 
 /* ------------------------------ */
 /* item                           */
@@ -24,7 +24,7 @@
 }
 
 .sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
-.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+.sapMComboBoxBasePicker-CTX .sapMSelectListFocus .sapMSelectListItemBaseSelected {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.188rem;
 }
@@ -42,6 +42,7 @@ html.sap-desktop li.sapMSelectListItemBase:focus {
 }
 
 /* FIX: IE and Edge do not support css outline-offset */
+/* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 
@@ -58,11 +59,11 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 	.sapMSelectListItemBase:focus,
 	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
-	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+	.sapMComboBoxBasePicker-CTX .sapMSelectListFocus .sapMSelectListItemBaseSelected {
 		.sapMSelectListCell::before {
 			border-top: 0.125rem dashed @sapUiContentFocusColor;
 			border-bottom: 0.125rem dashed @sapUiContentFocusColor;
-			height: calc(@_sap_m_SelectListItem_Height ~" - " @_sap_m_SelectListItemBelizeHCBFocus_Height);
+			height: calc(@_sap_m_SelectList_ItemHeight ~" - " @_sap_m_SelectList_ItemBelizeHCBFocus_Height);
 		}
 
 		.sapMSelectListFirstCell.sapMSelectListCell::before {
@@ -77,9 +78,9 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapUiSizeCompact {
 		.sapMSelectListItemBase:focus,
 		.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
-		.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+		.sapMComboBoxBasePicker-CTX .sapMSelectListFocus .sapMSelectListItemBaseSelected {
 			.sapMSelectListCell::before {
-				height: calc(@_sap_m_SelectListItem_CompactHeight ~" - " @_sap_m_SelectListItemBelizeHCBFocus_Height);
+				height: calc(@_sap_m_SelectList_ItemCompactHeight ~" - " @_sap_m_SelectList_ItemBelizeHCBFocus_Height);
 			}
 		}
 	}

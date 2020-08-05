@@ -3,6 +3,8 @@
 /* Base theme                  */
 /* =========================== */
 
+@_sap_m_Text_TextShadowInTransparentToolbar: none;
+
 .sapMText {
 	display: inline-block;
 	box-sizing: border-box;
@@ -20,6 +22,12 @@ html[data-sap-ui-browser="sf10"] {
 			display: block;
 		}
 	}
+}
+
+//BCP: 0020751295 0000279538 2020
+.sapMText.sapMTextMaxLineWrapper {
+	// needed for line clamp to work
+	overflow: hidden;
 }
 
 .sapMTextNoWrap,
@@ -77,6 +85,10 @@ html[data-sap-ui-browser="sf10"] {
 	padding-bottom: 0.8125rem;
 }
 
+.sapUiForm:not(.sapUiFormEdit) .sapMText {
+	min-height: 1rem; /* for empty text */
+}
+
 .sapMLIBActive .sapMText,
 .sapMLIBActive .sapMListTblCell .sapMText,
 .sapMLIBActive .sapMListTblSubCntRow .sapMText {
@@ -89,22 +101,16 @@ html[data-sap-ui-browser="sf10"] {
 	font-weight: bold;
 }
 
-/* Info Toolbar Context */
-.sapMTB-Info-CTX .sapMText {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	font-style: italic;
-	font-size: @sapMFontMediumSize;
-	font-family: @sapUiFontFamily;
-	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
+/* HorizontalLayout */
+.sapUiHLayoutChildWrapper > .sapMText {
+	vertical-align: text-bottom;
 }
 
 /* Transparent Toolbar Context*/
 .sapMTB-Transparent-CTX .sapMText {
 	font-weight: @sapUiFontHeaderWeight;
 	font-family: @sapUiFontHeaderFamily;
-	text-shadow: 0 1px 0 @sapUiContentContrastShadowColor;
+	text-shadow: @_sap_m_Text_TextShadowInTransparentToolbar;
 	color: @sapUiGroupTitleTextColor;
 }
 
@@ -120,12 +126,8 @@ html[data-sap-ui-browser="sf10"] {
 	vertical-align: middle;
 }
 
-.sapUiSizeCondensed .sapUiTableCell .sapMText {
+.sapUiSizeCondensed .sapUiTableDataCell .sapMText {
 	line-height: 1.5rem;
-}
-
-.sapUiAnalyticalTable .sapUiTableCell > .sapMText {
-	width: 100%;
 }
 
 .sapUiAnalyticalTable .sapUiAnalyticalTableSum .sapUiTableCell .sapMText {

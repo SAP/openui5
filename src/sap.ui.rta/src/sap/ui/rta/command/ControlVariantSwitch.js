@@ -2,10 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/fl/changeHandler/BaseTreeModifier',
-	'sap/ui/fl/Utils'
-], function(BaseCommand, BaseTreeModifier, flUtils) {
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/Utils"
+], function(
+	BaseCommand,
+	JsControlTreeModifier,
+	flUtils
+) {
 	"use strict";
 
 	/**
@@ -36,49 +40,49 @@ sap.ui.define([
 		}
 	});
 
-	ControlVariantSwitch.prototype.MODEL_NAME = "$FlexVariants";
-
-	ControlVariantSwitch.prototype._getAppComponent = function(oElement) {
-		if (!this._oControlAppComponent) {
-			this._oControlAppComponent = oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
-		}
-		return this._oControlAppComponent;
+	ControlVariantSwitch.prototype._getAppComponent = function () {
+		var oElement = this.getElement();
+		return oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
 	};
 
+
 	/**
-	 * @public Template Method to implement execute logic, with ensure precondition Element is available
+	 * Template Method to implement execute logic, with ensure precondition Element is available.
+	 * @public
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantSwitch.prototype.execute = function() {
-		var oElement = this.getElement(),
-			oAppComponent = this._getAppComponent(oElement),
-			sNewVariantReference = this.getTargetVariantReference();
+		var oElement = this.getElement();
+		var oAppComponent = this._getAppComponent();
+		var sNewVariantReference = this.getTargetVariantReference();
 
-		this.oModel = oAppComponent.getModel(this.MODEL_NAME);
-		this.sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oAppComponent).id;
-		return this._updateModelVariant(sNewVariantReference);
+		this.oModel = oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
+		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oElement, oAppComponent).id;
+		return this._updateModelVariant(sNewVariantReference, oAppComponent);
 	};
 
 	/**
-	 * @public Template Method to implement undo logic
+	 * Template Method to implement undo logic.
+	 * @public
 	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantSwitch.prototype.undo = function() {
 		var sOldVariantReference = this.getSourceVariantReference();
-		return this._updateModelVariant(sOldVariantReference);
+		var oAppComponent = this._getAppComponent();
+		return this._updateModelVariant(sOldVariantReference, oAppComponent);
 	};
 
 	/**
-	 * @private Update variant for the underlying model
+	 * Update variant for the underlying model.
+	 * @private
 	 * @returns {Promise} Returns promise resolve
 	 */
-	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference) {
+	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference, oAppComponent) {
 		if (this.getTargetVariantReference() !== this.getSourceVariantReference()) {
-			return Promise.resolve(this.oModel.updateCurrentVariant(this.sVariantManagementReference, sVariantReference));
+			return Promise.resolve(this.oModel.updateCurrentVariant(this.sVariantManagementReference, sVariantReference, oAppComponent));
 		}
 		return Promise.resolve();
 	};
 
 	return ControlVariantSwitch;
-
-}, /* bExport= */true);
+});

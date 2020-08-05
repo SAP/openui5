@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(["sap/base/Log", "sap/base/util/extend"], function(Log, extend) {
 	"use strict";
 
 	/**
@@ -13,6 +13,12 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 	return {
 
 		/**
+		 * Executes the route matched logic
+		 *
+		 * @param {object} oArguments The arguments of the event
+		 * @param {boolean} bInital Identifies if the route is matched the first time
+		 * @param {sap.ui.core.routing.Route} oNestingChild The nesting route
+		 * @returns {object} The place info
 		 * @private
 		 */
 		_routeMatched : function(oArguments, bInital, oNestingChild) {
@@ -24,7 +30,14 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				oEventData,
 				oView = null,
 				oTargetControl = null,
-				oTargetData;
+				oTargetData,
+				fnCollectDisplayedData,
+				aViews,
+				aTargetControls,
+				aTargets;
+
+			oRouter._oMatchedRoute = this;
+			oRouter._bMatchingProcessStarted = true;
 
 			// Recursively fire matched event and display views of this routes parents
 			if (this._oParent) {
@@ -34,10 +47,10 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				this._oNestingParent._routeMatched(oArguments, false, this);
 			}
 
-			oConfig =  jQuery.extend({}, oRouter._oConfig, this._oConfig);
+			oConfig =  extend({}, oRouter._oConfig, this._oConfig);
 
 			// make a copy of arguments and forward route config to target
-			oTargetData = jQuery.extend({}, oArguments);
+			oTargetData = Object.assign({}, oArguments);
 			oTargetData.routeConfig = oConfig;
 
 			oEventData = {
@@ -59,7 +72,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			if (this._oTarget) {
 				oTarget = this._oTarget;
 				// update the targets config so defaults are taken into account - since targets cannot be added in runtime they don't merge configs like routes do
-				oTarget._oOptions = this._convertToTargetOptions(oConfig);
+				oTarget._updateOptions(this._convertToTargetOptions(oConfig));
 
 				// validate if it makes sense to display the target (Route does not have all params required) - no error logging will be done during validation
 				if (oTarget._isValid(oParentPlaceInfo, false)) {
@@ -76,8 +89,39 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				oEventData.targetControl = oTargetControl;
 			} else {
 				// let targets do the placement + the events
+				aViews = [];
+				aTargetControls = [];
+
+				// collect the view and control parameters from the "displayed"
+				// event of each target because the targets.display doesn't return
+				// this information in the sync version
+				fnCollectDisplayedData = function(oEvent) {
+					aViews.push(oEvent.getParameter("view"));
+					aTargetControls.push(oEvent.getParameter("control"));
+				};
+
+				if (Array.isArray(this._oConfig.target)) {
+					aTargets = this._oConfig.target;
+				} else {
+					aTargets = [this._oConfig.target];
+				}
+
+				aTargets.forEach(function(sTargetName) {
+					var oTarget = oRouter._oTargets.getTarget(sTargetName);
+					if (oTarget) {
+						oTarget.attachEventOnce("display", fnCollectDisplayedData);
+					}
+				});
+
 				oRouter._oTargets._display(this._oConfig.target, oTargetData, this._oConfig.titleTarget);
+
+				oEventData.view = aViews[0];
+				oEventData.targetControl = aTargetControls[0];
+				oEventData.views = aViews;
+				oEventData.targetControls = aTargetControls;
 			}
+
+			oRouter._bMatchingProcessStarted = false;
 
 			if (oConfig.callback) {
 				//Targets don't pass TargetControl and view since there might be multiple
@@ -89,7 +133,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 			// skip this event in the recursion
 			if (bInital) {
-				jQuery.sap.log.info("The route named '" + oConfig.name + "' did match with its pattern", this);
+				Log.info("The route named '" + oConfig.name + "' did match with its pattern", this);
 				this.fireEvent("patternMatched", oEventData);
 				oRouter.fireRoutePatternMatched(oEventData);
 			}

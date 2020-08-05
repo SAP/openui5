@@ -1,31 +1,31 @@
 /*global QUnit*/
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/Toolbar",
 	"sap/ui/core/mvc/View",
 	"sap/ui/layout/changeHandler/AddSimpleFormField",
 	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/commons/TextView",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
-	"sap/ui/fl/changeHandler/XmlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/m/Label",
+	"sap/m/Input",
+	"sap/base/util/includes"
 ],
-function (
+function(
 	Title,
 	Toolbar,
 	View,
 	AddFieldChangeHandler,
 	SimpleForm,
-	TextView,
 	Change,
 	JsControlTreeModifier,
-	XmlTreeModifier
+	XmlTreeModifier,
+	Label,
+	Input,
+	includes
 ) {
 	'use strict';
-
-	QUnit.start();
 
 	QUnit.module("AddField for SimpleForm", {
 		beforeEach: function () {
@@ -44,7 +44,6 @@ function (
 
 	QUnit.test('Add smart field to SimpleForm in different positions', function (assert) {
 		var oTitle = new Title("NewGroup");
-
 		this.oSimpleForm = new SimpleForm({content : [
 			oTitle
 		]});
@@ -67,94 +66,107 @@ function (
 		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
 		assert.equal(oChange.getDependentControl("targetContainerHeader", {modifier: JsControlTreeModifier, appComponent: this.oMockedAppComponent}).getId(), oTitle.getId(), "parent is part of dependentSelector");
 
-		assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
-			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
-			"the change to add a field was applied");
+		return AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
+			{
+				modifier: JsControlTreeModifier,
+				view : oView,
+				appComponent : this.oMockedAppComponent
+			}
+		)
+		.then(function() {
+			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
+			var oFormElement = oFormContainer.getAggregation("formElements")[0];
+			assert.equal(this.oSimpleForm.getContent().length, 3, "the form has now 3 content items");
+			var oSmartFieldLabel = oFormElement.getLabel();
+			assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the first form element");
+			var oSmartField = oFormElement.getFields()[0];
+			assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted in the empty form");
 
-		oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
-		var oFormElement = oFormContainer.getAggregation("formElements")[0];
-		assert.equal(this.oSimpleForm.getContent().length, 3, "the form has now 3 content items");
-		var oSmartFieldLabel = oFormElement.getLabel();
-		assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the first form element");
-		var oSmartField = oFormElement.getFields()[0];
-		assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted in the empty form");
+			var mSpecificChangeInfo2 = {
+					"newControlId": "addedFieldId2",
+					"parentId": oTitle.getParent().getId(),
+					"index" : 0,
+					"bindingPath" : "BindingPath2",
+					"oDataServiceVersion" : "2.0"
+			};
 
-		var mSpecificChangeInfo2 = {
-				"newControlId": "addedFieldId2",
-				"parentId": oTitle.getParent().getId(),
-				"index" : 0,
-				"bindingPath" : "BindingPath2",
-				"oDataServiceVersion" : "2.0"
-		};
+			var oChange2 = new Change({"changeType" : "addSimpleFormField"});
 
-		var oChange2 = new Change({"changeType" : "addSimpleFormField"});
+			AddFieldChangeHandler.completeChangeContent(oChange2, mSpecificChangeInfo2, {modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+			assert.equal(oChange.getDependentControl("targetContainerHeader", {modifier: JsControlTreeModifier, appComponent: this.oMockedAppComponent}).getId(), oTitle.getId(), "parent is part of dependentSelector");
+			return AddFieldChangeHandler.applyChange(oChange2, this.oSimpleForm,
+				{
+					modifier: JsControlTreeModifier,
+					view : oView,
+					appComponent: this.oMockedAppComponent
+				}
+			);
+		}.bind(this))
+		.then(function() {
+			assert.equal(this.oSimpleForm.getContent().length, 5, "the form has now 5 content items");
+			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
+			var oFormElement = oFormContainer.getAggregation("formElements")[0];
+			var oSmartFieldLabel = oFormElement.getLabel();
+			assert.equal(oSmartFieldLabel.getId(), "addedFieldId2-label", "the new label was inserted for the first form element");
+			var oSmartField = oFormElement.getFields()[0];
+			assert.equal(oSmartField.getBindingPath("value"),"BindingPath2", "the new field was inserted in the first form element");
 
-		AddFieldChangeHandler.completeChangeContent(oChange2, mSpecificChangeInfo2, {modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
-		assert.equal(oChange.getDependentControl("targetContainerHeader", {modifier: JsControlTreeModifier, appComponent: this.oMockedAppComponent}).getId(), oTitle.getId(), "parent is part of dependentSelector");
-		assert.ok(AddFieldChangeHandler.applyChange(oChange2, this.oSimpleForm,
-			{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent}),
-			"the change adding a field to index 0 was applied");
+			oFormElement = oFormContainer.getAggregation("formElements")[1];
+			oSmartFieldLabel = oFormElement.getLabel();
+			assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the previous label is now in the second form element");
+			oSmartField = oFormElement.getFields()[0];
+			assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the previous field is now in the second form element");
 
-		assert.equal(this.oSimpleForm.getContent().length, 5, "the form has now 5 content items");
-		oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
-		oFormElement = oFormContainer.getAggregation("formElements")[0];
-		oSmartFieldLabel = oFormElement.getLabel();
-		assert.equal(oSmartFieldLabel.getId(), "addedFieldId2-label", "the new label was inserted for the first form element");
-		oSmartField = oFormElement.getFields()[0];
-		assert.equal(oSmartField.getBindingPath("value"),"BindingPath2", "the new field was inserted in the first form element");
+			var mSpecificChangeInfo3 = {
+					"newControlId": "addedFieldId3",
+					"parentId": oTitle.getParent().getId(),
+					"index" : 1,
+					"bindingPath" : "BindingPath3",
+					"oDataServiceVersion" : "2.0"
+			};
 
-		oFormElement = oFormContainer.getAggregation("formElements")[1];
-		oSmartFieldLabel = oFormElement.getLabel();
-		assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the previous label is now in the second form element");
-		oSmartField = oFormElement.getFields()[0];
-		assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the previous field is now in the second form element");
+			var oChange3 = new Change({"changeType" : "addSimpleFormField"});
 
-		var mSpecificChangeInfo3 = {
-				"newControlId": "addedFieldId3",
-				"parentId": oTitle.getParent().getId(),
-				"index" : 1,
-				"bindingPath" : "BindingPath3",
-				"oDataServiceVersion" : "2.0"
-		};
+			AddFieldChangeHandler.completeChangeContent(oChange3, mSpecificChangeInfo3, {modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+			return AddFieldChangeHandler.applyChange(oChange3, this.oSimpleForm,
+				{
+					modifier: JsControlTreeModifier,
+					view : oView,
+					appComponent: this.oMockedAppComponent
+				}
+			);
+		}.bind(this))
+		.then(function() {
+			assert.equal(this.oSimpleForm.getContent().length, 7, "the form has now 7 content items");
+			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
+			var oFormElement = oFormContainer.getAggregation("formElements")[0];
+			var oSmartFieldLabel = oFormElement.getLabel();
+			assert.equal(oSmartFieldLabel.getId(), "addedFieldId2-label", "the new label 2 is still in the first form element");
+			var oSmartField = oFormElement.getFields()[0];
+			assert.equal(oSmartField.getBindingPath("value"),"BindingPath2", "the new field 2 is still in the first form element");
 
-		var oChange3 = new Change({"changeType" : "addSimpleFormField"});
+			oFormElement = oFormContainer.getAggregation("formElements")[1];
+			oSmartFieldLabel = oFormElement.getLabel();
+			assert.equal(oSmartFieldLabel.getId(), "addedFieldId3-label", "the new label 3 was inserted for the second form element");
+			oSmartField = oFormElement.getFields()[0];
+			assert.equal(oSmartField.getBindingPath("value"),"BindingPath3", "the new field 3 was inserted as second form element");
 
-		AddFieldChangeHandler.completeChangeContent(oChange3, mSpecificChangeInfo3, {modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
-		assert.ok(AddFieldChangeHandler.applyChange(oChange3, this.oSimpleForm,
-			{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent}),
-			"the change adding a field to index 1 was applied");
-
-		assert.equal(this.oSimpleForm.getContent().length, 7, "the form has now 7 content items");
-		oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
-		oFormElement = oFormContainer.getAggregation("formElements")[0];
-		oSmartFieldLabel = oFormElement.getLabel();
-		assert.equal(oSmartFieldLabel.getId(), "addedFieldId2-label", "the new label 2 is still in the first form element");
-		oSmartField = oFormElement.getFields()[0];
-		assert.equal(oSmartField.getBindingPath("value"),"BindingPath2", "the new field 2 is still in the first form element");
-
-		oFormElement = oFormContainer.getAggregation("formElements")[1];
-		oSmartFieldLabel = oFormElement.getLabel();
-		assert.equal(oSmartFieldLabel.getId(), "addedFieldId3-label", "the new label 3 was inserted for the second form element");
-		oSmartField = oFormElement.getFields()[0];
-		assert.equal(oSmartField.getBindingPath("value"),"BindingPath3", "the new field 3 was inserted as second form element");
-
-		oFormElement = oFormContainer.getAggregation("formElements")[2];
-		oSmartFieldLabel = oFormElement.getLabel();
-		assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was moved to the third form element");
-		oSmartField = oFormElement.getFields()[0];
-		assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the new field was moved to the third form element");
-
+			oFormElement = oFormContainer.getAggregation("formElements")[2];
+			oSmartFieldLabel = oFormElement.getLabel();
+			assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was moved to the third form element");
+			oSmartField = oFormElement.getFields()[0];
+			assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the new field was moved to the third form element");
+		}.bind(this));
 	});
 
 	QUnit.test('Add smart field to SimpleForm with toolbar instead of title', function (assert) {
 		this.oToolbar = new Toolbar("NewGroup");
-		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
-		this.oInput0 = new sap.m.Input({id : "Input0"});
+		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
+		this.oInput0 = new Input({id : "Input0"});
 
 		this.oSimpleForm = new SimpleForm({content : [
 			this.oToolbar, this.oLabel0, this.oInput0
 		]});
-
 		var oView = new View({content : [
 			this.oSimpleForm
 		]});
@@ -171,24 +183,29 @@ function (
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
 		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
-		assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
-			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
-			"the change to add a field was applied");
-
-		oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
-		var oFormElement = oFormContainer.getAggregation("formElements")[0];
-		assert.equal(this.oSimpleForm.getContent().length, 5, "the form has 5 content items after field was added");
-		var oSmartFieldLabel = oFormElement.getLabel();
-		assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the first form element");
-		var oSmartField = oFormElement.getFields()[0];
-		assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted as first form element");
+		return AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
+			{
+				modifier: JsControlTreeModifier,
+				view : oView,
+				appComponent : this.oMockedAppComponent
+			}
+		)
+		.then(function() {
+			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
+			var oFormElement = oFormContainer.getAggregation("formElements")[0];
+			assert.equal(this.oSimpleForm.getContent().length, 5, "the form has 5 content items after field was added");
+			var oSmartFieldLabel = oFormElement.getLabel();
+			assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the first form element");
+			var oSmartField = oFormElement.getFields()[0];
+			assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted as first form element");
+		}.bind(this));
 	});
 
 	QUnit.test('Add smart field to second group of SimpleForm', function (assert) {
 		this.oToolbar = new Toolbar("NewGroup");
 		this.oTitle = new Title("AnotherGroup");
-		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
-		this.oInput0 = new sap.m.Input({id : "Input0"});
+		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
+		this.oInput0 = new Input({id : "Input0"});
 
 		this.oSimpleForm = new SimpleForm({content : [
 			this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
@@ -210,20 +227,69 @@ function (
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
 		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
-		assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
-			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
-			"the change to add a field was applied");
-
-		oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[1];
-		var oFormElement = oFormContainer.getAggregation("formElements")[0];
-		assert.equal(this.oSimpleForm.getContent().length, 6, "the form has 6 content items after field was added");
-		var oSmartFieldLabel = oFormElement.getLabel();
-		assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the field of the new group");
-		var oSmartField = oFormElement.getFields()[0];
-		assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted in the empty group");
+		return AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
+			{
+				modifier: JsControlTreeModifier,
+				view : oView,
+				appComponent : this.oMockedAppComponent
+			}
+		)
+		.then(function() {
+			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[1];
+			var oFormElement = oFormContainer.getAggregation("formElements")[0];
+			assert.equal(this.oSimpleForm.getContent().length, 6, "the form has 6 content items after field was added");
+			var oSmartFieldLabel = oFormElement.getLabel();
+			assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the field of the new group");
+			var oSmartField = oFormElement.getFields()[0];
+			assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted in the empty group");
+		}.bind(this));
 	});
 
 	QUnit.test('Add smart field to first group of SimpleForm with two groups', function (assert) {
+		this.oToolbar = new Toolbar("NewGroup");
+		this.oTitle = new Title("AnotherGroup");
+		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
+		this.oInput0 = new Input({id : "Input0"});
+
+		this.oSimpleForm = new SimpleForm({content : [
+			this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
+		]});
+
+		var oView = new View({content : [
+			this.oSimpleForm
+		]});
+
+		var oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
+
+		var mSpecificChangeInfo = {
+				"newControlId": "addedFieldId",
+				"parentId": oFormContainer.getId(),
+				"index" : 2,
+				"bindingPath" : "BindingPath1",
+				"oDataServiceVersion" : "2.0"
+		};
+		var oChange = new Change({"changeType" : "addSimpleFormField"});
+
+		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		return AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
+			{
+				modifier: JsControlTreeModifier,
+				view : oView,
+				appComponent : this.oMockedAppComponent
+			}
+		)
+		.then(function() {
+			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
+			var oFormElement = oFormContainer.getAggregation("formElements")[1];
+			assert.equal(this.oSimpleForm.getContent().length, 6, "the form has 6 content items after field was added");
+			var oSmartFieldLabel = oFormElement.getLabel();
+			assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the new field");
+			var oSmartField = oFormElement.getFields()[0];
+			assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted in the right place");
+		}.bind(this));
+	});
+
+	QUnit.test('Add smart field to group of SimpleForm twice', function (assert) {
 		this.oToolbar = new Toolbar("NewGroup");
 		this.oTitle = new Title("AnotherGroup");
 		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
@@ -247,24 +313,26 @@ function (
 				"oDataServiceVersion" : "2.0"
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
+		var oPropertyBag = {
+			modifier: JsControlTreeModifier,
+			view : oView,
+			appComponent : this.oMockedAppComponent
+		};
 
-		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
-		assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
-			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
-			"the change to add a field was applied");
-
-		oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
-		var oFormElement = oFormContainer.getAggregation("formElements")[1];
-		assert.equal(this.oSimpleForm.getContent().length, 6, "the form has 6 content items after field was added");
-		var oSmartFieldLabel = oFormElement.getLabel();
-		assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the new field");
-		var oSmartField = oFormElement.getFields()[0];
-		assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted in the right place");
+		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo, oPropertyBag);
+		return AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm, oPropertyBag)
+		.then(function() {
+			return AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm, oPropertyBag)
+			.catch(function(oReturn) {
+				assert.ok(includes(oReturn.message, "Control to be created already exists"),
+				"the second change to add the same field throws a not applicable info message");
+			});
+		}.bind(this));
 	});
 
 	QUnit.test('Add smart field to SimpleForm without title/toolbar', function (assert) {
-		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
-		this.oInput0 = new sap.m.Input({id : "Input0"});
+		this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
+		this.oInput0 = new Input({id : "Input0"});
 
 		this.oSimpleForm = new SimpleForm({content : [
 			this.oLabel0, this.oInput0
@@ -286,17 +354,22 @@ function (
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
 		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
-		assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
-			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
-			"the change to add a field was applied");
-
-		oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
-		var oFormElement = oFormContainer.getAggregation("formElements")[0];
-		assert.equal(this.oSimpleForm.getContent().length, 4, "the form has 4 content items after field was added");
-		var oSmartFieldLabel = oFormElement.getLabel();
-		assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the first form element");
-		var oSmartField = oFormElement.getFields()[0];
-		assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted in the empty form");
+		return AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
+			{
+				modifier: JsControlTreeModifier,
+				view : oView,
+				appComponent : this.oMockedAppComponent
+			}
+		)
+		.then(function() {
+			oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
+			var oFormElement = oFormContainer.getAggregation("formElements")[0];
+			assert.equal(this.oSimpleForm.getContent().length, 4, "the form has 4 content items after field was added");
+			var oSmartFieldLabel = oFormElement.getLabel();
+			assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the first form element");
+			var oSmartField = oFormElement.getFields()[0];
+			assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted in the empty form");
+		}.bind(this));
 	});
 
 	QUnit.module("AddField for SimpleForm in XML", {
@@ -314,7 +387,6 @@ function (
 		var sAddedFieldId = "addedFieldId";
 		var sValue = "{BindingPath1}";
 		var sTitleId = "NewTitle";
-
 		var oChangeDefinitionXml = {
 			"changeType" : "addSimpleFormField",
 			"content" : {
@@ -349,25 +421,27 @@ function (
 		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 		this.oXmlSimpleForm = oXmlDocument.childNodes[0];
 
-		assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oXmlSimpleForm,
-			{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
-			"the change was successfully applied");
-
-		assert.equal(this.oXmlSimpleForm.childElementCount, 5, "the simpleform has 5 elements after the change");
-		var aChildNodes = this.oXmlSimpleForm.childNodes;
-		assert.equal(aChildNodes[1].getAttribute("id"), sSmartFieldLabelId);
-		assert.equal(aChildNodes[2].getAttribute("id"), sSmartFieldId);
-		assert.equal(aChildNodes[3].getAttribute("id"), sAddedFieldId + "-label");
-		assert.equal(aChildNodes[4].getAttribute("id"), sAddedFieldId, "the field was added in position 1");
-
+		return AddFieldChangeHandler.applyChange(oChangeXml, this.oXmlSimpleForm,
+			{
+				modifier: XmlTreeModifier,
+				view: oXmlDocument,
+				appComponent: this.oMockedAppComponent
+			}
+		)
+		.then(function() {
+			assert.equal(this.oXmlSimpleForm.childElementCount, 5, "the simpleform has 5 elements after the change");
+			var aChildNodes = this.oXmlSimpleForm.childNodes;
+			assert.equal(aChildNodes[1].getAttribute("id"), sSmartFieldLabelId);
+			assert.equal(aChildNodes[2].getAttribute("id"), sSmartFieldId);
+			assert.equal(aChildNodes[3].getAttribute("id"), sAddedFieldId + "-label");
+			assert.equal(aChildNodes[4].getAttribute("id"), sAddedFieldId, "the field was added in position 1");
+		}.bind(this));
 	});
 
 	QUnit.test('Add smart field to SimpleForm xml tree in the beginning', function (assert) {
-
 		var sAddedFieldId = "addedFieldId";
 		var sValue = "{BindingPath1}";
 		var sTitleId = "NewTitle";
-
 		var oChangeDefinitionXml = {
 			"changeType" : "addSimpleFormField",
 			"content" : {
@@ -402,25 +476,27 @@ function (
 		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 		this.oSimpleForm = oXmlDocument.childNodes[0];
 
-		assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
-			{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
-			"the change was successfully applied");
-
-		assert.equal(this.oSimpleForm.childElementCount, 5, "the simpleform has 5 elements after the change");
-		var aChildNodes = this.oSimpleForm.childNodes;
-		assert.equal(aChildNodes[1].getAttribute("id"), sAddedFieldId + "-label");
-		assert.equal(aChildNodes[2].getAttribute("id"), sAddedFieldId, "the field is added in position 0");
-		assert.equal(aChildNodes[3].getAttribute("id"), sSmartFieldLabelId);
-		assert.equal(aChildNodes[4].getAttribute("id"), sSmartFieldId);
-
+		return AddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
+			{
+				modifier: XmlTreeModifier,
+				view: oXmlDocument,
+				appComponent: this.oMockedAppComponent
+			}
+		)
+		.then(function() {
+			assert.equal(this.oSimpleForm.childElementCount, 5, "the simpleform has 5 elements after the change");
+			var aChildNodes = this.oSimpleForm.childNodes;
+			assert.equal(aChildNodes[1].getAttribute("id"), sAddedFieldId + "-label");
+			assert.equal(aChildNodes[2].getAttribute("id"), sAddedFieldId, "the field is added in position 0");
+			assert.equal(aChildNodes[3].getAttribute("id"), sSmartFieldLabelId);
+			assert.equal(aChildNodes[4].getAttribute("id"), sSmartFieldId);
+		}.bind(this));
 	});
 
 	QUnit.test('Add smart field to SimpleForm xml tree in the middle', function (assert) {
-
 		var sAddedFieldId = "addedFieldId";
 		var sValue = "{BindingPath1}";
 		var sTitleId = "NewTitle";
-
 		var oChangeDefinitionXml = {
 			"changeType" : "addSimpleFormField",
 			"content" : {
@@ -459,26 +535,29 @@ function (
 		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 		this.oSimpleForm = oXmlDocument.childNodes[0];
 
-		assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
-			{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
-			"the change was successfully applied");
-
-		assert.equal(this.oSimpleForm.childElementCount, 7, "the simpleform has 7 elements after the change");
-		var aChildNodes = this.oSimpleForm.childNodes;
-		assert.equal(aChildNodes[1].getAttribute("id"), sSmartFieldLabelId);
-		assert.equal(aChildNodes[2].getAttribute("id"), sSmartFieldId, "the first field stayed in position 0");
-		assert.equal(aChildNodes[3].getAttribute("id"), sAddedFieldId + "-label");
-		assert.equal(aChildNodes[4].getAttribute("id"), sAddedFieldId, "the field is added in position 1");
-		assert.equal(aChildNodes[5].getAttribute("id"), sSmartFieldLabelId2);
-		assert.equal(aChildNodes[6].getAttribute("id"), sSmartFieldId2, "the second field is moved to position 2");
-
+		return AddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
+			{
+				modifier: XmlTreeModifier,
+				view: oXmlDocument,
+				appComponent: this.oMockedAppComponent
+			}
+		)
+		.then(function() {
+			assert.equal(this.oSimpleForm.childElementCount, 7, "the simpleform has 7 elements after the change");
+			var aChildNodes = this.oSimpleForm.childNodes;
+			assert.equal(aChildNodes[1].getAttribute("id"), sSmartFieldLabelId);
+			assert.equal(aChildNodes[2].getAttribute("id"), sSmartFieldId, "the first field stayed in position 0");
+			assert.equal(aChildNodes[3].getAttribute("id"), sAddedFieldId + "-label");
+			assert.equal(aChildNodes[4].getAttribute("id"), sAddedFieldId, "the field is added in position 1");
+			assert.equal(aChildNodes[5].getAttribute("id"), sSmartFieldLabelId2);
+			assert.equal(aChildNodes[6].getAttribute("id"), sSmartFieldId2, "the second field is moved to position 2");
+		}.bind(this));
 	});
 
 	QUnit.test('Add smart field in the middle of SimpleForm without title/toolbar in xml tree', function (assert) {
 
 		var sAddedFieldId = "addedFieldId";
 		var sValue = "{BindingPath1}";
-
 		var oChangeDefinitionXml = {
 			"changeType" : "addSimpleFormField",
 			"content" : {
@@ -512,19 +591,23 @@ function (
 		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 		this.oSimpleForm = oXmlDocument.childNodes[0];
 
-		assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
-			{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
-			"the change was successfully applied");
-
-		assert.equal(this.oSimpleForm.childElementCount, 6, "the simpleform has 6 elements after the change");
-		var aChildNodes = this.oSimpleForm.childNodes;
-		assert.equal(aChildNodes[0].getAttribute("id"), sSmartFieldLabelId);
-		assert.equal(aChildNodes[1].getAttribute("id"), sSmartFieldId, "the first field stayed in position 0");
-		assert.equal(aChildNodes[2].getAttribute("id"), sAddedFieldId + "-label");
-		assert.equal(aChildNodes[3].getAttribute("id"), sAddedFieldId, "the field is added in position 1");
-		assert.equal(aChildNodes[4].getAttribute("id"), sSmartFieldLabelId2);
-		assert.equal(aChildNodes[5].getAttribute("id"), sSmartFieldId2, "the second field is moved to position 2");
-
+		return AddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
+			{
+				modifier: XmlTreeModifier,
+				view: oXmlDocument,
+				appComponent: this.oMockedAppComponent
+			}
+		)
+		.then(function() {
+			assert.equal(this.oSimpleForm.childElementCount, 6, "the simpleform has 6 elements after the change");
+			var aChildNodes = this.oSimpleForm.childNodes;
+			assert.equal(aChildNodes[0].getAttribute("id"), sSmartFieldLabelId);
+			assert.equal(aChildNodes[1].getAttribute("id"), sSmartFieldId, "the first field stayed in position 0");
+			assert.equal(aChildNodes[2].getAttribute("id"), sAddedFieldId + "-label");
+			assert.equal(aChildNodes[3].getAttribute("id"), sAddedFieldId, "the field is added in position 1");
+			assert.equal(aChildNodes[4].getAttribute("id"), sSmartFieldLabelId2);
+			assert.equal(aChildNodes[5].getAttribute("id"), sSmartFieldId2, "the second field is moved to position 2");
+		}.bind(this));
 	});
 
 });

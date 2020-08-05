@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TableLayout",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TableLayout.Table",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Table.view.xml",
+					"Table.controller.js",
+					"Dialog.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

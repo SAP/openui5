@@ -1,0 +1,31 @@
+@_sap_m_PlanningCalendarHeader_Background: @sapUiListBackground;
+
+.sapMPCHead .sapMPCHeadActionsToolbar,
+.sapMPCHead .sapMPCHeadNavToolbar{
+	padding-left: 1rem;
+	background-color: @_sap_m_PlanningCalendarHeader_Background;
+}
+
+.sapMPCHead .sapMPCHeadNavToolbar {
+	border-bottom: none;
+	flex-wrap: wrap;
+	white-space: normal;
+	min-height: 3rem;
+
+	&.sapMIBar {
+		height: auto;
+	}
+}
+
+.sapUiSizeCompact .sapMPCHead {
+	.sapMPCHeadActionsToolbar {
+		min-height: 3rem;
+	}
+	.sapMPCHeadNavToolbar {
+		min-height: 2rem;
+	}
+}
+
+.sapMIBar.sapMTB .sapMBarChild.sapUiCalMonthView {
+	margin-left: 0;
+}

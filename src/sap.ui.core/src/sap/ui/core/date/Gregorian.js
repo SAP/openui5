@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.Gregorian
-sap.ui.define(['jquery.sap.global', './UniversalDate'],
-	function(jQuery, UniversalDate) {
+sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
+	function(UniversalDate, CalendarType, _Calendars) {
 	"use strict";
 
 
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	var Gregorian = UniversalDate.extend("sap.ui.core.date.Gregorian", /** @lends sap.ui.core.date.Gregorian.prototype */ {
 		constructor: function() {
 			this.oDate = this.createDate(Date, arguments);
-			this.sCalendarType = sap.ui.core.CalendarType.Gregorian;
+			this.sCalendarType = CalendarType.Gregorian;
 		}
 	});
 
@@ -31,6 +31,8 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	Gregorian.now = function() {
 		return Date.now();
 	};
+
+	_Calendars.set(CalendarType.Gregorian, Gregorian);
 
 	return Gregorian;
 

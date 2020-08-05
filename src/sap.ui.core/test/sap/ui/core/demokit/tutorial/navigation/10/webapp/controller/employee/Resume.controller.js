@@ -46,10 +46,10 @@ sap.ui.define([
 				// the default query param should be visible at all time
 				this.getRouter().navTo("employeeResume", {
 					employeeId : oArgs.employeeId,
-					query: {
+					"?query": {
 						tab : _aValidTabKeys[0]
 					}
-				},true /*no history*/);
+				}, true /*no history*/);
 			}
 		},
 
@@ -69,7 +69,7 @@ sap.ui.define([
 
 			this.getRouter().navTo("employeeResume", {
 				employeeId : oCtx.getProperty("EmployeeID"),
-				query: {
+				"?query": {
 					tab : oEvent.getParameter("selectedKey")
 				}
 			}, true /*without history*/);

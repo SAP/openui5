@@ -1,0 +1,48 @@
+/* Make the iframe transparent so that the content in it will use the theme's background */
+.sapUiTopicsIframe {
+	width: 100%;
+	height: 99%;
+	background: transparent;
+}
+/*This is fixes broken wrapping of the timeline card. The problem is caused by splitter's styles when its in Horizontal mode.*/
+.sapUiLoSplitterH.sapUiLoSplitter .sapUiLoSplitterContent {
+    white-space: normal;
+}
+
+.topicPage .sapMBarPH {
+	text-align: left;
+	padding-left: 2rem;
+}
+
+/* rotate icon of splitter orientation button to mimic correct position */
+.sapUiLoSplitterH .orientationBtn .sapUiIcon {
+	transform: rotate(180deg);
+}
+.sapUiLoSplitterV .orientationBtn .sapUiIcon {
+	transform: rotate(90deg);
+}
+
+a.appTitle {
+	display: flex;
+	align-items: center;
+	margin: 0 0.25rem;
+	text-decoration: none;
+}
+
+a.appTitle .sapMTitle {
+	cursor: pointer;
+}
+
+ .sapFGridContainer { /* in "Explore" section */
+	padding: 3rem;
+}
+
+/* on Phone */
+
+html.sap-phone .sapFGridContainer { /* in "Explore" section */
+	padding: 0.25rem;
+}
+
+.sapUiTopicsIframe {
+	border: none;
+}

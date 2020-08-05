@@ -1,0 +1,88 @@
+{
+  "_version": "1.8.0",
+  "sap.app": {
+    "type": "card"
+  },
+  "sap.card": {
+    "type": "Analytical",
+    "header": {
+      "type": "Numeric",
+      "title": "Header and Content with Navigation URL",
+      "data": {
+        "json": {
+          "n": 6547394.45496,
+          "u": "M $",
+          "trend": "Down",
+          "valueColor": "Critical"
+        }
+      },
+      "subTitle": "Success Rate",
+      "mainIndicator": {
+        "number": "{n}",
+        "unit": "{u}",
+        "trend": "{trend}",
+        "state": "{valueColor}"
+      },
+      "sideIndicators": [
+        {
+          "title": "Decrease",
+          "number": "24",
+          "unit": "weeks"
+        }
+      ],
+      "actions": [
+        {
+          "type": "Navigation",
+          "url": "https://www.sap.com"
+
+        }
+      ]
+    },
+    "content": {
+      "chartType": "Donut",
+      "legend": {
+        "visible": true,
+        "position": "Top",
+        "alignment": "Center"
+      },
+      "plotArea": {
+        "dataLabel": {
+          "visible": true,
+          "showTotal": true
+        }
+      },
+      "title": {
+        "text": "Donut chart",
+        "visible": true,
+        "alignment": "Center"
+      },
+      "measureAxis": "size",
+      "dimensionAxis": "color",
+      "data": {
+        "request": {
+          "url": "./cardsdemo/cardcontent/cost.json"
+        },
+        "path": "/milk"
+      },
+      "dimensions": [
+        {
+          "label": "Store Name",
+          "value": "{Store Name}"
+        }
+      ],
+      "measures": [
+        {
+          "label": "Revenue",
+          "value": "{Revenue}"
+        }
+      ],
+      "actions": [
+        {
+          "type": "Navigation",
+          "url": "https://www.sap.com"
+
+        }
+      ]
+    }
+  }
+}

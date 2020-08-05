@@ -1,22 +1,25 @@
-
 /*!
  * ${copyright}
  */
 sap.ui.define([
-    "jquery.sap.global",
+    "sap/ui/core/InvisibleText",
+    "sap/base/Log",
     "./Slider",
     "./SliderTooltip",
     "./SliderUtilities",
-    "sap/ui/core/InvisibleText",
-    "./RangeSliderRenderer"
+    "./RangeSliderRenderer",
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/events/KeyCodes"
 ],
     function(
-    jQuery,
-    Slider,
-    SliderTooltip,
-    SliderUtilities,
-    InvisibleText,
-    RangeSliderRenderer
+        InvisibleText,
+        log,
+        Slider,
+        SliderTooltip,
+        SliderUtilities,
+        RangeSliderRenderer,
+        jQuery,
+        KeyCodes
     ) {
         "use strict";
 
@@ -52,7 +55,7 @@ sap.ui.define([
          * @public
          * @since 1.38
          * @alias sap.m.RangeSlider
-		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/range-slider/ Range Slider}
+         * @see {@link fiori:https://experience.sap.com/fiori-design-web/range-slider/ Range Slider}
          * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
          */
         var RangeSlider = Slider.extend("sap.m.RangeSlider", /** @lends sap.m.RangeSlider.prototype */ {
@@ -87,22 +90,12 @@ sap.ui.define([
             // we should be sure that at the first run they are set  properly and then to be validated.
             this._bInitialRangeChecks = true;
 
-            this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
-
             // the initial focus range which should be used
             this._aInitialFocusRange = this.getRange();
 
             this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
             this._ariaUpdateDelay = [];
-
-            // this is the second(right) tooltip of the RangeSlider - first is defined in Slider's init
-            var oTooltip = new SliderTooltip(this.getId() + "-" + "rightTooltip", {
-                change: this.handleTooltipChange.bind(this)
-            });
-
-            this.addAggregation("_tooltips", oTooltip);
-            this.getAggregation("_tooltipContainer").addAssociation("associatedTooltips", oTooltip);
 
             oStartLabel = new InvisibleText({
                 text: this._oResourceBundle.getText("RANGE_SLIDER_LEFT_HANDLE")
@@ -150,7 +143,14 @@ sap.ui.define([
         };
 
         RangeSlider.prototype.onBeforeRendering = function () {
+            this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
+
             var aRange = this.getRange();
+
+            if (this.getShowAdvancedTooltip()) {
+                this.initAndSyncTooltips(["leftTooltip", "rightTooltip"]);
+                this._storeTooltipsMetadata();
+            }
 
             // At this point it's certain that all setters are executed and values of
             // min, max, value, value2 and range are set properly and are not using the Default values.
@@ -169,27 +169,8 @@ sap.ui.define([
 
             this._validateProperties();
 
-            // Attach tooltips
-            if (!this._mHandleTooltip.start.tooltip) {
-                this._mHandleTooltip.start.tooltip = this.getAggregation("_tooltips")[0];
-            }
-            if (!this._mHandleTooltip.end.tooltip) {
-                this._mHandleTooltip.end.tooltip =  this.getAggregation("_tooltips")[1];
-            }
-
-            this._mHandleTooltip.bTooltipsSwapped = false; // Reset tooltips swapping
-
-            // For backwards compatibility when tickmarks are enabled, should be visible
-            if (this.getEnableTickmarks() && !this.getAggregation("scale")) {
-                this.setAggregation("scale", new sap.m.ResponsiveScale(), true);
-            }
-
-            if (this.getShowAdvancedTooltip()) {
-                this._forwardProperties(["enabled"], this.getAggregation("_tooltipContainer"));
-                this.getAggregation("_tooltips").forEach(function(oTooltip) {
-                    this._forwardPropertiesToTooltip(oTooltip);
-                }, this);
-            }
+            // set the correct scale aggregation, if needed
+            this._syncScaleUsage();
         };
 
         RangeSlider.prototype.onAfterRendering = function () {
@@ -208,9 +189,23 @@ sap.ui.define([
 
             //Swap tooltips so when range is with reversed values e.g. [12, 1]
             //to have properly updated tooltips
-            if (aRange[0] > aRange[1]) {
+            if (this.getShowAdvancedTooltip() && (aRange[0] > aRange[1])) {
                 this._swapTooltips(aRange);
             }
+        };
+
+        RangeSlider.prototype._storeTooltipsMetadata = function () {
+            var aTooltips = this.getUsedTooltips();
+
+            // Attach tooltips
+            if (!this._mHandleTooltip.start.tooltip) {
+                this._mHandleTooltip.start.tooltip = aTooltips[0];
+            }
+            if (!this._mHandleTooltip.end.tooltip) {
+                this._mHandleTooltip.end.tooltip = aTooltips[1];
+            }
+
+            this._mHandleTooltip.bTooltipsSwapped = false; // Reset tooltips swapping
         };
 
         /**
@@ -268,10 +263,10 @@ sap.ui.define([
 
         /**
          * Gets a handle corresponding to a tooltip
-         * @param {sap.m.ISliderTooltip} oTooltip Slider/Range slider tooltip
-         * @sap-restricted sap.m.SliderTooltipContainer.js
+         * @param {sap.m.SliderTooltipBase} oTooltip Slider/Range slider tooltip
          * @returns {HTMLElement} The handle, from which the tooltip is responsible.
          * @private
+         * @ui5-restricted sap.m.SliderTooltipContainer.js
          */
         RangeSlider.prototype._getHandleForTooltip = function (oTooltip) {
             var oHandle = oTooltip === this._mHandleTooltip.start.tooltip ?
@@ -297,8 +292,12 @@ sap.ui.define([
             this._updateRangePropertyDependencies(aRange);
 
             this._updateHandleDom(oHandle, aRange, iIndex, fValue, fPercentVal);
-            this._updateTooltipContent(oTooltip, fValue);
-            this._adjustTooltipsContainer();
+
+            if (this.getShowAdvancedTooltip()) {
+                this._updateTooltipContent(oTooltip, fValue);
+                this._adjustTooltipsContainer();
+            }
+
             this._recalculateRange();
         };
 
@@ -308,7 +307,7 @@ sap.ui.define([
                 oFormInput = this.getDomRef("input");
 
             if (!!this.getName()) {
-                oFormInput.setAttribute(oHandle.getAttribute("data-range-val"), aRange[iIndex]);
+                oFormInput.setAttribute(oHandle.getAttribute("data-range-val"), this.toFixed(aRange[iIndex], this._iDecimalPrecision));
                 oFormInput.setAttribute("value", this.getValue());
             }
 
@@ -318,8 +317,8 @@ sap.ui.define([
                 oHandle.style.left = fPercentVal + "%";
             }
 
-            if (this.getShowHandleTooltip()) {
-                oHandle.title = sValue;
+            if (this.getShowHandleTooltip() && !this.getShowAdvancedTooltip()) {
+                oHandle.title = this._formatValueByCustomElement(sValue);
             }
 
             bMergedRanges = aRange[0] === aRange[1];
@@ -328,23 +327,26 @@ sap.ui.define([
 
             // ARIA updates. Delay the update to prevent multiple updates- for example holding the arrow key.
             // We need only the latest state
-            jQuery.sap.clearDelayedCall(this._ariaUpdateDelay[iIndex]);
-            this._ariaUpdateDelay[iIndex] = jQuery.sap.delayedCall(100, this, "_updateHandleAria", [oHandle, sValue]);
+            clearTimeout(this._ariaUpdateDelay[iIndex]);
+            this._ariaUpdateDelay[iIndex] = setTimeout(this["_updateHandleAria"].bind(this, oHandle, sValue), 100);
         };
 
         RangeSlider.prototype._updateHandleAria = function (oHandle, sValue) {
             var aRange = this.getRange(),
                 oProgressHandle = this.getDomRef("progress"),
-                fNormalizedValue = this.toFixed(sValue, this._iDecimalPrecision);
+                fNormalizedValue = this.toFixed(sValue, this._iDecimalPrecision),
+                sScaleLabel = this._formatValueByCustomElement(fNormalizedValue);
+
+            aRange[0] = this.toFixed(aRange[0], this._iDecimalPrecision);
+            aRange[1] = this.toFixed(aRange[1], this._iDecimalPrecision);
 
             this._updateHandlesAriaLabels();
 
-            oHandle.setAttribute("aria-valuenow", fNormalizedValue);
+            this._updateHandleAriaAttributeValues(oHandle, sValue, sScaleLabel);
 
             if (oProgressHandle) {
-                oProgressHandle.setAttribute("aria-valuenow", aRange.join("-"));
                 oProgressHandle.setAttribute("aria-valuetext",
-                    this._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange));
+                    this._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange.map(this._formatValueByCustomElement, this)));
             }
         };
 
@@ -371,6 +373,25 @@ sap.ui.define([
                 }
 
                 this._mHandleTooltip.bAriaHandlesSwapped = !this._mHandleTooltip.bAriaHandlesSwapped;
+            }
+        };
+
+        /**
+         * Adds aria-controls attribute, when the tooltips are rendered.
+         *
+         * @private
+         */
+        RangeSlider.prototype._setAriaControls = function () {
+            if (!this.getShowAdvancedTooltip()) {
+                return;
+            }
+
+            if (!this._mHandleTooltip.start.handle.getAttribute('aria-controls') && this._mHandleTooltip.start.tooltip) {
+                this._mHandleTooltip.start.handle.setAttribute('aria-controls', this._mHandleTooltip.start.tooltip.getId());
+            }
+
+            if (!this._mHandleTooltip.end.handle.getAttribute('aria-controls') && this._mHandleTooltip.end.tooltip) {
+                this._mHandleTooltip.end.handle.setAttribute('aria-controls', this._mHandleTooltip.end.tooltip.getId());
             }
         };
 
@@ -420,22 +441,47 @@ sap.ui.define([
         };
 
         /**
+         * Gets the tooltips that should be shown.
+         * Returns custom tooltips if provided and more than 1 else default tooltips
+         *
+         * @protected
+         * @override
+         * @returns {sap.m.SliderTooltipBase[]} SliderTooltipBase instances.
+         */
+        RangeSlider.prototype.getUsedTooltips = function () {
+            var aCustomTooltips = this.getCustomTooltips(),
+                aDefaultTooltips = this.getAggregation("_defaultTooltips") || [];
+
+            return aCustomTooltips.length > 1 ? aCustomTooltips : aDefaultTooltips;
+        };
+
+        /**
          * Handles changes in Tooltip Inputs
          * @param {jQuery.Event} oEvent The event object
          * @private
          * @override
          */
         RangeSlider.prototype.handleTooltipChange = function (oEvent) {
-            var oHandle, oActiveTooltip,
-                oTooltip = oEvent.getSource(),
-                bTooltipsInitialPositionTouched = this._mHandleTooltip.bTooltipsSwapped,
-                newValue = Number(oEvent.getParameter("value"));
+            this.updateTooltipsPositionAndState(oEvent.getSource(), Number(oEvent.getParameter("value")));
+        };
 
-            newValue = this._adjustRangeValue(newValue);
+        /**
+         * Updates values of RangeSlider and repositions tooltips.
+         *
+         * @param {string} oTooltip Tooltip to be changed
+         * @param {float} fValue New value of the RangeSlider
+         * @private
+         * @ui5-restricted sap.m.SliderTooltipBase
+         */
+        RangeSlider.prototype.updateTooltipsPositionAndState = function (oTooltip, fValue) {
+            var oHandle, oActiveTooltip,
+                bTooltipsInitialPositionTouched = this._mHandleTooltip.bTooltipsSwapped;
+
+            fValue = this._adjustRangeValue(fValue);
             oHandle = this._mHandleTooltip.start.tooltip === oTooltip ?
                 this._mHandleTooltip.start.handle : this._mHandleTooltip.end.handle;
 
-            this._updateHandle(oHandle, newValue);
+            this._updateHandle(oHandle, fValue);
 
             // When tooltips are swapped, we should put the focus to the corresponding visual representation
             if (bTooltipsInitialPositionTouched !== this._mHandleTooltip.bTooltipsSwapped) {
@@ -457,7 +503,10 @@ sap.ui.define([
                 oHandle = iHandleIndex === 1 ? this._mHandleTooltip.end : this._mHandleTooltip.start;
 
                 this._updateHandleDom(oHandle.handle, aRange, iHandleIndex, fValue, fPercentOfValue);
-                this._updateTooltipContent(oHandle.tooltip, fValue);
+
+                if (this.getShowAdvancedTooltip()) {
+                    this._updateTooltipContent(oHandle.tooltip, fValue);
+                }
 
                 return true;
             }
@@ -478,29 +527,14 @@ sap.ui.define([
         };
 
         RangeSlider.prototype.setStep = function (fStep) {
-            var oTooltipContainer = this.getAggregation("_tooltipContainer");
-
-            if (!oTooltipContainer instanceof sap.ui.core.Control || !oTooltipContainer["getAssociatedTooltipsAsControls"]) {
-                return this;
-            }
-
-            var aTooltips = oTooltipContainer.getAssociatedTooltipsAsControls();
-
-            this.setProperty("step", fStep, true);
-
             //Log warning in case fStep is not valid
             this._validateProperties();
 
             //Get the new decimal precision
             this._iDecimalPrecision = this.getDecimalPrecisionOfNumber(fStep);
 
-            aTooltips.forEach(function (oTooltip) {
-                if (oTooltip.getStep() !== fStep) {
-                    oTooltip.setStep(fStep);
-                }
-            });
-
-            return this;
+            // invalidate as setStep is not called regularly
+            return this.setProperty("step", fStep);
         };
 
         RangeSlider.prototype.setValue = function (fValue) {
@@ -602,11 +636,11 @@ sap.ui.define([
             }
 
             if (fValue < fMin) {
-                jQuery.sap.log.warning("Warning: " + "Min value (" + fValue + ") not in the range: ["
+                log.warning("Warning: " + "Min value (" + fValue + ") not in the range: ["
                     + fMin + "," + fMax + "]", this);
                 fValue = fMin;
             } else if (fValue > fMax) {
-                jQuery.sap.log.warning("Warning: " + "Max value (" + fValue + ") not in the range: ["
+                log.warning("Warning: " + "Max value (" + fValue + ") not in the range: ["
                     + fMin + "," + fMax + "]", this);
                 fValue = fMax;
             }
@@ -623,8 +657,9 @@ sap.ui.define([
         RangeSlider.prototype.ontouchstart = function (oEvent) {
             var oTouch = oEvent.targetTouches[0],
                 CSS_CLASS = this.getRenderer().CSS_CLASS,
-                sEventNamespace = "." + CSS_CLASS,
-                fValue, aHandles, aRange, iHandleIndex, fHandlesDistance, oFocusItem;
+                sEventNamespace = "." + CSS_CLASS, fMinValue, fMaxValue,
+                fValue, aHandles, aRange, iHandleIndex, fHandlesDistance, oFocusItem,
+                fTotalNumberOfValues, fPercentOfHandle, fHandleValue, fHandleHalfWidth;
 
             if (!this.getEnabled()) {
                 return;
@@ -632,6 +667,7 @@ sap.ui.define([
 
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
+
             // Should be prevent as in Safari while dragging the handle everything else gets selection.
             // As part of the RangeSlider, Inputs in the tooltips should be excluded
             if (oEvent.target.className.indexOf("sapMInput") === -1) {
@@ -654,12 +690,28 @@ sap.ui.define([
                 return Math.abs(fAccumulation - oHandle.offsetLeft);
             }, 0);
 
+            fMinValue = Math.min.apply(Math, aRange);
+            fMaxValue = Math.max.apply(Math, aRange);
+
+            // half width of a handle (both are equal)
+            fHandleHalfWidth = this.$("handle1").outerWidth() / 2;
+            // total number of possible values
+            fTotalNumberOfValues = Math.abs(this.getMin()) + Math.abs(this.getMax());
+            // percents that half a handle takes from the width of the scale
+            fPercentOfHandle = ((fHandleHalfWidth * 100) / this.$("inner").outerWidth());
+            // number of values that takes half a handle
+            fHandleValue = (fPercentOfHandle / 100) * fTotalNumberOfValues;
+
             // if the click is outside the range or distance between handles is below the threshold - update the closest slider handle
-            if (fValue < Math.min.apply(Math, aRange) || fValue > Math.max.apply(Math, aRange) || fHandlesDistance <= SliderUtilities.CONSTANTS.RANGE_MOVEMENT_THRESHOLD) {
+            if (fValue < fMinValue ||
+                fValue < fMinValue + fHandleValue ||
+                fValue > fMaxValue ||
+                fValue > (fMaxValue - fHandleValue) ||
+                fHandlesDistance <= SliderUtilities.CONSTANTS.RANGE_MOVEMENT_THRESHOLD) {
                 aHandles = [this.getClosestHandleDomRef(oTouch)];
                 this._updateHandle(aHandles[0], fValue);
                 // _updateHandle would update the range and the check for change event fire would fail in _ontouchend
-                this._fireChangeAndLiveChange({range: this.getRange()});
+                this.fireLiveChange({range: aRange});
             } else if (iHandleIndex !== -1) { // Determine if the press event is on certain handle
                 aHandles = [this.getDomRef(iHandleIndex === 0 ? "handle1" : "handle2")];
             }
@@ -679,7 +731,7 @@ sap.ui.define([
             });
 
             oFocusItem = aHandles.length === 1 ? aHandles[0] : this.getDomRef("progress");
-            jQuery.sap.delayedCall(0, oFocusItem, "focus");
+            setTimeout(oFocusItem["focus"].bind(oFocusItem), 0);
         };
 
         /**
@@ -701,6 +753,7 @@ sap.ui.define([
 
             // note: prevent native document scrolling
             oEvent.preventDefault();
+
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
 
@@ -726,12 +779,17 @@ sap.ui.define([
             bRangesEquality = aRange.every(function (fValue, iIndex) {return fValue === aRangeTemp[iIndex];});
             bRangeInBoudaries = aRange.every(function (fValue) {return (fValue >= fMin && fValue <= fMax );});
             bRangeOnBoudaries = aRangeTemp.indexOf(fMin) > -1 || aRangeTemp.indexOf(fMax) > -1;
+
             if (!bRangesEquality) {
+
                 //check the need to update the handle depending of number of the selected handles and the handles position
                 if ((aHandles.length === 1) || bRangeInBoudaries || !bRangeOnBoudaries) {
                     aHandles.map(function (oHandle) {this._updateHandle(oHandle, aInitialRange[this._getIndexOfHandle(oHandle)] + fOffset);}, this);
                 }
-                this._adjustTooltipsContainer();
+
+                // adjust container if advanced tooltips have to be shown
+                this.getShowAdvancedTooltip() && this._adjustTooltipsContainer();
+
                 aRangeTemp = this._getNormalizedRange(this.getRange(), aInitialRange, aHandles);
             }
 
@@ -784,17 +842,19 @@ sap.ui.define([
             for (i = 0; i < aRange.length; i++) {
                 aRangeNormalized[i] = (aRange[i] < fMin ? fMin : aRange[i]);
                 aRangeNormalized[i] = (aRange[i] > fMax ? fMax : aRangeNormalized[i]);
+
                 if (aHandles.length === 2) {
+
                     if (aRangeNormalized[0] == fMin) {
                         aRangeNormalized[1] = aRangeNormalized[0] + iSelectedRange;
                     } else {
                         iOtherElementIndex = Math.abs(i - 1);
                         aRangeNormalized[iOtherElementIndex] = (aRangeNormalized[i] <= fMin ? aRangeNormalized[i] + iSelectedRange : aRangeNormalized[iOtherElementIndex]);
                         aRangeNormalized[iOtherElementIndex] = (aRangeNormalized[i] >= fMax ? aRangeNormalized[i] - iSelectedRange : aRangeNormalized[iOtherElementIndex]);
-
                     }
                 }
             }
+
             return aRangeNormalized;
         };
 
@@ -824,8 +884,10 @@ sap.ui.define([
                 this.fireChange({ range: aNewRange });
             }
 
-            this._updateTooltipContent(this._mHandleTooltip.start.tooltip, aNewRange[0]);
-            this._updateTooltipContent(this._mHandleTooltip.end.tooltip, aNewRange[1]);
+            if (this.getShowAdvancedTooltip()) {
+                this._updateTooltipContent(this._mHandleTooltip.start.tooltip, aNewRange[0]);
+                this._updateTooltipContent(this._mHandleTooltip.end.tooltip, aNewRange[1]);
+            }
         };
 
         /**
@@ -838,10 +900,11 @@ sap.ui.define([
             if (this.getShowAdvancedTooltip()) {
                 oTooltipsContainer.show(this);
                 this._adjustTooltipsContainer();
+                this._setAriaControls();
             }
 
             // remember the initial focus range so when esc key is pressed we can return to it
-            if (!(document.activeElement === this.getFocusDomRef())) {
+            if (document.activeElement !== this.getFocusDomRef()) {
                 this._aInitialFocusRange = this.getRange();
             }
         };
@@ -853,7 +916,6 @@ sap.ui.define([
         /* ----------------------------------------------------------- */
         /* Keyboard handling                                           */
         /* ----------------------------------------------------------- */
-
 
         /**
          * Moves handle / entire slider by specified offset
@@ -881,7 +943,8 @@ sap.ui.define([
             if (fRangeMax + fOffset > fMax) {
                 fOffset = iOffsetSign * (Math.abs(fMax) - Math.abs(fRangeMax));
             } else if (fRangeMin + fOffset < fMin) {
-                fOffset = iOffsetSign * (Math.abs(fRangeMin) - Math.abs(fMin));
+                fOffset = Math.abs(fRangeMin) - Math.abs(fMin);
+                fOffset = fOffset < 0 ? fOffset : iOffsetSign * fOffset;
             }
 
             aHandles.map(function (oCurHandle) {
@@ -892,12 +955,17 @@ sap.ui.define([
 
         RangeSlider.prototype.onkeydown = function (oEvent) {
             var bFocusableTooltip = this.getInputsAsTooltips(),
+                bShowAdvancedTooltips = this.getShowAdvancedTooltip(),
                 bF2Pressed = oEvent.keyCode === SliderUtilities.CONSTANTS.F2_KEYCODE,
                 bStartTooltipFocused = (oEvent.target === this._mHandleTooltip.start.handle),
                 bTargetIsHandle = jQuery(oEvent.target).hasClass(SliderUtilities.CONSTANTS.HANDLE_CLASS);
 
-            if (bF2Pressed && bFocusableTooltip && bTargetIsHandle) {
+            if (bF2Pressed && bShowAdvancedTooltips && bFocusableTooltip && bTargetIsHandle) {
                 this._mHandleTooltip[bStartTooltipFocused ? "start" : "end"].tooltip.focus();
+            }
+
+            if (oEvent.keyCode === KeyCodes.SPACE) {
+                oEvent.preventDefault();
             }
         };
 
@@ -908,9 +976,6 @@ sap.ui.define([
          * @override
          */
         RangeSlider.prototype.onsapincrease = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1) {
-                return;
-            }
 
             // note: prevent document scrolling when arrow keys are pressed
             oEvent.preventDefault();
@@ -939,13 +1004,16 @@ sap.ui.define([
          * @override
          */
         RangeSlider.prototype.onsapincreasemodifiers = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1 || oEvent.altKey) {
+
+            if (oEvent.altKey) {
                 return;
             }
 
             // note: prevent document scrolling when arrow keys are pressed
             oEvent.preventDefault();
+
             oEvent.stopPropagation();
+
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
 
@@ -970,9 +1038,6 @@ sap.ui.define([
          * @override
          */
         RangeSlider.prototype.onsapdecrease = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1) {
-                return;
-            }
 
             // note: prevent document scrolling when arrow keys are pressed
             oEvent.preventDefault();
@@ -1001,13 +1066,16 @@ sap.ui.define([
          * @override
          */
         RangeSlider.prototype.onsapdecreasemodifiers = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1 || oEvent.altKey) {
+
+            if (oEvent.altKey) {
                 return;
             }
 
             // note: prevent document scrolling when arrow keys are pressed
             oEvent.preventDefault();
+
             oEvent.stopPropagation();
+
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
 
@@ -1034,9 +1102,6 @@ sap.ui.define([
         RangeSlider.prototype.onsaphome = function (oEvent) {
             var iHandleIndex = 0,
                 fRangeValue, oHandle, fMin;
-            if (["number", "text"].indexOf(oEvent.target.type) > -1) {
-                return;
-            }
 
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
@@ -1062,9 +1127,6 @@ sap.ui.define([
          * @override
          */
         RangeSlider.prototype.onsapend = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1) {
-                return;
-            }
 
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
@@ -1083,6 +1145,7 @@ sap.ui.define([
          * @override
          */
         RangeSlider.prototype.onsapescape = function () {
+
             // reset the slider back to the value
             // which it had when it got the focus
             this.setRange(this._aInitialFocusRange);

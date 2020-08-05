@@ -1,0 +1,148 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "bc2c83f2df4e84eb5dfad2900c27d4592a2dcead",
+        "type": "FIX",
+        "text": " model.Model: avoid too many setTimeout/clearTimeout calls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070128967"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070128920"
+          }
+        ]
+      },
+      {
+        "id": "8d0208acabd23c264dcc222e11ab7c0fcbb3d279",
+        "type": "FIX",
+        "text": " sap.ui.core.hyphenation.Hyphenation: Check for native support improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070141765"
+          }
+        ]
+      },
+      {
+        "id": "26d59b54863cac9efbdc3e9d78fe20bc1f885605",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Fix getSelectedIndex return value if node can\u0027t be found",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070052448"
+          }
+        ]
+      },
+      {
+        "id": "aed52e776f8ff1834333016dab7f7ddefeb5da81",
+        "type": "FIX",
+        "text": " sap.ui.core.cache.CacheManager: Remove restriction for Apple OS",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "cf055689a1b1e31d217eb06b516ed3ad4080cc99",
+        "type": "FIX",
+        "text": " sap.ui.core.hyphenation.Hyphenation: Improved behavior for Google Chrome on macOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070112349"
+          }
+        ]
+      },
+      {
+        "id": "68c3af40d0203fa52a0dd8924383c529f005e3e1",
+        "type": "FIX",
+        "text": " sap.ui.core: several documentation enhancements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070111549"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970388173"
+          }
+        ]
+      },
+      {
+        "id": "bd9d1494681f9eb3a9b26492b7ea4260f7b06363",
+        "type": "FIX",
+        "text": " DragAndDrop: The text of input fields should be selectable in FF and Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070157420"
+          }
+        ]
+      },
+      {
+        "id": "0cf3dea9f505ffad03c4e4486ed0e028c2ba6f7d",
+        "type": "FIX",
+        "text": " test recorder: result filtering for descendant and ancestor selectors",
+        "references": []
+      },
+      {
+        "id": "17eb54f860cf2daeb0f817a247ec226138fe4e76",
+        "type": "FEATURE",
+        "text": " sap.ui.core.InvisibleMessage: Message service implemented",
+        "references": []
+      },
+      {
+        "id": "0d3943e0f8ca0ce6128cce23187f9aef3c4b3c5c",
+        "type": "FIX",
+        "text": " MessageProcessor: make \u0027messageChange\u0027 event visible in API Ref",
+        "references": []
+      },
+      {
+        "id": "c44c3ebec517a0fba18788d23805dfc6b79302ea",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: Handle Top-Level ExtensionPoints and Flexibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070136077"
+          }
+        ]
+      },
+      {
+        "id": "85099fd201e3ed851f0492100477e00d6f7c6c72",
+        "type": "FIX",
+        "text": " routing.qunit.History: check enablement of pushstate instead of browser",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070145984"
+          }
+        ]
+      },
+      {
+        "id": "ae7977fde5b503dd04759a2ee4fd530ffd6ecbeb",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: Fixed scrolling behavior while popup opening",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070120788"
+          }
+        ]
+      },
+      {
+        "id": "82bf8b7beafa336e0285ce9d02617ca8d8d647c6",
+        "type": "FIX",
+        "text": " sap/base/strings/toHex: Module JSDoc alias fixed",
+        "references": []
+      }
+    ]
+  }
+}

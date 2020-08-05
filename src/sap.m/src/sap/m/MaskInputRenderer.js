@@ -11,6 +11,8 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 	 */
 	var MaskInputRenderer = Renderer.extend(InputBaseRenderer);
 
+	MaskInputRenderer.apiVersion = 2;
+
 	/**
 	 * Returns the inner aria labelledby announcement texts for the accessibility.
 	 *
@@ -21,7 +23,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 	MaskInputRenderer.getLabelledByAnnouncement = function(oControl) {
 		var sMask = oControl.getMask(),
 			sPlaceholder = oControl.getPlaceholder() || "",
-			sToolTip = oControl.getTooltip_AsString() || "",
 			oResourceBundle,
 			sMaskScreenReaderTag,
 			sAnnouncement = "";
@@ -30,13 +31,10 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sMaskScreenReaderTag = oResourceBundle.getText("MASKINPUT_SCREENREADER_TAG");
 
-			if (sToolTip) {
-				sToolTip = " " + sToolTip + " ";
-			}
 			if (sPlaceholder) {
 				sPlaceholder = " " + sPlaceholder + " ";
 			}
-			sAnnouncement = sMaskScreenReaderTag + sPlaceholder + sToolTip;
+			sAnnouncement = sMaskScreenReaderTag + sPlaceholder;
 			return sAnnouncement;
 		}
 
@@ -60,7 +58,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sAnnouncement = oResourceBundle.getText("MASKINPUT_SCREENREADER_DESCRIPTION", [sMaskPlaceholderSymbol, sMask]);
 
-			return jQuery.trim(sAnnouncement);
+			return sAnnouncement.trim();
 		}
 
 		return InputBaseRenderer.getDescribedByAnnouncement.apply(this, arguments);

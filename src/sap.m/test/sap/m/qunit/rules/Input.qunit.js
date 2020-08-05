@@ -1,6 +1,9 @@
-/*global QUnit testRule*/
+/*global QUnit */
 
-sap.ui.define(["jquery.sap.global"], function (jQuery) {
+sap.ui.define([
+	"jquery.sap.global",
+	"test-resources/sap/ui/support/TestHelper"
+], function (jQuery, testRule) {
 	"use strict";
 
 	QUnit.module("Input rule tests", {

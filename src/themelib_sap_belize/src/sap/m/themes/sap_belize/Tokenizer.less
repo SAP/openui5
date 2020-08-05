@@ -3,7 +3,7 @@
 /* Belize theme                     */
 /* ================================ */
 
-html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ie"].sap-desktop, /* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMTokenizer:focus {
 		&:before {
@@ -21,4 +21,25 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 			color: @sapUiToggleButtonPressedTextColor;
 		}
 	}
+}
+
+/* ------------------------------ */
+/* Disabled                       */
+/* ------------------------------ */
+
+.sapMTokenizer.sapMTokenizerDisabled .sapMToken  {
+  &.sapMToken:hover,
+  &.sapMToken:focus,
+  &.sapMTokenSelected,
+  &.sapMToken .sapMTokenIcon {
+    background: @sapUiButtonBackground;
+    cursor: default;
+    color: @sapUiButtonTextColor;
+    outline: none;
+    border-color: darken(@sapUiButtonBackground, 10);
+  }
+
+  &.sapMTokenText {
+    color: @sapUiButtonTextColor;
+  }
 }

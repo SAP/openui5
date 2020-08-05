@@ -1,0 +1,71 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:forms="sap.ui.layout.form"
+		xmlns="sap.m">
+
+	<forms:Form width="100%">
+		<forms:layout>
+			<forms:ColumnLayout/>
+		</forms:layout>
+		<forms:formContainers>
+
+			<forms:FormContainer id="addressInfo" title="Addresses">
+				<forms:formElements>
+
+					<forms:FormElement label="Home Address">
+						<forms:fields>
+							<Text text="2096 Mission Street"/>
+						</forms:fields>
+					</forms:FormElement>
+
+					<forms:FormElement label="Home Mailing Address">
+						<forms:fields>
+							<Text text="PO Box 32114"/>
+						</forms:fields>
+					</forms:FormElement>
+
+					<forms:FormElement label="Office Address">
+						<forms:fields>
+							<Text text="4311 Green Street"/>
+						</forms:fields>
+					</forms:FormElement>
+
+					<forms:FormElement label="Office Mailing Address">
+						<forms:fields>
+							<Text text="PO Box 95493"/>
+						</forms:fields>
+					</forms:FormElement>
+
+				</forms:formElements>
+			</forms:FormContainer>
+
+
+			<forms:FormContainer id="socialInfo" title="Social Accounts">
+				<forms:formElements>
+
+					<forms:FormElement label="LinkedIn">
+						<forms:fields>
+							<Text text="/DeniseSmith"/>
+						</forms:fields>
+					</forms:FormElement>
+
+					<forms:FormElement label="Twitter">
+						<forms:fields>
+							<Text text="@DeniseSmith"/>
+						</forms:fields>
+					</forms:FormElement>
+
+					<forms:FormElement label="Facebook">
+						<forms:fields>
+							<Text text="/DenisSmith"/>
+						</forms:fields>
+					</forms:FormElement>
+
+				</forms:formElements>
+			</forms:FormContainer>
+
+		</forms:formContainers>
+
+	</forms:Form>
+
+</mvc:View>

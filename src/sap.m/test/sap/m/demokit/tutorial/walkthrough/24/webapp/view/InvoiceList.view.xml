@@ -10,8 +10,8 @@
 		<headerToolbar>
 			<Toolbar>
 				<Title text="{i18n>invoiceListTitle}"/>
-				<ToolbarSpacer />
-				<SearchField width="50%" search="onFilterInvoices"/>
+				<ToolbarSpacer/>
+				<SearchField width="50%" search=".onFilterInvoices"/>
 			</Toolbar>
 		</headerToolbar>
 		<items>

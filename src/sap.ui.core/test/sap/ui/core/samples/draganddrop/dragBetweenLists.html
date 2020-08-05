@@ -13,7 +13,7 @@
 			data-sap-ui-libs='sap.m'></script>
 
 		<script>
-			jQuery.sap.registerModulePath("mvc", "./mvc");
+			sap.ui.loader.config({paths: {"mvc": "./mvc"}});
 
 			var oData = {
 				names: [

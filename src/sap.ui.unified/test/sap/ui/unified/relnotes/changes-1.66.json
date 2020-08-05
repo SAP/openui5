@@ -1,0 +1,42 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "06391995448dc65ea9badf743202b8ea9e76bfb6",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Arrow icons for appointments are added",
+        "references": []
+      },
+      {
+        "id": "5a6da02c9a04869bc7a1bf094f426f0171147558",
+        "type": "FEATURE",
+        "text": "CLDR: Upgrade to 35.1, support new Japanese era",
+        "references": []
+      },
+      {
+        "id": "99125a90a1670c5133f269feb9a32a93f6f19c38",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Implemented special dates",
+        "references": []
+      },
+      {
+        "id": "63aa7717b7c416fada1034942c3f38e63d4e4355",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Longer appointments text supported",
+        "references": []
+      },
+      {
+        "id": "b63e876793d2b563e7df87f4b37539e80505ca4d",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: closes on scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980107356"
+          }
+        ]
+      }
+    ]
+  }
+}

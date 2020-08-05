@@ -1,37 +1,29 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Unit tests for Manage Products</title>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-		<meta charset="utf-8">
+<head>
+	<meta charset="utf-8">
+	<title>Unit tests for Manage Products</title>
 
-		<script id="sap-ui-bootstrap"
-			src="../../../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-resourceroots='{
-				"mycompany.myapp": "../../",
-				"test.unit": "./"
-			}'>
-		</script>
+	<script id="sap-ui-bootstrap"
+		src="../../../../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-resourceroots='{
+			"mycompany.myapp.MyWorklistApp": "../../"
+		}'
+		data-sap-ui-async="true">
+	</script>
 
-		<script>
-			jQuery.sap.require("sap.ui.qunit.qunit-css");
-			jQuery.sap.require("sap.ui.thirdparty.qunit");
-			jQuery.sap.require("sap.ui.qunit.qunit-junit");
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	<link rel="stylesheet" type="text/css" href="../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
 
-			QUnit.config.autostart = false;
+	<script src="../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-			sap.ui.require(
-				["test/unit/allTests"],
-					function () {
-						QUnit.start();
-					}
-			);
-		</script>
-
-	</head>
-	<body>
-		<div id="qunit"></div>
-		<div id="qunit-fixture"></div>
-	</body>
+	<script src="unitTests.qunit.js"></script>
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
 </html>

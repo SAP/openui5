@@ -3,8 +3,10 @@
  */
 
 // Provides control sap.ui.layout.form.ColumnElementData.
-sap.ui.define(['sap/ui/core/LayoutData', 'sap/ui/layout/library'],
-	function(LayoutData, library) {
+sap.ui.define([
+	'sap/ui/core/LayoutData',
+	'sap/ui/layout/library'
+	], function(LayoutData, library) {
 	"use strict";
 
 	/**
@@ -26,7 +28,7 @@ sap.ui.define(['sap/ui/core/LayoutData', 'sap/ui/layout/library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @since 1.54.0
+	 * @since 1.56.0
 	 * @alias sap.ui.layout.form.ColumnElementData
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

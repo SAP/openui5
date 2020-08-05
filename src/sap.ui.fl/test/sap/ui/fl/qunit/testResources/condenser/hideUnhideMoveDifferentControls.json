@@ -1,0 +1,57 @@
+[
+	{
+		"id": "id_1_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--lb2",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 0
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "contentLeft",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "contentLeft",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--bar",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_2_hideControl",
+		"changeType": "hideControl",
+		"reference": "sap.ui.rta.test.Component",
+		"selector": {
+			"id": "idMain1--lb1",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_3_unhideControl",
+		"changeType": "unhideControl",
+		"reference": "sap.ui.rta.test.Component",
+		"selector": {
+			"id": "idMain1--lb1",
+			"idIsLocal": true
+		}
+	}
+]

@@ -14,7 +14,14 @@
 var oData = [
 			{
 				text: "Node0",
-				ref: "sap-icon://action"
+				ref: "sap-icon://action",
+				state: "Success",
+				nodes: [{
+					text: "Node0-1",
+					ref: "sap-icon://action",
+					state: "Success"
+				}
+				]
 			},
  			{
  				text: "Node1 text text text text text text text text text text text text text text text text text text text text",
@@ -120,15 +127,34 @@ var oData = [
  			},
  			{
  				text: "Node2",
- 				ref: "sap-icon://action"
+ 				ref: "sap-icon://action",
+ 				state: "Error",
+				nodes: [{
+					text: "Node2-1",
+					ref: "sap-icon://action",
+					state: "Warning"
+				}
+				]
  			},
  			{
 				text: "Node3",
-				ref: "sap-icon://action"
+				ref: "sap-icon://action",
+				state: "Success",
+				nodes: [{
+					text: "Node3-1",
+					ref: "sap-icon://action",
+					state: "Success"
+				}]
 			},
 			{
  				text: "Node4",
- 				ref: "sap-icon://action"
+ 				ref: "sap-icon://action",
+ 				state: "Success",
+				nodes: [{
+					text: "Node4-1",
+					ref: "sap-icon://action",
+					state: "Success"
+				}]
  			},
  			{
 				text: "Node5",
@@ -715,6 +741,7 @@ var oData = [
 	var oLabel3 = new sap.m.Label({text:"*********************Tree*********************"});
 	var oTree = new sap.m.Tree({
 		headerText: "Data in Tree Structure",
+		'delete': handleControlEvent,
 		dragDropConfig: new sap.ui.core.dnd.DragDropInfo({
 			sourceAggregation: "items",
 			targetAggregation: "items",
@@ -727,15 +754,22 @@ var oData = [
 	//JSON
 	var oModel = new sap.ui.model.json.JSONModel();
 	oTree.setModel(oModel);
-	oModel.setSizeLimit(20);
+	oModel.setSizeLimit(200);
 	// set the data to the model
 	oModel.setData(oData);
 	var oStandardTreeItem = new sap.m.StandardTreeItem({
-		title: "{text}"
+		title: "{text}",
+		highlight: "{state}",
+		press : handleControlEvent,
+		detailPress : handleControlEvent
 	});
 	oTree.bindItems("/", oStandardTreeItem);
-	//oTree.expandToLevel(3);
 	var oBinding = oTree.getBinding("items");
+	//oTree.expandToLevel(3);
+
+	function handleControlEvent(oEvent) {
+		sap.m.MessageToast.show("'" + oEvent.getId() + "' event fired");
+	};
 
 	function onDragStart(oEvent) {
 		var oDragSession = oEvent.getParameter("dragSession");
@@ -797,6 +831,36 @@ var oData = [
 	};
 
 	// footer funxtions
+	function expandMulti(){
+		return new sap.m.Button({
+			text:"expand selected nodes",
+			tooltip: "expand selected nodes",
+			press: function(evt) {
+				var oBinding = oTree.getBinding("items"),
+					aSelectedItems = oTree.getSelectedItems(),
+					aSelectedIndices = aSelectedItems.map( function(oSelectedItem) {
+					return oTree.indexOfItem(oSelectedItem);
+				});
+				oTree.expand(aSelectedIndices);
+			}
+		});
+	};
+
+	function collapseMulti(){
+		return new sap.m.Button({
+			text:"collapse selected nodes",
+			tooltip: "collapse selected nodes",
+			press: function(evt) {
+				var oBinding = oTree.getBinding("items"),
+					aSelectedItems = oTree.getSelectedItems(),
+					aSelectedIndices = aSelectedItems.map( function(oSelectedItem) {
+					return oTree.indexOfItem(oSelectedItem);
+				});
+				oTree.collapse(aSelectedIndices);
+			}
+		});
+	};
+
 	function addSelectionMode(){
 		return new sap.m.Select({
 			tooltip: "Selection Mode",
@@ -909,23 +973,26 @@ var oData = [
 
 	function addIcon(){
 		return new sap.m.Select({
-			tooltip: "Icon",
+			tooltip: "icon (change icon will rebind the control)",
 			items: [
 				new sap.ui.core.Item({ key: "0", text: "withoutIcon" }),
 				new sap.ui.core.Item({ key: "1", text: "withIcon" })
 			],
 			selectedItem: "0",
 			change: function(oControlEvent){
+				var sType = oTree.getItems()[0].getType();
 				var sItem = oControlEvent.getParameter("selectedItem").getText();
 				if (sItem === "withIcon") {
 					var oStandardTreeItem = new sap.m.StandardTreeItem({
 						title: "{text}",
-						icon: "{ref}"
+						icon: "{ref}",
+						type: sType
 					});
 					oTree.bindItems("/", oStandardTreeItem);
 				} else {
 					var oStandardTreeItem = new sap.m.StandardTreeItem({
-						title: "{text}"
+						title: "{text}",
+						type: sType
 					});
 					oTree.bindItems("/", oStandardTreeItem);
 				}
@@ -955,8 +1022,10 @@ var oData = [
 	var oPage = new sap.m.Page("TreeTest", {
 		title : "Test Page for sap.m.Tree - JSON",
 		content : [oTree],
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content: [
+				expandMulti(),
+				collapseMulti(),
 				addSizeMode(),
 				addSelectionMode(),
 				addExpandToLevel(),

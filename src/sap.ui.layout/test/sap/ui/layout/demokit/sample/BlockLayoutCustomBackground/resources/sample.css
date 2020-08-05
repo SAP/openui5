@@ -1,12 +1,11 @@
 .customCellImageBackground {
-    color: #ffffff;
-    background-image: url("Night_sky.jpg");
-    background-size: 100% auto;
-    background-position: 0 80%;
+	color: #fff;
+	background-image: url("Night_sky.jpg");
+	background-size: 100% auto;
+	background-position: 0 80%;
 }
 
 .customCellImageBackground .sapUiBlockCellContent,
-.customCellImageBackground .sapUiBlockCellContent .sapMText{
-    color: #ffffff;
+.customCellImageBackground .sapUiBlockCellContent .sapMText {
+	color: #fff;
 }
-

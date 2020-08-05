@@ -66,7 +66,13 @@ body {
 	padding-bottom: 0.125rem;
 }
 
+.customHBox {
+	min-width: 0;
+	flex: 1;
+}
+
 .customIconTabHeader {
+	text-align: left;
 	display: inline-block;
 	height: 1.96rem;
 }
@@ -85,14 +91,13 @@ body {
 	height: 0.55rem !important;
 }
 
+.customIconTabHeader.sapMITH .sapMITBHead {
+	margin-top: 0;
+}
+
 .customIconTabHeader {
 	border-bottom: none !important;
 	box-shadow: none !important;
-}
-
-.customIconTabHeader .sapMITBScrollContainer, .sapMITBHead {
-	padding: 0 !important;
-	padding-left: 1px !important;
 }
 
 .customMargin {
@@ -133,16 +138,79 @@ body {
 
 .sapUiSupportToolIssuesTreeTable .sapMFT {
 	overflow: hidden;
+	font-size: 0.875rem;
 }
 
 .selectedRuleTitle {
 	height: 2rem !important;
 }
 
-.issuesSeverityIcon.sapUiIcon {
-	top: 0.2rem;
-}
-
 .sapMBarContainer.sapMBarRight > .sapMBarChild.sapMIBar > .sapUiIcon {
 	padding: 0;
 }
+
+.sapUiSupportToolAdditionRuleSetNote.sapMText {
+	padding-top: 0.5rem;
+	padding-left: 1rem;
+}
+
+.sapUiSupportToolAdditionRuleSetNote.sapMLnk {
+	padding-bottom: 0.5rem;
+	padding-left: 1rem;
+}
+.issuesSeverityIcon.sapUiIcon {
+	vertical-align: middle;
+}
+.sapUiSupportToolIssuesPage .sapMIBar.sapMHeader-CTX.sapUiSupportToolToolbar {
+	border-bottom: 1px solid #cccccc;
+}
+
+.sapUiSupportToolIssuesPage .sapUiSupportToolIssueHeader {
+	border-bottom: none;
+}
+
+.sapUiSupportToolVariantCont {
+	cursor: pointer;
+}
+
+.sapUiSupportToolVariantCont .sapUiSupportToolVariantTxt {
+	color: #346187; /* @sapUiButtonTextColor */
+	text-decoration: none !important;
+}
+
+.sapUiSupportToolVariantCont  .sapMLnk.sapUiSupportToolVariantTxt:hover {
+	color: #427cac; /* @sapUiHighlight ?*/
+}
+
+.sapUiSupportToolVariantCont .sapUiSupportToolVariantBtn {
+	margin-left: 0.25rem;
+}
+
+.sapUiSupportToolVariantCont:hover .sapUiSupportToolVariantBtn>span {
+	background-image: none;
+	background-color: rgba(179,179,179,0.5) !important; /* @sapUiButtonLiteHoverBackground */
+	border-radius: 0.2rem;
+}
+
+.sapMText.sapUiSupportToolError {
+	color: #ee0000; /* @sapErrorCode */
+}
+
+.sapMScrollCont.sapUiSupportToolImportDescr {
+	max-height: 5rem;
+}
+
+.sapMGHLI.sapMLIB.sapMLIB-CTX.sapMLIBFocusable.sapMLIBShowSeparator.sapMLIBTypeInactive.sapUiSupportToolGHLI {
+	padding-left: 0.5rem;
+}
+
+.sapUiSupportToolVariantTxt.sapMFT {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 0.2rem;
+}
+
+.sapMFT.sapUiSupportToolPresetTitle {
+	padding-right: 0.2rem;
+}
+

@@ -1,12 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/layout/form/ResponsiveLayoutRenderer'],
-	function(jQuery, Renderer, ResponsiveLayoutRenderer1) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/layout/form/ResponsiveLayoutRenderer'],
+	function(Renderer, LayoutResponsiveLayoutRenderer) {
 	"use strict";
 
 
-	var ResponsiveLayoutRenderer = Renderer.extend(ResponsiveLayoutRenderer1);
+	var ResponsiveLayoutRenderer = Renderer.extend(LayoutResponsiveLayoutRenderer);
 
 	return ResponsiveLayoutRenderer;
 

@@ -670,7 +670,7 @@
 				</ReferentialConstraint>
 			</Association>
 			<EntityContainer Name="gwsample_basic_Entities"
-				m:IsDefaultEntityContainer="true">
+				m:IsDefaultEntityContainer="true" sap:message-scope-supported="true">
 				<EntitySet Name="BusinessPartnerSet" EntityType="gwsample_basic.BusinessPartner"
 					sap:content-version="1" />
 				<EntitySet Name="ProductSet" EntityType="gwsample_basic.Product"
@@ -851,6 +851,21 @@
 					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
 						MaxLength="10" />
 				</FunctionImport>
+				<FunctionImport Name="BusinessPartner_Refresh"
+					ReturnType="gwsample_basic.BusinessPartner" EntitySet="BusinessPartnerSet"
+					m:HttpMethod="POST" sap:action-for="gwsample_basic.BusinessPartner">
+					<Parameter Name="BusinessPartnerID" Type="Edm.String" Mode="In"
+						MaxLength="10" />
+				</FunctionImport>
+				<FunctionImport Name="BusinessPartner_Alternatives"
+					ReturnType="Collection(gwsample_basic.BusinessPartner)"
+					EntitySet="BusinessPartnerSet" m:HttpMethod="POST"
+					sap:action-for="gwsample_basic.BusinessPartner">
+					<Parameter Name="BusinessPartnerID" Type="Edm.String" Mode="In"
+						MaxLength="10" />
+				</FunctionImport>
+			</EntityContainer>
+			<EntityContainer Name="gwsample_basic_Entities_2" sap:message-scope-supported="false">
 			</EntityContainer>
 			<atom:link rel="self"
 				href="/SalesOrderSrv//$metadata"

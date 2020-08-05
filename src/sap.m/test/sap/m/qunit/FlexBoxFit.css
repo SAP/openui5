@@ -1,0 +1,26 @@
+#content.fitContainerH {
+	width: 600px;
+	height: 400px;
+}
+#content.fitContainerV {
+	width: 400px;
+	height: 600px;
+}
+#item1 {
+	background-color: #d1dbbd;
+}
+#item2 {
+	background-color: #7D8A2E;
+}
+#item3 {
+	background-color: #C9D787;
+}
+#item4 {
+	background-color: #FFFFFF;
+}
+#item5 {
+	background-color: #FFC0A9;
+}
+#item6 {
+	background-color: #FF8598;
+}

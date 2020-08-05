@@ -1,0 +1,47 @@
+/* =========================================== */
+/* CSS for control sap.uxap/ObjectPageSection  */
+/* Fiori 3 theme                               */
+/* =========================================== */
+
+
+.sapUiSizeCompact .sapUxAPObjectPageSectionHeader,
+.sapUxAPObjectPageSectionHeader {
+	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+	height: 2.75rem;
+	line-height: 2.25rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageSectionTitle,
+.sapUxAPObjectPageSectionTitle {
+	height: 2.75rem;
+	line-height: 2.25rem;
+	color: @sapUiGroupTitleTextColor;
+	font-size: @sapMFontHeader4Size;
+	border-bottom: 0.0625rem solid @sapUiSelected;
+}
+
+.sapUxAPObjectPageSection:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}
+
+.sapUxAPObjectPageSectionHeader,
+.sapUxAPObjectPageSubSectionWithSeeMore .sapUxAPSubSectionSeeMoreContainer {
+	padding-right: 3rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Tablet {
+	.sapUxAPObjectPageSectionHeader,
+	html .sapUiContainer-Medium .sapUxAPObjectPageSectionHeader,
+	.sapUxAPObjectPageSubSectionWithSeeMore .sapUxAPSubSectionSeeMoreContainer {
+		padding-right: 2rem;
+	}
+}
+
+.sapUxAPObjectPageLayout-Std-Phone {
+	.sapUxAPObjectPageSectionHeader,
+	html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader,
+	.sapUxAPObjectPageSubSectionWithSeeMore .sapUxAPSubSectionSeeMoreContainer {
+		padding-right: 1rem;
+	}
+}

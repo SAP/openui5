@@ -2,8 +2,17 @@ sap.ui.define([
 	"sap/ui/demo/nav/controller/BaseController",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/model/Sorter"
-], function (BaseController, Filter, FilterOperator, Sorter) {
+	"sap/ui/model/Sorter",
+	"sap/m/ViewSettingsDialog",
+	"sap/m/ViewSettingsItem"
+], function(
+	BaseController,
+	Filter,
+	FilterOperator,
+	Sorter,
+	ViewSettingsDialog,
+	ViewSettingsItem
+) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.nav.controller.employee.overview.EmployeeOverviewContent", {
@@ -29,14 +38,10 @@ sap.ui.define([
 		_onRouteMatched : function (oEvent) {
 			// save the current query state
 			this._oRouterArgs = oEvent.getParameter("arguments");
-			this._oRouterArgs.query = this._oRouterArgs["?query"] || {};
+			this._oRouterArgs["?query"] = this._oRouterArgs["?query"] || {};
 
-			if (this._oRouterArgs.query) {
-
-				// search/filter via URL hash
-				this._applySearchFilter(this._oRouterArgs.query.search);
-
-			}
+			// search/filter via URL hash
+			this._applySearchFilter(this._oRouterArgs["?query"].search);
 		},
 
 		onSortButtonPressed : function (oEvent) {
@@ -46,13 +51,12 @@ sap.ui.define([
 		onSearchEmployeesTable : function (oEvent) {
 			var oRouter = this.getRouter();
 			// update the hash with the current search term
-			this._oRouterArgs.query.search = oEvent.getSource().getValue();
-			oRouter.navTo("employeeOverview",this._oRouterArgs, true /*no history*/);
+			this._oRouterArgs["?query"].search = oEvent.getSource().getValue();
+			oRouter.navTo("employeeOverview", this._oRouterArgs, true /*no history*/);
 		},
 
 		_initViewSettingsDialog : function () {
-			var oRouter = this.getRouter();
-			this._oVSD = new sap.m.ViewSettingsDialog("vsd", {
+			this._oVSD = new ViewSettingsDialog("vsd", {
 				confirm: function (oEvent) {
 					var oSortItem = oEvent.getParameter("sortItem");
 					this._applySorter(oSortItem.getKey(), oEvent.getParameter("sortDescending"));
@@ -60,19 +64,19 @@ sap.ui.define([
 			});
 
 			// init sorting (with simple sorters as custom data for all fields)
-			this._oVSD.addSortItem(new sap.m.ViewSettingsItem({
+			this._oVSD.addSortItem(new ViewSettingsItem({
 				key: "EmployeeID",
 				text: "Employee ID",
 				selected: true			// by default the MockData is sorted by EmployeeID
 			}));
 
-			this._oVSD.addSortItem(new sap.m.ViewSettingsItem({
+			this._oVSD.addSortItem(new ViewSettingsItem({
 				key: "FirstName",
 				text: "First Name",
 				selected: false
 			}));
 
-			this._oVSD.addSortItem(new sap.m.ViewSettingsItem({
+			this._oVSD.addSortItem(new ViewSettingsItem({
 				key: "LastName",
 				text: "Last Name",
 				selected: false

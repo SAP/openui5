@@ -4,17 +4,30 @@
 		"appComponent": "CA-UI5-CTR",
 		"formFactors": "ML"
 	  },
-	  "samplesRef": {
+	  "samplesRef": [
+		{
 		  "namespace": "sap.f.sample",
 		  "ref": "test-resources/sap/f/demokit/sample"
 		},
+		{
+		  "namespace": "sap.f.tutorial",
+		  "ref": "test-resources/sap/f/demokit/tutorial"
+		}
+	  ],
 	  "entities": [
 		{
 		  "id": "sap.f.Avatar",
-		  "name": "Avatar",
+		  "name": "Avatar (sap.f)",
 		  "category": "Display",
 		  "since": "1.46",
 		  "samples": ["sap.f.sample.Avatar"]
+		},
+		{
+			"id": "sap.f.AvatarGroup",
+			"name": "Avatar Group",
+			"category": "Display",
+			"since": "1.73",
+			"samples": ["sap.f.sample.AvatarGroup"]
 		},
 		{
 		  "id": "sap.f.DynamicPage",
@@ -23,7 +36,9 @@
 		  "since": "1.42",
 		  "samples": [
 			"sap.f.sample.DynamicPageFreeStyle",
-			"sap.f.sample.DynamicPageAnalyticalTable"
+			"sap.f.sample.DynamicPageAnalyticalTable",
+			"sap.f.sample.DynamicPageWithStickySubheader",
+			"sap.f.sample.DynamicPageWithWizard"
 		  ]
 		},
 		{
@@ -34,7 +49,9 @@
 		  "samples": [
 			"sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
 			"sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart",
-			"sap.f.sample.FlexibleColumnLayoutSimple"
+			"sap.f.sample.FlexibleColumnLayoutWithFullscreenPage",
+			"sap.f.sample.FlexibleColumnLayoutSimple",
+			"sap.f.sample.ShellBarWithFlexibleColumnLayout"
 		  ]
 		},
 		{
@@ -43,7 +60,89 @@
 		  "category": "Container",
 		  "since": "1.46",
 		  "samples": ["sap.f.sample.SemanticPage", "sap.f.sample.SemanticPageFreeStyle"]
-		}
+		},
+		{
+		  "id": "sap.f.tutorial.fiori2",
+		  "name": "SAP Fiori 2.0 App",
+		  "category": "Tutorial",
+		  "since": "1.56",
+		  "formFactors": "-",
+		  "description": "In this tutorial, we showcase how to structure your UI5 app using the layout patterns that comply with the latest SAP Fiori guidelines.",
+		  "docuLink": "#docs/guide/c4de2df385174e58a689d9847c7553bd.html",
+		  "samplesAsSteps": [
+			"Setting Up the Initial App",
+			"Creating an Empty Flexible Column Layout",
+			"Using Dynamic Page for the Master View",
+			"Adding a Detail Page",
+			"Using Object Page Layout as a Detail Page",
+			"Adding a Floating Footer",
+			"Routing",
+			"Enhancing the Detail Page",
+			"Adding a Detail-Detail Page",
+			"Adding More Pages",
+			"Using the Flexible Column Layout Semantic Helper",
+			"Starting with Two Columns",
+			"Setting the Master-Detail Pattern"
+		  ]
+		},
+		{
+		  "id": "sap.f.GridList",
+		  "name": "Grid List",
+		  "category": "List",
+		  "since": "1.60",
+		  "samples": [
+			"sap.f.sample.GridListBasic",
+			"sap.f.sample.GridListModes",
+			"sap.f.sample.GridListBreakPoints",
+			"sap.f.sample.GridListBoxContainer",
+			"sap.f.sample.GridListBoxContainerGrouping",
+			"sap.f.sample.GridListBoxContainerReal",
+			"sap.f.sample.GridListDragAndDrop",
+			"sap.f.sample.GridListResponsiveColumnLayout"
+		  ]
+		},
+		{
+		  "id": "sap.f.ShellBar",
+		  "name": "Shell Bar",
+		  "category": "Display",
+		  "since": "1.63",
+			"samples": [
+				"sap.f.sample.ShellBar",
+				"sap.f.sample.ShellBarProductSwitch",
+				"sap.f.sample.ShellBarWithMenuButton",
+				"sap.f.sample.ShellBarWithSearch",
+				"sap.f.sample.ShellBarWithFlexibleColumnLayout",
+				"sap.f.sample.ShellBarWithSplitApp"
+			]
+		},
+		{
+		  "id": "sap.f.Card",
+		  "name": "Card (sap.f)",
+		  "category": "Display",
+		  "since": "1.64",
+		  "samples": ["sap.f.sample.Card"]
+		},
+		{
+		  "id": "sap.f.GridContainer",
+		  "name": "Grid Container",
+		  "category": "Container",
+			"formFactors" : "-",
+		  "since": "1.65",
+		  "samples": [
+				"sap.f.sample.GridContainer",
+				"sap.f.sample.GridContainerDragAndDrop",
+				"sap.f.sample.GridContainerDragAndDropFromList"
+			]
+		},
+		{
+			"id": "sap.f.ProductSwitch",
+			"name": "Product Switch",
+			"category": "Display",
+			"since": "1.72",
+			  "samples": [
+				  "sap.f.sample.ShellBarProductSwitch"
+			  ]
+		  }
 	  ],
 	  "samples": [
 		{
@@ -57,9 +156,24 @@
 		  "description": "Dynamic Page containing an Analytical Table in the content area and filters in the header aligned with the SAP Fiori 2 List Report floorplan."
 		},
 		{
+		  "id": "sap.f.sample.DynamicPageWithStickySubheader",
+		  "name": "Dynamic Page with Sticky Subheader",
+		  "description": "Dynamic Page containing an sap.m.IconTabBar in the sticky subheader content area."
+		},
+		{
+		  "id": "sap.f.sample.DynamicPageWithWizard",
+		  "name": "Dynamic Page with Wizard",
+		  "description": "Dynamic Page containing a sap.m.Wizard and WizardProgressNavigator in the content area."
+		},
+		{
 		  "id": "sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
 		  "name": "Flexible Column Layout with Routing and One Initial Column",
 		  "description": "Flexible Column Layout as an app with routing that starts with a single initial column."
+		},
+		{
+		 "id": "sap.f.sample.FlexibleColumnLayoutWithFullscreenPage",
+		  "name": "Flexible Column Layout with Routing and first page in fullscreen only",
+		  "description": "Flexible Column Layout as an app with routing that displays different pages in the initial column. The first page is only displayed in OneColumn layout type"
 		},
 		{
 		  "id": "sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart",
@@ -77,6 +191,11 @@
 		  "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar."
 		},
 		{
+			"id": "sap.f.sample.AvatarGroup",
+			"name": "Avatar Group (Experimental)",
+			"description": "This sample demonstrates the different group types and item sizes of the AvatarGroup control."
+		},
+		{
 		  "id": "sap.f.sample.SemanticPage",
 		  "name": "Semantic Page using Draft Indicator",
 		  "description": "This sample demonstrates the use of a <code>DraftIndicator</code> in the footer area."
@@ -85,7 +204,98 @@
 		  "id": "sap.f.sample.SemanticPageFreeStyle",
 		  "name": "Semantic Page - Freestyle Sample",
 		  "description": "This sample demonstrates a <code>SemanticPage</code> with all semantic-specific actions both in the title and in the footer areas."
-		 }
-		]
+		 },
+		{
+		  "id": "sap.f.sample.GridListBasic",
+		  "name": "Grid List - Basic examples",
+		  "description": ""
+		},
+		{
+			"id": "sap.f.sample.GridListModes",
+			"name": "Grid List - Different Modes With Various Item Types",
+			"description": "This is a sample for GridList with different modes of selection."
+		},
+		{
+		  "id": "sap.f.sample.GridListBreakPoints",
+		  "name": "Grid List - Break point examples - S, M, L, XL",
+		  "description": "This sample illustrates how to configure the responsive settings for different container sizes."
+		},
+		{
+		  "id": "sap.f.sample.GridListBoxContainer",
+		  "name": "Grid List with GridBoxLayout",
+		  "description": "This layout allows to display same height grid items with configurable width."
+		},
+		{
+		  "id": "sap.f.sample.GridListBoxContainerGrouping",
+		  "name": "Grid List features - Grouping, Header, Growing",
+		  "description": "This sample illustrates subgroups with headers, custom header and lazy loading of GridList items."
+		},
+		{
+		  "id": "sap.f.sample.GridListBoxContainerReal",
+		  "name": "Grid List - Item Designs",
+		  "description": "This is a sample for GridList item templates representing a typical tools page dashboard style."
+		},
+		{
+			"id": "sap.f.sample.GridListDragAndDrop",
+			"name": "Grid List - Drag and Drop",
+			"description": "This sample represents GridList with enabled Drag and Drop functionality."
+		},
+		{
+		  "id": "sap.f.sample.GridListResponsiveColumnLayout",
+		  "name": "GridList with Responsive Column Layout",
+		  "description": "This layout displays a variable number of grid columns depending on available screen size. Grid row's height is dynamically determined by the height of the highest grid element on this row."
+		},
+		{
+		  "id": "sap.f.sample.ShellBar",
+		  "name": "Shell Bar with title mega menu",
+		  "description": "Shell Bar example showing the control title as part of a mega menu, configurable by the app developer."
+		},
+		{
+		  "id": "sap.f.sample.ShellBarWithMenuButton",
+		  "name": "Shell Bar with menu button",
+		  "description": "Shell Bar example with a menu button and a plain title."
+		},
+		{
+		  "id": "sap.f.sample.ShellBarProductSwitch",
+		  "name": "Shell Bar with Product Switch (Experimental)",
+		  "description": "Shell Bar example with enabled Product Switch, configurable by the app developer. The Product Switch control is in experimental state."
+		},
+		{
+		  "id": "sap.f.sample.ShellBarWithSearch",
+		  "name": "Shell Bar with search",
+		  "description": "Shell Bar example with configured search functionality.",
+		  "details": "To observe the search bar functionality, choose the search icon."
+		},
+		{
+		  "id": "sap.f.sample.ShellBarWithFlexibleColumnLayout",
+		  "name": "Shell Bar with Flexible Column Layout",
+		  "description": "Example of Shell Bar in combination with Flexible Column Layout."
+		},
+		{
+		  "id": "sap.f.sample.ShellBarWithSplitApp",
+		  "name": "Shell Bar with Split App",
+		  "description": "Example of Shell Bar in combination with Split App."
+		},
+		{
+		  "id": "sap.f.sample.Card",
+		  "name": "Card Control",
+		  "description": "This sample illustrates how to specify the predefined header and the content of the Card control."
+		},
+		{
+		  "id": "sap.f.sample.GridContainer",
+		  "name": "Grid Container",
+		  "description": "This sample represents the general usage of GridContainer."
+		},
+		{
+			"id": "sap.f.sample.GridContainerDragAndDrop",
+			"name": "Grid Container - Drag and Drop",
+			"description": "This sample represents GridContainer with enabled Drag and Drop functionality."
+		},
+		{
+			"id": "sap.f.sample.GridContainerDragAndDropFromList",
+			"name": "Grid Container - Drag and Drop From List to GridContainer",
+			"description": "This sample represents how items from a control which is not GridContainer can be dragged and dropped over a GridContainer."
+		}
+	  ]
 	}
 }

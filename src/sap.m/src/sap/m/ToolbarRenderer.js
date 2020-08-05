@@ -11,13 +11,9 @@ sap.ui.define(['./BarInPageEnabler'],
 	 * Toolbar renderer.
 	 * @namespace
 	 */
-	var ToolbarRenderer = {};
-
-	// determines whether toolbar has new flexbox (shrink) support
-	ToolbarRenderer.hasNewFlexBoxSupport = (function() {
-		var oStyle = document.documentElement.style;
-		return (oStyle.flex !== undefined || oStyle.webkitFlexShrink !== undefined);
-	}());
+	var ToolbarRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -28,40 +24,57 @@ sap.ui.define(['./BarInPageEnabler'],
 	ToolbarRenderer.render = BarInPageEnabler.prototype.render;
 
 	/**
+	 * Writes the accessibility state.
+	 * To be overwritten by subclasses.
+	 *
+	 * @private
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oToolbar An object representation of the control that should be rendered.
+	 */
+	ToolbarRenderer.writeAccessibilityState = function(oRm, oToolbar) {
+		var oAccInfo = {
+			role: oToolbar._getAccessibilityRole()
+		};
+
+		if (!oToolbar.getAriaLabelledBy().length) {
+			oAccInfo.labelledby = oToolbar.getTitleId();
+		}
+
+		if (oToolbar.getActive()) {
+			oAccInfo.haspopup = oToolbar.getAriaHasPopup();
+		}
+
+		if (oToolbar._sAriaRoleDescription) {
+			oAccInfo.roledescription = oToolbar._sAriaRoleDescription;
+		}
+
+		oRm.accessibilityState(oToolbar, oAccInfo);
+	};
+
+	/**
 	 * Add classes attributes and styles to the root tag
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oToolbar an object representation of the control that should be rendered
 	 */
 	ToolbarRenderer.decorateRootElement = function (oRm, oToolbar) {
-		oRm.addClass("sapMTB");
+		this.writeAccessibilityState(oRm, oToolbar);
 
-		// ARIA
-		oRm.writeAccessibilityState(oToolbar, {
-			role: oToolbar._getAccessibilityRole()
-		});
-
-
-		if (!ToolbarRenderer.hasNewFlexBoxSupport) {
-			oRm.addClass("sapMTBOldFlex");
-		} else {
-			oRm.addClass("sapMTBNewFlex");
-		}
+		oRm.class("sapMTB");
+		oRm.class("sapMTBNewFlex");
 
 		if (oToolbar.getActive()) {
-			oRm.addClass("sapMTBActive");
-			oRm.writeAttribute("tabindex", "0");
+			oRm.class("sapMTBActive");
+			oRm.attr("tabindex", "0");
 		} else {
-			oRm.addClass("sapMTBInactive");
+			oRm.class("sapMTBInactive");
 		}
 
-		oRm.addClass("sapMTB" + oToolbar.getStyle());
-		oRm.addClass("sapMTB-" + oToolbar.getActiveDesign() + "-CTX");
+		oRm.class("sapMTB" + oToolbar.getStyle());
+		oRm.class("sapMTB-" + oToolbar.getActiveDesign() + "-CTX");
 
-		var sWidth = oToolbar.getWidth();
-		var sHeight = oToolbar.getHeight();
-		sWidth && oRm.addStyle("width", sWidth);
-		sHeight && oRm.addStyle("height", sHeight);
+		oRm.style("width", oToolbar.getWidth());
+		oRm.style("height", oToolbar.getHeight());
 	};
 
 	ToolbarRenderer.renderBarContent = function(rm, oToolbar) {

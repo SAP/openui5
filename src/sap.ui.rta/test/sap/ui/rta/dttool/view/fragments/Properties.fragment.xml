@@ -1,0 +1,38 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:dt="sap.ui.rta.dttool"
+	xmlns:l="sap.ui.layout">
+	<Page>
+		<customHeader>
+			<OverflowToolbar id="PropertyToolbar" class="sapUiResponsivePadding">
+				<content>
+					<Image
+						src="{
+							path: 'properties>/palette/icons/svg',
+							formatter: '.formatter'
+						}"/>
+					<Title text="{= ${properties>/displayName/singular} ? ${properties>/displayName/singular} + ' ' + ${i18n>properties} : ${i18n>propertyPanel}} "/>
+				</content>
+			</OverflowToolbar>
+		</customHeader>
+
+		<List id="PropertyPanel"
+			noDataText="{i18n>propertyPrompt}"
+			items="{properties>/propertiesList}">
+			<items>
+				<dt:controls.DTToolListItem
+					propertyName="{properties>name}"
+					defaultValue="{properties>defaultValue}"
+					value="{properties>currentValue}"
+					class="sapMTitleStyleAuto"
+					type="{= ${properties>type} ? ${properties>type} : 'string' }"
+					change="onPropertyChange"
+					visible="{= ${properties>ignore} ? false : true}"/>
+			</items>
+		</List>
+		<layoutData>
+			<l:SplitterLayoutData size="25%" minSize="200px"/>
+		</layoutData>
+	</Page>
+</core:FragmentDefinition>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../../css/topic.css">
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/core/themes/sap_fiori_3/library.css">
+
+	<link rel="stylesheet" href="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="../../../../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/run-prettify.js"></script>
+</head>
+<body class="sapUiBody topicBody">
+<div class="topic">
+	<div class="content">
+
+		<h1 id="cardTypes">Integration Card Types</h1>
+
+		<h3>List Card</h3>
+		<img width="300px" src="../images/list.png" alt="List card">
+
+		<h3>Analytical Card</h3>
+		<img width="300px" src="../images/barchart1.png" alt="Analytical card with bar chart">
+		<img width="300px" src="../images/barchart2.png" alt="Analytical card with bar chart">
+		<img width="300px" src="../images/donutchart.png" alt="Analytical card with donut chart">
+		<img width="300px" src="../images/linechart.png" alt="Analytical cars with line chart">
+
+		<h3>Table Card</h3>
+		<img width="300px" src="../images/table.png" alt="Table card">
+
+		<h3>Object Card</h3>
+		<img width="300px" src="../images/object.png" alt="Object card">
+		<h3>Timeline Card</h3>
+
+		<img width="300px" src="../images/timeline.png" alt="Timeline card">
+
+		<h3>Calendar Card (Experimental)</h3>
+
+		<img width="300px" src="../images/calendar.png" alt="Calendar card">
+
+		<h3>Adaptive Card</h3>
+		<p>This is a special type of card, which application developers can use to visualize and reuse cards that are created using the Microsoft Adaptive Cards specification and manifest.</p>
+		<img width="300px" src="../images/adaptive.png" alt="Adaptive card">
+
+		<h3>Component Card</h3>
+		For more flexible implementations of card content, the Component Card allows the integration of UI5 Components as content.
+		Such cards could only be rendered within an HTML host environment.
+
+		<h2 id="otherCards">Integration Card and sap.f.Card</h2>
+		<p>
+			Note, that besides the <code>sap.ui.integration.widgets.Card</code> there is also the <code>sap.f.Card</code>.
+			While the <code>sap.ui.integration.widgets.Card</code> is designed for easy integration and configuration, the <code>sap.f.Card</code>
+			provides more freedom in choosing the structure and the controls which you can include.
+			The Card Explorer documents only the <code>sap.ui.integration.widgets.Card</code>.
+			For more information and comparison between <code>sap.ui.integration.widgets.Card</code> and <code>sap.f.Card</code> read <a id="linkToMoreAboutControlsCards" target="_blank">More About Cards</a>.
+		</p>
+	</div>
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<div><a href="#cardTypes">Integration Card Types</a></div>
+		<div><a href="#otherCards">Integration Card and sap.f.Card</a></div>
+	</div>
+</div>
+<script>
+	var sPathToDemoKitLocal = "../../../../../../../../../documentation.html#";
+	var sPathToDemoKit = "../../../../../../../../../#";
+
+	if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+		document.getElementById("linkToMoreAboutControlsCards").href = sPathToDemoKitLocal + "/topic/5b46b03f024542ba802d99d67bc1a3f4";
+	} else {
+		document.getElementById("linkToMoreAboutControlsCards").href = sPathToDemoKit + "/topic/5b46b03f024542ba802d99d67bc1a3f4";
+	}
+</script>
+</body>
+</html>

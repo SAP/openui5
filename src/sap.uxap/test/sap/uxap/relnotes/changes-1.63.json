@@ -1,0 +1,29 @@
+{
+  "1.63.0": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "1f55855bea5ae4157f9daff2437271701470a548",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Fixed wrong width calculation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970044923"
+          }
+        ]
+      },
+      {
+        "id": "6d84a7af1bec7feab51468df2c0e7d2e66a88d30",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPegeLayout: _updateMedia is now called on DOM ready",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970034947"
+          }
+        ]
+      }
+    ]
+  }
+}

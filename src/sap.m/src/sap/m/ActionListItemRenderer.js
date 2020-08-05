@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer'],
+sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer"],
 	function(ListItemBaseRenderer, Renderer) {
 	"use strict";
 
@@ -12,6 +12,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer'],
 	 * @namespace
 	 */
 	var ActionListItemRenderer = Renderer.extend(ListItemBaseRenderer);
+	ActionListItemRenderer.apiVersion = 2;
 
 	/**
 	 * Renders the HTML for the given control, using the provided
@@ -25,18 +26,17 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer'],
 	 *          rendered
 	 */
 	ActionListItemRenderer.renderLIAttributes = function(rm, oLI) {
-		rm.addClass("sapMALI");
+		rm.class("sapMALI");
 	};
 
 	ActionListItemRenderer.renderLIContent = function(rm, oLI) {
 
-		var isText = oLI.getText();
-
 		// List item label
-		if (isText) {
-			rm.write("<div class='sapMALIText'>");
-			rm.writeEscaped(isText);
-			rm.write("</div>");
+		var sText = oLI.getText();
+		if (sText) {
+			rm.openStart("div").class("sapMALIText").openEnd();
+			rm.text(sText);
+			rm.close("div");
 		}
 	};
 

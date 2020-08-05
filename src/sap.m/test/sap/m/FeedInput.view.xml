@@ -5,6 +5,8 @@
 
 	<Label class="caption" text="FeedInput with an Image" />
 	<FeedInput
+		maxLength="20"
+		showExceededText="true"
 		post="onPostFeedItem"
 		icon="images/Woman_04.png"
 		ariaLabelForPicture="Picture of a woman" />

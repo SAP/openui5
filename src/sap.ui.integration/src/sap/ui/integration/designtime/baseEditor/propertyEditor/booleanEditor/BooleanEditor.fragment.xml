@@ -1,0 +1,14 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<ComboBox
+		value="{value}"
+		selectedKey="{value}"
+		width="100%"
+		change="_onChange"
+	>
+		<core:Item key="true" text="{i18n>BASE_EDITOR.BOOLEAN.TRUE_VALUE}"/>
+		<core:Item key="false" text="{i18n>BASE_EDITOR.BOOLEAN.FALSE_VALUE}"/>
+	</ComboBox>
+</core:FragmentDefinition>

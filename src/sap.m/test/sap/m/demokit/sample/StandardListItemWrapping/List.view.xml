@@ -1,0 +1,25 @@
+<mvc:View
+	controllerName="sap.m.sample.StandardListItemWrapping.List"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		id="myList"
+		mode="MultiSelect"
+		headerText="Wrapping texts"
+		items="{
+			path: '/names'
+		}">
+		<items>
+			<StandardListItem
+				title="{title}"
+				description="{desc}"
+				icon="{icon}"
+				iconInset="false"
+				highlight="{highlight}"
+				info="{info}"
+				infoState="{highlight}"
+				type="Detail"
+				wrapping="true" />
+		</items>
+	</List>
+</mvc:View>

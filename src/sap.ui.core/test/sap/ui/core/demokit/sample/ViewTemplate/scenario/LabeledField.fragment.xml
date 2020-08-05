@@ -8,7 +8,7 @@
 			<Label labelFor="{parts: [{path: 'field>'}, {path: 'fieldGroup>'}], formatter: '.id'}"
 				text="{path: 'field>Label', formatter: '.AH.format'}"/>
 			<template:if test="{:= !${field>Value} }">
-				<HBox/><!-- needed in case label is shown, but no field -->
+				<Text/><!-- needed in case label is shown, but no field -->
 			</template:if>
 		</template:then>
 		<template:elseif test="{field>Value}">

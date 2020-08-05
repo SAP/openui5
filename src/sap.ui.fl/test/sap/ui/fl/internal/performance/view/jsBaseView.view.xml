@@ -1,0 +1,14 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:vm="sap.ui.fl.variants">
+	<l:HorizontalLayout id="HorizontalLayout">
+		<l:VerticalLayout id="ContainerLayout">
+			<vm:VariantManagement id="variantManagementOrdersTable" for="HorizontalLayout" updateVariantInURL="true" />
+			<Label id="ContainerLabel" text="UI Flexibility Performance Test" />
+			<Button text="Start Test" press="window.runPerformanceTests()" />
+			<l:VerticalLayout id="Layout" />
+		</l:VerticalLayout>
+	</l:HorizontalLayout>
+</mvc:View>

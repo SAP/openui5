@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
 	<meta charset="UTF-8">
-	<title>Avatar</title>
+	<title>sap.f.Avatar test page</title>
 	<script type="text/javascript"
 			src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
@@ -16,6 +16,7 @@
 
 		var oPage = new sap.m.Page({
 			title: "sap.f.Avatar",
+			titleLevel: "H1",
 			content: [
 				new sap.f.Avatar("defaultXSSquareAvatar", {
 					displaySize: "XS",
@@ -35,22 +36,26 @@
 					displaySize: "XL"
 
 				}),
+				// if image cannot be found, the initials will be shown if provided
+				new sap.f.Avatar("imageXL2", {
+					initials: "YY",
+					src: "images/cannotfind_Woman_avatar_01.png",
+					displaySize: "XL"
+				}),
 				new sap.f.Avatar("imageXLSquareCover", {
 					src: "images/Screw_avatar_01.jpg",
 					displaySize: "XL",
 					displayShape: "Square",
 					imageFitType: "Cover",
 					press: onAvatarPress
-
-				}),
+				}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"),
 				new sap.f.Avatar("imageXLSquareContain", {
 					src: "images/Lamp_avatar_01.jpg",
 					displaySize: "XL",
 					displayShape: "Square",
 					imageFitType: "Contain",
 					press: onAvatarPress
-
-				}),
+				}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"),
 				new sap.f.Avatar("initialsCustomAvatar", {
 					initials: "BP",
 					displaySize: "Custom",
@@ -66,7 +71,7 @@
 							title: "LightBox example"
 						})
 					})
-				})
+				}).addStyleClass("sapUiTinyMarginBegin")
 			]
 		});
 

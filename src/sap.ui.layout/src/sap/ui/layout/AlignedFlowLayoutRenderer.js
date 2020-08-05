@@ -3,14 +3,16 @@
  */
 
 sap.ui.define(['./library'],
-	function (library) {
+	function(library) {
 		"use strict";
 
 		/**
 		 * AlignedFlowLayout renderer.
 		 * @namespace
 		 */
-		var AlignedFlowLayoutRenderer = {};
+		var AlignedFlowLayoutRenderer = {
+			apiVersion: 2
+		};
 
 		/**
 		 * CSS class to be applied to the HTML root element of the control.
@@ -29,17 +31,19 @@ sap.ui.define(['./library'],
 		AlignedFlowLayoutRenderer.render = function (oRm, oControl) {
 			var aContent = oControl.getContent();
 
-			oRm.write("<ul");
-			oRm.writeControlData(oControl);
-			oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS);
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div", oControl);
+			oRm.class(AlignedFlowLayoutRenderer.CSS_CLASS);
 
+			if (aContent.length === 0) {
+				oRm.class(AlignedFlowLayoutRenderer.CSS_CLASS + "NoContent");
+			}
+
+			oRm.openEnd();
 			this.renderItems(oRm, oControl, aContent);
 			this.renderEndItem(oRm, oControl);
 			this.renderSpacers(oRm, oControl);
 
-			oRm.write("</ul>");
+			oRm.close("div");
 		};
 
 		/**
@@ -53,9 +57,9 @@ sap.ui.define(['./library'],
 		AlignedFlowLayoutRenderer.renderItems = function(oRm, oControl, aContent) {
 			aContent = aContent || oControl.getContent();
 
-			for (var i = 0; i < aContent.length; i++) {
-				this.renderItem(oRm, oControl, aContent[i]);
-			}
+			aContent.forEach(function(oContent) {
+				this.renderItem(oRm, oControl, oContent);
+			}, this);
 		};
 
 		/**
@@ -67,15 +71,13 @@ sap.ui.define(['./library'],
 		 * @param {sap.ui.core.Control} oContent The content to be rendered inside the item
 		 */
 		AlignedFlowLayoutRenderer.renderItem = function(oRm, oControl, oContent) {
-			oRm.write("<li");
-			oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS + "Item");
-			oRm.addStyle("flex-basis", oControl.getMinItemWidth());
-			oRm.addStyle("max-width", oControl.getMaxItemWidth());
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
+			oRm.openStart("div");
+			oRm.class(AlignedFlowLayoutRenderer.CSS_CLASS + "Item");
+			oRm.style("flex-basis", oControl.getMinItemWidth());
+			oRm.style("max-width", oControl.getMaxItemWidth());
+			oRm.openEnd();
 			oRm.renderControl(oContent);
-			oRm.write("</li>");
+			oRm.close("div");
 		};
 
 		/**
@@ -90,24 +92,21 @@ sap.ui.define(['./library'],
 			aEndContent = aEndContent || oControl.getEndContent();
 
 			if (aEndContent.length) {
-				oRm.write("<li");
-				oRm.writeAttribute("id", oControl.getId() + "-endItem");
-				oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS + "End");
+				oRm.openStart("div", oControl.getId() + "-endItem");
+				oRm.class(AlignedFlowLayoutRenderer.CSS_CLASS + "End");
 
 				// if the end item is the only child, do not change the initial main size of a flex item
 				if (oControl.getContent().length) {
-					oRm.addStyle("flex-basis", oControl.getMinItemWidth());
+					oRm.style("flex-basis", oControl.getMinItemWidth());
 				}
 
-				oRm.writeClasses();
-				oRm.writeStyles();
-				oRm.write(">");
+				oRm.openEnd();
 
-				for (var i = 0; i < aEndContent.length; i++) {
-					this.renderEndContent(oRm, oControl, aEndContent[i]);
-				}
+				aEndContent.forEach(function(oEndContent) {
+					this.renderEndContent(oRm, oControl, oEndContent);
+				}, this);
 
-				oRm.write("</li>");
+				oRm.close("div");
 			}
 		};
 
@@ -137,25 +136,25 @@ sap.ui.define(['./library'],
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 		 */
 		AlignedFlowLayoutRenderer.renderSpacers = function(oRm, oControl) {
-			var iSpacers = oControl.getNumberOfSpacers(),
+			var iSpacers = oControl.computeNumberOfSpacers(),
 				sMinItemWidth = oControl.getMinItemWidth(),
 				sMaxItemWidth = oControl.getMaxItemWidth(),
-				CSS_CLASS = AlignedFlowLayoutRenderer.CSS_CLASS;
+				CSS_CLASS = AlignedFlowLayoutRenderer.CSS_CLASS,
+				sID = oControl.getId(),
+				sSpacerPrefixID = sID + "-spacer",
+				sLastSpacerID = sID + "-spacerlast";
 
 			for (var i = 0; i < iSpacers; i++) {
-				oRm.write("<li");
+				var bLastSpacer = i === (iSpacers - 1),
+					sSpacerID = bLastSpacer ? sLastSpacerID : sSpacerPrefixID + i;
 
-				if (i === (iSpacers - 1)) {
-					oRm.writeAttribute("id", oControl.getId() + "-last");
-				}
-
-				oRm.addClass(CSS_CLASS + "Item");
-				oRm.addClass(CSS_CLASS + "Spacer");
-				oRm.addStyle("flex-basis", sMinItemWidth);
-				oRm.addStyle("max-width", sMaxItemWidth);
-				oRm.writeClasses();
-				oRm.writeStyles();
-				oRm.write("></li>");
+				oRm.openStart("div", sSpacerID);
+				oRm.class(CSS_CLASS + "Item");
+				oRm.class(CSS_CLASS + "Spacer");
+				oRm.style("flex-basis", sMinItemWidth);
+				oRm.style("max-width", sMaxItemWidth);
+				oRm.openEnd();
+				oRm.close("div");
 			}
 		};
 

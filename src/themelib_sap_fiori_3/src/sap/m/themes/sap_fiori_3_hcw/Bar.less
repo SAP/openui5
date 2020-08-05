@@ -1,0 +1,69 @@
+/* ================================ */
+/* CSS for control sap.m/Bar        */
+/* Quartz High Contrast White theme */
+/* ================================ */
+
+.sapMBar {
+	background-color: transparent;
+	text-shadow: none;
+}
+
+.sapMBarRight,
+.sapMBarPH {
+	padding-right: 0.5rem;
+}
+
+.sapMBarLeft,
+.sapMBarPH {
+	padding-left: 0.5rem;
+}
+
+.sapMBar .sapMBarRight.sapMBarContainer > *:first-child,
+.sapMBar .sapMBarLeft.sapMBarContainer > *:first-child,
+.sapMBar .sapMBarMiddle .sapMBarContainer > *:first-child{
+	margin: 0 0.25rem 0 0;
+}
+
+.sapMBar .sapMBarRight.sapMBarContainer > *:last-child,
+.sapMBar .sapMBarLeft.sapMBarContainer > *:last-child,
+.sapMBar .sapMBarMiddle .sapMBarContainer > *:last-child{
+	margin: 0 0 0 0.25rem;
+}
+
+.sapMBar .sapMBarRight.sapMBarContainer > *:not(:first-child):not(:last-child),
+.sapMBar .sapMBarLeft.sapMBarContainer > *:not(:first-child):not(:last-child),
+.sapMBar .sapMBarMiddle .sapMBarContainer > *:not(:first-child):not(:last-child){
+	margin: 0 0.25rem;
+}
+
+.sapMBar .sapMBarRight.sapMBarContainer > *:first-child:last-child,
+.sapMBar .sapMBarLeft.sapMBarContainer > *:first-child:last-child,
+.sapMBar .sapMBarMiddle .sapMBarContainer > *:first-child:last-child{
+	margin: 0;
+}
+
+.sapMBar {
+	height: 2.75rem;
+	line-height: 2.75rem;
+}
+
+.sapMBarLeft, .sapMBarRight, .sapMBarPH {
+	height: 2.75rem;
+	line-height: 2.75rem;
+}
+
+/* in Master page the bar should have different color */
+.sapMSplitContainerMaster .sapMIBar .sapMHeader-CTX,
+.sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX {
+	background-color: @sapUiGroupContentBackground;
+}
+
+/* in Master page the bar should have a different color shadow only if we don't have subHeader (e.g. another bar) */
+.sapMSplitContainerMaster .sapMIBar .sapMHeader-CTX:only-of-type {
+	box-shadow: inset 0 -0.0625rem @sapUiGroupContentBorderColor;
+}
+
+/* in Master page the bar should have a different color shadow */
+.sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX {
+	box-shadow: inset 0 -0.0625rem @sapUiGroupContentBorderColor;
+}

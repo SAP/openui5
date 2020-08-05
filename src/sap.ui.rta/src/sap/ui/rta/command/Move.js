@@ -1,7 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(jQuery, FlexCommand) {
+sap.ui.define([
+	"sap/ui/rta/command/FlexCommand"
+],
+function(
+	FlexCommand
+) {
 	"use strict";
 
 	/**
@@ -38,12 +43,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(
 	});
 
 	/**
-	 * @param  {boolean} bIsUndo If is true, then it switches source and target
 	 * @override
 	 */
-	Move.prototype._getChangeSpecificData = function(bIsUndo) {
-		var mSource = bIsUndo ? this.getTarget() : this.getSource();
-		var mTarget = bIsUndo ? this.getSource() : this.getTarget();
+	Move.prototype._getChangeSpecificData = function() {
+		var mSource = this.getSource();
+		var mTarget = this.getTarget();
 
 		// replace elements by their id, unify format and help with serialization
 		if (mSource.parent) {
@@ -64,26 +68,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(
 		this.getMovedElements().forEach(function(mMovedElement) {
 			mSpecificInfo.movedElements.push({
 				id : mMovedElement.id || (mMovedElement.element && mMovedElement.element.getId()),
-				sourceIndex : bIsUndo ? mMovedElement.targetIndex : mMovedElement.sourceIndex,
-				targetIndex : bIsUndo ? mMovedElement.sourceIndex : mMovedElement.targetIndex
+				sourceIndex : mMovedElement.sourceIndex,
+				targetIndex : mMovedElement.targetIndex
 			});
 		});
 		return mSpecificInfo;
 	};
 
-	Move.prototype.prepare = function(sLayer, bDeveloperMode) {
-		var bSuccessful = FlexCommand.prototype.prepare.apply(this, arguments);
-
-		if (bSuccessful) {
-			this._oPreparedUndoChange = this._createChangeFromData(this._getChangeSpecificData(true), sLayer, bDeveloperMode);
-		}
-		return bSuccessful;
-	};
-
-	Move.prototype.undo = function() {
-		return this._applyChange(this._oPreparedUndoChange, true);
-	};
-
 	return Move;
-
-}, /* bExport= */true);
+});

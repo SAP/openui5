@@ -1,0 +1,15 @@
+<mvc:View
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<MessagePage showHeader="false"
+				 text="Your browser can't load this page properly."
+				 enableFormattedText="true"
+				 description="This page might not behave as expected because your browser isn't configured to load unsigned &lt;a target='_self' &gt;third-party controls&lt;/a&gt;.&lt;br&gt;&lt;br&gt;Possible reasons:&lt;ul&gt;&lt;li&gt;Your current security settings prohibit running third party controls on this page.&lt;/li&gt;&lt;li&gt;You have blocked a publisher of one of the controls.&lt;/li&gt;&lt;/ul&gt;You can change your security settings to allow unsigned controls.However, &lt;strong&gt;installing unsigned controls from untrusted sources may harm your computer&lt;/strong&gt;."
+				 icon="sap-icon://message-warning">
+		<buttons>
+			<Button text="Change security settings"/>
+			<Button text="Reload page"/>
+		</buttons>
+	</MessagePage>
+</mvc:View>

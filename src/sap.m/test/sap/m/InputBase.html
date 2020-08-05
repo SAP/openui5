@@ -48,14 +48,15 @@
 		tooltip: "Tooltip",
 		visible: true,
 		required: true,
-		busy: false
+		busy: false,
+		formattedText: ""
 	};
 
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData(oProperties);
 	sap.ui.getCore().setModel(oModel);
 
-	var oInput = new sap.m.InputBase({
+	var oInput = new sap.m.InputBase("input-base1", {
 		value: "{/value}",
 		name: "{/name}",
 		placeholder: "{/placeholder}",
@@ -69,7 +70,7 @@
 		textDirection: "{/textDirection}",
 		tooltip: "{/tooltip}",
 		visible: "{/visible}",
-		busy: "{/busy}"
+		busy: "{/busy}",
 	});
 
 	var oToolbar = new sap.m.Toolbar({
@@ -151,6 +152,45 @@
 			new sap.m.Input({
 				value: "{/valueStateText}",
 				valueLiveUpdate: true
+			}),
+			new sap.m.Label({
+				text: "Formatted ValueState Text"
+			}),
+			new sap.m.Input({
+				value: "{/formattedText}",
+				valueLiveUpdate: false,
+				change: function() {
+					var oInput = sap.ui.getCore().byId("input-base1");
+
+					if (this.getValue()) {
+						var oFormattedText = new sap.m.FormattedText({htmlText: this.getValue() });
+						oInput.setFormattedValueStateText(oFormattedText);
+					} else {
+						oInput.removeAllAggregation("formattedValueStateText");
+					}
+				}
+			}),
+			new sap.m.Label({
+				text: "Add a link in Formatted ValueState Text"
+			}),
+			new sap.m.Input({
+				value: "{/formattedValueStateTextLink}",
+				valueLiveUpdate: false,
+				change: function() {
+					var oInput = sap.ui.getCore().byId("input-base1");
+
+					if (oInput.getFormattedValueStateText()) {
+						if (this.getValue()) {
+							oInput.getFormattedValueStateText().addAggregation("controls",new sap.m.Link({
+							text: "{/formattedValueStateTextLink}", href:"#", target: "_blank"
+							}));
+							oInput.getFormattedValueStateText().setHtmlText(oInput.getFormattedValueStateText().getHtmlText() + " %%0");
+						} else {
+							oInput.getFormattedValueStateText().removeAllAggregation("controls");
+							oInput.getFormattedValueStateText().setHtmlText(oInput.getFormattedValueStateText().getHtmlText().replace("%%0", ""));
+						}
+					}
+				}
 			}),
 			new sap.m.Label({
 				text: "Text Align"

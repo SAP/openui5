@@ -1,0 +1,7 @@
+{
+  "sEntity": "Theme",
+  "sId": "sap_hcb",
+  "oExtends": "base",
+  "sVendor": "SAP",
+  "sDeprecated" : "since version 1.48.0"
+}

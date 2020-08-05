@@ -1,0 +1,37 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "435ce2901cf884ea12328078ce49c00ebd49a68f",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.Splitter: Method resetContentAreasSizes is now available",
+        "references": []
+      },
+      {
+        "id": "8cbc40c36a258f34f89b42c665cee49a5657d564",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Orchestration of the initial rendering fixed",
+        "references": []
+      },
+      {
+        "id": "c929fb9e1e379d4eebfb198df20a37ba93ba5780",
+        "type": "FIX",
+        "text": " Form: Fiori3 themes align Label, Text and Link with Input",
+        "references": []
+      },
+      {
+        "id": "b78feb626b4a87f4432ff26b1c392dea365b24fc",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.DynamicSideContent: Support Scrolling related functionality",
+        "references": []
+      },
+      {
+        "id": "79e457f8d521b848be5316065ef8d10a5b067bbf",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.Splitter,ResponsiveSplitter: Bars are now redesigned",
+        "references": []
+      }
+    ]
+  }
+}

@@ -3,43 +3,28 @@
 /* Belize High Contrast White theme       */
 /* ====================================== */
 
-.sapMRIIconSel,
-.sapMRIIconHov,
-.sapMPointer .sapMRIIconUnsel {
-	color: @sapUiContentIconColor;
-}
-
-.sapMRIIconUnsel {
-	color: @sapUiHcReducedAltForeground;
-}
-
-.sapMRI.sapMRIDisplayOnly {
-	.sapMRIIconSel{
-		color: @sapUiContentIconColor;
+.sapMRI {
+	.sapMRISel, .sapMRIHov {
+		color: @sapUiContentRatedColor;
 	}
-	.sapMRIIconUnsel {
-		color: darken(@sapUiContentForegroundColor, 50);
+
+	.sapMRIUnsel,
+	&.sapMRIReadOnly .sapMRIUnsel,
+	&.sapMRIDisplayOnly .sapMRIUnsel {
+		color: @sapUiContentUnratedColor;
 	}
-}
 
-.sapMRI.sapMRIReadOnly {
-  .sapMRIIconSel {
-	color: @sapUiContentIconColor;
-  }
+	&.sapMRIDisplayOnly {
+		.sapMRIIconSel {
+			color: @sapUiContentIconColor;
+		}
+	}
 
-  .sapMRIIconReadOnly {
-	color: darken(@sapUiContentForegroundColor, 50);
-  }
-}
-
-.sapMRIDisabled {
-  .sapMRIIconSel {
-	color: @sapUiHcReducedForeground;
-  }
-
-  .sapMRIIconUnsel {
-	color: @sapUiContentDisabledTextColor;
-  }
+	&.sapMRIDisabled {
+		.sapMRIUnsel, .sapMRISel {
+			color: @sapUiContentDisabledTextColor;
+		}
+	}
 }
 
 /* Custom focus outline */
@@ -48,9 +33,10 @@ html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 	outline-offset: -0.125rem;
 }
 
+/* TODO remove after the end of support for Internet Explorer */
 /* IE ignores outline-offset. Use an overlay: */
 html[data-sap-ui-browser^="ie"].sap-desktop {
-	.sapMRI:focus {
+	.sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly) {
 		outline: none;
 		position: relative;
 	}

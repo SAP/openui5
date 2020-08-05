@@ -1,0 +1,41 @@
+<mvc:View height="100%" controllerName="sap.ui.core.sample.XMLComposite.02.C" 
+	xmlns:core="sap.ui.core" 
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:fc="sap.ui.core.sample.XMLComposite.02.comp">
+	<fc:Table class="heigth100percent" press="onPress">
+		<fc:content>
+			<core:Item text="Action #1"/>
+			<core:Item text="Action #2"/>
+			<core:Item text="Action #3"/>
+		</fc:content>
+		<fc:columns>
+			<Column width="10em">
+				<Text text="Product" />
+			</Column>
+			<Column width="12em">
+				<Text text="Supplier" />
+			</Column>
+		</fc:columns>
+		<fc:items>
+			<ColumnListItem>
+				<cells>
+					<Text text="Beam Breaker B-1" />
+					<Text text="Titanium" />
+				</cells>
+			</ColumnListItem>
+			<ColumnListItem>
+				<cells>
+					<Text text="Server Power Pro" />
+					<Text text="Technocom" />
+				</cells>
+			</ColumnListItem>
+			<ColumnListItem>
+				<cells>
+					<Text text="Silverberry" />
+					<Text text="Fasttech" />
+				</cells>
+			</ColumnListItem>
+		</fc:items>
+	</fc:Table>
+</mvc:View>

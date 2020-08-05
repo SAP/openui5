@@ -4,13 +4,15 @@
 
 // Provides control sap.ui.core.mvc.JSView.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/core/library',
-    './View',
-    'sap/ui/base/ManagedObject',
-    "./JSViewRenderer"
+	'./View',
+	'./JSViewRenderer',
+	'sap/base/util/extend',
+	'sap/base/util/merge',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/library',
+	'sap/base/Log'
 ],
-	function(jQuery, library, View, ManagedObject, JSViewRenderer) {
+	function(View, JSViewRenderer, merge, extend, ManagedObject, library, Log) {
 	"use strict";
 
 
@@ -59,6 +61,36 @@ sap.ui.define([
 	 */
 	JSView.asyncSupport = true;
 
+	// shortcut for enum(s)
+	var ViewType = library.mvc.ViewType;
+
+	/**
+	 * Creates an instance of the view with the given name (and id).
+	 *
+	 * @param {object} oOptions An object containing the view configuration options.
+	 * @param {string} [oOptions.id] Specifies an ID for the view instance. If no ID is given, an ID will be generated.
+	 * @param {string} [oOptions.viewName] Name of the view. The view must still be defined using {@link sap.ui.jsview}.
+	 * @param {sap.ui.core.mvc.Controller} [oOptions.controller] Controller instance to be used for this view.
+	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
+	 * between multiple views is not supported.
+	 * @public
+	 * @static
+	 * @since 1.56.0
+	 * @return {Promise<sap.ui.core.mvc.JSView>} A promise that resolves with the view instance
+	 */
+	JSView.create = function(oOptions) {
+		var mParameters = merge({}, oOptions);
+		//remove unsupported options:
+		for (var sOption in mParameters) {
+			if (sOption === 'definition' || sOption === 'preprocessors') {
+				delete mParameters[sOption];
+				Log.warning("JSView.create does not support the options definition or preprocessor!");
+			}
+		}
+		mParameters.type = ViewType.JS;
+		return View.create(mParameters);
+	};
+
 	/**
 	 * Defines or creates an instance of a JavaScript view.
 	 *
@@ -71,7 +103,7 @@ sap.ui.define([
 	 * Defines a view of the given name with the given implementation. <code>sId</code> must be the view's name,
 	 * <code>vView</code> must be an object and can contain implementations for any of the hooks provided by JSView.
 	 *
-	 * <h3>View Instantiation</h3>
+	 * <h3>View Instantiation (deprecated)</h3>
 	 * <pre>
 	 *   var oView = sap.ui.jsview(vView);
 	 *   var oView = sap.ui.jsview(vView, bASync);
@@ -88,6 +120,10 @@ sap.ui.define([
 	 * When <code>bAsync</code> has a truthy value, the view definition will be read asynchronously, if needed,
 	 * but the (incomplete) view instance will be returned immediately.
 	 *
+	 * <b>Note:</b> Using <code>sap.ui.jsview</code> for creating view instances has been deprecated, use
+	 * {@link sap.ui.core.mvc.JSView.create JSView.create} instead. <code>JSView.create</code> enforces
+	 * asynchronous loading and can be used via an AMD reference, it doesn't rely on a global name.
+	 *
 	 * <b>Note:</b> Any other call signature will lead to a runtime error.
 	 *
 	 * @param {string} [sId] id of the newly created view, only allowed for instance creation
@@ -96,9 +132,39 @@ sap.ui.define([
 	 *   (only relevant for instantiation, ignored for everything else)
 	 * @public
 	 * @static
+	 * @deprecated Since 1.56, use {@link sap.ui.core.mvc.JSView.create JSView.create} to create view instances;
+	 *   for defining JavaScript views, there's no substitute yet and <em>sap.ui.jsview</em> still has to be used
 	 * @return {sap.ui.core.mvc.JSView | undefined} the created JSView instance in the creation case, otherwise undefined
+	 * @ui5-global-only
 	 */
 	sap.ui.jsview = function(sId, vView, bAsync) {
+		var fnLogDeprecation = function(sMethod) {
+			Log[sMethod](
+				"Do not use deprecated view factory functions." +
+				"Use the static create function on the specific view module instead: [XML|JS|HTML|JSON]View.create().",
+				"sap.ui.view",
+				null,
+				function () {
+					return {
+						type: "sap.ui.view",
+						name: sId || (vView && vView.name)
+					};
+				}
+			);
+		};
+
+		if (vView && vView.async) {
+			fnLogDeprecation("info");
+		} else {
+			fnLogDeprecation("warning");
+		}
+		return viewFactory.apply(this, arguments);
+	};
+
+	/*
+	 * The old view factory implementation
+	 */
+	function viewFactory(sId, vView, bAsync) {
 		var mSettings = {}, oView;
 
 		if (vView && typeof (vView) == "string") { // instantiation sap.ui.jsview("id","name", [async])
@@ -115,8 +181,8 @@ sap.ui.define([
 		} else if (vView && typeof (vView) == "object") { // definition sap.ui.jsview("name",definitionObject)
 			// sId is not given, but contains the desired value of sViewName
 			mRegistry[sId] = vView;
-			jQuery.sap.declare({modName:sId,type:"view"}, false);
-
+			sap.ui.loader._.declareModule(sId.replace(/\./g, "/") + ".view.js");
+			Log.info("For defining views use JSView.extend instead.");
 		} else if (arguments.length == 1 && typeof sId == "string" ||
 			arguments.length == 2 && typeof arguments[0] == "string" && typeof arguments[1] == "boolean") { // instantiation sap.ui.jsview("name", [async])
 			mSettings.viewName = arguments[0];
@@ -129,17 +195,17 @@ sap.ui.define([
 		} else {
 			throw new Error("Wrong arguments ('" + sId + "', '" + vView + "')! Either call sap.ui.jsview([sId,] sViewName) to instantiate a View or sap.ui.jsview(sViewName, oViewImpl) to define a View type.");
 		}
-	};
+	}
 
 	JSView.prototype.initViewSettings = function (mSettings) {
 		var oPromise;
 
 		// require view definition if not yet done...
 		if (!mRegistry[mSettings.viewName]) {
-			var sModuleName = jQuery.sap.getResourceName(mSettings.viewName, ".view");
+			var sModuleName = mSettings.viewName.replace(/\./g, "/") + ".view";
 			if ( mSettings.async ) {
-				oPromise = new Promise(function(resolve) {
-					sap.ui.require([sModuleName], resolve);
+				oPromise = new Promise(function(resolve, reject) {
+					sap.ui.require([sModuleName], resolve, reject);
 				});
 			} else {
 				sap.ui.requireSync(sModuleName);
@@ -149,10 +215,10 @@ sap.ui.define([
 		// extend 'this' with view from registry which should now or then be available
 		if (mSettings.async) {
 			return Promise.resolve(oPromise).then(function() {
-				jQuery.extend(this, mRegistry[mSettings.viewName]);
+				extend(this, mRegistry[mSettings.viewName]);
 			}.bind(this));
 		}
-		jQuery.extend(this, mRegistry[mSettings.viewName]);
+		extend(this, mRegistry[mSettings.viewName]);
 	};
 
 	JSView.prototype.onControllerConnected = function(oController) {

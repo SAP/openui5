@@ -1,0 +1,48 @@
+{
+  "1.65.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "3c083dae93394a9ada734d3ba332960e13d64d8d",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Sticky shadow implemented",
+        "references": []
+      },
+      {
+        "id": "fac509871246f68fd90c8b85b1c48877bb867ab1",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: appointments shorter that 30 min indicate its duration",
+        "references": []
+      },
+      {
+        "id": "f13bf2a575adbaff29f4072f74b1e26be7aa184c",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: create appointments with Drag n Drop",
+        "references": []
+      },
+      {
+        "id": "de9969e2ac28b498f33a4970c5721342169c636c",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageHeader: Image styling aligned with Avatar",
+        "references": []
+      },
+      {
+        "id": "0f21e10400bdf43a337c8707362c68dc96816b90",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Today date highlighted correctly on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980089083"
+          }
+        ]
+      },
+      {
+        "id": "e3c10daacb99bf5d8f178c16dd8c4531491773b2",
+        "type": "FEATURE",
+        "text": "sap.m.Select: Display multiline value state text",
+        "references": []
+      }
+    ]
+  }
+}

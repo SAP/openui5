@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>ResponsivePopover - sap.m</title>
+
+		<script src="shared-config.js"></script>
+		<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-compatVersion="1.16">
+		</script>
+
+		<script>
+			var app = new sap.m.App("myApp", {initialPage:"page1"});
+
+			//create the list
+			var oList = new sap.m.List({});
+
+			var data = {
+				navigation : [ {
+					title : "Travel Expend",
+					description : "Access the travel expend workflow",
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel and expense report",
+					description : "Access travel and expense reports",
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Request",
+					description : "Access the travel request workflow",
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Work Accidents",
+					description : "Report your work accidents",
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Settings",
+					description : "Change your travel worflow settings",
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Expend",
+					description : "Access the travel expend workflow",
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel and expense report",
+					description : "Access travel and expense reports",
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Request",
+					description : "Access the travel request workflow",
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Work Accidents",
+					description : "Report your work accidents",
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Settings",
+					description : "Change your travel worflow settings",
+					type : "Navigation",
+					press : 'detailPage'
+				} ]
+			};
+
+			var oItemTemplate1 = new sap.m.StandardListItem({
+				title : "{title}",
+				description : "{description}",
+				type : "{type}"
+			});
+
+			function bindListData(data, itemTemplate, list)
+			{
+				var oModel = new sap.ui.model.json.JSONModel();
+				// set the data for the model
+				oModel.setData(data);
+				// set the model to the list
+				list.setModel(oModel);
+
+				// bind Aggregation
+				list.bindAggregation("items", "/navigation", itemTemplate);
+			}
+
+			bindListData(data, oItemTemplate1, oList)
+			//end of the list creation
+
+			var oBeginButton = new sap.m.Button({
+				text: "Action",
+				type: sap.m.ButtonType.Reject,
+				press: function(){
+					oResponsivePopover.close();
+				}
+			}),
+				oInvisibleText = new sap.ui.core.InvisibleText({text: "I have a hidden label"}),
+
+				oResponsivePopover = new sap.m.ResponsivePopover("popoverBottom", {
+					placement: sap.m.PlacementType.Bottom,
+					title: "Responsive Popover Title",
+					showHeader: true,
+					beginButton: oBeginButton,
+					horizontalScrolling: false,
+					content: [
+						oList
+					],
+					ariaLabelledBy: oInvisibleText.getId()
+				}),
+
+				oButton = new sap.m.Button("btnPopoverBottom", {
+					text : "ResponsivePopover with hidden label",
+					press : function() {
+						oResponsivePopover.openBy(this);
+					}
+				}),
+
+				oCompactMode = new sap.m.CheckBox("compactMode", {
+					text: "Compact Mode",
+					selected : false,
+					select : function() {
+						$("body").toggleClass("sapUiSizeCompact");
+					}
+				}),
+
+				oPage = new sap.m.Page("page1", {
+					title:"ResponsivePopover Accessibility Test Page",
+					content: [
+						oButton
+					],
+					footer: new sap.m.Toolbar({
+								content: [
+									new sap.m.ToolbarSpacer(),
+									oCompactMode
+								]
+					})
+				});
+
+			app.addPage(oPage);
+			app.placeAt("body");
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

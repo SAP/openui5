@@ -1,7 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 	<edmx:DataServices>
-		<Schema Namespace="special.cases">
+		<Schema Namespace="special.cases" Alias="MySchema">
+			<EntityType Name="ArtistsType">
+				<Key>
+					<PropertyRef Name="ArtistID"/>
+					<PropertyRef Name="IsActiveEntity"/>
+				</Key>
+				<Property Name="Address" Type="special.cases.Address"/>
+				<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>
+				<Property Name="Name" Type="Edm.String" MaxLength="255"/>
+				<Property Name="Messages" Type="Collection(special.cases.Message)" />
+				<Property Name="defaultChannel" Type="Edm.String" />
+				<Property Name="lastUsedChannel" Type="Edm.String" />
+				<Property Name="sendsAutographs" Type="Edm.Boolean" />
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
+				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
+				<NavigationProperty Name="BestPublication" Type="special.cases.PublicationsType" />
+				<NavigationProperty Name="_Publication" Type="Collection(special.cases.PublicationsType)" Partner="_Artist"/>
+				<NavigationProperty Name="BestFriend" Type="special.cases.ArtistsType" />
+				<NavigationProperty Name="_Friend" Type="Collection(special.cases.ArtistsType)" />
+			</EntityType>
+			<EntityType Name="DraftAdministrativeDataType">
+				<Key>
+					<PropertyRef Name="DraftID"/>
+				</Key>
+				<Property Name="DraftID" Type="Edm.String" Nullable="false"/>
+				<Property Name="InProcessByUser" Type="Edm.String" MaxLength="12"/>
+			</EntityType>
+			<EntityType Name="PublicationsType">
+				<Key>
+					<PropertyRef Name="PublicationID" />
+				</Key>
+				<Property Name="PublicationID" Type="Edm.String" Nullable="false" />
+				<Property Name="Price" Type="Edm.Decimal" Precision="13" Scale="variable" />
+				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5"/>
+				<Property Name="Messages" Type="Collection(special.cases.Message)" />
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
+				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
+				<NavigationProperty Name="_Artist" Type="special.cases.ArtistsType" Partner="_Publication"/>
+			</EntityType>
 			<EntityType Name="EntityWithComplexKey">
 				<Key>
 					<PropertyRef Name="Key/P1" Alias="Key1"/>
@@ -10,13 +49,204 @@
 				<Property Name="Key" Type="special.cases.ComplexKey"/>
 				<Property Name="Value" Type="Edm.String"/>
 			</EntityType>
+			<EntityType Name="EntityWithUnsupportedEdmTypes">
+				<Property Name="Binary" Type="Edm.Binary" />
+				<Property Name="Duration" Type="Edm.Duration" />
+			</EntityType>
+			<EntityType Name="A">
+				<Key>
+					<PropertyRef Name="AID"/>
+				</Key>
+				<Property Name="AID" Type="Edm.Int16" Nullable="false"/>
+				<Property Name="AValue" Type="Edm.Int16"/>
+				<NavigationProperty Name="AtoB" Partner="BtoA" Type="special.cases.B"/>
+				<NavigationProperty Name="AtoCs" Partner="CtoA" Type="Collection(special.cases.C)"/>
+				<NavigationProperty Name="AtoEntityWithComplexKey"
+					Type="special.cases.EntityWithComplexKey"/>
+			</EntityType>
+			<EntityType Name="B">
+				<Key>
+					<PropertyRef Name="BID"/>
+				</Key>
+				<Property Name="BID" Type="Edm.Int16" Nullable="false"/>
+				<Property Name="BValue" Type="Edm.Int16"/>
+				<NavigationProperty Name="BtoA" Partner="AtoB" Type="special.cases.A"/>
+				<NavigationProperty Name="BtoDs" Partner="DtoB" Type="Collection(special.cases.D)"/>
+			</EntityType>
+			<EntityType Name="C">
+				<Key>
+					<PropertyRef Name="CID"/>
+				</Key>
+				<Property Name="CID" Type="Edm.Int16" Nullable="false"/>
+				<Property Name="CValue" Type="Edm.Int16"/>
+				<NavigationProperty Name="CtoA" Partner="AtoCs" Type="special.cases.A"/>
+				<NavigationProperty Name="CtoD" Partner="DtoC" Type="special.cases.D"/>
+			</EntityType>
+			<EntityType Name="D">
+				<Key>
+					<PropertyRef Name="DID"/>
+				</Key>
+				<Property Name="DID" Type="Edm.Int16" Nullable="false"/>
+				<Property Name="DValue" Type="Edm.Int16"/>
+				<NavigationProperty Name="DtoB" Partner="BtoDs" Type="special.cases.B"/>
+				<NavigationProperty Name="DtoC" Partner="CtoD" Type="special.cases.C"/>
+			</EntityType>
+			<ComplexType Name="Address">
+				<Property Name="City" Type="Edm.String"/>
+				<Property Name="ZIP" Type="Edm.String" MaxLength="5" />
+			</ComplexType>
 			<ComplexType Name="ComplexKey">
 				<Property Name="P1" Type="Edm.String"/>
 				<Property Name="P2" Type="Edm.Int32"/>
 			</ComplexType>
+			<ComplexType Name="Message">
+				<Property Name="code" Type="Edm.String" Nullable="false" />
+				<Property Name="message" Type="Edm.String" Nullable="false" />
+				<Property Name="target" Type="Edm.String" Nullable="true" />
+				<Property Name="transition" Type="Edm.Boolean" Nullable="false" />
+				<Property Name="numericSeverity" Type="Edm.Byte" Nullable="false" />
+				<Property Name="longtextUrl" Type="Edm.String" Nullable="true" />
+			</ComplexType>
+			<ComplexType Name="Person">
+				<Property Name="Address" Type="special.cases.Address" />
+				<Property Name="Name" Type="Edm.String" Nullable="false" />
+				<Property Name="Salary" Type="Edm.Decimal" Nullable="false" Precision="16"
+					Scale="variable"/>
+			</ComplexType>
+			<Action Name="ActivationAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
+				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
+			</Action>
+			<Action Name="SendAutograph" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
+				<Parameter Name="Address" Type="special.cases.Address"/>
+				<Parameter Name="Channel" Type="Edm.String" Nullable="false"/>
+			</Action>
+			<Action Name="EditAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
+				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
+			</Action>
+			<Action Name="AcHirePerson">
+				<Parameter Name="Person" Type="special.cases.Person" Nullable="false"/>
+			</Action>
+			<Action Name="PreparationAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="special.cases.PublicationsType" Nullable="false"/>
+				<ReturnType Type="special.cases.PublicationsType" Nullable="false"/>
+			</Action>
+			<Action Name="Create" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="Collection(special.cases.ArtistsType)" Nullable="false"/>
+				<Parameter Name="ArtistID" Type="Edm.String" />
+				<Parameter Name="Countryoforigin" Type="Edm.String" />
+				<Parameter Name="IsActiveEntity" Type="Edm.Boolean" />
+				<Parameter Name="Name" Type="Edm.String" />
+				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
+			</Action>
+			<Action Name="Create" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="Collection(special.cases.PublicationsType)" Nullable="false"/>
+				<Parameter Name="Price" Type="Edm.Decimal" Precision="13" Scale="variable" />
+				<Parameter Name="CurrencyCode" Type="Edm.String" MaxLength="5"/>
+				<ReturnType Type="special.cases.PublicationsType" Nullable="false"/>
+			</Action>
+			<Function Name="GetDefaults" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="Collection(special.cases.ArtistsType)" Nullable="false"/>
+				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
+			</Function>
+			<Function Name="GetDefaults" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="Collection(special.cases.DraftAdministrativeDataType)" Nullable="false"/>
+				<ReturnType Type="special.cases.DraftAdministrativeDataType" Nullable="false"/>
+			</Function>
+			<Function Name="GetDraft" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
+				<ReturnType Type="special.cases.ArtistsType" Nullable="true"/>
+			</Function>
 			<EntityContainer Name="Container">
 				<EntitySet Name="EntitiesWithComplexKey" EntityType="special.cases.EntityWithComplexKey"/>
+				<EntitySet Name="Artists" EntityType="special.cases.ArtistsType">
+					<NavigationPropertyBinding Path="BestFriend" Target="Artists"/>
+				</EntitySet>
+				<EntitySet Name="As" EntityType="special.cases.A">
+					<NavigationPropertyBinding Path="AtoEntityWithComplexKey"
+						Target="EntitiesWithComplexKey"/>
+				</EntitySet>
+				<EntitySet Name="Bs" EntityType="special.cases.B"/>
+				<ActionImport Name="HirePerson" Action="special.cases.AcHirePerson"/>
 			</EntityContainer>
+			<Annotations Target="special.cases.ArtistsType/ArtistID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="Name" />
+			</Annotations>
+			<Annotations Target="special.cases.ArtistsType/Name">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Artist Name" />
+			</Annotations>
+			<Annotations Target="special.cases.Container/Artists">
+				<Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="true" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="special.cases.ArtistsType">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Artist" />
+				<Annotation Term="com.sap.vocabularies.UI.v1.SelectionFields">
+					<Collection>
+						<PropertyPath>Name</PropertyPath>
+						<PropertyPath>BestFriend/Name</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="special.cases.EntityWithUnsupportedEdmTypes">
+				<Annotation Term="com.sap.vocabularies.UI.v1.SelectionFields">
+					<Collection>
+						<PropertyPath>Binary</PropertyPath>
+						<PropertyPath>Duration</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="special.cases.Create/Countryoforigin">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="n/a"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListReferences">
+					<Collection>
+						<String>../countryoforigin/$metadata</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="MySchema.Create(Collection(MySchema.ArtistsType))/Countryoforigin">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Country of Origin"/>
+			</Annotations>
+			<Annotations Target="special.cases.Create/CurrencyCode">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListReferences">
+					<Collection>
+						<String>../CurrencyCode/$metadata</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="special.cases.Create(Collection(special.cases.PublicationsType))/Price">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListReferences">
+					<Collection>
+						<String>../Price/$metadata</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="special.cases.SendAutograph(special.cases.ArtistsType)">
+				<Annotation Term="Org.OData.Core.V1.OperationAvailable" Path="_it/sendsAutographs"/>
+			</Annotations>
+			<Annotations Target="special.cases.SendAutograph(special.cases.ArtistsType)/Channel">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="_it/defaultChannel"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListMapping">
+					<Record>
+						<!-- PropertyValue Property="CollectionPath" String="VH_Channels"/ -->
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="_it/lastUsedChannel"/>
+									<!-- PropertyValue Property="ValueListProperty" String="ChannelID"/ -->
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

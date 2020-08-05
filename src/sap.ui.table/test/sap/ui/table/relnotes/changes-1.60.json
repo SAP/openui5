@@ -1,0 +1,135 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "04a30baf94c43c1f7000a704a8ff6f450a5f64e1",
+        "type": "FIX",
+        "text": "GridTable: Add additional aria label to column visibility items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880301090"
+          }
+        ]
+      },
+      {
+        "id": "30c449c7d733816c065c219053776a902c566bd4",
+        "type": "FIX",
+        "text": "Table: Avoid horizontal scrolling of cell content on focus in rtl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880453585"
+          }
+        ]
+      },
+      {
+        "id": "ab9eeabf2bfc9f66aaf26246ef954fc27b1b3631",
+        "type": "FIX",
+        "text": "Table: Scrolling to last row with mouse wheel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870303491"
+          }
+        ]
+      },
+      {
+        "id": "a08675d8c87fb70c39f5e03e980b81aada06d737",
+        "type": "FIX",
+        "text": "ODataTreeBindingAdapter.expandNodeToLevel: Only expand nodes above given level",
+        "references": []
+      },
+      {
+        "id": "06a22469851c073ac0e947d998696c05f38703e2",
+        "type": "FIX",
+        "text": "Table: Clicking on the column resizer no longer causes scrolling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880305886"
+          }
+        ]
+      },
+      {
+        "id": "c465549f731286019bcc890895c1b106a7484a11",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: Type conversion removed",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2103"
+          }
+        ]
+      },
+      {
+        "id": "d560b524ea504a222118820e3f7b960b287feba6",
+        "type": "FIX",
+        "text": "Table: Accessibility texts for row selection corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880542287"
+          }
+        ]
+      },
+      {
+        "id": "d5853a6e79d40899d48c34a5c6c74b8e92e73dc8",
+        "type": "FIX",
+        "text": "Table: Calculation of row count in \"Auto\" mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880437786"
+          }
+        ]
+      },
+      {
+        "id": "6ef708e55291ce5f49126c2cf35c049d2c551104",
+        "type": "FIX",
+        "text": "TableUtils: Update OpenSource usage documentation",
+        "references": []
+      },
+      {
+        "id": "1fa170f567bfa3b29f3348b443d95156f11a19ff",
+        "type": "FIX",
+        "text": "Table: Avoid infinite requests if no count is provided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880537465"
+          }
+        ]
+      },
+      {
+        "id": "dc96123d8e22e86917f2861f8c89eac6fe8cd8e4",
+        "type": "FIX",
+        "text": "Table: Always fully display the content in header rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870405637"
+          }
+        ]
+      },
+      {
+        "id": "f167d57792c4b26195eae6003270ad64acd5d474",
+        "type": "FIX",
+        "text": "Table: Update the scroll position when setting firstVisibleRow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880583236"
+          }
+        ]
+      },
+      {
+        "id": "f1789479c853784231f49bff9e01102715f4a14f",
+        "type": "FEATURE",
+        "text": "Table: paste event handling is added",
+        "references": []
+      }
+    ]
+  }
+}

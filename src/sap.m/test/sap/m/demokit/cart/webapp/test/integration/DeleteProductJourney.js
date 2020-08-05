@@ -5,8 +5,12 @@
  global QUnit
  */
 sap.ui.define([
-	'sap/ui/test/opaQunit',
-	'sap/ui/test/Opa5'
+	"sap/ui/test/opaQunit",
+	"./pages/Home",
+	"./pages/Category",
+	"./pages/Product",
+	"./pages/Cart",
+	"./pages/Dialog"
 ], function (opaTest) {
 	"use strict";
 
@@ -29,7 +33,7 @@ sap.ui.define([
 		// Actions
 		When.onTheCategory.iPressOnTheFirstProduct();
 		When.onTheProduct.iAddTheDisplayedProductToTheCart();
-		When.onTheCategory.iGoToTheCartPage();
+		When.onTheProduct.iToggleTheCart();
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart().
@@ -84,8 +88,9 @@ sap.ui.define([
 		When.onTheCart.iPressOnTheSaveChangesButton();
 		// Assertions
 		Then.onTheCart.iShouldSeeTheEditButtonDisabled().
-		and.iShouldSeeTheProceedButtonDisabled().
-		and.iTeardownMyApp();
+		and.iShouldSeeTheProceedButtonDisabled();
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 });

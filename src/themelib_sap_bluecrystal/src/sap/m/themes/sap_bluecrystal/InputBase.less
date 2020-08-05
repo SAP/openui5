@@ -1,0 +1,72 @@
+/* ================================ */
+/* CSS for control sap.m/InputBase  */
+/* Belize theme                     */
+/* ================================ */
+
+.sapMInputBaseInner {
+	color: @sapUiFieldTextColor;
+}
+
+.sapMInputBaseContentWrapper {
+	border: 1px solid @sapUiDarkBorder;
+	background: @sapUiFieldBackground;
+	&.sapMInputBaseContentWrapperState {
+		border-width: 2px;
+		.sapMInputBaseIcon {
+			line-height: 2.25rem;
+		}
+	}
+	&:hover:not(.sapMInputBaseContentWrapperState):not(.sapMInputBaseDisabledWrapper):not(.sapMInputBaseReadonlyWrapper) {
+		border-color: @sapUiHighlight;
+	}
+}
+
+.sapMInputBaseIcon {
+	color: @sapUiContentIconColor;
+	&:hover {
+		background: @sapUiButtonLiteHoverBackground;
+	}
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+		color: @sapUiButtonActiveTextColor;
+	}
+}
+
+.sapMInputBaseContentWrapperWarning {
+	background: @sapUiFieldWarningBackground;
+	border-color: @sapUiWarningBorder;
+}
+
+.sapMInputBaseContentWrapperSuccess {
+	background: @sapUiFieldSuccessBackground;
+	border-color: @sapUiFieldSuccessColor;
+}
+
+.sapMInputBaseContentWrapperError {
+	background: @sapUiFieldInvalidBackground;
+	border-color: @sapUiErrorBorder;
+}
+
+/*read only*/
+
+.sapMInputBaseReadonlyWrapper .sapMInputBaseInner {
+	border: 1px solid @sapUiFieldReadOnlyBorderColor;
+	background: @sapUiFieldReadOnlyBackground;
+}
+
+/*disabled*/
+
+.sapMInputBase .sapMInputBaseDisabledWrapper {
+	border: 1px solid @sapUiDarkBorder;
+	background: @sapUiLightestBG;
+}
+
+/* focus and hover */
+
+.sapMFocus:not(.sapMInputBaseReadonly):not(.sapMInputBaseReadonly):not(.sapMInputBaseContentWrapperState):not(.sapMInputBaseDisabled):hover {
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
+.sapMFocus .sapMInputBaseContentWrapper:not(.sapMInputBaseContentWrapperState):not(.sapMInputBaseReadonlyWrapper) {
+	border: 1px solid @sapUiHighlight;
+}

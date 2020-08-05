@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.layout.form.FormElement.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedObjectObserver', 'sap/ui/layout/library'],
-	function(jQuery, Element, ManagedObjectObserver, library) {
+sap.ui.define([
+	'sap/ui/core/Element',
+	'sap/ui/core/Control',
+	'sap/ui/base/ManagedObjectObserver',
+	'sap/ui/layout/library',
+	"sap/base/Log"
+	], function(Element, Control, ManagedObjectObserver, library, Log) {
 	"use strict";
 
 	/**
@@ -35,7 +40,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 			/**
 			 * If set to <code>false</code>, the <code>FormElement</code> is not rendered.
 			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true}
+			visible : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * Internal property for the <code>editable</code> state of the internal <code>FormElement</code>.
+			 */
+			_editable: {
+				type: "boolean",
+				group: "Misc",
+				defaultValue: false,
+				visibility: "hidden"
+			}
 		},
 		defaultAggregation : "fields",
 		aggregations : {
@@ -124,7 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 		var oLabel = vAny;
 		if (typeof oLabel === "string") {
 			if (!this._oLabel) {
-				this._oLabel = library.form.FormHelper.createLabel(oLabel);
+				this._oLabel = library.form.FormHelper.createLabel(oLabel, this.getId() + "-label");
 				this.setAggregation("_label", this._oLabel, true); // use Aggregation to allow model inheritance
 				this._oLabel.disableRequiredChangeCheck(true);
 				if (this._oLabel.isRequired) {
@@ -237,7 +252,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 				sLabelledBy = oLabel.getId();
 			} else {
 				var aLabels = sLabelledBy.split(" ");
-				if (jQuery.inArray(oLabel.getId(), aLabels) < 0) {
+				if (aLabels.indexOf(oLabel.getId()) < 0) {
 					aLabels.splice(0, 0, oLabel.getId());
 					sLabelledBy = aLabels.join(" ");
 				}
@@ -284,14 +299,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 	};
 
 	/**
-	 * Labels inside of a Form must be invalidated if "editable" changed on Form
-	 * @private
+	 * Sets the editable state of the <code>FormElement</code>.
+	 *
+	 * This must only be called from the <code>Form</code> and it's <code>FormContainers</code>.
+	 *
+	 * Labels inside of a <code>Form</code> must be invalidated if <code>editable</code> changed on <code>Form</code>.
+	 *
+	 * @param {boolean} bEditable Editable state of the <code>Form</code>
+	 * @protected
+	 * @restricted sap.ui.layout.form.FormContainer
+	 * @since 1.74.0
 	 */
-	FormElement.prototype.invalidateLabel = function(){
+	FormElement.prototype._setEditable = function(bEditable) {
+
+		var bOldEditable = this.getProperty("_editable");
+		this.setProperty("_editable", bEditable, true); // do not invalidate whole FormElement
+
+		if (bEditable !== bOldEditable) {
+			this.invalidateLabel();
+		}
+
+	};
+
+	/**
+	 * Labels inside of a Form must be invalidated if "editable" changed on Form
+	 * @protected
+	 */
+	FormElement.prototype.invalidateLabel = function(){ // is overwritten in sap.ui.comp.smartform.GroupElement
 
 		var oLabel = this.getLabelControl();
 
-		if (oLabel) {
+		if (oLabel && oLabel.getDomRef()) { // only if already rendered.
 			oLabel.invalidate();
 		}
 
@@ -314,6 +352,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 
 	};
 
+	/**
+	 * Determines what fields must be rendered.
+	 *
+	 * @returns {sap.ui.core.Control[]} Array of fields to be rendered
+	 * @public
+	 * @restricted sap.ui.layout.form.Form
+	 * @since 1.74.0
+	 */
+	FormElement.prototype.getFieldsForRendering = function(){
+
+		return this.getFields();
+
+	};
+
 	/*
 	 * handles change of FormElement itself and content controls
 	 * @private
@@ -323,7 +375,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 		if (oChanges.object == this) {
 			// it's the FormElement
 			if (oChanges.name == "fields") {
-				_fieldsChanged.call(this, oChanges);
+				_fieldChanged.call(this, oChanges.child, oChanges.mutation);
 			}
 		} else {
 			// it's some content control
@@ -334,30 +386,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 
 	// *** Private helper functions ***
 
-	function _fieldsChanged(oChanges) {
-
-			if (oChanges.child) {
-				_fieldChanged.call(this, oChanges.child, oChanges.mutation);
-			} else if (oChanges.children) {
-				for (var i = 0; i < oChanges.chlidren.length; i++) {
-					_fieldChanged.call(this, oChanges.children[i], oChanges.mutation);
-				}
-			}
-
-		_updateLabelFor.call(this);
-
-	}
-
 	function _fieldChanged(oField, sMutation) {
 
 		if (sMutation == "insert") {
-			if (!oField.getMetadata().isInstanceOf("sap.ui.core.IFormContent")) {
-				jQuery.sap.log.warning(oField + " is not valid Form content", this);
+			if (!oField.isA("sap.ui.core.IFormContent")) {
+				Log.warning(oField + " is not valid Form content", this);
 			}
 			_attachDelegate.call(this, oField);
 		} else {
 			_detachDelegate.call(this, oField);
 		}
+
+		_updateLabelFor.call(this);
 
 	}
 
@@ -408,15 +448,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 			}
 
 			var oFormElement = this.getParent();
-			var oFormContainer = oFormElement.getParent();
-
-			if (oFormContainer) {
-				var oForm = oFormContainer.getParent();
-
-				if (oForm) {
-					return !oForm.getEditable();
-				}
-			}
+			return !oFormElement.getProperty("_editable");
 		}
 
 		return false;
@@ -450,7 +482,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 			oLabel.setLabelFor(oField); // as Label is internal of FormElement, we can use original labelFor
 		} else {
 			oLabel = this.getLabel();
-			if (oLabel instanceof sap.ui.core.Control /*might also be a string*/) {
+			if (oLabel instanceof Control /*might also be a string*/) {
 				oLabel.setAlternativeLabelFor(oField);
 			}
 		}

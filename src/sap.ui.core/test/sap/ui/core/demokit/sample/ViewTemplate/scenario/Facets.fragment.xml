@@ -6,11 +6,11 @@
 	<template:repeat list="{facets>}" var="facet">
 		<template:if test="{= ${facet>RecordType} === 'com.sap.vocabularies.UI.v1.CollectionFacet'}">
 			<template:then>
-				<scenario:Form title="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
+				<Panel expandable="true" expanded="true" headerText="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
 					<template:with path="facet>Facets" var="facets">
 						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Facets" type="XML"/>
 					</template:with>
-				</scenario:Form>
+				</Panel>
 			</template:then>
 			<template:elseif test="{= ${facet>RecordType} === 'com.sap.vocabularies.UI.v1.ReferenceFacet'}">
 				<core:Fragment fragmentName="{= ${path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.isMultiple'} === 'true'

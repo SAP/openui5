@@ -94,14 +94,20 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 */
 	MenuItemBase.prototype.render = function(oRenderManager, oItem, oMenu){
 		var rm = oRenderManager;
-		rm.write("<li");
-		rm.writeElementData(oItem);
-		rm.write("><div style=\"white-space:nowrap;display:inline-block;padding:1px;color:black;\" id=\"" + this.getId() + "-txt\">");
-		rm.write(oItem.getId());
+		rm.openStart("li", oItem);
+		rm.openEnd();
+		rm.openStart("div", this.getId() + "-txt");
+		rm.style("white-space", "nowrap");
+		rm.style("display", "inline-block");
+		rm.style("padding", "1px");
+		rm.style("color", "black");
+		rm.openEnd();
+		rm.text(oItem.getId());
 		if (this.getSubmenu()) {
-			rm.write("&nbsp;&nbsp;->");
+			rm.text("&nbsp;&nbsp;->");
 		}
-		rm.write("</div></li>");
+		rm.close("div");
+		rm.close("li");
 	};
 
 	/**
@@ -116,6 +122,8 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	MenuItemBase.prototype.hover = function(bHovered, oMenu){
 		this.$("txt").attr("style", bHovered ? "white-space:nowrap;display:inline-block;padding:1px;color:red;" : "white-space:nowrap;display:inline-block;padding:1px;color:black;");
 	};
+
+	MenuItemBase.prototype.focus = function() {};
 
 	/**
 	 * Event handler which is called whenever the submenu of the item is opened or closed.
@@ -141,15 +149,16 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 		// Subclasses may override this: Called after the item is rendered
 	};
 
-
-
-	MenuItemBase.prototype.onmouseover = function(oEvent){
-		var oParent = this.getParent();
-		if (oParent && oParent instanceof sap.ui.unified.Menu && this.getTooltip() instanceof sap.ui.core.TooltipBase) {
-			//TooltipBase stops the event propagation
-			oParent.onmouseover(oEvent);
+	MenuItemBase.prototype.onsapshow = function(oEvent) {
+		if (this.getParent() && this.getParent().close) {
+			// Call Menu.prototype.close with argument "true"
+			// in order not to ignore the opener DOM reference
+			this.getParent().close(true);
 		}
+		oEvent.preventDefault(); //IE focuses the address bar
 	};
+
+	MenuItemBase.prototype.onsaphide = MenuItemBase.prototype.onsapshow;
 
 	return MenuItemBase;
 

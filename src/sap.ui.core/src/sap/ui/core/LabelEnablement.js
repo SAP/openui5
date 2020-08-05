@@ -3,21 +3,16 @@
  */
 
 // Provides helper sap.ui.core.LabelEnablement
-sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
-	function(jQuery, ManagedObject) {
+sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
+	function(ManagedObject, assert) {
 	"use strict";
-
-	function lazyInstanceof(o, sModule) {
-		var FNClass = sap.ui.require(sModule);
-		return typeof FNClass === 'function' && (o instanceof FNClass);
-	}
 
 	// Mapping between controls and labels
 	var CONTROL_TO_LABELS_MAPPING = {};
 
 	// The controls which should not be referenced by a "for" attribute (Specified in the HTML standard).
 	// Extend when needed.
-	var NON_LABELABLE_CONTROLS = ["sap.m.Link", "sap.m.Select", "sap.m.Label", "sap.m.Text"];
+	var NON_LABELABLE_CONTROLS = ["sap.ui.comp.navpopover.SmartLink", "sap.m.Link", "sap.m.Label", "sap.m.Text"];
 
 	// Returns the control for the given id (if available) and invalidates it if desired
 	function toControl(sId, bInvalidate) {
@@ -28,7 +23,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 		var oControl = sap.ui.getCore().byId(sId);
 		// a control must only be invalidated if there is already a DOM Ref. If there is no DOM Ref yet, it will get
 		// rendered later in any case. Elements must always be invalidated because they have no own renderer.
-		if (oControl && bInvalidate && (!lazyInstanceof(oControl, 'sap/ui/core/Control') || oControl.getDomRef())) {
+		if (oControl && bInvalidate && (!oControl.isA('sap.ui.core.Control') || oControl.getDomRef())) {
 			oControl.invalidate();
 		}
 
@@ -141,11 +136,20 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 	var LabelEnablement = {};
 
 	/**
-	 * Helper function for the <code>Label</code> control to render the HTML 'for' attribute. This function should be called
-	 * at the desired location in the renderer code of the <code>Label</code> control.
+	 * Helper function for the <code>Label</code> control to render the HTML 'for' attribute.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render-output-buffer.
-	 * @param {sap.ui.core.Label} oLabel The <code>Label</code> for which the 'for' HTML attribute should be written to the render-output-buffer.
+	 * This function should be called at the desired location in the renderer code of the <code>Label</code> control.
+	 * It can be used with both rendering APIs, with the new semantic rendering API (<code>apiVersion 2</code>)
+	 * as well as with the old, string-based API.
+	 *
+	 * As this method renders an attribute, it can only be called while a start tag is open. For the new semantic
+	 * rendering API, this means it can only be called between an <code>openStart/voidStart</code> call and the
+	 * corresponding <code>openEnd/voidEnd</code> call. In the context of the old rendering API, it can be called
+	 * only after the prefix of a start tag has been written (e.g. after <code>rm.write("&lt;span id=\"foo\"");</code>),
+	 * but before the start tag ended, e.g before the right-angle ">" of the start tag has been written.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for rendering.
+	 * @param {sap.ui.core.Label} oLabel The <code>Label</code> for which the 'for' HTML attribute should be rendered.
 	 * @protected
 	 */
 	LabelEnablement.writeLabelForAttribute = function(oRenderManager, oLabel) {
@@ -166,7 +170,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 
 		// The "for" attribute should only reference labelable HTML elements.
 		if (sControlId && isLabelableControl(oControl)) {
-			oRenderManager.writeAttributeEscaped("for", sControlId);
+			oRenderManager.attr("for", sControlId);
 		}
 	};
 
@@ -273,7 +277,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 			if (sId instanceof ManagedObject) {
 				sId = sId.getId();
 			} else if (sId != null && typeof sId !== "string") {
-				jQuery.sap.assert(false, "setAlternativeLabelFor(): sId must be a string, an instance of sap.ui.base.ManagedObject or null");
+				assert(false, "setAlternativeLabelFor(): sId must be a string, an instance of sap.ui.base.ManagedObject or null");
 				return this;
 			}
 

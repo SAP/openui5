@@ -8,7 +8,7 @@ You want to contribute to OpenUI5? Welcome! Please read this document to underst
 
 ## Help Others
 
-You can help OpenUI5 by helping others who use UI5 and need support. You will find them e.g. on [StackOverflow](http://stackoverflow.com/questions/tagged/sapui5) or in the [SAP.com UI5 Community](https://www.sap.com/community/topic/ui5/all-content.html).
+You can help OpenUI5 by helping others who use UI5 and need support. You will find them e.g. on [StackOverflow](http://stackoverflow.com/questions/tagged/sapui5) or in the [SAP.com UI5 Community](https://answers.sap.com/tags/500983881501772639608291559920477).
 
 ## Analyze Issues
 
@@ -40,26 +40,29 @@ Issue report checklist:
 ### Requirements for a bug report
 
 These eight requirements are the mandatory base of a good bug report:
- 1. **Only real bugs**: please do your best to make sure to only report real bugs in OpenUI5! Do not report:
+1. **Only real bugs**: please do your best to make sure to only report real bugs in OpenUI5! Do not report:
    * issues caused by application code or any code outside UI5.
    * issues caused by the usage of non-public UI5 methods. Only the public methods listed in the API documentation may be used.
    * something that behaves just different from what you expected. A bug is when something behaves different than specified. When in doubt, ask in a forum.
    * something you do not get to work properly. Use a support forum like stackoverflow to request help.
    * feature requests. Well, this is arguable: critical or easy-to-do enhancement suggestions are welcome, but we do not want to use the issue tracker as wishlist.
- 2. No duplicate: you have searched the issue tracker to make sure the bug has not yet been reported
- 3. Good summary: the summary should be specific to the issue
- 4. Current bug: the bug can be reproduced in the most current version (state the tested version!)
- 5. Reproducible bug: there are clear steps to reproduce given. This includes:
+2. No duplicate: you have searched the issue tracker to make sure the bug has not yet been reported
+3. Good summary: the summary should be specific to the issue
+4. Current bug: the bug can be reproduced in the most current version (state the tested version!)
+5. Reproducible bug: there are clear steps to reproduce given. This includes:
    * a URL to access the example
    * any required user/password information (do not reveal any credentials that could be mis-used!)
    * detailed and complete step-by-step instructions to reproduce the bug
- 6. Precise description:
+6. Precise description:
    * precisely state the expected and the actual behavior
    * give information about the used browser/device and its version, if possible also the behavior in other browsers/devices
    * if the bug is about wrong UI appearance, attach a screenshot and mark what is wrong
    * generally give as much additional information as possible. (But find the right balance: do not invest hours for a very obvious and easy to solve issue. When in doubt, give more information.)
- 7. Minimal example: it is highly encouraged to provide a minimal example to reproduce in e.g. jsbin: isolate the application code which triggers the issue and strip it down as much as possible as long as the issue still occurs. If several files are required, you can create a gist. This may not always be possible and sometimes be overkill, but it always helps analyzing a bug.
- 8. Only one bug per report: open different tickets for different issues
+7. Minimal example: it is highly encouraged to provide a minimal example to reproduce in e.g. jsbin: 
+   * isolate the application code which triggers the issue and strip it down as much as possible as long as the issue still occurs
+   * if several files are required, you can create a gist
+   * this may not always be possible and sometimes be overkill, but it always helps analyzing a bug
+8. Only one bug per report: open different tickets for different issues
 
 You are encouraged to use [this template](ISSUE_TEMPLATE.md).
 
@@ -70,18 +73,21 @@ If the bug appears to be a regression introduced in a new version of UI5, try to
 
 ### Issue handling process
 
-When an issue is reported, a committer will look at it and either confirm it as a real issue (by giving the "approved" label), close it if it is not an issue, or ask for more details. Approved issues are then either assigned to a committer in GitHub, reported in our internal issue handling system, or left open as "contribution welcome" for easy or not urgent fixes.
+When an issue is reported, a committer will look at it and either confirm it as a real issue (by giving the "in progress" label), close it if it is not an issue, or ask for more details. In-progress issues are then either assigned to a committer in GitHub, reported in our internal issue handling system, or left open as "contribution welcome" for easy or not urgent fixes.
 
 An issue that is about a real bug is closed as soon as the fix is committed. The closing comment explains which patch version(s) of UI5 will contain the fix.
 
 
 ### Reporting Security Issues
 
-If you find a security issue, please act responsibly and report it not in the public issue tracker, but directly to us, so we can fix it before it can be exploited:
- * SAP Customers: if the found security issue is not covered by a published security note, please report it by creating a customer message at https://service.sap.com/message.
- * Researchers/non-Customers: please send the related information to secure@sap.com using [PGP for e-mail encryption](http://global.sap.com/pc/security/keyblock.txt).
-Also refer to the general [SAP security information page](https://www.sap.com/corporate/en/company/security.html).
+We take security issues in our projects seriously. We appreciate your efforts to responsibly disclose your findings.
 
+Please do not report security issues directly on GitHub but using one of the channels listed below. This allows us to provide a fix before an issue can be exploited.
+
+- **Researchers/Non-SAP Customers:** Please consult SAPs [disclosure guidelines](https://wiki.scn.sap.com/wiki/display/PSR/Disclosure+Guidelines+for+SAP+Security+Advisories) and send the related information in a PGP encrypted e-mail to secure@sap.com. Find the public PGP key [here](https://www.sap.com/dmc/policies/pgp/keyblock.txt).
+- **SAP Customers:** If the security issue is not covered by a published security note, please report it by creating a customer message at https://launchpad.support.sap.com.
+
+Please also refer to the general [SAP security information page](https://www.sap.com/about/trust-center/security/incident-management.html).
 
 ### Usage of Labels
 
@@ -94,9 +100,9 @@ Labels for issue categories:
 
 Status of open issues:
  * unconfirmed: this report needs confirmation whether it is really a bug (no label; this is the default status)
- * approved: this issue is confirmed to be a bug
+ * in progress: this issue has been triaged and is now being handled, e.g. because it looks like an actual bug
  * author action: the author is required to provide information
- * contribution welcome: this fix/enhancement is approved and you are invited to contribute it
+ * contribution welcome: this fix/enhancement is something we would like to have and you are invited to contribute it
 
 Status/resolution of closed issues:
  * fixed: a fix for the issue was provided
@@ -142,8 +148,6 @@ the [Corporate Contributor License Agreement](/docs/SAP%20Corporate%20Contributo
 -   Scan it and e-mail it to [opensource@sap.com](mailto:opensource@sap.com) and [openui5@sap.com](mailto:openui5@sap.com)
 -   Fax it to: +49 6227 78-45813
 -   Send it by traditional letter to: *Industry Standards & Open Source Team, Dietmar-Hopp-Allee 16, 69190 Walldorf, Germany*
-
-The form contains a list of employees who are authorized to contribute on behalf of your company. When this list changes, please let us know.
 
 ### Contribution Content Guidelines
 

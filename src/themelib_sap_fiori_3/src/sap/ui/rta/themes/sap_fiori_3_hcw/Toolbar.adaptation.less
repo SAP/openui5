@@ -1,0 +1,13 @@
+/***********************************************************************
+	Style of the RTA Toolbar (type: adaptation) - sap_fiori_3_hcw Theme
+************************************************************************/
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor: @sapUiWhite; //#ffffff
+@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiBlackBG; //#000000
+
+.sapUiRtaMode {
+	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
+		border: 0.125 solid @_sap_ui_rta_Toolbar_Adaptation_BaseColor; //2px
+		border-image: repeating-linear-gradient(-45deg, @_sap_ui_rta_Toolbar_Adaptation_TextColor, @_sap_ui_rta_Toolbar_Adaptation_TextColor 4px, @_sap_ui_rta_Toolbar_Adaptation_BaseColor 4px, @_sap_ui_rta_Toolbar_Adaptation_BaseColor 6px) 4;
+		box-shadow: 0 0.625rem 2rem 0 rgba(0, 0, 0, 0.5), 0 0 0.625rem -0.125rem @_sap_ui_rta_Toolbar_Adaptation_TextColor; //10px 32px 10px 2px
+	}
+}

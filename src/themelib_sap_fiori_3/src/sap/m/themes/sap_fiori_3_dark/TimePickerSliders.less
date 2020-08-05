@@ -1,0 +1,144 @@
+/* ======================================== */
+/* CSS for control sap.m/TimePickerSliders  */
+/* Quartz Dark theme                        */
+/* ======================================== */
+
+/* ======================================== */
+/* TimePicker Dropdown                      */
+/* ======================================== */
+.sapMTimePickerSlider {
+	.sapMTimePickerItem {
+		border-radius: @sapUiButtonBorderCornerRadius;
+	}
+}
+
+.sapMTimePickerContainer {
+	.sapMTPColumn:not(:last-child),
+	.sapMTPColumn.sapMTPSliderExpanded:not(:last-child) {
+		margin-right: 0.5rem;
+	}
+}
+
+.sapMTimePickerContainer .sapMTPColumn {
+	.sapMTimePickerSlider,
+	.sapMTimePickerLabel,
+	.sapMTimePickerSlider {
+		.sapMTimePickerItem,
+		.sapMTPPickerSelectionFrame,
+		.sapMTPSliderExpanded {
+			width: 3rem;
+			height: 2.875rem;
+		}
+		width: 3rem;
+		height: 2.875rem;
+	}
+}
+
+.sapUiSizeCompact .sapMTimePickerContainer .sapMTPColumn {
+	.sapMTimePickerSlider,
+	.sapMTimePickerLabel,
+	.sapMTimePickerSlider {
+		.sapMTimePickerItem,
+		.sapMTPPickerSelectionFrame,
+		.sapMTPSliderExpanded {
+			width: 3rem;
+		}
+		width: 3rem;
+		height: 2rem;
+	}
+}
+
+.sapMTimePickerContainer {
+	.sapMTPColumn {
+		.sapMTimePickerSlider {
+			.sapMTimePickerItem {
+				background: @sapUiContentSelectedBackground;
+				border: 1px solid @sapUiListBackground;
+				&:hover {
+					background: @sapUiContentSelectedHoverBackground;
+				}
+			}
+		}
+		&.sapMTPSliderExpanded {
+			.sapMTimePickerSlider {
+				.sapMTimePickerItem {
+					background: @sapUiLegendWorkingBackground;
+					border: 0.0625rem solid @sapUiListBackground;
+					&:hover {
+						background: @sapUiListHoverBackground;
+					}
+					&:active {
+						background: @sapUiContentSelectedBackground;
+						color: @sapUiContentSelectedTextColor;
+					}
+					&.sapMTimePickerItemSelected{
+						background: @sapUiListBackground
+					}
+				}
+				.sapMTPPickerSelectionFrame {
+					border: 0.0625rem solid @sapUiListSelectionBorderColor;
+					border-radius: @sapUiButtonBorderCornerRadius;
+					outline:none;
+					&:hover {
+						+ ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
+							background: @sapUiListHoverBackground;
+						}
+					}
+					&:active {
+						& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
+							background: @sapUiContentSelectedBackground;
+							color: @sapUiContentSelectedTextColor;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.sapMTPDisabled {
+		opacity: 0.5;
+	}
+}
+
+
+/* PHONE STYLES */
+.sap-phone {
+	/* ======================================== */
+	/* TimePicker Dropdown                      */
+	/* ======================================== */
+
+	.sapMTimePickerContainer {
+		.sapMTPColumn {
+			.sapMTimePickerSlider,
+			.sapMTimePickerLabel,
+			.sapMTimePickerSlider {
+				.sapMTimePickerItem,
+				.sapMTPPickerSelectionFrame,
+				.sapMTPSliderExpanded {
+					width: 3rem;
+					height: 2.875rem;
+				}
+				width: 3rem;
+				height: 2.875rem;
+			}
+			.sapMTimePickerSlider {
+				.sapMTimePickerItem {
+					border: 1px solid @sapUiListBackground;
+				}
+			}
+			&.sapMTPSliderExpanded {
+				.sapMTimePickerSlider {
+					.sapMTimePickerItem {
+						background: @sapUiLegendWorkingBackground;
+						border: 1px solid @sapUiListBackground;
+						width: 3rem;
+					}
+					.sapMTPPickerSelectionFrame {
+						outline: 0.125rem solid @sapUiSelected;
+						outline-offset: -0.188rem;
+					}
+				}
+			}
+		}
+	}
+}

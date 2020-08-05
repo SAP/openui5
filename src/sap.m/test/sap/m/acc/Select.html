@@ -453,6 +453,14 @@
 			}
 		});
 
+		var oSelectReadOnly = new sap.m.Select({
+			editable: false,
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
 		var oSelectSuccess = new sap.m.Select({
 			width: "15rem",
 			valueState: sap.ui.core.ValueState.Success,
@@ -487,6 +495,16 @@
 			}
 		});
 
+		var oSelectInformation = new sap.m.Select({
+			width: "15rem",
+			valueState: sap.ui.core.ValueState.Information,
+			valueStateText: "value state text",
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
 		var oSelectBusy = new sap.m.Select({
 			busy: true,
 			items: {
@@ -497,42 +515,51 @@
 
 		new sap.m.App().addPage(new sap.m.Page({
 			title: "sap.m.Select",
+			titleLevel: "H1",
 			content: [
-				new sap.ui.core.HTML({ content: "<h3>Default</h3>" }),
+				new sap.ui.core.HTML({ content: "<h2 class='sapMTitleStyleH3'>Default</h2>" }),
 				oSelect,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Two column layout</h3>" }),
+				new sap.ui.core.HTML({ content: "<h2 class='sapMTitleStyleH3'>Two column layout</h2>" }),
 				oSelectTwoColumn,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Labeled</h3>" }),
+				new sap.ui.core.HTML({ content: "<h2 class='sapMTitleStyleH3'>Labeled</h2>" }),
 				oLabel,
 				oSelectLabeled,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Icon only</h3>" }),
+				new sap.ui.core.HTML({ content: "<h2 class='sapMTitleStyleH3'>Icon only</h2>" }),
 				oSelectIconOnly,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Disabled</h3>" }),
+				new sap.ui.core.HTML({ content: "<h2 class='sapMTitleStyleH3'>Disabled</h2>" }),
 				oSelectDisabled,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Warning state with label</h3>" }),
+				new sap.ui.core.HTML({ content: "<h2 class='sapMTitleStyleH3'>Read-only</h2>" }),
+				oSelectReadOnly,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h2 class='sapMTitleStyleH3'>Warning state with label</h2>" }),
 				oLabelWarning,
 				oSelectWarning,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Success state</h3>" }),
+				new sap.ui.core.HTML({ content: "<h2 class='sapMTitleStyleH3'>Success state</h2>" }),
 				oSelectSuccess,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
+				new sap.ui.core.HTML({ content: "<h2 class='sapMTitleStyleH3'>Error state</h2>" }),
 				oSelectError,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Busy</h3>" }),
+				new sap.ui.core.HTML({ content: "<h2 class='sapMTitleStyleH3'>Information state</h2>" }),
+				oSelectInformation,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h2 class='sapMTitleStyleH3'>Busy</h2>" }),
 				oSelectBusy,
 				new sap.ui.core.HTML({ content: "<hr>" })
 			]

@@ -41,7 +41,25 @@ sap.ui.define([
 		 */
 		isMatching : function (oControl) {
 			return true;
+		},
+
+		/**
+		 * @return {object} window of the application under test, or the current window if OPA5 is not loaded
+		 * Note: declared matchers are instanciated in the app context (by MatcherFactory)
+		 * while users instanciate matchers in the test context (in a waitFor)
+		 * @private
+		 * @function
+		 */
+		_getApplicationWindow: function () {
+			if (sap.ui.test && sap.ui.test.Opa5) {
+				// matcher context === test context, because Opa5 is loadded
+				return sap.ui.test.Opa5.getWindow();
+			} else {
+				// matcher context === app context
+				return window;
+			}
 		}
+
 	});
 
 	return Matcher;

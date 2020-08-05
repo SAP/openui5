@@ -1,17 +1,23 @@
-<mvc:View controllerName="appUnderTest.view.Main"
+<mvc:View controllerName="appUnderTest.controller.Main"
 	xmlns="sap.m"
-	xmlns:mvc="sap.ui.core.mvc">
-	<App id="myApp">
-		<Page id="fistPage">
-			<headerContent>
-				<Button id="navigationButton" press="onNavButtonPress" text="I navigate to a secondPage"/>
-			</headerContent>
-		</Page>
-		<Page id="secondPage">
-			<headerContent>
-				<Button id="firstButtonOnSecondPage" text="I am the first Button!"/>
-				<Button id="secondButtonOnSecondPage" text="I am the second Button!"/>
-			</headerContent>
-		</Page>
-	</App>
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core">
+	<Shell>
+		<App id="myApp">
+			<Page id="fistPage">
+				<headerContent>
+					<Button id="navigationButton" press="onNavButtonPress" text="I navigate to a secondPage"/>
+				</headerContent>
+			</Page>
+			<Page id="secondPage">
+				<headerContent>
+					<Button id="firstButtonOnSecondPage" text="I am the first Button!"/>
+					<Button id="secondButtonOnSecondPage" text="I am the second Button!"/>
+				</headerContent>
+				<content>
+					<core:Fragment id="secondPageFragment" fragmentName="appUnderTest.view.Hello" type="XML" />
+				</content>
+			</Page>
+		</App>
+	</Shell>
 </mvc:View>

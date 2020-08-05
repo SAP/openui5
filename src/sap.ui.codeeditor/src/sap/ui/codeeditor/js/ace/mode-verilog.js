@@ -44,11 +44,16 @@ var keywords = "always|and|assign|automatic|begin|buf|bufif0|bufif1|case|casex|c
                 { defaultToken : "comment" }
             ]
         }, {
-            token : "string",           // " string
-            regex : '".*?"'
+            token : "string.start",
+            regex : '"',
+            next : [
+                { token : "constant.language.escape", regex : /\\(?:[ntvfa\\"]|[0-7]{1,3}|\x[a-fA-F\d]{1,2}|)/, consumeLineEnd : true },
+                { token : "string.end", regex : '"|$', next: "start" },
+                { defaultToken : "string" }
+            ]
         }, {
-            token : "string",           // ' string
-            regex : "'.*?'"
+            token : "string",
+            regex : "'^[']'"
         }, {
             token : "constant.numeric", // float
             regex : "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b"
@@ -95,10 +100,19 @@ oop.inherits(Mode, TextMode);
 
     this.lineCommentStart = "//";
     this.blockComment = {start: "/*", end: "*/"};
+    this.$quotes = { '"': '"' };
+
 
     this.$id = "ace/mode/verilog";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
 
-});
+});                (function() {
+                    ace.require(["ace/mode/verilog"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

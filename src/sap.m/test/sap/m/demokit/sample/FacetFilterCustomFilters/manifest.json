@@ -1,0 +1,37 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.FacetFilterCustomFilters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.FacetFilterCustomFilters.FacetFilter",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			},
+			"components": {
+				"sap.m.sample.Table": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"FacetFilter.view.xml",
+					"FacetFilter.controller.js",
+					"../Table/Component.js",
+					"../Table/Formatter.js",
+					"../Table/Table.controller.js",
+					"../Table/Table.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

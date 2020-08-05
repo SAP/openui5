@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Base type for <code>items</code> aggregation in <code>P13nPanel</code> control.
-	 * @extends sap.ui.core.Item
+	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 * @constructor
 	 * @public
@@ -61,6 +61,16 @@ sap.ui.define([
 					type: "string",
 					group: "Misc",
 					defaultValue: "text"
+				},
+
+				/**
+				 * data type instance of the column. Can be used instead of the type, precision, scale and formatSettings properties
+				 */
+				typeInstance: {
+					type: "object",
+					group: "Misc",
+					defaultValue: null,
+					since: "1.56"
 				},
 
 				/**
@@ -187,14 +197,23 @@ sap.ui.define([
 					type: "object",
 					defaultValue: null
 				},
-                /**
-                 * Defines additional information of the link.
-                 *
-                 * @since 1.56.0
-                 */
-                description: {
-                    type: "string",
-                    defaultValue: null
+				/**
+				 * Defines additional information of the link.
+				 *
+				 * @since 1.56.0
+				 */
+				description: {
+					type: "string",
+					defaultValue: null
+				},
+
+				/**
+				 * Defines if the item is nullable
+				 */
+				nullable: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				}
 			}
 		}

@@ -1,0 +1,68 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:grid="sap.ui.layout.cssgrid"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
+
+	<Slider value="100" app:mydata="boxContainer"  liveChange="onSliderMoved" />
+	<Panel id="boxContainer" width="100%" class="sapUiResponsiveMargin">
+		<headerToolbar>
+			<Toolbar height="3rem">
+				<Title text=" BoxContainer"/>
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<Panel id="boxContainerPanel" width="100%">
+				<headerToolbar>
+					<Toolbar height="3rem">
+						<Title text=" BoxContainer boxMinWidth=17rem"/>
+					</Toolbar>
+				</headerToolbar>
+				<content>
+					<grid:CSSGrid id="grid1" items="{ path: '/' }">
+
+						<grid:customLayout>
+							<grid:GridBoxLayout boxMinWidth="17rem"/>
+						</grid:customLayout>
+
+						<VBox height="100%">
+							<VBox class="sapUiSmallMargin demoBox">
+								<layoutData>
+									<FlexItemData growFactor="1" shrinkFactor="0" />
+								</layoutData>
+								<Title text="{title} (Click me)" wrapping="true" />
+								<Label text="{subtitle}" wrapping="true" />
+							</VBox>
+						</VBox>
+					</grid:CSSGrid>
+				</content>
+			</Panel>
+			<Panel width="100%">
+				<headerToolbar>
+					<Toolbar height="3rem">
+						<Title text="BoxContainer boxWidth=7rem"/>
+					</Toolbar>
+				</headerToolbar>
+				<content>
+					<grid:CSSGrid items="{ path: '/' }">
+
+						<grid:customLayout>
+							<grid:GridBoxLayout boxWidth="7rem"/>
+						</grid:customLayout>
+
+						<VBox height="100%">
+							<VBox class="sapUiSmallMargin demoBox">
+								<layoutData>
+									<FlexItemData growFactor="1" shrinkFactor="0" />
+								</layoutData>
+								<Title text="{title} (Click me)" wrapping="true" />
+								<Label text="{subtitle}" wrapping="true" />
+							</VBox>
+						</VBox>
+					</grid:CSSGrid>
+				</content>
+			</Panel>
+		</content>
+	</Panel>
+</mvc:View>

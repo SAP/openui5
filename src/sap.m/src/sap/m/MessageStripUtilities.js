@@ -28,7 +28,7 @@ sap.ui.define(function () {
 		CLOSABLE: "data-sap-ui-ms-closable"
 	};
 
-	MessageStripUtilities.RESOURCE_BUNDLE = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+	MessageStripUtilities.RESOURCE_BUNDLE = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	/**
 	 * Calculate the icon uri that should be set to the control property.
@@ -57,22 +57,9 @@ sap.ui.define(function () {
 		return sAriaText;
 	};
 
-	MessageStripUtilities.handleMSCloseButtonInteraction = function (oEvent) {
-		if (MessageStripUtilities.isMSCloseButtonPressed(oEvent.target)) {
-			this.close();
-		}
-	};
-
 	MessageStripUtilities.isMSCloseButtonPressed = function (oTarget) {
 		return oTarget.className.indexOf(MessageStripUtilities.CLASSES.CLOSE_BUTTON) !== -1 ||
 			oTarget.parentNode.className.indexOf(MessageStripUtilities.CLASSES.CLOSE_BUTTON) !== -1;
-	};
-
-	MessageStripUtilities.closeTransitionWithJavascript = function (fnCallback) {
-		this.$().animate({opacity: 0}, {
-			duration: 200,
-			complete: fnCallback
-		});
 	};
 
 	MessageStripUtilities.closeTransitionWithCSS = function (fnCallback) {
@@ -82,9 +69,8 @@ sap.ui.define(function () {
 
 	MessageStripUtilities.getAccessibilityState = function () {
 		return {
-			role: "alert",
-			live: "assertive",
-			labelledby: this.getId()
+			role: "note",
+			live: "assertive"
 		};
 	};
 

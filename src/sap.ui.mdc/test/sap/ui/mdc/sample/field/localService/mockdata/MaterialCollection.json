@@ -1,0 +1,37 @@
+[
+	{
+		"MatrId": "",
+		"Text": "Nothing",
+		"defaultUnit": null
+	},
+	{
+		"MatrId": "1",
+		"Text": "Paper",
+		"defaultUnit": "KG"
+	},
+	{
+		"MatrId": "2",
+		"Text": "Wood",
+		"defaultUnit": "KG"
+	},
+	{
+		"MatrId": "3",
+		"Text": "Steel",
+		"defaultUnit": "TO"
+	},
+	{
+		"MatrId": "4",
+		"Text": "Cement",
+		"defaultUnit": "KG"
+	},
+	{
+		"MatrId": "5",
+		"Text": "Carbon",
+		"defaultUnit": "G"
+	},
+	{
+		"MatrId": "6",
+		"Text": "Leather",
+		"defaultUnit": "G"
+	}
+]

@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.DataStateOData",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.core.sample.DataStateOData.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Page.view.xml",
+					"Page.controller.js",
+					"mockdata/BusinessPartnerSet.json",
+					"mockdata/ContactSet.json",
+					"mockdata/metadata.xml",
+					"mockdata/ProductSet.json",
+					"mockdata/SalesOrderLineItemSet.json",
+					"mockdata/SalesOrderSet.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

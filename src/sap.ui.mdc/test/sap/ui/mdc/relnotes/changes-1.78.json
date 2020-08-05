@@ -1,0 +1,151 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "ee38e88dbd4bc2c7b885225ebcf948b88b88b1fb",
+        "type": "FEATURE",
+        "text": " FieldBase: allow input validation via delegate",
+        "references": []
+      },
+      {
+        "id": "9ef37875b6ef81d68ffc266149244862cc463b3a",
+        "type": "FIX",
+        "text": " FieldBase: parsing error not cleared after new input",
+        "references": []
+      },
+      {
+        "id": "ef833724adb6182b660ca6bb0d819b947a1b5cea",
+        "type": "FIX",
+        "text": " FieldValueHelp: search filter not cleared after reopen",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070151324"
+          }
+        ]
+      },
+      {
+        "id": "6fea7d3b20e754ceacbe7e1a5e19e576d48a677d",
+        "type": "FIX",
+        "text": " mdc.Chart: Async creation of inner controls after destroy suppressed",
+        "references": []
+      },
+      {
+        "id": "f7e04e5e99b21ee1e98be877c64e8feacf61b1c7",
+        "type": "FIX",
+        "text": " mdc.Chart: Forwarding of actions to unexisting inner aggregation fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070154256"
+          }
+        ]
+      },
+      {
+        "id": "0ef5849a486799fb5531a46925af8c2d4ae59b95",
+        "type": "FIX",
+        "text": " Field, FilterField: Label points to wrong DOM node",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070038598"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070038593"
+          }
+        ]
+      },
+      {
+        "id": "0bbe1c1f81dcc00fce3b665d8e7c4e2162731e5f",
+        "type": "FIX",
+        "text": " FieldValueHelp: remove BindingContext if not connected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070151027"
+          }
+        ]
+      },
+      {
+        "id": "8af5f13e4a05f72ed4bf3949e8b65a6415deff9d",
+        "type": "FIX",
+        "text": " mdc.Chart: Return type of inherited .applySettings() method fixed",
+        "references": []
+      },
+      {
+        "id": "d02e57e1c065e30949cc93237b5f25036d193b7d",
+        "type": "FIX",
+        "text": " mdc.Chart: Showstopper lifecycle issue fixed",
+        "references": []
+      },
+      {
+        "id": "c3e1273c4d95195ffacc50f3699480b04996dfe8",
+        "type": "FIX",
+        "text": " Field with external content: no tooltip",
+        "references": []
+      },
+      {
+        "id": "64b1ca52cdc8b842d582cb497c96d9d0d42de188",
+        "type": "FIX",
+        "text": " Field, FilterField: close field help if escape key pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070038713"
+          }
+        ]
+      },
+      {
+        "id": "645d0f3746c67d7d268d1912f876eea9dfb8a418",
+        "type": "FIX",
+        "text": " FieldValueHelp: wrong BindingContext if not assigned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980457079"
+          }
+        ]
+      },
+      {
+        "id": "b21130e56fa97dd5832e2c479de70ed4a7dc3873",
+        "type": "FIX",
+        "text": " FilterField: do not show default help if only EQ and EEQ",
+        "references": []
+      },
+      {
+        "id": "deeb6d92232c203ff08f1425cf8552957a250611",
+        "type": "FIX",
+        "text": " FilterField: do not show default help if only EQ and EEQ\"",
+        "references": []
+      },
+      {
+        "id": "167dceb300d060bd78029b2a48d9fe96be7ba00c",
+        "type": "FIX",
+        "text": " Empty operator: convert condition from or to external type fails",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070204019"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070204698"
+          }
+        ]
+      },
+      {
+        "id": "3c0e53651914e50406c1d397bf14ffe92406b8d9",
+        "type": "FIX",
+        "text": " msc.FilterBar: do not count hidden filters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070199258"
+          }
+        ]
+      }
+    ]
+  }
+}

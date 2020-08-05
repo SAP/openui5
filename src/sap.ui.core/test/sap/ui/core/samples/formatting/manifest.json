@@ -1,0 +1,66 @@
+{
+	"name": "sap.ui.core.samples.formatting.Formatting",
+
+	"sap.app": {
+		"id": "sap.ui.core.samples.formatting.Formatting",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+
+	"sap.ui5": {
+		"handleValidation": true,
+
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.f": {}
+			}
+		},
+
+		"models": {
+			"": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/data.json"
+			}
+		},
+
+		"rootView": {
+			"viewName": "sap.ui.core.samples.formatting.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+
+		"routing": {
+
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.core.samples.formatting.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"async": true
+			},
+
+			"routes": [
+				{
+					"pattern": "",
+					"name": "default",
+					"target": "choose"
+				}
+			],
+
+			"targets": {
+				"choose": {
+					"viewId": "choose",
+					"viewName": "ChooseFormatOptions",
+					"viewLevel": 1
+				}
+			}
+
+		}
+	}
+}

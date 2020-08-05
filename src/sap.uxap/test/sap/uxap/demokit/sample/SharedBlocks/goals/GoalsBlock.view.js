@@ -6,11 +6,10 @@ sap.ui.define(["sap/ui/layout/form/SimpleForm", "sap/ui/layout/VerticalLayout", 
 		},
 		createContent: function (oController) {
 			var oForm = new SimpleForm({
-				maxContainerCols: 1,
-				layout: "ResponsiveGridLayout",
 				width: "100%",
-				content: new VerticalLayout({
-					content: [
+				layout: "ColumnLayout",
+				editable: false,
+				content: [
 						new Label({text: "Evangelize the UI framework accross the company", design: "Bold"}),
 						new Text({text: "4 days overdue Cascaded"}),
 						new Text({text: " "}),
@@ -21,7 +20,6 @@ sap.ui.define(["sap/ui/layout/form/SimpleForm", "sap/ui/layout/VerticalLayout", 
 						new Text({text: "Due Dec 31 Cascaded"}),
 						new Button({text: "Hello from a JS View", press: oController.onBtnPress})
 					]
-				})
 			});
 			return oForm;
 		}

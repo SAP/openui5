@@ -1,12 +1,10 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	'jquery.sap.global',
-	'sap/ui/rta/toolbar/Base',
-	'sap/ui/core/BusyIndicator',
-	'sap/m/Button'
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/rta/toolbar/Base",
+	"sap/ui/core/BusyIndicator",
+	"sap/m/Button"
 ],
 function(
 	jQuery,
@@ -16,14 +14,15 @@ function(
 ) {
 	'use strict';
 
-	QUnit.start();
-
 	/*********************************************************************************************************
 	 * BASIC FUNCTIONALITY
 	 ********************************************************************************************************/
 
+	//RTA Toolbar needs RTA Mode settings
+	jQuery("body").addClass("sapUiRtaMode");
+
 	QUnit.module('Basic functionality', {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			this.oToolbar = new BaseToolbar();
 		},
 
@@ -77,14 +76,14 @@ function(
 
 		QUnit.test('setZIndex() method', function(assert) {
 			return this.oToolbar.show().then(function () {
-				var iInitialZIndex = parseInt(this.oToolbar.$().css('z-index'), 10);
+				var iInitialZIndex = parseInt(this.oToolbar.$().css('z-index'));
 				assert.strictEqual(this.oToolbar.getZIndex(), iInitialZIndex, 'z-index is rendered properly');
 
 				var iZIndex = iInitialZIndex + 1;
 				this.oToolbar.setZIndex(iZIndex);
 				sap.ui.getCore().applyChanges();
 
-				assert.strictEqual(parseInt(this.oToolbar.$().css('z-index'), 10), iZIndex, 'z-index is updated properly');
+				assert.strictEqual(parseInt(this.oToolbar.$().css('z-index')), iZIndex, 'z-index is updated properly');
 			}.bind(this));
 		});
 
@@ -116,8 +115,9 @@ function(
 		});
 
 		QUnit.test('buildControls() method', function(assert) {
-			var aControls = this.oToolbar.buildControls();
-			assert.ok(Array.isArray(aControls) && aControls.length === 0, 'returns an empty array');
+			return this.oToolbar.buildControls().then(function(aControls) {
+				assert.ok(Array.isArray(aControls) && aControls.length === 0, 'returns an empty array');
+			});
 		});
 	});
 
@@ -127,12 +127,12 @@ function(
 	 ********************************************************************************************************/
 
 	QUnit.module('Inheritance functionality', {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			var CustomToolbar = BaseToolbar.extend('CustomToolbar', {
 				renderer: 'sap.ui.rta.toolbar.BaseRenderer',
 				metadata: {
 					events: {
-						'action': {}
+						action: {}
 					}
 				}
 			});
@@ -141,20 +141,22 @@ function(
 
 			CustomToolbar.prototype.buildControls = function () {
 				// expose button to the context of the unit test
-				that.oButton = new Button({
+				that.oButton = new Button("sapUiRta_action", {
 					type: 'Transparent',
 					icon: 'sap-icon://home',
 					press: this.eventHandler.bind(this, 'Action')
 				}).data('name', 'action');
 
-				return [
+				return Promise.resolve([
 					that.oButton
-				];
+				]);
 			};
 
 			this.oToolbar = new CustomToolbar();
 		},
 		afterEach: function() {
+			// by default RuntimeAuthoring takes care of destroying the controls
+			this.oButton.destroy();
 			this.oToolbar.destroy();
 		}
 	}, function () {
@@ -185,7 +187,7 @@ function(
 	};
 
 	QUnit.module('Animation functionality', {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			var CustomToolbar = BaseToolbar.extend('CustomToolbar', {
 				renderer: 'sap.ui.rta.toolbar.BaseRenderer',
 				animation: true,
@@ -230,4 +232,8 @@ function(
 		});
 	});
 
+	QUnit.done(function () {
+		jQuery("body").removeClass("sapUiRtaMode");
+		jQuery("#qunit-fixture").hide();
+	});
 });

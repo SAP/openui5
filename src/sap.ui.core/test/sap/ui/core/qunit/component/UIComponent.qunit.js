@@ -1,18 +1,26 @@
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/core/Component",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/UIComponentMetadata"
-], function(jQuery, ComponentContainer, UIComponent, UIComponentMetadata) {
+	"sap/ui/core/UIComponentMetadata",
+	"sap/base/Log"
+], function(jQuery, Component, ManagedObject, ComponentContainer, UIComponent, UIComponentMetadata, Log) {
 
 	"use strict";
 	/*global sinon, QUnit*/
+
+	// create content div
+	var oDIV = document.createElement("div");
+	oDIV.id = "content";
+	document.body.appendChild(oDIV);
 
 	QUnit.module("Basic UIComponent", {
 		beforeEach: function() {
 
 			// define the Component
-			sap.ui.define("my/test/Component", ["sap/ui/core/UIComponent", "sap/m/Button"], function(UIComponent, Button) {
+			sap.ui.predefine("my/test/Component", ["sap/ui/core/UIComponent", "sap/m/Button"], function(UIComponent, Button) {
 
 				return UIComponent.extend("my.test.Component", {
 
@@ -199,6 +207,160 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("forwarding RouterHashChanger to the creation of Router", function(assert) {
+		this.oManifest["sap.ui5"]["routing"] = {
+			routes: {
+			}
+		};
+		this.oServer.respondWithJSONContent(this.oManifest);
+
+		var oComponentConstructorSpy = sinon.spy(ManagedObject.prototype, "applySettings");
+
+		// scenario 1 - "_routerHashChanger"-property is being defined - via component load
+		// the "_routerHashChanger"-property is being removed from the component settings
+		var oRouterHashChanger = {};
+		var oComponent1 = sap.ui.component({
+			manifestUrl : "/anylocation/manifest.json",
+			settings: {
+				_routerHashChanger: oRouterHashChanger
+			}
+		});
+
+		var oRouter1 = oComponent1.getRouter();
+		assert.strictEqual(oComponentConstructorSpy.callCount, 2, "The constructor was called");
+		assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {}, "The settings object of the constructor is empty");
+		assert.strictEqual(oRouter1.getHashChanger(), oRouterHashChanger, "The RouterHashChanger is forwarded to the created Router");
+
+		// destroy the component
+		oComponent1.destroy();
+
+		// scenario 2 - "_routerHashChanger"-property is set but with value undefined
+		// the "_routerHashChanger"-property is being removed from the component settings
+		var oComponent2 = new UIComponent("component1", {
+			_routerHashChanger: undefined
+		});
+
+		var oRouter2 = oComponent2.getRouter();
+		assert.strictEqual(oComponentConstructorSpy.callCount, 3, "The constructor was called");
+		assert.deepEqual(oComponentConstructorSpy.getCall(2).args[0], {}, "The settings object of the constructor is empty");
+		assert.strictEqual(oRouter2, undefined, "The router is undefined");
+
+		// destroy the component
+		oComponent2.destroy();
+
+		// scenario 3 - "_routerHashChanger"-property is set but with value undefined - via component load
+		// the "_routerHashChanger"-property is being removed however a new RouterHashChanger is being created
+		var oComponent3 = sap.ui.component({
+			manifestUrl : "/anylocation/manifest.json",
+			settings: {
+				_routerHashChanger: undefined
+			}
+		});
+		var oRouter3 = oComponent3.getRouter();
+		assert.strictEqual(oComponentConstructorSpy.callCount, 5, "The constructor was called");
+		assert.deepEqual(oComponentConstructorSpy.getCall(2).args[0], {}, "The settings object of the constructor is empty");
+		assert.strictEqual(oRouter3.getHashChanger().getMetadata().getName(), "sap.ui.core.routing.RouterHashChanger","The RouterHashChanger is created by the Router");
+
+		// destroy the component
+		oComponent3.destroy();
+
+		// remove the spy
+		oComponentConstructorSpy.restore();
+	});
+
+	QUnit.test("forwarding propagateTitle to the creation of Router", function(assert) {
+		this.oManifest["sap.ui5"]["routing"] = {
+			routes: {
+			}
+		};
+		this.oServer.respondWithJSONContent(this.oManifest);
+
+		var oComponentConstructorSpy = sinon.spy(ManagedObject.prototype, "applySettings");
+
+		// _propagateTitle is true
+		var oComponent1 = new UIComponent("component1", {
+			_propagateTitle: true
+		});
+
+		// _propagateTitle is false
+		var oComponent2 = new UIComponent("component2", {
+			_propagateTitle: false
+		});
+
+		// _propagateTitle is undefined
+		var oComponent3 = new UIComponent("component3", {
+			_propagateTitle: undefined
+		});
+
+		assert.strictEqual(oComponentConstructorSpy.callCount, 3, "The constructor should be called three times");
+		assert.strictEqual(oComponent1._bRoutingPropagateTitle, true, "The propagateTitle flag should be stored successfully in the component");
+		assert.deepEqual(oComponentConstructorSpy.getCall(0).args[0], {}, "The settings object of the constructor should be empty");
+		assert.strictEqual(oComponent2._bRoutingPropagateTitle, false, "The propagateTitle flag should be stored successfully in the component");
+		assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {}, "The settings object of the constructor should be empty");
+		assert.strictEqual(oComponent3._bRoutingPropagateTitle, undefined, "The propagateTitle flag should be stored successfully in the component");
+		assert.deepEqual(oComponentConstructorSpy.getCall(2).args[0], {}, "The settings object of the constructor should be empty");
+
+		// destroy the components
+		oComponent1.destroy();
+		oComponent2.destroy();
+		oComponent3.destroy();
+
+		oComponentConstructorSpy.resetHistory();
+
+		var done = assert.async();
+
+		// _propagateTitle is true - via component load
+		Component.create({
+			id: "component1b",
+			manifest : "/anylocation/manifest.json",
+			settings: {
+				_propagateTitle: true
+			}
+		}).then(function(oComponent){
+			assert.strictEqual(oComponentConstructorSpy.callCount, 2, "The component constructor and the button constructor should be called once");
+			assert.strictEqual(oComponent._bRoutingPropagateTitle, true, "The propagateTitle flag should be stored successfully in the component");
+			assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {id: "component1b"}, "The settings object of the constructor should contains only the id, the propagateTitle flag should be removed from the settings");
+
+			oComponent.destroy();
+			oComponentConstructorSpy.resetHistory();
+
+			// _propagateTitle is false - via component load
+			Component.create({
+				id: "component2b",
+				manifest : "/anylocation/manifest.json",
+				settings: {
+					_propagateTitle: false
+				}
+			}).then(function(oComponent){
+				assert.strictEqual(oComponentConstructorSpy.callCount, 2, "The component constructor and the button constructor should be called once");
+				assert.strictEqual(oComponent._bRoutingPropagateTitle, false, "The propagateTitle flag should be stored successfully in the component");
+				assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {id: "component2b"}, "The settings object of the constructor should contains only the id, the propagateTitle flag should be removed from the settings");
+
+				oComponent.destroy();
+				oComponentConstructorSpy.resetHistory();
+
+				// _propagateTitle is undefined - via component load
+				Component.create({
+					id: "component3b",
+					manifest : "/anylocation/manifest.json",
+					settings: {
+						_propagateTitle: undefined
+					}
+				}).then(function(oComponent){
+					assert.strictEqual(oComponentConstructorSpy.callCount, 2, "The component constructor and the button constructor should be called once");
+					assert.strictEqual(oComponent._bRoutingPropagateTitle, undefined, "The propagateTitle flag should be stored successfully in the component");
+					assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {id: "component3b"}, "The settings object of the constructor should contains only the id, the propagateTitle flag should be removed from the settings");
+					oComponent.destroy();
+
+					done();
+
+					// remove the spy
+					oComponentConstructorSpy.restore();
+				});
+			});
+		});
+	});
+
 	QUnit.module("UIComponent with rootView from Manifest", {
 		beforeEach: function() {
 
@@ -227,6 +389,16 @@ sap.ui.define([
 				}
 			};
 
+			var oManifestJSView = {
+				"sap.ui5" : {
+					"rootView" : {
+						"async": true,
+						"viewName" : "error.test.JSView",
+						"type" : "JS"
+					}
+				}
+			};
+
 			// define the XMLView
 			var sXMLView = '\
 				<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" \
@@ -245,6 +417,7 @@ sap.ui.define([
 						!/^\/anylocation\/prefixid\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/mf1st\/autoid\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/mf1st\/prefixid\/manifest\.json/.test(url) &&
+						!/^\/test-resources\/sap\/ui\/core\/qunit\/component\/testdata\/view\/manifest\.json/.test(url) &&
 						url !== "/anylocation/View.view.xml");
 			});
 			oServer.autoRespond = true;
@@ -292,14 +465,27 @@ sap.ui.define([
 				sXMLView
 			]);
 
+			oServer.respondWith("GET", /^\/test-resources\/sap\/ui\/core\/qunit\/component\/testdata\/view\/manifest\.json/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifestJSView)
+			]);
+
 			// define the Components
-			jQuery.sap.registerModulePath("my.own", "/anylocation");
-			sap.ui.define("my/own/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.loader.config({
+				paths:{
+					"my/own":"/anylocation",
+					"error/test": "/test-resources/sap/ui/core/qunit/component/testdata/view/"
+				}
+			});
+			sap.ui.predefine("my/own/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("my.own.Component", {});
 
 			});
-			sap.ui.define("my/own/autoid/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.predefine("my/own/autoid/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("my.own.autoid.Component", {
 					metadata: {
@@ -308,7 +494,7 @@ sap.ui.define([
 				});
 
 			});
-			sap.ui.define("my/own/prefixid/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.predefine("my/own/prefixid/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("my.own.prefixid.Component", {
 					metadata: {
@@ -318,8 +504,18 @@ sap.ui.define([
 
 			});
 
+			sap.ui.predefine("error/test/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+
+				return UIComponent.extend("error.test.Component", {
+					metadata: {
+						manifest: "json"
+					}
+				});
+
+			});
+
 			// defined the controller
-			sap.ui.define("my/own/Controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
+			sap.ui.predefine("my/own/Controller.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
 
 				return Controller.extend("my.own.Controller", {
 					doSomething: function() {}
@@ -335,6 +531,30 @@ sap.ui.define([
 
 		}
 
+	});
+
+	QUnit.test("UIComponent that no error is logged for View-Types other than XML when processingMode is set", function(assert) {
+		var oSpy = sinon.spy(ManagedObject.prototype, "applySettings");
+
+		var oComponent = sap.ui.component({
+			name: "error.test"
+		});
+
+		var oComponentContainer = new ComponentContainer({
+			component: oComponent
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oSpy.calledWith({
+			async: true,
+			viewName: "error.test.JSView",
+			type: "JS"
+		}));
+
+		oComponentContainer.destroy();
+		oComponent.destroy();
+		oSpy.restore();
 	});
 
 	QUnit.test("UIComponent check for not prefixing the views' auto id", function(assert) {
@@ -474,13 +694,13 @@ sap.ui.define([
 
 	QUnit.module("Async loading of manifest modules before component instantiation", {
 		before: function () {
-			sinon.config.useFakeTimers = false;
+			//sinon.config.useFakeTimers = false;
 			this.requireSpy = sinon.spy(sap.ui, "require");
-			this.logWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+			this.logWarningSpy = sinon.spy(Log, "warning");
 		},
 
 		beforeEach : function() {
-			jQuery.sap.registerModulePath("manifestModules", "/manifestModules/");
+			sap.ui.loader.config({paths:{"manifestModules":"/manifestModules/"}});
 
 			// Define Views
 			var sXMLView1 = '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"\></mvc:View>';
@@ -491,43 +711,35 @@ sap.ui.define([
 			oServer.xhr.filters = [];
 			oServer.xhr.addFilter(function(method, url) {
 				return (
-					url !== "/manifestModules/manifest.json?sap-language=EN"
-					&& url !== "../../../../../../resources/someRootView.view.xml"
-					&& url !== "../../../../../../resources/someRootView.view.json"
-					&& url !== "../../../../../../resources/someRootViewNotExists.view.xml"
-					&& url !== "../../../../../../resources/someCustomRouter.js"
+					!/^\/manifestModules\/scenario\d+\/manifest.json\?sap-language=EN$/.test(url)
+					&& url !== sap.ui.require.toUrl("someRootView.view.xml")
+					&& url !== sap.ui.require.toUrl("someRootView.view.json")
+					&& url !== sap.ui.require.toUrl("someRootViewNotExists.view.xml")
 				);
 			});
 			oServer.autoRespond = true;
 
 			// Respond data
-			oServer.respondWith("GET", "../../../../../../resources/someRootView.view.xml", [
+			oServer.respondWith("GET", sap.ui.require.toUrl("someRootView.view.xml"), [
 				200,
 				{ "Content-Type": "application/xml" },
 				sXMLView1
 			]);
-			oServer.respondWith("GET", "../../../../../../resources/someRootViewNotExists.view.xml", [
+			oServer.respondWith("GET", sap.ui.require.toUrl("someRootViewNotExists.view.xml"), [
 				404,
 				{ "Content-Type": "text/html" },
 				"not found"
 			]);
-			oServer.respondWith("GET", "../../../../../../resources/someRootView.view.json", [
+			oServer.respondWith("GET", sap.ui.require.toUrl("someRootView.view.json"), [
 				200,
 				{ "Content-Type": "application/javascript" },
 				"{}"
 			]);
-			oServer.respondWith("GET", "../../../../../../resources/someCustomRouter.js", [
-				200,
-				{ "Content-Type": "application/javascript" },
-				"sap.ui.define(['sap/ui/core/routing/Router'], function(Router) {\n" +
-				"\treturn Router.extend(\"someCustomRouter\", {});\n" +
-				"});\n"
-			]);
 		},
 
-		setRespondedManifest: function(manifest) {
+		setRespondedManifest: function(manifest, scenario) {
 			// Respond data
-			this.oServer.respondWith("GET", "/manifestModules/manifest.json?sap-language=EN", [
+			this.oServer.respondWith("GET", "/manifestModules/" + scenario + "/manifest.json?sap-language=EN", [
 				200,
 				{ "Content-Type": "application/json" },
 				JSON.stringify(manifest)
@@ -541,7 +753,7 @@ sap.ui.define([
 		},
 
 		after: function() {
-			sinon.config.useFakeTimers = true;
+			//sinon.config.useFakeTimers = true;
 			this.requireSpy.restore();
 			this.logWarningSpy.restore();
 		}
@@ -587,11 +799,11 @@ sap.ui.define([
 				}
 			}
 		};
-		this.setRespondedManifest(oManifest);
+		this.setRespondedManifest(oManifest, "scenario1");
 
 		var requireSpy = this.requireSpy;
-		sap.ui.define("manifestModules/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.Component", {
+		sap.ui.define("manifestModules/scenario1/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.scenario1.Component", {
 				metadata: {
 					manifest: "json"
 				},
@@ -614,8 +826,10 @@ sap.ui.define([
 		});
 
 		return sap.ui.component({
-			name: "manifestModules",
+			name: "manifestModules.scenario1",
 			manifest: true
+		}).then(function(oInstance) {
+			// console.error("instance here", oInstance);
 		});
 	});
 
@@ -641,11 +855,11 @@ sap.ui.define([
 				}
 			}
 		};
-		this.setRespondedManifest(oManifest);
+		this.setRespondedManifest(oManifest, "scenario2");
 
 		var requireSpy = this.requireSpy;
-		sap.ui.define("manifestModules/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.Component", {
+		sap.ui.predefine("manifestModules/scenario2/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.scenario2.Component", {
 				metadata: {
 					manifest: "json"
 				},
@@ -656,9 +870,12 @@ sap.ui.define([
 				}
 			});
 		});
+		sap.ui.predefine("someCustomRouter", ['sap/ui/core/routing/Router'], function(Router) {
+			return Router.extend("someCustomRouter", {});
+		});
 
 		return sap.ui.component({
-			name: "manifestModules",
+			name: "manifestModules.scenario2",
 			manifest: true
 		});
 	});
@@ -672,11 +889,11 @@ sap.ui.define([
 				"rootView": "someRootView"
 			}
 		};
-		this.setRespondedManifest(oManifest);
+		this.setRespondedManifest(oManifest, "scenario3");
 
 		var requireSpy = this.requireSpy;
-		sap.ui.define("manifestModules/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.Component", {
+		sap.ui.predefine("manifestModules/scenario3/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.scenario3.Component", {
 				metadata: {
 					manifest: "json"
 				},
@@ -689,7 +906,7 @@ sap.ui.define([
 		});
 
 		return sap.ui.component({
-			name: "manifestModules",
+			name: "manifestModules.scenario3",
 			manifest: true
 		});
 	});
@@ -723,11 +940,11 @@ sap.ui.define([
 				}
 			}
 		};
-		this.setRespondedManifest(oManifest);
+		this.setRespondedManifest(oManifest, "scenario4");
 
 		var logWarningSpy = this.logWarningSpy;
-		sap.ui.define("manifestModules/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.Component", {
+		sap.ui.predefine("manifestModules/scenario4/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.scenario4.Component", {
 				metadata: {
 					manifest: "json"
 				},
@@ -740,7 +957,7 @@ sap.ui.define([
 		});
 
 		return sap.ui.component({
-			name: "manifestModules",
+			name: "manifestModules.scenario4",
 			manifest: true
 		}).catch(function() {
 			assert.ok(true, "Modules could not be loaded and an error occured.");

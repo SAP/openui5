@@ -4,4 +4,4 @@ sap.ui.define(['sap/uxap/BlockBase'], function (BlockBase) {
 	return BlockBase.extend("sap.uxap.sample.SingleView.blocks.SimpleForm", {
 		metadata: {}
 	});
-}, true);
+});

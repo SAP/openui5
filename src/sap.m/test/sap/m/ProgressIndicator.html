@@ -20,10 +20,8 @@
 
 			// create progressIndicator
 			var oProgInd1 = new sap.m.ProgressIndicator("pi1", {
-				width:"100%",
 				percentValue:50,
-				displayValue:"50%",
-				showValue:true
+				displayValue:"50%"
 			});
 
 			var oInput = new sap.m.Input("input", {
@@ -37,7 +35,6 @@
 
 			// create progressIndicator
 			var oProgInd2 = new sap.m.ProgressIndicator("pi2", {
-				width:"100%",
 				percentValue:75,
 				state: sap.ui.core.ValueState.Error
 			});
@@ -48,11 +45,9 @@
 
 			// create progressIndicator
 			var oProgInd3 = new sap.m.ProgressIndicator("pi3", {
-				width:"100%",
 				height: "1.375rem",
 				percentValue:88,
 				displayValue:"0.88GB of 1GB",
-				showValue:true,
 				state: sap.ui.core.ValueState.Success
 			});
 
@@ -65,7 +60,6 @@
 				width:"50%",
 				percentValue:25,
 				displayValue:"25%",
-				showValue:true,
 				enabled:false,
 				state: sap.ui.core.ValueState.Warning
 			});
@@ -117,6 +111,29 @@
 				percentValue:49,
 				displayValue:"49%",
 				state: sap.ui.core.ValueState.Success
+			});
+
+			var label9 = new sap.m.Label({
+				text : "Progress Indicator with 39% information"
+			});
+
+			// create progressIndicator
+			var oProgInd9 = new sap.m.ProgressIndicator("pi9", {
+				width:"80%",
+				percentValue:39,
+				displayValue:"39%",
+				state: sap.ui.core.ValueState.Information
+			});
+
+			var label10 = new sap.m.Label({
+				text : "Progress Indicator without animation"
+			});
+
+			var oProgInd10 = new sap.m.ProgressIndicator("pi10", {
+				percentValue:0,
+				displayValue:"0%",
+				state: sap.ui.core.ValueState.Success,
+				displayAnimation: false
 			});
 
 			var oButton = new sap.m.Button("button", {
@@ -173,9 +190,26 @@
 				}
 			});
 
+			var oButton10 = new sap.m.Button("button_no_animation100", {
+				text:"Change PI to 100% without animation",
+				press: function(){
+					oProgInd10.setPercentValue(100);
+					oProgInd10.setDisplayValue("100%");
+				}
+			});
+
+			var oButton11 = new sap.m.Button("button_no_animation0", {
+				text:"Change PI to 0% without animation",
+				press: function(){
+					oProgInd10.setPercentValue(0);
+					oProgInd10.setDisplayValue("0%");
+				}
+			}).addStyleClass("sapUiSmallMarginEnd");
+
 			// create page
 			var page1 = new sap.m.Page("page1", {
 				title:"Progress Indicator",
+				titleLevel: "H1",
 				content: [
 					label2,
 					oProgInd2,
@@ -191,6 +225,9 @@
 					oProgInd6,
 					label7,
 					oProgInd7,
+					label9,
+					oProgInd9,
+					label10,
 					label8,
 					oProgInd8,
 					oInput,
@@ -200,7 +237,10 @@
 					oButton4,
 					oButton5,
 					oButton6,
-					oButton7
+					oButton7,
+					oProgInd10,
+					oButton11,
+					oButton10
 				]
 			});
 
@@ -210,6 +250,6 @@
 		</script>
 
 	</head>
-	<body id="body" class="sapUiBody" role="application">
+	<body id="body" class="sapUiBody">
 	</body>
 </html>

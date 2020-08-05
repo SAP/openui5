@@ -3,13 +3,15 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterType",
-	"sap/ui/model/json/JSONModel"
-], function (jQuery, Controller, XMLView, Filter, FilterType, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/base/util/UriParameters",
+	"sap/base/security/encodeXML"
+], function (jQuery, Controller, XMLView, Filter, FilterType, JSONModel, UriParameters, encodeXML) {
 	"use strict";
 
 	// lower case package names, UpperCamelCase class name, optional lowerCamelCase method name
@@ -62,6 +64,22 @@ sap.ui.define([
 		.blanket-source .miss span.highlight {\
 			background-color: #e6c3c7\
 		}\
+		.coverageSummary {\
+			background-color: #0D3349;\
+			border-radius: 0 0 5px 5px;\
+			font-family: Calibri, Helvetica, Arial, sans-serif;\
+			font-size: 1.5em;\
+			font-weight: 400;\
+			line-height: 1em;\
+			padding: 0.5em 0 0.5em 1em;\
+		}\
+		.coverageSummary a {\
+			color: #C6E746;\
+		}\
+		.coverageSummary a:hover,\
+		.coverageSummary a:focus {\
+			color: #FFFFFF;\
+		}\
 	';
 
 	Controller.extend("sap.ui.test.BlanketReporterUI", {
@@ -113,7 +131,7 @@ sap.ui.define([
 					+ "</div>");
 				oHtml.setVisible(true);
 			} else {
-				oHtml.setContent("<div/>");
+				oHtml.setContent("<div></div>");
 			}
 		}
 	});
@@ -162,7 +180,7 @@ sap.ui.define([
 
 		// highlight given source code according to current level; updates iLastHighlightedLine
 		function highlight(iLine, sSourceCode) {
-			sSourceCode = jQuery.sap.encodeHTML(sSourceCode);
+			sSourceCode = encodeXML(sSourceCode);
 			if (sSourceCode && iHighlightLevel) {
 				iLastHighlightedLine = iLine;
 				sSourceCode = "<span class='highlight'>" + sSourceCode + "</span>";
@@ -199,12 +217,9 @@ sap.ui.define([
 			iLinesOfContext = Infinity;
 		}
 		return aSourceLines.reduce(function (sHtml, sSourceLine, iLine) {
-			var iNextHighlightedLine = aPositions.length && aPositions[0].line || Infinity,
-				iNextHitsLine = bShowHits
-					? aHits.findIndex(function (iHits, i) {
-						return iHits !== undefined && i >= iLine;
-					})
-					: aHits.indexOf(0, iLine);
+			var i,
+				iNextHighlightedLine = aPositions.length && aPositions[0].line || Infinity,
+				iNextHitsLine;
 
 			function show() {
 				sHtml += "<div";
@@ -224,10 +239,20 @@ sap.ui.define([
 					+ "</div>";
 			}
 
+			if (bShowHits) {
+				for (i = iLine; i < aHits.length; i += 1) {
+					if (aHits[i] !== undefined) {
+						iNextHitsLine = i;
+						break;
+					}
+				}
+			} else {
+				iNextHitsLine = aHits.indexOf(0, iLine);
+			}
+
 			if (iNextHitsLine >= 0 && iNextHitsLine < iNextHighlightedLine) {
 				iNextHighlightedLine = iNextHitsLine; // treat hit/missed lines as highlighted
 			}
-			iLine += 1; // 0-based JS array index --> 1-based Position class
 			// show iLinesOfContext before and after highlighting, do not skip a single line
 			if (iLine >= iNextHighlightedLine - iLinesOfContext
 				|| iLine <= iLastHighlightedLine + iLinesOfContext
@@ -239,22 +264,6 @@ sap.ui.define([
 			}
 			return sHtml;
 		}, "") + getSkippedHtml();
-	}
-
-	/**
-	 * Returns the element's attribute as an integer.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {string} sAttributeName The attribute name
-	 * @param {number} iDefault The default value
-	 * @returns {number} The attribute value or the default value if the attribute value is not a
-	 *   positive number
-	 */
-	function getAttributeAsInteger(oElement, sAttributeName, iDefault) {
-		var iValue = parseInt(oElement.getAttribute(sAttributeName), 10);
-
-		// Note: if the value is not a number, the result is NaN which is not greater than 0
-		return iValue > 0 ? iValue : iDefault;
 	}
 
 	/**
@@ -410,31 +419,16 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates the view.
+	 * Creates the view and places it at the given DIV.
 	 *
 	 * @param {sap.ui.model.json.JSONModel} oModel The model
-	 * @returns {sap.ui.core.mvc.XMLView} The view
+	 * @param {object} oDiv Some <div>
 	 */
-	function createView(oModel) {
-		return sap.ui.xmlview({viewName: "sap.ui.test.BlanketReporterUI", models: oModel});
-	}
-
-	/**
-	 * Places the view into a new <div> at the end of the body.
-	 *
-	 * @param {sap.ui.core.mvc.XMLView} oView The view
-	 */
-	function placeView(oView) {
-		var oDiv = document.createElement("div"),
-			oStyle = document.createElement("style");
-
-		oDiv.setAttribute("id", "blanket-view");
-		oDiv.setAttribute("class", "sapUiBody");
-		document.body.appendChild(oDiv);
-		oView.placeAt(oDiv);
-
-		oStyle.innerHTML = sStyle;
-		document.head.appendChild(oStyle);
+	function createViewAndPlaceAt(oModel, oDiv) {
+		XMLView.create({viewName: "sap.ui.test.BlanketReporterUI", models: oModel})
+			.then(function (oView) {
+				oView.placeAt(oDiv);
+			});
 	}
 
 	function convertToFile(sModule) {
@@ -445,16 +439,75 @@ sap.ui.define([
 			: jQuery.sap.getResourceName(aMatches[1]);
 	}
 
-	return function (oScript, fnGetTestedModules, oCoverageData) {
-		var iLinesOfContext, aTestedModules, iThreshold;
+	/**
+	 * Creates a new <div> at the end of the body and includes our style.
+	 *
+	 * @returns {object}
+	 *   The new <div>
+	 */
+	function getDiv() {
+		var oDiv = document.createElement("div"),
+			oStyle = document.createElement("style");
+
+		oDiv.setAttribute("id", "blanket-view");
+		oDiv.setAttribute("class", "sapUiBody");
+		document.body.appendChild(oDiv);
+
+		oStyle.innerHTML = sStyle;
+		document.head.appendChild(oStyle);
+
+		return oDiv;
+	}
+
+	return function (iLinesOfContext, iThreshold, fnGetTestedModules, oCoverageData) {
+		var oDiv, oModel, aTestedModules;
+
+		/*
+		 * Tells whether the given module corresponds 1:1 to a single class.
+		 *
+		 * @param {string} sModule
+		 * @return {boolean}
+		 */
+		function isSingleClass(sModule) {
+			var aMatches = rModule.exec(sModule);
+
+			return aMatches && !aMatches[2];
+		}
 
 		// Sometimes, when refreshing, this function is called twice. Ignore the 2nd call.
 		if (!document.getElementById("blanket-view")) {
-			iLinesOfContext = getAttributeAsInteger(oScript, "data-lines-of-context", 3);
-			iThreshold = Math.min(getAttributeAsInteger(oScript, "data-threshold", 0), 100);
 			aTestedModules = fnGetTestedModules();
-			placeView(createView(createModel(oCoverageData, iLinesOfContext, iThreshold,
-				aTestedModules && aTestedModules.map(convertToFile))));
+			oModel = createModel(oCoverageData, iLinesOfContext, iThreshold,
+				aTestedModules && aTestedModules.map(convertToFile));
+			oDiv = getDiv();
+
+			if (UriParameters.fromQuery(window.location.search).get("testId")
+				|| aTestedModules && !aTestedModules.every(isSingleClass)) {
+				// do not fail due to coverage
+				createViewAndPlaceAt(oModel, oDiv);
+				return;
+			}
+
+			// make QUnit fail (indirectly) and show UI
+			if (oModel.getProperty("/lines/coverage") < iThreshold) {
+				createViewAndPlaceAt(oModel, oDiv);
+				throw new Error("Line coverage too low! "
+					+ oModel.getProperty("/lines/coverage") + " < " + iThreshold);
+			}
+			if (oModel.getProperty("/branches/coverage") < iThreshold) {
+				createViewAndPlaceAt(oModel, oDiv);
+				throw new Error("Branch coverage too low! "
+					+ oModel.getProperty("/branches/coverage") + " < " + iThreshold);
+			}
+
+			oDiv.setAttribute("class", "coverageSummary");
+			oDiv.innerHTML = '<a href="" id="coverage">Blanket Code Coverage: OK</a>';
+			jQuery("#coverage").one("click", function (oMouseEvent) {
+				oMouseEvent.preventDefault();
+				jQuery(oDiv).fadeOut(function () {
+					createViewAndPlaceAt(oModel, getDiv());
+				});
+			});
 		}
 	};
 }, /* bExport= */ false);

@@ -6,10 +6,10 @@ sap.ui.define(['sap/ui/commons/Button', 'sap/ui/core/Fragment'],
 
 		createContent : function(oController) {
 			var aContent = [ new Button(this.createId("customerButton1"),{
-				text : "Hello World",
+				text : "Hello World"
 
 			}), new Button(this.createId("customerButton2"),{
-				text : "Hello Button",
+				text : "Hello Button"
 			}) ];
 			return aContent;
 		}

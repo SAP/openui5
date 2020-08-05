@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>Accessibility Test Page - sap.ui.core.TooltipBase</title>
+
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-libs="sap.m,sap.ui.commons">
+
+</script>
+
+<style>
+	body {
+		margin: 10px !important;
+	}
+</style>
+
+<script>
+	sap.ui.require(["sap/m/Button", "sap/ui/commons/RichTooltip"], function(Button, RichTooltip) {
+		var oButton = new Button({
+			icon: "sap-icon://syringe",
+			text: "Rich Fuel Injection",
+			tooltip: new RichTooltip({
+				title: "Title",
+				text: "Text"
+			})
+		});
+
+		oButton.placeAt("uiarea0");
+	});
+</script>
+</head>
+<body class="sapUiBody">
+	<h1 id="header">
+		ACC Test Page for
+		<code>sap.ui.core.TooltipBase</code>
+	</h1>
+
+	<span>sap.m.Button with RichTooltip</span>
+	<div id="uiarea0"></div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Action Select - sap.m</title>
+	<style type="text/css">
+	</style>
+	<script src="shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+            src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+	</script>
+	<script>
+
+		var oApp = new sap.m.App("myApp", {
+					initialPage:"page1"
+			}),
+            oActionSelect0 = new sap.m.ActionSelect("default_sample",{	// the selected item is not specified, the first one will be selected
+                width: "33%",
+                items: [
+                    oItem0 = new sap.ui.core.Item({
+                        key: "0",
+                        text: "item 0"
+                    }),
+                    oItem1 = new sap.ui.core.Item({
+                        key: "1",
+                        text: "item 1"
+                    }),
+                ],
+                buttons: [
+                    oButton0 = new sap.m.Button({
+                        text: "Action 1",
+                        enabled: false
+                    }),
+                    oButton1 = new sap.m.Button({
+                        text: "Action 2",
+                    })
+                ]
+            }),
+            oLabel0 = new sap.m.Label({
+                text: "ActionSelect with type Default:",
+                labelFor: oActionSelect0
+            }),
+            oActionSelect1 = new sap.m.ActionSelect("icon_only",{	// the selected item is not specified, the first one will be selected
+                type: sap.m.SelectType.IconOnly,
+                icon: sap.ui.core.IconPool.getIconURI("filter"),
+                autoAdjustWidth: true,
+                width: "10rem",
+                items: [
+                    oItem18 = new sap.ui.core.Item({
+                        key: "0",
+                        text: "item 0"
+                    }),
+                    oItem19 = new sap.ui.core.Item({
+                        key: "1",
+                        text: "item 1"
+                    }),
+                    oItem20 = new sap.ui.core.Item({
+                        key: "2",
+                        text: "item 2"
+                    })
+                ],
+                buttons: [
+                    oButton5 = new sap.m.Button({
+                        text: "Action 1"
+                    }),
+                    oButton6 = new sap.m.Button({
+                        text: "Action 2"
+                    })
+                ]
+            }),
+            oLabel4 = new sap.m.Label({
+                text: "ActionSelect with type IconOnly:",
+                labelFor: oActionSelect1
+            }),
+            bCompactMode = new sap.m.CheckBox("compactMode", {
+                text: "Compact Mode",
+                selected : false,
+                select : function() {
+                    $("body").toggleClass("sapUiSizeCompact");
+                }
+            }),
+            oPage = new sap.m.Page("page1", {
+                title:  "ActionSelect Accessibility Test Page",
+                titleLevel: sap.ui.core.TitleLevel.H1,
+                content: [
+                    new sap.ui.layout.Grid({
+                        content: [
+                            new sap.m.VBox({items: [oLabel0, oActionSelect0]}),
+                            new sap.m.VBox({items: [oLabel4, oActionSelect1]})
+                        ]
+                    })
+                ],
+                footer: new sap.m.Toolbar({
+                            content: [
+                                new sap.m.ToolbarSpacer(),
+                                bCompactMode
+                            ]
+                        })
+            });
+
+		oApp.addPage(oPage);
+		oApp.placeAt("body");
+	</script>
+</head>
+<body id="body" class="sapUiBody"></body>
+</html>

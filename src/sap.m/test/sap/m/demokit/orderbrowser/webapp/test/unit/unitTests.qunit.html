@@ -1,34 +1,27 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Unit tests for Order Browser</title>
+		<title>Unit tests for Browse Orders</title>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge'/>
 		<meta charset="UTF-8">
 
 		<script id="sap-ui-bootstrap"
 			src="../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m"
 			data-sap-ui-resourceroots='{
-				"sap/ui/demo/orderbrowser": "../../",
-				"test/unit": "./"
-			}'>
+				"sap/ui/demo/orderbrowser": "../../"
+			}'
+			data-sap-ui-async="true">
 		</script>
 
-		<script>
-			jQuery.sap.require("sap.ui.qunit.qunit-css");
-			jQuery.sap.require("sap.ui.thirdparty.qunit");
-			jQuery.sap.require("sap.ui.qunit.qunit-junit");
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		<link rel="stylesheet" type="text/css" href="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
 
-			QUnit.config.autostart = false;
+		<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-			sap.ui.require(
-					["test/unit/allTests"],
-					function() {
-						QUnit.start();
-					}
-			);
-		</script>
+		<script src="unitTests.qunit.js"></script>
 
 	</head>
 	<body>

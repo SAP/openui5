@@ -2,7 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/m/semantic/SemanticConfiguration", "sap/ui/base/ManagedObject", "sap/ui/core/Element"], function (jQuery, SemanticConfiguration, ManagedObject, Element) {
+sap.ui.define([
+	"sap/m/semantic/SemanticConfiguration",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Element",
+	"sap/ui/thirdparty/jquery"
+], function(SemanticConfiguration, ManagedObject, Element, jQuery) {
 	"use strict";
 
 	/**
@@ -142,7 +147,7 @@ sap.ui.define(["jquery.sap.global", "sap/m/semantic/SemanticConfiguration", "sap
 	/**
 	 * Implementation of a commonly used function that adapts <code>sap.ui.core.Element</code>
 	 * to provide DOM reference for opening popovers.
-	 * @returns The DOM reference of the actual wrapped control
+	 * @returns {Element} The DOM reference of the actual wrapped control
 	 * @public
 	 */
 	SemanticControl.prototype.getPopupAnchorDomRef = function() {

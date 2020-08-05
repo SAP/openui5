@@ -1,34 +1,40 @@
 /**
 	This class is being assigned to the original Fiori Header Toolbar when RTA Toolbar shows
  */
+@_sap_ui_rta_Toolbar_Fiori_TextColor: @sapUiWhite;  //#fff
+
 .sapUiRtaFioriHeaderInvisible {
 	visibility: hidden;
-	}
+}
 
 
-
-/* type: fiori */
+  /* type: fiori */
 .sapUiRtaToolbar.type_fiori {
 	transition: opacity 0.25s ease-out;
 	opacity: 0;
+
+
+	.sapMImg {
+		//padding-top: 0.375rem; //6px
+		vertical-align: middle;
+		height: 2.5rem !important; // 40px
 	}
-	.sapUiRtaToolbar.type_fiori.is_visible {
+
+	&.is_visible {
 		opacity: 1;
-		}
-
-/* color: default */
-.sapUiRtaToolbar.type_fiori.color_default {
 	}
 
-/* color: contrast */
-.sapUiRtaToolbar.type_fiori.color_contrast {
-	}
-	.sapUiRtaToolbar.type_fiori.color_contrast .sapMBtn .sapMBtnContent,
-	.sapUiRtaToolbar.type_fiori.color_contrast .sapMBtn .sapMBtnIcon {
-		text-shadow: none; /* Override shadow of `.sapMBtnInner` in sap.m */
-		color: #fff;
+	/* color: contrast */
+	&.color_contrast {
+
+		.sapMBtn .sapMBtnContent,
+		.sapMBtn .sapMBtnIcon {
+			text-shadow: none; /* Override shadow of `.sapMBtnInner` in sap.m */
+			color: @_sap_ui_rta_Toolbar_Fiori_TextColor;
 		}
-		.sapUiRtaToolbar.type_fiori.color_contrast .sapMBtn.sapMBtnDisabled,
-		.sapUiRtaToolbar.type_fiori.color_contrast .sapMBtn.sapMBtnDisabled {
+
+		.sapMBtn.sapMBtnDisabled {
 			opacity: 0.3;
-			}
+		}
+	}
+}

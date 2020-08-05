@@ -4,12 +4,10 @@
 
 // Provides class sap.ui.dt.ControlObserver.
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/dt/ManagedObjectObserver'
+	"sap/ui/dt/ManagedObjectObserver"
 ],
-function(jQuery, ManagedObjectObserver) {
+function(ManagedObjectObserver) {
 	"use strict";
-
 
 	/**
 	 * Constructor for a new ControlObserver.
@@ -44,15 +42,9 @@ function(jQuery, ManagedObjectObserver) {
 				/**
 				 * target Control to observe
 				 */
-				"target" : {
-					"type" : "sap.ui.core.Control"
+				target : {
+					type : "sap.ui.core.Control"
 				}
-			},
-			/**
-			 * Fired when the DOM of the observed control is changed
-			 */
-			events : {
-				"afterRendering" : {}
 			}
 		}
 	});
@@ -97,9 +89,10 @@ function(jQuery, ManagedObjectObserver) {
 	 * @private
 	 */
 	ControlObserver.prototype._onAfterRendering = function() {
-		this.fireAfterRendering();
-
+		this.fireModified({
+			type: "afterRendering"
+		});
 	};
 
 	return ControlObserver;
-}, /* bExport= */ true);
+});

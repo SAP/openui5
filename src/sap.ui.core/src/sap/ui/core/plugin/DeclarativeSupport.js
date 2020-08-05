@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.plugin.DeclarativeSupport
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/DeclarativeSupport'],
-	function(jQuery, Core, DeclarativeSupport1) {
+sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/DeclarativeSupport', "sap/base/Log"],
+	function(Core, DeclarativeSupport1, Log) {
 	"use strict";
 
 
@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/Declarative
 	 * @public
 	 */
 	DeclarativeSupport.prototype.startPlugin = function(oCore, bOnInit) {
-		jQuery.sap.log.info("Starting DeclarativeSupport plugin.");
+		Log.info("Starting DeclarativeSupport plugin.");
 		this.oCore = oCore;
 		this.oWindow = window;
 		DeclarativeSupport1.compile(document.body);
@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/Declarative
 	 * @public
 	 */
 	DeclarativeSupport.prototype.stopPlugin = function() {
-		jQuery.sap.log.info("Stopping DeclarativeSupport plugin.");
+		Log.info("Stopping DeclarativeSupport plugin.");
 		this.oCore = null;
 	};
 

@@ -6,4 +6,4 @@ sap.ui.define(['sap/uxap/BlockBase'], function (BlockBase) {
 	});
 
 	return BlockMailing;
-}, true);
+});

@@ -1,26 +1,19 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/core/sample/odata/v4/SalesOrders/tests/Create",
 	"sap/ui/test/opaQunit"
-], function (CreateTest, opaTest) {
-	/*global QUnit */
+], function (Helper, CreateTest, opaTest) {
 	"use strict";
 
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Create");
+	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Create", 180);
 
 	//*****************************************************************************
 	opaTest("Create, modify and delete", function (Given, When, Then) {
 
-		Given.iStartMyUIComponent({
-			componentConfig : {
-				name : "sap.ui.core.sample.odata.v4.SalesOrdersRTATest"
-			}
-		});
+		CreateTest.create(Given, When, Then, "sap.ui.core.sample.odata.v4.SalesOrdersRTATest");
 
-		CreateTest.create(Given, When, Then);
-
-		Then.iTeardownMyUIComponent();
 	});
 });

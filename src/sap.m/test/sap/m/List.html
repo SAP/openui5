@@ -16,6 +16,15 @@
 	border-radius: 12px;
 	padding: 3px 6px;
 }
+
+.SmallPaddingBegin {
+	padding-left: 1rem;
+}
+
+html[dir=rtl] .SmallPaddingBegin {
+	padding-right: 1rem;
+	padding-left: 0;
+}
 </style>
 
 <script>
@@ -54,13 +63,15 @@
 	*/
 	var listOverview = new sap.m.Page("listOverview", {
 		title : "List Overview",
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				new sap.m.Button({
 					text : "Embedded",
 					press : switchStyle
-				}) ]
+				}),
+				new sap.m.ToolbarSpacer() ]
 		})
 	});
 
@@ -105,15 +116,15 @@
 	});
 	// ================================================================================
 
-		var standardListThumb = new sap.m.Page("standardListThumb", {
+	var standardListThumb = new sap.m.Page("standardListThumb", {
 		title : "Standard List Thumb",
 		showNavButton : true,
 		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -173,8 +184,9 @@
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -208,7 +220,8 @@
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListStandardIcon) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -220,8 +233,9 @@
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -255,7 +269,8 @@
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListStandardIconA) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -267,8 +282,9 @@
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -302,7 +318,8 @@
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListStandardIconDA) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -314,8 +331,9 @@
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -349,7 +367,8 @@
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListStandardTitle) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	})
@@ -361,8 +380,9 @@
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -396,7 +416,8 @@
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListStandardNoImage) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -408,8 +429,9 @@
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -443,7 +465,8 @@
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListDisplay) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -455,8 +478,9 @@
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -490,7 +514,8 @@
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListInput) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -502,8 +527,9 @@
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -537,7 +563,8 @@
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListCustom) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -549,14 +576,16 @@
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
 					text : "Embedded",
 					press : switchStyle
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -568,32 +597,43 @@
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
 					text : "Embedded",
 					press : switchStyle
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
 
 	var selectionList = new sap.m.Page("selectionList", {
-		customHeader : new sap.m.Bar({
-			contentLeft: [ oButtonSelectionBack = new sap.m.Button('myButtonSelectionBack', {text:"Back", type:sap.m.ButtonType.Back, press:function() {app.back();}}) ],
-			contentMiddle: [ new sap.m.Label("myBarLabel", {text: "Selection List"}) ],
-			contentRight: [ new sap.m.Button('myButtonSetSelectionItem1', {text:"#1", press: setSelectionItem1}),
-							new sap.m.Button('myButtonSetSelectionItem2', {text:"#2", press: setSelectionItem2}),
-							new sap.m.Button('myButtonSetSelectionItem3', {text:"#3", press: setSelectionItem3}),
-							new sap.m.Button('myButtonSetSelectionItem4', {text:"#4", press: setSelectionItem4}),
-							new sap.m.Button('myButtonSetSelectionItem5', {text:"#5", press: setSelectionItem5}),
-							new sap.m.Button('myButtonGetSelection', {text:"Get Selection", press: getSelection2}),
-											oButtonRemoveSelection = new sap.m.Button('myButtonRemoveSelection', {text:"Remove Selection", press: removeSelection}) ]
+		title: "Selection List", //Only needed for the Dialog (see addDialogButton)
+		customHeader : new sap.m.OverflowToolbar({
+			content: [
+				oButtonSelectionBack = new sap.m.Button('myButtonSelectionBack', {text:"Back", type:sap.m.ButtonType.Back, press:function() {app.back();},
+					layoutData: new sap.m.OverflowToolbarLayoutData({group:1})}),
+				new sap.m.ToolbarSpacer(),
+				new sap.m.Label("myBarLabel", {text: "Selection List", layoutData: new sap.m.OverflowToolbarLayoutData({group:2})}),
+				new sap.m.ToolbarSpacer(),
+				new sap.m.Button('myButtonSetSelectionItem1', {text:"#1", press: setSelectionItem1, layoutData: new sap.m.OverflowToolbarLayoutData({group:3})}),
+				new sap.m.Button('myButtonSetSelectionItem2', {text:"#2", press: setSelectionItem2, layoutData: new sap.m.OverflowToolbarLayoutData({group:3})}),
+				new sap.m.Button('myButtonSetSelectionItem3', {text:"#3", press: setSelectionItem3, layoutData: new sap.m.OverflowToolbarLayoutData({group:3})}),
+				new sap.m.Button('myButtonSetSelectionItem4', {text:"#4", press: setSelectionItem4, layoutData: new sap.m.OverflowToolbarLayoutData({group:3})}),
+				new sap.m.Button('myButtonSetSelectionItem5', {text:"#5", press: setSelectionItem5, layoutData: new sap.m.OverflowToolbarLayoutData({group:3})}),
+				new sap.m.Button('myButtonGetSelection', {text:"Get Selection", press: getSelection2,
+					layoutData: new sap.m.OverflowToolbarLayoutData({group:3, priority: sap.m.OverflowToolbarPriority.AlwaysOverflow})}),
+				oButtonRemoveSelection = new sap.m.Button('myButtonRemoveSelection', {text:"Remove Selection", press: removeSelection,
+					layoutData: new sap.m.OverflowToolbarLayoutData({group:3, priority: sap.m.OverflowToolbarPriority.AlwaysOverflow})})
+			]
 		}),
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -627,7 +667,8 @@
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListSelection) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -639,8 +680,9 @@
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -670,7 +712,8 @@
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListHtml) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -682,8 +725,9 @@
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -713,7 +757,8 @@
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListNoData) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -987,6 +1032,7 @@
 			counter: 999999999,
 			selected: false,
 			info: "Info message",
+			infoState: "Information",
 			press : 'detailPage'
 		}, {
 			title : "Travel Settings",
@@ -1306,7 +1352,7 @@
 			type : sap.m.ButtonType.Reject
 		}),
 		press : handlePress
-	});
+	}).addStyleClass("SmallPaddingBegin");
 
 	var oItemTemplateHtml = new sap.m.CustomListItem({
 		unread: "{unread}",
@@ -1591,11 +1637,18 @@
 			selected: false,
 			info: "Error message",
 			infoState: "Error",
-			})
+			press : handlePress,
+			customData: [
+				new sap.ui.core.CustomData({
+					key : "xyz",
+					value: "detailPage"
+				})
+			]
+		});
 		oListStandardThumb.addItem(addedItem);
 	}});
 	var actionListItem2 = new sap.m.ActionListItem({id: "actionListItem2", text: "Add Item to Model", press: function(){
-		(oListStandardThumb.getModel()).getData().navigation[(oListStandardThumb.getModel()).getData().navigation.length] = (oListStandardThumb.getModel()).getData().navigation[0];
+		(oListStandardThumb.getModel()).getData().navigation.push(jQuery.extend({}, oListStandardThumb.getModel().getData().navigation[0]));
 		(oListStandardThumb.getModel()).setData((oListStandardThumb.getModel()).getData());
 	}});
 
@@ -1676,22 +1729,25 @@
 	}
 
 	function handlePress(e) {
-		if(this.data("xyz") && "Content pressed" != this.data("xyz") )
+		if(this.data("xyz") && "Content pressed" != this.data("xyz") && !this.getParent().data("ContainedinDialog")) {
 			app.to(this.data("xyz"));
-		else{
+		} else {
 			showPopup();
 		}
-
 	}
 
 	function showPopup(message)
 	{
 		if(!message)
 			message = "List item was tapped!";
+
+		var oMessageContent = new sap.ui.core.HTML({content:"<p>" + message + "<p>"});
+
 		var oMessageDialog1 = new sap.m.Dialog({
 			title: "Important Message",
+			ariaDescribedBy: oMessageContent,
 			content: [
-				new sap.ui.core.HTML({content:"<p>" + message + "<p>"}),
+				oMessageContent
 			],
 			leftButton:
 				new sap.m.Button({
@@ -1747,6 +1803,7 @@
 	function showDialog(oPage, oList){
 		if(!oPage._dialog){
 			var list = oList.clone();
+			list.data("ContainedinDialog", true);
 			oPage._dialog = new sap.m.Dialog({
 				title: oPage.getTitle(),
 				content: [

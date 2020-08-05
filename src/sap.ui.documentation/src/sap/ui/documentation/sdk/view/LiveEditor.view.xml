@@ -1,0 +1,43 @@
+<mvc:View
+        controllerName="sap.ui.documentation.sdk.controller.LiveEditor"
+        xmlns="sap.m"
+        xmlns:l="sap.ui.layout"
+        xmlns:core="sap.ui.core"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:custom="sap.ui.documentation"
+        xmlns:editor="sap.ui.codeeditor"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        class="liveEditor">
+    <html:div class="editorWrapper">
+        <html:div>
+            <Title text="{i18n>LIVE_EDITOR_TITLE}"/>
+            <IconTabHeader selectedKey="{viewModel>/selectedFileName}" select="onFileSwitch">
+                <items>
+                    <IconTabFilter text="App.view.xml" key="App.view.xml"/>
+                    <IconTabFilter text="App.controller.js" key="App.controller.js"/>
+                    <IconTabFilter text="index.js" key="index.js"/>
+                    <IconTabFilter text="index.html" key="index.html"/>
+                </items>
+            </IconTabHeader>
+            <html:div class="editorSrcWindow">
+                <editor:CodeEditor id="srcEditor"
+                                   editable="{= ${viewModel>/selectedFileType} !== 'text' }"
+                                   value="{viewModel>/selectedFileContent}"
+                                   type="{viewModel>/selectedFileType}"
+                                   liveChange="onSrcLiveChange"/>
+            </html:div>
+        </html:div>
+
+        <VBox id="resultBox">
+            <Title text="{i18n>LIVE_EDITOR_RESULT}"/>
+            <Toolbar style="Clear" class="editorToolbar">
+                <Button text="{i18n>LIVE_EDITOR_PREVIEW_BTN}"
+                        press="requestExecuteCurrentSrc"
+                        enabled="{= !${viewModel>/autoPreview}}"/>
+                <CheckBox text="{i18n>LIVE_EDITOR_LIVE_PREVIEW_TEXT}"
+                          selected="{viewModel>/autoPreview}"/>
+            </Toolbar>
+            <core:HTML id="outputWindowWrapper" content="&#x3C;div&#x3E; &#x3C;/div&#x3E;"/>
+        </VBox>
+    </html:div>
+</mvc:View>

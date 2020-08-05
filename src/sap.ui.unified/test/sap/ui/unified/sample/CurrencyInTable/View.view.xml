@@ -3,27 +3,50 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:u="sap.ui.unified"
 	xmlns="sap.m">
-        <Table id="idProductsTable"
-            items="{
-                path: '/modelData'
-            }">
-            <columns>
-                <Column>
-                    <Text text="Products" />
-                </Column>
-                <Column hAlign="Right">
-                    <Text text="Price" />
-                </Column>
-            </columns>
-            <items>
-                <ColumnListItem>
-                    <cells>
-                        <ObjectIdentifier
-                            text="{product}"/>
-                        <u:Currency
-                                value="{price}"  currency="EUR" maxPrecision="0" useSymbol="false" />
-                    </cells>
-                </ColumnListItem>
-            </items>
-        </Table>
+	<Table id="idProductsTable"
+		items="{
+			path: '/modelData'
+		}">
+		<columns>
+			<Column id="exapnseColumn" hAlign="Start">
+				<Text text="Expense"/>
+			</Column>
+			<Column id="transactionAmountColumn" hAlign="End">
+				<Text text="Transaction amount" />
+			</Column>
+			<Column id="exchangeRateColumn" hAlign="End">
+				<Text text="Exchange rate"/>
+			</Column>
+			<Column id="amountColumn" hAlign="End">
+				<Text text="Amount"/>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<ObjectIdentifier
+						text="{expense}"/>
+					<u:Currency
+						value="{transactionAmount/size}" currency="{transactionAmount/currency}" maxPrecision="2" useSymbol="false"/>
+					<ObjectNumber
+						number="{ path:'exchangeRate',
+							type: 'sap.ui.model.type.Float',
+							formatOptions: {
+								minFractionDigits: 5,
+								maxFractionDigits: 5
+							}
+						}"/>
+					<ObjectNumber
+						number="{ path: 'amount',
+							type: 'sap.ui.model.type.Float',
+							formatOptions: {
+								minFractionDigits: 2,
+								maxFractionDigits: 2
+							}
+						}"
+						unit="EUR"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
 </mvc:View>

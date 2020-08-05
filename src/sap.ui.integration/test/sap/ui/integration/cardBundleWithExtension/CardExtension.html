@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>sap.ui.integration.Extension Test</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.f, sap.ui.integration"
+	></script>
+
+	<script>
+		var Log = sap.ui.requireSync("sap/base/Log");
+
+		function fnCardAction(event) {
+
+			var type = event.getParameter('type'),
+				actionSource = event.getParameter('actionSource'),
+				parameters = event.getParameter('parameters');
+
+			Log.error("Action handled in the Card:" + JSON.stringify(event.getParameters().parameters));
+		}
+
+		var oHost = new sap.ui.integration.Host({
+			actions: [{
+					type: 'Navigation',
+					url: "http://www.sap.com",
+					target: "_blank",
+					text: 'AutoOpen - SAP website - Host'
+				},
+				{
+					type: 'Navigation',
+					parameters: {
+						url: "http://www.sap.com",
+						target: "_blank"
+					},
+					text: 'Navigation - SAP website - Host'
+				},
+			],
+			action: function (oEvent) {
+				var parameters = oEvent.getParameter('parameters');
+				Log.error("Action handled in the Host:" + JSON.stringify(oEvent.getParameters().parameters));
+			},
+			resolveDestination: function (sDestinationName) {
+				if (sDestinationName === "Northwind") {
+					return "https://services.odata.org/V3/Northwind/Northwind.svc";
+				}
+			}
+		});
+
+		var card1 = new sap.ui.integration.widgets.Card({
+			id: 'card1',
+			manifest: "./bundle/cardWithExtension.manifest.json",
+			host: oHost,
+			layoutData: new sap.f.GridContainerItemLayoutData({
+				columns: 4
+			}),
+			action: fnCardAction
+		});
+
+		var cardContainer = new sap.f.GridContainer({
+			items: [
+				card1
+			]
+		});
+
+		cardContainer.placeAt("preview");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="preview">
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.LinkSubtle",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.LinkSubtle.Link",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Link.view.xml",
+					"Link.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

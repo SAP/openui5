@@ -13,11 +13,11 @@
 			}
 		}">
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<Title text="Products" level="H2"/>
 				<ToolbarSpacer></ToolbarSpacer>
 				<Button	icon="sap-icon://download" press="onDataExport" />
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<columns>
 			<Column

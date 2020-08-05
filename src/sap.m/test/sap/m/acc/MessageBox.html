@@ -11,8 +11,16 @@
 	<script>
 		jQuery.sap.require("sap.m.MessageBox");
 
+		var bCompactMode = new sap.m.CheckBox("compactMode", {
+                text: "Compact Mode",
+                selected : false,
+                select : function() {
+                    $("body").toggleClass("sapUiSizeCompact");
+                }
+		});
+
 		var oPage = new sap.m.Page("oPage", {
-			title: "sap.m.MessageBox",
+			title: "MessageBox Accessibility Test Page",
 			content: [
 				new sap.m.Button({
 					text: "Confirm",
@@ -88,7 +96,13 @@
 						);
 					}
 				})
-			]
+			],
+			footer: new sap.m.Toolbar({
+                            content: [
+                                new sap.m.ToolbarSpacer(),
+                                bCompactMode
+                            ]
+                    })
 		});
 
 		var app = new sap.m.App("myApp", {initialPage: "oPage"});
@@ -96,7 +110,7 @@
 		app.placeAt('content');
 	</script>
 </head>
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 <div id="content"></div>
 </body>
 </html>

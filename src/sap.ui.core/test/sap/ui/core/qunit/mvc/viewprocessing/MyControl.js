@@ -1,7 +1,8 @@
 /**
- * Control which does not return its class
+ * Control which ...
  */
-sap.ui.define(['sap/ui/core/Control', './MyGlobal'], function(Control, MyGlobal){
+sap.ui.define(['sap/ui/core/Control', './MyGlobal'], function(Control, MyGlobal) {
+	"use strict";
 
 	var MyControl = Control.extend("sap.ui.core.qunit.mvc.viewprocessing.MyControl", {
 		constructor: function(sId, mSettings) {

@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.uxap.ObjectPage</title>
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout,sap.ui.table">
+	</script>
+
+
+	<style>
+		footer {
+			z-index: 1001;
+		}
+	</style>
+
+
+	<!-- simple empty div -->
+	<script id="view1" type="sapui5/xmlview">
+		<core:View
+				xmlns="sap.uxap"
+				xmlns:core="sap.ui.core"
+				xmlns:layout="sap.ui.layout"
+				xmlns:m="sap.m"
+				xmlns:f="sap.ui.layout.form"
+				height="100%">
+			<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="false" showFooter="true" useIconTabBar="true" showHeaderContent="true" alwaysShowContentHeader="false">
+				<headerTitle>
+					<ObjectPageHeader id="headerForTest"
+									  headerDesign="Light"
+									  objectTitle="Long title that wraps and goes over more lines"
+									  showTitleSelector="true"
+									  titleSelectorPress="handleTitleSelectorPress"
+									  showMarkers="true"
+									  markFavorite="true"
+									  markLocked="true"
+									  markFlagged="true"
+									  markLockedPress="handleMarkLockedPress"
+									  objectSubtitle="Long subtitle that wraps and goes over more lines"
+									  objectImageShape="Circle"
+									  objectImageURI="./images/imageID_275314.png">
+						<actions>
+						    <ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized" id="btnToggleFooter"/>
+						    <ObjectPageHeaderActionButton text="Toggle UseIconTabBar" hideIcon="true" hideText="false" type="Emphasized" id="btnToggleUseIconTabBar"/>
+							<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" importance="Low"/>
+						</actions>
+						<breadCrumbsLinks>
+							<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
+							<m:Link text="Page 2 long link" press="handleLink2Press"/>
+						</breadCrumbsLinks>
+					</ObjectPageHeader>
+				</headerTitle>
+				<headerContent>
+					<m:Text width="200px"
+							text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+				</headerContent>
+				<sections>
+					<ObjectPageSection id="section1" title="table with 100% height">
+						<subSections>
+							<ObjectPageSubSection id="section1_SS1" title="" class="sapUxAPObjectPageSubSectionFitContainer">
+								<blocks>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+					<ObjectPageSection title="2 subsections">
+						<subSections>
+							<ObjectPageSubSection title="Connect">
+								<blocks>
+									<f:SimpleForm labelSpanL="4" labelSpanM="4"
+													labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+													maxContainerCols="2" layout="ResponsiveLayout">
+										<core:Title text="Main Payment Method"/>
+										<m:Label text="Bank Transfer"/>
+										<layout:VerticalLayout>
+											<m:Text text="Sparkasse Heimfeld, Germany"/>
+											<m:Text text="Account 458784545"/>
+										</layout:VerticalLayout>
+									</f:SimpleForm>
+									<f:SimpleForm labelSpanL="4" labelSpanM="4"
+													  labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+													  maxContainerCols="2" layout="ResponsiveLayout">
+										<core:Title text="Payment method for Expenses"/>
+										<m:Label text="Extra Travel Expenses"/>
+										<m:Text text="Cash 100 USD"/>
+									</f:SimpleForm>
+								</blocks>
+							</ObjectPageSubSection>
+							<ObjectPageSubSection id="paymentSubSection" title="Payment information">
+								<blocks>
+									<f:SimpleForm labelSpanL="4" labelSpanM="4"
+													labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+													maxContainerCols="2" layout="ResponsiveGridLayout"
+													width="100%">
+										<core:Title text="Termination information"/>
+										<m:Label text="Ok to return"/>
+										<m:Text text="No"/>
+										<m:Label text="Regret Termination"/>
+										<m:Text text="Yes"/>
+									</f:SimpleForm>
+								</blocks>
+								<moreBlocks>
+									<f:SimpleForm labelSpanL="4" labelSpanM="4"
+													labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+													maxContainerCols="2"
+										layout="ResponsiveGridLayout"
+										width="100%">
+										<m:Label text="Start Date"/>
+										<m:Text text="Jan 01, 2001"/>
+										<m:Label text="End Date"/>
+										<m:Text text="Jun 30, 2014"/>
+										<m:Label text="Last Date Worked"/>
+										<m:Text text="Jun 01, 2014"/>
+										<m:Label text="Payroll End Date"/>
+										<m:Text text="Jun 01, 2014"/>
+									</f:SimpleForm>
+								</moreBlocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+					<ObjectPageSection title="1 form">
+						<subSections>
+							<ObjectPageSubSection title="Connect" class="sapUxAPObjectPageSubSectionFitContainer">
+								<blocks>
+									<core:HTML content="&lt;div style=&quot;border: 1px solid;height:1000px&quot;&gt;&lt;ul&gt;&lt;li&gt;this is simple block with content that requires scroll (51 lines) AND fitContainer ENABLED &lt;/li&gt;&lt;li&gt;=> content that does not fit the container is cut to prevent overlap with any succeeding section content&lt;/li&gt;&lt;li&gt;1&lt;/li&gt;&lt;li&gt;2&lt;/li&gt;&lt;li&gt;3&lt;/li&gt;&lt;li&gt;4&lt;/li&gt;&lt;li&gt;5&lt;/li&gt;&lt;li&gt;6&lt;/li&gt;&lt;li&gt;7&lt;/li&gt;&lt;li&gt;8&lt;/li&gt;&lt;li&gt;9&lt;/li&gt;&lt;li&gt;10&lt;/li&gt;&lt;li&gt;1&lt;/li&gt;&lt;li&gt;2&lt;/li&gt;&lt;li&gt;3&lt;/li&gt;&lt;li&gt;4&lt;/li&gt;&lt;li&gt;5&lt;/li&gt;&lt;li&gt;6&lt;/li&gt;&lt;li&gt;7&lt;/li&gt;&lt;li&gt;8&lt;/li&gt;&lt;li&gt;9&lt;/li&gt;&lt;li&gt;10&lt;/li&gt;&lt;li&gt;1&lt;/li&gt;&lt;li&gt;2&lt;/li&gt;&lt;li&gt;3&lt;/li&gt;&lt;li&gt;4&lt;/li&gt;&lt;li&gt;5&lt;/li&gt;&lt;li&gt;6&lt;/li&gt;&lt;li&gt;7&lt;/li&gt;&lt;li&gt;8&lt;/li&gt;&lt;li&gt;9&lt;/li&gt;&lt;li&gt;10&lt;/li&gt;&lt;li&gt;1&lt;/li&gt;&lt;li&gt;2&lt;/li&gt;&lt;li&gt;3&lt;/li&gt;&lt;li&gt;4&lt;/li&gt;&lt;li&gt;5&lt;/li&gt;&lt;li&gt;6&lt;/li&gt;&lt;li&gt;7&lt;/li&gt;&lt;li&gt;8&lt;/li&gt;&lt;li&gt;9&lt;/li&gt;&lt;li&gt;10&lt;/li&gt;&lt;li&gt;1&lt;/li&gt;&lt;li&gt;2&lt;/li&gt;&lt;li&gt;3&lt;/li&gt;&lt;li&gt;4&lt;/li&gt;&lt;li&gt;5&lt;/li&gt;&lt;li&gt;6&lt;/li&gt;&lt;li&gt;7&lt;/li&gt;&lt;li&gt;8&lt;/li&gt;&lt;li&gt;9&lt;/li&gt;&lt;li&gt;10&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;"/>
+								</blocks>
+
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+				</sections>
+				<footer>
+					<m:OverflowToolbar>
+						<m:ToolbarSpacer />
+						<m:Button type="Accept" text="Accept"/>
+						<m:Button type="Reject" text="Reject"/>
+					</m:OverflowToolbar>
+				</footer>
+			</ObjectPageLayout>
+		</core:View>
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<script>
+    sap.ui.define([
+            "jquery.sap.global",
+            "sap/m/App",
+            "sap/m/Page"
+        ],
+        function (jQuery, App, Page) {
+            "use strict";
+
+            var oApp = new App(),
+                myView = sap.ui.xmlview({viewContent:jQuery('#view1').html()}),
+                btnToggleFooter = myView.byId("btnToggleFooter"),
+                btnToggleUseIconTabBar = myView.byId("btnToggleUseIconTabBar"),
+                oObjectPage = myView.byId("ObjectPageLayout"),
+                aData = [],
+                o,
+                oModel;
+
+            for (var i = 1; i < 20; i++) {
+                o = {};
+                for (var b = 1; b < 6; b++) {
+                    o["text" + b] = "test" + i;
+                }
+                aData.push(o);
+            }
+            oModel = new sap.ui.model.json.JSONModel();
+            oModel.setProperty("/rows", aData);
+
+            var oTable1 = new sap.ui.table.Table("testUITable",{
+                rows:"{model>/rows}",
+                visibleRowCountMode: "Auto",
+                minAutoRowCount: 2,
+
+            });
+            oTable1.setModel(oModel,"model");
+
+            oTable1.addColumn(new sap.ui.table.Column({
+                label: "col01",
+                autoResizable: true,
+                template: new sap.m.Text({
+                    text:"{model>text1}"
+                })
+            }));
+
+            oTable1.addColumn(new sap.ui.table.Column({
+                label: "col02",
+                autoResizable: true,
+                template: new sap.m.Text({
+                    text:"{model>text2}"
+                })
+            }));
+            oTable1.addColumn(new sap.ui.table.Column({
+                label: "col03",
+                autoResizable: true,
+                template: new sap.m.Text({
+                    text:"{model>text3}"
+                })
+            }));
+
+            myView.byId("section1_SS1").addBlock(oTable1);
+
+
+            btnToggleFooter.setEnabled(oObjectPage.getUseIconTabBar());
+            btnToggleFooter.attachPress(function() {
+                oObjectPage.setShowFooter(!oObjectPage.getShowFooter());
+            });
+
+
+            btnToggleUseIconTabBar.attachPress(function() {
+                oObjectPage.setUseIconTabBar(!oObjectPage.getUseIconTabBar());
+            });
+
+            oApp.addPage(new Page({
+                title: "ObjectPage",
+                content: [myView]
+            })).placeAt("content");
+    });
+
+</script>
+<div id="content"></div>
+</body>
+</html>

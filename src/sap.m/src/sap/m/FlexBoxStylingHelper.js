@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap', 'sap/ui/Device'],
-	function(jQuery, FlexBoxCssPropertyMap, Device) {
+sap.ui.define(['./FlexBoxCssPropertyMap', 'sap/ui/Device'],
+	function(FlexBoxCssPropertyMap, Device) {
 	"use strict";
 
 	/**
@@ -38,14 +38,12 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap', 'sap/ui/Device'],
 			FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "flex-grow", sGrowFactor);
 		}
 
-		if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {
-			if (typeof sShrinkFactor !== 'undefined') {
-				FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "flex-shrink", sShrinkFactor);
-			}
+		if (typeof sShrinkFactor !== 'undefined') {
+			FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "flex-shrink", sShrinkFactor);
+		}
 
-			if (typeof sBaseSize !== 'undefined') {
-				FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "flex-basis", sBaseSize);
-			}
+		if (typeof sBaseSize !== 'undefined') {
+			FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "flex-basis", sBaseSize);
 		}
 
 		if (typeof sMinHeight !== 'undefined') {
@@ -74,80 +72,11 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap', 'sap/ui/Device'],
 		if (typeof (sValue) === "string") {
 			// Convert camel-case to lower-case and dashes
 			sValue = sValue.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+		} else if (typeof (sValue) === "number") {
+			sValue = sValue.toString();
 		}
 
-		if (jQuery.support.flexBoxPrefixed) {
-			if (Device.browser.webkit) {
-				this.sVendorPrefix = "-webkit-";
-			} else if (Device.browser.mozilla) {
-				this.sVendorPrefix = "-moz-";
-			} else if (Device.browser.internet_explorer) {
-				this.sVendorPrefix = "-ms-";
-			}
-		} else {
-			this.sVendorPrefix = "";
-		}
-
-		// Choose flex box styling method
-		if (jQuery.support.newFlexBoxLayout || ["min-height", "max-height", "min-width", "max-width"].indexOf(sProperty) !== -1) {
-			// New spec
-			FlexBoxStylingHelper.writeStyle(oRm, oLayoutData, sProperty, sValue);
-		} else if (jQuery.support.flexBoxLayout || jQuery.support.ie10FlexBoxLayout) {
-			// Old spec
-			FlexBoxStylingHelper.setOldSpecStyle(oRm, oLayoutData, sProperty, sValue);
-		}
-	};
-
-	/**
-	 * Sets style for the OLD or the IE10 flex box spec to the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.FlexItemData} oLayoutData an object representation of the layout data
-	 * @param {string} sProperty name of the property
-	 * @param {string} sValue value of the property
-	 */
-	FlexBoxStylingHelper.setOldSpecStyle = function(oRm, oLayoutData, sProperty, sValue) {
-		// Choose specification
-		var sSpec = "";
-		if (this.sVendorPrefix == "-ms-") {
-			sSpec = "specie10"; // IE10 specification
-		} else {
-			sSpec = "spec0907";	// old specification
-		}
-
-		// Nothing to do if final standard is supported or property doesn't exist in this spec or is the same as standard
-		// Else map to old property
-		if (FlexBoxCssPropertyMap[sSpec][sProperty] !== null && FlexBoxCssPropertyMap[sSpec][sProperty] !== "<idem>") {
-			// Prepare mapped properties and values
-			var mLegacyMap = null;
-			if (typeof (FlexBoxCssPropertyMap[sSpec][sProperty]) === "object") {
-				if (FlexBoxCssPropertyMap[sSpec][sProperty]["<number>"]) {
-					mLegacyMap = {};
-					for (var key in FlexBoxCssPropertyMap[sSpec][sProperty]["<number>"]) {
-						// Check if the target is also a number, otherwise assume it's a literal
-						if (FlexBoxCssPropertyMap[sSpec][sProperty]["<number>"][key] === "<number>") {
-							mLegacyMap[key] = sValue;
-						} else {
-							mLegacyMap[key] = FlexBoxCssPropertyMap[sSpec][sProperty]["<number>"][key];
-						}
-					}
-				} else {
-					mLegacyMap = FlexBoxCssPropertyMap[sSpec][sProperty][sValue];
-				}
-			} else {
-				mLegacyMap = FlexBoxCssPropertyMap[sSpec][sProperty][sValue];
-			}
-
-			// Nothing to do if value doesn't exist or is the same as standard
-			if (mLegacyMap !== null && mLegacyMap !== "<idem>") {
-				if (typeof (mLegacyMap) === "object") {
-					for (var sLegacyProperty in mLegacyMap) {
-						// Write property/value to control
-						FlexBoxStylingHelper.writeStyle(oRm, oLayoutData, sLegacyProperty, mLegacyMap[sLegacyProperty]);
-					}
-				}
-			}
-		}
+		FlexBoxStylingHelper.writeStyle(oRm, oLayoutData, sProperty, sValue);
 	};
 
 	/**
@@ -159,22 +88,10 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap', 'sap/ui/Device'],
 	 * @param {string} sValue value of the property
 	 */
 	FlexBoxStylingHelper.writeStyle = function(oRm, oLayoutData, sProperty, sValue) {
-		var sPropertyPrefix = "";
-		var sValuePrefix = "";
-
-		// Set prefix to value for 'display' property
-		// As 'display' is a long-standing standard property, the value is vendor-prefixed instead of the property name
-		if (sProperty !== "display") {
-			sPropertyPrefix = this.sVendorPrefix;
-		} else {
-			sValuePrefix = this.sVendorPrefix;
-		}
-
-		// IE 10-11 miscalculate the width of the flex items when box-sizing: border-box
+		// IE 10-11 miscalculate the width of the flex items when box-sizing: border-box // TODO remove after the end of support for Internet Explorer
 		// Instead of using flex-basis, we use an explicit width/height
 		// @see https://github.com/philipwalton/flexbugs#7-flex-basis-doesnt-account-for-box-sizingborder-box
 		if (Device.browser.internet_explorer && (sProperty === "flex-basis" || sProperty === "flex-preferred-size")) {
-			sPropertyPrefix = "";
 			if (oLayoutData.getParent()) {
 				if (oLayoutData.getParent().getParent().getDirection().indexOf("Row") > -1) {
 					sProperty = "width";
@@ -187,25 +104,25 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap', 'sap/ui/Device'],
 		// Finally, write property value to control using either the render manager or the element directly
 		if (oRm) {
 			if (sValue === "0" || sValue) {
-				oRm.addStyle(sPropertyPrefix + sProperty, sValuePrefix + sValue);
+				oRm.style(sProperty, sValue);
 			}
 		} else {
 			// Set the property on the wrapper or the control root itself
 			if (oLayoutData.$().length) {	// Does the layout data have a DOM representation?
 				// jQuery removes 'null' styles
 				if (sValue !== "0" && !sValue) {
-					oLayoutData.$().css(sPropertyPrefix + sProperty, null);
+					oLayoutData.$().css(sProperty, null);
 				} else {
-					oLayoutData.$().css(sPropertyPrefix + sProperty, sValuePrefix + sValue);
+					oLayoutData.$().css(sProperty, sValue);
 				}
 			} else {
 				// Get control root for bare item
 				if (oLayoutData.getParent()) {
 					// jQuery removes 'null' styles
 					if (sValue !== "0" && !sValue) {
-						oLayoutData.getParent().$().css(sPropertyPrefix + sProperty, null);
+						oLayoutData.getParent().$().css(sProperty, null);
 					} else {
-						oLayoutData.getParent().$().css(sPropertyPrefix + sProperty, sValuePrefix + sValue);
+						oLayoutData.getParent().$().css(sProperty, sValue);
 					}
 				}
 			}

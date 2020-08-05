@@ -5,8 +5,10 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/support/supportRules/Storage",
-	"sap/ui/support/supportRules/Constants"
-], function (Controller, storage, constants) {
+	"sap/ui/support/supportRules/Constants",
+	"sap/ui/support/supportRules/ui/models/SelectionUtils",
+	"sap/ui/support/supportRules/ui/models/PresetsUtils"
+], function (Controller, storage, constants, SelectionUtils, PresetsUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.support.supportRules.ui.controllers.BaseController", {
@@ -24,7 +26,10 @@ sap.ui.define([
 				});
 
 				this.persistExecutionScope();
-				this.persistSelection();
+				this.persistVisibleColumns();
+				SelectionUtils.persistSelection();
+				PresetsUtils.persistSelectionPresets();
+				PresetsUtils.persistCustomPresets();
 
 			} else {
 				storage.deletePersistenceCookie(constants.COOKIE_NAME);
@@ -44,30 +49,19 @@ sap.ui.define([
 		},
 
 		/**
-		 * Traverses the model and creates a rule descriptor for every selected rule.
-		 * After that saves it to the local storage.
-		 */
-		persistSelection: function () {
-			var oModel = this.getView().getModel(),
-				aSelectedRules = [],
-				oRule;
+		 * Persist visible columns selection in local storage.
+		 **/
+		persistVisibleColumns: function() {
+			var aVisibleColumnsIds = [],
+			aColumns = SelectionUtils.treeTable.getColumns();
 
-			for (var i in oModel.getProperty("/treeViewModel/")) {
-				if (Number.isInteger(Number.parseInt(i, 10))) {
-					for (var k in oModel.getProperty("/treeViewModel/" + i)) {
-						oRule = oModel.getProperty("/treeViewModel/" + i + "/" + k);
-
-						if (Number.isInteger(Number.parseInt(k, 10)) && oRule && oRule.selected) {
-							aSelectedRules.push({
-								ruleId: oRule.id,
-								libName: oRule.libName
-							});
-						}
-					}
+			aColumns.forEach(function (oColumn) {
+				if (oColumn.getVisible()){
+					aVisibleColumnsIds.push(oColumn.sId);
 				}
-			}
+			});
 
-			storage.setSelectedRules(aSelectedRules);
+			storage.setVisibleColumns(aVisibleColumnsIds);
 		},
 
 		deletePersistedData: function() {

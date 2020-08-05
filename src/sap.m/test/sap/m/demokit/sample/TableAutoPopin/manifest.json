@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TableAutoPopin",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TableAutoPopin.Table",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Table.view.xml",
+					"Table.controller.js",
+					"Formatter.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

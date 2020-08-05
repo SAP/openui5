@@ -16,6 +16,8 @@
     top.globalQUnitTestSuite = true;
     // first we execute all the Core QUnit tests
     suite.addTestPage(contextPath + "/test-resources/qunit/testsuite.desktop.qunit.html");
+	// then we execute all demoapps OPA tests
+    suite.addTestPage(contextPath + "/test-resources/qunit/testsuite.demoapps.qunit.html");
     // finally we execute all the Mobile QUnit tests (due to user agent adoptions)
     suite.addTestPage(contextPath + "/test-resources/qunit/testsuite.mobile.qunit.html");
     return suite;

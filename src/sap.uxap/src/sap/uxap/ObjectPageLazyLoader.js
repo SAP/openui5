@@ -4,11 +4,11 @@
 
 // Provides control sap.uxap.ObjectPageLazyLoader.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Element',
-	'sap/ui/core/StashedControlSupport'
-], function (jQuery, library, Element, StashedControlSupport) {
+	'sap/ui/core/StashedControlSupport',
+	"sap/base/assert"
+], function (library, Element, StashedControlSupport, assert) {
 	"use strict";
 
 	/**
@@ -32,7 +32,7 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> Subsections are required to have an ID when used with <code>ObjectPageLazyLoader</code>.
 	 *
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -61,7 +61,7 @@ sap.ui.define([
 
 	LazyLoader.prototype.setParent = function (oParent) {
 		if (!(oParent === null || oParent instanceof sap.uxap.ObjectPageSubSection)) {
-			jQuery.sap.assert(false, "setParent(): oParent must be an instance of sap.uxap.ObjectPageSubSection or null");
+			assert(false, "setParent(): oParent must be an instance of sap.uxap.ObjectPageSubSection or null");
 		}
 
 		return Element.prototype.setParent.apply(this, arguments);

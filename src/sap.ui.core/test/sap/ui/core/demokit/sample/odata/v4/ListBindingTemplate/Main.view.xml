@@ -1,0 +1,236 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.odata.v4.ListBindingTemplate.Main"
+	template:require="{Helper : 'sap/ui/core/sample/odata/v4/ListBindingTemplate/Helper',
+		AnnotationHelper : 'sap/ui/model/odata/v4/AnnotationHelper'}"
+	xmlns="sap.m"
+	xmlns:ce="sap.ui.codeeditor"
+	xmlns:core="sap.ui.core"
+	xmlns:demo="sap.ui.core.sample.common"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<template:alias name="getValueListType" value="AnnotationHelper.getValueListType">
+	<template:alias name="stringify" value="Helper.stringify">
+	<template:alias name="format" value="AnnotationHelper.format">
+	<template:alias name="value" value="AnnotationHelper.value">
+	<template:alias name="label" value="AnnotationHelper.label">
+	<VBox>
+		<HBox>
+			<ToggleButton icon="sap-icon://syntax" press="onSourceCode"
+				text="Source Code after Templating"/>
+		</HBox>
+		<Panel expandable="false" visible="{ui>/bCodeVisible}"
+			headerText="Source Code after Templating" width="auto" class="sapUiResponsiveMargin">
+			<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/sCode}"/>
+		</Panel>
+		<Panel expandable="true" headerText="(Technical Tests)">
+			<VBox>
+				<Title text="async helper" titleStyle="H2"/>
+				<template:with var="product" path="meta>/Equipments" helper="Helper.asyncHelper">
+					<template:repeat list="{product>}" var="productProperty">
+						<Text text="{productProperty>@sapui.name}: {productProperty>$Type}"/>
+					</template:repeat>
+				</template:with>
+				<Text text="- - - - - - - - - -"/>
+				<Title text="isMultiple" titleStyle="H2"/>
+				<template:repeat list="{meta>/}" var="topLevel">
+					<template:if test="{:= ${topLevel>$kind} === 'EntitySet' }">
+						<Label design="Bold" text="{topLevel>$Type}"/>
+						<template:with path="topLevel>./@com.sap.vocabularies.UI.v1.Facets"
+							var="facets">
+							<core:Fragment
+								fragmentName="sap.ui.core.sample.odata.v4.ListBindingTemplate.Facets"
+								type="XML"/>
+						</template:with>
+					</template:if>
+				</template:repeat>
+				<Text text="- - - - - - - - - -"/>
+				<template:with path="meta>/$EntityContainer/" var="objectWithKind">
+					<core:Fragment
+						fragmentName="sap.ui.core.sample.odata.v4.ListBindingTemplate.FormattedText"
+						type="XML"/>
+				</template:with>
+				<Text text="- - - - - - - - - -"/>
+				<template:with path="meta>/TEAMS" var="objectWithKind">
+					<core:Fragment
+						fragmentName="sap.ui.core.sample.odata.v4.ListBindingTemplate.FormattedText"
+						type="XML"/>
+				</template:with>
+				<Text text="- - - - - - - - - -"/>
+				<template:repeat
+					list="{path: 'meta>/', filters: {path: '@sapui.name', operator: 'EndsWith', value1: 'List'}}"
+					var="entitySet">
+					<Text text="{entitySet>@sapui.name}: {entitySet>$Type}"/>
+				</template:repeat>
+				<Text text="- - - - - - - - - -"/>
+				<Table id="entitySets"
+					items="{path: 'metaModel>/', filters: {path: '$kind', operator: 'EQ', value1: 'EntitySet'}}">
+					<headerToolbar>
+						<Toolbar>
+							<Title text="Entity Sets" titleStyle="H2"/>
+							<ToggleButton text="Sort" press="onSort"/>
+						</Toolbar>
+					</headerToolbar>
+					<columns>
+						<Column>
+							<Label text="Name" />
+						</Column>
+						<Column>
+							<Label text="Type" />
+						</Column>
+					</columns>
+					<ColumnListItem>
+						<Text text="{metaModel>@sapui.name}"/>
+						<Text text="{metaModel>$Type}"/>
+					</ColumnListItem>
+				</Table>
+				<template:repeat
+					list="{path: 'meta>/', filters: {path: '$kind', operator: 'EQ', value1: 'EntitySet'}}"
+					var="entitySet">
+					<Text text="{entitySet>@sapui.name}: {entitySet>$Type}"/>
+				</template:repeat>
+				<Text text="- - - - - - - - - -"/>
+				<template:repeat list="{path: 'meta>/TEAMS', filters: {path: '$kind', operator: 'EQ', value1: 'Property'}, sorter: {path: '@sapui.name'}}" var="property">
+					<Label design="Bold" text="{property>@sapui.name}: {property>$Type}"/>
+					<template:repeat
+						list="{path: 'property>@', filters: {path: '@sapui.name', operator: 'StartsWith', value1: '@com.sap.vocabularies.Common.v1.'}}"
+						var="annotation">
+						<Text text="{annotation>@sapui.name} = {path:'annotation>', formatter: 'stringify'}"/>
+					</template:repeat>
+					<Text text="ValueListType: {property>@@getValueListType}"/>
+				</template:repeat>
+				<Text text="- - - - - - - - - -"/>
+				<Title text="async repeat" titleStyle="H2"/>
+				<template:repeat
+					list="{meta>/com.sap.gateway.default.iwbep.tea_busi_supplier.v0001.Supplier/}"
+					var="property">
+					<Text text="{property>@sapui.name}"/>
+				</template:repeat>
+				<Text text="- - - - - - - - - -"/>
+				<Title text="AnnotationHelper.value vs. AnnotationHelper.format" titleStyle="H2"/>
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@format', formatter : 'stringify'}" />
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@value" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@value', formatter : 'stringify'}" />
+
+				<Text text="- - - - - - - - - format with $Path"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path = EQUIPMENT_2_PRODUCT/Name;
+					@com.sap.vocabularies.Common.v1.QuickInfo = PRODUCT_2_SUPPLIER/Supplier_Name
+					Expected Result: {path:'EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
+				 -->
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value', formatter : 'stringify'}" />
+
+				<template:with path="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path" helper="AnnotationHelper.resolve$Path" var="value">
+					<Label text="value>@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+					<Text text="{path : 'value>@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+				</template:with>
+
+				<Text text="- - - - - - - - - format with $Path; multiple navigation steps"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path = EMPLOYEE_2_MANAGER/Manager_to_Team/Name;
+					@com.sap.vocabularies.Common.v1.QuickInfo = TEAM_2_MANAGER/ID
+					Expected Result: {path:'EMPLOYEE_2_MANAGER/Manager_to_Team/TEAM_2_MANAGER/ID',type:'sap.ui.model.odata.type.Int32',constraints:{'maxLength':4,'nullable':false}}
+				 -->
+				<Label text="meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+				<Text text="{path : 'meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+				<Label text="meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value" />
+				<Text text="{path : 'meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value', formatter : 'stringify'}" />
+
+				<Text text="- - - - - - - - - format $Path pointing to navigation property"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path = EQUIPMENT_2_PRODUCT;
+					@com.sap.vocabularies.Common.v1.QuickInfo = Name
+					Expected Result: {path:'EQUIPMENT_2_PRODUCT/Name',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
+				 -->
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path/@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path/@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+
+				<Text text="- - - - - - - - - format $Path pointing to navigation property; annotation at the navigation property"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path = EQUIPMENT_2_PRODUCT;
+					@com.sap.vocabularies.Common.v1.QuickInfo = Category (at Equipments)
+					Expected Result: {path:'Category',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
+				 -->
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+
+				<Text text="- - - - - - - - - format $Path pointing to a property of a complex type"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.LineItem/1/Value/$Path = LOCATION/City
+					@com.sap.vocabularies.Common.v1.QuickInfo = COUNTRY
+					Expected Result: {path:'LOCATION/COUNTRY',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':255,'nullable':false}}
+				 -->
+				<Label text="meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/1/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+				<Text text="{path : 'meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/1/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+
+				<Text text="- - - - - - - - - format with $AnnotationPath"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath = EQUIPMENT_2_PRODUCT/@com.sap.vocabularies.Common.v1.QuickInfo;
+					@com.sap.vocabularies.Common.v1.QuickInfo = Name
+					Expected Result: {path:'EQUIPMENT_2_PRODUCT/Name',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
+				 -->
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath/@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath/@@format', formatter : 'stringify'}" />
+
+				<Text text="- - - - - - - - - format with $AnnotationPath; annotation at navigation property"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.Facets/1/Target/$AnnotationPath = EQUIPMENT_2_PRODUCT@com.sap.vocabularies.Common.v1.QuickInfo;
+					@com.sap.vocabularies.Common.v1.QuickInfo = Category (at Equipments)
+					Expected Result: {path:'Category',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
+				 -->
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/1/Target/$AnnotationPath/@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/1/Target/$AnnotationPath/@@format', formatter : 'stringify'}" />
+
+				<!-- TODO repeat over $* properties! -->
+			</VBox>
+		</Panel>
+		<template:with path="data>#/" var="entityType">
+			<template:with path="entityType>@com.sap.vocabularies.UI.v1.LineItem" var="lineItem">
+				<!-- Note: this limits the data shown to 5 rows! -->
+				<Table headerText="Equipments"
+					items="{path:'', length: 5, parameters : {$$updateGroupId : 'update'}}">
+					<columns>
+						<template:repeat list="{lineItem>}" var="field">
+							<Column>
+								<Label design="{:= ${field>@com.sap.vocabularies.UI.v1.Importance/$EnumMember}
+									=== 'com.sap.vocabularies.UI.v1.ImportanceType/High' ? 'Bold' : 'Standard'}"
+									text="{field>@@label}"/>
+							</Column>
+						</template:repeat>
+					</columns>
+					<ColumnListItem>
+						<template:repeat list="{lineItem>}" var="field">
+							<template:with path="field>Value/$Path" var="target">
+								<template:if test="{= ${target>@@getValueListType} !== 'None' }">
+									<template:then>
+										<demo:ValueHelp value="{field>Value/@@value}"/>
+									</template:then>
+									<template:elseif test="{target>@com.sap.vocabularies.Common.v1.Text}">
+										<!-- Note: TextFirst, TextLast, TextSeparate, TextOnly -->
+										<template:if test="{= ${target>@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement/$EnumMember}
+											=== 'com.sap.vocabularies.UI.v1.TextArrangementType/TextLast' }">
+											<!-- Text: "A descriptive text for values of the annotated property.
+												Value MUST be a dynamic expression when used as metadata annotation." -->
+											<Text text="{field>Value/@@value} {target>@com.sap.vocabularies.Common.v1.Text/@@value}" />
+										</template:if>
+									</template:elseif>
+									<template:else>
+										<Text text="{field>Value/@@format}" />
+									</template:else>
+								</template:if>
+							</template:with>
+						</template:repeat>
+					</ColumnListItem>
+				</Table>
+			</template:with>
+		</template:with>
+	</VBox>
+	</template:alias>
+	</template:alias>
+	</template:alias>
+	</template:alias>
+	</template:alias>
+</mvc:View>

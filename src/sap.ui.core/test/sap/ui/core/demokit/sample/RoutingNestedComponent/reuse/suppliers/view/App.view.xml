@@ -1,0 +1,6 @@
+<mvc:View controllerName="sap.ui.core.sample.RoutingNestedComponent.reuse.suppliers.controller.App"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	displayBlock="true">
+	<App id="app" />
+</mvc:View>

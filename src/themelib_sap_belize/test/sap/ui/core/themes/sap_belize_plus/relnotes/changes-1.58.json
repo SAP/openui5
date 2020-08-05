@@ -1,0 +1,202 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "561771d27be0a2217015697316ae18a8ab5cd142",
+        "type": "FIX",
+        "text": "m.App: Applied transparent bg in belize_plus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870237573"
+          }
+        ]
+      },
+      {
+        "id": "215eeb642b45961cf47956b503622c511f8f3f54",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Selected text now has correct contrast",
+        "references": []
+      },
+      {
+        "id": "11c596df09e94695f28bb5e7d98e17be55370f4e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870233788"
+          }
+        ]
+      },
+      {
+        "id": "f8170bcdfac5faa4ab7fdc269fe0f0b618674998",
+        "type": "FIX",
+        "text": "sap.tnt.ToolHeader: Border is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870234760"
+          }
+        ]
+      },
+      {
+        "id": "2192bec6998ee6fa4e2c57de78ac98d02b2c7eab",
+        "type": "FIX",
+        "text": "CheckBox: right focus otline cut off fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880270876"
+          }
+        ]
+      },
+      {
+        "id": "2d7f09d180b3b67e7d708886547268b17f216caf",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "827862284b5412c1404ffbbee11d5f0994ef518c",
+        "type": "FEATURE",
+        "text": "sap.m.ListBase: enable sticky header toolbars",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880274020"
+          }
+        ]
+      },
+      {
+        "id": "9eed19dc624a04808bfe8e932124bf31501acb5f",
+        "type": "FIX",
+        "text": "Select: Double fours outline in sap_belize_hcw fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880272671"
+          }
+        ]
+      },
+      {
+        "id": "bdb7654d7e9b0205cb3ac151081d4871bf777a06",
+        "type": "FIX",
+        "text": "sap_belize: @sapPositiveColor contrast ratio fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002116352018"
+          }
+        ]
+      },
+      {
+        "id": "c173db1214047804fe2807443b1be14909326419",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: headerBackgroundDesign now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880322384"
+          }
+        ]
+      },
+      {
+        "id": "e638f3c632e3e870c953d4397907f948c32f621d",
+        "type": "FIX",
+        "text": "sap.m.RatingIndicator: Focus outline fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770616812"
+          }
+        ]
+      },
+      {
+        "id": "b540bdef9cc96effb664ba3153f303d6ef0ec61a",
+        "type": "FIX",
+        "text": "MessageView: Link in hcb/hcw contrast fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880272615"
+          }
+        ]
+      },
+      {
+        "id": "d300575695f9845531deeba41cc05f12db411a95",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: DnD added tab background",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880339643"
+          }
+        ]
+      },
+      {
+        "id": "44e9000fa60d010148f02fefdf71f34ef7b6007b",
+        "type": "FEATURE",
+        "text": "adding sap.ui.core.IconColor.Contrast",
+        "references": []
+      },
+      {
+        "id": "6b7e98c63c5db7e6218dd4e05bc71fbd10b0aa39",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: visual fix of the color in active state on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880296689"
+          }
+        ]
+      },
+      {
+        "id": "0f0514fcf72755574c43daed4857271f207d92b3",
+        "type": "FEATURE",
+        "text": "DynamicPage: backgroundDesign property added",
+        "references": []
+      },
+      {
+        "id": "d16a145c80ac1c93da7d78c32a386c4685326610",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Selection now visible in print",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003242382018"
+          }
+        ]
+      },
+      {
+        "id": "e7300c6187cb12b8e034e0cae7e04e1d4175b2ec",
+        "type": "FIX",
+        "text": "sap.m.themes.sap_belize_hcb.NewsContent: Accessibilty issue with focus of NewsContent in HCB and HCW theme.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880165837"
+          }
+        ]
+      },
+      {
+        "id": "cf521198540a50391a215a5f2f827e693c422fdb",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPage: Navigation improvement",
+        "references": []
+      },
+      {
+        "id": "b96e2f9ff1e0cb49d9c4dc71aa4affc69710e2b2",
+        "type": "FIX",
+        "text": "sap.m.themes.base.SlideTile: Allignmnet issue of play-pause Icon in all themes and TileIndicator issue in HCW and HCB themes.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880217426"
+          }
+        ]
+      }
+    ]
+  }
+}

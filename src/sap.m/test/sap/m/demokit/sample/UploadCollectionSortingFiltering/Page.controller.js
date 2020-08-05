@@ -4,12 +4,13 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/UploadCollectionParameter",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/syncStyleClass",
 	"sap/ui/model/Filter",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/core/format/FileSizeFormat"
-], function(jQuery, Controller, MessageToast, UploadCollectionParameter, Fragment, Filter, Sorter, JSONModel, GroupHeaderListItem, FileSizeFormat) {
+], function(jQuery, Controller, MessageToast, UploadCollectionParameter, Fragment, syncStyleClass, Filter, Sorter, JSONModel, GroupHeaderListItem, FileSizeFormat) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionSortingFiltering.Page", {
@@ -17,7 +18,7 @@ sap.ui.define([
 
 		onInit: function() {
 			// set mock data
-			var sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollectionSortingFiltering", "/uploadCollection.json");
+			var sPath = sap.ui.require.toUrl("sap/m/sample/UploadCollectionSortingFiltering/uploadCollection.json");
 			this.getView().setModel(new JSONModel(sPath));
 
 			// Sets the text to the label
@@ -78,7 +79,7 @@ sap.ui.define([
 				this._oDialog = sap.ui.xmlfragment("sap.m.sample.UploadCollectionSortingFiltering.Dialog", this);
 			}
 			// toggle compact style
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
+			syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
 			this._oDialog.open();
 		},
 

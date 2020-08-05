@@ -25,3 +25,18 @@
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMTabContainer", ~"> .sapMTabContainerContent > .sapMTabContainerInnerContent");
+
+.sapMTabContainer {
+	.sapMTabContainerContentTransparent{
+		background-color: transparent;
+	}
+	.sapMTabContainerContentList{
+		background-color: @sapUiGroupContentBackground;
+	}
+	.sapMTabContainerContentSolid{
+		background-color: @sapUiShellBackground;
+	}
+	.sapMTabContainerContentStandard{
+		background-color: @sapUiBaseBG;
+	}
+}

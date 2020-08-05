@@ -33,17 +33,20 @@
 		<h3>Create, modify and delete of an unsaved sales order</h3>
 		<ol>
 			<li><b>Check:</b> (without back end only) The sales orders count is 10.
-			<li>After the application is started, click on the <code>Create</code> button in the
-				<code>Sales Orders</code> table.</li>
+			<li>After the application is started, select the first sales order</li>
+			<li>Click on the <code>ValueHelp</code> button for <code>Category</code>in the
+				<code>Sales Order Line Items</code> table.</li>
+			<li><b>Check:</b> The title of the <code>Value Help</code> is
+				"Value Help: Category (Modified Mapping)".</li>
+			<li>Close the <code>Value Help</code> dialog.</li>
+			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> The table below the <code>Create New Sales Order</code> dialog gets
 				a new row with an empty <code>Sales Order ID</code> and the <code>Note</code> as
 				displayed in the <code>Create New Sales Order</code> dialog.</li>
 			<li><b>Check:</b> That for input field <code>Currency Code</code> a value help
 				button is displayed.</li>
 			<li>Press the value help button and check that a value help dialog is opened.</li>
-			<li><b>Check:</b> That for each row, first column a value help
-				button is displayed also and the value help can be opened recursively.</li>
-			<li>Close all value help dialogs.</li>
+			<li>Close the <code>Value Help</code> dialog.</li>
 			<li>Modify the content of the <code>Note</code> input field of the
 				<code>Create New Sales Order</code> dialog.</li>
 			<li><b>Check:</b> The <code>Note</code> of the first sales order (table below the
@@ -65,6 +68,8 @@
 		<h3>Create a sales order, save, modify again, save and delete</h3>
 		<ol>
 			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Modify the content of the <code>Note</code> input field of the
+				<code>Create New Sales Order</code> dialog.</li>
 			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
 			<li><b>Check:</b>The <code>Confirm selected sales order</code> button in the
 				<code>Sales Orders</code> table is disabled.</li>
@@ -79,8 +84,6 @@
 				<li>For the newly created sales order enter a text in the <code>Note</code> field
 				.</li>
 				<li>Click on <code>Save</code> button in the <code>Sales Orders</code> table.</li>
-				<li><b>Check:</b> You get a success message for updating the sales order.</li>
-				<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
 			</ol></li>
 			<li>Select the saved sales order.</li>
 			<li>Click on <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
@@ -93,17 +96,20 @@
 		<h3>Create a sales order, save and refresh the sales orders</h3>
 		<ol>
 			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Modify the content of the <code>Note</code> input field of the
+				<code>Create New Sales Order</code> dialog.</li>
 			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
 			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> You get a success message for creating the sales order.</li>
 			<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
+			<li><b>Check:</b> (without back end only) The sales orders count is 11.
 			<li>Click on <code>Refresh</code> button in the <code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> The first sales order is the same as the one from the initial
-			application start.</li>
+				application start.</li>
 			<li><b>Check (with back end only): </b> The new sales order is inserted at the right
-			position (considering sort and filter criterion); maybe you have to click on the
-			<code>More</code> button of the <code>Sales Orders</code> table to see the new sales
-			order.</li>
+				position (considering sort and filter criterion); maybe you have to click on the
+				<code>More</code> button of the <code>Sales Orders</code> table to see the new sales
+				order.</li>
 		</ol>
 		<h3>Create a sales order, refresh/filter w/o saving -> expected "pending changes"
 			message</h3>
@@ -139,17 +145,18 @@
 			<li>Click on <code>Cancel sales orders changes</code> button in the
 				<code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> The newly created sales order is gone.</li>
+			<li><b>Check:</b> (without back end only) The sales orders count is 10.
 		</ol>
 		<h3>Cancel or resume a failed creation of a sales order</h3>
 		With back end only:
 		<ol>
 			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
-			<li>Type in <code>RAISE_ERROR</code> into the <code>Note</code> input field of the
-				<code>Create New Sales Order</code> dialog.</li>
 			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
+			<li>Type in <code>RAISE_ERROR</code> into the <code>Note</code> input field of the new
+				row.</li>
 			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
-			<li><b>Check:</b>that you got an error regarding invalid value for the <code>Note</code>
-			</li>
+			<li><b>Check:</b>You get an error regarding invalid value for the <code>Note</code>.
+				</li>
 			<li>Click on <code>Refresh</code> button in the <code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> You get a warning about pending changes.</li>
 			<li>Click on the <code>Cancel</code> button.</li>

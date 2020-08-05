@@ -1,19 +1,22 @@
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/Popup",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, MenuM, MenuItemM, TableExampleUtils) {
+	"sap/m/ToolbarSpacer",
+	"sap/ui/thirdparty/jquery"
+], function(Log, Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, Popup, MenuM, MenuItemM, ToolbarSpacer, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Menus.Controller", {
 
-		onInit : function () {
+		onInit : function() {
 			var oView = this.getView();
 
 			// set explored app's demo model on this sample
@@ -25,6 +28,12 @@ sap.ui.define([
 				showFreezeMenuEntry: false,
 				enableCellFilter: false
 			}), "ui");
+
+			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
+				var oTb = oView.byId("infobar");
+				oTb.addContent(new ToolbarSpacer());
+				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Menus"));
+			}, function(oError){/*ignore*/});
 		},
 
 		initSampleDataModel : function() {
@@ -32,20 +41,20 @@ sap.ui.define([
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
-				success: function (oData) {
+				success: function(oData) {
 					var aTemp1 = [];
 					var aTemp2 = [];
 					var aSuppliersData = [];
 					var aCategoryData = [];
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
-						if (oProduct.SupplierName && jQuery.inArray(oProduct.SupplierName, aTemp1) < 0) {
+						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
 						}
-						if (oProduct.Category && jQuery.inArray(oProduct.Category, aTemp2) < 0) {
+						if (oProduct.Category && aTemp2.indexOf(oProduct.Category) < 0) {
 							aTemp2.push(oProduct.Category);
 							aCategoryData.push({Name: oProduct.Category});
 						}
@@ -60,15 +69,15 @@ sap.ui.define([
 
 					oModel.setData(oData);
 				},
-				error: function () {
-					jQuery.sap.log.error("failed to load json");
+				error: function() {
+					Log.error("failed to load json");
 				}
 			});
 
 			return oModel;
 		},
 
-		onColumnSelect : function (oEvent) {
+		onColumnSelect : function(oEvent) {
 			var oCurrentColumn = oEvent.getParameter("column");
 			var oImageColumn = this.byId("image");
 			if (oCurrentColumn === oImageColumn) {
@@ -76,7 +85,7 @@ sap.ui.define([
 			}
 		},
 
-		onColumnMenuOpen: function (oEvent) {
+		onColumnMenuOpen: function(oEvent) {
 			var oCurrentColumn = oEvent.getSource();
 			var oImageColumn = this.byId("image");
 			if (oCurrentColumn != oImageColumn) {
@@ -87,7 +96,7 @@ sap.ui.define([
 			oEvent.preventDefault();
 		},
 
-		onProductIdCellContextMenu : function (oEvent) {
+		onProductIdCellContextMenu : function(oEvent) {
 			if (sap.ui.Device.support.touch) {
 				return; //Do not use context menus on touch devices
 			}
@@ -115,7 +124,7 @@ sap.ui.define([
 
 			//Open the menu on the cell
 			var oCellDomRef = oEvent.getParameter("cellDomRef");
-			var eDock = sap.ui.core.Popup.Dock;
+			var eDock = Popup.Dock;
 			this._oIdContextMenu.open(false, oCellDomRef, eDock.BeginTop, eDock.BeginBottom, oCellDomRef, "none none");
 		},
 
@@ -129,10 +138,6 @@ sap.ui.define([
 			var sOrder = oColumn.getSortOrder() == "Ascending" ? "Descending" : "Ascending";
 
 			this.byId("table").sort(oColumn, sOrder, bAdd);
-		},
-
-		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Menus", "/info.json"), oEvent.getSource());
 		},
 
 		onToggleContextMenu : function(oEvent) {

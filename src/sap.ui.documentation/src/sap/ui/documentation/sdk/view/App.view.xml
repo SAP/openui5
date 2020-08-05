@@ -4,7 +4,7 @@
 		xmlns:tnt="sap.tnt"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:custom="sap.ui.documentation.sdk.controls"
+		xmlns:custom="sap.ui.documentation"
 		displayBlock="true"
 		busy="{appView>/busy}"
 		busyIndicatorDelay="{appView>/delay}">
@@ -14,75 +14,72 @@
 		showNavButton="false"
 		class="sapUiDemokit">
 		<content>
+			<MessageStrip id="cookieMessageStrip"
+				class="sapUiSmallMargin sapUiDemoKitFixedStrip"
+				text="{i18n>APP_COOKIES_TEXT}"
+				showIcon="true"
+				showCloseButton="true">
+				<Link text="{i18n>APP_COOKIES_BTN}" press="onCookieDialogAccept" />
+			</MessageStrip>
 			<tnt:ToolHeader id="headerToolbar">
-				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; !${device>/system/phone} &amp;&amp; !${appView>/bLandscape} &amp;&amp; !${appView>/bSearchMode} }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
+				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; !${appView>/bPhoneSize} &amp;&amp; !${appView>/bLandscape} &amp;&amp; !${appView>/bSearchMode} }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</ToggleButton>
 				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
-					visible="{=!${appView>/bPhoneSize}}"
 					densityAware="false"
 					height="2rem"
 					alt="UI5 logo"
-					class="sapLogo"
 					decorative="false"
-					press="navigateToSection" />
+					class="sapLogo"
+					press="onLogoIconPress"/>
 				<core:ExtensionPoint name="customStartLinks" />
 				<Select id="selectHeader"
-						stashed="true"
-						class="sapUiDocumentationSelect"
-						visible="{=!${appView>/bSearchMode}}"
+						class="sapUiDocumentationSelect menuSelect"
+						visible="{=${appView>/bPhoneSize}}"
 						change="navigateToSection"
 						autoAdjustWidth="true">
 					<items>
-						<core:Item id="welcomeTab" text="Home" key="home"/>
-						<core:Item id="topicMasterTab" text="Documentation" key="topic"/>
-						<core:Item id="apiMasterTab" text="API Reference" key="api"/>
-						<core:Item id="controlsMasterTab" text="Samples" key="controls"/>
-						<core:Item id="demoAppsTab" text="Demo Apps" key="demoapps"/>
-						<core:Item id="toolsTab" text="Tools" key="tools"/>
+						<core:Item text="{i18n>APP_TABHEADER_ITEM_HOME}" key="home"/>
+						<core:Item text="{i18n>APP_TABHEADER_ITEM_DOCUMENTATION}" key="topic"/>
+						<core:Item text="{i18n>APP_TABHEADER_ITEM_API_REFERENCE}" key="api"/>
+						<core:Item text="{i18n>APP_TABHEADER_ITEM_SAMPLES}" key="controls"/>
+						<core:Item text="{i18n>APP_TABHEADER_ITEM_DEMO_APPS}" key="demoapps"/>
+						<core:Item text="{i18n>APP_TABHEADER_ITEM_TOOLS}" key="tools"/>
 					</items>
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
 					</layoutData>
 				</Select>
 				<IconTabHeader id="tabHeader"
-						stashed="true"
 						selectedKey="home"
-						showOverflowSelectList="true"
 						backgroundDesign="Transparent"
 						mode="Inline"
 						select="navigateToSection"
-						visible="{=!${appView>/bPhoneSize} || !${appView>/bSearchMode}}">
+						visible="{=!${appView>/bPhoneSize}}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
 					</layoutData>
 					<items>
-						<IconTabFilter id="welcomeTab" text="Home" key="home" visible="{=${appView>/bPhoneSize}}">
+						<IconTabFilter id="welcomeTab" text="{i18n>APP_TABHEADER_ITEM_HOME}" key="home" visible="{=${appView>/bPhoneSize}}">
 						</IconTabFilter>
-						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic" visible="{= !${appView>/bHideEmptySections}}">
+						<IconTabFilter id="topicMasterTab" text="{i18n>APP_TABHEADER_ITEM_DOCUMENTATION}" key="topic" visible="{= !${appView>/bHideTopicSection}}">
 						</IconTabFilter>
-						<IconTabFilter id="apiMasterTab" text="API Reference" key="api" visible="{= !${appView>/bHideEmptySections}}">
+						<IconTabFilter id="apiMasterTab" text="{i18n>APP_TABHEADER_ITEM_API_REFERENCE}" key="api" visible="{= !${appView>/bHideApiSection}}">
 						</IconTabFilter>
-						<IconTabFilter id="controlsMasterTab" text="Samples" key="controls">
+						<IconTabFilter id="controlsMasterTab" text="{i18n>APP_TABHEADER_ITEM_SAMPLES}" key="controls">
 						</IconTabFilter>
-						<IconTabFilter id="demoAppsTab" text="Demo Apps" key="demoapps">
+						<IconTabFilter id="demoAppsTab" text="{i18n>APP_TABHEADER_ITEM_DEMO_APPS}" key="demoapps">
 						</IconTabFilter>
-						<IconTabFilter id="toolsTab" text="Tools" key="tools">
+						<IconTabFilter id="toolsTab" text="{i18n>APP_TABHEADER_ITEM_TOOLS}" key="tools">
 						</IconTabFilter>
 					</items>
 				</IconTabHeader>
 
-				<ToolbarSpacer visible="{= ${device>/system/phone} || !${appView>/bPhoneSize}}">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="{= ${device>/system/tablet} ? '' : '1rem'}" />
-					</layoutData>
-				</ToolbarSpacer>
+				<ObjectStatus text="{= ${versionData>/isBetaVersion} ? ${i18n>APP_VERSION_BETA_VERSION} : ${i18n>APP_VERSION_VERSION}} {versionData>/version} {= ${versionData>/isBetaVersion} ? ${i18n>APP_VERSION_NOT_PRODUCTIVE} : ${versionData>/isDevVersion} ? ${i18n>APP_VERSION_IN_PROGRESS} : ''}" state="{= ${versionData>/isBetaVersion} ? 'Error' : ${versionData>/isDevVersion} ? 'Warning' : 'None'}" visible="{=!${appView>/bPhoneSize}}" />
 
-				<ObjectStatus text="{= ${versionData>/isBetaVersion} ? 'Beta version' : 'Version'} {versionData>/version} {= ${versionData>/isBetaVersion} ? '– not for productive use!' : ${versionData>/isDevVersion} ? '- development in progress!' : ''}" state="{= ${versionData>/isBetaVersion} ? 'Error' : ${versionData>/isDevVersion} ? 'Warning' : 'None'}" visible="{=!${appView>/bPhoneSize}}" />
-
-				<Button id="changeVersionButton" press="onChangeVersionButtonPress" type="Transparent" text="Change version" visible="{appView>/bShowVersionSwitchInHeader}">
+				<Button id="changeVersionButton" press="onChangeVersionButtonPress" type="Transparent" text="{i18n>APP_CHANGE_VERSION_BTN}" visible="{appView>/bShowVersionSwitchInHeader}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
@@ -90,35 +87,37 @@
 
 				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
-				<Button press="feedbackDialogOpen" icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
+				<Button id="feedBackDialogButton" tooltip="{i18n>APP_FEEDBACK_BTN_TOOLTIP}" press="feedbackDialogOpen" icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
 
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</Button>
 
-				<MenuButton icon="sap-icon://hint" type="Transparent" visible="{=!${appView>/bSearchMode}}">
+				<MenuButton tooltip="{i18n>APP_INFORMATION_BTN_TOOLTIP}" id="aboutMenuButton" icon="sap-icon://hint" type="Transparent" visible="{=!${appView>/bSearchMode}}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 					<menu>
-						<Menu class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
+						<Menu id="aboutMenu" class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
 							<items>
-								<MenuItem text="{= ${versionData>/isBetaVersion} ? 'Beta' : ''} Version {versionData>/version} {=${versionData>/isDevVersion} ? '- development in progress!' : ''}" visible="{appView>/bPhoneSize}" />
-								<MenuItem text="Change version" visible="{appView>/bShowVersionSwitchInMenu}" />
-								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
-								<MenuItem text="About" />
-								<MenuItem text="Legal" />
-								<MenuItem text="Privacy" />
-								<MenuItem text="Terms of Use" visible="{=!${versionData>/isOpenUI5}}">
+								<MenuItem text="{= ${versionData>/isBetaVersion} ? ${i18n>APP_VERSION_BETA_VERSION} : ${i18n>APP_VERSION_VERSION}} {versionData>/version} {=${versionData>/isDevVersion} ? ${i18n>APP_VERSION_IN_PROGRESS} : ''}" visible="{appView>/bPhoneSize}" />
+								<MenuItem key="change_version" text="{i18n>APP_CHANGE_VERSION_BTN}" visible="{appView>/bShowVersionSwitchInMenu}" />
+								<MenuItem key="feedback" text="{i18n>APP_INFORMATION_BTN_FEEDBACK}" visible="{appView>/bPhoneSize}" />
+								<MenuItem key="about" id="aboutMenuItem" text="{i18n>APP_INFORMATION_BTN_ABOUT}" />
+								<MenuItem key="legal" text="{i18n>APP_INFORMATION_BTN_LEGAL}" />
+								<MenuItem key="privacy" text="{i18n>APP_INFORMATION_BTN_PRIVACY}" />
+								<MenuItem key="terms_of_use" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" visible="{=!${versionData>/isOpenUI5}}">
 									<items>
-										<MenuItem text="Terms of Use" />
-										<MenuItem text="Copyright" />
-										<MenuItem text="Trademark" />
-										<MenuItem text="Disclaimer" />
+										<MenuItem  key="terms_of_use" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" />
+										<MenuItem  key="copyright" text="{i18n>APP_INFORMATION_BTN_COPYRIGHT}" />
+										<MenuItem  key="trademark" text="{i18n>APP_INFORMATION_BTN_TRADEMARK}" />
+										<MenuItem  key="disclaimer" text="{i18n>APP_INFORMATION_BTN_DISCLAIMER}" />
 									</items>
 								</MenuItem>
-								<MenuItem text="License" visible="{versionData>/isOpenUI5}"/>
+								<MenuItem text="{i18n>APP_INFORMATION_BTN_LICENSE}" key="license" visible="{versionData>/isOpenUI5}"/>
+								<MenuItem text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" key="terms_of_use" visible="{versionData>/isOpenUI5}"/>
+								<MenuItem text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE}" key="settings"/>
 							</items>
 						</Menu>
 					</menu>
@@ -126,7 +125,7 @@
 				<core:ExtensionPoint name="customLinks" />
 			</tnt:ToolHeader>
 
-			<Bar visible="{= ${device>/system/phone} &amp;&amp; ${appView>/bHasMaster} &amp;&amp; ${headerView>/bShowSubHeader} }" class="sapContrast sapContrastPlus">
+			<Bar visible="{= ${appView>/bPhoneSize} &amp;&amp; ${appView>/bHasMaster}}" class="sapContrast sapContrastPlus">
 				<contentLeft>
 					<ToggleButton icon="sap-icon://menu2" type="Transparent" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
 						<layoutData>
@@ -140,11 +139,14 @@
 			<ScrollContainer
 					id="contentId"
 					width="100%"
-					height="{= ${device>/system/phone} &amp;&amp; ${appView>/bHasMaster} &amp;&amp; ${headerView>/bShowSubHeader} ? 'calc(100% - 5rem)' : 'calc(100% - 3rem)'}"
+					height="{= ${appView>/bPhoneSize} &amp;&amp; ${appView>/bHasMaster} ?
+					'calc(100% - ' + ${appView>/oThemeScrollContainerHeight/iMobileHeight} + ')' :
+				 	'calc(100% - ' + ${appView>/oThemeScrollContainerHeight/iDesktopHeight} + ')'}"
 					horizontal="false"
 					vertical="false">
 				<SplitApp id="splitApp"
 						  mode="HideMode"
+						  class="sapUiDocumentationSplitApp"
 						  defaultTransitionNameDetail="show"
 						  defaultTransitionNameMaster="fade">
 				</SplitApp>

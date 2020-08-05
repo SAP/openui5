@@ -2,8 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Core', './Component'],
-	function(jQuery, Core, Component) {
+sap.ui.define([
+	'./Core',
+	'./Component',
+	'sap/base/Log',
+	'sap/base/util/extend',
+	'sap/base/util/ObjectPath',
+	"sap/base/util/isEmptyObject"
+],
+	function(Core, Component, Log, extend, ObjectPath, isEmptyObject) {
 	"use strict";
 
 
@@ -33,7 +40,7 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 				// configuration is checked - the customizing configuration is
 				// merged in case of extending components - so the configuration
 				// should be available properly
-				var oComponent = sap.ui.component(sComponentId);
+				var oComponent = Component.get(sComponentId);
 				var sComponentName = oComponent && oComponent.getMetadata().getComponentName();
 				// starting with manifest first we need to check the instance
 				// specific configuration first and fallback to the general
@@ -49,11 +56,12 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 				}
 			} else {
 				// TODO: checking order of components?
-				jQuery.each(mComponentConfigs, function(sComponentName, oConfig) {
+				for (sComponentName in mComponentConfigs) {
+					oConfig = mComponentConfigs[sComponentName];
 					if (oConfig && oConfig[sType] && fnCheck(oConfig[sType])) {
-						return false;
+						break;
 					}
-				});
+				}
 			}
 		}
 
@@ -90,13 +98,13 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 			 * @private
 			 */
 			activateForComponent: function(sComponentName) {
-				jQuery.sap.log.info("CustomizingConfiguration: activateForComponent('" + sComponentName + "')");
+				Log.info("CustomizingConfiguration: activateForComponent('" + sComponentName + "')");
 				var sFullComponentName = sComponentName + ".Component";
-				jQuery.sap.require(sFullComponentName);
-				var oCustomizingConfig = jQuery.sap.getObject(sFullComponentName).getMetadata().getCustomizing();
+				sap.ui.requireSync(sFullComponentName.replace(/\./g, "/"));
+				var oCustomizingConfig = ObjectPath.get(sFullComponentName).getMetadata().getCustomizing();
 				mComponentConfigs[sComponentName] = oCustomizingConfig;
 
-				jQuery.sap.log.debug("CustomizingConfiguration: customizing configuration for component '" + sComponentName + "' loaded: " + JSON.stringify(oCustomizingConfig));
+				Log.debug("CustomizingConfiguration: customizing configuration for component '" + sComponentName + "' loaded: " + JSON.stringify(oCustomizingConfig));
 			},
 
 			/**
@@ -107,7 +115,7 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 			 */
 			deactivateForComponent: function(sComponentName) {
 				if (mComponentConfigs[sComponentName]) {
-					jQuery.sap.log.info("CustomizingConfiguration: deactivateForComponent('" + sComponentName + "')");
+					Log.info("CustomizingConfiguration: deactivateForComponent('" + sComponentName + "')");
 					delete mComponentConfigs[sComponentName];
 				}
 			},
@@ -119,13 +127,13 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 			 * @private
 			 */
 			activateForComponentInstance: function(oComponent) {
-				jQuery.sap.log.info("CustomizingConfiguration: activateForComponentInstance('" + oComponent.getId() + "')");
+				Log.info("CustomizingConfiguration: activateForComponentInstance('" + oComponent.getId() + "')");
 				var sComponentName = oComponent.getMetadata().getComponentName(),
 					sKey = sComponentName + "::" + oComponent.getId(),
 					oCustomizingConfig = oComponent.getManifest()["sap.ui5"] && oComponent.getManifest()["sap.ui5"]["extends"] && oComponent.getManifest()["sap.ui5"]["extends"]["extensions"];
 				mComponentConfigs[sKey] = oCustomizingConfig;
 
-				jQuery.sap.log.debug("CustomizingConfiguration: customizing configuration for component '" + sKey + "' loaded: " + JSON.stringify(oCustomizingConfig));
+				Log.debug("CustomizingConfiguration: customizing configuration for component '" + sKey + "' loaded: " + JSON.stringify(oCustomizingConfig));
 			},
 
 			/**
@@ -138,7 +146,7 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 				var sComponentName = oComponent.getMetadata().getComponentName(),
 				    sKey = sComponentName + "::" + oComponent.getId();
 				if (mComponentConfigs[sKey]) {
-					jQuery.sap.log.info("CustomizingConfiguration: deactivateForComponent('" + sKey + "')");
+					Log.info("CustomizingConfiguration: deactivateForComponent('" + sKey + "')");
 					delete mComponentConfigs[sKey];
 				}
 			},
@@ -211,19 +219,21 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 					var oSettings = oConfig[sViewName] && oConfig[sViewName][sControlId];
 					var oUsedSettings = {};
 					var bValidConfigFound = false;
+					var vValue, sName;
 					if (oSettings) {
-						jQuery.each(oSettings, function(sName, vValue) {
+						for (sName in oSettings) {
+							vValue = oSettings[sName];
 							if (sName === "visible") {
 								bValidConfigFound = true;
 								oUsedSettings[sName] = vValue;
-								jQuery.sap.log.info("Customizing: custom value for property '" + sName + "' of control '" + sControlId + "' in View '" + sViewName + "' applied: " + vValue);
+								Log.info("Customizing: custom value for property '" + sName + "' of control '" + sControlId + "' in View '" + sViewName + "' applied: " + vValue);
 							} else {
-								jQuery.sap.log.warning("Customizing: custom value for property '" + sName + "' of control '" + sControlId + "' in View '" + sViewName + "' ignored: only the 'visible' property can be customized.");
+								Log.warning("Customizing: custom value for property '" + sName + "' of control '" + sControlId + "' in View '" + sViewName + "' ignored: only the 'visible' property can be customized.");
 							}
-						});
+						}
 						if (bValidConfigFound) { // initialize only when there is actually something to add
 							mSettings = mSettings || {}; // merge with any previous calls to findConfig in case of multiple definition sections
-							jQuery.extend(mSettings, oUsedSettings); // FIXME: this currently overrides customizations from different components in random order
+							extend(mSettings, oUsedSettings); // FIXME: this currently overrides customizations from different components in random order
 						}
 					}
 				});
@@ -237,19 +247,19 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 						mSettings = oConfig[sViewName];
 					}
 				});
-				return (!jQuery.isEmptyObject(mSettings));
+				return !isEmptyObject(mSettings);
 			}
 
 		};
 
 		// when the customizing is disabled all the functions will be noop
 		if (sap.ui.getCore().getConfiguration().getDisableCustomizing()) {
-			jQuery.sap.log.info("CustomizingConfiguration: disabling Customizing now");
-			jQuery.each(CustomizingConfiguration, function(sName, vAny) {
-				if (typeof vAny === "function") {
+			Log.info("CustomizingConfiguration: disabling Customizing now");
+			for (var sName in CustomizingConfiguration) {
+				if (typeof CustomizingConfiguration[sName] === "function") {
 					CustomizingConfiguration[sName] = function() {};
 				}
-			});
+			}
 		}
 
 

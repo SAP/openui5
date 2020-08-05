@@ -1,0 +1,37 @@
+{
+	"error" : {
+		"code" : "SEPM_BO_COMMON/010",
+		"message" : {
+			"lang" : "en",
+			"value" : "Mandatory field 'PRODUCT_GUID' is empty"
+		},
+		"innererror" : {
+			"application" : {
+				"component_id" : "",
+				"service_namespace" : "/SAP/",
+				"service_id" : "ZUI5_GWSAMPLE_BASIC",
+				"service_version" : "0001"
+			},
+			"transactionid" : "B5D8524E18950210E005ED6EDB56062B",
+			"timestamp" : "",
+			"errordetails" : [
+				{
+					"code" : "SEPM_BO_COMMON/010",
+					"message" : "Mandatory field 'PRODUCT_GUID' is empty",
+					"propertyref" : "",
+					"severity" : "error",
+					"transition" : false,
+					"target" : ""
+				},
+				{
+					"code" : "/IWBEP/CX_MGW_BUSI_EXCEPTION",
+					"message" : "Error occurred while processing the request",
+					"propertyref" : "",
+					"severity" : "error",
+					"transition" : false,
+					"target" : ""
+				}
+			]
+		}
+	}
+}

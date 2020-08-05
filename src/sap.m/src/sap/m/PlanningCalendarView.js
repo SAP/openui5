@@ -2,6 +2,11 @@
  * ${copyright}
  */
 
+// Ensure that sap.ui.unified is loaded before the module dependencies will be required.
+// Loading it synchronously is the only compatible option and doesn't harm when sap.ui.unified
+// already has been loaded asynchronously (e.g. via a dependency declared in the manifest)
+sap.ui.getCore().loadLibrary("sap.ui.unified");
+
 //Provides control sap.m.PlanningCalendarView.
 sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 		function(Element, library, unifiedLibrary) {
@@ -10,6 +15,7 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 	// shortcut for sap.ui.unified.CalendarIntervalType
 	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
 
+	var CalendarAppointmentHeight = unifiedLibrary.CalendarAppointmentHeight;
 	/**
 	 * Constructor for a new <code>PlanningCalendarView</code>.
 	 *
@@ -56,6 +62,8 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 
 			/**
 			 * Defines the number of intervals that are displayed for a {@link sap.m.PlanningCalendar} that is less than 600 pixels wide.
+
+			 * <b>Note:</b> On a phone the maximum visible intervals are 8.
 			 */
 			intervalsS : {type : "int", group : "Appearance", defaultValue : 6},
 
@@ -78,7 +86,13 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 			 * <li>Day subintervals for interval type <code>Month</code>.</li>
 			 * </ul>
 			 */
-			showSubIntervals : {type : "boolean", group : "Appearance", defaultValue : false}
+			showSubIntervals: { type: "boolean", group: "Appearance", defaultValue: false },
+
+			/**
+			 * Determines the different possible sizes for appointments.
+			 * @since 1.81.0
+			 */
+			appointmentHeight: { type: "sap.ui.unified.CalendarAppointmentHeight", group: "Appearance", defaultValue: CalendarAppointmentHeight.Regular }
 
 		}
 	}});

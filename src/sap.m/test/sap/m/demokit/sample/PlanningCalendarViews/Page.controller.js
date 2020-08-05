@@ -1,12 +1,19 @@
 sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
-		'sap/m/MessageBox'
+		'sap/m/MessageBox',
+		'sap/ui/Device',
+		'sap/ui/unified/library',
+		'sap/ui/unified/DateTypeRange',
+		'sap/m/PlanningCalendarView'
 	],
-	function (Controller, JSONModel, MessageBox) {
+	function (Controller, JSONModel, MessageBox, Device, unifiedLibrary, DateTypeRange, PlanningCalendarView) {
 		"use strict";
 
-		var PageController = Controller.extend("sap.m.sample.PlanningCalendarViews.Page", {
+		var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
+		var CalendarDayType = unifiedLibrary.CalendarDayType;
+
+		return Controller.extend("sap.m.sample.PlanningCalendarViews.Page", {
 
 			onInit: function () {
 				// create model
@@ -14,7 +21,7 @@ sap.ui.define([
 				oModel.setData({
 					startDate: new Date(2017, 1, 8, 8, 0),
 					people: [{
-						pic: "test-resources/sap/ui/demokit/explored/img/John_Miller.png",
+						pic: "test-resources/sap/ui/documentation/sdk/images/John_Miller.png",
 						name: "John Miller",
 						role: "team member",
 						freeDays: [5, 6],
@@ -243,21 +250,24 @@ sap.ui.define([
 			},
 
 			handleGroupModeChange: function (oEvent) {
-				var selectedItem = oEvent.getParameter("selectedItem");
-				if (selectedItem) {
-					var oPC1 = this.byId("PC1");
-					oPC1.setGroupAppointmentsMode(selectedItem.getKey());
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				if (oSelectedItem) {
+					this.byId("PC1").setGroupAppointmentsMode(oSelectedItem.getKey());
 				}
 			},
 
 			handleAppointmentSelect: function (oEvent) {
-				var oAppointment = oEvent.getParameter("appointment");
+				var oAppointment = oEvent.getParameter("appointment"),
+					sSelected,
+					aAppointments,
+					sValue;
+
 				if (oAppointment) {
-					var sSelected = oAppointment.getSelected() ? "selected" : "deselected";
+					sSelected = oAppointment.getSelected() ? "selected" : "deselected";
 					MessageBox.show("'" + oAppointment.getTitle() + "' " + sSelected + ". \n Selected appointments: " + this.byId("PC1").getSelectedAppointments().length);
 				} else {
-					var aAppointments = oEvent.getParameter("appointments"),
-						sValue = aAppointments.length + " Appointments selected";
+					aAppointments = oEvent.getParameter("appointments");
+					sValue = aAppointments.length + " Appointments selected";
 					MessageBox.show(sValue);
 				}
 			},
@@ -266,7 +276,7 @@ sap.ui.define([
 				if (this.byId("PC1").getViewKey() === "nonWorking"){
 					this.handleNonWorkingSpecialDates(oEvent);
 				} else {
-					var oPC = oEvent.oSource,
+					var oPC = oEvent.getSource(),
 						oStartDate = oEvent.getParameter("startDate"),
 						oEndDate = oEvent.getParameter("endDate"),
 						oRow = oEvent.getParameter("row"),
@@ -278,14 +288,16 @@ sap.ui.define([
 							end: oEndDate,
 							title: "new appointment",
 							type: "Type09"
-						};
+						},
+						aSelectedRows,
+						i;
 
 					if (oRow) {
 						iIndex = oPC.indexOfRow(oRow);
 						oData.people[iIndex].appointments.push(oAppointment);
 					} else {
-						var aSelectedRows = oPC.getSelectedRows();
-						for (var i = 0; i < aSelectedRows.length; i++) {
+						aSelectedRows = oPC.getSelectedRows();
+						for (i = 0; i < aSelectedRows.length; i++) {
 							iIndex = oPC.indexOfRow(aSelectedRows[i]);
 							oData.people[iIndex].appointments.push(oAppointment);
 						}
@@ -295,7 +307,7 @@ sap.ui.define([
 				}
 			},
 
-			handleViewChange: function (oEvent) {
+			handleViewChange: function () {
 				this.determineControlsVisibility();
 			},
 
@@ -307,17 +319,16 @@ sap.ui.define([
 			handleNonWorkingSpecialDates: function (oEvent){
 				var oPC1 = this.byId("PC1"),
 					aSpecialDates = oPC1.getSpecialDates() || [],
-					oStartDate = oEvent.getParameter("startDate");
-
-				//determine add or remove
-				var oFound = aSpecialDates.find(function(oDateRange) {
-					return oDateRange.getStartDate().getTime() === oStartDate.getTime();
-				});
+					oStartDate = oEvent.getParameter("startDate"),
+					//determine add or remove
+					oFound = aSpecialDates.find(function(oDateRange) {
+						return oDateRange.getStartDate().getTime() === oStartDate.getTime();
+					});
 
 				if (!oFound) {
-					oPC1.addSpecialDate(new sap.ui.unified.DateTypeRange({
+					oPC1.addSpecialDate(new DateTypeRange({
 						startDate: new Date(oStartDate.getTime()),
-						type: sap.ui.unified.CalendarDayType.NonWorking
+						type: CalendarDayType.NonWorking
 					}));
 				} else {
 					oPC1.removeSpecialDate(oFound);
@@ -330,8 +341,11 @@ sap.ui.define([
 			 */
 			determineControlsVisibility: function () {
 				var bLabelVisible = this.byId("PC1").getViewKey() === "nonWorking",
-					bSelectVisible = this.byId("PC1").getViewKey() === "M";
+					bSelectVisible = false;
 				this.byId("label").setVisible(bLabelVisible);
+				if (Device.system.desktop){
+					bSelectVisible = this.byId("PC1").getViewKey() === "M";
+				}
 				this.byId("select").setVisible(bSelectVisible);
 			},
 
@@ -343,9 +357,9 @@ sap.ui.define([
 			onPress: function (oEvent) {
 				if (!oEvent.getParameter("pressed")) {
 					this.byId("PC1").addView(
-						new sap.m.PlanningCalendarView({
+						new PlanningCalendarView({
 							key: "A",
-							intervalType: sap.ui.unified.CalendarIntervalType.Hour,
+							intervalType: CalendarIntervalType.Hour,
 							description: "hours view",
 							intervalsS: 2,
 							intervalsM: 4,
@@ -354,9 +368,9 @@ sap.ui.define([
 						})
 					);
 					this.byId("PC1").addView(
-						new sap.m.PlanningCalendarView({
+						new PlanningCalendarView({
 							key: "D",
-							intervalType: sap.ui.unified.CalendarIntervalType.Day,
+							intervalType: CalendarIntervalType.Day,
 							description: "days view",
 							intervalsS: 1,
 							intervalsM: 3,
@@ -365,9 +379,9 @@ sap.ui.define([
 						})
 					);
 					this.byId("PC1").addView(
-						new sap.m.PlanningCalendarView({
+						new PlanningCalendarView({
 							key: "M",
-							intervalType: sap.ui.unified.CalendarIntervalType.Month,
+							intervalType: CalendarIntervalType.Month,
 							description: "months view",
 							intervalsS: 1,
 							intervalsM: 2,
@@ -376,9 +390,9 @@ sap.ui.define([
 						})
 					);
 					this.byId("PC1").addView(
-						new sap.m.PlanningCalendarView({
+						new PlanningCalendarView({
 							key: "nonWorking",
-							intervalType: sap.ui.unified.CalendarIntervalType.Day,
+							intervalType: CalendarIntervalType.Day,
 							description: "days with non-working dates",
 							intervalsS: 1,
 							intervalsM: 5,
@@ -389,10 +403,10 @@ sap.ui.define([
 				} else {
 					this.byId("PC1").destroyViews();
 				}
+				this.byId("select").setVisible(false);
+				this.byId("label").setVisible(false);
 			}
 
 		});
-
-		return PageController;
 
 	});

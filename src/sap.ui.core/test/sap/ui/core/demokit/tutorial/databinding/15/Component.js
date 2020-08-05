@@ -17,7 +17,10 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/view/App.view.xml",
 							"webapp/view/ProductExtended.fragment.xml",
 							"webapp/view/ProductSimple.fragment.xml",
-							"webapp/index.html"
+							"webapp/index.html",
+							"webapp/index.js",
+							"ui5.yaml",
+							"package.json"
 						]
 					}
 				}

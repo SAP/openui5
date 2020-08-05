@@ -1,0 +1,52 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.data.list.card",
+		"type": "card",
+		"title": "Sample for Data usage in Cards",
+		"subTitle": "Sample for Data usage in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Data",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"data": {
+				"json": {
+					"title": "Header with data coming from data as JSON",
+					"subTitle": "This card is using static JSON data",
+					"iconSrc": "sap-icon://desktop-mobile"
+				}
+			},
+			"title": "{title}",
+			"subTitle": "{subTitle}",
+			"icon": {
+				"src": "{iconSrc}"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./samples/data/items.json"
+				},
+				"path": "/staticData"
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"highlight": "{Highlight}"
+			}
+		}
+	}
+}

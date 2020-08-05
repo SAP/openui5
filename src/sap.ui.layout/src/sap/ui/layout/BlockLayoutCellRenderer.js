@@ -2,14 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/library'],
-	function(jQuery, library, coreLibrary) {
+sap.ui.define(['./library', 'sap/ui/core/library', "sap/base/Log"],
+	function(library, coreLibrary, Log) {
 		"use strict";
 
 		// shortcut for sap.ui.core.TitleLevel
 		var TitleLevel = coreLibrary.TitleLevel;
 
-		var BlockLayoutCellRenderer = {};
+		var BlockLayoutCellRenderer = {
+			apiVersion: 2
+		};
 
 		BlockLayoutCellRenderer.render = function (rm, blockLayoutCell) {
 			this.startCell(rm, blockLayoutCell);
@@ -20,15 +22,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/library'],
 		BlockLayoutCellRenderer.startCell = function (oRm, oBlockLayoutCell) {
 			var sCellColor = this.getCellColor(oRm, oBlockLayoutCell);
 
-			oRm.write("<div");
-			oRm.writeControlData(oBlockLayoutCell);
-			oRm.addClass("sapUiBlockLayoutCell");
-			sCellColor && oRm.addClass(sCellColor); // Set any of the predefined cell colors
+			oRm.openStart("div", oBlockLayoutCell)
+				.class("sapUiBlockLayoutCell");
+			sCellColor && oRm.class(sCellColor); // Set any of the predefined cell colors
 			this.setWidth(oRm, oBlockLayoutCell);
 
-			oRm.writeStyles();
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 		};
 
 		BlockLayoutCellRenderer.getCellColor = function (oRm, oBlockLayoutCell) {
@@ -38,7 +37,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/library'],
 			if (!sColorSet && !sColorIndex) {
 				return "";
 			} else if (( sColorSet && !sColorIndex ) || ( !sColorSet && sColorIndex )) { // XOR check. Both values need to be either defined or not defined.
-				jQuery.sap.log.warning("Both, backgroundColorSet and backgroundColorShade should be defined. ColoSet is not applied to " + oBlockLayoutCell.getId() + ".");
+				Log.warning("Both, backgroundColorSet and backgroundColorShade should be defined. ColoSet is not applied to " + oBlockLayoutCell.getId() + ".");
 				return "";
 			}
 
@@ -50,24 +49,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/library'],
 		};
 
 		BlockLayoutCellRenderer.setWidth = function (rm, blockLayoutCell) {
+			var width = blockLayoutCell.getWidth();
 			if (blockLayoutCell._getParentRowScrollable()) {
-				var width = blockLayoutCell.getWidth();
 				if (width !== 0) {
-					rm.addStyle("width", width + "%");
+					rm.style("width", width + "%");
 				}
 			} else {
 				this.addFlex(rm, blockLayoutCell._getFlexWidth());
 			}
+
 		};
 
 		BlockLayoutCellRenderer.addFlex = function (rm, flex) {
-			rm.addStyle("-webkit-flex", flex);
-			rm.addStyle("-ms-flex", flex);
-			rm.addStyle("flex", flex);
+			rm.style("-webkit-flex", flex);
+			rm.style("-ms-flex", flex);
+			rm.style("flex", flex);
 		};
 
 		BlockLayoutCellRenderer.addTitle = function (rm, blockLayoutCell) {
-			if (blockLayoutCell.getTitle()) {
+			var oTitleLink = blockLayoutCell.getTitleLink();
+
+			var sTitleText = blockLayoutCell.getTitle();
+
+			if (sTitleText || oTitleLink) {
 				var alignmentClass = "sapUiBlockCell" + blockLayoutCell.getTitleAlignment(),
 					titleClass = "sapUiBlockCellTitle " + alignmentClass;
 
@@ -80,9 +84,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/library'],
 					autoLevel = level === TitleLevel.Auto,
 					tag = autoLevel ? "h2" : level;
 
-				rm.write("<" + tag + " id='" + this.getTitleId(blockLayoutCell) + "' class='" + titleClass + "'>");
-				rm.writeEscaped(blockLayoutCell.getTitle());
-				rm.write("</" + tag + ">");
+				var aTitleClassesSeparated = titleClass.split(" ");
+
+				rm.openStart(tag, this.getTitleId(blockLayoutCell));
+
+				for (var index = 0; index < aTitleClassesSeparated.length; index++) {
+					rm.class(aTitleClassesSeparated[index]);
+				}
+
+				rm.openEnd();
+
+				if (oTitleLink) {
+					rm.renderControl(oTitleLink);
+				} else {
+					rm.text(sTitleText);
+				}
+
+				rm.close(tag);
 			}
 		};
 
@@ -90,22 +108,37 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/library'],
 			return blockLayoutCell.getId() + "-Title";
 		};
 
+		BlockLayoutCellRenderer.hasTitle = function (blockLayoutCell) {
+			return blockLayoutCell.getTitleLink() || blockLayoutCell.getTitle();
+		};
+
 		BlockLayoutCellRenderer.addContent = function (rm, blockLayoutCell) {
 			var content = blockLayoutCell.getContent(),
-				contentClass = "sapUiBlockCellContent ";
+				bHasTitle = this.hasTitle(blockLayoutCell);
+
+			rm.openStart("div")
+				.class("sapUiBlockCellContent");
 
 			if (blockLayoutCell.getTitleAlignment() === "Center") {
-				contentClass += "sapUiBlockCellCenteredContent";
+				rm.class("sapUiBlockCellCenteredContent");
 			}
 
-			rm.write("<div class='" + contentClass + "' aria-labelledby='" + this.getTitleId(blockLayoutCell) +  "' >");
-			this.addTitle(rm, blockLayoutCell);
-			content.forEach(rm.renderControl);
-			rm.write("</div>");
+			if (bHasTitle) {
+				rm.attr("aria-labelledby", this.getTitleId(blockLayoutCell));
+			}
+
+			rm.openEnd();
+
+			if (bHasTitle) {
+				this.addTitle(rm, blockLayoutCell);
+			}
+
+			content.forEach(rm.renderControl, rm);
+			rm.close("div");
 		};
 
 		BlockLayoutCellRenderer.endCell = function (rm) {
-			rm.write("</div>");
+			rm.close("div");
 		};
 
 		return BlockLayoutCellRenderer;

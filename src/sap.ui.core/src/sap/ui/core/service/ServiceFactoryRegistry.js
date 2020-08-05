@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.service.ServiceFactoryRegistry
-sap.ui.define(['jquery.sap.global', './ServiceFactory'],
-	function(jQuery, ServiceFactory) {
+sap.ui.define(['./ServiceFactory', "sap/base/assert"],
+	function(ServiceFactory, assert) {
 	"use strict";
 
 
@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './ServiceFactory'],
 	 * @version ${version}
 	 * @alias sap.ui.core.service.ServiceFactoryRegistry
 	 * @private
-	 * @sap-restricted sap.ushell
+	 * @ui5-restricted sap.ushell
 	 * @since 1.37.0
 	 */
 	var ServiceFactoryRegistry = Object.create(null);
@@ -33,12 +33,12 @@ sap.ui.define(['jquery.sap.global', './ServiceFactory'],
 	 * @return {sap.ui.core.service.ServiceFactoryRegistry} <code>this</code> to allow method chaining
 	 * @static
 	 * @private
-	 * @sap-restricted sap.ushell
+	 * @ui5-restricted sap.ushell
 	 */
 	ServiceFactoryRegistry.register = function(sServiceFactoryName, oServiceFactory) {
 
-		jQuery.sap.assert(sServiceFactoryName, "sServiceFactoryName must not be empty, null or undefined");
-		jQuery.sap.assert(oServiceFactory instanceof ServiceFactory, "oServiceFactory must be an instance of sap.ui.core.service.ServiceFactory");
+		assert(sServiceFactoryName, "sServiceFactoryName must not be empty, null or undefined");
+		assert(oServiceFactory instanceof ServiceFactory, "oServiceFactory must be an instance of sap.ui.core.service.ServiceFactory");
 
 		mServiceFactories[sServiceFactoryName] = oServiceFactory;
 
@@ -54,11 +54,11 @@ sap.ui.define(['jquery.sap.global', './ServiceFactory'],
 	 * @return {sap.ui.core.service.ServiceFactoryRegistry} <code>this</code> to allow method chaining
 	 * @static
 	 * @private
-	 * @sap-restricted sap.ushell
+	 * @ui5-restricted sap.ushell
 	 */
 	ServiceFactoryRegistry.unregister = function(sServiceFactoryName) {
 
-		jQuery.sap.assert(sServiceFactoryName, "sServiceFactoryName must not be empty, null or undefined");
+		assert(sServiceFactoryName, "sServiceFactoryName must not be empty, null or undefined");
 
 		delete mServiceFactories[sServiceFactoryName];
 
@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', './ServiceFactory'],
 	 * @return {sap.ui.core.service.ServiceFactory} Service factory instance
 	 * @static
 	 * @private
-	 * @sap-restricted sap.ushell
+	 * @ui5-restricted sap.ushell
 	 */
 	ServiceFactoryRegistry.get = function(sServiceFactoryName) {
 		return mServiceFactories[sServiceFactoryName];

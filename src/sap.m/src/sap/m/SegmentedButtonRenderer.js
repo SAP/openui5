@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/library"],
-	function(coreLibrary) {
+sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
+	function(coreLibrary, InvisibleRenderer) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -14,6 +14,7 @@ sap.ui.define(["sap/ui/core/library"],
 	 * @namespace
 	 */
 	var SegmentedButtonRenderer = {
+		apiVersion: 2
 	};
 
 	/**
@@ -24,6 +25,8 @@ sap.ui.define(["sap/ui/core/library"],
 	 */
 	SegmentedButtonRenderer.render = function(oRM, oControl){
 		var aButtons = oControl.getButtons(),
+			aVisibleButtons = aButtons.filter(function(oButton) { return oButton.getVisible(); }),
+			iVisibleButtonPos = 0,
 			sSelectedButton = oControl.getSelectedButton(),
 			oButton,
 			sTooltip,
@@ -32,47 +35,36 @@ sap.ui.define(["sap/ui/core/library"],
 
 		// Select representation mockup
 		if (oControl._bInOverflow) {
-			oRM.write("<div");
-			oRM.writeControlData(oControl);
-			oRM.writeClasses();
-			oRM.write(">");
+			oRM.openStart("div", oControl);
+			oRM.openEnd();
 			oRM.renderControl(oControl.getAggregation("_select"));
-			oRM.write("</div>");
+			oRM.close("div");
 			return;
 		}
 
 		// write the HTML into the render manager
-		oRM.write("<ul");
-
+		oRM.openStart("ul", oControl);
 
 		if (SegmentedButtonRenderer._addAllIconsClass(aButtons)) {
-			oRM.addClass("sapMSegBIcons");
+			oRM.class("sapMSegBIcons");
 		}
-		oRM.addClass("sapMSegB");
-		oRM.writeClasses();
-		if (oControl.getWidth() && oControl.getWidth() !== '') {
-			oRM.addStyle('width', oControl.getWidth());
-		}
-		oRM.writeStyles();
-		oRM.writeControlData(oControl);
+		oRM.class("sapMSegB");
+		oRM.style('width', oControl.getWidth());
+
 		sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			oRM.writeAttributeEscaped("title", sTooltip);
+			oRM.attr("title", sTooltip);
 		}
 
 		// ARIA
-		oRM.writeAccessibilityState(oControl, {
+		oRM.accessibilityState(oControl, {
 			role : "radiogroup"
 		});
 
-		oRM.write(">");
+		oRM.openEnd();
 
 		for (var i = 0; i < aButtons.length; i++) {
 			oButton = aButtons[i];
-
-			// instead of the button API we render a li element but with the id of the button
-			// only the button properties enabled, width, icon, text, and tooltip are evaluated here
-			oRM.write("<li");
 
 			if (oButton.getVisible()) {
 				var sButtonText = oButton.getText(),
@@ -80,6 +72,7 @@ sap.ui.define(["sap/ui/core/library"],
 					sIconAriaLabel = "",
 					oImage;
 
+				++iVisibleButtonPos;
 				if (oButtonIcon) {
 					oImage = oButton._getImage((oButton.getId() + "-img"), oButtonIcon);
 					if (oImage instanceof sap.m.Image) {
@@ -89,46 +82,47 @@ sap.ui.define(["sap/ui/core/library"],
 					}
 				}
 
-				oRM.writeControlData(oButton);
-				oRM.writeAttribute("aria-posinset", i + 1);
-				oRM.writeAttribute("aria-setsize", aButtons.length);
-				oRM.addClass("sapMSegBBtn");
+				// instead of the button API we render a li element but with the id of the button
+				// only the button properties enabled, width, icon, text, and tooltip are evaluated here
+				oRM.openStart("li", oButton);
+				oRM.attr("aria-posinset", iVisibleButtonPos);
+				oRM.attr("aria-setsize", aVisibleButtons.length);
+				oRM.class("sapMSegBBtn");
+				if (oButton.getId() === aVisibleButtons[aVisibleButtons.length - 1].getId()) {
+					oRM.class("sapMSegBtnLastVisibleButton");
+				}
 				if (oButton.aCustomStyleClasses !== undefined && oButton.aCustomStyleClasses instanceof Array) {
 					for (var j = 0; j < oButton.aCustomStyleClasses.length; j++) {
-						oRM.addClass(oButton.aCustomStyleClasses[j]);
+						oRM.class(oButton.aCustomStyleClasses[j]);
 					}
 				}
 				if (oButton.getEnabled()) {
-					oRM.addClass("sapMSegBBtnFocusable");
+					oRM.class("sapMSegBBtnFocusable");
 				} else {
-					oRM.addClass("sapMSegBBtnDis");
+					oRM.class("sapMSegBBtnDis");
 				}
 				if (sSelectedButton === oButton.getId()) {
-					oRM.addClass("sapMSegBBtnSel");
+					oRM.class("sapMSegBBtnSel");
 				}
 				if (oButtonIcon && sButtonText !== '') {
-					oRM.addClass("sapMSegBBtnMixed");
+					oRM.class("sapMSegBBtnMixed");
 				}
-				oRM.writeClasses();
 				sButtonWidth = oButton.getWidth();
-				if (sButtonWidth) {
-					oRM.addStyle('width', sButtonWidth);
-					oRM.writeStyles();
-				}
+				oRM.style('width', sButtonWidth);
 
 				sTooltip = oButton.getTooltip_AsString();
 				if (sTooltip) {
-					oRM.writeAttributeEscaped("title", sTooltip);
+					oRM.attr("title", sTooltip);
 				}
-				oRM.writeAttribute("tabindex", oButton.getEnabled() ? "0" : "-1");
+				oRM.attr("tabindex", oButton.getEnabled() ? "0" : "-1");
 
 				sButtonTextDirection = oButton.getTextDirection();
 				if (sButtonTextDirection !== TextDirection.Inherit) {
-					oRM.writeAttribute("dir", sButtonTextDirection.toLowerCase());
+					oRM.attr("dir", sButtonTextDirection.toLowerCase());
 				}
 
 				// ARIA
-				oRM.writeAccessibilityState(oButton, {
+				oRM.accessibilityState(oButton, {
 					role : "radio",
 					checked : sSelectedButton === oButton.getId()
 				});
@@ -140,12 +134,15 @@ sap.ui.define(["sap/ui/core/library"],
 						sIconAriaLabel += " " + sButtonText;
 					} else {
 						// if we have no text for the button set tooltip the name of the Icon
-						oRM.writeAttributeEscaped("title", sIconAriaLabel);
+						oRM.attr("title", sIconAriaLabel);
 					}
-					oRM.writeAttributeEscaped("aria-label", sIconAriaLabel);
+					oRM.attr("aria-label", sIconAriaLabel);
 				}
 
-				oRM.write('>');
+				oRM.openEnd();
+				oRM.openStart("div");
+				oRM.class("sapMSegBBtnInner");
+				oRM.openEnd();
 
 				if (oButtonIcon && oImage) {
 					oRM.renderControl(oImage);
@@ -153,15 +150,15 @@ sap.ui.define(["sap/ui/core/library"],
 
 				// render text
 				if (sButtonText !== '') {
-					oRM.writeEscaped(sButtonText, false);
+					oRM.text(sButtonText);
 				}
+				oRM.close("div");
+				oRM.close("li");
 			} else {
-				oRM.writeInvisiblePlaceholderData(oButton);
-				oRM.write('>');
+				InvisibleRenderer.render(oRM, oButton, "li");
 			}
-			oRM.write("</li>");
 		}
-		oRM.write("</ul>");
+		oRM.close("ul");
 	};
 
 	SegmentedButtonRenderer._addAllIconsClass = function (aButtons) {

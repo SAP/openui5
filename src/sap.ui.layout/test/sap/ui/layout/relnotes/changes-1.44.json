@@ -30,67 +30,125 @@
         "id": "37be474f58af55dd6e5e02de53926d40a60ef0b9",
         "type": "FIX",
         "text": "sap.m.VerticalLayout: Vertical-align for all browsers removed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670413162"
+          },
+          {
+            "type": "BCP",
+            "reference": "1680208145"
+          }
+        ]
       },
       {
         "id": "7576fe0a6b2f65c40ba289fe31b93a17c9ee9f9c",
         "type": "FIX",
         "text": "sap.ui.layout.BlockLayout: AMD load of library.js",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670402467"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670403191"
+          }
+        ]
       },
       {
         "id": "9a2ce4870815211e2ba13d05980270609ad78980",
         "type": "FIX",
         "text": "sap.ui.layout.FixFlex: ScrollEnablement is now used for scrolling",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670379471"
+          }
+        ]
       },
       {
         "id": "4dbf88af0ce49e4c7a0d5332287bc9db12ab3534",
         "type": "FIX",
         "text": "sap.ui.layout.FixFlex: Scrollbars are now correctly displayed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670456546"
+          }
+        ]
       },
       {
         "id": "1a306500e7c906de8e0d4209bda7effbd601c26c",
         "type": "FIX",
         "text": "sap.ui.layout.ResponsiveSplitter: Issues with translations in qunit are now resolved",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670356456"
+          }
+        ]
       },
       {
         "id": "94ace5af1be6422385b4922187ea6fa82badac5e",
         "type": "FIX",
-        "text": "sap.ui.layout.Splitter: Splitter containers\u0027 sizes are now properly calculated",
-        "references": []
+        "text": "sap.ui.layout.Splitter: Splitter containers' sizes are now properly calculated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002482422016"
+          }
+        ]
       },
       {
         "id": "6d778d0c0e44ea5bad4676642f1cc38a5b1a98de",
         "type": "FIX",
-        "text": "sap.ui.layout.VerticalLayout - Vertical layout no longer cuts the outline and box-shadow of it\u0027s content controls",
+        "text": "sap.ui.layout.VerticalLayout - Vertical layout no longer cuts the outline and box-shadow of it's content controls",
         "references": []
       },
       {
         "id": "ede325141d811443fafb24b06662105110f3237b",
         "type": "FIX",
         "text": "sap.ui.layout.VerticalLayout: Vertical-align for all browsers adjusted to top",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670440864"
+          }
+        ]
       },
       {
         "id": "a9ba7162ac401eeac851b6b73703dad6845b558b",
         "type": "FIX",
         "text": "sap.ui.layout.form.Form: Label required visualization missing",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670412077"
+          }
+        ]
       },
       {
         "id": "a346b047602d9cbc5191faea62dd417ad4210fb9",
         "type": "FIX",
         "text": "sap.ui.layout.form.FormContainer: Theme image URLs",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670427408"
+          }
+        ]
       },
       {
         "id": "1bf430308f9fbbba97fdfe86fba4dcf9ad413d7c",
         "type": "FIX",
         "text": "sap.ui.layout.form.SimpleForm: moving content - wrong result",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670468863"
+          }
+        ]
       }
     ]
   }

@@ -1,0 +1,75 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.PageStandardClasses.controller.PageStandardClasses"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		id="idPage"
+		title=" Product XY"
+		class= "sapUiResponsivePadding--header" >
+		<!-- this CSS class add a standard spacing to all the page content -->
+
+		<content>
+			<ObjectHeader
+				title="{Name}"
+				backgroundDesign="Solid"
+				number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
+				numberUnit="{CurrencyCode}" >
+				<attributes>
+					<ObjectAttribute title="Weight" text="{WeightMeasure} {WeightUnit}" />
+					<ObjectAttribute title="Dimensions" text="{Width} x {Depth} X {Height} {DimUnit}" />
+				</attributes>
+				<statuses>
+					<ObjectStatus title="Status" text="In Stock" state="Success" />
+				</statuses>
+			</ObjectHeader>
+			<IconTabBar
+				expanded="{device>/isNoPhone}"
+				class="sapUiSmallMarginBottom sapUiResponsiveContentPadding">
+				<items>
+					<IconTabFilter
+						text="Info">
+						<f:SimpleForm
+							minWidth="1024"
+							maxContainerCols="2"
+							layout="ResponsiveGridLayout" >
+							<f:title>
+								<core:Title text="A Form" />
+							</f:title>
+							<Label text="Label"/>
+							<Text text="Value"/>
+						</f:SimpleForm>
+					</IconTabFilter>
+					<IconTabFilter
+						text="Attachments">
+						<List headerText="A List" showSeparators="Inner" >
+						</List>
+					</IconTabFilter>
+					<IconTabFilter
+						text="Notes">
+						<FeedInput />
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+			<f:SimpleForm
+				minWidth="1024"
+				maxContainerCols="2"
+				class="sapUiForceWidthAuto sapUiResponsiveMargin" >
+				<f:title>
+					<core:Title text="A Form" />
+				</f:title>
+				<Label text="Label"/>
+				<Text text="Value"/>
+			</f:SimpleForm>
+			<List headerText="A List" backgroundDesign="Translucent" width="auto" class="sapUiResponsiveMargin"/>
+			<Table headerText="A Table" width="auto" class="sapUiResponsiveMargin"/>
+			<Panel headerText="A Panel" width="auto" class="sapUiResponsiveMargin"/>
+		</content>
+	</Page>
+</mvc:View>

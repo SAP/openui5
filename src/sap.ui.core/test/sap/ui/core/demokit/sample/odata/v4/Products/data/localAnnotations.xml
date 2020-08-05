@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+	xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:DataServices>
+		<Schema Namespace="foo">
+			<Annotations Target="com.sap.gateway.default.zui5_epm_sample.v0002.Product">
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem" Qualifier="short">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Product ID" />
+							<PropertyValue Property="Value" Path="ProductID" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Product Name" />
+							<PropertyValue Property="Value" Path="Name" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Weight" />
+							<PropertyValue Property="Value" Path="WeightMeasure" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Price" />
+							<PropertyValue Property="Value" Path="Price" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.zui5_epm_sample.v0002.Product/ProductID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl"
+					EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly" />
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.zui5_epm_sample.v0002.Product/WeightMeasure">
+				<Annotation Term="Org.OData.Validation.V1.Minimum" Decimal="0.00">
+					<Annotation Term="Org.OData.Validation.V1.Exclusive"/>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.Visualization"
+					EnumMember="com.sap.vocabularies.UI.v1.VisualizationType/Number" />
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.zui5_epm_sample.v0002.Product/Price">
+				<Annotation Term="com.sap.vocabularies.UI.v1.Visualization"
+					EnumMember="com.sap.vocabularies.UI.v1.VisualizationType/Number" />
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

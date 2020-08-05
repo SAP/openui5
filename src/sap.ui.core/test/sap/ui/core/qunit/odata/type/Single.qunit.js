@@ -1,8 +1,9 @@
 /*!
  *{copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/format/NumberFormat",
@@ -12,7 +13,7 @@ sap.ui.require([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/Single",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Control, LocaleData, NumberFormat, FormatException, ParseException,
+], function (jQuery, Log, Control, LocaleData, NumberFormat, FormatException, ParseException,
 		ValidateException, ODataType, Single, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
@@ -23,7 +24,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Single", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");

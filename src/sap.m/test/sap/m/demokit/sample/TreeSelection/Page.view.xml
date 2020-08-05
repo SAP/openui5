@@ -9,7 +9,7 @@
 		 	mode="MultiSelect"
 			includeItemInSelection="true">
 			<headerToolbar>
-                <Toolbar>
+                <OverflowToolbar>
                     <content>
                         <Title text="Nodes" level="H2" />
                         <ToolbarSpacer />
@@ -25,7 +25,7 @@
                             </items>
                         </Select>
                     </content>
-                </Toolbar>
+                </OverflowToolbar>
             </headerToolbar>
 		    <StandardTreeItem
 			    title="{text}"/>

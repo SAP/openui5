@@ -1,0 +1,24 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "52f4ee4441ebb01f3df8fa70fd135346647360e2",
+        "type": "FEATURE",
+        "text": "ManagedObject: support hidden properties and associations",
+        "references": []
+      },
+      {
+        "id": "cd6b31964f47b70cbae8dcc41f93082968dc81ee",
+        "type": "FIX",
+        "text": "sap.ui.commons.AutoComplete: Minor QUnit fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880610958"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -15,9 +15,9 @@
 			press: function () {
 				list.setExpanded(!list.getExpanded());
 			}
-		}).placeAt('content');
+		})
 
-		var list = new sap.tnt.NavigationList({
+		var list = new sap.tnt.NavigationList("navLiWithIcons", {
 			// width: '320px',
 			expanded: true,
 			items: [
@@ -193,17 +193,117 @@
 			]
 		});
 
-		list.placeAt('content');
-
 		var change = new sap.m.Button({
 			text: 'Change',
 			press: function () {
 				list.getItems()[0].getItems()[0].setText('New text');
-				// list.getItems()[0].removeAllItems();
-
-				// list.getItems()[0].setExpanded(true);
 			}
-		}).placeAt('content');
+		})
+
+		var oNavigationListWithoutIcons = new sap.tnt.NavigationList("navLiWithoutIcons", {
+			width: '320px',
+			expanded: true,
+			items: [
+				new sap.tnt.NavigationListItem({
+					text: 'Root 1',
+					expanded: true,
+					items: [
+						new sap.tnt.NavigationListItem({
+							text: 'Looooooooooooooooooooong Child'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Disabled Child',
+							enabled: false
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						})
+					]
+				}),
+				new sap.tnt.NavigationListItem({
+					text: 'Only Root',
+				}),
+				new sap.tnt.NavigationListItem({
+					text: 'Disabled Root',
+					enabled: false,
+					items: [
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1',
+							enabled: false
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						})
+					]
+				}),
+				new sap.tnt.NavigationListItem({
+					text: 'Looooooooooooooooong Root 2',
+					items: [
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1',
+							enabled: false
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						})
+					]
+				}),
+				new sap.tnt.NavigationListItem({
+					text: 'Root 3',
+					items: [
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						})
+					]
+				})
+			]
+		});
+
+		var oApp = new sap.m.App({
+			pages: [
+				new sap.m.Page("page1", {
+					title: "NavigationList with icons",
+					headerContent: [
+						new sap.m.Button("toPage2", {
+							text: "Go to Page2",
+							press: function () {
+								oApp.to("page2")
+							}
+						})
+					],
+					content: [menuButton, list, change]
+				}),
+				new sap.m.Page("page2", {
+					title: "NavigationList without icons",
+					headerContent: [
+						new sap.m.Button({
+							text: "Go to Page1",
+							press: function () {
+								oApp.to("page1")
+							}
+						})
+					],
+					content: [oNavigationListWithoutIcons]
+				})
+			]
+		});
+
+		oApp.placeAt("content");
 
 	</script>
 

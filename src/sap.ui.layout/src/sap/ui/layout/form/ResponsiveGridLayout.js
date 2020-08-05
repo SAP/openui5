@@ -3,11 +3,31 @@
  */
 
 // Provides control sap.ui.layout.form.ResponsiveGridLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridData',
-               './Form', './FormContainer', './FormElement', './FormLayout',
-               'sap/ui/layout/library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './ResponsiveGridLayoutRenderer'],
-	function(jQuery, Grid, GridData, Form, FormContainer, FormElement, FormLayout,
-	         library, Control, ResizeHandler, ResponsiveGridLayoutRenderer) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/layout/library',
+	'sap/ui/layout/Grid',
+	'sap/ui/layout/GridData',
+	'./Form',
+	'./FormContainer',
+	'./FormElement',
+	'./FormLayout',
+	'./ResponsiveGridLayoutRenderer',
+	"sap/ui/thirdparty/jquery"
+], function(
+	Control,
+	ResizeHandler,
+	library,
+	Grid,
+	GridData,
+	Form,
+	FormContainer,
+	FormElement,
+	FormLayout,
+	ResponsiveGridLayoutRenderer,
+	jQuery
+) {
 	"use strict";
 
 	/**
@@ -55,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			/**
 			 * Default span for labels in large size.
 			 *
-			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set, this property is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
+			 * <b>Note:</b> If <code>adjustLabelSpan</code> is set, this property is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
 			 * @since 1.16.3
 			 */
 			labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
@@ -63,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			/**
 			 * Default span for labels in medium size.
 			 *
-			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set this property is used for full-size <code>FormContainers</code>. If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
+			 * <b>Note:</b> If <code>adjustLabelSpan</code> is set this property is used for full-size <code>FormContainers</code>. If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
 			 * @since 1.16.3
 			 */
 			labelSpanM : {type : "int", group : "Misc", defaultValue : 2},
@@ -186,6 +206,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	var Panel = Control.extend("sap.ui.layout.form.ResponsiveGridLayoutPanel", {
 
 		metadata : {
+			library: "sap.ui.layout",
 			aggregations: {
 				"content"   : {type: "sap.ui.layout.Grid", multiple: false}
 			},
@@ -202,7 +223,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			var oLayout    = sap.ui.getCore().byId(this.getLayout());
 			var oLD;
 			if (oLayout && oContainer) {
-				oLD = oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/GridData");
+				oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 			}
 			if (oLD) {
 				return oLD;
@@ -295,7 +316,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		// clear panels
 		for ( var sContainerId in this.mContainers) {
-			_cleanContainer.call(this, sContainerId);
+			_cleanContainer.call(this, sContainerId, true);
 		}
 
 		// clear main Grid
@@ -513,12 +534,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	/*
 	 * clear content before delete panel
 	 */
-	function _deletePanel( oPanel ) {
+	function _deletePanel( oPanel, bDestroyLayout ) {
 
-		oPanel.setContent("");
-		oPanel.setLayout("");
-		oPanel.setContainer("");
-		oPanel.destroy();
+		oPanel.setLayout(null);
+		oPanel.setContainer(null);
+
+		if (!bDestroyLayout || !oPanel.getParent()) {
+			// if in real control tree let the ManagedObject logic destroy the children
+			oPanel.setContent(null);
+			oPanel.destroy();
+		}
 
 	}
 
@@ -529,7 +554,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		var oGrid = new Grid(sId, {vSpacing: 0, hSpacing: 0, containerQuery: true});
 		oGrid.__myParentLayout = this;
 		oGrid.__myParentContainerId = oContainer.getId();
-		oGrid.addStyleClass("sapUiFormResGridCont");
+		oGrid.addStyleClass("sapUiFormResGridCont").addStyleClass("sapUiRespGridOverflowHidden");
 
 		oGrid.getContent = function(){
 			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
@@ -544,7 +569,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					if (oLabel) {
 						aContent.push(oLabel);
 					}
-					aFields = oElement.getFields();
+					aFields = oElement.getFieldsForRendering();
 					for ( var j = 0; j < aFields.length; j++) {
 						aContent.push(aFields[j]);
 					}
@@ -664,7 +689,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		oGrid._getLayoutDataForControl = function(oControl) {
 			var oLayout = this.__myParentLayout;
-			var oLD = oLayout.getLayoutDataForElement(oControl, "sap/ui/layout/GridData");
+			var oLD = oLayout.getLayoutDataForElement(oControl, "sap.ui.layout.GridData");
 
 			var oElement = oControl.getParent();
 			var oLabel = oElement.getLabelControl();
@@ -676,7 +701,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			} else {
 				// calculate Layout Data for control
 				var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
-				var oContainerLD = oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/GridData");
+				var oContainerLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 				var oForm = oContainer.getParent();
 				var oSize;
 				var s = 0;
@@ -722,9 +747,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				} else {
 					var oLabelLD;
 					if (oLabel) {
-						oLabelLD = oLayout.getLayoutDataForElement(oLabel, "sap/ui/layout/GridData");
+						oLabelLD = oLayout.getLayoutDataForElement(oLabel, "sap.ui.layout.GridData");
 					}
-					var aFields = oElement.getFields();
+					var aFields = oElement.getFieldsForRendering();
 					var iLength = aFields.length;
 					var oField;
 					var oFieldLD;
@@ -756,7 +781,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 						oField = aFields[i];
 						if (oField != oControl) {
 							// check if other fields have layoutData
-							oFieldLD = oLayout.getLayoutDataForElement(oField, "sap/ui/layout/GridData");
+							oFieldLD = oLayout.getLayoutDataForElement(oField, "sap.ui.layout.GridData");
 							// is Spans are too large - ignore in calculation....
 							if (oFieldLD) {
 								for (s = 0; s < aSizes.length; s++) {
@@ -801,7 +826,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 							oField = aFields[i];
 							oFieldLD = undefined;
 							if (oField != oControl) {
-								oFieldLD = oLayout.getLayoutDataForElement(oField, "sap/ui/layout/GridData");
+								oFieldLD = oLayout.getLayoutDataForElement(oField, "sap.ui.layout.GridData");
 							}
 
 							for (s = 0; s < aMultiLine.length; s++) {
@@ -977,14 +1002,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	/*
 	 * clear internal variables before delete grid
 	 */
-	function _deleteGrid( oGrid ) {
+	function _deleteGrid( oGrid, bDestroyLayout ) {
 
 		if (oGrid.__myParentContainerId) {
 			oGrid.__myParentContainerId = undefined;
 		}
 		oGrid.__myParentLayout = undefined;
 
-		oGrid.destroy();
+		if (!bDestroyLayout || !oGrid.getParent()) {
+			// if in real control tree let the ManagedObject logic destroy the children
+			oGrid.destroy();
+		}
 
 	}
 
@@ -1004,7 +1032,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 				var oLD;
 				if (oContainer) {
-					oLD = oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/GridData");
+					oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 				}
 
 				if (oLD) {
@@ -1028,7 +1056,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			oLayout = oControl.__myParentLayout;
 		}
 
-		var oLD = oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/GridData");
+		var oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 		if (!oLD) {
 			// only needed if container has no own LayoutData
 			var iColumnsM = oLayout.getColumnsM();
@@ -1057,7 +1085,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			}
 
 			if (oContainerNext) {
-				var oLDNext = oLayout.getLayoutDataForElement(oContainerNext, "sap/ui/layout/GridData");
+				var oLDNext = oLayout.getLayoutDataForElement(oContainerNext, "sap.ui.layout.GridData");
 				if (oLDNext && ( oLDNext.getLinebreak() || oLDNext.getLinebreakXL() )) {
 					bLastXL = true;
 					bLastRowXL = false;
@@ -1144,20 +1172,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 	}
 
-	function _cleanContainer( sContainerId ) {
+	function _cleanContainer( sContainerId, bDestroyLayout ) {
 
 		var aContainerContent = this.mContainers[sContainerId];
 
 		//delete Grid
 		var oGrid = aContainerContent[1];
 		if (oGrid) {
-			_deleteGrid(oGrid);
+			_deleteGrid(oGrid, bDestroyLayout);
 		}
 
 		//delete panel
 		var oPanel = aContainerContent[0];
 		if (oPanel) {
-			_deletePanel(oPanel);
+			_deletePanel(oPanel, bDestroyLayout);
 		}
 
 		delete this.mContainers[sContainerId];
@@ -1168,6 +1196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		var aVisibleContainers = oForm.getVisibleFormContainers();
 		var oContainer;
+		var sContainerId;
 		var iLength = aVisibleContainers.length;
 		var iContentLenght = 0;
 		var i = 0;
@@ -1196,7 +1225,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					vSpacing: 0,
 					containerQuery: true
 					}).setParent(this);
-				this._mainGrid.addStyleClass("sapUiFormResGridMain");
+				this._mainGrid.addStyleClass("sapUiFormResGridMain").addStyleClass("sapUiRespGridOverflowHidden");
 				// change resize handler so that the main grid triggers the resize of it's children
 				this._mainGrid._onParentResizeOrig = this._mainGrid._onParentResize;
 				this._mainGrid._onParentResize = function() {
@@ -1269,7 +1298,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				}
 				for ( i = iStartIndex; i < iLength; i++) {
 					oContainer = aVisibleContainers[i];
-					var sContainerId = oContainer.getId();
+					sContainerId = oContainer.getId();
 					if (this.mContainers[sContainerId]) {
 						if (this.mContainers[sContainerId][0]) {
 							// panel used
@@ -1281,8 +1310,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					}
 				}
 			}
-		} else if ( this._mainGrid ) {
-			this._mainGrid.__bIsUsed = false;
+		} else {
+			if ( this._mainGrid ) {
+				this._mainGrid.__bIsUsed = false;
+			}
+			// set Layout as parent for panels and Grids to have them in control tree
+			for (i = 0; i < iLength; i++) {
+				oContainer = aVisibleContainers[i];
+				sContainerId = oContainer.getId();
+				if (this.mContainers[sContainerId]) {
+					if (this.mContainers[sContainerId][0]) {
+						// panel used
+						if (this.mContainers[sContainerId][0].getParent() !== this) {
+							this.addDependent(this.mContainers[sContainerId][0]);
+						}
+					} else if (this.mContainers[sContainerId][1]) {
+						// no panel - used Grid directly
+						if (this.mContainers[sContainerId][1].getParent() !== this) {
+							this.addDependent(this.mContainers[sContainerId][1]);
+						}
+					}
+				}
+			}
 		}
 
 	}

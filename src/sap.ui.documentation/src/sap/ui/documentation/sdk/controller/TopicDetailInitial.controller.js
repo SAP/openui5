@@ -4,10 +4,13 @@
 
 /*global location */
 sap.ui.define([
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/Device"
-	], function (BaseController, Device) {
+    "sap/ui/documentation/sdk/controller/BaseController",
+    "sap/ui/Device",
+    "sap/ui/thirdparty/jquery"
+], function(BaseController, Device, jQuery0) {
 		"use strict";
+
+		var GIT_HUB_URL = "https://github.com/SAP/openui5-docs";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.TopicDetailInitial", {
 
@@ -31,7 +34,7 @@ sap.ui.define([
 			 * to show disclaimer message if such is available in the loaded json file.
 			 */
 			handleDocumentationDisclaimer: function () {
-				jQuery.ajax(this.getConfig().docuPath + "disclaimer.json", {dataType: "json"}).then(function (oData) {
+				jQuery0.ajax(this.getConfig().docuPath + "disclaimer.json", {dataType: "json"}).then(function (oData) {
 					var oView = this.getView();
 					if (oData.showDisclaimer && oData.message) {
 						oView.byId("disclaimerBlock").setVisible(true);
@@ -72,6 +75,14 @@ sap.ui.define([
 			 */
 			onDownloadButtonPress: function () {
 				window.open(this._determineFileLocation(), "_blank");
+			},
+
+			/**
+			 * Opens the openui5-docs GitHub repo in a new tab.
+			 * @public
+			 */
+			onGitHubButtonPress: function () {
+				window.open(GIT_HUB_URL, "_blank");
 			},
 
 			/**

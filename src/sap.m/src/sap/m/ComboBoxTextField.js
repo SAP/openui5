@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/library',
 	'sap/ui/Device',
+	'sap/ui/core/LabelEnablement',
 	"./ComboBoxTextFieldRenderer"
 ],
 	function(
@@ -16,12 +17,10 @@ sap.ui.define([
 		InvisibleText,
 		coreLibrary,
 		Device,
+		LabelEnablement,
 		ComboBoxTextFieldRenderer
 	) {
 		"use strict";
-
-		// shortcut for sap.ui.core.ValueState
-		var ValueState = coreLibrary.ValueState;
 
 		/**
 		 * Constructor for a new <code>sap.m.ComboBoxTextField</code>.
@@ -65,40 +64,62 @@ sap.ui.define([
 						group: "Appearance",
 						defaultValue: true
 					}
-				},
-				aggregations: {
-					_buttonLabelText: {type : "sap.ui.core.InvisibleText", multiple : false, visibility : "hidden"}
 				}
 			}
 		});
 
-		ComboBoxTextField.prototype.init = function() {
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		ComboBoxTextField.prototype.init = function () {
 			InputBase.prototype.init.apply(this, arguments);
-			var oRb, oArrowDownInvisibleLabel;
 
-			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-				oArrowDownInvisibleLabel = new InvisibleText({
-					text: oRb.getText("COMBOBOX_BUTTON")
-				});
-
-				this.setAggregation("_buttonLabelText", oArrowDownInvisibleLabel, true);
-			}
+			this.addEndIcon({
+				id: this.getId() + "-arrow",
+				src: "sap-icon://slim-arrow-down",
+				noTabStop: true,
+				alt: oRb.getText("COMBOBOX_BUTTON"),
+				decorative: false
+			});
 		};
 
-		ComboBoxTextField.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
-			InputBase.prototype.updateValueStateClasses.apply(this, arguments);
+		/**
+		 * Returns the arrow icon
+		 * @returns {sap.ui.core.Icon} Icon
+		 * @protected
+		 */
+		ComboBoxTextField.prototype.getIcon = function () {
+			return this.getAggregation("_endIcon")[0];
+		};
 
-			var mValueState = ValueState,
-				CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD,
-				$DomRef = this.$();
+		/**
+		 * Toggles the icon pressed style on or off.
+		 *
+		 * @param {boolean} [bState] True if the icon pressed class should be applied.
+		 * @protected
+		 */
+		ComboBoxTextField.prototype.toggleIconPressedStyle = function(bState) {
+			this.toggleStyleClass(InputBase.ICON_PRESSED_CSS_CLASS, bState);
+		};
 
-			if (sOldValueState !== mValueState.None) {
-				$DomRef.removeClass(CSS_CLASS + "State " + CSS_CLASS + sOldValueState);
-			}
+		ComboBoxTextField.prototype.onBeforeRendering = function () {
+			InputBase.prototype.onBeforeRendering.apply(this, arguments);
 
-			if (sValueState !== mValueState.None) {
-				$DomRef.addClass(CSS_CLASS + "State " + CSS_CLASS + sValueState);
+			var aReferencingLabels = LabelEnablement.getReferencingLabels(this) || [],
+				oIcon = this.getIcon();
+
+			oIcon.setVisible(this.getShowButton());
+
+			aReferencingLabels.forEach(function (sLabelId) {
+				if (oIcon.getAriaLabelledBy().indexOf(sLabelId) === -1) {
+					oIcon.addAssociation("ariaLabelledBy", sLabelId, true);
+				}
+			}, this);
+
+			//Creates an invisible aria node for the given message bundle text in the static UIArea for ARIA announcements.
+			if (!this.oInvisibleText && Device.browser.msie) {
+				this.oInvisibleText = new InvisibleText(this.getId() + '-describedby', {
+					text: oRb.getText("ACC_CTR_TYPE_COMBO")
+				}).toStatic();
 			}
 		};
 
@@ -108,19 +129,12 @@ sap.ui.define([
 		 * @returns {Element | null} The element that is used as trigger to open the control's picker popup.
 		 */
 		ComboBoxTextField.prototype.getOpenArea = function() {
-			return this.getDomRef("arrow");
+			// returns the div wrapping the icon
+			var oDomRef = this.getIcon().getDomRef();
+
+			return oDomRef ? oDomRef.parentNode : oDomRef;
 		};
 
-		/**
-		 * Checks whether the provided element is the open area.
-		 *
-		 * @param {Element} oDomRef
-		 * @returns {boolean}
-		 */
-		ComboBoxTextField.prototype.isOpenArea = function(oDomRef) {
-			var oOpenAreaDomRef = this.getOpenArea();
-			return oOpenAreaDomRef && oOpenAreaDomRef.contains(oDomRef);
-		};
 
 		/**
 		 * Handles the <code>sapenter</code> event when enter key is pressed.
@@ -136,7 +150,7 @@ sap.ui.define([
 			}
 
 			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
+			this._bCheckDomValue &&  oEvent.setMarked();
 
 			var sValue = this.getValue(),
 				iValueLength = sValue.length;
@@ -146,14 +160,6 @@ sap.ui.define([
 			// deselect text
 			this.selectText(iValueLength, iValueLength);
 		};
-
-		/**
-		 * Indicates whether the custom placeholder is used.
-		 *
-		 * IE9 does not have a native placeholder support.
-		 * IE10+ fires the input event when an input field with a native placeholder is focused.
-		 */
-		ComboBoxTextField.prototype.bShowLabelAsPlaceholder = Device.browser.msie;
 
 		/* =========================================================== */
 		/* API methods                                                 */
@@ -184,7 +190,7 @@ sap.ui.define([
 		/**
 		 * Gets the DOM element reference where the message popup is attached.
 		 *
-		 * @returns {object} The DOM element reference where the message popup is attached
+		 * @returns {Element} The DOM element reference where the message popup is attached
 		 */
 		ComboBoxTextField.prototype.getDomRefForValueStateMessage = function() {
 			return this.getDomRef();
@@ -192,8 +198,18 @@ sap.ui.define([
 
 		ComboBoxTextField.prototype.getAccessibilityInfo = function() {
 			var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
-			oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO");
+			oInfo.type = oRb.getText("ACC_CTR_TYPE_COMBO");
 			return oInfo;
+		};
+
+		ComboBoxTextField.prototype.exit = function() {
+			InputBase.prototype.exit.apply(this, arguments);
+
+			//destroy the already created invisible text
+			if (this.oInvisibleText) {
+				this.oInvisibleText.destroy();
+				this.oInvisibleText = null;
+			}
 		};
 
 		return ComboBoxTextField;

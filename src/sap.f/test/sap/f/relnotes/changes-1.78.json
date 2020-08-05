@@ -1,0 +1,63 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "ebed0a018fc421a3cc8f9a2b2758750ec13932e0",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPageTitle: Introduced new ariaDescribedBy association",
+        "references": []
+      },
+      {
+        "id": "d9f59f7ac21e985c86bd234db6b5c1a0cd7cfd1c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: GenericTags overflow correctly now",
+        "references": []
+      },
+      {
+        "id": "0e2c844de8135eb177f78d9dc4505c4578d987e8",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Qunit test no longer fails at IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070187869"
+          }
+        ]
+      },
+      {
+        "id": "9746f43349a5b2bd6f0423bb575f40f647ff50dc",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Corrected focus handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070059649"
+          }
+        ]
+      },
+      {
+        "id": "f51795c909a1cd556deda52ea28b02e739f0becd",
+        "type": "FIX",
+        "text": " sap.f.PlanningCalendarInCard: Appointment alignment is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070197037"
+          }
+        ]
+      },
+      {
+        "id": "78527b42efdd55785e058eb10bd35814393436d8",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Qunit is not failing anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070153445"
+          }
+        ]
+      }
+    ]
+  }
+}

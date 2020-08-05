@@ -4,26 +4,34 @@
 
 // Provides control sap.ui.ux3.ExactBrowser.
 sap.ui.define([
-    'jquery.sap.global',
     'sap/ui/commons/Button',
     'sap/ui/commons/Menu',
     'sap/ui/core/Control',
     './ExactAttribute',
     './ExactList',
     './library',
-    "./ExactBrowserRenderer"
+    './ExactBrowserRenderer',
+    'sap/ui/core/Popup'
 ],
 	function(
-	    jQuery,
-		Button,
+	    Button,
 		Menu,
 		Control,
 		ExactAttribute,
 		ExactList,
 		library,
-		ExactBrowserRenderer
+		ExactBrowserRenderer,
+		Popup
 	) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.Popup.Dock
+	var Dock = Popup.Dock;
+
+	// shortcut for sap.ui.ux3.ExactOrder
+	var ExactOrder = library.ExactOrder;
 
 
 
@@ -67,7 +75,7 @@ sap.ui.define([
 			 * The order how the sublists of the top level list should be displayed.
 			 * @since 1.7.1
 			 */
-			topListOrder : {type : "sap.ui.ux3.ExactOrder", defaultValue : sap.ui.ux3.ExactOrder.Select},
+			topListOrder : {type : "sap.ui.ux3.ExactOrder", defaultValue : ExactOrder.Select},
 
 			/**
 			 * Enables the close icons of the displayed lists.
@@ -166,11 +174,6 @@ sap.ui.define([
 	}});
 
 
-
-
-
-	(function() {
-
 		/**
 		 * Does the setup when the ExactBrowser is created.
 		 * @private
@@ -211,7 +214,7 @@ sap.ui.define([
 				var oMenu = that.getOptionsMenu();
 				if (oMenu) {
 					var oDomRef = oEvent.getParameter("domRef");
-					oMenu.open(oEvent.getParameter("keyboard"), oDomRef, sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.BeginBottom, oDomRef);
+					oMenu.open(oEvent.getParameter("keyboard"), oDomRef, Dock.BeginTop, Dock.BeginBottom, oDomRef);
 				}
 			});
 		};
@@ -366,8 +369,7 @@ sap.ui.define([
 		}
 	*/
 
-	}());
 
 	return ExactBrowser;
 
-}, /* bExport= */ true);
+});

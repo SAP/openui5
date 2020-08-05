@@ -1,0 +1,147 @@
+{
+  "1.71.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "93eddf61a796b3e8f1ad9959f2da5b7850cc56b9",
+        "type": "FIX",
+        "text": " Field with type boolean: allow to clear the field",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970419666"
+          }
+        ]
+      },
+      {
+        "id": "65c8825d137329ba6ff2b406dd3d261de8446db3",
+        "type": "FIX",
+        "text": " Field: do not handle null and undifined for customUnits as equal",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980319535"
+          }
+        ]
+      },
+      {
+        "id": "6e3c12727a7db392c6e8a55a2a3169bf982a0350",
+        "type": "FIX",
+        "text": " Field: don\u0027t try to read description for invalid key",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980323874"
+          }
+        ]
+      },
+      {
+        "id": "a470dd1db1e451fc8e8dc7378a5ea3eb5c4b661b",
+        "type": "FIX",
+        "text": " Field: enter number in empty unit or currency field fails",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980351655"
+          }
+        ]
+      },
+      {
+        "id": "63081855fff81440134df6aeb4fc3cc44c354ead",
+        "type": "FIX",
+        "text": " FieldValueHelp: wrong BindingContext set after reading description",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980326570"
+          }
+        ]
+      },
+      {
+        "id": "46b5e0d74a7c245d754ba4146e484b010187929a",
+        "type": "FEATURE",
+        "text": " ValueHelpPanel: add tokenizer title",
+        "references": []
+      },
+      {
+        "id": "9eeec9c9750b855e7bde451776f3c9878b4e3cf3",
+        "type": "FIX",
+        "text": " Field: Focus stays on field after tabbing out",
+        "references": []
+      },
+      {
+        "id": "2551b7bd4bc60e005a9f6da7908e6ba723acc4c4",
+        "type": "FIX",
+        "text": " Field: change event promise not rejected if invalid input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980355039"
+          }
+        ]
+      },
+      {
+        "id": "4a38648825f3d43174d306ce6fa77e6a03c9cf6a",
+        "type": "FIX",
+        "text": " Field: clearing unit in currency or unit field fails",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980351655"
+          }
+        ]
+      },
+      {
+        "id": "ac86cf883347ffddf92195ad16dc9d8c3fb7f395",
+        "type": "FIX",
+        "text": " Field: suggestion don\u0027t close on ENTER if nothing changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980376177"
+          }
+        ]
+      },
+      {
+        "id": "aa04f3e205a43d290d94f89cbcb26852f8890461",
+        "type": "FIX",
+        "text": " FieldHelp: if in-parameter added late wrong items selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980345209"
+          }
+        ]
+      },
+      {
+        "id": "2054f4539d5a6d41f3d2c64c920fdb0746f9cbe6",
+        "type": "FIX",
+        "text": " ContentHandler: fallback for sourceControl",
+        "references": []
+      },
+      {
+        "id": "cc7055def26bb96d98397a2f4f6a673abbd56fb3",
+        "type": "FIX",
+        "text": " Field with unit or currency: initialize internal type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980387644"
+          }
+        ]
+      },
+      {
+        "id": "9f27ef5c7d8aa6850370319296096e080cb30456",
+        "type": "FIX",
+        "text": " Field: boolean false not shown in Field",
+        "references": []
+      },
+      {
+        "id": "4ae444317e106f7d8e2c21e62d1d7c2eda49593b",
+        "type": "FIX",
+        "text": " FilterField: TimeField cannot be cleared",
+        "references": []
+      }
+    ]
+  }
+}

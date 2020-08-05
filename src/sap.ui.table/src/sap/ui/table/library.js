@@ -25,7 +25,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 			"sap.ui.table.SelectionMode",
 			"sap.ui.table.SortOrder",
 			"sap.ui.table.VisibleRowCountMode",
-			"sap.ui.table.SharedDomRef",
 			"sap.ui.table.TreeAutoExpandMode" /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
 		],
 		interfaces: [],
@@ -33,6 +32,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 			"sap.ui.table.AnalyticalColumnMenu",
 			"sap.ui.table.AnalyticalTable",
 			"sap.ui.table.ColumnMenu",
+			"sap.ui.table.CreationRow",
 			"sap.ui.table.Table",
 			"sap.ui.table.TreeTable",
 			"sap.ui.table.RowAction"
@@ -42,7 +42,13 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 			"sap.ui.table.Column",
 			"sap.ui.table.Row",
 			"sap.ui.table.RowActionItem",
-			"sap.ui.table.RowSettings"
+			"sap.ui.table.RowSettings",
+			"sap.ui.table.rowmodes.RowMode",
+			"sap.ui.table.rowmodes.FixedRowMode",
+			"sap.ui.table.rowmodes.InteractiveRowMode",
+			"sap.ui.table.rowmodes.AutoRowMode",
+			"sap.ui.table.plugins.MultiSelectionPlugin",
+			"sap.ui.table.plugins.SelectionPlugin"
 		],
 		extensions: {
 			flChangeHandlers: {
@@ -238,23 +244,19 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	thisLib.VisibleRowCountMode = {
 
 		/**
-		 * The table always has as many rows as defined in the visibleRowCount property.
+		 * The table always has as many rows as defined in the <code>visibleRowCount</code> property.
 		 * @public
 		 */
 		Fixed : "Fixed",
 
 		/**
-		 * After rendering the table has as many rows as defined in visibleRowCount property. The user is able to change the visible rows by moving a grip with the mouse. The visibleRowCount property is changed accordingly.
+		 * The user can change the <code>visibleRowCount</code> by dragging a resizer.
 		 * @public
 		 */
 		Interactive : "Interactive",
 
 		/**
 		 * The table automatically fills the height of the surrounding container.
-		 * The visibleRowCount property is automatically changed accordingly.
-		 * All rows need the same height, otherwise the auto mode doesn't always work as expected.
-		 * The height of all siblings within the same layout container of the table will be subtracted from the available height.
-		 * For performance reasons, it is recommended to add no siblings in the table's parent container.
 		 * @public
 		 */
 		Auto : "Auto"
@@ -336,11 +338,11 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	/**
 	 * Different modes for setting the auto expand mode on tree or analytical bindings.
 	 *
+	 * This is an alias for {@link sap.ui.model.TreeAutoExpandMode} and kept for compatibility reasons.
+	 *
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @borrows sap.ui.model.TreeAutoExpandMode.Sequential as Sequential
-	 * @borrows sap.ui.model.TreeAutoExpandMode.Bundled as Bundled
 	 */
 	thisLib.TreeAutoExpandMode = TreeAutoExpandMode;
 

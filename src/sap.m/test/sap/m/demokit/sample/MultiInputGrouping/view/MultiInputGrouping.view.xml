@@ -1,0 +1,92 @@
+<mvc:View
+		controllerName="sap.m.sample.MultiInputGrouping.controller.MultiInputGrouping"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<l:VerticalLayout
+			class="sapUiContentPadding"
+			width="100%">
+		<l:content>
+			<Label text="Multi Input with grouped suggestions" labelFor="productInputWithList"/>
+			<MultiInput
+					id="productMIWithList"
+					type="Text"
+					placeholder="Enter Product ..."
+					showSuggestion="true"
+					showValueHelp="false"
+					suggestionItems="{
+					path: '/ProductCollection',
+					sorter: {
+						path: 'SupplierName',
+						group: true,
+						ascending:false
+				}
+				}">
+				<suggestionItems>
+					<core:Item text="{Name}" key="{ProductId}"/>
+				</suggestionItems>
+			</MultiInput>
+			<Label text="Multi Input with grouped tabular suggestions" labelFor="productMIWithTable"/>
+			<MultiInput
+					id="productMIWithTable"
+					type="Text"
+					placeholder="Enter Product ..."
+					showSuggestion="true"
+					showValueHelp="false"
+					showTableSuggestionValueHelp="false"
+					suggestionRows="{
+					path: '/ProductCollection',
+					sorter: {
+						path: 'SupplierName',
+						group: true,
+						ascending:false
+				}
+				}">
+				<suggestionColumns>
+					<Column
+							hAlign="Begin"
+							popinDisplay="Inline"
+							demandPopin="true">
+						<Label text="Name"/>
+					</Column>
+					<Column
+							hAlign="Center"
+							popinDisplay="Inline"
+							demandPopin="true"
+							minScreenWidth="Tablet">
+						<Label text="Product ID"/>
+					</Column>
+					<Column
+							hAlign="Center"
+							popinDisplay="Inline"
+							demandPopin="false"
+							minScreenWidth="Tablet">
+						<Label text="Supplier Name"/>
+					</Column>
+					<Column
+							hAlign="End"
+							popinDisplay="Inline"
+							demandPopin="true">
+						<Label text="Price"/>
+					</Column>
+				</suggestionColumns>
+				<suggestionRows>
+					<ColumnListItem>
+						<cells>
+							<Label text="{Name}"/>
+							<Label text="{ProductId}"/>
+							<Label text="{SupplierName}"/>
+							<Label
+									text="{
+ 		 						parts:[{path:'Price'},{path:'CurrencyCode'}],
+								type: 'sap.ui.model.type.Currency',
+		 						formatOptions: {showMeasure: true}
+							}"/>
+						</cells>
+					</ColumnListItem>
+				</suggestionRows>
+			</MultiInput>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

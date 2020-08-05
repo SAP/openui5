@@ -4,13 +4,23 @@
 
 // Provides control sap.ui.commons.TriStateCheckBox.
 sap.ui.define([
-    'jquery.sap.global',
     './library',
     'sap/ui/core/Control',
-    "./TriStateCheckBoxRenderer"
+    './TriStateCheckBoxRenderer',
+    'sap/ui/core/library',
+    'sap/ui/Device'
 ],
-	function(jQuery, library, Control, TriStateCheckBoxRenderer) {
+	function(library, Control, TriStateCheckBoxRenderer, coreLibrary, Device) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.commons.TriStateCheckBoxState
+	var TriStateCheckBoxState = library.TriStateCheckBoxState;
 
 	/**
 	 * Constructor for a new TriStateCheckBox.
@@ -39,7 +49,7 @@ sap.ui.define([
 			/**
 			 * Defines the states of the checkbox
 			 */
-			selectionState : {type : "sap.ui.commons.TriStateCheckBoxState", group : "Data", defaultValue : sap.ui.commons.TriStateCheckBoxState.Unchecked},
+			selectionState : {type : "sap.ui.commons.TriStateCheckBoxState", group : "Data", defaultValue : TriStateCheckBoxState.Unchecked},
 
 			/**
 			 * Defines the text displayed next to the check box
@@ -59,7 +69,7 @@ sap.ui.define([
 			/**
 			 * Accepts the core enumeration ValueState.type that supports 'None', 'Error', 'Warning' and 'Success'.
 			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
+			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
 
 			/**
 			 * The width can be set to an absolute value. If no value is set, the control width results from the text length.
@@ -69,7 +79,7 @@ sap.ui.define([
 			/**
 			 * The value can be set to LTR or RTL. Otherwise, the control inherits the text direction from its parent control.
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
 		},
 		events : {
 
@@ -97,8 +107,8 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
-	 TriStateCheckBox.prototype.onclick = function(oEvent) {
-		if (!!sap.ui.Device.browser.internet_explorer && (!this.getEnabled())) {
+	TriStateCheckBox.prototype.onclick = function(oEvent) {
+		if (Device.browser.msie && !this.getEnabled()) {
 			// in IE tabindex = -1 hides focus, so in disabled case tabindex must be temporarily set to 0
 			// as long as CheckBox is focused
 			this.$().attr("tabindex", 0).addClass("sapUiTriCbFoc"); // the CSS class itself is not used, but IE only draws the standard focus outline when it is added
@@ -114,7 +124,7 @@ sap.ui.define([
 	 */
 	TriStateCheckBox.prototype.onfocusout = function(oEvent) {
 
-		if (!!sap.ui.Device.browser.internet_explorer && (!this.getEnabled())) {
+		if (Device.browser.msie && !this.getEnabled()) {
 			// in IE tabindex = -1 hides focus, so in disabled case tabindex must be temporarily set to 0
 			// as long as CheckBox is focused - now unset this again
 			this.$().attr("tabindex", -1).removeClass("sapUiTriCbFoc");
@@ -165,11 +175,11 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TriStateCheckBox.prototype.toggle = function(destState) {
-		if (destState in sap.ui.commons.TriStateCheckBoxState) {
+		if (destState in TriStateCheckBoxState) {
 				this.setSelectionState(destState);
 		}
 	};
 
 	return TriStateCheckBox;
 
-}, /* bExport= */ true);
+});

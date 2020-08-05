@@ -1,10 +1,10 @@
-<core:View xmlns:core="sap.ui.core"
-           xmlns="sap.uxap.component"
-           height="100%"
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.uxap.component"
+          height="100%"
         >
     <ObjectPageComponentContainer id="objectPageContainer"
             mode="JsonModel"
             height="100%"
             width="100%" />
 
-</core:View>
+</mvc:View>

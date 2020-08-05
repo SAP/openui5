@@ -1,27 +1,30 @@
 /*global QUnit, sinon */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/model/odata/ODataTreeBindingAdapter"
-], function(ODataModel, ODataTreeBindingAdapter) {
+	"sap/ui/model/odata/ODataTreeBindingAdapter",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/Sorter",
+	"sap/ui/thirdparty/sinon-qunit" /*Sinon itself already part of MockServer*/
+], function(ODataModel, ODataTreeBindingAdapter, MockServer, Sorter, SinonQUnit) {
 	"use strict";
 
 	sinon.config.useFakeTimers = false;
 
-	//Initialize mock servers
-	var MockServer = sap.ui.core.util.MockServer;
+	var sURLPrefix = sap.ui.require.toUrl("sap/ui/core/qunit");
 
+	//Initialize mock servers
 	//Mock server for use with navigation properties
 	var oNavPropMockServer = new MockServer({
 		rootUri: "/navprop/"
 	});
-	oNavPropMockServer.simulate("../../core/qunit/model/metadata_odtb.xml", "../../core/qunit/model/odtb/");
+	oNavPropMockServer.simulate(sURLPrefix + "/model/metadata_odtb.xml", sURLPrefix + "/model/odtb/");
 
 	//MockServer for use with annotated tree
 	var oAnnotationMockServer = new MockServer({
 		rootUri: "/metadata/"
 	});
-	oAnnotationMockServer.simulate("../../core/qunit/model/metadata_odtbmd.xml", "../../core/qunit/model/odtbmd/");
+	oAnnotationMockServer.simulate(sURLPrefix + "/model/metadata_odtbmd.xml", sURLPrefix + "/model/odtbmd/");
 
 	/**
 	 * Clean-Up Hierarchy Annotation Mockdata/Metadata
@@ -30,7 +33,7 @@ sap.ui.require([
 	var aAnnotationsMockdata = oAnnotationMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
 	for (var i = 0; i < aAnnotationsMockdata.length; i++) {
 		//convert string based level properties (NUMC fields) to real numbers
-		aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal, 10);
+		aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal);
 	}
 
 	var oModel, oBinding;
@@ -58,12 +61,12 @@ sap.ui.require([
 		});
 		assert.equal(oBinding.getPath(), "/Employees(2)", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
-		assert.ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+		assert.ok(oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding"), "treeBinding class check");
 	});
 
 	QUnit.test("getRootContexts getNodeContexts", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
+		oModel.metadataLoaded().then(function() {
 			createTreeBindingAdapter("/Employees(2)", null, [], {
 				navigation: {
 					Employees: "Employees1",
@@ -143,7 +146,7 @@ sap.ui.require([
 
 	QUnit.test("Display root node", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
+		oModel.metadataLoaded().then(function() {
 			createTreeBindingAdapter("/Employees(2)", null, [], {
 				navigation: {
 					Employees: "Employees1",
@@ -212,7 +215,7 @@ sap.ui.require([
 
 	QUnit.test("Number of expanded levels", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
+		oModel.metadataLoaded().then(function() {
 			createTreeBindingAdapter("/Employees(2)", null, [], {
 				navigation: {
 					Employees: "Employees1",
@@ -274,7 +277,7 @@ sap.ui.require([
 
 	QUnit.test("Bind to Collection", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
+		oModel.metadataLoaded().then(function() {
 			createTreeBindingAdapter("/Employees", null, [], {
 				navigation: {
 					Employees: "Employees1",
@@ -346,7 +349,7 @@ sap.ui.require([
 
 	QUnit.test("Refresh", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
+		oModel.metadataLoaded().then(function() {
 			createTreeBindingAdapter("/Employees(2)", null, [], {
 				navigation: {
 					Employees: "Employees1",
@@ -439,6 +442,7 @@ sap.ui.require([
 		beforeEach: function() {
 			oAnnotationMockServer.start();
 			oModel = new ODataModel("/metadata/", {useBatch: true});
+			return oModel.metadataLoaded();
 		},
 		afterEach: function() {
 			oAnnotationMockServer.stop();
@@ -449,484 +453,466 @@ sap.ui.require([
 	 * Expands a mock tree to level 3
 	 */
 	var prebuildTree = function(fnTreeBuiltCallback) {
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				displayRootNode: true,
-				numberOfExpandedLevels: 2,
-				rootLevel: 1
-			});
-			var handler1 = function(oEvent) {
-				oBinding.detachChange(handler1);
-				// contexts should be loaded now
-				oBinding.attachChange(handler2);
-				oBinding.getContexts(0, 100);
-			};
-
-			var handler2 = function(oEvent) {
-				oBinding.detachChange(handler2);
-				oBinding.attachChange(handler3);
-				oBinding.getContexts(0, 100);
-			};
-
-			var handler3 = function(oEvent) {
-				oBinding.detachChange(handler3);
-				oBinding.getContexts(0, 100);
-				fnTreeBuiltCallback();
-			};
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 100);
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			numberOfExpandedLevels: 2,
+			rootLevel: 1
 		});
+		var handler1 = function(oEvent) {
+			oBinding.detachChange(handler1);
+			// contexts should be loaded now
+			oBinding.attachChange(handler2);
+			oBinding.getContexts(0, 100);
+		};
+
+		var handler2 = function(oEvent) {
+			oBinding.detachChange(handler2);
+			oBinding.attachChange(handler3);
+			oBinding.getContexts(0, 100);
+		};
+
+		var handler3 = function(oEvent) {
+			oBinding.detachChange(handler3);
+			oBinding.getContexts(0, 100);
+			fnTreeBuiltCallback();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100);
 	};
 
 	QUnit.test("Properties", function(assert) {
-		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
-				navigation: {}
-			});
-			assert.ok(oBinding.findNode, "Check if ODataTreeBinding was enhanced by the Adapter.");
-			assert.equal(oBinding.bHasTreeAnnotations, true, "TreeBinding Metadata should be available");
-			assert.equal(oBinding.iRootLevel, 0, "Root Level should be 0 by default");
-			assert.equal(oBinding.iNumberOfExpandedLevels, 0, "number of expanded levels should be 0 by default");
-			done();
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+			navigation: {}
 		});
+		assert.ok(oBinding.findNode, "Check if ODataTreeBinding was enhanced by the Adapter.");
+		assert.equal(oBinding.bHasTreeAnnotations, true, "TreeBinding Metadata should be available");
+		assert.equal(oBinding.iRootLevel, 0, "Root Level should be 0 by default");
+		assert.equal(oBinding.iNumberOfExpandedLevels, 0, "number of expanded levels should be 0 by default");
 	});
 
 	QUnit.test("TreeBinding getContexts() calls, facading getRootContexts and getNodeContexts on the TreeBinding", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
-				rootLevel: 2
-			});
-
-			var oContext;
-
-			var handler1 = function(oEvent) {
-				// contexts should be now loaded
-				var aContexts = oBinding.getContexts(0, 9);
-				assert.equal(aContexts.length, 9, "TreeBinding rootContexts length");
-
-				oContext = aContexts[0];
-				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level of 1st child should be 2");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierarchyNode ID of 1st child should be set correctly");
-				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode ID of 1st child should be correct node");
-
-				oContext = aContexts[1];
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "HierarchyNode ID of 2nd child should be set correctly");
-
-				oContext = aContexts[8];
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001180", "HierarchyNode ID of last child should be set correctly");
-
-				oBinding.detachChange(handler1);
-
-				done();
-			};
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 9);
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+			rootLevel: 2
 		});
+
+		var oContext;
+
+		var handler1 = function(oEvent) {
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(0, 9);
+			assert.equal(aContexts.length, 9, "TreeBinding rootContexts length");
+
+			oContext = aContexts[0];
+			assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level of 1st child should be 2");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierarchyNode ID of 1st child should be set correctly");
+			assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode ID of 1st child should be correct node");
+
+			oContext = aContexts[1];
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "HierarchyNode ID of 2nd child should be set correctly");
+
+			oContext = aContexts[8];
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "001180", "HierarchyNode ID of last child should be set correctly");
+
+			oBinding.detachChange(handler1);
+
+			done();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 9);
 	});
 
 	QUnit.test("Display root node, node on level 1 should be there", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				displayRootNode: true,
-				rootLevel: 1
-			});
-
-			var oContext;
-
-			var handler1 = function(oEvent) {
-				// contexts should be now loaded
-				var aContexts = oBinding.getContexts(0, 1);
-
-				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length");
-
-				oContext = aContexts[0];
-				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "1st root child level check");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st root child HierarchyNode check");
-
-				oBinding.detachChange(handler1);
-
-				var fnExpandChangeHandler = function() {
-					oBinding.detachChange(fnExpandChangeHandler);
-					oBinding.attachChange(handler2);
-					oBinding.getContexts(0, 10);
-				};
-
-				oBinding.attachChange(fnExpandChangeHandler);
-				oBinding.expand(0);
-
-			};
-
-			var handler2 = function(oEvent) {
-				// contexts should be now loaded
-				var aContexts = oBinding.getContexts(1, 9);
-
-				assert.equal(aContexts.length, 9, "Check if getContexts returned the expected length for expanded 1st node");
-				assert.equal(oBinding.getChildCount(oContext), 9, "ChildCount of expanded 1st node");
-
-				oContext = aContexts[0];
-				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check on 1st child (0.0)");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierarchyNode check on 1st child (0.0)");
-				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode check on 1st child (0.0)");
-
-				oContext = aContexts[1];
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "HierarchyNode check on 2nd child (0.1)");
-
-				oContext = aContexts[8];
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001180", "HierarchyNode check on last child (0.8)");
-
-				oBinding.detachChange(handler2);
-				done();
-			};
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 1);
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			rootLevel: 1
 		});
+
+		var oContext;
+
+		var handler1 = function(oEvent) {
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(0, 1);
+
+			assert.equal(aContexts.length, 1, "TreeBinding rootContexts length");
+
+			oContext = aContexts[0];
+			assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "1st root child level check");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st root child HierarchyNode check");
+
+			oBinding.detachChange(handler1);
+
+			var fnExpandChangeHandler = function() {
+				oBinding.detachChange(fnExpandChangeHandler);
+				oBinding.attachChange(handler2);
+				oBinding.getContexts(0, 10);
+			};
+
+			oBinding.attachChange(fnExpandChangeHandler);
+			oBinding.expand(0);
+
+		};
+
+		var handler2 = function(oEvent) {
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(1, 9);
+
+			assert.equal(aContexts.length, 9, "Check if getContexts returned the expected length for expanded 1st node");
+			assert.equal(oBinding.getChildCount(oContext), 9, "ChildCount of expanded 1st node");
+
+			oContext = aContexts[0];
+			assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check on 1st child (0.0)");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierarchyNode check on 1st child (0.0)");
+			assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode check on 1st child (0.0)");
+
+			oContext = aContexts[1];
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "HierarchyNode check on 2nd child (0.1)");
+
+			oContext = aContexts[8];
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "001180", "HierarchyNode check on last child (0.8)");
+
+			oBinding.detachChange(handler2);
+			done();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 1);
 	});
 
 	QUnit.test("Pagesize increasing", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				displayRootNode: true,
-				rootLevel: 1
-			});
-
-			var oContext;
-
-			var handler1 = function(oEvent) {
-				// contexts should be now loaded
-				var aContexts = oBinding.getContexts(0, 10);
-
-				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length, 10 requested, only 1 node present");
-
-				assert.equal(oBinding._iPageSize, 10, "PageSize must be 10, since 10 requested by getContexts");
-
-				oContext = aContexts[0];
-				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "1st root child level check");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st root child HierarchyNode check");
-
-				oBinding.detachChange(handler1);
-
-				var fnExpandChangeHandler = function() {
-					oBinding.detachChange(fnExpandChangeHandler);
-					oBinding.attachChange(handler2);
-					oBinding.getContexts(1, 3);
-				};
-
-				oBinding.attachChange(fnExpandChangeHandler);
-				oBinding.expand(0);
-
-			};
-
-			var handler2 = function(oEvent) {
-				// contexts should be now loaded
-				var aContexts = oBinding.getContexts(1, 3);
-
-				assert.equal(oBinding._iPageSize, 10, "PageSize must still be 10, since 10 was requested by getContexts earlier");
-
-				assert.equal(aContexts.length, 3, "Check if getContexts returned the expected length for expanded 1st node");
-				assert.equal(oBinding.getChildCount(oContext), 9, "ChildCount of expanded 1st node");
-
-				// row index 4 must be present due to higher page size (10) although not requested by latest getContexts call
-				oContext = oBinding.getContextByIndex(4);
-				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check on 1st child (0.0)");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001073", "HierarchyNode check on 1st child (0.0)");
-				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode check on 1st child (0.0)");
-
-				oBinding.detachChange(handler2);
-				done();
-			};
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 10);
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			rootLevel: 1
 		});
+
+		var oContext;
+
+		var handler1 = function(oEvent) {
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(0, 10);
+
+			assert.equal(aContexts.length, 1, "TreeBinding rootContexts length, 10 requested, only 1 node present");
+
+			assert.equal(oBinding._iPageSize, 10, "PageSize must be 10, since 10 requested by getContexts");
+
+			oContext = aContexts[0];
+			assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "1st root child level check");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st root child HierarchyNode check");
+
+			oBinding.detachChange(handler1);
+
+			var fnExpandChangeHandler = function() {
+				oBinding.detachChange(fnExpandChangeHandler);
+				oBinding.attachChange(handler2);
+				oBinding.getContexts(1, 3);
+			};
+
+			oBinding.attachChange(fnExpandChangeHandler);
+			oBinding.expand(0);
+
+		};
+
+		var handler2 = function(oEvent) {
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(1, 3);
+
+			assert.equal(oBinding._iPageSize, 10, "PageSize must still be 10, since 10 was requested by getContexts earlier");
+
+			assert.equal(aContexts.length, 3, "Check if getContexts returned the expected length for expanded 1st node");
+			assert.equal(oBinding.getChildCount(oContext), 9, "ChildCount of expanded 1st node");
+
+			// row index 4 must be present due to higher page size (10) although not requested by latest getContexts call
+			oContext = oBinding.getContextByIndex(4);
+			assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check on 1st child (0.0)");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "001073", "HierarchyNode check on 1st child (0.0)");
+			assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode check on 1st child (0.0)");
+
+			oBinding.detachChange(handler2);
+			done();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 10);
 	});
 
 	QUnit.test("Pagesize not decreasing", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				displayRootNode: true,
-				rootLevel: 1
-			});
-
-			var oContext;
-
-			var handler1 = function(oEvent) {
-				// contexts should be now loaded
-				var aContexts = oBinding.getContexts(0, 1);
-
-				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length, 10 requested, only 1 node present");
-
-				assert.equal(oBinding._iPageSize, 1, "PageSize must be 1, since 1 requested by getContexts");
-
-				oContext = aContexts[0];
-				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "1st root child level check");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st root child HierarchyNode check");
-
-				oBinding.detachChange(handler1);
-
-				var fnExpandChangeHandler = function() {
-					oBinding.detachChange(fnExpandChangeHandler);
-					oBinding.attachChange(handler2);
-					oBinding.getContexts(1, 5);
-				};
-
-				oBinding.attachChange(fnExpandChangeHandler);
-				oBinding.expand(0);
-
-			};
-
-			var handler2 = function(oEvent) {
-				// contexts should be now loaded
-				var aContexts = oBinding.getContexts(1, 5);
-
-				assert.equal(oBinding._iPageSize, 5,
-					"PageSize must now be 5, since 5 was requested by latest getContexts call and is higher than the first getContexts call");
-
-				assert.equal(aContexts.length, 5, "Check if getContexts returned the expected length for expanded 1st node");
-				assert.equal(oBinding.getChildCount(oContext), 9, "ChildCount of expanded 1st node");
-
-				oContext = oBinding.getContextByIndex(4);
-				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check on 1st child (0.0)");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001073", "HierarchyNode check on 1st child (0.0)");
-				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode check on 1st child (0.0)");
-
-				oContext = oBinding.getContextByIndex(6);
-				assert.equal(oContext, null, "Context at row index 6 still missing.");
-
-				oBinding.detachChange(handler2);
-				done();
-			};
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 1);
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			rootLevel: 1
 		});
+
+		var oContext;
+
+		var handler1 = function(oEvent) {
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(0, 1);
+
+			assert.equal(aContexts.length, 1, "TreeBinding rootContexts length, 10 requested, only 1 node present");
+
+			assert.equal(oBinding._iPageSize, 1, "PageSize must be 1, since 1 requested by getContexts");
+
+			oContext = aContexts[0];
+			assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "1st root child level check");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st root child HierarchyNode check");
+
+			oBinding.detachChange(handler1);
+
+			var fnExpandChangeHandler = function() {
+				oBinding.detachChange(fnExpandChangeHandler);
+				oBinding.attachChange(handler2);
+				oBinding.getContexts(1, 5);
+			};
+
+			oBinding.attachChange(fnExpandChangeHandler);
+			oBinding.expand(0);
+
+		};
+
+		var handler2 = function(oEvent) {
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(1, 5);
+
+			assert.equal(oBinding._iPageSize, 5,
+				"PageSize must now be 5, since 5 was requested by latest getContexts call and is higher than the first getContexts call");
+
+			assert.equal(aContexts.length, 5, "Check if getContexts returned the expected length for expanded 1st node");
+			assert.equal(oBinding.getChildCount(oContext), 9, "ChildCount of expanded 1st node");
+
+			oContext = oBinding.getContextByIndex(4);
+			assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check on 1st child (0.0)");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "001073", "HierarchyNode check on 1st child (0.0)");
+			assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode check on 1st child (0.0)");
+
+			oContext = oBinding.getContextByIndex(6);
+			assert.equal(oContext, null, "Context at row index 6 still missing.");
+
+			oBinding.detachChange(handler2);
+			done();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 1);
 	});
 
 	QUnit.test("Sequential expand over 3 levels", function(assert) {
 		var done = assert.async();
 
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				displayRootNode: true,
-				numberOfExpandedLevels: 2,
-				rootLevel: 1
-			});
-
-			var handler1 = function(oEvent) {
-				oBinding.detachChange(handler1);
-				oBinding.attachChange(handler2);
-
-				var aContexts = oBinding.getContexts(0, 1);
-				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length is 1, only 1 root loaded");
-
-				//Level 0
-				var oContext = aContexts[0];
-				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "Level of root node (0)");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "HierarchyNode of root node");
-				assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "Content-Item of root node");
-			};
-
-			var handler2 = function(oEvent) {
-				oBinding.detachChange(handler2);
-				oBinding.attachChange(handler3);
-
-				var aContexts = oBinding.getContexts(1, 9);
-				assert.equal(aContexts.length, 9, "TreeBinding nodeContexts length is 9, 9 children of first root node");
-
-				var oContext = aContexts[0];
-				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level of first child of root (0.0)");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierarchyNode of first child of root (0.0)");
-				assert.equal(oModel.getProperty("ParentNode", oContext), "000001",
-					"ParentNode of first child of root (0.0), should be the root node id");
-			};
-
-			var handler3 = function(oEvent) {
-				oBinding.detachChange(handler3);
-
-				var aSubContexts = oBinding.getContexts(2, 7);
-				assert.equal(aSubContexts.length, 7, "TreeBinding nodeContexts length is 7, 7 children of the first root child");
-
-				var oContext = aSubContexts[0];
-				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 3, "Grandchild of root (0.0.0)");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000003", "HierarchyNode of Grandchild (0.0.0)");
-				assert.equal(oModel.getProperty("ParentNode", oContext), "000002", "ParentNode of GrandChild, should be first child of root node");
-
-				// check if the next collected node is a sibling of the first
-				// otherwise we would have expanded too far
-				oContext = aSubContexts[1];
-				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 3, "2nd Grandchild of root (0.0.0)");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000008", "HierarchyNode of 2nd Grandchild (0.0.1)");
-				assert.equal(oModel.getProperty("ParentNode", oContext), "000002",
-					"ParentNode of 2nd GrandChild, should be first child of root node");
-
-				done();
-			};
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 20);
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			numberOfExpandedLevels: 2,
+			rootLevel: 1
 		});
+
+		var handler1 = function(oEvent) {
+			oBinding.detachChange(handler1);
+			oBinding.attachChange(handler2);
+
+			var aContexts = oBinding.getContexts(0, 1);
+			assert.equal(aContexts.length, 1, "TreeBinding rootContexts length is 1, only 1 root loaded");
+
+			//Level 0
+			var oContext = aContexts[0];
+			assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 1, "Level of root node (0)");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "HierarchyNode of root node");
+			assert.equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "Content-Item of root node");
+		};
+
+		var handler2 = function(oEvent) {
+			oBinding.detachChange(handler2);
+			oBinding.attachChange(handler3);
+
+			var aContexts = oBinding.getContexts(1, 9);
+			assert.equal(aContexts.length, 9, "TreeBinding nodeContexts length is 9, 9 children of first root node");
+
+			var oContext = aContexts[0];
+			assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level of first child of root (0.0)");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierarchyNode of first child of root (0.0)");
+			assert.equal(oModel.getProperty("ParentNode", oContext), "000001",
+				"ParentNode of first child of root (0.0), should be the root node id");
+		};
+
+		var handler3 = function(oEvent) {
+			oBinding.detachChange(handler3);
+
+			var aSubContexts = oBinding.getContexts(2, 7);
+			assert.equal(aSubContexts.length, 7, "TreeBinding nodeContexts length is 7, 7 children of the first root child");
+
+			var oContext = aSubContexts[0];
+			assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 3, "Grandchild of root (0.0.0)");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000003", "HierarchyNode of Grandchild (0.0.0)");
+			assert.equal(oModel.getProperty("ParentNode", oContext), "000002", "ParentNode of GrandChild, should be first child of root node");
+
+			// check if the next collected node is a sibling of the first
+			// otherwise we would have expanded too far
+			oContext = aSubContexts[1];
+			assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 3, "2nd Grandchild of root (0.0.0)");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000008", "HierarchyNode of 2nd Grandchild (0.0.1)");
+			assert.equal(oModel.getProperty("ParentNode", oContext), "000002",
+				"ParentNode of 2nd GrandChild, should be first child of root node");
+
+			done();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 20);
 	});
 
 	QUnit.test("Manual expand", function(assert) {
 		var done = assert.async();
 
-		oModel.attachMetadataLoaded(function() {
-			var oContext;
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				rootLevel: 1,
-				collapseRecursive: false
-			});
+		var oContext;
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			rootLevel: 1,
+			collapseRecursive: false
+		});
 
-			// self (de)registering handler helper
-			// used to circumvent double change handlers due to expand/collapse calls
-			var createChangeHandler = function(fnCallback) {
-				var fn = function() {
-					oBinding.detachChange(fn);
-					oBinding.attachChange(fnCallback);
+		// self (de)registering handler helper
+		// used to circumvent double change handlers due to expand/collapse calls
+		var createChangeHandler = function(fnCallback) {
+			var fn = function() {
+				oBinding.detachChange(fn);
+				oBinding.attachChange(fnCallback);
 
-					oBinding.getContexts(0, 100);
-				};
-				return fn;
-			};
-
-			//nothing expanded
-			var fnChangeHandler1 = function() {
-				oBinding.detachChange(fnChangeHandler1);
 				oBinding.getContexts(0, 100);
-				oBinding.attachChange(createChangeHandler(fnChangeHandler2));
-
-				//expand root node
-				oBinding.expand(0);
 			};
+			return fn;
+		};
 
-			// expanded root 0
-			var fnChangeHandler2 = function() {
-				oBinding.detachChange(fnChangeHandler2);
-				oBinding.getContexts(0, 100);
+		//nothing expanded
+		var fnChangeHandler1 = function() {
+			oBinding.detachChange(fnChangeHandler1);
+			oBinding.getContexts(0, 100);
+			oBinding.attachChange(createChangeHandler(fnChangeHandler2));
 
-				oContext = oBinding.getContextByIndex(9);
-				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check for (0.9)");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001180", "HierarchyNode check for (0.9)");
-				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode check for (0.9)");
+			//expand root node
+			oBinding.expand(0);
+		};
 
-				oBinding.attachChange(createChangeHandler(fnChangeHandler3));
-				oBinding.expand(9);
-			};
-
-			//expanded 0.9
-			var fnChangeHandler3 = function() {
-				oBinding.detachChange(fnChangeHandler3);
-				oBinding.getContexts(0, 100);
-
-				oContext = oBinding.getContextByIndex(10);
-				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 3, "Level check (0.9.0)");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001181", "HierarchyNode check (0.9.0)");
-				assert.equal(oModel.getProperty("ParentNode", oContext), "001180", "ParentNode check (0.9.0)");
-
-				oBinding.attachChange(createChangeHandler(fnChangeHandler4));
-				oBinding.expand(10);
-			};
-
-			//expanded 0.9.1
-			var fnChangeHandler4 = function() {
-				oBinding.detachChange(fnChangeHandler4);
-				oBinding.getContexts(0, 100);
-
-				oContext = oBinding.getContextByIndex(12);
-				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 4, "Level check (0.9.0.1)");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001193", "HierarchyNode check (0.9.0.1)");
-				assert.equal(oModel.getProperty("ParentNode", oContext), "001181", "ParentNode check (0.9.0.1)");
-
-				assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
-				assert.ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded");
-				assert.ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should be expanded");
-				assert.ok(oBinding._mTreeState.expanded["/000001/001180/001181/"], "3rd Level node should be expanded");
-
-				assert.deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed");
-
-				//collapsing to level 2 (no change handler, because we do not load data anymore)
-				oBinding.collapseToLevel(2);
-
-				oBinding.getContexts(0, 100); //rebuild the tree, as usual
-
-				assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
-				assert.ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded");
-				assert.ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should be expanded");
-				assert.ok(!oBinding._mTreeState.expanded["/000001/001180/001181/"], "3rd Level node is NOT in the expanded map");
-
-				assert.ok(oBinding._mTreeState.collapsed["/000001/001180/001181/"], "3rd Level node is now in the collapsed map");
-
-				//finally collapse the whole tree
-				oBinding.collapseToLevel(0);
-				oBinding.getContexts(0, 100); //rebuild the tree, as usual
-
-				oContext = oBinding.getContextByIndex(0);
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "HierarchyNode check for root node, everything is still there");
-				assert.equal(oBinding.isExpanded(0), false, "Root node is also collapsed now");
-
-				assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
-				assert.ok(!oBinding._mTreeState.expanded["/000001/"], "1st Level node should NOT be expanded");
-				//this node is still expanded, because collapseRecursive is set to false
-				assert.ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should still be expanded (collapseRecursive = false)");
-
-				assert.ok(oBinding._mTreeState.collapsed["/000001/"], "Root node is now in the collapsed map");
-				assert.ok(oBinding._mTreeState.collapsed["/000001/001180/001181/"], "3rd Level node is still in the collapsed map");
-
-				// switch on collapseRecursive mode
-				oBinding.setCollapseRecursive(true);
-
-				// re-expand the root node and check if the expanded states are still correct
-				oBinding.expandToLevel(1);
-				assert.deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed now, just before expanding to level X");
-				oBinding.getContexts(0, 100); //rebuild the tree, as usual
-
-				assert.equal(oBinding.isExpanded(0), true, "root is expanded again");
-				assert.equal(oBinding.isExpanded(8), false, "sibling of the 2nd level node is not expanded");
-				assert.equal(oBinding.isExpanded(9), true, "2nd level node is still expanded");
-				assert.equal(oBinding.isExpanded(10), false, "3nd level node is not expanded");
-
-				//collapse all again, this time recursive
-				oBinding.collapseToLevel(0);
-
-				//expand again
-				oBinding.expandToLevel(1);
-
-				oBinding.getContexts(0, 100); //rebuild the tree, as usual
-
-				assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
-				assert.ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded again");
-				//this node is still expanded, because collapseRecursive is set to false
-				assert.ok(!oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should NOT be expanded (collapseRecursive = true)");
-
-				oBinding.attachChange(fnChangeHandler5);
-				oBinding.expand(1);
-			};
-
-			// check for correct change reasons in event
-			var fnChangeHandler5 = function(oEvent) {
-				oBinding.detachChange(fnChangeHandler5);
-				assert.equal(oEvent.getParameter("reason"), "expand", "Change Reason expand is set");
-				oBinding.attachChange(fnChangeHandler6);
-				oBinding.collapse(1);
-			};
-
-			var fnChangeHandler6 = function(oEvent) {
-				oBinding.detachChange(fnChangeHandler6);
-				assert.equal(oEvent.getParameter("reason"), "collapse", "Change Reason expand is set");
-				done();
-			};
-
-			oBinding.attachChange(fnChangeHandler1);
+		// expanded root 0
+		var fnChangeHandler2 = function() {
+			oBinding.detachChange(fnChangeHandler2);
 			oBinding.getContexts(0, 100);
 
-		});
+			oContext = oBinding.getContextByIndex(9);
+			assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level check for (0.9)");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "001180", "HierarchyNode check for (0.9)");
+			assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode check for (0.9)");
+
+			oBinding.attachChange(createChangeHandler(fnChangeHandler3));
+			oBinding.expand(9);
+		};
+
+		//expanded 0.9
+		var fnChangeHandler3 = function() {
+			oBinding.detachChange(fnChangeHandler3);
+			oBinding.getContexts(0, 100);
+
+			oContext = oBinding.getContextByIndex(10);
+			assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 3, "Level check (0.9.0)");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "001181", "HierarchyNode check (0.9.0)");
+			assert.equal(oModel.getProperty("ParentNode", oContext), "001180", "ParentNode check (0.9.0)");
+
+			oBinding.attachChange(createChangeHandler(fnChangeHandler4));
+			oBinding.expand(10);
+		};
+
+		//expanded 0.9.1
+		var fnChangeHandler4 = function() {
+			oBinding.detachChange(fnChangeHandler4);
+			oBinding.getContexts(0, 100);
+
+			oContext = oBinding.getContextByIndex(12);
+			assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 4, "Level check (0.9.0.1)");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "001193", "HierarchyNode check (0.9.0.1)");
+			assert.equal(oModel.getProperty("ParentNode", oContext), "001181", "ParentNode check (0.9.0.1)");
+
+			assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/000001/001180/001181/"], "3rd Level node should be expanded");
+
+			assert.deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed");
+
+			//collapsing to level 2 (no change handler, because we do not load data anymore)
+			oBinding.collapseToLevel(2);
+
+			oBinding.getContexts(0, 100); //rebuild the tree, as usual
+
+			assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should be expanded");
+			assert.ok(!oBinding._mTreeState.expanded["/000001/001180/001181/"], "3rd Level node is NOT in the expanded map");
+
+			assert.ok(oBinding._mTreeState.collapsed["/000001/001180/001181/"], "3rd Level node is now in the collapsed map");
+
+			//finally collapse the whole tree
+			oBinding.collapseToLevel(0);
+			oBinding.getContexts(0, 100); //rebuild the tree, as usual
+
+			oContext = oBinding.getContextByIndex(0);
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000001", "HierarchyNode check for root node, everything is still there");
+			assert.equal(oBinding.isExpanded(0), false, "Root node is also collapsed now");
+
+			assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
+			assert.ok(!oBinding._mTreeState.expanded["/000001/"], "1st Level node should NOT be expanded");
+			//this node is still expanded, because collapseRecursive is set to false
+			assert.ok(oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should still be expanded (collapseRecursive = false)");
+
+			assert.ok(oBinding._mTreeState.collapsed["/000001/"], "Root node is now in the collapsed map");
+			assert.ok(oBinding._mTreeState.collapsed["/000001/001180/001181/"], "3rd Level node is still in the collapsed map");
+
+			// switch on collapseRecursive mode
+			oBinding.setCollapseRecursive(true);
+
+			// re-expand the root node and check if the expanded states are still correct
+			oBinding.expandToLevel(1);
+			assert.deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed now, just before expanding to level X");
+			oBinding.getContexts(0, 100); //rebuild the tree, as usual
+
+			assert.equal(oBinding.isExpanded(0), true, "root is expanded again");
+			assert.equal(oBinding.isExpanded(8), false, "sibling of the 2nd level node is not expanded");
+			assert.equal(oBinding.isExpanded(9), true, "2nd level node is still expanded");
+			assert.equal(oBinding.isExpanded(10), false, "3nd level node is not expanded");
+
+			//collapse all again, this time recursive
+			oBinding.collapseToLevel(0);
+
+			//expand again
+			oBinding.expandToLevel(1);
+
+			oBinding.getContexts(0, 100); //rebuild the tree, as usual
+
+			assert.ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
+			assert.ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded again");
+			//this node is still expanded, because collapseRecursive is set to false
+			assert.ok(!oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should NOT be expanded (collapseRecursive = true)");
+
+			oBinding.attachChange(fnChangeHandler5);
+			oBinding.expand(1);
+		};
+
+		// check for correct change reasons in event
+		var fnChangeHandler5 = function(oEvent) {
+			oBinding.detachChange(fnChangeHandler5);
+			assert.equal(oEvent.getParameter("reason"), "expand", "Change Reason expand is set");
+			oBinding.attachChange(fnChangeHandler6);
+			oBinding.collapse(1);
+		};
+
+		var fnChangeHandler6 = function(oEvent) {
+			oBinding.detachChange(fnChangeHandler6);
+			assert.equal(oEvent.getParameter("reason"), "collapse", "Change Reason expand is set");
+			done();
+		};
+
+		oBinding.attachChange(fnChangeHandler1);
+		oBinding.getContexts(0, 100);
+
 	});
 
 	/**
@@ -1023,86 +1009,84 @@ sap.ui.require([
 
 	QUnit.test("Top-Level Paging", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			var oContext;
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, null, {
-				rootLevel: 2
-			});
-
-			var handler1 = function(oEvent) {
-				// contexts should be now loaded
-				var aContexts = oBinding.getContexts(1, 4);
-
-				assert.equal(aContexts.length, 4, "getContexts(1, 4) returned 4 contexts");
-
-				oContext = oBinding.getContextByIndex(0);
-				assert.equal(oContext, null, "Context for row index 0 must be null, it was not loaded yet.");
-
-				oContext = oBinding.getContextByIndex(1);
-				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level Check for 1st returned context");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "HierarchyNode Check for 1st returned context");
-				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode Check for 1st returned context");
-
-				assert.deepEqual(oContext, aContexts[0], "First returned context is the same as the one returned by getContextByIndex(1)");
-
-				oContext = oBinding.getContextByIndex(2);
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
-
-				oContext = oBinding.getContextByIndex(3);
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001073", "TreeBinding node content");
-
-				oContext = oBinding.getContextByIndex(4);
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001131", "TreeBinding node content");
-
-				oBinding.detachChange(handler1);
-
-				oBinding.attachChange(handler2);
-				oBinding.getContexts(5, 3);
-			};
-
-			var handler2 = function(oEvent) {
-				// contexts should be now loaded
-				var aContexts = oBinding.getContexts(5, 3);
-
-				assert.equal(aContexts.length, 3, "getContexts(5, 3) returned 3 contexts");
-
-				oContext = oBinding.getContextByIndex(1);
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "Context for index 1 should still be the same after paging");
-
-				assert.notDeepEqual(oContext, aContexts[0], "getContextByIndex(1) returns a different context than getContexts(5, 3)[0]");
-
-				//first context
-				oContext = oBinding.getContextByIndex(5);
-				assert.deepEqual(oContext, aContexts[0], "getContextByIndex(1) returns the same context as getContexts(5, 3)[0]");
-				assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "TreeBinding node content");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001136", "TreeBinding node content");
-				assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-
-				//second context
-				oContext = oBinding.getContextByIndex(6);
-				assert.deepEqual(oContext, aContexts[1], "getContextByIndex(6) returns the same context as getContexts(5, 3)[1]");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001153", "TreeBinding node content");
-
-				//last context
-				oContext = oBinding.getContextByIndex(7);
-				assert.deepEqual(oContext, aContexts[2], "getContextByIndex(7) returns the same context as getContexts(5, 3)[3]");
-				assert.equal(oModel.getProperty("HierarchyNode", oContext), "001179", "TreeBinding node content");
-
-				// gap at the beginning should still be there
-				oContext = oBinding.getContextByIndex(0);
-				assert.equal(oContext, null, "Context at row index 0 still missing.");
-
-				// gap at the end should still be there
-				oContext = oBinding.getContextByIndex(8);
-				assert.equal(oContext, null, "Context at row index 8 still missing.");
-
-				oBinding.detachChange(handler2);
-				done();
-			};
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(1, 4);
+		var oContext;
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, null, {
+			rootLevel: 2
 		});
+
+		var handler1 = function(oEvent) {
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(1, 4);
+
+			assert.equal(aContexts.length, 4, "getContexts(1, 4) returned 4 contexts");
+
+			oContext = oBinding.getContextByIndex(0);
+			assert.equal(oContext, null, "Context for row index 0 must be null, it was not loaded yet.");
+
+			oContext = oBinding.getContextByIndex(1);
+			assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level Check for 1st returned context");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "HierarchyNode Check for 1st returned context");
+			assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "ParentNode Check for 1st returned context");
+
+			assert.deepEqual(oContext, aContexts[0], "First returned context is the same as the one returned by getContextByIndex(1)");
+
+			oContext = oBinding.getContextByIndex(2);
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
+
+			oContext = oBinding.getContextByIndex(3);
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "001073", "TreeBinding node content");
+
+			oContext = oBinding.getContextByIndex(4);
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "001131", "TreeBinding node content");
+
+			oBinding.detachChange(handler1);
+
+			oBinding.attachChange(handler2);
+			oBinding.getContexts(5, 3);
+		};
+
+		var handler2 = function(oEvent) {
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(5, 3);
+
+			assert.equal(aContexts.length, 3, "getContexts(5, 3) returned 3 contexts");
+
+			oContext = oBinding.getContextByIndex(1);
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "000362", "Context for index 1 should still be the same after paging");
+
+			assert.notDeepEqual(oContext, aContexts[0], "getContextByIndex(1) returns a different context than getContexts(5, 3)[0]");
+
+			//first context
+			oContext = oBinding.getContextByIndex(5);
+			assert.deepEqual(oContext, aContexts[0], "getContextByIndex(1) returns the same context as getContexts(5, 3)[0]");
+			assert.strictEqual(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "TreeBinding node content");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "001136", "TreeBinding node content");
+			assert.equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+
+			//second context
+			oContext = oBinding.getContextByIndex(6);
+			assert.deepEqual(oContext, aContexts[1], "getContextByIndex(6) returns the same context as getContexts(5, 3)[1]");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "001153", "TreeBinding node content");
+
+			//last context
+			oContext = oBinding.getContextByIndex(7);
+			assert.deepEqual(oContext, aContexts[2], "getContextByIndex(7) returns the same context as getContexts(5, 3)[3]");
+			assert.equal(oModel.getProperty("HierarchyNode", oContext), "001179", "TreeBinding node content");
+
+			// gap at the beginning should still be there
+			oContext = oBinding.getContextByIndex(0);
+			assert.equal(oContext, null, "Context at row index 0 still missing.");
+
+			// gap at the end should still be there
+			oContext = oBinding.getContextByIndex(8);
+			assert.equal(oContext, null, "Context at row index 8 still missing.");
+
+			oBinding.detachChange(handler2);
+			done();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(1, 4);
 	});
 
 	/**
@@ -1159,6 +1143,30 @@ sap.ui.require([
 
 			iLeadIndex = oBinding.getSelectedIndex();
 			assert.equal(iLeadIndex, -1, "LeadIndex must be -1 if there is no selection");
+
+			done();
+		});
+	});
+
+	QUnit.test("Deselect All after SelectAll with specific isNodeSelectable implementation", function(assert) {
+		var done = assert.async();
+
+		prebuildTree(function() {
+			sinon.stub(oBinding, "_isNodeSelectable", function(oNode) {
+				if (!oNode) {
+					return false;
+				}
+				return oNode.isLeaf && !oNode.isArtificial;
+			});
+
+			oBinding.selectAll();
+			oBinding.clearSelection();
+
+			var i, iLength = oBinding.getLength();
+			// after selection is cleared, all node should leave the selectAllMode
+			for (i = 0; i < iLength; i++) {
+				assert.ok(!oBinding.getNodeByIndex(i).nodeState.selectAllMode);
+			}
 
 			done();
 		});
@@ -1221,109 +1229,103 @@ sap.ui.require([
 
 	QUnit.test("getSelectedNodesCount expand", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				displayRootNode: true,
-				numberOfExpandedLevels: 0,
-				rootLevel: 1
-			});
-
-			var handler1 = function() {
-				oBinding.detachChange(handler1);
-				oBinding.getContexts(0, 100);
-
-				oBinding.selectAll();
-				assert.equal(oBinding.getSelectedNodesCount(), 1, "After select all, exactly one node (the only one) is selected");
-				assert.equal(oBinding.getLength(), 1, "Correct binding length");
-
-				oBinding.attachChange(handler2);
-				oBinding.expand(0);
-
-			};
-
-			var handler2 = function() {
-				oBinding.detachChange(handler2);
-				oBinding.attachChange(handler3);
-				oBinding.getContexts(0, 100);
-			};
-
-			var handler3 = function() {
-				oBinding.detachChange(handler3);
-				oBinding.getContexts(0, 100);
-				assert.equal(oBinding.getSelectedNodesCount(), 1, "After expand, no additional nodes get selected");
-				assert.equal(oBinding.getLength(), 10, "Correct binding length");
-
-				done();
-			};
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 100);
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			numberOfExpandedLevels: 0,
+			rootLevel: 1
 		});
+
+		var handler1 = function() {
+			oBinding.detachChange(handler1);
+			oBinding.getContexts(0, 100);
+
+			oBinding.selectAll();
+			assert.equal(oBinding.getSelectedNodesCount(), 1, "After select all, exactly one node (the only one) is selected");
+			assert.equal(oBinding.getLength(), 1, "Correct binding length");
+
+			oBinding.attachChange(handler2);
+			oBinding.expand(0);
+
+		};
+
+		var handler2 = function() {
+			oBinding.detachChange(handler2);
+			oBinding.attachChange(handler3);
+			oBinding.getContexts(0, 100);
+		};
+
+		var handler3 = function() {
+			oBinding.detachChange(handler3);
+			oBinding.getContexts(0, 100);
+			assert.equal(oBinding.getSelectedNodesCount(), 1, "After expand, no additional nodes get selected");
+			assert.equal(oBinding.getLength(), 10, "Correct binding length");
+
+			done();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100);
 	});
 
 	QUnit.test("getSelectedNodesCount expand to level", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				displayRootNode: true,
-				numberOfExpandedLevels: 0,
-				rootLevel: 1
-			});
-
-			var handler1 = function() {
-				oBinding.detachChange(handler1);
-				oBinding.getContexts(0, 100);
-
-				oBinding.selectAll();
-				assert.equal(oBinding.getSelectedNodesCount(), 1, "After select all, exactly one node (the only one) is selected");
-				assert.equal(oBinding.getLength(), 1, "Correct binding length");
-
-				oBinding.attachChange(handler2);
-				oBinding.setNumberOfExpandedLevels(1);
-			};
-
-			var handler2 = function() {
-				oBinding.detachChange(handler2);
-				oBinding.attachChange(handler3);
-				oBinding.getContexts(0, 100);
-			};
-
-			var handler3 = function() {
-				oBinding.detachChange(handler3);
-				oBinding.getContexts(0, 100);
-				assert.equal(oBinding.getSelectedNodesCount(), 1, "After expand, no additional nodes get selected");
-				assert.equal(oBinding.getLength(), 10, "Correct binding length");
-
-				done();
-			};
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 100);
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			numberOfExpandedLevels: 0,
+			rootLevel: 1
 		});
+
+		var handler1 = function() {
+			oBinding.detachChange(handler1);
+			oBinding.getContexts(0, 100);
+
+			oBinding.selectAll();
+			assert.equal(oBinding.getSelectedNodesCount(), 1, "After select all, exactly one node (the only one) is selected");
+			assert.equal(oBinding.getLength(), 1, "Correct binding length");
+
+			oBinding.attachChange(handler2);
+			oBinding.setNumberOfExpandedLevels(1);
+		};
+
+		var handler2 = function() {
+			oBinding.detachChange(handler2);
+			oBinding.attachChange(handler3);
+			oBinding.getContexts(0, 100);
+		};
+
+		var handler3 = function() {
+			oBinding.detachChange(handler3);
+			oBinding.getContexts(0, 100);
+			assert.equal(oBinding.getSelectedNodesCount(), 1, "After expand, no additional nodes get selected");
+			assert.equal(oBinding.getLength(), 10, "Correct binding length");
+
+			done();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100);
 	});
 
 	QUnit.test("getSelectedNodesCount with paging", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				displayRootNode: true,
-				rootLevel: 4
-			});
-
-			var handler1 = function() {
-				oBinding.detachChange(handler1);
-				oBinding.getContexts(0, 2);
-
-				oBinding.selectAll();
-				assert.equal(oBinding.getSelectedNodesCount(), 61, "Correct selected nodes count after selectAll call");
-				assert.equal(oBinding.getLength(), 61, "Correct binding length");
-
-				done();
-			};
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 2);
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			rootLevel: 4
 		});
+
+		var handler1 = function() {
+			oBinding.detachChange(handler1);
+			oBinding.getContexts(0, 2);
+
+			oBinding.selectAll();
+			assert.equal(oBinding.getSelectedNodesCount(), 61, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getLength(), 61, "Correct binding length");
+
+			done();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 2);
 	});
 	/**
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
@@ -1394,6 +1396,51 @@ sap.ui.require([
 			assert.equal(oBinding._isNodeSelectable(null), false, "Illegal nodes are not selectable.");
 			assert.equal(oBinding._isNodeSelectable(undefined), false, "Illegal nodes are not selectable.");
 			assert.equal(oBinding._isNodeSelectable(""), false, "Illegal nodes are not selectable.");
+
+			done();
+		});
+	});
+
+	/**
+	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
+	 * Data should already be present, since prebuildTree already requested a big set
+	 */
+	QUnit.test("getSelectedIndex w/ recursive collapse", function(assert) {
+		var done = assert.async();
+		prebuildTree(function() {
+			oBinding.setSelectedIndex(2);
+			assert.equal(oBinding.getSelectedIndex(), 2, "Selected index is 2");
+
+			oBinding.collapse(1);
+			oBinding._buildTree(0, 1);
+			assert.equal(oBinding.getSelectedIndex(), -1, "Selected index could not be found (-1)");
+
+			oBinding.expand(1);
+			oBinding._buildTree(0, 1);
+			assert.equal(oBinding.getSelectedIndex(), -1,
+				"Selected index has not been restored because of recursive collapse mode");
+			done();
+		});
+	});
+
+	/**
+	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
+	 * Data should already be present, since prebuildTree already requested a big set
+	 */
+	QUnit.test("getSelectedIndex w/o recursive collapse", function(assert) {
+		var done = assert.async();
+		prebuildTree(function() {
+			oBinding.setCollapseRecursive(false);
+			oBinding.setSelectedIndex(2);
+			assert.equal(oBinding.getSelectedIndex(), 2, "Selected index is 2");
+
+			oBinding.collapse(1);
+			oBinding._buildTree(0, 1);
+			assert.equal(oBinding.getSelectedIndex(), -1, "Selected index could not be found (-1)");
+
+			oBinding.expand(1);
+			oBinding._buildTree(0, 1);
+			assert.equal(oBinding.getSelectedIndex(), 2, "Selected index 2 has been restored");
 
 			done();
 		});
@@ -1516,12 +1563,13 @@ sap.ui.require([
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
-	QUnit.test("selectionChanged event with selectAll", 3, function(assert) {
+	QUnit.test("selectionChanged event with selectAll", function(assert) {
+		assert.expect(3);
 		var done = assert.async();
 		prebuildTree(function() {
 			var fnSelectionChangeHandler1 = function(oEvent) {
 				oBinding.detachChange(fnSelectionChangeHandler1);
-				assert.equal(oEvent.mParameters.leadIndex, 55, "Event: leadIndex should be515");
+				assert.equal(oEvent.mParameters.leadIndex, 55, "Event: leadIndex should be 55");
 				assert.equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
 				assert.equal(oEvent.mParameters.rowIndices.length, 56, "Event: length of changedIndices should be 56");
 				done();
@@ -1536,7 +1584,8 @@ sap.ui.require([
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
-	QUnit.test("selectionChanged event with collapse", 4, function(assert) {
+	QUnit.test("selectionChanged event with collapse", function(assert) {
+		assert.expect(4);
 		var done = assert.async();
 		prebuildTree(function() {
 			oBinding.selectAll();
@@ -1547,7 +1596,7 @@ sap.ui.require([
 				assert.equal(oEvent.mParameters.oldIndex, 55, "Event: oldIndex should still be 55");
 				assert.equal(oEvent.mParameters.rowIndices.length, 7, "Event: length of changedIndices should be 7");
 
-				assert.deepEqual(oEvent.mParameters.rowIndices, [3, 4, 5, 6, 7, 8, 9], "Changed indices after collapse is correct");
+				assert.deepEqual(oEvent.mParameters.rowIndices, [2, 3, 4, 5, 6, 7, 8], "Changed indices after collapse is correct");
 				done();
 			};
 
@@ -1560,7 +1609,8 @@ sap.ui.require([
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
-	QUnit.test("selectionChanged event with collapse: deselect of lead selection", 4, function(assert) {
+	QUnit.test("selectionChanged event with collapse: deselect of lead selection", function(assert) {
+		assert.expect(4);
 		var done = assert.async();
 		prebuildTree(function() {
 			oBinding.setSelectedIndex(2);
@@ -1568,10 +1618,10 @@ sap.ui.require([
 			var fnSelectionChangeHandler1 = function(oEvent) {
 				oBinding.detachChange(fnSelectionChangeHandler1);
 				assert.equal(oEvent.mParameters.leadIndex, -1, "Event: leadIndex should be -1 (no lead selection)");
-				assert.equal(oEvent.mParameters.oldIndex, 3, "Event: oldIndex should be 3");
+				assert.equal(oEvent.mParameters.oldIndex, 2, "Event: oldIndex should be 2");
 				assert.equal(oEvent.mParameters.rowIndices.length, 1, "Event: length of changedIndices should be 1");
 
-				assert.deepEqual(oEvent.mParameters.rowIndices, [3], "Changed indices after collapse is correct");
+				assert.deepEqual(oEvent.mParameters.rowIndices, [2], "Changed indices after collapse is correct");
 				done();
 			};
 
@@ -1582,131 +1632,125 @@ sap.ui.require([
 
 	QUnit.test("SelectAll with Paging and Expand", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, null, {
-				rootLevel: 2
-			});
-
-			var fnChangeHandler1 = function(oEvent) {
-				oBinding.detachChange(fnChangeHandler1);
-				oBinding.getContexts(0, 2);
-				oBinding.selectAll();
-
-				oBinding.attachChange(fnChangeHandler2);
-				oBinding.getContexts(2, 2); // perform paging
-			};
-
-			var fnChangeHandler2 = function(oEvent) {
-				oBinding.detachChange(fnChangeHandler2);
-				oBinding.getContexts(0, 4);
-
-				var aSelectedIndices = oBinding.getSelectedIndices();
-				assert.deepEqual(aSelectedIndices, [0, 1, 2, 3], "Selected indices after paging ok");
-
-				// now expand first node
-				oBinding.attachChange(fnChangeHandler3);
-				oBinding.expand(0);
-			};
-
-			var fnChangeHandler3 = function(oEvent) {
-				oBinding.detachChange(fnChangeHandler3);
-				oBinding.attachChange(fnChangeHandler4);
-				oBinding.getContexts(0, 4);
-			};
-
-			var fnChangeHandler4 = function(oEvent) {
-				oBinding.detachChange(fnChangeHandler4);
-				oBinding.getContexts(0, 4);
-
-				var aSelectedIndices = oBinding.getSelectedIndices();
-				assert.deepEqual(aSelectedIndices, [0, 8, 9, 10], "Selected indices after expand ok");
-
-				done();
-			};
-
-			oBinding.attachChange(fnChangeHandler1);
-			oBinding.getContexts(0, 2);
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, null, {
+			rootLevel: 2
 		});
+
+		var fnChangeHandler1 = function(oEvent) {
+			oBinding.detachChange(fnChangeHandler1);
+			oBinding.getContexts(0, 2);
+			oBinding.selectAll();
+
+			oBinding.attachChange(fnChangeHandler2);
+			oBinding.getContexts(2, 2); // perform paging
+		};
+
+		var fnChangeHandler2 = function(oEvent) {
+			oBinding.detachChange(fnChangeHandler2);
+			oBinding.getContexts(0, 4);
+
+			var aSelectedIndices = oBinding.getSelectedIndices();
+			assert.deepEqual(aSelectedIndices, [0, 1, 2, 3], "Selected indices after paging ok");
+
+			// now expand first node
+			oBinding.attachChange(fnChangeHandler3);
+			oBinding.expand(0);
+		};
+
+		var fnChangeHandler3 = function(oEvent) {
+			oBinding.detachChange(fnChangeHandler3);
+			oBinding.attachChange(fnChangeHandler4);
+			oBinding.getContexts(0, 4);
+		};
+
+		var fnChangeHandler4 = function(oEvent) {
+			oBinding.detachChange(fnChangeHandler4);
+			oBinding.getContexts(0, 4);
+
+			var aSelectedIndices = oBinding.getSelectedIndices();
+			assert.deepEqual(aSelectedIndices, [0, 8, 9, 10], "Selected indices after expand ok");
+
+			done();
+		};
+
+		oBinding.attachChange(fnChangeHandler1);
+		oBinding.getContexts(0, 2);
 	});
 
 	QUnit.test("Sorting with stable expand states", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, null, {
-				rootLevel: 2,
-				displayRootNode: false
-			});
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, null, {
+			rootLevel: 2,
+			displayRootNode: false
+		});
 
-			//initial load
-			function fnChangeHandler1() {
-				oBinding.detachChange(fnChangeHandler1);
-				oBinding.getContexts(0, 100);
-
-				oBinding.attachChange(fnChangeHandler2);
-				oBinding.expand(2);
-				oBinding.expand(0);
-
-				//trigger reload
-				oBinding.getContexts(0, 100);
-			}
-
-			//change after expand
-			function fnChangeHandler2(oEvent) {
-
-				if (oEvent.getParameter("reason") === "expand") {
-					return;
-				}
-
-				oBinding.detachChange(fnChangeHandler2);
-				oBinding.getContexts(0, 100);
-
-				oBinding.attachRefresh(fnRefreshHandler);
-				//sort descending
-				oBinding.sort(new sap.ui.model.Sorter("HierarchyNode", true));
-			}
-
-			//refresh after sort()
-			function fnRefreshHandler() {
-				oBinding.detachRefresh(fnRefreshHandler);
-
-				assert.ok(oBinding._mTreeState.expanded["/000682/"], "NodeState for 000682 still there.");
-				assert.ok(oBinding._mTreeState.expanded["/000002/"], "NodeState for 000002 still there.");
-				assert.equal(oBinding._mTreeState.expanded["/000682/"].expanded, true, "Node 000682 is still expanded after sorting.");
-				assert.equal(oBinding._mTreeState.expanded["/000002/"].expanded, true, "Node 000002 is still expanded after sorting.");
-
-				done();
-			}
-
-			oBinding.attachChange(fnChangeHandler1);
+		//initial load
+		function fnChangeHandler1() {
+			oBinding.detachChange(fnChangeHandler1);
 			oBinding.getContexts(0, 100);
 
-		});
+			oBinding.attachChange(fnChangeHandler2);
+			oBinding.expand(2);
+			oBinding.expand(0);
+
+			//trigger reload
+			oBinding.getContexts(0, 100);
+		}
+
+		//change after expand
+		function fnChangeHandler2(oEvent) {
+
+			if (oEvent.getParameter("reason") === "expand") {
+				return;
+			}
+
+			oBinding.detachChange(fnChangeHandler2);
+			oBinding.getContexts(0, 100);
+
+			oBinding.attachRefresh(fnRefreshHandler);
+			//sort descending
+			oBinding.sort(new Sorter("HierarchyNode", true));
+		}
+
+		//refresh after sort()
+		function fnRefreshHandler() {
+			oBinding.detachRefresh(fnRefreshHandler);
+
+			assert.ok(oBinding._mTreeState.expanded["/000682/"], "NodeState for 000682 still there.");
+			assert.ok(oBinding._mTreeState.expanded["/000002/"], "NodeState for 000002 still there.");
+			assert.equal(oBinding._mTreeState.expanded["/000682/"].expanded, true, "Node 000682 is still expanded after sorting.");
+			assert.equal(oBinding._mTreeState.expanded["/000002/"].expanded, true, "Node 000002 is still expanded after sorting.");
+
+			done();
+		}
+
+		oBinding.attachChange(fnChangeHandler1);
+		oBinding.getContexts(0, 100);
+
 	});
 
 	QUnit.test("toggleIndex after multiple getContexts calls (which happens when table has a fixed row)", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				rootLevel: 1,
-				collapseRecursive: false
-			});
-
-			var fnChangeHandler1 = function() {
-				oBinding.getContexts(0, 10);
-				assert.ok(!oBinding.findNode(0).nodeState.expanded, "node is initially collapsed");
-				oBinding.detachChange(fnChangeHandler1);
-
-				// clear the _aRowIndexMap internally
-				oBinding.getContexts(10, 20);
-
-				oBinding.toggleIndex(0);
-				assert.ok(oBinding.findNode(0).nodeState.expanded, "node is now expanded");
-				done();
-			};
-
-			oBinding.attachChange(fnChangeHandler1);
-			oBinding.getContexts(0, 10);
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			rootLevel: 1,
+			collapseRecursive: false
 		});
+
+		var fnChangeHandler1 = function() {
+			oBinding.getContexts(0, 10);
+			assert.ok(!oBinding.findNode(0).nodeState.expanded, "node is initially collapsed");
+			oBinding.detachChange(fnChangeHandler1);
+
+			// clear the _aRowIndexMap internally
+			oBinding.getContexts(10, 20);
+
+			oBinding.toggleIndex(0);
+			assert.ok(oBinding.findNode(0).nodeState.expanded, "node is now expanded");
+			done();
+		};
+
+		oBinding.attachChange(fnChangeHandler1);
+		oBinding.getContexts(0, 10);
 	});
 
 	QUnit.test("Check Tree State Reset", function(assert) {
@@ -1766,71 +1810,69 @@ sap.ui.require([
 
 	QUnit.test("Check correct initial tree-build in OperationMode.Client", function(assert) {
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				operationMode: "Auto",
-				rootLevel: 2,
-				numberOfExpandedLevels: 1,
-				threshold: 300
-			});
-
-			// change handler called after the $count returns
-			function countChangeHandler() {
-				oBinding.detachChange(countChangeHandler);
-				assert.ok(oBinding.bClientOperation, "Binding is internally running in Client-Mode");
-
-				// trigger data request
-				oBinding.attachChange(dataChangeHandler);
-				oBinding.getContexts(1, 10);
-			}
-
-			// change handler called after the data returned
-			function dataChangeHandler() {
-				oBinding.detachChange(dataChangeHandler);
-
-				// retrieve the data and check it
-				var aContexts = oBinding.getContexts(1, 10);
-
-				// check return value of getContexts call
-				assert.equal(aContexts[0].getProperty("HierarchyNode"), "000003", "Node 1 is 000003");
-				assert.equal(aContexts[0].getProperty("FinancialStatementItemText"), "Ausstehende Kapital-Einlagen",
-					"Node 1 is 'Ausstehende Kapital-Einlagen'");
-				assert.equal(aContexts[0].getProperty("FinStatementHierarchyLevelVal"), 3, "Node 1 is a 1st level node");
-
-				assert.equal(aContexts[7].getProperty("HierarchyNode"), "000362", "Node 8 is 'P A S S I V A'");
-				assert.equal(aContexts[7].getProperty("FinancialStatementItemText"), "P A S S I V A", "Node 8 is 'P A S S I V A'");
-				assert.equal(aContexts[7].getProperty("FinStatementHierarchyLevelVal"), 2, "Node 8 is a top-level node");
-
-				// check internal tree state
-				var oN000002 = oBinding.findNode(0);
-				var oN000003 = oBinding.findNode(1);
-
-				assert.equal(oN000002.groupID, "/000002/", "Correct node for index 0 found.");
-				assert.equal(oN000003.groupID, "/000002/000003/", "Correct node for index 1 found.");
-
-				var oN000002_test2 = oBinding.getNodeByIndex(0);
-				var oN000003_test2 = oBinding.getNodeByIndex(1);
-
-				assert.deepEqual(oN000002, oN000002_test2, "Correct node for index 0 found via getNodeByIndex.");
-				assert.deepEqual(oN000003, oN000003_test2, "Correct node for index 1 found via getNodeByIndex.");
-
-				// check if contexts are correctly returned via getContextByIndex vs getContexts
-				// Beware: Indices are shifted by 1, as the context array starts with 0
-				var oContext000003 = oBinding.getContextByIndex(1);
-				var oContext000008 = oBinding.getContextByIndex(2);
-
-				assert.equal(oContext000003.getProperty("HierarchyNode"), aContexts[0].getProperty("HierarchyNode"),
-					"Context 000003 via different API calls is identical.");
-				assert.equal(oContext000008.getProperty("HierarchyNode"), aContexts[1].getProperty("HierarchyNode"),
-					"Context 000008 via different API calls is identical.");
-
-				done();
-			}
-
-			// trigger $count in op mode auto
-			oBinding.attachChange(countChangeHandler);
-			oBinding.getContexts(1, 10);
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			operationMode: "Auto",
+			rootLevel: 2,
+			numberOfExpandedLevels: 1,
+			threshold: 300
 		});
+
+		// change handler called after the $count returns
+		function countChangeHandler() {
+			oBinding.detachChange(countChangeHandler);
+			assert.ok(oBinding.bClientOperation, "Binding is internally running in Client-Mode");
+
+			// trigger data request
+			oBinding.attachChange(dataChangeHandler);
+			oBinding.getContexts(1, 10);
+		}
+
+		// change handler called after the data returned
+		function dataChangeHandler() {
+			oBinding.detachChange(dataChangeHandler);
+
+			// retrieve the data and check it
+			var aContexts = oBinding.getContexts(1, 10);
+
+			// check return value of getContexts call
+			assert.equal(aContexts[0].getProperty("HierarchyNode"), "000003", "Node 1 is 000003");
+			assert.equal(aContexts[0].getProperty("FinancialStatementItemText"), "Ausstehende Kapital-Einlagen",
+				"Node 1 is 'Ausstehende Kapital-Einlagen'");
+			assert.equal(aContexts[0].getProperty("FinStatementHierarchyLevelVal"), 3, "Node 1 is a 1st level node");
+
+			assert.equal(aContexts[7].getProperty("HierarchyNode"), "000362", "Node 8 is 'P A S S I V A'");
+			assert.equal(aContexts[7].getProperty("FinancialStatementItemText"), "P A S S I V A", "Node 8 is 'P A S S I V A'");
+			assert.equal(aContexts[7].getProperty("FinStatementHierarchyLevelVal"), 2, "Node 8 is a top-level node");
+
+			// check internal tree state
+			var oN000002 = oBinding.findNode(0);
+			var oN000003 = oBinding.findNode(1);
+
+			assert.equal(oN000002.groupID, "/000002/", "Correct node for index 0 found.");
+			assert.equal(oN000003.groupID, "/000002/000003/", "Correct node for index 1 found.");
+
+			var oN000002_test2 = oBinding.getNodeByIndex(0);
+			var oN000003_test2 = oBinding.getNodeByIndex(1);
+
+			assert.deepEqual(oN000002, oN000002_test2, "Correct node for index 0 found via getNodeByIndex.");
+			assert.deepEqual(oN000003, oN000003_test2, "Correct node for index 1 found via getNodeByIndex.");
+
+			// check if contexts are correctly returned via getContextByIndex vs getContexts
+			// Beware: Indices are shifted by 1, as the context array starts with 0
+			var oContext000003 = oBinding.getContextByIndex(1);
+			var oContext000008 = oBinding.getContextByIndex(2);
+
+			assert.equal(oContext000003.getProperty("HierarchyNode"), aContexts[0].getProperty("HierarchyNode"),
+				"Context 000003 via different API calls is identical.");
+			assert.equal(oContext000008.getProperty("HierarchyNode"), aContexts[1].getProperty("HierarchyNode"),
+				"Context 000008 via different API calls is identical.");
+
+			done();
+		}
+
+		// trigger $count in op mode auto
+		oBinding.attachChange(countChangeHandler);
+		oBinding.getContexts(1, 10);
 
 		QUnit.test("Empty binding should not cause exceptions", function(assert) {
 			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
@@ -1902,50 +1944,206 @@ sap.ui.require([
 
 		QUnit.test("Expand with bSuppressChange flag should suppress the change event", function(assert) {
 			var done = assert.async();
-			oModel.attachMetadataLoaded(function() {
-				createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-					rootLevel: 2,
-					numberOfExpandedLevels: 2
-				});
-
-				oBinding.attachChange(changeHandler);
-				oBinding.getContexts(0, 10);
-
-				function changeHandler() {
-					oBinding.detachChange(changeHandler);
-					oBinding.getContexts(0, 10);
-					assert.ok(oBinding.findNode(1), "Node can be found"); // If the binding does not find a node, it also does not fire a change event
-
-					var oSpy = sinon.spy(oBinding, "_fireChange");
-					oBinding.expand(1, true);
-					assert.ok(oSpy.notCalled, "No change event fired");
-					done();
-				}
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				rootLevel: 2,
+				numberOfExpandedLevels: 2
 			});
+
+			oBinding.attachChange(changeHandler);
+			oBinding.getContexts(0, 10);
+
+			function changeHandler() {
+				oBinding.detachChange(changeHandler);
+				oBinding.getContexts(0, 10);
+				assert.ok(oBinding.findNode(1), "Node can be found"); // If the binding does not find a node, it also does not fire a change event
+
+				var oSpy = sinon.spy(oBinding, "_fireChange");
+				oBinding.expand(1, true);
+				assert.ok(oSpy.notCalled, "No change event fired");
+				done();
+			}
 		});
 
 		QUnit.test("Collapse with bSuppressChange flag should suppress the change event", function(assert) {
 			var done = assert.async();
-			oModel.attachMetadataLoaded(function() {
-				createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-					rootLevel: 2,
-					numberOfExpandedLevels: 2
-				});
-
-				oBinding.attachChange(changeHandler);
-				oBinding.getContexts(0, 10);
-
-				function changeHandler() {
-					oBinding.detachChange(changeHandler);
-					oBinding.getContexts(0, 10);
-					assert.ok(oBinding.findNode(0), "Node can be found"); // If the binding does not find a node, it also does not fire a change event
-
-					var oSpy = sinon.spy(oBinding, "_fireChange");
-					oBinding.collapse(0, true);
-					assert.ok(oSpy.notCalled, "No change event fired");
-					done();
-				}
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				rootLevel: 2,
+				numberOfExpandedLevels: 2
 			});
+
+			oBinding.attachChange(changeHandler);
+			oBinding.getContexts(0, 10);
+
+			function changeHandler() {
+				oBinding.detachChange(changeHandler);
+				oBinding.getContexts(0, 10);
+				assert.ok(oBinding.findNode(0), "Node can be found"); // If the binding does not find a node, it also does not fire a change event
+
+				var oSpy = sinon.spy(oBinding, "_fireChange");
+				oBinding.collapse(0, true);
+				assert.ok(oSpy.notCalled, "No change event fired");
+				done();
+			}
 		});
 	});
+
+	QUnit.test("expandNodeToLevel: Correct filter creation", function(assert) {
+		var done = assert.async();
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, null, {
+			rootLevel: 2,
+			displayRootNode: false
+		});
+
+		function fnChangeHandler() {
+			oBinding.getContexts(0, 100);
+			oBinding.sCustomParams = "SOME_CUST_PARAMS";
+
+			var aExpectedParams = [
+				"$filter=HierarchyNode%20eq%20%27000002%27%20and%20FinStatementHierarchyLevelVal%20le%202",
+				"SOME_CUST_PARAMS"
+			];
+			var oExpectedNode = oBinding.findNode(0);
+
+			oBinding._expandSubTree = function(oNode, aResults) {
+				assert.deepEqual(oNode, oExpectedNode, "Passed correct node object to _expandSubTree()");
+				assert.deepEqual(aResults[0].pony, true, "Passed correct data array");
+			};
+
+			oBinding._fireChange = function(oEvent) {
+				assert.deepEqual(oEvent.reason, "expand", "Change event fired with correct reason");
+				done();
+			};
+
+			oBinding._loadSubTree = function(oNode, aParams) {
+				assert.deepEqual(aParams, aExpectedParams, "Generated correct parameters");
+				assert.deepEqual(oNode, oExpectedNode, "Passed correct node object to _loadSubTree()");
+				return Promise.resolve({
+					results: [{ "FinStatementHierarchyLevelVal": 0, pony: true }]
+				});
+			};
+
+
+			oBinding.expandNodeToLevel(0, 2);
+		}
+
+		oBinding.attachChange(fnChangeHandler);
+		oBinding.getContexts(0, 100);
+
+	});
+
+	QUnit.test("expandNodeToLevel: Expand correct nodes", function(assert) {
+		var done = assert.async();
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, null, {
+			rootLevel: 2,
+			displayRootNode: false
+		});
+
+		function fnChangeHandler() {
+			oBinding.getContexts(0, 100);
+
+			oBinding._expandSubTree = function(oNode, aResults) {
+				assert.equal(aResults.length,  1, "Only one node should be expanded");
+				assert.equal(aResults[0]["FinStatementHierarchyLevelVal"],  0, "Only node on level 0 should be expanded");
+			};
+
+			oBinding._fireChange = function(oEvent) {
+				assert.deepEqual(oEvent.reason, "expand", "Change event fired with correct reason");
+				done();
+			};
+
+			oBinding._loadSubTree = function(oNode, aParams) {
+				return Promise.resolve({
+					results: [
+						{ "FinStatementHierarchyLevelVal": 0 },
+						{ "FinStatementHierarchyLevelVal": 1 }
+					]
+				});
+			};
+
+
+			oBinding.expandNodeToLevel(0, 1);
+		}
+
+		oBinding.attachChange(fnChangeHandler);
+		oBinding.getContexts(0, 100);
+
+	});
+
+	QUnit.test("_expandSubTree: Expands correctly", function(assert) {
+		var done = assert.async();
+		var aExpectedGroupIDs = ["/123", "/123/FinancialStatementItem:001",
+			"/123/FinancialStatementItem:003", "/123/FinancialStatementItem:001 3",
+			"/123/FinancialStatementItem:001 5", "/123/FinancialStatementItem:001 6"];
+
+
+		sap.ui.require([
+			"sap/ui/model/odata/v2/ODataTreeBinding", "sap/ui/model/odata/ODataTreeBindingAdapter"],
+			function(ODataTreeBinding, ODataTreeBindingAdapter) {
+				var oBinding = new ODataTreeBinding({
+					checkFilterOperation: function() { }
+				}, "/");
+				ODataTreeBindingAdapter.apply(oBinding);
+
+				oBinding.oTreeProperties = {
+					"hierarchy-node-for": "GLAccount_NodeID",
+					"hierarchy-parent-node-for": "GLAccount_ParentID",
+					"hierarchy-drill-state-for": "GLAccount_Drillstate"
+				};
+
+				oBinding.oModel.getContext = function(sInput) {
+					return sInput;
+				};
+
+				oBinding.oModel._getKey = function(oNode) {
+					return oNode["GLAccount_NodeID"];
+				};
+
+				oBinding._calculateGroupID = function(oArgs) {
+					return oArgs.parent.groupID + oArgs.context;
+				};
+
+				var oReq = new XMLHttpRequest();
+				oReq.addEventListener("load", fnDataLoaded);
+				oReq.open("GET", "test-resources/sap/ui/core/qunit/testdata/odata/sfin.json");
+				oReq.send();
+
+				function fnDataLoaded() {
+					var oData, aExpandedTreeState;
+					oData = JSON.parse(this.responseText);
+
+					oBinding._expandSubTree({
+						groupID: "/123",
+						context: {
+							getProperty: function() {
+								return oData.results[0]["GLAccount_NodeID"];
+							}
+						}
+					}, oData.results);
+
+					aExpandedTreeState = oBinding._mTreeState["expanded"];
+
+					aExpectedGroupIDs.forEach(function(sGroupId) {
+						assert.ok(aExpandedTreeState[sGroupId], "group id: " + sGroupId + " is expanded");
+					});
+
+					assert.equal(Object.keys(aExpandedTreeState).length, aExpectedGroupIDs.length,
+						"Only expected group ids have been expanded");
+					done();
+				}
+		});
+	});
+
+	QUnit.test("Binding length available before first getContexts call", function(assert) {
+		var done = assert.async();
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			rootLevel: 1
+		});
+		oBinding.attachDataReceived(function() {
+			assert.equal(oBinding.getLength(),  1, "Binding length can be retrieved");
+			done();
+		});
+		oBinding.getContexts(0, 100);
+	});
+
 });

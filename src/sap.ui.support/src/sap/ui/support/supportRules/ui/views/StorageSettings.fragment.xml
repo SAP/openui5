@@ -3,6 +3,7 @@
 		xmlns:l="sap.ui.layout"
 		xmlns:core="sap.ui.core">
 	<Popover
+			id="storageSettings"
 			title="Settings"
 			contentMinWidth="250px"
 			class="sapUiContentPadding"
@@ -13,9 +14,11 @@
 			justifyContent="Center">
 				<l:VerticalLayout>
 					<l:HorizontalLayout>
-						<CheckBox text="I agree to use local storage persistency for:"
-							  select= "onPersistedSettingSelect"
-							  selected="{/persistingSettings}"
+						<CheckBox
+						id="persistChB"
+						text="I agree to use local storage persistency for:"
+						select= "onPersistedSettingSelect"
+						selected="{/persistingSettings}"
 						/>
 					</l:HorizontalLayout>
 					<FlexBox
@@ -24,18 +27,24 @@
 						<l:VerticalLayout class="customSettingsPadding">
 							<Text text="  Execution Scope"></Text>
 							<Text text="  Temporary Rules"></Text>
-							<Text text="  Selected Rules"></Text>
+							<Text text="  Selected Rules and Presets"></Text>
+							<Text text="  Filtered Columns in Rules"></Text>
 							<Button text="Delete Persisted Data" press="deletePersistedData"></Button>
 
 							<l:HorizontalLayout class="customSettingsInfo">
-							<Text text="Support Assistant Location : \t" renderWhitespace="true"></Text>
-							<Link text="Copy" href="#" press="copySupportAssistantOriginToClipboard"></Link>
+								<Text text="Support Assistant Location : " renderWhitespace="true"></Text>
 							</l:HorizontalLayout>
-
-							<Text text="{/supportAssistantOrigin}"></Text>
-
 							<l:HorizontalLayout>
-							<Text text="Support Assistant Version : {/supportAssistantVersion}" renderWhitespace="true"></Text>
+								<Text text="{/supportAssistantOrigin} " renderWhitespace="true"></Text>
+								<core:Icon
+									class="sapUiTinyMarginLeft"
+									src="sap-icon://copy"
+									tooltip="Copy Location"
+									press="copySupportAssistantOriginToClipboard" />
+							</l:HorizontalLayout>
+							
+							<l:HorizontalLayout class="sapUiTinyMarginTop">
+								<Text text="Support Assistant Version : {/supportAssistantVersion}" renderWhitespace="true"></Text>
 							</l:HorizontalLayout>
 						</l:VerticalLayout>
 					</FlexBox>

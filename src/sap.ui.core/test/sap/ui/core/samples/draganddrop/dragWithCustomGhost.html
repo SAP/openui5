@@ -13,7 +13,7 @@
 			data-sap-ui-libs='sap.m'></script>
 
 		<script>
-			jQuery.sap.registerModulePath("my", "./");
+			sap.ui.loader.config({paths: {"my": "./"}});
 
 			sap.ui.require(["my/DraggableText"], function(DraggableText) {
 				"use strict";

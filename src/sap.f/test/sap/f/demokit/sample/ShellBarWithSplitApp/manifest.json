@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.ShellBarWithSplitApp",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.ShellBarWithSplitApp.view.ShellBarWithSplitApp",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.tnt": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"controller/ShellBarWithSplitApp.controller.js",
+					"model/model.json",
+					"view/ShellBarWithSplitApp.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

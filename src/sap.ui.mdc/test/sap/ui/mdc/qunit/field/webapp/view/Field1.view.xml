@@ -1,0 +1,81 @@
+<mvc:View
+	controllerName="test.sap.ui.mdc.field.Field.controller.Field1"
+	xmlns="sap.m"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdcField="sap.ui.mdc.field"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true">
+		<form:SimpleForm
+			id="simpleform"
+			editable="true"
+			layout="ResponsiveGridLayout"
+			title="{meta>/MusicService.Artists@com.sap.vocabularies.Common.v1.Label}"
+			labelSpanXL="3"
+			labelSpanL="3"
+			labelSpanM="3"
+			labelSpanS="12"
+			adjustLabelSpan="false"
+			emptySpanXL="4"
+			emptySpanL="4"
+			emptySpanM="4"
+			emptySpanS="0"
+			columnsXL="1"
+			columnsL="1"
+			columnsM="1"
+			singleContainerFullSize="false">
+
+			<Label
+				id="artistlabel"
+				text="{meta>/MusicService.Artists/name@com.sap.vocabularies.Common.v1.Label}"/>
+			<mdc:Field
+				id="artistnamefield"
+				value="{name}"
+				editMode="Display"/>
+
+			<Label
+				id="countrylabel"
+				text="{meta>/MusicService.Artists/countryOfOrigin@com.sap.vocabularies.Common.v1.Label}"/>
+			<mdc:Field
+				id="countryfield"
+				value="{countryOfOrigin_code}"
+				display="ValueDescription"
+				maxConditions="1"
+				fieldHelp="countryfieldhelp">
+				<mdc:dependents>
+					<mdcField:FieldValueHelp
+						id="countryfieldhelp"
+						title="Countries"
+						filterFields="*code,descr*"
+						keyPath="code"
+						descriptionPath="descr"
+						delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+						<mdcField:content>
+							<mdcField:FieldValueHelpMTableWrapper id="countryfieldhelppwrapper">
+								<Table
+									id="countryfieldhelptable"
+									items="{
+										path: '/Countries'
+									}">
+									<columns>
+										<Column id="column1" width="10rem">
+											<Label text="{meta>/MusicService.Countries/name@com.sap.vocabularies.Common.v1.Label}"/>
+										</Column>
+										<Column id="column2">
+											<Label text="{meta>/MusicService/Countries/descr@com.sap.vocabularies.Common.v1.Label}"/>
+										</Column>
+									</columns>
+									<items id="items">
+										<ColumnListItem id="columnlistitem" type="Active">
+											<Text text="{code}"/>
+											<Text text="{descr}"/>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</mdcField:FieldValueHelpMTableWrapper>
+						</mdcField:content>
+					</mdcField:FieldValueHelp>
+				</mdc:dependents>
+			</mdc:Field>
+		</form:SimpleForm>
+</mvc:View>

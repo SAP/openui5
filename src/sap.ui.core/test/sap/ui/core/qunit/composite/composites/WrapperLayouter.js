@@ -13,15 +13,18 @@ sap.ui.define([
 			},
 			init: function () {
 			},
-			renderer: function (rm, oControl) {
-				rm.write('<div>');
-				var oItems = oControl.getItems();
-				oItems.forEach(function (oItem) {
-					rm.renderControl(oItem);
-				}, this);
-				rm.write('</div>');
+			renderer: {
+				apiVersion: 2,
+				render: function (rm, oControl) {
+					rm.openStart('div').openEnd();
+					var oItems = oControl.getItems();
+					oItems.forEach(function (oItem) {
+						rm.renderControl(oItem);
+					});
+					rm.close('div');
+				}
 			}
 		});
 
 		return WrapperLayouter;
-	}, /* bExport= */true);
+	});

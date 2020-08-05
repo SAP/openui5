@@ -6,13 +6,19 @@
 			id="releaseDialog"
 			resizable="true"
 			draggable="true"
-			title="Change log for: {/library}"
+			title="{
+				parts: [
+					'i18n>RELEASE_DIALOG_TITLE',
+					'/library'
+				],
+				formatter: '.formatMessage'
+			}"
 			contentWidth="40%"
 			contentHeight="40%"
 			stretch="{appView>/bPhoneSize}">
-			<Text text="{/noDataMessage}" class="sapUiSmallMargin" visible="{=!!${/noDataMessage}}"/>
+			<Text text="{i18n>RELEASE_DIALOG_NO_DATA_TEXT}" class="sapUiSmallMargin" visible="{/noDataMessage}"/>
 		<beginButton>
-			<Button text="Close" press="onReleaseDialogClose"/>
+			<Button text="{i18n>RELEASE_DIALOG_CLOSE_BTN}" press="onReleaseDialogClose"/>
 		</beginButton>
 	</Dialog>
 

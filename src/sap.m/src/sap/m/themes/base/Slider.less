@@ -14,19 +14,25 @@
 	position: relative;
 	height: 3.3125rem;
 	padding: 1.406rem 1.0625rem;
+	z-index: 0;
 
 
+	/* TODO remove after the end of support for Internet Explorer */
 	/* IE Windows 8 */
-	/* This elements receives events when not panning in vertial direction */
+	/* This elements receives events when not panning in vertical direction */
 	touch-action: pan-y;
 	-ms-touch-action: pan-y;
 }
 
 .sapMSliderInner {
 	width: 100%;
-	z-index: 1;
 	position: relative;
 	background-repeat: no-repeat;
+	z-index: 1;
+}
+
+.sapUiLocalBusy .sapMSliderInner {
+	z-index: 0;
 }
 
 .sapMSliderInner,
@@ -53,12 +59,12 @@
 	padding: 0;
 	list-style: none;
 	position: absolute;
-	z-index: 0;
 	top: 0.625rem;
 	left: 1.0625rem;
 	right: 1.0625rem;;
 	display: block;
 	height: 1.75rem;
+	z-index: 0;
 }
 
 .sapMSliderTick {
@@ -72,7 +78,6 @@
 .sapMSliderTickLabel {
 	display: inline-block;
 	position: absolute;
-	z-index: 1;
 	width: 0.0625rem;
 	background-color: @sapUiFieldBorderColor;
 	margin: 0 0 0 -0.0625rem;
@@ -84,6 +89,7 @@
 
 .sapMSliderLabel {
 	font-size: 0.75rem;
+	padding-top: 0.5rem;
 	display: block;
 	width: 5rem;
 	text-align: center;
@@ -137,6 +143,12 @@
 	}
 }
 
+/* focus */
+html.sap-desktop .sapMSliderHandle:focus {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: 0.0625rem;
+}
+
 /* ============ */
 /* compact size */
 /* ============ */
@@ -162,6 +174,7 @@
 	}
 
 	.sapMSliderLabel {
+		padding-top: 0.3125rem;
 		top: 1rem;
 	}
 

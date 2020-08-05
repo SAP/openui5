@@ -1,0 +1,24 @@
+{
+	"sap.app": {
+		"id": "sap.ui.integration.sample.HostActions",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.integration.sample.HostActions.HostActions",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.f": {},
+				"sap.ui.integration": {}
+			}
+		},
+		"config": {
+		}
+	}
+}

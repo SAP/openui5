@@ -158,6 +158,8 @@
 				new sap.m.Label({text: "DateTimePicker with minDate=2016-01-01 and maxDate=2016-12-31", labelFor: "DP8"}),
 				new sap.m.DateTimePicker("DP8", { minDate: new Date(2016, 0, 1, 0, 0, 0), maxDate: new Date(2016, 11, 31, 23, 59, 59), change: handleChange }),
 				new sap.m.Input("I2", {value: "Content of events DateTimePicker", editable: false}),
+				new sap.m.Label({text: "DateTimePicker with minutesStep: 3, secondsStep: 5", labelFor: "DP9"}),
+				new sap.m.DateTimePicker("DP9", { minutesStep: 3, secondsStep: 5 })
 			],
 			footer: createFooter()
 		});

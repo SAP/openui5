@@ -2,10 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	"jquery.sap.global"
-], function (jQuery) {
+sap.ui.define([], function () {
 	"use strict";
+
+	var oResolved = new SyncPromise(function (resolve, reject) {
+			resolve();
+		}); // a SyncPromise which is resolved w/o arguments
 
 	/*
 	 * @see https://promisesaplus.com
@@ -165,7 +167,8 @@ sap.ui.define([
 		 * Marks this {@link sap.ui.base.SyncPromise} as caught and informs the optional
 		 * {@link sap.ui.base.SyncPromise.listener}. Basically, it has the same effect as
 		 * {@link #catch}, but with less overhead. Use it together with {@link #isRejected} and
-		 * {@link #getResult} in cases where the rejection is turned into <code>throw</code>.
+		 * {@link #getResult} in cases where the rejection is turned into <code>throw</code>; or
+		 * simply use {@link #unwrap} instead.
 		 */
 		this.caught = function () {
 			if (!bCaught) {
@@ -246,6 +249,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a {@link sap.ui.base.SyncPromise} and calls the given handler, like
+	 * <code>Promise.prototype.finally</code>.
+	 *
+	 * @param {function} [fnOnFinally]
+	 *   Callback function if this {@link sap.ui.base.SyncPromise} is settled
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A new {@link sap.ui.base.SyncPromise}, or <code>this</code> in case it is settled and no
+	 *   callback function is given
+	 *
+	 * @see #then
+	 */
+	SyncPromise.prototype.finally = function (fnOnFinally) {
+		if (typeof fnOnFinally === "function") {
+			return this.then(function (vResult) {
+				return SyncPromise.resolve(fnOnFinally()).then(function () {
+					return vResult;
+				}).unwrap(); // Note: avoids unnecessary micro task
+			}, function (vReason) {
+				return SyncPromise.resolve(fnOnFinally()).then(function () {
+					throw vReason;
+				}).unwrap(); // Note: avoids unnecessary micro task
+			});
+		}
+
+		return this.then(fnOnFinally, fnOnFinally);
+	};
+
+	/**
 	 * Returns a {@link sap.ui.base.SyncPromise} and calls the given handler as applicable, like
 	 * <code>Promise.prototype.then</code>. This {@link sap.ui.base.SyncPromise} is marked as
 	 * {@link #caught} unless <code>this</code> is returned. Note that a new
@@ -295,6 +326,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Unwraps this {@link sap.ui.base.SyncPromise} by returning the current result if this promise
+	 * is already fulfilled, returning the wrapped thenable if this promise is still pending, or
+	 * throwing the reason if this promise is already rejected. This {@link sap.ui.base.SyncPromise}
+	 * is marked as {@link #caught}.
+	 *
+	 * @returns {any|Promise}
+	 *   The result in case this {@link sap.ui.base.SyncPromise} is already fulfilled, or the
+	 *   wrapped thenable if this promise is still pending
+	 * @throws {any}
+	 *   The reason if this promise is already rejected
+	 *
+	 * @see #getResult
+	 */
+	SyncPromise.prototype.unwrap = function () {
+		this.caught(); // make sure it will never count as uncaught
+		if (this.isRejected()) {
+			throw this.getResult();
+		}
+		return this.getResult();
+	};
+
+	/**
 	 * Returns a new {@link sap.ui.base.SyncPromise} for the given array of values just like
 	 * <code>Promise.all(aValues)</code>.
 	 *
@@ -306,32 +359,59 @@ sap.ui.define([
 	 */
 	SyncPromise.all = function (aValues) {
 		return new SyncPromise(function (resolve, reject) {
-			var iPending; // number of pending promises
+			var bDone = false,
+				iPending = 0; // number of pending promises
 
 			function checkFulfilled() {
-				if (iPending === 0) {
+				if (bDone && iPending === 0) {
 					resolve(aValues); // Note: 1st reject/resolve wins!
 				}
 			}
 
 			aValues = Array.prototype.slice.call(aValues);
-			iPending = aValues.length;
-			checkFulfilled();
 			aValues.forEach(function (vValue, i) {
-				if (hasThen(vValue)) {
-					SyncPromise.resolve(vValue).then(function (vResult0) {
-						aValues[i] = vResult0;
+				if (vValue !== aValues[i + 1] && hasThen(vValue)) { // do s.th. at end of run only
+					iPending += 1;
+					vValue.then(function (vResult0) {
+						do {
+							aValues[i] = vResult0;
+							i -= 1;
+						} while (i >= 0 && vValue === aValues[i]);
 						iPending -= 1;
 						checkFulfilled();
 					}, function (vReason) {
 						reject(vReason); // Note: 1st reject/resolve wins!
 					});
-				} else { // cannot be a "thenable"
-					iPending -= 1;
-					checkFulfilled();
 				}
 			});
+			bDone = true;
+			checkFulfilled();
 		});
+	};
+
+	/**
+	 * Tells whether the given value is a function or object with a "then" property which can be
+	 * retrieved without an exception being thrown and which is a function.
+	 *
+	 * @param {any} vValue
+	 *   Any value
+	 * @returns {boolean}
+	 *   See above
+	 *
+	 * @see step 2.3.3. of https://promisesaplus.com
+	 */
+	SyncPromise.isThenable = function (vValue) {
+		// "typeof vValue.then" returns "unknown" in IE if the getter for "then" throws an error; to
+		// get 100% code coverage also in IE assign vValue.then to a variable before using typeof
+		var fnThen;
+
+		try {
+			return !!hasThen(vValue) && (fnThen = vValue.then) && typeof fnThen === "function";
+		} catch (e) {
+			// "2.3.3.2. If retrieving the property x.then results in a thrown exception e,..."
+			// ...we should not call this a proper "thenable"
+			return false;
+		}
 	};
 
 	/**
@@ -367,7 +447,8 @@ sap.ui.define([
 	/**
 	 * Returns <code>vResult</code> if it is already a {@link sap.ui.base.SyncPromise}, or a new
 	 * {@link sap.ui.base.SyncPromise} wrapping the given thenable <code>vResult</code> or
-	 * fulfilling with the given result.
+	 * fulfilling with the given result. In case <code>vResult === undefined</code>, the same
+	 * instance is reused to improve performance.
 	 *
 	 * @param {any} [vResult]
 	 *   The thenable to wrap or the result to synchronously fulfill with
@@ -375,9 +456,15 @@ sap.ui.define([
 	 *   The {@link sap.ui.base.SyncPromise}
 	 */
 	SyncPromise.resolve = function (vResult) {
-		return vResult instanceof SyncPromise
-			? vResult
-			: new SyncPromise(function (resolve, reject) {
+		if (vResult === undefined) {
+			return oResolved;
+		}
+
+		if (vResult instanceof SyncPromise) {
+			return vResult;
+		}
+
+		return new SyncPromise(function (resolve, reject) {
 				resolve(vResult);
 			});
 	};

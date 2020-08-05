@@ -1,0 +1,90 @@
+{
+	"@odata.context" : "$metadata#Equipments(Category,EmployeeId,ID,Name,EQUIPMENT_2_PRODUCT(ID,Name,PRODUCT_2_CATEGORY(CategoryIdentifier,CategoryName),PRODUCT_2_SUPPLIER(SUPPLIER_ID,Supplier_Name)))",
+	"@odata.metadataEtag" : "W/\"20180213164903\"",
+	"value" : [{
+		"Category" : "Electronics",
+		"ID" : 1,
+		"Name" : "Office PC",
+		"EmployeeId" : "0001",
+		"EQUIPMENT_2_PRODUCT" : {
+			"ID" : 1,
+			"Name" : "Office PC",
+			"PRODUCT_2_CATEGORY" : [{
+				"CategoryIdentifier" : 1,
+				"CategoryName" : "Computer device"
+			}],
+			"PRODUCT_2_SUPPLIER" : {
+				"SUPPLIER_ID" : 1,
+				"Supplier_Name" : "Apple"
+			}
+		}
+	}, {
+		"Category" : "Electronics",
+		"ID" : 2,
+		"Name" : "Tablet X",
+		"EmployeeId" : "0001",
+		"EQUIPMENT_2_PRODUCT" : {
+			"ID" : 2,
+			"Name" : "Tablet X",
+			"PRODUCT_2_CATEGORY" : [{
+				"CategoryIdentifier" : 1,
+				"CategoryName" : "Computer device"
+			}],
+			"PRODUCT_2_SUPPLIER" : {
+				"SUPPLIER_ID" : 1,
+				"Supplier_Name" : "Apple"
+			}
+		}
+	}, {
+		"Category" : "Electronics",
+		"ID" : 3,
+		"Name" : "Smartphone X",
+		"EmployeeId" : "0002",
+		"EQUIPMENT_2_PRODUCT" : {
+			"ID" : 3,
+			"Name" : "Smartphone X",
+			"PRODUCT_2_CATEGORY" : [{
+				"CategoryIdentifier" : 1,
+				"CategoryName" : "Computer device"
+			}],
+			"PRODUCT_2_SUPPLIER" : {
+				"SUPPLIER_ID" : 1,
+				"Supplier_Name" : "Apple"
+			}
+		}
+	}, {
+		"Category" : "Furniture",
+		"ID" : 4,
+		"Name" : "Electric Table Model A1",
+		"EmployeeId" : "0002",
+		"EQUIPMENT_2_PRODUCT" : {
+			"ID" : 4,
+			"Name" : "Electric Table Model A1",
+			"PRODUCT_2_CATEGORY" : [{
+				"CategoryIdentifier" : 1,
+				"CategoryName" : "Computer device"
+			}],
+			"PRODUCT_2_SUPPLIER" : {
+				"SUPPLIER_ID" : 5,
+				"Supplier_Name" : "Werner Werke"
+			}
+		}
+	}, {
+		"Category" : "Vehicle",
+		"ID" : 5,
+		"Name" : "VW Golf 2.0",
+		"EmployeeId" : "0003",
+		"EQUIPMENT_2_PRODUCT" : {
+			"ID" : 5,
+			"Name" : "VW Golf 2.0",
+			"PRODUCT_2_CATEGORY" : [{
+				"CategoryIdentifier" : 2,
+				"CategoryName" : "Vehicle"
+			}],
+			"PRODUCT_2_SUPPLIER" : {
+				"SUPPLIER_ID" : 2,
+				"Supplier_Name" : "VW"
+			}
+		}
+	}]
+}

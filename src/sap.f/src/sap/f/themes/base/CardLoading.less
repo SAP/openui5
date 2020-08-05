@@ -1,0 +1,200 @@
+/* ================================== */
+/* CSS for control sap.f/CardLoading  */
+/* Base theme          */
+/* ================================== */
+@_sap_f_Card_FocusBorderWidth: 1px;
+@sap_f_Card_Background_Placeholder_Color: @sapContent_Placeholderloading_Background;
+@sap_f_Card_Placeholder_Gradient: linear-gradient(to right, @sapContent_Placeholderloading_Background 0%, @sapContent_Placeholderloading_Background 35%, darken(@sapContent_Placeholderloading_Background, 5) 50%, @sapContent_Placeholderloading_Background 65%, @sapContent_Placeholderloading_Background 100%);
+
+.sapFCard {
+	.sapFCardHeader.sapFCardHeaderLoading {
+
+		.sapFCardHeaderImage.sapFCardHeaderItemBinded {
+			height: 3rem;
+			width: 3rem;
+			margin-right: 0.75rem;
+			//hide the fallback icon
+		}
+
+		.sapFCardHeaderText .sapFCardHeaderTextFirstLine {
+
+			.sapFCardTitle.sapFCardHeaderItemBinded {
+				flex: 1 0;
+				position: relative;
+			}
+
+			.sapFCardStatus.sapFCardHeaderItemBinded {
+				position: relative;
+				display: flex;
+				justify-content: flex-end;
+				align-self: center;
+				min-width: 1.5rem;
+				min-height: 1rem;
+			}
+
+		}
+
+		.sapFCardHeaderItemBinded::after {
+			content: "";
+			animation-duration: 2.5s;
+			animation-fill-mode: forwards;
+			animation-iteration-count: infinite;
+			animation-name: placeHolderShimmer;
+			animation-timing-function: linear;
+			background-color: @sap_f_Card_Background_Placeholder_Color;
+			background-image: @sap_f_Card_Placeholder_Gradient;
+			background-repeat: no-repeat;
+			background-size: 800px 144px;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			border-radius: 0.25rem;
+			top: 0;
+			left: 0;
+		}
+	}
+
+	.sapFCardNumericHeader.sapFCardHeaderLoading {
+		.sapFCardHeaderMainIndicator .sapFCardHeaderItemBinded {
+			min-width: 5rem;
+		}
+
+		.sapFCardHeaderSideIndicator.sapFCardHeaderItemBinded {
+			flex: 1 0;
+			min-height: 2rem;
+		}
+
+		.sapFCardHeaderDetails.sapFCardHeaderItemBinded {
+			flex: 1 0;
+			min-height: 0.5rem;
+			width: 100%;
+		}
+	}
+
+	.sapFCardContent {
+
+
+		.sapFCardBaseContent .sapFCardContentHidden {
+			visibility: hidden;
+		}
+
+		.sapFCardContentPlaceholder {
+			outline: none;
+		}
+
+		.sapFCardContentPlaceholder:focus::before {
+			content: '';
+			display: block;
+			position: absolute;
+			left: 1px;
+			bottom: 1px;
+			right: 1px;
+			top: 1px;
+			border: @_sap_f_Card_FocusBorderWidth dotted @sapUiContentFocusColor;
+			pointer-events: none;
+		}
+
+		html[data-sap-ui-browser^="ie"] .sapFCardContentPlaceholder:focus::before {
+			border: @_sap_f_Card_FocusBorderWidth dashed @sapUiContentFocusColor;
+		}
+
+		.sapFCardContentGenericPlaceholder {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			height: 100%;
+
+			.sapFCardLoadingShimmer {
+				width: 144px;
+				height: 144px;
+			}
+
+			.sapFCardSVG {
+				fill: @sapUiTileBackground;
+			}
+		}
+
+		.sapFCardContentShimmerPlaceholderItem {
+			height: 2.75rem;
+			padding: 0 1rem 0 1rem;
+			box-sizing: border-box;
+			display: flex;
+			position: relative;
+			align-items: center;
+			flex: 1 1 auto;
+
+			&.sapFCardContentShimmerPlaceholderWithChart.sapFCardContentShimmerPlaceholderWithDescription {
+				height: 6rem;
+			}
+
+			&.sapFCardContentShimmerPlaceholderWithChart,
+			&.sapFCardContentShimmerPlaceholderWithDescription,
+			&.sapFCardContentShimmerPlaceholderWithIcon {
+				height: 5rem;
+			}
+
+			.sapFCardContentShimmerPlaceholderImg {
+				margin: 0rem 0.75rem 0rem 0rem;
+				height: 2rem;
+				width: 2rem;
+				display: inline-block;
+			}
+
+			.sapFCardContentShimmerPlaceholderRows {
+				flex-grow: 1;
+
+				.sapFCardContentShimmerPlaceholderItemText {
+					height: 0.75rem;
+					margin-bottom: 0.5rem;
+					margin-top: 0.5rem;
+				}
+			}
+		}
+
+		.sapFCardLoadingShimmer {
+			animation-duration: 2.5s;
+			animation-fill-mode: forwards;
+			animation-iteration-count: infinite;
+			animation-name: placeHolderShimmer;
+			animation-timing-function: linear;
+			background-color: @sap_f_Card_Background_Placeholder_Color;
+			background-image: @sap_f_Card_Placeholder_Gradient;
+			background-repeat: no-repeat;
+			background-size: 800px 144px;
+			position: relative;
+			border-radius: 0.25rem;
+		}
+
+	}
+
+	@keyframes placeHolderShimmer {
+		0% {
+			background-position: -468px 0;
+		}
+
+		100% {
+			background-position: 468px 0;
+		}
+	}
+}
+
+.sapUiSizeCompact {
+	.sapFCard {
+		.sapFCardContent {
+			.sapFCardContentShimmerPlaceholderItem {
+				height: 2rem;
+
+				&.sapFCardContentShimmerPlaceholderWithChart.sapFCardContentShimmerPlaceholderWithDescription {
+					height: 6rem;
+				}
+
+				&.sapFCardContentShimmerPlaceholderWithChart,
+				&.sapFCardContentShimmerPlaceholderWithDescription,
+				&.sapFCardContentShimmerPlaceholderWithIcon {
+					height: 5rem;
+				}
+			}
+		}
+	}
+}

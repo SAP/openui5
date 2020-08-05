@@ -57,7 +57,7 @@ sap.ui.define(["sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticConfigurat
 			},
 			designtime: "sap/m/designtime/semantic/ShareMenuPage.designtime"
 		},
-		renderer: SemanticPageRenderer.render
+		renderer: SemanticPageRenderer
 	});
 
 	ShareMenuPage.prototype._getSemanticPositionsMap = function (oControl, oConfig) {

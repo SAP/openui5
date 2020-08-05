@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/m/library"],
-	function(library) {
+sap.ui.define(["sap/m/library", "sap/ui/Device"],
+	function(library, Device) {
 	"use strict";
 
 	// shortcut for sap.m.ToolbarDesign
@@ -12,7 +12,9 @@ sap.ui.define(["sap/m/library"],
 	 * Panel renderer
 	 * @namespace
 	 */
-	var PanelRenderer = {};
+	var PanelRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -33,52 +35,61 @@ sap.ui.define(["sap/m/library"],
 	};
 
 	PanelRenderer.startPanel = function (oRm, oControl) {
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMPanel");
-		oRm.writeClasses();
-		oRm.addStyle("width", oControl.getWidth());
-		oRm.addStyle("height", oControl.getHeight());
-		oRm.writeStyles();
-		oRm.writeAccessibilityState(oControl, {
-			role: oControl.getAccessibleRole().toLowerCase(),
-			labelledby: oControl._getLabellingElementId()
-		});
-		oRm.write(">");
+		var bIsExpandable = oControl.getExpandable(),
+			oAccAttributes = {
+				role: oControl.getAccessibleRole().toLowerCase()
+			};
+
+		oRm.openStart("div", oControl);
+		oRm.class("sapMPanel");
+
+		if (bIsExpandable) {
+			oRm.class("sapMPanelExpandable");
+		}
+
+		oRm.style("width", oControl.getWidth());
+		oRm.style("height", oControl.getHeight());
+
+		// add an aria-labelledby refence to the header, only when a headerToolbar is provided
+		// or the control is not expandable
+		// since in the default case, the focus is on the header
+		// and the header would be read out twice
+		if (oControl.getHeaderToolbar() || !bIsExpandable) {
+			oAccAttributes.labelledby = oControl._getLabellingElementId();
+		}
+
+		oRm.accessibilityState(oControl, oAccAttributes);
+		oRm.openEnd();
 	};
 
 	PanelRenderer.renderHeader = function (oRm, oControl) {
 		var bIsExpandable = oControl.getExpandable(),
 			bIsExpanded = oControl.getExpanded(),
 			oHeaderTBar = oControl.getHeaderToolbar(),
-			sHeaderClass;
+			sHeaderClass,
+			sHeaderElement = oHeaderTBar ? "header" : "div";
 
 		if (bIsExpandable) {
-			// we need a wrapping div around icon and header
+			// we need a wrapping div around button and header
 			// otherwise the border needed for both do not exact align
-			oRm.write("<header");
+			oRm.openStart(sHeaderElement);
 			if (oHeaderTBar) {
 				sHeaderClass = "sapMPanelWrappingDivTb";
 			} else {
 				sHeaderClass = "sapMPanelWrappingDiv";
+				this.writeHeaderAccessibility(oRm, oControl);
 			}
 
-			oRm.addClass(sHeaderClass);
+			oRm.class(sHeaderClass);
 			if (bIsExpanded) {
-				oRm.addClass(sHeaderClass + "Expanded");
+				oRm.class(sHeaderClass + "Expanded");
 			}
 
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 
-			var oIcon = oControl._getIcon();
-			if (bIsExpanded) {
-				oIcon.addStyleClass("sapMPanelExpandableIconExpanded");
-			} else {
-				oIcon.removeStyleClass("sapMPanelExpandableIconExpanded");
+			if (bIsExpandable) {
+				oRm.renderControl(oControl._oExpandButton);
 			}
-
-			oRm.renderControl(oIcon);
 		}
 
 		// render header
@@ -90,32 +101,42 @@ sap.ui.define(["sap/m/library"],
 			oRm.renderControl(oHeaderTBar);
 
 		} else if (sHeaderText || bIsExpandable) {
-			oRm.write("<h1");
-			oRm.addClass("sapMPanelHdr");
-			oRm.writeClasses();
-			oRm.writeAttribute("id", oControl.getId() + "-header");
-			oRm.write(">");
-			oRm.writeEscaped(sHeaderText);
-			oRm.write("</h1>");
+			oRm.openStart("h2", oControl.getId() + "-header");
+			oRm.class("sapMPanelHdr");
+			oRm.openEnd();
+			oRm.text(sHeaderText);
+			oRm.close("h2");
 		}
 
 		if (bIsExpandable) {
-			oRm.write("</header>");
+			oRm.close(sHeaderElement);
 		}
 
 		var oInfoTBar = oControl.getInfoToolbar();
 
 		if (oInfoTBar) {
-			if (bIsExpandable) {
-				// use this class as marker class to ease selection later in onAfterRendering
-				oInfoTBar.addStyleClass("sapMPanelExpandablePart");
-			}
-
 			// render infoBar
 			oInfoTBar.setDesign(ToolbarDesign.Info, true);
 			oInfoTBar.addStyleClass("sapMPanelInfoTB");
-			oRm.renderControl(oInfoTBar);
+
+			if (bIsExpandable) {
+				oRm.openStart("div");
+				// use this class as marker class to ease selection later in onAfterRendering
+				oRm.class("sapMPanelExpandablePart");
+				oRm.openEnd();
+				oRm.renderControl(oInfoTBar);
+				oRm.close("div");
+			} else {
+				oRm.renderControl(oInfoTBar);
+			}
 		}
+	};
+
+	PanelRenderer.writeHeaderAccessibility = function (oRm, oControl) {
+		oRm.attr('tabindex', 0);
+		oRm.attr('role', 'button');
+		oRm.attr('aria-expanded', oControl.getExpanded());
+		oRm.attr('aria-controls', oControl.getId() + "-content");
 	};
 
 	PanelRenderer.renderContent = function (oRm, oControl) {
@@ -127,32 +148,34 @@ sap.ui.define(["sap/m/library"],
 	};
 
 	PanelRenderer.startContent = function (oRm, oControl) {
-		oRm.write("<div");
-		oRm.addClass("sapMPanelContent");
-		oRm.addClass("sapMPanelBG" + oControl.getBackgroundDesign());
+		oRm.openStart("div",  oControl.getId() + "-content");
+		oRm.class("sapMPanelContent");
+		oRm.class("sapMPanelBG" + oControl.getBackgroundDesign());
 
 		if (oControl.getExpandable()) {
 			// use this class as marker class to ease selection later in onAfterRendering
-			oRm.addClass("sapMPanelExpandablePart");
+			oRm.class("sapMPanelExpandablePart");
 		}
 
-		oRm.writeClasses();
-		// ensure that the content is not included in the tab chain
-		// this happens in FF, when we have a scrollable content
-		oRm.writeAttribute('tabindex', '-1');
-		oRm.write(">");
+		if (Device.browser.firefox) {
+			// ensure that the content is not included in the tab chain
+			// this happens in FF, when we have a scrollable content
+			oRm.attr('tabindex', '-1');
+		}
+
+		oRm.openEnd();
 	};
 
 	PanelRenderer.renderChildren = function (oRm, aChildren) {
-		aChildren.forEach(oRm.renderControl);
+		aChildren.forEach(oRm.renderControl, oRm);
 	};
 
 	PanelRenderer.endContent = function (oRm) {
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	PanelRenderer.endPanel = function (oRm) {
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return PanelRenderer;

@@ -1,0 +1,15 @@
+/* ==================================== */
+/* CSS for control sap.m/BusyIndicator  */
+/* Quartz Dark theme                    */
+/* ==================================== */
+
+/* Background animation element */
+.sapUiLocalBusyIndicatorAnimation > div::before {
+	background: @sapUiContentIconColor;
+	animation-duration: 0ms;
+}
+
+/* Shadow animation element */
+.sapUiLocalBusyIndicatorAnimation > div::after {
+	box-shadow: inset 0px 0px 0px 0px @sapUiContentIconColor;
+}

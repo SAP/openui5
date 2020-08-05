@@ -1,0 +1,100 @@
+{
+	"pages": [
+		{
+			"pageId": "companyPageId",
+			"header": "Company info",
+			"title": "Adventure Company",
+			"titleUrl": "http://sap.com",
+			"icon": "sap-icon://building",
+			"description": "John Doe",
+			"groups": [
+				{
+					"heading": "Contact Details",
+					"elements": [
+						{
+							"label": "Phone",
+							"value": "+001 6101 34869-0",
+							"elementType": "phone"
+						},
+						{
+							"label": "Address",
+							"value": "550 Larkin Street, 4F, Mountain View, CA, 94102 San Francisco USA",
+							"elementType": "text"
+						}
+					]
+				},
+				{
+					"heading": "Main Contact",
+					"elements": [
+						{
+							"label": "Name",
+							"value": "John Doe",
+							"elementType": "pageLink",
+							"pageLinkId": "companyEmployeePageId"
+						},
+						{
+							"label": "Mobile",
+							"value": "+001 6101 34869-0",
+							"elementType": "mobile"
+						},
+						{
+							"label": "Phone",
+							"value": "+001 6101 34869-0",
+							"elementType": "phone"
+						},
+						{
+							"label": "Email",
+							"value": "main.contact@company.com",
+							"emailSubject": "Subject",
+							"elementType": "email"
+						}
+					]
+				}
+			]
+		},
+		{
+			"pageId": "companyEmployeePageId",
+			"header": "Employee Info",
+			"title": "John Doe",
+			"icon": "sap-icon://person-placeholder",
+			"description": "Department Manager",
+			"groups": [
+				{
+					"heading": "Company",
+					"elements": [
+						{
+							"label": "Name",
+							"value": "Adventure Company",
+							"url": "http://sap.com",
+							"elementType": "link"
+						},
+						{
+							"label": "Address",
+							"value": "Sofia, Boris III, 136A"
+						},
+						{
+							"label": "Slogan",
+							"value": "Innovation through technology"
+						}
+					]
+				},
+				{
+					"heading": "Other",
+					"elements": [
+						{
+							"label": "Email",
+							"value": "john.doe@sap.com",
+							"emailSubject": "Subject",
+							"elementType": "email"
+						},
+						{
+							"label": "Phone",
+							"value": "+359 888 888 888",
+							"elementType": "mobile"
+						}
+					]
+				}
+			]
+		}
+	]
+}

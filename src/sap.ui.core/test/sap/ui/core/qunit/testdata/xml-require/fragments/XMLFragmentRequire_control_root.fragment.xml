@@ -1,0 +1,9 @@
+<Dialog id="xmlDialog" xmlns="sap.m" xmlns:core="sap.ui.core"
+	title="XML Fragment Dialog"
+	core:require="{Box:'sap/m/MessageBox',Toast:'sap/m/MessageToast'}">
+	<Text id="xmlDialogTxt" text="test" />
+	<buttons>
+		<Button id="button1" text="Close" press="Box.show('Do you really want to close?')" />
+		<Button id="button2" text="Toast" press="Toast.show('This is a toast')" />
+	</buttons>
+</Dialog>

@@ -10,7 +10,6 @@ sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
 		}
 	});
 
-
 	return CController;
 
 });

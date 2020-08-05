@@ -1,0 +1,226 @@
+/* ================================= */
+/* CSS for control sap.m/Page        */
+/* Quartz High Contrast White theme  */
+/* ================================= */
+
+.sapMPage .sapMPageHeader:not(.sapMIBar-CTX),
+.sapMPageWithSubHeader .sapMPageSubHeader:not(.sapMIBar-CTX) {
+	position: relative;
+	border-bottom: none;
+	box-shadow: none;
+
+	.sapMIBar-CTX {
+		position: relative;
+		z-index: 2;
+	}
+
+	&:after {
+		content: "";
+		position: absolute;
+		height: 1px;
+		bottom: 0;
+		width: 100%;
+		box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor, 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15);
+		z-index: 1;
+	}
+}
+
+.sapMPageWithHeader.sapMPageWithSubHeader {
+	.sapMPageHeader {
+		box-shadow: none;
+
+		&:after {
+			box-shadow: none;
+		}
+	}
+}
+
+.sapMPageBgStandard {
+	background-color: @sapUiBaseBG;
+}
+
+.sapMPageBgSolid {
+	background-color: @sapUiBaseBG;
+}
+
+.sapMPageBgTransperant {
+	background-color: @sapUiBaseBG;
+}
+
+.sapMPageBgList {
+	background-color: @sapUiBaseBG;
+}
+
+/* The following overrides for sap_belize/sap_belize_plus are only intended for apps inside FLP (Ushell) */
+.sapUshellShell {
+
+	/* In sap_belize_plus backgroundDesign=Standard maps to Solid */
+	.sapMPageBgStandard {
+		background-color: @sapUiBaseBG;
+	}
+
+	/* For the pages in the master part of sap.m.SplitApp backgroundDesign=Standard maps to Transparent */
+	.sapMSplitContainerMaster .sapMPageBgStandard {
+		background-color: transparent;
+		background-image: none;
+	}
+
+	/* Hack - temporary - this is the FLP change*/
+	#sapUshellDashboardPage {
+		background-color: transparent !important;
+		background-image: none !important;
+	}
+}
+
+.sapMPageWithFloatingFooter .sapMPageFloatingFooter {
+	opacity: 1;
+
+	.sapMIBar-CTX.sapMFooter-CTX {
+		box-shadow: @sapUiShadowLevel1;
+	}
+}
+
+html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
+	@keyframes bounceShow {
+		0% {
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@keyframes bounceHide {
+		0% {
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+}
+
+.sapMPage.sapF2CollapsedHeader > .sapMPageHeader {
+	& + section,
+	& + .sapUiHiddenPlaceholder + section {
+		top: 0;
+	}
+
+	& + .sapMPageSubHeader + section {
+		top: 2.75rem;
+	}
+}
+
+.sapMPage.sapF2CollapsedHeader > .sapMPageHeader {
+	& + section,
+	& + .sapUiHiddenPlaceholder + section {
+		top: 0;
+	}
+
+	& + .sapMPageSubHeader + section {
+		top: 2.75rem;
+	}
+}
+
+/* page with footer */
+.sapMPageWithFooter > section {
+	bottom: 2.75rem;
+}
+
+.sapMPage {
+	> .sapMPageHeader + section,
+	> .sapMPageSubHeader + section,
+	> .sapMPageHeader + .sapUiHiddenPlaceholder + section {
+		top: 2.75rem;
+	}
+
+	> .sapMPageHeader + .sapMPageSubHeader + section,
+	> .sapMPageHeader + .sapMPageSubHeader.sapMPageSubHeaderInfoBar + section {
+		top: 5.5rem;
+	}
+}
+
+.sapUiSizeCompact .sapF2CollapsedHeader.sapMPageWithHeader {
+	> section {
+		top: 0;
+	}
+
+	&.sapMPageWithSubHeader > section {
+		top: 2rem;
+	}
+}
+
+.sapMPageWithHeader {
+	&.sapFShellBar-CTX > section {
+		top: 2.75rem;
+	}
+
+	&.sapMPageWithSubHeader.sapFShellBar-CTX > section {
+		top: 5.5rem;
+	}
+}
+
+.sapMPageHeader, .sapMPageSubHeader, .sapMPageFooter {
+	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
+	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
+		&.sapMBar {
+			box-sizing: border-box;
+
+			.sapMBarLeft {
+				padding-left: inherit;
+			}
+
+			.sapMBarRight {
+				padding-right: inherit;
+			}
+		}
+	}
+}
+.sapUi-Std-PaddingS,
+.sapUi-Std-PaddingM,
+.sapUi-Std-PaddingL,
+.sapUi-Std-PaddingXL {
+	&.sapMPageFloatingFooter.sapMPageFooter {
+		margin: 0.5rem 0;
+		width: auto;
+	}
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+	/* Header and footer have 2.5 rem */
+	.sapMPageWithHeader > section {
+		top: 2.5rem;
+	}
+
+	.sapMPageWithFooter > section {
+		bottom: 2.5rem;
+	}
+
+	/* Subheader only 2 rem */
+	.sapMPageWithSubHeader > section {
+		top: 2rem;
+	}
+
+	.sapMPageWithHeader.sapMPageWithSubHeader {
+		> section {
+			top: 4.5rem;
+		}
+
+		.sapMPageSubHeader.sapMPageSubHeaderInfoBar + section {
+			top: 4.5rem;
+		}
+	}
+
+	.sapMPageWithHeader {
+		&.sapFShellBar-CTX > section {
+			top: 2.75rem;
+		}
+
+		&.sapMPageWithSubHeader.sapFShellBar-CTX > section {
+			top: 4.75rem;
+		}
+	}
+}

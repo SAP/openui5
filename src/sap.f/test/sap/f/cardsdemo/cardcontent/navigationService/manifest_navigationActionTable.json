@@ -1,0 +1,91 @@
+{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "Table Card with Top 5 Products",
+			"subTitle": "These are the top sellers this month",
+			"icon": {
+				"src": "sap-icon://sales-order"
+			},
+			"status": {
+				"text": "5 of 100"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Comfort Easy",
+						"Category": "PDA & Organizers",
+						"url": "https://www.sap.com",
+						"identifierUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"Number": "356865544"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Category": "PDA & Organizers",
+						"url": "https://www.sap.com",
+						"identifierUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"Number": "356865544"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Category": "Notebooks",
+						"url": "https://www.sap.com",
+						"identifierUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"Number": "356865544"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"Category": "Monitors",
+						"url": "https://www.sap.com",
+						"Number": "356865544"
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"Category": "Printers",
+						"url": "https://www.sap.com",
+						"identifierUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"Number": "356865544"
+					}
+				]
+			},
+			"row": {
+				"columns": [
+					{
+						"title": "Name",
+						"value": "{Name}"
+					},
+					{
+						"title": "Link",
+						"value": "{Name}",
+						"url": "{url}"
+					},
+					{
+						"title": "Category",
+						"value": "{Category}"
+					},
+					{
+						"title": "Number",
+						"value": "{Number}",
+						"identifier": {
+							"url": "{identifierUrl}"
+						}
+					}
+				],
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": "{= ${url}}",
+						"parameters": {
+							"url": "{url}"
+						}
+					}
+				]
+			}
+		}
+	}
+}

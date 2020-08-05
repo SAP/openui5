@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global"
+	"sap/base/Log"
 ], function(
-	jQuery
+	Log
 ) {
 	"use strict";
+
+	var PROPERTY_NAME = "visible";
 
 	/**
 	 * Change handler for hiding of a control.
@@ -55,7 +57,7 @@ sap.ui.define([
 			mPropertyBag.modifier.setVisible(oControl, mRevertData.originalValue);
 			oChange.resetRevertData();
 		} else {
-			jQuery.sap.log.error("Attempt to revert an unapplied change.");
+			Log.error("Attempt to revert an unapplied change.");
 			return false;
 		}
 
@@ -69,7 +71,22 @@ sap.ui.define([
 	 * @param {object} oSpecificChangeInfo as an empty object since no additional attributes are required for this operation
 	 * @public
 	 */
-	HideControl.completeChangeContent = function(oChange, oSpecificChangeInfo) {
+	HideControl.completeChangeContent = function() {
+	};
+
+	/**
+	 * Retrieves the condenser-specific information.
+	 *
+	 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+	 * @returns {object} - Condenser-specific information
+	 * @public
+	 */
+	HideControl.getCondenserInfo = function(oChange) {
+		return {
+			affectedControl: oChange.getSelector(),
+			classification: sap.ui.fl.condenser.Classification.Reverse,
+			uniqueKey: PROPERTY_NAME
+		};
 	};
 
 	return HideControl;

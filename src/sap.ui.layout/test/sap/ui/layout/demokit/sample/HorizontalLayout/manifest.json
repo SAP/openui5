@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.HorizontalLayout",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.HorizontalLayout.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {},
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

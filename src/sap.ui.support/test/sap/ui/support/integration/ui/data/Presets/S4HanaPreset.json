@@ -1,0 +1,49 @@
+{
+	"id": "S4HANA_MUSTHAVE",
+	"title": "S/4HANA Consistency Checks for 1811",
+    "description": "Consistency check rules for S\\4HANA release 1811",
+    "dateExported": "2018-07-05T13:32:08.222Z",
+    "version": "1.0",
+    "selections": [
+        {
+            "ruleId": "eventBusSilentPublish",
+            "libName": "sap.ui.core"
+        },
+        {
+            "ruleId": "errorLogs",
+            "libName": "sap.ui.core"
+        },
+        {
+            "ruleId": "cssCheckCustomStyles",
+            "libName": "sap.ui.core"
+        },
+        {
+            "ruleId": "cssCheckCustomStylesThatAffectControls",
+            "libName": "sap.ui.core"
+        },
+        {
+            "ruleId": "libraryUsage",
+            "libName": "sap.ui.core"
+        },
+        {
+            "ruleId": "bindingPathSyntaxValidation",
+            "libName": "sap.ui.core"
+        },
+        {
+            "ruleId": "deprecatedProperty",
+            "libName": "sap.ui.core"
+        },
+        {
+            "ruleId": "deprecatedAggregation",
+            "libName": "sap.ui.core"
+        },
+        {
+            "ruleId": "deprecatedAssociation",
+            "libName": "sap.ui.core"
+        },
+        {
+            "ruleId": "deprecatedEvent",
+            "libName": "sap.ui.core"
+        }
+    ]
+}

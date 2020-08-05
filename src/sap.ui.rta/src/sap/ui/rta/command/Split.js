@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/FlexCommand'
+	"sap/ui/rta/command/FlexCommand"
 ], function(FlexCommand) {
 	"use strict";
 
@@ -44,14 +44,13 @@ sap.ui.define([
 	 */
 	Split.prototype._getChangeSpecificData = function() {
 		var mSpecificInfo = {
-				newElementIds : this.getNewElementIds(),
-				sourceControlId : this.getSource().getId(),
-				changeType : this.getChangeType(),
-				parentId : this.getParentElement().getId()
+			newElementIds : this.getNewElementIds(),
+			sourceControlId : this.getSource().getId(),
+			changeType : this.getChangeType(),
+			parentId : this.getParentElement().getId()
 		};
 		return mSpecificInfo;
 	};
 
 	return Split;
-
-}, /* bExport= */true);
+});

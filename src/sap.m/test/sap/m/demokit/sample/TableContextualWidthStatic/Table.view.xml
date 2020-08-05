@@ -1,0 +1,71 @@
+<mvc:View
+	controllerName="sap.m.sample.TableContextualWidthStatic.Table"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<MessageStrip
+		text="Table is initially setting contexualWidth to 500px. Press button to change the ContextualWidth."
+		type="Success"
+		class="sapUiSmallMargin"
+		showIcon="true"/>
+			<OverflowToolbar>
+				<Button
+					text="change contexualWidth to 100px"
+					press="onPress"/>
+			</OverflowToolbar>
+		<Table id="table"
+			contextualWidth="500px"
+			popinLayout="GridSmall"
+			headerText="Products"
+			items="{
+			path: '/'}">
+
+		<columns>
+			<Column>
+				<header>
+					<Label text="First Name" />
+				</header>
+			</Column>
+			<Column
+				demandPopin="true"
+				minScreenWidth="Phone">
+				<header>
+					<Label text="Last Name" />
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Phone"
+				demandPopin="true"
+				popinDisplay="Inline"
+				hAlign="Right">
+				<header>
+					<Label text="Birth Date" />
+				</header>
+			</Column>
+			<Column
+				width="4rem"
+				demandPopin="true"
+				hAlign="Right"
+				minScreenWidth="Tablet"
+				popinDisplay="Inline">
+				<header>
+					<Label text="Gender" />
+				</header>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Label
+						text="{firstName}"/>
+					<Label
+						text="{lastName}" />
+					<Label
+						text="{birthDate}" />
+					<Label
+						text="{gender}"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

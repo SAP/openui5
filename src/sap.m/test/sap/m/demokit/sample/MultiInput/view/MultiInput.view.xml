@@ -1,0 +1,26 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.MultiInput.controller.MultiInput"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<Label text="Enter a search term, e.g. “Notebook”, and add matching products as tokens" width="100%" labelFor="multiInput"/>
+		<MultiInput width="70%"
+			id="multiInput"
+			suggestionItems="{
+				path: '/ProductCollection',
+				sorter: { path: 'Name' }
+			}"
+			showValueHelp="false">
+			<core:Item key="{ProductId}" text="{Name}" />
+		</MultiInput>
+		<Label text="MultiInput with pre-selected tokens" labelFor="multiInput1"/>
+		<MultiInput id="multiInput1" width="70%" showValueHelp="false"/>
+		<Label text="MultiInput with single long token" labelFor="multiInput2"/>
+		<MultiInput id="multiInput2" width="300px" showValueHelp="false" />
+	</l:VerticalLayout>
+</mvc:View>

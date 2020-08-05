@@ -1,38 +1,21 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
 
-jQuery.sap.require("sap.ui.fl.StandardVariant");
-jQuery.sap.require("sap.ui.fl.Change");
-
-(function(QUnit, sinon, standardVariant, Change) {
+sap.ui.define([
+	"sap/ui/fl/StandardVariant",
+	"sap/ui/fl/Change",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
+], function(
+	StandardVariant,
+	Change,
+	sinon,
+	jQuery
+) {
 	"use strict";
-
-	/*eslint-disable no-unused-vars */
-	var standardVariantChangeDefinitionSpecifics = {
-		"fileType": "change", //set by Change.createInitialFileContent if not variant
-		"layer": "USER", //enforced
-		"fileName": "<name>", //currently set by Change.createInitialFileContent, must not be set
-		"namespace": "<namespace>", //currently set by Change.createInitialFileContent, must not be set
-		"packageName": "<packageName>", //currently set by Change.createInitialFileContent, must not be set
-		"changeType": "standardVariant",
-		"creation": "<timestamp>", //set by Change.createInitialFileContent
-		"reference": "<component>", //set by Change.createInitialFileContent
-		"selector": {
-			"persistenceKey": "control1"
-		}, //optional
-		"content": {
-			"executeOnSelect": false
-		},
-		"support": {  //set by Change.createInitialFileContent
-			"generator": "<generator>",
-			"user": "<user>",
-			"service": "<service>"
-		}
-	};
-	/*eslint-enable no-unused-vars */
 
 	QUnit.module("sap.ui.fl.StandardVariant", {
 		beforeEach: function() {
-			this.oStandardVariant = new standardVariant.constructor();
+			this.oStandardVariant = new StandardVariant.constructor();
 		},
 		afterEach: function() {
 		}
@@ -113,7 +96,6 @@ jQuery.sap.require("sap.ui.fl.Change");
 	});
 
 	QUnit.test("getExecuteOnSelect - shall return null if there are no standardVariant changes", function(assert) {
-
 		var oChanges = {};
 
 		new Array(5).forEach(function(index) {
@@ -127,7 +109,8 @@ jQuery.sap.require("sap.ui.fl.Change");
 	});
 
 	QUnit.test("createChangeFile shall return a new change", function(assert) {
-		var mParameterBag, oChangeContent;
+		var mParameterBag;
+		var oChangeContent;
 		mParameterBag = {executeOnSelect: true, reference: "ribukombu"};
 
 		oChangeContent = this.oStandardVariant._createChangeFile(mParameterBag);
@@ -136,7 +119,8 @@ jQuery.sap.require("sap.ui.fl.Change");
 	});
 
 	QUnit.test("createChangeFile shall write the component name into the change file", function(assert) {
-		var mParameterBag, oChangeContent;
+		var mParameterBag;
+		var oChangeContent;
 		mParameterBag = {reference: "ribukombu"};
 
 		oChangeContent = this.oStandardVariant._createChangeFile(mParameterBag);
@@ -144,8 +128,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 	});
 
 	QUnit.test("createChangeObject with all possible standard variant change specific options", function(assert) {
-		var mParameterBag, oChange;
-		mParameterBag = {
+		var mParameterBag = {
 			reference: "Glennkadiko",
 			componentName: "Glennkadiko",
 			executeOnSelect: true,
@@ -155,7 +138,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 		};
 
 		//Call CUT
-		oChange = this.oStandardVariant.createChangeObject(mParameterBag);
+		var oChange = this.oStandardVariant.createChangeObject(mParameterBag);
 
 		assert.ok(oChange);
 		assert.ok(oChange instanceof Change);
@@ -260,4 +243,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 		assert.strictEqual(mChanges.firstChange.getPendingAction(), 'DELETE');
 	});
 
-}(QUnit, sinon, sap.ui.fl.StandardVariant, sap.ui.fl.Change));
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
+	});
+});

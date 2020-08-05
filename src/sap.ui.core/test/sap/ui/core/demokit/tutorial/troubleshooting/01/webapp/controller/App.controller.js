@@ -5,11 +5,11 @@
  ******************************************************************************/
 
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	'sap/ui/core/mvc/Controller',
 	'sap/m/MessageToast',
 	'sap/ui/ux3/NavigationBar',
-	'jquery.sap.global'
-], function (Controller, MessageToast, NavigationBar, jQuery) {
+	'sap/base/Log'
+], function (Controller, MessageToast, NavigationBar, Log) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.HeapOfShards.controller.App", {
@@ -20,16 +20,13 @@ sap.ui.define([
 				sMessage = this.getResourceBundle().getText("buttonOk", [oEvent.getSourceXYZ().getId()]);
 			} catch (oException) {
 				sMessage = this.getResourceBundle().getText("buttonErrorOccurred");
-				jQuery.sap.log.error(oException.stack);
+				Log.error(oException.stack);
 			}
 			MessageToast.show(sMessage);
 		},
 
 		getResourceBundle: function () {
-			if (!this.oBundle) {
-				this.oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-			}
-			return this.oBundle;
+			return this.getView().getModel("i18n").getResourceBundle();
 		}
 
 	});

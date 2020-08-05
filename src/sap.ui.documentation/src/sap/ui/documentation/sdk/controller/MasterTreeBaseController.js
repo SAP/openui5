@@ -6,7 +6,7 @@
  * Common controller for the API Reference & Documentation master controllers (as they both use a tree)
  */
 sap.ui.define([
-		"jquery.sap.global",
+		"sap/ui/thirdparty/jquery",
 		"./BaseController",
 		"./util/TreeUtil",
 		"sap/ui/model/Filter",
@@ -52,13 +52,16 @@ sap.ui.define([
 				// Select the target node and scroll to it
 				if (oLastItem) {
 					oLastItem.setSelected(true);
-
+					this.oSelectedItem = {
+						sTopicId: sTopicId,
+						oModel: oModel
+					};
 					// Only scroll after the dom is ready
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						if (oLastItem.getDomRef() && !isInViewport(oLastItem.getDomRef())) {
 							this._scrollTreeItemIntoView(oLastItem);
 						}
-					});
+					}.bind(this), 0);
 				}
 			},
 
@@ -70,12 +73,10 @@ sap.ui.define([
 			 * @private
 			 */
 			_findTreeItem: function (sId) {
-				var oTree = this.byId("tree");
-				var oItems = oTree.getItems();
+				var oItems = this.byId("tree").getItems();
 
 				for (var i = 0; i < oItems.length; i++) {
-					var oCustomData = oItems[i].getCustomData()[0]; // assumes one custom data element only
-					if (oCustomData.getKey() === "nodeId" && oCustomData.getValue() === sId) {
+					if (oItems[i].getTarget() === sId) {
 						return oItems[i];
 					}
 				}
@@ -92,66 +93,62 @@ sap.ui.define([
 			 * @param oEvent
 			 */
 			onTreeFilter: function (oEvent) {
-				var oTree = this.byId("tree");
-				var sFilterArgument = oEvent.getParameter("newValue").trim();
-				var sFilterArgumentJoined = sFilterArgument.replace(/\s/g, '');
-				var oBinding = oTree.getBinding("items");
+				// Update filter value
+				this._sFilter = oEvent.getParameter("newValue").trim();
 
 				if (this._filterTimeout) {
-					jQuery.sap.clearDelayedCall(this._filterTimeout);
+					clearTimeout(this._filterTimeout);
 				}
 
-				this._filterTimeout = jQuery.sap.delayedCall(250, this, function () {
+				this._filterTimeout = setTimeout(function () {
 
-					// 0 characters - clear filters and collapse all nodes
-					if (sFilterArgument.length === 0) {
-						oBinding.filter([]);
+					if (this.buildAndApplyFilters()) {
+						this._expandAllNodes();
+					} else {
 						this._collapseAllNodes();
-						return;
+						if (this.oSelectedItem) {
+							this._expandTreeToNode(this.oSelectedItem.sTopicId, this.oSelectedItem.oModel);
+						}
 					}
-
-					var aFilters = [];
-					if (sFilterArgument) {
-						var oNameFilter = new Filter("name", FilterOperator.Contains, sFilterArgument);
-						aFilters.push(oNameFilter);
-					}
-
-					if (sFilterArgumentJoined) {
-						var oNameFilterJoined = new Filter("name", FilterOperator.Contains, sFilterArgumentJoined);
-						aFilters.push(oNameFilterJoined);
-					}
-
-					oBinding.filter(aFilters);
-					this._expandAllNodes();
 
 					this._filterTimeout = null;
-				});
+				}.bind(this), 250);
 
+			},
+
+			/**
+			 * Build and apply filters to the tree model.
+			 * @returns {boolean} if search filter is applied
+			 */
+			buildAndApplyFilters: function () {
+				var oBinding = this.byId("tree").getBinding("items");
+				if (this._sFilter) {
+					oBinding.filter(new Filter({
+						path: "name",
+						operator: FilterOperator.Contains,
+						value1: this._sFilter
+					}));
+					return true;
+				} else {
+					oBinding.filter();
+					return false;
+				}
 			},
 
 			_expandAllNodes: function () {
-				var oTree = this.byId("tree");
-				oTree.expandToLevel(10);
+				this.byId("tree").expandToLevel(10);
 			},
 
 			_collapseAllNodes: function () {
-				var oTree = this.byId("tree");
-				oTree.collapseAll();
+				this.byId("tree").collapseAll();
 			},
 
 			_clearSelection: function () {
-				var oTree = this.byId("tree"),
-					aItems = oTree.getItems();
+				var aItems = this.byId("tree").getItems();
 
 				if (aItems.length) {
 					aItems[0].setSelected(false);
 				}
-			},
-
-			_expandFirstNodeOnly: function () {
-				var oTree = this.byId("tree");
-				this._collapseAllNodes();
-				oTree.getBinding("items").expand(0);
 			},
 
 			/**

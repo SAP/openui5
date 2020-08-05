@@ -2,7 +2,7 @@
 		controllerName="sap.ui.documentation.sdk.controller.TopicMaster"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
-		xmlns:core="sap.ui.core"
+        xmlns:custom="sap.ui.documentation"
 		class="sapContrast sapContrastPlus">
 
 	<Page
@@ -15,26 +15,25 @@
 
 		<customHeader>
 			<Toolbar width="100%">
-				<SearchField id="searchField" placeholder="Filter" liveChange="onTreeFilter" class="sapUiDocumentationFilterField"></SearchField>
-				<Button icon="sap-icon://expand-group" press="onTreeExpandAll"></Button>
-				<Button icon="sap-icon://collapse-group" press="onTreeCollapseAll"></Button>
+				<SearchField id="searchField" placeholder="{i18n>TOPIC_MASTER_FILTER_PLACEHOLDER}" liveChange="onTreeFilter" class="sapUiDocumentationFilterField"/>
+				<Button icon="sap-icon://expand-all" press="onTreeExpandAll" tooltip="{i18n>TOPIC_MASTER_EXPAND_TOOLTIP}"/>
+				<Button icon="sap-icon://collapse-all" press="onTreeCollapseAll" tooltip="{i18n>TOPIC_MASTER_COLAPSE_TOOLTIP}"/>
 			</Toolbar>
 		</customHeader>
 
 		<content>
 
 			<Tree
-					id="tree"
-					mode="SingleSelectMaster"
-					selectionChange="onNodeSelect"
-					items="{ path: '/' }">
-				<StandardTreeItem
-						title="{text}"
-						selected="{isSelected}">
-					<customData>
-						<core:CustomData key="nodeId" value="{key}" />
-					</customData>
-				</StandardTreeItem>
+                id="tree"
+                mode="SingleSelectMaster"
+                selectionChange="onNodeSelect"
+                noDataText="{i18n>TOPIC_MASTER_NO_DATA_TEXT}"
+                items="{ path: '/' }">
+                <custom:DemokitTreeItem
+                        title="{text}"
+                        target="{key}"
+                        section="topic"
+                        selected="{isSelected}"/>
 			</Tree>
 
 		</content>

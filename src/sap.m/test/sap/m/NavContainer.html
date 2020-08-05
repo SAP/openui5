@@ -24,7 +24,8 @@
             });
 
             var page1 = new sap.m.Page("page1", {
-                title:"Page 1",
+                title: "Page 1",
+                titleLevel: "H1",
                 content : [ new sap.m.Button({
                     text : "[default] to Page 2",
                     press : function() {
@@ -68,7 +69,16 @@
                             app.to("page2", {payloadInfo:value});
                         }
                     }),
-                    new sap.m.Input("p1input")
+                    new sap.m.HBox({
+                        alignItems: sap.m.FlexAlignItems.Center,
+                        items: [
+                            new sap.m.Label({
+                                text: "Label for input",
+                                labelFor: "p1input"
+                            }),
+                            new sap.m.Input("p1input")
+                        ]
+                    })
                 ]
             }).addEventDelegate({
                 onBeforeShow: function(evt) {
@@ -82,6 +92,7 @@
 
             var page2 = new sap.m.Page("page2", {
                 title:"Page 2",
+                titleLevel: "H1",
                 showNavButton: true,
                 navButtonText: "Page 1",
                 navButtonPress: function(){ app.back(); },
@@ -105,12 +116,18 @@
                             app.to("page3", "show");
                         }
                     }),
-                    new sap.m.Label({
-                        text : "The following field shows the data passed from page 1:"
-                    }),
-                    new sap.m.Input("p2input", {
-                        value : null,
-                        width: "100%"
+                    new sap.m.HBox({
+                        alignItems: sap.m.FlexAlignItems.Center,
+                        items: [
+                            new sap.m.Label({
+                                text : "The following field shows the data passed from page 1:",
+                                labelFor: "p2input"
+                            }),
+                            new sap.m.Input("p2input", {
+                                value : null,
+                                width: "100%"
+                            }),
+                        ]
                     }),
                     new sap.m.Text({
                         text: "This is the second page!"
@@ -133,6 +150,7 @@
 
             var page3 = new sap.m.Page("page3", {
                 title:"Page 3",
+                titleLevel: "H1",
                 showNavButton: true,
                 navButtonText: "Home",
                 navButtonPress: function(){ app.backToTop(); },
@@ -141,8 +159,17 @@
                     new sap.m.Button({text : "Back to Page 2", press:function(){
                         app.back({myBackPayload:sap.ui.getCore().byId("p3input").getValue()});
                     }}),
-                    new sap.m.Input("p3input", {
-                        value : null
+                    new sap.m.HBox({
+                        alignItems: sap.m.FlexAlignItems.Center,
+                        items: [
+                            new sap.m.Label({
+                                text: "Label for input",
+                                labelFor: "p3input"
+                            }),
+                            new sap.m.Input("p3input", {
+                                value : null
+                            })
+                        ]
                     }),
                     new sap.m.Text({
                         text: "Last page... finally"

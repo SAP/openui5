@@ -3,9 +3,25 @@
  */
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.Form control
-sap.ui.define([],
-	function() {
+sap.ui.define([
+	'sap/ui/layout/form/Form'
+], function(
+	Form
+) {
 	"use strict";
+
+	function isChildOfFormElement(oElement) {
+		return oElement.getParent().isA("sap.ui.layout.form.FormElement");
+	}
+
+	function fnIsLayoutSupported(oForm){
+		if ((oForm instanceof Form) &&
+			oForm.getLayout() &&
+			oForm.getLayout().getMetadata().getName() === "sap.ui.layout.form.GridLayout"){
+			return false;
+		}
+		return true;
+	}
 
 	return {
 		palette: {
@@ -27,18 +43,38 @@ sap.ui.define([],
 				}
 			},
 			formContainers : {
+				propagateRelevantContainer: true,
+				propagateMetadata: function (oElement) {
+					if (isChildOfFormElement(oElement)) {
+						return {
+							actions: "not-adaptable"
+						};
+					}
+				},
 				childNames : {
 					singular : "GROUP_CONTROL_NAME",
 					plural : "GROUP_CONTROL_NAME_PLURAL"
 				},
 				domRef: ":sap-domref",
 				actions: {
-					move: "moveControls",
-					createContainer :  {
-						changeType : "addGroup",
-						isEnabled : true,
-						getCreatedContainerId : function(sNewControlID) {
-							return sNewControlID;
+					move: function(oForm) {
+						if (fnIsLayoutSupported(oForm)){
+							return "moveControls";
+						} else {
+							return null;
+						}
+					},
+					createContainer :  function(oForm){
+						if (fnIsLayoutSupported(oForm)){
+							return {
+								changeType : "addGroup",
+								isEnabled : true,
+								getCreatedContainerId : function(sNewControlID) {
+									return sNewControlID;
+								}
+							};
+						} else {
+							return null;
 						}
 					}
 				}
@@ -47,4 +83,4 @@ sap.ui.define([],
 		}
 	};
 
-}, /* bExport= */ false);
+});

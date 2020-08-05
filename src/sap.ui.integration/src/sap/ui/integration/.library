@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+  <name>sap.ui.integration</name>
+  <vendor>SAP SE</vendor>
+  <copyright>${copyright}</copyright>
+  <version>${version}</version>
+
+  <documentation>SAPUI5 library with integration-related controls.</documentation>
+
+  <dependencies>
+    <dependency>
+      <libraryName>sap.ui.core</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.f</libraryName>
+    </dependency>
+  </dependencies>
+
+  <appData>
+    <!-- excludes for the JSDoc -->
+    <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
+        <exclude name="sap.ui.integration.js." />
+        <exclude name="sap.ui.integration.thirdparty." />
+    </jsdoc>
+    <!-- excludes for the JSCoverage -->
+    <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
+        <exclude name="sap.ui.integration.js." />
+        <exclude name="sap.ui.integration.thirdparty." />
+    </jscoverage>
+
+    <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
+      <module-infos>
+        <raw-module name="sap/ui/integration/sap-ui-integration-config.js" />
+        <raw-module name="sap/ui/integration/sap-ui-integration-define-nojQuery.js" depends="ui5loader-autoconfig.js" />
+      </module-infos>
+    </packaging>
+
+    <!-- Thirdparty references -->
+    <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
+        <lib name="webcomponentsjs" displayName="Webcomponentsjs" homepage="https://github.com/webcomponents/webcomponentsjs">
+            <license url="https://github.com/webcomponents/webcomponentsjs/blob/master/LICENSE.md" type="BSD License" file="./thirdparty/licenses/CustomElements-BSD-LICENSE.txt"></license>
+        </lib>
+        <lib name="custom-event-polyfill" displayName="CustomEvent Polyfill" homepage="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill">
+            <license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="./thirdparty/licenses/CustomEvent-polyfill-LICENSE.txt"></license>
+        </lib>
+        <lib name="adaptive-cards" displayName="Adaptive Cards" homepage="https://adaptivecards.io/">
+            <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT License" file="./thirdparty/licenses/adaptive-cards.txt"></license>
+        </lib>
+        <lib name="markdown-it" displayName="Markdown-it" homepage="https://github.com/markdown-it/markdown-it">
+            <license url="https://github.com/markdown-it/markdown-it/blob/master/LICENSE" type="MIT License" file="./thirdparty/licenses/markdown-it.txt"></license>
+        </lib>
+        <lib name="ui5-web-components" displayName="UI5 Web Components" homepage="https://sap.github.io/ui5-webcomponents/">
+            <license url="https://github.com/SAP/ui5-webcomponents/blob/master/LICENSE.txt" type="Apache License 2.0" file="./thirdparty/licenses/web-components.txt"></license>
+        </lib>
+        <lib name="ajv" displayName="ajv" homepage="https://ajv.js.org/">
+            <license url="https://ajv.js.org/license.html" type="MIT License" file="./designtime/thirdparty/licenses/ajv-LICENSE.txt"></license>
+        </lib>
+    </thirdparty>
+
+    <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
+        indexUrl="../../../../test-resources/sap/ui/integration/demokit/docuindex.json"
+        resolve="lib" />
+    <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+        url="../../../../test-resources/sap/ui/integration/relnotes/changes-{major}.{minor}.json"
+        resolve="lib" />
+
+    <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
+        <component>CA-UI5-CTR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
+    </ownership>
+
+  </appData>
+
+</library>

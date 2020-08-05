@@ -12,13 +12,31 @@
 				"id": "f20efb4c90ac53e6806f06272a284a8a8327196d",
 				"type": "FEATURE",
 				"text": "sap.ui.unified.Calendar: startDateChange event added",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "600"
+					}
+				]
 			},
 			{
 				"id": "f18669d01d1ef8e08f45d677731e14b49ff4ff7d",
 				"type": "FIX",
 				"text": "sap.m.PlanningCalendar: several issues",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670016104"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670018191"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670018193"
+					}
+				]
 			},
 			{
 				"id": "00b5e1c928297ab081eec608075091df10d9c708",
@@ -36,13 +54,23 @@
 				"id": "c6bb6942ec8414baace1079ff8a42a3cc402f5b7",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: Aria Text enhanced",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580182221"
+					}
+				]
 			},
 			{
 				"id": "fbf9a17ca9d20574a753dc355bfbd3f4f0140ce1",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: setEnabled() method repaired",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570140414"
+					}
+				]
 			}
 		]
 	},
@@ -53,7 +81,12 @@
 				"id": "fc33a8bce6b1ee5bf8b51e8e59915a31a544304b",
 				"type": "FIX",
 				"text": "sap.m.PlanningCalendar: appointments in new line if invisible",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670041686"
+					}
+				]
 			},
 			{
 				"id": "0b4019e6a87cd9fa40b2136ea88774d8cec01c88",
@@ -65,7 +98,12 @@
 				"id": "814f7e101b93a4898937082226fc881eb1847ec6",
 				"type": "FIX",
 				"text": "sap.ui.unified.CalendarDateInterval: startDateChange event too early",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670002015"
+					}
+				]
 			},
 			{
 				"id": "76af0f9a60160545d656263f4ae29b12ea06ee03",
@@ -77,19 +115,34 @@
 				"id": "0716a1f763d7f43c48b0fd95fc94c9206b7cbd44",
 				"type": "FIX",
 				"text": "sap.ui.unified.CalendarLegend: rename \"normal Day\" to \"working day\"",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670015739"
+					}
+				]
 			},
 			{
 				"id": "8fdc778577b560ff3dfda2e78c816339c69ded21",
 				"type": "FIX",
 				"text": "sap.ui.unified.Currency: When \"maxPrecision\" is set to 0 only the base part is being displayed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670027749"
+					}
+				]
 			},
 			{
 				"id": "c396f5f46d4b0a59f7ac8b6fd302d46debaeffec",
 				"type": "FIX",
 				"text": "sap.ui.unified.ShellHeadItem: Provide API to differentiate between toggle button mode and action button mode.",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670033614"
+					}
+				]
 			}
 		]
 	},
@@ -147,13 +200,23 @@
 				"id": "08ac6ec294fb362c69be581bb72f9fe5ad8437aa",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: clickable area fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670071344"
+					}
+				]
 			},
 			{
 				"id": "ac051d5e077c044fef74a26510f09dfe17bc6fc9",
 				"type": "FIX",
 				"text": "sap.ui.unified.SplitContainer: Left-to-right - Right-to-Left mode switch not recognized after control initialization",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "012002523100001012662016"
+					}
+				]
 			}
 		]
 	},
@@ -164,7 +227,12 @@
 				"id": "089d6322d707471a30acc52a5328fe5b7481fc3b",
 				"type": "FIX",
 				"text": "sap.ui.unified.Menu: Resore focus when click outside the menu",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670001286"
+					}
+				]
 			}
 		]
 	},
@@ -175,7 +243,12 @@
 				"id": "5f0abc9db1e38472a647ff17fe809aec3239b1d6",
 				"type": "FIX",
 				"text": "sap.m.DatePicker: Calendar on phone in landscape design issues",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670169506"
+					}
+				]
 			},
 			{
 				"id": "1d4dec8d4cbf3cac49d51d6444b3769f56702521",
@@ -187,7 +260,12 @@
 				"id": "6e2b55a67c0aa10dd5356f68d7166f50cdcedd98",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: upload of several files fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "012002523100001865252016"
+					}
+				]
 			}
 		]
 	},

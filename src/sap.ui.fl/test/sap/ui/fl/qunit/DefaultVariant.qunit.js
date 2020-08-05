@@ -1,39 +1,21 @@
-/*global QUnit, sinon*/
-jQuery.sap.require("sap.ui.fl.DefaultVariant");
-jQuery.sap.require("sap.ui.fl.Change");
+/*global QUnit*/
 
-(function(QUnit, sinon, defaultVariant, Change) {
+sap.ui.define([
+	"sap/ui/fl/DefaultVariant",
+	"sap/ui/fl/Change",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
+], function(
+	DefaultVariant,
+	Change,
+	sinon,
+	jQuery
+) {
 	"use strict";
-
-	/*eslint-disable no-unused-vars */
-	var defaultVariantChangeDefinitionSpecifics = {
-		"fileType": "change", //set by Change.createInitialFileContent if not variant
-		"layer": "USER", //enforced
-		"fileName": "<name>", //currently set by Change.createInitialFileContent, must not be set
-		"namespace": "<namespace>", //currently set by Change.createInitialFileContent, must not be set
-		"packageName": "<packageName>", //currently set by Change.createInitialFileContent, must not be set
-		"changeType": "defaultVariant",
-		"creation": "<timestamp>", //set by Change.createInitialFileContent
-		"reference": "<component>", //set by Change.createInitialFileContent
-		"selector": {
-			"persistenceKey": "control1"
-		}, //optional
-		"content": {
-			"something": "createNewVariant"
-		},
-		"support": {  //set by Change.createInitialFileContent
-			"generator": "<generator>",
-			"user": "<user>",
-			"service": "<service>"
-		}
-	};
-	/*eslint-enable no-unused-vars */
 
 	QUnit.module("sap.ui.fl.DefaultVariant", {
 		beforeEach: function() {
-			this.oDefaultVariant = new defaultVariant.constructor();
-		},
-		afterEach: function() {
+			this.oDefaultVariant = new DefaultVariant.constructor();
 		}
 	});
 
@@ -112,7 +94,6 @@ jQuery.sap.require("sap.ui.fl.Change");
 	});
 
 	QUnit.test("getDefaultVariantId - shall return an empty string if there are no defaultVariant changes", function(assert) {
-
 		var oChanges = {};
 
 		new Array(5).forEach(function(index) {
@@ -126,7 +107,8 @@ jQuery.sap.require("sap.ui.fl.Change");
 	});
 
 	QUnit.test("createChangeFile shall return a new change", function(assert) {
-		var mParameterBag, oChangeContent;
+		var mParameterBag;
+		var oChangeContent;
 		mParameterBag = {defaultVariantId: "dominka", reference: "ribukombu"};
 
 		oChangeContent = this.oDefaultVariant._createChangeFile(mParameterBag);
@@ -135,7 +117,8 @@ jQuery.sap.require("sap.ui.fl.Change");
 	});
 
 	QUnit.test("createChangeFile shall write the component name into the change file", function(assert) {
-		var mParameterBag, oChangeContent;
+		var mParameterBag;
+		var oChangeContent;
 		mParameterBag = {reference: "ribukombu"};
 
 		oChangeContent = this.oDefaultVariant._createChangeFile(mParameterBag);
@@ -143,18 +126,21 @@ jQuery.sap.require("sap.ui.fl.Change");
 	});
 
 	QUnit.test("createChangeObject with all possible default variant change specific options", function(assert) {
-		var mParameterBag, oChange;
-		mParameterBag = {
+		var mParameterBag = {
 			reference: "Glennkadiko",
 			componentName: "Glennkadiko",
 			defaultVariantId: "Grendalin",
 			selector: {
 				stableId: "Galustika"
+			},
+			validAppVersions: {
+				creation: "1.2.3",
+				from: "1.2.3"
 			}
 		};
 
 		//Call CUT
-		oChange = this.oDefaultVariant.createChangeObject(mParameterBag);
+		var oChange = this.oDefaultVariant.createChangeObject(mParameterBag);
 
 		assert.ok(oChange);
 		assert.ok(oChange instanceof Change);
@@ -163,6 +149,8 @@ jQuery.sap.require("sap.ui.fl.Change");
 		assert.equal(oChange.getChangeType(), 'defaultVariant');
 		assert.equal(oChange.getSelector(), mParameterBag.selector);
 		assert.equal(oChange.getLayer(), 'USER');
+		assert.equal(oChange.getDefinition().validAppVersions.creation, "1.2.3");
+		assert.equal(oChange.getDefinition().validAppVersions.from, "1.2.3");
 	});
 
 	QUnit.test('getDefaultVariantChanges should return all default variant changes', function(assert) {
@@ -259,4 +247,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 		assert.strictEqual(mChanges.firstChange.getPendingAction(), 'DELETE');
 	});
 
-}(QUnit, sinon, sap.ui.fl.DefaultVariant, sap.ui.fl.Change));
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
+	});
+});

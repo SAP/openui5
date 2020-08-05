@@ -17,10 +17,10 @@ sap.ui.define([
 			// configure
 			MockServer.config({
 				autoRespond: true,
-				autoRespondAfter: 1000
+				autoRespondAfter: 500
 			});
 
-			sLocalServicePath = jQuery.sap.getModulePath("sap.ui.core.sample.MessageManager.BasicODataMessages.localService");
+			sLocalServicePath = sap.ui.require.toUrl("sap/ui/core/sample/MessageManager/BasicODataMessages/localService");
 
 			// simulate
 			oMockServer.simulate(sLocalServicePath + "/metadata.xml", {
@@ -37,9 +37,9 @@ sap.ui.define([
 			// mock all DELETE requests for Employees with the error response/message from above
 			aRequests.forEach(function(aRequest) {
 				if (aRequest.method === "DELETE" && aRequest.path.toString().indexOf("Employees") > -1) {
-                    this._fnResponse(500, oErrorResponse, aRequest);
-                }
-			}.bind(this));
+					this._fnResponse(500, oErrorResponse, aRequest);
+				}
+			}, this);
 
 			// start
 			oMockServer.start();

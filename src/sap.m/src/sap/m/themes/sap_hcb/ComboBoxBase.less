@@ -4,39 +4,6 @@
 /* =================================== */
 
 /* ------------------------------ */
-/* text field                     */
-/* ------------------------------ */
-
-/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
-.sapMComboBoxBasePressed .sapMComboBoxBaseInputInner:not(.sapMInputBaseStateInner) {
-	border-color: @sapUiFieldActiveBorderColor;
-}
-
-/* ------------------------------ */
-/* arrow                          */
-/* ------------------------------ */
-
-/* hover */
-html.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
-	border-left: 1px solid @sapUiFieldHoverBorderColor;
-}
-
-/* pressed */
-/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
-.sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
-html.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
-	border-left: 1px solid @sapUiFieldActiveBorderColor;
-}
-
-/* ------------------------------ */
-/* list                           */
-/* ------------------------------ */
-
-.sapMComboBoxBaseList.sapUiLocalBusy {
-	min-height: 2rem;
-}
-
-/* ------------------------------ */
 /* picker                         */
 /* ------------------------------ */
 

@@ -1,0 +1,35 @@
+<core:FragmentDefinition
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+	xmlns:t="composites" xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Table>
+		<headerToolbar>
+		<template:if test="{= ${this>header}}">
+		<template:then>
+			<Title text="I have a header" />
+		</template:then>
+		</template:if>
+			<Toolbar>
+				<template:repeat list="{this>actions}" var="action">
+					<Button text="{action>text}" press="sap.ui.getCore().byId('{$view>id}').byId('{action>id}').fireCall()"
+						id="button--{action>id}" />
+				</template:repeat>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<template:repeat list="{this>columns}" var="column">
+				<Column>
+					<Label text="{column>label}" />
+				</Column>
+			</template:repeat>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<template:repeat list="{this>columns}" var="cell">
+						<t:Cell asLink="{cell>asLink}" value="{cell>path}" id="cell-{cell>key}"/>
+					</template:repeat>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>

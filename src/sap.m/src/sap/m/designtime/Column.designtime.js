@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/rta/Utils"
+	"sap/ui/dt/ElementUtil"
 ], function (Utils) {
 	"use strict";
 
@@ -12,7 +12,9 @@ sap.ui.define([
 			return oColumn.getVisible();
 		},
 		actions: {
-			remove: "hideControl",
+			remove: {
+				changeType: "hideControl"
+			},
 			reveal: {
 				changeType: "unhideControl",
 				getLabel: function(oControl) {
@@ -21,4 +23,4 @@ sap.ui.define([
 			}
 		}
 	};
-}, /* bExport= */ false);
+});

@@ -1,0 +1,61 @@
+/* ============================================ */
+/* CSS for control sap.ui.unified/FileUploader  */
+/* Fiori 3 theme                                */
+/* ============================================ */
+
+/* increase outline offset */
+.sapMIBar-CTX .sapUiFup:focus .sapMBtnInner.sapMFocusable {
+	outline-offset: -.125rem;
+}
+
+.sapUiFup:focus .sapMBtn {
+	outline: none;
+}
+
+html.sap-desktop .sapUiFup:focus .sapMFocusable,
+html.sap-desktop .sapUiFup:active .sapMFocusable {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}
+
+.sapMFooter-CTX .sapUiFup:focus .sapMBtnInner.sapMFocusable,
+.sapMFooter-CTX .sapUiFup:active .sapMBtnInner.sapMFocusable,
+.sapUiFup:active .sapMBtnInner.sapMBtnAccept,
+html.sap-desktop .sapUiFup:active .sapMBtnInner.sapMBtnAccept,
+.sapUiFup:active .sapMBtnInner.sapMBtnReject,
+html.sap-desktop .sapUiFup:active .sapMBtnInner.sapMBtnReject,
+.sapUiFup:active .sapMBtnInner.sapMBtnEmphasized,
+html.sap-desktop .sapUiFup:active .sapMBtnInner.sapMBtnEmphasized {
+	outline-color: @sapUiContentContrastFocusColor;
+	outline-offset: -.125rem;
+}
+
+.sapMFooter-CTX .sapUiFup:active .sapMBtnInner.sapMFocusable {
+	background-color: @sapUiButtonActiveBackground;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+
+html[data-sap-ui-browser^="ie"] {
+
+	.sapUiFup:focus .sapMBtnInner.sapMFocusable {
+		outline: none;
+		position: relative;
+	}
+
+	.sapUiFup:focus .sapMBtnInner.sapMFocusable:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 1px dotted @sapUiContentFocusColor;
+	}
+
+	.sapMFooter-CTX .sapUiFup:focus .sapMBtnInner.sapMFocusable:before {
+		border-color: @sapUiContentContrastFocusColor;
+	}
+
+}

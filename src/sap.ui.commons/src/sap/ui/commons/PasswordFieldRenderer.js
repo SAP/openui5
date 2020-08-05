@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
-	function(jQuery, TextFieldRenderer) {
+sap.ui.define(['./TextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/Device'],
+	function(TextFieldRenderer, Renderer, Device) {
 	"use strict";
 
 
@@ -11,18 +11,18 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 	 * PasswordFieldRenderer.
 	 * @namespace
 	 */
-	var PasswordFieldRenderer = sap.ui.core.Renderer.extend(TextFieldRenderer);
+	var PasswordFieldRenderer = Renderer.extend(TextFieldRenderer);
 
 
 	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.fw.RenderManager}.
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.fw.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.fw.Control} oPasswordField an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oPasswordField an object representation of the control that should be rendered
 	 */
 	PasswordFieldRenderer.renderInnerAttributes = function(rm, oPasswordField) {
 
-		if (sap.ui.Device.support.input.placeholder || oPasswordField.getValue() || !oPasswordField.getPlaceholder()) {
+		if (Device.support.input.placeholder || oPasswordField.getValue() || !oPasswordField.getPlaceholder()) {
 			// if browser not supports placeholder on input tag, set the password type only if placeholder is not displayed
 			rm.writeAttribute('type', 'password');
 		}
@@ -45,23 +45,23 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 
 	// this method uses "readonly" instead of "disabled" because with "disabled" the Jaws screenreader reads the password
 	PasswordFieldRenderer.setEnabled = function(oPasswordField, bEnabled) {
-		var oTfRef = oPasswordField.getDomRef();
+		var $TFRef = oPasswordField.$();
 
 		if (bEnabled) {
 			if (oPasswordField.getEditable()) {
-				jQuery(oTfRef).removeClass('sapUiTfDsbl').addClass('sapUiTfStd');
-				jQuery(oTfRef).removeAttr('readonly').attr('tabindex', '0');
+				$TFRef.removeClass('sapUiTfDsbl').addClass('sapUiTfStd');
+				$TFRef.removeAttr('readonly').attr('tabindex', '0');
 			} else {
-				jQuery(oTfRef).removeClass('sapUiTfDsbl').addClass('sapUiTfRo');
-				jQuery(oTfRef).attr('tabindex', '0');
+				$TFRef.removeClass('sapUiTfDsbl').addClass('sapUiTfRo');
+				$TFRef.attr('tabindex', '0');
 			}
 		} else {
 			if (oPasswordField.getEditable()) {
-				jQuery(oTfRef).removeClass('sapUiTfStd').addClass('sapUiTfDsbl');
-				jQuery(oTfRef).attr('readonly', 'readonly').attr('tabindex', '-1');
+				$TFRef.removeClass('sapUiTfStd').addClass('sapUiTfDsbl');
+				$TFRef.attr('readonly', 'readonly').attr('tabindex', '-1');
 			} else {
-				jQuery(oTfRef).removeClass('sapUiTfRo').addClass('sapUiTfDsbl');
-				jQuery(oTfRef).attr( 'tabindex', '-1');
+				$TFRef.removeClass('sapUiTfRo').addClass('sapUiTfDsbl');
+				$TFRef.attr( 'tabindex', '-1');
 			}
 		}
 	};

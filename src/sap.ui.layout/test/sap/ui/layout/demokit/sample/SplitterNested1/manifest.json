@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.SplitterNested1",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.SplitterNested1.Splitter",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Splitter.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

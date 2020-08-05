@@ -36,4 +36,4 @@ sap.ui.define([],
 				create: "sap/m/designtime/RadioButton.create.fragment.xml"
 			}
 		};
-	}, /* bExport= */ false);
+	});

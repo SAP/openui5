@@ -1,5 +1,5 @@
 sap.ui.define([
-	'sap/ui/core/format/NumberFormat'
+	"sap/ui/core/format/NumberFormat"
 ], function (NumberFormat) {
 	"use strict";
 
@@ -75,31 +75,24 @@ sap.ui.define([
 		 * @return {string} relative image URL
 		 */
 		pictureUrl: function (sUrl) {
-			return jQuery.sap.getResourcePath("sap/ui/demo/cart/" + sUrl);
+			if (sUrl){
+				return  sap.ui.require.toUrl(sUrl);
+			} else {
+				return undefined;
+			}
 		},
 
 		/**
-		 * Returns the footer text for the cart based on the amount of products
-		 * @param {object} oSavedForLaterEntries the entries in the cart
-		 * @return {string} "" for no products, the i18n text for >0 products
-		 */
-		footerTextForCart: function (oSavedForLaterEntries) {
-			var oBundle = this.getResourceBundle();
-
-			if (Object.keys(oSavedForLaterEntries).length === 0) {
-				return "";
-			}
-			return oBundle.getText("cartSavedForLaterFooterText");
-		},
-
-        /**
 		 * Checks if one of the collections contains items.
 		 * @param {object} oCollection1 First array or object to check
 		 * @param {object} oCollection2 Second array or object to check
 		 * @return {boolean} true if one of the collections is not empty, otherwise - false.
 		 */
 		hasItems: function (oCollection1, oCollection2) {
-			return !(jQuery.isEmptyObject(oCollection1) && jQuery.isEmptyObject(oCollection2));
+			var bCollection1Filled = !!(oCollection1 && Object.keys(oCollection1).length),
+				bCollection2Filled = !!(oCollection2 && Object.keys(oCollection2).length);
+
+			return bCollection1Filled || bCollection2Filled;
 		}
 	};
 

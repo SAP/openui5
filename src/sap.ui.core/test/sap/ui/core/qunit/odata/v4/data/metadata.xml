@@ -54,6 +54,8 @@
 					Type="com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER"/>
 				<NavigationProperty Name="EMPLOYEE_2_TEAM" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM"
 					Nullable="false"/>
+				<Property Name="__CT__FAKE__Message" Type="SAP__self.__CT__FAKE__Message" />
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="__CT__FAKE__Message/__FAKE__Messages" />
 			</EntityType>
 			<EntityType Name="EQUIPMENT">
 				<Key>
@@ -94,6 +96,8 @@
 					Type="Collection(com.sap.gateway.default.iwbep.tea_busi.v0001.Worker)"/>
 				<NavigationProperty Name="TEAM_2_MANAGER"
 					Type="com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER" Nullable="false"/>
+				<Property Name="__CT__FAKE__Message" Type="SAP__self.__CT__FAKE__Message" />
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="__CT__FAKE__Message/__FAKE__Messages" />
 			</EntityType>
 			<ComplexType Name="ComplexType_City">
 				<Property Name="POSTALCODE" Type="Edm.String" Nullable="true" MaxLength="16"/>
@@ -116,6 +120,17 @@
 					Scale="variable"/>
 				<Property Name="BONUS_CURR" Type="Edm.String" Nullable="false" MaxLength="5"/>
 			</ComplexType>
+			<ComplexType Name="__FAKE__Message">
+				<Property Name="code" Type="Edm.String" Nullable="false" />
+				<Property Name="message" Type="Edm.String" Nullable="false" />
+				<Property Name="target" Type="Edm.String" Nullable="true" />
+				<Property Name="transition" Type="Edm.Boolean" Nullable="false" />
+				<Property Name="numericSeverity" Type="Edm.Byte" Nullable="false" />
+				<Property Name="longtextUrl" Type="Edm.String" Nullable="true" />
+			</ComplexType>
+			<ComplexType Name="__CT__FAKE__Message">
+				<Property Name="__FAKE__Messages" Type="Collection(SAP__self.__FAKE__Message)" Nullable="false" />
+			</ComplexType>
 			<Action Name="AcChangeManagerOfDepartment" IsBound="true">
 				<Parameter Name="DEPARTMENT" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.Department"
 					Nullable="false"/>
@@ -133,7 +148,7 @@
 				<Parameter Name="Budget" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="variable"/>
 				<ReturnType Type="com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM" Nullable="false"/>
 			</Action>
-			<Action Name="AcChangeTeamOfEmployee" IsBound="true">
+			<Action Name="AcChangeTeamOfEmployee" IsBound="true" EntitySetPath="EMPLOYEE">
 				<Parameter Name="EMPLOYEE" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.Worker"
 					Nullable="false"/>
 				<Parameter Name="TeamID" Type="Edm.String" Nullable="false" MaxLength="10"/>
@@ -331,8 +346,7 @@
 			<Annotations Target="SAP__self.Department/ID">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-DEPARTMENT.ID'/$metadata
-						</String>
+						<String>../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-DEPARTMENT.ID'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
@@ -340,8 +354,7 @@
 			<Annotations Target="SAP__self.Worker/STATUS">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/iwbep/v4_tea_emp_status-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-EMPLOYEE.STATUS'/$metadata
-						</String>
+						<String>../../../../f4/iwbep/v4_tea_emp_status-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-EMPLOYEE.STATUS'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
@@ -349,16 +362,14 @@
 			<Annotations Target="SAP__self.TEAM/BudgetCurrency">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/tcurc-ct/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.BUDGET_CURRENCY'/$metadata
-						</String>
+						<String>../../../../f4/sap/tcurc-ct/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.BUDGET_CURRENCY'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.TEAM/DEPARTMENT_ID">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.DEPARTMENT_ID'/$metadata
-						</String>
+						<String>../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.DEPARTMENT_ID'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues"/>

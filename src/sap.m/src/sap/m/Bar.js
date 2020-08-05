@@ -4,23 +4,15 @@
 
 // Provides control sap.m.Bar.
 sap.ui.define([
-	'jquery.sap.global',
 	'./BarInPageEnabler',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/Device',
-	'./BarRenderer'
+	'./BarRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
-	function(
-	jQuery,
-	BarInPageEnabler,
-	library,
-	Control,
-	ResizeHandler,
-	Device,
-	BarRenderer
-	) {
+	function(BarInPageEnabler, library, Control, ResizeHandler, Device, BarRenderer, jQuery) {
 	"use strict";
 
 
@@ -122,7 +114,8 @@ sap.ui.define([
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
-		designtime: "sap/m/designtime/Bar.designtime"
+		designtime: "sap/m/designtime/Bar.designtime",
+		dnd: { draggable: false, droppable: true }
 	}});
 
 	Bar.prototype.onBeforeRendering = function() {
@@ -221,7 +214,6 @@ sap.ui.define([
 		this._updatePosition(bContentLeft, bContentMiddle, bContentRight);
 
 		this._sResizeListenerId = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._handleResize, this));
-
 		if (this.getEnableFlexBox()) {
 			return;
 		}
@@ -233,7 +225,6 @@ sap.ui.define([
 		if (bContentMiddle) {
 			this._sResizeListenerIdMid = ResizeHandler.register(this._$MidBarPlaceHolder[0], jQuery.proxy(this._handleResize, this));
 		}
-
 		if (bContentRight) {
 			this._sResizeListenerIdRight = ResizeHandler.register(this._$RightBar[0], jQuery.proxy(this._handleResize, this));
 		}
@@ -260,14 +251,15 @@ sap.ui.define([
 		}
 
 		var iBarWidth = this.$().outerWidth(true);
-
 		// reset to default
 		this._$RightBar.css({ width : "" });
 		this._$LeftBar.css({ width : "" });
-		this._$MidBarPlaceHolder.css({ position : "", width : "", visibility : 'hidden' });
-
+		if (Device.browser.msie) {
+			this._$MidBarPlaceHolder.css({ position : "", width : ""});
+		} else {
+			this._$MidBarPlaceHolder.css({ position : "", width : "", visibility: "hidden"});
+		}
 		var iRightBarWidth = this._$RightBar.outerWidth(true);
-
 		//right bar is bigger than the bar - only show the right bar
 		if (iRightBarWidth > iBarWidth) {
 
@@ -283,7 +275,6 @@ sap.ui.define([
 			return;
 
 		}
-
 		var iLeftBarWidth = this._getBarContainerWidth(this._$LeftBar);
 
 		// handle the case when left and right content are wider than the bar itself
@@ -302,10 +293,8 @@ sap.ui.define([
 			return;
 
 		}
-
 		//middle bar will be shown
 		this._$MidBarPlaceHolder.css(this._getMidBarCss(iRightBarWidth, iBarWidth, iLeftBarWidth));
-
 	};
 
 	/**
@@ -323,10 +312,9 @@ sap.ui.define([
 			bRtl = sap.ui.getCore().getConfiguration().getRTL(),
 			sLeftOrRight = bRtl ? "right" : "left",
 			oMidBarCss = { visibility : "" };
-
 		if (this.getEnableFlexBox()) {
 
-			iMidBarPlaceholderWidth = iBarWidth - iLeftBarWidth - iRightBarWidth - parseInt(this._$MidBarPlaceHolder.css('margin-left'), 10) - parseInt(this._$MidBarPlaceHolder.css('margin-right'), 10);
+			iMidBarPlaceholderWidth = iBarWidth - iLeftBarWidth - iRightBarWidth - parseInt(this._$MidBarPlaceHolder.css('margin-left')) - parseInt(this._$MidBarPlaceHolder.css('margin-right'));
 
 			oMidBarCss.position = "absolute";
 			oMidBarCss.width = iMidBarPlaceholderWidth + "px";
@@ -345,9 +333,10 @@ sap.ui.define([
 			iMidBarEndPoint = (iBarWidth / 2) + (iMidBarPlaceholderWidth / 2),
 			bRightContentIsOverlapping = (iBarWidth - iRightBarWidth) < iMidBarEndPoint;
 
-		if (iSpaceBetweenLeftAndRight > 0 && (bLeftContentIsOverlapping || bRightContentIsOverlapping)) {
+			if (this._$MidBarPlaceHolder.closest(".sapMBarTitleStart").length > 0 ||
+				(iSpaceBetweenLeftAndRight > 0 && (bLeftContentIsOverlapping || bRightContentIsOverlapping))) {
 
-			//Left or Right content is overlapping the Middle content
+			//Left or Right content is overlapping the Middle content or there is Title alignment class (sapMBarTitleStart) set
 
 			// place the middle positioned element directly next to the end of left content area
 			oMidBarCss.position = "absolute";
@@ -547,6 +536,24 @@ sap.ui.define([
 	 */
 	Bar.prototype._getRootAccessibilityRole = BarInAnyContentEnabler.prototype._getRootAccessibilityRole;
 
+	/**
+	 * Sets accessibility aria-level attribute of the Root HTML element.
+	 *
+	 * This is only needed if <code>sap.m.Bar</code> has role="heading"
+	 * @param {string} sLevel aria-level attribute of the root Element
+	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
+	 * @private
+	 */
+	Bar.prototype._setRootAriaLevel = BarInAnyContentEnabler.prototype._setRootAriaLevel;
+
+	/**
+	 * Gets accessibility aria-level attribute of the Root HTML element.
+	 *
+	 * This is only needed if <code>sap.m.Bar</code> has role="heading"
+	 * @returns {string} aria-level
+	 * @private
+	 */
+	Bar.prototype._getRootAriaLevel = BarInAnyContentEnabler.prototype._getRootAriaLevel;
 
 	return Bar;
 

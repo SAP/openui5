@@ -2,10 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
-		'sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataType',
-		'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, Core, FormatException, ODataType, ParseException, ValidateException) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/Core",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType"
+], function (Log, Core, FormatException, ParseException, ValidateException, ODataType) {
 	"use strict";
 
 	/**
@@ -63,7 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 			if (vNullable === false || vNullable === "false") {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 		}
 	}
@@ -155,7 +159,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 	 *   "No" in the current {@link sap.ui.core.Configuration#getLanguage language}.
 	 * @public
 	 */
-	EdmBoolean.prototype.parseValue = function(vValue, sSourceType) {
+	EdmBoolean.prototype.parseValue = function (vValue, sSourceType) {
 		var sValue;
 
 		if (vValue === null || vValue === "") {
@@ -185,7 +189,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 	 *
 	 * @param {boolean} bValue
 	 *   the value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 */

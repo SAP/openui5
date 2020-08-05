@@ -1,0 +1,72 @@
+<mvc:View
+	controllerName="sap.m.sample.ImageModeBackground.controller.Image"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns="sap.m">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<l:content>
+				<l:Grid
+					defaultSpan="XL3 L3 M6 S12">
+					<l:content>
+						<VBox
+							alignItems="Center">
+							<Image
+								src="{img>/products/pic1}"
+								mode="{/imageMode}"
+								height="{/imageHeight}"
+								width="{/imageWidth}" >
+								<layoutData>
+									<FlexItemData growFactor="1" />
+								</layoutData>
+							</Image>
+							<Text text="Background covers the entire container" class="sapUiSmallMarginTop"/>
+						</VBox>
+						<VBox
+							alignItems="Center">
+								<Image
+									src="{img>/products/pic1}"
+									mode="{/imageMode}"
+									height="{/imageHeight}"
+									backgroundSize="5em 5em"
+									backgroundPosition="center"
+									width="{/imageWidth}" >
+									<layoutData>
+										<FlexItemData growFactor="1" />
+									</layoutData>
+								</Image>
+							<Text text="Center placed background" class="sapUiSmallMarginTop"/>
+						</VBox>
+						<VBox
+							alignItems="Center">
+
+							<Image
+								src="{img>/products/pic1}"
+								mode="{/imageMode}"
+								height="{/imageHeight}"
+								backgroundSize="2em 2em"
+								backgroundRepeat="repeat"
+								width="{/imageWidth}" >
+								<layoutData>
+									<FlexItemData growFactor="1" />
+								</layoutData>
+							</Image>
+							<Text text="Repeating background" class="sapUiSmallMarginTop"/>
+						</VBox>
+						<VBox alignItems="Center">
+							<html:Div style="background-color: #A9EAFF">
+								<Image
+										src="{img>/products/pic3}"
+										mode="{/imageMode}"
+										height="{/imageHeight}"
+										backgroundSize="contain"
+										backgroundPosition="center center"
+										width="6em" />
+							</html:Div>
+							<Text text="The background adjusts its lower dimension in order to fit in the container" class="sapUiSmallMarginTop"/>
+						</VBox>
+					</l:content>
+				</l:Grid>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

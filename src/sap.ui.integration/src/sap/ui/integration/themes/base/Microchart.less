@@ -1,0 +1,35 @@
+/* ====================================================== */
+/* CSS for control sap.ui.integration.controls/Microchart */
+/* Base theme                                             */
+/* ====================================================== */
+
+
+.sapUiIntegrationMicrochartValue {
+	&Neutral {
+		color: @sapUiNeutralText;
+	}
+
+	&Good {
+		color: @sapUiPositiveText;
+	}
+
+	&Error {
+		color: @sapUiNegativeText;
+	}
+
+	&Critical {
+		color: @sapUiCriticalText;
+	}
+}
+
+.sapUiIntegrationMicrochartChartWrapper {
+	height: 1rem;
+	display: flex;
+	align-items: center;
+	margin-top: 0.5rem;
+
+	.sapUiIntegrationMicrochartChart {
+		flex-grow: 1;
+		height: 0.675rem;
+	}
+}

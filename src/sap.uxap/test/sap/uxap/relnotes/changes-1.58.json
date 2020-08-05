@@ -1,0 +1,194 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "49ee00226896e38ddea6eccc03da2d00825cea8b",
+        "type": "FIX",
+        "text": "uxap.ObjectPage: showEditHeaderButton custom setter added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880232711"
+          }
+        ]
+      },
+      {
+        "id": "1327fc7bb63b16a1979f0b5c740257edea05f6c1",
+        "type": "FEATURE",
+        "text": "ObjectPageHeaderActionButton: Enabled RTA",
+        "references": []
+      },
+      {
+        "id": "e009d4a3eea9170590711f0320145cc0238b4101",
+        "type": "FIX",
+        "text": "AnchorBar: Anchors cut off is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880256586"
+          }
+        ]
+      },
+      {
+        "id": "11750a542b7740e5013857d4e59730e30fd3ebdf",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: f.Avatar alignment fixed",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2055"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880273124"
+          }
+        ]
+      },
+      {
+        "id": "560c1cfcd81683db102949e996dcf20900af61d2",
+        "type": "FIX",
+        "text": "LazyLoading: Ensure doLazyLoading work with fresh subSection sizes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870326083"
+          }
+        ]
+      },
+      {
+        "id": "c9c987db2d58e3fcb90c986881938a1a815324d6",
+        "type": "FIX",
+        "text": "ObjectPageLayout: Infinity resizing loop fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870298358"
+          }
+        ]
+      },
+      {
+        "id": "6bf511b5475647ab59cc733fa974ea6962b1be35",
+        "type": "FIX",
+        "text": "AnchorBar: Added tooltip to overflow menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880332125"
+          }
+        ]
+      },
+      {
+        "id": "d3f537d27561a449d46c0f5ef7c7c52e0e47a058",
+        "type": "FIX",
+        "text": "ObjectPageSection: Default aria-labelledby adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880270565"
+          }
+        ]
+      },
+      {
+        "id": "6a401c7ecfef7166b717fb9506a13d8e4184d944",
+        "type": "FIX",
+        "text": "uxap.AnchorBar: F6 navigation handling corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880300246"
+          }
+        ]
+      },
+      {
+        "id": "ad839bc02ae901cb4ac563bc2e0edc528562571f",
+        "type": "FIX",
+        "text": "uxap.ObjectPageSubSection: See more button accessibility improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880270195"
+          }
+        ]
+      },
+      {
+        "id": "8b04317a81836b0f7fa87ca4519c69fc803e8db4",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: ScrollBar flickering fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870275340"
+          }
+        ]
+      },
+      {
+        "id": "c6f013162278253bb7f3f84f94c71e9087666d2b",
+        "type": "FIX",
+        "text": "ObjectPageHeaderActionButton: RTA \"Rename\" action is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880354063"
+          }
+        ]
+      },
+      {
+        "id": "b62a26d044e50e0fed01b16527cec57c8c32f98a",
+        "type": "FIX",
+        "text": "ObjectPageLayout: test failures fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880378374"
+          }
+        ]
+      },
+      {
+        "id": "0f0514fcf72755574c43daed4857271f207d92b3",
+        "type": "FEATURE",
+        "text": "DynamicPage: backgroundDesign property added",
+        "references": []
+      },
+      {
+        "id": "6e4351e40a2c3487ad52f138e61cacceeb13bca9",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870201875"
+          }
+        ]
+      },
+      {
+        "id": "cf521198540a50391a215a5f2f827e693c422fdb",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPage: Navigation improvement",
+        "references": []
+      },
+      {
+        "id": "99512e2d88f38d50b9dfd07ccaeaec86f406b4b2",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Non existing sub-section is now handled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870038109"
+          }
+        ]
+      },
+      {
+        "id": "7cba647e87f6f98ec1596246b4fae2719591c18b",
+        "type": "FIX",
+        "text": "ObjectPageHeader: Long titles are now truncated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880423844"
+          }
+        ]
+      }
+    ]
+  }
+}

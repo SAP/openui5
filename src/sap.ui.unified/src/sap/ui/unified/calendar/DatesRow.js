@@ -4,13 +4,13 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/Month',
 	'sap/ui/unified/library',
-	"./DatesRowRenderer"
-], function(jQuery, CalendarUtils, CalendarDate, Month, library, DatesRowRenderer) {
+	"./DatesRowRenderer",
+	"sap/ui/thirdparty/jquery"
+], function(CalendarUtils, CalendarDate, Month, library, DatesRowRenderer, jQuery) {
 	"use strict";
 
 	/*
@@ -76,6 +76,17 @@ sap.ui.define([
 		//example: [{ len: 3, number: 12 }, { len: 7, number: 13 }, ...]
 		this._aWeekNumbers = [];
 
+	};
+
+	DatesRow.prototype._setAriaRole = function(sRole){
+		this._ariaRole = sRole;
+
+		return this;
+	};
+
+	DatesRow.prototype._getAriaRole = function(){
+
+		return this._ariaRole ? this._ariaRole : "gridcell";
 	};
 
 	/*
@@ -166,6 +177,12 @@ sap.ui.define([
 		Month.prototype.displayDate.apply(this, arguments);
 
 		return this;
+
+	};
+
+	DatesRow.prototype._setTopPosition = function(iTop){
+
+		this._iTopPosition = iTop;
 
 	};
 

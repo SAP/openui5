@@ -1,0 +1,78 @@
+{
+  "1.61.0": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "c38217ccba0f2a304a20e5e3159055cde7009cf7",
+        "type": "FIX",
+        "text": "Table: Horizontal scroll position on focus in RTL with Unit Tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880609454"
+          }
+        ]
+      },
+      {
+        "id": "ddc255ca23f04cac76a3504ba03aac4bde2a3821",
+        "type": "FIX",
+        "text": "TreeTable: ACC - Avoid duplicate announcement on expand/collapse",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870333721"
+          }
+        ]
+      },
+      {
+        "id": "b8a0faf62e0a83b5291f2cdb1d33749527927496",
+        "type": "FIX",
+        "text": "Table: Apply input values when scrolling by edit mode navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005540862018"
+          }
+        ]
+      },
+      {
+        "id": "da5044220d20718f4eac0a646c00851504fffc8a",
+        "type": "FIX",
+        "text": "Table: Accessibility announcement in tree table and grouping rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880566707"
+          }
+        ]
+      },
+      {
+        "id": "d8f3cb346fce4da02a993388e3d95ddd37c95ce3",
+        "type": "FIX",
+        "text": "Table: Correctly create new rows after resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880678505"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880674567"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880721476"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880723120"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880722157"
+          }
+        ]
+      }
+    ]
+  }
+}

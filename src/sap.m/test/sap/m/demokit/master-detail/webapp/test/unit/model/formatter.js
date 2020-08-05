@@ -35,5 +35,4 @@ sap.ui.define([
 	QUnit.test("Should round a zero", function (assert) {
 		currencyValueTestCase.call(this, assert, "0", "0.00");
 	});
-
 });

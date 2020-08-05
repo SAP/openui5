@@ -5,9 +5,14 @@
 /**
  * Initialization Code and shared classes of library sap.ui.documentation.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
-	'sap/ui/core/library', 'sap/m/library'], // library dependency
-	function(jQuery, LibraryInfo) {
+sap.ui.define([
+    "sap/ui/thirdparty/jquery",
+    'sap/ui/core/util/LibraryInfo',
+	"sap/base/Log",
+    'sap/ui/core/library',
+	'sap/m/library'
+], // library dependency
+	function(jQuery, LibraryInfo, Log) {
 
 	'use strict';
 
@@ -19,13 +24,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 		types: [],
 		interfaces: [],
 		controls: [
-			"sap.ui.documentation.sdk.controls.Search",
-			"sap.ui.documentation.sdk.controls.ObjectPageSubSection",
-			"sap.ui.documentation.sdk.controls.LightTable",
-			"sap.ui.documentation.sdk.controls.Row"
+			"sap.ui.documentation.BorrowedList",
+			"sap.ui.documentation.DemokitTreeItem",
+			"sap.ui.documentation.JSDocText",
+			"sap.ui.documentation.LightTable",
+			"sap.ui.documentation.ObjectPageSubSection",
+			"sap.ui.documentation.ParamText",
+			"sap.ui.documentation.Search",
+			"sap.ui.documentation.TitleLink"
 		],
-		elements: [],
-		noLibraryCSS: true
+		elements: [
+			"sap.ui.documentation.Row",
+			"sap.ui.documentation.WebPageTitleUtil"
+		]
 	});
 
 	/**
@@ -57,12 +68,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 			url: sUrl,
 			dataType: "json",
 			error: function(xhr, status, e) {
-				jQuery.sap.log.error("failed to load library list from '" + sUrl + "': " + status + ", " + e);
+				Log.error("failed to load library list from '" + sUrl + "': " + status + ", " + e);
 				fnCallback(null);
 			},
 			success : function(oAppInfo, sStatus, oXHR) {
 				if (!oAppInfo) {
-					jQuery.sap.log.error("failed to load library list from '" + sUrl + "': " + sStatus + ", Data: " + oAppInfo);
+					Log.error("failed to load library list from '" + sUrl + "': " + sStatus + ", Data: " + oAppInfo);
 					fnCallback(null);
 					return;
 				}
@@ -141,9 +152,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 					// fetch the release notes if defined - in case of no version
 					// is specified we fallback to the current library version
 					if (bFetchReleaseNotes) {
-						if (!sReqVersion) {
-							sReqVersion = oLibVersions[oExtensionData.library];
-						}
 						libInfo._getReleaseNotes(oExtensionData.library, sReqVersion, function(oReleaseNotes) {
 							oLibInfos[oExtensionData.library].relnotes = oReleaseNotes;
 							fnDone();

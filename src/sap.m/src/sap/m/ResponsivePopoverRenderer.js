@@ -11,6 +11,7 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var ResponsivePopoverRenderer = {
+		apiVersion: 2
 	};
 
 	/**

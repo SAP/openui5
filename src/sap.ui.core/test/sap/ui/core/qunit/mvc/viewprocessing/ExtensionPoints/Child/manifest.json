@@ -1,0 +1,32 @@
+{
+	"_version": "0.0.1",
+	"sap.app": {
+		"id": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child"
+	},
+	"sap.ui5": {
+		"extends": {
+			"component" : "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent",
+			"extensions": {
+				"sap.ui.viewExtensions": {
+					"sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent.Main": {
+						"EPone": {
+							"className": "sap.ui.core.mvc.View",
+							"viewName": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child.EPone",
+							"type": "XML"
+						},
+						"EPtwo": {
+							"className": "sap.ui.core.mvc.View",
+							"viewName": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child.EPtwo",
+							"type": "XML"
+						},
+						"EPnesting": {
+							"className": "sap.ui.core.mvc.View",
+							"viewName": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child.EPnesting",
+							"type": "XML"
+						}
+					}
+				 }
+			}
+		}
+	}
+}

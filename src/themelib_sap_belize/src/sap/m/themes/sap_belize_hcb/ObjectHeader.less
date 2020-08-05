@@ -29,7 +29,7 @@
 		text-decoration: underline;
 		cursor: pointer;
 	}
-	
+
 	a.sapMOHTitle.sapMOHTitleActive:hover > h6 .sapMText,
 	a.sapMOHTitle.sapMOHTitleActive:hover > h5 .sapMText,
 	a.sapMOHTitle.sapMOHTitleActive:hover > h4 .sapMText,
@@ -56,7 +56,7 @@
 	.sapMOHTitle.sapMOHTitleActive > h1 .sapMText:hover {
 		text-decoration: none;
 	}
-	
+
 	.sapMOHTitle.sapMOHTitleActive:focus > h6 span,
 	.sapMOHTitle.sapMOHTitleActive:focus > h5 span,
 	.sapMOHTitle.sapMOHTitleActive:focus > h4 span,
@@ -139,11 +139,12 @@ html[data-sap-ui-browser^="ie"] {
 			outline-offset: -0.125rem;
 		}
 	}
-	.sapMOHRIcon.sapMPointer {
-		&:active > span,
-		&:focus > span {
-			outline: 0.125rem dotted @sapUiContentFocusColor;
-			outline-offset: -0.125rem;
+	.sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer {
+		&:active,
+		&:focus {
+			&:before {
+				outline: 0.125rem dotted @sapUiContentFocusColor;
+			}
 		}
 	}
 }
@@ -172,6 +173,15 @@ html[data-sap-ui-browser^="ie"] {
 		}
 		.sapMObjectAttributeActive {
 			padding: 0.125rem;
+		}
+
+		.sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer {
+			&:active,
+			&:focus {
+				&:before {
+					outline: none;
+				}
+			}
 		}
 	}
 }

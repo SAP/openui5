@@ -36,7 +36,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/UIComponent'],
 
 		handleBtn1Press : function() {
 			this.getRouter().navTo("view1", { from : "detail"});
-		},
+		}
 		/**
 		 * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
 		 * This hook is the same one that SAPUI5 controls get after being rendered.

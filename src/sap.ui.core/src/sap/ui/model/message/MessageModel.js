@@ -11,8 +11,8 @@
  */
 
 // Provides the Message based model implementation
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/ClientModel', 'sap/ui/model/Context', './MessageListBinding', './MessagePropertyBinding'],
-	function(jQuery, BindingMode, ClientModel, Context, MessageListBinding, MessagePropertyBinding) {
+sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientModel', 'sap/ui/model/Context', './MessageListBinding', './MessagePropertyBinding', "sap/base/Log"],
+	function(BindingMode, ClientModel, Context, MessageListBinding, MessagePropertyBinding, Log) {
 	"use strict";
 
 
@@ -59,8 +59,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 		this.checkUpdate();
 	};
 
-	MessageModel.prototype.fireMessageChange = function(mArguments) {
-		this.fireEvent("messageChange", mArguments);
+	MessageModel.prototype.fireMessageChange = function(oParameters) {
+		this.fireEvent("messageChange", oParameters);
 		return this;
 	};
 
@@ -83,17 +83,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 	};
 
 	/**
-	 * Sets a new value for the given property <code>sPropertyName</code> in the model.
-	 * If the model value changed all interested parties are informed.
+	 * Unsupported operation.
 	 *
-	 * @param {string}  sPath path of the property to set
-	 * @param {any}     oValue value to set the property to
-	 * @param {object} [oContext=null] the context which will be used to set the property
+	 * Other models provide this method to set a new value for a specific property.
+	 * <code>MessageModel</code> does not support it as it supports the <code>OneWay</code> mode only.
+	 *
 	 * @public
 	 */
 	MessageModel.prototype.setProperty = function(sPath, oValue, oContext) {
 		//not implemented: Only 'OneWay' binding mode supported
-		jQuery.sap.log.error(this + "not implemented: Only 'OneWay' binding mode supported");
+		Log.error(this + "not implemented: Only 'OneWay' binding mode supported");
 	};
 
 	/**

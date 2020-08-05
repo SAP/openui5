@@ -1,16 +1,16 @@
-<core:View xmlns:core="sap.ui.core"
-		   xmlns="sap.uxap"
-		   xmlns:layout="sap.ui.layout"
-		   xmlns:m="sap.m"
-		   xmlns:html="http://www.w3.org/1999/xhtml"
-		   height="100%">
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.uxap"
+		  xmlns:layout="sap.ui.layout"
+		  xmlns:m="sap.m"
+		  xmlns:html="http://www.w3.org/1999/xhtml"
+		  height="100%">
 	<ObjectPageLayout id="ObjectPageLayout"
 					  enableLazyLoading="false"
 					  showTitleInHeaderContent="true"
 					  showEditHeaderButton="true"
 					  editHeaderButtonPress="handleEditBtnPress">
 		<headerTitle>
-			<ObjectPageHeader objectImageURI="./img/person.png"
+			<ObjectPageHeader objectImageURI="test-resources/sap/uxap/qunit/img/person.png"
 							  objectTitle="Denise Smith"
 							  objectImageShape="Circle"
 							  objectImageAlt="Denise Smith"
@@ -38,8 +38,8 @@
 			</layout:VerticalLayout>
 
 			<layout:HorizontalLayout>
-				<m:Image src="./img/linkedin.png"></m:Image>
-				<m:Image src="./img/Twitter.png"></m:Image>
+				<m:Image src="test-resources/sap/uxap/qunit/img/linkedin.png"></m:Image>
+				<m:Image src="test-resources/sap/uxap/qunit/img/Twitter.png"></m:Image>
 			</layout:HorizontalLayout>
 
 			<layout:VerticalLayout>
@@ -138,4 +138,4 @@
 			</m:OverflowToolbar>
 		</footer>
 	</ObjectPageLayout>
-</core:View>
+</mvc:View>

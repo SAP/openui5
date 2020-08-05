@@ -1,0 +1,74 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "b7002d66e653d69bbfb688e25e6eadb695257e1b",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Ensure extra space in DynamicPageTitle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080160972"
+          }
+        ]
+      },
+      {
+        "id": "dfc27102ee97ac7ca29e2dd993eb93b38ec86fda",
+        "type": "FEATURE",
+        "text": " sap.f.GridContainer: Added Drag and Drop support with keyboard arrows",
+        "references": []
+      },
+      {
+        "id": "aa97232bc1da8f26c7c606c59a78b56ec899ea99",
+        "type": "FIX",
+        "text": " sap.f.CalendarContent: looks correct on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080256991"
+          }
+        ]
+      },
+      {
+        "id": "2d0fcedbbf6e4f3a9877627334c539aa464f8653",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Back button in Sample including Shellbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080256635"
+          }
+        ]
+      },
+      {
+        "id": "bff06a06a569a908e9f0d224cec1f306da6e28a3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: visible property is now available in the manifest",
+        "references": []
+      },
+      {
+        "id": "148c9bbe1eedda487d42fefb9bc1b8a74c652926",
+        "type": "FIX",
+        "text": " sap.f.Card: Fixed spacing between title and subtitle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080286246"
+          }
+        ]
+      },
+      {
+        "id": "377dd72991abf0a39ab3d997afdf65c348a2bf39",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: GenerictTag with DynamicPageTitle fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070220678"
+          }
+        ]
+      }
+    ]
+  }
+}

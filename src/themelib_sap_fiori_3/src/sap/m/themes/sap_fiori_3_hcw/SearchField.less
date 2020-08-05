@@ -1,0 +1,80 @@
+/* ================================== */
+/* CSS for control sap.m/SearchField  */
+/* Quartz High Contrast White theme   */
+/* ================================== */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_m_SearchField_Height: 2.75rem;
+@_sap_m_SearchField_FormHeight: 2.25rem;
+@_sap_m_SearchField_InputHeight: 2.125rem;
+@_sap_m_SearchField_ButtonSize: 2.125rem;
+@_sap_m_SearchField_ButtonFontSize: 1rem;
+@_sap_m_SearchField_NoSearchButtonPadding: 2.25rem;
+@_sap_m_SearchField_Compact_FormPaddingLeft: 0.5rem;
+@_sap_m_SearchField_ResetIcon: "\e03e";
+
+.sapMSFF {
+	border-radius: @sapUiFieldBorderCornerRadius;
+}
+
+.sapMSFDisabled {
+	opacity: 0.5;
+}
+
+html.sap-desktop .sapMFocus > .sapMSFF::before {
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	position: absolute;
+	content: " ";
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+	left: 1px;
+	z-index: 2;
+	pointer-events: none;
+}
+
+/* custom buttons */
+.sapMSFB:focus {
+	outline: none;
+}
+
+.sapMBarChild > .sapMSFF > .sapMSFB {
+	text-shadow: none;
+}
+
+.sapMFocus>.sapMSFF>.sapMSFB {
+	color: @sapUiContentContrastIconColor; // contrast themes specific
+}
+
+.sapMSFB:hover {
+	background-color: @sapUiButtonLiteHoverBackground;
+	border-left: 1px solid @sapUiListSelectionBorderColor; // contrast themes specific
+}
+
+.sapMSFB.sapMSFR:hover {
+	box-sizing: border-box; // contrast themes specific
+}
+
+.sapMSFB.sapMSFR:last-child:hover {
+	box-sizing: content-box; // contrast themes specific
+}
+
+
+.sapMSFB.sapMSFR:not(:last-child):hover { // if there is no search button the right border is not needed
+	border-right: 1px solid @sapUiListSelectionBorderColor; // contrast themes specific
+}
+
+.sapMSFF>.sapMSFB:not(.sapMSFBF):active,
+.sapMSFF>.sapMSFB.sapMSFBA {
+	background-color: @sapUiButtonLiteActiveBackground;
+	color: @sapUiContentContrastIconColor;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop {// TODO remove after the end of support for Internet Explorer
+	.sapMFocus > .sapMSFF::before  {
+		border: @sapUiContentFocusWidth dashed @sapUiContentFocusColor;
+	}
+}

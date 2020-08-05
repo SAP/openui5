@@ -14,7 +14,7 @@ sap.ui.define(["./MainAction"], function(MainAction) {
 	* A semantic-specific button, eligible for the <code>footerMainAction</code> aggregation of the
 	* {@link sap.f.semantic.SemanticPage} to be placed in its footer.
 	*
-	* @extends sap.f.semantic.SemanticButton
+	* @extends sap.f.semantic.MainAction
 	*
 	* @author SAP SE
 	* @version ${version}

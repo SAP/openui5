@@ -2,13 +2,11 @@
 
 jQuery.sap.require("sap.ui.fl.Persistence");
 jQuery.sap.require("sap.ui.fl.Utils");
-jQuery.sap.require("sap.ui.fl.Change");
-jQuery.sap.require('sap.ui.fl.DefaultVariant');
 jQuery.sap.require('sap.ui.fl.LrepConnector');
 jQuery.sap.require('sap.ui.core.Control');
 jQuery.sap.require('sap.ui.fl.Cache');
 
-(function(utils, Persistence, Control, defaultVariant, Change, LrepConnector, $, Cache) {
+(function(utils, Persistence, Control, LrepConnector, $, Cache) {
 	"use strict";
 
 	var TestingControl = Control.extend("sap.ui.fl.TestingControl", {
@@ -18,7 +16,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 			],
 			library: "sap.ui.fl",
 			properties: {
-				"persistencyKey": {
+				persistencyKey: {
 					type: "string",
 					group: "Misc",
 					defaultValue: null
@@ -60,7 +58,6 @@ jQuery.sap.require('sap.ui.fl.Cache');
 						resolve({
 							changes: result
 						});
-
 					}).fail(function(error) {
 						reject(error);
 					});
@@ -149,7 +146,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 					containsChangeId = true;
 				}
 			});
-			assert.strictEqual(containsChangeId, true, 'Change successfully recieved from backend');
+			assert.strictEqual(containsChangeId, true, 'Change successfully received from backend');
 
 			return deletionPersistnce.saveAll();
 		}
@@ -209,7 +206,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 				}
 			});
 			assert.strictEqual(actualLayer, expectedLayer, 'Layer has been set according to specified Layer');
-			assert.strictEqual(containsChangeId, true, 'Change successfully recieved from backend');
+			assert.strictEqual(containsChangeId, true, 'Change successfully received from backend');
 			return deletionPersistnce.saveAll();
 		}
 
@@ -265,7 +262,6 @@ jQuery.sap.require('sap.ui.fl.Cache');
 			$.each(changes, function(changeId, change) {
 				change.markForDeletion();
 				if (changeId === newChangeId) {
-
 					actualVariantName = change.getText('variantName');
 				}
 			});

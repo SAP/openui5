@@ -1,21 +1,21 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/demo/cart/controller/BaseController',
-	'sap/ui/demo/cart/model/formatter',
-	'sap/ui/Device',
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	'sap/m/MessageToast',
-	'sap/ui/model/json/JSONModel'
+	"./BaseController",
+	"../model/formatter",
+	"sap/ui/Device",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/m/MessageToast",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Fragment"
 ], function (
-	$,
 	BaseController,
 	formatter,
 	Device,
 	Filter,
 	FilterOperator,
 	MessageToast,
-	JSONModel) {
+	JSONModel,
+	Fragment) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Category", {
@@ -30,16 +30,24 @@ sap.ui.define([
 			});
 			this.getView().setModel(oViewModel, "view");
 			var oComponent = this.getOwnerComponent();
-			this._router = oComponent.getRouter();
-			this._router.getRoute("category").attachMatched(this._loadCategories, this);
-			this._router.getRoute("product").attachMatched(this._loadCategories, this);
+			this._oRouter = oComponent.getRouter();
+			this._oRouter.getRoute("category").attachMatched(this._loadCategories, this);
+			this._oRouter.getRoute("productCart").attachMatched(this._loadCategories, this);
+			this._oRouter.getRoute("product").attachMatched(this._loadCategories, this);
+			this._oRouter.getRoute("comparison").attachMatched(this._loadCategories, this);
+			this._oRouter.getRoute("comparisonCart").attachMatched(this._loadCategories, this);
 		},
 
 		_loadCategories: function(oEvent) {
+			var bSmallScreen = this.getModel("appView").getProperty("/smallScreenMode"),
+				sRouteName = oEvent.getParameter("name");
+
+			// switch to first column in full screen mode for category route on small devices
+			this._setLayout(bSmallScreen && sRouteName === "category" ? "One" : "Two");
+
 			var oModel = this.getModel();
 			this._loadSuppliers();
 			var oProductList = this.byId("productList");
-			this._changeNoDataTextToIndicateLoading(oProductList);
 			var oBinding = oProductList.getBinding("items");
 			oBinding.attachDataReceived(this.fnDataReceived, this);
 			var sId = oEvent.getParameter("arguments").id;
@@ -68,7 +76,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Craete a unique array of suppliers to be used in the supplier flter option
+		 * Create a unique array of suppliers to be used in the supplier flter option
 		 * @private
 		 */
 		_loadSuppliers: function () {
@@ -93,12 +101,8 @@ sap.ui.define([
 					this.getModel("view").setProperty("/Suppliers", aUniqueSuppliers);
 				}.bind(this)
 			});
-		},
 
-		_changeNoDataTextToIndicateLoading: function (oList) {
-			var sOldNoDataText = oList.getNoDataText();
-			oList.setNoDataText("Loading...");
-			oList.attachEventOnce("updateFinished", function() {oList.setNoDataText(sOldNoDataText);});
+			this._clearComparison();
 		},
 
 		fnDataReceived: function() {
@@ -124,13 +128,11 @@ sap.ui.define([
 		 * Event handler to determine which sap.m.ObjectListItem is pressed
 		 * @param {sap.ui.base.Event} oEvent the sap.m.ObjectListItem press event
 		 */
-		onProductListItemPress : function (oEvent) {
-			this._showProduct(oEvent);
-		},
 
-		_showProduct: function (oEvent) {
+
+		onProductDetails: function (oEvent) {
 			var oBindContext;
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				oBindContext = oEvent.getSource().getBindingContext();
 			} else {
 				oBindContext = oEvent.getSource().getSelectedItem().getBindingContext();
@@ -138,21 +140,16 @@ sap.ui.define([
 			var oModel = oBindContext.getModel();
 			var sCategoryId = oModel.getData(oBindContext.getPath()).Category;
 			var sProductId = oModel.getData(oBindContext.getPath()).ProductId;
-			this._router.navTo("product", {id: sCategoryId, productId: sProductId}, !Device.system.phone);
-		},
 
-		/**
-		 * Navigation back to home view
-		 */
-		onNavButtonPress : function () {
-			this.getOwnerComponent().myNavBack();
-		},
+			// keep the cart context when showing a product
+			var bCartVisible = this.getModel("appView").getProperty("/layout").startsWith("Three");
+			this._setLayout("Two");
+			this._oRouter.navTo(bCartVisible ? "productCart" : "product", {
+				id: sCategoryId,
+				productId: sProductId
+			}, !Device.system.phone);
 
-		/**
-		 * Navigation to cart view
-		 */
-		onCartButtonPress :  function () {
-			this._router.navTo("cart");
+			this._unhideMiddlePage();
 		},
 
 		/** Apply selected filters to the category list and update text and visibility of the info toolbar
@@ -163,7 +160,7 @@ sap.ui.define([
 			var oList = this.byId("productList"),
 				oBinding = oList.getBinding("items"),
 				aSelectedFilterItems = oEvent.getParameter("filterItems"),
-				oCustomFilter =  this._oDialog.getFilterItems()[1],
+				oCustomFilter =  this.byId("categoryFilterDialog").getFilterItems()[1],
 				oFilter,
 				oCustomKeys = {},
 				aFilters = [],
@@ -226,7 +223,7 @@ sap.ui.define([
 				var sText = this.getResourceBundle().getText("filterByText") + " ";
 				var sSeparator = "";
 				var oFilterKey = oEvent.getParameter("filterCompoundKeys");
-				var oKeys = $.extend(oFilterKey, oCustomKeys);
+				var oKeys = Object.assign(oFilterKey, oCustomKeys);
 				for (var key in oKeys) {
 					if (oKeys.hasOwnProperty(key)) {
 						sText = sText + sSeparator  + this.getResourceBundle().getText(key, [this._iLowFilterPreviousValue, this._iHighFilterPreviousValue]);
@@ -244,20 +241,22 @@ sap.ui.define([
 		/**
 		 * Open the filter dialog
 		 */
-		onMasterListFilterPressed: function () {
-			this._getDialog().open();
-		},
-
-		/**
-		 * Define and return {sap.ui.xmlfragment}
-		 * @private
-		 */
-		_getDialog: function () {
-			if (!this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment("sap.ui.demo.cart.view.MasterListFilterDialog", this);
-				this.getView().addDependent(this._oDialog);
+		onFilter: function () {
+			// load asynchronous XML fragment
+			if (!this.byId("categoryFilterDialog")) {
+				Fragment.load({
+					id: this.getView().getId(),
+					name: "sap.ui.demo.cart.view.CategoryFilterDialog",
+					controller: this
+				}).then(function(oDialog){
+					// connect dialog to the root view of this component (models, lifecycle)
+					this.getView().addDependent(oDialog);
+					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+					oDialog.open();
+				}.bind(this));
+			} else {
+				this.byId("categoryFilterDialog").open();
 			}
-			return this._oDialog;
 		},
 
 		/**
@@ -265,7 +264,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the press event of the sap.m.Button
 		 */
 		handleConfirm: function (oEvent) {
-			var oCustomFilter = this._getDialog().getFilterItems()[1];
+			var oCustomFilter = this.byId("categoryFilterDialog").getFilterItems()[1];
 			var oSlider = oCustomFilter.getCustomControl().getAggregation("content")[0];
 			this._iLowFilterPreviousValue = oSlider.getValue();
 			this._iHighFilterPreviousValue = oSlider.getValue2();
@@ -277,7 +276,7 @@ sap.ui.define([
 		 * Updates the filter count
 		 */
 		handleCancel: function () {
-			var oCustomFilter = this._oDialog.getFilterItems()[1];
+			var oCustomFilter = this.byId("categoryFilterDialog").getFilterItems()[1];
 			var oSlider = oCustomFilter.getCustomControl().getAggregation("content")[0];
 			oSlider.setValue(this._iLowFilterPreviousValue).setValue2(this._iHighFilterPreviousValue);
 			if (this._iLowFilterPreviousValue > oSlider.getMin() || this._iHighFilterPreviousValue !== oSlider.getMax()) {
@@ -292,7 +291,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the change event of the sap.m.RangeSlider
 		 */
 		handleChange: function (oEvent) {
-			var oCustomFilter = this._getDialog().getFilterItems()[1];
+			var oCustomFilter = this.byId("categoryFilterDialog").getFilterItems()[1];
 			var oSlider = oCustomFilter.getCustomControl().getAggregation("content")[0];
 			var iLowValue = oEvent.getParameter("range")[0];
 			var iHighValue = oEvent.getParameter("range")[1];
@@ -301,18 +300,39 @@ sap.ui.define([
 			} else {
 				oCustomFilter.setFilterCount(0);
 			}
-
 		},
 
 		/**
 		 * Reset the price custom filter
 		 */
 		handleResetFilters: function () {
-			var oCustomFilter = this._oDialog.getFilterItems()[1];
+			var oCustomFilter = this.byId("categoryFilterDialog").getFilterItems()[1];
 			var oSlider = oCustomFilter.getCustomControl().getAggregation("content")[0];
 			oSlider.setValue(oSlider.getMin());
 			oSlider.setValue2(oSlider.getMax());
 			oCustomFilter.setFilterCount(0);
+		},
+
+		/**
+		 * Navigation to comparison view
+		 * @param {sap.ui.base.Event} oEvent the press event of the link text in sap.m.ObjectListItem
+		 */
+		compareProducts: function (oEvent) {
+			var oProduct = oEvent.getSource().getBindingContext().getObject();
+			var sItem1Id = this.getModel("comparison").getProperty("/item1");
+			var sItem2Id = this.getModel("comparison").getProperty("/item2");
+			this._oRouter.navTo("comparison", {
+				id : oProduct.Category,
+				item1Id : (sItem1Id ? sItem1Id : oProduct.ProductId),
+				item2Id : (sItem1Id && sItem1Id != oProduct.ProductId ? oProduct.ProductId : sItem2Id)
+			}, true);
+		},
+		/**
+		 * Always navigates back to category overview
+		 * @override
+		 */
+		onBack: function () {
+			this.getRouter().navTo("categories");
 		}
 	});
 });

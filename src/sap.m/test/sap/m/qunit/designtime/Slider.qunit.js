@@ -1,15 +1,19 @@
-(function () {
+sap.ui.define([
+	"sap/m/Slider",
+	"sap/m/ResponsiveScale",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	Slider,
+	ResponsiveScale,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/m/Slider",
-		"sap/m/ResponsiveScale",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, Slider, ResponsiveScale, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.m.Slider",
 			create: function () {
 				return new Slider({
@@ -18,13 +22,8 @@
 				});
 			}
 		});
-
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function() {
 		var fnConfirmSliderIsInvisible = function (oAppComponent, oViewAfterAction, assert) {
 			assert.ok(oViewAfterAction.byId("slider").getVisible() === false, "then the Slider is invisible");
 		};
@@ -33,7 +32,7 @@
 			assert.ok(oViewAfterAction.byId("slider").getVisible() === true, "then the Slider is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for Slider", {
+		elementActionTest("Checking the remove action for Slider", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 			'<Slider id="slider" />' +
 			'</mvc:View>'
@@ -52,7 +51,7 @@
 			afterRedo: fnConfirmSliderIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a Slider", {
+		elementActionTest("Checking the reveal action for a Slider", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 			'<Slider id="slider" visible="false"/>' +
 			'</mvc:View>'
@@ -66,4 +65,4 @@
 			afterRedo: fnConfirmSliderIsVisible
 		});
 	});
-})();
+});

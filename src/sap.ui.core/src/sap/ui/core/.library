@@ -20,18 +20,21 @@
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
         <!--
-        <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/baseuri.js" />
+        <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-object-assign.js" />
         -->
         <raw-module name="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/core/support/trace/E2eTraceLib.js" depends="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/Device.js" />
         <raw-module name="sap/ui/thirdparty/baseuri.js" />
         <raw-module name="sap/ui/thirdparty/blanket.js" />
+        <raw-module name="sap/ui/thirdparty/bignumber.js" />
         <raw-module name="sap/ui/thirdparty/caja-html-sanitizer.js" />
         <raw-module name="sap/ui/thirdparty/crossroads.js" depends="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/d3.js" />
         <raw-module name="sap/ui/thirdparty/datajs.js" />
+        <raw-module name="sap/ui/thirdparty/es6-object-assign.js" />
         <raw-module name="sap/ui/thirdparty/es6-promise.js" />
+        <raw-module name="sap/ui/thirdparty/es6-shim-nopromise.js" />
         <raw-module name="sap/ui/thirdparty/es6-string-methods.js" />
         <raw-module name="sap/ui/thirdparty/flexie.js" />
         <raw-module name="sap/ui/thirdparty/handlebars.js" />
@@ -107,8 +110,11 @@
         <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
         <raw-module name="sap/ui/thirdparty/zyngascroll.js" />
-        <raw-module name="ui5loader.js" depends="sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/es6-string-methods.js" />
+        <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenopoly.bundle.js" depends="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" />
+        <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" />
+        <raw-module name="ui5loader.js" depends="sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/es6-shim-nopromise.js" />
         <raw-module name="ui5loader-autoconfig.js" depends="ui5loader.js" />
+        <raw-module name="sap/ui/test/starter/_configureLoader.js" depends="ui5loader.js" />
         <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Component.js" />
       </module-infos>
       <all-in-one>
@@ -130,11 +136,14 @@
         <exclude name="jquery-ui-position.js" />
         <exclude name="sap/ui/model/odata/datajs.js" />
         <!-- Third party libs which should NOT be part of the all-in-one file -->
+        <exclude name="sap/ui/thirdparty/bignumber.js" />
         <exclude name="sap/ui/thirdparty/blanket.js" />
         <!-- <exclude name="sap/ui/thirdparty/crossroads.js" /> -->
         <!-- <exclude name="sap/ui/thirdparty/caja-htmlsanitizer.js" /> -->
         <exclude name="sap/ui/thirdparty/d3.js" />
         <exclude name="sap/ui/thirdparty/datajs.js" />
+        <exclude name="sap/ui/thirdparty/es6-object-assign.js" />
+        <exclude name="sap/ui/thirdparty/es6-string-methods.js" />
         <exclude name="sap/ui/thirdparty/flexie.js" />
         <exclude name="sap/ui/thirdparty/handlebars.js" />
         <!-- <exclude name="sap/ui/thirdparty/hasher.js" /> -->
@@ -192,6 +201,7 @@
         <exclude name="sap/ui/thirdparty/URITemplate.js" />
         <exclude name="sap/ui/thirdparty/vkbeautify.js" />
         <exclude name="sap/ui/thirdparty/zyngascroll.js" />
+        <exclude name="sap/ui/thirdparty/hyphenopoly/**" />
         <!-- INCLUDED (because not mentioned in the list above) are the following libs: -->
         <!-- jquery.sap.global.js -->
         <!-- sap/ui/thirdparty/jquery-mobile-custom.js -->
@@ -204,8 +214,10 @@
     <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
         <exclude name=".library-all" />
         <exclude name=".library-all-dbg" />
-        <exclude name=".library-preload" />
-        <exclude name=".library-preload-dbg" />
+        <exclude name=".library-preload*" />
+        <exclude name=".library-h2-preload*" />
+        <exclude name=".Component-preload*" />
+        <exclude name=".Component-h2-preload*" />
         <exclude name=".*[legacy]" />
         <exclude name=".*[legacy]-dbg" />
         <exclude name="jquery-*" />
@@ -214,6 +226,7 @@
         <exclude name="sap.ui.debug." />
         <exclude name="sap.ui.test.ControlTree" />
         <exclude name="sap.ui.test.TestEnv" />
+        <exclude name="sap.ui.test.starter.runTest" />
         <exclude name="sap.ui.qunit." />
         <exclude name="sap.ui.thirdparty." />
     </jsdoc>
@@ -221,6 +234,8 @@
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
         <exclude name=".library-all" />
         <exclude name=".library-preload" />
+        <exclude name=".library-preload*" /><!-- library-preload.designtime.js, library-preload.support.js -->
+        <exclude name=".library-h2-preload" />
         <exclude name="jquery-*" />
         <exclude name="sap-ui-*" />
         <exclude name="testsuite." />
@@ -313,14 +328,20 @@
         <lib name="array-polyfills" displayName="Array.prototype Polyfills" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/">
         	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/array-polyfills-LICENSE.txt" />
         </lib>
+        <lib name="Element-getAttributeNames-polyfill" displayName="Element.prototype.getAttributeNames Polyfill" homepage="https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNames#Polyfill">
+        	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/Element-getAttributeNames-LICENSE.txt" />
+        </lib>
+        <lib name="object-assign-polyfill" displayName="Object.assign Polyfill" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill">
+        	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/Object-assign-polyfill-LICENSE.txt" />
+        </lib>
         <lib name="unorm" displayName="unorm.js" homepage="https://github.com/walling/unorm">
         	<license url="http://raw.githubusercontent.com/walling/unorm/v1.3.3/LICENSE.md" type="MIT License" file="../thirdparty/licenses/unorm-MIT-LICENSE.txt" />
         </lib>
         <lib name="tdop" displayName="Top Down Operator Precedence" homepage="https://github.com/douglascrockford/TDOP">
         	<license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache License Version 2.0" file="../thirdparty/licenses/TDOP-Apache-LICENSE.txt" />
         </lib>
-        <lib name="es6-promise" displayName="es6-promise" homepage="https://github.com/jakearchibald/es6-promise/">
-        	<license url="https://raw.githubusercontent.com/jakearchibald/es6-promise/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-promise-MIT-LICENSE.txt" />
+        <lib name="es6-promise" displayName="es6-promise" homepage="https://github.com/stefanpenner/es6-promise/">
+        	<license url="https://github.com/stefanpenner/es6-promise/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-promise-MIT-LICENSE.txt" />
         </lib>
         <lib name="es6-string-method-startsWith" displayName="String.prototype Polyfill (startsWith)" homepage="https://github.com/mathiasbynens/String.prototype.startsWith">
             <license url="https://github.com/mathiasbynens/String.prototype.startsWith/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
@@ -340,6 +361,24 @@
         <lib name="klayjs" displayName="KLayJS" homepage="https://github.com/OpenKieler/klayjs">
             <license url="https://github.com/OpenKieler/klayjs/blob/master/LICENSE" type="Eclipse Public License" file="../thirdparty/licenses/klayjs-ECLIPSE-LICENSE.txt" />
         </lib>
+        <lib name="bignumber" displayName="bignumber.js" homepage="https://github.com/MikeMcl/bignumber.js">
+            <license url="https://github.com/MikeMcl/bignumber.js/blob/master/LICENCE" type="MIT License" file="../thirdparty/licenses/bignumber-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="lodash" displayName="lodash" homepage="https://github.com/lodash/lodash">
+            <license url="https://github.com/lodash/lodash/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/lodash-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="hyphenopoly" displayName="Hyphenopoly" homepage="https://github.com/mnater/Hyphenopoly">
+            <license url="https://github.com/mnater/Hyphenopoly/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/hyphenopoly-LICENSE.txt" />
+        </lib>
+        <lib name="es6-shim-nopromise" displayName="ECMAScript 6 compatibility shims for legacy JavaScript engines" homepage="https://github.com/paulmillr/es6-shim">
+            <license url="https://github.com/paulmillr/es6-shim/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-shim-nopromise-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="p-cancelable" displayName="p-cancelable" homepage="https://github.com/sindresorhus/p-cancelable/tree/v2.0.0">
+            <license url="https://github.com/sindresorhus/p-cancelable/blob/v2.0.0/license" type="MIT License" file="../thirdparty/licenses/p-cancelable-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="@babel/helpers" displayName="@babel/helpers" homepage="https://github.com/babel/babel/tree/v7.10.4">
+            <license url="https://github.com/babel/babel/blob/v7.10.4/LICENSE" type="MIT License" file="../thirdparty/licenses/babel-MIT-LICENSE.txt" />
+        </lib>
     </thirdparty>
 
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
@@ -357,13 +396,22 @@
             <name>CA-UI5-COR</name>
             <modules>
                 <module>jquery.sap.*</module>
+                <module>ui5loader*</module>
+                <module>sap/base/*</module>
                 <module>sap/ui/app/*</module>
                 <module>sap/ui/base/*</module>
                 <module>sap/ui/debug/*</module>
+                <module>sap/ui/dom/*</module>
+                <module>sap/ui/events/*</module>
                 <module>sap/ui/model/*</module>
+                <module>sap/ui/performance/*</module>
                 <module>sap/ui/qunit/*</module>
+                <module>sap/ui/security/*</module>
+                <module>sap/ui/test/starter/*</module>
+                <module>sap/ui/util/*</module>
                 <module>sap/ui/Device</module>
                 <module>sap/ui/Global</module>
+                <module>sap/ui/VersionInfo</module>
             </modules>
         </component>
 
@@ -378,11 +426,18 @@
             <name>CA-UI5-TBL</name>
             <modules>
                 <module>sap/ui/core/dnd/*</module>
+                <module>sap/ui/core/util/Export</module>
+                <module>sap/ui/core/util/ExportCell</module>
+                <module>sap/ui/core/util/ExportColumn</module>
+                <module>sap/ui/core/util/ExportRow</module>
+                <module>sap/ui/core/util/ExportType</module>
+                <module>sap/ui/core/util/ExportTypeCSV</module>
+                <module>sap/ui/core/util/File</module>
             </modules>
         </component>
 
         <component>
-            <name>CA-UI5-FST</name>
+            <name>CA-UI5-TA</name>
             <modules>
                 <module>sap/ui/test/*</module>
             </modules>
@@ -392,6 +447,13 @@
             <name>CA-WDE-MCK</name>
             <modules>
                 <module>sap/ui/core/util/MockServer</module>
+            </modules>
+        </component>
+
+        <component>
+            <name>CA-UI5-CTR-ROD</name>
+            <modules>
+                <module>sap/ui/core/hyphenation/*</module>
             </modules>
         </component>
     </ownership>

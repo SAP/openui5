@@ -2,8 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
-	function(Control, library, BlockLayoutCellRenderer) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'./library',
+	"./BlockLayoutCellRenderer",
+	"sap/base/Log",
+	"./BlockLayoutCellData",
+	"sap/ui/thirdparty/jquery"
+],
+	function(Control, Device, library, BlockLayoutCellRenderer, Log, BlockLayoutCellData, jQuery) {
 		"use strict";
 
 		/**
@@ -32,7 +40,8 @@ sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
 				library: "sap.ui.layout",
 				properties: {
 					/**
-					 * Defines the title of the cell
+					 * Defines the title of the cell.
+					 * <b>Note:</b> When the <code>titleLink</code> aggregation is provided, the title of the cell will be replaced with the text from the <code>titleLink</code>.
 					 */
 					title: {type: "string", group: "Appearance", defaultValue: null},
 
@@ -82,7 +91,13 @@ sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
 					/**
 					 * The content to be included inside the cell
 					 */
-					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
+					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"},
+					/**
+					 * The link that will replace the title of the cell.
+					 * <b>Note:</b> The only possible value is the <code>sap.m.Link</code> control.
+					 * @since 1.56
+					 */
+					titleLink: {type: "sap.ui.core.Control", multiple : false}
 				},
 				designtime: "sap/ui/layout/designtime/BlockLayoutCell.designtime"
 			}
@@ -97,14 +112,61 @@ sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
 				oRow._handleEvent(oEvent);
 			}
 			//Check if current cell has defined width
-			if (this.getWidth() != 0) {
+			if (oLayoutData && this.getWidth() != 0) {
 				this.getLayoutData().setSize(this.getWidth());
 			}
 
 			return this;
 		};
+
+		/**
+		 * Sets the Width.
+		 *
+		 * @public
+		 * @param {number} iWidth value.
+		 * @returns {sap.ui.layout.BlockLayoutCell} this BlockLayoutCell reference for chaining.
+		 */
+		BlockLayoutCell.prototype.setWidth = function (iWidth) {
+			this.setProperty("width", iWidth);
+
+			if (this.getLayoutData() && (this.getLayoutData().isA("sap.ui.layout.BlockLayoutCellData"))) {
+				this.getLayoutData().setSize(iWidth);
+			}
+
+			return this;
+		};
+
+		BlockLayoutCell.prototype.setTitleLink = function(oObject) {
+			if (oObject && oObject.getMetadata().getName() !== "sap.m.Link") {
+				Log.warning("sap.ui.layout.BlockLayoutCell " + this.getId() + ": Can't add value for titleLink aggregation different than sap.m.Link.");
+				return this;
+			}
+
+			this.setAggregation("titleLink", oObject);
+
+			return this;
+		};
+
 		BlockLayoutCell.prototype._setParentRowScrollable = function (scrollable) {
 			this._parentRowScrollable = scrollable;
+		};
+
+		BlockLayoutCell.prototype.onAfterRendering = function (oEvent) {
+
+			// fixes the issue in IE when the block layout size is auto
+			// like BlockLayout in a Dialog
+			if (Device.browser.internet_explorer) {
+
+				 var bHasParentDialog = this.$().parents().toArray().some(function (element) {
+					if (element.className.indexOf("sapMDialogScroll") !== -1) {
+						return true;
+					}
+				});
+
+				if (bHasParentDialog) {
+					this.$()[0].style.flex = this._flexWidth + " 1 auto";
+				}
+			}
 		};
 
 		BlockLayoutCell.prototype._getParentRowScrollable = function () {

@@ -1,0 +1,125 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "f21833b7b2ffd7a03ee54e7275abd473b546984f",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Fixed incorrect display of focus on contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980435273"
+          }
+        ]
+      },
+      {
+        "id": "d9f59f7ac21e985c86bd234db6b5c1a0cd7cfd1c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: GenericTags overflow correctly now",
+        "references": []
+      },
+      {
+        "id": "a55ef69703e50657f6371cb195c48d2e7131711e",
+        "type": "FIX",
+        "text": " Form: layout issues in toolbar in Fiori3 theme",
+        "references": []
+      },
+      {
+        "id": "a2d966e20e29971520924ef012905c6b0577c28f",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Border of selected item is now visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070148602"
+          }
+        ]
+      },
+      {
+        "id": "ff4a2a818fd7002ee44d4e5897e2e52c9a1c1487",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fiori theme special dates visualization adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070126624"
+          }
+        ]
+      },
+      {
+        "id": "c929fb9e1e379d4eebfb198df20a37ba93ba5780",
+        "type": "FIX",
+        "text": " Form: Fiori3 themes align Label, Text and Link with Input",
+        "references": []
+      },
+      {
+        "id": "36af2e87bbef9cc912544e730d81ff90d012596b",
+        "type": "FIX",
+        "text": " sap.m.Button: Icon and text are center-aligned inside the button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123105"
+          }
+        ]
+      },
+      {
+        "id": "e96703252a8fd1913387bf64ac419a997ee3172d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: align the implementation to the current VD specs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070131385"
+          }
+        ]
+      },
+      {
+        "id": "de30e165124b3e7904f7103201c1f30c15e39c5e",
+        "type": "FIX",
+        "text": " sap.m.SplitButton: Internet Explorer visual enhancement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070179620"
+          }
+        ]
+      },
+      {
+        "id": "62d016f66e59bc22424440a040e87a90b0a6cc18",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: Filters with sub tabs with or without own content differentiated",
+        "references": []
+      },
+      {
+        "id": "79e457f8d521b848be5316065ef8d10a5b067bbf",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.Splitter,ResponsiveSplitter: Bars are now redesigned",
+        "references": []
+      },
+      {
+        "id": "04c181e13ce74d28eb6662e7ff81143899acc5b6",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar, sap.m.PlanningCalendar, sap.m.SinglePlanningCalendar - visual issues fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070040553"
+          }
+        ]
+      },
+      {
+        "id": "e17df29a807417701bf36b61b93689430668ac29",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: remove double focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070195217"
+          }
+        ]
+      }
+    ]
+  }
+}

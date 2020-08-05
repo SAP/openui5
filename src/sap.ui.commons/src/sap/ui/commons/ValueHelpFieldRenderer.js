@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.ValueHelpField
-sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
-	function(jQuery, TextFieldRenderer) {
+sap.ui.define(['./TextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool'],
+	function(TextFieldRenderer, Renderer, IconPool) {
 	"use strict";
 
 
@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 	 * just like the ComboBox does.
 	 * @namespace
 	 */
-	var ValueHelpFieldRenderer = sap.ui.core.Renderer.extend(TextFieldRenderer);
+	var ValueHelpFieldRenderer = Renderer.extend(TextFieldRenderer);
 
 	/**
 	 * Hint: "renderOuterAttributes" is a reserved/hard-coded TextField extending function!
@@ -42,9 +42,9 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 	/**
 	 * Renders additional HTML for the ComboBox to the TextField (sets the icon)
 	 *
-	 * @param {sap.ui.fw.RenderManager} oRenderManager The RenderManager that can be used for
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for
 	 *                                                 writing to the Render-Output-Buffer.
-	 * @param {sap.ui.fw.Control} oControl An object representation of the control that should
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should
 	 *                                     be rendered.
 	 */
 	ValueHelpFieldRenderer.renderOuterContent = function(rm, oControl){
@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 		// the ComboBox image sources and backgrounds.
 		aClasses.push("sapUiTfValueHelpIcon");
 
-		if (sIconUrl && sap.ui.core.IconPool.isIconURI(sIconUrl)) {
+		if (sIconUrl && IconPool.isIconURI(sIconUrl)) {
 			oControl.bIsIconURI = true;
 			mAttributes.title = oControl.getTooltip_AsString();
 		} else {
@@ -105,9 +105,9 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 		///**
 	// * Renders ARIA information for the outer DIV
 	// *
-	// * @param {sap.ui.fw.RenderManager} oRenderManager the RenderManager that can be used for
+	// * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for
 	// *                                                 writing to the Render-Output-Buffer
-	// * @param {sap.ui.fw.Control} oControl an object representation of the control that should
+	// * @param {sap.ui.core.Control} oControl an object representation of the control that should
 	// *                                     be rendered
 	// */
 	//sap.ui.commons.ValueHelpFieldRenderer.renderARIAInfo = function(rm, oControl) {

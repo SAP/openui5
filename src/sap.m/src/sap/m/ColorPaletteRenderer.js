@@ -10,7 +10,9 @@ sap.ui.define(['sap/ui/Device'],
 		 * ColorPalette renderer.
 		 * @namespace
 		 */
-		var ColorPaletteRenderer = {};
+		var ColorPaletteRenderer = {
+			apiVersion: 2
+		};
 
 
 		// reference to the message bundle
@@ -23,12 +25,9 @@ sap.ui.define(['sap/ui/Device'],
 		 * @param {sap.m.ColorPalette} oColorPalette A palette instance
 		 */
 		ColorPaletteRenderer.render = function (oRm, oColorPalette) {
-			oRm.write("<div");
-			oRm.writeControlData(oColorPalette);
-			oRm.addClass("sapMColorPalette");
-			oRm.writeClasses();
-			oRm.writeAttribute("tabIndex", "0");
-			oRm.write(">");
+			oRm.openStart("div", oColorPalette);
+			oRm.class("sapMColorPalette");
+			oRm.openEnd();
 
 			//render default button
 			if (oColorPalette._getShowDefaultColorButton()) {
@@ -48,7 +47,19 @@ sap.ui.define(['sap/ui/Device'],
 					this.renderSeparator(oRm);
 				}
 			}
-			oRm.write("</div>"); //close palette container
+
+			//render Recent Colors section
+			if (oColorPalette._getShowRecentColorsSection()) {
+				if (!oColorPalette._getShowMoreColorsButton() || !Device.system.phone) {
+					this.renderSeparator(oRm);
+				}
+
+				this.renderRecentColorsSection(oRm, oColorPalette);
+				if (Device.system.phone) {
+					this.renderSeparator(oRm);
+				}
+			}
+			oRm.close("div"); //close palette container
 		};
 
 		/**
@@ -59,20 +70,19 @@ sap.ui.define(['sap/ui/Device'],
 		ColorPaletteRenderer.renderSwatches = function (oRm, oColorPalette) {
 			var sColors = oColorPalette.getColors();
 
-			oRm.write("<div");
-			oRm.addClass("sapMColorPaletteContent");
-			oRm.writeClasses();
-			oRm.writeAccessibilityState(oColorPalette, {
+			oRm.openStart("div", oColorPalette.getId() + "-swatchCont-paletteColor");
+			oRm.class("sapMColorPaletteContent");
+			oRm.accessibilityState(oColorPalette, {
 				"role": "region",
 				"label": oLibraryResourceBundle.getText("COLOR_PALETTE_SWATCH_CONTAINER_TITLE")
 			});
-			oRm.write(">");
+			oRm.openEnd();
 
 			sColors.forEach(function (sColor, iIndex) {
-				this.renderSquare(oRm, oColorPalette, sColor, iIndex);
+				this.renderSquare(oRm, oColorPalette, sColor, iIndex, false);
 			}, this);
 
-			oRm.write("</div>"); //close palette squares container
+			oRm.close("div"); //close palette squares container
 		};
 
 		/**
@@ -82,40 +92,38 @@ sap.ui.define(['sap/ui/Device'],
 		 * @param {sap.ui.core.CSSColor} sColor A color used as background
 		 * @param {number} iIndex the index of the color amongst its siblings
 		 */
-		ColorPaletteRenderer.renderSquare = function (oRm, oColorPalette, sColor, iIndex) {
+		ColorPaletteRenderer.renderSquare = function (oRm, oColorPalette, sColor, iIndex, bIsRecentColor) {
 			var sNamedColor = oColorPalette._ColorsHelper.getNamedColor(sColor),
-				sColorNameAria = oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [iIndex + 1,
-					sNamedColor || oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_CUSTOM")]);
+				sCustomOrPredefinedColor = (sNamedColor === undefined) ? oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_CUSTOM") : oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_" + sNamedColor.toUpperCase()),
+				sColorNameAria = bIsRecentColor ? oLibraryResourceBundle.getText("COLOR_PALETTE_RECENT_COLOR", [iIndex + 1, sCustomOrPredefinedColor]) : oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [iIndex + 1, sCustomOrPredefinedColor]);
 
-			oRm.write("<div");
-			oRm.addClass("sapMColorPaletteSquare");
-			oRm.writeClasses();
-			oRm.writeAttribute("data-sap-ui-color", sColor);
-			oRm.writeAttribute("tabindex", "-1");
-
-			oRm.writeAttribute("title", sColorNameAria);
-			oRm.writeAccessibilityState(oColorPalette, {
+			oRm.openStart("div");
+			oRm.class("sapMColorPaletteSquare");
+			if (bIsRecentColor && sColor === "") {
+				oRm.class("sapMRecentColorSquareDisabled");
+			}
+			oRm.attr("data-sap-ui-color", sColor);
+			oRm.attr("tabindex", "-1");
+			oRm.attr("title", sColorNameAria);
+			oRm.accessibilityState(oColorPalette, {
 				"role": "button",
 				"label": sColorNameAria
 			});
-			oRm.write(">");
-
-			//swatch inner content
-			oRm.write("<div");
-			oRm.addStyle("background-color", sColor);
-			oRm.writeStyles();
-			oRm.write("></div>");
-
-			oRm.write("</div>"); //close palette swatch
+			oRm.openEnd();
+			oRm.openStart("div");
+			oRm.style("background-color", sColor);
+			oRm.openEnd();
+			oRm.close("div");
+			oRm.close("div");
 		};
 
 		ColorPaletteRenderer.renderSeparator = function (oRm) {
-			oRm.write("<div");
-			oRm.addClass("sapMColorPaletteSeparator");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.write("<hr/>");
-			oRm.write("</div>");
+			oRm.openStart("div");
+			oRm.class("sapMColorPaletteSeparator");
+			oRm.openEnd();
+			oRm.voidStart("hr");
+			oRm.voidEnd();
+			oRm.close("div");
 		};
 
 		/**
@@ -134,6 +142,33 @@ sap.ui.define(['sap/ui/Device'],
 		 */
 		ColorPaletteRenderer.renderMoreColorsButton = function (oRm, oColorPalette) {
 			oRm.renderControl(oColorPalette._getMoreColorsButton());
+		};
+
+		/**
+		 * Renders the Recent Colors section.
+		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+		 */
+		ColorPaletteRenderer.renderRecentColorsSection = function (oRm, oColorPalette) {
+			var sColor,
+				aRecentColors = oColorPalette._getRecentColors(),
+				iCountOfBoxes = 5,
+				sContainer = oLibraryResourceBundle.getText("COLOR_PALETTE_SWATCH_RECENT_COLOR_CONTAINER_TITLE");
+
+			oRm.openStart("div", oColorPalette.getId() + "-swatchCont-recentColors");
+			oRm.class("sapMColorPaletteContent");
+			oRm.attr("role","region");
+			oRm.attr("aria-label",sContainer); // Change with translation variable
+			oRm.openEnd();
+			// Use render square function
+			for (var i = 0; i < iCountOfBoxes; i++) {
+				if (aRecentColors[i]) {
+					sColor = aRecentColors[i];
+				} else {
+					sColor = "";
+				}
+				this.renderSquare(oRm, oColorPalette, sColor, i, true);
+			}
+			oRm.close("div");
 		};
 
 		return ColorPaletteRenderer;

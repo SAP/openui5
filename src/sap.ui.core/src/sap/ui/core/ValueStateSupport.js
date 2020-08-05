@@ -3,8 +3,8 @@
  */
 
 // Provides helper class ValueStateSupport
-sap.ui.define(['jquery.sap.global', './Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['./Element', './library', "sap/base/assert"],
+	function(Element, library, assert) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -29,6 +29,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 				mTexts[ValueState.Error] = rb.getText("VALUE_STATE_ERROR");
 				mTexts[ValueState.Warning] = rb.getText("VALUE_STATE_WARNING");
 				mTexts[ValueState.Success] = rb.getText("VALUE_STATE_SUCCESS");
+				mTexts[ValueState.Information] = rb.getText("VALUE_STATE_INFORMATION");
 			}
 		};
 
@@ -46,7 +47,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 		 * @function
 		 */
 		ValueStateSupport.enrichTooltip = function(oElement, sTooltipText) {
-			jQuery.sap.assert(oElement instanceof Element, "oElement must be an Element");
+			assert(oElement instanceof Element, "oElement must be an Element");
 
 			if (!sTooltipText && oElement.getTooltip()) {
 				return undefined; // this means there is no tooltip text configured, but a tooltip object like a RichTooltip
@@ -97,6 +98,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 		 *  1 : ValueState.Warning
 		 *  2 : ValueState.Success
 		 *  3 : ValueState.Error
+		 *  4 : ValueState.Information
 		 *
 		 * @param {int} iState the state as an integer
 		 * @return {sap.ui.core.ValueState} the corresponding ValueState object
@@ -114,6 +116,8 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 					return ValueState.Success;
 				case 3:
 					return ValueState.Error;
+				case 4:
+					return ValueState.Information;
 				default:
 					return ValueState.None;
 			}

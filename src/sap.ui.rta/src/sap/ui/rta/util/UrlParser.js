@@ -2,9 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-],
-function(jQuery) {
+sap.ui.define([], function() {
 	"use strict";
 
 	var module = {};

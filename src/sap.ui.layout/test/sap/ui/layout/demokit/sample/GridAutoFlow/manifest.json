@@ -1,0 +1,44 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.GridAutoFlow",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.GridAutoFlow.GridAutoFlow",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/main.css"
+				},
+				{
+					"uri": "RevealGrid/RevealGrid.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"GridAutoFlow.view.xml",
+					"GridAutoFlow.controller.js",
+					"css/main.css",
+					"manifest.json",
+					"RevealGrid/RevealGrid.js",
+					"RevealGrid/RevealGrid.css"
+				]
+			}
+		}
+	}
+}

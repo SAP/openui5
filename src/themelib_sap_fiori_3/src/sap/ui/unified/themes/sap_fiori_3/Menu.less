@@ -1,0 +1,146 @@
+/* ==================================== */
+/* CSS for control sap.ui.unified/Menu  */
+/* Fiori 3 theme                        */
+/* ==================================== */
+
+.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf.sapUiMnuTfItemTfDsbl {
+	opacity: @sapUiContentDisabledOpacity;
+}
+
+/** Cozy Mode **/
+
+.sapUiMnu.sapUiMnuCozySupport.sapUiSizeCozy {
+
+	.sapUiMnuDiv > hr {
+		left: 0rem;
+		right: 0rem;
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	.sapUiMnuDiv {
+	  height: 1px;
+	}
+
+	.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf {
+		height: @_sap_ui_unified_Menu_ItmHeightCozy - 0.625rem;
+	}
+
+}
+
+.sapUiMnuItm.sapUiMnuItmSubMnuOpen.sapUiMnuItmHov:hover {
+	background-color: @sapUiListSelectionHoverBackground;
+}
+
+.sapUiMnu  .sapUiMnuDiv>hr,
+.sapMList .sapMListItems .sapUiMnuDiv>hr{
+	border-top: 0.0625rem solid @sapUiGroupContentBorderColor;
+	left: 0rem;
+	right: 0rem;
+}
+
+.sapUiMnu.sapUiMnuCozySupport.sapUiSizeCozy .sapUiMnuItm {
+	height: 2.75rem;
+	line-height: 2.75rem;
+}
+
+.sapUiMnu.sapUiMnuCozySupport.sapUiSizeCozy .sapUiMnuItmIco {
+	width: 2.25rem;
+	height: 2.75rem;
+}
+
+.sapUiMnu.sapUiMnuCozySupport.sapUiSizeCozy .sapUiMnuItmIco > .sapUiIcon {
+	line-height: 2.75rem;
+	font-size: 1rem;
+}
+
+.sapUiMnu.sapUiMnuCozySupport.sapUiSizeCozy .sapUiMnuNoIco .sapUiMnuItmL {
+	width: 0.75rem;
+}
+
+.sapUiMnu.sapUiMnuCozySupport.sapUiSizeCozy .sapUiMnuItmSbMnu {
+	width: 2.25rem;
+	height: 2.75rem;
+	font-size: 0.75rem;
+	&.sapUiIconMirrorInRTL{
+		height: 2.75rem;
+	}
+}
+
+html.sap-phone .sapMMenuLIImgThumbIcon{
+	height: 2.75rem;
+	font-size: 1rem;
+	width: 2.75rem;
+	line-height:  2.75rem;
+}
+
+html.sap-phone .sapUiSizeCozy .sapUiMnuItm {
+	.sapUiMnuItmTxt {
+		padding-left: 1rem;
+	}
+	.sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0;
+	}
+}
+
+.sapMMenuLIArrowRightIcon {
+	font-size: 0.75rem;
+	width: 2.75rem;
+	height: 2.75rem;
+	line-height: 2.75rem;
+}
+
+.sapUiSizeCompact .sapUiMnuItmR, .sapUiSizeCompact .sapUiMnuNoIco .sapUiMnuItmL {
+	width: 0.5rem;
+}
+
+.sapUiMnu .sapUiMnuLst .sapUiMnuItm.sapUiMnuItmSubMnuOpen,
+.sapUiMnu .sapUiMnuLst .sapUiMnuItm.sapUiMnuItmSubMnuOpen.sapUiMnuItmHov {
+	border-bottom: 1px solid @sapUiListSelectionBorderColor;
+}
+
+.sapUiMnu .sapUiMnuLst .sapUiMnuItm {
+	border-bottom: 1px solid transparent;
+}
+
+.sapUiMnu .sapUiMnuLst .sapUiMnuItm.sapUiMnuItmHov:active{
+	border-bottom: 1px solid transparent;
+}
+
+.sapUiMnu .sapUiMnuLst .sapUiMnuItm.sapUiMnuItmSubMnuOpen.sapUiMnuItmHov:active{
+	border-bottom: 1px solid transparent;
+	background-color: @sapUiListActiveBackground;
+}
+
+html.sap-desktop,
+html.sap-tablet {
+	.sapUiSizeCozy{
+		.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmTxt {
+			padding-left: 0.75rem;
+		}
+		.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+			padding-left: 0;
+		}
+		.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmTxt,
+		.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+			padding-left: 0;
+		}
+	}
+}
+
+/** Compact Mode **/
+
+.sapUiSizeCompact{
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmTxt {
+		padding-left: 0.5rem;
+	}
+
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0rem;
+	}
+
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmTxt,
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt{
+		padding-left: 0;
+	}
+}

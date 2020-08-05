@@ -6,9 +6,9 @@
 				"icon": "map-2",
 				"text": "Employee Directory",
 				"desc": "This app is an employee directory and shows the final result of the 'Navigation Tutorial'",
-				"ref": "test-resources/sap/ui/core/demokit/tutorial/navigation/09/webapp/index.html#/employees",
+				"ref": "test-resources/sap/ui/core/demokit/tutorial/navigation/17/webapp/index.html",
 				"links": {
-					"Navigation Tutorial": "#docs/guide/1b6dcd39a6a74f528b27ddb22f15af0d.html"
+					"View Tutorial": "#/topic/1b6dcd39a6a74f528b27ddb22f15af0d"
 				},
 				"category": "Tutorial",
 				"config": "test-resources/sap/ui/core/demokit/tutorial/navigation/demoapp.json"
@@ -68,11 +68,25 @@
 				"samples" : [ "sap.ui.core.sample.Icon" ]
 			},
 			{
+				"id" : "sap.ui.core.InvisibleMessage",
+				"name" : "InvisibleMessage",
+				"category" : "Display",
+				"since" : "1.78",
+				"samples" : [ "sap.ui.core.sample.InvisibleMessage" ]
+			},
+			{
 				"id" : "sap.ui.core.InvisibleText",
 				"name" : "InvisibleText",
 				"category" : "Display",
 				"since" : "1.28",
 				"samples" : [ "sap.ui.core.sample.InvisibleText" ]
+			},
+			{
+				"id" : "sap.ui.core.sample.Commands",
+				"name" : "Commands",
+				"category" : "Action",
+				"since" : "1.70",
+				"samples" : [ "sap.ui.core.sample.Commands" ]
 			},
 			{
 				"id" : "sap.ui.core.mvc.View",
@@ -83,6 +97,16 @@
 				"samples" : [
 					"sap.ui.core.sample.View.async",
 					"sap.ui.core.sample.View.preprocessor"
+				]
+			},
+			{
+				"id" : "sap.ui.core.XMLComposite",
+				"name" : "XML Composite Control",
+				"category" : "Display",
+				"since" : "1.56",
+				"samples" : [
+					"sap.ui.core.sample.XMLComposite.01",
+					"sap.ui.core.sample.XMLComposite.02"
 				]
 			},
 			{
@@ -120,9 +144,19 @@
 					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters",
 					"sap.ui.core.sample.OpaWithSupportAssistant",
 					"sap.ui.core.sample.OpaTestLibrary",
-					"sap.ui.core.sample.OpaMessageToast",
+					"sap.ui.core.sample.OpaStaticAreaControls",
+					"sap.ui.core.sample.OpaBusyIndicator",
 					"sap.ui.core.sample.OpaAutoWaitParams",
 					"sap.ushell.sample.OpaFLPSandbox"
+				]
+			},
+			{
+				"id": "sap.ui.core.hyphenation.Hyphenation",
+				"name": "Hyphenation API",
+				"category": "Display",
+				"since": "1.60",
+				"samples": [
+					"sap.ui.core.sample.HyphenationAPI"
 				]
 			},
 			{
@@ -134,6 +168,7 @@
 					"sap.ui.core.sample.matcher.BindingPath",
 					"sap.ui.core.sample.matcher.I18NText",
 					"sap.ui.core.sample.matcher.LabelFor",
+					"sap.ui.core.sample.matcher.Descendant",
 					"sap.ui.core.sample.OpaMatchers"
 				]
 			},
@@ -195,7 +230,8 @@
 				"since" : "1.16",
 				"samples" : [
 					"sap.ui.core.sample.RoutingFullscreen",
-					"sap.ui.core.sample.RoutingMasterDetail"
+					"sap.ui.core.sample.RoutingMasterDetail",
+					"sap.ui.core.sample.RoutingNestedComponent"
 				]
 			},
 			{
@@ -205,6 +241,7 @@
 				"since" : "1.38",
 				"samples" : [
 					"sap.ui.core.sample.odata.v4.ConsumeV2Service",
+					"sap.ui.core.sample.odata.v4.FlexibleColumnLayout",
 					"sap.ui.core.sample.odata.v4.ListBinding",
 					"sap.ui.core.sample.odata.v4.SalesOrders",
 					"sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
@@ -302,7 +339,7 @@
 				"since": "1.30",
 				"formFactors": "-",
 				"description": "This tutorial illustrates the major features of navigation and routing inside SAPUI5 apps.",
-				"docuLink": "#docs/guide/1b6dcd39a6a74f528b27ddb22f15af0d.html",
+				"docuLink": "#/topic/1b6dcd39a6a74f528b27ddb22f15af0d",
 				"samplesAsSteps": [
 					"Set Up the Initial App",
 					"Enable Routing",
@@ -330,7 +367,7 @@
 				"since": "1.48",
 				"formFactors": "-",
 				"description": "In this tutorial, we will show you some tools that will help you when you run into problems with your SAPUI5 app.",
-				"docuLink": "#docs/guide/5661952e72df471b932eddc10350c081.html",
+				"docuLink": "#/topic/5661952e72df471b932eddc10350c081",
 				"samplesAsSteps": [
 					"Heap of Shards"
 				]
@@ -342,7 +379,7 @@
 				"since": "1.30",
 				"formFactors": "-",
 				"description": "In this tutorial, we will explain the concepts of data binding in SAPUI5.",
-				"docuLink": "#docs/guide/e5310932a71f42daa41f3a6143efca9c.html",
+				"docuLink": "#/topic/e5310932a71f42daa41f3a6143efca9c",
 				"samplesAsSteps": [
 					"No Data Binding",
 					"Creating a Model",
@@ -368,7 +405,7 @@
 				"since": "1.34",
 				"formFactors": "-",
 				"description": "In this tutorial, we will explore some advanced features of the mock server.",
-				"docuLink": "#docs/guide/3a9728ec31f94ca18a7d543ce419d85d.html",
+				"docuLink": "#/topic/3a9728ec31f94ca18a7d543ce419d85d",
 				"samplesAsSteps": [
 				  "Initial App Without Data",
 				  "Creating a Mock Server to Simulate Data",
@@ -383,7 +420,7 @@
 				"since": "1.54",
 				"formFactors": "-",
 				"description": "In this tutorial, we will show you how to build a simple application using an OData V4 service.",
-				"docuLink": "#docs/guide/bcdbde6911bd4fc68fd435cf8e306ed0.html",
+				"docuLink": "#/topic/bcdbde6911bd4fc68fd435cf8e306ed0",
 				"samplesAsSteps": [
 					"Set Up the Initial App",
 					"Data Access and Client-Server Communication",
@@ -488,6 +525,11 @@
 				"description": "Formats the number by using the parameters defined for the given currency code. Either currency symbol, currency code or none of them can be included in the final formatted string. It parses the given string into an array which contains both the currency number and currency code."
 			},
 			{
+				"id" : "sap.ui.core.sample.InvisibleMessage",
+				"name" : "InvisibleMessage",
+				"description" : "The InvisibleMessage provides a way to programmaticaly expose dynamic content changes in a way that can be announced by screen readers."
+			},
+			{
 				"id" : "sap.ui.core.sample.InvisibleText",
 				"name" : "InvisibleText",
 				"description" : "Many controls provide the associations ariaLabelledBy and ariaDescribedBy for accessibility purposes. The InvisibleText control can be used by application to provide hidden texts on the UI which can be referenced via these associations."
@@ -533,6 +575,16 @@
 				"description": "Example for consuming an OData V2 Service via an OData V4 Model"
 			},
 			{
+				"id": "sap.ui.core.sample.XMLComposite.01",
+				"name": "XMLComposite: basic example",
+				"description": "Basic example to show the structure of an XML composite control"
+			},
+			{
+				"id": "sap.ui.core.sample.XMLComposite.02",
+				"name": "XMLComposite: example showing usage of aggregation",
+				"description": "Example showing how aggregations can be dealt with in an XML composite control"
+			},
+			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
 				"name": "XML Templating: demo scenario",
 				"description": "Complete demo scenario for XML Templating based on OData V4 annotations"
@@ -560,7 +612,7 @@
 			{
 				"id": "sap.ui.core.sample.OpaMatchers",
 				"name": "Using Matchers",
-				"description": "Matchers are used to retrieve controls that have to match a condition, eg: Property matching a value"
+				"description": "Matchers are used in OPA tests to retrieve controls that have to match a condition, eg: Property matching a value"
 			},
 			{
 				"id": "sap.ui.core.sample.OpaById",
@@ -628,19 +680,29 @@
 				"description" : "A mini app with 2 detail pages. Both are bookmarkable."
 			},
 			{
+				"id" : "sap.ui.core.sample.RoutingNestedComponent",
+				"name" : "Routing with nested components consuming the NorthWind OData Service",
+				"description" : "An App that shows how nested component with routing enabled can be used. This app uses the NorthWind OData Service and shows the 'Products', 'Categories' and 'Suppliers' entity sets and the relationships between them."
+			},
+			{
 				"id": "sap.ui.core.sample.matcher.BindingPath",
 				"name": "Binding Path Matcher",
-				"description": "The binding path matcher checks if a control has a binding context with the exact same binding path"
+				"description": "The binding path matcher checks if a control has a binding with the exact same binding context and/or binding property path in OPA tests."
 			},
 			{
 				"id": "sap.ui.core.sample.matcher.I18NText",
 				"name": "I18N Text Matcher",
-				"description": "The I18N text matcher checks if a control property has the same value as a text of an I18N file."
+				"description": "The I18N text matcher checks if a control property has the same value as a text of an I18N file in OPA tests."
 			},
 			{
 				"id": "sap.ui.core.sample.matcher.LabelFor",
 				"name": "Label For Matcher",
-				"description": "The LabelFor matcher searches for given control associated with labelFor property."
+				"description": "The LabelFor matcher searches for given control associated with labelFor property in OPA tests."
+			},
+			{
+				"id": "sap.ui.core.sample.matcher.Descendant",
+				"name": "Descendant Matcher",
+				"description": "The descendant matcher checks if a control has a given descendant."
 			},
 			{
 				"id": "sap.ui.core.sample.MessageManager.BasicMessages",
@@ -698,14 +760,29 @@
 				"description": "This sample demonstrates how to create and use a simple OPA5 test library"
 			},
 			{
-				"id": "sap.ui.core.sample.OpaMessageToast",
-				"name": "Retrieving message toast elements with OPA5",
-				"description": "This sample demonstrates how to locate message toast elements with OPA5"
+				"id": "sap.ui.core.sample.OpaStaticAreaControls",
+				"name": "Retrieving controls located in the static area with OPA5",
+				"description": "This sample demonstrates how to locate static area controls with OPA5"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaBusyIndicator",
+				"name": "Testing busy controls with OPA5",
+				"description": "This sample demonstrates how to test busy controls with OPA5"
 			},
 			{
 				"id": "sap.ui.core.sample.OpaAutoWaitParams",
 				"name": "OPA5 autoWait parameters",
 				"description": "This sample demonstrates how to take advantage of OPA5 autoWait parameters"
+			},
+			{
+				"id": "sap.ui.core.sample.HyphenationAPI",
+				"name": "Hyphenation API",
+				"description": "This sample demonstrates usage of the Hyphenation API"
+			},
+			{
+				"id" : "sap.ui.core.sample.Commands",
+				"name" : "Commands",
+				"description": "This example demonstrates how to define shortcuts using commands in your application"
 			}
 		]
 	}

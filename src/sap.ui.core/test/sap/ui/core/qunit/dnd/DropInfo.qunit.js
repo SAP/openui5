@@ -1,12 +1,14 @@
+/*global QUnit,sinon*/
+
 sap.ui.define([
 	"jquery.sap.global",
-	"test/TestControl",
+	"./TestControl",
 	"sap/ui/core/dnd/DropInfo",
-	"sap/ui/base/ManagedObject"
-], function(jQuery, TestControl, DropInfo, ManagedObject) {
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/ElementMetadata",
+	"sap/base/Log"
+], function(jQuery, TestControl, DropInfo, ManagedObject, ElementMetadata, Log) {
 	"use strict";
-
-	/*global QUnit,sinon*/
 
 	QUnit.test("Default values", function(assert) {
 		var oDropInfo = new DropInfo();
@@ -14,9 +16,62 @@ sap.ui.define([
 		assert.strictEqual(oDropInfo.getGroupName(), "", "Default value of targetAggregation is correct");
 		assert.strictEqual(oDropInfo.getDropEffect(), "Move", "Default value of dropEffect is correct");
 		assert.strictEqual(oDropInfo.getDropPosition(), "On", "Default value of dropPosition is correct");
-		assert.strictEqual(oDropInfo.getDropLayout(), "Vertical", "Default value of dropLayout is correct");
+		assert.strictEqual(oDropInfo.getDropLayout(), "Default", "Default value of dropLayout is correct");
+		assert.strictEqual(oDropInfo.getEnabled(), true, "Default value of enabled is correct");
 		assert.strictEqual(oDropInfo.isDraggable(), false, "DropInfo is not draggable.");
 		oDropInfo.destroy();
+	});
+
+	QUnit.test("invalidation", function(assert) {
+		var oDropInfo = new DropInfo();
+		var fnInvalidateSpy = sinon.spy(oDropInfo, "invalidate");
+
+		oDropInfo.setEnabled(false);
+		assert.strictEqual(fnInvalidateSpy.callCount, 0, "Invalidation has not happened for enabled property");
+
+		oDropInfo.setGroupName("abc");
+		assert.strictEqual(fnInvalidateSpy.callCount, 0, "Invalidation has not happened for groupName property");
+
+		oDropInfo.setTargetAggregation("items");
+		assert.strictEqual(fnInvalidateSpy.callCount, 0, "Invalidation has not happened for targetAggregation property");
+
+		oDropInfo.setDropEffect("Copy");
+		assert.strictEqual(fnInvalidateSpy.callCount, 0, "Invalidation has not happened for dropEffect property");
+
+		oDropInfo.setDropPosition("Between");
+		assert.strictEqual(fnInvalidateSpy.callCount, 0, "Invalidation has not happened for dropPosition property");
+
+		oDropInfo.setDropLayout("Horizontal");
+		assert.strictEqual(fnInvalidateSpy.callCount, 0, "Invalidation has not happened for dropLayout property");
+
+		oDropInfo.destroy();
+	});
+
+	QUnit.test("TemporaryDropPosition", function(assert) {
+		var oDropInfo = new DropInfo();
+		oDropInfo.sTemporaryDropPosition = "Between";
+
+		assert.strictEqual(oDropInfo.getDropPosition(), "On", "Public API returns the correct DropPosition value");
+		assert.strictEqual(oDropInfo.getDropPosition(true), "Between", "Temporary DropPosition is returned when 1st param is true");
+
+		oDropInfo.destroy();
+	});
+
+	QUnit.test("getDropLayout", function(assert) {
+		var oDropInfo = new DropInfo({
+			targetAggregation: "test"
+		});
+		var oControl = new TestControl({
+			dragDropConfig: oDropInfo
+		});
+
+		assert.strictEqual(oDropInfo.getDropLayout(true), "Horizontal", "Default value is taken from metadata.dnd.layout");
+
+		oDropInfo.setDropLayout("Vertical");
+		assert.strictEqual(oDropInfo.getDropLayout(), "Vertical", "Public API returned the control value");
+		assert.strictEqual(oDropInfo.getDropLayout(true), "Vertical", "Nothing to detect property value is returned");
+
+		oControl.destroy();
 	});
 
 	QUnit.test("isDroppable - An unrelated element", function(assert) {
@@ -85,8 +140,12 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oEvent.target = oControl.getDomRef("children");
+		assert.notOk(oDropInfo.isDroppable(oControl, oEvent), "Not Droppable: event target is the defined targetAggregation DOM");
+		assert.strictEqual(oEvent.getMark("DragWithin"), undefined, "Event is not marked as found aggregation name");
+
+		oEvent.target = oControl.getDomRef("children").firstChild;
 		assert.ok(oDropInfo.isDroppable(oControl, oEvent), "Droppable: event target is in the defined targetAggregation DOM");
-		assert.strictEqual(oEvent.getMark("DragWithin"), "children", "Droppable: event is marked for found aggregation name");
+		assert.strictEqual(oEvent.getMark("DragWithin"), "children", "Event is not marked for the found aggregation name");
 
 		oEvent.target = oControl.getDomRef("title");
 		assert.notOk(oDropInfo.isDroppable(oControl, oEvent), "Not Droppable: event target is in the valid targetAggregation DOM");
@@ -97,6 +156,44 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
+	QUnit.test("isDroppable - Enabled", function(assert) {
+		var oDropInfo = new DropInfo({
+			enabled: false
+		});
+		var oControl = new TestControl({
+			dragDropConfig: oDropInfo
+		});
+
+		assert.notOk(oDropInfo.isDroppable(oControl), "Not droppable: DropInfo is not enabled");
+
+		oDropInfo.setEnabled(true);
+		assert.ok(oDropInfo.isDroppable(oControl), "Droppable: DropInfo is enabled and drop target is the control itself");
+
+		oControl.destroy();
+	});
+
+	QUnit.test("isDroppable - metadata disallows", function(assert) {
+		var oDropInfo = new DropInfo();
+		var oChild = new TestControl();
+		var oParent = new TestControl({
+			dragDropConfig: oDropInfo,
+			children: oChild
+		});
+
+		var fnLogSpy = this.spy(Log, "warning");
+		this.stub(ElementMetadata.prototype, "getDragDropInfo").returns({droppable: false});
+		assert.notOk(oDropInfo.isDroppable(oParent), "Not droppable: Element metadata does not allow droppping");
+		assert.strictEqual(fnLogSpy.callCount, 1, "Not droppable is logged");
+
+		oDropInfo.setTargetAggregation("children");
+		assert.notOk(oDropInfo.isDroppable(oChild), "Not droppable: Aggregation metadata does not allow dropping");
+		assert.strictEqual(fnLogSpy.callCount, 2, "Not droppable is logged again");
+
+		oDropInfo.bIgnoreMetadataCheck = true;
+		assert.ok(oDropInfo.isDroppable(oChild), "Droppable: private flag ignores metadata check");
+
+		oParent.destroy();
+	});
 
 	QUnit.test("fireDragEnter - invalid parameters", function(assert) {
 		var oDragEnterEvent = new jQuery.Event("dragenter");
@@ -112,7 +209,7 @@ sap.ui.define([
 		assert.ok(fnDragEnterSpy.notCalled, "dragEnter event is not fired, dragSession does not exist");
 
 		oDropInfo.destroy();
-	})
+	});
 
 	QUnit.test("fireDragEnter - event parameters", function(assert) {
 		var fnDragEnterSpy = sinon.spy(function(oEvent) {
@@ -150,6 +247,54 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
+	QUnit.test("fireDragOver - invalid parameters", function(assert) {
+		var oDragOverEvent = new jQuery.Event("dragover");
+		var fnDragOverSpy = sinon.spy();
+		var oDropInfo = new DropInfo({
+			dragOver: fnDragOverSpy
+		});
+
+		oDropInfo.fireDragOver();
+		assert.ok(fnDragOverSpy.notCalled, "dragOver event is not fired, there is no parameter");
+
+		oDropInfo.fireDragOver(oDragOverEvent);
+		assert.ok(fnDragOverSpy.notCalled, "dragOver event is not fired, dragSession does not exist");
+
+		oDropInfo.destroy();
+	});
+
+	QUnit.test("fireDragOver - event parameters", function(assert) {
+		var fnDragOverSpy = sinon.spy(function(oEvent) {
+			var mParameters = oEvent.getParameters();
+			assert.ok(mParameters.dragSession, "dragSession exists");
+			assert.strictEqual(mParameters.target, oControl, "target is valid");
+			assert.strictEqual(mParameters.dropPosition, "On", "dropPosition is valid");
+			assert.strictEqual(mParameters.browserEvent, oDragOverEvent.originalEvent, "browserEvent is valid");
+		});
+		var oDropInfo = new DropInfo({
+			dragOver: fnDragOverSpy
+		});
+		var oControl = new TestControl({
+			title: "Control",
+			dragDropConfig: oDropInfo
+		});
+		var oDragOverEvent = new jQuery.Event("dragstart");
+		oDragOverEvent.dragSession = {
+			getDropControl: function() {
+				return oControl;
+			},
+			getDropPosition: function() {
+				return "On";
+			}
+		};
+
+		var bEventValue = oDropInfo.fireDragOver(oDragOverEvent);
+		assert.ok(fnDragOverSpy.calledOnce, "dragOver event is fired once");
+		assert.ok(bEventValue, "dragOver event is returned true");
+
+		oControl.destroy();
+	});
+
 	QUnit.test("fireDrop - invalid parameters", function(assert) {
 		var oDropEvent = new jQuery.Event("drop");
 		var fnDropSpy = sinon.spy();
@@ -164,7 +309,7 @@ sap.ui.define([
 		assert.ok(fnDropSpy.notCalled, "drop event is not fired, dragSession does not exist");
 
 		oDropInfo.destroy();
-	})
+	});
 
 	QUnit.test("fireDrop - event parameters", function(assert) {
 		var fnDropSpy = sinon.spy(function(oEvent) {

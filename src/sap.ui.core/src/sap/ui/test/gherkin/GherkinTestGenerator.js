@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
-  "jquery.sap.global",
-  "sap/ui/base/Object",
-  "sap/ui/test/gherkin/dataTableUtils",
-  "sap/ui/test/gherkin/simpleGherkinParser"
-], function($, UI5Object, dataTableUtils, simpleGherkinParser) {
+	"sap/ui/base/Object",
+	"sap/ui/test/gherkin/dataTableUtils",
+	"sap/ui/test/gherkin/simpleGherkinParser",
+	"sap/base/strings/escapeRegExp",
+	"sap/ui/thirdparty/jquery"
+], function(UI5Object, dataTableUtils, simpleGherkinParser, escapeRegExp, jQueryDOM) {
   "use strict";
 
   /**
@@ -95,19 +96,19 @@ sap.ui.define([
     constructor : function(vFeature, fnStepDefsConstructor, fnAlternateTestStepGenerator) {
       UI5Object.apply(this, arguments);
 
-      if ($.type(vFeature) === "string") {
+      if (typeof vFeature === "string" || vFeature instanceof String) {
         vFeature = simpleGherkinParser.parseFile(vFeature);
 
-      // else if the type is not a String and not a Feature object
-      } else if (($.type(vFeature) !== "object") || !vFeature.scenarios) {
+      // else if the type is not a String and not a Feature object (or not given)
+      } else if (!vFeature || (typeof vFeature !== "object") || !vFeature.scenarios) {
         throw new Error("GherkinTestGenerator constructor: parameter 'vFeature' must be a valid String or a valid Feature object");
       }
 
-      if (($.type(fnStepDefsConstructor) !== "function") || !((new fnStepDefsConstructor())._generateTestStep)) {
+      if ((typeof fnStepDefsConstructor !== "function") || !((new fnStepDefsConstructor())._generateTestStep)) {
         throw new Error("GherkinTestGenerator constructor: parameter 'fnStepDefsConstructor' must be a valid StepDefinitions constructor");
       }
 
-      if (fnAlternateTestStepGenerator && $.type(fnAlternateTestStepGenerator) !== "function") {
+      if (fnAlternateTestStepGenerator && typeof fnAlternateTestStepGenerator !== "function") {
         throw new Error("GherkinTestGenerator constructor: if specified, parameter 'fnAlternateTestStepGenerator' must be a valid Function");
       }
 
@@ -201,7 +202,7 @@ sap.ui.define([
         throw new Error("Run 'generate' before calling 'execute'");
       }
       if (!oTestStep ||
-        (!oTestStep.skip && (($.type(oTestStep.func) !== "function") || ($.type(oTestStep.parameters) !== "array"))))  {
+        (!oTestStep.skip && ((typeof oTestStep.func !== "function") || !Array.isArray(oTestStep.parameters))))  {
         throw new Error("Input parameter 'oTestStep' is not a valid TestStep object.");
       }
 
@@ -278,17 +279,17 @@ sap.ui.define([
         // create a concrete scenario from each example in the Examples
         aConcreteScenarios = aConcreteScenarios.concat(aConvertedExamples.map(function(oConvertedExample, i) {
 
-          var oScenarioCopy = $.extend(true, {}, oScenario);
+          var oScenarioCopy = jQueryDOM.extend(true, {}, oScenario);
           oScenarioCopy.name += (oExample.name) ? ": " + oExample.name : "";
           oScenarioCopy.name += " #" + (i + 1);
 
           // for each variable specified for this concrete example
-          $.each(oConvertedExample, function(sVariableName, sVariableValue) {
+          jQueryDOM.each(oConvertedExample, function(sVariableName, sVariableValue) {
 
             // for each test step in the scenario
             oScenarioCopy.steps.forEach(function(oStep) {
               // in the scenario text, replace all occurences of the variable with the concrete value
-              var sEscapedVariableName = $.sap.escapeRegExp(sVariableName);
+              var sEscapedVariableName = escapeRegExp(sVariableName);
               oStep.text = oStep.text.replace(new RegExp("<" + sEscapedVariableName + ">", "g"), sVariableValue);
             });
           });
@@ -384,7 +385,7 @@ sap.ui.define([
      */
     _convertScenarioExamplesToListOfObjects: function(aExamples) {
       // if aExamples is a simple list then convert from simple list to list-of-lists before executing toTable
-      aExamples = aExamples.map(function(i){return $.type(i) === "string" ? [i] : i;});
+      aExamples = aExamples.map(function(i){return (typeof i === "string" || i instanceof String) ? [i] : i;});
       return dataTableUtils.toTable(aExamples);
     },
 
@@ -413,7 +414,7 @@ sap.ui.define([
      * @private
      */
     _isNotWip: function(oObject) {
-      return ($.inArray("@wip", oObject.tags) === -1);
+      return (jQueryDOM.inArray("@wip", oObject.tags) === -1);
     },
 
     /**

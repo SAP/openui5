@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.GridInfo",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.GridInfo.view.GridInfo",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"view/GridInfo.view.xml",
+					"controller/GridInfo.controller.js",
+					"persons.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

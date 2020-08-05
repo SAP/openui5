@@ -1,7 +1,9 @@
 /**
  * Control which contains many aggregations
  */
-sap.ui.define(['sap/ui/core/Control'], function(Control){
+sap.ui.define(['sap/ui/core/Control'], function(Control) {
+	"use strict";
+
 	var ManyAggregationsControl = Control.extend("sap.ui.core.qunit.mvc.viewprocessing.ManyAggregationsControl", {
 		library: "sap.ui.core.qunit.mvc.viewprocessing",
 		metadata: {
@@ -25,25 +27,24 @@ sap.ui.define(['sap/ui/core/Control'], function(Control){
 				groundControls: {type: "sap.ui.core.Control", multiple: true, singularName: "groundControl"}
 			}
 		},
-		renderer: function (oRM, oControl) {
-			oRM.write("<div");
-			oRM.writeControlData(oControl);
-			oRM.addClass("myTestAggrs");
-			oRM.writeClasses();
-			oRM.write(">");
+		renderer: {
+			apiVersion: 2,
+			render: function (oRM, oControl) {
+				oRM.openStart("div", oControl).class("myTestAggrs").openEnd();
 
-			var renderCtrls = function(aCtrls){
-				if (aCtrls){
-					aCtrls.forEach(function(oCtrl) {
-						oRM.renderControl(oCtrl);
-					});
-				}
-			};
+				var renderCtrls = function(aCtrls){
+					if (aCtrls){
+						aCtrls.forEach(function(oCtrl) {
+							oRM.renderControl(oCtrl);
+						});
+					}
+				};
 
-			renderCtrls(oControl.getAggregation("alternativeContent"));
-			renderCtrls(oControl.getAggregation("content"));
-			renderCtrls(oControl.getAggregation("secondaryContent"));
-			oRM.write("</div>");
+				renderCtrls(oControl.getAggregation("alternativeContent"));
+				renderCtrls(oControl.getAggregation("content"));
+				renderCtrls(oControl.getAggregation("secondaryContent"));
+				oRM.close("div");
+			}
 		}
 	});
 

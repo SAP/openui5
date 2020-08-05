@@ -1,0 +1,41 @@
+{
+	"sap.app": {
+		"id": "sap.ui.integration.sample.CardExplorer",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.integration.sample.CardsLoading.CardLoading",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.integration": {},
+				"sap.m": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"CardLoading.view.xml",
+					"CardLoading.controller.js",
+					"manifest.json",
+					"manifests/analyticalData.json",
+					"manifests/cardManifests.json",
+					"manifests/calendarData.json",
+					"manifests/employee.json",
+					"manifests/listData1.json",
+					"manifests/listData2.json",
+					"manifests/someitems.json",
+					"manifests/tableData.json",
+					"manifests/timelineData.json"
+				]
+			}
+		}
+	}
+}

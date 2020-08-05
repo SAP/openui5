@@ -6,7 +6,7 @@
 		"applicationVersion" : {
 			"version" : "${version}"
 		},
-		"description" : "{{sap.app.description}}",
+		"description" : "Example for consuming an OData V4 Service",
 		"dataSources" : {
 			"default" : {
 				"uri" : "/sap/opu/odata4/sap/sepm_odata_ref/sadl/sap/sepm_c_slsorder_tp_100/0001/",
@@ -17,8 +17,7 @@
 			}
 		},
 		"id" : "sap.ui.core.sample.odata.v4.SalesOrderTP100_V4",
-		"i18n" : "i18n/i18n.properties",
-		"title" : "{{sap.app.title}}",
+		"title" : "Sales Orders TP100",
 		"type" : "application"
 	},
 	"sap.ui" : {
@@ -38,7 +37,10 @@
 					"Component.js",
 					"Main.controller.js",
 					"Main.view.xml",
-					"manifest.json"
+					"manifest.json",
+					"SandboxModel.js",
+					"../../../common/Helper",
+					"../../../common/SandboxModelHelper.js"
 				]
 			}
 		},
@@ -56,18 +58,21 @@
 		"models" : {
 			"" : {
 				"dataSource" : "default",
+				"preload" : true,
 				"settings" : {
 					"autoExpandSelect" : true,
 					"operationMode" : "Server",
 					"synchronizationMode" : "None",
 					"updateGroupId" : "UpdateGroup"
-				}
+				},
+				"type" : "sap.ui.core.sample.odata.v4.SalesOrderTP100_V4.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
 		},
 		"rootView" : {
 			"async" : true,
 			"type" : "XML",
-			"viewName" : "Main.view.xml"
+			"viewName" : "sap.ui.core.sample.odata.v4.SalesOrderTP100_V4.Main"
 		}
 	}
 }

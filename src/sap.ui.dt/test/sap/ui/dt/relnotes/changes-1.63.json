@@ -1,0 +1,18 @@
+{
+  "1.63.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "999a0cb7f30fbed75c3606570860ae1c7ece7ae5",
+        "type": "FIX",
+        "text": ": RTA upper position of minimenu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970077040"
+          }
+        ]
+      }
+    ]
+  }
+}

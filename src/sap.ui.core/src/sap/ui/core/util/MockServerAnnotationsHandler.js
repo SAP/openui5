@@ -1,7 +1,7 @@
 /*
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/util/MockServer', 'sap/ui/model/odata/ODataModel', 'jquery.sap.xml'],
+sap.ui.define(['sap/ui/core/util/MockServer', 'sap/ui/model/odata/ODataModel'],
 	function(MockServer, ODataModel) {
 		"use strict";
 		return {

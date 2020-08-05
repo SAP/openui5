@@ -1,0 +1,15 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc">
+	<f:DynamicPage toggleHeaderOnTitleClick="false">
+		<!-- DynamicPage Title -->
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<Title text="About supplier"/>
+				</f:heading>
+			</f:DynamicPageTitle>
+		</f:title>
+	</f:DynamicPage>
+</mvc:View>

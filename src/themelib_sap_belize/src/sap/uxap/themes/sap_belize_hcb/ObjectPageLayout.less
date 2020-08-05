@@ -3,10 +3,6 @@
 /* Belize High Contrast Black theme           */
 /* ========================================== */
 
-.sapUxAPObjectPageNavigation {
-	background-color: @sapUiObjectHeaderBackground;
-}
-
 .sapUxAPObjectChildPage {
 	width: 0.25rem;
 }
@@ -32,16 +28,9 @@
 	width: auto;
 }
 
-// title hover
-.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) .sapFDynamicPageTitle:hover {
-	background: @sapUiHighlight;
-	box-shadow: @sapUiShadowHeader;
-}
-
 // toggle header visual indicator
 .sapUxAPObjectPageLayout {
-  &.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) {
-    .sapFDynamicPageTitle:hover,
+  &.sapUxAPObjectPageLayoutTitleClickEnabled {
     &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
       background: @sapUiHighlight;
       box-shadow: @sapUiShadowHeader;

@@ -1,27 +1,36 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([
-	'jquery.sap.global',
-	'./Matcher'
-], function (jQuery, Matcher) {
+sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], function (Matcher, capitalize) {
 	"use strict";
 
 	/**
 	 * @class
 	 * The I18NText matcher checks if a control property has the same value as a text from an I18N file.
-	 * The matcher does automatically
+	 *
+	 * The matcher automatically:
 	 * <ul>
 	 *     <li>
-	 *         retrieve the text from the assigned 'i18n' model (name can be changed)
+	 *         retrieves the text from the assigned 'i18n' model (name can be changed)
 	 *     </li>
 	 *     <li>
-	 *         check that the I18N key does actually exist in the file
+	 *         checks that the I18N key does actually exist in the file
 	 *     </li>
 	 *     <li>
-	 *         check if asynchronously loaded I18N have actually been loaded
+	 *         checks if asynchronously loaded I18N have actually been loaded
 	 *     </li>
 	 * </ul>
+	 *
+	 * As of version 1.72, it is available as a declarative matcher with the following syntax:
+	 * <code><pre>{
+	 *     i18NText: {
+	 *         propertyName: "string",
+	 *         key: "string",
+	 *         parameters: "any",
+	 *         modelName: "string"
+	 *     }
+	 * }
+	 * </code></pre>
 	 *
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new I18NText
@@ -32,33 +41,33 @@ sap.ui.define([
 	 */
 	return Matcher.extend("sap.ui.test.matchers.I18NText", /** @lends sap.ui.test.matchers.I18NText.prototype */ {
 
-		metadata : {
-			publicMethods : [ "isMatching" ],
-			properties : {
+		metadata: {
+			publicMethods: ["isMatching"],
+			properties: {
 				/**
 				 * The name of the control property to match the I18N text with.
 				 */
-				propertyName : {
-					type : "string"
+				propertyName: {
+					type: "string"
 				},
 				/**
-				 * The key of the I18N text in the containing {@link jQuery.sap.util.ResourceBundle}.
+				 * The key of the I18N text in the containing {@link module:sap/base/i18n/ResourceBundle}.
 				 */
-				key : {
-					type : "string"
+				key: {
+					type: "string"
 				},
 				/**
-				 * The parameters for replacing the placeholders of the I18N text. See {@link jQuery.sap.util.ResourceBundle#getText}.
+				 * The parameters for replacing the placeholders of the I18N text. See {@link module:sap/base/i18n/ResourceBundle#getText}.
 				 */
-				parameters : {
-					type : "any"
+				parameters: {
+					type: "any"
 				},
 				/**
 				 * The name of the {@link sap.ui.model.resource.ResourceModel} assigned to the control.
 				 */
-				modelName : {
-					type : "string",
-					defaultValue : "i18n"
+				modelName: {
+					type: "string",
+					defaultValue: "i18n"
 				}
 			}
 		},
@@ -70,18 +79,14 @@ sap.ui.define([
 		 * @return {boolean} true if the property has a strictly matching value.
 		 * @public
 		 */
-		isMatching : function (oControl) {
+		isMatching: function (oControl) {
 
 			var sKey = this.getKey(),
 				sPropertyName = this.getPropertyName(),
 				aParameters = this.getParameters(),
 				sModelName = this.getModelName(),
 				oModel = oControl.getModel(sModelName),
-				oBundle,
-				fnProperty = oControl["get" + jQuery.sap.charToUpperCase(sPropertyName, 0)],
-				sPropertyValue,
-				sText,
-				bResult;
+				fnProperty = oControl["get" + capitalize(sPropertyName, 0)];
 
 			// check model existence
 			if (!oModel) {
@@ -96,9 +101,10 @@ sap.ui.define([
 			}
 
 			// check resource bundle
-			oBundle = oModel.getResourceBundle();
-			if (oBundle instanceof Promise) {
-				if (oModel._oResourceBundle instanceof Object && oModel._oResourceBundle.getText) {
+			var oAppWindow = this._getApplicationWindow();
+			var oBundle = oModel.getResourceBundle();
+			if (oBundle instanceof oAppWindow.Promise) {
+				if (oModel._oResourceBundle instanceof oAppWindow.Object && oModel._oResourceBundle.getText) {
 					// we access the loaded bundle from the internal variable of the resource model
 					// ... instead of using the asynchronous promises which is no option for a synchronous matcher
 					// !!! we have a qunit in place that ensures this internal implementation of the ResourceModel
@@ -114,18 +120,19 @@ sap.ui.define([
 				this._oLogger.debug("The '" + oControl + "' has no '" + sPropertyName + "' property");
 				return false;
 			}
-			sPropertyValue =  fnProperty.call(oControl);
+
+			var sPropertyValue = fnProperty.call(oControl);
 
 			// check key
-			sText = oBundle.getText(sKey, aParameters);
-			if (sText === sKey) {
+			var sText = oBundle.getText(sKey, aParameters, true);
+			if (!sText) {
 				var sMessage = "No value for the key '" + sKey + "' in the model '" + sModelName + "' of '" + oControl + "'";
 				this._oLogger.debug(sMessage);
 				return false;
 			}
 
 			// compare values
-			bResult = sPropertyValue === sText;
+			var bResult = sPropertyValue === sText;
 			if (!bResult) {
 				this._oLogger.debug("The text '" + sText + "' does not match the value '" + sPropertyValue + "' of the '" + sPropertyName + "' property for '" + oControl + "'");
 			}

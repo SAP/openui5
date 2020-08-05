@@ -1,9 +1,25 @@
 {
-	"_version": "1.8.0",
+	"_version": "1.21.0",
 	"sap.app": {
 		"id": "sap.ui.demo.toolpageapp",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"fallbackLocale": "en",
+			"supportedLocales": ["en", "de"],
+			"terminologies": {
+				"sports": {
+					"bundleUrl": "i18n/terminologies/sports/i18n.terminologies.sports.properties",
+					"bundleUrlRelativeTo": "manifest",
+					"supportedLocales": ["en", "de"]
+				},
+				"travel": {
+					"bundleUrl": "i18n/terminologies/travel/i18n.terminologies.travel.properties",
+					"bundleUrlRelativeTo": "manifest",
+					"supportedLocales": ["en", "de"]
+				}
+			}
+		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
@@ -20,7 +36,7 @@
 		"supportedThemes": [
 			"sap_hcb",
 			"sap_bluecrystal",
-			"sap_belize"
+			"sap_fiori_3"
 		]
 	},
 	"sap.ui5": {
@@ -37,14 +53,75 @@
 				"sap.m": {},
 				"sap.tnt": {},
 				"sap.ui.layout": {},
-				"sap.uxap": {}
+				"sap.uxap": {},
+				"sap.suite.ui.microchart": {
+					"lazy": true
+				}
 			}
 		},
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.toolpageapp.i18n.i18n"
+					"bundleUrl": "i18n/i18n.properties",
+					"async": true,
+					"fallbackLocale": "en",
+					"supportedLocales": ["en", "de"],
+					"terminologies": {
+						"sports": {
+							"bundleUrl": "i18n/terminologies/sports/i18n.terminologies.sports.properties",
+							"bundleUrlRelativeTo": "manifest",
+							"supportedLocales": ["en", "de"]
+						},
+						"travel": {
+							"bundleUrl": "i18n/terminologies/travel/i18n.terminologies.travel.properties",
+							"bundleUrlRelativeTo": "manifest",
+							"supportedLocales": ["en", "de"]
+						}
+					},
+					"enhanceWith": [
+						{
+							"bundleUrl": "reuse/appvar1/i18n/i18n.properties",
+							"fallbackLocale": "en",
+							"supportedLocales": [
+								"en", "de"
+							],
+							"terminologies": {
+								"sports": {
+									"bundleUrl": "reuse/appvar1/i18n/terminologies/sports/i18n.terminologies.sports.properties",
+									"bundleUrlRelativeTo": "manifest",
+									"supportedLocales": [
+										"en", "de"
+									]
+								},
+								"travel": {
+									"bundleUrl": "reuse/appvar1/i18n/terminologies/travel/i18n.terminologies.travel.properties",
+									"bundleUrlRelativeTo": "manifest",
+									"supportedLocales": [
+										"en", "de"
+									]
+								}
+							}
+						},
+						{
+							"bundleUrl": "reuse/appvar2/i18n/i18n.properties",
+							"bundleUrlRelativeTo": "manifest",
+							"supportedLocales": [
+								"en",
+								"de"
+							],
+							"fallbackLocale": "en",
+							"terminologies": {
+								"travel": {
+									"bundleUrl": "reuse/appvar2/i18n/terminologies/travel/i18n.terminologies.travel.properties",
+									"bundleUrlRelativeTo": "manifest",
+									"supportedLocales": [
+										"en", "de"
+									]
+								}
+							}
+						}
+					]
 				}
 			},
 			"side": {
@@ -84,14 +161,37 @@
 					]
 				},
 				{
-					"pattern": "SystemSettings",
+					"pattern": "MasterSettings/SystemSettings",
 					"name": "systemSettings",
-					"target": "detailSettings"
+					"target": [
+						"detailSettings",
+						"masterSettings"
+					]
 				},
 				{
 					"pattern": "Statistics",
 					"name": "statistics",
 					"target": "statistics"
+				},
+				{
+					"pattern": "UsageStatistics",
+					"name": "usageStatistics",
+					"target": "usageStatistics"
+				},
+				{
+					"pattern": "OrderStatistics",
+					"name": "orderStatistics",
+					"target": "orderStatistics"
+				},
+				{
+					"pattern": "ImportantLinks",
+					"name": "importantLinks",
+					"target": "importantLinks"
+				},
+				{
+					"pattern": "Legal",
+					"name": "legal",
+					"target": "legal"
 				}
 			],
 			"targets": {
@@ -120,6 +220,22 @@
 				"statistics": {
 					"viewId": "statistics",
 					"viewName": "Statistics"
+				},
+				"usageStatistics": {
+					"viewId": "usageStatistics",
+					"viewName": "UsageStatistics"
+				},
+				"orderStatistics": {
+					"viewId": "orderStatistics",
+					"viewName": "OrderStatistics"
+				},
+				"importantLinks": {
+					"viewId": "importantLinks",
+					"viewName": "ImportantLinks"
+				},
+				"legal": {
+					"viewId": "legal",
+					"viewName": "Legal"
 				}
 			}
 		}

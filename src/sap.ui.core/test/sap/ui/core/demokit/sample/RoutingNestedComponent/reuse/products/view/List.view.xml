@@ -1,0 +1,35 @@
+<mvc:View controllerName="sap.ui.core.sample.RoutingNestedComponent.reuse.products.controller.List"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	displayBlock="true">
+	<Page id="page"
+		showHeader="false"
+		enableScrolling="true"
+		class="sapUiContentPadding productsPage">
+		<Table id="table" inset="false" busyIndicatorDelay="0">
+			<headerToolbar>
+				<OverflowToolbar>
+					<content>
+						<Title text="{i18n>listViewTitle}"
+							level="H2" />
+						<ToolbarSpacer />
+					</content>
+				</OverflowToolbar>
+			</headerToolbar>
+			<columns>
+				<Column width="12em">
+					<Text text="ID" />
+				</Column>
+				<Column>
+					<Text text="Name" />
+				</Column>
+				<Column>
+					<Text text="Supplier" />
+				</Column>
+				<Column>
+					<Text text="Price" />
+				</Column>
+			</columns>
+		</Table>
+	</Page>
+</mvc:View>

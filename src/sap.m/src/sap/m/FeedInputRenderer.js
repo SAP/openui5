@@ -20,6 +20,10 @@ var FeedInputRenderer = {
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
+		oRm.addClass("sapMFeedInBase");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.write('<div id="' + sMyId + '-outerContainer"');
 		oRm.addClass("sapMFeedIn");
 		if (!oControl.getShowIcon()) {
 			oRm.addClass("sapMFeedInNoIcon");
@@ -39,6 +43,12 @@ var FeedInputRenderer = {
 		var oTextArea = oControl._getTextArea();
 		oRm.renderControl(oTextArea);
 		oRm.renderControl(oControl._getPostButton());
+		oRm.write("</div>");
+		oRm.write("</div>");
+		oRm.write('<div id="' + sMyId + '-counterContainer"');
+		oRm.addClass("sapMFeedInCounter");
+		oRm.writeClasses();
+		oRm.write(">");
 		oRm.write("</div>");
 		oRm.write("</div>");
 	};

@@ -2,36 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
-		'sap/ui/model/ValidateException', 'sap/ui/model/type/String'],
-	function(jQuery, ODataType, ValidateException, StringType) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/model/type/String"
+], function (Log, ValidateException, ODataType, StringType) {
 	"use strict";
 
 	var rDigitsOnly = /^\d+$/,
-		rLeadingZeros = /^0*(?=\d)/,
-		sZeros = "00000000000000000000000000000000000000000000000000000000000000000000000000000000";
-
-	/**
-	 * Adds leading zeros to the given value.
-	 *
-	 * @param {string} sValue
-	 *   the string which needs to be filled up with leading zeros
-	 * @param {number} iLength
-	 *   the expected length of the resulting string; resulting string might be longer if given
-	 *   value is already longer
-	 * @returns {string}
-	 *   given value with leading zeros
-	 */
-	function fillLeadingZeros(sValue, iLength) {
-		if (sValue.length >= iLength) {
-			return sValue;
-		}
-		// ensure that constant for zeros is long enough
-		while (sZeros.length < iLength) {
-			sZeros = sZeros + sZeros;
-		}
-		return sZeros.slice(0, iLength - sValue.length) + sValue;
-	}
+		rLeadingZeros = /^0*(?=\d)/;
 
 	/**
 	 * Checks whether isDigitSequence constraint is set to true and the given value is a digit
@@ -63,13 +43,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 		if (oConstraints) {
 			vMaxLength = oConstraints.maxLength;
 			if (typeof vMaxLength === "string") {
-				vMaxLength = parseInt(vMaxLength, 10);
+				vMaxLength = parseInt(vMaxLength);
 			}
 			if (typeof vMaxLength === "number" && !isNaN(vMaxLength) && vMaxLength > 0) {
 				oType.oConstraints = {maxLength : vMaxLength };
 			} else if (vMaxLength !== undefined) {
-				jQuery.sap.log.warning("Illegal maxLength: " + oConstraints.maxLength,
-					null, oType.getName());
+				Log.warning("Illegal maxLength: " + oConstraints.maxLength, null, oType.getName());
 			}
 			vIsDigitSequence = oConstraints.isDigitSequence;
 			if (vIsDigitSequence === true || vIsDigitSequence === "true") {
@@ -77,8 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 				oType.oConstraints.isDigitSequence = true;
 			} else if (vIsDigitSequence !== undefined && vIsDigitSequence !== false
 					&& vIsDigitSequence !== "false") {
-				jQuery.sap.log.warning("Illegal isDigitSequence: " + vIsDigitSequence, null,
-					oType.getName());
+				Log.warning("Illegal isDigitSequence: " + vIsDigitSequence, null, oType.getName());
 			}
 
 			vNullable = oConstraints.nullable;
@@ -86,7 +64,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 				oType.oConstraints = oType.oConstraints || {};
 				oType.oConstraints.nullable = false;
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 		}
 	}
@@ -108,8 +86,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 *
 	 * @alias sap.ui.model.odata.type.String
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
-	 *   type ignores them since it does not support any format options
+	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}
+	 * @param {boolean} [oFormatOptions.parseKeepsEmptyString=false]
+	 *   if <code>true</code>, the empty string <code>""</code> is parsed to <code>""</code> and
+	 *   <code>nullable=false</code> does not mean "input is mandatory". Otherwise the empty string
+	 *   <code>""</code> is parsed to <code>null</code> which might be rejected.
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
@@ -118,25 +99,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 *   leading zeros are removed from the value and while parsing the value is enhanced with
 	 *   leading zeros (if a maxLength constraint is given) or leading zeros are removed from the
 	 *   value (if no maxLength constraint is given); this constraint is supported since 1.35.0.
+	 *
 	 *   To make this type behave as ABAP type NUMC, use
 	 *   <code>oConstraints.isDigitSequence=true</code> together with
 	 *   <code>oConstraints.maxLength</code>.
+	 *
+	 *   A type with <code>isDigitSequence=true</code> and <code>nullable=false</code> does not
+	 *   parse the empty string to <code>null</code> or "", but to "0" instead. This overrides
+	 *   <code>parseKeepsEmptyString</code> and means that "input is mandatory" does not hold here.
 	 * @param {int|string} [oConstraints.maxLength]
 	 *   the maximal allowed length of the string; unlimited if not defined
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> is accepted. The constraint
 	 *   <code>nullable=false</code> is interpreted as "input is mandatory"; empty user input is
-	 *   rejected then.
+	 *   rejected then (see <code>parseKeepsEmptyString</code> and <code>isDigitSequence</code> for
+	 *   exceptions).
 	 * @public
 	 * @since 1.27.0
 	 */
 	var EdmString = ODataType.extend("sap.ui.model.odata.type.String", {
-				constructor : function (oFormatOptions, oConstraints) {
-					ODataType.apply(this, arguments);
-					setConstraints(this, oConstraints);
+			constructor : function (oFormatOptions, oConstraints) {
+				var vParseKeepsEmptyString
+						= oFormatOptions ? oFormatOptions.parseKeepsEmptyString : undefined;
+
+				ODataType.apply(this, arguments);
+				setConstraints(this, oConstraints);
+
+				this._sParsedEmptyString = null;
+
+				if (this.oConstraints && this.oConstraints.nullable === false
+						&& this.oConstraints.isDigitSequence) {
+					this._sParsedEmptyString = "0";
+				} else if (vParseKeepsEmptyString !== undefined) {
+					if (vParseKeepsEmptyString === true) {
+						this._sParsedEmptyString = "";
+					} else if (vParseKeepsEmptyString !== false) {
+						Log.warning("Illegal parseKeepsEmptyString: " + vParseKeepsEmptyString,
+							null, this.getName());
+					}
 				}
 			}
-		);
+	});
 
 	/**
 	 * Formats the given value to the given target type.
@@ -175,9 +178,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 * leading zeros, if <code>maxLength</code> constraint is given, or leading zeros are removed
 	 * from parsed string.
 	 *
-	 * Note: An empty input string (<code>""</code>) is parsed to <code>null</code>. This value will
-	 * be rejected with a {@link sap.ui.model.ValidateException ValidateException} by
-	 * {@link #validateValue} if the constraint <code>nullable</code> is <code>false</code>.
+	 * Note:
+	 * Depending on the format option <code>parseKeepsEmptyString</code>, an empty input
+	 * string (<code>""</code>) is either parsed to <code>""</code> or <code>null</code>.
+	 * If the constraint <code>nullable</code> is <code>false</code>, a <code>null</code>
+	 * value is rejected with a {@link sap.ui.model.ValidateException ValidateException} raised
+	 * in the {@link #validateValue} method.
 	 *
 	 * @param {string|number|boolean} vValue
 	 *   the value to be parsed
@@ -185,7 +191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 *   the source type (the expected type of <code>vValue</code>).
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
-	 *   the parsed value or <code>null</code> if <code>vValue</code> is <code>""</code>
+	 *   the parsed value
 	 * @throws {sap.ui.model.ParseException}
 	 *   if <code>sSourceType</code> is unsupported
 	 * @public
@@ -193,12 +199,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	EdmString.prototype.parseValue = function (vValue, sSourceType) {
 		var sResult;
 
-		sResult = vValue === "" ? null : StringType.prototype.parseValue.apply(this, arguments);
+		sResult = vValue === ""
+			? this._sParsedEmptyString
+			: StringType.prototype.parseValue.apply(this, arguments);
 
 		if (isDigitSequence(sResult, this.oConstraints)) {
 			sResult = sResult.replace(rLeadingZeros, "");
 			if (this.oConstraints.maxLength) {
-				sResult = fillLeadingZeros(sResult, this.oConstraints.maxLength);
+				sResult = sResult.padStart(this.oConstraints.maxLength, "0");
 			}
 		}
 		return sResult;
@@ -210,7 +218,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 *
 	 * @param {string} sValue
 	 *   the value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 */

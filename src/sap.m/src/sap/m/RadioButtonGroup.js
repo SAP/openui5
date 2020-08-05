@@ -4,20 +4,20 @@
 
 // Provides control sap.m.RadioButtonGroup.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/library',
-	'./RadioButtonGroupRenderer'
+	'./RadioButtonGroupRenderer',
+	"sap/base/Log"
 ],
 	function(
-		jQuery,
 		library,
 		Control,
 		ItemNavigation,
 		coreLibrary,
-		RadioButtonGroupRenderer
+		RadioButtonGroupRenderer,
+		Log
 		) {
 			"use strict";
 
@@ -172,10 +172,22 @@ sap.ui.define([
 			 * @public
 			 */
 			RadioButtonGroup.prototype.onBeforeRendering = function() {
+				var aButtons = this.getButtons();
+				var iButtonCount = aButtons.length;
+				var bEditable = this.getEditable();
 
-				if (this.getSelectedIndex() > this.getButtons().length) {
-					jQuery.sap.log.warning("Invalid index, set to 0");
+				aButtons.forEach(function (oRadioButton) {
+					oRadioButton._setEditableParent(bEditable);
+				});
+
+				if (this.getSelectedIndex() > iButtonCount) {
+					Log.warning("Invalid index, set to 0");
 					this.setSelectedIndex(0);
+				}
+
+				if (this.aRBs){
+					var oValueState = this.getValueState();
+					this.aRBs.forEach(function (oRB) { oRB.setValueState(oValueState); });
 				}
 			};
 
@@ -185,25 +197,7 @@ sap.ui.define([
 			 * @public
 			 */
 			RadioButtonGroup.prototype.onAfterRendering = function() {
-
 				this._initItemNavigation();
-
-				// update ARIA information of RadioButtons with visible buttons only
-				var aVisibleRBs;
-
-				if (this.getVisible()) {
-					aVisibleRBs = this.aRBs.filter(function(oButton) {
-						return oButton.getVisible();
-					});
-				} else {
-					aVisibleRBs = [];
-				}
-
-				for (var i = 0; i < aVisibleRBs.length; i++) {
-					var oRBDomRef = aVisibleRBs[i].getDomRef();
-					oRBDomRef.setAttribute("aria-posinset", i + 1);
-					oRBDomRef.setAttribute("aria-setsize", aVisibleRBs.length);
-				}
 			};
 
 			/**
@@ -271,7 +265,7 @@ sap.ui.define([
 
 				if (iSelectedIndex < -1) {
 					// invalid negative index -> don't change index.
-					jQuery.sap.log.warning("Invalid index, will not be changed");
+					Log.warning("Invalid index, will not be changed");
 					return this;
 				}
 
@@ -307,21 +301,16 @@ sap.ui.define([
 			 * @param {sap.m.RadioButton} oSelectedButton The item to be selected.
 			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining.
 			 */
-			RadioButtonGroup.prototype.setSelectedButton = function(oSelectedButton) {
+			RadioButtonGroup.prototype.setSelectedButton = function (oSelectedButton) {
+				if (!oSelectedButton) {
+					return this.setSelectedIndex(-1);
+				}
 
 				var aButtons = this.getButtons();
-
-				if (oSelectedButton) {
-					if (aButtons) {
-						for (var i = 0; i < aButtons.length; i++) {
-							if (oSelectedButton.getId() == aButtons[i].getId()) {
-								this.setSelectedIndex(i);
-								break;
-							}
-						}
+				for (var i = 0; i < aButtons.length; i++) {
+					if (oSelectedButton.getId() == aButtons[i].getId()) {
+						return this.setSelectedIndex(i);
 					}
-				} else {
-					this.setSelectedIndex(-1);
 				}
 
 				return this;
@@ -493,6 +482,8 @@ sap.ui.define([
 					this.setSelectedIndex(-1);
 				}
 
+				this.aRBs = [];
+
 				return this.removeAllAggregation("buttons");
 			};
 
@@ -601,26 +592,6 @@ sap.ui.define([
 			 */
 
 			/**
-			 * Sets ValueState of all radio buttons in the group.
-			 *
-			 * @public
-			 * @param {string} sValueState The value state of the radio group - none, success, warning, error.
-			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining.
-			 */
-			RadioButtonGroup.prototype.setValueState = function(sValueState) {
-
-				this.setProperty("valueState", sValueState, false); // re-rendering to update ItemNavigation
-
-				if (this.aRBs){
-					for (var i = 0; i < this.aRBs.length; i++) {
-						this.aRBs[i].setValueState(sValueState);
-					}
-				}
-
-				return this;
-			};
-
-			/**
 			 * Handles the event that gets fired by the {@link sap.ui.core.delegate.ItemNavigation} delegate.
 			 * Ensures that focused element is selected.
 			 *
@@ -647,7 +618,6 @@ sap.ui.define([
 					this.fireSelect({
 						selectedIndex : iIndex
 					});
-					this.aRBs[iIndex].fireSelect({ selected: true });
 				}
 			};
 

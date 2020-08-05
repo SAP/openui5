@@ -1,9 +1,15 @@
 {
-	"_version": "1.8.0",
+	"_version": "1.21.0",
 	"sap.app": {
 		"id": "sap.ui.demo.basicTemplate",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -38,7 +44,7 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.30.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},
@@ -53,7 +59,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.basicTemplate.i18n.i18n"
+					"bundleName": "sap.ui.demo.basicTemplate.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			}
 		},
@@ -61,6 +71,31 @@
 			"css": [{
 				"uri": "css/style.css"
 			}]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.demo.basicTemplate.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": ["home"]
+				}
+			],
+			"targets": {
+				"home": {
+					"viewName": "Home",
+					"viewId": "home",
+					"viewLevel": 1,
+					"title": "{i18n>title}"
+				}
+			}
 		}
 	}
 }

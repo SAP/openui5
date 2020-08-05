@@ -1,0 +1,31 @@
+{
+  "1.68.0": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "3e983e882001533177b97c95ed061b2137af80d7",
+        "type": "FIX",
+        "text": "sap.ui.dt - async new processing state in plugins",
+        "references": []
+      },
+      {
+        "id": "8968f5a44e69fccede3f5d9b1c391d64d9c2f8cb",
+        "type": "FIX",
+        "text": "sap.ui.rta: Adjust some commands for binding template handling",
+        "references": []
+      },
+      {
+        "id": "d73a38f3dd52cbc757c7011bb3d177fb644b88ba",
+        "type": "FEATURE",
+        "text": "UX improvements for deletion/creation of app variants",
+        "references": []
+      },
+      {
+        "id": "5b2681916cbc170ffd7a8c5d93495138aae57e6e",
+        "type": "FEATURE",
+        "text": "S/4HANA Cloud UX improvements for deletion app variants",
+        "references": []
+      }
+    ]
+  }
+}

@@ -28,8 +28,7 @@
 			<ObjectAttribute text="{Description}" />
 			<ObjectAttribute
 				text="www.sap.com"
-				active="true"
-				press="handleLinkObjectAttributePress" />
+				active="true"/>
 		</attributes>
 	</ObjectHeader>
 	<Text text="ObjectHeader with its bottom and begin margins removed:" class="sapUiExploredNoMarginInfo"/>
@@ -57,8 +56,7 @@
 			<ObjectAttribute text="{Description}" />
 			<ObjectAttribute
 				text="www.sap.com"
-				active="true"
-				press="handleLinkObjectAttributePress" />
+				active="true"/>
 		</attributes>
 	</ObjectHeader>
 	<Text text="By default, ObjectHeader instances come with a 16px (1rem) margin all around. In our example, we added pre-defined css classes 'sapUiNoMarginTop' and 'sapUiNoMarginEnd' to remove the top and right margin from the first ObjectHeader and 'sapUiNoMarginBottom' and 'sapUiNoMarginBegin' to remove the bottom and left margin from the second ObjectHeader(in left-to-right mode). To see what happens in Right-To-Left mode open 'Settings' by pressing the cog wheel button next to 'Entities'." class="sapUiExploredNoMarginInfo"/>

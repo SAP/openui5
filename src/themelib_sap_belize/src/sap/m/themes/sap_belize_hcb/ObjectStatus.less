@@ -29,3 +29,66 @@
 .sapMObjStatusActive:focus .sapMObjStatusIcon:only-child > .sapUiIcon{
 	text-decoration: none;
 }
+
+.sapMListTbl .sapMObjStatusInverted .sapMObjStatusIcon > .sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon),
+.sapMObjStatusInverted .sapMObjStatusIcon > .sapUiIcon {
+	font-size: 1rem;
+	vertical-align: top;
+}
+
+.sapMObjStatusInverted.sapMObjStatusIndication01,
+.sapMObjStatusInverted.sapMObjStatusIndication02,
+.sapMObjStatusInverted.sapMObjStatusIndication03,
+.sapMObjStatusInverted.sapMObjStatusIndication04,
+.sapMObjStatusInverted.sapMObjStatusIndication05,
+.sapMObjStatusInverted.sapMObjStatusIndication06,
+.sapMObjStatusInverted.sapMObjStatusIndication07,
+.sapMObjStatusInverted.sapMObjStatusIndication08,
+.sapMObjStatusInverted.sapMObjStatusNone,
+.sapMObjStatusInverted.sapMObjStatusError,
+.sapMObjStatusInverted.sapMObjStatusWarning,
+.sapMObjStatusInverted.sapMObjStatusSuccess,
+.sapMObjStatusInverted.sapMObjStatusInformation {
+	.sapMObjStatusText,
+	.sapMObjStatusIcon {
+		background: none;
+		font-size: @sapMFontMediumSize;
+		font-weight: normal;
+		padding: 0;
+	}
+	.sapMObjStatusIcon {
+		padding-right: .5rem;
+	}
+	.sapMObjStatusLink:active,
+	.sapMObjStatusLink:hover {
+		.sapMObjStatusText,
+		.sapMObjStatusIcon {
+			background: none;
+		}
+	}
+}
+
+.sapMObjStatusInverted.sapMObjStatusNone .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusNone .sapMObjStatusIcon {
+	color: @sapUiNeutralText;
+}
+
+.sapMObjStatusInverted.sapMObjStatusError .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusError .sapMObjStatusIcon {
+	color: @sapUiNegativeText;
+}
+
+.sapMObjStatusInverted.sapMObjStatusWarning .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusWarning .sapMObjStatusIcon {
+	color: @sapUiCriticalText;
+}
+
+.sapMObjStatusInverted.sapMObjStatusSuccess .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusSuccess .sapMObjStatusIcon {
+	color: @sapUiPositiveText;
+}
+
+.sapMObjStatusInverted.sapMObjStatusInformation .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusInformation .sapMObjStatusIcon {
+	color: @sapUiInformativeText;
+}

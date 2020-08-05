@@ -16,6 +16,7 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var CurrencyRenderer = {
+		apiVersion: 2
 	};
 
 	/**
@@ -30,39 +31,34 @@ sap.ui.define([],
 	CurrencyRenderer.render = function(oRm,oCurrency) {
 		var sTooltip = oCurrency.getTooltip_AsString();
 
-		oRm.write("<div");
-		oRm.writeControlData(oCurrency);
+		oRm.openStart("div", oCurrency);
 
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 
-		oRm.addClass("sapUiUfdCurrency");
+		oRm.class("sapUiUfdCurrency");
 		if (oCurrency._bRenderNoValClass) {
-			oRm.addClass("sapUiUfdCurrencyNoVal");
+			oRm.class("sapUiUfdCurrencyNoVal");
 		}
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write("<div");
-		oRm.addClass("sapUiUfdCurrencyAlign");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write("<span");
+		oRm.openEnd();
+		oRm.openStart("div");
+		oRm.class("sapUiUfdCurrencyAlign");
+		oRm.openEnd();
+		oRm.openStart("span");
 		// The currency value should always be displayed in ltr direction
-		oRm.writeAttribute("dir", "ltr");
-		oRm.addClass("sapUiUfdCurrencyValue");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.writeEscaped(oCurrency.getFormattedValue());
-		oRm.write("</span>");
-		oRm.write("<span");
-		oRm.addClass("sapUiUfdCurrencyCurrency");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.writeEscaped(oCurrency._getCurrency());
-		oRm.write("</span>");
-		oRm.write("</div>");
-		oRm.write("</div>");
+		oRm.attr("dir", "ltr");
+		oRm.class("sapUiUfdCurrencyValue");
+		oRm.openEnd();
+		oRm.text(oCurrency.getFormattedValue());
+		oRm.close("span");
+		oRm.openStart("span");
+		oRm.class("sapUiUfdCurrencyCurrency");
+		oRm.openEnd();
+		oRm.text(oCurrency._getCurrency());
+		oRm.close("span");
+		oRm.close("div");
+		oRm.close("div");
 	};
 
 	return CurrencyRenderer;

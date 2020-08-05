@@ -1,0 +1,69 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "48fbef23b2fbce0bfc76f92e1492363a78b70d14",
+        "type": "FIX",
+        "text": "variable @sapContent_GridSize is undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970141244"
+          }
+        ]
+      },
+      {
+        "id": "3bf0af9829546f06b24e25666549fcd57009359e",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: Focus outline in SimpleForm is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970110538"
+          }
+        ]
+      },
+      {
+        "id": "16bbab7451d4b2ecf98ed94f4b8cf1cd1eb2e6c8",
+        "type": "FIX",
+        "text": "sap.f.Avatar: Displaying transparent image is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970178419"
+          }
+        ]
+      },
+      {
+        "id": "5e84afc81a451c0390c84b28324a75a6052fbdff",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageDynamicHeaderTitle: Single-line title on phone",
+        "references": []
+      },
+      {
+        "id": "11177a5d593a75274d49e45fbc71d144107d7c32",
+        "type": "FIX",
+        "text": "sap.uxap.HierarchicalSelect: Fixed visual state of background",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980009916"
+          }
+        ]
+      },
+      {
+        "id": "148312a03542ab816f2ec24e246e999ea59a06a0",
+        "type": "FIX",
+        "text": ": RTA Theme UX Consistency",
+        "references": []
+      },
+      {
+        "id": "47fbc9bc4c59ccafd21c46e11bad7b6235f96f17",
+        "type": "FEATURE",
+        "text": "sap.f.ShellBar: Created notifications badge element",
+        "references": []
+      }
+    ]
+  }
+}

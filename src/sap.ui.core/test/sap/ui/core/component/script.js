@@ -1,15 +1,18 @@
+/* exported main */
 function main() {
 	"use strict";
 
-	jQuery.sap.registerModulePath("test1.Component", "./Component1");
-	jQuery.sap.registerModulePath("test1", "./");
-	jQuery.sap.registerModulePath("test2.Component", "./Component2");
-	jQuery.sap.registerModulePath("test2", "./");
-	jQuery.sap.registerModulePath("test3.Component", "./Component3");
-	jQuery.sap.registerModulePath("test3", "./");
-	sap.ui.require(['sap/ui/core/UIComponent'], function(UIComponent) {
+	sap.ui.loader.config({paths: {
+		"test1/Component": "./Component1",
+		"test1":  "./",
+		"test2/Component": "./Component2",
+		"test2": "./",
+		"test3/Component": "./Component3",
+		"test3": "./"
+	}});
+	sap.ui.require(['sap/ui/core/ComponentContainer', 'sap/ui/core/UIComponent'], function(ComponentContainer, UIComponent) {
 
-		var oCompCont = new sap.ui.core.ComponentContainer({
+		var oCompCont = new ComponentContainer({
 			name: 'test1'
 		});
 
@@ -25,7 +28,7 @@ function main() {
 
 			setTimeout(function() {
 				// Create new component
-				oCompCont = new sap.ui.core.ComponentContainer({
+				oCompCont = new ComponentContainer({
 					name: 'test2'
 				});
 				oCompCont.placeAt("target");
@@ -47,7 +50,7 @@ function main() {
 							manifestUrl: "manifest.json",
 							async: true
 						}).then(function(oComponent) {
-							oCompCont = new sap.ui.core.ComponentContainer({
+							oCompCont = new ComponentContainer({
 								component: oComponent
 							});
 							oCompCont.placeAt("target");
@@ -66,7 +69,7 @@ function main() {
 										manifestUrl: "manifest.appdescr",
 										async: true
 									}).then(function(oComponent) {
-										oCompCont = new sap.ui.core.ComponentContainer({
+										oCompCont = new ComponentContainer({
 											component: oComponent
 										});
 										oCompCont.placeAt("target");

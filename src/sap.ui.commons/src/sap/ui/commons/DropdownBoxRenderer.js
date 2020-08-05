@@ -3,16 +3,20 @@
  */
 
 // Provides default renderer for control sap.ui.commons.DropdownBox
-sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
-	function(jQuery, ComboBoxRenderer) {
+sap.ui.define(['./ComboBoxRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/library'],
+	function(ComboBoxRenderer, Renderer, coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 	/**
 	 * DropdownBox renderer.
 	 * @namespace
 	 */
-	var DropdownBoxRenderer = sap.ui.core.Renderer.extend(ComboBoxRenderer);
+	var DropdownBoxRenderer = Renderer.extend(ComboBoxRenderer);
 
 	/**
 	 * Renders additional HTML for the DropdownBox to the TextField before the INPUT element (sets the icon).
@@ -65,8 +69,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
 
 	/*
 	 * Renders ARIA information for the dropdownbox (outer &lt;div&gt;)
-	 * @param {sap.ui.fw.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.fw.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 * @private
 	 */
 	DropdownBoxRenderer.renderARIAInfo = function(rm, oDdb) {
@@ -89,7 +93,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
 				posinset: (iPosInSet >= 0) ? iPosInSet : undefined
 			};
 
-		if (oDdb.getValueState() == sap.ui.core.ValueState.Error) {
+		if (oDdb.getValueState() == ValueState.Error) {
 			mProps["invalid"] = true;
 		}
 

@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
-	function(Element, Device) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool", "sap/ui/Device"],
+	function(Element, Icon, IconPool, Device) {
 		"use strict";
 
 		/**
@@ -10,7 +10,9 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 		 *
 		 * @namespace
 		 */
-		var SelectListRenderer = {};
+		var SelectListRenderer = {
+			apiVersion: 2
+		};
 
 		/**
 		 * CSS class to be applied to the  root element of the SelectList.
@@ -35,30 +37,29 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 		SelectListRenderer.writeOpenListTag = function(oRm, oList, mStates) {
 			var CSS_CLASS = SelectListRenderer.CSS_CLASS;
 
-			oRm.write("<ul");
 			if (mStates.elementData) {
-				oRm.writeControlData(oList);
+				oRm.openStart("ul", oList);
+			} else {
+				oRm.openStart("ul");
 			}
-			oRm.addClass(CSS_CLASS);
+
+			oRm.class(CSS_CLASS);
 
 			if (oList.getShowSecondaryValues()) {
-				oRm.addClass(CSS_CLASS + "TableLayout");
+				oRm.class(CSS_CLASS + "TableLayout");
 			}
 
 			if (!oList.getEnabled()) {
-				oRm.addClass(CSS_CLASS + "Disabled");
+				oRm.class(CSS_CLASS + "Disabled");
 			}
 
-			oRm.addStyle("width", oList.getWidth());
-			oRm.addStyle("max-width", oList.getMaxWidth());
-			oRm.writeStyles();
-			oRm.writeClasses();
+			oRm.style("width", oList.getWidth());
 			this.writeAccessibilityState(oRm, oList);
-			oRm.write(">");
+			oRm.openEnd();
 		};
 
 		SelectListRenderer.writeCloseListTag = function(oRm, oList) {
-			oRm.write("</ul>");
+			oRm.close("ul");
 		};
 
 		/**
@@ -72,9 +73,14 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 				aItems = oList.getItems(),
 				oSelectedItem = oList.getSelectedItem(),
 				iCurrentPosInSet = 1,
-				oItemStates;
+				oItemStates,
+				bForceSelectedVisualState;
 
 			for (var i = 0; i < aItems.length; i++) {
+				// should force selected state when there is no selected item for the
+				// visual focus to be set on the first item when popover is opened
+				bForceSelectedVisualState = i === 0 && !oSelectedItem;
+
 				oItemStates = {
 					selected: oSelectedItem === aItems[i],
 					setsize: iSize,
@@ -85,7 +91,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 					oItemStates.posinset = iCurrentPosInSet++;
 				}
 
-				this.renderItem(oRm, oList, aItems[i], oItemStates);
+				this.renderItem(oRm, oList, aItems[i], oItemStates, bForceSelectedVisualState);
 			}
 		};
 
@@ -96,8 +102,9 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
 		 * @param {sap.ui.core.Element} oItem An object representation of the element that should be rendered.
 		 * @param {object} mStates
+		 * @param {boolean} bForceSelectedVisualState Forces the visual focus (selected state) to be se on the item.
 		 */
-		SelectListRenderer.renderItem = function(oRm, oList, oItem, mStates) {
+		SelectListRenderer.renderItem = function(oRm, oList, oItem, mStates, bForceSelectedVisualState) {
 
 			if (!(oItem instanceof Element)) {
 				return;
@@ -109,87 +116,89 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 				sTooltip = oItem.getTooltip_AsString(),
 				bShowSecondaryValues = oList.getShowSecondaryValues();
 
-			oRm.write("<li");
+			oRm.openStart("li", mStates.elementData ? oItem : null);
 
-			if (mStates.elementData) {
-				oRm.writeElementData(oItem);
+			if (oItem.getIcon && oItem.getIcon()) {
+				oRm.class("sapMSelectListItemWithIcon");
 			}
 
 			if (oItem instanceof sap.ui.core.SeparatorItem) {
-				oRm.addClass(CSS_CLASS + "SeparatorItem");
+				oRm.class(CSS_CLASS + "SeparatorItem");
 
 				if (bShowSecondaryValues) {
-					oRm.addClass(CSS_CLASS + "Row");
+					oRm.class(CSS_CLASS + "Row");
 				}
 			} else {
 
-				oRm.addClass(CSS_CLASS + "ItemBase");
+				oRm.class(CSS_CLASS + "ItemBase");
 
 				if (bShowSecondaryValues) {
-					oRm.addClass(CSS_CLASS + "Row");
+					oRm.class(CSS_CLASS + "Row");
 				} else {
-					oRm.addClass(CSS_CLASS + "Item");
+					oRm.class(CSS_CLASS + "Item");
 				}
 
 				if (oItem.bVisible === false) {
-					oRm.addClass(CSS_CLASS + "ItemBaseInvisible");
+					oRm.class(CSS_CLASS + "ItemBaseInvisible");
 				}
 
 				if (!bEnabled) {
-					oRm.addClass(CSS_CLASS + "ItemBaseDisabled");
+					oRm.class(CSS_CLASS + "ItemBaseDisabled");
 				}
 
 				if (bEnabled && Device.system.desktop) {
-					oRm.addClass(CSS_CLASS + "ItemBaseHoverable");
+					oRm.class(CSS_CLASS + "ItemBaseHoverable");
 				}
 
-				if (oItem === oSelectedItem) {
-					oRm.addClass(CSS_CLASS + "ItemBaseSelected");
+				if (oItem === oSelectedItem || bForceSelectedVisualState) {
+					oRm.class(CSS_CLASS + "ItemBaseSelected");
 				}
 
 				if (bEnabled) {
-					oRm.writeAttribute("tabindex", "0");
+					oRm.attr("tabindex", "0");
 				}
 			}
 
-			oRm.writeClasses();
 
 			if (sTooltip) {
-				oRm.writeAttributeEscaped("title", sTooltip);
+				oRm.attr("title", sTooltip);
 			}
 
 			this.writeItemAccessibilityState.apply(this, arguments);
 
-			oRm.write(">");
+			oRm.openEnd();
 
 			if (bShowSecondaryValues) {
 
-				oRm.write("<span");
-				oRm.addClass(CSS_CLASS + "Cell");
-				oRm.addClass(CSS_CLASS + "FirstCell");
-				oRm.writeClasses();
-				oRm.writeAttribute("disabled", "disabled"); // fixes span obtaining focus in IE
-				oRm.write(">");
-				oRm.writeEscaped(oItem.getText());
-				oRm.write("</span>");
+				oRm.openStart("span");
+				oRm.class(CSS_CLASS + "Cell");
+				oRm.class(CSS_CLASS + "FirstCell");
+				oRm.attr("disabled", "disabled"); // fixes span obtaining focus in IE
+				oRm.openEnd();
 
-				oRm.write("<span");
-				oRm.addClass(CSS_CLASS + "Cell");
-				oRm.addClass(CSS_CLASS + "LastCell");
-				oRm.writeClasses();
-				oRm.writeAttribute("disabled", "disabled"); // fixes span obtaining focus in IE
-				oRm.write(">");
+				this._renderIcon(oRm, oItem);
+
+				oRm.text(oItem.getText());
+				oRm.close("span");
+
+				oRm.openStart("span");
+				oRm.class(CSS_CLASS + "Cell");
+				oRm.class(CSS_CLASS + "LastCell");
+				oRm.attr("disabled", "disabled"); // fixes span obtaining focus in IE
+				oRm.openEnd();
 
 				if (typeof oItem.getAdditionalText === "function") {
-					oRm.writeEscaped(oItem.getAdditionalText());
+					oRm.text(oItem.getAdditionalText());
 				}
 
-				oRm.write("</span>");
+				oRm.close("span");
 			} else {
-				oRm.writeEscaped(oItem.getText());
+				this._renderIcon(oRm, oItem);
+
+				oRm.text(oItem.getText());
 			}
 
-			oRm.write("</li>");
+			oRm.close("li");
 		};
 
 		/**
@@ -200,7 +209,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
 		 */
 		SelectListRenderer.writeAccessibilityState = function(oRm, oList) {
-			oRm.writeAccessibilityState(oList, {
+			oRm.accessibilityState(oList, {
 				role: "listbox"
 			});
 		};
@@ -215,14 +224,32 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 		 * @param {object} mStates
 		 */
 		SelectListRenderer.writeItemAccessibilityState = function(oRm, oList, oItem, mStates) {
-			var sRole = (oItem instanceof sap.ui.core.SeparatorItem) ? "separator" : "option";
+			var sRole = (oItem.isA("sap.ui.core.SeparatorItem")) ? "separator" : "option";
 
-			oRm.writeAccessibilityState(oItem, {
+			var sDesc;
+
+			if (!oItem.getText() && oItem.getIcon && oItem.getIcon()) {
+				var oIconInfo = IconPool.getIconInfo(oItem.getIcon());
+				if (oIconInfo) {
+					sDesc = oIconInfo.text || oIconInfo.name;
+				}
+			}
+
+			oRm.accessibilityState(oItem, {
 				role: sRole,
 				selected: mStates.selected,
 				setsize: mStates.setsize,
-				posinset: mStates.posinset
+				posinset: mStates.posinset,
+				label: sDesc
 			});
+		};
+
+		SelectListRenderer._renderIcon = function(oRm, oItem) {
+			if (oItem.getIcon && oItem.getIcon()) {
+				oRm.icon(oItem.getIcon(), SelectListRenderer.CSS_CLASS + "ItemIcon", {
+					id: oItem.getId() + "-icon"
+				});
+			}
 		};
 
 		return SelectListRenderer;

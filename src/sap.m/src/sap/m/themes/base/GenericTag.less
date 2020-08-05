@@ -1,0 +1,206 @@
+@sapMGenericTagBorderWidth: 0.25rem;
+@sapMGenericTagPaddingLeft: 0.25rem;
+@sapMGenericTagStatusIconWidth: 1rem;
+@sapMGenericTagIconPaddingRight: 0.5rem;
+@sapMGenericTagTextMinWidth: 1.5625rem;
+
+.sapMGenericTag {
+	margin-top: 0.1875rem;
+	margin-bottom: 0.1875rem;
+	display: inline-block;
+	max-width: 100%;
+
+	&:focus {
+		outline: none;
+	}
+	&:-moz-focus-inner {
+		padding: 0;
+		border: 0
+	}
+	&.sapMGenericTagOverflowToolbar {
+		margin-right: 0;
+		max-width: 20rem;
+		.sapMGenericTagWrap {
+			width: 100%;
+		}
+		.sap-phone & {
+			max-width: 100%;
+		}
+	}
+	.sapMBarChild& {
+		>.sapMGenericTagWrap {
+			display: flex;
+		}
+	}
+}
+
+html.sap-desktop .sapMGenericTag:focus {
+	position: relative;
+	&:before {
+		position: absolute;
+		content: " ";
+		top: 1px;
+		right: 1px;
+		bottom: 1px;
+		left: 1px;
+		z-index: 2;
+		pointer-events: none;
+	}
+
+	&:after {
+		position: absolute;
+		content: " ";
+		top: 1px;
+		right: 1px;
+		bottom: 1px;
+		left: 1px;
+		z-index: 2;
+		pointer-events: none;
+	}
+}
+
+/* FIX: IE and Edge - dotted line appears blurry. */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMGenericTag:focus {
+		&:after{
+			border-style: dashed;
+		}
+	}
+}
+
+.sapMGenericTagWrap {
+	background: @sapUiListBackground;
+	box-shadow: @sapUiShadowLevel0;
+	box-sizing: border-box;
+	border-radius: 0.125rem;
+	border-left-width: @sapMGenericTagBorderWidth;
+	border-left-style: solid;
+	padding: 0 0.5rem 0  @sapMGenericTagPaddingLeft;
+	display: inline-flex;
+	max-width: 100%;
+	flex-flow: row nowrap;
+	align-items: center;
+	page-break-after: auto;
+	height: 1.625rem;
+	min-width: @sapMGenericTagBorderWidth + @sapMGenericTagPaddingLeft + @sapMGenericTagStatusIconWidth + @sapMGenericTagIconPaddingRight+ @sapMGenericTagTextMinWidth;
+
+	.sapMGenericTagIcon {
+		width: 1rem;
+		padding-right: @sapMGenericTagIconPaddingRight;
+	}
+
+	.sapMGenericTagError & {
+		border-color: @sapUiErrorBorder;
+
+		.sapMGenericTagIcon {
+			color: @sapUiNegativeText;
+		}
+	}
+
+	.sapMGenericTagWarning & {
+		border-color: @sapUiWarningBorder;
+
+		.sapMGenericTagIcon {
+			color: @sapUiCriticalText;
+		}
+	}
+
+	.sapMGenericTagSuccess & {
+		border-color: @sapUiSuccessBorder;
+
+		.sapMGenericTagIcon {
+			color: @sapUiPositiveText;
+		}
+	}
+
+	.sapMGenericTagInformation & {
+		border-color: @sapUiInformationBorder;
+
+		.sapMGenericTagIcon {
+			color: @sapUiInformativeText;
+		}
+	}
+
+	.sapMGenericTagNone & {
+		border-color: @sapUiNeutralBorder;
+
+		.sapMGenericTagIcon {
+			color: @sapUiNeutralText;
+		}
+	}
+
+	&:hover {
+		box-shadow: 0 0 0 0.0625rem fade(@sapUiContentShadowColor, 30);
+	}
+
+	.sapMGenericTagActive &  {
+		background: @sapUiListActiveBackground;
+
+		.sapMGenericTagIcon,
+		.sapMGenericTagText,
+		.sapMGenericTagValue,
+		.sapMGenericTagErrorIcon {
+			color: @sapUiListActiveTextColor;
+		}
+	}
+
+	.sapMGenericTagErrorIcon {
+		overflow: hidden;
+		color: @sapUiNegativeText;
+		padding-left: 0.5rem;
+
+		&:before {
+			line-height: normal;
+		}
+	}
+
+	.sapMGenericTagText {
+		font-family: @sapUiFontFamily;
+		font-size: @sapMFontMediumSize;
+		font-weight: normal;
+		color: @sapUiBaseText;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		box-sizing: border-box;
+		flex: 1 10000 auto;
+		min-width: @sapMGenericTagTextMinWidth;
+	}
+
+	.sapMGenericTagValue {
+		display: flex;
+		flex: 0 0.5 auto;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		box-sizing: border-box;
+		align-items: center;
+		padding-left: 0.5rem;
+
+		.sapMObjectNumberText {
+			min-width: 0.75rem;
+			&::after {
+				//simulate ObjectNumber's styling: The ObjectNumber value and unit are inline blocks and
+				//have an empty space between them. That's because the browser interprets the line-break and spaces
+				//in the HTML as content. Since we change the styling of the ObjectNumber we must have the same styling.
+				content: "\00a0";
+			}
+		}
+		.sapMObjectNumberUnit {
+			padding-top: 0.0625rem;
+			min-width: 0.75rem;
+		}
+	}
+}
+
+.sapUiSizeCozy {
+	.sapMGenericTag {
+		margin: 0.25rem 0;
+
+		.sapMGenericTagWrap {
+			height:  2.5rem;
+		}
+	}
+}
+

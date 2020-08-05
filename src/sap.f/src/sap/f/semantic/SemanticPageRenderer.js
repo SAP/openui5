@@ -7,7 +7,9 @@ sap.ui.define([], function() {
 	/**
 	* <code>sap.f.semantic.SemanticPage</code> renderer.
 	*/
-	var SemanticPageRenderer = {};
+	var SemanticPageRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	* Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -16,13 +18,11 @@ sap.ui.define([], function() {
 	* @param {sap.ui.core.Control} oSemanticPage An object representation of the control that should be rendered
 	*/
 	SemanticPageRenderer.render = function(oRenderManager, oSemanticPage) {
-		oRenderManager.write("<div");
-		oRenderManager.writeControlData(oSemanticPage);
-		oRenderManager.addClass("sapFSemanticPage");
-		oRenderManager.writeClasses();
-		oRenderManager.write(">");
+		oRenderManager.openStart("div", oSemanticPage);
+		oRenderManager.class("sapFSemanticPage");
+		oRenderManager.openEnd();
 		oRenderManager.renderControl(oSemanticPage._getPage());
-		oRenderManager.write("</div>");
+		oRenderManager.close("div");
 	};
 
 	return SemanticPageRenderer;

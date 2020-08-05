@@ -5,28 +5,7 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.ui.table.sample.Aggregations.Component", {
 		metadata : {
-			rootView : {
-				"viewName": "sap.ui.table.sample.Aggregations.View",
-				"type": "XML",
-				"async": true
-			},
-			dependencies : {
-				libs : [
-					"sap.ui.table",
-					"sap.ui.unified",
-					"sap.m"
-				]
-			},
-
-			config : {
-				sample : {
-					stretch : true,
-					files : [
-						"View.view.xml",
-						"Controller.controller.js"
-					]
-				}
-			}
+			manifest: "json"
 		}
 	});
 

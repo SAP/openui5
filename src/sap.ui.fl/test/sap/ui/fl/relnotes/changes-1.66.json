@@ -1,0 +1,24 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "cc0d811051d27f39f590a723ce6bf907250c53d2",
+        "type": "FIX",
+        "text": "JSDoc: incorporate feedback from SDK feedback channel (2019/3)",
+        "references": []
+      },
+      {
+        "id": "e97c3d355002c831f257e6577854404130fd2d1a",
+        "type": "FIX",
+        "text": "fl.VariantManagement: fix for defaulting an unchecked favorit item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980103494"
+          }
+        ]
+      }
+    ]
+  }
+}

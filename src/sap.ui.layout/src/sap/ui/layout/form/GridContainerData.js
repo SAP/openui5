@@ -3,8 +3,10 @@
  */
 
 // Provides control sap.ui.layout.form.GridContainerData.
-sap.ui.define(['sap/ui/core/LayoutData', 'sap/ui/layout/library'],
- function(LayoutData, library) {
+sap.ui.define([
+	'sap/ui/core/LayoutData',
+	'sap/ui/layout/library'
+	], function(LayoutData, library) {
 	"use strict";
 
 	/**
@@ -38,13 +40,6 @@ sap.ui.define(['sap/ui/core/LayoutData', 'sap/ui/layout/library'],
 			halfGrid : {type : "boolean", group : "Misc", defaultValue : false}
 		}
 	}});
-
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.commons.form.GridLayoutdata.prototype.init = function(){
-	//   // do something for initialization...
-	//};
 
 	return GridContainerData;
 

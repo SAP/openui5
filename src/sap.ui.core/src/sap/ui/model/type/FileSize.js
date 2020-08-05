@@ -3,8 +3,22 @@
  */
 
 // Provides class sap.ui.model.type.FileSize
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, FileSizeFormat, SimpleType, FormatException, ParseException, ValidateException) {
+sap.ui.define([
+	'sap/ui/core/format/FileSizeFormat',
+	'sap/ui/model/SimpleType',
+	'sap/ui/model/FormatException',
+	'sap/ui/model/ParseException',
+	'sap/ui/model/ValidateException',
+	"sap/ui/thirdparty/jquery"
+],
+	function(
+		FileSizeFormat,
+		SimpleType,
+		FormatException,
+		ParseException,
+		ValidateException,
+		jQuery
+	) {
 	"use strict";
 
 

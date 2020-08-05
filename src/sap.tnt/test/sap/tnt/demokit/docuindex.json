@@ -10,7 +10,7 @@
 					"Run Integration Tests": "test-resources/sap/tnt/demokit/toolpageapp/webapp/test/integration/opaTests.qunit.html"
 				},
 				"icon": "retail-store",
-				"desc": "Tool page for admins, built with the sap.tnt.ToolPage",
+				"desc": "Backoffice tool, built with the sap.tnt.ToolPage",
 				"config": "test-resources/sap/tnt/demokit/toolpageapp/demoapp.json"
 			}
 		]
@@ -62,7 +62,8 @@
 				"samples": [
 					"sap.tnt.sample.ToolHeader",
 					"sap.tnt.sample.ToolHeaderControls",
-					"sap.tnt.sample.ToolHeaderIconTabHeader"
+					"sap.tnt.sample.ToolHeaderIconTabHeader",
+					"sap.tnt.sample.ToolHeaderFiori3"
 				]
 			},
 			{
@@ -115,6 +116,11 @@
 				"id": "sap.tnt.sample.ToolHeaderIconTabHeader",
 				"name": "ToolHeader with IconTabHeader",
 				"description": "ToolHeader can contain IconTabHeader. When both controls are combined, the IconTabHeader supports only inline text. No icons can be used."
+			},
+			{
+				"id": "sap.tnt.sample.ToolHeaderFiori3",
+				"name": "ToolHeader - Fiori 3",
+				"description": "ToolHeader that mimics the content of Fiori 3 Shell."
 			},
 			{
 				"id": "sap.tnt.sample.ToolPage",

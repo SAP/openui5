@@ -3,21 +3,21 @@
 */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'./SliderUtilities',
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
-	'./SliderTooltipContainerRenderer'
+	'./SliderTooltipContainerRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 function(
-	jQuery,
 	Library,
 	SliderUtilities,
 	Control,
 	Popup,
-	SliderTooltipContainerRenderer
-	) {
+	SliderTooltipContainerRenderer,
+	jQuery
+) {
 		"use strict";
 
 		/**
@@ -60,7 +60,7 @@ function(
 					 *
 					 * @since 1.54
 					 */
-					associatedTooltips: { type: "sap.m.ISliderTooltip", multiple: true }
+					associatedTooltips: { type: "sap.m.SliderTooltipBase", multiple: true }
 				}
 			}
 		});
@@ -81,7 +81,7 @@ function(
 		};
 
 		SliderTooltipContainer.prototype._handleTabNavigation = function (oEvent) {
-			var bParentRangeSlider = (this._oParentSlider.getMetadata().getName() ===  SliderUtilities.CONSTANTS.RANGE_SLIDER_NAME);
+			var bParentRangeSlider = this._oParentSlider instanceof sap.m.RangeSlider;
 
 			oEvent.preventDefault();
 			this[bParentRangeSlider ? "_handleRangeSliderF2" : "_handleSliderF2"].apply(this, arguments);
@@ -94,7 +94,7 @@ function(
 		SliderTooltipContainer.prototype._handleRangeSliderF2 = function (oEvent) {
 			var oHandle = this._oParentSlider._getHandleForTooltip(oEvent.srcControl);
 
-			jQuery(oHandle).focus();
+			jQuery(oHandle).trigger("focus");
 		};
 
 		SliderTooltipContainer.prototype.onsaptabnext = SliderTooltipContainer.prototype._handleTabNavigation;
@@ -128,8 +128,8 @@ function(
 		 */
 		SliderTooltipContainer.prototype._getScrollListener = function () {
 			return function () {
-				jQuery.sap.clearDelayedCall(this._scrollDebounce);
-				this._scrollDebounce = jQuery.sap.delayedCall(0, this, this.repositionTooltips);
+				clearTimeout(this._scrollDebounce);
+				this._scrollDebounce = setTimeout(this.repositionTooltips.bind(this), 0);
 			}.bind(this);
 		};
 
@@ -147,15 +147,16 @@ function(
 		 * @public
 		 */
 		SliderTooltipContainer.prototype.repositionTooltips = function () {
-			var bParentRangeSlider;
+			var bParentRangeSlider = this._oParentSlider instanceof sap.m.RangeSlider,
+				aTooltips = this._oParentSlider.getUsedTooltips(),
+				// we are considering that both tooltips have the same rendering
+				fTooltipHeight = this.getAssociatedTooltipsAsControls()[0].$().outerHeight(true);
 
-			if (this.getDomRef() && this._oParentSlider) {
-				bParentRangeSlider = (this._oParentSlider.getMetadata().getName() ===  SliderUtilities.CONSTANTS.RANGE_SLIDER_NAME);
-				this[bParentRangeSlider ? "_positionRangeTooltips" : "_positionTooltip"].call(this, this._oParentSlider.getAggregation("_tooltips"), arguments[0], arguments[1]);
-				this.getDomRef().style["top"] = (this._$ParentSlider.offset().top - SliderUtilities.CONSTANTS.TOOLTIP_CONTAINER_HEIGHT) + "px";
+			if (this.getDomRef()) {
+				this[bParentRangeSlider ? "_positionRangeTooltips" : "_positionTooltip"].call(this, aTooltips, arguments[0], arguments[1]);
+				this.getDomRef().style["top"] = (this._$ParentSlider.offset().top - fTooltipHeight) + "px";
 				this._handleOverflow();
 			}
-
 		};
 
 		/**
@@ -270,7 +271,7 @@ function(
 		/**
 		 * Gets Slider's tooltip position.
 		 *
-		 * @param {float} fValue
+		 * @param {float} fTooltipValue
 		 * @param {float} fMin Min property of the Slider/RangeSlider.
 		 * @param {float} fMax Max property of the Slider/RangeSlider.
 		 * @private

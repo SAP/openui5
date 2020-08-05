@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select', 'jquery.sap.global'], function(SemanticControl, Select, jQuery) {
+sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select', "sap/base/Log"], function(SemanticControl, Select, Log) {
 	"use strict";
 
 	/**
@@ -87,7 +87,7 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select', 'jquery.sap.glo
 				&& !SemanticSelect.getMetadata().getProperties()[sPropertyName]
 				&& !SemanticControl.getMetadata().getProperties()[sPropertyName]) {
 
-			jQuery.sap.log.error("unknown property: " + sPropertyName, this);
+			Log.error("unknown property: " + sPropertyName, this);
 			return this;
 		}
 		SemanticControl.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);

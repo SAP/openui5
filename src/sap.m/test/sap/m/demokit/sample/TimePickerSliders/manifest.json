@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TimePickerSliders",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TimePickerSliders.TimePickerSliders",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"TimePickerSliders.view.xml",
+					"TimePickerSlidersDialog.fragment.xml",
+					"TimePickerSliders.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

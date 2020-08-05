@@ -3,14 +3,14 @@
  */
 
 //Provides the locale object sap.ui.core.LocaleData
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
-	function(jQuery, BaseObject, Locale) {
+sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', './Locale', 'sap/base/assert', 'sap/base/util/LoaderExtensions'],
+	function(extend, BaseObject, CalendarType, Locale, assert, LoaderExtensions) {
 	"use strict";
 
 	/**
 	 * Creates an instance of LocaleData for the given locale.
 	 *
-	 * @class Provides access to locale-specific data, like date formats, number formats, currencies, etc.
+	 * @class Provides access to locale-specific data, such as, date formats, number formats, and currencies.
 	 *
 	 * @param {sap.ui.core.Locale} oLocale the locale
 	 *
@@ -28,6 +28,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 			this.mData = getData(oLocale);
 		},
 
+		/**
+		 * @private
+		 * @ui5-restricted UI5 Web Components
+		 */
 		_get: function() {
 			return this._getDeep(this.mData, arguments);
 		},
@@ -101,7 +105,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getMonths: function(sWidth, sCalendarType) {
-			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
+			assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
 			return this._get(getCLDRCalendarName(sCalendarType), "months", "format", sWidth);
 		},
 
@@ -114,7 +118,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getMonthsStandAlone: function(sWidth, sCalendarType) {
-			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
+			assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
 			return this._get(getCLDRCalendarName(sCalendarType), "months", "stand-alone", sWidth);
 		},
 
@@ -127,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getDays: function(sWidth, sCalendarType) {
-			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide" || sWidth == "short", "sWidth must be narrow, abbreviate, wide or short");
+			assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide" || sWidth == "short", "sWidth must be narrow, abbreviate, wide or short");
 			return this._get(getCLDRCalendarName(sCalendarType), "days", "format",  sWidth);
 		},
 
@@ -140,7 +144,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getDaysStandAlone: function(sWidth, sCalendarType) {
-			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide" || sWidth == "short", "sWidth must be narrow, abbreviated, wide or short");
+			assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide" || sWidth == "short", "sWidth must be narrow, abbreviated, wide or short");
 			return this._get(getCLDRCalendarName(sCalendarType), "days", "stand-alone",  sWidth);
 		},
 
@@ -153,7 +157,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getQuarters: function(sWidth, sCalendarType) {
-			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
+			assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
 			return this._get(getCLDRCalendarName(sCalendarType), "quarters", "format",  sWidth);
 		},
 
@@ -166,7 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getQuartersStandAlone: function(sWidth, sCalendarType) {
-			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
+			assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
 			return this._get(getCLDRCalendarName(sCalendarType), "quarters", "stand-alone",  sWidth);
 		},
 
@@ -179,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getDayPeriods: function(sWidth, sCalendarType) {
-			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
+			assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
 			return this._get(getCLDRCalendarName(sCalendarType), "dayPeriods", "format",  sWidth);
 		},
 
@@ -192,7 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getDayPeriodsStandAlone: function(sWidth, sCalendarType) {
-			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
+			assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
 			return this._get(getCLDRCalendarName(sCalendarType), "dayPeriods", "stand-alone",  sWidth);
 		},
 
@@ -205,7 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getDatePattern: function(sStyle, sCalendarType) {
-			jQuery.sap.assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
+			assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
 			return this._get(getCLDRCalendarName(sCalendarType), "dateFormats", sStyle);
 		},
 
@@ -218,7 +222,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getTimePattern: function(sStyle, sCalendarType) {
-			jQuery.sap.assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
+			assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
 			return this._get(getCLDRCalendarName(sCalendarType), "timeFormats", sStyle);
 		},
 
@@ -231,7 +235,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getDateTimePattern: function(sStyle, sCalendarType) {
-			jQuery.sap.assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
+			assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
 			return this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", sStyle);
 		},
 
@@ -245,8 +249,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getCombinedDateTimePattern: function(sDateStyle, sTimeStyle, sCalendarType) {
-			jQuery.sap.assert(sDateStyle == "short" || sDateStyle == "medium" || sDateStyle == "long" || sDateStyle == "full", "sStyle must be short, medium, long or full");
-			jQuery.sap.assert(sTimeStyle == "short" || sTimeStyle == "medium" || sTimeStyle == "long" || sTimeStyle == "full", "sStyle must be short, medium, long or full");
+			assert(sDateStyle == "short" || sDateStyle == "medium" || sDateStyle == "long" || sDateStyle == "full", "sStyle must be short, medium, long or full");
+			assert(sTimeStyle == "short" || sTimeStyle == "medium" || sTimeStyle == "long" || sTimeStyle == "full", "sStyle must be short, medium, long or full");
 			var sDateTimePattern = this.getDateTimePattern(sDateStyle, sCalendarType),
 				sDatePattern = this.getDatePattern(sDateStyle, sCalendarType),
 				sTimePattern = this.getTimePattern(sTimeStyle, sCalendarType);
@@ -386,7 +390,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		_createFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, vDiff) {
 			var aTokens = this._parseSkeletonFormat(sSkeleton), aPatterns,
 				oBestMatch = this._findBestMatch(aTokens, sSkeleton, oAvailableFormats),
-				oToken, oAvailableDateTimeFormats,
+				oToken, oAvailableDateTimeFormats, oSymbol, oGroup,
 				sPattern, sSinglePattern, sDiffSymbol, sDiffGroup,
 				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/,
 				bSingleDate,
@@ -406,6 +410,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 					sDiffSymbol = vDiff;
 				} else {
 					bSingleDate = true;
+					// Special handling of "y" (Year) in case patterns contains also "G" (Era)
+					if (aTokens[0].symbol === "y" && oBestMatch && oBestMatch.pattern.G) {
+						oSymbol = mCLDRSymbols["G"];
+						oGroup = mCLDRSymbolGroups[oSymbol.group];
+						aTokens.splice(0, 0, {
+							symbol: "G",
+							group: oSymbol.group,
+							match: oSymbol.match,
+							index: oGroup.index,
+							field: oGroup.field,
+							length: 1
+						});
+					}
+
 					// Check if at least one token's group appears in the interval diff
 					// If not, a single date pattern is returned
 					for (i = aTokens.length - 1; i >= 0; i--){
@@ -657,13 +675,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 					i = 0,
 					iSkeletonLength,
 					iPatternLength,
-					iOldLength,
+					iBestLength,
 					iNewLength,
 					oSkeletonToken,
 					oBestToken,
 					oSymbol,
-					oSkeletonSymbol,
-					oBestSymbol,
 					sChar;
 
 				// Create a map of group names to token
@@ -685,32 +701,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 					} else {
 						oSymbol = mCLDRSymbols[sChar];
 						// If symbol is a CLDR symbol and is contained in the group, expand length
-					if (oSymbol && mGroups[oSymbol.group] && mPatternGroups[oSymbol.group]) {
+						if (oSymbol && mGroups[oSymbol.group] && mPatternGroups[oSymbol.group]) {
 							oSkeletonToken = mGroups[oSymbol.group];
 							oBestToken = mPatternGroups[oSymbol.group];
-							oSkeletonSymbol = mCLDRSymbols[oSkeletonToken.symbol];
-							oBestSymbol = mCLDRSymbols[oBestToken.symbol];
 
 							iSkeletonLength = oSkeletonToken.length;
-							iPatternLength = oBestToken.length;
+							iBestLength = oBestToken.length;
 
-							iOldLength = 1;
+							iPatternLength = 1;
 							while (sPattern.charAt(i + 1) == sChar) {
 								i++;
-								iOldLength++;
+								iPatternLength++;
 							}
 
 							// Prevent expanding the length of the field when:
-							// 1. The length in the best matching skeleton (iPatternLength) matches the length of the application provided skeleton (iSkeletonLength) or
-							// 2. The length of the provided skeleton (iSkeletonLength) and the length of the result pattern (iOldLength) are not in the same category (numeric or text)
+							// 1. The length in the best matching skeleton (iBestLength) matches the length of the application provided skeleton (iSkeletonLength) or
+							// 2. The length of the provided skeleton (iSkeletonLength) and the length of the result pattern (iPatternLength) are not in the same category (numeric or text)
 							//	because switching between numeric to text representation is wrong in all cases
-							if (iSkeletonLength === iPatternLength ||
-								((iSkeletonLength < oSkeletonSymbol.numericCeiling) ?
-									(iPatternLength >= oBestSymbol.numericCeiling) : (iPatternLength < oBestSymbol.numericCeiling)
+							if (iSkeletonLength === iBestLength ||
+								((iSkeletonLength < oSymbol.numericCeiling) ?
+									(iPatternLength >= oSymbol.numericCeiling) : (iPatternLength < oSymbol.numericCeiling)
 								)) {
-								iNewLength = iOldLength;
+								iNewLength = iPatternLength;
 							} else {
-								iNewLength = Math.max(iOldLength, iSkeletonLength);
+								iNewLength = Math.max(iPatternLength, iSkeletonLength);
 							}
 
 							for (var j = 0; j < iNewLength; j++) {
@@ -792,8 +806,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @public
 		 */
 		getNumberSymbol: function(sType) {
-			jQuery.sap.assert(sType == "decimal" || sType == "group" || sType == "plusSign" || sType == "minusSign" || sType == "percentSign", "sType must be decimal, group, plusSign, minusSign or percentSign");
+			assert(sType == "decimal" || sType == "group" || sType == "plusSign" || sType == "minusSign" || sType == "percentSign", "sType must be decimal, group, plusSign, minusSign or percentSign");
 			return this._get("symbols-latn-" + sType);
+		},
+
+		/**
+		 * Get lenient number symbols for "plusSign" or "minusSign".
+		 *
+		 * @param {string} sType the required type of symbol
+		 * @returns {string} the selected lenient number symbols, e.g. "-‒⁻₋−➖﹣"
+		 * @public
+		 */
+		getLenientNumberSymbols: function(sType) {
+			assert(sType == "plusSign" || sType == "minusSign", "sType must be plusSign or minusSign");
+			return this._get("lenient-scope-number")[sType];
 		},
 
 		/**
@@ -809,11 +835,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		/**
 		 * Get currency format pattern.
 		 *
+		 * CLDR format pattern:
+		 *
+		 * @example standard with currency symbol in front of the number
+		 * ¤#,##0.00
+		 * $100,000.00
+		 * $-100,000.00
+		 *
+		 * @example accounting with negative number pattern after the semicolon
+		 * ¤#,##0.00;(¤#,##0.00)
+		 * $100,000.00
+		 * ($100,000.00)
+		 *
+		 * @see http://cldr.unicode.org/translation/numbers-currency/number-patterns
+		 *
 		 * @param {string} sContext the context of the currency pattern (standard or accounting)
 		 * @returns {string} The pattern
 		 * @public
 		 */
 		getCurrencyPattern: function(sContext) {
+			// Undocumented contexts for NumberFormat internal use: "sap-standard" and "sap-accounting"
 			return this._get("currencyFormat")[sContext] || this._get("currencyFormat").standard;
 		},
 
@@ -829,6 +870,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 */
 		getPercentPattern: function() {
 			return this._get("percentFormat").standard;
+		},
+
+		/**
+		 * Get miscellaneous pattern.
+		 *
+		 * @param {string} sName the name of the misc pattern, can be "approximately", "atLeast", "atMost" or "range"
+		 * @returns {string} The pattern
+		 * @public
+		 */
+		getMiscPattern: function(sName) {
+			assert(sName == "approximately" || sName == "atLeast" || sName == "atMost" || sName == "range", "sName must be approximately, atLeast, atMost or range");
+			return this._get("miscPattern")[sName];
 		},
 
 		/**
@@ -903,6 +956,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		},
 
 		/**
+		 * Returns a map of custom currency codes, defined via global configuration.
+		 * @returns {object} map of custom currency codes, e.g.
+		 * {
+		 *     "AUD": "AUD",
+		 *     "BRL": "BRL",
+		 *     "EUR": "EUR",
+		 *     "GBP": "GBP",
+		 * }
+		 * @private
+		 * @ui5-restricted sap.ui.core.format.NumberFormat
+		 * @since 1.63
+		 */
+		getCustomCurrencyCodes: function () {
+			var mCustomCurrencies = this._get("currency") || {},
+				mCustomCurrencyCodes = {};
+
+			Object.keys(mCustomCurrencies).forEach(function (sCurrencyKey) {
+				mCustomCurrencyCodes[sCurrencyKey] = sCurrencyKey;
+			});
+
+			return mCustomCurrencyCodes;
+		},
+
+		/**
 		 * Returns the number of digits of the specified currency.
 		 *
 		 * @param {string} sCurrency ISO 4217 currency code
@@ -942,7 +1019,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @since 1.21.1
 		 */
 		getCurrencySymbol: function(sCurrency) {
-			var oCurrencySymbols = this._get("currencySymbols");
+			var oCurrencySymbols = this.getCurrencySymbols();
 			return (oCurrencySymbols && oCurrencySymbols[sCurrency]) || sCurrency;
 		},
 
@@ -962,6 +1039,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 				}
 			}
 			return sCurrencySymbol;
+		},
+
+		/**
+		 * Returns the currency symbols available for this locale.
+		 * Currency symbols get accumulated by custom currency symbols.
+		 *
+		 * @returns {object} the map of all currency symbols available in this locale, e.g.
+		 * {
+		 *     "AUD": "A$",
+		 *     "BRL": "R$",
+		 *     "EUR": "€",
+		 *     "GBP": "£",
+		 * }
+		 * @public
+		 * @since 1.60
+		 */
+		getCurrencySymbols: function() {
+			// Lookup into global Config
+			var mCustomCurrencies = this._get("currency"),
+				mCustomCurrencySymbols = {},
+				sIsoCode;
+
+			for (var sCurrencyKey in mCustomCurrencies) {
+				sIsoCode = mCustomCurrencies[sCurrencyKey].isoCode;
+
+				if (mCustomCurrencies[sCurrencyKey].symbol) {
+					mCustomCurrencySymbols[sCurrencyKey] = mCustomCurrencies[sCurrencyKey].symbol;
+				} else if (sIsoCode) {
+					mCustomCurrencySymbols[sCurrencyKey] = this._get("currencySymbols")[sIsoCode];
+				}
+			}
+
+			return Object.assign({}, this._get("currencySymbols"), mCustomCurrencySymbols);
 		},
 
 		/**
@@ -1003,7 +1113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 				sStyle = "wide";
 			}
 
-			jQuery.sap.assert(sStyle === "wide" || sStyle === "short" || sStyle === "narrow", "sStyle is only allowed to be set with 'wide', 'short' or 'narrow'");
+			assert(sStyle === "wide" || sStyle === "short" || sStyle === "narrow", "sStyle is only allowed to be set with 'wide', 'short' or 'narrow'");
 
 			var aPatterns = [],
 				aPluralCategories = this.getPluralCategories(),
@@ -1020,7 +1130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 				oScale = this._get("dateFields", sScale + "-" + sStyle);
 				for (var sEntry in oScale) {
 					if (sEntry.indexOf("relative-type-") === 0) {
-						iValue = parseInt(sEntry.substr(14), 10);
+						iValue = parseInt(sEntry.substr(14));
 						aPatterns.push({
 							scale: sScale,
 							value: iValue,
@@ -1070,7 +1180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 				sStyle = "wide";
 			}
 
-			jQuery.sap.assert(sStyle === "wide" || sStyle === "short" || sStyle === "narrow", "sStyle is only allowed to be set with 'wide', 'short' or 'narrow'");
+			assert(sStyle === "wide" || sStyle === "short" || sStyle === "narrow", "sStyle is only allowed to be set with 'wide', 'short' or 'narrow'");
 
 			sKey = sScale + "-" + sStyle;
 
@@ -1193,7 +1303,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @since 1.34.0
 		 */
 		getDisplayName: function(sType, sStyle) {
-			jQuery.sap.assert(sType == "second" || sType == "minute" || sType == "hour" || sType == "zone" || sType == "day"
+			assert(sType == "second" || sType == "minute" || sType == "hour" || sType == "zone" || sType == "day"
 				|| sType == "weekday" || sType == "week" || sType == "month" || sType == "quarter" || sType == "year" || sType == "era",
 				"sType must be second, minute, hour, zone, day, weekday, week, month, quarter, year, era");
 
@@ -1201,7 +1311,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 				sStyle = "wide";
 			}
 
-			jQuery.sap.assert(sStyle === "wide" || sStyle === "short" || sStyle === "narrow", "sStyle is only allowed to be set with 'wide', 'short' or 'narrow'");
+			assert(sStyle === "wide" || sStyle === "short" || sStyle === "narrow", "sStyle is only allowed to be set with 'wide', 'short' or 'narrow'");
 
 			var aSingleFormFields = ["era", "weekday", "zone"],
 				sKey = aSingleFormFields.indexOf(sType) === -1 ? sType + "-" + sStyle : sType;
@@ -1274,12 +1384,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		getCurrencyFormat: function(sStyle, sNumber, sPlural) {
 
 			var sFormat;
-			var oFormats;
+			var oFormats = this._get("currencyFormat-" + sStyle);
 
-			switch (sStyle) {
-			default: //short
+			// Defaults to "short" if not found
+			if (!oFormats) {
+				if (sStyle === "sap-short") {
+					throw new Error("Failed to get CLDR data for property \"currencyFormat-sap-short\"");
+				}
 				oFormats = this._get("currencyFormat-short");
-				break;
 			}
 
 			if (oFormats) {
@@ -1381,13 +1493,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @since 1.32.0
 		 */
 		getEras: function(sWidth, sCalendarType) {
-			jQuery.sap.assert(sWidth == "wide" || sWidth == "abbreviated" || sWidth == "narrow" , "sWidth must be wide, abbreviate or narrow");
+			assert(sWidth == "wide" || sWidth == "abbreviated" || sWidth == "narrow" , "sWidth must be wide, abbreviate or narrow");
 
 			//TODO Adapt generation so that eras are an array instead of object
 			var oEras = this._get(getCLDRCalendarName(sCalendarType), "era-" + sWidth),
 				aEras = [];
 			for (var i in oEras) {
-				aEras[parseInt(i, 10)] = oEras[i];
+				aEras[parseInt(i)] = oEras[i];
 			}
 			return aEras;
 		},
@@ -1405,7 +1517,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 			var oEraDates = this._get("eras-" + sCalendarType.toLowerCase()),
 				aEraDates = [];
 			for (var i in oEraDates) {
-				aEraDates[parseInt(i, 10)] = oEraDates[i];
+				aEraDates[parseInt(i)] = oEraDates[i];
 			}
 			return aEraDates;
 		},
@@ -1421,7 +1533,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @since 1.32.0
 		 */
 		getCalendarWeek: function(sStyle, iWeekNumber) {
-			jQuery.sap.assert(sStyle == "wide" || sStyle == "narrow" , "sStyle must be wide or narrow");
+			assert(sStyle == "wide" || sStyle == "narrow" , "sStyle must be wide or narrow");
 
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", this.oLocale.toString()),
 				sKey = "date.week.calendarweek." + sStyle;
@@ -1441,14 +1553,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 				aCalendars = sCalendarPreference ? sCalendarPreference.split(" ") : [],
 				sCalendarName, sType, i;
 
-			// lazy load of sap.ui.core library to avoid cyclic dependencies
-			sap.ui.getCore().loadLibrary('sap.ui.core');
-			var CalendarType = sap.ui.require("sap/ui/core/library").CalendarType;
-
 			for ( i = 0 ; i < aCalendars.length ; i++ ) {
-				sCalendarName = aCalendars[i];
+				// No support for calendar subtypes (islamic) yet, so ignore part after -
+				sCalendarName = aCalendars[i].split("-")[0];
 				for (sType in CalendarType) {
-					if (sCalendarName === getCLDRCalendarName(sType).substring(3)) {
+					if (sCalendarName === sType.toLowerCase()) {
 						return sType;
 					}
 				}
@@ -1599,7 +1708,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 				var fnOperand;
 				fnOperand = operand();
 				if (accept(OP_MOD)) {
-					var iDivisor = parseInt(consume(), 10);
+					var iDivisor = parseInt(consume());
 					return function(o) {
 						return fnOperand(o) % iDivisor;
 					};
@@ -1645,10 +1754,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 				aParts.forEach(function(sPart) {
 					aRange = sPart.split(RANGE);
 					if (aRange.length === 1) {
-						aValues.push(parseInt(sPart, 10));
+						aValues.push(parseInt(sPart));
 					} else {
-						iFrom = parseInt(aRange[0], 10);
-						iTo = parseInt(aRange[1], 10);
+						iFrom = parseInt(aRange[0]);
+						iTo = parseInt(aRange[1]);
 						for (var i = iFrom; i <= iTo; i++) {
 							aValues.push(i);
 						}
@@ -1679,11 +1788,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 
 				o = {
 					n: parseFloat(sValue),
-					i: parseInt(sDecimal, 10),
+					i: parseInt(sDecimal),
 					v: sFraction.length,
 					w: sFractionNoZeros.length,
-					f: parseInt(sFraction, 10),
-					t: parseInt(sFractionNoZeros, 10)
+					f: parseInt(sFraction),
+					t: parseInt(sFractionNoZeros)
 				};
 				return fnOr(o);
 			};
@@ -2330,6 +2439,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 				}
 			},
 			"percentFormat": { "standard": "#,##0%"},
+			"miscPattern": {
+				"approximately": "~{0}",
+				"atLeast": "{0}+",
+				"atMost": "≤{0}",
+				"range": "{0}–{1}"
+			},
 			"symbols-latn-decimal":".",
 			"symbols-latn-group":",",
 			"symbols-latn-plusSign":"+",
@@ -2342,6 +2457,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 			"timeData": {
 				_allowed: "H h",
 				_preferred: "H"
+			},
+			"lenient-scope-number": {
+				"minusSign": "-‐‒–⁻₋−➖﹣",
+				"commaSign": ",،٫、︐︑﹐﹑，",
+				"plusSign": "+⁺₊➕﬩﹢"
 			},
 			"plurals": {},
 			"units": {
@@ -3158,7 +3278,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 
 		function getOrLoad(sId) {
 			if ( !mLocaleDatas[sId] && (!M_SUPPORTED_LOCALES || M_SUPPORTED_LOCALES[sId] === true) ) {
-				var data = mLocaleDatas[sId] = jQuery.sap.loadResource("sap/ui/core/cldr/" + sId + ".json", {
+				var data = mLocaleDatas[sId] = LoaderExtensions.loadResource("sap/ui/core/cldr/" + sId + ".json", {
 					dataType: "json",
 					failOnError : false
 				});
@@ -3263,7 +3383,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 			var mData = this._getDeep(this.mData, arguments);
 			var mCustomData = this._getDeep(this.mCustomData, arguments);
 
-			return jQuery.extend({}, mData, mCustomData);
+			return extend({}, mData, mCustomData);
 		}
 	});
 

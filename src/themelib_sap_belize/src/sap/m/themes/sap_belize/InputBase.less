@@ -3,44 +3,73 @@
 /* Belize theme                     */
 /* ================================ */
 
-.sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):active {
-  	border-color: @sapUiFieldBorderColor;
+.sapMInputBaseInner {
+	color: @sapUiFieldTextColor;
 }
 
-.sapMInputBaseReadonlyInner .sapMInputBaseInner {
-	border-color: @sapUiFieldReadOnlyBorderColor;
+.sapMInputBaseContentWrapper {
+	border: 1px solid @sapUiFieldBorderColor;
+	background: @sapUiFieldBackground;
+	&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
+		border-width: 2px;
+		.sapMInputBaseIcon {
+			line-height: 2.25rem;
+		}
+	}
+}
+
+.sapMInputBaseIcon {
+	color: @sapUiContentIconColor;
+	&:hover {
+		background: @sapUiButtonLiteHoverBackground;
+	}
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+		color: @sapUiButtonActiveTextColor;
+	}
+}
+
+.sapMInputBaseDisabledWrapper .sapMInputBaseIcon {
+	color: @sapUiContentDisabledTextColor;
+	background-color: @sapUiButtonBackground;
+}
+
+.sapMInputBaseContentWrapperWarning {
+	background: @sapUiFieldWarningBackground;
+	border-color: @sapUiFieldWarningColor;
+}
+
+.sapMInputBaseContentWrapperSuccess {
+	background: @sapUiFieldSuccessBackground;
+	border-color: @sapUiFieldSuccessColor;
+}
+
+.sapMInputBaseContentWrapperError {
+	background: @sapUiFieldInvalidBackground;
+	border-color: @sapUiFieldInvalidColor;
+}
+
+.sapMInputBaseContentWrapperInformation {
+	background: @sapUiFieldInformationBackground;
+	border-color: @sapUiFieldInformationColor;
+}
+
+.sapMInputBaseReadonlyWrapper,
+.sapMInputBaseDisabledWrapper {
 	background: @sapUiFieldReadOnlyBackground;
 }
 
-.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner),
-.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner) {
-	outline: none;
-}
-
-.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner) {
+.sapMFocus .sapMInputBaseContentWrapper {
 	&::before {
-		content: "";
-		position: absolute;
-		top: 2px;
-		left: 2px;
-		right: 2px;
-		bottom: 2px;
 		border: 1px dotted @sapUiContentFocusColor;
-		pointer-events: none;
 	}
 }
 
-.sapMFocus.sapMInputBaseState .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner) {
-	&::before {
-		top: 3px;
-		left: 3px;
-		right: 3px;
-		bottom: 3px;
-	}
-}
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-  .sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner)::before {
-    border: 1px dashed @sapUiContentFocusColor;
-  }
+	.sapMFocus .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper) {
+		&::before {
+			border: 1px dashed @sapUiContentFocusColor;
+		}
+	}
 }

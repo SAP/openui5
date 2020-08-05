@@ -4,20 +4,22 @@
 
 // Provides control sap.ui.core.ComponentContainer.
 sap.ui.define([
-    'sap/ui/base/ManagedObject',
-    './Control',
-    './Component',
-    './Core',
-    './library',
-    "./ComponentContainerRenderer"
+	'sap/ui/base/ManagedObject',
+	'./Control',
+	'./Component',
+	'./Core',
+	'./library',
+	"./ComponentContainerRenderer",
+	"sap/base/Log"
 ],
 	function(
-	    ManagedObject,
+		ManagedObject,
 		Control,
 		Component,
 		Core,
 		library,
-		ComponentContainerRenderer
+		ComponentContainerRenderer,
+		Log
 	) {
 	"use strict";
 
@@ -31,7 +33,30 @@ sap.ui.define([
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class Container that embeds a UIComponent in a control tree.
+	 * @class Container that embeds a <code>sap/ui/core/UIComponent</code> in a control tree.
+	 *
+	 * <b>Concerning asynchronous component loading:</b>
+	 *
+	 * To activate a fully asynchronous loading behavior of components and their dependencies,
+	 * the property <code>async</code> needs to be set to <code>true</code> and
+	 * the <code>manifest</code> property needs to be set to a 'truthy' value, e.g. <code>true</code> or a URL to the manifest location.
+	 * If both options are correctly set, the component factory will load and evaluate the component manifest first.
+	 * In this way, the additional dependencies of the Component are already known before the Component preload/controller is loaded.
+	 * Both the component preload/controller and the additional dependencies can thus be loaded asynchronously and in parallel.
+	 *
+	 * Sample usage of the ComponentContainer:
+	 *
+	 * <pre>
+	 *     &lt;!-- inside XML view -->
+	 *     ...
+	 *     &lt;core:ComponentContainer
+	 *         usage="someComponent"
+	 *         manifest="true"
+	 *         async="true"
+	 *     />
+	 * </pre>
+	 *
+	 * See also {@link module:sap/ui/core/ComponentSupport}.
 	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
@@ -112,9 +137,16 @@ sap.ui.define([
 			autoPrefixId : {type : "boolean", defaultValue: false},
 
 			/**
-			 * The component usage. If the ComponentContainer is used inside a
-			 * Component, this Component can define a usage which will be used for creating
-			 * the Component.
+			 * The name of a component usage as configured in the app descriptor of the component
+			 * owning this <code>ComponentContainer</code>.
+			 *
+			 * The configuration from the named usage will be used to create a component instance for this
+			 * <code>ComponentContainer</code>. If there's no owning component or if its app descriptor
+			 * does not contain a usage with the given name, an error will be logged.
+			 *
+			 * See {@link topic:346599f0890d4dfaaa11c6b4ffa96312 Using and Nesting Components} for more
+			 * information about component usages.
+			 *
 			 * This property can only be applied initially.
 			 */
 			usage : {type : "string", defaultValue : null},
@@ -151,6 +183,18 @@ sap.ui.define([
 					 * Reference to the created component instance
 					 */
 					component : { type: "sap.ui.core.UIComponent" }
+				}
+			},
+			/**
+			 * Fired when the creation of the component instance has failed.
+			 * @since 1.60
+			 */
+			componentFailed : {
+				parameters : {
+					/**
+					 * The reason object as returned by the component promise
+					 */
+					reason : { type: "object" }
 				}
 			}
 		},
@@ -225,10 +269,15 @@ sap.ui.define([
 	 */
 	ComponentContainer.prototype.applySettings = function(mSettings, oScope) {
 		if (mSettings) {
-			// support the ID prefixing of the component
-			if (mSettings.autoPrefixId === true && mSettings.settings && mSettings.settings.id) {
-				mSettings.settings.id = this.getId() + "-" + mSettings.settings.id;
+			// The "manifest" property has type "any" to be able to handle string|boolean|object.
+			// When using the ComponentContainer in a declarative way (e.g. XMLView), boolean values
+			// are passed as string. Therefore this type conversion needs to be done manually.
+			// As this use-case is only relevant initially the handling is done in "applySettings"
+			// instead of overriding "setManifest".
+			if (mSettings.manifest === "true" || mSettings.manifest === "false") {
+				mSettings.manifest = mSettings.manifest === "true";
 			}
+
 			// a truthy value for the manifest property will set the property
 			// async to true if not provided initially
 			if (mSettings.manifest && mSettings.async === undefined) {
@@ -244,14 +293,12 @@ sap.ui.define([
 	 */
 	function createComponentConfig(oComponentContainer) {
 		var sName = oComponentContainer.getName();
-		var sUsage = oComponentContainer.getUsage();
-		var sManifest = oComponentContainer.getManifest();
+		var vManifest = oComponentContainer.getManifest();
 		var sUrl = oComponentContainer.getUrl();
 		var mSettings = oComponentContainer.getSettings();
 		var mConfig = {
 			name: sName ? sName : undefined,
-			usage: sUsage ? sUsage : undefined,
-			manifest: sManifest !== null ? sManifest : undefined,
+			manifest: vManifest !== null ? vManifest : false,
 			async: oComponentContainer.getAsync(),
 			url: sUrl ? sUrl : undefined,
 			handleValidation: oComponentContainer.getHandleValidation(),
@@ -269,13 +316,31 @@ sap.ui.define([
 	ComponentContainer.prototype._createComponent = function() {
 		// determine the owner component
 		var oOwnerComponent = Component.getOwnerComponentFor(this),
+			sUsageId = this.getUsage(),
 			mConfig = createComponentConfig(this);
-		// create the component instance
-		if (!oOwnerComponent) {
-			return sap.ui.component(mConfig);
-		} else {
-			return oOwnerComponent._createComponent(mConfig);
+
+		// First, enhance the config object with "usage" definition from manifest
+		if (sUsageId) {
+			if (oOwnerComponent) {
+				mConfig = oOwnerComponent._enhanceWithUsageConfig(sUsageId, mConfig);
+			} else {
+				Log.error("ComponentContainer \"" + this.getId() + "\" does have a \"usage\", but no owner component!");
+			}
 		}
+
+		// Then, prefix component ID with the container ID, as the ID might come from
+		// the usage configuration in the manifest
+		if (this.getAutoPrefixId()) {
+			if (mConfig.id) {
+				mConfig.id = this.getId() + "-" + mConfig.id;
+			}
+			if (mConfig.settings && mConfig.settings.id) {
+				mConfig.settings.id = this.getId() + "-" + mConfig.settings.id;
+			}
+		}
+
+		// Finally, create the component instance
+		return Component._createComponent(mConfig, oOwnerComponent);
 	};
 
 	/*
@@ -308,13 +373,20 @@ sap.ui.define([
 					});
 				}.bind(this), function(oReason) {
 					delete this._oComponentPromise;
-					jQuery.sap.log.error("Failed to load component for container " + this.getId() + ". Reason: " + oReason);
+					this.fireComponentFailed({
+						reason: oReason
+					});
+					Log.error("Failed to load component for container " + this.getId() + ". Reason: " + oReason);
 				}.bind(this));
-			} else {
+			} else if (oComponent) {
 				this.setComponent(oComponent, true);
 				// notify listeners that a new component instance has been created
 				this.fireComponentCreated({
 					component: oComponent
+				});
+			} else {
+				this.fireComponentFailed({
+					reason: new Error("The component could not be created.")
 				});
 			}
 		}
@@ -355,8 +427,8 @@ sap.ui.define([
 		var oComponent = this.getComponentInstance();
 		if (oComponent && this.getPropagateModel()) {
 			this._propagateProperties(vName, oComponent);
-			Control.prototype.propagateProperties.apply(this, arguments);
 		}
+		Control.prototype.propagateProperties.apply(this, arguments);
 	};
 
 	/*

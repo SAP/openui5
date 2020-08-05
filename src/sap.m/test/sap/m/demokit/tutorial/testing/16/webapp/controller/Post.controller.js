@@ -1,7 +1,7 @@
 sap.ui.define([
-	'sap/ui/demo/bulletinboard/controller/BaseController',
+	'./BaseController',
 	'sap/ui/model/json/JSONModel',
-	'sap/ui/demo/bulletinboard/model/formatter'
+	'../model/formatter'
 ], function (BaseController, JSONModel, formatter) {
 	"use strict";
 

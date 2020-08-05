@@ -3,8 +3,7 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib._Parser
-sap.ui.define([
-], function () {
+sap.ui.define([], function () {
 	"use strict";
 
 	var // The delimiters in a system query option, possibly %-encoded (their hex value listed in
@@ -22,7 +21,7 @@ sap.ui.define([
 		rNot = new RegExp("^not" + sWhitespace + "+"),
 		// OData operators (only recognized when surrounded by spaces; aMatches[1] contains the
 		// leading spaces, aMatches[2] the operator if found)
-		sOperators = "(" + sWhitespace + "+)(and|eq|ge|gt|le|lt|ne|or)" + sWhitespace + "*",
+		sOperators = "(" + sWhitespace + "+)(and|eq|ge|gt|le|lt|ne|or)" + sWhitespace + "+",
 		// a GUID (has to be recognized before a path because it may start with a letter)
 		sGuid = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
 		// '*' (poss. %-encoded)
@@ -169,6 +168,7 @@ sap.ui.define([
 	 * @param {number} iLbp The "left binding power"
 	 */
 	function addInfixOperator(sId, iLbp) {
+		// Note: this function is executed at load time only!
 		mFilterParserSymbols[sId] = {
 			lbp : iLbp,
 			led : function (oToken, oLeft) {
@@ -187,6 +187,7 @@ sap.ui.define([
 	 * @param {string} sId The token ID
 	 */
 	function addLeafSymbol(sId) {
+		// Note: this function is executed at load time only!
 		mFilterParserSymbols[sId] = {
 			lbp : 0,
 			nud : function (oToken) {
@@ -708,9 +709,9 @@ sap.ui.define([
 					if (sValue === "false" || sValue === "true" || sValue === "null") {
 						sId = "VALUE";
 					} else if (sValue === "not") {
-						sId = "not";
 						aMatches = rNot.exec(sNext);
 						if (aMatches) {
+							sId = "not";
 							sValue = aMatches[0];
 						}
 					}
@@ -875,6 +876,11 @@ sap.ui.define([
 		 */
 		parseSystemQueryOption : function (sOption) {
 			return new SystemQueryOptionParser().parse(sOption);
-		}
+		},
+
+		// ABNF rule oDataIdentifier
+		sODataIdentifier : sODataIdentifier,
+		// a whitespace character
+		sWhitespace : sWhitespace
 	};
 }, /* bExport= */false);

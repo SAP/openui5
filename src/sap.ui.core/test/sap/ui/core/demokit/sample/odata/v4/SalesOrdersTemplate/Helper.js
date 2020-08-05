@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/ui/base/BindingParser"
-	], function (BindingParser) {
+	"sap/ui/base/BindingParser"
+], function (BindingParser) {
 	"use strict";
 
 	return {

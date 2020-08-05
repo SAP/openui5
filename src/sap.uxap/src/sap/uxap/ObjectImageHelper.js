@@ -3,10 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Icon",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/IconPool",
+	"sap/m/Avatar",
 	"sap/m/Image"
-], function (Icon, IconPool, Image) {
+], function (ManagedObject, IconPool, Avatar, Image) {
 	"use strict";
 
 	var ObjectImageHelper = function() {
@@ -17,19 +18,21 @@ sap.ui.define([
 			sObjectImageURI = oHeader.getObjectImageURI();
 
 		if (sObjectImageURI.indexOf("sap-icon://") === 0) {
-			oObjectImage = new Icon();
+			oObjectImage = ObjectImageHelper.instantiateAvatar(sObjectImageURI);
 			oObjectImage.addStyleClass("sapUxAPObjectPageHeaderObjectImageIcon");
 		} else {
 			oObjectImage = new Image({
 				densityAware: oHeader.getObjectImageDensityAware(),
-				alt: oHeader.getObjectImageAlt(),
-				decorative: false
+				alt: ManagedObject.escapeSettingsValue(oHeader.getObjectImageAlt()),
+				decorative: false,
+				mode: "Background",
+				backgroundSize: "contain",
+				backgroundPosition: "center"
 			});
 
 			oObjectImage.addStyleClass("sapUxAPObjectPageHeaderObjectImage");
+			oObjectImage.setSrc(sObjectImageURI);
 		}
-
-		oObjectImage.setSrc(sObjectImageURI);
 
 		if (oHeader.getObjectImageAlt()) {
 			oObjectImage.setTooltip(oHeader.getObjectImageAlt());
@@ -37,11 +40,20 @@ sap.ui.define([
 		return oObjectImage;
 	};
 
-	ObjectImageHelper.createPlaceholder = function() {
-		return IconPool.createControlByURI({
-			src: IconPool.getIconURI("picture"),
-			visible: true
+	ObjectImageHelper.instantiateAvatar = function(sURI) {
+		return new Avatar({
+			displaySize: "L",
+			fallbackIcon: sURI
 		});
+	};
+
+	ObjectImageHelper.createPlaceholder = function() {
+		return ObjectImageHelper.instantiateAvatar(IconPool.getIconURI("picture"));
+	};
+
+	ObjectImageHelper.updateAvatarInstance = function(oAvatarInstance, sShape, sColor) {
+		oAvatarInstance.setDisplayShape(sShape);
+		oAvatarInstance.setBackgroundColor(sColor);
 	};
 
 	ObjectImageHelper._renderImageAndPlaceholder = function(oRm, oOptions) {
@@ -52,42 +64,52 @@ sap.ui.define([
 			bIsObjectIconAlwaysVisible = oOptions.bIsObjectIconAlwaysVisible,
 			bAddSubContainer = oOptions.bAddSubContainer,
 			sBaseClass = oOptions.sBaseClass,
-			bShowPlaceholder = !(oHeader.getObjectImageShape() || oHeader.getShowPlaceholder()),
-			bAddIconContainer = (oObjectImage instanceof Icon);
+			sObjectImageShape = oHeader.getObjectImageShape(),
+			sObjectImageBackgroundColor = oHeader.getObjectImageBackgroundColor(),
+			bShowPlaceholder = oHeader.getShowPlaceholder() && !oHeader.getObjectImageURI(),
+			bAddIconContainer = oObjectImage.isA("sap.m.Avatar");
+
+		if (oHeader.getShowPlaceholder()) {
+			ObjectImageHelper.updateAvatarInstance(oPlaceholder, sObjectImageShape, sObjectImageBackgroundColor);
+		}
 
 		if (oHeader.getObjectImageURI() || oHeader.getShowPlaceholder()) {
-			oRm.write("<span ");
-			oRm.addClass(sBaseClass);
-			oRm.addClass('sapUxAPObjectPageHeaderObjectImage-' + oHeader.getObjectImageShape());
+			oRm.openStart("span")
+				.class(sBaseClass)
+				.class('sapUxAPObjectPageHeaderObjectImage-' + sObjectImageShape);
+
 			if (bIsObjectIconAlwaysVisible) {
-				oRm.addClass('sapUxAPObjectPageHeaderObjectImageForce');
+				oRm.class('sapUxAPObjectPageHeaderObjectImageForce');
 			}
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 
 			if (bAddSubContainer) { // add subContainer
-				oRm.write("<span class='sapUxAPObjectPageHeaderObjectImageContainerSub'>");
+				oRm.openStart("span")
+					.class("sapUxAPObjectPageHeaderObjectImageContainerSub")
+					.openEnd();
 			}
 
 			if (bAddIconContainer) {
-				oRm.write("<div");
-				oRm.addClass("sapUxAPObjectPageHeaderObjectImage");
-				oRm.addClass("sapUxAPObjectPageHeaderPlaceholder");
-				oRm.writeClasses();
-				oRm.write(">");
+				ObjectImageHelper.updateAvatarInstance(oObjectImage, sObjectImageShape, sObjectImageBackgroundColor);
+				oRm.openStart("div")
+					.class("sapUxAPObjectPageHeaderObjectImage")
+					.class("sapUxAPObjectPageHeaderPlaceholder")
+					.openEnd();
 			}
 
-			oRm.renderControl(oObjectImage);
+			if (oHeader.getObjectImageURI()) {
+				oRm.renderControl(oObjectImage);
+			}
 			ObjectImageHelper._renderPlaceholder(oRm, oPlaceholder, bShowPlaceholder);
 
 			if (bAddIconContainer) {
-				oRm.write("</div>"); // close icon container
+				oRm.close("div"); // close icon container
 			}
 
 			if (bAddSubContainer) { // close subContainer
-				oRm.write("</span>");
+				oRm.close("span");
 			}
-			oRm.write("</span>");
+			oRm.close("span");
 		}
 	};
 
@@ -102,18 +124,19 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectImageHelper._renderPlaceholder = function (oRm, oPlaceholder, bVisible) {
-		oRm.write("<div");
-		oRm.addClass('sapUxAPObjectPageHeaderPlaceholder');
-		oRm.addClass('sapUxAPObjectPageHeaderObjectImage');
+		oRm.openStart("div")
+			.class('sapUxAPObjectPageHeaderPlaceholder')
+			.class('sapUxAPObjectPageHeaderObjectImage');
+
 		if (!bVisible) {
-			oRm.addClass('sapUxAPHidePlaceholder');
+			oRm.class('sapUxAPHidePlaceholder');
 		}
-		oRm.writeClasses();
-		oRm.write(">");
+
+		oRm.openEnd();
 		oRm.renderControl(oPlaceholder);
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return ObjectImageHelper;
 
-}, /* bExport= */ false);
+});

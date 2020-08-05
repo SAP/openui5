@@ -27,8 +27,12 @@
 			title: "sap.m.MessageBox"
 		});
 
-		var oHL = new sap.ui.layout.HorizontalLayout();
-		var oHL1 = new sap.ui.layout.HorizontalLayout();
+		var oHL = new sap.ui.layout.HorizontalLayout({
+			allowWrapping: true
+		});
+		var oHL1 = new sap.ui.layout.HorizontalLayout({
+			allowWrapping: true
+		});
 		var oVL = new sap.ui.layout.VerticalLayout();
 
 		oVL.addContent(oHL);
@@ -46,11 +50,11 @@
 			aItems.push(item);
 		});
 
-		var oSelect = sap.m.Select("selectType", {
+		var oSelect = new sap.m.Select("selectType", {
 			items: aItems
 		});
 
-		var oSwitch = sap.m.Switch({
+		var oSwitch = new sap.m.Switch({
 			customTextOn: "CPT",
 			customTextOff: "CZY",
 			change: function (ev) {
@@ -129,8 +133,38 @@
 					title: "Set initial button focus",
 					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Custom button text"],
 					id: "messageBoxId1",
-					defaultAction: sap.m.MessageBox.Action.NO,
 					initialFocus: "Custom button text"
+				});
+			}
+		}));
+
+		oVL.addContent(new sap.m.Text("textEmphasizedAction", {
+					text: "\nemphasizedAction"
+				})
+		);
+
+		oVL.addContent(new sap.m.Button("btnEmphasizedAction", {
+			text: "Custom actions with emphasizedAction",
+			width: "300px",
+			press: function () {
+				sap.m.MessageBox.alert("MessageBox with custom actions and emphasizedAction set to YES", {
+					title: "This is an alert",
+					actions: [sap.m.MessageBox.Action.YES],
+					emphasizedAction: sap.m.MessageBox.Action.YES,
+					id: "mboxEmphasizedAction"
+				});
+			}
+		}));
+
+		oVL.addContent(new sap.m.Button("btnNoEmphasizedAction", {
+			text: "Custom actions with no emphasizedAction",
+			width: "300px",
+			press: function () {
+				sap.m.MessageBox.alert("MessageBox with custom actions and emphasizedAction set to null", {
+					title: "This is an alert",
+					actions: [sap.m.MessageBox.Action.YES],
+					emphasizedAction: null,
+					id: "mboxNoEmphasizedAction"
 				});
 			}
 		}));
@@ -206,13 +240,30 @@
 					title: "Error",
 					actions: [sap.m.MessageBox.Action.OK],
 					id: "messageBoxId1",
-					defaultAction: sap.m.MessageBox.Action.OK,
 					details: oJSON
 				});
 			}
 		}));
 
 		oVL.addContent(new sap.m.Text("text4", {
+			text: "\n Responsive Padding support (Fiori 3 themes only)"
+		}));
+
+		oVL.addContent(new sap.m.Button("buttonResponsivePadding", {
+			text: "Responsive Padding",
+			width: "270px",
+			press: function () {
+				sap.m.MessageBox.show(sLongText, {
+					id: "messageBoxId",
+					icon: sap.m.MessageBox.Icon.SUCCESS,
+					title: "MessageBox title",
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+					styleClass: "sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer"
+				});
+			}
+		}));
+
+		oVL.addContent(new sap.m.Text("text5", {
 					text: "\n Deprecated syntax"
 				})
 		);
@@ -323,7 +374,7 @@
 			}
 		}));
 
-		oVL.addContent(new sap.m.Text("text5", {
+		oVL.addContent(new sap.m.Text("text6", {
 			text: "\n Simply usage"
 			})
 		);
@@ -340,7 +391,7 @@
 	</script>
 
 </head>
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 <div id="content"></div>
 </body>
 </html>

@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.unified.ColorPicker.
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/HTML",
@@ -19,9 +18,10 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/library",
 	"./ColorPickerRenderer",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Global"
 ], function(
-	jQuery,
 	Library,
 	Control,
 	HTML,
@@ -35,19 +35,17 @@ sap.ui.define([
 	InvisibleText,
 	Device,
 	coreLibrary,
-	ColorPickerRenderer
+	ColorPickerRenderer,
+	Log,
+	jQuery
 ) {
 	"use strict";
 
-
-
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
-
-	// shortcut for sap.ui.unified.ColorPickerMode
-	var ColorPickerMode = Library.ColorPickerMode;
-
-
+	var ValueState = coreLibrary.ValueState,
+		// shortcut for sap.ui.unified.ColorPickerMode & sap.ui.unified.ColorPickerDisplayMode
+		ColorPickerMode = Library.ColorPickerMode,
+		ColorPickerDisplayMode = Library.ColorPickerDisplayMode;
 
 	/**
 	 * Constructor for a new <code>ColorPicker</code>.
@@ -89,13 +87,21 @@ sap.ui.define([
 			 * <b>Note:</b> The output parameter is an RGB string of the current color.
 			 * @since 1.48.0
 			 */
-			colorString : {type : "string", group : "Misc", defaultValue : null},
+			colorString : {type: "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * Determines the color mode of the <code>ColorPicker</code>.
+			 * Determines the color representation mode the ColorPicker works with - Hue, Saturation, and Value (HSV) or Hue, Saturation, and Lightness (HSL).
+			 *
+			 * <b>Note:</b> The <code>ColorPickerMode.HSV</code> is set by default. For color composing with alpha values, please set the mode to <code>ColorPickerMode.HSL</code>
 			 * @since 1.48.0
 			 */
-			mode : {type : "sap.ui.unified.ColorPickerMode", group : "Appearance", defaultValue : ColorPickerMode.HSV}
+			mode : {type: "sap.ui.unified.ColorPickerMode", group : "Appearance", defaultValue : ColorPickerMode.HSV},
+
+			/**
+			 * Determines the display mode of the <code>ColorPicker</code> among three types - Default, Large and Simplified
+			 * @since 1.58
+			 */
+			displayMode : {type: "sap.ui.unified.ColorPickerDisplayMode", group : "Appearance", defaultValue : ColorPickerDisplayMode.Default}
 		},
 		aggregations: {
 			/**
@@ -110,7 +116,110 @@ sap.ui.define([
 			 * @private
 			 * @since 1.48.0
 			 */
-			_invisibleTexts: {type: "sap.ui.core.InvisibleText", multiple: true, visibility: "hidden"}
+			_invisibleTexts: {type: "sap.ui.core.InvisibleText", multiple: true, visibility: "hidden"},
+
+			/*
+			 * ColorPickerBox.
+			 * All the hidden aggregations from here to the bottom are of type Control because the code also
+			 * works in commons.ColorPicker. It could be fixed via separation of the controls.
+			 * @private
+			 * @since 1.61
+			 */
+			_oCPBox: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Slider to determine the preferred Hue.
+			 * @private
+			 * @since 1.61
+			 */
+			_oSlider: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Alpha slider for transparency regulation of the selected color.
+			 * @private
+			 * @since 1.61
+			 */
+			_oAlphaSlider: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Input for the Hex's value. For faster and precise color picking.
+			 * @private
+			 * @since 1.61
+			 */
+			_oHexField: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Input for the Red's value.
+			 * @private
+			 * @since 1.61
+			 */
+			_oRedField: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Input for the Green's value.
+			 * @private
+			 * @since 1.61
+			 */
+			_oGreenField: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Input for the Blue's value.
+			 * @private
+			 * @since 1.61
+			 */
+			_oBlueField: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Input for the Hue's value.
+			 * @private
+			 * @since 1.61
+			 */
+			_oHueField: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Input for the Saturation's value.
+			 * @private
+			 * @since 1.61
+			 */
+			_oSatField: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Input for the Lightness's value.
+			 * @private
+			 * @since 1.61
+			 */
+			_oLitField: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Input for the Value's value.
+			 * @private
+			 * @since 1.61
+			 */
+			_oValField: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Input for the Alpha's value.
+			 * We need two fields because of the specific of the design. Both fields should be kept in sync.
+			 * @private
+			 * @since 1.61
+			*/
+			_oAlphaField: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+			_oAlphaField2: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * RadioButtonGroup control.
+			 * @private
+			 * @since 1.61
+			 */
+			_oRGBorHSLRBUnifiedGroup: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Button control.
+			 * @private
+			 * @since 1.61
+			 */
+			_oButton: {type: "sap.ui.core.Control", group: "Appearance", multiple: false, visibility: "hidden"}
+
 		},
 		events : {
 
@@ -127,47 +236,47 @@ sap.ui.define([
 					/**
 					 * Parameter containing the RED value (0-255).
 					 */
-					r : {type : "int"},
+					r : {type: "int"},
 
 					/**
 					 * Parameter containing the GREEN value (0-255).
 					 */
-					g : {type : "int"},
+					g : {type: "int"},
 
 					/**
 					 * Parameter containing the BLUE value (0-255).
 					 */
-					b : {type : "int"},
+					b : {type: "int"},
 
 					/**
 					 * Parameter containing the HUE value (0-360).
 					 */
-					h : {type : "int"},
+					h : {type: "int"},
 
 					/**
 					 * Parameter containing the SATURATION value (0-100).
 					 */
-					s : {type : "int"},
+					s : {type: "int"},
 
 					/**
 					 * Parameter containing the VALUE value (0-100).
 					 */
-					v : {type : "int"},
+					v : {type: "int"},
 
 					/**
 					 * Parameter containing the LIGHTNESS value (0-100).
 					 */
-					l : {type : "int"},
+					l : {type: "int"},
 
 					/**
 					 * Parameter containing the Hexadecimal string (#FFFFFF).
 					 */
-					hex : {type : "string"},
+					hex : {type: "string"},
 
 					/**
 					 * Parameter containing the alpha value (transparency).
 					 */
-					alpha : {type : "string"}
+					alpha : {type: "string"}
 				}
 			},
 
@@ -184,47 +293,47 @@ sap.ui.define([
 					/**
 					 * Parameter containing the RED value (0-255).
 					 */
-					r : {type : "int"},
+					r : {type: "int"},
 
 					/**
 					 * Parameter containing the GREEN value (0-255).
 					 */
-					g : {type : "int"},
+					g : {type: "int"},
 
 					/**
 					 * Parameter containing the BLUE value (0-255).
 					 */
-					b : {type : "int"},
+					b : {type: "int"},
 
 					/**
 					 * Parameter containing the HUE value (0-360).
 					 */
-					h : {type : "int"},
+					h : {type: "int"},
 
 					/**
 					 * Parameter containing the SATURATION value (0-100).
 					 */
-					s : {type : "int"},
+					s : {type: "int"},
 
 					/**
 					 * Parameter containing the VALUE value (0-100).
 					 */
-					v : {type : "int"},
+					v : {type: "int"},
 
 					/**
 					 * Parameter containing the LIGHTNESS value (0-100).
 					 */
-					l : {type : "int"},
+					l : {type: "int"},
 
 					/**
 					 * Parameter containing the Hexadecimal string (#FFFFFF).
 					 */
-					hex : {type : "string"},
+					hex : {type: "string"},
 
 					/**
 					 * Parameter containing the alpha value (transparency).
 					 */
-					alpha : {type : "string"}
+					alpha : {type: "string"}
 				}
 			}
 		}
@@ -237,10 +346,6 @@ sap.ui.define([
 		sBgSrc = sap.ui.resource('sap.ui.unified', 'img/ColorPicker/Alphaslider_BG.png'),
 		// get resource bundle
 		oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
-		// Library Helper
-		oHelper = Library.ColorPickerHelper,
-		// Factory
-		oFactory = oHelper.factory,
 		// Constants object
 		CONSTANTS = {};
 
@@ -267,7 +372,6 @@ sap.ui.define([
 		OldColorClass: {value: "sapUiColorPicker-ColorPickerOldColor"},
 		NewColorClass: {value: "sapUiColorPicker-ColorPickerNewColor"},
 		SwatchesClass: {value: "sapUiColorPicker-swatches"},
-		ArrowClass: {value: "sapUiColorPicker-Arrow"},
 		Colors: {value: {
 			aliceblue: 'f0f8ff',
 			antiquewhite: 'faebd7',
@@ -462,14 +566,21 @@ sap.ui.define([
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
 		// Get if control should be in responsive mode
-		this.bResponsive = oHelper.isResponsive();
+		this.bResponsive = Library.ColorPickerHelper.isResponsive();
 
 		// Color picker cursor size in px obtained from less parameter. Keep in mind width and height are the same.
-		this._iCPCursorSize = parseInt(Parameters.get("_sap_ui_unified_ColorPicker_CircleSize"), 10);
+		var circleSize = this.bResponsive ? "_sap_ui_unified_ColorPicker_CircleSize" : "_sap_ui_commons_ColorPicker_CircleSize";
+		this._iCPCursorSize = parseInt(Parameters.get(circleSize));
 
 		// Init _processChanges and _bHSLMode according to default control mode
 		this._processChanges = this._processHSVChanges;
 		this._bHSLMode = false;
+
+		if (this.getDisplayMode() === ColorPickerDisplayMode.Simplified) {
+			CONSTANTS.HideForDisplay.value = ".hideDisplay";
+		}
+
+		this.bPressed = false;
 	};
 
 	/**
@@ -497,10 +608,10 @@ sap.ui.define([
 				}
 			}
 		},
-		init: function () {
+		init: function() {
 			this.bRtl = sap.ui.getCore().getConfiguration().getRTL();
 		},
-		exit: function () {
+		exit: function() {
 			if (this._sResizeListener) {
 				ResizeHandler.deregister(this._sResizeListener);
 			}
@@ -508,21 +619,21 @@ sap.ui.define([
 		/**
 		 * @returns {int} Width of the rendered control
 		 */
-		getWidth: function () {
+		getWidth: function() {
 			return this.$().width();
 		},
 		/**
 		 * @returns {object} jQuery object containing the offset coordinates of the control
 		 */
-		getOffset: function () {
+		getOffset: function() {
 			return this.$().offset();
 		},
-		onBeforeRendering: function () {
+		onBeforeRendering: function() {
 			if (this._sResizeListener) {
 				ResizeHandler.deregister(this._sResizeListener);
 			}
 		},
-		onAfterRendering: function () {
+		onAfterRendering: function() {
 			this._handle = this.$().find("> div." + CONSTANTS.CPCircleClass);
 
 			// Attach resize listener
@@ -536,13 +647,13 @@ sap.ui.define([
 		 * and height should always be equal.
 		 * @param {object} oEvent event
 		 */
-		handleResize: function (oEvent) {
+		handleResize: function(oEvent) {
 			this.fireResize({size: oEvent.size.width});
 		},
 		/**
 		 * @returns {object} DOM reference of the handle
 		 */
-		getHandle: function () {
+		getHandle: function() {
 			return this._handle;
 		},
 		/**
@@ -550,7 +661,7 @@ sap.ui.define([
 		 * @override
 		 * @param {object} oEvent event object
 		 */
-		ontouchstart: function (oEvent) {
+		ontouchstart: function(oEvent) {
 			// React on first touch|click event
 			this.handleTouch(oEvent);
 		},
@@ -559,7 +670,7 @@ sap.ui.define([
 		 * @override
 		 * @param {object} oEvent event object
 		 */
-		ontouchend: function (oEvent) {
+		ontouchend: function(oEvent) {
 			// React on the last position of the handle
 			this.handleTouch(oEvent);
 		},
@@ -568,14 +679,14 @@ sap.ui.define([
 		 * @override
 		 * @param {object} oEvent event object
 		 */
-		ontouchmove: function (oEvent) {
+		ontouchmove: function(oEvent) {
 			this.handleTouch(oEvent);
 		},
 		/**
 		 * Handles touch/click/mouse drag interaction.
 		 * @param {object} oEvent event object
 		 */
-		handleTouch: function (oEvent) {
+		handleTouch: function(oEvent) {
 			var oValues = this.calculateValuesFromEvent(oEvent);
 			// Fire event if calculation is ok so ColorPicker control can react to the interaction
 			if (oValues) {
@@ -588,7 +699,7 @@ sap.ui.define([
 		 * @param {object} oEvent event object
 		 * @returns {object|false} with 'value' and 'saturation' properties
 		 */
-		calculateValuesFromEvent: function (oEvent) {
+		calculateValuesFromEvent: function(oEvent) {
 			var iX = oEvent.offsetX,
 				iY = oEvent.offsetY,
 				iBoxHeight,
@@ -638,7 +749,7 @@ sap.ui.define([
 				saturation: (1 - iY / iBoxHeight) * 100
 			};
 		},
-		renderer: function (oRm, oControl) {
+		renderer: function(oRm, oControl) {
 			// Control container div
 			oRm.write("<div");
 			oRm.addClass(CONSTANTS.CPBoxClass);
@@ -667,7 +778,7 @@ sap.ui.define([
 	 * @returns{sap.ui.layout.HorizontalLayout} Holding the input control and the label's
 	 * @private
 	 */
-	ColorPicker.prototype._createRowFromInput = function (oInput, sTooltipID, sLabelText, sUnit) {
+	ColorPicker.prototype._createRowFromInput = function(oInput, sTooltipID, sLabelText, sUnit) {
 		var sTooltip = oRb.getText(sTooltipID),
 			oHL;
 
@@ -675,7 +786,7 @@ sap.ui.define([
 		oHL = new HLayout({
 			content: [
 				// Label
-				oFactory.createLabel({
+				Library.ColorPickerHelper.factory.createLabel({
 					text: sLabelText,
 					tooltip: sTooltip,
 					labelFor: oInput
@@ -687,7 +798,7 @@ sap.ui.define([
 
 		// Manage unit label
 		if (sUnit) {
-			oHL.addContent(oFactory.createLabel({text: sUnit, labelFor: oInput})
+			oHL.addContent(Library.ColorPickerHelper.factory.createLabel({text: sUnit, labelFor: oInput})
 				.addStyleClass(CONSTANTS.UnitLabelClass)
 				.addStyleClass(CONSTANTS.LabelClass)
 			);
@@ -702,7 +813,7 @@ sap.ui.define([
 	 * @param {boolean} [bFireLiveChange=false] if <code>liveChange</code> event should be fired on this update
 	 * @private
 	 */
-	ColorPicker.prototype._updateColorStringProperty = function (bFireChange, bFireLiveChange) {
+	ColorPicker.prototype._updateColorStringProperty = function(bFireChange, bFireLiveChange) {
 		var sRGBString = this._getCSSColorString();
 		this.setProperty('colorString', sRGBString, true);
 		if (bFireLiveChange) {
@@ -742,7 +853,7 @@ sap.ui.define([
 	 * @param {object} oEvent event object
 	 * @private
 	 */
-	ColorPicker.prototype._handleCPBoxSelectEvent = function (oEvent) {
+	ColorPicker.prototype._handleCPBoxSelectEvent = function(oEvent) {
 		var valValue = oEvent.getParameter("value"),
 			satValue = oEvent.getParameter("saturation");
 
@@ -763,7 +874,7 @@ sap.ui.define([
 	 * @param {object} oEvent event object
 	 * @private
 	 */
-	ColorPicker.prototype._handleCPBoxResizeEvent = function (oEvent) {
+	ColorPicker.prototype._handleCPBoxResizeEvent = function(oEvent) {
 		this._iCPBoxSize = oEvent.getParameter("size");
 		this._updateCursorPosition();
 	};
@@ -773,7 +884,7 @@ sap.ui.define([
 	 * @param {object} oEvent event object
 	 * @private
 	 */
-	ColorPicker.prototype._handleCPBoxTouchEndEvent = function (oEvent) {
+	ColorPicker.prototype._handleCPBoxTouchEndEvent = function(oEvent) {
 		this._updateColorStringProperty(true, false);
 	};
 
@@ -781,10 +892,8 @@ sap.ui.define([
 	 * Creates all internal interaction controls needed for displaying the <code>ColorPicker</code>.
 	 * @private
 	 */
-	ColorPicker.prototype._createInteractionControls = function () {
-		var sId = this.getId(),
-			oHueInvisibleText,
-			oAlphaInvisibleText;
+	ColorPicker.prototype._createInteractionControls = function() {
+		var sId = this.getId();
 
 		// Create the internal ColorPickerBox control
 		this.oCPBox = new ColorPickerBox(sId + "-cpBox", {
@@ -799,85 +908,116 @@ sap.ui.define([
 			ontouchend: this._handleCPBoxTouchEndEvent.bind(this)
 		});
 
-		this.oHexField = oFactory.createInput(sId + "-hxF", {
+		this.oHexField = Library.ColorPickerHelper.factory.createInput(sId + "-hxF", {
 			value: this.Color.hex.substr(1),
-			change: this._handleHexValueChange.bind(this)
+			change: this._handleHexValueChange.bind(this),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_HEX")
 		}).addStyleClass(CONSTANTS.HEXClass);
 
-		this.oRedField = oFactory.createInput(sId + "-rF", {
+
+		this.oRedField = Library.ColorPickerHelper.factory.createInput(sId + "-rF", {
 			value: this.Color.r,
-			change: this._handleRedValueChange.bind(this)
+			change: this._handleRedValueChange.bind(this),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_RED")
 		}).addStyleClass(CONSTANTS.LeftColumnInputClass);
 
-		this.oGreenField = oFactory.createInput(sId + "-gF", {
+
+		this.oGreenField = Library.ColorPickerHelper.factory.createInput(sId + "-gF", {
 			value: this.Color.g,
-			change: this._handleGreenValueChange.bind(this)
+			change: this._handleGreenValueChange.bind(this),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_GREEN")
 		}).addStyleClass(CONSTANTS.LeftColumnInputClass);
 
-		this.oBlueField = oFactory.createInput(sId + "-bF", {
+
+
+		this.oBlueField = Library.ColorPickerHelper.factory.createInput(sId + "-bF", {
 			value: this.Color.b,
-			change: this._handleBlueValueChange.bind(this)
+			change: this._handleBlueValueChange.bind(this),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_BLUE")
 		}).addStyleClass(CONSTANTS.LeftColumnInputClass);
 
-		this.oHueField = oFactory.createInput(sId + "-hF", {
+
+		this.oHueField = Library.ColorPickerHelper.factory.createInput(sId + "-hF", {
 			value: this.Color.h,
-			change: this._handleHueValueChange.bind(this)
+			change: this._handleHueValueChange.bind(this),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_HUE")
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
 
-		this.oSatField = oFactory.createInput(sId + "-sF", {
+
+		this.oSatField = Library.ColorPickerHelper.factory.createInput(sId + "-sF", {
 			value: this.Color.s,
-			change: this._handleSatValueChange.bind(this)
+			change: this._handleSatValueChange.bind(this),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_SAT") +
+				" " + InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_PERCENTAGE")
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
 
-		this.oLitField = oFactory.createInput(sId + "-lF", {
+
+		this.oLitField = Library.ColorPickerHelper.factory.createInput(sId + "-lF", {
 			value: this.Color.l,
-			change: this._handleLitValueChange.bind(this)
-		}).addStyleClass(CONSTANTS.RightColumnInputClass);
+			change: this._handleLitValueChange.bind(this),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_LIGHTNESS") +
+				" " + InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_PERCENTAGE")
+		}).addStyleClass(CONSTANTS.RightColumnInputClass).addStyleClass(CONSTANTS.HideForHSVClass);
 
-		this.oAlphaField = oFactory.createInput(sId + "-aF", {
+		// this alpha field is rendered along with R, G, B fields
+		this.oAlphaField = Library.ColorPickerHelper.factory.createInput(sId + "-aF", {
 			value: this.Color.a,
-			change: this._handleAlphaValueChange.bind(this)
-		}).addStyleClass(CONSTANTS.RightColumnInputClass);
+			change: this._handleAlphaValueChange.bind(this),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_ALPHA")
+		}).addStyleClass(CONSTANTS.RightColumnInputClass).addStyleClass(CONSTANTS.HideForHSVClass).addStyleClass("sapUnifiedA");
 
-		this.oValField = oFactory.createInput(sId + "-vF", {
+		// this alpha field is rendered along with H, S, L fields
+		this.oAlphaField2 = Library.ColorPickerHelper.factory.createInput(sId + "-aF2", {
+			value: this.Color.a,
+			change: this._handleAlphaValueChange.bind(this),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_ALPHA")
+		}).addStyleClass(CONSTANTS.RightColumnInputClass).addStyleClass(CONSTANTS.HideForHSVClass).addStyleClass("sapUnifiedA");
+
+
+		this.oValField = Library.ColorPickerHelper.factory.createInput(sId + "-vF", {
 			value: this.Color.v,
-			change: this._handleValValueChange.bind(this)
-		}).addStyleClass(CONSTANTS.RightColumnInputClass);
+			change: this._handleValValueChange.bind(this),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_VALUE")
+		}).addStyleClass(CONSTANTS.RightColumnInputClass).addStyleClass(CONSTANTS.HideForHSLClass);
 
-		// RGB|HSL output
-		this.oRGBorHSLRBGroup = oFactory.createRadioButtonGroup({
+
+		//Commons RGB|HSL output
+		this.oRGBorHSLRBGroup = Library.ColorPickerHelper.factory.createRadioButtonGroup({
 			columns: 2,
 			buttons: [
-				oFactory.createRadioButtonItem({text: CONSTANTS.RGB}),
-				oFactory.createRadioButtonItem({text: Library.ColorPickerMode.HSL})
+				Library.ColorPickerHelper.factory.createRadioButtonItem({text: CONSTANTS.RGB}),
+				Library.ColorPickerHelper.factory.createRadioButtonItem({text: Library.ColorPickerMode.HSL})
 			],
 			select: this._handleRGBorHSLValueChange.bind(this),
 			selectedIndex: (this.Color.formatHSL ? 1 : 0 )
 		}).addStyleClass(CONSTANTS.OutputSelectorClass);
 
 		// Slider
-		oHueInvisibleText = new InvisibleText({text: oRb.getText("COLORPICKER_HUE_SLIDER")}).toStatic();
-		this.addAggregation("_invisibleTexts", oHueInvisibleText, true);
-		this.oSlider = oFactory.createSlider(sId + "-hSLD", {
+		this.oHueInvisibleText = new InvisibleText({text: oRb.getText("COLORPICKER_HUE_SLIDER")}).toStatic();
+		this.addAggregation("_invisibleTexts", this.oHueInvisibleText, true);
+		this.oSlider = Library.ColorPickerHelper.factory.createSlider(sId + "-hSLD", {
 			max: 360,
 			step: 1,
 			tooltip: oRb.getText("COLORPICKER_HUE"),
-			value: parseInt(this.oHueField.getValue(), 10)
-		}).addStyleClass(CONSTANTS.SliderClass).addAriaLabelledBy(oHueInvisibleText);
+			value: parseInt(this.oHueField.getValue())
+		}).addStyleClass(CONSTANTS.SliderClass).addAriaLabelledBy(this.oHueInvisibleText);
+
 
 		// Attaching events with parameter passed so the handler will know in which mode to execute
 		this.oSlider.attachEvent("liveChange", "liveChange", this._handleSliderChange.bind(this));
 		this.oSlider.attachEvent("change", "change", this._handleSliderChange.bind(this));
 
 		// Alpha Slider
-		oAlphaInvisibleText = new InvisibleText({text: oRb.getText("COLORPICKER_ALPHA_SLIDER")}).toStatic();
-		this.addAggregation("_invisibleTexts", oAlphaInvisibleText, true);
-		this.oAlphaSlider = oFactory.createSlider(sId + "-aSLD", {
+		this.oAlphaInvisibleText = new InvisibleText({text: oRb.getText("COLORPICKER_ALPHA_SLIDER")}).toStatic();
+		this.addAggregation("_invisibleTexts", this.oAlphaInvisibleText, true);
+
+		this.oAlphaSlider = Library.ColorPickerHelper.factory.createSlider(sId + "-aSLD", {
 			max: 1,
 			value: 1,
 			step: 0.01,
 			tooltip: oRb.getText("COLORPICKER_ALPHA")
-		}).addStyleClass(CONSTANTS.AlphaSliderClass).addAriaLabelledBy(oAlphaInvisibleText);
+		}).addStyleClass(CONSTANTS.AlphaSliderClass).addAriaLabelledBy(this.oAlphaInvisibleText);
+
 
 		// Attaching events with parameter passed so the handler will know in which mode to execute
 		this.oAlphaSlider.attachEvent("liveChange", "liveChange", this._handleAlphaSliderChange.bind(this));
@@ -889,7 +1029,7 @@ sap.ui.define([
 	 * Controls will be created only once during the lifecycle of the control.
 	 * @private
 	 */
-	ColorPicker.prototype._createLayout = function () {
+	ColorPicker.prototype._createLayout = function() {
 		var sId = this.getId(),
 			oGrid;
 
@@ -902,91 +1042,34 @@ sap.ui.define([
 		this._createInteractionControls();
 
 		// Layout Data - that will be needed for visual state update
-		this._oLayoutData = {
-			oCPBox: new GridData({span: "L6 M6 S12"}), // Color picker box
-			icOne: new GridData({span: "L3 M3 S6"}), // Input column 1
-			icTwo: new GridData({span: "L3 M3 S6"}), // Input column 2
-			swatches: new GridData({span: "L3 M3 S12"}), // New and old color swatches
-			rbg: new GridData({span: "L6 M8 S12"}) // RadioButton group RGB|HSL output
-		};
+		this.oCPBoxGD = new GridData({span: "L6 M6 S12"}); // Color picker box
+		this.icOne = new GridData({span: "L3 M3 S6"}); // Input column 1
+		this.icTwo = new GridData({span: "L3 M3 S6"}); // Input column 2
+		this.swatches = new GridData({span: "L3 M3 S12"}); // New and old color swatches
+		this.rbg = new GridData({span: "L6 M8 S12"}); // RadioButton group RGB|HSL output
 
-		// Create Grid
-		oGrid = new Grid({
-			containerQuery: true,
-			content: [
-				// ColorPickerBox
-				this.oCPBox.setLayoutData(this._oLayoutData.oCPBox),
-				// Input column 1
-				new VLayout({
-					content: [
-						this._createRowFromInput(this.oRedField, "COLORPICKER_RED", "R:"),
-						this._createRowFromInput(this.oGreenField, "COLORPICKER_GREEN", "G:"),
-						this._createRowFromInput(this.oBlueField, "COLORPICKER_BLUE", "B:"),
-						this._createRowFromInput(this.oHexField, "COLORPICKER_HEX", "#:")
-					],
-					layoutData: this._oLayoutData.icOne
-				}),
-				// Input column 2
-				new VLayout({
-					content: [
-						this._createRowFromInput(this.oHueField, "COLORPICKER_HUE", "H:"),
-						this._createRowFromInput(this.oSatField, "COLORPICKER_SAT", "S:", "%"),
-						this._createRowFromInput(this.oLitField, "COLORPICKER_LIGHTNESS", "L:", "%").addStyleClass(CONSTANTS.HideForHSVClass),
-						this._createRowFromInput(this.oAlphaField, "COLORPICKER_ALPHA", "A:").addStyleClass(CONSTANTS.HideForHSVClass),
-						this._createRowFromInput(this.oValField, "COLORPICKER_VALUE", "V:").addStyleClass(CONSTANTS.HideForHSLClass)
-					],
-					layoutData: this._oLayoutData.icTwo
-				}).addStyleClass(CONSTANTS.LastColumnClass),
-				// Old and New color swatches
-				new HLayout({
-					content: [
-						// HTML-Control containing the Old Color Box
-						new HTML({
-							content: ["<div id='", sId, "-ocBox' class='", CONSTANTS.OldColorClass, "'></div>"].join("")
-						}),
-						// Arrow
-						new Icon({
-							backgroundColor: "transparent",
-							src: "sap-icon://arrow-right",
-							tooltip: oRb.getText("COLORPICKER_NEW_OLD_COLOR")
-						}).addStyleClass(CONSTANTS.HideForHSVClass).addStyleClass(CONSTANTS.ArrowClass),
-						// HTML-Control containing the New Color Box
-						new HTML({
-							content: ["<div id='", sId, "-ncBox' class='", CONSTANTS.NewColorClass, "'></div>"].join("")
-						})
-					],
-					layoutData: this._oLayoutData.swatches
-				}).addStyleClass(CONSTANTS.SwatchesClass),
-				// RGB|HSL output selector
-				new HLayout({
-					content: [
-						oFactory.createLabel({ text: "Output:", labelFor: this.oRGBorHSLRBGroup}),
-						this.oRGBorHSLRBGroup
-					],
-					layoutData: this._oLayoutData.rbg
-				}).addStyleClass(CONSTANTS.HideForHSVClass).addStyleClass(CONSTANTS.OutputSelectorRowClass),
-				// Slider
-				this.oSlider.setLayoutData(new GridData({span: "L6 M6 S12", linebreak: true})),
-				// Alpha Slider
-				this.oAlphaSlider.setLayoutData(new GridData({span: "L6 M6 S12"}))
-			]
-		}).addStyleClass(CONSTANTS.CPMatrixClass);
-
-		// Grid as aggregation of the ColorPicker control - needed for lifecycle management
-		this.setAggregation("_grid", oGrid, true);
+		if (this.bResponsive) {
+			this._createUnifiedColorPicker(sId);
+		} else {
+			oGrid = this._createCommonsColorPicker(oGrid, sId);
+			// Grid as aggregation of the ColorPicker control - needed for lifecycle management
+			this.setAggregation("_grid", oGrid, true);
+		}
 
 		// Internal flag marking that layout controls are created
 		this._bLayoutControlsCreated = true;
 
-		// Adapt control to library - only initial adaptation needed here.
-		this._adaptControlToLibrary();
+		if (!this.bResponsive) {
+			// Adapt control to library - only initial adaptation needed here.
+			this._adaptControlToLibrary();
+		}
 	};
 
 	/**
 	 * Should be called once after creating of internal controls to apply library specific layout
 	 * @private
 	 */
-	ColorPicker.prototype._adaptControlToLibrary = function () {
+	ColorPicker.prototype._adaptControlToLibrary = function() {
 		var oGrid;
 
 		// If layout is not created there is nothing to adapt
@@ -1008,46 +1091,43 @@ sap.ui.define([
 		} else {
 			oGrid.setProperty("hSpacing", 0, true);
 			oGrid.setProperty("vSpacing", 0, true);
-			this._oLayoutData.oCPBox.setSpanS(5);
-			this._oLayoutData.icOne.setSpanS(4);
-			this._oLayoutData.icTwo.setSpanS(3);
-			this._oLayoutData.rbg.setSpanS(8);
+			this.oCPBoxGD.setSpanS(5);
+			this.icOne.setSpanS(4);
+			this.icTwo.setSpanS(3);
+			this.rbg.setSpanS(8);
 		}
-
-		// Make sure controls are adapted only once
-		this._adaptControlToLibrary = jQuery.noop;
 	};
 
 	/**
 	 * Adapts the control visual state depending on the currently used mode.
 	 * @private
 	 */
-	ColorPicker.prototype._updateControlVisualState = function () {
+	ColorPicker.prototype._updateControlVisualState = function() {
 		var oGrid = this.getAggregation("_grid");
 
 		// If controls are not created there is nothing to update
-		if (!this._bLayoutControlsCreated) {
+		if (!oGrid) {
 			return;
 		}
 		if (this.bResponsive) {
 			// Responsive control mode
 			if (this._bHSLMode) {
 				oGrid.addStyleClass(CONSTANTS.HSLClass);
-				this._oLayoutData.swatches.setSpanM(4).setLinebreak(true);
+				this.swatches.setSpanM(4).setLinebreak(true);
 			} else {
 				// HSV mode
 				oGrid.removeStyleClass(CONSTANTS.HSLClass);
-				this._oLayoutData.swatches.setSpanM(3).setLinebreak(false);
+				this.swatches.setSpanM(3).setLinebreak(false);
 			}
 		} else {
 			// Legacy control mode
 			if (this._bHSLMode) {
 				oGrid.addStyleClass(CONSTANTS.HSLClass);
-				this._oLayoutData.swatches.setSpanS(4).setLinebreak(true);
+				this.swatches.setSpanS(4).setLinebreak(true);
 			} else {
 				// HSV mode
 				oGrid.removeStyleClass(CONSTANTS.HSLClass);
-				this._oLayoutData.swatches.setSpanS(3).setLinebreak(false);
+				this.swatches.setSpanS(3).setLinebreak(false);
 			}
 		}
 	};
@@ -1057,7 +1137,7 @@ sap.ui.define([
 	 * depending on the current control mode.
 	 * @private
 	 */
-	ColorPicker.prototype._processChanges = jQuery.noop;
+	ColorPicker.prototype._processChanges = function() {};
 
 	/**
 	 * Setter for <code>mode</code> property.
@@ -1066,7 +1146,8 @@ sap.ui.define([
 	 * @public
 	 * @override
 	 */
-	ColorPicker.prototype.setMode = function (sMode, bSuppressInvalidate) {
+	ColorPicker.prototype.setMode = function(sMode, bSuppressInvalidate) {
+		this._bLayoutControlsCreated = false;
 		// Assign internal _processChanges method reference depending on current control mode
 		switch (sMode) {
 			case Library.ColorPickerMode.HSL:
@@ -1076,7 +1157,7 @@ sap.ui.define([
 				this._processChanges = this._processHSVChanges;
 				break;
 			default:
-				jQuery.sap.log.error("Control must have a valid mode set to work correct");
+				Log.error("Control must have a valid mode set to work correct");
 				break;
 		}
 
@@ -1084,7 +1165,41 @@ sap.ui.define([
 		return this.setProperty("mode", sMode, bSuppressInvalidate);
 	};
 
+	/**
+	 * Setter for <code>displayMode</code> property.
+	 * @param {sap.ui.unified.ColorPickerDisplayMode} sDisplayMode control displayMode enum
+	 * @public
+	 * @override
+	 */
+	ColorPicker.prototype.setDisplayMode = function(sDisplayMode) {
+		this._bLayoutControlsCreated = false;
+		return this.setProperty("displayMode", sDisplayMode, false);
+	};
+
+	ColorPicker.prototype._cleanup = function() {
+		var aControls = [this.getAggregation("_grid"), this.getAggregation("_oCPBox"), this.getAggregation("_oHexField"),
+			this.getAggregation("_oRedField"), this.getAggregation("_oGreenField"), this.getAggregation("_oBlueField"),
+			this.getAggregation("_oHueField"), this.getAggregation("_oSatField"), this.getAggregation("_oLitField"),
+			this.getAggregation("_oAlphaField"), this.getAggregation("_oAlphaField2"), this.getAggregation("_oValField"),
+			this.getAggregation("_oSlider"), this.getAggregation("_oAlphaSlider"), this.oRGBorHSLRBUnifiedGroup,
+			this.oCPBoxGD, this.icOne, this.icTwo, this.rbg, this.swatches, this.oAlphaInvisibleText, this.oHueInvisibleText,
+			this.getAggregation("_oButton"), this.getAggregation("_oRGBorHSLRBUnifiedGroup"), this.oRGBorHSLRBGroup];
+
+		aControls.forEach(function(oControl) {
+			if (oControl) {
+				oControl.destroy();
+			}
+		}, this);
+
+		this._bLayoutControlsCreated = false;
+	};
+
+	ColorPicker.prototype.exit = function() {
+		this._cleanup();
+	};
+
 	ColorPicker.prototype.onBeforeRendering = function() {
+		this._cleanup();
 		// Create the layout controls
 		this._createLayout();
 
@@ -1095,7 +1210,7 @@ sap.ui.define([
 		this._updateColorString();
 	};
 
-	ColorPicker.prototype._updateColorString = function () {
+	ColorPicker.prototype._updateColorString = function() {
 		// parse string; get the color object
 		this._parseColorString(this.getColorString());
 
@@ -1110,14 +1225,20 @@ sap.ui.define([
 		if (this._bHSLMode) {
 			this.oLitField.setValue(this.Color.l);
 			this.oAlphaField.setValue(this.Color.a);
+			this.oAlphaField2.setValue(this.Color.a);
 			this.oSlider.setValue(this.Color.h);
 			this.oAlphaSlider.setValue(this.Color.a);
-			this.oRGBorHSLRBGroup.setSelectedIndex(this.Color.formatHSL ? 1 : 0 );
+			if (this.bResponsive) {
+				this.oRGBorHSLRBUnifiedGroup.setSelectedIndex(this.Color.formatHSL ? 1 : 0);
+			} else {
+				this.oRGBorHSLRBGroup.setSelectedIndex(this.Color.formatHSL ? 1 : 0);
+			}
 		} else {
 			this.oValField.setValue(this.Color.v);
 			this.oSlider.setValue(this.Color.h);
 			this.oAlphaSlider.setValue(this.Color.a);
 			this.oAlphaField.setValue(this.Color.a);
+			this.oAlphaField2.setValue(this.Color.a);
 		}
 
 		this._updateColorStringProperty(true, true);
@@ -1143,7 +1264,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleSliderChange = function(oEvent, oData) {
 		// get the new value
-		var sliderValue = parseInt(this.oSlider.getValue(), 10);
+		var sliderValue = parseInt(this.oSlider.getValue());
 
 		// set the new hue value in the hue input field
 		this.oHueField.setValue(sliderValue);
@@ -1165,6 +1286,7 @@ sap.ui.define([
 		// Update Alpha Field if needed - it's visible only in HSL mode
 		if (this._bHSLMode) {
 			this.oAlphaField.setValue(this.Color.a);
+			this.oAlphaField2.setValue(this.Color.a);
 		}
 
 		// process changes
@@ -1185,7 +1307,7 @@ sap.ui.define([
 	 * @returns {number} in the defined by iMin and iMax range
 	 * @private
 	 */
-	ColorPicker.prototype._getValueInRange = function (iValue, iMin, iMax) {
+	ColorPicker.prototype._getValueInRange = function(iValue, iMin, iMax) {
 		if (isNaN(iValue)) {
 			iValue = 0;
 		}
@@ -1198,9 +1320,10 @@ sap.ui.define([
 	 * <b>Note:</b> This input is available only in HSL mode.
 	 * @private
 	 */
-	ColorPicker.prototype._handleAlphaValueChange = function() {
-		// get the new value
-		var alphaValue = parseFloat(this.oAlphaField.getValue(), 10);
+	ColorPicker.prototype._handleAlphaValueChange = function(oEvent) {
+		// get the new value from the alpha field that was modified
+		var alphaValue = (oEvent.getParameter("id") == "cp-aF2") ?
+			parseFloat(this.oAlphaField2.getValue(), 10) : parseFloat(this.oAlphaField.getValue(), 10);
 
 		alphaValue = this._getValueInRange(alphaValue, 0, 1);
 
@@ -1209,6 +1332,7 @@ sap.ui.define([
 
 		// set the new value (maybe the value has been changed in the above lines)
 		this.oAlphaField.setValue(alphaValue);
+		this.oAlphaField2.setValue(alphaValue);
 		this.oAlphaSlider.setValue(alphaValue);
 
 		if (!this.Color.formatHSL) {
@@ -1225,7 +1349,9 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleRGBorHSLValueChange = function() {
 		// store new value
-		this.Color.formatHSL = (this.oRGBorHSLRBGroup.getSelectedIndex() === 1);
+		var oUnifiedRBGroup = this.oRGBorHSLRBUnifiedGroup;
+		this.Color.formatHSL = oUnifiedRBGroup ? oUnifiedRBGroup.getSelectedIndex() === 1 : this.oRGBorHSLRBGroup.getSelectedIndex() === 1;
+
 		this._updateColorStringProperty(true, true);
 	};
 
@@ -1235,7 +1361,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleHueValueChange = function() {
 		// get the new value
-		var hueValue = parseInt(this.oHueField.getValue(), 10);
+		var hueValue = parseInt(this.oHueField.getValue());
 		hueValue = this._getValueInRange(hueValue, 0, 360);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1254,7 +1380,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleSatValueChange = function() {
 		// get the new value
-		var satValue = parseInt(this.oSatField.getValue(),10);
+		var satValue = parseInt(this.oSatField.getValue());
 		satValue = this._getValueInRange(satValue, 0, 100);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1271,7 +1397,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleValValueChange = function() {
 		// get the new value
-		var valValue = parseInt(this.oValField.getValue(), 10);
+		var valValue = parseInt(this.oValField.getValue());
 		valValue = this._getValueInRange(valValue, 0, 100);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1288,7 +1414,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleLitValueChange = function() {
 		// get the new value
-		var litValue = parseInt(this.oLitField.getValue(), 10);
+		var litValue = parseInt(this.oLitField.getValue());
 		litValue = this._getValueInRange(litValue, 0, 100);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1306,7 +1432,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleRedValueChange = function() {
 		// get the new value
-		var redValue = parseInt(this.oRedField.getValue(), 10);
+		var redValue = parseInt(this.oRedField.getValue());
 		redValue = this._getValueInRange(redValue, 0, 255);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1322,7 +1448,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleGreenValueChange = function() {
 		// get the new value
-		var greenValue = parseInt(this.oGreenField.getValue(), 10);
+		var greenValue = parseInt(this.oGreenField.getValue());
 		greenValue = this._getValueInRange(greenValue, 0, 255);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1339,7 +1465,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._handleBlueValueChange = function() {
 		// get the new value
-		var blueValue = parseInt(this.oBlueField.getValue(), 10);
+		var blueValue = parseInt(this.oBlueField.getValue());
 		blueValue = this._getValueInRange(blueValue, 0, 255);
 
 		// set the new value (maybe the value has been changed in the above lines)
@@ -1357,9 +1483,9 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._processHSVChanges = function() {
 		// get HSV-values
-		var hueValue = parseInt(this.oHueField.getValue(), 10);
-		var satValue = parseInt(this.oSatField.getValue(), 10);
-		var valValue = parseInt(this.oValField.getValue(), 10);
+		var hueValue = parseInt(this.oHueField.getValue());
+		var satValue = parseInt(this.oSatField.getValue());
+		var valValue = parseInt(this.oValField.getValue());
 
 		// calculate and set new RGB-values
 		this._calculateRGB(hueValue, satValue, valValue);
@@ -1371,7 +1497,7 @@ sap.ui.define([
 		this.oBlueField.setValue(this.Color.b);
 
 		// calculate and set HEX-values from the RGB-values
-		this._calculateHEX(this.Color.r,this.Color.g,this.Color.b);
+		this._calculateHEX(this.Color.r, this.Color.g, this.Color.b);
 		this.oHexField.setValue(this.sHexString);
 		this.Color.hex = "#" + this.oHexField.getValue();
 
@@ -1394,9 +1520,9 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._processHSLChanges = function() {
 		// get HSL-values
-		var iHueValue = parseInt(this.oHueField.getValue(), 10),
-			iSatValue = parseInt(this.oSatField.getValue(), 10),
-			iLitValue = parseInt(this.oLitField.getValue(), 10);
+		var iHueValue = parseInt(this.oHueField.getValue()),
+			iSatValue = parseInt(this.oSatField.getValue()),
+			iLitValue = parseInt(this.oLitField.getValue());
 
 		if (iHueValue > 360) {
 			iHueValue %= 360;
@@ -1412,7 +1538,7 @@ sap.ui.define([
 		this.oBlueField.setValue(this.Color.b);
 
 		// calculate and set HEX-values from the RGB-values
-		this._calculateHEX(this.Color.r,this.Color.g,this.Color.b);
+		this._calculateHEX(this.Color.r, this.Color.g, this.Color.b);
 		this.oHexField.setValue(this.sHexString);
 		this.Color.hex = "#" + this.oHexField.getValue();
 
@@ -1436,9 +1562,9 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._processRGBChanges = function() {
 		// calculate and set HEX-value from the RGB-values
-		var redValue   = Math.round(parseInt(this.oRedField.getValue(),10)),
-			greenValue = Math.round(parseInt(this.oGreenField.getValue(),10)),
-			blueValue  = Math.round(parseInt(this.oBlueField.getValue(),10)),
+		var redValue = Math.round(parseInt(this.oRedField.getValue())),
+			greenValue = Math.round(parseInt(this.oGreenField.getValue())),
+			blueValue = Math.round(parseInt(this.oBlueField.getValue())),
 			// 765 is the sum of red, green and blue values if they are all equal to 255 which in combination gives pure white
 			bPureWhite = (redValue + greenValue + blueValue) === 765;
 
@@ -1464,7 +1590,7 @@ sap.ui.define([
 		this.oSatField.setValue(this.Color.s);
 
 		// update slider value
-		this.oSlider.setValue(parseInt(this.oHueField.getValue(),10));
+		this.oSlider.setValue(parseInt(this.oHueField.getValue()));
 
 		// store the values in variable
 		this.Color.r = redValue;
@@ -1496,7 +1622,7 @@ sap.ui.define([
 		re = /^([0-9a-fA-F]{8})$/;
 		if (re.test(sHexValue) !== false) {
 			flAlphaValue = Number((parseInt(sHexValue.substr(6, 2), 16) / 255).toFixed(2));
-			sHexValue = sHexValue.substr(0,6);
+			sHexValue = sHexValue.substr(0, 6);
 		}
 
 		re = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
@@ -1509,10 +1635,10 @@ sap.ui.define([
 			this.oGreenField.setEnabled(false);
 			this.oBlueField.setEnabled(false);
 			this.oSatField.setEnabled(false);
-
+			this.oAlphaField.setEnabled(false);
+			this.oAlphaField2.setEnabled(false);
 			if (this._bHSLMode) {
 				this.oLitField.setEnabled(false);
-				this.oAlphaField.setEnabled(false);
 			} else {
 				this.oValField.setEnabled(false);
 			}
@@ -1526,10 +1652,10 @@ sap.ui.define([
 			this.oGreenField.setEnabled(true);
 			this.oBlueField.setEnabled(true);
 			this.oSatField.setEnabled(true);
-
+			this.oAlphaField.setEnabled(true);
+			this.oAlphaField2.setEnabled(true);
 			if (this._bHSLMode) {
 				this.oLitField.setEnabled(true);
-				this.oAlphaField.setEnabled(true);
 			} else {
 				this.oValField.setEnabled(true);
 			}
@@ -1554,15 +1680,17 @@ sap.ui.define([
 		if (this._bHSLMode) {
 			this.oLitField.setValue(this.Color.l);
 			this.oAlphaField.setValue(1);
+			this.oAlphaField2.setValue(1);
 		} else {
 			this.oValField.setValue(this.Color.v);
 		}
-		this.oSlider.setValue(parseInt(this.oHueField.getValue(),10));
+		this.oSlider.setValue(parseInt(this.oHueField.getValue()));
 		this.oAlphaSlider.setValue(flAlphaValue);
 		this.Color.a = flAlphaValue;
 
 		if (this._bHSLMode) {
 			this.oAlphaField.setValue(flAlphaValue);
+			this.oAlphaField2.setValue(flAlphaValue);
 		}
 
 		this._updateGradientBoxBackground(this.Color.h);
@@ -1576,7 +1704,7 @@ sap.ui.define([
 	 * @param {string} sHexValue color value
 	 * @private
 	 */
-	ColorPicker.prototype._processHexChanges = function (sHexValue) {
+	ColorPicker.prototype._processHexChanges = function(sHexValue) {
 		// convert RGB-values
 		this._convertRGB(sHexValue);
 
@@ -1600,13 +1728,8 @@ sap.ui.define([
 		var sRGB = [this.Color.r, this.Color.g, this.Color.b].join(","),
 			newBG = sBrowserPrefix + "(left,rgba(" + sRGB + ",0),rgba(" + sRGB + ",1)),url(" + sBgSrc + ")";
 
-		if (this.lastAlphaSliderGradient !== newBG) { // check against cached value to prevent flicker
-			this.oAlphaSlider.$().find(this.bResponsive ? ".sapMSliderInner" : ".sapUiSliBar")
-				.css("background-image", newBG); // stop flicker
-
-			// cache last value to prevent flicker
-			this.lastAlphaSliderGradient = newBG;
-		}
+		this.oAlphaSlider.$().find(this.bResponsive ? ".sapMSliderInner" : ".sapUiSliBar")
+			.css("background-image", newBG); // stop flicker
 	};
 
 	/**
@@ -1632,7 +1755,7 @@ sap.ui.define([
 		}
 
 		// calculate x if we are in RTL mode
-		if (this.bRtl) {
+		if (sap.ui.getCore().getConfiguration().getRTL()) {
 			iX = this._iCPBoxSize - iX;
 		}
 		iY = Math.round((1 - this.oSatField.getValue() / 100.0) * this._iCPBoxSize);
@@ -1641,6 +1764,16 @@ sap.ui.define([
 
 		// set the new cursor position
 		this.$CPCur.css("left", iX).css("top", iY);
+
+		// fixes Edge rendering glitches on (x50%) zoom: 50%, 150%, 250%, etc...
+		if (sap.ui.Device.browser.edge) {
+			var oBox = document.getElementById(this.oCPBox.getId());
+			oBox.style.verticalAlign = "top";
+			setTimeout( function() {
+				oBox.style.verticalAlign = "initial";
+			}, 0);
+		}
+
 	};
 
 	/**
@@ -1737,6 +1870,7 @@ sap.ui.define([
 			i;
 
 		iHue = this._getValueInRange(iHue, 0, 360);
+		iHue %= 360;
 
 		if (iSat > 100) {
 			iSat = 1;
@@ -1840,14 +1974,14 @@ sap.ui.define([
 			sBlueStr = iBlue.toString(16);
 
 		// Pad strings if needed
-		if (sRedStr.length === 1)   {
-			sRedStr   = '0' + sRedStr;
+		if (sRedStr.length === 1) {
+			sRedStr = '0' + sRedStr;
 		}
 		if (sGreenStr.length === 1) {
 			sGreenStr = '0' + sGreenStr;
 		}
-		if (sBlueStr.length === 1)  {
-			sBlueStr  = '0' + sBlueStr;
+		if (sBlueStr.length === 1) {
+			sBlueStr = '0' + sBlueStr;
 		}
 
 		// return the HexValue
@@ -1874,9 +2008,9 @@ sap.ui.define([
 			hueValue = 0;
 		} else if (iRed === max)   {
 			hueValue = 60.0 * (iGreen - iBlue) / delta;
-		} else if (iGreen === max) {
+		} else if (iGreen === max)  {
 			hueValue = 120.0 + 60.0 * (iBlue - iRed) / delta;
-		} else if (iBlue === max)  {
+		} else if (iBlue === max) {
 			hueValue = 240.0 + 60.0 * (iRed - iGreen) / delta;
 		}
 		if (hueValue < 0.0) {
@@ -1940,7 +2074,10 @@ sap.ui.define([
 		}
 
 		// store the new values
-		this.Color.h = Math.round(hueValue);
+		// be careful not to change 360 to 0
+		if (hueValue !== 0 || this.Color.h !== 360) {
+			this.Color.h = Math.round(hueValue);
+		}
 		this.Color.s = satValue;
 		this.Color.l = litValue;
 	};
@@ -1982,7 +2119,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ColorPicker.prototype._updateSelColorBackground = function() {
-		this.$("ncBox").css('background-color', this._getCSSColorString());
+		this.$().find(".sapUiColorPicker-ColorPickerNewColor").css('background-color', this._getCSSColorString());
 	};
 
 	/**
@@ -2015,7 +2152,6 @@ sap.ui.define([
 
 			this._processHexChanges(hexValue);
 			this.Color.old = this.Color.hex;
-
 
 			if (this._bHSLMode) {
 				this.Color.formatHSL = false;
@@ -2066,7 +2202,7 @@ sap.ui.define([
 			iV;
 
 		// remove hsv, "(", ")" and blanks
-		sColor = sColor.substr(3).replace("(",'').replace(")",'').split(' ').join('');
+		sColor = sColor.substr(3).replace("(", '').replace(")", '').split(' ').join('');
 		if (re.test(sColor) === true) {
 			// If we are in check only mode we don't do any control adaptation
 			if (bCheckOnly) {
@@ -2075,9 +2211,9 @@ sap.ui.define([
 
 			// it's a hsv string, get the values
 			aHSVColor = sColor.split(",");
-			iH = parseInt(aHSVColor[0], 10);
-			iS = parseInt(aHSVColor[1], 10);
-			iV = parseInt(aHSVColor[2], 10);
+			iH = parseInt(aHSVColor[0]);
+			iS = parseInt(aHSVColor[1]);
+			iV = parseInt(aHSVColor[2]);
 
 			//get RGB values
 			this._calculateRGB(iH, iS, iV);
@@ -2126,12 +2262,12 @@ sap.ui.define([
 		}
 
 		// remove hsl|a, "(", ")" and blanks
-		sColor = sColor.substr(bHSLA ? 4 : 3).replace("(",'').replace(")",'').split(' ').join('');
+		sColor = sColor.substr(bHSLA ? 4 : 3).replace("(", '').replace(")", '').split(' ').join('');
 
 		// split string to array of values
 		aHSLColor = sColor.split(",");
 
-		iH = parseInt(aHSLColor[0], 10);
+		iH = parseInt(aHSLColor[0]);
 		// Parsing iS and iL as floats as they could be of both float or int type
 		iS = parseFloat(aHSLColor[1]);
 		iL = parseFloat(aHSLColor[2]);
@@ -2213,7 +2349,7 @@ sap.ui.define([
 		}
 
 		// remove rgb|a, "(", ")" and blanks
-		sColor = sColor.substr(bRGBA ? 4 : 3).replace("(",'').replace(")",'').split(' ').join('');
+		sColor = sColor.substr(bRGBA ? 4 : 3).replace("(", '').replace(")", '').split(' ').join('');
 
 		if (re.test(sColor)) {
 			if (bCheckOnly) {
@@ -2221,7 +2357,7 @@ sap.ui.define([
 			}
 			// it's a rgb string, get the values and convert to Hex
 			aValues = sColor.split(",");
-			this._calculateHEX(parseInt(aValues[0], 10), parseInt(aValues[1], 10), parseInt(aValues[2], 10));
+			this._calculateHEX(parseInt(aValues[0]), parseInt(aValues[1]), parseInt(aValues[2]));
 			// get HSV values
 			this._processHexChanges(this.sHexString);
 			this.Color.old = this.Color.hex;
@@ -2251,15 +2387,16 @@ sap.ui.define([
 	 * @override
 	 */
 	ColorPicker.prototype.onAfterRendering = function() {
-		var sRGBString = this._getCSSColorString();
+		var sRGBString = this._getCSSColorString(),
+			oParent = this.getParent();
 
 		// get the jQuery-Object for oCPBox and cpCur
 		this.$CPBox = this.oCPBox.$();
 		this.$CPCur = this.oCPBox.getHandle();
 
 		// set the background color of the Color Boxes
-		this.$("ncBox").css('background-color', sRGBString);
-		this.$("ocBox").css('background-color', sRGBString);
+		this.$().find(".sapUiColorPicker-ColorPickerNewColor").css('background-color', sRGBString);
+		this.$().find(".sapUiColorPicker-ColorPickerOldColor").css('background-color', sRGBString);
 
 		// update the background color of the 'new color box'
 		this._updateGradientBoxBackground(this.Color.h);
@@ -2273,8 +2410,19 @@ sap.ui.define([
 		if (this._bHSLMode) {
 			this._updateAlphaBackground();
 		}
-		this.oSlider.iShiftGrip =  Math.round(jQuery(this.oSlider.oGrip).outerWidth() / 2);
-		this.oAlphaSlider.iShiftGrip =  Math.round(jQuery(this.oAlphaSlider.oGrip).outerWidth() / 2);
+		this.oSlider.iShiftGrip = Math.round(jQuery(this.oSlider.oGrip).outerWidth() / 2);
+		this.oAlphaSlider.iShiftGrip = Math.round(jQuery(this.oAlphaSlider.oGrip).outerWidth() / 2);
+
+		//TODO This is a temporary fix. It's in order to satisfy the control's VD until the refactoring of the control
+		if (oParent && oParent.getMetadata().getName() === "sap.m.Dialog") {
+			oParent.addStyleClass("sapUiCPDialog");
+		}
+		//unified: the class must be added here in order to toggle it in the button press
+		this.addStyleClass("sapUiCPDisplayRGB");
+		if (Device.system.phone) {
+			// toggle fields - HEX field will be visible initially on mobile
+			this._toggleFields();
+		}
 	};
 
 	/**
@@ -2285,7 +2433,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ColorPicker.prototype.getRGB = function() {
-		return {r:this.Color.r, g:this.Color.g, b:this.Color.b};
+		return {r: this.Color.r, g: this.Color.g, b: this.Color.b};
 	};
 
 	/**
@@ -2293,8 +2441,150 @@ sap.ui.define([
 	 * @returns {object} CONSTANTS object
 	 * @private
 	 */
-	ColorPicker.prototype._getConstants = function () {
+	ColorPicker.prototype._getConstants = function() {
 		return CONSTANTS;
+	};
+
+	/**
+	 * Creates the grid for the commons.ColorPicker
+	 * @param {sap.ui.layout.Grid} oGrid
+	 * @param {string} sId
+	 * @returns {object} sap.ui.layout.Grid
+	 * @private
+	 */
+	ColorPicker.prototype._createCommonsColorPicker = function(oGrid, sId) {
+		oGrid = new Grid({
+			containerQuery: true,
+			content: [
+				// ColorPickerBox
+				this.oCPBox.setLayoutData(this.oCPBoxGD),
+				// Input column 1
+				new VLayout({
+					content: [
+						this._createRowFromInput(this.oRedField, "COLORPICKER_RED", "R:"),
+						this._createRowFromInput(this.oGreenField, "COLORPICKER_GREEN", "G:"),
+						this._createRowFromInput(this.oBlueField, "COLORPICKER_BLUE", "B:"),
+						this._createRowFromInput(this.oHexField, "COLORPICKER_HEX", "#:")
+					],
+					layoutData: this.icOne
+				}),
+				// Input column 2
+				new VLayout({
+					content: [
+						this._createRowFromInput(this.oHueField, "COLORPICKER_HUE", "H:"),
+						this._createRowFromInput(this.oSatField, "COLORPICKER_SAT", "S:", "%"),
+						this._createRowFromInput(this.oLitField, "COLORPICKER_LIGHTNESS", "L:", "%").addStyleClass(CONSTANTS.HideForHSVClass),
+						this._createRowFromInput(this.oAlphaField, "COLORPICKER_ALPHA", "A:").addStyleClass(CONSTANTS.HideForHSVClass),
+						this._createRowFromInput(this.oAlphaField2, "COLORPICKER_ALPHA", "A:").addStyleClass(CONSTANTS.HideForHSVClass),
+						this._createRowFromInput(this.oValField, "COLORPICKER_VALUE", "V:").addStyleClass(CONSTANTS.HideForHSLClass)
+					],
+					layoutData: this.icTwo
+				}).addStyleClass(CONSTANTS.LastColumnClass),
+				// Old and New color swatches
+				new HLayout({
+					content: [
+						// HTML-Control containing the Old Color Box
+						new HTML({
+							content: ["<div id='", sId, "-ocBox' class='", CONSTANTS.OldColorClass, "'></div>"].join("")
+						}),
+						// HTML-Control containing the New Color Box
+						new HTML({
+							content: ["<div id='", sId, "-ncBox' class='", CONSTANTS.NewColorClass, "'></div>"].join("")
+						})
+					],
+					layoutData: this.swatches
+				}).addStyleClass(CONSTANTS.SwatchesClass),
+				// RGB|HSL output selector
+				new HLayout({
+					content: [
+						Library.ColorPickerHelper.factory.createLabel({ text: "Output:", labelFor: this.oRGBorHSLRBGroup}),
+						this.oRGBorHSLRBGroup
+					],
+					layoutData: this.rbg
+				}).addStyleClass(CONSTANTS.HideForHSVClass).addStyleClass(CONSTANTS.OutputSelectorRowClass),
+				// Slider
+				this.oSlider.setLayoutData(new GridData({span: "L6 M6 S12", linebreak: true})),
+				// Alpha Slider
+				this.oAlphaSlider.setLayoutData(new GridData({span: "L6 M6 S12"}))
+			]
+		}).addStyleClass(CONSTANTS.CPMatrixClass);
+
+		return oGrid;
+	};
+
+	/**
+	 * Creates the needed elements for unified.ColorPicker
+	 * @param {string} sId
+	 * @private
+	 */
+	ColorPicker.prototype._createUnifiedColorPicker = function(sId) {
+		var that = this;
+
+		this.oRbRGB = Library.ColorPickerHelper.factory.createRadioButtonItem({tooltip: oRb.getText("COLORPICKER_SELECT_RGB_TOOLTIP")});
+		this.oRbRGB.addStyleClass("sapUiCPRB");
+		this.oRbHSLV = Library.ColorPickerHelper.factory.createRadioButtonItem({tooltip: oRb.getText("COLORPICKER_SELECT_HSL_TOOLTIP")});
+		this.oRbHSLV.addStyleClass("sapUiCPRB");
+		this.oButton = Library.ColorPickerHelper.factory.createButton(sId + "-toggleMode", {
+			type: Device.system.phone ? "Default" : "Transparent",
+			tooltip: oRb.getText("COLORPICKER_TOGGLE_BTN_TOOLTIP"),
+			icon: "sap-icon://source-code",
+			press: function(oEvent) {
+				that._toggleFields();
+			}
+		});
+		this.setAggregation("_oButton", this.oButton, true);
+
+		// RGB|HSL output
+		this.oRGBorHSLRBUnifiedGroup = Library.ColorPickerHelper.factory.createRadioButtonGroup({
+			select: this._handleRGBorHSLValueChange.bind(this),
+			selectedIndex: (this.Color.formatHSL ? 1 : 0)
+		});
+
+		this.oRGBorHSLRBUnifiedGroup.addButton(this.oRbRGB);
+		this.oRGBorHSLRBUnifiedGroup.addButton(this.oRbHSLV);
+
+		this.setAggregation("_oRGBorHSLRBUnifiedGroup", this.oRGBorHSLRBUnifiedGroup, true);
+		this.setAggregation("_oCPBox", this.oCPBox, true);
+		this.setAggregation("_oHexField", this.oHexField, true);
+		this.setAggregation("_oRedField", this.oRedField, true);
+		this.setAggregation("_oGreenField", this.oGreenField, true);
+		this.setAggregation("_oBlueField", this.oBlueField, true);
+		this.setAggregation("_oHueField", this.oHueField, true);
+		this.setAggregation("_oSatField", this.oSatField, true);
+		this.setAggregation("_oLitField", this.oLitField, true);
+		this.setAggregation("_oAlphaField", this.oAlphaField, true);
+		this.setAggregation("_oAlphaField2", this.oAlphaField2, true);
+		this.setAggregation("_oValField", this.oValField, true);
+		this.setAggregation("_oSlider", this.oSlider, true);
+		this.setAggregation("_oAlphaSlider", this.oAlphaSlider, true);
+	};
+
+	ColorPicker.prototype._toggleFields = function() {
+		if (!Device.system.phone) {
+			this.toggleStyleClass("sapUiCPDisplayRGB", this.bPressed);
+			this.bPressed = !this.bPressed;
+		} else {
+			switch (this.sVisibleFiled) {
+			case "HSL":
+				this.removeStyleClass("sapUiCPHexVisible");
+				this.toggleStyleClass("sapUiCPDisplayRGB", false);
+				this.addStyleClass("sapUiCPHideHex");
+				this.sVisibleFiled = "RGB";
+				break;
+			case "RGB":
+				this.removeStyleClass("sapUiCPHexVisible");
+				this.addStyleClass("sapUiCPHideHex");
+				this.toggleStyleClass("sapUiCPDisplayRGB", true);
+				this.sVisibleFiled = "Hex";
+				break;
+			case "Hex":
+			default:
+				this.addStyleClass("sapUiCPHexVisible");
+				this.removeStyleClass("sapUiCPHideHex");
+				this.sVisibleFiled = "HSL";
+				break;
+			}
+		}
 	};
 
 	return ColorPicker;

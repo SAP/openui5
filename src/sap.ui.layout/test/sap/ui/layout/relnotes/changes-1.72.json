@@ -1,0 +1,35 @@
+{
+  "1.72.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "00a0877bef1636612d7a2d1ad076dbd02d5f6540",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Collision detection algorithm extended to support custom margins",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970452866"
+          }
+        ]
+      },
+      {
+        "id": "7f3f16ee6f0e666e457506f29d251d53016bc727",
+        "type": "FEATURE",
+        "text": " sap.f.GridList: ResponsiveColumnLayout implementation",
+        "references": []
+      },
+      {
+        "id": "41bbe2a6e189192f1fbc96302c5d8745299c949a",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: removed deprecated call",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970484042"
+          }
+        ]
+      }
+    ]
+  }
+}

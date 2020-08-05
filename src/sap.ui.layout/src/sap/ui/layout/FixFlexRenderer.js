@@ -2,116 +2,103 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function (jQuery) {
-		"use strict";
+sap.ui.define([
+], function () {
+	"use strict";
 
-		/**
-		 * FixFlex renderer
-		 * @namespace
-		 */
-		var FixFlexRenderer = {};
+	/**
+	 * FixFlex renderer
+	 * @namespace
+	 */
+	var FixFlexRenderer = {
+		apiVersion: 2
+	};
 
-		/**
-		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-		 */
-		FixFlexRenderer.render = function (oRm, oControl) {
-			// Control container
-			oRm.write('<div');
-			oRm.writeControlData(oControl);
-			oRm.addClass('sapUiFixFlex');
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 */
+	FixFlexRenderer.render = function (oRM, oControl) {
+		oRM.openStart("div", oControl)
+			.class("sapUiFixFlex");
 
-			if (oControl.getMinFlexSize() !== 0) {
-				oRm.addClass('sapUiFixFlexInnerScrolling');
-			}
+		if (oControl.getMinFlexSize() !== 0) {
+			oRM.class("sapUiFixFlexInnerScrolling");
+		}
 
-			// Setting css class for horizontal layout
-			if (!oControl.getVertical()) {
-				oRm.addClass('sapUiFixFlexRow');
-			}
+		// Setting css class for horizontal layout
+		if (!oControl.getVertical()) {
+			oRM.class("sapUiFixFlexRow");
+		}
 
-			// Setting css class for older browsers
-			if (!jQuery.support.hasFlexBoxSupport) {
-				oRm.addClass('sapUiFixFlex-Legacy');
-			}
+		oRM.openEnd();
 
-			oRm.writeClasses();
-			oRm.write('>');
+		// Defines the rendering sequence - fix/flex or flex/fix
+		if (oControl.getFixFirst()) {
+			this.renderFixChild(oRM, oControl);
+			this.renderFlexChild(oRM, oControl);
+		} else {
+			this.renderFlexChild(oRM, oControl);
+			this.renderFixChild(oRM, oControl);
+		}
 
-			// Defines the rendering sequence - fix/flex or flex/fix
-			if (oControl.getFixFirst()) {
-				this.renderFixChild(oRm, oControl);
-				this.renderFlexChild(oRm, oControl);
+		oRM.close("div");
+	};
+
+	/**
+	 * Render the controls in the flex container
+	 *
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 */
+	FixFlexRenderer.renderFixChild = function (oRM, oControl) {
+		oRM.openStart("div", oControl.getId() + "-Fixed").class("sapUiFixFlexFixed");
+
+		// Set specific height/width to the element depending of the orientation of the layout
+		if (oControl.getFixContentSize() !== "auto") {
+			if (oControl.getVertical()) {
+				oRM.style("height", oControl.getFixContentSize());
 			} else {
-				this.renderFlexChild(oRm, oControl);
-				this.renderFixChild(oRm, oControl);
+				oRM.style("width", oControl.getFixContentSize());
 			}
+		}
 
-			// Close the FixFlex Control container
-			oRm.write('</div>');
-		};
+		oRM.openEnd();
 
-		/**
-		 * Render the controls in the flex container
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-		 */
-		FixFlexRenderer.renderFixChild = function (oRm, oControl) {
-			var aFixContent = oControl.getFixContent();
+		oControl.getFixContent().forEach(oRM.renderControl, oRM);
 
-			oRm.write('<div id="' + oControl.getId() + '-Fixed" class="sapUiFixFlexFixed"');
+		oRM.close("div");
+	};
 
-			// Set specific height/width to the element depending of the orientation of the layout
-			if (oControl.getFixContentSize() !== 'auto') {
-				if (oControl.getVertical()) {
-					oRm.addStyle('height', oControl.getFixContentSize());
-				} else {
-					oRm.addStyle('width', oControl.getFixContentSize());
-				}
-				oRm.writeStyles();
+	/**
+	 * Render the controls in the fix container
+	 *
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 */
+	FixFlexRenderer.renderFlexChild = function (oRM, oControl) {
+		oRM.openStart("div", oControl.getId() + "-Flexible").class("sapUiFixFlexFlexible").openEnd();
+
+		oRM.openStart("div", oControl.getId() + "-FlexibleContainer").class("sapUiFixFlexFlexibleContainer");
+
+		if (oControl.getMinFlexSize() !== 0) {
+			if (oControl.getVertical()) {
+				oRM.style("min-height", oControl.getMinFlexSize() + "px");
+			} else {
+				oRM.style("min-width", oControl.getMinFlexSize() + "px");
 			}
+		}
 
-			oRm.write('>');
+		oRM.openEnd();
 
-			// Render the children
-			for (var i = 0; i < aFixContent.length; i++) {
-				oRm.renderControl(aFixContent[i]);
-			}
+		oRM.renderControl(oControl.getFlexContent());
 
-			oRm.write('</div>');
-		};
+		oRM.close("div")
+			.close("div");
+	};
 
-		/**
-		 * Render the controls in the fix container
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-		 */
-		FixFlexRenderer.renderFlexChild = function (oRm, oControl) {
-			var oFlexContent = oControl.getFlexContent();
+	return FixFlexRenderer;
 
-			oRm.write('<div id="' + oControl.getId() + '-Flexible" class="sapUiFixFlexFlexible">');
-			oRm.write('<div id="' + oControl.getId() + '-FlexibleContainer" class="sapUiFixFlexFlexibleContainer"');
-			if (oControl.getMinFlexSize() !== 0) {
-				if (oControl.getVertical()) {
-					oRm.write('style="min-height:' + oControl.getMinFlexSize() + 'px"');
-				} else {
-					oRm.write('style="min-width:' + oControl.getMinFlexSize() + 'px"');
-				}
-			}
-			oRm.write('>');
-
-			// Render the child
-			oRm.renderControl(oFlexContent);
-
-			oRm.write('</div>');
-			oRm.write('</div>');
-		};
-
-		return FixFlexRenderer;
-
-	}, /* bExport= */ true);
+}, /* bExport= */ true);

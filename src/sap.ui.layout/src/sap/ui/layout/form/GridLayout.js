@@ -3,8 +3,7 @@
  */
 
 // Provides control sap.ui.layout.form.GridLayout.
-sap.ui.define(['jquery.sap.global', './FormLayout', 'sap/ui/layout/library', './GridLayoutRenderer'],
-	function(jQuery, FormLayout, library, GridLayoutRenderer) {
+sap.ui.define(['sap/ui/layout/library', './FormLayout', './GridLayoutRenderer'], function(library, FormLayout, GridLayoutRenderer) {
 	"use strict";
 
 	/**
@@ -32,6 +31,9 @@ sap.ui.define(['jquery.sap.global', './FormLayout', 'sap/ui/layout/library', './
 	 * @constructor
 	 * @public
 	 * @since 1.16.0
+	 * @deprecated Since version 1.67.0.
+	 * as <code>sap.ui.commons</code> library is deprecated and the <code>GridLayout</code> must not be used in responsive applications.
+	 * Please use <code>ResponsiveGridLayout</code> or <code>ColumnLayout</code> instead.
 	 * @alias sap.ui.layout.form.GridLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -108,7 +110,7 @@ sap.ui.define(['jquery.sap.global', './FormLayout', 'sap/ui/layout/library', './
 			return null;
 		}
 
-		var aFields = oElement.getFields();
+		var aFields = oElement.getFieldsForRendering();
 		var oNewDomRef;
 
 		var iIndex = aFields.length;
@@ -219,10 +221,10 @@ sap.ui.define(['jquery.sap.global', './FormLayout', 'sap/ui/layout/library', './
 		if (this.getDomRef()) {
 			var bSingleColumn = this.getSingleColumn();
 			var oContainer = oElement.getParent();
-			var oContainerData = this.getLayoutDataForElement(oContainer, "sap/ui/layout/form/GridContainerData");
+			var oContainerData = this.getLayoutDataForElement(oContainer, "sap.ui.layout.form.GridContainerData");
 
 			if ((bSingleColumn || !oContainerData || !oContainerData.getHalfGrid()) && !this.getRenderer().checkFullSizeElement(this, oElement) ) {
-				return jQuery.sap.domById(oElement.getId());
+				return (oElement.getId() ? window.document.getElementById(oElement.getId()) : null);
 			}
 		}
 

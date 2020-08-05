@@ -1,0 +1,29 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "35101ba7b64e7ef9381d0c61f4eac0e690d9e8e9",
+        "type": "FIX",
+        "text": " Integration Cards: Unit of measurement is not truncated anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080285173"
+          }
+        ]
+      },
+      {
+        "id": "7a7e2b160af6d82163c3dcb170bbc0010b92c418",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: jQuery incorrect width measurement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080205481"
+          }
+        ]
+      }
+    ]
+  }
+}

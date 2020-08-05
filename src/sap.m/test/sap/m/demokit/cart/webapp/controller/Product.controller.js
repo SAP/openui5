@@ -1,22 +1,20 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/demo/cart/controller/BaseController',
-	'sap/ui/demo/cart/model/formatter',
-	'sap/ui/demo/cart/model/cart'
-], function ($, BaseController, formatter, cart) {
+	"./BaseController",
+	"../model/formatter"
+], function(
+	BaseController,
+	formatter) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Product", {
 		formatter : formatter,
-		cart: cart,
 
 		onInit : function () {
 			var oComponent = this.getOwnerComponent();
 			this._router = oComponent.getRouter();
 			this._router.getRoute("product").attachPatternMatched(this._routePatternMatched, this);
-			this._router.getRoute("cartProduct").attachPatternMatched(this._routePatternMatched, this);
 
-			this._router.getTarget("productView").attachDisplay(function (oEvent) {
+			this._router.getTarget("product").attachDisplay(function (oEvent) {
 				this.fnUpdateProduct(oEvent.getParameter("data").productId);// update the binding based on products cart selection
 			}, this);
 		},
@@ -79,27 +77,18 @@ sap.ui.define([
 		},
 
 		/**
-		 * Called, when the add button of a product is pressed.
-		 * Saves the product, the i18n bundle, and the cart model and hands them to the <code>addToCart</code> function
-		 * @public
+		 * Navigate to the generic cart view
+		 * @param {sap.ui.base.Event} @param oEvent the button press event
 		 */
-		onAddButtonPress : function () {
-			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-			var oProduct = this.getView().getBindingContext().getObject();
-			var oCartModel = this.getView().getModel("cartProducts");
-			cart.addToCart(oResourceBundle, oProduct, oCartModel);
-		},
+		onToggleCart: function (oEvent) {
+			var bPressed = oEvent.getParameter("pressed");
+			var oEntry = this.getView().getBindingContext().getObject();
 
-		onCartButtonPress :  function () {
-			this._router.navTo("cart");
-		},
-
-		onNavButtonPress : function () {
-			this.getOwnerComponent().myNavBack();
-		},
-
-		onPicturePress: function () {
-			this.byId("lightBox").open();
+			this._setLayout(bPressed ? "Three" : "Two");
+			this.getRouter().navTo(bPressed ? "productCart" : "product", {
+				id: oEntry.Category,
+				productId: oEntry.ProductId
+			});
 		}
 	});
 });

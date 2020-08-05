@@ -26,7 +26,7 @@
 				}
 
 				jQuery.extend(FakeLrepConnector.prototype);
-				FakeLrepConnector.enableFakeConnector(jQuery.sap.getModulePath("sap.m.test.rta.mockdata.FakeLrepConnector") + ".json");
+				FakeLrepConnector.enableFakeConnector(sap.ui.require.toUrl("sap/m/test/rta/mockdata/FakeLrepConnector.json");
 			});
 		}());
 
@@ -233,7 +233,7 @@
 
 	</script>
 </head>
-<body class="sapUiBody" role="application">
+<body class="sapUiBody">
 <div id="content"></div>
 </body>
 

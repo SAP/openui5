@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Opa tests for Bulletin Board</title>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<title>Integration tests for Bulletin Board</title>
 	<meta charset="utf-8">
 
 	<script id="sap-ui-bootstrap"
 			src="../../../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme='sap_fiori_3'
 			data-sap-ui-resourceroots='{
-			"sap.ui.demo.bulletinboard.test": "../",
-			"sap.ui.demo.bulletinboard.app" : "../mockServer"
-		}'
-			data-sap-ui-frameOptions='deny'>
+				"sap.ui.demo.bulletinboard": "../../"
+			}'
+			data-sap-ui-animation="false"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-async="true">
 	</script>
 
+	<link rel="stylesheet" type="text/css" href="../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
 
-	<script>
-		jQuery.sap.require("sap.ui.demo.bulletinboard.test.integration.AllJourneys");
-	</script>
+	<script src="../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+	<script src="opaTests.qunit.js"></script>
 
 </head>
 <body>
-<div id="qunit"></div>
-<div id="qunit-fixture"></div>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>

@@ -5,8 +5,14 @@
 /**
  * Initialization Code and shared classes of library sap.ui.rta.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/library'],
-	function(jQuery, Core, coreLibrary) {
+sap.ui.define([
+	"sap/ui/core/Core",
+	"sap/ui/core/library",
+	"sap/m/library",
+	"sap/ui/fl/library",
+	"sap/ui/dt/library"
+],
+function() {
 	"use strict";
 
 	/**
@@ -25,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/library'],
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.rta",
 		version: "${version}",
-		dependencies : ["sap.ui.core","sap.m", "sap.ui.fl", "sap.ui.dt"],
+		dependencies : ["sap.ui.core", "sap.m", "sap.ui.fl", "sap.ui.dt"],
 		types: [
 		],
 		interfaces: [],
@@ -35,5 +41,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/library'],
 	});
 
 	return sap.ui.rta;
-
-}, /* bExport= */ true);
+});

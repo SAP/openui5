@@ -53,12 +53,53 @@ sap.ui.define(function() {
 
 			/**
 			 * FilterOperator between
-			 * When used on strings, the BT operator might not behave intuitively. For example,
-			 * when filtering a list of Names with BT "A", "B", all Names starting with "A" will be
-			 * included as well as the name "B" itself, but no other name starting with "B".
+			 *
+			 * Used to filter all entries between the given boundaries.
+			 * The filter result contains the boundaries, but no entries before or further.
+			 * The order of the entries in the filter results is based on their occurrence in the input list.
+			 *
+			 * <b>Note, when used on strings:</b>
+			 * The String comparison is based on lexicographical ordering.
+			 * Characters are ranked in their alphabetical order.
+			 * Words with the same preceding substring are ordered based on their length
+			 * e.g. "Chris" comes before "Christian".
+			 *
+			 * The filtering includes the right boundary, but no strings further in the lexicographical ordering.
+			 * e.g. between "A" and "C" includes the string "C", but not "Chris".
+			 *
+			 * @example
+			 * <b>Numbers</b>
+			 * [7, 1, 4, 3, 6, 5, 2, 8]
+			 * between 4 and 6
+			 * result: [4, 6, 5]
+			 *
 			 * @public
 			 */
 			BT: "BT",
+
+			/**
+			 * FilterOperator "Not Between"
+			 *
+			 * Used to filter all entries, which are not between the given boundaries.
+			 * The filter result does not contains the boundaries, but only entries outside of the boundaries.
+			 * The order of the entries in the filter results is based on their occurrence in the input list.
+			 *
+			 * <b>Note, when used on strings:</b>
+			 * The String comparison is based on lexicographical ordering.
+			 * Characters are ranked in their alphabetical order.
+			 * Words with the same preceding substring are ordered based on their length
+			 * e.g. "Chris" comes before "Christian".
+			 *
+			 * @example
+			 * <b>Numbers</b>
+			 * [7, 1, 4, 3, 6, 5, 2, 8]
+			 * not between 4 and 6
+			 * result: [7, 1, 3, 2, 8]
+			 *
+			 * @since 1.58.0
+			 * @public
+			 */
+			NB: "NB",
 
 			/**
 			 * FilterOperator contains
@@ -67,16 +108,42 @@ sap.ui.define(function() {
 			Contains: "Contains",
 
 			/**
+			 * FilterOperator not contains
+			 *
+			 * @since 1.58.0
+			 * @public
+			 */
+			NotContains: "NotContains",
+
+			/**
 			 * FilterOperator starts with
+			 *
 			 * @public
 			 */
 			StartsWith: "StartsWith",
 
 			/**
+			 * FilterOperator not starts with
+			 *
+			 * @since 1.58.0
+			 * @public
+			 */
+			NotStartsWith: "NotStartsWith",
+
+			/**
 			 * FilterOperator ends with
+			 *
 			 * @public
 			 */
 			EndsWith: "EndsWith",
+
+			/**
+			 * FilterOperator not ends with
+			 *
+			 * @since 1.58.0
+			 * @public
+			 */
+			NotEndsWith: "NotEndsWith",
 
 			/**
 			 * Used to filter a list based on filter criteria that are defined in a nested filter for dependent subitems.

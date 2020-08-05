@@ -2,33 +2,29 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/commons/Label',
-	'sap/ui/commons/LabelDesign',
-	'sap/m/Dialog',
-	'sap/ui/model/json/JSONModel',
-	'sap/m/SearchField',
-	'sap/m/Button',
-	'sap/m/Toolbar',
-	'sap/m/ToolbarSpacer',
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/rta/command/CompositeCommand',
-	'sap/m/List',
-	'sap/m/CustomListItem',
-	'sap/m/ListType',
-	'sap/m/ScrollContainer',
-	'sap/ui/model/Sorter',
-	'sap/ui/dt/ElementUtil',
-	'sap/m/VBox',
-	'sap/ui/rta/Utils'
-], function (
-	jQuery,
+	"sap/ui/base/ManagedObject",
+	"sap/m/Label",
+	"sap/m/Dialog",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/SearchField",
+	"sap/m/Button",
+	"sap/m/Toolbar",
+	"sap/m/ToolbarSpacer",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/m/List",
+	"sap/m/CustomListItem",
+	"sap/m/ScrollContainer",
+	"sap/ui/model/Sorter",
+	"sap/base/Log",
+	"sap/m/VBox",
+	"sap/ui/rta/Utils",
+	"sap/m/library",
+	"sap/ui/layout/VerticalLayout",
+	"sap/m/Text"
+], function(
 	ManagedObject,
 	Label,
-	LabelDesign,
 	Dialog,
 	JSONModel,
 	SearchField,
@@ -37,24 +33,33 @@ sap.ui.define([
 	ToolbarSpacer,
 	Filter,
 	FilterOperator,
-	CommandFactory,
-	CompositeCommand,
 	List,
 	ListItem,
-	ListType,
 	ScrollContainer,
 	Sorter,
-	ElementUtil,
+	Log,
 	VBox,
-	Utils
+	Utils,
+	mobileLibrary,
+	VerticalLayout,
+	Text
 ) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
+
+	// shortcut for sap.m.ListType
+	var ListType = mobileLibrary.ListType;
+
+	// shortcut for sap.m.LabelDesign
+	var LabelDesign = mobileLibrary.LabelDesign;
 
 	/**
 	 * Constructor for a new sap.ui.rta.plugin.additionalElements.AddElementsDialog control.
 	 *
 	 * @class Context - Dialog for available Fields in Runtime Authoring
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
@@ -68,17 +73,21 @@ sap.ui.define([
 		metadata : {
 			library : "sap.ui.rta",
 			properties : {
-				"customFieldEnabled" : {
+				customFieldEnabled : {
 					type: "boolean",
 					defaultValue: false
 				},
-				"title" : {
+				businessContextVisible : {
+					type: "boolean",
+					defaultValue: false
+				},
+				title : {
 					type: "string"
 				}
 			},
 			events : {
-				"opened" : {},
-				"openCustomField" : {}
+				opened : {},
+				openCustomField : {}
 			}
 		}
 	});
@@ -112,6 +121,10 @@ sap.ui.define([
 		this._oDialog.setInitialFocus(this._oInput);
 	};
 
+	AddElementsDialog.prototype.exit = function() {
+		this._oDialog.destroy();
+	};
+
 	/**
 	 * Create the Content of the Dialog
 	 *
@@ -120,7 +133,7 @@ sap.ui.define([
 	 */
 	AddElementsDialog.prototype._createContent = function() {
 		// SearchField
-		this._oInput =  new SearchField({
+		this._oInput = new SearchField({
 			width : "100%",
 			liveChange : [this._updateModelFilter, this]
 		});
@@ -147,15 +160,23 @@ sap.ui.define([
 			content: [this._oInput, oResortButton, this._oToolbarSpacer1, this._oCustomFieldButton]
 		});
 
+		//Business Context Display
+		this._oBCContainer = new VerticalLayout({
+			visible: this.getBusinessContextVisible(),
+			content: [new Text({
+				text: this._oTextResources.getText("BUSINESS_CONTEXT_TITLE")
+			})
+			]
+		}).addStyleClass("sapUIRtaBusinessContextContainer");
+
 		// Fields of the List
 		var oFieldName = new Label({
-			design: LabelDesign.Bold,
-			tooltip: "{tooltip}",
+			design: LabelDesign.Standard,
 			text: {
-				parts: [{path: "label"}, {path: "referencedComplexPropertyName"}, {path: "duplicateComplexName"}],
-				formatter: function(sLabel, sReferencedComplexPropertyName, bDuplicateComplexName) {
-					if (bDuplicateComplexName && sReferencedComplexPropertyName) {
-						sLabel += " (" + sReferencedComplexPropertyName + ")";
+				parts: [{path: "label"}, {path: "parentPropertyName"}, {path: "duplicateName"}],
+				formatter: function(sLabel, sParentPropertyName, bDuplicateName) {
+					if (bDuplicateName && sParentPropertyName) {
+						sLabel += " (" + sParentPropertyName + ")";
 					}
 					return sLabel;
 				}
@@ -190,20 +211,41 @@ sap.ui.define([
 		// List
 		var oSorter = new Sorter("label", this._bAscendingSortOrder);
 		this._oList = new List(
-				{
-					mode : "MultiSelect",
-					includeItemInSelection : true,
-					growing : true,
-					growingScrollToLoad : true
-				}).setNoDataText(this._oTextResources.getText("MSG_NO_FIELDS", this._oTextResources.getText("MULTIPLE_CONTROL_NAME").toLowerCase()));
+			{
+				mode : "MultiSelect",
+				includeItemInSelection : true,
+				growing : true,
+				growingScrollToLoad : true
+			}).setNoDataText(this._oTextResources.getText("MSG_NO_FIELDS", this._oTextResources.getText("MULTIPLE_CONTROL_NAME").toLowerCase()));
 
 		var oListItem = new ListItem({
 			type: ListType.Active,
 			selected : "{selected}",
+			tooltip: "{tooltip}",
 			content : [oVBox]
-		});
+		}).addStyleClass("sapUIRtaListItem");
 
-		this._oList.bindItems({path:"/elements", template: oListItem, sorter : oSorter});
+		this._oList.bindItems({
+			path:"/elements",
+			template: oListItem,
+			sorter: oSorter,
+			templateShareable: false,
+			//Extended Change Detection via "key" property see docs: #/topic/7cdff73f308b4b10bdf7d83b7aba72e7 -
+			key: function (oContext) {
+				switch (oContext.getProperty("type")) {
+					case "invisible":
+						return oContext.getProperty("elementId");
+					case "odata":
+						return oContext.getProperty("name");
+					case "delegate":
+						return oContext.getProperty("name");
+					case "custom":
+						return oContext.getProperty("key");
+					default:
+						Log.error("sap.ui.rta.plugin.additionalElements.AddElementsDialog#_createContent: unsupported data type");
+				}
+			}
+		});
 
 		// Scrollcontainer containing the List
 		// Needed for scrolling the List
@@ -214,7 +256,8 @@ sap.ui.define([
 		}).addStyleClass("sapUIRtaCCDialogScrollContainer");
 
 		return [this.oInputFields,
-				oScrollContainer];
+			this._oBCContainer,
+			oScrollContainer];
 	};
 
 	/**
@@ -226,7 +269,8 @@ sap.ui.define([
 	AddElementsDialog.prototype._createButtons = function() {
 		this._oOKButton = new Button({
 			text : this._oTextResources.getText("BTN_FREP_OK"),
-			press : [this._submitDialog, this]
+			press : [this._submitDialog, this],
+			type: ButtonType.Emphasized
 		});
 		var oCancelButton = new Button({
 			text : this._oTextResources.getText("BTN_FREP_CANCEL"),
@@ -262,7 +306,7 @@ sap.ui.define([
 	};
 
 	AddElementsDialog.prototype.getSelectedElements = function() {
-		return this._oDialog.getModel().getObject("/elements").filter(function(oElement){
+		return this._oDialog.getModel().getObject("/elements").filter(function(oElement) {
 			return oElement.selected;
 		});
 	};
@@ -274,11 +318,11 @@ sap.ui.define([
 	 * @returns {Promise} empty promise
 	 * @public
 	 */
-	AddElementsDialog.prototype.open = function(oControl) {
+	AddElementsDialog.prototype.open = function () {
 		return new Promise(function (resolve, reject) {
 			this._fnResolve = resolve;
 			this._fnReject = reject;
-			this._oDialog.oPopup.attachOpened(function (){
+			this._oDialog.attachAfterOpen(function () {
 				this.fireOpened();
 			}.bind(this));
 			// Makes sure the modal div element does not change the size of our application (which would result in
@@ -293,7 +337,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
-	AddElementsDialog.prototype._resortList = function(oEvent) {
+	AddElementsDialog.prototype._resortList = function () {
 		this._bAscendingSortOrder = !this._bAscendingSortOrder;
 		var oBinding = this._oList.getBinding("items");
 		var aSorter = [];
@@ -313,10 +357,10 @@ sap.ui.define([
 		if ((typeof sValue) === "string") {
 			var oFilterLabel = new Filter("label", FilterOperator.Contains, sValue);
 			var oOriginalLabelFilter = new Filter("originalLabel", FilterOperator.Contains, sValue);
-			var oReferencedComplexPropertyNameFilter = new Filter("referencedComplexPropertyName", FilterOperator.Contains, sValue);
-			var oDuplicateComplexNameFilter = new Filter("duplicateComplexName", FilterOperator.EQ, true);
-			var oComplexNameFilter = new Filter({ filters: [oReferencedComplexPropertyNameFilter, oDuplicateComplexNameFilter], and: true });
-			var oFilterLabelOrInfo = new Filter({ filters: [oFilterLabel, oOriginalLabelFilter, oComplexNameFilter], and: false });
+			var oParentPropertyNameFilter = new Filter("parentPropertyName", FilterOperator.Contains, sValue);
+			var oDuplicateNameFilter = new Filter("duplicateName", FilterOperator.EQ, true);
+			var oParentNameFilter = new Filter({ filters: [oParentPropertyNameFilter, oDuplicateNameFilter], and: true });
+			var oFilterLabelOrInfo = new Filter({ filters: [oFilterLabel, oOriginalLabelFilter, oParentNameFilter], and: false });
 			oBinding.filter([oFilterLabelOrInfo]);
 		} else {
 			oBinding.filter([]);
@@ -329,7 +373,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
-	AddElementsDialog.prototype._redirectToCustomFieldCreation = function(oEvent) {
+	AddElementsDialog.prototype._redirectToCustomFieldCreation = function () {
 		this.fireOpenCustomField();
 		this._oDialog.close();
 	};
@@ -346,10 +390,67 @@ sap.ui.define([
 	 * @public
 	 */
 	AddElementsDialog.prototype.setCustomFieldEnabled = function(bCustomFieldEnabled) {
-		ManagedObject.prototype.setProperty.call(this, "customFieldEnabled", bCustomFieldEnabled, true);
-		this._oCustomFieldButton.setEnabled(bCustomFieldEnabled);
+		this.setProperty("customFieldEnabled", bCustomFieldEnabled, true);
+		this._oCustomFieldButton.setEnabled(this.getProperty("customFieldEnabled"));
+	};
+
+	/**
+	 * Sets the visibility of the business context container
+	 *
+	 * @param {boolean} bBusinessContextVisible - Indicates whether the container is visible
+	 * @private
+	 */
+	AddElementsDialog.prototype._setBusinessContextVisible = function(bBusinessContextVisible) {
+		this.setProperty("businessContextVisible", bBusinessContextVisible, true);
+		this._oBCContainer.setVisible(this.getProperty("businessContextVisible"));
+	};
+
+	/**
+	 * Returns list control
+	 * @returns {sap.m.List}
+	 */
+	AddElementsDialog.prototype.getList = function () {
+		return this._oList;
+	};
+
+	/**
+	 * Adds available business contexts
+	 * @param (object[]} aBusinessContexts - Array containing business contexts
+	 * @public
+	 */
+	AddElementsDialog.prototype.addBusinessContext = function (aBusinessContexts) {
+		// clear old values from last run
+		this._removeBusinessContexts();
+		// Message "none" when no business contexts are available
+		var oBCDescription = new Text({
+			text: this._oTextResources.getText("MSG_NO_BUSINESS_CONTEXTS")
+		});
+		if (aBusinessContexts && aBusinessContexts.length > 0) {
+			aBusinessContexts.forEach(function (oContext) {
+				oBCDescription = new Text({
+					text: oContext.BusinessContextDescription
+				});
+				this._oBCContainer.addContent(oBCDescription);
+			}, this);
+		} else {
+			this._oBCContainer.addContent(oBCDescription);
+		}
+		// set the container visible
+		this._setBusinessContextVisible(true);
+	};
+
+	/**
+	 * Removes business contexts from the vertical layout
+	 * (except for the title)
+	 * @private
+	 */
+	AddElementsDialog.prototype._removeBusinessContexts = function () {
+		var nIndex;
+		var nElementsCount = this._oBCContainer.getContent().length;
+		for (nIndex = 0; nIndex < nElementsCount; nIndex++) {
+			this._oBCContainer.removeContent(1);
+		}
 	};
 
 	return AddElementsDialog;
-
-}, /* bExport= */ true);
+});

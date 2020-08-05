@@ -1,0 +1,153 @@
+<core:FragmentDefinition
+	height="100%"
+	xmlns:layout="sap.ui.layout"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+	<Page id="wizardBranchingReviewPage" showHeader="false">
+		<content>
+			<form:SimpleForm
+				title="1. List of products"
+				minWidth="1024"
+				editable="false"
+				layout="ResponsiveGridLayout">
+				<List items="{/ProductCollection}">
+					<StandardListItem
+						title="{Name}"
+						type="Active"
+						description="{Description}"
+						icon="{ProductPicUrl}"
+						info="{Price} {CurrencyCode}"
+						iconDensityAware="false"
+						iconInset="false"/>
+				</List>
+				<ObjectHeader
+					title="Total"
+					number="{/ProductsTotalPrice}"
+					numberUnit="EUR">
+					<attributes>
+						<ObjectAttribute
+							press="handleNavBackToList"
+							active="true"
+							text="Edit"/>
+					</attributes>
+				</ObjectHeader>
+			</form:SimpleForm>
+
+			<form:SimpleForm
+				title="2. Payment type"
+				minWidth="1024"
+				editable="false"
+				layout="ResponsiveGridLayout">
+				<form:content>
+					<Label text="Chosen payment type"/>
+					<Text text="{/selectedPayment}"/>
+					<Link press="handleNavBackToPaymentType" text="Edit"/>
+				</form:content>
+			</form:SimpleForm>
+
+			<form:SimpleForm
+				visible="{= ${/selectedPayment}==='Credit Card' ? true : false}"
+				title="3. Credit Card payment"
+				minWidth="1024"
+				editable="false"
+				layout="ResponsiveGridLayout">
+				<form:content>
+					<Label text="Name on card"/>
+					<Text text="{/CreditCard/Name}"/>
+					<Label text="Card number"/>
+					<Text text="{/CardNumber}"/>
+					<Label text="Security code"/>
+					<Text text="{/CreditCard/SecurityCode}"/>
+					<Label text="Expiration date"/>
+					<Text text="{/CreditCard/Expire}"/>
+					<Link press="handleNavBackToCreditCard" text="Edit"/>
+				</form:content>
+			</form:SimpleForm>
+
+			<form:SimpleForm
+				visible="{= ${/selectedPayment}==='Bank Transfer' ? true : false}"
+				title="3. Bank Transfer"
+				minWidth="1024"
+				editable="false"
+				layout="ResponsiveGridLayout">
+				<form:content>
+					<layout:Grid
+						defaultSpan="L6 M6 S10"
+						hSpacing="2">
+						<Label text="Beneficiary Name" design="Bold"/>
+						<Label text="Singapore Hardware e-Commerce LTD"/>
+						<Label text="Beneficiary Bank" design="Bold"/>
+						<Label text="CITY BANK, SINGAPORE BRANCH"/>
+						<Label text="Beneficiary Account Number" design="Bold"/>
+						<Label text="06110702027218"/>
+						<Label text="Bank Phone Number" design="Bold"/>
+						<Label text="+65-6224-2622"/>
+						<Label text="Bank Email Address" design="Bold"/>
+						<Label text="customerservice@citybank.com"/>
+					</layout:Grid>
+				</form:content>
+			</form:SimpleForm>
+
+			<form:SimpleForm
+				visible="{= ${/selectedPayment}==='Cash on Delivery' ? true : false}"
+				title="3. Cash on delivery"
+				minWidth="1024"
+				editable="false"
+				layout="ResponsiveGridLayout">
+				<form:content>
+					<Label text="First Name"/>
+					<Text text="{/CashOnDelivery/FirstName}"/>
+					<Label text="Last Name"/>
+					<Text text="{/CashOnDelivery/LastName}"/>
+					<Label text="Phone number"/>
+					<Text text="{/CashOnDelivery/Phone Number}"/>
+					<Label text="Email address"/>
+					<Text text="{/CashOnDelivery/Email}"/>
+					<Link press="handleNavBackToCashOnDelivery" text="Edit"/>
+				</form:content>
+			</form:SimpleForm>
+
+			<form:SimpleForm
+				title="4. Billing Address"
+				minWidth="1024"
+				editable="false"
+				layout="ResponsiveGridLayout">
+				<form:content>
+					<Label text="Address"/>
+					<Text text="{/BillingAddress/Address}"/>
+					<Label text="City"/>
+					<Text text="{/BillingAddress/City}"/>
+					<Label text="Zip Code"/>
+					<Text text="{/BillingAddress/ZipCode}"/>
+					<Label text="Country"/>
+					<Text text="{/BillingAddress/Country}"/>
+					<Label text="Note"/>
+					<Text text="{/BillingAddress/Note}"/>
+					<Link press="handleNavBackToBillingAddress" text="Edit"/>
+				</form:content>
+			</form:SimpleForm>
+
+			<form:SimpleForm
+				title="5. Delivery type"
+				minWidth="1024"
+				editable="false"
+				layout="ResponsiveGridLayout">
+				<form:content>
+					<Label text="Chosen delivery type"/>
+					<Text text="{/selectedDeliveryMethod}"/>
+					<Link press="handleNavBackToDeliveryType" text="Edit"/>
+				</form:content>
+			</form:SimpleForm>
+
+		</content>
+		<footer>
+			<Bar>
+				<contentRight>
+					<Button text="Submit" press="handleWizardSubmit"/>
+					<Button text="Cancel" press="handleWizardCancel"/>
+				</contentRight>
+			</Bar>
+		</footer>
+	</Page>
+</core:FragmentDefinition>

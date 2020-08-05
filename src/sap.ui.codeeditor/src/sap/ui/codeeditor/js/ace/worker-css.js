@@ -1,5 +1,5 @@
 "no use strict";
-;(function(window) {
+!(function(window) {
 if (typeof window.window != "undefined" && window.document)
     return;
 if (window.require && window.define)
@@ -134,7 +134,7 @@ window.define = function(id, deps, factory) {
         exports: {},
         factory: function() {
             var module = this;
-            var returnExports = factory.apply(this, deps.map(function(dep) {
+            var returnExports = factory.apply(this, deps.slice(0, factory.length).map(function(dep) {
                 switch (dep) {
                     // Because "require", "exports" and "module" aren't actual
                     // dependencies, we must handle them seperately.
@@ -217,7 +217,7 @@ window.onmessage = function(e) {
 };
 })(this);
 
-ace.define("ace/lib/oop",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/oop",[], function(require, exports, module) {
 "use strict";
 
 exports.inherits = function(ctor, superCtor) {
@@ -245,7 +245,7 @@ exports.implement = function(proto, mixin) {
 
 });
 
-ace.define("ace/lib/lang",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/lang",[], function(require, exports, module) {
 "use strict";
 
 exports.last = function(a) {
@@ -347,7 +347,7 @@ exports.escapeRegExp = function(str) {
 };
 
 exports.escapeHTML = function(str) {
-    return str.replace(/&/g, "&#38;").replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;");
+    return ("" + str).replace(/&/g, "&#38;").replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;");
 };
 
 exports.getMatchOffsets = function(string, regExp) {
@@ -433,7 +433,7 @@ exports.delayedCall = function(fcn, defaultTimeout) {
 };
 });
 
-ace.define("ace/range",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/range",[], function(require, exports, module) {
 "use strict";
 var comparePoints = function(p1, p2) {
     return p1.row - p2.row || p1.column - p2.column;
@@ -638,9 +638,9 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
     };
     this.collapseRows = function() {
         if (this.end.column == 0)
-            return new Range(this.start.row, 0, Math.max(this.start.row, this.end.row-1), 0)
+            return new Range(this.start.row, 0, Math.max(this.start.row, this.end.row-1), 0);
         else
-            return new Range(this.start.row, 0, this.end.row, 0)
+            return new Range(this.start.row, 0, this.end.row, 0);
     };
     this.toScreenRange = function(session) {
         var screenPosStart = session.documentToScreenPosition(this.start);
@@ -672,7 +672,7 @@ Range.comparePoints = function(p1, p2) {
 exports.Range = Range;
 });
 
-ace.define("ace/apply_delta",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/apply_delta",[], function(require, exports, module) {
 "use strict";
 
 function throwDeltaError(delta, errorText){
@@ -734,10 +734,10 @@ exports.applyDelta = function(docLines, delta, doNotValidate) {
             }
             break;
     }
-}
+};
 });
 
-ace.define("ace/lib/event_emitter",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/event_emitter",[], function(require, exports, module) {
 "use strict";
 
 var EventEmitter = {};
@@ -787,15 +787,20 @@ EventEmitter._signal = function(eventName, e) {
 
 EventEmitter.once = function(eventName, callback) {
     var _self = this;
-    callback && this.addEventListener(eventName, function newCallback() {
+    this.addEventListener(eventName, function newCallback() {
         _self.removeEventListener(eventName, newCallback);
         callback.apply(null, arguments);
     });
+    if (!callback) {
+        return new Promise(function(resolve) {
+            callback = resolve;
+        });
+    }
 };
 
 
 EventEmitter.setDefaultHandler = function(eventName, callback) {
-    var handlers = this._defaultHandlers
+    var handlers = this._defaultHandlers;
     if (!handlers)
         handlers = this._defaultHandlers = {_disabled_: {}};
     
@@ -812,13 +817,12 @@ EventEmitter.setDefaultHandler = function(eventName, callback) {
     handlers[eventName] = callback;
 };
 EventEmitter.removeDefaultHandler = function(eventName, callback) {
-    var handlers = this._defaultHandlers
+    var handlers = this._defaultHandlers;
     if (!handlers)
         return;
     var disabled = handlers._disabled_[eventName];
     
     if (handlers[eventName] == callback) {
-        var old = handlers[eventName];
         if (disabled)
             this.setDefaultHandler(eventName, disabled.pop());
     } else if (disabled) {
@@ -863,7 +867,7 @@ exports.EventEmitter = EventEmitter;
 
 });
 
-ace.define("ace/anchor",["require","exports","module","ace/lib/oop","ace/lib/event_emitter"], function(require, exports, module) {
+ace.define("ace/anchor",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("./lib/oop");
@@ -988,7 +992,7 @@ var Anchor = exports.Anchor = function(doc, row, column) {
 
 });
 
-ace.define("ace/document",["require","exports","module","ace/lib/oop","ace/apply_delta","ace/lib/event_emitter","ace/range","ace/anchor"], function(require, exports, module) {
+ace.define("ace/document",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("./lib/oop");
@@ -1279,28 +1283,23 @@ var Document = function(textOrLines) {
             return;
         }
         
-        if (isInsert && delta.lines.length > 20000)
+        if (isInsert && delta.lines.length > 20000) {
             this.$splitAndapplyLargeDelta(delta, 20000);
-        applyDelta(this.$lines, delta, doNotValidate);
-        this._signal("change", delta);
+        }
+        else {
+            applyDelta(this.$lines, delta, doNotValidate);
+            this._signal("change", delta);
+        }
     };
     
     this.$splitAndapplyLargeDelta = function(delta, MAX) {
         var lines = delta.lines;
-        var l = lines.length;
+        var l = lines.length - MAX + 1;
         var row = delta.start.row; 
         var column = delta.start.column;
-        var from = 0, to = 0;
-        do {
-            from = to;
+        for (var from = 0, to = 0; from < l; from = to) {
             to += MAX - 1;
             var chunk = lines.slice(from, to);
-            if (to > l) {
-                delta.lines = chunk;
-                delta.start.row = row + from;
-                delta.start.column = column;
-                break;
-            }
             chunk.push("");
             this.applyDelta({
                 start: this.pos(row + from, column),
@@ -1308,7 +1307,11 @@ var Document = function(textOrLines) {
                 action: delta.action,
                 lines: chunk
             }, true);
-        } while(true);
+        }
+        delta.lines = lines.slice(from);
+        delta.start.row = row + from;
+        delta.start.column = column;
+        this.applyDelta(delta, true);
     };
     this.revertDelta = function(delta) {
         this.applyDelta({
@@ -1326,7 +1329,7 @@ var Document = function(textOrLines) {
             if (index < 0)
                 return {row: i, column: index + lines[i].length + newlineLength};
         }
-        return {row: l-1, column: lines[l-1].length};
+        return {row: l-1, column: index + lines[l-1].length + newlineLength};
     };
     this.positionToIndex = function(pos, startRow) {
         var lines = this.$lines || this.getAllLines();
@@ -1344,7 +1347,7 @@ var Document = function(textOrLines) {
 exports.Document = Document;
 });
 
-ace.define("ace/worker/mirror",["require","exports","module","ace/range","ace/document","ace/lib/lang"], function(require, exports, module) {
+ace.define("ace/worker/mirror",[], function(require, exports, module) {
 "use strict";
 
 var Range = require("../range").Range;
@@ -1406,7 +1409,7 @@ var Mirror = exports.Mirror = function(sender) {
 
 });
 
-ace.define("ace/mode/css/csslint",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/mode/css/csslint",[], function(require, exports, module) {
 var parserlib = {};
 (function(){
 function EventTarget(){
@@ -2390,6 +2393,7 @@ Parser.prototype = function(){
                     expression  = null;
 
                 tokenStream.mustMatch(Tokens.LPAREN);
+                this._readWhitespace();
 
                 feature = this._media_feature();
                 this._readWhitespace();
@@ -3959,8 +3963,10 @@ var Properties = {
     "marquee-style"                 : 1,
     "max-height"                    : "<length> | <percentage> | <content-sizing> | none | inherit",
     "max-width"                     : "<length> | <percentage> | <content-sizing> | none | inherit",
+    "max-zoom"                      : "<number> | <percentage> | auto",
     "min-height"                    : "<length> | <percentage> | <content-sizing> | contain-floats | -moz-contain-floats | -webkit-contain-floats | inherit",
     "min-width"                     : "<length> | <percentage> | <content-sizing> | contain-floats | -moz-contain-floats | -webkit-contain-floats | inherit",
+    "min-zoom"                      : "<number> | <percentage> | auto",
     "move-to"                       : 1,
     "nav-down"                      : 1,
     "nav-index"                     : 1,
@@ -4061,6 +4067,7 @@ var Properties = {
     "unicode-bidi"                  : "normal | embed | isolate | bidi-override | isolate-override | plaintext | inherit",
     "user-modify"                   : "read-only | read-write | write-only | inherit",
     "user-select"                   : "none | text | toggle | element | elements | all | inherit",
+    "user-zoom"                     : "zoom | fixed",
     "vertical-align"                : "auto | use-script | baseline | sub | super | top | text-top | central | middle | bottom | text-bottom | <percentage> | <length>",
     "visibility"                    : "visible | hidden | collapse | inherit",
     "voice-balance"                 : 1,
@@ -7991,7 +7998,7 @@ module.exports.CSSLint = CSSLint;
 
 });
 
-ace.define("ace/mode/css_worker",["require","exports","module","ace/lib/oop","ace/lib/lang","ace/worker/mirror","ace/mode/css/csslint"], function(require, exports, module) {
+ace.define("ace/mode/css_worker",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -8054,7 +8061,7 @@ oop.inherits(Worker, Mirror);
                 text: msg.message,
                 type: infoRules[msg.rule.id] ? "info" : msg.type,
                 rule: msg.rule.name
-            }
+            };
         }));
     };
 
@@ -8062,7 +8069,7 @@ oop.inherits(Worker, Mirror);
 
 });
 
-ace.define("ace/lib/es5-shim",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/es5-shim",[], function(require, exports, module) {
 
 function Empty() {}
 

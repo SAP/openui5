@@ -1,0 +1,79 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.ListContent"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="List Card" />
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<SegmentedButton
+			selectedKey="cozy"
+			selectionChange=".onFormFactorChange"
+			class="VizTestDensityBtn sapUiSmallMargin">
+			<items>
+				<SegmentedButtonItem text="Cozy" key="cozy" />
+				<SegmentedButtonItem text="Compact" key="compact" />
+			</items>
+		</SegmentedButton>
+
+		<Button
+			text="Get Walldorf Weather"
+			press=".onChangeCity"
+			class="sapUiSmallMargin">
+			<layoutData>
+				<f:GridContainerItemLayoutData columns="2" />
+			</layoutData>
+		</Button>
+
+		<f:GridContainer class="sapUiSmallMargin">
+			<w:Card id="weatherCard" manifest="{manifests>/paramsInRequest}" parameters="{params>/weather}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card id="listCountStatic" manifest="{manifests>/card14}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{manifests>/paramsInManifestOnly}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{manifests>/paramsListCard}" parameters="{params>/location}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{manifests>/paramsDefaultParamFromManifest}" parameters="{params>/locationCity}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{manifests>/paramsDefaultParamFromManifestOverwrite}" parameters="{params>/locationOverwrite}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card id="listTasks" manifest="{manifests>/tasksContent}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="./cardsdemo/cardcontent/listContent/manifestUrl.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+	</Page>
+</mvc:View>

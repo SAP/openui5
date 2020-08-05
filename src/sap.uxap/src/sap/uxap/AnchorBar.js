@@ -4,10 +4,10 @@
 
 // Provides control sap.uxap.AnchorBar.
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
+	"sap/m/MenuButton",
 	"sap/m/library",
-	"sap/m/Popover",
 	"sap/m/Toolbar",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Item",
@@ -16,19 +16,18 @@ sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/Device",
 	"sap/ui/core/CustomData",
+	"sap/ui/core/Control",
 	"./HierarchicalSelect",
 	"./library",
 	"sap/uxap/AnchorBarRenderer",
-	"jquery.sap.keycodes"
-], function (jQuery, Button, mobileLibrary, Popover, Toolbar, IconPool, Item, ResizeHandler,
-			 ScrollEnablement, HorizontalLayout, Device, CustomData, HierarchicalSelect, library, AnchorBarRenderer) {
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes"
+], function (jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler,	ScrollEnablement,
+		HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.m.SelectType
 	var SelectType = mobileLibrary.SelectType;
-
-	// shortcut for sap.m.PlacementType
-	var PlacementType = mobileLibrary.PlacementType;
 
 	/**
 	 * Constructor for a new <code>AnchorBar</code>.
@@ -71,7 +70,17 @@ sap.ui.define([
 				/**
 				 * Determines whether the Anchor bar items are displayed in upper case.
 				 */
-				upperCase: {type: "boolean", defaultValue: false}
+				upperCase: {type: "boolean", defaultValue: false},
+
+				/**
+				 * Determines the background color of the <code>AnchorBar</code>.
+				 *
+				 * <b>Note:</b> The default value of <code>backgroundDesign</code> property is null.
+				 * If the property is not set, the color of the background is <code>@sapUiObjectHeaderBackground</code>,
+				 * which depends on the specific theme.
+				 * @since 1.58
+				*/
+				backgroundDesign : {type: "sap.m.BackgroundDesign", group: "Appearance"}
 			},
 			associations: {
 
@@ -83,7 +92,6 @@ sap.ui.define([
 			aggregations: {
 
 				_select: {type: "sap.uxap.HierarchicalSelect", multiple: false, visibility: "hidden"},
-				_popovers: {type: "sap.m.Popover", multiple: true, visibility: "hidden"},
 				_scrollArrowLeft: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 				_scrollArrowRight: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 			}
@@ -108,12 +116,15 @@ sap.ui.define([
 		//IE handles rtl in a transparent way (positions positives, scroll starts at the end)
 		//while firefox, safari and chrome have a special management (scroll at the beginning and negative positioning)
 		//therefore we will apply some specific actions only if are in rtl and not in IE.
+		/* TODO remove after the end of support for Internet Explorer */
 		this._bRtlScenario = this._bRtl && !Device.browser.msie;
 
 		//there are 2 different uses cases:
 		//case 1: on a real phone we don't need the scrolling anchorBar, just the hierarchicalSelect
 		//case 2: on a real tablet or a desktop we need both as the size may change
 		this._bHasButtonsBar = Device.system.tablet || Device.system.desktop;
+
+		this.oLibraryResourceBundleOP = sap.ui.getCore().getLibraryResourceBundle("sap.uxap"); // get resource translation bundle
 
 		this._oSelect = this._getHierarchicalSelect();
 
@@ -126,15 +137,13 @@ sap.ui.define([
 				nonTouchScrolling: true
 			});
 
-			this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
-			this._iTolerance = this._iREMSize * 1;  // 1 rem
-			this._iOffset = this._iREMSize * 3;  // 3 rem
+			this._iREMSize = 0;
+			this._iTolerance = 0;
+			this._iOffset = 0;
 
 			//listen to resize
 			this._sResizeListenerId = undefined; //defined in onAfterRendering
 		}
-
-		this.oLibraryResourceBundleOP = library.i18nModel.getResourceBundle(); // get resource translation bundle
 
 		//composite controls
 		this.setDesign("Transparent"); //styling is coming from css
@@ -148,7 +157,9 @@ sap.ui.define([
 	AnchorBar.DOM_CALC_DELAY = 200; // ms
 
 	AnchorBar.prototype.setSelectedButton = function (oButton) {
-		var aSelectItems = this._oSelect.getItems(),
+		var sPreviouslySelectedButtonId = this.getSelectedButton(),
+			oPreviouslySelectedButton,
+			aSelectItems = this._oSelect.getItems(),
 			bHasSelectItems = aSelectItems.length > 0;
 
 		if (typeof oButton === "string") {
@@ -157,7 +168,7 @@ sap.ui.define([
 
 		if (oButton) {
 
-			if (oButton.getId() === this.getSelectedButton()) {
+			if (oButton.getId() === sPreviouslySelectedButtonId) {
 				return this;
 			}
 
@@ -168,10 +179,11 @@ sap.ui.define([
 				this._oSelect.setSelectedKey(oSelectedSectionId);
 			}
 
-			if (this._bHasButtonsBar) {
-				//remove selection class from the currently selected item
-				this.$().find(".sapUxAPAnchorBarButtonSelected").removeClass("sapUxAPAnchorBarButtonSelected").attr("aria-checked", false);
-				oButton.$().addClass("sapUxAPAnchorBarButtonSelected").attr("aria-checked", true);
+			if (this._bHasButtonsBar && oButton.data("secondLevel") !== true) {
+
+				oPreviouslySelectedButton = sap.ui.getCore().byId(sPreviouslySelectedButtonId);
+				this._toggleSelectionStyleClass(oPreviouslySelectedButton, false);
+				this._toggleSelectionStyleClass(oButton, true);
 
 				if (oSelectedSectionId) {
 					this.scrollToSection(oSelectedSectionId, AnchorBar.SCROLL_DURATION);
@@ -179,9 +191,11 @@ sap.ui.define([
 
 				this._setAnchorButtonsTabFocusValues(oButton);
 			}
+
+			this.setAssociation("selectedButton", oButton, true /* don't rerender */);
 		}
 
-		return this.setAssociation("selectedButton", oButton, true /* don't rerender */);
+		return this;
 	};
 
 	AnchorBar.prototype.setShowPopover = function (bValue, bSuppressInvalidate) {
@@ -190,27 +204,7 @@ sap.ui.define([
 			return this;
 		}
 
-		var sSelectedButton, bNeedInvalidate = !jQuery.isEmptyObject(this._oPressHandlers);
-
-		//changing the behavior after the firstRendering is removing all press handlers on first level items
-		if (bNeedInvalidate) {
-			var aContent = this.getContent() || [];
-			sSelectedButton = this.getSelectedButton();
-
-			aContent.forEach(this._detachPopoverHandler, this);
-		}
-
-		this.setProperty("showPopover", bValue, true /* always trigger re-rendering manually */);
-
-		if (bNeedInvalidate) {
-			this.rerender();
-
-			if (sSelectedButton) {
-				this.setSelectedButton(sSelectedButton);
-			}
-		}
-
-		return this;
+		return this.setProperty("showPopover", bValue, true /* always trigger re-rendering manually */);
 	};
 
 	AnchorBar.prototype.getSelectedSection = function () {
@@ -234,32 +228,21 @@ sap.ui.define([
 	 * create phone equivalents for each of the provided content controls
 	 */
 	AnchorBar.prototype.onBeforeRendering = function () {
+		if (this._bHasButtonsBar) {
+			this._iREMSize = parseInt(jQuery("body").css("font-size"));
+			this._iTolerance = this._iREMSize * 1;  // 1 rem
+			this._iOffset = this._iREMSize * 3;  // 3 rem
+		}
+
 		if (Toolbar.prototype.onBeforeRendering) {
 			Toolbar.prototype.onBeforeRendering.call(this);
 		}
 
 		var aContent = this.getContent() || [],
-			bUpperCase = this.getUpperCase(),
-			oPopoverState = {
-				oLastFirstLevelButton: null,
-				oCurrentPopover: null
-			};
+			bUpperCase = this.getUpperCase();
 
-		//rebuild select items
-		this._oSelect.removeAllItems();
 		this._oSelect.setUpperCase(bUpperCase);
 		this.toggleStyleClass("sapUxAPAnchorBarUpperCase", bUpperCase);
-
-		//create responsive equivalents of the provided controls
-		aContent.forEach(function (oButton) {
-			this._createSelectItem(oButton);
-
-			// desktop scenario logic: builds the scrolling anchorBar
-			if (this._bHasButtonsBar) {
-				this._createPopoverSubMenu(oButton, oPopoverState);
-			}
-
-		}, this);
 
 		if (aContent.length > 0 && this._sSelectedKey) {
 			this._oSelect.setSelectedKey(this._sSelectedKey);
@@ -267,23 +250,26 @@ sap.ui.define([
 	};
 
 	AnchorBar.prototype.addContent = function (oButton, bInvalidate) {
+		var bIsSecondLevel = oButton.data("secondLevel") === true || oButton.data("secondLevel") === "true";
 		oButton.addStyleClass("sapUxAPAnchorBarButton");
 		oButton.removeAllAriaDescribedBy();
 
-		if (this._bHasButtonsBar && (oButton.data("secondLevel") === true || oButton.data("secondLevel") === "true")) {
+		this._createSelectItem(oButton, bIsSecondLevel);
 
-			//attach handler on the scrolling mechanism
-			oButton.attachPress(this._handleDirectScroll, this);
+		if (bIsSecondLevel) {
+			oButton.destroy();
+		} else {
+			this.addAggregation("content", oButton, bInvalidate);
 		}
 
-		return this.addAggregation("content", oButton, bInvalidate);
+		return this;
 	};
 
-	AnchorBar.prototype._createSelectItem = function (oButton) {
-		var bIsSecondLevel = oButton.data("secondLevel") === true || oButton.data("secondLevel") === "true";
-
+	AnchorBar.prototype._createSelectItem = function (oButton, bIsSecondLevel) {
 		//create the phone equivalent item if the button has some visible text (UX rule)
-		if (oButton.getText().trim() != "" && (!bIsSecondLevel || oButton.data("bTitleVisible") === true)) {
+		var oBindingInfo = oButton.getBindingInfo("text"),
+			bButtonHasText = oButton.getText().trim() != "" || oBindingInfo;
+		if (bButtonHasText && (!bIsSecondLevel || oButton.data("bTitleVisible") === true)) {
 			var oPhoneItem = new Item({
 				key: oButton.data("sectionId"),
 				text: oButton.getText(),
@@ -295,72 +281,11 @@ sap.ui.define([
 				]
 			});
 
+			if (oBindingInfo) {
+				oPhoneItem.bindProperty("text", Object.assign({}, oBindingInfo));
+			}
+
 			this._oSelect.addItem(oPhoneItem);
-		}
-
-	};
-
-	AnchorBar.prototype._createPopoverSubMenu = function (oButton, oPopoverState) {
-
-		var bIsSecondLevel = oButton.data("secondLevel") === true || oButton.data("secondLevel") === "true",
-			fnPressHandler = null;
-
-		//handles the tablet/desktop hierarchical behavior
-		//a second level is injected into the latest first level
-		//at this point we know that there are children to the last firstLevel therefore we can create the popover
-		if (bIsSecondLevel) {
-
-			if (oPopoverState.oLastFirstLevelButton && oPopoverState.oCurrentPopover) {
-
-				//don't attach the parent press handler for each child
-				if (!this._oPressHandlers[oPopoverState.oLastFirstLevelButton.getId()]) {
-
-					fnPressHandler = jQuery.proxy(this._handlePopover, /* closure with oLastFirstLevelButton and oCurrentPopover as context */
-						{
-							oCurrentPopover: oPopoverState.oCurrentPopover,
-							oLastFirstLevelButton: oPopoverState.oLastFirstLevelButton
-						}
-					);
-
-
-					oPopoverState.oLastFirstLevelButton.attachPress(fnPressHandler);
-					this._oPressHandlers[oPopoverState.oLastFirstLevelButton.getId()] = fnPressHandler;
-				}
-				oPopoverState.oCurrentPopover.addContent(oButton);
-			} else if (this.getShowPopover()) {
-				jQuery.sap.log.error("sapUxApAnchorBar :: missing parent first level for item " + oButton.getText());
-			} else {
-				this.removeContent(oButton);
-				oButton.destroy();
-			}
-		} else {
-			oPopoverState.oLastFirstLevelButton = oButton;
-
-			//default behavior: the first level show a popover containing second levels
-			if (this.getShowPopover()) {
-				oPopoverState.oCurrentPopover = new Popover({
-					placement: PlacementType.Bottom,
-					showHeader: false,
-					verticalScrolling: true,
-					horizontalScrolling: false,
-					contentWidth: "auto",
-					showArrow: false,
-					afterOpen: this._decorateSubMenuButtons
-				});
-
-				oPopoverState.oCurrentPopover.addStyleClass("sapUxAPAnchorBarPopover");
-
-				this._addKeyboardHandling(oPopoverState.oCurrentPopover);
-
-				this.addAggregation('_popovers', oPopoverState.oCurrentPopover);
-				//alternative behavior: the first level triggers direct navigation
-			} else if (!this._oPressHandlers[oPopoverState.oLastFirstLevelButton.getId()]) {
-				fnPressHandler = jQuery.proxy(this._handleDirectScroll, this);
-
-				oPopoverState.oLastFirstLevelButton.attachPress(fnPressHandler);
-
-				this._oPressHandlers[oPopoverState.oLastFirstLevelButton.getId()] = fnPressHandler;
-			}
 		}
 	};
 
@@ -372,66 +297,18 @@ sap.ui.define([
 		});
 	};
 
-	AnchorBar.prototype._addKeyboardHandling = function (oCurrentPopover) {
-		oCurrentPopover.onsapdown = function (oEvent) {
-			if (oEvent.target.nextSibling) {
-				oEvent.target.nextSibling.focus();
-			}
-		};
-		oCurrentPopover.onsapright = function (oEvent) {
-			oCurrentPopover.onsapdown(oEvent);
-		};
-		oCurrentPopover.onsapup = function (oEvent) {
-			if (oEvent.target.previousSibling) {
-				oEvent.target.previousSibling.focus();
-			}
-		};
-		oCurrentPopover.onsapleft = function (oEvent) {
-			oCurrentPopover.onsapup(oEvent);
-		};
-		oCurrentPopover.onsaphome = function (oEvent) {
-			if (oEvent.target.parentElement.firstChild) {
-				oEvent.target.parentElement.firstChild.focus();
-			}
-		};
-		oCurrentPopover.onsapend = function (oEvent) {
-			if (oEvent.target.parentElement.lastChild) {
-				oEvent.target.parentElement.lastChild.focus();
-			}
-		};
-		oCurrentPopover.onsappageup = this._handlePageUp.bind(oCurrentPopover);
-		oCurrentPopover.onsappagedown = this._handlePageDown.bind(oCurrentPopover);
-	};
-
-	AnchorBar.prototype._detachPopoverHandler = function (oButton) {
-		if (this._oPressHandlers[oButton.getId()]) {
-			oButton.detachPress(this._oPressHandlers[oButton.getId()]);
-			this._oPressHandlers[oButton.getId()] = null;
-		}
-	};
-
-	AnchorBar.prototype._handlePopover = function (oEvent) {
-		var aPopoverButtons = this.oCurrentPopover.getContent() || [];
-
-		//open the popover only if we are in Tablet/Desktop scenario = the button is visible in the anchorBar
-		if (this.oLastFirstLevelButton.$().is(":visible")) {
-
-			//specific use case management: if there are only 1 button in the popover, then we don't display it and navigate directly (= the subsection is "promoted" it to a section level)
-			//this is a specific behavior asked by UX as of Sep 25, 2014
-			if (aPopoverButtons.length == 1) {
-				aPopoverButtons[0].firePress({});
+	AnchorBar.prototype._toggleSelectionStyleClass = function(oButton, bAdd) {
+		if (oButton && oButton.toggleStyleClass) {
+			oButton.toggleStyleClass("sapUxAPAnchorBarButtonSelected", bAdd);
+			if (oButton instanceof MenuButton) {
+				oButton._getButtonControl().$().attr("aria-selected", bAdd);
 			} else {
-				this.oCurrentPopover.openBy(this.oLastFirstLevelButton);
+				oButton.$().attr("aria-selected", bAdd);
 			}
 		}
 	};
 
 	AnchorBar.prototype._handleDirectScroll = function (oEvent) {
-
-		if (oEvent.getSource().getParent() instanceof Popover) {
-			oEvent.getSource().getParent().close();
-		}
-
 		this._requestScrollToSection(oEvent.getSource().data("sectionId"));
 	};
 
@@ -471,13 +348,18 @@ sap.ui.define([
 	AnchorBar.prototype._onSelectChange = function (oEvent) {
 		var oSelectedItem = oEvent.getParameter("selectedItem"), oSelectedSection;
 
+		if (!oSelectedItem) {
+			Log.warning("AnchorBar :: no selected hierarchicalSelect item");
+			return;
+		}
+
 		oSelectedSection = sap.ui.getCore().byId(oSelectedItem.getKey());
 
 		if (oSelectedSection) {
 
 			this._requestScrollToSection(oSelectedSection.getId());
 		} else {
-			jQuery.sap.log.error("AnchorBar :: cannot find corresponding section", oSelectedItem.getKey());
+			Log.error("AnchorBar :: cannot find corresponding section", oSelectedItem.getKey());
 		}
 	};
 
@@ -488,6 +370,7 @@ sap.ui.define([
 			this.setAggregation('_select', new HierarchicalSelect({
 				width: "100%",
 				icon: "sap-icon://slim-arrow-down",
+				tooltip: this.oLibraryResourceBundleOP.getText("ANCHOR_BAR_OVERFLOW"),
 				change: jQuery.proxy(this._onSelectChange, this)
 			}));
 		}
@@ -604,7 +487,7 @@ sap.ui.define([
 	AnchorBar.prototype._applyHierarchicalSelectMode = function () {
 
 		if (this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon) {
-			this.$().find(".sapUxAPAnchorBarScrollContainer").show();
+			this._bHideScrollContainer = false;
 
 			this._oSelect.setWidth("auto");
 			this._oSelect.setAutoAdjustWidth(true);
@@ -612,7 +495,7 @@ sap.ui.define([
 			this._computeBarSectionsInfo();
 
 		} else {
-			this.$().find(".sapUxAPAnchorBarScrollContainer").hide();
+			this._bHideScrollContainer = true;
 
 			this._oSelect.setWidth("100%");
 			this._oSelect.setAutoAdjustWidth(false);
@@ -620,12 +503,16 @@ sap.ui.define([
 		}
 
 		this.$().toggleClass("sapUxAPAnchorBarOverflow", this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon);
+
+		this.invalidate();
 	};
 
-	AnchorBar.prototype._adjustSize = function () {
+	AnchorBar.prototype._adjustSize = function (oEvent) {
 
 		//size changed => check if switch in display-mode (phone-view vs. desktop-view) needed
-		var sNewMode = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange()) ?
+		var oMediaRange = Device.media.getCurrentRange(Device.media.RANGESETS.SAP_STANDARD, this._getWidth(this)),
+			bWidthChange = oEvent && oEvent.size && (oEvent.size.width !== oEvent.oldSize.width),
+			sNewMode = library.Utilities.isPhoneScenario(oMediaRange) ?
 			AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Text :
 			AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon;
 
@@ -648,6 +535,10 @@ sap.ui.define([
 				bNeedScrollingEnd,
 				iContainerWidth;
 
+			// if width has changed we need to scroll AnchorBar to selected section
+			if (bWidthChange) {
+				this.scrollToSection(this._sSelectedKey);
+			}
 
 			iContainerWidth = $scrollContainer.width();
 
@@ -666,7 +557,7 @@ sap.ui.define([
 				bNeedScrollingBegin = $scrollContainer.scrollLeft() >= this._iTolerance;
 			}
 
-			jQuery.sap.log.debug("AnchorBar :: scrolled at " + $scrollContainer.scrollLeft(), "scrollBegin [" + (bNeedScrollingBegin ? "true" : "false") + "] scrollEnd [" + (bNeedScrollingEnd ? "true" : "false") + "]");
+			Log.debug("AnchorBar :: scrolled at " + $scrollContainer.scrollLeft(), "scrollBegin [" + (bNeedScrollingBegin ? "true" : "false") + "] scrollEnd [" + (bNeedScrollingEnd ? "true" : "false") + "]");
 
 			$dom.toggleClass("sapUxAPAnchorBarScrollLeft", bNeedScrollingBegin);
 			$dom.toggleClass("sapUxAPAnchorBarScrollRight", bNeedScrollingEnd);
@@ -699,17 +590,18 @@ sap.ui.define([
 	 * Scroll to a specific Section.
 	 *
 	 * @param {string} sId The Section ID to scroll to
-	 * @param {int} iDuration Scroll duration (in ms). Default value is 0.
+	 * @param {int} [iDuration=0] Scroll duration (in ms)
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AnchorBar.prototype.scrollToSection = function (sId, iDuration) {
 
 		if (this._bHasButtonsBar) {
-			var iDuration = iDuration || AnchorBar.SCROLL_DURATION,
+			var oMediaRange = Device.media.getCurrentRange(Device.media.RANGESETS.SAP_STANDARD, this._getWidth(this)),
+				iDuration = iDuration || AnchorBar.SCROLL_DURATION,
 				iScrollTo;
 
-			if (!library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange())
+			if (!library.Utilities.isPhoneScenario(oMediaRange)
 				&& this._oSectionInfo[sId]) {
 
 				if (this._bRtlScenario && Device.browser.firefox) {
@@ -723,26 +615,26 @@ sap.ui.define([
 						}
 				}
 
-				jQuery.sap.log.debug("AnchorBar :: scrolling to section " + sId + " of " + iScrollTo);
+				Log.debug("AnchorBar :: scrolling to section " + sId + " of " + iScrollTo);
 
 				//avoid triggering twice the scrolling onto the same target section
 				if (this._sCurrentScrollId != sId) {
 					this._sCurrentScrollId = sId;
 
 					if (this._iCurrentScrollTimeout) {
-						jQuery.sap.clearDelayedCall(this._iCurrentScrollTimeout);
-						jQuery.sap.byId(this.getId() + "-scroll").parent().stop(true, false);
+						clearTimeout(this._iCurrentScrollTimeout);
+						jQuery(document.getElementById(this.getId() + "-scroll")).parent().stop(true, false);
 					}
 
-					this._iCurrentScrollTimeout = jQuery.sap.delayedCall(iDuration, this, function () {
+					this._iCurrentScrollTimeout = setTimeout(function () {
 						this._sCurrentScrollId = undefined;
 						this._iCurrentScrollTimeout = undefined;
-					});
+					}.bind(this), iDuration);
 
 					this._oScroller.scrollTo(iScrollTo, 0, iDuration);
 				}
 			} else {
-				jQuery.sap.log.debug("AnchorBar :: no need to scroll to " + sId);
+				Log.debug("AnchorBar :: no need to scroll to " + sId);
 			}
 		}
 	};
@@ -766,39 +658,28 @@ sap.ui.define([
 	AnchorBar.PAGEUP_AND_PAGEDOWN_JUMP_SIZE = 5;
 
 	/**
-	 * Handles DOWN key, triggered on anchor bar level.
-	 *
-	 * @param {jQuery.Event} oEvent
-	 * @private
-	 */
-	AnchorBar.prototype.onsapdown = function (oEvent) {
-		oEvent.preventDefault();
-		if (oEvent.target.nextSibling) {
-			oEvent.target.nextSibling.focus();
-		}
-	};
-
-	/**
 	 * Handles RIGHT key, triggered on anchor bar level.
 	 *
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	AnchorBar.prototype.onsapright = function (oEvent) {
-		var sMethodName = this._bRtl ? "onsapup" : "onsapdown";
-		this[sMethodName](oEvent);
-	};
-
-	/**
-	 * Handles UP key, triggered on anchor bar level.
-	 *
-	 * @param {jQuery.Event} oEvent
-	 * @private
-	 */
-	AnchorBar.prototype.onsapup = function (oEvent) {
 		oEvent.preventDefault();
-		if (oEvent.target.previousSibling) {
-			oEvent.target.previousSibling.focus();
+
+		var iNextIndex;
+		var aAnchors = this.getContent();
+
+		aAnchors.forEach(function (oAnchor, iAnchorIndex) {
+			if (oEvent.target.id.indexOf(oAnchor.getId()) > -1) {
+				iNextIndex = iAnchorIndex + 1;
+				return;
+			}
+		});
+
+		if (iNextIndex && aAnchors[iNextIndex]) {
+			aAnchors[iNextIndex].focus();
+		} else if (aAnchors[aAnchors.length - 1]) {
+			aAnchors[aAnchors.length - 1].focus();
 		}
 	};
 
@@ -809,8 +690,43 @@ sap.ui.define([
 	 * @private
 	 */
 	AnchorBar.prototype.onsapleft = function (oEvent) {
-		var sMethodName = this._bRtl ? "onsapdown" : "onsapup";
-		this[sMethodName](oEvent);
+		oEvent.preventDefault();
+
+		var iNextIndex;
+		var aAnchors = this.getContent();
+
+		aAnchors.forEach(function (oAnchor, iAnchorIndex) {
+			if (oEvent.target.id.indexOf(oAnchor.getId()) > -1) {
+				iNextIndex = iAnchorIndex - 1;
+				return;
+			}
+		});
+
+		if (iNextIndex && aAnchors[iNextIndex]) {
+			aAnchors[iNextIndex].focus();
+		} else if (aAnchors[0]) {
+			aAnchors[0].focus();
+		}
+	};
+
+	/**
+	 * Handles DOWN key, triggered on anchor bar level.
+	 *
+	 * @param {jQuery.Event} oEvent
+	 * @private
+	 */
+	AnchorBar.prototype.onsapdown = function (oEvent) {
+		oEvent.preventDefault();
+	};
+
+	/**
+	 * Handles UP key, triggered on anchor bar level.
+	 *
+	 * @param {jQuery.Event} oEvent
+	 * @private
+	 */
+	AnchorBar.prototype.onsapup = function (oEvent) {
+		oEvent.preventDefault();
 	};
 
 	/**
@@ -821,9 +737,10 @@ sap.ui.define([
 	 */
 	AnchorBar.prototype.onsaphome = function (oEvent) {
 		oEvent.preventDefault();
-		if (oEvent.target.parentElement.firstChild) {
-			oEvent.target.parentElement.firstChild.focus();
-		}
+
+		var aAnchors = this.getContent();
+
+		aAnchors[0].focus();
 	};
 
 	/**
@@ -834,9 +751,10 @@ sap.ui.define([
 	 */
 	AnchorBar.prototype.onsapend = function (oEvent) {
 		oEvent.preventDefault();
-		if (oEvent.target.parentElement.lastChild) {
-			oEvent.target.parentElement.lastChild.focus();
-		}
+
+		var aAnchors = this.getContent();
+
+		aAnchors[aAnchors.length - 1].focus();
 	};
 
 	/**
@@ -872,7 +790,7 @@ sap.ui.define([
 		var aAnchors = this.getContent();
 
 		aAnchors.forEach(function (oAnchor, iAnchorIndex) {
-			if (oAnchor.getId() === oEvent.target.id) {
+			if (oEvent.target.id.indexOf(oAnchor.getId()) > -1) {
 				iNextIndex = iAnchorIndex - (AnchorBar.PAGEUP_AND_PAGEDOWN_JUMP_SIZE + 1);
 				return;
 			}
@@ -898,7 +816,7 @@ sap.ui.define([
 		var aAnchors = this.getContent();
 
 		aAnchors.forEach(function (oAnchor, iAnchorIndex) {
-			if (oAnchor.getId() === oEvent.target.id) {
+			if (oEvent.target.id.indexOf(oAnchor.getId()) > -1) {
 				iNextIndex = iAnchorIndex + AnchorBar.PAGEUP_AND_PAGEDOWN_JUMP_SIZE + 1;
 				return;
 			}
@@ -922,68 +840,13 @@ sap.ui.define([
 			sTabIndex = "tabIndex";
 
 		aAnchorBarContent.forEach(function (oAnchorBarItem) {
-			$anchorBarItem = oAnchorBarItem.$();
-			if (oAnchorBarItem.sId === oSelectedButton.sId) {
+			$anchorBarItem = oAnchorBarItem.getAggregation("_button") ? oAnchorBarItem.getAggregation("_button").$() : oAnchorBarItem.$();
+			if (oAnchorBarItem.sId === (oSelectedButton && oSelectedButton.sId)) {
 				$anchorBarItem.attr(sTabIndex, sFocusable);
 			} else {
 				$anchorBarItem.attr(sTabIndex, sNotFocusable);
 			}
 		});
-	};
-
-	/**
-	 * Handler for F6
-	 *
-	 * @param oEvent - The event object
-	 */
-	AnchorBar.prototype.onsapskipforward = function (oEvent) {
-		this._handleGroupNavigation(oEvent, false);
-	};
-
-	/**
-	 * Handler for F6 and Shift + F6 group navigation
-	 *
-	 * @param {jQuery.Event} oEvent
-	 * @param {boolean} bShiftKey serving as a reference if shift is used
-	 * @private
-	 */
-	AnchorBar.prototype._handleGroupNavigation = function (oEvent, bShiftKey) {
-		var oEventF6 = jQuery.Event("keydown"),
-			oSettings = {},
-			oObjectPageLayout = this.getParent(),
-			bUseIconTabBar = oObjectPageLayout.getUseIconTabBar(),
-			sCurrentSectionId = oObjectPageLayout.getSelectedSection(),
-			aSections = oObjectPageLayout.getSections(),
-			aSubSections = [this.getDomRef()],
-			aCurrentSubSections = [];
-
-		if (bUseIconTabBar) {
-			aCurrentSubSections = sap.ui.getCore().byId(sCurrentSectionId).getSubSections().map(function (oSubSection) {
-				return oSubSection.$().attr("tabindex", -1)[0];
-			});
-
-			aSubSections = aSubSections.concat(aCurrentSubSections);
-		} else {
-			//this is needed in order to be sure that next F6 group will be found in sub sections
-			aSections.forEach(function (oSection) { // for each section
-				// get the subsections which have tabindex=-1
-				aCurrentSubSections = oSection.getSubSections().map(function (oSubSection) {
-					return oSubSection.$().attr("tabindex", -1)[0];
-				});
-				// accumulate the result
-				aSubSections = aSubSections.concat(aCurrentSubSections);
-			});
-		}
-		oSettings.scope = aSubSections;
-
-		oEvent.preventDefault();
-		this.$().focus();
-
-		oEventF6.target = oEvent.target;
-		oEventF6.keyCode = jQuery.sap.KeyCodes.F6;
-		oEventF6.shiftKey = bShiftKey;
-
-		jQuery.sap.handleF6GroupNavigation(oEventF6, oSettings);
 	};
 
 	/**
@@ -996,6 +859,7 @@ sap.ui.define([
 		}
 
 		oSelectedButton = sap.ui.getCore().byId(this.getSelectedButton());
+		this._setAnchorButtonsTabFocusValues(oSelectedButton);
 
 		//save max for arrow show/hide management, the max position is the required scroll for the item to be fully visible
 		this._iMaxPosition = -1;
@@ -1003,31 +867,30 @@ sap.ui.define([
 		//show/hide scrolling arrows
 		this._sResizeListenerId = ResizeHandler.register(this, jQuery.proxy(this._adjustSize, this));
 
-		this.$().find(".sapUxAPAnchorBarScrollContainer").scroll(jQuery.proxy(this._onScroll, this));
+		this.$().find(".sapUxAPAnchorBarScrollContainer").on("scroll", jQuery.proxy(this._onScroll, this));
 
 		//restore state from previous rendering
 		if (oSelectedButton) {
 			this.setSelectedButton(oSelectedButton);
-			this._setAnchorButtonsTabFocusValues(oSelectedButton);
 		}
 
 		//initial state
 		if (this._bHasButtonsBar) {
-			jQuery.sap.delayedCall(AnchorBar.DOM_CALC_DELAY, this, function () {
+			setTimeout(function () {
 				if (this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon) {
 					this._computeBarSectionsInfo();
 				}
 				this._adjustSize();
-			});
+			}.bind(this), AnchorBar.DOM_CALC_DELAY);
 		}
 	};
 
 	AnchorBar.prototype._onScroll = function () {
 		if (!this._iCurrentSizeCheckTimeout) {
-			this._iCurrentSizeCheckTimeout = jQuery.sap.delayedCall(AnchorBar.SCROLL_DURATION, this, function () {
+			this._iCurrentSizeCheckTimeout = setTimeout(function () {
 				this._iCurrentSizeCheckTimeout = undefined;
 				this._adjustSize();
-			});
+			}.bind(this), AnchorBar.SCROLL_DURATION);
 		}
 	};
 
@@ -1049,12 +912,23 @@ sap.ui.define([
 	};
 
 	AnchorBar.prototype._computeNextSectionInfo = function (oContent) {
+		var oButton = oContent.isA("sap.m.MenuButton") ? oContent._getButtonControl() : oContent,
+			bSelected = oContent.hasStyleClass("sapUxAPAnchorBarButtonSelected");
+
 		// set ARIA has-popup if button opens submenu
 		if (oContent.data("bHasSubMenu")) {
-			oContent.$().attr("aria-haspopup", "true");
+			oButton.$().attr("aria-haspopup", "menu");
+
+			// set role 'group' to inner button element since
+			// its not allow nesting them in elements with role 'option'
+			oButton.$().find(".sapMBtn")
+				.attr("role", "group")
+				// remove ARIA has-popup from inner elements
+				// since they are not receiving any focus
+				.removeAttr('aria-haspopup');
 		}
 		// set ARIA attributes of main buttons
-		oContent.$().attr("aria-controls", oContent.data("sectionId")).attr("aria-checked", false);
+		oButton.$().attr("aria-controls", oContent.data("sectionId")).attr("aria-selected", bSelected);
 
 		var iWidth = oContent.$().outerWidth(true);
 
@@ -1087,20 +961,15 @@ sap.ui.define([
 		}
 	};
 
-	AnchorBar.prototype._destroyPopoverContent = function () {
-		var aPopovers = this.getAggregation("_popovers");
-		if (Array.isArray(aPopovers)) {
-			aPopovers.forEach(function (popover) {
-				popover.destroyContent();
-			});
-		}
+	AnchorBar.prototype._resetControl = function () {
+		this.destroyAggregation('content');
+		this._oSelect.destroyAggregation("items", true);
+
+		return this;
 	};
 
-	AnchorBar.prototype._resetControl = function () {
-		this._destroyPopoverContent();
-		this.getContent().forEach(this._detachPopoverHandler, this);
-		this.destroyAggregation('content', true);
-		return this;
+	AnchorBar.prototype._getAccessibilityRole = function () {
+		return 'none';
 	};
 
 	/**
@@ -1118,8 +987,7 @@ sap.ui.define([
 			iIndex = oContent.indexOf(oElement);
 
 		if (iIndex !== -1) {
-			mAriaProps.role = "menuitemradio";
-			mAriaProps.type = "button";
+			mAriaProps.role = "option";
 			mAriaProps.setsize = oContent.length;
 			mAriaProps.posinset = iIndex + 1; // we need "+ 1", since iIndex would start from 0 (due to indexOf)
 		}
@@ -1143,6 +1011,22 @@ sap.ui.define([
 		if (this.oLibraryResourceBundleOP) {
 			this.oLibraryResourceBundleOP = null;
 		}
+	};
+
+	/**
+	 * Determines the width of a control safely. If the control doesn't exist, it returns 0.
+	 * If it exists, it returns the DOM element width.
+	 * @param  {sap.ui.core.Control} oControl
+	 * @return {Number} the width of the control
+	 */
+	AnchorBar.prototype._getWidth = function (oControl) {
+		var oDomReference = oControl.getDomRef();
+		return !(oControl instanceof Control) ? 0 : (oDomReference && oDomReference.offsetWidth) || 0;
+	};
+
+	AnchorBar.prototype.setVisible = function (bVisible) {
+		this.getParent() && this.getParent().toggleStyleClass("sapUxAPObjectPageLayoutNoAnchorBar", !bVisible);
+		return this.setProperty("visible", bVisible);
 	};
 
 	return AnchorBar;

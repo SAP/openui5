@@ -1,12 +1,14 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/thirdparty/sinon'
-], function (jQuery, sinon) {
+	"sap/ui/model/json/JSONModel",
+	'sap/ui/thirdparty/sinon',
+	"sap/base/Log"
+], function (JSONModel, sinon, Log) {
 	"use strict";
 
 	var oSandbox = sinon.sandbox.create(),
 		aUsers, // The array that holds the cached user data
-		sMetadata,  // The string that holds the cached mock service metadata
+		sMetadata, // The string that holds the cached mock service metadata
+		sNamespace = "sap/ui/core/tutorial/odatav4",
 		sLogComponent = "sap.ui.core.tutorial.odatav4.mockserver", // Component for writing logs into the console
 		rBaseUrl = /services.odata.org\/TripPinRESTierService/;
 
@@ -15,29 +17,33 @@ sap.ui.define([
 		/**
 		 * Creates a Sinon fake service, intercepting all http requests to
 		 * the URL defined in variable sBaseUrl above.
+		 * @returns{Promise} a promise that is resolved when the mock server is started
 		 */
-		start : function () {
+		init : function () {
 			// Read the mock data
-			readData();
-			// Initialize the sinon fake server
-			oSandbox.useFakeServer();
-			// Make sure that requests are responded to automatically. Otherwise we would need to do that manually.
-			oSandbox.server.autoRespond = true;
+			return readData().then(function () {
+				// Initialize the sinon fake server
+				oSandbox.useFakeServer();
+				// Make sure that requests are responded to automatically. Otherwise we would need to do that manually.
+				oSandbox.server.autoRespond = true;
 
-			// Register the requests for which responses should be faked.
-			oSandbox.server.respondWith(rBaseUrl, handleAllRequests);
+				// Register the requests for which responses should be faked.
+				oSandbox.server.respondWith(rBaseUrl, handleAllRequests);
 
-			// Apply a filter to the fake XmlHttpRequest.
-			// Otherwise, ALL requests (e.g. for the component, views etc.) would be intercepted.
-			sinon.FakeXMLHttpRequest.useFilters = true;
-			sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
-				// If the filter returns true, the request will NOT be faked.
-				// We only want to fake requests that go to the intended service.
-				return !rBaseUrl.test(sUrl);
+				// Apply a filter to the fake XmlHttpRequest.
+				// Otherwise, ALL requests (e.g. for the component, views etc.) would be intercepted.
+				sinon.FakeXMLHttpRequest.useFilters = true;
+				sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
+					// If the filter returns true, the request will NOT be faked.
+					// We only want to fake requests that go to the intended service.
+					return !rBaseUrl.test(sUrl);
+				});
+
+				// Set the logging level for console entries from the mock server
+				Log.setLevel(3, sLogComponent);
+
+				Log.info("Running the app with mock data", sLogComponent);
 			});
-
-			// Set the logging level for console entries from the mock server
-			jQuery.sap.log.setLevel(3, sLogComponent);
 		},
 
 		/**
@@ -154,30 +160,55 @@ sap.ui.define([
 	/**
 	 * Reads and caches the fake service metadata and data from their
 	 * respective files.
+	 * @returns{Promise} a promise that is resolved when the data is loaded
 	 */
 	function readData() {
-		var oResult;
+		var oMetadataPromise = new Promise(function (fnResolve, fnReject) {
+			var sResourcePath = sap.ui.require.toUrl(sNamespace + "/localService/metadata.xml");
+			var oRequest = new XMLHttpRequest();
 
-		// Read metadata file
-		oResult = jQuery.sap.sjax({
-			url : "./localService/metadata.xml",
-			dataType : "text"
+			oRequest.onload = function () {
+				// 404 is not an error for XMLHttpRequest so we need to handle it here
+				if (oRequest.status === 404) {
+					var sError = "resource " + sResourcePath + " not found";
+					Log.error(sError, sLogComponent);
+					fnReject(new Error(sError, sLogComponent));
+				}
+				sMetadata = this.responseText;
+				fnResolve();
+			};
+			oRequest.onerror = function() {
+				var sError = "error loading resource '" + sResourcePath + "'";
+				Log.error(sError, sLogComponent);
+				fnReject(new Error(sError, sLogComponent));
+			};
+			oRequest.open("GET", sResourcePath);
+			oRequest.send();
 		});
-		if (!oResult.success) {
-			throw new Error("'./localService/metadata.xml'" + ": resource not found");
-		} else {
-			sMetadata = oResult.data;
-		}
 
-		oResult = jQuery.sap.sjax({
-			url : "./localService/mockdata/people.json",
-			dataType : "text"
+		var oMockDataPromise = new Promise(function (fnResolve, fnReject) {
+			var sResourcePath = sap.ui.require.toUrl(sNamespace + "/localService/mockdata/people.json");
+			var oMockDataModel = new JSONModel(sResourcePath);
+
+			oMockDataModel.attachRequestCompleted(function (oEvent) {
+				// 404 is not an error for JSONModel so we need to handle it here
+				if (oEvent.getParameter("errorobject") && oEvent.getParameter("errorobject").statusCode === 404) {
+					var sError = "resource '" + sResourcePath + "' not found";
+					Log.error(sError, sLogComponent);
+					fnReject(new Error(sError, sLogComponent));
+				}
+				aUsers = this.getData().value;
+				fnResolve();
+			});
+
+			oMockDataModel.attachRequestFailed(function () {
+				var sError = "error loading resource '" + sResourcePath + "'";
+				Log.error(sError, sLogComponent);
+				fnReject(new Error(sError, sLogComponent));
+			});
 		});
-		if (!oResult.success) {
-			throw new Error("'./localService/mockdata/people.json'" + ": resource not found");
-		} else {
-			aUsers = JSON.parse(oResult.data).value;
-		}
+
+		return Promise.all([oMetadataPromise, oMockDataPromise]);
 	}
 
 	/**
@@ -624,7 +655,7 @@ sap.ui.define([
 		var aResponse;
 
 		// Log the request
-		jQuery.sap.log.info(
+		Log.info(
 			"Mockserver: Received " + oXhr.method + " request to URL " + oXhr.url,
 			(oXhr.requestBody ? "Request body is:\n" + oXhr.requestBody : "No request body.") + "\n",
 			sLogComponent);
@@ -638,7 +669,7 @@ sap.ui.define([
 		oXhr.respond(aResponse[0], aResponse[1], aResponse[2]);
 
 		// Log the response
-		jQuery.sap.log.info(
+		Log.info(
 			"Mockserver: Sent response with return code " + aResponse[0],
 			("Response headers: " + JSON.stringify(aResponse[1]) + "\n\nResponse body:\n" + aResponse[2]) + "\n",
 			sLogComponent);

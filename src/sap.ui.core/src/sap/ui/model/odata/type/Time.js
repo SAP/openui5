@@ -2,15 +2,21 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
-		'sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataType',
-		'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, DateFormat, FormatException, ODataType, ParseException, ValidateException) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/thirdparty/jquery"
+], function (Log, DateFormat, FormatException, ParseException, ValidateException, ODataType,
+		jQuery) {
 	"use strict";
 
 	var oDemoTime = {
 			__edmType : "Edm.Time",
-			ms : 49646000 // "13:47:26"
+			ms : 86398000 // "23:59:58"
 		},
 		// a "formatter" like DateFormat, see getModelFormat
 		oModelFormat = {
@@ -78,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 			if (vNullable === false || vNullable === "false") {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 		}
 	}
@@ -188,7 +194,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
-	Time.prototype.formatValue = function(oValue, sTargetType) {
+	Time.prototype.formatValue = function (oValue, sTargetType) {
 		if (oValue === undefined || oValue === null) {
 			return null;
 		}
@@ -214,7 +220,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 * @override
 	 * @protected
 	 */
-	Time.prototype.getModelFormat = function() {
+	Time.prototype.getModelFormat = function () {
 		return oModelFormat;
 	};
 
@@ -267,7 +273,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 *
 	 * @param {object} oValue
 	 *   the value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 */

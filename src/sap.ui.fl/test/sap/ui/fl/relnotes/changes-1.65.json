@@ -1,0 +1,29 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "9124843dd07afcff3dbee678fa33956a65856781",
+        "type": "FIX",
+        "text": "VariantManagement: Open Popover on Keyup",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980059440"
+          }
+        ]
+      },
+      {
+        "id": "8591eed16a54faae5466bf2f8982b3994480034e",
+        "type": "FIX",
+        "text": "order of object properties in safari differs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970096859"
+          }
+        ]
+      }
+    ]
+  }
+}

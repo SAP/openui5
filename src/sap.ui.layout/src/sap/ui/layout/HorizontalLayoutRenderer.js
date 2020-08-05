@@ -12,6 +12,7 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var HorizontalLayoutRenderer = {
+		apiVersion: 2
 	};
 
 
@@ -27,27 +28,27 @@ sap.ui.define([],
 		var bNoWrap = !oControl.getAllowWrapping();
 
 		// write the HTML into the render manager
-		rm.write("<div");
-		rm.writeControlData(oControl);
-		rm.addClass("sapUiHLayout");
+		rm.openStart("div", oControl);
+		rm.class("sapUiHLayout");
 		if (bNoWrap) {
-			rm.addClass("sapUiHLayoutNoWrap");
+			rm.class("sapUiHLayoutNoWrap");
 		}
-		rm.writeClasses();
-		rm.write(">"); // div element
+		rm.openEnd(); // div element
 
 		var aChildren = oControl.getContent();
 		for (var i = 0; i < aChildren.length; i++) {
 			if (bNoWrap) {
-				rm.write("<div class='sapUiHLayoutChildWrapper'>");
+				rm.openStart("div");
+				rm.class("sapUiHLayoutChildWrapper");
+				rm.openEnd();
 			}
 			rm.renderControl(aChildren[i]);
 			if (bNoWrap) {
-				rm.write("</div>");
+				rm.close("div");
 			}
 		}
 
-		rm.write("</div>");
+		rm.close("div");
 	};
 
 

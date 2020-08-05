@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(jQuery, FlexCommand) {
+sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	"use strict";
 
 	/**
@@ -23,13 +23,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(
 			library : "sap.ui.rta",
 			properties : {
 				index : {
-					type : "int"
+					type : "int",
+					group: "content"
 				},
 				newControlId : {
+					type : "string",
+					group: "content"
+				},
+				label : { //legacy property => exposed in tests
 					type : "string"
 				},
-				label : {
-					type : "string"
+				parentId : {
+					type : "string",
+					group: "content"
 				}
 			},
 			associations : {},
@@ -37,18 +43,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(
 		}
 	});
 
-	CreateContainer.prototype._getChangeSpecificData = function(bForward) {
+	CreateContainer.prototype._getChangeSpecificData = function() {
+		var mSpecificInfo = FlexCommand.prototype._getChangeSpecificData.apply(this);
 
-		var mSpecificInfo = {
-			changeType : this.getChangeType(),
-			index : this.getIndex(),
-			newControlId : this.getNewControlId(),
-			newLabel : this.getLabel()
-		};
+		mSpecificInfo.newLabel = this.getLabel();
 
 		return mSpecificInfo;
 	};
-
 	return CreateContainer;
-
-}, /* bExport= */true);
+});

@@ -1,0 +1,70 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+
+			<MessageStrip
+				text="Default (Information) with default icon and close button:"
+				showIcon="true"
+				showCloseButton="true"
+				class="sapUiMediumMarginBottom">
+			</MessageStrip>
+
+			<MessageStrip
+				text="Error with default icon and close button:"
+				type="Error"
+				showIcon="true"
+				showCloseButton="true"
+				class="sapUiMediumMarginBottom">
+			</MessageStrip>
+
+			<MessageStrip
+				text="Warning with default icon and close button:"
+				type="Warning"
+				showIcon="true"
+				showCloseButton="true"
+				class="sapUiMediumMarginBottom">
+			</MessageStrip>
+
+			<MessageStrip
+				text="Success with default icon and close button:"
+				type="Success"
+				showIcon="true"
+				showCloseButton="true"
+				class="sapUiMediumMarginBottom">
+			</MessageStrip>
+
+			<MessageStrip
+				text="Information with default icon."
+				type="Information"
+				showIcon="true"
+				class="sapUiMediumMarginBottom">
+			</MessageStrip>
+
+			<MessageStrip
+				text="Information with custom icon"
+				type="Information"
+				showIcon="true"
+				customIcon="sap-icon://locked"
+				class="sapUiMediumMarginBottom">
+			</MessageStrip>
+
+			<MessageStrip
+				text="Error with link"
+				type="Error"
+				showCloseButton="true"
+				class="sapUiMediumMarginBottom">
+				<link>
+					<Link text="Open SAP Homepage"
+						target="_blank"
+						href="http://www.sap.com" />
+				</link>
+			</MessageStrip>
+
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

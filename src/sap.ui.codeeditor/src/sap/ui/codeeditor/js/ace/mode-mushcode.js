@@ -587,7 +587,7 @@ oop.inherits(FoldMode, BaseFoldMode);
                 return this.indentationBlock(session, row, match.index + match[2].length);
             return this.indentationBlock(session, row);
         }
-    }
+    };
 
 }).call(FoldMode.prototype);
 
@@ -671,4 +671,11 @@ oop.inherits(Mode, TextMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
+});                (function() {
+                    ace.require(["ace/mode/mushcode"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

@@ -1,0 +1,160 @@
+[
+	{
+		"title": "List Card",
+		"description": "Example page for Integration Card of type List",
+		"route": "listContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Table Card",
+		"description": "Example page for Integration Card of type Table",
+		"route": "tableContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Analytical Card",
+		"description": "Example page for Integration Card of type Analytical",
+		"route": "analyticalContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Object Card",
+		"description": "Example page for Integration Card of type Object",
+		"route": "objectContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "AnalyticsCloud Card",
+		"description": "Example page for Integration Card of type AnalyticsCloud. Used for displaying data from SAP Analytics Cloud",
+		"route": "analyticsCloudContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Component Card",
+		"description": "Example page for Integration Card of type Component",
+		"route": "componentCard",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "sap.f.Card",
+		"description": "Example page for Control of type sap.f.Card",
+		"route": "sapfCard",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "TimelineContent Card",
+		"description": "Example page for Integration Card of type Timeline",
+		"route": "timelineContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Adaptive Card",
+		"description": "Example page for Integration Card of type AdaptiveCard",
+		"route": "adaptiveCard",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Fit Container",
+		"description": "The cards fit the whole container allowing it to dynamically change their sizes.",
+		"route": "splitter",
+		"usage": "The cards have no height and width (defined by the container control)",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "Grid Container",
+		"description": "Grid Container",
+		"route": "gridContainer",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "Grid Container, containerQuery=true",
+		"description": "Grid Container, containerQuery=true",
+		"route": "gridContainerQuery",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "GridContainer Drag and Drop with Target Position",
+		"description": "",
+		"route": "dnd3",
+		"usage": "",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "Min-height of the Card Content",
+		"description": "Examples of cards with no height provided (default value) or with specified height",
+		"route": "minHeight",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "Default Header",
+		"description": "Example page for Card with Default Header",
+		"route": "defaultHeader",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Numeric Header",
+		"description": "Example page for Card with Numeric Header",
+		"route": "numericHeader",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Manifest initialization",
+		"description": "Three types of manifest initializations are possible",
+		"route": "manifest",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Navigation Action",
+		"description": "Navigation action examples",
+		"route": "navigationService",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Data Service",
+		"description": "Examples for FLP data scenarios",
+		"route": "dataService",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Loading behavior",
+		"description": "Busy indicators and heights examples",
+		"route": "delayedLoading",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "No Header / No Content",
+		"description": "Examples of cards with no header or no content provided",
+		"route": "noHeaderNoContent",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Active/Inactive data mode",
+		"description": "Example with 'enabled' property of the Card",
+		"route": "dataMode",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Translations & Header Count",
+		"description": "Example with card translations and count binding",
+		"route": "translation",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Card bundles",
+		"description": "Example with card bundles with static resources and baseURL usage",
+		"route": "bundle",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Manifest Ready Event",
+		"description": "Example  showing the manifestReady event",
+		"route": "manifestReady",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Badges",
+		"description": "Example with cards with badge",
+		"route": "badges",
+		"group": "Other Card Examples"
+	}
+]

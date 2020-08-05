@@ -1,0 +1,29 @@
+/* =================================================== */
+/* CSS for control sap.ui.layout/ResponsiveGridLayout  */
+/* Quartz Dark theme                                   */
+/* =================================================== */
+
+/* Toolbar */
+.sapUiFormResGrid.sapUiFormToolbar > div:first-child {
+	background-color: transparent;
+	height: 2.75rem;
+	line-height: 2.75rem;
+	padding-right: 1rem;
+}
+
+/* Grid */
+.sapUiFormResGrid.sapUiFormBackgrTranslucent > div {
+	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
+}
+
+.sapUiFormResGrid.sapUiFormBackgrSolid > div {
+	background-color: @sapUiGroupContentBackground;
+}
+
+/* alignment of Labels */
+.sapUiFormEdit.sapUiFormM .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12),
+.sapUiFormEdit.sapUiFormM .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12),
+.sapUiFormEdit.sapUiFormM .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12),
+.sapUiFormEdit.sapUiFormM .sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12){
+	padding-top: 0.875rem;
+}

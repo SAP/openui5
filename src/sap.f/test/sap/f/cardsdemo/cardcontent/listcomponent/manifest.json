@@ -1,0 +1,60 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.f.cardsdemo.cardcontent.listcomponent",
+		"type": "card",
+		"i18n": "i18n.properties",
+		"title": "{{title}}",
+		"description": "{{subtitle}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.cardsdemo.cardcontent.listcomponent.View",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.38",
+			"libs": {
+				"sap.m": { }
+			}
+		}
+    },
+
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Request List Content Card",
+			"subTitle": "Card Subtitle",
+			"icon":  {
+				"src": "sap-icon://accept"
+			},
+			"status": "100 of 200"
+		},
+		"content": {
+			"type": "List",
+			"data": {
+				"request": {
+					"url": "./cardsdemo/cardcontent/someitems.json"
+				}
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"label": "{{title_label}}",
+					"value": "{Name}"
+				},
+				"description": {
+					"label": "{{description_label}}",
+					"value": "{Description}"
+				}
+			}
+		}
+	}
+}

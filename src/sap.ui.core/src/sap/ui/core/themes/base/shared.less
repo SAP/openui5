@@ -226,6 +226,24 @@ link[id^="sap-ui-theme-"]::after,
 .sapUiLargeMarginBegin  { margin-left: @sapUiMarginLarge !important; }
 .sapUiLargeMarginEnd    { margin-right: @sapUiMarginLarge !important; }
 
+/* Negative two-sided margins */
+.sapUiTinyNegativeMarginBeginEnd {
+	margin-left: -@sapUiMarginTiny !important;
+	margin-right: -@sapUiMarginTiny !important;
+}
+.sapUiSmallNegativeMarginBeginEnd {
+	margin-left: -@sapUiMarginSmall !important;
+	margin-right: -@sapUiMarginSmall !important;
+}
+.sapUiMediumNegativeMarginBeginEnd {
+	margin-left: -@sapUiMarginMedium !important;
+	margin-right: -@sapUiMarginMedium !important;
+}
+.sapUiLargeNegativeMarginBeginEnd {
+	margin-left: -@sapUiMarginLarge !important;
+	margin-right: -@sapUiMarginLarge !important;
+}
+
 
 /*
  * Class for responsive margins which adapts to the screen size of the currently used device
@@ -290,6 +308,9 @@ link[id^="sap-ui-theme-"]::after,
 .sapUiPseudoInvisibleText {
 	position: absolute !important;
 	clip: rect(1px, 1px, 1px, 1px);
+	user-select: none;
+	left: 0;
+	top: 0;
 }
 
 /* CSS classes for bridging two buttons in the technical info dialog */

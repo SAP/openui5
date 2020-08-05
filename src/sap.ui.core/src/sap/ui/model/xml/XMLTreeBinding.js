@@ -3,8 +3,8 @@
  */
 
 // Provides the XML model implementation of a list binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
-	function(jQuery, ClientTreeBinding) {
+sap.ui.define(['sap/ui/model/ClientTreeBinding', "sap/base/util/each"],
+	function(ClientTreeBinding, each) {
 	"use strict";
 
 
@@ -42,10 +42,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 
 		var sContextPath = oContext.getPath();
 
-		if (!jQuery.sap.endsWith(sContextPath,"/")) {
+		if (!sContextPath.endsWith("/")) {
 			sContextPath = sContextPath + "/";
 		}
-		if (!jQuery.sap.startsWith(sContextPath,"/")) {
+		if (!sContextPath.startsWith("/")) {
 			sContextPath = "/" + sContextPath;
 		}
 
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 			oNode = this.oModel._getObject(oContext.getPath()),
 			sChildPath, oChildContext;
 
-		jQuery.each(oNode[0].childNodes, function(sName, oChild) {
+		each(oNode[0].childNodes, function(sName, oChild) {
 			if (oChild.nodeType == 1) { // check if node is an element
 				if (mNodeIndices[oChild.nodeName] == undefined) {
 					mNodeIndices[oChild.nodeName] = 0;
@@ -65,8 +65,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 				sChildPath = sContextPath + oChild.nodeName + "/" + mNodeIndices[oChild.nodeName];
 				oChildContext = that.oModel.getContext(sChildPath);
 				// check if there is a filter on this level applied
-				if (that.aAllFilters && !that.bIsFiltering) {
-					if (jQuery.inArray(oChildContext, that.filterInfo.aFilteredContexts) != -1) {
+				if (that.oCombinedFilter && !that.bIsFiltering) {
+					if (that.filterInfo.aFilteredContexts && that.filterInfo.aFilteredContexts.indexOf(oChildContext) != -1) {
 						aContexts.push(oChildContext);
 					}
 				} else {

@@ -1,0 +1,48 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "card.explorer.extension.getData"
+	},
+	"sap.card": {
+		"extension": "./myExtension",
+		"configuration": {
+			"destinations": {
+				"NorthwindDestination": {
+					"name": "Northwind",
+					"label": "Northwind Service URL",
+					"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+				}
+			},
+			"parameters": {
+				"maxItems": {
+					"value": 4,
+					"type": "integer",
+					"label": "Maximum Items",
+					"description": "Defines how many items will be displayed at most."
+				}
+			}
+		},
+		"data": {
+			"extension": {
+				"method": "getData"
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Available Trainings",
+			"icon": {
+				"src": "sap-icon://activities"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{title}",
+				"description": "Trainer: {trainer}",
+				"info": {
+					"value": "Location: {location}"
+				}
+			},
+			"maxItems": "{{parameters.maxItems}}"
+		}
+	}
+}

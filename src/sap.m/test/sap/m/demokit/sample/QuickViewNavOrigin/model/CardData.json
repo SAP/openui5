@@ -1,0 +1,60 @@
+{
+	"pages": [
+		{
+			"pageId": "bankPage",
+			"header": "Company info",
+			"title": "SAP Bank",
+			"icon": "sap-icon://building",
+			"description": "The bank of SAP",
+			"groups": [
+				{
+					"heading": "Office",
+					"elements": [
+						{
+							"label": "Phone",
+							"value": "+001 6101 34869-0",
+							"elementType": "phone"
+						},
+						{
+							"label": "Address",
+							"value": "550 Larkin Street, 4F, Mountain View, CA, 94102 San Francisco USA",
+							"elementType": "text"
+						}
+					]
+				},
+				{
+					"heading": "Contacts",
+					"elements": [
+						{
+							"label": "Name",
+							"value": "Johnny Cash",
+							"elementType": "pageLink",
+							"pageLinkId": "contactPage"
+						},
+						{
+							"label": "Name",
+							"value": "James Bonus",
+							"elementType": "pageLink",
+							"pageLinkId": "contactPage"
+						},
+						{
+							"label": "Name",
+							"value": "Maria Leasing",
+							"elementType": "pageLink",
+							"pageLinkId": "contactPage"
+						},
+						{
+							"label": "Name",
+							"value": "Claudia Credit",
+							"elementType": "pageLink",
+							"pageLinkId": "contactPage"
+						}
+					]
+				}
+			]
+		},
+		{
+			"pageId": "contactPage"
+		}
+	]
+}

@@ -1,24 +1,27 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
 	"jquery.sap.strings",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ExpressionParser",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Icon",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/model/Filter",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/type/Date",
-	"sap/ui/model/type/String"
-], function (jQuery, jQuery0, BindingParser, ExpressionParser, ManagedObject, Icon, Filter, Sorter, JSONModel,
-	Currency, Date, String) {
+	"sap/ui/model/type/String",
+	"sap/base/Log"
+], function (jQuery, jQuery0, BindingParser, ExpressionParser, ManagedObject, InvisibleText, Filter,
+	Sorter, JSONModel, Currency, Date, String, Log) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
+
+	var enclosingContext;
 
 	var oController = {
 			mytype : String,
@@ -29,6 +32,26 @@ sap.ui.require([
 				pattern : "yyyy-MM-dd"
 			}),
 			myeventHandler: function () {}
+		},
+		oGlobalContext = {
+			module1: {
+				formatter : function($) { return $; },
+				check : function(iValue) { return iValue > 100; },
+				fn: function() {
+					enclosingContext = this;
+					return "fn";
+				},
+				ns: {
+					fn: function() {
+						enclosingContext = this;
+						return "ns";
+					}
+				}
+			},
+			Global: {
+				ns: undefined
+			},
+			formatter: function($) { return $; }
 		},
 		Global = {
 			type : String,
@@ -41,7 +64,13 @@ sap.ui.require([
 			instancedType : new Date({
 				pattern : "yyyy-MM-dd"
 			}),
-			eventHandler: function () {}
+			eventHandler: function () {},
+			ns: {
+				global: function() {
+					enclosingContext = this;
+					return "global";
+				}
+			}
 		},
 		parse = ManagedObject.bindingParser,
 		TestControl = ManagedObject.extend("TestControl", {
@@ -64,7 +93,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.base.BindingParser", {
 		beforeEach : function (assert) {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
@@ -88,6 +117,34 @@ sap.ui.require([
 
 	QUnit.test("Binding Parser", function (assert) {
 		assert.strictEqual(parse, BindingParser.complexParser, "configuration should have set the right binding parser");
+	});
+
+	QUnit.test("Simple Binding", function(assert) {
+		var o = parse("{model>path}");
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.strictEqual(o.model, "model", "binding info should contain the expected model name");
+		assert.strictEqual(o.path, "path", "binding info should contain the expected pathg");
+	});
+
+	QUnit.test("Complex Binding (no quotes)", function(assert) {
+		var o = parse("{model: \"some\", path: \"path\"}");
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.strictEqual(o.model, "some", "binding info should contain the expected model name");
+		assert.strictEqual(o.path, "path", "binding info should contain the expected pathg");
+	});
+
+	QUnit.test("Complex Binding (double quotes)", function(assert) {
+		var o = parse("{\"model\": \"some\", path: \"path\"}");
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.strictEqual(o.model, "some", "binding info should contain the expected model name");
+		assert.strictEqual(o.path, "path", "binding info should contain the expected pathg");
+	});
+
+	QUnit.test("Complex Binding (single quotes)", function(assert) {
+		var o = parse("{'model': \"some\", path: \"path\"}");
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.strictEqual(o.model, "some", "binding info should contain the expected model name");
+		assert.strictEqual(o.path, "path", "binding info should contain the expected pathg");
 	});
 
 	QUnit.test("Single Binding with global formatter", function (assert) {
@@ -117,12 +174,33 @@ sap.ui.require([
 		assert.strictEqual(o.formatter, undefined, "parse should return no formatter");
 	});
 
+	QUnit.test("Single Binding with required type", function (assert) {
+		var o = parse("{path:'something', type: 'myType'}", /*oContext*/null, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/true, /*bPreferContext*/false,
+			/*mLocals*/{myType: String});
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
+		assert.strictEqual(o.path, "something", "path should be as specified");
+		assert.ok(o.type instanceof String, "parse should return the type required from mLocals");
+		assert.strictEqual(o.formatter, undefined, "parse should return no formatter");
+	});
+
 	QUnit.test("Single Binding with local type", function (assert) {
 		var o = parse("{path:'something', type: '.mytype'}", oController);
 		assert.strictEqual(typeof o, "object", "parse should return an object");
 		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
 		assert.strictEqual(o.path, "something", "path should be as specified");
 		assert.ok(o.type instanceof String, "parse should return the global type");
+		assert.strictEqual(o.formatter, undefined, "parse should return no formatter");
+	});
+
+	QUnit.test("Single Binding with non-existing type", function (assert) {
+		this.oLogMock.expects("error").once().withExactArgs("Failed to resolve type 'does.not.exist'. Maybe not loaded or a typo?");
+		var o = parse("{path:'something', type: 'does.not.exist'}", oController);
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
+		assert.strictEqual(o.path, "something", "path should be as specified");
+		assert.strictEqual(o.type, undefined, "parse should set type to undefined");
 		assert.strictEqual(o.formatter, undefined, "parse should return no formatter");
 	});
 
@@ -440,15 +518,16 @@ sap.ui.require([
 
 
 	[{
-		expression: "{={birthday/day} > 10 && {birthday/month} > 0 && {birthday/month} < 4}",
+		expression: "{= ${birthday/day} > 10 && ${birthday/month} > 0 && ${birthday/month} < 4}",
 		parts: [{path: 'birthday/day'}, {path: 'birthday/month'}, {path: 'birthday/month'}]
 	}, {
-		expression: "{={path:'birthday/day',model:'special}Name'} > 10}",
+		expression: "{= ${path:'birthday/day',model:'special}Name'} > 10}",
 		parts: [{path: 'birthday/day', model:'special}Name'}]
 	}].forEach(function(oFixture, iIndex) {
 
 		QUnit.test("Expression binding: " + oFixture.expression , function (assert) {
 			var oBindingInfo,
+				oContext = {},
 				oParseResult = {
 					result: {
 						formatter: function () {/*empty*/},
@@ -457,11 +536,11 @@ sap.ui.require([
 					at: oFixture.expression.length - 1
 				};
 
-			this.mock(ExpressionParser).expects("parse")
-				.withExactArgs(sinon.match.func, oFixture.expression, 2)
+			this.mock(ExpressionParser).expects("parse").withExactArgs(sinon.match.func,
+					oFixture.expression, 2, null, sinon.match.same(oContext))
 				.returns(oParseResult);
 
-			oBindingInfo = parse(oFixture.expression);
+			oBindingInfo = parse(oFixture.expression, oContext, false, false, true);
 
 			assert.deepEqual(oBindingInfo, {
 				formatter: oParseResult.result.formatter,
@@ -482,7 +561,7 @@ sap.ui.require([
 			sInput = "{=invalid}";
 
 		this.mock(ExpressionParser).expects("parse")
-			.withExactArgs(sinon.match.func, sInput, 2)
+			.withExactArgs(sinon.match.func, sInput, 2, null, null)
 			.throws(oError);
 
 		assert.throws(function () {
@@ -495,7 +574,7 @@ sap.ui.require([
 			sMsg = "Expected '}' and instead saw ',' in expression binding {='foo',} at position 7";
 
 		this.mock(ExpressionParser).expects("parse")
-			.withExactArgs(sinon.match.func, sInput, 2)
+			.withExactArgs(sinon.match.func, sInput, 2, null, null)
 			.returns({at: sInput.length - 2, result: {}});
 
 		assert.throws(function () {
@@ -643,7 +722,7 @@ sap.ui.require([
 		assert.ok(oBindingInfo.parts[0].type instanceof Currency);
 	});
 
-	QUnit.test("mergeParts with constants", function (assert) {
+	QUnit.test("mergeParts with constants and part with empty path", function (assert) {
 		var oBindingInfo = {
 				formatter : function () {
 					// turn arguments into a real array and return its JSON representation
@@ -653,6 +732,7 @@ sap.ui.require([
 				parts : [
 					{path : '/foo'},
 					{parts : [{path : '/foo'}, {path : '/bar'}]},
+					{path : ''},
 					"",
 					false,
 					0,
@@ -663,9 +743,9 @@ sap.ui.require([
 				]
 			},
 			aExpectedArray = [
-				"hello", "hello world", "", false, 0, {foo : "bar"}, null, undefined, []
+				"hello", "hello world", "moon", "", false, 0, {foo : "bar"}, null, undefined, []
 			],
-			oModel = new JSONModel({bar : "world", foo : "hello"}),
+			oModel = new JSONModel({bar : "world", baz : "moon", foo : "hello"}),
 			oControl = new TestControl({
 				models: oModel
 			});
@@ -673,8 +753,9 @@ sap.ui.require([
 		BindingParser.mergeParts(oBindingInfo);
 
 		assert.deepEqual(oBindingInfo.parts,
-			[{path : '/foo'}, {path : '/foo'}, {path : '/bar'}]);
+			[{path : '/foo'}, {path : '/foo'}, {path : '/bar'}, {path : ''}]);
 		oControl.bindProperty("text", oBindingInfo);
+		oControl.setBindingContext(oModel.createBindingContext('/baz'));
 		assert.strictEqual(oControl.getText(), JSON.stringify(aExpectedArray));
 		checkTextFragments(assert, oBindingInfo.formatter);
 	});
@@ -808,6 +889,21 @@ sap.ui.require([
 		assert.strictEqual(oControl.getText(), "prefix 0,foo,bar", "prefix 0,foo,bar");
 	});
 
+	QUnit.test("Expression binding: use global context", function (assert) {
+		var oBindingInfo,
+			oControl = new TestControl(),
+			oModel = new JSONModel({value : 99, p1 : "foo", p2 : "bar"});
+
+		oControl.setModel(oModel);
+
+		oBindingInfo = parse("{= module1.check(${/value}) ? ${/p1} : ${/p2}}", /*oContext*/null,
+			/*bUnescape*/false, /*bTolerateFunctionsNotFound*/false,
+			/*bStaticContext*/false, /*bPreferContext*/false, /*mGlobals*/oGlobalContext);
+		oControl.bindProperty("text", oBindingInfo);
+
+		assert.strictEqual(oControl.getText(), "bar", "bar");
+	});
+
 	QUnit.test("parseExpression: uses Expression.parse", function (assert) {
 		var sInput = "foo",
 			iStart = 0,
@@ -819,44 +915,60 @@ sap.ui.require([
 		assert.strictEqual(BindingParser.parseExpression(sInput, iStart), oResult);
 	});
 
+	QUnit.test("parseExpression: oEnv, mGlobals", function (assert) {
+		var oEnv = {},
+			mGlobals = {},
+			sInput = "foo",
+			iStart = 0,
+			oResult = {};
+
+		this.mock(ExpressionParser).expects("parse")
+			.withExactArgs(sinon.match.func, sInput, iStart, sinon.match.same(mGlobals))
+			.returns(oResult);
+
+		// code under test
+		assert.strictEqual(BindingParser.parseExpression(sInput, iStart, oEnv, mGlobals), oResult);
+	});
+	//TODO how to really test that oEnv is passed to resolveEmbeddedBinding.bind?
+
 	QUnit.test("parseExpression: resolving", function (assert) {
 		var sExpression = "[${/blue}?'blue':'red']",
-			oIcon = new Icon(),
+			oInvisibleText = new InvisibleText(),
 			oResult = BindingParser.parseExpression(sExpression, 1),
 			oModel = new JSONModel({blue: false});
 
 		assert.strictEqual(oResult.at, sExpression.length - 1);
-		oIcon.setModel(oModel);
-		oIcon.bindProperty("color", oResult.result);
-		assert.strictEqual(oIcon.getColor(), "red");
+		oInvisibleText.setModel(oModel);
+		oInvisibleText.bindProperty("text", oResult.result);
+		assert.strictEqual(oInvisibleText.getText(), "red");
 
 		oModel.setProperty("/blue", true);
-		assert.strictEqual(oIcon.getColor(), "blue");
+		assert.strictEqual(oInvisibleText.getText(), "blue");
 	});
 
 	QUnit.test("Expression binding: one time binding", function (assert) {
 		var oModel = new JSONModel({blue: false}),
-			oIcon = new Icon({models : oModel});
+			oInvisibleText = new InvisibleText({models : oModel});
 
-		oIcon.bindProperty("color", parse("{:= ${/blue} ? 'blue' : 'red' }"));
-		assert.strictEqual(oIcon.getColor(), "red");
+		oInvisibleText.bindProperty("text", parse("{:= ${/blue} ? 'blue' : 'red' }"));
+		assert.strictEqual(oInvisibleText.getText(), "red");
 
 		oModel.setProperty("/blue", true);
-		assert.strictEqual(oIcon.getColor(), "red", "one time binding -> value unchanged");
+		assert.strictEqual(oInvisibleText.getText(), "red", "one time binding -> value unchanged");
 
-		oIcon.bindProperty("color", parse("{/blue} {:= 'green' }"));
-		assert.strictEqual(oIcon.getColor(), "true green");
+		oInvisibleText.bindProperty("text", parse("{/blue} {:= 'green' }"));
+		assert.strictEqual(oInvisibleText.getText(), "true green");
 	});
 
 	QUnit.test("Expression binding: one time binding inside composite binding", function (assert) {
 		var oModel = new JSONModel({blue: false}),
-			oIcon = new Icon({models : oModel});
+			oInvisibleText = new InvisibleText({models : oModel});
 
-		oIcon.bindProperty("color", parse("*{:= ${/blue} ? 'blue' : 'red' }*"));
-		assert.strictEqual(oIcon.getColor(), "*red*");
+		oInvisibleText.bindProperty("text", parse("*{:= ${/blue} ? 'blue' : 'red' }*"));
+		assert.strictEqual(oInvisibleText.getText(), "*red*");
 
 		oModel.setProperty("/blue", true);
-		assert.strictEqual(oIcon.getColor(), "*red*", "one time binding -> value unchanged");
+		assert.strictEqual(oInvisibleText.getText(), "*red*", "one time binding -> value unchanged");
 	});
 
 	QUnit.test("Local functions are bound to context", function (assert) {
@@ -874,33 +986,151 @@ sap.ui.require([
 		oBindingInfo.formatter();
 	});
 
+	QUnit.test("Scope access w/o dot", function (assert) {
+		var sBinding1 = "{path : '/', formatter : 'foo'}",
+			sBinding2 = "{path : '/', formatter : 'Global.formatter'}",
+			oBindingInfo,
+			oScope = {
+				foo : function () {}
+			};
+
+		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true);
+
+		assert.strictEqual(oBindingInfo.formatter, undefined);
+		assert.deepEqual(oBindingInfo.functionsNotFound, ["foo"]);
+
+		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/true, /*bPreferContext*/true);
+
+		assert.strictEqual(oBindingInfo.formatter, oScope.foo);
+
+		oBindingInfo = parse(sBinding2, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/true);
+
+		assert.strictEqual(oBindingInfo.formatter, Global.formatter);
+	});
+
+	QUnit.test("Scope access w/o dot by given static context", function (assert) {
+		var sBinding1 = "{path : '/', formatter : 'foo'}",
+			sBinding2 = "{path : '/', formatter : 'Global.formatter'}",
+			sBinding3 = "{path : '/', formatter : 'module1.formatter'}",
+			sBinding4 = "{path : '/', formatter : 'module1.fn'}",
+			sBinding5 = "{path : '/', formatter : 'module1.ns.fn'}",
+			sBinding6 = "{path : '/', formatter : 'Global.ns.global'}",
+			sBinding7 = "{path : '/', formatter : 'formatter'}",
+			oBindingInfo,
+			oScope = {
+				foo : function () {}
+			};
+
+		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter, undefined);
+		assert.deepEqual(oBindingInfo.functionsNotFound, ["foo"]);
+
+		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true, /*bPreferContext*/true,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter, oScope.foo);
+		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
+
+		oBindingInfo = parse(sBinding2, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter, undefined);
+		assert.deepEqual(oBindingInfo.functionsNotFound, ["Global.formatter"]);
+
+		oBindingInfo = parse(sBinding3, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter.toString(),
+			oGlobalContext.module1.formatter.bind(oGlobalContext.module1).toString());
+		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
+
+		oBindingInfo = parse(sBinding4, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter.toString(),
+			oGlobalContext.module1.fn.bind(oGlobalContext.module1).toString());
+
+		oBindingInfo.formatter();
+		assert.strictEqual(enclosingContext, oGlobalContext.module1);
+		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
+
+		oBindingInfo = parse(sBinding5, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter.toString(),
+			oGlobalContext.module1.ns.fn.bind(oGlobalContext.module1.ns.fn).toString());
+
+		oBindingInfo.formatter();
+		assert.strictEqual(enclosingContext, oGlobalContext.module1.ns);
+		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
+
+		oBindingInfo = parse(sBinding6, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter, undefined);
+		assert.deepEqual(oBindingInfo.functionsNotFound, ["Global.ns.global"]);
+
+		oBindingInfo = parse(sBinding6, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false);
+
+		assert.strictEqual(oBindingInfo.formatter.toString(),
+			Global.ns.global.toString());
+
+		oBindingInfo.formatter();
+		assert.strictEqual(enclosingContext, oBindingInfo);
+		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
+
+		oBindingInfo = parse(sBinding7, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter,
+			oGlobalContext.formatter, "function module");
+		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
+
+		// cleanup
+		enclosingContext = null;
+	});
+
 	QUnit.test("Expression binding with embedded composite binding", function (assert) {
 		var sBinding
 			= "{:= ${parts:['m2>/foo',{path:'/bar'}],formatter:'Global.joiningFormatter'} }",
 			oModel = new JSONModel({"bar" : 1}),
 			oModel2 = new JSONModel({"foo" : 0}),
-			oIcon = new Icon({models : {undefined : oModel, "m2" : oModel2}});
+			oInvisibleText = new InvisibleText({models : {undefined : oModel, "m2" : oModel2}});
 
 		// code under test
-		oIcon.bindProperty("color", parse(sBinding));
+		oInvisibleText.bindProperty("text", parse(sBinding));
 
-		assert.strictEqual(oIcon.getColor(), "0,1");
+		assert.strictEqual(oInvisibleText.getText(), "0,1");
 		oModel.setProperty("/bar", 42);
-		assert.strictEqual(oIcon.getColor(), "0,1", "one time binding -> value unchanged");
+		assert.strictEqual(oInvisibleText.getText(), "0,1", "one time binding -> value unchanged");
 	});
 
 	QUnit.test("Single expression binding, no mergeParts needed", function (assert) {
 		var oModel = new JSONModel({"foo" : 0, "bar" : 1}),
-			oIcon = new Icon({models : oModel});
+			oInvisibleText = new InvisibleText({models : oModel});
 
 		this.mock(BindingParser).expects("mergeParts").never();
 
 		// code under test
-		oIcon.bindProperty("color", parse("{:= ${/foo} + ${/bar} }"));
+		oInvisibleText.bindProperty("text", parse("{:= ${/foo} + ${/bar} }"));
 
-		assert.strictEqual(oIcon.getColor(), "1");
+		assert.strictEqual(oInvisibleText.getText(), "1");
 		oModel.setProperty("/foo", 42);
-		assert.strictEqual(oIcon.getColor(), "1", "one time binding -> value unchanged");
+		assert.strictEqual(oInvisibleText.getText(), "1", "one time binding -> value unchanged");
 	});
 
 	QUnit.test("BindingParser.simpleParser.escape", function (assert) {

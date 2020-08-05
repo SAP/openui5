@@ -8,31 +8,23 @@
 			showFooter="false"
 			navButtonPress="onNavBack"
 			showNavButton="false"
-			showHeader="false"
 			class="sapUiDocumentationMasterPage">
 
 		<!-- Header -->
-		<subHeader>
-			<Toolbar>
-				<ToolbarSpacer/>
-				<SearchField
-						id="searchField"
-						placeholder="Filter"
-						width="100%"
-						liveChange="handleListFilter">
-				</SearchField>
-				<ToolbarSpacer/>
-				<Button icon="sap-icon://drop-down-list" press="handleListSettings" />
-				<ToolbarSpacer/>
-				<Button icon="sap-icon://action-settings" press="handleSettings" />
+		<customHeader>
+			<Toolbar width="100%">
+				<SearchField id="searchField" placeholder="{i18n>CONTROLS_MASTER_FILTER_PLACERHOLDER}" liveChange="handleListFilter" class="sapUiDocumentationFilterField" />
+				<Button id="listFilterSettings" icon="sap-icon://drop-down-list" press="handleListSettings" tooltip="{i18n>CONTROLS_MASTER_FILTER_BTN_TOOLTIP}"/>
+				<Button id="sampleSettings" icon="sap-icon://action-settings" press="handleSettings" />
 			</Toolbar>
-		</subHeader>
+		</customHeader>
 
 		<!-- Navigation List -->
 		<content>
 			<List id="exploredMasterList"
 				  mode="{viewModel>/listMode}"
 				  selectionChange="onNavToEntity"
+				  noDataText="{i18n>CONTROLS_MASTER_NO_DATA_TEXT}"
 				  items="{path: '/entities',
 				  groupHeaderFactory: '.getGroupHeader',
 				  sorter: [{

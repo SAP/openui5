@@ -33,7 +33,7 @@
 				<Property Name="SByte" Type="Edm.SByte" />
 				<Property Name="Single" Type="Edm.Single" />
 				<Property Name="String" Type="Edm.String" />
-				<Property Name="String40" Type="Edm.String" MaxLength="40" />
+				<Property Name="String40" Type="Edm.String" MaxLength="40" Nullable="false" />
 				<Property Name="TimeOfDay" Type="Edm.TimeOfDay" />
 			</EntityType>
 			<Action Name="ResetEdmTypes">

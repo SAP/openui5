@@ -5,7 +5,7 @@
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:layout="sap.ui.layout"
-		xmlns:custom="sap.ui.documentation.sdk.controls"
+		xmlns:custom="sap.ui.documentation"
 		xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 
 	<m:Page
@@ -22,8 +22,7 @@
 							  upperCaseAnchorBar="false"
 							  busyIndicatorDelay="0">
 				<headerTitle>
-					<ObjectPageHeader id="title" objectTitle="{/title}"
-									  objectSubtitle="{/subTitle}">
+					<ObjectPageHeader id="title" objectTitle="{/title}" objectSubtitle="{/subTitle}">
 						<actions>
 							<ObjectPageHeaderActionButton id="apiDetailBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
 							<ObjectPageHeaderActionButton
@@ -62,7 +61,27 @@
 												class="sapUiSmallMarginBottom sapUiSmallMarginTop">
 											</m:MessageStrip>
 										</template:if>
-										<custom:JSDocText text="{/description}"/>
+
+										<custom:JSDocText sanitizeContent="false" text="{/description}"/>
+
+										<template:if test="{=${data>/dnd/draggable} === true}">
+											<m:MessageStrip
+												text="This control can be a drag source."
+												type="Information"
+												showIcon="true"
+												showCloseButton="false"
+												class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+											</m:MessageStrip>
+										</template:if>
+										<template:if test="{=${data>/dnd/droppable} === true}">
+											<m:MessageStrip
+												text="This control can be a drop target."
+												type="Information"
+												showIcon="true"
+												showCloseButton="false"
+												class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+											</m:MessageStrip>
+										</template:if>
 
 										<template:if test="{data>/hasAnnotations}">
 											<layout:HorizontalLayout class="sapUiTinyMarginTop sapUiDocumentationAnnotationsText">
@@ -87,19 +106,48 @@
 											</m:MessageStrip>
 										</template:if>
 
-										<template:if test="{data>/hasChildren}">
-											<custom:LightTable
-												 rows="{ path : '/nodes'}"
-												 columnTitles="Namespaces &amp; Classes,Description"
-												 columnCount="2"
-												 class="sapUiSmallMarginTop">
+										<template:if test="{= !!${data>/parameters} }">
+											<custom:LightTable rows="{path: '/parameters'}"
+															   columnTitles="Param,Type,Default Value,Description"
+															   columnCount="4"
+															   class="sapUiDocumentationParamsTable">
 												<custom:Row>
-													<m:Link href="{ref}" text="{name}"/>
-													<custom:JSDocText text="{description}"/>
+													<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
+													<m:Text text="{type}" wrapping="false"/>
+													<m:Text text="{defaultValue}" wrapping="false"/>
+													<custom:JSDocText sanitizeContent="false" text="{description}"/>
 												</custom:Row>
 											</custom:LightTable>
 										</template:if>
 
+										<template:if test="{= ${data>/returnValue} !== undefined}">
+											<custom:LightTable columnCount="2"
+															   columnTitles="Returns,Description"
+															   class="sapUiDocumentation2ColumnsEqualTable">
+												<custom:Row>
+													<m:Text text="{path: 'data>/returnValue/type', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}" wrapping="false"/>
+													<custom:JSDocText sanitizeContent="false" text="{path: 'data>/returnValue/description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+												</custom:Row>
+											</custom:LightTable>
+										</template:if>
+
+										<template:if test="{data>/hasChildren}">
+											<custom:LightTable
+												 rows="{path : '/nodes'}"
+												 columnTitles="Namespaces &amp; Classes,Description"
+												 columnCount="2"
+												 class="sapUiSmallMarginTop">
+												<custom:Row>
+													<custom:ParamText text="{name}" href="{href}" deprecated="{deprecated}"/>
+													<custom:JSDocText sanitizeContent="false" text="{description}"/>
+												</custom:Row>
+											</custom:LightTable>
+										</template:if>
+										<template:if test="{data>/isFunction}">
+											<template:repeat list="{data>/examples}" var="example">
+												<custom:JSDocText sanitizeContent="false" text="{path: 'example>data', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+											</template:repeat>
+										</template:if>
 									</layout:VerticalLayout>
 								</custom:blocks>
 							</custom:ObjectPageSubSection>
@@ -113,13 +161,38 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/properties'}"
-											 columnCount="2"
-											 columnTitles="Name,Description"
+										<custom:LightTable rows="{path : '/properties'}"
+											 columnCount="3"
+											 columnTitles="Name,Type,Description"
 											 class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
-												<custom:JSDocText text="{description}"/>
+												<m:Link text="{type}"
+														href="{href}"
+														enabled="{= !!${linkEnabled} }"/>
+												<layout:VerticalLayout>
+													<custom:JSDocText sanitizeContent="false" text="{description}"/>
+													<m:MessageStrip
+															visible="{=${deprecated} !== undefined}"
+															text="Deprecated as of version {deprecated/since}"
+															type="Error"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+															visible="{=${experimental} !== undefined}"
+															text="Experimental API since {experimental/since} {experimental/text}"
+															type="Warning"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
+													<m:ObjectStatus visible="{=${since} !== undefined}" text="Since: {since}" />
+												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -136,43 +209,43 @@
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
 										<layout:VerticalLayout width="100%">
-											<custom:JSDocText text="{/constructor/description}"/>
+											<custom:JSDocText sanitizeContent="false" text="{/constructor/description}"/>
 
 											<layout:VerticalLayout visible="{= ${/constructor/examples} !== undefined}"
-																   content="{ path : '/constructor/examples', templateShareable: 'false'}">
-												<custom:JSDocText text="{data}"/>
+																   content="{path : '/constructor/examples', templateShareable: false}">
+												<custom:JSDocText sanitizeContent="false" text="{data}"/>
 											</layout:VerticalLayout>
 
-											<custom:JSDocText text="{/constructor/codeExample}"/>
+											<custom:JSDocText sanitizeContent="false" text="{/constructor/codeExample}"/>
 
 											<template:if test="{= !!${data>/constructor/parameters} }">
-												<custom:LightTable rows="{ path: '/constructor/parameters'}"
+												<custom:LightTable rows="{path: '/constructor/parameters'}"
 														columnTitles="Param,Type,Default Value,Description"
 														columnCount="4"
 														class="sapUiDocumentationParamsTable">
 													<custom:Row>
 														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
-														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}" width="100%">
+														<layout:VerticalLayout content="{path: 'types', templateShareable: false}" width="100%">
 															<m:Link text="{name}"
-																	href="#/api/{name}"
+																	href="api/{name}"
 																	enabled="{= !!${linkEnabled} }"/>
 														</layout:VerticalLayout>
 														<m:Text text="{defaultValue}" wrapping="false"/>
-														<custom:JSDocText text="{description}"/>
+														<custom:JSDocText sanitizeContent="false" text="{description}"/>
 													</custom:Row>
 												</custom:LightTable>
 											</template:if>
 
 											<template:if test="{= ${data>/constructor/throws} !== undefined}">
-												<custom:LightTable rows="{ path : '/constructor/throws', templateShareable: 'false'}"
+												<custom:LightTable rows="{path : '/constructor/throws', templateShareable: false}"
 														columnTitles="Throws,Desktop"
 														columnCount="2"
-														class="sapUiDocumentationReturnsTable">
+														class="sapUiDocumentation2ColumnsEqualTable">
 													<custom:Row>
 														<m:Link text="{type}"
-																href="#/api/{type}"
+																href="api/{type}"
 																enabled="{= !!${linkEnabled} }"/>
-														<custom:JSDocText text="{description}"/>
+														<custom:JSDocText sanitizeContent="false" text="{description}"/>
 													</custom:Row>
 												</custom:LightTable>
 											</template:if>
@@ -190,18 +263,19 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/ui5-metadata/properties'}"
+										<m:CheckBox text="Show borrowed properties" visible="{/bHasBorrowedProps}" displayOnly="{=!${/bHasSelfProps}}" selected="{=${/bShowBorrowedProps}}" select="onBorrowedPropCheckboxClick"/>
+										<custom:LightTable rows="{path : '/ui5-metadata/properties'}"
 											columnTitles="Name,Type,Default Value,Description"
 											columnCount="4"
 											class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
 												<m:Link text="{type}"
-														href="#/api/{= ${type}.replace('[]', '') }"
+														href="api/{= ${type}.replace('[]', '') }"
 														enabled="{= !!${linkEnabled} }"/>
 												<m:Text text="{defaultValue}"/>
 												<layout:VerticalLayout width="100%">
-													<custom:JSDocText text="{description}"/>
+													<custom:JSDocText sanitizeContent="false" text="{description}"/>
 													<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
 													<m:MessageStrip
 														visible="{=${deprecatedText} !== undefined}"
@@ -221,6 +295,9 @@
 														enableFormattedText="true"
 														class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 													</m:MessageStrip>
+													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
+														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
+													</m:FormattedText>
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
@@ -237,17 +314,60 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/ui5-metadata/aggregations'}"
-											columnTitles="Name,Cardinality,Type,Description"
-											columnCount="4"
+										<m:CheckBox text="Show borrowed aggregations" visible="{/bHasBorrowedAggr}" displayOnly="{=!${/bHasSelfAggr}}" selected="{/bShowBorrowedAggr}" select="onBorrowedAggrCheckboxClick"/>
+										<custom:LightTable rows="{path : '/ui5-metadata/aggregations'}"
+											columnTitles="{= ${data>/hasAggregationAltTypes} ? 'Name,Cardinality,Type,Alt types,Description' : 'Name,Cardinality,Type,Description'}"
+											columnCount="{= ${data>/hasAggregationAltTypes} ? 5 : 4}"
 											class="sapUiSmallMarginTop">
 											<custom:Row visible="{= ${visibility} === 'public'}">
-												<custom:ParamText text="{name}" deprecated="{= ${deprecated} !== undefined }" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
+												<custom:ParamText text="{name}" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
 												<m:Text text="{cardinality}" wrapping="false"/>
 												<m:Link text="{type}"
-														href="#/api/{type}"
+														href="api/{type}"
 														enabled="{= !!${linkEnabled} }"/>
-												<custom:JSDocText text="{description}"/>
+												<template:if test="{data>/hasAggregationAltTypes}">
+													<m:Text text="{path: 'altTypes', formatter:'.formatter.apiRefAggregationAltTypes'}"/>
+												</template:if>
+												<layout:VerticalLayout width="100%">
+													<custom:JSDocText sanitizeContent="false" text="{description}"/>
+													<m:MessageStrip
+															visible="{=${deprecated} !== undefined}"
+															text="Deprecated as of version {deprecated/since}"
+															type="Error"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+															visible="{=${experimental} !== undefined}"
+															text="Experimental API since {experimental/since} {experimental/text}"
+															type="Warning"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+														visible="{=${dnd/draggable} === true}"
+														text="This aggregation can be a drag source."
+														type="Information"
+														showIcon="true"
+														showCloseButton="false"
+														class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+														visible="{=${dnd/droppable} === true}"
+														text="This aggregation can be a drop target."
+														type="Information"
+														showIcon="true"
+														showCloseButton="false"
+														class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+													</m:MessageStrip>
+													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
+														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
+													</m:FormattedText>
+												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -263,17 +383,41 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/ui5-metadata/associations'}"
+										<m:CheckBox text="Show borrowed associations" visible="{/bHasBorrowedAssoc}" displayOnly="{=!${/bHasSelfAssoc}}" selected="{/bShowBorrowedAssoc}" select="onBorrowedAssocCheckboxClick"/>
+										<custom:LightTable rows="{path : '/ui5-metadata/associations'}"
 											columnCount="4"
 											columnTitles="Name,Cardinality,Type,Description"
 											class="sapUiSmallMarginTop">
 											<custom:Row visible="{visibility === 'public'}">
-												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
+												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" />
 												<m:Text text="{cardinality}" wrapping="false"/>
 												<m:Link text="{type}"
-														href="#/api/{type}"
+														href="api/{type}"
 														enabled="{= !!${linkEnabled} }"/>
-												<custom:JSDocText text="{description}"/>
+												<layout:VerticalLayout width="100%">
+													<custom:JSDocText sanitizeContent="false" text="{description}"/>
+													<m:MessageStrip
+															visible="{=${deprecated} !== undefined}"
+															text="Deprecated as of version {deprecated/since}"
+															type="Error"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+															visible="{=${experimental} !== undefined}"
+															text="Experimental API since {experimental/since} {experimental/text}"
+															type="Warning"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
+														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
+													</m:FormattedText>
+												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -291,23 +435,25 @@
 									<custom:blocks>
 										<layout:VerticalLayout width="100%">
 											<template:if test="{data>/hasOwnEvents}">
-												<custom:LightTable
-														columnCount="2"
-														columnTitles="Event,Description">
+												<custom:LightTable columnCount="2" columnTitles="Event,Description">
 													<template:repeat list="{data>/events}" var="event">
 														<custom:Row>
 															<custom:ParamText text="{event>name}"
-																		href="#/api/{data>/name}/events/{event>name}"
+																		href="api/{data>/name}#events/{event>name}"
 																		deprecated="{= ${event>deprecated} !== undefined }"
-																		press="scrollToEvent"/>
-															<custom:JSDocText text="{event>description}"/>
+																		class="scrollToEvent jsdoclink">
+                                                                <custom:customData>
+                                                                    <core:CustomData writeToDom="true" key="target" value="{event>name}" />
+                                                                </custom:customData>
+                                                            </custom:ParamText>
+															<custom:JSDocText sanitizeContent="false" text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 														</custom:Row>
 													</template:repeat>
 												</custom:LightTable>
 											</template:if>
 											<template:if test="{= ${data>/borrowed/events/}.length > 0 }">
 												<m:Title text="Borrowed from:" class="sapUiSmallMarginTop sapUiDocumentationBorrowedTitle"/>
-												<layout:VerticalLayout width="100%" content="{path: '/borrowed/events/', templateShareable: 'false'}">
+												<layout:VerticalLayout width="100%" content="{path: '/borrowed/events/', templateShareable: false}">
 														<m:Panel class="borrowedListPanel"
 																expandable="true"
 																expanded="true"
@@ -326,7 +472,7 @@
 										<custom:blocks>
 											<layout:VerticalLayout width="100%">
 
-												<custom:JSDocText text="{event>description}"/>
+												<custom:JSDocText sanitizeContent="false" text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 
 												<m:ObjectStatus text="Visibility: {event>visibility}" state="{= ${event>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
 
@@ -345,22 +491,30 @@
 														text="Experimental API since {event>experimental/since} {event>experimental/text}"
 														type="Warning"
 														showIcon="true"
-														showCloseButton="false"
 														enableFormattedText="true"
 														class="sapUiSmallMarginBottom">
 													</m:MessageStrip>
 												</template:if>
 												<template:if test="{= !!${event>parameters} &amp;&amp; ${event>parameters}.length > 0}">
-													<custom:LightTable
-														columnTitles="Param,Type,Description"
-														columnCount="3">
+													<custom:LightTable columnTitles="Param,Type,Description" columnCount="3">
 														<template:repeat list="{event>parameters}" var="parameter">
 															<custom:Row>
 																<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
 																<m:Link text="{parameter>type}"
-																		href="#/api/{parameter>type}"
+																		href="api/{parameter>type}"
 																		enabled="{= !!${parameter>linkEnabled} }"/>
-																<custom:JSDocText text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																<layout:VerticalLayout>
+																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																	<m:MessageStrip
+																			visible="{=${parameter>deprecated} !== undefined}"
+																			text="{parameter>deprecatedText}"
+																			type="Error"
+																			showIcon="true"
+																			showCloseButton="false"
+																			enableFormattedText="true"
+																			class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+																	</m:MessageStrip>
+																</layout:VerticalLayout>
 															</custom:Row>
 														</template:repeat>
 													</custom:LightTable>
@@ -384,23 +538,26 @@
 									<custom:blocks>
 										<layout:VerticalLayout width="100%">
 											<template:if test="{data>/hasOwnMethods}">
-												<custom:LightTable
-														columnCount="2"
-														columnTitles="Method,Description">
+												<custom:LightTable columnCount="2" columnTitles="Method,Description">
 													<template:repeat list="{data>/methods}" var="method">
 														<custom:Row>
 															<custom:ParamText text="{method>name}"
-																		href="#/api/{data>/name}/methods/{method>name}"
+																		href="{method>href}"
 																		deprecated="{= ${method>deprecated} !== undefined }"
-																		press="scrollToMethod"/>
-															<custom:JSDocText text="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																        experimental="{= ${method>experimental} !== undefined }"
+																		class="scrollToMethod jsdoclink">
+                                                                <custom:customData>
+                                                                    <core:CustomData writeToDom="true" key="target" value="{method>name}" />
+                                                                </custom:customData>
+                                                            </custom:ParamText>
+															<custom:JSDocText sanitizeContent="false" text="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 														</custom:Row>
 													</template:repeat>
 												</custom:LightTable>
 											</template:if>
 											<template:if test="{= ${data>/borrowed/methods/}.length > 0 }">
 												<m:Title text="Borrowed from:" class="sapUiSmallMarginTop sapUiDocumentationBorrowedTitle"/>
-												<layout:VerticalLayout width="100%" content="{path: '/borrowed/methods/', templateShareable: 'false'}">
+												<layout:VerticalLayout width="100%" content="{path: '/borrowed/methods/', templateShareable: false}">
 														<m:Panel class="borrowedListPanel"
 																expandable="true"
 																expanded="true"
@@ -415,18 +572,18 @@
 								</custom:ObjectPageSubSection>
 
 								<template:repeat list="{data>/methods}" var="method">
-									<custom:ObjectPageSubSection title="{method>name}" id="{= ${method>name}.replace('$', '') }_method">
+									<custom:ObjectPageSubSection title="{method>name}" id="{method>placeholderId}">
 										<custom:blocks>
 
-											<ObjectPageLazyLoader stashed="true" id="{= ${method>name}.replace('$', '') }__method">
+											<ObjectPageLazyLoader stashed="true" id="{method>subPlaceholderId}">
 
 												<layout:VerticalLayout width="100%">
 
-													<custom:JSDocText text="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+													<custom:JSDocText sanitizeContent="false" text="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 
 													<layout:VerticalLayout visible="{= ${method>examples} !== undefined}" width="100%">
 														<template:repeat list="{method>examples}" var="example">
-															<custom:JSDocText text="{path: 'example>data', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+															<custom:JSDocText sanitizeContent="false" text="{path: 'example>data', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 														</template:repeat>
 													</layout:VerticalLayout>
 
@@ -467,13 +624,20 @@
 																	<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
 																	<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																		<template:repeat list="{parameter>types}" var="type">
-																			<m:Link text="{type>value}"
-																					href="#/api/{= ${path: 'type>value'}.replace('[]', '') }"
-																					enabled="{= !!${type>linkEnabled} }"/>
+																			<template:if test="{= !!${type>linkEnabled} }">
+																				<template:then>
+																					<m:Link text="{path: 'type>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"
+																							href="{type>href}"
+																							enabled="true"/>
+																				</template:then>
+																				<template:else>
+																					<m:Link text="{path: 'type>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}" enabled="false"/>
+																				</template:else>
+																			</template:if>
 																		</template:repeat>
 																	</layout:VerticalLayout>
-																	<m:Text text="{{parameter>defaultValue}" wrapping="false"/>
-																	<custom:JSDocText text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																	<m:Text text="{parameter>defaultValue}" wrapping="false"/>
+																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 																</custom:Row>
 															</template:repeat>
 														</custom:LightTable>
@@ -482,16 +646,16 @@
 													<template:if test="{= ${method>returnValue} !== undefined}">
 														<custom:LightTable columnCount="2"
 																	columnTitles="Returns,Description"
-																	class="sapUiDocumentationReturnsTable">
+																	class="sapUiDocumentation2ColumnsEqualTable">
 															<custom:Row>
 																<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																	<template:repeat list="{method>returnValue/types}" var="rtype">
 																		<m:Link text="{rtype>value}"
-																				href="#/api/{= ${path: 'rtype>value'}.replace('[]', '') }"
+																				href="{rtype>href}"
 																				enabled="{= !!${rtype>linkEnabled} }"/>
 																	</template:repeat>
 																</layout:VerticalLayout>
-																<custom:JSDocText text="{path: 'method>returnValue/description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																<custom:JSDocText sanitizeContent="false" text="{path: 'method>returnValue/description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 															</custom:Row>
 														</custom:LightTable>
 													</template:if>
@@ -500,13 +664,13 @@
 														<custom:LightTable
 																columnTitles="Throws,Description"
 																columnCount="2"
-																class="sapUiDocumentationReturnsTable">
+																class="sapUiDocumentation2ColumnsEqualTable">
 															<template:repeat list="{method>throws}" var="throws">
 																<custom:Row>
 																	<m:Link text="{throws>type}"
-																		href="#/api/{throws>type}"
+																		href="api/{throws>type}"
 																		enabled="{= !!${throws>linkEnabled} }"/>
-																	<custom:JSDocText text="{path: 'throws>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																	<custom:JSDocText sanitizeContent="false" text="{path: 'throws>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 																</custom:Row>
 															</template:repeat>
 														</custom:LightTable>
@@ -530,16 +694,16 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/ui5-metadata/specialSettings'}"
+										<custom:LightTable rows="{path : '/ui5-metadata/specialSettings'}"
 											columnCount="3"
 											columnTitles="Name,Type,Description"
 											class="sapUiSmallMarginTop sapUiDocumentationSpecialSettingsTable">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
 												<m:Link text="{type}"
-														href="#/api/{type}"
+														href="api/{type}"
 														enabled="{= !!${linkEnabled} }"/>
-												<custom:JSDocText text="{description}"/>
+												<custom:JSDocText sanitizeContent="false" text="{description}"/>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -555,15 +719,17 @@
 							<subSections>
 								<custom:ObjectPageSubSection title="Summary">
 									<custom:blocks>
-										<custom:LightTable
-												columnCount="2"
-												columnTitles="Annotation,Description">
+										<custom:LightTable columnCount="2" columnTitles="Annotation,Description">
 											<template:repeat list="{data>/ui5-metadata/annotations}" var="annotation">
 												<custom:Row>
 													<m:Link text="{= ${annotation>annotation} !== 'undefined' ? ${annotation>annotation} : '(' + ${annotation>namespaceText} + ')' }"
-															press="scrollToAnnotation"
-															wrapping="false"/>
-													<custom:JSDocText text="{path: 'annotation>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+															class="scrollToAnnotation jsdoclink"
+															wrapping="false">
+                                                        <m:customData>
+                                                            <core:CustomData writeToDom="true" key="target" value="{= ${annotation>annotation} !== 'undefined' ? ${annotation>annotation} : ${annotation>namespaceText} }" />
+                                                        </m:customData>
+                                                    </m:Link>
+													<custom:JSDocText sanitizeContent="false" text="{path: 'annotation>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 												</custom:Row>
 											</template:repeat>
 										</custom:LightTable>
@@ -575,13 +741,13 @@
 										<custom:blocks>
 											<layout:VerticalLayout width="100%">
 
-												<custom:JSDocText text="{path: 'annotation>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+												<custom:JSDocText sanitizeContent="false" text="{path: 'annotation>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 
 												<custom:LightTable columnTitles="Namespace,Target Type,Applies To" columnCount="3">
 													<custom:Row>
-														<custom:JSDocText text="{annotation>namespace}"/>
-														<custom:JSDocText text="{annotation>target}"/>
-														<custom:JSDocText text="{annotation>appliesTo}"/>
+														<custom:JSDocText sanitizeContent="false" text="{annotation>namespace}"/>
+														<custom:JSDocText sanitizeContent="false" text="{annotation>target}"/>
+														<custom:JSDocText sanitizeContent="false" text="{annotation>appliesTo}"/>
 													</custom:Row>
 												</custom:LightTable>
 

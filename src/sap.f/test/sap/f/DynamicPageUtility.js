@@ -5,6 +5,7 @@
 	window.oDynamicPageUtil = {
 		getLabel: function (sText, sLabelFor) {
 			return new sap.m.Label({
+				wrapping: true,
 				text: sText,
 				labelFor: sLabelFor
 			});
@@ -55,7 +56,7 @@
 		},
 		getTitle: function(oToggleFooterButton) {
 			return new sap.f.DynamicPageTitle({
-				heading: [new sap.m.Title({text: "Some title"})],
+				heading: [new sap.m.Title({text: "Some title", level: "H1", titleStyle: "H2"})],
 				snappedContent: [this.getLabel("Filtered 1042 items based on 'unknown' criteria")],
 				actions: [
 					new sap.m.ToolbarSpacer(),
@@ -93,6 +94,16 @@
 		getDynamicPage: function(bPreserveHeader, oTitle, oHeader, oContent, oFooter) {
 			return new sap.f.DynamicPage({
 				preserveHeaderStateOnScroll: bPreserveHeader,
+				title: oTitle,
+				header: oHeader,
+				content: oContent,
+				footer: oFooter
+			});
+		},
+		getDynamicPageWithStickyHeader: function(bPreserveHeader, oTitle, oHeader, oContent, oFooter, oStickyHeaderProvider) {
+			return new sap.f.DynamicPage({
+				preserveHeaderStateOnScroll: bPreserveHeader,
+				stickySubheaderProvider: oStickyHeaderProvider.getId(),
 				title: oTitle,
 				header: oHeader,
 				content: oContent,

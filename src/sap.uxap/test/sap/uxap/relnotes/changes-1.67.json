@@ -1,0 +1,90 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "7ac54e3c985ce093c12f098fc4f78fd0b1d332d3",
+        "type": "FIX",
+        "text": "sap.uxap.ObjecPageSection: Fixed title visibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980187961"
+          }
+        ]
+      },
+      {
+        "id": "0b4597b9c51c173d541e31f75ca9e8d1309d8263",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Corrected title layout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980061214"
+          }
+        ]
+      },
+      {
+        "id": "810ae72f1729b578e719e6444fbb243e1f60e6bf",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageLayout: Single section snap without scroll",
+        "references": []
+      },
+      {
+        "id": "046929ac7316c8f946adaffb8c4d685b005fcb2a",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: setSelectedButton is now called correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980286141"
+          }
+        ]
+      },
+      {
+        "id": "6fea24df69798f9afcd110bc43d33540ddb6c10b",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Fixed lost focus of pin button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980283300"
+          }
+        ]
+      },
+      {
+        "id": "e118086b5f0e82c51904fb507efb71fab36d051f",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: selectedButton aria-checked setting fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980286141"
+          }
+        ]
+      },
+      {
+        "id": "1db09fc1e1e1fdb397bf2150a3c77008533dd8f5",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Animation completion ensured on invalidate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970193165"
+          }
+        ]
+      },
+      {
+        "id": "61a42cb2870d99dce0547e10494e761fa73b5989",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: fixed test-set ObjectPageAPICreation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980291096"
+          }
+        ]
+      }
+    ]
+  }
+}

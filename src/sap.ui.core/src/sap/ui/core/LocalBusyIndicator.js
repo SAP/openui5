@@ -4,13 +4,13 @@
 
 // Provides control sap.ui.core.LocalBusyIndicator.
 sap.ui.define([
-    'jquery.sap.global',
-    './Control',
-    './library',
-    './theming/Parameters',
-    "./LocalBusyIndicatorRenderer"
+	'./Control',
+	'./library',
+	'./theming/Parameters',
+	"./LocalBusyIndicatorRenderer",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(jQuery, Control, library, Parameters, LocalBusyIndicatorRenderer) {
+	function(Control, library, Parameters, LocalBusyIndicatorRenderer, jQuery) {
 	"use strict";
 
 
@@ -83,7 +83,7 @@ sap.ui.define([
 		};
 
 		LocalBusyIndicator.prototype.exit = function() {
-			jQuery.sap.clearDelayedCall(this._delayedCallId);
+			clearTimeout(this._delayedCallId);
 			delete this._delayedCallId;
 		};
 
@@ -94,8 +94,8 @@ sap.ui.define([
 		};
 
 		LocalBusyIndicator.prototype.onAfterRendering = function() {
-			var w = parseInt(this.getWidth(), 10);
-			var h = parseInt(this.getHeight(), 10);
+			var w = parseInt(this.getWidth());
+			var h = parseInt(this.getHeight());
 
 			var $this = this.$();
 			$this.css("width", w + "px");
@@ -121,7 +121,7 @@ sap.ui.define([
 				this._$right = this.$("rightBox");
 			}
 
-			this._delayedCallId = jQuery.sap.delayedCall(0, this, this._animateProxy);
+			this._delayedCallId = setTimeout(this._animateProxy.bind(this), 0);
 		};
 
 		var fnAnimate = function() {
@@ -178,7 +178,7 @@ sap.ui.define([
 					}, 150);
 				}, 150);
 
-				this._delayedCallId = jQuery.sap.delayedCall(1200, this, this._animateProxy);
+				this._delayedCallId = setTimeout(this._animateProxy.bind(this), 1200);
 			}
 		};
 

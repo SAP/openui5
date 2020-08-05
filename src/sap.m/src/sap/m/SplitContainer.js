@@ -4,8 +4,8 @@
 
 // Provides control sap.m.SplitContainer.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
+	'sap/ui/base/DataType',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'sap/m/semantic/SemanticPage',
@@ -14,11 +14,15 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/m/NavContainer',
 	'sap/m/Popover',
-	'./SplitContainerRenderer'
+	'sap/m/Button',
+	'./SplitContainerRenderer',
+	"sap/ui/dom/containsOrEquals",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
-	jQuery,
 	library,
+	DataType,
 	Control,
 	IconPool,
 	SemanticPage,
@@ -27,8 +31,12 @@ function(
 	ManagedObject,
 	NavContainer,
 	Popover,
-	SplitContainerRenderer
-	) {
+	Button,
+	SplitContainerRenderer,
+	containsOrEquals,
+	Log,
+	jQuery
+) {
 	"use strict";
 
 
@@ -147,7 +155,7 @@ function(
 			/**
 			 * Determines the content entities, between which the SplitContainer navigates in master area.
 			 * These can be of type sap.m.Page, sap.ui.core.View, sap.m.Carousel or any other control with fullscreen/page semantics.
-			 * These aggregated controls receive navigation events like {@link sap.m.NavContainerChild#beforeShow beforeShow},
+			 * These aggregated controls receive navigation events like {@link sap.m.NavContainerChild#event:beforeShow beforeShow},
 			 * they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 			 */
 			masterPages : {type : "sap.ui.core.Control", multiple : true, singularName : "masterPage"},
@@ -155,7 +163,7 @@ function(
 			/**
 			 * Determines the content entities, between which the SplitContainer navigates in detail area.
 			 * These can be of type sap.m.Page, sap.ui.core.View, sap.m.Carousel or any other control with fullscreen/page semantics.
-			 * These aggregated controls receive navigation events like {@link sap.m.NavContainerChild#beforeShow beforeShow},
+			 * These aggregated controls receive navigation events like {@link sap.m.NavContainerChild#event:beforeShow beforeShow},
 			 * they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 			 */
 			detailPages : {type : "sap.ui.core.Control", multiple : true, singularName : "detailPage"},
@@ -471,11 +479,6 @@ function(
 	**************************************************************/
 	SplitContainer.prototype.init = function() {
 		var that = this;
-		this._isMie9 = false;
-		//Check for IE9
-		if (Device.browser.internet_explorer && Device.browser.version < 10) {
-			this._isMie9 = true;
-		}
 
 		// Init static hidden text for ARIA
 		if (sap.ui.getCore().getConfiguration().getAccessibility() && !SplitContainer._sAriaPopupLabelId) {
@@ -570,7 +573,7 @@ function(
 		var fnPatchRemoveChild = function(fnRemoveChild, sNavContainerProperty, sPagesArrayProperty) {
 			return function(oChild, sAggregationName, bSuppressInvalidate) {
 				fnRemoveChild.apply(that[sNavContainerProperty], arguments);
-				if (sAggregationName === "pages" && jQuery.inArray(oChild, that[sPagesArrayProperty]) !== -1) {
+				if (sAggregationName === "pages" && that[sPagesArrayProperty] && that[sPagesArrayProperty].indexOf(oChild) !== -1) {
 					that._removePageFromArray(that[sPagesArrayProperty], oChild);
 				}
 			};
@@ -597,6 +600,16 @@ function(
 		}
 
 		this._updateMasterButtonTooltip();
+
+		this._oMasterNav.setInitialPage(sap.ui.getCore().byId(this.getInitialMaster()));
+		this._oMasterNav.setDefaultTransitionName(this.getDefaultTransitionNameMaster());
+
+		if (!Device.system.phone) {
+			this._oDetailNav.setInitialPage(sap.ui.getCore().byId(this.getInitialDetail()));
+			this._oShowMasterBtn.setText(this.getMasterButtonText() || this._rb.getText("SPLITCONTAINER_NAVBUTTON_TEXT"));
+		}
+
+		this._oDetailNav.setDefaultTransitionName(this.getDefaultTransitionNameDetail());
 	};
 
 	SplitContainer.prototype.exit = function() {
@@ -621,15 +634,22 @@ function(
 		}
 		Device.resize.attachHandler(this._fnResize);
 
-		if (Device.os.windows && Device.browser.internet_explorer) { // not for windows_phone
+		if (Device.os.windows && Device.browser.internet_explorer) { // not for windows_phone// TODO remove after the end of support for Internet Explorer
 			this._oMasterNav.$().append('<iframe class="sapMSplitContainerMasterBlindLayer" src="about:blank"></iframe>');
 		}
 
 		// "sapMSplitContainerNoTransition" prevents initial flickering, after that it needs to be removed
-		jQuery.sap.delayedCall(0, this, function () {
+		setTimeout(function () {
 			this._oMasterNav.removeStyleClass("sapMSplitContainerNoTransition");
-		});
+		}.bind(this), 0);
 	};
+
+	SplitContainer.prototype.applySettings = function (mSettings, oScope) {
+		Control.prototype.applySettings.call(this, mSettings, oScope);
+
+		this._updateMasterInitialPage();
+	};
+
 	/**************************************************************
 	* END - Life Cycle Methods
 	**************************************************************/
@@ -685,7 +705,7 @@ function(
 				// press isn't occurring in master area
 				&& !bIsMasterNav
 				// press isn't triggered by the showMasterButton
-				&& !jQuery.sap.containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)
+				&& !containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)
 				&& (!metaData.getEvent("tap") || !metaData.getEvent("press"))) {
 			this.hideMaster();
 		}
@@ -737,9 +757,9 @@ function(
 	 *
 	 * @param {string} sPageId
 	 *         The screen to which we are navigating to. The ID or the control itself can be given.
-	 * @param {string} sTransitionName
-	 *         The type of the transition/animation to apply. This parameter can be omitted; then the default value is "slide" (horizontal movement from the right).
-	 *         Other options are: "fade", "flip", and "show" and the names of any registered custom transitions.
+     * @param {string} [transitionName=slide]
+     *         The type of the transition/animation to apply. Options are "slide" (horizontal movement from the right), "baseSlide", "fade", "flip", and "show"
+	 *         and the names of any registered custom transitions.
 	 *
 	 *         None of the standard transitions is currently making use of any given transition parameters.
 	 * @param {object} oData
@@ -820,9 +840,9 @@ function(
 	 *
 	 * @param {string} sPageId
 	 *         The ID of the control/page/screen, which is inserted into the history stack. The respective control must be aggregated by the SplitContainer, otherwise this will cause an error.
-	 * @param {string} sTransitionName
-	 *         The type of the transition/animation, which would have been used to navigate from the (inserted) previous page to the current page. When navigating back, the inverse animation will be applied.
-	 *         This parameter can be omitted; then the default value is "slide" (horizontal movement from the right).
+	 * @param {string} [transitionName=slide]
+	 *         The type of the transition/animation which would have been used to navigate from the (inserted) previous page to the current page. When navigating back, the inverse animation will be applied.
+	 *         Options are "slide" (horizontal movement from the right), "baseSlide", "fade", "flip", and "show" and the names of any registered custom transitions.
 	 * @param {object} oData
 	 *         This optional object can carry any payload data which would have been given to the inserted previous page if the user would have done a normal forward navigation to it.
 	 * @type sap.m.SplitContainer
@@ -846,8 +866,8 @@ function(
 	 * @param {string} sPageId
 	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
 	 * @param {string} sTransitionName
-	 *         The type of the transition/animation to apply. This parameter can be omitted; then the default value is "slide" (horizontal movement from the right).
-	 *         Other options are: "fade", "flip", and "show" and the names of any registered custom transitions.
+	 *         The type of the transition/animation to apply. Options are "slide" (horizontal movement from the right), "baseSlide", "fade", "flip", and "show"
+	 *         and the names of any registered custom transitions.
 	 *
 	 *         None of the standard transitions is currently making use of any given transition parameters.
 	 * @param {object} oData
@@ -908,8 +928,8 @@ function(
 	 *
 	 * @param {string} sPageId
 	 * @param {string} sTransitionName
-	 *         The type of the transition/animation to apply. This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
-	 *         Other options are: "fade", "flip", and "show" and the names of any registered custom transitions.
+	 *         The type of the transition/animation to apply. Options are "slide" (horizontal movement from the right), "baseSlide", "fade", "flip", and "show"
+	 *         and the names of any registered custom transitions.
 	 *
 	 *         None of the standard transitions is currently making use of any given transition parameters.
 	 * @param {object} oData
@@ -1028,7 +1048,7 @@ function(
 		// aggregated by this NavContainer, but in the other "virtual" aggregation of this SplitContainer (i.e. moved from detailPages to masterPages).
 		// This would lead to the page being added to the "master" array, but not removed from the "detail" array because the patched method
 		// in the NavContainer (removePage) is not called. Hence, remove it directly from the detail array.
-		if (this._oMasterNav === this._oDetailNav && jQuery.inArray(oPage, this._oDetailNav.getPages()) !== -1) {
+		if (this._oMasterNav === this._oDetailNav && this._oDetailNav.getPages() && this._oDetailNav.getPages().indexOf(oPage) !== -1) {
 			this._removePageFromArray(this._aDetailPages, oPage);
 		}
 		this._oMasterNav.insertPage(oPage, this._aMasterPages.length);
@@ -1113,7 +1133,7 @@ function(
 		// aggregated by this NavContainer, but in the other "virtual" aggregation of this SplitContainer (i.e. moved from masterPages to detailPages).
 		// This would lead to the page being added to the "detail" array, but not removed from the "master" array because the patched method
 		// in the NavContainer (removePage) is not called. Hence, remove it directly from the master array.
-		if (this._oMasterNav === this._oDetailNav && jQuery.inArray(oPage, this._oMasterNav.getPages()) !== -1) {
+		if (this._oMasterNav === this._oDetailNav && this._oMasterNav.getPages() && this._oMasterNav.getPages().indexOf(oPage) !== -1) {
 			this._removePageFromArray(this._aMasterPages, oPage);
 		}
 
@@ -1123,11 +1143,13 @@ function(
 	};
 
 	SplitContainer.prototype.getMasterPages = function() {
-		return this._aMasterPages;
+		// Return a shallow copy of the array instead of the array itself as reference
+		return this._aMasterPages.slice();
 	};
 
 	SplitContainer.prototype.getDetailPages = function() {
-		return this._aDetailPages;
+		// Return a shallow copy of the array instead of the array itself as reference
+		return this._aDetailPages.slice();
 	};
 
 	SplitContainer.prototype.indexOfMasterPage = function(oPage) {
@@ -1229,9 +1251,7 @@ function(
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.showMaster = function() {
-		var _this$ = this._oMasterNav.$(),
-			that = this,
-			fnAnimationEnd = jQuery.proxy(this._afterShowMasterAnimation, this),
+		var that = this,
 			_curPage = this._getRealPage(this._oDetailNav.getCurrentPage());
 
 		function afterPopoverOpen(){
@@ -1248,41 +1268,32 @@ function(
 				this._oPopOver.openBy(this._oShowMasterBtn, true);
 				this._bMasterOpening = true;
 			}
-		} else {
-			if ((this._portraitHide() || this._hideMode())
-				&& (!this._bMasterisOpen || this._bMasterClosing)) {
-				if (this._isMie9) {
-					this._oMasterNav.$().css("width", "320px");
-					_this$.animate({
-						left: "+=320"
-					}, {
-						duration: 300,
-						complete: fnAnimationEnd
-					});
-					this._bMasterisOpen = true;
-					that._bMasterOpening = false;
-					this._removeMasterButton(_curPage);
-				} else {
-					_this$.bind("webkitTransitionEnd transitionend", fnAnimationEnd);
-				}
+		} else if ((this._portraitHide() || this._hideMode())
+					&& (!this._bMasterisOpen || this._bMasterClosing)) {
 
-				this.fireBeforeMasterOpen();
-				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", true);
-				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", false);
-				this._bMasterOpening = true;
-				that._removeMasterButton(_curPage);
+			this._oMasterNav.$().one(
+				"webkitTransitionEnd transitionend",
+				jQuery.proxy(this._afterShowMasterAnimation, this)
+			);
 
-				// workaround for bug in current webkit versions: in slided-in elements the z-order may be wrong and will be corrected once a re-layout is enforced
-				// see http://code.google.com/p/chromium/issues/detail?id=246965
-				if (Device.browser.webkit) {
-					var oMNav = this._oMasterNav;
+			this.fireBeforeMasterOpen();
+			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", true);
+			//BCP: 1870368506
+			this._oMasterNav.getDomRef() && this._oMasterNav.getDomRef().offsetHeight;
+			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", false);
+			this._bMasterOpening = true;
+			that._removeMasterButton(_curPage);
+
+			// workaround for bug in current webkit versions: in slided-in elements the z-order may be wrong and will be corrected once a re-layout is enforced
+			// see http://code.google.com/p/chromium/issues/detail?id=246965
+			if (Device.browser.webkit) {
+				var oMNav = this._oMasterNav;
+				window.setTimeout(function(){
+					oMNav.$().css("box-shadow", "none"); // remove box-shadow
 					window.setTimeout(function(){
-						oMNav.$().css("box-shadow", "none"); // remove box-shadow
-						window.setTimeout(function(){
-							oMNav.$().css("box-shadow", "");  // add it again
-						},50);
-					},0);
-				}
+						oMNav.$().css("box-shadow", "");  // add it again
+					},50);
+				},0);
 			}
 		}
 		return this;
@@ -1297,42 +1308,31 @@ function(
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.hideMaster = function() {
-		var _this$ = this._oMasterNav.$(),
-			fnAnimationEnd = jQuery.proxy(this._afterHideMasterAnimation, this);
 		if (this._portraitPopover()) {
 			if (this._oPopOver.isOpen()) {
 				this._oPopOver.close();
 				this._bMasterClosing = true;
 			}
-		} else {
-			if ((this._portraitHide() || this._hideMode()) &&
-				(this._bMasterisOpen || this._oMasterNav.$().hasClass("sapMSplitContainerMasterVisible"))) {
-				if (this._isMie9) {
-					_this$.animate({
-						left: "-=320"
-					}, {
-						duration: 300,
-						complete: fnAnimationEnd
-					});
-				} else {
-					_this$.bind("webkitTransitionEnd transitionend", fnAnimationEnd);
-				}
+		} else if ((this._portraitHide() || this._hideMode()) &&
+					(this._bMasterisOpen || this._oMasterNav.$().hasClass("sapMSplitContainerMasterVisible"))) {
 
-				this.fireBeforeMasterClose();
-				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", false);
-				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", true);
-				this._bMasterClosing = true;
-			}
+			this._oMasterNav.$().one(
+				"webkitTransitionEnd transitionend",
+				jQuery.proxy(this._afterHideMasterAnimation, this)
+			);
+
+			this.fireBeforeMasterClose();
+			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", false);
+			//BCP: 1870368506
+			this._oMasterNav.getDomRef() && this._oMasterNav.getDomRef().offsetHeight;
+			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", true);
+			this._bMasterClosing = true;
 		}
 		return this;
 	};
 
 	SplitContainer.prototype._afterShowMasterAnimation = function() {
 		if (this._portraitHide() || this._hideMode()) {
-			if (!this._isMie9) {
-				var $MasterNav = this._oMasterNav.$();
-				$MasterNav.unbind("webkitTransitionEnd transitionend", this._afterShowMasterAnimation);
-			}
 			this._bMasterOpening = false;
 			this._bMasterisOpen = true;
 			this.fireAfterMasterOpen();
@@ -1340,12 +1340,6 @@ function(
 	};
 
 	SplitContainer.prototype._afterHideMasterAnimation = function() {
-		if (this._portraitHide() || this._hideMode()) {
-			if (!this._isMie9) {
-				var $MasterNav = this._oMasterNav.$();
-				$MasterNav.unbind("webkitTransitionEnd transitionend", this._afterHideMasterAnimation);
-			}
-		}
 		var oCurPage = this._getRealPage(this._oDetailNav.getCurrentPage());
 		this._setMasterButton(oCurPage);
 
@@ -1353,7 +1347,7 @@ function(
 		this._bMasterisOpen = false;
 		// If the focus is still inside the master area after master is open, the focus should be removed.
 		// Otherwise user can still type something on mobile device and the browser will show the master area again.
-		if (jQuery.sap.containsOrEquals(this._oMasterNav.getDomRef(), document.activeElement)) {
+		if (containsOrEquals(this._oMasterNav.getDomRef(), document.activeElement)) {
 			document.activeElement.blur();
 		}
 		this.fireAfterMasterClose();
@@ -1515,129 +1509,84 @@ function(
 	//**************************************************************
 	//* START - Setters/Getters of the SplitContainer control
 	//**************************************************************
-	SplitContainer.prototype.setInitialMaster = function(sPage) {
-		this._oMasterNav.setInitialPage(sPage);
-		this.setAssociation('initialMaster', sPage, true);
-		return this;
-	};
 
-	SplitContainer.prototype.setInitialDetail = function(sPage) {
-		if (!Device.system.phone) {
-			this._oDetailNav.setInitialPage(sPage);
+	SplitContainer.prototype.setBackgroundOpacity = function(fOpacity) {
+		if (fOpacity > 1 || fOpacity < 0) {
+			Log.warning("Invalid value " + fOpacity + " for SplitContainer.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
+			return this;
 		}
-		this.setAssociation('initialDetail', sPage, true);
-		return this;
+		return this.setProperty("backgroundOpacity", fOpacity);
 	};
 
-	SplitContainer.prototype.setDefaultTransitionNameDetail = function(sTransition) {
-		this.setProperty("defaultTransitionNameDetail", sTransition, true);
-		this._oDetailNav.setDefaultTransitionName(sTransition);
-		return this;
-	};
-
-	SplitContainer.prototype.setDefaultTransitionNameMaster = function(sTransition) {
-		this.setProperty("defaultTransitionNameMaster", sTransition, true);
-		this._oMasterNav.setDefaultTransitionName(sTransition);
-		return this;
-	};
-
-	SplitContainer.prototype.setMasterButtonText = function(sText) {
-		if (!Device.system.phone) {
-			if (!sText) {
-				sText = this._rb.getText("SplitContainer_NAVBUTTON_TEXT");
-			}
-			this._oShowMasterBtn.setText(sText);
-		}
-		this.setProperty("masterButtonText", sText, true);
-		return this;
-	};
-
-	SplitContainer.prototype.setMode = function(sMode) {
+	SplitContainer.prototype.setMode = function (sMode) {
 		var sOldMode = this.getMode();
 		if (sOldMode === sMode) {
 			return this;
 		}
+
 		this.setProperty("mode", sMode, true);
-		//the reposition of master and detail area only occurs in tablet and after it's rendered
-		if (!Device.system.phone && this.getDomRef()) {
-			if (sOldMode === "HideMode" && this._oldIsLandscape) {
-				//remove the master button
-				this._removeMasterButton(this._oDetailNav.getCurrentPage());
-				if (this._isMie9) {
-					this._oMasterNav.$().css({
-						left: 0,
-						width: ""
-					});
-				}
-			}
-
-			if (sMode !== "PopoverMode" && this._oPopOver.getContent().length > 0) {
-				this._updateMasterPosition("landscape");
-			} else if (sMode == "PopoverMode") {
-				if (!this._oldIsLandscape) {
-					if (this._oPopOver.getContent().length === 0) {
-						this._updateMasterPosition("popover");
-					}
-					this._setMasterButton(this._oDetailNav.getCurrentPage());
-				}
-				this.toggleStyleClass("sapMSplitContainerShowHide", false);
-				this.toggleStyleClass("sapMSplitContainerStretchCompress", false);
-				this.toggleStyleClass("sapMSplitContainerHideMode", false);
-				this.toggleStyleClass("sapMSplitContainerPopover", true);
-			}
-
-			if (sMode == "StretchCompressMode") {
-				this.toggleStyleClass("sapMSplitContainerShowHide", false);
-				this.toggleStyleClass("sapMSplitContainerPopover", false);
-				this.toggleStyleClass("sapMSplitContainerHideMode", false);
-				this.toggleStyleClass("sapMSplitContainerStretchCompress", true);
-				this._removeMasterButton(this._oDetailNav.getCurrentPage());
-			}
-
-			if (sMode == "ShowHideMode") {
-				this.toggleStyleClass("sapMSplitContainerPopover", false);
-				this.toggleStyleClass("sapMSplitContainerStretchCompress", false);
-				this.toggleStyleClass("sapMSplitContainerHideMode", false);
-				this.toggleStyleClass("sapMSplitContainerShowHide", true);
-
-				if (!Device.orientation.landscape) {
-					this._setMasterButton(this._oDetailNav.getCurrentPage());
-				}
-			}
-
-			if (sMode === "HideMode") {
-				this.toggleStyleClass("sapMSplitContainerPopover", false);
-				this.toggleStyleClass("sapMSplitContainerStretchCompress", false);
-				this.toggleStyleClass("sapMSplitContainerShowHide", false);
-				this.toggleStyleClass("sapMSplitContainerHideMode", true);
-
-				// always hide the master area after changing mode to HideMode
-				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", false);
-				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", true);
-				this._bMasterisOpen = false;
-
-				this._setMasterButton(this._oDetailNav.getCurrentPage());
-
-				if (this._isMie9) {
-					this._oMasterNav.$().css({
-						left: "",
-						width: "auto"
-					});
-				}
-			}
-		}
-		return this;
-	};
-
-	SplitContainer.prototype.setBackgroundOpacity = function(fOpacity) {
-		if (fOpacity > 1 || fOpacity < 0) {
-			jQuery.sap.log.warning("Invalid value " + fOpacity + " for SplitContainer.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
+		// the reposition of master and detail area occurs in tablet & desktop and after it's rendered
+		if (Device.system.phone || !this.getDomRef()) {
 			return this;
 		}
-		this.$("BG").css("opacity", fOpacity);
-		return this.setProperty("backgroundOpacity", fOpacity, true); // no rerendering - live opacity change looks cooler
-	};
 
+		if (sOldMode === "HideMode" && this._oldIsLandscape) {
+			//remove the master button
+			this._removeMasterButton(this._oDetailNav.getCurrentPage());
+		}
+
+		var oDomRef = this.getDomRef();
+
+		if (sMode !== "PopoverMode" && this._oPopOver.getContent().length > 0) {
+			this._updateMasterPosition("landscape");
+		} else if (sMode == "PopoverMode") {
+			if (!this._oldIsLandscape) {
+				if (this._oPopOver.getContent().length === 0) {
+					this._updateMasterPosition("popover");
+				}
+				this._setMasterButton(this._oDetailNav.getCurrentPage());
+			}
+			oDomRef.classList.remove("sapMSplitContainerShowHide");
+			oDomRef.classList.remove("sapMSplitContainerStretchCompress");
+			oDomRef.classList.remove("sapMSplitContainerHideMode");
+			oDomRef.classList.add("sapMSplitContainerPopover");
+		}
+
+		if (sMode == "StretchCompressMode") {
+			oDomRef.classList.remove("sapMSplitContainerShowHide");
+			oDomRef.classList.remove("sapMSplitContainerPopover");
+			oDomRef.classList.remove("sapMSplitContainerHideMode");
+			oDomRef.classList.add("sapMSplitContainerStretchCompress");
+			this._removeMasterButton(this._oDetailNav.getCurrentPage());
+		}
+
+		if (sMode == "ShowHideMode") {
+			oDomRef.classList.remove("sapMSplitContainerPopover");
+			oDomRef.classList.remove("sapMSplitContainerStretchCompress");
+			oDomRef.classList.remove("sapMSplitContainerHideMode");
+			oDomRef.classList.add("sapMSplitContainerShowHide");
+
+			if (!Device.orientation.landscape) {
+				this._setMasterButton(this._oDetailNav.getCurrentPage());
+			}
+		}
+
+		if (sMode === "HideMode") {
+			oDomRef.classList.remove("sapMSplitContainerPopover");
+			oDomRef.classList.remove("sapMSplitContainerStretchCompress");
+			oDomRef.classList.remove("sapMSplitContainerShowHide");
+			oDomRef.classList.add("sapMSplitContainerHideMode");
+
+			// always hide the master area after changing mode to HideMode
+			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", false);
+			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", true);
+			this._bMasterisOpen = false;
+
+			this._setMasterButton(this._oDetailNav.getCurrentPage());
+		}
+
+		return this;
+	};
 
 	/**************************************************************
 	* START - Private methods
@@ -1646,15 +1595,25 @@ function(
 	/**
 	 * @private
 	 */
+	SplitContainer.prototype._updateMasterInitialPage = function() {
+		//BCP: 002028376500005408012018
+		if (this.getMode() === "HideMode" && Device.system.phone && this._aDetailPages) {
+			this._oMasterNav.setInitialPage(this.getInitialDetail() ? this.getInitialDetail() : (this.getInitialMaster() || this._aDetailPages[0]));
+		}
+	};
+
+	/**
+	 * @private
+	 */
 	SplitContainer.prototype._indexOfMasterPage = function(oPage) {
-		return jQuery.inArray(oPage, this._aMasterPages);
+		return this._aMasterPages.indexOf(oPage);
 	};
 
 	/**
 	 * @private
 	 */
 	SplitContainer.prototype._indexOfDetailPage = function(oPage) {
-		return jQuery.inArray(oPage, this._aDetailPages);
+		return this._aDetailPages.indexOf(oPage);
 	};
 
 
@@ -1671,7 +1630,7 @@ function(
 		} else {
 			i = iIndex;
 		}
-		var iOldIndex = jQuery.inArray(oPage, aPageArray);
+		var iOldIndex = (aPageArray ? Array.prototype.indexOf.call(aPageArray, oPage) : -1);
 		aPageArray.splice(i, 0, oPage);
 		if (iOldIndex != -1) {
 			// this is the insert order ui5 is doing it: first add, then remove when it was added before (even so this would remove the just added control)
@@ -1697,7 +1656,7 @@ function(
 	 * @private
 	 */
 	SplitContainer.prototype._removePageFromArray = function(aPageArray, oPage) {
-		var iIndex = jQuery.inArray(oPage, aPageArray);
+		var iIndex = (aPageArray ? Array.prototype.indexOf.call(aPageArray, oPage) : -1);
 		if (iIndex != -1) {
 			aPageArray.splice(iIndex, 1);
 			if (aPageArray === this._aDetailPages) {
@@ -1726,7 +1685,7 @@ function(
 		if (this._oldIsLandscape !== isLandscape) {
 			this._oldIsLandscape = isLandscape;
 			if (!Device.system.phone) {
-				this.toggleStyleClass("sapMSplitContainerPortrait", !isLandscape);
+				this.$().toggleClass("sapMSplitContainerPortrait", !isLandscape);
 
 				//hidemode doesn't react to orientation change
 				if (mode === "HideMode") {
@@ -1738,22 +1697,6 @@ function(
 						this.fireBeforeMasterOpen();
 					} else {
 						this.fireBeforeMasterClose();
-					}
-				}
-
-				if (this._isMie9) {
-					if (isLandscape) {
-						this._oMasterNav.$().css({
-							left: 0,
-							width: ""
-						});
-					} else {
-						if (mode === "ShowHideMode" || mode === "PopoverMode") {
-							this._oMasterNav.$().css({
-								left: -320,
-								width: "auto"
-							});
-						}
 					}
 				}
 
@@ -1931,7 +1874,7 @@ function(
 			return;
 		}
 
-		this._oShowMasterBtn = new sap.m.Button(this.getId() + "-MasterBtn", {
+		this._oShowMasterBtn = new Button(this.getId() + "-MasterBtn", {
 			icon: IconPool.getIconURI("menu2"),
 			tooltip: this.getMasterButtonTooltip(),
 			type: ButtonType.Default,
@@ -1981,6 +1924,8 @@ function(
 			// showMasterBtn could have already be destroyed by destroying the customHeader of the previous page
 			// When this is the case, showMasterBtn will be instantiated again
 			this._createShowMasterButton();
+			//Tooltip should be update again also
+			this._updateMasterButtonTooltip();
 
 			this._oShowMasterBtn.removeStyleClass("sapMSplitContainerMasterBtnHidden");
 
@@ -1988,9 +1933,6 @@ function(
 				oPageHeader.insertAggregation(sHeaderAggregationName, this._oShowMasterBtn, 0, bSuppressRerendering);
 			}
 		} else {
-			if (this._isMie9) {
-				this._oShowMasterBtn.$().fadeIn();
-			}
 			this._oShowMasterBtn.$().parent().toggleClass("sapMSplitContainerMasterBtnHide", false);
 			this._oShowMasterBtn.removeStyleClass("sapMSplitContainerMasterBtnHidden");
 			this._oShowMasterBtn.$().parent().toggleClass("sapMSplitContainerMasterBtnShow", true);
@@ -2058,24 +2000,18 @@ function(
 				var aHeaderContent = SplitContainer._getHeaderButtonAggregation(oPage).aAggregationContent;
 				for (var i = 0; i < aHeaderContent.length; i++) {
 					if (aHeaderContent[i] === this._oShowMasterBtn) {
-						if (this._isMie9) {
-							this._oShowMasterBtn.$().fadeOut();
-							if (fnCallBack) {
-								fnCallBack(oPage);
-							}
-						}
 
 						this._oShowMasterBtn.destroy();
 						/*eslint-disable no-loop-func */
-						this._oShowMasterBtn.$().parent().bind("webkitAnimationEnd animationend", function(){
-							jQuery(this).unbind("webkitAnimationEnd animationend");
+						this._oShowMasterBtn.$().parent().on("webkitAnimationEnd animationend", function(){
+							jQuery(this).off("webkitAnimationEnd animationend");
 							that._oShowMasterBtn.addStyleClass("sapMSplitContainerMasterBtnHidden");
 							if (fnCallBack) {
 								fnCallBack(oPage);
 							}
 						});
 						/*eslint-enable no-loop-func */
-						return;
+						break;
 					}
 				}
 			}

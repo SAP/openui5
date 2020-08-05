@@ -5,6 +5,7 @@
 
 .sapUxAPObjectPageSubSection {
 	padding-bottom: 0;
+	box-sizing: border-box;
 }
 
 .sapUxAPObjectPageSubSectionHeaderActions > .sapMBtn {
@@ -15,13 +16,7 @@
 	height: auto;
 	overflow: auto;
 	word-wrap: break-word;
-	padding: 1rem 0 0 3rem
-}
-
-.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSubSectionHeader,
-.sapUiMedia-Std-Tablet .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSubSectionHeader,
-html .sapUiContainer-Medium .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSubSectionHeader {
-	padding-left: 2rem;
+	padding: 1rem 2.25rem 0 3rem
 }
 
 .sapUxAPObjectPageSubSectionHeaderTitle {
@@ -34,9 +29,7 @@ html .sapUiContainer-Medium .sapMSplitContainer:not(.sapMSplitContainerHideMode)
 }
 
 .sapUxAPObjectPageSubSectionHeaderActions {
-	padding-right: 0.5rem;
 	float: right;
-	height: 3rem;
 }
 
 .sapUxAPSubSectionSeeMoreContainer {
@@ -44,7 +37,6 @@ html .sapUiContainer-Medium .sapMSplitContainer:not(.sapMSplitContainerHideMode)
 	width: auto;
 	float: right;
 	height: auto;
-	margin-right: 1rem;
 }
 
 .sapUxAPSubSectionSeeMoreButton {
@@ -56,12 +48,12 @@ html .sapUiContainer-Medium .sapMSplitContainer:not(.sapMSplitContainerHideMode)
 }
 
 /* phone display */
-.sapUiMedia-Std-Phone .sapUxAPObjectPageSubSectionHeader,
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSectionHeader,
 html .sapUiContainer-Narrow .sapUxAPObjectPageSubSectionHeader {
-	padding: 0 0 0 1rem;
+	padding: 0 0.5rem 0 1rem;
 }
 
-.sapUiMedia-Std-Phone .sapUxAPObjectPageSubSectionHeaderTitle,
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSectionHeaderTitle,
 html .sapUiContainer-Narrow .sapUxAPObjectPageSubSectionHeaderTitle {
 	height: auto;
 	overflow: auto;
@@ -73,12 +65,12 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSubSectionHeaderTitle {
 
 /* tablet display */
 
-.sapUiMedia-Std-Tablet .sapUxAPObjectPageSubSectionHeader,
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSubSectionHeader,
 html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
-	padding: 1rem 0 0 2rem;
+	padding: 1rem 1.25rem 0 2rem;
 }
 
-.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout {
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout {
 	box-sizing: border-box;
 	width: 25%;
 	margin-right: 0;
@@ -87,7 +79,7 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 	overflow: visible;
 }
 
-.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout + .sapUxAPBlockContainer {
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout + .sapUxAPBlockContainer {
 	width: -webkit-calc(~"75% - 4rem");
 	width: calc(~"75% - 4rem");
 	box-sizing: border-box;
@@ -95,13 +87,12 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 	margin-left: 0;
 }
 
-.sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail
-.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout + .sapUxAPBlockContainer {
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout + .sapUxAPBlockContainer {
 	width: -webkit-calc(~"75% - 2rem");
 	width: calc(~"75% - 2rem");
 }
 
-.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderTitle {
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderTitle {
 	height: auto;
 	white-space: normal;
 	word-wrap: break-word;
@@ -109,25 +100,25 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 	padding-top: 1rem;
 }
 
-.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions {
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions {
 	float: none;
 	display: inline-block;
 	margin-left: 0;
 	width: 100%;
 }
 
-.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions > .sapMBtn:first-child {
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions > .sapMBtn:first-child {
 	margin-left: 0;
 }
 
 /* remove the padding of form content, since form itself is already in a grid-cell that provides the required extra spacing */
 /* (1) if the direct child is a form container with a title, a more specific selector is needed: */
-.sapUxAPBlockContainer .sapUiFormResGrid > div.sapUiFormContainerTitle {
+.sapUxAPBlockContainer .sapUiFormCLContainer > div.sapUiFormContainerTitle {
 	padding-top: 0;
 }
 
 /* (2) if the direct child is a form container with a title, a more specific selector is needed for the title itself: */
-.sapUxAPBlockContainer .sapUiFormResGrid > div.sapUiFormContainerTitle > .sapUiFormTitle {
+.sapUxAPBlockContainer .sapUiFormCLContainer > div.sapUiFormContainerTitle > .sapUiFormTitle {
 	line-height: 2rem;
 	margin-bottom: 0;
 }
@@ -136,70 +127,108 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 	.sapUiFormResGrid>.sapUiFormTitle {
 		padding: 0;
 	}
-}
-
-.sapUxAPBlockContainerDesktop {
-	padding: 1rem 2rem 3rem 2rem;
-	.sapUiFormResGrid > div {
-		padding: 1rem 0;
-	}
-}
-.sapUxAPBlockContainerTablet {
-	padding: 1rem 1rem 3rem 1rem;
-	.sapUiFormResGrid > div {
-		padding: 1rem 0;
-	}
-}
-.sapUxAPBlockContainerPhone {
-	padding: 0 1rem;
-	.sapUiFormResGrid > div {
-		padding: 1rem 0;
-	}
-	.sapUiRespGrid.sapUiRespGridHSpace1 {
+	.sapUiFormResGrid.sapUiFormToolbar >.sapMTB {
 		padding: 0;
 	}
-	.sapUiRespGrid.sapUiRespGridHSpace1 > div {
-		margin: 0;
+	.sapUxAPObjectPageSubSectionAlignContent {
+		margin-left: -@sapUiMarginSmall;
+		margin-right: -@sapUiMarginSmall;
 	}
 }
 
-.sapUxAPObjectPageSubSectionPromoted .sapUxAPBlockContainerPhone {
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+	padding: 1rem 2rem 3rem 2rem;
+}
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer {
+	padding: 1rem 1rem 3rem 1rem;
+}
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer {
+	padding: 0 1rem;
+	.sapUxAPObjectPageSubSectionAlignContent {
+		margin-left: -@sapUiMarginSmall;
+		margin-right: -@sapUiMarginMedium;
+	}
+}
+
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSubSectionWithSeeMore {
+	.sapUxAPBlockContainer {
+		padding-bottom: 0;
+	}
+
+	.sapUxAPSubSectionSeeMoreContainer {
+		padding-bottom: 2rem;
+	}
+}
+
+
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSectionPromoted .sapUxAPBlockContainer {
 	padding-top: 1rem;
 }
 
-.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSubSection,
-.sapUiMedia-Std-Phone .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapUxAPObjectPageSubSection {
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSection {
 	.sapUiRespGrid.sapUiRespGridHSpace1 {
 		padding: 0;
 	}
 	.sapUiRespGrid.sapUiRespGridHSpace1 > div {
 		margin: 0;
 	}
+	.sapUxAPBlockBase {
+		margin-bottom: 1rem;
+	}
 }
 
+.sapUxAPObjectPageSubSectionFitContainer {
+	overflow-y: hidden; // hide content that does not fit the available height to avoid overlap with the next section content
+
+	.sapUxAPBlockContainer,
+	.sapUxAPBlockContainer > .sapUiRespGrid,
+	.sapUxAPBlockContainer > .sapUiRespGrid > *,
+	.sapUxAPBlockContainer .sapUxAPBlockBase {
+		height: 100%;
+	}
+	.sapUxAPBlockContainer {
+		box-sizing: border-box;
+	}
+}
+
+.sapUxAPObjectPageSection .sapUxAPObjectPageSectionContainer .sapUxAPObjectPageSubSection .sapUxAPBlockContainer {
+    padding-bottom: 0;
+}
 /* compact size */
 .sapUiSizeCompact {
 	.sapUxAPObjectPageSubSectionHeaderTitle {
 		height: 2rem;
 		line-height: 2rem;
 	}
-	.sapUxAPBlockContainerDesktop {
+	.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
 		padding: 1rem 2rem 2rem 2rem;
 	}
-	.sapUxAPBlockContainerTablet,
-	.sapUxAPBlockContainerPhone {
+	.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer,
+	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer {
 		padding: 1rem 1rem 2rem 1rem;
 	}
-	.sapUxAPBlockContainerPhone {
-		.sapUiFormResGrid > div {
-			padding: 1rem 0;
+	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer .sapUiFormResGrid > div{
+		padding: 1rem 0;
+	}
+
+	.sapUxAPObjectPageSubSectionWithSeeMore {
+		.sapUxAPBlockContainer {
+			padding-bottom: 0;
+		}
+
+		.sapUxAPSubSectionSeeMoreContainer {
+			padding-bottom: 2rem;
 		}
 	}
 }
 
-/* IE and Edge ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUxAPObjectPageSubSection:focus {
+	outline-style: dashed;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"].sap-desktop {
 	.sapUxAPObjectPageSubSection:focus {
 		outline: none;
 		position: relative;
@@ -218,3 +247,4 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		pointer-events: none;
 	}
 }
+

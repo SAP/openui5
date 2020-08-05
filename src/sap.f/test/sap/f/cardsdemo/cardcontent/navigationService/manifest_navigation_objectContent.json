@@ -1,0 +1,84 @@
+{
+  "sap.app": {
+	"type": "card"
+  },
+  "sap.card": {
+	"type": "Object",
+	"data": {
+	  "request": {
+		"url": "./cardsdemo/cardcontent/objectcontent/employee.json"
+	  }
+	},
+	"header": {
+	  "icon": {
+		"src": "{photo}"
+	  },
+	  "title": "{firstName} {lastName}",
+	  "subTitle": "{position}",
+	  "actions": [
+		{
+		  "type": "Navigation",
+		  "url": "https://www.sap.com"
+
+		}
+	  ]
+	},
+	"content": {
+	  "groups": [
+		{
+		  "title": "{{contactDetails}}",
+		  "items": [
+			{
+			  "label": "{{firstName}}",
+			  "value": "{firstName}"
+			},
+			{
+			  "label": "{{lastName}}",
+			  "value": "{lastName}"
+			},
+			{
+			  "label": "{{phone}}",
+			  "value": "{phone}"
+			}
+		  ]
+		},
+		{
+		  "title": "{{organizationalDetails}}",
+		  "items": [
+			{
+			  "label": "{{directManager}}",
+			  "value": "{manager/firstName} {manager/lastName}",
+			  "icon": {
+				"src": "{manager/photo}"
+			  }
+			}
+		  ]
+		},
+		{
+		  "title": "{{companyDetails}}",
+		  "items": [
+			{
+			  "label": "{{companyName}}",
+			  "value": "{company/name}"
+			},
+			{
+			  "label": "{{address}}",
+			  "value": "{company/address}"
+			},
+			{
+			  "label": "{{website}}",
+			  "url": "{company/website}"
+			}
+		  ]
+		}
+	  ],
+	  "actions": [
+		{
+		  "type": "Navigation",
+		  "url": "https://www.sap.com"
+
+		}
+	  ]
+	}
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "4d232a7dc3f50da11d1f90912636ade21734bb8b",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Icon correctly visualized in High Contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000439894 2020"
+          }
+        ]
+      },
+      {
+        "id": "430b5d389d2c1556cad4aa20434087d9d5ab413b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: styles calculation removal",
+        "references": []
+      },
+      {
+        "id": "218e420324610c571591df07176e5ad026632dbb",
+        "type": "FIX",
+        "text": " sap.m.Slider, sap.m.RangeSlider: Focus outline adjusted in High Contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080219138"
+          }
+        ]
+      },
+      {
+        "id": "f73d1148b70f7230996aa4d0a839a8bf2a366b1b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Remove actions redundant \"right\" style alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000397149 2020"
+          }
+        ]
+      },
+      {
+        "id": "fe94e64b6521720a1695a7eacfe36ad937bd256b",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Appointment text on 3 lines",
+        "references": []
+      }
+    ]
+  }
+}

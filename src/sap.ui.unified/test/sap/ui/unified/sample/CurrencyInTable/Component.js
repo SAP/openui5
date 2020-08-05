@@ -1,5 +1,5 @@
-sap.ui.define(['sap/ui/core/UIComponent','sap/ui/core/mvc/XMLView'],
-	function(UIComponent, XMLView) {
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.unified.sample.CurrencyInTable.Component", {
@@ -8,20 +8,8 @@ sap.ui.define(['sap/ui/core/UIComponent','sap/ui/core/mvc/XMLView'],
 			publicMethods : [
 				"getTable"
 			],
-			dependencies : {
-				libs : [
-					"sap.ui.unified",
-					"sap.m"
-				]
-			},
-			config : {
-				sample : {
-					files : [
-						"View.view.xml",
-						"Controller.controller.js"
-					]
-				}
-			}
+
+			manifest: "json"
 		},
 
 		getTable : function () {

@@ -1,21 +1,29 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
-	function(jQuery, library, HashChanger) {
+sap.ui.define([
+	'sap/ui/core/library',
+	'./HashChanger',
+	"sap/base/Log",
+	"sap/ui/thirdparty/URI",
+	"sap/ui/Device",
+	"sap/base/util/ObjectPath"
+], function(library, HashChanger, Log, URI, Device, ObjectPath) {
 	"use strict";
-
 
 	// shortcut for enum(s)
 	var HistoryDirection = library.routing.HistoryDirection;
 
+	// when HashChanger fires a hashChange event without a real browser "hashchange" event, the _getDirectionWithState
+	// function can detect this case and keep the previous history direction unchanged
+	var DIRECTION_UNCHANGED = "Direction_Unchanged";
 
 	/**
 	 * Used to determine the {@link sap.ui.core.routing.HistoryDirection} of the current or a future navigation,
 	 * done with a {@link sap.ui.core.routing.Router} or {@link sap.ui.core.routing.HashChanger}.
 	 *
-	 * <strong>ATTENTION:</strong> this class will not be accurate if someone does hash-replacement without the named classes above
-	 * If you are manipulating the hash directly this class is not supported anymore.
+	 * <strong>ATTENTION:</strong> this class will not be accurate if someone does hash-replacement without the named classes above.
+	 * If you are manipulating the hash directly, this class is not supported anymore.
 	 *
 	 * @param {sap.ui.core.routing.HashChanger} oHashChanger required, without a HashChanger this class cannot work. The class needs to be aware of the hash-changes.
 	 * @public
@@ -27,8 +35,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 		this.aHistory = [];
 		this._bIsInitial = true;
 
+		if (History._bUsePushState) {
+			var oState = window.history.state === null ? {} : window.history.state,
+				sHash = window.location.hash;
+
+			// remove the leading '#'
+			sHash = sHash.replace(/^#/, "");
+
+			if (typeof oState === "object") {
+				History._aStateHistory.push(sHash);
+				oState.sap = {};
+				oState.sap.history = History._aStateHistory;
+				window.history.replaceState(oState, window.document.title);
+			} else {
+				Log.debug("Unable to determine HistoryDirection as history.state is already set: " + window.history.state, "sap.ui.core.routing.History");
+			}
+		}
+
 		if (!oHashChanger) {
-			jQuery.sap.log.error("sap.ui.core.routing.History constructor was called and it did not get a hashChanger as parameter");
+			Log.error("sap.ui.core.routing.History constructor was called and it did not get a hashChanger as parameter");
 		}
 
 		this._setHashChanger(oHashChanger);
@@ -37,9 +62,73 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 	};
 
 	/**
-	 * Detaches all events and cleans up this instance
+	 * Stores the history of full hashes to compare with window.history.state
+	 * @private
 	 */
-	History.prototype.destroy = function(sNewHash) {
+	History._aStateHistory = [];
+
+	/*
+	 * Whether the push state API should be used.
+	 *
+	 * The state information isn't used when at least one of the following points is met:
+	 * <ul>
+	 * <li>Browser is IE: because it doesn't clear the state after new hash is set</li>
+	 * <li>Running in an iFrame: because browser doesn't update the history state correct after forward/backward
+	 * navigation</li>
+	 * </ul>
+	 *
+	 * @private
+	 */
+	History._bUsePushState = !Device.browser.msie && (window.self === window.top);
+
+	/**
+	 * Returns the length difference between the history state stored in browser's
+	 * pushState and the state maintained in this class.
+	 *
+	 * The function returns <code>undefined</code> when
+	 * <ul>
+	 *     <li>The current state in browser's history pushState isn't
+	 *         initialized, for example, between a new hash is set or replaced
+	 *         and the "hashChange" event is processed by this class</li>
+	 *     <li>History pushState isn't fully supported, for example,
+	 *         Internet Explorer.</li>
+	 *     <li>History pushState is already used before UI5 History
+	 *         is initialized, and UI5 can't maintain the hash history
+	 *         by using the browser pushState</li>
+	 * </ul>
+	 *
+	 * Once the "hashChange" event is processed by this class, this method always
+	 * returns 0. However, before a "hashChange" event reaches this class, it
+	 * returns the offset between the new hash and the previous one within the
+	 * history state.
+	 *
+	 * @public
+	 * @since 1.70
+	 * @return {int|undefined} The length difference or returns
+	 *  <code>undefined</code> when browser pushState can't be used at the
+	 *  moment when this function is called
+	 */
+	History.prototype.getHistoryStateOffset = function() {
+		// browser doesn't fully support pushState
+		if (!History._bUsePushState) {
+			return undefined;
+		}
+
+		var aStateHistory = ObjectPath.get("history.state.sap.history");
+
+		if (!Array.isArray(aStateHistory)) {
+			return undefined;
+		}
+
+		return aStateHistory.length - History._aStateHistory.length;
+	};
+
+	/**
+	 * Detaches all events and cleans up this instance
+	 *
+	 * @private
+	 */
+	History.prototype.destroy = function() {
 		this._unRegisterHashChanger();
 	};
 
@@ -80,13 +169,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 		}
 
 		this._oHashChanger = oHashChanger;
-		this._oHashChanger.attachEvent("hashChanged", this._onHashChange, this);
+
+		this._mEventListeners = {};
+
+		oHashChanger.getRelevantEventsInfo().forEach(function(oEventInfo) {
+			var sEventName = oEventInfo.name,
+				oParamMapping = oEventInfo.paramMapping || {},
+				fnListener = this._onHashChange.bind(this, oParamMapping);
+
+			this._mEventListeners[sEventName] = fnListener;
+
+			this._oHashChanger.attachEvent(sEventName, fnListener, this);
+		}.bind(this));
+
 		this._oHashChanger.attachEvent("hashReplaced", this._hashReplaced, this);
 		this._oHashChanger.attachEvent("hashSet", this._hashSet, this);
 	};
 
 	History.prototype._unRegisterHashChanger = function() {
-		this._oHashChanger.detachEvent("hashChanged", this._onHashChange, this);
+		if (this._mEventListeners) {
+			var aEventNames = Object.keys(this._mEventListeners);
+
+			aEventNames.forEach(function(sEventName) {
+				this._oHashChanger.detachEvent(sEventName, this._mEventListeners[sEventName], this);
+			}.bind(this));
+
+			delete this._mEventListeners;
+		}
+
 		this._oHashChanger.detachEvent("hashReplaced", this._hashReplaced, this);
 		this._oHashChanger.detachEvent("hashSet", this._hashSet, this);
 
@@ -94,7 +204,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 	};
 
 
-		/**
+	/**
 	 * Empties the history array, and sets the instance back to the unknown state.
 	 * @private
 	 */
@@ -111,14 +221,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 		this.aHistory[0] = this._oHashChanger.getHash();
 	};
 
-		/**
-		 * Determines what the navigation direction for a newly given hash would be
-		 * @param {string} sNewHash the new hash
-		 * @param {boolean} bHistoryLengthIncreased if the history length has increased compared with the last check
-		 * @param {boolean} bCheckHashChangerEvents Checks if the hash was set or replaced by the hashchanger. When getDirection is called by an app this has to be false.
-		 * @returns {sap.ui.core.routing.HistoryDirection}
-		 * @private
-		 */
+	/**
+	 * Determines what the navigation direction for a newly given hash would be
+	 * @param {string} sNewHash the new hash
+	 * @param {boolean} bHistoryLengthIncreased if the history length has increased compared with the last check
+	 * @param {boolean} bCheckHashChangerEvents Checks if the hash was set or replaced by the hashchanger. When getDirection is called by an app this has to be false.
+	 * @returns {sap.ui.core.routing.HistoryDirection} The history direction
+	 * @private
+	 */
 	History.prototype._getDirection = function(sNewHash, bHistoryLengthIncreased, bCheckHashChangerEvents) {
 
 		//Next hash was set by the router - it has to be a new entry
@@ -157,15 +267,67 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 		return HistoryDirection.Unknown;
 	};
 
-	History.prototype._onHashChange = function(oEvent) {
-		this._hashChange(oEvent.getParameter("newHash"));
+	/**
+	 * Determine HistoryDirection leveraging the full hash as in window.location.hash
+	 * and window.history.state.
+	 *
+	 * @param {string} sHash the complete hash, same as window.location.hash
+	 * @return {sap.ui.core.routing.HistoryDirection} The determined HistoryDirection
+	 * @private
+	 */
+	History.prototype._getDirectionWithState = function(sHash) {
+		var oState = window.history.state === null ? {} : window.history.state,
+			bBackward,
+			sDirection;
+
+		if (typeof oState === "object") {
+			if (oState.sap === undefined) {
+				History._aStateHistory.push(sHash);
+				oState.sap = {};
+				oState.sap.history = History._aStateHistory;
+				history.replaceState(oState, document.title);
+				sDirection = HistoryDirection.NewEntry;
+			} else {
+				bBackward = oState.sap.history.every(function(sURL, index) {
+					return sURL === History._aStateHistory[index];
+				});
+
+				// If the state history is identical with the history trace, it means
+				// that a hashChanged event is fired without a real brower hash change.
+				// In this case, the _getDirectionWithState can't be used to determine
+				// the history direction and should keep the direction unchanged
+				if (bBackward && oState.sap.history.length === History._aStateHistory.length) {
+					sDirection = DIRECTION_UNCHANGED;
+				} else {
+					sDirection = bBackward ? HistoryDirection.Backwards : HistoryDirection.Forwards;
+					History._aStateHistory = oState.sap.history;
+				}
+			}
+		} else {
+			Log.debug("Unable to determine HistoryDirection as history.state is already set: " + window.history.state, "sap.ui.core.routing.History");
+		}
+
+		return sDirection;
+	};
+
+	History.prototype._onHashChange = function(oParamMapping, oEvent) {
+		var sNewHashParamName = oParamMapping.newHash || "newHash",
+			sOldHashParamName = oParamMapping.oldHash || "oldHash",
+			sFullHashParamName = oParamMapping.fullHash || "fullHash";
+
+		// Leverage the fullHash parameter if available
+		this._hashChange(oEvent.getParameter(sNewHashParamName), oEvent.getParameter(sOldHashParamName), oEvent.getParameter(sFullHashParamName));
 	};
 
 	/**
 	 * Handles a hash change and cleans up the History
+	 *
+	 * @param {string} sNewHash The new hash
+	 * @param {string} sOldHash The old hash
+	 * @param {string} sFullHash The full hash
 	 * @private
 	 */
-	History.prototype._hashChange = function(sNewHash) {
+	History.prototype._hashChange = function(sNewHash, sOldHash, sFullHash) {
 		var actualHistoryLength = window.history.length,
 			sDirection;
 
@@ -173,6 +335,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 		if (this._oNextHash && this._oNextHash.bWasReplaced && this._oNextHash.sHash === sNewHash) {
 			//Since a replace has taken place, the current history entry is also replaced
 			this.aHistory[this.iHistoryPosition] = sNewHash;
+
+			if (sFullHash !== undefined && History._bUsePushState && this === History.getInstance()) {
+				// after the hash is replaced, the history state is cleared.
+				// We need to update the last entry in _aStateHistory and save the
+				// history back to the browser history state
+				History._aStateHistory[History._aStateHistory.length - 1] = sFullHash;
+				window.history.replaceState({
+					sap: {
+						history: History._aStateHistory
+					}
+				}, window.document.title);
+			}
+
 			this._oNextHash = null;
 			//reset the direction to Unknown when hash is replaced after history is already initialized
 			if (!this._bIsInitial) {
@@ -184,7 +359,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 		//a navigation has taken place so the history is not initial anymore.
 		this._bIsInitial = false;
 
-		sDirection = this._sCurrentDirection = this._getDirection(sNewHash, this._iHistoryLength < window.history.length, true);
+		// Extended direction determination with window.history.state
+		// IE 11 doesn't clear the window.history.state when new hash is set
+		// therefore the state solution can't be used
+		//
+		// The enhancement for direction determination is only done for the global
+		// instance because the window.history.state can only be used once for the
+		// new entry determination. Once the window.history.state is changed, it
+		// can't be used again for the same hashchange event to determine the
+		// direction which is the case if additional History instance is created
+		if (sFullHash !== undefined && History._bUsePushState && this === History.getInstance()) {
+			sDirection = this._getDirectionWithState(sFullHash);
+		}
+
+		// if the hashChange event is fired without a real browser hashchange event, the direction isn't updated
+		if (sDirection === DIRECTION_UNCHANGED) {
+			return;
+		}
+
+		// if the direction can't be decided by using the state method, the fallback to the legacy method is taken
+		if (!sDirection) {
+			sDirection = this._getDirection(sNewHash, this._iHistoryLength < window.history.length, true);
+		}
+
+		this._sCurrentDirection = sDirection;
 
 		// Remember the new history length, after it has been taken into account by getDirection
 		this._iHistoryLength = actualHistoryLength;
@@ -227,6 +425,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 
 	/**
 	 * Handles a hash change and cleans up the History
+	 * @param {sap.ui.base.Event} oEvent The event containing the hash
 	 * @private
 	 */
 	History.prototype._hashSet = function(oEvent) {
@@ -235,6 +434,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 
 	/**
 	 * Handles a hash change and cleans up the History
+	 * @param {sap.ui.base.Event} oEvent The event containing the hash
 	 * @private
 	 */
 	History.prototype._hashReplaced = function(oEvent) {
@@ -243,8 +443,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 
 	/**
 	 * Sets the next hash that is going to happen in the hashChange function - used to determine if the app or the browserHistory/links triggered this navigation
-	 * @param {string} sNewHash
-	 * @param {boolean} bWasReplaced
+	 * @param {string} sNewHash The new hash
+	 * @param {boolean} bWasReplaced If the hash was replaced
 	 */
 	History.prototype._hashChangedByApp = function(sNewHash, bWasReplaced) {
 		this._oNextHash = { sHash : sNewHash, bWasReplaced : bWasReplaced };

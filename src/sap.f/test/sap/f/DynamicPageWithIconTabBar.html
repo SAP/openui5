@@ -162,14 +162,14 @@
 			})
 		});
 
-		var oPage = oDynamicPageUtil.getDynamicPage(true, oTitle, oHeader, oContent, oFooter);
+		var oPage = oDynamicPageUtil.getDynamicPage(true, oTitle, oHeader, oContent, oFooter).addStyleClass("sapUiNoContentPadding");
 
 		var oApp = new sap.m.App;
 		oApp.addPage(oPage).placeAt("body");
 	</script>
 </head>
 
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 </body>
 
 </html>

@@ -6,12 +6,10 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 sap.ui.define([
-	'sap/base/events/KeyCodes',
-	'sap/ui/dom/focus',
-	'sap/ui/thirdparty/jquery'
-], function(KeyCodes, focus /*,jQuery*/) {
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/dom/jquery/Selectors'
+], function(jQuery/*, sapTabbable */) {
 	"use strict";
-
 
 	/**
 	 * Central handler for F6 key event. Based on the current target and the given event the next element in the F6 chain is focused.
@@ -22,26 +20,36 @@ sap.ui.define([
 	 * the handling is explicitly skipped (<code>oSettings.skip</code>) or the target (<code>oSettings.target</code>) is not contained
 	 * in the used scopes (<code>oSettings.scope</code>), the event is skipped.
 	 *
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/ui/events/F6Navigation
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.m, sap.uxap
+	 */
+	var F6Navigation = {};
+
+	/**
+	 * CustomData attribute name for fast navigation groups (in DOM additional prefix "data-" is needed)
+	 *
+	 * @type string
+	 * @const
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.m, sap.uxap
+	 */
+	F6Navigation.fastNavigationKey = "sap-ui-fastnavgroup";
+
+	/**
+	 * Handles the F6 key event.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.m, sap.uxap
 	 * @param {jQuery.Event} oEvent a <code>keydown</code> event object.
 	 * @param {object} [oSettings] further options in case the handler is called manually.
 	 * @param {boolean} [oSettings.skip=false] whether the event should be ignored by the central handler (see above)
 	 * @param {Element} [oSettings.target=document.activeElement] the DOMNode which should be used as starting point to find the next DOMNode in the F6 chain.
 	 * @param {Element[]} [oSettings.scope=[document]] the DOMNodes(s) which are used for the F6 chain search
-	 * @static
-	 * @private
 	 */
-
-
-	/**
-	 * @exports sap/ui/events/F6Navigation
-	 * @private
-	 */
-	var oF6Navigation = {};
-
-	// CustomData attribute name for fast navigation groups (in DOM additional prefix "data-" is needed)
-	oF6Navigation.fastNavigationKey = "sap-ui-fastnavgroup";
-
-	oF6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
+	F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
 
 		// Returns the nearest parent DomRef of the given DomRef with attribute data-sap-ui-customfastnavgroup="true".
 		function findClosestCustomGroup(oRef) {
@@ -57,7 +65,7 @@ sap.ui.define([
 				return oGroup;
 			}
 
-			var $Group = jQuery(oRef).closest('[data-' + oF6Navigation.fastNavigationKey + '="true"]');
+			var $Group = jQuery(oRef).closest('[data-' + F6Navigation.fastNavigationKey + '="true"]');
 			return $Group[0];
 		}
 
@@ -74,7 +82,7 @@ sap.ui.define([
 				$Tabbables = jQuery.merge($Ref.parents(':sapTabbable'), $All.find(':sapTabbable').addBack(':sapTabbable'));
 			}
 
-			var $Tabbables = jQuery.unique($Tabbables);
+			var $Tabbables = jQuery.uniqueSort($Tabbables);
 			return $Tabbables.filter(function() {
 				return isContained(aScopes, this);
 			});
@@ -210,13 +218,13 @@ sap.ui.define([
 				}
 
 				if (!oEvent || !oEvent.isDefaultPrevented()) {
-					focus(oTarget);
+					oTarget.focus();
 				}
 			}
 		}
 
 		if (oEvent.type != "keydown" ||
-			oEvent.keyCode != KeyCodes.F6 ||
+			oEvent.key != 'F6' ||
 			oEvent.isMarked("sapui5_handledF6GroupNavigation") ||
 			oEvent.isMarked() ||
 			oEvent.isDefaultPrevented()) {
@@ -241,11 +249,5 @@ sap.ui.define([
 		navigate(oTarget, aScopes, !oEvent.shiftKey);
 	};
 
-	jQuery(function() {
-		jQuery(document).on("keydown", function(oEvent) {
-			oF6Navigation.handleF6GroupNavigation(oEvent, null);
-		});
-	});
-
-	return oF6Navigation;
+	return F6Navigation;
 });

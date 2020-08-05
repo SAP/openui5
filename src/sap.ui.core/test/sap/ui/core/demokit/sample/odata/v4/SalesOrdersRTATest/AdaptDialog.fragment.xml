@@ -4,7 +4,8 @@
 	<Dialog draggable="true" id="AdaptDialog" title="Adapt UI">
 		<List items="{ui>/adaptationProperties}">
 			<CustomListItem>
-				<CheckBox selected="{ui>displayed}" text="{ui>name}" select="onAdaptColumnOrField"/>
+				<CheckBox enabled="{ui>enabled}" selected="{ui>displayed}" text="{ui>name}"
+					  select="onAdaptColumnOrField"/>
 			</CustomListItem>
 		</List>
 		<buttons>

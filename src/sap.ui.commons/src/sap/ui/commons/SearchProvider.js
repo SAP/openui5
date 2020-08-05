@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.SearchProvider.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/search/OpenSearchProvider'],
-	function(jQuery, library, OpenSearchProvider) {
+sap.ui.define(['./library', 'sap/ui/core/search/OpenSearchProvider'],
+	function(library, OpenSearchProvider) {
 	"use strict";
 
 
@@ -50,4 +50,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/search/OpenSearchP
 
 	return SearchProvider;
 
-}, /* bExport= */ true);
+});

@@ -2,37 +2,46 @@
  * ${copyright}
  */
 
-// Provides the base implementation for all model implementations
+// Provides the base implementation for all composite type implementations
 sap.ui.define(['./SimpleType'],
-	function(SimpleType) {
+	function (SimpleType) {
 	"use strict";
 
 	/**
 	 * Constructor for a new CompositeType.
 	 *
-	 * @class
-	 * This is an abstract base class for composite types. Composite types have multiple input values and know
-	 * how to merge/split them upon formatting/parsing the value. Typical use case a currency or amount values.
-	 *
-	 * Subclasses of CompositeTypes can define boolean properties in the constructor:
-	 * - bUseRawValues: the format and parse method will handle raw model values, types of embedded bindings are ignored
-	 * - bParseWithValues: the parse method call will include the current binding values as a third parameter
+	 * @param {object} [oFormatOptions] Format options as defined by concrete subclasses
+	 * @param {object} [oConstraints] Constraints as defined by concrete subclasses
 	 *
 	 * @abstract
-	 *
-	 * @extends sap.ui.model.SimpleType
-	 *
-	 * @author SAP SE
-	 * @version ${version}
-	 *
-	 * @param {object} [oFormatOptions] options as provided by concrete subclasses
-	 * @param {object} [oConstraints] constraints as supported by concrete subclasses
-	 * @public
 	 * @alias sap.ui.model.CompositeType
+	 * @author SAP SE
+	 * @class
+	 *   This is an abstract base class for composite types. Composite types have multiple parts
+	 *   and know how to merge/split them upon formatting/parsing the value. Typical use cases are
+	 *   currency or amount values.
+	 *
+	 *   Subclasses of <code>CompositeType</code> may set the following boolean properties in the
+	 *   constructor:
+	 *   <ul>
+	 *     <li><code>bParseWithValues</code>: Whether the {@link #parseValue} method requires the
+	 *       current binding values as a third parameter; defaults to <code>false</code></li>
+	 *     <li><code>bUseInternalValues</code>: Whether the {@link #formatValue} and
+	 *       {@link #parseValue} methods operate on the internal values; defaults to
+	 *       <code>false</code></li>
+	 *     <li><code>bUseRawValues</code>: Whether the {@link #formatValue} and {@link #parseValue}
+	 *       methods operate on the raw model values; the types of embedded bindings are ignored;
+	 *       defaults to <code>false</code></li>
+	 *   </ul>
+	 *   <code>bUseRawValues</code> and <code>bUseInternalValues</code> cannot be both
+	 *   <code>true</code>.
+	 * @extends sap.ui.model.SimpleType
+	 * @public
+	 * @version ${version}
 	 */
 	var CompositeType = SimpleType.extend("sap.ui.model.CompositeType", /** @lends sap.ui.model.CompositeType.prototype */ {
 
-		constructor : function(oFormatOptions, oConstraints) {
+		constructor : function (oFormatOptions, oConstraints) {
 			SimpleType.apply(this, arguments);
 			this.sName = "CompositeType";
 			this.bUseRawValues = false;
@@ -41,71 +50,110 @@ sap.ui.define(['./SimpleType'],
 		},
 
 		metadata : {
-			"abstract" : true,
-			publicMethods : []
+			"abstract" : true
 		}
-
 	});
 
 	/**
-	 * Format the given set of values in model representation to an output value in the given
-	 * internal type. This happens according to the format options, if target type is 'string'.
-	 * If aValues is not defined or null, null will be returned.
+	 * Formats the given raw values to an output value of the given target type. This happens
+	 * according to the format options if the target type is <code>string</code>. If
+	 * <code>aValues</code> is not defined or <code>null</code>, <code>null</code> is returned.
 	 *
+	 * @param {any[]} aValues
+	 *   The values to be formatted
+	 * @param {string} sTargetType
+	 *   The target type; see {@link topic:ac56d92162ed47ff858fdf1ce26c18c4 Allowed Property Types}
+	 * @return {any}
+	 *   The formatted output value
+	 * @throws {sap.ui.model.FormatException}
+	 *   If a conversion to the target type is not possible
+	 *
+	 * @abstract
 	 * @function
 	 * @name sap.ui.model.CompositeType.prototype.formatValue
-	 * @param {array} aValues the values to be formatted
-	 * @param {string} sInternalType the target type
-	 * @return {any} the formatted output value
-	 *
 	 * @public
 	 */
 
 	/**
-	 * Parse a value of an internal type to the expected set of values of the model type.
+	 * Parses an external value of the given source type to the corresponding values in model
+	 * representation.
 	 *
+	 * @param {any} vValue
+	 *   The value to be parsed
+	 * @param {string} sSourceType
+	 *   The source type (the expected type of <code>vValue</code>); see
+	 *   {@link topic:ac56d92162ed47ff858fdf1ce26c18c4 Allowed Property Types}
+	 * @param {array} [aCurrentValues]
+	 *   The current values of all binding parts; required if {@link #getParseWithValues} returns
+	 *   <code>true</code>
+	 * @return {any[]}
+	 *   An array of raw values
+	 * @throws {sap.ui.model.ParseException}
+	 *   If parsing to the model type is not possible; the message of the exception is language
+	 *   dependent as it may be displayed on the UI
+	 *
+	 * @abstract
 	 * @function
 	 * @name sap.ui.model.CompositeType.prototype.parseValue
-	 * @param {any} oValue the value to be parsed
-	 * @param {string} sInternalType the source type
-	 * @param {array} aCurrentValues the current values of all binding parts
-	 * @return {array} the parse result array
-	 *
 	 * @public
 	 */
 
 	/**
-	 * Validate whether a given value in model representation is valid and meets the
-	 * defined constraints (if any).
+	 * Validates whether the given raw values meet the defined constraints. This method does nothing
+	 * if no constraints are defined.
 	 *
+	 * @param {any[]} aValues
+	 *   The set of values to be validated
+	 * @throws {sap.ui.model.ValidateException}
+	 *   If at least one of the type constraints is not met; the message of the exception is
+	 *   language dependent as it may be displayed on the UI
+	 *
+	 * @abstract
 	 * @function
 	 * @name sap.ui.model.CompositeType.prototype.validateValue
-	 * @param {array} aValues the set of values to be validated
-	 *
 	 * @public
 	 */
 
 	/**
-	 * Returns whether this composite types works on raw values or formatted values
+	 * Returns whether the {@link #formatValue} and {@link #parseValue} methods operate on the raw
+	 * model values instead of formatted values.
+	 *
+	 * @returns {boolean}
+	 *   Whether the {@link #formatValue} and {@link #parseValue} methods operate on the raw model
+	 *   values instead of formatted values
+	 *
+	 * @public
 	 */
-	CompositeType.prototype.getUseRawValues = function() {
+	CompositeType.prototype.getUseRawValues = function () {
 		return this.bUseRawValues;
 	};
 
 	/**
-	 * Returns whether this composite type works on the related native JavaScript values or not.
+	 * Returns whether the {@link #formatValue} and {@link #parseValue} methods operate on the
+	 * internal, related native JavaScript values.
+	 *
+	 * @returns {boolean}
+	 *   Whether the {@link #formatValue} and {@link #parseValue} methods operate on the internal,
+	 *   related native JavaScript values
+	 *
+	 * @public
 	 */
-	CompositeType.prototype.getUseInternalValues = function() {
+	CompositeType.prototype.getUseInternalValues = function () {
 		return this.bUseInternalValues;
 	};
 
 	/**
-	 * Returns whether this composite types needs current values for parsing
+	 * Returns whether the {@link #parseValue} method requires the current binding values as a third
+	 * parameter.
+	 *
+	 * @returns {boolean}
+	 *   Whether the {@link #parseValue} method requires the current binding values as a third
+	 *   parameter
+	 * @public
 	 */
-	CompositeType.prototype.getParseWithValues = function() {
+	CompositeType.prototype.getParseWithValues = function () {
 		return this.bParseWithValues;
 	};
 
 	return CompositeType;
-
 });

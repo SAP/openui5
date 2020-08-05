@@ -3,15 +3,14 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/m/Text',
 	'sap/ui/Device',
 	'./NewsContentRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, library, Control, Text, Device, NewsContentRenderer) {
+	function(library, Control, Text, Device, NewsContentRenderer, KeyCodes) {
 	"use strict";
 
 	/**
@@ -82,13 +81,13 @@ sap.ui.define([
 
 	NewsContent.prototype.onBeforeRendering = function() {
 		this._setPointerOnContentText();
-		this.$().unbind("mouseenter", this._addTooltip);
-		this.$().unbind("mouseleave", this._removeTooltip);
+		this.$().off("mouseenter");
+		this.$().off("mouseleave");
 	};
 
 	NewsContent.prototype.onAfterRendering = function() {
-		this.$().bind("mouseenter", this._addTooltip.bind(this));
-		this.$().bind("mouseleave", this._removeTooltip.bind(this));
+		this.$().on("mouseenter", this._addTooltip.bind(this));
+		this.$().on("mouseleave", this._removeTooltip.bind(this));
 	};
 
 	/**
@@ -172,7 +171,7 @@ sap.ui.define([
 	 */
 	NewsContent.prototype.ontap = function(oEvent) {
 		if (Device.browser.msie) {
-			this.$().focus();
+			this.$().trigger("focus");
 		}
 		this.firePress();
 	};
@@ -183,7 +182,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent which was triggered
 	 */
 	NewsContent.prototype.onkeydown = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.ENTER || oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if (oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.SPACE) {
 			this.firePress();
 			oEvent.preventDefault();
 		}

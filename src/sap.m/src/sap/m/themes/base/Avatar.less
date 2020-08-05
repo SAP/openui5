@@ -1,0 +1,279 @@
+/* ============================= */
+/* CSS for control sap.m/Avatar  */
+/* Base theme                    */
+/* ============================= */
+
+.sapFAvatar {
+	display: inline-block;
+	position: relative;
+}
+
+// Define a loop and go trough 10 color sets
+.loop-colors(@i: 1) when (@i =< 10) {
+	.generateColor(@i);
+
+	.loop-colors(@i + 1); // Execute next loop iteration
+}
+
+// Execute Loop through color sets
+.loop-colors(1);
+
+// Create classes which would just set background color of Avatar
+.generateColor (@accentIndex) {
+	@css-selector: ~"sapFAvatarColorAccent@{accentIndex}"; // Create the css selector string
+	@color-param: ~"sapUiAccent@{accentIndex}"; // Build the color param which is a sapUiAccent
+
+	// Build the real CSS selector.
+	// The output would be something like this: .sapFAvatar.sapFAvatarColorAccent6 {background-color: #0092d1;}
+	.@{css-selector} {
+		background-color: @@color-param;
+	}
+}
+
+.sapFAvatarIcon {
+	text-align: center;
+	color: @sapUiContentContrastTextColor;
+
+	.sapUiIcon {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		-webkit-transform: translate(-50%, -50%);
+	}
+}
+
+.sapFAvatarColorTransparent {
+	background-color: transparent;
+
+	&.sapFAvatarIcon,
+	&>.sapFAvatarInitialsHolder {
+		color: @sapUiContentIconColor;
+	}
+}
+
+.sapFAvatarColorTileIcon {
+	background-color: @sapUiTileIconColor;
+}
+
+.sapFAvatarColorPlaceholder {
+	background-color: @sapUiContentImagePlaceholderBackground;
+}
+
+.sapFAvatarInitialsHolder {
+	color: @sapUiContentContrastTextColor;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+}
+
+.sapFAvatarImage {
+	text-align: center;
+	background-color: transparent;
+
+	.sapFAvatarTypeIcon, .sapFAvatarInitialsHolder {
+		display: none;
+	}
+}
+
+.sapFAvatarImageHolder {
+	background: no-repeat center;
+	display: block;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	.sapFAvatar:not(.sapFAvatarImage) &
+	{
+		display: none;
+	}
+}
+
+.sapFAvatarImageCover {
+	background-size: cover;
+}
+
+.sapFAvatarImageContain {
+	background-size: contain;
+}
+
+.sapFAvatarCircle {
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+
+	.sapMImg,
+	.sapFAvatarImageHolder {
+		border-radius: 50%;
+		-webkit-border-radius: 50%;
+	}
+}
+
+.sapFAvatarXS {
+	height: 2rem;
+	width: 2rem;
+	font-size: 1rem;
+
+	.sapFAvatarInitialsHolder {
+		font-size: 0.75rem;
+	}
+}
+
+.sapFAvatarS {
+	height: 3rem;
+	width: 3rem;
+	font-size: 1.5rem;
+
+	.sapFAvatarInitialsHolder {
+		font-size: 1.125rem;
+	}
+}
+
+.sapFAvatarM {
+	height: 4rem;
+	width: 4rem;
+	font-size: 2rem;
+
+	.sapFAvatarInitialsHolder {
+		font-size: 1.625rem;
+	}
+}
+
+.sapFAvatarL {
+	height: 5rem;
+	width: 5rem;
+	font-size: 2.5rem;
+
+	.sapFAvatarInitialsHolder {
+		font-size: 2rem;
+	}
+}
+
+.sapFAvatarXL {
+	height: 7rem;
+	width: 7rem;
+	font-size: 3rem;
+
+	.sapFAvatarInitialsHolder {
+		font-size: 2.75rem;
+	}
+}
+
+.sapFAvatarFocusable:focus {
+	outline: 0.0625rem dotted @sapUiContentFocusColor;
+	.sapUiRespGrid & {
+		z-index: 100;
+	}
+
+    &.sapFAvatarImage.sapFAvatarSquare {
+        outline-offset: 0.0625rem;
+    }
+}
+
+html[data-sap-ui-browser^="ie"] .sapFAvatarFocusable:focus,
+html[data-sap-ui-browser^="ed"] .sapFAvatarFocusable:focus {
+	outline-style: dashed;
+}
+
+html:not(.sap-desktop) .sapFAvatarFocusable:focus {
+	outline: none;
+}
+
+.sapFAvatarInitialsHolder {
+	color: @sapUiContentImagePlaceholderForegroundColor;
+}
+
+// Apply LightBox Magnifying glass mixin to control
+.lightBoxMagnifyingGlassMixing(~".sapFAvatar", ~".sapFAvatarMagnifyingGlass");
+
+
+//restrinct inner elements of blocking press event of the whole control
+.sapFAvatar * {
+	pointer-events: none;
+}
+
+.sapFAvatarBadgeIconActiveArea {
+	position: absolute;
+	pointer-events: all;
+
+	.sapFAvatarCircle & {
+		width: 100%;
+		height: 100%;
+		bottom: 0;
+		right: 0;
+	}
+	.sapFAvatarSquare & {
+		width: ~"calc(100% + 0.125rem)";
+		height: ~"calc(100% + 0.125rem)";
+		bottom: -0.125rem;
+		right:  -0.125rem;
+	}
+	.sapFAvatarSquare.sapFAvatarXL & {
+		width: ~"calc(100% + 0.25rem)";
+		height: ~"calc(100% + 0.25rem)";
+		bottom: -0.25rem;
+		right: -0.25rem;
+	}
+	.sapFAvatarSquare.sapFAvatarL & {
+		width: ~"calc(100% + 0.1875rem)";
+		height: ~"calc(100% + 0.1875rem)";
+		bottom: -0.1875rem;
+		right: -0.1875rem;
+	}
+	.sapFAvatarSquare.sapFAvatarCustom & {
+		width: 104%;
+		height: 104%;
+		bottom: -4%;
+		right: -4%;
+	}
+}
+
+.sapFAvatarBadgeIcon {
+	display: inline-block;
+	position: absolute;
+	bottom: 0;
+	right:  0;
+
+	width: 1.125rem;
+	height: 1.125rem;
+
+	border-radius: 50%;
+	font-size: 0.75rem;
+	text-align: center;
+
+	background-color: @sapUiLink;
+	border-color: @sapUiContentContrastTextColor;
+
+	>.sapUiIcon {
+		vertical-align: middle;
+		color: @sapUiContentContrastTextColor;
+	}
+	&:after {
+		content: "";
+		display: inline-block;
+		vertical-align: middle;
+		height: 100%;
+	}
+	.sapFAvatarL & {
+
+		width: 1.25rem;
+		height: 1.25rem;
+		font-size: 0.875rem;
+	}
+
+	.sapFAvatarXL & {
+
+		width: 1.75rem;
+		height: 1.75rem;
+		font-size: 1rem;
+	}
+
+	.sapFAvatarCustom & {
+		font-size: 16.5%;
+
+		width: 25%;
+		height: 25%;
+	}
+}

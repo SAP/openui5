@@ -1,0 +1,27 @@
+/* =================================== */
+/* CSS for control sap.m/MessageStrip  */
+/* Quartz High Contrast White theme    */
+/* =================================== */
+
+.sapMMsgStrip {
+	border-radius: @sapUiElementBorderCornerRadius;
+	border-width: 0.125rem;
+}
+
+.sapMMsgStripCloseButton {
+	top: -0.4375rem;
+}
+
+.sapUiSizeCompact .sapMMsgStripCloseButton {
+	top: -0.0625rem;
+}
+
+.sapMMsgStripInformation {
+	background-color: @sapInformationBackground;
+	border-color: @sapInformationBorderColor;
+	color: @sapUiBaseText;
+
+	& .sapMMsgStripIcon {
+		color: @sapInformativeElementColor;
+	}
+}

@@ -1,0 +1,37 @@
+{
+	"sap.app": {
+		"id": "sap.uxap.sample.ObjectPageBlockViewTypes",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.uxap.sample.ObjectPageBlockViewTypes.view.ObjectPageOnJSON",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/ObjectPageOnJSON.view.xml",
+					"../SharedBlocks/goals/GoalsBlock.js",
+					"../SharedBlocks/goals/GoalsBlockJS.js",
+					"../SharedBlocks/goals/GoalsBlockJSON.js",
+					"../SharedBlocks/goals/GoalsBlockHTML.js",
+					"../SharedBlocks/goals/GoalsBlock.view.xml",
+					"../SharedBlocks/goals/GoalsBlock.view.js",
+					"../SharedBlocks/goals/GoalsBlock.view.json",
+					"../SharedBlocks/goals/GoalsBlock.view.html",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

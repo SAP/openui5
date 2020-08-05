@@ -1,19 +1,19 @@
-/*!
- * ${copyright}
- */
+sap.ui.define([
+	"sap/m/CustomListItem",
+	"sap/m/Button",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function(
+	CustomListItem,
+	Button,
+	elementDesigntimeTest,
+	elementActionTest
+) {
+	"use strict";
 
-(function () {
-	'use strict';
-
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/m/CustomListItem",
-		'sap/m/Button',
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, CustomListItem, Button, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.m.CustomListItem",
 			create: function () {
 				return new CustomListItem({
@@ -23,12 +23,8 @@
 				});
 			}
 		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function () {
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("text1").getId(),
@@ -41,7 +37,7 @@
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for CustomListItem control", {
+		elementActionTest("Checking the move action for CustomListItem control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 			'<ListBase id="myList">' +
 			'<CustomListItem id="myCustomListItem">' +
@@ -82,4 +78,4 @@
 			afterRedo: fnConfirmElement1IsOn3rdPosition
 		});
 	});
-})();
+});

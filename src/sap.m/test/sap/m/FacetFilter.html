@@ -220,7 +220,7 @@
 		}));
 		oTestPage.addContent(oFF);
 
-		var oToolbar = new sap.m.Toolbar({
+		var oToolbar = new sap.m.OverflowToolbar({
 			content: [new sap.m.Button({
 				    	text: "Save Selections",
 				    	press: function(oEvent) {
@@ -445,7 +445,7 @@
 	    	}
 		  });
 
-		var oToolbar1 = new sap.m.Toolbar({
+		var oToolbar1 = new sap.m.OverflowToolbar({
 			content: [
 			          oListLabel,
 			          oListSelect,
@@ -459,7 +459,7 @@
 			          oApplyButton
 			          ]
 		});
-		var oToolbar2 = new sap.m.Toolbar({
+		var oToolbar2 = new sap.m.OverflowToolbar({
 			content: [
 			          oRadioSingleSelect,
 			          oRadioMultiSelect,
@@ -608,7 +608,7 @@
 			}
 		});
 
-		var oToolbar = new sap.m.Toolbar({
+		var oToolbar = new sap.m.OverflowToolbar({
 			content: [oVisibleCheckbox,
 			          oRadioSimpleType,
 			          oRadioLightType,
@@ -969,19 +969,50 @@
 			}),
 
 		}));
-		var oToolbar = new sap.m.Toolbar({content: [oFFWithModelOfArbitrarySizeLimit]});
+		var oToolbar = new sap.m.OverflowToolbar({content: [oFFWithModelOfArbitrarySizeLimit]});
 
 		oTestPage.addContent(oToolbar);
+	};
+
+	// BCP: 1880435856
+	function createListOnNavigating() {
+		function fnAddList() {
+			setTimeout(function () {
+				oFacet.setModel(new sap.ui.model.json.JSONModel([{title: "Select and click back Async"}, {title: "List 2"}]));
+				// Custom coding from application side. They should refreshFacetList by hand if
+				// async update is happening in the listClose event
+				oFacet.refreshFacetList();
+			}, 500);
+		}
+
+		var oFacet = new sap.m.FacetFilter("listUpdateModelAsync", {
+			type: "Light",
+			showPersonalization: false,
+			showReset: true,
+			reset: "handleFacetFilterReset"
+		});
+
+		var oFacetListTemplate = new sap.m.FacetFilterList({
+			title: "{title}",
+			listClose: fnAddList
+		});
+
+		oFacet.setModel(new sap.ui.model.json.JSONModel([{title: "Select and click back"}]));
+		oFacet.bindAggregation("lists", "/", oFacetListTemplate);
+
+		oTestPage.addContent(oFacet);
 	}
 
 	////////////////////////////
 	//fnVariantNoListOpen();
 	//fnVariantListOpen();
 	fnOData();
+	createListOnNavigating();
 	fnFacetFilterListProperties();
 	fnFacetFilterProperties();
 	fnDependentFacets();
 	fnModelSizeLimit();
+
 </script>
 
 </head>

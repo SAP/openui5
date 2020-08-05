@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nColumnsPanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table', './library', 'sap/ui/core/library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/ui/core/IconPool', 'sap/m/ScrollContainer'
-], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Table, library, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, IconPool, ScrollContainer) {
+	'sap/ui/core/library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/ui/core/IconPool', './library', './Table', './Column', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './ScrollContainer', './Text', './Button', './OverflowToolbar', './OverflowToolbarLayoutData', './OverflowToolbarButton', './ToolbarSpacer', "sap/ui/thirdparty/jquery"
+], function(CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, IconPool, library, Table, Column, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, ScrollContainer, Text, Button, OverflowToolbar, OverflowToolbarLayoutData, OverflowToolbarButton, ToolbarSpacer, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -96,7 +96,7 @@ sap.ui.define([
 
 				/**
 				 * Event raised when a <code>columnsItem</code> is added.
-				 * @deprecated As of version 1.50, replaced by extended event {@link sap.m.P13nColumnsPanel.html#changeColumnsItems}
+				 * @deprecated As of version 1.50, replaced by extended event {@link sap.m.P13nColumnsPanel#event:changeColumnsItems}
 				 * @since 1.26.0
 				 */
 				addColumnsItem: {
@@ -160,20 +160,17 @@ sap.ui.define([
 				setData: {}
 			}
 		},
-		renderer: function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapMP13nColumnsPanel");
-			oRm.writeClasses();
-			oRm.write(">");
-
-			var aContent = oControl.getAggregation("content");
-			if (aContent) {
-				aContent.forEach(function(oContent) {
-					oRm.renderControl(oContent);
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl){
+				oRm.openStart("div", oControl);
+				oRm.class("sapMP13nColumnsPanel");
+				oRm.openEnd();
+				oControl.getAggregation("content").forEach(function(oChildren){
+					oRm.renderControl(oChildren);
 				});
+				oRm.close("div");
 			}
-			oRm.write("</div>");
 		}
 	});
 
@@ -473,9 +470,6 @@ sap.ui.define([
 			return;
 		}
 		sap.ui.getCore().applyChanges();
-		if (!!oItem.getDomRef()) {
-			oItem.focus();
-		}
 	};
 
 	// -------------------------- new --------------------------------------------
@@ -490,9 +484,9 @@ sap.ui.define([
 			itemPress: jQuery.proxy(this._onItemPressed, this),
 			selectionChange: jQuery.proxy(this._onSelectionChange, this),
 			columns: [
-				new sap.m.Column({
+				new Column({
 					vAlign: CoreLibrary.VerticalAlign.Middle,
-					header: new sap.m.Text({
+					header: new Text({
 						text: {
 							parts: [
 								{
@@ -515,7 +509,7 @@ sap.ui.define([
 				templateShareable: false,
 				template: new ColumnListItem({
 					cells: [
-						new sap.m.Text({
+						new Text({
 							text: "{text}"
 						})
 					],
@@ -532,10 +526,10 @@ sap.ui.define([
 	P13nColumnsPanel.prototype._createToolbar = function() {
 		var that = this;
 		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		var oToolbar = new sap.m.OverflowToolbar(this.getId() + "-toolbar", {
+		var oToolbar = new OverflowToolbar(this.getId() + "-toolbar", {
 			design: ToolbarDesign.Auto,
 			content: [
-				new sap.m.ToolbarSpacer(), new SearchField(this.getId() + "-searchField", {
+				new ToolbarSpacer(), new SearchField(this.getId() + "-searchField", {
 					liveChange: function(oEvent) {
 						var sValue = oEvent.getSource().getValue(), iDelay = (sValue ? 300 : 0); // no delay if value is empty
 
@@ -551,14 +545,14 @@ sap.ui.define([
 					},
 					// execute the standard search
 					search: jQuery.proxy(this._onExecuteSearch, this),
-					layoutData: new sap.m.OverflowToolbarLayoutData({
+					layoutData: new OverflowToolbarLayoutData({
 						minWidth: "12.5rem",
 						maxWidth: "23.077rem",
 						shrinkable: true,
 						moveToOverflow: false,
 						stayInOverflow: false
 					})
-				}), new sap.m.Button({
+				}), new Button({
 					text: {
 						path: '/showOnlySelectedItems',
 						formatter: function(bShowOnlySelectedItems) {
@@ -573,11 +567,11 @@ sap.ui.define([
 					},
 					type: ButtonType.Transparent,
 					press: jQuery.proxy(this._onSwitchButtonShowSelected, this),
-					layoutData: new sap.m.OverflowToolbarLayoutData({
+					layoutData: new OverflowToolbarLayoutData({
 						moveToOverflow: true,
 						priority: OverflowToolbarPriority.High
 					})
-				}), new sap.m.OverflowToolbarButton({
+				}), new OverflowToolbarButton({
 					icon: IconPool.getIconURI("collapse-group"),
 					text: oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
 					tooltip: oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
@@ -586,12 +580,12 @@ sap.ui.define([
 						path: '/isMoveUpButtonEnabled'
 					},
 					press: jQuery.proxy(this.onPressButtonMoveToTop, this),
-					layoutData: new sap.m.OverflowToolbarLayoutData({
+					layoutData: new OverflowToolbarLayoutData({
 						moveToOverflow: true,
 						priority: OverflowToolbarPriority.Low,
 						group: 2
 					})
-				}), new sap.m.OverflowToolbarButton({
+				}), new OverflowToolbarButton({
 					icon: IconPool.getIconURI("slim-arrow-up"),
 					text: oRb.getText('COLUMNSPANEL_MOVE_UP'),
 					tooltip: oRb.getText('COLUMNSPANEL_MOVE_UP'),
@@ -600,12 +594,12 @@ sap.ui.define([
 						path: '/isMoveUpButtonEnabled'
 					},
 					press: jQuery.proxy(this.onPressButtonMoveUp, this),
-					layoutData: new sap.m.OverflowToolbarLayoutData({
+					layoutData: new OverflowToolbarLayoutData({
 						moveToOverflow: true,
 						priority: OverflowToolbarPriority.High,
 						group: 1
 					})
-				}), new sap.m.OverflowToolbarButton({
+				}), new OverflowToolbarButton({
 					icon: IconPool.getIconURI("slim-arrow-down"),
 					text: oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
 					tooltip: oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
@@ -614,12 +608,12 @@ sap.ui.define([
 						path: '/isMoveDownButtonEnabled'
 					},
 					press: jQuery.proxy(this.onPressButtonMoveDown, this),
-					layoutData: new sap.m.OverflowToolbarLayoutData({
+					layoutData: new OverflowToolbarLayoutData({
 						moveToOverflow: true,
 						priority: OverflowToolbarPriority.High,
 						group: 1
 					})
-				}), new sap.m.OverflowToolbarButton({
+				}), new OverflowToolbarButton({
 					icon: IconPool.getIconURI("expand-group"),
 					text: oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
 					tooltip: oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
@@ -628,7 +622,7 @@ sap.ui.define([
 						path: '/isMoveDownButtonEnabled'
 					},
 					press: jQuery.proxy(this.onPressButtonMoveToBottom, this),
-					layoutData: new sap.m.OverflowToolbarLayoutData({
+					layoutData: new OverflowToolbarLayoutData({
 						moveToOverflow: true,
 						priority: OverflowToolbarPriority.Low,
 						group: 2
@@ -759,6 +753,23 @@ sap.ui.define([
 	};
 
 	P13nColumnsPanel.prototype._sortModelItemsByPersistentIndex = function(aModelItems) {
+		// BCP 0020751294 0000593415 2018
+		var oCollator;
+		var sLanguage;
+		try {
+			sLanguage = sap.ui.getCore().getConfiguration().getLocale().toString();
+			if (typeof window.Intl !== 'undefined') {
+				oCollator = window.Intl.Collator(sLanguage, {
+					numeric: true
+				});
+			}
+		} catch (oException) {
+			// this exception can happen if the configured language is not convertible to BCP47 -> getLocale will deliver an exception
+		}
+		// BCP 0020751295 0000514259 2018
+		aModelItems.forEach(function(oMItem, iIndex) {
+			oMItem.localIndex = iIndex;
+		});
 		aModelItems.sort(function(a, b) {
 			if (a.persistentSelected === true && (b.persistentSelected === false || b.persistentSelected === undefined)) {
 				return -1;
@@ -770,17 +781,16 @@ sap.ui.define([
 				} else if (b.persistentIndex > -1 && a.persistentIndex > b.persistentIndex) {
 					return 1;
 				} else {
-					return 0;
+					return a.localIndex - b.localIndex;
 				}
 			} else if ((a.persistentSelected === false || a.persistentSelected === undefined) && (b.persistentSelected === false || b.persistentSelected === undefined)) {
-				if (a.text < b.text) {
-					return -1;
-				} else if (a.text > b.text) {
-					return 1;
-				} else {
-					return 0;
-				}
+				return oCollator ? oCollator.compare(a.text, b.text) : a.text.localeCompare(b.text, sLanguage, {
+					numeric: true
+				});
 			}
+		});
+		aModelItems.forEach(function(oMItem) {
+			delete oMItem.localIndex;
 		});
 	};
 

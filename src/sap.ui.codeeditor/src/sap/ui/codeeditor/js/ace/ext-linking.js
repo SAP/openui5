@@ -15,7 +15,7 @@ require("../config").defineOptions(Editor.prototype, "editor", {
         },
         value: false
     }
-})
+});
 
 exports.previousLinkingHover = false;
 
@@ -54,8 +54,11 @@ function onClick(e) {
     }
 }
 
-});
-                (function() {
-                    ace.require(["ace/ext/linking"], function() {});
+});                (function() {
+                    ace.require(["ace/ext/linking"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
                 })();
             

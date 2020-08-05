@@ -1,0 +1,63 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "2fd46505aab57b49095f4c30f24ff1ecda1b4819",
+        "type": "FIX",
+        "text": ": RTA Add Iframe Size Input Unit Handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080133801"
+          }
+        ]
+      },
+      {
+        "id": "b81759d97a3c2ec51b7c20c0598c70fb86ad7945",
+        "type": "FIX",
+        "text": " For add xml change fill moduleName in change definition",
+        "references": []
+      },
+      {
+        "id": "09f3d5c562b98012316a261e6b48e53461c6feff",
+        "type": "FIX",
+        "text": " Reuse the same inbound \"customer.savedAsAppVariant\" if app variant",
+        "references": []
+      },
+      {
+        "id": "b5efee9cee75e0dd54c76502b79a9dcdd3f9d085",
+        "type": "FIX",
+        "text": " sap.ui.fl - extension point default content issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080202656"
+          }
+        ]
+      },
+      {
+        "id": "f151864da8826a20cea729bc16e84d366607a26e",
+        "type": "FIX",
+        "text": " sap.ui.rta - fixed check toolbar and execute funcion",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080199399"
+          }
+        ]
+      },
+      {
+        "id": "611a0d75990f4d0c09316a3ff6536f2b205f9445",
+        "type": "FIX",
+        "text": " sap.ui.rta - prevent double save and exit in rta",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080157740"
+          }
+        ]
+      }
+    ]
+  }
+}

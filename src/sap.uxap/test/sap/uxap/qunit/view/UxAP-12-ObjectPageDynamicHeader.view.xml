@@ -1,0 +1,230 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.uxap"
+		  xmlns:layout="sap.ui.layout"
+		  xmlns:m="sap.m"
+		  height="100%"
+>
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<breadcrumbs>
+					<m:Breadcrumbs>
+						<m:Link text="Page 1 a very long link"/>
+						<m:Link text="Page 2 long link"/>
+					</m:Breadcrumbs>
+				</breadcrumbs>
+
+				<expandedHeading>
+					<m:Title text="Denise Smith" wrapping="true"/>
+				</expandedHeading>
+
+				<snappedHeading>
+					<m:FlexBox fitContainer="true" alignItems="Center">
+						<m:Avatar src="./test-resources/sap/uxap/images/imageID_275314.png" class="sapUiTinyMarginEnd"/>
+						<m:Title text="Denise Smith" wrapping="true"/>
+					</m:FlexBox>
+				</snappedHeading>
+
+				<expandedContent>
+					<m:Text text="Senior UI Developer"/>
+				</expandedContent>
+
+				<snappedContent>
+					<m:Text text="Senior UI Developer"/>
+				</snappedContent>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Header Title On Phone"/>
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:OverflowToolbarButton type="Emphasized" icon="sap-icon://pull-down" tooltip="pull-down" text="show section"/>
+					<m:OverflowToolbarButton type="Emphasized" icon="sap-icon://show" tooltip="show" text="show state"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+			<m:FlexBox wrap="Wrap" fitContainer="true" >
+				<m:Avatar class="sapUiSmallMarginEnd" src="./test-resources/sap/uxap/images/imageID_275314.png" displaySize="L" />
+
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:Link text="+33 6 4512 5158"/>
+					<m:Link text="DeniseSmith@sap.com"/>
+					<layout:HorizontalLayout>
+						<m:Image src="./test-resources/sap/uxap/images/linkedin.png"/>
+						<m:Image src="./test-resources/sap/uxap/images/Twitter.png" class="sapUiSmallMarginBegin"/>
+					</layout:HorizontalLayout>
+				</layout:VerticalLayout>
+
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:Label text="Hello! I am Denise and I use UxAP"/>
+					<m:VBox>
+						<m:Label text="Achieved goals"/>
+						<m:ProgressIndicator percentValue="30" displayValue="30%"/>
+					</m:VBox>
+				</layout:VerticalLayout>
+
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:Label text="San Jose, USA"/>
+				</layout:VerticalLayout>
+			</m:FlexBox>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 1" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label section 1"  />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 2" mode="Expanded" id="subsection2">
+						<blocks>
+							<m:Label text="Label label"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 3" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label section 3" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 4" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 5" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 6" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 7" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 8" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 9" mode="Expanded">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 10a" mode="Expanded" id="subsection10a">
+						<blocks>
+							<m:Label text="This is my label" />
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Section 10" mode="Expanded" id="subsection10">
+						<blocks>
+							<ObjectPageLazyLoader stashed="true" id="subsection10stash">
+								<m:Toolbar>
+									<m:Label text="first toolbar"/>
+									<m:ToolbarSpacer/>
+									<m:Button text="Button1a" />
+									<m:Button text="Button2a" />
+									<m:Button text="Button3a" />
+								</m:Toolbar>
+							</ObjectPageLazyLoader>
+							<ObjectPageLazyLoader stashed="true" id="subsection1110stash">
+								<m:Toolbar>
+									<m:Label text="second toolbar"/>
+									<m:ToolbarSpacer/>
+									<m:Button text="Button1b" />
+									<m:Button text="Button2b" />
+									<m:Button text="Button3b" />
+								</m:Toolbar>
+							</ObjectPageLazyLoader>
+							<ObjectPageLazyLoader stashed="true" id="subsection11110stash">
+								<m:Toolbar>
+									<m:Label text="second toolbar"/>
+									<m:ToolbarSpacer/>
+									<m:Button text="Button1b" />
+									<m:Button text="Button2b" />
+									<m:Button text="Button3b" />
+								</m:Toolbar>
+							</ObjectPageLazyLoader>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="my section">
+				<subSections>
+					<ObjectPageSubSection title="Section 11" mode="Expanded" id="subsection11">
+						<blocks>
+							<ObjectPageLazyLoader stashed="true" id="subsection11stash">
+								<m:Toolbar>
+									<m:Label text="My stashed toolbar"/>
+									<m:ToolbarSpacer/>
+									<m:Button text="Button1" />
+									<m:Button text="Button2" />
+									<m:Button text="Button3" />
+								</m:Toolbar>
+								<m:Toolbar>
+									<m:Label text="My stashed toolbar2"/>
+									<m:ToolbarSpacer/>
+									<m:Button text="Button4" />
+									<m:Button text="Button5" />
+									<m:Button text="Button6" />
+								</m:Toolbar>
+							</ObjectPageLazyLoader>
+
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+		<footer>
+			<m:OverflowToolbar>
+				<m:ToolbarSpacer />
+				<m:Button type="Accept" text="Accept"/>
+				<m:Button type="Reject" text="Reject"/>
+			</m:OverflowToolbar>
+		</footer>
+	</ObjectPageLayout>
+</mvc:View>

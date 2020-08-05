@@ -1,11 +1,12 @@
 sap.ui.predefine('testlibs/scenario5/lib4/library',['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLib) {
+	"use strict";
 	sap.ui.getCore().initLibrary({
 		name: 'testlibs.scenario5.lib4',
 		dependencies: [
 		],
 		noLibraryCSS: true
 	});
-	return testlibs.scenario5.lib4;
+	return testlibs.scenario5.lib4; // eslint-disable-line no-undef
 });
 jQuery.sap.registerPreloadedModules({
 	"version":"2.0",

@@ -1,0 +1,19 @@
+/* ================================== */
+/* CSS for control sap.m/Breadcrumbs  */
+/* Quartz High Contrast White theme   */
+/* ================================== */
+
+.sapMBreadcrumbs {
+
+	.sapMSltIconOnly.sapMSltHoverable:hover, .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled),
+	.sapMSltPressed:not(.sapMSltDisabled), .sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:hover,
+	.sapMSlt, .sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover {
+		background: transparent;
+		border: none;
+	}
+
+	.sapMBreadcrumbsCurrentLocation:focus {
+		outline: 0.125rem dotted @sapUiHcStandardForeground;
+		outline-offset: -0.125rem;
+	}
+}

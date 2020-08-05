@@ -6,9 +6,15 @@ sap.ui.define([
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/matchers/Properties",
-	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/demo/iconexplorer/test/integration/pages/Common"
-], function(Opa5, Press, EnterText, Ancestor, AggregationLengthEquals, AggregationFilled, Properties, PropertyStrictEquals, Common) {
+	"sap/ui/test/matchers/PropertyStrictEquals"
+], function(Opa5,
+			Press,
+			EnterText,
+			Ancestor,
+			AggregationLengthEquals,
+			AggregationFilled,
+			Properties,
+			PropertyStrictEquals) {
 	"use strict";
 
 	var sViewName = "Overview",
@@ -31,7 +37,7 @@ sap.ui.define([
 		});
 	}
 
-	function oneItemInTheListContainTheSearchTerm (sName, oResults) {
+	function oneItemInTheListContainsTheSearchTerm (sName, oResults) {
 		var aItems = oResults.getItems();
 
 		// table needs items
@@ -39,12 +45,18 @@ sap.ui.define([
 			return false;
 		}
 
-		return !!aItems.filter(function (oItem) {
-			return oItem.getCells()[1].getText().indexOf(sName) !== -1;
-		}).length;
+		return !!aItems.some(function (oItem) {
+			var sText;
+			if (oItem.getCells) {
+				sText = oItem.getCells()[1].getText();
+			}else {
+				sText = oItem.getContent()[0].getContent()[1].getText();
+			}
+			return sText.indexOf(sName) !== -1;
+		});
 	}
 
-	function onlyOneItemInTheListContainTheSearchTerm (sName, oResults) {
+	function onlyOneItemInTheListContainsTheSearchTerm (sName, oResults) {
 		var aItems = oResults.getItems();
 
 		// only one item is present in the result table
@@ -80,7 +92,7 @@ sap.ui.define([
 			},
 			actions: oOptions.actions,
 			success: oOptions.success,
-			errorMessage: "Table in view '" + sViewName + "' does not contain an Item with name '" + sName + "'"
+			errorMessage: "Table in view \"" + sViewName + "\" does not contain an Item with name \"" + sName + "\""
 		};
 	}
 
@@ -106,7 +118,7 @@ sap.ui.define([
 					});
 				}
 			},
-			errorMessage: "Table in view '" + sViewName + "' does not contain an Item with name '" + sName + "'"
+			errorMessage: "Table in view \"" + sViewName + "\" does not contain an Item with name \"" + sName + "\""
 		};
 	}
 
@@ -120,15 +132,23 @@ sap.ui.define([
 			},
 			actions: oOptions.actions,
 			success: oOptions.success,
-			errorMessage: "Table in view '" + sViewName + "' does not contain an Item at position '" + iPosition + "'"
+			errorMessage: "Table in view \"" + sViewName + "\" does not contain an Item at position \"" + iPosition + "\""
 		};
 	}
 
 	Opa5.createPageObjects({
 
 		onTheOverviewPage: {
-			baseClass: Common,
-			actions: jQuery.extend({
+			actions: {
+				iPressTheNavigationBackButton: function(){
+					return this.waitFor({
+						id: "buttonNavigateBack",
+						viewName: sViewName,
+						actions: new Press(),
+						errorMessage: "The Button is not there"
+					});
+				},
+
 				iPressATableItemWithName: function (sName) {
 					return this.waitFor(createWaitForTableItemWithName({
 						name: sName,
@@ -177,7 +197,7 @@ sap.ui.define([
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
-						matchers: [ new AggregationFilled({name: "items"}) ],
+						matchers: new AggregationFilled({name: "items"}),
 						errorMessage: "The Table has not been loaded"
 					});
 				},
@@ -188,9 +208,7 @@ sap.ui.define([
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
-						matchers: new AggregationFilled({
-							name: "items"
-						}),
+						matchers: new AggregationFilled({name: "items"}),
 						success: function(oResults) {
 							sFirstObjectTitle = oResults.getItems()[0].getCells()[1].getText();
 
@@ -204,10 +222,10 @@ sap.ui.define([
 								id: [sResultsId, sSearchFieldId],
 								viewName: sViewName,
 								check: allItemsInTheListContainTheSearchTerm,
-								errorMessage: "Did not find any table entries or too many while trying to search for the first object."
+								errorMessage: "Did not find any table entries or too many while trying to search for the first object"
 							});
 						},
-						errorMessage: "Did not find table entries while trying to search for the first object."
+						errorMessage: "Did not find table entries while trying to search for the first object"
 					});
 				},
 
@@ -216,7 +234,7 @@ sap.ui.define([
 						id: sSearchFieldId,
 						viewName: sViewName,
 						actions: aActions,
-						errorMessage: "Failed to find search field in Overview view.'"
+						errorMessage: "Failed to find search field in Overview view"
 					});
 				},
 
@@ -228,19 +246,8 @@ sap.ui.define([
 					return this.iSearchForValueWithActions([new EnterText({text: sSearchString}), new Press()]);
 				},
 
-				iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh: function () {
-					var fireRefreshButtonPressedOnSearchField = function (oSearchField) {
-						/*eslint-disable new-cap */
-						var oEvent = jQuery.Event("touchend");
-						/*eslint-enable new-cap */
-						oEvent.originalEvent = {refreshButtonPressed: true, id: oSearchField.getId()};
-						oEvent.target = oSearchField;
-						oEvent.srcElement = oSearchField;
-						jQuery.extend(oEvent, oEvent.originalEvent);
-
-						oSearchField.fireSearch(oEvent);
-					};
-					return this.iSearchForValueWithActions([new EnterText({text: sSomethingThatCannotBeFound}), fireRefreshButtonPressedOnSearchField]);
+				iTypeSomethingInTheSearchThatCannotBeFound: function () {
+					return this.iSearchForValueWithActions([new EnterText({text: sSomethingThatCannotBeFound})]);
 				},
 
 				iClearTheSearch: function () {
@@ -255,9 +262,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.IconTabFilter",
 						viewName: sViewName,
-						matchers: new Properties({
-							key: sKey
-						}),
+						matchers: new Properties({key: sKey}),
 						actions: new Press(),
 						errorMessage: "Cannot find the icon tab filter"
 					});
@@ -268,7 +273,7 @@ sap.ui.define([
 						id: "surprise",
 						viewName: sViewName,
 						actions: new Press(),
-						errorMessage: "Failed to find surprise me button field in overview view.'"
+						errorMessage: "Failed to find surprise me button field in overview view"
 					});
 				},
 
@@ -290,7 +295,7 @@ sap.ui.define([
 							});
 						},
 						actions: new Press(),
-						errorMessage: "Failed to find the tag selection bar in overview view.'"
+						errorMessage: "Failed to find the tag selection bar in overview view"
 					});
 				},
 
@@ -305,11 +310,11 @@ sap.ui.define([
 						success: function(oComboBox) {
 							// press on the item with the key specified by the parameter
 							return this.waitFor({
-								controlType: "sap.ui.core.Item",
+								controlType: "sap.m.StandardListItem",
 								matchers: new Ancestor(oComboBox),
 								success: function(aItems) {
 									aItems.some(function (oItem) {
-										if (oItem.getText() === sName) {
+										if (oItem.getTitle() === sName) {
 											new Press().executeOn(oItem);
 											return true;
 										}
@@ -317,25 +322,64 @@ sap.ui.define([
 								}
 							});
 						},
-						errorMessage: "Failed to find the category selection in overview view.'"
+						errorMessage: "Failed to find the category selection in overview view"
+					});
+				},
+				iClickonTheFontSelectionButton: function(){
+					return this.waitFor({
+						id: "fontSelector",
+						viewName: sViewName,
+						actions: new Press(),
+						errorMessage: "The font selection button is not there"
+					});
+				},
+				iSelectTheIconFont:  function(sFontName) {
+					return this.waitFor({
+						id: "selectFont",
+						viewName: sViewName,
+						actions: function(oList) {
+							var oItems = oList.getContent()[0].getItems();
+							for (var i = 0; i < oItems.length; i++) {
+								var sItemFontName = oItems[i].getCustomData()[0].getValue();
+
+								if (sItemFontName === sFontName) {
+									new Press().executeOn(oItems[i]);
+								}
+							}
+						},
+						errorMessage: "Can't select the icon font \"" + sFontName + "\""
 					});
 				}
-			}),
+			},
 
-			assertions: jQuery.extend({
+			assertions: {
+				iShouldSeeTheTNTFontPage: function () {
+					return this.waitFor({
+						id: "fontSelector",
+						viewName: sViewName,
+						matchers : new PropertyStrictEquals({
+							name : "text",
+							value : "SAP Fiori Tools"
+						}),
+						success: function () {
+							Opa5.assert.ok(true, "Showing the TNT font page");
+						},
+						errorMessage: "Can't find the TNT font page"
+					});
+				},
 
 				iShouldSeeTheTable: function () {
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
 						success: function (oResults) {
-							Opa5.assert.ok(oResults, "Found the object Table");
+							Opa5.assert.ok(oResults, "Found the result table");
 						},
-						errorMessage: "Can't see the master Table."
+						errorMessage: "Can't find the result table"
 					});
 				},
 
-				theTableShowsOnlyObjectsWithTheSearchStringInTheirTitle: function () {
+				theTableShouldShowOnlyObjectsWithTheSearchStringInTheirTitle: function () {
 					return this.waitFor({
 						id: [sResultsId, sSearchFieldId],
 						viewName: sViewName,
@@ -343,11 +387,11 @@ sap.ui.define([
 						success: function () {
 							Opa5.assert.ok(true, "Every item did contain the search term");
 						},
-						errorMessage: "The table did not have items"
+						errorMessage: "The table did not have items matching the search term"
 					});
 				},
 
-				theTableShowsOnlyObjectsWithTheTag: function (sName, sModelName) {
+				theTableShouldShowOnlyObjectsWithTheTag: function (sName, sModelName) {
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
@@ -357,30 +401,36 @@ sap.ui.define([
 						success: function () {
 							Opa5.assert.ok(true, "Every item did contain the tag");
 						},
-						errorMessage: "The table did not have items"
+						errorMessage: "The table does not show items with the tag \"" + sName + "\""
 					});
 				},
 
-				theTableShowsTheCategory: function (sName) {
+				theTableShouldShowTheCategory: function (sName) {
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
 						check:  function (oControl) {
-							return oControl.getModel().getProperty(oControl.getBinding("items").getPath().replace("/icons", "")).text === sName;
+							var sAbsolutePath = oControl.getBinding("items").getPath();
+
+							if (sAbsolutePath.startsWith("/")) {
+								return oControl.getModel().getProperty(sAbsolutePath.replace("/icons", "")).text === sName;
+							} else {
+								return false;
+							}
 						},
 						success: function () {
 							Opa5.assert.ok(true, "The category is bound to the table");
 						},
-						errorMessage: "The table did not have items"
+						errorMessage: "The table does not show items with the category \"" + sName + "\""
 					});
 				},
 
-				theTableContainsTheIcon: function (sName) {
+				theTableShouldContainTheIcon: function (sName) {
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
 						check:  function () {
-							return oneItemInTheListContainTheSearchTerm.apply(this, [sName].concat(Array.prototype.slice.apply(arguments)));
+							return oneItemInTheListContainsTheSearchTerm.apply(this, [sName].concat(Array.prototype.slice.apply(arguments)));
 						},
 						success: function () {
 							Opa5.assert.ok(true, "The item is in the result set");
@@ -389,26 +439,26 @@ sap.ui.define([
 					});
 				},
 
-				theTableContainsOnlyTheIcon: function (sName) {
+				theTableShouldContainOnlyTheIcon: function (sName) {
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
 						check:  function (oTable) {
-							return onlyOneItemInTheListContainTheSearchTerm(sName, oTable);
+							return onlyOneItemInTheListContainsTheSearchTerm(sName, oTable);
 						},
 						success: function () {
-							Opa5.assert.ok(true, "Only one single item with the substring '" + sName + "' in the title is in the result set");
+							Opa5.assert.ok(true, "Only one single item with the substring \"" + sName + "\" in the title is in the result set");
 						},
-						errorMessage: "The table does not show only one single item with the substring '"  + sName + "' in its title "
+						errorMessage: "The table does not show only one single item with the substring \""  + sName + "\" in its title"
 					});
 				},
 
-				theTableDoesNotContainTheIcon: function (sName) {
+				theTableShouldNotContainTheIcon: function (sName) {
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
 						check:  function () {
-							return !oneItemInTheListContainTheSearchTerm.apply(this, [sName].concat(Array.prototype.slice.apply(arguments)));
+							return !oneItemInTheListContainsTheSearchTerm.apply(this, [sName].concat(Array.prototype.slice.apply(arguments)));
 						},
 						success: function () {
 							Opa5.assert.ok(true, "The item is not in the result set");
@@ -417,7 +467,7 @@ sap.ui.define([
 					});
 				},
 
-				theIconIsMarkedAsFavorite: function (sName) {
+				theIconShouldBeMarkedAsFavorite: function (sName) {
 					return this.waitFor(createWaitForTableItemFavoriteWithName({
 						name: sName,
 						success: function(aControls) {
@@ -428,17 +478,15 @@ sap.ui.define([
 					}));
 				},
 
-				theTableHasEntries: function () {
+				theTableShouldHaveNoEntries: function () {
 					return this.waitFor({
 						viewName: sViewName,
 						id: sResultsId,
-						matchers: new AggregationFilled({
-							name: "items"
-						}),
-						success: function () {
-							Opa5.assert.ok(true, "The table has entries");
+						matchers : new AggregationLengthEquals({name : "items", length: 0}),
+						success : function () {
+							Opa5.assert.ok(true, "The list has no entries");
 						},
-						errorMessage: "The table had no entries"
+						errorMessage : "The list does contain entries"
 					});
 				},
 
@@ -458,7 +506,7 @@ sap.ui.define([
 						success: function (oResults) {
 							Opa5.assert.strictEqual(oResults.getItems().length, iExpectedNumberOfItems, "The growing Table has " + iExpectedNumberOfItems + " items");
 						},
-						errorMessage: "Table does not have all entries."
+						errorMessage: "Table does not have all entries"
 					});
 				},
 
@@ -478,12 +526,12 @@ sap.ui.define([
 								}),
 								success: function (aTabFilters) {
 									var oTabFilter = aTabFilters[0];
-									Opa5.assert.strictEqual(parseInt(oTabFilter.getCount(), 10), iObjectCount, "The icon tab fillter \"all\" shows the total number of icons " + iObjectCount);
+									Opa5.assert.strictEqual(parseInt(oTabFilter.getCount()), iObjectCount, "The icon tab fillter \"all\" shows the total number of icons " + iObjectCount);
 								},
 								errorMessage: "The icon tab fillter \"all\" does not contain the number of items " + iObjectCount
 							});
 						},
-						errorMessage: "The table has no items."
+						errorMessage: "The table has no items"
 					});
 				},
 
@@ -501,21 +549,7 @@ sap.ui.define([
 						success: function () {
 							Opa5.assert.ok(true, "The growing Table had the double amount: " + iExpectedNumberOfItems + " of entries");
 						},
-						errorMessage: "Table does not have the double amount of entries."
-					});
-				},
-
-				iShouldSeeTheResultsTableBusyIndicatorOrItemsLoaded: function () {
-					return this.waitFor({
-						id: sResultsId,
-						viewName: sViewName,
-						matchers: function (oResults) {
-							return new AggregationFilled({name: "items"}).isMatching(oResults) || new PropertyStrictEquals({name: "busy", value: true}).isMatching(oResults);
-						},
-						success: function () {
-							Opa5.assert.ok(true, "The results table is busy or the data is already loaded");
-						},
-						errorMessage: "The results table is not busy"
+						errorMessage: "Table does not have the double amount of entries"
 					});
 				},
 
@@ -529,7 +563,7 @@ sap.ui.define([
 						errorMessage: "The tabular results do not show the no data text for search"
 					});
 				}
-			})
+			}
 		}
 	});
 });

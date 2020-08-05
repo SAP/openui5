@@ -1,0 +1,24 @@
+<core:FragmentDefinition xmlns:m="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+
+	<l:HorizontalLayout id="idLayout" class="mdcbaseinfoPanelListItem">
+
+		<m:HBox id="idContainer" visible="{$this>visible}">
+			<m:layoutData>
+				<m:FlexItemData
+						styleClass="{= ${$this>description} ? 'mdcbaseinfoPanelItemsGroup' : 'mdcbaseinfoPanelItemsWithoutGroup'}"/>
+			</m:layoutData>
+
+			<m:ImageContent src="{$this>icon}" visible="{= ${$this>icon} ? true:false}"/>
+
+			<m:VBox>
+				<m:Link text="{$this>text}" href="{$this>href}" target="{$this>target}" visible="{= ${$this>href} ? true:false}" press="onPress" wrapping="true"/>
+				<m:Label text="{$this>text}" visible="{= ${$this>href} ? false:true}" wrapping="true"/>
+
+				<m:Text text="{$this>description}" visible="{= ${$this>description} ? true:false}" wrapping="true"/>
+			</m:VBox>
+		</m:HBox>
+
+	</l:HorizontalLayout>
+
+</core:FragmentDefinition>
+

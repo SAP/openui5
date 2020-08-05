@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
+sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, jQuery) {
 	"use strict";
 
 	/**
@@ -54,12 +54,12 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	 * @param {String} sFilename - name of the file
 	 * @param {String} sFileType - type of the file
 	 * @param {String} sContent - content of the file saved to the layered repository
+	 * @param [String] sTransportId - id of an ABAP transport or ATO_NOTIFICATION
+	 * @param [String] sPackageName - name of an ABAP package
 	 * @returns {Promise} Promise of the SAVE content request to the back end
 	 * @public
 	 */
-	LrepConnector.saveFile = function (sLayer, sNamespace, sFilename, sFileType, sContent) {
-		var that = this;
-
+	LrepConnector.saveFile = function (sLayer, sNamespace, sFilename, sFileType, sContent, sTransportId, sPackageName) {
 		return new Promise(function (fnResolve, fnReject) {
 			if (!sLayer || sNamespace === undefined || !sFilename || !sFileType) {
 				fnReject();
@@ -67,10 +67,12 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 
 			var sContentSuffix = sNamespace + sFilename + "." + sFileType;
 			sContentSuffix = encodeURI(sContentSuffix);
-			var sLayerSuffix = that._getLayerSuffix(sLayer);
-			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix;
-			that._getTokenAndSendPutRequest.call(that, sUrl, sContent, fnResolve, fnReject);
-		});
+			var sLayerSuffix = this._getLayerSuffix(sLayer);
+			var sChangeListSuffix = this._getChangeListSuffix(sTransportId);
+			var sPackageSuffix = this._getPackageSuffix(sPackageName);
+			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix + sChangeListSuffix + sPackageSuffix;
+			this._getTokenAndSendPutRequest(sUrl, sContent, fnResolve, fnReject);
+		}.bind(this));
 	};
 
 	/**
@@ -80,12 +82,11 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	 * @param {String} sNamespace - namespace of the file
 	 * @param {String} sFileName - name of the file
 	 * @param {String} sFileType - type of the file
+	 * @param [String] sTransportId - id of the ABAP transport or ATO_NOTIFICATION
 	 * @returns {Promise} Promise of DELETE content request to the back end
 	 * @public
 	 */
-	LrepConnector.deleteFile = function (sLayer, sNamespace, sFileName, sFileType) {
-		var that = this;
-
+	LrepConnector.deleteFile = function (sLayer, sNamespace, sFileName, sFileType, sTransportId) {
 		return new Promise(function (fnResolve, fnReject) {
 			if (!sLayer || sNamespace === undefined || !sFileName || !sFileType) {
 				fnReject();
@@ -93,10 +94,11 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 
 			var sContentSuffix = sNamespace + sFileName + "." + sFileType;
 			sContentSuffix = encodeURI(sContentSuffix);
-			var sLayerSuffix = that._getLayerSuffix(sLayer);
-			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix;
-			that._getTokenAndSendDeletionRequest.call(that, sUrl, fnResolve, fnReject);
-		});
+			var sLayerSuffix = this._getLayerSuffix(sLayer);
+			var sChangeListSuffix = this._getChangeListSuffix(sTransportId);
+			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix + sChangeListSuffix;
+			this._getTokenAndSendDeletionRequest(sUrl, fnResolve, fnReject);
+		}.bind(this));
 	};
 
 	/**
@@ -142,10 +144,30 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	 * @private
 	 */
 	LrepConnector._getLayerSuffix = function (sLayer) {
-		if (sLayer === "All"){
+		if (sLayer === "All") {
 			return "";
 		}
 		return "?layer=" + sLayer;
+	};
+
+	/**
+	 * Get changelist suffix for request URL;
+	 * @param {String} sChangeList - transport id
+	 * @returns {String} correct changelist suffix
+	 * @private
+	 */
+	LrepConnector._getChangeListSuffix = function (sChangeList) {
+		return sChangeList ? "&changelist=" + sChangeList : "";
+	};
+
+	/**
+	 * Get package suffix for request URL;
+	 * @param {String} sPackage - package name
+	 * @returns {String} correct package suffix
+	 * @private
+	 */
+	LrepConnector._getPackageSuffix = function (sPackage) {
+		return sPackage ? "&package=" + sPackage : "";
 	};
 
 	/**
@@ -163,7 +185,7 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 			sReadRuntimeContextSuffix += (sLayerSuffix ? "&" : "?");
 			sReadRuntimeContextSuffix += "dt=true";
 		}
-		if (!!bReadContextMetadata) {
+		if (bReadContextMetadata) {
 			sReadRuntimeContextSuffix += (sLayerSuffix || sReadRuntimeContextSuffix ? "&" : "?");
 			sReadRuntimeContextSuffix += "metadata=true";
 		}
@@ -206,7 +228,7 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 			}
 		};
 		//code extension content should be treated as plain text to avoid parser error.
-		if (!!bRequestAsText){
+		if (bRequestAsText) {
 			oRequest.dataType = "text";
 		}
 		jQuery.ajax(oRequest);

@@ -147,8 +147,6 @@
 
 				oRBGroup.destroyButtons();
 
-				iIndex = 0;
-
 				updateInfo();
 			}
 
@@ -609,7 +607,6 @@
 					content: [
 						new sap.m.IconTabBar("itb1", {
 							expandable: false,
-							showOverflowSelectList: true,
 							items: [
 								new sap.m.IconTabFilter("sample1", {
 									key: "key1",
@@ -651,7 +648,7 @@
 		</script>
 	</head>
 
-	<body class="sapUiBody" role="application" id="body" >
+	<body class="sapUiBody" id="body" >
 		<div id="content"></div>
 	</body>
 </html>

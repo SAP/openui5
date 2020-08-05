@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Data Aggregation</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Data Aggregation</h1>
+		<h2>DESCRIPTION</h2>
+		Test scrolling and expanding of aggregated data.
+		<h2>PREPARATION</h2>
+
+		To check console errors open the developer tools before starting the application and
+		check with each step, that there are no errors and warnings.
+		Ignore initial message bundle errors.
+
+		<h3>Testing with mock data</h3>
+		Start the Data Aggregation application
+		URL (adjust host and port if necessary):
+		<ul>
+			<li> local:
+				<a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.DataAggregation">
+					http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.DataAggregation
+				</a>
+			</li>
+		</ul>
+
+		<h2>REALIZE and CHECK</h2>
+		<h3>Expand the third node</h3>
+		<ol>
+			<li>After the application is started, click on the expand button in the third row with
+				country <code>Germany</code>.
+			</li>
+			<li><b>Check:</b> Two new rows appear below the third row with country
+				<code>Germany</code>, region <code>Lower-Saxony</code> and region <code>Saxony</code>.
+			</li>
+		</ol>
+		<h3>Scroll to the end of the table</h3>
+		<ol>
+			<li>Click on <code>Germany</code> to move the focus to the table. Press CTRL-END to scroll to
+				the end of the table.</li>
+			<li><b>Check:</b> The row with the country <code>Germany</code> and region
+				<code>Hessia</code> is displayed at the top.
+			</li>
+		</ol>
+		<h3>Expand the last visible node</h3>
+		<ol>
+			<li>Click on the expand button of
+				the last visible row with the region <code>Baden-W&uuml;rttemberg</code>.
+			</li>
+			<li><b>Check:</b> The scrollbar of the table has changed.</li>
+			<li>Scroll down to the end of the table.</li>
+			<li><b>Check:</b> The first visible row has country <code>Germany</code> and region
+				<code>Bavaria</code>.</li>
+		</ol>
+		<h3>Expand the last visible node</h3>
+		<ol>
+			<li>Click on the expand button of the last visible row with the
+				region <code>Baden-W&uuml;rttemberg</code> and the segment <code>Small</code>.
+			</li>
+			<li><b>Check:</b> The scrollbar of the table has changed.</li>
+			<li>Click on <code>Germany</code> to move the focus to the table. Press CTRL-END to scroll to
+				the end of the table.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<br>
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>Expand</th>
+						<th>Country</th>
+						<th>Region</th>
+						<th>Segment</th>
+						<th>Account Responsible</th>
+						<th>Sales Amount</th>
+						<th>Sales Number</th>
+						<th>Subtotal</th>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>Not Expanded</td>
+						<td>Germany</td>
+						<td>Baden-W&uuml;rttemberg</td>
+						<td>Large</td>
+						<td></td>
+						<td>3.765.323</td>
+						<td></td>
+						<td><input type="checkbox" checked/></td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>Not Expanded</td>
+						<td>Germany</td>
+						<td>Baden-W&uuml;rttemberg</td>
+						<td>Mid-size</td>
+						<td></td>
+						<td>526.122</td>
+						<td></td>
+						<td><input type="checkbox" checked/></td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>Expanded</td>
+						<td>Germany</td>
+						<td>Baden-W&uuml;rttemberg</td>
+						<td>Small</td>
+						<td></td>
+						<td>125.093</td>
+						<td></td>
+						<td><input type="checkbox" checked/></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>Leaf</td>
+						<td>Germany</td>
+						<td>Baden-W&uuml;rttemberg</td>
+						<td>Small</td>
+						<td>Erwin Fischer</td>
+						<td>61.632</td>
+						<td>1.032</td>
+						<td><input type="checkbox"/></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>Leaf</td>
+						<td>Germany</td>
+						<td>Baden-W&uuml;rttemberg</td>
+						<td>Small</td>
+						<td>Winfried Maier</td>
+						<td>63.461</td>
+						<td>1.178</td>
+						<td><input type="checkbox"/></td>
+					</tr>
+				</table>
+			</li>
+		</ol>
+	</body>
+</html>

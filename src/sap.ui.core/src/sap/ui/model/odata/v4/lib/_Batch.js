@@ -2,15 +2,16 @@
  * ${copyright}
  */
 
-//Provides class sap.ui.model.odata.v4.lib.Batch
+//Provides class sap.ui.model.odata.v4.lib._Batch
 sap.ui.define([
-	"jquery.sap.global"
-], function (jQuery) {
+	"./_Helper",
+	"sap/base/strings/escapeRegExp"
+], function (_Helper, escapeRegExp) {
 	"use strict";
 
 	var mAllowedChangeSetMethods = {"POST" : true, "PUT" : true, "PATCH" : true, "DELETE" : true},
 		oBatch,
-		rContentIdReference = /\$\d+/,
+		rContentIdReference = /^\$\d+/,
 		rHeaderParameter = /(\S*?)=(?:"(.+)"|(\S+))/;
 
 	/**
@@ -31,7 +32,7 @@ sap.ui.define([
 		}
 
 		// escape RegExp-related characters
-		sBatchBoundary = jQuery.sap.escapeRegExp(sBatchBoundary);
+		sBatchBoundary = escapeRegExp(sBatchBoundary);
 		return new RegExp('--' + sBatchBoundary + '(?:[ \t]*\r\n|--)');
 	}
 
@@ -51,7 +52,7 @@ sap.ui.define([
 			aMatches;
 
 		sParameterName = sParameterName.toLowerCase();
-		for (iParamIndex = 1; iParamIndex < aHeaderParts.length; iParamIndex++) {
+		for (iParamIndex = 1; iParamIndex < aHeaderParts.length; iParamIndex += 1) {
 			// remove possible quotes via reg exp
 			// RFC7231: parameter = token "=" ( token / quoted-string )
 			aMatches = rHeaderParameter.exec(aHeaderParts[iParamIndex]);
@@ -72,7 +73,7 @@ sap.ui.define([
 	 */
 	function getChangeSetContentType(sMimeTypeHeaders) {
 		var sContentType = getHeaderValue(sMimeTypeHeaders, "content-type");
-		return sContentType.indexOf("multipart/mixed;") === 0 ? sContentType : undefined;
+		return sContentType.startsWith("multipart/mixed;") ? sContentType : undefined;
 	}
 
 	/**
@@ -95,7 +96,7 @@ sap.ui.define([
 			throw new Error("Content-ID MIME header missing for the change set response.");
 		}
 
-		iResponseIndex = parseInt(sContentID, 10);
+		iResponseIndex = parseInt(sContentID);
 		if (isNaN(iResponseIndex)) {
 			throw new Error("Invalid Content-ID value in change set response.");
 		}
@@ -117,7 +118,7 @@ sap.ui.define([
 			aHeaderParts,
 			aHeaders = sHeaders.split("\r\n");
 
-		for (i = 0; i < aHeaders.length; i++) {
+		for (i = 0; i < aHeaders.length; i += 1) {
 			aHeaderParts = aHeaders[i].split(":");
 
 			if (aHeaderParts[0].toLowerCase().trim() === sHeaderName) {
@@ -139,6 +140,11 @@ sap.ui.define([
 		aBatchParts = aBatchParts.slice(1, -1);
 
 		aBatchParts.forEach(function (sBatchPart) {
+			// a batch part contains 3 elements separated by a double "\r\n"
+			// 0: general batch part headers
+			// 1: HTTP response headers and status line
+			// 2: HTTP response body
+
 			var sChangeSetContentType,
 				sCharset,
 				iColonIndex,
@@ -146,37 +152,37 @@ sap.ui.define([
 				sHeaderName,
 				sHeaderValue,
 				aHttpHeaders,
+				sHttpHeaders,
+				iHttpHeadersEnd,
 				aHttpStatusInfos,
 				i,
 				sMimeHeaders,
+				iMimeHeadersEnd,
 				oResponse = {},
-				iResponseIndex,
-				aResponseParts;
+				iResponseIndex;
 
-			// aResponseParts will take 3 elements:
-			// 0: general batch part headers
-			// 1: HTTP response headers and status line
-			// 2: HTTP response body
-			aResponseParts = sBatchPart.split("\r\n\r\n");
+			iMimeHeadersEnd = sBatchPart.indexOf("\r\n\r\n");
+			sMimeHeaders = sBatchPart.slice(0, iMimeHeadersEnd);
+			iHttpHeadersEnd = sBatchPart.indexOf("\r\n\r\n", iMimeHeadersEnd + 4);
+			sHttpHeaders = sBatchPart.slice(iMimeHeadersEnd + 4, iHttpHeadersEnd);
 
-			sMimeHeaders = aResponseParts[0];
 			sChangeSetContentType = getChangeSetContentType(sMimeHeaders);
 			if (sChangeSetContentType) {
 				aResponses.push(_deserializeBatchResponse(sChangeSetContentType,
-					aResponseParts.slice(1).join("\r\n\r\n"), true));
+					sBatchPart.slice(iMimeHeadersEnd + 4), true));
 				return;
 			}
 
-			aHttpHeaders = aResponseParts[1].split("\r\n");
+			aHttpHeaders = sHttpHeaders.split("\r\n");
 			// e.g. HTTP/1.1 200 OK
 			aHttpStatusInfos = aHttpHeaders[0].split(" ");
 
-			oResponse.status = parseInt(aHttpStatusInfos[1], 10);
+			oResponse.status = parseInt(aHttpStatusInfos[1]);
 			oResponse.statusText = aHttpStatusInfos.slice(2).join(' ');
 			oResponse.headers = {};
 
 			// start with index 1 to skip status line
-			for (i = 1; i < aHttpHeaders.length; i++) {
+			for (i = 1; i < aHttpHeaders.length; i += 1) {
 				// e.g. Content-Type: application/json;odata.metadata=minimal
 				sHeader = aHttpHeaders[i];
 				iColonIndex = sHeader.indexOf(':');
@@ -193,7 +199,7 @@ sap.ui.define([
 			}
 
 			// remove \r\n sequence from the end of the response body
-			oResponse.responseText = aResponseParts[2].slice(0, -2);
+			oResponse.responseText = sBatchPart.slice(iHttpHeadersEnd + 4, -2);
 
 			if (bIsChangeSet) {
 				iResponseIndex = getChangeSetResponseIndex(sMimeHeaders);
@@ -213,7 +219,7 @@ sap.ui.define([
 	 *   A map of request headers
 	 * @returns {object[]} Array representing the serialized headers
 	 */
-	function serializeHeaders (mHeaders) {
+	function serializeHeaders(mHeaders) {
 		var sHeaderName,
 			aHeaders = [];
 
@@ -241,7 +247,7 @@ sap.ui.define([
 	 */
 	function _serializeBatchRequest(aRequests, iChangeSetIndex) {
 		var sBatchBoundary = (iChangeSetIndex !== undefined ? "changeset_" : "batch_")
-				+ jQuery.sap.uid(),
+				+ _Helper.uid(),
 			bIsChangeSet = iChangeSetIndex !== undefined,
 			aRequestBody = [];
 
@@ -271,8 +277,11 @@ sap.ui.define([
 						". Change set must contain only POST, PUT, PATCH or DELETE requests.");
 				}
 
-				// adjust URL if it contains Content-ID reference by adding the change set index
-				sUrl = sUrl.replace(rContentIdReference, "$&." + iChangeSetIndex);
+				if (iChangeSetIndex !== undefined && sUrl[0] === "$") {
+					// adjust URL if it starts with a Content-ID reference by adding the change set
+					// index
+					sUrl = sUrl.replace(rContentIdReference, "$&." + iChangeSetIndex);
+				}
 
 				aRequestBody = aRequestBody.concat(
 					"Content-Type:application/http\r\n",
@@ -280,7 +289,7 @@ sap.ui.define([
 					sContentIdHeader,
 					"\r\n",
 					oRequest.method, " ", sUrl, " HTTP/1.1\r\n",
-					serializeHeaders(oRequest.headers),
+					serializeHeaders(_Helper.resolveIfMatchHeader(oRequest.headers)),
 					"\r\n",
 					JSON.stringify(oRequest.body) || "", "\r\n");
 			}
@@ -338,7 +347,8 @@ sap.ui.define([
 		 *   See example below.
 		 * @param {object} oRequest.headers
 		 *   Map of request headers. RFC-2047 encoding rules are not supported. Nevertheless non
-		 *   US-ASCII values can be used.
+		 *   US-ASCII values can be used. If the value of an "If-Match" header is an object, that
+		 *   object's ETag is used instead.
 		 * @param {object} oRequest.body
 		 *   Request body. If specified, oRequest.headers map must contain "Content-Type" header
 		 *   either without "charset" parameter or with "charset" parameter having value "UTF-8".
@@ -371,7 +381,8 @@ sap.ui.define([
 		 *           method : "POST",
 		 *           url : "$0/TEAM_2_Employees",
 		 *           headers : {
-		 *               "Content-Type" : "application/json"
+		 *               "Content-Type" : "application/json",
+		 *               "If-Match" : "etag0"
 		 *           },
 		 *           body : {"Name" : "John Smith"}
 		 *       }],
@@ -379,7 +390,10 @@ sap.ui.define([
 		 *           method : "PATCH",
 		 *           url : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Employees('3')",
 		 *           headers : {
-		 *               "Content-Type" : "application/json"
+		 *               "Content-Type" : "application/json",
+		 *               "If-Match" : {
+		 *                   "@odata.etag" : "etag1"
+		 *               }
 		 *           },
 		 *           body : {"TEAM_ID" : "TEAM_01"}
 		 *       }

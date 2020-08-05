@@ -1,0 +1,52 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:editor="sap.ui.codeeditor"
+	xmlns:core="sap.ui.core"
+>
+	<Dialog
+		contentWidth="700px"
+		contentHeight="100%"
+		verticalScrolling="false"
+		resizable="true"
+		draggable="true"
+	>
+		<customHeader>
+			<Bar>
+				<contentLeft>
+					<Button
+						icon="sap-icon://syntax"
+						tooltip="{i18n>BASE_EDITOR.JSON.BEAUTIFY}"
+						press="onBeautify"
+					/>
+				</contentLeft>
+				<contentMiddle>
+					<Title
+						text="{i18n>BASE_EDITOR.JSON.TITLE}"
+					/>
+				</contentMiddle>
+			</Bar>
+		</customHeader>
+		<content>
+			<MessageStrip id="errorMsg" visible="false" type="Error" showIcon="true" />
+			<editor:CodeEditor
+				id="jsonEditor"
+				type="json"
+				syntaxHints="false"
+				liveChange="onLiveChange"
+			/>
+		</content>
+		<beginButton>
+			<Button
+				text="{i18n>BASE_EDITOR.JSON.SAVE}"
+				type="Emphasized"
+				press="onSave"
+			/>
+		</beginButton>
+		<endButton>
+			<Button
+				text="{i18n>BASE_EDITOR.JSON.CANCEL}"
+				press="onClose"
+			/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

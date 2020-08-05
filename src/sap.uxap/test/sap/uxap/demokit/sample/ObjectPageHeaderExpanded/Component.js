@@ -1,32 +1,9 @@
 sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.uxap.sample.ObjectPageHeaderExpanded.Component", {
+	return UIComponent.extend("sap.uxap.sample.ObjectPageHeaderExpanded.Component", {
 		metadata: {
-			rootView: {
-				"viewName": "sap.uxap.sample.ObjectPageHeaderExpanded.ObjectPageHeaderExpanded",
-				"type": "XML",
-				"async": true
-			},
-			dependencies: {
-				libs: [
-					"sap.m",
-					"sap.ui.core"
-				]
-			},
-			config: {
-				sample: {
-					stretch: true,
-					files: [
-						"ObjectPageHeaderExpanded.view.xml",
-						"ObjectPageHeaderExpanded.controller.js",
-						"employee.json",
-						"products.json"
-					]
-				}
-			}
+			manifest: "json"
 		}
 	});
-
-	return Component;
-}, true);
+});

@@ -1,0 +1,15 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:table="sap.ui.mdc.table">
+	<Table id="mdcTable">
+		<columns>
+			<table:Column id="mdcTable--column0" header="column 0" dataProperties="column0">
+				<m:Text text="{column0}" id="mdcTable--text0"/>
+			</table:Column>
+			<table:Column id="mdcTable--column1" header="column 1" dataProperties="column1">
+				<m:Text text="{column1}" id="mdcTable--text1"/>
+			</table:Column>
+			<table:Column id="mdcTable--column2" header="column 2" dataProperties="column2">
+				<m:Text text="{column2}" id="mdcTable--text2"/>
+			</table:Column>
+		</columns>
+	</Table>
+</mvc:View>

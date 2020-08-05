@@ -3,84 +3,145 @@
 		height="100%"
 		xmlns="sap.ui.table"
 		xmlns:m="sap.m"
-		xmlns:c="sap.ui.core"
 		xmlns:l="sap.ui.layout"
-		xmlns:f="sap.ui.layout.form"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:t="sap.ui.table">
+		xmlns:t="sap.ui.table"
+		xmlns:layout="sap.ui.layout">
 	<m:NavContainer
 		id="rulesNavContainer"
 		afterNavigate="onAfterNavigate">
 		<l:Splitter id="rulesDisplayPage">
 			<l:contentAreas>
 				<m:Page
-						showHeader="true">
+						showHeader="true"
+						showSubHeader="{= ${/selectedSetPreviewKey} === 'availableRules' }">
 					<m:headerContent>
 						<m:Bar>
-							<m:contentLeft>
-								<m:IconTabHeader
-										id="ruleSetsView"
-										select="onSelectedRuleSets"
-										selectedKey="{/selectedSetPreviewKey}"
-										class="customIconTabHeader">
+							<m:contentMiddle>
+								<m:HBox fitContainer="true" renderType="Bare" class="customHBox">
 									<m:items>
-										<m:IconTabFilter key="availableRules" text="Available Rulesets" />
-										<m:IconTabFilter key="additionalRulesets" text="Additional Rulesets" />
+										<m:IconTabHeader
+												id="ruleSetsView"
+												select="onSelectedRuleSets"
+												selectedKey="{/selectedSetPreviewKey}"
+												class="customIconTabHeader">
+											<m:layoutData>
+												<m:FlexItemData growFactor="1" minWidth="0">
+												</m:FlexItemData>
+											</m:layoutData>
+											<m:items>
+												<m:IconTabFilter id="availableRulesId" key="availableRules" text="Available Rulesets" />
+												<m:IconTabFilter key="additionalRulesets" text="Additional Rulesets" />
+											</m:items>
+										</m:IconTabHeader>
+										<m:Button class="supportAnalyzeButton" text="Analyze" press="onAnalyze" type="Emphasized"/>
+										<m:Button class="supportSettingsButton" icon="sap-icon://settings" press="onAnalyzeSettings" type="Emphasized"/>
 									</m:items>
-								</m:IconTabHeader>
-							</m:contentLeft>
-							<m:contentRight >
-								<m:Button class="supportAnalyzeButton" text="Analyze" press="onAnalyze" type="Emphasized"/>
-								<m:Button class="supportSettingsButton" icon="sap-icon://settings" press="onAnalyzeSettings" type="Emphasized"/>
-							</m:contentRight>
+								</m:HBox>
+							</m:contentMiddle>
 						</m:Bar>
 					</m:headerContent>
-					<m:subHeader>
-						<m:Bar >
-							<m:contentRight>
-								<m:Button text="Create Rule" icon="sap-icon://add" press="createNewRulePress"/>
+						<m:subHeader>
+							<m:Bar>
+								<m:contentLeft>
+									<m:Toolbar width="100%">
+										<m:Label text="Rule Preset:" labelFor="presetVariant">
+											<m:layoutData>
+												<m:ToolbarLayoutData shrinkable="false" />
+											</m:layoutData>
+										</m:Label>
+										<m:Toolbar id="presetVariant" class="sapUiSupportToolVariantCont" width="100%">
+											<m:FormattedText
+												id="presetVariantTxt"
+												class="sapUiSupportToolVariantTxt"
+												htmlText="{= ${/selectionPresetsCurrent/isModified} ?
+																'&lt;em&gt;' + ${/selectionPresetsCurrent/title} + '&lt;/em&gt;' :
+																${/selectionPresetsCurrent/title} }"
+												tooltip="Select a Rule Preset"/>
+											<m:Button
+												id="presetVariantBtn"
+												icon="sap-icon://slim-arrow-down"
+												class="sapUiSupportToolVariantBtn"
+												tooltip="Select a Rule Preset"/>
+										</m:Toolbar>
+									</m:Toolbar>
+								</m:contentLeft>
+								<m:contentRight>
+									<m:Button id="createRuleBtn" text="Create Rule" icon="sap-icon://add" press="createNewRulePress"/>
 								</m:contentRight>
 							</m:Bar>
-							</m:subHeader>
+						</m:subHeader>
 						<t:TreeTable
 								id="ruleList"
-								collapseRecursive="false"
 								selectionMode="MultiToggle"
+								rows="{
+									path: 'treeModel>/',
+									parameters: {numberOfExpandedLevels: 1}
+								}"
+								collapseRecursive="false"
 								enableColumnReordering="false"
-								expandFirstLevel="true"
-								rows="{path: '/treeViewModel'}"
 								cellClick="onCellClick"
 								class="sapUiSizeCondensed"
-								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"
 								visibleRowCountMode="Auto"
 								selectionBehavior="RowSelector"
 								rowActionCount="1"
-								toggleOpenState="onToggleOpenState"
-								rowSelectionChange="onRowSelectionChange">
+								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"
+								showColumnVisibilityMenu="true"
+								columnVisibility="onColumnVisibilityChange"
+								expandFirstLevel="true"
+								>
 							<t:columns>
-								<t:Column label="Rules">
+								<t:Column id="rulesColumn"
+										  label="Rules ({/selectedRulesCount} selected)"
+										  sortProperty="name"
+										  filterProperty="name">
 									<t:template>
-										<m:Text text="{name}" wrapping="false"/>
+										<m:Text text="{treeModel>name}" wrapping="false"/>
 									</t:template>
 								</t:Column>
-								<t:Column label="Categories"
-										  width="10rem">
+								<t:Column id="categoriesColumn"
+										  label="Categories"
+										  width="10rem"
+										  sortProperty="categories"
+										  filterProperty="categories">
 									<t:template>
-										<m:Text text="{categories}" wrapping="false"/>
+										<m:Text text="{treeModel>categories}" wrapping="false"/>
+									</t:template>
+								</t:Column>
+								<t:Column id="audienceColumn"
+										  label="Audience"
+										  visible="false"
+										  sortProperty="audiences"
+										  filterProperty="audiences">
+									<t:template>
+										<m:Text text="{treeModel>audiences}" wrapping="false"/>
+									</t:template>
+								</t:Column>
+								<t:Column id="idsColumn"
+										  label="RuleID"
+										  width="10rem"
+										  visible="false"
+										  sortProperty="id"
+										  filterProperty="id">
+									<t:template>
+										<m:Text text="{treeModel>id}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 							</t:columns>
 							<t:rowActionTemplate>
 									<t:RowAction>
 										<t:items>
-											<t:RowActionItem icon="sap-icon://edit" text="Edit" press="editRule"  visible="{= ${libName} === 'temporary'}" />
-											<t:RowActionItem icon="sap-icon://delete" text="Delete" press="deleteTemporaryRule" visible="{= ${libName} === 'temporary'}" />
-											<t:RowActionItem icon="sap-icon://copy" text="Copy" press="duplicateRule" visible="{= ${libName} !== 'temporary' &amp;&amp; ${type} !== 'lib'}" />
+											<t:RowActionItem icon="sap-icon://edit" text="Edit" press="editRule"  visible="{= ${treeModel>libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://delete" text="Delete" press="deleteTemporaryRule" visible="{= ${treeModel>libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://copy" text="Copy" press="duplicateRule" visible="{= ${treeModel>libName} !== 'temporary' &amp;&amp; ${treeModel>type} !== 'lib'}" />
 										</t:items>
 									</t:RowAction>
 							</t:rowActionTemplate>
 						</t:TreeTable>
 					<l:VerticalLayout id="librarySetContainer" width="100%" visible="{= ${/selectedSetPreviewKey} === 'additionalRulesets' }">
+						<m:Text class="sapUiSupportToolAdditionRuleSetNote" text="The list of available rules is dynamic and changes based on the libraries currently required by your application.
+								In the table below, you can select and load rulesets from the additional libraries."/>
+						<m:Link class="sapUiSupportToolAdditionRuleSetNote" text="See more here" href="https://ui5.sap.com/#/topic/3fc864acf926406194744375aa464fe7" target="_blank"/>
 						<m:List
 							id="availableLibrariesSet"
 							mode = "MultiSelect"

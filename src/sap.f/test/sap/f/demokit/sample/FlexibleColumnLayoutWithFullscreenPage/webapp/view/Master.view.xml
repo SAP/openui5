@@ -1,0 +1,49 @@
+<mvc:View displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.Master" height="100%"
+	  xmlns="sap.m"
+	  xmlns:f="sap.f"
+	  xmlns:mvc="sap.ui.core.mvc">
+	<f:DynamicPage id="dynamicPageId"
+				   toggleHeaderOnTitleClick="false">
+		<!-- DynamicPage Title -->
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<Title text="Categories"/>
+				</f:heading>
+			</f:DynamicPageTitle>
+		</f:title>
+
+		<!-- DynamicPage Content -->
+		<f:content>
+			<Table id="productsTable"
+				   inset="false"
+				   items="{
+						path: 'products>/ProductCollectionStats/Filters/0/values'
+					}"
+				   class="sapFDynamicPageAlignContent"
+				   width="auto">
+				<columns>
+					<Column width="12em">
+						<Text text="Category" />
+					</Column>
+					<Column	hAlign="End">
+						<Text text="Number of Items" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem type="Navigation" press="onListItemPress">
+						<cells>
+							<ObjectIdentifier title="{products>text}" />
+							<ObjectNumber
+									number="{
+										parts:[{path:'products>data'}],
+										type: 'sap.ui.model.type.Integer'
+									}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</f:content>
+		
+	</f:DynamicPage>
+</mvc:View>

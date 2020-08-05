@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Sorter'],
-	function(jQuery, Sorter) {
+sap.ui.define(['./Sorter', "sap/base/util/each"],
+	function(Sorter, each) {
 	"use strict";
 
 	/**
@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', './Sorter'],
 			aCompareFunctions[j] = oSorter.fnCompare || Sorter.defaultComparator;
 
 			/*eslint-disable no-loop-func */
-			jQuery.each(aData, function(i, vRef) {
+			each(aData, function(i, vRef) {
 				oValue = fnGetValue(vRef, oSorter.sPath);
 				if (typeof oValue == "string") {
 					oValue = oValue.toLocaleUpperCase();
@@ -95,4 +95,3 @@ sap.ui.define(['jquery.sap.global', './Sorter'],
 	return SorterProcessor;
 
 });
-

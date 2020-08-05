@@ -1,0 +1,542 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "9aac02b6ed87fabb4924d43b30fede025808fbe2",
+        "type": "FEATURE",
+        "text": " Display shortcut hint on focus and on hover",
+        "references": []
+      },
+      {
+        "id": "2741c83fae7c254d677f868dab738117dc330f81",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Badge affordance position fixed in custom size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080149132"
+          }
+        ]
+      },
+      {
+        "id": "5bccd0eb9ea7730e634b0632f0878ac4decf58ec",
+        "type": "FIX",
+        "text": " sap.m.IconTabHeader: Fix the logic of truncating the first tab",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080158238"
+          }
+        ]
+      },
+      {
+        "id": "023656a8a921a92d654f4b8b5b058fe55cfa71e5",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Ensured pages stack cleared upon removeAllPages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070249903"
+          }
+        ]
+      },
+      {
+        "id": "6ca5db83df944597303eca285b9e85fd9017a0f2",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fixed failing qunit test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080159964"
+          }
+        ]
+      },
+      {
+        "id": "e6afce2bad8141ee738901c80d78c9896caf2678",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Group header is now announced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080158380"
+          }
+        ]
+      },
+      {
+        "id": "b42f4ac9b8cbe9145581b088f6fb5abecb2bd307",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font",
+        "references": []
+      },
+      {
+        "id": "826ad5cd2de021339a7a20b11f0559b28a161437",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Badge affordance position fixed in custom size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080149132"
+          }
+        ]
+      },
+      {
+        "id": "e3b947a9e76cc96f6cd74de18019ff295b8d95a6",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Badge icon size adjusted with custom Avatar size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080150950"
+          }
+        ]
+      },
+      {
+        "id": "0082667d379d4c676efcbb92b8fd865fdc831b8c",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Aria-activedescendant is set on focus change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070259359"
+          }
+        ]
+      },
+      {
+        "id": "63090c6078e651d4c1988c47387019f748bcee8b",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: control doesn\u0027t select a date if there is no initial date/time",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080150667"
+          }
+        ]
+      },
+      {
+        "id": "8434cac6680a6b4665c4bfd8eb58359d53ab74ba",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: _getSuggestionsPopoverPopup method now always returns a popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080177545"
+          }
+        ]
+      },
+      {
+        "id": "a70e4d7d9ec6d84dda2637156a7feafda01ba50f",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: fixed sample in Demokit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080178544"
+          }
+        ]
+      },
+      {
+        "id": "071feba4866e9f6d4773e0b3e1fb7ee24485253b",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Added GenericTags are not cut in DT title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070257184"
+          }
+        ]
+      },
+      {
+        "id": "9534a7c7e8d44cd7180b624ca6a1f42a92ee2a6c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appointment name fixed in Drag and Drop Sample in Demokit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080178312"
+          }
+        ]
+      },
+      {
+        "id": "c4140cab661c3126b39a83789b3642649e47618a",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarHeader: Popover\u0027s hidden label changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070198541"
+          }
+        ]
+      },
+      {
+        "id": "0e283376fe9a26075d00c6d02aff5c343844cf10",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: qunit tests are optimized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080175896"
+          }
+        ]
+      },
+      {
+        "id": "875ff41175ce126d365df298ceb9cf1805373b06",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: tokenUpdate now always fired after token deletion",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080172416"
+          }
+        ]
+      },
+      {
+        "id": "ec9c8232316735228fba9bc67f601d685991c236",
+        "type": "FEATURE",
+        "text": " sap.m.BadgeEnabler: New Badge API introduced",
+        "references": []
+      },
+      {
+        "id": "31c691b1294956b6f47a710c9b3d4df1ff3244d2",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumb: Prevented redundant invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080143818"
+          }
+        ]
+      },
+      {
+        "id": "74be33d6263471493e3ee40045a4c14734ed7fcb",
+        "type": "FIX",
+        "text": " sap.m.Button: uses correct color parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080189988"
+          }
+        ]
+      },
+      {
+        "id": "f00068d580cbdeaf41d7a82ced394d42dcb80695",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: keyboard interactions are now aligned with the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080166852"
+          }
+        ]
+      },
+      {
+        "id": "6b59752774d0f7b0e23fb5ae19d3cb9d9f32f327",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Neutral filter trype is now read out by the screen reader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080193849"
+          }
+        ]
+      },
+      {
+        "id": "f2e7c6b1f2c6de405dc39f85d9b01dffff7eb15d",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Focus outline in SAP Quartz HCB/HCW themes adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080195107"
+          }
+        ]
+      },
+      {
+        "id": "fd82c220f3c43219232e7a0cbd36380f9551ed9c",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Contast ratio satisfied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070260049"
+          }
+        ]
+      },
+      {
+        "id": "59da47953ce84ba9ece049c737b4e4f9a69d269d",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Opening the dialog on mobile  error fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080188410"
+          }
+        ]
+      },
+      {
+        "id": "2a3f8e033468fc0b2eb3fe68dc46427e7e7c1143",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent opening SuggestionsPopover when selected items are shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080185684"
+          }
+        ]
+      },
+      {
+        "id": "0591f2064746521cc2b310ea4ea13678577c2966",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Remove unnecessary z-index from the tokenizer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080187051"
+          }
+        ]
+      },
+      {
+        "id": "f87509ad6f3b600c4705df732a2aff565c8fbf79",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: failing QUnit IE11 is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080138475"
+          }
+        ]
+      },
+      {
+        "id": "2d54bee34ed768509b9a02e18e9d8cfd311bf4c5",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: Icon\u0027s decorative state adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980411313"
+          }
+        ]
+      },
+      {
+        "id": "3f3134987473927df7ef6d5856aeb356b7ac0b17",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Samples edit appointment fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080178147"
+          }
+        ]
+      },
+      {
+        "id": "632ff6c0f462335c1e92b45e140756590146999f",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: on focus in behavior over the input is now consistent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003307462020"
+          }
+        ]
+      },
+      {
+        "id": "ae739f2f6422408a61fdf93b68f7f75692956c39",
+        "type": "FEATURE",
+        "text": " P13nFilterPanel: allow to set a MessageStrip",
+        "references": []
+      },
+      {
+        "id": "e02e666d29bebd150d9d93500452aff8394e62b9",
+        "type": "FIX",
+        "text": " m.ObjectNumber: Rendering of state\u0027s element adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080174188"
+          }
+        ]
+      },
+      {
+        "id": "92d4da252803f920923008c61f1b62d53bc6a148",
+        "type": "FIX",
+        "text": " sap.m.BadgeEnabler: Redundant show of empty badge fixed",
+        "references": []
+      },
+      {
+        "id": "1c1c3f895fe4dac35cb6eb0c964ae9280b4c85a1",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Properly updating item\u0027s selection on model change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000324415 2020"
+          }
+        ]
+      },
+      {
+        "id": "abca51ff4239524a85dc401e35b21d803b382a4c",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Buttons\u0027 positioning fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980411290"
+          }
+        ]
+      },
+      {
+        "id": "d7d2dd9b14b01282d3cd37461f24a2eb474561af",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: TabFilter focus is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070204567"
+          }
+        ]
+      },
+      {
+        "id": "bc1f51e81b6dcb7035022da3cc056ca417dd1440",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Belize theme aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080205466"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080207010"
+          }
+        ]
+      },
+      {
+        "id": "532cf7ebd94ac51e9ff86c0a1436d0de9449586d",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Inner text width fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080209672"
+          }
+        ]
+      },
+      {
+        "id": "cd421ffcd4ca7fe7a0ae1ab67234425e69f8e198",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Buttons are now working correctly on Phone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080160271"
+          }
+        ]
+      },
+      {
+        "id": "d42dfc5bac81a03127ee25dcda719936a882a156",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Min boundary validation fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080219090"
+          }
+        ]
+      },
+      {
+        "id": "0718b6355e7b4ec97a895ae76acd81cfe8e8199a",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Clicking on a group header list item doesn\u0027t close the dialog anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080139511"
+          }
+        ]
+      },
+      {
+        "id": "144a4a3ea716d347386e2ae3fb2bd5d40fee6019",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Drag and drop resize now works on internet explorer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080178226"
+          }
+        ]
+      },
+      {
+        "id": "7c9605c6b6c4e9f051728dfe384f26ee25446308",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Navigating through the IME popover via arrow keys fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080200423"
+          }
+        ]
+      },
+      {
+        "id": "73ad96fde75639d1241f400833800aa78b0fbfbf",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: changes its value when support2400 property is used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000396451 2020"
+          }
+        ]
+      },
+      {
+        "id": "8547386fcc7806ede3b7ed2a05d4456578b723fb",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabHeader: Add ariaTexts property",
+        "references": []
+      },
+      {
+        "id": "5cd43d09f8fe516f88ae87df1b2c245a8869661d",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer : Accessibility fix role assigned of type list.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970601254"
+          }
+        ]
+      },
+      {
+        "id": "7c0bf7d2653be0f47671e49c7da14213d201e884",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Do not throw exceptions when databinding is changed on updateToken event.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080186880"
+          }
+        ]
+      },
+      {
+        "id": "d9c3bc61f78c40a339be914bd8bb5ab25d886a25",
+        "type": "FIX",
+        "text": " sap.m.Panel: Header text is now read out correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080190194"
+          }
+        ]
+      },
+      {
+        "id": "9fbabcf1afff8d52726b2f3ccaf02c09eff347a6",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Accessibility example improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080190140"
+          }
+        ]
+      }
+    ]
+  }
+}

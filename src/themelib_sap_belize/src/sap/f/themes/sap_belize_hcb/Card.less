@@ -1,0 +1,32 @@
+/* ================================ */
+/* CSS for control sap.f/Card       */
+/* Belize High Contrast Black theme */
+/* ================================ */
+
+@_sap_f_Card_BoxShadow: none;
+@_sap_f_Card_HeaderBorder: 1px solid @sapUiTileBorderColor;
+@_sap_f_Card_HeaderIconColor: @sapUiContentIconColor;
+
+.sapFCard .sapFCardHeader.sapFCardClickable {
+	&:hover {
+		.sapFCardHeaderMainIndicator {
+			.sapMNCValue,
+			.sapMNCIndicator,
+			.sapMNCScale,
+			.sapMNCIndIcon {
+				color: @sapUiContentContrastTextColor;
+			}
+		}
+	}
+
+	&:active {
+		.sapFCardHeaderMainIndicator {
+			.sapMNCValue,
+			.sapMNCIndicator,
+			.sapMNCScale,
+			.sapMNCIndIcon {
+				color: @sapUiContentContrastTextColor;
+			}
+		}
+	}
+}

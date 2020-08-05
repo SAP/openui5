@@ -1,0 +1,108 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "4d232a7dc3f50da11d1f90912636ade21734bb8b",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Icon correctly visualized in High Contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000439894 2020"
+          }
+        ]
+      },
+      {
+        "id": "90c0c109b23933e7728fafc92c15cbab50056d60",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Icon is correctly positioned in High Contast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080225133"
+          }
+        ]
+      },
+      {
+        "id": "fcfed40c1afff12b34ab797551035417e65755ea",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: styles calculation removal",
+        "references": []
+      },
+      {
+        "id": "01e6cef3b8649eb222337efe65109ac28c82ebb8",
+        "type": "FIX",
+        "text": " sap.m.Searchfield: Fixed focus outline in high-contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080218933"
+          }
+        ]
+      },
+      {
+        "id": "430b5d389d2c1556cad4aa20434087d9d5ab413b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: styles calculation removal",
+        "references": []
+      },
+      {
+        "id": "ded7e8d50b693841d28e690b3e3835c3a3afd976",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button focus is now visible in Quartz Light and Dark",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080263557"
+          }
+        ]
+      },
+      {
+        "id": "a4a2918f90a21ee49b6604f63ee3204f8d4f91ff",
+        "type": "FIX",
+        "text": " sap.m.Link: has high contrast ratio when displayed in a selected row in a table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080202639"
+          }
+        ]
+      },
+      {
+        "id": "5a3e70fe253af27cc16a7263ad88f9a228e5b443",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Belize alignment fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080266204"
+          }
+        ]
+      },
+      {
+        "id": "b567436964718592726d59147c782ccf5a5808a5",
+        "type": "FEATURE",
+        "text": " sap.m.IBadgeEnabler: Implement animations",
+        "references": []
+      },
+      {
+        "id": "fe94e64b6521720a1695a7eacfe36ad937bd256b",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Appointment text on 3 lines",
+        "references": []
+      },
+      {
+        "id": "cbb0fc2b10e1d5dc3689e06b3f90c0e0b9dea853",
+        "type": "FIX",
+        "text": " ObjectPageHeader: Fixed incorrect layout of the title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080248483"
+          }
+        ]
+      }
+    ]
+  }
+}

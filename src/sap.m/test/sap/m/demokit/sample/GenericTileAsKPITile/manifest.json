@@ -1,0 +1,37 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.GenericTileAsKPITile",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.GenericTileAsKPITile.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Page.view.xml",
+					"Page.controller.js",
+					"style.css",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

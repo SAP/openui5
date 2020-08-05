@@ -1,16 +1,14 @@
 /*global QUnit,sinon,Promise*/
 
 jQuery.sap.require("sap.ui.fl.FlexController");
-jQuery.sap.require("sap.ui.fl.FlexControllerFactory");
 jQuery.sap.require("sap.ui.fl.Utils");
 jQuery.sap.require('sap.ui.fl.LrepConnector');
 jQuery.sap.require('sap.ui.core.Control');
 jQuery.sap.require('sap.ui.fl.Cache');
 jQuery.sap.require('sap.ui.fl.registry.SimpleChanges');
 jQuery.sap.require('sap.ui.fl.registry.ChangeRegistry');
-jQuery.sap.require('sap.ui.core.mvc.View');
 
-(function(utils, Persistence, FlexController, FlexControllerFactory, LrepConnector, $, Control, Cache, SimpleChanges, ChangeRegistry, View) {
+(function(utils, Persistence, FlexController, LrepConnector, $, Control, Cache, SimpleChanges, ChangeRegistry) {
 	"use strict";
 
 	var TestingControl = Control.extend("sap.ui.fl.TestingControl", {
@@ -20,7 +18,7 @@ jQuery.sap.require('sap.ui.core.mvc.View');
 			],
 			library: "sap.ui.fl",
 			properties: {
-				"label": {
+				label: {
 					type: "string",
 					group: "Misc",
 					defaultValue: null
@@ -88,7 +86,7 @@ jQuery.sap.require('sap.ui.core.mvc.View');
 				});
 
 				return deletionPersistence.saveAll();
-			}, function(error) {
+			}, function() {
 				return 0;
 			}).then(finalSteps)['catch'](function(err) {
 				assert.ok(false, err);
@@ -117,16 +115,18 @@ jQuery.sap.require('sap.ui.core.mvc.View');
 			isUserDependent: false
 		};
 		var oFlexController = createFlexController();
-		var oChange = oFlexController.addChange(oChangeParameters, this.oControl);
-		assert.ok(oChange);
-
-		oFlexController.saveAll(this.oControl).then(function() {
-			QUnit.start();
-		})['catch'](function(err) {
-			assert.ok(false, err);
-			done();
-		});
-
+		return oFlexController.addChange(oChangeParameters, this.oControl)
+			.then(function(oChange) {
+				assert.ok(oChange);
+				return oFlexController.saveAll(this.oControl);
+			}.bind(this))
+			.then(function() {
+				QUnit.start();
+			})
+			.catch(function(err) {
+				assert.ok(false, err);
+				done();
+			});
 	});
 
 	// FIXME processView has currently the issue, that it will automatically be called when the view is instantiated, this should be fixed, as soon as the real hook is inplace
@@ -164,5 +164,4 @@ jQuery.sap.require('sap.ui.core.mvc.View');
 		var oFlexController = new FlexController("integrationTestingFl.Component"); //do not use FlexControllerFactory.create to avoid caching across tests
 		return oFlexController;
 	}
-
 }(sap.ui.fl.Utils, sap.ui.fl.Persistence, sap.ui.fl.FlexController, sap.ui.fl.FlexControllerFactory, sap.ui.fl.LrepConnector, jQuery, sap.ui.core.Control, sap.ui.fl.Cache, sap.ui.fl.registry.SimpleChanges, sap.ui.fl.registry.ChangeRegistry, sap.ui.core.mvc.View));

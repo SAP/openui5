@@ -1,0 +1,41 @@
+{
+  "1.70.0": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "18f1e90f51eccf3515efc5398c4763df070a6867",
+        "type": "FIX",
+        "text": "sap.m.ScrollBar: Fixed incorrect rendering on 80% browser zoom",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970285385"
+          }
+        ]
+      },
+      {
+        "id": "65cc42ebc8dedd4d2aac6108831f887ad3030988",
+        "type": "FIX",
+        "text": "sap.uxap.HierarchicalSelect: Fixed incorrect alignment in FCL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970422781"
+          }
+        ]
+      },
+      {
+        "id": "9a56dbd77a5d8ede57fc6b0ac22b26779e2f044a",
+        "type": "FIX",
+        "text": " Core: incorporate feedback from SDK feedback channel (2019/4-7)",
+        "references": []
+      },
+      {
+        "id": "6f88099b730e15d7184db9350dec1d1dcf7e3f73",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Removed computationally expensive check",
+        "references": []
+      }
+    ]
+  }
+}

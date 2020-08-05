@@ -33,10 +33,10 @@ sap.ui.define(['./Binding'],
 		},
 
 		metadata : {
-			 publicMethods : [
-			 // methods
-				"getElementContext"
-			 ]
+			publicMethods : [
+				// methods
+				"getBoundContext"
+			]
 		}
 	});
 
@@ -68,7 +68,6 @@ sap.ui.define(['./Binding'],
 	ContextBinding.prototype.getBoundContext = function() {
 		return this.oElementContext;
 	};
-
 
 	return ContextBinding;
 

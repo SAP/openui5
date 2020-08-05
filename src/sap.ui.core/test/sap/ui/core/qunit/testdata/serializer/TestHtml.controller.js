@@ -1,18 +1,23 @@
-sap.ui.controller("serializer.view.TestHtml", {
+sap.ui.define(['sap/ui/model/json/JSONModel'], function(JSONModel) {
+	"use strict";
 
-	onInit : function () {
-		var model = new sap.ui.model.json.JSONModel({
-			name : "Skoda Fabia",
-			price : "14000"
-		});
-		this.getView().setModel(model);
-	},
+	sap.ui.controller("serializer.view.TestHtml", {
 
-	handleButtonPress : function () {
-		this.getView().byId("buttonPressLabel").setText("Button Pressed!");
-	},
+		onInit : function () {
+			var model = new JSONModel({
+				name : "Skoda Fabia",
+				price : "14000"
+			});
+			this.getView().setModel(model);
+		},
 
-	formatPrice : function (sValue) {
-		return sValue + " EUR";
-	}
+		handleButtonPress : function () {
+			this.getView().byId("buttonPressLabel").setText("Button Pressed!");
+		},
+
+		formatPrice : function (sValue) {
+			return sValue + " EUR";
+		}
+	});
+
 });

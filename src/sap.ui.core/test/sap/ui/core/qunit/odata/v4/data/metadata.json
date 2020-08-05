@@ -150,6 +150,10 @@
 			"$Precision" : 16,
 			"$Scale" : "variable"
 		},
+		"__CT__FAKE__Message": {
+			"$kind": "Property",
+			"$Type": "com.sap.gateway.default.iwbep.tea_busi.v0001.__CT__FAKE__Message"
+		},
 		"TEAM_2_EMPLOYEES" : {
 			"$kind" : "NavigationProperty",
 			"$isCollection" : true,
@@ -244,6 +248,19 @@
 			"$kind" : "NavigationProperty",
 			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
 			"$Nullable" : false
+		},
+		"__CT__FAKE__Message" : {
+			"$kind" : "Property",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.__CT__FAKE__Message"
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.__CT__FAKE__Message": {
+		"$kind": "ComplexType",
+		"__FAKE__Messages": {
+			"$Nullable": false,
+			"$Type": "com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__Message",
+			"$isCollection": true,
+			"$kind": "Property"
 		}
 	},
 	"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_City" : {
@@ -369,6 +386,7 @@
 	}],
 	"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee" : [{
 		"$kind" : "Action",
+		"$EntitySetPath" : "EMPLOYEE",
 		"$IsBound" : true,
 		"$Parameter" : [{
 			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker",
@@ -667,9 +685,45 @@
 			"$IncludeInServiceDocument" : true
 		}
 	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__Message" : {
+		"$kind" : "ComplexType",
+		"code" : {
+			"$Nullable" : false,
+			"$Type" : "Edm.String",
+			"$kind" : "Property"
+		},
+		"longtextUrl" : {
+			"$Type" : "Edm.String",
+			"$kind" : "Property"
+		},
+		"message" : {
+			"$Nullable" : false,
+			"$Type" : "Edm.String",
+			"$kind" : "Property"
+		},
+		"numericSeverity" : {
+			"$Nullable" : false,
+			"$Type" : "Edm.Byte",
+			"$kind" : "Property"
+		},
+		"target" : {
+			"$Type" : "Edm.String",
+			"$kind" : "Property"
+		},
+		"transition" : {
+			"$Nullable" : false,
+			"$Type" : "Edm.Boolean",
+			"$kind" : "Property"
+		}
+	},
 	"com.sap.gateway.default.iwbep.tea_busi.v0001." : {
 		"$kind" : "Schema",
 		"$Annotations" : {
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" : {
+				"@com.sap.vocabularies.Common.v1.Messages" : {
+					"$Path" : "__CT__FAKE__Message/__FAKE__Messages"
+				}
+			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/LOCATION/COUNTRY" : {
 				"@com.sap.vocabularies.Common.v1.Label" : "char 255"
 			},
@@ -754,19 +808,24 @@
 				"@com.sap.vocabularies.Common.v1.QuickInfo" : "Währungsschlüssel"
 			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Department/ID" : {
-				"@com.sap.vocabularies.Common.v1.ValueListReferences" : ["../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-DEPARTMENT.ID'/$metadata\n\t\t\t\t\t\t"],
+				"@com.sap.vocabularies.Common.v1.ValueListReferences" : ["../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-DEPARTMENT.ID'/$metadata"],
 				"@com.sap.vocabularies.Common.v1.ValueListWithFixedValues" : true
 			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/STATUS" : {
-				"@com.sap.vocabularies.Common.v1.ValueListReferences" : ["../../../../f4/iwbep/v4_tea_emp_status-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-EMPLOYEE.STATUS'/$metadata\n\t\t\t\t\t\t"],
+				"@com.sap.vocabularies.Common.v1.ValueListReferences" : ["../../../../f4/iwbep/v4_tea_emp_status-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-EMPLOYEE.STATUS'/$metadata"],
 				"@com.sap.vocabularies.Common.v1.ValueListWithFixedValues" : true
 			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM/BudgetCurrency" : {
-				"@com.sap.vocabularies.Common.v1.ValueListReferences" : ["../../../../f4/sap/tcurc-ct/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.BUDGET_CURRENCY'/$metadata\n\t\t\t\t\t\t"]
+				"@com.sap.vocabularies.Common.v1.ValueListReferences" : ["../../../../f4/sap/tcurc-ct/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.BUDGET_CURRENCY'/$metadata"]
 			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM/DEPARTMENT_ID" : {
-				"@com.sap.vocabularies.Common.v1.ValueListReferences" : ["../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.DEPARTMENT_ID'/$metadata\n\t\t\t\t\t\t"],
+				"@com.sap.vocabularies.Common.v1.ValueListReferences" : ["../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.DEPARTMENT_ID'/$metadata"],
 				"@com.sap.vocabularies.Common.v1.ValueListWithFixedValues" : true
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM": {
+				"@com.sap.vocabularies.Common.v1.Messages": {
+					"$Path": "__CT__FAKE__Message/__FAKE__Messages"
+				}
 			}
 		}
 	}

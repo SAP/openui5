@@ -1,12 +1,10 @@
 /*global QUnit,sinon*/
-
-(function () {
-	"use strict";
-
-	jQuery.sap.require("sap/ui/support/supportRules/RuleSet");
-	jQuery.sap.require("sap/ui/support/supportRules/Storage");
-	jQuery.sap.require("sap/ui/thirdparty/sinon");
-	jQuery.sap.require("sap/ui/thirdparty/sinon-qunit");
+sap.ui.define([
+		"sap/ui/support/Bootstrap",
+		"sap/ui/support/supportRules/RuleSet",
+		"sap/ui/support/supportRules/Storage"],
+	function (Bootstrap, RuleSet, Storage) {
+		"use strict";
 
 	var createValidRule = function (id) {
 		return {
@@ -21,25 +19,29 @@
 		};
 	};
 
-	window.saptest = {
-		createValidRule: createValidRule
-	};
-
 	QUnit.module("RuleSet API test", {
-		setup: function () {
+		beforeEach: function (assert) {
+			var done = assert.async();
+
 			sinon.spy(jQuery.sap.log, "error");
-			this.ruleSet = new sap.ui.support.supportRules.RuleSet({
+			this.ruleSet = new RuleSet({
 				name: "sap.ui.testName"
 			});
+
+			Bootstrap.initSupportRules(["true", "silent"], {
+				onReady: function() {
+					done();
+				}
+			});
 		},
-		teardown: function () {
-			sap.ui.support.supportRules.RuleSet.clearAllRuleSets();
+		afterEach: function () {
+			RuleSet.clearAllRuleSets();
 			jQuery.sap.log.error.restore();
 		}
 	});
 
 	QUnit.test("Creating rule set with no name", function (assert) {
-		var ruleSet = new sap.ui.support.supportRules.RuleSet();
+		var ruleSet = new RuleSet();
 		assert.strictEqual(ruleSet._oSettings.name, undefined, "There is no set name in the RuleSet !");
 		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error.");
 	});
@@ -103,7 +105,7 @@
 	});
 
 	QUnit.test("Rule minversion check", function (assert) {
-		sap.ui.support.supportRules.RuleSet.versionInfo = {
+		RuleSet.versionInfo = {
 			version: '1.44'
 		};
 
@@ -152,24 +154,32 @@
 	});
 
 	QUnit.module("RuleSet static functions test", {
-		setup: function () {
-			this.ruleSet = new sap.ui.support.supportRules.RuleSet({
+		beforeEach: function (assert) {
+			var done = assert.async();
+
+			this.ruleSet = new RuleSet({
 				name: "sap.ui.testName"
 			});
 			this.libraries = [
 				{title: "test", type: "library", rules: [createValidRule("id1"), createValidRule("id2")]},
 				{title: "tested", type: "library", rules: [createValidRule("id3"), createValidRule("id4")]}
 			];
+
+			Bootstrap.initSupportRules(["true", "silent"], {
+				onReady: function() {
+					done();
+				}
+			});
 		},
 		teardown: function () {
 			// Restores original function
-			sap.ui.support.supportRules.RuleSet.clearAllRuleSets();
+			RuleSet.clearAllRuleSets();
 			this.libraries = null;
 		}
 	});
 
 	QUnit.test("Extract rules settings to object", function (assert) {
-		var rulesSettings = sap.ui.support.supportRules.RuleSet._extractRulesSettingsToSave(this.libraries);
+		var rulesSettings = RuleSet._extractRulesSettingsToSave(this.libraries);
 
 		assert.strictEqual(typeof rulesSettings, 'object', "should return object");
 		assert.equal(Object.keys(rulesSettings).length, 2, "should contain 2 objects");
@@ -188,29 +198,28 @@
 		this.libraries[1].rules[1].selected = false;
 
 		// Mock storage function
-		sinon.stub(sap.ui.support.supportRules.Storage, "getSelectedRules", function () {
+		sinon.stub(Storage, "getSelectedRules", function () {
 			return JSON.parse('{"test":{"id1":{"id":"id1","selected":true},"id2":{"id":"id2","selected":true}},' +
 				'"tested":{"id3":{"id":"id3","selected":true},"id4":{"id":"id4","selected":true}}}');
 		});
 
-		sap.ui.support.supportRules.RuleSet.loadSelectionOfRules(this.libraries);
+		RuleSet.loadSelectionOfRules(this.libraries);
 		this.libraries.forEach(function (lib) {
 			assert.ok(lib.rules[0].selected === true, "first rule should be selected");
 			assert.ok(lib.rules[1].selected === true, "second rule should be selected");
 		});
-		sap.ui.support.supportRules.Storage.getSelectedRules.restore();
+		Storage.getSelectedRules.restore();
 	});
 
 	QUnit.test("Should not update libraries if storage is empty", function (assert) {
 		var originalLibrary = this.libraries.slice();
 		// Mock storage function
-		sinon.stub(sap.ui.support.supportRules.Storage, "getSelectedRules", function () {
+		sinon.stub(Storage, "getSelectedRules", function () {
 			return null;
 		});
-		sap.ui.support.supportRules.RuleSet.loadSelectionOfRules(this.libraries);
+		RuleSet.loadSelectionOfRules(this.libraries);
 
 		assert.ok(JSON.stringify(originalLibrary) === JSON.stringify(this.libraries), "library should not be changed");
-		sap.ui.support.supportRules.Storage.getSelectedRules.restore();
+		Storage.getSelectedRules.restore();
 	});
-
-}());
+});

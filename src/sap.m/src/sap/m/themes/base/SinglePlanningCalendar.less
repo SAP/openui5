@@ -1,0 +1,50 @@
+@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight_Compact: 3rem;
+@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight: 2.75rem;
+@_sap_m_SinglePlanningCalendarGrid_HoursBackground: @sapUiListBackground;
+
+.sapMPCHead, .sapMSinglePCColumnHeader{
+	position: -webkit-sticky;
+	position: sticky;
+	z-index: 3;
+}
+
+.sapMSinglePCStickyAll {
+	.sapMPCHead {
+		top: 0;
+	}
+}
+
+.sapMSinglePCStickyNavBarAndColHeaders {
+	.sapMPCHead {
+		top: -@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight;
+	}
+
+	// If the actions toolbar are hidden, then the navigation toolbar will
+	// be on top by default.
+	&.sapMSinglePCActionsHidden {
+		.sapMPCHead {
+			top: 0;
+		}
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMSinglePCStickyNavBarAndColHeaders {
+		.sapMPCHead {
+			top: -@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight_Compact;
+		}
+	}
+}
+
+
+html.sap-desktop .sapMSinglePC .sapUiCalItem:not(.sapUiCalItemSel):hover {
+  background-color: darken(@sapUiContentForegroundColor,5);
+}
+
+html.sap-desktop .sapMSinglePC .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover {
+  background-color: transparent;
+}
+
+.sapMSinglePCGridContent {
+	background-color: @_sap_m_SinglePlanningCalendarGrid_HoursBackground;
+}

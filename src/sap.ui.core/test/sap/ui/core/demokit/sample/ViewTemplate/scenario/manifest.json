@@ -5,10 +5,9 @@
 		"applicationVersion" : {
 			"version" : "${version}"
 		},
-		"description": "{{sap.app.description}}",
+		"description": "Complete demo scenario for XML Templating based on OData V4 annotations",
 		"id" : "sap.ui.core.sample.ViewTemplate.scenario",
-		"i18n" : "i18n/i18n.properties",
-		"title" : "{{sap.app.title}}",
+		"title" : "XML Templating: demo scenario",
 		"type" : "application"
 	},
 	"sap.ui" : {
@@ -37,7 +36,8 @@
 					"Main.view.xml",
 					"ODataMetaModel.json",
 					"Table.fragment.xml",
-					"TableFacet.fragment.xml"
+					"TableFacet.fragment.xml",
+					"../../common/Controller.js"
 				]
 			}
 		},
@@ -54,7 +54,9 @@
 		"models": {
 			"@i18n": {
 				"settings": {
-					"bundleName": "sap.ui.core.sample.ViewTemplate.scenario.i18n.i18n"
+					"bundleName": "sap.ui.core.sample.ViewTemplate.scenario.i18n.i18n",
+					"fallbackLocale" : "",
+					"supportedLocales" : ["de", ""]
 				},
 				"type": "sap.ui.model.resource.ResourceModel"
 			}

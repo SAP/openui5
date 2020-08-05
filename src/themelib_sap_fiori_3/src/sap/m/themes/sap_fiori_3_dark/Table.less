@@ -1,0 +1,30 @@
+/* ============================ */
+/* CSS for control sap.m/Table  */
+/* Quartz Dark theme            */
+/* ============================ */
+
+@_sap_m_Table_SelNavColWidth: 2.75rem;
+
+.sapMListBGTransparent .sapMListTblHeader,
+.sapMListBGTransparent .sapMListTblFooter {
+	background-color: fade(@sapUiListBackground, 0%);
+}
+
+.sapMListBGTranslucent .sapMListTblHeader,
+.sapMListBGTranslucent .sapMListTblFooter {
+	background-color: @sapUiListBackground;
+}
+
+.sapMListBGSolid .sapMListTblHeader,
+.sapMListBGSolid .sapMListTblFooter {
+	background-color: @sapUiListBackground;
+}
+
+/* make the focus visible on all sides */
+.sapMSticky .sapMLIBShowSeparator:first-child > td {
+	border-top-color: transparent;
+}
+
+.sapMListTblCell {
+	padding: 0 0.5rem;
+}

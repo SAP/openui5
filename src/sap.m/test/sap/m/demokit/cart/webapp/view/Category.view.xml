@@ -5,8 +5,9 @@
 	<Page
 		id="page"
 		title="{CategoryName}"
+		backgroundDesign="Solid"
 		showNavButton="true"
-		navButtonPress="onNavButtonPress">
+		navButtonPress=".onBack">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				rootRole="Region"
@@ -20,16 +21,15 @@
 		</landmarkInfo>
 		<headerContent>
 			<Button
-				icon="sap-icon://cart"
-				tooltip="{i18n>toCartButtonTooltip}"
-				press="onCartButtonPress">
-			</Button>
+				id="masterListFilterButton"
+				icon="sap-icon://filter"
+				press=".onFilter"/>
 		</headerContent>
 		<content>
 			<List
 				id="productList"
 				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
-				selectionChange="onProductListSelect"
+				selectionChange=".onProductDetails"
 				noDataText="{i18n>categoryNoData}"
 				busyIndicatorDelay="0"
 				items="{
@@ -61,10 +61,16 @@
 							formatter : '.formatter.price'
 						}"
 						numberUnit="{CurrencyCode}"
-						press="onProductListItemPress"
-						iconDensityAware="false" >
+						press=".onProductDetails"
+						iconDensityAware="false"
+						tooltip="{i18n>openProductDetails} {Name}">
 						<attributes>
-							<ObjectAttribute text="{SupplierName}"/>
+							<ObjectAttribute visible="true"
+											 text="{SupplierName}"/>
+							<ObjectAttribute visible="{device>/system/desktop}"
+											 active="true"
+											 text="{i18n>CompareWith}"
+											 press=".compareProducts"/>
 						</attributes>
 						<firstStatus>
 							<ObjectStatus
@@ -75,20 +81,11 @@
 								state="{
 									path : 'Status',
 									formatter : '.formatter.statusState'
-								}" />
+								}"/>
 						</firstStatus>
 					</ObjectListItem>
 				</items>
 			</List>
 		</content>
-		<footer>
-			<Toolbar>
-				<ToolbarSpacer />
-				<Button
-					id="masterListFilterButton"
-					icon="sap-icon://filter"
-					press="onMasterListFilterPressed"/>
-			</Toolbar>
-		</footer>
 	</Page>
 </mvc:View>

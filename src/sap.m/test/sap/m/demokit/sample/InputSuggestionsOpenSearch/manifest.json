@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.InputSuggestionsOpenSearch",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.InputSuggestionsOpenSearch.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"MockServer.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

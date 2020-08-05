@@ -4,14 +4,16 @@
 
 // Provides control sap.m.ColumnListItem.
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"./library",
 	"./ListItemBase",
-	"./ColumnListItemRenderer"
+	"./ColumnListItemRenderer",
+	"sap/ui/thirdparty/jquery",
+	// jQuery custom selectors ":sapFocusable", ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors"
 ],
-	function(jQuery, Element, coreLibrary, library, ListItemBase, ColumnListItemRenderer) {
+	function(Element, coreLibrary, library, ListItemBase, ColumnListItemRenderer, jQuery) {
 	"use strict";
 
 
@@ -74,10 +76,37 @@ sap.ui.define([
 	 */
 	var TablePopin = Element.extend("sap.m.TablePopin", {
 		ontap: function(oEvent) {
+			// prevent the tap event if selection is done within the popin control and mark the event
+			if (oEvent.isMarked() || ListItemBase.detectTextSelection(this.getDomRef())) {
+				return oEvent.stopImmediatePropagation(true);
+			}
+
 			// focus to the main row if there is nothing to focus in the popin
 			if (oEvent.srcControl === this || !jQuery(oEvent.target).is(":sapFocusable")) {
 				this.getParent().focus();
 			}
+		},
+
+		_onMouseEnter: function() {
+			var $this = jQuery(this),
+				$parent = $this.prev();
+
+			if (!$parent.length || !$parent.hasClass("sapMLIBHoverable") || $parent.hasClass("sapMPopinHovered")) {
+				return;
+			}
+
+			$parent.addClass("sapMPopinHovered");
+		},
+
+		_onMouseLeave: function() {
+			var $this = jQuery(this),
+				$parent = $this.prev();
+
+			if (!$parent.length || !$parent.hasClass("sapMLIBHoverable") || !$parent.hasClass("sapMPopinHovered")) {
+				return;
+			}
+
+			$parent.removeClass("sapMPopinHovered");
 		}
 	});
 
@@ -93,6 +122,11 @@ sap.ui.define([
 	ColumnListItem.prototype.onAfterRendering = function() {
 		ListItemBase.prototype.onAfterRendering.call(this);
 		this._checkTypeColumn();
+
+		var oPopin = this.hasPopin();
+		if (oPopin) {
+			this.$Popin().hover(oPopin._onMouseEnter, oPopin._onMouseLeave);
+		}
 	};
 
 	ColumnListItem.prototype.exit = function() {
@@ -119,12 +153,7 @@ sap.ui.define([
 	// returns responsible table control for the item
 	ColumnListItem.prototype.getTable = function() {
 		var oParent = this.getParent();
-		if (!oParent) {
-			return;
-		}
-
-		var fnTableClass = sap.ui.require("sap/m/Table");
-		if (typeof fnTableClass == "function" && oParent instanceof fnTableClass) {
+		if (oParent && oParent.isA("sap.m.Table")) {
 			return oParent;
 		}
 	};
@@ -139,7 +168,7 @@ sap.ui.define([
 		if (!this._oPopin) {
 			this._oPopin = new TablePopin({
 				id: this.getId() + "-sub"
-			}).addEventDelegate({
+			}).addDelegate({
 				// handle the events of pop-in
 				ontouchstart: this.ontouchstart,
 				ontouchmove: this.ontouchmove,
@@ -234,6 +263,18 @@ sap.ui.define([
 		if (this.hasPopin()) {
 			this.$Popin().attr("aria-selected", bSelected);
 		}
+	};
+
+	ColumnListItem.prototype.onfocusin = function(oEvent) {
+		if (oEvent.isMarked()) {
+			return;
+		}
+
+		if (oEvent.srcControl === this) {
+			this.$().children(".sapMListTblCellDup").find(":sapTabbable").attr("tabindex", -1);
+		}
+
+		ListItemBase.prototype.onfocusin.apply(this, arguments);
 	};
 
 	// informs the table when item's type column requirement is changed

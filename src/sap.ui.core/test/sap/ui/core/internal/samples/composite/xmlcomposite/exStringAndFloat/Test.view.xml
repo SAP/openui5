@@ -1,6 +1,6 @@
 <mvc:View height="100%" controllerName="sap.ui.core.internal.samples.composite.xmlcomposite.ex2.Test" 
 	xmlns:m="sap.m" 
-	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:fc="sap.ui.core.internal.samples.composite.xmlcomposite.ex2.comp">
 	<m:VBox>
 		<m:Button text="Decrease values by 10 %" press="handlePress" />

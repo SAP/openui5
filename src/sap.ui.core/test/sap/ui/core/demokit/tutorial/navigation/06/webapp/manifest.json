@@ -1,15 +1,20 @@
 {
-	"_version": "1.8.0",
+	"_version": "1.21.0",
 	"sap.app": {
 		"id": "sap.ui.demo.nav",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
-		"ach": "CA-UI5-FST",
 		"dataSources": {
 			"employeeRemote": {
 				"uri": "/here/goes/your/serviceUrl/",
@@ -39,14 +44,19 @@
 		"dependencies": {
 			"minUI5Version": "1.30",
 			"libs": {
-				"sap.m": { }
+				"sap.m": {},
+				"sap.ui.core": {}
 			}
 		},
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.nav.i18n.i18n"
+					"bundleName": "sap.ui.demo.nav.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			},
 			"": {

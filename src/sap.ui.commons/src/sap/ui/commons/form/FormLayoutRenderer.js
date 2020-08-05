@@ -1,12 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/layout/form/FormLayoutRenderer'],
-	function(jQuery, Renderer, FormLayoutRenderer1) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/layout/form/FormLayoutRenderer'],
+	function(Renderer, LayoutFormLayoutRenderer) {
 	"use strict";
 
 
-	var FormLayoutRenderer = Renderer.extend(FormLayoutRenderer1);
+	var FormLayoutRenderer = Renderer.extend(LayoutFormLayoutRenderer);
 
 
 	return FormLayoutRenderer;

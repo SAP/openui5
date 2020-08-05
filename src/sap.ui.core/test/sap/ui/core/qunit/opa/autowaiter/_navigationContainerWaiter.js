@@ -1,5 +1,5 @@
+/*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/test/_LogCollector",
 	"sap/ui/test/autowaiter/_autoWaiter",
 	"sap/ui/test/autowaiter/_timeoutWaiter",
@@ -11,14 +11,14 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5"
-], function ($, _LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
+], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
 		NavContainer, App, Page, Button, opaTest, Opa5) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();
 
-	[NavContainer, App].forEach(function (fnConstructor) {
-		QUnit.module("NavigationContainerWaiter - " + fnConstructor.getMetadata().getName(), {
+	[NavContainer, App].forEach(function (FnConstructor) {
+		QUnit.module("NavigationContainerWaiter - " + FnConstructor.getMetadata().getName(), {
 			beforeEach: function () {
 				this.oTimeoutWaiterStub = sinon.stub(_timeoutWaiter, "hasPending");
 				this.oXHRWaiterStub = sinon.stub(_XHRWaiter, "hasPending");
@@ -35,7 +35,7 @@ sap.ui.define([
 				this.oSecondPage = new Page({
 					content: this.oSecondPageButton
 				});
-				this.oNavContainer = new fnConstructor({
+				this.oNavContainer = new FnConstructor({
 					pages: [oInitialPage, this.oSecondPage]
 				}).placeAt("qunit-fixture");
 
@@ -78,7 +78,7 @@ sap.ui.define([
 	QUnit.module("NavigationContainerWaiter - iFrame");
 
 	opaTest("Should wait for navigating NavContainers in an IFrame", function (oOpa) {
-		oOpa.iStartMyAppInAFrame("../../testdata/miniUI5Site.html");
+		oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/miniUI5Site.html");
 
 		oOpa.waitFor({
 			viewName: "myView",
@@ -87,7 +87,7 @@ sap.ui.define([
 				oOpa.waitFor({
 					viewName: "myView",
 					id: "buttonOutsideOfTheApp",
-					success: function (oButton) {
+					success: function () {
 						var oIFrameWindow = Opa5.getWindow();
 						oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test.autowaiter._timeoutWaiter, "hasPending").returns(false);
 						oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test.autowaiter._XHRWaiter, "hasPending").returns(false);

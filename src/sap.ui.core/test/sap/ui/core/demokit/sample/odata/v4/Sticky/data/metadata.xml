@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities" />
+		<edmx:Include Namespace="com.sap.vocabularies.Capabilities.v1" Alias="SAP__capabilities" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregate" />
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_SESSION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Session.v1" Alias="Session" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="SAP__measures" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Validation.V1" Alias="SAP__validation" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.srvd.zrc_rap_sticky.v0001" Alias="SAP__self">
+			<EntityType Name="StickySubNodeType">
+				<Key>
+					<PropertyRef Name="Id" />
+					<PropertyRef Name="NodeId" />
+					<PropertyRef Name="SubNodeId" />
+				</Key>
+				<Property Name="Id" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="NodeId" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="SubNodeId" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="Content" Type="Edm.String" MaxLength="20" />
+				<Property Name="SAP__Messages" Type="Collection(com.sap.gateway.srvd.zrc_rap_sticky.v0001.SAP__Message)" Nullable="false" />
+				<NavigationProperty Name="_Node" Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyNodeType" Nullable="false" />
+				<NavigationProperty Name="_Root" Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType" />
+			</EntityType>
+			<EntityType Name="AnotherNotImportantNodeType">
+				<Key>
+					<PropertyRef Name="msehi_original" />
+				</Key>
+				<Property Name="msehi_original" Type="Edm.String" Nullable="false" MaxLength="3" />
+				<Property Name="msehi_noconv" Type="Edm.String" MaxLength="3" />
+				<Property Name="msehi_conv" Type="Edm.String" MaxLength="3" />
+				<Property Name="isocode" Type="Edm.String" MaxLength="3" />
+				<Property Name="mseh3" Type="Edm.String" MaxLength="3" />
+				<Property Name="mseh6" Type="Edm.String" MaxLength="6" />
+				<Property Name="mseht" Type="Edm.String" MaxLength="10" />
+				<Property Name="msehl" Type="Edm.String" MaxLength="30" />
+				<Property Name="lowerDate" Type="Edm.Date" />
+				<Property Name="upperDate" Type="Edm.Date" />
+			</EntityType>
+			<EntityType Name="StickyNodeType">
+				<Key>
+					<PropertyRef Name="Id" />
+					<PropertyRef Name="NodeId" />
+				</Key>
+				<Property Name="Id" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="NodeId" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="Content" Type="Edm.String" MaxLength="20" />
+				<Property Name="SAP__Messages" Type="Collection(com.sap.gateway.srvd.zrc_rap_sticky.v0001.SAP__Message)" Nullable="false" />
+				<NavigationProperty Name="_Root" Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType" Nullable="false" />
+				<NavigationProperty Name="_SubNode" Type="Collection(com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickySubNodeType)" />
+			</EntityType>
+			<EntityType Name="StickyType">
+				<Key>
+					<PropertyRef Name="Id" />
+				</Key>
+				<Property Name="Id" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="Content" Type="Edm.String" MaxLength="20" />
+				<Property Name="AdditionalContent" Type="Edm.String" MaxLength="20" />
+				<Property Name="SAP__Messages" Type="Collection(com.sap.gateway.srvd.zrc_rap_sticky.v0001.SAP__Message)" Nullable="false" />
+				<NavigationProperty Name="_Node" Type="Collection(com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyNodeType)" />
+			</EntityType>
+			<ComplexType Name="SAP__Message">
+				<Property Name="code" Type="Edm.String" Nullable="false" />
+				<Property Name="message" Type="Edm.String" Nullable="false" />
+				<Property Name="numericSeverity" Type="Edm.Byte" Nullable="false" />
+				<Property Name="target" Type="Edm.String" Nullable="false" />
+				<Property Name="transition" Type="Edm.Boolean" Nullable="false" />
+			</ComplexType>
+			<Action Name="CreateFromTemplate" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType" Nullable="false" />
+			</Action>
+			<Action Name="Release" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType" Nullable="false" />
+			</Action>
+			<Action Name="Create" IsBound="true">
+				<Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType)" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType" Nullable="false" />
+			</Action>
+			<Action Name="DiscardChanges" />
+			<Action Name="PrepareForEdit" IsBound="true" EntitySetPath="_it">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType" Nullable="false" />
+			</Action>
+			<Action Name="PrepareForCreate" IsBound="true">
+				<Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType)" Nullable="false" />
+			</Action>
+			<Action Name="ProcessSideEffects" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType" Nullable="false" />
+			</Action>
+			<Action Name="ProcessSideEffects" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickySubNodeType" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickySubNodeType" Nullable="false" />
+			</Action>
+			<Action Name="ProcessSideEffects" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyNodeType" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyNodeType" Nullable="false" />
+			</Action>
+			<Action Name="SaveChanges" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType" Nullable="false" />
+			</Action>
+			<EntityContainer Name="Container">
+				<EntitySet Name="AnotherNotImportantNode" EntityType="com.sap.gateway.srvd.zrc_rap_sticky.v0001.AnotherNotImportantNodeType" />
+				<EntitySet Name="Sticky" EntityType="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyType">
+					<NavigationPropertyBinding Path="_Node" Target="StickyNode" />
+				</EntitySet>
+				<EntitySet Name="StickyNode" EntityType="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickyNodeType">
+					<NavigationPropertyBinding Path="_Root" Target="Sticky" />
+					<NavigationPropertyBinding Path="_SubNode" Target="StickySubNode" />
+				</EntitySet>
+				<EntitySet Name="StickySubNode" EntityType="com.sap.gateway.srvd.zrc_rap_sticky.v0001.StickySubNodeType">
+					<NavigationPropertyBinding Path="_Node" Target="StickyNode" />
+					<NavigationPropertyBinding Path="_Root" Target="Sticky" />
+				</EntitySet>
+				<ActionImport Name="DiscardChanges" Action="com.sap.gateway.srvd.zrc_rap_sticky.v0001.DiscardChanges" />
+			</EntityContainer>
+			<Annotations Target="SAP__self.StickySubNodeType">
+				<Annotation Term="SAP__common.Label" String="Node" />
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Renzos Node" />
+							<PropertyValue Property="ID" String="SubNode" />
+							<PropertyValue Property="Target" AnnotationPath="@UI.Identification" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="ID" />
+							<PropertyValue Property="Value" Path="Id" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="SubNode ID" />
+							<PropertyValue Property="Value" Path="NodeId" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="SubNode ID" />
+							<PropertyValue Property="Value" Path="SubNodeId" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Content" />
+							<PropertyValue Property="Value" Path="Content" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="ID" />
+							<PropertyValue Property="Value" Path="Id" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="SubNode ID" />
+							<PropertyValue Property="Value" Path="NodeId" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="SubNode ID" />
+							<PropertyValue Property="Value" Path="SubNodeId" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Content" />
+							<PropertyValue Property="Value" Path="Content" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/StickySubNode">
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.AnotherNotImportantNodeType">
+				<Annotation Term="SAP__common.Label" String="Unit of Measure" />
+			</Annotations>
+			<Annotations Target="SAP__self.Container/AnotherNotImportantNode">
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record>
+						<PropertyValue Property="Deletable" Bool="false" />
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="Updatable" Bool="false" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.StickyNodeType">
+				<Annotation Term="SAP__common.Label" String="Node" />
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Renzos Node" />
+							<PropertyValue Property="ID" String="Node" />
+							<PropertyValue Property="Target" AnnotationPath="@UI.Identification" />
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Renzos SubNodes" />
+							<PropertyValue Property="ID" String="Node" />
+							<PropertyValue Property="Target" AnnotationPath="_SubNode/@UI.LineItem" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="ID" />
+							<PropertyValue Property="Value" Path="Id" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Node ID" />
+							<PropertyValue Property="Value" Path="NodeId" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Content" />
+							<PropertyValue Property="Value" Path="Content" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="ID" />
+							<PropertyValue Property="Value" Path="Id" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Node ID" />
+							<PropertyValue Property="Value" Path="NodeId" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Content" />
+							<PropertyValue Property="Value" Path="Content" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/StickyNode">
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.StickyType">
+				<Annotation Term="SAP__common.Label" String="Root" />
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Renzos Root" />
+							<PropertyValue Property="ID" String="Root" />
+							<PropertyValue Property="Target" AnnotationPath="@UI.Identification" />
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Renzos Nodes" />
+							<PropertyValue Property="ID" String="Node" />
+							<PropertyValue Property="Target" AnnotationPath="_Node/@UI.LineItem" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataFieldForAction">
+							<PropertyValue Property="Label" String="Release" />
+							<PropertyValue Property="Action" String="">
+								<Annotation Term="SAP__core.Messages">
+									<Collection>
+										<Record>
+											<PropertyValue Property="message" String="Action TypeRelease is NOT SUPPORTED" />
+											<PropertyValue Property="severity" String="error" />
+										</Record>
+									</Collection>
+								</Annotation>
+							</PropertyValue>
+							<PropertyValue Property="InvocationGrouping" EnumMember="UI.OperationGroupingType/Isolated" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="ID" />
+							<PropertyValue Property="Value" Path="Id" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Content" />
+							<PropertyValue Property="Value" Path="Content" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Additional Content" />
+							<PropertyValue Property="Value" Path="AdditionalContent" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="ID" />
+							<PropertyValue Property="Value" Path="Id" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Content" />
+							<PropertyValue Property="Value" Path="Content" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Additional Content" />
+							<PropertyValue Property="Value" Path="AdditionalContent" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataFieldForAction">
+							<PropertyValue Property="Label" String="Release" />
+							<PropertyValue Property="Action" String="">
+								<Annotation Term="SAP__core.Messages">
+									<Collection>
+										<Record>
+											<PropertyValue Property="message" String="Action TypeRelease is NOT SUPPORTED" />
+											<PropertyValue Property="severity" String="error" />
+										</Record>
+									</Collection>
+								</Annotation>
+							</PropertyValue>
+							<PropertyValue Property="InvocationGrouping" EnumMember="UI.OperationGroupingType/Isolated" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/Sticky">
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container">
+				<Annotation Term="SAP__aggregation.ApplySupported">
+					<Record>
+						<PropertyValue Property="Transformations">
+							<Collection>
+								<String>aggregate</String>
+								<String>groupby</String>
+								<String>filter</String>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Rollup" EnumMember="None" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/Sticky">
+				<Annotation Term="Session.StickySessionRequired">
+					<Record>
+						<PropertyValue Property="NewAction" String="com.sap.gateway.srvd.zrc_rap_sticky.v0001.PrepareForCreate" />
+						<PropertyValue Property="EditAction" String="com.sap.gateway.srvd.zrc_rap_sticky.v0001.PrepareForEdit" />
+						<PropertyValue Property="PreparationAction" String="com.sap.gateway.srvd.zrc_rap_sticky.v0001.ProcessSideEffects" />
+						<PropertyValue Property="SaveAction" String="com.sap.gateway.srvd.zrc_rap_sticky.v0001.SaveChanges" />
+						<PropertyValue Property="DiscardAction" String="com.sap.gateway.srvd.zrc_rap_sticky.v0001.DiscardChanges" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/StickyNode">
+				<Annotation Term="Session.StickySessionRequired">
+					<Record>
+						<PropertyValue Property="PreparationAction" String="com.sap.gateway.srvd.zrc_rap_sticky.v0001.ProcessSideEffects" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/StickySubNode">
+				<Annotation Term="Session.StickySessionRequired">
+					<Record>
+						<PropertyValue Property="PreparationAction" String="com.sap.gateway.srvd.zrc_rap_sticky.v0001.ProcessSideEffects" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.StickySubNodeType">
+				<Annotation Term="SAP__common.Messages" Path="SAP__Messages" />
+			</Annotations>
+			<Annotations Target="SAP__self.StickySubNodeType/SAP__Messages">
+				<Annotation Term="SAP__core.Computed" />
+			</Annotations>
+			<Annotations Target="SAP__self.AnotherNotImportantNodeType/msehi_noconv">
+				<Annotation Term="SAP__common.Label" String="Unit" />
+				<Annotation Term="SAP__common.Heading" String="In" />
+				<Annotation Term="SAP__common.QuickInfo" String="Length unit for Workbench training data model BC_Travel" />
+			</Annotations>
+			<Annotations Target="SAP__self.AnotherNotImportantNodeType/msehi_conv">
+				<Annotation Term="SAP__common.Label" String="Internal UoM" />
+				<Annotation Term="SAP__common.Heading" String="MU" />
+				<Annotation Term="SAP__common.QuickInfo" String="Unit of Measurement" />
+			</Annotations>
+			<Annotations Target="SAP__self.AnotherNotImportantNodeType/isocode">
+				<Annotation Term="SAP__common.Label" String="ISO Code" />
+				<Annotation Term="SAP__common.Heading" String="ISO" />
+				<Annotation Term="SAP__common.QuickInfo" String="ISO Code for Unit of Measurement" />
+			</Annotations>
+			<Annotations Target="SAP__self.AnotherNotImportantNodeType/mseh3">
+				<Annotation Term="SAP__common.Label" String="Commercial" />
+				<Annotation Term="SAP__common.QuickInfo" String="External Unit of Measurement in Commercial Format (3-Char.)" />
+			</Annotations>
+			<Annotations Target="SAP__self.AnotherNotImportantNodeType/mseh6">
+				<Annotation Term="SAP__common.Label" String="Technical" />
+				<Annotation Term="SAP__common.Heading" String="Techn." />
+				<Annotation Term="SAP__common.QuickInfo" String="External Unit of Measurement in Technical Format (6-Char.)" />
+			</Annotations>
+			<Annotations Target="SAP__self.AnotherNotImportantNodeType/mseht">
+				<Annotation Term="SAP__common.Label" String="Measuremt unit text" />
+				<Annotation Term="SAP__common.Heading" String="Measurement unit text" />
+				<Annotation Term="SAP__common.QuickInfo" String="Unit of Measurement Text (Maximum 10 Characters)" />
+			</Annotations>
+			<Annotations Target="SAP__self.AnotherNotImportantNodeType/msehl">
+				<Annotation Term="SAP__common.Label" String="UoM Text" />
+				<Annotation Term="SAP__common.Heading" String="Measurement unit text" />
+				<Annotation Term="SAP__common.QuickInfo" String="Unit of Measurement Text (Maximum 30 Characters)" />
+			</Annotations>
+			<Annotations Target="SAP__self.StickyNodeType">
+				<Annotation Term="SAP__common.Messages" Path="SAP__Messages" />
+			</Annotations>
+			<Annotations Target="SAP__self.StickyNodeType/SAP__Messages">
+				<Annotation Term="SAP__core.Computed" />
+			</Annotations>
+			<Annotations Target="SAP__self.StickyType">
+				<Annotation Term="SAP__common.Messages" Path="SAP__Messages" />
+			</Annotations>
+			<Annotations Target="SAP__self.StickyType/SAP__Messages">
+				<Annotation Term="SAP__core.Computed" />
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

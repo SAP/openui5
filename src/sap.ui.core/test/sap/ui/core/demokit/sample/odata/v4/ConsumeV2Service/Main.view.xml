@@ -10,9 +10,8 @@
 			<form:title>
 				<core:Title text="Single Entity"/>
 			</form:title>
-			<Button binding="{com.sap.ui5.OData.ResetEdmTypes(...)}" icon="sap-icon://sys-cancel"
-				id="resetEntityButton" press="onResetEntity" text="Reset Entity"
-				tooltip="Reset Entity"/>
+			<Button binding="{com.sap.ui5.OData.ResetEdmTypes(...)}" id="resetEntityButton"
+				press="onResetEntity" text="Reset Entity" tooltip="Reset Entity"/>
 			<Label labelFor="binary" text="Binary"/>
 			<Text id="binary" text="{path : 'Binary', type : 'sap.ui.model.odata.type.String'}"/>
 			<Label labelFor="boolean" text="Boolean"/>

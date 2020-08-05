@@ -4,17 +4,32 @@
 
 // Provides control sap.uxap.BlockBase.
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/CustomData",
+	"sap/ui/core/mvc/View",
 	"./BlockBaseMetadata",
 	"sap/ui/model/Context",
 	"sap/ui/Device",
-	"sap/ui/layout/form/ResponsiveGridLayout",
+	"sap/ui/layout/form/ColumnLayout",
 	"./library",
 	"sap/ui/core/Component",
-	"sap/ui/layout/library"
-], function (jQuery, Control, CustomData, BlockBaseMetadata, Context, Device, ResponsiveGridLayout, library, Component, layoutLibrary) {
+	"sap/ui/layout/library",
+	"sap/base/Log"
+], function(
+	jQuery,
+	Control,
+	CustomData,
+	CoreView,
+	BlockBaseMetadata,
+	Context,
+	Device,
+	ColumnLayout,
+	library,
+	Component,
+	layoutLibrary,
+	Log
+) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.form.SimpleFormLayout
@@ -45,6 +60,7 @@ sap.ui.define([
 		 *
 		 * As any UI5 view, the XML view can have a controller which automatically comes with a
 		 * <code>this.oParentBlock</code> attribute (so that the controller can interact with the block).
+		 * The <code>oParentBlock</code> is firstly available in <code>onParentBlockModeChange</code> method.
 		 * If the controller implements the <code>onParentBlockModeChange</code> method, this method will
 		 * be called with the <code>sMode</code> parameter when the view is used or reused by the block.
 		 *
@@ -65,9 +81,11 @@ sap.ui.define([
 				library: "sap.uxap",
 				properties: {
 					/**
-					 * Determines the mode of the block.
-					 * When block is used inside ObjectPage this mode is inherited my the SubSection.
-					 * The mode of the block is changed when SubSection mode changes.
+					 * Determines the mode of the block. See {@link sap.uxap.ObjectPageSubSectionMode ObjectPageSubSectionMode}.
+					 * When <code>BlockBase</code> is used inside an <code>ObjectPageLayout</code>,
+					 * the <code>mode</code> property is inherited from the respective {@link sap.uxap.ObjectPageSubSection SubSection}.
+					 * The <code>mode</code> property of <code>BlockBase</code> changes when the
+					 * <code>mode</code> property of <code>ObjectPageSubSection</code> changes.
 					 */
 					"mode": {type: "string", group: "Appearance"},
 
@@ -98,7 +116,7 @@ sap.ui.define([
 					/**
 					 * Determines whether the show more button should be shown.
 					 *
-					 * <b>Note:</b> The property will take effect if the <code>BlockBase</code> is inside <ObjectPageSubSection</code>
+					 * <b>Note:</b> The property will take effect if the <code>BlockBase</code> is inside <code>ObjectPageSubSection</code>
 					 * and would be ignored in case the <code>BlockBase</code> is nested inside another <code>BlockBase</code>.
 					 */
 					"showSubSectionMore": {type: "boolean", group: "Behavior", defaultValue: false}
@@ -119,10 +137,32 @@ sap.ui.define([
 				associations: {
 
 					/**
-					 * The view that is rendered now.
-					 * Can be used as getter for the rendered view.
+					 * The current view.
+					 * Corresponds to the currently specified <code>mode</code> of the <code>sap.uxap.BlockBase<code>.
+					 * Can be used as a getter for the internally created view.
+					 *
+					 * <b>Note:</b> As the views are created asynchronously, this association will be updated only after the view creation is completed.
+					 * Applications that want to be notified when a view is created should subscribe to the <code>viewInit</code> event.
 					 */
 					"selectedView": {type: "sap.ui.core.Control", multiple: false}
+				},
+				events: {
+
+					/**
+					 * Fired when an aggregated view is instantiated.
+					 * @since 1.72
+					 */
+					"viewInit": {
+						parameters: {
+
+							/**
+							 * The initialized view.
+							 */
+							view: {
+								type: "sap.ui.core.mvc.View"
+							}
+						}
+					}
 				},
 				views: {
 
@@ -161,6 +201,7 @@ sap.ui.define([
 			this._bConnected = false;   //indicates connectToModels function has been called
 			this._oUpdatedModels = {};
 			this._oParentObjectPageSubSection = null; // the parent ObjectPageSubSection
+			this._oPromisedViews = {};
 		};
 
 		BlockBase.prototype.onBeforeRendering = function () {
@@ -172,7 +213,7 @@ sap.ui.define([
 				if (this.getMetadata().getView("defaultXML")) {
 					this.setMode("defaultXML");
 				} else {
-					jQuery.sap.log.error("BlockBase ::: there is no mode defined for rendering " + this.getMetadata().getName() +
+					Log.error("BlockBase ::: there is no mode defined for rendering " + this.getMetadata().getName() +
 						". You can either set a default mode on the block metadata or set the mode property before rendering the block.");
 				}
 			}
@@ -200,11 +241,11 @@ sap.ui.define([
 		 * @param {*} bSuppressInvalidate invalidate
 		 */
 		BlockBase.prototype.setParent = function (oParent, sAggregationName, bSuppressInvalidate) {
-			Control.prototype.setParent.call(this, oParent, sAggregationName, bSuppressInvalidate);
-
 			if (oParent instanceof library.ObjectPageSubSection) {
 				this._bLazyLoading = true; //we activate the block lazy loading since we are within an objectPageLayout
 				this._oParentObjectPageSubSection = oParent;
+			} else {
+				Control.prototype.setParent.call(this, oParent, sAggregationName, bSuppressInvalidate);
 			}
 		};
 
@@ -230,7 +271,7 @@ sap.ui.define([
 		 */
 		BlockBase.prototype._applyMapping = function () {
 			if (this._shouldLazyLoad()) {
-				jQuery.sap.log.debug("BlockBase ::: Ignoring the _applyMapping as the block is not connected");
+				Log.debug("BlockBase ::: Ignoring the _applyMapping as the block is not connected");
 			} else {
 				this.getMappings().forEach(function (oMapping, iIndex) {
 					var oModel,
@@ -258,7 +299,7 @@ sap.ui.define([
 							|| (this.getModel(sInternalModelName) !== this.getModel(sExternalModelName)) /* model changed, then we have to update internal model mapping */
 							|| (oBindingContext && (oBindingContext.getPath() !== sPath)) /* sExternalPath changed, then we have to update internal model mapping */) {
 
-							jQuery.sap.log.info("BlockBase :: mapping external model " + sExternalModelName + " to " + sInternalModelName);
+							Log.info("BlockBase :: mapping external model " + sExternalModelName + " to " + sInternalModelName);
 
 							this._oMappingApplied[sInternalModelName] = true;
 							Control.prototype.setModel.call(this, oModel, sInternalModelName);
@@ -320,7 +361,7 @@ sap.ui.define([
 				//if Lazy loading is enabled, and if the block is not connected
 				//delay the view creation (will be done in connectToModels function)
 				if (!this._shouldLazyLoad()) {
-					this._initView(sMode);
+					this._selectView(sMode);
 				}
 			}
 
@@ -386,7 +427,7 @@ sap.ui.define([
 				//the view wasn't defined.
 				//as a fallback mechanism: we look for the defaultXML one and raise an error before raising an exception
 				if (this.getMetadata().getView("defaultXML")) {
-					jQuery.sap.log.warning("BlockBase :: no view defined for block " + sBlockName + " for mode " + sMode + ", loading defaultXML instead");
+					Log.warning("BlockBase :: no view defined for block " + sBlockName + " for mode " + sMode + ", loading defaultXML instead");
 					sMode = "defaultXML";
 				} else {
 					throw new Error("BlockBase :: no view defined for block " + sBlockName + " for mode " + sMode);
@@ -418,121 +459,168 @@ sap.ui.define([
 			return oView;
 		};
 
-		/***
-		 * Create view
-		 * @param {*} mParameter parameter
-		 * @returns {sap.ui.core.mvc.View} view
+		/**
+		 * Creates a view.
+		 *
+		 * @param {object} mParameter - View metadata
+		 * @param {string} sMode - Mode associated with the view
+		 * @returns {Promise<sap.ui.core.mvc.View>} A promise on the created view.
 		 * @protected
 		 */
 		BlockBase.prototype.createView = function (mParameter, sMode) {
-			var oOwnerComponent,
-				fnCreateView;
 
-			fnCreateView = function () {
-				return sap.ui.view(this.getId() + "-" + sMode, mParameter);
+			if (!this._oPromisedViews[mParameter.id]){
+				this._oPromisedViews[mParameter.id] = new Promise(function(resolve, reject) {
+
+					var oOwnerComponent = Component.getOwnerComponentFor(this),
+						fnCreateView = function () {
+							var fnCoreCreateView = function() {
+								return CoreView.create(mParameter);
+							};
+							if (oOwnerComponent) {
+								return oOwnerComponent.runAsOwner(fnCoreCreateView);
+							} else {
+								return fnCoreCreateView();
+							}
+						};
+
+					fnCreateView().then(function(oView) {
+						this._afterViewInstantiated(oView, sMode);
+						resolve(oView);
+					}.bind(this));
+
+				}.bind(this));
+			}
+
+			return this._oPromisedViews[mParameter.id];
+		};
+
+		/**
+		 * Finalizes view creation:
+		 * adds the created view to the <code>_views</code> aggregation
+		 * and assigns <code>oParentBlock</code> to the <code>controller</code> of the view
+		 * @param {*} oView the created view
+		 * @param {string} sMode the valid mode corresponding to the created view
+		 * @private
+		 */
+		BlockBase.prototype._afterViewInstantiated = function (oView, sMode) {
+			var oController = oView.getController();
+
+			//link to the controller defined in the Block
+			if (oView) {
+				//inject a reference to this
+				if (oController) {
+					oController.oParentBlock = this;
+				}
+
+				oView.addCustomData(new CustomData({
+					"key": "layoutMode",
+					"value": sMode
+				}));
+
+				this.addAggregation("_views", oView);
+				this.fireEvent("viewInit", {view: oView});
+			} else {
+				throw new Error("BlockBase :: no view defined in metadata.views for mode " + sMode);
+			}
+		};
+
+		/**
+		 * Notifies Controller for loading in specific mode
+		 * @param {*} oController the Controller of the selected View
+		 * @param {*} oViewInner the selected View
+		 * @param {*} sMode the valid mode corresponding to the View to initialize
+		 * @private
+		 */
+		BlockBase.prototype._notifyForLoadingInMode = function (oController, oViewInner, sMode) {
+			if (oController && typeof oController.onParentBlockModeChange === "function") {
+				oController.onParentBlockModeChange(sMode);
+			} else {
+				Log.info("BlockBase ::: could not notify " + oViewInner.sViewName + " of loading in mode "
+					+ sMode + ": missing controller onParentBlockModeChange method");
+			}
+		};
+
+
+		/**
+		 * Updates the <code>selectedView</code> association to match the view of the given <code>sMode</code>
+		 * (and creates the view if it was not created already)
+		 * @param {string} sMode the valid mode corresponding to the view to select
+		 * @private
+		 */
+		BlockBase.prototype._selectView = function (sMode) {
+			var oView,
+				sViewId = this.getId() + "-" + sMode,
+				sViewMetadata,
+				fnSelect;
+
+			fnSelect = function(oView) {
+				if (oView && this.getAssociation("selectedView") !== sViewId) {
+					this.setAssociation("selectedView", oView);
+					this._notifyForLoadingInMode(oView.getController(), oView, sMode);
+				}
 			}.bind(this);
 
-			oOwnerComponent = Component.getOwnerComponentFor(this);
-			if (oOwnerComponent) {
-				return oOwnerComponent.runAsOwner(fnCreateView);
-			} else {
-				return fnCreateView();
+
+			// check if the view is already instantiated
+			oView = this._findView(sMode);
+			if (oView) {
+				fnSelect(oView);
+				return;
 			}
-		};
 
-		/**
-		 * Initialize a view and returns it if it has not been defined already.
-		 * @param {*} sMode the valid mode corresponding to the view to initialize
-		 * @returns {sap.ui.view} view
-		 * @private
-		 */
-		BlockBase.prototype._initView = function (sMode) {
-			var oView,
-				aViews = this.getAggregation("_views") || [],
-				mParameter = this.getMetadata().getView(sMode);
-
-			//look for the views if it was already instantiated
-			aViews.forEach(function (oCurrentView, iIndex) {
-				if (oCurrentView.data("layoutMode") === sMode) {
-					oView = oCurrentView;
-				}
-			});
 
 			//the view is not instantiated yet, handle a new view scenario
-			if (!oView) {
-				oView = this._initNewView(sMode);
-			}
-
-			this.setAssociation("selectedView", oView, true);
-
-			//try to notify the associated controller that the view is being used for this mode
-			if (oView.getController() && oView.getController().onParentBlockModeChange) {
-				oView.getController().onParentBlockModeChange(sMode);
-			} else {
-				jQuery.sap.log.info("BlockBase ::: could not notify " + mParameter.viewName + " of loading in mode " + sMode + ": missing controller onParentBlockModeChange method");
-			}
-
-			return oView;
+			sViewMetadata = this.getMetadata().getView(sMode);
+			sViewMetadata.id = sViewId;
+			this.createView(sViewMetadata, sMode).then(function (oView) {
+				fnSelect(oView);
+			});
 		};
+
 
 		/**
-		 * Initialize new BlockBase view
-		 * @param {*} sMode the valid mode corresponding to the view to initialize
-		 * @returns {sap.ui.view} view
+		 * Searches the <code>_views</code> aggregation for an existing view
+		 * that corresponds to the given <code>sMode</code>
+		 * @param {string} sMode the valid mode corresponding to the searched view
 		 * @private
 		 */
-		BlockBase.prototype._initNewView = function (sMode) {
-			var oView = this._getSelectedViewContent(),
-				mParameter = this.getMetadata().getView(sMode);
+		BlockBase.prototype._findView = function (sMode) {
+			var aViews = this.getAggregation("_views") || [],
+				sViewMetadata,
+				oFilteredViews;
 
-			//check if the new view is not the current one (we may want to have the same view for several modes)
-			if (!oView || mParameter.viewName != oView.getViewName()) {
-				oView = this.createView(mParameter, sMode);
+			oFilteredViews = aViews.filter(function(oView) {
+				return oView.data("layoutMode") === sMode;
+			});
 
-				//link to the controller defined in the Block
-				if (oView) {
-
-					//inject a reference to this
-					if (oView.getController()) {
-						oView.getController().oParentBlock = this;
-					}
-
-					oView.addCustomData(new CustomData({
-						"key": "layoutMode",
-						"value": sMode
-					}));
-
-					this.addAggregation("_views", oView, true);
-				} else {
-					throw new Error("BlockBase :: no view defined in metadata.views for mode " + sMode);
-				}
+			if (oFilteredViews.length) {
+				return oFilteredViews[0];
 			}
 
-			return oView;
+			//check the view name (we may want to have the same view for several modes)
+			sViewMetadata = this.getMetadata().getView(sMode);
+			oFilteredViews = aViews.filter(function(oView) {
+				return sViewMetadata.viewName === oView.getViewName();
+			});
+
+			if (oFilteredViews.length) {
+				return oFilteredViews[0];
+			}
 		};
 
-		// This offset is needed so the breakpoints of the simpleForm match those of the GridLayout (offset = left-padding of grid + margins of grid-cells [that create the horizontal spacing between the cells])
-		BlockBase.FORM_ADUSTMENT_OFFSET = 32;
+
+		// This offset is needed so the breakpoints of the ColumnLayout match those of the GridLayout (offset = Grid container width - ColumnLayout container width)
+		BlockBase.FORM_ADUSTMENT_OFFSET = 16;
 
 		BlockBase._FORM_ADJUSTMENT_CONST = {
-			breakpoints: {
-				XL: Device.media._predefinedRangeSets.StdExt.points[2] - BlockBase.FORM_ADUSTMENT_OFFSET,
-				L: Device.media._predefinedRangeSets.StdExt.points[1] - BlockBase.FORM_ADUSTMENT_OFFSET,
-				M: Device.media._predefinedRangeSets.StdExt.points[0] - BlockBase.FORM_ADUSTMENT_OFFSET
-			},
 			labelSpan: {
 				/* values specified by design requirement */
-				XL: 12,
-				L: 12,
-				M: 12,
-				S: 12
+				L: 12
 			},
 			emptySpan: {
 				/* values specified by design requirement */
-				XL: 0,
-				L: 0,
-				M: 0,
-				S: 0
+				L: 0
 			},
 			columns: {
 				XL: 1,
@@ -543,97 +631,73 @@ sap.ui.define([
 
 		BlockBase._PARENT_GRID_SIZE = 12;
 
-		BlockBase.prototype._computeFormAdjustmentFields = function (oView, oLayoutData, sFormAdjustment, oParentColumns) {
+		BlockBase.prototype._computeFormAdjustmentFields = function (sFormAdjustment, oParentColumns) {
 
-			if (oView && oLayoutData && sFormAdjustment && oParentColumns) {
+			if (sFormAdjustment && oParentColumns) {
 
-				var oColumns = this._computeFormColumns(oLayoutData, sFormAdjustment, oParentColumns),
-					oBreakpoints = this._computeFormBreakpoints(oLayoutData, sFormAdjustment);
-
-				return jQuery.extend({},
-					BlockBase._FORM_ADJUSTMENT_CONST,
-					{columns: oColumns},
-					{breakpoints: oBreakpoints});
+				return sFormAdjustment === BlockBaseFormAdjustment.BlockColumns ?
+					jQuery.extend({}, BlockBase._FORM_ADJUSTMENT_CONST, {columns: oParentColumns}) :
+					BlockBase._FORM_ADJUSTMENT_CONST;
 			}
-		};
-
-		BlockBase.prototype._computeFormColumns = function (oLayoutData, sFormAdjustment, oParentColumns) {
-
-			var oColumns = jQuery.extend({}, BlockBase._FORM_ADJUSTMENT_CONST.columns);
-
-			if (sFormAdjustment === BlockBaseFormAdjustment.BlockColumns) {
-
-				var iColumnSpanXL = BlockBase._PARENT_GRID_SIZE / oParentColumns.XL,
-					iColumnSpanL = BlockBase._PARENT_GRID_SIZE / oParentColumns.L,
-					iColumnSpanM = BlockBase._PARENT_GRID_SIZE / oParentColumns.M;
-
-				oColumns.XL = oLayoutData.getSpanXL() / iColumnSpanXL;
-				oColumns.L = oLayoutData.getSpanL() / iColumnSpanL;
-				oColumns.M = oLayoutData.getSpanM() / iColumnSpanM;
-			}
-
-			return oColumns;
-		};
-
-		BlockBase.prototype._computeFormBreakpoints = function (oLayoutData, sFormAdjustment) {
-
-			var oBreakpoints = jQuery.extend({}, BlockBase._FORM_ADJUSTMENT_CONST.breakpoints);
-
-			if (sFormAdjustment === BlockBaseFormAdjustment.BlockColumns) {
-				oBreakpoints.XL = Math.round(oBreakpoints.XL * oLayoutData.getSpanXL() / BlockBase._PARENT_GRID_SIZE);
-				oBreakpoints.L = Math.round(oBreakpoints.L * oLayoutData.getSpanL() / BlockBase._PARENT_GRID_SIZE);
-				oBreakpoints.M = Math.round(oBreakpoints.M * oLayoutData.getSpanM() / BlockBase._PARENT_GRID_SIZE);
-			}
-
-			return oBreakpoints;
 		};
 
 		BlockBase.prototype._applyFormAdjustment = function () {
 
-			var oLayoutData = this.getLayoutData(),
-				sFormAdjustment = this.getFormAdjustment(),
+			var sFormAdjustment = this.getFormAdjustment(),
 				oView = this._getSelectedViewContent(),
 				oParent = this._oParentObjectPageSubSection,
 				oFormAdjustmentFields;
 
-			if (sFormAdjustment && (sFormAdjustment !== BlockBaseFormAdjustment.None)
-				&& oView && oLayoutData && oParent) {
+			if ((sFormAdjustment !== BlockBaseFormAdjustment.None) && oView && oParent) {
 
-				var oParentColumns = oParent._oLayoutConfig;
+				oFormAdjustmentFields = this._computeFormAdjustmentFields(sFormAdjustment, oParent._oLayoutConfig);
 
 				oView.getContent().forEach(function (oItem) {
-					if (oItem.getMetadata().getName() === "sap.ui.layout.form.SimpleForm") {
+					this._adjustForm(oItem, oFormAdjustmentFields);
+				}.bind(this));
+			}
+		};
 
-						oItem.setLayout(SimpleFormLayout.ResponsiveGridLayout);
+		BlockBase.prototype._adjustForm = function (oForm, oFormAdjustmentFields) {
 
-						if (!oFormAdjustmentFields) {
-							oFormAdjustmentFields = this._computeFormAdjustmentFields(oView, oLayoutData, sFormAdjustment, oParentColumns);
-						}
+			var oColumnLayout,
+				oLayout;
 
-						this._applyFormAdjustmentFields(oFormAdjustmentFields, oItem);
+			if (oForm.getMetadata().getName() === "sap.ui.layout.form.SimpleForm") {
 
-						oItem.setWidth("100%");
-					} else if (oItem.getMetadata().getName() === "sap.ui.layout.form.Form") {
+				oForm.setLayout(SimpleFormLayout.ColumnLayout);
 
-						var oLayout = oItem.getLayout(),
-							oResponsiveGridLayout;
+				oLayout = oForm.getAggregation("form").getLayout();
 
-						if (oLayout && oLayout.getMetadata().getName() === "sap.ui.layout.form.ResponsiveGridLayout") {
-							oResponsiveGridLayout = oLayout; // existing ResponsiveGridLayout must be reused, otherwise an error is thrown in the existing implementation
-						} else {
-							oResponsiveGridLayout = new ResponsiveGridLayout();
-							oItem.setLayout(oResponsiveGridLayout);
-						}
+				oLayout._iBreakPointTablet -= BlockBase.FORM_ADUSTMENT_OFFSET;
+				oLayout._iBreakPointDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
+				oLayout._iBreakPointLargeDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
 
-						if (!oFormAdjustmentFields) {
-							oFormAdjustmentFields = this._computeFormAdjustmentFields(oView, oLayoutData, sFormAdjustment, oParentColumns);
-						}
+				oForm.setLabelSpanL(oFormAdjustmentFields.labelSpan.L);
+				oForm.setEmptySpanL(oFormAdjustmentFields.emptySpan.L);
+				this._applyFormAdjustmentFields(oFormAdjustmentFields, oForm);
 
-						this._applyFormAdjustmentFields(oFormAdjustmentFields, oResponsiveGridLayout);
+				oForm.setWidth("100%");
+			} else if (oForm.getMetadata().getName() === "sap.ui.layout.form.Form") {
 
-						oItem.setWidth("100%");
-					}
-				}, this);
+				oLayout = oForm.getLayout();
+
+				if (oLayout && oLayout.getMetadata().getName() === "sap.ui.layout.form.ColumnLayout") {
+					oColumnLayout = oLayout; // existing ColumnLayout must be reused, otherwise an error is thrown in the existing implementation
+				} else {
+					oColumnLayout = new ColumnLayout();
+					oForm.setLayout(oColumnLayout);
+				}
+
+				oColumnLayout._iBreakPointTablet -= BlockBase.FORM_ADUSTMENT_OFFSET;
+				oColumnLayout._iBreakPointDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
+				oColumnLayout._iBreakPointLargeDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
+
+				oColumnLayout.setLabelCellsLarge(oFormAdjustmentFields.labelSpan.L);
+				oColumnLayout.setEmptyCellsLarge(oFormAdjustmentFields.emptySpan.L);
+				this._applyFormAdjustmentFields(oFormAdjustmentFields, oColumnLayout);
+
+				oForm.setWidth("100%");
 			}
 		};
 
@@ -642,20 +706,6 @@ sap.ui.define([
 			oFormLayout.setColumnsXL(oFormAdjustmentFields.columns.XL);
 			oFormLayout.setColumnsL(oFormAdjustmentFields.columns.L);
 			oFormLayout.setColumnsM(oFormAdjustmentFields.columns.M);
-
-			oFormLayout.setLabelSpanXL(oFormAdjustmentFields.labelSpan.XL);
-			oFormLayout.setLabelSpanL(oFormAdjustmentFields.labelSpan.L);
-			oFormLayout.setLabelSpanM(oFormAdjustmentFields.labelSpan.M);
-			oFormLayout.setLabelSpanS(oFormAdjustmentFields.labelSpan.S);
-
-			oFormLayout.setEmptySpanXL(oFormAdjustmentFields.emptySpan.XL);
-			oFormLayout.setEmptySpanL(oFormAdjustmentFields.emptySpan.L);
-			oFormLayout.setEmptySpanM(oFormAdjustmentFields.emptySpan.M);
-			oFormLayout.setEmptySpanS(oFormAdjustmentFields.emptySpan.S);
-
-			oFormLayout.setBreakpointXL(oFormAdjustmentFields.breakpoints.XL);
-			oFormLayout.setBreakpointL(oFormAdjustmentFields.breakpoints.L);
-			oFormLayout.setBreakpointM(oFormAdjustmentFields.breakpoints.M);
 		};
 
 		/*************************************************************************************
@@ -671,9 +721,8 @@ sap.ui.define([
 			return library.Utilities.getClosestOPL(this);
 		};
 
-		/**
+		/*
 		 * Setter for the visibility of the block.
-		 * @public
 		 */
 		BlockBase.prototype.setVisible = function (bValue, bSuppressInvalidate) {
 			var oParentObjectPageLayout = this._getObjectPageLayout();
@@ -704,13 +753,13 @@ sap.ui.define([
 		 */
 		BlockBase.prototype.connectToModels = function () {
 			if (!this._bConnected) {
-				jQuery.sap.log.debug("BlockBase :: Connecting block to the UI5 model tree");
+				Log.debug("BlockBase :: Connecting block to the UI5 model tree");
 				this._bConnected = true;
 				if (this._bLazyLoading) {
 					//if lazy loading is enabled, the view has not been created during the setMode
 					//so create it now
 					var sMode = this.getMode();
-					sMode && this._initView(sMode);
+					sMode && this._selectView(sMode);
 				}
 
 				this.invalidate();
@@ -739,7 +788,7 @@ sap.ui.define([
 			if (!this._shouldLazyLoad()) {
 				return Control.prototype.updateBindingContext.call(this, bSkipLocal, bSkipChildren, sModelName, bUpdateAll);
 			} else {
-				jQuery.sap.log.debug("BlockBase ::: Ignoring the updateBindingContext as the block is not visible for now in the ObjectPageLayout");
+				Log.debug("BlockBase ::: Ignoring the updateBindingContext as the block is not visible for now in the ObjectPageLayout");
 			}
 		};
 
@@ -754,7 +803,7 @@ sap.ui.define([
 			if (!this._shouldLazyLoad()) {
 				return Control.prototype.updateBindings.call(this, bUpdateAll, sModelName);
 			} else {
-				jQuery.sap.log.debug("BlockBase ::: Ignoring the updateBindingContext as the block is not visible for now in the ObjectPageLayout");
+				Log.debug("BlockBase ::: Ignoring the updateBindingContext as the block is not visible for now in the ObjectPageLayout");
 			}
 		};
 

@@ -1,0 +1,21 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.PlanningCalendar",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.PlanningCalendar.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.unified": {}
+			}
+		}
+	}
+}

@@ -1,0 +1,89 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+	xmlns:t="sap.ui.table"
+	xmlns:f="sap.ui.layout.form"
+	height="100%">
+	<Page title="Title" enableScrolling="true" class="sapUiResponsivePadding--header sapUiResponsivePadding--footer">
+		<content>
+			<VBox fitContainer="true">
+				<f:SimpleForm id="SimpleFormDisplay480"
+					minWidth="1024"
+					maxContainerCols="2"
+					editable="false"
+					layout="ResponsiveGridLayout"
+					title="Address"
+					labelSpanL="4"
+					labelSpanM="4"
+					emptySpanL="0"
+					emptySpanM="0"
+					columnsL="2"
+					columnsM="2">
+					<f:content>
+						<c:Title text="Office" />
+						<Label text="Name" />
+						<Text text="Red Point Stores" />
+						<Label text="Street/No." />
+						<Text text="Main St 1618" />
+						<Label text="ZIP Code/City" />
+						<Text text="31415 Maintown" />
+						<Label text="Country" />
+						<Text text="Germany" />
+						<c:Title text="Online" />
+						<Label text="Web" />
+						<Text text="http://www.sap.com" />
+						<Label text="Twitter" />
+						<Text text="@sap" />
+					</f:content>
+					<f:layoutData>
+						<FlexItemData shrinkFactor="0" backgroundDesign="Solid" styleClass="sapContrastPlus"/>
+					</f:layoutData>
+				</f:SimpleForm>
+				<IconTabBar upperCase="true" expandable="false" applyContentPadding="true" stretchContentHeight="true" class="sapUiResponsiveContentPadding">
+					<items>
+						<IconTabFilter text="Balances" />
+						<IconTabFilter text="Compare" />
+					</items>
+					<content>
+						<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
+							<t:toolbar>
+								<OverflowToolbar>
+									<ToolbarSpacer />
+									<SearchField width="12rem" />
+									<ToolbarSpacer width="1rem" />
+									<SegmentedButton>
+										<buttons>
+											<Button icon="sap-icon://table-view" />
+											<Button icon="sap-icon://bar-chart" />
+										</buttons>
+									</SegmentedButton>
+									<ToolbarSpacer width="1rem" />
+									<Button icon="sap-icon://group-2" type="Transparent" />
+									<Button icon="sap-icon://action-settings" type="Transparent" />
+								</OverflowToolbar>
+							</t:toolbar>
+							<t:columns>
+								<t:AnalyticalColumn />
+								<t:AnalyticalColumn />
+								<t:AnalyticalColumn />
+								<t:AnalyticalColumn />
+							</t:columns>
+						</t:AnalyticalTable>
+					</content>
+					<layoutData>
+						<FlexItemData growFactor="1" baseSize="0%"/>
+					</layoutData>
+				</IconTabBar>
+			</VBox>
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<content>
+					<ToolbarSpacer />
+					<Button text="Grouped View" />
+					<Button text="Classical Table" />
+				</content>
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>

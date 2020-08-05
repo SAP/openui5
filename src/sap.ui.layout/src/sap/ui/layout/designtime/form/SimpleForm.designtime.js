@@ -3,10 +3,14 @@
  */
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.SimpleForm control
-sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(ChangeHandlerMediator) {
+sap.ui.define([
+	"sap/ui/fl/Utils"
+], function(
+	FlexUtils
+) {
 	"use strict";
 
-	var fnGetStableElements = function(oElement) {
+	function getStableElements(oElement) {
 		var aStableElements = [];
 		var oLabel;
 		var oTitleOrToolbar;
@@ -28,19 +32,37 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 				}
 				aStableElements = aStableElements.concat(oFormElement.getFields());
 			});
+		} else if (oElement.getMetadata().getName() === "sap.ui.layout.form.Form") {
+			aStableElements.push(oElement);
 		}
 		return aStableElements;
-	};
+	}
+
+	function getSimpleFormFromChild(oControl) {
+		if (oControl.getMetadata().getName() === "sap.ui.layout.form.SimpleForm") {
+			return oControl;
+		} else if (oControl.getParent()) {
+			return getSimpleFormFromChild(oControl.getParent());
+		}
+	}
+
+	function checkContentForStableIds(oControl) {
+		var oSimpleForm = getSimpleFormFromChild(oControl);
+		// this function is also invoked when a field is removed, then we won't find the SimpleForm
+		return oSimpleForm && oSimpleForm.getContent().every(function(oContent) {
+			return FlexUtils.checkControlId(oContent);
+		});
+	}
 
 	var oFormPropagatedMetadata = {
-		aggregations : {
-			formContainers : {
+		aggregations: {
+			formContainers: {
 				//maybe inherited from Form
-				childNames : {
-					singular : "GROUP_CONTROL_NAME",
-					plural : "GROUP_CONTROL_NAME_PLURAL"
+				childNames: {
+					singular: "GROUP_CONTROL_NAME",
+					plural: "GROUP_CONTROL_NAME_PLURAL"
 				},
-				getIndex : function(oForm, oFormContainer) {
+				getIndex: function(oForm, oFormContainer) {
 					var aFormContainers = oForm.getFormContainers();
 
 					if (oFormContainer) {
@@ -55,24 +77,28 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 
 					return aFormContainers.length;
 				},
-				beforeMove : function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
+				beforeMove: function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
 					if (oSimpleForm){
 						oSimpleForm._bChangedByMe = true;
 					}
 				},
-				afterMove : function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
+				afterMove: function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
 					if (oSimpleForm){
 						oSimpleForm._bChangedByMe = false;
 					}
 				},
-				actions : {
-					move : {
-						changeType : "moveSimpleFormGroup"
+				actions: {
+					move: function(oControl) {
+						if (checkContentForStableIds(oControl)) {
+							return {
+								changeType: "moveSimpleFormGroup"
+							};
+						}
 					},
-					createContainer : {
-						changeType : "addSimpleFormGroup",
-						changeOnRelevantContainer : true,
-						isEnabled : function (oForm) {
+					createContainer: {
+						changeType: "addSimpleFormGroup",
+						changeOnRelevantContainer: true,
+						isEnabled: function (oForm) {
 							var aFormContainers = oForm.getFormContainers();
 
 							for (var i = 0; i < aFormContainers.length; i++) {
@@ -82,7 +108,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 							}
 							return true;
 						},
-						getCreatedContainerId : function(sNewControlID) {
+						getCreatedContainerId: function(sNewControlID) {
 							var oTitle = sap.ui.getCore().byId(sNewControlID);
 							var sParentElementId = oTitle.getParent().getId();
 
@@ -92,67 +118,67 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 				}
 			}
 		},
-		getStableElements : fnGetStableElements
+		getStableElements: getStableElements
 	};
 
 	var oFormContainerPropagatedMetadata = {
-		name : {
-			singular : "GROUP_CONTROL_NAME",
-			plural : "GROUP_CONTROL_NAME_PLURAL"
+		name: {
+			singular: "GROUP_CONTROL_NAME",
+			plural: "GROUP_CONTROL_NAME_PLURAL"
 		},
 		aggregations: {
-			formElements : {
-				childNames : {
-					singular : "FIELD_CONTROL_NAME",
-					plural : "FIELD_CONTROL_NAME_PLURAL"
+			formElements: {
+				childNames: {
+					singular: "FIELD_CONTROL_NAME",
+					plural: "FIELD_CONTROL_NAME_PLURAL"
 				},
-				beforeMove : function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
+				beforeMove: function (oSimpleForm) { //TODO extract as function
 					if (oSimpleForm){
 						oSimpleForm._bChangedByMe = true;
 					}
 				},
-				afterMove : function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
+				afterMove: function (oSimpleForm) { //TODO extract as function
 					if (oSimpleForm){
 						oSimpleForm._bChangedByMe = false;
 					}
 				},
-				actions : {
-					move : {
-						changeType : "moveSimpleFormField"
-					},
-					addODataProperty : function (oFormContainer) {
-						var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldWithLabelSettings(oFormContainer);
-
-						if (mChangeHandlerSettings){
+				actions: {
+					move: function(oControl) {
+						if (checkContentForStableIds(oControl)) {
 							return {
-								changeType: "addSimpleFormField",
-								changeOnRelevantContainer : true,
-								changeHandlerSettings : mChangeHandlerSettings
+								changeType: "moveSimpleFormField"
 							};
+						}
+					},
+					add: {
+						delegate: {
+							changeType: "addSimpleFormField",
+							changeOnRelevantContainer: true,
+							supportsDefaultDelegate: true
 						}
 					}
 				}
 			}
 		},
 		actions: {
-			rename : function(oRenamedElement) {
+			rename: function(oRenamedElement) {
 				return {
-					changeType : "renameTitle",
-					changeOnRelevantContainer : true,
-					isEnabled : !(oRenamedElement.getToolbar() || !oRenamedElement.getTitle()),
-					domRef : function (oControl){
+					changeType: "renameTitle",
+					changeOnRelevantContainer: true,
+					isEnabled: !(oRenamedElement.getToolbar() || !oRenamedElement.getTitle()),
+					domRef: function (oControl){
 						if (oControl.getTitle && oControl.getTitle()) {
 							return oControl.getTitle().getDomRef();
 						}
 					}
 				};
 			},
-			remove : function(oRemovedElement) {
+			remove: function(oRemovedElement) {
 				return {
-					changeType : "removeSimpleFormGroup",
-					changeOnRelevantContainer : true,
-					isEnabled : !!(oRemovedElement.getToolbar() || oRemovedElement.getTitle()),
-					getConfirmationText : function(oRemovedElement){
+					changeType: "removeSimpleFormGroup",
+					changeOnRelevantContainer: true,
+					isEnabled: !!(oRemovedElement.getToolbar() || oRemovedElement.getTitle()),
+					getConfirmationText: function(oRemovedElement){
 						var bContent = false;
 						if (oRemovedElement.getMetadata().getName() === "sap.ui.layout.form.FormContainer"
 								&& oRemovedElement.getToolbar && oRemovedElement.getToolbar()) {
@@ -169,78 +195,36 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 							var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout.designtime");
 							return oTextResources.getText("MSG_REMOVING_TOOLBAR");
 						}
-					},
-					getState : function(oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
-						var aContent = oSimpleForm.getContent();
-						return {
-							content : aContent.map(function(oElement) {
-								return {
-									element : oElement,
-									visible : oElement.getVisible ? oElement.getVisible() : undefined,
-									index : aContent.indexOf(oElement)
-								};
-							})
-						};
-					},
-					restoreState : function(oSimpleForm, oState) { //TODO has to be relevant container/selector, TODO extract as function
-						oSimpleForm.removeAllContent();
-						oState.content.forEach(function(oElementState) {
-							oSimpleForm.insertContent(oElementState.element, oElementState.index);
-							if (oElementState.element.setVisible){
-								oElementState.element.setVisible(oElementState.visible);
-							}
-						});
 					}
 				};
 			}
 		},
-		getStableElements : fnGetStableElements
+		getStableElements: getStableElements
 	};
 
 	var oFormElementPropagatedMetadata = {
-		name : {
-			singular : "FIELD_CONTROL_NAME",
-			plural : "FIELD_CONTROL_NAME_PLURAL"
+		name: {
+			singular: "FIELD_CONTROL_NAME",
+			plural: "FIELD_CONTROL_NAME_PLURAL"
 		},
 		actions: {
-			rename : {
-				changeType : "renameLabel",
-				changeOnRelevantContainer : true,
-				domRef : function (oControl){
+			rename: {
+				changeType: "renameLabel",
+				changeOnRelevantContainer: true,
+				domRef: function (oControl){
 					return oControl.getLabel().getDomRef();
 				}
 			},
-			remove : {
-				changeType : "hideSimpleFormField",
-				changeOnRelevantContainer : true,
-				getState : function(oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
-					var aContent = oSimpleForm.getContent();
-					return {
-						content : aContent.map(function(oElement) {
-							return {
-								element : oElement,
-								visible : oElement.getVisible ? oElement.getVisible() : undefined,
-								index : aContent.indexOf(oElement)
-							};
-						})
-					};
-				},
-				restoreState : function(oSimpleForm, oState) { //TODO has to be relevant container/selector, TODO extract as function
-					oSimpleForm.removeAllContent();
-					oState.content.forEach(function(oElementState) {
-						oSimpleForm.insertContent(oElementState.element, oElementState.index);
-						if (oElementState.element.setVisible){
-							oElementState.element.setVisible(oElementState.visible);
-						}
-					});
-				}
+			remove: {
+				changeType: "hideSimpleFormField",
+				changeOnRelevantContainer: true
 			},
-			reveal : {
-				changeType : "unhideSimpleFormField",
-				changeOnRelevantContainer : true
+			reveal: {
+				changeType: "unhideSimpleFormField",
+				changeOnRelevantContainer: true
 			}
 		},
-		getStableElements : fnGetStableElements
+		getStableElements: getStableElements
 	};
 
 	return {
@@ -250,24 +234,24 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 				svg: "sap/ui/layout/designtime/form/SimpleForm.icon.svg"
 			}
 		},
-		aggregations : {
-			content : {
-				ignore : true
+		aggregations: {
+			content: {
+				ignore: true
 			},
-			title : {
-				ignore : true
+			title: {
+				ignore: true
 			},
-			toolbar : {
-				ignore : function(oSimpleForm){
+			toolbar: {
+				ignore: function(oSimpleForm){
 					return !oSimpleForm.getToolbar();
 				},
-				domRef : function(oSimpleForm){
+				domRef: function(oSimpleForm){
 					return oSimpleForm.getToolbar().getDomRef();
 				}
 			},
-			form : {
-				ignore : false,
-				propagateMetadata : function(oElement){
+			form: {
+				ignore: false,
+				propagateMetadata: function(oElement){
 					var sType = oElement.getMetadata().getName();
 					if (sType === "sap.ui.layout.form.Form") {
 						return oFormPropagatedMetadata;
@@ -281,9 +265,9 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 						};
 					}
 				},
-				propagateRelevantContainer : true
+				propagateRelevantContainer: true
 			}
 		}
 	};
 
-}, /* bExport= */false);
+});

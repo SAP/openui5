@@ -2,15 +2,20 @@
  * ${copyright}
  */
 
+//Provides class sap.ui.model.odata.v4.ODataUtils
 sap.ui.define([
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (DateFormat, BaseODataUtils, _Helper) {
+], function (CalendarType, DateFormat, BaseODataUtils, _Helper) {
 	"use strict";
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
-	var sDateValue = "\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])",
+	var oDateFormatter,
+		oDateTimeOffsetFormatter,
+		sDateValue = "\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])",
+		oTimeFormatter,
 		sTimeOfDayValue = "(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(\\.\\d{1,12})?)?",
 		rDate = new RegExp("^" + sDateValue + "$"),
 		rDateTimeOffset = new RegExp("^" + sDateValue + "T" + sTimeOfDayValue
@@ -26,6 +31,31 @@ sap.ui.define([
 		 * @alias sap.ui.model.odata.v4.ODataUtils
 		 */
 		ODataUtils = {
+			/**
+			 * Sets the static date and time formatter instances.
+			 *
+			 * @private
+			 */
+			_setDateTimeFormatter : function () {
+				oDateFormatter = DateFormat.getDateInstance({
+					calendarType : CalendarType.Gregorian,
+					pattern: "yyyy-MM-dd",
+					strictParsing : true,
+					UTC : true
+				});
+				oDateTimeOffsetFormatter = DateFormat.getDateTimeInstance({
+					calendarType : CalendarType.Gregorian,
+					pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+					strictParsing : true
+				});
+				oTimeFormatter = DateFormat.getTimeInstance({
+					calendarType : CalendarType.Gregorian,
+					pattern : "HH:mm:ss.SSS",
+					strictParsing : true,
+					UTC : true
+				});
+			},
+
 			/**
 			 * Compares the given OData values.
 			 *
@@ -64,6 +94,36 @@ sap.ui.define([
 			},
 
 			/**
+			 * Formats the given OData value into a literal suitable for usage in data binding paths
+			 * and URLs.
+			 *
+			 * @param {any} vValue
+			 *   The value according to "OData JSON Format Version 4.0" section
+			 *   "7.1 Primitive Value"
+			 * @param {string} sType
+			 *   The OData primitive type, e.g. "Edm.String"
+			 * @returns {string}
+			 *   The literal according to "OData Version 4.0 Part 2: URL Conventions" section
+			 *   "5.1.1.6.1 Primitive Literals"
+			 * @throws {Error}
+			 *   If the value is undefined or the type is not supported
+			 *
+			 * @example <caption>Use <code>formatLiteral</code> together with
+			 *   <code>encodeURIComponent</code> to create a properly encoded data binding path for
+			 *   {@link sap.ui.model.odata.v4.ODataModel}.</caption>
+			 *   var sSalesOrderId = ODataUtils.formatLiteral("A/B&C", "Edm.String"),
+			 *           // expected result: "'A/B&C'"
+			 *       sPath = "/" + encodeURIComponent("SalesOrderList(" + sSalesOrderId + ")");
+			 *           // expected result: "/SalesOrderList('A%2FB%26C')"
+			 *
+			 * @public
+			 * @since 1.64.0
+			 */
+			formatLiteral : function (vValue, sType) {
+				return _Helper.formatLiteral(vValue, sType);
+			},
+
+			/**
 			 * Parses an "Edm.Date" value and returns the corresponding JavaScript <code>Date</code>
 			 * value (UTC with a time value of "00:00:00").
 			 *
@@ -78,11 +138,7 @@ sap.ui.define([
 			 * @since 1.43.0
 			 */
 			parseDate : function (sDate) {
-				var oDate = rDate.test(sDate) && DateFormat.getDateInstance({
-						pattern : "yyyy-MM-dd",
-						strictParsing : true,
-						UTC : true
-					}).parse(sDate);
+				var oDate = rDate.test(sDate) && oDateFormatter.parse(sDate);
 
 				if (!oDate) {
 					throw new Error("Not a valid Edm.Date value: " + sDate);
@@ -114,10 +170,7 @@ sap.ui.define([
 						sDateTimeOffset
 							= sDateTimeOffset.replace(aMatches[1], aMatches[1].slice(0, 4));
 					}
-					oDateTimeOffset = DateFormat.getDateTimeInstance({
-						pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSX",
-						strictParsing : true
-					}).parse(sDateTimeOffset.toUpperCase());
+					oDateTimeOffset = oDateTimeOffsetFormatter.parse(sDateTimeOffset.toUpperCase());
 				}
 				if (!oDateTimeOffset) {
 					throw new Error("Not a valid Edm.DateTimeOffset value: " + sDateTimeOffset);
@@ -147,36 +200,16 @@ sap.ui.define([
 						// "round" to millis: "HH:mm:ss.SSS"
 						sTimeOfDay = sTimeOfDay.slice(0, 12);
 					}
-					oTimeOfDay =  DateFormat.getTimeInstance({
-						pattern : "HH:mm:ss.SSS",
-						strictParsing : true,
-						UTC : true
-					}).parse(sTimeOfDay);
+					oTimeOfDay =  oTimeFormatter.parse(sTimeOfDay);
 				}
 				if (!oTimeOfDay) {
 					throw new Error("Not a valid Edm.TimeOfDay value: " + sTimeOfDay);
 				}
 				return oTimeOfDay;
-			},
-
-			/**
-			 * Formats the given OData value into a literal suitable for usage in URLs.
-			 *
-			 * @param {any} vValue
-			 *   The value according to "OData JSON Format Version 4.0" section
-			 *   "7.1 Primitive Value"
-			 * @param {string} sType
-			 *   The OData primitive type, e.g. "Edm.String"
-			 * @returns {string}
-			 *   The literal according to "OData Version 4.0 Part 2: URL Conventions" section
-			 *   "5.1.1.6.1 Primitive Literals"
-			 * @throws {Error}
-			 *   If the value is undefined or the type is not supported
-			 */
-			formatLiteral : function (vValue, sType) {
-				return _Helper.formatLiteral(vValue, sType);
 			}
 		};
+
+	ODataUtils._setDateTimeFormatter();
 
 	return ODataUtils;
 }, /* bExport= */ true);

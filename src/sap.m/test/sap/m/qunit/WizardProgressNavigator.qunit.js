@@ -1,15 +1,18 @@
 /*global QUnit,sinon*/
 
-(function () {
+sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/WizardProgressNavigator",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device"
+], function(QUnitUtils, WizardProgressNavigator, JSONModel, Device) {
 	"use strict";
-
-	jQuery.sap.require("sap.m.WizardProgressNavigator");
 
 	QUnit.module("sap.m.WizardProgressNavigator API", {
 		oSpies: {},
 		beforeEach: function () {
 			this.oSpies.stepChanged = sinon.spy();
-			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
+			this.oProgressNavigator = new WizardProgressNavigator({
 				stepChanged: this.oSpies.stepChanged,
 				stepCount: 5
 			}).placeAt("qunit-fixture");
@@ -80,7 +83,7 @@
 	});
 
 	QUnit.test("alt + right/left is not handled", function(assert) {
-		var oModifiers = this.oProgressNavigator._anchorNavigation.getDisabledModifiers();
+		var oModifiers = this.oProgressNavigator._oStepNavigation.getDisabledModifiers();
 		assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
 		assert.ok(oModifiers["sapprevious"], "sapprevious has disabled modifiers");
 		assert.equal(oModifiers["sapnext"][0], "alt", "alt is not handled when right is pressed");
@@ -88,7 +91,7 @@
 	});
 
 	QUnit.test("NextStep() should not overflow", function (assert) {
-		this.oProgressNavigator._currentStep = 5;
+		this.oProgressNavigator._iCurrentStep = 5;
 
 		this.oProgressNavigator.nextStep();
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 5,
@@ -96,7 +99,7 @@
 	});
 
 	QUnit.test("PreviousStep() should go to the previous step", function (assert) {
-		this.oProgressNavigator._currentStep = 2;
+		this.oProgressNavigator._iCurrentStep = 2;
 
 		this.oProgressNavigator.previousStep();
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 1,
@@ -143,8 +146,8 @@
 
 	QUnit.module("sap.m.WizardProgressNavigator Data binding", {
 		beforeEach: function () {
-			this.oProgressNavigator = new sap.m.WizardProgressNavigator();
-			this.oModel = new sap.ui.model.json.JSONModel({
+			this.oProgressNavigator = new WizardProgressNavigator();
+			this.oModel = new JSONModel({
 				steps: 5
 			});
 
@@ -169,7 +172,7 @@
 
 	QUnit.module("sap.m.WizardProgressNavigator CSS Classes", {
 		beforeEach: function () {
-			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
+			this.oProgressNavigator = new WizardProgressNavigator({
 				stepCount: 5
 			});
 
@@ -225,25 +228,25 @@
 			"sapMWizardProgressNavStep class should be present 5 times");
 	});
 
-	QUnit.test("When stepCount = 5, anchors should be 5", function (assert) {
+	QUnit.test("When stepCount = 5, items should be 5", function (assert) {
 		var $progNav = this.oProgressNavigator.$();
 
-		assert.strictEqual($progNav.find(".sapMWizardProgressNavAnchor").length, 5,
-			"sapMWizardProgressNavAnchor class should be present 5 times");
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavStep").length, 5,
+			"sapMWizardProgressNavStep class should be present 5 times");
 	});
 
 	QUnit.test("When stepCount = 5, circles should be 5", function (assert) {
 		var $progNav = this.oProgressNavigator.$();
 
-		assert.strictEqual($progNav.find(".sapMWizardProgressNavAnchorCircle").length, 5,
-			"sapMWizardProgressNavAnchorCircle class should be present 5 times");
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavStepCircle").length, 5,
+			"sapMWizardProgressNavStepCircle class should be present 5 times");
 	});
 
 	QUnit.test("When stepCount = 5 and no titles are provided, titles should NOT be present", function (assert) {
 		var $progNav = this.oProgressNavigator.$();
 
-		assert.strictEqual($progNav.find(".sapMWizardProgressNavAnchorTitle").length, 0,
-			"sapMWizardProgressNavAnchorTitle class should be present 0 times");
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavStepTitle").length, 0,
+			"sapMWizardProgressNavStepTitle class should be present 0 times");
 	});
 
 	QUnit.test("When stepCount = 5 and all have titles, titles should be 5", function (assert) {
@@ -252,15 +255,15 @@
 
 		var $progNav = this.oProgressNavigator.$();
 
-		assert.strictEqual($progNav.find(".sapMWizardProgressNavAnchorTitle").length, 5,
-			"sapMWizardProgressNavAnchorTitle class should be present 5 times");
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavStepTitle").length, 5,
+			"sapMWizardProgressNavStepTitle class should be present 5 times");
 	});
 
 	QUnit.test("When stepCount = 5 and no icons are provided, icons should be 0", function (assert) {
 		var $progNav = this.oProgressNavigator.$();
 
-		assert.strictEqual($progNav.find(".sapMWizardProgressNavAnchorIcon").length, 0,
-			"sapMWizardProgressNavAnchorIcon class should be present 0 times");
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavStepIcon").length, 0,
+			"sapMWizardProgressNavStepIcon class should be present 0 times");
 	});
 
 	QUnit.test("When stepCount = 5 and all have icons, icons should be 5", function (assert) {
@@ -269,8 +272,8 @@
 
 		var $progNav = this.oProgressNavigator.$();
 
-		assert.strictEqual($progNav.find(".sapMWizardProgressNavAnchorIcon").length, 5,
-			"sapMWizardProgressNavAnchorIcon class should be present 5 times");
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavStepIcon").length, 5,
+			"sapMWizardProgressNavStepIcon class should be present 5 times");
 	});
 
 	QUnit.module("sap.m.WizardProgressNavigator Events", {
@@ -285,7 +288,7 @@
 				that.oParams.currentIndex = event.getParameter("current");
 			});
 
-			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
+			this.oProgressNavigator = new WizardProgressNavigator({
 				stepCount: 5,
 				stepChanged: this.oSpies.stepChanged
 			});
@@ -301,7 +304,7 @@
 
 	QUnit.module("sap.m.WizardProgressNavigator Interaction", {
 		beforeEach: function () {
-			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
+			this.oProgressNavigator = new WizardProgressNavigator({
 				stepCount: 7
 			});
 
@@ -316,89 +319,97 @@
 
 	QUnit.test("Tapping on action sheet on mobile should fire stepChanged", function(assert) {
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
 		});
 
-		var stepChangedSpy = sinon.spy(),
-			$anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
-		this.oProgressNavigator.attachStepChanged(stepChangedSpy);
+		var oStepChangedSpy = sinon.spy(),
+			$steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
+		this.oProgressNavigator.attachStepChanged(oStepChangedSpy);
 
 		// navigate to next wizard steps
 		this.oProgressNavigator.nextStep().nextStep().nextStep();
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 4, "currentStep should change");
 
 		// open action sheet
-		this.oProgressNavigator._showActionSheet($anchors[0]);
+		this.oProgressNavigator._showActionSheet($steps[0]);
 
-		this.oProgressNavigator._actionSheet.getButtons()[0].firePress();
+		this.oProgressNavigator._oActionSheet.getButtons()[0].firePress();
 
-		assert.strictEqual(stepChangedSpy.callCount, 1, "stepChanged event should be fired");
+		assert.strictEqual(oStepChangedSpy.callCount, 1, "stepChanged event should be fired");
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 1, "currentStep should change after interaction with the progress navigator");
 	});
 
 	QUnit.test("Tapping on NON ACTIVE step", function(assert) {
-		var stepChangedSpy = sinon.spy(),
-			$anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+		var oStepChangedSpy = sinon.spy(),
+			$steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
-		this.oProgressNavigator.attachStepChanged(stepChangedSpy);
-		$anchors.eq(1).trigger("tap");
+		this.oProgressNavigator.attachStepChanged(oStepChangedSpy);
+		$steps.eq(1).trigger("tap");
 
-		assert.strictEqual(stepChangedSpy.callCount, 0, "stepChanged event should NOT be fired");
+		assert.strictEqual(oStepChangedSpy.callCount, 0, "stepChanged event should NOT be fired");
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 1, "currentStep should NOT change");
 	});
 
 	QUnit.test("Tapping on ACTIVE step", function(assert) {
-		var stepChangedSpy = sinon.spy(),
-			$anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+		var oStepChangedSpy = sinon.spy(),
+			$steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
 		this.oProgressNavigator.nextStep().previousStep();
-		this.oProgressNavigator.attachStepChanged(stepChangedSpy);
-		$anchors.eq(1).trigger("tap");
+		this.oProgressNavigator.attachStepChanged(oStepChangedSpy);
+		$steps.eq(1).trigger("tap");
 
-		assert.strictEqual(stepChangedSpy.callCount, 1, "stepChanged event should be fired once");
+		assert.strictEqual(oStepChangedSpy.callCount, 1, "stepChanged event should be fired once");
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 2, "currentStep should change to 2");
 	});
 
 	QUnit.module("sap.m.WizardProgressNavigator ARIA Support", {
 		beforeEach: function () {
-			this.oProgressNavigator = new sap.m.WizardProgressNavigator({
+			this.oProgressNavigator = new WizardProgressNavigator({
 				stepCount: 5
 			});
 
+			this.oBranchingProgressNavigator = new WizardProgressNavigator({
+				varyingStepCount: true
+			});
+
 			this.oProgressNavigator.placeAt("qunit-fixture");
+			this.oBranchingProgressNavigator.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		},
 		afterEach: function () {
 			this.oProgressNavigator.destroy();
+			this.oBranchingProgressNavigator.destroy();
+
 			this.oProgressNavigator = null;
+			this.oBranchingProgressNavigator = null;
 		}
 	});
 
-	QUnit.test("When rendered only the first anchor should NOT have aria-disabled=true", function(assert) {
-		var stepCount = this.oProgressNavigator.getStepCount(),
-			$anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+	QUnit.test("When rendered only the first step should NOT have aria-disabled=true", function(assert) {
+		var iStepCount = this.oProgressNavigator.getStepCount(),
+			$steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
-		assert.strictEqual($anchors.eq(0).attr("aria-disabled"), undefined,
-			"first anchor should NOT have aria-disabled=true attribute");
+		assert.strictEqual($steps.eq(0).attr("aria-disabled"), undefined,
+			"first step should NOT have aria-disabled=true attribute");
 
-		for (var i = 1; i < stepCount; i++) {
-			assert.strictEqual($anchors.eq(i).attr("aria-disabled"), "true",
-				"anchor should have aria-disabled=true attribute");
+		for (var i = 1; i < iStepCount; i++) {
+			assert.strictEqual($steps.eq(i).attr("aria-disabled"), "true",
+				"step should have aria-disabled=true attribute");
 		}
 	});
 
 	QUnit.test("After activating the second step aria-disabled should be removed", function(assert) {
 		this.oProgressNavigator.nextStep();
 
-		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
-		assert.strictEqual($anchors.eq(1).attr("aria-disabled"), undefined,
-			"aria-disabled=true attribute should be removed from the second anchor");
+		assert.strictEqual($steps.eq(1).attr("aria-disabled"), undefined,
+			"aria-disabled=true attribute should be removed from the second step");
 	});
 
 	QUnit.test("After a step had already been active it should not have aria-disabled=true", function (assert) {
@@ -407,68 +418,67 @@
 		// we need to force rerendering as in normal case when moving from step to step the ProgressNavigator is rerendered
 		this.oProgressNavigator.rerender();
 
-		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
-		assert.strictEqual($anchors.eq(0).attr("aria-disabled"), undefined,
-			"aria-disabled=true attribute should be removed from previous active anchor");
-		assert.strictEqual($anchors.eq(1).attr("aria-disabled"), undefined,
-			"aria-disabled=true attribute should be removed from previous active anchor");
-	});
-
-	QUnit.test("Current step should have aria-label=Selected", function(assert) {
-		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor"),
-			sSelectedText = this.oResourceBundle.getText("WIZARD_PROG_NAV_SELECTED");
-
-		assert.strictEqual($anchors.eq(0).attr("aria-label"), sSelectedText,
-			"aria-label=Selected should be present on first anchor");
-	});
-
-	QUnit.test("Open steps should have aria-label=Processed", function(assert) {
-		this.oProgressNavigator.nextStep();
-
-		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor"),
-			sProcessedText = this.oResourceBundle.getText("WIZARD_PROG_NAV_PROCESSED");
-
-		assert.strictEqual($anchors.eq(0).attr("aria-label"), sProcessedText,
-			"aria-label=Processed should be present on first anchor");
+		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
+		assert.strictEqual($steps.eq(0).attr("aria-disabled"), undefined,
+			"aria-disabled=true attribute should be removed from previous active step");
+		assert.strictEqual($steps.eq(1).attr("aria-disabled"), undefined,
+			"aria-disabled=true attribute should be removed from previous active step");
 	});
 
 	QUnit.test("Discarding progress should add aria-disabled=true", function(assert) {
 		this.oProgressNavigator.nextStep().nextStep().nextStep();
 		this.oProgressNavigator.discardProgress(1);
 
-		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
-		assert.strictEqual($anchors.eq(0).attr("aria-disabled"), undefined,
+		assert.strictEqual($steps.eq(0).attr("aria-disabled"), undefined,
 			"first anchor should NOT have aria-disabled=true attribute");
 
-		assert.strictEqual($anchors.eq(1).attr("aria-disabled"), "true",
+		assert.strictEqual($steps.eq(1).attr("aria-disabled"), "true",
 			"second anchor should have aria-disabled=true attribute");
 
-		assert.strictEqual($anchors.eq(2).attr("aria-disabled"), "true",
+		assert.strictEqual($steps.eq(2).attr("aria-disabled"), "true",
 			"third anchor should have aria-disabled=true attribute");
 	});
 
-	QUnit.test("Discarding progress should remove aria-label", function(assert) {
+	QUnit.test("Current step should have aria-current=step", function(assert) {
+		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
+
+		assert.strictEqual($steps.eq(0).attr("aria-current"), "step",
+			"aria-current=step should be present on first step");
+	});
+
+	QUnit.test("aria-current should not be presented", function(assert) {
+		this.oProgressNavigator.nextStep();
+
+		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
+
+		assert.strictEqual($steps.eq(0).attr("aria-current"), undefined,
+			"aria-current should not be present on first step");
+	});
+
+
+	QUnit.test("Discarding progress should remove aria-current", function(assert) {
 		this.oProgressNavigator.nextStep().nextStep().nextStep();
 		this.oProgressNavigator.discardProgress(1);
 
-		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor"),
-			sSelectedText = this.oResourceBundle.getText("WIZARD_PROG_NAV_SELECTED");
+		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
-		assert.strictEqual($anchors.eq(0).attr("aria-label"), sSelectedText,
-			"first anchor should have aria-label=Selected");
+		assert.strictEqual($steps.eq(0).attr("aria-current"), "step",
+			"first step should have aria-current=step");
 
-		assert.strictEqual($anchors.eq(1).attr("aria-label"), undefined,
-			"second anchor should NOT have aria-label attribute");
+		assert.strictEqual($steps.eq(1).attr("aria-current"), undefined,
+			"second step should NOT have aria-current attribute");
 
-		assert.strictEqual($anchors.eq(2).attr("aria-label"), undefined,
-			"third anchor should NOT have aria-label attribute");
+		assert.strictEqual($steps.eq(2).attr("aria-current"), undefined,
+			"third step should NOT have aria-current attribute");
 	});
 
-	QUnit.test("WizardProgressNavigator aria-label attribute", function (assert) {
-		var sAriaLabel = this.oProgressNavigator.$().attr("aria-label");
-		var sWizardProgressNavLabel = this.oResourceBundle.getText("WIZARD_LABEL");
-		assert.strictEqual(sAriaLabel, sWizardProgressNavLabel, "'aria-label' attribute should be set to '" + sWizardProgressNavLabel + "'");
+	QUnit.test("WizardProgressNavigator aria-roledescription attributes", function (assert) {
+		var sAriaRoleDescription = this.oProgressNavigator.getDomRef().getAttribute("aria-roledescription");
+		var sWizardProgressNavRoleDescription = this.oResourceBundle.getText("WIZARD_PROGRESS_NAVIGATOR_ARIA_ROLE_DESCRIPTION");
+
+		assert.strictEqual(sAriaRoleDescription, sWizardProgressNavRoleDescription, "'aria-roledescription' attribute should be set to '" + sWizardProgressNavRoleDescription + "'");
 	});
 
 	QUnit.test("WizardProgressNavigator role attribute", function (assert) {
@@ -488,12 +498,74 @@
 		}
 	});
 
-	QUnit.test("WizardProgressNavigator anchor element title attribute", function (assert) {
-		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor"),
+	QUnit.test("WizardProgressNavigator step roledescription attribute must be rendered correctly with the step title text", function (assert) {
+		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep"),
 			sStepText = this.oResourceBundle.getText("WIZARD_PROG_NAV_STEP_TITLE");
-		for (var i = 0; i < $anchors.length; i++){
+		for (var i = 0; i < $steps.length; i++){
 			var sStepTitle = sStepText + " " + (i + 1);
-			assert.strictEqual($anchors.eq(i).attr("title"), sStepTitle, "'title' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + sStepTitle + "'");
+			assert.strictEqual($steps.eq(i).attr("aria-roledescription"), sStepTitle, "'aria-roledescription' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + sStepTitle + "'");
 		}
 	});
-}());
+
+	QUnit.test("WizardProgressNavigator aria-posinset and aria-setsize attribute should be set correctly.", function (assert) {
+		//Arrange
+		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep"),
+			$branchingSteps = this.oBranchingProgressNavigator.$().find(".sapMWizardProgressNavStep");
+
+		//Assert
+		for (var i = 0; i < $steps.length; i++){
+			assert.strictEqual($steps.eq(i).attr("aria-posinset"), "" + (i + 1) + "", "'aria-posinset' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + i + "'");
+			assert.strictEqual($steps.eq(i).attr("aria-setsize"), "5", "'aria-setsize' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + 5 + "'");
+		}
+
+		for (var i = 0; i < $branchingSteps.length; i++){
+			assert.strictEqual($branchingSteps.eq(i).attr("aria-posinset"), "" + (i + 1) + "", "'aria-posinset' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + i + "'");
+			assert.strictEqual($branchingSteps.eq(i).attr("aria-setsize"), "-1", "'aria-setsize' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + -1 + "'");
+		}
+
+		//Act
+		this.oBranchingProgressNavigator.setVaryingStepCount(false);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		for (var i = 0; i < $branchingSteps.length; i++){
+			assert.strictEqual($branchingSteps.eq(i).attr("aria-posinset"), "" + (i + 1) + "", "'aria-posinset' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + i + "'");
+			assert.strictEqual($branchingSteps.eq(i).attr("aria-setsize"), "3", "'aria-setsize' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + 3 + "'");
+		}
+	});
+
+	QUnit.module("Error robustness", {
+		beforeEach: function () {
+			this.oProgressNavigator = new WizardProgressNavigator({
+				stepCount: 3
+			});
+
+			this.oProgressNavigator.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oProgressNavigator.destroy();
+			this.oProgressNavigator = null;
+		}
+	});
+
+	QUnit.test("_updateOpenSteps should not throw when this._aCachedSteps is undefined.", function (assert) {
+		var oThrowSpy = new sinon.spy(this.oProgressNavigator, "_updateOpenSteps");
+
+		// arrange
+		this.oProgressNavigator._aCachedSteps = undefined;
+
+		// act
+		try {
+			oThrowSpy.apply(this.oProgressNavigator);
+		} catch (e) {
+			// continue
+		}
+
+		// assert
+		assert.ok(!oThrowSpy.threw(), "The method didn't threw.");
+
+		// clean
+		oThrowSpy.restore();
+	});
+});

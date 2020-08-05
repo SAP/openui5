@@ -1,0 +1,60 @@
+/******************************************************************
+	Style of the RTA Contextmenu - sap_fiori_3_hcb Theme
+*******************************************************************/
+@_sap_ui_rta_ContextMenu_Border_LightColor: @sapUiWhite; //#ffffff
+@_sap_ui_rta_ContextMenu_Border_DarkColor: @sapUiBlackBG; //#000000
+@_sap_ui_rta_ContextMenu_BoxShadowColor: fade(@sapUiWhite, 60%); //rgba(255, 255, 255, 0.6)
+
+.sapUiRtaMode {
+
+	.sapUiDtContextMenu {
+
+		&.sapMPopover, .sapMPopover {
+			border: 0.125rem solid @_sap_ui_rta_ContextMenu_Border_LightColor; //2px
+			border-image: repeating-linear-gradient(-45deg, @_sap_ui_rta_ContextMenu_Border_DarkColor, @_sap_ui_rta_ContextMenu_Border_DarkColor 4px, @_sap_ui_rta_ContextMenu_Border_LightColor 4px, @_sap_ui_rta_ContextMenu_Border_LightColor 6px) 4;
+			box-shadow: 0 0.625rem 2rem 0 @_sap_ui_rta_ContextMenu_BoxShadowColor, 0 0 0.625rem -0.125rem @_sap_ui_rta_ContextMenu_Border_LightColor; //10px 32px 10px 2px
+		}
+
+		&.sapMPopoverArr, .sapMPopoverArr {
+			width: 2rem; //32px
+			height: 2rem; //32px
+			bottom: -2rem; //32px
+			left: 0.25rem !important; //4px
+
+			&:after {
+				box-shadow: 0 4rem 2rem 0 @_sap_ui_rta_ContextMenu_BoxShadowColor, 0 0 0.625rem -0.1875rem @_sap_ui_rta_ContextMenu_Border_LightColor; //64px 32px 10px 3px
+				border: 0.125rem solid @_sap_ui_rta_ContextMenu_Border_LightColor; //2px
+				border-image: repeating-linear-gradient(-50deg, @_sap_ui_rta_ContextMenu_Border_DarkColor, @_sap_ui_rta_ContextMenu_Border_DarkColor 3px, @_sap_ui_rta_ContextMenu_Border_LightColor 3px, @_sap_ui_rta_ContextMenu_Border_LightColor 5px) 4;
+				width: 1rem; //16px
+				height: 0.8125rem; //13px
+				margin: -0.65rem 0 0 0.35rem; //10px 6px
+			}
+
+			&.sapMPopoverArrUp {
+				height:	0.8125rem; //13px
+				top: -0.8125rem; //13px
+				&:after {
+					box-shadow: 0 -4rem 2rem 0 @_sap_ui_rta_ContextMenu_BoxShadowColor, 0 0 0.625rem -0.1875rem @_sap_ui_rta_ContextMenu_Border_LightColor; //64px 32px 10px 3px
+					margin: 0.35rem 0 0 0.35rem; //6px 6px
+				}
+			}
+		}
+
+		.sapMBtnInner.sapMBtnText .sapMBtnIcon {
+			padding-left: 0;
+		}
+
+		&.sapMBtn:focus:not(:hover) > .sapMFocusable,
+		.sapMBtn:focus:not(:hover) > .sapMFocusable {
+			outline: none;
+			border: 0.0625rem dotted; //1px
+		}
+
+		.sapMBtn:focus:hover > .sapMFocusable,
+		&.sapMBtn:focus:hover > .sapMFocusable {
+			border: 0.0625rem solid; //1px
+			outline: 0.0625rem dotted; //1px
+			outline-offset: -0.25rem; //4px
+		}
+	}
+}

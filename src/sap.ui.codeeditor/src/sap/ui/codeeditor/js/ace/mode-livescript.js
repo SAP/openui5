@@ -38,7 +38,7 @@ var MatchingBraceOutdent = function() {};
 exports.MatchingBraceOutdent = MatchingBraceOutdent;
 });
 
-ace.define("ace/mode/livescript",["require","exports","module","ace/tokenizer","ace/mode/matching_brace_outdent","ace/mode/text"], function(require, exports, module){
+ace.define("ace/mode/livescript",["require","exports","module","ace/tokenizer","ace/mode/matching_brace_outdent","ace/mode/behaviour/cstyle","ace/mode/text"], function(require, exports, module){
   var identifier, LiveScriptMode, keywordend, stringfill;
   identifier = '(?![\\d\\s])[$\\w\\xAA-\\uFFDC](?:(?!\\s)[$\\w\\xAA-\\uFFDC]|-[A-Za-z])*';
   exports.Mode = LiveScriptMode = (function(superclass){
@@ -50,6 +50,7 @@ ace.define("ace/mode/livescript",["require","exports","module","ace/tokenizer","
         this.$outdent = new that.MatchingBraceOutdent;
       }
       this.$id = "ace/mode/livescript";
+      this.$behaviour = new (require("./behaviour/cstyle").CstyleBehaviour)();
     }
     indenter = RegExp('(?:[({[=:]|[-~]>|\\b(?:e(?:lse|xport)|d(?:o|efault)|t(?:ry|hen)|finally|import(?:\\s*all)?|const|var|let|new|catch(?:\\s*' + identifier + ')?))\\s*$');
     prototype.getNextLineIndent = function(state, line, tab){
@@ -268,4 +269,11 @@ function import$(obj, src){
   for (var key in src) if (own.call(src, key)) obj[key] = src[key];
   return obj;
 }
-});
+});                (function() {
+                    ace.require(["ace/mode/livescript"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

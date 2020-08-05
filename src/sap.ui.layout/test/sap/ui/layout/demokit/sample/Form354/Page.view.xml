@@ -5,8 +5,8 @@
 	xmlns="sap.m">
 	<Page
 		id="page"
-		showHeader="false" >
-		<footer>
+		showHeader="true" >
+		<customHeader>
 			<Bar>
 				<contentRight>
 					<Button id="edit" text="Edit" enabled="false" press="handleEditPress" />
@@ -14,6 +14,6 @@
 					<Button id="cancel" text="Cancel" visible="false" press="handleCancelPress" />
 				</contentRight>
 			</Bar>
-		</footer>
+		</customHeader>
 	</Page>
 </mvc:View>

@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.SinglePlanningCalendarCreateApp",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.SinglePlanningCalendarCreateApp.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {},
+				"sap.ui.layout": {},
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Page.view.xml",
+					"Page.controller.js",
+					"Modify.fragment.xml",
+					"Details.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

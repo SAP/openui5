@@ -3,25 +3,109 @@
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
-		'sap/ui/base/BindingParser', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject',
-		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
-		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager',
-		'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script', 'jquery.sap.sjax'],
-	function(jQuery, Device, Global,
-		BindingParser, DataType, EventProvider, Interface, BaseObject, ManagedObject,
-		Component, Configuration, Control, Element, ElementMetadata, FocusHandler,
-		RenderManager, ResizeHandler, ThemeCheck, UIArea, MessageManager
-		/* , jQuerySapAct, jQuerySapDom, jQuerySapEvents, jQuerySapMobile, jQuerySapProperties, jQuerySapResources, jQuerySapScript, jQuerySapSjax */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'sap/ui/Global',
+	'sap/ui/base/BindingParser',
+	'sap/ui/base/DataType',
+	'sap/ui/base/EventProvider',
+	'sap/ui/base/Interface',
+	'sap/ui/base/Object',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/performance/trace/Interaction',
+	'./Component',
+	'./Configuration',
+	'./Control',
+	'./Element',
+	'./ElementMetadata',
+	'./FocusHandler',
+	'./RenderManager',
+	'./ResizeHandler',
+	'./ThemeCheck',
+	'./UIArea',
+	'./message/MessageManager',
+	"sap/ui/util/ActivityDetection",
+	"sap/ui/dom/getScrollbarSize",
+	"sap/base/i18n/ResourceBundle",
+	"sap/base/Log",
+	"sap/ui/performance/Measurement",
+	"sap/ui/security/FrameOptions",
+	"sap/base/assert",
+	"sap/ui/dom/includeStylesheet",
+	"sap/base/util/ObjectPath",
+	"sap/base/util/Version",
+	"sap/base/util/array/uniqueSort",
+	"sap/base/util/uid",
+	'sap/ui/performance/trace/initTraces',
+	'sap/base/util/LoaderExtensions',
+	'sap/base/util/isEmptyObject',
+	'sap/base/util/each',
+	'sap/ui/VersionInfo',
+	'sap/ui/events/jquery/EventSimulation'
+],
+	function(
+		jQuery,
+		Device,
+		Global,
+		BindingParser,
+		DataType,
+		EventProvider,
+		Interface,
+		BaseObject,
+		ManagedObject,
+		Interaction,
+		Component,
+		Configuration,
+		Control,
+		Element,
+		ElementMetadata,
+		FocusHandler,
+		RenderManager,
+		ResizeHandler,
+		ThemeCheck,
+		UIArea,
+		MessageManager,
+		ActivityDetection,
+		getScrollbarSize,
+		ResourceBundle,
+		Log,
+		Measurement,
+		FrameOptions,
+		assert,
+		includeStylesheet,
+		ObjectPath,
+		Version,
+		uniqueSort,
+		uid,
+		initTraces,
+		LoaderExtensions,
+		isEmptyObject,
+		each,
+		VersionInfo
+		/* ,EventSimulation */
+	) {
 
 	"use strict";
 
-	/*global Promise */
+	/*global Map, Promise */
 
-	function lazyInstanceof(o, sModule) {
-		var FNClass = sap.ui.require(sModule);
-		return typeof FNClass === 'function' && (o instanceof FNClass);
+	/**
+	 * Executes an 'eval' for its arguments in the global context (without closure variables).
+	 */
+	function globalEval() {
+		/*eslint-disable no-eval */
+		eval(arguments[0]);
+		/*eslint-enable no-eval */
 	}
+
+	// when the Core module has been executed before, don't execute it again
+	if (sap.ui.getCore && sap.ui.getCore()) {
+		return sap.ui.getCore();
+	}
+
+	// Initialize SAP Passport or FESR
+	initTraces();
 
 	// share the rendering log with the UIArea
 	var oRenderLog = UIArea._oRenderLog;
@@ -50,6 +134,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @private
 	 */
 	var _oEventProvider;
+
+	/*
+	 * Internal class that can help to synchronize a set of asynchronous tasks.
+	 * Each task must be registered in the sync point by calling startTask with
+	 * an (purely informative) title. The returned value must be used in a later
+	 * call to finishTask.
+	 * When finishTask has been called for all tasks that have been started,
+	 * the fnCallback will be fired.
+	 * When a timeout is given and reached, the callback is called at that
+	 * time, no matter whether all tasks have been finished or not.
+	 */
+	var SyncPoint = function (sName, fnCallback) {
+		var aTasks = [],
+			iOpenTasks = 0,
+			iFailures = 0;
+
+		this.startTask = function(sTitle) {
+			var iId = aTasks.length;
+			aTasks[iId] = { name : sTitle, finished : false };
+			iOpenTasks++;
+			return iId;
+		};
+
+		this.finishTask = function(iId, bSuccess) {
+			if ( !aTasks[iId] || aTasks[iId].finished ) {
+				throw new Error("trying to finish non existing or already finished task");
+			}
+			aTasks[iId].finished = true;
+			iOpenTasks--;
+			if ( bSuccess === false ) {
+				iFailures++;
+			}
+			if ( iOpenTasks === 0 ) {
+				Log.info("Sync point '" + sName + "' finished (tasks:" + aTasks.length + ", open:" + iOpenTasks + ", failures:" + iFailures + ")");
+				finish();
+			}
+		};
+
+		function finish() {
+			if ( fnCallback ) {
+				fnCallback(iOpenTasks, iFailures);
+			}
+			fnCallback = null;
+		}
+
+		Log.info("Sync point '" + sName + "' created");
+	};
 
 	/**
 	 * @class Core Class of the SAP UI Library.
@@ -91,25 +222,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @version ${version}
 	 * @alias sap.ui.core.Core
 	 * @public
+	 * @hideconstructor
 	 */
 	var Core = BaseObject.extend("sap.ui.core.Core", /** @lends sap.ui.core.Core.prototype */ {
 		constructor : function() {
 
-			//make this class only available once
+			var that = this,
+				METHOD = "sap.ui.core.Core";
+
+			// when a Core instance has been created before, don't create another one
 			if (sap.ui.getCore && sap.ui.getCore()) {
+				Log.error("Only the framework must create an instance of sap/ui/core/Core." +
+						  " To get access to its functionality, use sap.ui.getCore().");
 				return sap.ui.getCore();
 			}
-
-			var that = this,
-				log = jQuery.sap.log,
-				METHOD = "sap.ui.core.Core";
 
 			BaseObject.call(this);
 
 			_oEventProvider = new EventProvider();
 
 			// Generate all functions from EventProvider for backward compatibility
-			["attachEvent", "detachEvent", "getEventingParent"].forEach(function(sFuncName) {
+			["attachEvent", "detachEvent", "getEventingParent"].forEach(function (sFuncName) {
 				Core.prototype[sFuncName] = _oEventProvider[sFuncName].bind(_oEventProvider);
 			});
 
@@ -169,16 +302,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			 */
 			this.oEventBus = null;
 
-			/**
-			 * Map of of created Elements keyed by their id.
-			 *
-			 * Each element registers itself in its constructor and deregisters itself in its
-			 * destroy method.
-			 *
-			 * @private
-			 * @todo get rid of this collection as it represents a candidate for memory leaks
-			 */
-			this.mElements = {};
+			Object.defineProperty(this, "mElements", {
+				get: function() {
+					Log.error("oCore.mElements was a private member and has been removed. Use one of the methods in sap.ui.core.Element.registry instead");
+					return Element.registry.all(); // this is a very costly snapshot!
+				},
+				configurable: false
+			});
 
 			/**
 			 * Map of of created objects structured by their type which contains a map
@@ -191,7 +321,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			 * @todo get rid of this collection as it represents a candidate for memory leaks
 			 */
 			this.mObjects = {
-				"component": {},
 				"template": {}
 			};
 
@@ -230,11 +359,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			 */
 			this.aPrerenderingTasks = [];
 
-			log.info("Creating Core",null,METHOD);
+			Log.info("Creating Core",null,METHOD);
 
-			jQuery.sap.measure.start("coreComplete", "Core.js - complete");
-			jQuery.sap.measure.start("coreBoot", "Core.js - boot");
-			jQuery.sap.measure.start("coreInit", "Core.js - init");
+			Measurement.start("coreComplete", "Core.js - complete");
+			Measurement.start("coreBoot", "Core.js - boot");
+			Measurement.start("coreInit", "Core.js - init");
 
 			/**
 			 * Object holding the interpreted configuration
@@ -247,7 +376,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			var oFrameOptionsConfig = this.oConfiguration["frameOptionsConfig"] || {};
 			oFrameOptionsConfig.mode = this.oConfiguration.getFrameOptions();
 			oFrameOptionsConfig.whitelistService = this.oConfiguration.getWhitelistService();
-			this.oFrameOptions = new jQuery.sap.FrameOptions(oFrameOptionsConfig);
+			this.oFrameOptions = new FrameOptions(oFrameOptionsConfig);
 
 			// enable complex bindings if configured
 			if ( this.oConfiguration["bindingSyntax"] === "complex" ) {
@@ -278,7 +407,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			// enable LessSupport if specified in configuration
 			if (this.oConfiguration["xx-lesssupport"] && aModules.indexOf("sap.ui.core.plugin.LessSupport") == -1) {
-				log.info("Including LessSupport into declared modules");
+				Log.info("Including LessSupport into declared modules");
 				aModules.push("sap.ui.core.plugin.LessSupport");
 			}
 
@@ -288,14 +417,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			if ( window["sap-ui-debug"] === true ) {
 				sPreloadMode = "";
 			}
-			// when the preload mode is 'auto', it will be set to 'sync' for optimized sources
+			// when the preload mode is 'auto', it will be set to 'async' or 'sync' for optimized sources
+			// depending on whether the ui5loader is configured async
 			if ( sPreloadMode === "auto" ) {
-				sPreloadMode = window["sap-ui-optimized"] ? "sync" : "";
+				if (window["sap-ui-optimized"]) {
+					sPreloadMode = sap.ui.loader.config().async ? "async" : "sync";
+				} else {
+					sPreloadMode = "";
+				}
 			}
 			// write back the determined mode for later evaluation (e.g. loadLibrary)
 			this.oConfiguration.preload = sPreloadMode;
 
-			var bAsync = sPreloadMode === "async";
+			// This flag controls the core initialization flow.
+			// We can switch to async when an async preload is used or the ui5loader
+			// is in async mode. The latter might also happen for debug scenarios
+			// where no preload is used at all.
+			var bAsync = sPreloadMode === "async" || sap.ui.loader.config().async;
 
 			// evaluate configuration for library preload file types
 			this.oConfiguration['xx-libraryPreloadFiles'].forEach(function(v){
@@ -311,21 +449,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				}
 			});
 
-			log.info("Declared modules: " + aModules, METHOD);
+			Log.info("Declared modules: " + aModules, METHOD);
 
 			this._setupThemes();
 
 			this._setupContentDirection();
 
-			var $html = jQuery("html");
+			this._setupBrowser();
 
-			this._setupBrowser($html);
+			this._setupOS();
 
-			this._setupOS($html);
+			this._setupLang();
 
-			this._setupLang($html);
-
-			this._setupAnimation($html);
+			this._setupAnimation();
 
 			// create accessor to the Core API early so that initLibrary and others can use it
 			/**
@@ -333,32 +469,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			 * @returns {sap.ui.core.Core} the API of the current SAPUI5 Core instance.
 			 * @public
 			 * @function
+			 * @ui5-global-only
 			 */
-			sap.ui.getCore = jQuery.sap.getter(this.getInterface());
+			sap.ui.getCore = function() {
+				return that.getInterface();
+			};
 
 			// create the RenderManager so it can be used already
 			this.oRenderManager = new RenderManager();
 
 			// sync point 1 synchronizes document ready and rest of UI5 boot
-			var oSyncPoint1 = jQuery.sap.syncPoint("UI5 Document Ready", function(iOpenTasks, iFailures) {
+			var oSyncPoint1 = new SyncPoint("UI5 Document Ready", function(iOpenTasks, iFailures) {
 				that.bDomReady = true;
 				that.init();
 			});
 			var iDocumentReadyTask = oSyncPoint1.startTask("document.ready");
 			var iCoreBootTask = oSyncPoint1.startTask("preload and boot");
 
-			// task 1 is to wait for document.ready
-			jQuery(function() {
-				log.trace("document is ready");
+			var fnContentLoadedCallback = function() {
+				Log.trace("document is ready");
 				oSyncPoint1.finishTask(iDocumentReadyTask);
-			});
+				document.removeEventListener("DOMContentLoaded", fnContentLoadedCallback);
+			};
+
+			// immediately execute callback if the ready state is already 'complete'
+			if (document.readyState !== "loading") {
+				fnContentLoadedCallback();
+			} else {
+				// task 1 is to wait for document.ready
+				document.addEventListener("DOMContentLoaded", fnContentLoadedCallback);
+			}
 
 			// sync point 2 synchronizes all library preloads and the end of the bootstrap script
-			var oSyncPoint2 = jQuery.sap.syncPoint("UI5 Core Preloads and Bootstrap Script", function(iOpenTasks, iFailures) {
-				log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
+			var oSyncPoint2 = new SyncPoint("UI5 Core Preloads and Bootstrap Script", function(iOpenTasks, iFailures) {
+				Log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
 				that._boot(bAsync, function() {
 					oSyncPoint1.finishTask(iCoreBootTask);
-					jQuery.sap.measure.end("coreBoot");
+					Measurement.end("coreBoot");
 				});
 			});
 
@@ -372,9 +519,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 				var fnCallback = function(oVersionInfo) {
 					if (oVersionInfo) {
-						log.trace("Loaded \"sap-ui-version.json\".");
+						Log.trace("Loaded \"sap-ui-version.json\".");
 					} else {
-						log.error("Could not load \"sap-ui-version.json\".");
+						Log.error("Could not load \"sap-ui-version.json\".");
 					}
 					oSyncPoint2.finishTask(iVersionInfoTask);
 				};
@@ -385,7 +532,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 					vReturn.then(fnCallback, function(oError) {
 						// this should only happen when there is a script error as "failOnError=false"
 						// prevents throwing a loading error (e.g. HTTP 404)
-						log.error("Unexpected error when loading \"sap-ui-version.json\": " + oError);
+						Log.error("Unexpected error when loading \"sap-ui-version.json\": " + oError);
 						oSyncPoint2.finishTask(iVersionInfoTask);
 					});
 				} else {
@@ -449,26 +596,57 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			if (this.oConfiguration.getSupportMode() !== null) {
 				var iSupportInfoTask = oSyncPoint2.startTask("support info script");
 
-				var fnCallbackBootstrap = function(Bootstrap) {
+				var fnCallbackSupportBootstrapInfo = function(Support, Bootstrap) {
+					Support.initializeSupportMode(that.oConfiguration.getSupportMode(), bAsync);
+
 					Bootstrap.initSupportRules(that.oConfiguration.getSupportMode());
 
 					oSyncPoint2.finishTask(iSupportInfoTask);
 				};
 
-				var fnCallbackSupportInfo = function(Support) {
-					Support.initializeSupportMode(that.oConfiguration.getSupportMode(), bAsync);
+				if (bAsync) {
+					sap.ui.require(["sap/ui/core/support/Support", "sap/ui/support/Bootstrap"], fnCallbackSupportBootstrapInfo, function (oError) {
+						Log.error("Could not load support mode modules:", oError);
+					});
+				} else {
+					Log.warning("Synchronous loading of Support mode. Set preload configuration to 'async' or switch to asynchronous bootstrap to prevent these synchronous request.", "SyncXHR", null, function() {
+						return {
+							type: "SyncXHR",
+							name: "support-mode"
+						};
+					});
+					fnCallbackSupportBootstrapInfo(
+						sap.ui.requireSync("sap/ui/core/support/Support"),
+						sap.ui.requireSync("sap/ui/support/Bootstrap")
+					);
+				}
+			}
 
-					if (bAsync) {
-						sap.ui.require(["sap/ui/support/Bootstrap"], fnCallbackBootstrap);
-					} else {
-						fnCallbackBootstrap(sap.ui.requireSync("sap/ui/support/Bootstrap"));
-					}
+			// Initialize test tools
+			if (this.oConfiguration.getTestRecorderMode() !== null) {
+				var iTestRecorderTask = oSyncPoint2.startTask("test recorder script");
+
+				var fnCallbackTestRecorder = function (Bootstrap) {
+					Bootstrap.init(that.oConfiguration.getTestRecorderMode());
+					oSyncPoint2.finishTask(iTestRecorderTask);
 				};
 
 				if (bAsync) {
-					sap.ui.require(["sap/ui/core/support/Support"], fnCallbackSupportInfo);
+					sap.ui.require([
+						"sap/ui/testrecorder/Bootstrap"
+					], fnCallbackTestRecorder, function (oError) {
+						Log.error("Could not load test recorder:", oError);
+					});
 				} else {
-					fnCallbackSupportInfo(sap.ui.requireSync("sap/ui/core/support/Support"));
+					Log.warning("Synchronous loading of Test recorder mode. Set preload configuration to 'async' or switch to asynchronous bootstrap to prevent these synchronous request.", "SyncXHR", null, function() {
+						return {
+							type: "SyncXHR",
+							name: "test-recorder-mode"
+						};
+					});
+					fnCallbackTestRecorder(
+						sap.ui.requireSync("sap/ui/testrecorder/Bootstrap")
+					);
 				}
 			}
 
@@ -512,6 +690,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	// Id of the static UIArea
 	var STATIC_UIAREA_ID = "sap-ui-static";
 
+	// to protect against nested rendering we use an array of Steps instead of a single one
+	Core.aFnDone = [];
+
 	/**
 	 * The core allows some friend components to register/deregister themselves
 	 * @private
@@ -523,13 +704,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		ElementMetadata.prototype.register = function(oMetadata) {
 			that.registerElementClass(oMetadata);
 		};
-		// grant Element "friend" access to Core for (de-)registration
-		Element.prototype.register = function() {
-			that.registerElement(this);
-		};
-		Element.prototype.deregister = function() {
-			that.deregisterElement(this);
-		};
 
 		// grant Element "friend" access to Core / FocusHandler to update the given elements focus info
 		Element._updateFocusInfo = function(oElement) {
@@ -537,23 +711,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				that.oFocusHandler.updateControlFocusInfo(oElement);
 			}
 		};
-
-		// grant Component "friend" access to Core for (de-)registration
-		Component.prototype.register = function() {
-			that.registerObject(this);
-		};
-		Component.prototype.deregister = function() {
-			var sComponentId = this.sId;
-			for (var sElementId in that.mElements) {
-				var oElement = that.mElements[sElementId];
-				if ( oElement._sapui_candidateForDestroy && oElement._sOwnerId === sComponentId && !oElement.getParent() ) {
-					jQuery.sap.log.debug("destroying dangling template " + oElement + " when destroying the owner component");
-					oElement.destroy();
-				}
-			}
-			that.deregisterObject(this);
-		};
-
 	};
 
 	/**
@@ -561,8 +718,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @private
 	 */
 	Core.prototype._setupThemes = function() {
-		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core";
+		var METHOD = "sap.ui.core.Core";
 
 		var oCfgData = window["sap-ui-config"];
 		// Configuration might have a themeRoot, if so integrate it in themeroots
@@ -593,8 +749,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// set CSS class for the theme name
 		this.sTheme = this.oConfiguration.getTheme();
-		jQuery(document.documentElement).addClass("sapUiTheme-" + this.sTheme);
-		log.info("Declared theme " + this.sTheme,null,METHOD);
+		document.documentElement.classList.add("sapUiTheme-" + this.sTheme);
+		Log.info("Declared theme " + this.sTheme,null,METHOD);
 	};
 
 	/**
@@ -602,60 +758,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @private
 	 */
 	Core.prototype._setupContentDirection = function() {
-		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core",
+		var METHOD = "sap.ui.core.Core",
 			sDir = this.oConfiguration.getRTL() ? "rtl" : "ltr";
 
-		jQuery(document.documentElement).attr("dir", sDir); // webkit does not allow setting document.dir before the body exists
-		log.info("Content direction set to '" + sDir + "'",null,METHOD);
+		document.documentElement.setAttribute("dir", sDir); // webkit does not allow setting document.dir before the body exists
+		Log.info("Content direction set to '" + sDir + "'",null,METHOD);
 	};
 
 	/**
-	 * Set the body's browser-related attributes and and jQuery.browser properties
-	 * @param $html - jQuery wrapped html object
+	 * Set the body's browser-related attributes.
 	 * @private
 	 */
-	Core.prototype._setupBrowser = function($html) {
-		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core";
+	Core.prototype._setupBrowser = function() {
+		var METHOD = "sap.ui.core.Core";
 
 		//set the browser for CSS attribute selectors. do not move this to the onload function because sf and ie do not
 		//use the classes
-		$html = $html || jQuery("html");
+		var html = document.documentElement;
 
 		var b = Device.browser;
 		var id = b.name;
 
-		if (id === b.BROWSER.CHROME) {
-			jQuery.browser.safari = false;
-			jQuery.browser.chrome = true;
-		} else if (id === b.BROWSER.SAFARI) {
-			jQuery.browser.safari = true;
-			jQuery.browser.chrome = false;
-			if (b.mobile) {
+		if (id) {
+			if (id === b.BROWSER.SAFARI && b.mobile) {
 				id = "m" + id;
 			}
-		}
-
-		if (id) {
-			jQuery.browser.fVersion = b.version;
-			jQuery.browser.mobile = b.mobile;
-
 			id = id + (b.version === -1 ? "" : Math.floor(b.version));
-			$html.attr("data-sap-ui-browser", id);
-			log.debug("Browser-Id: " + id, null, METHOD);
+			html.dataset.sapUiBrowser = id;
+			Log.debug("Browser-Id: " + id, null, METHOD);
 		}
 	};
 
 	/**
 	 * Set the body's OS-related attribute and CSS class
-	 * @param $html - jQuery wrapped HTML object
 	 * @private
 	 */
-	Core.prototype._setupOS = function($html) {
-		$html = $html || jQuery("html");
+	Core.prototype._setupOS = function(html) {
+		var html = document.documentElement;
 
-		$html.attr("data-sap-ui-os", Device.os.name + Device.os.versionStr);
+		html.dataset.sapUiOs = Device.os.name + Device.os.versionStr;
+
 		var osCSS = null;
 		switch (Device.os.name) {
 			case Device.os.OS.IOS:
@@ -672,26 +814,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				break;
 		}
 		if (osCSS) {
-			$html.addClass(osCSS);
+			html.classList.add(osCSS);
 		}
 	};
 
 	/**
 	 * Set the body's lang attribute and attach the localization change event
-	 * @param $html - jQuery wrapped HTML object
 	 * @private
 	 */
-	Core.prototype._setupLang = function($html) {
-		$html = $html || jQuery("html");
+	Core.prototype._setupLang = function() {
+		var html = document.documentElement;
 
 		// append the lang info to the document (required for ARIA support)
 		var fnUpdateLangAttr = function() {
 			var oLocale = this.oConfiguration.getLocale();
-			if (oLocale) {
-				$html.attr("lang", oLocale.toString());
-			} else {
-				$html.removeAttr("lang");
-			}
+			oLocale ? html.setAttribute("lang", oLocale.toString()) : html.removeAttribute("lang");
 		};
 		fnUpdateLangAttr.call(this);
 
@@ -700,19 +837,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Set the body's Animation-related attribute and configures jQuery accordingly.
-	 * @param $html - jQuery wrapped HTML object
+	 * Set the body's Animation-related attribute and configures jQuery animations accordingly.
 	 * @private
 	 */
-	Core.prototype._setupAnimation = function($html) {
+	Core.prototype._setupAnimation = function() {
+		// We check for the existence of the configuration object, because the _setupAnimation function
+		// will first be called from the Configuration constructor within the Core constructor.
+		// During this first call, the configuration object is not yet set on the Core instance.
 		if (this.oConfiguration) {
-			$html = $html || jQuery("html");
+			var html = document.documentElement;
 			var bAnimation = this.oConfiguration.getAnimation();
-			$html.attr("data-sap-ui-animation", bAnimation ? "on" : "off");
-			jQuery.fx.off = !bAnimation;
-
+			html.dataset.sapUiAnimation = bAnimation ? "on" : "off";
+			if (typeof jQuery !== "undefined") {
+				jQuery.fx.off = !bAnimation;
+			}
 			var sAnimationMode = this.oConfiguration.getAnimationMode();
-			$html.attr("data-sap-ui-animation-mode", sAnimationMode);
+			html.dataset.sapUiAnimationMode = sAnimationMode;
 		}
 	};
 
@@ -733,22 +873,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		 * However, if the compatibility version is 1.16 or higher then the polyfill
 		 * should not be used.
 		 */
-		var useFlexBoxPolyfillCompatVersion = new jQuery.sap.Version(this.oConfiguration.getCompatibilityVersion("flexBoxPolyfill"));
-
-		// Always false if version is >= 1.16
-		if (useFlexBoxPolyfillCompatVersion.compareTo("1.16") >= 0) {
-			jQuery.support.useFlexBoxPolyfill = false;
-		} else if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
-			jQuery.support.useFlexBoxPolyfill = true;
-		} else {
-			jQuery.support.useFlexBoxPolyfill = false;
-		}
+		jQuery.support.useFlexBoxPolyfill = false;
 	};
 
 	/**
 	 * Boots the core and injects the necessary CSS and JavaScript files for the library.
 	 * Applications shouldn't call this method. It is automatically called by the bootstrap scripts (e.g. sap-ui-core.js)
 	 *
+	 * @param {boolean} bAsync - Flag if modules should be loaded asynchronously
+	 * @param {function} fnCallback - Callback after modules have been loaded
+	 * @returns {undefined|Promise}
 	 * @private
 	 */
 	Core.prototype._boot = function(bAsync, fnCallback) {
@@ -766,15 +900,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			});
 		}
 
-		var that = this;
+		Log.warning("Modules and libraries declared via bootstrap-configuration are loaded synchronously. Set preload configuration to" +
+			" 'async' or switch to asynchronous bootstrap to prevent these requests.", "SyncXHR", null, function() {
+			return {
+				type: "SyncXHR",
+				name: "legacy-module"
+			};
+		});
+
 		this.oConfiguration.modules.forEach( function(mod) {
 			var m = mod.match(/^(.*)\.library$/);
 			if ( m ) {
-				that.loadLibrary(m[1]);
+				this.loadLibrary(m[1]);
 			} else {
-				jQuery.sap.require( mod );
+				// data-sap-ui-modules might contain legacy jquery.sap.* modules
+				sap.ui.requireSync( /^jquery\.sap\./.test(mod) ?  mod : mod.replace(/\./g, "/"));
 			}
-		});
+		}.bind(this));
 
 		fnCallback();
 	};
@@ -786,10 +928,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		this.oConfiguration.modules.forEach(function(sModule) {
 			var m = sModule.match(/^(.*)\.library$/);
-			if ( m ) {
-				aLibs.push( m[1] );
+			if (m) {
+				aLibs.push(m[1]);
 			} else {
-				aModules.push( jQuery.sap.getResourceName( sModule, "" ) );
+				// data-sap-ui-modules might contain legacy jquery.sap.* modules
+				aModules.push(/^jquery\.sap\./.test(sModule) ? sModule : sModule.replace(/\./g, "/"));
 			}
 		});
 
@@ -827,8 +970,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.applyTheme = function(sThemeName, sThemeBaseUrl) {
-		jQuery.sap.assert(typeof sThemeName === "string", "sThemeName must be a string");
-		jQuery.sap.assert(typeof sThemeBaseUrl === "string" || typeof sThemeBaseUrl === "undefined", "sThemeBaseUrl must be a string or undefined");
+		assert(typeof sThemeName === "string", "sThemeName must be a string");
+		assert(typeof sThemeBaseUrl === "string" || typeof sThemeBaseUrl === "undefined", "sThemeBaseUrl must be a string or undefined");
 
 		sThemeName = this.oConfiguration._normalizeTheme(sThemeName, sThemeBaseUrl);
 
@@ -839,13 +982,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// only apply the theme if it is different from the active one
 		if (sThemeName && this.sTheme != sThemeName) {
 			var sCurrentTheme = this.sTheme;
-
+			var html = document.documentElement;
 			this._updateThemeUrls(sThemeName, /* bSuppressFOUC */ true);
 			this.sTheme = sThemeName;
 			this.oConfiguration._setTheme(sThemeName);
 
 			// modify the <html> tag's CSS class with the theme name
-			jQuery(document.documentElement).removeClass("sapUiTheme-" + sCurrentTheme).addClass("sapUiTheme-" + sThemeName);
+			html.classList.remove("sapUiTheme-" + sCurrentTheme);
+			html.classList.add("sapUiTheme-" + sThemeName);
 
 			// notify the listeners
 			if ( this.oThemeCheck ) {
@@ -856,7 +1000,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	// this function is also used by "sap.ui.core.ThemeCheck" to load a fallback theme for a single library
 	Core.prototype._updateThemeUrl = function(oLink, sThemeName, bSuppressFOUC) {
-		var sLibName = oLink.id.slice(13), // length of "sap-ui-theme-"
+		var sLibName,
 		    iQueryIndex = oLink.href.search(/[?#]/),
 		    sLibFileName,
 		    sQuery,
@@ -864,6 +1008,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		    sRTL = this.oConfiguration.getRTL() ? "-RTL" : "",
 		    sHref,
 		    pos;
+
+		// derive lib name from id via regex
+		var mLinkId = /^sap-ui-theme(?:skeleton)?-(.*)$/i.exec(oLink.id);
+		if (Array.isArray(mLinkId)) {
+			sLibName = mLinkId[1];
+		} else {
+			// fallback to legacy logic
+			sLibName = oLink.id.slice(13); // length of "sap-ui-theme-"
+		}
 
 		if (iQueryIndex > -1) {
 			// Split href on query and/or fragment to check for the standard lib file prefix
@@ -890,28 +1043,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		sHref = this._getThemePath(sLibName, sThemeName) + sLibFileName + sQuery;
 		if ( sHref != oLink.href ) {
-			// jQuery.sap.includeStyleSheet has a special FOUC handling
-			// which enables once the attribute data-sap-ui-foucmarker is
+			// sap/ui/dom/includeStylesheet has a special FOUC handling
+			// which is activated once the attribute data-sap-ui-foucmarker is
 			// present on the link to be replaced (usage of the Promise
 			// API is not sufficient as it will change the sync behavior)
 			if (bSuppressFOUC) {
-				oLink.setAttribute("data-sap-ui-foucmarker", oLink.id);
+				oLink.dataset.sapUiFoucmarker =  oLink.id;
 			}
 			// Replace the current <link> tag with a new one.
 			// Changing "oLink.href" would also trigger loading the new stylesheet but
 			// the load/error handlers would not get called which causes issues with the ThemeCheck
 			// as the "data-sap-ui-ready" attribute won't be set.
-			jQuery.sap.includeStyleSheet(sHref, oLink.id);
+			includeStylesheet(sHref, oLink.id);
 		}
 	};
 
 	// modify style sheet URLs to point to the given theme, using the current RTL mode
 	Core.prototype._updateThemeUrls = function(sThemeName, bSuppressFOUC) {
-		var that = this;
 		// select "our" stylesheets
-		jQuery("link[id^=sap-ui-theme-]").each(function() {
-			that._updateThemeUrl(this, sThemeName, bSuppressFOUC);
-		});
+		var oQueryResult = document.querySelectorAll("link[id^=sap-ui-theme-],link[id^=sap-ui-themeskeleton-]");
+
+		Array.prototype.forEach.call(oQueryResult, function(oHTMLElement) {
+			this._updateThemeUrl(oHTMLElement, sThemeName, bSuppressFOUC);
+		}.bind(this));
+
 	};
 
 	/**
@@ -928,7 +1083,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// check whether for this combination (theme+lib) a URL is registered or for this theme a default location is registered
 			if (path) {
 				path = path + sLibName.replace(/\./g, "/") + "/themes/" + sThemeName + "/";
-				jQuery.sap.registerModulePath(sLibName + ".themes." + sThemeName, path);
+				registerModulePath(sLibName + ".themes." + sThemeName, path);
 			}
 		}
 	};
@@ -947,7 +1102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this._ensureThemeRoot(sLibName, sThemeName);
 
 		// use the library location as theme location
-		return jQuery.sap.getModulePath(sLibName + ".themes." + sThemeName, "/");
+		return getModulePath(sLibName + ".themes." + sThemeName, "/");
 	};
 
 
@@ -994,20 +1149,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {string} sThemeName Name of the theme for which to configure the location
 	 * @param {string[]} [aLibraryNames] Optional library names to which the configuration should be restricted
 	 * @param {string} sThemeBaseUrl Base URL below which the CSS file(s) will be loaded from
+	 * @param {boolean} [bForceUpdate=false] Force updating URLs of currently loaded theme
 	 * @return {sap.ui.core.Core} the Core, to allow method chaining
 	 * @since 1.10
 	 * @public
 	 */
-	Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl) {
-		jQuery.sap.assert(typeof sThemeName === "string", "sThemeName must be a string");
-		jQuery.sap.assert((Array.isArray(aLibraryNames) && typeof sThemeBaseUrl === "string") || (typeof aLibraryNames === "string" && sThemeBaseUrl === undefined), "either the second parameter must be a string (and the third is undefined), or it must be an array and the third parameter is a string");
+	Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl, bForceUpdate) {
+		assert(typeof sThemeName === "string", "sThemeName must be a string");
+		assert((Array.isArray(aLibraryNames) && typeof sThemeBaseUrl === "string") || (typeof aLibraryNames === "string" && sThemeBaseUrl === undefined), "either the second parameter must be a string (and the third is undefined), or it must be an array and the third parameter is a string");
 
 		if (!this._mThemeRoots) {
 			this._mThemeRoots = {};
 		}
 
 		// normalize parameters
-		if (sThemeBaseUrl === undefined) {
+		if (typeof aLibraryNames === "string") {
+			bForceUpdate = sThemeBaseUrl;
 			sThemeBaseUrl = aLibraryNames;
 			aLibraryNames = undefined;
 		}
@@ -1025,6 +1182,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			this._mThemeRoots[sThemeName] = sThemeBaseUrl;
 		}
 
+		// Update theme urls when theme roots of currently loaded theme have changed
+		if (bForceUpdate && sThemeName === this.sTheme) {
+			this._updateThemeUrls(this.sTheme);
+		}
+
 		return this;
 	};
 
@@ -1039,54 +1201,68 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			return;
 		}
 
-		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core.init()";
+		var METHOD = "sap.ui.core.Core.init()";
 
 		// ensure that the core is booted now (e.g. loadAllMode)
 		this.boot();
 
-		log.info("Initializing",null,METHOD);
+		Log.info("Initializing",null,METHOD);
 
 		this.oFocusHandler = new FocusHandler(document.body, this);
 		this.oRenderManager._setFocusHandler(this.oFocusHandler); //Let the RenderManager know the FocusHandler
 		this.oResizeHandler = new ResizeHandler(this);
 		this.oThemeCheck = new ThemeCheck(this);
 
-		log.info("Initialized",null,METHOD);
-		jQuery.sap.measure.end("coreInit");
-
-		this.bInitialized = true;
+		Log.info("Initialized",null,METHOD);
+		Measurement.end("coreInit");
 
 		// start the plugins
-		log.info("Starting Plugins",null,METHOD);
+		Log.info("Starting Plugins",null,METHOD);
 		this.startPlugins();
-		log.info("Plugins started",null,METHOD);
+		Log.info("Plugins started",null,METHOD);
 
 		this._createUIAreas();
 
-		this.oThemeCheck.fireThemeChangedEvent(true);
-
-		this._executeOnInit();
-
-		this._setupRootComponent();
-
 		this._setBodyAccessibilityRole();
 
-		this._executeInitListeners();
+		this.oThemeCheck.fireThemeChangedEvent(true);
 
-		if ( this.isThemeApplied() || !this.oConfiguration['xx-waitForTheme'] ) {
+		var sWaitForTheme = this.oConfiguration['xx-waitForTheme'];
+		if ( this.isThemeApplied() || !sWaitForTheme ) {
+			Core.aFnDone.push(Interaction.notifyAsyncStep());
+			this._executeInitialization();
 			this.renderPendingUIUpdates("during Core init"); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
-		} else {
+			Measurement.end("coreComplete");
+
+		} else if (sWaitForTheme === "rendering") {
+			Core.aFnDone.push(Interaction.notifyAsyncStep());
+			this._executeInitialization();
+
 			oRenderLog.debug("delay initial rendering until theme has been loaded");
 			_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, function() {
-				setTimeout(
+					setTimeout(
 					this.renderPendingUIUpdates.bind(this, "after theme has been loaded"),
 					Device.browser.safari ? 50 : 0
 				);
 			}, this);
-		}
 
-		jQuery.sap.measure.end("coreComplete");
+			Measurement.end("coreComplete");
+
+		} else if (sWaitForTheme === "init") {
+			oRenderLog.debug("delay init event and initial rendering until theme has been loaded");
+			Core.aFnDone.push(Interaction.notifyAsyncStep());
+			_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, function() {
+				this._executeInitialization();
+				setTimeout(
+					this.renderPendingUIUpdates.bind(this, "after theme has been loaded"),
+					Device.browser.safari ? 50 : 0
+				);
+
+				Measurement.end("coreComplete");
+
+			}, this);
+
+		}
 	};
 
 	Core.prototype._createUIAreas = function() {
@@ -1095,7 +1271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// create any pre-configured UIAreas
 		//	if ( oConfig.areas && oConfig.areas.length > 0 ) {
 		if ( oConfig.areas ) {
-			// log.warning("deprecated config option '(data-sap-ui-)areas' used.");
+			// Log.warning("deprecated config option '(data-sap-ui-)areas' used.");
 			for (var i = 0, l = oConfig.areas.length; i < l; i++) {
 				this.createUIArea(oConfig.areas[i]);
 			}
@@ -1112,18 +1288,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				vOnInit();
 			} else if (typeof vOnInit === "string") {
 				// determine onInit being a module name prefixed via module or a global name
-				var aResult = /^module\:((?:(?:[_$a-zA-Z][_$a-zA-Z0-9]*)\/?)*)$/.exec(vOnInit);
+				var aResult = /^module\:((?:[_$.\-a-zA-Z0-9]+\/)*[_$.\-a-zA-Z0-9]+)$/.exec(vOnInit);
 				if (aResult && aResult[1]) {
 					// ensure that the require is done async and the Core is finally booted!
 					setTimeout(sap.ui.require.bind(sap.ui, [aResult[1]]), 0);
 				} else {
 					// lookup the name specified in onInit and try to call the function directly
-					var fn = jQuery.sap.getObject(vOnInit);
+					var fn = ObjectPath.get(vOnInit);
 					if (typeof fn === "function") {
 						fn();
 					} else {
 						// DO NOT USE jQuery.globalEval as it executes async in FF!
-						jQuery.sap.globalEval(vOnInit);
+						//Remove this eval call
+						globalEval(vOnInit);
 					}
 				}
 			}
@@ -1132,25 +1309,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	Core.prototype._setupRootComponent = function() {
-		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core.init()",
+		var METHOD = "sap.ui.core.Core.init()",
 			oConfig = this.oConfiguration;
 
 		// load the root component
 		var sRootComponent = oConfig.getRootComponent();
 		if (sRootComponent) {
 
-			log.info("Loading Root Component: " + sRootComponent,null,METHOD);
+			Log.info("Loading Root Component: " + sRootComponent,null,METHOD);
 			var oComponent = sap.ui.component({
 				name: sRootComponent
 			});
 			this.oRootComponent = oComponent;
 
 			var sRootNode = oConfig["xx-rootComponentNode"];
-			if (sRootNode && lazyInstanceof(oComponent, 'sap/ui/core/UIComponent')) {
-				var oRootNode = jQuery.sap.domById(sRootNode);
+			if (sRootNode && oComponent.isA('sap.ui.core.UIComponent')) {
+				var oRootNode = document.getElementById(sRootNode);
 				if (oRootNode) {
-					log.info("Creating ComponentContainer for Root Component: " + sRootComponent,null,METHOD);
+					Log.info("Creating ComponentContainer for Root Component: " + sRootComponent,null,METHOD);
 					var ComponentContainer = sap.ui.requireSync('sap/ui/core/ComponentContainer'),
 						oContainer = new ComponentContainer({
 						component: oComponent,
@@ -1166,13 +1342,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			var sApplication = oConfig.getApplication();
 			if (sApplication) {
 
-				log.warning("The configuration 'application' is deprecated. Please use the configuration 'component' instead! Please migrate from sap.ui.app.Application to sap.ui.core.Component.");
-				log.info("Loading Application: " + sApplication,null,METHOD);
-				jQuery.sap.require(sApplication);
-				var oClass = jQuery.sap.getObject(sApplication);
-				jQuery.sap.assert(oClass !== undefined, "The specified application \"" + sApplication + "\" could not be found!");
+				Log.warning("The configuration 'application' is deprecated. Please use the configuration 'component' instead! " +
+				"Please migrate from sap.ui.app.Application to sap.ui.core.Component.", "SyncXHR", null, function () {
+					return {
+						type: "Deprecation",
+						name: "sap.ui.core"
+					};
+				});
+
+				Log.info("Loading Application: " + sApplication,null,METHOD);
+				sap.ui.requireSync(sApplication.replace(/\./g, "/"));
+				var oClass = ObjectPath.get(sApplication);
+				assert(oClass !== undefined, "The specified application \"" + sApplication + "\" could not be found!");
 				var oApplication = new oClass();
-				jQuery.sap.assert(lazyInstanceof(oApplication, 'sap/ui/app/Application'), "The specified application \"" + sApplication + "\" must be an instance of sap.ui.app.Application!");
+				assert(BaseObject.isA(oApplication, 'sap.ui.app.Application'), "The specified application \"" + sApplication + "\" must be an instance of sap.ui.app.Application!");
 
 			}
 
@@ -1180,18 +1363,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	Core.prototype._setBodyAccessibilityRole = function() {
-		var oConfig = this.oConfiguration;
+		var oConfig = this.oConfiguration,
+			body = document.body;
 
 		//Add ARIA role 'application'
-		var $body = jQuery("body");
-		if (oConfig.getAccessibility() && oConfig.getAutoAriaBodyRole() && !$body.attr("role")) {
-			$body.attr("role", "application");
+		if (oConfig.getAccessibility() && oConfig.getAutoAriaBodyRole() && !body.getAttribute("role")) {
+			body.setAttribute("role", "application");
 		}
 	};
 
 	Core.prototype._executeInitListeners = function() {
-		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core.init()";
+		var METHOD = "sap.ui.core.Core.init()";
 
 		// make sure that we have no concurrent modifications on the init listeners
 		var aCallbacks = this.aInitListeners;
@@ -1203,11 +1385,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// execute registered init event handlers
 		if (aCallbacks && aCallbacks.length > 0) {
 			// execute the callbacks
-			log.info("Fire Loaded Event",null,METHOD);
+			Log.info("Fire Loaded Event",null,METHOD);
 			aCallbacks.forEach(function(fn) {
 				fn();
 			});
 		}
+	};
+
+	Core.prototype._executeInitialization = function() {
+		if (this.bInitialized) {
+			return;
+		}
+		this.bInitialized = true;
+		this._executeOnInit();
+		this._setupRootComponent();
+		this._executeInitListeners();
 	};
 
 	/**
@@ -1248,7 +1440,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @deprecated since 1.13.2 Register with the more convenient {@link #attachInit} function instead
 	 */
 	Core.prototype.attachInitEvent = function (fnFunction) {
-		jQuery.sap.assert(typeof fnFunction === "function", "fnFunction must be a function");
+		assert(typeof fnFunction === "function", "fnFunction must be a function");
 		if (this.aInitListeners) {
 			this.aInitListeners.push(fnFunction);
 		}
@@ -1260,12 +1452,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * The given function will either be called as soon as the framework has been initialized
 	 * or, if it has been initialized already, it will be called immediately.
 	 *
+	 * More information about the initialization process and the steps it consists of can be found
+	 * in the documentation topic "{@link topic:91f2c9076f4d1014b6dd926db0e91070 Initialization Process}".
+	 *
 	 * @param {function} fnFunction Function to be after initialization of the framework
 	 * @public
 	 * @since 1.13.2
 	 */
 	Core.prototype.attachInit = function (fnFunction) {
-		jQuery.sap.assert(typeof fnFunction === "function", "fnFunction must be a function");
+		assert(typeof fnFunction === "function", "fnFunction must be a function");
 		if (this.aInitListeners) {
 			this.aInitListeners.push(fnFunction);
 		} else {
@@ -1281,7 +1476,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.lock = function () {
-		// TODO clarify it the documentation is really (stil?) true
+		// TODO clarify it the documentation is really (still?) true
 		this.bLocked = true;
 	};
 
@@ -1333,7 +1528,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.createRenderManager = function() {
-		jQuery.sap.assert(this.isInitialized(), "A RenderManager should be created only after the Core has been initialized");
+		assert(this.isInitialized(), "A RenderManager should be created only after the Core has been initialized");
 		var oRm = new RenderManager();
 		oRm._setFocusHandler(this.oFocusHandler); //Let the RenderManager know the FocusHandler
 		return oRm.getInterface();
@@ -1367,7 +1562,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	function evalLibConfig(lib) {
 
-		jQuery.sap.assert(
+		assert(
 			typeof lib === 'string' && lib ||
 			typeof lib === 'object' && typeof lib.name === 'string' && lib.name && (lib.json == null || typeof lib.json === 'boolean'),
 			"lib must be a non-empty string or an object with at least a non-empty 'name' property and an optional (boolean) property 'json'" );
@@ -1421,7 +1616,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			libPackage = lib.replace(/\./g, '/'),
 			http2 = this.oConfiguration.getDepCache();
 
-		if ( fileType === 'none' || jQuery.sap.isResourceLoaded(libPackage + '/library.js') ) {
+		if ( fileType === 'none' || !!sap.ui.loader._.getModuleState(libPackage + '/library.js') ) {
 			return Promise.resolve(true);
 		}
 
@@ -1440,7 +1635,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		var p;
 		if ( fileType !== 'json' /* 'js' or 'both', not forced to JSON */ ) {
 			var sPreloadModule = libPackage + (http2 ? '/library-h2-preload.js' : '/library-preload.js');
-			p = jQuery.sap._loadJSResourceAsync(sPreloadModule).then(
+			p = sap.ui.loader._.loadJSResourceAsync(sPreloadModule).then(
 					function() {
 						return dependenciesFromManifest(lib);
 					},
@@ -1448,7 +1643,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 						// loading library-preload.js failed, might be an old style lib with a library-preload.json only.
 						// with json === false, this fallback can be suppressed
 						if ( fileType !== 'js' /* 'both' */ ) {
-							jQuery.sap.log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + "), falling back to library-preload.json");
+							Log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + "), falling back to library-preload.json");
 							return loadJSONAsync(lib);
 						}
 						// ignore other errors
@@ -1464,10 +1659,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				oManifest = getManifest(lib);
 
 			if ( dependencies && dependencies.length ) {
+				dependencies = VersionInfo._getTransitiveDependencyForLibraries(dependencies);
 				aPromises = dependencies.map(preloadLibraryAsync.bind(that));
 			}
 
-			if (oManifest && jQuery.sap.Version(oManifest._version).compareTo("1.9.0") >= 0) {
+			if (oManifest && Version(oManifest._version).compareTo("1.9.0") >= 0) {
 				aPromises.push(that.getLibraryResourceBundle(lib, true));
 			}
 
@@ -1481,16 +1677,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	}
 
+	/**
+	 * Map of library manifests keyed by library names.
+	 *
+	 * If the manifest was loaded but could not be parsed, <code>null</code> will be stored.
+	 * @type {Map<string,object>}
+	 * @private
+	 */
+	var mLibraryManifests = new Map();
+
 	function getManifest(lib) {
+		if ( mLibraryManifests.has(lib) ) {
+			return mLibraryManifests.get(lib);
+		}
+
 		var manifestModule = lib.replace(/\./g, '/') + '/manifest.json';
 
-		if ( jQuery.sap.isResourceLoaded(manifestModule) ) {
+		if ( sap.ui.loader._.getModuleState(manifestModule) ) {
 
-			return jQuery.sap.loadResource(manifestModule, {
+			var oManifest = LoaderExtensions.loadResource(manifestModule, {
 				dataType: 'json',
 				async: false, // always sync as we are sure to load from preload cache
 				failOnError: false
 			});
+
+			mLibraryManifests.set(lib, oManifest);
+
+			return oManifest;
 		}
 	}
 
@@ -1513,8 +1726,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// return undefined
 	}
 
+	/**
+	 * Adds all resources from a preload bundle to the preload cache.
+	 *
+	 * When a resource exists already in the cache, the new content is ignored.
+	 *
+	 * @param {object} oData Preload bundle
+	 * @param {string} [oData.url] URL from which the bundle has been loaded
+	 * @param {string} [oData.name] Unique name of the bundle
+	 * @param {string} [oData.version='1.0'] Format version of the preload bundle
+	 * @param {object} oData.modules Map of resources keyed by their resource name; each resource must be a string or a function
+	 *
+	 * @private
+	*/
+	function registerPreloadedModules(oData, sURL) {
+		var modules = oData.modules,
+				fnUI5ToRJS = function(sName) {
+					return /^jquery\.sap\./.test(sName) ? sName : sName.replace(/\./g, "/");
+				};
+			if ( Version(oData.version || "1.0").compareTo("2.0") < 0 ) {
+				modules = {};
+				for ( var sName in oData.modules ) {
+					modules[fnUI5ToRJS(sName) + ".js"] = oData.modules[sName];
+				}
+			}
+			sap.ui.require.preload(modules, oData.name, sURL);
+	}
+
+	/**
+	 * Preprocessed given dependencies
+	 *
+	 * @param {object} oDependencies - Dependencies to preprocess
+	 * @returns {object} oDependencies - Proprocessed dependencies
+	 */
+	function preprocessDependencies(dependencies) {
+		if (Array.isArray(dependencies)) {
+			// remove .library-preload suffix from dependencies
+			return dependencies.map(function (dep) {
+				return dep.replace(/\.library-preload$/, '');
+			});
+		}
+		return dependencies;
+	}
+
 	function loadJSONAsync(lib) {
-		var sURL = jQuery.sap.getModulePath(lib + ".library-preload", ".json");
+
+		var sURL = getModulePath(lib, "/library-preload.json");
 
 		return Promise.resolve(jQuery.ajax({
 			dataType : "json",
@@ -1522,20 +1779,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		})).then(
 			function(data) {
 				if ( data ) {
-					data.url = sURL;
-					jQuery.sap.registerPreloadedModules(data);
-					var dependencies = data.dependencies;
-					if ( Array.isArray(dependencies) ) {
-						// remove .library-preload suffix from dependencies
-						dependencies = dependencies.map(function(dep) {
-							return dep.replace(/\.library-preload$/, '');
-						});
-					}
-					return dependencies;
+					registerPreloadedModules(data, sURL);
+					return preprocessDependencies(data.dependencies);
 				}
 			},
 			function(xhr, textStatus, error) {
-				jQuery.sap.log.error("failed to load '" + sURL + "': " + (error || textStatus));
+				Log.error("failed to load '" + sURL + "': " + (error || textStatus));
 			}
 		);
 
@@ -1557,9 +1806,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		var lib = libConfig.name,
 			fileType = libConfig.fileType,
-			libPackage = lib.replace(/\./g, '/');
+			libPackage = lib.replace(/\./g, '/'),
+			libLoaded = !!sap.ui.loader._.getModuleState(libPackage + '/library.js');
 
-		if ( fileType === 'none' || jQuery.sap.isResourceLoaded(libPackage + '/library.js') ) {
+		if ( fileType === 'none' || libLoaded ) {
 			return;
 		}
 
@@ -1573,11 +1823,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// currently loading
 		if ( libInfo.pending ) {
 			if ( libInfo.async ) {
-				jQuery.sap.log.warning("request to load " + lib + " synchronously while async loading is pending; this causes a duplicate request and should be avoided by caller");
+				Log.warning("request to load " + lib + " synchronously while async loading is pending; this causes a duplicate request and should be avoided by caller");
 				// fall through and preload synchronously
 			} else {
 				// sync cycle -> ignore nested call (would nevertheless be a dependency cycle)
-				jQuery.sap.log.warning("request to load " + lib + " synchronously while sync loading is pending (cycle, ignored)");
+				Log.warning("request to load " + lib + " synchronously while sync loading is pending (cycle, ignored)");
 				return;
 			}
 		}
@@ -1597,7 +1847,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				sap.ui.requireSync(sPreloadModule);
 				dependencies = dependenciesFromManifest(lib);
 			} catch (e) {
-				jQuery.sap.log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + ")");
+				Log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + ")");
 				if ( e && e.loadError && fileType !== 'js' ) {
 					dependencies = loadJSONSync(lib);
 				} // ignore other errors (preload shouldn't fail)
@@ -1616,7 +1866,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	}
 
 	function loadJSONSync(lib) {
-		var sURL = jQuery.sap.getModulePath(lib + ".library-preload", ".json");
+		var sURL = getModulePath(lib, "/library-preload.json");
 		var dependencies;
 
 		jQuery.ajax({
@@ -1625,27 +1875,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			url : sURL,
 			success: function(data) {
 				if ( data ) {
-					data.url = sURL;
-					jQuery.sap.registerPreloadedModules(data);
+					registerPreloadedModules(data, sURL);
 					dependencies = data.dependencies;
 				}
 			},
 			error: function(xhr, textStatus, error) {
-				jQuery.sap.log.error("failed to load '" + sURL + "': " + (error || textStatus));
+				Log.error("failed to load '" + sURL + "': " + (error || textStatus));
 			}
 		});
 
-		if ( Array.isArray(dependencies) ) {
-			// remove .library-preload suffix from dependencies
-			dependencies = dependencies.map(function(dep) {
-				return dep.replace(/\.library-preload$/, '');
-			});
-		}
-		return dependencies;
+		return preprocessDependencies(dependencies);
 	}
 
 	/**
-	 * Loads the given library and its dependencies and makes it available to the application.
+	 * Retrieves the module path.
+	 * @param {string} sModuleName module name.
+	 * @param {string} sSuffix is used untouched (dots are not replaced with slashes).
+	 * @returns {string} module path.
+	 */
+	function getModulePath(sModuleName, sSuffix){
+		return sap.ui.require.toUrl(sModuleName.replace(/\./g, "/") + sSuffix);
+	}
+
+	/*
+	 * Registers a URL prefix for a module name prefix
+	 */
+	function registerModulePath(sModuleNamePrefix, sUrlPrefix) {
+		LoaderExtensions.registerResourcePath(sModuleNamePrefix.replace(/\./g, "/"), sUrlPrefix);
+	}
+
+	/**
+	 * Loads the given library and its dependencies and makes its content available to the application.
+	 *
+	 *
+	 * <h3>What it does</h3>
 	 *
 	 * When library preloads are not suppressed for the given library, then a library-preload bundle
 	 * will be loaded for it. By default, the bundle will be loaded synchronously (for compatibility
@@ -1668,12 +1931,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * namespace of the library and all resources will be loaded from that location. This is convenience for
 	 * a call like
 	 * <pre>
-	 *   jQuery.sap.registerModulePath(sLibrary, vUrl); // or vUrl.url resp.
+	 *   sap.ui.loader.config({
+	 *     paths: {
+	 *       "lib/with/slashes": vUrl
+	 *     }
+	 *   });
 	 * </pre>
 	 *
 	 * When the given library has been loaded already, no further action will be taken, especially, a given
 	 * URL will not be registered! In the case of asynchronous loading, a Promise will be returned, but will be
 	 * resolved immediately.
+	 *
+	 *
+	 * <h3>When to use</h3>
+	 *
+	 * For applications that follow the best practices and use components with component descriptors (manifest.json),
+	 * the framework will load all declared mandatory libraries and their dependencies automatically before instantiating
+	 * the application component.
+	 *
+	 * The same is true for libraries that are listed in the bootstrap configuration (e.g. with the attribute
+	 * <code>data-sap-ui-libs</code>). They will be loaded before the <code>init</code> event of the UI5 Core is fired.
+	 *
+	 * Only when an app declares a library to be a lazy library dependency or when code does not use descriptors at all,
+	 * then an explicit call to <code>loadLibrary</code> becomes necessary. The call should be made before artifacts
+	 * (controls, elements, types, helpers, modules etc.) from the library are used or required. This allows the framework
+	 * to optimize access to those artifacts.
+	 *
+	 * For example, when an app uses a heavy-weight charting library that shouldn't be loaded during startup, it can
+	 * declare it as "lazy" and load it just before it loads and displays a view that uses the charting library:
+	 * <pre>
+	 *   sap.ui.getCore().loadLibrary("heavy.charting", {async: true})
+	 *     .then(function() {
+	 *       View.create({
+	 *         name: "myapp.views.HeavyChartingView",
+	 *         type: ViewType.XML
+	 *       });
+	 *     });
+	 * </pre>
 	 *
 	 * @param {string} sLibrary name of the library to load
 	 * @param {string|boolean|object} [vUrl] URL to load the library from or the async flag or a complex configuration object
@@ -1683,11 +1977,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.loadLibrary = function(sLibrary, vUrl) {
-		jQuery.sap.assert(typeof sLibrary === "string", "sLibrary must be a string");
-		jQuery.sap.assert(vUrl === undefined ||
+		assert(typeof sLibrary === "string", "sLibrary must be a string");
+		assert(vUrl === undefined ||
 			typeof vUrl === 'boolean' ||
 			typeof vUrl === 'string' ||
-			typeof vUrl === 'object' && (vUrl.url == null || vUrl.url === 'string') && (vUrl.async == null || typeof vUrl.async === 'boolean'),
+			typeof vUrl === 'object' && (vUrl.url == null || typeof vUrl.url === 'string') && (vUrl.async == null || typeof vUrl.async === 'boolean'),
 			"vUrl must be empty or a string or an object with an optional property 'url' of type string and an optional boolean property 'async'");
 
 		if ( typeof vUrl === 'boolean' ) {
@@ -1696,7 +1990,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		if ( typeof vUrl === 'object' ) {
 			if ( vUrl.async ) {
 				if ( vUrl.url && mLibraryPreloadBundles[sLibrary] == null ) { // only if lib has not been loaded yet
-					jQuery.sap.registerModulePath(sLibrary, vUrl.url);
+					registerModulePath(sLibrary, vUrl.url);
 				}
 				return this.loadLibraries([sLibrary]);
 			}
@@ -1710,7 +2004,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			// if a sUrl is given, redirect access to it
 			if ( vUrl ) {
-				jQuery.sap.registerModulePath(sLibrary, vUrl);
+				registerModulePath(sLibrary, vUrl);
 			}
 
 			if ( this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async' ) {
@@ -1718,16 +2012,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			}
 
 			// require the library module (which in turn will call initLibrary())
-			jQuery.sap.require(sModule);
+			sap.ui.requireSync(sModule.replace(/\./g, "/"));
 
 			// check for legacy code
 			if ( !mLoadedLibraries[sLibrary] ) {
-				jQuery.sap.log.warning("library " + sLibrary + " didn't initialize itself");
+				Log.warning("library " + sLibrary + " didn't initialize itself");
 				this.initLibrary(sLibrary); // TODO redundant to generated initLibrary call....
-			}
-
-			if ( this.oThemeCheck && this.isInitialized() ) {
-				this.oThemeCheck.fireThemeChangedEvent(true);
 			}
 
 		}
@@ -1756,17 +2046,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @experimental Since 1.27.0 This API is not mature yet and might be changed or removed completely.
 	 * Productive code should not use it, except code that is delivered as part of UI5.
 	 * @private
-	 * @sap-restricted sap.ui.core,sap.ushell
+	 * @ui5-restricted sap.ui.core,sap.ushell
 	 */
 	Core.prototype.loadLibraries = function(aLibraries, mOptions) {
 
-		jQuery.sap.assert(Array.isArray(aLibraries), "aLibraries must be an array");
+		assert(Array.isArray(aLibraries), "aLibraries must be an array");
 
 		// default values for options
-		mOptions = jQuery.extend({ async : true, preloadOnly : false }, mOptions);
+		mOptions = Object.assign({ async : true, preloadOnly : false }, mOptions);
 
-		var that = this,
-			bPreload = this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async',
+		var bPreload = this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async',
 			bAsync = mOptions.async,
 			bRequire = !mOptions.preloadOnly;
 
@@ -1779,27 +2068,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			});
 		}
 
-		function triggerThemeCheck() {
-			if ( that.oThemeCheck && that.isInitialized() ) {
-				that.oThemeCheck.fireThemeChangedEvent(true);
-			}
-		}
-
 		function requireLibsAsync() {
 			return new Promise(function(resolve, reject) {
-				sap.ui.require(getLibraryModuleNames(), function() {
-					triggerThemeCheck();
-					resolve();
-				});
+				sap.ui.require(
+					getLibraryModuleNames(),
+					function () {
+						// Wrapper function is needed to omit parameters for resolve()
+						// which is always one library (first from the list), not an array of libraries.
+						resolve();
+					},
+					reject
+				);
 			});
 		}
 
 		function requireLibsSync() {
 			getLibraryModuleNames().forEach(sap.ui.requireSync);
-			triggerThemeCheck();
 		}
 
 		if ( bAsync ) {
+
+			aLibraries = VersionInfo._getTransitiveDependencyForLibraries(aLibraries);
 
 			var preloaded = bPreload ? Promise.all(aLibraries.map(preloadLibraryAsync.bind(this))) : Promise.resolve(true);
 			return bRequire ? preloaded.then(requireLibsAsync) : preloaded;
@@ -1823,7 +2112,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * When the optional parameter <code>sUrl</code> is given, then all request for resources of the
 	 * library will be redirected to the given URL. This is convenience for a call to
 	 * <pre>
-	 *   jQuery.sap.registerModulePath(sName, sUrl);
+	 *   sap.ui.loader.config({
+	 *       paths: {
+	 *         "lib/with/slashes": vUrl
+	 *       }
+	 *   });
 	 * </pre>
 	 *
 	 * @param {string|object} vComponent name of the component to import or object containing all needed parameters
@@ -1831,7 +2124,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {string} [vComponent.url] URL to load the component from
 	 * @param {string} [vComponent.id] ID for the component instance
 	 * @param {object} [vComponent.settings] settings object for the component
-	 * @param {string} [vComponent.componentData] user specific data which is available during the whole lifecycle of the component
+	 * @param {any} [vComponent.componentData] user specific data which is available during the whole lifecycle of the component
 	 * @param {string} [sUrl] the URL to load the component from
 	 * @param {string} [sId] the ID for the component instance
 	 * @param {object} [mSettings] the settings object for the component
@@ -1855,6 +2148,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		}
 
 		// use the factory function
+		if ( vComponent.async &&
+			(vComponent.manifest !== undefined ||
+				(vComponent.manifestFirst === undefined && vComponent.manifestUrl === undefined)) ) {
+			if ( vComponent.manifest === undefined ) {
+				vComponent.manifest = false;
+			}
+			return Component.create(vComponent);
+		}
+
+		// use deprecated factory for sync use case or when legacy options are used
 		return sap.ui.component(vComponent);
 
 	};
@@ -1947,7 +2250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.initLibrary = function(oLibInfo) {
-		jQuery.sap.assert(typeof oLibInfo === 'string' || typeof oLibInfo === 'object', "oLibInfo must be a string or object");
+		assert(typeof oLibInfo === 'string' || typeof oLibInfo === 'object', "oLibInfo must be a string or object");
 
 		var bLegacyMode = typeof oLibInfo === 'string';
 		if ( bLegacyMode ) {
@@ -1955,18 +2258,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		}
 
 		var sLibName = oLibInfo.name,
-			log = jQuery.sap.log,
 			METHOD =  "sap.ui.core.Core.initLibrary()";
 
 		if ( bLegacyMode ) {
-			log.error("[Deprecated] library " + sLibName + " uses old fashioned initLibrary() call (rebuild with newest generator)");
+			Log.error("[Deprecated] library " + sLibName + " uses old fashioned initLibrary() call (rebuild with newest generator)");
 		}
 
 		if ( !sLibName || mLoadedLibraries[sLibName] ) {
 			return;
 		}
 
-		log.debug("Analyzing Library " + sLibName, null, METHOD);
+		Log.debug("Analyzing Library " + sLibName, null, METHOD);
 
 		// Set 'loaded' marker
 		mLoadedLibraries[sLibName] = true;
@@ -1986,14 +2288,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 						if ( oLibrary[sKey].length === 0 ) {
 							oLibrary[sKey] = vValue;
 						} else {
-							oLibrary[sKey] = jQuery.sap.unique(oLibrary[sKey].concat(vValue));
+							oLibrary[sKey] = uniqueSort(oLibrary[sKey].concat(vValue));
 						}
 					} else if ( oLibrary[sKey] === undefined ) {
 						// only set values for properties that are still undefined
 						oLibrary[sKey] = vValue;
 					} else if ( sKey != "name" ) {
 						// ignore other values (silently ignore "name")
-						jQuery.sap.log.warning("library info setting ignored: " + sKey + "=" + vValue);
+						Log.warning("library info setting ignored: " + sKey + "=" + vValue);
 					}
 				}
 			}
@@ -2002,7 +2304,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		}
 
 		// ensure namespace
-		jQuery.sap.getObject(sLibName, 0);
+		ObjectPath.create(sLibName);
 
 		// Create lib info object or merge with existing 'adhoc' library
 		this.mLibraries[sLibName] = oLibInfo = extend(this.mLibraries[sLibName] || {
@@ -2017,9 +2319,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// resolve dependencies
 		for (var i = 0; i < oLibInfo.dependencies.length; i++) {
 			var sDepLib = oLibInfo.dependencies[i];
-			log.debug("resolve Dependencies to " + sDepLib, null, METHOD);
+			Log.debug("resolve Dependencies to " + sDepLib, null, METHOD);
 			if ( mLoadedLibraries[sDepLib] !== true ) {
-				log.warning("Dependency from " + sLibName + " to " + sDepLib + " has not been resolved by library itself", null, METHOD);
+				Log.warning("Dependency from " + sLibName + " to " + sDepLib + " has not been resolved by library itself", null, METHOD);
 				this.loadLibrary(sDepLib);
 			}
 		}
@@ -2031,7 +2333,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// Only needed for backward compatibility: some code 'requires' such types although they never have been modules on their own
 		for (var i = 0; i < oLibInfo.types.length; i++) {
 			if ( !/^(any|boolean|float|int|string|object|void)$/.test(oLibInfo.types[i]) ) {
-				jQuery.sap.declare(oLibInfo.types[i]);
+				sap.ui.loader._.declareModule(oLibInfo.types[i].replace(/\./g, "/") + ".js");
+
+				// ensure parent namespace of the type
+				var sNamespacePrefix = oLibInfo.types[i].substring(0, oLibInfo.types[i].lastIndexOf("."));
+				if (ObjectPath.get(sNamespacePrefix) === undefined) {
+					// parent type namespace does not exists, so we create its
+					ObjectPath.create(sNamespacePrefix);
+				}
 			}
 		}
 
@@ -2057,6 +2366,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				var sQuery = this._getLibraryCssQueryParams(oLibInfo);
 
 				this.includeLibraryTheme(sLibName, undefined, sQuery);
+
+				if (this.oThemeCheck && this.isInitialized()) {
+					this.oThemeCheck.fireThemeChangedEvent(false);
+				}
 			}
 		}
 
@@ -2068,6 +2381,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	};
 
+	// helper to add the FOUC marker to the CSS for the given id
+	function fnAddFoucmarker(sLinkId) {
+		var oLink = document.getElementById(sLinkId);
+		if (oLink) {
+			oLink.dataset.sapUiFoucmarker = sLinkId;
+		}
+	}
+
 	/**
 	 * Includes a library theme into the current page (if a variant is specified it
 	 * will include the variant library theme)
@@ -2077,8 +2398,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.includeLibraryTheme = function(sLibName, sVariant, sQuery) {
-		jQuery.sap.assert(typeof sLibName === "string", "sLibName must be a string");
-		jQuery.sap.assert(sVariant === undefined || typeof sVariant === "string", "sVariant must be a string or undefined");
+		assert(typeof sLibName === "string", "sLibName must be a string");
+		assert(sVariant === undefined || typeof sVariant === "string", "sVariant must be a string or undefined");
 
 		/*
 		 * by specifying a library name containing a colon (":") you can specify
@@ -2093,23 +2414,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				sVariant = "";
 			}
 
-			// determine RTL
+			// determine CSS Variables / RTL
+			var sCssVars = (/^(true|x)$/i.test(this.oConfiguration['xx-cssVariables']) ? "_skeleton" : "");
 			var sRtl = (this.oConfiguration.getRTL() ? "-RTL" : "");
 
 			// create the library file name
 			var sLibFileName,
 				sLibId = sLibName + (sVariant.length > 0 ? "-[" + sVariant + "]" : sVariant);
 			if (sLibName && sLibName.indexOf(":") == -1) {
-				sLibFileName = "library" + sVariant + sRtl;
+				sLibFileName = "library" + sVariant + sCssVars + sRtl;
 			} else {
 				sLibFileName = sLibName.substring(sLibName.indexOf(":") + 1) + sVariant;
 				sLibName = sLibName.substring(0, sLibName.indexOf(":"));
 			}
 
+			// use the special FOUC handling for initially existing stylesheets
+			// to ensure that they are not just replaced when using the
+			// includeStyleSheet API and to be removed later
+			var sLinkId = "sap-ui-theme-" + sLibId;
+			fnAddFoucmarker(sLinkId);
+
+			// include the css variables
+			var cssPathAndName;
+			if (/^(true|x|additional)$/i.test(this.oConfiguration['xx-cssVariables'])) {
+				cssPathAndName = this._getThemePath(sLibName, this.sTheme) + "css_variables.css" + (sQuery ? sQuery : "");
+				Log.info("Including " + cssPathAndName + " -  sap.ui.core.Core.includeLibraryTheme()");
+				includeStylesheet(cssPathAndName, sLinkId);
+				// include the skeleton css next to the css variables
+				sLinkId = "sap-ui-themeskeleton-" + sLibId;
+				fnAddFoucmarker(sLinkId);
+			}
+
 			// log and include
-			var cssPathAndName = this._getThemePath(sLibName, this.sTheme) + sLibFileName + ".css" + (sQuery ? sQuery : "");
-			jQuery.sap.log.info("Including " + cssPathAndName + " -  sap.ui.core.Core.includeLibraryTheme()");
-			jQuery.sap.includeStyleSheet(cssPathAndName, "sap-ui-theme-" + sLibId);
+			cssPathAndName = this._getThemePath(sLibName, this.sTheme) + sLibFileName + ".css" + (sQuery ? sQuery : "");
+			Log.info("Including " + cssPathAndName + " -  sap.ui.core.Core.includeLibraryTheme()");
+			includeStylesheet(cssPathAndName, sLinkId);
 
 			// if parameters have been used, update them with the new style sheet
 			var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
@@ -2156,11 +2495,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * copy of the internal data (for efficiency reasons) and the framework is not prepared
 	 * to handle modifications to these objects.
 	 *
-	 * @return {map} Map of library info objects keyed by the library names.
+	 * @return {Object<string,Object>} Map of library info objects keyed by the library names.
 	 * @public
 	 */
 	Core.prototype.getLoadedLibraries = function() {
-		return jQuery.extend({}, this.mLibraries);
+		return Object.assign({}, this.mLibraries);
 	};
 
 	/**
@@ -2170,7 +2509,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * then falls back to the current {@link sap.ui.core.Configuration#getLanguage session locale}.
 	 * If no argument is given, the library also falls back to a default: "sap.ui.core".
 	 *
-	 * <h3>Configuration via App Descriptor<h3>
+	 * <h3>Configuration via App Descriptor</h3>
 	 * When the App Descriptor for the library is available without further request (manifest.json
 	 * has been preloaded) and when the App Descriptor is at least of version 1.9.0 or higher, then
 	 * this method will evaluate the App Descriptor entry <code>"sap.ui5" / "library" / "i18n"</code>.
@@ -2202,7 +2541,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {string} [sLibraryName='sap.ui.core'] Name of the library to retrieve the bundle for
 	 * @param {string} [sLocale] Locale to retrieve the resource bundle for
 	 * @param {boolean} [bAsync=false] Whether the resource bundle is loaded asynchronously
-	 * @return {jQuery.sap.util.ResourceBundle|Promise} The best matching resource bundle for the given
+	 * @return {module:sap/base/i18n/ResourceBundle|Promise} The best matching resource bundle for the given
 	 *   parameters or <code>undefined</code>; in asynchronous case a Promise on that bundle is returned
 	 * @public
 	 */
@@ -2223,9 +2562,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			sLocale = undefined;
 		}
 
+		/**
+		 *
+		 * @param {Object} vInfo bundle information. Can be:
+		 * <ul>
+		 *     <li>false - library has no resource bundle</li>
+		 *     <li>true|null|undefined - use default settings: bundle is 'messageBundle.properties',
+		 *       fallback and supported locales are not defined (defaulted by ResourceBundle)</li>
+		 *     <li>typeof string - string is the url of the bundle,
+		 *       fallback and supported locales are not defined (defaulted by ResourceBundle)</li>
+		 *     <li>typeof object - object can contain bundleUrl, supportedLocales, fallbackLocale</li>
+		 * </ul>
+		 * @returns {Object} bundle information
+		 */
+		function normalizeBundleInfo(vInfo) {
+			if ( vInfo == null || vInfo === true ) {
+				return {
+					bundleUrl: "messagebundle.properties"
+				};
+			}
+			if ( typeof vInfo === "string" ) {
+				return {
+					bundleUrl: vInfo
+				};
+			}
+			if ( typeof vInfo === "object" ) {
+				return vInfo;
+			}
+			// return undefined
+		}
 
-		jQuery.sap.assert((sLibraryName === undefined && sLocale === undefined) || typeof sLibraryName === "string", "sLibraryName must be a string or there is no argument given at all");
-		jQuery.sap.assert(sLocale === undefined || typeof sLocale === "string", "sLocale must be a string or omitted");
+		assert((sLibraryName === undefined && sLocale === undefined) || typeof sLibraryName === "string", "sLibraryName must be a string or there is no argument given at all");
+		assert(sLocale === undefined || typeof sLocale === "string", "sLocale must be a string or omitted");
 
 		sLibraryName = sLibraryName || "sap.ui.core";
 		sLocale = sLocale || this.getConfiguration().getLanguage();
@@ -2234,14 +2602,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		vResult = this.mResourceBundles[sKey];
 		if (!vResult || (!bAsync && vResult instanceof Promise)) {
 			oManifest = getManifest(sLibraryName);
-			if ( oManifest && jQuery.sap.Version(oManifest._version).compareTo("1.9.0") >= 0 ) {
+			if ( oManifest && Version(oManifest._version).compareTo("1.9.0") >= 0 ) {
 				vI18n = oManifest["sap.ui5"] && oManifest["sap.ui5"].library && oManifest["sap.ui5"].library.i18n;
 			} // else vI18n = undefined
+			vI18n = normalizeBundleInfo(vI18n);
 
-			if (vI18n !== false) {
-
-				vResult = jQuery.sap.resources({
-					url : sap.ui.resource(sLibraryName, typeof vI18n === "string" ? vI18n : 'messagebundle.properties'),
+			if (vI18n) {
+				vResult = ResourceBundle.create({
+					url : getModulePath(sLibraryName + "/", vI18n.bundleUrl),
+					supportedLocales: vI18n.supportedLocales,
+					fallbackLocale: vI18n.fallbackLocale,
 					locale : sLocale,
 					async: bAsync
 				});
@@ -2274,11 +2644,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {sap.ui.base.Interface | sap.ui.core.Control}
 	 *            oControl the Control that should be the added to the <code>UIArea</code>.
 	 * @public
-	 * @deprecated Use function <code>oControl.placeAt(oDomRef, "only")</code> of <code>sap.ui.core.Control</code> instead.
+	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt oControl.placeAt(oDomRef, "only")} instead.
 	 */
 	Core.prototype.setRoot = function(oDomRef, oControl) {
-		jQuery.sap.assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
-		jQuery.sap.assert(oControl instanceof Interface || oControl instanceof Control, "oControl must be a Control or Interface");
+		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
+		assert(oControl instanceof Interface || oControl instanceof Control, "oControl must be a Control or Interface");
 
 		if (oControl) {
 			oControl.placeAt(oDomRef, "only");
@@ -2286,16 +2656,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Creates a new sap.ui.core.UIArea.
+	 * Creates a new {@link sap.ui.core.UIArea UIArea}.
 	 *
 	 * @param {string|Element} oDomRef a DOM Element or ID string of the UIArea
 	 * @return {sap.ui.core.UIArea} a new UIArea
 	 * @public
-	 * @deprecated Use <code>setRoot()</code> instead!
+	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt Control#placeAt} instead!
 	 */
 	Core.prototype.createUIArea = function(oDomRef) {
 		var that = this;
-		jQuery.sap.assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
+		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
 
 		if (!oDomRef) {
 			throw new Error("oDomRef must not be null");
@@ -2308,7 +2678,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			if (id == STATIC_UIAREA_ID) {
 				oDomRef = this.getStaticAreaRef();
 			} else {
-				oDomRef = jQuery.sap.domById(oDomRef);
+				oDomRef = document.getElementById(oDomRef);
 				if (!oDomRef) {
 					throw new Error("DOM element with ID '" + id + "' not found in page, but application tries to insert content.");
 				}
@@ -2317,16 +2687,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// if the domref does not have an ID or empty ID => generate one
 		if (!oDomRef.id || oDomRef.id.length == 0) {
-			oDomRef.id = jQuery.sap.uid();
+			oDomRef.id = uid();
 		}
 
 		// create a new or fetch an existing UIArea
 		var sId = oDomRef.id;
 		if (!this.mUIAreas[sId]) {
 			this.mUIAreas[sId] = new UIArea(this, oDomRef);
-			if (!jQuery.isEmptyObject(this.oModels)) {
+			if (!isEmptyObject(this.oModels)) {
 				var oProperties = {
-					oModels: jQuery.extend({}, this.oModels),
+					oModels: Object.assign({}, this.oModels),
 					oBindingContexts: {},
 					aPropagationListeners: []
 				};
@@ -2341,14 +2711,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Returns a UIArea if the given ID/Element belongs to one.
+	 * Returns the {@link sap.ui.core.UIArea UIArea} with the given ID or that belongs to the given DOM element.
 	 *
 	 * @public
-	 * @param {string|Element} o a DOM Element or ID string of the UIArea
-	 * @return {sap.ui.core.UIArea} a UIArea with a given ID or DOM Element.
+	 * @param {string|Element} o DOM element or ID of the UIArea
+	 * @return {sap.ui.core.UIArea} UIArea with the given ID or DOM element or <code>null</code> or <code>undefined</code>.
 	 */
 	Core.prototype.getUIArea = function(o) {
-		jQuery.sap.assert(typeof o === "string" || typeof o === "object", "o must be a string or object");
+		assert(typeof o === "string" || typeof o === "object", "o must be a string or object");
 
 		var sId = "";
 		if (typeof (o) == "string") {
@@ -2378,7 +2748,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	Core.prototype.addInvalidatedUIArea = function(oUIArea) {
 		if ( !this._sRerenderTimer ) {
 			oRenderLog.debug("Registering timer for delayed re-rendering");
-			this._sRerenderTimer = jQuery.sap.delayedCall(0,this,"renderPendingUIUpdates"); // decoupled for collecting several invalidations into one redraw
+			// start async interaction step
+			Core.aFnDone.push(Interaction.notifyAsyncStep());
+			this._sRerenderTimer = setTimeout(this["renderPendingUIUpdates"].bind(this), 0); // decoupled for collecting several invalidations into one redraw
 		}
 	};
 
@@ -2397,11 +2769,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @private
 	 */
 	Core.prototype.renderPendingUIUpdates = function(sCaller) {
-
 		// start performance measurement
 		oRenderLog.debug("Render pending UI updates: start (" + (sCaller || "by timer" ) + ")");
 
-		jQuery.sap.measure.start("renderPendingUIUpdates","Render pending UI updates in all UIAreas");
+		Measurement.start("renderPendingUIUpdates","Render pending UI updates in all UIAreas");
 
 		var bUIUpdated = false,
 			bLooped = Core.MAX_RENDERING_ITERATIONS > 0,
@@ -2428,9 +2799,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// clear a pending timer so that the next call to re-render will create a new timer
 			if (this._sRerenderTimer) {
 				if ( this._sRerenderTimer !== this ) { // 'this' is used as a marker for a delayed initial rendering, no timer to cleanup then
-					jQuery.sap.clearDelayedCall(this._sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
+					clearTimeout(this._sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
 				}
 				this._sRerenderTimer = undefined;
+				if (Core.aFnDone.length > 0) {
+					Core.aFnDone.pop()();
+				}
 			}
 
 			this.runPrerenderingTasks();
@@ -2453,7 +2827,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		oRenderLog.debug("Render pending UI updates: finished");
 
 		// end performance measurement
-		jQuery.sap.measure.end("renderPendingUIUpdates");
+		Measurement.end("renderPendingUIUpdates");
 	};
 
 
@@ -2488,9 +2862,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * This method can be called to trigger realignment of controls after changing the cozy/compact CSS class of a DOM
-	 * element, for example, the <code>&lt;body&gt;</code> tag.
+	 * Triggers a realignment of controls
 	 *
+	 * This method should be called after changing the cozy/compact CSS class of a DOM element at runtime,
+	 *  for example at the <code>&lt;body&gt;</code> tag.
+	 *  Controls can listen to the themeChanged event to realign their appearance after changing the theme.
+	 *  Changing the cozy/compact CSS class should then also be handled as a theme change.
+	 *  In more simple scenarios where the cozy/compact CSS class is added to a DOM element which contains only a few controls
+	 *  it might not be necessary to trigger the realigment of all controls placed in the DOM,
+	 *  for example changing the cozy/compact CSS class at a single control
 	 * @public
 	 */
 	Core.prototype.notifyContentDensityChanged = function() {
@@ -2519,13 +2899,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 */
 
 	 /**
-	 * Attach event-handler <code>fnFunction</code> to the <code>ThemeChanged</code> event of this <code>sap.ui.core.Core</code>.
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:ThemeChanged ThemeChanged} event
+	 * of this <code>sap.ui.core.Core</code>.
+	 *
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function.
+	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
+	 *            provider object
 	 * @public
 	 */
 	Core.prototype.attachThemeChanged = function(fnFunction, oListener) {
@@ -2533,12 +2917,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the <code>ThemeChanged</code> event of this <code>sap.ui.core.Core</code>.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:ThemeChanged ThemeChanged} event
+	 * of this <code>sap.ui.core.Core</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Object on which the given function had to be called.
 	 * @public
@@ -2550,32 +2935,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	/**
 	 * Fires event <code>ThemeChanged</code> to attached listeners.
 	 *
-	 * @param {object} [mParameters] Parameters to pass along with the event
-	 * @param {object} [mParameters.theme] Theme name (default is <code>sap.ui.getCore().getConfiguration().getTheme()</code>)
+	 * @param {object} [oParameters] Parameters to pass along with the event
+	 * @param {string} [oParameters.theme] Theme name (default is <code>sap.ui.getCore().getConfiguration().getTheme()</code>)
 	 */
-	Core.prototype.fireThemeChanged = function(mParameters) {
-		jQuery.sap.scrollbarSize(true);
+	Core.prototype.fireThemeChanged = function(oParameters) {
+		getScrollbarSize(true);
 
 		// special hook for resetting theming parameters before the controls get
 		// notified (lightweight coupling to static Parameters module)
-		var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
-		if (Parameters) {
-			Parameters.reset(/* bOnlyWhenNecessary= */ true);
+		var ThemeParameters = sap.ui.require("sap/ui/core/theming/Parameters");
+		if (ThemeParameters) {
+			ThemeParameters.reset(/* bOnlyWhenNecessary= */ true);
+		}
+
+		oParameters = oParameters || {};
+		// set the current theme name as default if omitted
+		if (!oParameters.theme) {
+			oParameters.theme = this.getConfiguration().getTheme();
 		}
 
 		// notify all elements/controls via a pseudo browser event
 		var sEventId = Core.M_EVENTS.ThemeChanged;
 		var oEvent = jQuery.Event(sEventId);
-		//set the current theme name as default if omitted
-		oEvent.theme = mParameters && mParameters.theme || this.getConfiguration().getTheme();
-		jQuery.each(this.mElements, function(sId, oElement) {
+		oEvent.theme = oParameters.theme;
+		Element.registry.forEach(function(oElement) {
 			oElement._handleEvent(oEvent);
 		});
 
-		jQuery.sap.act.refresh();
+		ActivityDetection.refresh();
 
 		// notify the listeners via a control event
-		_oEventProvider.fireEvent(sEventId, mParameters);
+		_oEventProvider.fireEvent(sEventId, oParameters);
 	};
 
 	/**
@@ -2637,10 +3027,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 */
 
 	/**
-	 * Register a listener for the <code>localizationChanged</code> event.
+	 * Register a listener for the {@link #event:localizationChanged localizationChanged} event.
 	 *
-	 * @param {function} fnFunction callback to be called
-	 * @param {object} oListener context object to cal lthe function on.
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
+	 *
+	 * @param {function} fnFunction Callback to be called when the event occurs
+	 * @param {object} [oListener] Context object to call the function on
 	 * @public
 	 */
 	Core.prototype.attachLocalizationChanged = function(fnFunction, oListener) {
@@ -2648,13 +3041,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Unregister a listener from the <code>localizationChanged</code> event.
+	 * Unregister a listener from the {@link #event:localizationChanged localizationChanged} event.
 	 *
 	 * The listener will only be unregistered if the same function/context combination
 	 * is given as in the call to <code>attachLocalizationListener</code>.
 	 *
-	 * @param {function} fnFunction callback to be deregistered
-	 * @param {object} oListener context object given in a previous call to attachLocalizationChanged.
+	 * @param {function} fnFunction Callback to be deregistered
+	 * @param {object} [oListener] Context object on which the given function had to be called
 	 * @public
 	 */
 	Core.prototype.detachLocalizationChanged = function(fnFunction, oListener) {
@@ -2669,30 +3062,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			oBrowserEvent = jQuery.Event(sEventId, {changes : mChanges}),
 			fnAdapt = ManagedObject._handleLocalizationChange;
 
-		jQuery.sap.log.info("localization settings changed: " + Object.keys(mChanges).join(","), null, "sap.ui.core.Core");
+		Log.info("localization settings changed: " + Object.keys(mChanges).join(","), null, "sap.ui.core.Core");
 
 		/*
 		 * Notify models that are able to handle a localization change
 		 */
-		jQuery.each(this.oModels, function(sName, oModel) {
-			if ( oModel && oModel._handleLocalizationChange ) {
+		each(this.oModels, function (prop, oModel) {
+			if (oModel && oModel._handleLocalizationChange) {
 				oModel._handleLocalizationChange();
 			}
 		});
+
 
 		/*
 		 * Notify all UIAreas, Components, Elements to first update their models (phase 1)
 		 * and then to update their bindings and corresponding data types (phase 2)
 		 */
 		function notifyAll(iPhase) {
-			jQuery.each(this.mUIAreas, function() {
-				fnAdapt.call(this, iPhase);
+			each(this.mUIAreas, function(prop, oUIArea) {
+				fnAdapt.call(oUIArea, iPhase);
 			});
-			jQuery.each(this.mObjects["component"], function() {
-				fnAdapt.call(this, iPhase);
+			Component.registry.forEach(function(oComponent) {
+				fnAdapt.call(oComponent, iPhase);
 			});
-			jQuery.each(this.mElements, function() {
-				fnAdapt.call(this, iPhase);
+			Element.registry.forEach(function(oElement) {
+				fnAdapt.call(oElement, iPhase);
 			});
 		}
 
@@ -2702,19 +3096,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// special handling for changes of the RTL mode
 		if ( mChanges.rtl != undefined ) {
 			// update the dir attribute of the document
-			jQuery(document.documentElement).attr("dir", mChanges.rtl ? "rtl" : "ltr");
+			document.documentElement.setAttribute("dir", mChanges.rtl ? "rtl" : "ltr");
 			// modify style sheet URLs
 			this._updateThemeUrls(this.sTheme);
 			// invalidate all UIAreas
-			jQuery.each(this.mUIAreas, function() {
-				this.invalidate();
+			each(this.mUIAreas, function(prop, oUIArea) {
+				oUIArea.invalidate();
 			});
-			jQuery.sap.log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
+			Log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
 		}
 
 		// notify Elements via a pseudo browser event (onlocalizationChanged, note the lower case 'l')
-		jQuery.each(this.mElements, function(sId, oElement) {
-			this._handleEvent(oBrowserEvent);
+		Element.registry.forEach(function(oElement) {
+			oElement._handleEvent(oBrowserEvent);
 		});
 
 		// notify registered Core listeners
@@ -2791,7 +3185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		if ( !oLibrary ) {
 
 			// ensure namespace
-			jQuery.sap.getObject(sLibraryName, 0);
+			ObjectPath.create(sLibraryName);
 
 			oLibrary = this.mLibraries[sLibraryName] = {
 				name: sLibraryName,
@@ -2808,47 +3202,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// add class to corresponding category in library ('elements' or 'controls')
 			oLibrary[sCategory].push(sName);
 
-			jQuery.sap.log.debug("Class " + oMetadata.getName() + " registered for library " + oMetadata.getLibraryName());
+			Log.debug("Class " + oMetadata.getName() + " registered for library " + oMetadata.getLibraryName());
 			this.fireLibraryChanged({name : oMetadata.getName(), stereotype : oMetadata.getStereotype(), operation: "add", metadata : oMetadata});
 		}
-	};
-
-	/**
-	 * Registers the given element. Must be called once during construction.
-	 * @param {sap.ui.core.Element} oElement
-	 * @private
-	 */
-	Core.prototype.registerElement = function(oElement) {
-
-		var sId = oElement.getId(),
-			oldElement = this.mElements[sId];
-
-		if ( oldElement && oldElement !== oElement ) {
-			if ( oldElement._sapui_candidateForDestroy ) {
-				jQuery.sap.log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
-				oldElement.destroy();
-			} else {
-				// duplicate ID detected => fail or at least log a warning
-				if (this.oConfiguration.getNoDuplicateIds()) {
-					jQuery.sap.log.error("adding element with duplicate id '" + sId + "'");
-					throw new Error("Error: adding element with duplicate id '" + sId + "'");
-				} else {
-					jQuery.sap.log.warning("adding element with duplicate id '" + sId + "'");
-				}
-			}
-		}
-
-		this.mElements[sId] = oElement;
-
-	};
-
-	/**
-	 * Deregisters the given element. Must be called once during destruction.
-	 * @param {sap.ui.core.Element} oElement
-	 * @private
-	 */
-	Core.prototype.deregisterElement = function(oElement) {
-		delete this.mElements[oElement.getId()];
 	};
 
 	/**
@@ -2862,7 +3218,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			oldObject = this.getObject(sType, sId);
 
 		if ( oldObject && oldObject !== oObject ) {
-			jQuery.sap.log.error("adding object \"" + sType + "\" with duplicate id '" + sId + "'");
+			Log.error("adding object \"" + sType + "\" with duplicate id '" + sId + "'");
 			throw new Error("Error: adding object \"" + sType + "\" with duplicate id '" + sId + "'");
 		}
 
@@ -2882,88 +3238,55 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 
 	/**
-	 * Returns the registered element for the given id, if any.
-	 * @param {string} sId
-	 * @return {sap.ui.core.Element} the element for the given id
+	 * Returns the registered element with the given ID, if any.
+	 *
+	 * The ID must be the globally unique ID of an element, the same as returned by <code>oElement.getId()</code>.
+	 *
+	 * When the element has been created from a declarative source (e.g. XMLView), that source might have used
+	 * a shorter, non-unique local ID. A search for such a local ID cannot be executed with this method.
+	 * It can only be executed on the corresponding scope (e.g. on an XMLView instance), by using the
+	 * {@link sap.ui.core.mvc.View#byId View#byId} method of that scope.
+	 *
+	 * @param {sap.ui.core.ID|null|undefined} sId ID of the element to search for
+	 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
 	 * @public
+	 * @function
 	 */
-	Core.prototype.byId = function(sId) {
-		jQuery.sap.assert(sId == null || typeof sId === "string", "sId must be a string when defined");
-		// allow null, as this occurs frequently and it is easier to check whether there is a control in the end than
-		// first checking whether there is an ID and then checking for a control
-
-		/*
-		// test alternative implementation
-		function findById(sId, mUIAreas) {
-			function _find(oControl) {
-				if ( !oControl )
-					return undefined;
-				if ( oControl.getId() === sId ) {
-					return oControl;
-				}
-				for (var n in oControl.mAggregations) {
-					var a = oControl.mAggregations[n];
-					if ( Array.isArray(a) ) {
-						for (var i=0; i<a.length; i++) {
-							var r = _find(a[i]);
-							if ( r ) return r;
-						}
-					} else if ( a instanceof sap.ui.core.Element ) {
-						var r = _find(a[i]);
-						if ( r ) return r;
-					}
-				}
-				return undefined;
-			}
-
-			//var t0=new Date().getTime();
-			var r=undefined;
-			for (var n in mUIAreas) {
-				r=_find(mUIAreas[n].getRootControl()); //TODO: Adapt to mUIAreas[n].getContent
-				if ( r ) break;
-			}
-			//var t1=new Date().getTime();
-			//t=t+(t1-t0);
-			return r;
-		}
-
-		if ( findById(sId, this.mUIAreas) !== this.mElements[sId] ) {
-			jQuery.sap.log.error("failed to resolve " + sId + " (" + this.mElements[sId] + ")");
-		}
-		*/
-		return sId == null ? undefined : this.mElements[sId];
-	};
+	Core.prototype.byId = Element.registry.get;
 
 	/**
 	 * Returns the registered element for the given ID, if any.
-	 * @param {string} sId
-	 * @return {sap.ui.core.Element} the element for the given id
-	 * @deprecated use <code>sap.ui.core.Core.byId</code> instead!
+	 *
+	 * @param {sap.ui.core.ID|null|undefined} sId ID of the control to retrieve
+	 * @returns {sap.ui.core.Element|undefined} Element for the given ID or <code>undefined</code>
+	 * @deprecated As of version 1.1, use <code>sap.ui.core.Core.byId</code> instead!
 	 * @function
 	 * @public
 	 */
-	Core.prototype.getControl = Core.prototype.byId;
+	Core.prototype.getControl = Element.registry.get;
 
 	/**
 	 * Returns the registered element for the given ID, if any.
-	 * @param {string} sId
-	 * @return {sap.ui.core.Element} the element for the given id
-	 * @deprecated use <code>sap.ui.core.Core.byId</code> instead!
+	 *
+	 * @param {sap.ui.core.ID|null|undefined} sId ID of the element to retrieve
+	 * @returns {sap.ui.core.Element|undefined} Element for the given ID or <code>undefined</code>
+	 * @deprecated As of version 1.1, use <code>sap.ui.core.Core.byId</code> instead!
 	 * @function
 	 * @public
 	 */
-	Core.prototype.getElementById = Core.prototype.byId;
+	Core.prototype.getElementById = Element.registry.get;
 
 	/**
 	 * Returns the registered object for the given id, if any.
-	 * @param {string} sType
-	 * @param {string} sId
-	 * @return {sap.ui.core.Component} the component for the given id
+	 *
+	 * @param {string} sType Stereotype of the object to retrieve
+	 * @param {sap.ui.core.ID|null|undefined} sId Id of the object to retrieve
+	 * @returns {sap.ui.base.ManagedObject|undefined} Object of the given type and with the given id or undefined
 	 * @private
 	 */
 	Core.prototype.getObject = function(sType, sId) {
-		jQuery.sap.assert(sId == null || typeof sId === "string", "sId must be a string when defined");
-		jQuery.sap.assert(this.mObjects[sType] !== undefined, "sType must be a supported stereotype");
+		assert(sId == null || typeof sId === "string", "sId must be a string when defined");
+		assert(this.mObjects[sType] !== undefined, "sType must be a supported stereotype");
 		return sId == null ? undefined : this.mObjects[sType] && this.mObjects[sType][sId];
 	};
 
@@ -2971,11 +3294,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Returns the registered component for the given id, if any.
 	 * @param {string} sId
 	 * @return {sap.ui.core.Component} the component for the given id
+	 * @function
 	 * @public
 	 */
-	Core.prototype.getComponent = function(sId) {
-		return this.getObject("component", sId);
-	};
+	Core.prototype.getComponent = Component.registry.get;
 
 	/**
 	 * Returns the registered template for the given id, if any.
@@ -2985,6 +3307,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @deprecated Since 1.29.1 Require 'sap/ui/core/tmpl/Template' and use {@link sap.ui.core.tmpl.Template.byId Template.byId} instead.
 	 */
 	Core.prototype.getTemplate = function(sId) {
+		Log.warning("Synchronous loading of 'sap/ui/core/tmpl/Template'. Use 'sap/ui/core/tmpl/Template' module and" +
+			" call Template.byId instead", "SyncXHR", null, function() {
+			return {
+				type: "SyncXHR",
+				name: "Core.prototype.getTemplate"
+			};
+		});
 		var Template = sap.ui.requireSync('sap/ui/core/tmpl/Template');
 		return Template.byId(sId);
 	};
@@ -3001,31 +3330,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.getStaticAreaRef = function() {
-		var oStatic = jQuery.sap.domById(STATIC_UIAREA_ID);
-		if (!oStatic) {
+		var oStaticArea = document.getElementById(STATIC_UIAREA_ID),
+			oConfig, oFirstFocusElement;
+
+		if (!oStaticArea) {
+
+			oStaticArea = document.createElement("div");
+			oFirstFocusElement = document.createElement("span");
+			oConfig = this.getConfiguration();
+
 			if (!this.bDomReady) {
 				throw new Error("DOM is not ready yet. Static UIArea cannot be created.");
 			}
 
-			var oAttributes = {id:STATIC_UIAREA_ID};
+			oStaticArea.setAttribute("id", STATIC_UIAREA_ID);
 
-			if (jQuery("body").attr("role") != "application") {
-				// Only set ARIA application role if not available on html body (see configuration entry "autoAriaBodyRole")
-				oAttributes.role = "application";
-			}
+			Object.assign(oStaticArea.style, {
+				"height": "0",
+				"width": "0",
+				"overflow": "hidden",
+				"float":  oConfig.getRTL() ? "right" : "left"
+			});
 
-			var leftRight = this.getConfiguration().getRTL() ? "right" : "left";
-			oStatic = jQuery("<DIV/>", oAttributes).css({
-				"height"   : "0",
-				"width"    : "0",
-				"overflow" : "hidden",
-				"float"    : leftRight
-			}).prependTo(document.body)[0];
+			oFirstFocusElement.setAttribute("id", STATIC_UIAREA_ID + "-firstfe");
+			oFirstFocusElement.setAttribute("tabindex", -1);
+			oFirstFocusElement.style.fontSize = 0;
 
-			// TODO Check whether this is sufficient
-			this.createUIArea(oStatic).bInitial = false;
+			oStaticArea.appendChild(oFirstFocusElement);
+
+			document.body.insertBefore(oStaticArea, document.body.firstChild);
+
+			this.createUIArea(oStaticArea).bInitial = false;
 		}
-		return oStatic;
+		return oStaticArea;
+
 	};
 
 	/**
@@ -3040,57 +3378,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Interval for central interval timer.
+	 * Singleton instance
 	 * @private
 	 */
-	Core._I_INTERVAL = 200;
-
-	/**
-	 * Obsolete but kept for backward compatibility.
-	 * Note that the ResizeHandler has been required above, so we can access it here.
-	 * @private
-	 * @name sap.ui.core.ResizeHandler#I_INTERVAL
-	 */
-	ResizeHandler.prototype.I_INTERVAL = Core._I_INTERVAL;
+	var oIntervalTrigger;
 
 	/**
 	 * Registers a listener to the central interval timer.
 	 *
-	 * @param {function} fnFunction callback to be called periodically
-	 * @param {object} [oListener] optional context object to call the callback on.
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to the interval timer instance.
+	 *
+	 * @param {function} fnFunction Callback to be called periodically
+	 * @param {object} [oListener] Optional context object to call the callback on
 	 * @since 1.16.0
+	 * @deprecated Since 1.61. Use <code>IntervalTrigger.addListener()</code> from "sap/ui/core/IntervalTrigger" module.
 	 * @public
 	 */
 	Core.prototype.attachIntervalTimer = function(fnFunction, oListener) {
-		if (!this.oTimedTrigger) {
-			var IntervalTrigger = sap.ui.requireSync("sap/ui/core/IntervalTrigger");
-			this.oTimedTrigger = new IntervalTrigger(Core._I_INTERVAL);
+		if (!oIntervalTrigger) {
+			oIntervalTrigger = sap.ui.requireSync("sap/ui/core/IntervalTrigger");
 		}
-		this.oTimedTrigger.addListener(fnFunction, oListener);
+		oIntervalTrigger.addListener(fnFunction, oListener);
 	};
 
 	/**
 	 * Unregisters a listener for the central interval timer.
 	 *
 	 * A listener will only be unregistered if the same function/context combination
-	 * is given as in the attachIntervalTimer call.
+	 * is given as in the <code>attachIntervalTimer</code> call.
 	 *
 	 * @param {function} fnFunction function to unregister
 	 * @param {object} [oListener] context object given during registration
 	 * @since 1.16.0
+	 * @deprecated Since 1.61. Use <code>IntervalTrigger.removeListener()</code> from "sap/ui/core/IntervalTrigger" module.
 	 * @public
 	 */
 	Core.prototype.detachIntervalTimer = function(fnFunction, oListener) {
-		if (this.oTimedTrigger) {
-			this.oTimedTrigger.removeListener(fnFunction, oListener);
+		if (oIntervalTrigger) {
+			oIntervalTrigger.removeListener(fnFunction, oListener);
 		}
 	};
 
 	/**
 	 * Registers a listener for control events.
 	 *
-	 * @param {function} fnFunction callback to be called for each control event
-	 * @param {object} [oListener] optional context object to call the callback on.
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
+	 *
+	 * @param {function} fnFunction Callback to be called for each control event
+	 * @param {object} [oListener] Optional context object to call the callback on
 	 * @public
 	 */
 	Core.prototype.attachControlEvent = function(fnFunction, oListener) {
@@ -3100,11 +3437,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	/**
 	 * Unregisters a listener for control events.
 	 *
-	 * A listener will only be unregistered if the same function/context combination
-	 * is given as in the attachControlEvent call.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
-	 * @param {function} fnFunction function to unregister
-	 * @param {object} [oListener] context object given during registration
+	 * @param {function} fnFunction Function to unregister
+	 * @param {object} [oListener] Context object on which the given function had to be called
 	 * @public
 	 */
 	Core.prototype.detachControlEvent = function(fnFunction, oListener) {
@@ -3112,12 +3448,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Notifies the listeners that an event on a control occurs
-	 * @param {map} mParameters { browserEvent: jQuery.EventObject }
+	 * Notifies the listeners that an event on a control occurs.
+	 *
+	 * @param {object} oParameters Parameters to pass along with the event, e.g. <code>{ browserEvent: jQuery.Event }</code>
 	 * @private
 	 */
-	Core.prototype.fireControlEvent = function(mParameters) {
-		_oEventProvider.fireEvent(Core.M_EVENTS.ControlEvent, mParameters);
+	Core.prototype.fireControlEvent = function(oParameters) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.ControlEvent, oParameters);
 	};
 
 	/**
@@ -3130,7 +3467,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	Core.prototype._handleControlEvent = function(/**event*/oEvent, sUiAreaId) {
 		// Create a copy of the event
 		var oEventClone = jQuery.Event(oEvent.type);
-		jQuery.extend(oEventClone, oEvent);
+		Object.assign(oEventClone, oEvent);
 		oEventClone.originalEvent = undefined;
 
 		this.fireControlEvent({"browserEvent": oEventClone, "uiArea": sUiAreaId});
@@ -3163,9 +3500,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @param {object} oPlugin reference to a Plugin object
 	 * @public
+	 * @deprecated As of 1.73. Plugins never have been meant as a public offering, but were intended for internal
+	 *   usage only. They unfortunately allow access to all internals of the Core and therefore break encapsulation
+	 *   and hinder evolution of the Core. The most common use case of accessing the set of all controls/elements
+	 *   or all components can now be addressed by using the APIs {@link sap.ui.core.Element.registry} or
+	 *   {@link sap.ui.core.Component.registry}, respectively. Future refactorings of the Core will only take
+	 *   existing plugins in the OpenUI5 repository into account.
 	 */
 	Core.prototype.registerPlugin = function(oPlugin) {
-		jQuery.sap.assert(typeof oPlugin === "object", "oPlugin must be an object");
+		assert(typeof oPlugin === "object", "oPlugin must be an object");
 
 		// check for a valid plugin
 		if (!oPlugin) {
@@ -3195,9 +3538,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @param {object} oPlugin reference to a Plugin object
 	 * @public
+	 * @deprecated As of 1.73. Plugins never have been meant as a public offering, but were intended for internal
+	 *   usage only. They unfortunately allow access to all internals of the Core and therefore break encapsulation
+	 *   and hinder evolution of the Core. The most common use case of accessing the set of all controls/elements
+	 *   or all components can now be addressed by using the APIs {@link sap.ui.core.Element.registry} or
+	 *   {@link sap.ui.core.Component.registry}, respectively. Future refactorings of the Core will only take
+	 *   existing plugins in the OpenUI5 repository into account.
 	 */
 	Core.prototype.unregisterPlugin = function(oPlugin) {
-		jQuery.sap.assert(typeof oPlugin === "object", "oPlugin must be an object");
+		assert(typeof oPlugin === "object", "oPlugin must be an object");
 
 		// check for a valid plugin
 		if (!oPlugin) {
@@ -3254,6 +3603,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		}
 	};
 
+
 	/**
 	 * Sets or unsets a model for the given model name.
 	 *
@@ -3271,28 +3621,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @param {sap.ui.model.Model} oModel the model to be set or <code>null</code> or <code>undefined</code>
 	 * @param {string} [sName] the name of the model or <code>undefined</code>
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.setModel = function(oModel, sName) {
-		jQuery.sap.assert(oModel == null || lazyInstanceof(oModel, 'sap/ui/model/Model'), "oModel must be an instance of sap.ui.model.Model, null or undefined");
-		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
+		assert(oModel == null || BaseObject.isA(oModel, 'sap.ui.model.Model'), "oModel must be an instance of sap.ui.model.Model, null or undefined");
+		assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		var that = this,
 			oProperties;
 
 		if (!oModel && this.oModels[sName]) {
 			delete this.oModels[sName];
-			if (jQuery.isEmptyObject(that.oModels) && jQuery.isEmptyObject(that.oBindingContexts)) {
+			if (isEmptyObject(that.oModels) && isEmptyObject(that.oBindingContexts)) {
 				oProperties = ManagedObject._oEmptyPropagatedProperties;
 			} else {
 				oProperties = {
-					oModels: jQuery.extend({}, that.oModels),
+					oModels: Object.assign({}, that.oModels),
 					oBindingContexts: {},
 					aPropagationListeners: []
 				};
 			}
 			// propagate Models to all UI areas
-			jQuery.each(this.mUIAreas, function (i, oUIArea){
+
+			each(this.mUIAreas, function (prop, oUIArea){
 				if (oModel != oUIArea.getModel(sName)) {
 					oUIArea._propagateProperties(sName, oUIArea, oProperties, false, sName);
 				}
@@ -3300,16 +3651,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		} else if (oModel && oModel !== this.oModels[sName] ) {
 			this.oModels[sName] = oModel;
 			// propagate Models to all UI areas
-			jQuery.each(this.mUIAreas, function (i, oUIArea){
+			each(this.mUIAreas, function (prop, oUIArea){
 				if (oModel != oUIArea.getModel(sName)) {
 					var oProperties = {
-						oModels: jQuery.extend({}, that.oModels),
+						oModels: Object.assign({}, this.oModels),
 						oBindingContexts: {},
 						aPropagationListeners: []
 					};
 					oUIArea._propagateProperties(sName, oUIArea, oProperties, false, sName);
 				}
-			});
+			}.bind(this));
 		} //else nothing to do
 		return this;
 	};
@@ -3342,14 +3693,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.byFieldGroupId = function(vFieldGroupIds) {
-		var aResult = [];
-		for (var n in this.mElements) {
-			var oElement = this.mElements[n];
-			if (oElement instanceof Control && oElement.checkFieldGroupIds(vFieldGroupIds)) {
-				aResult.push(oElement);
-			}
-		}
-		return aResult;
+		return Element.registry.filter(function(oElement) {
+			return oElement instanceof Control && oElement.checkFieldGroupIds(vFieldGroupIds);
+		});
 	};
 
 	/**
@@ -3365,7 +3711,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.getModel = function(sName) {
-		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
+		assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		return this.oModels[sName];
 	};
 
@@ -3375,7 +3721,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.hasModel = function() {
-		return !jQuery.isEmptyObject(this.oModels);
+		return !isEmptyObject(this.oModels);
 	};
 
 	/**
@@ -3386,7 +3732,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 */
 	Core.prototype.getEventBus = function() {
 		if (!this.oEventBus) {
-			var EventBus = sap.ui.requireSync('sap/ui/core/EventBus');
+			var EventBus = sap.ui.require('sap/ui/core/EventBus');
+			if (!EventBus) {
+				Log.warning("Synchronous loading of EventBus. Ensure that 'sap/ui/core/EventBus' module is loaded" +
+					" before this function is called.", "SyncXHR", null, function() {
+					return {
+						type: "SyncXHR",
+						name: "core-eventbus"
+					};
+				});
+				EventBus = sap.ui.requireSync('sap/ui/core/EventBus');
+			}
 			var oEventBus = this.oEventBus = new EventBus();
 			this._preserveHandler = function(event) {
 				// for compatibility reasons
@@ -3398,20 +3754,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'validationError' event of <code>sap.ui.core.Core</code>.
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:validationError validationError} event
+	 * of <code>sap.ui.core.Core</code>.
+	 *
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
 	 *
 	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
 	 * @param {object}
-	 *            [oData] The object, that should be passed along with the event-object when firing the event
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function.
-	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
-	 *
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
+	 *            provider object
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.attachValidationError = function(oData, fnFunction, oListener) {
@@ -3425,15 +3784,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'validationError' event of <code>sap.ui.core.Core</code>.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:validationError validationError} event
+	 * of <code>sap.ui.core.Core</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
 	 *            fnFunction The callback function to unregister
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.detachValidationError = function(fnFunction, oListener) {
@@ -3442,20 +3802,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'parseError' event of <code>sap.ui.core.Core</code>.
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:parseError parseError} event
+	 * of <code>sap.ui.core.Core</code>.
+	 *
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
 	 *
 	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
 	 * @param {object}
-	 *            [oData] The object, that should be passed along with the event-object when firing the event
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function.
-	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
+	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
+	 *            provider object
 	 *
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.attachParseError = function(oData, fnFunction, oListener) {
@@ -3469,15 +3833,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'parseError' event of <code>sap.ui.core.Core</code>.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:parseError parseError} event
+	 * of <code>sap.ui.core.Core</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
 	 *            fnFunction The callback function to unregister.
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.detachParseError = function(fnFunction, oListener) {
@@ -3486,18 +3851,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'formatError' event of <code>sap.ui.core.Core</code>.
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:formatError formatError} event
+	 * of <code>sap.ui.core.Core</code>.
+	 *
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
 	 *
 	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function.
-	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
+	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
+	 *            provider object
 	 *
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.attachFormatError = function(oData, fnFunction, oListener) {
@@ -3511,15 +3879,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'formatError' event of <code>sap.ui.core.Core</code>.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:formatError formatError} event
+	 * of <code>sap.ui.core.Core</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
 	 *            fnFunction The callback function to unregister
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.detachFormatError = function(fnFunction, oListener) {
@@ -3528,20 +3897,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'validationSuccess' event of <code>sap.ui.core.Core</code>.
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:validationSuccess validationSuccess} event
+	 * of <code>sap.ui.core.Core</code>.
+	 *
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
 	 *
 	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
 	 * @param {object}
 	 *            [oData] The object, that should be passed along with the event-object when firing the event
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function.
-	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
+	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
+	 *            provider object
 	 *
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.attachValidationSuccess = function(oData, fnFunction, oListener) {
@@ -3555,15 +3927,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'validationSuccess' event of <code>sap.ui.core.Core</code>.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:validationSuccess validationSuccess} event
+	 * of <code>sap.ui.core.Core</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.detachValidationSuccess = function(fnFunction, oListener) {
@@ -3573,127 +3946,114 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 
 	/**
-	 * Fire event parseError to attached listeners.
+	 * Fires event {@link #event:parseError parseError} to attached listeners.
 	 *
-	 * Expects following event parameters:
-	 * <ul>
-	 * <li>'element' of type <code>sap.ui.core.Element</code> </li>
-	 * <li>'property' of type <code>string</code> </li>
-	 * <li>'type' of type <code>string</code> </li>
-	 * <li>'newValue' of type <code>object</code> </li>
-	 * <li>'oldValue' of type <code>object</code> </li>
-	 * <li>'exception' of type <code>object</code> </li>
-	 * </ul>
-	 *
-	 * @param {Map} [mArguments] the arguments to pass along with the event.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @param {object} [oParameters] Parameters to pass along with the event.
+	 * @param {sap.ui.core.Element} oParameters.element Element where the parse error occurred
+	 * @param {string} oParameters.property Name of the property of the element where the parse error occurred
+	 * @param {sap.ui.model.Type} oParameters.type Type of the property
+	 * @param {object} oParameters.newValue Value of the property which was entered when the parse error occurred
+	 * @param {object} oParameters.oldValue Value of the property which was present before a new value was entered (before the parse error)
+	 * @param {object} oParameters.exception Exception object which occurred and has more information about the parse error
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
-	Core.prototype.fireParseError = function(mArguments) {
-		_oEventProvider.fireEvent(Core.M_EVENTS.ParseError, mArguments);
+	Core.prototype.fireParseError = function(oParameters) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.ParseError, oParameters);
 		return this;
 	};
 
 	/**
-	 * The 'parseError' event is fired when input parsing fails.
+	 * The <code>parseError</code> event is fired when input parsing fails.
 	 *
 	 * @name sap.ui.core.Core#parseError
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-
-	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the parse error occurred
-	 * @param {string} oControlEvent.getParameters.property The property name of the element where the parse error occurred
-	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
-	 * @param {object} oControlEvent.getParameters.newValue The value of the property which was entered when the parse error occurred
-	 * @param {object} oControlEvent.getParameters.oldValue The value of the property which was present before a new value was entered (before the parse error)
-	 * @param {object} oControlEvent.getParameters.exception The exception object which occurred and has more information about the parse error
+	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element Element where the parse error occurred
+	 * @param {string} oControlEvent.getParameters.property Name of the property of the element where the parse error occurred
+	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type Type of the property
+	 * @param {object} oControlEvent.getParameters.newValue Value of the property which was entered when the parse error occurred
+	 * @param {object} oControlEvent.getParameters.oldValue Value of the property which was present before a new value was entered (before the parse error)
+	 * @param {object} oControlEvent.getParameters.exception Exception object which occurred and has more information about the parse error
 	 * @public
 	 */
 
 	/**
-	 * Fire event validationError to attached listeners.
+	 * Fires event {@link #event:validationError validationError} to attached listeners.
 	 *
-	 * Expects following event parameters:
-	 * <ul>
-	 * <li>'element' of type <code>sap.ui.core.Element</code> </li>
-	 * <li>'property' of type <code>string</code> </li>
-	 * <li>'type' of type <code>string</code> </li>
-	 * <li>'newValue' of type <code>object</code> </li>
-	 * <li>'oldValue' of type <code>object</code> </li>
-	 * <li>'exception' of type <code>object</code> </li>
-	 * </ul>
-	 *
-	 * @param {Map} [mArguments] the arguments to pass along with the event.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @param {object} [oParameters] Parameters to pass along with the event.
+	 * @param {sap.ui.core.Element} oParameters.element The Element where the validation error occurred
+	 * @param {string} oParameters.property Property name of the element where the validation error occurred
+	 * @param {sap.ui.model.Type} oParameters.type Type of the property
+	 * @param {object} oParameters.newValue Value of the property which was entered when the validation error occurred
+	 * @param {object} oParameters.oldValue Value of the property which was present before a new value was entered (before the validation error)
+	 * @param {object} oParameters.exception Exception object which occurred and has more information about the validation error
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
-	Core.prototype.fireValidationError = function(mArguments) {
-		_oEventProvider.fireEvent(Core.M_EVENTS.ValidationError, mArguments);
+	Core.prototype.fireValidationError = function(oParameters) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.ValidationError, oParameters);
 		return this;
 	};
 
 	/**
-	 * The 'validationError' event is fired when validation of the input fails.
+	 * The <code>validationError</code> event is fired when validation of the input fails.
 	 *
 	 * @name sap.ui.core.Core#validationError
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-
-	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the validation error occurred
-	 * @param {string} oControlEvent.getParameters.property The property name of the element where the validation error occurred
-	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
-	 * @param {object} oControlEvent.getParameters.newValue The value of the property which was entered when the validation error occurred
-	 * @param {object} oControlEvent.getParameters.oldValue The value of the property which was present before a new value was entered (before the validation error)
-	 * @param {object} oControlEvent.getParameters.exception The exception object which occurred and has more information about the validation error
+	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element Element where the validation error occurred
+	 * @param {string} oControlEvent.getParameters.property Property name of the element where the validation error occurred
+	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type Type of the property
+	 * @param {object} oControlEvent.getParameters.newValue Value of the property which was entered when the validation error occurred
+	 * @param {object} oControlEvent.getParameters.oldValue Value of the property which was present before a new value was entered (before the validation error)
+	 * @param {object} oControlEvent.getParameters.exception Exception object which occurred and has more information about the validation error
 	 * @public
 	 */
 
 	/**
-	 * Fire event formatError to attached listeners.
+	 * Fires event {@link #event:formatError formatError} to attached listeners.
 	 *
-	 * Expects following event parameters:
-	 * <ul>
-	 * <li>'element' of type <code>sap.ui.core.Element</code> </li>
-	 * <li>'property' of type <code>string</code> </li>
-	 * <li>'type' of type <code>string</code> </li>
-	 * <li>'newValue' of type <code>object</code> </li>
-	 * <li>'oldValue' of type <code>object</code> </li>
-	 * <li>'exception' of type <code>object</code> </li>
-	 * </ul>
-	 *
-	 * @param {Map} [mArguments] the arguments to pass along with the event.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @param {object} [oParameters] Parameters to pass along with the event.
+	 * @param {sap.ui.core.Element} oParameters.element Element where the format error occurred
+	 * @param {string} oParameters.property Name of the property of the element where the format error occurred
+	 * @param {sap.ui.model.Type} oParameters.type Type of the property
+	 * @param {any} oParameters.newValue Value of the property which was entered when the format error occurred
+	 * @param {any} oParameters.oldValue Value of the property which was present before a new value was entered (before the format error)
+	 * @param {object} oParameters.exception Exception object which occurred and has more information about the format error
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
-	Core.prototype.fireFormatError = function(mArguments) {
-		_oEventProvider.fireEvent(Core.M_EVENTS.FormatError, mArguments);
+	Core.prototype.fireFormatError = function(oParameters) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.FormatError, oParameters);
 		return this;
 	};
 
 	/**
-	 * The 'formatError' event is fired when a value formatting fails. This can happen when a value stored in the model cannot be formatted to be displayed in an element property.
+	 * The <code>formatError</code> event is fired when a value formatting fails.
+	 *
+	 * This can happen when a value stored in the model cannot be formatted to be displayed in an element property.
 	 *
 	 * @name sap.ui.core.Core#formatError
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-
-	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the format error occurred
-	 * @param {string} oControlEvent.getParameters.property The property name of the element where the format error occurred
-	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
-	 * @param {object} oControlEvent.getParameters.newValue The value of the property which was entered when the format error occurred
-	 * @param {object} oControlEvent.getParameters.oldValue The value of the property which was present before a new value was entered (before the format error)
-	 * @param {object} oControlEvent.getParameters.exception The exception object which occurred and has more information about the format error
+	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element Element where the format error occurred
+	 * @param {string} oControlEvent.getParameters.property Name of the property of the element where the format error occurred
+	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type Type of the property
+	 * @param {object} oControlEvent.getParameters.newValue Value of the property which was entered when the format error occurred
+	 * @param {object} oControlEvent.getParameters.oldValue Value of the property which was present before a new value was entered (before the format error)
+	 * @param {object} oControlEvent.getParameters.exception Exception object which occurred and has more information about the format error
 	 * @public
 	 */
 
 	/**
-	 * Fire event validationSuccess to attached listeners.
+	 * Fires event {@link #event:validationSuccess validationSuccess} to attached listeners.
 	 *
 	 * Expects following event parameters:
 	 * <ul>
@@ -3704,29 +4064,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * <li>'oldValue' of type <code>object</code> </li>
 	 * </ul>
 	 *
-	 * @param {Map} [mArguments] the arguments to pass along with the event.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @param {object} [oParameters] Parameters to pass along with the event
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
-	Core.prototype.fireValidationSuccess = function(mArguments) {
-		_oEventProvider.fireEvent(Core.M_EVENTS.ValidationSuccess, mArguments);
+	Core.prototype.fireValidationSuccess = function(oParameters) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.ValidationSuccess, oParameters);
 		return this;
 	};
 
 	/**
-	 * The 'validationSuccess' event is fired when a value validation was successfully completed.
+	 * The <code>validationSuccess</code> event is fired when a value validation was successfully completed.
 	 *
 	 * @name sap.ui.core.Core#validationSuccess
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-
-	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the successful validation occurred
-	 * @param {string} oControlEvent.getParameters.property The property name of the element where the successfull validation occurred
-	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
-	 * @param {object} oControlEvent.getParameters.newValue The value of the property which was entered when the validation occurred
-	 * @param {object} oControlEvent.getParameters.oldValue The value of the property which was present before a new value was entered (before the validation)
+	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element Element where the successful validation occurred
+	 * @param {string} oControlEvent.getParameters.property Name of the property of the element where the successful validation occurred
+	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type Type of the property
+	 * @param {object} oControlEvent.getParameters.newValue Value of the property which was entered when the validation occurred
+	 * @param {object} oControlEvent.getParameters.oldValue Value of the property which was present before a new value was entered (before the validation)
 	 * @public
 	 */
 
@@ -3740,8 +4099,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Friendly function to access the provider from outside the core
-	 * This is needed for UIArea to set the core as the top level eventing parent
+	 * Friendly function to access the provider from outside the core.
+	 *
+	 * This is needed for UIArea to set the core as the top level eventing parent.
+	 *
 	 * @returns {*}
 	 * @private
 	 */
@@ -3795,14 +4156,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	/**
 	 * Called by the Core after it has been initialized.
+	 *
 	 * If a plugin is added to the core after its initialization, then
 	 * this method is called during registration of the plugin.
 	 *
 	 * Implementing this method is optional for a plugin.
 	 *
 	 * @name sap.ui.core.CorePlugin.prototype.startPlugin
-	 * @param {sap.ui.core.Core} oCore reference to the core
-	 * @param {boolean} bOnInit whether the hook is called during Core.init() or later
+	 * @param {sap.ui.core.Core} oCore Reference to the core
+	 * @param {boolean} bOnInit Whether the hook is called during Core.init() or later
 	 * @function
 	 */
 
@@ -3813,7 +4175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Implementing this method is optional for a plugin.
 	 *
 	 * @name sap.ui.core.CorePlugin.prototype.stopPlugin
-	 * @param {sap.ui.core.Core} oCore reference to the core
+	 * @param {sap.ui.core.Core} oCore Reference to the core
 	 * @function
 	 */
 
@@ -3843,11 +4205,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {sap.ui.base.Interface | sap.ui.core.Control}
 	 *            oControl the Control that should be added to the <code>UIArea</code>.
 	 * @public
-	 * @deprecated Use function <code>placeAt</code> of <code>sap.ui.core.Control</code> instead.
+	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt Control#placeAt} instead.
+	 * @ui5-global-only
 	 */
 	sap.ui.setRoot = function(oDomRef, oControl) {
-		jQuery.sap.assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
-		jQuery.sap.assert(oControl instanceof Interface || oControl instanceof Control, "oControl must be a Control or Interface");
+		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
+		assert(oControl instanceof Interface || oControl instanceof Control, "oControl must be a Control or Interface");
 
 		sap.ui.getCore().setRoot(oDomRef, oControl);
 	};
@@ -3860,7 +4223,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * Note that the Core = EventProvider.extend() call above already exposes sap.ui.core.Core.
 	 * This is needed for backward compatibility reason, in case some other code tries to enhance
-	 * the core prototype. Once global names are switched off, such extension scnearios are
+	 * the core prototype. Once global names are switched off, such extension scenarios are
 	 * no longer supported.
 	 */
 	return new Core().getInterface();

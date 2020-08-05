@@ -40,6 +40,10 @@
  * May cause truncation of decimals and overruns. Supported by all numeric types.</td></tr>
  * <tr><td><code>float</code></td><td>The value is converted to a <code>number</code>. Supported by
  * all numeric types.</td></tr>
+ * <tr><td><code>object</code></td><td>The value is converted to a <code>Date</code> so that it can
+ * be displayed in a date or time picker. Supported by {@link sap.ui.model.odata.type.Date} and
+ * {@link sap.ui.model.odata.type.DateTimeOffset} since 1.69.0.
+ * </td></tr>
  * <tr><td><code>any</code></td><td>A technical format. The value is simply passed through. Only
  * supported by <code>format</code>, not by <code>parse</code>. Supported by all types.</td></tr>
  * </table>
@@ -62,13 +66,23 @@
  * type. However it does not ensure that the user really entered something if the field was empty
  * before.
  *
+ * <b><code>Date</code> vs. <code>DateTime</code></b>:
+ *
+ * The type {@link sap.ui.model.odata.type.Date} is only valid for an OData V4 service. If you use
+ * the type for an OData V2 service, displaying is possible but you get an error message from server
+ * if you try to save changes.
+ *
+ * For an OData V2 service use {@link sap.ui.model.odata.type.DateTime} with the constraint
+ * <code>displayFormat: "Date"</code> to display only a date.
+ *
  * @namespace
  * @name sap.ui.model.odata.type
  * @public
  */
 
-sap.ui.define(['sap/ui/model/SimpleType'],
-	function(SimpleType) {
+sap.ui.define([
+	"sap/ui/model/SimpleType"
+], function (SimpleType) {
 	"use strict";
 
 	/**
@@ -126,7 +140,7 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 * @returns {object} this
 	 * @public
 	 */
-	ODataType.prototype.getInterface = function() {
+	ODataType.prototype.getInterface = function () {
 		return this;
 	};
 
@@ -139,7 +153,7 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 *   constraints, see {@link #constructor}.
 	 * @private
 	 */
-	ODataType.prototype.setConstraints = function(oConstraints) {
+	ODataType.prototype.setConstraints = function (oConstraints) {
 		// do nothing!
 	};
 
@@ -152,7 +166,7 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 *   format options, see {@link #constructor}.
 	 * @private
 	 */
-	ODataType.prototype.setFormatOptions = function(oFormatOptions) {
+	ODataType.prototype.setFormatOptions = function (oFormatOptions) {
 		// do nothing!
 	};
 

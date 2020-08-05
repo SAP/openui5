@@ -1,11 +1,19 @@
 /* global  QUnit */
-sap.ui.define(['sap/ui/model/Filter', 'sap/ui/model/FilterOperator'],
-	function(Filter, FilterOperator) {
+sap.ui.define([
+	'sap/ui/model/ClientModel',
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator'
+],
+	function(
+		ClientModel,
+		Filter,
+		FilterOperator
+) {
 	"use strict";
 
-	QUnit.module("Unsupported Filter Operators", {
+	QUnit.module("sap.ui.model.ClientModel: Unsupported Filter Operators", {
 		beforeEach: function() {
-			this.oModel = new sap.ui.model.ClientModel();
+			this.oModel = new ClientModel();
 		},
 
 		getErrorWithMessage: function(sFilter) {
@@ -325,11 +333,11 @@ sap.ui.define(['sap/ui/model/Filter', 'sap/ui/model/FilterOperator'],
 		);
 	});
 
-	QUnit.module("Create own model which supports lambda operators", {
+	QUnit.module("sap.ui.model.ClientModel: Create own model which supports lambda operators", {
 		beforeEach: function() {
-			var SomeOwnModel = sap.ui.model.ClientModel.extend("sap.ui.model.SomeOwnModel", {
+			var SomeOwnModel = ClientModel.extend("sap.ui.model.SomeOwnModel", {
 				constructor : function(oData) {
-					sap.ui.model.ClientModel.apply(this, arguments);
+					ClientModel.apply(this, arguments);
 					// Only the "All" operator is not supported. The "Any" operator is supported.
 					this.mUnsupportedFilterOperators = {"All": true};
 				}

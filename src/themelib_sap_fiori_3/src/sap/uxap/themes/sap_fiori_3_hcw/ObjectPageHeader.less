@@ -1,0 +1,123 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageHeader  */
+/* Quartz High Contrast White theme           */
+/* ========================================== */
+
+.sapUxAPObjectPageHeader {
+	.sapMBar {
+		background-color: @sapUiObjectHeaderBackground;
+		text-shadow: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+
+	.sapUxAPObjectPageHeaderChangesBtn .sapMBtnTransparent:not(.sapMBtnActive) > .sapMBtnIcon,
+	.sapUxAPObjectPageHeaderLockBtn .sapMBtnTransparent:not(.sapMBtnActive) > .sapMBtnIcon {
+		color:  @sapUiContentMarkerIconColor;
+	}
+}
+
+.sapUxAPObjectPageHeaderIdentifierTitle {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: @sapMFontHeader3Size;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiGroupTitleTextColor;
+}
+
+.sapUxAPObjectPageHeaderIdentifierDescription {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	color: @sapUiContentLabelColor;
+	vertical-align: baseline;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifier,
+.sapUxAPObjectPageHeaderIdentifier {
+	.sapUxAPObjectChildPage {
+		margin-top: -0.5rem;
+	}
+
+	.sapUxAPObjectPageHeaderIdentifierActions {
+		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
+			position: relative;
+			right: 0;
+		}
+	}
+}
+
+.sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderIdentifierActions {
+	padding-top: 0;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderIdentifierActions {
+	padding-top: 0.25rem;
+}
+
+.sapUxAPObjectPageHeaderIdentifierContainer .sapMBreadcrumbs {
+	line-height:  1.25rem;
+}
+
+.sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderIdentifierContainer  {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
+	padding: 0.5rem 3rem;
+}
+
+html .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiContainer-Medium .sapUxAPObjectPageHeaderIdentifier {
+	padding: 0.5rem 2rem;
+}
+
+html .sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageHeaderIdentifier,
+html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderIdentifier {
+	padding: 0.5rem 1rem;
+}
+
+html .sapUxAPObjectPageLayout-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn,
+html .sapUxAPObjectPageLayout-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn,
+html .sapUiContainer-Narrow .sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn,
+html .sapUiContainer-Narrow .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn {
+	margin-top: -0.5rem;
+}
+
+.sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn,
+.sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn {
+	margin-top: -0.25rem;
+}
+
+.sapUxAPObjectPageHeaderObjectImageContainer .sapUiIcon {
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderSnappedTitleOnMobile > .sapFDynamicPageTitle {
+	box-shadow: @sapUiShadowHeader;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnIconFirst.sapMBtnText {
+	padding: 0;
+
+	&> .sapMBtnCustomIcon.sapMBtnIcon.sapMBtnIconLeft.sapUiIcon.sapUiIconMirrorInRTL {
+		padding: 0 0.4375rem;
+	}
+}
+
+/* Phone Size */
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 0.875rem 0 1rem;
+	}
+
+/* Tablet Size */
+// Needed because on some high-end phones in landscape mode,
+// the width of the viewport is bigger than 600 (Tablet breakpoint).
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 0.375rem 0 2rem;
+	}
+
+/*** styles for responsive object header ***/
+.sapMOHRTitle h1 {
+	font-size: @sapMFontHeader3Size;
+}

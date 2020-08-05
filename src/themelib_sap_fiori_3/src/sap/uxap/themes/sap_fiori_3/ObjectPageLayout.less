@@ -1,0 +1,94 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageLayout  */
+/* Fiori 3 theme                              */
+/* ========================================== */
+
+/* background color for the sections of the page below the header: */
+.sapUxAPObjectPageContainer, /* (1) the sections container */
+.sapUxAPObjectPageContainer + div, /* (2) the spacer */
+.sapUxAPObjectPageHeaderDetailsHidden /* (3) the placeholder for the headerContent is also part of the page content bellow the header */ {
+  background-color: @sapUiGlobalBackgroundColor;
+}
+
+.sapUxAPObjectPageNavigation {
+	background: @sapUiObjectHeaderBackground;
+
+	&.sapUxAPObjectPageNavigationTransparent {
+		background: transparent;
+	}
+
+	&.sapUxAPObjectPageNavigationTranslucent {
+		background: lighten(@sapUiObjectHeaderBackground, 10);
+	}
+}
+
+.sapUxAPObjectPageHeaderDetails {
+	.sapMObjectNumberEmph.sapMObjectNumber {
+		> .sapMObjectNumberText {
+			font-family: @sapUiFontHeaderFamily;
+			font-size: 1.375rem;
+			font-weight: @sapUiFontHeaderWeight;
+		}
+		> .sapMObjectNumberUnit {
+			font-family: @sapUiFontFamily;
+			font-size: @sapMFontSmallSize;
+		}
+	}
+
+	.sapMOHTitle .sapMText {
+		color: @sapUiContentLabelColor;
+	}
+	.sapMLabel {
+		color: @sapUiContentLabelColor;
+	}
+}
+.sapUiSizeCompact .sapUxAPObjectPageNavigation,
+.sapUxAPObjectPageNavigation {
+	.sapUxAPObjectChildPage {
+		height: @sapElement_LineHeight;
+	}
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 2.9375rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 1.9375rem;
+}
+
+/* ======================================== */
+/* Title and Toggle Header Visual Indicator */
+/* ======================================== */
+.sapUxAPObjectPageLayout {
+  &.sapUxAPObjectPageLayoutTitleClickEnabled {
+
+    &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
+      .title-hover(@sapUiObjectHeaderBackground);
+	}
+
+	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitleTranslucent {
+		.title-hover(lighten(@sapUiObjectHeaderBackground, 10));
+	}
+
+	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitleTransparent {
+		.title-hover(transparent);
+	}
+  }
+}
+
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutNoAnchorBar) > .sapUxAPObjectPageHeaderStickied > .sapFDynamicPageTitle {
+		box-shadow: none;
+}
+
+// footer
+.sapUxAPObjectPageLayout .sapUxAPObjectPageFooter .sapUxAPObjectPageFloatingFooter {
+	background: @sapUiPageFooterBackground;
+	color: @sapUiPageFooterTextColor;
+	box-shadow: @sapUiShadowLevel1;
+	border: none;
+}
+
+.title-hover(@backgroundColor) {
+	background-color: darken(@backgroundColor, 3);
+}

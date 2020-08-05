@@ -1,0 +1,15 @@
+{
+  "name": "ToolPageApp",
+  "private": true,
+  "version": "1.0.0",
+  "author": "SAP SE",
+  "description": "UI5 Demo App - Toolpage App",
+  "dependencies": {
+    "@openui5/sap.m": "^1",
+    "@openui5/sap.tnt": "^1",
+    "@openui5/sap.uxap": "^1",
+    "@openui5/sap.ui.core": "^1",
+    "@openui5/sap.ui.layout": "^1",
+    "@openui5/themelib_sap_fiori_3": "^1"
+  }
+}

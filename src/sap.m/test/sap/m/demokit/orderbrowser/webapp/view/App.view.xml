@@ -1,9 +1,18 @@
 <mvc:View
 	controllerName="sap.ui.demo.orderbrowser.controller.App"
-	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true"
-	busy="{appView>/busy}"
-	busyIndicatorDelay="{appView>/delay}"
-	xmlns="sap.m">
-	<SplitApp id="idAppControl" />
+	height="100%"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc">
+	<App
+		id="app"
+		busy="{appView>/busy}"
+		busyIndicatorDelay="{appView>/delay}">
+		<f:FlexibleColumnLayout
+			id="layout"
+			layout="{appView>/layout}"
+			backgroundDesign="Translucent">
+		</f:FlexibleColumnLayout>
+	</App>
 </mvc:View>

@@ -43,83 +43,125 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 			 * Defines the icon of the {@link sap.ui.core.IconPool sap.ui.core.IconPool} or an image which should be displayed on the item.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''}
+		},
+		associations : {
+
+			/**
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		}
 	}});
 
-	IconPool.getIconInfo("", ""); //Ensure Icon Font is loaded
+	IconPool.insertFontFaceStyle(); //Ensure Icon Font is loaded
 
 	MenuItem.prototype.render = function(oRenderManager, oItem, oMenu, oInfo){
-		var rm = oRenderManager;
-		var oSubMenu = oItem.getSubmenu();
-		rm.write("<li ");
+		var rm = oRenderManager,
+			oSubMenu = oItem.getSubmenu(),
+			bIsEnabled = oItem.getEnabled();
 
-		var sClass = "sapUiMnuItm";
+		rm.openStart("li", oItem);
+
+		if (oItem.getVisible() && bIsEnabled) {
+			rm.attr("tabindex", "0");
+		}
+
+		rm.class("sapUiMnuItm");
 		if (oInfo.iItemNo == 1) {
-			sClass += " sapUiMnuItmFirst";
+			rm.class("sapUiMnuItmFirst");
 		} else if (oInfo.iItemNo == oInfo.iTotalItems) {
-			sClass += " sapUiMnuItmLast";
+			rm.class("sapUiMnuItmLast");
 		}
 		if (!oMenu.checkEnabled(oItem)) {
-			sClass += " sapUiMnuItmDsbl";
+			rm.class("sapUiMnuItmDsbl");
 		}
 		if (oItem.getStartsSection()) {
-			sClass += " sapUiMnuItmSepBefore";
+			rm.class("sapUiMnuItmSepBefore");
 		}
 
-		rm.writeAttribute("class", sClass);
-		if (oItem.getTooltip_AsString()) {
-			rm.writeAttributeEscaped("title", oItem.getTooltip_AsString());
+		if (!bIsEnabled) {
+			rm.attr("disabled", "disabled");
 		}
-		rm.writeElementData(oItem);
+
+		if (oItem.getTooltip_AsString()) {
+			rm.attr("title", oItem.getTooltip_AsString());
+		}
 
 		// ARIA
 		if (oInfo.bAccessible) {
-			rm.writeAccessibilityState(oItem, {
+			rm.accessibilityState(oItem, {
 				role: "menuitem",
-				disabled: !oMenu.checkEnabled(oItem),
+				disabled: null, // Prevent aria-disabled as a disabled attribute is enough
 				posinset: oInfo.iItemNo,
 				setsize: oInfo.iTotalItems,
 				labelledby: {value: /*oMenu.getId() + "-label " + */this.getId() + "-txt " + this.getId() + "-scuttxt", append: true}
 			});
 			if (oSubMenu) {
-				rm.writeAttribute("aria-haspopup", true);
-				rm.writeAttribute("aria-owns", oSubMenu.getId());
+				rm.attr("aria-haspopup", true);
+				rm.attr("aria-owns", oSubMenu.getId());
 			}
 		}
 
 		// Left border
-		rm.write("><div class=\"sapUiMnuItmL\"></div>");
+		rm.openEnd();
+		rm.openStart("div");
+		rm.class("sapUiMnuItmL");
+		rm.openEnd();
+		rm.close("div");
 
-		// icon/check column
-		rm.write("<div class=\"sapUiMnuItmIco\">");
 		if (oItem.getIcon()) {
-			rm.writeIcon(oItem.getIcon(), null, {title: null});
+			// icon/check column
+			rm.openStart("div");
+			rm.class("sapUiMnuItmIco");
+			rm.openEnd();
+			rm.icon(oItem.getIcon(), null, {title: null});
+			rm.close("div");
 		}
-		rm.write("</div>");
 
 		// Text column
-		rm.write("<div id=\"" + this.getId() + "-txt\" class=\"sapUiMnuItmTxt\">");
-		rm.writeEscaped(oItem.getText());
-		rm.write("</div>");
+		rm.openStart("div", this.getId() + "-txt");
+		rm.class("sapUiMnuItmTxt");
+		rm.openEnd();
+		rm.text(oItem.getText());
+		rm.close("div");
 
 		// Shortcut column
-		rm.write("<div id=\"" + this.getId() + "-scuttxt\" class=\"sapUiMnuItmSCut\"></div>");
+		rm.openStart("div", this.getId() + "-scuttxt");
+		rm.class("sapUiMnuItmSCut");
+		rm.openEnd();
+		rm.close("div");
 
 		// Submenu column
-		rm.write("<div class=\"sapUiMnuItmSbMnu\">");
+		rm.openStart("div");
+		rm.class("sapUiMnuItmSbMnu");
+		rm.openEnd();
 		if (oSubMenu) {
-			rm.write("<div class=\"sapUiIconMirrorInRTL\"></div>");
+			rm.openStart("div");
+			rm.class("sapUiIconMirrorInRTL");
+			rm.openEnd();
+			rm.close("div");
 		}
-		rm.write("</div>");
+		rm.close("div");
 
 		// Right border
-		rm.write("<div class=\"sapUiMnuItmR\"></div>");
+		rm.openStart("div");
+		rm.class("sapUiMnuItmR");
+		rm.openEnd();
+		rm.close("div");
 
-		rm.write("</li>");
+		rm.close("li");
 	};
 
 	MenuItem.prototype.hover = function(bHovered, oMenu){
 		this.$().toggleClass("sapUiMnuItmHov", bHovered);
+	};
+
+	MenuItem.prototype.focus = function(oMenu){
+		if (this.getEnabled() && this.getVisible()) {
+			this.$().trigger("focus");
+		} else {
+			oMenu.focus();
+		}
 	};
 
 	return MenuItem;

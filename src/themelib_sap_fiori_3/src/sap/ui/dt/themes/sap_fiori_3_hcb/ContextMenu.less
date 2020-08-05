@@ -1,0 +1,26 @@
+/******************************************************************
+	Style of the DT Contextmenu - sap_fiori_3_hcb Theme
+*******************************************************************/
+@_sap_ui_dt_ContextMenu_BorderColor: @sapUiWhite; //#ffffff
+
+.sapUiDtContextMenu {
+
+	&.sapMPopoverArr, .sapMPopoverArr {
+		&:after {
+			box-shadow: 0 0 0 0.0625rem @_sap_ui_dt_ContextMenu_BorderColor; //1px
+			border: none;
+		}
+	}
+	.sapMBtnIcon {
+		margin-left: 0.4375rem; //7px
+		margin-right: 0.4375rem; //7px
+		padding-left: 0;
+	}
+}
+
+html .sapUiDtContextMenu .sapMBtn:focus > .sapMFocusable,
+html .sapUiDtContextMenu.sapMBtn:focus > .sapMFocusable {
+	border-color: transparent;
+	outline: 0.125rem dotted @_sap_ui_dt_ContextMenu_BorderColor; //2px
+	outline-offset: -0.125rem; //2px
+}

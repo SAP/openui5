@@ -1,0 +1,637 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "10eaf123c7ed68f1d2a6f69aca601d297f2c3cb9",
+        "type": "FIX",
+        "text": "P13nFilterPanel : removes empty operations when maxLength==1",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970047060"
+          }
+        ]
+      },
+      {
+        "id": "14a15e8afc0bb481e6c7118cccf3663f1674c069",
+        "type": "FIX",
+        "text": "m.TimePickerSliders: Reset typing when no chance to match value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970093104"
+          }
+        ]
+      },
+      {
+        "id": "f96281c8ac9c87d32b9494de72675f4ae974022a",
+        "type": "FIX",
+        "text": "sap.m.Button: Returns to active on enter with pressed left button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970026521"
+          }
+        ]
+      },
+      {
+        "id": "59dd449a6106608fc77daf46a381475d4eba8ff7",
+        "type": "FIX",
+        "text": "sap.m.IconTabHeader: sapUiResponsiveContentPadding corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970131364"
+          }
+        ]
+      },
+      {
+        "id": "8563cf8d857fc06ce7e964bdfd500eb4669105c2",
+        "type": "FIX",
+        "text": "sap.m.LightBox: Keep the focus inside the lightbox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970098612"
+          }
+        ]
+      },
+      {
+        "id": "e8c4d71a04a9720dd810688ae0b1f0a3cdcba5ad",
+        "type": "FIX",
+        "text": "sap.m.MultiInput, sap.m.Slider: Busy form integration fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870534962"
+          }
+        ]
+      },
+      {
+        "id": "2b1f1e67071f476c30810efdba70191c8e5ceea5",
+        "type": "FIX",
+        "text": "sap.m.ProgressIndicator: Invalid percentValue handling corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970134215"
+          }
+        ]
+      },
+      {
+        "id": "37ec85220d11939d3a114030e142ea9b891f2480",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Works in an oveflow toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970086218"
+          }
+        ]
+      },
+      {
+        "id": "ef49f4e422f929c22d12df46fbc310de890167e6",
+        "type": "FIX",
+        "text": "sap.m.Select: First item in list can now be selected on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970141576"
+          }
+        ]
+      },
+      {
+        "id": "68676f2b7b022487349593a2461a220c2437738a",
+        "type": "FIX",
+        "text": "sap.m.Switch: Allow to set state without animation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970060868"
+          }
+        ]
+      },
+      {
+        "id": "6740f83ba423a6e55acd706b6adb64947506ffe2",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: Deleting a tile keeps the focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970112601"
+          }
+        ]
+      },
+      {
+        "id": "9898ab423c0e5ab19bb1a109471d94cda4d031fb",
+        "type": "FIX",
+        "text": "sap.m.TimePickerSlider: Apply animation snap when more are queued",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2374"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970039414"
+          }
+        ]
+      },
+      {
+        "id": "19ce2d9049324a13f83de7653a7c8926f21a4185",
+        "type": "FIX",
+        "text": "sap.m.TimePickerSliders: apply animation snap when stopped",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970093104"
+          }
+        ]
+      },
+      {
+        "id": "558b73bee756a268d399d7e2a36d797550309401",
+        "type": "FIX",
+        "text": "sap.m.WizardStep: Position is read out now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880700978"
+          }
+        ]
+      },
+      {
+        "id": "549f08ff1df8a4b10ccfb29d72b1b12e283af0d0",
+        "type": "FEATURE",
+        "text": "sap.m.ComboBox: Grouping of items enabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970083625"
+          }
+        ]
+      },
+      {
+        "id": "95cfd821b288a046df126fdaf20616df27f8f005",
+        "type": "FIX",
+        "text": "UploadCollection - jQuery selectors do not work with Fiori separators \"::\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970106651"
+          }
+        ]
+      },
+      {
+        "id": "3bf0af9829546f06b24e25666549fcd57009359e",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: Focus outline in SimpleForm is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970110538"
+          }
+        ]
+      },
+      {
+        "id": "11d4b6b7204608c02ce9a92f5cba42f0b011373a",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Sample adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970164971"
+          }
+        ]
+      },
+      {
+        "id": "ab183c2e328dd6b06ff9aa3920c99433fafb2d7f",
+        "type": "FIX",
+        "text": "sap.m.GenericTag: Fixed overflowing error icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970103509"
+          }
+        ]
+      },
+      {
+        "id": "dafabfd3c0c2a0e0a901bf4ec11b1a3d8d59d687",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: align attribute to the baseline",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2368"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970039317"
+          }
+        ]
+      },
+      {
+        "id": "a227a24e66f8ab31475644bce6498c6c06fd21e9",
+        "type": "FIX",
+        "text": "sap.m.Select: Error state screen reader behavior improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970160878"
+          }
+        ]
+      },
+      {
+        "id": "1f13f00b7f73b37a7202b7c997bac53606675cb9",
+        "type": "FIX",
+        "text": "sap.m.Select: Keyboard SPACE action is now triggered on keyup",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970108517"
+          }
+        ]
+      },
+      {
+        "id": "f1c8b1e161a4f710d88de82dcadd6d412cb5dfcd",
+        "type": "FIX",
+        "text": "sap.m.SelectList: Fixed browser navigation with alt + arrow keys",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1414"
+          }
+        ]
+      },
+      {
+        "id": "5da974a43618ae117dcdeddafff4e3ca80a252f3",
+        "type": "FIX",
+        "text": "sap.m.StepInput: correct check for buttons if no min/max is set",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2358"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970021720"
+          }
+        ]
+      },
+      {
+        "id": "fd8475d1dbdd323d4a58a07ba6fd654c4001f416",
+        "type": "FIX",
+        "text": "sap.m.SuggestionsPopover: Cursor now stays on its correct place",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970127503"
+          }
+        ]
+      },
+      {
+        "id": "b8dcbf89044a4212d4f67347076b96fad7535054",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Appointment all-day is reworked",
+        "references": []
+      },
+      {
+        "id": "5a91ebc76da14b9f2ae2ec782e6abfe44081cd7a",
+        "type": "FIX",
+        "text": "Enums: fix visibility of enum values where inconsistent",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1984"
+          }
+        ]
+      },
+      {
+        "id": "e5b2d31a2acacbf84913b17a0d844bd55c776180",
+        "type": "FIX",
+        "text": "TimePickerSlider: Animation does not skip on arrow navigation",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2432"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970093104"
+          }
+        ]
+      },
+      {
+        "id": "349af5e9ea2c2f5319ec631a3009015040aa43bb",
+        "type": "FIX",
+        "text": "sap.m.ColorPalette: doesn't scroll on usage of the space key",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980013526"
+          }
+        ]
+      },
+      {
+        "id": "894c2c82464f9181c0f53add7fe46717c2831ffe",
+        "type": "FIX",
+        "text": "sap.m.MultiIput: Sample adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970165031"
+          }
+        ]
+      },
+      {
+        "id": "f45b9088fe930b065c8b105c64fd658d9ee96919",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: wraps in Table correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005041000000126732019"
+          }
+        ]
+      },
+      {
+        "id": "a189c09af84be9925f27ee4b2c03366f82032dc0",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: example fixed for mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000981542019"
+          }
+        ]
+      },
+      {
+        "id": "ab7d1df5426b3ff6d4f3d3c5c6c4207c26db7179",
+        "type": "FIX",
+        "text": "sap.m.ObjectIdentifier: wraps on Edge correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970120816"
+          }
+        ]
+      },
+      {
+        "id": "47b8b6e902b4afae681bb172eebdc8be4f27da0a",
+        "type": "FIX",
+        "text": "sap.m.Popover: Popover does not close on navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880682612"
+          }
+        ]
+      },
+      {
+        "id": "55934afafb7633cafd2012e65db32e54fc478454",
+        "type": "FIX",
+        "text": "sap.m.Select: Arrow font size aligned with visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980002916"
+          }
+        ]
+      },
+      {
+        "id": "72da42f78e9ec3dd915aeb2a9429f56ef08bd323",
+        "type": "FIX",
+        "text": "sap.m.Select: Prevented scrolling on SPACE key pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970178106"
+          }
+        ]
+      },
+      {
+        "id": "f637a343af35784dee2c2e1facfdf5a804ba7488",
+        "type": "FIX",
+        "text": "sap.m.SplitButton: Space fires press onkeyup and prevents scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980014071"
+          }
+        ]
+      },
+      {
+        "id": "56fc44c42fd31f68f254ff129f888fe7fbfa71e5",
+        "type": "FEATURE",
+        "text": "sap.m.DatePicker: provides information on the validity of the last date entry",
+        "references": []
+      },
+      {
+        "id": "f085cc2559cde8bd5fa5771883d8283baff1f2b9",
+        "type": "FEATURE",
+        "text": "sap.m.Input, sap.m.MultiInput: Grouping in suggestions introduced",
+        "references": []
+      },
+      {
+        "id": "445bbeb27a4b8d74482852dd4b55e5209d67cbc4",
+        "type": "FIX",
+        "text": "ResponsiveTable: Improve ARIA roles",
+        "references": []
+      },
+      {
+        "id": "d2d20bec8ece470885e4a398680b4cb2314d6f42",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: Propose and Commit actions enabled on SPACE key",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980029373"
+          }
+        ]
+      },
+      {
+        "id": "779537d72fc25c87f38d0506264ce2014281820f",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Behaviour with grouping in IE and Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980015037"
+          }
+        ]
+      },
+      {
+        "id": "8185e60e74bac40700cfbd09857e4a26271f73fd",
+        "type": "FIX",
+        "text": "sap.m.LightBox: Title and subtile of LightBox are now read out",
+        "references": []
+      },
+      {
+        "id": "a74b647c5a9ea6b2f2a5b29c1dbab55056c13d28",
+        "type": "FIX",
+        "text": "sap.m.MessagePage: Curly braces in binded properties are shown now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980023781"
+          }
+        ]
+      },
+      {
+        "id": "2d6dba4db930f52d38ca5c0dd085f53f21ff08e7",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: prevent scrolling on space",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980044176"
+          }
+        ]
+      },
+      {
+        "id": "4787552d0b22cb755581a39d89489854caffe23e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: stop showing appointments on OneMonth view if no date is selected on small screen",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970068322"
+          }
+        ]
+      },
+      {
+        "id": "9fe3c74d8fdb99f8078d6833a8530e9111d054ed",
+        "type": "FIX",
+        "text": "sap.m.Select: Correct update on child item 'key' changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870551736"
+          }
+        ]
+      },
+      {
+        "id": "5fe868fa5adb5ee2f38c0a0c595831bc4eef1b43",
+        "type": "FIX",
+        "text": "sap.m.ToggleButton: fire press event on space keyup",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980024753"
+          }
+        ]
+      },
+      {
+        "id": "a4f9b0181a06a5a9b1089a12c073ff7275a4033e",
+        "type": "FEATURE",
+        "text": "sap.m.SinglePlanningCalendar: Enable drag and drop of appointments",
+        "references": []
+      },
+      {
+        "id": "1be226e71dacceb8b5fbd1d25ea5aafaf21f346d",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: Clicking on assigned label now sets the focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980036097"
+          }
+        ]
+      },
+      {
+        "id": "1ffd45b373e36f0acfe481f1ef7447a069077a8d",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Grouping after SuggestionsPopover adoption",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980048235"
+          }
+        ]
+      },
+      {
+        "id": "8323aa0757e8bb2e6ab9a2e902e67b434207c8c3",
+        "type": "FIX",
+        "text": "sap.m.GenericTag: Fixed vertical alignment in test pages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980042820"
+          }
+        ]
+      },
+      {
+        "id": "90ffbeb037c59d27bc0711a2bf34f75982cc4611",
+        "type": "FIX",
+        "text": "sap.m.MessageView: Items with long activeTitle are now navigation type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980047984"
+          }
+        ]
+      },
+      {
+        "id": "2862b1d11ee81831f17d4c13385f43f7f1eee355",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Keyboard navigation with group headers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980044725"
+          }
+        ]
+      },
+      {
+        "id": "3885374677bcaa2d3b2dc482ee2390c42b9bb183",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Close and Collaps button are read out correctly now",
+        "references": []
+      },
+      {
+        "id": "d05437d1d819935f421c370ac33291cea4fdc46d",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: all active elements react on key up when SPACE is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980040302"
+          }
+        ]
+      },
+      {
+        "id": "027aa73e2be3a0367a99140e21ebb22ca8ad44cc",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: prevent scrolling on 'SPACE'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980009647"
+          }
+        ]
+      },
+      {
+        "id": "7de7e43f417e9d9bf8048d26717ae246c4090f11",
+        "type": "FIX",
+        "text": "sap.m.Switch: React on key up when SPACE is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980055139"
+          }
+        ]
+      },
+      {
+        "id": "ad514af5f862a9fba364417cd8b960d0683d85c6",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: Support rule enhancement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980053013"
+          }
+        ]
+      }
+    ]
+  }
+}

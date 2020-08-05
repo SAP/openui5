@@ -1,0 +1,60 @@
+{
+	"sap.app": {
+		"id": "AppUnderTestTable",
+		"type": "application",
+		"version": "1.0",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"default": {
+				"uri": "/tenant(MDCTableP13nOpaTestApplication)/music/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"preprocessors": {
+				"xml": {
+					"models": {
+						"metaList": ""
+					},
+					"bindingContexts": {}
+				}
+			},
+			"type": "XML",
+			"viewName": "view.Main",
+			"id": "IDViewTableOpaTest",
+			"height": "100%",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.ui.mdc": {}
+			},
+			"components": {}
+		},
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"operationMode": "Server",
+					"synchronizationMode": "None",
+					"updateGroupId": "booksGroup"
+				},
+				"type": "sap.ui.model.odata.v4.ODataModel"
+			}
+		}
+	}
+}

@@ -1,0 +1,21 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:forms="sap.ui.layout.form"
+		  xmlns="sap.m"
+		  xmlns:core="sap.ui.core">
+
+	<forms:SimpleForm editable="true" layout="ColumnLayout">
+
+		<core:Title text="General"/>
+
+		<Label text="Job classification"/>
+		<Input value="Senior Ui Developer (UIDEV-SR)"/>
+
+		<Label text="Pay Grade"/>
+		<Input value="Salary Grade 18 (GR-14)"/>
+
+		<Label text="Job title"/>
+		<Input value="Developer"/>
+
+	</forms:SimpleForm>
+
+</mvc:View>

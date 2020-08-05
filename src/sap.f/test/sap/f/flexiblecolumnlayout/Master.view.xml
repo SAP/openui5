@@ -1,4 +1,4 @@
-<View xmlns="sap.m" displayBlock="true" controllerName="flexiblecolumnlayout.Master" height="100%">
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="flexiblecolumnlayout.Master" height="100%">
 	<Page id="masterPage" title="Master page">
 
 		<Table id="idProductsTable"
@@ -274,6 +274,6 @@
 			</items>
 		</Table>
 	</Page>
-</View>
+</mvc:View>
 
 

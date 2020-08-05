@@ -147,6 +147,11 @@
 		sap.m.MessageToast.show("Personalization Dialog");
 	}
 
+    function applyPastedData(oEvent) {
+        var aData = oEvent.getParameter("data");
+        sap.m.MessageToast.show("Pasted Data: " + aData);
+    }
+
 	var oSalaryFooter = new sap.m.Label({
 		text : "9.470.095 EUR",
 		tooltip: "Sum"
@@ -197,7 +202,11 @@
 		pressed: true,
 		press : function() {
 			oTable.setGrowing(oGrowing.getPressed());
-			oTable.bindItems("/modelData", oTemplate);
+			oTable.bindItems({
+				path: "/modelData",
+				template: oTemplate,
+				key: "id"
+			});
 		}
 	});
 
@@ -246,7 +255,7 @@
 		}
 	});
 
-	var oTableActions = new sap.m.Toolbar({
+	var oTableActions = new sap.m.OverflowToolbar({
 		content : [
 			oModes, oTypes, new sap.m.ToolbarSpacer(), oNoData, new sap.m.ToolbarSpacer(), oGrowing, oGrouping, oMerging
 
@@ -255,8 +264,9 @@
 
 	var oTableInfo = new sap.m.Toolbar({
 		active : true,
+		ariaLabelledBy: "infoText",
 		content : [
-			new sap.m.Text({
+			new sap.m.Text("infoText", {
 				text : "The quick brown fox jumps over the lazy dog.",
 				wrapping : false
 			}),
@@ -269,7 +279,7 @@
 		]
 	});
 
-	var oTableHeader = new sap.m.Toolbar({
+	var oTableHeader = new sap.m.OverflowToolbar({
 		content : [
 			new sap.m.Title({
 				text : "Keyboard Handling Test Page"
@@ -318,11 +328,11 @@
 			header : new sap.m.Label({
 				text : "Image"
 			}),
-			minScreenWidth : "Phone",
+			minScreenWidth : "Phone"
 		}),
 		new sap.m.Column({
 			header : new sap.m.Label({
-				text : "Raiting"
+				text : "Rating"
 			}),
 			minScreenWidth : "Tablet",
 			popinDisplay : "WithoutHeader",
@@ -343,7 +353,7 @@
 			minScreenWidth : "Desktop",
 			popinDisplay : "Inline",
 			demandPopin : true
-		}),
+		})
 	];
 
 	var oTemplate = new sap.m.ColumnListItem({
@@ -353,6 +363,39 @@
 			setTimeout(function() {
 				sap.m.MessageToast.show("detail is pressed");
 			}, 10);
+		},
+		highlight: {
+			path: "money",
+			formatter: function(fSalary) {
+				if (fSalary < 50) {
+					return "Error";
+				}
+				if (fSalary < 1000) {
+					return "Warning";
+				}
+				if (fSalary <= 10000) {
+					return "Indication04";
+				}
+				if (fSalary > 10000 && fSalary < 50000) {
+					return "Success";
+				}
+				return "None";
+			}
+		},
+		highlightText: {
+			path: "money",
+			formatter: function(fSalary) {
+				if (fSalary < 5) {
+					return "Custom Highlight Message: Your salary is less than 5.";
+				}
+				if (fSalary >= 1000 && fSalary <= 10000) {
+					return "Custom Highlight Message: Your salary is between 1000 and 10000.";
+				}
+				if (fSalary > 10000 && fSalary < 50000) {
+					return "Custom Highlight Message: Your salary is between 10000 and 50000.";
+				}
+				return "";
+			}
 		},
 		cells : [
 			new sap.m.Text({
@@ -372,6 +415,7 @@
 			new sap.ui.core.Icon({
 				src : "sap-icon://{src}",
 				decorative: false,
+				tooltip : "{src}",
 				press: function() {}
 			}),
 			new sap.m.RatingIndicator({
@@ -383,8 +427,8 @@
 				displayFormat : "dd.MM.yyyy"
 			}),
 			new sap.m.Text({
-				text : "{money} EUR",
-			}),
+				text : "{money} EUR"
+			})
 		]
 	});
 
@@ -397,6 +441,7 @@
 	});
 
 	var oTable = new sap.m.Table({
+		ariaLabelledBy: [oTableHeader.getContent()[0]],
 		growing: true,
 		growingThreshold: 5,
 		growingScrollToLoad : true,
@@ -426,7 +471,8 @@
 		},
 		itemPress : function(e) {
 			sap.m.MessageToast.show("item is pressed");
-		}
+		},
+		paste: applyPastedData
 	});
 
 	oTable.setModel(oModel);

@@ -5,17 +5,17 @@
 
 			<EntityType Name="Employee">
 				<Key>
-					<PropertyRef Name="EmployeeID" />
+					<PropertyRef Name="EmployeeID"/>
 				</Key>
-				<Property Name="EmployeeID" Type="Edm.Int32" Nullable="false" p8:StoreGeneratedPattern="Identity" xmlns:p8="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-				<Property Name="LastName" Type="Edm.String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false" />
-				<Property Name="FirstName" Type="Edm.String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" />
-				<Property Name="Address" Type="Edm.String" Nullable="true" MaxLength="60" Unicode="true" FixedLength="false" />
-				<Property Name="City" Type="Edm.String" Nullable="true" MaxLength="15" Unicode="true" FixedLength="false" />
-				<Property Name="Region" Type="Edm.String" Nullable="true" MaxLength="15" Unicode="true" FixedLength="false" />
-				<Property Name="PostalCode" Type="Edm.String" Nullable="true" MaxLength="10" Unicode="true" FixedLength="false" />
-				<Property Name="Country" Type="Edm.String" Nullable="true" MaxLength="15" Unicode="true" FixedLength="false" />
-				<Property Name="HomePhone" Type="Edm.String" Nullable="true" MaxLength="24" Unicode="true" FixedLength="false" />
+				<Property Name="EmployeeID" Type="Edm.Int32" Nullable="false" p8:StoreGeneratedPattern="Identity" xmlns:p8="http://schemas.microsoft.com/ado/2009/02/edm/annotation"/>
+				<Property Name="LastName" Type="Edm.String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false"/>
+				<Property Name="FirstName" Type="Edm.String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false"/>
+				<Property Name="Address" Type="Edm.String" Nullable="true" MaxLength="60" Unicode="true" FixedLength="false"/>
+				<Property Name="City" Type="Edm.String" Nullable="true" MaxLength="15" Unicode="true" FixedLength="false"/>
+				<Property Name="Region" Type="Edm.String" Nullable="true" MaxLength="15" Unicode="true" FixedLength="false"/>
+				<Property Name="PostalCode" Type="Edm.String" Nullable="true" MaxLength="10" Unicode="true" FixedLength="false"/>
+				<Property Name="Country" Type="Edm.String" Nullable="true" MaxLength="15" Unicode="true" FixedLength="false"/>
+				<Property Name="HomePhone" Type="Edm.String" Nullable="true" MaxLength="24" Unicode="true" FixedLength="false"/>
 				<Property Name="ResumeID" Type="Edm.Int32" Nullable="true"/>
 				<NavigationProperty Name="Resume" Relationship="NavigationModel.FK_Employees_Resumes" FromRole="Employees" ToRole="Resumes"/>
 			</EntityType>
@@ -46,8 +46,8 @@
 
 			<EntityContainer Name="NavigationEntities" p7:LazyLoadingEnabled="true" m:IsDefaultEntityContainer="true" xmlns:p7="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
 
-				<EntitySet Name="Employees" EntityType="NavigationModel.Employee" />
-				<EntitySet Name="Resumes" EntityType="NavigationModel.Resume" />
+				<EntitySet Name="Employees" EntityType="NavigationModel.Employee"/>
+				<EntitySet Name="Resumes" EntityType="NavigationModel.Resume"/>
 
 				<AssociationSet Name="FK_Employees_Resumes" Association="NavigationModel.FK_Employees_Resumes">
 					<End EntitySet="Employees" Role="Employees"/>

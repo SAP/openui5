@@ -1,10 +1,11 @@
 <mvc:View
-	controllerName="sap.tnt.sample.InfoLabelInTable.V"
+	controllerName="sap.tnt.sample.InfoLabelInTable.C"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
-	xmlns="sap.m"
 	xmlns:tnt="sap.tnt">
-	<Table id="idProductsTable"
+	<Table
+		id="idProductsTable"
 		inset="false"
 		items="{
 			path: '/ProductCollection',
@@ -14,42 +15,29 @@
 		}">
 		<headerToolbar>
 			<Toolbar>
-				<content>
-					<Title text="Products" level="H2"/>
+					<Title text="Products" level="H2" />
 					<ToolbarSpacer />
-					<ComboBox id="idPopinLayout"
+					<ComboBox
+						id="idPopinLayout"
 						placeholder="Popin layout options"
-						change="onPopinLayoutChanged">
-						<items>
-							<core:Item  text="Block"
-								key="Block"/>
-							<core:Item  text="Grid Large"
-								key="GridLarge"/>
-							<core:Item  text="Grid Small"
-								key="GridSmall"/>
-						</items>
+						change=".onPopinLayoutChanged">
+						<core:Item text="Block" key="Block" />
+						<core:Item text="Grid Large" key="GridLarge" />
+						<core:Item text="Grid Small" key="GridSmall" />
 					</ComboBox>
-				</content>
 			</Toolbar>
 		</headerToolbar>
 		<columns>
-			<Column
-				width="12em">
+			<Column width="12em">
 				<Text text="Product" />
 			</Column>
-			<Column
-				minScreenWidth="Tablet"
-				demandPopin="true">
+			<Column minScreenWidth="Tablet" demandPopin="true">
 				<Text text="Supplier" />
 			</Column>
-			<Column
-				minScreenWidth="Desktop"
-				demandPopin="true">
+			<Column minScreenWidth="Desktop" demandPopin="true">
 				<Text text="Dimensions" />
 			</Column>
-			<Column
-				minScreenWidth="Desktop"
-				demandPopin="true">
+			<Column minScreenWidth="Desktop" demandPopin="true">
 				<Text text="Availability" />
 			</Column>
 			<Column>
@@ -59,13 +47,9 @@
 		<items>
 			<ColumnListItem>
 				<cells>
-					<ObjectIdentifier
-						title="{Name}"
-						text="{ProductId}"/>
-					<Text
-						text="{SupplierName}" />
-					<Text
-						text="{Width} x {Depth} x {Height} {DimUnit}" />
+					<ObjectIdentifier title="{Name}" text="{ProductId}" />
+					<Text text="{SupplierName}" />
+					<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
 					<tnt:InfoLabel
 						text="{Status}"
 						displayOnly="true"
@@ -74,14 +58,14 @@
 								{path: 'Status'}
 							],
 							formatter: 'sap.tnt.sample.InfoLabelInTable.Formatter.availableState'
-						}"/>
+						}" />
 					<ObjectNumber
-							number="{
-								parts:[{path:'Price'},{path:'CurrencyCode'}],
-								type: 'sap.ui.model.type.Currency',
-								formatOptions: {showMeasure: false}
-							}"
-							unit="{CurrencyCode}" />
+						number="{
+							parts:[{path:'Price'},{path:'CurrencyCode'}],
+							type: 'sap.ui.model.type.Currency',
+							formatOptions: {showMeasure: false}
+						}"
+						unit="{CurrencyCode}" />
 				</cells>
 			</ColumnListItem>
 		</items>

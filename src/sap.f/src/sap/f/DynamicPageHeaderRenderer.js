@@ -10,7 +10,9 @@ sap.ui.define([], function () {
 	 * oDynamicPage Header renderer.
 	 * @namespace
 	 */
-	var DynamicPageHeaderRenderer = {};
+	var DynamicPageHeaderRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -19,24 +21,29 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oDynamicPageHeader An object representation of the control that should be rendered
 	 */
 	DynamicPageHeaderRenderer.render = function (oRm, oDynamicPageHeader) {
-		var oDynamicPageHeaderState = oDynamicPageHeader._getState();
+		var oDynamicPageHeaderState = oDynamicPageHeader._getState(),
+			sSapFDynamicPageHeader = "sapFDynamicPageHeader",
+			sBackgroundDesign = oDynamicPageHeader.getBackgroundDesign();
 
 		// Dynamic Page Layout Header Root DOM Element.
-		oRm.write("<header");
-		oRm.writeControlData(oDynamicPageHeader);
-		oRm.writeAccessibilityState({
+		oRm.openStart("header", oDynamicPageHeader);
+		oRm.accessibilityState({
 			role: "region"
 		});
-		oRm.addClass("sapContrastPlus");
-		oRm.addClass("sapFDynamicPageHeader");
+		oRm.class("sapContrastPlus");
+		oRm.class(sSapFDynamicPageHeader);
 		if (oDynamicPageHeaderState.headerHasContent) {
-			oRm.addClass("sapFDynamicPageHeaderWithContent");
+			oRm.class("sapFDynamicPageHeaderWithContent");
 		}
 		if (oDynamicPageHeaderState.headerPinnable) {
-			oRm.addClass("sapFDynamicPageHeaderPinnable");
+			oRm.class("sapFDynamicPageHeaderPinnable");
 		}
-		oRm.writeClasses();
-		oRm.write(">");
+
+		if (sBackgroundDesign) {
+			oRm.class(sSapFDynamicPageHeader + sBackgroundDesign);
+		}
+
+		oRm.openEnd();
 
 		// Header Content
 		this._renderHeaderContent(oRm, oDynamicPageHeaderState);
@@ -44,31 +51,22 @@ sap.ui.define([], function () {
 		// Collapse button
 		oRm.renderControl(oDynamicPageHeaderState.collapseButton);
 
-		oRm.write("</header>");
+		// Pin button
+		if (oDynamicPageHeaderState.headerPinnable) {
+			oRm.renderControl(oDynamicPageHeaderState.pinButton);
+		}
+
+		oRm.close("header");
 	};
 
 	DynamicPageHeaderRenderer._renderHeaderContent = function (oRm, oDynamicPageHeaderState) {
 		if (oDynamicPageHeaderState.headerHasContent) {
-			oRm.write("<div");
-			oRm.addClass("sapFDynamicPageHeaderContent");
-			oRm.writeClasses();
-			oRm.write(">");
-			oDynamicPageHeaderState.content.forEach(oRm.renderControl);
-			oRm.write("</div>");
-
-			if (oDynamicPageHeaderState.headerPinnable) {
-				this._renderPinUnpinArea(oRm, oDynamicPageHeaderState);
-			}
+			oRm.openStart("div");
+			oRm.class("sapFDynamicPageHeaderContent");
+			oRm.openEnd();
+			oDynamicPageHeaderState.content.forEach(oRm.renderControl, oRm);
+			oRm.close("div");
 		}
-	};
-
-	DynamicPageHeaderRenderer._renderPinUnpinArea = function (oRm, oDynamicPageHeaderState) {
-		oRm.write("<div");
-		oRm.addClass("sapFDynamicPageHeaderPinButtonArea");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.renderControl(oDynamicPageHeaderState.pinButton);
-		oRm.write("</div>");
 	};
 
 	return DynamicPageHeaderRenderer;

@@ -3,6 +3,10 @@
 /* Base theme                                        */
 /* ================================================= */
 
+@_sap_ui_layout_ResponsiveSplitter_PaginatorHeight: 2.5rem;
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonWidth: 2.5rem;
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonHeight: 2.375rem;
+
 .sapUiResponsiveSplitter {
 	width: 100%;
 	height: 100%;
@@ -23,13 +27,14 @@
 		justify-content: center;
 		box-sizing: border-box;
 		outline: none;
-		height: 2.5rem;
+		height: @_sap_ui_layout_ResponsiveSplitter_PaginatorHeight;
 		background-color: @sapUiPageFooterBackground;
-		border: 1px solid @sapUiPageFooterBorderColor;
+		border-top: 0.0625rem solid @sapUiPageFooterBorderColor;
+		border-bottom: 0.0625rem solid transparent; // needed to properly align buttons vertically
 	}
 
 	& .sapUiResponsiveSplitterPage {
-		height: ~"calc(100% - 2.5rem)";
+		height: calc(100% ~"-" @_sap_ui_layout_ResponsiveSplitter_PaginatorHeight);
 	}
 
 	& .sapUiResponsiveSplitterPaginator.sapUiResponsiveSplitterWithNavButtons {
@@ -37,18 +42,24 @@
 	}
 }
 
+.sapUiResponsiveSplitterPaginatorButtons {
+	display: flex;
+	align-items: center;
+}
+
 .sapUiResponsiveSplitterPaginatorButton {
-	width: 2.5rem;
-	height: 2.375rem;
+	width: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonWidth;
+	height: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonHeight;
 	cursor: pointer;
 	background-color: transparent;
-	display: inline-block;
+	border-radius: 0.25rem;
+	position: relative;
 
-	&:after {
+	&::after {
 		content: "";
-		width: 0.5rem;
-		height: 0.5rem;
-		background-color: @sapUiContentIconColor;
+		width: 0.25rem;
+		height: 0.25rem;
+		background-color: @sapUiContentNonInteractiveIconColor;
 		margin: auto;
 		display: block;
 		margin-top: 16px;
@@ -59,17 +70,46 @@
 		outline: none;
 	}
 
-	&:focus:before {
+	&:focus::before {
 		content: "";
 		position: absolute;
-		width: 2.125rem;
-		height: 2.125rem;
-		margin: 1px 0 0 2px;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		border: 0.0625rem dotted @sapUiContentFocusColor;
+	}
+
+	&:hover {
+		background-color: @sapUiButtonLiteHoverBackground;
+
+		&::after {
+			background-color: @sapUiContentNonInteractiveIconColor;
+		}
+	}
+
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+
+		&::after {
+			background-color: @sapUiContentContrastIconColor;
+		}
 	}
 }
 
-.sapUiResponsiveSplitterPaginatorButton:first-child {
-	margin-left: 0;
+.sapUiResponsiveSplitterPaginatorSelectedButton {
+	&::after {
+		background-color: @sapUiContentIconColor;
+		width: 0.5rem;
+		height: 0.5rem;
+		margin-top: 0.875rem;
+	}
+
+	&:hover {
+		&::after {
+			background-color: @sapUiContentIconColor;
+		}
+	}
 }
 
 .sapUiResponsiveSplitterHiddenElement {
@@ -78,7 +118,7 @@
 
 .sapUiResponsiveSplitterPaginatorNavButton {
 	width: 2.5rem;
-    height: 2.375rem;
+	height: 100%;
 	font-family: 'SAP-icons';
 	cursor: pointer;
 
@@ -105,98 +145,4 @@
  .sapUiResponsiveSplitterHiddenPaginatorButton {
 	display: none !important;
 	background-color: @sapUiSelected;
-}
-
-html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
-html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
-html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
-html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
-	& .sapUiLoSplitterBarIcon {
-		width: 3rem;
-		height: 3rem;
-		z-index: 1;
-		margin-left: -22px;
-		top: 50%;
-		display: block;
-		position: relative;
-		text-align: center;
-		touch-action: none;
-	}
-
-	& .sapUiLoSplitterBarIcon:after {
-		content: "";
-		width: 1.25rem;
-		height: 1.25rem;
-		border-width: 0.125rem;
-		border-radius: 50%;
-		border-style: solid;
-		display: block;
-		position: relative;
-		left: 25%;
-		top: 25%;
-	}
-}
-
-.sapUiResponsiveSplitter .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sapUiResponsiveSplitter .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	&:hover {
-		cursor: row-resize;
-	}
-}
-
-.sapUiResponsiveSplitter .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-
-	&:hover {
-		cursor: col-resize;
-	}
-}
-
-html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterBar,
-html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterOverlayBar,
-html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterBar,
-html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterOverlayBar {
-	& .sapUiLoSplitterBarIcon {
-		position: absolute;
-		margin-top: -22px;
-		top: auto;
-	}
-
-	& .sapUiLoSplitterBarIcon:after {
-		top: 25%;
-		left: 25%;
-	}
-}
-
-html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterOverlayBar,
-html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterOverlayBar {
-	& .sapUiLoSplitterBarIcon {
-		left: 50%;
-		width: 3rem;
-		height: 3rem;
-		margin-left: -30px;
-	}
-}
-
-.sapUiResponsiveSplitter .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sapUiResponsiveSplitter .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	height: 0.25rem !important;
-}
-
-.sapUiResponsiveSplitter .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	width: 0.25rem !important;
-}
-
-html[data-sap-ui-browser^=ie].sap-desktop .sapUiResponsiveSplitter {
-	.sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
-		width: 2px;
-		z-index: 1;
-	}
-
-	.sapUiLoSplitterV > .sapUiLoSplitterBar:focus::after {
-		height: 2px;
-		top: -6px;
-		z-index: 1;
-	}
 }

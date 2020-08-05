@@ -2,12 +2,12 @@
 		xmlns="sap.m"
 		xmlns:core="sap.ui.core">
 	<Dialog
-			title="Change version"
+			title="{i18n>CHANGE_VERSION_DIALOG_TITLE}"
 			contentHeight="400px"
 			stretch="{appView>/bPhoneSize}">
 		<endButton>
 			<Button
-				text="Close"
+				text="{i18n>CHANGE_VERSION_DIALOG_CLOSE_BTN}"
 				press="onCloseVersionDialog">
 			</Button>
 		</endButton>
@@ -37,8 +37,11 @@
 					}]
 				}">
 			<StandardListItem
-					title="{version}"
+					title="{path: 'version'}"
 					type="Active">
+				<customData>
+					<core:CustomData key="path" value="{path: 'path'}" />
+				</customData>
 			</StandardListItem>
 		</List>
 	</Dialog>

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define("sap/ui/fl/support/apps/contentbrowser/utils/DataUtils", ["sap/m/GroupHeaderListItem"],
-	function(GroupHeaderListItem) {
+sap.ui.define(["sap/m/GroupHeaderListItem", "sap/ui/thirdparty/jquery"],
+	function(GroupHeaderListItem, jQuery) {
 		"use strict";
 
 		/**
@@ -21,7 +21,7 @@ sap.ui.define("sap/ui/fl/support/apps/contentbrowser/utils/DataUtils", ["sap/m/G
 				category: "NS",
 				name: "LREP_HOME_CONTENT",
 				ns: "UIF/"
-			},{
+			}, {
 				category: "NS",
 				name: "virtual~",
 				ns: "/"
@@ -44,7 +44,7 @@ sap.ui.define("sap/ui/fl/support/apps/contentbrowser/utils/DataUtils", ["sap/m/G
 				try {
 					oData = JSON.parse(oData);
 					return JSON.stringify(oData, null, '\t');
-				} catch (oError){
+				} catch (oError) {
 					var ErrorUtils = sap.ui.require("sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils");
 					ErrorUtils.displayError("Error", oError.name, oError.message);
 					return oData;
@@ -116,7 +116,7 @@ sap.ui.define("sap/ui/fl/support/apps/contentbrowser/utils/DataUtils", ["sap/m/G
 
 			/**
 			 * Title formatter: combines the items namespace, filename and type.
-			 * @param {map} mModelData
+			 * @param {object} mModelData
 			 * @param {string} mModelData.namespace
 			 * @param {string} mModelData.fileName
 			 * @param {string} mModelData.fileType

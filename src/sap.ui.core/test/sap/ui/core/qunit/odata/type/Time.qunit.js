@@ -1,8 +1,9 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
@@ -11,7 +12,7 @@ sap.ui.require([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Control, DateFormat, FormatException, ParseException, ValidateException,
+], function (jQuery, Log, Control, DateFormat, FormatException, ParseException, ValidateException,
 		ODataType, Time, TestUtils) {
 	/*global QUnit */
 	"use strict";
@@ -39,7 +40,7 @@ sap.ui.require([
 			} catch (e) {
 				assert.ok(e instanceof ParseException, sReason + ": exception");
 				assert.strictEqual(e.message,
-					"EnterTime " + oType.formatValue(createTime(13, 47, 26, 0), "string"),
+					"EnterTime " + oType.formatValue(createTime(23, 59, 58, 0), "string"),
 					sReason + ": message");
 			}
 		});
@@ -48,7 +49,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Time", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
@@ -222,7 +223,8 @@ sap.ui.require([
 				assert.ok(false);
 			} catch (e) {
 				assert.ok(e instanceof ValidateException, "ValidateException: exception");
-				assert.strictEqual(e.message, "EnterTime 1:47:26 PM", "ValidateException: message");
+				assert.strictEqual(e.message, "EnterTime 11:59:58 PM",
+					"ValidateException: message");
 			}
 		});
 	});

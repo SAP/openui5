@@ -1,20 +1,38 @@
-<mvc:View controllerName="appUnderTest.view.Main"
+<mvc:View controllerName="appUnderTest.controller.Main"
+	xmlns:l="sap.ui.layout"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-	<App>
-		<Page id="myPage">
-			<headerContent>
-				<Button id="changingButton" text="My text will change after 5 seconds" class="mySuperButton"/>
-			</headerContent>
-			<content>
-				<Button text="Button in a Page" id="buttonInAPage"></Button>
-			</content>
-			<footer>
-				<Toolbar>
-					<Button text="You won't find me" />
-					<Button text="Me neither" />
-				</Toolbar>
-			</footer>
-		</Page>
-	</App>
+	<Page id="myPage">
+		<headerContent>
+			<Button id="changingButton" text="My text will change after 5 seconds" class="mySuperButton"/>
+		</headerContent>
+		<content>
+			<l:HorizontalLayout
+				class="sapUiContentPadding"
+				width="100%">
+				<l:content>
+					<Button
+						text="Button in a Page"
+						id="buttonInAPage">
+					</Button>
+					<Button
+						text="You can't click me"
+						id="disabledButton"
+						enabled="false">
+					</Button>
+					<Button
+						text="Open the popover"
+						id="togglePopoverButton"
+						press="togglePopover">
+					</Button>
+				</l:content>
+			</l:HorizontalLayout>
+		</content>
+		<footer>
+			<Toolbar>
+				<Button text="You won't find me" />
+				<Button text="Me neither" />
+			</Toolbar>
+		</footer>
+	</Page>
 </mvc:View>

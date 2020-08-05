@@ -8,27 +8,32 @@
 	box-shadow: none;
 }
 
-.sapFDynamicPageTitle:focus {
+html.sap-desktop .sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
 	outline-width: 0.125rem;
-	outline-offset: -0.125rem;
+	outline-offset: -0.25rem; // due to bottom border overlapping
 }
 
 .sapFDynamicPageTitle .sapFDynamicPageTitleActionsBar {
 	background: none;
 }
 
+.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
+	border-bottom: 1px solid @sapUiObjectHeaderBorderColor;
+}
+
 /* IE and Edge ignores outline-offset. Use an overlay: */
+/* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapFDynamicPageTitle:focus {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
 		outline: none;
 		position: relative;
 	}
-	.sapFDynamicPageTitle:focus:before {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus:before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;
-		height: 100%;
+		height: 98%; // due to bottom border overlapping
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -39,15 +44,15 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 /* Firefox fix due to focus cut out from top and left */
 html[data-sap-ui-browser^="ff"].sap-desktop {
-	.sapFDynamicPageTitle:focus {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
 		outline: none;
 		position: relative;
 	}
-	.sapFDynamicPageTitle:focus:before {
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus:before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;
-		height: 100%;
+		height: 98%; // due to bottom border overlapping
 		position: absolute;
 		left: 0;
 		top: 0;

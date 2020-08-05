@@ -3,12 +3,14 @@
  */
 
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/DOMUtil'
+	"sap/ui/base/ManagedObject",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	ManagedObject,
-	DOMUtil
+	DOMUtil,
+	jQuery
 ) {
 	"use strict";
 
@@ -17,7 +19,7 @@ function(
 	 *
 	 * @class
 	 * The ScrollbarSynchronizer helps to keep a set of targets up-to-date with the scrolling events of each other
-	 * @extends sap.ui.dt.ManagedObject
+	 * @extends sap.ui.base.ManagedObject
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -32,19 +34,20 @@ function(
 		metadata: {
 			library: "sap.ui.dt",
 			properties: {
-				"scrollTop": {
+				scrollTop: {
 					type: "float"	// replaced 'int' with 'float'. In some special cases (chrome on a retina mac) jquery returns a float value instead of int
 				},
-				"scrollLeft": {
+				scrollLeft: {
 					type: "float"	// replaced 'int' with 'float'. In some special cases (chrome on a retina mac) jquery returns a float value instead of int
 				},
-				"targets": {
+				targets: {
 					type: "any[]",
 					defaultValue: []
 				}
 			},
 			events: {
-				synced: {}
+				synced: {},
+				destroyed: {}
 			}
 		},
 		_bSyncing: false,
@@ -105,7 +108,7 @@ function(
 		aTargets.forEach(this._attachScrollEvent, this);
 		var aNextTargets = this.getTargets().concat(aTargets);
 		this.setProperty('targets', aNextTargets);
-		this._sync(aNextTargets[0]);
+		this.sync(aNextTargets[0]);
 	};
 
 	/**
@@ -134,32 +137,40 @@ function(
 	};
 
 	ScrollbarSynchronizer.prototype._scrollEventHandler = function (oEvent) {
-		this._sync(oEvent.target);
+		this.sync(oEvent.target);
 	};
 
-	ScrollbarSynchronizer.prototype._sync = function (oSourceDomNode) {
+	ScrollbarSynchronizer.prototype.sync = function (oSourceDomNode, bForce) {
 		if (
-			this.getScrollTop() !== oSourceDomNode.scrollTop
+			bForce
+			|| this.getScrollTop() !== oSourceDomNode.scrollTop
 			|| this.getScrollLeft() !== oSourceDomNode.scrollLeft
 		) {
 			this.setScrollTop(oSourceDomNode.scrollTop);
 			this.setScrollLeft(oSourceDomNode.scrollLeft);
 
-			if (!this._bSyncing) {
-				this._bSyncing = true;
-				this.animationFrame = window.requestAnimationFrame(function () {
-					this.getTargets()
-						.filter(function (oDomNode) {
-							return oSourceDomNode !== oDomNode;
-						})
-						.forEach(function (oDomNode) {
-							DOMUtil.syncScroll(oSourceDomNode, oDomNode);
-						});
-					this.fireSynced();
-					this._bSyncing = false;
-				}.bind(this));
+			if (this._bSyncing) {
+				this._abortSync();
 			}
+
+			this._bSyncing = true;
+			this.animationFrame = window.requestAnimationFrame(function () {
+				this.getTargets()
+					.filter(function (oDomNode) {
+						return oSourceDomNode !== oDomNode;
+					})
+					.forEach(function (oDomNode) {
+						DOMUtil.syncScroll(oSourceDomNode, oDomNode);
+					});
+				this._bSyncing = false;
+				this.fireSynced();
+			}.bind(this));
 		}
+	};
+
+	ScrollbarSynchronizer.prototype._abortSync = function () {
+		window.cancelAnimationFrame(this.animationFrame);
+		this._bSyncing = false;
 	};
 
 	/**
@@ -169,6 +180,8 @@ function(
 		this.getTargets().forEach(function (oDomNode) {
 			this.removeTarget(oDomNode);
 		}, this);
+		this._abortSync();
+		this.fireDestroyed();
 
 		ManagedObject.prototype.destroy.apply(this, arguments);
 	};
@@ -177,5 +190,12 @@ function(
 		return this._bSyncing;
 	};
 
+	ScrollbarSynchronizer.prototype.refreshListeners = function () {
+		this.getTargets().forEach(function (oDomNode) {
+			this._detachScrollEvent(oDomNode);
+			this._attachScrollEvent(oDomNode);
+		}, this);
+	};
+
 	return ScrollbarSynchronizer;
-}, true);
+});

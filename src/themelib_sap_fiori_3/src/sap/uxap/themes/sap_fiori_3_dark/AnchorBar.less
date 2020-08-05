@@ -1,0 +1,230 @@
+/* =================================== */
+/* CSS for control sap.uxap/AnchorBar  */
+/* Quartz Dark theme                   */
+/* =================================== */
+
+/**********************************
+Common compact/cozy
+**********************************/
+
+@sapUiFiori3AnchorBarBottomShadow: inset 0 -0.0625rem @sapUiObjectHeaderBorderColor;
+@sapUiFiori3ABUnderlineOffsetAndHeight: 0.188rem;
+@sapUiFiori3ABUnderlineTopRadius: 0.125rem;
+
+.sapUxAPAnchorBarFiori3Height {
+	height: @sapElement_LineHeight;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar,
+.sapUxAPAnchorBar {
+	&:extend(.sapUxAPAnchorBarFiori3Height);
+
+	&.sapUxAPAnchorBarScrollLeft,
+	&.sapUxAPAnchorBarScrollRight{
+
+		.anchorBarArrowLeft,
+		.anchorBarArrowRight {
+			&:extend(.sapUxAPAnchorBarFiori3Height);
+		}
+
+		.anchorBarArrow .sapMBtn {
+			top: 0.5625rem;
+		}
+	}
+
+	.anchorBarArrow > .sapUiHLayoutChildWrapper {
+		&:extend(.sapUxAPAnchorBarFiori3Height);
+	}
+
+	.sapUxAPAnchorBarButton:extend(.sapUxAPAnchorBarFiori3Height) {
+
+		.sapMSB.sapMSBTransparent,
+		.sapMBtnInner {
+
+			&:extend(.sapUxAPAnchorBarFiori3Height);
+
+			&.sapMBtnText .sapMBtnIcon.sapMBtnIconRight {
+				padding-right: 0px;
+				padding-left: 0px;
+			}
+
+			.sapMBtnContent,
+			.sapMBtnIcon {
+				color: @sapUiContentLabelColor;
+				font-family: @sapUiFontFamily;
+				font-size: @sapMFontMediumSize;
+				height: 2.5rem;
+				line-height: @sapElement_LineHeight;
+			}
+		}
+	}
+}
+
+.sapUxAPAnchorBar.sapMTB {
+	border: none;
+	background: @sapUiObjectHeaderBackground;
+	box-shadow: @sapUiFiori3AnchorBarBottomShadow;
+
+	&.sapUxAPAnchorBarTransparent {
+		background: transparent;
+	}
+
+	&.sapUxAPAnchorBarTranslucent {
+		background: darken(@sapUiObjectHeaderBackground, 10);
+	}
+}
+
+/* L fullscreen paddings */
+html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
+{
+	padding-left: 2rem;
+}
+
+/* visual in anchor bar */
+
+.sapUxAPAnchorBarButton {
+	padding-bottom: 0;
+
+	&.sapMMenuBtn .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnIcon,
+	&.sapMMenuBtn .sapMSBArrow:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnIcon,
+	&.sapMMenuBtn.sapMMenuBtnSplit .sapMSBText:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnContent {
+		color: @sapUiGroupTitleTextColor;
+	}
+
+	&.sapMMenuBtn .sapMSBArrow:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive {
+		outline: none;
+	}
+
+	&.sapMBtn .sapMBtnInner.sapMBtnActive > .sapMBtnFocusDiv,
+	&.sapMMenuBtn .sapMBtnInner.sapMBtnActive > .sapMBtnFocusDiv {
+		border: none;
+	}
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnContent {
+	position: relative;
+	bottom: -1px;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected {
+
+	.sapMSB.sapMSBTransparent {
+
+		.sapMBtnContent,
+		.sapUiIcon {
+			color: @sapUiSelected;
+		}
+
+		&::after {
+			@sapUiFiori3ABSBTextPaddingLeft: 1rem;
+
+			content: "";
+			position: absolute;
+			// Formula for the width is as it follows:
+			// 100% (whole width of the split button)
+			// - 0.8125rem (space between split button right edge and the right edge of the arrow icon)
+			// - 1rem (split button text padding left)
+			width: calc(~"100% - 0.8125rem - " @sapUiFiori3ABSBTextPaddingLeft);
+			top: 2.55rem;
+			left: calc(@sapUiFiori3ABSBTextPaddingLeft - @sapUiFiori3ABUnderlineOffsetAndHeight);
+			padding: (@sapUiFiori3ABUnderlineOffsetAndHeight / 2) @sapUiFiori3ABUnderlineOffsetAndHeight;
+			border-top-left-radius: @sapUiFiori3ABUnderlineTopRadius;
+			border-top-right-radius: @sapUiFiori3ABUnderlineTopRadius;
+			background-color: @sapUiActive;
+		}
+	}
+
+	.sapMBtnDefault .sapMBtnContent {
+		overflow: visible;
+		color: @sapUiSelected;
+
+		&::after {
+			content: "";
+			position: absolute;
+			width: 100%;
+			top: 2.5rem;
+			left: -@sapUiFiori3ABUnderlineOffsetAndHeight;
+			padding: (@sapUiFiori3ABUnderlineOffsetAndHeight / 2) @sapUiFiori3ABUnderlineOffsetAndHeight;
+			border-top-left-radius: @sapUiFiori3ABUnderlineTopRadius;
+			border-top-right-radius: @sapUiFiori3ABUnderlineTopRadius;
+			background-color: @sapUiActive;
+		}
+	}
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnActive .sapMBtnIcon {
+	color: @sapUiContentIconColor;
+}
+
+.sapUxAPObjectPageNavigation > .sapMTB.sapMTB-Transparent-CTX > .anchorBarArrow .sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
+	background: @sapUiButtonLiteHoverBackground;
+}
+
+/***********************/
+/* BEGIN Scroll Arrows */
+/***********************/
+
+// By design the arrows are not focusable
+.sapUxAPAnchorBar .anchorBarArrow .sapMBtn:focus > .sapMFocusable,
+html.sap-desktop .sapUxAPAnchorBarButton.sapMBtn:focus > .sapMBtnActive.sapMFocusable {
+	outline: none;
+}
+
+html.sap-desktop .sapUxAPAnchorBar .sapMBtn:focus > .sapMFocusable {
+	outline-offset: -0.25rem;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMMenuBtn .sapMSB:focus .sapMSBInner::after,
+.sapUxAPAnchorBarButton .sapMIE .sapMBtnFocusDiv {
+	top: 0.25rem;
+	bottom: 0.25rem;
+}
+
+// Gradient mask
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
+	background: -moz-linear-gradient(left, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 0) 100%); /* FF3.6+ */
+	background: -ms-linear-gradient(left, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 0) 100%); /* IE10+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%, @sapUiObjectHeaderBackground), color-stop(75%, @sapUiObjectHeaderBackground), color-stop(100%, fade(@sapUiObjectHeaderBackground, 0))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 0) 100%); /* Chrome10+,Safari5.1+ */
+	background: linear-gradient(to right, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 0) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#00000000', GradientType=1); /* IE6-9 */
+	box-shadow: @sapUiFiori3AnchorBarBottomShadow;
+}
+
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
+html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
+	background: -moz-linear-gradient(left, fade(@sapUiObjectHeaderBackground, 0) 0%, @sapUiObjectHeaderBackground 25%, @sapUiObjectHeaderBackground 100%); /* FF3.6+ */
+	background: -ms-linear-gradient(left, fade(@sapUiObjectHeaderBackground, 0) 0%, @sapUiObjectHeaderBackground 25%, @sapUiObjectHeaderBackground 100%); /* IE10+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%, fade(@sapUiObjectHeaderBackground, 0)), color-stop(25%, @sapUiObjectHeaderBackground), color-stop(100%, @sapUiObjectHeaderBackground)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, fade(@sapUiObjectHeaderBackground, 0) 0%, @sapUiObjectHeaderBackground 25%, @sapUiObjectHeaderBackground 100%); /* Chrome10+,Safari5.1+ */
+	background: linear-gradient(to right, fade(@sapUiObjectHeaderBackground, 0) 0%, @sapUiObjectHeaderBackground 25%, @sapUiObjectHeaderBackground 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#000000', GradientType=1); /* IE6-9 */
+	box-shadow: @sapUiFiori3AnchorBarBottomShadow;
+}
+
+html[data-sap-ui-animation="on"] {
+	// Scroll buttons are invisible at first
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
+		opacity: 0;
+	}
+
+	// Fade-in animation on hover
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar:hover.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar:hover.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
+		opacity: 1;
+		-webkit-transition-property: opacity;
+		transition-property: opacity;
+		-webkit-transition-duration: 0.7s;
+		transition-duration: 0.7s;
+	}
+}
+
+html[data-sap-ui-animation="off"] {
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
+	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
+		opacity: 1;
+	}
+}

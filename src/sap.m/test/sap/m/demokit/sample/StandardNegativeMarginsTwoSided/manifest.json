@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.StandardNegativeMarginsTwoSided",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.StandardNegativeMarginsTwoSided.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Page.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -3,9 +3,13 @@
  */
 
 // Provides default renderer for control sap.ui.commons.AutoComplete
-sap.ui.define(['jquery.sap.global', './ComboBoxRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, ComboBoxRenderer, Renderer) {
+sap.ui.define(['./ComboBoxRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/library'],
+	function(ComboBoxRenderer, Renderer, coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 	/**
@@ -52,7 +56,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer', 'sap/ui/core/Renderer'
 			setsize: oCtrl._getListBox().getItems().length
 		};
 
-		if (oCtrl.getValueState() == sap.ui.core.ValueState.Error) {
+		if (oCtrl.getValueState() == ValueState.Error) {
 			mProps["invalid"] = true;
 		}
 

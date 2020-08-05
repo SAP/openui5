@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.MenuItem.
-sap.ui.define(['jquery.sap.global', './MenuItemBase', './library', 'sap/ui/unified/MenuItem'],
-	function(jQuery, MenuItemBase, library, MenuItem1) {
+sap.ui.define(['./MenuItemBase', './library', 'sap/ui/unified/MenuItem'],
+	function(MenuItemBase, library, UnifiedMenuItem) {
 	"use strict";
 
 
@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', './MenuItemBase', './library', 'sap/ui/unifi
 	 * @alias sap.ui.commons.MenuItem
 	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */
-	var MenuItem = MenuItem1.extend("sap.ui.commons.MenuItem", /** @lends sap.ui.commons.MenuItem.prototype */ { metadata : {
+	var MenuItem = UnifiedMenuItem.extend("sap.ui.commons.MenuItem", /** @lends sap.ui.commons.MenuItem.prototype */ { metadata : {
 
 		deprecated : true,
 		library : "sap.ui.commons"
@@ -39,4 +39,4 @@ sap.ui.define(['jquery.sap.global', './MenuItemBase', './library', 'sap/ui/unifi
 
 	return MenuItem;
 
-}, /* bExport= */ true);
+});

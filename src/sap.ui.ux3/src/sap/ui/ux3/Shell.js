@@ -4,15 +4,75 @@
 
 // Provides control sap.ui.ux3.Shell.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     'sap/ui/commons/Menu',
     'sap/ui/core/Control',
     'sap/ui/core/theming/Parameters',
     './library',
-    "./ShellRenderer"
+    './ShellRenderer',
+    './ShellPersonalization',
+    './NavigationBar',
+    'sap/ui/core/delegate/ItemNavigation',
+    'sap/ui/core/RenderManager',
+    'sap/ui/core/Popup',
+    './ToolPopup',
+    'sap/ui/commons/SearchField',
+    'sap/ui/commons/Label',
+    './Feeder',
+    'sap/ui/commons/library',
+    'sap/ui/commons/Button',
+    'sap/ui/commons/MenuItem',
+    './NotificationBar',
+    'sap/ui/base/Object',
+    'sap/ui/Device',
+    'sap/base/Log',
+    'sap/base/assert',
+    // jQuery Plugin 'firstFocusableDomRef'
+	'sap/ui/dom/jquery/Focusable'
 ],
-	function(jQuery, Menu, Control, Parameters, library, ShellRenderer) {
+	function(
+	    jQuery,
+		Menu,
+		Control,
+		Parameters,
+		library,
+		ShellRenderer,
+		ShellPersonalization,
+		NavigationBar,
+		ItemNavigation,
+		RenderManager,
+		Popup,
+		ToolPopup,
+		SearchField,
+		Label,
+		Feeder,
+		commonsLibrary,
+		Button,
+		MenuItem,
+		NotificationBar,
+		BaseObject,
+		Device,
+		Log,
+		assert
+	) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.ux3.NotificationBarStatus
+	var NotificationBarStatus = library.NotificationBarStatus;
+
+	// shortcut for sap.ui.ux3.FeederType
+	var FeederType = library.FeederType;
+
+	// shortcut for sap.ui.core.Popup.Dock
+	var Dock = Popup.Dock;
+
+	// shortcut for sap.ui.ux3.ShellDesignType
+	var ShellDesignType = library.ShellDesignType;
+
+	// shortcut for sap.ui.ux3.ShellHeaderType
+	var ShellHeaderType = library.ShellHeaderType;
 
 
 
@@ -97,13 +157,13 @@ sap.ui.define([
 			/**
 			 * Defines which header type to be used. Depending on the header type some other functionality might be obsolete.
 			 */
-			headerType : {type : "sap.ui.ux3.ShellHeaderType", group : "Misc", defaultValue : sap.ui.ux3.ShellHeaderType.Standard},
+			headerType : {type : "sap.ui.ux3.ShellHeaderType", group : "Misc", defaultValue : ShellHeaderType.Standard},
 
 			/**
 			 * Defines which design type is to be used.
 			 * @since 1.12.0
 			 */
-			designType : {type : "sap.ui.ux3.ShellDesignType", group : "Misc", defaultValue : sap.ui.ux3.ShellDesignType.Standard},
+			designType : {type : "sap.ui.ux3.ShellDesignType", group : "Misc", defaultValue : ShellDesignType.Standard},
 
 			/**
 			 * The width of the right-hand side pane in pixels. The value must be a non-negative integer. The Shell reserves the right to define a minimum width (currently 50px).
@@ -301,11 +361,11 @@ sap.ui.define([
 		this._aSyncRefStack = [];
 		this._mSyncRefs = {};
 
-		this._oWorksetBar = new sap.ui.ux3.NavigationBar(this.getId() + "-wsBar", {
+		this._oWorksetBar = new NavigationBar(this.getId() + "-wsBar", {
 			toplevelVariant : true,
 			select          : [this._handleWorksetBarSelect, this]
 		}).setParent(this);
-		this._oFacetBar = new sap.ui.ux3.NavigationBar(this.getId() + "-facetBar", {
+		this._oFacetBar = new NavigationBar(this.getId() + "-facetBar", {
 			select          : [this._handleFacetBarSelect, this]
 		}).setParent(this);
 
@@ -334,7 +394,9 @@ sap.ui.define([
 		}
 		this._oSearchField = null;
 
-		jQuery(window).unbind("resize", this._checkResizeClosure);
+		jQuery(window).off("resize", this._checkResizeClosure);
+		clearTimeout(this._checkPaneBarOverflowDelayId);
+		this._checkPaneBarOverflowDelayId = null;
 	};
 
 
@@ -343,18 +405,18 @@ sap.ui.define([
 		// unbind the tool palette mouse (hover effect) handlers
 		this._beforeRenderingToolPalette();
 
-		this.$("focusDummyPane").unbind("focusin");
+		this.$("focusDummyPane").off("focusin");
 
 		// drag&drop for images with local file API
 		if (window.FileReader) {
 			var $hdr = this.$("hdr");
-			$hdr.unbind('dragover', this._handleDragover)
-			.unbind('dragend', this._handleDragend)
-			.unbind('drop', this._handleDrop);
+			$hdr.off('dragover', this._handleDragover)
+			.off('dragend', this._handleDragend)
+			.off('drop', this._handleDrop);
 			var $bg = this.$("bgImg");
-			$bg.unbind('dragover', jQuery.proxy(this._handleDragover))
-			.unbind('dragend', this._handleDragend)
-			.unbind('drop', this._handleDrop);
+			$bg.off('dragover', jQuery.proxy(this._handleDragover))
+			.off('dragend', this._handleDragend)
+			.off('drop', this._handleDrop);
 		}
 
 	};
@@ -366,19 +428,19 @@ sap.ui.define([
 		this._afterRenderingToolPalette();
 
 		if (this._topSyncRefId && this._mSyncRefs[this._topSyncRefId].focusLast) {
-			this.$("focusDummyPane").focusin(this._mSyncRefs[this._topSyncRefId].focusLast);
+			this.$("focusDummyPane").on("focusin", this._mSyncRefs[this._topSyncRefId].focusLast);
 		}
 
 		// drag&drop for images with local file API
 		if (window.FileReader) {
 			var $hdr = this.$("hdr");
-			$hdr.bind('dragover', jQuery.proxy(this._handleDragover, this))
-			.bind('dragend',jQuery.proxy(this._handleDragend, this))
-			.bind('drop', jQuery.proxy(this._handleDrop, this));
+			$hdr.on('dragover', jQuery.proxy(this._handleDragover, this))
+			.on('dragend',jQuery.proxy(this._handleDragend, this))
+			.on('drop', jQuery.proxy(this._handleDrop, this));
 			var $bg = this.$("bgImg");
-			$bg.bind('dragover', jQuery.proxy(this._handleDragover, this))
-			.bind('dragend',jQuery.proxy(this._handleDragend, this))
-			.bind('drop', jQuery.proxy(this._handleDrop, this));
+			$bg.on('dragover', jQuery.proxy(this._handleDragover, this))
+			.on('dragend',jQuery.proxy(this._handleDragend, this))
+			.on('drop', jQuery.proxy(this._handleDrop, this));
 		}
 
 		// hide or show the facet bar depending on whether the current workset item has sub-items
@@ -396,7 +458,7 @@ sap.ui.define([
 
 		// ItemNavigation for PaneBar items
 		if (!this._oPaneItemNavigation) {
-			this._oPaneItemNavigation = new sap.ui.core.delegate.ItemNavigation().setCycling(false);
+			this._oPaneItemNavigation = new ItemNavigation().setCycling(false);
 			this.addDelegate(this._oPaneItemNavigation);
 		}
 		var $PaneListRef = this.$("paneBarEntries");
@@ -405,7 +467,7 @@ sap.ui.define([
 		this._setNotifyVisibility();
 
 		if (Shell.FIRST_RENDERING) {
-			jQuery(window).bind("resize", this._checkResizeClosure);
+			jQuery(window).on("resize", this._checkResizeClosure);
 		}
 		this._checkResize();
 
@@ -413,8 +475,8 @@ sap.ui.define([
 
 		// Firefox ESR (17) workaround
 		// TODO: Remove when Firefox ESR is updated
-		if (!!sap.ui.Device.browser.firefox && sap.ui.Device.browser.version == 17) {
-			jQuery.sap.delayedCall(500, this, this._checkResize);
+		if (Device.browser.firefox && Device.browser.version == 17) {
+			setTimeout(this._checkResize.bind(this), 500);
 		}
 	};
 
@@ -426,14 +488,10 @@ sap.ui.define([
 	 */
 	Shell.prototype._updateThemeVariables = function() {
 		Shell.SIDE_BAR_BASE_WIDTH = parseInt(
-			Parameters.get("sapUiUx3ShellSideBarBaseWidth"),
-			10
-		);
+			Parameters.get("sapUiUx3ShellSideBarBaseWidth"));
 
 		Shell.PANE_OVERFLOW_BUTTON_HEIGHT = parseInt(
-			Parameters.get("sapUiUx3ShellPaneOverflowButtonHeight"),
-			10
-		);
+			Parameters.get("sapUiUx3ShellPaneOverflowButtonHeight"));
 		// Save the original button height to be referenced as maximum height
 		Shell.PANE_OVERFLOW_BUTTON_MAX_HEIGHT = Shell.PANE_OVERFLOW_BUTTON_HEIGHT;
 	};
@@ -453,11 +511,11 @@ sap.ui.define([
 		// The browser window is (depending on the configuration) repainted several hundred times
 		// during resize, which triggers several resize-events
 		// Keep it from executing several times when only once suffices...
-		jQuery.sap.clearDelayedCall(this._checkResizeDelayId);
-		this._checkResizeDelayId = jQuery.sap.delayedCall(100, this, function() {
+		clearTimeout(this._checkResizeDelayId);
+		this._checkResizeDelayId = setTimeout(function() {
 			this._rerenderPaneBarItems();
 			this._checkToolPaletteSize();
-		});
+		}.bind(this), 100);
 	};
 
 
@@ -519,7 +577,7 @@ sap.ui.define([
 				break;
 			}
 
-			sap.ui.core.RenderManager.forceRepaint(oToolPalette[0]);
+			RenderManager.forceRepaint(oToolPalette[0]);
 			iCurrentTop = oToolPalette.children().last()[0].offsetTop;
 			if (iCurrentTop >= iLastTop) {
 				// Reset to previous size...
@@ -533,7 +591,7 @@ sap.ui.define([
 			iColumns++;
 			if (iColumns > 10) {
 				// Now this is just silly....
-				jQuery.sap.log.error("The ToolPalette is growing too much, this must be a bug.");
+				Log.error("The ToolPalette is growing too much, this must be a bug.");
 				break;
 			}
 
@@ -587,10 +645,10 @@ sap.ui.define([
 	 */
 	Shell.prototype._checkPaneBarOverflow = function($PaneListRef) {
 		// Keep it from executing several times when only once suffices...
-		jQuery.sap.clearDelayedCall(this._checkPaneBarOverflowDelayId);
-		this._checkPaneBarOverflowDelayId = jQuery.sap.delayedCall(200, this, function() {
+		clearTimeout(this._checkPaneBarOverflowDelayId);
+		this._checkPaneBarOverflowDelayId = setTimeout(function() {
 			this._delayedCheckPaneBarOverflow($PaneListRef);
-		});
+		}.bind(this), 200);
 	};
 
 	Shell.prototype._delayedCheckPaneBarOverflow = function($PaneListRef) {
@@ -635,8 +693,9 @@ sap.ui.define([
 
 			// Hide/show the main item
 			jQuery(oDomEntry).css("display", bItemInPane ? "inline-block" : "none");
-			// Hide/show the submenu item
-			sap.ui.getCore().byId(oDomEntry.id + "-overflow").setVisible(!bItemInPane);
+			// Hide/show the submenu item (check if it is in the DOM first)
+			var oSubmenuItem = sap.ui.getCore().byId(oDomEntry.id + "-overflow");
+			oSubmenuItem && oSubmenuItem.setVisible(!bItemInPane);
 
 			if (bItemInPane) {
 				// This item is inside the pane
@@ -664,8 +723,8 @@ sap.ui.define([
 
 			// Firefox ESR (17) Redraw bug workaround
 			// TODO: Remove when Firefox ESR is updated
-			if (!!sap.ui.Device.browser.firefox && sap.ui.Device.browser.version == 17) {
-				sap.ui.core.RenderManager.forceRepaint(document.getElementsByTagName("body")[0]);
+			if (Device.browser.firefox && Device.browser.version == 17) {
+				RenderManager.forceRepaint(document.getElementsByTagName("body")[0]);
 			}
 		}
 
@@ -779,9 +838,12 @@ sap.ui.define([
 	 * @param oFocusInfo
 	 */
 	Shell.prototype.applyFocusInfo = function(oFocusInfo) {
-		var oElement = jQuery.sap.domById(oFocusInfo.sFocusId)
+		var oElement = (oFocusInfo.sFocusId ? window.document.getElementById(oFocusInfo.sFocusId) : null)
 		|| oFocusInfo.oFocusedElement; // if not even an ID was available when focus was lost maybe the original DOM element is still there
-		jQuery.sap.focus(oElement); // also works for oElement == null
+
+		if (oElement) {
+		    oElement.focus();
+		}
 	};
 
 
@@ -964,7 +1026,7 @@ sap.ui.define([
 		var sOpenToolId;
 		if (this._oOpenToolPopup) {
 			sOpenToolId = this._oOpenToolPopup.getId();
-			jQuery.sap.byId(this.getId() + Shell.TOOL_PREFIX + this._oOpenToolPopup.getId()).removeClass("sapUiUx3ShellToolSelected").attr("aria-pressed", "false");
+			jQuery(document.getElementById(this.getId() + Shell.TOOL_PREFIX + this._oOpenToolPopup.getId())).removeClass("sapUiUx3ShellToolSelected").attr("aria-pressed", "false");
 			if (sOpenToolId === this.getId() + "-feederTool") {
 				var feeder = sap.ui.getCore().byId(this.getId() + "-feeder");
 				feeder.setText("");
@@ -996,12 +1058,12 @@ sap.ui.define([
 		// open the new tool
 		if (tool && (tool.getId() != sAlreadyOpenId)) {
 			this._oOpenToolPopup = tool;
-			tool.setPosition(sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.EndTop, jQuery.sap.domById(sId), "13 -6", "fit");
+			tool.setPosition(Dock.BeginTop, Dock.EndTop, document.getElementById(sId), "13 -6", "fit");
 			tool.open();
 
 			// mark icon as "tool opened"
-			jQuery.sap.byId(sId).addClass("sapUiUx3ShellToolSelected").attr("aria-pressed", "true");
-			Shell._updateToolIcon(jQuery.sap.domById(sId));
+			jQuery(document.getElementById(sId)).addClass("sapUiUx3ShellToolSelected").attr("aria-pressed", "true");
+			Shell._updateToolIcon(document.getElementById(sId));
 
 			// need to reset the icon also when the tool is closed by the application
 			var that = this;
@@ -1013,13 +1075,13 @@ sap.ui.define([
 					that._closeCurrentToolPopup();
 				}
 
-				jQuery.sap.byId(sId).removeClass("sapUiUx3ShellToolSelected");
-				Shell._updateToolIcon(jQuery.sap.domById(sId));
+				jQuery(document.getElementById(sId)).removeClass("sapUiUx3ShellToolSelected");
+				Shell._updateToolIcon(document.getElementById(sId));
 			};
 			tool.attachClosed(fnOnClosed);
 
 		} else if (tool.getId() == sAlreadyOpenId) {
-			Shell._updateToolIcon(jQuery.sap.domById(sId));
+			Shell._updateToolIcon(document.getElementById(sId));
 		}
 	};
 
@@ -1034,15 +1096,15 @@ sap.ui.define([
 	 */
 	Shell.prototype._hasDarkDesign = function() {
 		return (
-			this.getDesignType() !== sap.ui.ux3.ShellDesignType.Light
-			&& this.getDesignType() !== sap.ui.ux3.ShellDesignType.Crystal
+			this.getDesignType() !== ShellDesignType.Light
+			&& this.getDesignType() !== ShellDesignType.Crystal
 		);
 	};
 
 	Shell.prototype._getSearchTool = function() {
 		if (!this._oSearchPopup) {
 			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
-			this._oSearchPopup = new sap.ui.ux3.ToolPopup(this.getId() + "-searchTool", {tooltip:rb.getText("SHELL_SEARCH")}).addStyleClass("sapUiUx3TP-search");
+			this._oSearchPopup = new ToolPopup(this.getId() + "-searchTool", {tooltip:rb.getText("SHELL_SEARCH")}).addStyleClass("sapUiUx3TP-search");
 
 			// Create the popup in an inverted state if the shell is dark.
 			// This will be changed when the design is changed: see setDesignType()
@@ -1050,13 +1112,13 @@ sap.ui.define([
 			this._oSearchPopup.setInverted(bInverted);
 
 			var that = this;
-			var sf = new sap.ui.commons.SearchField(this.getId() + "-searchField", {
+			var sf = new SearchField(this.getId() + "-searchField", {
 				enableListSuggest: false,
 				search: function(oEvent) {
 					that.fireSearch({text:oEvent.getParameter("query")});
 				}
 			});
-			var label = new sap.ui.commons.Label({text:rb.getText("SHELL_SEARCH_LABEL") + ":"}).setLabelFor(sf);
+			var label = new Label({text:rb.getText("SHELL_SEARCH_LABEL") + ":"}).setLabelFor(sf);
 			this._oSearchPopup.addContent(label).addContent(sf);
 			this._oSearchPopup.attachOpen(function(){
 				window.setTimeout(function(){sf.focus();},100);
@@ -1085,14 +1147,14 @@ sap.ui.define([
 		if (!this._oFeederPopup) {
 			var that = this;
 			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
-			this._oFeederPopup = new sap.ui.ux3.ToolPopup(this.getId() + "-feederTool", {tooltip:rb.getText("SHELL_FEEDER")}).addStyleClass("sapUiUx3TP-feeder");
+			this._oFeederPopup = new ToolPopup(this.getId() + "-feederTool", {tooltip:rb.getText("SHELL_FEEDER")}).addStyleClass("sapUiUx3TP-feeder");
 
 			// Create the popup in an inverted state if the shell is dark.
 			// This will be changed when the design is changed: see setDesignType()
 			var bInverted = this._hasDarkDesign();
 			this._oFeederPopup.setInverted(bInverted);
 
-			var f = new sap.ui.ux3.Feeder(this.getId() + "-feeder", {type:sap.ui.ux3.FeederType.Medium,submit:function(oEvent){
+			var f = new Feeder(this.getId() + "-feeder", {type:FeederType.Medium,submit:function(oEvent){
 				that.fireFeedSubmit({text:oEvent.getParameter("text")});
 				f.setText("");
 				f.rerender();
@@ -1131,7 +1193,7 @@ sap.ui.define([
 	 */
 	Shell.prototype.openPane = function(sPaneId) {
 		var that = this;
-		jQuery.sap.assert(typeof sPaneId === "string", "sPaneId must be given as string");
+		assert(typeof sPaneId === "string", "sPaneId must be given as string");
 		var item = sap.ui.getCore().byId(sPaneId);
 		if (item && (sPaneId != this._sOpenPaneId) && this.getShowPane()) {
 			var key;
@@ -1146,7 +1208,7 @@ sap.ui.define([
 			}
 			this.firePaneBarItemSelected({"id":sPaneId,"item":item,"key":key});
 
-			var oPaneButton = jQuery.sap.byId(sPaneId);
+			var oPaneButton = jQuery(document.getElementById(sPaneId));
 			oPaneButton.siblings().removeClass("sapUiUx3ShellPaneEntrySelected");
 			oPaneButton.addClass("sapUiUx3ShellPaneEntrySelected");
 
@@ -1160,7 +1222,7 @@ sap.ui.define([
 				});
 			} else {
 				// pane area already open for a different pane bar item - unselect that one
-				jQuery.sap.byId(this.getId() + "-pb_" + this._sOpenPaneId).removeClass("sapUiUx3ShellPaneEntrySelected");
+				jQuery(document.getElementById(this.getId() + "-pb_" + this._sOpenPaneId)).removeClass("sapUiUx3ShellPaneEntrySelected");
 			}
 
 			this._sOpenPaneId = sPaneId;
@@ -1209,8 +1271,6 @@ sap.ui.define([
 
 
 
-	(function() {
-
 		Shell._SHELL_OFFSET_RIGHT = 0;   // can be changed during runtime
 	//	Shell._PANE_OUTER_DISTANCE = 40; //TODO: Theme Parameter?
 
@@ -1230,27 +1290,26 @@ sap.ui.define([
 			var sOpenPaneId = this._sOpenPaneId;
 			var that = this; // this-reference for closures below
 
-			var id = this.getId();
-			var dist = this.getShowPane() ? (jQuery.sap.byId(id + "-paneBarRight").outerWidth() + Shell._SHELL_OFFSET_RIGHT) : Shell._SHELL_OFFSET_RIGHT;
+			var dist = this.getShowPane() ? (this.$("paneBarRight").outerWidth() + Shell._SHELL_OFFSET_RIGHT) : Shell._SHELL_OFFSET_RIGHT;
 			var props = {};
 			props[this._bRtl ? "left" : "right"] = dist + "px";
 			var props2 = {};
 			props2[this._bRtl ? "marginLeft" : "marginRight"] = (dist - Shell._SHELL_OFFSET_RIGHT) + "px";
 
-			jQuery.sap.byId(id + "-content").css("overflow-x", "hidden");
-			jQuery.sap.byId(id + "-canvas").stop().animate(props);
-			jQuery.sap.byId(id + "-notify").stop().animate(props);
+			this.$("content").css("overflow-x", "hidden");
+			this.$("canvas").stop().animate(props);
+			this.$("notify").stop().animate(props);
 			this._getSyncRefs().stop(false, true).animate(props);
-			jQuery.sap.byId(id + "-wBar").stop().animate(props2);
-			jQuery.sap.byId(id + "-paneBar")
+			this.$("wBar").stop().animate(props2);
+			this.$("paneBar")
 				.removeClass("sapUiUx3ShellPaneBarOpened")
 				.addClass("sapUiUx3ShellPaneBarClose");
-			jQuery.sap.byId(id + "-canvasBackground")
+			this.$("canvasBackground")
 			.removeClass("sapUiUx3ShellCanvasBackgroundOpen")
 			.addClass("sapUiUx3ShellCanvasBackgroundClosed")
 			.stop().animate(props, function() {
-				jQuery.sap.byId(id + "-paneBar").removeClass("sapUiUx3ShellPaneBarOpen");
-				jQuery.sap.byId(id + "-content").css("overflow-x", "");
+				that.$("paneBar").removeClass("sapUiUx3ShellPaneBarOpen");
+				that.$("content").css("overflow-x", "");
 				if (fCompleteCallback) {
 					fCompleteCallback();
 				}
@@ -1260,45 +1319,45 @@ sap.ui.define([
 				that.firePaneClosed({ "id" : sOpenPaneId });
 			});
 
-			jQuery.sap.byId(this._sOpenPaneId).removeClass("sapUiUx3ShellPaneEntrySelected");
+			jQuery(document.getElementById(this._sOpenPaneId)).removeClass("sapUiUx3ShellPaneEntrySelected");
 			this._sOpenPaneId = null;
 		};
 
 		Shell.prototype._openPane = function(fnOpenedCallback) {
-			var id = this.getId();
+			var that = this;
 			var PANE_WIDTH = this.getPaneWidth();
-			var iPaneBarWidth = jQuery.sap.byId(id + "-paneBarRight").outerWidth();
+			var iPaneBarWidth = this.$("paneBarRight").outerWidth();
 
-			jQuery.sap.byId(id + "-content").css("overflow-x", "hidden");
+			this.$("content").css("overflow-x", "hidden");
 			if (this._bRtl) {
-				jQuery.sap.byId(id + "-paneBar")
+				this.$("paneBar")
 					.removeClass("sapUiUx3ShellPaneBarClose")
 					.addClass("sapUiUx3ShellPaneBarOpen");
-				jQuery.sap.byId(id + "-wBar").stop().animate({marginLeft: (PANE_WIDTH + iPaneBarWidth) + "px"});
-				jQuery.sap.byId(id + "-canvas").stop().animate({left: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"});
-				jQuery.sap.byId(id + "-notify").stop().animate({left: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"});
+				this.$("wBar").stop().animate({marginLeft: (PANE_WIDTH + iPaneBarWidth) + "px"});
+				this.$("canvas").stop().animate({left: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"});
+				this.$("notify").stop().animate({left: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"});
 				this._getSyncRefs().stop(false, true).animate({left: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"});
-				jQuery.sap.byId(id + "-canvasBackground").stop().animate({left: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"}, function() {
-					jQuery.sap.byId(id + "-content").css("overflow-x", "");
-					jQuery.sap.byId(id + "-canvasBackground").removeClass("sapUiUx3ShellCanvasBackgroundClosed").addClass("sapUiUx3ShellCanvasBackgroundOpen");
-					jQuery.sap.byId(id + "-paneBar").addClass("sapUiUx3ShellPaneBarOpened");
+				this.$("canvasBackground").stop().animate({left: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"}, function() {
+					that.$("content").css("overflow-x", "");
+					that.$("canvasBackground").removeClass("sapUiUx3ShellCanvasBackgroundClosed").addClass("sapUiUx3ShellCanvasBackgroundOpen");
+					that.$("paneBar").addClass("sapUiUx3ShellPaneBarOpened");
 
 					if (fnOpenedCallback) {
 						fnOpenedCallback();
 					}
 				});
 			} else {
-				jQuery.sap.byId(id + "-paneBar")
+				this.$("paneBar")
 					.removeClass("sapUiUx3ShellPaneBarClose")
 					.addClass("sapUiUx3ShellPaneBarOpen");
-				jQuery.sap.byId(id + "-wBar").stop().animate({marginRight: (PANE_WIDTH + iPaneBarWidth) + "px"});
-				jQuery.sap.byId(id + "-canvas").stop().animate({right: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"});
-				jQuery.sap.byId(id + "-notify").stop().animate({right: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"});
+				this.$("wBar").stop().animate({marginRight: (PANE_WIDTH + iPaneBarWidth) + "px"});
+				this.$("canvas").stop().animate({right: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"});
+				this.$("notify").stop().animate({right: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"});
 				this._getSyncRefs().stop(false, true).animate({right: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"});
-				jQuery.sap.byId(id + "-canvasBackground").stop().animate({right: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"}, function() {
-					jQuery.sap.byId(id + "-content").css("overflow-x", "");
-					jQuery.sap.byId(id + "-canvasBackground").removeClass("sapUiUx3ShellCanvasBackgroundClosed").addClass("sapUiUx3ShellCanvasBackgroundOpen");
-					jQuery.sap.byId(id + "-paneBar").addClass("sapUiUx3ShellPaneBarOpened");
+				this.$("canvasBackground").stop().animate({right: (PANE_WIDTH + iPaneBarWidth + Shell._SHELL_OFFSET_RIGHT) + "px"}, function() {
+					that.$("content").css("overflow-x", "");
+					that.$("canvasBackground").removeClass("sapUiUx3ShellCanvasBackgroundClosed").addClass("sapUiUx3ShellCanvasBackgroundOpen");
+					that.$("paneBar").addClass("sapUiUx3ShellPaneBarOpened");
 
 					if (fnOpenedCallback) {
 						fnOpenedCallback();
@@ -1313,23 +1372,22 @@ sap.ui.define([
 
 				// apply width
 				if (this.getDomRef()) {
-					var id = this.getId();
-					jQuery.sap.byId(id + "-paneContent").css("width", iWidth + "px");
-					jQuery.sap.byId(id + "-paneBar").css("width", (iWidth + Shell.SIDE_BAR_BASE_WIDTH) + "px");
+					this.$("paneContent").css("width", iWidth + "px");
+					this.$("paneBar").css("width", (iWidth + Shell.SIDE_BAR_BASE_WIDTH) + "px");
 
 					if (!!this._sOpenPaneId) { // pane area is open
 						if (this._bRtl) {
-							jQuery.sap.byId(id + "-wBar").css("marginLeft", (iWidth + Shell.SIDE_BAR_BASE_WIDTH) + "px");
-							jQuery.sap.byId(id + "-canvas").css("left", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
-							jQuery.sap.byId(id + "-notify").css("left", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
+							this.$("wBar").css("marginLeft", (iWidth + Shell.SIDE_BAR_BASE_WIDTH) + "px");
+							this.$("canvas").css("left", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
+							this.$("notify").css("left", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
 							this._getSyncRefs().css("left", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
-							jQuery.sap.byId(id + "-canvasBackground").css("left", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
+							this.$("canvasBackground").css("left", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
 						} else {
-							jQuery.sap.byId(id + "-wBar").css("marginRight", (iWidth + Shell.SIDE_BAR_BASE_WIDTH) + "px");
-							jQuery.sap.byId(id + "-canvas").css("right", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
-							jQuery.sap.byId(id + "-notify").css("right", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
+							this.$("wBar").css("marginRight", (iWidth + Shell.SIDE_BAR_BASE_WIDTH) + "px");
+							this.$("canvas").css("right", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
+							this.$("notify").css("right", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
 							this._getSyncRefs().css("right", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
-							jQuery.sap.byId(id + "-canvasBackground").css("right", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
+							this.$("canvasBackground").css("right", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");
 						}
 					}
 				}
@@ -1368,21 +1426,20 @@ sap.ui.define([
 
 			// adapt DOM elements
 			var pxVal = px + "px";
-			var id = this.getId();
 			var animCnfg = this._bRtl ? {"left": pxVal} : {"right": pxVal};
 
-			jQuery.sap.byId(id + "-hdr").stop().animate(animCnfg);
-			jQuery.sap.byId(id + "-hdrImg").stop().animate(animCnfg);
-			jQuery.sap.byId(id + "-bg").stop().animate(animCnfg, function() {
+			this.$("hdr").stop().animate(animCnfg);
+			this.$("hdrImg").stop().animate(animCnfg);
+			this.$("bg").stop().animate(animCnfg, function() {
 				if (complete) {
 					complete();
 				}
 			});
 
-			jQuery.sap.byId(id + "-bgImg").stop().animate(animCnfg);
-			jQuery.sap.byId(id + "-wBar").stop().animate(animCnfg);
-			jQuery.sap.byId(id + "-paneBar").stop().animate(animCnfg);
-			jQuery.sap.byId(outerId).stop().animate({"width": pxVal});
+			this.$("bgImg").stop().animate(animCnfg);
+			this.$("wBar").stop().animate(animCnfg);
+			this.$("paneBar").stop().animate(animCnfg);
+			jQuery(document.getElementById(outerId)).stop().animate({"width": pxVal});
 
 			if (!this.$().hasClass("sapUiUx3ShellNoPane")) {
 				pxVal = (px + (this._sOpenPaneId ? this.getPaneWidth() : 0) + Shell.SIDE_BAR_BASE_WIDTH) + "px";
@@ -1390,25 +1447,24 @@ sap.ui.define([
 
 			animCnfg = this._bRtl ? {"left": pxVal} : {"right": pxVal};
 
-			jQuery.sap.byId(id + "-notify").stop().animate(animCnfg);
+			this.$("notify").stop().animate(animCnfg);
 			this._getSyncRefs().stop(false, true).animate(animCnfg);
-			jQuery.sap.byId(id + "-canvas").stop().animate(animCnfg);
-			jQuery.sap.byId(id + "-canvasBackground").stop().animate(animCnfg);
+			this.$("canvas").stop().animate(animCnfg);
+			this.$("canvasBackground").stop().animate(animCnfg);
 		};
 
 		Shell.prototype._refreshCanvasOffsetRight = function(bPaneShown) {
-			var id = this.getId();
 			var right = this._bRtl ? "left" : "right";
 			var pxVal = Shell._SHELL_OFFSET_RIGHT;
 			if (bPaneShown) {
-				var iPaneBarWidth = jQuery.sap.byId(id + "-paneBarRight").outerWidth();
+				var iPaneBarWidth = this.$("paneBarRight").outerWidth();
 				pxVal = pxVal + (this._sOpenPaneId ? this.getPaneWidth() : 0) + iPaneBarWidth;
 			}
 			pxVal = pxVal + "px";
 
-			jQuery.sap.byId(id + "-notify").css(right, pxVal);
-			jQuery.sap.byId(id + "-canvas").css(right, pxVal);
-			jQuery.sap.byId(id + "-canvasBackground").css(right, pxVal);
+			this.$("notify").css(right, pxVal);
+			this.$("canvas").css(right, pxVal);
+			this.$("canvasBackground").css(right, pxVal);
 			this._getSyncRefs().css(right, pxVal);
 		};
 
@@ -1423,17 +1479,17 @@ sap.ui.define([
 			}
 
 			var $notify = this.$("notify");
-			var $syncRef = this._topSyncRefId ? jQuery.sap.byId(this._topSyncRefId) : jQuery(null);
+			var $syncRef = this._topSyncRefId ? jQuery(document.getElementById(this._topSyncRefId)) : jQuery(null);
 			var bIsThingInspector = $syncRef.hasClass("sapUiUx3TI");
 
 			var iHeight = 0;
 			var iBottom = 0;
 
-			if (sVisibleStatus === sap.ui.ux3.NotificationBarStatus.Min) {
+			if (sVisibleStatus === NotificationBarStatus.Min) {
 				iHeight = 10;
-			} else if (sVisibleStatus === sap.ui.ux3.NotificationBarStatus.Max || sVisibleStatus === sap.ui.ux3.NotificationBarStatus.Default) {
-				if (this.getHeaderType() === sap.ui.ux3.ShellHeaderType.BrandOnly && bIsThingInspector) {
-					iHeight = parseInt(oNotificationBar.getHeightOfStatus(sap.ui.ux3.NotificationBarStatus.Default), 10);
+			} else if (sVisibleStatus === NotificationBarStatus.Max || sVisibleStatus === NotificationBarStatus.Default) {
+				if (this.getHeaderType() === ShellHeaderType.BrandOnly && bIsThingInspector) {
+					iHeight = parseInt(oNotificationBar.getHeightOfStatus(NotificationBarStatus.Default));
 				} else {
 					iHeight = 10;
 				}
@@ -1451,7 +1507,7 @@ sap.ui.define([
 			}
 
 			// TODO replace 100000 when there is something smart to handle the z-index centrally
-			if (sVisibleStatus === sap.ui.ux3.NotificationBarStatus.Min) {
+			if (sVisibleStatus === NotificationBarStatus.Min) {
 				// this enables the NotificationBar to be usable if it's minimized.
 				// If there is a ComboBox in the content area the NotificationBar should
 				// be behind the ComboBox if the NotificationBar is minimized. Otherwise
@@ -1481,7 +1537,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Shell.prototype.syncWithCanvasSize = function(sId, bInit, fFocusFirst, fFocusLast, fApplyChanges) {
-			var idx = jQuery.inArray(sId, this._aSyncRefStack);
+		    var idx = this._aSyncRefStack.indexOf(sId);
 
 			//Update sync ref data structure
 			if (bInit) {
@@ -1491,7 +1547,7 @@ sap.ui.define([
 				}
 				this._mSyncRefs[sId] = oRef;
 				//notify TI for property changes
-				oRef.applyChanges({showOverlay: this.getHeaderType() !== sap.ui.ux3.ShellHeaderType.BrandOnly});
+				oRef.applyChanges({showOverlay: this.getHeaderType() !== ShellHeaderType.BrandOnly});
 			} else {
 				if (idx >= 0) {
 					delete this._mSyncRefs[sId];
@@ -1501,11 +1557,11 @@ sap.ui.define([
 
 			//Cleanup Shell
 			this.$("canvas").removeAttr("aria-hidden");
-			this.$("focusDummyTPStart").removeAttr("tabindex").unbind("focusin");
-			this.$("focusDummyTPEnd").removeAttr("tabindex").unbind("focusin");
-			this.$("focusDummyHdrStart").removeAttr("tabindex").unbind("focusin");
-			this.$("focusDummyHdrEnd").removeAttr("tabindex").unbind("focusin");
-			this.$("focusDummyPane").removeAttr("tabindex").unbind("focusin");
+			this.$("focusDummyTPStart").removeAttr("tabindex").off("focusin");
+			this.$("focusDummyTPEnd").removeAttr("tabindex").off("focusin");
+			this.$("focusDummyHdrStart").removeAttr("tabindex").off("focusin");
+			this.$("focusDummyHdrEnd").removeAttr("tabindex").off("focusin");
+			this.$("focusDummyPane").removeAttr("tabindex").off("focusin");
 			this.$().toggleClass("sapUiUx3ShellBlockHeaderAccess", false);
 			delete this._topSyncRefId;
 
@@ -1523,35 +1579,33 @@ sap.ui.define([
 					}
 				}
 				$DomRefs.css(this._bRtl ? "left" : "right", iRight + "px");
-				$DomRefs.css("top", jQuery.sap.domById(this.getId() + (this.getAllowOverlayHeaderAccess() ? "-hdr" : "-hdrLine")).offsetHeight + "px");
+				$DomRefs.css("top", this.getDomRef(this.getAllowOverlayHeaderAccess() ? "hdr" : "hdrLine").offsetHeight + "px");
 				$DomRefs.css("bottom", "0");
 				jQuery(oCanvas).attr("aria-hidden", "true");
-				this.$("focusDummyTPEnd").attr("tabindex", "0").focusin(oRef.focusFirst);
-				this.$("focusDummyHdrStart").attr("tabindex", "0").focusin(jQuery.proxy(this.focusPaneEnd, this));
-				this.$("focusDummyHdrEnd").attr("tabindex", "0").focusin(jQuery.proxy(this.focusFirstTool, this));
-				this.$("focusDummyTPStart").attr("tabindex", "0").focusin(jQuery.proxy(this.focusLastHdr, this));
-				this.$("focusDummyPane").attr("tabindex", "0").focusin(oRef.focusLast);
+				this.$("focusDummyTPEnd").attr("tabindex", "0").on("focusin", oRef.focusFirst);
+				this.$("focusDummyHdrStart").attr("tabindex", "0").on("focusin", jQuery.proxy(this.focusPaneEnd, this));
+				this.$("focusDummyHdrEnd").attr("tabindex", "0").on("focusin", jQuery.proxy(this.focusFirstTool, this));
+				this.$("focusDummyTPStart").attr("tabindex", "0").on("focusin", jQuery.proxy(this.focusLastHdr, this));
+				this.$("focusDummyPane").attr("tabindex", "0").on("focusin", oRef.focusLast);
 				this.$().toggleClass("sapUiUx3ShellBlockHeaderAccess", !this.getAllowOverlayHeaderAccess());
 				this._topSyncRefId = oRef.id;
 			}
 
-			jQuery.sap.require("jquery.sap.script");
 			if (this._sUpdateNotificationZIndex) {
-				jQuery.sap.clearDelayedCall(this._sUpdateNotificationZIndex);
+				clearTimeout(this._sUpdateNotificationZIndex);
 				delete this._sUpdateNotificationZIndex;
 			}
-			this._sUpdateNotificationZIndex = jQuery.sap.delayedCall(0, this, function(){
+			this._sUpdateNotificationZIndex = setTimeout(function(){
 				delete this._sUpdateNotificationZIndex;
 				this._setNotifyVisibility();
 
 				if (this._oOpenToolPopup && this._topSyncRefId) {
-					var $syncRef = jQuery.sap.byId(this._topSyncRefId);
-					this._oOpenToolPopup.$().css("z-index", parseInt($syncRef.css("z-index"), 10) + 1);
+					var $syncRef = jQuery(document.getElementById(this._topSyncRefId));
+					this._oOpenToolPopup.$().css("z-index", parseInt($syncRef.css("z-index")) + 1);
 				}
-			});
+			}.bind(this), 0);
 		};
 
-	}());
 
 	/**
 	 * Returns a jQuery object containing all registered "special cases" aka overlays (ThingInspector,
@@ -1565,7 +1619,7 @@ sap.ui.define([
 		var aRefs = [];
 		var oRef;
 		for (var i = 0; i < this._aSyncRefStack.length; i++) {
-			oRef = jQuery.sap.domById(this._aSyncRefStack[i]);
+			oRef = this._aSyncRefStack[i] ? window.document.getElementById(this._aSyncRefStack[i]) : null;
 			if (oRef) {
 				aRefs.push(oRef);
 			}
@@ -1583,9 +1637,12 @@ sap.ui.define([
 	 */
 	Shell.prototype.focusFirstHdr = function() {
 		// tabbing forward into the page from the browser UI
+		// jQuery Plugin "firstFocusableDomRef"
 		var oToFocus = this.$("hdr-items").firstFocusableDomRef();
-		if (oToFocus && this.getAllowOverlayHeaderAccess() && this.getHeaderType() != sap.ui.ux3.ShellHeaderType.BrandOnly) {
-			jQuery.sap.focus(oToFocus);
+		if (oToFocus && this.getAllowOverlayHeaderAccess() && this.getHeaderType() != ShellHeaderType.BrandOnly) {
+			if (oToFocus) {
+				oToFocus.focus();
+			}
 		} else {
 			// otherwise focus the first tool
 			this.focusFirstTool();
@@ -1601,9 +1658,12 @@ sap.ui.define([
 	 */
 	Shell.prototype.focusLastHdr = function() {
 		// tabbing forward into the page from the browser UI
+		// jQuery Plugin "lastFocusableDomRef"
 		var oToFocus = this.$("hdr-items").lastFocusableDomRef();
-		if (oToFocus && this.getAllowOverlayHeaderAccess() && this.getHeaderType() != sap.ui.ux3.ShellHeaderType.BrandOnly) {
-			jQuery.sap.focus(oToFocus);
+		if (oToFocus && this.getAllowOverlayHeaderAccess() && this.getHeaderType() != ShellHeaderType.BrandOnly) {
+			if (oToFocus) {
+				oToFocus.focus();
+			}
 		} else {
 			// otherwise focus the last pane entry
 			this.focusPaneEnd();
@@ -1621,7 +1681,7 @@ sap.ui.define([
 		// tabbing forward into the page from the browser UI
 		var $firstTool = this.$("tp").find(".sapUiUx3ShellTool").first();
 		if ($firstTool.length && this.getShowTools()) {
-			jQuery.sap.focus($firstTool[0]);
+			$firstTool[0].focus();
 		} else {
 			// otherwise focus the first item in the ThingInspector
 			this._mSyncRefs[this._topSyncRefId].focusFirst();
@@ -1638,7 +1698,7 @@ sap.ui.define([
 		// tabbing backward out of the ThingInspector
 		var $lastTool = this.$("tp").find(".sapUiUx3ShellTool").last();
 		if ($lastTool.length && this.getShowTools()) {
-			jQuery.sap.focus($lastTool[0]);
+			$lastTool[0].focus();
 		} else {
 			// no tool present => jump to end of the Pane
 			this.focusPaneEnd();
@@ -1653,9 +1713,10 @@ sap.ui.define([
 	 */
 	Shell.prototype.focusPaneStart = function() {
 		// tabbing forward, ThingInspector is being left
+		// jQuery Plugin "firstFocusableDomRef"
 		var oToFocus = this.$("paneBar").firstFocusableDomRef();
 		if (oToFocus) {
-			jQuery.sap.focus(oToFocus);
+		    oToFocus.focus();
 		} else {
 			// no focusable element in the pane => focus first tool
 			this.focusFirstTool();
@@ -1669,9 +1730,10 @@ sap.ui.define([
 	 */
 	Shell.prototype.focusPaneEnd = function() {
 		// The ThingInspector tried to focus the last tool, but there was no tool. Or tools were being focused and we are tabbing backwards.
+		// jQuery Plugin "lastFocusableDomRef"
 		var oToFocus = this.$("paneBar").lastFocusableDomRef();
 		if (oToFocus) {
-			jQuery.sap.focus(oToFocus);
+		    oToFocus.focus();
 		} else {
 			// no focusable element in the pane, so focus the last element in the ThingInspector
 			this._mSyncRefs[this._topSyncRefId].focusLast();
@@ -1706,7 +1768,7 @@ sap.ui.define([
 	};
 
 	Shell.prototype.insertHeaderItem = function(oHeaderItem, iIndex) {
-		if (sap.ui.commons && sap.ui.commons.Button && (oHeaderItem instanceof sap.ui.commons.Button)) {
+		if (BaseObject.isA(oHeaderItem, "sap.ui.commons.Button")) {
 			oHeaderItem.setStyled(false);
 		}
 		this.insertAggregation("headerItems", oHeaderItem, iIndex, true);
@@ -1714,7 +1776,7 @@ sap.ui.define([
 		return this;
 	};
 	Shell.prototype.addHeaderItem = function(oHeaderItem) {
-		if (sap.ui.commons && sap.ui.commons.Button && (oHeaderItem instanceof sap.ui.commons.Button)) {
+		if (BaseObject.isA(oHeaderItem, "sap.ui.commons.Button")) {
 			oHeaderItem.setStyled(false);
 		}
 		this.addAggregation("headerItems", oHeaderItem, true);
@@ -1757,11 +1819,11 @@ sap.ui.define([
 
 		var $SyncRefs = this._getSyncRefs();
 		if ($SyncRefs.length) {
-			$SyncRefs.css("top", jQuery.sap.domById(this.getId() + (this.getAllowOverlayHeaderAccess() ? "-hdr" : "-hdrLine")).offsetHeight + "px");
+			$SyncRefs.css("top", this.getDomRef(this.getAllowOverlayHeaderAccess() ? "hdr" : "hdrLine").offsetHeight + "px");
 		}
 
 		//notify TI for changes
-		var oChanges = {showOverlay: sHeaderType !== sap.ui.ux3.ShellHeaderType.BrandOnly};
+		var oChanges = {showOverlay: sHeaderType !== ShellHeaderType.BrandOnly};
 		jQuery.each(this._mSyncRefs,function(sId,oRef) {
 			oRef.applyChanges(oChanges);
 		});
@@ -1774,7 +1836,7 @@ sap.ui.define([
 		var $SyncRefs = this._getSyncRefs();
 		if ($SyncRefs.length) {
 			this.$().toggleClass("sapUiUx3ShellBlockHeaderAccess", !this.getAllowOverlayHeaderAccess());
-			$SyncRefs.css("top", jQuery.sap.domById(this.getId() + (this.getAllowOverlayHeaderAccess() ? "-hdr" : "-hdrLine")).offsetHeight + "px");
+			$SyncRefs.css("top", this.getDomRef(this.getAllowOverlayHeaderAccess() ? "hdr" : "hdrLine").offsetHeight + "px");
 		}
 
 		return this;
@@ -1985,12 +2047,11 @@ sap.ui.define([
 		return this;
 	};
 
-	(function() {
 
 		function clearNotificationBar(oShell) {
 			var oOldNotificationBar = oShell.getNotificationBar();
 			if (oOldNotificationBar) {
-				oShell._setNotifyVisibility(sap.ui.ux3.NotificationBarStatus.None);
+				oShell._setNotifyVisibility(NotificationBarStatus.None);
 				oOldNotificationBar.setVisibleStatus = oOldNotificationBar.__orig_setVisibleStatus;
 				oOldNotificationBar.detachDisplay(oOldNotificationBar.__fHandleNotifyDisplay);
 				delete oOldNotificationBar.__orig_setVisibleStatus;
@@ -2022,7 +2083,7 @@ sap.ui.define([
 			if (oNotificationBar) {
 				oNotificationBar.__fHandleNotifyDisplay = function(oEvent){
 					var bShow = oEvent ? oEvent.getParameter("show") : oNotificationBar.hasItems();
-					oNotificationBar.setVisibleStatus(bShow ? sap.ui.ux3.NotificationBarStatus.Default : sap.ui.ux3.NotificationBarStatus.None);
+					oNotificationBar.setVisibleStatus(bShow ? NotificationBarStatus.Default : NotificationBarStatus.None);
 				};
 				oNotificationBar.attachDisplay(oNotificationBar.__fHandleNotifyDisplay);
 				oNotificationBar.__fHandleNotifyDisplay();
@@ -2037,13 +2098,12 @@ sap.ui.define([
 			return this;
 		};
 
-	}());
 
 	Shell.prototype._rerenderNotificationArea = function() {
 		var $notify = this.$("notify");
 		if ($notify.length > 0) {
 			var rm = sap.ui.getCore().createRenderManager();
-			sap.ui.ux3.ShellRenderer.renderNotificationArea(rm, this);
+			ShellRenderer.renderNotificationArea(rm, this);
 			rm.flush($notify[0], true);
 			rm.destroy();
 		}
@@ -2053,7 +2113,7 @@ sap.ui.define([
 		var $hdr = this.$("hdr");
 		if ($hdr.length > 0) {
 			var rm = sap.ui.getCore().createRenderManager();
-			sap.ui.ux3.ShellRenderer.renderHeader(rm, this);
+			ShellRenderer.renderHeader(rm, this);
 			rm.flush($hdr[0], true);
 			rm.destroy();
 		}
@@ -2064,7 +2124,7 @@ sap.ui.define([
 		if ($tp.length > 0) {
 			var rm = sap.ui.getCore().createRenderManager();
 			this._beforeRenderingToolPalette();
-			sap.ui.ux3.ShellRenderer.renderToolPalette(rm, this);
+			ShellRenderer.renderToolPalette(rm, this);
 			rm.flush($tp[0], true);
 			this._afterRenderingToolPalette();
 			rm.destroy();
@@ -2075,10 +2135,10 @@ sap.ui.define([
 
 	Shell.prototype._beforeRenderingToolPalette = function() {
 		// unbind the tool palette mouse (hover effect) handlers
-		this.$("tp").find(".sapUiUx3ShellTool").unbind("mouseenter mouseleave");
+		this.$("tp").find(".sapUiUx3ShellTool").off("mouseenter mouseleave");
 
-		this.$("focusDummyTPEnd").unbind("focusin");
-		this.$("focusDummyTPStart").unbind("focusin");
+		this.$("focusDummyTPEnd").off("focusin");
+		this.$("focusDummyTPStart").off("focusin");
 	};
 
 	Shell.prototype._afterRenderingToolPalette = function() {
@@ -2088,8 +2148,8 @@ sap.ui.define([
 
 		var bValidOpenTool = false;
 		if (this._oOpenToolPopup && this._oOpenToolPopup.isOpen() && (this.indexOfToolPopup(this._oOpenToolPopup) >= 0 || this._oOpenToolPopup === this._oSearchPopup || this._oOpenToolPopup === this._oFeederPopup)) {
-			this._oOpenToolPopup.setPosition(sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.EndTop, jQuery.sap.domById(sIdPrefix + this._oOpenToolPopup.getId()), "13 -6", "fit");
-			var oPopupTool = jQuery.sap.domById(sIdPrefix + this._oOpenToolPopup.getId());
+			this._oOpenToolPopup.setPosition(Dock.BeginTop, Dock.EndTop, sIdPrefix + this._oOpenToolPopup.getId() ? window.document.getElementById(sIdPrefix + this._oOpenToolPopup.getId()) : null, "13 -6", "fit");
+			var oPopupTool = document.getElementById(sIdPrefix + this._oOpenToolPopup.getId());
 			jQuery(oPopupTool).toggleClass("sapUiUx3ShellToolSelected", true);
 			Shell._updateToolIcon(oPopupTool);
 			bValidOpenTool = true;
@@ -2101,8 +2161,8 @@ sap.ui.define([
 
 		for (var i = 0; i < aToolItems.length; i++) {
 			var oToolItem = aToolItems[i];
-			if (oToolItem instanceof sap.ui.ux3.ToolPopup) {	// regular item
-				jQuery.sap.byId(sIdPrefix + oToolItem.getId()).hover(
+			if (oToolItem instanceof ToolPopup) {	// regular item
+				jQuery(document.getElementById(sIdPrefix + oToolItem.getId())).hover(
 					/*eslint-disable no-loop-func */
 					function(evt) {
 						jQuery(this).toggleClass("sapUiUx3ShellToolHover", (evt.type === "mouseenter")); // set/remove class depending on mouseenter/mouseleave
@@ -2114,10 +2174,10 @@ sap.ui.define([
 		}
 
 		if (this._topSyncRefId && this._mSyncRefs[this._topSyncRefId].focusFirst) {
-			this.$("focusDummyTPEnd").attr("tabindex", "0").focusin(this._mSyncRefs[this._topSyncRefId].focusFirst);
+			this.$("focusDummyTPEnd").attr("tabindex", "0").on("focusin", this._mSyncRefs[this._topSyncRefId].focusFirst);
 		}
 		if (this._aSyncRefStack.length > 0) {
-			this.$("focusDummyTPStart").attr("tabindex", "0").focusin(jQuery.proxy(this.focusLastHdr, this));
+			this.$("focusDummyTPStart").attr("tabindex", "0").on("focusin", jQuery.proxy(this.focusLastHdr, this));
 		}
 	};
 
@@ -2152,7 +2212,7 @@ sap.ui.define([
 
 		if ($PaneListRef.length > 0) {
 			var rm = sap.ui.getCore().createRenderManager();
-			sap.ui.ux3.ShellRenderer.renderPaneBarItems(rm, this);
+			ShellRenderer.renderPaneBarItems(rm, this);
 			rm.flush($PaneListRef[0]);
 			rm.destroy();
 
@@ -2185,7 +2245,7 @@ sap.ui.define([
 			var oItem = sap.ui.getCore().byId(sItemId);
 
 			if (!oItem) {
-				var oOverflowItem = new sap.ui.commons.MenuItem(sItemId, {
+				var oOverflowItem = new MenuItem(sItemId, {
 					text : aPaneBarItems[i].getText(),
 					visible : false,
 					select : fnOnItemSelect
@@ -2200,8 +2260,8 @@ sap.ui.define([
 
 	Shell.prototype._rerenderWorksetItems = function() {
 		if (this.$("wBar").length > 0) {
-			sap.ui.ux3.ShellRenderer.renderWorksetItems(null, this);
-			sap.ui.ux3.ShellRenderer.renderFacetBar(null, this);
+			ShellRenderer.renderWorksetItems(null, this);
+			ShellRenderer.renderFacetBar(null, this);
 			var items = this._oFacetBar.getAssociatedItems();
 			this._oFacetBar.$().css("display", (items && items.length > 0 ? "block" : "none"));
 			this._adaptContentHeight();
@@ -2261,7 +2321,7 @@ sap.ui.define([
 			// a PaneBarItem was changed/added/removed
 			this.forceInvalidation();
 
-		} else if (oSource instanceof sap.ui.ux3.ToolPopup) {
+		} else if (oSource instanceof ToolPopup) {
 			// This is needed for changes due to databinding. When the model changes for example the
 			// tooltip, the Shell's invalidate function is called.
 			this._rerenderToolPalette();
@@ -2301,11 +2361,11 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Shell.prototype.setContent = function(vContent, bDestruct) {
-		jQuery.sap.assert(vContent === null
+		assert(vContent === null
 			|| (vContent instanceof Control)
-			|| ((jQuery.isArray(vContent) && ((vContent.length > 0) ? (vContent[0] instanceof Control) : true))),
+			|| ((Array.isArray(vContent) && ((vContent.length > 0) ? (vContent[0] instanceof Control) : true))),
 			"vContent must be a control or array of controls or null"); // only the first array element is checked
-		jQuery.sap.assert((bDestruct === undefined || bDestruct === true || bDestruct === false), "bDestruct must be true, false, or undefined");
+		assert((bDestruct === undefined || bDestruct === true || bDestruct === false), "bDestruct must be true, false, or undefined");
 
 		var oldContent = [];
 		var $content = this.$("content");
@@ -2315,7 +2375,7 @@ sap.ui.define([
 			oldContent = this.removeAllAggregation("content", true);
 
 			if ($content.length > 0) {
-				sap.ui.core.RenderManager.preserveContent($content[0]);
+				RenderManager.preserveContent($content[0]);
 				bPreventPreserve = true;
 				$content.empty();
 			}
@@ -2354,10 +2414,10 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Shell.prototype.setPaneContent = function(vContent, bDestruct) {
-		jQuery.sap.assert((vContent instanceof Control)
-			|| ((jQuery.isArray(vContent) && ((vContent.length > 0) ? (vContent[0] instanceof Control) : true))),
+		assert((vContent instanceof Control)
+			|| ((Array.isArray(vContent) && ((vContent.length > 0) ? (vContent[0] instanceof Control) : true))),
 			"vContent must be a control or array of controls"); // only the first array element is checked
-		jQuery.sap.assert((bDestruct === undefined || bDestruct === true || bDestruct === false), "bDestruct must be true, false, or undefined");
+		assert((bDestruct === undefined || bDestruct === true || bDestruct === false), "bDestruct must be true, false, or undefined");
 
 		var oldContent = [];
 		var $paneContent = this.$("paneContent");
@@ -2367,7 +2427,7 @@ sap.ui.define([
 			oldContent = this.removeAllAggregation("paneContent", true);
 
 			if ($paneContent.length > 0) {
-				sap.ui.core.RenderManager.preserveContent($paneContent[0]);
+				RenderManager.preserveContent($paneContent[0]);
 				bPreventPreserve = true; // HTML content is already preserved; do not do it again in the RenderManager
 				$paneContent.empty();
 			}
@@ -2466,12 +2526,14 @@ sap.ui.define([
 		this.setProperty("applyContentPadding", bApplyContentPadding, true); // no re-rendering
 		this.$().toggleClass("sapUiUx3ShellNoContentPadding", !bApplyContentPadding);
 		this._adaptContentHeight();
+		return this;
 	};
 
 	Shell.prototype.setFullHeightContent = function(bFullHeightContent) {
 		this.setProperty("fullHeightContent", bFullHeightContent, true); // no re-rendering
 		this.$().toggleClass("sapUiUx3ShellFullHeightContent", bFullHeightContent);
 		this._adaptContentHeight();
+		return this;
 	};
 
 	Shell.prototype._calcFacetBarHeight = function($FacetBar){
@@ -2500,9 +2562,9 @@ sap.ui.define([
 
 		if (this.getFullHeightContent()) {
 			var bPad = this.getApplyContentPadding();
-			var iTop = !bPad ? 0 : parseInt($canvas.css("paddingTop"), 10);
-			var iLeft = !bPad ? 0 : parseInt($canvas.css("paddingLeft"), 10);
-			var iRight = !bPad ? 0 : parseInt($canvas.css("paddingRight"), 10);
+			var iTop = !bPad ? 0 : parseInt($canvas.css("paddingTop"));
+			var iLeft = !bPad ? 0 : parseInt($canvas.css("paddingLeft"));
+			var iRight = !bPad ? 0 : parseInt($canvas.css("paddingRight"));
 
 			var _iFacetBarHeight = iFacetBarHeight ? iFacetBarHeight : this._calcFacetBarHeight();
 
@@ -2519,13 +2581,13 @@ sap.ui.define([
 				sNotificationBarVisibleStatus = oNotify.getVisibleStatus();
 			}
 
-			if (sNotificationBarVisibleStatus === sap.ui.ux3.NotificationBarStatus.Default
-				|| sNotificationBarVisibleStatus === sap.ui.ux3.NotificationBarStatus.Max) {
-				$content.css("bottom", oNotify.getHeightOfStatus(sap.ui.ux3.NotificationBarStatus.Default));
+			if (sNotificationBarVisibleStatus === NotificationBarStatus.Default
+				|| sNotificationBarVisibleStatus === NotificationBarStatus.Max) {
+				$content.css("bottom", oNotify.getHeightOfStatus(NotificationBarStatus.Default));
 			} else {
-				var iBottom = !bPad ? 0 : parseInt($canvas.css("paddingBottom"), 10);
-				if (oNotify && sNotificationBarVisibleStatus === sap.ui.ux3.NotificationBarStatus.Min) {
-					iBottom += sap.ui.ux3.NotificationBar.HOVER_ITEM_HEIGHT;
+				var iBottom = !bPad ? 0 : parseInt($canvas.css("paddingBottom"));
+				if (oNotify && sNotificationBarVisibleStatus === NotificationBarStatus.Min) {
+					iBottom += NotificationBar.HOVER_ITEM_HEIGHT;
 				}
 				$content.css("bottom", iBottom + "px");
 			}
@@ -2536,9 +2598,9 @@ sap.ui.define([
 			$content.removeAttr("style");
 		}
 
-		if (!!sap.ui.Device.browser.webkit) {
+		if (Device.browser.webkit) {
 			//Force Webkit Browsers to do a repaint
-			sap.ui.core.RenderManager.forceRepaint(this.getId() + "-canvas");
+			RenderManager.forceRepaint(this.getId() + "-canvas");
 		}
 	};
 
@@ -2548,7 +2610,7 @@ sap.ui.define([
 	Shell.prototype._handleDragover = function(evt) {
 		var id = evt.target.id;
 		if (!this._dragOverBlinking) {
-			var $bg = jQuery.sap.byId(id);
+			var $bg = jQuery(document.getElementById(id));
 			$bg.css("opacity", "0.5");
 			this._dragOverBlinking = true;
 			var that = this;
@@ -2591,8 +2653,7 @@ sap.ui.define([
 
 	Shell.prototype._getPersonalization = function() {
 		if (!this.oPersonalization) {
-			jQuery.sap.require("sap.ui.ux3.ShellPersonalization");
-			this.oPersonalization = new sap.ui.ux3.ShellPersonalization(this);
+			this.oPersonalization = new ShellPersonalization(this);
 		}
 		return this.oPersonalization;
 	};
@@ -2657,4 +2718,4 @@ sap.ui.define([
 
 	return Shell;
 
-}, /* bExport= */ true);
+});

@@ -1,0 +1,16 @@
+<mvc:View
+	controllerName="sap.ui.demo.cardExplorer.controller.NotFound"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+
+	<MessagePage
+		title="{i18n>notFoundTitle}"
+		text="{i18n>notFoundText}"
+		icon="sap-icon://document"
+		id="page"
+		description="">
+		<customDescription>
+			<Link id="link" text="Getting Started" press=".onLinkPressed"/>
+		</customDescription>
+	</MessagePage>
+</mvc:View>

@@ -1,0 +1,195 @@
+{
+  "1.70.0": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "0da44cea2db2304537645c7eb55ecdcbd77583b6",
+        "type": "FIX",
+        "text": "FieldValueHelp: trigger FilterBar filter only after \"Go\"",
+        "references": []
+      },
+      {
+        "id": "b5576d5bd4d5cbceddfd7ed85f5fa7c35d55191f",
+        "type": "FIX",
+        "text": "FieldValueHelp: updateBindingContext if changed on Field",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970311297"
+          }
+        ]
+      },
+      {
+        "id": "364a06ffbe2d2226280137e421247bbdb4d53a9f",
+        "type": "FIX",
+        "text": "DefineConditionPanel: prevent adding more conditions than allowed",
+        "references": []
+      },
+      {
+        "id": "1c495385005a61880723d4a60fc10cfdcd4da245",
+        "type": "FIX",
+        "text": "Field: initialize unit/currentcy type even if no custom-units set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970405130"
+          }
+        ]
+      },
+      {
+        "id": "ab17323efdc3fe8d9d7872fee08517c848c8aad7",
+        "type": "FIX",
+        "text": "Field: number not shown if updated before rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970414749"
+          }
+        ]
+      },
+      {
+        "id": "4e19656314e9c1b65ef7b6af046e312fad86ef45",
+        "type": "FIX",
+        "text": "Field: on fast typing in field, in-parameter ignored",
+        "references": []
+      },
+      {
+        "id": "a87aafc126dd3eae217d7a4d4f455dafe5861b63",
+        "type": "FIX",
+        "text": "Field: use key returned from filter request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970306987"
+          }
+        ]
+      },
+      {
+        "id": "91b87e5a3f8b8cef14884946c98eb3523159a1cb",
+        "type": "FIX",
+        "text": "Field: with currency or unit. switch edit-display-edit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970405130"
+          }
+        ]
+      },
+      {
+        "id": "afd76dc01060e4d61ed7821e05b548eb134757da",
+        "type": "FIX",
+        "text": "FieldHelp: in/out-parameter not set leads to unselected table",
+        "references": []
+      },
+      {
+        "id": "b2f4335ed7f6be33dba04f07175398f08cb2e779",
+        "type": "FIX",
+        "text": " mdc.FilterBar: consider non conditional changes",
+        "references": []
+      },
+      {
+        "id": "274017b4992f669440bd43f418bd59b6524c1301",
+        "type": "FIX",
+        "text": " mdc:Field : fixing field issues in fast create row",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970428864"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970437707"
+          }
+        ]
+      },
+      {
+        "id": "903da6ca3767bbd96e1d1d421b9bdf0b362568fc",
+        "type": "FIX",
+        "text": " ConditionType: if parsing error in unit provide the currentValue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980331520"
+          }
+        ]
+      },
+      {
+        "id": "3beb3e9ec7c3ed832428a5fba916cc8cf024d0e2",
+        "type": "FIX",
+        "text": " ConditionType: validate value as \"\" if parseKeepsEmptyString",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980317488"
+          }
+        ]
+      },
+      {
+        "id": "1ee6a982a8ec86901cea5bfe1cd3b2a0b83d39d8",
+        "type": "FIX",
+        "text": " DefineConditionPanel: no fields if type is Edm.Int32",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970424773"
+          }
+        ]
+      },
+      {
+        "id": "0449fb1b53842b61f301fea108d273367b17e29c",
+        "type": "FIX",
+        "text": " Field: Unit only partly taken",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980327278"
+          }
+        ]
+      },
+      {
+        "id": "73fe11ceea5da830523860d62882d172514c0c4e",
+        "type": "FIX",
+        "text": " Field: number of unit field cannot be changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980336529"
+          }
+        ]
+      },
+      {
+        "id": "09308193049fa727e1fe96bd10fa0407511fbfb9",
+        "type": "FIX",
+        "text": " Field: unit validation is called with array",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980327278"
+          }
+        ]
+      },
+      {
+        "id": "e4157ce510f3842505846c11ab6f54d183fd9afc",
+        "type": "FIX",
+        "text": " FieldHelp: if typed fast and enter before open exceprion",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980326570"
+          }
+        ]
+      },
+      {
+        "id": "a4310a033af8a1e5f19cb9d832780476f42a7136",
+        "type": "FIX",
+        "text": " mdc.Field: Allow empty string as key in value help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970431497"
+          }
+        ]
+      }
+    ]
+  }
+}

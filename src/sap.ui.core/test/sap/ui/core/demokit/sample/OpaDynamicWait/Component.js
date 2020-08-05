@@ -5,24 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.core.sample.OpaDynamicWait.Component", {
 
 		metadata : {
-			dependencies : {
-				libs : [
-					"sap.m",
-					"sap.ui.commons"
-				]
-			},
-			config : {
-				sample : {
-					iframe : "Opa.html?opaExecutionDelay=700",
-					stretch : true,
-					files : [
-						"Opa.html",
-						"applicationUnderTest/view/Main.view.xml",
-						"applicationUnderTest/index.html",
-						"applicationUnderTest/Component.js"
-					]
-				}
-			}
+			manifest: "json"
 		}
 
 	});

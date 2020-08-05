@@ -1,0 +1,16 @@
+/******************************************************************
+	Style of the RTA Overlays - sap_fiori_3 Theme
+*******************************************************************/
+@_sap_ui_rta_Overlay_BaseBG: @sapBackgroundColor; //#fafafa
+@_sap_ui_rta_Overlay_BaseColor: @sapPrimary1; //#3f5161
+@_sap_ui_rta_Overlay_Base_PlaceholderBG: lighten(saturate(@sapPrimary4, 15%), 2%); //#f1f5f6
+
+.sapUiRta {
+	.sapUiDtOverlayDropZone {
+		> .sapUiDtOverlayChildren {
+			> .sapUiDtOverlayMovable {
+				background: inherit;
+			}
+		}
+	}
+}

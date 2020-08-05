@@ -2,12 +2,34 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/IconPool',
-    'sap/m/library', 'sap/m/Popover', 'sap/m/Text', 'sap/ui/layout/form/SimpleForm', 'sap/m/Button', 'sap/m/Label', 'sap/m/Link',
-    'sap/ui/core/HTML', 'sap/ui/core/Title'],
-    function (jQuery, ManagedObject, IconPool,
-              mobileLibrary, Popover, Text, SimpleForm, Button, Label, Link,
-              HTML, Title) {
+sap.ui.define([
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/IconPool',
+	'sap/m/library',
+	'sap/m/Popover',
+	'sap/m/Text',
+	'sap/ui/layout/form/SimpleForm',
+	'sap/m/Button',
+	'sap/m/Label',
+	'sap/m/Link',
+	'sap/ui/core/HTML',
+	'sap/ui/core/Title',
+	"sap/ui/thirdparty/jquery"
+],
+    function(
+		ManagedObject,
+	   IconPool,
+	   mobileLibrary,
+	   Popover,
+	   Text,
+	   SimpleForm,
+	   Button,
+	   Label,
+	   Link,
+	   HTML,
+	   Title,
+	   jQuery
+	) {
        'use strict';
 
        var PlacementType = mobileLibrary.PlacementType;
@@ -124,7 +146,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           this.gridContainer = jQuery('.sapUiInteractionTreeContainer .sapUiInteractionGridLinesContainer');
           this.gridContainerWidth = 0;
 
-          interactionTree.bind('click', function (event) {
+          interactionTree.on('click', function (event) {
 
              var $target = jQuery(event.target);
 
@@ -133,11 +155,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              }
           });
 
-          this.gridContainer.resize(function (event) {
+          this.gridContainer.on("resize", function (event) {
              that.updateGridLines();
           });
 
-          jQuery(window).resize(function (event) {
+          jQuery(window).on("resize", function (event) {
              that.updateGridLines();
           });
 
@@ -222,7 +244,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           var $li = $parent.parent().parent();
           $li.toggleClass('sapUiInteractionItemExpanded');
 
-          var index = parseInt($li.attr('data-interaction-index'), 10);
+          var index = parseInt($li.attr('data-interaction-index'));
           this.interactions[index].isExpanded = !expanded;
 
           var $container = $li.find('ul');
@@ -538,8 +560,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              var $requestLi = $element.parents('li[data-request-index]');
              var $interactionLi = $element.parents('li[data-interaction-index]');
 
-             var interactionIndex = parseInt($interactionLi.attr('data-interaction-index'), 10);
-             var requestIndex = parseInt($requestLi.attr('data-request-index'), 10);
+             var interactionIndex = parseInt($interactionLi.attr('data-interaction-index'));
+             var requestIndex = parseInt($requestLi.attr('data-request-index'));
 
              var interaction = that.interactions[interactionIndex];
              var request = interaction.requests[requestIndex];
@@ -664,7 +686,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              }).addStyleClass('sapUiSupportPopover');
 
              oPopover.attachAfterOpen(function(oEvent){
-                oEvent.getSource().$().focus();
+                oEvent.getSource().$().trigger("focus");
              });
 
              return oPopover;
@@ -735,8 +757,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           var $requestLi = $element.parents('li[data-request-index]');
           var $interactionLi = $element.parents('li[data-interaction-index]');
 
-          var interactionIndex = parseInt($interactionLi.attr('data-interaction-index'), 10);
-          var requestIndex = parseInt($requestLi.attr('data-request-index'), 10);
+          var interactionIndex = parseInt($interactionLi.attr('data-interaction-index'));
+          var requestIndex = parseInt($requestLi.attr('data-request-index'));
 
           var request = this.interactions[interactionIndex].requests[requestIndex];
 
@@ -775,7 +797,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           function initializePopOverInteractionData() {
 
              var $li = jQuery(this).parent().parent();
-             var index = parseInt($li.attr('data-interaction-index'), 10);
+             var index = parseInt($li.attr('data-interaction-index'));
              var interaction = that.interactions[index];
 
              if (!interaction) {
@@ -807,7 +829,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              }).addStyleClass('sapUiSupportPopover');
 
              oPopover.attachAfterOpen(function(oEvent){
-                oEvent.getSource().$().focus();
+                oEvent.getSource().$().trigger("focus");
              });
              return oPopover;
           }

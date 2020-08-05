@@ -4,14 +4,14 @@
 
 // Provides class sap.ui.dt.ElementDesignTimeMetadata.
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/dt/DesignTimeMetadata',
-	'sap/ui/dt/AggregationDesignTimeMetadata'
+	"sap/ui/dt/DesignTimeMetadata",
+	"sap/ui/dt/AggregationDesignTimeMetadata",
+	"sap/ui/dt/ElementUtil"
 ],
 function(
-	jQuery,
 	DesignTimeMetadata,
-	AggregationDesignTimeMetadata
+	AggregationDesignTimeMetadata,
+	ElementUtil
 ) {
 	"use strict";
 
@@ -23,7 +23,7 @@ function(
 	 *
 	 * @class
 	 * The ElementDesignTimeMetadata is a wrapper for the ElementDesignTimeMetadata of the associated element
-	 * @extends sap.ui.core.DesignTimeMetadata
+	 * @extends sap.ui.dt.DesignTimeMetadata
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -48,10 +48,10 @@ function(
 	 * @return {Object} default data
 	 * @override
 	 */
-	ElementDesignTimeMetadata.prototype.getDefaultData = function(oData) {
+	ElementDesignTimeMetadata.prototype.getDefaultData = function() {
 		var oDefaultData = DesignTimeMetadata.prototype.getDefaultData.apply(this, arguments);
 
-		oDefaultData.aggregations  = {
+		oDefaultData.aggregations = {
 			layout : {
 				ignore : true
 			},
@@ -66,6 +66,9 @@ function(
 			},
 			tooltip: {
 				ignore : true
+			},
+			dragDropConfig: {
+				ignore: true
 			}
 		};
 
@@ -100,9 +103,8 @@ function(
 	 * @return {sap.ui.dt.AggregationDesignTimeMetadata} returns the aggregation DT metadata for an aggregation with a given name
 	 * @public
 	 */
-	ElementDesignTimeMetadata.prototype.createAggregationDesignTimeMetadata  = function(mMetadata) {
+	ElementDesignTimeMetadata.prototype.createAggregationDesignTimeMetadata = function(mMetadata) {
 		return new AggregationDesignTimeMetadata({
-			libraryName: this.getLibraryName(),
 			data: mMetadata
 		});
 	};
@@ -116,23 +118,29 @@ function(
 	ElementDesignTimeMetadata.prototype.getAggregations = function() {
 		var mAggregations = this.getData().aggregations || {};
 		var mAssociations = this.getData().associations || {};
-		Object.keys(mAssociations).forEach(function(sAssociation){
+		Object.keys(mAssociations).forEach(function(sAssociation) {
 			var mAssociation = mAssociations[sAssociation];
-			if (mAssociation.aggregationLike){
+			if (mAssociation.aggregationLike) {
 				mAggregations[sAssociation] = mAssociation;
 			}
 		});
 		return mAggregations;
 	};
 
-	ElementDesignTimeMetadata.prototype.isActionAvailableOnAggregations = function(sAction) {
+	/**
+	 * Returns all available aggregation names containing the given action.
+	 * @param {string} sAction - action to search for the aggregations
+	 * @return {array.<string>} Returns the names of aggregations which contains the given action.
+	 * @public
+	 */
+	ElementDesignTimeMetadata.prototype.getAggregationNamesWithAction = function(sAction) {
 		var mAggregations = this.getAggregations();
-		return Object.keys(mAggregations).some( function (sAggregation) {
+		return Object.keys(mAggregations).filter(function (sAggregation) {
 			return mAggregations[sAggregation].actions && mAggregations[sAggregation].actions[sAction];
 		});
 	};
 
-	ElementDesignTimeMetadata.prototype.getActionDataFromAggregations = function(sAction, oElement, aArgs) {
+	ElementDesignTimeMetadata.prototype.getActionDataFromAggregations = function(sAction, oElement, aArgs, sSubAction) {
 		var vAction;
 		var mAggregations = this.getAggregations();
 		var aActions = [];
@@ -140,57 +148,66 @@ function(
 		for (var sAggregation in mAggregations) {
 			if (mAggregations[sAggregation].actions && mAggregations[sAggregation].actions[sAction]) {
 				vAction = mAggregations[sAggregation].actions[sAction];
+				if (sSubAction) {
+					vAction = vAction[sSubAction];
+				}
 				if (typeof vAction === "function") {
 					var aActionParameters = [oElement];
-					if (aArgs){
+					if (aArgs) {
 						aActionParameters = aActionParameters.concat(aArgs);
 					}
 					vAction = vAction.apply(null, aActionParameters);
 				}
-				if (typeof (vAction) === "string" ) {
+				if (typeof (vAction) === "string") {
 					vAction = { changeType : vAction };
 				}
 				if (vAction) {
 					vAction.aggregation = sAggregation;
+					aActions.push(vAction);
 				}
-				aActions.push(vAction);
 			}
 		}
 		return aActions;
 	};
 
-	ElementDesignTimeMetadata.prototype._getText = function(vName){
+	ElementDesignTimeMetadata.prototype._getText = function(oElement, vName) {
 		if (typeof vName === "function") {
 			return vName();
-		} else {
-			return this.getLibraryText(vName);
 		}
+		return this.getLibraryText(oElement, vName);
 	};
 
-	ElementDesignTimeMetadata.prototype.getAggregationDescription = function(sAggregationName, oElement){
+	ElementDesignTimeMetadata.prototype.getAggregationDescription = function(sAggregationName, oElement) {
 		var vChildNames = this.getAggregation(sAggregationName).childNames;
 		if (typeof vChildNames === "function") {
-			vChildNames = vChildNames.call(null, oElement);
+			vChildNames = vChildNames(oElement);
 		}
-		if (vChildNames){
+		if (vChildNames) {
 			return {
-				singular : this._getText(vChildNames.singular),
-				plural : this._getText(vChildNames.plural)
+				singular : this._getText(oElement, vChildNames.singular),
+				plural : this._getText(oElement, vChildNames.plural)
 			};
 		}
 	};
 
-	ElementDesignTimeMetadata.prototype.getName = function(oElement){
+	ElementDesignTimeMetadata.prototype.getName = function(oElement) {
 		var vName = this.getData().name;
 		if (typeof vName === "function") {
-			vName = vName.call(null, oElement);
+			vName = vName(oElement);
 		}
-		if (vName){
+		if (vName) {
 			return {
-				singular : this._getText(vName.singular),
-				plural : this._getText(vName.plural)
+				singular : this._getText(oElement, vName.singular),
+				plural : this._getText(oElement, vName.plural)
 			};
 		}
+	};
+
+	ElementDesignTimeMetadata.prototype.getToolHooks = function() {
+		return this.getData().tool || {
+			start: function() {},
+			stop: function() {}
+		};
 	};
 
 	/**
@@ -206,9 +223,8 @@ function(
 		var vIgnore = (oAggregationMetadata) ? oAggregationMetadata.ignore : false;
 		if (!vIgnore || (vIgnore && typeof vIgnore === "function" && !vIgnore(oElement))) {
 			return false;
-		} else {
-			return true;
 		}
+		return true;
 	};
 
 	/**
@@ -217,9 +233,53 @@ function(
 	 * @return {array} scrollContainers or empty array
 	 * @public
 	 */
-	ElementDesignTimeMetadata.prototype.getScrollContainers = function() {
-		return this.getData().scrollContainers || [];
+	ElementDesignTimeMetadata.prototype.getScrollContainers = function(oElement) {
+		var aScrollContainers = this.getData().scrollContainers || [];
+
+		aScrollContainers.forEach(function(oScrollContainer) {
+			if (typeof oScrollContainer.aggregations === "function") {
+				oScrollContainer.aggregations = oScrollContainer.aggregations.call(null, oElement);
+			}
+		});
+
+		return aScrollContainers;
+	};
+
+	/**
+	 * Returns "label" from element designtime metadata or present in a metadata property
+	 * @param {sap.ui.core.Element} oElement element for which label has to retrieved
+	 *
+	 * @return {string|undefined} Returns the label as string or undefined
+	 * @public
+	 */
+	ElementDesignTimeMetadata.prototype.getLabel = function(oElement) {
+		return DesignTimeMetadata.prototype.getLabel.apply(this, arguments) || ElementUtil.getLabelForElement(oElement);
+	};
+
+	/**
+	 * This function checks the designtime metadata for a getStableElements function
+	 * returns the result of the DTMD function if it is an array or an empty array if it is anything else
+	 * if no function is available in DTMD it will return an array with the element of the overlay
+	 *
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay
+	 * @returns {sap.ui.base.ManagedObject[]|object[]} Returns an array of elements or selectors.
+	 */
+	ElementDesignTimeMetadata.prototype.getStableElements = function(oOverlay) {
+		var oElement = oOverlay.getElement();
+		var aStableElements;
+		var fnGetStableElements = this.getData().getStableElements;
+		if (fnGetStableElements) {
+			aStableElements = fnGetStableElements(oElement);
+		} else {
+			aStableElements = [oElement];
+		}
+
+		// if the result is undefined or not an array we return an empty array
+		if (!aStableElements || !Array.isArray(aStableElements)) {
+			aStableElements = [];
+		}
+		return aStableElements;
 	};
 
 	return ElementDesignTimeMetadata;
-}, /* bExport= */ true);
+});

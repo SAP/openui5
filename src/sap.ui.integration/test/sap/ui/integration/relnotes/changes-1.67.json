@@ -1,0 +1,19 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "4773f844e3cef4249ee13719bcf2cc2bd27675fb",
+        "type": "FIX",
+        "text": "CustomElement events need to pass event parameters as data",
+        "references": []
+      },
+      {
+        "id": "05f933407f4e8c18b7bf99285ab9ca2520dbaf18",
+        "type": "FEATURE",
+        "text": "sap.ui.integration.widgets.Card: Counter in Numeric Header is introduced",
+        "references": []
+      }
+    ]
+  }
+}

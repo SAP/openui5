@@ -35,6 +35,25 @@ sap.ui.define([],
 						return fnShouldIgnoreSingleAggregation(oControl, "getTitleHeading");
 					}
 				},
+				titleSnappedHeading : {
+					domRef : function (oControl) {
+						return oControl.getTitleHeading().getDomRef();
+					},
+					ignore : function (oControl) {
+						return fnShouldIgnoreSingleAggregation(oControl, "getTitleSnappedHeading");
+					}
+				},
+				titleExpandedHeading : {
+					domRef : function (oControl) {
+						return oControl.getTitleHeading().getDomRef();
+					},
+					ignore : function (oControl) {
+						return fnShouldIgnoreSingleAggregation(oControl, "getTitleExpandedHeading");
+					}
+				},
+				titleSnappedOnMobile : {
+					ignore : true
+				},
 				titleBreadcrumbs : {
 					domRef : function (oControl) {
 						return oControl.getTitleBreadcrumbs().getDomRef();
@@ -182,7 +201,7 @@ sap.ui.define([],
 				content : {
 					domRef : ":sap-domref .sapFDynamicPageContent",
 					ignore : function (oControl) {
-						return fnShouldIgnoreSingleAggregation(oControl, "getContent");
+						return !(oControl && oControl.getContent());
 					}
 				},
 				footerMainAction : {
@@ -289,11 +308,22 @@ sap.ui.define([],
 						// in this case we can reuse the function here
 						return fnShouldIgnoreSingleAggregation(oControl, "_getActionSheet");
 					}
+				},
+				landmarkInfo: {
+					ignore: true
 				}
 			},
 			scrollContainers : [{
 				domRef : ":sap-domref .sapFDynamicPageContentWrapper",
-				aggregations : ["headerContent", "content"]
+				aggregations : function(oElement) {
+					if (oElement && oElement.getDomRef() &&
+						(oElement.getDomRef().querySelector(".sapFDynamicPageHeaderPinned") ||
+						oElement.getPreserveHeaderStateOnScroll())) {
+						return ["content"];
+					} else {
+						return ["headerContent", "content"];
+					}
+				}
 			},
 			{
 				domRef : function(oElement) {
@@ -305,4 +335,4 @@ sap.ui.define([],
 			}
 		};
 
-	}, /* bExport= */ false);
+	});

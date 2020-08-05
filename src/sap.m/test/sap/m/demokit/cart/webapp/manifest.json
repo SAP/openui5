@@ -1,14 +1,21 @@
 {
-	"_version": "1.8.0",
+	"_version": "1.21.0",
 	"sap.app": {
 		"id": "sap.ui.demo.cart",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
+		"resources": "resources.json",
 		"dataSources": {
 			"mainService": {
 				"uri": "/sap/opu/odata/IWBEP/EPM_DEVELOPER_SCENARIO_SRV/",
@@ -23,17 +30,8 @@
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
-			"icon": "sap-icon://detail-view",
-			"favIcon": "",
-			"phone": "",
-			"phone@2": "",
-			"tablet": "",
-			"tablet@2": ""
-		},
-		"deviceTypes": {
-			"desktop": true,
-			"tablet": true,
-			"phone": true
+			"icon": "sap-icon://cart",
+			"favIcon": "img/favicon.ico"
 		}
 	},
 	"sap.ui5": {
@@ -44,14 +42,12 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.36.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
-				"sap.ui.core": {
-				},
-				"sap.m": {
-				},
-				"sap.ui.layout": {
-				}
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.f": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"contentDensities": {
@@ -62,7 +58,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.cart.i18n.i18n"
+					"bundleName": "sap.ui.demo.cart.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			},
 			"": {
@@ -72,20 +72,15 @@
 		},
 		"handleValidation": true,
 		"resources": {
-			"css": [
-				{
-					"uri": "css/style.css"
-				}
-			]
+			"css": [{"uri": "css/style.css"}]
 		},
 		"routing": {
 			"config": {
-				"routerClass": "sap.m.routing.Router",
+				"routerClass": "sap.f.routing.Router",
 				"viewType": "XML",
 				"viewPath": "sap.ui.demo.cart.view",
-				"controlId": "app",
-				"controlAggregation": "pages",
-				"transition": "slide",
+				"controlId": "layout",
+				"controlAggregation": "midColumnPages",
 				"bypassed": {
 					"target": [
 						"home",
@@ -107,7 +102,8 @@
 					"pattern": "categories",
 					"name": "categories",
 					"target": [
-						"homeSlide"
+						"home",
+						"welcome"
 					]
 				},
 				{
@@ -115,33 +111,52 @@
 					"name": "category",
 					"target": [
 						"welcome",
-						"categoryView"
+						"category"
 					],
-					"titleTarget": "categoryView"
+					"titleTarget": "category"
 				},
 				{
 					"pattern": "category/{id}/product/{productId}",
 					"name": "product",
 					"target": [
-						"categoryView",
-						"productView"
+						"category",
+						"product"
 					],
-					"titleTarget": "productView"
+					"titleTarget": "product"
+				},
+				{
+				  "pattern": "category/{id}/compare/:item1Id:/:item2Id:",
+				  "name": "comparison",
+				  "target": [
+					"category",
+					"comparison"
+				  ],
+				  "titleTarget": "comparison"
+				},
+				{
+				  "pattern": "category/{id}/compare/:item1Id:/:item2Id:/cart",
+				  "name": "comparisonCart",
+				  "target": [
+					"category",
+					"comparison",
+					"cart"
+				  ],
+				  "titleTarget": "comparison"
+				},
+				{
+					"pattern": "category/{id}/product/{productId}/cart",
+					"name": "productCart",
+					"target": [
+						"category",
+						"product",
+						"cart"
+					],
+					"titleTarget": "product"
 				},
 				{
 					"pattern": "cart",
 					"name": "cart",
-					"target": [
-						"cart"
-					]
-				},
-				{
-					"pattern": "cart/{productId}",
-					"name": "cartProductView",
-					"target": [
-						"cart",
-						"productView"
-					]
+					"target": ["home", "welcome", "cart"]
 				},
 				{
 					"pattern": "checkout",
@@ -152,37 +167,28 @@
 					"pattern": "ordercompleted",
 					"name": "ordercompleted",
 					"target": "ordercompleted"
-				},
-				{
-					"pattern": "product/{productId}",
-					"name": "cartProduct",
-					"target": [
-						"home",
-						"productView"
-					]
 				}
 			],
 			"targets": {
-				"splitscreenTarget": {
-					"viewName": "SplitScreen",
-					"viewId": "splitView"
-				},
-				"productView": {
+				"product": {
 					"viewName": "Product",
 					"viewLevel": 3,
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
-					"viewId": "productView",
-					"controlAggregation": "detailPages",
+					"viewId": "product",
+					"controlAggregation": "midColumnPages",
 					"title":"{Name}"
 				},
-				"categoryView": {
+				"comparison": {
+				  "viewName": "Comparison",
+				  "viewLevel": 3,
+				  "viewId": "comparison",
+				  "controlAggregation": "midColumnPages",
+				  "title":"{Name}"
+				},
+				"category": {
 					"viewName": "Category",
 					"viewLevel": 2,
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
-					"controlAggregation": "masterPages",
-					"viewId": "categoryView",
+					"controlAggregation": "beginColumnPages",
+					"viewId": "category",
 					"title": {
 						"parts": [
 							"i18n>tabTitle",
@@ -193,41 +199,26 @@
 				"notFound": {
 					"viewName": "NotFound",
 					"viewLevel": 3,
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
-					"controlAggregation": "detailPages",
+					"controlAggregation": "midColumnPages",
 					"viewId": "notFoundView",
 					"title": "{i18n>categoryNoData}"
 				},
 				"welcome": {
 					"viewName": "Welcome",
 					"viewLevel": 0,
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
 					"viewId": "welcomeView",
-					"controlAggregation": "detailPages"
+					"controlAggregation": "midColumnPages"
 				},
 				"home": {
 					"viewName": "Home",
 					"viewLevel": 1,
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
-					"controlAggregation": "masterPages",
+					"controlAggregation": "beginColumnPages",
 					"viewId": "homeView",
-					"title": "{i18n>homeTitle}"
-				},
-				"homeSlide": {
-					"viewName": "Home",
-					"viewLevel": -1,
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
-					"controlAggregation": "masterPages"
+					"title": "{i18n>appTitle}"
 				},
 				"cart": {
 					"viewName": "Cart",
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
-					"controlAggregation": "masterPages",
+					"controlAggregation": "endColumnPages",
 					"viewId": "cartView",
 					"title": {
 						"parts": [
@@ -238,12 +229,14 @@
 				},
 				"checkout": {
 					"viewName": "Checkout",
+					"controlAggregation": "beginColumnPages",
 					"viewLevel": 1,
 					"title": "{i18n>checkoutTitle}",
 					"viewId": "checkoutView"
 				},
 				"ordercompleted": {
 					"viewName": "OrderCompleted",
+					"controlAggregation": "beginColumnPages",
 					"viewLevel": 2,
 					"viewId": "orderCompletedView",
 					"title": "{i18n>orderCompletedTitle}"

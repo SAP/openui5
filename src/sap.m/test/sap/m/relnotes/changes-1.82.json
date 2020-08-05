@@ -1,0 +1,95 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "c81085bf982a3fc71df0337cfd9bb1bf05b85ea9",
+        "type": "FIX",
+        "text": " sap.m.Button: Icon-only buttons now have proper padding in case of overflow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080298219"
+          }
+        ]
+      },
+      {
+        "id": "78415195426a430905385989bf4c3c1ffe09fd94",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Invalidating empty carousel is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080236976"
+          }
+        ]
+      },
+      {
+        "id": "116d8eddeb7fe34decbd00569a36a3d5bb0c9e91",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: \u0027setAttribute\u0027 of null error is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080270388"
+          }
+        ]
+      },
+      {
+        "id": "a82d7b72641d948fb20853b3d972266dcfda722d",
+        "type": "FIX",
+        "text": " sap.m.InputBase: IE \u0026 Safari no longer fire change event on value selection in IME popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004949912020"
+          }
+        ]
+      },
+      {
+        "id": "95a17f14a73be5f236cceb57aab65c0abff3cb65",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Text is no longer read twice in virtual mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193263"
+          }
+        ]
+      },
+      {
+        "id": "7a7e2b160af6d82163c3dcb170bbc0010b92c418",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: jQuery incorrect width measurement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080205481"
+          }
+        ]
+      },
+      {
+        "id": "10349c15bcec266c2530198f45d6ab88b577ca24",
+        "type": "FIX",
+        "text": " sap.m.Popover, sap.m.MessagePopover: Runtime exceptions cleared",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080193375"
+          }
+        ]
+      },
+      {
+        "id": "0aefc64651e93691a74ceb5677db56b06b473ec0",
+        "type": "FIX",
+        "text": " sap.m.SematicPage: getCustomFooterContent return copy of array",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000471395 2020"
+          }
+        ]
+      }
+    ]
+  }
+}

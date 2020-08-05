@@ -18,4 +18,4 @@ sap.ui.define([],
 				create: "sap/m/designtime/Breadcrumbs.create.fragment.xml"
 			}
 		};
-	}, /* bExport= */ false);
+	});

@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TableTest",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"iframe": "OpaTableTest.html",
+				"stretch": true,
+				"files": [
+					"OpaTableTest.html",
+					"applicationUnderTest/index.html",
+					"applicationUnderTest/Component.js",
+					"applicationUnderTest/products.json",
+					"applicationUnderTest/view/Table.view.xml",
+					"applicationUnderTest/view/Table.controller.js",
+					"applicationUnderTest/view/Formatter.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -3,26 +3,6 @@
 /* High Contrast Black theme    */
 /* ============================ */
 
-/* Value Help */
-.sapMInputVH .sapMInputBaseInner {
-	padding-right: 2.5rem;
-}
-
-.sapMInputVHO:hover > .sapMInputValHelp > .sapMInputValHelpInner {
-	border-left: 0.0625rem solid @sapUiFieldBorderColor;
-	margin-left: -0.0625rem;
-}
-
-.sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:hover{
-	border-left: 0.0625rem solid @sapUiFieldBorderColor;
-	margin-left: -0.0625rem;
-}
-
-.sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:active {
-	/* works fine in desktop browsers, iOS6 and mobile Chrome; does not work well in older Android browser */
-	outline: none;
-}
-
 /* suggestion popup */
 div.sapMInputSuggestionPopup {
 	border: none;
@@ -33,11 +13,4 @@ div.sapMInputSuggestionPopup {
 	border: solid @sapUiGroupContentBorderColor;
 	border-width: 0.0625rem .125rem .125rem;
 	box-sizing: border-box;
-}
-
-/* Compact size */
-.sapUiSizeCompact {
-	.sapMInputDescription > span {
-		color: @sapUiFieldTextColor;
-	}
 }

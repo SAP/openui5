@@ -1,16 +1,10 @@
 <mvc:View controllerName="sap.m.sample.TimePickerSliders.TimePickerSliders"
 	height="100%"
-
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
-
-	<Page
-		showHeader="false"
-	>
+	<Page showHeader="false">
 		<VBox>
 			<Button  press="handleOpenDialog" text="Open Dialog" class="sapUiSmallMargin"/>
-
 			<Text id="T1" text="change event result" class="sapUiSmallMargin" />
 		</VBox>
 	</Page>

@@ -1,0 +1,38 @@
+{
+	"sap.app": {
+		"id": "sap.ui.unified.sample.SplitContainer",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.unified.sample.SplitContainer.View",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {},
+				"sap.m": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "../style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"View.view.xml",
+					"Controller.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

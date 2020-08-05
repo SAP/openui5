@@ -1,0 +1,51 @@
+{
+  "1.79.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "b2e0fae6c3dc01f6a2e7a5c8e9a993f1a06c0522",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Corrected QUnit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070219771"
+          }
+        ]
+      },
+      {
+        "id": "4a1ce2927674a490d27ca648d963bae5c21c8aa7",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected error upon rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070205321"
+          }
+        ]
+      },
+      {
+        "id": "84483eb7087e89129daf16f602d485ce75cb275f",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Missing header shadow is added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070175609"
+          }
+        ]
+      },
+      {
+        "id": "429ff4929864d87da89c84733fb041c725cb0c53",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: No lazyLoading during animation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970593988"
+          }
+        ]
+      }
+    ]
+  }
+}

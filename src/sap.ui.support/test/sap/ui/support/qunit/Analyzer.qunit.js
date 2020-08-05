@@ -1,20 +1,18 @@
 /*global QUnit,sinon*/
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/support/supportRules/Analyzer",
 	"sap/ui/support/supportRules/IssueManager"
 ], function (Analyzer, IssueManager) {
 		"use strict";
 
 		QUnit.module("Analyzer", {
-			setup: function () {
+			beforeEach: function () {
 				this.oAnalyzer = new Analyzer();
-				this.clock = sinon.useFakeTimers();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oAnalyzer.reset();
 				this.oAnalyzer = null;
-				this.clock.restore();
 			}
 		});
 
@@ -108,7 +106,7 @@ sap.ui.require([
 		});
 
 		QUnit.module("Analyzer start", {
-			setup: function () {
+			beforeEach: function () {
 				this.oAnalyzer = new Analyzer();
 				this.oMockCoreFacade = {};
 				this.oMockExecutionScope = {};
@@ -117,7 +115,7 @@ sap.ui.require([
 					return {};
 				});
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.oAnalyzer.reset();
 				this.oAnalyzer = null;
 				IssueManager.createIssueManagerFacade.restore();
@@ -126,7 +124,6 @@ sap.ui.require([
 
 		QUnit.test("start with synchronous rules and 2 errors thrown", function (assert) {
 			// Arrange
-			this.clock = sinon.useFakeTimers();
 
 			var done = assert.async(),
 				oSpy = sinon.spy(),
@@ -188,6 +185,8 @@ sap.ui.require([
 			var done = assert.async(),
 				that = this;
 
+			this.clock.restore(); // using real timeouts for this test
+
 			sinon.spy(this.oAnalyzer, "_updateProgress");
 			sinon.spy(this.oAnalyzer, "reset");
 			sinon.spy(this.oAnalyzer, "_handleException");
@@ -248,5 +247,6 @@ sap.ui.require([
 
 				done();
 			});
+
 		});
 });

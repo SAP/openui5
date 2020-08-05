@@ -1,20 +1,25 @@
 /*global QUnit*/
 
-(function(){
+sap.ui.define([
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/core/Core",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/core/Element",
+	"sap/ui/thirdparty/sinon-4"
+], function (
+	ElementDesignTimeMetadata,
+	Core,
+	ElementUtil,
+	Element,
+	sinon
+) {
 	"use strict";
 
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-	jQuery.sap.require("sap.ui.dt.ElementDesignTimeMetadata");
-
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that an ElementDesignTimeMetadata is created for a control", {
 		beforeEach : function() {
-			this.oElementDesignTimeMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
-				libraryName : "fake.lib",
+			this.oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
 				data : {
 					name : {
 						singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
@@ -33,6 +38,16 @@
 								},
 								action4 : function(oElement, foo, bar) {
 									return {changeType: oElement.name + foo + bar};
+								},
+								action5 : {
+									subAction: {
+										changeType : "subChangeType"
+									}
+								},
+								action6 : {
+									subAction: function(oElement, foo, bar) {
+										return {changeType: oElement.name + foo + bar};
+									}
 								}
 							},
 							childNames : {
@@ -47,18 +62,18 @@
 							}
 						},
 						testAggregation3 : {
-							childNames : function(oElement){
+							childNames : function(oElement) {
 								//fake 2 cases:
 								//1. childNames is a function, that returns the object
 								//2. singular and plural can be functions to handle cases with self made resource bundling
 								return {
-									singular : function(){
+									singular : function() {
 										//fake own resource bundle handling
-										return "I18N_KEY" + oElement;
+										return "I18N_KEY" + oElement.getText();
 									},
-									plural :  function(){
+									plural :  function() {
 										//fake own resource bundle handling
-										return "I18N_KEY_PLURAL" + oElement;
+										return "I18N_KEY_PLURAL" + oElement.getText();
 									}
 								};
 							}
@@ -68,76 +83,239 @@
 						testAssociation: {
 							aggregationLike : true
 						}
+					},
+					getStableElements: function(oElement) {
+						return [oElement, oElement];
 					}
 				}
 			});
 		},
 		afterEach : function() {
 			this.oElementDesignTimeMetadata.destroy();
+			sandbox.restore();
 		}
+	}, function() {
+		QUnit.test("when the ElementDesignTimeMetadata is initialized", function(assert) {
+			assert.strictEqual(this.oElementDesignTimeMetadata.hasAggregation("testAggregation"), true, "hasAggregations is true when aggregation data exists");
+			assert.strictEqual(this.oElementDesignTimeMetadata.hasAggregation("fakeAggregation"), false, "hasAggregations is false when aggregation data not exists");
+			assert.strictEqual(this.oElementDesignTimeMetadata.hasAggregation("testAssociation"), true, "hasAggregations is true when aggregation-like association data exists");
+			assert.strictEqual(this.oElementDesignTimeMetadata.getAggregation("testAggregation").testField, "testValue", "getAggregation returns data when aggregation it exists");
+			assert.strictEqual(this.oElementDesignTimeMetadata.getAggregation("fakeAggregation"), undefined, "getAggregation returns undefined when aggregation data doesn't exists");
+			assert.strictEqual(this.oElementDesignTimeMetadata.getAggregation("layout").ignore, true, "getAggregation returns correct data for default aggregations");
+			assert.strictEqual(this.oElementDesignTimeMetadata.getAggregation("testAssociation").aggregationLike, true, "getAggregation returns correct data for aggregation-like association");
+		});
+
+		QUnit.test("when creating aggregation dt metadata", function(assert) {
+			var oAggregationDesignTimeMetadata = this.oElementDesignTimeMetadata.createAggregationDesignTimeMetadata({testData: "TestData"});
+			assert.equal(oAggregationDesignTimeMetadata.getMetadata().getName(), "sap.ui.dt.AggregationDesignTimeMetadata", "then aggregation designtime metadata class is created");
+		});
+
+		QUnit.test("when getActionDataFromAggregations is called", function(assert) {
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action1"), [
+				{changeType : "firstChangeType", aggregation : "testAggregation"},
+				{changeType : "firstChangeType-aggregation2", aggregation : "testAggregation2"}
+			], "for string action, the correct object is returned");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action2"), [{changeType : "secondChangeType", aggregation : "testAggregation"}], "for object action, the correct object is returned");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action3", {name:"thirdChangeType"}), [{changeType : "thirdChangeType", aggregation : "testAggregation"}], "for function action, the correct object is returned");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action4", {name:"fourthChangeType"}, ["foo", "bar"]), [{changeType : "fourthChangeTypefoobar", aggregation : "testAggregation"}], "for function action with parameters , the correct object is returned");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action5", {name:"subChangeType"}, ["foo", "bar"], "subAction"), [{changeType : "subChangeType", aggregation : "testAggregation"}], "when the function was called with an action, a sub-action and parameters, then the correct object is returned");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action6", {name:"subChangeType"}, ["foo", "bar"], "subAction"), [{changeType : "subChangeTypefoobar", aggregation : "testAggregation"}], "for function action with a function action, a sub-action and parameters, then the correct object is returned");
+		});
+
+		QUnit.test("when getAggregationDescription is called", function(assert) {
+			var oFakeElement = {
+				getMetadata : sandbox.stub().returns({
+					getLibraryName : sandbox.stub().returns("fakeLibrary"),
+					getParent : sandbox.stub().returns(undefined)
+				}),
+				getText : sandbox.stub().returns("simulateElement")
+			};
+			var oFakeLibBundle = {
+				getText : sandbox.stub().returnsArg(0), //just return i18n keys
+				hasText : sandbox.stub().returns(false)
+			};
+			sandbox.stub(Core, "getLibraryResourceBundle").returns(oFakeLibBundle);
+
+			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation", oFakeElement), {
+				singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
+				plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
+			}, "then the translated texts are returned for static keys");
+			assert.notOk(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation2", oFakeElement), "then undefined is returned missing childNames");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation3", oFakeElement, "simulateElement"), {
+				singular : "I18N_KEYsimulateElement",
+				plural :  "I18N_KEY_PLURALsimulateElement"
+			}, "then the translated texts are returned for variable texts/keys");
+		});
+
+		QUnit.test("when getText is called", function(assert) {
+			var oFakeElement = {
+				getMetadata : sandbox.stub().returns({
+					getLibraryName : sandbox.stub().returns("fakeLibrary"),
+					getParent : sandbox.stub().returns(undefined)
+				})
+			};
+
+			var oFakeLibBundle = {
+				getText : sandbox.stub().returnsArg(0), //just return i18n keys
+				hasText : sandbox.stub().returns(false)
+			};
+			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").returns(oFakeLibBundle);
+
+			assert.deepEqual(this.oElementDesignTimeMetadata.getName(oFakeElement), {
+				singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
+				plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
+			}, "then the translated texts are returned for static keys");
+		});
+
+		QUnit.test("when getLabel is called with label property available in the DesignTimeMetadata as a function", function(assert) {
+			this.oElementDesignTimeMetadata.getData().getLabel = function(oElement) {
+				return oElement.getId();
+			};
+			var oTestElement = new Element("testId");
+			assert.strictEqual(this.oElementDesignTimeMetadata.getLabel(oTestElement), oTestElement.getId(), "then the correct element is received");
+			oTestElement.destroy();
+			delete this.oElementDesignTimeMetadata.getData().label;
+		});
+
+		QUnit.test("when getLabel is called with label property not available in the DesignTimeMetadata", function(assert) {
+			var fnLabelForElementStub = sandbox.stub(ElementUtil, "getLabelForElement");
+			var aMockArguments = ["testArg1", "testArg2"];
+			this.oElementDesignTimeMetadata.getLabel(aMockArguments);
+			assert.ok(fnLabelForElementStub.calledOnce, "then ElementUtil.getLabelForElement() called once");
+			assert.ok(fnLabelForElementStub.calledWith(aMockArguments), "then ElementUtil.getLabelForElement() called with the correct arguments");
+		});
+
+		QUnit.test("when getAggregations method is called and DT Metadata has no aggregations nor associations", function(assert) {
+			this.oElementDesignTimeMetadata.getData().aggregations = null;
+			this.oElementDesignTimeMetadata.getData().associations = null;
+			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregations(), {}, "then an empty object is returned");
+		});
+
+		QUnit.test("when getStableElements method is called and DT Metadata has a getStableElements function returning valid data", function(assert) {
+			var oOverlay = {
+				getElement: function() {
+					return "element";
+				}
+			};
+			assert.deepEqual(this.oElementDesignTimeMetadata.getStableElements(oOverlay), ["element", "element"], "the function returns the value of the function");
+		});
+
+		QUnit.test("when getStableElements method is called and DT Metadata has a getStableElements function returning invalid data", function(assert) {
+			var oOverlay = {
+				getElement: function() {
+					return "element";
+				}
+			};
+			this.oElementDesignTimeMetadata.getData().getStableElements = function() {return "notAnArray";};
+			assert.deepEqual(this.oElementDesignTimeMetadata.getStableElements(oOverlay), [], "the function returns an empty array");
+		});
+
+		QUnit.test("when getStableElements method is called and DT Metadata has no getStableElements function", function(assert) {
+			var oOverlay = {
+				getElement: function() {
+					return "element";
+				}
+			};
+			this.oElementDesignTimeMetadata.getData().getStableElements = undefined;
+			assert.deepEqual(this.oElementDesignTimeMetadata.getStableElements(oOverlay), ["element"], "the function returns the value of the function");
+		});
+
+		QUnit.test("when getToolHooks method is called and DT Metadata has no tool object", function(assert) {
+			assert.ok(typeof this.oElementDesignTimeMetadata.getToolHooks().start === "function", "the function inside the object is part of the return");
+			assert.ok(typeof this.oElementDesignTimeMetadata.getToolHooks().stop === "function", "the function inside the object is part of the return");
+		});
+
+		QUnit.test("when getToolHooks method is called and DT Metadata has a tool object", function(assert) {
+			var oStartSpy = sandbox.spy();
+			var oStopSpy = sandbox.spy();
+
+			this.oElementDesignTimeMetadata.setData(Object.assign(
+				{},
+				this.oElementDesignTimeMetadata.getData(),
+				{
+					tool: {
+						start: oStartSpy,
+						stop: oStopSpy
+					}
+				}
+			));
+			assert.ok(typeof this.oElementDesignTimeMetadata.getToolHooks().start === "function", "the function inside the object is part of the return");
+			assert.ok(typeof this.oElementDesignTimeMetadata.getToolHooks().stop === "function", "the function inside the object is part of the return");
+			this.oElementDesignTimeMetadata.getToolHooks().start("arg1");
+			this.oElementDesignTimeMetadata.getToolHooks().stop("arg2");
+			assert.ok(oStartSpy.withArgs("arg1").calledOnce);
+			assert.ok(oStopSpy.withArgs("arg2").calledOnce);
+		});
+
+		QUnit.test("when 'getScrollContainers' is called without scrollContainers defined in the metadata", function(assert) {
+			assert.ok(Array.isArray(this.oElementDesignTimeMetadata.getScrollContainers()), "an array is returned");
+			assert.equal(this.oElementDesignTimeMetadata.getScrollContainers().length, 0, "the array is empty");
+		});
 	});
 
-	QUnit.test("when the ElementDesignTimeMetadata is initialized", function(assert) {
-		assert.strictEqual(this.oElementDesignTimeMetadata.hasAggregation("testAggregation"), true, "hasAggregations is true when aggregation data exists");
-		assert.strictEqual(this.oElementDesignTimeMetadata.hasAggregation("fakeAggregation"), false, "hasAggregations is false when aggregation data not exists");
-		assert.strictEqual(this.oElementDesignTimeMetadata.hasAggregation("testAssociation"), true, "hasAggregations is true when aggregation-like association data exists");
-		assert.strictEqual(this.oElementDesignTimeMetadata.getAggregation("testAggregation").testField, "testValue", "getAggregation returns data when aggregation it exists");
-		assert.strictEqual(this.oElementDesignTimeMetadata.getAggregation("fakeAggregation"), undefined, "getAggregation returns undefined when aggregation data doesn't exists");
-		assert.strictEqual(this.oElementDesignTimeMetadata.getAggregation("layout").ignore, true, "getAggregation returns correct data for default aggregations");
-		assert.strictEqual(this.oElementDesignTimeMetadata.getAggregation("testAssociation").aggregationLike, true, "getAggregation returns correct data for aggregation-like association");
+	QUnit.module("Given that an ElementDesignTimeMetadata with scrollContainers with an array for aggregations is created for a control", {
+		beforeEach : function() {
+			this.oScrollContainer = {
+				domRef: "foo",
+				aggregations: ["a", "b"]
+			};
+			this.oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
+				data : {
+					scrollContainers: [
+						this.oScrollContainer
+					]
+				}
+			});
+		},
+		afterEach : function() {
+			this.oElementDesignTimeMetadata.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when 'getScrollContainers' is called", function(assert) {
+			var aScrollContainers = this.oElementDesignTimeMetadata.getScrollContainers();
+			assert.equal(aScrollContainers.length, 1, "there is one scrollContainer");
+			assert.deepEqual(this.oScrollContainer, aScrollContainers[0], "the scrollContainer is correctly returned");
+		});
 	});
 
-	QUnit.test("when creating aggregation dt metadata", function(assert){
-		var oAggregationDesignTimeMetadata = this.oElementDesignTimeMetadata.createAggregationDesignTimeMetadata({testData: "TestData"});
-		assert.equal(oAggregationDesignTimeMetadata.getMetadata().getName(), "sap.ui.dt.AggregationDesignTimeMetadata", "then aggregation designtime metadata class is created");
-		assert.equal(oAggregationDesignTimeMetadata.getLibraryName(), "fake.lib", "then the elements libraryName is passed to the AggregationDesignTimeMetadata");
+	QUnit.module("Given that an ElementDesignTimeMetadata with scrollContainers with a function for aggregations is created for a control", {
+		beforeEach : function() {
+			this.oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
+				data : {
+					scrollContainers: [
+						{
+							domRef: "foo",
+							aggregations: function(oElement) {
+								return oElement.getScroll();
+							}
+						}
+					]
+				}
+			});
+		},
+		afterEach : function() {
+			this.oElementDesignTimeMetadata.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when 'getScrollContainers' is called", function(assert) {
+			var oElement = {
+				getScroll: function() {
+					return ["a"];
+				}
+			};
+			var oExpectedScrollContainer = {
+				domRef: "foo",
+				aggregations: ["a"]
+			};
+			var aScrollContainers = this.oElementDesignTimeMetadata.getScrollContainers(oElement);
+			assert.equal(aScrollContainers.length, 1, "there is one scrollContainer");
+			assert.deepEqual(oExpectedScrollContainer, aScrollContainers[0], "the scrollContainer is correctly returned");
+		});
 	});
 
-	QUnit.test("when getActionDataFromAggregations is called", function(assert) {
-		assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action1"), [
-			{changeType : "firstChangeType", aggregation : "testAggregation"},
-			{changeType : "firstChangeType-aggregation2", aggregation : "testAggregation2"}
-		], "for string action, the correct object is returned");
-		assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action2"), [{changeType : "secondChangeType", aggregation : "testAggregation"}], "for object action, the correct object is returned");
-		assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action3", {name:"thirdChangeType"}), [{changeType : "thirdChangeType", aggregation : "testAggregation"}], "for function action, the correct object is returned");
-		assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action4", {name:"fourthChangeType"}, ["foo", "bar"]), [{changeType : "fourthChangeTypefoobar", aggregation : "testAggregation"}], "for function action with parameters , the correct object is returned");
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.test("when getAggregationText is called", function(assert) {
-		var oFakeLibBundle = {
-			getText : this.stub().returnsArg(0), //just return i18n keys
-			hasText : this.stub().returns(false)
-		};
-		this.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
-
-		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation"), {
-			singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
-			plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
-		}, "then the translated texts are returned for static keys");
-		assert.notOk(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation2"), "then undefined is returned missing childNames");
-		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation3", "simulateElement"), {
-			singular : "I18N_KEYsimulateElement",
-			plural :  "I18N_KEY_PLURALsimulateElement"
-		}, "then the translated texts are returned for variable texts/keys");
-	});
-
-	QUnit.test("when getText is called", function(assert) {
-		var oFakeLibBundle = {
-			getText : this.stub().returnsArg(0), //just return i18n keys
-			hasText : this.stub().returns(false)
-		};
-		this.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
-
-		assert.deepEqual(this.oElementDesignTimeMetadata.getName(), {
-			singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
-			plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
-		}, "then the translated texts are returned for static keys");
-	});
-
-	QUnit.test("when getAggregations method is called and DT Metadata has no aggregations nor associations", function(assert){
-		this.oElementDesignTimeMetadata.getData().aggregations = null;
-		this.oElementDesignTimeMetadata.getData().associations = null;
-		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregations(), {}, "then an empty object is returned");
-	});
-
-})();
+});

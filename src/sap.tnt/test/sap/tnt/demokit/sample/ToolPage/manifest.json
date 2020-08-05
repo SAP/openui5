@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.tnt.sample.ToolPage",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.tnt.sample.ToolPage.ToolPage",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.tnt": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"ToolPage.view.xml",
+					"ToolPage.controller.js",
+					"model/data.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

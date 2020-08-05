@@ -1,60 +1,50 @@
 sap.ui.define([
-	"sap/ui/test/Opa5",
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function(Opa5, PropertyStrictEquals) {
+	"sap/ui/test/Opa5"
+], function(Opa5) {
 	"use strict";
 
-	function getFrameUrl(sHash, sUrlParameters) {
-		var sUrl = jQuery.sap.getResourcePath("mycompany/myapp/app", ".html");
-		sUrlParameters = sUrlParameters ? "?" + sUrlParameters : "";
+	return Opa5.extend("mycompany.myapp.MyWorklistApp.test.integration.pages.Common", {
 
-		if (sHash) {
-			sHash = "#" + (sHash.indexOf("/") === 0 ? sHash.substring(1) : sHash);
-		} else {
-			sHash = "";
-		}
+		createAWaitForAnEntitySet : function  (oOptions) {
+			return {
+				success: function () {
+					var aEntitySet;
 
-		return sUrl + sUrlParameters + sHash;
-	}
+					var oMockServerInitialized = this.getMockServer().then(function (oMockServer) {
+						aEntitySet = oMockServer.getEntitySetData(oOptions.entitySet);
+					});
 
-	return Opa5.extend("mycompany.myapp.test.integration.pages.Common", {
-
-		iStartMyApp: function(oOptions) {
-			var sUrlParameters = "";
-			oOptions = oOptions || {};
-
-			if (oOptions.delay) {
-				sUrlParameters = "serverDelay=" + oOptions.delay;
-			}
-
-			this.iStartMyAppInAFrame(getFrameUrl(oOptions.hash, sUrlParameters));
+					this.iWaitForPromise(oMockServerInitialized);
+					return this.waitFor({
+						success : function () {
+							oOptions.success.call(this, aEntitySet);
+						}
+					});
+				}
+			};
 		},
 
-		iLookAtTheScreen: function() {
-			return this;
-		},
-
-		iStartMyAppOnADesktopToTestErrorHandler: function(sParam) {
-			this.iStartMyAppInAFrame(getFrameUrl("", sParam));
-		},
-
-		theUnitNumbersShouldHaveTwoDecimals: function(sControlType, sViewName, sSuccessMsg, sErrMsg) {
-			var rTwoDecimalPlaces = /^-?\d+\.\d{2}$/;
+		theUnitNumbersShouldHaveTwoDecimals : function (sControlType, sViewName, sSuccessMsg, sErrMsg) {
+			var rTwoDecimalPlaces =  /^-?\d+\.\d{2}$/;
 
 			return this.waitFor({
-				controlType: sControlType,
-				viewName: sViewName,
-				matchers: new PropertyStrictEquals({
-					name: "unit",
-					value: "EUR"
-				}),
-				success: function(aNumberControls) {
-					Opa5.assert.ok(aNumberControls.every(function(oNumberControl) {
+				controlType : sControlType,
+				viewName : sViewName,
+				success : function (aNumberControls) {
+					Opa5.assert.ok(aNumberControls.every(function(oNumberControl){
 							return rTwoDecimalPlaces.test(oNumberControl.getNumber());
 						}),
 						sSuccessMsg);
 				},
-				errorMessage: sErrMsg
+				errorMessage : sErrMsg
+			});
+		},
+
+		getMockServer : function () {
+			return new Promise(function (success) {
+				Opa5.getWindow().sap.ui.require(["mycompany/myapp/MyWorklistApp/localService/mockserver"], function (mockserver) {
+					success(mockserver.getMockServer());
+				});
 			});
 		}
 

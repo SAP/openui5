@@ -2,110 +2,116 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function () {
-		'use strict';
+sap.ui.define([
+	"sap/ui/Device"
+], function (Device) {
+	"use strict";
 
-		/**
-		 * ToolPage renderer
-		 * @namespace
-		 */
-		var ToolPageRenderer = {};
+	/**
+	 * ToolPage renderer
+	 * @namespace
+	 */
+	var ToolPageRenderer = {
+		apiVersion: 2
+	};
 
-		/**
-		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-		 *
-		 * @param {sap.ui.core.RenderManager}
-		 *          rm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control}
-		 *          control an object representation of the control that should be rendered
-		 */
-		ToolPageRenderer.render = function (rm, control) {
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 */
+	ToolPageRenderer.render = function (oRM, oControl) {
+		var oHeader = oControl.getHeader();
 
-			var header = control.getAggregation('header');
+		oRM.openStart("div", oControl).class("sapTntToolPage");
 
-			rm.write('<div');
-			rm.writeControlData(control);
-			rm.addClass('sapTntToolPage');
+		if (oHeader) {
+			oRM.class("sapTntToolPageWithHeader");
+		}
 
-			if (header) {
-				rm.addClass('sapTntToolPageWithHeader');
+		oRM.openEnd();
+
+		if (oHeader) {
+			oRM.openStart("header").openEnd();
+
+				oRM.openStart("div", oControl.getId() + "-header").class("sapTntToolPageHeader").openEnd();
+
+				oRM.renderControl(oHeader);
+
+				oRM.close("div");
+
+			oRM.close("header");
+		}
+
+		this.renderContentWrapper(oRM, oControl);
+
+		oRM.close("div");
+	};
+
+	ToolPageRenderer.renderContentWrapper = function (oRM, oControl) {
+		oRM.openStart("div").class("sapTntToolPageContentWrapper");
+
+		if (!Device.system.desktop || !oControl.getSideExpanded()) {
+			oRM.class("sapTntToolPageAsideCollapsed");
+		}
+
+		oRM.openEnd();
+
+		this.renderAsideContent(oRM, oControl);
+		this.renderMainContent(oRM, oControl);
+
+		oRM.close("div");
+	};
+
+	ToolPageRenderer.renderAsideContent = function (oRM, oControl) {
+		var oSideContent = oControl.getSideContent();
+		if (!oSideContent) {
+			return;
+		}
+
+		oRM.openStart("aside", oControl.getId() + "-aside").class("sapTntToolPageAside").openEnd();
+
+			oRM.openStart("div").class("sapTntToolPageAsideContent").openEnd();
+
+			var bSideExpanded = oControl.getSideExpanded();
+			if (oSideContent && oSideContent.getExpanded() !== bSideExpanded) {
+				oSideContent.setExpanded(bSideExpanded);
 			}
 
-			rm.writeClasses();
-			rm.write('>');
-
-			if (header) {
-				rm.write("<header>");
-				rm.write('<div id="' + control.getId() + '-header" class="sapTntToolPageHeader">');
-				rm.renderControl(header);
-				rm.write('</div>');
-				rm.write("</header>");
-			}
-
-			this.renderContentWrapper(rm, control);
-
-			rm.write('</div>');
-		};
-
-		ToolPageRenderer.renderContentWrapper = function (rm, control) {
-			var isDesktop = sap.ui.Device.system.desktop;
-
-			rm.write('<div class="sapTntToolPageContentWrapper');
-
-			if (!isDesktop || !control.getSideExpanded()) {
-				rm.write(' sapTntToolPageAsideCollapsed');
-			}
-
-			rm.write('">');
-			this.renderAsideContent(rm, control);
-			this.renderMainContent(rm, control);
-			rm.write('</div>');
-		};
-
-		ToolPageRenderer.renderAsideContent = function (rm, control) {
-			var isDesktop = sap.ui.Device.system.desktop;
-			var sideContentAggregation = control.getAggregation('sideContent');
-			var isSideExpanded = control.getSideExpanded();
-
-			rm.write('<aside id="' + control.getId() + '-aside" class="sapTntToolPageAside">');
-
-			rm.write('<div class="sapTntToolPageAsideContent">');
-
-			if (sideContentAggregation && sideContentAggregation.getExpanded() !== isSideExpanded) {
-				sideContentAggregation.setExpanded(isSideExpanded);
-			}
-
-			if (!isDesktop) {
-				control.setSideExpanded(false);
+			if (!Device.system.desktop) {
+				oControl.setSideExpanded(false);
 			}
 
 			// The render of the aggregation should be after the above statement,
 			// due to class manipulations inside the aggregation.
-			rm.renderControl(sideContentAggregation);
+			oRM.renderControl(oSideContent);
 
-			rm.write('</div>');
+			oRM.close("div");
 
-			rm.write('</aside>');
-		};
+		oRM.close("aside");
+	};
 
-		ToolPageRenderer.renderMainContent = function (rm, control) {
-			var mainContentAggregations = control.getAggregation('mainContents');
+	ToolPageRenderer.renderMainContent = function (oRM, oControl) {
+		var aMainContent = oControl.getMainContents();
+		if (!aMainContent) {
+			return;
+		}
 
-			if (mainContentAggregations) {
-				rm.write('<div id="' + control.getId() + '-main" class="sapTntToolPageMain">');
+		oRM.openStart("div", oControl.getId() + "-main").class("sapTntToolPageMain").openEnd();
 
-				rm.write('<div class="sapTntToolPageMainContent">');
-				rm.write('<div class="sapTntToolPageMainContentWrapper">');
-				mainContentAggregations.forEach(rm.renderControl);
-				rm.renderControl();
-				rm.write('</div>');
-				rm.write('</div>');
+			oRM.openStart("div").class("sapTntToolPageMainContent").openEnd();
 
-				rm.write('</div>');
-			}
-		};
+				oRM.openStart("div").class("sapTntToolPageMainContentWrapper").openEnd();
 
-		return ToolPageRenderer;
+				aMainContent.forEach(oRM.renderControl, oRM);
 
-	}, /* bExport= */ true);
+				oRM.close("div");
+
+			oRM.close("div");
+
+		oRM.close("div");
+	};
+
+	return ToolPageRenderer;
+}, /* bExport= */ true);

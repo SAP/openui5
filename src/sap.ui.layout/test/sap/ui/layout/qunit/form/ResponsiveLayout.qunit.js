@@ -3,16 +3,16 @@
 // Test only the things relevant for ResponsiveLayout. The basic Form functionality
 // is tested in Form, FormContainer and FormElement qUnit tests.
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/base/util/each",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/ResponsiveLayout",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
-	"sap/ui/core/VariantLayoutData",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
+	"sap/ui/core/VariantLayoutData",
 	"sap/ui/core/Title",
 	"sap/m/Toolbar",
 	"sap/m/Label",
@@ -22,12 +22,14 @@ sap.ui.require([
 	],
 	function(
 		jQuery,
+		qutils,
+		each,
 		Form,
-		ColumnLayout,
+		ResponsiveLayout,
 		FormContainer,
 		FormElement,
-		VariantLayoutData,
 		ResponsiveFlowLayoutData,
+		VariantLayoutData,
 		Title,
 		Toolbar,
 		Label,
@@ -36,8 +38,6 @@ sap.ui.require([
 		Link
 	) {
 	"use strict";
-
-	QUnit.start();
 
 	var oForm;
 	var oResponsiveLayout;
@@ -67,36 +67,36 @@ sap.ui.require([
 	}
 
 	function initForm(bOneContainer) {
-		oResponsiveLayout = new sap.ui.layout.form.ResponsiveLayout("RL1");
-		oLabel1 = new sap.m.Label("L1", {text: "Label 1"});
-		oLabel2 = new sap.m.Label("L2", {text: "Label 2"});
-		oField1 = new sap.m.Input("I1");
-		oField2 = new sap.m.Input("I2");
-		oField3 = new sap.m.Input("I3");
-		oFormElement1 = new sap.ui.layout.form.FormElement("FE1",{
+		oResponsiveLayout = new ResponsiveLayout("RL1");
+		oLabel1 = new Label("L1", {text: "Label 1"});
+		oLabel2 = new Label("L2", {text: "Label 2"});
+		oField1 = new Input("I1");
+		oField2 = new Input("I2");
+		oField3 = new Input("I3");
+		oFormElement1 = new FormElement("FE1",{
 			label: oLabel1,
 			fields: [oField1]
 		});
-		oFormElement2 = new sap.ui.layout.form.FormElement("FE2",{
+		oFormElement2 = new FormElement("FE2",{
 			label: oLabel2,
 			fields: [oField2, oField3]
 		});
-		oFormContainer1 = new sap.ui.layout.form.FormContainer("FC1",{
+		oFormContainer1 = new FormContainer("FC1",{
 			formElements: [ oFormElement1, oFormElement2 ]
 		});
 		var aFormContainers = [oFormContainer1];
 		if (!bOneContainer) {
-			oField4 = new sap.m.Input("I4");
-			oField5 = new sap.m.Input("I5");
-			oField6 = new sap.m.Input("I6");
-			oFormElement3 = new sap.ui.layout.form.FormElement("FE3",{
+			oField4 = new Input("I4");
+			oField5 = new Input("I5");
+			oField6 = new Input("I6");
+			oFormElement3 = new FormElement("FE3",{
 				fields: [oField4]
 			});
-			oFormElement4 = new sap.ui.layout.form.FormElement("FE4",{
+			oFormElement4 = new FormElement("FE4",{
 				fields: [oField5, oField6]
 			});
-			oTitle = new sap.ui.core.Title("T2", {text: "Test"});
-			oFormContainer2 = new sap.ui.layout.form.FormContainer("FC2",{
+			oTitle = new Title("T2", {text: "Test"});
+			oFormContainer2 = new FormContainer("FC2",{
 				title: oTitle,
 				tooltip: "Test",
 				expandable: true,
@@ -104,11 +104,11 @@ sap.ui.require([
 			});
 			aFormContainers.push(oFormContainer2);
 		}
-		oForm = new sap.ui.layout.form.Form("F1", {
+		oForm = new Form("F1", {
 			layout: oResponsiveLayout,
 			editable: true,
 			formContainers: aFormContainers
-		}).placeAt("content");
+		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	}
 
@@ -166,14 +166,14 @@ sap.ui.require([
 	QUnit.test("content of Main Layout", function(assert) {
 		var oRFL = sap.ui.getCore().byId("F1--RFLayout");
 		assert.ok(oRFL, "Main RF-Layout exist");
-		assert.ok(oRFL instanceof sap.ui.layout.ResponsiveFlowLayout, "Main Layout is ResponsiveFlowLayout");
+		assert.ok(oRFL.isA("sap.ui.layout.ResponsiveFlowLayout"), "Main Layout is ResponsiveFlowLayout");
 	});
 
 	QUnit.test("Respresentations of Containers", function(assert) {
 		var oRFL = sap.ui.getCore().byId("F1--RFLayout");
 		var aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Main RF-Layout content");
-		assert.ok(aContent[0] instanceof sap.ui.layout.ResponsiveFlowLayout, "Container1 is ResponsiveFlowLayout");
+		assert.ok(aContent[0].isA("sap.ui.layout.ResponsiveFlowLayout"), "Container1 is ResponsiveFlowLayout");
 		assert.equal(aContent[0].getId(), "FC1--RFLayout", "Layout for Container1");
 		assert.equal(aContent[1].getMetadata().getName(), "sap.ui.layout.form.ResponsiveLayoutPanel", "Container2 is Panel");
 		assert.equal(aContent[1].getId(), "FC2--Panel", "Panel for Container1");
@@ -187,9 +187,9 @@ sap.ui.require([
 		assert.ok(oPanel, "panel created for second container");
 		assert.equal(oTitle.getParent().getId(), "FC2", "FormContainer is still parent of Title");
 		assert.equal(oPanel.getContent().getId(), "FC2--RFLayout", "RF-Layout is inside Panel");
-		assert.ok(oPanel.getContent() instanceof sap.ui.layout.ResponsiveFlowLayout, "content of Panel is ResponsiveFlowLayout");
-		assert.ok(jQuery.sap.domById("T2"), "Title rendered");
-		assert.ok(jQuery.sap.domById("FC2--Exp"), "Expander rendered");
+		assert.ok(oPanel.getContent().isA("sap.ui.layout.ResponsiveFlowLayout"), "content of Panel is ResponsiveFlowLayout");
+		assert.ok(window.document.getElementById("T2"), "Title rendered");
+		assert.ok(window.document.getElementById("FC2--Exp"), "Expander rendered");
 		assert.equal(jQuery("#FC2--Panel").attr("title"), "Test", "tooltip set on panel");
 	});
 
@@ -230,13 +230,13 @@ sap.ui.require([
 	});
 
 	QUnit.test("Toolbar", function(assert) {
-		var oToolbar = new sap.m.Toolbar("TB1");
+		var oToolbar = new Toolbar("TB1");
 		oFormContainer2.setToolbar(oToolbar);
 		sap.ui.getCore().applyChanges();
 
-		assert.notOk(jQuery.sap.domById("T2"), "Title not rendered");
-		assert.notOk(jQuery.sap.domById("FC2--Exp"), "Expander not rendered");
-		assert.ok(jQuery.sap.domById("TB1"), "Toolbar rendered");
+		assert.notOk(window.document.getElementById("T2"), "Title not rendered");
+		assert.notOk(window.document.getElementById("FC2--Exp"), "Expander not rendered");
+		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
 		assert.ok(jQuery("#FC2--Panel").attr("aria-labelledby"), "TB1", "aria-labelledby set on panel");
 	});
 
@@ -244,9 +244,9 @@ sap.ui.require([
 		var oRFL = sap.ui.getCore().byId("FC1--RFLayout");
 		var aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Container1 RF-Layout content");
-		assert.ok(aContent[0] instanceof sap.ui.layout.ResponsiveFlowLayout, "ResponsiveFlowLayout for Element1");
+		assert.ok(aContent[0].isA("sap.ui.layout.ResponsiveFlowLayout"), "ResponsiveFlowLayout for Element1");
 		assert.equal(aContent[0].getId(), "FE1--RFLayout", "Layout for Element11");
-		assert.ok(aContent[1] instanceof sap.ui.layout.ResponsiveFlowLayout, "ResponsiveFlowLayout for Element2");
+		assert.ok(aContent[1].isA("sap.ui.layout.ResponsiveFlowLayout"), "ResponsiveFlowLayout for Element2");
 		assert.equal(aContent[1].getId(), "FE2--RFLayout", "Layout for Element12");
 	});
 
@@ -264,7 +264,7 @@ sap.ui.require([
 		assert.equal(aContent.length, 2, "Element2 RF-Layout content");
 		assert.equal(aContent[0].getId(), "L2", "Element2 first content is Label1");
 		assert.equal(aContent[1].getId(), "FE2--content--RFLayout", "Element2 second content is inner Layout");
-		assert.ok(aContent[1] instanceof sap.ui.layout.ResponsiveFlowLayout, "Element2 inner layout is RF-Layout");
+		assert.ok(aContent[1].isA("sap.ui.layout.ResponsiveFlowLayout"), "Element2 inner layout is RF-Layout");
 		aContent = aContent[1].getContent();
 		assert.equal(aContent.length, 2, "Element2 inner Layout content");
 		assert.equal(aContent[0].getId(), "I2", "Element2 first content is Field2");
@@ -285,7 +285,7 @@ sap.ui.require([
 
 	QUnit.test("add/remove fields", function(assert) {
 		var oRFL = sap.ui.getCore().byId("FE1--RFLayout");
-		var oNewField = new sap.m.Input("I7");
+		var oNewField = new Input("I7");
 		oFormElement1.insertField(oNewField, 0);
 		sap.ui.getCore().applyChanges();
 
@@ -410,8 +410,8 @@ sap.ui.require([
 	QUnit.test("add/remove FormContainer", function(assert) {
 		oForm.removeFormContainer(oFormContainer1);
 		sap.ui.getCore().applyChanges();
-		assert.notOk(jQuery.sap.domById("F1--RFLayout"), "Main layout not rendered");
-		assert.ok(jQuery.sap.domById("FC2--Panel"), "container panel rendered");
+		assert.notOk(window.document.getElementById("F1--RFLayout"), "Main layout not rendered");
+		assert.ok(window.document.getElementById("FC2--Panel"), "container panel rendered");
 		assert.notOk(sap.ui.getCore().byId("FC1--RFLayout"), "Container1 layout destroyed");
 
 		oForm.addFormContainer(oFormContainer1);
@@ -424,9 +424,9 @@ sap.ui.require([
 	});
 
 	QUnit.test("visibility of FormElement", function(assert) {
-		var oNewLabel = new sap.m.Label("L5", {text: "Label 5"});
-		var oNewField = new sap.m.Input("I7");
-		var oNewFormElement = new sap.ui.layout.form.FormElement("FE5",{
+		var oNewLabel = new Label("L5", {text: "Label 5"});
+		var oNewField = new Input("I7");
+		var oNewFormElement = new FormElement("FE5",{
 			visible: false,
 			label: oNewLabel,
 			fields: [oNewField]
@@ -444,7 +444,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("visibility of FormContainer", function(assert) {
-		var oNewFormContainer = new sap.ui.layout.form.FormContainer("FC3",{ title: "Test", visible: false});
+		var oNewFormContainer = new FormContainer("FC3",{ title: "Test", visible: false});
 		oForm.insertFormContainer(oNewFormContainer, 1);
 		sap.ui.getCore().applyChanges();
 		var oRFL = sap.ui.getCore().byId("F1--RFLayout");
@@ -475,7 +475,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("custom LayoutData on FormContainer", function(assert) {
-		var oLayoutData = new sap.ui.layout.ResponsiveFlowLayoutData("RFLD1", {linebreak: true});
+		var oLayoutData = new ResponsiveFlowLayoutData("RFLD1", {linebreak: true});
 		oFormContainer2.setLayoutData(oLayoutData);
 		sap.ui.getCore().applyChanges();
 		var oPanel = sap.ui.getCore().byId("FC2--Panel");
@@ -488,7 +488,7 @@ sap.ui.require([
 		var oRFL = sap.ui.getCore().byId("FE1--RFLayout");
 		var oLayoutData = oRFL.getLayoutData();
 		assert.ok(!!oLayoutData, "Layout for Element1 has LayoutData");
-		assert.ok(oLayoutData instanceof sap.ui.layout.ResponsiveFlowLayoutData, "LayoutData are ResponsiveFlowLayoutData");
+		assert.ok(oLayoutData instanceof ResponsiveFlowLayoutData, "LayoutData are ResponsiveFlowLayoutData");
 		assert.notOk(oLayoutData.getMargin(), "No margins");
 		assert.notOk(oLayoutData.getLinebreak(), "No linebreak");
 		assert.equal(oLayoutData.getWeight(), 1, "weight");
@@ -496,7 +496,7 @@ sap.ui.require([
 		oRFL = sap.ui.getCore().byId("FE3--RFLayout");
 		oLayoutData = oRFL.getLayoutData();
 		assert.ok(!!oLayoutData, "Layout for Element3 has LayoutData");
-		assert.ok(oLayoutData instanceof sap.ui.layout.ResponsiveFlowLayoutData, "LayoutData are ResponsiveFlowLayoutData");
+		assert.ok(oLayoutData instanceof ResponsiveFlowLayoutData, "LayoutData are ResponsiveFlowLayoutData");
 		assert.notOk(oLayoutData.getMargin(), "No margins");
 		assert.notOk(oLayoutData.getLinebreak(), "No linebreak");
 		assert.equal(oLayoutData.getWeight(), 1, "weight");
@@ -504,14 +504,14 @@ sap.ui.require([
 		oRFL = sap.ui.getCore().byId("FE2--content--RFLayout");
 		oLayoutData = oRFL.getLayoutData();
 		assert.ok(!!oLayoutData, "inner Layout for Element2 has LayoutData");
-		assert.ok(oLayoutData instanceof sap.ui.layout.ResponsiveFlowLayoutData, "LayoutData are ResponsiveFlowLayoutData");
+		assert.ok(oLayoutData instanceof ResponsiveFlowLayoutData, "LayoutData are ResponsiveFlowLayoutData");
 		assert.notOk(oLayoutData.getMargin(), "No margins");
 		assert.notOk(oLayoutData.getLinebreak(), "No linebreak");
 		assert.equal(oLayoutData.getWeight(), 2, "weight");
 	});
 
 	QUnit.test("custom LayoutData on FormElement", function(assert) {
-		var oLayoutData = new sap.ui.layout.ResponsiveFlowLayoutData("RFLD1", {linebreak: true});
+		var oLayoutData = new ResponsiveFlowLayoutData("RFLD1", {linebreak: true});
 		oFormElement2.setLayoutData(oLayoutData);
 		sap.ui.getCore().applyChanges();
 
@@ -534,9 +534,9 @@ sap.ui.require([
 	});
 
 	QUnit.test("custom LayoutData on Field and Label", function(assert) {
-		var oLayoutData1 = new sap.ui.layout.ResponsiveFlowLayoutData("RFLD1", {weight: 3});
+		var oLayoutData1 = new ResponsiveFlowLayoutData("RFLD1", {weight: 3});
 		oLabel1.setLayoutData(oLayoutData1);
-		var oLayoutData2 = new sap.ui.layout.ResponsiveFlowLayoutData("RFLD2", {weight: 2});
+		var oLayoutData2 = new ResponsiveFlowLayoutData("RFLD2", {weight: 2});
 		oField3.setLayoutData(oLayoutData2);
 		sap.ui.getCore().applyChanges();
 
@@ -558,9 +558,9 @@ sap.ui.require([
 	});
 
 	QUnit.test("Field width", function(assert) {
-		var oText = new sap.m.Text("T1", {text: "Test"});
+		var oText = new Text("T1", {text: "Test"});
 		oFormElement2.addField(oText);
-		var oLink = new sap.m.Link("Li1", {text: "Test", href: "http://www.sap.com"});
+		var oLink = new Link("Li1", {text: "Test", href: "http://www.sap.com"});
 		oFormElement2.addField(oLink);
 		sap.ui.getCore().applyChanges();
 
@@ -585,7 +585,7 @@ sap.ui.require([
 	QUnit.test("destroy layout", function(assert) {
 		var iLength = 0;
 		if (!Object.keys) {
-			jQuery.each(oResponsiveLayout.mContainers, function(){iLength++;});
+			each(oResponsiveLayout.mContainers, function(){iLength++;});
 		} else {
 			iLength = Object.keys(oResponsiveLayout.mContainers).length;
 		}
@@ -596,7 +596,7 @@ sap.ui.require([
 		iLength = 0;
 
 		if (!Object.keys) {
-			jQuery.each(oResponsiveLayout.mContainers, function(){iLength++;});
+			each(oResponsiveLayout.mContainers, function(){iLength++;});
 		} else {
 			iLength = Object.keys(oResponsiveLayout.mContainers).length;
 		}

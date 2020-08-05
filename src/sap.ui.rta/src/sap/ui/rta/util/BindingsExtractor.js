@@ -3,14 +3,77 @@
  */
 
 sap.ui.define([
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/rta/Utils'
+	"sap/ui/dt/ElementUtil",
+	"sap/base/util/isPlainObject",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	ElementUtil,
-	RtaUtils
+	isPlainObject,
+	jQuery
 ) {
 	"use strict";
+
+	/**
+	 * Get all relevant binding paths and binding context paths for the element (from all properties)
+	 *
+	 * @param {sap.ui.core.Control} oElement - Starting point of the search
+	 * @param {sap.ui.model.Model} oModel - Model for filtering irrelevant binding paths
+	 * @returns {{bindingPaths: Array, bindingContextPaths: Array}}} - returns with all relevant bindingPaths and all bindingContextPaths for all properties of the element
+	 *
+	 * @private
+	 */
+	function collectBindingPaths(oElement, oModel) {
+		var mBindingsCollection = {
+			bindingPaths: [],
+			bindingContextPaths: []
+		};
+		var sAggregationName = oElement.sParentAggregationName;
+		var oParent = oElement.getParent();
+		var aBindings = getBindings(oElement, oModel);
+
+		if (oParent) {
+			var oDefaultAggregation = oParent.getMetadata().getAggregation();
+
+			if (oDefaultAggregation) {
+				var iPositionOfInvisibleElement = ElementUtil.getAggregation(oParent, sAggregationName).indexOf(oElement);
+				var sParentDefaultAggregationName = oDefaultAggregation.name;
+				var oBinding = oParent.getBindingInfo(sParentDefaultAggregationName);
+				var oTemplate = oBinding && oBinding.template;
+
+				if (oTemplate) {
+					var oTemplateDefaultAggregation = oTemplate.getMetadata().getAggregation();
+
+					if (oTemplateDefaultAggregation) {
+						var sTemplateDefaultAggregationName = oTemplateDefaultAggregation.name;
+						var oTemplateElement = ElementUtil.getAggregation(oTemplate, sTemplateDefaultAggregationName)[iPositionOfInvisibleElement];
+						aBindings = aBindings.concat(getBindings(oTemplateElement, null, true));
+					}
+				}
+			}
+		}
+
+		for (var i = 0, l = aBindings.length; i < l; i++) {
+			if (aBindings[i].getPath) {
+				var sBindingPath = aBindings[i].getPath();
+				if (sBindingPath &&	mBindingsCollection.bindingPaths.indexOf(sBindingPath) === -1) {
+					mBindingsCollection.bindingPaths.push(sBindingPath);
+				}
+			}
+			if (aBindings[i].getContext && aBindings[i].getContext() && aBindings[i].getContext().getPath) {
+				var sBindingContextPath = aBindings[i].getContext().getPath();
+				if (sBindingContextPath && mBindingsCollection.bindingContextPaths.indexOf(sBindingContextPath) === -1) {
+					mBindingsCollection.bindingContextPaths.push(sBindingContextPath);
+				}
+			}
+			if (isPlainObject(aBindings[i])) {
+				if (mBindingsCollection.bindingPaths.indexOf(aBindings[i].parts[0].path) === -1) {
+					mBindingsCollection.bindingPaths.push(aBindings[i].parts[0].path);
+				}
+			}
+		}
+		return mBindingsCollection;
+	}
 
 	/**
 	 * Gets bindings for the whole hierarchy of children for a specified Element
@@ -18,38 +81,45 @@ function(
 	 *
 	 * @param {sap.ui.core.Control} oElement - Starting point of the search
 	 * @param {sap.ui.model.Model} oParentDefaultModel - Model for filtering irrelevant binding paths
-	 * @param {boolean} bTemplate - Whether we should consider provided element as a template
-	 *
+	 * @param {boolean} [bTemplate] - Whether we should consider provided element as a template
+	 * @param {string} [sAggregationName] - if aggregation name is given then only for this aggregation bindings are returned, if not then all aggregations are considered
 	 * @returns {Array} - returns array with all relevant bindings for all properties of the element
 	 *
 	 * @private
 	 */
-	function getBindings(oElement, oParentDefaultModel, bTemplate) {
+	function getBindings(oElement, oParentDefaultModel, bTemplate, sAggregationName) {
 		var aBindings = (
 			bTemplate
 			? getBindingsFromTemplateProperties(oElement)
 			: getBindingsFromProperties(oElement, oParentDefaultModel)
 		);
+		var aAggregationNames = sAggregationName ? [sAggregationName] : Object.keys(oElement.getMetadata().getAllAggregations());
 
-		// Iterate through all aggregations
-		for (var sAggregationName in oElement.getMetadata().getAllAggregations()) {
-			// Getting children of the current aggregation and iterating through all of them
-			var oBinding = oElement.getBindingInfo(sAggregationName);
-			var oTemplate = oBinding && oBinding.template;
-			var aElements = oTemplate ? [oTemplate] : ElementUtil.getAggregation(oElement, sAggregationName);
+		aAggregationNames.forEach(function (sAggregationNameInLoop) {
+			aBindings = aBindings.concat(getBindingsForAggregation(oElement, oParentDefaultModel, bTemplate, sAggregationNameInLoop));
+		});
 
-			aElements.forEach(function (oChildElement) { // eslint-disable-line no-loop-func
-				if (oChildElement.getMetadata) {
-					// Fetching bindings from Element and all children of Element
-					aBindings = aBindings.concat(
-						oTemplate || bTemplate
-						? getBindingsFromTemplateProperties(oChildElement)
-						: getBindingsFromProperties(oChildElement, oParentDefaultModel),
-						getBindings(oChildElement, oParentDefaultModel, oTemplate || bTemplate)
-					);
-				}
-			});
-		}
+		return aBindings;
+	}
+
+	function getBindingsForAggregation(oElement, oParentDefaultModel, bTemplate, sAggregationName) {
+		var aBindings = [];
+		// Getting children of the current aggregation and iterating through all of them
+		var oBinding = oElement.getBindingInfo(sAggregationName);
+		var oTemplate = oBinding && oBinding.template;
+		var aElements = oTemplate ? [oTemplate] : ElementUtil.getAggregation(oElement, sAggregationName);
+
+		aElements.forEach(function (oChildElement) {
+			if (oChildElement.getMetadata) {
+				// Fetching bindings from Element and all children of Element
+				aBindings = aBindings.concat(
+					oTemplate || bTemplate
+					? getBindingsFromTemplateProperties(oChildElement)
+					: getBindingsFromProperties(oChildElement, oParentDefaultModel),
+					getBindings(oChildElement, oParentDefaultModel, oTemplate || bTemplate)
+				);
+			}
+		});
 
 		return aBindings;
 	}
@@ -162,9 +232,25 @@ function(
 			}, []);
 	}
 
+	/**
+	 * Retrieving context binding path from element
+	 *
+	 * @param {sap.ui.core.Control} oElement - element to get context binding paths from
+	 * @return {boolean|string} - Returns the binding context path string from element. If not available <code>false</code> is returned.
+	 * @private
+	 */
+	function getBindingContextPath(oElement) {
+		if (oElement.getBindingContext() && oElement.getBindingContext().getPath) {
+			return oElement.getBindingContext().getPath();
+		}
+		return undefined;
+	}
+
 	return {
 		getBindings: getBindings,
+		collectBindingPaths: collectBindingPaths,
 		flattenBindings: flattenBindings,
-		getBindingsFromProperties: getBindingsFromProperties
+		getBindingsFromProperties: getBindingsFromProperties,
+		getBindingContextPath: getBindingContextPath
 	};
 }, true);

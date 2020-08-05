@@ -1,0 +1,49 @@
+{
+	"card": {
+		"border": {
+			"radius": 0,
+			"lineColor": "#3C5306",
+			"lineThickness": 1
+		},
+		"default": {
+			"backgroundColor": "#1680D6",
+			"foregroundColors": {
+				"default": {
+					"default": "#EFF8FD",
+					"subtle": "#EFF8FD"
+				},
+				"good": {
+					"default": "#00DD00",
+					"subtle": "#00AA00"
+				},
+				"warning": {
+					"default": "#E09C08",
+					"subtle": "#999933"
+				},
+				"attention": {
+					"default": "#DD0000",
+					"subtle": "#990000"
+				},
+				"accent": {
+					"default": "#5E9DFD",
+					"subtle": "#990000"
+				}
+			}
+		}
+	},
+	"fontStyles": {
+		"default": {
+			"fontFamily": "Monaco",
+			"fontSizes": {
+				"default": 13,
+				"large": 18,
+				"medium": 13,
+				"small": 10,
+				"extraLarge": 26
+			},
+			"fontWeights": {
+				"default": 200
+			}
+		}
+	}
+}

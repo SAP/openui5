@@ -1,0 +1,143 @@
+{
+  "1.61.0": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "b852e15810e0ea4cf34e658b4002701a7c8d867e",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Corrected content height calculation",
+        "references": []
+      },
+      {
+        "id": "a7a75bb64bf4204752c61f3ea973cd4b984e953a",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageLayout: Breakpoints are now triggered",
+        "references": []
+      },
+      {
+        "id": "9e1dc552962b73f82ca73a2e8f8fb10b33b1b002",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Fixed RTA behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880589921"
+          }
+        ]
+      },
+      {
+        "id": "623a8bd7af1e942ec6bf7d03f98b21e4abeb8c7e",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageLayout: Allow subSection fit container",
+        "references": []
+      },
+      {
+        "id": "acc2f0ceee9015abe6d238cf9eaef74bb9c1afe4",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Empty SubSection title disabled in RTA",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880499390"
+          }
+        ]
+      },
+      {
+        "id": "78a52856e5f5323331d2397f5dddf98557dddc9b",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Initial flickering fixed",
+        "references": []
+      },
+      {
+        "id": "9cf4fdf82e964223fd29aba5d4a98c16bbbedbfe",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Unneeded save of changing title is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880499390"
+          }
+        ]
+      },
+      {
+        "id": "45b98dbcebfa916f0b0de668b5630a5b1bcb4449",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Revert header rendering",
+        "references": []
+      },
+      {
+        "id": "67ac442feb9f09e38be5c61494cf70988438023b",
+        "type": "FEATURE",
+        "text": "sap.uxap.BlockBase: Default form layout is now ColumnLayout",
+        "references": []
+      },
+      {
+        "id": "4a6fee205042881ae2bb7776fda75c7d175b1369",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageLayout: landmarkInfo enablement",
+        "references": []
+      },
+      {
+        "id": "2f600cacaf0efccdf920e349f70980ef70742c9c",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPage: APICreation failing qUnit fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870457211"
+          }
+        ]
+      },
+      {
+        "id": "c931092e7398f6e3dff1418d7b7e6880ecad4af5",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Adaptation of actions improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870456862"
+          }
+        ]
+      },
+      {
+        "id": "8e0f255fb00ca2d3a6e15bc22153fb64db0aabbc",
+        "type": "FIX",
+        "text": "sap.uxap.BlockBase: Simplified Form Columns calculations",
+        "references": []
+      },
+      {
+        "id": "74794a4354f0ad4d4ae3568c55b89abad4f9fd16",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Corrected layout calculation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880686928"
+          }
+        ]
+      },
+      {
+        "id": "e7455d33b185414abbe4eb386cf93e54a896b52e",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: _updateMedia is now called correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870470695"
+          }
+        ]
+      },
+      {
+        "id": "2bf582ff341fb4601afa9f8677552ee3bea91d5d",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Corrected css height handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880686928"
+          }
+        ]
+      }
+    ]
+  }
+}

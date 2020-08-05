@@ -1,61 +1,68 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/MessageBox',
-		'sap/m/MessageToast',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/SimpleType',
-		'sap/ui/model/ValidateException',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageBox, MessageToast, Controller, SimpleType, ValidateException, JSONModel) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/SimpleType",
+	"sap/ui/model/ValidateException",
+	"sap/ui/core/Core",
+	"sap/m/MessageBox",
+	"sap/m/MessageToast"
+], function (Controller, JSONModel, SimpleType, ValidateException, Core, MessageBox, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.InputChecked.C", {
 
-		/**
-		 * Lifecycle hook that is called when the controller is instantiated
-		 */
-		onInit : function () {
-			var oView = this.getView();
+		onInit: function () {
+			var oView = this.getView(),
+				oMM = Core.getMessageManager();
 
-			oView.setModel(new JSONModel({
-				name : "",
-				email : ""
-			}));
+			oView.setModel(new JSONModel({ name: "", email: "" }));
 
 			// attach handlers for validation errors
-			sap.ui.getCore().getMessageManager().registerObject(oView.byId("nameInput"), true);
-			sap.ui.getCore().getMessageManager().registerObject(oView.byId("emailInput"), true);
+			oMM.registerObject(oView.byId("nameInput"), true);
+			oMM.registerObject(oView.byId("emailInput"), true);
 		},
 
-		/**
-		 * Event handler for the continue button
-		 */
-		onContinue : function () {
+		_validateInput: function (oInput) {
+			var sValueState = "None";
+			var bValidationError = false;
+			var oBinding = oInput.getBinding("value");
+
+			try {
+				oBinding.getType().validateValue(oInput.getValue());
+			} catch (oException) {
+				sValueState = "Error";
+				bValidationError = true;
+			}
+
+			oInput.setValueState(sValueState);
+
+			return bValidationError;
+		},
+
+		onNameChange: function(oEvent) {
+			var oInput = oEvent.getSource();
+			this._validateInput(oInput);
+		},
+
+		onSubmit: function () {
 			// collect input controls
-			var oView = this.getView();
-			var aInputs = [
+			var oView = this.getView(),
+				aInputs = [
 				oView.byId("nameInput"),
 				oView.byId("emailInput")
-			];
-			var bValidationError = false;
+			],
+				bValidationError = false;
 
-			// check that inputs are not empty
-			// this does not happen during data binding as this is only triggered by changes
-			jQuery.each(aInputs, function (i, oInput) {
-				var oBinding = oInput.getBinding("value");
-				try {
-					oBinding.getType().validateValue(oInput.getValue());
-				} catch (oException) {
-					oInput.setValueState("Error");
-					bValidationError = true;
-				}
-			});
+			// Check that inputs are not empty.
+			// Validation does not happen during data binding as this is only triggered by user actions.
+			aInputs.forEach(function (oInput) {
+				bValidationError = this._validateInput(oInput) || bValidationError;
+			}, this);
 
-			// output result
 			if (!bValidationError) {
-				MessageToast.show("The input is validated. You could now continue to the next screen");
+				MessageToast.show("The input is validated. Your form has been submitted.");
 			} else {
-				MessageBox.alert("A validation error has occured. Complete your input first");
+				MessageBox.alert("A validation error has occurred. Complete your input first.");
 			}
 		},
 
@@ -64,23 +71,25 @@ sap.ui.define([
 		 * @class
 		 * @extends sap.ui.model.SimpleType
 		 */
-		customEMailType : SimpleType.extend("email", {
+		customEMailType: SimpleType.extend("email", {
 			formatValue: function (oValue) {
 				return oValue;
 			},
+
 			parseValue: function (oValue) {
 				//parsing step takes place before validating step, value could be altered here
 				return oValue;
 			},
+
 			validateValue: function (oValue) {
-				// The following Regex is NOT a completely correct one and only used for demonstration purposes.
-				// RFC 5322 cannot even checked by a Regex and the Regex for RFC 822 is very long and complex.
+				// The following Regex is only used for demonstration purposes and does not cover all variations of email addresses.
+				// It's always better to validate an address by simply sending an e-mail to it.
 				var rexMail = /^\w+[\w-+\.]*\@\w+([-\.]\w+)*\.[a-zA-Z]{2,}$/;
 				if (!oValue.match(rexMail)) {
-					throw new ValidateException("'" + oValue + "' is not a valid email address");
+					throw new ValidateException("'" + oValue + "' is not a valid e-mail address");
 				}
 			}
 		})
-	});
 
+	});
 });

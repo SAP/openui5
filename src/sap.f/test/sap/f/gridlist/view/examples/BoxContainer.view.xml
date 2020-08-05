@@ -1,0 +1,71 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f"
+    controllerName="sap.f.gridlist.controller.Main">
+
+    <f:GridList
+		headerText="BoxContainer with minWidth 17rem"
+		items="{ path: '/' }">
+
+        <f:customLayout>
+            <grid:GridBoxLayout boxMinWidth="17rem"/>
+        </f:customLayout>
+
+		<CustomListItem>
+			<VBox height="100%">
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" />
+					</layoutData>
+					<Title text="{title} (Click me)" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</VBox>
+		</CustomListItem>
+    </f:GridList>
+
+    <f:GridList
+		headerText="BoxContainer with width 17rem"
+		items="{ path: '/' }">
+
+        <f:customLayout>
+            <grid:GridBoxLayout boxWidth="17rem"/>
+        </f:customLayout>
+
+		<CustomListItem>
+			<VBox height="100%">
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" />
+					</layoutData>
+					<Title text="{title} (Click me)" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</VBox>
+		</CustomListItem>
+    </f:GridList>
+
+	<f:GridList
+		headerText="BoxContainer with boxesPerRowConfig XL12 L9 M6 S4"
+		items="{ path: '/' }">
+
+        <f:customLayout>
+            <grid:GridBoxLayout boxesPerRowConfig="XL12 L9 M6 S4"/>
+        </f:customLayout>
+
+		<CustomListItem>
+			<VBox height="100%">
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" />
+					</layoutData>
+					<Title text="{title} (Click me)" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</VBox>
+		</CustomListItem>
+    </f:GridList>
+
+</mvc:View>

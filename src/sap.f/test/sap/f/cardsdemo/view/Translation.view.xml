@@ -1,0 +1,23 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Translations and Count" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<Panel>
+			<w:Card
+				id="card"
+				manifest="./cardsdemo/cardcontent/translation/manifest.json"
+				width="400px"
+				class="sapUiMediumMargin" />
+		</Panel>
+	</Page>
+</mvc:View>

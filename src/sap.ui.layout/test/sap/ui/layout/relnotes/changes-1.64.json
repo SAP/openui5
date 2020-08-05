@@ -1,0 +1,45 @@
+{
+  "1.64.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "a7a43f7d759f6ce2f904d563757ccf2c2a87cd6e",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayout: BlockLayoutRow is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980043434"
+          }
+        ]
+      },
+      {
+        "id": "ad7a3505579a24b51a30adf3ebcf78d5d066b4a2",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayoutCell: Width of the cell is now correct",
+        "references": []
+      },
+      {
+        "id": "c41c4affdd52c29076e6830ffd7f2773a88af4cd",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.cssgrid.CSSGrid: Enable CSSGrid for drop configuration",
+        "references": []
+      },
+      {
+        "id": "7d9d509c8beac117e6d0afb4f04e4feb592d6da1",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayout: Layouting in IE11 was fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980039451"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980049632"
+          }
+        ]
+      }
+    ]
+  }
+}

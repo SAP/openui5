@@ -3,8 +3,16 @@
  */
 
 // Provides control sap.ui.unified.CalendarLegend.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/Device', './CalendarLegendRenderer'],
-	function(jQuery, Control, library, Device, CalendarLegendRenderer) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	'./library',
+	'sap/ui/Device',
+	'./CalendarLegendRenderer',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/unified/CalendarLegendItem"
+],
+	function(Control, library, Device, CalendarLegendRenderer, Log, jQuery, CalendarLegendItem) {
 	"use strict";
 
 	// shortcut for sap.ui.unified.CalendarDayType
@@ -40,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				/**
 				 * Determines the standard items related to the calendar days, such as, today, selected, working and non-working.
 				 * Values must be one of <code>sap.ui.unified.StandardCalendarLegendItem</code>.
-				 * Note: for versions 1.50 and 1.52, this property was defined in the the subclass <code>sap.m.PlanningCalendarLegend</code>
+				 * Note: for versions 1.50 and 1.52, this property was defined in the subclass <code>sap.m.PlanningCalendarLegend</code>
 				 * @since 1.54
 				 */
 				standardItems: {type: "string[]", group: "Misc", defaultValue: ['Today', 'Selected', 'WorkingDay', 'NonWorkingDay']},
@@ -73,17 +81,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			if (!mSettings || (mSettings && !mSettings.standardItems)) {
 				this._addStandardItems(this.getStandardItems()); // Default items should be used if nothing is given
 			}
+
+			//don't render standardItems unless it's a PC legend
+			this._bShouldRenderStandardItems = true;
 		}
 	});
-
-	// IE9 workaround for responsive layout of legend items
-	CalendarLegend.prototype.onAfterRendering = function() {
-		if (Device.browser.msie) {
-			if (Device.browser.version < 10) {
-				jQuery(".sapUiUnifiedLegendItem").css("width", this.getColumnWidth() + 4 + "px").css("display", "inline-block");
-			}
-		}
-	};
 
 	CalendarLegend.prototype.setStandardItems = function (aValues) {
 		var i;
@@ -124,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		}
 
 		for (i = 0; i < aStandardItems.length; i++) {
-			var oItem = new sap.ui.unified.CalendarLegendItem(sId + "-" + aStandardItems[i], {
+			var oItem = new CalendarLegendItem(sId + "-" + aStandardItems[i], {
 				text: rb.getText(CalendarLegend._Standard_Items_TextKeys[aStandardItems[i]])
 			});
 			this.addAggregation("_standardItems", oItem);
@@ -160,7 +162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		}).indexOf(oItem);
 
 		if (iNoTypeItemIndex < 0) {
-			jQuery.sap.log.error('Legend item is not in the legend', this);
+			Log.error('Legend item is not in the legend', this);
 			return sType;
 		}
 

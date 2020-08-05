@@ -1,0 +1,20 @@
+<mvc:View
+		xmlns:forms="sap.ui.layout.form"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		controllerName="sap.uxap.sample.ObjectPageSubSection.controller.MultiViewBlockCommon">
+
+	<forms:SimpleForm
+			title="Location"
+			editable="false"
+			layout="ColumnLayout">
+
+		<Label text="Country"/>
+		<Text text="France"/>
+
+		<Label text="Subsidiary"/>
+		<Text text="SAP France"/>
+
+	</forms:SimpleForm>
+
+</mvc:View>

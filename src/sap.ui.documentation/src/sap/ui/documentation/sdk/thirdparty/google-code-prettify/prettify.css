@@ -68,3 +68,165 @@ li.L3,
 li.L5,
 li.L7,
 li.L9 { background: #eee }
+
+/* Different theme for Fiori 3 Dark for better visibility */
+/* SPAN elements with the classes below are added by prettyprint. */
+
+.sapUiTheme-sap_fiori_3_dark pre .pln { color: #fff }  /* plaintext */
+
+@media screen {
+  .sapUiTheme-sap_fiori_3_dark pre .str { color: #ffa0a0 }  /* string content */
+  .sapUiTheme-sap_fiori_3_dark pre .kwd { color: #f0e68c}  /* a keyword */
+  .sapUiTheme-sap_fiori_3_dark pre .com { color: #87ceeb }  /* a comment */
+  .sapUiTheme-sap_fiori_3_dark pre .typ { color: #98fb98 }  /* a type name */
+  .sapUiTheme-sap_fiori_3_dark pre .lit { color: #cd5c5c }  /* a literal value */
+  /* punctuation, lisp open bracket, lisp close bracket */
+  .sapUiTheme-sap_fiori_3_dark pre .pun { color: #fff }  /* punctuation */
+  .sapUiTheme-sap_fiori_3_dark pre .tag { color: #f0e68c }  /* a markup tag name */
+  .sapUiTheme-sap_fiori_3_dark pre .atn { color: #bdb76b }  /* a markup attribute name */
+  .sapUiTheme-sap_fiori_3_dark pre .atv { color: #ffa0a0 }  /* a markup attribute value */
+  .sapUiTheme-sap_fiori_3_dark pre .dec { color: #98fb98 }  /* decimal */
+}
+
+/* Use higher contrast and text-weight for printable form. */
+@media print, projection {
+  .sapUiTheme-sap_fiori_3_dark pre.prettyprint { background-color: none }
+  .sapUiTheme-sap_fiori_3_dark pre .str, .sapUiTheme-sap_fiori_3_dark code .str { color: #060 }
+  .sapUiTheme-sap_fiori_3_dark pre .kwd, .sapUiTheme-sap_fiori_3_dark code .kwd { color: #006; font-weight: bold }
+  .sapUiTheme-sap_fiori_3_dark pre .com, .sapUiTheme-sap_fiori_3_dark code .com { color: #600; font-style: italic }
+  .sapUiTheme-sap_fiori_3_dark pre .typ, .sapUiTheme-sap_fiori_3_dark code .typ { color: #404; font-weight: bold }
+  .sapUiTheme-sap_fiori_3_dark pre .lit, .sapUiTheme-sap_fiori_3_dark code .lit { color: #044 }
+  .sapUiTheme-sap_fiori_3_dark pre .pun, .sapUiTheme-sap_fiori_3_dark code .pun { color: #440 }
+  .sapUiTheme-sap_fiori_3_dark pre .pln, .sapUiTheme-sap_fiori_3_dark code .pln { color: #000 }
+  .sapUiTheme-sap_fiori_3_dark pre .tag, .sapUiTheme-sap_fiori_3_dark code .tag { color: #006; font-weight: bold }
+  .sapUiTheme-sap_fiori_3_dark pre .atn, .sapUiTheme-sap_fiori_3_dark code .atn { color: #404 }
+  .sapUiTheme-sap_fiori_3_dark pre .atv, .sapUiTheme-sap_fiori_3_dark code .atv { color: #060 }
+}
+
+/* Put a border around prettyprinted code snippets. */
+.sapUiTheme-sap_fiori_3_dark pre.prettyprint { padding: 2px; border: solid 1px #3a4552 }
+
+/* Specify class=linenums on a pre to get line numbering */
+.sapUiTheme-sap_fiori_3_dark ol.linenums { margin-top: 0; margin-bottom: 0 } /* IE indents via margin-left */
+.sapUiTheme-sap_fiori_3_dark li.L0,
+.sapUiTheme-sap_fiori_3_dark li.L1,
+.sapUiTheme-sap_fiori_3_dark li.L2,
+.sapUiTheme-sap_fiori_3_dark li.L3,
+.sapUiTheme-sap_fiori_3_dark li.L5,
+.sapUiTheme-sap_fiori_3_dark li.L6,
+.sapUiTheme-sap_fiori_3_dark li.L7,
+.sapUiTheme-sap_fiori_3_dark li.L8 { list-style-type: none }
+/* Alternate shading for lines */
+.sapUiTheme-sap_fiori_3_dark li.L1,
+.sapUiTheme-sap_fiori_3_dark li.L3,
+.sapUiTheme-sap_fiori_3_dark li.L5,
+.sapUiTheme-sap_fiori_3_dark li.L7,
+.sapUiTheme-sap_fiori_3_dark li.L9 { background: #eee }
+
+/* Different theme for Belize HCB for better visibility */
+/* SPAN elements with the classes below are added by prettyprint. */
+
+.sapUiTheme-sap_belize_hcb pre .pln { color: #fff }  /* plaintext */
+
+@media screen {
+  .sapUiTheme-sap_belize_hcb pre .str { color: #ffa0a0 }  /* string content */
+  .sapUiTheme-sap_belize_hcb pre .kwd { color: #f0e68c}  /* a keyword */
+  .sapUiTheme-sap_belize_hcb pre .com { color: #87ceeb }  /* a comment */
+  .sapUiTheme-sap_belize_hcb pre .typ { color: #98fb98 }  /* a type name */
+  .sapUiTheme-sap_belize_hcb pre .lit { color: #cd5c5c }  /* a literal value */
+  /* punctuation, lisp open bracket, lisp close bracket */
+  .sapUiTheme-sap_belize_hcb pre .pun { color: #fff }  /* punctuation */
+  .sapUiTheme-sap_belize_hcb pre .tag { color: #f0e68c }  /* a markup tag name */
+  .sapUiTheme-sap_belize_hcb pre .atn { color: #bdb76b }  /* a markup attribute name */
+  .sapUiTheme-sap_belize_hcb pre .atv { color: #ffa0a0 }  /* a markup attribute value */
+  .sapUiTheme-sap_belize_hcb pre .dec { color: #98fb98 }  /* decimal */
+}
+
+/* Use higher contrast and text-weight for printable form. */
+@media print, projection {
+  .sapUiTheme-sap_belize_hcb pre.prettyprint { background-color: none }
+  .sapUiTheme-sap_belize_hcb pre .str, .sapUiTheme-sap_belize_hcb code .str { color: #060 }
+  .sapUiTheme-sap_belize_hcb pre .kwd, .sapUiTheme-sap_belize_hcb code .kwd { color: #006; font-weight: bold }
+  .sapUiTheme-sap_belize_hcb pre .com, .sapUiTheme-sap_belize_hcb code .com { color: #600; font-style: italic }
+  .sapUiTheme-sap_belize_hcb pre .typ, .sapUiTheme-sap_belize_hcb code .typ { color: #404; font-weight: bold }
+  .sapUiTheme-sap_belize_hcb pre .lit, .sapUiTheme-sap_belize_hcb code .lit { color: #044 }
+  .sapUiTheme-sap_belize_hcb pre .pun, .sapUiTheme-sap_belize_hcb code .pun { color: #440 }
+  .sapUiTheme-sap_belize_hcb pre .pln, .sapUiTheme-sap_belize_hcb code .pln { color: #000 }
+  .sapUiTheme-sap_belize_hcb pre .tag, .sapUiTheme-sap_belize_hcb code .tag { color: #006; font-weight: bold }
+  .sapUiTheme-sap_belize_hcb pre .atn, .sapUiTheme-sap_belize_hcb code .atn { color: #404 }
+  .sapUiTheme-sap_belize_hcb pre .atv, .sapUiTheme-sap_belize_hcb code .atv { color: #060 }
+}
+
+/* Put a border around prettyprinted code snippets. */
+.sapUiTheme-sap_belize_hcb pre.prettyprint { padding: 2px; border: solid 1px #3a4552 }
+
+/* Specify class=linenums on a pre to get line numbering */
+.sapUiTheme-sap_belize_hcb ol.linenums { margin-top: 0; margin-bottom: 0 } /* IE indents via margin-left */
+.sapUiTheme-sap_belize_hcb li.L0,
+.sapUiTheme-sap_belize_hcb li.L1,
+.sapUiTheme-sap_belize_hcb li.L2,
+.sapUiTheme-sap_belize_hcb li.L3,
+.sapUiTheme-sap_belize_hcb li.L5,
+.sapUiTheme-sap_belize_hcb li.L6,
+.sapUiTheme-sap_belize_hcb li.L7,
+.sapUiTheme-sap_belize_hcb li.L8 { list-style-type: none }
+/* Alternate shading for lines */
+.sapUiTheme-sap_belize_hcb li.L1,
+.sapUiTheme-sap_belize_hcb li.L3,
+.sapUiTheme-sap_belize_hcb li.L5,
+.sapUiTheme-sap_belize_hcb li.L7,
+.sapUiTheme-sap_belize_hcb li.L9 { background: #eee }
+
+/* Different theme for Fiori 3 HCB for better visibility */
+/* SPAN elements with the classes below are added by prettyprint. */
+
+.sapUiTheme-sap_fiori_3_hcb pre .pln { color: #fff }  /* plaintext */
+
+@media screen {
+  .sapUiTheme-sap_fiori_3_hcb pre .str { color: #ffa0a0 }  /* string content */
+  .sapUiTheme-sap_fiori_3_hcb pre .kwd { color: #f0e68c}  /* a keyword */
+  .sapUiTheme-sap_fiori_3_hcb pre .com { color: #87ceeb }  /* a comment */
+  .sapUiTheme-sap_fiori_3_hcb pre .typ { color: #98fb98 }  /* a type name */
+  .sapUiTheme-sap_fiori_3_hcb pre .lit { color: #cd5c5c }  /* a literal value */
+  /* punctuation, lisp open bracket, lisp close bracket */
+  .sapUiTheme-sap_fiori_3_hcb pre .pun { color: #fff }  /* punctuation */
+  .sapUiTheme-sap_fiori_3_hcb pre .tag { color: #f0e68c }  /* a markup tag name */
+  .sapUiTheme-sap_fiori_3_hcb pre .atn { color: #bdb76b }  /* a markup attribute name */
+  .sapUiTheme-sap_fiori_3_hcb pre .atv { color: #ffa0a0 }  /* a markup attribute value */
+  .sapUiTheme-sap_fiori_3_hcb pre .dec { color: #98fb98 }  /* decimal */
+}
+
+/* Use higher contrast and text-weight for printable form. */
+@media print, projection {
+  .sapUiTheme-sap_fiori_3_hcb pre.prettyprint { background-color: none }
+  .sapUiTheme-sap_fiori_3_hcb pre .str, .sapUiTheme-sap_fiori_3_hcb code .str { color: #060 }
+  .sapUiTheme-sap_fiori_3_hcb pre .kwd, .sapUiTheme-sap_fiori_3_hcb code .kwd { color: #006; font-weight: bold }
+  .sapUiTheme-sap_fiori_3_hcb pre .com, .sapUiTheme-sap_fiori_3_hcb code .com { color: #600; font-style: italic }
+  .sapUiTheme-sap_fiori_3_hcb pre .typ, .sapUiTheme-sap_fiori_3_hcb code .typ { color: #404; font-weight: bold }
+  .sapUiTheme-sap_fiori_3_hcb pre .lit, .sapUiTheme-sap_fiori_3_hcb code .lit { color: #044 }
+  .sapUiTheme-sap_fiori_3_hcb pre .pun, .sapUiTheme-sap_fiori_3_hcb code .pun { color: #440 }
+  .sapUiTheme-sap_fiori_3_hcb pre .pln, .sapUiTheme-sap_fiori_3_hcb code .pln { color: #000 }
+  .sapUiTheme-sap_fiori_3_hcb pre .tag, .sapUiTheme-sap_fiori_3_hcb code .tag { color: #006; font-weight: bold }
+  .sapUiTheme-sap_fiori_3_hcb pre .atn, .sapUiTheme-sap_fiori_3_hcb code .atn { color: #404 }
+  .sapUiTheme-sap_fiori_3_hcb pre .atv, .sapUiTheme-sap_fiori_3_hcb code .atv { color: #060 }
+}
+
+/* Put a border around prettyprinted code snippets. */
+.sapUiTheme-sap_fiori_3_hcb pre.prettyprint { padding: 2px; border: solid 1px #3a4552 }
+
+/* Specify class=linenums on a pre to get line numbering */
+.sapUiTheme-sap_fiori_3_hcb ol.linenums { margin-top: 0; margin-bottom: 0 } /* IE indents via margin-left */
+.sapUiTheme-sap_fiori_3_hcb li.L0,
+.sapUiTheme-sap_fiori_3_hcb li.L1,
+.sapUiTheme-sap_fiori_3_hcb li.L2,
+.sapUiTheme-sap_fiori_3_hcb li.L3,
+.sapUiTheme-sap_fiori_3_hcb li.L5,
+.sapUiTheme-sap_fiori_3_hcb li.L6,
+.sapUiTheme-sap_fiori_3_hcb li.L7,
+.sapUiTheme-sap_fiori_3_hcb li.L8 { list-style-type: none }
+/* Alternate shading for lines */
+.sapUiTheme-sap_fiori_3_hcb li.L1,
+.sapUiTheme-sap_fiori_3_hcb li.L3,
+.sapUiTheme-sap_fiori_3_hcb li.L5,
+.sapUiTheme-sap_fiori_3_hcb li.L7,
+.sapUiTheme-sap_fiori_3_hcb li.L9 { background: #eee }

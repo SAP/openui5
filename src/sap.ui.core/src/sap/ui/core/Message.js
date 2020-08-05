@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.Message.
-sap.ui.define(['jquery.sap.global', './Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['./Element', './library', "sap/base/Log"],
+	function(Element, library, Log) {
 	"use strict";
 
 	// shortcut
@@ -18,9 +18,9 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * This element used to provide messages. Rendering must be done within the control that uses this kind of element.
+	 * This element is used to provide messages.
 	 *
-	 * Its default level is none.
+	 * Rendering must be done within the control that uses this kind of element. Its default level is none.
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
@@ -67,19 +67,13 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	/**
 	 * Returns the icon's default URI depending on given size.
 	 *
-	 * There are default icons for messages available that can be used this way. If no
-	 * parameter is given, the size will be 16x16 per default. If larger icons are needed,
-	 * the parameter "32x32" might be given.
-	 *
-	 * @param {string} sSize
-	 *         If parameter is not set the default icon's size will be 16x16. If parameter
-	 *         is set to "32x32" the icon size will be 32x32.
+	 * @param {string} [sSize="16x16"] Only the values "16x16" or "32x32" are allowed. Otherwise the default value is used.
 	 * @return {sap.ui.core.URI} URI of the default icon.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Message.prototype.getDefaultIcon = function(sSize) {
-		var sModulePath = jQuery.sap.getModulePath("sap.ui.core.themes." + sap.ui.getCore().getConfiguration().getTheme());
+		var sModulePath = sap.ui.require.toUrl("sap/ui/core/themes/" + sap.ui.getCore().getConfiguration().getTheme());
 
 		var sImagesPath = sModulePath + "/img/message/";
 		if (sSize && sSize == "32x32") {
@@ -184,7 +178,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 			return -1;
 
 		default:
-			jQuery.sap.log.error("Comparison error", this);
+			Log.error("Comparison error", this);
 			return 0;
 		}
 	};

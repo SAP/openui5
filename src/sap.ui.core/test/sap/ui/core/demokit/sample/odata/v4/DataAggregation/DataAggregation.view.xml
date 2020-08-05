@@ -1,0 +1,80 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.DataAggregation.DataAggregation"
+	xmlns="sap.ui.table"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<!-- TODO: enable sorting in table -->
+	<!-- TODO: enhance auto type detection for @$ui5.node.*? -->
+	<Table id="table" ariaLabelledBy="title"
+		rows="{path : '/BusinessPartners',
+			parameters : {
+				$$aggregation : {
+					aggregate : {
+						SalesAmount : {subtotals : true},
+						SalesNumber : {}
+					},
+					group : {
+						AccountResponsible : {}
+					},
+					groupLevels : ['Country', 'Region', 'Segment']
+				},
+				$count : false,
+				$orderby : 'Country desc,Region desc,Segment,AccountResponsible'
+			}}" selectionMode="None" threshold="0" visibleRowCount="5">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="title" text="Sales Amount by Region" level="H1"/>
+				<m:ToolbarSpacer />
+				<m:Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
+					press="onToggleMessagePopover" text="{ui>/iMessages}"
+					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+			</m:Toolbar>
+		</extension>
+		<Column hAlign="End" width="5em">
+			<m:Label text="Level"/>
+			<template>
+				<m:Text wrapping="false" text="{= %{@$ui5.node.level} }"/><!-- Note: type not
+				really useful here -->
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined}"
+					id="expand"
+					icon="{= %{@$ui5.node.isExpanded} === true
+						? 'sap-icon://collapse'
+						: (%{@$ui5.node.isExpanded} === false
+							? 'sap-icon://expand' : 'sap-icon://e-care')}"
+					press=".onToggleExpand"
+					tooltip="{= %{@$ui5.node.isExpanded} === true ? 'Collapse' : 'Expand'}"
+					/>
+			</template>
+		</Column>
+		<Column template="Country">
+			<m:Label text="Country"/>
+		</Column>
+		<Column template="Region">
+			<m:Label text="Region"/>
+		</Column>
+		<Column template="Segment">
+			<m:Label text="Segment"/>
+		</Column>
+		<Column template="AccountResponsible">
+			<m:Label text="Account Responsible"/>
+		</Column>
+		<Column hAlign="End" template="SalesAmount">
+			<m:Label text="Sales Amount"/>
+		</Column>
+		<Column hAlign="End" template="SalesNumber">
+			<m:Label text="Sales Number"/>
+		</Column>
+		<Column hAlign="Center" width="5em">
+			<m:Label text="Subtotal"/>
+			<template>
+				<m:CheckBox selected="{= %{@$ui5.node.isTotal} }" editable="false"/>
+			</template>
+		</Column>
+	</Table>
+</mvc:View>

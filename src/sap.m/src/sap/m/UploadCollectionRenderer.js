@@ -38,7 +38,6 @@ sap.ui.define(['./ListItemBaseRenderer'], function(ListItemBaseRenderer) {
 		oRm.addClass("sapMLIB sapMUCNoDataPage");
 		ListItemBaseRenderer.addFocusableClasses.call(ListItemBaseRenderer, oRm);
 		oRm.writeClasses();
-		oRm.writeAttribute("id", oUploadCollection.getId() + "-no-data-page");
 		oRm.write(">");
 
 		oRm.renderControl(oUploadCollection.getAggregation("_noDataIcon"));

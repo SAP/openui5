@@ -1,0 +1,51 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "8b605e5aeb11f4b4c29f4d777ef2916e223eb116",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: demokit samples are now improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080256954"
+          }
+        ]
+      },
+      {
+        "id": "db092357ac4940efdc320bd2435bf665000556fb",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: the contents visibility remain the same after rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080215441"
+          }
+        ]
+      },
+      {
+        "id": "6da9ac2370006ce7a252b5a6e8a6fb364c6a40c4",
+        "type": "FIX",
+        "text": " DemoKit: Corrected paths to mock data",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070157881"
+          }
+        ]
+      },
+      {
+        "id": "766fece7ffc4af37e7bc130e99a440ab24f67d02",
+        "type": "FIX",
+        "text": " Form. use Title in Toolbar as default aria-labelledby",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080231830"
+          }
+        ]
+      }
+    ]
+  }
+}

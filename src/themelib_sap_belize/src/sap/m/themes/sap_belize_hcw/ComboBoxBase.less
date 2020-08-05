@@ -8,32 +8,8 @@
 /* ------------------------------ */
 
 /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
-.sapMComboBoxBasePressed .sapMComboBoxBaseInputInner:not(.sapMInputBaseStateInner) {
+.sapMComboBoxBasePressed .sapMComboBoxBaseInputInner:not(.sapMInputBaseContentWrapperState) .sapMInputBaseInner {
 	border-color: @sapUiFieldActiveBorderColor;
-}
-
-/* ------------------------------ */
-/* arrow                          */
-/* ------------------------------ */
-
-/* hover */
-html.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
-	border-left: 1px solid @sapUiFieldHoverBorderColor;
-}
-
-/* pressed */
-/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
-.sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
-html.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
-	border-left: 1px solid @sapUiFieldActiveBorderColor;
-}
-
-/* ------------------------------ */
-/* list                           */
-/* ------------------------------ */
-
-.sapMComboBoxBaseList.sapUiLocalBusy {
-	min-height: 2rem;
 }
 
 /* ------------------------------ */
@@ -43,6 +19,11 @@ html.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
 div.sapMComboBoxBasePicker {
 	box-shadow: 0 .25rem 1.875rem .125rem fade(@sapUiContentShadowColor, 80%);
 	border: none;
+}
+
+.sapMComboBoxBasePicker-CTX .sapMListFocus .sapMLIBSelected {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.188rem;
 }
 
 /* make border of the combobox's list not scrollable */

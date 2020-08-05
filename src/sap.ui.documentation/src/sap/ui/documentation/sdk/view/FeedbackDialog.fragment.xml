@@ -3,7 +3,7 @@
 		xmlns:core="sap.ui.core"
 		xmlns:html="http://www.w3.org/1999/xhtml">
 	<Dialog
-		title="Give Feedback"
+		title="{i18n>FEEDBACK_DIALOG_TITLE}"
 		class="sapUiContentPadding"
 		id="feedbackDialog"
 		resizable="true"
@@ -16,7 +16,7 @@
 		<VBox>
 			<HBox justifyContent="SpaceBetween">
 				<items>
-					<Label text="How is your overall experience?" design="Bold" class="sapMFontMediumSize" required="true"/>
+					<Label text="{i18n>FEEDBACK_DIALOG_OVERALL}" design="Bold" class="sapMFontMediumSize" required="true"/>
 					<ObjectStatus id="ratingStatus" text="" state="None" class="sapMFontMediumSize"/>
 				</items>
 			</HBox>
@@ -50,12 +50,12 @@
 				</items>
 			</HBox>
 
-			<Label text="What would you like to tell us?" design="Bold" class="sapUiTinyMarginTop"/>
+			<Label text="{i18n>FEEDBACK_DIALOG_MESSAGE}" design="Bold" class="sapUiTinyMarginTop"/>
 
-			<TextArea id="feedbackInput" width="100%" placeholder="You can share your feedback for the overall Demo Kit experience or for the specific page you are currently viewing."
+			<TextArea id="feedbackInput" width="100%" placeholder="{i18n>FEEDBACK_DIALOG_MESSAGE_PLACEHOLDER}"
 						rows="7" class="sapMFontMediumSize sapUiFeedbackDialogTextArea"/>
 
-			<CheckBox id="pageContext" text="Feedback is related to the current page" selected="true" class="sapMFontMediumSize contextCheckBoxAlign" select="onContextSelect"/>
+			<CheckBox id="pageContext" text="{i18n>FEEDBACK_DIALOG_RELATED}" selected="true" class="sapMFontMediumSize contextCheckBoxAlign" select="onContextSelect"/>
 
 			<FormattedText class="sapMLabel sapUiFeedbackDialogNoteLabel sapUiTinyMarginBottom"
 						   htmlText="&lt;strong&gt;Note:&lt;/strong&gt; If you want to report a bug,
@@ -67,18 +67,21 @@
 			}
 			This way we will be able to get back to you in case we have follow-up questions."/>
 
-			<Link text="Show context Data" class="sapMFontMediumSize sapUiTinyMarginBottom" press="onShowHideContextData"/>
+			<FormattedText class="sapMLabel sapUiFeedbackDialogNoteLabel sapUiTinyMarginBottom" visible="{= ${versionData>/isOpenUI5}}"
+						   htmlText="You can contribute directly to the &lt;a href=&quot;https://github.com/SAP/openui5-docs&quot; target=&quot;_blank&quot;&gt;OpenUI5 Documentation&lt;/a&gt; on GitHub."/>
+
+			<Link text="{i18n>FEEDBACK_DIALOG_SHOW_DATA}" class="sapMFontMediumSize sapUiTinyMarginBottom" press="onShowHideContextData"/>
 
 			<TextArea id="contextData" width="100%" value="Details/ descriptive text..." visible="false" editable="false" rows="3" class="sapUiBaseText sapMFontMediumSize sapUiTinyMarginBottom sapUiNoMarginTop"/>
 
-			<MessageStrip text="Your feedback is anonymous, we do not collect any personal data" type="Information" showIcon="true"/>
+			<MessageStrip text="{i18n>FEEDBACK_DIALOG_DISCLAIMER}" type="Information" showIcon="true"/>
 		</VBox>
 		</content>
 		<beginButton>
-			<Button id="sendButton" text="Send"  press="onFeedbackDialogSend" enabled="false"/>
+			<Button id="sendButton" text="{i18n>FEEDBACK_DIALOG_BTN_SEND}" press="onFeedbackDialogSend" enabled="false" type="Emphasized"/>
 		</beginButton>
 		<endButton>
-			<Button id="cancelButton" text="Cancel" press="onFeedbackDialogCancel"/>
+			<Button id="cancelButton" text="{i18n>FEEDBACK_DIALOG_BTN_CANCEL}" press="onFeedbackDialogCancel"/>
 		</endButton>
 	</Dialog>
 </core:FragmentDefinition>

@@ -22,6 +22,7 @@ sap.ui.define(['sap/ui/base/ManagedObject'],
 	 * @since 1.22.0
 	 *
 	 * @public
+	 * @deprecated Since version 1.73
 	 * @alias sap.ui.core.util.ExportType
 	 */
 	var ExportType = ManagedObject.extend('sap.ui.core.util.ExportType', {

@@ -21,7 +21,7 @@
 					icon="{pic}"
 					title="{name}"
 					text="{role}"
-					appointments="{path : 'appointments', templateShareable: 'true'}">
+					appointments="{path : 'appointments', templateShareable: true}">
 					<appointments>
 						<unified:CalendarAppointment
 							startDate="{start}"

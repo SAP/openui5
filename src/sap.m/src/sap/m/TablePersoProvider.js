@@ -3,8 +3,8 @@
  */
 
 // Provides TablePersoProvider
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
-	function(jQuery, ManagedObject) {
+sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"],
+	function(ManagedObject, Log) {
 	"use strict";
 
 
@@ -46,8 +46,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 */
 	TablePersoProvider.prototype.init = function() {
 
-		jQuery.sap.log.warning("This is the abstract base class for a TablePersoProvider. Do not create instances of this class, but use a concrete sub class instead.");
-		jQuery.sap.log.debug("TablePersoProvider init");
+		Log.warning("This is the abstract base class for a TablePersoProvider. Do not create instances of this class, but use a concrete sub class instead.");
+		Log.debug("TablePersoProvider init");
 
 	};
 
@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 */
 	TablePersoProvider.prototype.getPersData = function() {
 
-		jQuery.sap.log.debug("TablePersoProvider getPersData");
+		Log.debug("TablePersoProvider getPersData");
 
 	};
 
@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 */
 	TablePersoProvider.prototype.setPersData = function(oBundle) {
 
-		jQuery.sap.log.debug("TablePersoProvider setPersData");
+		Log.debug("TablePersoProvider setPersData");
 
 	};
 
@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 */
 	TablePersoProvider.prototype.delPersData = function() {
 
-		jQuery.sap.log.debug("TablePersoProvider delPersData");
+		Log.debug("TablePersoProvider delPersData");
 
 	};
 
@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	*/
 	TablePersoProvider.prototype.resetPersData = function() {
 
-		jQuery.sap.log.debug("TablePersoProvider resetPersData");
+		Log.debug("TablePersoProvider resetPersData");
 
 	};
 

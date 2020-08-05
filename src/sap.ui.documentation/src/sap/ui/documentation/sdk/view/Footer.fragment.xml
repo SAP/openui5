@@ -12,8 +12,8 @@
 				<Image
 						src="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
 						densityAware="false"
-						width="4.25rem"
-						height="2rem">
+						width="3rem"
+						height="1.5rem">
 				</Image>
 				<FlexBox
 						direction ="{= ${device>/system/phone} ? 'Column' : 'Row' }"
@@ -21,24 +21,30 @@
 					<items>
 						<Link
 								class="demokitInitialPagesBrightLink sapUiLargeMarginEnd sapUiTinyMarginBottom"
-								text="Legal Disclosure"
+								text="{i18n>FOOTER_LEGAL_DISCOLURE}"
 								href="https://www.sap.com/corporate/en/legal/impressum.html"
 								target="_blank"/>
 						<Link
 								class="demokitInitialPagesBrightLink sapUiLargeMarginEnd sapUiTinyMarginBottom"
-								text="Privacy"
+								text="{i18n>FOOTER_PRIVACY}"
 								href="https://www.sap.com/corporate/en/legal/privacy.html"
 								target="_blank"/>
 						<Link
 								class="demokitInitialPagesBrightLink"
-								text="Terms of Use"
+								text="{i18n>FOOTER_TERMS}"
 								href="https://www.sap.com/corporate/en/legal/terms-of-use.html"
 								visible="{=!${versionData>/isOpenUI5}}"
 								target="_blank"/>
 						<Link
-								class="demokitInitialPagesBrightLink"
-								text="License"
+								class="demokitInitialPagesBrightLink sapUiTinyMarginBottom sapUiLargeMarginEnd"
+								text="{i18n>FOOTER_LICENSE}"
 								href="LICENSE.txt"
+								visible="{versionData>/isOpenUI5}"
+								target="_blank"/>
+						<Link
+								class="demokitInitialPagesBrightLink"
+								text="{i18n>FOOTER_TERMS}"
+								href="TermsOfUse.txt"
 								visible="{versionData>/isOpenUI5}"
 								target="_blank"/>
 					</items>

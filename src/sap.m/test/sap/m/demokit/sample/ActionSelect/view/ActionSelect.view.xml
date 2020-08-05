@@ -1,0 +1,26 @@
+<mvc:View
+	controllerName="sap.m.sample.ActionSelect.controller.ActionSelect"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<ActionSelect
+			id="select"
+			buttons="button1 button2"
+			items="{
+				path: '/ProductCollection',
+				sorter: { path: 'Name' }
+			}">
+			<items>
+				<core:Item key="{ProductId}" text="{Name}" />
+			</items>
+			<dependents>
+				<Button id="button1" text="Action 1" press="onButtonPress" />
+				<Button id="button2" text="Action 2" press="onButtonPress" />
+			</dependents>
+		</ActionSelect>
+	</l:VerticalLayout>
+</mvc:View>

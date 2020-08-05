@@ -1,0 +1,49 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.samples.timeline1",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Timeline",
+		"header": {
+			"title": "New Team Members",
+			"icon": {
+				"src": "sap-icon://group"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./cardsdemo/cardcontent/employees.json"
+				},
+				"path": "/Employees"
+			},
+			"maxItems": 4,
+			"item": {
+				"dateTime": {
+					"label": "{{hireDate_label}}",
+					"value": "{HireDate}"
+				},
+				"description": {
+					"label": "{{jobResponsibilities_label}}",
+					"value": "{JobResponsibilities}"
+				},
+				"title": {
+					"label": "{{jobTitle}}",
+					"value": "{JobTitle}"
+				},
+				"owner": {
+					"label": "{{name_label}}",
+					"value": "{Name}"
+				},
+				"ownerImage": {
+					"label": "{{picture_label}}",
+					"value": "{Photo}"
+				},
+				"icon": {
+					"src": "{Icon}"
+				}
+			}
+		}
+	}
+}

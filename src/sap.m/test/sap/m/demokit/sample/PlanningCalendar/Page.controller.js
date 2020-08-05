@@ -6,7 +6,7 @@ sap.ui.define([
 	function (Controller, JSONModel, MessageBox) {
 		"use strict";
 
-		var PageController = Controller.extend("sap.m.sample.PlanningCalendar.Page", {
+		return Controller.extend("sap.m.sample.PlanningCalendar.Page", {
 
 			onInit: function () {
 				// create model
@@ -14,7 +14,7 @@ sap.ui.define([
 				oModel.setData({
 					startDate: new Date("2017", "0", "15", "8", "0"),
 					people: [{
-						pic: "test-resources/sap/ui/demokit/explored/img/John_Miller.png",
+						pic: "test-resources/sap/ui/documentation/sdk/images/John_Miller.png",
 						name: "John Miller",
 						role: "team member",
 						appointments: [
@@ -223,7 +223,7 @@ sap.ui.define([
 						]
 					},
 						{
-							pic: "test-resources/sap/ui/demokit/explored/img/Donna_Moore.jpg",
+							pic: "test-resources/sap/ui/documentation/sdk/images/Donna_Moore.jpg",
 							name: "Donna Moore",
 							role: "team member",
 							appointments: [
@@ -472,7 +472,5 @@ sap.ui.define([
 			}
 
 		});
-
-		return PageController;
 
 	});

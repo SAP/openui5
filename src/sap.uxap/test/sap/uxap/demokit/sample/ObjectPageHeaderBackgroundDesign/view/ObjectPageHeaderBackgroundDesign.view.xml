@@ -1,0 +1,109 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:layout="sap.ui.layout"
+	xmlns:sample="sap.uxap.sample.AnchorBar.controller.blocks"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout"
+		showTitleInHeaderContent="true"
+		upperCaseAnchorBar="false"
+		backgroundDesignAnchorBar="Translucent">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle backgroundDesign="Solid">
+				<breadcrumbs>
+					<m:Breadcrumbs>
+						<m:Link text='Page 1'/>
+						<m:Link text='Page 2'/>
+						<m:Link text='Page 3'/>
+						<m:Link text='Page 4'/>
+						<m:Link text='Page 5'/>
+					</m:Breadcrumbs>
+				</breadcrumbs>
+
+				<expandedHeading>
+					<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginTop"/>
+				</expandedHeading>
+
+				<snappedHeading>
+					<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginTop"/>
+				</snappedHeading>
+
+				<expandedContent>
+					<m:Text text="Senior Developer"/>
+				</expandedContent>
+
+				<snappedContent>
+					<m:Text text="Senior Developer"/>
+				</snappedContent>
+
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+			<layout:HorizontalLayout
+					allowWrapping="true">
+				<layout:VerticalLayout
+						class="sapUiMediumMarginEnd">
+					<m:ObjectAttribute title="Location" text="Warehouse A"/>
+					<m:ObjectAttribute title="Halway" text="23L"/>
+					<m:ObjectAttribute title="Rack" text="34"/>
+				</layout:VerticalLayout>
+				<layout:VerticalLayout>
+					<m:ObjectAttribute title="Availability"/>
+					<m:ObjectStatus text="In Stock" state="Success"/>
+				</layout:VerticalLayout>
+			</layout:HorizontalLayout>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection titleUppercase="false" id="section1" title="Section 1">
+				<subSections>
+					<ObjectPageSubSection id="section1_SS1" title="Subsection 1.1" titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="bbt1"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection id="section1_SS2" title="Subsection 1.2" titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="bbt2"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="section2" title="Section 2">
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="section3" title="Section 3">
+				<subSections>
+					<ObjectPageSubSection id="section3_SS1" titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="bbt3"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="section4" title="Section 4">
+				<subSections>
+					<ObjectPageSubSection id="section4_SS1" title="Subsection 4.1" titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="bbt4"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="section5" title="Section 5">
+				<subSections>
+					<ObjectPageSubSection id="section5_SS1" titleUppercase="false">
+						<blocks>
+							<sample:mySimpleBlock id="bbt5"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+
+	</ObjectPageLayout>
+</mvc:View>

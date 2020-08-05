@@ -1,5 +1,5 @@
 {
-	"@odata.context": "http://services.odata.org/TripPinRESTierService/(S(id))/$metadata#People(Age,FirstName,LastName,UserName)",
+	"@odata.context": "https://services.odata.org/TripPinRESTierService/(S(id))/$metadata#People(Age,FirstName,LastName,UserName)",
 	"value": [
 		{
 			"Age": 23,

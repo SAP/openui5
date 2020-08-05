@@ -1,0 +1,179 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "9ca98a79f812f7e4a0bbd02d18321aa48977f1a0",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: setSelectedButton behavior corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980059352"
+          }
+        ]
+      },
+      {
+        "id": "68bf6683f27d68eb67832ff2746c19010c381ef6",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Allowed non-animated footer toggle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980049593"
+          }
+        ]
+      },
+      {
+        "id": "b73157716e4dd65d636f65cd79cd5e9b816d75dc",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Attach resize handler after rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980069920"
+          }
+        ]
+      },
+      {
+        "id": "091c97f2bc127795c6c2417cdd03a8bc89dcbcfb",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Corrected lazyLoading memory leak",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780437211"
+          }
+        ]
+      },
+      {
+        "id": "b8c8dcc32160aa0808b7d3edba467d184805680f",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Corrected scrollToSection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780437211"
+          }
+        ]
+      },
+      {
+        "id": "6d2ab0755b1aae300a85d8fa8dc9f147628b2a5d",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Ensured no scrollbar after unsnap",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980038906"
+          }
+        ]
+      },
+      {
+        "id": "31929d5a78e6f891aebd64a21a253decab60ad5f",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Failing QUnit is fixed",
+        "references": []
+      },
+      {
+        "id": "23daba2ea12a8f88339960fea8a6200b8445a3c9",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSection: SPACE key behavior handled correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980044176"
+          }
+        ]
+      },
+      {
+        "id": "404a1d372c6dfc669d1afd10821dd1c522202e70",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageHeader: Action button parameter introduced",
+        "references": []
+      },
+      {
+        "id": "d007bf79146dcb8a194ce086aec0db0ad42fc31d",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Title and Subtitle IDs are now unique",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980095131"
+          }
+        ]
+      },
+      {
+        "id": "3ce6c5d73eae9345e5883182da4b8940cb007c3d",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSection: SPACE key action preventing fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980101315"
+          }
+        ]
+      },
+      {
+        "id": "cd8ee4897ca3c58e31d4fec360701f8914b11b91",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSection: Showing empty title in RTA is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970093334"
+          }
+        ]
+      },
+      {
+        "id": "de9969e2ac28b498f33a4970c5721342169c636c",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageHeader: Image styling aligned with Avatar",
+        "references": []
+      },
+      {
+        "id": "f3c3f55647fe1677d560a449bc37994d34a157d6",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: Added ARIA role description to menu buttons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980057363"
+          }
+        ]
+      },
+      {
+        "id": "97a8618acef9c594bd68ce8317b810b1cda499e3",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Fixed form paddings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980083486"
+          }
+        ]
+      },
+      {
+        "id": "dc573252bb4915dea93de026954f90207d6b5442",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Prevent unwanted content resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980116640"
+          }
+        ]
+      },
+      {
+        "id": "073b8217817ce3864b80aa8801df48f7a1e01603",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: Updated resize behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980015066"
+          }
+        ]
+      }
+    ]
+  }
+}

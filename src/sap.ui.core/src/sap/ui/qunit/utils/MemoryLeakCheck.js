@@ -4,13 +4,17 @@
 
 /*global QUnit*/
 
-sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', 'sap/ui/core/Control' ],
-		function(jQuery, Core, BaseObject, Control) {
+sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', 'sap/ui/core/Element', 'sap/ui/core/Control' ],
+		function(jQuery, Core, BaseObject, Element, Control) {
 	"use strict";
 
+	//TODO: global jquery call found
 	jQuery.sap.require("sap.ui.qunit.qunit-css");
+	//TODO: global jquery call found
 	jQuery.sap.require("sap.ui.thirdparty.qunit");
+	//TODO: global jquery call found
 	jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	//TODO: global jquery call found
 	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 	QUnit.config.reorder = false;   // make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
@@ -32,20 +36,9 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 	var MemoryLeakCheck = {};
 
 
-	// get access to the real core object to access the control list
-	sap.ui.getCore().registerPlugin({
-		startPlugin : function(oRealCore) {
-			MemoryLeakCheck.oCore = oRealCore;
-		},
-		stopPlugin : function() {
-			MemoryLeakCheck.oCore = undefined;
-		}
-	});
-
-
-	// gets the map of all currently registered controls from the Core
+	// gets a snapshot of all currently registered controls (keyed by their ID)
 	function getAllAliveControls() {
-		return jQuery.extend({}, MemoryLeakCheck.oCore.mElements);
+		return Element.registry.all();
 	}
 
 
@@ -54,13 +47,13 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 		var mProperties = oControl.getMetadata().getAllProperties();
 
 		for (var sPropertyName in mProperties) {
-			var oProperty = mProperties[sPropertyName];
-			try {
-				if (oControl[oProperty._sGetter]() === oProperty.getDefaultValue()) { // if no value has been set yet by the control factory  TODO: use "isPropertyInitial", once available
+			if (oControl.isPropertyInitial(sPropertyName)) { // if no value has been set yet by the control factory
+				var oProperty = mProperties[sPropertyName];
+				try {
 					oControl[oProperty._sMutator]("dummyValueForMemLeakTest"); // just try a string for everything now, TODO: check type
+				} catch (e) {
+					// type check error, ignore (we stupidly always try with a string, even if the property has a different type)
 				}
-			} catch (e) {
-				// type check error, ignore (we stupidly always try with a string, even if the property has a different type)
 			}
 		}
 		if (!oControl.getTooltip()) {
@@ -214,13 +207,13 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 			beforeEach: function() { // not needed before EACH, because there is only one test creating controls right now, but 1.) "before" is never called and 2.) there might be more later.
 				mOriginalElements = getAllAliveControls();
 			},
-			afterEach: function() {
-				for (var sId in MemoryLeakCheck.oCore.mElements) {
+			afterEach: function(assert) {
+				Element.registry.forEach(function(oControl, sId) {
 					if (!mOriginalElements[sId]) {
-						var oControl = sap.ui.getCore().byId(sId);
+						assert.ok(oControl.getMetadata().getName(), "Cleanup of id: " + sId + ", control: " + oControl.getMetadata().getName());
 						oControl.destroy();
 					}
-				}
+				});
 			}
 		});
 

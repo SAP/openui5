@@ -1,7 +1,6 @@
 <mvc:View
 	height="100%"
 	controllerName="sap.m.sample.Select.Page"
-	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
@@ -13,7 +12,7 @@
 				<ToolbarSpacer/>
 				<Select
 					forceSelection="false"
-					selectedKey="{/ProductCollection/0/ProductId}"
+					selectedKey="{/SelectedProduct}"
 					items="{
 						path: '/ProductCollection',
 						sorter: { path: 'Name' }
@@ -23,29 +22,41 @@
 			</Toolbar>
 		</subHeader>
 		<content>
-			<VBox>
+			<HBox justifyContent="SpaceAround">
 				<Select
-					forceSelection="false"
-					selectedKey="{/ProductCollection/1/ProductId}"
-					items="{
-						path: '/ProductCollection',
-						sorter: { path: 'Name' }
-					}">
+						enabled="{/Enabled}"
+						editable="{/Editable}"
+						forceSelection="false"
+						selectedKey="{/SelectedProduct2}"
+						items="{
+							path: '/ProductCollection2',
+							sorter: { path: 'Name' }
+						}">
 					<core:Item key="{ProductId}" text="{Name}" />
 				</Select>
-			</VBox>
+				<VBox>
+					<HBox alignItems="Center">
+						<Label text="Enabled:" class="sapUiTinyMarginEnd"/>
+						<Switch type="AcceptReject" state="true" change="toggleEnabled"/>
+					</HBox>
+					<HBox alignItems="Center">
+						<Label text="Editable:" class="sapUiTinyMarginEnd"/>
+						<Switch type="AcceptReject" state="true" change="toggleEditable"/>
+					</HBox>
+				</VBox>
+			</HBox>
 		</content>
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Select
 					forceSelection="false"
-					selectedKey="{/ProductCollection/2/ProductId}"
+					selectedKey="{/SelectedProduct3}"
 					type="IconOnly"
 					icon="sap-icon://filter"
 					autoAdjustWidth="true"
 					items="{
-						path: '/ProductCollection',
+						path: '/ProductCollection3',
 						sorter: { path: 'Name' }
 					}">
 					<core:Item key="{ProductId}" text="{Name}" />

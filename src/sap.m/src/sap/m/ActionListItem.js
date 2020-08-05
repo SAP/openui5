@@ -34,6 +34,7 @@ sap.ui.define(['./ListItemBase', './library', './ActionListItemRenderer'],
 	 * @constructor
 	 * @public
 	 * @alias sap.m.ActionListItem
+	 * @see {@link fiori:/action-list-item/ Action List Item}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ActionListItem = ListItemBase.extend("sap.m.ActionListItem", /** @lends sap.m.ActionListItem.prototype */ { metadata : {
@@ -60,12 +61,16 @@ sap.ui.define(['./ListItemBase', './library', './ActionListItemRenderer'],
 	};
 
 	/**
-	 * Determines item specific mode
+	 * Determines item specific mode.
 	 *
-	 * ActionListItems are not selectable because they are command controls (like Button or Link) so triggering the associated command, rather than selection is
-	 * appropriate to happen upon user action on these items. By overwriting isSelectable (inherited from ListItemBase) we exclude the item from processing
-	 * specific to selectable list-items.
+	 * ActionListItems are not selectable because they are command controls (like Button or Link),
+	 * so triggering the associated command, rather than selection is appropriate to happen upon
+	 * user action on these items.
 	 *
+	 * By overwriting <code>getMode</code> (inherited from <code>ListItemBase</code>), we
+	 * exclude the item from processing steps that are specific for selectable list-items.
+	 *
+	 * @returns {sap.m.ListMode|""} Mode of the list item.
 	 * @protected
 	 * @overwrite
 	 */

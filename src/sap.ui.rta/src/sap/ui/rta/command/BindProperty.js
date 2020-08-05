@@ -2,11 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/FlexCommand',
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/command/FlexCommand"
 ], function(
-	FlexCommand,
-	Utils
+	FlexCommand
 ) {
 	"use strict";
 
@@ -24,7 +22,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @class
-	 * @extends sap.ui.base.ManagedObject
+	 * @extends sap.ui.rta.command.FlexCommand
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
@@ -55,10 +53,10 @@ sap.ui.define([
 	});
 
 	/**
-	 * @override to suppress the binding strings to be used as
+	 * @override to suppress the binding strings to be used as binding
 	 */
-	BindProperty.prototype.bindProperty = function(sName, oBindingInfo){
-		if (sName === "newBinding"){
+	BindProperty.prototype.bindProperty = function(sName, oBindingInfo) {
+		if (sName === "newBinding") {
 			return this.setNewBinding(oBindingInfo.bindingString);
 		}
 		return FlexCommand.prototype.bindProperty.apply(this, arguments);
@@ -83,5 +81,4 @@ sap.ui.define([
 	};
 
 	return BindProperty;
-
-}, /* bExport= */true);
+});

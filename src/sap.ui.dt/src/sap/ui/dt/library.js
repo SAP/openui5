@@ -6,11 +6,13 @@
  * Initialization Code and shared classes of library sap.ui.dt.
  */
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/library'
-], // library dependency
-function(jQuery) {
-
+	"sap/ui/base/ManagedObjectMetadata",
+	"sap/ui/dt/SelectionMode",
+	"sap/ui/core/library"
+],
+function (
+	ManagedObjectMetadata
+) {
 	"use strict";
 
 	/**
@@ -37,29 +39,13 @@ function(jQuery) {
 		elements: []
 	});
 
-	/**
-	 * Selection mode of the tree
-	 *
-	 * @enum {string}
-	 * @private
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	sap.ui.dt.SelectionMode = {
-
-		/**
-		 * Select multiple overlays at a time.
-		 * @public
-		 */
-		Multi : "Multi",
-
-		/**
-		 * Select one overlay at a time.
-		 * @public
-		 */
-		Single : "Single"
-
-	};
+	ManagedObjectMetadata.setDesignTimeDefaultMapping({
+		"not-adaptable": "sap/ui/dt/designtime/notAdaptable.designtime",
+		"not-adaptable-tree": "sap/ui/dt/designtime/notAdaptableTree.designtime",
+		"not-adaptable-visibility": "sap/ui/dt/designtime/notAdaptableVisibility.designtime",
+		// legacy, should not be used anymore
+		"not-removable": "sap/ui/dt/designtime/notAdaptableVisibility.designtime"
+	});
 
 	return sap.ui.dt;
-
 }, /* bExport= */ true);

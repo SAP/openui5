@@ -1,9 +1,11 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/Manifest',
-	'sap/ui/thirdparty/URI',
-	"sap/ui/core/Component"
-], function(jQuery, Manifest, URI, Component) {
+	"sap/ui/core/Manifest",
+	"sap/ui/thirdparty/URI",
+	"sap/ui/core/Component",
+	"sap/base/Log",
+	"sap/base/util/deepClone",
+	"require"
+], function(Manifest, URI, Component, Log, deepClone, require) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -12,188 +14,46 @@ sap.ui.define([
 	 * TEST INITIALIZATION
 	 */
 
+	QUnit.dump.maxDepth = 10;
+
 	/*
 	 * SHARED TEST CODE
 	 */
 
+	function getModulePath(sModuleName, sSuffix) {
+		return sap.ui.require.toUrl(sModuleName.replace(/\./g, "/")) + (sSuffix || "");
+	}
+
 	function moduleSetup(sComponentName, iMetadataVersion, bManifestFirst, bDefineComponentName) {
 
+		var oConfig;
 		if (bManifestFirst) {
-			this.oComponent = sap.ui.getCore().createComponent({
+			oConfig = {
 				name: bDefineComponentName ? "sap.ui.test." + sComponentName : undefined,
-				manifestUrl: jQuery.sap.getModulePath("sap.ui.test." + sComponentName) + "/manifest.json"
-			});
+				manifest: getModulePath("sap.ui.test." + sComponentName) + "/manifest.json"
+			};
 		} else {
-			this.oComponent = sap.ui.getCore().createComponent({
-				name: "sap.ui.test." + sComponentName
-			});
+			oConfig = {
+				name: "sap.ui.test." + sComponentName,
+				manifest: false
+			};
 		}
 
-		this.oMetadata = this.oComponent.getMetadata();
+		return Component.create(oConfig).then(function(oComponent) {
+			this.oComponent = oComponent;
 
-		this.iExpectedMetadataVersion = iMetadataVersion;
-		this.oExpectedMetadata = {
+			this.oMetadata = this.oComponent.getMetadata();
 
-			"name": "sap.ui.test." + sComponentName + ".Component",
-			"version": "1.0.0",
-			"includes" : ["style.css", "script.js"],
-			"dependencies": {
-				"libs": ["sap.ui.commons"],
-				"components" : ["sap.ui.test.other"],
-				"ui5version" : "1.22.5"
-			},
-			"config": {
-				"any1": {
-					"entry": "configuration"
-				},
-				"any2": {
-					"anyobject": {
-						"key1": "value1"
-					}
-				},
-				"any3": {
-					"anyarray": [1, 2, 3]
-				},
-				"zero": 0
-			},
-			"models": {
-				"i18n": {
-					"type": "sap.ui.model.resource.ResourceModel",
-					"uri": "i18n/i18n.properties"
-				},
-				"sfapi": {
-					"type": "sap.ui.model.odata.ODataModel",
-					"uri": "./some/odata/service"
-				}
-			},
-			"rootView": {
-				"type": "XML",
-				"viewName": "sap.ui.test.view.Main"
-			},
-			"customizing": {
-				"sap.ui.viewReplacements": {
-					"sap.ui.test.view.Main": {
-						"viewName": "sap.ui.test.view.Main",
-						"type": "XML"
-					}
-				},
-				"sap.ui.controllerReplacements": {
-					"sap.ui.test.view.Main": "sap.ui.test.view.Main"
-				},
-				"sap.ui.viewExtensions": {
-					"sap.ui.test.view.Main": {
-						"extension": {
-							"name": "sap.xx.new.Fragment",
-							"type": "sap.ui.core.XMLFragment"
-						}
-					}
-				},
-				"sap.ui.viewModification": {
-					"sap.ui.test.view.Main": {
-						"myControlId": {
-							"text": iMetadataVersion === 1 ? "{{mytext}}" : "This is my text"
-						}
-					}
-				}
-			},
-			"routing": {
-				"config": {
-					"viewType" : "XML",
-					"viewPath": "NavigationWithoutMasterDetailPattern.view",
-					"targetParent": "myViewId",
-					"targetControl": "app",
-					"targetAggregation": "pages",
-					"clearTarget": false
-				},
-				"routes": [
-					{
-						"name" : "myRouteName1",
-						"pattern" : "FirstView/{from}",
-						"view" : "myViewId"
-					}
-				]
-			},
-			"custom.entry": {
-				"key1": "value1",
-				"key2": "value2",
-				"key3": {
-					"subkey1": "subvalue1",
-					"subkey2": "subvalue2"
-				},
-				"key4": ["value1", "value2"]
-			}
-		};
+			this.iExpectedMetadataVersion = iMetadataVersion;
+			this.oExpectedMetadata = {
 
-		this.oExpectedManifest = {
-			"name": "sap.ui.test." + sComponentName + ".Component",
-			"sap.app": {
-				"id": "sap.ui.test." + sComponentName,
-				"applicationVersion": {
-					"version": "1.0.0"
-				},
-				"title": "App Title",
-				"description": "App Description"
-			},
-			"sap.ui5": {
-				"resourceRoots": {
-					"x.y.z": "anypath",
-					"foo.bar": "../../foo/bar",
-					"absolute": "http://absolute/uri",
-					"server.absolute": "/server/absolute/uri"
-				},
-				"resources": iMetadataVersion === 1 ? {
-					"js": [
-						{
-							"uri": "script.js"
-						}
-					],
-					"css": [
-						{
-							"uri": "style.css"
-						}
-					]
-				} : {
-					"js": [
-						{
-							"uri": "script.js"
-						},
-						{}
-					],
-					"css": [
-						{
-							"uri": "style.css",
-							"id": "mystyle"
-						},
-						{}
-					]
-				},
+				"name": "sap.ui.test." + sComponentName + ".Component",
+				"version": "1.0.0",
+				"includes" : ["style.css", "script.js"],
 				"dependencies": {
-					"components": {
-						"sap.ui.test.other": {
-							"optional": true,
-							"minVersion": "1.0.1"
-						}
-					},
-					"libs": {
-						"sap.ui.commons": {
-							"minVersion": "1.22.0"
-						}
-					},
-					"minUI5Version": "1.22.5"
-				},
-				"models": {
-					"i18n": {
-						"type": "sap.ui.model.resource.ResourceModel",
-						"uri": "i18n/i18n.properties"
-					},
-					"sfapi": {
-						"type": "sap.ui.model.odata.ODataModel",
-						"uri": "./some/odata/service"
-					}
-				},
-				"rootView": {
-					"type": "XML",
-					"viewName": "sap.ui.test.view.Main"
+					"libs": ["sap.ui.commons"],
+					"components" : ["sap.ui.test.other"],
+					"ui5version" : "1.22.5"
 				},
 				"config": {
 					"any1": {
@@ -209,60 +69,215 @@ sap.ui.define([
 					},
 					"zero": 0
 				},
-				"extends": {
-					"extensions": {
-						"sap.ui.controllerReplacements": {
-							"sap.ui.test.view.Main": "sap.ui.test.view.Main"
-						},
-						"sap.ui.viewExtensions": {
-							"sap.ui.test.view.Main": {
-								"extension": {
-									"name": "sap.xx.new.Fragment",
-									"type": "sap.ui.core.XMLFragment"
-								}
+				"models": {
+					"i18n": {
+						"type": "sap.ui.model.resource.ResourceModel",
+						"uri": "i18n/i18n.properties"
+					},
+					"sfapi": {
+						"type": "sap.ui.model.odata.ODataModel",
+						"uri": "./some/odata/service"
+					}
+				},
+				"rootView": {
+					"type": "XML",
+					"viewName": "sap.ui.test.view.Main"
+				},
+				"customizing": {
+					"sap.ui.viewReplacements": {
+						"sap.ui.test.view.Main": {
+							"viewName": "sap.ui.test.view.Main",
+							"type": "XML"
+						}
+					},
+					"sap.ui.controllerReplacements": {
+						"sap.ui.test.view.Main": "sap.ui.test.view.Main"
+					},
+					"sap.ui.viewExtensions": {
+						"sap.ui.test.view.Main": {
+							"extension": {
+								"name": "sap.xx.new.Fragment",
+								"type": "sap.ui.core.XMLFragment"
 							}
-						},
-						"sap.ui.viewModification": {
-							"sap.ui.test.view.Main": {
-								"myControlId": {
-									"text": iMetadataVersion === 1 ? "{{mytext}}" : "This is my text"
-								}
-							}
-						},
-						"sap.ui.viewReplacements": {
-							"sap.ui.test.view.Main": {
-								"type": "XML",
-								"viewName": "sap.ui.test.view.Main"
+						}
+					},
+					"sap.ui.viewModification": {
+						"sap.ui.test.view.Main": {
+							"myControlId": {
+								"text": iMetadataVersion === 1 ? "{{mytext}}" : "This is my text"
 							}
 						}
 					}
 				},
 				"routing": {
 					"config": {
-						"clearTarget": false,
-						"targetAggregation": "pages",
-						"targetControl": "app",
-						"targetParent": "myViewId",
+						"viewType" : "XML",
 						"viewPath": "NavigationWithoutMasterDetailPattern.view",
-						"viewType": "XML"
+						"targetParent": "myViewId",
+						"targetControl": "app",
+						"targetAggregation": "pages",
+						"clearTarget": false
 					},
 					"routes": [
 						{
-							"name": "myRouteName1",
-							"pattern": "FirstView/{from}",
-							"view": "myViewId"
+							"name" : "myRouteName1",
+							"pattern" : "FirstView/{from}",
+							"view" : "myViewId"
 						}
 					]
+				},
+				"custom.entry": {
+					"key1": "value1",
+					"key2": "value2",
+					"key3": {
+						"subkey1": "subvalue1",
+						"subkey2": "subvalue2"
+					},
+					"key4": ["value1", "value2"]
 				}
-			},
-			"foo": {}, // getEntry is not allowed for keys without a dot
-			"foo.bar": "string as entry value is not valid!"
-		};
-		this.oExpectedRawManifest = jQuery.extend(true, {}, this.oExpectedManifest);
-		this.oExpectedRawManifest["sap.app"]["title"] = "{{title}}";
-		this.oExpectedRawManifest["sap.app"]["description"] = "{{description}}";
-		this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]
-			["sap.ui.test.view.Main"]["myControlId"]["text"] = "{{mytext}}";
+			};
+
+			this.oExpectedManifest = {
+				"name": "sap.ui.test." + sComponentName + ".Component",
+				"sap.app": {
+					"id": "sap.ui.test." + sComponentName,
+					"applicationVersion": {
+						"version": "1.0.0"
+					},
+					"title": "App Title",
+					"description": "App Description"
+				},
+				"sap.ui5": {
+					"resourceRoots": {
+						"x.y.z": "anypath",
+						"foo.bar": "../../foo/bar",
+						"absolute": "http://absolute/uri",
+						"server.absolute": "/server/absolute/uri"
+					},
+					"resources": iMetadataVersion === 1 ? {
+						"js": [
+							{
+								"uri": "script.js"
+							}
+						],
+						"css": [
+							{
+								"uri": "style.css"
+							}
+						]
+					} : {
+						"js": [
+							{
+								"uri": "script.js"
+							},
+							{}
+						],
+						"css": [
+							{
+								"uri": "style.css",
+								"id": "mystyle"
+							},
+							{}
+						]
+					},
+					"dependencies": {
+						"components": {
+							"sap.ui.test.other": {
+								"optional": true,
+								"minVersion": "1.0.1"
+							}
+						},
+						"libs": {
+							"sap.ui.commons": {
+								"minVersion": "1.22.0"
+							}
+						},
+						"minUI5Version": "1.22.5"
+					},
+					"models": {
+						"i18n": {
+							"type": "sap.ui.model.resource.ResourceModel",
+							"uri": "i18n/i18n.properties"
+						},
+						"sfapi": {
+							"type": "sap.ui.model.odata.ODataModel",
+							"uri": "./some/odata/service"
+						}
+					},
+					"rootView": {
+						"type": "XML",
+						"viewName": "sap.ui.test.view.Main"
+					},
+					"config": {
+						"any1": {
+							"entry": "configuration"
+						},
+						"any2": {
+							"anyobject": {
+								"key1": "value1"
+							}
+						},
+						"any3": {
+							"anyarray": [1, 2, 3]
+						},
+						"zero": 0
+					},
+					"extends": {
+						"extensions": {
+							"sap.ui.controllerReplacements": {
+								"sap.ui.test.view.Main": "sap.ui.test.view.Main"
+							},
+							"sap.ui.viewExtensions": {
+								"sap.ui.test.view.Main": {
+									"extension": {
+										"name": "sap.xx.new.Fragment",
+										"type": "sap.ui.core.XMLFragment"
+									}
+								}
+							},
+							"sap.ui.viewModification": {
+								"sap.ui.test.view.Main": {
+									"myControlId": {
+										"text": iMetadataVersion === 1 ? "{{mytext}}" : "This is my text"
+									}
+								}
+							},
+							"sap.ui.viewReplacements": {
+								"sap.ui.test.view.Main": {
+									"type": "XML",
+									"viewName": "sap.ui.test.view.Main"
+								}
+							}
+						}
+					},
+					"routing": {
+						"config": {
+							"clearTarget": false,
+							"targetAggregation": "pages",
+							"targetControl": "app",
+							"targetParent": "myViewId",
+							"viewPath": "NavigationWithoutMasterDetailPattern.view",
+							"viewType": "XML"
+						},
+						"routes": [
+							{
+								"name": "myRouteName1",
+								"pattern": "FirstView/{from}",
+								"view": "myViewId"
+							}
+						]
+					}
+				},
+				"foo": {}, // getEntry is not allowed for keys without a dot
+				"foo.bar": "string as entry value is not valid!"
+			};
+			this.oExpectedRawManifest = deepClone(this.oExpectedManifest);
+			this.oExpectedRawManifest["sap.app"]["title"] = "{{title}}";
+			this.oExpectedRawManifest["sap.app"]["description"] = "{{description}}";
+			this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]
+				["sap.ui.test.view.Main"]["myControlId"]["text"] = "{{mytext}}";
+
+		}.bind(this));
 
 	}
 
@@ -311,20 +326,20 @@ sap.ui.define([
 			if (this.iExpectedMetadataVersion === 1) {
 				assert.ok(true, "Metadata version 1 does not support 'resourceRoots'. Skipping tests...");
 			} else {
-				assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
-					.equals(new URI(jQuery.sap.getModulePath("x.y.z"))),
-					"ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
-				assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
-					.equals(new URI(jQuery.sap.getModulePath("foo.bar"))),
-					"ResourceRoot 'foo.bar' registered (" + jQuery.sap.getModulePath("foo.bar") + ")");
+				assert.ok(new URI(getModulePath(this.oMetadata.getComponentName(), "/anypath"))
+					.equals(new URI(getModulePath("x.y.z"))),
+					"ResourceRoot 'x.y.z' registered (" + getModulePath("x.y.z") + ")");
+				assert.ok(new URI(getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
+					.equals(new URI(getModulePath("foo.bar"))),
+					"ResourceRoot 'foo.bar' registered (" + getModulePath("foo.bar") + ")");
 
 				// (server-)absolute resource roots are not allowed and therefore won't be registered!
 				assert.ok(!new URI("http://absolute/uri")
-					.equals(new URI(jQuery.sap.getModulePath("absolute"))),
-					"ResourceRoot 'absolute' not registered (" + jQuery.sap.getModulePath("absolute") + ")");
+					.equals(new URI(getModulePath("absolute"))),
+					"ResourceRoot 'absolute' not registered (" + getModulePath("absolute") + ")");
 				assert.ok(!new URI("/server/absolute/uri")
-					.equals(new URI(jQuery.sap.getModulePath("server.absolute"))),
-					"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
+					.equals(new URI(getModulePath("server.absolute"))),
+					"ResourceRoot 'server.absolute' not registered (" + getModulePath("server.absolute") + ")");
 			}
 		});
 
@@ -347,8 +362,8 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata v1", {
 		beforeEach: function() {
-			moduleSetup.call(this, "v1", 1);
-			// fix the specials in the metadata for the v1
+			return moduleSetup.call(this, "v1", 1).then(function() {
+				// fix the specials in the metadata for the v1
 				[
 					this.oExpectedManifest,
 					this.oExpectedRawManifest
@@ -361,6 +376,7 @@ sap.ui.define([
 					delete oManifest["foo"];
 					delete oManifest["foo.bar"];
 				});
+			}.bind(this));
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -376,7 +392,7 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata v2", {
 		beforeEach: function() {
-			moduleSetup.call(this, "v2", 2);
+			return moduleSetup.call(this, "v2", 2);
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -392,12 +408,10 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata v2 (manifest first)", {
 		beforeEach: function() {
-			moduleSetup.call(this, "v2", 2, true);
-			// fix the specials in the metadata for the v2 manifest first
-			this.oExpectedManifest["sap.app"]["description"] = this.oExpectedRawManifest["sap.app"]["description"];
-			this.oExpectedManifest["sap.app"]["title"] = this.oExpectedRawManifest["sap.app"]["title"];
-			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"];
-			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"]["viewName"];
+			return moduleSetup.call(this, "v2", 2, true).then(function() {
+				// fix the specials in the metadata for the v2 manifest first
+				this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"]["viewName"];
+			}.bind(this));
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -413,12 +427,10 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata v2 (manifest first with component name)", {
 		beforeEach: function() {
-			moduleSetup.call(this, "v2", 2, true, true);
-			// fix the specials in the metadata for the v2 manifest first
-			this.oExpectedManifest["sap.app"]["description"] = this.oExpectedRawManifest["sap.app"]["description"];
-			this.oExpectedManifest["sap.app"]["title"] = this.oExpectedRawManifest["sap.app"]["title"];
-			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"];
-			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"]["viewName"];
+			return moduleSetup.call(this, "v2", 2, true, true).then(function() {
+				// fix the specials in the metadata for the v2 manifest first
+				this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"]["viewName"];
+			}.bind(this));
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -434,20 +446,21 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata v1 (inline)", {
 		beforeEach: function() {
-			moduleSetup.call(this, "v1inline", 1);
-			// fix the specials in the metadata for the v1
-			[
-				this.oExpectedManifest,
-				this.oExpectedRawManifest
-			].forEach(function(oManifest) {
-				oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
-				oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
-				delete oManifest["sap.ui5"]["resourceRoots"];
-				delete oManifest["sap.app"]["title"];
-				delete oManifest["sap.app"]["description"];
-				delete oManifest["foo"];
-				delete oManifest["foo.bar"];
-			});
+			return moduleSetup.call(this, "v1inline", 1).then(function() {
+				// fix the specials in the metadata for the v1
+				[
+					this.oExpectedManifest,
+					this.oExpectedRawManifest
+				].forEach(function(oManifest) {
+					oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
+					oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
+					delete oManifest["sap.ui5"]["resourceRoots"];
+					delete oManifest["sap.app"]["title"];
+					delete oManifest["sap.app"]["description"];
+					delete oManifest["foo"];
+					delete oManifest["foo.bar"];
+				});
+			}.bind(this));
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -463,7 +476,7 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata v2 (inline)", {
 		beforeEach: function() {
-			moduleSetup.call(this, "v2inline", 2);
+			return moduleSetup.call(this, "v2inline", 2);
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -479,7 +492,7 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata v1 (empty)", {
 		beforeEach: function() {
-			moduleSetup.call(this, "v1empty", 1);
+			return moduleSetup.call(this, "v1empty", 1);
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -499,7 +512,7 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata v2 (empty)", {
 		beforeEach: function() {
-			moduleSetup.call(this, "v2empty", 2);
+			return moduleSetup.call(this, "v2empty", 2);
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -519,7 +532,7 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata v1 (missing)", {
 		beforeEach: function() {
-			moduleSetup.call(this, "v1missing", 1);
+			return moduleSetup.call(this, "v1missing", 1);
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -539,7 +552,7 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata v2 (missing)", {
 		beforeEach: function() {
-			moduleSetup.call(this, "v2missing", 2);
+			return moduleSetup.call(this, "v2missing", 2);
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -560,7 +573,7 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata v1 & v2 (mixed)", {
 		beforeEach: function() {
-			moduleSetup.call(this, "mixed", 2);
+			return moduleSetup.call(this, "mixed", 2);
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -593,18 +606,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResourceRoots", function(assert) {
-		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
-			.equals(new URI(jQuery.sap.getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
-		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
-			.equals(new URI(jQuery.sap.getModulePath("foo.bar"))), "ResourceRoot 'foo.bar' registered (" + jQuery.sap.getModulePath("foo.bar") + ")");
+		assert.ok(new URI(getModulePath(this.oMetadata.getComponentName(), "/anypath"))
+			.equals(new URI(getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + getModulePath("x.y.z") + ")");
+		assert.ok(new URI(getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
+			.equals(new URI(getModulePath("foo.bar"))), "ResourceRoot 'foo.bar' registered (" + getModulePath("foo.bar") + ")");
 
 		// (server-)absolute resource roots are not allowed and therefore won't be registered!
 		assert.ok(!new URI("http://absolute/uri")
-			.equals(new URI(jQuery.sap.getModulePath("absolute"))),
-			"ResourceRoot 'absolute' not registered (" + jQuery.sap.getModulePath("absolute") + ")");
+			.equals(new URI(getModulePath("absolute"))),
+			"ResourceRoot 'absolute' not registered (" + getModulePath("absolute") + ")");
 		assert.ok(!new URI("/server/absolute/uri")
-			.equals(new URI(jQuery.sap.getModulePath("server.absolute"))),
-			"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
+			.equals(new URI(getModulePath("server.absolute"))),
+			"ResourceRoot 'server.absolute' not registered (" + getModulePath("server.absolute") + ")");
 	});
 
 	QUnit.test("Manifest Validation", function(assert) {
@@ -622,30 +635,31 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata v1 & v2 (mixed/inheritance)", {
 		beforeEach: function() {
-			moduleSetup.call(this, "inherit", 2);
-			// fix the specials in the metadata for the v1 & v2 mixed/inheritance
-			this.oExpectedMetadata.config.any9 = this.oExpectedMetadata.config.any3;
-			this.oExpectedMetadata.models.i18n_1 = this.oExpectedMetadata.models.i18n;
-			this.oExpectedMetadata.models.sfapi_1 = this.oExpectedMetadata.models.sfapi;
+			return moduleSetup.call(this, "inherit", 2).then(function() {
+				// fix the specials in the metadata for the v1 & v2 mixed/inheritance
+				this.oExpectedMetadata.config.any9 = this.oExpectedMetadata.config.any3;
+				this.oExpectedMetadata.models.i18n_1 = this.oExpectedMetadata.models.i18n;
+				this.oExpectedMetadata.models.sfapi_1 = this.oExpectedMetadata.models.sfapi;
 
-			[
-				this.oExpectedManifest,
-				this.oExpectedRawManifest
-			].forEach(function(oManifest) {
-				oManifest["sap.ui5"]["extends"].component = "sap.ui.test.inherit.parent";
-				delete oManifest["sap.ui5"].resourceRoots["x.y.z"];
-				delete oManifest["sap.ui5"].rootView;
-				oManifest["sap.ui5"].routing = {
-					"routes": [
-						{
-							"name" : "myRouteName1",
-							"pattern" : "FirstView/{from}",
-							"view" : "myViewId"
-						}
-					]
-				};
+				[
+					this.oExpectedManifest,
+					this.oExpectedRawManifest
+				].forEach(function(oManifest) {
+					oManifest["sap.ui5"]["extends"].component = "sap.ui.test.inherit.parent";
+					delete oManifest["sap.ui5"].resourceRoots["x.y.z"];
+					delete oManifest["sap.ui5"].rootView;
+					oManifest["sap.ui5"].routing = {
+						"routes": [
+							{
+								"name" : "myRouteName1",
+								"pattern" : "FirstView/{from}",
+								"view" : "myViewId"
+							}
+						]
+					};
 
-			});
+				});
+			}.bind(this));
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -680,18 +694,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResourceRoots", function(assert) {
-		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getParent().getComponentName(), "/anypath"))
-			.equals(new URI(jQuery.sap.getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
-		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
-			.equals(new URI(jQuery.sap.getModulePath("foo.bar"))), "ResourceRoot 'foo.bar' registered (" + jQuery.sap.getModulePath("foo.bar") + ")");
+		assert.ok(new URI(getModulePath(this.oMetadata.getParent().getComponentName(), "/anypath"))
+			.equals(new URI(getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + getModulePath("x.y.z") + ")");
+		assert.ok(new URI(getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
+			.equals(new URI(getModulePath("foo.bar"))), "ResourceRoot 'foo.bar' registered (" + getModulePath("foo.bar") + ")");
 
 		// (server-)absolute resource roots are not allowed and therefore won't be registered!
 		assert.ok(!new URI("http://absolute/uri")
-			.equals(new URI(jQuery.sap.getModulePath("absolute"))),
-			"ResourceRoot 'absolute' not registered (" + jQuery.sap.getModulePath("absolute") + ")");
+			.equals(new URI(getModulePath("absolute"))),
+			"ResourceRoot 'absolute' not registered (" + getModulePath("absolute") + ")");
 		assert.ok(!new URI("/server/absolute/uri")
-			.equals(new URI(jQuery.sap.getModulePath("server.absolute"))),
-			"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
+			.equals(new URI(getModulePath("server.absolute"))),
+			"ResourceRoot 'server.absolute' not registered (" + getModulePath("server.absolute") + ")");
 	});
 
 	QUnit.test("Manifest Validation", function(assert) {
@@ -709,11 +723,15 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata: Resolve URI", {
 		beforeEach: function(assert) {
-			this.assert = assert;
-		},
-		assertResolvedUri: function(sInput, sBase, sExpected) {
-			var sActual = Manifest._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
-			this.assert.equal(sActual, sExpected, "Resolved URI is correct!");
+			this.assertResolvedUri = function(sInput, sBase, sExpected) {
+				// Note: temporarily change the <base href>
+				var oBaseTag = document.querySelector("base"),
+					sOldHRef = oBaseTag.href;
+				oBaseTag.href = "./";
+				var sActual = Manifest._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
+				oBaseTag.href = sOldHRef;
+				assert.equal(sActual, sExpected, "Resolved URI is correct!");
+			};
 		}
 	});
 
@@ -725,7 +743,6 @@ sap.ui.define([
 		this.assertResolvedUri("../../../relative/3/uri",             "path/to/base/",          "relative/3/uri");
 		this.assertResolvedUri("../../../../relative/4/uri",          "path/to/base/",          "../relative/4/uri");
 		this.assertResolvedUri("../../../../../relative/5/uri",       "path/to/base/",          "../../relative/5/uri");
-		this.assertResolvedUri("../../../../../../relative/6/uri",    "path/to/base/",          "../../../relative/6/uri");
 
 		this.assertResolvedUri("local/uri",                           "../../../path/to/base/", "../../../path/to/base/local/uri");
 		this.assertResolvedUri("./local/uri",                         "../../../path/to/base/", "../../../path/to/base/local/uri");
@@ -734,7 +751,6 @@ sap.ui.define([
 		this.assertResolvedUri("../../../relative/3/uri",             "../../../path/to/base/", "../../../relative/3/uri");
 		this.assertResolvedUri("../../../../relative/4/uri",          "../../../path/to/base/", "../../../../relative/4/uri");
 		this.assertResolvedUri("../../../../../relative/5/uri",       "../../../path/to/base/", "../../../../../relative/5/uri");
-		this.assertResolvedUri("../../../../../../relative/6/uri",    "../../../path/to/base/", "../../../../../../relative/6/uri");
 	});
 
 	QUnit.test("absolute", function(assert){
@@ -769,75 +785,78 @@ sap.ui.define([
 				}
 				return this.oVersionInfo;
 			}.bind(this);
-			sinon.spy(jQuery.sap.log, "warning");
+			sinon.spy(Log, "warning");
 		},
 		afterEach: function() {
-			jQuery.sap.log.warning.restore();
+			Log.warning.restore();
 			sap.ui.getVersionInfo = this.fnGetVersionInfo;
 		}
 	});
 
 	QUnit.test("MinVersion gt Version", function(assert){
 		this.oVersionInfo.version = "1.20.0";
-		moduleSetup.call(this, "v2version", 2);
 		var oDone = assert.async(), that = this;
-		setTimeout(function() {
-			var aCalls = jQuery.sap.log.warning.getCalls();
-			var bFound = false;
-			for (var i = 0, l = aCalls.length; i < l; i++) {
-				if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.20.0\"!") {
-					bFound = true;
+		moduleSetup.call(this, "v2version", 2).then(function() {
+			setTimeout(function() {
+				var aCalls = Log.warning.getCalls();
+				var bFound = false;
+				for (var i = 0, l = aCalls.length; i < l; i++) {
+					if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.20.0\"!") {
+						bFound = true;
+					}
 				}
-			}
-			// in case of debug mode is on the warning should be reported
-			// when it is turned off => no warning!
-			if (sap.ui.getCore().getConfiguration().getDebug()) {
-				assert.ok(bFound, "Warning has been reported!");
-			} else {
-				assert.ok(!bFound, "Warning has not been reported!");
-			}
-			moduleTeardown.call(that);
-			sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
-			oDone();
-		}, 200);
+				// in case of debug mode is on the warning should be reported
+				// when it is turned off => no warning!
+				if (sap.ui.getCore().getConfiguration().getDebug()) {
+					assert.ok(bFound, "Warning has been reported!");
+				} else {
+					assert.ok(!bFound, "Warning has not been reported!");
+				}
+				moduleTeardown.call(that);
+				sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+				oDone();
+			}, 200);
+		});
 	});
 
 	QUnit.test("MinVersion eq Version", function(assert){
 		this.oVersionInfo.version = "1.22.5";
-		moduleSetup.call(this, "v2version", 2);
 		var oDone = assert.async(), that = this;
-		setTimeout(function() {
-			var aCalls = jQuery.sap.log.warning.getCalls();
-			var bFound = false;
-			for (var i = 0, l = aCalls.length; i < l; i++) {
-				if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.22.5\"!") {
-					bFound = true;
+		moduleSetup.call(this, "v2version", 2).then(function() {
+			setTimeout(function() {
+				var aCalls = Log.warning.getCalls();
+				var bFound = false;
+				for (var i = 0, l = aCalls.length; i < l; i++) {
+					if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.22.5\"!") {
+						bFound = true;
+					}
 				}
-			}
-			assert.ok(!bFound, "Warning has not been reported!");
-			moduleTeardown.call(that);
-			sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
-			oDone();
-		}, 200);
+				assert.ok(!bFound, "Warning has not been reported!");
+				moduleTeardown.call(that);
+				sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+				oDone();
+			}, 200);
+		});
 	});
 
 	QUnit.test("MinVersion lt Version", function(assert){
 		this.oVersionInfo.version = "1.31.0";
-		moduleSetup.call(this, "v2version", 2);
 		var oDone = assert.async(), that = this;
-		setTimeout(function() {
-			var aCalls = jQuery.sap.log.warning.getCalls();
-			var bFound = false;
-			for (var i = 0, l = aCalls.length; i < l; i++) {
-				if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.31.0\"!") {
-					bFound = true;
+		moduleSetup.call(this, "v2version", 2).then(function() {
+			setTimeout(function() {
+				var aCalls = Log.warning.getCalls();
+				var bFound = false;
+				for (var i = 0, l = aCalls.length; i < l; i++) {
+					if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.31.0\"!") {
+						bFound = true;
+					}
 				}
-			}
-			assert.ok(!bFound, "Warning has not been reported!");
-			moduleTeardown.call(that);
-			sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
-			oDone();
-		}, 200);
+				assert.ok(!bFound, "Warning has not been reported!");
+				moduleTeardown.call(that);
+				sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+				oDone();
+			}, 200);
+		});
 	});
 
 	// Test async loading of manifest files for component metadata
@@ -851,32 +870,19 @@ sap.ui.define([
 
 	runManifestLoadingTests("manifest", function(path) {
 		return {
-			manifest: path,
+			manifest: require.toUrl(path),
 			async: true
 		};
 	});
 	runManifestLoadingTests("manifestUrl", function(path) {
 		return {
-			manifestUrl: path,
-			async: true
-		};
-	});
-	runManifestLoadingTests("manifestUrl", function(path) {
-		return {
-			manifestUrl: path,
+			manifestUrl: require.toUrl(path),
 			async: true
 		};
 	});
 
 	function runManifestLoadingTests(sDescription, fnCreateConfig) {
-		QUnit.module("Component Metadata async loading of manifests: " + sDescription, {
-			beforeEach: function() {
-				jQuery.sap.registerResourcePath("sap/ui/test", "./testdata");
-			},
-			afterEach: function() {
-				jQuery.sap.registerResourcePath("sap/ui/test");
-			}
-		});
+		QUnit.module("Component Metadata async loading of manifests: " + sDescription);
 
 		QUnit.test("Async loading of manifests with component.json", function(assert) {
 			return sap.ui.component(fnCreateConfig("./testdata/inherit/manifest.json", "sap.ui.test.inherit")).then(function(oComponent) {
@@ -923,10 +929,10 @@ sap.ui.define([
 			return sap.ui.component(fnCreateConfig("./testdata/inheritAsyncError/manifest.json", "sap.ui.test.inheritAsyncError")).then(function(oComponent) {
 				assert.ok(oComponent instanceof Component, "Component has been created.");
 
-				var aLogEntries = jQuery.sap.log.getLog();
+				var aLogEntries = Log.getLogEntries();
 				var result = aLogEntries.filter(function(oEntry){
 					return oEntry.message.indexOf(
-						"Failed to load component manifest from \"./testdata/inheritAsyncError/parentFAIL/manifest.json\""
+						"Failed to load component manifest from \"test-resources/sap/ui/core/qunit/component/testdata/inheritAsyncError/parentFAIL/manifest.json\""
 					) === 0;
 				});
 				assert.equal(result.length, 1, "Error: 'Failed to laod component manifest from...' was logged.");
@@ -951,14 +957,7 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("Component Metadata async loading of manifests: manifest object", {
-		beforeEach: function() {
-			jQuery.sap.registerResourcePath("sap/ui/test", "./testdata");
-		},
-		afterEach: function() {
-			jQuery.sap.registerResourcePath("sap/ui/test");
-		}
-	});
+	QUnit.module("Component Metadata async loading of manifests: manifest object");
 
 	QUnit.test("Async loading of manifests", function(assert) {
 		var oManifest = {

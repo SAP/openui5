@@ -39,14 +39,14 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 				nr: 1,
 				zip: "12345"
 			}
-		}
+		};
 		oModel.setData(oData);
 
 		var oLayout = new ResponsiveGridLayout();
 		var oForm = new Form({
 			models: oModel,
 			objectBindings:{path: "/form"},
-			//title: new sap.ui.core.Title({text: "Form Title", tooltip: "Title tooltip"}),
+			//title: new Title({text: "Form Title", tooltip: "Title tooltip"}),
 			tooltip: "Form tooltip",
 			editable: true,
 			layout: oLayout,
@@ -127,65 +127,6 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 					]
 				})
 			]
-		});
-
-		var oButton1 = new Button({
-			text: "add Warning",
-			press: function() {
-				sap.ui.getCore().getMessageManager().addMessages(
-					new Message({
-						message: "Invalid order of characters in this name!",
-						type: sap.ui.core.MessageType.Warning,
-						target: "/form/name",
-						processor: oModel
-					})
-				)
-			}
-		});
-		var oButton2 = new Button({
-			text: "add Info",
-			press: function() {
-				sap.ui.getCore().getMessageManager().addMessages(
-					new Message({
-						message: "Nice last name!",
-						type: sap.ui.core.MessageType.Information,
-						processor: oModel
-					})
-				)
-			}
-		});
-		var oButton3 = new Button({
-			text: "add Success",
-			press: function() {
-				sap.ui.getCore().getMessageManager().addMessages(
-					new Message({
-						message: "City sucessfully updated",
-						type: sap.ui.core.MessageType.Success,
-						target: "/form/city",
-						processor: oModel
-					})
-				)
-			}
-		});
-		var oButton5 = new Button({
-			text: "add Success for ZIP",
-			press: function() {
-				sap.ui.getCore().getMessageManager().addMessages(
-					new Message({
-						message: "de Zip is gut!",
-						type: sap.ui.core.MessageType.Success,
-						target: "/form/zip",
-						processor: oModel
-					})
-				)
-			}
-		});
-
-		var oButton4 = new Button({
-			text: "clear Messages",
-			press: function() {
-				sap.ui.getCore().getMessageManager().removeAllMessages();
-			}
 		});
 
 		return oForm;

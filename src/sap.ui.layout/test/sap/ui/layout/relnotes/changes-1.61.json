@@ -1,0 +1,126 @@
+{
+  "1.61.0": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "205d428f9dda89f38e95a81db5852e742242486d",
+        "type": "FIX",
+        "text": "SimpleForm: Layout rendered wrong if set late",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880610321"
+          }
+        ]
+      },
+      {
+        "id": "c0c5a3461ff9b193efa49ce8f46027ebf4fbbd1a",
+        "type": "FIX",
+        "text": "ColumnElementData and ColumnContainerData @since wrong",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2287"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880718434"
+          }
+        ]
+      },
+      {
+        "id": "19f40d3bf7900f28c7b3a465438f81040a3f3563",
+        "type": "FIX",
+        "text": "Form: use stable IDs for labels created by FormElement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880706126"
+          }
+        ]
+      },
+      {
+        "id": "fd965eb86b0fcffc5ad127236d5a8a4470472a56",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Improved focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880706499"
+          }
+        ]
+      },
+      {
+        "id": "87a88c4090bf95bff3d34bb8bffc3fc1637fb9a3",
+        "type": "FIX",
+        "text": "Fix in CSSGrid layout for use in bindings",
+        "references": []
+      },
+      {
+        "id": "a9fb4cb6b74ba10bd3e2cc8fdd61bf31566847c2",
+        "type": "FIX",
+        "text": "sap.ui.layout.VerticalLayout: QUnit fixes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880713229"
+          }
+        ]
+      },
+      {
+        "id": "44e2c7eeaf0576e12f4b02af24adf72b9f65f919",
+        "type": "FIX",
+        "text": "sap.ui.unified, sap.ui.layout: qunits work correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870472933"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870472938"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870472850"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870472847"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870476944"
+          }
+        ]
+      },
+      {
+        "id": "7522fe8b46606403adab8ef8868c822a42be5318",
+        "type": "FIX",
+        "text": "sap.ui.unified, sap.ui.layout: qunits work correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870472933"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870472938"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870472850"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870472847"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870476944"
+          }
+        ]
+      }
+    ]
+  }
+}

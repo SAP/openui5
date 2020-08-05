@@ -5,6 +5,14 @@
 
 @_sap_m_CheckBox_SelectedWarningColor: darken(@sapUiFieldWarningColor, 100);
 
+.sapMCb.sapMCbSucc .sapMCbBg {
+	background-color: @sapUiFieldSuccessBackground;
+	border-color: @sapUiFieldSuccessColor;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiFieldSuccessColor;
+	}
+}
+
 .sapMCb.sapMCbWarn .sapMCbBg {
 	background-color: @sapUiFieldWarningBackground;
 	border-color: @sapUiFieldWarningColor;
@@ -18,6 +26,14 @@
 	border-color: @sapUiFieldInvalidColor;
 	&.sapMCbMarkChecked:before {
 		color: @sapUiFieldInvalidColor;
+	}
+}
+
+.sapMCb.sapMCbInfo .sapMCbBg {
+	background-color: @sapUiFieldBackground;
+	border-color: @sapUiHighlight;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiHighlight;
 	}
 }
 
@@ -55,15 +71,16 @@ html.sap-desktop {
 		top: 0.6875rem;
 		bottom: 0.6875rem;
 		left: 0.6875rem;
-		right: -1px; /* Cb in BC the outline should have offset 1px from the control */
+		right: 0;
 		border: 1px dotted @sapUiContentFocusColor;
 	}
 
 	.sapUiForm .sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
-		left: -1px; /* Cb in SimpleForm: left border adjustment */
+		left: 0px; /* Cb in SimpleForm: left border adjustment */
 	}
 }
 
+/* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
@@ -129,7 +146,7 @@ html.sap-desktop {
 		}
 
 		.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
-			left: -0.0625rem;
+			left: 0px;
 		}
 	}
 }

@@ -12,13 +12,23 @@
         "id": "b16ccd37226d9d58d118da9c228ef6b266df3fbd",
         "type": "FIX",
         "text": "sap.ui.ux3.DataSetSimpleView: correctly destroy items",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680215892"
+          }
+        ]
       },
       {
         "id": "499eb1f8b6e87810fc9f35ceefcf421cb4dd32be",
         "type": "FIX",
         "text": "sap.ui.ux3.Feed: Theme image URLs",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670427408"
+          }
+        ]
       }
     ]
   }

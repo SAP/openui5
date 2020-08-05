@@ -19,7 +19,8 @@
 		  "sap.uxap.sample.ProfileObjectPageHeader",
 		  "sap.uxap.sample.AlternativeProfileObjectPageHeader",
 		  "sap.uxap.sample.KPIObjectPageHeader",
-		  "sap.uxap.sample.ObjectPageDynamicSideContentBtn"
+		  "sap.uxap.sample.ObjectPageDynamicSideContentBtn",
+		  "sap.uxap.sample.ChildObjectPage"
 		]
 	  },
 	  {
@@ -32,17 +33,6 @@
 		  "sap.uxap.sample.HeaderContent",
 		  "sap.uxap.sample.ObjectPageHeaderContentPriorities"
 		]
-	  },
-	  {
-		"id": "sap.uxap.ObjectPageDynamicHeaderTitle",
-		"name": "Object Page Dynamic Header Title",
-		"category": "Display",
-		"since": "1.52",
-		"formFactors": "-",
-			"samples": [
-			  "sap.uxap.sample.ObjectPageWithDynamicHeader",
-			  "sap.uxap.sample.ObjectPageHeaderActionButtons"
-			]
 	  },
 	  {
 		"id": "sap.uxap.ObjectPageLayout",
@@ -62,10 +52,23 @@
 		  "sap.uxap.sample.AnchorBar",
 		  "sap.uxap.sample.AnchorBarWithNumbers",
 		  "sap.uxap.sample.AnchorBarNoPopover",
-		  "sap.uxap.sample.ChildObjectPage",
 		  "sap.uxap.sample.ObjectPageHeaderExpanded",
 		  "sap.uxap.sample.ObjectPageHeaderContentPriorities",
-		  "sap.uxap.sample.ObjectPageFormLayout"
+		  "sap.uxap.sample.ObjectPageFormLayout",
+		  "sap.uxap.sample.ObjectPageFormFocusableInput",
+		  "sap.uxap.sample.HeaderFacetSample1",
+		  "sap.uxap.sample.HeaderFacetSample2"
+		]
+	  },
+	  {
+		"id": "sap.uxap.HeaderFacetPattern",
+		"name": "Header Facet Pattern",
+		"category": "Pattern",
+		"formFactors": "-",
+		"since": "1.77",
+		"samples": [
+		  "sap.uxap.sample.HeaderFacetSample1",
+		  "sap.uxap.sample.HeaderFacetSample2"
 		]
 	  },
 	  {
@@ -86,7 +89,8 @@
 		  "sap.uxap.sample.ObjectPageSubSection",
 		  "sap.uxap.sample.ObjectPageSubSectionMultiView",
 		  "sap.uxap.sample.ObjectPageSubSectionSized",
-		  "sap.uxap.sample.ObjectPageSubSectionWithActions"
+		  "sap.uxap.sample.ObjectPageSubSectionWithActions",
+		  "sap.uxap.sample.ObjectPageSubSectionHiddenTitle"
 		]
 	  },
 	  {
@@ -116,12 +120,12 @@
 	  {
 		"id": "sap.uxap.sample.ObjectPageHeaderActionButtons",
 		"name": "Object Page with ObjectPageHeaderActionButtons",
-		"description": "This example demonstrates ObjectPage with ObjectPageHeaderActionButtons in the header."
+		"description": "This example demonstrates ObjectPage with ObjectPageHeaderActionButtons and a GenericTag in the header."
 	  },
 	  {
-		"id": "sap.uxap.sample.ObjectPageDynamicHeader",
-		"name": "Object Page with Dynamic Header",
-		"description": "This example demonstrates the classic ObjectPageLayout achieved by using ObjectPageDynamicHeaderTitle for the headerContent aggregation."
+		"id": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign",
+		"name": "Object Page with Translucent backgroundDesign",
+		"description": "This example demonstrates ObjectPage with ObjectPageDynamicHeaderTitle with Solid backgroundDesign and Translucent backgroundDesignAnchorBar."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageSubSection",
@@ -142,6 +146,11 @@
 		"id": "sap.uxap.sample.ObjectPageSubSectionWithActions",
 		"name": "Subsection with Action buttons sample",
 		"description": "Example of a subsection displaying action buttons."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageSubSectionHiddenTitle",
+		"name": "Subsection with hidden title",
+		"description": "Example of a subsection with showTitle property set to false."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageSection",
@@ -284,6 +293,11 @@
 		"description": "Object Page automatically adjusts form layout to match block column layout"
 	  },
 	  {
+		"id": "sap.uxap.sample.ObjectPageFormFocusableInput",
+		"name": "ObjectPage with first editable input",
+		"description": "Object Page that focuses its first editable input in the currently selected section."
+	  },
+	  {
 		"id": "sap.uxap.sample.ObjectPageDynamicSideContentBtn",
 		"name": "ObjectPage with DynamicSideContent Button",
 		"description": "The sample shows Object Page inside a main content of DynamicSideContent. The ObjectPageHeader has property DynamicSideContentButton set to true which is used to show the side panel of DynamicSideContent."
@@ -292,6 +306,16 @@
 		"id": "sap.uxap.sample.ObjectPageBlockViewTypes",
 		"name": "Object Page with blocks of different view types",
 		"description": "ObjectPage sample with blocks that use different view types"
+	  },
+	  {
+		"id": "sap.uxap.sample.HeaderFacetSample1",
+		"name": "Header Facet Sample 1",
+		"description": "ObjectPage sample with header content arranged using containers, called facets, ProgressIndicator and RatingIndicator."
+	  },
+	  {
+		"id": "sap.uxap.sample.HeaderFacetSample2",
+		"name": "Header Facet Sample 2",
+		"description": "ObjectPage sample with header content arranged using containers, called facets, Links, RatingIndicator and ObjectStatus."
 	  }
 	]
   }

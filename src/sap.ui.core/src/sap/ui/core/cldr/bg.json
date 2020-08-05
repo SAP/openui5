@@ -44,7 +44,7 @@
 		"bez": "бена",
 		"bg": "български",
 		"bgn": "западен балочи",
-		"bho": "божпури",
+		"bho": "боджпури",
 		"bi": "бислама",
 		"bik": "биколски",
 		"bin": "бини",
@@ -63,6 +63,7 @@
 		"cad": "каддо",
 		"car": "карибски",
 		"cch": "атсам",
+		"ccp": "ccp",
 		"ce": "чеченски",
 		"ceb": "себуански",
 		"cgg": "чига",
@@ -75,7 +76,7 @@
 		"cho": "чокто",
 		"chp": "чиипувски",
 		"chr": "черокски",
-		"chy": "чейенски",
+		"chy": "шайенски",
 		"ckb": "кюрдски (централен)",
 		"co": "корсикански",
 		"cop": "коптски",
@@ -89,7 +90,7 @@
 		"cy": "уелски",
 		"da": "датски",
 		"dak": "дакотски",
-		"dar": "даргва",
+		"dar": "даргински",
 		"dav": "таита",
 		"de": "немски",
 		"de_AT": "немски (Австрия)",
@@ -153,7 +154,6 @@
 		"ga": "ирландски",
 		"gaa": "га",
 		"gag": "гагаузки",
-		"gan": "gan",
 		"gay": "гайо",
 		"gba": "гбая",
 		"gd": "шотландски галски",
@@ -175,7 +175,6 @@
 		"gwi": "гвичин",
 		"ha": "хауса",
 		"hai": "хайда",
-		"hak": "hak",
 		"haw": "хавайски",
 		"he": "иврит",
 		"hi": "хинди",
@@ -185,7 +184,6 @@
 		"ho": "хири моту",
 		"hr": "хърватски",
 		"hsb": "горнолужишки",
-		"hsn": "hsn",
 		"ht": "хаитянски креолски",
 		"hu": "унгарски",
 		"hup": "хупа",
@@ -312,14 +310,13 @@
 		"mt": "малтийски",
 		"mua": "мунданг",
 		"mul": "многоезични",
-		"mus": "крик",
+		"mus": "мускогски",
 		"mwl": "мирандийски",
 		"mwr": "марвари",
 		"my": "бирмански",
 		"myv": "ерзиа",
 		"mzn": "мазандари",
 		"na": "науру",
-		"nan": "nan",
 		"nap": "неаполитански",
 		"naq": "нама",
 		"nb": "норвежки (букмол)",
@@ -499,7 +496,6 @@
 		"was": "уашо",
 		"wbp": "валпири",
 		"wo": "волоф",
-		"wuu": "wuu",
 		"xal": "калмик",
 		"xh": "ксоса",
 		"xog": "сога",
@@ -554,16 +550,19 @@
 		"Cprt": "Кипърска",
 		"Cyrl": "кирилица",
 		"Deva": "деванагари",
+		"Dogr": "Dogr",
 		"Dsrt": "Дезерет",
 		"Dupl": "Dupl",
 		"Egyd": "Египетско демотично писмо",
 		"Egyh": "Египетско йератично писмо",
 		"Egyp": "Египетски йероглифи",
 		"Elba": "Elba",
+		"Elym": "Elym",
 		"Ethi": "етиопска",
 		"Geok": "Грузинска хуцури",
 		"Geor": "грузинска",
 		"Glag": "Глаголическа",
+		"Gong": "Gong",
 		"Gonm": "Gonm",
 		"Goth": "Готическа",
 		"Gran": "Gran",
@@ -583,6 +582,7 @@
 		"Hira": "хирагана",
 		"Hluw": "Hluw",
 		"Hmng": "Пахау хмонг",
+		"Hmnp": "Hmnp",
 		"Hrkt": "японска сричкова",
 		"Hung": "Староунгарска",
 		"Inds": "Харапска",
@@ -611,10 +611,12 @@
 		"Lyci": "Лицийска",
 		"Lydi": "Лидийска",
 		"Mahj": "Mahj",
+		"Maka": "Maka",
 		"Mand": "Мандаринска",
 		"Mani": "Манихейска",
 		"Marc": "Marc",
 		"Maya": "Йероглифи на Маите",
+		"Medf": "Medf",
 		"Mend": "Mend",
 		"Merc": "Merc",
 		"Mero": "Мероитска",
@@ -626,6 +628,7 @@
 		"Mtei": "Манипури",
 		"Mult": "Mult",
 		"Mymr": "бирманска",
+		"Nand": "Nand",
 		"Narb": "Narb",
 		"Nbat": "Nbat",
 		"Newa": "Newa",
@@ -647,7 +650,9 @@
 		"Phnx": "Финикийска",
 		"Plrd": "Писменост Полард",
 		"Prti": "Prti",
+		"Qaag": "Qaag",
 		"Rjng": "Rjng",
+		"Rohg": "Rohg",
 		"Roro": "Ронго-ронго",
 		"Runr": "Руническа",
 		"Samr": "Самаританска",
@@ -660,6 +665,8 @@
 		"Sidd": "Sidd",
 		"Sind": "Sind",
 		"Sinh": "синхалска",
+		"Sogd": "Sogd",
+		"Sogo": "Sogo",
 		"Sora": "Sora",
 		"Soyo": "Soyo",
 		"Sund": "Сунданска",
@@ -686,6 +693,7 @@
 		"Vaii": "Вайска",
 		"Visp": "Видима реч",
 		"Wara": "Wara",
+		"Wcho": "Wcho",
 		"Xpeo": "Староперсийска",
 		"Xsux": "Шумеро-акадски клинопис",
 		"Yiii": "Йи",
@@ -706,7 +714,7 @@
 		"151": "Източна Европа",
 		"154": "Северна Европа",
 		"155": "Западна Европа",
-		"202": "202",
+		"202": "Субсахарска Африка",
 		"419": "Латинска Америка",
 		"001": "Свят",
 		"002": "Африка",
@@ -762,7 +770,7 @@
 		"BO": "Боливия",
 		"BQ": "Карибска Нидерландия",
 		"BR": "Бразилия",
-		"BS": "Бахами",
+		"BS": "Бахамски острови",
 		"BT": "Бутан",
 		"BV": "остров Буве",
 		"BW": "Ботсвана",
@@ -777,7 +785,7 @@
 		"CG-alt-variant": "Конго (Република)",
 		"CH": "Швейцария",
 		"CI": "Кот д’Ивоар",
-		"CI-alt-variant": "Бряг на слоновата кост",
+		"CI-alt-variant": "CI",
 		"CK": "острови Кук",
 		"CL": "Чили",
 		"CM": "Камерун",
@@ -811,8 +819,8 @@
 		"EZ": "Еврозона",
 		"FI": "Финландия",
 		"FJ": "Фиджи",
-		"FK": "Фолклендски острови",
-		"FK-alt-variant": "Фолклендски острови (Малвински острови)",
+		"FK": "Фолкландски острови",
+		"FK-alt-variant": "Фолкландски острови (Малвински острови)",
 		"FM": "Микронезия",
 		"FO": "Фарьорски острови",
 		"FR": "Франция",
@@ -836,7 +844,7 @@
 		"GU": "Гуам",
 		"GW": "Гвинея-Бисау",
 		"GY": "Гаяна",
-		"HK": "Хонконг, САР на Китай",
+		"HK": "Хонконг",
 		"HK-alt-short": "Хонконг",
 		"HM": "острови Хърд и Макдоналд",
 		"HN": "Хондурас",
@@ -887,12 +895,12 @@
 		"MF": "Сен Мартен",
 		"MG": "Мадагаскар",
 		"MH": "Маршалови острови",
-		"MK": "Македония",
-		"MK-alt-variant": "Бивша югославска република Македония",
+		"MK": "Северна Македония",
+		"MK-alt-variant": "MK",
 		"ML": "Мали",
 		"MM": "Мианмар (Бирма)",
 		"MN": "Монголия",
-		"MO": "Макао, САР на Китай",
+		"MO": "Макао",
 		"MO-alt-short": "Макао",
 		"MP": "Северни Мариански острови",
 		"MQ": "Мартиника",
@@ -961,6 +969,7 @@
 		"SX": "Синт Мартен",
 		"SY": "Сирия",
 		"SZ": "Свазиленд",
+		"SZ-alt-variant": "SZ",
 		"TA": "Тристан да Куня",
 		"TC": "острови Търкс и Кайкос",
 		"TD": "Чад",
@@ -996,6 +1005,8 @@
 		"VU": "Вануату",
 		"WF": "Уолис и Футуна",
 		"WS": "Самоа",
+		"XA": "XA",
+		"XB": "XB",
 		"XK": "Косово",
 		"YE": "Йемен",
 		"YT": "Майот",
@@ -1076,7 +1087,7 @@
 				"yMMMMEd": "E, d MMMM y 'г'.",
 				"yQQQ": "QQQ y 'г'.",
 				"yQQQQ": "QQQQ y 'г'.",
-				"MMMMW": "'седмица' W 'от' MMM",
+				"MMMMW": "'седмица' W 'от' MMMM",
 				"yw": "'седмица' w 'от' Y 'г'."
 			},
 			"appendItems": {
@@ -1094,8 +1105,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "y G – y G",
+					"y": "y – y G"
+				},
+				"GyM": {
+					"G": "MM.y GGGGG – MM.y GGGGG",
+					"M": "MM.y – MM.y GGGGG",
+					"y": "MM.y – MM.y GGGGG"
+				},
+				"GyMd": {
+					"d": "dd.MM.y – dd.MM.y GGGGG",
+					"G": "dd.MM.y GGGGG – dd.MM.y GGGGG",
+					"M": "dd.MM.y – dd.MM.y GGGGG",
+					"y": "dd.MM.y – dd.MM.y GGGGG"
+				},
+				"GyMEd": {
+					"d": "E, dd.MM.y – E, dd.MM.y GGGGG",
+					"G": "E, dd.MM.y GGGGG – E, dd.MM.y GGGGG",
+					"M": "E, dd.MM.y – E, dd.MM.y GGGGG",
+					"y": "E, dd.MM.y – E, dd.MM.y GGGGG"
+				},
+				"GyMMM": {
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"GyMMMd": {
+					"d": "d – d MMM y G",
+					"G": "d MMM y G – d MMM y G",
+					"M": "d MMM – d MMM y G",
+					"y": "d MMM y – d MMM y G"
+				},
+				"GyMMMEd": {
+					"d": "E, d MMM – E, d MMM y G",
+					"G": "E, d MMM y G – E, d MMM y G",
+					"M": "E, d MMM – E, d MMM y G",
+					"y": "E, d MMM y – E, d MMM y G"
 				},
 				"h": {
 					"a": "h 'ч'. a – h 'ч'. a",
@@ -1545,8 +1603,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1993,8 +2098,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2062,49 +2214,59 @@
 					"M": "E, d MMMM – E, d MMMM"
 				},
 				"y": {
-					"y": "y – y 'г'.G"
+					"y": "y – y 'г'.G",
+					"G": "y 'г'.G – y 'г'.G"
 				},
 				"yM": {
 					"M": "MM – MM.y 'г'. G",
-					"y": "MM.y 'г'. – MM.y 'г'. G"
+					"y": "MM.y 'г'. – MM.y 'г'. G",
+					"G": "MM.y 'г'. G – MM.y 'г'. G"
 				},
 				"yMd": {
 					"d": "d.MM – d.MM.y 'г'. G",
 					"M": "d.MM – d.MM.y 'г'. G",
-					"y": "d.MM.y 'г'. – d.MM.y 'г'. G"
+					"y": "d.MM.y 'г'. – d.MM.y 'г'. G",
+					"G": "d.MM.y 'г'. G – d.MM.y 'г'. G"
 				},
 				"yMEd": {
 					"d": "E, d.MM – E, d.MM.y 'г'. G",
 					"M": "E, d.MM – E, d.MM.y 'г'. G",
-					"y": "E, d.MM.y 'г'. – E, d.MM.y 'г'. G"
+					"y": "E, d.MM.y 'г'. – E, d.MM.y 'г'. G",
+					"G": "E, d.MM.y 'г'. G – E, d.MM.y 'г'. G"
 				},
 				"yMMM": {
 					"M": "MM – MM.y 'г'. G",
-					"y": "MM.y 'г'. – MM.y 'г'. G"
+					"y": "MM.y 'г'. – MM.y 'г'. G",
+					"G": "MM.y 'г'. G – MM.y 'г'. G"
 				},
 				"yMMMd": {
 					"d": "d.MM – d.MM.y 'г'. G",
 					"M": "d.MM – d.MM.y 'г'. G",
-					"y": "d.MM.y 'г'. – d.MM.y 'г'. G"
+					"y": "d.MM.y 'г'. – d.MM.y 'г'. G",
+					"G": "d.MM.y 'г'. G – d.MM.y 'г'. G"
 				},
 				"yMMMEd": {
 					"d": "E, d.MM – E, d.MM.y 'г'. G",
 					"M": "E, d.MM – E, d.MM.y 'г'. G",
-					"y": "E, d.MM.y 'г'. – E, d.MM.y 'г'. G"
+					"y": "E, d.MM.y 'г'. – E, d.MM.y 'г'. G",
+					"G": "E, d.MM.y 'г'. G – E, d.MM.y 'г'. G"
 				},
 				"yMMMM": {
 					"M": "MMMM – MMMM y 'г'. G",
-					"y": "MMMM y 'г'. – MMMM y 'г'. G"
+					"y": "MMMM y 'г'. – MMMM y 'г'. G",
+					"G": "MMMM y 'г'. G – MMMM y 'г'. G"
 				},
 				"yMMMMd": {
 					"d": "d – d MMMM y 'г'. G",
 					"M": "d MMMM – d MMMM y 'г'. G",
-					"y": "d MMMM y 'г'. – d MMMM y 'г'. G"
+					"y": "d MMMM y 'г'. – d MMMM y 'г'. G",
+					"G": "d MMMM y 'г'. G – d MMMM y 'г'. G"
 				},
 				"yMMMMEd": {
 					"d": "E, d MMMM – E, d MMMM y 'г'. G",
 					"M": "E, d MMMM – E, d MMMM y 'г'. G",
-					"y": "E, d MMMM y 'г'. – E, d MMMM y 'г'. G"
+					"y": "E, d MMMM y 'г'. – E, d MMMM y 'г'. G",
+					"G": "E, d MMMM y 'г'. G – E, d MMMM y 'г'. G"
 				}
 			}
 		},
@@ -2352,19 +2514,22 @@
 			"232": "Meiji",
 			"233": "Taishō",
 			"234": "Shōwa",
-			"235": "Heisei"
+			"235": "Heisei",
+			"236": "Reiwa"
 		},
 		"era-abbreviated": {
 			"232": "Meiji",
 			"233": "Taishō",
 			"234": "Shōwa",
-			"235": "Heisei"
+			"235": "Heisei",
+			"236": "Reiwa"
 		},
 		"era-narrow": {
 			"232": "M",
 			"233": "T",
 			"234": "S",
-			"235": "H"
+			"235": "H",
+			"236": "R"
 		}
 	},
 	"ca-persian": {
@@ -2450,8 +2615,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d – d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2813,6 +3025,501 @@
 		},
 		"era-narrow": {
 			"0": "AP"
+		}
+	},
+	"ca-buddhist": {
+		"dateFormats": {
+			"full": "EEEE, d MMMM y 'г'. G",
+			"long": "d MMMM y 'г'. G",
+			"medium": "d.MM.y 'г'. G",
+			"short": "d.MM.yy G"
+		},
+		"timeFormats": {
+			"full": "H:mm:ss 'ч'. zzzz",
+			"long": "H:mm:ss 'ч'. z",
+			"medium": "H:mm:ss 'ч'.",
+			"short": "H:mm 'ч'."
+		},
+		"dateTimeFormats": {
+			"full": "{1}, {0}",
+			"long": "{1}, {0}",
+			"medium": "{1}, {0}",
+			"short": "{1}, {0}",
+			"availableFormats": {
+				"Bh": "h 'ч' .B",
+				"Bhm": "h:mm 'ч'. B",
+				"Bhms": "h:mm:ss 'ч'. B",
+				"d": "d",
+				"E": "ccc",
+				"EBhm": "E, h:mm 'ч'. B",
+				"EBhms": "E, h:mm:ss 'ч'. B",
+				"Ed": "E, d",
+				"Ehm": "E, h:mm 'ч'. a",
+				"EHm": "E, HH:mm 'ч'.",
+				"Ehms": "E, h:mm:ss 'ч'. a",
+				"EHms": "E, HH:mm:ss 'ч'.",
+				"Gy": "y 'г'. G",
+				"GyMMM": "MM.y 'г'. G",
+				"GyMMMd": "d.MM.y 'г'. G",
+				"GyMMMEd": "E, d.MM.y 'г'. G",
+				"GyMMMM": "MMMM y 'г'. G",
+				"GyMMMMd": "d MMMM y 'г'. G",
+				"GyMMMMEd": "E, d MMMM y 'г'. G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm 'ч'. a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss 'ч'. a",
+				"Hms": "HH:mm:ss",
+				"M": "M",
+				"Md": "d.MM",
+				"MEd": "E, d.MM",
+				"MMM": "MM",
+				"MMMd": "d.MM",
+				"MMMEd": "E, d.MM",
+				"MMMM": "LLLL",
+				"MMMMd": "d MMMM",
+				"MMMMEd": "E, d MMMM",
+				"ms": "mm:ss",
+				"y": "y 'г'. G",
+				"yyyy": "y 'г'. G",
+				"yyyyM": "M.y 'г'. G",
+				"yyyyMd": "d.MM.y 'г'. G",
+				"yyyyMEd": "E, d.MM.y 'г'. G",
+				"yyyyMMM": "MM.y 'г'. G",
+				"yyyyMMMd": "d.MM.y 'г'. G",
+				"yyyyMMMEd": "E, d.MM.y 'г'. G",
+				"yyyyMMMM": "MMMM y 'г'. G",
+				"yyyyMMMMd": "d MMMM y 'г'. G",
+				"yyyyMMMMEd": "E, d MMMM y 'г'. G",
+				"yyyyQQQ": "QQQ y 'г'. G",
+				"yyyyQQQQ": "QQQQ y 'г'. G"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
+				"d": {
+					"d": "d – d"
+				},
+				"Gy": {
+					"G": "G y – G y",
+					"y": "G y–y"
+				},
+				"GyM": {
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
+				},
+				"GyMd": {
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
+				},
+				"GyMEd": {
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+				},
+				"GyMMM": {
+					"G": "G y MMM – G y MMM",
+					"M": "G y MMM–MMM",
+					"y": "G y MMM – y MMM"
+				},
+				"GyMMMd": {
+					"d": "G y MMM d–d",
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
+				},
+				"GyMMMEd": {
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M – M"
+				},
+				"Md": {
+					"d": "d.MM – d.MM",
+					"M": "d.MM – d.MM"
+				},
+				"MEd": {
+					"d": "E, d.MM – E, d.MM",
+					"M": "E, d.MM – E, d.MM"
+				},
+				"MMM": {
+					"M": "MM – MM"
+				},
+				"MMMd": {
+					"d": "d.MM – d.MM",
+					"M": "d.MM – d.MM"
+				},
+				"MMMEd": {
+					"d": "E, d.MM – E, d.MM",
+					"M": "E, d.MM – E, d.MM"
+				},
+				"MMMM": {
+					"M": "LLLL – LLLL"
+				},
+				"MMMMd": {
+					"d": "d – d MMMM",
+					"M": "d MMMM – d MMMM"
+				},
+				"MMMMEd": {
+					"d": "E, d MMMM – E, d MMMM",
+					"M": "E, d MMMM – E, d MMMM"
+				},
+				"y": {
+					"y": "y – y 'г'.G"
+				},
+				"yM": {
+					"M": "MM – MM.y 'г'. G",
+					"y": "MM.y 'г'. – MM.y 'г'. G"
+				},
+				"yMd": {
+					"d": "d.MM – d.MM.y 'г'. G",
+					"M": "d.MM – d.MM.y 'г'. G",
+					"y": "d.MM.y 'г'. – d.MM.y 'г'. G"
+				},
+				"yMEd": {
+					"d": "E, d.MM – E, d.MM.y 'г'. G",
+					"M": "E, d.MM – E, d.MM.y 'г'. G",
+					"y": "E, d.MM.y 'г'. – E, d.MM.y 'г'. G"
+				},
+				"yMMM": {
+					"M": "MM – MM.y 'г'. G",
+					"y": "MM.y 'г'. – MM.y 'г'. G"
+				},
+				"yMMMd": {
+					"d": "d.MM – d.MM.y 'г'. G",
+					"M": "d.MM – d.MM.y 'г'. G",
+					"y": "d.MM.y 'г'. – d.MM.y 'г'. G"
+				},
+				"yMMMEd": {
+					"d": "E, d.MM – E, d.MM.y 'г'. G",
+					"M": "E, d.MM – E, d.MM.y 'г'. G",
+					"y": "E, d.MM.y 'г'. – E, d.MM.y 'г'. G"
+				},
+				"yMMMM": {
+					"M": "MMMM – MMMM y 'г'. G",
+					"y": "MMMM y 'г'. – MMMM y 'г'. G"
+				},
+				"yMMMMd": {
+					"d": "d – d MMMM y 'г'. G",
+					"M": "d MMMM – d MMMM y 'г'. G",
+					"y": "d MMMM y 'г'. – d MMMM y 'г'. G"
+				},
+				"yMMMMEd": {
+					"d": "E, d MMMM – E, d MMMM y 'г'. G",
+					"M": "E, d MMMM – E, d MMMM y 'г'. G",
+					"y": "E, d MMMM y 'г'. – E, d MMMM y 'г'. G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"яну",
+					"фев",
+					"март",
+					"апр",
+					"май",
+					"юни",
+					"юли",
+					"авг",
+					"сеп",
+					"окт",
+					"ное",
+					"дек"
+				],
+				"narrow": [
+					"я",
+					"ф",
+					"м",
+					"а",
+					"м",
+					"ю",
+					"ю",
+					"а",
+					"с",
+					"о",
+					"н",
+					"д"
+				],
+				"wide": [
+					"януари",
+					"февруари",
+					"март",
+					"април",
+					"май",
+					"юни",
+					"юли",
+					"август",
+					"септември",
+					"октомври",
+					"ноември",
+					"декември"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"яну",
+					"фев",
+					"март",
+					"апр",
+					"май",
+					"юни",
+					"юли",
+					"авг",
+					"сеп",
+					"окт",
+					"ное",
+					"дек"
+				],
+				"narrow": [
+					"я",
+					"ф",
+					"м",
+					"а",
+					"м",
+					"ю",
+					"ю",
+					"а",
+					"с",
+					"о",
+					"н",
+					"д"
+				],
+				"wide": [
+					"януари",
+					"февруари",
+					"март",
+					"април",
+					"май",
+					"юни",
+					"юли",
+					"август",
+					"септември",
+					"октомври",
+					"ноември",
+					"декември"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"нд",
+					"пн",
+					"вт",
+					"ср",
+					"чт",
+					"пт",
+					"сб"
+				],
+				"narrow": [
+					"н",
+					"п",
+					"в",
+					"с",
+					"ч",
+					"п",
+					"с"
+				],
+				"short": [
+					"нд",
+					"пн",
+					"вт",
+					"ср",
+					"чт",
+					"пт",
+					"сб"
+				],
+				"wide": [
+					"неделя",
+					"понеделник",
+					"вторник",
+					"сряда",
+					"четвъртък",
+					"петък",
+					"събота"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"нд",
+					"пн",
+					"вт",
+					"ср",
+					"чт",
+					"пт",
+					"сб"
+				],
+				"narrow": [
+					"н",
+					"п",
+					"в",
+					"с",
+					"ч",
+					"п",
+					"с"
+				],
+				"short": [
+					"нд",
+					"пн",
+					"вт",
+					"ср",
+					"чт",
+					"пт",
+					"сб"
+				],
+				"wide": [
+					"неделя",
+					"понеделник",
+					"вторник",
+					"сряда",
+					"четвъртък",
+					"петък",
+					"събота"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"1. трим.",
+					"2. трим.",
+					"3. трим.",
+					"4. трим."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1. тримесечие",
+					"2. тримесечие",
+					"3. тримесечие",
+					"4. тримесечие"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"1. трим.",
+					"2. трим.",
+					"3. трим.",
+					"4. трим."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1. тримесечие",
+					"2. тримесечие",
+					"3. тримесечие",
+					"4. тримесечие"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"am",
+					"pm"
+				],
+				"narrow": [
+					"am",
+					"pm"
+				],
+				"wide": [
+					"пр.об.",
+					"сл.об."
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"am",
+					"pm"
+				],
+				"narrow": [
+					"am",
+					"pm"
+				],
+				"wide": [
+					"am",
+					"pm"
+				]
+			}
+		},
+		"era-wide": {
+			"0": "BE"
+		},
+		"era-abbreviated": {
+			"0": "BE"
+		},
+		"era-narrow": {
+			"0": "BE"
 		}
 	},
 	"dateFields": {
@@ -3126,7 +3833,7 @@
 			}
 		},
 		"second-short": {
-			"displayName": "с",
+			"displayName": "сек",
 			"relative-type-0": "сега",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "след {0} сек",
@@ -3228,7 +3935,15 @@
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
-		}
+		},
+		"sap-standard": "0.00 ¤",
+		"sap-accounting": "0.00 ¤;(0.00 ¤)"
+	},
+	"miscPattern": {
+		"approximately": "~{0}",
+		"atLeast": "≥ {0}",
+		"atMost": "≤ {0}",
+		"range": "{0} – {1}"
 	},
 	"currencyFormat-short": {
 		"1000-one": "0 хил'.' ¤",
@@ -3274,7 +3989,8 @@
 		"USD": "щ.д.",
 		"XAF": "FCFA",
 		"XOF": "CFA",
-		"XPF": "CFPF"
+		"XPF": "CFPF",
+		"XXX": "¤"
 	},
 	"rtl": false,
 	"listPattern-standard-wide": {
@@ -3391,6 +4107,11 @@
 				"unitPattern-count-other": "{0} кв. инча",
 				"perUnitPattern": "{0}/in²"
 			},
+			"area-dunam": {
+				"displayName": "дюнюми",
+				"unitPattern-count-one": "{0} дюнюм",
+				"unitPattern-count-other": "{0} дюнюма"
+			},
 			"concentr-karat": {
 				"displayName": "карати",
 				"unitPattern-count-one": "{0} карат",
@@ -3411,6 +4132,26 @@
 				"unitPattern-count-one": "{0} ppm",
 				"unitPattern-count-other": "{0} ppm"
 			},
+			"concentr-percent": {
+				"displayName": "процент",
+				"unitPattern-count-one": "{0}%",
+				"unitPattern-count-other": "{0}%"
+			},
+			"concentr-permille": {
+				"displayName": "промил",
+				"unitPattern-count-one": "{0}‰",
+				"unitPattern-count-other": "{0}‰"
+			},
+			"concentr-permyriad": {
+				"displayName": "базисен пункт",
+				"unitPattern-count-one": "{0}‱",
+				"unitPattern-count-other": "{0}‱"
+			},
+			"concentr-mole": {
+				"displayName": "мол",
+				"unitPattern-count-one": "{0} мол",
+				"unitPattern-count-other": "{0} мол"
+			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "l/km",
 				"unitPattern-count-one": "{0} l/km",
@@ -3430,6 +4171,11 @@
 				"displayName": "мили/имп. гал.",
 				"unitPattern-count-one": "{0} миля/имп. галон",
 				"unitPattern-count-other": "{0} мили/имп. галон"
+			},
+			"digital-petabyte": {
+				"displayName": "PByte",
+				"unitPattern-count-one": "{0} PB",
+				"unitPattern-count-other": "{0} PB"
 			},
 			"digital-terabyte": {
 				"displayName": "TB",
@@ -3488,8 +4234,8 @@
 			},
 			"duration-year": {
 				"displayName": "години",
-				"unitPattern-count-one": "{0} г",
-				"unitPattern-count-other": "{0} г",
+				"unitPattern-count-one": "{0} год.",
+				"unitPattern-count-other": "{0} год.",
 				"perUnitPattern": "{0}/год."
 			},
 			"duration-month": {
@@ -3514,7 +4260,7 @@
 				"displayName": "часове",
 				"unitPattern-count-one": "{0} ч",
 				"unitPattern-count-other": "{0} ч",
-				"perUnitPattern": "{0}/h"
+				"perUnitPattern": "{0}/ч"
 			},
 			"duration-minute": {
 				"displayName": "мин",
@@ -3524,14 +4270,14 @@
 			},
 			"duration-second": {
 				"displayName": "секунди",
-				"unitPattern-count-one": "{0} с",
-				"unitPattern-count-other": "{0} с",
-				"perUnitPattern": "{0}/с"
+				"unitPattern-count-one": "{0} сек",
+				"unitPattern-count-other": "{0} сек",
+				"perUnitPattern": "{0}/сек"
 			},
 			"duration-millisecond": {
 				"displayName": "милисекунди",
-				"unitPattern-count-one": "{0} ms",
-				"unitPattern-count-other": "{0} ms"
+				"unitPattern-count-one": "{0} мсек",
+				"unitPattern-count-other": "{0} мсек"
 			},
 			"duration-microsecond": {
 				"displayName": "μs",
@@ -3592,6 +4338,26 @@
 				"displayName": "kWh",
 				"unitPattern-count-one": "{0} kWh",
 				"unitPattern-count-other": "{0} kWh"
+			},
+			"energy-electronvolt": {
+				"displayName": "електронволт",
+				"unitPattern-count-one": "{0} eV",
+				"unitPattern-count-other": "{0} eV"
+			},
+			"energy-british-thermal-unit": {
+				"displayName": "BTU",
+				"unitPattern-count-one": "{0} BTU",
+				"unitPattern-count-other": "{0} BTU"
+			},
+			"force-pound-force": {
+				"displayName": "фунт сила",
+				"unitPattern-count-one": "{0} lbf",
+				"unitPattern-count-other": "{0} lbf"
+			},
+			"force-newton": {
+				"displayName": "нютон",
+				"unitPattern-count-one": "{0} N",
+				"unitPattern-count-other": "{0} N"
 			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
@@ -3699,7 +4465,7 @@
 			},
 			"length-fathom": {
 				"displayName": "fm",
-				"unitPattern-count-other": "{0} fm"
+				"unitPattern-count-other": "{0} fth"
 			},
 			"length-nautical-mile": {
 				"displayName": "nmi",
@@ -3716,10 +4482,20 @@
 				"unitPattern-count-one": "{0} pt",
 				"unitPattern-count-other": "{0} pt"
 			},
+			"length-solar-radius": {
+				"displayName": "слънчеви радиуси",
+				"unitPattern-count-one": "{0} R☉",
+				"unitPattern-count-other": "{0} R☉"
+			},
 			"light-lux": {
 				"displayName": "lx",
 				"unitPattern-count-one": "{0} lx",
 				"unitPattern-count-other": "{0} lx"
+			},
+			"light-solar-luminosity": {
+				"displayName": "слънчеви светимости",
+				"unitPattern-count-one": "{0} L☉",
+				"unitPattern-count-other": "{0} L☉"
 			},
 			"mass-metric-ton": {
 				"displayName": "т",
@@ -3779,6 +4555,21 @@
 				"unitPattern-count-one": "{0} CD",
 				"unitPattern-count-other": "{0} CD"
 			},
+			"mass-dalton": {
+				"displayName": "далтони",
+				"unitPattern-count-one": "{0} Da",
+				"unitPattern-count-other": "{0} Da"
+			},
+			"mass-earth-mass": {
+				"displayName": "Маси на Земята",
+				"unitPattern-count-one": "{0} M⊕",
+				"unitPattern-count-other": "{0} M⊕"
+			},
+			"mass-solar-mass": {
+				"displayName": "слънчеви маси",
+				"unitPattern-count-one": "{0} M☉",
+				"unitPattern-count-other": "{0} M☉"
+			},
 			"power-gigawatt": {
 				"displayName": "GW",
 				"unitPattern-count-one": "{0} GW",
@@ -3834,6 +4625,21 @@
 				"unitPattern-count-one": "{0} mbar",
 				"unitPattern-count-other": "{0} mbar"
 			},
+			"pressure-atmosphere": {
+				"displayName": "atm",
+				"unitPattern-count-one": "{0} atm",
+				"unitPattern-count-other": "{0} atm"
+			},
+			"pressure-kilopascal": {
+				"displayName": "kPa",
+				"unitPattern-count-one": "{0} kPa",
+				"unitPattern-count-other": "{0} kPa"
+			},
+			"pressure-megapascal": {
+				"displayName": "MPa",
+				"unitPattern-count-one": "{0} MPa",
+				"unitPattern-count-other": "{0} MPa"
+			},
 			"speed-kilometer-per-hour": {
 				"displayName": "km/h",
 				"unitPattern-count-one": "{0} km/h",
@@ -3873,6 +4679,16 @@
 				"displayName": "K",
 				"unitPattern-count-one": "{0} K",
 				"unitPattern-count-other": "{0} K"
+			},
+			"torque-pound-foot": {
+				"displayName": "lbf⋅ft",
+				"unitPattern-count-one": "{0} lbf⋅ft",
+				"unitPattern-count-other": "{0} lbf⋅ft"
+			},
+			"torque-newton-meter": {
+				"displayName": "N⋅m",
+				"unitPattern-count-one": "{0} N⋅m",
+				"unitPattern-count-other": "{0} N⋅m"
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "km³",
@@ -3993,6 +4809,11 @@
 				"unitPattern-count-one": "{0} т. унц.",
 				"unitPattern-count-other": "{0} т. унц."
 			},
+			"volume-fluid-ounce-imperial": {
+				"displayName": "Imp. fl oz",
+				"unitPattern-count-one": "{0} fl oz Imp.",
+				"unitPattern-count-other": "{0} fl oz Imp."
+			},
 			"volume-tablespoon": {
 				"displayName": "с. л.",
 				"unitPattern-count-one": "{0} с. л.",
@@ -4003,7 +4824,13 @@
 				"unitPattern-count-one": "{0} ч. л.",
 				"unitPattern-count-other": "{0} ч. л."
 			},
+			"volume-barrel": {
+				"displayName": "барел",
+				"unitPattern-count-one": "{0} bbl",
+				"unitPattern-count-other": "{0} bbl"
+			},
 			"coordinateUnit": {
+				"displayName": "посока",
 				"east": "{0}И",
 				"north": "{0}С",
 				"south": "{0}Ю",
@@ -4011,30 +4838,51 @@
 			}
 		}
 	},
+	"lenient-scope-number": {
+		"minusSign": "-‐‒–⁻₋−➖﹣－",
+		"commaSign": ",،٫、︐︑﹐﹑，､",
+		"plusSign": "+⁺₊➕﬩﹢＋"
+	},
+	"currencyFormat-sap-short": {
+		"1000-one": "0 хил'.' ¤",
+		"1000-other": "0 хил'.' ¤",
+		"10000-one": "00 хил'.' ¤",
+		"10000-other": "00 хил'.' ¤",
+		"100000-one": "000 хил'.' ¤",
+		"100000-other": "000 хил'.' ¤",
+		"1000000-one": "0 млн'.' ¤",
+		"1000000-other": "0 млн'.' ¤",
+		"10000000-one": "00 млн'.' ¤",
+		"10000000-other": "00 млн'.' ¤",
+		"100000000-one": "000 млн'.' ¤",
+		"100000000-other": "000 млн'.' ¤",
+		"1000000000-one": "0 млрд'.' ¤",
+		"1000000000-other": "0 млрд'.' ¤",
+		"10000000000-one": "00 млрд'.' ¤",
+		"10000000000-other": "00 млрд'.' ¤",
+		"100000000000-one": "000 млрд'.' ¤",
+		"100000000000-other": "000 млрд'.' ¤",
+		"1000000000000-one": "0 трлн'.' ¤",
+		"1000000000000-other": "0 трлн'.' ¤",
+		"10000000000000-one": "00 трлн'.' ¤",
+		"10000000000000-other": "00 трлн'.' ¤",
+		"100000000000000-one": "000 трлн'.' ¤",
+		"100000000000000-other": "000 трлн'.' ¤"
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
 		"ALL": 0,
-		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
-		"BYN": 2,
 		"BYR": 0,
-		"CAD": 2,
-		"CHF": 2,
 		"CLF": 4,
 		"CLP": 0,
-		"COP": 0,
-		"CRC": 0,
-		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
-		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
-		"GYD": 0,
 		"HUF": 0,
-		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
 		"ISK": 0,
@@ -4052,16 +4900,11 @@
 		"MGA": 0,
 		"MGF": 0,
 		"MMK": 0,
-		"MNT": 0,
 		"MRO": 0,
-		"MUR": 0,
-		"NOK": 0,
 		"OMR": 3,
-		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
-		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,
@@ -4070,10 +4913,9 @@
 		"TND": 3,
 		"TRL": 0,
 		"TWD": 0,
-		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
-		"UZS": 0,
+		"UYW": 4,
 		"VND": 0,
 		"VUV": 0,
 		"XAF": 0,
@@ -4112,6 +4954,11 @@
 			"_start": "622-01-01"
 		}
 	},
+	"eras-buddhist": {
+		"0": {
+			"_start": "-542-01-01"
+		}
+	},
 	"eras-japanese": {
 		"232": {
 			"_start": "1868-9-8"
@@ -4124,6 +4971,9 @@
 		},
 		"235": {
 			"_start": "1989-1-8"
+		},
+		"236": {
+			"_start": "2019-5-1"
 		}
 	}
 }

@@ -1,0 +1,742 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "70dc8088939ec27619cb8535483b32c437e6cf04",
+        "type": "FEATURE",
+        "text": " sap.m.NavContainer: New transition added",
+        "references": []
+      },
+      {
+        "id": "6b57e462d5dfa622161bf02e5db0bda3a0f22623",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Required property implemented",
+        "references": []
+      },
+      {
+        "id": "ee525257bd5a579652bfbbd39b6ea2f29869414c",
+        "type": "FIX",
+        "text": " Case insensitive NumericContent lang map + add en_US lang",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "4bef77d4a68ada207915f511bdd09443d0ff6226",
+        "type": "FIX",
+        "text": " NumericContent max length fallback",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "24c235673c3a2ff38a879b65490e38c0da827987",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Required attribute is set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980434150"
+          }
+        ]
+      },
+      {
+        "id": "42ba13c4ec1d0118b04dee1b57161362c563c6f2",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Keyboard handling navigation on days view is now working correctly",
+        "references": []
+      },
+      {
+        "id": "368500eedeeeb43cada62cf7cd7959cb33f8ffd2",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Control layout is now correct in rtl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970610144"
+          }
+        ]
+      },
+      {
+        "id": "4ec5e49b906db04e142734d83cc59613257a84f3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar/OverflowToolbar: Fixed items adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970591185"
+          }
+        ]
+      },
+      {
+        "id": "00d37eaeeed7307603be8bbc440578a93769b9ad",
+        "type": "FIX",
+        "text": " sap.m.Wizard: destroySteps causing browsers to crash fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980440936"
+          }
+        ]
+      },
+      {
+        "id": "48a97541525c8f773a5d1f8f295186f1ea792cee",
+        "type": "FEATURE",
+        "text": " StandardListItem: inverted info text",
+        "references": []
+      },
+      {
+        "id": "1bc938e7d9a102d977756a9dd7f2821ac77ac81e",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection: ability to select Month ranges added",
+        "references": []
+      },
+      {
+        "id": "5eee0f9865db4fb289b4ea6b00de17a75d21fcaa",
+        "type": "FIX",
+        "text": " m.SinglePlanningCalendar: tab navigation cycles inside the unified.Calendar popover now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980464696"
+          }
+        ]
+      },
+      {
+        "id": "53826cf8ab2c30a878ebbde755843b25e842735d",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: gets correctly the active state of the FacetList",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980441633"
+          }
+        ]
+      },
+      {
+        "id": "e03ac5b0b014894e32ab7a7926c3f7bc76ee6c91",
+        "type": "FIX",
+        "text": " sap.m.InputBase: QUnit is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980461720"
+          }
+        ]
+      },
+      {
+        "id": "bec3c98557edfc17fc568971cf683024338a7fe2",
+        "type": "FIX",
+        "text": " sap.m.Link: Self-reference placement adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970610033"
+          }
+        ]
+      },
+      {
+        "id": "e2d54e4d74d3943da8397b522359171e1b829f5f",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Demo Kit sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980434150"
+          }
+        ]
+      },
+      {
+        "id": "17bcfdba00a9f580236db012a36efdbd6bfcd320",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: getAccessibilityInfo method enhanced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980434141"
+          }
+        ]
+      },
+      {
+        "id": "6a347bf5db832cbf0b9af2e6adee3c28ef74e0d8",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Custom Views sample improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980459865"
+          }
+        ]
+      },
+      {
+        "id": "72f169595d6d2e82475279c05b7ee78976a4197d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Keyboard handling navigation of daterow now is restricted by min or max date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970573616"
+          }
+        ]
+      },
+      {
+        "id": "df8a281f2f349806bd48eb22d79da5bc19437d90",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Suggestion items ARIA is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970631682"
+          }
+        ]
+      },
+      {
+        "id": "708af42ce1ebbfedac086b43633725732849e2f7",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Focusing styles alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970578490"
+          }
+        ]
+      },
+      {
+        "id": "31f23d999fb137ae22dedea9be9e5098e5a9579e",
+        "type": "FIX",
+        "text": " sap.m.SplitApp: Parent elements heights are now correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980460690"
+          }
+        ]
+      },
+      {
+        "id": "9f7fcad2339b86106c4a9205f0aea719beff3bce",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Now the year range button is not cut",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980454204"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970573833"
+          }
+        ]
+      },
+      {
+        "id": "a1eee5aec97d6ee7065a302e9cc48147ac8e64dd",
+        "type": "FEATURE",
+        "text": " Introduced new predifined negative margin classes",
+        "references": []
+      },
+      {
+        "id": "00f1cd98c20ee84b84e58e1a296fe0a66ecf262c",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection: ability to select year ranges is now added",
+        "references": []
+      },
+      {
+        "id": "fc5036498d2e70e5365b0c25921e0a72214ff02c",
+        "type": "FEATURE",
+        "text": " sap.m.NotificationListItem: New property \"authorAvatarColor\" is introduced",
+        "references": []
+      },
+      {
+        "id": "686bcb7e19ea73241bfae361c2f8f4c4062051a6",
+        "type": "FIX",
+        "text": " sap.m.Button: Does not fire press event on mouse out",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970554912"
+          }
+        ]
+      },
+      {
+        "id": "1a6f1a96b6f58467312a70f77e8eab2fb109ac88",
+        "type": "FIX",
+        "text": " sap.m.Button: Press event fires once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006778252019"
+          }
+        ]
+      },
+      {
+        "id": "6b2f2063fb736c03d5ffcfaa672c1e516c845d90",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Disable text selection for selected option on Android tablets",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980372825"
+          }
+        ]
+      },
+      {
+        "id": "2b398563d9fcab36b7120a5a9a7961adee0a166f",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Prevent Suggestions Popover\u0027s highlighting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970579874"
+          }
+        ]
+      },
+      {
+        "id": "1b3fcc9ca904bd7f9856001e821f03f05b0b0067",
+        "type": "FIX",
+        "text": " sap.m.Input: Clear references after destroying Sugg Popover content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980458244"
+          }
+        ]
+      },
+      {
+        "id": "4b76f3d2e807521a6d9a93bb315eb94de794df76",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: QUnit fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980470898"
+          }
+        ]
+      },
+      {
+        "id": "1b5c2d0c0feb6c7abdbf8ab75b4c145922126fef",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent closing of Popover when non editable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970586745"
+          }
+        ]
+      },
+      {
+        "id": "6b5589ac79121809fa29188ac5bd8d113bc6a1af",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent exception when pressing arrows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980454206"
+          }
+        ]
+      },
+      {
+        "id": "9887a25ba7efc3a103fe2e80f783cc846c5bd487",
+        "type": "FIX",
+        "text": " sap.m.Page: Prevent setting Up type to nav button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980483066"
+          }
+        ]
+      },
+      {
+        "id": "37395361f23adb85440913652211b3c5ae858e7b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: New appointment in Hours view gets proper start/end times",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1930741556"
+          }
+        ]
+      },
+      {
+        "id": "e6c75ee5df05014ffc014bc3ddbfa67f70fa6a5e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: load not density aware image by default",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007126932019"
+          }
+        ]
+      },
+      {
+        "id": "44d15f08953d98c6c3a800956b088abf97c81e41",
+        "type": "FIX",
+        "text": " sap.m.SearchField: search event is now fired correctly in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970045315"
+          }
+        ]
+      },
+      {
+        "id": "80491713eabb3ece45aa90af7fa8f34ac91a3a6b",
+        "type": "FEATURE",
+        "text": " sap.m.Avatar: Added new actions in design-time metadata",
+        "references": []
+      },
+      {
+        "id": "bd86ceed067d32532482b5cadc2072ef7d3d0069",
+        "type": "FEATURE",
+        "text": " sap.m.FormattedText: Functionality to replace placeholders with Links",
+        "references": []
+      },
+      {
+        "id": "0b4aab861cbe50fa3a03a39dcd844f5e29675106",
+        "type": "FIX",
+        "text": " sap.m.ActionSelect: Added explicit apiVersion 2 flag",
+        "references": []
+      },
+      {
+        "id": "b2990a153f1dd8035dc3ad070ee01b2280a996f8",
+        "type": "FIX",
+        "text": " sap.m.Bar: fixed vertical alignment in the right aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980454207"
+          }
+        ]
+      },
+      {
+        "id": "6f00d59355e41a29e63a823d1ee9ee24366debb2",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Some accessibility texts are fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980398867"
+          }
+        ]
+      },
+      {
+        "id": "da502da5f54f08a981b0881776731136d84d7945",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: wraps letter by letter in Table now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980485706"
+          }
+        ]
+      },
+      {
+        "id": "8a572bd2b0a65adbc1a0376661f56b09ab621119",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: inverted status shown correctly inside ObjectListItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980454205"
+          }
+        ]
+      },
+      {
+        "id": "9ee24e5d2e06e9c16f6940aa404c7d0878d0e2e0",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Overflow Button appearance is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980507985"
+          }
+        ]
+      },
+      {
+        "id": "64edadcb558d01b40592f750aa604b8b21fd44ba",
+        "type": "FIX",
+        "text": " sap.m.Page: Position floating footer using css only",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980450656"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980492228"
+          }
+        ]
+      },
+      {
+        "id": "69c48a102af2044798768ffad6c213a3743c08c1",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now the button\u0027s year text is correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980459813"
+          }
+        ]
+      },
+      {
+        "id": "efbf3d851536cb91c5f6e8cf641b03451f6f6d13",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Does not lose focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980455339"
+          }
+        ]
+      },
+      {
+        "id": "da8010a650fed52d89e214a4d1a2540af720493b",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: Recent colors section implemented",
+        "references": []
+      },
+      {
+        "id": "299ad9fbb693f698cbb7d235678b02805c90e634",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectHeader: Responsive paddings enablement",
+        "references": []
+      },
+      {
+        "id": "b0c4d79b17c0dc6cfbaa4b289f9ea4f42b191afa",
+        "type": "FEATURE",
+        "text": " sap.m.ViewSettingsDialog: Show only selected items button implemented",
+        "references": []
+      },
+      {
+        "id": "43f6aefe028b2d8578902b26d9c2525ae9f75e03",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Calendar content added",
+        "references": []
+      },
+      {
+        "id": "fe73a55d0ad195fda9c9698490e6e441d1c8c7fa",
+        "type": "FIX",
+        "text": " Align GenericTile \u0026 SlideTile with Fiori 3.0 visual specs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980488808"
+          }
+        ]
+      },
+      {
+        "id": "e9b77599d7721bec738b0a9b2005b7d21692a461",
+        "type": "FIX",
+        "text": " All: fix AMD dependencies to types that are embedded in library.js",
+        "references": []
+      },
+      {
+        "id": "3e529db675116795e9918874e8b587f78f2629c9",
+        "type": "FIX",
+        "text": " CSS of OneByOne tile with NewsContent + add to samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080016544"
+          }
+        ]
+      },
+      {
+        "id": "5d98ab6f5954ed69fb395f51d2948400475d7fa0",
+        "type": "FIX",
+        "text": " Fiori 3.0 shadow levels \u0026 GenericTile focus/hover/active states",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980488808"
+          }
+        ]
+      },
+      {
+        "id": "d955dad55056c03dd35f3beb2e30a8eccc33b52a",
+        "type": "FIX",
+        "text": " Rendering of GenericTile with custom width (after change 4518265)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080007736"
+          }
+        ]
+      },
+      {
+        "id": "0382caab43ce38b5049d358a7663e5021392e517",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: DescribedBy text is read clearly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080000721"
+          }
+        ]
+      },
+      {
+        "id": "9f242481c171b2b8f19362b756435fa955a4e665",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Images url having $value not set as backgroundImage.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007075562019"
+          }
+        ]
+      },
+      {
+        "id": "ac2d4c7cf6a7e80336b2eef072a10241cec53248",
+        "type": "FIX",
+        "text": " sap.m.Label: Reqiered label is not truncating on IOS now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980552109"
+          }
+        ]
+      },
+      {
+        "id": "491d9c7d9b9b6ef2280833c385da31d981dc0394",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Speech output is now more clear",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980211004"
+          }
+        ]
+      },
+      {
+        "id": "9e8eaab8580c9bcbfbde7b90eaa0557c440945cf",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Control \u0026 binding values misalignment fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980437334"
+          }
+        ]
+      },
+      {
+        "id": "b025db2b5455ebecde2f54fba5aeaca0a311d9e7",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fixed token duplication",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980437405"
+          }
+        ]
+      },
+      {
+        "id": "de46bebb3a744441ed72f1f796431069d435fbf3",
+        "type": "FIX",
+        "text": " sap.m.P13nConditionPanel: Define conditions tab on the ValueHelpDialog now shows the selected value correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980437959"
+          }
+        ]
+      },
+      {
+        "id": "70b7fb290c010aa3304f76e0e018fa41b31f3a49",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Min and max dates work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970513641"
+          }
+        ]
+      },
+      {
+        "id": "dc54ed3fa8da83e0fbf8d06b7ebbd046c8844e50",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: min/max date are now corretly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980546247"
+          }
+        ]
+      },
+      {
+        "id": "4a87f6a597f4c4ba0ee013bf43b42d1c9a6ff41c",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Popover is now displayed properly on iOS and OS X",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980505824"
+          }
+        ]
+      },
+      {
+        "id": "2221a6c0315b13a16ec4602dca00bb79358ebcd9",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Exchange usage of SimpleFixFlex with ValueStateHeader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970616340"
+          }
+        ]
+      },
+      {
+        "id": "2c79ee62483927997f6579d423c1d87881ac57f9",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Update items count on context change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980463599"
+          }
+        ]
+      },
+      {
+        "id": "c4432cf8a899ccd4c4c49e13f625dea7b374b93c",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: pre-renders tiles in both directions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080003916"
+          }
+        ]
+      },
+      {
+        "id": "271465a02ca7346813111e3c9b8e7833af1dc13b",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Default action on backspace prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970405635"
+          }
+        ]
+      },
+      {
+        "id": "1ba49348211f6e79cf82a37e1686005fc560731f",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Special character Curly braces in the file name disrupts the behavior.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970592551"
+          }
+        ]
+      },
+      {
+        "id": "7f218159a5d4a4a0dde02280fa171b4b9a341bde",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: proper icon for \"Show only selected\" Button",
+        "references": []
+      }
+    ]
+  }
+}

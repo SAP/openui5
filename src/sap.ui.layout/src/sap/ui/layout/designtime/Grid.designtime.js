@@ -29,4 +29,4 @@ sap.ui.define([],
 				plural: "GRID_CONTROL_NAME_PLURAL"
 			}
 		};
-	}, /* bExport= */ false);
+	});

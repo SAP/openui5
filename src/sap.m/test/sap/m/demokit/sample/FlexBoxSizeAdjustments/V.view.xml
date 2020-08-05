@@ -1,154 +1,103 @@
-<mvc:View
-	xmlns:l="sap.ui.layout"
-	xmlns:html="http://www.w3.org/1999/xhtml"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		width="100%" >
-		<l:content>
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<VBox>
+		<Panel headerText="Equal flexibility and content" class="sapUiDemoFlexBoxSizeAdjustments">
+			<FlexBox alignItems="Start">
+				<Button text="1" width="100%" type="Emphasized" class="sapUiSmallMarginEnd" >
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button text="2" width="100%" type="Reject" class="sapUiSmallMarginEnd">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button text="3" width="100%" type="Accept" >
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+			</FlexBox>
+		</Panel>
 
-			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
-				<headerToolbar>
-					<Toolbar>
-						<Title level="H2" text="Equal flexibility and content" />
-					</Toolbar>
-				</headerToolbar>
-				<FlexBox
-					alignItems="Start">
-					<items>
-						<Button text="1" width="100%" type="Emphasized" class="sapUiSmallMarginEnd" >
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-						<Button text="2" width="100%" type="Reject" class="sapUiSmallMarginEnd">
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-						<Button text="3" width="100%" type="Accept" >
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-					</items>
-				</FlexBox>
-			</Panel>
+		<Panel headerText="Different flexibility, equal content" class="sapUiDemoFlexBoxSizeAdjustments">
+			<FlexBox alignItems="Start">
+				<Button text="1" width="100%" type="Emphasized" class="sapUiSmallMarginEnd" >
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button text="2" width="100%" type="Reject" class="sapUiSmallMarginEnd">
+					<layoutData>
+						<FlexItemData growFactor="2" />
+					</layoutData>
+				</Button>
+				<Button text="3" width="100%" type="Accept" >
+					<layoutData>
+						<FlexItemData growFactor="3" />
+					</layoutData>
+				</Button>
+			</FlexBox>
+		</Panel>
 
-			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
-				<headerToolbar>
-					<Toolbar>
-						<Title level="H2" text="Different flexibility, equal content" />
-					</Toolbar>
-				</headerToolbar>
-				<FlexBox
-					alignItems="Start">
-					<items>
-						<Button text="1" width="100%" type="Emphasized" class="sapUiSmallMarginEnd" >
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-						<Button text="2" width="100%" type="Reject" class="sapUiSmallMarginEnd">
-							<layoutData>
-								<FlexItemData growFactor="2" />
-							</layoutData>
-						</Button>
-						<Button text="3" width="100%" type="Accept" >
-							<layoutData>
-								<FlexItemData growFactor="3" />
-							</layoutData>
-						</Button>
-					</items>
-				</FlexBox>
-			</Panel>
+		<Panel headerText="Equal flexibility, different content" class="sapUiDemoFlexBoxSizeAdjustments">
+			<FlexBox alignItems="Start">
+				<Button text="1" width="50px" type="Emphasized" class="sapUiSmallMarginEnd">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button text="2" width="100px" type="Reject" class="sapUiSmallMarginEnd">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button text="3" width="150px" type="Accept" >
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+			</FlexBox>
+		</Panel>
 
-			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
-				<headerToolbar>
-					<Toolbar>
-						<Title level="H2" text="Equal flexibility, different content" />
-					</Toolbar>
-				</headerToolbar>
-				<FlexBox
-					alignItems="Start">
-					<items>
-						<Button text="1" width="50px" type="Emphasized" class="sapUiSmallMarginEnd" >
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-						<Button text="2" width="100px" type="Reject" class="sapUiSmallMarginEnd">
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-						<Button text="3" width="150px" type="Accept" >
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-					</items>
-				</FlexBox>
-			</Panel>
+		<Panel headerText="Equal flexibility, different content, width 0" class="sapUiDemoFlexBoxSizeAdjustments">
+			<FlexBox alignItems="Start" class="sapUiDemoFlexBoxSizeAdjustmentsZeroWidthItems">
+				<Button text="1" width="100%" type="Emphasized" class="sapUiSmallMarginEnd" >
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button text="2" width="100%" type="Reject" class="sapUiSmallMarginEnd">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button text="3" width="100%" type="Accept" >
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+			</FlexBox>
+		</Panel>
 
-			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
-				<headerToolbar>
-					<Toolbar>
-						<Title level="H2" text="Equal flexibility, different content, width 0" />
-					</Toolbar>
-				</headerToolbar>
-				<FlexBox
-					class="sapUiDemoFlexBoxSizeAdjustmentsZeroWidthItems"
-					alignItems="Start">
-					<items>
-						<Button text="1" width="100%" type="Emphasized" class="sapUiSmallMarginEnd" >
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-						<Button text="2" width="100%" type="Reject" class="sapUiSmallMarginEnd">
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-						<Button text="3" width="100%" type="Accept" >
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-					</items>
-				</FlexBox>
-			</Panel>
-
-			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
-				<headerToolbar>
-					<Toolbar>
-						<Title level="H2" text="Different flexibility and content, width 0" />
-					</Toolbar>
-				</headerToolbar>
-				<FlexBox
-					class="sapUiDemoFlexBoxSizeAdjustmentsZeroWidthItems"
-					alignItems="Start">
-					<items>
-						<Button text="1" width="50px" type="Emphasized" class="sapUiSmallMarginEnd" >
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-						<Button text="2" width="100px" type="Reject" class="sapUiSmallMarginEnd">
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-						<Button text="3" width="150px" type="Accept" >
-							<layoutData>
-								<FlexItemData growFactor="1" />
-							</layoutData>
-						</Button>
-					</items>
-				</FlexBox>
-			</Panel>
-
-		</l:content>
-	</l:VerticalLayout>
+		<Panel headerText="Different flexibility and content, width 0" class="sapUiDemoFlexBoxSizeAdjustments">
+			<FlexBox alignItems="Start" class="sapUiDemoFlexBoxSizeAdjustmentsZeroWidthItems">
+				<Button text="1" width="50px" type="Emphasized" class="sapUiSmallMarginEnd">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button text="2" width="100px" type="Reject" class="sapUiSmallMarginEnd">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button text="3" width="150px" type="Accept" >
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+			</FlexBox>
+		</Panel>
+	</VBox>
 </mvc:View>

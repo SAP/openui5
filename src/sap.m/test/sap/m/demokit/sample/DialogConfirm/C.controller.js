@@ -1,170 +1,174 @@
 sap.ui.define([
-		'sap/m/Button',
-		'sap/m/Dialog',
-		'sap/m/Label',
-		'sap/m/MessageToast',
-		'sap/m/Text',
-		'sap/m/TextArea',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/layout/HorizontalLayout',
-		'sap/ui/layout/VerticalLayout'
-	], function(Button, Dialog, Label, MessageToast, Text, TextArea, Controller, HorizontalLayout, VerticalLayout) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/Core",
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/layout/VerticalLayout",
+	"sap/m/Dialog",
+	"sap/m/DialogType",
+	"sap/m/Button",
+	"sap/m/ButtonType",
+	"sap/m/Label",
+	"sap/m/MessageToast",
+	"sap/m/Text",
+	"sap/m/TextArea"
+], function (Controller, Core, HorizontalLayout, VerticalLayout, Dialog, DialogType, Button, ButtonType, Label, MessageToast, Text, TextArea) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.DialogConfirm.C", {
+	return Controller.extend("sap.m.sample.DialogConfirm.C", {
 
-		onApproveDialog: function () {
-			var dialog = new Dialog({
-				title: 'Confirm',
-				type: 'Message',
-				content: new Text({ text: 'Are you sure you want to submit your shopping cart?' }),
-				beginButton: new Button({
-					text: 'Submit',
-					press: function () {
-						MessageToast.show('Submit pressed!');
-						dialog.close();
-					}
-				}),
-				endButton: new Button({
-					text: 'Cancel',
-					press: function () {
-						dialog.close();
-					}
-				}),
-				afterClose: function() {
-					dialog.destroy();
-				}
-			});
-
-			dialog.open();
-		},
-
-		onRejectDialog: function () {
-			var dialog = new Dialog({
-				title: 'Reject',
-				type: 'Message',
-				content: [
-					new Label({ text: 'Are you sure you want to reject your shopping cart?', labelFor: 'rejectDialogTextarea'}),
-					new TextArea('rejectDialogTextarea', {
-						width: '100%',
-						placeholder: 'Add note (optional)'
-					})
-				],
-				beginButton: new Button({
-					text: 'Reject',
-					press: function () {
-						var sText = sap.ui.getCore().byId('rejectDialogTextarea').getValue();
-						MessageToast.show('Note is: ' + sText);
-						dialog.close();
-					}
-				}),
-				endButton: new Button({
-					text: 'Cancel',
-					press: function () {
-						dialog.close();
-					}
-				}),
-				afterClose: function() {
-					dialog.destroy();
-				}
-			});
-
-			dialog.open();
-		},
-
-		onSubmitDialog: function () {
-			var dialog = new Dialog({
-				title: 'Confirm',
-				type: 'Message',
-				content: [
-					new Label({ text: 'Are you sure you want to submit your shopping cart?', labelFor: 'submitDialogTextarea'}),
-					new TextArea('submitDialogTextarea', {
-						liveChange: function(oEvent) {
-							var sText = oEvent.getParameter('value');
-							var parent = oEvent.getSource().getParent();
-
-							parent.getBeginButton().setEnabled(sText.length > 0);
-						},
-						width: '100%',
-						placeholder: 'Add note (required)'
-					})
-				],
-				beginButton: new Button({
-					text: 'Submit',
-					enabled: false,
-					press: function () {
-						var sText = sap.ui.getCore().byId('submitDialogTextarea').getValue();
-						MessageToast.show('Note is: ' + sText);
-						dialog.close();
-					}
-				}),
-				endButton: new Button({
-					text: 'Cancel',
-					press: function () {
-						dialog.close();
-					}
-				}),
-				afterClose: function() {
-					dialog.destroy();
-				}
-			});
-
-			dialog.open();
-		},
-
-		onConfirmDialog: function () {
-			var dialog = new Dialog({
-				title: 'Confirm',
-				type: 'Message',
-				content: [
-					new HorizontalLayout({
-						content: [
-							new VerticalLayout({
-								width: '120px',
-								content: [
-									new Text({ text: 'Type: ' }),
-									new Text({ text: 'Delivery:' }),
-									new Text({ text: 'Items count: ' })
-								]
-							}),
-							new VerticalLayout({
-								content: [
-									new Text({ text: 'Shopping Cart' }),
-									new Text({ text: 'Jun 26, 2013' }),
-									new Text({ text: '2' })
-								]
-							})
-						]
+		onApproveDialogPress: function () {
+			if (!this.oApproveDialog) {
+				this.oApproveDialog = new Dialog({
+					type: DialogType.Message,
+					title: "Confirm",
+					content: new Text({ text: "Do you want to submit this order?" }),
+					beginButton: new Button({
+						type: ButtonType.Emphasized,
+						text: "Submit",
+						press: function () {
+							MessageToast.show("Submit pressed!");
+							this.oApproveDialog.close();
+						}.bind(this)
 					}),
-					new TextArea('confirmDialogTextarea', {
-						width: '100%',
-						placeholder: 'Add note (optional)'
+					endButton: new Button({
+						text: "Cancel",
+						press: function () {
+							this.oApproveDialog.close();
+						}.bind(this)
 					})
-				],
-				beginButton: new Button({
-					text: 'Submit',
-					press: function () {
-						var sText = sap.ui.getCore().byId('confirmDialogTextarea').getValue();
-						MessageToast.show('Note is: ' + sText);
-						dialog.close();
-					}
-				}),
-				endButton: new Button({
-					text: 'Cancel',
-					press: function () {
-						dialog.close();
-					}
-				}),
-				afterClose: function() {
-					dialog.destroy();
-				}
-			});
+				});
+			}
 
-			dialog.open();
+			this.oApproveDialog.open();
+		},
+
+		onRejectDialogPress: function () {
+			if (!this.oRejectDialog) {
+				this.oRejectDialog = new Dialog({
+					title: "Reject",
+					type: DialogType.Message,
+					content: [
+						new Label({
+							text: "Do you want to reject this order?",
+							labelFor: "rejectionNote"
+						}),
+						new TextArea("rejectionNote", {
+							width: "100%",
+							placeholder: "Add note (optional)"
+						})
+					],
+					beginButton: new Button({
+						type: ButtonType.Emphasized,
+						text: "Reject",
+						press: function () {
+							var sText = Core.byId("rejectionNote").getValue();
+							MessageToast.show("Note is: " + sText);
+							this.oRejectDialog.close();
+						}.bind(this)
+					}),
+					endButton: new Button({
+						text: "Cancel",
+						press: function () {
+							this.oRejectDialog.close();
+						}.bind(this)
+					})
+				});
+			}
+
+			this.oRejectDialog.open();
+		},
+
+		onSubmitDialogPress: function () {
+			if (!this.oSubmitDialog) {
+				this.oSubmitDialog = new Dialog({
+					type: DialogType.Message,
+					title: "Confirm",
+					content: [
+						new Label({
+							text: "Do you want to submit this order?",
+							labelFor: "submissionNote"
+						}),
+						new TextArea("submissionNote", {
+							width: "100%",
+							placeholder: "Add note (required)",
+							liveChange: function (oEvent) {
+								var sText = oEvent.getParameter("value");
+								this.oSubmitDialog.getBeginButton().setEnabled(sText.length > 0);
+							}.bind(this)
+						})
+					],
+					beginButton: new Button({
+						type: ButtonType.Emphasized,
+						text: "Submit",
+						enabled: false,
+						press: function () {
+							var sText = Core.byId("submissionNote").getValue();
+							MessageToast.show("Note is: " + sText);
+							this.oSubmitDialog.close();
+						}.bind(this)
+					}),
+					endButton: new Button({
+						text: "Cancel",
+						press: function () {
+							this.oSubmitDialog.close();
+						}.bind(this)
+					})
+				});
+			}
+
+			this.oSubmitDialog.open();
+		},
+
+		onConfirmDialogPress: function () {
+			if (!this.oConfirmDialog) {
+				this.oConfirmDialog = new Dialog({
+					type: DialogType.Message,
+					title: "Confirm",
+					content: [
+						new HorizontalLayout({
+							content: [
+								new VerticalLayout({
+									width: "120px",
+									content: [
+										new Text({ text: "Type: " }),
+										new Text({ text: "Delivery: " }),
+										new Text({ text: "Items count: " })
+									]
+								}),
+								new VerticalLayout({
+									content: [
+										new Text({ text: "Shopping Cart" }),
+										new Text({ text: "Jun 26, 2013" }),
+										new Text({ text: "2" })
+									]
+								})
+							]
+						}),
+						new TextArea("confirmationNote", {
+							width: "100%",
+							placeholder: "Add note (optional)"
+						})
+					],
+					beginButton: new Button({
+						type: ButtonType.Emphasized,
+						text: "Submit",
+						press: function () {
+							var sText = Core.byId("confirmationNote").getValue();
+							MessageToast.show("Note is: " + sText);
+							this.oConfirmDialog.close();
+						}.bind(this)
+					}),
+					endButton: new Button({
+						text: "Cancel",
+						press: function () {
+							this.oConfirmDialog.close();
+						}.bind(this)
+					})
+				});
+			}
+
+			this.oConfirmDialog.open();
 		}
+
 	});
-
-
-	return CController;
-
 });

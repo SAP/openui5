@@ -8,7 +8,7 @@
 		showNavButton="false">
 
 		<content>
-			<Table id="idProductsTable" growing="true" growingThreshold="10">
+			<Table id="idProductsTable" growing="true" growingThreshold="10" paste="onPaste">
 				<headerToolbar>
 					<OverflowToolbar id="otbSubheader">
 						<Title text="Products" level="H2" />

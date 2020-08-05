@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.DynamicPageAnalyticalTable",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.DynamicPageAnalyticalTable.view.DynamicPageAnalyticalTable",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/DynamicPageAnalyticalTable.view.xml",
+					"view/Card.fragment.xml",
+					"controller/DynamicPageAnalyticalTable.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

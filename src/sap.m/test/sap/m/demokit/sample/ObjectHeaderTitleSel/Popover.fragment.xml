@@ -4,14 +4,12 @@
 	<ResponsivePopover
 		title="Select Product"
 		placement="Bottom">
-		<content>
-			<List
-				mode="SingleSelectMaster"
-				includeItemInSelection="true"
-				select="handleItemSelect"
-				items="{/ProductCollection}">
-				<StandardListItem title="{Name}" />
-			</List>
-		</content>
+		<List
+			mode="SingleSelectMaster"
+			includeItemInSelection="true"
+			select="handleItemSelect"
+			items="{/ProductCollection}">
+			<StandardListItem title="{Name}" />
+		</List>
 	</ResponsivePopover>
 </core:FragmentDefinition>

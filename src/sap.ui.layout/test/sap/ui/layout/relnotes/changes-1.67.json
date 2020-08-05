@@ -1,0 +1,35 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "cccfb854614bd140eb7956ceeb25089c27159818",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayout: Width of the cells is now set properly in IE",
+        "references": []
+      },
+      {
+        "id": "b271cfa34ffd599ccd049e03b6e46a4f99914a9b",
+        "type": "FIX",
+        "text": "sap.ui.layout.Grid: Fixed incorrect CSS calculations for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980178963"
+          }
+        ]
+      },
+      {
+        "id": "494f79dbafa756beaa8108726dea5af36a99e63a",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent: shows side content on small screen",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980254677"
+          }
+        ]
+      }
+    ]
+  }
+}

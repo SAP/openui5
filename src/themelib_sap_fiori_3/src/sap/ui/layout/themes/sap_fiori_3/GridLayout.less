@@ -1,0 +1,49 @@
+/* ========================================= */
+/* CSS for control sap.ui.layout/GridLayout  */
+/* Fiori 3 theme                             */
+/* ========================================= */
+
+.sapUiGrid {
+	font-family: @sapUiDesktopFontFamily;
+}
+
+.sapUiGrid.sapUiFormBackgrTranslucent > tbody > tr {
+	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
+}
+
+.sapUiGrid.sapUiFormBackgrSolid > tbody > tr {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapUiGrid > tbody > tr.sapUiGridTitle {
+	background-color: transparent;
+}
+
+/* Title */
+.sapUiGridHeader > .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite {
+	bottom: 0.3125rem;
+}
+
+/* Toolbar */
+.sapUiGrid.sapUiFormToolbar th > div {
+	height: 2.75rem;
+	line-height: 2.75rem;
+}
+
+.sapUiGridHeader.sapUiFormContainerToolbar > .sapMTB {
+	padding: 0;
+}
+
+/* alignment of Labels */
+.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiFormElementLbl {
+	padding-top: 0.875rem;
+}
+
+.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr.sapUiGridConteinerFirstRow > td.sapUiFormElementLbl {
+	padding-top: 2.875rem;
+}
+
+.sapUiFormEdit.sapUiFormM >.sapUiGrid > tbody > tr:first-child > td.sapUiFormElementLbl, /* if no Form title */
+.sapUiFormEdit[aria-labelledby].sapUiFormM > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormElementLbl {
+	padding-top: 1.875rem;
+}

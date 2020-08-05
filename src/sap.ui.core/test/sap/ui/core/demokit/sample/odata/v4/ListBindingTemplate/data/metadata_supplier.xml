@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="../../../../default/iwbep/tea_busi_product/0001/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.default.iwbep.tea_busi_product.v0001" Alias="TEA_BUSI_PRODUCT"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.default.iwbep.tea_busi_supplier.v0001" Alias="SAP__self">
+			<EntityType Name="Supplier">
+				<Key>
+					<PropertyRef Name="SUPPLIER_ID"/>
+				</Key>
+				<Property Name="SUPPLIER_ID" Type="Edm.Int32" Nullable="false"/>
+				<Property Name="Supplier_Name" Type="Edm.String" Nullable="false"/>
+				<NavigationProperty Name="SUPPLIER_2_PRODUCT" Type="Collection(com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product)"/>
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="Suppliers" EntityType="com.sap.gateway.default.iwbep.tea_busi_supplier.v0001.Supplier">
+					<NavigationPropertyBinding Path="SUPPLIER_2_PRODUCT" Target="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Container/Products"/>
+				</EntitySet>
+			</EntityContainer>
+			<Annotations Target="SAP__self.Supplier/SUPPLIER_ID">
+				<Annotation Term="SAP__common.Label" String="Supplier ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Supplier/Supplier_Name">
+				<Annotation Term="SAP__common.Label" String="String"/>
+				<Annotation Term="SAP__common.QuickInfo" String="string"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

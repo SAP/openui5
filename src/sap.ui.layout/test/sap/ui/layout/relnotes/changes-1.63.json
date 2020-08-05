@@ -1,0 +1,40 @@
+{
+  "1.63.0": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "ab10cbd2e1f52456d004368e15b3086371bb7d5e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox&FixFlex: Controls are now valid droppable area",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970030951"
+          }
+        ]
+      },
+      {
+        "id": "52827031ba0582f39ab214df2627c1312a0cce48",
+        "type": "FIX",
+        "text": "DynamicSideContent: setShowMain/SideContent do not set the same value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870526688"
+          }
+        ]
+      },
+      {
+        "id": "c2033878d1186c2154cbd9fd81d0e5e0fe77eb1b",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayout: Correctly displayed in a Dialog in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870570415"
+          }
+        ]
+      }
+    ]
+  }
+}

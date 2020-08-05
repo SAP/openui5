@@ -80,7 +80,7 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:active{
 }
 
 /* hover and focus makes only sense on desktops. On mobile devices it's not needed */
-html.sap-desktop .sapUiCalItem:hover{
+html.sap-desktop .sapUiCalItem:not(.sapUiCalItemSel) .sapUiCalItemText:hover{
 	background-color: darken(@sapUiContentForegroundColor,5);
 }
 
@@ -99,6 +99,10 @@ html.sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus{
 html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText,
 html.sap-desktop .sapUiCalMonthPicker .sapUiCalItemSel:focus,
 html.sap-desktop .sapUiCalYearPicker .sapUiCalItemSel:focus{
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+html.sap-desktop .sapUiSizeCompact .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalDayName {
 	outline-color: @sapUiContentContrastFocusColor;
 }
 
@@ -142,8 +146,8 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 }
 
-html.sap-desktop .sapUiCalItemWeekEnd:hover,
-html.sap-desktop .sapUiCalItemWeekEnd:focus {
+html.sap-desktop .sapUiCalItemWeekEnd:not(.sapUiCalItemSel) .sapUiCalItemText:hover,
+html.sap-desktop .sapUiCalItemWeekEnd:not(.sapUiCalItemSel) .sapUiCalItemText:focus {
 	background-color: darken(@sapUiContentForegroundColor,10);
 }
 
@@ -154,11 +158,6 @@ html.sap-desktop .sapUiCalItemWeekEnd:focus {
 .sapUiCalItemOtherMonth {
 	background-color: transparent;
 	color: lighten(@sapUiBaseText, 50);
-}
-
-html.sap-desktop .sapUiCalItemOtherMonth:hover,
-html.sap-desktop .sapUiCalItemOtherMonth:focus {
-	background-color: darken(@sapUiListBackground , 10);
 }
 
 .sapUiCalItemSel {
@@ -214,14 +213,14 @@ html.sap-desktop .sapUiCalItemSelBetween:focus {
 }
 
 /* 2 calendar types */
-.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem.sapUiCalItemNow  > .sapUiCalItemText{
+.sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemNow  > .sapUiCalItemText{
 	line-height: 1.875rem;
 }
 
 /*** compact mode (desktop size) ***/
 
 .sapUiSizeCompact .sapUiCalItemNow > .sapUiCalItemText{
-	line-height: 1.6875rem;
+	line-height: 1.625rem;
 }
 
 .sapUiSizeCompact .sapUiCalContentOver{
@@ -292,15 +291,18 @@ and (min-height: 380px) {
 		right: 5.5rem;
 	}
 
-	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalContent > .sapUiCalMonthView > .sapUiCalItems{
-		position: absolute;
-		top: 0.25rem;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		width: auto;
-		margin: 1rem;
-		min-height: 11.25rem;
+	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalContent {
+		.sapUiCalMonthView,
+		.sapUiCalDatesRow {
+			position: absolute;
+			top: 0.25rem;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			width: auto;
+			margin: 1rem;
+			min-height: 11.25rem;
+		}
 	}
 
 	.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalMonthPicker,
@@ -309,9 +311,12 @@ and (min-height: 380px) {
 		min-height: 11.25rem;
 	}
 
-	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalItems > div{
-		height: 16.66%;
-		min-height: 1.875rem;
+	.sap-phone .sapUiCal[data-sap-ui-popup] {
+		.sapUiCalDatesRow > div,
+		.sapUiCalMonthView > div{
+			height: 16.66%;
+			min-height: 1.875rem;
+		}
 	}
 
 	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalItem{

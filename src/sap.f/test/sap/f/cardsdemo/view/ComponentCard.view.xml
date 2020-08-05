@@ -1,0 +1,40 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.ComponentCard"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}" id="page">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Component Card" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<SegmentedButton
+			selectedKey="cozy"
+			selectionChange=".onFormFactorChange"
+			class="VizTestDensityBtn sapUiSmallMargin">
+			<items>
+				<SegmentedButtonItem text="Cozy" key="cozy" />
+				<SegmentedButtonItem text="Compact" key="compact" />
+			</items>
+		</SegmentedButton>
+
+		<Panel>
+			<w:Card
+				id="comp"
+				manifest="./cardsdemo/cardcontent/componentCard/allInOne/manifest.json"
+				width="300px"
+				height="300px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="ticket"
+				manifest="./cardsdemo/cardcontent/componentCard/booking/manifest.json"
+				width="300px"
+				class="sapUiTinyMargin" />
+		</Panel>
+	</Page>
+</mvc:View>

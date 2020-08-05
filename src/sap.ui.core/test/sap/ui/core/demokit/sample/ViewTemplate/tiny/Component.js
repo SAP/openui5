@@ -8,20 +8,20 @@
  * @version @version@
  */
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/MessageBox',
-		'sap/m/Title',
-		'sap/m/VBox',
-		'sap/ui/core/TitleLevel',
-		'sap/ui/core/UIComponent',
-		'sap/ui/core/mvc/View', // sap.ui.view()
-		'sap/ui/core/mvc/ViewType',
-		'sap/ui/model/odata/v2/ODataModel'
-	], function(jQuery, MessageBox, Title, VBox, TitleLevel, UIComponent, View, ViewType,
-		ODataModel) {
+	"sap/m/MessageBox",
+	"sap/m/Title",
+	"sap/m/VBox",
+	"sap/ui/core/library",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/View",
+	"sap/ui/model/odata/v2/ODataModel"
+], function(MessageBox, Title, VBox, library, UIComponent, View, ODataModel) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.core.sample.ViewTemplate.tiny.Component", {
+	var TitleLevel = library.TitleLevel, // shortcut for sap.ui.core.TitleLevel
+		ViewType = library.mvc.ViewType; // shortcut for sap.ui.core.mvc.ViewType
+
+	return UIComponent.extend("sap.ui.core.sample.ViewTemplate.tiny.Component", {
 		metadata : "json",
 
 		createContent : function () {
@@ -43,37 +43,34 @@ sap.ui.define([
 				});
 
 			oMetaModel.loaded().then(function () {
-				var oTemplateView = sap.ui.view({
-						async : true,
-						preprocessors : {
-							xml : {
-								bindingContexts : {
-									meta : oMetaModel.getMetaContext(sPath)
-								},
-								models : {
-									meta : oMetaModel
-								}
+				View.create({
+					async : true,
+					models : oModel,
+					preprocessors : {
+						xml : {
+							bindingContexts : {
+								meta : oMetaModel.getMetaContext(sPath)
+							},
+							models : {
+								meta : oMetaModel
 							}
-						},
-						type : ViewType.XML,
-						viewName : "sap.ui.core.sample.ViewTemplate.tiny.Template"
-					});
-
-				oTemplateView.setModel(oModel);
-				oTemplateView.bindElement(sPath);
-				oViewContainer.destroyItems();
-				oViewContainer.addItem(oTemplateView);
-			}, function (oError) {
-				MessageBox.alert(oError.message, {
-					icon : MessageBox.Icon.ERROR,
-					title : "Missing Proxy?"});
+						}
+					},
+					type : ViewType.XML,
+					viewName : "sap.ui.core.sample.ViewTemplate.tiny.Template"
+				}).then(function (oTemplateView) {
+					oTemplateView.bindElement(sPath);
+					oViewContainer.destroyItems();
+					oViewContainer.addItem(oTemplateView);
+				}, function (oError) {
+					MessageBox.alert(oError.message, {
+						icon : MessageBox.Icon.ERROR,
+						title : "Missing Proxy?"});
+				});
 			});
 
 			// Note: synchronously return s.th. here and add content to it later on
 			return oViewContainer;
 		}
 	});
-
-	return Component;
-
 });

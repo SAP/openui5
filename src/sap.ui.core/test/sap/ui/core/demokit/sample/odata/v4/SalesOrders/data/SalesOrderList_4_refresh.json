@@ -1,0 +1,36 @@
+{
+	"@odata.etag" : "W/\"20160619220000.0000000\"",
+	"ChangedAt" : "2016-06-26T22:00:00.000000Z",
+	"CurrencyCode" : "EUR",
+	"GrossAmount" : "195.16",
+	"LifecycleStatus" : "N",
+	"LifecycleStatusDesc" : "New",
+	"Note" : "EPM DG: SO ID 0500000004 Deliver as fast as possible",
+	"SalesOrderID" : "0500000004",
+	"SO_2_BP" : {
+		"@odata.etag" : "W/\"20160613143341.1548870\"",
+		"BusinessPartnerID" : "0100000000",
+		"BusinessPartnerRole" : "01",
+		"CompanyName" : "SAP",
+		"WebAddress" : "http://www.sap.com",
+		"EmailAddress" : "do.not.reply@sap.com",
+		"PhoneNumber" : "0622734567",
+		"FaxNumber" : "0622734004",
+		"LegalForm" : "SE",
+		"CurrencyCode" : "EUR",
+		"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+		"ChangedAt" : "2016-06-13T14:33:41.154887Z",
+		"Address" : {
+			"City" : "Walldorf",
+			"PostalCode" : "69190",
+			"Street" : "Dietmar-Hopp-Allee",
+			"Building" : "16",
+			"Country" : "DE",
+			"AddressType" : "02",
+			"GeoLocation" : {
+				"Longitude" : "8.641701933686",
+				"Latitude" : "49.293673600000"
+			}
+		}
+	}
+}

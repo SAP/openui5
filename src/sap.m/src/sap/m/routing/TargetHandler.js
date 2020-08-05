@@ -3,18 +3,25 @@
  */
 
  /*global Promise*/
-sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/Device'],
-	function($, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Device) {
+sap.ui.define(['sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/Device', "sap/base/Log"],
+	function(InstanceManager, NavContainer, SplitContainer, BaseObject, History, Device, Log) {
 		"use strict";
 
 
 		/**
-		 * Instantiates a TargetHandler, a class used for closing dialogs and showing transitions in NavContainers when targets are displayed.<br/>
-		 * <b>You should not create an own instance of this class.</b> It will be created when using {@link sap.m.routing.Router} or {@link sap.m.routing.Targets}.
-		 * You may use the {@link #setCloseDialogs} function to specify if dialogs should be closed on displaying other views.
+		 * Constructor for a new <code>TargetHandler</code>.
 		 *
 		 * @class
-		 * @param {boolean} closeDialogs - the default is true - will close all open dialogs before navigating, if set to true. If set to false it will just navigate without closing dialogs.
+		 * Used for closing dialogs and showing transitions in <code>NavContainers</code>
+		 * when targets are displayed.
+		 *
+		 * <b>Note:</b> You should not create an own instance of this class. It is created
+		 * when using <code>{@link sap.m.routing.Router}</code> or <code>{@link sap.m.routing.Targets}</code>.
+		 * You may use the <code>{@link #setCloseDialogs}</code> function to specify if dialogs should be
+		 * closed on displaying other views.
+		 *
+		 * @param {boolean} closeDialogs Closes all open dialogs before navigating, if set to <code>true</code> (default).
+		 * If set to <code>false</code>, it will just navigate without closing dialogs.
 		 * @public
 		 * @since 1.28.1
 		 * @alias sap.m.routing.TargetHandler
@@ -40,11 +47,11 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 		 * =================================*/
 
 		/**
-		 * Sets if a navigation should close dialogs
+		 * Sets if a navigation should close dialogs.
 		 *
-		 * @param {boolean} bCloseDialogs close dialogs if true
+		 * @param {boolean} bCloseDialogs Close dialogs if <code>true</code>
 		 * @public
-		 * @returns {sap.m.routing.TargetHandler} for chaining
+		 * @returns {sap.m.routing.TargetHandler} For chaining
 		 */
 		TargetHandler.prototype.setCloseDialogs = function (bCloseDialogs) {
 			this._bCloseDialogs = !!bCloseDialogs;
@@ -53,10 +60,10 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 
 
 		/**
-		 * Gets if a navigation should close dialogs
+		 * Gets if a navigation should close dialogs.
 		 *
 		 * @public
-		 * @returns {boolean} a flag indication if dialogs will be closed
+		 * @returns {boolean} A flag indication if dialogs will be closed.
 		 */
 		TargetHandler.prototype.getCloseDialogs = function () {
 			return this._bCloseDialogs;
@@ -244,11 +251,11 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 			// TODO: when target view is loaded asyncly, it could happen that the target control is rendered with empty content and
 			// the target view is added later. oTargetControl.getDomRef has to be adapted with some new method in target control.
 			if (oTargetControl.getDomRef() && oTargetControl.getCurrentPage(bNextPageIsMaster).getId() === sViewId) {
-				$.sap.log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.m.routing.TargetHandler");
+				Log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.m.routing.TargetHandler");
 				return false;
 			}
 
-			$.sap.log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
+			Log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
 
 			if (bBack) {
 				// insert previous page if not in nav container yet

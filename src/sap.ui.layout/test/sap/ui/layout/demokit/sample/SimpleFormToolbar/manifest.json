@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.SimpleFormToolbar",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.SimpleFormToolbar.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Page.view.xml",
+					"Page.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

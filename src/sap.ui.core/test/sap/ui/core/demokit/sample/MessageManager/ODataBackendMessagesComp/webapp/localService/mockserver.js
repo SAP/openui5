@@ -13,12 +13,12 @@ sap.ui.define([
 				rootUri: sODataServiceUrl
 			});
 
-			var sLocalServicePath = jQuery.sap.getModulePath("sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.localService");
+			var sLocalServicePath = sap.ui.require.toUrl("sap/ui/core/sample/MessageManager/ODataBackendMessagesComp/localService");
 
 			// configure mock server with a delay
 			MockServer.config({
 				autoRespond: true,
-				autoRespondAfter: 1000
+				autoRespondAfter: 500
 			});
 
 			oMockServer.simulate(sLocalServicePath + "/metadata.xml", {
@@ -105,7 +105,7 @@ sap.ui.define([
 				if (aRequest.method === "GET" && aRequest.path.toString().indexOf("Employees") > -1) {
 					//we simply return always the first entry
 					fnGetEntityResponse(aRequest);
-				}else if (aRequest.method === "PUT" && aRequest.path.toString().indexOf("Employees") > -1){
+				} else if (aRequest.method === "PUT" && aRequest.path.toString().indexOf("Employees") > -1) {
 					fnUpdateEntityResponse(aRequest);
 				}
 			});

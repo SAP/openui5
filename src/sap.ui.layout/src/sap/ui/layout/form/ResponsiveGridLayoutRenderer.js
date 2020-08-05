@@ -2,8 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', './FormLayoutRenderer'],
-	function(Renderer, FormLayoutRenderer) {
+sap.ui.define([
+	'sap/ui/core/Renderer',
+	'./FormLayoutRenderer'
+	], function(Renderer, FormLayoutRenderer) {
 	"use strict";
 
 

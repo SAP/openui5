@@ -3,8 +3,14 @@
  */
 
 // Provides class sap.ui.core.support.plugins.TechInfo (TechInfo support plugin)
-sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'jquery.sap.encoder', 'jquery.sap.script'],
-	function(jQuery, Plugin, Support, ToolsAPI/* , jQuerySap, jQuerySap1 */) {
+sap.ui.define([
+	'sap/base/Log',
+	'../Plugin',
+	'../Support',
+	'../ToolsAPI',
+	"sap/base/security/encodeXML"
+],
+	function(Log, Plugin, Support, ToolsAPI, encodeXML) {
 	"use strict";
 
 
@@ -136,21 +142,21 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 			html.push("</table></div>");
 			this.$().html(html.join(""));
 
-			this.$("tggleDbgSrc").bind("click", function(oEvent) {
+			this.$("tggleDbgSrc").on("click", function(oEvent) {
 				oEvent.preventDefault();
 				Support.getStub().sendEvent(that.getId() + "ToggleDebug", {});
 			});
-			this.$("Refresh").bind("click", function(oEvent) {
+			this.$("Refresh").on("click", function(oEvent) {
 				oEvent.preventDefault();
 				Support.getStub().sendEvent(that.getId() + "Refresh", {});
 			});
 
-			this.$("outputE2ETrace").bind("click", function() {
+			this.$("outputE2ETrace").on("click", function() {
 				this.focus();
 				this.select();
 			});
 
-			this.$("startE2ETrace").bind("click", function() {
+			this.$("startE2ETrace").on("click", function() {
 				if (!that.e2eTraceStarted) {
 					that.e2eLogLevel = that.$("logLevelE2ETrace").val();
 					that.$("startE2ETrace").addClass("active").text("Running...");
@@ -204,6 +210,8 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 						trace: traceXml
 					});
 				});
+			}, function (oError) {
+				Log.error("Could not load module 'sap/ui/core/support/trace/E2eTraceLib':", oError);
 			});
 
 		};
@@ -283,7 +291,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 
 
 		function encode(any) {
-			return any == null ? "" : jQuery.sap.encodeHTML(String(any));
+			return any == null ? "" : encodeXML(String(any));
 		}
 
 		function line(buffer, right, border, label, content){

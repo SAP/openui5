@@ -1,13 +1,19 @@
+/*global QUnit, sinon */
+/*eslint max-nested-callbacks: [2,5]*/
+
 sap.ui.define([
-	"jquery.sap.global",
-	"unitTests/utils/loggerInterceptor",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/autowaiter/_timeoutWaiter"
-], function ($, loggerInterceptor,timeoutWaiter) {
+], function ($, timeoutWaiter) {
 	"use strict";
+
+	var fnSetTimeout = window["setTimeout"];
+	var fnClearTimeout = window["clearTimeout"];
 
 	["Timeout", "Immediate"].forEach(function (sFunctionUnderTest) {
 		var fnSetFunction = window["set" + sFunctionUnderTest];
 		var fnClearFunction = window["clear" + sFunctionUnderTest];
+
 		if (!fnSetFunction) {
 			$.sap.log.debug("Skipped tests because" + sFunctionUnderTest + " is not defined in this browser");
 			return;
@@ -39,26 +45,26 @@ sap.ui.define([
 
 		QUnit.test("Should return that there are no pending Timeouts if a timeout has finished", function (assert) {
 			var fnDone = assert.async();
-			var iID = fnSetFunction(function () {
+			fnSetFunction(function () {
 				assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
 				fnDone();
 			}, 100);
 		});
 
 		QUnit.test("Should ignore long runners", function (assert) {
-			var iID = setTimeout(function () {}, 1001);
+			var iID = fnSetFunction(function () {}, 1001);
 			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
-			clearTimeout(iID);
+			fnClearFunction(iID);
 		});
 
 		QUnit.test("Should have configurable max timeout delay", function (assert) {
 			timeoutWaiter.extendConfig({timeoutWaiter: {maxDelay: 3000}});
-			var iID = setTimeout(function () {}, 1001);
-			var iIDIgnored = setTimeout(function () {}, 3001);
+			var iID = fnSetFunction(function () {}, 1001);
+			var iIDIgnored = fnSetFunction(function () {}, 3001);
 
 			assert.ok(timeoutWaiter.hasPending(), "there is 1 pending timeout");
-			clearTimeout(iID);
-			clearTimeout(iIDIgnored);
+			fnClearFunction(iID);
+			fnClearFunction(iIDIgnored);
 			// reset to default value
 			timeoutWaiter.extendConfig({timeoutWaiter: {maxDelay: 1000}});
 		});
@@ -122,8 +128,7 @@ sap.ui.define([
 		QUnit.module("timeoutWaiter - clear " + sFunctionUnderTest);
 
 		QUnit.test("Should clear a timeout", function (assert) {
-			var iId = fnSetFunction(function () {
-			});
+			var iId = fnSetFunction(function () {});
 			fnClearFunction(iId);
 			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
 		});
@@ -131,12 +136,12 @@ sap.ui.define([
 
 		QUnit.test("Should clear 1 of 2 timeouts", function (assert) {
 			var fnDone = assert.async();
+			var fnSecondTimeoutSpy = sinon.spy();
 			fnSetFunction(function () {
 				assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
 				sinon.assert.notCalled(fnSecondTimeoutSpy);
 				fnDone();
 			},20);
-			var fnSecondTimeoutSpy = sinon.spy();
 			var iId = fnSetFunction(fnSecondTimeoutSpy);
 			fnClearFunction(iId);
 			assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
@@ -150,13 +155,13 @@ sap.ui.define([
 		var aTimeouts = [];
 
 		function addTimeout () {
-			aTimeouts.push(setTimeout(addTimeout, 30));
+			aTimeouts.push(fnSetTimeout(addTimeout, 30));
 		}
 
-		setTimeout(function () {
+		fnSetTimeout(function () {
 			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts - spawned " + aTimeouts.length + " timeouts");
 			aTimeouts.forEach(function (iID) {
-				clearTimeout(iID);
+				fnClearTimeout(iID);
 			});
 			fnDone();
 		}, 600);
@@ -168,14 +173,14 @@ sap.ui.define([
 		var aTimeouts = [];
 
 		function addTimeout () {
-			aTimeouts.push(setTimeout(addTimeout, 40));
-			aTimeouts.push(setTimeout(addTimeout, 40));
+			aTimeouts.push(fnSetTimeout(addTimeout, 40));
+			aTimeouts.push(fnSetTimeout(addTimeout, 40));
 		}
 
-		setTimeout(function () {
+		fnSetTimeout(function () {
 			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts - spawned " + aTimeouts.length + " timeouts");
 			aTimeouts.forEach(function (iID) {
-				clearTimeout(iID);
+				fnClearTimeout(iID);
 			});
 			fnDone();
 		}, 600);

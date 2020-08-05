@@ -36,61 +36,115 @@
 				"id": "2fefc273e0321e66b781659892d5374266b92f7b",
 				"type": "FIX",
 				"text": "sap.m.DatePicker: Error message shortly appears by closing",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570786560"
+					}
+				]
 			},
 			{
 				"id": "e1a308a675b80b4b13109d75e23a44cbe3ab4255",
 				"type": "FIX",
 				"text": "sap.ui.unified.Calendar: Don't select date on right click",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570817290"
+					}
+				]
 			},
 			{
 				"id": "65a62737fda051ce07471e37d9cc01d86040cb9d",
 				"type": "FIX",
 				"text": "sap.ui.unified.Calendar: Wrong date selected if daylight saving",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "533"
+					},
+					{
+						"type": "BCP",
+						"reference": "1570756375"
+					}
+				]
 			},
 			{
 				"id": "14968f224c7788eb6b54f52c3473d83cdcfc3159",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUoloader: Fix for m styling",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570017473"
+					}
+				]
 			},
 			{
 				"id": "09742e71b465cd4620e2258e009610afc5376832",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUoloader: Invalid files handling fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1472009396"
+					}
+				]
 			},
 			{
 				"id": "dd04793662608f2c046531de13d1665f491657ac",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570445096"
+					}
+				]
 			},
 			{
 				"id": "79f7023c1140f56c5cae691a1c7ddcde28a1c750",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: clear() function repaired",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570145342"
+					}
+				]
 			},
 			{
 				"id": "8cd9a95090b649284a8698c32b7d106d89c855ea",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: File is lost when pressing key fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570763916"
+					}
+				]
 			},
 			{
 				"id": "8d167c623b96ec5cef24a07aa066f7632fd55c8c",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: Keyboard navigation in toolbar fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570675342"
+					}
+				]
 			},
 			{
 				"id": "82875f78d0cf6c2a6a392982cc51676a6a99945a",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: Mobile style alignment",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570017473"
+					}
+				]
 			},
 			{
 				"id": "026293fe6ec0ab011081c279d3add3bac3fba798",
@@ -113,7 +167,12 @@
 				"id": "252a6d6d787ef1792a7b28149322b4a639901439",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: clear() function fixed.",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580072467"
+					}
+				]
 			}
 		]
 	},
@@ -124,13 +183,23 @@
 				"id": "96c3fa3c1f507fd41a1c4ccbb06df54bfe1803a3",
 				"type": "FIX",
 				"text": "sap.ui.uinified.Calendar current day is wrong displayed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580153899"
+					}
+				]
 			},
 			{
 				"id": "247f0f184f942de758616602886e1ba002137f72",
 				"type": "FIX",
 				"text": "sap.ui.unified.Calendar Focus changes while rendering",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "002007974700006951722015"
+					}
+				]
 			},
 			{
 				"id": "8e870e5c01ca6b8e3e891d8621d41dd6d110a86a",
@@ -142,13 +211,23 @@
 				"id": "44067c231931683537762efc58a605b064f40d30",
 				"type": "FIX",
 				"text": "sap.ui.unified.Menu: Avoid additional labelling the items with the menu labels",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580097573"
+					}
+				]
 			},
 			{
 				"id": "3df7210550add1a81209426df275fc5751c87dc3",
 				"type": "FIX",
 				"text": "sap.ui.unified.Menu: Avoid focusing when Menu is not open",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570802311"
+					}
+				]
 			}
 		]
 	},
@@ -183,7 +262,12 @@
 				"id": "a178275eee2047714d71fe9cc74018c27cc0cc44",
 				"type": "FIX",
 				"text": "sap.ui.unified.Calendar: mousemove inside same day switch month",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580163230"
+					}
+				]
 			}
 		]
 	},
@@ -205,13 +289,23 @@
 				"id": "c709780528040addce34271d9be723352b539e54",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: Aria Text enhanced",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580182221"
+					}
+				]
 			},
 			{
 				"id": "52dc328e55e56098a8c01c13dfed672233373192",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: setEnabled() method repaired",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570140414"
+					}
+				]
 			}
 		]
 	},
@@ -234,7 +328,12 @@
 				"id": "da5967aba41847e836c23657c4ac784d8acd9f10",
 				"type": "FIX",
 				"text": "sap.ui.unified.Currency: When \"maxPrecision\" is set to 0 only the base part is being displayed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670027749"
+					}
+				]
 			},
 			{
 				"id": "9b5b5dfeabc680f90fea9a7cbc1a50b2a29d9aab",

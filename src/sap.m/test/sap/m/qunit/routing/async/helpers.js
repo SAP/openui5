@@ -19,23 +19,26 @@ sap.ui.define(
 		}
 
 		function createViewAndControllerAsync(sName) {
-			return createViewMock({viewName: sName});
+			return createViewMock({name: sName});
 		}
 
 		function createViewMock(oViewOptions) {
 			var oView;
-			createViewAndController(oViewOptions.viewName);
+			createViewAndController(oViewOptions.name);
 			return {
 				loaded: function() {
-					oView = sap.ui.jsview(oViewOptions.viewName, oViewOptions.viewName);
+					oView = sap.ui.jsview(oViewOptions.name, oViewOptions.name);
 					return new Promise(function(resolve) {
 						setTimeout(function() {
 							resolve(oView);
-						}, _mViewDelays[oViewOptions.viewName]);
+						}, _mViewDelays[oViewOptions.name]);
 					});
 				},
 				destroy: function() {
 					oView.destroy();
+				},
+				isA: function(sClass) {
+					return sClass === "sap.ui.core.mvc.View";
 				}
 			};
 		}

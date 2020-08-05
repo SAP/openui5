@@ -1,0 +1,39 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.UploadCollection",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.UploadCollection.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Page.view.xml",
+					"Page.controller.js",
+					"AppSettings.fragment.xml",
+					"uploadCollection.json",
+					"LinkedDocuments/Business Plan Agenda.doc",
+					"LinkedDocuments/Business Plan Topics.xls",
+					"LinkedDocuments/Document.txt",
+					"LinkedDocuments/Instructions.pdf",
+					"LinkedDocuments/Notes.txt",
+					"LinkedDocuments/Screenshot.jpg",
+					"LinkedDocuments/Third Quarter Results.ppt",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

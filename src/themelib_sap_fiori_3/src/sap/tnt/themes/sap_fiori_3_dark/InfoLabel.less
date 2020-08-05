@@ -1,0 +1,54 @@
+/* ================================== */
+/* CSS for control sap.tnt/InfoLabel  */
+/* Quartz Dark theme                  */
+/* ================================== */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_tnt_InfoLabel_Margin: 0.8125rem;
+@_sap_tnt_InfoLabel_NoTextPadding: 0.5rem;
+@_sap_tnt_InfoLabel_NoTextDisplayOnlyPadding: 0.4375rem;
+@_sap_tnt_InfoLabel_LineHeight: 1rem;
+@_sap_tnt_InfoLabel_LineHeightDisplayOnly: 0.875rem;
+
+// ==========================================================================
+// Variables and mixins
+// ==========================================================================
+
+@_sap_tnt_InfoLabel_ColorsArray:
+	@_sap_tnt_InfoLabel_BackgroundColor1 @_sap_tnt_InfoLabel_BorderColor1,
+	@_sap_tnt_InfoLabel_BackgroundColor2 @_sap_tnt_InfoLabel_BorderColor2,
+	@_sap_tnt_InfoLabel_BackgroundColor3 @_sap_tnt_InfoLabel_BorderColor3,
+	@_sap_tnt_InfoLabel_BackgroundColor4 @_sap_tnt_InfoLabel_BorderColor4,
+	@_sap_tnt_InfoLabel_BackgroundColor5 @_sap_tnt_InfoLabel_BorderColor5,
+	@_sap_tnt_InfoLabel_BackgroundColor6 @_sap_tnt_InfoLabel_BorderColor6,
+	@_sap_tnt_InfoLabel_BackgroundColor7 @_sap_tnt_InfoLabel_BorderColor7,
+	@_sap_tnt_InfoLabel_BackgroundColor8 @_sap_tnt_InfoLabel_BorderColor8,
+	@_sap_tnt_InfoLabel_BackgroundColor9 @_sap_tnt_InfoLabel_BorderColor9,
+	@_sap_tnt_InfoLabel_BackgroundColor10 @_sap_tnt_InfoLabel_BorderColor10;
+
+.create-classes-for-background-and-border-colors(backgroundColor, @_sap_tnt_InfoLabel_ColorsArray);
+
+// Iterate over the InfoLabel ColorsArray and create separate class for each
+// color named with the passed prefix and the number of the color
+.create-classes-for-background-and-border-colors(@prefix, @list) {
+	.iter(length(@list));
+	.iter(@i) when (@i > 0) {
+		.iter(@i - 1);
+
+		@pair: extract(@list, @i);
+		@backgroundColor: extract(@pair, 1);
+		@borderColor: extract(@pair, 2);
+
+		.@{prefix}@{i} {
+			border: 1px solid @borderColor;
+			background-color: @backgroundColor;
+
+			.sapTntInfoLabelInner {
+				color: @sapUiBaseText;
+			}
+		}
+	}
+}

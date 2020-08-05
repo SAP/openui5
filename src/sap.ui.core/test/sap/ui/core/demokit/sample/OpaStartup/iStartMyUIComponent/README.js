@@ -1,3 +1,5 @@
+/*global QUnit */
+
 sap.ui.require(
 	[
 		"sap/m/Panel",
@@ -21,11 +23,11 @@ sap.ui.require(
 
 	var oText = new Text(),
 		oPanel = new Panel({
-		headerText: "README",
-		expandable: true,
-		expanded: true,
-		content: oText
-	});
+			headerText: "README",
+			expandable: true,
+			expanded: true,
+			content: oText
+		});
 
 	oText.setText("******Definition******\n" +
 		"	The function iStartMyUIComponent allows starting a UIComponent by using a component.js file" +

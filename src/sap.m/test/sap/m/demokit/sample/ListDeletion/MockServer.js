@@ -1,5 +1,5 @@
-sap.ui.define(['jquery.sap.global','sap/ui/core/util/MockServer'],
-	function(jQuery, MockServer1) {
+sap.ui.define(['sap/base/util/extend', 'sap/ui/core/util/MockServer'],
+	function(extend, StandardMockServer) {
 	"use strict";
 
 	// load mock server
@@ -13,17 +13,17 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/util/MockServer'],
 
 		rootUri : "/mockserver/",
 
-		dataPath : "test-resources/sap/ui/demokit/explored/mockserver/",
+		dataPath : "test-resources/sap/ui/documentation/sdk/mockserver/",
 
 		start : function (oConfig) {
 			// configure respond to requests delay
-			MockServer1.config(jQuery.extend({
+			StandardMockServer.config(extend({
 				autoRespond : true,
 				autoRespondAfter : 2000
 			}, oConfig));
 
 			// create mockserver
-			this.server = new MockServer1({
+			this.server = new StandardMockServer({
 				rootUri : this.rootUri
 			});
 
@@ -43,4 +43,4 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/util/MockServer'],
 
 	return MockServer;
 
-}, /* bExport= */ true);
+});

@@ -6,6 +6,9 @@
 .sapMObjLItem {
 	box-sizing: border-box;
 	vertical-align: baseline;
+	/* set this otherwise if one of the parents has "nowrap" style this
+	affects the whole arrangement of the ObjectListItem */
+	white-space: normal;
 }
 
 .sapMObjLItem > .sapMLIBContent {
@@ -109,8 +112,23 @@ html[dir=rtl] .sapMObjLAttrDiv {
 	white-space: nowrap;
 	overflow: hidden;
 	width: 100%;
-}
+	&.sapMObjectAttributeActive {
+		.sapMObjectAttributeTitle,
+		.sapMObjectAttributeText {
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+			max-width: 50%;
+		}
+		&.sapMObjectAttributeTextOnly {
+			.sapMObjectAttributeTitle,
+			.sapMObjectAttributeText {
+				max-width: 100%;
+			}
+		}
 
+	}
+}
 
 /* First and second attributes get one line with ellipsis */
 .sapMObjLAttrRow:nth-child(1)>.sapMObjLAttrDiv .sapMObjectAttributeDiv,
@@ -142,6 +160,14 @@ html[dir=rtl] .sapMObjLStatusDiv {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	width: 100%;
+	.sapMObjStatusText {
+		word-break: normal;
+	}
+}
+
+// invertedStatus in ObjectListItem
+.sapMObjLAttrRow .sapMObjStatusInverted {
+	height: 1.1875rem;
 }
 
 .sapMObjLBottomRow .sapMObjStatusIcon {
@@ -162,6 +188,7 @@ html[dir=rtl] .sapMObjLStatusDiv {
 	align-items: center;
 }
 
+/* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser="ie11"] .sapMObjLItem > .sapMLIBContent
 {
 	width: 100%;

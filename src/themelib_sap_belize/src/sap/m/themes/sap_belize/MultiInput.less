@@ -2,29 +2,3 @@
 /* CSS for control sap.m/MultiInput  */
 /* Belize theme                      */
 /* ================================= */
-
-.sapMInputFocused:not(.sapMInputBaseReadonly) .sapMMultiInputBorder::before {
-	border: 1px dotted @sapUiContentFocusColor;
-	content: "";
-	position: absolute;
-	top: 1px;
-	right: 1px;
-	bottom: 1px;
-	left: 1px;
-	pointer-events: none;
-	z-index: 2;
-}
-
-.sapMMultiInput.sapMInputBaseState {
-	.sapMMultiInputBorder {
-		border-width: 2px;
-	}
-
-	.sapMInputValHelpInner {
-		line-height: 2.275rem
-	}
-}
-
-.sapUiSizeCompact .sapMMultiInput.sapMInputBaseState .sapMInputValHelpInner {
-	line-height: 1.4rem
-}

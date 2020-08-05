@@ -37,3 +37,21 @@
 .sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr.sapMListTblSubRow:nth-child(4n).sapMLIBSelected.sapMLIBHoverable:hover{
 	background-color: darken(@sapUiListSelectionBackgroundColor, 4);
 }
+
+/* Calendar overstyling */
+
+html.sap-desktop .sapMPlanCal .sapUiCalItem:not(.sapUiCalItemSel):hover {
+	background-color: darken(@sapUiContentForegroundColor,5);
+}
+
+html.sap-desktop .sapMPlanCal .sapUiCalItemWeekEnd:not(.sapUiCalItemSel):hover {
+	background-color: darken(@sapUiContentForegroundColor, 10);
+}
+
+html.sap-desktop .sapMPlanCal .sapUiCalItemOtherMonth:not(.sapUiCalItemSel):hover {
+	background-color: darken(@sapUiListBackground, 10);
+}
+
+html.sap-desktop .sapMPlanCal .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover {
+	background-color: transparent;
+}

@@ -1,0 +1,50 @@
+<mvc:View
+	controllerName="sap.m.sample.TreeExpandMulti.Page"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Tree
+		id="Tree"
+		items="{path: '/'}"
+		mode="MultiSelect">
+		<headerToolbar>
+			<OverflowToolbar>
+				<content>
+					<Title text="Tree Nodes"/>
+					<ToolbarSpacer/>
+					<Button
+						id="expandMulti"
+						text="expand selected nodes"
+						press="onExpandMultiPress"/>
+					<Button
+						id="collapseMulti"
+						text="collapse selected nodes"
+						press="onCollapseMultiPress"/>
+					<MultiComboBox id="idSticky"
+						placeholder="Sticky options"
+						selectionFinish="onSelectionFinish"
+						width="15%">
+						<items>
+							<core:Item  text="Header Toolbar"
+								key="HeaderToolbar"/>
+							<core:Item  text="Info Toolbar"
+								key="InfoToolbar"/>
+						</items>
+					</MultiComboBox>
+					<ToggleButton id="toggleInfoToolbar"
+						text="Hide/Show InfoToolbar"
+						press="onToggleInfoToolbar" />
+				</content>
+			</OverflowToolbar>
+		</headerToolbar>
+		<infoToolbar>
+			<OverflowToolbar>
+				<content>
+					<Title text="Tree's info toolbar"/>
+				</content>
+			</OverflowToolbar>
+		</infoToolbar>
+		<StandardTreeItem title="{text}"/>
+	</Tree>
+</mvc:View>

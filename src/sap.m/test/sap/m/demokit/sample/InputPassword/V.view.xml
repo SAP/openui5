@@ -1,16 +1,12 @@
 <mvc:View
-	xmlns:l="sap.ui.layout"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Label text="Password" labelFor="passwordInput"/>
-			<Input
-				id="passwordInput"
-				type="Password"
-				placeholder="Enter password ..." />
-		</l:content>
+	xmlns:l="sap.ui.layout">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Label text="Password" labelFor="passwordInput" />
+		<Input
+			id="passwordInput"
+			type="Password"
+			placeholder="Enter password" />
 	</l:VerticalLayout>
 </mvc:View>

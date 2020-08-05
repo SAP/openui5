@@ -1,0 +1,35 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "a580fccf49ffadc3aaeed2132c81aa5b2867e693",
+        "type": "FIX",
+        "text": " sap.ui.rta - Save as app variant browser reload unregistration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070003933"
+          }
+        ]
+      },
+      {
+        "id": "d9ef949ee799684b62f8ab94adf17c93c4c49e29",
+        "type": "FIX",
+        "text": " disabling of ui adaptation extensionPoint functionality",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002752872020"
+          }
+        ]
+      },
+      {
+        "id": "614fae41f7234c347a40d3758048e6c64fbc85be",
+        "type": "FIX",
+        "text": " sap.ui.rta: Getting rid of sinon.fakeServer as it was never used",
+        "references": []
+      }
+    ]
+  }
+}

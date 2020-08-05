@@ -1,11 +1,11 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
-	function(jQuery/*, Controller*/) {
+sap.ui.define(['sap/base/Log', 'sap/ui/core/mvc/Controller'],
+	function(Log/*, Controller*/) {
 	"use strict";
 
 	sap.ui.controller("samples.components.ext.customer.CustomSubSubView1", {
 
 		onInit: function() {
-			jQuery.sap.log.info("CustomSubSubView1 Controller onInit()");
+			Log.info("CustomSubSubView1 Controller onInit()");
 		},
 
 		formatNumber: function(iNumber) {

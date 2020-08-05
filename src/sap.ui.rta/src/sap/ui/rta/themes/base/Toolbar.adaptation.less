@@ -1,0 +1,119 @@
+/******************************************************************
+	Style of the RTA Toolbar (type: adaptation) - base Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor: darken(desaturate(@sapChart_OrderedColor_1, 48%), 14%); //435060
+@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiWhite; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: #ffc847; //@sapAccentColor1 (on HCB)
+@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: #b2e484; //@sapAccentColor8 (on HCB)
+
+.sapUiRtaMode {
+	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
+		border: 0.125rem solid @_sap_ui_rta_Toolbar_Adaptation_TextColor; //2px
+		border-image: repeating-linear-gradient(-45deg, @_sap_ui_rta_Toolbar_Adaptation_BaseColor, @_sap_ui_rta_Toolbar_Adaptation_BaseColor 4px, @_sap_ui_rta_Toolbar_Adaptation_TextColor 4px, @_sap_ui_rta_Toolbar_Adaptation_TextColor 6px) 4;
+		box-shadow: 0 10px 20px fade(black, 19), 0 6px 6px fade(black, 23), 0 0 0 1px fade(white, 20), 0 1px 0 0 fade(white, 20);
+
+		.sapMFlexBox {
+			margin-left: 0;
+			margin-right: 0;
+			height: 2.5rem; //40px
+			background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
+		}
+
+		.sapMHBox.sapMFlexBox:first-child.sapMTBShrinkItem {
+			min-width: 0; /* Overrider '.sapMTBShrinkItem' */
+		}
+
+		.sapMHBox.sapMFlexBox:last-child {
+			.sapMFlexItem:first-child {
+				.sapMSegB {
+					margin-left: 0;
+				}
+			}
+		}
+
+		// Disable the right margin for Exit button
+		> .sapMFlexItem:last-child {
+			> .sapMFlexItem:last-child {
+				.sapMBtn:last-child {
+					margin-right: 0;
+				}
+			}
+		}
+	}
+	
+	.sapUiRtaVersionHistory {
+		background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
+		border: 0.125rem solid @_sap_ui_rta_Toolbar_Adaptation_TextColor; //2px
+		border-image: repeating-linear-gradient(-45deg, @_sap_ui_rta_Toolbar_Adaptation_BaseColor, @_sap_ui_rta_Toolbar_Adaptation_BaseColor 4px, @_sap_ui_rta_Toolbar_Adaptation_TextColor 4px, @_sap_ui_rta_Toolbar_Adaptation_TextColor 6px) 4;
+		box-shadow: 0 10px 20px fade(black, 19), 0 6px 6px fade(black, 23), 0 0 0 1px fade(white, 20), 0 1px 0 0 fade(white, 20);
+
+		.sapMLIBHighlightWarning {
+			background: @_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor;
+		}
+
+		.sapMLIBHighlightWarning ~ .sapMLIBContent .sapMFeedListItemTextString {
+			color: @_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor;
+		}
+
+		.sapMLIBHighlightSuccess {
+			background:@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor;
+		}
+
+		.sapMLIBHighlightSuccess ~ .sapMLIBContent .sapMFeedListItemTextString {
+			color: @_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor;
+		}
+
+		.sapMLIBHighlightSuccess ~ .sapMLIBContent .sapMFeedListItemInfoText,
+		.sapMLIBHighlightSuccess ~ .sapMLIBContent .sapMFeedListItemTimestampText {
+			color: darken(@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor, 10%);
+		}
+
+		.sapMFeedListItemTextString {
+			color: @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+		}
+
+		.sapMFeedListItemFooter,
+		.sapMFeedListItemTimestampText,
+		.sapMFeedListItemInfoText {
+			color: darken(@_sap_ui_rta_Toolbar_Adaptation_TextColor, 20%);
+		}
+
+		.sapMPopoverArr:after,
+		.sapMFeedListShowSeparatorsAll.sapMLIB,
+		.sapMListTblCell,
+		.sapMListTblNavCol {
+			background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
+			border: 0;
+		}
+	}
+}
+
+.sapUiRtaToolbarSwitcherSection .sapMSegBBtn.sapMSegBBtnSel .sapMSegBBtnInner .sapUiIcon,
+.sapUiRtaToolbarSwitcherSection .sapMSegBBtn .sapUiIcon {
+	color: @_sap_ui_rta_Toolbar_Base_TextColor;
+}
+
+.sapUiRtaVersionButton {
+	color: @_sap_ui_rta_Toolbar_Base_TextColor;
+}
+
+.sapUiRtaVersionButton.sapUiRtaDraftVersionAccent > span > span {
+	color: @_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor;
+}
+
+.sapUiRtaVersionButton.sapUiRtaActiveVersionAccent > span > span {
+	color: @_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor;
+}
+
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaVersionButton,
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaVersionButton {
+	max-width: ~"calc(90% - 160px)";
+}
+
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaVersionButton {
+	max-width: ~"calc(100% - 100px)";
+}
+
+.sapUiRtaToolbarIconAndDraftSection > div {
+	width: 100%;
+}

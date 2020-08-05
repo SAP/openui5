@@ -3,8 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils", "jquery.sap.global"
-], function(Utils, jQuery) {
+	"sap/base/Log"
+], function(
+	Log
+) {
 	"use strict";
 
 	/**
@@ -23,10 +25,10 @@ sap.ui.define([
 	 */
 	var ChangeRegistryItem = function(mParam) {
 		if (!mParam.changeTypeMetadata) {
-			Utils.log.error("sap.ui.fl.registry.ChangeRegistryItem: ChangeTypeMetadata required");
+			Log.error("sap.ui.fl.registry.ChangeRegistryItem: ChangeTypeMetadata required");
 		}
 		if (!mParam.controlType) {
-			Utils.log.error("sap.ui.fl.registry.ChangeRegistryItem: ControlType required");
+			Log.error("sap.ui.fl.registry.ChangeRegistryItem: ControlType required");
 		}
 
 		this._changeTypeMetadata = mParam.changeTypeMetadata;

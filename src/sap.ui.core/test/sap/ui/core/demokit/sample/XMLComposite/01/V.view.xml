@@ -1,0 +1,6 @@
+<mvc:View height="100%" controllerName="sap.ui.core.sample.XMLComposite.01.C" 
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:mm="sap.m" 
+	xmlns:fc="sap.ui.core.sample.XMLComposite.01.comp">
+	<fc:SearchField placeholder="{/placeholder}" search="onSearch" buttonText="{/searchText}"></fc:SearchField>
+</mvc:View>

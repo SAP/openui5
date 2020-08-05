@@ -5,19 +5,23 @@
 		"applicationVersion" : {
 			"version" : "${version}"
 		},
-		"description" : "{{sap.app.description}}",
+		"description" : "Example for OData V4 EPM Sales Orders",
 		"dataSources" : {
 			"default" : {
 				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/?custom-option=value",
 				"type" : "OData",
 				"settings" : {
+					"annotations" : ["localAnnotations"],
 					"odataVersion" : "4.0"
 				}
+			},
+			"localAnnotations" : {
+				"uri" : "data/localAnnotations.xml",
+				"type" : "ODataAnnotation"
 			}
 		},
 		"id" : "sap.ui.core.sample.odata.v4.SalesOrders",
-		"i18n" : "i18n/i18n.properties",
-		"title" : "{{sap.app.title}}",
+		"title" : "EPM Sales Orders",
 		"type" : "application"
 	},
 	"sap.ui" : {
@@ -36,6 +40,9 @@
 					"Main.controller.js",
 					"Main.view.xml",
 					"manifest.json",
+					"SandboxModel.js",
+					"../../../common/Controller.js",
+					"../../../common/SandboxModelHelper.js",
 					"../../../common/ValueHelp.js"
 				]
 			}
@@ -54,29 +61,24 @@
 		"models" : {
 			"" : {
 				"dataSource" : "default",
+				"preload" : true,
 				"settings" : {
 					"autoExpandSelect" : true,
 					"earlyRequests": true,
 					"groupProperties" : {
 						"FavoriteProductGroup" : {"submit" : "Auto"},
 						"myAutoGroup" : {"submit" : "Auto"},
-						"myDirectGroup" : {"submit" : "Direct"}
+						"myDirectGroup" : {"submit" : "Direct"},
+						"SalesOrderUpdateGroup" : {"submit" : "API"},
+						"UpdateGroup" : {"submit" : "API"}
 					},
 					"operationMode" : "Server",
 					"synchronizationMode" : "None",
 					"updateGroupId" : "UpdateGroup"
-				}
+				},
+				"type" : "sap.ui.core.sample.odata.v4.SalesOrders.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
-		},
-		"rootView" : {
-			"async" : true,
-			"type" : "XML",
-			"viewName" : "Main.view.xml"
-		},
-		"resources": {
-			"js": [{
-				"uri": "SalesOrdersSandbox.js"
-			}]
 		}
 	}
 }

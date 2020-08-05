@@ -1,0 +1,230 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "60486d670e61e26e1845f4c9c901154cd86fac3c",
+        "type": "FIX",
+        "text": "sap.ui.rta Reload page for app descriptor changes",
+        "references": []
+      },
+      {
+        "id": "f8b94edd3d4dab0a1b2e2fca4125ebb600d3506f",
+        "type": "FIX",
+        "text": "sap.ui.rta - Add elements dialog model contains circular references",
+        "references": []
+      },
+      {
+        "id": "ecd8e7b5544b1b841051625b8d11aa9fda56fc0b",
+        "type": "FIX",
+        "text": "sap.ui.rta - additionalElementsDialog replaced deprecated label",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870291814"
+          }
+        ]
+      },
+      {
+        "id": "280970a41dbf5d7b361b190b37988fd97b50d522",
+        "type": "FIX",
+        "text": ": RTA rename jumping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870174587"
+          }
+        ]
+      },
+      {
+        "id": "27cee942e881e74a0c269876a5f2edbad1c86a5e",
+        "type": "FIX",
+        "text": "sap.ui.rta - Automatic rename on groups created in empty forms",
+        "references": []
+      },
+      {
+        "id": "ecda8f745941b0ce0ba5b2d897a28b4c9b60c77c",
+        "type": "FIX",
+        "text": ": RTA - better label display in Add Elements dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870209366"
+          }
+        ]
+      },
+      {
+        "id": "67cf43b30ad9e5dc7d183a2e978a2058ef815e88",
+        "type": "FIX",
+        "text": "Already persisted change should not be saved again",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880250239"
+          }
+        ]
+      },
+      {
+        "id": "c1db68b448ce9fd9b1607217c1a8cd89c0739d87",
+        "type": "FIX",
+        "text": "Command and Index mismatch in stack error response",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880267194"
+          }
+        ]
+      },
+      {
+        "id": "7482e1626a2fa9f0559e08f6d3d96d994272f5a5",
+        "type": "FIX",
+        "text": "sap.ui.rta: deselect overlays before removing them",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880273071"
+          }
+        ]
+      },
+      {
+        "id": "592004d1eb67972e445b9410a5153453f1fd6cc2",
+        "type": "FIX",
+        "text": "Revise arrow key navigation",
+        "references": []
+      },
+      {
+        "id": "4d453761642b9dd95a8c6316ca261d7e12d6183f",
+        "type": "FIX",
+        "text": "sap.ui.rta - Prevent overlay plugin evaluation during drag&drop",
+        "references": []
+      },
+      {
+        "id": "cb7a43859a68149f9ce5ffb577321fab0ff46f87",
+        "type": "FIX",
+        "text": "sap.ui.rta: Fixed the text for failing catalog assignment",
+        "references": []
+      },
+      {
+        "id": "a2fb174c28e2c167e8251ad02a92a6bb7effebd2",
+        "type": "FIX",
+        "text": "sap.ui.rta:Change service.Outline.OutlineObject visibility",
+        "references": []
+      },
+      {
+        "id": "1a1d07ef0dfd27686df2496eef5d824f999bb062",
+        "type": "FIX",
+        "text": "Issues with displaying error messages in case of failed save",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880353309"
+          }
+        ]
+      },
+      {
+        "id": "a32147a2be046d29b99de8582fe29f899da816cc",
+        "type": "FIX",
+        "text": "Revise message text in case of save error",
+        "references": []
+      },
+      {
+        "id": "9dc5f0fc0f8d9ad102b545278fa60c44e6702e0b",
+        "type": "FIX",
+        "text": "sap.ui.rta - AppVariantManager test bugfix",
+        "references": []
+      },
+      {
+        "id": "2b9ccf176e22630692f0fa40f35cf4b63f573724",
+        "type": "FIX",
+        "text": "sap.ui.rta - Improve language compatibility of RTA texts",
+        "references": []
+      },
+      {
+        "id": "a13538a8f845326798356b724a9fe95b00ec7621",
+        "type": "FIX",
+        "text": "sap.ui.rta - Rename plugin handling of overlays as arrays",
+        "references": []
+      },
+      {
+        "id": "c2598768ee67da3087835a99399eeaa63cae7011",
+        "type": "FIX",
+        "text": ": Support UI Adaptation embedded components scenario",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003178522018"
+          }
+        ]
+      },
+      {
+        "id": "4f6142d15c07b404b51899c9c8eaee11f71b0756",
+        "type": "FIX",
+        "text": "sap.ui.fl - invalidate cache on exit rta",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880409794"
+          }
+        ]
+      },
+      {
+        "id": "80f6fa1bc18e958b909b289b17ed60d7f5549ba9",
+        "type": "FIX",
+        "text": "Fix error in Settings changes containing binding",
+        "references": []
+      },
+      {
+        "id": "7801ff77bb9434a5377d63a65a3c0797125d58cd",
+        "type": "FIX",
+        "text": "Fix error in global flex settings modification",
+        "references": []
+      },
+      {
+        "id": "201f13ce60c33c9337bfa30705ed432225b1c20f",
+        "type": "FIX",
+        "text": "sap.ui.rta - remove useless tests",
+        "references": []
+      },
+      {
+        "id": "fa6bd6b7cd55b302d1902cf3a24b6562c3661384",
+        "type": "FIX",
+        "text": "sap.ui.rta: Disable actions in relevant container without stable id",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880415501"
+          }
+        ]
+      },
+      {
+        "id": "7c76c9461fee6186d4d7f9fa05ed68a837aea389",
+        "type": "FIX",
+        "text": "Fix errors in stable id check",
+        "references": []
+      },
+      {
+        "id": "7216b4f4c9a0ecf2000a084b3b47455daa05f111",
+        "type": "FIX",
+        "text": "sap.ui.rta - followup - get rid of sync requests change",
+        "references": []
+      },
+      {
+        "id": "2f01d9d8e5b8d0d7f367a90f6993c3ba95e4bd24",
+        "type": "FIX",
+        "text": "sap.ui.rta - settings bug fixed",
+        "references": []
+      },
+      {
+        "id": "e222963cc39901da285f21bacd1c81c41a684c44",
+        "type": "FIX",
+        "text": "sap.ui.rta: Fixing busyindicator in the ManageAppsController",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880479380"
+          }
+        ]
+      }
+    ]
+  }
+}

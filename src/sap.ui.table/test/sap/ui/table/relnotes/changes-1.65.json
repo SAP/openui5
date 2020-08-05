@@ -1,0 +1,24 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "9395969f2833c488d27e7917c554bf1e7590a719",
+        "type": "FIX",
+        "text": "AnalyticalTable: Correctly open group row context menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980017041"
+          }
+        ]
+      },
+      {
+        "id": "a00e413d0dfe44ef9fc637595b3bcfd9759153fd",
+        "type": "FIX",
+        "text": "Table: Open cell filter menus on correct cell",
+        "references": []
+      }
+    ]
+  }
+}

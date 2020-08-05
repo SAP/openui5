@@ -1,0 +1,79 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "card.explorer.format.float",
+		"type": "card",
+		"title": "Sample for Float Formatters",
+		"subTitle": "Sample for Float Formatters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Float",
+				"Formatter",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Order status",
+			"subTitle": "Orders exceeding {= format.float(50.00, {decimals:2, style:'short'}, 'de' )} are highlighted as important",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			},
+			"status": {
+				"text": "5 of 5"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Keyboard and Mouse",
+						"image": "sap-icon://keyboard-and-mouse",
+						"Price": 155.5
+					},
+					{
+						"Name": "ITelO Vault",
+						"image": "sap-icon://shield",
+						"Price": 30.123
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"image": "sap-icon://laptop",
+						"Price": 1234567890
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"image": "sap-icon://desktop-mobile",
+						"Price": 69.697
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"image": "sap-icon://keyboard-and-mouse",
+						"Price": 40.001
+					}
+				]
+			},
+			"maxItems": 5,
+			"item": {
+				"title": "{Name}",
+				"description": "Price:",
+				"highlight": "{= ${Price} < 50 ? 'Success' : 'Error'}",
+				"icon": {
+					"src": "{image}"
+				},
+				"info": {
+					"value": "{= format.float(${Price}, {decimals:2, style:'short'})}"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,575 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "43bea542817f1c39599d83576cc3b4c41e74b6fc",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Accessibility overhauled",
+        "references": []
+      },
+      {
+        "id": "2c7c9ac657dab66049dc9843a9d893df23a7d8f0",
+        "type": "FIX",
+        "text": " sap.m.Button: drag and drop now works on safari and firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080226059"
+          }
+        ]
+      },
+      {
+        "id": "b7c3a79f0eab00a55aad1473e59b510e1e8ed03a",
+        "type": "FIX",
+        "text": " sap.m.Image, sap.m.Avatar: Outline no longer hidden in sap.ui.layout.Grid",
+        "references": []
+      },
+      {
+        "id": "b7002d66e653d69bbfb688e25e6eadb695257e1b",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Ensure extra space in DynamicPageTitle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080160972"
+          }
+        ]
+      },
+      {
+        "id": "885d85cbf8db9885a8d5de7ac709c61e19ae10fc",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Truncation on destroyTokens fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080209984"
+          }
+        ]
+      },
+      {
+        "id": "a8130e2f755c0965b7a36d32a01cea828c0d3646",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Prevent resizing of content above max-height",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2030432314"
+          }
+        ]
+      },
+      {
+        "id": "0e458df56d1dea8317d7596a02993211f0293ced",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: selectedKey reset on user input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000427588 2020"
+          }
+        ]
+      },
+      {
+        "id": "fb6d1090a66798e87cee5d4849d73fc814ff8c77",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: fixed alignment of the unit part",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070137379"
+          }
+        ]
+      },
+      {
+        "id": "416cda4dc2b68426792dfd0824f45cfdc3d8b577",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Alignment of Buttons in Popover is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080255196"
+          }
+        ]
+      },
+      {
+        "id": "9d2fa620d9240061abd223243fee2e0e90c9686b",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Fixed multiple button selection in radio group",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080236008"
+          }
+        ]
+      },
+      {
+        "id": "430b5d389d2c1556cad4aa20434087d9d5ab413b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: styles calculation removal",
+        "references": []
+      },
+      {
+        "id": "218e420324610c571591df07176e5ad026632dbb",
+        "type": "FIX",
+        "text": " sap.m.Slider, sap.m.RangeSlider: Focus outline adjusted in High Contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080219138"
+          }
+        ]
+      },
+      {
+        "id": "57c5ddf3eb2f8caf56408d21c582c638d72922c8",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Now the focus is not trapped in the field",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080237060"
+          }
+        ]
+      },
+      {
+        "id": "e96a5d948fdacfeb2c6c4d86d98362966f5dd21a",
+        "type": "FIX",
+        "text": " sap.m.StepInput: keyboard interaction is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080237020"
+          }
+        ]
+      },
+      {
+        "id": "0350de1666484ffe38be7c68b6acb6e9a4b7082e",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: have tooltips on their arrow buttons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080178582"
+          }
+        ]
+      },
+      {
+        "id": "bb7c5b4ee535f8a0ab19429d6510716205c3ed16",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080255126"
+          }
+        ]
+      },
+      {
+        "id": "2da07dabdaf80e140c0a63cb4e156b8651afff92",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Now finds first focusable element even if it is missing an id",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080223380"
+          }
+        ]
+      },
+      {
+        "id": "5a3e70fe253af27cc16a7263ad88f9a228e5b443",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Belize alignment fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080266204"
+          }
+        ]
+      },
+      {
+        "id": "c2f8b71e7594bc0469115db1d2b1407e11008250",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Input\u0027s width calculation is now in decimals",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070139347"
+          }
+        ]
+      },
+      {
+        "id": "789814cbc816b4bb0a20120e55ab462ffbf9626f",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Sample update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080177577"
+          }
+        ]
+      },
+      {
+        "id": "6580a0d54a5b94808fe0dfa1798b37b259c2a5e6",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: manages selectedAppointments association correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003492272020"
+          }
+        ]
+      },
+      {
+        "id": "d68da655664f6a1dcf386909e1d9faeca651b4cf",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Return defaultValue of width property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080265989"
+          }
+        ]
+      },
+      {
+        "id": "70c6cc0a1a8e99ded039995708019cf063266b4e",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Value is now cleared when setValue(\"\") is called",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080281248"
+          }
+        ]
+      },
+      {
+        "id": "7554fabcbc5f700ee47495163b3cdb377403206c",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: on focus in behavior over the input is now consistent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003307462020"
+          }
+        ]
+      },
+      {
+        "id": "cf07a7dd42bcf85d0082717d9abe93e7f4da7a03",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Model refresh shows No Data text.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003060082020"
+          }
+        ]
+      },
+      {
+        "id": "301f13153c4ca8e5d97a3d83f55dd1d4b1fe86b7",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Revert Model refresh shows No Data text.",
+        "references": []
+      },
+      {
+        "id": "f857170e51d6b05f7e8310f669cc368e0616fc8d",
+        "type": "FIX",
+        "text": " sap.m.Wizard: NextStep documentation updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080264920"
+          }
+        ]
+      },
+      {
+        "id": "68d358827e48d27390f5943d0735a22a50434532",
+        "type": "FEATURE",
+        "text": " Show many shortcut hints",
+        "references": []
+      },
+      {
+        "id": "7943c80b7bc352a48fd403564573702b1d1c520f",
+        "type": "FEATURE",
+        "text": " Upload Collection / Upload Set: Align icons to UXC standard",
+        "references": []
+      },
+      {
+        "id": "a1fd4234ccb042570535cbf9c4e9ebfa57ec20b9",
+        "type": "FEATURE",
+        "text": " sap.m.BadgeEnabler: Updates on badge now handled by the control",
+        "references": []
+      },
+      {
+        "id": "b567436964718592726d59147c782ccf5a5808a5",
+        "type": "FEATURE",
+        "text": " sap.m.IBadgeEnabler: Implement animations",
+        "references": []
+      },
+      {
+        "id": "273a9866f362987b7ada5eee03e086c4fb101a1f",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Appointment rounding width",
+        "references": []
+      },
+      {
+        "id": "fe94e64b6521720a1695a7eacfe36ad937bd256b",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Appointment text on 3 lines",
+        "references": []
+      },
+      {
+        "id": "64d821c9586efdeaba263eb02e06755ccebd406f",
+        "type": "FEATURE",
+        "text": " sap.m.SplitButton: Enable shortcut hints",
+        "references": []
+      },
+      {
+        "id": "e17e780c74404e4ec641cc8cccdc7bc02ff5aa90",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.DateTypeRange: Allows specialDates to be also non-working days",
+        "references": []
+      },
+      {
+        "id": "766fece7ffc4af37e7bc130e99a440ab24f67d02",
+        "type": "FIX",
+        "text": " Form. use Title in Toolbar as default aria-labelledby",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080231830"
+          }
+        ]
+      },
+      {
+        "id": "44647c83f778005c3747d34cba7d7257e2a71f7c",
+        "type": "FIX",
+        "text": " sap.m.BadgeEnabler: visual improvements added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080309616"
+          }
+        ]
+      },
+      {
+        "id": "bece84fa33fb85557ccb4a7384af1af37b0f6ef2",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: Fix in OPA test press action",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080264964"
+          }
+        ]
+      },
+      {
+        "id": "a2ed5b94c2711cc511ddde05166757d0b9b1c2f7",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Focus no longer remains in the input after focusout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080221553"
+          }
+        ]
+      },
+      {
+        "id": "4f26d4557fa4ecb780c5fd3beaef283eec512b12",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: improvement in the documentation about change event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080275021"
+          }
+        ]
+      },
+      {
+        "id": "7d63baa05d213d206ac0aa16221b4e2618d85caf",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: week selection works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080273028"
+          }
+        ]
+      },
+      {
+        "id": "484a8b05bd84c9c3814806cab5afe1d80d5e8603",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Overflow texts are now wrapped correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080264225"
+          }
+        ]
+      },
+      {
+        "id": "9429fd82725c01b7f523101bbdf4982f607c1b42",
+        "type": "FIX",
+        "text": " sap.m.Label: Colon\u0027s margins are now correct in French language",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080233963"
+          }
+        ]
+      },
+      {
+        "id": "e1be7ea5aec3713b4a2e948e31638a2f3659b485",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Arrow icon now visible in footer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080291615"
+          }
+        ]
+      },
+      {
+        "id": "29409b365893171d61cbca9be4c18770a8d3b51a",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Image alternative is now read out",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080281816"
+          }
+        ]
+      },
+      {
+        "id": "447d1b7d2a2be49d472ad1a358a0c3f9941c12ac",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: proper color parameter is set for ObjectNumber",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080304878"
+          }
+        ]
+      },
+      {
+        "id": "377dd72991abf0a39ab3d997afdf65c348a2bf39",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: GenerictTag with DynamicPageTitle fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070220678"
+          }
+        ]
+      },
+      {
+        "id": "d5f951a9f9078fa5efdd4802c2aeab48ccabb563",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now is possible to set directly property to Appointment hight",
+        "references": []
+      },
+      {
+        "id": "07c96adcae9be2e0df707e12f5d90c5144864603",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: now Appointment don\u0027t cut the text when resizing is half-size",
+        "references": []
+      },
+      {
+        "id": "b54a329a6096151e59dfe7118f5d4c9e81035a88",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: optimization of a failing test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080159964"
+          }
+        ]
+      },
+      {
+        "id": "52bae598d6d5fe28c92cbdc84d6b12a417ec9892",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: selected date is in visible range after navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080272605"
+          }
+        ]
+      },
+      {
+        "id": "282b62f8c8f885735dbf38ba88f3d556e14156d3",
+        "type": "FIX",
+        "text": " sap.m.Popover: beforeClose now fired correctly on auto-close",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080253679"
+          }
+        ]
+      },
+      {
+        "id": "c9bde94bbcd02a5a6ebc70270fbf0a5718fa1fed",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed out of bounds text in the list items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080282515"
+          }
+        ]
+      },
+      {
+        "id": "a315a988179bc5490380b99a468cfb4171595b03",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Modify appointment sample is style aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080303061"
+          }
+        ]
+      },
+      {
+        "id": "6cca129e6f08811a55e0d176f4859db6f0d57846",
+        "type": "FIX",
+        "text": " sap.m.StepInput: getAccessibilityInfo method provided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080233937"
+          }
+        ]
+      },
+      {
+        "id": "4dd48bc0a90a9c6b01bb35dde90a58aa3e5a3b97",
+        "type": "FIX",
+        "text": " sap.m.TabContainerItem: renders its custom data",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080281816"
+          }
+        ]
+      },
+      {
+        "id": "47cf3f1b40168a4ac634e2b4fb145b7a64552fab",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: now single- and multi-select filter subitems are set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080289000"
+          }
+        ]
+      },
+      {
+        "id": "b8f9884c6168ab58f79a8c8f920f6c3f7036aea1",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Next button handler now fired before attachComplete",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080264920"
+          }
+        ]
+      }
+    ]
+  }
+}

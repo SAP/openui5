@@ -1,408 +1,421 @@
 /*global QUnit */
 
-sap.ui.require([
-	"sap/ui/fl/codeExt/CodeExtManager", "sap/ui/fl/Change", "sap/ui/fl/Utils"
-], function(CodeExtManager, Change, Utils) {
+sap.ui.define([
+	"sap/ui/fl/codeExt/CodeExtManager",
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4"
+], function(
+	CodeExtManager,
+	Storage,
+	Utils,
+	Layer,
+	LayerUtils,
+	jQuery,
+	sinon
+) {
 	"use strict";
 
-	QUnit.test("createOrUpdateCodeExtChange throws an error if no codeRef is provided", function(assert) {
+	var sandbox = sinon.sandbox.create();
 
-		var oPropertyBag = {
-			content: {
-				codeRef: undefined
-			},
-			selector: {
-				id: "controllerName"
-			}
-		};
+	QUnit.module("CodeExtManager", {
+		afterEach : function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("createOrUpdateCodeExtChange throws an error if no codeRef is provided", function(assert) {
+			var oPropertyBag = {
+				content: {
+					codeRef: undefined
+				},
+				selector: {
+					id: "controllerName"
+				}
+			};
 
-		assert.throws(function() {
-			CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag);
-		}, new Error("no code reference passed for the code extension change"), "an error was thrown");
+			assert.throws(function() {
+				CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag);
+			}, new Error("no code reference passed for the code extension change"), "an error was thrown");
+		});
 
-	});
+		QUnit.test("createOrUpdateCodeExtChange throws an error if no controller name is provided", function(assert) {
+			var oPropertyBag = {
+				content: {
+					codeRef: "codeRef"
+				}
+			};
 
-	QUnit.test("createOrUpdateCodeExtChange throws an error if no controller name is provided", function(assert) {
+			assert.throws(function() {
+				CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag);
+			}, new Error("no controller name passed for the code extension change"), "an error was thrown");
 
-		var oPropertyBag = {
-			content: {
-				codeRef: "codeRef"
-			}
-		};
+			var oPropertyBag2 = {
+				content: {
+					codeRef: "codeRef"
+				},
+				selector: {
+					id: undefined
+				}
+			};
 
-		assert.throws(function() {
-			CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag);
-		}, new Error("no controller name passed for the code extension change"), "an error was thrown");
+			assert.throws(function() {
+				CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag2);
+			}, new Error("no controller name passed for the code extension change"), "an error was thrown");
+		});
 
-		var oPropertyBag2 = {
-			content: {
-				codeRef: "codeRef"
-			},
-			selector: {
-				id: undefined
-			}
-		};
+		QUnit.test("createOrUpdateCodeExtChange throws an error if no reference is provided", function(assert) {
+			var oPropertyBag = {
+				content: {
+					codeRef: "codeRef"
+				},
+				selector: {
+					id: "controllerName"
+				}
+			};
 
-		assert.throws(function() {
-			CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag2);
-		}, new Error("no controller name passed for the code extension change"), "an error was thrown");
+			assert.throws(function() {
+				CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag);
+			}, new Error("no reference passed for the code extension change"), "an error was thrown");
+		});
 
-	});
+		QUnit.test("createOrUpdateCodeExtChange creates a new change and calls the backend connection class to propagate the creation", function(assert) {
+			var sGeneratedId = "id_123_0";
+			var sCodeRef = "myCode/code.js";
+			var sControllerName = "controllerName";
 
-	QUnit.test("createOrUpdateCodeExtChange throws an error if no reference is provided", function(assert) {
+			sandbox.stub(Utils, "createDefaultFileName").returns(sGeneratedId);
 
-		var oPropertyBag = {
-			content: {
-				codeRef: "codeRef"
-			},
-			selector: {
-				id: "controllerName"
-			}
-		};
+			var oPropertyBag = {
+				componentName: "component",
+				fileName: "a.js",
+				namespace: "",
+				reference: "component.Component",
+				content: {
+					codeRef: sCodeRef
+				},
+				selector: {
+					id: sControllerName
+				}
+			};
 
-		assert.throws(function() {
-			CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag);
-		}, new Error("no reference passed for the code extension change"), "an error was thrown");
+			var oStorageWriteStub = sandbox.stub(Storage, "write");
 
-	});
+			CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag, {});
 
-	QUnit.test("createOrUpdateCodeExtChange creates a new change and calls the backend connection class to propagate the creation", function(assert) {
+			assert.ok(oStorageWriteStub.calledOnce, "the sending was initiated");
 
-		var sGeneratedId = "id_123_0";
-		var sCodeRef = "myCode/code.js";
-		var sControllerName = "controllerName";
+			var oCallArguments = oStorageWriteStub.getCall(0).args;
 
-		this.stub(Utils, "createDefaultFileName").returns(sGeneratedId);
+			assert.equal(oCallArguments.length, 1, "one storage object");
+			assert.equal(oCallArguments[0].layer, "CUSTOMER", "that contains flex objects for the CUSTOMER layer");
+			assert.equal(oCallArguments[0].flexObjects.length, 1, "there is one flex object in the array");
+			assert.equal(oCallArguments[0].flexObjects[0].changeType, "codeExt", "that has the change type codeExt");
+			assert.equal(oCallArguments[0].flexObjects[0].content.codeRef, sCodeRef, "the code reference property should be set in the content section");
+			assert.equal(oCallArguments[0].flexObjects[0].selector.id, sControllerName, "the controller name property should be set in the content section");
+			assert.equal(oCallArguments[0].flexObjects[0].fileName, sGeneratedId, "an ID was generated");
+		});
 
-		var sExpectedUrl = "/sap/bc/lrep/content/apps/component/changes/" + sGeneratedId + ".change?layer=CUSTOMER";
+		QUnit.test("createOrUpdateCodeExtChange creates a new change with Transport Information and calls the backend connection class to propagate the creation", function(assert) {
+			var sGeneratedId = "id_123_0";
+			var sCodeRef = "myCode/code.js";
+			var sControllerName = "controllerName";
 
-		var oPropertyBag = {
-			componentName: "component",
-			fileName: "a.js",
-			namespace: "",
-			reference: "component.Component",
-			content: {
-				codeRef: sCodeRef
-			},
-			selector: {
-				id: sControllerName
-			}
-		};
+			sandbox.stub(Utils, "createDefaultFileName").returns(sGeneratedId);
 
-		var oLrepConnectorSendStub = this.stub(CodeExtManager._oLrepConnector, "send");
+			var oPropertyBag = {
+				componentName: "component",
+				fileName: "a.js",
+				namespace: "",
+				reference: "component.Component",
+				content: {
+					codeRef: sCodeRef
+				},
+				selector: {
+					id: sControllerName
+				}
+			};
 
-		CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag);
-
-		assert.ok(oLrepConnectorSendStub.calledOnce, "the sending was initiated");
-
-		var oCallArguments = oLrepConnectorSendStub.getCall(0).args;
-
-		assert.equal(oCallArguments[0], sExpectedUrl, "the url was build correct");
-		assert.equal(oCallArguments[1], "PUT", "the backend operation should be a writing");
-		assert.equal(oCallArguments[2].changeType, "codeExt", "the change type is codeExt");
-		assert.equal(oCallArguments[2].content.codeRef, sCodeRef, "the code reference property should be set in the content section");
-		assert.equal(oCallArguments[2].selector.id, sControllerName, "the controller name property should be set in the content section");
-		assert.equal(oCallArguments[2].fileName, sGeneratedId, "an ID was generated");
-	});
-
-	QUnit.test("createOrUpdateCodeExtChange creates a new change with TransportInfor and calls the backend connection class to propagate the creation", function(assert) {
-
-		var sGeneratedId = "id_123_0";
-		var sCodeRef = "myCode/code.js";
-		var sControllerName = "controllerName";
-
-		this.stub(Utils, "createDefaultFileName").returns(sGeneratedId);
-
-		var sExpectedUrl = "/sap/bc/lrep/content/apps/component/changes/" + sGeneratedId + ".change?layer=CUSTOMER&changelist=myTransportId&package=myPackageName";
-
-		var oPropertyBag = {
-			componentName: "component",
-			fileName: "a.js",
-			namespace: "",
-			reference: "component.Component",
-			content: {
-				codeRef: sCodeRef
-			},
-			selector: {
-				id: sControllerName
-			}
-		};
-
-		var mOptions = {
+			var mOptions = {
 				transportId: "myTransportId",
 				packageName: "myPackageName"
 			};
 
-		var oLrepConnectorSendStub = this.stub(CodeExtManager._oLrepConnector, "send");
+			var oStorageWriteStub = sandbox.stub(Storage, "write");
 
-		CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag, mOptions);
+			CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag, mOptions);
 
-		assert.ok(oLrepConnectorSendStub.calledOnce, "the sending was initiated");
+			assert.ok(oStorageWriteStub.calledOnce, "the sending was initiated");
 
-		var oCallArguments = oLrepConnectorSendStub.getCall(0).args;
+			var oCallArguments = oStorageWriteStub.getCall(0).args;
 
-		assert.equal(oCallArguments[0], sExpectedUrl, "the url was build correct");
-		assert.equal(oCallArguments[1], "PUT", "the backend operation should be a writing");
-		assert.equal(oCallArguments[2].changeType, "codeExt", "the change type is codeExt");
-		assert.equal(oCallArguments[2].content.codeRef, sCodeRef, "the code reference property should be set in the content section");
-		assert.equal(oCallArguments[2].selector.id, sControllerName, "the controller name property should be set in the content section");
-		assert.equal(oCallArguments[2].fileName, sGeneratedId, "an ID was generated");
-	});
+			assert.equal(oCallArguments.length, 1, "one storage object");
+			assert.equal(oCallArguments[0].layer, "CUSTOMER", "that contains flex objects for the CUSTOMER layer");
+			assert.equal(oCallArguments[0].transport, "myTransportId", "and the specified transport Id");
+			assert.equal(oCallArguments[0].flexObjects.length, 1, "there is one flex object in the array");
+			assert.equal(oCallArguments[0].flexObjects[0].changeType, "codeExt", "that has the change type codeExt");
+			assert.equal(oCallArguments[0].flexObjects[0].content.codeRef, sCodeRef, "the code reference property should be set in the content section");
+			assert.equal(oCallArguments[0].flexObjects[0].selector.id, sControllerName, "the controller name property should be set in the content section");
+			assert.equal(oCallArguments[0].flexObjects[0].fileName, sGeneratedId, "an ID was generated");
+		});
 
-	QUnit.test("createCodeExtChanges creates new changes with transportId, packageName, codeRef and calls the backend connection class to propagate the creation", function(assert) {
+		QUnit.test("createCodeExtChanges creates new changes with transportId, packageName, codeRef and calls the backend connection class to propagate the creation", function(assert) {
+			var sGeneratedId = "id_123_0";
+			var sLayer = Layer.VENDOR;
+			var sCodeRef = "myCode/code.js";
+			var sControllerName1 = "controllerName1";
+			var sControllerName2 = "controllerName2";
+			var sReference = "component.Component";
+			var sNamespace = "namespace";
+			var sLanguage = "EN";
 
-		var sGeneratedId = "id_123_0";
-		var sLayer = "VENDOR";
-		var sCodeRef = "myCode/code.js";
-		var sControllerName1 = "controllerName1";
-		var sControllerName2 = "controllerName2";
-		var sReference = "component.Component";
-		var sNamespace = "namespace";
-		var sLanguage = "EN";
+			sandbox.stub(Utils, "createDefaultFileName").returns(sGeneratedId);
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(sLayer);
+			sandbox.stub(Utils, "createNamespace").returns(sNamespace);
+			sandbox.stub(Utils, "getCurrentLanguage").returns(sLanguage);
 
-		this.stub(Utils, "createDefaultFileName").returns(sGeneratedId);
-		this.stub(Utils, "getCurrentLayer").returns(sLayer);
-		this.stub(Utils, "createNamespace").returns(sNamespace);
-		this.stub(Utils, "getCurrentLanguage").returns(sLanguage);
+			var aChanges = [
+				{
+					changeType : "codeExt",
+					namespace : "",
+					componentName : "component",
+					reference : sReference,
+					selector : {
+						id : sControllerName1
+					}
+				},
+				{
+					changeType : "codeExt",
+					namespace : "",
+					componentName : "component",
+					reference : sReference,
+					selector : {
+						id : sControllerName2
+					}
+				}];
 
-		var aChanges = [
-			{
-				changeType : "codeExt",
-				namespace : "",
-				componentName : "component",
-				context : "context",
-				reference : sReference,
-				selector : {
-					id : sControllerName1
-				}
-			},
-			{
-				changeType : "codeExt",
-				namespace : "",
-				componentName : "component",
-				context : "context",
-				reference : sReference,
-				selector : {
-					id : sControllerName2
-				}
-			}];
-
-		var mOptions = {
+			var mOptions = {
 				transportId: "myTransportId",
 				packageName: "myPackageName",
 				codeRef: sCodeRef
 			};
 
-		var aExpectedPayload = [
-			{
-				fileName: sGeneratedId,
+			var aExpectedPayload = {
+				layer: "VENDOR",
+				transport: "myTransportId",
+				flexObjects: [{
+					appDescriptorChange: false,
+					fileName: sGeneratedId,
+					fileType: "change",
+					changeType: "codeExt",
+					reference: sReference,
+					packageName: "myPackageName",
+					content: {
+						codeRef: sCodeRef
+					},
+					selector: {
+						id : sControllerName1
+					},
+					layer: sLayer,
+					moduleName: "",
+					texts: {},
+					namespace: sNamespace,
+					projectId : "component",
+					creation: "",
+					originalLanguage: sLanguage,
+					support: {
+						generator: "Change.createInitialFileContent",
+						service: "",
+						user: "",
+						sapui5Version: sap.ui.version,
+						compositeCommand: "",
+						sourceChangeFileName: ""
+					},
+					oDataInformation: {},
+					dependentSelector: {},
+					validAppVersions: {},
+					jsOnly: false,
+					variantReference: ""
+				}, {
+					appDescriptorChange: false,
+					fileName: sGeneratedId,
+					fileType: "change",
+					changeType: "codeExt",
+					reference: sReference,
+					packageName: "myPackageName",
+					content: {
+						codeRef: sCodeRef
+					},
+					selector: {
+						id : sControllerName2
+					},
+					layer: sLayer,
+					moduleName: "",
+					texts: {},
+					namespace: sNamespace,
+					projectId : "component",
+					creation: "",
+					originalLanguage: sLanguage,
+					support: {
+						generator: "Change.createInitialFileContent",
+						service: "",
+						user: "",
+						sapui5Version: sap.ui.version,
+						compositeCommand: "",
+						sourceChangeFileName: ""
+					},
+					oDataInformation: {},
+					dependentSelector: {},
+					validAppVersions: {},
+					jsOnly: false,
+					variantReference: ""
+				}]
+			};
+
+			var oConnectorCreateStub = sandbox.stub(Storage, "write");
+
+			CodeExtManager.createCodeExtChanges(aChanges, mOptions);
+
+			assert.equal(oConnectorCreateStub.callCount, 1, "the sending was initiated");
+
+			var oCallArguments = oConnectorCreateStub.getCall(0).args;
+
+			assert.deepEqual(oCallArguments[0], aExpectedPayload, "the payload was built correctly");
+		});
+
+		QUnit.test("deleteCodeExtChange throws an error if the passed object is not an code extension", function(assert) {
+			var oPropertyBag = {
+				changeType: "codeExt",
+				fileType: "somethingElse"
+			};
+
+			assert.throws(function() {
+				CodeExtManager.deleteCodeExtChange(oPropertyBag);
+			}, new Error("the change is not of type 'code extension'"), "an error was thrown");
+		});
+		QUnit.test("deleteCodeExtChange throws an error if the passed object is not an change file", function(assert) {
+			var oPropertyBag = {
+				changeType: "somethingElse",
+				fileType: "change"
+			};
+
+			assert.throws(function() {
+				CodeExtManager.deleteCodeExtChange(oPropertyBag);
+			}, new Error("the change is not of type 'code extension'"), "an error was thrown");
+		});
+
+		QUnit.test("deleteCodeExtChange throws an error if the file name is not specified", function(assert) {
+			var oPropertyBag = {
+				fileName: undefined,
 				fileType: "change",
 				changeType: "codeExt",
-				reference: sReference,
-				packageName: "myPackageName",
 				content: {
-					codeRef: sCodeRef
-				},
-				selector: {
-					id : sControllerName1
-				},
-				layer: sLayer,
-				texts: {},
-				namespace: sNamespace,
-				creation: "",
-				originalLanguage: sLanguage,
-				conditions: {},
-				context: "context",
-				support: {
-					generator: "Change.createInitialFileContent",
-					service: "",
-					user: "",
-					sapui5Version: sap.ui.version
-				},
-				dependentSelector: {},
-				validAppVersions: {}
-			},
-			{
-				fileName: sGeneratedId,
-				fileType: "change",
+					codeRef: "codeRef",
+					appVariantId: "controllerName"
+				}
+			};
+
+			assert.throws(function() {
+				CodeExtManager.deleteCodeExtChange(oPropertyBag);
+			}, new Error("the extension does not contains a file name"), "an error was thrown");
+		});
+
+		QUnit.test("deleteCodeExtChange throws an error if the passed object has no namespace property", function(assert) {
+			var oPropertyBag = {
 				changeType: "codeExt",
-				reference: sReference,
-				packageName: "myPackageName",
+				fileType: "change",
+				fileName: "a",
 				content: {
-					codeRef: sCodeRef
+					codeRef: "codeRef",
+					appVariantId: "controllerName"
+				}
+			};
+
+			assert.throws(function() {
+				CodeExtManager.deleteCodeExtChange(oPropertyBag);
+			}, new Error("the extension does not contains a namespace"), "an error was thrown");
+		});
+
+		QUnit.test("deleteCodeExtChange deletes a change and calls the backend connection class to propagate the deletion", function(assert) {
+			var sFileName = "id_123_0";
+			var sCodeRef = "myCode/code.js";
+			var sNameSpace = "apps/component/changes/";
+			var sControllerName = "controllerName";
+
+			sandbox.stub(Utils, "createDefaultFileName").returns(sFileName);
+
+			var oPropertyBag = {
+				changeType: "codeExt",
+				fileName: sFileName,
+				fileType: "change",
+				componentName: "component",
+				namespace: sNameSpace,
+				reference: "component.Component",
+				content: {
+					codeRef: sCodeRef,
+					appVariantId: sControllerName
 				},
-				selector: {
-					id : sControllerName2
+				layer: Layer.VENDOR
+			};
+
+			var oStorageWriteStub = sandbox.stub(Storage, "remove");
+
+			CodeExtManager.deleteCodeExtChange(oPropertyBag, {});
+
+			assert.ok(oStorageWriteStub.calledOnce, "the sending was initiated");
+
+			var oCallArguments = oStorageWriteStub.getCall(0).args;
+
+			assert.equal(oCallArguments.length, 1, "one storage object");
+			assert.equal(oCallArguments[0].layer, "VENDOR", "that contains a flex object for the VENDOR layer");
+			assert.equal(oCallArguments[0].flexObject.fileName, sFileName, "the file name of the flex object was taken over from the id property");
+		});
+
+		QUnit.test("deleteCodeExtChange deletes a change with Transport Information and calls the backend connection class to propagate the deletion", function(assert) {
+			var sFileName = "id_123_0";
+			var sCodeRef = "myCode/code.js";
+			var sNameSpace = "apps/component/changes/";
+			var sControllerName = "controllerName";
+
+			sandbox.stub(Utils, "createDefaultFileName").returns(sFileName);
+
+			var oPropertyBag = {
+				changeType: "codeExt",
+				fileName: sFileName,
+				fileType: "change",
+				componentName: "component",
+				namespace: sNameSpace,
+				reference: "component.Component",
+				content: {
+					codeRef: sCodeRef,
+					appVariantId: sControllerName
 				},
-				layer: sLayer,
-				texts: {},
-				namespace: sNamespace,
-				creation: "",
-				originalLanguage: sLanguage,
-				conditions: {},
-				context: "context",
-				support: {
-					generator: "Change.createInitialFileContent",
-					service: "",
-					user: "",
-					sapui5Version: sap.ui.version
-				},
-				dependentSelector: {},
-				validAppVersions: {}
-			}
-		];
+				layer: Layer.VENDOR
+			};
 
-		var oLrepConnectorCreateStub = this.stub(CodeExtManager._oLrepConnector, "create");
+			var mOptions = {
+				transportId: "myTransportId",
+				packageName: "myPackageName"
+			};
 
-		CodeExtManager.createCodeExtChanges(aChanges, mOptions);
+			var oStorageWriteStub = sandbox.stub(Storage, "remove");
 
-		assert.ok(oLrepConnectorCreateStub.calledOnce, "the sending was initiated");
+			CodeExtManager.deleteCodeExtChange(oPropertyBag, mOptions);
 
-		var oCallArguments = oLrepConnectorCreateStub.getCall(0).args;
+			assert.ok(oStorageWriteStub.calledOnce, "the sending was initiated");
 
-		assert.deepEqual(oCallArguments[0], aExpectedPayload, "the payload was built correctly");
-		assert.equal(oCallArguments[1], mOptions.transportId, "the transportId was sent correctly");
+			var oCallArguments = oStorageWriteStub.getCall(0).args;
+
+			assert.equal(oCallArguments.length, 1, "one storage object");
+			assert.equal(oCallArguments[0].layer, "VENDOR", "that contains a flex object for the VENDOR layer");
+			assert.equal(oCallArguments[0].transport, "myTransportId", "and the specified transport Id");
+			assert.equal(oCallArguments[0].flexObject.fileName, sFileName, "the file name of the flex object was taken over from the id property");
+		});
 	});
 
-	QUnit.test("deleteCodeExtChange throws an error if the passed object is not an code extension", function(assert) {
-
-		var oPropertyBag = {
-			changeType: "codeExt",
-			fileType: "somethingElse"
-		};
-
-		assert.throws(function() {
-			CodeExtManager.deleteCodeExtChange(oPropertyBag);
-		}, new Error("the change is not of type 'code extension'"), "an error was thrown");
-
-	});
-	QUnit.test("deleteCodeExtChange throws an error if the passed object is not an change file", function(assert) {
-
-		var oPropertyBag = {
-			changeType: "somethingElse",
-			fileType: "change"
-		};
-
-		assert.throws(function() {
-			CodeExtManager.deleteCodeExtChange(oPropertyBag);
-		}, new Error("the change is not of type 'code extension'"), "an error was thrown");
-
-	});
-
-	QUnit.test("deleteCodeExtChange throws an error if the file name is not specified", function(assert) {
-
-		var oPropertyBag = {
-			fileName: undefined,
-			fileType: "change",
-			changeType: "codeExt",
-			content: {
-				codeRef: "codeRef",
-				appVariantId: "controllerName"
-			}
-		};
-
-		assert.throws(function() {
-			CodeExtManager.deleteCodeExtChange(oPropertyBag);
-		}, new Error("the extension does not contains a file name"), "an error was thrown");
-
-	});
-
-	QUnit.test("deleteCodeExtChange throws an error if the passed object has no namepsace property", function(assert) {
-
-		var oPropertyBag = {
-			changeType: "codeExt",
-			fileType: "change",
-			fileName: "a",
-			content: {
-				codeRef: "codeRef",
-				appVariantId: "controllerName"
-			}
-		};
-
-		assert.throws(function() {
-			CodeExtManager.deleteCodeExtChange(oPropertyBag);
-		}, new Error("the extension does not contains a namespace"), "an error was thrown");
-
-	});
-
-	QUnit.test("deleteCodeExtChange deletes a change and calls the backend connection class to propagate the deletion", function(assert) {
-
-		var sFileName = "id_123_0";
-		var sCodeRef = "myCode/code.js";
-		var sNameSpace = "apps/component/changes/";
-		var sControllerName = "controllerName";
-
-		this.stub(Utils, "createDefaultFileName").returns(sFileName);
-
-		var sExpectedUrl = "/sap/bc/lrep/content/" + sNameSpace + sFileName + ".change?layer=VENDOR";
-
-		var oPropertyBag = {
-			changeType: "codeExt",
-			fileName: sFileName,
-			fileType: "change",
-			componentName: "component",
-			namespace: sNameSpace,
-			reference: "component.Component",
-			content: {
-				codeRef: sCodeRef,
-				appVariantId: sControllerName
-			},
-			layer: "VENDOR"
-		};
-
-		var oLrepConnectorSendStub = this.stub(CodeExtManager._oLrepConnector, "send");
-
-		CodeExtManager.deleteCodeExtChange(oPropertyBag);
-
-		assert.ok(oLrepConnectorSendStub.calledOnce, "the sending was initiated");
-
-		var oCallArguments = oLrepConnectorSendStub.getCall(0).args;
-
-		assert.equal(oCallArguments[0], sExpectedUrl, "the url was build correct");
-		assert.equal(oCallArguments[1], "DELETE", "the backend operation should be a deletion");
-		assert.equal(oCallArguments[2].fileName, sFileName, "the file name was taken over from the id property");
-	});
-
-	QUnit.test("deleteCodeExtChange deletes a change with TranportInfor and calls the backend connection class to propagate the deletion", function(assert) {
-
-		var sFileName = "id_123_0";
-		var sCodeRef = "myCode/code.js";
-		var sNameSpace = "apps/component/changes/";
-		var sControllerName = "controllerName";
-
-		this.stub(Utils, "createDefaultFileName").returns(sFileName);
-
-		var sExpectedUrl = "/sap/bc/lrep/content/" + sNameSpace + sFileName + ".change?layer=VENDOR&changelist=myTransportId&package=myPackageName";
-
-		var oPropertyBag = {
-			changeType: "codeExt",
-			fileName: sFileName,
-			fileType: "change",
-			componentName: "component",
-			namespace: sNameSpace,
-			reference: "component.Component",
-			content: {
-				codeRef: sCodeRef,
-				appVariantId: sControllerName
-			},
-			layer: "VENDOR"
-		};
-
-		var mOptions = {
-			transportId: "myTransportId",
-			packageName: "myPackageName"
-		};
-
-		var oLrepConnectorSendStub = this.stub(CodeExtManager._oLrepConnector, "send");
-
-		CodeExtManager.deleteCodeExtChange(oPropertyBag, mOptions);
-
-		assert.ok(oLrepConnectorSendStub.calledOnce, "the sending was initiated");
-
-		var oCallArguments = oLrepConnectorSendStub.getCall(0).args;
-
-		assert.equal(oCallArguments[0], sExpectedUrl, "the url was build correct");
-		assert.equal(oCallArguments[1], "DELETE", "the backend operation should be a deletion");
-		assert.equal(oCallArguments[2].fileName, sFileName, "the file name was taken over from the id property");
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
 });

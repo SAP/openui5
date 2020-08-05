@@ -2,8 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/odata/type/Int'],
-	function(Int) {
+sap.ui.define([
+	"sap/ui/model/odata/type/Int"
+], function (Int) {
 	"use strict";
 
 	var oRange = {minimum : -32768, maximum : 32767};

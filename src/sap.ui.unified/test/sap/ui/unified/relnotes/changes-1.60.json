@@ -1,0 +1,157 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "2949e97c3e2541e5a68a820f0c28cd5d65a1f7b3",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: fix visual tests on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880469603"
+          }
+        ]
+      },
+      {
+        "id": "bca2af995e017165955afb082d21c2b60881f3ea",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: returns empty string now when file has no extension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880468008"
+          }
+        ]
+      },
+      {
+        "id": "46848fb5fe0c5239e0ab0c50f9f9673cae7d76d0",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: button is not cut when displaying two months and years in Bulgarian",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880434903"
+          }
+        ]
+      },
+      {
+        "id": "fdb8e9bf8d5e0bbd8355b5263b12d61f9304ef38",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880484945"
+          }
+        ]
+      },
+      {
+        "id": "ba19e4a9bfdbae0621a09eec0f1121def4be359f",
+        "type": "FIX",
+        "text": "unified.ColorPicker: Hue value of 360 is the same as 0",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880490034"
+          }
+        ]
+      },
+      {
+        "id": "3a20f688956e350dfd83b74a00856d724a8842ab",
+        "type": "FIX",
+        "text": "sap.ui.unified.ColorPicker: Now the dialog's style is not broken",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870330317"
+          }
+        ]
+      },
+      {
+        "id": "596d509c546445bcd9c69d7a6ca6f587d236b2d1",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: correct width of the input when invalidated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870362150"
+          }
+        ]
+      },
+      {
+        "id": "10af631cd1533ea339172ed6fd44fbbc52e6e1fa",
+        "type": "FIX",
+        "text": "PlanningCalendar: Spaces in internal aria-label are removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870391389"
+          }
+        ]
+      },
+      {
+        "id": "618f67fd40ccaaa8e3ea3ff49fac604c91ee7f28",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.ColorPickerPopover: enabling popover/dialog mode of ColorPicker",
+        "references": []
+      },
+      {
+        "id": "c9e6074ee4e05181eaaaf85270c044dd83685373",
+        "type": "FIX",
+        "text": "PlanningCalendar: Show interval headers in one month view",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870412488"
+          }
+        ]
+      },
+      {
+        "id": "e4767ba0f3dd00b84404ed5531ff6e90188061b6",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.calendar.Month: Multi selection mode implemented",
+        "references": []
+      },
+      {
+        "id": "6836691409bee19f24a0cb159d6871aad1e32c67",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarTimeInterval: navigates to the correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005182132018"
+          }
+        ]
+      },
+      {
+        "id": "c573e9008b2a0f5b74917290bd9fb7e570573a48",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: Headers now have role \"button\" for indicating that they are clickable",
+        "references": []
+      },
+      {
+        "id": "366d7a48fc005de0d8ccd686b5963ecbc40cf67e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: example is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870394729"
+          }
+        ]
+      },
+      {
+        "id": "1d1f245ec4c63e4ad3b99a5080940775cfd3c4c2",
+        "type": "FIX",
+        "text": "sap.m.ColorPalette: Now the Dialog responds to the new size of the Color Picker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880570125"
+          }
+        ]
+      }
+    ]
+  }
+}

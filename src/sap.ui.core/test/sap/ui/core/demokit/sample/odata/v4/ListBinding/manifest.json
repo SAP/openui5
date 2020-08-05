@@ -5,7 +5,7 @@
 		"applicationVersion" : {
 			"version" : "${version}"
 		},
-		"description" : "{{sap.app.description}}",
+		"description" : "Example for OData V4 List Binding",
 		"dataSources" : {
 			"default" : {
 				"uri" : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
@@ -16,8 +16,7 @@
 			}
 		},
 		"id" : "sap.ui.core.sample.odata.v4.ListBinding",
-		"i18n" : "i18n/i18n.properties",
-		"title" : "{{sap.app.title}}",
+		"title" : "OData V4 List Binding",
 		"type" : "application"
 	},
 	"sap.ui" : {
@@ -34,7 +33,9 @@
 				"files" : [
 					"Component.js",
 					"Main.controller.js",
-					"Main.view.xml"
+					"Main.view.xml",
+					"SandboxModel.js",
+					"../../../common/SandboxModelHelper.js"
 				]
 			}
 		},
@@ -52,17 +53,20 @@
 		"models" : {
 			"" : {
 				"dataSource" : "default",
+				"preload" : true,
 				"settings" : {
 					"operationMode" : "Server",
 					"synchronizationMode" : "None",
 					"updateGroupId" : "update"
-				}
+				},
+				"type" : "sap.ui.core.sample.odata.v4.ListBinding.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
 		},
 		"rootView" : {
 			"async" : true,
 			"type" : "XML",
-			"viewName" : "Main.view.xml"
+			"viewName" : "sap.ui.core.sample.odata.v4.ListBinding.Main"
 		}
 	}
 }

@@ -9,7 +9,7 @@
 		items="{/ProductCollection}"
 		includeItemInSelection="true">
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<content>
 					<Title text="Products" level="H2"/>
 					<ToolbarSpacer />
@@ -27,7 +27,7 @@
 						</items>
 					</Select>
 				</content>
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<StandardListItem
 			title="{Name}"

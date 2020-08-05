@@ -1,3 +1,4 @@
+/* exports exactTestData */
 var exactTestData = {};
 
 (function() {

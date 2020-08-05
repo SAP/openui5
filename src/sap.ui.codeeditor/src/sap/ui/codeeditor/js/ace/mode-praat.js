@@ -98,10 +98,10 @@ var PraatHighlightRules = function() {
         "start" : [
             {
                 token : "string.interpolated",
-                regex : /'((?:[a-z][a-zA-Z0-9_]*)(?:\$|#|:[0-9]+)?)'/
+                regex : /'((?:\.?[a-z][a-zA-Z0-9_.]*)(?:\$|#|:[0-9]+)?)'/
             }, {
                 token : ["text", "text", "keyword.operator", "text", "keyword"],
-                regex : /(^\s*)(?:([a-z][a-zA-Z0-9_]*\$?\s+)(=)(\s+))?(stopwatch)/
+                regex : /(^\s*)(?:(\.?[a-z][a-zA-Z0-9_.]*\$?\s+)(=)(\s+))?(stopwatch)/
             }, {
                 token : ["text", "keyword", "text", "string"],
                 regex : /(^\s*)(print(?:line|tab)?|echo|exit|pause|send(?:praat|socket)|include|execute|system(?:_nocheck)?)(\s+)(.*)/
@@ -113,7 +113,10 @@ var PraatHighlightRules = function() {
                 regex : /(\s+)((?:\+|-|\/|\*|<|>)=?|==?|!=|%|\^|\||and|or|not)(\s+)/
             }, {
                 token : ["text", "text", "keyword.operator", "text", "keyword", "text", "keyword"],
-                regex : /(^\s*)(?:([a-z][a-zA-Z0-9_]*\$?\s+)(=)(\s+))?(?:((?:no)?warn|(?:unix_)?nocheck|noprogress)(\s+))?((?:[A-Z][^.:"]+)(?:$|(?:\.{3}|:)))/
+                regex : /(^\s*)(?:(\.?[a-z][a-zA-Z0-9_.]*\$?\s+)(=)(\s+))?(?:((?:no)?warn|(?:unix_)?nocheck|noprogress)(\s+))?((?:[A-Z][^.:"]+)(?:$|(?:\.{3}|:)))/
+            }, {
+                token : ["text", "keyword", "text", "keyword"],
+                regex : /(^\s*)((?:no(?:warn|check))?)(\s*)(\b(?:editor(?::?)|endeditor)\b)/
             }, {
                 token : ["text", "keyword", "text", "keyword"],
                 regex : /(^\s*)(?:(demo)?(\s+))((?:[A-Z][^.:"]+)(?:$|(?:\.{3}|:)))/
@@ -155,7 +158,7 @@ var PraatHighlightRules = function() {
                 regex : /\b[+-]?\d+(?:(?:\.\d*)?(?:[eE][+-]?\d+)?)?\b/
             }, {
                 token : ["keyword", "text", "entity.name.function"],
-                regex : /(procedure)(\s+)(\S+)/
+                regex : /(procedure)(\s+)([^:\s]+)/
             }, {
                 token : ["entity.name.function", "text"],
                 regex : /(@\S+)(:|\s*\()/
@@ -293,8 +296,8 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
     
-    this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
-    this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
+    this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
+    this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
     this.tripleStarBlockCommentRe = /^\s*(\/\*\*\*).*\*\/\s*$/;
     this.startRegionRe = /^\s*(\/\*|\/\/)#?region\b/;
@@ -465,4 +468,11 @@ oop.inherits(Mode, TextMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
+});                (function() {
+                    ace.require(["ace/mode/praat"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

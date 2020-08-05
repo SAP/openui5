@@ -1,71 +1,42 @@
 <mvc:View
-	xmlns:l="sap.ui.layout"
-	xmlns:html="http://www.w3.org/1999/xhtml"
-	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		class="navigationExamples"
-		width="100%" >
-		<l:content>
-
-			<Panel>
-				<headerToolbar>
-					<Toolbar>
-						<Title level="H2" text="Variable width" />
-					</Toolbar>
-				</headerToolbar>
-
+	xmlns:core="sap.ui.core">
+	<VBox class="navigationExamples">
+		<Panel headerText="Variable width">
 			<FlexBox
 				class="ne-flexbox1"
-				width="95%"
 				renderType="List"
 				justifyContent="Center"
 				alignItems="Center">
-				<items>
-					<core:HTML content="&lt;a href='javascript:return false;'&gt;Item 1&lt;/a&gt;" />
-					<core:HTML content="&lt;a href='javascript:return false;'&gt;Long item 2&lt;/a&gt;" />
-					<core:HTML content="&lt;a href='javascript:return false;'&gt;Item 3&lt;/a&gt;" />
-				</items>
+				<core:HTML content="&lt;a &gt;Item 1&lt;/a&gt;" />
+				<core:HTML content="&lt;a &gt;Long item 2&lt;/a&gt;" />
+				<core:HTML content="&lt;a &gt;Item 3&lt;/a&gt;" />
 			</FlexBox>
-			</Panel>
+		</Panel>
 
-			<Panel>
-				<headerToolbar>
-					<Toolbar>
-						<Title level="H2" text="Same width, transition effect" />
-					</Toolbar>
-				</headerToolbar>
-
-				<FlexBox
-					class="ne-flexbox2"
-					width="95%"
-					renderType="List"
-					justifyContent="SpaceBetween"
-					alignItems="Center">
-					<items>
-						<core:HTML
-							content="&lt;a href='javascript:return false;'&gt;Item 1&lt;/a&gt;">
-							<core:layoutData>
-								<FlexItemData growFactor="1" />
-							</core:layoutData>
-						</core:HTML>
-						<core:HTML
-							content="&lt;a href='javascript:return false;'&gt;Long item 2&lt;/a&gt;">
-							<core:layoutData>
-								<FlexItemData growFactor="1" />
-							</core:layoutData>
-						</core:HTML>
-						<core:HTML
-							content="&lt;a href='javascript:return false;'&gt;Item 3&lt;/a&gt;">
-							<core:layoutData>
-								<FlexItemData growFactor="1" />
-							</core:layoutData>
-						</core:HTML>
-					</items>
-				</FlexBox>
-
-			</Panel>
-		</l:content>
-	</l:VerticalLayout>
+		<Panel headerText="Same width, transition effect">
+			<FlexBox
+				class="ne-flexbox2"
+				renderType="List"
+				justifyContent="SpaceBetween"
+				alignItems="Center">
+				<core:HTML content="&lt;a &gt;Item 1&lt;/a&gt;">
+					<core:layoutData>
+						<FlexItemData growFactor="1" baseSize="25%" />
+					</core:layoutData>
+				</core:HTML>
+				<core:HTML content="&lt;a &gt;Long item 2&lt;/a&gt;">
+					<core:layoutData>
+						<FlexItemData growFactor="1" baseSize="25%" />
+					</core:layoutData>
+				</core:HTML>
+				<core:HTML content="&lt;a &gt;Item 3&lt;/a&gt;">
+					<core:layoutData>
+						<FlexItemData growFactor="1" baseSize="25%" />
+					</core:layoutData>
+				</core:HTML>
+			</FlexBox>
+		</Panel>
+	</VBox>
 </mvc:View>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:DataServices>
+		<Schema Namespace="foo">
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM">
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="Team_Id" />
+							<!-- TODO name vs. (number) value for enums -->
+							<Annotation Term="com.sap.vocabularies.UI.v1.Importance"
+								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/High"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Name" />
+							<PropertyValue Property="Value" Path="Name" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Member Count" />
+							<PropertyValue Property="Value" Path="MEMBER_COUNT" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Manager ID" />
+							<PropertyValue Property="Value" Path="MANAGER_ID" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Budget Currency" />
+							<PropertyValue Property="Value" Path="BudgetCurrency" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Budget" />
+							<PropertyValue Property="Value" Path="Budget" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM/Team_Id">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Team ID"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="Name">
+					<Annotation Term="com.sap.vocabularies.UI.v1.TextArrangement"
+						EnumMember="com.sap.vocabularies.UI.v1.TextArrangementType/TextLast"/>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT">
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="Category" />
+							<!-- TODO name vs. (number) value for enums -->
+							<Annotation Term="com.sap.vocabularies.UI.v1.Importance"
+								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/High"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="ID" />
+							<!-- TODO name vs. (number) value for enums -->
+							<Annotation Term="com.sap.vocabularies.UI.v1.Importance"
+								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/High"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Name" />
+							<PropertyValue Property="Value" Path="Name" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Employee ID" />
+							<PropertyValue Property="Value" Path="EmployeeId" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="EQUIPMENT_2_PRODUCT/Name" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name" />
+						</Record>
+						<!-- Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<!- - TODO how to follow 1:* nav. prop. PRODUCT_2_CATEGORY? - ->
+							<PropertyValue Property="Value" Path="EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY/CategoryName" />
+						</Record -->
+					</Collection>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem" Qualifier="test">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="EQUIPMENT_2_PRODUCT" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.Facets">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Target" AnnotationPath="EQUIPMENT_2_PRODUCT/@com.sap.vocabularies.Common.v1.QuickInfo" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+							<PropertyValue Property="Target" AnnotationPath="EQUIPMENT_2_PRODUCT@com.sap.vocabularies.Common.v1.QuickInfo" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT/Category">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Category"/>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT/ID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Equipment ID"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="Name">
+					<Annotation Term="com.sap.vocabularies.UI.v1.TextArrangement"
+						EnumMember="com.sap.vocabularies.UI.v1.TextArrangementType/TextLast"/>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT/EQUIPMENT_2_PRODUCT">
+				<Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="Category" />
+			</Annotations>
+			<!-- TODO with $async, these local annotations do not win over the inline ones -->
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Category/CategoryName">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Product Category"/>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product/Name">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Product Name"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="PRODUCT_2_SUPPLIER/Supplier_Name" />
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi_supplier.v0001.Supplier/Supplier_Name">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Supplier Name"/>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.Worker">
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="EMPLOYEE_2_MANAGER/Manager_to_Team/Name" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="LOCATION/City" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM/Name">
+				<Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="TEAM_2_MANAGER/ID" />
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product">
+				<Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="Name" />
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Location/City">
+				<Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="COUNTRY" />
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

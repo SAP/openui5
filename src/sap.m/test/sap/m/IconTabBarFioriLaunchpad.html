@@ -1,0 +1,326 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>sap.m.IconTabBar Fiori Lauchpad</title>
+		<script src="shared-config.js"></script>
+		<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-libs="sap.ui.core, sap.m, sap.f">
+		</script>
+		<script>
+
+			var oShellBar = new sap.f.ShellBar({
+				homeIcon: sap.ui.require.toUrl("sap/ui/documentation/sdk/images/logo_sap.png"),
+				title: "Title",
+				showCopilot: true,
+				showSearch: true,
+				showProductSwitcher: true,
+				showNotifications: true,
+				notificationsNumber: "2",
+				profile: new sap.f.Avatar({
+					initials: "DN"
+				}),
+				additionalContent: [
+					new sap.m.OverflowToolbarButton({ icon: "sap-icon://home", text: "home", type: "Transparent" }),
+					new sap.m.OverflowToolbarButton({ icon: "sap-icon://action-settings", text: "Action settings", type: "Transparent" }),
+					new sap.m.OverflowToolbarButton({ icon: "sap-icon://add-photo", text: "Add photo", type: "Transparent" })
+				]
+			});
+
+			var oIconTabBar = new sap.m.IconTabBar({
+				items: [
+					new sap.m.IconTabFilter({
+						text: 'Tab 1 - Single Click',
+						items: [
+							new sap.m.IconTabFilter({
+								text: 'Tab 1.1',
+								content: [
+									new sap.m.Text({
+										text: 'Content 1.1'
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: 'Tab 1.2',
+								content: [
+									new sap.m.Text({
+										text: 'Content 1.2'
+									})
+								]
+							})
+						]
+					}),
+					new sap.m.IconTabFilter({
+						text: 'Tab 2',
+						content: [
+							new sap.m.Text({
+								text: 'Content 2'
+							})
+						],
+						items: [
+							new sap.m.IconTabFilter({
+								text: 'Tab 2.1',
+								content: [
+									new sap.m.Text({
+										text: 'Content 2.1'
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: 'Tab 2.2',
+								content: [
+									new sap.m.Text({
+										text: 'Content 2.2'
+									})
+								]
+							})
+						]
+					}),
+					new sap.m.IconTabFilter({
+						text: 'Tab 3',
+						content: [
+							new sap.m.Text({
+								text: 'Content 3'
+							})
+						],
+						items: [
+							new sap.m.IconTabFilter({
+								text: 'Tab 31.1',
+								content: [
+									new sap.m.Text({
+										text: 'Content 3.1'
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: 'Tab 3.2',
+								content: [
+									new sap.m.Text({
+										text: 'Content 3.2'
+									})
+								]
+							})
+						]
+					}),
+					new sap.m.IconTabFilter({
+						text: 'Tab 4',
+						content: [
+							new sap.m.Text({
+								text: 'Content 4'
+							})
+						],
+						items: [
+							new sap.m.IconTabFilter({
+								text: 'Tab 4.1',
+								content: [
+									new sap.m.Text({
+										text: 'Content 4.1'
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: 'Tab 4.2',
+								content: [
+									new sap.m.Text({
+										text: 'Content 4.2'
+									})
+								]
+							})
+						]
+					}),
+					new sap.m.IconTabFilter({
+						text: 'Tab 5',
+						content: [
+							new sap.m.Text({
+								text: 'Content 5'
+							})
+						],
+						items: [
+							new sap.m.IconTabFilter({
+								text: 'Tab 5.1',
+								content: [
+									new sap.m.Text({
+										text: 'Content 5.1'
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: 'Tab 5.2',
+								content: [
+									new sap.m.Text({
+										text: 'Content 5.2'
+									})
+								]
+							})
+						]
+					}),
+					new sap.m.IconTabFilter({
+						text: 'Tab 6',
+						content: [
+							new sap.m.Text({
+								text: 'Content 6'
+							})
+						],
+						items: [
+							new sap.m.IconTabFilter({
+								text: 'Tab 6.1',
+								content: [
+									new sap.m.Text({
+										text: 'Content 6.1'
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: 'Tab 6.2',
+								content: [
+									new sap.m.Text({
+										text: 'Content 6.2'
+									})
+								]
+							})
+						]
+					}),
+					new sap.m.IconTabFilter({
+						text: 'Tab 7',
+						content: [
+							new sap.m.Text({
+								text: 'Content 7'
+							})
+						],
+						items: [
+							new sap.m.IconTabFilter({
+								text: 'Tab 7.1',
+								content: [
+									new sap.m.Text({
+										text: 'Content 7.1'
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: 'Tab 7.2',
+								content: [
+									new sap.m.Text({
+										text: 'Content 7.2'
+									})
+								]
+							})
+						]
+					}),
+					new sap.m.IconTabFilter({
+						text: 'Tab 8',
+						content: [
+							new sap.m.Text({
+								text: 'Content 8'
+							})
+						],
+						items: [
+							new sap.m.IconTabFilter({
+								text: 'Tab 8.1',
+								content: [
+									new sap.m.Text({
+										text: 'Content 8.1'
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: 'Tab 8.2',
+								content: [
+									new sap.m.Text({
+										text: 'Content 8.2'
+									})
+								]
+							})
+						]
+					}),
+					new sap.m.IconTabFilter({
+						text: 'Tab 9',
+						content: [
+							new sap.m.Text({
+								text: 'Content 9'
+							})
+						],
+						items: [
+							new sap.m.IconTabFilter({
+								text: 'Tab 9.1',
+								content: [
+									new sap.m.Text({
+										text: 'Content 9.1'
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: 'Tab 9.2',
+								content: [
+									new sap.m.Text({
+										text: 'Content 9.2'
+									})
+								]
+							})
+						]
+					}),
+					new sap.m.IconTabFilter({
+						text: 'Tab 10',
+						content: [
+							new sap.m.Text({
+								text: 'Content 10'
+							})
+						],
+						items: [
+							new sap.m.IconTabFilter({
+								text: 'Tab 10.1',
+								content: [
+									new sap.m.Text({
+										text: 'Content 10.1'
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: 'Tab 10.2',
+								content: [
+									new sap.m.Text({
+										text: 'Content 10.2'
+									})
+								]
+							})
+						]
+					})
+				]
+			}).addStyleClass('sapUshellShellTabBar');
+
+			var oIconTabBarWithIcons = new sap.m.IconTabBar({
+				items: [
+					new sap.m.IconTabFilter({
+						icon: "sap-icon://home",
+						text: 'TymgggYMym',
+						count: '1'
+					}),
+					new sap.m.IconTabFilter({
+						icon: "sap-icon://home",
+						text: 'Tymgggy',
+						count: '2'
+					})
+				]
+			}).addStyleClass('sapUshellShellTabBar');
+
+			var oPage = new sap.m.Page("page", {
+				showHeader: false,
+				content: [
+					oShellBar,
+					oIconTabBar,
+					oIconTabBarWithIcons
+				]
+			}).addStyleClass('sapUshellShell');
+
+			var oApp = new sap.m.App("myApp", {
+				initialPage: "page"
+			});
+
+			oApp.addPage(oPage).placeAt("body");
+
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

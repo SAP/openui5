@@ -1,0 +1,76 @@
+<mvc:View
+	controllerName="sap.m.sample.PopoverControllingCloseBehavior.controller.PopoverControllingCloseBehavior"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<App>
+		<pages>
+			<Page class="sapUiContentPadding"
+			title="Header" >
+				<content>
+					<Table id="idProductsTable"
+						mode="MultiSelect"
+						inset="false"
+						items="{
+							path: '/ProductCollection',
+							sorter: {
+								path: 'Name'
+							}
+						}"
+						itemPress="handleDrillDown">
+						<headerToolbar>
+							<Toolbar>
+								<Title text="Table - click events are disabled while a popover is open" level="H2"/>
+							</Toolbar>
+						</headerToolbar>
+						<columns>
+							<Column>
+								<Text text="Product" />
+							</Column>
+							<Column>
+								<Text text="ID (Example feature)" />
+							</Column>
+							<Column
+								hAlign="End"
+								width="12em"
+								minScreenWidth="Tablet"
+								demandPopin="true">
+								<Text text="Quantity" />
+							</Column>
+							<Column
+								minScreenWidth="Tablet"
+								demandPopin="true"
+								hAlign="End">
+								<Text text="Weight" />
+							</Column>
+							<Column
+								hAlign="End">
+								<Text text="Unit Price" />
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem vAlign="Middle" type="Navigation">
+								<cells>
+									<ObjectIdentifier title="{Name}" />
+									<Link
+										text="{ProductId}"
+										press="handlePopoverPress" />
+									<Input value="{Quantity}" type="{Text}" description="{UoM}" fieldWidth="{60%}"/>
+									<ObjectNumber
+										number="{WeightMeasure}"
+										unit="{WeightUnit}" />
+									<ObjectNumber
+										number="{
+											parts:[{path:'Price'},{path:'CurrencyCode'}],
+											type: 'sap.ui.model.type.Currency',
+											formatOptions: {showMeasure: false}
+										}"
+										unit="{CurrencyCode}" />
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

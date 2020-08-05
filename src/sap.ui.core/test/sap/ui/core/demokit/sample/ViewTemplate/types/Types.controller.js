@@ -3,39 +3,41 @@
  */
 
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/core/ValueState',
-		'sap/m/MessageBox',
-		'sap/m/MessagePopover',
-		'sap/m/MessagePopoverItem',
-		'sap/m/MessageToast',
-		'jquery.sap.encoder',
-		'jquery.sap.xml'
-	], function(jQuery, Controller, ValueState, MessageBox, MessagePopover, MessagePopoverItem,
-		MessageToast) {
+	"sap/m/MessageToast",
+	"sap/ui/core/library",
+	"sap/ui/core/sample/common/Controller",
+	"sap/ui/util/XMLHelper"
+], function (MessageToast, library, Controller, XMLHelper) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = library.ValueState;
 
 	function showSuccessMessage(sContext) {
 		MessageToast.show("Data successfully " + sContext);
 	}
 
 	return Controller.extend("sap.ui.core.sample.ViewTemplate.types.Types", {
-		showErrorPopover : function (sButtonID) {
-			this.messagePopover.openBy(this.byId(sButtonID));
+		/**
+		 * Function is called by <code>onSourceCode</code> before the source code is pretty printed.
+		 * It replaces <code>identificationBox</code> control by the corresponding XML.
+		 *
+		 * @param {string} sSourceCode The source code
+		 * @returns {string} The modified source code
+		 */
+		beforePrettyPrinting : function (sSourceCode) {
+			var oView = this.getView(),
+				bV4 = oView.getModel("ui").getProperty("/v4"),
+				sIdentification = XMLHelper.serialize(oView.getViewData()[bV4]._xContent);
+
+			// adjust indentation
+			sIdentification = sIdentification.replace(/\n/g, "\n\t\t");
+
+			return sSourceCode.replace("<HBox id=\"identificationBox\"/>", sIdentification);
 		},
 
 		onInit : function () {
-
-			this.messagePopover = new MessagePopover({
-				items : {
-					path :"message>/",
-					template : new MessagePopoverItem({description : "{message>description}",
-						type : "{message>type}", title :"{message>message}"})
-				}
-			});
-			this.messagePopover.setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
-				"message");
+			this.initMessagePopover("messagesButton");
 			this.getView().bindObject("/EdmTypesCollection(ID='1')");
 			this.getView().bindObject("v2>/EdmTypesCollection(ID='1')");
 			this.getView().bindObject("v4>/EdmTypesCollection(ID='1')");
@@ -44,8 +46,7 @@ sap.ui.define([
 		onReset : function () {
 			var i,
 				oModel = this.getView().getModel(),
-				aObjects = this.getView().findAggregatedObjects(true),
-				that = this;
+				aObjects = this.getView().findAggregatedObjects(true);
 
 			if (this.getView().getModel("ui").getProperty("/v2")) {
 				for (i = 0; i < aObjects.length; i += 1) {
@@ -59,9 +60,6 @@ sap.ui.define([
 					method : "POST",
 					success : function () {
 						showSuccessMessage("reset");
-					},
-					error : function (oError) {
-						that.showErrorPopover("resetButton");
 					}
 				});
 			} else {
@@ -70,8 +68,6 @@ sap.ui.define([
 						//TODO: refresh needed as long there is no synchronisation
 						oModel.refresh();
 						showSuccessMessage("reset");
-					}, function () {
-						that.showErrorPopover("resetButton");
 					});
 			}
 		},
@@ -86,48 +82,19 @@ sap.ui.define([
 		},
 
 		onSave : function () {
-			var oModel = this.getView().getModel(),
-				that = this;
+			var oModel = this.getView().getModel();
 
 			if (this.getView().getModel("ui").getProperty("/v2")) {
 				oModel.attachEventOnce("requestCompleted", this, function(oEvent) {
 					if (oEvent.getParameter("success")) {
 						showSuccessMessage("saved");
-					} else {
-						that.showErrorPopover("saveButton");
 					}
 				});
 				oModel.submitChanges();
 			} else {
 				oModel.submitBatch("EDMTypes").then(function () {
 					showSuccessMessage("saved");
-				},
-				function () {
-					that.showErrorPopover("saveButton");
 				});
-			}
-		},
-
-		onSourceCode : function (oEvent) {
-			var oView = this.getView(),
-				bVisible = this.byId("toggleSourceCodeButton").getPressed(),
-				sSource;
-
-			oView.getModel("ui").setProperty("/codeVisible", bVisible);
-			if (bVisible) {
-				sSource = jQuery.sap.serializeXML(oView._xContent)
-					.replace(/<!--.*-->/g, "") // remove comments
-					.replace(/\t/g, "  ") // indent by just 2 spaces
-					.replace(/\n\s*\n/g, "\n") // remove empty lines
-					.replace("<HBox id=\"identificationBox\"/>",
-						jQuery.sap.serializeXML(
-							oView.getViewData()[oView.getModel("ui").getProperty("/v4")]._xContent)
-						)
-					.replace("</mvc:View>", "      </mvc:View>") // indent by just 6 spaces
-					.replace(/\t/g, "    ") // indent by just 4 spaces
-					.replace(/\n\s*\n/g, "\n");
-
-				oView.getModel("ui").setProperty("/code", sSource);
 			}
 		},
 

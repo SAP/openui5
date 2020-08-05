@@ -2,13 +2,26 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
+sap.ui.define([
+	"sap/ui/test/matchers/Matcher",
+	"sap/base/strings/capitalize",
+	"sap/ui/thirdparty/jquery"
+], function (Matcher, capitalize, jQueryDOM) {
 	"use strict";
 
 	/**
-	 * AggregationLengthEquals - checks if an aggregation contains at least one entry.
+	 * @class
+	 * Checks if an aggregation contains a specified number of entries.
 	 *
-	 * @class AggregationLengthEquals - checks if an aggregation contains at least one entry
+	 * As of version 1.72, it is available as a declarative matcher with the following syntax:
+	 * <code><pre>{
+	 *     aggregationLengthEquals: {
+	 *         name: "string",
+	 *         length: "integer"
+	 *     }
+	 * }
+	 * </code></pre>
+	 *
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationLengthEqualsMatcher
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @public
@@ -18,20 +31,20 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 	 */
 	return Matcher.extend("sap.ui.test.matchers.AggregationLengthEquals", /** @lends sap.ui.test.matchers.AggregationLengthEquals.prototype */ {
 
-		metadata : {
-			publicMethods : [ "isMatching" ],
-			properties : {
+		metadata: {
+			publicMethods: ["isMatching"],
+			properties: {
 				/**
 				 * The name of the aggregation that is used for matching.
 				 */
-				name : {
-					type : "string"
+				name: {
+					type: "string"
 				},
 				/**
 				 * The length that aggregation <code>name</code> should have.
 				 */
-				length : {
-					type : "int"
+				length: {
+					type: "int"
 				}
 			}
 		},
@@ -43,15 +56,17 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 		 * @return {boolean} true if the length of aggregation <code>name</code> is the same as <code>length</code>, false if it is not.
 		 * @public
 		 */
-		isMatching : function (oControl) {
+		isMatching: function (oControl) {
 			var sAggregationName = this.getName(),
-				fnAggregation = oControl["get" + $.sap.charToUpperCase(sAggregationName, 0)];
+				fnAggregation = oControl["get" + capitalize(sAggregationName, 0)];
 
 			if (!fnAggregation) {
 				this._oLogger.error("Control '" + oControl + "' does not have an aggregation called '" + sAggregationName + "'");
 				return false;
 			}
-			var iAggregationLength = fnAggregation.call(oControl).length;
+			var vAggregation = fnAggregation.call(oControl);
+			var aAggregation = jQueryDOM.isArray(vAggregation) ? vAggregation : [vAggregation];
+			var iAggregationLength = aAggregation.length;
 			var iExpectedLength = this.getLength();
 			var bIsMatch = iAggregationLength === iExpectedLength;
 			if (!bIsMatch) {
@@ -63,4 +78,4 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 
 	});
 
-}, /* bExport= */ true);
+});

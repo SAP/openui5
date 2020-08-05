@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Opa tests for Order Browser</title>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+		<title>Integration tests for Browse Orders</title>
 		<meta charset="UTF-8">
 
 		<script id="sap-ui-bootstrap"
-				src="../../../../../../../../resources/sap-ui-core.js"
-				data-sap-ui-resourceroots='{
-					"sap.ui.demo.orderbrowser.test.integration": "./",
-					"sap.ui.demo.orderbrowser.app" : "../mockServer"
-				}'>
+			src="../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme='sap_fiori_3'
+			data-sap-ui-resourceroots='{
+				"sap.ui.demo.orderbrowser": "../../"
+			}'
+			data-sap-ui-animation="false"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-async="true">
 		</script>
 
-		<script>
-			jQuery.sap.require("sap.ui.demo.orderbrowser.test.integration.PhoneJourneys");
-		</script>
+		<link rel="stylesheet" type="text/css" href="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
+
+		<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+		<script src="opaTestsPhone.qunit.js"></script>
 
 	</head>
 	<body>

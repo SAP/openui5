@@ -4,8 +4,6 @@
 	<ResponsivePopover
 		title="About"
 		class="sapUiContentPadding">
-		<content>
-			<Text text="... more content goes here" />
-		</content>
+		<Text text="... more content goes here" />
 	</ResponsivePopover>
 </core:FragmentDefinition>

@@ -35,26 +35,33 @@
 				items: [
 					new sap.m.TabStripItem({
 						key: "0",
+						additionalText: "some text",
+						icon: "sap-icon://syringe",
 						text: "01234567890123456789012345"
 					}),
 					oItem2,
 					new sap.m.TabStripItem({
 						key: "2",
+						icon: "sap-icon://syringe",
+						iconTooltip: "syringe",
 						text: "Two"
 					}),
 					new sap.m.TabStripItem({
 						key: "3",
 						text: "Three",
+						additionalText: "intro text (2)",
 						modified: true
 					}),
 					new sap.m.TabStripItem({
 						key: "4",
+						icon: "../ui/documentation/sdk/images/HT-6120.jpg",
+						iconTooltip: "flash",
 						text: "Four"
 					}),
 					new sap.m.TabStripItem({
 						key: "5",
-						text: "Five",
-						modified: true
+						additionalText: "additional text",
+						modified: false
 					}),
 					new sap.m.TabStripItem({
 						key: "6",
@@ -83,5 +90,5 @@
 			oTabStrip.placeAt('body');
 		</script>
 	</head>
-	<body id="body" class="sapUiBody" role="application"></body>
+	<body id="body" class="sapUiBody"></body>
 </html>

@@ -4,22 +4,23 @@
 
 // Provides control sap.ui.layout.ResponsiveFlowLayout.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/core/Control',
-    './ResponsiveFlowLayoutData',
-    './library',
-    'sap/ui/core/ResizeHandler',
-    'sap/ui/Device',
-    "./ResponsiveFlowLayoutRenderer"
+	'sap/ui/core/Control',
+	'./ResponsiveFlowLayoutData',
+	'./library',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/Device',
+	'./ResponsiveFlowLayoutRenderer',
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/dom/jquery/rect' // jQuery Plugin "rect"
 ],
 	function(
-	    jQuery,
 		Control,
 		ResponsiveFlowLayoutData,
 		library,
 		ResizeHandler,
 		Device,
-		ResponsiveFlowLayoutRenderer
+		ResponsiveFlowLayoutRenderer,
+		jQuery
 	) {
 	"use strict";
 
@@ -86,7 +87,7 @@ sap.ui.define([
 			delete this._rows;
 
 			if (this._IntervalCall) {
-				jQuery.sap.clearDelayedCall(this._IntervalCall);
+				clearTimeout(this._IntervalCall);
 				this._IntervalCall = undefined;
 			}
 
@@ -192,7 +193,7 @@ sap.ui.define([
 			var currentRow = -1;
 
 			var fnCurrentWrapping = function(j) {
-				var $cont = jQuery.sap.byId(oRow.cont[j].id);
+				var $cont = jQuery(document.getElementById(oRow.cont[j].id));
 				if ($cont.length > 0) {
 					var offset = $cont[0].offsetLeft;
 					if (lastOffsetLeft >= offset) {
@@ -453,7 +454,7 @@ sap.ui.define([
 						var tPercentage = percW;
 
 						oRm.renderControl(oCont.control);
-						oRm.write("</div>");
+						oRm.close("div");
 
 						/*
 						 * Render all following elements that should wrap with the
@@ -487,16 +488,16 @@ sap.ui.define([
 							oRm.writeHeader(sHeaderId, oStyles, aClasses);
 
 							oRm.renderControl(oCont.breakWith[jj].control);
-							oRm.write("</div>");
+							oRm.close("div");
 						}
 					} else {
 						oRm.renderControl(oCont.control);
 					}
-					oRm.write("</div>"); // content
+					oRm.close("div"); // content
 
-					oRm.write("</div>"); // container
+					oRm.close("div"); // container
 				}
-				oRm.write("</div>"); // row
+				oRm.close("div"); // row
 
 				this._iRowCounter++;
 			}
@@ -513,7 +514,7 @@ sap.ui.define([
 
 				if (this._rows) {
 					for (var i = 0; i < this._rows.length; i++) {
-						var $Row = this._$DomRef.find("#" + sId + "-row" + i);
+						var $Row = jQuery(document.getElementById(sId + "-row" + i));
 
 						var oTargetWrapping = getTargetWrapping(this._rows[i], iInnerWidth);
 						var oCurrentWrapping = getCurrentWrapping(this._rows[i], $Row, this);
@@ -552,7 +553,7 @@ sap.ui.define([
 						this._getRenderManager().flush(this._oDomRef);
 
 						for (var i = 0; i < this._rows.length; i++) {
-							var oTmpRect = this._getElementRect(jQuery.sap.byId(sId + "-row" + i));
+							var oTmpRect = this._getElementRect(jQuery(document.getElementById(sId + "-row" + i)));
 							this._rows[i].oRect = oTmpRect;
 						}
 					}
@@ -653,10 +654,11 @@ sap.ui.define([
 		 */
 		ResponsiveFlowLayout.prototype.addContent = function(oContent) {
 			if (oContent && this._IntervalCall) {
-				jQuery.sap.clearDelayedCall(this._IntervalCall);
+				clearTimeout(this._IntervalCall);
 				this._IntervalCall = undefined;
 			}
 			this.addAggregation("content", oContent);
+			return this;
 		};
 
 		/**
@@ -672,10 +674,11 @@ sap.ui.define([
 		 */
 		ResponsiveFlowLayout.prototype.insertContent = function(oContent, iIndex) {
 			if (oContent && this._IntervalCall) {
-				jQuery.sap.clearDelayedCall(this._IntervalCall);
+				clearTimeout(this._IntervalCall);
 				this._IntervalCall = undefined;
 			}
 			this.insertAggregation("content", oContent, iIndex);
+			return this;
 		};
 
 		/**
@@ -688,7 +691,7 @@ sap.ui.define([
 		 */
 		ResponsiveFlowLayout.prototype.removeContent = function(oContent) {
 			if (oContent && this._IntervalCall) {
-				jQuery.sap.clearDelayedCall(this._IntervalCall);
+				clearTimeout(this._IntervalCall);
 				this._IntervalCall = undefined;
 			}
 			this.removeAggregation("content", oContent);
@@ -747,27 +750,22 @@ sap.ui.define([
 		ResponsiveFlowLayout.prototype._getRenderManager = function () {
 			if (!this.oRm) {
 				this.oRm = sap.ui.getCore().createRenderManager();
-				this.oRm.writeStylesAndClasses = function() {
-					this.writeStyles();
-					this.writeClasses();
-				};
 				this.oRm.writeHeader = function(sId, oStyles, aClasses) {
-					this.write('<div id="' + sId + '"');
+					this.openStart("div", sId);
 
 					if (oStyles) {
 						for ( var key in oStyles) {
 							if (key === "width" && oStyles[key] === "100%") {
-								this.addClass("sapUiRFLFullLength");
+								this.class("sapUiRFLFullLength");
 							}
-							this.addStyle(key, oStyles[key]);
+							this.style(key, oStyles[key]);
 						}
 					}
 					for (var i = 0; i < aClasses.length; i++) {
-						this.addClass(aClasses[i]);
+						this.class(aClasses[i]);
 					}
 
-					this.writeStylesAndClasses();
-					this.write(">");
+					this.openEnd();
 				};
 			}
 			return this.oRm;

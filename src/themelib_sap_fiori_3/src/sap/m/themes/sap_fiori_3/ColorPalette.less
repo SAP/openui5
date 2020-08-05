@@ -1,0 +1,39 @@
+/* =================================== */
+/* CSS for control sap.m/ColorPalette  */
+/* Fiori 3 theme                       */
+/* =================================== */
+
+.sapMColorPalette .sapMColorPaletteSquare:hover > div,
+.sapMColorPalette .sapMColorPaletteSquare,
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare:hover > div,
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
+	border-radius: 0.25rem;
+}
+
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare div,
+.sapMColorPalette .sapMColorPaletteSquare div {
+	border-radius: 0.125rem;
+}
+
+.sap-desktop .sapMColorPalette .sapMBtn:focus {
+	&:after {
+		border-color: @sapUiContentFocusColor;
+	}
+}
+
+.sap-desktop .sapContrast,
+.sap-desktop.sapContrast {
+	.sapMColorPalette .sapMBtn {
+		&:focus:after {
+			border-color: @sapUiContentFocusColor;
+
+		}
+		&:active,
+		> .sapMBtnActive,
+		&:hover > .sapMBtnActive,
+		&:active > .sapMBtnActive {
+			color: @sapUiListTextColor;
+		}
+	}
+}
+

@@ -1,0 +1,15 @@
+<!--
+	This fragment only require sap/m/MessageBox and make it available with
+	variable Box. The "badButton" tries to use the "Toast" variable which
+	is loaded by the parent view but not available for this fragment.
+
+	Processing this fragment should log an error regarding the missing
+	"Toast" variable.
+-->
+<Dialog id="xmlDialog" xmlns="sap.m" xmlns:core="sap.ui.core"
+	title="XML Fragment Dialog">
+	<Text id="xmlDialogTxt" text="test" />
+	<buttons>
+		<Button id="badButton" text="Toast" press="Toast.show('Problem occurred')" />
+	</buttons>
+</Dialog>

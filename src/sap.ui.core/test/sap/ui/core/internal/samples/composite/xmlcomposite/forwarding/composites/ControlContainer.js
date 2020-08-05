@@ -11,14 +11,14 @@ sap.ui.define(['sap/ui/core/Control'],
 				},
 				defaultAggregation: "content"
 			},
-			renderer: function (oRm, oControl) {
-				oRm.write("<div");
-				oRm.writeControlData(oControl);
-				oRm.writeClasses();
-				oRm.write(">");
-                oRm.renderControl(oControl.getContent());
-				oRm.write("</div>");
+			renderer: {
+				apiVersion: 2,
+				render: function (oRm, oControl) {
+					oRm.openStart("div", oControl).openEnd();
+					oRm.renderControl(oControl.getContent());
+					oRm.close("div");
+				}
 			}
 		});
 		return ControlContainer;
-	}, /* bExport= */true);
+	});

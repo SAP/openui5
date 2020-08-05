@@ -22,6 +22,7 @@ sap.ui.define(['sap/ui/core/Element'],
 	 * @since 1.22.0
 	 *
 	 * @public
+	 * @deprecated Since version 1.73
 	 * @alias sap.ui.core.util.ExportCell
 	 */
 	var ExportCell = Element.extend('sap.ui.core.util.ExportCell', {

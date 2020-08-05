@@ -1,12 +1,16 @@
 sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
-		'sap/m/MessageBox'
+		'sap/ui/unified/library',
+		'sap/m/library'
 	],
-	function (Controller, JSONModel, MessageBox) {
+	function (Controller, JSONModel, unifiedLibrary, mLibrary) {
 		"use strict";
 
-		var PageController = Controller.extend("sap.m.sample.PlanningCalendarWithLegend.Page", {
+		var StandardCalendarLegendItem = unifiedLibrary.StandardCalendarLegendItem,
+			PlanningCalendarBuiltInView = mLibrary.PlanningCalendarBuiltInView;
+
+		return Controller.extend("sap.m.sample.PlanningCalendarWithLegend.Page", {
 
 			onInit: function () {
 				// create model
@@ -14,9 +18,15 @@ sap.ui.define([
 				oModel.setData({
 					startDate: new Date("2017", "0", "15", "8", "0"),
 					people: [{
-						pic: "test-resources/sap/ui/demokit/explored/img/John_Miller.png",
+						pic: "test-resources/sap/ui/documentation/sdk/images/John_Miller.png",
 						name: "John Miller",
 						role: "team member",
+						specialDates: [
+							{
+								start: new Date(2017, 0, 24),
+								type: "NonWorking"
+							}
+						],
 						appointments: [
 							{
 								start: new Date("2017", "0", "8", "08", "30"),
@@ -219,13 +229,19 @@ sap.ui.define([
 								title: "New quarter",
 								type: "Type10",
 								tentative: false
-							}
-						]
-					},
+						}
+							]
+						},
 						{
-							pic: "test-resources/sap/ui/demokit/explored/img/Donna_Moore.jpg",
+							pic: "test-resources/sap/ui/documentation/sdk/images/Donna_Moore.jpg",
 							name: "Donna Moore",
 							role: "team member",
+							specialDates: [
+								{
+									start: new Date(2017, 0, 13),
+									type: "NonWorking"
+								}
+							],
 							appointments: [
 								{
 									start: new Date("2017", "0", "10", "18", "00"),
@@ -237,7 +253,7 @@ sap.ui.define([
 								},
 								{
 									start: new Date("2017", "0", "9", "10", "0"),
-									end: new Date("2017", "0", "13", "12", "0"),
+									end: new Date("2017", "0", "12", "12", "0"),
 									title: "Workshop out of the country",
 									type: "Type07",
 									pic: "sap-icon://sap-ui5",
@@ -330,11 +346,18 @@ sap.ui.define([
 									type: "Type06"
 								}
 							]
-						},
+				},
 						{
 							pic: "sap-icon://employee",
 							name: "Max Mustermann",
 							role: "team member",
+							specialDates: [
+								{
+									start: new Date(2017, 0, 16),
+									end: new Date(2017, 0, 18),
+									type: "NonWorking"
+								}
+							],
 							appointments: [
 								{
 									start: new Date("2017", "0", "15", "08", "30"),
@@ -366,15 +389,6 @@ sap.ui.define([
 									title: "Vacation",
 									info: "out of office",
 									type: "Type04",
-									tentative: false
-								},
-								{
-									start: new Date("2017", "0", "17", "1", "0"),
-									end: new Date("2017", "0", "18", "22", "0"),
-									title: "Workshop",
-									info: "regular",
-									type: "Type07",
-									pic: "sap-icon://sap-ui5",
 									tentative: false
 								},
 								{
@@ -460,6 +474,18 @@ sap.ui.define([
 							type: "Type08"
 						},
 						{
+							start: new Date("2017", "0", "21"),
+							end: new Date("2017", "0", "21", "23", "59"),
+							type: "Type05",
+							color: "#ff69b4"
+						},
+						{
+							start: new Date("2017", "0", "22"),
+							end: new Date("2017", "0", "22", "23", "59"),
+							type: "Type04",
+							color: "#add8e6"
+						},
+						{
 							start: new Date("2017", "6", "24"),
 							end: new Date("2017", "6", "24", "23", "59"),
 							type: "Type09"
@@ -478,6 +504,16 @@ sap.ui.define([
 						{
 							text: "Team building",
 							type: "Type08"
+						},
+						{
+							text: "Work from office 1",
+							type: "Type05",
+							color: "#ff69b4"
+						},
+						{
+							text: "Work from office 2",
+							type: "Type04",
+							color: "#add8e6"
 						}
 					],
 					legendAppointmentItems: [
@@ -501,10 +537,10 @@ sap.ui.define([
 							text: "Out of office",
 							type: "Type03"
 						},
-                        {
-                            text: "Customer Initiative",
-                            type: "Type07"
-                        }
+						{
+							text: "Customer Initiative",
+							type: "Type07"
+						}
 					]
 				});
 				this.getView().setModel(oModel);
@@ -528,18 +564,16 @@ sap.ui.define([
 				var sViewKey = this.byId('PC1').getViewKey(),
 					oLegend = this.byId("PlanningCalendarLegend");
 
-				if (sViewKey !== sap.m.PlanningCalendarBuiltInView.OneMonth) {
+				if (sViewKey !== PlanningCalendarBuiltInView.OneMonth) {
 					oLegend.setStandardItems([
-						sap.ui.unified.StandardCalendarLegendItem.Today,
-						sap.ui.unified.StandardCalendarLegendItem.WorkingDay,
-						sap.ui.unified.StandardCalendarLegendItem.NonWorkingDay
+						StandardCalendarLegendItem.Today,
+						StandardCalendarLegendItem.WorkingDay,
+						StandardCalendarLegendItem.NonWorkingDay
 					]);
 				} else {
 					oLegend.setStandardItems(); //return defaults
 				}
 			}
 		});
-
-		return PageController;
 
 	});

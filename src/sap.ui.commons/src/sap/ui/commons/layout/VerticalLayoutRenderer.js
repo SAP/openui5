@@ -3,12 +3,12 @@
  */
 
 // Provides default renderer for control sap.ui.commons.layout.VerticalLayout
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/layout/VerticalLayoutRenderer'],
-	function(jQuery, Renderer, VerticalLayoutRenderer1) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/layout/VerticalLayoutRenderer'],
+	function(Renderer, LayoutVerticalLayoutRenderer) {
 	"use strict";
 
 
-	var VerticalLayoutRenderer = Renderer.extend(VerticalLayoutRenderer1);
+	var VerticalLayoutRenderer = Renderer.extend(LayoutVerticalLayoutRenderer);
 
 
 	return VerticalLayoutRenderer;

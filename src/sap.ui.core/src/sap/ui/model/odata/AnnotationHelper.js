@@ -4,11 +4,11 @@
 
 // Provides object sap.ui.model.odata.AnnotationHelper
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/base/BindingParser",
 	"./_AnnotationHelperBasics",
-	"./_AnnotationHelperExpression"
-], function(jQuery, BindingParser, Basics, Expression) {
+	"./_AnnotationHelperExpression",
+	"sap/base/Log",
+	"sap/ui/base/BindingParser"
+], function (Basics, Expression, Log, BindingParser) {
 		'use strict';
 
 		/**
@@ -110,7 +110,7 @@ sap.ui.define([
 			 * oControl.applySettings({"someProperty" : vPropertySetting});
 			 * </pre>
 			 *
-			 * @param {any[]} vParts
+			 * @param {any[]} aParts
 			 *   array of parts
 			 * @param {function} [fnRootFormatter]
 			 *   root formatter function; default: <code>Array.prototype.join(., " ")</code>
@@ -125,12 +125,12 @@ sap.ui.define([
 			 * @public
 			 * @since 1.31.0
 			 */
-			createPropertySetting : function (vParts, fnRootFormatter) {
+			createPropertySetting : function (aParts, fnRootFormatter) {
 				var bMergeNeeded = false,
 					vPropertySetting;
 
-				vParts = vParts.slice(); // shallow copy to avoid changes visible to caller
-				vParts.forEach(function (vPart, i) {
+				aParts = aParts.slice(); // shallow copy to avoid changes visible to caller
+				aParts.forEach(function (vPart, i) {
 					switch (typeof vPart) {
 					case "boolean":
 					case "number":
@@ -146,7 +146,7 @@ sap.ui.define([
 									+ vPropertySetting.functionsNotFound.join(", ")
 									+  " not found");
 							}
-							vParts[i] = vPart = vPropertySetting;
+							aParts[i] = vPart = vPropertySetting;
 						}
 						// falls through
 					case "object":
@@ -164,7 +164,7 @@ sap.ui.define([
 
 				vPropertySetting = {
 					formatter : fnRootFormatter,
-					parts : vParts
+					parts : aParts
 				};
 				if (bMergeNeeded) {
 					BindingParser.mergeParts(vPropertySetting);
@@ -386,7 +386,7 @@ sap.ui.define([
 				}
 
 				if (!sEntitySetPath) {
-					jQuery.sap.log.warning(oContext.getPath() + ": found '" + sEntitySet
+					Log.warning(oContext.getPath() + ": found '" + sEntitySet
 						+ "' which is not a name of an entity set", undefined,
 						"sap.ui.model.odata.AnnotationHelper");
 				}
@@ -420,7 +420,7 @@ sap.ui.define([
 					oResult = oContext.getModel().getODataEntityType(sEntityType, true);
 
 				if (!oResult) {
-					jQuery.sap.log.warning(oContext.getPath() + ": found '" + sEntityType
+					Log.warning(oContext.getPath() + ": found '" + sEntityType
 						+ "' which is not a name of an entity type", undefined,
 						"sap.ui.model.odata.AnnotationHelper");
 				}
@@ -458,7 +458,7 @@ sap.ui.define([
 					oResult = oContext.getModel().getODataFunctionImport(sFunctionImport, true);
 
 				if (!oResult) {
-					jQuery.sap.log.warning(oContext.getPath() + ": found '" + sFunctionImport
+					Log.warning(oContext.getPath() + ": found '" + sFunctionImport
 						+ "' which is not a name of a function import", undefined,
 						"sap.ui.model.odata.AnnotationHelper");
 				}
@@ -556,7 +556,7 @@ sap.ui.define([
 				var oResult = Basics.followPath(oContext, oContext.getObject());
 
 				if (!oResult) {
-					jQuery.sap.log.warning(oContext.getPath() + ": Path could not be resolved ",
+					Log.warning(oContext.getPath() + ": Path could not be resolved ",
 						undefined, "sap.ui.model.odata.AnnotationHelper");
 				}
 

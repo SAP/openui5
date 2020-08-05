@@ -1,9 +1,12 @@
+/*global QUnit */
 sap.ui.define([
+	'sap/ui/qunit/utils/createAndAppendDiv',
 	'sap/ui/core/Control'
-], function(Control) {
-
+], function(createAndAppendDiv, Control) {
 	"use strict";
-	/*global QUnit*/
+
+	createAndAppendDiv("content");
+
 	var SelectorControl = Control.extend("selectorTestControl", {
 		metadata: {
 			properties: {
@@ -62,7 +65,7 @@ sap.ui.define([
 		},
 		getDomRefForSetting: function(sSettingsName) {
 			var oDomRef = this.getDomRef();
-			//adding a dom ref for a property dynamically or finding it if a selector is not sufficient
+			//adding a DOM ref for a property dynamically or finding it if a selector is not sufficient
 			if (oDomRef) {
 				if (sSettingsName === "propDynamic") {
 					var oSpan = document.createElement("span");
@@ -70,7 +73,7 @@ sap.ui.define([
 					oDomRef.appendChild(oSpan);
 					return oSpan;
 				}
-				//adding a dom ref for an aggregation dynamically or finding it if a selector is not sufficient
+				//adding a DOM ref for an aggregation dynamically or finding it if a selector is not sufficient
 				if (sSettingsName === "multipleDynamic") {
 					var oSpan = document.createElement("span");
 					oSpan.setAttribute("testvalue", "multipleDynamic");
@@ -81,66 +84,61 @@ sap.ui.define([
 			}
 			return Control.prototype.getDomRefForSetting.apply(this, arguments);
 		},
-		renderer: function (oRm, oControl) {
-			oRm.write("<div");
-			oRm.addClass("propDirectClass");
-			oRm.addClass("aggDirectClass");
-			//property selector with direct class
-			oRm.writeAttributeEscaped("testvalueProp", oControl.getMetadata().getProperty("propIdDirectClass").selector);
-			//aggregation selector with direct class
-			oRm.writeAttributeEscaped("testvalueAgg", oControl.getMetadata().getAggregation("multipleIdDirectClass").selector);
-			oRm.writeControlData(oControl);
-			oRm.writeClasses();
-			oRm.write(">");
+		renderer: {
+			apiVersion: 2,
+			render: function (oRm, oControl) {
+				oRm.openStart("div", oControl);
+				oRm.class("propDirectClass");
+				oRm.class("aggDirectClass");
+				//property selector with direct class
+				oRm.attr("testvalueProp", oControl.getMetadata().getProperty("propIdDirectClass").selector);
+				//aggregation selector with direct class
+				oRm.attr("testvalueAgg", oControl.getMetadata().getAggregation("multipleIdDirectClass").selector);
+				oRm.openEnd();
 
-			//property with id suffix
-			oRm.write("<span");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-suffix");
-			//testvalue to check that the rigth dom node was found
-			oRm.writeAttributeEscaped("testvalue", oControl.getMetadata().getProperty("propIdSuffix").selector);
-			oRm.write("></span>");
+				//property with id suffix
+				oRm.openStart("span", oControl.getId() + "-suffix");
+				//testvalue to check that the right DOM node was found
+				oRm.attr("testvalue", oControl.getMetadata().getProperty("propIdSuffix").selector);
+				oRm.openEnd().close("span");
 
-			//property with class
-			oRm.write("<span");
-			oRm.addClass("propClass");
-			oRm.writeClasses();
-			//testvalue to check that the rigth dom node was found
-			oRm.writeAttributeEscaped("testvalue", oControl.getMetadata().getProperty("propIdClass").selector);
-			oRm.write("></span>");
+				//property with class
+				oRm.openStart("span");
+				oRm.class("propClass");
+				//testvalue to check that the right DOM node was found
+				oRm.attr("testvalue", oControl.getMetadata().getProperty("propIdClass").selector);
+				oRm.openEnd().close("span");
 
-			//property with attribute
-			oRm.write("<span");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-propAttribute");
-			oRm.writeClasses();
-			//testvalue to check that the rigth dom node was found
-			oRm.writeAttributeEscaped("testvalue", oControl.getMetadata().getProperty("propIdAttribute").selector);
-			oRm.write("></span>");
+				//property with attribute
+				oRm.openStart("span", oControl.getId() + "-propAttribute");
+				//testvalue to check that the right DOM node was found
+				oRm.attr("testvalue", oControl.getMetadata().getProperty("propIdAttribute").selector);
+				oRm.openEnd().close("span");
 
-			//aggregation with id suffix
-			oRm.write("<span");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-aggSuffix");
-			//testvalue to check that the rigth dom node was found
-			oRm.writeAttributeEscaped("testvalue", oControl.getMetadata().getAggregation("multipleIdSuffix").selector);
-			oRm.write("></span>");
+				//aggregation with id suffix
+				oRm.openStart("span", oControl.getId() + "-aggSuffix");
+				//testvalue to check that the right DOM node was found
+				oRm.attr("testvalue", oControl.getMetadata().getAggregation("multipleIdSuffix").selector);
+				oRm.openEnd().close("span");
 
-			//aggregation with class
-			oRm.write("<span");
-			oRm.addClass("aggClass");
-			oRm.writeClasses();
-			//testvalue to check that the rigth dom node was found
-			oRm.writeAttributeEscaped("testvalue", oControl.getMetadata().getAggregation("multipleIdClass").selector);
-			oRm.write("></span>");
+				//aggregation with class
+				oRm.openStart("span");
+				oRm.class("aggClass");
+				//testvalue to check that the right DOM node was found
+				oRm.attr("testvalue", oControl.getMetadata().getAggregation("multipleIdClass").selector);
+				oRm.openEnd().close("span");
 
-			//aggregation with attribute
-			oRm.write("<span");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-aggAttribute");
-			//testvalue to check that the rigth dom node was found
-			oRm.writeAttributeEscaped("testvalue", oControl.getMetadata().getAggregation("multipleIdAttribute").selector);
-			oRm.write("></span>");
-			oRm.write("</div>");
+				//aggregation with attribute
+				oRm.openStart("span", oControl.getId() + "-aggAttribute");
+				oRm.attr("testvalue", oControl.getMetadata().getAggregation("multipleIdAttribute").selector);
+				//testvalue to check that the right DOMnode was found
+				oRm.openEnd().close("span");
+				oRm.close("div");
+			}
 		}
-	})
-	QUnit.module("Element - Member.selector metadata", {
+	});
+
+	QUnit.module("Member.selector metadata", {
 		beforeEach: function() {
 			this.element = new SelectorControl("testId:that:_needs-escaping");
 			this.element.placeAt("content");

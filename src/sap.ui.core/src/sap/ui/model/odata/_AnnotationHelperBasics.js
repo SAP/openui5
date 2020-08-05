@@ -4,8 +4,11 @@
 
 // Provides basic internal functions for sap.ui.model.odata.AnnotationHelper
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/base/BindingParser'
-], function(jQuery, BindingParser) {
+	"sap/base/Log",
+	"sap/ui/base/BindingParser",
+	"sap/ui/performance/Measurement",
+	"sap/ui/thirdparty/jquery"
+], function (Log, BindingParser, Measurement, jQuery) {
 	'use strict';
 
 	var sAnnotationHelper = "sap.ui.model.odata.AnnotationHelper",
@@ -22,6 +25,7 @@ sap.ui.define([
 		mUi5TypeForEdmType = {
 			"Edm.Boolean" : "sap.ui.model.odata.type.Boolean",
 			"Edm.Byte" : "sap.ui.model.odata.type.Byte",
+			"Edm.Date" : "sap.ui.model.odata.type.Date",
 			"Edm.DateTime" : "sap.ui.model.odata.type.DateTime",
 			"Edm.DateTimeOffset" : "sap.ui.model.odata.type.DateTimeOffset",
 			"Edm.Decimal" : "sap.ui.model.odata.type.Decimal",
@@ -34,7 +38,9 @@ sap.ui.define([
 			"Edm.SByte" : "sap.ui.model.odata.type.SByte",
 			"Edm.Single" : "sap.ui.model.odata.type.Single",
 			"Edm.String" : "sap.ui.model.odata.type.String",
-			"Edm.Time" : "sap.ui.model.odata.type.Time"
+			"Edm.Stream" : "sap.ui.model.odata.type.Stream",
+			"Edm.Time" : "sap.ui.model.odata.type.Time",
+			"Edm.TimeOfDay" : "sap.ui.model.odata.type.TimeOfDay"
 		};
 
 	Basics = {
@@ -84,7 +90,7 @@ sap.ui.define([
 		 */
 		error : function (oPathValue, sMessage, sComponent) {
 			sMessage = oPathValue.path + ": " + sMessage;
-			jQuery.sap.log.error(sMessage, Basics.toErrorString(oPathValue.value),
+			Log.error(sMessage, Basics.toErrorString(oPathValue.value),
 				sComponent || sAnnotationHelper);
 			throw new SyntaxError(sMessage);
 		},
@@ -167,11 +173,11 @@ sap.ui.define([
 				sSegment,
 				oType;
 
-			jQuery.sap.measure.average(sPerformanceFollowPath, "", aPerformanceCategories);
+			Measurement.average(sPerformanceFollowPath, "", aPerformanceCategories);
 			sPath = Basics.getPath(oRawValue);
 			sContextPath = sPath !== undefined && Basics.getStartingPoint(oInterface, sPath);
 			if (!sContextPath) {
-				jQuery.sap.measure.end(sPerformanceFollowPath);
+				Measurement.end(sPerformanceFollowPath);
 				return undefined;
 			}
 			aParts = sPath.split("/");
@@ -209,7 +215,7 @@ sap.ui.define([
 			}
 
 			oResult.resolvedPath = sContextPath;
-			jQuery.sap.measure.end(sPerformanceFollowPath);
+			Measurement.end(sPerformanceFollowPath);
 			return oResult;
 		},
 
@@ -315,12 +321,17 @@ sap.ui.define([
 		 *     when "composite": a composite binding string
 		 *   type: an EDM data type (like "Edm.String")
 		 *   constraints: {object} optional type constraints when result is "binding"
+		 *   formatOptions: {object} optional type format options when result is "binding"
+		 *   parameters: {object} optional binding parameters when result is "binding"
 		 * @param {boolean} bExpression
 		 *   if true the value is to be embedded into a binding expression, otherwise in a
 		 *   composite binding
 		 * @param {boolean} [bWithType=false]
-		 *  if <code>true</code> and <code>oResult.result</code> is "binding", type and constraint
-		 *  information is written to the resulting binding string
+		 *  if this is <code>true</code>, <code>oResult.result</code> is "binding" and
+		 *  <code>oResult.type</code> maps to a UI5 type, then both type and constraint information,
+		 *  as well as format options, are written to the resulting binding string; if this is
+		 *  <code>false</code> and <code>oResult.result</code> is "binding", then binding parameters
+		 *  are written to the resulting binding string if present
 		 * @returns {string}
 		 *   the resulting string to embed into a composite binding or a binding expression
 		 */
@@ -328,17 +339,30 @@ sap.ui.define([
 			var vValue = oResult.value;
 
 			function binding(bAddType) {
-				var sConstraints, sResult;
+				var sConstraints,
+					sFormatOptions,
+					sParameters = oResult.parameters && Basics.toJSON(oResult.parameters),
+					bHasParameters = sParameters && sParameters !== "{}",
+					sResult,
+					sType = mUi5TypeForEdmType[oResult.type];
 
-				bAddType = bAddType && !oResult.ignoreTypeInPath && oResult.type;
-				if (bAddType || rBadChars.test(vValue)) {
+				bAddType = bAddType && !oResult.ignoreTypeInPath && sType;
+				if (bAddType || rBadChars.test(vValue) || bHasParameters) {
 					sResult = "{path:" + Basics.toJSON(vValue);
 					if (bAddType) {
-						sResult += ",type:'" + mUi5TypeForEdmType[oResult.type] + "'";
+						sResult += ",type:'" + sType + "'";
 						sConstraints = Basics.toJSON(oResult.constraints);
 						if (sConstraints && sConstraints !== "{}") {
 							sResult += ",constraints:" + sConstraints;
 						}
+						sFormatOptions
+							= oResult.formatOptions && Basics.toJSON(oResult.formatOptions);
+						if (sFormatOptions && sFormatOptions !== "{}") {
+							sResult += ",formatOptions:" + sFormatOptions;
+						}
+					}
+					if (bHasParameters) {
+						sResult += ",parameters:" + sParameters;
 					}
 					return sResult + "}";
 				}

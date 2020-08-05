@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/m/ColumnListItem",
 	"./Utils"
-], function(Controller, Utils) {
+], function(Controller, ColumnListItem, Utils) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.TableDnD.SelectedProducts", {
@@ -12,7 +13,6 @@ sap.ui.define([
 				// reset the rank property and update the model to refresh the bindings
 				var oProductsModel = oSelectedProductsTable.getModel();
 				oProductsModel.setProperty("Rank", Utils.ranking.Initial, oSelectedItemContext);
-				oProductsModel.refresh(true);
 
 				// select the previously selected position
 				var aItemsOfSelectedProductsTable = oSelectedProductsTable.getItems();
@@ -34,7 +34,7 @@ sap.ui.define([
 			var iNewRank = oRanking.Default;
 			var oDroppedItem = oEvent.getParameter("droppedControl");
 
-			if (oDroppedItem instanceof sap.m.ColumnListItem) {
+			if (oDroppedItem instanceof ColumnListItem) {
 				// get the dropped row data
 				var sDropPosition = oEvent.getParameter("dropPosition");
 				var oDroppedItemContext = oDroppedItem.getBindingContext();
@@ -59,7 +59,6 @@ sap.ui.define([
 			var oSelectedProductsTable = Utils.getSelectedProductsTable(this);
 			var oProductsModel = oSelectedProductsTable.getModel();
 			oProductsModel.setProperty("Rank", iNewRank, oDraggedItemContext);
-			oProductsModel.refresh(true);
 		},
 
 		moveSelectedItem: function(sDirection) {
@@ -79,7 +78,6 @@ sap.ui.define([
 
 				oProductsModel.setProperty("Rank", iSiblingItemRank, oSelectedItemContext);
 				oProductsModel.setProperty("Rank", iSelectedItemRank, oSiblingItemContext);
-				oProductsModel.refresh(true);
 
 				// after move select the sibling
 				oSelectedProductsTable.getItems()[iSiblingItemIndex].setSelected(true);

@@ -1,0 +1,143 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "9aac02b6ed87fabb4924d43b30fede025808fbe2",
+        "type": "FEATURE",
+        "text": " Display shortcut hint on focus and on hover",
+        "references": []
+      },
+      {
+        "id": "74b3a4e1c57efb9ecb1095f52bb3926f090e6d5a",
+        "type": "FIX",
+        "text": " Configuration: normalize Theme to sap_fiori_3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002689182020"
+          }
+        ]
+      },
+      {
+        "id": "4a9cf89374c1973cab8ca6c1dd4b279a988de25d",
+        "type": "FIX",
+        "text": " Static bindings: binding creation on model propagation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070251754"
+          }
+        ]
+      },
+      {
+        "id": "c1966d9113f8984b6479d90f48ebf0edcd98bc5e",
+        "type": "FIX",
+        "text": " core.InvisibleMessage: fix documented base class",
+        "references": []
+      },
+      {
+        "id": "f36a6bc8ed6c817a731c2079b8d7298c983fc2fc",
+        "type": "FIX",
+        "text": " sap.ui.core.InvisibleMessage: Exception in the sample prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080164604"
+          }
+        ]
+      },
+      {
+        "id": "b42f4ac9b8cbe9145581b088f6fb5abecb2bd307",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font",
+        "references": []
+      },
+      {
+        "id": "aae73698a41f8b7a5c479a9144085b0248d22201",
+        "type": "FIX",
+        "text": " ui5loader: properly handle empty preloaded resources",
+        "references": []
+      },
+      {
+        "id": "60550a61509397c63369edf94803515e59186242",
+        "type": "FEATURE",
+        "text": " Opa: add interactable option in waitFor",
+        "references": []
+      },
+      {
+        "id": "1ce1509cedbfaf27151dbf9e67d085b9902dc676",
+        "type": "FEATURE",
+        "text": " testrecorder: add searchOpenDialogs flag when needed",
+        "references": []
+      },
+      {
+        "id": "012028c1971de56a00b7e448bccee84f763debf3",
+        "type": "FIX",
+        "text": " ManagedObject: set (+ bind) a formatter only when it\u0027s a function",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080181010"
+          }
+        ]
+      },
+      {
+        "id": "5255b9755ae1a21e107db3a66d371b402a1e47bb",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataModel#_loadData: Do not use x-csrf-token for GET requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002585962020"
+          }
+        ]
+      },
+      {
+        "id": "79ee1c507119d1fc477908fc8c0a03498bab9d26",
+        "type": "FEATURE",
+        "text": " testrecorder: change window placement",
+        "references": []
+      },
+      {
+        "id": "c2d5ba6f9b6b2c51f2d6aa222dac46da1b87f250",
+        "type": "FIX",
+        "text": " core.Popup: log an error when popup content isn\u0027t connected to any UIArea",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080140527"
+          }
+        ]
+      },
+      {
+        "id": "f02c4f78333d40092fd0c1464acc8e932c19b025",
+        "type": "FIX",
+        "text": " routing.history: keep history direction in case the browser hash isn\u0027t changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003521542020"
+          }
+        ]
+      },
+      {
+        "id": "f82fccf72177832131fbf313cbc59a283f7dee2e",
+        "type": "FIX",
+        "text": " sap.ui.core.util.ExportTypeCSV - Cell overflow injection fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080220914"
+          }
+        ]
+      },
+      {
+        "id": "9fa35c84522200b3c535aaa1e29d93473a60cc28",
+        "type": "FEATURE",
+        "text": " Opa: add editable property in waitFor",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,10 +1,26 @@
-/* global QUnit*/
+/* global QUnit, sinon */
 
-(function () {
+sap.ui.define([
+	"sap/m/Label",
+	"sap/m/Button",
+	"sap/m/Input",
+	"sap/ui/layout/Grid",
+	"sap/ui/layout/GridData",
+	"sap/ui/layout/library",
+	"sap/ui/core/Core"
+],
+function (
+	Label,
+	Button,
+	Input,
+	Grid,
+	GridData,
+	Library,
+	Core
+) {
 	"use strict";
 
-	var oCore = sap.ui.getCore(),
-		TESTS_DOM_CONTAINER = 'qunit-fixture',
+	var TESTS_DOM_CONTAINER = 'qunit-fixture',
 		GRID_ID = 'grid1',
 		VISIBLE_PREFIX = 'visible_',
 		CLASSES_FOR_PREFIX = 'CSS classes for ',
@@ -21,7 +37,7 @@
 			getLabel: function(sId, oLayoutData) {
 				oLayoutData = oLayoutData && oFactory.getLayoutData(oLayoutData);
 
-				return new sap.m.Label(sId, {
+				return new Label(sId, {
 					text: "Label's text",
 					width: '100%',
 					layoutData: oLayoutData
@@ -30,7 +46,7 @@
 			getButton: function (sId, bVisible, oLayoutData) {
 				oLayoutData = oLayoutData && oFactory.getLayoutData(oLayoutData);
 
-				return new sap.m.Button(sId, {
+				return new Button(sId, {
 					text: "Button's text",
 					width: "100%",
 					visible: bVisible,
@@ -40,7 +56,7 @@
 			getInput: function (sId, oLayoutData) {
 				oLayoutData = oLayoutData && oFactory.getLayoutData(oLayoutData);
 
-				return new sap.m.Input(sId, {
+				return new Input(sId, {
 					value: "Input's value",
 					width: '100%',
 					layoutData: oLayoutData
@@ -48,10 +64,10 @@
 			},
 			getLayoutData: function (oProps) {
 				oProps = oProps || {};
-				return new sap.ui.layout.GridData(oProps);
+				return new GridData(oProps);
 			},
 			getGrid: function (sId) {
-				return new sap.ui.layout.Grid(sId, {
+				return new Grid(sId, {
 					hSpacing: 1,
 					vSpacing: 1,
 					defaultSpan: 'L2',
@@ -71,29 +87,31 @@
 						oFactory.getLabel('indent', {
 							indent: 'L1 M7 S3'
 						}),
-						oFactory.getInput(VISIBLE_PREFIX + 'M_S', {
-							visibleL: false,
-							visibleXL: false
-						}),
 						oFactory.getInput(VISIBLE_PREFIX + 'S', {
 							visibleM: false,
 							visibleL: false,
 							visibleXL: false
-						}),
-						oFactory.getInput(VISIBLE_PREFIX + 'L_XL', {
-							visibleS: false,
-							visibleM: false
 						}),
 						oFactory.getInput(VISIBLE_PREFIX + 'M', {
 							visibleS: false,
 							visibleL: false,
 							visibleXL: false
 						}),
-						oFactory.getInput(VISIBLE_PREFIX + 'L_XL_S', {
-							visibleM: false
+						oFactory.getInput(VISIBLE_PREFIX + 'L', {
+							visibleS: false,
+							visibleM: false,
+							visibleXL: false
 						}),
-						oFactory.getInput(VISIBLE_PREFIX + 'L_XL_M', {
-							visibleS: false
+						oFactory.getInput(VISIBLE_PREFIX + 'XL', {
+							visibleS: false,
+							visibleM: false,
+							visibleL: false
+						}),
+						oFactory.getInput(VISIBLE_PREFIX + 'NONE', {
+							visibleS: false,
+							visibleM: false,
+							visibleL: false,
+							visibleXL: false
 						})
 					]
 				});
@@ -103,13 +121,13 @@
 			setupFunction: function() {
 				this.oGrid = oFactory.getGrid(GRID_ID);
 				this.oGrid.placeAt(TESTS_DOM_CONTAINER);
-				oCore.applyChanges();
+				Core.applyChanges();
 			},
 			teardownFunction: function() {
 				this.oGrid.destroy();
 			},
 			getRefById: function(sId) {
-				var oElement = oCore.byId(sId);
+				var oElement = Core.byId(sId);
 				return oElement ? oElement.$() : null;
 			},
 			getParentRefById: function(sId) {
@@ -129,6 +147,11 @@
 			},
 			isVisible: function (oReference) {
 				return oReference.is(':visible');
+			},
+			classesApplied: function ($DomEl, aClasses) {
+			   return aClasses.every(function (sClass) {
+				   return $DomEl.hasClass(sClass);
+			   });
 			}
 		};
 
@@ -173,28 +196,30 @@
 		assert.ok(!$oVisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Visible element doesn't have the class for hidden elements");
 
 		// Swap visibility
-		sap.ui.getCore().byId('hiddenButton').setVisible(true);
-		sap.ui.getCore().byId('visibleButton').setVisible(false);
+		Core.byId('hiddenButton').setVisible(true);
+		Core.byId('visibleButton').setVisible(false);
 
 		assert.ok(!$oInvisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Class is removed after element's visibility is changed to visible");
 		assert.ok($oVisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Class is added when element's visibility changed to hidden");
 	});
 
 	QUnit.test('Visibility', function(assert) {
-		var bHasVisibleLXLClasses = oUtility.getParentRefById(VISIBLE_PREFIX + 'L_XL').is('.sapUiRespGridVisibleL.sapUiRespGridVisibleXL'),
-			bHasVisibleMSClasses = oUtility.getParentRefById(VISIBLE_PREFIX + 'M_S').is('.sapUiRespGridHiddenL.sapUiRespGridHiddenXL'),
-			bHasVisibleSClasses = oUtility.getParentRefById(VISIBLE_PREFIX + 'S').is('.sapUiRespGridVisibleS'),
-			bHasVisibleLXLMClasses = oUtility.getParentRefById(VISIBLE_PREFIX + 'L_XL_M').is('.sapUiRespGridHiddenS'),
-			bHasVisibleMClasses = oUtility.getParentRefById(VISIBLE_PREFIX + 'M').is('.sapUiRespGridVisibleM'),
-			bHasVisibleLXLSClasses = oUtility.getParentRefById(VISIBLE_PREFIX + 'L_XL_S').is('.sapUiRespGridHiddenM');
+		var $oInputS = oUtility.getParentRefById(VISIBLE_PREFIX + 'S'),
+			$oInputM = oUtility.getParentRefById(VISIBLE_PREFIX + 'M'),
+			$oInputL = oUtility.getParentRefById(VISIBLE_PREFIX + 'L'),
+			$oInputXL = oUtility.getParentRefById(VISIBLE_PREFIX + 'XL'),
+			$oInputNONE = oUtility.getParentRefById(VISIBLE_PREFIX + 'NONE'),
+			bHasVisibleSClasses = !$oInputS.hasClass('sapUiRespGridHiddenS') && oUtility.classesApplied($oInputS, ['sapUiRespGridHiddenM', 'sapUiRespGridHiddenL', 'sapUiRespGridHiddenXL']),
+			bHasVisibleMClasses = !$oInputM.hasClass('sapUiRespGridHiddenM') && oUtility.classesApplied($oInputM, ['sapUiRespGridHiddenS', 'sapUiRespGridHiddenL', 'sapUiRespGridHiddenXL']),
+			bHasVisibleLClasses = !$oInputL.hasClass('sapUiRespGridHiddenL') && oUtility.classesApplied($oInputL, ['sapUiRespGridHiddenS', 'sapUiRespGridHiddenM', 'sapUiRespGridHiddenXL']),
+			bHasVisibleXLClasses = !$oInputXL.hasClass('sapUiRespGridHiddenXL') && oUtility.classesApplied($oInputXL, ['sapUiRespGridHiddenS', 'sapUiRespGridHiddenM', 'sapUiRespGridHiddenL']),
+			bHasVisibleNONEClasses = oUtility.classesApplied($oInputNONE, ['sapUiRespGridHiddenS', 'sapUiRespGridHiddenM', 'sapUiRespGridHiddenL', 'sapUiRespGridHiddenXL']);
 
-		assert.ok(bHasVisibleLXLClasses, VISIBILITY_CLASSES_FOR_PREFIX + 'L and XL');
-		assert.ok(bHasVisibleMSClasses, VISIBILITY_CLASSES_FOR_PREFIX + 'M and S');
 		assert.ok(bHasVisibleSClasses, VISIBILITY_CLASSES_FOR_PREFIX + 'S');
-		assert.ok(bHasVisibleLXLMClasses, VISIBILITY_CLASSES_FOR_PREFIX + 'L, XL and M');
 		assert.ok(bHasVisibleMClasses, VISIBILITY_CLASSES_FOR_PREFIX + 'M');
-		assert.ok(bHasVisibleLXLSClasses, VISIBILITY_CLASSES_FOR_PREFIX + 'L, XL, S');
-
+		assert.ok(bHasVisibleLClasses, VISIBILITY_CLASSES_FOR_PREFIX + 'L');
+		assert.ok(bHasVisibleXLClasses, VISIBILITY_CLASSES_FOR_PREFIX + 'XL');
+		assert.ok(bHasVisibleNONEClasses, VISIBILITY_CLASSES_FOR_PREFIX + 'NONE');
 	});
 
 	QUnit.test('Media', function(assert) {
@@ -229,48 +254,43 @@
 	});
 
 	QUnit.test('Visibility state', function (assert) {
-		var $visibleLXL = oUtility.getRefById(VISIBLE_PREFIX + 'L_XL'),
-			$visibleMS = oUtility.getRefById(VISIBLE_PREFIX + 'M_S'),
-			$visibleS = oUtility.getRefById(VISIBLE_PREFIX + 'S'),
-			$visibleLXLM = oUtility.getRefById(VISIBLE_PREFIX + 'L_XL_M'),
+		var $visibleS = oUtility.getRefById(VISIBLE_PREFIX + 'S'),
 			$visibleM = oUtility.getRefById(VISIBLE_PREFIX + 'M'),
-			$visibleLXLS = oUtility.getRefById(VISIBLE_PREFIX + 'L_XL_S');
+			$visibleL = oUtility.getRefById(VISIBLE_PREFIX + 'L'),
+			$visibleXL = oUtility.getRefById(VISIBLE_PREFIX + 'XL'),
+			$visibleNONE = oUtility.getRefById(VISIBLE_PREFIX + 'NONE');
 
 		// Toggles phone media size
 		this.oGrid._toggleClass(PHONE_STRING);
-		assert.strictEqual(oUtility.isVisible($visibleLXL), false, oUtility.getAriaHiddenMessage('L, XL', PHONE_STRING));
-		assert.strictEqual(oUtility.isVisible($visibleMS), true, oUtility.getAriaHiddenMessage('M, S', PHONE_STRING, true));
 		assert.strictEqual(oUtility.isVisible($visibleS), true, oUtility.getAriaHiddenMessage('S', PHONE_STRING, true));
-		assert.strictEqual(oUtility.isVisible($visibleLXLM), false, oUtility.getAriaHiddenMessage('L, XL, M', PHONE_STRING));
 		assert.strictEqual(oUtility.isVisible($visibleM), false, oUtility.getAriaHiddenMessage('M', PHONE_STRING));
-		assert.strictEqual(oUtility.isVisible($visibleLXLS), true, oUtility.getAriaHiddenMessage('L, XL, S', PHONE_STRING, true));
+		assert.strictEqual(oUtility.isVisible($visibleL), false, oUtility.getAriaHiddenMessage('L', PHONE_STRING));
+		assert.strictEqual(oUtility.isVisible($visibleXL), false, oUtility.getAriaHiddenMessage('XL', PHONE_STRING));
+		assert.strictEqual(oUtility.isVisible($visibleNONE), false, oUtility.getAriaHiddenMessage('NONE', PHONE_STRING));
 
 		// Toggles tablet media size
 		this.oGrid._toggleClass(TABLET_STRING);
-		assert.strictEqual(oUtility.isVisible($visibleLXL), false, oUtility.getAriaHiddenMessage('L, XL', TABLET_STRING));
-		assert.strictEqual(oUtility.isVisible($visibleMS), true, oUtility.getAriaHiddenMessage('M, S', TABLET_STRING, true));
 		assert.strictEqual(oUtility.isVisible($visibleS), false, oUtility.getAriaHiddenMessage('S', TABLET_STRING));
-		assert.strictEqual(oUtility.isVisible($visibleLXLM), true, oUtility.getAriaHiddenMessage('L, XL, M', TABLET_STRING, true));
 		assert.strictEqual(oUtility.isVisible($visibleM), true, oUtility.getAriaHiddenMessage('M', TABLET_STRING, true));
-		assert.strictEqual(oUtility.isVisible($visibleLXLS), false, oUtility.getAriaHiddenMessage('L, XL, S', TABLET_STRING));
+		assert.strictEqual(oUtility.isVisible($visibleL), false, oUtility.getAriaHiddenMessage('L', TABLET_STRING));
+		assert.strictEqual(oUtility.isVisible($visibleXL), false, oUtility.getAriaHiddenMessage('XL', TABLET_STRING));
+		assert.strictEqual(oUtility.isVisible($visibleNONE), false, oUtility.getAriaHiddenMessage('NONE', TABLET_STRING));
 
 		// Toggles desktop media size
 		this.oGrid._toggleClass(DESKTOP_STRING);
-		assert.strictEqual(oUtility.isVisible($visibleLXL), true, oUtility.getAriaHiddenMessage('L, XL', DESKTOP_STRING, true));
-		assert.strictEqual(oUtility.isVisible($visibleMS), false, oUtility.getAriaHiddenMessage('M, S', DESKTOP_STRING));
 		assert.strictEqual(oUtility.isVisible($visibleS), false, oUtility.getAriaHiddenMessage('S', DESKTOP_STRING));
-		assert.strictEqual(oUtility.isVisible($visibleLXLM), true, oUtility.getAriaHiddenMessage('L, XL, M', DESKTOP_STRING, true));
 		assert.strictEqual(oUtility.isVisible($visibleM), false, oUtility.getAriaHiddenMessage('M', DESKTOP_STRING));
-		assert.strictEqual(oUtility.isVisible($visibleLXLS), true, oUtility.getAriaHiddenMessage('L, XL, S', DESKTOP_STRING, true));
+		assert.strictEqual(oUtility.isVisible($visibleL), true, oUtility.getAriaHiddenMessage('L', DESKTOP_STRING, true));
+		assert.strictEqual(oUtility.isVisible($visibleXL), false, oUtility.getAriaHiddenMessage('XL', DESKTOP_STRING));
+		assert.strictEqual(oUtility.isVisible($visibleNONE), false, oUtility.getAriaHiddenMessage('NONE', DESKTOP_STRING));
 
 		// Toggles large Desktop media size
 		this.oGrid._toggleClass(LARGE_DESKTOP_STRING);
-		assert.strictEqual(oUtility.isVisible($visibleLXL), true, oUtility.getAriaHiddenMessage('L, XL', LARGE_DESKTOP_STRING, true));
-		assert.strictEqual(oUtility.isVisible($visibleMS), false, oUtility.getAriaHiddenMessage('M, S', LARGE_DESKTOP_STRING));
 		assert.strictEqual(oUtility.isVisible($visibleS), false, oUtility.getAriaHiddenMessage('S', LARGE_DESKTOP_STRING));
-		assert.strictEqual(oUtility.isVisible($visibleLXLM), true, oUtility.getAriaHiddenMessage('L, XL, M', LARGE_DESKTOP_STRING, true));
 		assert.strictEqual(oUtility.isVisible($visibleM), false, oUtility.getAriaHiddenMessage('M', LARGE_DESKTOP_STRING));
-		assert.strictEqual(oUtility.isVisible($visibleLXLS), true, oUtility.getAriaHiddenMessage('L, XL, S', LARGE_DESKTOP_STRING, true));
+		assert.strictEqual(oUtility.isVisible($visibleL), false, oUtility.getAriaHiddenMessage('L', LARGE_DESKTOP_STRING));
+		assert.strictEqual(oUtility.isVisible($visibleXL), true, oUtility.getAriaHiddenMessage('XL', LARGE_DESKTOP_STRING, true));
+		assert.strictEqual(oUtility.isVisible($visibleNONE), false, oUtility.getAriaHiddenMessage('NONE', LARGE_DESKTOP_STRING));
 	});
 
 
@@ -285,6 +305,7 @@
 		this.oGrid._toggleClass(DESKTOP_STRING);
 
 		var oInfo = this.oGrid.getAccessibilityInfo();
+
 		assert.ok(this.oGrid.getAccessibilityInfo, 'Grid has a getAccessibilityInfo function');
 		assert.ok(oInfo, 'getAccessibilityInfo returns a info object');
 		assert.ok(oInfo.role === undefined || oInfo.editable === null, 'AriaRole');
@@ -293,6 +314,50 @@
 		assert.ok(oInfo.focusable === undefined || oInfo.editable === null, 'Focusable');
 		assert.ok(oInfo.enabled === undefined || oInfo.editable === null, 'Enabled');
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, 'Editable');
-		assert.ok(oInfo.children && oInfo.children.length === 9, 'Children'); // Only 9 children are visible, because 3 of them are hidden on L devices
+		assert.ok(oInfo.children && oInfo.children.length === 7, 'Children'); // Only 7 children are visible, because 4 of them are hidden on L devices
 	});
-})();
+
+	QUnit.module("Overflow hidden library specific support");
+
+	QUnit.test("Library gridHelper is defined", function (assert) {
+		var oGridHelper = Library.GridHelper;
+		assert.ok(oGridHelper, "Grid helper is defined");
+		assert.strictEqual(typeof oGridHelper.getLibrarySpecificClass, "function",
+			"getLibrarySpecificClass function defined");
+		assert.strictEqual(oGridHelper.bFinal, true,
+			"GridHelper definition is final as in this test sap.m library is loaded");
+	});
+
+	QUnit.test("onBeforeRendering applying of class", function (assert) {
+		// Arrange
+		var oSpyMethod = sinon.spy(Library.GridHelper, "getLibrarySpecificClass"),
+			oSpyAddStyleClass = sinon.spy(Grid.prototype, "addStyleClass"),
+			fnOriginalLibrarySpecificClass,
+			oGrid;
+
+		// Act
+		oGrid = new Grid();
+
+		// Assert
+		assert.strictEqual(oSpyMethod.callCount, 1, "Method called once onBeforeRendering");
+		assert.strictEqual(oSpyAddStyleClass.callCount, 0, "AddStyleClass not called in mobile scenario");
+
+		// Arrange - mock getLibrarySpecificClass method for testing
+		fnOriginalLibrarySpecificClass = Library.GridHelper.getLibrarySpecificClass;
+		Library.GridHelper.getLibrarySpecificClass = function () {
+			return "testClassName";
+		};
+		oSpyAddStyleClass.reset();
+
+		// Act
+		oGrid = new Grid();
+
+		// Assert
+		assert.strictEqual(oSpyAddStyleClass.callCount, 1, "AddStyleClass method called - non-mobile scenario");
+		assert.ok(oSpyAddStyleClass.calledWithExactly("testClassName"), "addStyleClass called with returned class name");
+		assert.ok(oSpyAddStyleClass.calledOn(oGrid), "Spy called on the tested instance");
+
+		// Cleanup - restore mocked method
+		Library.GridHelper.getLibrarySpecificClass = fnOriginalLibrarySpecificClass;
+	});
+});

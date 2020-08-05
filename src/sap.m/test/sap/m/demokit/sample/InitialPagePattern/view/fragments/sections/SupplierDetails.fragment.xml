@@ -1,0 +1,71 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:forms="sap.ui.layout.form"
+	xmlns:uxap="sap.uxap">
+	<uxap:ObjectPageSection title="Supplier details" visible="{= !!${/selectedPurchase} }">
+		<uxap:subSections>
+			<uxap:ObjectPageSubSection title="Connect">
+				<uxap:blocks>
+					<forms:SimpleForm layout="ColumnLayout" width="100%">
+						<core:Title text="Phone Numbers"/>
+
+						<Label text="Home"/>
+						<Text text="+ 1 415-321-1234"/>
+
+						<Label text="Office phone"/>
+						<Text text="+ 1 415-321-5555"/>
+					</forms:SimpleForm>
+
+					<forms:SimpleForm
+						editable="false"
+						labelSpanM="4"
+						labelSpanS="4"
+						width="100%">
+						<core:Title text="Social Accounts"/>
+
+						<Label text="LinkedIn"/>
+						<Text text="/DeniseSmith"/>
+
+						<Label text="Twitter"/>
+						<Text text="@DeniseSmith"/>
+					</forms:SimpleForm>
+
+					<forms:SimpleForm
+						layout="ColumnLayout"
+						editable="false"
+						width="100%">
+						<core:Title text="Addresses"/>
+
+						<Label text="Home Address"/>
+						<Text text="2096 Mission Street"/>
+
+						<Label text="Mailing Address"/>
+						<Text text="PO Box 32114"/>
+					</forms:SimpleForm>
+
+					<forms:SimpleForm layout="ColumnLayout" width="100%">
+						<core:Title text="Mailing Address"/>
+
+						<Label text="Work"/>
+						<Text text="DeniseSmith@sap.com"/>
+					</forms:SimpleForm>
+				</uxap:blocks>
+			</uxap:ObjectPageSubSection>
+
+			<uxap:ObjectPageSubSection title="Payment information">
+				<uxap:blocks>
+					<forms:SimpleForm
+						width="250px"
+						editable="false"
+						layout="ColumnLayout">
+						<core:Title text="Main Payment Method"/>
+
+						<Label text="Bank Transfer"/>
+						<Text text="Sparkasse Heimfeld, Germany"/>
+					</forms:SimpleForm>
+				</uxap:blocks>
+			</uxap:ObjectPageSubSection>
+		</uxap:subSections>
+	</uxap:ObjectPageSection>
+</core:FragmentDefinition>

@@ -204,9 +204,10 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 					multiple: false
 				}
 			},
+			dnd: { draggable: false, droppable: true },
 			designtime: "sap/m/designtime/semantic/DetailPage.designtime"
 		},
-		renderer: SemanticPageRenderer.render
+		renderer: SemanticPageRenderer
 	});
 
 	DetailPage.prototype.init = function () {

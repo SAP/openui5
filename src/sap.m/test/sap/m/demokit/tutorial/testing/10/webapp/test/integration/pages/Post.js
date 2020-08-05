@@ -1,17 +1,14 @@
-sap.ui.require([
-		'sap/ui/test/Opa5',
-		'sap/ui/test/matchers/Properties',
-		'sap/ui/demo/bulletinboard/test/integration/pages/Common',
-		'sap/ui/test/actions/Press'
-	],
-	function (Opa5, Properties, Common, Press) {
-		"use strict";
+sap.ui.define([
+	'sap/ui/test/Opa5',
+	'sap/ui/test/matchers/Properties',
+	'sap/ui/test/actions/Press'
+], function (Opa5, Properties, Press) {
+	"use strict";
 
 		var sViewName = "Post";
 
 		Opa5.createPageObjects({
 			onThePostPage: {
-				baseClass: Common,
 				actions: {
 					iPressTheBackButton: function () {
 						return this.waitFor({

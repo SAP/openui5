@@ -2,109 +2,27 @@
  * ${copyright}
  */
 
- sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/StashedControlSupport',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/rta/Utils',
-	'sap/ui/rta/util/BindingsExtractor'
-	],
-	function (
-		jQuery,
-		StashedControlSupport,
-		ElementUtil,
-		RtaUtils,
-		BindingsExtractor
-	) {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dt/ElementUtil",
+	"sap/base/Log",
+	"sap/base/util/ObjectPath",
+	"sap/ui/rta/util/BindingsExtractor"
+], function (
+	jQuery,
+	ElementUtil,
+	Log,
+	ObjectPath,
+	BindingsExtractor
+) {
 	"use strict";
 
-	function _enrichProperty(mProperty, mEntity){
-		var mProp = jQuery.extend({},mProperty);
-		mProp.entityName = mEntity.name;
-
-		var mLabelAnnotation = mProperty["com.sap.vocabularies.Common.v1.Label"];
-		mProp.fieldLabel = mLabelAnnotation && mLabelAnnotation.String;
-
-		var mQuickInfoAnnotation = mProperty["com.sap.vocabularies.Common.v1.QuickInfo"];
-		mProp.quickInfo = mQuickInfoAnnotation && mQuickInfoAnnotation.String;
-
-		//CDS UI.Hidden new way also for sap:visible = false
-		var mHiddenAnnotation = mProperty["com.sap.vocabularies.UI.v1.Hidden"];
-		mProp.hidden = mHiddenAnnotation && mHiddenAnnotation.Bool === "true";
-
-		if (!mProp.hidden){
-			// Old hidden annotation
-			var mFieldControlAnnotation = mProperty["com.sap.vocabularies.Common.v1.FieldControl"];
-			if (mFieldControlAnnotation){
-				mProp.hidden = mFieldControlAnnotation.EnumMember === "com.sap.vocabularies.Common.v1.FieldControlType/Hidden";
-			}
-		}
-		return mProp;
-	}
-
-	/**
-	 * Is field using a complex type
-	 *
-	 * @param {Object} mProperty - property from entityType
-	 * @returns {Boolean} - Returns true if property is using a complex type
-	 */
-	function _isComplexType (mProperty) {
-		if (mProperty && mProperty.type) {
-			if (mProperty.type.toLowerCase().indexOf("edm") !== 0) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	function _expandComplexProperties(aODataProperties, oMetaModel, mEntity){
-		return aODataProperties.reduce(function(aExpandedProperties, mProperty){
-			var vProps = _enrichProperty(mProperty, mEntity);
-			if (_isComplexType(vProps)) {
-				var mComplexType = oMetaModel.getODataComplexType(vProps.type);
-				if (mComplexType) {
-					vProps = mComplexType.property.map(function(oComplexProperty){
-						oComplexProperty = _enrichProperty(oComplexProperty, mEntity);
-						oComplexProperty.bindingPath = vProps.name + "/" + oComplexProperty.name;
-						oComplexProperty.referencedComplexPropertyName = vProps.fieldLabel || vProps.name;
-						return oComplexProperty;
-					});
-				}
-			} else {
-				//harmonize structure
-				vProps.bindingPath = mProperty.name;
-			}
-			return aExpandedProperties.concat(vProps);
-		}, []);
-	}
-
-	function _filterInvisibleProperties(aODataProperties, oElement, sAggregationName) {
-		return aODataProperties.filter(function(mProperty){
-			//see _enrichProperty
-			return !mProperty.hidden;
-		}).filter(function(mProperty){
-			//@runtime hidden by field control value = 0
-			var mFieldControlAnnotation = mProperty["com.sap.vocabularies.Common.v1.FieldControl"];
-			var sFieldControlPath = mFieldControlAnnotation && mFieldControlAnnotation.Path;
-			if (sFieldControlPath){
-				// if the binding is a listbinding, we skip the check for field control
-				var bListBinding = oElement.getBinding(sAggregationName) instanceof sap.ui.model.ListBinding;
-				if (bListBinding) {
-					return true;
-				}
-				var iFieldControlValue = oElement.getBindingContext().getProperty(sFieldControlPath);
-				return iFieldControlValue !== 0;
-			}
-			return true;
-		});
-	}
-
-	function _checkForAbsoluteAggregationBinding(oElement, sAggregationName) {
+	function _checkForAbsoluteAggregationBinding(oElement, sAggregationName, sModelName) {
 		if (!oElement) {
 			return false;
 		}
-		var oBindingInfo = oElement.getBindingInfo(sAggregationName);
-		var sPath = oBindingInfo && oBindingInfo.path;
+		var mBindingInfo = oElement.getBindingInfo(sAggregationName, sModelName);
+		var sPath = mBindingInfo && mBindingInfo.path;
 		if (!sPath) {
 			return false;
 		}
@@ -114,227 +32,170 @@
 		return sPath.indexOf("/") === 0;
 	}
 
-	var _getBindingContext = function(oElement, bAbsoluteAggregationBinding, sAggregationName) {
-		return bAbsoluteAggregationBinding ? oElement.getBindingInfo(sAggregationName) : oElement.getBindingContext();
-	};
+	function _getModelBindingData(oElement, bAbsoluteAggregationBinding, sAggregationName, sModelName) {
+		var vBinding;
+		if (bAbsoluteAggregationBinding) {
+			vBinding = oElement.getBindingInfo(sAggregationName, sModelName);
+			//check to be model binding otherwise return undefined
+			if (typeof vBinding.model === "string" && vBinding.model !== sModelName) {
+				vBinding = undefined;
+			}
+		} else {
+			//here we explicitly request the models binding context
+			vBinding = oElement.getBindingContext(sModelName);
+		}
+		return vBinding;
+	}
 
-	var _getBindingPath = function(oElement, sAggregationName) {
-		var bAbsoluteAggregationBinding = _checkForAbsoluteAggregationBinding(oElement, sAggregationName);
-		var vBinding = _getBindingContext(oElement, bAbsoluteAggregationBinding, sAggregationName);
+	function _getBindingContextPath(oElement, sAggregationName, sModelName) {
+		var bAbsoluteAggregationBinding = _checkForAbsoluteAggregationBinding(oElement, sAggregationName, sModelName);
+		var vBinding = _getModelBindingData(oElement, bAbsoluteAggregationBinding, sAggregationName, sModelName);
 		if (vBinding) {
 			return bAbsoluteAggregationBinding ? vBinding.path : vBinding.getPath();
 		}
-	};
-
-	/**
-	 * Fetching all available properties of the Element's Model
-	 * @param {sap.ui.core.Control} oElement - Control instance
-	 * @param {string} sAggregationName - aggregation name of the action
-	 * @return {Promise} - Returns Promise with results
-	 * @private
-	 */
-	function _getODataPropertiesOfModel(oElement, sAggregationName) {
-		var oModel = oElement.getModel();
-		var mData = {
-			property: [],
-			navigationProperty: [],
-			navigationEntityNames: []
-		};
-
-		if (oModel) {
-			var sModelName = oModel.getMetadata().getName();
-			if (sModelName === "sap.ui.model.odata.ODataModel" || sModelName === "sap.ui.model.odata.v2.ODataModel") {
-				var oMetaModel = oModel.getMetaModel();
-				return oMetaModel.loaded().then(function(){
-					var sBindingContextPath = _getBindingPath(oElement, sAggregationName);
-					if (sBindingContextPath) {
-						var oMetaModelContext = oMetaModel.getMetaContext(sBindingContextPath);
-						var mODataEntity = oMetaModelContext.getObject();
-
-						var oDefaultAggregation = oElement.getMetadata().getAggregation();
-						if (oDefaultAggregation) {
-							var oBinding = oElement.getBindingInfo(oDefaultAggregation.name);
-							var oTemplate = oBinding && oBinding.template;
-
-							if (oTemplate) {
-								var sPath = oElement.getBindingPath(oDefaultAggregation.name);
-								var oODataAssociationEnd = oMetaModel.getODataAssociationEnd(mODataEntity, sPath);
-								var sFullyQualifiedEntityName = oODataAssociationEnd && oODataAssociationEnd.type;
-								if (sFullyQualifiedEntityName) {
-									var oEntityType = oMetaModel.getODataEntityType(sFullyQualifiedEntityName);
-									mODataEntity = oEntityType;
-								}
-							}
-						}
-
-						mData.property = mODataEntity.property || [];
-						mData.property = _expandComplexProperties(mData.property, oMetaModel, mODataEntity);
-						mData.property = _filterInvisibleProperties(mData.property, oElement, sAggregationName);
-
-						if (mODataEntity.navigationProperty){
-							mData.navigationProperty = mODataEntity.navigationProperty;
-							mODataEntity.navigationProperty.forEach(function(oNavProp){
-								var sFullyQualifiedEntityName = (
-									oMetaModel.getODataAssociationEnd(mODataEntity, oNavProp.name)
-									&& oMetaModel.getODataAssociationEnd(mODataEntity, oNavProp.name).type
-								);
-								var oEntityType = oMetaModel.getODataEntityType(sFullyQualifiedEntityName);
-								if (oEntityType && oEntityType.name){
-									if (mData.navigationEntityNames.indexOf(oEntityType.name) === -1){
-										mData.navigationEntityNames.push(oEntityType.name);
-									}
-								}
-							});
-						}
-					}
-					return mData;
-				});
+	}
+	function _flattenProperties(aProperties) {
+		var aFlattenedProperties = aProperties.reduce(function(aFlattened, oProperty) {
+			if (Array.isArray(oProperty.properties)) {
+				//currently only one level supported by our dialogs, etc. => TODO make deep types possible
+				//Only take the leaves, but attach the parent property name/label to it
+				aFlattened = aFlattened.concat(oProperty.properties.map(function(mInnerProp) {
+					mInnerProp.parentPropertyName = oProperty.label || oProperty.name;
+					return mInnerProp;
+				}));
+			} else {
+				aFlattened.push(oProperty);
 			}
-		}
+			return aFlattened;
+		}, []);
 
-		return Promise.resolve(mData);
+		return aFlattenedProperties;
 	}
 
-	function _oDataPropertyToAdditionalElementInfo (oODataProperty){
+	function _getAllPropertiesFromDelegate(oElement, sAggregationName, mAction) {
+		var mPropertyBag = {
+			element: oElement,
+			aggregationName: sAggregationName,
+			payload: mAction.delegateInfo.payload || {}
+		};
+		return mAction.delegateInfo.delegate.getPropertyInfo(mPropertyBag)
+			.then(_flattenProperties);
+	}
+
+	function _getAllPropertiesFromModels(oElement, sAggregationName, mActions) {
+		var mAddViaDelegate = mActions.addViaDelegate;
+		var fnGetAllProperties;
+		if (mAddViaDelegate) {
+			fnGetAllProperties = _getAllPropertiesFromDelegate.bind(null, oElement, sAggregationName, mAddViaDelegate);
+		} else {
+			fnGetAllProperties = Promise.resolve.bind(Promise, []);
+		}
+		return fnGetAllProperties() //arguments bound before
+			.then(function(aProperties) {
+				return _checkForDuplicateProperties(aProperties);
+			});
+	}
+
+	function _filterUnsupportedProperties(aProperties) {
+		return aProperties.filter(function(mProperty) {
+			//see _enrichProperty
+			return !mProperty.unsupported;
+		});
+	}
+
+	function _assignCustomItemIds(sParentId, oCustomItem) {
+		oCustomItem.type = "custom";
+		if (oCustomItem.id) {
+			oCustomItem.itemId = sParentId + "-" + oCustomItem.id;
+			oCustomItem.key = oCustomItem.itemId;
+		}
+		return oCustomItem;
+	}
+
+	function _oPropertyToAdditionalElementInfo (oProperty) {
 		return {
 			selected : false,
-			label : oODataProperty.fieldLabel || oODataProperty.name,
-			referencedComplexPropertyName: oODataProperty.referencedComplexPropertyName ? oODataProperty.referencedComplexPropertyName : "",
-			duplicateComplexName: oODataProperty.duplicateComplexName ? oODataProperty.duplicateComplexName : false,
-			tooltip :  oODataProperty.quickInfo || oODataProperty.fieldLabel,
+			label : oProperty.label || oProperty.name,
+			parentPropertyName: oProperty.parentPropertyName ? oProperty.parentPropertyName : "",
+			duplicateName: oProperty.duplicateName ? oProperty.duplicateName : false,
+			tooltip :  oProperty.tooltip || oProperty.label,
 			originalLabel: "",
 			//command relevant data
-			type : "odata",
-			entityType : oODataProperty.entityName,
-			name : oODataProperty.name,
-			bindingPath : oODataProperty.bindingPath
+			type : "delegate",
+			entityType : oProperty.entityType,
+			name : oProperty.name,
+			bindingPath : oProperty.bindingPath
 		};
 	}
 
-	function _elementToAdditionalElementInfo (mData){
+	function _elementToAdditionalElementInfo (mData) {
 		var oElement = mData.element;
 		var mAction = mData.action;
 		return {
 			selected : false,
-			label : RtaUtils.getLabelForElement(oElement, mAction.getLabel),
-			tooltip : oElement.quickInfoFromOData || oElement.name || RtaUtils.getLabelForElement(oElement, mAction.getLabel),
-			referencedComplexPropertyName: oElement.referencedComplexPropertyName ? oElement.referencedComplexPropertyName : "",
-			duplicateComplexName: oElement.duplicateComplexName ? oElement.duplicateComplexName : false,
-			bindingPaths: oElement.bindingPaths,
-			originalLabel: oElement.renamedLabel && oElement.fieldLabel !== oElement.labelFromOData ? oElement.labelFromOData : "",
+			label : oElement.__label || ElementUtil.getLabelForElement(oElement, mAction.getLabel),
+			tooltip : oElement.__tooltip || ElementUtil.getLabelForElement(oElement, mAction.getLabel) || oElement.__bindingPath,
+			parentPropertyName: oElement.__parentPropertyName ? oElement.__parentPropertyName : "",
+			duplicateName: oElement.__duplicateName ? oElement.__duplicateName : false,
+			originalLabel: oElement.__renamedLabel && oElement.__label !== oElement.__originalLabel ? oElement.__originalLabel : "",
+			bindingPath: oElement.__bindingPath, //used for OPA tests and debugging
 			//command relevant data
 			type : "invisible",
-			element : oElement
+			elementId : oElement.getId()
 		};
 	}
 
 	/**
 	 * Retrieving sibling elements from its parent container which are bound to the same Model (important!)
 	 *
-	 * @param {sap.ui.core.Control} oElement - element for which we're looking for siblings
-	 * @param {sap.ui.core.Control} oRelevantContainer - "parent" container of the oElement
+	 * @param {sap.ui.core.Element} oElement - element for which we're looking for siblings
+	 * @param {sap.ui.core.Element} oRelevantContainer - "parent" container of the oElement
 	 * @param {string} sAggregationName - name of the aggregation of the action
+	 * @param {string} sModelName - model name
 	 *
-	 * @return {Array.<sap.ui.core.Control>} - returns an array with found siblings elements
+	 * @return {sap.ui.core.Element[]} - returns an array with found siblings elements
 	 *
 	 * @private
 	 */
-	function _getRelevantElements(oElement, oRelevantContainer, sAggregationName) {
+	function _getRelevantElements(oElement, oRelevantContainer, sAggregationName, sModelName) {
 		if (oRelevantContainer && oRelevantContainer !== oElement) {
-			var sEntityName = RtaUtils.getEntityTypeByPath(
-				oElement.getModel(),
-				_getBindingPath(oElement, sAggregationName)
-			);
+			var sRelevantContainerBindingContext = _getBindingContextPath(oElement, sAggregationName, sModelName);
 
 			return ElementUtil
 				.findAllSiblingsInContainer(oElement, oRelevantContainer)
 				// We accept only siblings that are bound on the same model
 				.filter(function (oSiblingElement) {
-					var sPath = _getBindingPath(oSiblingElement, sAggregationName);
-					if (sPath) {
-						return RtaUtils.getEntityTypeByPath(oSiblingElement.getModel(), sPath) === sEntityName;
-					}
-					return false;
+					return sRelevantContainerBindingContext === _getBindingContextPath(oSiblingElement, sAggregationName, sModelName);
 				});
-		} else {
-			return [oElement];
 		}
+		return [oElement];
 	}
 
-	function _checkForComplexDuplicates(aODataProperties) {
-		aODataProperties.forEach(function(oODataProperty, index, aODataProperties) {
-			if (oODataProperty["duplicateComplexName"] !== true) {
-				for (var j = index + 1; j < aODataProperties.length - 1; j++) {
-					if (oODataProperty.fieldLabel === aODataProperties[j].fieldLabel) {
-						oODataProperty["duplicateComplexName"] = true;
-						aODataProperties[j]["duplicateComplexName"] = true;
+	function _checkForDuplicateProperties(aProperties) {
+		aProperties.forEach(function(oModelProperty, index, aProperties) {
+			if (oModelProperty["duplicateName"] !== true) {
+				for (var j = index + 1; j < aProperties.length - 1; j++) {
+					if (oModelProperty.label === aProperties[j].label) {
+						oModelProperty["duplicateName"] = true;
+						aProperties[j]["duplicateName"] = true;
 					}
 				}
 			}
 		});
-		return aODataProperties;
+		return aProperties;
 	}
 
-	//check for duplicate labels to later add the referenced complexTypeName if available
-	function _checkForDuplicateLabels(oInvisibleElement, aODataProperties) {
-		return aODataProperties.some(function(oDataProperty) {
-			return oDataProperty.fieldLabel === oInvisibleElement.fieldLabel;
+	//check for duplicate labels to later add the parent property name/label if available
+	function _checkForDuplicateLabels(oInvisibleElement, aProperties) {
+		return aProperties.some(function(oModelProperty) {
+			return oModelProperty.label === oInvisibleElement.__label;
 		});
-	}
-
-	// Get all relevant bindings for the element (from all properties)
-	function _collectBindingPaths(oInvisibleElement, oModel){
-		oInvisibleElement.bindingPaths = [];
-		oInvisibleElement.bindingContextPaths = [];
-		var sAggregationName = oInvisibleElement.sParentAggregationName;
-		var oParent = oInvisibleElement.getParent();
-		var aBindings = BindingsExtractor.getBindings(oInvisibleElement, oModel);
-
-		if (oParent) {
-			var oDefaultAggregation = oParent.getMetadata().getAggregation();
-
-			if (oDefaultAggregation) {
-				var iPositionOfInvisibleElement = ElementUtil.getAggregation(oParent, sAggregationName).indexOf(oInvisibleElement);
-				var sParentDefaultAggregationName = oDefaultAggregation.name;
-				var oBinding = oParent.getBindingInfo(sParentDefaultAggregationName);
-				var oTemplate = oBinding && oBinding.template;
-
-				if (oTemplate) {
-					var oTemplateDefaultAggregation = oTemplate.getMetadata().getAggregation();
-
-					if (oTemplateDefaultAggregation) {
-						var sTemplateDefaultAggregationName = oTemplateDefaultAggregation.name;
-						var oTemplateElement = ElementUtil.getAggregation(oTemplate, sTemplateDefaultAggregationName)[iPositionOfInvisibleElement];
-						aBindings = aBindings.concat(BindingsExtractor.getBindings(oTemplateElement, null, true));
-					}
-				}
-			}
-		}
-
-		for (var i = 0, l = aBindings.length; i < l; i++) {
-			if (aBindings[i].getPath && aBindings[i].getPath()){
-				if (oInvisibleElement.bindingPaths.indexOf(aBindings[i].getPath()) === -1){
-					oInvisibleElement.bindingPaths.push(aBindings[i].getPath());
-				}
-			}
-			if (aBindings[i].getContext && aBindings[i].getContext()){
-				if (oInvisibleElement.bindingContextPaths.indexOf(aBindings[i].getContext().getPath()) === -1){
-					oInvisibleElement.bindingContextPaths.push(aBindings[i].getContext().getPath());
-				}
-			}
-			if (jQuery.isPlainObject(aBindings[i])){
-				if (oInvisibleElement.bindingPaths.indexOf(aBindings[i].parts[0].path) === -1){
-					oInvisibleElement.bindingPaths.push(aBindings[i].parts[0].path);
-				}
-			}
-		}
-		return oInvisibleElement;
 	}
 
 	/**
 	 * Checks if array of paths is not empty
-	 * @param {Array.<String>} aBindingPaths - Array of collected binding paths
-	 * @return {Boolean} - true if it has binding(s)
+	 * @param {string[]} aBindingPaths - Array of collected binding paths
+	 * @return {boolean} - true if it has binding(s)
 	 * @private
 	 */
 	function _hasBindings(aBindingPaths) {
@@ -342,100 +203,203 @@
 	}
 
 	/**
-	 * Checks if array of paths contains bindings through navigation
+	 * Looks for a model property for a set of bindings paths
 	 *
-	 * @param {Array.<String>} aBindingPaths - Array of collected binding paths
-	 * @param {Array.<Object>} aNavigationProperties - Array of Navigation Properties
-	 * @param {Array.<String>} aNavigationEntityNames - Array of Navigation Entity Names
-	 * @param {Array.<String>} aBindingContextPaths - Array of Binding Context Paths
+	 * @param {string[]} aControlsBindingPaths - Array of collected binding paths
+	 * @param {object[]} aProperties - Array of Fields
 	 *
-	 * @return {Boolean} - true if it has at least one navigational binding
-	 */
-	function _hasNavigationBindings(aBindingPaths, aNavigationProperties, aNavigationEntityNames, aBindingContextPaths) {
-		var bNavigationInBindingPath = _hasBindings(aBindingPaths)
-			&& aBindingPaths.some(function (sPath) {
-				var aParts = sPath.trim().replace(/^\//gi, '').split('/');
-				if (aParts.length > 1) {
-					return aNavigationProperties.indexOf(aParts.shift()) !== -1;
-				}
-			});
-
-		// BindingContextPath : "/SEPMRA_C_PD_Supplier('100000001')"
-		// NavigationEntityName : "SEPMRA_C_PD_Supplier"
-		var bNavigationInEntity = aBindingContextPaths.some(function(sContextPath){
-			sContextPath = sContextPath.match(/^\/?([A-Za-z0-9_]+)/)[0];
-			return (aNavigationEntityNames.indexOf(sContextPath) >= 0);
-		});
-
-		return bNavigationInBindingPath || bNavigationInEntity;
-	}
-
-	/**
-	 * Looks for a ODataProperty for a set of bindings paths
-	 *
-	 * @param {Array.<String>} aBindingPaths - Array of collected binding paths
-	 * @param {Array.<Object>} aODataProperties - Array of Fields
-	 *
-	 * @return {Object|undefined} - returns first found Object with Field (Property) description, undefined if not found
+	 * @return {object|undefined} - returns first found Object with Field (Property) description, undefined if not found
 	 *
 	 * @private
 	 */
-	function _findODataProperty(aBindingPaths, aODataProperties) {
-		return aODataProperties.filter(function (oDataProperty) {
-			return aBindingPaths.indexOf(oDataProperty.bindingPath) !== -1;
+	function _findModelProperty(aControlsBindingPaths, aProperties) {
+		return aProperties.filter(function (oModelProperty) {
+			return aControlsBindingPaths.some(function(sBindingPath) {
+				//there might be some deeper binding paths available on controls,
+				//than returned by the model evaluation (e.g. navigation property paths)
+				//So we only check a properties are part of the controls bindings
+				return sBindingPath.startsWith(oModelProperty.bindingPath);
+			});
 		}).pop();
 	}
 
+	function _vBindingToPath(vBinding) {
+		return (
+			jQuery.isPlainObject(vBinding)
+			? vBinding.parts[0].path //TODO what about complex bindings with multiple paths, this was not covered so far?
+			: !!vBinding.getPath && vBinding.getPath()
+		);
+	}
+
+	function _getRepresentedBindingPathsFromBinding(oElement, mAction, sModelName, sAggregationName) {
+		var oModel = oElement.getModel(sModelName);
+		var aRelevantElements = _getRelevantElements(oElement, mAction.relevantContainer, sAggregationName, sModelName);
+		var aBindingPaths = [];
+
+		aRelevantElements.forEach(function(oElement) {
+			aBindingPaths = aBindingPaths.concat(BindingsExtractor.getBindings(oElement, oModel)
+				.map(_vBindingToPath)
+			);
+		});
+		return aBindingPaths;
+	}
+
+	function _getRepresentedPropertiesFromDelegate(mAction, sAggregationName) {
+		var mPropertyBag = {
+			element: mAction.relevantContainer,
+			aggregationName: sAggregationName,
+			payload: mAction.delegateInfo.payload || {}
+		};
+		return mAction.delegateInfo.delegate.getRepresentedProperties(mPropertyBag);
+	}
+
+	function _getRepresentedBindingPathsFromDelegateOrBinding(oElement, mAction, sModelName, sAggregationName) {
+		return _getRepresentedPropertiesFromDelegate(mAction, sAggregationName)
+		.then(function(aRepresentedProperties) {
+			if (aRepresentedProperties === undefined) {
+				//delegate skipped taking over => evaluate binding
+				return _getRepresentedBindingPathsFromBinding(oElement, mAction, sModelName, sAggregationName);
+			}
+			var aBindingPaths = [];
+			aRepresentedProperties.forEach(function(oRepresentedProperty) {
+				aBindingPaths = aBindingPaths.concat(oRepresentedProperty.bindingPaths);
+			});
+			return aBindingPaths;
+		});
+	}
+
+
+	function _getRepresentedBindingPaths(oElement, mAction, sModelName, sAggregationName) {
+		return Promise.resolve().then(function() {
+			var bHasDelegateAndGetRepresentedProperties = !!ObjectPath.get("delegateInfo.delegate.getRepresentedProperties", mAction);
+
+			if (bHasDelegateAndGetRepresentedProperties) {
+				return _getRepresentedBindingPathsFromDelegateOrBinding(oElement, mAction, sModelName, sAggregationName);
+			}
+			return _getRepresentedBindingPathsFromBinding(oElement, mAction, sModelName, sAggregationName);
+		});
+	}
+
 	/**
-	 * Enhance Invisible Element with extra data from OData property
+	 * Enhance Invisible Element with extra data from model property or custom item
 	 *
-	 * @param {sap.ui.core.Control} oInvisibleElement - Invisible Element
-	 * @param {Object} mODataProperty - ODataProperty as a source of data enhancement process
+	 * @param {sap.ui.core.Element} oInvisibleElement - Invisible Element
+	 * @param {object} mSomeItem - source of data enhancement process
 	 *
 	 * @private
 	 */
-	function _enhanceInvisibleElement(oInvisibleElement, mODataProperty) {
-		oInvisibleElement.labelFromOData = mODataProperty.fieldLabel;
-		oInvisibleElement.quickInfoFromOData = mODataProperty.quickInfo;
-		oInvisibleElement.name = mODataProperty.name;
-		if (oInvisibleElement.fieldLabel !== oInvisibleElement.labelFromOData) {
-			oInvisibleElement.renamedLabel = true;
+	function _enhanceInvisibleElement(oInvisibleElement, mSomeItem) {
+		oInvisibleElement.__originalLabel = mSomeItem.label;
+
+		oInvisibleElement.__tooltip = mSomeItem.tooltip;
+
+		//found element
+		oInvisibleElement.__bindingPath = mSomeItem.name;
+
+		// oInvisibleElement.__label has the current label retrieved before in the analysis
+		if (oInvisibleElement.__label !== oInvisibleElement.__originalLabel) {
+			oInvisibleElement.__renamedLabel = true;
 		}
-		if (mODataProperty.referencedComplexPropertyName) {
-			oInvisibleElement.referencedComplexPropertyName = mODataProperty.referencedComplexPropertyName;
+		if (mSomeItem.parentPropertyName) {
+			oInvisibleElement.__parentPropertyName = mSomeItem.parentPropertyName;
 		}
+	}
+
+	function _getRepresentedBindingPathsFromDelegateIfAvailable(mAction, sAggregationName) {
+		var bHasDelegateAndGetRepresentedProperties = !!ObjectPath.get("delegateInfo.delegate.getRepresentedProperties", mAction);
+
+		if (bHasDelegateAndGetRepresentedProperties) {
+			return _getRepresentedPropertiesFromDelegate(mAction, sAggregationName);
+		}
+	}
+
+	function _getRepresentedBindingPathsOfInvisibleElement(oInvisibleElement, aRepresentedProperties) {
+		var oRepresentedProperty;
+		aRepresentedProperties.some(function(oProperty) {
+			if (oProperty.id === oInvisibleElement.getId()) {
+				oRepresentedProperty = oProperty;
+				return true; //skip processing
+			}
+		});
+		return oRepresentedProperty.bindingPaths || [];
 	}
 
 	/**
 	 * Checks if this InvisibleProperty should be included in resulting list and adds information
-	 * from oDataProperty to the InvisibleProperty if available
+	 * from models metadata to the InvisibleProperty if available
+	 * if metadata is available and the element is not present in it, do not include it:
+	 * Example use case: custom field which was hidden and then removed from system
+	 * should not be available for reveal after the removal
 	 *
-	 * @param {sap.ui.core.Control} oInvisibleElement - Invisible Element
-	 * @param {Array.<Object>} aODataProperties - Array of Fields
-	 * @param {Array.<Object>} aNavigationProperties - Array of Navigation Properties
-	 * @param {Array.<Object>} aNavigationEntityNames - Array of Navigation Entity names
+	 * @param {sap.ui.core.Element} oInvisibleElement - Invisible Element
+	 * @param {object[]} aProperties - Array of Fields
+	 * @param {string[]} aBindingPaths - Map of all binding paths and binding context paths of the passed invisible element
 	 *
-	 * @return {Boolean} - whether this field is
+	 * @return {boolean} - whether this field should be included
 	 *
 	 * @private
 	 */
-	function _checkAndEnhanceODataProperty(oInvisibleElement, aODataProperties, aNavigationProperties, aNavigationEntityNames) {
-		var aBindingPaths = oInvisibleElement.bindingPaths,
-			aBindingContextPaths = oInvisibleElement.bindingContextPaths,
-			mODataProperty;
-
-		return (
+	function _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths) {
+		if (!_hasBindings(aBindingPaths)) {
 			// include it if the field has no bindings (bindings can be added in runtime)
-			!_hasBindings(aBindingPaths)
-			// include it if some properties got binding through valid navigations of the current Model
-			|| _hasNavigationBindings(aBindingPaths, aNavigationProperties, aNavigationEntityNames, aBindingContextPaths)
-			// looking for a corresponding OData property, if it exists oInvisibleElement is being enhanced
-			// with extra data from it
-			|| (
-				(mODataProperty = _findODataProperty(aBindingPaths, aODataProperties))
-				&&  (_enhanceInvisibleElement(oInvisibleElement, mODataProperty) || true)
-			)
-		);
+			return true;
+		}
+
+		var mModelProperty = _findModelProperty(aBindingPaths, aProperties);
+		if (mModelProperty) {
+			_enhanceInvisibleElement(oInvisibleElement, mModelProperty);
+			return true;
+		}
+		return false;
+	}
+
+	function _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties) {
+		var mAddViaDelegate = mActions.addViaDelegate;
+		var sModelName = _getModelName(mAddViaDelegate);
+		var oModel = oElement.getModel(sModelName);
+		var bIncludeElement = true;
+		var aBindingPaths = [];
+
+		if (mAddViaDelegate) {
+			if (mAddViaDelegate && aRepresentedProperties) {
+				aBindingPaths = _getRepresentedBindingPathsOfInvisibleElement(oInvisibleElement, aRepresentedProperties);
+
+			// BCP: 1880498671
+			} else if (_getBindingContextPath(oElement, sAggregationName, sModelName) === _getBindingContextPath(oInvisibleElement, sAggregationName, sModelName)) {
+				//TODO fix with stashed type support
+				aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel).bindingPaths;
+			} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
+				bIncludeElement = false;
+			}
+
+			if (bIncludeElement) {
+				oInvisibleElement.__duplicateName = _checkForDuplicateLabels(oInvisibleElement, aProperties);
+
+				bIncludeElement = _checkAndEnhanceByModelProperty(
+					oInvisibleElement,
+					aProperties,
+					aBindingPaths);
+			}
+		}
+		return bIncludeElement;
+	}
+
+	function _enhanceByCustomItems(oInvisibleElement, mActions, bIncludeElement, oElement) {
+		var mCustom = mActions.addViaCustom;
+		if (mCustom && bIncludeElement) {
+			mCustom.items.forEach(function(oCustomItem) {
+				_assignCustomItemIds(oElement.getParent().getId(), oCustomItem);
+				if (oCustomItem.itemId === oInvisibleElement.getId()) {
+					_enhanceInvisibleElement(oInvisibleElement, oCustomItem);
+				}
+			});
+		}
+	}
+
+	function _getModelName(mAddViaDelegate) {
+		//ManagedObject jsdoc tells to use undefined for default model, therefore it
+		//is necessary to return undefined if modelName or whole delegateInfo is missing
+		return ObjectPath.get("delegateInfo.payload.modelName", mAddViaDelegate);
 	}
 
 	// API: depending on the available actions for the aggregation call one or both of these methods
@@ -443,63 +407,42 @@
 		/**
 		 * Filters available invisible elements whether they could be shown or not
 		 *
-		 * @param {sap.ui.core.Control} oElement - Container Element where to start search for a invisible
-		 * @param {Object} mActions - Container with actions
+		 * @param {sap.ui.core.Element} oElement - Container Element where to start search for a invisible
+		 * @param {object} mActions - Container with actions
 		 *
 		 * @return {Promise} - returns a Promise which resolves with a list of hidden controls are available to display
 		 */
-		enhanceInvisibleElements : function(oElement, mActions){
-			var oModel = oElement.getModel();
+		enhanceInvisibleElements : function(oElement, mActions) {
 			var mRevealData = mActions.reveal;
-			var mAddODataProperty = mActions.addODataProperty;
+			var mAddViaDelegate = mActions.addViaDelegate;
+
 			var oDefaultAggregation = oElement.getMetadata().getAggregation();
 			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mActions.aggregation;
 
-			return Promise.resolve()
-				.then(function () {
-					return _getODataPropertiesOfModel(oElement, sAggregationName);
-				})
-				.then(function(mData) {
-					var aODataProperties = mData.property;
-					var aODataNavigationProperties = mData.navigationProperty.map(function (mNavigation) {
-						return mNavigation.name;
-					});
-					var aODataNavigationEntityNames = mData.navigationEntityNames;
-
-					aODataProperties = _checkForComplexDuplicates(aODataProperties);
-
+			return Promise.all([
+				_getAllPropertiesFromModels(oElement, sAggregationName, mActions),
+				_getRepresentedBindingPathsFromDelegateIfAvailable(mAddViaDelegate, sAggregationName)
+			])
+				.then(function(args) {
+					var aProperties = args[0];
+					var aRepresentedProperties = args[1];
 					var aAllElementData = [];
 					var aInvisibleElements = mRevealData.elements || [];
 
-					aInvisibleElements.forEach(function(oInvisibleElement) {
-						var sType = oInvisibleElement.getMetadata().getName();
-						var mAction = mRevealData.types[sType].action;
-						var bIncludeElement = true;
+					aInvisibleElements.forEach(function(mInvisibleElement) {
+						var oInvisibleElement = mInvisibleElement.element;
+						var mRevealAction = mInvisibleElement.action;
 
-						if (_getBindingPath(oElement, sAggregationName) === _getBindingPath(oInvisibleElement, sAggregationName)) {
-							//TODO fix with stashed type support
-							oInvisibleElement = _collectBindingPaths(oInvisibleElement, oModel);
-							oInvisibleElement.fieldLabel = RtaUtils.getLabelForElement(oInvisibleElement, mAction.getLabel);
-							oInvisibleElement.duplicateComplexName = _checkForDuplicateLabels(oInvisibleElement, aODataProperties);
+						oInvisibleElement.__label = ElementUtil.getLabelForElement(oInvisibleElement, mRevealAction.getLabel);
 
-							//Add information from the oDataProperty to the InvisibleProperty if available;
-							//if oData is available and the element is not present in it, do not include it
-							//Example use case: custom field which was hidden and then removed from system
-							//should not be available for adding after the removal
-							if (mAddODataProperty && aODataProperties.length > 0){
-								bIncludeElement = _checkAndEnhanceODataProperty(oInvisibleElement, aODataProperties, aODataNavigationProperties, aODataNavigationEntityNames);
-							}
-						} else if (
-							oInvisibleElement.getParent()
-							&& BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0
-						) {
-							bIncludeElement = false;
-						}
+						var bIncludeElement = _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties);
+
+						_enhanceByCustomItems(oInvisibleElement, mActions, bIncludeElement, oElement);
 
 						if (bIncludeElement) {
 							aAllElementData.push({
 								element : oInvisibleElement,
-								action : mAction
+								action : mRevealAction
 							});
 						}
 					});
@@ -511,54 +454,88 @@
 		},
 
 		/**
-		 * Retrieves available OData properties from the metadata
+		 * Retrieves available properties from the delegate
 		 *
-		 * @param {sap.ui.core.Control} oElement - Source element of which Model we're looking for additional properties
-		 * @param {Object} mAction - Action descriptor
+		 * @param {sap.ui.core.Element} oElement - Source element for which delegate we're looking for additional properties
+		 * @param {object} mAction - Action descriptor for add via delegate action
 		 *
-		 * @return {Promise} - returns a Promise which resolves with a list of available to display OData properties
+		 * @return {Promise} - returns a Promise which resolves with a list of available to display delegate properties
 		 */
-		getUnboundODataProperties: function (oElement, mAction) {
+		getUnrepresentedDelegateProperties: function (oElement, mAction) {
+			var sModelName = _getModelName(mAction);
 			var oDefaultAggregation = oElement.getMetadata().getAggregation();
 			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mAction.action.aggregation;
-			var oModel = oElement.getModel();
-
-			return Promise.resolve()
-				.then(function () {
-					return _getODataPropertiesOfModel(oElement, sAggregationName);
-				})
-				.then(function(mData) {
-					var aODataProperties = mData.property;
-					var aRelevantElements = _getRelevantElements(oElement, mAction.relevantContainer, sAggregationName);
-					var aBindings = [];
-
-					aRelevantElements.forEach(function(oElement){
-						aBindings = aBindings.concat(BindingsExtractor.getBindings(oElement, oModel));
-					});
+			return Promise.all([
+				_getAllPropertiesFromDelegate(oElement, sAggregationName, mAction),
+				_getRepresentedBindingPaths(oElement, mAction, sModelName, sAggregationName)
+			])
+				.then(function(args) {
+					var aAllProperties = args[0];
+					var aRepresentedBindingPaths = args[1];
 
 					var fnFilter = mAction.action.filter ? mAction.action.filter : function() {return true;};
 
-					aODataProperties = aODataProperties.filter(function(oDataProperty) {
-						var bHasBindingPath = false;
-						if (aBindings){
-							bHasBindingPath = aBindings.some(function(vBinding) {
-								return (
-									jQuery.isPlainObject(vBinding)
-									? vBinding.parts[0].path
-									: !!vBinding.getPath && vBinding.getPath()
-								) === oDataProperty.bindingPath;
+					var aUnrepresentedProperties = _filterUnsupportedProperties(aAllProperties);
+					aUnrepresentedProperties = aUnrepresentedProperties.filter(function(oModelProperty) {
+						var bIsRepresented = false;
+						if (aRepresentedBindingPaths) {
+							bIsRepresented = aRepresentedBindingPaths.some(function(sBindingPath) {
+								return sBindingPath === oModelProperty.bindingPath;
 							});
 						}
-						return !bHasBindingPath && fnFilter(mAction.relevantContainer, oDataProperty);
+						return !bIsRepresented && fnFilter(mAction.relevantContainer, oModelProperty);
 					});
 
-					aODataProperties = _checkForComplexDuplicates(aODataProperties);
+					aUnrepresentedProperties = _checkForDuplicateProperties(aUnrepresentedProperties);
 
-					return aODataProperties;
-				})
-				.then(function(aUnboundODataProperties) {
-					return aUnboundODataProperties.map(_oDataPropertyToAdditionalElementInfo);
+					return aUnrepresentedProperties;
+				}).then(function(aUnrepresentedProperties) {
+					return aUnrepresentedProperties.map(_oPropertyToAdditionalElementInfo);
 				});
+		},
+
+		getCustomAddItems: function(oElement, mAction) {
+			return new Promise(function(fnResolve) {
+				if (Array.isArray(mAction.items)) {
+					// remove items already rendered
+					fnResolve(
+						mAction.items
+							.map(_assignCustomItemIds.bind(null, oElement.getParent().getId()))
+							.filter(function(oCustomItem) {
+								if (!oCustomItem.id) {
+									Log.error("CustomAdd item with label " + oCustomItem.label + " does not contain an 'id' property", "sap.ui.rta.plugin.AdditionalElementsAnalyzer#showAvailableElements");
+									return false;
+								}
+								return !ElementUtil.getElementInstance(oCustomItem.itemId);
+							})
+					);
+				} else {
+					fnResolve();
+				}
+			});
+		},
+
+		getFilteredItemsList: function(aAnalyzerValues) {
+			// promise index 0: invisible, 1: addViaOData/addViaDelegate, 2: custom
+			var aInvisibleElements = aAnalyzerValues[0];
+			var iCustomItemsIndex = 2;
+			var aCustomItems = aAnalyzerValues[iCustomItemsIndex];
+			if (aCustomItems) {
+				var aInvisibleElementIds = aInvisibleElements.map(
+					function (oInvisibleItem) {
+						return oInvisibleItem.elementId;
+					}
+				);
+				// filter for hidden custom items in the array
+				aAnalyzerValues[iCustomItemsIndex] = aCustomItems
+					.filter(function(oCustomItem) {
+						return !oCustomItem.itemId || aInvisibleElementIds.indexOf(oCustomItem.itemId) === -1;
+					});
+			}
+			return aAnalyzerValues
+				.reduce(function (aAllElements, aAnalyzerValue) {
+					return aAllElements.concat(aAnalyzerValue);
+				}, []);
 		}
 	};
 	return oAnalyzer;

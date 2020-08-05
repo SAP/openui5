@@ -4,22 +4,26 @@
 
 // Provides control sap.tnt.NavigationList
 sap.ui.define([
-    'jquery.sap.global',
-    './library',
-    'sap/ui/core/Control',
-    'sap/m/Popover',
-    'sap/ui/core/delegate/ItemNavigation',
-    'sap/ui/core/InvisibleText',
-    "./NavigationListRenderer"
+	"sap/ui/thirdparty/jquery",
+	'./library',
+	'sap/ui/core/Element',
+	'sap/ui/core/Control',
+	'sap/m/Popover',
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/core/InvisibleText',
+	"./NavigationListRenderer",
+	"sap/base/Log"
 ],
 	function(
-	    jQuery,
+		jQuery,
 		library,
+		Element,
 		Control,
 		Popover,
 		ItemNavigation,
 		InvisibleText,
-		NavigationListRenderer
+		NavigationListRenderer,
+		Log
 	) {
 		"use strict";
 
@@ -54,7 +58,13 @@ sap.ui.define([
 					/**
 					 * Specifies if the control is in expanded or collapsed mode.
 					 */
-					expanded: {type: "boolean", group: "Misc", defaultValue: true}
+					expanded: {type: "boolean", group: "Misc", defaultValue: true},
+					/**
+					 * Specifies the currently selected key.
+					 *
+					 * @since 1.62.0
+					 */
+					selectedKey: {type: "string", group: "Data"}
 				},
 				defaultAggregation: "items",
 				aggregations: {
@@ -64,23 +74,23 @@ sap.ui.define([
 					 */
 					items: {type: "sap.tnt.NavigationListItem", multiple: true, singularName: "item"}
 				},
-				associations : {
+				associations: {
 					/**
 					 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
 					 */
-					ariaDescribedBy : { type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy" },
+					ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
 
 					/**
 					 * Association to controls / IDs, which label this control (see WAI-ARIA attribute aria-labelledby).
 					 */
-					ariaLabelledBy : { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" },
+					ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"},
 
 					/**
 					 * The currently selected <code>NavigationListItem</code>.
 					 *
 					 * @since 1.52.0
 					 */
-					selectedItem : { type: "sap.tnt.NavigationListItem", multiple: false }
+					selectedItem: {type: "sap.tnt.NavigationListItem", multiple: false}
 				},
 				events: {
 					/**
@@ -110,11 +120,9 @@ sap.ui.define([
 
 			this._itemNavigation.setPageSize(10);
 			this._itemNavigation.setDisabledModifiers({
-				sapnext : ["alt", "meta"],
-				sapprevious : ["alt", "meta"]
+				sapnext: ["alt", "meta"],
+				sapprevious: ["alt", "meta"]
 			});
-
-			this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 
 			if (sap.ui.getCore().getConfiguration().getAccessibility() && !NavigationList._sAriaPopupLabelId) {
 				NavigationList._sAriaPopupLabelId = new InvisibleText({
@@ -124,18 +132,24 @@ sap.ui.define([
 		};
 
 		/**
-		 * Called after the control is rendered.
+		 * Called before the control is rendered.
 		 */
-		NavigationList.prototype.onAfterRendering = function() {
-			this._itemNavigation.setRootDomRef(this.getDomRef());
-			this._itemNavigation.setItemDomRefs(this._getDomRefs());
+		NavigationList.prototype.onBeforeRendering = function () {
 
-			if (this._selectedItem) {
-				this._selectedItem._select();
-			}
+			// make sure the initial selected item (if any) is correct
+			var selectedKey = this.getSelectedKey();
+			this.setSelectedKey(selectedKey);
 		};
 
-		NavigationList.prototype._updateNavItems = function() {
+		/**
+		 * Called after the control is rendered.
+		 */
+		NavigationList.prototype.onAfterRendering = function () {
+			this._itemNavigation.setRootDomRef(this.getDomRef());
+			this._itemNavigation.setItemDomRefs(this._getDomRefs());
+		};
+
+		NavigationList.prototype._updateNavItems = function () {
 			this._itemNavigation.setItemDomRefs(this._getDomRefs());
 		};
 
@@ -143,13 +157,18 @@ sap.ui.define([
 		 * Gets DOM references of the navigation items.
 		 * @private
 		 */
-		NavigationList.prototype._getDomRefs = function() {
-			var domRefs = [];
+		NavigationList.prototype._getDomRefs = function () {
 
-			var items = this.getItems();
+			var domRefs = [],
+				items = this.getItems(),
+				isExpanded = this.getExpanded();
 
 			for (var i = 0; i < items.length; i++) {
-				jQuery.merge(domRefs, items[i]._getDomRefs());
+				if (isExpanded) {
+					jQuery.merge(domRefs, items[i]._getDomRefs());
+				} else {
+					domRefs.push(items[i].getDomRef());
+				}
 			}
 
 			return domRefs;
@@ -165,8 +184,8 @@ sap.ui.define([
 				this._marginRight = 10;
 				this._marginBottom = 10;
 
-				this._arrowOffset = 18;
-				this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
+				this._arrowOffset = 8;
+				this._offsets = ["0 -8", "8 0", "0 8", "-8 0"];
 
 				this._myPositions = ["center bottom", "begin top", "center top", "end top"];
 				this._atPositions = ["center top", "end top", "center bottom", "begin top"];
@@ -202,15 +221,50 @@ sap.ui.define([
 			this.fireItemSelect(params);
 
 			var item = params.item;
+			this.setSelectedItem(item, true);
+		};
 
-			if (this._selectedItem) {
-				this._selectedItem._unselect();
+		NavigationList.prototype._findItemByKey = function (selectedKey) {
+			var groupItems = this.getItems(),
+				groupItem,
+				items,
+				item,
+				i,
+				j;
+
+			for (i = 0; i < groupItems.length; i++) {
+				groupItem = groupItems[i];
+				if (groupItem._getUniqueKey() === selectedKey) {
+					return groupItem;
+				}
+
+				items = groupItem.getItems();
+
+				for (j = 0; j < items.length; j++) {
+					item = items[j];
+					if (item._getUniqueKey() === selectedKey) {
+						return item;
+					}
+				}
 			}
 
-			item._select();
+			return null;
+		};
 
-			this._selectedItem = item;
-			this.setAssociation('selectedItem', item, true);
+		/**
+		 * Sets the selected item based on a key.
+		 * @public
+		 * @param {string} selectedKey The key of the item to be selected
+		 * @return {sap.tnt.NavigationList} this pointer for chaining
+		 */
+		NavigationList.prototype.setSelectedKey = function (selectedKey) {
+
+			var item = this._findItemByKey(selectedKey);
+			this.setSelectedItem(item, true);
+
+			this.setProperty('selectedKey', selectedKey, true);
+
+			return this;
 		};
 
 		/**
@@ -218,7 +272,7 @@ sap.ui.define([
 		 * @public
 		 * @return {sap.tnt.NavigationListItem|null} The selected item or null if nothing is selected
 		 */
-		NavigationList.prototype.getSelectedItem = function() {
+		NavigationList.prototype.getSelectedItem = function () {
 			var selectedItem = this.getAssociation('selectedItem');
 
 			if (!selectedItem) {
@@ -232,12 +286,12 @@ sap.ui.define([
 		 * Sets the association for selectedItem. Set <code>null</code> to deselect.
 		 * @public
 		 * @param {string|sap.tnt.NavigationListItem} selectedItem The control to be set as selected
-		 * @param {boolean} suppressInvalidate If true, the managed object's invalidate method is not called
 		 * @return {sap.tnt.NavigationList|null} The <code>selectedItem</code> association
 		 */
-		NavigationList.prototype.setSelectedItem = function(selectedItem, suppressInvalidate) {
-			jQuery.sap.require('sap.tnt.NavigationListItem');
-			var navigationListItem;
+		NavigationList.prototype.setSelectedItem = function (selectedItem) {
+			var navigationListItem,
+				selectedKey,
+				isNavigationListItem;
 
 			if (this._selectedItem) {
 				this._selectedItem._unselect();
@@ -245,13 +299,17 @@ sap.ui.define([
 
 			if (!selectedItem) {
 				this._selectedItem = null;
-				return sap.ui.core.Control.prototype.setAssociation.call(this, 'selectedItem', selectedItem, suppressInvalidate);
 			}
 
-			if (typeof selectedItem !== 'string' && !(selectedItem instanceof sap.tnt.NavigationListItem)) {
-				jQuery.sap.log.warning('Type of selectedItem association should be string or instance of sap.tnt.NavigationListItem. New value was not set.');
+			isNavigationListItem = selectedItem instanceof Element && selectedItem.isA("sap.tnt.NavigationListItem");
+
+			if (typeof selectedItem !== 'string' && !isNavigationListItem) {
+				Log.warning('Type of selectedItem association should be string or instance of sap.tnt.NavigationListItem. New value was not set.');
+				this.setAssociation('selectedItem', null, true);
 				return this;
 			}
+
+			this.setAssociation('selectedItem', selectedItem, true);
 
 			if (typeof selectedItem === 'string') {
 				navigationListItem = sap.ui.getCore().byId(selectedItem);
@@ -259,14 +317,17 @@ sap.ui.define([
 				navigationListItem = selectedItem;
 			}
 
-			if (navigationListItem instanceof sap.tnt.NavigationListItem) {
+			selectedKey = navigationListItem ? navigationListItem._getUniqueKey() : '';
+			this.setProperty('selectedKey', selectedKey, true);
+
+			if (navigationListItem) {
 				navigationListItem._select();
 				this._selectedItem = navigationListItem;
-				return sap.ui.core.Control.prototype.setAssociation.call(this, 'selectedItem', selectedItem, suppressInvalidate);
-			} else {
-				jQuery.sap.log.warning('Type of selectedItem association should be a valid NavigationListItem object or ID. New value was not set.');
 				return this;
 			}
+
+			Log.warning('Type of selectedItem association should be a valid NavigationListItem object or ID. New value was not set.');
+			return this;
 		};
 
 		/**
@@ -309,4 +370,4 @@ sap.ui.define([
 
 		return NavigationList;
 
-	}, /* bExport= */ true);
+	});

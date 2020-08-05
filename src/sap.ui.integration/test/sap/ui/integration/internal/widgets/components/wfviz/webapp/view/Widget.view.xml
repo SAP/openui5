@@ -1,0 +1,38 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:wf="sap.my.test.widget.wfviz.controls" controllerName="sap.my.test.widget.wfviz.controller.Widget" displayBlock="true">
+	<VBox class="wfvizWidget">
+		<wf:HorizontalSteps
+			id="hsteps"
+			steps="{wfdata>/tasks}"
+			selectionChange=".onHorizontalBarSelectionChange"
+			selectedIndex="{path:'wfdatacurrent>/tasks', formatter:'.selectedHIndexFormatter'}"
+			>
+			<wf:Step
+				status="{path:'wfdata>', formatter:'.stepStatusFormatter'}"
+				title="{wfdata>subject}"
+				description="{
+				path: 'wfdata>dueDate',
+				type: 'sap.ui.model.type.DateTime',
+				formatOptions: {
+					relative: true,
+					relativeScale: 'auto'
+				}
+			}"></wf:Step>
+		</wf:HorizontalSteps>
+		<wf:VerticalSteps
+			id="vsteps"
+			steps="{wfdatacurrent>/tasks}"
+			selectionChange=".onVerticalLaneSelectionChange"
+			selectedIndex="{path:'wfdatacurrent>/tasks', formatter:'.selectedVIndexFormatter'}"
+			>
+			<wf:Step
+				stepContent="{path:'wfdatacurrent>', formatter:'.stepVContentFormatter'}"
+				status="{path:'wfdatacurrent>', formatter:'.stepStatusFormatter'}"
+				title="{wfdatacurrent>subject}"
+				description="{path:'wfdatacurrent>', formatter:'.stepVDescriptionFormatter'}"
+			></wf:Step>
+		</wf:VerticalSteps>
+		<dependents>
+
+		</dependents>
+	</VBox>
+</mvc:View>

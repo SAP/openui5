@@ -1,0 +1,29 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "f8170bcdfac5faa4ab7fdc269fe0f0b618674998",
+        "type": "FIX",
+        "text": "sap.tnt.ToolHeader: Border is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870234760"
+          }
+        ]
+      },
+      {
+        "id": "c413e800120fe79aa254d2476dd6c8ae9af29860",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Expand/collapse animation visual glitches solved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880258460"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -6,15 +6,16 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/events/ControlEvents',
-	'sap/base/events/PseudoEvents',
-	'sap/base/events/checkMouseEnterOrLeave',
-	'sap/base/events/isSpecialKey',
-	'sap/base/events/isMouseEventDelayed',
-	'sap/ui/events/_triggerEventHook',
+	'sap/ui/events/PseudoEvents',
+	'sap/ui/events/checkMouseEnterOrLeave',
+	'sap/ui/events/isSpecialKey',
+	'sap/ui/events/isMouseEventDelayed',
 	'sap/ui/events/F6Navigation',
-	'sap/ui/events/jqueryEvent',
-	'sap/ui/events/EventSimulation'
-], function(jQuery, ControlEvents, PseudoEvents, fnCheckMouseEnterOrLeave, fnIsSpecialKey, fnIsMouseEventDelayed, _triggerEventHook, F6Navigation, jQueryEvent, EventSimulation) {
+	'sap/ui/events/jquery/EventExtension',
+	'sap/ui/events/jquery/EventSimulation',
+	'sap/ui/events/KeyCodes',
+	'sap/base/util/defineCoupledProperty'
+], function(jQuery, ControlEvents, PseudoEvents, fnCheckMouseEnterOrLeave, fnIsSpecialKey, fnIsMouseEventDelayed, F6Navigation, EventExtension, EventSimulation, KeyCodes, defineCoupledProperty) {
 	"use strict";
 
 
@@ -36,6 +37,7 @@ sap.ui.define([
 	 *
 	 * @namespace
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/PseudoEvents.events} instead
 	 */
 	jQuery.sap.PseudoEvents = PseudoEvents.events;
 
@@ -364,134 +366,25 @@ sap.ui.define([
 	 * create both onmouse* and ontouch* functions to avoid one event being handled twice on the same control.
 	 * @namespace
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/ControlEvents.events} instead
 	 */
 	jQuery.sap.ControlEvents = ControlEvents.events;
-
-	/**
-	 * Constructor for a jQuery.Event object.<br/>
-	 * See "http://www.jquery.com" and "http://api.jquery.com/category/events/event-object/".
-	 *
-	 * @class Check the jQuery.Event class documentation available under "http://www.jquery.com"<br/>
-	 * and "http://api.jquery.com/category/events/event-object/" for details.
-	 *
-	 * @name jQuery.Event
-	 * @public
-	 */
-
-	/**
-	 * Returns an array of names (as strings) identifying {@link jQuery.sap.PseudoEvents} that are fulfilled by this very Event instance.
-	 *
-	 * @name jQuery.Event.prototype.getPseudoTypes
-	 * @function
-	 * @returns {String[]} Array of names identifying {@link jQuery.sap.PseudoEvents} that are fulfilled by this very Event instance.
-	 * @public
-	 */
-
-	/**
-	 * Checks whether this instance of {@link jQuery.Event} is of the given <code>sType</code> pseudo type.
-	 *
-	 * @name jQuery.Event.prototype.isPseudoType
-	 * @function
-	 * @param {string} sType The name of the pseudo type this event should be checked for.
-	 * @returns {boolean} <code>true</code> if this instance of jQuery.Event is of the given sType, <code>false</code> otherwise.
-	 * @public
-	 */
-
-	/**
-	 * Returns OffsetX of Event. In jQuery there is a bug. In IE the value is in offsetX, in FF in layerX
-	 *
-	 * @name jQuery.Event.prototype.getOffsetX
-	 * @function
-	 * @returns {int} offsetX
-	 * @public
-	 */
-
-	/**
-	 * Returns OffsetY of Event. In jQuery there is a bug. in IE the value is in offsetY, in FF in layerY.
-	 *
-	 * @name jQuery.Event.prototype.getOffsetY
-	 * @function
-	 * @returns {int} offsetY
-	 * @public
-	 */
-
-	/**
-	 * PRIVATE EXTENSION: allows to immediately stop the propagation of events in
-	 * the event handler execution - means that "before" delegates can stop the
-	 * propagation of the event to other delegates or the element and so on.
-	 *
-	 * @name jQuery.Event.prototype.stopImmediatePropagation
-	 * @function
-	 * @see sap.ui.core.Element.prototype._callEventHandles
-	 * @param {boolean} bStopHandlers
-	 */
-
-	/**
-	 * PRIVATE EXTENSION: check if the handler propagation has been stopped.
-	 *
-	 * @name jQuery.Event.prototype.isImmediateHandlerPropagationStopped
-	 * @function
-	 * @private
-	 * @see sap.ui.core.Element.prototype._callEventHandles
-	 */
-
-	/**
-	 * Mark the event object for components that needs to know if the event was handled by a child component.
-	 * PRIVATE EXTENSION
-	 *
-	 * @name jQuery.Event.prototype.setMark
-	 * @function
-	 * @private
-	 * @param {string} [sKey="handledByControl"]
-	 * @param {string} [vValue=true]
-	 */
-
-	/**
-	 * Mark the event object for components that needs to know if the event was handled by a child component.
-	 * PRIVATE EXTENSION
-	 *
-	 * @name jQuery.Event.prototype.setMarked
-	 * @function
-	 * @private
-	 * @see jQuery.Event.prototype.setMark
-	 * @param {string} [sKey="handledByControl"]
-	 */
-
-	/**
-	 * Check whether the event object is marked by the child component or not.
-	 * PRIVATE EXTENSION
-	 *
-	 * @name jQuery.Event.prototype.isMarked
-	 * @function
-	 * @private
-	 * @param {string} [sKey="handledByControl"]
-	 * @returns {boolean}
-	 */
-
-	/**
-	 * Return the marked value of a given key
-	 * PRIVATE EXTENSION
-	 *
-	 * @name jQuery.Event.prototype.getMark
-	 * @function
-	 * @private
-	 * @param {string} [sKey="handledByControl"]
-	 * @returns {any} the marked value or undefined
-	 */
 
 	/**
 	 * Disable touch to mouse handling
 	 *
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/jquery/EventSimulation.disableTouchToMouseHandling} instead
 	 */
 	jQuery.sap.disableTouchToMouseHandling = EventSimulation.disableTouchToMouseHandling;
 
 	/**
 	 * Defines touch event mode. Values used 'ON' and 'SIM'.
 	 * @private
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/jquery/EventSimulation.touchEventMode} instead
 	 */
-	jQuery.sap.touchEventMode = EventSimulation.touchEventMode;
+	defineCoupledProperty(jQuery.sap, "touchEventMode", EventSimulation, "touchEventMode");
 
 	/**
 	 * Binds all events for listening with the given callback function.
@@ -499,6 +392,7 @@ sap.ui.define([
 	 * @param {function} fnCallback Callback function
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/ControlEvents.bindAnyEvent} instead
 	 */
 	jQuery.sap.bindAnyEvent = ControlEvents.bindAnyEvent;
 
@@ -508,6 +402,7 @@ sap.ui.define([
 	 * @param {function} fnCallback Callback function
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/ControlEvents.unbindAnyEvent} instead
 	 */
 	jQuery.sap.unbindAnyEvent = ControlEvents.unbindAnyEvent;
 
@@ -519,6 +414,7 @@ sap.ui.define([
 	 * @param {Element} oDomRef
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/checkMouseEnterOrLeave} instead
 	 */
 	jQuery.sap.checkMouseEnterOrLeave = fnCheckMouseEnterOrLeave;
 
@@ -536,8 +432,112 @@ sap.ui.define([
 	* @since 1.24.0
 	* @experimental Since 1.24.0 Implementation might change.
 	* @function
+	* @deprecated since 1.58 use {@link module:sap/ui/events/isSpecialKey} instead
 	*/
-	jQuery.sap.isSpecialKey = fnIsSpecialKey;
+	jQuery.sap.isSpecialKey = function(oEvent) {
+		if (oEvent.key) {
+			return fnIsSpecialKey(oEvent);
+		}
+
+		// legacy case where Event.key is not use, e.g. when jQuery.Events are created manually instead of using the Browser's KeyBoardEvent
+
+		/**
+		 * Detect whether the pressed key is a modifier.
+		 *
+		 * Modifier keys are considered:
+		 * SHIFT, CONTROL, ALT, CAPS_LOCK, NUM_LOCK
+		 * These keys don't send characters, but modify the characters sent by other keys.
+		 *
+		 * @param {jQuery.Event} oEvent The event object of the <code>keydown</code>, <code>keyup</code> or <code>keypress</code> events.
+		 * @static
+		 * @returns {boolean} True if a modifier key was pressed
+		 */
+		function isModifierKey(oEvent) {
+			var iKeyCode = oEvent.which; // jQuery oEvent.which normalizes oEvent.keyCode and oEvent.charCode
+
+			return (iKeyCode === KeyCodes.SHIFT) ||
+				(iKeyCode === KeyCodes.CONTROL) ||
+				(iKeyCode === KeyCodes.ALT) ||
+				(iKeyCode === KeyCodes.CAPS_LOCK) ||
+				(iKeyCode === KeyCodes.NUM_LOCK);
+		}
+
+		/**
+		 * Detect whether the pressed key is a navigation key.
+		 *
+		 * Navigation keys are considered:
+		 * ARROW_LEFT, ARROW_UP, ARROW_RIGHT, ARROW_DOWN
+		 *
+		 * @param {jQuery.Event} oEvent The event object of the <code>keydown</code>, <code>keyup</code> or <code>keypress</code> events.
+		 * @static
+		 * @returns {boolean} True if a arrow key was pressed
+		 */
+		function isArrowKey(oEvent) {
+			var iKeyCode = oEvent.which, // jQuery oEvent.which normalizes oEvent.keyCode and oEvent.charCode
+				bArrowKey = (iKeyCode >= 37 && iKeyCode <= 40); // ARROW_LEFT, ARROW_UP, ARROW_RIGHT, ARROW_DOWN
+
+			switch (oEvent.type) {
+				case "keydown":
+				case "keyup":
+					return bArrowKey;
+
+				// note: the keypress event should be fired only when a character key is pressed,
+				// unfortunately some browsers fire the keypress event for other keys. e.g.:
+				//
+				// Firefox fire it for:
+				// ARROW_LEFT, ARROW_RIGHT
+				case "keypress":
+
+					// in Firefox, almost all noncharacter keys that fire the keypress event have a key code of 0
+					return iKeyCode === 0;
+
+				default:
+					return false;
+			}
+		}
+
+		var iKeyCode = oEvent.which, // jQuery oEvent.which normalizes oEvent.keyCode and oEvent.charCode
+			bSpecialKey = isModifierKey(oEvent) ||
+				isArrowKey(oEvent) ||
+				(iKeyCode >= 33 && iKeyCode <= 36) || // PAGE_UP, PAGE_DOWN, END, HOME
+				(iKeyCode >= 44 && iKeyCode <= 46) || // PRINT, INSERT, DELETE
+				(iKeyCode >= 112 && iKeyCode <= 123) || // F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12
+				(iKeyCode === KeyCodes.BREAK) ||
+				(iKeyCode === KeyCodes.BACKSPACE) ||
+				(iKeyCode === KeyCodes.TAB) ||
+				(iKeyCode === KeyCodes.ENTER) ||
+				(iKeyCode === KeyCodes.ESCAPE) ||
+				(iKeyCode === KeyCodes.SCROLL_LOCK);
+
+		switch (oEvent.type) {
+			case "keydown":
+			case "keyup":
+				return bSpecialKey;
+
+			// note: the keypress event should be fired only when a character key is pressed,
+			// unfortunately some browsers fire the keypress event for other keys. e.g.:
+			//
+			// Firefox fire it for:
+			// BREAK, ARROW_LEFT, ARROW_RIGHT, INSERT, DELETE,
+			// F1, F2, F3, F5, F6, F7, F8, F9, F10, F11, F12
+			// BACKSPACE, ESCAPE
+			//
+			// Internet Explorer fire it for:
+			// ESCAPE
+			case "keypress":
+
+				// note: in Firefox, almost all noncharacter keys that fire the keypress event have a key code of 0,
+				// with the exception of BACKSPACE (key code of 8).
+				// note: in IE the ESCAPE key is also fired for the keypress event
+				return (iKeyCode === 0 || // in Firefox, almost all noncharacter keys that fire the keypress event have a key code of 0, with the exception of BACKSPACE (key code of 8)
+					iKeyCode === KeyCodes.BACKSPACE ||
+					iKeyCode === KeyCodes.ESCAPE ||
+					iKeyCode === KeyCodes.ENTER /* all browsers */) || false;
+
+			default:
+				return false;
+		}
+	};
 
 	/**
 	 * Central handler for F6 key event. Based on the current target and the given event the next element in the F6 chain is focused.
@@ -557,12 +557,21 @@ sap.ui.define([
 	 * @private
 	 * @since 1.25.0
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/F6Navigation.handleF6GroupNavigation} instead
 	 */
-	jQuery.sap.handleF6GroupNavigation = F6Navigation.handleF6GroupNavigation;
+	jQuery.sap.handleF6GroupNavigation = function (oEvent, oSettings) {
+		// map keyCode to key property of the event, e.g. if jQuery.Event was created manually
+		if (!oEvent.key && oEvent.keyCode === KeyCodes.F6) {
+			oEvent.key = "F6";
+		}
+		return F6Navigation.handleF6GroupNavigation(oEvent, oSettings);
+
+	};
 
 	/**
 	 * CustomData attribute name for fast navigation groups (in DOM additional prefix "data-" is needed)
 	 * @private
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/F6Navigation.fastNavigationKey} instead
 	 */
 	jQuery.sap._FASTNAVIGATIONKEY = F6Navigation.fastNavigationKey;
 
@@ -578,6 +587,7 @@ sap.ui.define([
 	 * @private
 	 * @name jQuery.sap.isMouseEventDelayed
 	 * @since 1.30.0
+	 * @deprecated since 1.58 use {@link module:sap/ui/events/isMouseEventDelayed} instead
 	 */
 
 	jQuery.sap._refreshMouseEventDelayedFlag = function(oNavigator) {
@@ -585,9 +595,6 @@ sap.ui.define([
 	};
 
 	jQuery.sap._refreshMouseEventDelayedFlag(navigator);
-
-	jQuery.sap._suppressTriggerEvent = _triggerEventHook.suppress;
-	jQuery.sap._releaseTriggerEvent = _triggerEventHook.release;
 
 	return jQuery;
 });

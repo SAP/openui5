@@ -1,0 +1,69 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.MinHeight"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Min height of the card content" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<SegmentedButton
+			selectedKey="cozy"
+			selectionChange=".onFormFactorChange"
+			class="VizTestDensityBtn sapUiSmallMargin">
+			<items>
+				<SegmentedButtonItem text="Cozy" key="cozy" />
+				<SegmentedButtonItem text="Compact" key="compact" />
+			</items>
+		</SegmentedButton>
+
+		<Panel>
+			<w:Card
+				id="lineChart"
+				manifest="{manifests>/minHeight/line}"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="stackedColumnChart"
+				manifest="{manifests>/minHeight/stackedColumn}"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="stackedBarChart"
+				manifest="{manifests>/minHeight/stackedBar}"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="donutChart"
+				manifest="{manifests>/minHeight/donut}"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="smallList"
+				manifest="{manifests>/minHeight/smallList}"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="mediumList"
+				manifest="{manifests>/minHeight/mediumList}"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="largeList"
+				manifest="{manifests>/minHeight/largeList}"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="staticData"
+				manifest="./cardsdemo/cardcontent/objectcontent/staticData.json"
+				width="400px"
+				class="sapUiTinyMargin" />
+		</Panel>
+	</Page>
+</mvc:View>

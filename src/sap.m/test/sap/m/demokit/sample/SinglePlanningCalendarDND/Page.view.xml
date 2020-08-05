@@ -1,0 +1,55 @@
+<mvc:View
+	controllerName="sap.m.sample.SinglePlanningCalendarDND.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:unified="sap.ui.unified"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<HBox wrap="Wrap">
+			<VBox class="sapUiSmallMarginEnd">
+				<Label text="Drag and Drop" labelFor="enableAppointmentsDragAndDrop" />
+
+				<Switch id="enableAppointmentsDragAndDrop" state="{settings>/enableAppointmentsDragAndDrop}"/>
+			</VBox>
+
+			<VBox class="sapUiSmallMarginEnd">
+				<Label text="Resize Appointments" labelFor="enableAppointmentsResize" />
+
+				<Switch id="enableAppointmentsResize" state="{settings>/enableAppointmentsResize}"/>
+			</VBox>
+
+			<VBox>
+				<Label text="Create Appointments" labelFor="enableAppointmentsCreate" />
+
+				<Switch id="enableAppointmentsCreate" state="{settings>/enableAppointmentsCreate}"/>
+			</VBox>
+		</HBox>
+		<SinglePlanningCalendar
+			id="SPC1"
+			class="sapUiSmallMarginTop"
+			title= "My Calendar"
+			appointmentDrop="handleAppointmentDrop"
+			appointmentResize="handleAppointmentResize"
+			appointmentCreate="handleAppointmentCreateDnD"
+			startDate="{path: '/startDate'}"
+			enableAppointmentsDragAndDrop="{settings>/enableAppointmentsDragAndDrop}"
+			enableAppointmentsResize="{settings>/enableAppointmentsResize}"
+			enableAppointmentsCreate="{settings>/enableAppointmentsCreate}"
+			appointments="{path: '/appointments'}">
+			<views>
+				<SinglePlanningCalendarDayView key="DayView" title="Day" />
+				<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
+			</views>
+			<appointments>
+				<unified:CalendarAppointment
+					title= "{title}"
+					text= "{text}"
+					type= "{type}"
+					icon= "{icon}"
+					startDate= "{startDate}"
+					endDate= "{endDate}">
+				</unified:CalendarAppointment>
+			</appointments>
+		</SinglePlanningCalendar>
+	</VBox>
+</mvc:View>

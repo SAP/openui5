@@ -24,10 +24,10 @@ var YamlHighlightRules = function() {
                 regex: "[&\\*][a-zA-Z0-9-_]+"
             }, {
                 token: ["meta.tag", "keyword"],
-                regex: /^(\s*\w.*?)(:(?:\s+|$))/
+                regex: /^(\s*\w.*?)(:(?=\s|$))/
             },{
                 token: ["meta.tag", "keyword"],
-                regex: /(\w+?)(\s*:(?:\s+|$))/
+                regex: /(\w+?)(\s*:(?=\s|$))/
             }, {
                 token : "keyword.operator",
                 regex : "<<\\w*:\\w*"
@@ -39,20 +39,25 @@ var YamlHighlightRules = function() {
                 regex : '["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
             }, {
                 token : "string", // multi line string start
-                regex : /[|>][-+\d\s]*$/,
+                regex : /[|>][-+\d]*(?:$|\s+(?:$|#))/,
                 onMatch: function(val, state, stack, line) {
-                    var indent = /^\s*/.exec(line)[0];
-                    if (stack.length < 1) {
-                        stack.push(this.next);
+                    line = line.replace(/ #.*/, "");
+                    var indent = /^ *((:\s*)?-(\s*[^|>])?)?/.exec(line)[0]
+                        .replace(/\S\s*$/, "").length;
+                    var indentationIndicator = parseInt(/\d+[\s+-]*$/.exec(line));
+                    
+                    if (indentationIndicator) {
+                        indent += indentationIndicator - 1;
+                        this.next = "mlString";
                     } else {
-                        stack[0] = "mlString";
+                        this.next = "mlStringPre";
                     }
-
-                    if (stack.length < 2) {
-                        stack.push(indent.length);
-                    }
-                    else {
-                        stack[1] = indent.length;
+                    if (!stack.length) {
+                        stack.push(this.next);
+                        stack.push(indent);
+                    } else {
+                        stack[0] = this.next;
+                        stack[1] = indent;
                     }
                     return this.token;
                 },
@@ -62,7 +67,7 @@ var YamlHighlightRules = function() {
                 regex : "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
             }, {
                 token : "constant.numeric", // float
-                regex : /(\b|[+\-\.])[\d_]+(?:(?:\.[\d_]*)?(?:[eE][+\-]?[\d_]+)?)/
+                regex : /(\b|[+\-\.])[\d_]+(?:(?:\.[\d_]*)?(?:[eE][+\-]?[\d_]+)?)(?=[^\d-\w]|$)/
             }, {
                 token : "constant.numeric", // other number
                 regex : /[+\-]?\.inf\b|NaN\b|0x[\dA-Fa-f_]+|0b[10_]+/
@@ -75,15 +80,44 @@ var YamlHighlightRules = function() {
             }, {
                 token : "paren.rparen",
                 regex : "[\\])}]"
+            }, {
+                token : "text",
+                regex : /[^\s,:\[\]\{\}]+/
+            }
+        ],
+        "mlStringPre" : [
+            {
+                token : "indent",
+                regex : /^ *$/
+            }, {
+                token : "indent",
+                regex : /^ */,
+                onMatch: function(val, state, stack) {
+                    var curIndent = stack[1];
+
+                    if (curIndent >= val.length) {
+                        this.next = "start";
+                        stack.shift();
+                        stack.shift();
+                    }
+                    else {
+                        stack[1] = val.length - 1;
+                        this.next = stack[0] = "mlString";
+                    }
+                    return this.token;
+                },
+                next : "mlString"
+            }, {
+                defaultToken : "string"
             }
         ],
         "mlString" : [
             {
                 token : "indent",
-                regex : /^\s*$/
+                regex : /^ *$/
             }, {
                 token : "indent",
-                regex : /^\s*/,
+                regex : /^ */,
                 onMatch: function(val, state, stack) {
                     var curIndent = stack[1];
 
@@ -257,7 +291,7 @@ oop.inherits(Mode, TextMode);
 
 (function() {
 
-    this.lineCommentStart = "#";
+    this.lineCommentStart = ["#"];
     
     this.getNextLineIndent = function(state, line, tab) {
         var indent = this.$getIndent(line);
@@ -286,4 +320,11 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 
-});
+});                (function() {
+                    ace.require(["ace/mode/yaml"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

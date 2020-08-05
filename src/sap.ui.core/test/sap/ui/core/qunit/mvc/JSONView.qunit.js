@@ -1,7 +1,9 @@
+/*global QUnit */
 sap.ui.define([
 	'sap/ui/core/library',
 	'./AnyView.qunit'
 ], function(coreLibrary, testsuite) {
+	"use strict";
 
 	var ViewType = coreLibrary.mvc.ViewType;
 

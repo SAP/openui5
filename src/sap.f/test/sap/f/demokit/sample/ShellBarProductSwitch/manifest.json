@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.ShellBarProductSwitch",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.ShellBarProductSwitch.view.ShellBarProductSwitch",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/ProductSwitchPopover.fragment.xml",
+					"view/ShellBarProductSwitch.view.xml",
+					"controller/ShellBarProductSwitch.controller.js",
+					"model/data.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

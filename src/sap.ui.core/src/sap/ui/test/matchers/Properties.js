@@ -2,12 +2,38 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/test/_LogCollector"], function ($, _LogCollector) {
+sap.ui.define([
+	"sap/ui/test/_LogCollector",
+	"sap/base/Log",
+	"sap/base/strings/capitalize",
+	"sap/ui/thirdparty/jquery"
+], function (_LogCollector, Log, capitalize, jQueryDOM) {
 	"use strict";
-	var oLogger = $.sap.log.getLogger("sap.ui.test.matchers.Properties", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
+	var oLogger = Log.getLogger("sap.ui.test.matchers.Properties");
 
 	/**
-	 * @class Properties - checks if a control's properties have the provided values - all properties have to match their values.
+	 * @class
+	 * Checks if a control's properties have the provided values - all properties have to match their values.
+	 *
+	 * As of version 1.72, it is available as a declarative matcher with the following syntax:
+	 * <code><pre>{
+	 *     properties: {
+	 *         propertyName: "propertyValue"
+	 *     }
+	 * }
+	 * </pre></code>
+	 * As of version 1.74, you can use regular expressions in declarative syntax:
+	 * <code><pre>{
+	 *     properties: {
+	 *         propertyName: {
+	 *             regex: {
+	 *                 source: "propertyValue$",
+	 *                 flags: "ig"
+	 *             }
+	 *         }
+	 *     }
+	 * }
+	 * </pre></code>
 	 * @param {object} oProperties the object with the properties to be checked. Example:
 	 * <pre>
 	 * // Would filter for an enabled control with the text "Accept".
@@ -28,8 +54,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/test/_LogCollector"], function ($, _
 	return function (oProperties) {
 		return function (oControl) {
 			var bIsMatching = true;
-			$.each(oProperties, function(sPropertyName, oPropertyValue) {
-				var fnProperty = oControl["get" + $.sap.charToUpperCase(sPropertyName, 0)];
+
+			jQueryDOM.each(oProperties, function (sPropertyName, oPropertyValue) {
+				var fnProperty = oControl["get" + capitalize(sPropertyName, 0)];
 
 				if (!fnProperty) {
 					bIsMatching = false;
@@ -38,8 +65,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/test/_LogCollector"], function ($, _
 				}
 
 				var vCurrentPropertyValue = fnProperty.call(oControl);
+				// propertyValue is set in parent frame (on matcher instantiation), so match it against the parent's RegExp constructor
 				if (oPropertyValue instanceof RegExp) {
 					bIsMatching = oPropertyValue.test(vCurrentPropertyValue);
+				} else if (jQueryDOM.isPlainObject(oPropertyValue) && oPropertyValue.regex && oPropertyValue.regex.source) {
+					// declarative syntax
+					var oRegExp = new RegExp(oPropertyValue.regex.source, oPropertyValue.regex.flags);
+					bIsMatching = oRegExp.test(vCurrentPropertyValue);
 				} else {
 					bIsMatching = vCurrentPropertyValue === oPropertyValue;
 				}

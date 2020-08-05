@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.DatePicker",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.DatePicker.Group",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {},
+				"sap.ui.unified": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Group.view.xml",
+					"Group.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

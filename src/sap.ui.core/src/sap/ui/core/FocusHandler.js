@@ -3,8 +3,16 @@
  */
 
 // Provides class sap.ui.core.FocusHandler
-sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.script'],
-	function(jQuery, Device, BaseObject/* , jQuerySap */) {
+sap.ui.define([
+	'../Device',
+	'../base/Object',
+	"sap/ui/dom/containsOrEquals",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
+],
+	function(Device, BaseObject, containsOrEquals, Log, jQuery) {
 	"use strict";
 
 
@@ -35,6 +43,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 				this.aEventQueue = [];
 				// keep track of last focused element
 				this.oLastFocusedControlInfo = null;
+				// keep track of focused element which is using Renderer.apiVersion=2
+				this.oPatchingControlFocusInfo = null;
 
 				this.fEventHandler = jQuery.proxy(this.onEvent, this);
 
@@ -43,10 +53,10 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 					oRootRef.addEventListener("focus", this.fEventHandler, true);
 					oRootRef.addEventListener("blur", this.fEventHandler, true);
 				} else { //IE
-					jQuery(oRootRef).bind("activate", this.fEventHandler);
-					jQuery(oRootRef).bind("deactivate", this.fEventHandler);
+					jQuery(oRootRef).on("activate", this.fEventHandler);
+					jQuery(oRootRef).on("deactivate", this.fEventHandler);
 				}
-				jQuery.sap.log.debug("FocusHandler setup on Root " + oRootRef.type + (oRootRef.id ? ": " + oRootRef.id : ""), null, "sap.ui.core.FocusHandler");
+				Log.debug("FocusHandler setup on Root " + oRootRef.type + (oRootRef.id ? ": " + oRootRef.id : ""), null, "sap.ui.core.FocusHandler");
 			}
 		});
 
@@ -98,6 +108,36 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 		};
 
 		/**
+		 * Stores the focus info of the current focused control which is using Renderer.apiVersion=2
+		 *
+		 * @see sap.ui.core.FocusHandler#restoreFocus
+		 * @see sap.ui.core.FocusHandler#getControlFocusInfo
+		 * @param {HTMLElement} oDomRef The DOM reference of the control where the rendering is happening
+		 * @private
+		 */
+		FocusHandler.prototype.storePatchingControlFocusInfo = function(oDomRef) {
+			var oActiveElement = document.activeElement;
+			if (!oActiveElement || !oDomRef.contains(oActiveElement)) {
+				this.oPatchingControlFocusInfo = null;
+			} else {
+				this.oPatchingControlFocusInfo = this.getControlFocusInfo();
+				if (this.oPatchingControlFocusInfo) {
+					this.oPatchingControlFocusInfo.patching = true;
+				}
+			}
+		};
+
+		/**
+		 * Returns the focus info of the last focused control which is using Renderer.apiVersion=2
+		 *
+		 * @see sap.ui.core.FocusHandler#storePatchingControlFocusInfo
+		 * @private
+		 */
+		FocusHandler.prototype.getPatchingControlFocusInfo = function() {
+			return this.oPatchingControlFocusInfo;
+		};
+
+		/**
 		 * If the given control is the last known focused control, the stored focusInfo is updated.
 		 *
 		 * @see sap.ui.core.FocusHandler#restoreFocus
@@ -109,7 +149,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 			if (oControl && this.oLastFocusedControlInfo && this.oLastFocusedControlInfo.control === oControl) {
 				var sControlId = oControl.getId();
 				this.oLastFocusedControlInfo = this.getControlFocusInfo(sControlId);
-				jQuery.sap.log.debug("Update focus info of control " + sControlId, null, "sap.ui.core.FocusHandler");
+				Log.debug("Update focus info of control " + sControlId, null, "sap.ui.core.FocusHandler");
 			}
 		};
 
@@ -128,16 +168,21 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 			}
 
 			var oControl = this.oCore && this.oCore.byId(oInfo.id);
-			if (oControl && oInfo.info
-					&& oControl.getMetadata().getName() == oInfo.type
-					&& oControl.getFocusDomRef() != oInfo.focusref
-					&& (oControlFocusInfo || /*!oControlFocusInfo &&*/ oControl !== oInfo.control)) {
-				jQuery.sap.log.debug("Apply focus info of control " + oInfo.id, null, "sap.ui.core.FocusHandler");
+			var oFocusRef = oInfo.focusref;
+			if (oControl
+				&& oInfo.info
+				&& oControl.getMetadata().getName() == oInfo.type
+				&& (oInfo.patching
+					|| (oControl.getFocusDomRef() != oFocusRef
+						&& (oControlFocusInfo || /*!oControlFocusInfo &&*/ oControl !== oInfo.control)))) {
+				Log.debug("Apply focus info of control " + oInfo.id, null, "sap.ui.core.FocusHandler");
 				oInfo.control = oControl;
 				this.oLastFocusedControlInfo = oInfo;
+				// Do not store dom patch info in the last focused control info
+				delete this.oLastFocusedControlInfo.patching;
 				oControl.applyFocusInfo(oInfo.info);
 			} else {
-				jQuery.sap.log.debug("Apply focus info of control " + oInfo.id + " not possible", null, "sap.ui.core.FocusHandler");
+				Log.debug("Apply focus info of control " + oInfo.id + " not possible", null, "sap.ui.core.FocusHandler");
 			}
 		};
 
@@ -155,8 +200,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 					oRootRef.removeEventListener("focus", this.fEventHandler, true);
 					oRootRef.removeEventListener("blur", this.fEventHandler, true);
 				} else { //IE
-					jQuery(oRootRef).unbind("activate", this.fEventHandler);
-					jQuery(oRootRef).unbind("deactivate", this.fEventHandler);
+					jQuery(oRootRef).off("activate", this.fEventHandler);
+					jQuery(oRootRef).off("deactivate", this.fEventHandler);
 				}
 			}
 			this.oCore = null;
@@ -171,7 +216,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 		FocusHandler.prototype.onEvent = function(oBrowserEvent){
 			var oEvent = jQuery.event.fix(oBrowserEvent);
 
-			jQuery.sap.log.debug("Event " + oEvent.type + " reached Focus Handler (target: " + oEvent.target + (oEvent.target ? oEvent.target.id : "") + ")", null, "sap.ui.core.FocusHandler");
+			Log.debug("Event " + oEvent.type + " reached Focus Handler (target: " + oEvent.target + (oEvent.target ? oEvent.target.id : "") + ")", null, "sap.ui.core.FocusHandler");
 
 			var type = (oEvent.type == "focus" || oEvent.type == "focusin" || oEvent.type == "activate") ? "focus" : "blur";
 			this.aEventQueue.push({type:type, controlId: getControlIdForDOM(oEvent.target)});
@@ -214,7 +259,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 			var oControl = this.oCore && this.oCore.byId(sControlId);
 			if (oControl) {
 				this.oLastFocusedControlInfo = this.getControlFocusInfo(sControlId);
-				jQuery.sap.log.debug("Store focus info of control " + sControlId, null, "sap.ui.core.FocusHandler");
+				Log.debug("Store focus info of control " + sControlId, null, "sap.ui.core.FocusHandler");
 			}
 
 			this.oCurrent = sControlId;
@@ -245,7 +290,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 			this.oLast = sControlId;
 
 			this.oCurrent = null;
-			jQuery.sap.delayedCall(0, this, "checkForLostFocus");
+			setTimeout(this["checkForLostFocus"].bind(this), 0);
 		};
 
 		/**
@@ -306,7 +351,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 					oUiArea = oCore.getUIArea(oControlUIArea.getId());
 				} else {
 					var oPopupUIAreaDomRef = oCore.getStaticAreaRef();
-					if (jQuery.sap.containsOrEquals(oPopupUIAreaDomRef, oEvent.target)) {
+					if (containsOrEquals(oPopupUIAreaDomRef, oEvent.target)) {
 						oUiArea = oCore.getUIArea(oPopupUIAreaDomRef.id);
 					}
 				}
@@ -324,7 +369,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 		 * @returns {boolean} whether the passed DOM reference is nested in the active DOM of the document
 		 */
 		/*function isInActiveDom(oDomRef) {
-			jQuery.sap.assert(oDomRef != null);
+			assert(oDomRef != null);
 			var oCurrDomRef = oDomRef;
 			while(oCurrDomRef) {
 				if(oCurrDomRef === document) return true;

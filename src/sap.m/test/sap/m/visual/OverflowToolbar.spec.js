@@ -7,6 +7,11 @@ describe("sap.m.OverflowToolbar", function() {
 		expect(takeScreenshot()).toLookAs("overflowToolbar-rendering");
 	});
 
+	it("OverflowToolar click overflow button with CheckBox in Popover Menu", function() {
+		element(by.id("otb6-overflowButton")).click();
+		expect(takeScreenshot()).toLookAs("popover-menu-with-checkbox");
+	});
+
 	it("OverflowToolar click overflow button",function() {
 		element(by.id("otb0-overflowButton")).click();
 		expect(takeScreenshot()).toLookAs("overflow-button-clicked");

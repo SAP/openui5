@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.m.ObjectHeader - Accessibility</title>
+
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+	</script>
+
+	<script>
+		"use strict";
+
+		function handleTitleSelection(oEvent) {
+			if (!window.oPopover) {
+				window.oPopover = new sap.m.ResponsivePopover({
+					title: "Select title",
+					placement: sap.m.PlacementType.Bottom,
+					showHeader: true,
+					content: new sap.m.List({
+						mode: "SingleSelectMaster",
+						includeItemInSelection: true,
+						select: function (oEvt) {
+							oObjectHeaderWithTitleSelector.setTitle(oEvt.getParameter("listItem").getTitle());
+							window.oPopover.close();
+						},
+						items: [
+							new sap.m.StandardListItem({
+								title: "First"
+							}),
+							new sap.m.StandardListItem({
+								title: "Second"
+							}),
+							new sap.m.StandardListItem({
+								title: "Third"
+							})
+						]
+					})
+				});
+			}
+			window.oPopover.openBy(oEvent.getParameter("domRef"));
+		}
+
+		function onPress(oEvent) {
+			sap.m.MessageToast.show(oEvent.getSource().getId() + " pressed");
+		}
+
+		function onIconPressHandler(oEvent) {
+			sap.m.MessageToast.show(oEvent.getSource().getId() + "'s icon pressed");
+		}
+
+		function onTitlePressHandler(oEvent) {
+			sap.m.MessageToast.show(oEvent.getSource().getId() + "'s title pressed");
+		}
+
+		function onIntroPressHandler(oEvent) {
+			sap.m.MessageToast.show(oEvent.getSource().getId() + "'s intro pressed");
+		}
+
+		function getTitle(sText) {
+			return new sap.m.Title({
+				text: sText
+			}).addStyleClass("sapUiMediumMarginTop sapUiTinyMarginBottom");
+		}
+
+
+		// Object Attribute Controls
+
+		var oActiveObjectAttribute1 = new sap.m.ObjectAttribute({
+			active: true,
+			title: "Website",
+			text: "Take me there",
+			press: onPress
+		});
+
+		var oActiveObjectAttribute2 = new sap.m.ObjectAttribute({
+			active: true,
+			title: "Read more",
+			text: "Fruits",
+			press: onPress
+		});
+
+		var oActiveTitlelessObjectAttribute = new sap.m.ObjectAttribute({
+			active: true,
+			text: "Go to wiki page",
+			press: onPress
+		});
+
+		var oPassiveObjectAttribute = new sap.m.ObjectAttribute({
+			title: "Website",
+			text: "Currently offline"
+		});
+
+		var oPassiveTitlelessObjectAttribute = new sap.m.ObjectAttribute({
+			text: "Click on the dropdown and choose a new title"
+		});
+
+
+		// Object Status Controls
+
+		var oActiveObjectStatusIconOnly = new sap.m.ObjectStatus({
+			active: true,
+			title: "Reputation status",
+			icon: "sap-icon://sys-enter",
+			tooltip: "Good",
+			state: sap.ui.core.ValueState.Success,
+			press: onPress
+		});
+
+		var oActiveObjectStatusTextOnly = new sap.m.ObjectStatus({
+			active: true,
+			title: "Payment",
+			text: "No information",
+			state: sap.ui.core.ValueState.Warning,
+			press: onPress
+		});
+
+		var oActiveObjectStatusCombined = new sap.m.ObjectStatus({
+			active: true,
+			title: "Is better than SAP",
+			text: "Impossible",
+			icon: "sap-icon://thumb-down",
+			state: sap.ui.core.ValueState.Error,
+			press: onPress
+		});
+
+		var oActiveTitlelessObjectStatusCombined = new sap.m.ObjectStatus({
+			active: true,
+			icon: "sap-icon://cursor-arrow",
+			text: "Clickable status",
+			state: sap.ui.core.ValueState.Success,
+			press: onPress
+		});
+
+		var oPassiveTitlelessObjectStatusIconOnly = new sap.m.ObjectStatus({
+			icon: "sap-icon://time-overtime",
+			tooltip: "Overtime required sometimes",
+			state: sap.ui.core.ValueState.Warning
+		});
+
+		var oPassiveTitlelessObjectStatusTextOnly = new sap.m.ObjectStatus({
+			text: "Endless learning opportunities",
+			state: sap.ui.core.ValueState.Success
+		});
+
+		var oPassiveTitlelessObjectStatusCombined = new sap.m.ObjectStatus({
+			text: "The best company",
+			icon: "sap-icon://accept",
+			state: sap.ui.core.ValueState.None
+		});
+
+
+		// Object Header Controls
+
+		var oObjectHeaderWithTitleSelector = new sap.m.ObjectHeader({
+			title: "Products",
+			showTitleSelector: true,
+			titleSelectorPress: handleTitleSelection,
+			titleSelectorTooltip: "Related Options",
+			number: "1.000.0000",
+			numberUnit: "EUR",
+			numberState: sap.ui.core.ValueState.Warning,
+			attributes: oPassiveTitlelessObjectAttribute,
+			statuses: oActiveTitlelessObjectStatusCombined
+		});
+
+		var oActiveResponsiveObjectHeader = new sap.m.ObjectHeader({
+			responsive: true,
+			icon: "sap-icon://building",
+			iconAlt: "Building icon",
+			iconTooltip: "Building icon",
+			iconPress: onIconPressHandler,
+			intro: "Google Intro",
+			introActive: true,
+			introPress: onIntroPressHandler,
+			title: "Google Title",
+			titleActive: true,
+			titlePress: onTitlePressHandler,
+			attributes: [
+				oActiveObjectAttribute1,
+				oActiveTitlelessObjectAttribute
+			],
+			statuses: [
+				oActiveObjectStatusIconOnly,
+				oActiveObjectStatusTextOnly,
+				oActiveObjectStatusCombined
+			]
+		});
+
+		var oPassiveResponsiveObjectHeader = new sap.m.ObjectHeader({
+			responsive: true,
+			icon: "sap-icon://building",
+			iconAlt: "Building icon",
+			iconTooltip: "Building icon",
+			intro: "Our company",
+			title: "SAP",
+			attributes: oPassiveObjectAttribute,
+			statuses: [
+				oPassiveTitlelessObjectStatusIconOnly,
+				oPassiveTitlelessObjectStatusTextOnly,
+				oPassiveTitlelessObjectStatusCombined
+			],
+			markers: new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite})
+		});
+
+		var oCondensedObjectHeader = new sap.m.ObjectHeader({
+			condensed: true,
+			title: "Banana",
+			number: "0.75",
+			numberUnit: "LEV",
+			attributes: oActiveObjectAttribute2
+		});
+
+
+		// Wrapper
+
+		var oLayout = sap.ui.layout.VerticalLayout({
+			width: "100%",
+			content: [
+				getTitle("ObjectHeader with title selector:"),
+				oObjectHeaderWithTitleSelector,
+				getTitle("Responsive ObjectHeader with active elements:"),
+				oActiveResponsiveObjectHeader,
+				getTitle("Responsive ObjectHeader with inactive elements:"),
+				oPassiveResponsiveObjectHeader,
+				getTitle("Condensed ObjectHeader:"),
+				oCondensedObjectHeader
+			]
+		}).addStyleClass("sapUiSmallMarginBegin");
+
+		oLayout.placeAt("content");
+	</script>
+
+	<style>
+		html, body {
+			width: 100%;
+			height: 100%
+		}
+	</style>
+</head>
+<body id="content" class="sapUiBody"></body>
+</html>

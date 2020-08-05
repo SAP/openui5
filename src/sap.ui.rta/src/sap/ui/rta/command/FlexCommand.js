@@ -1,9 +1,23 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactory",
-		"sap/ui/rta/ControlTreeModifier", "sap/ui/fl/Utils"], function(BaseCommand, FlexControllerFactory,
-		RtaControlTreeModifier, Utils) {
+sap.ui.define([
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/Utils",
+	"sap/base/Log",
+	"sap/base/util/merge",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/base/util/values"
+], function(
+	BaseCommand,
+	JsControlTreeModifier,
+	flUtils,
+	Log,
+	merge,
+	ChangesWriteAPI,
+	objectValues
+) {
 	"use strict";
 
 	/**
@@ -30,16 +44,10 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 					type : "string"
 				},
 				/**
-				 * getState and restoreState are used for retrieving custom undo/redo implementations from design time metadata
+				 * Change can only be applied on js, other modifiers like xml will not work
 				 */
-				fnGetState : {
-					type : "any"
-				},
-				state : {
-					type : "any"
-				},
-				fnRestoreState : {
-					type : "any"
+				jsOnly : {
+					type : "boolean"
 				},
 				/**
 				 * selector object containing id, appComponent and controlType to create a command for an element, which is not instantiated
@@ -54,7 +62,7 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	});
 
 	/**
-	 * Retrives id of element or selector
+	 * Retrieves id of element or selector
 	 *
 	 * @returns {string} id value
 	 * @public
@@ -65,17 +73,14 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	};
 
 	/**
-	 * Retrives app component of element or selector
+	 * Retrieves app component of element or selector
 	 *
 	 * @returns {sap.ui.core.UIComponent} component
 	 * @private
 	 */
 	FlexCommand.prototype.getAppComponent = function() {
-		if (!this._oControlAppComponent) {
-			var oElement = this.getElement();
-			this._oControlAppComponent = oElement ? Utils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
-		}
-		return this._oControlAppComponent;
+		var oElement = this.getElement();
+		return oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
 	};
 
 	/**
@@ -84,35 +89,40 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	 * @override
 	 */
 	FlexCommand.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
-		if (
-			!this.getSelector()
-			&& this.getElement()
-		) {
-			var oSelector = {
+		var oSelector;
+		if (!this.getSelector() && mFlexSettings && mFlexSettings.templateSelector) {
+			oSelector = {
+				id: mFlexSettings.templateSelector,
+				appComponent: this.getAppComponent(),
+				controlType: flUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.templateSelector))
+			};
+			this.setSelector(oSelector);
+		} else if (!this.getSelector() && this.getElement()) {
+			oSelector = {
 				id: this.getElement().getId(),
 				appComponent: this.getAppComponent(),
-				controlType: Utils.getControlType(this.getElement())
+				controlType: flUtils.getControlType(this.getElement())
 			};
 			this.setSelector(oSelector);
 		}
-		try {
-			this._oPreparedChange = this._createChange(mFlexSettings, sVariantManagementReference);
-		} catch (oError) {
-			jQuery.sap.log.error(oError.message || oError.name);
-			return false;
-		}
-		return true;
+
+		return this._createChange(mFlexSettings, sVariantManagementReference)
+			.then(function(oChange) {
+				this._oPreparedChange = oChange;
+				return true;
+			}.bind(this))
+			.catch(function(oError) {
+				Log.error(oError.message || oError.name);
+				return false;
+			});
 	};
 
 	/**
-	 * Returns a prepared change
-	 * @returns {object} prepared change object
+	 * Returns a prepared change if exists in the command
+	 * @returns {object} Prepared change object
 	 * @public
 	 */
 	FlexCommand.prototype.getPreparedChange = function() {
-		if (!this._oPreparedChange) {
-			this.prepare();
-		}
 		return this._oPreparedChange;
 	};
 
@@ -126,18 +136,23 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	};
 
 	/**
-	 * This method converts command constructor parameters into change specific data.
-	 * Default implementation of this method below is for commands, which do not have specific constructor parameters
-	 * @return {object} Returns the <code>SpecificChangeInfo</code> for change handler
+	 * This method converts all command constructor parameters that are flagged with group 'content' into change specific data.
+	 * @return {object} Returns the <code>ChangeSpecificInfo</code> for change handler
 	 * @protected
 	 */
 	FlexCommand.prototype._getChangeSpecificData = function() {
-		return {
-			changeType : this.getChangeType(),
-			selector : {
-				id : this.getElementId()
-			}
+		var mProperties = this.getMetadata().getProperties();
+		var mChangeSpecificData = {
+			changeType : this.getChangeType()
 		};
+		objectValues(mProperties)
+			.filter(function (oProperty) {
+				return oProperty.group === "content";
+			})
+			.forEach(function (oProperty) {
+				mChangeSpecificData[oProperty.name] = oProperty.get(this);
+			}, this);
+		return mChangeSpecificData;
 	};
 
 	/**
@@ -155,94 +170,88 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	 * Create a Flex change from a given Change Specific Data.
 	 * (This method can be reused to retrieve an Undo Change)
 	 *
-	 * @param {object} mChangeSpecificData Map containing change specific data
-	 * @param {object} mFlexSettings Map containing flex settings
-	 * @param {string} sVariantManagementReference Reference to the variant management
-	 * @returns {object} Returns the change object
+	 * @param {object} mChangeSpecificData - Map containing change specific data
+	 * @param {object} mFlexSettings - Map containing flex settings
+	 * @param {string} sVariantManagementReference - Reference to the variant management
+	 * @returns {Promise.<object>} Change object wrapped in a promise.
 	 * @private
 	 */
 	FlexCommand.prototype._createChangeFromData = function(mChangeSpecificData, mFlexSettings, sVariantManagementReference) {
 		if (mFlexSettings) {
-			jQuery.extend(mChangeSpecificData, mFlexSettings);
+			mChangeSpecificData = merge({}, mChangeSpecificData, mFlexSettings);
 		}
-		var oModel = this.getAppComponent().getModel("$FlexVariants");
+		mChangeSpecificData.jsOnly = this.getJsOnly();
+		var oModel = this.getAppComponent().getModel(flUtils.VARIANT_MODEL_NAME);
 		var sVariantReference;
 		if (oModel && sVariantManagementReference) {
 			sVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
 		}
-		var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
 		var mVariantObj = {
-			"variantManagementReference": sVariantManagementReference,
-			"variantReference": sVariantReference
+			variantManagementReference: sVariantManagementReference,
+			variantReference: sVariantReference
 		};
 		if (sVariantReference) {
-			jQuery.extend(mChangeSpecificData, mVariantObj);
+			mChangeSpecificData = Object.assign({}, mChangeSpecificData, mVariantObj);
 		}
-		return oFlexController.createChange(mChangeSpecificData, this.getElement() || this.getSelector());
+		return ChangesWriteAPI.create({changeSpecificData: mChangeSpecificData, selector: this._validateControlForChange(mFlexSettings)})
+			.then(function(oChange) {
+				if (mFlexSettings && mFlexSettings.originalSelector) {
+					oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
+					oChange.getDefinition().selector = Object.assign(oChange.getDefinition().selector, JsControlTreeModifier.getSelector(this.getSelector().id, this.getSelector().appComponent));
+					oChange.setContent(Object.assign({}, oChange.getContent(), mFlexSettings.content));
+				}
+				return oChange;
+			}.bind(this));
 	};
 
 	/**
 	 * @override
 	 */
 	FlexCommand.prototype.undo = function() {
-		//If the command has a "restoreState" implementation, use that to perform the undo
-		if (this.getFnRestoreState()){
-			this.getFnRestoreState()((this.getElement() || this.getSelector()), this.getState());
-		} else if (this._aRecordedUndo) {
-			RtaControlTreeModifier.performUndo(this._aRecordedUndo);
-		} else {
-			jQuery.sap.log.warning("Undo is not available for " + this.getElement() || this.getSelector());
-		}
-		return Promise.resolve();
+		var vControl = this.getElement() || JsControlTreeModifier.bySelector(this.getSelector());
+
+		var oChange = this.getPreparedChange();
+
+		return ChangesWriteAPI.revert({change: oChange, element: vControl});
 	};
 
 	/**
 	 * @private
 	 * @param {sap.ui.fl.Change|Object} vChange Change object or map containing the change object
-	 * @param {boolean} [bNotMarkAsAppliedChange] Apply the change without marking them as applied changes in the custom Data
 	 * @returns {Promise} Returns an empty promise
 	 */
-	FlexCommand.prototype._applyChange = function(vChange, bNotMarkAsAppliedChange) {
+	FlexCommand.prototype._applyChange = function(vChange) {
 		//TODO: remove the following compatibility code when concept is implemented
 		var oChange = vChange.change || vChange;
 
 		var oAppComponent = this.getAppComponent();
-		var oChangeDefinition = oChange.getDefinition();
-		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+		var oSelectorElement = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 
-		// If the command has a "getState" implementation, use that instead of recording the undo
-		if (this.getFnGetState()){
-			this.setState.call(this, (this.getFnGetState()((this.getElement() || this.getSelector()), oChangeDefinition, {
-			modifier: RtaControlTreeModifier,
-			appComponent : oAppComponent
-			})));
-		} else {
-			RtaControlTreeModifier.startRecordingUndo();
+
+		var mPropertyBag = {
+			modifier: JsControlTreeModifier,
+			appComponent: oAppComponent,
+			view: flUtils.getViewForControl(oSelectorElement)
+		};
+		return ChangesWriteAPI.apply(Object.assign({change: oChange, element: oSelectorElement}, mPropertyBag))
+
+		.then(function(oResult) {
+			if (!oResult.success) {
+				return Promise.reject(oResult.error);
+			}
+		});
+	};
+
+	FlexCommand.prototype._validateControlForChange = function(mFlexSettings) {
+		if (mFlexSettings && mFlexSettings.originalSelector && mFlexSettings.content && mFlexSettings.content.boundAggregation) {
+			return {
+				id: mFlexSettings.originalSelector,
+				appComponent: this.getAppComponent(),
+				controlType: flUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.originalSelector))
+			};
 		}
-
-		var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
-
-		return Promise.resolve(oFlexController.checkTargetAndApplyChange(oChange, oSelectorElement, {modifier: RtaControlTreeModifier, appComponent: oAppComponent}))
-
-		.then(function(bSuccess) {
-			if (bSuccess) {
-				if (bNotMarkAsAppliedChange) {
-					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oSelectorElement);
-				}
-			}
-			return bSuccess;
-		})
-
-		.then(function(bSuccess) {
-			if (!this.getFnGetState()){
-				this._aRecordedUndo = RtaControlTreeModifier.stopRecordingUndo();
-			}
-			if (!bSuccess) {
-				return Promise.reject();
-			}
-		}.bind(this));
+		return this.getElement() || this.getSelector();
 	};
 
 	return FlexCommand;
-
-}, /* bExport= */true);
+});

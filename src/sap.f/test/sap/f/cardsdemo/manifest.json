@@ -1,0 +1,364 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.f.cardsdemo",
+		"type": "application",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				"",
+				"en"
+			],
+			"fallbackLocale": "en"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"services": {
+			"UserRecent": {
+				"factoryName": "cardsdemo.service.UserRecentFactory"
+			},
+			"Navigation": {
+				"factoryName": "cardsdemo.service.SampleNavigationFactory"
+			}
+		},
+		"rootView": {
+			"viewName": "sap.f.cardsdemo.view.Main",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.60.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.f": {},
+				"sap.ui.layout": {},
+				"sap.ui.codeeditor": {},
+				"sap.ui.integration": {},
+				"sap.m": {}
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.f.cardsdemo.i18n.i18n",
+					"supportedLocales": [
+						"",
+						"en"
+					],
+					"fallbackLocale": "en"
+				},
+				"preload": true
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.f.cardsdemo.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"bypassed": {
+					"target": "notFound"
+				},
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "main",
+					"target": "main"
+				},
+				{
+					"pattern": "splitter",
+					"name": "splitter",
+					"target": "splitter"
+				},
+				{
+					"pattern": "listContent",
+					"name": "listContent",
+					"target": "listContent"
+				},
+				{
+					"pattern": "calendarContent",
+					"name": "calendarContent",
+					"target": "calendarContent"
+				},
+				{
+					"pattern": "tableContent",
+					"name": "tableContent",
+					"target": "tableContent"
+				},
+				{
+					"pattern": "defaultHeader",
+					"name": "defaultHeader",
+					"target": "defaultHeader"
+				},
+				{
+					"pattern": "numericHeader",
+					"name": "numericHeader",
+					"target": "numericHeader"
+				},
+				{
+					"pattern": "analyticalContent",
+					"name": "analyticalContent",
+					"target": "analyticalContent"
+				},
+				{
+					"pattern": "manifest",
+					"name": "manifest",
+					"target": "manifest"
+				},
+				{
+					"pattern": "componentCard",
+					"name": "componentCard",
+					"target": "componentCard"
+				},
+				{
+					"pattern": "sapfCard",
+					"name": "sapfCard",
+					"target": "sapfCard"
+				},
+				{
+					"pattern": "gridContainer",
+					"name": "gridContainer",
+					"target": "gridContainer"
+				},
+				{
+					"pattern": "gridContainerQuery",
+					"name": "gridContainerQuery",
+					"target": "gridContainerQuery"
+				},
+				{
+					"pattern": "timelineContent",
+					"name": "timelineContent",
+					"target": "timelineContent"
+				},
+				{
+					"pattern": "adaptiveCard",
+					"name": "adaptiveCard",
+					"target": "adaptiveCard"
+				},
+				{
+					"pattern": "navigationService",
+					"name": "navigationService",
+					"target": "navigationService"
+				},
+				{
+					"pattern": "dataService",
+					"name": "dataService",
+					"target": "dataService"
+				},
+				{
+					"pattern": "objectContent",
+					"name": "objectContent",
+					"target": "objectContent"
+				},
+				{
+					"pattern": "analyticsCloudContent",
+					"name": "analyticsCloudContent",
+					"target": "analyticsCloudContent"
+				},
+				{
+					"pattern": "dnd3",
+					"name": "dnd3",
+					"target": "dnd3"
+				},
+				{
+					"pattern": "delayedLoading",
+					"name": "delayedLoading",
+					"target": "delayedLoading"
+				},
+				{
+					"pattern": "noHeaderNoContent",
+					"name": "noHeaderNoContent",
+					"target": "noHeaderNoContent"
+				},
+				{
+					"pattern": "minHeight",
+					"name": "minHeight",
+					"target": "minHeight"
+				},
+				{
+					"pattern": "dataMode",
+					"name": "dataMode",
+					"target": "dataMode"
+				},
+				{
+					"pattern": "translation",
+					"name": "translation",
+					"target": "translation"
+				},
+				{
+					"pattern": "bundle",
+					"name": "bundle",
+					"target": "bundle"
+				},
+				{
+					"pattern": "manifestReady",
+					"name": "manifestReady",
+					"target": "manifestReady"
+				},
+				{
+					"pattern": "badges",
+					"name": "badges",
+					"target": "badges"
+				}
+			],
+			"targets": {
+				"main": {
+					"viewId": "main",
+					"viewName": "Main",
+					"viewLevel": 1
+				},
+				"splitter": {
+					"viewId": "splitter",
+					"viewName": "Splitter",
+					"viewLevel": 1
+				},
+				"notFound": {
+					"viewId": "notFound",
+					"viewName": "NotFound",
+					"transition": "show"
+				},
+				"listContent": {
+					"viewId": "listContent",
+					"viewName": "ListContent",
+					"viewLevel": 1
+				},
+				"calendarContent": {
+					"viewId": "calendarContent",
+					"viewName": "calendarContent",
+					"viewLevel": 1
+				},
+				"tableContent": {
+					"viewId": "tableContent",
+					"viewName": "TableContent",
+					"viewLevel": 1
+				},
+				"analyticalContent": {
+					"viewId": "analyticalContent",
+					"viewName": "AnalyticalContent",
+					"viewLevel": 1
+				},
+				"defaultHeader": {
+					"viewId": "defaultHeader",
+					"viewName": "DefaultHeader",
+					"viewLevel": 1
+				},
+				"numericHeader": {
+					"viewId": "numericHeader",
+					"viewName": "NumericHeader",
+					"viewLevel": 1
+				},
+				"manifest": {
+					"viewId": "manifest",
+					"viewName": "Manifest",
+					"viewLevel": 1
+				},
+				"componentCard": {
+					"viewId": "componentCard",
+					"viewName": "ComponentCard",
+					"viewLevel": 1
+				},
+				"sapfCard": {
+					"viewId": "sapfCard",
+					"viewName": "sapfCard",
+					"viewLevel": 1
+				},
+				"gridContainer": {
+					"viewId": "GridContainer",
+					"viewName": "GridContainer",
+					"viewLevel": 1
+				},
+				"gridContainerQuery": {
+					"viewId": "GridContainerQuery",
+					"viewName": "GridContainerQuery",
+					"viewLevel": 1
+				},
+				"navigationService": {
+					"viewId": "navigationService",
+					"viewName": "NavigationService",
+					"viewLevel": 1
+				},
+				"dataService": {
+					"viewId": "dataService",
+					"viewName": "DataService",
+					"viewLevel": 1
+				},
+				"delayedLoading": {
+					"viewId": "delayedLoading",
+					"viewName": "DelayedLoading",
+					"viewLevel": 1
+				},
+				"timelineContent": {
+					"viewId": "timelineContent",
+					"viewName": "timelineContent",
+					"viewLevel": 1
+				},
+				"adaptiveCard": {
+					"viewId": "adaptiveCard",
+					"viewName": "AdaptiveCard",
+					"viewLevel": 1
+				},
+				"objectContent": {
+					"viewId": "objectContent",
+					"viewName": "ObjectContent",
+					"viewLevel": 1
+				},
+				"analyticsCloudContent": {
+					"viewId": "analyticsCloudContent",
+					"viewName": "AnalyticsCloudContent",
+					"viewLevel": 1
+				},
+				"dnd3": {
+					"viewId": "dnd3",
+					"viewName": "Dnd3",
+					"viewLevel": 1
+				},
+				"noHeaderNoContent": {
+					"viewId": "noHeaderNoContent",
+					"viewName": "NoHeaderNoContent",
+					"viewLevel": 1
+				},
+				"minHeight": {
+					"viewId": "minHeight",
+					"viewName": "MinHeight",
+					"viewLevel": 1
+				},
+				"dataMode": {
+					"viewId": "dataMode",
+					"viewName": "DataMode",
+					"viewLevel": 1
+				},
+				"translation": {
+					"viewId": "translation",
+					"viewName": "Translation",
+					"viewLevel": 1
+				},
+				"bundle": {
+					"viewId": "bundle",
+					"viewName": "Bundle",
+					"viewLevel": 1
+				},
+				"manifestReady": {
+					"viewId": "manifestReady",
+					"viewName": "ManifestReady",
+					"viewLevel": 1
+				},
+				"badges": {
+					"viewId": "badges",
+					"viewName": "Badges",
+					"viewLevel": 1
+				}
+			}
+		}
+	}
+}

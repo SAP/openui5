@@ -88,7 +88,7 @@ oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "Charlie"}), te
 oTable.addColumn(oColumn);
 
 // sap.ui.core.Icon
-oControl = new sap.ui.core.Icon({src: "sap-icon://account", decorative: false});
+oControl = new sap.ui.core.Icon({src: "sap-icon://account", decorative: false, tooltip: "Account"});
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "Delta"}), template: oControl, width: "80px", hAlign: sap.ui.core.HorizontalAlign.Center});
 oTable.addColumn(oColumn);
 
@@ -170,7 +170,7 @@ oButtonAfterTable.placeAt("content");
 
 </script>
 </head>
-<body class="sapUiBody sapUiSizeCozy" role="application">
+<body class="sapUiBody sapUiSizeCozy">
 <div id="configuration" style="padding-bottom: 40px; display: none;"></div>
 <h1 id="header">ACC Test Page for <code>sap.ui.table.Table</code> with <code>sap.m</code> library</h1>
 <div id="content"></div>

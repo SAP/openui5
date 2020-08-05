@@ -1,0 +1,355 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="utf-8">
+        <title>MultiComboBox - sap.m</title>
+        <script src="shared-config.js"></script>
+        <script id="sap-ui-bootstrap" src="../../../../resources/sap-ui-core.js"
+            data-sap-ui-libs="sap.m, sap.ui.layout"
+            data-sap-ui-compatVersion="1.20">
+
+        </script>
+        <style type="text/css">
+            .customLabel {
+                margin: 0 0.5rem;
+                vertical-align: middle;
+                vertical-align: -webkit-baseline-middle;
+            }
+        </style>
+        <script>
+            jQuery.sap.require("sap.m.MessageToast");
+            jQuery.sap.require("jquery.sap.xml");
+
+            var oModel = new sap.ui.model.json.JSONModel();
+
+            var mData = {
+                "selected" : ["AR", "BH"],
+                "items" : [{
+                    "key" : "DZ",
+                    "text" : "Algeria"
+                },
+
+                {
+                    "key" : "AR",
+                    "text" : "Argentina"
+                },
+
+                {
+                    "key" : "AU",
+                    "text" : "Australia"
+                },
+
+                {
+                    "key" : "DI",
+                    "text" : "Disabled",
+                    "enabled" : false
+                },
+
+                {
+                    "key" : "AT",
+                    "text" : "Austria"
+                },
+
+                {
+                    "key" : "BH",
+                    "text" : "Bahrain"
+                },
+
+                {
+                    "key" : "BR",
+                    "text" : "Brazil"
+                },
+
+                {
+                    "key" : "BG",
+                    "text" : "Bulgaria"
+                },
+
+                {
+                    "key" : "CA",
+                    "text" : "Canada"
+                },
+
+                {
+                    "key" : "PE",
+                    "text" : "Peru"
+                },
+
+                {
+                    "key" : "QA",
+                    "text" : "Qatar"
+                },
+
+                {
+                    "key" : "RO",
+                    "text" : "Romania"
+                },
+
+                {
+                    "key" : "RU",
+                    "text" : "Russia"
+                },
+
+                {
+                    "key" : "SA",
+                    "text" : "Saudi Arabia"
+                },
+
+                {
+                    "key" : "SN",
+                    "text" : "Senegal"
+                },
+
+                {
+                    "key" : "SG",
+                    "text" : "Singapore"
+                },
+
+                {
+                    "key" : "SK",
+                    "text" : "Slovakia"
+                },
+
+                {
+                    "key" : "SI",
+                    "text" : "Slovenia"
+                },
+
+                {
+                    "key" : "SE",
+                    "text" : "Sweden"
+                },
+
+                {
+                    "key" : "CH",
+                    "text" : "Switzerland"
+                },
+
+                {
+                    "key" : "UA",
+                    "text" : "Ukraine"
+                },
+
+                {
+                    "key" : "AE",
+                    "text" : "United Arab Emirates"
+                },
+
+                {
+                    "key" : "YE",
+                    "text" : "Yemen"
+                }]
+            };
+
+            oModel.setData(mData);
+            sap.ui.getCore().setModel(oModel);
+
+            var oItemTemplate = new sap.ui.core.Item({
+                key : "{key}",
+                text : "{text}",
+                enabled : "{enabled}"
+            }),
+
+                oMultiComboBoxPlaceholder = new sap.m.MultiComboBox({
+                    id : "MultiComboBox0",
+                    placeholder : "List of contries",
+                    width : "300px",
+                    items : {
+                        path : "/items",
+                        template : oItemTemplate
+                    }
+                }),
+
+                oLabelPlaceholder = new sap.m.Label({
+                    text: "Choose your country",
+                    labelFor: oMultiComboBoxPlaceholder
+                }).addStyleClass("customLabel"),
+
+                oMultiComboBoxWithTokens = new sap.m.MultiComboBox({
+                    id : "multiComboBoxWithTokens",
+                    width : "300px",
+                    placeholder : "Select an item",
+                    items : {
+                        path : "/items",
+                        template : oItemTemplate
+                    },
+                    selectedKeys : ["SA", "PH", "YE", "ZA", "PE"],
+                }),
+
+                oLabelWithTokens = new sap.m.Label({
+                    text: "Choose your country",
+                    labelFor: oMultiComboBoxWithTokens
+                }).addStyleClass("customLabel"),
+
+                oMultiComboBoxDisabled = new sap.m.MultiComboBox({
+                    id : "MultiComboBoxDisabled",
+                    width : "300px",
+                    placeholder : "Disabled",
+                    items : [new sap.ui.core.Item({
+                        text : "Algeria",
+                        key : "AL"
+                    }), new sap.ui.core.Item({
+                        text : "Bulgaria",
+                        key : "BU"
+                    }), new sap.ui.core.Item({
+                        text : "Canada",
+                        key : "CA"
+                    })],
+                    selectedKeys : ["AL", "BU", "CA"],
+                    enabled : false
+                }),
+
+                oLabelDisabled = new sap.m.Label({
+                    text: "Choose your country",
+                    labelFor: oMultiComboBoxDisabled
+                }).addStyleClass("customLabel"),
+
+                items = [
+                    new sap.ui.core.Item({
+                        text : "Algeria"
+                    }),
+                    new sap.ui.core.Item({
+                        text : "Bulgaria"
+                    }),
+                    new sap.ui.core.Item({
+                        text : "Canada"
+                    }),
+                    new sap.ui.core.Item({
+                        text : "Denmark"
+                    }), new sap.ui.core.Item({
+                        text : "Estonia"
+                    })
+                ],
+
+                oMultiComboBoxReadOnly = new sap.m.MultiComboBox({
+                    id : "MultiComboBoxReadOnly",
+                    width : "300px",
+                    placeholder : "ReadOnlyListItem",
+                    items : items,
+                    selectedItems : [items[0], items[1], items[2], items[3], items[4]],
+                    editable : false
+                }),
+
+                oLabelReadOnly = new sap.m.Label({
+                    text: "Choose your country",
+                    labelFor: oMultiComboBoxReadOnly
+                }).addStyleClass("customLabel"),
+
+                oMultiComboBoxError = new sap.m.MultiComboBox({
+                    id : "MultiComboBoxError",
+                    width : "300px",
+                    placeholder : "Error",
+                    valueState : "Error",
+                    items : [
+                        new sap.ui.core.Item({
+                            key : "0",
+                            text : "item 0"
+                        }),
+                        new sap.ui.core.Item({
+                            key : "1",
+                            text : "item 1"
+                        })
+                    ]
+                }),
+
+                oLabelError = new sap.m.Label({
+                    text: "Select an item",
+                    labelFor: oMultiComboBoxError
+                }).addStyleClass("customLabel");
+
+                oMultiComboBoxWarning = new sap.m.MultiComboBox({
+                    id : "MultiComboBoxWarning",
+                    width : "300px",
+                    placeholder : "Warning",
+                    valueState : "Warning",
+                    items : [
+                        new sap.ui.core.Item({
+                            key : "0",
+                            text : "item 0"
+                        }),
+                        new sap.ui.core.Item({
+                            key : "1",
+                            text : "item 1"
+                        })
+                    ]
+                }),
+
+                oLabelWarning = new sap.m.Label({
+                    text: "Select an item",
+                    labelFor: oMultiComboBoxWarning
+                }).addStyleClass("customLabel"),
+
+                oMultiComboBoxSuccess = new sap.m.MultiComboBox({
+                    id : "MultiComboBoxSuccess",
+                    width : "300px",
+                    placeholder : "Success",
+                    valueState : "Success",
+                    items : [
+                        new sap.ui.core.Item({
+                            key : "0",
+                            text : "item 0"
+                        }),
+                        new sap.ui.core.Item({
+                            key : "1",
+                            text : "item 1"
+                        })
+                    ]
+                }),
+
+                oLabelSuccess = new sap.m.Label({
+                    text: "Select an item",
+                    labelFor: oMultiComboBoxSuccess
+                }).addStyleClass("customLabel"),
+
+                oCompactMode = new sap.m.CheckBox("compactMode", {
+                            text: "Compact Mode",
+                            selected : false,
+                            select : function() {
+                                $("body").toggleClass("sapUiSizeCompact");
+                            }
+                }),
+
+                oApp = new sap.m.App("myApp", {
+                    initialPage : "page1"
+                });
+
+            oApp.addPage(new sap.m.Page("page1", {
+                title: "MultiComboBox Accessibility Test Page",
+                content : [
+                    new sap.ui.core.HTML({ content: "<h3>Placeholder</h3>" }),
+                    oLabelPlaceholder,
+                    oMultiComboBoxPlaceholder,
+                    new sap.ui.core.HTML({ content: "<h3>Tokens and N-more</h3>" }),
+                    oLabelWithTokens,
+                    oMultiComboBoxWithTokens,
+                    new sap.ui.core.HTML({ content: "<h3>Disabled</h3>" }),
+                    oLabelDisabled,
+                    oMultiComboBoxDisabled,
+                    new sap.ui.core.HTML({ content: "<h3>Read only</h3>" }),
+                    oLabelReadOnly,
+                    oMultiComboBoxReadOnly,
+                    new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
+                    oLabelError,
+                    oMultiComboBoxError,
+                    new sap.ui.core.HTML({ content: "<h3>Warning State</h3>" }),
+                    oLabelWarning,
+                    oMultiComboBoxWarning,
+                    new sap.ui.core.HTML({ content: "<h3>Success state</h3>" }),
+                    oLabelSuccess,
+                    oMultiComboBoxSuccess
+                    ],
+                footer: new sap.m.Toolbar({
+                    content: [
+                        new sap.m.ToolbarSpacer(),
+                        oCompactMode
+                    ]
+                })
+            }));
+
+            oApp.placeAt("body");
+        </script>
+    </head>
+    <body id="body" class="sapUiBody"></body>
+</html>
+

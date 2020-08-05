@@ -1,0 +1,202 @@
+/* =============================== */
+/* CSS for control sap.m/CheckBox  */
+/* Fiori 3 theme                   */
+/* =============================== */
+
+.sapMCb {
+	height: 2.75rem;
+	line-height: 2.75rem;
+	padding: 0 0 0 2.75rem;
+}
+
+.sapMCbBg {
+	left: 0.6875rem;
+	top: 0.6875rem;
+	height: 1.375rem;
+	width: 1.375rem;
+	line-height: 1.125rem;
+	border-width: 0.0625rem;
+	box-sizing: border-box;
+
+	&:not(.sapMCbErr):not(.sapMCbInfo):not(.sapMCbWarn) > & {
+		line-height: 1.25rem;
+	}
+}
+
+.sapMCb.sapMCbWarn .sapMCbBg {
+	background-color: @sapUiFieldWarningBackground;
+	border: 0.125rem solid @sapUiFieldWarningColor;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiFieldTextColor;
+	}
+}
+
+.sapMCb.sapMCbSucc .sapMCbBg {
+	background-color: @sapUiFieldSuccessBackground;
+	border: 0.0625rem solid @sapUiFieldSuccessColor;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiFieldSuccessColor;
+	}
+}
+
+.sapMCb.sapMCbErr .sapMCbBg {
+	background-color: @sapUiFieldInvalidBackground;
+	border: 0.125rem solid @sapUiFieldInvalidColor;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiFieldInvalidColor;
+	}
+}
+
+.sapMCb.sapMCbInfo .sapMCbBg {
+	background-color: @sapUiFieldInformationBackground;
+	border: 0.125rem solid @sapUiFieldInformationColor;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiFieldInformationColor;
+	}
+}
+
+.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
+	left: 1px; // Must be in pixels to behave correctly in IE
+}
+
+.sapMCbBg.sapMCbMarkChecked:before {
+	color: @sapUiSelected;
+}
+
+.sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
+	border: 0.25rem solid transparent;
+}
+
+/* CheckBox focus */
+.sapMCb:focus {
+	outline: none;
+}
+
+html.sap-desktop {
+	.sapMCbBg:focus,
+	.sapMCbBg:active,
+	.sap-desktop .sapMCbBg.sapMCbBgDis:focus {
+		-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+		outline: none;
+	}
+
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
+		outline-width: 1px;
+		outline-style: dotted;
+		outline-color: @sapUiContentFocusColor;
+	}
+
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbDisplayOnly).sapMCbHasLabel {
+		&:focus:before {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 0.5625rem;
+			bottom: 0.5625rem;
+			left: 0.5625rem;
+			right: 0;
+			border: 1px dotted @sapUiContentFocusColor;
+		}
+		&:not(.sapMCbErr):not(.sapMCbInfo):not(.sapMCbWarn):focus:before {
+			bottom: 0.5625rem;
+		}
+	}
+
+	.sapUiForm .sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+		left: 0px; /* Cb in SimpleForm: left border adjustment */
+	}
+}
+
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
+		outline-style: dashed;
+	}
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbDisplayOnly).sapMCbHasLabel:focus:before {
+		border: 1px dashed @sapUiContentFocusColor;
+	}
+}
+
+/* CheckBox in Footer Context */
+.sapMFooter-CTX .sapMCb:not(.sapMCbBgDis):focus > .sapMCbBg,
+.sapMFooter-CTX .sapMCb:not(.sapMCbBgDis)		> .sapMCbBg:focus {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+.sapMLIBActive .sapMCbBg,
+.sapMLIBActive .sapMCbBg.sapMCbMarkChecked,
+.sapMLIBActive .sapMCbBg.sapMCbBgDis,
+.sapMLIBActive .sapMCbBg.sapMCbBgDis.sapMCbMarkChecked{
+	border-color: @sapUiListActiveTextColor;
+}
+
+.sapMLIBActive .sapMCbBg{
+	background-color: @sapUiListActiveBackground;
+}
+
+.sapMCbHoverable:hover{
+	border-color: @sapUiFieldHoverBorderColor;
+	background: @sapUiFieldHoverBackground;
+}
+
+.sapMCbBgDis {
+	opacity: @sapUiContentDisabledOpacity;
+}
+
+.sapMLIBActive .sapMActive .sapMCbBg.sapMCbActiveStateOff.sapMCbMarkChecked:before,
+.sapMLIBActive .sapMCbBg:active.sapMCbActiveStateOff.sapMCbMarkChecked:before,
+.sapMLIBActive .sapMCbBg.sapMCbMarkChecked:before,
+.sapMLIBActive .sapMActive .sapMCbBg.sapMCbMarkChecked:before,
+.sapMLIBActive .sapMCbBg:active.sapMCbMarkChecked:before,
+.sapMLIBActive .sapMCbBg.sapMCbBgDis.sapMCbMarkChecked:before{
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMCbBg.sapMCbBgDis.sapMCbMarkChecked:before {
+	color: fade(@sapUiSelected, 25);
+}
+
+/* Compact size */
+.sapUiSizeCompact{
+	.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
+		left: 1px; // Must be in pixels to behave correctly in IE
+	}
+	.sapMCbBg {
+		border-radius: 0.125rem;
+	}
+}
+
+html.sap-desktop {
+	.sapUiSizeCompact {
+		.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel {
+			&:focus:before {
+				top: 0.365rem;
+				bottom: 0.365rem;
+				left: 0.365rem;
+			}
+
+			&:not(.sapMCbErr):not(.sapMCbInfo):not(.sapMCbWarn):focus:before {
+				bottom: 0.375rem;
+			}
+		}
+
+		.sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
+			border-width: 0.1875rem;
+		}
+
+		.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
+			left: 0px;
+		}
+
+		.sapMCbBg {
+			height: 1rem;
+			width: 1rem;
+			box-sizing: border-box;
+		}
+
+		.sapMCb:not(.sapMCbErr):not(.sapMCbInfo):not(.sapMCbWarn) > .sapMCbBg {
+			line-height: 0.875rem;
+		}
+	}
+}

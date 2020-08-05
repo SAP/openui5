@@ -1,0 +1,2130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+		   xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+		   xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Validation.V1" Alias="Validation"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value"
+			xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+	</edmx:Reference>
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="QM_INSP_PLAN_SRV" xml:lang="en" sap:schema-version="1"
+				xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<Annotations Target="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspectionPlan"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.DraftRoot">
+					<Record>
+						<PropertyValue Property="ActivationAction"
+									   String="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspectionPlanActivation"/>
+						<PropertyValue Property="EditAction"
+									   String="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspectionPlanEdit"/>
+						<PropertyValue Property="PreparationAction"
+									   String="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspectionPlanPreparation"/>
+						<PropertyValue Property="ValidationFunction"
+									   String="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspectionPlanValidation"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>Activation_ac</PropertyPath>
+								<PropertyPath>Copy_ac</PropertyPath>
+								<PropertyPath>Edit_ac</PropertyPath>
+								<PropertyPath>Editwithkeydate_ac</PropertyPath>
+								<PropertyPath>Preparation_ac</PropertyPath>
+								<PropertyPath>Validation_ac</PropertyPath>
+								<PropertyPath>BillOfOperationsStatus_fc</PropertyPath>
+								<PropertyPath>BillOfOperationsUsage_fc</PropertyPath>
+								<PropertyPath>CustIsConsideredForDynModif_fc</PropertyPath>
+								<PropertyPath>InspectionLotDynamicLevel_fc</PropertyPath>
+								<PropertyPath>InspectionPlanForEdit_fc</PropertyPath>
+								<PropertyPath>InspectionPlanGroupForEdit_fc</PropertyPath>
+								<PropertyPath>InspLotDynamicRule_fc</PropertyPath>
+								<PropertyPath>MatlIsConsideredForDynModif_fc</PropertyPath>
+								<PropertyPath>MfrIsConsideredForDynModif_fc</PropertyPath>
+								<PropertyPath>Plant_fc</PropertyPath>
+								<PropertyPath>SuplrIsConsideredForDynModif_fc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>Activation_ac</PropertyPath>
+								<PropertyPath>Copy_ac</PropertyPath>
+								<PropertyPath>Edit_ac</PropertyPath>
+								<PropertyPath>Editwithkeydate_ac</PropertyPath>
+								<PropertyPath>Preparation_ac</PropertyPath>
+								<PropertyPath>Validation_ac</PropertyPath>
+								<PropertyPath>BillOfOperationsStatus_fc</PropertyPath>
+								<PropertyPath>BillOfOperationsUsage_fc</PropertyPath>
+								<PropertyPath>CustIsConsideredForDynModif_fc</PropertyPath>
+								<PropertyPath>InspectionLotDynamicLevel_fc</PropertyPath>
+								<PropertyPath>InspectionPlanForEdit_fc</PropertyPath>
+								<PropertyPath>InspectionPlanGroupForEdit_fc</PropertyPath>
+								<PropertyPath>InspLotDynamicRule_fc</PropertyPath>
+								<PropertyPath>MatlIsConsideredForDynModif_fc</PropertyPath>
+								<PropertyPath>MfrIsConsideredForDynModif_fc</PropertyPath>
+								<PropertyPath>Plant_fc</PropertyPath>
+								<PropertyPath>SuplrIsConsideredForDynModif_fc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspPlanMatlAssgmt"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.DraftNode">
+					<Record>
+						<PropertyValue Property="PreparationAction"
+									   String="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspPlanMatlAssgmtPreparation"/>
+						<PropertyValue Property="ValidationFunction"
+									   String="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspPlanMatlAssgmtValidation"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.DraftActivationVia">
+					<Collection>
+						<String>QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspectionPlan</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>Preparation_ac</PropertyPath>
+								<PropertyPath>Validation_ac</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>Preparation_ac</PropertyPath>
+								<PropertyPath>Validation_ac</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspPlanOpCharc"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.DraftNode">
+					<Record>
+						<PropertyValue Property="PreparationAction"
+									   String="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspPlanOpCharcPreparation"/>
+						<PropertyValue Property="ValidationFunction"
+									   String="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspPlanOpCharcValidation"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.DraftActivationVia">
+					<Collection>
+						<String>QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspectionPlan</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>Preparation_ac</PropertyPath>
+								<PropertyPath>Validation_ac</PropertyPath>
+								<PropertyPath>BOOCharacteristic_fc</PropertyPath>
+								<PropertyPath>BOOCharcSampleQuantity_fc</PropertyPath>
+								<PropertyPath>CustIsConsideredForDynModif_fc</PropertyPath>
+								<PropertyPath>InspCharacteristicSampleUnit_fc</PropertyPath>
+								<PropertyPath>InspCharcDynModifRef_fc</PropertyPath>
+								<PropertyPath>InspectionMethod_fc</PropertyPath>
+								<PropertyPath>InspectionMethodPlant_fc</PropertyPath>
+								<PropertyPath>InspectionMethodVersion_fc</PropertyPath>
+								<PropertyPath>InspectionScope_fc</PropertyPath>
+								<PropertyPath>InspectionSpecification_fc</PropertyPath>
+								<PropertyPath>InspectionSpecificationPlant_fc</PropertyPath>
+								<PropertyPath>InspectionSpecificationText_fc</PropertyPath>
+								<PropertyPath>InspectionSpecificationUnit_fc</PropertyPath>
+								<PropertyPath>InspectionSpecificationVersion_fc</PropertyPath>
+								<PropertyPath>InspLotDynamicRule_fc</PropertyPath>
+								<PropertyPath>InspResultIsDocumentationRqd_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCatalog2_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCatalog3_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCatalog4_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCatalog5_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCodeGroup2_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCodeGroup3_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCodeGroup4_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCodeGroup5_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalSelectedSet5_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalSelectedSet3_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalSelectedSet2_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalSelectedSet4_fc</PropertyPath>
+								<PropertyPath>InspSpecAddlSeldCodeSetPlant3_fc</PropertyPath>
+								<PropertyPath>InspSpecAddlSeldCodeSetPlant5_fc</PropertyPath>
+								<PropertyPath>InspSpecAddlSeldCodeSetPlant4_fc</PropertyPath>
+								<PropertyPath>InspSpecAddlSeldCodeSetPlant2_fc</PropertyPath>
+								<PropertyPath>InspSpecCharacteristicType_fc</PropertyPath>
+								<PropertyPath>InspSpecCharcCategory_fc</PropertyPath>
+								<PropertyPath>InspSpecDecimalPlaces_fc</PropertyPath>
+								<PropertyPath>InspSpecDefectCodeGrpRjcnLower_fc</PropertyPath>
+								<PropertyPath>InspSpecDefectCodeGrpRjcnUpper_fc</PropertyPath>
+								<PropertyPath>InspSpecDefectCodeGrpRejection_fc</PropertyPath>
+								<PropertyPath>InspSpecDefectCodeRejection_fc</PropertyPath>
+								<PropertyPath>InspSpecDefectCodeRjcnLower_fc</PropertyPath>
+								<PropertyPath>InspSpecDefectCodeRjcnUpper_fc</PropertyPath>
+								<PropertyPath>InspSpecHasFixedCtrlIndicators_fc</PropertyPath>
+								<PropertyPath>InspSpecImportanceCode_fc</PropertyPath>
+								<PropertyPath>InspSpecInformationField1_fc</PropertyPath>
+								<PropertyPath>InspSpecInformationField2_fc</PropertyPath>
+								<PropertyPath>InspSpecInformationField3_fc</PropertyPath>
+								<PropertyPath>InspSpecIsChgDocRequired_fc</PropertyPath>
+								<PropertyPath>InspSpecIsControlChartUsed_fc</PropertyPath>
+								<PropertyPath>InspSpecIsDefectsRecgAutomatic_fc</PropertyPath>
+								<PropertyPath>InspSpecIsDestructive_fc</PropertyPath>
+								<PropertyPath>InspSpecIsLongTermInspection_fc</PropertyPath>
+								<PropertyPath>InspSpecIsLowerLimitRequired_fc</PropertyPath>
+								<PropertyPath>InspSpecIsMeasuredValueRqd_fc</PropertyPath>
+								<PropertyPath>InspSpecIsQuantitative_fc</PropertyPath>
+								<PropertyPath>InspSpecIsSampleQtyAdditive_fc</PropertyPath>
+								<PropertyPath>InspSpecIsSamplingProcedRqd_fc</PropertyPath>
+								<PropertyPath>InspSpecIsScrapRelevant_fc</PropertyPath>
+								<PropertyPath>InspSpecIsSelectedSetRequired_fc</PropertyPath>
+								<PropertyPath>InspSpecIsTargetValueInLimit_fc</PropertyPath>
+								<PropertyPath>InspSpecIsUpperLimitRequired_fc</PropertyPath>
+								<PropertyPath>InspSpecLowerLimit_fc</PropertyPath>
+								<PropertyPath>InspSpecPrintControl_fc</PropertyPath>
+								<PropertyPath>InspSpecRecordingType_fc</PropertyPath>
+								<PropertyPath>InspSpecResultCalculation_fc</PropertyPath>
+								<PropertyPath>InspSpecTargetValue_fc</PropertyPath>
+								<PropertyPath>InspSpecUpperLimit_fc</PropertyPath>
+								<PropertyPath>InspToleranceSpecification_fc</PropertyPath>
+								<PropertyPath>MatlIsConsideredForDynModif_fc</PropertyPath>
+								<PropertyPath>MfrIsConsideredForDynModif_fc</PropertyPath>
+								<PropertyPath>QltyCtrlChartAggrgnCriterion_fc</PropertyPath>
+								<PropertyPath>SamplingProcedure_fc</PropertyPath>
+								<PropertyPath>SelectedCodeSet_fc</PropertyPath>
+								<PropertyPath>SelectedCodeSetPlant_fc</PropertyPath>
+								<PropertyPath>SuplrIsConsideredForDynModif_fc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>Preparation_ac</PropertyPath>
+								<PropertyPath>Validation_ac</PropertyPath>
+								<PropertyPath>BOOCharacteristic_fc</PropertyPath>
+								<PropertyPath>BOOCharcSampleQuantity_fc</PropertyPath>
+								<PropertyPath>CustIsConsideredForDynModif_fc</PropertyPath>
+								<PropertyPath>InspCharacteristicSampleUnit_fc</PropertyPath>
+								<PropertyPath>InspCharcDynModifRef_fc</PropertyPath>
+								<PropertyPath>InspectionMethod_fc</PropertyPath>
+								<PropertyPath>InspectionMethodPlant_fc</PropertyPath>
+								<PropertyPath>InspectionMethodVersion_fc</PropertyPath>
+								<PropertyPath>InspectionScope_fc</PropertyPath>
+								<PropertyPath>InspectionSpecification_fc</PropertyPath>
+								<PropertyPath>InspectionSpecificationPlant_fc</PropertyPath>
+								<PropertyPath>InspectionSpecificationText_fc</PropertyPath>
+								<PropertyPath>InspectionSpecificationUnit_fc</PropertyPath>
+								<PropertyPath>InspectionSpecificationVersion_fc</PropertyPath>
+								<PropertyPath>InspLotDynamicRule_fc</PropertyPath>
+								<PropertyPath>InspResultIsDocumentationRqd_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCatalog2_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCatalog3_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCatalog4_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCatalog5_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCodeGroup2_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCodeGroup3_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCodeGroup4_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalCodeGroup5_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalSelectedSet5_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalSelectedSet3_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalSelectedSet2_fc</PropertyPath>
+								<PropertyPath>InspSpecAdditionalSelectedSet4_fc</PropertyPath>
+								<PropertyPath>InspSpecAddlSeldCodeSetPlant3_fc</PropertyPath>
+								<PropertyPath>InspSpecAddlSeldCodeSetPlant5_fc</PropertyPath>
+								<PropertyPath>InspSpecAddlSeldCodeSetPlant4_fc</PropertyPath>
+								<PropertyPath>InspSpecAddlSeldCodeSetPlant2_fc</PropertyPath>
+								<PropertyPath>InspSpecCharacteristicType_fc</PropertyPath>
+								<PropertyPath>InspSpecCharcCategory_fc</PropertyPath>
+								<PropertyPath>InspSpecDecimalPlaces_fc</PropertyPath>
+								<PropertyPath>InspSpecDefectCodeGrpRjcnLower_fc</PropertyPath>
+								<PropertyPath>InspSpecDefectCodeGrpRjcnUpper_fc</PropertyPath>
+								<PropertyPath>InspSpecDefectCodeGrpRejection_fc</PropertyPath>
+								<PropertyPath>InspSpecDefectCodeRejection_fc</PropertyPath>
+								<PropertyPath>InspSpecDefectCodeRjcnLower_fc</PropertyPath>
+								<PropertyPath>InspSpecDefectCodeRjcnUpper_fc</PropertyPath>
+								<PropertyPath>InspSpecHasFixedCtrlIndicators_fc</PropertyPath>
+								<PropertyPath>InspSpecImportanceCode_fc</PropertyPath>
+								<PropertyPath>InspSpecInformationField1_fc</PropertyPath>
+								<PropertyPath>InspSpecInformationField2_fc</PropertyPath>
+								<PropertyPath>InspSpecInformationField3_fc</PropertyPath>
+								<PropertyPath>InspSpecIsChgDocRequired_fc</PropertyPath>
+								<PropertyPath>InspSpecIsControlChartUsed_fc</PropertyPath>
+								<PropertyPath>InspSpecIsDefectsRecgAutomatic_fc</PropertyPath>
+								<PropertyPath>InspSpecIsDestructive_fc</PropertyPath>
+								<PropertyPath>InspSpecIsLongTermInspection_fc</PropertyPath>
+								<PropertyPath>InspSpecIsLowerLimitRequired_fc</PropertyPath>
+								<PropertyPath>InspSpecIsMeasuredValueRqd_fc</PropertyPath>
+								<PropertyPath>InspSpecIsQuantitative_fc</PropertyPath>
+								<PropertyPath>InspSpecIsSampleQtyAdditive_fc</PropertyPath>
+								<PropertyPath>InspSpecIsSamplingProcedRqd_fc</PropertyPath>
+								<PropertyPath>InspSpecIsScrapRelevant_fc</PropertyPath>
+								<PropertyPath>InspSpecIsSelectedSetRequired_fc</PropertyPath>
+								<PropertyPath>InspSpecIsTargetValueInLimit_fc</PropertyPath>
+								<PropertyPath>InspSpecIsUpperLimitRequired_fc</PropertyPath>
+								<PropertyPath>InspSpecLowerLimit_fc</PropertyPath>
+								<PropertyPath>InspSpecPrintControl_fc</PropertyPath>
+								<PropertyPath>InspSpecRecordingType_fc</PropertyPath>
+								<PropertyPath>InspSpecResultCalculation_fc</PropertyPath>
+								<PropertyPath>InspSpecTargetValue_fc</PropertyPath>
+								<PropertyPath>InspSpecUpperLimit_fc</PropertyPath>
+								<PropertyPath>InspToleranceSpecification_fc</PropertyPath>
+								<PropertyPath>MatlIsConsideredForDynModif_fc</PropertyPath>
+								<PropertyPath>MfrIsConsideredForDynModif_fc</PropertyPath>
+								<PropertyPath>QltyCtrlChartAggrgnCriterion_fc</PropertyPath>
+								<PropertyPath>SamplingProcedure_fc</PropertyPath>
+								<PropertyPath>SelectedCodeSet_fc</PropertyPath>
+								<PropertyPath>SelectedCodeSetPlant_fc</PropertyPath>
+								<PropertyPath>SuplrIsConsideredForDynModif_fc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspPlanOperation"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.DraftNode">
+					<Record>
+						<PropertyValue Property="PreparationAction"
+									   String="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspPlanOperationPreparation"/>
+						<PropertyValue Property="ValidationFunction"
+									   String="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspPlanOperationValidation"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.DraftActivationVia">
+					<Collection>
+						<String>QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities/C_InspectionPlan</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>Preparation_ac</PropertyPath>
+								<PropertyPath>Validation_ac</PropertyPath>
+								<PropertyPath>InspSbstCompletionConfirmation_fc</PropertyPath>
+								<PropertyPath>OperationControlProfile_fc</PropertyPath>
+								<PropertyPath>Plant_fc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>Preparation_ac</PropertyPath>
+								<PropertyPath>Validation_ac</PropertyPath>
+								<PropertyPath>InspSbstCompletionConfirmation_fc</PropertyPath>
+								<PropertyPath>OperationControlProfile_fc</PropertyPath>
+								<PropertyPath>Plant_fc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspectionPlanType/Plant"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Plant"/>
+						<PropertyValue Property="CollectionPath" String="I_Plant"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="Plant"/>
+									<PropertyValue Property="ValueListProperty" String="Plant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="PlantName"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="ValuationArea"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="PlantCustomer"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="PlantSupplier"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="FactoryCalendar"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="DefaultPurchasingOrganization"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="SalesOrganization"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="AddressID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="PlantCategory"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="DistributionChannel"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Division"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Language"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspectionPlanType/BillOfOperationsUsage"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Bill of Operations Usage"/>
+						<PropertyValue Property="CollectionPath" String="I_BillOfOperationsUsage"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="BillOfOperationsUsage"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="BillOfOperationsUsage"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="BillOfOperationsUsage_Text"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspectionPlanType/BillOfOperationsStatus"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Bill of Operations Status Code"/>
+						<PropertyValue Property="CollectionPath" String="I_BillOfOperationsStatus"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="BillOfOperationsStatus"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="BillOfOperationsStatus"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="BillOfOperationsStatus_Text"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="IsReleased"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspectionPlanType/BillOfOperationsUnit"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Inspection Plan Charac UoM Value Help"/>
+						<PropertyValue Property="CollectionPath" String="C_InspPlnCharcUoMVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="BillOfOperationsUnit"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasure"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasure_Text"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasureISOCode"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasure_E"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.FieldControl"
+							EnumMember="Common.FieldControlType/Mandatory"/>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspectionPlanType/InspSubsetFieldCombination"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Insp Subset Field Combination Value Help"/>
+						<PropertyValue Property="CollectionPath" String="C_InspSubsetFldCombnVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSubsetFieldCombination"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSubsetFieldCombination"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSubsetFieldCombination_Text"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspectionPlanType/InspectionLotDynamicLevel"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Dynamic modification level"/>
+						<PropertyValue Property="CollectionPath"
+									   String="I_InspectionLotDynamicLevel"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionLotDynamicLevel"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionLotDynamicLevel"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionLotDynamicLevel_Text"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspectionPlanType/InspLotDynamicRule"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Dynamic modification rule"/>
+						<PropertyValue Property="CollectionPath" String="I_InspLotDynamicRule"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspLotDynamicRule"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspLotDynamicRule"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspLotDynamicRule_Text"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspLotDynRuleInitStage"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType/Material"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Material"/>
+						<PropertyValue Property="CollectionPath" String="I_MaterialStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="Material"/>
+									<PropertyValue Property="ValueListProperty" String="Material"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="Material_Text"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType/MaterialForEdit"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Material-Plant Value Help"/>
+						<PropertyValue Property="CollectionPath" String="C_InspPlanMatlPlantVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="MaterialForEdit"/>
+									<PropertyValue Property="ValueListProperty" String="Material"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="PlantForEdit"/>
+									<PropertyValue Property="ValueListProperty" String="Plant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="MaterialName"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType/PlantForEdit"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Material-Plant Value Help"/>
+						<PropertyValue Property="CollectionPath" String="C_InspPlanMatlPlantVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="MaterialForEdit"/>
+									<PropertyValue Property="ValueListProperty" String="Material"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="PlantForEdit"/>
+									<PropertyValue Property="ValueListProperty" String="Plant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="MaterialName"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType/Supplier"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Value Help for Supplier"/>
+						<PropertyValue Property="CollectionPath" String="I_Supplier_VH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="Supplier"/>
+									<PropertyValue Property="ValueListProperty" String="Supplier"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="SupplierName"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="AuthorizationGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="SupplierAccountGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="IsBusinessPurposeCompleted"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanMatlAssgmtType/Customer"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Value Help for Customer"/>
+						<PropertyValue Property="CollectionPath" String="I_Customer_VH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="Customer"/>
+									<PropertyValue Property="ValueListProperty" String="Customer"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OrganizationBPName1"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OrganizationBPName2"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Country"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="CityName"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="StreetName"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="CustomerName"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="CustomerAccountGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="AuthorizationGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="IsBusinessPurposeCompleted"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanMatlPlantVHType/Material"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Material"/>
+						<PropertyValue Property="CollectionPath" String="I_MaterialStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="Material"/>
+									<PropertyValue Property="ValueListProperty" String="Material"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="Material_Text"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspectionMethod"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Insp Meth Value Help for Insp Spec"/>
+						<PropertyValue Property="CollectionPath" String="I_InspMethForInspSpecVH"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionMethod"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionMethod"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionMethodPlant"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionMethodPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionMethodVersion"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionMethodVersion"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecification"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationVersion"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspMethInformationField1"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspMethInformationField2"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspMethInformationField3"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspectionMethodVersion"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Insp Meth Value Help for Insp Spec"/>
+						<PropertyValue Property="CollectionPath" String="I_InspMethForInspSpecVH"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionMethod"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionMethod"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionMethodPlant"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionMethodPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionMethodVersion"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionMethodVersion"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecification"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationVersion"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspMethInformationField1"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspMethInformationField2"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspMethInformationField3"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspectionMethodPlant"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Insp Meth Value Help for Insp Spec"/>
+						<PropertyValue Property="CollectionPath" String="I_InspMethForInspSpecVH"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionMethod"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionMethod"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionMethodPlant"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionMethodPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionMethodVersion"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionMethodVersion"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecification"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationVersion"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspMethInformationField1"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspMethInformationField2"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspMethInformationField3"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspSpecImportanceCode"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Importance/Weighting of inspection characteristic"/>
+						<PropertyValue Property="CollectionPath" String="I_InspSpecImportanceCode"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecImportanceCode"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSpecImportanceCode"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSpecImportanceCodeText"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspectionSpecification"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Insp Specification Released Versions VH"/>
+						<PropertyValue Property="CollectionPath" String="I_InspSpecVersReldVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionSpecification"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecification"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionSpecificationPlant"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionSpecificationVersion"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationVersion"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="ValidityStartDate"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationSrchTxt"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationStatus"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSpecTransferType"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSpecCharacteristicType"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="QltyMstrDataAuthorizationGroup"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspectionSpecificationVersion"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Insp Specification Released Versions VH"/>
+						<PropertyValue Property="CollectionPath" String="I_InspSpecVersReldVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionSpecification"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecification"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionSpecificationPlant"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionSpecificationVersion"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationVersion"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="ValidityStartDate"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationSrchTxt"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationStatus"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSpecTransferType"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSpecCharacteristicType"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="QltyMstrDataAuthorizationGroup"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspectionSpecificationPlant"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Insp Specification Released Versions VH"/>
+						<PropertyValue Property="CollectionPath" String="I_InspSpecVersReldVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionSpecification"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecification"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionSpecificationPlant"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionSpecificationVersion"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationVersion"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="ValidityStartDate"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationSrchTxt"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSpecificationStatus"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSpecTransferType"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSpecCharacteristicType"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="QltyMstrDataAuthorizationGroup"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspectionSpecificationUnit"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Inspection Plan Charac UoM Value Help"/>
+						<PropertyValue Property="CollectionPath" String="C_InspPlnCharcUoMVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectionSpecificationUnit"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasure"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasure_Text"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasureISOCode"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasure_E"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspSpecDefectCodeGrpRejection"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Defect Code Group"/>
+						<PropertyValue Property="CollectionPath" String="I_DefectCodeGroupStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecDefectCodeGrpRejection"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCodeGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCodeGroup_Text"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspSpecDefectCodeRejection"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Defect Code"/>
+						<PropertyValue Property="CollectionPath" String="I_DefectCodeStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecDefectCodeGrpRejection"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCodeGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecDefectCodeRejection"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCode"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCodeText"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspSpecDefectCodeGrpRjcnUpper"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Defect Code Group"/>
+						<PropertyValue Property="CollectionPath" String="I_DefectCodeGroupStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecDefectCodeGrpRjcnUpper"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCodeGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCodeGroup_Text"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspSpecDefectCodeRjcnUpper"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Defect Code"/>
+						<PropertyValue Property="CollectionPath" String="I_DefectCodeStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecDefectCodeGrpRjcnUpper"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCodeGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecDefectCodeRjcnUpper"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCode"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCodeText"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspSpecDefectCodeGrpRjcnLower"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Defect Code Group"/>
+						<PropertyValue Property="CollectionPath" String="I_DefectCodeGroupStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecDefectCodeGrpRjcnLower"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCodeGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCodeGroup_Text"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspSpecDefectCodeRjcnLower"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Defect Code"/>
+						<PropertyValue Property="CollectionPath" String="I_DefectCodeStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecDefectCodeGrpRjcnLower"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCodeGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecDefectCodeRjcnLower"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCode"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="DefectCodeText"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/SelectedCodeSet"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Selected set of codes for characteristic attributes"/>
+						<PropertyValue Property="CollectionPath"
+									   String="I_CharcAttribSeldCodeSetStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="SelectedCodeSetPlant"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="SelectedCodeSetPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="SelectedCodeSet"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="SelectedCodeSet"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspSpecAdditionalSelectedSet2"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Selected set of codes for characteristic attributes"/>
+						<PropertyValue Property="CollectionPath"
+									   String="I_CharcAttribSeldCodeSetStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="SelectedCodeSetPlant"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="SelectedCodeSetPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecAdditionalSelectedSet2"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="SelectedCodeSet"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspSpecAdditionalSelectedSet3"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Selected set of codes for characteristic attributes"/>
+						<PropertyValue Property="CollectionPath"
+									   String="I_CharcAttribSeldCodeSetStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="SelectedCodeSetPlant"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="SelectedCodeSetPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecAdditionalSelectedSet3"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="SelectedCodeSet"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspSpecAdditionalSelectedSet4"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Selected set of codes for characteristic attributes"/>
+						<PropertyValue Property="CollectionPath"
+									   String="I_CharcAttribSeldCodeSetStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="SelectedCodeSetPlant"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="SelectedCodeSetPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecAdditionalSelectedSet4"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="SelectedCodeSet"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspSpecAdditionalSelectedSet5"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Selected set of codes for characteristic attributes"/>
+						<PropertyValue Property="CollectionPath"
+									   String="I_CharcAttribSeldCodeSetStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="SelectedCodeSetPlant"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="SelectedCodeSetPlant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSpecAdditionalSelectedSet5"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="SelectedCodeSet"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/SamplingProcedure"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Value Help for Sampling procedure"/>
+						<PropertyValue Property="CollectionPath" String="I_SamplingProcedureStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="SamplingProcedure"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="SamplingProcedure"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="SamplingProcedureText"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/QltyCtrlChartAggrgnCriterion"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Value-help for Quality Control Chart Aggregation"/>
+						<PropertyValue Property="CollectionPath"
+									   String="C_QltyCtrlChtAggrgnCritrnVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="QltyCtrlChartAggrgnCriterion"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="QltyCtrlChartAggrgnCriterion"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="QltyCtrlChtAggrgnCriterionTxt"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOpCharcType/InspLotDynamicRule"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Dynamic modification rule"/>
+						<PropertyValue Property="CollectionPath" String="I_InspLotDynamicRule"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspLotDynamicRule"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspLotDynamicRule"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspLotDynamicRule_Text"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspLotDynRuleInitStage"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOperationType/Plant"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Plant"/>
+						<PropertyValue Property="CollectionPath" String="I_Plant"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="Plant"/>
+									<PropertyValue Property="ValueListProperty" String="Plant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="PlantName"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="ValuationArea"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="PlantCustomer"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="PlantSupplier"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="FactoryCalendar"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="DefaultPurchasingOrganization"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="SalesOrganization"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="AddressID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="PlantCategory"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="DistributionChannel"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Division"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Language"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOperationType/WorkCenter"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Work Center By Semantic Key"/>
+						<PropertyValue Property="CollectionPath"
+									   String="I_WrkCtrBySemanticKeyStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="WorkCenter"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="WorkCenter"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Plant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="WorkCenter_Text"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="WorkCenterInternalID"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOperationType/OperationUnit"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Inspection Plan Charac UoM Value Help"/>
+						<PropertyValue Property="CollectionPath" String="C_InspPlnCharcUoMVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="OperationUnit"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasure"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasure_Text"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasureISOCode"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasure_E"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.FieldControl"
+							EnumMember="Common.FieldControlType/Mandatory"/>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOperationType/OperationControlProfile"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Operation Control Profile"/>
+						<PropertyValue Property="CollectionPath"
+									   String="I_OperationControlProfile"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="OperationControlProfile"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="OperationControlProfile"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OperationControlProfile_Text"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OperationExternalProcessing"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OperationIsProcessedExternally"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OperationIsProcessedInternally"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OperationIsMilestone"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="ConfirmationIsRequired"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="ConfirmationIsNotPossible"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="ConfirmationIsOptional"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OperationIsScheduled"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OperationIsPrinted"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OperationIsIncludedInCosting"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OperationIsReworkOperation"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="GRIsPostedAutomatically"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="CapacityRequirementsAreDtmnd"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspCharacteristicIsRequired"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OperationIsNotMESRelevant"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspPlanOperationType/BillOfOperationsUnit"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Inspection Plan Charac UoM Value Help"/>
+						<PropertyValue Property="CollectionPath" String="C_InspPlnCharcUoMVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="BillOfOperationsUnit"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasure"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasure_Text"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasureISOCode"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="UnitOfMeasure_E"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.FieldControl"
+							EnumMember="Common.FieldControlType/Mandatory"/>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.C_InspSubsetFldCombnVHType/InspSubsetFieldCombination"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+									   String="Inspection Point Field Combination"/>
+						<PropertyValue Property="CollectionPath"
+									   String="I_InspSubsetFieldCombination"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspSubsetFieldCombination"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSubsetFieldCombination"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSubsetFieldCombination_Text"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectionSubsetType"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSbstFieldCombnIsLastValid"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="SamplingProcedureInspSubset"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSbstLongTxtFldProperty"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSbstShrtTxtFldProperty"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSbstLongNmbrFldProperty"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSbstShrtNmbrFldProperty"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSbstDateFldProperty"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspSbstTimeFldProperty"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="SelectedCodeSet"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="SelectedCodeSetPlant"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.I_InspectionMethodVersionType/InspectorQualification"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Inspector Qualification"/>
+						<PropertyValue Property="CollectionPath"
+									   String="I_InspectorQualificationStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="InspectorQualification"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectorQualification"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="InspectorQualificationText"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.I_PlantType/PlantCustomer"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Value Help for Customer"/>
+						<PropertyValue Property="CollectionPath" String="I_Customer_VH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="PlantCustomer"/>
+									<PropertyValue Property="ValueListProperty" String="Customer"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OrganizationBPName1"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="OrganizationBPName2"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Country"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="CityName"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="StreetName"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="CustomerName"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="CustomerAccountGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="AuthorizationGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="IsBusinessPurposeCompleted"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.I_PlantType/PlantSupplier"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Value Help for Supplier"/>
+						<PropertyValue Property="CollectionPath" String="I_Supplier_VH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="PlantSupplier"/>
+									<PropertyValue Property="ValueListProperty" String="Supplier"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="SupplierName"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="AuthorizationGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="SupplierAccountGroup"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="IsBusinessPurposeCompleted"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.I_WorkCenterType/WorkCenter"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Work Center By Semantic Key"/>
+						<PropertyValue Property="CollectionPath"
+									   String="I_WrkCtrBySemanticKeyStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="WorkCenter"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="WorkCenter"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Plant"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="WorkCenter_Text"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="WorkCenterInternalID"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.I_WorkCenterType/CapacityInternalID"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Capacity Header"/>
+						<PropertyValue Property="CollectionPath" String="I_CapacityStdVH"/>
+						<PropertyValue Property="SearchSupported" Bool="false"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+												   PropertyPath="CapacityInternalID"/>
+									<PropertyValue Property="ValueListProperty"
+												   String="CapacityInternalID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+												   String="CapacityInternalID_Text"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.QM_INSP_PLAN_SRV_Entities"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+				<Annotation Term="Aggregation.ApplySupported">
+					<Record>
+						<PropertyValue Property="Transformations">
+							<Collection>
+								<String>aggregate</String>
+								<String>groupby</String>
+								<String>filter</String>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Rollup" EnumMember="None"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations
+					Target="QM_INSP_PLAN_SRV.C_InspPlanOperationType/OperationReferenceQuantity"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl"
+							EnumMember="Common.FieldControlType/Mandatory"/>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.C_InspectionPlanType/MaximumLotSizeQuantity"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.FieldControl"
+							EnumMember="Common.FieldControlType/Mandatory"/>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.I_BillOfOperationsStatusType"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.SemanticKey">
+					<Collection>
+						<PropertyPath>BillOfOperationsStatus</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.I_WorkCenterType"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.SemanticKey">
+					<Collection>
+						<PropertyPath>WorkCenter</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="QM_INSP_PLAN_SRV.I_UnitOfMeasureType/UnitOfMeasure"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.UnitSpecificScale" Path="UnitOfMeasureDspNmbrOfDcmls"/>
+			</Annotations>
+			<atom:link rel="self"
+					   href="/sap/opu/odata/sap/QM_INSP_PLAN_SRV/$metadata"
+					   xmlns:atom="http://www.w3.org/2005/Atom"/>
+			<atom:link rel="latest-version"
+					   href="/sap/opu/odata/sap/QM_INSP_PLAN_SRV/$metadata"
+					   xmlns:atom="http://www.w3.org/2005/Atom"/>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

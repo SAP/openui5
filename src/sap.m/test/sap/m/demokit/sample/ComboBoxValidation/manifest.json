@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ComboBoxValidation",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.ComboBoxValidation.view.ComboBoxValidation",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.layout": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/ComboBoxValidation.view.xml",
+					"controller/ComboBoxValidation.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

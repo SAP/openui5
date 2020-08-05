@@ -4,23 +4,31 @@
 
 // Provides control sap.m.DateTimeField.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/model/type/Date',
 	'sap/ui/model/odata/type/ODataType',
+	'sap/ui/model/odata/type/DateTimeBase',
 	'./InputBase',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/library',
 	'sap/ui/core/format/DateFormat',
-	'./DateTimeFieldRenderer'
+	'./DateTimeFieldRenderer',
+	"sap/base/util/deepEqual",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos"
 ], function(
-	jQuery,
 	SimpleDateType,
 	ODataType,
+	DateTimeBase,
 	InputBase,
 	LocaleData,
 	coreLibrary,
 	DateFormat,
-	DateTimeFieldRenderer
+	DateTimeFieldRenderer,
+	deepEqual,
+	Log,
+	jQuery
 ) {
 	"use strict";
 
@@ -71,6 +79,9 @@ sap.ui.define([
 				 * and <code>valueFormat</code> pair properties are supplied instead,
 				 * the <code>dateValue</code> will be instantiated according to the parsed
 				 * <code>value</code>.
+				 * Use <code>dateValue</code> as a helper property to easily obtain the day, month, year, hours, minutes
+				 * and seconds of the chosen date and time. Although possible to bind it, the recommendation is not to do it.
+				 * When binding is needed, use <code>value</code> property instead.
 				 */
 				dateValue: {type: "object", group: "Data", defaultValue: null},
 
@@ -100,7 +111,7 @@ sap.ui.define([
 		if (sValue === sOldValue) {
 			return this;
 		} else {
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 		}
 
 		// set the property in any case but check validity on output
@@ -113,7 +124,7 @@ sap.ui.define([
 			oDate = this._parseValue(sValue);
 			if (!oDate || oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
 				this._bValid = false;
-				jQuery.sap.log.warning("Value can not be converted to a valid date", this);
+				Log.warning("Value can not be converted to a valid date", this);
 			}
 		}
 
@@ -140,11 +151,11 @@ sap.ui.define([
 
 	DateTimeField.prototype.setDateValue = function (oDate) {
 
-		if (this._isValidDate(oDate)) {
+		if (!this._isValidDate(oDate)) {
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
-		if (jQuery.sap.equal(this.getDateValue(), oDate)) {
+		if (deepEqual(this.getDateValue(), oDate)) {
 			return this;
 		}
 
@@ -154,7 +165,7 @@ sap.ui.define([
 		var sValue = this._formatValue(oDate, true);
 
 		if (sValue !== this.getValue()) {
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 		}
 		// set the property in any case but check validity on output
 		this.setProperty("value", sValue);
@@ -165,7 +176,6 @@ sap.ui.define([
 
 			if (this._$input.val() !== sOutputValue) {
 				this._$input.val(sOutputValue);
-				this._setLabelVisibility();
 				this._curpos = this._$input.cursorPos();
 			}
 		}
@@ -239,17 +249,93 @@ sap.ui.define([
 		).getDatePattern(sPlaceholder);
 	};
 
-
 	DateTimeField.prototype._parseValue = function (sValue, bDisplayFormat) {
+		var oBinding = this.getBinding("value"),
+			oBindingType = oBinding && oBinding.getType && oBinding.getType(),
+			oFormatOptions,
+			oDateLocal,
+			oDate;
+
+		if (oBindingType && this._isSupportedBindingType(oBindingType)) {
+			try {
+				oDate = oBindingType.parseValue(sValue, "string");
+
+				if (typeof (oDate) === "string" && oBindingType instanceof DateTimeBase) {
+					oDate = DateTimeBase.prototype.parseValue.call(oBindingType, sValue, "string");
+				}
+
+				oFormatOptions = oBindingType.oFormatOptions;
+				if (oFormatOptions && oFormatOptions.source && oFormatOptions.source.pattern == "timestamp") {
+					// convert timestamp back to Date
+					oDate = new Date(oDate);
+				} else if (oFormatOptions && oFormatOptions.source && typeof oFormatOptions.source.pattern === "string") {
+					oDate = oBindingType.oInputFormat.parse(sValue);
+				}
+			} catch (e) {
+				// ignore, ParseException to be handled in ManagedObject.updateModelProperty()
+			}
+
+			if (oDate && ((oBindingType.oFormatOptions && this._isFormatOptionsUTC(oBindingType.oFormatOptions)) || (oBindingType.oConstraints && oBindingType.oConstraints.isDateOnly))) {
+				// convert to local date because it was parsed as UTC date
+				oDateLocal = new Date(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(),
+					oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds(), oDate.getUTCMilliseconds());
+
+				oDateLocal.setFullYear(oDate.getUTCFullYear());
+				oDate = oDateLocal;
+			}
+			return oDate;
+		}
+
 		return this._getFormatter(bDisplayFormat).parse(sValue);
 	};
 
+	/* The bValueFormat variable defines whether the result is in valueFormat(true) or displayFormat(false) */
 	DateTimeField.prototype._formatValue = function (oDate, bValueFormat) {
-		if (oDate) {
-			return this._getFormatter(!bValueFormat).format(oDate);
+		if (!oDate) {
+			return "";
 		}
 
-		return "";
+		var oBinding = this.getBinding("value"),
+			oBindingType = oBinding && oBinding.getType && oBinding.getType(),
+			oFormatOptions,
+			oDateUTC;
+
+		if (oBindingType && this._isSupportedBindingType(oBindingType)) {
+			if ((oBindingType.oFormatOptions && oBindingType.oFormatOptions.UTC) || (oBindingType.oConstraints && oBindingType.oConstraints.isDateOnly)) {
+				// convert to UTC date because it will be formatted as UTC date
+				oDateUTC = new Date(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(),
+					oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
+
+				oDateUTC.setUTCFullYear(oDate.getFullYear());
+				oDate = oDateUTC;
+			}
+
+			oFormatOptions = oBindingType.oFormatOptions;
+			if (oFormatOptions && oFormatOptions.source && oFormatOptions.source.pattern == "timestamp") {
+				// convert Date to timestamp
+				oDate = oDate.getTime();
+			} else if (oBindingType.oOutputFormat) {
+				return oBindingType.oOutputFormat.format(oDate);
+			}
+
+			return oBindingType.formatValue(oDate, "string");
+		}
+
+		/* The logic of _getFormatter function expects the opposite boolean variable of bValueFormat */
+		return this._getFormatter(!bValueFormat).format(oDate);
+	};
+
+	DateTimeField.prototype._isSupportedBindingType = function (oBindingType) {
+		return oBindingType.isA([
+			"sap.ui.model.type.Date",
+			"sap.ui.model.odata.type.DateTime",
+			"sap.ui.model.odata.type.DateTimeOffset"
+		]);
+	};
+
+	DateTimeField.prototype._isFormatOptionsUTC = function (oBindingTypeFormatOptions) {
+		// UTC can be set directly in oFormatOptions or inside the source along with the pattern
+		return (oBindingTypeFormatOptions.UTC || (oBindingTypeFormatOptions.source && oBindingTypeFormatOptions.source.UTC));
 	};
 
 	DateTimeField.prototype._getDefaultDisplayStyle = function () {
@@ -260,6 +346,7 @@ sap.ui.define([
 		return "short";
 	};
 
+	/* The bDisplayFormat variable defines whether the result is in displayFormat(true) or valueFormat(false) */
 	DateTimeField.prototype._getFormatter = function (bDisplayFormat) {
 		var sPattern = this._getBoundValueTypePattern(),
 			bRelative = false, // if true strings like "Tomorrow" are parsed fine
@@ -367,12 +454,8 @@ sap.ui.define([
 
 	// Cross frame check for a date should be performed here otherwise setDateValue would fail in OPA tests
 	// because Date object in the test is different than the Date object in the application (due to the iframe).
-	// We can use jQuery.type or this method:
-	// function isValidDate (date) {
-	//	return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
-	//}
 	DateTimeField.prototype._isValidDate = function (oDate) {
-		return oDate && jQuery.type(oDate) !== "date";
+		return !oDate || Object.prototype.toString.call(oDate) === "[object Date]";
 	};
 
 

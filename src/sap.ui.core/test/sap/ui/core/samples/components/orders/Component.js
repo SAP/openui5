@@ -2,10 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View', 'sap/ui/model/resource/ResourceModel', 'sap/ui/table/Table'],
-	function(jQuery, UIComponent, View, ResourceModel, Table) {
+sap.ui.define(['sap/ui/core/UIComponent', 'sap/ui/core/library', 'sap/ui/core/mvc/View', 'sap/ui/model/resource/ResourceModel', 'sap/ui/table/Table'],
+	function(UIComponent, coreLibrary, View, ResourceModel, Table) {
 	"use strict";
 
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = coreLibrary.mvc.ViewType;
 
 	// new Component
 	var Component = UIComponent.extend("samples.components.orders.Component", {
@@ -25,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/
 
 	// create the component content, set the models
 	Component.prototype.createContent = function(){
-		this.view = sap.ui.view({id:this.createId("ordersView"),viewName:"samples.components.orders.view.Orders",type:sap.ui.core.mvc.ViewType.XML});
+		this.view = sap.ui.view({id:this.createId("ordersView"),viewName:"samples.components.orders.view.Orders",type:ViewType.XML});
 		this.view.setModel(new ResourceModel({bundleName: this.getProperty("i18nBundle")}), "texts");
 		return this.view;
 	};

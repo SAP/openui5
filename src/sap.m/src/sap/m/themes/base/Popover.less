@@ -6,6 +6,9 @@
 /* Forces the usage of compact arrow offset, because belize uses a compact arrow for all content densities. */
 @_sap_m_Popover_ForceCompactArrowOffset: true;
 
+ /* Buffer width for the scroll bar */
+@_sap_m_Popover_Scroll_Width_Buffer: 20px;
+
 /* shared mixin for arrow shadow*/
 .sapMPopoverArrAfterShadow(@horizontalShadow, @verticalShadow) {
 	box-shadow: @horizontalShadow @verticalShadow 0.750rem 0 fade(@sapUiContentShadowColor, 30), 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 30);
@@ -18,15 +21,34 @@
 	}
 }
 
+.sapMPopover.sapMPopoverVerticalScrollIncluded {
+	.sapMPopoverScroll {
+		width: calc(~'100% + 20px');
+	}
+
+	html[data-sap-ui-browser^="sf"] & .sapMDialogSection {
+		/* For Safari - allow the vertical scroll bar to overlap the right padding which we use to compensate for its width. This happens by default for other browsers. */
+		overflow-y: overlay !important;
+	}
+}
+
 .sapMPopover .sapMIBar.sapMFooter-CTX ,
 .sapMPopover.sapMPopoverWithoutFooter .sapMPopoverCont {
 	border-bottom-right-radius: 0.25rem;
 	border-bottom-left-radius: 0.25rem;
 }
 
+.sapMPopover .sapMPopoverCont {
+	box-sizing: border-box;
+}
+
 .sapMPopover .sapMIBar.sapMHeader-CTX {
 	background-color: @sapUiGroupContentBackground;
 	box-shadow: inset 0 -1px @sapUiGroupContentBorderColor;
+}
+
+.sapMPopover .sapMIBar.sapMSubHeader-CTX {
+	background-color: @sapUiGroupContentBackground;
 }
 
 .sapMPopover.sapMPopoverWithoutBar .sapMPopoverCont,
@@ -38,7 +60,7 @@
 .sapMPopover {
 	position: absolute;
 	color: @sapUiContentForegroundTextColor;
-    min-width: 6.25rem;
+	min-width: 6.25rem;
 	box-sizing: border-box;
 	outline: none;
 	max-width: 100%;
@@ -75,7 +97,6 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 	vertical-align: middle;
 	min-width: 100%;
 	box-sizing: border-box;
-	overflow-y: hidden;
 }
 
 .sapMPopover.sapUiPopupWithPadding .sapMPopoverScroll {
@@ -84,6 +105,7 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 
 /* disable scrolling automatically for sap.m.Page sap.m.NavContainer sap.m.ScrollingContainer inside Popover */
 .sapMPopoverVerScrollDisabled .sapMPopoverScroll {
+	max-height: inherit;
 	height: 100%;
 }
 
@@ -175,6 +197,12 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 	}
 }
 
+html[data-sap-ui-browser^="sf"] .sapMPopover {
+	// scale(1) - Chrome does not clip children when transform is not applied resulting in non-visible border-radius
+	// translateZ(0px) - Safari Problem with z-index - After dialog was opened it was inserted behind the dark overlay
+	-webkit-transform: scale(1) translateZ(0px);
+}
+
 .sapMPopoverWithFooter .sapMPopoverArrDown:after {
 	background-color: @sapUiPageFooterBackground;
 }
@@ -235,6 +263,7 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 	}
 }
 
+/* TODO remove after the end of support for Internet Explorer */
 /* Outer width of the Popover's content is wrong in IE */
 html[data-sap-ui-browser^="ie"] {
 	.sapMPopover .sapMPopoverScroll {
@@ -343,4 +372,8 @@ html[data-sap-ui-browser^="ie"] {
 		padding-right: 0.25rem;
 		padding-left: 0;
 	}
+}
+
+&.sapMPopoverVerticalScrollIncluded .sapMPopoverCont {
+	padding-right: @_sap_m_Popover_Scroll_Width_Buffer;
 }

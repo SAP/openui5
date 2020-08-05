@@ -4,63 +4,82 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:core="sap.ui.core"
 		xmlns:layout="sap.ui.layout"
-		xmlns:controls="sap.ui.documentation.sdk.controls">
+		xmlns:controls="sap.ui.documentation">
 	<Page
 			id="page"
 			showHeader="false"
-			showNavButton="{/showNavButton}"
+			showNavButton="true"
 			navButtonPress="onNavBack"
 			busyIndicatorDelay="0">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
 		</landmarkInfo>
+
 		<subHeader>
 			<Bar id="header" class="sapContrast sapContrastPlus">
 				<contentLeft>
-					<Button type="Back" press="onNavBack"/>
+					<Button type="Back" press="onNavBack" tooltip="{i18n>SAMPLE_BACK_BTN_TOOLTIP}" enabled="{= ${/disableNavBack} === undefined }"/>
 				</contentLeft>
 				<contentMiddle>
-					<Title text="{/title}"/>
+					<Title level="H1" text="{/title}" tooltip="{/title}"/>
 				</contentMiddle>
 				<contentRight>
-					<Button id="apiRefButton" text="API Reference" type="Emphasized" press="onAPIRefPress" visible="false"/>
+					<Button
+							id="infoSample"
+							visible="{=${/details} !== undefined || ${/description} !== undefined}"
+							icon="sap-icon://hint"
+							tooltip="{i18n>SAMPLE_INFO_TOOLTIP}"
+							press="onInfoSample"/>
+
+					<Button id="apiRefButton" text="{i18n>SAMPLE_API_REFERENCE_BTN}" type="Emphasized" press="onAPIRefPress" visible="false"/>
 					<Button
 							id="prevSample"
 							icon="sap-icon://navigation-up-arrow"
 							class="sapUiHideOnPhone"
-							tooltip="Show previous sample"
+							tooltip="{i18n>SAMPLE_PREV_BTN_TOOLTIP}"
 							enabled="{= ${/previousSampleId} !== undefined }"
 							press="onPreviousSample"/>
 					<Button
 							id="nextSample"
 							icon="sap-icon://navigation-down-arrow"
 							class="sapUiHideOnPhone"
-							tooltip="Show next sample"
+							tooltip="{i18n>SAMPLE_NEXT_BTN_TOOLTIP}"
 							enabled="{= ${/nextSampleId} !== undefined }"
 							press="onNextSample"/>
 					<Button
 							id="toggleFullScreenBtn"
 							icon="sap-icon://full-screen"
-							visible="{device>/system/desktop}"
-							tooltip="Show this sample in full screen mode"
+							visible="{:= ${device>/system/desktop} ||
+										&#40; ${device>/system/tablet} &amp;&amp;
+										${device>/orientation/landscape} &#41; }"
+							tooltip="{i18n>SAMPLE_FULLSCREEN_BTN_TOOLTIP}"
 							press="onToggleFullScreen" />
 					<Button
 							id="toggleRTA"
 							icon="sap-icon://wrench"
 							class="sapUiHideOnPhone"
-							tooltip="Adapt UI"
+							tooltip="{i18n>SAMPLE_ADAPT_BTN_TOOLTIP}"
 							press="onToggleAdaptationMode"
 							visible="false" />
 					<Button
 							id="code"
 							icon="sap-icon://syntax"
-							tooltip="Show source code for this sample"
+							tooltip="{i18n>SAMPLE_CODE_BTN_TOOLTIP}"
 							press="onNavToCode" />
 					<Button visible="{/showNewTab}"
 							id="newTab"
-							tooltip="Open in new Tab"
+							tooltip="{i18n>SAMPLE_NEW_TAB_BTN_TOOLTIP}"
 							icon="sap-icon://inspect"
 							press="onNewTab" />
+					<Button
+							class="sapUiHideOnPhone"
+							text="{i18n>SAMPLE_DOWNLOAD_BTN_TOOLTIP}"
+							icon="sap-icon://download"
+							press="onDownload" />
+					<Button
+							class="sapUiVisibleOnlyOnPhone"
+							icon="sap-icon://download"
+							press="onDownload" />
 				</contentRight>
 			</Bar>
 		</subHeader>

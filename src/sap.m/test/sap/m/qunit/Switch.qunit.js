@@ -1,53 +1,67 @@
-/*global QUnit,sinon*/
+/*global QUnit */
 
-(function () {
+sap.ui.define([
+	"sap/m/Switch",
+	"sap/m/Page",
+	"sap/m/Label",
+	"sap/m/library",
+	"jquery.sap.keycodes",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"jquery.sap.global"
+], function(Switch, Page, Label, mobileLibrary, jQuery, qutils, createAndAppendDiv) {
 	"use strict";
+	createAndAppendDiv("content");
 
-	sinon.config.useFakeTimers = true;
 
-	var oSwitch0 = new sap.m.Switch(),
-		oSwitch1 = new sap.m.Switch({
+	// shortcut for sap.m.SwitchType
+	var SwitchType = mobileLibrary.SwitchType;
+
+
+
+	var oSwitch0 = new Switch(),
+		oSwitch1 = new Switch({
 			state: true
 		}),
-		oSwitch2 = new sap.m.Switch({
+		oSwitch2 = new Switch({
 			state: false
 		}),
-		oSwitch3 = new sap.m.Switch({
+		oSwitch3 = new Switch({
 			enabled: false
 		}),
-		oSwitch4 = new sap.m.Switch({
+		oSwitch4 = new Switch({
 			enabled: true
 		}),
-		oSwitch5 = new sap.m.Switch({
+		oSwitch5 = new Switch({
 			state: false
 		}),
-		oSwitch6 = new sap.m.Switch({
+		oSwitch6 = new Switch({
 			enabled: false,
 			name: "switch-1"
 		}),
-		oSwitch7 = new sap.m.Switch({
+		oSwitch7 = new Switch({
 			state: true,
 			name: "switch-7"
 		}),
-		oSwitch8 = new sap.m.Switch({
+		oSwitch8 = new Switch({
 			state: false
 		}),
-		oSwitch9 = new sap.m.Switch({
+		oSwitch9 = new Switch({
 			customTextOn: "I",
 			customTextOff: "O"
 		}),
-		oSwitch10 = new sap.m.Switch({
+		oSwitch10 = new Switch({
 			customTextOn: "Yes, it is",
 			customTextOff: "No, it is not"
 		}),
-		oSwitch11 = new sap.m.Switch({
+		oSwitch11 = new Switch({
 			customTextOn: "111",
 			customTextOff: "000"
 		}),
-		oSwitch12 = new sap.m.Switch(),
-		oSwitch13 = new sap.m.Switch();
+		oSwitch12 = new Switch(),
+		oSwitch13 = new Switch();
 
-	var oPage = new sap.m.Page("page1", {
+	var oPage = new Page("page1", {
 		title: "Mobile Switch Control",
 		content: [
 			oSwitch0,
@@ -68,8 +82,7 @@
 	});
 
 	oPage.placeAt("content");
-	QUnit.config.autostart = false;
-	sap.ui.test.qunit.delayTestStart();
+
 
 	// helper functions
 	var fnGetDomRefs = function (sId) {
@@ -109,7 +122,7 @@
 	QUnit.test("properties and default values", function (assert) {
 		assert.strictEqual(oSwitch0.getState(), false, "The default state is false");
 		assert.strictEqual(oSwitch0.getEnabled(), true, "By default the switch is disabled");
-		assert.strictEqual(oSwitch0.getFocusDomRef().getAttribute("role"), "checkbox", "The role checkbox is set");
+		assert.strictEqual(oSwitch0.getFocusDomRef().getAttribute("role"), "switch", "The role switch is set");
 		assert.strictEqual(jQuery(oSwitch0.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is set not set by default');
 	});
 
@@ -137,7 +150,7 @@
 	QUnit.test("setState() test case 1 (initial rendering)", function (assert) {
 
 		// system under test
-		var oSwitch = new sap.m.Switch({
+		var oSwitch = new Switch({
 			state: false
 		});
 
@@ -155,7 +168,7 @@
 	QUnit.test("setState() test case 2 (initial rendering)", function (assert) {
 
 		// system under test
-		var oSwitch = new sap.m.Switch({
+		var oSwitch = new Switch({
 			state: true
 		});
 
@@ -170,29 +183,10 @@
 		oSwitch.destroy();
 	});
 
-	QUnit.test("setState() test case 3", function (assert) {
-
-		// system under test
-		var oSwitch = new sap.m.Switch();
-
-		// arrange
-		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// act
-		oSwitch.setState(true);
-
-		// assert
-		assert.strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
-
-		// cleanup
-		oSwitch.destroy();
-	});
-
 	QUnit.test("setState() test case 4", function (assert) {
 
 		// system under test
-		var oSwitch = new sap.m.Switch();
+		var oSwitch = new Switch();
 
 		// arrange
 		oSwitch.placeAt("content");
@@ -215,11 +209,11 @@
 	QUnit.test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 1)", function (assert) {
 
 		// system under test
-		var oLabel = new sap.m.Label({
+		var oLabel = new Label({
 			id: "label"
 		});
 
-		var oSwitch = new sap.m.Switch({
+		var oSwitch = new Switch({
 			state: false,
 			ariaLabelledBy: oLabel
 		});
@@ -241,11 +235,11 @@
 	QUnit.test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 2)", function (assert) {
 
 		// system under test
-		var oSwitch = new sap.m.Switch({
+		var oSwitch = new Switch({
 			state: true
 		});
 
-		var oLabel = new sap.m.Label({
+		var oLabel = new Label({
 			id: "label",
 			labelFor: oSwitch
 		});
@@ -267,12 +261,12 @@
 	QUnit.test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the invisible element separated by a space (test case 3)", function (assert) {
 
 		// system under test
-		var oLabel = new sap.m.Label({
+		var oLabel = new Label({
 			id: "label"
 		});
 
-		var oSwitch = new sap.m.Switch({
-			type: sap.m.SwitchType.AcceptReject,
+		var oSwitch = new Switch({
+			type: SwitchType.AcceptReject,
 			ariaLabelledBy: oLabel
 		});
 
@@ -291,7 +285,7 @@
 	QUnit.test("it should set the value of the invisible element for custom text", function (assert) {
 
 		// system under test
-		var oSwitch = new sap.m.Switch({
+		var oSwitch = new Switch({
 			id: "label1",
 			state: true,
 			customTextOn: "Yes",
@@ -311,36 +305,47 @@
 
 	QUnit.test("getAccessibilityInfo", function (assert) {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		var oSwitch = new sap.m.Switch({
+		var oSwitch = new Switch({
 			customTextOn: "CustomON",
 			customTextOff: "CustomOff"
 		});
 		assert.ok(!!oSwitch.getAccessibilityInfo, "Switch has a getAccessibilityInfo function");
-		var oInfo = oSwitch.getAccessibilityInfo(true);
+		var oInfo = oSwitch.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		assert.strictEqual(oInfo.role, "checkbox", "AriaRole");
-		assert.strictEqual(oInfo.type, oBundle.getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
-		assert.strictEqual(oInfo.description, "", "Description");
+		assert.strictEqual(oInfo.role, "switch", "AriaRole");
+		assert.strictEqual(oInfo.type, oBundle.getText("ACC_CTR_TYPE_SWITCH"), "Type");
+		assert.strictEqual(oInfo.description, oSwitch.getCustomTextOff(), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 
 		oSwitch.setState(true);
-		oInfo = oSwitch.getAccessibilityInfo(true);
-		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " CustomON", "Description");
+		oInfo = oSwitch.getAccessibilityInfo();
+		assert.strictEqual(oInfo.description, oSwitch.getCustomTextOn(), "Description");
 
 		oSwitch.setCustomTextOn("");
-		oInfo = oSwitch.getAccessibilityInfo(true);
-		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oBundle.getText("SWITCH_ON"), "Description");
+		oInfo = oSwitch.getAccessibilityInfo();
+		assert.strictEqual(oInfo.description, oBundle.getText("SWITCH_ON"), "Description");
 
 		oSwitch.setType("AcceptReject");
-		oInfo = oSwitch.getAccessibilityInfo(true);
-		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oBundle.getText("SWITCH_ARIA_ACCEPT"), "Description");
+		oInfo = oSwitch.getAccessibilityInfo();
+		assert.strictEqual(oInfo.description, oBundle.getText("SWITCH_ARIA_ACCEPT"), "Description");
 
 		oSwitch.setEnabled(false);
 		oInfo = oSwitch.getAccessibilityInfo();
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
+		oSwitch.destroy();
+	});
+
+	QUnit.test("getOverflowToolbarConfig", function (assert) {
+		var oSwitch = new Switch(),
+			oOverflowToolbarConfig = oSwitch.getOverflowToolbarConfig();
+
+		assert.ok(oSwitch.isA("sap.m.IOverflowToolbarContent"), "Switch implements IOverflowToolbarContent interface");
+		assert.ok(oOverflowToolbarConfig.propsUnrelatedToSize.indexOf("enabled") > -1, "'enabled' is included in propsUnrelatedToSize array");
+		assert.ok(oOverflowToolbarConfig.propsUnrelatedToSize.indexOf("state") > -1, "'state' is included in propsUnrelatedToSize array");
+
 		oSwitch.destroy();
 	});
 
@@ -379,8 +384,8 @@
 	QUnit.test("it should render the invisible element with the corresponding text nodes for screen reader announcement", function (assert) {
 
 		// system under test
-		var oSwitch = new sap.m.Switch({
-			type: sap.m.SwitchType.AcceptReject
+		var oSwitch = new Switch({
+			type: SwitchType.AcceptReject
 		});
 
 		// arrange
@@ -488,7 +493,7 @@
 	// BCP: 1770146840
 	QUnit.test("No ellipsis", function (oAssert) {
 		// Arrange
-		var oSwitch = new sap.m.Switch().placeAt("content"),
+		var oSwitch = new Switch().placeAt("content"),
 			aDomRefs;
 
 		sap.ui.getCore().applyChanges();
@@ -716,7 +721,7 @@
 	QUnit.test("double click/tap test case", function (assert) {
 
 		// system under test
-		var oSwitch = new sap.m.Switch({
+		var oSwitch = new Switch({
 			state: true
 		});
 
@@ -770,10 +775,10 @@
 		this.clock.tick(iClickThreshold);
 		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
 		sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
-		this.clock.tick(sap.m.Switch._TRANSITIONTIME - iClickThreshold);
+		this.clock.tick(Switch._TRANSITIONTIME - iClickThreshold);
 
 		// assert
-		assert.strictEqual(oSwitch.getState(), false);
+		assert.strictEqual(oSwitch.getState(), true, "no treshold between clicks");
 		this.clock.tick(iClickThreshold);
 		assert.strictEqual(oSwitch.getState(), true);
 
@@ -784,7 +789,7 @@
 	QUnit.test("The change event should be fired only when it's state changes", function (assert) {
 
 		// system under test
-		var oSwitch = new sap.m.Switch({
+		var oSwitch = new Switch({
 			state: true
 		});
 
@@ -859,7 +864,7 @@
 		// drag the switch handle 7px to the right - we compensate for touch/slide threshold which is 6px
 		sap.ui.test.qunit.triggerTouchEvent("touchmove", oSwitch.getDomRef(), oTouchmove);
 		sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
-		this.clock.tick(sap.m.Switch._TRANSITIONTIME + 1);	// wait some ms after the CSS transition is completed
+		this.clock.tick(Switch._TRANSITIONTIME + 1);	// wait some ms after the CSS transition is completed
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 0);
@@ -872,10 +877,10 @@
 	/* onsapspace()                   */
 	/* ------------------------------ */
 
-	QUnit.test("onsapselect SPACE", function (assert) {
+	QUnit.test("on SPACE", function (assert) {
 
 		// system under test
-		var oSwitch = new sap.m.Switch({
+		var oSwitch = new Switch({
 			state: false
 		});
 
@@ -885,7 +890,7 @@
 		var fnFireChangeSpy = this.spy(oSwitch, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSwitch.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeyup(oSwitch.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 		this.clock.tick(1000);
 
 		// assert
@@ -896,10 +901,10 @@
 		oSwitch.destroy();
 	});
 
-	QUnit.test("onsapselect ENTER", function (assert) {
+	QUnit.test("on ENTER", function (assert) {
 
 		// system under test
-		var oSwitch = new sap.m.Switch({
+		var oSwitch = new Switch({
 			state: true
 		});
 
@@ -920,11 +925,28 @@
 		oSwitch.destroy();
 	});
 
+	QUnit.test("Space prevent scrolling", function (assert) {
+		// system under test
+		var oSwitch = new Switch({
+				state: true
+			}),
+			oEvent = { preventDefault: this.spy() };
+
+		// Act
+		oSwitch.onsapspace(oEvent);
+
+		// Assert
+		assert.equal(oEvent.preventDefault.callCount, 1, "preventDefault is called to prevent scrolling");
+
+		// Cleanup
+		oSwitch.destroy();
+	});
+
 	// BCP 1570633670
 	QUnit.test("extending the switch should not throw an error", function (assert) {
 
 		// system under test
-		sap.m.Switch.extend("sap.ui.test.CustomSwitch", {
+		Switch.extend("sap.ui.test.CustomSwitch", {
 			renderer: {}
 		});
 
@@ -943,7 +965,7 @@
 
 	QUnit.module("Accessibility", {
 		beforeEach : function() {
-			this.switch = new sap.m.Switch();
+			this.switch = new Switch();
 			this.switch.placeAt("content");
 
 			sap.ui.getCore().applyChanges();
@@ -953,16 +975,19 @@
 		}
 	});
 
-	QUnit.test("_setDomState", function(assert) {
+	QUnit.test("invisible text", function(assert) {
 		// arrange
-		var invisibleElementSpy = this.spy(this.switch, "getInvisibleElementText"),
-			switchDomRef = this.switch.getDomRef(),
-			domRefSpy = this.spy(switchDomRef, "setAttribute");
-
-		// act
-		this.switch._setDomState(true);
+		var $IT = this.switch.$().find(".sapUiInvisibleText");
 
 		// assert
-		assert.ok(invisibleElementSpy.calledBefore(domRefSpy), "InvisibleElement text was set before updating the dom reference attribute.");
+		assert.ok($IT.length, "invisible text exists");
+		assert.equal($IT.html(), "Off", "its text is correct");
+
+		// act
+		this.switch.setState(true);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal($IT.html(), "On", "its text is correct");
 	});
-}());
+});

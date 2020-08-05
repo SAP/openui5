@@ -2,15 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library", "jquery.sap.global"],
-	function(library, jQuery) {
+sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
+	function(library, encodeCSS) {
 	"use strict";
 
 	// shortcut for sap.m.GenericTileMode
 	var GenericTileMode = library.GenericTileMode;
-
-	// shortcut for sap.m.GenericTileScope
-	var GenericTileScope = library.GenericTileScope;
 
 	// shortcut for sap.m.LoadState
 	var LoadState = library.LoadState;
@@ -34,38 +31,59 @@ sap.ui.define(["sap/m/library", "jquery.sap.global"],
 		var sHeaderImage = oControl.getHeaderImage();
 		var bHasPress = oControl.hasListeners("press");
 		var sState = oControl.getState();
-		var sScope = oControl.getScope();
-		var sStateClass = jQuery.sap.encodeCSS("sapMGTState" + sState);
-		var sScopeClass = jQuery.sap.encodeCSS("sapMGTScope" + sScope);
+		var sStateClass = encodeCSS("sapMGTState" + sState);
+		var sScopeClass;
 
-		oRm.write("<div");
+		// Render a link when URL is provided, not in action scope and the state is enabled
+		var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled;
+
+		if (oControl._isInActionScope()) {
+			sScopeClass = encodeCSS("sapMGTScopeActions");
+		} else {
+			sScopeClass = encodeCSS("sapMGTScopeDisplay");
+		}
+
+		if (bRenderLink) {
+			oRm.write("<a");
+			oRm.writeAttributeEscaped("href", oControl.getUrl());
+			oRm.writeAttribute("draggable", "false"); // <a> elements are draggable per default, use UI5 DnD instead
+		} else {
+			oRm.write("<div");
+		}
+
 		oRm.writeControlData(oControl);
 		if (sTooltipText) {
 			oRm.writeAttributeEscaped("title", sTooltipText);
 		}
+
 		oRm.addClass("sapMGT");
 		oRm.addClass(sStateClass);
 		oRm.addClass(sScopeClass);
 		// render actions view for SlideTile actions scope
-		if (sScope !== GenericTileScope.Actions && oControl._bShowActionsView) {
+		if (!oControl._isInActionScope() && oControl._bShowActionsView) {
 			oRm.addClass("sapMGTScopeActions");
 		}
 		oRm.addClass(oControl.getFrameType());
-		if (bHasPress) {
-			oRm.writeAttribute("role", "button");
-		} else {
-			oRm.writeAttribute("role", "presentation");
+		if (!bRenderLink) { // buttons only; <a> elements always have the default role
+			oRm.writeAttribute("role", bHasPress ? "button" : "presentation");
 		}
 		oRm.writeAttributeEscaped("aria-label", sAriaText);
 		if (sState !== LoadState.Disabled) {
-			oRm.addClass("sapMPointer");
+			if (!oControl.isInActionRemoveScope()) {
+				oRm.addClass("sapMPointer");
+			}
 			oRm.writeAttribute("tabindex", "0");
 		}
+		if (oControl.getWidth()) {
+			oRm.write(" style='width: " + oControl.getWidth() + ";");
+		}
 		if (oControl.getBackgroundImage()) {
-			oRm.write(" style='background-image:url(");
+			oRm.write(oControl.getWidth() ? " background-image:url(\"" : "style='background-image:url(\"");
 			oRm.writeEscaped(oControl.getBackgroundImage());
-			oRm.write(");'");
+			oRm.write("\");'");
 			oRm.addClass("sapMGTBackgroundImage");
+		} else {
+			oRm.write("'");
 		}
 		if (oControl.getMode() === GenericTileMode.HeaderMode) {
 			oRm.addClass("sapMGTHeaderMode");
@@ -113,10 +131,14 @@ sap.ui.define(["sap/m/library", "jquery.sap.global"],
 			this._renderFocusDiv(oRm, oControl);
 		}
 
-		if (sScope === GenericTileScope.Actions) {
+		if (oControl._isInActionScope()) {
 			this._renderActionsScope(oRm, oControl);
 		}
-		oRm.write("</div>");
+		if (bRenderLink) {
+			oRm.write("</a>");
+		} else {
+			oRm.write("</div>");
+		}
 	};
 
 	GenericTileRenderer._renderFocusDiv = function(oRm, oControl) {
@@ -157,7 +179,7 @@ sap.ui.define(["sap/m/library", "jquery.sap.global"],
 				oRm.renderControl(oControl._oWarningIcon);
 				oRm.write("</div>");
 
-				if (oControl.getScope() !== GenericTileScope.Actions && !oControl._bShowActionsView) {
+				if (!oControl._isInActionScope() && !oControl._bShowActionsView) {
 					oRm.write("<div");
 					oRm.writeAttribute("id", oControl.getId() + "-failed-text");
 					oRm.addClass("sapMGenericTileFtrFldTxt");
@@ -224,7 +246,7 @@ sap.ui.define(["sap/m/library", "jquery.sap.global"],
 		oRm.writeClasses();
 		oRm.writeAttribute("id", oControl.getId() + "-subHdr-text");
 		oRm.write(">");
-		oRm.writeEscaped(oControl.getSubheader());
+		oRm.renderControl(oControl._oSubTitle);
 		oRm.write("</div>");
 	};
 

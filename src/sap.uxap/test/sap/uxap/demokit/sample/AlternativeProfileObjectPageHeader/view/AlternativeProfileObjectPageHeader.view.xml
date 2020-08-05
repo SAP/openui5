@@ -1,0 +1,88 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:m="sap.m"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+	controllerName="sap.uxap.sample.AlternativeProfileObjectPageHeader.controller.AlternativeProfileObjectPageHeader"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true">
+		<headerTitle>
+			<ObjectPageHeader id="headerForTest"
+							  objectTitle="Denise Smith"
+							  showTitleSelector="true"
+							  showMarkers="true"
+							  markFavorite="true"
+							  markFlagged="true"
+							  markChanges="true"
+							  markChangesPress="handleMarkChangesPress"
+							  objectSubtitle="Senior Developer"
+							  objectImageURI="test-resources/sap/uxap/images/imageID_273624.png"
+							  objectImageShape="Circle"
+							  isObjectTitleAlwaysVisible="false"
+							  isObjectSubtitleAlwaysVisible="false"
+							  showPlaceholder="true">
+				<actions>
+					<ObjectPageHeaderActionButton text="Public Profile" icon="sap-icon://edit" press="handlePress" tooltip="edit"/>
+					<ObjectPageHeaderActionButton text="Take Action" icon="sap-icon://action" tooltip="action"/>
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:Link text="denise-smith"/>
+				<m:Label text="(321) 123-4567"/>
+				<m:Link text="DeniseSmith@sap.com"/>
+				<layout:HorizontalLayout>
+					<m:Image height="24px" width="24px"
+							 src="./test-resources/sap/uxap/images/twitterIcon.png"/>
+					<m:Image height="24px" width="24px"
+							 src="./test-resources/sap/uxap/images/linkedInIcon.png"/>
+				</layout:HorizontalLayout>
+			</layout:VerticalLayout>
+			<m:Text width="200px"
+					text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+			<layout:VerticalLayout>
+				<m:Label text="Profile completion"/>
+				<m:ProgressIndicator
+						percentValue="30"
+						displayValue="30%"
+						showValue="true"
+						state="None"/>
+			</layout:VerticalLayout>
+		</headerContent>
+		<sections>
+			<ObjectPageSection title="2014 Goals Plan">
+				<subSections>
+					<ObjectPageSubSection>
+						<blocks>
+							<goals:GoalsBlock id="goalsblock"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Personal">
+				<subSections>
+					<ObjectPageSubSection title="Connect">
+						<blocks>
+							<personal:BlockPhoneNumber id="phone"/>
+							<personal:BlockSocial id="social"/>
+							<personal:BlockAdresses id="adresses"/>
+							<personal:BlockMailing id="mailing" columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="paymentSubSection" title="Payment information">
+						<blocks>
+							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
+						</blocks>
+						<moreBlocks>
+							<personal:PersonalBlockPart2 id="part2" columnLayout="1"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

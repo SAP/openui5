@@ -9,6 +9,13 @@
 	data-sap-ui-xx-bindingSyntax="complex"
 	data-sap-ui-theme="sap_belize"
 	data-sap-ui-libs="sap.m"></script>
+	
+<style>
+.highlight {
+	outline: 2px solid darkmagenta;
+	outline-offset: -2px;
+}
+</style>
 
 <script>
 var oData = {
@@ -30,25 +37,26 @@ var oModel = new sap.ui.model.json.JSONModel();
 oModel.setData(oData);
 sap.ui.getCore().setModel(oModel);
 
-var DraggableListItem = sap.m.StandardListItem.extend("my.DraggableListItem", {
-	metadata : {
-		aggregations : {
-			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true}
-		}
-	},
-	renderer: {}
-});
-
 var oIconList = new sap.m.List({
 	headerText: "Icons",
 	noDataText: "Well Done!",
 	width: "25rem",
-	inset: true
+	growing: true,
+	inset: true,
+	dragDropConfig: new sap.ui.core.dnd.DragInfo({
+		sourceAggregation: "items",
+		dragStart: function() {
+			oDescList.addStyleClass("highlight");
+		},
+		dragEnd: function() {
+			oDescList.removeStyleClass("highlight");
+		}
+	})
 }).bindItems({
 	path: "/game",
 	sorter: new sap.ui.model.Sorter("random"),
 	filters : new sap.ui.model.Filter("dropped", "EQ", false),
-	template: new DraggableListItem({
+	template: new sap.m.StandardListItem({
 		icon: "sap-icon://{icon}",
 		highlight: "Information",
 		dragDropConfig: new sap.ui.core.dnd.DragInfo({
@@ -80,7 +88,7 @@ var oDescList = new sap.m.List({
 	]
 }).bindItems({
 	path: "/game",
-	template: new DraggableListItem({
+	template: new sap.m.StandardListItem({
 		title: "{desc}",
 		highlight: {
 			parts: [{path : 'dropped'}],
@@ -102,8 +110,7 @@ var oDescList = new sap.m.List({
 			drop: function(oEvent) {
 				var oDraggedControl = oEvent.getParameter("draggedControl");
 				var oDraggedContext = oDraggedControl.getBindingContext();
-				oModel.setProperty("dropped", true, oDraggedContext);
-				oModel.refresh(true);
+				oModel.setProperty("dropped", true, oDraggedContext, true);
 			}
 		})
 	})
@@ -205,7 +212,7 @@ var oIconList2 = new sap.m.List({
 	path: "/game",
 	sorter: new sap.ui.model.Sorter("random"),
 	filters : new sap.ui.model.Filter("dropped2", "EQ", false),
-	template: new DraggableListItem({
+	template: new sap.m.StandardListItem({
 		icon: "sap-icon://{icon}",
 		highlight: "Information"
 	})
@@ -231,10 +238,12 @@ var oDescList2 = new sap.m.List({
 			targetAggregation: "items",
 			dragEnter: function(oEvent) {
 				var oDragSession = oEvent.getParameter("dragSession");
+				oDragSession.setDropControl(oHeaderToolbar);
+			},
+			dragOver: function(oEvent) {
 				var oBrowserEvent = oEvent.getParameter("browserEvent");
 				var bCopy = (oBrowserEvent.metaKey || oBrowserEvent.ctrlKey);
 				oEvent.getSource().setDropEffect(bCopy? "Copy": "Move");
-				oDragSession.setDropControl(oHeaderToolbar);
 			},
 			drop: function(oEvent) {
 				var oDraggedItem = oEvent.getParameter("draggedControl");

@@ -1,17 +1,13 @@
 <mvc:View
-	height="100%"
-	xmlns:l="sap.ui.layout"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<Page
-		showHeader="false" >
+	height="100%">
+	<Page showHeader="false" >
 		<subHeader>
 			<Toolbar>
 				<SearchField width="100%" />
 			</Toolbar>
 		</subHeader>
-		<content>
-			<SearchField width="90%" class="sapUiSmallMargin" />
-		</content>
+		<SearchField width="90%" class="sapUiSmallMargin" />
 	</Page>
 </mvc:View>

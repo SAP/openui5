@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<title>sap.ui.table - TreeTable with ODataV2</title>
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+		src="../../../../resources/sap-ui-core.js"
+		data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.table"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-preload="async"
+		data-sap-ui-resourceroots='{
+			"sap.ui.table.mvc": "./mvc"
+		}'>
+</script>
+<script>
+	jQuery.sap.measure.setActive(true);
+
+	sap.ui.getCore().attachInit(function() {
+		jQuery.sap.require("sap.ui.table.TreeTable");
+		jQuery.sap.require("sap.ui.table.Table");
+
+		jQuery.sap.measure.registerMethod("Table._createRows", sap.ui.table.Table.prototype, "_createRows", ["JS"]);
+		jQuery.sap.measure.registerMethod("TreeTable._updateTableContent", sap.ui.table.TreeTable.prototype, "_updateTableContent", ["JS"]);
+		jQuery.sap.measure.registerMethod("Table._syncColumnHeaders", sap.ui.table.Table.prototype, "_syncColumnHeaders", ["JS"]);
+		jQuery.sap.measure.registerMethod("Table._updateRowHeader", sap.ui.table.Table.prototype, "_updateRowHeader", ["JS"]);
+
+		sap.ui.xmlview({
+			viewName: "sap.ui.table.mvc.TreeTableODataV2"
+		}).placeAt("content");
+	});
+</script>
+</head>
+<body class="sapUiBody sapUiSizeCompact" id="content">
+</body>
+</html>

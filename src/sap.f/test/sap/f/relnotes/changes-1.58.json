@@ -1,0 +1,253 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "7f96c2bb1a3312c9a072d65e3add61c9da82005e",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Pin button visibility corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870240940"
+          }
+        ]
+      },
+      {
+        "id": "b95aebfadbc05e587b6a19c18a2aa96cbf121831",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageTitle: Fixed actions dragging in RTA",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870046974"
+          }
+        ]
+      },
+      {
+        "id": "e03de25921627bc700badc6914e833a413484729",
+        "type": "FIX",
+        "text": "f.DynamicPage: Header expanding in non-scrollable area changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870031161"
+          }
+        ]
+      },
+      {
+        "id": "193b15e9e7d1d365f516a58420fb5fa97710001a",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: toggleHeaderOnTitleClick initial state fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870166389"
+          }
+        ]
+      },
+      {
+        "id": "ebdf01ba15a732373460b5e2f13c1b10a8266e97",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Pointer cursor on passive controls in title fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870261908"
+          }
+        ]
+      },
+      {
+        "id": "188c53d214aebefee46fe417c41e8e0dac50fd7e",
+        "type": "FIX",
+        "text": "DynamicPageTitle: top area visibility fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880279756"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880278939"
+          }
+        ]
+      },
+      {
+        "id": "832e95152bb3b0821fd6f6004321ef24509f201f",
+        "type": "FIX",
+        "text": "DynamicPageTitle: Heading ARIA reference added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880282282"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870111213"
+          }
+        ]
+      },
+      {
+        "id": "336abe253cd74d41c08ff303d4b650588e25bfcc",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Initially snapped header behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880249493"
+          }
+        ]
+      },
+      {
+        "id": "7e5a49c94c7eb0692725a168476d4b6ae90232cb",
+        "type": "FIX",
+        "text": "DynamicPage: Explored sample updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880343529"
+          }
+        ]
+      },
+      {
+        "id": "701cfbfaca90e150ef08c24e1399b364237a235e",
+        "type": "FIX",
+        "text": "FlexibleColumnLayout: Slider visibility fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870028632"
+          }
+        ]
+      },
+      {
+        "id": "8b9b1041021589dddcbbe9169298d7342464d851",
+        "type": "FIX",
+        "text": "f.FlexibleColumnLayout: suspending/resuming of ResizeHander fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880331828"
+          }
+        ]
+      },
+      {
+        "id": "e9f5503fc817c53655fa357e304ae61c9c394c5d",
+        "type": "FEATURE",
+        "text": "SemanticPage: Added sapFSemanticPageAlignContent CSS class",
+        "references": []
+      },
+      {
+        "id": "d7400365e5ba40288419703312251a8603a11d3e",
+        "type": "FIX",
+        "text": "DynamicPage: Missing Expand Header icon is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880319729"
+          }
+        ]
+      },
+      {
+        "id": "539ebc3b7ab19643c2dc3c7ccb455852b69d802c",
+        "type": "FIX",
+        "text": "FlexibleColumnLayout: Not showing arrows in Demo App is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880353153"
+          }
+        ]
+      },
+      {
+        "id": "c0f9749e701dd811be7e895c23373023a36c39d5",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Bounce scrolling on iOS Safari prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880164878"
+          }
+        ]
+      },
+      {
+        "id": "18b53c9de2a951bf433713bb0772c722a2ff38e5",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Fixed responsiveness of sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880364651"
+          }
+        ]
+      },
+      {
+        "id": "859f983071e3e3255d74bdb5fd1b8b838b9c422a",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880390371"
+          }
+        ]
+      },
+      {
+        "id": "0f0514fcf72755574c43daed4857271f207d92b3",
+        "type": "FEATURE",
+        "text": "DynamicPage: backgroundDesign property added",
+        "references": []
+      },
+      {
+        "id": "2e88279730e9b6ea061506c1e64517e6de284b11",
+        "type": "FIX",
+        "text": "FlexibleColumnLayout: Fixed suspend and resume resize handlers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880392685"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880391328"
+          }
+        ]
+      },
+      {
+        "id": "48fdf887d83272458adb3b50c515d45d3ba76e1f",
+        "type": "FEATURE",
+        "text": "SemanticPage: Added new titleAreaShrinkRatio property",
+        "references": []
+      },
+      {
+        "id": "c02dacbbc2973178a2e7fab3642da5c4d392fe6a",
+        "type": "FEATURE",
+        "text": "SemanticPage: Added titleSnapped/ExpandedHeading aggregations",
+        "references": []
+      },
+      {
+        "id": "a31c44d645a7bba7ef9d8391a166b65f53200395",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageTitle: Clone now includes actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880376764"
+          }
+        ]
+      },
+      {
+        "id": "55d98ab497bf5d25a8482cb124ce995a7f421864",
+        "type": "INETRNAL",
+        "text": "[FIX] tutorial.fiori2: Updated documentation link",
+        "references": []
+      },
+      {
+        "id": "7be8204af9ea68333758887dedba5e31cd9a27f0",
+        "type": "FEATURE",
+        "text": "f.FlexibleColumnLayout: Reveal effect implemented",
+        "references": []
+      }
+    ]
+  }
+}

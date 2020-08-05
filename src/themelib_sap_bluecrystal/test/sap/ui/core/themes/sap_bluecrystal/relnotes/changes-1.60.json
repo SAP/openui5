@@ -1,0 +1,29 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "341f097a5fa58597c26c6c3f22b6664c192c66cc",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Items' loading indicator returned back",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880494891"
+          }
+        ]
+      },
+      {
+        "id": "fdb8e9bf8d5e0bbd8355b5263b12d61f9304ef38",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880484945"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -57,22 +57,29 @@
 					sap.ui.core.Control.apply(this, [sId, mSettings]);
 				},
 
-				renderer: function(oRm, oControl) {
-					oRm.write("<div");
-					oRm.writeControlData(oControl);
-					oRm.write("class='sapUiFontIconContainer'>");
-
-					oRm.write("<div id='" + oControl.getId() + "-name' class='sapUiFontName'>")
-					oRm.write(oControl.getName());
-					oRm.write("</div>");
-
-					oRm.renderControl(oControl.getIcon());
-
-					oRm.write("<div id='" + oControl.getId() + "-value' class='sapUiFontValue'>")
-					oRm.write("\"\\" + sap.ui.core.IconPool.getIconInfo(oControl.getIcon().getSrc()).content.charCodeAt(0).toString(16) + "\"");
-					oRm.write("</div>");
-
-					oRm.write("</div>");
+				renderer: {
+					apiVersion: 2,
+					render: function(oRm, oControl) {
+						oRm.openStart("div", oControl);
+						oRm.class("sapUiFontIconContainer");
+						oRm.openEnd();
+	
+							oRm.openStart("div", oControl.getId() + "-name");
+							oRm.class("sapUiFontName");
+							oRm.openEnd();
+							oRm.text(oControl.getName());
+							oRm.close("div");
+	
+							oRm.renderControl(oControl.getIcon());
+	
+							oRm.openStart("div", oControl.getId() + "-value");
+							oRm.class("sapUiFontValue");
+							oRm.openEnd();
+							oRm.text("\"\\" + sap.ui.core.IconPool.getIconInfo(oControl.getIcon().getSrc()).content.charCodeAt(0).toString(16) + "\"");
+							oRm.close("div");
+	
+						oRm.close("div");
+					}
 				}
 			});
 

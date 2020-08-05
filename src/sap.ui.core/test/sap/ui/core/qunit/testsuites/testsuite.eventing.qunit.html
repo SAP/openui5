@@ -1,29 +1,12 @@
+<!DOCTYPE html>
 <html>
 	<head>
-		<title>TestSuite for sap.ui.core: GTP testcase CORE/EVENTING</title>
-		<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
-		<script>
-
-		/**
-		 * Add test pages to this test suite function.
-		 * Please order alphabetically
-		 */
-		function suite() {
-			var suite = new parent.jsUnitTestSuite();
-			var contextPath = "/" + window.location.pathname.split("/")[1];
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/CoreEvents.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ElementFocusWhenMissing.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/EventBus.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/EventProvider.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/FocusHandler.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.events.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ResizeHandler.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/FastNavigation.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/CustomFastNavigation.qunit.html");
-			return suite;
-		}
-
-		</script>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<base href="../../../../../../">
+		<title>TestSuite for Topic: Events</title>
+		<script src="resources/sap/ui/test/starter/createSuite.js"
+				data-sap-ui-testsuite="test-resources/sap/ui/core/qunit/testsuites/testsuite.eventing.qunit"></script>
 	</head>
 	<body>
 	</body>

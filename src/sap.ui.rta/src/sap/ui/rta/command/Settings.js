@@ -1,14 +1,14 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
+sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	"use strict";
 
 	/**
 	 * Basic implementation for the command pattern.
 	 *
 	 * @class
-	 * @extends sap.ui.base.ManagedObject
+	 * @extends sap.ui.rta.command.FlexCommand
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
@@ -23,7 +23,8 @@ sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
 			library : "sap.ui.rta",
 			properties : {
 				content : {
-					type : "any"
+					type : "any",
+					group: "content"
 				}
 			},
 			associations : {},
@@ -31,27 +32,14 @@ sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
 		}
 	});
 
-
-	Settings.prototype._getChangeSpecificData = function(bForward) {
-
-		var mSpecificInfo = {
-				changeType : this.getChangeType(),
-				content : this.getContent()
-		};
-
-		return mSpecificInfo;
-	};
-
-
 	/**
 	 * @override
 	 */
 	Settings.prototype.execute = function() {
 		if (this.getElement()) {
 			return FlexCommand.prototype.execute.apply(this, arguments);
-		} else {
-			return Promise.resolve();
 		}
+		return Promise.resolve();
 	};
 
 	/**
@@ -60,11 +48,9 @@ sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
 	Settings.prototype.undo = function() {
 		if (this.getElement()) {
 			return FlexCommand.prototype.undo.apply(this, arguments);
-		} else {
-			return Promise.resolve();
 		}
+		return Promise.resolve();
 	};
 
 	return Settings;
-
-}, /* bExport= */true);
+});

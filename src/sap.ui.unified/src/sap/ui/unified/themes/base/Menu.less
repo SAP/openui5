@@ -50,11 +50,16 @@
 	position: relative;
 }
 
+.sapUiMnuItm:not(.sapUiMnuItmDsbl) {
+	cursor: pointer;
+}
+
 .sapUiMnuItm:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -3px;
 }
 
+/* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser*='ie'] {
 	.sapUiMnuItm:focus {
 		outline: none;
@@ -119,6 +124,14 @@ html[data-sap-ui-browser*='ie'] {
 
 .sapUiMnuItmIco > .sapUiIcon {
 	line-height: @_sap_ui_unified_Menu_ItmHeight;
+}
+
+.sapUiMnuItmIco > .sapUiIcon {
+	cursor: inherit;
+}
+
+.sapUiMnu .sapUiMnuItmIco .sapUiIcon {
+	font-size: 1rem;
 }
 
 .sapUiMnuItmIco > img{
@@ -405,11 +418,11 @@ html[data-sap-ui-browser*='ie'] {
 
 	.sapUiMnuItmIco {
 		width: @_sap_ui_unified_Menu_ItmHeightCozy;
-		font-size: @_sap_ui_unified_Menu_ItmHeightCozy / 2 - 0.125rem;
 	}
 
 	.sapUiMnuItmIco > .sapUiIcon {
 		line-height: @_sap_ui_unified_Menu_ItmHeightCozy;
+		font-size: @_sap_ui_unified_Menu_ItmHeightCozy / 2 - 0.125rem;
 	}
 
 	.sapUiMnuItmIco > img {
@@ -491,5 +504,30 @@ html.sap-phone, html.sap-tablet {
 		margin-top: 0;
 		margin-bottom: 0;
   }
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmTxt {
+		padding-left: 2rem;
+	}
 
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0rem;
+	}
+
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmTxt,
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt{
+		padding-left: 0;
+	}
+
+}
+
+.sapUiSizeCozy{
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmTxt {
+		padding-left: 3rem;
+	}
+	.sapUiMnuLst > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0;
+	}
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmTxt,
+	.sapUiMnuLst.sapUiMnuNoIco > .sapUiMnuItm > .sapUiMnuItmIco + .sapUiMnuItmTxt {
+		padding-left: 0;
+	}
 }

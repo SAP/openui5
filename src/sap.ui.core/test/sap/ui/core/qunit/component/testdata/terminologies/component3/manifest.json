@@ -1,0 +1,77 @@
+{
+    "sap.app": {
+        "id": "testdata.terminologies.component3",
+        "type": "application",
+        "title": "{{appTitle}}",
+        "i18n": {
+            "bundleUrl": "i18n/i18n.properties",
+            "supportedLocales": [
+                "en",
+                "de"
+            ],
+            "terminologies": {
+                "oil": {
+                    "bundleUrl": "i18n/terminologies.oil.i18n.properties",
+                    "supportedLocales": [
+                        "en"
+                    ]
+                },
+                "retail": {
+                    "bundleUrl": "i18n/terminologies.retail.i18n.properties",
+                    "supportedLocales": [
+                        "de"
+                    ]
+                }
+            },
+            "enhanceWith": [
+                {
+                    "bundleUrl": "../appvar1path/i18n/i18n.properties",
+                    "bundleUrlRelativeTo": "manifest",
+                    "supportedLocales": [
+                        "en",
+                        "de"
+                    ],
+                    "terminologies": {
+                        "oil": {
+                            "bundleUrl": "../appvar1path/i18n.terminologies.oil.i18n.properties",
+                            "supportedLocales": [
+                                "en"
+                            ]
+                        },
+                        "retail": {
+                            "bundleUrl": "../appvar1path/i18n.terminologies.retail.i18n.properties",
+                            "supportedLocales": [
+                                "de"
+                            ],
+                            "bundleUrlRelativeTo": "manifest"
+                        }
+                    }
+                },
+                {
+                    "bundleName": "appvar2.i18n.i18n.properties",
+                    "supportedLocales": [
+                        "en",
+                        "de"
+                    ],
+                    "terminologies": {
+                        "oil": {
+                            "bundleName": "appvar2.i18n.terminologies.oil.i18n",
+                            "supportedLocales": [
+                                "en"
+                            ]
+                        },
+                        "retail": {
+                            "bundleName": "appvar2.i18n.terminologies.retail.i18n",
+                            "supportedLocales": [
+                                "de"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "sap.ui5": {
+        "models": {}
+    }
+}

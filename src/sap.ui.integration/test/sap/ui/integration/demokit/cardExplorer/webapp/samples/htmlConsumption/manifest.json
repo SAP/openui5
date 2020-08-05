@@ -1,0 +1,51 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.translation.list.card",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"title": "Sample for HTML Consumption",
+		"subTitle": "Sample for HTML Consumption",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Consumption",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"data": {
+			"request": {
+				"url": "./items.json"
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "{{TITLE}}",
+			"subTitle": "Translation with model. {i18n>SUBTITLE}",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/"
+			},
+			"item": {
+				"title": {
+					"value": "{Name}"
+				},
+				"description": {
+					"value": "{Description}"
+				}
+			}
+		}
+	}
+}

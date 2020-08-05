@@ -59,7 +59,33 @@
 					"SupplierName": "Red Point Stores",
 					"Description": "Should be one line in height",
 					"Price": 39.99,
-					"CurrencyCode": "EUR"
+					"CurrencyCode": "EUR",
+					"icon": "sap-icon://notes"
+				},
+				{
+					"Name": "Laser Allround Pro2",
+					"Category": "Printer",
+					"SupplierName": "",
+					"Description": "Should be one line in height",
+					"Price": 39.99,
+					"CurrencyCode": "EUR",
+					"icon": "../ui/documentation/sdk/images/HT-6120.jpg"
+				},
+				{
+					"Name": "Hurricane GX",
+					"Category": "Printer",
+					"SupplierName": "",
+					"Description": "Should be one line in height",
+					"Price": 39.99,
+					"CurrencyCode": "EUR",
+				},
+				{
+					"icon": "sap-icon://notes",
+					"Category": "Projector",
+					"SupplierName": "",
+					"Description": "Should be one line in height",
+					"Price": 39.99,
+					"CurrencyCode": "EUR",
 				}
 			]
 		});
@@ -68,11 +94,16 @@
 
 		var oTemplate = new sap.m.TabContainerItem({
 			name: "{Name}",
+			additionalText: "{SupplierName}",
+			icon: "{icon}",
+			iconTooltip: "{Category}",
 			modified: "{modified}",
 			content: new sap.uxap.ObjectPageLayout({
 				headerTitle: new sap.uxap.ObjectPageHeader({
 					objectTitle:"{Name}",
-					objectSubtitle: "{SupplierName}"
+					objectSubtitle: "{SupplierName}",
+					objectImageURI: "{icon}",
+					isObjectIconAlwaysVisible: true
 				}),
 				sections: [
 					new sap.uxap.ObjectPageSection({
@@ -102,7 +133,12 @@
 		};
 
 		var fnOnItemSelected = function(oEvent) {
-			sap.m.MessageToast.show("Item selected: " + oEvent.getParameter("item").getName(), {duration: 500});
+		    var oItem = oEvent.getParameter("item");
+		    if (oItem) {
+                sap.m.MessageToast.show("Item selected: " + oEvent.getParameter("item").getName(), {duration: 500});
+            } else {
+                sap.m.MessageToast.show("No Items selected", {duration: 500});
+            }
 		};
 
 		var fnCloseItem = function(oEvent) {
@@ -130,7 +166,7 @@
 			itemSelect: fnOnItemSelected,
 			itemClose: fnCloseItem,
 			addNewButtonPress: fnOnAddButtonClick
-		});
+		}).addStyleClass("sapUiResponsivePadding--header");
 
 		var addButton = new sap.m.Button({
 			type: "Emphasized",
@@ -139,6 +175,7 @@
 				tabContainer.addItem(
 						new sap.m.TabContainerItem({
 							name: "SAP",
+							additionalText: "Customer",
 							modified: true
 						})
 				);
@@ -152,6 +189,7 @@
 				tabContainer.insertItem(
 						new sap.m.TabContainerItem({
 							name: "Apple",
+							additionalText: "Customer",
 							content: new sap.m.Text({ text: "Apple tab" })
 						}),
 						2
@@ -200,21 +238,24 @@
 		});
 
 		var changeTabButton1 = new sap.m.Button({
-			text: "1",
+			text: "0",
+			tooltip: "{/ProductCollection/0/Name}",
 			press: function() {
 				tabContainer.setSelectedItem(tabContainer.getItems()[0]);
 			}
 		});
 
 		var changeTabButton2 = new sap.m.Button({
-			text: "2",
+			text: "1",
+			tooltip: "{/ProductCollection/1/Name}",
 			press: function() {
 				tabContainer.setSelectedItem(tabContainer.getItems()[1]);
 			}
 		});
 
 		var changeTabButton3 = new sap.m.Button({
-			text: "3",
+			text: "2",
+			tooltip: "{/ProductCollection/2/Name}",
 			press: function() {
 				tabContainer.setSelectedItem(tabContainer.getItems()[2]);
 			}
@@ -224,6 +265,30 @@
 			text: "Change Name (3)",
 			press: function() {
 				tabContainer.getItems()[3].setName("New Name");
+			}
+		});
+
+		var addIconButton = new sap.m.Button({
+			type: "Emphasized",
+			text: "Add Icon (3)",
+			press: function() {
+				tabContainer.getItems()[3].setIcon("sap-icon://syringe");
+			}
+		});
+
+		var removeIconButton = new sap.m.Button({
+			type: "Emphasized",
+			text: "Remove Icon (4)",
+			press: function() {
+				tabContainer.getItems()[4].setIcon("");
+			}
+		});
+
+		var changeIconButton = new sap.m.Button({
+			type: "Emphasized",
+			text: "Change Icon (5)",
+			press: function() {
+				tabContainer.getItems()[5].setIcon("sap-icon://syringe");
 			}
 		});
 
@@ -237,17 +302,16 @@
 		new sap.m.App().addPage(oPage = new sap.m.Page({
 			title: "sap.m.TabContainer test page",
 			content: [tabContainer],
-			footer: new sap.m.Bar({
-				contentLeft: [
+			footer: new sap.m.OverflowToolbar({
+				content: [
 					changeTabButton1,
 					changeTabButton2,
-					changeTabButton3
-				],
-				contentMiddle: [
+					changeTabButton3,
 					changeNameButton,
-					toggleModifiedButton
-				],
-				contentRight: [
+					addIconButton,
+					changeIconButton,
+					removeIconButton,
+					toggleModifiedButton,
 					addButton,
 					insertButton,
 					removeButton,

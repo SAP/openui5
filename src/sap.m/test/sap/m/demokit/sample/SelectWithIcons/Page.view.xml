@@ -1,0 +1,22 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.SelectWithIcons.Page"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		showHeader="false"
+		class="sapUiContentPadding">
+		<content>
+				<Select
+					forceSelection="false"
+					selectedKey="{/SelectedProduct}"
+					items="{
+						path: '/ProductCollection',
+						sorter: { path: 'Name' }
+					}">
+					<core:ListItem key="{ProductId}" text="{Name}" icon="{Icon}"/>
+				</Select>
+		</content>
+	</Page>
+</mvc:View>

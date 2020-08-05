@@ -1,0 +1,53 @@
+/* ================================= */
+/* CSS for control sap.m/Link        */
+/* Quartz High Contrast Black theme  */
+/* ================================= */
+
+@_sap_m_Link_TextShadowColor: none;
+@sapUiLinkSubtleColor: darken(@sapUiLink, 15);
+
+.sapMLnk {
+	text-decoration: underline;
+}
+
+.sapMLnkDsbl {
+	opacity: @sapUiContentDisabledOpacity;
+	outline: none;
+	cursor: default;
+}
+
+.sapMLnk.sapMLnkSubtle {
+	color: @sapLinkColor;
+}
+
+.sapMLnkSubtle:focus {
+	color: @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
+	text-decoration: none;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+/* IE and Edge ignores outline-offset. Use an overlay: */
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMLnk:focus:not(.sapMLnkDsbl):before {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
+}
+
+html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
+	text-decoration: none;
+}
+
+.sapMLnk:hover.sapMLnkDsbl, .sapMLnk:focus.sapMLnkDsbl {
+	outline: none;
+}
+
+/* align Link in Form with Label */
+.sapUiFormEdit .sapMLnk {
+	margin-top: 0.875rem; /* don't use padding as this would stretch the focus outline */
+	margin-bottom: 0.625rem; /* for some reason browser adds 4px, display: block would lead to stretched focus outline*/
+}

@@ -3,20 +3,16 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/rta/library',
-	'sap/ui/core/Popup',
-	'sap/m/Toolbar',
-	'sap/ui/core/BusyIndicator',
-	'sap/ui/rta/util/Animation'
+	"sap/ui/model/resource/ResourceModel",
+	"sap/m/HBox",
+	"sap/ui/rta/util/Animation",
+	"sap/ui/dt/util/ZIndexManager"
 ],
 function(
-	jQuery,
-	library,
-	Popup,
-	Toolbar,
-	BusyIndicator,
-	Animation
+	ResourceModel,
+	HBox,
+	Animation,
+	ZIndexManager
 ) {
 	"use strict";
 
@@ -25,7 +21,7 @@ function(
 	 *
 	 * @class
 	 * Base class for Toolbar control
-	 * @extends sap.m.Toolbar
+	 * @extends sap.m.HBox
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -37,32 +33,32 @@ function(
 	 * @experimental Since 1.48. This class is experimental. The API might be changed in future.
 	 */
 
-	var Base = Toolbar.extend("sap.ui.rta.toolbar.Base", {
+	var Base = HBox.extend("sap.ui.rta.toolbar.Base", {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
 				/** Color in the toolbar */
-				"color": {
+				color: {
 					type: "string",
 					defaultValue: "default"
 				},
 
 				/** z-index of the toolbar on the page. Please consider of using bringToFront() function */
-				"zIndex": {
+				zIndex: {
 					type: "int"
 				},
 
 				/** i18n bundle */
-				"textResources": "object"
+				textResources: "object"
 			}
 		},
 		constructor: function() {
 			// call parent constructor
-			Toolbar.apply(this, arguments);
+			HBox.apply(this, arguments);
 
+			this.setAlignItems("Center");
 			this.setVisible(false);
 			this.placeToContainer();
-			this.buildContent();
 		},
 
 		/**
@@ -83,23 +79,23 @@ function(
 	 * @override
 	 */
 	Base.prototype.init = function() {
-		Toolbar.prototype.init.apply(this, arguments);
+		this._oResourceModel = new ResourceModel({
+			bundle: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+		});
+		HBox.prototype.init.apply(this, arguments);
+		// Assign the model object to the SAPUI5 core using the name "i18n"
+		this.setModel(this._oResourceModel, "i18n");
+		return this.buildContent();
 	};
 
 	/**
-	 * Event handler for onBeforeRendering
-	 * @protected
+	 * @override
 	 */
-	Base.prototype.onBeforeRendering = function () {
-		Toolbar.prototype.onBeforeRendering.apply(this, arguments);
-	};
-
-	/**
-	 * Event handler for onAfterRendering
-	 * @protected
-	 */
-	Base.prototype.onAfterRendering = function () {
-		Toolbar.prototype.onAfterRendering.apply(this, arguments);
+	Base.prototype.setTextResources = function(oTextResource) {
+		this.setProperty("textResources", oTextResource);
+		this._oResourceModel = new ResourceModel({
+			bundle: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+		});
 	};
 
 	/**
@@ -118,7 +114,7 @@ function(
 	 * @protected
 	 */
 	Base.prototype.buildControls = function () {
-		return [];
+		return Promise.resolve([]);
 	};
 
 	/**
@@ -135,7 +131,9 @@ function(
 	 * @protected
 	 */
 	Base.prototype.buildContent = function () {
-		this.buildControls().forEach(this.addContent, this);
+		return this.buildControls().then(function (aControls) {
+			aControls.forEach(this.addItem, this);
+		}.bind(this));
 	};
 
 	/**
@@ -188,17 +186,13 @@ function(
 
 	/**
 	 * Getter for inner controls
+	 *
 	 * @param {string} sName - Name of the control
 	 * @return {sap.ui.core.Control|undefined} - returns control or undefined if there is no control with provided name
 	 * @public
 	 */
 	Base.prototype.getControl = function(sName) {
-		return this
-			.getAggregation('content')
-			.filter(function (oControl) {
-				return oControl.data('name') === sName;
-			})
-			.pop();
+		return sap.ui.getCore().byId("sapUiRta_" + sName);
 	};
 
 	/**
@@ -206,17 +200,7 @@ function(
 	 * @public
 	 */
 	Base.prototype.bringToFront = function () {
-		var iNextZIndex;
-		var oBusyIndicatorPopup = BusyIndicator.oPopup;
-
-		if (oBusyIndicatorPopup && oBusyIndicatorPopup.isOpen() && oBusyIndicatorPopup.getModal()) {
-			// '-3' because overlay is on the '-2' level, see implementation of the sap.ui.core.Popup
-			iNextZIndex = oBusyIndicatorPopup._iZIndex - 3;
-		} else {
-			iNextZIndex = Popup.getNextZIndex();
-		}
-
-		this.setZIndex(iNextZIndex);
+		this.setZIndex(ZIndexManager.getNextZIndex());
 	};
 
 	/**
@@ -225,7 +209,9 @@ function(
 	Base.prototype.setUndoRedoEnabled = function () {};
 	Base.prototype.setPublishEnabled = function () {};
 	Base.prototype.setRestoreEnabled = function () {};
+	Base.prototype.setAppVariantsVisible = function () {};
+	Base.prototype.setAppVariantsEnabled = function () {};
+	Base.prototype.setExtendedManageAppVariants = function () {};
 
 	return Base;
-
 }, true);

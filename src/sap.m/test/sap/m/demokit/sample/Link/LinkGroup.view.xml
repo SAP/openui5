@@ -8,7 +8,7 @@
 		width="100%">
 		<l:content>
 			<Link
-				text="Click me"
+				text="Open message box"
 				press="handleLinkPress" />
 			<Link
 				text="Disabled link"

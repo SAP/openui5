@@ -1,8 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/test/opaQunit',
-	'sap/ui/test/Opa5'
+	"sap/ui/test/opaQunit",
+	"./pages/Home",
+	"./pages/Category",
+	"./pages/Product",
+	"./pages/Cart",
+	"./pages/Checkout",
+	"./pages/OrderCompleted",
+	"./pages/Welcome"
 ], function (opaTest) {
 	"use strict";
 
@@ -11,9 +17,6 @@ sap.ui.define([
 	opaTest("Should see the category list", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp();
-
-		//Actions
-		When.iLookAtTheScreen();
 
 		// Assertions
 		Then.onHome.iShouldSeeTheCategoryList().
@@ -44,32 +47,38 @@ sap.ui.define([
 
 		When.onTheProduct.iAddTheDisplayedProductToTheCart();
 
-		When.onTheCategory.iGoToTheCartPage();
+		When.onTheProduct.iToggleTheCart();
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart()
-			.and.iShouldSeeTheTotalPriceUpdated()
-			.and.iTeardownMyApp();
+			.and.iShouldSeeTheTotalPriceUpdated();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Should keep the cart when reloading", function (Given, When, Then) {
-
 		// Arrangements
-		Given.iStartMyApp(true);
+		Given.iStartMyApp({
+			keepStorage: true
+		});
 
 		// Actions
 		When.onHome.iPressOnTheFlatScreensCategory();
-		When.onTheCategory.iGoToTheCartPage();
+		When.onTheWelcomePage.iToggleTheCart();
 
 		// Assertions
-		Then.onTheCart.iShouldSeeTheProductInMyCart()
-			.and.iTeardownMyApp();
+		Then.onTheCart.iShouldSeeTheProductInMyCart();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Should start the app with a bookmarkable cart product", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyApp(true,{
-			hash: "#/cart/HT-1254"
+		Given.iStartMyApp({
+			keepStorage: true,
+			hash: "category/FS/product/HT-1254/cart"
 		});
 		//Assertions
 		Then.onTheProduct.iShouldSeeTheRightProduct();
@@ -99,7 +108,7 @@ sap.ui.define([
 	opaTest("Should return to checkout", function (Given, When, Then) {
 
 		// Actions
-		When.onHome.iGoToTheCartPage();
+		When.onTheWelcomePage.iToggleTheCart();
 		When.onTheCart.iPressOnTheProceedButton();
 
 		// Assertions
@@ -430,6 +439,9 @@ sap.ui.define([
 		When.onOrderCompleted.iPressOnTheReturnToShopButton();
 
 		// Assertions
-		Then.onTheWelcomePage.iShouldSeeTheWelcomePage().and.iTeardownMyApp();
+		Then.onTheWelcomePage.iShouldSeeTheWelcomePage();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 });

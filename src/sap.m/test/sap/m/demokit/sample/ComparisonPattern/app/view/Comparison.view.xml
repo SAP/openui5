@@ -1,0 +1,170 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:cards="sap.f.cards"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.f"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="sap.m.sample.ComparisonPattern.app.controller.Comparison"
+	height="100%">
+	<f:DynamicPage class="sapUiComparisonContainer">
+		<f:title>
+			<f:DynamicPageTitle
+				id="dynamic-page"
+				stateChange="onStateChange"
+				backgroundDesign="Transparent">
+				<f:heading>
+					<Title text="Second Page" />
+				</f:heading>
+				<f:snappedContent>
+					<Carousel
+						height="auto"
+						class="sapUiSmallMarginBottom"
+						id="carousel-snapped"
+						pageChanged="onPageChanged"
+						pageIndicatorPlacement="Top"
+						showPageIndicator="{= !${settings>/isDesktop} }"
+						pages="{
+							path: 'products>/Products'
+						}">
+						<customLayout>
+							<CarouselLayout visiblePagesCount="{settings>/pagesCount}" />
+						</customLayout>
+
+						<f:Card class="sapUiTinyMarginTop">
+							<f:header>
+								<cards:Header
+									title="{products>Name}"
+									subtitle="{products>Status}"
+									iconSrc="{
+												path: 'products>ProductPicUrl',
+												formatter: '.formatter.url'
+											}"
+									iconDisplayShape="Square" />
+							</f:header>
+						</f:Card>
+					</Carousel>
+				</f:snappedContent>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader backgroundDesign="Transparent">
+				<Carousel
+					height="auto"
+					class="sapUiSmallMarginBottom"
+					id="carousel-expanded"
+					pageChanged="onPageChanged"
+					pageIndicatorPlacement="Top"
+					showPageIndicator="{= !${settings>/isDesktop} }"
+					pages="{
+						path: 'products>/Products'
+					}">
+					<customLayout>
+						<CarouselLayout visiblePagesCount="{settings>/pagesCount}" />
+					</customLayout>
+
+					<f:Card class="sapUiTinyMarginTop">
+						<f:header>
+							<cards:Header
+								title="{products>Name}"
+								subtitle="{products>Status}"
+								iconSrc="{
+											path: 'products>ProductPicUrl',
+											formatter: '.formatter.url'
+										}"
+								iconDisplayShape="Square" />
+						</f:header>
+						<f:content>
+							<l:VerticalLayout width="100%">
+								<l:BlockLayout>
+									<l:BlockLayoutRow>
+										<l:BlockLayoutCell>
+											<HBox>
+												<Label text="Supplier:"/>
+											</HBox>
+											<HBox class="sapUiSmallMarginBottom">
+												<Text text="{products>SupplierName}" />
+											</HBox>
+											<HBox>
+												<Label text="Main Category:"/>
+											</HBox>
+											<HBox class="sapUiSmallMarginBottom">
+												<Text text="{products>MainCategory}" />
+											</HBox>
+											<HBox>
+												<Label text="Category:"/>
+											</HBox>
+											<HBox class="sapUiSmallMarginBottom">
+												<Text text="{products>Category}" />
+											</HBox>
+										</l:BlockLayoutCell>
+										<l:BlockLayoutCell>
+											<HBox>
+												<Label text="Width (cm)" />
+											</HBox>
+											<HBox class="sapUiSmallMarginBottom">
+												<Text text="{products>Width}" />
+											</HBox>
+											<HBox>
+												<Label text="Height (cm)" />
+											</HBox>
+											<HBox class="sapUiSmallMarginBottom">
+												<Text text="{products>Height}" />
+											</HBox>
+											<HBox>
+												<Label text="Weight (kg)" />
+											</HBox>
+											<HBox class="sapUiSmallMarginBottom">
+												<Text text="{products>WeightMeasure}"/>
+											</HBox>
+										</l:BlockLayoutCell>
+									</l:BlockLayoutRow>
+								</l:BlockLayout>
+							</l:VerticalLayout>
+						</f:content>
+					</f:Card>
+				</Carousel>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<List id="listItems"
+				backgroundDesign="Transparent"
+				class="sapUiSmallMarginBottom"
+				items="{
+				path: 'products>/Props'
+			}" >
+				<items>
+					<CustomListItem class="sapUiComparisonContent">
+						<Panel
+							expandable="true"
+							expanded="false"
+							headerText="{products>key}"
+							height="2.75rem"
+							expand="onPanelExpanded">
+						</Panel>
+						<HBox class="sapUiTinyMarginTop"
+								alignItems="Start"
+								backgroundDesign="Solid"
+								items="{
+									path: 'products>values', templateShareable : true
+								}">
+							<items>
+								<VBox class="sapUiTinyMarginTopBottom sapUiComparisonItem">
+									<layoutData>
+										<FlexItemData growFactor="1" baseSize="0" />
+									</layoutData>
+									<HBox>
+										<FormattedText htmlText="{products>text}" />
+									</HBox>
+									<HBox class="sapUiSmallMarginTop" visible="false">
+										<Text text="{products>description}" />
+									</HBox>
+								</VBox>
+							</items>
+						</HBox>
+					</CustomListItem>
+				</items>
+			</List>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

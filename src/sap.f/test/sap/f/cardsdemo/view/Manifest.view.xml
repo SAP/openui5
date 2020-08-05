@@ -1,0 +1,96 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.Manifest"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:editor="sap.ui.codeeditor"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Manifest loading examples" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<Panel>
+			<VBox id="samples">
+				<Panel
+					expanded="true"
+					expandable="true"
+					headerText="Using manifest property with string value (URL)">
+					<HBox>
+						<w:Card
+							id="card1"
+							manifest="./cardsdemo/model/manifests/manifest_card1.json"
+							width="500px"
+							height="auto">
+							<w:layoutData>
+								<FlexItemData growFactor="1" />
+							</w:layoutData>
+						</w:Card>
+						<VBox>
+							<Text text="XMLView usage:" class="sapUiTinyMargin" />
+							<editor:CodeEditor
+								height="50px"
+								id="card1-editorXmlUsage"
+								busy="true"
+								type="xml"
+								editable="false">
+							</editor:CodeEditor>
+							<Text text="Manifest:" class="sapUiTinyMargin" />
+							<editor:CodeEditor
+								height="450px"
+								id="card1-editorManifest"
+								busy="true"
+								type="json"
+								editable="false">
+							</editor:CodeEditor>
+							<layoutData>
+								<FlexItemData growFactor="3" />
+							</layoutData>
+						</VBox>
+					</HBox>
+				</Panel>
+
+				<Panel
+					expanded="true"
+					expandable="true"
+					headerText="Using manifest property with object value (passed from a JSONModel)">
+					<HBox>
+						<w:Card
+							id="card2"
+							manifest="{manifests>/manifestTests/manifest}"
+							width="500px"
+							height="auto">
+							<w:layoutData>
+								<FlexItemData growFactor="1" />
+							</w:layoutData>
+						</w:Card>
+						<VBox>
+							<layoutData>
+								<FlexItemData growFactor="3" />
+							</layoutData>
+
+							<Text text="XMLView usage:" class="sapUiTinyMargin" />
+							<editor:CodeEditor
+								height="50px"
+								id="card2-editorXmlUsage"
+								busy="true"
+								type="xml"
+								editable="false" />
+							<Text text="Manifest:" class="sapUiTinyMargin" />
+							<editor:CodeEditor
+								height="450px"
+								id="card2-editorManifest"
+								busy="true"
+								type="json"
+								editable="false" />
+						</VBox>
+					</HBox>
+				</Panel>
+			</VBox>
+		</Panel>
+	</Page>
+</mvc:View>

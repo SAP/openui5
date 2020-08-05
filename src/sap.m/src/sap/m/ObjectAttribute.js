@@ -4,14 +4,15 @@
 
 // Provides control sap.m.ObjectAttribute.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
 	'sap/m/Text',
-	'./ObjectAttributeRenderer'
+	'sap/ui/events/KeyCodes',
+	'./ObjectAttributeRenderer',
+	"sap/base/Log"
 ],
-function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
+function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -73,7 +74,7 @@ function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 		aggregations : {
 
 			/**
-			 * When the aggregation is set, it replaces the text, active and textDirection properties. This also ignores the press event. The provided control is displayed as an active link.
+			 * When the aggregation is set, it replaces the text, active and textDirection properties. This also ignores the press event. The provided control is displayed as an active link in case it is a sap.m.Link.
 			 * <b>Note:</b> It will only allow sap.m.Text and sap.m.Link controls.
 			 */
 			customContent : {type : "sap.ui.core.Control", multiple : false},
@@ -97,7 +98,8 @@ function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 					domRef : {type : "string"}
 				}
 			}
-		}
+		},
+		dnd: { draggable: true, droppable: false }
 	}});
 
 	/**
@@ -121,7 +123,7 @@ function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 			sTextDir = this.getTextDirection(),
 			oParent = this.getParent(),
 			bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
-			iMaxLines = ObjectAttributeRenderer.MAX_LINES.MULTI_LINE,
+			iMaxLines,
 			bWrap = true,
 			oppositeDirectionMarker = '';
 
@@ -133,7 +135,6 @@ function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 		}
 		sText = oppositeDirectionMarker + sText + oppositeDirectionMarker;
 		if (sTitle) {
-			sText = sText.replace(new RegExp(sTitle + ":\\s+", "gi"), "");
 			sText = sTitle + ": " + sText;
 		}
 		oAttrAggregation.setProperty('text', sText, true);
@@ -155,10 +156,10 @@ function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 	 * @private
 	 */
 	ObjectAttribute.prototype._setControlWrapping = function(oAttrAggregation, bWrap, iMaxLines) {
-		if (oAttrAggregation instanceof sap.m.Link) {
+		if (oAttrAggregation.isA("sap.m.Link")) {
 			oAttrAggregation.setProperty('wrapping', bWrap, true);
 		}
-		if (oAttrAggregation instanceof Text) {
+		if (oAttrAggregation.isA("sap.m.Text")) {
 			oAttrAggregation.setProperty('maxLines', iMaxLines, true);
 		}
 	};
@@ -168,8 +169,8 @@ function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 	 * @param {object} oEvent The fired event
 	 */
 	ObjectAttribute.prototype.ontap = function(oEvent) {
-		//event should only be fired if the click is on the text
-		if (this._isSimulatedLink() && (oEvent.target.id != this.getId())) {
+		//event should only be fired if the click is on the text (acting like a link)
+		if (this._isSimulatedLink() && (oEvent.target.id === this.getId() + "-text")) {
 			this.firePress({
 				domRef : this.getDomRef()
 			});
@@ -196,7 +197,13 @@ function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 	 * @param {object} oEvent The fired event
 	 */
 	ObjectAttribute.prototype.onsapspace = function(oEvent) {
-		this.onsapenter(oEvent);
+		oEvent.preventDefault();
+	};
+
+	ObjectAttribute.prototype.onkeyup = function (oEvent) {
+		if (oEvent.which === KeyCodes.SPACE) {
+			this.onsapenter(oEvent);
+		}
 	};
 
 	/**
@@ -206,8 +213,8 @@ function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 	 * @returns {boolean} true if ObjectAttribute's text is empty or only consists of whitespaces
 	 */
 	ObjectAttribute.prototype._isEmpty = function() {
-		if (this.getAggregation('customContent') && !(this.getAggregation('customContent') instanceof sap.m.Link || this.getAggregation('customContent') instanceof Text)) {
-			jQuery.sap.log.warning("Only sap.m.Link or sap.m.Text are allowed in \"sap.m.ObjectAttribute.customContent\" aggregation");
+		if (this.getAggregation('customContent') && !(this.getAggregation('customContent').isA("sap.m.Link") || this.getAggregation('customContent').isA("sap.m.Text"))) {
+			Log.warning("Only sap.m.Link or sap.m.Text are allowed in \"sap.m.ObjectAttribute.customContent\" aggregation");
 			return true;
 		}
 
@@ -230,7 +237,7 @@ function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 	 * Defines to which DOM reference the Popup should be docked.
 	 *
 	 * @protected
-	 * @return {DomNode} The DOM reference that Popup should dock to
+	 * @return {Element} The DOM reference that Popup should dock to
 	 */
 	ObjectAttribute.prototype.getPopupAnchorDomRef = function() {
 		return this.getDomRef("text");
@@ -238,6 +245,23 @@ function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 
 	ObjectAttribute.prototype._isSimulatedLink = function () {
 		return (this.getActive() && this.getText() !== "") && !this.getAggregation('customContent');
+	};
+
+	ObjectAttribute.prototype.setCustomContent = function(oCustomContent) {
+		if (oCustomContent && oCustomContent.isA('sap.m.Link')) {
+			oCustomContent._getTabindex = function() {
+				return "-1";
+			};
+		}
+		return this.setAggregation('customContent', oCustomContent);
+	};
+
+	/**
+	 * Returns whether the control can be clicked so in the renderer appropriate attributes can be set (for example tabindex).
+	 * @private
+	 */
+	ObjectAttribute.prototype._isClickable = function() {
+		return (this.getActive() && this.getText() !== "") || ( this.getAggregation('customContent') && this.getAggregation('customContent').isA('sap.m.Link'));
 	};
 
 	return ObjectAttribute;

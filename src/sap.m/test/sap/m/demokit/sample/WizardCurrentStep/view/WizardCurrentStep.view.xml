@@ -1,0 +1,76 @@
+<mvc:View
+		height="100%"
+		controllerName="sap.m.sample.WizardCurrentStep.controller.WizardCurrentStep"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+		<NavContainer id="wizardNavContainer">
+			<pages>
+				<Page
+				id="wizardContentPage"
+				showHeader="true">
+					<customHeader>
+						<Bar>
+							<contentRight>
+								<SegmentedButton selectedKey="{/selectedShowCase}">
+									<items>
+										<SegmentedButtonItem text="Linear case" key="linear" />
+										<SegmentedButtonItem text="Branching case" key="branching" width="150px" />
+									</items>
+								</SegmentedButton>
+							</contentRight>
+						</Bar>
+					</customHeader>
+					<subHeader>
+						<Bar>
+							<contentRight>
+								<Label text="Set current step: " />
+								<Select change="onCurrentStepChangeLinear" selectedKey="{/linearWizardSelectedStep}" visible="{= ${/selectedShowCase} === 'linear'}">
+									<core:Item text="ProductTypeStep" key="ProductTypeStep" />
+									<core:Item text="ProductInfoStep" key="ProductInfoStep" />
+									<core:Item text="OptionalInfoStep" key="OptionalInfoStep" />
+									<core:Item text="PricingStep" key="PricingStep" />
+								</Select>
+								<Select id="selectBranchingCurrentStep" change="onCurrentStepChangeBranching" selectedKey="A" visible="{= ${/selectedShowCase} === 'branching'}">
+									<core:Item text="A" key="A" />
+									<core:Item text="B1" key="B1" />
+									<core:Item text="B2" key="B2" />
+									<core:Item text="C" key="C" />
+									<core:Item text="D" key="D" />
+									<core:Item text="E" key="E" />
+									<core:Item text="F1" key="F1" />
+									<core:Item text="F2" key="F2" />
+									<core:Item text="G" key="G" />
+								</Select>
+							</contentRight>
+						</Bar>
+					</subHeader>
+					<content>
+						<mvc:XMLView
+							id="wizardViewLinear"
+							async="true"
+							visible="{= ${/selectedShowCase} === 'linear' }"
+							viewName="sap.m.sample.WizardCurrentStep.view.Linear" />
+						<mvc:XMLView
+							id="wizardViewBranching"
+							async="true"
+							visible="{= ${/selectedShowCase} === 'branching' }"
+							viewName="sap.m.sample.WizardCurrentStep.view.Branching" />
+					</content>
+					<footer>
+						<Bar>
+							<contentRight>
+								<Label text="Set background design: " />
+								<Select change="onBackgroundDesignChange" selectedKey="{/selectedBackgroundDesign}">
+									<core:Item text="Standard" key="Standard" />
+									<core:Item text="Solid" key="Solid" />
+									<core:Item text="List" key="List" />
+									<core:Item text="Transparent" key="Transparent" />
+								</Select>
+							</contentRight>
+						</Bar>
+					</footer>
+				</Page>
+			</pages>
+		</NavContainer>
+</mvc:View>

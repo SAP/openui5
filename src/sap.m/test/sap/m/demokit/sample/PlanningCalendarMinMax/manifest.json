@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.PlanningCalendarMinMax",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.PlanningCalendarMinMax.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {},
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Page.view.xml",
+					"Page.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

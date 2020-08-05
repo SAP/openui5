@@ -1,5 +1,5 @@
-<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons"
-	xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml"
+<mvc:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:svg="http://www.w3.org/2000/svg"
 	displayBlock="true">
 	<table id="localTableId" title="encoding is the A&amp;O of XML parsing &lt;and&gt; &quot;writing" border="5">
@@ -30,4 +30,4 @@
 			<mvc:XMLView id="MyHTMLView" viewName="example.mvc.test2" controllerName="example.mvc.test"></mvc:XMLView>
 		</phx:content>
 	</phx:Panel>
-</core:View>
+</mvc:View>

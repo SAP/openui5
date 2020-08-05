@@ -1,0 +1,227 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Notification List Group - sap.m</title>
+
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+	<script>
+
+		jQuery.sap.require('sap.m.MessageToast');
+
+		var listItem = new sap.m.NotificationListItem('firstNotification', {
+			title: 'Notification List Title1',
+			description: "Have you tried Wheaties? They're whole wheat with all of the bran. Won't you try Wheaties? For wheat is the best food of man. They're crispy and crunchy the whole year through, The kiddies never tire of them and neither will you. So just try Wheaties, the best breakfast food in the land!",
+			showCloseButton: false,
+			authorPicture: 'sap-icon://car-rental',
+			authorName: 'Bai Marin',
+			datetime: '5 minutes',
+			priority: sap.ui.core.Priority.None
+		});
+
+		var listItem2 = new sap.m.NotificationListItem({
+			title: 'Notification List Title2',
+			description: "What walks down stairs, alone or in pairs, and makes a slinkity sound? A spring, a spring, a marvelous thing, everyone knows it's Slinky.",
+			datetime: '2 hours',
+			unread: true,
+			priority: sap.ui.core.Priority.Medium,
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept',
+					type: sap.m.ButtonType.Accept,
+					press: function () {
+						sap.m.MessageToast.show('Accept button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel',
+					type: sap.m.ButtonType.Reject,
+					press: function () {
+						listItem2.close();
+					}
+				})
+			]
+		});
+
+		var listItem3 = new sap.m.NotificationListItem({
+			title: 'Notification List Title3',
+			description: " Searching for a way to tap into the hidden strengths that all humans have... then an accidental overdose of gamma radiation alters his body chemistry.",
+			datetime: '2 hours',
+			unread: true,
+			priority: sap.ui.core.Priority.Low,
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept',
+					type: sap.m.ButtonType.Accept,
+					press: function () {
+						sap.m.MessageToast.show('Accept button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel',
+					type: sap.m.ButtonType.Reject,
+					press: function () {
+						listItem2.close();
+					}
+				})
+			]
+		});
+
+
+		var listGroup = new sap.m.NotificationListGroup({
+			id: 'notificationGroup',
+			title: 'Notification List Item Group',
+			// datetime: 'More than 5 minutes', // deprecated
+			// authorPicture: 'images/SAPLogo.jpg', // deprecated
+			// authorName: 'Lorem Ipsum', // deprecated
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept All',
+					type: sap.m.ButtonType.Accept,
+					press: function () {
+						sap.m.MessageToast.show('Accept all button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel All',
+					type: sap.m.ButtonType.Reject
+				})
+			],
+			items: [
+				listItem,
+				listItem2,
+				listItem3
+			],
+			onCollapse: function (event) {
+				var collapseExpandText = (event.oSource.getCollapsed() ? 'Collapse' : 'Expand') + ' event fired';
+				sap.m.MessageToast.show(collapseExpandText);
+			}
+		});
+
+		var singleItemGroup = new sap.m.NotificationListGroup({
+			id: 'notificationGroup2',
+			title: 'Single Notification List Item Group',
+			// datetime: 'More than 15 minutes', // deprecated
+			// authorPicture: 'images/SAPLogo.jpg', // deprecated
+			// authorName: 'Lorem Ipsum', // deprecated
+			visible: true,
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept All',
+					type: sap.m.ButtonType.Accept,
+					press: function () {
+						sap.m.MessageToast.show('Accept all button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel All',
+					type: sap.m.ButtonType.Reject
+				})
+			],
+			items: [
+				new sap.m.NotificationListItem({
+					title: 'Single Item Notification',
+					description: "In the criminal justice system, the people are represented by two separate yet equally important groups. The police who investigate crime and the district attorneys who prosecute the offenders. These are their stories.",
+					datetime: '2 hours',
+					unread: true,
+					visible: true,
+					showCloseButton: false,
+					priority: sap.ui.core.Priority.High,
+					buttons: [
+						new sap.m.Button({
+							text: 'Accept',
+							type: sap.m.ButtonType.Accept,
+							press: function () {
+								sap.m.MessageToast.show('Accept button pressed');
+							}
+						}),
+						new sap.m.Button({
+							text: 'Cancel',
+							type: sap.m.ButtonType.Reject,
+							press: function () {
+								sap.m.MessageToast.show('Cancel button pressed');
+							}
+						})
+					]
+				}),
+				new sap.m.NotificationListItem({
+					title: 'Hidden Item Notification',
+					description: "Man lives in the sunlit world of what he believes to be reality. But, there is, unseen by most, an underworld, a place that is just as real, but not as brightly lit... a darkside. ",
+					datetime: '3 hours',
+					unread: true,
+					visible: false,
+					showCloseButton: true,
+					priority: sap.ui.core.Priority.Medium,
+					buttons: [
+						new sap.m.Button({
+							text: 'Accept',
+							type: sap.m.ButtonType.Accept,
+							press: function () {
+								sap.m.MessageToast.show('Accept button pressed');
+							}
+						}),
+						new sap.m.Button({
+							text: 'Cancel',
+							type: sap.m.ButtonType.Reject,
+							press: function () {
+								sap.m.MessageToast.show('Cancel button pressed');
+							}
+						})
+					]
+				})
+			]
+		});
+
+		var noItemsGroup = new sap.m.NotificationListGroup({
+			id: 'notificationGroup3',
+			title: 'Notification List With 0 Items',
+			// datetime: 'More than 25 minutes', // deprecated
+			// authorPicture: 'images/SAPLogo.jpg', // deprecated
+			// authorName: 'Lorem Ipsum', // deprecated
+			showEmptyGroup: true,
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept All',
+					type: sap.m.ButtonType.Accept,
+					press: function () {
+						sap.m.MessageToast.show('Accept all button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel All',
+					type: sap.m.ButtonType.Reject
+				})
+			],
+			items: [
+			]
+		});
+
+		var list = new sap.m.List({
+			items: [
+				listGroup,
+				singleItemGroup,
+				noItemsGroup
+			]
+		});
+
+
+		var page = new sap.m.Page("page", {
+			title: "NotificationGroup Accessibility Test Page",
+			content: [list]
+		});
+
+		var oApp = new sap.m.App("myApp", { initialPage: "page" });
+		oApp.addPage(page).placeAt("content");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+<div id="content"></div>
+</body>
+
+</html>

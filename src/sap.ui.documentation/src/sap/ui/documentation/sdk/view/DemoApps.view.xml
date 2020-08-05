@@ -10,80 +10,106 @@
 		showFooter="false"
 		showHeader="false"
 		class="sapUiDemoApps">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				headerRole="Region"
+				headerLabel="Demo Apps"
+				contentRole="Main"
+				contentLabel="Demo Apps by Category"/>
+		</landmarkInfo>
 		<content>
 			<ScrollContainer vertical="true" width="100%" height="100%">
-				<l:BlockLayout
-					id="headerLayout"
-					background="Light">
-					<l:BlockLayoutRow>
-						<l:BlockLayoutCell
-								class="sapUiDemokitLandingImageCell sapUiNoContentPadding welcomeImageCell">
-							<Image
+				<Panel
+					id="rootPage"
+					accessibleRole="Region"
+					class="sapUiNoContentPadding">
+					<l:BlockLayout
+						id="headerLayout"
+						background="Light">
+						<l:BlockLayoutRow>
+							<l:BlockLayoutCell
+								class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
+								<Image
 									id="phoneImage"
-									src="./resources/sap/ui/documentation/sdk/images/DemoApps_S_cropped.jpg"
+									src="./resources/sap/ui/documentation/sdk/images/DemoApps_S_cropped.png"
+									alt="{i18n>DEMO_APPS_IMAGE_PHONE}"
 									width="100%"
 									class="welcomeImage"
-									load="handleLandingImageLoad"
+									load=".handleLandingImageLoad"
 									visible="{device>/system/phone}"
 									densityAware="false"/>
-							<Image
+								<Image
 									id="desktopImage"
 									class="desktopImage welcomeImage"
-									src="./resources/sap/ui/documentation/sdk/images/DemoApps_M_and_L_cropped.jpg"
+									src="./resources/sap/ui/documentation/sdk/images/DemoApps_M_and_L_cropped.png"
+									alt="{i18n>DEMO_APPS_IMAGE_DESKTOP}"
 									densityAware="false"
-									load="handleLandingImageLoad"
+									load=".handleLandingImageLoad"
 									visible="{=!${device>/system/phone}}"
 									width="100%"/>
-							<l:Grid
+								<l:Grid
 									id="landingImageHeadline"
 									width="100%"
 									visible="false"
 									class="headerGrid"
 									hSpacing="0"
 									defaultSpan="L6 M6 S12">
-								<l:VerticalLayout width="100%" class="sapUiTinyMarginTop sapUiTinyMarginEnd">
-									<Text class="headerText" text="{i18n>pageTitle}" width="100%" textAlign="Left"/>
-									<l:HorizontalLayout>
-										<Button
+									<l:VerticalLayout width="100%" class="sapUiTinyMarginTop sapUiTinyMarginEnd">
+										<Text class="headerText" text="{i18n>DEMO_APPS_TEXT}" width="100%" textAlign="Left"/>
+										<l:HorizontalLayout>
+											<Button
 												class="actionButton headerButton"
 												id="download"
-												text="{i18n>downloadButtonText}"
+												text="{i18n>DEMO_APPS_DOWNLOAD_BTN}"
 												type="Emphasized"
-												press="onDownloadButtonPress">
-										</Button>
-										<Button
+												press=".onDownloadButtonPress">
+											</Button>
+											<Button
 												class="actionButton headerButton sapContrast sapContrastPlus sapUiSmallMarginBegin"
 												id="readMoreButton"
-												text="{i18n>linkText}"
-												type="Ghost"
-												press="onReadMoreButtonPress">
-										</Button>
-									</l:HorizontalLayout>
-								</l:VerticalLayout>
-								<Image
-										src="resources/sap/ui/documentation/sdk/images/demoAppsTeaser.png"
-										densityAware="false"
-										class="sapUiHideOnPhone"
-										visible="{=!${device>/system/phone}}"
-										width="100%"/>
-							</l:Grid>
-						</l:BlockLayoutCell>
-					</l:BlockLayoutRow>
-				</l:BlockLayout>
+												text="{i18n>DEMO_APPS_READ_MORE_BTN}"
+												press=".onReadMoreButtonPress">
+											</Button>
+										</l:HorizontalLayout>
+									</l:VerticalLayout>
+								</l:Grid>
+							</l:BlockLayoutCell>
+						</l:BlockLayoutRow>
+					</l:BlockLayout>
+				</Panel>
+				<l:VerticalLayout content="{/demoAppsByCategory}" width="100%">
+					<Panel
+						accessibleRole="Region"
+						backgroundDesign="Transparent"
+						class="sapUiNoContentPadding">
+						<headerToolbar>
+							<Toolbar class="headlineCell">
+								<Title
+									text="{
+										path: 'categoryId',
+										formatter: '.formatter.categoryName'
+									}"
+									level="H1"
+									titleStyle="H1"
+									class="sapUiMediumMarginTopBottom"/>
+							</Toolbar>
+						</headerToolbar>
+						<l:BlockLayout
+							content="{
+								 path: 'rows',
+								 templateShareable: false
+							}"
+							background="Light">
+							<l:BlockLayoutRow content="{
+								path: '',
+								factory: '.createDemoAppCell'
+							}"/>
+						</l:BlockLayout>
+					</Panel>
+				</l:VerticalLayout>
 				<l:BlockLayout
-					id="demoAppsLayout"
-					content="{
-						path: '/demoAppsByCategory'
-					}"
-					background="Light">
-					<l:BlockLayoutRow content="{
-						path: '',
-						factory: '.createDemoAppRow'
-					}"/>
-				</l:BlockLayout>
-				<l:BlockLayout
-					id="demoAppsFooter"
-					visible="{/bFooterVisible}">
+						id="demoAppsFooter"
+						visible="{/bFooterVisible}">
 					<l:BlockLayoutRow>
 						<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
 					</l:BlockLayoutRow>
@@ -93,9 +119,10 @@
 		<dependents>
 			<SelectDialog id="downloadDialog"
 				items="{/demoApps}"
-				title="{i18n>downloadDialogTitle}"
-				liveChange="onSearch"
-				confirm="onDownloadPress">
+				title="{i18n>DEMO_APPS_DOWNLOAD_DIALOG_TITLE}"
+				liveChange=".onSearch"
+				growing="false"
+				confirm=".onDownloadPress">
 				<InputListItem
 					visible="{= !!${config} }"
 					label="{name}"
@@ -104,9 +131,9 @@
 						<core:CustomData key="config" value="{config}"/>
 					</customData>
 					<Button
-						text="{i18n>downloadButtonText}"
+						text="{i18n>DEMO_APPS_DOWNLOAD_BTN}"
 						type="Emphasized"
-						press="onDownloadPress"/>
+						press=".onDownloadPress"/>
 				</InputListItem>
 			</SelectDialog>
 		</dependents>

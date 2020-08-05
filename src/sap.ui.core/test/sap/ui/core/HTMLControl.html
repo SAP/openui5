@@ -35,7 +35,7 @@
 
 			jQuery(document).ready(
 				function() {
-					jQuery("#embedded span").click(
+					jQuery("#embedded span").on("click", (
 							function(event) {
 								var sColor = event.target && jQuery.css(event.target, "background-color").toLowerCase();
 								var bRed = sColor == "#ff0000" || sColor == "rgb(255, 0, 0)";
@@ -112,7 +112,7 @@
 
 		</script>
 	</head>
-	<body class="sapUiBody" role="application">
+	<body class="sapUiBody">
 		<h1>Test Page for the HTML Container (sap.ui.core.HTML)</h1>
 
 	    <div id="controls" ></div>

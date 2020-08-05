@@ -1,7 +1,5 @@
-<core:View xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m" controllerName="sap.ui.fl.support.apps.contentbrowser.controller.Layers"
-	xmlns:html="http://www.w3.org/1999/xhtml">
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m" controllerName="sap.ui.fl.support.apps.contentbrowser.controller.Layers">
 	<Page title="Layers">
 		<List id="masterComponentsList" items="{layers>/}">
 			<items>
@@ -23,4 +21,4 @@
 			</Toolbar>
 		</footer>
 	</Page>
-</core:View>
+</mvc:View>

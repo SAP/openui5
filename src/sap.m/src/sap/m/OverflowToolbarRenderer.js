@@ -2,9 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', './ToolbarRenderer'],
-	function(Renderer, ToolbarRenderer) {
+sap.ui.define(["./library", 'sap/ui/core/Renderer', './ToolbarRenderer', "sap/m/BarInPageEnabler"],
+	function(library, Renderer, ToolbarRenderer, BarInPageEnabler) {
 		"use strict";
+
+		// shortcut for sap.m.OverflowToolbarPriority
+		var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 
 		/**
@@ -13,22 +16,45 @@ sap.ui.define(['sap/ui/core/Renderer', './ToolbarRenderer'],
 		 */
 		var OverflowToolbarRenderer = Renderer.extend(ToolbarRenderer);
 
+		OverflowToolbarRenderer.apiVersion = 2;
+
 		OverflowToolbarRenderer.renderBarContent = function(rm, oToolbar) {
 
+			var bHasAlwaysOverflowVisibleContent  = false,
+				bHasAnyVisibleContent;
+
 			oToolbar._getVisibleContent().forEach(function(oControl) {
-				sap.m.BarInPageEnabler.addChildClassTo(oControl,oToolbar);
-				rm.renderControl(oControl);
+				BarInPageEnabler.addChildClassTo(oControl, oToolbar);
+
+				if (oToolbar._getControlPriority(oControl) !== OverflowToolbarPriority.AlwaysOverflow ) {
+						rm.renderControl(oControl);
+				} else {
+					bHasAlwaysOverflowVisibleContent = bHasAlwaysOverflowVisibleContent || oControl.getVisible();
+				}
 			});
 
-			if (oToolbar._getOverflowButtonNeeded()) {
-				OverflowToolbarRenderer.renderOverflowButton(rm,oToolbar);
+			if (bHasAlwaysOverflowVisibleContent || oToolbar._getOverflowButtonNeeded()) {
+				OverflowToolbarRenderer.renderOverflowButton(rm, oToolbar);
+			}
+
+			bHasAnyVisibleContent = oToolbar.getContent().some(function (oControl) {
+				return oControl.getVisible();
+			});
+			if (bHasAnyVisibleContent) {
+				OverflowToolbarRenderer.renderOverflowButtonClone(rm, oToolbar);
 			}
 		};
 
-		OverflowToolbarRenderer.renderOverflowButton = function(rm,oToolbar) {
+		OverflowToolbarRenderer.renderOverflowButton = function(rm, oToolbar) {
 			var oOverflowButton = oToolbar._getOverflowButton();
-			sap.m.BarInPageEnabler.addChildClassTo(oOverflowButton,oToolbar);
+			BarInPageEnabler.addChildClassTo(oOverflowButton, oToolbar);
 			rm.renderControl(oOverflowButton);
+		};
+
+		OverflowToolbarRenderer.renderOverflowButtonClone = function(rm, oToolbar) {
+			var oOverflowButtonClone = oToolbar._getOverflowButtonClone();
+			BarInPageEnabler.addChildClassTo(oOverflowButtonClone, oToolbar);
+			rm.renderControl(oOverflowButtonClone);
 		};
 
 		return OverflowToolbarRenderer;

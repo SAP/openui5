@@ -4,32 +4,28 @@
 
 // Provides control sap.ui.rta.appVariant.AppVariantOverviewDialog.
 sap.ui.define([
-	'sap/ui/core/ComponentContainer',
-	'sap/m/Dialog',
-	'sap/m/DialogRenderer',
-	'sap/ui/rta/appVariant/manageApps/webapp/Component',
-	"sap/ui/fl/Utils",
-	"sap/ui/rta/Utils",
-	"sap/ui/rta/appVariant/AppVariantUtils"
+	"sap/ui/core/ComponentContainer",
+	"sap/m/Dialog",
+	"sap/m/DialogRenderer",
+	"sap/ui/rta/appVariant/manageApps/webapp/Component",
+	"sap/ui/rta/Utils"
 ], function(
-		ComponentContainer,
-		Dialog,
-		DialogRenderer,
-		ManageAppsComponent,
-		FlexUtils,
-		RtaUtils,
-		AppVariantUtils
-	) {
-
+	ComponentContainer,
+	Dialog,
+	DialogRenderer,
+	ManageAppsComponent,
+	RtaUtils
+) {
 	"use strict";
 
 	var AppVariantOverviewDialog = Dialog.extend("sap.ui.rta.appVariant.AppVariantOverviewDialog", {
 		metadata : {
 			properties: {
-				"idRunningApp" : "string",
+				idRunningApp : "string",
 				isOverviewForKeyUser: {
 					type: "boolean"
-				}
+				},
+				layer: "string"
 			},
 			events : {
 				cancel : {}
@@ -40,9 +36,10 @@ sap.ui.define([
 			this._oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 			// Create manage apps component
-			this.oManageAppsComponent = new ManageAppsComponent("manageApps", {
+			this.oManageAppsComponent = new ManageAppsComponent("sap.ui.rta.appVariant.manageApps", {
 				idRunningApp : this.getIdRunningApp(),
-				isOverviewForKeyUser: this.getIsOverviewForKeyUser()
+				isOverviewForKeyUser: this.getIsOverviewForKeyUser(),
+				layer: this.getLayer()
 			});
 
 			// Place component in container and display
@@ -62,10 +59,6 @@ sap.ui.define([
 			this.addStyleClass(RtaUtils.getRtaStyleClassName());
 		},
 		destroy: function() {
-			var sNewAppVarianId = AppVariantUtils.getNewAppVariantId();
-			if (sNewAppVarianId) {
-				AppVariantUtils.setNewAppVariantId(null);
-			}
 			Dialog.prototype.destroy.apply(this, arguments);
 		},
 		renderer: DialogRenderer.render
@@ -82,5 +75,4 @@ sap.ui.define([
 	};
 
 	return AppVariantOverviewDialog;
-
-}, /* bExport= */ true);
+});

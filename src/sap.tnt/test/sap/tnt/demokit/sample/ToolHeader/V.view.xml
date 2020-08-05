@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.tnt.sample.ToolHeader.V"
+	controllerName="sap.tnt.sample.ToolHeader.C"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:tnt="sap.tnt"
@@ -10,58 +10,61 @@
 				<OverflowToolbarLayoutData priority="NeverOverflow" />
 			</layoutData>
 		</Button>
-		<ToolbarSpacer width="20px" />
-		<Button text="File" type="Transparent">
+		<MenuButton text="File" type="Transparent">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Low" />
 			</layoutData>
-		</Button>
-		<Button text="Edit" type="Transparent">
+		</MenuButton>
+		<MenuButton text="Edit" type="Transparent" enabled="false">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Low" />
 			</layoutData>
-		</Button>
-		<Button text="View" type="Transparent">
+		</MenuButton>
+		<MenuButton text="View" type="Transparent">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Low" />
 			</layoutData>
-		</Button>
-		<Button text="Navigate" type="Transparent">
+		</MenuButton>
+		<MenuButton text="Navigate" type="Transparent">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Low" />
 			</layoutData>
-		</Button>
-		<Button text="Code" type="Transparent">
+		</MenuButton>
+		<MenuButton text="Code" type="Transparent">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Low" />
 			</layoutData>
-		</Button>
-		<Button text="Refactor" type="Transparent">
+		</MenuButton>
+		<MenuButton text="Refactor" type="Transparent">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Low" />
 			</layoutData>
-		</Button>
-		<Button text="Run" type="Transparent">
+		</MenuButton>
+		<MenuButton text="Run" type="Transparent">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Low" />
 			</layoutData>
-		</Button>
-		<Button text="Tools" type="Transparent">
+		</MenuButton>
+		<MenuButton text="Tools" type="Transparent">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Low" />
 			</layoutData>
-		</Button>
+		</MenuButton>
 		<tnt:ToolHeaderUtilitySeparator />
 		<ToolbarSpacer>
 			<layoutData>
-				<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="20px" />
+				<OverflowToolbarLayoutData minWidth="20px" />
 			</layoutData>
 		</ToolbarSpacer>
-		<Button text="Alan Smith" type="Transparent" press="onUserNamePress">
+		<SearchField width="240px">
+		<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" />
+			</layoutData>
+		</SearchField>
+		<Button text="Alan Smith" type="Transparent" press=".onUserNamePress">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="NeverOverflow" />
 			</layoutData>
 		</Button>
-
 	</tnt:ToolHeader>
 </mvc:View>

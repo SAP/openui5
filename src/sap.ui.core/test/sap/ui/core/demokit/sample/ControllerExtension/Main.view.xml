@@ -1,0 +1,39 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	controllerName="sap.ui.core.sample.ControllerExtension.Main" height="100%">
+	<Toolbar>
+		<Text text="Simulate Changes:" />
+		<Button text="Add Changes" press=".addChanges" />
+		<Button text="Add Other Changes" press=".addOtherChanges" />
+		<Button text="Reset Changes" press=".resetChanges" />
+	</Toolbar>
+	<Table id="employeeTable" items="{/employees}">
+		<headerToolbar>
+			<Toolbar id="tableToolbar">
+				<Title id="toolbarTitle" />
+				<Button text="Sort by Salary" press=".reuse.onPress" />
+				<Button text="Filter" press=".onPrivateFilter" />
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column>
+				<Text text="Name" />
+			</Column>
+			<Column>
+				<Text text="Salary" />
+			</Column>
+			<Column>
+				<Text text="JobTitle" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<Text text="{Name}" />
+				<Text text="{Salary}" />
+				<Text text="{JobTitle}" />
+			</ColumnListItem>
+		</items>
+	</Table>
+
+
+</mvc:View>

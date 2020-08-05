@@ -1,9 +1,9 @@
 sap.ui.define([
-		'jquery.sap.global',
+		'sap/ui/core/syncStyleClass',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, JSONModel) {
+	], function(syncStyleClass, Fragment, Controller, JSONModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.ContainerPadding.Page", {
@@ -12,7 +12,7 @@ sap.ui.define([
 
 		onInit: function () {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 		},
 
@@ -29,7 +29,7 @@ sap.ui.define([
 			this.dialog.bindElement("/ProductCollection/0");
 
 			// toggle compact style
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this.dialog);
+			syncStyleClass("sapUiSizeCompact", this.getView(), this.dialog);
 			this.dialog.open();
 		},
 

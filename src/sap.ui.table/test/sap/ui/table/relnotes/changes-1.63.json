@@ -1,0 +1,40 @@
+{
+  "1.63.0": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "607485909726bb46cc5ae6c7bae9413f3c37d64b",
+        "type": "FIX",
+        "text": "Table: Avoid duplicate id issues for rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000245292019"
+          }
+        ]
+      },
+      {
+        "id": "19571b1707b466da422d47bfd8f72e937365abfd",
+        "type": "FIX",
+        "text": "Table: Fixed column layout corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970042745"
+          }
+        ]
+      },
+      {
+        "id": "aec4f87ee719a55f9e4f5c5fe5d38ef807c70afa",
+        "type": "FIX",
+        "text": "Table: Alignment of row actions if zoomed in Chrome corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970067932"
+          }
+        ]
+      }
+    ]
+  }
+}

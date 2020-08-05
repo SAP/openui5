@@ -1,7 +1,8 @@
-<View
+<mvc:View
 	xmlns="sap.m"
 	xmlns:layout="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
 	controllerName="sap.ui.core.sample.RoutingMasterDetail.routingApp.controller.Detail2">
 	<Page
 		title="{productName}"
@@ -10,9 +11,9 @@
 		<content>
 			<f:SimpleForm title="Product Details">
 				<f:content>
-					<Label text="Prduct ID"/>
+					<Label text="Product ID"/>
 					<Text text="{productId}" />
-					<Label text="Prduct Name"/>
+					<Label text="Product Name"/>
 					<Text text="{productName}" />
 				</f:content>
 			</f:SimpleForm>
@@ -23,4 +24,4 @@
 			</layout:VerticalLayout>
 		</content>
 	</Page>
-</View>
+</mvc:View>

@@ -1,0 +1,79 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.SelectValueState.Page"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page showHeader="false">
+		<content>
+			<HBox class="sapUiMediumMarginBottom">
+				<Label text="Error state"
+					labelFor="errorSelect"
+					class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+				<Select
+					id="errorSelect"
+					forceSelection="true"
+					selectedKey="{/SelectedProductErrorCollection}"
+					valueState="Error"
+					valueStateText="error value state text"
+					items="{
+						path: '/ErrorProductCollection',
+						sorter: { path: 'Name' }
+					}">
+					<core:Item key="{ProductId}" text="{Name}" />
+				</Select>
+			</HBox>
+			<HBox class="sapUiMediumMarginBottom">
+				<Label text="Warning state"
+					labelFor="warningSelect"
+					class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+				<Select
+					id="warningSelect"
+					forceSelection="true"
+					selectedKey="{/SelectedProductWarningCollection}"
+					valueState="Warning"
+					valueStateText="This is a Level 1 explanation. The items Lorem and Ipsum are not recommended from the system."
+					items="{
+						path: '/WarningProductCollection',
+						sorter: { path: 'Name' }
+					}">
+					<core:Item key="{ProductId}" text="{Name}" />
+				</Select>
+			</HBox>
+			<HBox class="sapUiMediumMarginBottom">
+				<Label text="Success state"
+					labelFor="successSelect"
+					class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+				<Select
+					id="successSelect"
+					forceSelection="true"
+					selectedKey="{/SelectedProductSuccessCollection}"
+					valueState="Success"
+					valueStateText="success value state text"
+					items="{
+						path: '/SuccessProductCollection',
+						sorter: { path: 'Name' }
+					}">
+					<core:Item key="{ProductId}" text="{Name}" />
+				</Select>
+			</HBox>
+			<HBox class="sapUiMediumMarginBottom">
+				<Label text="Information state"
+					labelFor="informationSelect"
+					class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+				<Select
+					id="informationSelect"
+					forceSelection="true"
+					selectedKey="{/SelectedProductInformationCollection}"
+					valueState="Information"
+					valueStateText="information value state text"
+					items="{
+						path: '/InformationProductCollection',
+						sorter: { path: 'Name' }
+					}">
+					<core:Item key="{ProductId}" text="{Name}" />
+				</Select>
+			</HBox>
+		</content>
+	</Page>
+</mvc:View>

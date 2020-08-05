@@ -1,0 +1,323 @@
+{
+	"sap.app": {
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"itemsContent": {
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "Request List Content Card",
+				"subTitle": "Card subtitle",
+				"icon": {
+					"src": "sap-icon://accept"
+				}
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/listContent/items.json"
+					}
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"label": "{{title_label}}",
+						"value": "{Name}"
+					},
+					"description": {
+						"label": "{{description_label}}",
+						"value": "{Description}"
+					},
+					"highlight": "{state}",
+					"info": {
+						"value": "{info}",
+						"state": "{infoState}"
+					}
+				}
+			}
+		}
+	},
+	"tasksContent": {
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "Department Budget State",
+				"subTitle": "2019",
+				"icon": {
+					"src": "sap-icon://collections-insight"
+				}
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/listContent/tasks.json"
+					},
+					"path": "/"
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"value": "{Name}"
+					},
+					"info": {
+						"value": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Exceeded' : 'In Range' }",
+						"state": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Error' : 'Success' }"
+					}
+				}
+			}
+		}
+	},
+	"paramsListCard": {
+		"sap.card": {
+			"configuration": {
+				"parameters": {
+					"city": {},
+					"country": {
+						"value": ""
+					}
+				}
+			},
+			"type": "List",
+			"header": {
+				"title": "Params List Card Example"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/someitems.json"
+					}
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"label": "{{title_label}}",
+						"value": "{Name}, {{parameters.TODAY_ISO}}"
+					},
+					"description": {
+						"value": "Stationed in: {{parameters.city}}, {{parameters.country}}"
+					},
+					"highlight": "{state}"
+				}
+			}
+		}
+	},
+	"paramsDefaultParamFromManifest": {
+		"sap.card": {
+			"configuration": {
+				"parameters": {
+					"city": {},
+					"country": {
+						"value": "Bulgaria"
+					}
+				}
+			},
+			"type": "List",
+			"header": {
+				"title": "Parameters Example",
+				"subTitle": "Default parameter from manifest and one set trough parameters property"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/someitems.json"
+					}
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"label": "{{title_label}}",
+						"value": "{Name}, {{parameters.TODAY_ISO}}"
+					},
+					"description": {
+						"value": "Stationed in: {{parameters.city}}, {{parameters.country}}"
+					},
+					"highlight": "{state}"
+				}
+			}
+		}
+	},
+	"paramsDefaultParamFromManifestOverwrite": {
+		"sap.card": {
+			"configuration": {
+				"parameters": {
+					"city": {
+						"value": "Sofia"
+					},
+					"country": {
+						"value": "Bulgaria"
+					}
+				}
+			},
+			"type": "List",
+			"header": {
+				"title": "Parameters Example",
+				"subTitle": "Overwriting parameters from manifest"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/someitems.json"
+					}
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"label": "{{title_label}}",
+						"value": "{Name}, {{parameters.TODAY_ISO}}"
+					},
+					"description": {
+						"value": "Stationed in: {{parameters.city}}, {{parameters.country}}"
+					},
+					"highlight": "{state}"
+				}
+			}
+		}
+	},
+	"paramsInRequest": {
+		"sap.card": {
+			"configuration": {
+				"parameters": {
+					"city": {
+						"value": ""
+					}
+				}
+			},
+			"type": "List",
+			"header": {
+				"title": "Request Parameters Using Weather App",
+				"subTitle": "Making a request based on passed parameter - requesting a weather information passing city as a parameter"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "http://api.apixu.com/v1/current.json?key=4fbdcdb5a8c24190bc3145021191302&q={{parameters.city}}"
+					}
+				},
+				"item": {
+					"icon": {
+						"src": "{/current/condition/icon}"
+					},
+					"title": {
+						"value": "{/location/name}"
+					},
+					"description": {
+						"value": "{/current/condition/text}"
+					}
+				}
+			}
+		}
+	},
+	"card14": {
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "List Card",
+				"subTitle": "With static list items",
+				"icon": {
+					"src": "sap-icon://business-objects-experience"
+				},
+				"status": {
+					"text": "5 of 17"
+				}
+			},
+			"content": {
+				"items": [
+					{
+						"title": "Laurent Dubois",
+						"icon": "./images/Elena_Petrova.png",
+						"description": "I am Laurent. I put great attention to detail.",
+						"infoState": "Error",
+						"info": "Manager",
+						"highlight": "Success",
+						"action": {
+							"url": "https://www.sap.com"
+						}
+					},
+					{
+						"title": "Alain Chevalier",
+						"icon": "./images/Alain_Chevalier.png",
+						"description": "I am Alain. I put great attention to detail.",
+						"infoState": "Success",
+						"info": "Credit Analyst",
+						"highlight": "Error"
+					},
+					{
+						"title": "Alain Chevalier",
+						"icon": "./images/Monique_Legrand.png",
+						"description": "I am Alain. I put great attention to detail.",
+						"infoState": "Information",
+						"info": "Configuration Expert",
+						"highlight": "Information"
+					},
+					{
+						"title": "Alain Chevalier",
+						"icon": "./images/Alain_Chevalier.png",
+						"description": "I am Alain. I put great attention to detail.",
+						"highlight": "Warning"
+					},
+					{
+						"title": "Laurent Dubois",
+						"icon": "./images/Elena_Petrova.png",
+						"description": "I am Laurent. I put great attention to detail.",
+						"infoState": "Error",
+						"info": "Manager",
+						"highlight": "Success",
+						"action": {
+							"url": "https://www.sap.com"
+						}
+					}
+				]
+			}
+		}
+	},
+	"paramsInManifestOnly": {
+		"sap.card": {
+			"configuration": {
+				"parameters": {
+					"city": {
+						"value": "Vratza"
+					},
+					"country": {
+						"value": "Bulgaria"
+					}
+				}
+			},
+			"type": "List",
+			"header": {
+				"title": "Default Manifest Parameters",
+				"subTitle": "Default parameter from manifest"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/someitems.json"
+					}
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"label": "{{title_label}}",
+						"value": "{Name}, {{parameters.TODAY_ISO}}"
+					},
+					"description": {
+						"value": "Stationed in: {{parameters.city}}, {{parameters.country}}"
+					},
+					"highlight": "{state}"
+				}
+			}
+		}
+	}
+}

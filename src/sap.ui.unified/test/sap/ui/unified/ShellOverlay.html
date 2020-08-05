@@ -15,9 +15,10 @@
 	<script>
 		var oShell = new sap.ui.unified.Shell({
 			icon: sLogo,
-			headerHiding: true,
+			headerHiding: false,
 			search: createTestSearchField("sf", function(oEvent){
-					oOverlay.open();
+				oSearchField.setValue(oEvent.getParameter("query"));
+				oOverlay.open();
 			}),
 			content: [new sap.m.Text({text: window.sLorem})],
 			headItems: [new sap.ui.unified.ShellHeadItem({
@@ -54,7 +55,7 @@
 
 		var oSearchField = createTestSearchField("sf2");
 		oSearchField.addAriaLabelledBy("OverlySearch");
-		
+
 		var oOverlayContent = new sap.m.Page({
 			showHeader: false,
 			content: [new sap.m.Button({text: "Some Button"}), new sap.m.Text({text: window.sLorem})]
@@ -63,6 +64,7 @@
 			search: oSearchField,
 			content: [oOverlayContent],
 			closed: function(){
+				oShell.getSearch().setValue(oSearchField.getValue());
 				jQuery.sap.log.warning("ShellOverlay was closed - some cleanup can be done ...");
 			},
 			shell: oShell,
@@ -76,7 +78,7 @@
 		(new sap.ui.core.InvisibleText("OverlySearch", {text: "Search"})).toStatic();
 	</script>
 </head>
-<body class="sapUiBody" role="application">
+<body class="sapUiBody">
 	<div id="content"></div>
 </body>
 </html>

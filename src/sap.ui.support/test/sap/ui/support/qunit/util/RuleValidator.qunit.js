@@ -1,8 +1,9 @@
 /*global QUnit*/
 
-sap.ui.require([
-	'sap/ui/support/supportRules/util/RuleValidator'
-], function (RuleValidator) {
+sap.ui.define([
+	"sap/ui/VersionInfo",
+	"sap/ui/support/supportRules/util/RuleValidator"
+], function (VersionInfo, RuleValidator) {
 		"use strict";
 
 		var Audiences = sap.ui.support.Audiences,
@@ -29,7 +30,7 @@ sap.ui.require([
 		}
 
 		QUnit.module("RuleValidator - positive case", {
-			setup: function () {
+			beforeEach: function () {
 				this.libs = [
 					'sap.m',
 					'sap.ui.table',
@@ -44,7 +45,7 @@ sap.ui.require([
 				];
 				this.oRuleValidator = RuleValidator;
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.libs = null;
 				this.oRuleValidator = null;
 			}
@@ -52,9 +53,8 @@ sap.ui.require([
 
 		QUnit.test("validateVersion", function (assert) {
 			//arrange
+			var done = assert.async();
 			var oRule = fnCreateRule();
-
-			//act - //assert
 
 			//must work with "-"
 			oRule.minversion = "-";
@@ -66,13 +66,17 @@ sap.ui.require([
 
 			assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following character : '*' ");
 
-			//must work with valid version of UI5
-			oRule.minversion = sap.ui.getVersionInfo().version.match(/\d\.\d\d/)[0];
+			// Workaround: get the version of the framework by using the core library's version.
+			VersionInfo.load({ library: "sap.ui.core"}).then(function (oCoreLibInfo) {
 
-			assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following pattern of digits <digit>.<digit><digit>");
+				//must work with valid version of UI5
+				oRule.minversion = oCoreLibInfo.version.match(/\d\.\d\d/)[0];
+				assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following pattern of digits <digit>.<digit><digit>");
 
+				oRule = null;
 
-			oRule = null;
+				done();
+			}.bind(this));
 		});
 
 		QUnit.test("validateRuleCollection", function (assert) {
@@ -116,7 +120,7 @@ sap.ui.require([
 		});
 
 		QUnit.module("RuleValidator - should fail", {
-			setup: function () {
+			beforeEach: function () {
 				this.libs = [
 					'sap.m',
 					'sap.ui.table',
@@ -131,7 +135,7 @@ sap.ui.require([
 				];
 				this.oRuleValidator = RuleValidator;
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.libs = null;
 				this.oRuleValidator = null;
 			}

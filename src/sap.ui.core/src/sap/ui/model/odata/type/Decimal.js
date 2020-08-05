@@ -3,18 +3,20 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/format/NumberFormat',
-	'sap/ui/model/FormatException',
+	"sap/base/Log",
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/ODataUtils",
-	'sap/ui/model/odata/type/ODataType',
-	'sap/ui/model/ParseException',
-	'sap/ui/model/ValidateException'
-], function(jQuery, NumberFormat, FormatException, BaseODataUtils, ODataType, ParseException,
-		ValidateException) {
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/thirdparty/jquery"
+], function (Log, NumberFormat, FormatException, ParseException, ValidateException, BaseODataUtils,
+		ODataType, jQuery) {
 	"use strict";
 
-	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/;
+	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/,
+		rTrailingZeroes = /(?:(\.[0-9]*[1-9]+)0+|\.0*)$/;
 
 	/**
 	 * Returns the formatter. Creates it lazily.
@@ -69,6 +71,21 @@ sap.ui.define([
 	}
 
 	/**
+	 * Removes trailing zeroes after the decimal point from the given value; in case there are only
+	 * zeroes after the decimal point, also removes the decimal point.
+	 *
+	 * @param {string} sValue The value, e.g. "1.000"
+	 * @returns {string} The value without trailing zeroes, e.g. "1"
+	 */
+	function removeTrailingZeroes(sValue) {
+		if (sValue.indexOf(".") >= 0) {
+			sValue = sValue.replace(rTrailingZeroes, "$1");
+		}
+
+		return sValue;
+	}
+
+	/**
 	 * Sets the constraints.
 	 *
 	 * @param {sap.ui.model.odata.type.Decimal} oType
@@ -80,11 +97,11 @@ sap.ui.define([
 		var vNullable, iPrecision, vPrecision, iScale, vScale;
 
 		function logWarning(vValue, sName) {
-			jQuery.sap.log.warning("Illegal " + sName + ": " + vValue, null, oType.getName());
+			Log.warning("Illegal " + sName + ": " + vValue, null, oType.getName());
 		}
 
 		function validateInt(vValue, iDefault, iMinimum, sName) {
-			var iValue = typeof vValue === "string" ? parseInt(vValue, 10) : vValue;
+			var iValue = typeof vValue === "string" ? parseInt(vValue) : vValue;
 
 			if (iValue === undefined) {
 				return iDefault;
@@ -140,7 +157,7 @@ sap.ui.define([
 			iScale = vScale === "variable" ? Infinity : validateInt(vScale, 0, 0, "scale");
 			iPrecision = validateInt(vPrecision, Infinity, 1, "precision");
 			if (iScale !== Infinity && iPrecision <= iScale) {
-				jQuery.sap.log.warning("Illegal scale: must be less than precision (precision="
+				Log.warning("Illegal scale: must be less than precision (precision="
 					+ vPrecision + ", scale=" + vScale + ")", null, oType.getName());
 				iScale = Infinity; // "variable"
 			}
@@ -238,7 +255,7 @@ sap.ui.define([
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
-	Decimal.prototype.formatValue = function(sValue, sTargetType) {
+	Decimal.prototype.formatValue = function (sValue, sTargetType) {
 		if (sValue === null || sValue === undefined) {
 			return null;
 		}
@@ -250,7 +267,7 @@ sap.ui.define([
 		case "int":
 			return Math.floor(parseFloat(sValue));
 		case "string":
-			return getFormatter(this).format(sValue);
+			return getFormatter(this).format(removeTrailingZeroes(String(sValue)));
 		default:
 			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);
@@ -276,7 +293,7 @@ sap.ui.define([
 	 *   Decimal
 	 * @public
 	 */
-	Decimal.prototype.parseValue = function(vValue, sSourceType) {
+	Decimal.prototype.parseValue = function (vValue, sSourceType) {
 		var sResult;
 
 		if (vValue === null || vValue === "") {
@@ -290,9 +307,7 @@ sap.ui.define([
 					.getText("EnterNumber"));
 			}
 			// NumberFormat.parse does not remove trailing decimal zeroes and separator
-			if (sResult.indexOf(".") >= 0) {
-				sResult = sResult.replace(/0+$/, "").replace(/\.$/, "");
-			}
+			sResult = removeTrailingZeroes(sResult);
 			break;
 		case "int":
 		case "float":
@@ -323,7 +338,6 @@ sap.ui.define([
 	 *
 	 * @param {string} sValue
 	 *   the value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 */
@@ -362,8 +376,11 @@ sap.ui.define([
 				throw new ValidateException(getText("EnterNumberPrecision", [iPrecision]));
 			}
 		} else if (iIntegerDigits > iPrecision - iScale) {
-			throw new ValidateException(getText("EnterNumberInteger",
-				[iPrecision - iScale]));
+			if (iScale) {
+				throw new ValidateException(getText("EnterNumberInteger", [iPrecision - iScale]));
+			} else {
+				throw new ValidateException(getText("EnterMaximumOfDigits", [iPrecision]));
+			}
 		}
 		if (sMinimum) {
 			bMinimumExclusive = this.oConstraints.minimumExclusive;

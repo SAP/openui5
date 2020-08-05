@@ -1,0 +1,29 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "63bac8a6055ead18c0ac2adc5aae117f9c118375",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Updated samples for Parameters and Manifest Parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080139817"
+          }
+        ]
+      },
+      {
+        "id": "d9013ef6f665e6ad91ae233c0db08a88cfd9b1b6",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Fixed binding of type email",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080131506"
+          }
+        ]
+      }
+    ]
+  }
+}

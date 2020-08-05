@@ -18,4 +18,4 @@ sap.ui.define(["sap/ui/core/library", 'sap/uxap/BlockBase'], function (coreLibra
 		}
 	});
 	return GoalsBlock;
-}, true);
+});

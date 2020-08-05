@@ -1,14 +1,22 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/MessageToast',
-		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller'
-	], function(jQuery, MessageToast, Fragment, Controller) {
+	"sap/ui/thirdparty/jquery",
+	"sap/m/MessageToast",
+	"sap/ui/core/mvc/Controller",
+	"sap/base/Log",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device"
+], function (jQuery, MessageToast, Controller, Log, JSONModel, Device) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.SplitContainer.C", {
+	return Controller.extend("sap.m.sample.SplitContainer.C", {
 
-		onAfterRendering: function() {
+		onInit: function() {
+			var oDeviceModel = new JSONModel(Device);
+			oDeviceModel.setDefaultBindingMode("OneWay");
+			this.getView().setModel(oDeviceModel, "device");
+		},
+
+		onAfterRendering: function () {
 			var oSplitCont = this.getSplitContObj(),
 				ref = oSplitCont.getDomRef() && oSplitCont.getDomRef().parentNode;
 			// set all parent elements to 100% height, this should be done by app developer, but just in case
@@ -27,46 +35,42 @@ sap.ui.define([
 			}
 		},
 
-		onPressNavToDetail : function() {
+		onPressNavToDetail: function () {
 			this.getSplitContObj().to(this.createId("detailDetail"));
 		},
 
-		onPressDetailBack : function() {
+		onPressDetailBack: function () {
 			this.getSplitContObj().backDetail();
 		},
 
-		onPressMasterBack : function() {
+		onPressMasterBack: function () {
 			this.getSplitContObj().backMaster();
 		},
 
-		onPressGoToMaster : function() {
+		onPressGoToMaster: function () {
 			this.getSplitContObj().toMaster(this.createId("master2"));
 		},
 
-		onListItemPress : function(oEvent) {
+		onListItemPress: function (oEvent) {
 			var sToPageId = oEvent.getParameter("listItem").getCustomData()[0].getValue();
 
 			this.getSplitContObj().toDetail(this.createId(sToPageId));
 		},
 
-		onPressModeBtn : function(oEvent) {
+		onPressModeBtn: function (oEvent) {
 			var sSplitAppMode = oEvent.getSource().getSelectedButton().getCustomData()[0].getValue();
 
 			this.getSplitContObj().setMode(sSplitAppMode);
-			MessageToast.show("Split Container mode is changed to: " + sSplitAppMode, {duration: 5000});
+			MessageToast.show("Split Container mode is changed to: " + sSplitAppMode, { duration: 5000 });
 		},
 
-		getSplitContObj : function() {
+		getSplitContObj: function () {
 			var result = this.byId("SplitContDemo");
 			if (!result) {
-				jQuery.sap.log.error("SplitApp object can't be found");
+				Log.error("SplitApp object can't be found");
 			}
 			return result;
 		}
 
 	});
-
-
-	return CController;
-
 });

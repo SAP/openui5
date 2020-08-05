@@ -3,8 +3,14 @@
  */
 
 // Provides the XML model implementation of a list binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/ClientListBinding'],
-	function(jQuery, ChangeReason, ClientListBinding) {
+sap.ui.define([
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/ClientListBinding',
+	"sap/ui/util/XMLHelper",
+	"sap/base/util/deepEqual",
+	"sap/base/util/each"
+],
+	function(ChangeReason, ClientListBinding, XMLHelper, deepEqual, each) {
 	"use strict";
 
 
@@ -55,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 
 			//Check diff
 			if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
-				aContexts.diff = jQuery.sap.arraySymbolDiff(this.aLastContextData, aContextData);
+				aContexts.diff = this.diffData(this.aLastContextData, aContextData);
 			}
 
 			this.iLastEndIndex = iStartIndex + iLength;
@@ -81,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @private
 	 */
 	XMLListBinding.prototype.getEntryData = function(oContext) {
-		return jQuery.sap.serializeXML(oContext.getObject());
+		return XMLHelper.serialize(oContext.getObject());
 	};
 
 	/**
@@ -94,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			this.oList = [];
 			var that = this;
 			if (this.bUseExtendedChangeDetection) {
-				jQuery.each(oList, function(sKey, oNode) {
+				each(oList, function(sKey, oNode) {
 					that.oList.push(oNode.cloneNode(true));
 				});
 			} else {
@@ -141,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			if (this.oList.length != oList.length) {
 				bChangeDetected = true;
 			}
-			if (!jQuery.sap.equal(this.oList, oList)) {
+			if (!deepEqual(this.oList, oList)) {
 				this.update();
 			}
 
@@ -151,7 +157,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 				if (this.aLastContexts.length != aContexts.length) {
 					bChangeDetected = true;
 				} else {
-					jQuery.each(this.aLastContextData, function(iIndex, oLastData) {
+					each(this.aLastContextData, function(iIndex, oLastData) {
 						var oCurrentData = that.getContextData(aContexts[iIndex]);
 						if (oCurrentData !== oLastData) {
 							bChangeDetected = true;

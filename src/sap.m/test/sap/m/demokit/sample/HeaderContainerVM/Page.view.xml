@@ -6,7 +6,7 @@
 	<HeaderContainer scrollStep="124" scrollTime="500" orientation="Vertical" height="400px">
 		<NumericContent size="S" scale="M" value="1.75" valueColor="Good" indicator="Up" press="press" />
 		<NumericContent size="S" scale="M" value="0.57" valueColor="Error" indicator="Down" press="press" />
-		<NumericContent size="S" scale="M" value="1.04" valueColor="Normal" indicator="Up" press="press" />
+		<NumericContent size="S" scale="M" value="1.04" valueColor="Neutral" indicator="Up" press="press" />
 		<NumericContent size="S" scale="M" value="3.65" valueColor="Good" indicator="Up" press="press" />
 		<NumericContent size="S" scale="M" value="0.73" valueColor="Error" indicator="Down" press="press" />
 		<NumericContent size="S" scale="M" value="1.01" valueColor="Critical" indicator="Down" press="press" />

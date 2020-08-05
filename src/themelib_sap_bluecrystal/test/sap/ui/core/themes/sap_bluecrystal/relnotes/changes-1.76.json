@@ -1,0 +1,24 @@
+{
+  "1.76.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "75ad162380400ced80dcd24ce7b542ed87222a6f",
+        "type": "FIX",
+        "text": " Indication Color Fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070006509"
+          }
+        ]
+      },
+      {
+        "id": "50c6ab6dc4884c4cf1da993e95fbac2ee8e047e0",
+        "type": "FEATURE",
+        "text": " core.Icon: 3 new sematic colors (NonInteractive, Tile, Marker)",
+        "references": []
+      }
+    ]
+  }
+}

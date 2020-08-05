@@ -1,0 +1,19 @@
+{
+  "1.64.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "49528d10ffd8f146146675035f611feb43d26621",
+        "type": "FEATURE",
+        "text": "sap.ui.core: integrated es6-shim to allow restricted ES6 API",
+        "references": []
+      },
+      {
+        "id": "3960720ed62b23049ad5b6344033ba7c6492a939",
+        "type": "FIX",
+        "text": "es6-shim: include es6-promise polyfill for Edge (17)",
+        "references": []
+      }
+    ]
+  }
+}

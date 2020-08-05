@@ -10,34 +10,26 @@
 				data-sap-ui-preload="async"
 				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.ui.dt,sap.m"
-				data-sap-ui-resourceroots='{"dt": "./"}'
 				src="../../../../../../resources/sap-ui-core.js">
 		</script>
 		<script>
 
 			sap.ui.getCore().attachInit(function () {
 				sap.ui.require([
-					"sap/ui/dt/test/Element",
-					'sap/ui/dt/DesignTime',
-					'sap/ui/dt/test/report/Table',
-					'sap/ui/dt/test/report/Statistic',
-					'sap/ui/dt/test/ElementEnablementTest',
-					'sap/ui/dt/test/LibraryEnablementTest',
-					'dt/HorizontalLayout',
-					'dt/VerticalLayout'
-				], function (TestElement, DesignTime, Table, Statistic, ElementEnablementTest, LibraryEnablementTest, HorizontalLayout, VerticalLayout) {
-
-
-					var oLibraryEnablementTest = new LibraryEnablementTest({
-						libraryName : "sap.ui.layout",
-						testData : {
-							"sap.ui.layout.VerticalLayout" : VerticalLayout,
-							"sap.ui.layout.HorizontalLayout" : HorizontalLayout
-						}
+					'sap/ui/dt/enablement/report/Table',
+					'sap/ui/dt/enablement/report/Statistic',
+					'sap/ui/dt/enablement/report/LibraryReport'
+				], function (
+					Table,
+					Statistic,
+					LibraryReport
+				) {
+					var oLibraryReport = new LibraryReport({
+						libraryName : "sap.ui.layout"
 					});
 
-					oLibraryEnablementTest.run().then(function(oData) {
-						oStatisticReport = new Statistic({
+					oLibraryReport.run().then(function (oData) {
+						var oStatisticReport = new Statistic({
 							data: oData
 						});
 						oStatisticReport.placeAt("content");

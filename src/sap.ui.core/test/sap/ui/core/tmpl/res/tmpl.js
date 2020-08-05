@@ -1,4 +1,5 @@
 (function() {
+	"use strict";
 
 	jQuery(function() {
 
@@ -11,9 +12,9 @@
 					this.$().css({
 						"outline": "0 dotted red"
 					}).animate({
-				    	"outlineWidth": "5px"
+						"outlineWidth": "5px"
 					}, 750).animate({
-				    	"outlineWidth": "0"
+						"outlineWidth": "0"
 					}, 750);
 				}
 			}, this);
@@ -34,4 +35,4 @@
 
 	});
 
-}())
+}());

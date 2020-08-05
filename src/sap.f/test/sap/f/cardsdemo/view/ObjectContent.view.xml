@@ -1,0 +1,52 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.ObjectContent">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Object Content Card" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<SegmentedButton
+			selectedKey="cozy"
+			selectionChange=".onFormFactorChange"
+			class="VizTestDensityBtn sapUiSmallMargin">
+			<items>
+				<SegmentedButtonItem text="Cozy" key="cozy"/>
+				<SegmentedButtonItem text="Compact" key="compact" />
+			</items>
+		</SegmentedButton>
+
+		<Panel>
+			<w:Card
+				id="card1"
+				manifest="./cardsdemo/cardcontent/objectcontent/datahandling_manifest.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
+				manifest="./cardsdemo/cardcontent/objectcontent/manifest.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
+				manifest="./cardsdemo/cardcontent/objectcontent/manifest.json"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				manifest="./cardsdemo/cardcontent/objectcontent/manifest.json"
+				width="400px"
+				height="275px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="card2"
+				manifest="./cardsdemo/cardcontent/objectcontent/staticData.json" 
+				width="auto"
+				class="sapUiTinyMargin" />
+		</Panel>
+	</Page>
+</mvc:View>

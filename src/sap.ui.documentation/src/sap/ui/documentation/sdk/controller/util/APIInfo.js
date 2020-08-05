@@ -3,8 +3,10 @@
  */
 
 // Provides reuse functionality for reading documentation from api.json files (as created by the UI5 JSDoc3 template/plugin)
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/thirdparty/jquery",
+		"sap/base/Log",
+		"sap/ui/documentation/sdk/util/Resources"],
+	function(jQuery, Log, ResourcesUtil) {
 		"use strict";
 
 		/**
@@ -13,12 +15,6 @@ sap.ui.define(['jquery.sap.global'],
 		var sTestResourcesRoot;
 
 		var oLibraryDataCache = {};
-		var oAllLibrariesPromise = null;
-
-		// Libraries that should be ommitted from the tree
-		var LIBRARIES_BLACK_LIST = ["sap.ui.demokit", "sap.ui.documentation"];
-		// Libraries that start with these prefixes should be ommitted from the tree
-		var LIBRARY_PREFIXES_BLACK_LIST = ["themelib_"];
 
 		function getIndexJsonPromise() {
 
@@ -29,7 +25,7 @@ sap.ui.define(['jquery.sap.global'],
 			return new Promise(function (resolve, reject) {
 				jQuery.ajax({
 					async: true,
-					url : "./docs/api/api-index.json",
+					url : ResourcesUtil.getResourceOriginPath("/docs/api/api-index.json"),
 					dataType : 'json',
 					success : function(vResponse) {
 						var aResult = vResponse.symbols || [];
@@ -37,9 +33,21 @@ sap.ui.define(['jquery.sap.global'],
 						resolve(aResult);
 					},
 					error : function () {
-						jQuery.sap.log.error("failed to load api-index.json");
-						oLibraryDataCache["index"] = [];
-						resolve([]);
+						jQuery.ajax({
+							async: true,
+							url : ResourcesUtil.getResourceOriginPath("../../../../../../docs/api/api-index.json"),
+							dataType : 'json',
+							success : function(vResponse) {
+								var aResult = vResponse.symbols || [];
+								oLibraryDataCache["index"] = aResult;
+								resolve(aResult);
+							},
+							error : function () {
+								Log.error("failed to load api-index.json");
+								oLibraryDataCache["index"] = [];
+								resolve([]);
+							}
+						});
 					}
 				});
 			});
@@ -54,7 +62,7 @@ sap.ui.define(['jquery.sap.global'],
 			return new Promise(function (resolve, reject) {
 				jQuery.ajax({
 					async: true,
-					url : "./docs/api/api-index-deprecated.json",
+					url : ResourcesUtil.getResourceOriginPath("/docs/api/api-index-deprecated.json"),
 					dataType : 'json',
 					success : function(vResponse) {
 						oLibraryDataCache["deprecated"] = vResponse;
@@ -77,7 +85,7 @@ sap.ui.define(['jquery.sap.global'],
 			return new Promise(function (resolve, reject) {
 				jQuery.ajax({
 					async: true,
-					url : "./docs/api/api-index-experimental.json",
+					url : ResourcesUtil.getResourceOriginPath("/docs/api/api-index-experimental.json"),
 					dataType : 'json',
 					success : function(vResponse) {
 						oLibraryDataCache["experimental"] = vResponse;
@@ -91,33 +99,27 @@ sap.ui.define(['jquery.sap.global'],
 
 		}
 
-		function getLibraryElementsJSONSync(sLibraryName) {
-			var oResponse = [];
+		function getSincePromise() {
 
-			if ( !sLibraryName ) {
-				return oResponse;
+			if (oLibraryDataCache["since"]) {
+				return Promise.resolve(oLibraryDataCache["since"]);
 			}
 
-			if (oLibraryDataCache[sLibraryName]) {
-				return oLibraryDataCache[sLibraryName];
-			}
-
-			jQuery.ajax({
-				async: false,
-				url : sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/apiref/api.json',
-				dataType : 'json',
-				success : function(vResponse) {
-					oResponse = vResponse.symbols;
-				},
-				error : function () {
-					oResponse = [];
-					jQuery.sap.log.error("failed to load api.json for: " + sLibraryName);
-				}
+			return new Promise(function (resolve, reject) {
+				jQuery.ajax({
+					async: true,
+					url : ResourcesUtil.getResourceOriginPath("/docs/api/api-index-since.json"),
+					dataType : 'json',
+					success : function(vResponse) {
+						oLibraryDataCache["since"] = vResponse;
+						resolve(vResponse);
+					},
+					error : function () {
+						reject();
+					}
+				});
 			});
 
-			oLibraryDataCache[sLibraryName] = oResponse;
-
-			return oResponse;
 		}
 
 		function getLibraryElementsJSONPromise(sLibraryName) {
@@ -135,7 +137,7 @@ sap.ui.define(['jquery.sap.global'],
 				// Fetch library data, then cache it no matter the result
 				jQuery.ajax({
 					async: true,
-					url : sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/apiref/api.json',
+					url : ResourcesUtil.getResourceOriginPath(sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/apiref/api.json'),
 					dataType : 'json',
 					success : function(vResponse) {
 						var aResult = vResponse.symbols || [];
@@ -143,7 +145,7 @@ sap.ui.define(['jquery.sap.global'],
 						resolve(aResult);
 					},
 					error : function (err) {
-						jQuery.sap.log.error("failed to load api.json for: " + sLibraryName);
+						Log.error("failed to load api.json for: " + sLibraryName);
 						oLibraryDataCache[sLibraryName] = [];
 						resolve([]);
 					}
@@ -152,35 +154,8 @@ sap.ui.define(['jquery.sap.global'],
 
 		}
 
-		function isLibraryAllowed(oLibrary) {
-			var bIsBlacklisted = LIBRARIES_BLACK_LIST.indexOf(oLibrary.name) !== -1;
-			var bStartsWithBlacklistedPrefix = LIBRARY_PREFIXES_BLACK_LIST.some(function (sPrefix) {
-				return oLibrary.name.indexOf(sPrefix) === 0;
-			});
-
-			return !bIsBlacklisted && !bStartsWithBlacklistedPrefix;
-		}
-
-		function getAllLibrariesElementsJSONPromise(aLibraries) {
-			if (oAllLibrariesPromise) {
-				return oAllLibrariesPromise;
-			}
-
-			aLibraries = aLibraries || sap.ui.getVersionInfo().libraries || [];
-			aLibraries = aLibraries.filter(isLibraryAllowed);
-
-			// Get a list of promises for each library (these never reject, but can resolve with an empty array)
-			var aPromises = aLibraries.map(function (oLibrary) {
-				return getLibraryElementsJSONPromise(oLibrary.name);
-			});
-
-			oAllLibrariesPromise = Promise.all(aPromises);
-
-			return oAllLibrariesPromise;
-		}
-
 		function setRoot(sRoot) {
-			sRoot = sRoot == null ? jQuery.sap.getModulePath('', '/') + '../test-resources/' : sRoot;
+			sRoot = sRoot == null ? sap.ui.require.toUrl("") + "/" + '../test-resources/' : sRoot;
 			if ( sRoot.slice(-1) != '/' ) {
 				sRoot += '/';
 			}
@@ -194,9 +169,8 @@ sap.ui.define(['jquery.sap.global'],
 			getIndexJsonPromise: getIndexJsonPromise,
 			getDeprecatedPromise: getDeprecatedPromise,
 			getExperimentalPromise: getExperimentalPromise,
-			getLibraryElementsJSONSync : getLibraryElementsJSONSync,
-			getLibraryElementsJSONPromise: getLibraryElementsJSONPromise,
-			getAllLibrariesElementsJSONPromise: getAllLibrariesElementsJSONPromise
+			getSincePromise: getSincePromise,
+			getLibraryElementsJSONPromise: getLibraryElementsJSONPromise
 		};
 
 	});

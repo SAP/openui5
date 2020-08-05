@@ -1,11 +1,11 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/m/MessageToast'],
+	function(Controller, MessageToast) {
 	"use strict";
 
 	return Controller.extend("samples.components.sample.views.Products", {
 
 		onShowPress: function(oEvent) {
-			alert(oEvent.getSource().getText());
+			MessageToast.show(oEvent.getSource().getText());
 		}
 
 	});

@@ -1,25 +1,24 @@
-(function () {
+sap.ui.define([
+	"sap/m/Image",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function(
+	Image,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest",
-		"sap/m/Image",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, Image, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
 			type: "sap.m.Image",
 			create: function () {
 				return new Image();
 			}
 		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
+	})
+	.then(function() {
 		// Remove and reveal actions
 		var fnConfirmImageIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("myImage").getVisible(), false, "then the Image element is invisible");
@@ -29,7 +28,7 @@
 			assert.strictEqual(oViewAfterAction.byId("myImage").getVisible(), true, "then the Image element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for Image", {
+		elementActionTest("Checking the remove action for Image", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 			'<Image id="myImage" src="../../images/SAPUI5.png" width="100px"/>' +
 			'</mvc:View>'
@@ -43,7 +42,7 @@
 			afterRedo: fnConfirmImageIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a Image", {
+		elementActionTest("Checking the reveal action for a Image", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 			'<Image id="myImage" src="../../images/SAPUI5.png" width="100px" visible="false"/>' +
 			'</mvc:View>'
@@ -57,4 +56,4 @@
 			afterRedo: fnConfirmImageIsVisible
 		});
 	});
-})();
+});

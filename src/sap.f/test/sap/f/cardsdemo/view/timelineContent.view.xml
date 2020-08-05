@@ -1,0 +1,29 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:w="sap.ui.integration.widgets"
+		displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Timeline Content Card "/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+			<Panel>
+				<VBox>
+					<HBox>
+						<w:Card id="timeline" class="sapUiMediumMargin" manifest="{manifests>/timelineContent/card0}" width="300px" height="auto"/>
+						<w:Card id="timeline1" class="sapUiMediumMargin" manifest="{manifests>/timelineContent/card1}" width="300px" height="auto"/>
+						<w:Card id="timelineStaticContent" class="sapUiMediumMargin" manifest="{manifests>/timelineContent/cardStatic}" width="300px" height="auto"/>
+					</HBox>
+				</VBox>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

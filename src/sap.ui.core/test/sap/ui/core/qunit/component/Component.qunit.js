@@ -2,39 +2,36 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
+	'sap/ui/core/UIComponent',
 	'sap/ui/core/UIComponentMetadata',
 	'samples/components/loadfromfile/Component',
 	'samples/components/routing/Component',
-	'samples/components/routing/RouterExtension'
-], function(jQuery, Component, ComponentContainer, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension) {
+	'samples/components/routing/RouterExtension',
+	'sap/ui/thirdparty/URI',
+	'sap/ui/base/ManagedObjectRegistry',
+	'sap/base/Log',
+	'sap/ui/core/Manifest',
+	'sap/base/i18n/ResourceBundle'
+], function (jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension, URI, ManagedObjectRegistry, Log, Manifest, ResourceBundle) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
 
-	var oCompCont1 = new ComponentContainer("CompCont1", {
-		name: "samples.components.button",
-		id: "myButton",
-		settings: {
-			text: "Text changed through settings",
-			componentData: {
-				"foo": "bar"
-			}
-		}
-	});
-	oCompCont1.placeAt("comparea1");
+	function cleanUpRegistry() {
+		Component.registry.forEach(function(oComponent) {
+			oComponent.destroy();
+		});
+	}
 
-	var oComp = sap.ui.getCore().createComponent({
-		name: "samples.components.verticalLayout",
-		id: "vLayout",
-		componentData: {
-			"foo": "bar"
-		}
-	});
+	// create necessary DOM fixture
+	function appendDIV(id) {
+		var div = document.createElement("div");
+		div.id = id;
+		document.body.appendChild(div);
+	}
 
-	var oCompCont = new ComponentContainer("ContVLayout", {
-		component : oComp
-	});
-	oCompCont.placeAt("comparea2");
+	appendDIV("comparea1");
+	appendDIV("comparea2");
 
 	//******************************************************
 	//Test preparation for custom component configuration
@@ -59,11 +56,49 @@ sap.ui.define([
 	//******************************************************
 
 
-	QUnit.module("Basic Components");
+	QUnit.module("Basic Components", {
+		beforeEach: function(assert) {
+			var that = this;
+			var doneComp1 = assert.async();
+			this.oCompCont1 = new ComponentContainer("CompCont1", {
+				name: "samples.components.button",
+				id: "myButton",
+				async:true,
+				settings: {
+					id: "buttonComponent",
+					text: "Text changed through settings",
+					componentData: {
+						"foo": "bar"
+					}
+				},
+				componentCreated: function() {
+					doneComp1();
+				}
+			}).placeAt("comparea1");
+			return sap.ui.getCore().createComponent({
+				name: "samples.components.verticalLayout",
+				id: "vLayout",
+				componentData: {
+					"foo": "bar"
+				},
+				async: true
+			}).then(function(oComp) {
+				that.oComp = oComp;
+				that.oCompCont = new ComponentContainer("ContVLayout", {
+					component : oComp
+				}).placeAt("comparea2");
+			});
+		},
+		afterEach: function() {
+			this.oCompCont1.destroy();
+			this.oCompCont.destroy();
+		}
+	});
 
 	QUnit.test("Simple Component Instance", function(assert){
+		sap.ui.getCore().applyChanges();
 		assert.ok(document.getElementById("CompCont1"));
-		var elem = jQuery.sap.byId("__component0---mybutn");
+		var elem = jQuery.sap.byId("buttonComponent---mybutn");
 		assert.equal(elem.text(), "Text changed through settings", "Settings applied");
 	});
 
@@ -81,6 +116,7 @@ sap.ui.define([
 	QUnit.test("Components Metadata", function(assert){
 		var includes = ["css/vlayout.css","/js/includeme.js"];
 		var components =  ["samples.components.styledbutton"];
+		var oComp = this.oComp;
 		assert.equal(oComp.getMetadata().getVersion(), "1.0", "Version retrieved");
 		assert.deepEqual(oComp.getMetadata().getIncludes(), includes, "Includes Array retrieved");
 		assert.notEqual(oComp.getMetadata().getDependencies(), null, "Dependencies retrieved");
@@ -100,32 +136,6 @@ sap.ui.define([
 		assert.ok(!oSuccessUnMerged.property2, "Property 2 not merged (does not exist).");
 	});
 
-	QUnit.test("Components Metadata - Design Time", function(assert) {
-		var oRequireStub = sinon.stub(sap.ui, "require"),
-			oDesignTime = {
-				"foo": "bar"
-			};
-
-		// pass a deep copy to the stub
-		oRequireStub.withArgs(["test/dtcomp/Component.designtime"]).callsArgWithAsync(1, Object.create(oDesignTime));
-
-		var TestDtComp = TestComp1.extend("test.dtcomp.Component", {
-			metadata: {
-				"designTime": true
-			}
-		});
-
-		assert.expect(2);
-		return TestDtComp.getMetadata().loadDesignTime().then(function(_oDesignTime) {
-			//module was added
-			oDesignTime.designtimeModule = "test/dtcomp/Component.designtime";
-			oDesignTime._oLib = null;
-			assert.deepEqual(_oDesignTime, oDesignTime, "DesignTime was loaded properly");
-			sinon.assert.callCount(oRequireStub, 1);
-			oRequireStub.restore();
-		});
-	});
-
 	QUnit.test("Components Metadata - Load from file", function(assert){
 		var oMetadata = SamplesLoadFromFileComponent.getMetadata();
 
@@ -134,15 +144,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Components Includes", function(assert){
-		assert.ok((typeof foo == 'function'), "function foo from included js exists");
-		var sFontSize = "4px";
-		foo("comparea2", sFontSize);
-		var sSize = jQuery("#comparea2").css('font-size');
-		assert.equal(sSize, sFontSize, "function from JS include invoked");
-		assert.equal(jQuery.sap.byId("vLayout---myTF").css("padding-left"), "321px", "CSS from include applied");
+		assert.ok(typeof foo == 'function', "function foo from included js exists");
+		assert.equal(foo(), "bar", "function from JS include invoked");
+		var oLink = document.querySelector(
+			"link[data-sap-ui-manifest-uid='" + this.oComp.getManifestObject()._uid + "']"
+		);
+		assert.ok(oLink, "Stylsheet from include has been inserted");
+		assert.equal(oLink.getAttribute("href"),
+			"test-resources/sap/ui/core/samples/components/verticalLayout/css/vlayout.css",
+			"Stylesheet with correct href has been inserted"
+		);
 	});
 
 	QUnit.test("Factory Function", function(assert){
+		var oComp = this.oComp;
 		var oComponent = sap.ui.component(oComp.getId());
 		assert.equal(oComponent, oComp, "Factory function returns the same instance!");
 		oComponent = sap.ui.component({
@@ -154,6 +169,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Component Data", function(assert){
+		var oComp = this.oComp;
+		var oCompCont1 = this.oCompCont1;
 		assert.ok(!!oComp.getComponentData(), "Component has component data");
 		assert.equal(oComp.getComponentData().foo, "bar", "Component data is correct");
 		var oComponent = sap.ui.getCore().getComponent(oCompCont1.getComponent());
@@ -161,15 +178,100 @@ sap.ui.define([
 		assert.equal(oComponent.getComponentData().foo, "bar", "Component data is correct");
 	});
 
-	QUnit.module("Creation Context");
+	QUnit.test("Create instance without factory", function(assert) {
+
+		var oComponent = new TestComp1();
+
+		assert.equal(oComponent.getMetadata(), TestComp1.getMetadata(), "getMetadata returns static Metadata");
+		assert.equal(oComponent.getManifest(), TestComp1.getMetadata().getManifest(), "getManifest returns static Metadata manifest");
+
+		oComponent.destroy();
+	});
+
+	QUnit.test("getEventBus", function(assert) {
+
+		var oComponent = new TestComp1();
+
+		assert.equal(oComponent._oEventBus, undefined, "No EventBus available by default");
+
+		var oEventBus = oComponent.getEventBus();
+		assert.ok(oEventBus.isA("sap.ui.core.EventBus"), "getEventBus returns an EventBus instance");
+		assert.equal(oComponent._oEventBus, oComponent.getEventBus(), "EventBus instance is stored as private property");
+
+		oComponent.destroy();
+	});
+
+	QUnit.module("Factory Error Handling");
+
+	QUnit.test("Component.js error handling (manifestFirst)", function(assert) {
+
+		// Register manifest.json
+		sap.ui.require.preload({
+			"test/inline/errorHandling1/manifest.json": JSON.stringify({
+				"sap.app": {
+					"id": "test.inline.errorHandling1"
+				}
+			})
+		});
+
+		// Define failing component
+		sap.ui.define("test/inline/errorHandling1/Component", ["sap/ui/core/Component"], function(Component) {
+			throw new Error("Error from test/inline/errorHandling1/Component");
+		});
+
+		return Component.load({
+			name: "test.inline.errorHandling1"
+		}).then(function(oComponent) {
+			assert.notOk(true, "Component should not be created");
+		}, function(oError) {
+			assert.equal(oError.message, "Error from test/inline/errorHandling1/Component", "Error from Component.js should be propagated");
+		});
+
+	});
+
+	QUnit.test("Component.js error handling (no manifestFirst)", function(assert) {
+
+		// Define failing component
+		sap.ui.define("test/inline/errorHandling2/Component", ["sap/ui/core/Component"], function(Component) {
+			throw new Error("Error from test/inline/errorHandling2/Component");
+		});
+
+		return Component.load({
+			name: "test.inline.errorHandling2",
+			manifest: false
+		}).then(function(oComponent) {
+			assert.notOk(true, "Component should not be created");
+		}, function(oError) {
+			assert.equal(oError.message, "Error from test/inline/errorHandling2/Component", "Error from Component.js should be propagated");
+		});
+
+	});
+
+	QUnit.module("Creation Context", {
+		beforeEach: function() {
+			return sap.ui.getCore().createComponent({
+				name: "samples.components.verticalLayout",
+				id: "vLayout",
+				componentData: {
+					"foo": "bar"
+				},
+				async: true
+			}).then(function(oComp) {
+				this.oComp = oComp;
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oComp.destroy();
+		}
+	});
 
 	QUnit.test("Basic Test", function(assert){
 		// check that the layout has the reference to the component
-		var oLayout = oComp.byId("myLayout");
+		var oLayout = this.oComp.byId("myLayout");
 		var sRefComponentId = oLayout._sOwnerId; // INTERNAL ONLY!
-		assert.equal(oComp.getId(), sRefComponentId, "The nested control has the correct component context");
+		assert.equal(this.oComp.getId(), sRefComponentId, "The nested control has the correct component context");
 		// check the nested component having the ID of the parent component
-		var oNestedComponentContainer = oComp.byId("ContButton");
+		var oNestedComponentContainer = this.oComp.byId("ContButton");
 		var sNestedComponentId = oNestedComponentContainer.getComponent();
 		var oNestedComponent = sap.ui.component(sNestedComponentId);
 		assert.equal(sRefComponentId, Component.getOwnerIdFor(oNestedComponent), "The nested component has the correct component context");
@@ -202,10 +304,16 @@ sap.ui.define([
 	QUnit.module("Routing", {
 		beforeEach : function () {
 			// System under test
-			this.oComponent = sap.ui.getCore().createComponent({
-				name: "samples.components.routing"
-			});
-			this.oComponent.init();
+			return sap.ui.getCore().createComponent({
+				name: "samples.components.routing",
+				async: true
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+				this.oComponent.init();
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oComponent.destroy();
 		}
 	});
 
@@ -238,12 +346,23 @@ sap.ui.define([
 	});
 
 	QUnit.module("Routing", {
-		beforeEach : function () {
-			// System under test
-			this.oComponent = sap.ui.getCore().createComponent({
-				name: "samples.components.targets"
+		beforeEach : function (assert) {
+			var done = assert.async();
+			var that = this;
+			sap.ui.require(["sap/m/routing/Targets"], function() {
+				// System under test
+				sap.ui.getCore().createComponent({
+					name: "samples.components.targets",
+					async: true
+				}).then(function(oComponent) {
+					that.oComponent = oComponent;
+					that.oComponent.init();
+					done();
+				});
 			});
-			this.oComponent.init();
+		},
+		afterEach: function() {
+			this.oComponent.destroy();
 		}
 	});
 
@@ -268,9 +387,15 @@ sap.ui.define([
 	QUnit.module("Root control", {
 		beforeEach : function () {
 			// System under test
-			this.oComponent = sap.ui.getCore().createComponent({
-				name: "samples.components.routing"
-			});
+			return sap.ui.getCore().createComponent({
+				name: "samples.components.routing",
+				async: true
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oComponent.destroy();
 		}
 	});
 
@@ -295,60 +420,194 @@ sap.ui.define([
 			//setup fake server
 			var oManifest = this.oManifest = {
 				"sap.app" : {
-					"id" : "samples.components.button"
+					"id" : "samples.components.button",
+					"title": "{{title}}"
 				}
 			};
 			var oAltManifest1 = this.oAltManifest1 = {
 				"sap.app" : {
-					"id" : "samples.components.config"
+					"id" : "samples.components.config",
+					"title": "{{title}}"
 				}
 			};
 
 			var oAltManifest2 = this.oAltManifest2 = {
 				"sap.app" : {
-					"id" : "samples.components.oneview"
+					"id" : "samples.components.oneview",
+					"i18n": "someFolder/messagebundle.properties",
+					"title": "{{title}}"
+				}
+			};
+			var oAppVariantManifest = {
+				"sap.app" : {
+					"id" : "app.variant.id",
+					"title": "{{title}}"
+				},
+				"sap.ui5": {
+					"componentName": "samples.components.button"
 				}
 			};
 
-			var oServer = this.oServer = sinon.sandbox.useFakeServer();
+			// workaround sinon gh #1534
+			this._oSandbox.serverPrototype = null;
+			var oServer = this.oServer = this._oSandbox.useFakeServer();
 
 			oServer.xhr.useFilters = true;
 			oServer.xhr.filters = [];
 			oServer.xhr.addFilter(function(method, url) {
 				return (
-					url !== "/anylocation/manifest.json?sap-language=EN"
-					&& url !== "/anyotherlocation1/manifest.json?sap-language=EN"
-					&& url !== "/anyotherlocation2/manifest.json?sap-language=EN"
+					url !== "anylocation/manifest.json?sap-language=EN"
+					&& url !== "anyotherlocation1/manifest.json?sap-language=EN"
+					&& url !== "anyotherlocation2/manifest.json?sap-language=EN"
+					& url !== "anyappvariantlocation/manifest.json?sap-language=EN"
+
+					&& !/anylocation\/i18n\/i18n_en\.properties$/.test(url)
+					&& !/anyotherlocation2\/someFolder\/messagebundle_en\.properties$/.test(url)
 				);
 			});
 
 			oServer.autoRespond = true;
-			oServer.respondWith("GET", "/anylocation/manifest.json?sap-language=EN", [
+			oServer.respondWith("GET", "anylocation/manifest.json?sap-language=EN", [
 				200,
 				{
 					"Content-Type": "application/json"
 				},
 				JSON.stringify(oManifest)
 			]);
-			oServer.respondWith("GET", "/anyotherlocation1/manifest.json?sap-language=EN", [
+			oServer.respondWith("GET", "anyotherlocation1/manifest.json?sap-language=EN", [
 				200,
 				{
 					"Content-Type": "application/json"
 				},
 				JSON.stringify(oAltManifest1)
 			]);
-			oServer.respondWith("GET", "/anyotherlocation2/manifest.json?sap-language=EN", [
+			oServer.respondWith("GET", "anyotherlocation2/manifest.json?sap-language=EN", [
 				200,
 				{
 					"Content-Type": "application/json"
 				},
 				JSON.stringify(oAltManifest2)
 			]);
+			oServer.respondWith("GET", "anyappvariantlocation/manifest.json?sap-language=EN", [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oAppVariantManifest)
+			]);
+
+			oServer.respondWith("GET", /anylocation\/i18n\/i18n_en\.properties$/, [
+				200,
+				{
+					"Content-Type": "text/plain; charset=ISO-8859-1"
+				},
+				"title=Title anylocation"
+			]);
+			oServer.respondWith("GET", /anyotherlocation2\/someFolder\/messagebundle_en\.properties$/, [
+				200,
+				{
+					"Content-Type": "text/plain; charset=ISO-8859-1"
+				},
+				"title=Title anyotherlocation2"
+			]);
+			oServer.respondWith("GET", /anyappvariantlocation\/someFolder\/messagebundle_en\.properties$/, [
+				200,
+				{
+					"Content-Type": "text/plain; charset=ISO-8859-1"
+				},
+				"title=Title anyotherlocation2"
+			]);
 
 		},
-		afterEach : function() {}
+		afterEach : function() {
+			delete Component._fnOnInstanceCreated;
+		}
 	});
 
+	QUnit.test("Component.create - manifest with URL", function(assert) {
+
+		return Component.create({
+			manifest: "anylocation/manifest.json"
+		}).then(function(oComponent) {
+			assert.ok(true, "Component is loaded properly!");
+		}, function(oError) {
+			assert.ok(false, "Component should be loaded!");
+		});
+	});
+
+	QUnit.test("Component.create - manifest with URL and App Variant", function(assert) {
+		var configSpy = this.spy(sap.ui.loader, "config");
+		var sComponentUrl = "test-resources/sap/ui/core/samples/components/button/";
+
+		return Component.create({
+			manifest: "anyappvariantlocation/manifest.json",
+			url: sComponentUrl
+		}).then(function(oComponent) {
+			assert.equal(2, configSpy.callCount, "sap.ui.loader.config was called twice");
+
+			var mPathsOfFirstCall = configSpy.getCall(0).args[0].paths;
+			var aKeysOfFirstCall = Object.keys(mPathsOfFirstCall);
+			assert.equal(aKeysOfFirstCall.length, 1, "one path is registered");
+			var sComponentName = oComponent.getManifestEntry("/sap.ui5/componentName");
+			var sCompopnentModulePath = sComponentName.replace(/\./g, "/");
+			var sPathKeyOfFirstCall = aKeysOfFirstCall[0];
+			assert.equal(sPathKeyOfFirstCall, sCompopnentModulePath, "the component module path was registered");
+			assert.equal(mPathsOfFirstCall[sPathKeyOfFirstCall], sComponentUrl, "the component module uri is correct");
+
+			var mPathsOfSecondCall = configSpy.getCall(1).args[0].paths;
+			var aKeysOfSecondCall = Object.keys(mPathsOfSecondCall);
+			assert.equal(1, aKeysOfSecondCall.length, "one path is registered");
+			var sAppVariantId = oComponent.getManifestEntry("/sap.app/id");
+			var sAppVariantModulePath = sAppVariantId.replace(/\./g, "/");
+			var sPathKeyOfSecondCall = aKeysOfSecondCall[0];
+			assert.equal(sPathKeyOfSecondCall, sAppVariantModulePath, "the app variant module path was registered");
+			assert.equal(mPathsOfSecondCall[sPathKeyOfSecondCall], "anyappvariantlocation/", "the component module uri is correct");
+		});
+	});
+
+	QUnit.test("Component.get - manifest with URL", function(assert) {
+
+		return Component.create({
+			id: "myTestComp",
+			manifest: "anylocation/manifest.json"
+		}).then(function(oComponent) {
+			assert.ok(true, "Component is loaded properly!");
+			assert.equal(oComponent, Component.get("myTestComp"), "Component.get returns right component");
+		}, function(oError) {
+			assert.ok(false, "Component should be loaded!");
+		});
+
+	});
+
+
+	QUnit.test("Component.load - manifest with URL", function(assert) {
+
+		return Component.load({
+			manifest: "anylocation/manifest.json"
+		}).then(function(ComponentClass) {
+			assert.ok(true, "Component is loaded properly!");
+			assert.ok(ComponentClass.constructor && !(ComponentClass instanceof Component), "Component class loaded");
+		}, function(oError) {
+			assert.ok(false, "Component should be loaded!");
+		});
+
+	});
+
+	QUnit.test("Component.create - manifest as object", function(assert) {
+
+		return Component.create({
+			manifest: {
+				"sap.app" : {
+					"id" : "samples.components.oneview"
+				}
+			}
+		}).then(function(oComponent) {
+			assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.oneview", "The proper component has been loaded!");
+		}, function(oError) {
+			assert.ok(false, "Component should be loaded!");
+		});
+
+	});
 
 	QUnit.test("Manifest delegation to component instance (sync)", function(assert) {
 
@@ -356,7 +615,7 @@ sap.ui.define([
 
 		//start test
 		var oComponent = sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json"
+			manifestUrl : "anylocation/manifest.json"
 		});
 
 		assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
@@ -374,7 +633,7 @@ sap.ui.define([
 
 		//start test
 		var fnComponentClass = sap.ui.component.load({
-			manifestUrl : "/anylocation/manifest.json"
+			manifestUrl : "anylocation/manifest.json"
 		});
 
 		assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
@@ -397,18 +656,26 @@ sap.ui.define([
 
 	QUnit.test("Manifest delegation to component instance (async)", function(assert) {
 
-		var oServer = this.oServer, oManifest = this.oManifest;
+		var oServer = this.oServer;
+		var oExpectedManifest = {
+			"sap.app" : {
+				"id" : "samples.components.button",
+				// Note: Placeholders (e.g. {{title}}) are only replaced in "manifest first" + async mode (not sync!)
+				// The corresponding i18n bundle is loaded relative to the manifest.json (manifestUrl)
+				"title": "Title anylocation"
+			}
+		};
 
 		//start test
 		var done = assert.async();
 		sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json",
+			manifestUrl : "anylocation/manifest.json",
 			async : true
 		}).then(function(oComponent) {
 
 			assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(oComponent.getManifest(), "Manifest is available");
-			assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			assert.deepEqual(oComponent.getManifest(), oExpectedManifest, "Manifest matches the manifest behind manifestUrl with processed placeholders");
 
 			var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
 			assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
@@ -421,18 +688,26 @@ sap.ui.define([
 
 	QUnit.test("Manifest delegation to component instance (async, delayed instantiation)", function(assert) {
 
-		var oServer = this.oServer, oManifest = this.oManifest;
+		var oServer = this.oServer;
+		var oExpectedManifest = {
+			"sap.app" : {
+				"id" : "samples.components.button",
+				// Note: Placeholders (e.g. {{title}}) are only replaced in "manifest first" + async mode (not sync!)
+				// The corresponding i18n bundle is loaded relative to the manifest.json (manifestUrl)
+				"title": "Title anylocation"
+			}
+		};
 
 		//start test
 		var done = assert.async();
 		sap.ui.component.load({
-			manifestUrl : "/anylocation/manifest.json",
+			manifestUrl : "anylocation/manifest.json",
 			async : true
 		}).then(function(fnComponentClass) {
 
 			assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(fnComponentClass.getMetadata().getManifest(), "Manifest is available");
-			assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oExpectedManifest, "Manifest matches the manifest behind manifestUrl");
 			assert.throws(function() {
 				fnComponentClass.extend("new.Component", {});
 			}, new Error("Extending Components created by Manifest is not supported!"), "Extend should raise an exception");
@@ -441,7 +716,7 @@ sap.ui.define([
 
 			assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(oComponent.getManifest(), "Manifest is available");
-			assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			assert.deepEqual(oComponent.getManifest(), oExpectedManifest, "Manifest matches the manifest behind manifestUrl");
 
 			var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
 			assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
@@ -457,12 +732,12 @@ sap.ui.define([
 		var oServer = this.oServer, oManifest = this.oAltManifest1;
 
 		// create an invalid registration for samples.components.config to see that the "url" parameter works
-		jQuery.sap.registerModulePath("samples.components.config", "../../../../../../test-resources/invalid/");
+		sap.ui.loader.config({paths:{"samples/components/config":"test-resources/invalid/"}});
 
 		//start test
 		var fnComponentClass = sap.ui.component.load({
-			manifestUrl : "/anyotherlocation1/manifest.json",
-			url : "../../../../../../test-resources/sap/ui/core/samples/components/config/"
+			manifestUrl : "anyotherlocation1/manifest.json",
+			url : "test-resources/sap/ui/core/samples/components/config/"
 		});
 
 		assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
@@ -485,22 +760,31 @@ sap.ui.define([
 
 	QUnit.test("Alternate URL for component (async)", function(assert) {
 
-		var oServer = this.oServer, oManifest = this.oAltManifest2;
+		var oServer = this.oServer;
+		var oExpectedManifest = {
+			"sap.app" : {
+				"id" : "samples.components.oneview",
+				"i18n": "someFolder/messagebundle.properties",
+				// Note: Placeholders (e.g. {{title}}) are only replaced in "manifest first" + async mode (not sync!)
+				// The corresponding i18n bundle is loaded relative to the manifest.json (manifestUrl)
+				"title": "Title anyotherlocation2"
+			}
+		};
 
 		// create an invalid registration for samples.components.config to see that the "url" parameter works
-		jQuery.sap.registerModulePath("samples.components.oneview", "../../../../../../test-resources/invalid/");
+		sap.ui.loader.config({paths:{"samples/components/oneview":"test-resources/invalid/"}});
 
 		//start test
 		var done = assert.async();
 		sap.ui.component.load({
-			manifestUrl : "/anyotherlocation2/manifest.json",
-			url : "../../../../../../test-resources/sap/ui/core/samples/components/oneview/",
+			manifestUrl : "anyotherlocation2/manifest.json",
+			url : "test-resources/sap/ui/core/samples/components/oneview/",
 			async : true
 		}).then(function(fnComponentClass) {
 
 			assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(fnComponentClass.getMetadata().getManifest(), "Manifest is available");
-			assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oExpectedManifest, "Manifest matches the manifest behind manifestUrl");
 			assert.throws(function() {
 				fnComponentClass.extend("new.Component", {});
 			}, new Error("Extending Components created by Manifest is not supported!"), "Extend should raise an exception");
@@ -509,7 +793,7 @@ sap.ui.define([
 
 			assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(oComponent.getManifest(), "Manifest is available");
-			assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			assert.deepEqual(oComponent.getManifest(), oExpectedManifest, "Manifest matches the manifest behind manifestUrl");
 
 			var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
 			assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
@@ -525,7 +809,7 @@ sap.ui.define([
 		var oCallbackComponent;
 
 		// set the instance created callback hook
-		sap.ui.core.Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
 			oCallbackComponent = oComponent;
 
 			assert.ok(true, "sap.ui.core.Component._fnOnInstanceCreated called!");
@@ -541,7 +825,7 @@ sap.ui.define([
 		};
 
 		var oConfig = {
-			manifestUrl: "/anylocation/manifest.json"
+			manifestUrl: "anylocation/manifest.json"
 		};
 
 		var oComponent = sap.ui.component(oConfig);
@@ -553,19 +837,20 @@ sap.ui.define([
 	QUnit.test("On instance created callback / hook (sync, error)", function(assert) {
 
 		// set the instance created callback hook
-		sap.ui.core.Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
 			throw new Error("Error from _fnOnInstanceCreated");
 		};
 
 		assert.throws(
 			function() {
 				sap.ui.component({
-					manifestUrl: "/anylocation/manifest.json"
+					manifestUrl: "anylocation/manifest.json"
 				});
 			},
 			/Error from _fnOnInstanceCreated/,
 			"Error from hook should not be caught internally"
 		);
+
 	});
 
 	QUnit.test("On instance created callback / hook (async, no promise)", function(assert) {
@@ -573,7 +858,7 @@ sap.ui.define([
 		var oCallbackComponent;
 
 		// set the instance created callback hook
-		sap.ui.core.Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
 			oCallbackComponent = oComponent;
 
 			assert.ok(true, "sap.ui.core.Component._fnOnInstanceCreated called!");
@@ -585,7 +870,7 @@ sap.ui.define([
 		};
 
 		var oConfig = {
-			manifestUrl: "/anylocation/manifest.json",
+			manifestUrl: "anylocation/manifest.json",
 			async: true
 		};
 
@@ -602,7 +887,7 @@ sap.ui.define([
 		};
 
 		return sap.ui.component({
-			manifestUrl: "/anylocation/manifest.json",
+			manifestUrl: "anylocation/manifest.json",
 			async: true
 		}).then(function(oComponent) {
 			assert.ok(false, "Promise should not resolve");
@@ -632,7 +917,7 @@ sap.ui.define([
 		};
 
 		var oConfig = {
-			manifestUrl: "/anylocation/manifest.json",
+			manifestUrl: "anylocation/manifest.json",
 			async: true
 		};
 
@@ -653,7 +938,7 @@ sap.ui.define([
 		};
 
 		return sap.ui.component({
-			manifestUrl: "/anylocation/manifest.json",
+			manifestUrl: "anylocation/manifest.json",
 			async: true
 		}).then(function(oComponent) {
 			assert.ok(false, "Promise should not resolve");
@@ -666,10 +951,8 @@ sap.ui.define([
 
 	QUnit.test("Usage of manifest property in component configuration for URL", function(assert) {
 
-		sap.ui.core.Component._fnOnInstanceCreated = undefined;
-
 		return sap.ui.component({
-			manifest: "/anylocation/manifest.json"
+			manifest: "anylocation/manifest.json"
 		}).then(function(oComponent) {
 			assert.ok(true, "Component is loaded properly!");
 		}, function(oError) {
@@ -694,16 +977,45 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Usage of manifest property in component configuration for manifest object + resourceRoot url", function(assert) {
+
+		sap.ui.define("samples/components/oneview2/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("samples.components.oneview2.Component", {
+				metadata: {
+					manifest: {
+						"sap.app" : {
+							"id" : "samples.components.oneview2"
+						}
+					}
+				}
+			});
+		});
+
+		return sap.ui.component({
+			name: "samples.components.oneview2",
+			url: "/someUrl/oneview2",
+			manifest: {
+				"sap.app" : {
+					"id" : "samples.components.oneview2"
+				}
+			}
+		}).then(function(oComponent) {
+			assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.oneview2", "The proper component has been loaded!");
+			assert.equal(oComponent.getManifestObject()._oBaseUri.path(), "/someUrl/oneview2/", "Manifest baseURI is set correctly");
+		}, function(oError) {
+			assert.ok(false, "Component should be loaded!");
+		});
+
+	});
+
 	QUnit.test("Usage of manifest property in component configuration for URL (sync)", function(assert) {
 
-		sap.ui.core.Component._fnOnInstanceCreated = undefined;
-
 		var oComponent = sap.ui.component({
-			manifest: "/anylocation/manifest.json",
+			manifest: "anylocation/manifest.json",
 			async: false
 		});
 
-		assert.ok(oComponent instanceof sap.ui.core.UIComponent, "Component is loaded properly!");
+		assert.ok(oComponent instanceof UIComponent, "Component is loaded properly!");
 		assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.button", "The proper component has been loaded!");
 
 	});
@@ -719,13 +1031,72 @@ sap.ui.define([
 			async: false
 		});
 
-		assert.ok(oComponent instanceof sap.ui.core.UIComponent, "Component is loaded properly!");
+		assert.ok(oComponent instanceof UIComponent, "Component is loaded properly!");
 		assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.oneview", "The proper component has been loaded!");
 
 	});
 
 
-	QUnit.module("Component Usage");
+	QUnit.module("Component Usage", {
+		beforeEach : function() {
+
+			// setup fake server
+			var oManifest = this.oManifest = {
+					"sap.app" : {
+						"id" : "my.preloadusage"
+					},
+					"sap.ui5" : {
+						"dependencies": {
+							"components": {
+								"my.used": {}
+							}
+						},
+						"componentUsages": {
+							"defaultUsage": {
+								"name": "defaultUsage"
+							},
+							"lazyUsage": {
+								"name": "lazyUsage",
+								"lazy": true
+							},
+							"nonLazyUsage": {
+								"name": "nonLazyUsage",
+								"lazy": false
+							},
+							"nonLazyUsageNowLazy": {
+								"name": "nonLazyUsage",
+								"lazy": true
+							},
+							"nonLazyUsageAgain": {
+								"name": "nonLazyUsage",
+								"lazy": false
+							}
+						}
+					}
+			};
+
+			// workaround sinon gh #1534
+			this._oSandbox.serverPrototype = null;
+			var oServer = this.oServer = this._oSandbox.useFakeServer();
+
+			oServer.xhr.useFilters = true;
+			oServer.xhr.filters = [];
+			oServer.xhr.addFilter(function(method, url) {
+				return url !== "anylocation/manifest.json?sap-language=EN";
+			});
+
+			oServer.autoRespond = true;
+			oServer.respondWith("GET", "anylocation/manifest.json?sap-language=EN", [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifest)
+			]);
+
+		},
+		afterEach : function() {}
+	});
 
 	sap.ui.define("my/used/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 		return UIComponent.extend("my.used.Component", {
@@ -735,12 +1106,37 @@ sap.ui.define([
 						"id" : "my.used"
 					},
 					"sap.ui5" : {
+						"componentUsages": {
+							"mySubSubUsage": {
+								"manifest": false,
+								"name": "my.used"
+							}
+						}
 					}
 				}
 			},
 			constructor: function(mSettings) {
 				UIComponent.apply(this, arguments);
 				this._mSettings = mSettings;
+			}
+		});
+	});
+
+	sap.ui.define("my/changed/constructor/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		return UIComponent.extend("my.used.Component", {
+			metadata: {
+				manifest: {
+					"sap.app" : {
+						"id" : "my.changed.constructor"
+					},
+					"sap.ui5" : {
+
+					}
+				}
+			},
+			constructor: function(mSettings) {
+				mSettings._cacheTokens.manipulatedTokens = {};
+				UIComponent.apply(this, arguments);
 			}
 		});
 	});
@@ -755,12 +1151,21 @@ sap.ui.define([
 					"sap.ui5" : {
 						"dependencies": {
 							"components": {
-								"my.used": {}
+								"my.used": {},
+								"my.changed.constructor": {}
 							}
 						},
 						"componentUsages": {
 							"myUsage": {
 								"name": "my.used"
+							},
+							"mySubUsage": {
+								"manifest": false,
+								"name": "my.used"
+							},
+							"myConstructorUsage": {
+								"manifest": false,
+								"name": "my.changed.constructor"
 							}
 						}
 					}
@@ -769,12 +1174,55 @@ sap.ui.define([
 		});
 	});
 
+	sap.ui.define("my/preloadusage/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		return UIComponent.extend("my.preloadusage.Component", {
+			metadata: {
+				manifest: "json"
+			}
+		});
+	});
+
+	sap.ui.define("my/command/base/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		return UIComponent.extend("my.command.base.Component", {
+			metadata: {
+				manifest: {
+					"sap.app" : {
+						"id" : "my.command.base.constructor"
+					},
+					"sap.ui5" : {
+						"commands": {
+							"Save": {
+								"shortcut": "Ctrl+S"
+							},
+							"Cancel": {
+								"shortcut": "Ctrl+C"
+							}
+						}
+					}
+				}
+			}
+		});
+	});
+
+	sap.ui.define("my/command/Component", ["my/command/base/Component"], function(oBaseComponent) {
+		return oBaseComponent.extend("my.command.Component", {
+			metadata: {
+				manifest: {
+					"sap.app" : {
+						"id" : "my.command.constructor"
+					},
+					"sap.ui5" : {
+					}
+				}
+			}
+		});
+	});
 	QUnit.test("Async creation of component usage", function(assert) {
 
 		var oComponent = sap.ui.component({
 			name : "my.usage"
 		});
-		var oSpy = sinon.spy(oComponent, "_createComponent");
+		var oSpy = sinon.spy(Component, "create");
 
 		var done = (function() {
 			var asyncDone = assert.async();
@@ -807,7 +1255,6 @@ sap.ui.define([
 				assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
 				assert.equal(oComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
 				assert.equal(1, oSpy.callCount, "Nested component created with instance factory function");
-				assert.equal("myUsage", oSpy.args[0][0].usage, "Nested component created with config 'usage: \"myUsage\"'");
 				assert.equal(true, oSpy.args[0][0].async, "Nested component created with config 'async: true'");
 				assert.deepEqual(mConfig.settings, oSpy.args[0][0].settings, "ComponentUsage must receive the correct settings");
 				assert.deepEqual(mSettings, oComponentUsage._mSettings, "ComponentUsage must receive the correct settings");
@@ -824,12 +1271,292 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Propagate cacheTokens: Sync creation of sub component via createComponent()", function(assert) {
+		var oComponent = sap.ui.component({
+			name : "my.usage",
+			asyncHints: {
+				cacheTokens: {
+					someToken: {}
+				}
+			}
+		});
+
+		assert.ok(oComponent instanceof Component, "Component should be created");
+		assert.ok(oComponent._mCacheTokens, "_mCacheTokens should be available");
+		assert.deepEqual(oComponent._mCacheTokens.someToken, {}, "_mCacheTokens.someToken should be available");
+
+		var oSubComponent = oComponent.createComponent({
+			usage: "mySubUsage",
+			async: false,
+			anything: "else"
+		});
+
+		assert.ok(oSubComponent instanceof Component, "SubComponent should be created");
+		assert.deepEqual(oSubComponent._mCacheTokens, oComponent._mCacheTokens, "_mCacheTokens of the SubComponent should be equal to the parent component (content-wise)");
+		oComponent.destroy();
+		oSubComponent.destroy();
+	});
+
+	QUnit.test("Propagate cacheTokens: Async creation of sub component via createComponent()", function(assert) {
+		return Component.create({
+			name : "my.usage",
+			manifest: false,
+			asyncHints: {
+				cacheTokens: {
+					someToken: {}
+				}
+			}
+		}).then(function(oComponent) {
+			assert.ok(oComponent instanceof Component, "Component should be created");
+			assert.ok(oComponent._mCacheTokens, "_mCacheTokens should be available");
+			assert.deepEqual(oComponent._mCacheTokens.someToken, {}, "_mCacheTokens.someToken should be available");
+
+			return oComponent.createComponent({
+				usage: "mySubUsage",
+				async: true,
+				anything: "else"
+			}).then(function(oSubComponent) {
+				assert.ok(oSubComponent instanceof Component, "SubComponent should be created");
+				assert.deepEqual(oSubComponent._mCacheTokens, {someToken: {}}, "_mCacheTokens of the SubComponent should be equal to the parent component (content-wise)");
+
+				return oSubComponent.createComponent({
+					usage: "mySubSubUsage",
+					async: true,
+					anything: "else"
+				}).then(function(oSubSubComponent) {
+					assert.ok(oSubSubComponent instanceof Component, "oSubSubComponent should be created");
+					assert.deepEqual(oSubSubComponent._mCacheTokens, {someToken: {}}, "_mCacheTokens of the oSubSubComponent should be equal to the parent component (content-wise)");
+
+					oComponent.destroy();
+					oSubComponent.destroy();
+					oSubSubComponent.destroy();
+				});
+			});
+		});
+	});
+
+	QUnit.test("Propagate cacheTokens: Sync creation of sub component via sap.ui.component()", function(assert) {
+		var oRootComponent = sap.ui.component({
+			name : "my.usage",
+			asyncHints: {
+				cacheTokens: {
+					someToken: {}
+				}
+			}
+		});
+
+		assert.ok(oRootComponent instanceof Component, "Component should be created");
+		assert.ok(oRootComponent._mCacheTokens, "_mCacheTokens should be available");
+		assert.deepEqual(oRootComponent._mCacheTokens.someToken, {}, "_mCacheTokens.someToken should be available");
+
+		var oSubComponent1,
+			oSubComponent2,
+			oSubComponent1_1;
+
+		oRootComponent.runAsOwner(function() {
+			oSubComponent1 = sap.ui.component({
+				name: "my.used",
+				asyncHints: {
+					cacheTokens: {
+						myOwnTokens: {}
+					}
+				}
+			});
+
+			oSubComponent1.runAsOwner(function() {
+				oSubComponent1_1 = sap.ui.component({
+					name: "my.used"
+				});
+			});
+
+			oSubComponent2 = sap.ui.component({
+				name: "my.used"
+			});
+		});
+
+		assert.ok(oSubComponent1 instanceof Component, "oSubComponent1 should be created");
+		assert.ok(oSubComponent2 instanceof Component, "oSubComponent2 should be created");
+		assert.ok(oSubComponent1_1 instanceof Component, "oSubComponent1_1 should be created");
+
+		assert.deepEqual(oSubComponent1_1._mCacheTokens, {myOwnTokens: {}}, "_mCacheTokens of the oSubComponent1 shouldn't be propagated from parent component oRootComponent");
+		assert.deepEqual(oSubComponent2._mCacheTokens, {someToken: {}}, "_mCacheTokens of the oSubComponent2 should be equal to the parent component oRootComponent (content-wise)");
+		assert.deepEqual(oSubComponent1_1._mCacheTokens, {myOwnTokens: {}}, "_mCacheTokens of the oSubComponent1_1 should be equal to the parent component oSubComponent1 (content-wise)");
+
+		// cleanup
+		oRootComponent.destroy();
+		oSubComponent1.destroy();
+		oSubComponent2.destroy();
+		oSubComponent1_1.destroy();
+	});
+
+	QUnit.test("Propagate cacheTokens: Async creation of sub component via Component.create()", function(assert) {
+		return Component.create({
+			name : "my.usage",
+			asyncHints: {
+				cacheTokens: {
+					someToken: {}
+				}
+			}
+		}).then(function(oRootComponent) {
+			assert.ok(oRootComponent instanceof Component, "oRootComponent should be created");
+			assert.ok(oRootComponent._mCacheTokens, "_mCacheTokens should be available");
+			assert.deepEqual(oRootComponent._mCacheTokens.someToken, {}, "_mCacheTokens.someToken should be available");
+
+			return oRootComponent.runAsOwner(function() {
+				return Component.create({
+					name: "my.used",
+					asyncHints: {
+						cacheTokens: {
+							myOwnTokens: {}
+						}
+					}
+				}).then(function(oSubComponent1) {
+					assert.ok(oSubComponent1 instanceof Component, "oSubComponent1 should be created");
+					assert.deepEqual(oSubComponent1._mCacheTokens, {myOwnTokens: {}}, "_mCacheTokens of the oSubComponent1 shouldn't be propagated from parent component oRootComponent");
+
+					return oSubComponent1.runAsOwner(function() {
+						return Component.create({
+							name: "my.used"
+						}).then(function(oSubComponent1_1) {
+							assert.ok(oSubComponent1_1 instanceof Component, "oSubComponent1_1 should be created");
+							assert.deepEqual(oSubComponent1_1._mCacheTokens, {myOwnTokens: {}}, "_mCacheTokens of the oSubComponent1_1 should be equal to parent component oSubComponent1");
+
+							oRootComponent.destroy();
+							oSubComponent1.destroy();
+							oSubComponent1_1.destroy();
+						});
+					});
+				});
+			});
+		});
+	});
+
+	QUnit.test("Propagate cacheTokens: Async creation of sub component via runAsOwner()", function(assert) {
+		return Component.create({
+			name : "my.usage",
+			manifest: false,
+			asyncHints: {
+				cacheTokens: {
+					someToken: {}
+				}
+			}
+		}).then(function(oComponent) {
+			assert.ok(oComponent instanceof Component, "Component should be created");
+			assert.ok(oComponent._mCacheTokens, "_mCacheTokens should be available");
+			assert.deepEqual(oComponent._mCacheTokens.someToken, {}, "_mCacheTokens.someToken should be available");
+
+			return oComponent.runAsOwner(function() {
+				return Component.create({
+					name: "my.used"
+				}).then(function(oSubComponent) {
+					assert.ok(oSubComponent instanceof Component, "SubComponent should be created");
+					assert.deepEqual(oSubComponent._mCacheTokens, {someToken: {}}, "_mCacheTokens of the SubComponent should be equal to the parent component (content-wise)");
+					oComponent.destroy();
+					oSubComponent.destroy();
+				});
+			});
+		});
+	});
+
+	QUnit.test("Component.create - Async creation of component usage", function(assert) {
+
+		var done = (function() {
+			var asyncDone = assert.async();
+			return function cleanup(oComponent, oSpy) {
+				oSpy.restore();
+				oComponent.destroy();
+				asyncDone();
+			};
+		})();
+
+		Component.create({
+			name : "my.usage",
+			manifest: false
+		}).then(function (oComponent) {
+			var oSpy = sinon.spy(Component, "create");
+
+			sap.ui.require([
+				"my/used/Component"
+			], function(UsedComponent) {
+
+				var mConfig = {
+					usage: "myUsage",
+					settings: {
+						"key1": "value1"
+					},
+					componentData: {
+						"key2": "value2"
+					},
+					asyncHints: {},
+					anything: "else"
+				};
+				var mSettings = jQuery.extend(true, {}, mConfig.settings, { componentData: mConfig.componentData });
+				oComponent.createComponent(mConfig).then(function(oComponentUsage) {
+					assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
+					assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
+					assert.equal(oComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
+					assert.equal(1, oSpy.callCount, "Nested component created with instance factory function");
+					assert.equal(true, oSpy.args[0][0].async, "Nested component created with config 'async: true'");
+					assert.deepEqual(mConfig.settings, oSpy.args[0][0].settings, "ComponentUsage must receive the correct settings");
+					assert.deepEqual(mSettings, oComponentUsage._mSettings, "ComponentUsage must receive the correct settings");
+					assert.deepEqual(mConfig.componentData, oSpy.args[0][0].componentData, "ComponentUsage must receive the correct componentData");
+					assert.equal(undefined, oSpy.args[0][0].asyncHints, "ComponentUsage must not receive \"asyncHints\"");
+					assert.equal(undefined, oSpy.args[0][0].anything, "ComponentUsage must not receive \"anything\"");
+					done(oComponent, oSpy);
+				}).catch(function(oError) {
+					assert.ok(false, "createComponent must not be failing!");
+					done(oComponent, oSpy);
+				});
+
+			});
+		});
+
+	});
+
+	QUnit.test("Component.create - Async creation of component usage via usageId", function(assert) {
+
+		var done = (function() {
+			var asyncDone = assert.async();
+			return function cleanup(oComponent, oSpy) {
+				oSpy.restore();
+				oComponent.destroy();
+				asyncDone();
+			};
+		})();
+
+		Component.create({
+			name : "my.usage",
+			manifest: false
+		}).then(function (oComponent) {
+			var oSpy = sinon.spy(Component, "create");
+
+			sap.ui.require([
+				"my/used/Component"
+			], function(UsedComponent) {
+
+				oComponent.createComponent("myUsage").then(function(oComponentUsage) {
+					assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
+					assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
+					assert.equal(Component.getOwnerIdFor(oComponentUsage), oComponent.getId(), "ComponentUsage must be created with the creator Component as owner");
+					assert.equal(oSpy.callCount, 1, "Nested component created with instance factory function");
+					assert.equal(oSpy.args[0][0].async, true, "Nested component created with config 'async: true'");
+					done(oComponent, oSpy);
+				}).catch(function(oError) {
+					assert.ok(false, "createComponent must not be failing!");
+					done(oComponent, oSpy);
+				});
+
+			});
+		});
+
+	});
+
 	QUnit.test("Sync creation of component usage", function(assert) {
 
 		var oComponent = sap.ui.component({
 			name : "my.usage"
 		});
-		var oSpy = sinon.spy(oComponent, "_createComponent");
+		var oSpy = sinon.spy(sap.ui, "component"); // legacy factory for sync calls only
 
 		var done = (function() {
 			var asyncDone = assert.async();
@@ -862,7 +1589,6 @@ sap.ui.define([
 			assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
 			assert.equal(oComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
 			assert.equal(1, oSpy.callCount, "Nested component created with instance factory function");
-			assert.equal("myUsage", oSpy.args[0][0].usage, "Nested component created with config 'usage: \"myUsage\"'");
 			assert.equal(false, oSpy.args[0][0].async, "Nested component created with config 'async: true'");
 			assert.deepEqual(mConfig.settings, oSpy.args[0][0].settings, "ComponentUsage must receive the correct settings");
 			assert.deepEqual(mSettings, oComponentUsage._mSettings, "ComponentUsage must receive the correct settings");
@@ -875,4 +1601,1168 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Preload non-lazy component usages", function(assert) {
+
+		var oComponent;
+		var oSpy = sinon.spy(sap.ui.loader._, "loadJSResourceAsync");
+		var done = (function() {
+			var asyncDone = assert.async();
+			return function cleanup() {
+				oSpy.restore();
+				oComponent.destroy();
+				asyncDone();
+			};
+		})();
+
+		sap.ui.component({
+			name : "my.preloadusage",
+			manifest: "anylocation/manifest.json"
+		}).then(function(oPreloadComponent) {
+
+			oComponent = oPreloadComponent;
+
+			//console.log(oSpy.calls);
+			assert.ok(oSpy.calledOnceWithExactly("nonLazyUsage/Component-preload.js", true), "Only the non-lazy component usage should be preloaded!");
+
+			done();
+
+		});
+
+	});
+
+
+	QUnit.module("Models", {
+		beforeEach : function() {
+
+			//setup fake server
+			var oManifest = this.oManifest = {
+				"sap.app" : {
+					"id" : "samples.components.button"
+				},
+				"sap.ui5": {
+					"models": {
+						"i18n-component": {
+							"type": "sap.ui.model.resource.ResourceModel",
+							"settings": {
+								"bundleUrl": "i18n/i18n.properties",
+								"enhanceWith": [
+									{
+										"bundleUrl": "custom/i18n.properties"
+									},
+									{
+										"bundleUrl": "other/i18n.properties",
+										"bundleUrlRelativeTo": "manifest"
+									}
+								]
+							}
+						},
+						"i18n-manifest": {
+							"type": "sap.ui.model.resource.ResourceModel",
+							"settings": {
+								"bundleUrl": "i18n/i18n.properties",
+								"enhanceWith": [
+									{
+										"bundleUrl": "custom/i18n.properties",
+										"bundleUrlRelativeTo": "manifest"
+									},
+									{
+										"bundleUrl": "other/i18n.properties"
+									}
+								]
+							}
+						}
+					}
+				}
+			};
+
+			// workaround sinon gh #1534
+			this._oSandbox.serverPrototype = null;
+			var oServer = this.oServer = this._oSandbox.useFakeServer();
+
+			oServer.xhr.useFilters = true;
+			oServer.xhr.filters = [];
+			oServer.xhr.addFilter(function(method, url) {
+				return (
+					url !== "anylocation/manifest.json?sap-language=EN" &&
+					!/\.properties(\?.*)?$/.test(url)
+				);
+			});
+
+			oServer.autoRespond = true;
+			oServer.respondWith("GET", "anylocation/manifest.json?sap-language=EN", [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifest)
+			]);
+			oServer.respondWith("GET", /\.properties(\?.*)?$/, [
+				200,
+				{
+					"Content-Type": "text/plain"
+				},
+				""
+			]);
+
+		},
+		afterEach : function() {}
+	});
+
+
+	QUnit.test("Relative URLs for ResourceModel (enhanceWith)", function(assert) {
+
+		var oResourceBundleCreateSpy = this.spy(ResourceBundle, "create");
+
+		// load the test component
+		return Component.create({
+			manifest : "anylocation/manifest.json"
+		}).then(function(oComponent) {
+
+			var aI18NCmpEnhanceWith = oResourceBundleCreateSpy.getCall(0).args[0].enhanceWith;
+			assert.strictEqual(aI18NCmpEnhanceWith[0].bundleUrl, "test-resources/sap/ui/core/samples/components/button/custom/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+			assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
+			assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrl, "anylocation/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+
+			var aI18NMFEnhanceWith = oResourceBundleCreateSpy.getCall(1).args[0].enhanceWith;
+			assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
+			assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrl, "anylocation/custom/i18n.properties", "Bundle URL of enhancing model must be adopted relative to manifest!");
+			assert.strictEqual(aI18NMFEnhanceWith[1].bundleUrl, "test-resources/sap/ui/core/samples/components/button/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+
+			oComponent.destroy();
+			oResourceBundleCreateSpy.restore();
+		});
+	});
+
+	QUnit.test("Relative URLs for Manifest object", function(assert) {
+
+		// load the test component
+		return Component.create({
+			manifest : this.oManifest,
+			altManifestUrl : "manifest/from/lrep/manifest.json"
+		}).then(function(oComponent) {
+
+			assert.strictEqual(oComponent.getManifestObject().resolveUri("test"), "test-resources/sap/ui/core/samples/components/button/test", "URL is properly resolved to Component!");
+			assert.strictEqual(oComponent.getManifestObject().resolveUri("test", "manifest"), "manifest/from/lrep/test", "URL is properly resolved to Manifest!");
+
+			oComponent.destroy();
+		});
+	});
+
+	QUnit.module("Register Module Paths");
+
+	QUnit.test("Component.load with URL should not override final resource paths", function(assert) {
+
+		// Prepare
+		sap.ui.require.preload({
+			"test/resourceRoots/component1/manifest.json": JSON.stringify({
+				"sap.app": {
+					"id": "test.resourceRoots.component1"
+				}
+			})
+		});
+		sap.ui.define("test/resourceRoots/component1/Component", ["sap/ui/core/Component"], function(Component) {
+			return Component.extend("test.resourceRoots.component1.Component", {
+				metadata: {
+					manifest: "json"
+				}
+			});
+		});
+
+		// Register final resourceRoot
+		jQuery.sap.registerModulePath("test.resourceRoots.component1", {
+			"url": "/final/test/resourceRoots/component1",
+			"final": true
+		});
+
+		// load the component and pass new URL
+		return Component.load({
+			name: "test.resourceRoots.component1",
+			url: "/new/test/resourceRoots/component1"
+		}).then(function() {
+
+			assert.equal(sap.ui.require.toUrl("test/resourceRoots/component1"), "/final/test/resourceRoots/component1",
+				"Passing an URL should not override final resourceRoots");
+
+		});
+	});
+
+	QUnit.test("Component.create with URL should not override final resource paths", function(assert) {
+
+		// Prepare
+		sap.ui.require.preload({
+			"test/resourceRoots/component2/manifest.json": JSON.stringify({
+				"sap.app": {
+					"id": "test.resourceRoots.component2"
+				}
+			})
+		});
+		sap.ui.define("test/resourceRoots/component2/Component", ["sap/ui/core/Component"], function(Component) {
+			return Component.extend("test.resourceRoots.component2.Component", {
+				metadata: {
+					manifest: "json"
+				}
+			});
+		});
+
+		// Register final resourceRoot
+		jQuery.sap.registerModulePath("test.resourceRoots.component2", {
+			"url": "/final/test/resourceRoots/component2",
+			"final": true
+		});
+
+		// load the component and pass new URL
+		return Component.create({
+			name: "test.resourceRoots.component2",
+			url: "/new/test/resourceRoots/component2"
+		}).then(function() {
+
+			assert.equal(sap.ui.require.toUrl("test/resourceRoots/component2"), "/final/test/resourceRoots/component2",
+				"Passing an URL should not override final resourceRoots");
+
+		});
+	});
+
+	QUnit.test("Component.create with asyncHints.components should respect final URL flag (legacy scenario)", function(assert) {
+
+		// Prepare
+		sap.ui.require.preload({
+			"test/resourceRoots/component3/manifest.json": JSON.stringify({
+				"sap.app": {
+					"id": "test.resourceRoots.component3"
+				}
+			}),
+			"test/resourceRoots/component3/Component.js": function() {
+				sap.ui.component.load({
+					name: "test.resourceRoots.parentcomponent1",
+					url: "/new/test/resourceRoots/parentcomponent1"
+				});
+				test.resourceRoots.parentcomponent1.Component.extend("test.resourceRoots.component3.Component", { // eslint-disable-line no-undef
+					metadata: {
+						manifest: "json"
+					}
+				});
+			}
+		});
+
+		sap.ui.require.preload({
+			"test/resourceRoots/parentcomponent1/manifest.json": JSON.stringify({
+				"sap.app": {
+					"id": "test.resourceRoots.parentcomponent1"
+				}
+			})
+		});
+		// Using predefine to make module available synchronously
+		sap.ui.predefine("test/resourceRoots/parentcomponent1/Component", ["sap/ui/core/Component"], function(Component) {
+			return Component.extend("test.resourceRoots.parentcomponent1.Component", {
+				metadata: {
+					manifest: "json"
+				}
+			});
+		});
+
+		return sap.ui.component({
+			name: "test.resourceRoots.component3",
+			asyncHints: {
+				components: [
+					{
+						"name": "test.resourceRoots.parentcomponent1",
+						"lazy": false,
+						"url": {
+							"url": "/final/test/resourceRoots/parentcomponent1",
+							"final": true
+						}
+					}
+				]
+			},
+			async: true
+		}).then(function() {
+
+			assert.equal(sap.ui.require.toUrl("test/resourceRoots/parentcomponent1"), "/final/test/resourceRoots/parentcomponent1",
+				"Passing asyncHints with final URL should register final resourceRoot");
+
+		});
+	});
+
+
+	QUnit.module("Window Event Handler", {
+		beforeEach: function() {
+
+			this.addEventListenerSpy = this.spy(window, "addEventListener");
+			this.removeEventListenerSpy = this.spy(window, "removeEventListener");
+		},
+		afterEach: function () {
+			this.addEventListenerSpy.restore();
+			this.removeEventListenerSpy.restore();
+		}
+	});
+
+	QUnit.test("onWindowError", function(assert) {
+		var MyOnWindowErrorComponent = Component.extend("test.onWindowError.Component");
+
+		MyOnWindowErrorComponent.prototype.onWindowError = sinon.stub();
+
+		this.oComponent = new MyOnWindowErrorComponent();
+
+		assert.equal(typeof this.oComponent._fnWindowErrorHandler, "function", "Handler has been created");
+
+		sinon.assert.calledWithExactly(this.addEventListenerSpy, "error", this.oComponent._fnWindowErrorHandler);
+		assert.equal(this.addEventListenerSpy.getCall(0).thisValue, window, "addEventListener has been called on the window object");
+
+		this.oComponent._fnWindowErrorHandler({
+			originalEvent: {
+				message: "Some error",
+				filename: "foo.js",
+				lineno: 123
+			}
+		});
+		sinon.assert.calledOnce(this.oComponent.onWindowError);
+		sinon.assert.calledWithExactly(this.oComponent.onWindowError,
+			"Some error", "foo.js", 123);
+
+
+		var handler = this.oComponent._fnWindowErrorHandler;
+
+		this.oComponent.destroy();
+
+		assert.equal(this.oComponent._fnWindowErrorHandler, undefined, "Handler has been removed");
+		sinon.assert.calledWithExactly(this.removeEventListenerSpy, "error", handler);
+		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
+	});
+
+	QUnit.test("onWindowBeforeUnload", function(assert) {
+		var MyOnWindowBeforeUnloadComponent = Component.extend("test.onWindowBeforeUnload.Component");
+
+		MyOnWindowBeforeUnloadComponent.prototype.onWindowBeforeUnload = sinon.stub();
+
+		this.oComponent = new MyOnWindowBeforeUnloadComponent();
+
+		assert.equal(typeof this.oComponent._fnWindowBeforeUnloadHandler, "function", "Handler has been created");
+		sinon.assert.calledWithExactly(this.addEventListenerSpy, "beforeunload", this.oComponent._fnWindowBeforeUnloadHandler);
+		assert.equal(this.addEventListenerSpy.getCall(0).thisValue, window, "addEventListener has been called on the window object");
+
+		var oFakeEvent = {};
+		this.oComponent._fnWindowBeforeUnloadHandler(oFakeEvent);
+		sinon.assert.calledOnce(this.oComponent.onWindowBeforeUnload);
+		sinon.assert.calledWithExactly(this.oComponent.onWindowBeforeUnload, oFakeEvent);
+
+
+		var handler = this.oComponent._fnWindowBeforeUnloadHandler;
+
+		this.oComponent.destroy();
+
+		assert.equal(this.oComponent._fnWindowBeforeUnloadHandler, undefined, "Handler has been removed");
+		sinon.assert.calledWithExactly(this.removeEventListenerSpy, "beforeunload", handler);
+		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
+	});
+
+	QUnit.test("onWindowUnload", function(assert) {
+		var MyOnWindowUnloadComponent = Component.extend("test.onWindowUnload.Component");
+
+		MyOnWindowUnloadComponent.prototype.onWindowUnload = sinon.stub();
+
+		this.oComponent = new MyOnWindowUnloadComponent();
+
+		assert.equal(typeof this.oComponent._fnWindowUnloadHandler, "function", "Handler has been created");
+		sinon.assert.calledWithExactly(this.addEventListenerSpy, "unload", this.oComponent._fnWindowUnloadHandler);
+		assert.equal(this.addEventListenerSpy.getCall(0).thisValue, window, "addEventListener has been called on the window object");
+
+		var oFakeEvent = {};
+		this.oComponent._fnWindowUnloadHandler(oFakeEvent);
+		sinon.assert.calledOnce(this.oComponent.onWindowUnload);
+		sinon.assert.calledWithExactly(this.oComponent.onWindowUnload, oFakeEvent);
+
+
+		var handler = this.oComponent._fnWindowUnloadHandler;
+
+		this.oComponent.destroy();
+
+		assert.equal(this.oComponent._fnWindowUnloadHandler, undefined, "Handler has been removed");
+		sinon.assert.calledWithExactly(this.removeEventListenerSpy, "unload", handler);
+		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
+	});
+
+	QUnit.module("Component Registry", {
+		beforeEach: function () {
+			cleanUpRegistry();
+		},
+		afterEach: function() {
+			cleanUpRegistry();
+		}
+	});
+
+	QUnit.test("Component registry access", function(assert) {
+		var oFooA = new Component("A");
+		var oFooB = new Component("B");
+		var oFooC = new Component("C");
+		var fnCallbackSpy = this.spy(function() {});
+		var aFilteredComponents = [];
+
+		assert.ok(Component.hasOwnProperty("registry"), "Component has static method to access registry");
+		assert.equal(Component.registry.size, 3, "Return number of registered component instances");
+		assert.deepEqual(Object.keys(Component.registry.all()).sort(), ["A", "B", "C"], "Return all registered component instances");
+		assert.ok(Component.registry.get("B") === oFooB, "Return reference of component B from registry by ID");
+
+		Component.registry.forEach(fnCallbackSpy);
+		assert.ok(fnCallbackSpy.calledThrice, "Callback was executed 3 times");
+
+		aFilteredComponents = Component.registry.filter(function(oComponent) {
+			return ["B", "C"].indexOf(oComponent.getId()) > -1;
+		});
+
+		assert.equal(aFilteredComponents.length, 2, "Return 2 components matching the filter criteria");
+
+		oFooA.destroy();
+		oFooB.destroy();
+		oFooC.destroy();
+	});
+
+	QUnit.module("Hook _fnPreprocessManifest", {
+		afterEach: function() {
+			Component._fnPreprocessManifest = null;
+		}
+	});
+
+	QUnit.test("Hook is called when manifest is given in config object (Hook modifies the manifest)", function(assert) {
+		var oManifestJSON = {
+			"sap.app": {
+				"id": "sap.ui.test.other",
+				"type": "application",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.ui5": {
+				"resources": {
+					"css": [
+						{
+							"uri": "style3.css"
+						}
+					]
+				},
+				"models": {
+					"myModel": {
+						"type": "sap.ui.model.odata.ODataModel",
+						"uri": "./some/odata/service"
+					}
+				}
+			}
+		};
+
+		Component._fnPreprocessManifest = function(oManifestJSON) {
+			// To test if the modification is correctly passed back to the
+			// Component's manifest processing, we just change the class of a given model v1 -> v2
+			oManifestJSON["sap.ui5"]["models"]["myModel"].type = "sap.ui.model.odata.v2.ODataModel";
+
+			return Promise.resolve(oManifestJSON);
+		};
+
+		return Component.create({
+			name: "sap.ui.test.other",
+			manifest: oManifestJSON
+		}).then(function(oComponent) {
+			// check if the modification was correctly taken over
+			var oModel = oComponent.getModel("myModel");
+			assert.ok(oModel.isA("sap.ui.model.odata.v2.ODataModel"), "Manifest was modified to use v2 instead of v1 ODataModel.");
+		});
+	});
+
+	QUnit.test("Hook is called when manifest is given in config object and there is one new library dependency (Hook modifies the manifest)", function(assert) {
+		var oManifestJSON = {
+			"sap.app": {
+				"id": "sap.ui.test.other",
+				"type": "application",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.ui5": {
+				"dependencies": {
+					"minUI5Version": "1.71.0",
+					"libs": {
+						"sap.m": {
+							"minVersion": "1.72"
+						}
+					}
+				}
+			}
+		};
+
+		var oConfig = {
+			manifest: oManifestJSON,
+			async: true,
+			name: "sap.ui.test.other"
+		};
+
+		var oManifestJSONCopy;
+		Component._fnPreprocessManifest = function(oManifestJSON, oConfig) {
+			// Copy is required to check if this method is called with the correct raw manifest but not the modified one
+			oManifestJSONCopy = jQuery.extend(true, {}, oManifestJSON);
+
+			// To test if the new app desc change is correctly passed back to the
+			// Component's manifest processing, we just add a new library as a new application dependency
+			oManifestJSONCopy["sap.ui5"].dependencies.libs["sap.uxap"] = {
+				minVersion: "1.72",
+				lazy: true
+			};
+
+			return Promise.resolve(oManifestJSONCopy);
+		};
+
+		var oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
+
+		return Component.create({
+			name: "sap.ui.test.other",
+			manifest: oManifestJSON
+		}).then(function(oComponent) {
+			// check if the new dependency is correctly taken over
+			var oSapUi5Property = oComponent.getManifestEntry("sap.ui5");
+			var oSapUxapLib = oSapUi5Property["dependencies"]["libs"]["sap.uxap"];
+			var oExpectedSapUxapLib = {minVersion: "1.72", lazy: true};
+			assert.equal(oSapUxapLib.minVersion, oExpectedSapUxapLib.minVersion, "minVersion is correct");
+			assert.equal(oSapUxapLib.lazy, oExpectedSapUxapLib.lazy, "lazy is correct");
+			assert.ok(oPreprocessManifestSpy.calledOnceWithExactly(oManifestJSON, oConfig), "then the hook is called once with correct parameters");
+			assert.notDeepEqual(oManifestJSON, oManifestJSONCopy, "then the objects containing manifest info are not equal");
+		});
+	});
+
+	QUnit.test("Hook is called when manifest is loaded from the default location (Hook modifies the manifest)", function(assert) {
+		// register hook and modify the manifest
+		Component._fnPreprocessManifest = function(oManifestJSON) {
+			// To test if the modification is correctly passed back to the
+			// Component's manifest processing, we just change the class of a given model v1 -> v2
+			oManifestJSON["sap.ui5"]["models"]["sfapi"].type = "sap.ui.model.odata.v2.ODataModel";
+
+			return Promise.resolve(oManifestJSON);
+		};
+
+		// loading manifest from default location
+		return Component.create({
+			name: "sap.ui.test.v2"
+		}).then(function(oComponent) {
+			// check if the modification was correctly taken over
+			var oModel = oComponent.getModel("sfapi");
+			assert.ok(oModel.isA("sap.ui.model.odata.v2.ODataModel"), "Manifest was modified to use v2 instead of v1 ODataModel.");
+		});
+	});
+
+	QUnit.test("Hook is called when manifest is loaded from the default location and there is one new library dependency (Hook modifies the manifest)", function(assert) {
+		var oManifestJSONCopy;
+		var oManifestJSONClosure;
+		// register hook and modify the manifest
+		Component._fnPreprocessManifest = function(oManifestJSON) {
+			// Copy is required to check if it is called with the correct manifest but not the modified one
+			oManifestJSONCopy = jQuery.extend(true, {}, oManifestJSON);
+
+			oManifestJSONClosure = oManifestJSON;
+
+			// To test if the new app desc change is correctly passed back to the
+			// Component's manifest processing, we just add a new library as a new application dependency
+			oManifestJSONCopy["sap.ui5"].dependencies.libs["sap.uxap"] = {
+				minVersion: "1.72",
+				lazy: true
+			};
+
+			return Promise.resolve(oManifestJSONCopy);
+		};
+
+		var oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
+
+		// loading manifest from default location
+		return Component.create({
+			name: "sap.ui.test.v2"
+		}).then(function(oComponent) {
+			// check if the new dependency is correctly taken over
+			var oSapUi5Property = oComponent.getManifestEntry("sap.ui5");
+			var oSapUxapLib = oSapUi5Property["dependencies"]["libs"]["sap.uxap"];
+			var oExpectedSapUxapLib = {minVersion: "1.72", lazy: true};
+			assert.equal(oSapUxapLib.minVersion, oExpectedSapUxapLib.minVersion, "minVersion is correct");
+			assert.equal(oSapUxapLib.lazy, oExpectedSapUxapLib.lazy, "lazy is correct");
+			assert.ok(oPreprocessManifestSpy.calledOnce, "then the hook is called once");
+			assert.notDeepEqual(oManifestJSONClosure, oManifestJSONCopy, "then the objects containing manifest info are not equal");
+		});
+	});
+
+	QUnit.test("Hook is called when manifest is loaded from the given manifest URL", function(assert) {
+		var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/v2/manifest.json");
+
+		// register hook and modify the manifest
+		Component._fnPreprocessManifest = function(oManifestJSON) {
+			// To test if the modification is correctly passed back to the
+			// Component's manifest processing, we just change the class of a given model v1 -> v2
+			oManifestJSON["sap.ui5"]["models"]["sfapi"].type = "sap.ui.model.odata.v2.ODataModel";
+
+			return Promise.resolve(oManifestJSON);
+		};
+
+		return Component.create({
+			name: "sap.ui.test.v2",
+			manifest: sManifestUrl
+		}).then(function(oComponent) {
+			// check if the modification was correctly taken over
+			var oModel = oComponent.getModel("sfapi");
+			assert.ok(oModel.isA("sap.ui.model.odata.v2.ODataModel"), "Manifest was modified to use v2 instead of v1 ODataModel.");
+		});
+	});
+
+	QUnit.test("Hook is called when manifest is loaded from the given manifest URL and and there is one new library dependency (Hook modifies the manifest)", function(assert) {
+		var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/v2/manifest.json");
+		var oManifestJSONCopy;
+		var oManifestJSONClosure;
+
+		// register hook and modify the manifest
+		Component._fnPreprocessManifest = function(oManifestJSON) {
+			// Copy is required to check if it is called with the correct manifest but not the modified one
+			var oManifestJSONCopy = jQuery.extend(true, {}, oManifestJSON);
+
+			oManifestJSONClosure = oManifestJSON;
+
+			// To test if the new app desc change is correctly passed back to the
+			// Component's manifest processing, we just add a new library as a new application dependency
+			oManifestJSONCopy["sap.ui5"].dependencies.libs["sap.uxap"] = {
+				minVersion: "1.72",
+				lazy: true
+			};
+
+			return Promise.resolve(oManifestJSONCopy);
+		};
+
+		var oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
+
+		return Component.create({
+			name: "sap.ui.test.v2",
+			manifest: sManifestUrl
+		}).then(function(oComponent) {
+			// check if the new dependency is correctly taken over
+			var oSapUi5Property = oComponent.getManifestEntry("sap.ui5");
+			var oSapUxapLib = oSapUi5Property["dependencies"]["libs"]["sap.uxap"];
+			var oExpectedSapUxapLib = {minVersion: "1.72", lazy: true};
+			assert.equal(oSapUxapLib.minVersion, oExpectedSapUxapLib.minVersion, "minVersion is correct");
+			assert.equal(oSapUxapLib.lazy, oExpectedSapUxapLib.lazy, "lazy is correct");
+			assert.ok(oPreprocessManifestSpy.calledOnce, "then the hook is called once");
+			assert.notDeepEqual(oManifestJSONClosure, oManifestJSONCopy, "then the objects containing manifest info are not equal");
+		});
+	});
+
+	QUnit.test("When hook returns a rejected promise, it should also reject the Component.create with same reason", function(assert) {
+		var sRejectReason = "Rejected from preprocess manifest";
+
+		Component._fnPreprocessManifest = function() {
+			return Promise.reject(sRejectReason);
+		};
+		this.oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
+
+		return Component.create({
+			name: "sap.ui.test.v2empty"
+		}).then(function() {
+			assert.ok(false, "shouldn't reach here");
+		}, function(sReason) {
+			assert.equal(sReason, sRejectReason, "Promise is rejected with the correct reason");
+			this.oPreprocessManifestSpy.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("When hook causes unhandled errors, it should also reject the Component.create", function(assert) {
+		var sErrorText = "Uncaught TypeError: o.x is not a function";
+
+		Component._fnPreprocessManifest = function() {
+			// provoke unhandled error
+			throw new Error(sErrorText);
+		};
+
+		// spy to check if we logged the error for debugging
+		var oLogSpy = this.spy(Log, "error");
+
+		return Component.create({
+			name: "sap.ui.test.v2empty"
+		}).then(function() {
+			assert.ok(false, "shouldn't reach here");
+		}).catch(function(oError) {
+			assert.equal(oError.message, sErrorText, "Error was thrown, and Promise is rejected with the correct reason");
+			assert.ok(oLogSpy.calledWithExactly("Failed to execute flexibility hook for manifest preprocessing.", oError), "Correct Error was logged for supportability");
+			oLogSpy.restore();
+		});
+	});
+
+	QUnit.test("When Manifest-Loading fails (404), the hook should not be called", function(assert) {
+		Component._fnPreprocessManifest = function() {
+			assert.ok(false, "Should not be called when Manifest Request failed.");
+		};
+
+		// create a legacy Component without a manifest.json
+		// Manifest-first loading fails with 404, but is ignored, since the component controller contains metadata.
+		return Component.create({
+			name: "sap.ui.test.other"
+		}).then(function(oComponent) {
+			assert.ok(oComponent, "Component was created.");
+		}).catch(function() {
+			assert.ok(false, "Should not be called. Hook should not be called (fail) when no manifest exists.");
+		});
+	});
+
+	QUnit.module("Commands in manifest", {
+		beforeEach: function () {
+			cleanUpRegistry();
+		},
+		afterEach: function() {
+			cleanUpRegistry();
+		}
+	});
+
+	QUnit.test("getCommand", function(assert) {
+		assert.expect(3);
+		var done = assert.async();
+		// load the test component
+		return Component.create({
+			name: "my.command",
+			manifest: false
+		}).then(function(oComponent) {
+			assert.equal(Object.keys(oComponent.getCommand()).length, 2, "Two commands found");
+			assert.equal(oComponent.getCommand("Save").shortcut, "Ctrl+S", "Save command found");
+			assert.equal(oComponent.getCommand("Cancel").shortcut, "Ctrl+C", "Cancel command found");
+			done();
+		});
+	});
+
+	QUnit.test("$cmd model", function(assert) {
+		assert.expect(1);
+		var done = assert.async();
+		// load the test component
+		return Component.create({
+			name: "my.command",
+			manifest: false
+		}).then(function(oComponent) {
+			assert.ok(oComponent.getModel("$cmd"), "$cmd model created successfully");
+			done();
+		});
+	});
+
+    QUnit.module("Text Verticalization", {
+        beforeEach: function() {
+        },
+        afterEach: function() {
+            this.oComponent.destroy();
+        }
+    });
+
+	QUnit.test("Component0 with Terminologies defined in Component Metadata", function (assert) {
+		var oCreateManifestModelsSpy = sinon.spy(Component, "_createManifestModels");
+
+        return Component.create({
+            name: "testdata.terminologies",
+			manifest: false,
+			activeTerminologies: ["oil", "retail"]
+        }).then(function (oComponent) {
+            this.oComponent = oComponent;
+
+			// Check Resource Model creation
+            var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
+            assert.equal(oCreateManifestModelsSpy.callCount, 1, "_createManifestModels should be called for the i18n model");
+            assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+            assert.equal(oSettings.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oSettings.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.ok(oSettings.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oSettings.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
+
+			// resolve bundle urls
+			var oEnhanceWith0 = oSettings.enhanceWith[0];
+            assert.equal(oEnhanceWith0.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+            assert.equal(oEnhanceWith0.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oEnhanceWith0.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.ok(oEnhanceWith0.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oEnhanceWith0.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
+
+			// bundle names shouldn't be resolved
+			var oEnhanceWith1 = oSettings.enhanceWith[1];
+			assert.equal(oEnhanceWith1.bundleName, "appvar2.i18n.i18n.properties", "The bundleName should be correct");
+			assert.equal(oEnhanceWith1.terminologies.oil.bundleName, "appvar2.i18n.terminologies.oil.i18n", "The bundleName should be correct");
+			assert.equal(oEnhanceWith1.terminologies.retail.bundleName, "appvar2.i18n.terminologies.retail.i18n", "The bundleName should be correct");
+			assert.ok(oEnhanceWith1.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oEnhanceWith1.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
+
+			assert.deepEqual(this.oComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
+
+			oCreateManifestModelsSpy.restore();
+        }.bind(this));
+	});
+
+	QUnit.test("Component0 - Propagate Terminologies via owner component", function (assert) {
+		return Component.create({
+			name: "testdata.terminologies",
+			manifest: false,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+
+			assert.ok(this.oComponent.getActiveTerminologies(), "Active terminologies should be available");
+
+			return this.oComponent.createComponent("myReusedTerminologies").then(function (oReuseComponent) {
+				assert.ok(oReuseComponent, "Component should be loaded");
+				assert.ok(oReuseComponent.getActiveTerminologies(), "The list of terminologies should be available on the reuse component");
+				assert.deepEqual(oReuseComponent.getActiveTerminologies(), this.oComponent.getActiveTerminologies(), "The list of terminologies should be correct");
+				return oReuseComponent;
+			}.bind(this)).then(function (oReuseComponent) {
+				oReuseComponent.destroy();
+			});
+		}.bind(this));
+	});
+
+	QUnit.test("Component0 - Propagate Terminologies via Configuration", function (assert) {
+		return Component.create({
+			name: "testdata.terminologies",
+			manifest: false,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+
+			var oUsage = {
+				usage: "myReusedTerminologies"
+			};
+
+			return this.oComponent.createComponent(oUsage).then(function (oReuseComponent) {
+				assert.ok(oReuseComponent, "Component should be loaded");
+				assert.ok(oReuseComponent.getActiveTerminologies(), "The list of terminologies should be available on the reuse component");
+				assert.deepEqual(oReuseComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
+				return oReuseComponent;
+			}).then(function (oReuseComponent) {
+				oReuseComponent.destroy();
+			});
+		}.bind(this));
+	});
+
+	QUnit.test("Component0 - Propagate Terminologies via API with ignoring the usage parameters", function (assert) {
+		return Component.create({
+			name: "testdata.terminologies",
+			manifest: false,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+
+			var oUsage = {
+				usage: "myReusedTerminologies",
+				activeTerminologies: ["fashion"]
+			};
+			return this.oComponent.createComponent(oUsage).then(function(oComponent) {
+				assert.ok(oComponent, "Component should be loaded");
+				assert.deepEqual(oComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
+				oComponent.destroy();
+			});
+		}.bind(this));
+	});
+
+	QUnit.test("Component0 - Check if activeTerminologies are defined in the manifest in component usage", function (assert) {
+		return Component.create({
+			name: "testdata.terminologies",
+			manifest: false,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+
+			var oUsage = {
+				usage: "myReusedTerminologies2"
+			};
+
+			assert.throws(function() {
+				this.oComponent.createComponent(oUsage);
+			}, new Error("Terminologies vector can't be used in component usages"), "Error should be thrown");
+		}.bind(this));
+	});
+
+	QUnit.test("Component1 with Terminologies defined in manifest.json file", function (assert) {
+		var oResourceBundleCreateSpy = sinon.spy(ResourceBundle, "create");
+		var oCreateManifestModelsSpy = sinon.spy(Component, "_createManifestModels");
+
+		return Component.create({
+			name: "testdata.terminologies.component1",
+			manifest: true,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+
+			var oSettingsBeforeLoad = oResourceBundleCreateSpy.getCall(0).args[0];
+			assert.equal(oSettingsBeforeLoad.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component1/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.ok(oSettingsBeforeLoad.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oSettingsBeforeLoad.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
+
+			// resolve bundle urls
+			var oEnhanceWith0 = oSettingsBeforeLoad.enhanceWith[0];
+			assert.equal(oEnhanceWith0.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oEnhanceWith0.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oEnhanceWith0.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.ok(oEnhanceWith0.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oEnhanceWith0.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
+
+			// bundle names shouldn't be resolved
+			var oEnhanceWith1 = oSettingsBeforeLoad.enhanceWith[1];
+			assert.equal(oEnhanceWith1.bundleName, "appvar2.i18n.i18n.properties", "The bundleName should be correct");
+			assert.equal(oEnhanceWith1.terminologies.oil.bundleName, "appvar2.i18n.terminologies.oil.i18n", "The bundleName should be correct");
+			assert.equal(oEnhanceWith1.terminologies.retail.bundleName, "appvar2.i18n.terminologies.retail.i18n", "The bundleName should be correct");
+			assert.ok(oEnhanceWith1.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oEnhanceWith1.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
+
+			// check if already processed properties have been removed when the ResourceModel constructor is called
+			var oSettingsAfterLoad = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
+			assert.notOk(oSettingsAfterLoad.enhanceWith, "enhanceWith was removed");
+			assert.notOk(oSettingsAfterLoad.terminologies, "terminologies was removed");
+			assert.notOk(oSettingsAfterLoad.activeTerminologies, "terminologies was removed");
+
+			assert.deepEqual(this.oComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
+
+			oResourceBundleCreateSpy.restore();
+			oCreateManifestModelsSpy.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("Component2 - Pass Terminologies from 'sap.app.i18n' via ComponentMetadata to ResourceBundle", function (assert) {
+		var oExpected = {
+			bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component2/i18n/i18n.properties",
+			async: true,
+			activeTerminologies: ["oil", "retail"],
+			supportedLocales: ["en", "de"],
+			fallbackLocale: "en",
+			terminologies: {
+				oil: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component2/i18n/terminologies.oil.i18n.properties",
+					supportedLocales: ["en"]
+				},
+				retail: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component2/i18n/terminologies.retail.i18n.properties",
+					supportedLocales: ["de"]
+				}
+			},
+			enhanceWith: [
+				{
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n/i18n.properties",
+					bundleUrlRelativeTo: "manifest",
+					supportedLocales: ["en", "de"],
+					fallbackLocale: "en",
+					terminologies: {
+						oil: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.oil.i18n.properties",
+							supportedLocales: ["en"]
+						},
+						retail: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.retail.i18n.properties",
+							supportedLocales: ["de"],
+							bundleUrlRelativeTo: "manifest"
+						}
+					}
+				},
+				{
+					bundleName: "appvar2.i18n.i18n.properties",
+					supportedLocales: ["en", "de"],
+					fallbackLocale: "en",
+					terminologies: {
+						oil: {
+							bundleName: "appvar2.i18n.terminologies.oil.i18n",
+							supportedLocales: ["en"]
+						},
+						retail: {
+							bundleName: "appvar2.i18n.terminologies.retail.i18n",
+							supportedLocales: ["de"]
+						}
+					}
+				}
+			]
+		};
+		var oResourceBundleCreateStub = sinon.stub(ResourceBundle, "create").callsFake(function (mParams) {
+			if (mParams.async) {
+				assert.deepEqual(mParams, oExpected, "ResourceBundle.create should be called with the correct arguments");
+				return Promise.resolve({
+					getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
+				});
+			}
+			return {
+				getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
+			};
+		});
+		return Component.create({
+			name: "testdata.terminologies.component2",
+			manifest: false,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+			assert.ok(true, "assertions have been successful");
+			oResourceBundleCreateStub.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("Component3 - Pass Terminologies from 'sap.app.i18n' to ResourceBundle (with manifest.json)", function (assert) {
+		var oExpected = {
+			bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component3/i18n/i18n.properties",
+			async: true,
+			activeTerminologies: ["oil", "retail"],
+			supportedLocales: ["en", "de"],
+			terminologies: {
+				oil: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component3/i18n/terminologies.oil.i18n.properties",
+					supportedLocales: ["en"]
+				},
+				retail: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component3/i18n/terminologies.retail.i18n.properties",
+					supportedLocales: ["de"]
+				}
+			},
+			enhanceWith: [
+				{
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n/i18n.properties",
+					bundleUrlRelativeTo: "manifest",
+					supportedLocales: ["en", "de"],
+					terminologies: {
+						oil: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.oil.i18n.properties",
+							supportedLocales: ["en"]
+						},
+						retail: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.retail.i18n.properties",
+							supportedLocales: ["de"],
+							bundleUrlRelativeTo: "manifest"
+						}
+					}
+				},
+				{
+					bundleName: "appvar2.i18n.i18n.properties",
+					supportedLocales: ["en", "de"],
+					terminologies: {
+						oil: {
+							bundleName: "appvar2.i18n.terminologies.oil.i18n",
+							supportedLocales: ["en"]
+						},
+						retail: {
+							bundleName: "appvar2.i18n.terminologies.retail.i18n",
+							supportedLocales: ["de"]
+						}
+					}
+				}
+			]
+		};
+
+		var oResourceBundleCreateStub = sinon.stub(ResourceBundle, "create").callsFake(function (mParams) {
+			if (mParams.async) {
+				assert.deepEqual(mParams, oExpected, "ResourceBundle.create should be called with the correct arguments");
+				return Promise.resolve({
+					getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
+				});
+			}
+			return {
+				getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
+			};
+		});
+		var oManifestI18nSpy = sinon.spy(Manifest.prototype, "_loadI18n");
+
+		return Component.create({
+			name: "testdata.terminologies.component3",
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+			assert.ok(true, "assertions have been successful");
+
+			// check how many "data-loading" calls are made from the Manifest
+			// TODO: The number of loading calls will sink down to 1 with an additional optimization on ComponentMetadata.prototype._applyManifest
+			assert.equal(oManifestI18nSpy.args.length, 2, "Only two calls made to Manifest.prototype._loadI18n");
+			assert.ok(oManifestI18nSpy.args[0][0], "Manifest.prototype._loadI18n: 1st time called with async=true, after Component preload");
+			// TODO: This check can be enabled with an additional optimization on ComponentMetadata.prototype._applyManifest
+			//assert.ok(oManifestI18nSpy.args[0][1], "Manifest.prototype._loadI18n: 2nd time called with async=true");
+
+			oManifestI18nSpy.restore();
+			oResourceBundleCreateStub.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("Component4 - Pass Terminologies from 'sap.app.i18n' to ResourceBundle (with manifest.json from a different location)", function (assert) {
+		var oExpected = {
+			bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/i18n.properties",
+			async: true,
+			activeTerminologies: ["oil", "retail"],
+			supportedLocales: ["en", "de"],
+			fallbackLocale: "en",
+			terminologies: {
+				oil: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.oil.i18n.properties",
+					supportedLocales: ["en"]
+				},
+				retail: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.retail.i18n.properties",
+					supportedLocales: ["de"]
+				}
+			},
+			enhanceWith: [
+				{
+					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n/i18n.properties",
+					supportedLocales: ["en", "de"],
+					fallbackLocale: "en",
+					terminologies: {
+						oil: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.oil.i18n.properties",
+							supportedLocales: ["en"]
+						},
+						retail: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.retail.i18n.properties",
+							supportedLocales: ["de"]
+						}
+					}
+				},
+				{
+					bundleName: "appvar2.i18n.i18n.properties",
+					supportedLocales: ["en", "de"],
+					fallbackLocale: "en",
+					terminologies: {
+						oil: {
+							bundleName: "appvar2.i18n.terminologies.oil.i18n",
+							supportedLocales: ["en"]
+						},
+						retail: {
+							bundleName: "appvar2.i18n.terminologies.retail.i18n",
+							supportedLocales: ["de"]
+						}
+					}
+				}
+			]
+		};
+		var oResourceBundleCreateStub = sinon.stub(ResourceBundle, "create").callsFake(function (mParams) {
+			if (mParams.async) {
+				assert.deepEqual(mParams, oExpected, "ResourceBundle.create should be called with the correct arguments");
+				return Promise.resolve({
+					getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
+				});
+			}
+			return {
+				getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
+			};
+		});
+		return Component.create({
+			name: "testdata.terminologies.component4",
+			manifest: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/manifest.json",
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+			assert.ok(true, "assertions have been successful");
+			oResourceBundleCreateStub.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("Component5 - Map i18n.uri to i18n.settings.bundleUrl and pass correctly", function (assert) {
+		// Example: uri defined instead of bundleUrl
+		//
+		// "models": {
+		// 	"i18n": {
+		// 		"type": "sap.ui.model.resource.ResourceModel",
+		//		"uri": "i18n/i18n.properties",
+		//			"settings": {
+		// 				[...]
+		var oCreateManifestModelsSpy = sinon.spy(Component, "_createManifestModels");
+
+		return Component.create({
+			name: "testdata.terminologies.component5",
+			manifest: true,
+			activeTerminologies: ["oil", "retail"]
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
+
+			var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
+			assert.ok(oSettings.hasOwnProperty("bundleUrl"), "Property 'bundleUrl' should be avaialble");
+			assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component5/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+
+			oCreateManifestModelsSpy.restore();
+		}.bind(this));
+	});
 });

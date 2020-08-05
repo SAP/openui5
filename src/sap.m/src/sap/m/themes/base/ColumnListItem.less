@@ -3,6 +3,12 @@
 /* Base theme                            */
 /* ===================================== */
 
+@_sap_m_table_Row_Alternate_Background: darken(@sapUiListBackground, 2);
+@_sap_m_table_Row_Alternate_BackgroundHovered: darken(@sapUiListHoverBackground, 3);
+@_sap_m_table_Row_Alternate_BackgroundSelected: darken(@sapUiListSelectionBackgroundColor, 2);
+@_sap_m_table_Row_Alternate_BackgroundSelectedHovered: darken(@sapUiListSelectionHoverBackground, 2);
+@_sap_m_table_SelectionControlWidth: 3rem;
+
 .sapMListTblRow.sapMListTblRowTop > td {
 	vertical-align: top;
 }
@@ -29,22 +35,31 @@
 /* adding alternating rows background color */
 /* alternating rows color for Table without popin */
 .sapMListTblAlternateRowColors > :nth-child(even),
+/* alternating rows color for Table with popins (main row "sapMListTblRow") */
+.sapMListTblAlternateRowColorsPopin > :nth-child(4n-1),
+/* alternating rows color for popin rows (popin row "sapMListTblSubRow") */
+.sapMListTblAlternateRowColorsPopin > :nth-child(4n),
 .sapMListTblAlternateRowColorsGrouped > .sapMListTblRowAlternate,
 .sapMListTblAlternateRowColorsGrouped > .sapMListTblRowAlternate + .sapMListTblSubRow {
-	background-color: darken(@sapUiListBackground, 2);
+	background-color: @_sap_m_table_Row_Alternate_Background;
+	&.sapMLIBHoverable:hover {
+		background : @_sap_m_table_Row_Alternate_BackgroundHovered;
+	}
+	&.sapMLIBSelected {
+		background: @_sap_m_table_Row_Alternate_BackgroundSelected;
+		&.sapMLIBHoverable:hover {
+			background: @_sap_m_table_Row_Alternate_BackgroundSelectedHovered;
+		}
+	}
 }
 
-/* alternating rows color for Table with popins (main row "sapMListTblRow") */
-.sapMListTblAlternateRowColorsPopin > :nth-child(4n-1) {
-	background-color: darken(@sapUiListBackground, 2);
+.sapMLIBHoverable:hover + .sapMListTblSubRow,
+.sapMLIBHoverable.sapMPopinHovered {
+	background : @sapUiListHoverBackground;
 }
 
-/* alternating rows color for popin rows (popin row "sapMListTblSubRow") */
-.sapMListTblAlternateRowColorsPopin > :nth-child(4n) {
-	background-color: darken(@sapUiListBackground, 2);
-}
-
-.sapMLIBHoverable:hover + .sapMListTblSubRow {
+.sapMLIBHoverable + .sapMListTblSubRow:hover {
+	cursor: pointer;
 	background : @sapUiListHoverBackground;
 }
 
@@ -72,6 +87,12 @@
 	box-sizing: border-box;
 }
 
+/* selectionControl width + cell padding */
+.sapMListModeMultiSelect .sapMListTblSubCnt,
+.sapMListModeSingleSelectLeft .sapMListTblSubCnt {
+	padding-left: calc(@_sap_m_table_SelectionControlWidth + 0.5rem);
+}
+
 .sapMListTblSubCntRow{
 	padding-bottom: 0;
 }
@@ -91,6 +112,7 @@
 
 .sapMListTblSubCntValInline{
 	display: inline-block;
+	max-width: 100%;
 }
 
 .sapMListTblSubCntRow > .sapMListTblSubCntSpr,

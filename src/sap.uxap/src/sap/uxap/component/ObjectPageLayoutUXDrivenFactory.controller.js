@@ -7,8 +7,20 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/mvc/Controller"
-], function (jQuery, BindingMode, Context, ManagedObject, Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/base/Log",
+	"sap/base/util/ObjectPath",
+	"sap/ui/thirdparty/jquery"
+], function(
+	jQuery,
+	BindingMode,
+	Context,
+	ManagedObject,
+	Controller,
+	Log,
+	ObjectPath,
+	jQueryDOM
+) {
 	"use strict";
 
 	return Controller.extend("sap.uxap.component.ObjectPageLayoutUXDrivenFactory", {
@@ -19,12 +31,12 @@ sap.ui.define([
 		 */
 		connectToComponent: function (oModel) {
 
-			var bHasPendingRequest = jQuery.isEmptyObject(oModel.getData());
+			var bHasPendingRequest = jQueryDOM.isEmptyObject(oModel.getData());
 
 			//ensure a 1 way binding otherwise it cause any block property change to update the entire subSections
 			oModel.setDefaultBindingMode(BindingMode.OneWay);
 
-			var fnHeaderFactory = jQuery.proxy(function () {
+			var fnHeaderFactory = jQueryDOM.proxy(function () {
 
 				if (bHasPendingRequest) {
 					oModel.detachRequestCompleted(fnHeaderFactory);
@@ -40,7 +52,7 @@ sap.ui.define([
 						this._oHeader = this.controlFactory(oObjectPageLayout.getId(), oHeaderTitleContext);
 						oObjectPageLayout.setHeaderTitle(this._oHeader);
 					} catch (sError) {
-						jQuery.sap.log.error("ObjectPageLayoutFactory :: error in header creation from config: " + sError);
+						Log.error("ObjectPageLayoutFactory :: error in header creation from config: " + sError);
 					}
 				}
 
@@ -66,12 +78,11 @@ sap.ui.define([
 
 			try {
 				//retrieve the block class
-				jQuery.sap.require(oControlInfo.Type);
-				oControlClass = jQuery.sap.getObject(oControlInfo.Type);
+				oControlClass = sap.ui.requireSync(oControlInfo.Type.replace(/\./g, "/"));
 				oControlMetadata = oControlClass.getMetadata();
 
 				//pre-processing: substitute event handler as strings by their function instance
-				jQuery.each(oControlMetadata._mAllEvents, jQuery.proxy(function (sEventName, oEventProperties) {
+				jQueryDOM.each(oControlMetadata._mAllEvents, jQueryDOM.proxy(function (sEventName, oEventProperties) {
 					if (typeof oControlInfo[sEventName] == "string") {
 						oControlInfo[sEventName] = this.convertEventHandler(oControlInfo[sEventName]);
 					}
@@ -81,13 +92,13 @@ sap.ui.define([
 				oControl = ManagedObject.create(oControlInfo);
 
 				//post-processing: bind properties on the objectPageLayoutMetadata model
-				jQuery.each(oControlMetadata._mAllProperties, jQuery.proxy(function (sPropertyName, oProperty) {
+				jQueryDOM.each(oControlMetadata._mAllProperties, jQueryDOM.proxy(function (sPropertyName, oProperty) {
 					if (oControlInfo[sPropertyName]) {
 						oControl.bindProperty(sPropertyName, "objectPageLayoutMetadata>" + oBindingContext.getPath() + "/" + sPropertyName);
 					}
 				}, this));
 			} catch (sError) {
-				jQuery.sap.log.error("ObjectPageLayoutFactory :: error in control creation from config: " + sError);
+				Log.error("ObjectPageLayoutFactory :: error in control creation from config: " + sError);
 			}
 
 			return oControl;
@@ -103,15 +114,15 @@ sap.ui.define([
 			var fnNameSpace = window, aNameSpaceParts = sStaticHandlerName.split('.');
 
 			try {
-				jQuery.each(aNameSpaceParts, function (iIndex, sNameSpacePart) {
+				jQueryDOM.each(aNameSpaceParts, function (iIndex, sNameSpacePart) {
 					fnNameSpace = fnNameSpace[sNameSpacePart];
 				});
 			} catch (sError) {
-				jQuery.sap.log.error("ObjectPageLayoutFactory :: undefined event handler: " + sStaticHandlerName + ". Did you forget to require its static class?");
+				Log.error("ObjectPageLayoutFactory :: undefined event handler: " + sStaticHandlerName + ". Did you forget to require its static class?");
 				fnNameSpace = undefined;
 			}
 
 			return fnNameSpace;
 		}
 	});
-}, /* bExport= */ true);
+});

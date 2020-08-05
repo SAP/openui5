@@ -1,7 +1,11 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Overview",
+	"./pages/Browser",
+	"./pages/NotFound",
+	"./pages/Preview"
 ], function (opaTest) {
 	"use strict";
 
@@ -9,6 +13,7 @@ sap.ui.define([
 
 	/* page not found tests */
 	opaTest("Should see the resource not found page when changing to an invalid hash", function (Given, When, Then) {
+		Given.iStartMyAppOnTheDetailsTab();
 		//Actions
 		When.onTheOverviewPage.iWaitUntilTheTableIsLoaded();
 		When.onTheBrowser.iChangeTheHashToSomethingInvalid();
@@ -19,7 +24,6 @@ sap.ui.define([
 
 	opaTest("Clicking the 'Show icons' link on the 'Resource not found' page should bring me back to the overview", function (Given, When, Then) {
 		//Actions
-		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 		When.onTheNotFoundPage.iPressTheNotFoundShowOverviewLink();
 
 		// Assertions
@@ -31,8 +35,10 @@ sap.ui.define([
 		When.onTheBrowser.iPressOnTheBackwardsButton();
 
 		// Assertions
-		Then.onTheNotFoundPage.iShouldSeeResourceNotFound().
-		and.iTeardownMyApp();
+		Then.onTheNotFoundPage.iShouldSeeResourceNotFound();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 	/* no data text tests for all 4 tabs */
@@ -78,8 +84,10 @@ sap.ui.define([
 
 		// Assertions
 		Then.onThePreviewPage.iShouldSeeThePreviewArea().
-			and.iShouldSeeTheIcon("error").
-			and.iTeardownMyApp();
+			and.iShouldSeeTheIcon("error");
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 });

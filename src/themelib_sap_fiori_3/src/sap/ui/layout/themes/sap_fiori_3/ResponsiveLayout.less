@@ -1,0 +1,36 @@
+/* =============================================== */
+/* CSS for control sap.ui.layout/ResponsiveLayout  */
+/* Fiori 3 theme                                   */
+/* =============================================== */
+
+.sapUiFormResLayout.sapUiFormBackgrTranslucent > div {
+	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
+}
+
+.sapUiFormResLayout.sapUiFormBackgrSolid > div {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapUiRLContainer > .sapUiFormTitle > .sapUiBtn {
+	bottom: 0.3125rem;
+}
+
+/* Toolbar */
+.sapUiFormResLayout.sapUiFormToolbar > div:first-child {
+	background-color: transparent;
+	height: 2.75rem;
+	line-height: 2.75rem;
+}
+
+.sapUiRLContainer.sapUiFormContainerToolbar > .sapMTB {
+	padding: 0;
+}
+
+/* alignment of Label */
+.sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
+	padding-top: 0.875rem;
+}
+
+html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
+	padding-top: 0.8125rem;
+}

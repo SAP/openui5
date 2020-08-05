@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.ux3.NavigationItem.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Item', './library'],
-	function(jQuery, Item, library) {
+sap.ui.define(['sap/ui/core/Item', './library'],
+	function(Item, library) {
 	"use strict";
 
 
@@ -59,4 +59,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Item', './library'],
 
 	return NavigationItem;
 
-}, /* bExport= */ true);
+});

@@ -23,8 +23,9 @@
 
 html.sap-tablet.sapUiMedia-Std-Tablet .sapMOH,
 html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOH {
-	padding: 2rem;
+	padding: 1.5rem 2rem;
 }
+
 html .sapUiContainer-Narrow .sapMOH,
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOH,
 html.sap-phone .sapMOH {
@@ -37,17 +38,18 @@ html.sap-phone .sapMOH {
 
 .sapMOH.sapMOHC {
 	margin: 0;
-	padding: 1.125rem 3rem 1rem 3rem;
+	padding: 1.125rem 2rem 1rem 2rem;
 }
 
-html.sap-tablet.sapUiMedia-Std-Tablet .sapMOH.sapMOHC {
+html.sap-tablet.sapUiMedia-Std-Tablet .sapMOH.sapMOHC,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOH.sapMOHC {
 	margin: 0;
 	padding: 1.125rem 2rem 1rem 2rem;
 }
 
 html.sap-phone .sapMOH.sapMOHC {
 	margin: 0;
-	padding: 1.125rem 1rem 1rem 1rem;
+	padding: 1rem;
 }
 
 .sapMDialog .sapMOH.sapMOHC {
@@ -118,6 +120,10 @@ html.sap-phone .sapMOHTitleDiv.sapMOHNumberWrap {
 .sapMOHIcon {
 	position: absolute;
 	margin-top: 0.375rem;
+}
+
+.sapMOHIconCircle .sapMImg {
+	border-radius: 100%;
 }
 
 .sapMOHIcon .sapMImg {
@@ -337,6 +343,10 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMOHAttr {
 	overflow: hidden;
 	float: right;
 	white-space: nowrap;
+
+	.sapMObjStatusText {
+		word-break: normal;
+	}
 }
 
 .sapMOHStatusFixedWidth {
@@ -431,7 +441,7 @@ html[data-sap-ui-browser^=ie] .sapMOH .sapMObjectAttributeActive {
 .sapMOHR {
 	width: 100%;
 	height: 100%;
-	padding: 1.1rem 3rem 0 3rem;
+	padding: 1.1rem 3rem 1.5rem 3rem;
 	box-sizing: border-box;
 }
 
@@ -444,27 +454,22 @@ html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideM
 	padding-right: 2rem;
 }
 
-html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHR,
-html.sap-tablet.sapUiMedia-Std-Tablet .sapMOHR,
-html .sapUiContainer-Medium .sapMOHR,
-html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) :not(div[class*='sapMOHRBg']:only-child) .sapMOHR {
-	padding-bottom: 0;
-}
-
-div[class*='sapMOHRBg']:only-child {
-	padding-bottom: 1.5rem;
-}
-
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOHR,
 html.sap-phone .sapMOHR,
 html .sapUiContainer-Narrow .sapMOHR {
-	padding: 0.625rem 1rem 0 1rem;
+	padding: 0.625rem 1rem 1rem 1rem;
 }
 
-html.sap-desktop.sapUiMedia-Std-Phone div[class*='sapMOHRBg']:only-child,
-html.sap-phone div[class*='sapMOHRBg']:only-child,
-html .sapUiContainer-Narrow div[class*='sapMOHRBg']:only-child {
-	padding-bottom: 1rem;
+/* sapMOHRNoBorder this class is set when the ObjectHeader has headerContainer in that case the bottom padding should be 0 */
+.sapMOHRNoBorder.sapMOHR,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRNoBorder.sapMOHR,
+html.sap-phone .sapMOHRNoBorder.sapMOHR,
+html .sapUiContainer-Narrow .sapMOHRNoBorder.sapMOHR,
+html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRNoBorder.sapMOHR,
+html.sap-tablet.sapUiMedia-Std-Tablet .sapMOHRNoBorder.sapMOHR,
+html .sapUiContainer-Medium .sapMOHRNoBorder.sapMOHR,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRNoBorder.sapMOHR {
+	padding-bottom: 0;
 }
 
 /* Group1 (title, flags and number) */
@@ -492,6 +497,17 @@ html.sap-desktop .sapMOHRStatesOneOrThree .sapMOHRTitleNumberDiv {
 	display: block;
 }
 
+.sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer {
+	&:active,
+	&:focus {
+		outline: none;
+	}
+}
+
+.sapMOHRIconCircle .sapMImg {
+	border-radius: 100%;
+}
+
 .sapMOHRIcon .sapMImg {
 	max-height: 3rem;
 	max-width: 3rem;
@@ -506,6 +522,7 @@ html.sap-desktop .sapMOHRStatesOneOrThree .sapMOHRTitleNumberDiv {
 .sapMOHRTitleIcon > .sapMOHRTitle {
 	margin-left: 4rem;
 	min-height: 3.375rem;
+	overflow: hidden;
 }
 
 html[data-sap-ui-browser ^= "ie"] {
@@ -518,7 +535,6 @@ html[data-sap-ui-browser ^= "ie"] {
 .sapMOHRTitleDiv {
 	display: inline-block;
 	box-sizing: border-box;
-	overflow: hidden;
 	vertical-align: top;
 	position: relative;
 	width: 100%;
@@ -831,185 +847,28 @@ html .sapUiContainer-Medium .sapMOHRTabs .sapMITH,
 html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITH {
 	margin-left: -2rem;
 	margin-right: -2rem;
+	padding: 0 2rem;
 }
 
-html.sap-phone .sapMOHRTabs .sapMITH,
+html.sap-tablet.sapUiMedia-Std-Tablet .sapUi-Std-PaddingXL .sapMOHRTabs .sapMITH,
+html.sap-desktop.sapUiMedia-Std-Tablet .sapUi-Std-PaddingXL .sapMOHRTabs .sapMITH,
+html .sapUiContainer-Medium .sapUi-Std-PaddingXL .sapMOHRTabs .sapMITH,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapUi-Std-PaddingXL .sapMOHRTabs .sapMITH {
+	margin-left: -3rem;
+	margin-right: -3rem;
+	padding: 0 3rem;
+}
+
+html.sap-phone .sapMOHRTabs .sapMITH {
+	margin-left: -1.5rem;
+	margin-right: -1.5rem;
+}
+
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITH,
 html .sapUiContainer-Narrow .sapMOHRTabs .sapMITH {
 	margin-left: -1rem;
 	margin-right: -1rem;
-}
-
-html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBHead,
-html .sapUiContainer-Narrow .sapMOHRTabs .sapMITBHead {
-	margin: 1rem 0 0;
-}
-
-.sapMOHRTabs .sapMITBScrollContainer {
-	margin: 0 2.75rem;
-}
-
-html.sap-tablet.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITBScrollContainer,
-html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITBScrollContainer,
-html .sapUiContainer-Medium .sapMOHRTabs .sapMITBScrollContainer,
-html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITBScrollContainer {
-	margin: 0 1.75rem;
-}
-
-html.sap-phone .sapMOHRTabs .sapMITBScrollContainer,
-html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBScrollContainer,
-html .sapUiContainer-Narrow .sapMOHRTabs .sapMITBScrollContainer {
-	margin: 0 1rem;
-}
-
-.sapMOHRTabs .sapMITHOverflowList .sapMITBScrollContainer {
-	margin: 0 5rem 0 2.75rem;
-}
-
-html.sap-tablet.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITHOverflowList .sapMITBScrollContainer,
-html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITHOverflowList .sapMITBScrollContainer,
-html .sapUiContainer-Medium .sapMOHRTabs .sapMITHOverflowList .sapMITBScrollContainer {
-	margin: 0 4.25rem 0 1.75rem;
-}
-
-html.sap-phone .sapMOHRTabs .sapMITHOverflowList .sapMITBScrollContainer,
-html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITHOverflowList .sapMITBScrollContainer,
-html .sapUiContainer-Narrow .sapMOHRTabs .sapMITHOverflowList .sapMITBScrollContainer {
-	margin: 0 4rem 0 1rem;
-}
-
-.sapMOHRTabs .sapMITBArrowScrollLeft {
-	left: 1.25rem;
-	padding: 1rem 0;
-}
-
-html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITBArrowScrollLeft,
-html .sapUiContainer-Medium .sapMOHRTabs .sapMITBArrowScrollLeft,
-html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITBArrowScrollLeft {
-	left: 0.25rem;
-	padding: 1rem 0.4rem;
-}
-
-html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollLeft,
-html .sapUiContainer-Narrow .sapMOHRTabs .sapMITBArrowScrollLeft {
-	left: 0.25rem;
-	padding: 1rem 0;
-}
-
-.sapMOHRTabs .sapMITBArrowScrollRight {
-	padding: 1rem 0;
-	right: 1.25rem;
-}
-
-html.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITBArrowScrollRight,
-html .sapUiContainer-Medium .sapMOHRTabs .sapMITBArrowScrollRight,
-html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITBArrowScrollRight {
-	padding: 1rem 0.4rem;
-	right: 0.25rem;
-}
-
-html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollRight,
-html .sapUiContainer-Narrow .sapMOHRTabs .sapMITBArrowScrollRight {
-	padding: 1rem 0;
-	right: 0.25rem;
-}
-
-.sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRight {
-	right: 3.25rem;
-}
-
-html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRight,
-html .sapUiContainer-Medium .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRight,
-html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMITHOverflowList .sapMITBArrowScrollRight {
-	right: 2.75rem;
-}
-
-html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRight,
-html .sapUiContainer-Narrow .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRight {
-	right: 3.25rem;
-}
-
-.sapMOHRTabs .sapMITBArrowScrollLeftTextOnly {
-	left: 1.25rem;
-	padding: 0.75rem 0;
-}
-
-html.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly,
-html .sapUiContainer-Medium .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly,
-html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly {
-	left: 0.25rem;
-	padding: 1.0625rem 0.4rem;
-}
-
-html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly,
-html .sapUiContainer-Narrow .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly {
-	left: 0.25rem;
-	padding: 1.25rem 0 0.75rem;
-}
-
-.sapMOHRTabs .sapMITBArrowScrollRightTextOnly {
-	padding: 0.75rem 0;
-	right: 1.25rem;
-}
-
-html.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITBArrowScrollRightTextOnly,
-html .sapUiContainer-Medium .sapMOHRTabs .sapMITBArrowScrollRightTextOnly,
-html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITBArrowScrollRightTextOnly {
-	padding: 1.0625rem 0.4rem;
-	right: 0.25rem;
-}
-
-html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollRightTextOnly,
-html .sapUiContainer-Narrow .sapMOHRTabs .sapMITBArrowScrollRightTextOnly {
-	padding: 1.25rem 0 0.75rem;
-	right: 0.25rem;
-}
-
-.sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRightTextOnly {
-	right: 3.50rem;
-}
-
-html.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRightTextOnly,
-html .sapUiContainer-Medium .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRightTextOnly,
-html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRightTextOnly {
-	right: 2.75rem;
-}
-
-html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRightTextOnly,
-html .sapUiContainer-Narrow .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRightTextOnly {
-	right: 3.25rem;
-}
-
-.sapMOHRTabs {
-	margin: 0 0 0 0;
-	padding-top: 0;
-}
-
-html.sap-phone .sapMOHRTabs,
-html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs,
-html .sapUiContainer-Narrow .sapMOHRTabs {
-	margin: 0 0 0 0;
-	padding-left: 0;
-	padding-right: 0;
-}
-
-html.sap-phone .sapMOHRTabs .sapMITBTextOnly > .sapMITBFilter > .sapMITBText + .sapMITBContentArrow {
-	height: 0.75rem;
-}
-
-.sapMOHR .sapMITB {
-	display: block;
-	position: relative;
-	width: 100%;
-}
-
-.sapMOHR .sapMITBHead {
-	font-size: 0.75rem;
-	overflow: hidden;
-}
-
-html.sap-phone .sapMOHR .sapMITBHead {
-	margin: 1rem 0 0;
+	padding: 0 1rem;
 }
 
 /* end styles for the IconTabBar when inside ObjectHeader */
@@ -1018,11 +877,21 @@ html.sap-phone .sapMOHR .sapMITBHead {
 	margin: 0;
 }
 
+.sapMOHTitle.sapMOHTitleActive > h6 .sapMText,
+.sapMOHTitle.sapMOHTitleActive > h5 .sapMText,
+.sapMOHTitle.sapMOHTitleActive > h4 .sapMText,
+.sapMOHTitle.sapMOHTitleActive > h3 .sapMText,
+.sapMOHTitle.sapMOHTitleActive > h2 .sapMText,
 .sapMOHTitle.sapMOHTitleActive > h1 .sapMText {
 	color: @sapUiLink;
 	cursor: pointer;
 }
 
+.sapMOHTitle h6 .sapMText,
+.sapMOHTitle h5 .sapMText,
+.sapMOHTitle h4 .sapMText,
+.sapMOHTitle h3 .sapMText,
+.sapMOHTitle h2 .sapMText,
 .sapMOHTitle h1 .sapMText {
 	color: @sapUiGroupTitleTextColor;
 }
@@ -1088,7 +957,17 @@ html.sap-desktop .sapMOHTitleArrow .sapUiIcon:hover {
 /*** styles for responsive object header ***/
 .sapMOHRTitle h1 {
 	font-family: @sapUiFontHeaderFamily;
-	font-size: 1.375rem;
+	font-size: @sapMFontHeader2Size;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiGroupTitleTextColor;
+}
+
+.sapMOHRTitle h6,
+.sapMOHRTitle h5,
+.sapMOHRTitle h4,
+.sapMOHRTitle h3,
+.sapMOHRTitle h2 {
+	font-family: @sapUiFontHeaderFamily;
 	font-weight: @sapUiFontHeaderWeight;
 	color: @sapUiGroupTitleTextColor;
 }
@@ -1164,6 +1043,12 @@ html.sap-desktop .sapMOHRTitleArrow .sapUiIcon:hover {
 .sapMOHR .sapMOHRAttr,
 .sapMOHR .sapMOHRStatus {
 	padding-bottom: 0.5rem;
+}
+
+.sapMOHR .sapMOHRStatus {
+	.sapMObjStatusText {
+		word-break: normal;
+	}
 }
 
 .sapMOHRStatus .sapMObjStatusNone .sapMObjStatusText {

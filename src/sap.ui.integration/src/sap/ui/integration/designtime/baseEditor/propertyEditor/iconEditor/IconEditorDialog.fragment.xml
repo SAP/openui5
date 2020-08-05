@@ -1,0 +1,25 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<SelectDialog
+		noDataText="No Icons Found"
+		title="Select Icon"
+		liveChange="handleSearch"
+		search="handleSearch"
+		confirm="handleClose"
+		cancel="handleClose"
+		items="{
+			path: '/'
+		}"
+	>
+		<StandardListItem
+			title="{name}"
+			description="{path}"
+			icon="{path}"
+			iconDensityAware="false"
+			iconInset="false"
+			type="Active"
+		/>
+	</SelectDialog>
+</core:FragmentDefinition>

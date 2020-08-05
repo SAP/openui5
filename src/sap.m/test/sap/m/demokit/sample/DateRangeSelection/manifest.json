@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.DateRangeSelection",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.DateRangeSelection.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.unified": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

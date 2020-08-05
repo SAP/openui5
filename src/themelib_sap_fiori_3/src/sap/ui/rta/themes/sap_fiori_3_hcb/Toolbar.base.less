@@ -1,0 +1,85 @@
+/******************************************************************
+	Style of the RTA Toolbar (all types) - sap_fiori_3_hcb Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Base_BaseColor: @sapUiBlackBG; //#000000
+@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiWhite; //#ffffff
+@_sap_ui_rta_Toolbar_Base_FocusColor: @sapUiWhite; //#ffffff
+@_sap_ui_rta_Toolbar_Base_HoverColor: @sapHC_HighlightBackground; //#7a5100
+
+.sapUiRtaMode {
+
+	.sapUiRtaToolbar {
+
+		.sapMSegBBtn.sapMSegBBtnFocusable {
+
+			&:hover .sapMSegBBtnInner,
+			&.sapMSegBBtnSel:hover .sapMSegBBtnInner {
+				background-color: @_sap_ui_rta_Toolbar_Base_HoverColor;
+				color: @_sap_ui_rta_Toolbar_Base_TextColor;
+			}
+
+			&.sapMSegBBtnSel:hover .sapMSegBBtnInner::after {
+				border-bottom: 0.125rem solid @_sap_ui_rta_Toolbar_Base_TextColor; //2px
+			}
+
+			&:focus .sapMSegBBtnInner {
+				outline: 0.125rem dotted @_sap_ui_rta_Toolbar_Base_TextColor; //2px
+				outline-offset: -0.125rem; //2px
+			}
+		}
+
+		.sapMSegBBtnFocusable.sapMBtnActive:hover {
+			.sapMSegBBtnInner {
+				background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
+			}
+
+			& .sapMSegBBtnInner::after {
+				border-bottom: 0.125rem solid @_sap_ui_rta_Toolbar_Base_TextColor;  //2px
+			}
+		}
+
+		.sapMSegB .sapMSegBBtn.sapMSegBtnLastVisibleButton:not(.sapMSegBBtnDis) .sapMSegBBtnInner {
+			border-right: none;
+		}
+
+		.sapMSegBBtnFocusable:active + .sapMSegBBtn.sapMSegBtnLastVisibleButton .sapMSegBBtnInner,
+		.sapMSegBBtnFocusable:focus + .sapMSegBBtn.sapMSegBtnLastVisibleButton .sapMSegBBtnInner {
+			border-left: none;
+		}
+		.sapMBtn:focus > .sapMFocusable {
+			outline: 0.125rem dotted @_sap_ui_rta_Toolbar_Base_FocusColor; //2px
+			border-color: transparent;
+		}
+		.sapMBtn:hover {
+			&:focus > .sapMBtnInner {
+				border-color: transparent !important;
+			}
+		}
+		.sapUiRtaToolbarSwitcherSection {
+			.sapMSegBBtn:hover {
+				.sapUiIcon,
+				&.sapMSegBBtnSel .sapMSegBBtnInner .sapUiIcon {
+					color: @_sap_ui_rta_Toolbar_Base_TextColor;
+				}
+			}
+		}
+	}
+}
+
+.sapUiSizeCozy {
+	.sapUiRtaToolbar {
+		.sapMSegBBtn.sapMSegBBtnFocusable {
+			&:focus .sapMSegBBtnInner{
+				outline-offset: -0.25rem; //4px
+			}
+		}
+	}
+}
+
+// Special handling for IE and EDGE Browsers
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiRtaToolbar .sapMSegBBtn.sapMSegBBtnFocusable:focus .sapMSegBBtnInner,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiRtaToolbar .sapMSegBBtn.sapMSegBBtnFocusable:focus .sapMSegBBtnInner {
+	outline: 0.125rem dotted; //2px
+}

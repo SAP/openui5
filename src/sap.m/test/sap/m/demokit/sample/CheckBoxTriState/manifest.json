@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.CheckBoxTriState",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.CheckBoxTriState.CheckBoxTriState",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"CheckBoxTriState.view.xml",
+					"CheckBoxTriState.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

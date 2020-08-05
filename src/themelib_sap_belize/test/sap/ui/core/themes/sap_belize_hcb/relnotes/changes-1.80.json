@@ -1,0 +1,44 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "580651c6f43bf9fa5b9c32df069f92ca186d68c9",
+        "type": "FIX",
+        "text": " \"72\" font: fix Vietnamese characters with misplaced dot below",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002309352020"
+          }
+        ]
+      },
+      {
+        "id": "d7d2dd9b14b01282d3cd37461f24a2eb474561af",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: TabFilter focus is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070204567"
+          }
+        ]
+      },
+      {
+        "id": "bc1f51e81b6dcb7035022da3cc056ca417dd1440",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Belize theme aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080205466"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080207010"
+          }
+        ]
+      }
+    ]
+  }
+}

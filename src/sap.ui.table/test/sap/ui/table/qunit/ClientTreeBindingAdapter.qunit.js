@@ -1,8 +1,12 @@
 /*global QUnit */
 
-sap.ui.require([
-	"sap/ui/model/ClientTreeBindingAdapter"
-], function(ClientTreeBindingAdapter) {
+sap.ui.define([
+	"sap/ui/model/ClientTreeBindingAdapter",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter"
+], function(ClientTreeBindingAdapter, JSONModel, Filter, FilterOperator, Sorter) {
 	"use strict";
 
 	var oModel, oBinding;
@@ -160,7 +164,7 @@ sap.ui.require([
 
 	QUnit.module("ClientBindingAdapter", {
 		beforeEach: function() {
-			oModel = new sap.ui.model.json.JSONModel();
+			oModel = new JSONModel();
 			oModel.setData(jQuery.extend({}, oData));
 		},
 		afterEach: function() {
@@ -172,7 +176,7 @@ sap.ui.require([
 		createTreeBindingAdapter("/bing/root", null, [], {});
 		assert.equal(oBinding.getPath(), "/bing/root", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
-		assert.ok(oBinding instanceof sap.ui.model.ClientTreeBinding, "treeBinding class check");
+		assert.ok(oBinding.isA("sap.ui.model.ClientTreeBinding"), "treeBinding class check");
 	});
 
 	QUnit.test("getRootContexts getNodeContexts", function(assert) {
@@ -666,9 +670,9 @@ sap.ui.require([
 		});
 
 		oBinding.getContexts(0, 100);
-		oBinding.filter(new sap.ui.model.Filter({
+		oBinding.filter(new Filter({
 			path: "name",
-			operator: sap.ui.model.FilterOperator.EQ,
+			operator: FilterOperator.EQ,
 			value1: "Hip-Hop"
 		}));
 
@@ -684,9 +688,9 @@ sap.ui.require([
 
 		oBinding.getContexts(0, 100);
 
-		oBinding.filter(new sap.ui.model.Filter({
+		oBinding.filter(new Filter({
 			path: "name",
-			operator: sap.ui.model.FilterOperator.Contains,
+			operator: FilterOperator.Contains,
 			value1: "chuck"
 		}));
 
@@ -775,6 +779,64 @@ sap.ui.require([
 		assert.equal(oBinding._isNodeSelectable(""), false, "Illegal nodes are not selectable.");
 
 		done();
+	});
+
+	QUnit.test("getSelectedIndex after parent collapse w/ recursive collapse", function(assert) {
+		var done = assert.async();
+		createTreeBindingAdapter("/bing/root", [], null, {
+			collapseRecursive: true,
+			displayRootNode: true,
+			numberOfExpandedLevels: 0
+		});
+		oBinding.expand(0);
+		oBinding.getContexts(0, 100);
+
+		oBinding.setSelectedIndex(1);
+		assert.equal(oBinding.getSelectedIndex(), 1, "Selected index is 1");
+
+		var fnChangeHandler1 = function(oEvent) {
+			oBinding.detachChange(fnChangeHandler1);
+			oBinding.getContexts(0, 100); // rebuild tree
+			assert.equal(oBinding.getSelectedIndex(), -1, "Selected index could not be found (-1)");
+
+			oBinding.expand(0);
+			oBinding.getContexts(0, 100);
+			assert.equal(oBinding.getSelectedIndex(), -1,
+				"Selected index has not been restored because of recursive collapse mode");
+			done();
+		};
+
+		oBinding.attachChange(fnChangeHandler1);
+		oBinding.collapse(0);
+	});
+
+	QUnit.test("getSelectedIndex after parent collapse w/o recursive collapse", function(assert) {
+		var done = assert.async();
+		createTreeBindingAdapter("/bing/root", [], null, {
+			collapseRecursive: false,
+			displayRootNode: true,
+			numberOfExpandedLevels: 0
+		});
+
+		oBinding.expand(0);
+		oBinding.getContexts(0, 100);
+
+		oBinding.setSelectedIndex(1);
+		assert.equal(oBinding.getSelectedIndex(), 1, "Selected index is 1");
+
+		var fnChangeHandler1 = function(oEvent) {
+			oBinding.detachChange(fnChangeHandler1);
+			oBinding.getContexts(0, 100); // rebuild tree
+			assert.equal(oBinding.getSelectedIndex(), -1, "Selected index could not be found (-1)");
+
+			oBinding.expand(0);
+			oBinding.getContexts(0, 100);
+			assert.equal(oBinding.getSelectedIndex(), 1, "Selected index 1 has been restored");
+			done();
+		};
+
+		oBinding.attachChange(fnChangeHandler1);
+		oBinding.collapse(0);
 	});
 
 	QUnit.test("Add Selection Interval", function(assert) {
@@ -949,7 +1011,7 @@ sap.ui.require([
 
 		oBinding.attachChange(fnRefreshHandler);
 		//sort descending
-		oBinding.sort(new sap.ui.model.Sorter("name", true));
+		oBinding.sort(new Sorter("name", true));
 	});
 
 	/**
@@ -1074,7 +1136,7 @@ sap.ui.require([
 
 	QUnit.module("ClientBindingAdapter - Model Data 2", {
 		beforeEach: function() {
-			oModel = new sap.ui.model.json.JSONModel();
+			oModel = new JSONModel();
 			oModel.setData(jQuery.extend({}, oData2));
 		},
 		afterEach: function() {

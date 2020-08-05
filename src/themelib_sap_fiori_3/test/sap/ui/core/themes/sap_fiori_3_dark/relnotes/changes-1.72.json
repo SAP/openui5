@@ -1,0 +1,81 @@
+{
+  "1.72.0": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "7f7e4327f9e6ca226f829bff4222f96440ca7ae8",
+        "type": "FEATURE",
+        "text": " sap.f.Avatar: Added more background color options",
+        "references": []
+      },
+      {
+        "id": "bf0a4518655d1041e1ef0f50ba031fb84c8cd3a3",
+        "type": "FEATURE",
+        "text": " sap.f.ProductSwitch: Implemented new control",
+        "references": []
+      },
+      {
+        "id": "c9546822eebe3d90fee50698c891f526571699a6",
+        "type": "FEATURE",
+        "text": " sap.m.Popover: Responsive paddings enablement",
+        "references": []
+      },
+      {
+        "id": "7318c03e38f3898f48df88a7f3c78b6f57fdd546",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Quartz Light accessibility improvement",
+        "references": []
+      },
+      {
+        "id": "d6d8f40af43f63a99745ef3e05a9007c2d05da6d",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Buttons are correctly positioned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970472565"
+          }
+        ]
+      },
+      {
+        "id": "77af4a08c2462796ba24b313b53b22fc761a1bc8",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: When in IconTabBar and in Split mode focus no longer goes outside the box",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980405114"
+          }
+        ]
+      },
+      {
+        "id": "1a1c9d9c1300a6bdc1a9bad1e4398c6cbf296be4",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: has correct paddings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980388311"
+          }
+        ]
+      },
+      {
+        "id": "a62971e50068cb564fdd154adad504d0cd56a474",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: SAP Quartz Light styles adjustment",
+        "references": []
+      },
+      {
+        "id": "95368ef424b6680110504d7d433991b7571abc63",
+        "type": "FIX",
+        "text": " uxap.ObjectPageSubSection: Title height corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980401916"
+          }
+        ]
+      }
+    ]
+  }
+}

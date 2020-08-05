@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+	<title>RuntimeAuthoring - Embedded Components Test App</title>
+	<script>
+		window['sap-ui-config'] = window['sap-ui-config'] || {};
+		window['sap-ui-config'].theme = 'sap_belize';
+		window['sap-ui-config'].language = 'en';
+		window['sap-ui-config'].compatVersion = 'edge';
+		window['sap-ui-config'].libs = 'sap.m, sap.ui.layout, sap.ui.comp, sap.ui.rta';
+		window['sap-ui-config'].resourceroots = {
+			"sap.ui.rta.test": "./../../"
+		};
+
+		var __aPrefixMatches = document.location.pathname.match(/(.*)\/test-resources\//);
+		var __sPathPrefix = __aPrefixMatches &&  __aPrefixMatches[1] || "";
+
+		document.write('<script src="' + __sPathPrefix + '/resources/sap-ui-core.js"><' + '/script>');
+	</script>
+
+	<script type="text/javascript">
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				"sap/m/Shell",
+				"sap/ui/core/ComponentContainer"
+			], function (Shell, ComponentContainer) {
+
+				// initialize the UI component
+				new Shell({
+					app: new ComponentContainer({
+						height : "100%",
+						name: "sap.ui.rta.test.embeddedComponent"
+					})
+				}).placeAt("content");
+			});
+		});
+	</script>
+</head>
+<body class="sapUiBody">
+<div id="content"></div>
+</body>
+
+</html>

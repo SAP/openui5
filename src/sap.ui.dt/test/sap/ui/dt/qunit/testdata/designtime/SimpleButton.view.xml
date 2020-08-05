@@ -1,16 +1,15 @@
-<core:View xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc"
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m" controllerName="dt.view.SimpleButton">
 	<Page title="Title" id="Page" showFooter="true">
 		<content>
-		    <!-- this is a comment -->
-    		<Button text="Button 0" id="btn0"></Button>
-    		<Button text="Button 1" id="btn1"></Button>
-    		<Button text="Button 2" id="btn2"></Button>
+			<!-- this is a comment -->
+			<Button text="Button 0" id="btn0"></Button>
+			<Button text="Button 1" id="btn1"></Button>
+			<Button text="Button 2" id="btn2"></Button>
 		</content>
 		<footer>
-            <Bar id="Bar">
-            </Bar>
-        </footer>
+			<Bar id="Bar">
+			</Bar>
+		</footer>
 	</Page>
-</core:View>
+</mvc:View>

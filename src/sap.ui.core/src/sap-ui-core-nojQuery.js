@@ -54,7 +54,7 @@
 }([
 	"raw:sap/ui/thirdparty/baseuri.js",
 	"raw:sap/ui/thirdparty/es6-promise.js",
-	"raw:sap/ui/thirdparty/es6-string-methods.js",
+	"raw:sap/ui/thirdparty/es6-shim-nopromise.js",
 	"raw:ui5loader.js",
 	"raw:ui5loader-autoconfig.js",
 	"require:sap/ui/core/Core"

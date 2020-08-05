@@ -162,37 +162,67 @@
 				"id": "203bf7029ff102941d7643ab8468bdd44013e696",
 				"type": "FIX",
 				"text": "Less Parameter @sapUiFieldRequiredColor contrast issue",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570862997"
+					}
+				]
 			},
 			{
 				"id": "c40f68462e1eb53161b02141bbbccad6cbb5c583",
 				"type": "FIX",
 				"text": "m.IconTabBar: windows 10 rules added",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670168457"
+					}
+				]
 			},
 			{
 				"id": "2f41ee778bf2781aec17d266a6e755798afd093e",
 				"type": "FIX",
 				"text": "sap.m.Carousel: Fixed nav arrows on combi devices",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670121451"
+					}
+				]
 			},
 			{
 				"id": "373a5366152f8d953904fe1f3f470854ed7211d6",
 				"type": "FIX",
 				"text": "sap.m.IconTaBar: count in RTL is right aligned",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670163085"
+					}
+				]
 			},
 			{
 				"id": "913fdf09e73a97ec42b34f3e58606a57603c5632",
 				"type": "FIX",
 				"text": "sap.m.IconTaBar: scroll arrows in Text-only mode are aligned with the text now",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670015003"
+					}
+				]
 			},
 			{
 				"id": "535dc6a0f3e09290fa419d23325e94f7e69bb71f",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar: padding on phone fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670120798"
+					}
+				]
 			},
 			{
 				"id": "7ccce7518757ee7585d539bb7c296d30395731af",
@@ -210,7 +240,12 @@
 				"id": "47123cd5e9f74c2be76122de39a839d7af67939f",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670208916"
+					}
+				]
 			},
 			{
 				"id": "945b5767ff55d0f431578de210b14f1dd0510a4a",
@@ -244,7 +279,12 @@
 				"id": "75d4e33e30dfa74f91e4d036db836a2439a0921a",
 				"type": "FIX",
 				"text": "sap.m.NotificationListItem: Box shadow corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670289766"
+					}
+				]
 			}
 		]
 	},
@@ -255,19 +295,38 @@
 				"id": "50e2efa8167bd09bdc499b4ae8de16c40f0ebbc9",
 				"type": "FIX",
 				"text": "sap.m.ActionSheet: Dialog's \"Cancel\" button is now positioned correctly on IE",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680008807"
+					}
+				]
 			},
 			{
 				"id": "68dbe8bd92f13439357ed781d3aa7587409ac829",
 				"type": "FIX",
 				"text": "sap.m.Select: remove the margin inside the table cell",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670334763"
+					}
+				]
 			},
 			{
 				"id": "59bb51406ec357f92c5fbd94dec1136d5a157189",
 				"type": "FIX",
 				"text": "sap.m.StandardListItem: Update Icon correctly.",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670320921"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670314180"
+					}
+				]
 			}
 		]
 	}

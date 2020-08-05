@@ -1,0 +1,37 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TableColumnWidth",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TableColumnWidth.Table",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "Table.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Table.view.xml",
+					"Table.controller.js",
+					"Table.css",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

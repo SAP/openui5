@@ -1,0 +1,680 @@
+/*!********************************************* Documentation page styles *********************************************!*/
+.topicWrapper,
+.topicWrapper .sapUiHLayoutChildWrapper {
+    width: 100%;
+}
+
+#d4h5-main-container {
+    font-size: 0.875em;
+
+    .hidden {
+        display: none;
+    }
+
+    .sapUISDKExternalLink {
+        margin: 0;
+    }
+
+    .SAP-icons {
+        font-family: "SAP-icons";
+    }
+
+    li,
+    li p,
+    li div.p,
+    li ol,
+    li ul,
+    li aside,
+    li pre.codeblock,
+    li div.note,
+    li div.syntax,
+    li blockquote,
+    li pre.msgblock,
+    li table,
+    li div.table-wrapper,
+    table p,
+    table div.p,
+    table ol,
+    table ul,
+    table aside,
+    table pre.codeblock,
+    table div.note,
+    table div.syntax,
+    table blockquote,
+    table pre.msgblock,
+    .stepresult,
+    .itemgroup, div.disclaimer-page-block li, div.disclaimer-page-block li p {
+        margin-top: 1.5em;
+        margin-bottom: 1.5em;
+    }
+
+    .collapsible.expanded {
+        .fig > :not(.title) {
+            display: block;
+        }
+
+        > .collapsible-icon::before {
+            content: '\E1EF';
+        }
+    }
+
+    .collapsible:not(.expanded) {
+        .fig > :not(.title) {
+            display: none;
+        }
+
+        > .collapsible-icon::before {
+           content: '\e0e3';
+        }
+    }
+
+    .collapsible {
+        .collapsible-icon {
+            cursor: pointer;
+
+            &:before {
+                margin-right: 1rem;
+                font-family: sap-icons;
+            }
+
+            &:hover {
+                color: rgba(0,29,134,0.9)
+            }
+
+            h2, h3, .title, strong {
+              cursor: pointer;
+              display: inline-block;
+              margin: 0.25rem 0.25rem 0.25rem;
+              pointer-events: none;
+            }
+        }
+    }
+
+    .section.topic > h1 {
+        font-size: 2em;
+        font-weight: 400;
+        margin: 1.6em 0 .75em 0;
+
+        .apiname,
+        .sap-technical-name,
+        code {
+            font-size: inherit;
+        }
+    }
+
+    .h2 {
+        color: rgba(0, 0, 0, 0.7);
+        font-size: 1.375em;
+    }
+
+    .section.topic > section {
+        margin: 1.5rem 0;
+    }
+
+    .section.topic > section:first-of-type {
+        margin-top: 0.75rem;
+        h2 {
+            margin-top: 0;
+        }
+    }
+
+    .section.topic:first-of-type > h1:first-of-type {
+        display: none;
+    }
+
+    .lightbox-img-wrapper {
+        cursor: pointer;
+        position: relative;
+        display: inline-block;
+
+        .overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: #f7f7f7;
+            pointer-events: none;
+        }
+
+        &:before {
+            z-index: 2;
+            position: absolute;
+            right: 0;
+            content: "";
+            font-family: sap-icons;
+            color: rgb(0, 143, 211);
+            background-color: rgba(255, 255, 255, 0.75);
+        }
+
+        img {
+            position: relative;
+            z-index: 1;
+            &:hover {
+                opacity: .8;
+            }
+        }
+
+        img.minimized-extrasmall {
+            max-width: 100px;
+        }
+
+        img.minimized-small {
+            max-width: 200px;
+        }
+    }
+
+    .imagemap {
+        position: relative;
+
+        .overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            user-select: none;
+
+            .shape {
+                transition: opacity 0.3s;
+            }
+        }
+
+        .area-tooltip {
+            pointer-events: none;
+            user-select: none;
+            opacity: 0;
+            position: absolute;
+            background-color: #e8e8e8;
+            max-width: 200px;
+            display: inline-block;
+            padding: 1rem 1.5rem;
+            box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.5);
+        }
+
+    }
+
+    .light-overlays .imagemap {
+        .shape {
+            fill: rgba(255, 255, 255, 0.5);
+        }
+    }
+
+    .dark-overlays .imagemap {
+        .shape {
+            fill: rgba(99, 99, 99, 0.5);
+        }
+    }
+
+    .apiname,
+    .sap-technical-name,
+    code {
+        font-family: Consolas, Courier, monospace;
+        font-size: 0.875rem;
+    }
+
+    p {
+        line-height: 1.6em;
+        orphans: 2;
+        padding: 0;
+        widows: 2;
+        margin: 1.5em 0;
+        font-size: 1em;
+    }
+
+    .content-body p {
+        line-height: 1.5rem;
+        padding: 0;
+    }
+
+    .note,
+    pre.codeblock,
+    blockquote,
+    div.syntax {
+        border-left: .6rem solid #2fa0e0;
+        background-color: #EEE;
+        padding: .6em .75em .6em .75em;
+        margin: 1.5em 0;
+    }
+
+    .note {
+        .note {
+            border-left: unset;
+        }
+    }
+
+    .note .codeblock {
+        border: none;
+    }
+
+    pre.lines {
+        font-family: 'Benton Sans', Arial, sans-serif;
+        line-height: 1.6em;
+        orphans: 2;
+        padding: 0;
+        widows: 2;
+        margin: 1.5em 0;
+        font-size: 1em;
+    }
+
+    aside > p:first-of-type {
+        margin-bottom: 0;
+    }
+
+    aside > p:last-of-type {
+        margin-top: 0;
+    }
+
+    .note .fig > p {
+        margin: .4em 0;
+    }
+
+    .caution,
+    .restriction,
+    .limitations {
+        border-left: 0.6rem solid #e35500;
+    }
+
+    .note .title,
+    .note .cautiontitle,
+    .syntaxtitle,
+    .notetitle {
+        display: block;
+        background-repeat: no-repeat;
+        background-position: left top;
+        font-weight: 300;
+    }
+
+    .restriction .title:before,
+    .caution .cautiontitle:before,
+    .note.caution .title:before,
+    .note .title:before,
+    .notetitle:before,
+    .recommendation .title:before,
+    .remember .title:before,
+    .tip .title:before,
+    .tiptitle:before,
+    .samplecode .title:before,
+    .codesyntax .title:before,
+    .syntaxtitle .title:before,
+    .outputcodeblock .title:before,
+    .sourcecodeblock .title:before,
+    .example .title:before {
+        font-family: sap-icons;
+    }
+
+    .note .title:before,
+    .recommendation .title:before,
+    .remember .title:before,
+    .tip .title:before,
+    .example .title:before,
+    .restriction .title:before,
+    .caution .title:before {
+        margin-right: .5em;
+    }
+
+    .note .title:before {
+        content: '\e05c';
+    }
+
+    .recommendation .title:before {
+        content: '\e04c';
+    }
+
+    .restriction .title:before {
+        content: '\e094';
+    }
+
+    .caution .title:before {
+        content: '\e201';
+    }
+
+    .remember .title:before,
+    .tip .title:before {
+        content: '\e0e3';
+    }
+
+    .example .title:before {
+        content: '\e16d';
+    }
+
+    .videoWrapper {
+        padding-bottom: 56.25%; /* 16:9 */
+        position: relative;
+    }
+
+    .videoWrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .sapUiInvertedElement {
+        color: #ffffff;
+    }
+
+    .sapUiElement {
+        color: #666666;
+    }
+
+    .sapUiNeutralElement {
+        color: #007cc0;
+    }
+
+    .sapUiNegativeElement {
+        color: #cc1919;
+    }
+
+    .sapUiCriticalElement {
+        color: #d14900;
+    }
+
+    .sapUiPositiveElement {
+        color: #007833;
+    }
+
+    .sapContent_IconColor {
+        color: #346187;
+    }
+
+    .sapPositiveColor {
+        color: #2B7D2B;
+    }
+
+    .sapNegativeColor {
+        color: #BB0000;
+    }
+
+    .sapCriticalColor {
+        color: #E78C07;
+    }
+
+    .sapUiBrand {
+        background-color: #009de0;
+    }
+
+    .sapUiPageFooterBackground {
+        background-color: #363e43;
+    }
+
+    .sapUiButtonRejectBackground {
+        background-color: #cc1919;
+    }
+
+    .sapUiButtonAcceptBackground {
+        background-color: #007833;
+    }
+
+    .sapUiPageHeaderBackground {
+        background-color: #f2f2f2;
+    }
+
+    .sapUiObjectHeaderBackgroundsapUiObjectHeaderBackground {
+        background-color: #ffffff;
+    }
+
+    .samplecode .title:before,
+    .codesyntax .title:before,
+    .syntaxtitle .title:before,
+    .outputcodeblock .title:before,
+    .sourcecodeblock .title:before {
+        content: '\e139';
+    }
+
+    a,
+    a:visited {
+        color: #008fd3;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    h2 {
+        break-after: avoid;
+        break-inside: avoid;
+        font-weight: 600;
+        font-size: 1.25rem;
+        line-height: 1.25rem;
+        margin: 2.125rem 0 1.25rem 0;
+        word-wrap: break-word;
+
+        .apiname,
+        .sap-technical-name,
+        code {
+            font-size: inherit;
+        }
+    }
+
+    em,
+    span.uicontrol,
+    span.uinolabel,
+    .emphasis,
+    strong {
+        font-weight: 600;
+    }
+
+    span.uicontrol,
+    span.uinolabel {
+        color: #486ba7;
+    }
+
+    code, kbd, pre, samp {
+        font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    }
+
+    pre {
+        white-space: pre-wrap;
+        white-space: -moz-pre-wrap;
+        white-space: -pre-wrap;
+        white-space: -o-pre-wrap;
+        word-wrap: break-word;
+    }
+
+    pre.codeblock {
+        display: block;
+        padding: .625rem;
+        margin: 0 0 .625rem;
+        font-size: .8125rem;
+        line-height: 1.125rem;
+        color: #333;
+        word-break: break-all;
+        border: 1px solid #525252;
+
+        .emphasis {
+            background-color: #fffcb5;
+        }
+    }
+
+    .samplecode pre {
+        border: unset;
+    }
+
+    aside pre.codeblock,
+    div.note pre.codeblock,
+    div.syntax pre {
+        border-left: 0;
+        padding: 0;
+    }
+
+    .tableWrapper {
+        overflow-x: scroll;
+    }
+
+    table {
+        border: 0;
+        border-color: #adadad;
+        border-collapse: collapse;
+        text-align: left;
+        table-layout: fixed;
+        border-spacing: 0;
+    }
+
+    table.tableFullWidth {
+        width: 100%;
+    }
+
+    table.tableAutoWidth {
+        width: auto;
+    }
+
+    .tablecap {
+        color: #666;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+        white-space: nowrap;
+        font-size: .625rem;
+        margin-left: .125rem;
+    }
+
+    th {
+        background-color: rgba(0, 0, 0, 0.15);
+        font-weight: bold;
+        border-collapse: collapse;
+        padding: 0.6em;
+    }
+
+    td {
+        border-collapse: collapse;
+        padding: .5rem;
+        vertical-align: top;
+        text-align: left;
+        line-height: 1.75rem;
+
+        p:first-child {
+            margin-top: 0;
+        }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .p {
+            font-size: .8125rem;
+        }
+    }
+
+    span.figcap {
+        font-size: .857rem;
+    }
+
+    ol,
+    ul {
+        margin-top: 0;
+        margin-bottom: .625rem;
+    }
+
+    ol ol {
+        list-style-type: lower-alpha;
+    }
+
+    ol ol ol {
+        list-style-type: lower-roman;
+    }
+
+    .relatedLinks ol,
+    .relatedLinks ul,
+    .contentInSection ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .contentInSection {
+        h2 {
+            font-size: 1em;
+        }
+        ul {
+            font-weight: 600;
+            font-size: 1em;
+        }
+    }
+
+    .sl {
+        list-style-type: none;
+    }
+
+    .msgph,
+    .wintitle {
+        font-weight: 600;
+        color: rgba(13, 35, 113, 0.8);
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    kbd.key {
+        border-radius: 3px;
+        font-size: 1em;
+        border: 1px solid rgba(0, 0, 0, 0.8);
+        padding: 2px 4px;
+    }
+
+    .keys {
+        .keyWrap:not(:first-child):before {
+            content: '+';
+            margin-right: 0.25rem;
+        }
+    }
+
+    span.menucascade .uicontrol:after {
+        content: '\e066';
+        font-family: "SAP-icons";
+        font-size: .75em;
+        color: rgba(13, 35, 113, 0.65);
+        padding-left: .15em;
+    }
+
+    .keyword,
+    .cmdname {
+        font-style: italic;
+    }
+
+    .parmname {
+        font-size: 1rem;
+        font-family: Monaco, monospace;
+    }
+
+    .uilabel,
+    .uinolabel {
+        font-style: normal;
+        font-weight: 600;
+        color: rgba(13, 35, 113, 0.8);
+    }
+
+}
+
+.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container .note,
+.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container pre.codeblock,
+.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container blockquote,
+.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container div.syntax,
+.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container .apiname,
+.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container code,
+.sapUiTheme-sap_fiori_3_dark #d4h5-main-container .note,
+.sapUiTheme-sap_fiori_3_dark #d4h5-main-container pre.codeblock,
+.sapUiTheme-sap_fiori_3_dark #d4h5-main-container blockquote,
+.sapUiTheme-sap_fiori_3_dark #d4h5-main-container .apiname,
+.sapUiTheme-sap_fiori_3_dark #d4h5-main-container code {
+    background-color: #22364a;
+}
+
+.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container pre,
+.sapUiTheme-sap_fiori_3_dark #d4h5-main-container pre {
+    background-color: unset;
+    color: unset;
+}
+
+html.sap-desktop #d4h5-main-container ::-webkit-scrollbar,
+html.sap-desktop #d4h5-main-container ::-webkit-scrollbar-corner {
+    background-color: #f7f7f7;
+}
+
+#d4h5-main-content .apiname,
+#d4h5-main-content .parmname {
+    font-size: 1.375em;
+}

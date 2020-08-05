@@ -16,7 +16,11 @@
 		var oMCInformation = new sap.m.MessageStrip("mcontainer1" , {
 			type: "Information",
 			text: "You have configured Windows Internet Explorer to block unsigned ActiveX controls.",
-			link: new sap.m.Link({text: "Learn more"})
+			link: new sap.m.Link({
+				text: "Learn more",
+				href: "http://www.sap.com/",
+				target: "_blank"
+			})
 		});
 
 		var oMCSuccess = new sap.m.MessageStrip("mcontainer2",{
@@ -24,7 +28,11 @@
 			showIcon : true,
 			text: "We have received your enquiry and will respond to you within 24 hours." +
 				"For urgent enquiries please call us on one of the telephone numbers below.",
-			link: new sap.m.Link({text: "Learn more"})
+			link: new sap.m.Link({
+				text: "Learn more",
+				href: "http://www.sap.com/",
+				target: "_blank"
+			})
 		});
 
 		var oMCWarningExpand = new sap.m.MessageStrip("mcontainer3",{
@@ -41,7 +49,11 @@
 			type: "Error",
 			showIcon : true,
 			text: "This page cannot load an unsigned ActiveX control.",
-			link: new sap.m.Link({text: "Learn more"})
+			link: new sap.m.Link({
+				text: "Learn more",
+				href: "http://www.sap.com/",
+				target: "_blank"
+			})
 		});
 
 		var oMCInformationIC = new sap.m.MessageStrip("mcontainer5",{
@@ -90,7 +102,11 @@
 			text: "This page might not behave as expected because Windows Internet Explorer " +
 				"isn't configured to load unsigned ActiveX controls.Allow this page to install an unsigned " +
 				"ActiveX Control? Doing so from untrusted sources may harm your computer.",
-			link: new sap.m.Link({text: "Learn more"})
+			link: new sap.m.Link({
+				text: "Learn more",
+				href: "http://www.sap.com/",
+				target: "_blank"
+			})
 		});
 
 		var oMCWarningWithFormattedText = new sap.m.MessageStrip({
@@ -98,9 +114,17 @@
 			enableFormattedText: true,
 			showIcon: true,
 			text: "<strong>Warning:</strong> This page might not behave as expected because Windows Internet Explorer " +
-					"isn't <em><u>configured to load unsigned</u></em> <a href='#' target='_self'>ActiveX</a> controls.Allow this page to install an unsigned " +
+					"isn't <em><u>configured to load unsigned</u></em> <a href='http://www.sap.com/' target='_blank'>ActiveX</a> controls.Allow this page to install an unsigned " +
 					"ActiveX Control? <em><strong>Doing so from untrusted sources</strong> may harm your computer.</em>" +
-					"<a href='#' target='_self'>Learn more</a>"
+					"<a href='http://www.sap.com/' target='_blank'>Learn more</a>"
+		});
+
+		var oMCLongWordAndSmallWidth = new sap.ui.layout.VerticalLayout("mcontainer8", {
+			width: "10rem",
+			content: new sap.m.MessageStrip({
+				showIcon: true,
+				text: "This is a VeryLongWordAndThereMustBeNoScroll in IE11"
+			})
 		});
 
 		var oPageNoLayout = new sap.m.Page("no-layout", {
@@ -114,7 +138,8 @@
 				oMCInformationIC,
 				oMCInformationLong,
 				oMCWarning,
-				oMCWarningWithFormattedText
+				oMCWarningWithFormattedText,
+				oMCLongWordAndSmallWidth
 			],
 			footer: new sap.m.Bar({
 				contentMiddle: [

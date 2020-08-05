@@ -36,25 +36,45 @@
 				"id": "8c4f0f2be7b8a9276202c8f6894484beaeb67c58",
 				"type": "FIX",
 				"text": "Respect \"themeroots\" when resolving img URLs in Controls",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "012002523100003930322015"
+					}
+				]
 			},
 			{
 				"id": "c3b3460a4463f6c92840dc5b37c088714d8bcc6a",
 				"type": "FIX",
 				"text": "layout.Splitter: Don't Attempt Resize on Preserved DOM",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580131174"
+					}
+				]
 			},
 			{
 				"id": "47fa1a3ec30bfb46b35a594cbb9a6d673e592724",
 				"type": "FIX",
 				"text": "sap.ui.Layout.DynamicSideContent - Height is properly",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580200257"
+					}
+				]
 			},
 			{
 				"id": "ae0ca3d3ae8d5cbbc0e1fbe120e36e9cbdd6fe2a",
 				"type": "FIX",
 				"text": "sap.ui.core.layout.VerticalLayout: fix vertical-align in IE",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580197076"
+					}
+				]
 			},
 			{
 				"id": "99202f68d4af4f4c1d7f0735871dc500b2d3544b",
@@ -72,13 +92,27 @@
 				"id": "c2eb95ad5d5335196817a5f771466c885f486c5a",
 				"type": "FIX",
 				"text": "sap.ui.layout.ResponsiveFlowLayout - Cyclic re-rendering when the width is small solved",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "492"
+					},
+					{
+						"type": "BCP",
+						"reference": "1570801167"
+					}
+				]
 			},
 			{
 				"id": "38e8d9b215ba490e34a7809a537f802977c55495",
 				"type": "FIX",
 				"text": "sap.ui.layout.ResponsiveFlowLayout - On Internet Explorer the layout container does not occupy the whole width anymore",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570798440"
+					}
+				]
 			},
 			{
 				"id": "bcc72a3c14cb903015091a331f5168fa436b6129",
@@ -90,7 +124,12 @@
 				"id": "2bae7babba64ba2fd4f68ce32177ce937bf7ca9d",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.Form: use Label style only for direct labels",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580178200"
+					}
+				]
 			},
 			{
 				"id": "c2cae5cda5378743eda344d0d2b1f7794b59d756",
@@ -102,7 +141,12 @@
 				"id": "92bdf170af91089ed3553815587ece66f38d3377",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.GridLayout: wrong tab sequence in RTL",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "002007974700006423272015"
+					}
+				]
 			}
 		]
 	},
@@ -113,7 +157,12 @@
 				"id": "8b3a96e89c7ca75bdc465865a1c7048fcf76df59",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670208916"
+					}
+				]
 			}
 		]
 	}

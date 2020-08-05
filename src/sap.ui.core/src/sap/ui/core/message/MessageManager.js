@@ -4,13 +4,32 @@
 
 // Provides the implementation for a MessageManager
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObject',
-		'sap/ui/model/message/MessageModel', './Message', './ControlMessageProcessor', 'sap/ui/core/message/MessageProcessor'],
-	function(jQuery, EventProvider, ManagedObject, MessageModel, Message, ControlMessageProcessor, MessageProcessor) {
+	'sap/ui/base/EventProvider',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/model/message/MessageModel',
+	'./Message',
+	'./ControlMessageProcessor',
+	'sap/ui/core/message/MessageProcessor',
+	"sap/base/util/deepEqual",
+	"sap/base/Log",
+	'sap/base/util/merge',
+	'sap/base/util/array/uniqueSort'
+],
+	function(
+		EventProvider,
+		ManagedObject,
+		MessageModel,
+		Message,
+		ControlMessageProcessor,
+		MessageProcessor,
+		deepEqual,
+		Log,
+		merge,
+		uniqueSort
+	) {
 
 	"use strict";
-
+	/*global Map */
 
 	/**
 	 *
@@ -148,71 +167,84 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageManager.prototype._importMessage = function(oMessage) {
-		var sMessageKey = oMessage.getTarget(),
-				oProcessor = oMessage.getMessageProcessor(),
-				sProcessorId = oProcessor && oProcessor.getId();
+		var oProcessor = oMessage.getMessageProcessor(),
+			sProcessorId = oProcessor && oProcessor.getId(),
+			aTargets = oMessage.getTargets(),
+			that = this;
+
 		if (!this.mMessages[sProcessorId]) {
 			this.mMessages[sProcessorId] = {};
 		}
-		var aMessages = this.mMessages[sProcessorId][sMessageKey] ? this.mMessages[sProcessorId][sMessageKey] : [];
-		aMessages.push(oMessage);
-		this.mMessages[sProcessorId][sMessageKey] = aMessages;
+		if (!aTargets.length) { // unbound message => add it to undefined entry
+			aTargets = [undefined];
+		}
+		aTargets.forEach(function (sTarget) {
+			var aMessages = that.mMessages[sProcessorId][sTarget] ? that.mMessages[sProcessorId][sTarget] : [];
+			aMessages.push(oMessage);
+			that.mMessages[sProcessorId][sTarget] = aMessages;
+		});
 	};
 
 	/**
 	 * push messages to registered MessageProcessors
-	 * @param {map} mProcessors A Map containing the affected processor ids
+	 * @param {Object<string,sap.ui.core.message.MessageProcessor>} mProcessors A map containing the affected processor IDs
 	 * @private
 	 */
 	MessageManager.prototype._pushMessages = function(mProcessors) {
-		var that = this;
-		jQuery.each(mProcessors, function(sId, oProcessor) {
-			var vMessages = that.mMessages[sId] ? that.mMessages[sId] : {};
-			that._sortMessages(vMessages);
+		var oProcessor, sId;
+		for (sId in mProcessors) {
+			oProcessor = mProcessors[sId];
+			var vMessages = this.mMessages[sId] ? this.mMessages[sId] : {};
+			this._sortMessages(vMessages);
 			//push a copy
-			vMessages = Object.keys(vMessages).length === 0 ? null : jQuery.extend(true, {}, vMessages);
+			vMessages = Object.keys(vMessages).length === 0 ? null : merge({}, vMessages);
 			oProcessor.setMessages(vMessages);
-		});
+		}
 	};
 
 	/**
-	 * sort messages by type 'Error', 'Warning', 'Success', 'Information'
+	 * Sort messages by type as specified in {@link sap.ui.core.message.Message#compare}.
 	 *
-	 * @param {map|sap.ui.core.message.Message[]} vMessages Map or array of Messages to be sorted (in order of severity) by their type property
+	 * @param {Object<string,sap.ui.core.message.Message[]>|sap.ui.core.message.Message[]} vMessages
+	 *   Map or array of Messages to be sorted (in order of severity) by their type property
 	 * @private
 	 */
 	MessageManager.prototype._sortMessages = function(vMessages) {
-		var mSortOrder = { 'Error': 0, 'Warning':1, 'Success':2, 'Information':3 };
-
+		var sTarget, aMessages;
 		if (Array.isArray(vMessages)) {
 			vMessages = { "ignored": vMessages };
 		}
 
-		jQuery.each(vMessages, function(sTarget, aMessages){
-			if (aMessages.length > 0) {
-				aMessages.sort(function(a, b){
-					return mSortOrder[a.type] - mSortOrder[b.type];
-				});
+		for (sTarget in vMessages) {
+			aMessages = vMessages[sTarget];
+			if (aMessages.length > 1) {
+				aMessages.sort(Message.compare);
 			}
-		});
+		}
 	};
 
 	/**
 	 * update MessageModel
-	 * @param {map} mProcessors A Map containing the affected processor ids
+	 * @param {Object<string,sap.ui.core.message.MessageProcessor>} mProcessors A map containing the affected processor IDs
 	 * @private
 	 */
 	MessageManager.prototype._updateMessageModel = function(mProcessors) {
-		var aMessages = [],
-			oMessageModel = this.getMessageModel();
+		var mAllMessages = new Map(),
+			sProcessorId,
+			oMessageModel = this.getMessageModel(),
+			sTarget;
 
-		jQuery.each(this.mMessages, function(sProcessorId, mMessages) {
-			jQuery.each(mMessages, function(sKey, vMessages){
-				aMessages = jQuery.merge(aMessages, vMessages);
-			});
-		});
+		function setMessage(oMessage) {
+			mAllMessages.set(oMessage, true);
+		}
+
+		for (sProcessorId in this.mMessages) {
+			for (sTarget in this.mMessages[sProcessorId]) {
+				this.mMessages[sProcessorId][sTarget].forEach(setMessage);
+			}
+		}
 		this._pushMessages(mProcessors);
-		oMessageModel.setData(aMessages);
+		oMessageModel.setData(Array.from(mAllMessages.keys()));
 	};
 
 	/**
@@ -226,7 +258,7 @@ sap.ui.define([
 			//use the first Message/Message array to get the processor for the update
 			var sFirstKey = Object.keys(this.mMessages[sProcessorId])[0];
 			var vMessages = this.mMessages[sProcessorId][sFirstKey];
-			jQuery.extend(mProcessors, this.getAffectedProcessors(vMessages));
+			Object.assign(mProcessors, this.getAffectedProcessors(vMessages));
 		}
 		this.aMessages = [];
 		this.mMessages = {};
@@ -254,26 +286,25 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageManager.prototype._removeMessages = function(vMessages, bOnlyValidationMessages) {
-		var that = this,
-			mProcessors = this.getAffectedProcessors(vMessages);
+		var mProcessors = this.getAffectedProcessors(vMessages);
 
 		if (!vMessages || (Array.isArray(vMessages) && vMessages.length == 0)) {
 			return;
 		} else if (Array.isArray(vMessages)) {
 			// We need to work on a copy since the messages reference is changed by _removeMessage()
-			var vOriginalMessages = vMessages.slice(0);
-			for (var i = 0; i < vOriginalMessages.length; i++) {
-				if (!bOnlyValidationMessages || vOriginalMessages[i].validation) {
-					that._removeMessage(vOriginalMessages[i]);
+			var aOriginalMessages = vMessages.slice(0);
+			for (var i = 0; i < aOriginalMessages.length; i++) {
+				if (!bOnlyValidationMessages || aOriginalMessages[i].validation) {
+					this._removeMessage(aOriginalMessages[i]);
 				}
 			}
 		} else if (vMessages instanceof Message && (!bOnlyValidationMessages || vMessages.validation)){
-			that._removeMessage(vMessages);
+			this._removeMessage(vMessages);
 		} else {
 			//map with target as key
-			jQuery.each(vMessages, function (sTarget, aMessages) {
-				that._removeMessages(aMessages, bOnlyValidationMessages);
-			});
+			for (var sTarget in vMessages) {
+				this._removeMessages(vMessages[sTarget], bOnlyValidationMessages);
+			}
 		}
 		this._updateMessageModel(mProcessors);
 	};
@@ -287,27 +318,34 @@ sap.ui.define([
 	MessageManager.prototype._removeMessage = function(oMessage) {
 		var oProcessor = oMessage.getMessageProcessor(),
 			sProcessorId = oProcessor && oProcessor.getId(),
-			mMessages = this.mMessages[sProcessorId];
+			mMessages = this.mMessages[sProcessorId],
+			aTargets;
 
 		if (!mMessages) {
 			return;
 		}
 
-		var aMessages = mMessages[oMessage.getTarget()];
+		aTargets = oMessage.getTargets();
+		if (!aTargets.length) { // unbound message => remove it from undefined entry
+			aTargets = [undefined];
+		}
+		aTargets.forEach(function (sTarget) {
+			var aMessages = mMessages[sTarget];
 
-		if (aMessages) {
-			for (var i = 0; i < aMessages.length; i++) {
-				var oMsg = aMessages[i];
-				if (jQuery.sap.equal(oMsg, oMessage)) {
-					aMessages.splice(i,1);
-					--i; // Decrease counter as one element has been removed
+			if (aMessages) {
+				for (var i = 0; i < aMessages.length; i++) {
+					var oMsg = aMessages[i];
+					if (deepEqual(oMsg, oMessage)) {
+						aMessages.splice(i,1);
+						--i; // Decrease counter as one element has been removed
+					}
+				}
+				// delete empty message array
+				if (mMessages[sTarget].length === 0) {
+					delete mMessages[sTarget];
 				}
 			}
-			// delete empty message array
-			if (mMessages[oMessage.getTarget()].length === 0) {
-				delete mMessages[oMessage.getTarget()];
-			}
-		}
+		});
 	};
 
 	/**
@@ -367,7 +405,7 @@ sap.ui.define([
 	 */
 	MessageManager.prototype.registerObject = function(oObject, bHandleValidation) {
 		if (!oObject instanceof ManagedObject) {
-			jQuery.sap.log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
+			Log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			return;
 		}
 		oObject.attachValidationSuccess(bHandleValidation, this._handleSuccess, this);
@@ -384,22 +422,22 @@ sap.ui.define([
 	 */
 	MessageManager.prototype.unregisterObject = function(oObject) {
 		if (!oObject instanceof ManagedObject) {
-			jQuery.sap.log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
+			Log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			return;
 		}
-		oObject.detachValidationSuccess(this._handleSuccess);
-		oObject.detachValidationError(this._handleError);
-		oObject.detachParseError(this._handleError);
-		oObject.detachFormatError(this._handleError);
+		oObject.detachValidationSuccess(this._handleSuccess, this);
+		oObject.detachValidationError(this._handleError, this);
+		oObject.detachParseError(this._handleError, this);
+		oObject.detachFormatError(this._handleError, this);
 	};
 
 	/**
-	 * destroy MessageManager
-	 * @deprecated
+	 * Destroy MessageManager
+	 * @deprecated As of version 1.32, do not call <code>destroy()</code> on a <code>MessageManager</code>.
 	 * @public
 	 */
 	MessageManager.prototype.destroy = function() {
-		jQuery.sap.log.warning("Deprecated: Do not call destroy on a MessageManager");
+		Log.warning("Deprecated: Do not call destroy on a MessageManager");
 	};
 
 	/**
@@ -417,8 +455,8 @@ sap.ui.define([
 
 	/**
 	 * getAffectedProcessors
-	 * @return {map} mProcessors A Map containing the affected processor ids
 	 * @param {sap.ui.core.message.Message|sap.ui.core.message.Message[]} vMessages Array of sap.ui.core.message.Message or single sap.ui.core.message.Message
+	 * @return {Object<string,sap.ui.core.message.MessageProcessor>} mProcessors A map containing the affected processor IDs
 	 * @private
 	 */
 	MessageManager.prototype.getAffectedProcessors = function(vMessages) {

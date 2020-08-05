@@ -25,7 +25,7 @@
 	</script>
 	<script>
 		sap.ui.require(['sap/ui/Device'], function(Device) {
-			
+
 			// Config
 			var customUA = "";
 			//Enable this to activate Fullscreen mode on iOS in combination with the "Add to home screen" feature
@@ -147,6 +147,8 @@
 				}
 
 				printProperties(Device, "sap.ui.Device");
+				_html.push("<h3>jQuery.support</h3><hr>");
+				printProperties(jQuery.support);
 				return _html.join("");
 
 			};
@@ -178,7 +180,7 @@
 			jQuery(function() {
 				refreshFeaturesHtml(_fHtml);
 
-				jQuery("#title").bind("click", function() {
+				jQuery("#title").on("click", function() {
 					refreshFeaturesHtml();
 				});
 
@@ -290,7 +292,7 @@
 	</style>
 </head>
 
-<body class="sapUiBody" role="application">
+<body class="sapUiBody">
 
 	<h1 id="title">Device - Test Page</h1>
 	<h2>Detection Features</h2>

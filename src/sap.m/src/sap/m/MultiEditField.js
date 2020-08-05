@@ -1,9 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([
-	"jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "sap/ui/core/Item"
-], function(jQuery, XMLComposite, library, Item) {
+sap.ui.define(["sap/ui/core/XMLComposite", "./library", "sap/ui/core/Item"], function(XMLComposite, library, Item) {
 	"use strict";
 
 	/**
@@ -18,11 +16,11 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 * @public
 	 * @experimental since 1.52
 	 * @since 1.52.0
 	 * @alias sap.m.MultiEditField
-	 * @sap-restricted sap.m.MultiEditField
+	 * @private
+	 * @ui5-restricted sap.m.MultiEditField
 	 */
 	var MultiEditField = XMLComposite.extend("sap.m.MultiEditField", /** @lends sap.m.MultiEditField.prototype */ {
 		metadata: {
@@ -118,18 +116,29 @@ sap.ui.define([
 			MultiEditField.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		}
 
-		this._getKeepAll = jQuery.sap.getter(new Item({
-			key: "keep",
-			text: "< " + this._oRb.getText("MULTI_EDIT_KEEP_TEXT") + " >"
-		}));
-		this._getBlank = jQuery.sap.getter(new Item({
-			key: "blank",
-			text: "< " + this._oRb.getText("MULTI_EDIT_BLANK_TEXT") + " >"
-		}));
-		this._getValueHelp = jQuery.sap.getter(new Item({
-			key: "new",
-			text: "< " + this._oRb.getText("MULTI_EDIT_NEW_TEXT") + " >"
-		}));
+		var oKeepItem = new Item({
+				key: "keep",
+				text: "< " + this._oRb.getText("MULTI_EDIT_KEEP_TEXT") + " >"
+			}),
+			oBlankItem = new Item({
+				key: "blank",
+				text: "< " + this._oRb.getText("MULTI_EDIT_BLANK_TEXT") + " >"
+			}),
+			oNewItem = new Item({
+				key: "new",
+				text: "< " + this._oRb.getText("MULTI_EDIT_NEW_TEXT") + " >"
+			});
+
+
+		this._getKeepAll =  function() {
+			return oKeepItem;
+		};
+		this._getBlank = function() {
+			return oBlankItem;
+		};
+		this._getValueHelp = function() {
+			return oNewItem;
+		};
 
 		// This enables FormElements to correctly write aria attributes to the internal Select control
 		this.byId("select").getParent = this.getParent.bind(this);

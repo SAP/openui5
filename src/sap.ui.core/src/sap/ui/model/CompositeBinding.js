@@ -3,18 +3,63 @@
  */
 
 // Provides an abstract property binding.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './ChangeReason', './PropertyBinding', './CompositeType', './CompositeDataState'],
-	function(jQuery, DataType, BindingMode, ChangeReason, PropertyBinding, CompositeType, CompositeDataState) {
+sap.ui.define([
+	'sap/ui/base/DataType',
+	'./BindingMode',
+	'./ChangeReason',
+	'./PropertyBinding',
+	'./CompositeType',
+	'./CompositeDataState',
+	"sap/ui/base/SyncPromise",
+	"sap/base/util/deepEqual",
+	"sap/base/assert",
+	"sap/base/Log"
+],
+	function(
+		DataType,
+		BindingMode,
+		ChangeReason,
+		PropertyBinding,
+		CompositeType,
+		CompositeDataState,
+		SyncPromise,
+		deepEqual,
+		assert,
+		Log
+	) {
 	"use strict";
 
 
 	/**
-	 * Constructor for CompositeBinding
+	 * Constructor for CompositeBinding.
 	 *
 	 * @class
-	 * The CompositeBinding is used to bundle multiple property bindings which are be used to provide a single binding against
-	 * these property bindings.
+	 * Combines multiple property bindings (called 'parts') into a single one.
 	 *
+	 * A <code>CompositeBinding</code> combines the values from all its binding parts (each an instance of
+	 * <code>PropertyBinding</code>), either by calling a formatter function or by involving a
+	 * {@link sap.ui.model.CompositeType composite type}. When a formatter function is used, then the
+	 * composite binding is automatically limited to <code>OneWay</code> mode. When a type is used, the binding
+	 * can also operate in <code>TwoWay</code> mode.
+	 *
+	 * Higher layers of the framework derive composite bindings from easy-to-write string representations
+	 * (the following features require complex binding syntax, e.g. <code>data-sap-ui-bindingSyntax="complex"</code>):
+	 *
+	 * XML views, for example, convert attribute values with nested curly braces like
+	 * <pre>
+	 *   text="{fullname} &amp;lt;{email}&amp;gt;"
+	 * </pre>
+	 * into a composite binding with two parts (one property binding for property "fullname" and one for
+	 * property "email") and with a generic formatter function that injects the values of the parts into
+	 * the string literal "{0} &lt;{1}&gt;" accordingly.
+	 *
+	 * Similarly, {@link topic:daf6852a04b44d118963968a1239d2c0 expression bindings} are parsed and converted
+	 * into composite bindings, too. The formatter function is created by the framework and executes the
+	 * calculations as defined by the expression string, taking the values from the binding parts as input.
+	 *
+	 * <b>Note:</b> A nesting of composite bindings is currently not supported (albeit being helpful).
+	 *
+	 * @see {@link topic:a2fe8e763014477e87990ff50657a0d0}
 	 * @public
 	 * @alias sap.ui.model.CompositeBinding
 	 * @extends sap.ui.model.PropertyBinding
@@ -23,12 +68,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 	var CompositeBinding = PropertyBinding.extend("sap.ui.model.CompositeBinding", /** @lends sap.ui.model.CompositeBinding.prototype */ {
 
 		constructor : function (aBindings, bRawValues, bInternalValues) {
+			var oModel;
+
 			PropertyBinding.apply(this, [null,""]);
 			this.aBindings = aBindings;
 			this.aValues = null;
 			this.bRawValues = bRawValues;
 			this.bPreventUpdate = false;
 			this.bInternalValues = bInternalValues;
+			this.bMultipleModels = this.aBindings.some(function (oBinding) {
+				var oCurrentModel = oBinding.getModel();
+
+				oModel = oModel || oCurrentModel;
+				return oModel && oCurrentModel && oCurrentModel !== oModel;
+			});
 		},
 		metadata : {
 
@@ -39,30 +92,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 
 	});
 
+	CompositeBinding.prototype.destroy = function() {
+		PropertyBinding.prototype.destroy.apply(this);
+		this.aBindings.forEach(function(oBinding) {
+			oBinding.destroy();
+		});
+	};
+
 	CompositeBinding.prototype.getPath = function() {
-		jQuery.sap.assert(null, "Composite Binding has no path!");
+		assert(null, "Composite Binding has no path!");
 		return null;
 	};
 
 	CompositeBinding.prototype.getModel = function() {
-		jQuery.sap.assert(null, "Composite Binding has no model!");
+		assert(null, "Composite Binding has no model!");
 		return null;
 	};
 
 	CompositeBinding.prototype.getContext = function() {
-		jQuery.sap.assert(null, "Composite Binding has no context!");
+		assert(null, "Composite Binding has no context!");
 		return null;
 	};
 
 	CompositeBinding.prototype.isResolved = function() {
-		var bResolved = false;
-		jQuery.each(this.aBindings, function(i, oBinding) {
-			bResolved = oBinding.isResolved();
-			if (!bResolved) {
-				return false;
-			}
+		return this.aBindings.every(function(oBinding) {
+			return oBinding.isResolved();
 		});
-		return bResolved;
 	};
 
 	/**
@@ -96,7 +151,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 	 * @param {object} oContext the new context for the bindings
 	 */
 	CompositeBinding.prototype.setContext = function(oContext) {
-		jQuery.each(this.aBindings, function(i, oBinding){
+		this.aBindings.forEach(function(oBinding) {
 			// null context could also be set
 			if (!oContext || oBinding.updateRequired(oContext.getModel())) {
 				oBinding.setContext(oContext);
@@ -113,17 +168,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 	 * @public
 	 */
 	CompositeBinding.prototype.setValue = function(aValues) {
-		var oValue;
 		if (this.bSuspended) {
 			return;
 		}
-		jQuery.each(this.aBindings, function(i, oBinding) {
-			oValue = aValues[i];
-			if (oValue !== undefined) {
+		this.aBindings.forEach(function(oBinding, i) {
+			var oValue = aValues[i],
+				sBindingMode = oBinding.getBindingMode();
+			if (oValue !== undefined  && sBindingMode !== BindingMode.OneWay && sBindingMode !== BindingMode.OneTime) {
 				oBinding.setValue(oValue);
 			}
 		});
-
 		this.getDataState().setValue(this.getValue());
 	};
 
@@ -135,27 +189,55 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 	 * @public
 	 */
 	CompositeBinding.prototype.getValue = function() {
-		var aValues = [],
-		oValue;
-
-		jQuery.each(this.aBindings, function(i, oBinding) {
-			oValue = oBinding.getValue();
-			aValues.push(oValue);
+		return this.aBindings.map(function(oBinding) {
+			return oBinding.getValue();
 		});
-
-		return aValues;
 	};
 
 	CompositeBinding.prototype.getOriginalValue = function() {
-		var aValues = [],
-		oValue;
-
-		jQuery.each(this.aBindings, function(i, oBinding) {
-			oValue = oBinding.getDataState().getOriginalValue();
-			aValues.push(oValue);
+		return this.aBindings.map(function(oBinding) {
+			return oBinding.getDataState().getOriginalValue();
 		});
+	};
 
-		return aValues;
+	/**
+	 * Returns the current external value of the bound target which is formatted via a type or formatter function.
+	 *
+	 * @return {object} the current value of the bound target
+	 *
+	 * @throws {sap.ui.model.FormatException}
+	 *
+	 * @public
+	 */
+	CompositeBinding.prototype.getExternalValue = function() {
+		var aValues = [],
+			oInternalType,
+			oValue;
+
+		switch (this.sInternalType) {
+			case "raw":
+				return this.getRawValue();
+			case "internal":
+				return this.getInternalValue();
+			default:
+				oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
+				aValues = this.getCurrentValues();
+
+				if (this.fnFormatter) {
+					oValue = this.fnFormatter.apply(this, aValues);
+				} else if (this.oType) {
+					oValue = this.oType.formatValue(aValues, this.sInternalType);
+				} else if (oInternalType instanceof DataType && oInternalType.isArrayType()) {
+					oValue = aValues;
+				} else if (aValues.length > 1) {
+					// default: multiple values are joined together as space separated list if no formatter or type specified
+					oValue = aValues.join(" ");
+				} else {
+					oValue = aValues[0];
+				}
+
+				return oValue;
+		}
 	};
 
 	/**
@@ -168,112 +250,246 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 	 * @public
 	 */
 	CompositeBinding.prototype.setExternalValue = function(oValue) {
-		var aValues, aCurrentValues,
-			oInternalType = this.sInternalType && DataType.getType(this.sInternalType),
+		var oInternalType, oDataState, vResult, pValues,
 			that = this;
 
-		// No twoway binding when using formatters
-		if (this.fnFormatter) {
-			jQuery.sap.log.warning("Tried to use twoway binding, but a formatter function is used");
+		if (this.sInternalType === "raw") {
+			this.setRawValue(oValue);
+			return;
+		} else if (this.sInternalType === "internal") {
+			this.setInternalValue(oValue);
 			return;
 		}
 
-		var oDataState = this.getDataState();
+		oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
 
-		if (this.oType) {
-			try {
-				if (this.oType.getParseWithValues()) {
-					aCurrentValues = [];
-					if (this.bRawValues) {
-						aCurrentValues = this.getValue();
-					} else {
-						jQuery.each(this.aBindings, function(i, oBinding) {
-							aCurrentValues.push(oBinding.getExternalValue());
-						});
-					}
-				}
-				aValues = this.oType.parseValue(oValue, this.sInternalType, aCurrentValues);
-				this.oType.validateValue(aValues);
-			} catch (oException) {
-				oDataState.setInvalidValue(oValue);
-				this.checkDataState(); //data ui state is dirty inform the control
-				throw oException;
-			}
-		} else if (Array.isArray(oValue) && oInternalType instanceof DataType && oInternalType.isArrayType()) {
-			aValues = oValue;
-		} else if (typeof oValue == "string") {
-			// default: multiple values are split by space character together if no formatter or type specified
-			aValues = oValue.split(" ");
-		} else {
-			aValues = [oValue];
+		// No twoway binding when using formatters
+		if (this.fnFormatter) {
+			Log.warning("Tried to use twoway binding, but a formatter function is used");
+			return;
 		}
 
-		if (this.bRawValues) {
-			this.setValue(aValues);
+		oDataState = this.getDataState();
+
+		if (this.oType) {
+			pValues = SyncPromise.resolve().then(function() {
+				var aCurrentValues;
+				if (that.oType.getParseWithValues()) {
+					aCurrentValues = that.getCurrentValues();
+				}
+				return that.oType.parseValue(oValue, that.sInternalType, aCurrentValues);
+			}).then(function(aValues) {
+				var aValidateValues = that.getValidateValues(aValues);
+				return SyncPromise.all([aValues, that.oType.validateValue(aValidateValues)]);
+			}).then(function(aResult) {
+				return aResult[0];
+			}).catch(function(oException) {
+				oDataState.setInvalidValue(oValue);
+				that.checkDataState(); //data ui state is dirty inform the control
+				throw oException;
+			});
+		} else if (Array.isArray(oValue) && oInternalType instanceof DataType && oInternalType.isArrayType()) {
+			pValues = SyncPromise.resolve(oValue);
+		} else if (typeof oValue == "string") {
+			// default: multiple values are split by space character together if no formatter or type specified
+			pValues = SyncPromise.resolve(oValue.split(" "));
 		} else {
-			jQuery.each(this.aBindings, function(i, oBinding) {
-				oValue = aValues[i];
-				if (oValue !== undefined) {
-					if (that.bInternalValues) {
+			pValues = SyncPromise.resolve([oValue]);
+		}
+
+		vResult = pValues.then(function(aValues) {
+			that.aBindings.forEach(function(oBinding, iIndex) {
+				var sBindingMode = oBinding.getBindingMode();
+				oValue = aValues[iIndex];
+				// if a value is undefined skip the update of the nestend binding - this allows partial updates
+				if (oValue !== undefined  && sBindingMode !== BindingMode.OneWay && sBindingMode !== BindingMode.OneTime) {
+					if (that.bRawValues) {
+						oBinding.setRawValue(oValue);
+					} else if (that.bInternalValues) {
 						oBinding.setInternalValue(oValue);
 					} else {
 						oBinding.setExternalValue(oValue);
 					}
 				}
 			});
-		}
+			oDataState.setValue(that.getValue());
+			oDataState.setInvalidValue(undefined);
+		});
+		vResult.catch(function () {/*avoid "Uncaught (in promise)"*/});
 
-		oDataState.setValue(this.getValue());
-		oDataState.setInvalidValue(undefined);
+		return vResult.unwrap();
 	};
 
 	/**
-	 * Returns the current external value of the bound target which is formatted via a type or formatter function.
+	 * Returns the current internal value of the bound target which is an array of the
+	 * internal (JS native) values of nested bindings
 	 *
-	 * @return {object} the current value of the bound target
-	 *
-	 *@throws sap.ui.model.FormatException
+	 * @return {array} the current values of the nested bindings
 	 *
 	 * @public
 	 */
-	CompositeBinding.prototype.getExternalValue = function() {
-		var aValues = [];
-
-		if (this.bRawValues) {
-			aValues = this.getValue();
-		} else {
-			this.aBindings.forEach(function(oBinding) {
-				aValues.push(this.bInternalValues ? oBinding.getInternalValue() : oBinding.getExternalValue());
-			}.bind(this));
-		}
-		return this._toExternalValue(aValues);
+	CompositeBinding.prototype.getInternalValue = function() {
+		return this.aBindings.map(function(oBinding) {
+			return oBinding.getInternalValue();
+		});
 	};
 
 	/**
-	 * Returns the current external value of the given value which is formatted via a type or formatter function.
+	 * Sets the internal value of the bound target. Parameter must be an array of
+	 * values matching the internal (JS native) types of nested bindings.
 	 *
-	 * @param {any[]} aValues - An array of values that are formatted to one value
-	 * @returns {any} the current value of the bound target
-	 * @throws sap.ui.model.FormatException
-	 * @private
+	 * @param {array} aValues the new values of the nested bindings
+	 *
+	 * @public
 	 */
-	CompositeBinding.prototype._toExternalValue = function(aValues) {
-		var oValue,
-			oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
-		if (this.fnFormatter) {
-			oValue = this.fnFormatter.apply(this, aValues);
-		} else if (this.oType) {
-			oValue = this.oType.formatValue(aValues, this.sInternalType);
-		} else if (oInternalType instanceof DataType && oInternalType.isArrayType()) {
-			oValue = aValues;
-		} else if (aValues.length > 1) {
-			// default: multiple values are joined together as space separated list if no formatter or type specified
-			oValue = aValues.join(" ");
+	CompositeBinding.prototype.setInternalValue = function(aValues) {
+		var oDataState = this.getDataState(), pValues,
+			that = this;
+
+		if (this.oType) {
+			pValues = SyncPromise.resolve(aValues).then(function(aValidateValues){
+				if (!that.bInternalValues) {
+					aValidateValues = that.aBindings.map(function(oBinding, i) {
+						return oBinding._internalToRaw(aValidateValues[i]);
+					});
+					if (!that.bRawValues) {
+						aValidateValues = that.aBindings.map(function(oBinding, i) {
+							return oBinding._rawToExternal(aValidateValues[i]);
+						});
+					}
+				}
+				return that.oType.validateValue(aValidateValues);
+			}).then(function() {
+				return aValues;
+			}).catch(function(oException) {
+				oDataState.setInvalidValue(aValues);
+				that.checkDataState(); //data ui state is dirty inform the control
+				throw oException;
+			});
 		} else {
-			oValue = aValues[0];
+			pValues = SyncPromise.resolve(aValues);
 		}
 
-		return oValue;
+		return pValues.then(function() {
+			that.aBindings.forEach(function(oBinding, iIndex) {
+				var vValue = aValues[iIndex],
+					sBindingMode = oBinding.getBindingMode();
+				if (vValue !== undefined  && sBindingMode !== BindingMode.OneWay && sBindingMode !== BindingMode.OneTime) {
+					oBinding.setInternalValue(vValue);
+				}
+			});
+			oDataState.setValue(that.getValue());
+			oDataState.setInvalidValue(undefined);
+		}).unwrap();
+	};
+
+	/**
+	 * Returns the current raw value of the bound target which is an array of the
+	 * raw (model) values of nested bindings
+	 *
+	 * @return {array} the current values of the nested bindings
+	 *
+	 * @public
+	 */
+	CompositeBinding.prototype.getRawValue = function() {
+		return this.aBindings.map(function(oBinding) {
+			return oBinding.getRawValue();
+		});
+	};
+
+	/**
+	 * Sets the raw value of the bound target. Parameter must be an array of
+	 * values matching the raw (model) types of nested bindings.
+	 *
+	 * @param {array} aValues the new values of the nested bindings
+	 *
+	 * @public
+	 */
+	CompositeBinding.prototype.setRawValue = function(aValues) {
+		var oDataState = this.getDataState(), pValues,
+			that = this;
+
+		if (this.oType) {
+			pValues = SyncPromise.resolve(aValues).then(function(aValidateValues){
+				if (!that.bRawValues) {
+					if (that.bInternalValues) {
+						aValidateValues = that.aBindings.map(function(oBinding, i) {
+							return oBinding._rawToInternal(aValidateValues[i]);
+						});
+					} else {
+						aValidateValues = that.aBindings.map(function(oBinding, i) {
+							return oBinding._rawToExternal(aValidateValues[i]);
+						});
+					}
+				}
+				return that.oType.validateValue(aValidateValues);
+			}).then(function() {
+				return aValues;
+			}).catch(function(oException) {
+				oDataState.setInvalidValue(aValues);
+				that.checkDataState(); //data ui state is dirty inform the control
+				throw oException;
+			});
+		} else {
+			pValues = SyncPromise.resolve(aValues);
+		}
+
+		return pValues.then(function() {
+			that.aBindings.forEach(function(oBinding, iIndex) {
+				var vValue = aValues[iIndex],
+					sBindingMode = oBinding.getBindingMode();
+				if (vValue !== undefined && sBindingMode !== BindingMode.OneWay && sBindingMode !== BindingMode.OneTime) {
+					oBinding.setRawValue(vValue);
+				}
+			});
+			oDataState.setValue(that.getValue());
+			oDataState.setInvalidValue(undefined);
+		}).unwrap();
+	};
+
+	/**
+	 * Returns an array with the current values as available in the bindings.
+	 * Depending on the raw/internal value flags, this may return raw/internal values.
+	 *
+	 * @return {array} the values of all bindings
+	 *
+	 * @private
+	 */
+	CompositeBinding.prototype.getCurrentValues = function() {
+		if (this.bRawValues) {
+			return this.getRawValue();
+		} else if (this.bInternalValues) {
+			return this.getInternalValue();
+		} else {
+			return this.aBindings.map(function(oBinding) {
+				return oBinding.getExternalValue();
+			});
+		}
+	};
+
+	/**
+	 * Returns values to validate. In case the value array does contain undefined values
+	 * they will be filled with actual data of nested bindings. This ensures the validate
+	 * method always gets the full set of values to validate, even if partial updates are
+	 * used.
+	 *
+	 * @return {array} Array of values used for validation
+	 *
+	 * @private
+	 */
+	CompositeBinding.prototype.getValidateValues = function(aValues) {
+		var aCurrentValues, bPartialUpdate,
+			aValidateValues = aValues;
+		bPartialUpdate = this.aBindings.some(function(vPart, i) {
+			return aValues[i] === undefined;
+		});
+		if (bPartialUpdate) {
+			aCurrentValues = this.getCurrentValues();
+			aValidateValues = aCurrentValues.map(function(vValue, i) {
+				return aValues[i] === undefined ? vValue : aValues[i];
+			});
+		}
+		return aValidateValues;
 	};
 
 	/**
@@ -314,9 +530,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 
 	//Eventing and related
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the '_change' event of this <code>sap.ui.model.CompositeBinding</code>.<br/>
-	 * @param {function} fnFunction The function to call, when the event occurs.
-	 * @param {object} [oListener] object on which to call the given function.
+	 * Attaches event handler <code>fnFunction</code> to the <code>change</code> event of this
+	 * <code>sap.ui.model.CompositeBinding</code>.
+	 *
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to this <code>sap.ui.model.CompositeBinding</code> itself.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] object on which to call the given function
 	 * @protected
 	 */
 	CompositeBinding.prototype.attachChange = function(fnFunction, oListener) {
@@ -336,32 +557,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 		};
 		this.attachEvent("change", fnFunction, oListener);
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.attachChange(that.fChangeHandler);
 			});
 		}
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the '_change' event of this <code>sap.ui.model.CompositeBinding</code>.<br/>
-	 * @param {function} fnFunction The function to call, when the event occurs.
-	 * @param {object} [oListener] object on which to call the given function.
+	 * Detaches event handler <code>fnFunction</code> from the <code>change</code> event of this
+	 * <code>sap.ui.model.CompositeBinding</code>.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] object on which to call the given function
 	 * @protected
 	 */
 	CompositeBinding.prototype.detachChange = function(fnFunction, oListener) {
 		var that = this;
 		this.detachEvent("change", fnFunction, oListener);
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.detachChange(that.fChangeHandler);
 			});
 		}
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'DataStateChange' event of this <code>sap.ui.model.CompositeBinding</code>.<br/>
-	 * @param {function} fnFunction The function to call, when the event occurs.
-	 * @param {object} [oListener] object on which to call the given function.
+	 * Attaches event handler <code>fnFunction</code> to the <code>DataStateChange</code> event of this
+	 * <code>sap.ui.model.CompositeBinding</code>.
+	 *
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to this <code>sap.ui.model.CompositeBinding</code> itself.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] object on which to call the given function
 	 * @protected
 	 */
 	CompositeBinding.prototype.attachDataStateChange = function(fnFunction, oListener) {
@@ -376,35 +604,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 		};
 		this.attachEvent("DataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.attachEvent("DataStateChange", that.fDataStateChangeHandler);
 			});
 		}
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'DataStateChange' event of this <code>sap.ui.model.CompositeBinding</code>.<br/>
-	 * @param {function} fnFunction The function to call, when the event occurs.
-	 * @param {object} [oListener] object on which to call the given function.
+	 * Detaches event handler <code>fnFunction</code> from the <code>DataStateChange</code> event of
+	 * this <code>sap.ui.model.CompositeBinding</code>.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] object on which to call the given function
 	 * @protected
 	 */
 	CompositeBinding.prototype.detachDataStateChange = function(fnFunction, oListener) {
 		var that = this;
 		this.detachEvent("DataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.detachEvent("DataStateChange", that.fDataStateChangeHandler);
 			});
 		}
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'AggregatedDataStateChange' event of this
-	 * <code>sap.ui.model.CompositeBinding</code>. The AggregatedDataStateChange event is fired asynchronously, meaning
-	 * that the datastate object given as parameter of the event contains all changes that were applied to the datastate
+	 * Attaches event handler <code>fnFunction</code> to the <code>AggregatedDataStateChange</code> event of this
+	 * <code>sap.ui.model.CompositeBinding</code>.
+	 *
+	 * The <code>AggregatedDataStateChange</code> event is fired asynchronously, meaning that the <code>DataState</code>
+	 * object given as parameter of the event contains all changes that were applied to the <code>DataState</code>
 	 * in the running thread.
 	 *
-	 * @param {function} fnFunction The function to call, when the event occurs.
+	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
 	 */
@@ -424,23 +656,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 
 		this.attachEvent("AggregatedDataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.attachEvent("DataStateChange", that.fDataStateChangeHandler);
 			});
 		}
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'AggregatedDataStateChange' event of this <code>sap.ui.model.CompositeBinding</code>.<br/>
-	 * @param {function} fnFunction The function to call, when the event occurs.
-	 * @param {object} [oListener] object on which to call the given function.
+	 * Detaches event handler <code>fnFunction</code> from the <code>AggregatedDataStateChange</code>
+	 * event of this <code>sap.ui.model.CompositeBinding</code>.
+	 *
+	 * @param {function} fnFunction The function to be called, when the event occurs
+	 * @param {object} [oListener] object on which to call the given function
 	 * @protected
 	 */
 	CompositeBinding.prototype.detachAggregatedDataStateChange = function(fnFunction, oListener) {
 		var that = this;
 		this.detachEvent("AggregatedDataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.detachEvent("DataStateChange", that.fDataStateChangeHandler);
 			});
 		}
@@ -455,14 +689,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 	 */
 	CompositeBinding.prototype.updateRequired = function(oModel) {
 		var bUpdateRequired = false;
-		jQuery.each(this.aBindings, function(i, oBinding){
+		this.aBindings.forEach(function(oBinding) {
 			bUpdateRequired = bUpdateRequired || oBinding.updateRequired(oModel);
 		});
 		return bUpdateRequired;
 	};
 
 	/**
-	 * Initialize the binding. The message should be called when creating a binding.
+	 * Initialize the binding. The method should be called when creating a binding.
 	 * The default implementation calls checkUpdate(true).
 	 * Prevent checkUpdate to be triggered while initializing nestend bindings, it is
 	 * sufficient to call checkUpdate when all nested bindings are initialized.
@@ -472,7 +706,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 	CompositeBinding.prototype.initialize = function() {
 		this.bPreventUpdate = true;
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.initialize();
 			});
 		}
@@ -507,7 +741,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 	 */
 	CompositeBinding.prototype.suspend = function() {
 		this.bSuspended = true;
-		jQuery.each(this.aBindings, function(i, oBinding) {
+		this.aBindings.forEach(function(oBinding) {
 			oBinding.suspend();
 		});
 	};
@@ -521,7 +755,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 	 * @public
 	 */
 	CompositeBinding.prototype.resume = function() {
-		jQuery.each(this.aBindings, function(i, oBinding) {
+		this.aBindings.forEach(function(oBinding) {
 			oBinding.resume();
 		});
 		this.bSuspended = false;
@@ -540,15 +774,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 		if (this.bPreventUpdate || (this.bSuspended && !bForceUpdate)) {
 			return;
 		}
+		// do not fire change event in case the destruction of the model for one part leads to the
+		// update of a model for another part of this binding
+		if (this.bMultipleModels
+			&& this.aBindings.some(function (oBinding) {
+				var oModel = oBinding.getModel();
+
+				return oModel && oModel.bDestroyed;
+			})) {
+			return;
+		}
+
 		var oDataState = this.getDataState();
 		var aOriginalValues = this.getOriginalValue();
-		if (bForceUpdate || !jQuery.sap.equal(aOriginalValues, this.aOriginalValues)) {
+		if (bForceUpdate || !deepEqual(aOriginalValues, this.aOriginalValues)) {
 			this.aOriginalValues = aOriginalValues;
 			oDataState.setOriginalValue(aOriginalValues);
 			bChanged = true;
 		}
 		var aValues = this.getValue();
-		if (!jQuery.sap.equal(aValues, this.aValues) || bForceUpdate) {// optimize for not firing the events when unneeded
+		if (!deepEqual(aValues, this.aValues) || bForceUpdate) {// optimize for not firing the events when unneeded
 			this.aValues = aValues;
 			oDataState.setValue(aValues);
 			this._fireChange({reason: ChangeReason.Change});

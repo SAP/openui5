@@ -1,0 +1,37 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ViewSettingsDialog
+		id="viewSettingsDialog"
+		confirm=".onConfirmViewSettingsDialog">
+		<filterItems>
+			<ViewSettingsFilterItem
+				id="filterItems"
+				text="{i18n>filterName}"
+				key="Orders"
+				multiSelect="false">
+				<items>
+					<ViewSettingsItem
+						id="viewFilter1"
+						text="{i18n>masterFilterShipped}"
+						key="Shipped"/>
+					<ViewSettingsItem
+						id="viewFilter2"
+						text="{i18n>masterFilterNotShipped}"
+						key="NotShipped"/>
+				</items>
+			</ViewSettingsFilterItem>
+		</filterItems>
+		<groupItems>
+			<ViewSettingsItem
+				text="{i18n>masterGroupCustomer}"
+				key="CompanyName"/>
+			<ViewSettingsItem
+				text="{i18n>masterGroupOrderPeriod}"
+				key="OrderDate"/>
+			<ViewSettingsItem
+				text="{i18n>masterGroupShippedPeriod}"
+				key="ShippedDate"/>
+		</groupItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

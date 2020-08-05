@@ -60,7 +60,12 @@
 				"id": "aca1c65d32ba1c542be90062f8670e20e86968aa",
 				"type": "FIX",
 				"text": "Added missing placeholders in MultiComboBox in Internet Explorer 10",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1482007105"
+					}
+				]
 			},
 			{
 				"id": "5058ee96354df5692526ae1bab50d68da1ff4b70",
@@ -129,7 +134,12 @@
 				"id": "28699a06294fe1772424dd3bcfeb8df809487fb3",
 				"type": "FIX",
 				"text": "sap.m.MultiComboBox: Fixed issue with shrinking width",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1472020740"
+					}
+				]
 			},
 			{
 				"id": "1513e4514539b101cb0e82672718186c3e0781b1",
@@ -152,7 +162,16 @@
 				"id": "c829bd3027f67d6c2ee141f0552d74ec9a27b976",
 				"type": "FIX",
 				"text": "sap.m.ObjectHeader: Fixed alignment issue in Internet Explorer that displayed ObjectNumber incorrectly",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1482026526"
+					},
+					{
+						"type": "BCP",
+						"reference": "1472009254"
+					}
+				]
 			},
 			{
 				"id": "3833820dabb74c26de457de4baf186ae1947a332",
@@ -210,7 +229,12 @@
 				"id": "416be9ccd54e81bdc6d42c9937c76c2129c61aeb",
 				"type": "FIX",
 				"text": "ux3.Shell: Fixed NavigationBar rendering in Chrome",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1472020842"
+					}
+				]
 			},
 			{
 				"id": "403a42f7dad7aaf1b73706b8bca27c2f831c38c4",
@@ -246,13 +270,23 @@
 				"id": "cd7608e1550a585e383113ca90a6db4e6d0cbe8e",
 				"type": "FIX",
 				"text": "sap.ui.core.Icon: Icon supports color from sap.ui.core.IconColor",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1472017550"
+					}
+				]
 			},
 			{
 				"id": "ef481b09f23a67f37d566582a7fbe1db18634ff8",
 				"type": "FIX",
 				"text": "Form: Fixed expander icon being cut off",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570015267"
+					}
+				]
 			},
 			{
 				"id": "8d9aa761da91d56e75547ea94e675c68a86b3a33",
@@ -264,25 +298,45 @@
 				"id": "0f47f62203fa894af0ab704abd3b8833abed6a7d",
 				"type": "FIX",
 				"text": "m.ComboBox: Arrow button is no longer rendered in read-only mode",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570011983"
+					}
+				]
 			},
 			{
 				"id": "6a2342baa0fda00ce12da3a11d5d69e9a24cfffa",
 				"type": "FIX",
 				"text": "m.ListBase: ItemNavigation is invalidated when the DOM of the items is updated",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580005158"
+					}
+				]
 			},
 			{
 				"id": "6b976aac0bdff0e2bc946d020b18b8dc07cdbd9a",
 				"type": "FIX",
 				"text": "sap.m.ActionSelect: Fixed incorrect text shadow of the buttons",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570022428"
+					}
+				]
 			},
 			{
 				"id": "1a19dbcd21b1d89794c28798f5d5fdc8e9f66ab2",
 				"type": "FIX",
 				"text": "sap.m.Bar+Shell: Marker CSS class to suppress branding bar added",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570014641"
+					}
+				]
 			},
 			{
 				"id": "b656f448c27da15d64ba53b7189a84a556743271",
@@ -294,31 +348,56 @@
 				"id": "9ccd7e14029189f120893c5a4a2934acb8f0311c",
 				"type": "FIX",
 				"text": "sap.m.MultiComboBox: Fixed Placeholder overlay in Internet Explorer",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570018697"
+					}
+				]
 			},
 			{
 				"id": "a7e9553f3033d7dc60a5e1b2e0bd65ec43de97db",
 				"type": "FIX",
 				"text": "sap.m.Select: Fixed overlapping issue of the text (sap_bluecrystal theme)",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1472016445"
+					}
+				]
 			},
 			{
 				"id": "9b2d639becaf446b610586cde844c96f9807a5f5",
 				"type": "FIX",
 				"text": "sap.ui.AnalyticalTable: Fixed rendering in non-compact mode",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580003928"
+					}
+				]
 			},
 			{
 				"id": "4e3c4be07632fe0fa0973be2172c65e1d728941e",
 				"type": "FIX",
 				"text": "sap.ui.commons.Button: Emphasized text contrast fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570010074"
+					}
+				]
 			},
 			{
 				"id": "3c3bf4e7dac2ffd43576525c4b06cff83c268a0b",
 				"type": "FIX",
 				"text": "ux3.Shell: NavigationBar no longer flickers in Chrome",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1472020842"
+					}
+				]
 			},
 			{
 				"id": "58f96fea10fd0cfa458f3696d6415112670c96a2",
@@ -335,7 +414,12 @@
 				"id": "e4d23ffdcb48b7892ab8ad2c63b4b57038ccfc41",
 				"type": "FIX",
 				"text": "sap.m.Input: ValueHelp icon displayed correctly if description is used",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580012098"
+					}
+				]
 			},
 			{
 				"id": "43f80bff99935e1a4af9fd4f21c43cc41778a15c",
@@ -358,13 +442,27 @@
 				"id": "ea387946e3f60ec99512c4f66fb2f43842491490",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar: The first text is no longer cliped on mobile devices when the first filter is \"showAll:true\"",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570009305"
+					},
+					{
+						"type": "BCP",
+						"reference": "1580008364"
+					}
+				]
 			},
 			{
 				"id": "2276b93e3a03b8c0087c8e834fd6ae63892095b7",
 				"type": "FIX",
 				"text": "sap.m.MultiInput: Placeholder no longer covers ValueHelp button in Internet Explorer",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580007145"
+					}
+				]
 			}
 		]
 	},
@@ -375,25 +473,45 @@
 				"id": "2d85de57fc396c083b3bc4c86e2018636ac6c84c",
 				"type": "FIX",
 				"text": "sap.m.Button: Hover state odd when transparent",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580013077"
+					}
+				]
 			},
 			{
 				"id": "84a691847ed6062efbffe25b7b99cd79f8f83fd7",
 				"type": "FIX",
 				"text": "sap.m.Input: F4 button width on compact mode adjusted",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570027193"
+					}
+				]
 			},
 			{
 				"id": "3e32e5e9ec6a6b9e11bacffb79f842f7d0d2e60b",
 				"type": "FIX",
 				"text": "sap.m.MultiComboBox: Popup closed on first chosen token",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580008350"
+					}
+				]
 			},
 			{
 				"id": "b0653a8acd10aecd9be29ceaabc8fb818cf330a1",
 				"type": "FIX",
 				"text": "sap.m.Text: Min-height is added when text in editable form is empty",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580019297"
+					}
+				]
 			}
 		]
 	},
@@ -404,25 +522,45 @@
 				"id": "5bd081f938e0f9843f2f03fc64ddee9c8027d78a",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar: Left padding is now correct",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570023260"
+					}
+				]
 			},
 			{
 				"id": "f4ffd57debdab5343b6e5ad04c386eb8e0b4b421",
 				"type": "FIX",
 				"text": "sap.m.Title, Label: Margin in transparent toolbar context for Bluecrystal and High Contrast Black themes corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570022275"
+					}
+				]
 			},
 			{
 				"id": "f47c834c0ab29eb8b17ba61786ba1d75ca7d283a",
 				"type": "FIX",
 				"text": "sap.m.ToggleButton: Custom button outline CSS issue in Internet Explorer corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570028549"
+					}
+				]
 			},
 			{
 				"id": "cc71e7b852bd95dbe12d6d10224c7d7ed2b74623",
 				"type": "FIX",
 				"text": "sap.ui.commons.ComboBox: Incorrect text alignment in Internet Explorer 10 corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570022050"
+					}
+				]
 			}
 		]
 	},
@@ -439,19 +577,34 @@
 				"id": "d141237a6e56f0ab6852622e652f28ac82b49298",
 				"type": "FIX",
 				"text": "sap.m.DatePicker: Long text over picker icon in Internet Explorer 9 and 10 corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570148595"
+					}
+				]
 			},
 			{
 				"id": "9d1346510536d922173458b6ea377abfe1552cc9",
 				"type": "FIX",
 				"text": "sap.m.Input: ValueHelp icon size in compact mode changed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570145998"
+					}
+				]
 			},
 			{
 				"id": "722f67418d309668ee6294b1395cdcae66297d6c",
 				"type": "FIX",
 				"text": "sap.m.ObjectStatus: Font size in tables aligned with design spec",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570136795"
+					}
+				]
 			},
 			{
 				"id": "f8c6cc7fe5a3d15e5b40595c90297fbb746fc1b5",
@@ -463,7 +616,12 @@
 				"id": "f70be3f80172a5c42347b36634a034929cac1e09",
 				"type": "FIX",
 				"text": "sap.ui.layout.Form: RadioButton in compact mode corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570150393"
+					}
+				]
 			}
 		]
 	},
@@ -474,25 +632,45 @@
 				"id": "ca282a5cd25b03591885d9c9242c3d8efa2659e4",
 				"type": "FIX",
 				"text": "Theming: Background customizing fixed for UShell control (Lauchpad)",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "012002523100003941962015"
+					}
+				]
 			},
 			{
 				"id": "185708fa4d39caa28199fa931ff29c778581083a",
 				"type": "FIX",
 				"text": "Tree: Scrollbars in 100% height containers avoided",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570040764"
+					}
+				]
 			},
 			{
 				"id": "7a5a07674cd032c2762c3e17b9b22a65ddbcdde9",
 				"type": "FIX",
 				"text": "sap.m.Panel: Focused icon now has proper border placement",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570034007"
+					}
+				]
 			},
 			{
 				"id": "ed15f5849f49c0499b42e90d12f171fc8e184b96",
 				"type": "FIX",
 				"text": "sap.m.UploadCollection: Fixed display in upload and delete",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570149750"
+					}
+				]
 			}
 		]
 	},
@@ -503,25 +681,45 @@
 				"id": "1d3dcf2bbe0e8e503cee432425ce996cf5ea818a",
 				"type": "FIX",
 				"text": "sap.m.ActionSheet: Fixed scrolling the whole page when ran on Android stock browser",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570143033"
+					}
+				]
 			},
 			{
 				"id": "20b991a50de7cb42bc14468f9a2525ed086ba481",
 				"type": "FIX",
 				"text": "sap.m.Button: Focus outline drawn on mobile devices fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570443396"
+					}
+				]
 			},
 			{
 				"id": "1dc0bdda5cdaa7c9f185f8342223066857fdf839",
 				"type": "FIX",
 				"text": "sap.m.ComboBox: Arrow button height fixed (downport)",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570452524"
+					}
+				]
 			},
 			{
 				"id": "3c91ec404cd177ff806e91a1eea96663ebc25086",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar: Text tabs drop shadow is changed from 50% opacity to 70% opacity",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1472021648"
+					}
+				]
 			}
 		]
 	},
@@ -538,7 +736,12 @@
 				"id": "0ce45fb1c366c903b7c94497046fce8db04d6127",
 				"type": "FIX",
 				"text": "sap.m.ObjectAttribute: Text displayed on 100% if no title is set",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570459519"
+					}
+				]
 			},
 			{
 				"id": "1d7ab177be4849ded361f76cc70675ac8f6e34d1",
@@ -550,13 +753,23 @@
 				"id": "c70fac38a7164e3dde009a562d2ec7493bcbdfd4",
 				"type": "FIX",
 				"text": "sap.ui.commons.Button: Emphasized button with hover and focus color fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570466990"
+					}
+				]
 			},
 			{
 				"id": "8051f1b28d7c473ebeaa68a064f16617466d4aac",
 				"type": "FIX",
 				"text": "sap.ui.core.Icon: icon get different color only when it's direct under sap.m.Toolbar",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570448376"
+					}
+				]
 			}
 		]
 	},
@@ -567,7 +780,12 @@
 				"id": "6c503a76d5bb4fc9f7918e3e863528cdc3be4a20",
 				"type": "FIX",
 				"text": "sap.m.ObjectNumber: Number unit position corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570147815"
+					}
+				]
 			}
 		]
 	},
@@ -578,7 +796,12 @@
 				"id": "ce6b0dd8b897fcd95f0827ca012f2ca4172488d1",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar: Fix left paddings",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570158035"
+					}
+				]
 			}
 		]
 	},
@@ -589,19 +812,34 @@
 				"id": "c5371d62daf3677dfb626ed8cc6d3a3f116ac4ba",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar: UI Consistency on \"showAll\" filter with horizontal design is fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570071073"
+					}
+				]
 			},
 			{
 				"id": "f09aaa2c7e6a7b20e5aa5f84d329a4a36ad3d6f6",
 				"type": "FIX",
 				"text": "sap.m.SplitContainer: No separator between master and detail areas",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570764862"
+					}
+				]
 			},
 			{
 				"id": "c08234d563655c0291012745aa45f46c90eb11b8",
 				"type": "FIX",
 				"text": "sap.m.SplitContainer: Remove the thin blue line between master and detail when it's rendered in Launchpad shell",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570466880"
+					}
+				]
 			},
 			{
 				"id": "534a12f6dba204ed4254d60fe3461f34e899cc54",
@@ -635,13 +873,23 @@
 				"id": "c140439b0ac95c5e7e988dd4fa89305e45eabc07",
 				"type": "FIX",
 				"text": "sap.m.ComboBox: fix custom placeholder alignment issue in IE10",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570749082"
+					}
+				]
 			},
 			{
 				"id": "c0d88868827b24a6b1f88f26c6b5347c5e08d038",
 				"type": "FIX",
 				"text": "sap.m.ComboBox: prevent the change event from firing when an item is pressed (downport)",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570522570"
+					}
+				]
 			}
 		]
 	},
@@ -652,7 +900,12 @@
 				"id": "b7633e7bee02f37c05767a72ef989ab0aa2c92ac",
 				"type": "FIX",
 				"text": "sap.m.Page: SubHeader overlaps the content",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580140392"
+					}
+				]
 			}
 		]
 	},
@@ -663,19 +916,38 @@
 				"id": "5bc4625a337ca35d2db4f0c7b506f83771f0b199",
 				"type": "FIX",
 				"text": "sap.m.InputBase: Close valueState message synchronously.",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580149642"
+					},
+					{
+						"type": "BCP",
+						"reference": "1580075747"
+					}
+				]
 			},
 			{
 				"id": "51daa5c9495c99a6f26a97b963519eea598210bc",
 				"type": "FIX",
 				"text": "sap.m.RadioButton: Focus outline is not cut off when used in SimpleForm",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580151725"
+					}
+				]
 			},
 			{
 				"id": "e993e923a8798ba75662b8c665969f323d99360c",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.Form: Use Label style only for direct labels",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580178200"
+					}
+				]
 			}
 		]
 	},
@@ -686,7 +958,12 @@
 				"id": "4884011222586fedccce3ea51ce686e20297543b",
 				"type": "FIX",
 				"text": "sap.m.FacetFilterList: Set min content width",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580216445"
+					}
+				]
 			},
 			{
 				"id": "18c14f842486dba7cbe3c911278b82a8411ebe8a",
@@ -703,19 +980,34 @@
 				"id": "7c0bd0cb02377407b8dca9c11309456528bba4ce",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar: Arrows position in Win8 is correct now",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580193892"
+					}
+				]
 			},
 			{
 				"id": "c710212bc74d845dafa9674149f5a2619ae05e79",
 				"type": "FIX",
 				"text": "sap.m.ObjectStatus: Vertical alignment inside forms corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580155978"
+					}
+				]
 			},
 			{
 				"id": "d5d6a61949df2f1302ff7af7c041ef3bc97a4590",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.Form: Label not visible on iOS devices",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "012002523100008088922015"
+					}
+				]
 			}
 		]
 	},
@@ -726,7 +1018,16 @@
 				"id": "ae01dd7602ef1b6a39219e676a1e2f79388647ca",
 				"type": "FIX",
 				"text": "sap.m.FeedInput: Css class improved",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570854081"
+					},
+					{
+						"type": "BCP",
+						"reference": "1570854082"
+					}
+				]
 			}
 		]
 	},
@@ -737,7 +1038,20 @@
 				"id": "1d9bd61242bb65410538a58425abff580b678130",
 				"type": "FIX",
 				"text": "sap.m.ComboBox: Fix dropdown button alignment issue",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580238488"
+					},
+					{
+						"type": "BCP",
+						"reference": "1570752892"
+					},
+					{
+						"type": "BCP",
+						"reference": "002007974700000254572016"
+					}
+				]
 			}
 		]
 	},
@@ -748,13 +1062,23 @@
 				"id": "50ef06984184963c11e09740b34284a8fcb974ad",
 				"type": "FIX",
 				"text": "sap.m.Checkbox fixed position in form on compact size",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670056525"
+					}
+				]
 			},
 			{
 				"id": "560f61771b64d2f9aad733538532dc11314cbca5",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar scroll arrow shows correct on phone",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670015602"
+					}
+				]
 			}
 		]
 	},
@@ -765,7 +1089,12 @@
 				"id": "4a077acfddbbdd576d9696339eb4161b1868fba4",
 				"type": "FIX",
 				"text": "sap.m.Carousel: Fixed nav arrows on combi devices",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670121451"
+					}
+				]
 			}
 		]
 	},
@@ -776,7 +1105,12 @@
 				"id": "b3b32952d800fa148ce956d31593bfbe24be9a80",
 				"type": "FIX",
 				"text": "sap.ui.layout.for.Form: expand button wrong displayed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "002075129500000235682016"
+					}
+				]
 			}
 		]
 	}

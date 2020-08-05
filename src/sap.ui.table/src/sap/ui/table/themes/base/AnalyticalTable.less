@@ -3,39 +3,25 @@
 /* Base theme                                    */
 /* ============================================= */
 
-.sapUiAnalyticalTable .sapUiTableRowHdr {
-
-	&.sapUiAnalyticalTableSum {
-		border-left: 0;
-		border-right: 0;
-		background-color: @sapUiListBackground;
-	}
-
-	&.sapUiAnalyticalTableDummy {
-		font-size: 14px;
-		line-height: 28px;
-		color: @sapUiContentLabelColor;
-	}
-
+// sapUiAnalyticalTableGroupCellHidden and sapUiAnalyticalTableSumCellHidden provides the possibility for applications to hide
+// the cell content of a column on group headers and / or sums by using addStyleClass of the column template
+.sapUiAnalyticalTable .sapUiTableGroupHeaderRow .sapUiTableCellInner > .sapUiAnalyticalTableGroupCellHidden,
+.sapUiAnalyticalTable .sapUiTableSummaryRow .sapUiTableCellInner > .sapUiAnalyticalTableSumCellHidden {
+	visibility: hidden; /* hidden cell content*/
 }
 
-.sapUiAnalyticalTable tr.sapUiAnalyticalTableSum {
-	background-color: @sapUiListBackground;
-}
-
-.sapUiAnalyticalTable tr.sapUiAnalyticalTableSum > td {
-	border-left: 0;
-	border-right: 0;
-}
-
-.sapUiAnalyticalTable tr.sapUiAnalyticalTableSum > td.sapUiTableTdLast {
-	border-right: 1px solid @sapUiListVerticalBorderColor;
-}
-
-.sapUiAnalyticalTable tr.sapUiAnalyticalTableDummy td {
-	border-right-width: 0;
-}
-
-.sapUiAnalyticalTable tr.sapUiAnalyticalTableDummy td:last-child {
-	border-right-width: 1px;
+.sapUiAnalyticalTable .sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell .sapUiTableGroupMenuButton {
+	position: absolute;
+	width: 2.5rem;
+	text-align: center;
+	z-index: 5;
+	right: 0;
+	top: 50%;
+	-webkit-transform: translatey(-50%);
+	transform: translatey(-50%);
+	background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
+	font-family: 'SAP-icons';
+	font-size: 1.375rem;
+	color: @sapUiContentIconColor;
+	display: block;
 }

@@ -1,0 +1,13 @@
+<mvc:View height="100%" controllerName="sap.m.sample.MultiInputTokenUpdate.controller.MultiInputTokenUpdate"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<Text text="Open a new Excel file and write the letters from 'a' to 'f' in a column. Copy the column and paste it into the MultiInput below"/>
+		<MultiInput id="tokenUpdateMI" tokenUpdate="_onTokenUpdate" tokenChange="_onTokenChange" showValueHelp="false"/>
+		<Text text="Expected result is that tokens with texts 'c', 'd' and 'f' will be created instantly and a single
+		tokenUpdate will be fired for the three of them."/>
+		<Text text="Three seconds after that (simulating async validation) a token with text 'a' will be added.
+		Seven seconds later the MultiInput will attempt to add another token with text 'f'.
+		Adding that token again will be successful only if in the meantime the user deleted the 'f' token."/>
+	</VBox>
+</mvc:View>

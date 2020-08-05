@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="gwsample_basic" xml:lang="en"
+			sap:schema-version="0000" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityContainer Name="gwsample_basic_Entities"
+				m:IsDefaultEntityContainer="true" sap:message-scope-supported="false">
+			</EntityContainer>
+			<EntityContainer Name="gwsample_basic_Entities_2" sap:message-scope-supported="false">
+			</EntityContainer>
+			<atom:link rel="self"
+				href="/SalesOrderSrv//$metadata"
+				xmlns:atom="http://www.w3.org/2005/Atom" />
+			<atom:link rel="latest-version"
+				href="/SalesOrderSrv//$metadata"
+				xmlns:atom="http://www.w3.org/2005/Atom" />
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

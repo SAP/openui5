@@ -2,13 +2,12 @@
 
 jQuery.sap.require("sap.ui.fl.Persistence");
 jQuery.sap.require("sap.ui.fl.Utils");
-jQuery.sap.require("sap.ui.fl.Change");
 jQuery.sap.require('sap.ui.fl.DefaultVariant');
 jQuery.sap.require('sap.ui.fl.LrepConnector');
 jQuery.sap.require('sap.ui.core.Control');
 jQuery.sap.require('sap.ui.fl.Cache');
 
-(function(utils, Persistence, Control, defaultVariant, Change, LrepConnector, $, Cache) {
+(function(utils, Persistence, Control, defaultVariant, LrepConnector, $, Cache) {
 	"use strict";
 
 	var TestingControl = Control.extend("sap.ui.fl.TestingControl", {
@@ -18,7 +17,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 			],
 			library: "sap.ui.fl",
 			properties: {
-				"persistencyKey": {
+				persistencyKey: {
 					type: "string",
 					group: "Misc",
 					defaultValue: null
@@ -59,7 +58,6 @@ jQuery.sap.require('sap.ui.fl.Cache');
 						resolve({
 							changes: result
 						});
-
 					}).fail(function(error) {
 						reject(error);
 					});
@@ -112,7 +110,6 @@ jQuery.sap.require('sap.ui.fl.Cache');
 				Cache.setActive(true);
 				done();
 			}
-
 		}
 	});
 
@@ -240,5 +237,4 @@ jQuery.sap.require('sap.ui.fl.Cache');
 			persistencyKey: 'testingPersistencyKey'
 		}), 'persistencyKey');
 	}
-
 }(sap.ui.fl.Utils, sap.ui.fl.Persistence, sap.ui.core.Control, sap.ui.fl.DefaultVariant, sap.ui.fl.Change, sap.ui.fl.LrepConnector, jQuery, sap.ui.fl.Cache));

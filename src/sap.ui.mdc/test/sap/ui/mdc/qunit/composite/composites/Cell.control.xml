@@ -1,0 +1,12 @@
+<core:FragmentDefinition
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+	xmlns="sap.m" xmlns:core="sap.ui.core">
+	<template:if test="{= ${this>asLink} === true}">
+		<template:then>
+			<Link text="{$this>value}" />
+		</template:then>
+		<template:else>
+			<Text text="{$this>value}" />
+		</template:else>
+	</template:if>
+</core:FragmentDefinition>

@@ -1,0 +1,17 @@
+{
+	"d":{
+		"__count":"1",
+		"results":[{
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~8~EUR.53~0000000001')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~8~EUR.53~0000000001')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"8.00",
+			"CompanyCode":"B",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"1",
+			"CustomerName":"ACME"
+		}]
+	}
+}

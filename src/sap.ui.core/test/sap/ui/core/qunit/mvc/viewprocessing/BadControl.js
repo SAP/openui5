@@ -1,7 +1,9 @@
 /**
- * Control which does not return its class
+ * Control which does not return its class (no module export)
  */
-sap.ui.define(['sap/ui/core/Control'], function(Control){
+sap.ui.define(['sap/ui/core/Control'], function(Control) {
+	"use strict";
+
 	var BadControl = Control.extend("sap.ui.core.qunit.mvc.viewprocessing.BadControl", {
 		metadata: {},
 		init: function() {

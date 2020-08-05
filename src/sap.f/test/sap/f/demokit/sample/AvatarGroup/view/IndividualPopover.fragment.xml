@@ -1,0 +1,14 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.f"
+	xmlns:l="sap.ui.layout">
+	<Popover
+		title="Business card"
+		titleAlignment="Center"
+		placement="Bottom"
+		contentWidth="250px"
+		contentHeight="350px">
+		<core:Fragment fragmentName="sap.f.sample.AvatarGroup.view.Card" type="XML"> </core:Fragment>
+	</Popover>
+</core:FragmentDefinition>

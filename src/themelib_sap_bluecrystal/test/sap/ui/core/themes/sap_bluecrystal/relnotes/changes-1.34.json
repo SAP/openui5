@@ -108,19 +108,34 @@
 				"id": "c149d129cfe7a9afdd690d8cb1d5bc2fa2ce8eac",
 				"type": "FIX",
 				"text": "sap.m.ActionSheet: Remove empty header on phone",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580095203"
+					}
+				]
 			},
 			{
 				"id": "ad6970b02f887196831e7d35947e3403349eae81",
 				"type": "FIX",
 				"text": "sap.m.FacetFilterList: set min content width",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580216445"
+					}
+				]
 			},
 			{
 				"id": "de1b5e5e1c8cf270d2f5817423c19335f4567418",
 				"type": "FIX",
 				"text": "sap.m.GrowingEnablement: Grow button should be tabbable.",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570525301"
+					}
+				]
 			},
 			{
 				"id": "965714101c368d3f25f2f09947444f73066b744c",
@@ -138,7 +153,20 @@
 				"id": "d8f502d0ceaec664ef2e681ff75af61cf675c7c6",
 				"type": "FIX",
 				"text": "sap.m.InputBase: Close valueState message synchronously.",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580149642"
+					},
+					{
+						"type": "BCP",
+						"reference": "1580095163"
+					},
+					{
+						"type": "BCP",
+						"reference": "1580075747"
+					}
+				]
 			},
 			{
 				"id": "66d44026bd6d8e77650beac0e9fbb210bf702f69",
@@ -150,13 +178,23 @@
 				"id": "1d1ee07a79a84e719c1796a800f569ba0800bcbf",
 				"type": "FIX",
 				"text": "sap.m.Page: SubHeader overlaps the content",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580140392"
+					}
+				]
 			},
 			{
 				"id": "1941e8324bd098fbd9d84a8b9740b7dd85acf8cf",
 				"type": "FIX",
 				"text": "sap.m.Panel: Bottom border is no longer present on transparent Panel",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580128689"
+					}
+				]
 			},
 			{
 				"id": "90f02432b33e21e0038a923cf0a68ff5572a1e3a",
@@ -168,7 +206,12 @@
 				"id": "df353c7ea4f3802aa865fc671168b92024eb5669",
 				"type": "FIX",
 				"text": "sap.m.RadioButton: Focus outline is not cut off when used in SimpleForm",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580151725"
+					}
+				]
 			},
 			{
 				"id": "190581baa730a17c9a5e80210f9359bfa2298e9c",
@@ -186,7 +229,12 @@
 				"id": "31d9fbfe47cde3903487f32bafab3e8558f9e737",
 				"type": "FIX",
 				"text": "sap.m.Text in sap.ui.layout.form.SimpleForm is with display 'block' due to layout requirements",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580024576"
+					}
+				]
 			},
 			{
 				"id": "b1ef9ea67b5d91b910804c33dad8a535c257502a",
@@ -204,13 +252,23 @@
 				"id": "9cbec186fe55c7f08fb78b370c135c44bcb23450",
 				"type": "FIX",
 				"text": "sap.ui.TreeTable: node label alignment issue",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580092162"
+					}
+				]
 			},
 			{
 				"id": "2bae7babba64ba2fd4f68ce32177ce937bf7ca9d",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.Form: use Label style only for direct labels",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580178200"
+					}
+				]
 			},
 			{
 				"id": "c2cae5cda5378743eda344d0d2b1f7794b59d756",
@@ -222,19 +280,34 @@
 				"id": "6aa8f04105815151b63e3dc389951352d426e626",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: Touch Menu could overlay text",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570764825"
+					}
+				]
 			},
 			{
 				"id": "bb01b6f53dcd6b6ef28701ae0280f054ed572b65",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Cleanup cell paddings",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570685384"
+					}
+				]
 			},
 			{
 				"id": "54244cea6048a3ad123064af93801a2b435c5d5f",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: wrong font-size on <tr>",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580057504"
+					}
+				]
 			},
 			{
 				"id": "c2f11d82f24e0e7cd1cfa9fa279deff6edf28407",
@@ -257,19 +330,38 @@
 				"id": "aaee665f575ac60f9810e3b951ec42500da6137d",
 				"type": "FIX",
 				"text": "m.IconTabBar: windows 10 rules added",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670168457"
+					}
+				]
 			},
 			{
 				"id": "3faf95e8b7a308764fc8a19fa76eb51a731cceb6",
 				"type": "FIX",
 				"text": "sap.m.SegmentedButton - width recalculation is more effective now.",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670169823"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670061187"
+					}
+				]
 			},
 			{
 				"id": "8b3a96e89c7ca75bdc465865a1c7048fcf76df59",
 				"type": "FIX",
 				"text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670208916"
+					}
+				]
 			},
 			{
 				"id": "b171f36c3de7e0dc808f1b1ff2598e7c0609de90",

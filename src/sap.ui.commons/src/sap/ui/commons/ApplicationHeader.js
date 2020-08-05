@@ -4,24 +4,29 @@
 
 // Provides control sap.ui.commons.ApplicationHeader.
 sap.ui.define([
-    'jquery.sap.global',
     './library',
     'sap/ui/core/Control',
     './Image',
     './TextView',
     './Button',
-    "./ApplicationHeaderRenderer"
+    './ApplicationHeaderRenderer',
+    'sap/ui/core/library'
 ],
 	function(
-	    jQuery,
 		library,
 		Control,
 		Image,
 		TextView,
 		Button,
-		ApplicationHeaderRenderer
+		ApplicationHeaderRenderer,
+		coreLibrary
 	) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.AccessibleRole
+	var AccessibleRole = coreLibrary.AccessibleRole;
 
 
 
@@ -123,7 +128,7 @@ sap.ui.define([
 		this.oLogo.setParent(this);
 		this.oLogoText && this.oLogoText.destroy();
 		this.oLogoText = new TextView(appHeaderId + "-logoText");
-		this.oLogoText.setAccessibleRole(sap.ui.core.AccessibleRole.Heading);
+		this.oLogoText.setAccessibleRole(AccessibleRole.Heading);
 		this.oLogoText.setParent(this);
 
 		//Log off button
@@ -182,4 +187,4 @@ sap.ui.define([
 
 	return ApplicationHeader;
 
-}, /* bExport= */ true);
+});

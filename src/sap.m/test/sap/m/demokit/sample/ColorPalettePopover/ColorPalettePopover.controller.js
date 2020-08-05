@@ -1,12 +1,12 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
 	'sap/m/ColorPalettePopover',
-	'sap/m/MessageToast'
-], function (jQuery, Controller, ColorPalettePopover, MessageToast) {
+	'sap/m/MessageToast',
+	'sap/ui/unified/ColorPickerDisplayMode'
+], function (Controller, ColorPalettePopover, MessageToast, ColorPickerDisplayMode) {
 	"use strict";
 
-	var ColorPaletteController = Controller.extend("sap.m.sample.ColorPalettePopover.ColorPalettePopover", {
+	return Controller.extend("sap.m.sample.ColorPalettePopover.ColorPalettePopover", {
 
 		onExit: function () {
 			// Destroy popovers if any
@@ -25,6 +25,10 @@ sap.ui.define([
 
 			if (this.oColorPalettePopoverMin) {
 				this.oColorPalettePopoverMin.destroy();
+			}
+
+			if (this.oColorPaletteDisplayMode) {
+				this.oColorPaletteDisplayMode.destroy();
 			}
 		},
 
@@ -47,14 +51,14 @@ sap.ui.define([
 		 * Opens a <code>ColorPalette</code> in a <code>sap.m.ResponsivePopover</code>, where:
 		 *  - defaultColor is given
 		 *  - colors are given
-		 *  - "More Colors..." button is not visible
+		 *  - "Default Color" button is not visible
 		 * @param oEvent
 		 */
 		openCustomColorsSample: function (oEvent) {
 			if (!this.oColorPalettePopoverCustom) {
 				this.oColorPalettePopoverCustom = new ColorPalettePopover("oColorPalettePopoverCustom", {
 					defaultColor: "white",
-					showMoreColorsButton: false,
+					showDefaultColorButton: false,
 					colors: ["#292f36", "#4ecdc4", "#3a506b", "hsl(0,100%,71%)", "white", "lightcyan", "rgb(255,234,234)"],
 					colorSelect: this.handleColorSelect
 				});
@@ -66,13 +70,13 @@ sap.ui.define([
 		/**
 		 * Opens a <code>ColorPalette</code> in a responsive popover, where:
 		 *  - the minimum (2) colors are given
-		 *  - "Default Color" button is not visible
+		 *  - "More Colors.." button is not visible
 		 * @param oEvent
 		 */
 		openMinimalSampleWithDefaultColorButton: function (oEvent) {
 			if (!this.oColorPalettePopoverMinDefautButton) {
 				this.oColorPalettePopoverMinDefautButton = new ColorPalettePopover("oColorPalettePopoverMinDef", {
-					showDefaultColorButton: false,
+					showMoreColorsButton: false,
 					colors: ["red", "#ffff00"],
 					colorSelect: this.handleColorSelect
 				});
@@ -97,12 +101,28 @@ sap.ui.define([
 			this.oColorPalettePopoverMin.openBy(oEvent.getSource());
 		},
 
+		/**
+		 * Opens a <code>ColorPalette</code> in a responsive popover, where:
+		 *  - "More Colors.." button is visible
+		 *  - "displayMode" is set to 'Simplified'
+		 * @param oEvent
+		 */
+		openSampleWithDisplayModeSet: function (oEvent) {
+			if (!this.oColorPaletteDisplayMode) {
+				this.oColorPaletteDisplayMode = new ColorPalettePopover("oColorPaletteDisplayMode", {
+					showDefaultColorButton: false,
+					displayMode: ColorPickerDisplayMode.Simplified,
+					colorSelect: this.handleColorSelect
+				});
+			}
+
+			this.oColorPaletteDisplayMode.openBy(oEvent.getSource());
+		},
+
 		handleColorSelect: function (oEvent) {
 			MessageToast.show("Color Selected: value - " + oEvent.getParameter("value") +
 				", \n defaultAction - " + oEvent.getParameter("defaultAction"));
 		}
 	});
-
-	return ColorPaletteController;
 
 });

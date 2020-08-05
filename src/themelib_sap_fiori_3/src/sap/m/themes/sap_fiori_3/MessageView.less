@@ -1,0 +1,78 @@
+/* ================================== */
+/* CSS for control sap.m/MessageView  */
+/* Fiori 3 theme                      */
+/* ================================== */
+
+.sapMMsgView {
+	.sapMMsgViewItem {
+		padding-left: 0;
+		&.sapMSLIWithDescription {
+			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
+		}
+	}
+	.sapMLIBActive .sapMLIBImgNav {
+		background: none;
+	}
+
+	.sapMSLITitleOnly {
+		padding-top: 0.5rem;
+		padding-bottom: 0.5rem;
+	}
+
+	.sapMSLITitle {
+		color: @sapUiGroupTitleTextColor;
+	}
+
+	.sapMSLIDescription {
+		color: @sapUiContentLabelColor;
+	}
+
+	.sapMMsgViewDescriptionText {
+		padding-bottom:0;
+		margin: 0 1rem 1rem 3rem;
+		line-height: 1.4;
+		font-family: @sapUiFontFamily;
+		color: @sapUiBaseText;
+	}
+
+	.sapMMsgViewTitleText:not(.sapMLnk) {
+		margin: 1rem 1rem 1rem 3rem;
+	}
+
+	.sapMMsgViewDescriptionLink {
+		margin: 0 1rem 1rem 3rem;
+		font-family: @sapUiFontFamily;
+		font-size: @sapMFontMediumSize;
+		font-weight: normal;
+		color: @sapUiLink;
+	}
+
+	.sapMSLIWithDescription > .sapMLIBContent > .sapMSLIDiv > .sapMSLIDescription {
+		margin-top: 0.25rem;
+	}
+}
+
+.sapMMsgView .sapMIBar.sapMHeader-CTX {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMMsgViewDescIcon {
+	font-size: 1rem;
+	top: 1.125rem;
+}
+
+.sapMMsgViewItem .sapMSLIImgIcon {
+	font-size: 1rem;
+}
+
+.sapMMsgView .sapMSegBBtn .sapMBtnCustomIcon {
+	font-size: 1rem;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapMMsgView {
+	.sapMBtnIcon {
+		margin-right: 0.5rem;
+	}
+}

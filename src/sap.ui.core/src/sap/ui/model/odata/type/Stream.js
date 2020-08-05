@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/model/FormatException",
-	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/ParseException",
-	"sap/ui/model/ValidateException"
-], function (FormatException, ODataType, ParseException, ValidateException) {
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType"
+], function (Log, FormatException, ParseException, ValidateException, ODataType) {
 	"use strict";
 
 	/**
@@ -27,7 +28,7 @@ sap.ui.define([
 			if (vNullable === false) {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true) {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 		}
 	}

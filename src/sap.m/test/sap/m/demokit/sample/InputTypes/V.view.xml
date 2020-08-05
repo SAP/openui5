@@ -1,46 +1,40 @@
 <mvc:View
-		xmlns:l="sap.ui.layout"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Label text="Text" labelFor="inputText" />
+		<Input
+			id="inputText"
+			placeholder="Enter text"
+			class="sapUiSmallMarginBottom" />
 
-			<Label text="Text" labelFor="inputText"/>
-			<Input
-				id="inputText"
-				type="Text"
-				class="sapUiSmallMarginBottom"
-				placeholder="Enter Text ..." />
+		<Label text="Email" labelFor="inputEmail" />
+		<Input
+			id="inputEmail"
+			type="Email"
+			placeholder="Enter email"
+			class="sapUiSmallMarginBottom" />
 
-			<Label text="Email" labelFor="inputEmail"/>
-			<Input
-				id="inputEmail"
-				type="Email"
-				class="sapUiSmallMarginBottom"
-				placeholder="Enter Email ..." />
+		<Label text="Telephone" labelFor="inputTel" />
+		<Input
+			id="inputTel"
+			type="Tel"
+			placeholder="Enter telephone number"
+			class="sapUiSmallMarginBottom" />
 
-			<Label text="Telephone" labelFor="inputTel"/>
-			<Input
-				id="inputTel"
-				type="Tel"
-				class="sapUiSmallMarginBottom"
-				placeholder="Enter Telephone Number ..." />
+		<Label text="Number" labelFor="inputNumber" />
+		<Input
+			id="inputNumber"
+			type="Number"
+			placeholder="Enter a number"
+			class="sapUiSmallMarginBottom" />
 
-			<Label text="Number" labelFor="inputNumber"/>
-			<Input
-				id="inputNumber"
-				type="Number"
-				class="sapUiSmallMarginBottom"
-				placeholder="Enter a Number ..." />
-
-			<Label text="URL" labelFor="inputUrl"/>
-			<Input
-				id="inputUrl"
-				type="Url"
-				class="sapUiSmallMarginBottom"
-				placeholder="Enter URL ..." />
-		</l:content>
+		<Label text="URL" labelFor="inputUrl" />
+		<Input
+			id="inputUrl"
+			type="Url"
+			placeholder="Enter URL"
+			class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>

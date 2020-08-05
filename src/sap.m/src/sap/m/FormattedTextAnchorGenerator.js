@@ -7,15 +7,23 @@
  * This class handles the <code>AnchorGeneration</code> for the <code>FormattedText</code> control.
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/base/Metadata", "sap/m/library"], function(jQuery, Metadata, library) {
+sap.ui.define([
+	"sap/ui/base/Object",
+	"sap/m/library",
+	"sap/base/security/URLWhitelist"
+], function(BaseObject, library, URLWhitelist) {
 	"use strict";
 
 	// shortcut for sap.m.LinkConversion
 	var LinkConversion = library.LinkConversion;
 
-	var AnchorGenerator = Metadata.createClass("sap.m.FormattedTextAnchorGenerator", {});
+	var AnchorGenerator = BaseObject.extend("sap.m.FormattedTextAnchorGenerator", {
+		getInterface: function() {
+			return this; // no facade
+		}
+	});
 
-	var LINK_SEARCH_PATTERN = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+	var LINK_SEARCH_PATTERN = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;()$]*[-A-Z0-9+&@#\/%=~_|])/gim;
 	var WWW_DETECTION_PATTERN = /(www\.[^\s><]+(\b|$))/gim;
 	var WWW_DETECTED_LINKS_PREFIX = "//";
 	var DETECT_HTML_TAGS = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+(?!\/\s\*)>/gim;
@@ -88,7 +96,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Metadata", "sap/m/library"], fu
 	 * @private
 	 */
 	AnchorGenerator._shouldBeProcessed = function (sUrlCandidate, oCandidatePosition, aBlackListedPositions) {
-		return jQuery.sap.validateUrl(sUrlCandidate) && !AnchorGenerator._isAllowed(aBlackListedPositions, oCandidatePosition);
+		return URLWhitelist.validate(sUrlCandidate) && !AnchorGenerator._isAllowed(aBlackListedPositions, oCandidatePosition);
 	};
 
 	/**
@@ -155,4 +163,4 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Metadata", "sap/m/library"], fu
 	};
 
 	return AnchorGenerator;
-}, /* bExport= */ false);
+});

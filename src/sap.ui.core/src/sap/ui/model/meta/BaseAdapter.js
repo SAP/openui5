@@ -11,13 +11,17 @@
  * @param {string} mMetadataContext.modelName the name of the model
  * @param {string} mMetadataContext.contextName the name of the context
  * @param {object} mProperties the properties and redirection function
- * @return {sap.ui.model.meta.BaseAdapter} an instance of a context specific adapter Abstract Model adapter
- * @experimental
+ * @returns {sap.ui.model.meta.BaseAdapter} an instance of a context specific adapter
+ *
+ * @experimental Since 1.58
  * @abstract
  */
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/base/Object"
-], function(jQuery, BaseObject) {
+	"sap/ui/base/Object",
+	"./AdapterConstants",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/base/SyncPromise"
+], function(BaseObject, AdapterConstants, JSONModel, SyncPromise) {
 	"use strict";
 
 	var BaseAdapter = BaseObject.extend("sap.ui.model.meta.BaseAdapter", {
@@ -33,12 +37,8 @@ sap.ui.define([
 		 * @protected
 		 */
 		sModelName: undefined,
-		/**
-		 * The cached properties
-		 *
-		 * @private
-		 */
 		constructor: function(mMetadataContext, mProperties) {
+			this.constants = AdapterConstants;
 			this.mMetadataContext = mMetadataContext;
 			this.oModel = mMetadataContext.model;
 			this.oMetaModel = this.oModel.getMetaModel();
@@ -49,11 +49,6 @@ sap.ui.define([
 			this._mProperties = {};
 			this._mPropertyBag = {};
 			this._mCustomPropertyBag = {};
-
-			this.oMetaContext = this.oMetaModel.getMetaContext(this.path);
-			if (!this.metaPath) {
-				this.metaPath = this.oMetaContext.getPath();
-			}
 
 			this.init();
 
@@ -78,12 +73,18 @@ sap.ui.define([
 		 *
 		 * @protected
 		 */
-		init: function(sMetaPath, sPath) {
+		init: function() {
+			if (!this.metaPath) {
+				this.oMetaContext = this.oMetaModel.getMetaContext(this.path);
+				this.metaPath = this.oMetaContext.getPath();
+			} else {
+				this.oMetaContext = this.oMetaModel.createBindingContext(this.metaPath);
+			}
 		},
 		/**
 		 * The name of the model
 		 *
-		 * @return {string} the name of the model
+		 * @returns {string} the name of the model
 		 */
 		getModelName: function() {
 			return this.modelName;
@@ -113,11 +114,14 @@ sap.ui.define([
 					}
 
 					if (!this._mPropertyBag.hasOwnProperty(sProperty)) {
+						this._mPropertyBag[sProperty] = new SyncPromise(function(resolve, reject) {
 						if (typeof vGetter == 'function') {
-							this._mPropertyBag[sProperty] = vGetter.apply(caller, aArgs);
+								resolve(vGetter.apply(caller, aArgs));
 						} else {
-							this._mPropertyBag[sProperty] = vGetter;
+								resolve(vGetter);
 						}
+						});
+
 					}
 
 					return this._mPropertyBag[sProperty];
@@ -132,7 +136,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sValuePath the path to the property value, e.g 'Payed'
 		 * @param {string} sType the optional name of the UI5 model type, e.g. 'sap.ui.model.type.string'
-		 * @return {string} the representation of a simple binding syntax
+		 * @returns {string} the representation of a simple binding syntax
 		 */
 		convertToSimpleBinding: function(sValuePath, sType) {
 			var sPath = "{";
@@ -141,7 +145,11 @@ sap.ui.define([
 				sPath = sPath + "model: '" + this.modelName + "',";
 			}
 
-			sPath = sPath + "path: '" + sValuePath + "'";
+			if (this.sContextPath && sValuePath.startsWith(this.sContextPath)) {
+				sValuePath = sValuePath.replace(this.sContextPath,"");
+			}
+
+			sPath = sPath + "path: '" + escape(sValuePath) + "'";
 
 			if (sType) {
 				sPath = sPath + ", type: '" + sType + "'";
@@ -170,28 +178,61 @@ sap.ui.define([
 		},
 		parentPromise: function(sParentModulePath, mMetadataContext) {
 			return new Promise(function(resolve, reject) {
-				sap.ui.define([
+				sap.ui.require([
 					sParentModulePath
 				], function(ParentAdapter) {
 					var oParent = new ParentAdapter(mMetadataContext);
 					resolve(oParent);
-				});
+				}, reject);
 			});
+		},
+		getAdapterModel: function() {
+			if (!this._oAdapterModel) {
+				this._oAdapterModel = new JSONModel(this);
+			}
+			return this._oAdapterModel;
+		},
+		updateContextPath: function(oControl) {
+			var oControlCtx = oControl.getBindingContext(this.model);
+			var sContextPath = oControlCtx ? this.removeKeys(oControlCtx.getPath()) + "/" : null;
+			if (sContextPath && sContextPath != this.sContextPath) {
+				this.sContextPath = sContextPath;
+				this._mPropertyBag = {};
+			}
+		},
+		/**
+		 *
+		 * Removes the keys from the model/meta model path
+		 *
+		 * @param {string} sPath the path, e.g. /PurchaseOrders('300000020')
+		 * @returns {string} sKeyLess the key free path /PurchaseOrders
+		 */
+		removeKeys: function(sPath) {
+			return sPath;
+		},
+		/**
+		 *
+		 * Returns a sibling adapter of the same class type to the corresponding sibling path.
+		 *
+		 *@param {string} sSiblingPath The sibling path as an absolute path, for example /PurchaseOrders('300000020')/to_Supplier/Name
+		 *@returns {object} oSiblingAdapter The corresponding sibling adapter
+		 */
+		sibling : function(sSiblingPath) {
+			if (!sSiblingPath) {
+				return null;
+			}
+
+			var mSiblingMetadataContext = {
+				model : this.oModel,
+				path : sSiblingPath
+			};
+
+			var oClass = this.getMetadata().getClass();
+			var oSibling = new oClass(mSiblingMetadataContext);
+			oSibling.sContextPath = this.sContextPath;
+			return oSibling;
 		}
 	});
-
-	BaseAdapter.Relation = {
-		atMostOne: "0..1",
-		one: "1",
-		many: "n"
-	};
-
-	BaseAdapter.SupportedSortDirection = {
-		none: "none",
-		both: "both",
-		asc: "ascending",
-		desc: "descending"
-	};
 
 	return BaseAdapter;
 

@@ -1,40 +1,40 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'./MockServer',
-		'sap/ui/core/Item',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/core/search/OpenSearchProvider'
-	], function(jQuery, MockServer, Item, Controller, OpenSearchProvider) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/Item",
+	"sap/ui/core/search/OpenSearchProvider",
+	"./MockServer"
+], function (Controller, Item, OpenSearchProvider, MockServer) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.InputSuggestionsOpenSearch.C", {
+	return Controller.extend("sap.m.sample.InputSuggestionsOpenSearch.C", {
 
 		// Start up mock server that responds to product searches
 		// Then create an Open Search Provider pointing to that server.
 		// NOTE: The mock server is only to simulate a remote service,
 		// for demonstration purposes only!
-		onInit: function (oEvent) {
-			this._oServer = MockServer.backendProductSearchService();
-			this._oOpenSearchProvider = new OpenSearchProvider();
-			this._oOpenSearchProvider.setSuggestUrl(this._oServer.getRootUri() + "/{searchTerms}");
+		onInit: function () {
+			MockServer.connectToMockProductSearchService().then(function (oService) {
+				this._oServer = oService;
+				this._oOpenSearchProvider = new OpenSearchProvider();
+				this._oOpenSearchProvider.setSuggestUrl(this._oServer.getRootUri() + "/{searchTerms}");
+			}.bind(this));
 		},
 
-		handleSuggest: function (oEvent) {
+		onSuggest: function (oEvent) {
 			var sTerm = oEvent.getParameter("suggestValue");
-			this._oOpenSearchProvider.suggest(sTerm, jQuery.proxy(function (sValue, aSuggestions) {
+
+			this._oOpenSearchProvider.suggest(sTerm, function (sValue, aSuggestions) {
 				if (sValue === this.getValue()) {
 					this.destroySuggestionItems();
-					for (var i = 0, ii = aSuggestions.length; i < ii; i++) {
+
+					for (var i = 0; i < aSuggestions.length; i++) {
 						this.addSuggestionItem(new Item({
 							text: aSuggestions[i]
 						}));
 					}
 				}
-			}, oEvent.getSource()));
+			}.bind(oEvent.getSource()));
 		}
 
 	});
-
-	return CController;
-
 });

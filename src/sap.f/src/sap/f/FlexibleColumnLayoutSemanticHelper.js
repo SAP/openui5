@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
-	"./FlexibleColumnLayout"
-], function (jQuery, library, FlexibleColumnLayout) {
+	"./FlexibleColumnLayout",
+	"sap/base/assert"
+], function (library, FlexibleColumnLayout, assert) {
 	"use strict";
 
 	// shortcut for sap.f.LayoutType
@@ -53,13 +53,13 @@ sap.ui.define([
 	 *
 	 * @param {object} oSettings Determines the rules that will be used by the helper.
 	 *
-	 * @param {sap.f.LayoutType} oSettings.defaultTwoColumnLayoutType
+	 * @param {sap.f.LayoutType} [oSettings.defaultTwoColumnLayoutType=sap.f.LayoutType.TwoColumnsBeginExpanded]
 	 * Determines what two-column layout type will be suggested by default:
-	 * <code>sap.f.LayoutType.TwoColumnsBeginExpanded</code> (default) or <code>sap.f.LayoutType.TwoColumnsMidExpanded</code>.
+	 * <code>sap.f.LayoutType.TwoColumnsBeginExpanded</code> or <code>sap.f.LayoutType.TwoColumnsMidExpanded</code>.
 	 *
-	 * @param {sap.f.LayoutType} oSettings.defaultThreeColumnLayoutType
+	 * @param {sap.f.LayoutType} [oSettings.defaultThreeColumnLayoutType=sap.f.LayoutType.ThreeColumnsMidExpanded]
 	 * Determines what three-column layout type will be suggested by default:
-	 * <code>sap.f.LayoutType.ThreeColumnsMidExpanded</code> (default) or <code>sap.f.LayoutType.ThreeColumnsEndExpanded</code>.
+	 * <code>sap.f.LayoutType.ThreeColumnsMidExpanded</code> or <code>sap.f.LayoutType.ThreeColumnsEndExpanded</code>.
 	 *
 	 * @param {int} oSettings.maxColumnsCount
 	 * Determines the maximum number of columns that will be displayed side by side.
@@ -118,7 +118,7 @@ sap.ui.define([
 		if (["Normal", "MasterDetail", "SingleColumn"].indexOf(oSettings.mode) !== -1 && !oSettings.maxColumnsCount) {
 			iMax = oModeToMaxColumnsCountMapping[oSettings.mode];
 		} else {
-			iMax = oSettings.maxColumnsCount ? parseInt(oSettings.maxColumnsCount, 10) : 3;
+			iMax = oSettings.maxColumnsCount ? parseInt(oSettings.maxColumnsCount) : 3;
 			if (iMax < 1 || iMax > 3) {
 				iMax = 3;
 			}
@@ -126,7 +126,7 @@ sap.ui.define([
 		this._maxColumnsCount = iMax;
 
 		// Initial number of columns (1 by default, can be set to 2 for MasterDetail or Normal modes only)
-		iInitial = oSettings.initialColumnsCount ? parseInt(oSettings.initialColumnsCount, 10) : 1;
+		iInitial = oSettings.initialColumnsCount ? parseInt(oSettings.initialColumnsCount) : 1;
 		if (iInitial < 1 || iInitial > 2 || this._maxColumnsCount === 1) {
 			iInitial = 1;
 		}
@@ -154,7 +154,7 @@ sap.ui.define([
 	 */
 	FlexibleColumnLayoutSemanticHelper.getInstanceFor = function (oFlexibleColumnLayout, oSettings) {
 
-		jQuery.sap.assert(oFlexibleColumnLayout instanceof FlexibleColumnLayout, "Passed control is not FlexibleColumnLayout");
+		assert(oFlexibleColumnLayout instanceof FlexibleColumnLayout, "Passed control is not FlexibleColumnLayout");
 
 		var sId = oFlexibleColumnLayout.getId();
 
@@ -186,6 +186,8 @@ sap.ui.define([
 	 * 	<b>Note:</b> While <code>isFullScreen</code> can be <code>true</code> for any layout, due to small screen size, <code>isLogicallyFullScreen</code> will only be <code>true</code> for the layout values, listed above.</li>
 	 * 	<li>actionButtonsInfo - an object with fields <code>midColumn, endColumn</code>, each containing an object, telling whether action buttons should be shown in the <code>mid</code> and <code>end</code> columns, and what value of the <code>layout</code> property should be set upon clicking these buttons.
 	 * 	Each of these objects has the following fields: <code>closeColumn, fullScreen, exitFullScreen</code>. If <code>null</code>, then the respective action button should not be shown, otherwise provides the value of <code>layout</code> property for the action button.</li></ul>
+	 *
+	 * <b>Note:</b> This method relies on the internal <code>FlexibleColumnLayout</code> reference to be rendered in the DOM tree. For convenience, use methods {@link sap.f.FlexibleColumnLayout#isDOMReady} and {@link sap.f.FlexibleColumnLayout#whenDOMReady}.
 	 *
 	 * 	Example value:
 	 *
@@ -402,7 +404,7 @@ sap.ui.define([
 
 			}
 
-			if (sColumnWidthDistribution === "25/50/25" || sColumnWidthDistribution === "25/25/50" || sColumnWidthDistribution === "0/67/33") {
+			if (sColumnWidthDistribution === "25/50/25" || sColumnWidthDistribution === "25/25/50" || sColumnWidthDistribution === "0/67/33" || sColumnWidthDistribution === "0/33/67") {
 
 				oEndColumn.fullScreen = LT.EndColumnFullScreen;
 				oEndColumn.closeColumn = this._defaultTwoColumnLayoutType;
@@ -470,6 +472,85 @@ sap.ui.define([
 			iMaxColumnsCount = this._oFCL._getMaxColumnsCountForWidth( iControlWidth || window.innerWidth);
 
 		return iMaxColumnsCount > 1;
+	};
+
+	/**
+	 * Abstract wrapper for {@link sap.f.FlexibleColumnLayout#isDOMReady}.
+	 * Returns <code>true</code> if criteria are met for the APIs in this helper to be used.
+	 *
+	 * @returns {boolean} true if this helper's API reliability criteria are met
+	 * @since 1.72
+	 * @public
+	 */
+	FlexibleColumnLayoutSemanticHelper.prototype.isReady = function () {
+		return this.isDOMReady();
+	};
+
+	/**
+	 * Returns <code>true</code> if internal <code>FlexibleColumnLayout</code> reference is rendered in the DOM tree.
+	 *
+	 * @returns {boolean} true if the associated <code>FlexibleColumnLayout</code> is rendered
+	 * @since 1.72
+	 * @public
+	 */
+	FlexibleColumnLayoutSemanticHelper.prototype.isDOMReady = function () {
+		return this._oFCL.getDomRef() !== null;
+	};
+
+	/**
+	 * Returns promise which can be used to find out when internal criteria for this helper's
+	 * API reliability are met.
+	 *
+	 * @returns {Promise} A promise that resolves after internal criteria are met
+	 * @since 1.72
+	 * @public
+	 */
+	FlexibleColumnLayoutSemanticHelper.prototype.whenReady = function () {
+		var that = this;
+
+		return new Promise(function (resolve, reject) {
+			that.whenDOMReady()
+				.then(function () {
+					resolve();
+				})
+				.catch(function (arg) {
+					reject(arg);
+				});
+		});
+	};
+
+	/**
+	 * Returns promise which can be used to find out when the internal <code>FlexibleColumnLayout</code> is rendered.
+	 * This is needed because methods in <code>FlexibleColumnLayout</code> rely on the control
+	 * being rendered.
+	 *
+	 * @returns {Promise} A promise that resolves after <code>FlexibleColumnLayout</code> is rendered
+	 * @since 1.72
+	 * @public
+	 */
+	 FlexibleColumnLayoutSemanticHelper.prototype.whenDOMReady = function () {
+		var that = this;
+
+		var oDomReadyPromise = new Promise(function (resolve, reject) {
+			if (!that._oFCL || that._oFCL.bIsDestroyed) {
+				reject('FlexibleColumnLayout reference missing. Please make sure FlexibleColumnLayoutSemanticHelper is properly initialized.');
+			}
+
+
+			if (that._oFCL.getDomRef()) {
+				resolve();
+			} else {
+				var oDelegate = {
+					onAfterRendering: function () {
+						that._oFCL.removeEventDelegate(oDelegate);
+						resolve();
+					}
+				};
+				that._oFCL.addEventDelegate(oDelegate);
+			}
+		});
+
+		return oDomReadyPromise;
 	};
 
 	return FlexibleColumnLayoutSemanticHelper;

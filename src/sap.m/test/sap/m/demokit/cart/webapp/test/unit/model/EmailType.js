@@ -1,6 +1,6 @@
 /* global QUnit*/
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/demo/cart/model/EmailType"
 ],
 function (EmailType) {

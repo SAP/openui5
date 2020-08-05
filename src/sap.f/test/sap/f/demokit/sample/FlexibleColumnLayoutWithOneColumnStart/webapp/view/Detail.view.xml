@@ -1,5 +1,6 @@
-<m:View displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutWithOneColumnStart.controller.Detail" height="100%"
+<mvc:View displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutWithOneColumnStart.controller.Detail" height="100%"
 		xmlns="sap.uxap"
+		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:m="sap.m"
 		xmlns:f="sap.f"
 		xmlns:form="sap.ui.layout.form">
@@ -27,8 +28,8 @@
 						</snappedHeading>
 
 						<navigationActions>
-							<m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/fullScreen} !== null }"/>
-							<m:OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/exitFullScreen} !== null }"/>
+							<m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" id="enterFullScreenBtn" tooltip="Enter Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/fullScreen} !== null }"/>
+							<m:OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" id="exitFullScreenBtn" tooltip="Exit Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/exitFullScreen} !== null }"/>
 							<m:OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close column" visible="{= ${/actionButtonsInfo/midColumn/closeColumn} !== null }"/>
 						</navigationActions>
 
@@ -129,4 +130,4 @@
 			</ObjectPageSection>
 		</sections>
 	</ObjectPageLayout>
-</m:View>
+</mvc:View>

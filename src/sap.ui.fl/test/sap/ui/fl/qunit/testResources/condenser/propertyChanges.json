@@ -1,0 +1,159 @@
+[
+	{
+		"id": "id_1575964813623_132_propertyChange",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"layer": "VENDOR",
+		"content": {
+			"property": "useHorizontalLayout",
+			"newValue": true
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"type": "sap.ui.comp.smartform.Group",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-10T08:01:26.564Z"
+	},
+	{
+		"id": "id_1575964813623_132_propertyChange",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"layer": "VENDOR",
+		"content": {
+			"property": "useHorizontalLayout",
+			"newValue": false
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"type": "sap.ui.comp.smartform.Group",
+			"idIsLocal": true
+		},
+		"creation": "2019-12-10T08:01:26.564Z"
+	},
+	{
+		"id": "id_1479218968907_101_propertyChange",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"layer": "VENDOR",
+		"content": {
+			"property": "elementForLabel",
+			"newValue": 0
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1479219043003_105_propertyChange",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"layer": "VENDOR",
+		"content": {
+			"property": "elementForLabel",
+			"newValue": 2
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1491823781561_91_propertyChange",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"layer": "VENDOR",
+		"content": {
+			"property": "elementForLabel",
+			"newValue": 1
+		},
+		"selector": {
+			"id": "idMain1--Victim",
+			"type": "sap.ui.comp.smartform.GroupElement",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1493382638641_97_propertyChange",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"layer": "VENDOR",
+		"content": {
+			"property": "label",
+			"oldValue": "",
+			"newValue": "50"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"type": "sap.ui.comp.smartform.Group",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1493382638641_97_propertyChange",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"layer": "VENDOR",
+		"content": {
+			"property": "label",
+			"oldValue": "",
+			"newValue": "50"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"type": "sap.ui.comp.smartform.Group",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1493382638641_97_propertyChange",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"layer": "VENDOR",
+		"content": {
+			"property": "label",
+			"oldValue": "",
+			"newValue": "30"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"type": "sap.ui.comp.smartform.Group",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1493382638641_97_propertyChange",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"layer": "VENDOR",
+		"content": {
+			"property": "label",
+			"oldValue": "",
+			"newValue": "10"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"type": "sap.ui.comp.smartform.Group",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1493382638641_97_propertyChange",
+		"changeType": "propertyChange",
+		"reference": "sap.ui.rta.test.Component",
+		"layer": "VENDOR",
+		"content": {
+			"property": "label",
+			"oldValue": "",
+			"newValue": "80"
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"type": "sap.ui.comp.smartform.Group",
+			"idIsLocal": true
+		}
+	}
+]

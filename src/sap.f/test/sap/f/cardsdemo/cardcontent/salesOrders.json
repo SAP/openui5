@@ -1,0 +1,22 @@
+{
+	"items": [
+		{
+			"SO_ID": "0000000001",
+			"title": "Sales Order 1",
+			"state": "at risk",
+			"semanticColor": "red"
+		},
+		{
+			"SO_ID": "0000000002",
+			"title": "Sales Order 2",
+			"state": "review",
+			"semanticColor": "blue"
+		},
+		{
+			"SO_ID": "0000000003",
+			"title": "Sales Order 3",
+			"state": "finalized",
+			"semanticColor": "green"
+		}
+	]
+}

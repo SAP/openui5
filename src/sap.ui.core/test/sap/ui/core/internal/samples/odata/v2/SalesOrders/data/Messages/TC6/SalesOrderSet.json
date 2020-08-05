@@ -1,0 +1,36 @@
+{
+	"d" : {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('106')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('106')",
+			"type" : "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"SalesOrderID" : "106",
+		"Note" : "Test Case VI",
+		"NoteLanguage" : "EN",
+		"CustomerID" : "0100000009",
+		"CustomerName" : "Telecomunicaciones Star",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "5688.20",
+		"NetAmount" : "82950.10",
+		"TaxAmount" : "15760.52",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDescription" : "New",
+		"BillingStatus" : "",
+		"BillingStatusDescription" : "Initial",
+		"DeliveryStatus" : "",
+		"DeliveryStatusDescription" : "Initial",
+		"CreatedAt" : "\/Date(1567634400000)\/",
+		"ChangedAt" : "\/Date(1588753152655)\/",
+		"ToBusinessPartner" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('106')/ToBusinessPartner"
+			}
+		},
+		"ToLineItems" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('106')/ToLineItems"
+			}
+		}
+	}
+}

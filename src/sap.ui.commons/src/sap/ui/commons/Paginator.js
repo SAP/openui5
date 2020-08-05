@@ -4,13 +4,20 @@
 
 // Provides control sap.ui.commons.Paginator.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     './library',
     'sap/ui/core/Control',
-    "./PaginatorRenderer"
+    './PaginatorRenderer',
+    // jQuery custom selectors ":sapFocusable"
+    "sap/ui/dom/jquery/Selectors"
 ],
 	function(jQuery, library, Control, PaginatorRenderer) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.commons.PaginatorEvent
+	var PaginatorEvent = library.PaginatorEvent;
 
 
 
@@ -108,8 +115,9 @@ sap.ui.define([
 	Paginator.prototype.setCurrentPage = function(iTargetPage, bSuppressRerendering) {
 		this.setProperty("currentPage", iTargetPage, bSuppressRerendering);
 		if (this.getDomRef()) {
-			sap.ui.commons.PaginatorRenderer.updateBackAndForward(this);
+			PaginatorRenderer.updateBackAndForward(this);
 		}
+		return this;
 	};
 
 	/**
@@ -120,8 +128,7 @@ sap.ui.define([
 	Paginator.prototype.triggerPaginatorAnimation = function() {
 		var aIndicesToHide = [];
 		var aIndicesToShow = [];
-		var paginatorId = this.getId();
-		var aChildren = jQuery.sap.byId(paginatorId + "-pages").children();
+		var aChildren = this.$("pages").children();
 
 		// Get the ranges we need to display before and after the animation
 		var oNewRange = this._calculatePagesRange();
@@ -131,9 +138,9 @@ sap.ui.define([
 		} else {
 			oOldRange = {};
 			var aParts = aChildren[0].id.split("--");
-			oOldRange.firstPage = parseInt(aParts[aParts.length - 1], 10);
+			oOldRange.firstPage = parseInt(aParts[aParts.length - 1]);
 			aParts = aChildren[aChildren.length - 1].id.split("--");
-			oOldRange.lastPage = parseInt(aParts[aParts.length - 1], 10);
+			oOldRange.lastPage = parseInt(aParts[aParts.length - 1]);
 		}
 
 		// the pages to be shown only after the animation are those to be rendered invisible, initially
@@ -156,8 +163,8 @@ sap.ui.define([
 		}
 
 		// build the html for both the initially visible and still invisible pages
-		var oldHtml = sap.ui.commons.PaginatorRenderer.getPagesHtml(this.getId(), oOldRange, this.getCurrentPage(), true);
-		var newHtml = sap.ui.commons.PaginatorRenderer.getPagesHtml(this.getId(), oInvisibleRange, this.getCurrentPage(), false);
+		var oldHtml = PaginatorRenderer.getPagesHtml(this.getId(), oOldRange, this.getCurrentPage(), true);
+		var newHtml = PaginatorRenderer.getPagesHtml(this.getId(), oInvisibleRange, this.getCurrentPage(), false);
 		if (oOldRange.firstPage < oInvisibleRange.firstPage) {
 			newHtml = oldHtml + newHtml;
 		} else {
@@ -176,34 +183,34 @@ sap.ui.define([
 			// Set focus on the previously focused element.
 			// jQuery does not like document.activeElement, so we have to fetch it
 			// from the DOM again.
-			focElem = jQuery.sap.domById(focId);
+			focElem = document.getElementById(focId);
 		} else {
 			// Set focus to active page link if no other element was active before
-			focElem = jQuery.sap.domById("testPaginator-a--" + this.getCurrentPage());
+			focElem = document.getElementById("testPaginator-a--" + this.getCurrentPage());
 		}
 
-		jQuery.sap.focus(focElem);
-
+		if ( focElem ) {
+			focElem.focus();
+		}
 
 		// Use jQuery hide/show to animate the paging
-		var prefix = this.getId() + "-li--";
+		var prefix = "li--";
 
 		this._oOldRange = oNewRange;
 
 		function removeAfterAnimation(){ // remove the DOM elements after the animation
-			var elem = jQuery.sap.domById(this.id);
+			var elem = document.getElementById(this.id);
 			if (elem) {
 				elem.parentNode.removeChild(elem);
 			}
 		}
 
 		for (i = 0 ; i < aIndicesToHide.length; i++) {
-			var id = prefix + aIndicesToHide[i];
-			jQuery.sap.byId(id).hide(400, removeAfterAnimation);
+			this.$(prefix + aIndicesToHide[i]).hide(400, removeAfterAnimation);
 		}
 
 		for (i = 0 ; i < aIndicesToShow.length; i++) {
-			jQuery.sap.byId(prefix + aIndicesToShow[i]).show(400);
+			this.$(prefix + aIndicesToShow[i]).show(400);
 		}
 	};
 
@@ -263,18 +270,18 @@ sap.ui.define([
 		var aEvents = oEvent.getPseudoTypes();
 
 		//Tab
-		if (jQuery.inArray("saptabnext", aEvents) != -1) {
+		if (aEvents.indexOf("saptabnext") != -1) {
 			this.triggerTabbingNavigation(oEvent,false);
-		} else if (jQuery.inArray("saptabprevious", aEvents) != -1) {
+		} else if (aEvents.indexOf("saptabprevious") != -1) {
 			//Shift/tab
 			this.triggerTabbingNavigation(oEvent,true);
-		} else if (jQuery.inArray("sapincrease", aEvents) != -1) {
+		} else if (aEvents.indexOf("sapincrease") != -1) {
 			//Moves focus to the right (Right arrow key)
 			this.triggerInternalNavigation(oEvent,"next");
-		} else if (jQuery.inArray("sapdecrease", aEvents) != -1) {
+		} else if (aEvents.indexOf("sapdecrease") != -1) {
 			//Moves focus to the left (Left arrow key)
 			this.triggerInternalNavigation(oEvent,"previous");
-		} else if (jQuery.inArray("sapenter", aEvents) != -1) {
+		} else if (aEvents.indexOf("sapenter") != -1) {
 			this._handleSelect(oEvent);
 		}
 
@@ -288,7 +295,8 @@ sap.ui.define([
 	 */
 	Paginator.prototype.triggerInternalNavigation = function(oEvent,sDirection){
 
-		var aFocusableElements = jQuery(this.getDomRef()).find(":sapFocusable");
+		// jQuery custom selectors ":sapFocusable"
+		var aFocusableElements = this.$().find(":sapFocusable");
 		var iCurrentIndex = jQuery(aFocusableElements).index(oEvent.target);
 		var iNextIndex, oNextElement;
 
@@ -300,7 +308,7 @@ sap.ui.define([
 			}
 			oNextElement = aFocusableElements[iNextIndex];
 			if (oNextElement) {
-				jQuery(oNextElement).focus();
+				jQuery(oNextElement).trigger("focus");
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
 			}
@@ -312,7 +320,7 @@ sap.ui.define([
 				oNextElement = aFocusableElements[iNextIndex - 1];
 			}
 			if (oNextElement) {
-				jQuery(oNextElement).focus();
+				jQuery(oNextElement).trigger("focus");
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
 			}
@@ -329,11 +337,12 @@ sap.ui.define([
 	Paginator.prototype.triggerTabbingNavigation = function(oEvent,shiftKeyPressed){
 
 		//Get all focusable elements
-		var aFocusableElements = jQuery(this.getDomRef()).find(":sapFocusable");
+		// jQuery custom selectors ":sapFocusable"
+		var aFocusableElements = this.$().find(":sapFocusable");
 
 		//Tabbing --> Focus the last active element then let the browser focus the next active element
 		if (!shiftKeyPressed) {
-			jQuery(aFocusableElements[aFocusableElements.length - 1]).focus();
+			jQuery(aFocusableElements[aFocusableElements.length - 1]).trigger("focus");
 		} else { //Shift/Tab keys pressed --> Focus the 2nd active element then let the browser focus the first active element
 
 			//Which element triggered the event
@@ -341,7 +350,7 @@ sap.ui.define([
 
 			//If the focus is already on the first active element, let the browser move the focus
 			if (iCurrentIndex != 0) {
-				jQuery(aFocusableElements[0]).focus();
+				jQuery(aFocusableElements[0]).trigger("focus");
 			}
 		}
 	};
@@ -351,15 +360,15 @@ sap.ui.define([
 		if (sId) {
 			return {customId: sId};
 		} else {
-			return sap.ui.core.Element.prototype.getFocusInfo.apply(this, arguments);
+			return Control.prototype.getFocusInfo.apply(this, arguments);
 		}
 	};
 
 	Paginator.prototype.applyFocusInfo = function(mFocusInfo) {
 		if (mFocusInfo && mFocusInfo.customId) {
-			this.$().find("#" + mFocusInfo.customId).focus();
+			this.$().find("#" + mFocusInfo.customId).trigger("focus");
 		} else {
-			sap.ui.core.Element.prototype.getFocusInfo.apply(this, arguments);
+			Control.prototype.getFocusInfo.apply(this, arguments);
 		}
 		return this;
 	};
@@ -394,23 +403,23 @@ sap.ui.define([
 
 					// we have a number - a page has been clicked
 					if (lastPart.match(/^\d+$/)) {
-						sEventType = sap.ui.commons.PaginatorEvent.Goto;
-						iTargetPage = parseInt(lastPart, 10);
+						sEventType = PaginatorEvent.Goto;
+						iTargetPage = parseInt(lastPart);
 
 					} else if (lastPart == "firstPageLink") {
-						sEventType = sap.ui.commons.PaginatorEvent.First;
+						sEventType = PaginatorEvent.First;
 						iTargetPage = 1;
 
 					} else if (lastPart == "backLink") {
-						sEventType = sap.ui.commons.PaginatorEvent.Previous;
+						sEventType = PaginatorEvent.Previous;
 						iTargetPage = Math.max(iSrcPage - 1, 1);
 
 					} else if (lastPart == "forwardLink") {
-						sEventType = sap.ui.commons.PaginatorEvent.Next;
+						sEventType = PaginatorEvent.Next;
 						iTargetPage = Math.min(iSrcPage + 1, this.getNumberOfPages());
 
 					} else if (lastPart == "lastPageLink") {
-						sEventType = sap.ui.commons.PaginatorEvent.Last;
+						sEventType = PaginatorEvent.Last;
 						iTargetPage = this.getNumberOfPages();
 
 					} // else should not happen
@@ -433,4 +442,4 @@ sap.ui.define([
 
 	return Paginator;
 
-}, /* bExport= */ true);
+});

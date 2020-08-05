@@ -5,28 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.layout.sample.SimpleForm_Column_oneGroup234.Component", {
 
 		metadata : {
-			rootView : {
-				"viewName": "sap.ui.layout.sample.SimpleForm_Column_oneGroup234.Page",
-				"type": "XML",
-				"async": true
-			},
-			dependencies : {
-				libs : [
-					"sap.m",
-					"sap.ui.layout"
-				]
-			},
-			config : {
-				sample : {
-					stretch : true,
-					files : [
-						"Page.view.xml",
-						"Page.controller.js",
-						"Change.fragment.xml",
-						"Display.fragment.xml"
-					]
-				}
-			}
+			manifest: "json"
 		}
 	});
 

@@ -1,0 +1,20 @@
+[
+	{
+		"Name": "Development",
+		"departmentBudget": "10",
+		"departmentBudgetThreshold": "100",
+		"icon": "sap-icon://sap-ui5"
+	},
+	{
+		"Name": "Security",
+		"departmentBudget": "4000",
+		"departmentBudgetThreshold": "100000",
+		"icon": "sap-icon://shield"
+	},
+	{
+		"Name": "HR",
+		"departmentBudget": "1000000",
+		"departmentBudgetThreshold": "100",
+		"icon": "sap-icon://hr-approval"
+	}
+]

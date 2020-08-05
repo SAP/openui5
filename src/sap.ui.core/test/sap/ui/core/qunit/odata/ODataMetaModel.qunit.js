@@ -1,23 +1,30 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"sap/ui/base/BindingParser", "sap/ui/model/BindingMode", "sap/ui/model/ClientContextBinding",
-	"sap/ui/model/Context", "sap/ui/model/FilterProcessor",
-	"sap/ui/model/json/JSONListBinding", "sap/ui/model/json/JSONPropertyBinding",
-	"sap/ui/model/json/JSONTreeBinding", "sap/ui/model/Model",
-	"sap/ui/model/odata/_ODataMetaModelUtils", "sap/ui/model/odata/ODataMetaModel",
-	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel", "sap/ui/test/TestUtils"
-], function (BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
-	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, Model, Utils, ODataMetaModel,
-	ODataModel1, ODataModel, TestUtils) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/base/BindingParser",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/ClientContextBinding",
+	"sap/ui/model/Context",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/Model",
+	"sap/ui/model/json/JSONListBinding",
+	"sap/ui/model/json/JSONPropertyBinding",
+	"sap/ui/model/json/JSONTreeBinding",
+	"sap/ui/model/odata/ODataMetaModel",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/_ODataMetaModelUtils",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/performance/Measurement",
+	"sap/ui/test/TestUtils"
+], function (Log, BindingParser, InvisibleText, BindingMode, ClientContextBinding, Context,
+		FilterProcessor, Model, JSONListBinding, JSONPropertyBinding, JSONTreeBinding,
+		ODataMetaModel, ODataModel1, Utils, ODataModel, Measurement, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
-
-	//TODO remove this workaround in IE9 for
-	// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
-	sinon.xhr.supportsCORS = true;
 
 	var sComponent = "sap.ui.model.odata.ODataMetaModel",
 		sMetadata = '\
@@ -596,7 +603,7 @@ sap.ui.require([
 				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode" :
 				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode.xml"},
-			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode,FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode%2CFAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
 				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode_ItemCustomer.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
 				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCustomer.xml"},
@@ -713,16 +720,17 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.ODataMetaModel", {
 		beforeEach : function () {
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/model", mFixture);
-			this.iOldLogLevel = jQuery.sap.log.getLevel(sComponent);
+			this.iOldLogLevel = Log.getLevel(sComponent);
 			// do not rely on ERROR vs. DEBUG due to minified sources
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
-			this.oLogMock = this.mock(jQuery.sap.log);
+			Log.setLevel(Log.Level.ERROR, sComponent);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+			// avoid caching of metadata across tests
+			this.stub(ODataModel, "_getSharedData").returns({});
 		},
 		afterEach : function () {
-			jQuery.sap.log.setLevel(this.iOldLogLevel, sComponent);
-			ODataModel.mServiceData = {}; // clear cache
+			Log.setLevel(this.iOldLogLevel, sComponent);
 		}
 	});
 
@@ -939,10 +947,6 @@ sap.ui.require([
 			}),
 			that = this;
 
-		// code under test
-		assert.strictEqual(oMetaModel.getAdapterFactoryModulePath(),
-			"sap/ui/model/odata/v2/meta/ODataAdapterFactory");
-
 		return oMetaModel.loaded().then(function () {
 			var oMetaModelMock = that.mock(oMetaModel),
 				oModelMock = that.mock(oMetaModel.oModel),
@@ -1053,7 +1057,7 @@ sap.ui.require([
 				sPath = "dataServices",
 				aSorters = [];
 
-			fnApply.withArgs(["dataServiceVersion", "schema"], aFilters).returns(aIndices);
+			fnApply.withArgs(["dataServiceVersion", "schema"], undefined).returns(aIndices);
 
 			// code under test
 			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
@@ -1116,10 +1120,7 @@ sap.ui.require([
 		QUnit.test("_getObject: queries instead of indexes, log = " + bIsLoggable, function (assert) {
 			var oLogMock = this.oLogMock;
 
-			jQuery.sap.log.setLevel(bIsLoggable
-				? jQuery.sap.log.Level.WARNING
-				: jQuery.sap.log.Level.ERROR,
-				sComponent);
+			Log.setLevel(bIsLoggable ? Log.Level.WARNING : Log.Level.ERROR, sComponent);
 
 			oLogMock.expects("error")
 				.withExactArgs("A query is not allowed when an object context has been given",
@@ -1244,17 +1245,17 @@ sap.ui.require([
 				var sPath = "/dataServices/schema/" + sQuery + "/namespace";
 
 				function check(sBinding) {
-					var oIcon;
+					var oInvisibleText;
 
 					oMetaModel.mQueryCache = {};
 
 					try {
-						oIcon = new sap.ui.core.Icon({
-							color : sBinding,
+						oInvisibleText = new InvisibleText({
+							text : sBinding,
 							models : oMetaModel
 						});
 
-						assert.strictEqual(oIcon.getColor(), 'GWSAMPLE_BASIC', sBinding);
+						assert.strictEqual(oInvisibleText.getText(), 'GWSAMPLE_BASIC', sBinding);
 					} catch (ex) {
 						assert.ok(false, sBinding + ": " + ex.stack);
 					}
@@ -1303,7 +1304,7 @@ sap.ui.require([
 			var oLogMock = this.oLogMock;
 
 			oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
+				.withExactArgs(Log.Level.WARNING, sComponent)
 				.returns(bWarn);
 			oLogMock.expects("warning")
 				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
@@ -1320,7 +1321,7 @@ sap.ui.require([
 				var oLogMock = this.oLogMock;
 
 				oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
+					.withExactArgs(Log.Level.WARNING, sComponent)
 					.returns(bWarn);
 				oLogMock.expects("warning")
 					.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
@@ -1339,7 +1340,7 @@ sap.ui.require([
 			var oLogMock = this.oLogMock;
 
 			oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
+				.withExactArgs(Log.Level.WARNING, sComponent)
 				.returns(bWarn);
 			oLogMock.expects("warning")
 				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
@@ -2063,6 +2064,7 @@ sap.ui.require([
 				.withExactArgs(sIgnoreThisWarning);
 
 			oError = new Error("This call failed intentionally");
+			oError.$uncaughtInPromise = true;
 			oModel = new (bAsync ? ODataModel : ODataModel1)("/fake/service", {
 				annotationURI : "",
 				json : true,
@@ -2773,10 +2775,11 @@ sap.ui.require([
 			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
 				oInterface = oMetaModel.oODataModelInterface,
 				oMyError = new Error(),
-				oPromise;
+				oPromise = Promise.reject(oMyError);
 
 			that.mock(oInterface).expects("addAnnotationUrl")
-				.returns(Promise.reject(oMyError));
+				.returns(oPromise);
+			oPromise.catch(function () {}); // avoid "Uncaught (in promise)" info
 
 			oPromise = oMetaModel.getODataValueLists(oContext);
 			return oPromise.then(function () {
@@ -3053,9 +3056,9 @@ sap.ui.require([
 
 		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
 
-		oAverageSpy = this.spy(jQuery.sap.measure, "average")
+		oAverageSpy = this.spy(Measurement, "average")
 			.withArgs("sap.ui.model.odata.ODataMetaModel/load", "", [sComponent]);
-		oEndSpy = this.spy(jQuery.sap.measure, "end")
+		oEndSpy = this.spy(Measurement, "end")
 			.withArgs("sap.ui.model.odata.ODataMetaModel/load");
 		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
 			annotationURI : "/GWSAMPLE_BASIC/annotations",
@@ -3100,7 +3103,7 @@ sap.ui.require([
 			var oMetaModel, oModel;
 
 			this.oLogMock.expects("isLoggable").twice()
-				.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
+				.withExactArgs(Log.Level.WARNING, sComponent)
 				.returns(bWarn);
 			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
 				.withExactArgs("Path 'Code' for sap:unit cannot be resolved",

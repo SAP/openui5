@@ -1,0 +1,10 @@
+<View xmlns="sap.m" displayBlock="true" controllerName="flexiblecolumnlayoutHighlighting.Page2" height="100%">
+	<Page title="This is the page after the Flexible Column Layout page" backgroundDesign="Transparent">
+		<Toolbar>
+			<Button text="To Page3" icon="sap-icon://feeder-arrow" iconFirst="false" press="handleNextPress" />
+			<ToolbarSpacer />
+		</Toolbar>
+	</Page>
+</View>
+
+

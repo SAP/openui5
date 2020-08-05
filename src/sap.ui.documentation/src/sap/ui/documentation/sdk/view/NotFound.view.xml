@@ -1,12 +1,12 @@
 <mvc:View
-		controllerName="sap.ui.documentation.sdk.controller.BaseController"
+		controllerName="sap.ui.documentation.sdk.controller.NotFound"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
 
 	<MessagePage
 			id="page"
-			title="Not Found"
-			text="The requested resource was not found"
+			title="{i18n>NOT_FOUND_TITLE}"
+			text="{i18n>NOT_FOULD_TEXT}"
 			icon="sap-icon://document"
 			description=""
 			showNavButton="{device>/system/phone}"

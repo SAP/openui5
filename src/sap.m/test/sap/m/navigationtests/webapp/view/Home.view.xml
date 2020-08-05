@@ -1,0 +1,14 @@
+<mvc:View
+	controllerName="sap.ui.demo.navigationTests.controller.Home"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page
+		id="page"
+		title="Home">
+		<content>
+			<Button text="Open Info Message and Navigate" press="bntInfoMsgPress" />
+			<Button text="Open Error Message and Navigate" press="bntErrorMsgPress" />
+		</content>
+	</Page>
+</mvc:View>

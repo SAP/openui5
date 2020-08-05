@@ -1,36 +1,41 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Overview",
+	"./pages/Home",
+	"./pages/Preview"
 ], function (opaTest) {
 	"use strict";
 
 	QUnit.module("Navigation");
 
-	opaTest("Should see the busy indicator on app view while icon metadata is loaded", function (Given, When, Then) {
-
+	opaTest("Search for an Icon should navigate to the Overview page", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
-			delay: 10000 // to really see the busy indicator
+			hash: ""
 		});
 
 		//Actions
-		When.onTheOverviewPage.iLookAtTheScreen();
+		When.onTheHomePage.iSearchForAnIcon("arrow").
+			and.iSelectASuggestion("refresh");
 
 		// Assertions
-		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp().
-			and.iTeardownMyApp();
+		Then.onTheOverviewPage.theTableShouldContainTheIcon("refresh");
+
+		Then.onThePreviewPage.iShouldSeeThePreviewArea().
+			and.iShouldSeeTheIcon("refresh");
 	});
 
-	opaTest("Should see the busy indicator on overview table after metadata is loaded", function (Given, When, Then) {
-		// Arrangements
-		Given.iStartMyAppOnTheDetailsTab();
-
-		//Actions
-		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
+	opaTest("Should navigate to tnt font when using the font selection dropdown", function (Given, When, Then) {
+		// Actions
+		When.onTheOverviewPage.iClickonTheFontSelectionButton().
+			and.iSelectTheIconFont("SAP-icons-TNT");
 
 		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheResultsTableBusyIndicatorOrItemsLoaded();
-	});
+		Then.onTheOverviewPage.iShouldSeeTheTNTFontPage();
 
+		// Cleanup
+		Then.iTeardownMyApp();
+	});
 });

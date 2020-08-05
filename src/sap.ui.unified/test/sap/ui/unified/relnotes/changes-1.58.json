@@ -1,0 +1,162 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "3bdeb179a7e8a8ea2ce057e9b180146d20e94f4d",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Dates from previous/next month in the calendar picker are now interactive",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870150194"
+          }
+        ]
+      },
+      {
+        "id": "20c515e87921b50870fb379138f5afa22f9e59a2",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: Event \"weekNumberSelect\" introduced",
+        "references": []
+      },
+      {
+        "id": "cb893912fdfeb5e266192e629bc5e1b3d94cd341",
+        "type": "FIX",
+        "text": "sap.ui.commons.Menu: MenuTextFieldItem can now be focused on hover opened from IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870234443"
+          }
+        ]
+      },
+      {
+        "id": "2d7f09d180b3b67e7d708886547268b17f216caf",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "5ff60eea7a832d149157e54c065009b54694d9b3",
+        "type": "FIX",
+        "text": "sap.ui.unified.Month: Now select event is fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880273600"
+          }
+        ]
+      },
+      {
+        "id": "ac46d9e99cf5649b56c19b7b3caa5e331af91368",
+        "type": "FIX",
+        "text": "FileUploader: Accessing upload iframe adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001676212018"
+          }
+        ]
+      },
+      {
+        "id": "141fdd92280e5f769479a612441d4455441993e0",
+        "type": "FIX",
+        "text": "sap.m.Menu: F4 closes the menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880270570"
+          }
+        ]
+      },
+      {
+        "id": "d38674d657c87400566b6e88524f5c6b464eb9ac",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: pressing of ESCAPE is now propagated to the parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880332317"
+          }
+        ]
+      },
+      {
+        "id": "0677dc024bdfb8d25bdb35ee258a34586a2c0928",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: CW selection behavior corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880419589"
+          }
+        ]
+      },
+      {
+        "id": "9ea8dbf284294e88adbfb50853c4c04aec233273",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: Sample now displays correctly on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880363674"
+          }
+        ]
+      },
+      {
+        "id": "581bc354b0f9ccc436f86cf21f9caef654f0407b",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarRow: Minimal width of appointments now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880307332"
+          }
+        ]
+      },
+      {
+        "id": "1405add78ffbb6602cd42de8f058ee9c05973895",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: now has correct active state of semantic buttons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880391291"
+          }
+        ]
+      },
+      {
+        "id": "37a1676bc27144768461f4e46357535117fbd557",
+        "type": "FIX",
+        "text": "m.PlanningCalendar: Picker button shows both years when needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880290073"
+          }
+        ]
+      },
+      {
+        "id": "1f25202fad3488d9ba801bb4da599337b95ec80f",
+        "type": "FIX",
+        "text": "ui.unified.FileUploader: Documentation improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003320162018"
+          }
+        ]
+      },
+      {
+        "id": "8fb3786b00353b0ef6ac8170fb68c397bde5e3fc",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: visual tests adapted for running on iOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880469306"
+          }
+        ]
+      }
+    ]
+  }
+}

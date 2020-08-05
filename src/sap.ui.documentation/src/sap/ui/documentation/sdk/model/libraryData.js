@@ -2,10 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/documentation/library'
-],function (jQuery, library) {
+sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/base/Log"],function(jQuery, library, Log) {
 	"use strict";
 
 	// function to compute the app objects for a demo object
@@ -30,7 +27,7 @@ sap.ui.define([
 			config : oDemoAppMetadata.config,
 			teaser : oDemoAppMetadata.teaser,
 			category : oDemoAppMetadata.category,
-			ref : (oDemoAppMetadata.resolve === "lib" ? sLibUrl : "") + oDemoAppMetadata.ref,
+			ref : (oDemoAppMetadata.resolve === "lib" ? sLibUrl : "") + oDemoAppMetadata.ref + "?sap-ui-theme=sap_fiori_3",
 			links : aLinks
 		};
 
@@ -91,7 +88,7 @@ sap.ui.define([
 
 					// push demo app into helper structure
 					if (aCategories.indexOf(oDemoAppData.category) < 0) {
-						jQuery.sap.log.warning("Demo app category \"" + oDemoAppData.category + "\" not found, correcting demo app \"" + oDemoAppData.name + "\" to \"Misc\"");
+						Log.warning("Demo app category \"" + oDemoAppData.category + "\" not found, correcting demo app \"" + oDemoAppData.name + "\" to \"Misc\"");
 						oDemoAppData.category = "Misc";
 					}
 					if (oDemo.links[j].category !== "Tool") { // Exclude Tools from showing, but preserve them in Download dialog
@@ -109,12 +106,10 @@ sap.ui.define([
 				return;
 			}
 
-			// push a row for the headline
-			oData.demoAppsByCategory.push([{
-				categoryId : sKey
-			}]);
-			// push n rows for the demo apps itself (start a new row every 4 cells)
-			var iCurrentLength = oData.demoAppsByCategory.push([]);
+			var aRows = [];
+
+			// collect n rows for the demo apps itself (start a new row every 4 cells)
+			var iCurrentLength = aRows.push([]);
 			var iCellCounter = 0;
 			for (var i = 0; i < oDemoAppsByCategory[sKey].length; i++) {
 				iCellCounter++;
@@ -122,11 +117,18 @@ sap.ui.define([
 					iCellCounter++;
 				}
 				if (iCellCounter > 4) {
-					iCurrentLength = oData.demoAppsByCategory.push([]);
+					iCurrentLength = aRows.push([]);
 					iCellCounter = 0;
 				}
-				oData.demoAppsByCategory[iCurrentLength - 1].push(oDemoAppsByCategory[sKey][i]);
+				aRows[iCurrentLength - 1].push(oDemoAppsByCategory[sKey][i]);
 			}
+
+			// push the category including its rows
+			oData.demoAppsByCategory.push({
+				categoryId: sKey,
+				rows: aRows
+			});
+
 		});
 
 		return oData;

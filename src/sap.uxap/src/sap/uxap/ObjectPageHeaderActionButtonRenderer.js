@@ -12,6 +12,7 @@ sap.ui.define(["sap/m/ButtonRenderer", "sap/ui/core/Renderer"],
 		 */
 		var ObjectPageHeaderActionButtonRenderer = Renderer.extend(ButtonRenderer);
 
+		ObjectPageHeaderActionButtonRenderer.apiVersion = 2;
 
 		return ObjectPageHeaderActionButtonRenderer;
 

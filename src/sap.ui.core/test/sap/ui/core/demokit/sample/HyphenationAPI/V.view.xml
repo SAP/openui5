@@ -1,0 +1,37 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.m"
+		  xmlns:c="sap.ui.core"
+		  xmlns:f="sap.ui.layout.form"
+		  controllerName="sap.ui.core.sample.HyphenationAPI.C"
+		  displayBlock="true">
+	<f:SimpleForm
+			layout="ResponsiveGridLayout"
+			editable="true"
+			title="Hyphenation API usage with different languages"
+			adjustLabelSpan="false"
+			labelSpanXL="1"
+			labelSpanL="2"
+			labelSpanM="2"
+			labelSpanS="4">
+		<Label text="Container Width" />
+		<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
+	</f:SimpleForm>
+	<Panel id="containerLayout"
+		   headerText="Default language (English-US)"
+		   width="100%">
+		<c:HTML id="hyphenatedText"
+			   content=""/>
+	</Panel>
+	<Panel id="containerLayoutDE"
+		   headerText="German language"
+		   width="100%">
+		<c:HTML id="hyphenatedTextDE"
+			   content=""/>
+	</Panel>
+	<Panel id="containerLayoutRU"
+		   headerText="Russian language"
+		   width="100%">
+		<c:HTML id="hyphenatedTextRU"
+			   content=""/>
+	</Panel>
+</mvc:View>

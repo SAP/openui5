@@ -5,10 +5,13 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
-	"jquery.sap.global",
-	"./WizardStepRenderer"
+	"sap/ui/core/InvisibleText",
+	"./WizardStepRenderer",
+	"./Button",
+	"./TitlePropagationSupport",
+	"sap/base/Log"
 ],
-	function(library, Control, jQuery, WizardStepRenderer) {
+	function(library, Control, InvisibleText, WizardStepRenderer, Button, TitlePropagationSupport, Log) {
 
 	"use strict";
 
@@ -87,7 +90,12 @@ sap.ui.define([
 				/**
 				 * The content of the Wizard Step.
 				 */
-				content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
+				content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"},
+				/**
+				 * The next button of the Wizard Step.
+				 * @since 1.58
+				 */
+				_nextButton: { type: "sap.m.Button", multiple: false, visibility: "hidden"}
 			},
 			associations: {
 				/**
@@ -98,8 +106,8 @@ sap.ui.define([
 				 */
 				subsequentSteps : {type : "sap.m.WizardStep", multiple : true, singularName : "subsequentStep"},
 				/**
-				 * The next step to be taken after the step is completed.
-				 * Set this association value in the complete event of the current WizardStep.
+				 * The next step to be taken.
+				 * It must be defined in order for the previous step to be completed.
 				 * @since 1.32
 				 */
 				nextStep : {type: "sap.m.WizardStep", multiple: false}
@@ -107,44 +115,101 @@ sap.ui.define([
 		}
 	});
 
-	WizardStep.prototype.setValidated = function (validated) {
-		this.setProperty("validated", validated, true);
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
-		var parent = this._getWizardParent();
-		if (parent === null) {
-			return this;
-		}
+	// Add title propagation support
+	TitlePropagationSupport.call(WizardStep.prototype, "content", function () {return this.getId() + "-title";});
 
-		if (validated) {
-			parent.validateStep(this);
-		} else {
-			parent.invalidateStep(this);
-		}
+	WizardStep.prototype.init = function () {
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oNumberInvisibleText = new InvisibleText({id: this.getId() + "-NumberedTitle"}).toStatic();
+
+		this._createNextButton();
+		this._initTitlePropagationSupport();
+	};
+
+	/**
+	 * Creates the next button's instance.
+	 * @private
+	 */
+	WizardStep.prototype._createNextButton = function () {
+		this._oNextButton = new Button(this.getId() + "-nextButton", {
+			text: this._oResourceBundle.getText("WIZARD_STEP") + 2,
+			type: ButtonType.Emphasized,
+			press: this._complete.bind(this)
+		}).addStyleClass("sapMWizardNextButtonVisible");
+
+		this.setAggregation("_nextButton", this._oNextButton);
+	};
+
+	/**
+	 * Updates the step's properties in the current context of the wizard.
+	 * @param {object} [mSettings] Wizard step settings
+	 * @private
+	 * @ui5-restricted sap.m.Wizard
+	 */
+	WizardStep.prototype.setWizardContext = function (mSettings) {
+		["bLast", "bReviewStep", "sButtonText", "bParentAllowsButtonShow"].forEach(function(sProperty){
+			if (typeof mSettings[sProperty] !== "undefined") {
+				this[sProperty] = mSettings[sProperty];
+			}
+		}.bind(this));
+
+		this._oNextButton.setText(this.sButtonText);
+		this.setLast(this.bLast);
+		this.setButtonVisibility();
+	};
+
+	/**
+	 * Gets the invisible text, which describes the title and position of the step.
+	 * @returns {sap.ui.core.InvisibleText} The invisible text instance
+	 * @private
+	 * @ui5-restricted sap.m.Wizard
+	 */
+	WizardStep.prototype._getNumberInvisibleText = function () {
+		return this._oNumberInvisibleText;
+	};
+
+	/**
+	 * Sets the text, which describes the title and position of the step.
+	 * @param {number} iNumber The position of the step inside the wizard
+	 * @returns {sap.ui.core.InvisibleText} The invisible text instance
+	 * @private
+	 * @ui5-restricted sap.m.Wizard
+	 */
+	WizardStep.prototype._setNumberInvisibleText = function (iNumber) {
+		return this._oNumberInvisibleText.setText(this._oResourceBundle.getText("WIZARD_STEP") + iNumber + " "  + this.getTitle());
+	};
+
+	WizardStep.prototype.setValidated = function (bValidated) {
+		this.setProperty("validated", bValidated, true);
+		this.setButtonVisibility();
 
 		return this;
 	};
 
-	WizardStep.prototype.setNextStep = function (value) {
-		this.setAssociation("nextStep", value, true);
+	WizardStep.prototype.setNextStep = function (oValue) {
+		this.setAssociation("nextStep", oValue, true);
 
-		var parent = this._getWizardParent();
+		var oParent = this._getWizardParent();
 
-		if (parent !== null) {
-			parent._checkCircularReference(this._getNextStepReference());
-			parent._updateProgressNavigator();
+		if (oParent !== null) {
+			oParent._checkCircularReference(this._getNextStepReference());
+			oParent._updateProgressNavigator();
 		}
 
 		return this;
 	};
 	/**
 	 * setVisible shouldn't be used on wizard steps.
-	 * If you need to show/hide steps based on some condition - use the branching property instead
-	 * @param {boolean} visible Whether the step should be visible
+	 * If you need to show/hide steps based on some condition - use the branching property instead.
+	 * @param {boolean} bVisible Whether the step should be visible
 	 * @returns {sap.m.WizardStep} this instance for method chaining
 	 */
-	WizardStep.prototype.setVisible = function (visible) {
-		this.setProperty("visible", visible, true);
-		jQuery.sap.log.warning("Don't use the set visible method for wizard steps. If you need to show/hide steps based on some condition - use the branching property of the Wizard instead.");
+	WizardStep.prototype.setVisible = function (bVisible) {
+		this.setProperty("visible", bVisible, true);
+		Log.warning("Don't use the set visible method for wizard steps. If you need to show/hide steps based on some condition - use the branching property of the Wizard instead.");
 		return this;
 	};
 
@@ -159,7 +224,6 @@ sap.ui.define([
 		return this.getSubsequentSteps().length > 1;
 	};
 
-
 	WizardStep.prototype._getNextStepReference = function () {
 		if (this.getNextStep() !== null) {
 			return sap.ui.getCore().byId(this.getNextStep());
@@ -173,37 +237,50 @@ sap.ui.define([
 	};
 
 	WizardStep.prototype._containsSubsequentStep = function (stepId) {
-		return this.getSubsequentSteps().some(function (step) { return step === stepId; });
+		return this.getSubsequentSteps().some(function (sStep) { return sStep === stepId; });
 	};
 
 	WizardStep.prototype._getWizardParent = function () {
-		var parent = this.getParent();
+		var oParent = this.getParent();
 
-		while (!(parent instanceof sap.m.Wizard)) {
-			if (parent === null) {
+		while (!(oParent instanceof sap.m.Wizard)) {
+			if (oParent === null) {
 				return null;
 			}
-			parent = parent.getParent();
+			oParent = oParent.getParent();
 		}
 
-		return parent;
+		return oParent;
 	};
 
-	WizardStep.prototype._markAsLast = function () {
-		this.addStyleClass("sapMWizardLastActivatedStep");
+	WizardStep.prototype.setLast = function(bLast){
+		this.bLast = bLast;
+		this.toggleStyleClass("sapMWizardLastActivatedStep", bLast);
+		this.setButtonVisibility();
 	};
 
-	WizardStep.prototype._unMarkAsLast = function () {
-		this.removeStyleClass("sapMWizardLastActivatedStep");
-	};
+	WizardStep.prototype.setButtonVisibility = function() {
+		var bShow = this.getValidated() && this.bParentAllowsButtonShow && this.bLast;
 
-	WizardStep.prototype._activate = function () {
-		if (this.hasStyleClass("sapMWizardStepActivated")) {
+		// the setters haven't passed yet
+		if (typeof bShow === 'undefined') {
 			return;
 		}
 
-		this._markAsLast();
+		this.displayButton(bShow);
+	};
+
+	WizardStep.prototype.displayButton = function (bShow) {
+		this._oNextButton.toggleStyleClass("sapMWizardNextButtonHidden", !bShow);
+		this._oNextButton.toggleStyleClass("sapMWizardNextButtonVisible", bShow);
+
+		this._oNextButton.setVisible(bShow);
+	};
+
+	WizardStep.prototype._activate = function () {
+		this.setLast(true);
 		this.addStyleClass("sapMWizardStepActivated");
+
 		this.fireActivate();
 	};
 
@@ -212,8 +289,18 @@ sap.ui.define([
 	};
 
 	WizardStep.prototype._complete = function () {
-		this._unMarkAsLast();
+		var oWizard = this._getWizardParent();
+		this.setLast(this.bReviewStep || false);
 		this.fireComplete();
+
+		if (oWizard !== null) {
+			oWizard._handleNextButtonPress();
+		}
+	};
+
+	WizardStep.prototype.exit = function () {
+		this._oNumberInvisibleText.destroy();
+		this._oNumberInvisibleText = null;
 	};
 
 	return WizardStep;

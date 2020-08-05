@@ -17,12 +17,12 @@
 					id="entityHeader"
 					objectTitle="{/name}">
 				<actions>
-					<ObjectPageHeaderActionButton id="entityBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
+					<ObjectPageHeaderActionButton id="entityBackToSearch" text="{i18n>ENTITY_BACK_BTN}" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
 					<ObjectPageHeaderActionButton
 							id="toggleFullScreenBtn"
 							visible="{device>/system/desktop}"
 							icon="sap-icon://full-screen"
-							tooltip="Show this sample in full screen mode"
+							tooltip="{i18n>ENTITY_FULLSCREEN_TOOLTIP}"
 							press="onToggleFullScreen" />
 				</actions>
 			</ObjectPageHeader>
@@ -37,7 +37,7 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection id="about" title="About">
+			<ObjectPageSection id="about" title="{i18n>ENTITY_ABOUT}">
 				<subSections>
 					<ObjectPageSubSection>
 
@@ -48,53 +48,49 @@
 								<m:Text text="{/shortDescription}"/>
 							</l:VerticalLayout>
 
-							<m:Table
-									class="myTable"
-									visible="{/show/values}"
-									showSeparators="Inner"
-									fixedLayout="false"
-									items="{/values}" >
-								<m:columns>
-									<m:Column><m:Label text="Name" /></m:Column>
-									<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description" /></m:Column>
-								</m:columns>
-								<m:items>
-									<m:ColumnListItem>
-										<m:cells>
-											<m:Text text="{name}" class="docuKey" wrapping="false" />
-											<m:Text text="{description}" />
-										</m:cells>
-									</m:ColumnListItem>
-								</m:items>
-							</m:Table>
 						</l:VerticalLayout>
 
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection id="samples" title="Samples ({/count/samples})" visible="{= ${/count/samples} > 0 }">
+			<ObjectPageSection id="samples" title="{
+					parts: [
+						'i18n>ENTITY_SAMPLES',
+						'/count/samples'
+					],
+					formatter: '.formatMessage'
+				}"
+				visible="{= ${/count/samples} > 0 }">
 				<subSections>
 					<ObjectPageSubSection>
-						<m:Table
-								class="myTable"
-								id="table"
-								items="{/entity/samples}"
-								fixedLayout="false"
-								showSeparators="Inner" >
-							<m:columns>
-								<m:Column><m:Label text="Name" /></m:Column>
-								<m:Column minScreenWidth="Tablet"><m:Label text="Description" /></m:Column>
-							</m:columns>
-							<m:items>
-								<m:ColumnListItem type="Navigation" press="onNavToSample" vAlign="Middle">
-									<m:cells>
-										<m:Text text="{name}" class="entitySampleName" wrapping="false" />
-										<m:FormattedText htmlText="{= ${path: 'description'} ? ${path: 'description'} : ''}" />
-									</m:cells>
-								</m:ColumnListItem>
-							</m:items>
-						</m:Table>
+						<m:VBox>
+							<m:MessageStrip
+									class="sapUiSmallMarginBottom sapUiSmallNegativeMarginBeginEnd"
+									text="{/deprecatedMark}"
+									type="Error"
+									visible="{= ${/deprecated} === 'true'}"/>
+							<m:Table
+									class="myTable sapUxAPObjectPageSubSectionAlignContent"
+									width="auto"
+									id="table"
+									items="{/entity/samples}"
+									fixedLayout="false"
+									showSeparators="Inner" >
+								<m:columns>
+									<m:Column><m:Label text="{i18n>ENTITY_TABLE_NAME}" /></m:Column>
+									<m:Column minScreenWidth="Tablet"><m:Label text="{i18n>ENTITY_TABLE_DESCRIPTION}" /></m:Column>
+								</m:columns>
+								<m:items>
+									<m:ColumnListItem type="Navigation" press="onNavToSample" vAlign="Middle">
+										<m:cells>
+											<m:Text text="{name}" class="entitySampleName" wrapping="false" />
+											<m:FormattedText htmlText="{= ${path: 'description'} ? ${path: 'description'} : ''}" />
+										</m:cells>
+									</m:ColumnListItem>
+								</m:items>
+							</m:Table>
+						</m:VBox>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>

@@ -1,91 +1,50 @@
 <mvc:View
-	xmlns:l="sap.ui.layout"
-	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		width="100%" >
-		<l:content>
+	xmlns:l="sap.ui.layout">
+	<VBox>
+		<Panel headerText="Reverse, horizontal">
+			<FlexBox direction="RowReverse" alignItems="Start">
+				<Button text="1" type="Emphasized" />
+				<Button text="2" type="Reject" />
+				<Button text="3" type="Accept" />
+			</FlexBox>
+		</Panel>
 
-			<Panel>
-				<headerToolbar>
-					<Toolbar>
-						<Title level="H2" text="Reverse, horizontal" />
-					</Toolbar>
-				</headerToolbar>
-				<FlexBox
-					direction="RowReverse"
-					alignItems="Start">
-					<items>
-						<Button text="1" type="Emphasized" />
-						<Button text="2" type="Reject" />
-						<Button text="3" type="Accept" />
-					</items>
-				</FlexBox>
-			</Panel>
+		<Panel headerText="Top to bottom, vertical">
+			<FlexBox direction="Column" alignItems="Start">
+				<Button text="1" type="Emphasized" />
+				<Button text="2" type="Reject" />
+				<Button text="3" type="Accept" />
+			</FlexBox>
+		</Panel>
 
-			<Panel>
-				<headerToolbar>
-					<Toolbar>
-						<Title level="H2" text="Top to bottom, vertical" />
-					</Toolbar>
-				</headerToolbar>
-				<FlexBox
-					direction="Column"
-					alignItems="Start">
-					<items>
-						<Button text="1" type="Emphasized" />
-						<Button text="2" type="Reject" />
-						<Button text="3" type="Accept" />
-					</items>
-				</FlexBox>
-			</Panel>
+		<Panel headerText="Bottom to top, reverse vertical">
+			<FlexBox direction="ColumnReverse" alignItems="Start">
+				<Button text="1" type="Emphasized" />
+				<Button text="2" type="Reject" />
+				<Button text="3" type="Accept" />
+			</FlexBox>
+		</Panel>
 
-			<Panel>
-				<headerToolbar>
-					<Toolbar>
-						<Title level="H2" text="Bottom to top, reverse vertical" />
-					</Toolbar>
-				</headerToolbar>
-				<FlexBox
-					direction="ColumnReverse"
-					alignItems="Start">
-					<items>
-						<Button text="1" type="Emphasized" />
-						<Button text="2" type="Reject" />
-						<Button text="3" type="Accept" />
-					</items>
-				</FlexBox>
-			</Panel>
-
-			<Panel>
-				<headerToolbar>
-					<Toolbar>
-						<Title level="H2" text="Arbitrary flex item order" />
-					</Toolbar>
-				</headerToolbar>
-				<FlexBox
-					alignItems="Start">
-					<items>
-						<Button text="1" width="100%" type="Emphasized" >
-							<layoutData>
-								<FlexItemData order="2" />
-							</layoutData>
-						</Button>
-						<Button text="2" width="100%" type="Reject" >
-							<layoutData>
-								<FlexItemData order="3" />
-							</layoutData>
-						</Button>
-						<Button text="3" width="100%" type="Accept" >
-							<layoutData>
-								<FlexItemData order="1" />
-							</layoutData>
-						</Button>
-					</items>
-				</FlexBox>
-			</Panel>
-
-		</l:content>
-	</l:VerticalLayout>
+		<Panel headerText="Arbitrary flex item order">
+			<FlexBox alignItems="Start">
+				<Button text="1" type="Emphasized" class="sapUiTinyMarginEnd">
+					<layoutData>
+						<FlexItemData order="2" />
+					</layoutData>
+				</Button>
+				<Button text="2" type="Reject" class="sapUiTinyMarginEnd">
+					<layoutData>
+						<FlexItemData order="3" />
+					</layoutData>
+				</Button>
+				<Button text="3" type="Accept" class="sapUiTinyMarginEnd">
+					<layoutData>
+						<FlexItemData order="1" />
+					</layoutData>
+				</Button>
+			</FlexBox>
+		</Panel>
+	</VBox>
 </mvc:View>

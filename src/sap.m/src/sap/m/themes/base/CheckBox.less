@@ -13,15 +13,56 @@
 	vertical-align: top;
 	text-align: left;
 	padding: 0 0 0 3rem;
-	cursor: default;
 
-	&:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
-		pointer-events: none;
+	&:not(.sapMCbBgDis) {
+		&:hover,
+		.sapMCbLabel:hover {
+			cursor: pointer;
+		}
+		&.sapMCbHasLabel:focus:before {
+			pointer-events: none;
+		}
+	}
+
+	&.sapMCbDisplayOnly {
+		&.sapMCbErr,
+		&.sapMCbInfo,
+		&.sapMCbWarn,
+		&.sapMCbSucc {
+			.sapMCbBg {
+				border: none;
+				&.sapMCbMarkChecked:before {
+					color: @sapUiBaseText;
+				}
+				&.sapMCbMarkPartiallyChecked{
+					border: solid 0.0625rem #89919a
+				}
+
+			}
+		}
 	}
 }
 
 .sapUiForm .sapMCb {
 	display: table-cell;
+}
+
+.sapUiForm:not(.sapUiFormEdit-CTX) .sapMCb.sapMCbDisplayOnly {
+	height: 1.125rem;
+	line-height: 1.125rem;
+
+	&:not(.sapMCbBgDis) {
+		padding-left: 1.625rem;
+	}
+
+	.sapMCbBg {
+		top: 0;
+		margin: 0;
+	}
+	&.sapMCbWrapped.sapMCbHasLabel > .sapMLabel.sapMLabelWrapped {
+		margin: 0;
+		line-height: 1.125rem;
+	}
 }
 
 .sapMCb.sapMCbWrapped.sapMCbHasLabel {
@@ -46,6 +87,7 @@ html[dir="rtl"] .sapMCb {
 
 .sapMCb .sapMLabel {
 	cursor: default;
+	line-height: inherit;
 
 	&.sapMLabelNoText {
 		position: absolute;
@@ -75,6 +117,7 @@ html[dir="rtl"] .sapMCb {
 	line-height: 1.125rem;
 	padding: 0;
 	text-align: center;
+	font-size: 1rem;
 
 	// note: some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
 	// but does support the long-hand properties for each corner like "border-top-left-radius"
@@ -96,12 +139,19 @@ html[dir="rtl"] .sapMCb {
 	display: inline-block;
 }
 
-html[data-sap-ui-browser^=sf] body:not(.sapUiSizeCompact) .sapMCbBg.sapMCbMarkChecked:before {
-	padding-left: 0.065rem;
+.sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before{
+	content: "";
+	width: 100%;
+	height: 100%;
+	background-color: currentColor;
+	border: 0.1875rem solid transparent;
+	box-sizing: border-box;
+	background-clip: padding-box;
 }
 
-html[data-sap-ui-browser^=sf] .sapUiSizeCompact .sapMCbBg.sapMCbMarkChecked:before {
-	padding-left: 0.0625rem;
+.sapUiSizeCompact.sapMCb .sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before,
+.sapUiSizeCompact .sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
+	border-width: 0.125rem;
 }
 
 .sapMCbBg > input {
@@ -134,13 +184,23 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 .sapMCbDisplayOnly {
 	font-family: "SAP-icons";
 
-	.sapMCbBg {
+	.sapMCbBg.sapMCbMark.sapMCbMarkChecked.sapMCbMarkPartiallyChecked{
+		border-radius: 0.0625rem;
+		border: 1px solid @sapUiBaseText ;
+
+		&:before {
+			background-color: @sapUiBaseText;
+		}
+	}
+
+	.sapMCbBg:not(.sapMCbMarkPartiallyChecked) {
 		background-color: initial;
 		border: none;
 		margin: 0.125rem;
 
 		&:before {
 			content: "\e19a";
+			font-size: 1rem;
 		}
 
 		&.sapMCbMarkChecked:before {
@@ -183,6 +243,14 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 	.sapMLIBSelectM > .sapMCb {
 		width: 2rem;
 	}
+
+	.sapUiForm:not(.sapUiFormEdit-CTX) .sapMCb.sapMCbDisplayOnly .sapMCbBg {
+		top: 0.1875rem;
+	}
+
+	.sapMCb.sapMCbDisplayOnly:not(.sapMCbBgDis) {
+		padding-left: 2rem;
+	}
 }
 
 /* Condensed size */
@@ -195,7 +263,7 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 		padding-left: 1.5rem;
 	}
 
-	.sapUiTableCell > .sapMCb {
+	.sapUiTableDataCell > .sapUiTableCellInner > .sapMCb {
 		margin-left: 0.25rem;
 		padding-left: 1.75rem;
 	}
@@ -209,4 +277,8 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 		font-size: 0.625rem;
 		border-radius: 0;
 	}
+}
+
+html[data-sap-ui-browser^="sf"] .sapMCbBg > .sapMCbMark, .sapMCbBg.sapMCbMark > input {
+	margin: 0;
 }

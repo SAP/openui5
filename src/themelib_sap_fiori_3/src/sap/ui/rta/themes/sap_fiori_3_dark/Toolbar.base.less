@@ -1,0 +1,32 @@
+/******************************************************************
+	Style of the RTA Toolbar (all types) - sap_fiori_3_dark Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG:  @sapUiSelected;
+@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiWhite; //#fff
+@_sap_ui_rta_Toolbar_Base_BaseColor: @sapPrimary1; //#3f5161;
+@_sap_ui_rta_Toolbar_Base_BtnHover: fade(lighten(@sapPrimary1, 18%), 50%); //rgba(99, 127, 153, 0.5)
+
+.sapUiRtaMode {
+
+	.sapUiRtaToolbar {
+		.sapMBtn {
+			&.sapMBtnDisabled .sapMBtnInner {
+				opacity: 1.0;
+			}
+		}
+
+		.sapMSegBBtn.sapMSegBBtnFocusable {
+			&:hover .sapMSegBBtnInner,
+			&.sapMSegBBtnSel:hover .sapMSegBBtnInner {
+				color: @_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG;
+				&:after {
+					border-bottom: 0.125rem solid @_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG; //2px
+				}
+			}
+		}
+	}
+}
+
+.sapUiSizeCozy .sapUiRtaToolbar .sapMSegB .sapMSegBBtn .sapMSegBBtnInner {
+	line-height: 2rem; //32px
+}

@@ -9,6 +9,21 @@
 	position: relative;
 	isolation: isolate;
 	z-index: 0;
+
+	.sapFDynamicPageContentWrapperStandard,
+	.sapFDynamicPageContentWrapperSolid {
+		&>.sapFDynamicPageContent {
+			background: @sapUiBaseBG;
+		}
+	}
+
+	.sapFDynamicPageContentWrapperTransparent>.sapFDynamicPageContent {
+		background: transparent;
+	}
+
+	.sapFDynamicPageContentWrapperList>.sapFDynamicPageContent {
+		background: @sapUiGroupContentBackground;
+	}
 }
 
 .sapFDynamicPageContent {
@@ -16,14 +31,13 @@
 	-webkit-flex-grow: 1;
 	z-index: 0;
 
-	background: @sapUiGroupContentBackground;
-
 	.sapFDynamicPageAlignContent {
 		margin-left: -@sapUiMarginSmall;
 		margin-right: -@sapUiMarginSmall;
 	}
 }
 
+/* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"] {
 	.sapFDynamicPageContent {
 		flex-shrink: 0;
@@ -49,7 +63,7 @@ html[data-sap-ui-browser^="ie"] {
 .sapFDynamicPageContent,
 .sapFDynamicPageContentFitContainer {
 	position: relative;
-	padding: 2rem 3rem 0 3rem;
+	padding: 1rem 3rem 0 3rem;
 }
 
 .sapFDynamicPageContent > .sapFDynamicPageContentFitContainer {
@@ -78,13 +92,54 @@ html[data-sap-ui-browser^="ie"] {
 	}
 }
 
+.sapUiContainerContentPadding(~".sapFDynamicPage", ~".sapFDynamicPageContent");
+.sapUiContainerContentPadding(~".sapFDynamicPage", ~".sapFDynamicPageContentFitContainer");
+
+.sapFDynamicPage.sapUiContentPadding,
+.sapFDynamicPage.sapUiNoContentPadding,
+.sapFDynamicPage.sapUiResponsiveContentPadding {
+	.sapFDynamicPageAlignContent {
+		margin: 0;
+	}
+}
+
+.sapFDynamicPage.sapUiContentPadding {
+	.sapFDynamicPage-Std-Phone {
+		.sapFDynamicPageAlignContent {
+			margin: 0 -1rem;
+		}
+	}
+}
+
+.sapFDynamicPage.sapUiResponsiveContentPadding {
+	&.sapFDynamicPage-Std-Phone {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding: 0;
+		}
+	}
+
+	&.sapFDynamicPage-Std-Tablet {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding: 1rem;
+		}
+	}
+
+	&.sapFDynamicPage-Std-Desktop {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding: 1rem 2rem;
+		}
+	}
+}
 
 .sapFDynamicPageContentWrapper {
 	width: 100%;
 	height: 100%;
 	position: relative;
 	will-change: transform;
-	-webkit-overflow-scrolling: touch;
+	-webkit-overflow-scrolling: auto;
 
 	display: -webkit-box;
 	display: -webkit-flex;
@@ -105,12 +160,6 @@ html[data-sap-ui-browser^="ie"] {
 	.sapFDynamicPageContentWrapper {
 		overflow: hidden;
 	}
-}
-
-.sapFDynamicPageScrollBar {
-	right: 0;
-	position: absolute;
-	z-index: 10;
 }
 
 .sapFDynamicPage .sapFDynamicPageTitleWrapper {
@@ -137,11 +186,30 @@ html[data-sap-ui-browser^="ie"] {
 }
 
 // DynamicPageTitle hover
-.sapFDynamicPage.sapFDynamicPageTitleClickEnabled:not(.sapFDynamicPageHeaderPinned) {
+.sapFDynamicPage.sapFDynamicPageTitleClickEnabled {
 	.sapFDynamicPageTitle:hover,
 	&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
 		cursor: pointer;
 	}
+}
+
+// Overstyle for Comparison Pattern
+.sapFDynamicPage.sapFDynamicPageTitleClickEnabled.sapUiComparisonContainer {
+	.sapFDynamicPageTitleMainInner:hover {
+		cursor: pointer;
+	}
+
+	.sapFDynamicPageTitle:hover,
+	&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+		cursor: default;
+	}
+}
+
+.sapFDynamicPageTitleMainHeading,
+.sapFDynamicPageTitleMainContent,
+.sapFDynamicPageTitleMainActions {
+	// BCP: 1870261908 - CSS cursor reset is needed here to prevent showing pointer for not clickable control types
+	cursor: default;
 }
 
 .sapFDynamicPage {
@@ -170,67 +238,42 @@ html[data-sap-ui-browser^="ie"] {
 /* ============================== */
 /* Toggle Header Visual Indicator */
 /* ============================== */
-.sapFDynamicPageToggleHeaderIndicator.sapMBtn {
+.sapFDynamicPageToggleHeaderIndicator.sapMBtn,
+.sapFDynamicPageHeaderPinButton.sapMBtn {
 	position: absolute;
 	left: 50%;
 	padding: 0;
 
 	.sapMBtnInner {
 		position: absolute !important;
-		bottom: 0;
-		border-radius: 0 0 0.1875rem 0.1875rem;
+		border-radius: 0.1875rem;
 	}
 }
 
 /* Tablet and Desktop */
-.sapFDynamicPageToggleHeaderIndicator {
-	width: 2.5rem;
-	height: 3rem;
-	font-size: 1.375rem;
-	bottom: -1.5rem;
-	margin-left: -1.25rem;// shift the button with half of its width for perfect centering
-
-	.sapMBtnInner {
-		height: 1.5rem;
-
-		.sapMBtnIcon {
-			line-height: 1.5rem;
-		}
-	}
+.sapFDynamicPageToggleHeaderIndicator,
+.sapFDynamicPageHeaderPinButton {
+	bottom: -1.375rem;
 }
 
-/* Phone */
-.sap-phone {
-	.sapFDynamicPageToggleHeaderIndicator {
-		height: 2.5rem;
-		bottom: -1.25rem;
+.sapFDynamicPageToggleHeaderIndicator,
+.sapFDynamicPage:not(.sapFDynamicPageTitleClickEnabled) .sapFDynamicPageHeaderPinButton {
+	margin-left: -1.25rem;
+}
 
-		.sapMBtnInner {
-			height: 1.25rem;
+.sapFDynamicPageHeaderPinnable .sapFDynamicPageToggleHeaderIndicator {
+	margin-left: -2.5rem;
+}
 
-			.sapMBtnIcon {
-				line-height: 1.25rem;
-			}
-		}
-	}
+.sapFDynamicPageHeaderPinButton {
+	margin-left: 0.25rem;
 }
 
 /* Compact */
 .sapUiSizeCompact {
-	.sapFDynamicPageToggleHeaderIndicator {
-		width: 2rem;
-		height: 2rem;
-		font-size: 1rem;
-		bottom: -1rem;
-		margin-left: -1rem;// shift the button with half of its width for perfect centering
-
-		.sapMBtnInner {
-			height: 1rem;
-
-			.sapMBtnIcon {
-				line-height: 1rem;
-			}
-		}
+	.sapFDynamicPageToggleHeaderIndicator,
+	.sapFDynamicPageHeaderPinButton {
+		bottom: -0.875rem;
 	}
 }
 
@@ -289,4 +332,21 @@ html[data-sap-ui-animation='on'] .sapFDynamicPage {
 			opacity: 0;
 		}
 	}
+}
+
+
+/* Vertically align items in the table-like view with the items in the sap.m.Carousel control,
+part of DynamicPageTitle snapped content and DynamicPageHeader content.
+To be used in Comparison pattern scenario. */
+.sapUiComparisonContent .sapUiComparisonItem  {
+	padding-left: 2.25rem;
+	padding-right: 1rem;
+}
+
+.sapUiComparisonContent :first-child.sapUiComparisonItem {
+	padding-left: 1rem;
+}
+
+.sapUiComparisonContainer .sapFDynamicPageTitleSnapped + .sapFDynamicPageContentWrapper .sapUiComparisonContent  {
+	margin-right: -1rem;
 }

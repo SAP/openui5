@@ -1,0 +1,53 @@
+{
+  "1.81.0": {
+    "date": "July 2020",
+    "notes": [
+      {
+        "id": "b4a6298075ecd9f2dc05f0e374516824e0b6b498",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.AdaptiveContent: Adding customElements check in _loadDependencies",
+        "references": []
+      },
+      {
+        "id": "5a74c8663ef2dabdc07270ae750dbbde4896c491",
+        "type": "FIX",
+        "text": " sap.ui.integration.qunit.cards.AdaptiveCard: Missing semicolon fixed",
+        "references": []
+      },
+      {
+        "id": "edece81db7cc8ac731ad7ce1cedce4c34ba582d4",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Curly braces are now escaped properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080153977"
+          }
+        ]
+      },
+      {
+        "id": "29a64393ba8cf00551e71ed1cf51f9f131414c47",
+        "type": "FEATURE",
+        "text": " Enhancments for external design-time capabilities",
+        "references": []
+      },
+      {
+        "id": "bff06a06a569a908e9f0d224cec1f306da6e28a3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: visible property is now available in the manifest",
+        "references": []
+      },
+      {
+        "id": "bd888971975bcb3276f8afa57df6a51c9457a30a",
+        "type": "FIX",
+        "text": " Integration Cards: Content is now visible after re-rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080174673"
+          }
+        ]
+      }
+    ]
+  }
+}

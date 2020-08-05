@@ -4,25 +4,28 @@
 
 // Provides control sap.m.FormattedText.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'./FormattedTextAnchorGenerator',
-	'./FormattedTextRenderer'
+	'./FormattedTextRenderer',
+	"sap/base/Log",
+	"sap/base/security/URLWhitelist",
+	"sap/base/security/sanitizeHTML"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	FormattedTextAnchorGenerator,
-	FormattedTextRenderer
+	FormattedTextRenderer,
+	Log,
+	URLWhitelist,
+	sanitizeHTML0
 	) {
 		"use strict";
 
 
 		// shortcut for sap.m.LinkConversion
 		var LinkConversion = library.LinkConversion;
-
 
 		/**
 		 * Constructor for a new FormattedText.
@@ -70,14 +73,14 @@ function(
 					 *	<li><code>u</code></li>
 					 *	<li><code>dl</code></li>
 					 *	<li><code>dt</code></li>
-					 *	<li><code>dl</code></li>
+					 *	<li><code>dd</code></li>
 					 *	<li><code>ul</code></li>
 					 *	<li><code>ol</code></li>
 					 *	<li><code>li</code></li>
 					 * </ul>
 					 * <p><code>class, style,</code> and <code>target</code> attributes are allowed.
 					 * If <code>target</code> is not set, links open in a new window by default.
-					 * <p>Only safe <code>href</code> attributes can be used. See {@link jQuery.sap.validateUrl}.
+					 * <p>Only safe <code>href</code> attributes can be used. See {@link module:sap/base/security/URLWhitelist URLWhitelist}.
 					 *
 					 * <b>Note:</b> Keep in mind that not supported HTML tags and
 					 * the content nested inside them are both not rendered by the control.
@@ -87,7 +90,7 @@ function(
 					/**
 					 * Optional width of the control in CSS units.
 					 */
-					width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
+					width: {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 
 					/**
 					 * Determines whether strings that appear to be links will be converted to HTML anchor tags,
@@ -109,7 +112,16 @@ function(
 					/**
 					 *  Optional height of the control in CSS units.
 					 */
-					height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null}
+					height: {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null}
+				},
+				aggregations: {
+
+					/**
+					* List of <code>sap.m.Link</code> controls that will be used to replace the placeholders in the text.
+					* Placeholders are replaced according to their indexes. The placeholder with index %%0 will be replaced
+					* by the first link in the aggregation, etc.
+					*/
+					controls: {type: "sap.m.Link", multiple: true, singularName: "control"}
 				}
 			}
 		});
@@ -167,8 +179,13 @@ function(
 				'strong': 1,
 				'u': 1
 			}
-		},
-		_renderingRules = _defaultRenderingRules;
+		};
+
+		/**
+		 * Holds the internal list of allowed and evaluated HTML elements and attributes
+		 * @private
+		 */
+		FormattedText.prototype._renderingRules = _defaultRenderingRules;
 
 		/**
 		 * Initialization hook for the FormattedText, which creates a list of rules with allowed tags and attributes.
@@ -191,7 +208,7 @@ function(
 				value,
 				addTarget = tagName === "a";
 			// add UI5 specific classes when appropriate
-			var cssClass = _renderingRules.ELEMENTS[tagName].cssClass || "";
+			var cssClass = this._renderingRules.ELEMENTS[tagName].cssClass || "";
 
 			for (var i = 0; i < attribs.length; i += 2) {
 				// attribs[i] is the name of the tag's attribute.
@@ -200,9 +217,9 @@ function(
 				attr = attribs[i];
 				value = attribs[i + 1];
 
-				if (!_renderingRules.ATTRIBS[attr] && !_renderingRules.ATTRIBS[tagName + "::" + attr]) {
+				if (!this._renderingRules.ATTRIBS[attr] && !this._renderingRules.ATTRIBS[tagName + "::" + attr]) {
 					sWarning = 'FormattedText: <' + tagName + '> with attribute [' + attr + '="' + value + '"] is not allowed';
-					jQuery.sap.log.warning(sWarning, this);
+					Log.warning(sWarning, this);
 					// to remove the attribute by the sanitizer, set the value to null
 					attribs[i + 1] = null;
 					continue;
@@ -210,8 +227,8 @@ function(
 
 				// sanitize hrefs
 				if (attr == "href") { // a::href
-					if (!jQuery.sap.validateUrl(value)) {
-						jQuery.sap.log.warning("FormattedText: incorrect href attribute:" + value, this);
+					if (!URLWhitelist.validate(value)) {
+						Log.warning("FormattedText: incorrect href attribute:" + value, this);
 						attribs[i + 1] = "#";
 						addTarget = false;
 					}
@@ -242,11 +259,11 @@ function(
 		}
 
 		function fnPolicy (tagName, attribs) {
-			if (_renderingRules.ELEMENTS[tagName]) {
-				return fnSanitizeAttribs(tagName, attribs);
+			if (this._renderingRules.ELEMENTS[tagName]) {
+				return fnSanitizeAttribs.call(this, tagName, attribs);
 			} else {
 				var sWarning = '<' + tagName + '> is not allowed';
-				jQuery.sap.log.warning(sWarning, this);
+				Log.warning(sWarning, this);
 			}
 		}
 
@@ -258,11 +275,11 @@ function(
 		 * @private
 		 */
 		function sanitizeHTML(sText) {
-			return jQuery.sap._sanitizeHTML(sText, {
-				tagPolicy: fnPolicy,
+			return sanitizeHTML0(sText, {
+				tagPolicy: fnPolicy.bind(this),
 				uriRewriter: function (sUrl) {
 					// by default we use the URL whitelist to check the URLs
-					if (jQuery.sap.validateUrl(sUrl)) {
+					if (URLWhitelist.validate(sUrl)) {
 						return sUrl;
 					}
 				}
@@ -281,6 +298,10 @@ function(
 			this.$().find('a[target="_blank"]').on("click", openExternalLink);
 		};
 
+		FormattedText.prototype.onBeforeRendering = function () {
+			this.$().find('a[target="_blank"]').off("click", openExternalLink);
+		};
+
 		FormattedText.prototype._getDisplayHtml = function (){
 			var sText = this.getHtmlText(),
 				sAutoGenerateLinkTags = this.getConvertLinksToAnchorTags();
@@ -291,7 +312,7 @@ function(
 
 			sText = FormattedTextAnchorGenerator.generateAnchors(sText, sAutoGenerateLinkTags, this.getConvertedLinksDefaultTarget());
 
-			return sanitizeHTML(sText);
+			return sanitizeHTML.call(this, sText);
 		};
 
 		/**
@@ -301,18 +322,18 @@ function(
 		 * @public
 		 */
 		FormattedText.prototype.setHtmlText = function (sText) {
-			return this.setProperty("htmlText", sanitizeHTML(sText));
+			return this.setProperty("htmlText", sanitizeHTML.call(this, sText));
 		};
 
 		/**
 		 * Sets should a limited list of rendering rules be used instead of the default one. This limited list
 		 * will evaluate only a small subset of the default HTML elements and attributes.
 		 * @param {boolean} bLimit Should the control use the limited list
-		 * @sap-restricted sap.m.MessageStrip
 		 * @private
+		 * @ui5-restricted sap.m.MessageStrip
 		 */
 		FormattedText.prototype._setUseLimitedRenderingRules = function (bLimit) {
-			_renderingRules = bLimit ? _limitedRenderingRules : _defaultRenderingRules;
+			this._renderingRules = bLimit ? _limitedRenderingRules : _defaultRenderingRules;
 		};
 
 

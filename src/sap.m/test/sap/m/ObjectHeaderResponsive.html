@@ -46,6 +46,13 @@
 			var app = new sap.m.SplitApp("myApp");
 			app.placeAt("body");
 
+			var toDetailBtn = new sap.m.Button({
+				text: "Go to Detail page",
+				press: function(oEv) {
+					app.toDetail("detail");
+				}
+			});
+
 			var label1 = new sap.m.Label({
 				text: "ObjectHeader in fullScreenOptimized mode with states (2), no markers"
 			}).addStyleClass("label");
@@ -183,6 +190,7 @@
 
 			// connect IconTabBar and ObjectHeader
 			oh1.setHeaderContainer(itb1);
+			oh1.addStyleClass("sapUiResponsivePadding--header");
 
 			var oh1Small = new sap.m.ObjectHeader("oh1Small", {
 				responsive: true,
@@ -442,7 +450,7 @@
 
 			// connect IconTabBar and ObjectHeader
 			oh2.setHeaderContainer(itb2);
-
+			oh2.addStyleClass("sapUiResponsivePadding--header");
 			//test popover title
 			var domRef = null;
 			var titleSelectorEventHandler = function(oEvent) {
@@ -498,7 +506,8 @@
 				markFavorite: true,
 				numberState: sap.ui.core.ValueState.Success
 			});
-
+			oh3.addStyleClass("sapUiResponsivePadding--header");
+			
 			var itb3 = new sap.m.IconTabBar("itb3", {
 				selectedKey: "key13",
 				items: [
@@ -635,6 +644,7 @@
 					text: "Progress Indicator"
 				})]
 			});
+			oh4.addStyleClass("sapUiResponsivePadding--header");
 
 			var itb4 = new sap.m.IconTabBar("itb4", {
 				selectedKey: "key13",
@@ -757,6 +767,7 @@
 					})
 				]
 			});
+			oh7.addStyleClass("sapUiResponsivePadding--header");
 
 			var itb7 = new sap.m.IconTabBar("itb7", {
 				selectedKey: "key3",
@@ -828,6 +839,7 @@
 				 	})
 				]
 			});
+			oh9.addStyleClass("sapUiResponsivePadding--header");
 
 			if (sap.suite) {
 				var hc9 = new sap.suite.ui.commons.HeaderContainer({
@@ -900,7 +912,7 @@
 				 	})
 				]
 			});
-
+			oh10.addStyleClass("sapUiResponsivePadding--header");
 			if (sap.suite) {
 				var xml = '' +
 				'<HeaderContainer xmlns="sap.suite.ui.commons" xmlns:m="sap.m" scrollStep="200" scrollTime="500">' +
@@ -1044,6 +1056,7 @@
 				 	})
 				]
 			});
+			oh11.addStyleClass("sapUiResponsivePadding--header");
 
 			var itb11 = new sap.m.IconTabBar("itb11", {
 				selectedKey: "key1",
@@ -1174,6 +1187,7 @@
 				 	})
 				]
 			});
+			oh12.addStyleClass("sapUiResponsivePadding--header");
 
 			var itb12 = new sap.m.IconTabBar("itb12", {
 				selectedKey: "key1",
@@ -1342,6 +1356,7 @@
 				markFavorite: true,
 				numberState: sap.ui.core.ValueState.Success
 			});
+			oh14.addStyleClass("sapUiResponsivePadding--header");
 
 			/* special case: responsive with no markers, but not states, attributes, and tabs */
 			var oh15 = new sap.m.ObjectHeader("oh15", {
@@ -1352,6 +1367,7 @@
 				numberUnit: "Euro",
 				numberState: sap.ui.core.ValueState.Success
 			});
+			oh15.addStyleClass("sapUiResponsivePadding--header");
 
 			var oLongTitleOH = new sap.m.ObjectHeader({
 				title : "TitleThatDoesNotHaveAnySpaceAsItIsOneVeryLongWordWithoutNarrowClassSet",
@@ -1373,15 +1389,39 @@
 				responsive:true
 			}).addStyleClass("sapUiContainer-Narrow");
 
+			var ohEmptyAttribute = new sap.m.ObjectHeader("ohEA", {
+				responsive: true,
+				title: "ObjectHeader with empty attribute",
+				intro: "The only Status should be shift to the left",
+				attributes: [
+					new sap.m.ObjectAttribute({
+						title: "",
+						text: ""
+					 })
+				],
+				statuses: [
+					new sap.m.ObjectStatus({
+						title: "Approval",
+						text: "Pending",
+						icon: "sap-icon://inbox",
+						state: sap.ui.core.ValueState.Warning
+				 	})
+				]
+			});
 			var page1 = new sap.m.Page("page1", {
 				title:"ObjectHeader (Responsive)",
 				content : [
-					oLongTitleOH2
-					]
+					oLongTitleOH2,
+					toDetailBtn
+				]
 			});
 			// create and add a page with icon tab bar
-			var page = new sap.m.Page("page", {
+			var detail = new sap.m.Page("detail", {
 				title:"ObjectHeader (Responsive)",
+				showNavButton: jQuery.device.is.phone,
+				navButtonPress: function() {
+					app.backMaster();
+				},
 				content : [
 					oLongTitleOH,
 					oLongTitleOH1,
@@ -1415,15 +1455,16 @@
 					oh9,
 					label10,
 					oh10,
+					ohEmptyAttribute,
 					new sap.m.Label({text: "THE END!"}) // placeholder to see content below
 				]
 			});
 			app.addMasterPage(page1);
-			app.addDetailPage(page);
+			app.addDetailPage(detail);
 
 		</script>
 
 	</head>
-	<body id="body" class="sapUiBody" role="application">
+	<body id="body" class="sapUiBody">
 	</body>
 </html>

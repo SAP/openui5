@@ -1,0 +1,79 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "295137b3501ad1b4482bc9b5eef74d9ee91d29be",
+        "type": "FIX",
+        "text": "AlignedFlowLayout: Overlapping issue of items fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980003456"
+          }
+        ]
+      },
+      {
+        "id": "9203a0f018cb7cf2e732f7c5b153e0789968af11",
+        "type": "FIX",
+        "text": "sap.m.Splitter: Endless resizing is now prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980054787"
+          }
+        ]
+      },
+      {
+        "id": "46f842385abeb16bcf4a301768941cf8e669e395",
+        "type": "FIX",
+        "text": "sap.ui.layout.Grid: Wrapping of Grid children in IE is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970156801"
+          }
+        ]
+      },
+      {
+        "id": "31d7e3687d50de1f97e2d780e6e3ea3af38ffb1c",
+        "type": "FIX",
+        "text": "ResponsiveGridLayout: internal Grid has no parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005426952018"
+          }
+        ]
+      },
+      {
+        "id": "2f063a6179c881a749fb58a0caa346fe462e55fd",
+        "type": "FIX",
+        "text": "sap.ui.rta: fix cut&paste in SimpleForm",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980120495"
+          }
+        ]
+      },
+      {
+        "id": "e3c10daacb99bf5d8f178c16dd8c4531491773b2",
+        "type": "FEATURE",
+        "text": "sap.m.Select: Display multiline value state text",
+        "references": []
+      },
+      {
+        "id": "5c420ca5c3b505df969bcba6d45a4b4759e35669",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayoutCell: Improve aria-labelledby",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970125112"
+          }
+        ]
+      }
+    ]
+  }
+}

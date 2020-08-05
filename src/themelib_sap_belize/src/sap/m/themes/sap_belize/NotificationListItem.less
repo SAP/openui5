@@ -3,28 +3,19 @@
 /* Belize theme                                */
 /* =========================================== */
 
-.sapMNLI-UnreadStatus {
-	background: @sapUiAccent5;
-}
+@_sap_m_NotificationListBase_ItemBackground: @sapUiListBackground;
+@_sap_m_NotificationListBase_ItemGroupedBackground: darken(@sapUiListBackground,5);
 
-.sapMNLI-CloseButton {
-	border: none;
-}
+//Special case for visual specification of sap.m.NotificationListGroup
+.sapContrastPlus .sapContrast,
+.sapContrast .sapContrastPlus,
+.sapContrastPlus.sapContrast {
 
-.sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner {
-	border: none;
-}
+	.sapMNLI {
+		background: fade(@sapUiListBackground, 60);
+	}
 
-// Focus Styles ========================================================================================================
-
-.sapMNLI:focus::before {
-	border: 1px dotted @sapUiContentFocusColor;
-	position: absolute;
-	content: " ";
-	top: 1px;
-	right: 1px;
-	bottom: 1px;
-	left: 1px;
-	z-index: 2;
-	pointer-events: none;
+	.sapMNLGroup .sapMNLI {
+		background: fade(darken(@sapUiListBackground, 5), 60);
+	}
 }

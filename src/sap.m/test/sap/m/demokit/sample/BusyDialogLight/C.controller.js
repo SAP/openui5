@@ -1,19 +1,18 @@
-sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller'],
-	function(jQuery, Controller) {
+sap.ui.define([
+	"sap/ui/core/mvc/Controller"
+], function (Controller) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.BusyDialogLight.C", {
-		handlePress: function (oEvent) {
+	return Controller.extend("sap.m.sample.BusyDialogLight.C", {
+
+		handlePress: function () {
 			var oDialog = this.byId("BusyDialog");
 			oDialog.open();
 
-			jQuery.sap.delayedCall(3000, this, function () {
+			setTimeout(function () {
 				oDialog.close();
-			});
+			}, 3000);
 		}
+
 	});
-
-
-	return CController;
-
 });

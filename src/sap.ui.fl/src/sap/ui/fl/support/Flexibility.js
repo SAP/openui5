@@ -4,15 +4,17 @@
 
 // Provides class sap.ui.fl.support.Flexibility
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/core/support/Plugin",
-		"sap/ui/core/support/Support",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/fl/FlexController",
-		"sap/ui/fl/ChangePersistenceFactory",
-		"sap/ui/fl/Utils"
-	],
-	function (jQuery, Plugin, Support, JSONModel, FlexController, ChangePersistenceFactory, Utils) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/support/Plugin",
+	"sap/ui/core/support/Support",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/fl/FlexController",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor"
+],
+	function (jQuery, Plugin, Support, JsControlTreeModifier, JSONModel, FlexController, ChangePersistenceFactory, Utils, Extractor) {
 		"use strict";
 
 		/**
@@ -23,14 +25,14 @@ sap.ui.define([
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
 		 * @version ${version}
-		 * @sap-restricted
-		 * @constructor
 		 * @private
+		 * @ui5-restricted
+		 * @constructor
 		 */
 		var Flexibility = Plugin.extend("sap.ui.fl.support.Flexibility", {
 			constructor: function (oSupportStub) {
-					Plugin.apply(this, ["sapUiSupportFlexibility", "Flexibility", oSupportStub]);
-					this._oStub = oSupportStub;
+				Plugin.apply(this, ["sapUiSupportFlexibility", "Flexibility", oSupportStub]);
+				this._oStub = oSupportStub;
 
 				if (this.runsAsToolPlugin()) {
 					this._aEventIds = [
@@ -47,7 +49,6 @@ sap.ui.define([
 		});
 
 		Flexibility.prototype.sDelimiter = ";";
-		Flexibility.prototype.sNoDebug = "noDebug";
 
 		/**
 		 * Creation of the support plugin.
@@ -58,13 +59,10 @@ sap.ui.define([
 		Flexibility.prototype.init = function (oSupportStub) {
 			Plugin.prototype.init.apply(this, arguments);
 
-			var sNoDebugInfoText = "<div class='sapUiSmallMargin'>sapui5 has to be in <b>debug mode</b> or at least the " +
-				"library \'<b> sap.ui.fl</b>\' has to be debugged.</div>" +
-				"<div class='sapUiSmallMargin'>To set the debug sources use the URL parameter '<b>sap-ui-debug</b> " +
-				"with general debug setting <b>sap-ui-debug=true</b> or to debug single libraries by naming the libraries " +
-				"<b>sap-ui-debug=lib1, lib2, ...</b> (including '<b>sap.ui.fl</b>').</div>" +
-				"<div class='sapUiSmallMargin'>Another option is to enable the debugging in this 'Diagnostics' window by " +
-				"toggle the <b>Debug Sources</b> under the <b>Technical Info</b> panel.</div>";
+			var sPanelInfoText = "<div class='sapUiSmallMargin'>The applications listed below have been handled by the sap.ui.fl library in this session.</div>" +
+				"<div class='sapUiSmallMarginBegin'>You can download a file containing the data that has been applied to an application as well as " +
+				"relevant runtime information, and then upload this file to the UI Flexibility Diagnostics application for further investigation.</div>" +
+				"<div class='sapUiSmallMarginBegin'>The UI Flexibility Diagnostics application displays graphs and is only available with SAPUI5.</div>";
 
 			if (oSupportStub.isToolStub()) {
 				this.addStylesheet("sap/ui/fl/support/flexibility");
@@ -72,8 +70,7 @@ sap.ui.define([
 				this.oAppModel = new JSONModel();
 				this.oToolSettings = new JSONModel({
 					hideDependingChanges: false,
-					flInDebug: true,
-					noDebugInfoText: sNoDebugInfoText
+					panelInfoText: sPanelInfoText
 				});
 				this.oChangeDetails = new JSONModel();
 				this._renderToolPlugin([]);
@@ -123,53 +120,35 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sends a request to synchronize the tool window with the running applications;
-		 * The function is called after filling the app list (with the first item) or user selection of an app.
-		 *
-		 * @param {string} sAppKey Concatenated application name and version
-		 *
-		 * @private
-		 * @restricted sap.ui.fl.support
-		 */
-		Flexibility.prototype._onAppSelected = function (sAppKey) {
-			Support.getStub().sendEvent(this.getId() + "GetChangesMaps", {appKey: sAppKey});
-		};
-
-		/**
 		 * Requests the data from the application side support plugin
 		 *
 		 * @private
 		 * @restricted sap.ui.fl.support
 		 */
-		 Flexibility.prototype.onRefresh = function () {
-			 Support.getStub().sendEvent(this.getId() + "GetApps", {});
+		Flexibility.prototype.onRefresh = function () {
+			Support.getStub().sendEvent(this.getId() + "GetApps", {});
 		};
 
 		/**
 		 * Collect list of apps
 		 */
 		Flexibility.prototype.onsapUiSupportFlexibilityGetApps = function () {
-			// only provide data in case the debug collected these
-			if (Utils.isDebugEnabled()) {
-				var that = this;
-				var aApps = [];
+			var aApps = [];
 
-				if (ChangePersistenceFactory._instanceCache) {
-					jQuery.each(ChangePersistenceFactory._instanceCache, function (sReference, mInstancesOfVersions) {
-						Object.keys(mInstancesOfVersions).forEach(function (sVersion) {
-							aApps.push({
-								key : sReference + that.sDelimiter + sVersion,
-								text : sReference,
-								additionalText : sVersion
-							});
+			if (ChangePersistenceFactory._instanceCache) {
+				jQuery.each(ChangePersistenceFactory._instanceCache, function (sReference, mInstancesOfVersions) {
+					jQuery.each(mInstancesOfVersions, function (sVersion, oChangePersistanceInstance) {
+						aApps.push({
+							key : sReference + this.sDelimiter + sVersion,
+							text : sReference,
+							additionalText : sVersion,
+							data: Extractor.extractData(oChangePersistanceInstance)
 						});
-					});
-				}
-
-				this._oStub.sendEvent(this.getId() + "SetApps", aApps);
-			} else {
-				this._oStub.sendEvent(this.getId() + "SetApps", this.sNoDebug);
+					}.bind(this));
+				}.bind(this));
 			}
+
+			this._oStub.sendEvent(this.getId() + "SetApps", aApps);
 		};
 
 		/**
@@ -193,18 +172,7 @@ sap.ui.define([
 		 */
 		Flexibility.prototype.onsapUiSupportFlexibilitySetApps = function (oEvent) {
 			var mApps = oEvent.getParameters();
-
-			var bFlInDebug = mApps !== this.sNoDebug;
-			this.oToolSettings.setProperty("/flInDebug", bFlInDebug);
-
-			if (bFlInDebug) {
-				this.oAppModel.setData(mApps);
-
-				var oAppSelection = this.oView.byId("appSelection");
-				var oFirstItem = oAppSelection.getItems()[0];
-				oAppSelection.setSelectedItem(oFirstItem);
-				oAppSelection.fireChange({selectedItem : oFirstItem});
-			}
+			this.oAppModel.setData(mApps);
 		};
 
 		/**
@@ -219,7 +187,7 @@ sap.ui.define([
 			this.oView.byId("Tree").expandToLevel(1000);
 		};
 
-		Flexibility.prototype.exit = function (oSupportStub) {
+		Flexibility.prototype.exit = function () {
 			Plugin.prototype.exit.apply(this, arguments);
 		};
 
@@ -283,11 +251,12 @@ sap.ui.define([
 					oChangeDetails.indexOfFirstFailing = aAllFailedChanges.indexOf(oChange.getId());
 				}
 
-				if (oChange._aDependentIdList) {
-					oChangeDetails.dependentControls = oChange._aDependentIdList.map(function (sDependentId) {
+				if (oChange._aDependentSelectorList) {
+					var oAppComponent = Extractor.getAppComponentInstance(sAppName);
+					oChangeDetails.dependentControls = oChange._aDependentSelectorList.map(function (oDependentSelector) {
 						return {
-							id : sDependentId,
-							controlPresent : !!sap.ui.getCore().byId(sDependentId)
+							id : oDependentSelector.id,
+							controlPresent : JsControlTreeModifier.bySelector(oDependentSelector, oAppComponent)
 						};
 					});
 				}
@@ -316,11 +285,11 @@ sap.ui.define([
 					if (mDependencies[oChangeDetails.id] && mDependencies[oChangeDetails.id].dependencies) {
 						mDependencies[oChangeDetails.id].dependencies.forEach(function (sDependentChangeId) {
 							var oDependentChange = mChanges[sDependentChangeId];
-							var bDependentChangeNotApplied = oDependentChange.indexInAppliedChanges == undefined;
-							var oDependentChange = mChanges[sDependentChangeId];
+							var bDependentChangeNotApplied = oDependentChange.indexInAppliedChanges === undefined;
+							oDependentChange = mChanges[sDependentChangeId];
 							oChangeDetails.someDirectDependingChangesNotApplied =
 								oChangeDetails.someDirectDependingChangesNotApplied || bDependentChangeNotApplied;
-							var bDependentChangeFailed = oDependentChange.indexOfFirstFailing == undefined;
+							var bDependentChangeFailed = oDependentChange.indexOfFirstFailing === undefined;
 							var bDependentChangesUnsuccessfulApplied = bDependentChangeFailed && bDependentChangeNotApplied;
 
 							oChangeDetails.someDirectDependingChangesFailed = oChangeDetails.someDirectDependingChangesFailed
@@ -335,7 +304,7 @@ sap.ui.define([
 						oChangeDetails.controlPresent && oChangeDetails.allDependendingControlsPresent &&
 						!oChangeDetails.someDirectDependingChangesNotApplied;
 
-					oChangeDetails.isPossibleRootCause = oChangeDetails.isApplicable && oChangeDetails.indexInAppliedChanges == undefined;
+					oChangeDetails.isPossibleRootCause = oChangeDetails.isApplicable && oChangeDetails.indexInAppliedChanges === undefined;
 				});
 			}
 
@@ -343,7 +312,7 @@ sap.ui.define([
 				aChangesDetails = aChangesDetails.filter(function (oChange) {
 					return !aChangesDetails.some(function (oChangeInSameHierarchy) {
 						return oChangeInSameHierarchy.dependentChanges.some(function (oDependentChange) {
-							return oDependentChange.id == oChange.id;
+							return oDependentChange.id === oChange.id;
 						});
 					});
 				});

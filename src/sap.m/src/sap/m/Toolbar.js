@@ -4,25 +4,23 @@
 
 // Provides control sap.m.Toolbar.
 sap.ui.define([
-	'jquery.sap.global',
 	'./BarInPageEnabler',
 	'./ToolbarLayoutData',
 	'./ToolbarSpacer',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
-	'sap/ui/core/ResizeHandler',
+	"sap/ui/events/KeyCodes",
 	'./ToolbarRenderer'
 ],
 function(
-	jQuery,
 	BarInPageEnabler,
 	ToolbarLayoutData,
 	ToolbarSpacer,
 	library,
 	Control,
 	EnabledPropagator,
-	ResizeHandler,
+	KeyCodes,
 	ToolbarRenderer
 ) {
 	"use strict";
@@ -60,7 +58,11 @@ function(
 	 * You can define the width of the horizontal space or make it flexible to cover the remaining space
 	 * between the <code>Toolbar</code> items (for example, to to push an item to the edge of the <code>Toolbar</code>.
 	 *
-	 * <b>Note:</b> {@link sap.m.ToolbarLayoutData} should not be used together with {@link sap.m.ToolbarSpacer}.
+	 * <b>Note:</b> The {@link sap.m.ToolbarSpacer} is a flex control that is intended to
+	 * control its own behavior, thus {@link sap.m.ToolbarLayoutData} is not supported as value for the
+	 * <code>layoutData</code> aggregation of {@link sap.m.ToolbarSpacer} and if set it's ignored.
+	 *
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/toolbar-overview/ Toolbar}
 	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.Toolbar,sap.m.IBar
@@ -124,7 +126,13 @@ function(
 			 * <b>Note:</b> The visual styles are theme-dependent.
 			 * @since 1.54
 			 */
-			style : {type : "sap.m.ToolbarStyle", group : "Appearance", defaultValue : ToolbarStyle.Standard}
+			style : {type : "sap.m.ToolbarStyle", group : "Appearance", defaultValue : ToolbarStyle.Standard},
+
+			/**
+			 * Defines the aria-haspopup attribute of the <code>Toolbar</code>. if the active <code>design</code> is true.
+			 * @since 1.79.0
+			 */
+			ariaHasPopup: {type : "string", group : "Accessibility", defaultValue : null}
 		},
 		defaultAggregation : "content",
 		aggregations : {
@@ -245,6 +253,22 @@ function(
 		}
 	};
 
+	 /**
+	 * Sets the accessibility enablement
+	 * @param {string} bEnabled
+	 * @returns {sap.m.IBar} this for chaining
+	 * @private
+	 */
+	Toolbar.prototype._setEnableAccessibilty = function (bEnabled) {
+		var bFastGroupValue = bEnabled ? "true" : "false",
+			sRoleValue = bEnabled ? "toolbar" : "none";
+
+		this.data("sap-ui-fastnavgroup", bFastGroupValue, bEnabled);
+		this._setRootAccessibilityRole(sRoleValue);
+
+		return this;
+	};
+
 	Toolbar.prototype.init = function() {
 		// define group for F6 handling
 		this.data("sap-ui-fastnavgroup", "true", true);
@@ -255,22 +279,8 @@ function(
 		};
 	};
 
-	Toolbar.prototype.onBeforeRendering = function() {
-		this._cleanup();
-	};
-
 	Toolbar.prototype.onAfterRendering = function() {
-		// if there is no shrinkable item, layout is not needed
-		if (!this._checkContents()) {
-			return;
-		}
-
-		// layout the toolbar
-		this._doLayout();
-	};
-
-	Toolbar.prototype.exit = function() {
-		this._cleanup();
+		this._checkContents();
 	};
 
 	Toolbar.prototype.onLayoutDataChange = function() {
@@ -321,8 +331,18 @@ function(
 		}
 	};
 
-	// keyboard space handling mimic the enter event
-	Toolbar.prototype.onsapspace = Toolbar.prototype.onsapenter;
+	Toolbar.prototype.onsapspace = function(oEvent) {
+		// Prevent browser scrolling in case of SPACE key
+		if (oEvent.srcControl === this) {
+			oEvent.preventDefault();
+		}
+	};
+
+	Toolbar.prototype.onkeyup = function(oEvent){
+		if (oEvent.which === KeyCodes.SPACE) {
+			this.onsapenter(oEvent);
+		}
+	};
 
 	// mark to inform active handling is done by toolbar
 	Toolbar.prototype.ontouchstart = function(oEvent) {
@@ -332,35 +352,9 @@ function(
 	// mark shrinkable contents and render layout data
 	// returns shrinkable and flexible content count
 	Toolbar.prototype._checkContents = function() {
-		var iShrinkableItemCount = 0;
 		this.getContent().forEach(function(oControl) {
-			if (Toolbar.checkShrinkable(oControl)) {
-				iShrinkableItemCount++;
-			}
+			Toolbar.checkShrinkable(oControl);
 		});
-
-		return iShrinkableItemCount;
-	};
-
-	// apply the layout calculation according to flexbox support
-	Toolbar.prototype._doLayout = function() {
-		if (ToolbarRenderer.hasNewFlexBoxSupport) {
-			return;
-		}
-
-		this._resetOverflow();
-	};
-
-	// reset overflow and mark with classname if overflows
-	Toolbar.prototype._resetOverflow = function() {
-		this._deregisterResize();
-		var $This = this.$();
-		var oDomRef = $This[0] || {};
-		$This.removeClass("sapMTBOverflow");
-		var bOverflow = oDomRef.scrollWidth > oDomRef.clientWidth;
-		bOverflow && $This.addClass("sapMTBOverflow");
-		this._iEndPoint = this._getEndPoint();
-		this._registerResize();
 	};
 
 	// gets called when new control is inserted into content aggregation
@@ -400,90 +394,10 @@ function(
 		oControl.toggleStyleClass(Toolbar.shrinkClass, bPercent);
 	};
 
-	// register interval timer to detect inner content size is changed
-	Toolbar.prototype._registerContentResize = function() {
-		sap.ui.getCore().attachIntervalTimer(this._handleContentResize, this);
-	};
-
-	// deregister interval timer for inner content
-	Toolbar.prototype._deregisterContentResize = function() {
-		sap.ui.getCore().detachIntervalTimer(this._handleContentResize, this);
-	};
-
-	// register toolbar resize handler
-	Toolbar.prototype._registerToolbarResize = function() {
-		// register resize handler only if toolbar has relative width
-		if (Toolbar.isRelativeWidth(this.getWidth())) {
-			var fnResizeProxy = jQuery.proxy(this._handleToolbarResize, this);
-			this._sResizeListenerId = ResizeHandler.register(this, fnResizeProxy);
-		}
-	};
-
-	// deregister toolbar resize handlers
-	Toolbar.prototype._deregisterToolbarResize = function() {
-		sap.ui.getCore().detachIntervalTimer(this._handleContentResize, this);
-		if (this._sResizeListenerId) {
-			ResizeHandler.deregister(this._sResizeListenerId);
-			this._sResizeListenerId = "";
-		}
-	};
-
-	// register resize handlers
-	Toolbar.prototype._registerResize = function() {
-		this._registerToolbarResize();
-		this._registerContentResize();
-	};
-
-	// deregister resize handlers
-	Toolbar.prototype._deregisterResize = function() {
-		this._deregisterToolbarResize();
-		this._deregisterContentResize();
-	};
-
-	// cleanup resize handlers
-	Toolbar.prototype._cleanup = function() {
-		this._deregisterResize();
-	};
-
-	// get the end position of last content
-	Toolbar.prototype._getEndPoint = function() {
-		var oLastChild = (this.getDomRef() || {}).lastElementChild;
-		if (oLastChild) {
-			var iEndPoint = oLastChild.offsetLeft;
-			if (!sap.ui.getCore().getConfiguration().getRTL()) {
-				iEndPoint += oLastChild.offsetWidth;
-			}
-		}
-
-		return iEndPoint || 0;
-	};
-
-	// handle toolbar resize
-	Toolbar.prototype._handleToolbarResize = function() {
-		this._handleResize(false);
-	};
-
-	// handle inner content resize
-	Toolbar.prototype._handleContentResize = function() {
-		this._handleResize(true);
-	};
-
-	// generic resize handler
-	Toolbar.prototype._handleResize = function(bCheckEndPoint) {
-		// check whether end point is changed or not
-		if (bCheckEndPoint && this._iEndPoint == this._getEndPoint()) {
-			return;
-		}
-
-		// re-layout the toolbar
-		this._doLayout();
-	};
-
 	Toolbar.prototype._getAccessibilityRole = function () {
-		var aContent = this.getContent(),
-			sRole = this._getRootAccessibilityRole();
+		var sRole = this._getRootAccessibilityRole();
 
-		if (this.getActive() && (!aContent || aContent.length === 0)) {
+		if (this.getActive()) {
 			sRole = "button";
 		}
 
@@ -505,27 +419,6 @@ function(
 		}
 
 		this._sAutoDesign = this.validateProperty("design", sDesign);
-		return this;
-	};
-
-	Toolbar.prototype.setStyle = function(sNewStyle) {
-		var sTbStyleClass, bEnable;
-
-		if (this.getStyle() === sNewStyle) {
-			return this;
-		}
-
-		this.setProperty("style", sNewStyle, true /* suppress invalidate */);
-
-		if (this.getDomRef()) {
-			Object.keys(ToolbarStyle).forEach(function(sStyleKey) {
-
-				sTbStyleClass = "sapMTB" + sStyleKey;
-				bEnable = (sStyleKey === sNewStyle);
-				this.$().toggleClass(sTbStyleClass, bEnable);
-			}, this);
-		}
-
 		return this;
 	};
 
@@ -551,14 +444,15 @@ function(
 	 * @protected
 	 */
 	Toolbar.prototype.getTitleControl = function() {
-		if (!sap.m.Title) {
+		var Title = sap.ui.require("sap/m/Title");
+		if (!Title) {
 			return;
 		}
 
 		var aContent = this.getContent();
 		for (var i = 0; i < aContent.length; i++) {
 			var oContent = aContent[i];
-			if (oContent instanceof sap.m.Title && oContent.getVisible()) {
+			if (oContent instanceof Title && oContent.getVisible()) {
 				return oContent;
 			}
 		}
@@ -590,7 +484,7 @@ function(
 	/**
 	 * Sets the HTML tag of the root domref
 	 * @param {string} sTag
-	 * @returns {IBar} this for chaining
+	 * @returns {sap.m.IBar} this for chaining
 	 * @protected
 	 * @function
 	 */
@@ -598,7 +492,7 @@ function(
 
 	/**
 	 * Gets the HTML tag of the root domref
-	 * @returns {IBarHTMLTag} the HTML-tag
+	 * @returns {string} the HTML-tag
 	 * @protected
 	 * @function
 	 */
@@ -606,7 +500,7 @@ function(
 
 	/**
 	 * Sets classes and HTML tag according to the context of the page. Possible contexts are header, footer, subheader
-	 * @returns {IBar} <code>this</code> for chaining
+	 * @returns {sap.m.IBar} <code>this</code> for chaining
 	 * @protected
 	 * @function
 	 */
@@ -639,7 +533,7 @@ function(
 	Toolbar.prototype._getContextOptions  = BarInPageEnabler.prototype._getContextOptions;
 
 	/**
-	 * Gets accessibility role of the Root HTML element.
+	 * Sets accessibility role of the Root HTML element.
 	 *
 	 * @param {string} sRole AccessibilityRole of the root Element
 	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
@@ -654,6 +548,26 @@ function(
 	 * @private
 	 */
 	Toolbar.prototype._getRootAccessibilityRole = BarInPageEnabler.prototype._getRootAccessibilityRole;
+
+
+    /**
+     * Sets accessibility aria-level attribute of the Root HTML element.
+     *
+     * This is only needed if <code>sap.m.Bar</code> has role="heading"
+     * @param {string} sLevel aria-level attribute of the root Element
+     * @returns {sap.m.IBar} <code>this</code> to allow method chaining
+     * @private
+     */
+    Toolbar.prototype._setRootAriaLevel = BarInPageEnabler.prototype._setRootAriaLevel;
+
+    /**
+     * Gets accessibility aria-level attribute of the Root HTML element.
+     *
+     * This is only needed if <code>sap.m.Bar</code> has role="heading"
+     * @returns {string} aria-level
+     * @private
+     */
+    Toolbar.prototype._getRootAriaLevel = BarInPageEnabler.prototype._getRootAriaLevel;
 
 	return Toolbar;
 

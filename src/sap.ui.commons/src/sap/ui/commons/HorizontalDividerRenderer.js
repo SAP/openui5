@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.HorizontalDivider
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 
@@ -17,13 +17,12 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.fw.RenderManager}.
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.fw.RenderManager} oRenderManager The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.fw.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
-	HorizontalDividerRenderer.render = function(oRenderManager, oControl){
-		var rm = oRenderManager;
+	HorizontalDividerRenderer.render = function(rm, oControl){
 		rm.write("<hr");
 		rm.writeControlData(oControl);
 		rm.writeAttribute("role", "separator"); //ARIA

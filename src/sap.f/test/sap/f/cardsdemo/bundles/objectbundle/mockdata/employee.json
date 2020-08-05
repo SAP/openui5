@@ -1,0 +1,17 @@
+{
+	"firstName": "Elena",
+	"lastName": "Petrova",
+	"position": "Sales Executive",
+	"phone": "+1 202 555 5555",
+	"photo": "./images/Elena_Petrova.png",
+	"manager": {
+		"firstName": "John",
+		"lastName": "Miller",
+		"photo": "./images/John_Miller.png"
+	},
+	"company": {
+		"name": "Company A",
+		"address": "481 West Street, Anytown OH 45066, USA",
+		"website": "www.company_a.example.com"
+	}
+}

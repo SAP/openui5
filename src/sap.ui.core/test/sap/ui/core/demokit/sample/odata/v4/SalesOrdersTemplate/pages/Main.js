@@ -1,15 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press"
-],
-function (Opa5, Press) {
+], function (Opa5, Press) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main";
-
-	Opa5.extendConfig({autoWait : true});
 
 	Opa5.createPageObjects({
 		onTheMainPage : {

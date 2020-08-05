@@ -10,6 +10,25 @@
  */
 (function( $, undefined ) {
 
+// ##### BEGIN: MODIFIED BY SAP
+
+// Resetting lazy getters defined by jquery.sap.stubs to prevent them from loading
+// our implementation of the jQuery plugins. This would be caused by $.extend
+// as it first reads the property which triggers our getter.
+// jQuery UI Core will override them with its own implementation.
+
+// sap/ui/dom/jquery/zIndex
+$.fn.zIndex = undefined;
+
+// sap/ui/dom/jquery/Selection
+$.fn.enableSelection = undefined;
+$.fn.disableSelection = undefined;
+
+// sap/ui/dom/jquery/Selectors
+$.expr[ ":" ].focusable = undefined;
+
+// ##### END: MODIFIED BY SAP
+
 var uuid = 0,
 	runiqueId = /^ui-id-\d+$/;
 

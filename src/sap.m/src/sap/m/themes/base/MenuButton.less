@@ -12,12 +12,13 @@
 	text-align: left;
 	padding-right: 2rem;
 	position: relative;
+	padding-left: 0.625rem;
 }
 
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner:not(.sapMBtnText) {
 	padding-right: 1.4375rem;
 }
-	
+
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
 	position: absolute;
 	top: 0;
@@ -44,6 +45,7 @@
 .sapUiSizeCompact {
 	.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner {
 		padding-right: 1.625rem;
+		padding-left: 0.5rem;
 	}
 
 	.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner:not(.sapMBtnText) {
@@ -56,11 +58,6 @@
 		padding-right: 0.5rem;
 		padding-left: 0.375rem;
 	}
-}
-
-//type Default, Transparent(header)
-.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnActive::after {
-	color: @sapUiButtonActiveTextColor;
 }
 
 //type Emphasized
@@ -79,14 +76,23 @@
 	color: @sapUiButtonAcceptTextColor;
 }
 
+//type Attention
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnAttention::after {
+	color: @sapUiButtonAttentionTextColor;
+}
+
 //type Reject
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnReject::after {
 	color: @sapUiButtonRejectTextColor;
 }
 
+//type Default, Transparent(header)
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnActive::after {
+  color: @sapUiButtonActiveTextColor;
+}
+
 //Transparent(footer)
 .sapMIBar-CTX.sapMFooter-CTX .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
-	color: @sapUiContentContrastIconColor;
 	text-shadow: @sapUiButtonEmphasizedTextShadow;
 }
 
@@ -108,6 +114,11 @@
 	border-color:     @sapUiButtonAcceptActiveBorderColor;
 }
 
+.sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnAttention {
+	background-color: @sapUiButtonAttentionActiveBackground;
+	border-color: @sapUiButtonAttentionActiveBorderColor;
+}
+
 .sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnEmphasized {
 	background-color: @sapUiButtonEmphasizedActiveBackground;
 	border-color:     @sapUiButtonEmphasizedActiveBorderColor;
@@ -115,4 +126,16 @@
 
 .sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnIcon {
 	color: @sapUiButtonActiveTextColor;
+}
+
+.sapMMenuBtn .sapMBtn .sapMBtnInner {
+	display: block;
+}
+
+.sapMMenuBtn .sapMBtn:not(.sapMSBArrow) .sapMBtnInner.sapMBtnIconFirst .sapMBtnIcon {
+	padding-right: 0.375rem;
+}
+
+.sapMMenuBtn .sapMBtn .sapMBtnInner.sapMBtnText:not(.sapMBtnIconFirst) .sapMBtnContent{
+	width: 100%;
 }

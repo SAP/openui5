@@ -1,0 +1,45 @@
+/* ================================= */
+/* CSS for control sap.m/ListBase    */
+/* Quartz High Contrast White theme  */
+/* ================================= */
+
+.sapMListHdrText {
+	border-bottom: 0.188rem solid @sapUiGroupTitleBorderColor;
+}
+
+/*Growing feature*/
+
+/*HCB additional styles for Growing feature*/
+.sapMLIBContent > .sapMGrowingListTrigger {
+	box-sizing: border-box;
+	border-radius: 0.375rem;
+	background: @sapUiButtonBackground;
+	border: @sapUiListBorderWidth solid @sapUiButtonBorderColor;
+}
+
+html.sap-desktop .sapMLIBContent > .sapMGrowingListTrigger:hover {
+	background: @sapUiButtonHoverBackground;
+}
+
+html.sap-desktop .sapMGrowingList > .sapMCLI:hover {
+	background: @sapUiListBackground !important;
+}
+
+//Needed to fix the margin collapsing behaviour on safari
+html.sap-desktop .sapMGrowingList > .sapMCLI {
+	padding: 0.25rem;
+}
+
+html.sap-desktop .sapMGrowingList  .sapMCLI.sapMLIB.sapMLIB-CTX:focus{
+	outline:none;
+}
+
+/* avoid double focus borders in IE */
+html.sap-desktop .sapMGrowingList .sapMLIBLegacyOutline:focus::before {
+	border: none;
+}
+
+html.sap-desktop .sapMLIB-CTX:focus .sapMGrowingListTrigger {
+	border: 0.125rem dotted @sapUiContentFocusColor;
+	border-radius: 0;
+}

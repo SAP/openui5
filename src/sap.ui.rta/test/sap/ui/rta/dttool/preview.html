@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>DT Tool Preview</title>
+	<script id="sap-ui-bootstrap"
+            src="../../../../../resources/sap-ui-core.js"
+            data-sap-ui-theme="sap_belize"
+            data-sap-ui-libs="sap.m,sap.ui.codeeditor"
+            data-sap-ui-compatVersion="edge"
+            data-sap-ui-preload="async"
+            data-sap-ui-resourceroots='{
+				"sap.ui.rta.dttool": "./",
+				"sap.m.sample": "./../../../../sap/m/demokit/sample/",
+				"sap.ui.layout.sample": "./../../../../sap/ui/layout/demokit/sample/",
+				"sap.ui.demo.mock": "./../../../../../test-resources/sap/ui/documentation/sdk/",
+				"sap.ui.documentation": "./../../../../../sap/ui/documentation"
+			}'>
+	</script>
+	<script>
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				"sap/ui/core/postmessage/Bus",
+				"sap/ui/rta/dttool/preview"
+			], function (
+				PostMessageBus,
+				Preview
+			) {
+				oPostMessageBus = PostMessageBus.getInstance();
+
+				oPostMessageBus.subscribe("dtTool", "setComponent", Preview.loadComponent, Preview)
+					.subscribe("dtTool", "startRTA", Preview.startRTA, Preview)
+					.subscribe("dtTool", "stopRTA", Preview.stopRTA, Preview)
+					.subscribe("dtTool", "getOutline", Preview.loadOutline, Preview)
+					.subscribe("dtTool", "propertyChange", Preview.propertyChange, Preview)
+					.subscribe("dtTool", "dragStart", Preview.dragStart, Preview)
+					.subscribe("dtTool", "dragEnd", Preview.dragEnd, Preview)
+					.subscribe("dtTool", "editorDTData", Preview.editorDTData, Preview)
+					.subscribe("dtTool", "undo", Preview.undo, Preview)
+					.subscribe("dtTool", "redo", Preview.redo, Preview);
+
+				oPostMessageBus.publish({
+					target : window.parent,
+					origin : window.parent.origin,
+					channelId : "dtTool",
+					eventId : "iFrameReady",
+					data : {}
+				});
+			});
+		});
+	</script>
+</head>
+
+<body class='sapUiBody'>
+	<div id="content"></div>
+	<div id="dragDropContainer" style="display: none;"></div>
+</body>
+
+</html>

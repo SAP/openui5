@@ -2,34 +2,29 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
+sap.ui.define([
+	"sap/ui/test/actions/Action",
+	"sap/ui/thirdparty/jquery"
+], function (Action, jQueryDOM) {
 	"use strict";
 
 	/**
-	 * The Press action is used to simulate a press interaction on a Control's dom ref.
-	 * This will work out of the box for most of the controls (even custom controls).
-	 *
-	 * Here is a List of supported controls (some controls will trigger the press on a specific region):
-	 *
-	 * <ul>
-	 *     <li>sap.m.Button</li>
-	 *     <li>sap.m.Link</li>
-	 *     <li>sap.m.StandardListItem</li>
-	 *     <li>sap.m.IconTabFilter</li>
-	 *     <li>sap.m.Input - Value help</li>
-	 *     <li>sap.m.SearchField - Search Button</li>
-	 *     <li>sap.m.Page - Back Button</li>
-	 *     <li>sap.m.semantic.FullscreenPage - Back Button</li>
-	 *     <li>sap.m.semantic.DetailPage - Back Button</li>
-	 *     <li>sap.m.List - More Button</li>
-	 *     <li>sap.m.Table - More Button</li>
-	 *     <li>sap.m.StandardTile</li>
-	 *     <li>sap.m.ComboBox</li>
-	 *     <li>sap.m.ObjectIdentifier</li>
-	 *     <li>sap.ui.comp.smartfilterbar.SmartFilterBar - Go Button</li>
-	 * </ul>
-	 *
 	 * @class
+	 * The <code>Press</code> action is used to simulate a press interaction with a
+	 * control. Most controls are supported, for example buttons, links, list items,
+	 * tables, filters, and form controls.
+	 *
+	 * The <code>Press</code> action targets a special DOM element representing the
+	 * control. This DOM element can be customized.
+	 *
+	 * For most most controls (even custom ones), the DOM focus reference is an
+	 * appropriate choice. You can choose a different DOM element by specifying its ID
+	 * suffix. You can do this by directly passing the ID suffix to the Press constructor,
+	 * or by defining a control adapter.
+	 *
+	 * There are some basic controls for which OPA5 has defined <code>Press</code> control
+	 * adapters. For more information, see {@link sap.ui.test.actions.Press.controlAdapters}.
+	 *
 	 * @extends sap.ui.test.actions.Action
 	 * @public
 	 * @name sap.ui.test.actions.Press
@@ -44,7 +39,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 
 		init: function () {
 			Action.prototype.init.apply(this, arguments);
-			this.controlAdapters = $.extend(this.controlAdapters, Press.controlAdapters);
+			this.controlAdapters = jQueryDOM.extend(this.controlAdapters, Press.controlAdapters);
 		},
 
 		/**
@@ -60,7 +55,9 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 				oActionDomRef = $ActionDomRef[0];
 
 			if ($ActionDomRef.length) {
-				$.sap.log.debug("Pressed the control " + oControl, this._sLogPrefix);
+				this.oLogger.timestamp("opa.actions.press");
+				this.oLogger.debug("Pressed the control " + oControl);
+
 				this._tryOrSimulateFocusin($ActionDomRef, oControl);
 
 				// the missing events like saptouchstart and tap will be fired by the event simulation
@@ -75,7 +72,27 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	});
 
 	/**
-	 * A map that contains the id suffixes for certain controls of the library.
+	 * A map of ID suffixes for controls that require a special DOM reference for
+	 * <code>Press</code> interaction.
+	 *
+	 * Here is a sublist of supported controls and their <code>Press</code> control adapter:
+	 * <ul>
+	 *  <li>sap.m.ComboBox - Arrow button</li>
+	 *  <li>sap.m.SearchField - Search Button</li>
+	 *  <li>sap.m.Input - Value help</li>
+	 *  <li>sap.m.List - More Button</li>
+	 *  <li>sap.m.Table - More Button</li>
+	 *  <li>sap.m.ObjectIdentifier - Title</li>
+	 *  <li>sap.m.ObjectAttribute - Text</li>
+	 *  <li>sap.m.Page - Back Button</li>
+	 *  <li>sap.m.semantic.FullscreenPage - Back Button</li>
+	 *  <li>sap.m.semantic.DetailPage - Back Button</li>
+	 *  <li>sap.ui.comp.smartfilterbar.SmartFilterBar - Go Button</li>
+	 * </ul>
+	 *
+	 * @since 1.63 a control adapter can also be a function.
+	 * This is useful for controls with different modes where a different control adapter makes sense in different modes.
+	 *
 	 * When you extended a UI5 controls the adapter of the control will be taken.
 	 * If you need an adapter for your own control you can add it here. For example:
 	 * You wrote a control with the namespace my.Control it renders two buttons and you want the press action to press the second one by default.
@@ -120,16 +137,28 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 * @type map
 	 */
 	Press.controlAdapters = {};
-	Press.controlAdapters["sap.m.Input"] = "vhi";
-	Press.controlAdapters["sap.m.SearchField"] = "search";
-	Press.controlAdapters["sap.m.ListBase"] = "trigger";
-	Press.controlAdapters["sap.m.Page"] = "navButton";
-	Press.controlAdapters["sap.m.semantic.FullscreenPage"] = "navButton";
-	Press.controlAdapters["sap.m.semantic.DetailPage"] = "navButton";
-	Press.controlAdapters["sap.m.ComboBox"] = "arrow";
-	Press.controlAdapters["sap.ui.comp.smartfilterbar.SmartFilterBar"] = "btnGo";
-	Press.controlAdapters["sap.m.ObjectAttribute"] = "text";
-	Press.controlAdapters["sap.m.ObjectIdentifier"] = "link";
+	Press.controlAdapters["sap.m.Input"] = "vhi"; // focusDomRef: <input>
+	Press.controlAdapters["sap.m.SearchField"] = "search"; // suffix is the same if refresh button is shown. focusDomRef: <input>
+	Press.controlAdapters["sap.m.ListBase"] = "trigger"; // focusDomRef: <table>
+	Press.controlAdapters["sap.m.Page"] = "navButton"; // focusDomRef: <div> -- root
+	Press.controlAdapters["sap.m.semantic.FullscreenPage"] = "navButton"; // focusDomRef: <div> -- root
+	Press.controlAdapters["sap.m.semantic.DetailPage"] = "navButton"; // focusDomRef: <div> -- root
+	Press.controlAdapters["sap.m.ComboBox"] = "arrow"; // focusDomRef: <input>
+	Press.controlAdapters["sap.ui.comp.smartfilterbar.SmartFilterBar"] = "btnGo"; // always available?
+
+	Press.controlAdapters["sap.m.ObjectAttribute"] = "text"; // suffix is the same in active state. focusDomRef: <div> -- root
+
+	Press.controlAdapters["sap.m.ObjectIdentifier"] = function (oControl) {
+		if (oControl.getTitleActive()) {
+			return "link";
+		} else if (oControl.getTitle()) {
+			return "title";
+		} else if (oControl.getText()) {
+			return "text";
+		} else {
+			return null; // focusDomRef: <div> -- root
+		}
+	};
 
 	return Press;
 

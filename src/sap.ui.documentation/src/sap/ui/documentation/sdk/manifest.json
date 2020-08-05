@@ -1,15 +1,13 @@
 {
-	"_version": "1.8.0",
-
+	"_version": "1.12.0",
 	"sap.app": {
-	"id": "sap.ui.documentation.sdk",
+		"id": "sap.ui.documentation.sdk",
 		"type": "application",
-		"title": "OpenUI5 SDK - Demo Kit v2.0",
+		"title": "OpenUI5 SDK - Demo Kit",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
@@ -26,7 +24,6 @@
 			"phone": true
 		}
 	},
-
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.documentation.sdk.view.App",
@@ -34,7 +31,6 @@
 			"async": true,
 			"id": "app"
 		},
-
 		"dependencies": {
 			"minUI5Version": "1.46.0",
 			"libs": {
@@ -44,336 +40,442 @@
 				"sap.m": {
 					"minVersion": "1.46.0"
 				},
-				"sap.ui.layout" : {
+				"sap.ui.layout": {
 					"minVersion": "1.46.0"
 				},
-				"sap.f" : {
+				"sap.f": {
 					"minVersion": "1.46.0"
 				},
-				"sap.uxap" : {
+				"sap.uxap": {
 					"minVersion": "1.46.0"
 				},
-				"sap.tnt" : {
+				"sap.tnt": {
 					"minVersion": "1.46.0"
 				},
-				"sap.ui.codeeditor" : {
+				"sap.ui.codeeditor": {
 					"minVersion": "1.46.0"
 				}
 			}
 		},
-
 		"contentDensities": {
 			"compact": true,
 			"cozy": true
 		},
-
 		"config": {
 			"docuPath": "./docs/topics/",
 			"exploredURI": "./",
 			"topicHtmlMainDivId": "d4h5-main-container"
 		},
-
 		"routing": {
 			"config": {
-			"routerClass": "sap.ui.documentation.sdk.util.DocumentationRouter",
-			"viewType": "XML",
-			"viewPath": "sap.ui.documentation.sdk.view",
-			"controlId": "splitApp",
-			"controlAggregation": "detailPages",
-			"bypassed": {
-				"target": ["welcome"]
+				"routerClass": "sap.ui.documentation.sdk.util.DocumentationRouter",
+				"viewType": "XML",
+				"viewPath": "sap.ui.documentation.sdk.view",
+				"controlId": "splitApp",
+				"controlAggregation": "detailPages",
+				"bypassed": {
+					"target": [
+						"welcome"
+					]
+				},
+				"async": true,
+				"clearTarget": false
 			},
-			"async": true,
-			"clearTarget" : false
-		},
-
-		"routes": [
-		  {
-			"pattern": "",
-			"name": "welcome",
-			"target": ["welcome"]
-		  },
-		  {
-			"pattern": "controlsMaster",
-			"name": "controlsMaster",
-			"target": ["controlsMaster"]
-		  },
-		  {
-			"pattern": "controls",
-			"name": "controls",
-			"target": ["controlsMaster", "controls"],
-			  "subroutes": [
-				  {
-					  "pattern": "controls/filter/{value}",
-					  "name": "listFilter",
-					  "target": ["controlsMaster", "controls"]
-				  }
-			  ]
-		  },
-		  {
-			"pattern": "group/{id}",
-			"name": "group",
-			"target": ["controlsMaster", "group"]
-		  },
-		  {
-			"pattern": "entity/{id}/samples",
-			"name": "entitySamplesLegacyRoute"
-		  },
-		  {
-			"pattern": "entity/{id}/about",
-			"name": "entityAboutLegacyRoute"
-		  },
-		  {
-			"pattern": "entity/{id}/properties",
-			"name": "entityPropertiesLegacyRoute"
-		  },
-		  {
-			"pattern": "entity/{id}/aggregations",
-			"name": "entityAggregationsLegacyRoute"
-		  },
-		  {
-			"pattern": "entity/{id}/associations",
-			"name": "entityAssociationsLegacyRoute"
-		  },
-		  {
-			"pattern": "entity/{id}/events",
-			"name": "entityEventsLegacyRoute"
-		  },
-		  {
-			"pattern": "entity/{id}/methods",
-			"name": "entityMethodsLegacyRoute"
-		  },
-		  {
-			"pattern": "entity/{id}/:sectionTab:",
-			"name": "entity",
-			"target": ["controlsMaster", "entity"]
-		  },
-		  {
-			"pattern": "sample/{id}/preview",
-			"name": "sample",
-			"target": ["controlsMaster", "sample"]
-		  },
-		  {
-			"pattern": "sample/{id}/code",
-			"name": "code",
-			"target": ["controlsMaster", "code"]
-		  },
-		  {
-			"pattern": "sample/{id}/code/{fileName}",
-			"name": "code_file",
-			"target": ["controlsMaster", "code"]
-		  },
-		  {
-			"pattern": "downloads",
-			"name": "downloads",
-			"target": ["downloads"]
-		  },
-		  {
-			"pattern": "api",
-			"name": "api",
-			"target": ["apiMaster", "apiDetailInitial"]
-		  },
-		  {
-		    "pattern": "api/deprecated",
-			"name": "deprecated",
-			"target": ["apiMaster", "apiDetailDeprecated"]
-		  },
-		  {
-		    "pattern": "api/experimental",
-			"name": "experimental",
-			"target": ["apiMaster", "apiDetailExperimental"]
-		  },
-		  {
-		    "pattern": "api/{id}/:entityType:/:entityId:",
-			"name": "apiId",
-			"target": ["apiMaster", "apiDetail"]
-		  },
-		  {
-			"pattern": "topic",
-			"name": "topic",
-			"target": ["topicMaster", "topicDetailInitial"]
-		  },
-		  {
-			"pattern": "topic/{id}",
-			"name": "topicId",
-			"target": ["topicMaster", "topicDetail"]
-		  },
-		  {
-			"pattern": "demoapps",
-			"name": "demoapps",
-			"target": ["demoApps"]
-		  },
-		  {
-			"pattern": "tools",
-			"name": "tools",
-			"target": ["tools"]
-		  },
-		  {
-			"pattern": "search/{searchParam}",
-			"name": "search",
-			"target": ["searchPage"]
-		  },
-		  {
-			"pattern": "releasenotes.html",
-			"name": "releaseNotes",
-			"target": [
-				"topicMaster",
-				"releaseNotes"
-			]
-		  },
-		  {
-			"pattern": "versioninfo.html",
-			"name": "versionInfo",
-			"target": [
-				"topicMaster",
-				"versionInfo"
-			]
-		  },
-		  {
-			"pattern": "LICENSE.txt",
-			"name": "license",
-			"target": [ "license" ]
-		  },
-		  {
-			"pattern": "docs/guide/{id}",
-			"name": "topicIdLegacyRoute"
-		  },
-		  {
-			"pattern": "docs/api/symbols/{id}",
-			"name": "apiIdLegacyRoute"
-		  }
-		],
-
-		"targets": {
-			"empty": {
-				"viewName": "Empty",
-				"viewLevel": 1,
-				"viewId": "empty",
-				"controlAggregation": "masterPages"
-			},
-			"welcome": {
-				"viewName": "Welcome",
-				"viewLevel": 2,
-				"viewId": "welcome"
-			},
-			"controls": {
-				"viewName": "Controls",
-				"viewLevel": 2,
-				"viewId": "controls"
-			},
-			"controlsMaster": {
-				"viewName": "ControlsMaster",
-				"viewLevel": 1,
-				"viewId": "controlsMaster",
-				"controlAggregation": "masterPages"
-			},
-			"group": {
-				"viewName": "Group",
-				"viewLevel": 2,
-				"viewId": "group"
-			},
-			"entity": {
-				"viewName": "Entity",
-				"viewLevel": 2,
-				"viewId": "entity"
-			},
-			"sample": {
-				"viewName": "Sample",
-				"viewLevel": 2,
-				"viewId": "sample"
-			},
-			"code": {
-				"viewName": "Code",
-				"viewLevel": 2,
-				"viewId": "code",
-				"transition": "flip"
-			},
-			"downloads": {
-				"viewName": "Downloads",
-				"viewLevel": 2,
-				"viewId": "downloads"
-			},
-			"apiMaster": {
-				"viewName": "ApiMaster",
-				"viewLevel": 1,
-				"viewId": "apiMaster",
-				"controlAggregation": "masterPages"
-			},
-			"demoApps": {
-				"viewName": "DemoApps",
-				"viewLevel": 2,
-				"viewId": "demoApps"
-			},
-			"tools": {
-				"viewName": "Tools",
-				"viewLevel": 2,
-				"viewId": "tools"
-			},
-			"apiDetailInitial": {
-				"viewName": "ApiDetailInitial",
-				"viewId": "apiDetailInitial",
-				"viewLevel": 2
-			},
-			"apiDetail": {
-				"viewName": "ApiDetail",
-				"viewId": "apiDetail",
-				"viewLevel": 2
-			},
-			"apiDetailDeprecated": {
-				"viewName": "ApiDetailDeprecated",
-				"viewId": "apiDetailDeprecated",
-				"viewLevel": 2
-			},
-			"apiDetailExperimental": {
-				"viewName": "ApiDetailExperimental",
-				"viewId": "apiDetailExperimental",
-				"viewLevel": 2
-			},
-			"topicMaster": {
-				"viewName": "TopicMaster",
-				"viewLevel": 1,
-				"viewId": "topicMaster",
-				"controlAggregation": "masterPages"
-			},
-			"topicDetailInitial": {
-				"viewName": "TopicDetailInitial",
-				"viewId": "topicDetailInitial",
-				"viewLevel": 2
-			},
-			"topicDetail": {
-				"viewName": "TopicDetail",
-				"viewId": "topicDetail",
-				"viewLevel": 2
-			},
-			"searchPage": {
-				"viewName": "SearchPage",
-				"viewId": "searchPage",
-				"viewLevel": 2,
-				"controlAggregation": "detailPages"
-			},
-			"notFound": {
-				"viewName": "NotFound",
-				"viewId": "notFound"
-			},
-			"releaseNotes": {
-				"viewName": "ReleaseNotes",
-				"viewLevel": 2,
-				"viewId": "releaseNotes",
-				"controlAggregation": "detailPages"
-			},
-		  	"license": {
-				"viewName": "License",
-				"viewLevel": 2,
-				"viewId": "releaseNotes",
-				"controlAggregation": "detailPages"
-			},
-			"versionInfo": {
-				"viewName": "VersionInfo",
-				"viewLevel": 2,
-				"viewId": "versionInfo",
-				"controlAggregation": "detailPages"
+			"routes": [
+				{
+					"pattern": "",
+					"name": "welcome",
+					"target": [
+						"welcome"
+					]
+				},
+				{
+					"pattern": "controlsMaster",
+					"name": "controlsMaster",
+					"target": [
+						"controlsMaster"
+					]
+				},
+				{
+					"pattern": "controls",
+					"name": "controls",
+					"target": [
+						"controlsMaster",
+						"controls"
+					]
+				},
+				{
+				  "pattern": "controls/filter/{value}",
+				  "name": "listFilter",
+				  "target": [
+					"controlsMaster",
+					"controls"
+				  ]
+				},
+				{
+					"pattern": "group/{id}",
+					"name": "group",
+					"target": [
+						"controlsMaster",
+						"group"
+					]
+				},
+				{
+					"pattern": "entity/{id}/samples",
+					"name": "entitySamplesLegacyRoute"
+				},
+				{
+					"pattern": "entity/{id}/about",
+					"name": "entityAboutLegacyRoute"
+				},
+				{
+					"pattern": "entity/{id}/properties",
+					"name": "entityPropertiesLegacyRoute"
+				},
+				{
+					"pattern": "entity/{id}/aggregations",
+					"name": "entityAggregationsLegacyRoute"
+				},
+				{
+					"pattern": "entity/{id}/associations",
+					"name": "entityAssociationsLegacyRoute"
+				},
+				{
+					"pattern": "entity/{id}/events",
+					"name": "entityEventsLegacyRoute"
+				},
+				{
+					"pattern": "entity/{id}/methods",
+					"name": "entityMethodsLegacyRoute"
+				},
+				{
+					"pattern": "topic/a6a78b7e104348b4bb94fb8bcf003480",
+					"name": "ReleaseNotesLegacyRoute"
+				},
+				{
+					"pattern": "entity/{id}/:sectionTab:",
+					"name": "entity",
+					"target": [
+						"controlsMaster",
+						"entity"
+					]
+				},
+				{
+					"pattern": "sample/{id}/preview",
+					"name": "sampleLegacyRoute"
+				},
+				{
+					"pattern": "sample/{id}/code",
+					"name": "codeLegacyRoute"
+				},
+				{
+					"pattern": "sample/{id}/code/{fileName}",
+					"name": "codeFileLegacyRoute"
+				},
+				{
+					"pattern": "entity/{entityId}/sample/{sampleId}",
+					"name": "sample",
+					"target": [
+						"controlsMaster",
+						"sample"
+					]
+				},
+				{
+					"pattern": "entity/{entityId}/sample/{sampleId}/code",
+					"name": "code",
+					"target": [
+						"controlsMaster",
+						"code"
+					]
+				},
+				{
+					"pattern": "entity/{entityId}/sample/{sampleId}/code/:p1:/:p2:/:p3:/:p4:/:p5:/:p6:/:p7:/:p8:/:p9:/:p10:/:p11:/:p12:/:p13:/:p14:/:p15:",
+					"name": "codeFile",
+					"target": [
+						"controlsMaster",
+						"code"
+					]
+				},
+				{
+					"pattern": "downloads",
+					"name": "downloads",
+					"target": [
+						"downloads"
+					]
+				},
+				{
+					"pattern": "api",
+					"name": "api",
+					"target": [
+						"apiMaster",
+						"apiDetailInitial"
+					]
+				},
+				{
+					"pattern": "api/deprecated",
+					"name": "deprecated",
+					"target": [
+						"apiMaster",
+						"apiDetailDeprecated"
+					]
+				},
+				{
+					"pattern": "api/experimental",
+					"name": "experimental",
+					"target": [
+						"apiMaster",
+						"apiDetailExperimental"
+					]
+				},
+				{
+					"pattern": "api/since",
+					"name": "since",
+					"target": [
+						"apiMaster",
+						"apiDetailSince"
+					]
+				},
+				{
+					"pattern": "api/{id}/:p1:/:p2:/:p3:/:p4:/:p5:/:p6:/:p7:/:p8:/:p9:/:p10:/:p11:/:p12:/:p13:/:p14:/:p15:",
+					"name": "apiSpecialRoute",
+					"target": [
+						"apiMaster",
+						"apiDetail"
+					]
+				},
+				{
+					"pattern": "api/{id}#:entityType:/:entityId:",
+					"name": "apiId",
+					"target": [
+						"apiMaster",
+						"apiDetail"
+					]
+				},
+				{
+					"pattern": "topic",
+					"name": "topic",
+					"target": [
+						"topicMaster",
+						"topicDetailInitial"
+					]
+				},
+				{
+					"pattern": "topic/{id}",
+					"name": "topicId",
+					"target": [
+						"topicMaster",
+						"topicDetail"
+					]
+				},
+				{
+					"pattern": "topic/{id}/{subId}",
+					"name": "subTopicId",
+					"target": [
+						"topicMaster",
+						"topicDetail"
+					]
+				},
+				{
+					"pattern": "demoapps",
+					"name": "demoapps",
+					"target": [
+						"demoApps"
+					]
+				},
+				{
+					"pattern": "tools",
+					"name": "tools",
+					"target": [
+						"tools"
+					]
+				},
+				{
+					"pattern": "search/{searchParam}",
+					"name": "search",
+					"target": [
+						"searchPage"
+					]
+				},
+				{
+					"pattern": "releasenotes.html",
+					"name": "releaseNotes",
+					"target": [
+						"topicMaster",
+						"releaseNotes"
+					]
+				},
+				{
+					"pattern": "versioninfo.html",
+					"name": "versionInfo",
+					"target": [
+						"topicMaster",
+						"versionInfo"
+					]
+				},
+				{
+					"pattern": "LICENSE.txt",
+					"name": "license",
+					"target": [
+						"license"
+					]
+				},
+				{
+					"pattern": "TermsOfUse.txt",
+					"name": "termsOfUse",
+					"target": [
+						"termsOfUse"
+					]
+				},
+				{
+					"pattern": "docs/guide/{id}",
+					"name": "topicIdLegacyRoute"
+				},
+				{
+					"pattern": "docs/api/symbols/{id}",
+					"name": "apiIdLegacyRoute"
+				}
+			],
+			"targets": {
+				"empty": {
+					"viewName": "Empty",
+					"viewLevel": 1,
+					"viewId": "empty",
+					"controlAggregation": "masterPages"
+				},
+				"welcome": {
+					"viewName": "Welcome",
+					"viewLevel": 2,
+					"viewId": "welcome"
+				},
+				"controls": {
+					"viewName": "Controls",
+					"viewLevel": 2,
+					"viewId": "controls"
+				},
+				"controlsMaster": {
+					"viewName": "ControlsMaster",
+					"viewLevel": 1,
+					"viewId": "controlsMaster",
+					"controlAggregation": "masterPages"
+				},
+				"group": {
+					"viewName": "Group",
+					"viewLevel": 2,
+					"viewId": "group"
+				},
+				"entity": {
+					"viewName": "Entity",
+					"viewLevel": 2,
+					"viewId": "entity"
+				},
+				"sample": {
+					"viewName": "Sample",
+					"viewLevel": 2,
+					"viewId": "sample"
+				},
+				"code": {
+					"viewName": "Code",
+					"viewLevel": 2,
+					"viewId": "code",
+					"transition": "flip"
+				},
+				"downloads": {
+					"viewName": "Downloads",
+					"viewLevel": 2,
+					"viewId": "downloads"
+				},
+				"apiMaster": {
+					"viewName": "ApiMaster",
+					"viewLevel": 1,
+					"viewId": "apiMaster",
+					"controlAggregation": "masterPages"
+				},
+				"demoApps": {
+					"viewName": "DemoApps",
+					"viewLevel": 2,
+					"viewId": "demoApps"
+				},
+				"tools": {
+					"viewName": "Tools",
+					"viewLevel": 2,
+					"viewId": "tools"
+				},
+				"apiDetailInitial": {
+					"viewName": "ApiDetailInitial",
+					"viewId": "apiDetailInitial",
+					"viewLevel": 2
+				},
+				"apiDetail": {
+					"viewName": "ApiDetail",
+					"viewId": "apiDetail",
+					"viewLevel": 2
+				},
+				"apiDetailDeprecated": {
+					"viewName": "ApiDetailDeprecated",
+					"viewId": "apiDetailDeprecated",
+					"viewLevel": 2
+				},
+				"apiDetailExperimental": {
+					"viewName": "ApiDetailExperimental",
+					"viewId": "apiDetailExperimental",
+					"viewLevel": 2
+				},
+				"apiDetailSince": {
+					"viewName": "ApiDetailSince",
+					"viewId": "apiDetailSince",
+					"viewLevel": 2
+				},
+				"topicMaster": {
+					"viewName": "TopicMaster",
+					"viewLevel": 1,
+					"viewId": "topicMaster",
+					"controlAggregation": "masterPages"
+				},
+				"topicDetailInitial": {
+					"viewName": "TopicDetailInitial",
+					"viewId": "topicDetailInitial",
+					"viewLevel": 2
+				},
+				"topicDetail": {
+					"viewName": "TopicDetail",
+					"viewId": "topicDetail",
+					"viewLevel": 2
+				},
+				"searchPage": {
+					"viewName": "SearchPage",
+					"viewId": "searchPage",
+					"viewLevel": 2,
+					"controlAggregation": "detailPages"
+				},
+				"notFound": {
+					"viewName": "NotFound",
+					"viewId": "notFound"
+				},
+				"releaseNotes": {
+					"viewName": "ReleaseNotes",
+					"viewLevel": 2,
+					"viewId": "releaseNotes",
+					"controlAggregation": "detailPages"
+				},
+				"license": {
+					"viewName": "License",
+					"viewLevel": 2,
+					"viewId": "releaseNotes",
+					"controlAggregation": "detailPages"
+				},
+				"termsOfUse": {
+					"viewName": "TermsOfUse",
+					"viewLevel": 2,
+					"viewId": "termsOfUse",
+					"controlAggregation": "detailPages"
+				},
+				"versionInfo": {
+					"viewName": "VersionInfo",
+					"viewLevel": 2,
+					"viewId": "versionInfo",
+					"controlAggregation": "detailPages"
+				}
 			}
-		}
 		}
 	}
 }

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define("sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils",[
+sap.ui.define([
 	"sap/m/MessagePopoverItem",
 	"sap/m/MessagePopover"],
 	function (MessagePopoverItem, MessagePopover) {
@@ -68,9 +68,9 @@ sap.ui.define("sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils",[
 			if (ErrorUtils._messagesModel) {
 				var sMessages = ErrorUtils._messagesModel.getData();
 				sMessages.push({
-					"type": sType || "Information",
-					"title": sTitle || "",
-					"description": sDescription || ""
+					type: sType || "Information",
+					title: sTitle || "",
+					description: sDescription || ""
 				});
 				ErrorUtils._messagesModel.setData(sMessages);
 				// force update bindings
@@ -80,4 +80,4 @@ sap.ui.define("sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils",[
 		};
 
 		return ErrorUtils;
-});
+	});

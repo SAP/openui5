@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-  'jquery.sap.global',
-  'sap/ui/base/Object'
-],function($, Ui5Object) {
+  'sap/ui/test/_OpaLogger',
+  'sap/ui/base/Object',
+  'sap/ui/thirdparty/jquery'
+],function(_OpaLogger, Ui5Object, $) {
   "use strict";
 
-  var oLogger = $.sap.log.getLogger("sap.ui.test.SampleOpaExtension",
-    $.sap.log.Level.DEBUG);
+  var oLogger = _OpaLogger.getLogger("sap.ui.test.SampleOpaExtension");
 
   var Extension = Ui5Object.extend("sap.ui.test.SampleOpaExtension", {
     metadata : {
@@ -46,7 +46,7 @@ sap.ui.define([
 
           return deferred.promise();
         }
-      }
+      };
     }
   });
 

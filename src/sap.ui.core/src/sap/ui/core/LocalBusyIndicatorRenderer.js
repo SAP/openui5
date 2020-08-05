@@ -10,7 +10,9 @@ sap.ui.define(function() {
 	 * @namespace
 	 * @alias sap.ui.core.LocalBusyIndicatorRenderer
 	 */
-	var LocalBusyIndicatorRenderer = {};
+	var LocalBusyIndicatorRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided
@@ -24,16 +26,13 @@ sap.ui.define(function() {
 	 *            be rendered
 	 */
 	LocalBusyIndicatorRenderer.render = function(oRm, oControl) {
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-
-		oRm.addClass("sapUiLocalBusyIndicator");
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("div", oControl);
+		oRm.class("sapUiLocalBusyIndicator");
+		oRm.openEnd();
 
 		fnRenderFlickerDivs(oRm, oControl);
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	var fnRenderFlickerDivs = function(oRm, oControl) {
@@ -41,23 +40,18 @@ sap.ui.define(function() {
 		var sIdAnimation = sId + "-animation";
 		var aBoxEnum = [ "-leftBox", "-middleBox", "-rightBox" ];
 
-		oRm.write('<div');
-		oRm.writeAttribute('id', sIdAnimation);
-		oRm.addClass("sapUiLocalBusyIndicatorAnimation");
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart('div', sIdAnimation);
+		oRm.class("sapUiLocalBusyIndicatorAnimation");
+		oRm.openEnd();
 
 		for ( var i = 0; i < aBoxEnum.length; i++) {
-			oRm.write('<div');
-			oRm.addClass("sapUiLocalBusyIndicatorBox");
-			oRm.writeClasses();
-			oRm.writeAttribute("id", sId + aBoxEnum[i]);
-			oRm.write(">");
-			oRm.write("</div>");
-
+			oRm.openStart('div', sId + aBoxEnum[i]);
+			oRm.class("sapUiLocalBusyIndicatorBox");
+			oRm.openEnd();
+			oRm.close("div");
 		}
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return LocalBusyIndicatorRenderer;

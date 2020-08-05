@@ -1,0 +1,94 @@
+<mvc:View
+	controllerName="sap.ui.fl.support.apps.uiFlexibilityDiagnostics.controller.Root"
+	xmlns="sap.suite.ui.commons.networkgraph"
+	xmlns:unified="sap.ui.unified"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:layout="sap.suite.ui.commons.networkgraph.layout"
+	displayBlock="true">
+	<m:App>
+		<m:Page
+				title="UI Flexibility Diagnostics">
+			<m:content>
+				<m:FlexBox
+						fitContainer="true"
+						renderType="Bare"
+						wrap="Wrap"
+						id="graphWrapper">
+					<m:items>
+						<Graph
+								nodes="{selectedData>/nodes}"
+								lines="{selectedData>/lines}"
+								groups="{selectedData>/groups}"
+								renderType="Svg"
+								id="graph">
+							<statuses>
+								<Status key="CustomNotApplicable" title="notApplicable"
+										backgroundColor="sapUiChartSequence1"
+										legendColor="sapUiChartSequence1"/>
+							</statuses>
+							<layoutData>
+								<m:FlexItemData
+										growFactor="1"
+										shrinkFactor="1"
+										baseSize="0%"
+										minWidth="300px"/>
+							</layoutData>
+							<layoutAlgorithm>
+								<layout:LayeredLayout
+										mergeEdges="0"
+										nodeSpacing="40" />
+							</layoutAlgorithm>
+							<nodes>
+								<Node
+										key="{selectedData>key}"
+										title="{selectedData>title}"
+										statusIcon="{selectedData>variantIcon}"
+										icon="{selectedData>icon}"
+										group="{selectedData>group}"
+										attributes="{path:'selectedData>attributes', templateShareable:true}"
+										shape="{selectedData>shape}"
+										status="{parts:['selectedData>key','selectedData>/appliedChanges','selectedData>/failedChanges','selectedData>/notApplicableChanges'], formatter: '.formatStatus'}"
+										showActionLinksButton="false">
+									<attributes>
+										<ElementAttribute
+												label="{selectedData>label}"
+												value="{selectedData>value}"/>
+									</attributes>
+								</Node>
+							</nodes>
+							<lines>
+								<Line
+									  from="{selectedData>from}"
+									  to="{selectedData>to}"
+									  status="{selectedData>status}">
+								</Line>
+							</lines>
+							<groups>
+								<Group key="{selectedData>key}"
+									   title="{selectedData>title}">
+								</Group>
+							</groups>
+						</Graph>
+						<GraphMap
+								id="map"
+								graph="graph">
+						</GraphMap>
+					</m:items>
+				</m:FlexBox>
+			</m:content>
+			<m:footer>
+				<m:Toolbar>
+					<m:ToolbarSpacer/>
+					<unified:FileUploader
+						uploadUrl = ""
+						buttonText = "Upload Local File"
+						fileType = "json"
+						buttonOnly = "true"
+						icon = "sap-icon://upload"
+						change = ".loadFile" />
+				</m:Toolbar>
+			</m:footer>
+		</m:Page>
+	</m:App>
+</mvc:View>

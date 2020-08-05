@@ -1,27 +1,33 @@
 sap.ui.define([
-	'jquery.sap.global', './Formatter', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/m/MessageToast'
-], function(jQuery, Formatter, Controller, JSONModel, MessageToast) {
+	'sap/base/util/deepExtend',
+	'./Formatter',
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel',
+	'sap/m/ColumnListItem',
+	'sap/m/Input',
+	'sap/m/MessageToast'
+], function(deepExtend, Formatter, Controller, JSONModel, ColumnListItem, Input, MessageToast) {
 	"use strict";
 
 	var TableController = Controller.extend("sap.m.sample.TableEditable.Table", {
 
 		onInit: function(evt) {
-			this.oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.oTable = this.byId("idProductsTable");
 			this.getView().setModel(this.oModel);
 			this.oReadOnlyTemplate = this.byId("idProductsTable").removeItem(0);
 			this.rebindTable(this.oReadOnlyTemplate, "Navigation");
-			this.oEditableTemplate = new sap.m.ColumnListItem({
+			this.oEditableTemplate = new ColumnListItem({
 				cells: [
-					new sap.m.Input({
+					new Input({
 						value: "{Name}"
-					}), new sap.m.Input({
+					}), new Input({
 						value: "{Quantity}",
 						description: "{UoM}"
-					}), new sap.m.Input({
+					}), new Input({
 						value: "{WeightMeasure}",
 						description: "{WeightUnit}"
-					}), new sap.m.Input({
+					}), new Input({
 						value: "{Price}",
 						description: "{CurrencyCode}"
 					})
@@ -33,12 +39,13 @@ sap.ui.define([
 			this.oTable.bindItems({
 				path: "/ProductCollection",
 				template: oTemplate,
+				templateShareable: true,
 				key: "ProductId"
 			}).setKeyboardMode(sKeyboardMode);
 		},
 
 		onEdit: function() {
-			this.aProductCollection = jQuery.extend(true, [], this.oModel.getProperty("/ProductCollection"));
+			this.aProductCollection = deepExtend([], this.oModel.getProperty("/ProductCollection"));
 			this.byId("editButton").setVisible(false);
 			this.byId("saveButton").setVisible(true);
 			this.byId("cancelButton").setVisible(true);
@@ -68,6 +75,11 @@ sap.ui.define([
 			this.aProductCollection = [];
 			this.oEditableTemplate.destroy();
 			this.oModel.destroy();
+		},
+
+		onPaste: function(oEvent) {
+			var aData = oEvent.getParameter("data");
+			MessageToast.show("Pasted Data: " + aData);
 		}
 	});
 

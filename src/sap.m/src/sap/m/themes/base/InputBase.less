@@ -3,53 +3,189 @@
 /* Base theme                       */
 /* ================================ */
 
+@_sap_m_InputBase_InnerMinWidth: 3rem;
+@_sap_m_InputBase_InnerPadding: 0 0.75rem;
+@_sap_m_InputBase_Height: 2.5rem;
+@_sap_m_InputBase_DisabledOpacity: 0.5;
+@_sap_m_InputBase_IconLineHeight: 2.375rem;
+@_sap_m_InputBase_IconWidth: 2.375rem;
+@_sap_m_InputBase_Compact_IconWidth: 2rem;
+@_sap_m_InputBase_IconMinWidth: 2.375rem;
+@_sap_m_InputBaseWrapper_Sum_Border: 0.125rem;
+@_sap_m_InputBase_InnerMinWidth_Compact: 2rem;
+@_sap_m_InputBase_Compact_InnerPadding: 0 0.5rem;
+@_sap_m_InputBase_Compact_Height: 1.625rem;
+
+/*MIN-WIDTH variables*/
+/* rounding values to 2 symbols, because of IE and Edge */
+@_InputBase_Control_MinWidth: round((@_sap_m_InputBase_InnerMinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_InputBase_Control_OneIcon_MinWidth: round((@_InputBase_Control_MinWidth + @_sap_m_InputBase_IconWidth), 2);
+@_InputBase_Control_TwoIcons_MinWidth: round((@_InputBase_Control_MinWidth + @_sap_m_InputBase_IconWidth * 2), 2);
+@_InputBase_Control_State_MinWidth: round((@_InputBase_Control_MinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_InputBase_Control_TwoIcons_State_MinWidth: round((@_InputBase_Control_TwoIcons_MinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_InputBase_Control_OneIcon_State_MinWidth: round((@_InputBase_Control_OneIcon_MinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+
+@_InputBase_Control_MinWidth_Compact: round((@_sap_m_InputBase_InnerMinWidth_Compact + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_InputBase_Control_OneIcon_MinWidth_Compact: round((@_InputBase_Control_MinWidth_Compact + @_sap_m_InputBase_Compact_IconWidth), 2);
+@_InputBase_Control_TwoIcons_MinWidth_Compact: round((@_InputBase_Control_MinWidth_Compact + @_sap_m_InputBase_Compact_IconWidth * 2), 2);
+@_InputBase_Control_State_MinWidth_Compact: round((@_InputBase_Control_MinWidth_Compact + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_InputBase_Control_TwoIcons_State_MinWidth_Compact: round((@_InputBase_Control_TwoIcons_MinWidth_Compact + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_InputBase_Control_OneIcon_State_MinWidth_Compact: round((@_InputBase_Control_OneIcon_MinWidth_Compact + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+
 .sapMInputBase {
-	height: 3rem;
+	height: @_sap_m_InputBase_Height;
 	background: transparent;
 	position: relative;
 	display: inline-block;
 	vertical-align: top;
 	outline: none;
-}
-
-.sapMInputBaseWidthPadding {
-	padding: 0.25rem 0;
-}
-
-.sapMInputBaseInner {
-	color: @sapUiFieldTextColor;
-	background: @sapUiFieldBackground;
-	border: 1px solid @sapUiFieldBorderColor;
-	-webkit-appearance: none;
-
-	-moz-appearance: textfield;
-	font-size: @sapMFontMediumSize;
-	font-family: @sapUiFontFamily;
-	line-height: normal;
-
-	padding: 0 0.75rem;
-	height: 100%;
-	box-sizing: border-box;
-}
-
-.sapMInputDivWrapper {
-	position: relative;
-	display: inline-block;
-	border-radius: 0;
-	vertical-align: top;
-	margin: 0;
-	height: 2.5rem;
-	width: 100%;
-}
-
-.sapMInputBase,
-.sapMInputBasePlaceholder {
 	box-sizing: border-box;
 	line-height: 0;
 }
 
-.sapMInputBaseState .sapMInputDivWrapper .sapMInputValHelp{
-	top: 0.1rem;
+.sapMInputBaseHeightMargin {
+	margin: 0.25rem 0;
+}
+
+/* handle min-width calculation */
+.sapMInputBaseHasEndIcons, .sapMInputBaseHasBeginIcons {
+	.sapMInputBaseContentWrapper {
+		min-width: @_InputBase_Control_OneIcon_MinWidth;
+		&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
+			min-width: @_InputBase_Control_OneIcon_State_MinWidth;
+		}
+	}
+}
+
+.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons {
+	.sapMInputBaseContentWrapper {
+		min-width: @_InputBase_Control_TwoIcons_MinWidth;
+		&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
+			min-width: @_InputBase_Control_TwoIcons_State_MinWidth;
+		}
+	}
+}
+
+.sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) {
+	.sapMInputBaseContentWrapper {
+		min-width: @_InputBase_Control_MinWidth;
+		&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
+			min-width: @_InputBase_Control_State_MinWidth;
+		}
+	}
+}
+
+.sapMInputBaseInner {
+	background: transparent;
+	border: none;
+	font-style: normal;
+	-webkit-appearance: none;
+	-moz-appearance: textfield;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	line-height: normal;
+	padding: @_sap_m_InputBase_InnerPadding;
+	height: 100%;
+	box-sizing: border-box;
+	min-width: @_sap_m_InputBase_InnerMinWidth;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: inherit;
+
+	// We need to reset the line-height in IE as the inherited "normal" is not properly
+	// handled when the focus is on the input on the initial loading of the application
+	html[data-sap-ui-browser*='ie'] & {
+		line-height: 0;
+	}
+}
+
+.sapMInputBaseReadonly .sapMInputBaseIconContainer {
+	height: 0;
+}
+
+.sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) .sapMInputBaseInner,
+.sapMInputBaseNoWidth .sapMInputBaseInner {
+	width: 100%;
+}
+
+.sapMInputBaseInner {
+	.sapMInputBaseHasEndIcons &,
+	.sapMInputBaseHasBeginIcons & {
+		width: calc(~'100% - @{_sap_m_InputBase_IconWidth}');
+	}
+
+	.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons & {
+		width: calc(~'100% - @{_sap_m_InputBase_IconWidth}*2');
+	}
+}
+
+.sapMInputBaseContentWrapper {
+	height: 100%;
+	box-sizing: border-box;
+	display: inline-block;
+	position: relative;
+	overflow: hidden;
+	border-radius: 0;
+	vertical-align: middle;
+	margin: 0;
+}
+
+.sapMInputBaseIconContainer {
+	display: inline-block;
+	vertical-align: inherit;
+	height: 100%;
+	width: auto;
+	outline: none;
+}
+
+.sapMInputBaseHasBeginIcons .sapMInputBaseInner {
+	padding-left: 0.25rem;
+}
+
+.sapMInputBaseHasEndIcons .sapMInputBaseInner {
+	padding-right: 0.25rem;
+}
+
+.sapMInputBaseIcon {
+	width: @_sap_m_InputBase_IconWidth;
+	min-width: @_sap_m_InputBase_IconMinWidth;
+	height: 100%;
+	line-height: @_sap_m_InputBase_IconLineHeight;
+	cursor: pointer;
+	background: transparent;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.sapMFocus {
+	& .sapMInputBaseContentWrapper {
+		outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		outline-offset: -3px;
+	}
+	&.sapMInputBaseState .sapMInputBaseContentWrapper:not(.sapMInputBaseContentWrapperSuccess) {
+		outline-offset: -4px;
+	}
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMFocus .sapMInputBaseContentWrapper {
+		outline: none;
+
+		&:not(.sapMInputBaseDisabledWrapper)::before {
+			content: " ";
+			position: absolute;
+			top: 1px;
+			left: 1px;
+			right: 1px;
+			bottom: 1px;
+			border: 2px dashed @sapUiContentFocusColor;
+			pointer-events: none;
+			z-index: 1;
+		}
+	}
 }
 
 .sapMInputBaseInner::-webkit-input-placeholder {
@@ -65,33 +201,6 @@
 .sapMInputBaseInner:-ms-input-placeholder {
 	font-size: @sapMFontMediumSize;
 	font-style: italic;
-}
-
-.sapMInputBasePlaceholder {
-	font-size: @sapMFontMediumSize;
-	color: @sapUiFieldPlaceholderTextColor;
-	cursor: text;
-	position: absolute;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
-	font-style: italic;
-	line-height: 2.5rem;
-	padding: 0 0.75rem;
-	-ms-user-select: none;
-	user-select: none;
-	z-index: 2;
-	pointer-events: none;
-}
-
-.sapMInputBaseState .sapMInputBaseInner.sapMInputBaseStateInner,
-.sapMInputBaseStateInner {
-	border-width: 2px;
-}
-
-.sapMInputBaseInner,
-.sapMInputBasePlaceholder {
-	width: 100%;	/* fit the parents(sapMInputBase) width */
 }
 
 .sapMInputBaseInner::-webkit-outer-spin-button,
@@ -105,19 +214,21 @@
 	outline-width: 0;
 }
 
-/* remove user agent pseudo-element clear button (IE specifix) */
+/* remove user agent pseudo-element clear button (IE specifix) */ // TODO remove after the end of support for Internet Explorer
 .sapMInputBaseInner::-ms-clear {
-
 	/* note: don't use display: none; see BCP 1570024996 */
 	height: 0;
 }
 
-.sapMPointer > .sapMInputBaseInner {
+.sapMPointer>.sapMInputBaseInner {
 	cursor: pointer;
 }
 
 .sapMInputBaseDisabled {
-	opacity: 0.5;
+	opacity: @_sap_m_InputBase_DisabledOpacity;
+	.sapMInputBaseIcon {
+		cursor: default;
+	}
 }
 
 .sapMInputBaseInner[placeholder] {
@@ -126,7 +237,8 @@
 
 .sapMInputBaseInner::-webkit-input-placeholder {
 	color: @sapUiFieldPlaceholderTextColor;
-	text-overflow: ellipsis !important; /* important is necessary to overwrite inline style of shadow dom */
+	text-overflow: ellipsis !important;
+	/* important is necessary to overwrite inline style of shadow dom */
 }
 
 .sapMInputBaseInner::-moz-placeholder {
@@ -137,41 +249,63 @@
 	color: @sapUiFieldPlaceholderTextColor;
 }
 
-.sapMInputBaseInner:invalid {
+.sapMInputBaseInner[dir="rtl"]::-webkit-input-placeholder {
+	padding-right: 0.125rem;
+	/* important text dir set to rtl causes some characters to get cut off */
+}
 
+.sapMInputBaseInner[dir="rtl"]::-moz-placeholder {
+	padding-right: 0.125rem;
+	/* important text dir set to rtl causes some characters to get cut off */
+}
+
+.sapMInputBaseInner[dir="rtl"]:-ms-input-placeholder {
+	padding-right: 0.125rem;
+	/* important text dir set to rtl causes some characters to get cut off */
+}
+
+input.sapMInputBaseInner:invalid {
 	/* disable native browser input validation visualization e.g. for type email or number */
 	box-shadow: none;
 }
 
-.sapMInputBaseErrorInner {
-	background: @sapUiFieldInvalidBackground;
-	border-color: @sapUiFieldInvalidColor;
-}
+/*read only*/
 
-.sapMInputBaseReadonlyInner {
+.sapMInputBaseReadonly .sapMInputBaseContentWrapper {
 	border-color: @sapUiFieldReadOnlyBorderColor;
 	background: @sapUiFieldReadOnlyBackground;
 }
 
-.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):focus {
+.sapMInputBaseInner:not(.sapMInputBaseReadonlyWrapper):not(.sapMInputBaseContentWrapperState):focus {
 	border-color: @sapUiFieldFocusBorderColor;
 }
 
-.sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):hover {
-	background: @sapUiFieldHoverBackground;
-	border-color: @sapUiFieldHoverBorderColor;
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMFocus .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper) {
+		&::before {
+			border: @sapUiContentFocusWidth dashed @sapUiContentFocusColor;
+		}
+	}
 }
 
-.sapMILI-CTX .sapMInputDivWrapper,
+.sapMInputBaseContentWrapper:not(.sapMInputBaseReadonlyWrapper):not(.sapMInputBaseContentWrapperState):not(.sapMInputBaseDisabledWrapper) {
+	&:hover {
+		background: @sapUiFieldHoverBackground;
+		border-color: @sapUiFieldHoverBorderColor;
+	}
+	&:active {
+		background: @sapUiFieldHoverBackground;
+		border-color: @sapUiFieldHoverBorderColor;
+	}
+}
+
+.sapMILI-CTX .sapMInputBaseContentWrapper,
 .sapMILI-CTX .sapMInputBaseInner,
 .sapMILI-CTX .sapMInputBaseDisabled .sapMInputBaseInner,
-.sapMILI-CTX .sapMInputBaseReadonlyInner .sapMInputBaseInner {
+.sapMILI-CTX .sapMInputBaseReadonlyWrapper .sapMInputBaseInner {
 	text-align: right;
 	background: transparent;
-}
-
-.sapMILI-CTX .sapMInputBasePlaceholder {
-	text-align: right;
 }
 
 .sapMLIBActive .sapMInputBaseInner {
@@ -184,69 +318,108 @@
 }
 
 /* Compact size */
+
 .sapUiSizeCompact {
-
-	.sapMInputBase,
-	.sapMInputBasePlaceholder {
-		line-height: 1rem;
-	}
 	.sapMInputBase {
-		height: 2rem;
+		line-height: 1rem;
+		height: @_sap_m_InputBase_Compact_Height;
 	}
 
-	.sapMInputDivWrapper {
-		height: 1.625rem;
+	.sapMInputBaseContentWrapper {
+		height: @_sap_m_InputBase_Compact_Height;
 	}
 
 	.sapMInputBaseInner {
-		padding: 0 0.5rem
+		padding: @_sap_m_InputBase_Compact_InnerPadding;
+		min-width: @_sap_m_InputBase_InnerMinWidth_Compact;
 	}
 
-	.sapMInputBasePlaceholder {
-		line-height: 1.625rem;
-		padding: 0 0.5rem;
+	.sapMInputBaseHasEndIcons .sapMInputBaseInner,
+	.sapMInputBaseHasBeginIcons .sapMInputBaseInner {
+		width: calc(~'100% - @{_sap_m_InputBase_Compact_IconWidth}');
 	}
-}
 
-.sapUiSizeCompact .sapMInputBaseWidthPadding {
-	padding: 0.1875rem 0;
-}
+	.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons .sapMInputBaseInner {
+		width: calc(~'100% - @{_sap_m_InputBase_Compact_IconWidth}*2');
+	}
 
-/* Condensed size */
-.sapUiSizeCondensed .sapUiTableCell {
-	.sapMInputBase {
-		height: 1.375rem; /* + 2*1px padding = 1.5rem */
-		padding: 0 0.0625rem; /* 1px padding only */
+	.sapMInputBaseIcon {
+		width: @_sap_m_InputBase_Compact_IconWidth;
+		min-width: 2rem;
+		line-height: 1.5rem;
+	}
 
-		.sapMInputValHelp {
-			top: 0;
+	.sapMInputBaseContentWrapper.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) .sapMInputBaseIcon {
+		line-height: 1.375rem;
+	}
+
+	.sapMInputBaseHasBeginIcons .sapMInputBaseInner {
+		padding-left: 0.25rem;
+	}
+
+	.sapMInputBaseHasEndIcons .sapMInputBaseInner {
+		padding-right: 0.25rem;
+	}
+
+	/* handle min-width calculation */
+	.sapMInputBaseHasEndIcons, .sapMInputBaseHasBeginIcons {
+		.sapMInputBaseContentWrapper {
+			min-width: @_InputBase_Control_OneIcon_MinWidth_Compact;
+			&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
+				min-width: @_InputBase_Control_OneIcon_State_MinWidth_Compact;
+			}
 		}
 	}
 
-	.sapMInputBaseInner:not(.sapMInputBaseStateInner) {
+	.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons {
+		.sapMInputBaseContentWrapper {
+			min-width: @_InputBase_Control_TwoIcons_MinWidth_Compact;
+			&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
+				min-width: @_InputBase_Control_TwoIcons_State_MinWidth_Compact;
+			}
+		}
+	}
+
+	.sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) {
+		.sapMInputBaseContentWrapper {
+			min-width: @_InputBase_Control_MinWidth_Compact;
+			&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
+				min-width: @_InputBase_Control_State_MinWidth_Compact;
+			}
+		}
+	}
+
+	.sapMInputBaseHeightMargin {
+		margin: 0.1875rem 0;
+	}
+}
+
+/* Condensed size */
+
+.sapUiSizeCondensed .sapUiTableCell {
+	.sapMInputBase {
+		height: 1.375rem;
+		/* + 2*1px padding = 1.5rem */
+		padding: 0 0.0625rem;
+		/* 1px padding only */
+	}
+	.sapMInputBaseHeightMargin {
+		margin: 0;
+	}
+	.sapMInputBaseInner:not(.sapMInputBaseContentWrapperState) {
 		border-color: transparent;
 	}
-
-	.sapMInputDivWrapper {
+	.sapMInputBaseContentWrapper:not(.sapMInputBaseContentWrapperSuccess) {
 		height: 1.375rem;
-	}
-
-	.sapMInputBasePlaceholder,
-	.sapMInputDescription  span {
-		line-height: 1.375rem;
 	}
 }
 
 /* Input selection fix -
  * Due to the fact that the CSS parsing rules require dropping the whole rule when encountering an invalid
  * pseudo-element, two separate rules must be written */
+
 .sapMInputBaseInner {
-
-	&::selection {
-		background: @sapUiSelected;
-		color: @sapUiContentContrastTextColor;
-	}
-
+	&::selection,
 	&::-moz-selection {
 		background: @sapUiSelected;
 		color: @sapUiContentContrastTextColor;
@@ -257,10 +430,12 @@
  * The browser renders the selection background with 50% opacity by default.
  * The solution is to use fade with a value for alpha 99 if it's set 100 the browser ignores it.
  */
+
 html[data-sap-ui-browser^="sf"],
 html[data-sap-ui-browser^="cr"] {
 	.sapMInputBaseInner::selection {
 		background: fade(@sapUiSelected, 99);
+		color: fade(@sapUiContentContrastTextColor, 99);
 	}
 }
 
@@ -270,28 +445,24 @@ html[data-sap-ui-browser^="ed"] {
 	}
 }
 
-.sapMInputBaseWarningInner {
-	background: @sapUiFieldWarningBackground;
-	border-color: @sapUiFieldWarningColor;
-}
-
-.sapMInputBaseSuccessInner {
-	background: @sapUiFieldSuccessBackground;
-	border-color: @sapUiFieldSuccessColor;
-}
-
 // When disabled or read-only hide placeholder by setting opacity to 0
 .sapMInputBaseDisabled {
 	.sapMInputBaseInner::-webkit-input-placeholder {
 		opacity: 0;
 	}
-
 	.sapMInputBaseInner::-moz-placeholder {
 		opacity: 0;
 	}
-
 	.sapMInputBaseInner:-ms-input-placeholder {
 		color: @sapUiFieldBackground;
+	}
+}
+
+// IE fires onfocusin on disabled inputs
+html[data-sap-ui-browser^="ie"] .sapMFocus .sapMInputBaseDisabledWrapper {
+	&::before {
+		display: none;
+		pointer-events: none;
 	}
 }
 
@@ -299,12 +470,50 @@ html[data-sap-ui-browser^="ed"] {
 	.sapMInputBaseInner::-webkit-input-placeholder {
 		opacity: 0;
 	}
-
 	.sapMInputBaseInner::-moz-placeholder {
 		opacity: 0;
 	}
-
 	.sapMInputBaseInner:-ms-input-placeholder {
 		color: @sapUiFieldReadOnlyBackground;
 	}
+}
+
+.sapMInputBaseDisabledWrapper .sapMInputBaseIcon {
+	color: @sapUiContentDisabledTextColor;
+}
+
+/* pressed */
+
+.sapMInputBaseIconPressed .sapMInputBaseIcon,
+.sapMInputBaseIconPressed .sapMInputBaseIcon:hover {
+	background: @sapUiToggleButtonPressedBackground;
+}
+
+.sapMInputBaseIconPressed .sapMInputBaseIcon::before {
+	color: @sapUiToggleButtonPressedTextColor;
+}
+
+.sapMInputBaseIconPressed .sapMInputBaseContentWrapper:not(.sapMInputBaseReadonlyWrapper):not(.sapMInputBaseContentWrapperState):not(.sapMInputBaseDisabledWrapper) {
+	border-color: @sapUiFieldActiveBorderColor;
+}
+
+.sapUiSizeCondensed .sapUiTableDataCell {
+
+	.sapMInputBaseContentWrapper {
+		height: 1.375rem;
+	}
+
+	.sapMInputBaseContentWrapper:not(.sapMInputBaseContentWrapperState) {
+		border: none;
+	}
+
+	.sapMInputBase .sapMInputBaseIcon {
+		height: 1.375rem;
+		width: 1.375rem;
+		line-height: 1.375rem;
+	}
+}
+
+.sapMInputBase .sapUiLocalBusyIndicator:focus {
+	outline: none;
 }

@@ -1,46 +1,21 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8">
 		<title>Launcher for UI5 demokit sample components</title>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-		<meta charset="utf-8">
 
+		<!-- ensure that V2 MockServer can load mock data in the explored app and standalone -->
 		<base href="../../../../../../../">
 
-		<script id="sap-ui-bootstrap"
-				src="resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.m"
-				data-sap-ui-preload="async"
-				data-sap-ui-theme="sap_belize"
-				data-sap-ui-compatVersion="edge">
+		<script src="test-resources/sap/ui/core/shared-config.js"></script>
+		<script id="sap-ui-bootstrap" src="resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compatversion="edge"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{"sap.ui.core.sample":"test-resources/sap/ui/core/demokit/sample"}'>
 		</script>
-		<script>
-			sap.ui.getCore().attachInit(function () {
-				"use strict";
-				var sComponentName = jQuery.sap.getUriParameters().get("component");
-
-				if (!sComponentName) {
-					alert("Missing URL parameter 'component', e.g. "
-						+ "'?component=ViewTemplate.scenario'");
-				} else {
-					jQuery.sap.registerModulePath(
-						"sap.ui.core.sample", "test-resources/sap/ui/core/demokit/sample");
-					try {
-						new sap.ui.core.ComponentContainer({
-							component : sap.ui.component({
-								name : "sap.ui.core.sample." + sComponentName,
-								settings : {
-									id : sComponentName
-								}
-							})}
-						).placeAt('content');
-					} catch (e) {
-						alert("Error while instantiating sap.ui.core.sample." + sComponentName + ":"
-							+ e);
-					}
-				}
-			});
-		</script>
+		<script src="test-resources/sap/ui/core/demokit/sample/common/init.js"></script>
 	</head>
 	<body class='sapUiBody'>
 		<div id='content'></div>

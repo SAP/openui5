@@ -1,0 +1,36 @@
+{
+	"d" : {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('108')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('108')",
+			"type" : "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"SalesOrderID" : "108",
+		"Note" : "Test Case VIII: Multi Targets",
+		"NoteLanguage" : "EN",
+		"CustomerID" : "0100000006",
+		"CustomerName" : "Asia High tech",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "4174.16",
+		"NetAmount" : "3507.70",
+		"TaxAmount" : "666.46",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDescription" : "New",
+		"BillingStatus" : "",
+		"BillingStatusDescription" : "Initial",
+		"DeliveryStatus" : "",
+		"DeliveryStatusDescription" : "Initial",
+		"CreatedAt" : "\/Date(1591567200000)\/",
+		"ChangedAt" : "\/Date(1591624700353)\/",
+		"ToBusinessPartner" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('108')/ToBusinessPartner"
+			}
+		},
+		"ToLineItems" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('108')/ToLineItems"
+			}
+		}
+	}
+}

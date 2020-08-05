@@ -18,7 +18,6 @@
 	text-transform: none;
 	height: 3rem;
 	line-height: 3rem;
-	padding: 0 1rem;
 	margin: 0;
 
 	/*
@@ -31,11 +30,29 @@
 	font-size: @sapMFontHeader4Size;
 	font-family: @sapUiFontHeaderFamily;
 	color: @sapUiGroupTitleTextColor;
-	background-color: @sapUiGroupTitleBackground;
+}
+
+.sapMPanel {
+	.sapMPanelHdr,
+	.sapMTB.sapMPanelHeaderTB {
+		padding-left: 1rem;
+		padding-right: 0.5rem;
+	}
+
+	&.sapMPanelExpandable {
+		.sapMPanelHdr, .sapMTB.sapMPanelHeaderTB {
+			padding-left: 0.5rem;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapMPanel .sapMPanelHdr {
+	line-height: 2rem;
+	height: 2rem;
 }
 
 .sapMPanelContent {
-	padding: 1rem;
+	padding: 0.625rem 1rem 1.375rem 1rem;
 	box-sizing: border-box;
 	overflow: auto;
 	white-space: normal;
@@ -50,41 +67,30 @@
 	clear: both;
 }
 
-.sapMPanelExpandableIcon {
-	position: absolute;
-	width: 1.5rem;
-	line-height: 1.5rem;
-	font-size: 1rem;
-	margin: 0 0.75rem;
-	top: 50%;
-	-webkit-transform: translateY(-50%);
-	transform: translateY(-50%);
-	color: @sapUiContentIconColor;
-}
-
-.sapMPanelExpandableIconExpanded {
-	display: inline-block;
-	-webkit-transform: translateY(-50%) rotate(90deg);
-	transform: translateY(-50%) rotate(90deg);
-}
-
-html[data-sap-ui-animation='on'] {
-	.sapMPanelExpandableIcon {
-		/* 400ms is standard jQuery duration */
-		-webkit-transition: -webkit-transform 0.4s ease-out;
-		transition: transform 0.4s ease-out;
-	}
-
-	.sapMPanelExpandableIconExpanded {
-		/* 400ms is standard jQuery duration */
-		-webkit-transition: all 0.4s ease-out;
-		transition: all 0.4s ease-out;
-	}
-}
-
 .sapMPanelWrappingDiv,
 .sapMPanelWrappingDivTb {
 	position: relative;
+	background-color: @sapUiGroupTitleBackground;
+
+	> .sapMBtn {
+		position: absolute;
+		top: 50%;
+		-webkit-transform: translateY(-50%);
+		transform: translateY(-50%);
+		padding-left: 0.25rem;
+		padding-right: 0.25rem;
+	}
+}
+
+.sapMPanelWrappingDiv .sapUiIcon {
+	position: absolute;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	padding: 0.25rem;
+	font-size: 1rem;
+	cursor: inherit;
+	color: @sapUiContentIconColor;
 }
 
 /* if Panel is expandable, we do not wish toolbar to come with own border */
@@ -93,6 +99,10 @@ html[data-sap-ui-animation='on'] {
 }
 
 .sapMPanelWrappingDiv.sapMPanelWrappingDivExpanded {
+	border-bottom-width: 0;
+}
+
+.sapMPanelWrappingDivTb.sapMPanelWrappingDivTbExpanded {
 	border-bottom-width: 0;
 }
 
@@ -105,8 +115,7 @@ html.sap-desktop .sapUiFioriObjectPage > section > .sapMPanel {
 
 .sapMPanel .sapMPanelWrappingDiv .sapMPanelHdr,
 .sapMPanel .sapMPanelWrappingDivTb .sapMIBar.sapMTB {
-	padding-left: 0;
-	margin-left: 3rem;
+	margin-left: 2.5rem;
 
   	>:first-child {
 	  margin-left: 0;
@@ -116,12 +125,24 @@ html.sap-desktop .sapUiFioriObjectPage > section > .sapMPanel {
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMPanel", ~"> .sapMPanelContent");
 
+/* TODO remove after the end of support for Internet Explorer */
 /* workaround for drawing issue in IE - ensures that the content will be redrawn */
 html[data-sap-ui-animation='on'][data-sap-ui-browser^="ie"] .sapMPanelContent {
-	transform: translate2d(0, 0);
+	transform: translate(0, 0);
 }
 
 /* workaround for drawing issue in Edge - ensures that the content will be redrawn */
 html[data-sap-ui-animation='on'][data-sap-ui-browser^="ed"] .sapMPanelContent {
 	transform: translate(0, 0);
+}
+
+.sapMPanelExpandable .sapMPanelWrappingDiv {
+	&:focus {
+		outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		outline-offset: -0.1875rem;
+	}
+
+	&:hover {
+		cursor: pointer;
+	}
 }
