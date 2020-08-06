@@ -141,7 +141,7 @@ sap.ui.define([
                 //add general information
                 mItem.selected = oExistingProperty ? true : false;
                 mItem.position = oExistingProperty ? oExistingProperty.position : -1;
-                mItem = merge(mItem, oProperty);
+                mItem = merge(mItem, oProperty, oExistingProperty);
                 mItem.label = oProperty.label || oProperty.name;
                 mItem.tooltip = oProperty.tooltip ? oProperty.tooltip : oProperty.label;
                 mItem.visibleInDialog = oProperty.hasOwnProperty("visibleInDialog") ? oProperty.visibleInDialog : true;

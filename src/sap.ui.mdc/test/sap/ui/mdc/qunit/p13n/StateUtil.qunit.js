@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/TableDelegate","sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/FilterField"
-], function (TableDelegate, StateUtil, FilterBarDelegate, UIComponent, ComponentContainer, FilterField) {
+	"sap/ui/mdc/TableDelegate","sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate"
+], function (TableDelegate, StateUtil, FilterBarDelegate, UIComponent, ComponentContainer, FilterField, ChartDelegate) {
 	"use strict";
 
 	sap.ui.getCore().loadLibrary("sap.ui.fl");
@@ -46,6 +46,39 @@ sap.ui.define([
 			return oView;
 		}
 	});
+
+	var UICompChart = UIComponent.extend("test", {
+		metadata: {
+			manifest: {
+				"sap.app": {
+					"id": "",
+					"type": "application"
+				}
+			}
+		},
+		createContent: function() {
+			// store it in outer scope
+			var oView = sap.ui.view({
+				async: false,
+				type: "XML",
+				id: this.createId("view"),
+				viewContent: '<mvc:View' +
+				'\t\t  xmlns:mvc="sap.ui.core.mvc"\n' +
+				'\t\t  xmlns:chart="sap.ui.mdc.chart"\n' +
+				'\t\t  xmlns:mdc="sap.ui.mdc"\n' +
+				'\t\t  >\n' +
+				'\t\t\t\t<mdc:Chart id="mdcChart" p13nMode="{=[\'Sort\',\'Item\']}">\n' +
+				'\t\t\t\t\t\t<mdc:items><chart:DimensionItem id="item0" key="Name" label="Name" role="category"></chart:DimensionItem>\n' +
+				'\t\t\t\t\t\t<chart:MeasureItem id="item1" key="agSalesAmount" label="Depth" role="axis1"></chart:MeasureItem>\n' +
+				'\t\t\t\t\t\t<chart:MeasureItem id="item2" key="SalesNumber" label="Width" role="axis2"></chart:MeasureItem></mdc:items>\n' +
+				'\t\t\t\t</mdc:Chart>\n' +
+				'</mvc:View>'
+			});
+			return oView;
+		}
+	});
+
+
 
 	function createFilterItem(sPropertyName, oFilterBar, mPropertyBag) {
 		return new Promise(function(resolve, reject){
@@ -810,5 +843,241 @@ sap.ui.define([
 		}.bind(this));
 
 	});
+
+	var _retrieveChartMetaData = function () {
+		return Promise.resolve({
+			chartType: "column",
+			properties: [
+				{
+					name: "CategoryName",
+					type: "string",
+					required: true,
+					label: "Category",
+					kind: "Dimension"
+				},
+				{
+					name: "SalesNumber",
+					propertyPath: "SalesNumber",
+					type: "Edm.Int32",
+					required: true,
+					label: "Sales Number",
+					kind: "Measure"
+				}, {
+					name: "agSalesAmount",
+					propertyPath: "SalesAmount",
+					type: "string",
+					required: true,
+					label: "Sales Amount",
+					kind: "Measure",
+					defaultAggregation: "sum",
+					supportedAggregations: ["sum", "min", "max", "average"]
+				}, {
+					name: "Name",
+					propertyPath: "Name",
+					type: "string",
+					required: true,
+					label: "Name",
+					kind: "Dimension"
+				}, {
+					name: "Industry",
+					type: "string",
+					required: true,
+					label: "Industry",
+					kind: "Dimension"
+				}, {
+					name: "Country",
+					type: "string",
+					required: true,
+					label: "Country",
+					kind: "Dimension"
+				}, {
+					name: "SomePropertyName",
+					type: "string",
+					required: true,
+					label: "SomeProperty",
+					kind: "Dimension"
+				}
+			]
+		});
+	};
+
+	var _modifyChartDelegate = function () {
+		ChartDelegate.retrieveAllMetaData = _retrieveChartMetaData;
+			ChartDelegate.fetchProperties = function () {
+				return _retrieveChartMetaData().then(function (oMetaData) {
+					return oMetaData.properties;
+				});
+			};
+			ChartDelegate.retrieveAggregationItem = function(sAggregationName, oMetadata) {
+				var oSettings;
+				var oAggregation = {
+					className: "",
+					settings: {
+						key: oMetadata.name,
+						label: oMetadata.label || oMetadata.name,
+						type: oMetadata.type
+					}
+				};
+				switch (oMetadata.kind) {
+
+					case "Dimension":
+						oAggregation.className = "sap.ui.mdc.chart.DimensionItem";
+						oSettings = {
+							textProperty: oMetadata.textProperty,
+							timeUnit: oMetadata.timeUnit,
+							displayText: true,
+							criticality: oMetadata.criticality
+						};
+						break;
+
+					case "Measure":
+						oAggregation.className = "sap.ui.mdc.chart.MeasureItem";
+						oSettings = {
+							propertyPath: oMetadata.propertyPath,
+							aggregationMethod: oMetadata.aggregationMethod
+						};
+						break;
+					// no default
+				}
+				oAggregation.settings = Object.assign(oAggregation.settings, oSettings);
+				return oAggregation;
+			};
+	};
+
+
+	QUnit.module("API tests for Chart", {
+		before: function(){
+			_modifyChartDelegate();
+			this.oUiComponent = new UICompChart("compChart");
+
+			// Place component in container and display
+			this.oUiComponentContainer = new ComponentContainer({
+				component: this.oUiComponent,
+				async: false
+			});
+			this.oUiComponentContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oView = this.oUiComponent.getRootControl();
+		},
+		beforeEach: function(){
+			this.oChart = this.oView.byId('mdcChart');
+		},
+		afterEach: function(){
+			this.oChart.setSortConditions(undefined);
+		},
+		after: function(){
+			this.oUiComponentContainer = null;
+			this.oChart.destroy();
+			this.oView = null;
+		}
+	});
+
+	QUnit.test("Create / Remove items via 'applyExternalState'", function(assert){
+
+		var done = assert.async();
+
+		var oState = {
+			items: [
+				{
+				  "name": "Industry",
+				  "role": "category"
+				}
+			  ],
+			sort: []
+		};
+
+		StateUtil.applyExternalState(this.oChart, oState).then(function(aChanges){
+			assert.equal(aChanges.length, oState.items.length, "Correct amount of changes created: " + aChanges.length);
+			assert.equal(aChanges[0].getChangeType(), "addItem", "Correct change type created");
+			assert.equal(this.oChart.getItems().length, 4, "Correct amount of items");
+
+			var oRemoveState = {
+				items: [
+					{
+					  "name": "Industry",
+					  "visible": false
+					}
+				  ],
+				sort: []
+			};
+
+			StateUtil.applyExternalState(this.oChart, oRemoveState).then(function(aChanges){
+				assert.equal(aChanges.length, oRemoveState.items.length, "Correct amount of changes created for: " + aChanges.length);
+				assert.equal(aChanges[0].getChangeType(), "removeItem", "Correct change type created");
+				assert.equal(this.oChart.getItems().length, 3, "Correct amount of items removed");
+
+				done();
+			}.bind(this));
+
+		}.bind(this));
+	});
+
+	QUnit.test("Change an items role via 'applyExternalState'", function(assert){
+
+		var done = assert.async();
+
+		var oState = {
+			items: [
+				{
+				  "name": "Name",
+				  "role": "series"
+				}
+			  ],
+			sort: []
+		};
+
+		StateUtil.applyExternalState(this.oChart, oState).then(function(aChanges){
+			assert.equal(aChanges.length, 2, "Correct amount of changes created: " + aChanges.length);
+			assert.equal(aChanges[0].getChangeType(), "removeItem", "Correct change type created");
+			assert.equal(aChanges[1].getChangeType(), "addItem", "Correct change type created");
+			assert.equal(this.oChart.getItems().length, 3, "Correct amount of items");
+
+			assert.equal(this.oChart.getItems()[0].getRole(), "series", "Role correctly changed");
+
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Create / Remove sorters via 'applyExternalState'", function(assert){
+
+		var done = assert.async();
+
+		var oState = {
+			sorters: [
+				{
+				  "name": "Name",
+				  "descending": false
+				},
+				{
+					"name": "Date",
+					"descending": true
+				}
+			  ]
+		};
+
+		assert.ok(!this.oChart.getSortConditions(), "No sorters defined.");
+
+		StateUtil.applyExternalState(this.oChart, oState).then(function(aChanges){
+
+			assert.deepEqual(oState.sorters, this.oChart.getSortConditions().sorters, "Correct SortConditions created");
+
+			var oRemoveState = {
+				sorters: [
+				  {
+					  "name": "Date",
+					  "sorted": false
+				  }]
+			};
+
+			StateUtil.applyExternalState(this.oChart, oRemoveState).then(function(aChanges){
+				assert.ok(aChanges.length === 1, "Correct amount of changes created for remove: " + aChanges.length);
+				assert.ok(this.oChart.getSortConditions().sorters.length === 1, "Correct amount of sortConditions: " + aChanges.length);
+				done();
+			}.bind(this));
+		}.bind(this));
+	});
+
+
 
 });
