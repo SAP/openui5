@@ -159,7 +159,7 @@ sap.ui.define([
 
 			for (var i = 0; i < libs.length; i++) {
 				if (libs[i].title == Constants.TEMP_RULESETS_NAME) {
-					return libs[i];
+					return Object.assign({}, libs[i]);
 				}
 			}
 		},
