@@ -1848,5 +1848,37 @@ sap.ui.define([
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
+
+
+		QUnit.module("Translations", {
+			beforeEach: function () {
+				this.oCard = new Card();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Use getResourceBundle to get translated text", function (assert) {
+
+			var done = assert.async();
+
+			// Arrange
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				var oBundle = this.oCard.getResourceBundle();
+
+				// Assert
+				assert.ok(oBundle, "The resource bundle is returned");
+				assert.strictEqual(oBundle.getText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
 	}
 );
