@@ -845,6 +845,16 @@ sap.ui.define([
 		return vRetErrorState;
 	};
 
+	FilterBarBase.prototype._handleFilterItemSubmit = function(oEvent) {
+
+		var oPromise = oEvent.getParameter("promise");
+		if (oPromise) {
+			oPromise.then(function() {
+				this.triggerSearch();
+			}.bind(this));
+		}
+	};
+
 	FilterBarBase.prototype._handleFilterItemChanges = function(oEvent) {
 
 		if (this._bIgnoreChanges) {
@@ -1220,10 +1230,12 @@ sap.ui.define([
 			switch (oChanges.mutation) {
 				case "insert":
 					oChanges.child.attachChange(this._handleFilterItemChanges, this);
+					oChanges.child.attachSubmit(this._handleFilterItemSubmit, this);
 					this._filterItemInserted(oChanges.child);
 					break;
 				case "remove":
 					oChanges.child.detachChange(this._handleFilterItemChanges, this);
+					oChanges.child.detachSubmit(this._handleFilterItemSubmit, this);
 					this._filterItemRemoved(oChanges.child);
 					break;
 				default:
@@ -1253,13 +1265,15 @@ sap.ui.define([
 	FilterBarBase.prototype._getFilterItemLayoutByName = function(sFieldPath) {
 		var oFilterItemLayout = null;
 
-		this._oFilterBarLayout.getFilterFields().some(function(oItemLayout) {
-			if (oItemLayout._getFieldPath() === sFieldPath) {
-				oFilterItemLayout = oItemLayout;
-			}
+		if (this._oFilterBarLayout) {
+			this._oFilterBarLayout.getFilterFields().some(function(oItemLayout) {
+				if (oItemLayout._getFieldPath() === sFieldPath) {
+					oFilterItemLayout = oItemLayout;
+				}
 
-			return oFilterItemLayout !== null;
-		});
+				return oFilterItemLayout !== null;
+			});
+		}
 
 		return oFilterItemLayout;
 	};
@@ -1323,11 +1337,14 @@ sap.ui.define([
 		var oOldBasicSearchField = this.getAggregation("basicSearchField");
 		if (oOldBasicSearchField) {
 			this._removeFilterFieldFromContent(oOldBasicSearchField);
+			oOldBasicSearchField.detachSubmit(this._handleFilterItemSubmit, this);
 		}
 
 		this.setAggregation("basicSearchField", oBasicSearchField);
 
 		if (oBasicSearchField) {
+
+			oBasicSearchField.attachSubmit(this._handleFilterItemSubmit, this);
 
 			if (!this._oObserver.isObserved(oBasicSearchField, {properties: ["visible"]})) {
 				this._oObserver.observe(oBasicSearchField, {properties: ["visible"]});
