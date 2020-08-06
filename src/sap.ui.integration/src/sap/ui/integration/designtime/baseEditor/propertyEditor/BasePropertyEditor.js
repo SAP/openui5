@@ -597,10 +597,13 @@ sap.ui.define([
 						this._checkReadyState();
 						break;
 					case 'parent':
-						if (!isTemplate(oObservedWrapper, this)) {
-							this._oWrapperObserver.unobserve(oObservedWrapper);
-							this._registerWrapper(oObservedWrapper);
-						}
+						// Observed elements might contain nested wrappers
+						findNestedWrappers(oObservedWrapper).forEach(function (oWrapper) {
+							if (!isTemplate(oWrapper, this)) {
+								this._registerWrapper(oWrapper);
+							}
+						}.bind(this));
+						this._oWrapperObserver.unobserve(oObservedWrapper);
 						break;
 					default:
 						return;
@@ -615,16 +618,43 @@ sap.ui.define([
 			// If the element is the aggregation template it must be ignored
 			// Otherwise, if the element is not part of an aggregation inside its fragment
 			// it should be registered as a wrapper nevertheless
-			// In such a case, observing the parent change of the element ensures that it
-			// is properly registered when added to the content aggregation of the BasePropertyEditor
-			this._oWrapperObserver.observe(oWrapper, {
-				parent: true
-			});
+			// In such a case, observing the parent change of the root element ensures that
+			// the wrapper is properly registered when the fragment content is added to the
+			// content aggregation of the parent BasePropertyEditor
+
+			var oRootElement = getRootParent(oWrapper);
+			if (
+				!this._oWrapperObserver.isObserved(oRootElement, {
+					parent: true
+				})
+			) {
+				this._oWrapperObserver.observe(oRootElement, {
+					parent: true
+				});
+			}
 			return;
 		}
 
 		this._registerWrapper(oWrapper);
 	};
+
+	function getRootParent(oElement) {
+		var oParent = oElement.getParent();
+		return oParent ? getRootParent(oParent) : oElement;
+	}
+
+	function findNestedWrappers(oElement) {
+		return isWrapper(oElement)
+			? [oElement]
+			: oElement.findAggregatedObjects(true, function (oElement) {
+				return isWrapper(oElement);
+			});
+	}
+
+	function isWrapper(oElement) {
+		return oElement.isA("sap.ui.integration.designtime.baseEditor.PropertyEditors")
+		|| oElement.isA("sap.ui.integration.designtime.baseEditor.PropertyEditor");
+	}
 
 	BasePropertyEditor.prototype._registerWrapper = function (oWrapper) {
 		this._aEditorWrappers.push(oWrapper);
