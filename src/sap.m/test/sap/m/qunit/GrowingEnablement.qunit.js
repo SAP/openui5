@@ -2,8 +2,13 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/util/MockServer",
+	"sap/ui/core/Core",
 	"sap/m/List",
 	"sap/m/GrowingEnablement",
+	"sap/m/Table",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/Text",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
@@ -11,7 +16,7 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/ui/core/HTML",
 	"sap/m/Page"
-], function(createAndAppendDiv, MockServer, List, GrowingEnablement, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page) {
+], function(createAndAppendDiv, MockServer, Core, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page) {
 	"use strict";
 	createAndAppendDiv("growing1");
 	createAndAppendDiv("growing2");
@@ -45,7 +50,7 @@ sap.ui.define([
 		});
 
 		oPage.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// sytem under test
 		var oGrowingDelegate = oList._oGrowingDelegate;
@@ -75,7 +80,7 @@ sap.ui.define([
 
 			// act + assert growingScrollToLoad=true
 			oList.setGrowingScrollToLoad(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
 
 			// act + assert loading is started case for growingScrollToLoad=true
@@ -104,7 +109,7 @@ sap.ui.define([
 
 			// act + assert growingScrollToLoad=true
 			oList.setGrowingScrollToLoad(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			setTimeout(function() {
 				assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is  visible");
@@ -158,7 +163,7 @@ sap.ui.define([
 		});
 
 		oPage.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var aVisibleItems = oList.getVisibleItems();
 
@@ -166,7 +171,7 @@ sap.ui.define([
 			oItem.setVisible(false);
 		});
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		aVisibleItems = oList.getVisibleItems();
 		assert.strictEqual(aVisibleItems.length, 0, "List has no visible items.");
 
@@ -205,7 +210,7 @@ sap.ui.define([
 		var sut = new GrowingEnablement(oList);
 
 		page.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act + Assert
 		assert.ok(sut._getHasScrollbars(), "The list has scrollbars");
@@ -226,7 +231,7 @@ sap.ui.define([
 		var sut = new GrowingEnablement(oList);
 
 		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act + Assert
 		assert.ok(!sut._getHasScrollbars(), "The list has no scrollbars");
@@ -262,7 +267,7 @@ sap.ui.define([
 		});
 
 		oPage.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
 
@@ -294,7 +299,7 @@ sap.ui.define([
 		});
 
 		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act + Assert
 		assert.ok(!!oList.getDomRef(), "DomRef OK");
@@ -367,7 +372,7 @@ sap.ui.define([
 			});
 
 		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oList.attachEventOnce("updateFinished", oInitialLoadDeferred.resolve);
 
@@ -417,7 +422,7 @@ sap.ui.define([
 
 		//System under test
 		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oList.attachEventOnce("updateFinished", oInitialLoadDeferred.resolve);
 
@@ -455,6 +460,75 @@ sap.ui.define([
 		//Act
 		//Loads the data
 		setODataModelAndBindItems(oList);
+	});
+
+	QUnit.test("Prevent DOM update when all columns are hidden (BCP - 2080250160)", function(assert) {
+		var oTable = new Table({
+				growing: true,
+				growingThreshold: 2,
+				columns: [
+					new Column({
+						header: new Text({
+							text: "Test"
+						})
+					})
+				],
+				items: {
+					path: "/items",
+					template: new ColumnListItem({
+						cells: [
+							new Text({
+								text: "{stringVal}"
+							})
+						]
+					})
+				}
+			}),
+			data = { items: [
+				{
+					stringVal: "a"
+				},
+				{
+					stringVal: "b"
+				},
+				{
+					stringVal: "c"
+				}
+			]},
+			oModel = new JSONModel();
+
+		oModel.setData(data);
+		oTable.setModel(oModel);
+
+		oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(oTable.getItems().length, 2, "2 items are rendered");
+
+		// hide all columns
+		var oColumn = oTable.getColumns()[0];
+		oColumn.setVisible(false);
+
+		assert.notOk(oTable._oGrowingDelegate._aChunk.length, "No chunk available since model did not change");
+
+		// change model data and refresh
+		data.items.splice(0, 0, {
+			stringVal: "d"
+		});
+		oTable.getModel().refresh();
+		// changes done to the model are collected as chuck in the GrowingEnablement
+		assert.ok(oTable._oGrowingDelegate._aChunk.length > 0, "chuck is available but not cleared yet since the columns are hidden");
+
+		// make the column visible again
+		oColumn.setVisible(true);
+		// change model data and refresh
+		data.items.splice(0, 0, {
+			stringVal: "e"
+		});
+		oTable.getModel().refresh();
+		assert.notOk(oTable._oGrowingDelegate._aChunk.length, "chunk is cleared as expected, which updates the items as expected in the DOM");
+
+		oTable.destroy();
 	});
 
 });

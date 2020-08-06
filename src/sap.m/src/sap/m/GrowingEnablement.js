@@ -394,6 +394,17 @@ sap.ui.define([
 				return;
 			}
 
+			// prevent DOM updates when there are no visible columns in the table and items are being inserted (see BCP: 2080250160)
+			if (this._oControl.isA("sap.m.Table")) {
+				var bHasVisibleColumn = this._oControl.getColumns().some(function(oColumn) {
+					return oColumn.getVisible();
+				});
+
+				if (!bHasVisibleColumn) {
+					return;
+				}
+			}
+
 			if (this._oControl.getGrowingDirection() == ListGrowingDirection.Upwards) {
 				this._aChunk.reverse();
 				if (vInsert === true) {
