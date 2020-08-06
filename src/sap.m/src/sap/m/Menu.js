@@ -116,7 +116,8 @@ sap.ui.define([
 				 * Fired when the menu is closed.
 				 */
 				closed: {}
-			}
+			},
+			renderer: null // this is a popup control without a renderer
 		}});
 
 		EnabledPropagator.call(Menu.prototype);

@@ -82,6 +82,7 @@ sap.ui.define([
 		 *
 		 * @constructor
 		 * @public
+		 * @abstract
 		 * @since 1.38
 		 * @alias sap.m.NotificationListBase
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -89,6 +90,7 @@ sap.ui.define([
 		var NotificationListBase = ListItemBase.extend('sap.m.NotificationListBase', /** @lends sap.m.NotificationListBase.prototype */ {
 			metadata: {
 				library: 'sap.m',
+				"abstract": true,
 				properties: {
 					// unread is inherit from the ListItemBase.
 
@@ -162,7 +164,8 @@ sap.ui.define([
 					close: {}
 
 					// 'tap' and 'press' events are inherited from ListItemBase.
-				}
+				},
+				renderer: null // this class has no renderer (it is abstract)
 			}
 		});
 

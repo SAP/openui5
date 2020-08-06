@@ -94,7 +94,8 @@ sap.ui.define([
 			 * @since 1.11.0
 			 */
 			closed : {}
-		}
+		},
+		renderer: null // this control has no renderer (it is abstract)
 	}});
 
 
