@@ -100,7 +100,7 @@ sap.ui.define([
 			layer : mPropertyBag.layer
 		}).getProperty("/versions");
 		var oDraft = aVersions.find(function (oVersion) {
-			return oVersion.versionNumber === 0;
+			return oVersion.versionNumber === sap.ui.fl.Versions.Draft;
 		});
 
 		return !!oDraft;
@@ -132,7 +132,7 @@ sap.ui.define([
 		return FlexState.clearAndInitialize({
 			componentId: oAppComponent.getId(),
 			reference: oAppInfo.reference,
-			draftLayer: mPropertyBag.layer
+			versionNumber: sap.ui.fl.Versions.Draft
 		});
 	};
 
@@ -207,11 +207,10 @@ sap.ui.define([
 			appVersion: oAppInfo.appVersion
 		}).then(function(oDiscardInfo) {
 			if (oDiscardInfo.backendChangesDiscarded) {
-				//invalidate flexState to trigger getFlexData after discard
+				//invalidate flexState to trigger getFlexData for the current active version after discard
 				FlexState.clearAndInitialize({
 					componentId: oAppComponent.getId(),
-					reference: oAppInfo.reference,
-					draftLayer: mPropertyBag.layer
+					reference: oAppInfo.reference
 				});
 			}
 			return oDiscardInfo;

@@ -975,6 +975,7 @@ function(
 					};
 				}
 			});
+			return this.oRta._initVersioning();
 		},
 		afterEach: function() {
 			this.oRta.destroy();

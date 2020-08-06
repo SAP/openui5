@@ -43,7 +43,6 @@ function(
 		_mLayersIndex: mLayersIndex,
 		_sTopLayer: aLayers[aLayers.length - 1],
 		FL_MAX_LAYER_PARAM: "sap-ui-fl-max-layer",
-		FL_VERSION_PARAM: "sap-ui-fl-version",
 
 		/**
 		 * Indicates if the VENDOR is selected.

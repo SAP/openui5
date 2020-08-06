@@ -17,13 +17,18 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, sDraftLayer) {
-		if (oConnectorConfig.layers && (oConnectorConfig.layers[0] === "ALL" || oConnectorConfig.layers.indexOf(sDraftLayer) !== -1)) {
-			oConnectorSpecificPropertyBag.draftLayer = sDraftLayer;
-		} else {
-			// removes an existing draftLayer entry copied from the original mPropertyBag
-			delete oConnectorSpecificPropertyBag.draftLayer;
+	function _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, mPropertyBag) {
+		if (oConnectorConfig.layers && (oConnectorConfig.layers[0] === "ALL" || oConnectorConfig.layers.indexOf("CUSTOMER") !== -1)) {
+			var sVersionNumber = FlUtils.getUrlParameter(sap.ui.fl.Versions.UrlParameter);
+			if (mPropertyBag.versionNumber !== undefined) {
+				oConnectorSpecificPropertyBag.version = mPropertyBag.versionNumber;
+			} else {
+				oConnectorSpecificPropertyBag.version = sVersionNumber ? parseInt(sVersionNumber) : "";
+			}
 		}
+
+		// removes an existing versionNumber entry copied from the original mPropertyBag
+		delete oConnectorSpecificPropertyBag.versionNumber;
 
 		return oConnectorSpecificPropertyBag;
 	}
@@ -45,8 +50,7 @@ sap.ui.define([
 				path: oConnectorConfig.path
 			});
 
-			var sDraftLayer = mPropertyBag.draftLayer || FlUtils.getUrlParameter(LayerUtils.FL_VERSION_PARAM) || "";
-			oConnectorSpecificPropertyBag = _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, sDraftLayer);
+			oConnectorSpecificPropertyBag = _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, mPropertyBag);
 
 			return oConnectorConfig.loadConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)
 				.then(function (oResponse) {
@@ -118,7 +122,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.componentName] componentName of the application which may differ from the reference in case of an app variant
 	 * @param {string} [mPropertyBag.appVersion] version of the application for which the flex data is requested
 	 * @param {string} [mPropertyBag.cacheKey] cacheKey which can be used to etag / cachebuster the request
-	 * @param {string} [mPropertyBag.draftLayer] - Layer for which the draft should be loaded
+	 * @param {number} [mPropertyBag.versionNumber] - Number of the version for which the data should be loaded
 	 * @returns {Promise<object>} Resolves with the responses from all configured connectors merged into one object
 	 */
 	Storage.loadFlexData = function (mPropertyBag) {

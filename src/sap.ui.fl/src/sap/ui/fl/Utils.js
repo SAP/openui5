@@ -1298,20 +1298,28 @@ function(
 		 * @returns {boolean} <code>true</code> if the parameter and the given value are in the URL
 		 */
 		hasParameterAndValue: function(sParameterName, sParameterValue) {
+			return this.getParameter(sParameterName) === sParameterValue;
+		},
+
+		/**
+		 * Checks if the passed parameter name is contained in the URL and returns its value.
+		 *
+		 * @param  {string} sParameterName - The parameter name to be checked
+		 * @returns {string} The value of the given parameter or undefined
+		 */
+		getParameter: function (sParameterName) {
 			var oUshellContainer = this.getUshellContainer();
 			if (oUshellContainer) {
 				var mParsedHash = this.getParsedURLHash();
-				return (mParsedHash.params &&
+				return mParsedHash.params &&
 					mParsedHash.params[sParameterName] &&
-					mParsedHash.params[sParameterName][0] === sParameterValue) || false;
+					mParsedHash.params[sParameterName][0];
 			}
 			var oUriParams = UriParameters.fromQuery(document.location.search);
 			if (!oUriParams) {
 				return false;
 			}
-			var sUriValue = oUriParams.get(sParameterName);
-
-			return sUriValue === sParameterValue;
+			return oUriParams.get(sParameterName);
 		}
 	};
 	return Utils;

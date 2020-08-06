@@ -88,9 +88,9 @@ sap.ui.define([
 		});
 	}
 
-	function givenDraftParameterIsSetTo(sDraftLayer, fnFLPToExternalStub) {
+	function givenDraftParameterIsSet(fnFLPToExternalStub) {
 		givenAnFLP.call(this, fnFLPToExternalStub, {
-			"sap-ui-fl-version" : [sDraftLayer]
+			"sap-ui-fl-versionNumber" : ["0"]
 		});
 	}
 
@@ -148,14 +148,14 @@ sap.ui.define([
 		return !!mFLPArgs.params["sap-ui-fl-version"];
 	}
 
-	function isReloadedWithDraftFalseParameter(fnFLPToExternalStub) {
+	function getReloadedWithVersionNumberParameter(fnFLPToExternalStub) {
 		if (!fnFLPToExternalStub.lastCall) {
 			return false;
 		}
 		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
 		return mFLPArgs.params &&
-			mFLPArgs.params["sap-ui-fl-version"] &&
-			mFLPArgs.params["sap-ui-fl-version"][0] === "false" || false;
+			mFLPArgs.params["sap-ui-fl-versionNumber"] &&
+			mFLPArgs.params["sap-ui-fl-versionNumber"][0];
 	}
 
 	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
@@ -452,7 +452,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
-			givenAnFLP(function() {return true;}, {"sap-ui-fl-version": [Layer.CUSTOMER]});
+			givenAnFLP(function() {return true;}, {"sap-ui-fl-versionNumber": ["0"]});
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
 
 			return this.oRta._handleReloadOnExit()
@@ -465,7 +465,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when draft changes already existed when entering and user exits RTA...", function(assert) {
-			givenDraftParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
+			givenDraftParameterIsSet.call(this, this.fnFLPToExternalStub);
 			var oReloadInfo = {
 				reloadMethod: this.oRta._RELOAD.VIA_HASH
 			};
@@ -486,7 +486,7 @@ sap.ui.define([
 
 		QUnit.test("when draft changes already existed and the draft was activated and user exits RTA...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
-			givenDraftParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
+			givenDraftParameterIsSet.call(this, this.fnFLPToExternalStub);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 			sandbox.stub(this.oRta, "_handleReloadMessageBoxOnExit").resolves();
 
@@ -519,8 +519,8 @@ sap.ui.define([
 					"then handleParametersOnExit was called");
 				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
 					1, "then crossAppNavigation was triggered");
-				assert.equal(isReloadedWithDraftFalseParameter(this.fnFLPToExternalStub),
-					true, "then draft parameter is set to false");
+				assert.equal(getReloadedWithVersionNumberParameter(this.fnFLPToExternalStub),
+					sap.ui.fl.Versions.Original, "then versionNumber parameter is set to 'Original App'");
 			}.bind(this));
 		});
 
@@ -539,8 +539,6 @@ sap.ui.define([
 					"then handleParametersOnExit was called");
 				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
 					1, "then crossAppNavigation was triggered");
-				assert.equal(isReloadedWithDraftFalseParameter(this.fnFLPToExternalStub),
-					false, "then draft parameter is not set");
 			}.bind(this));
 		});
 	});
@@ -961,7 +959,7 @@ sap.ui.define([
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oRootControl
 			});
-			givenAnFLP(function() {return true;}, {"sap-ui-fl-version": [Layer.CUSTOMER]});
+			givenAnFLP(function() {return true;}, {"sap-ui-fl-versionNumber": ["0"]});
 		},
 		afterEach : function() {
 			this.oRta.destroy();
@@ -1079,7 +1077,7 @@ sap.ui.define([
 			var oStopStub = sandbox.stub(this.oRta, "stop");
 			var mParsedHash = {
 				params: {
-					"sap-ui-fl-version": [Layer.CUSTOMER]
+					"sap-ui-fl-versionNumber": ["0"]
 				}
 			};
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
@@ -1245,7 +1243,7 @@ sap.ui.define([
 			});
 			this.mParsedHash = {
 				params: {
-					"sap-ui-fl-version": [Layer.CUSTOMER]
+					"sap-ui-fl-versionNumber": ["0"]
 				}
 			};
 			this.oReloadInfo = {
@@ -1314,7 +1312,7 @@ sap.ui.define([
 			var oHasVersionParameterSpy = sandbox.spy(ReloadInfoAPI, "hasVersionParameterWithValue");
 			var oHasHigherLayerChangesSpy = sandbox.spy(PersistenceWriteAPI, "hasHigherLayerChanges");
 			var oGetReloadMessageOnStart = sandbox.stub(this.oRta, "_getReloadMessageOnStart").returns("MSG_DRAFT_EXISTS");
-			var oHandleParameterOnStartStub = sandbox.stub(ReloadInfoAPI, "handleParametersOnStart");
+			var oHandleParameterOnStartStub = sandbox.stub(ReloadInfoAPI, "handleParametersOnStart").returns(this.mParsedHash);
 			var oIsDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
 
