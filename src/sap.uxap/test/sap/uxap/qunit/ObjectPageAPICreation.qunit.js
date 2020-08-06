@@ -3349,7 +3349,7 @@ function (
 		assert.expect(2);
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-				assert.strictEqual(oUpdateMediaSpy.callCount, 2, "_updateMedia is called on after rendering and after DOM ready to ensure coorect size classes are set");
+				assert.strictEqual(oUpdateMediaSpy.callCount, 3, "_updateMedia is called on after rendering and after DOM ready to ensure coorect size classes are set");
 				assert.strictEqual(oGetWidthSpy.callCount, 2, "_getWidth is called once on after rendering and once after DOM ready");
 				oObjectPage.destroy();
 				done();
@@ -3371,6 +3371,29 @@ function (
 
         // clean up
         oObjectPage.destroy();
+	});
+
+	QUnit.test("ObjectPage _applyContextualSettings: changes media classes", function (assert) {
+        // Arrange
+        var oObjectPage = new ObjectPageLayout({});
+		oObjectPage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Act
+		oObjectPage._applyContextualSettings({contextualWidth: 800});
+
+		// Assert
+		assert.ok(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Tablet"), "Tablet class is applied");
+		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Desktop"), "Desktop class is removed");
+		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Phone"), "Phone class is removed");
+
+		// Act
+		oObjectPage._applyContextualSettings({contextualWidth: 500});
+
+		// Assert
+		assert.ok(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Phone"), "Phone class is applied");
+		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Tablet"), "Tablet class is removed");
+		assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Desktop"), "Desktop class is removed");
     });
 
 
