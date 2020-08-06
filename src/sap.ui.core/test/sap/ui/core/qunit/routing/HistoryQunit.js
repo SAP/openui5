@@ -470,12 +470,13 @@ sap.ui.define([
 	QUnit.test("Should save the initial hash without slash", function(assert) {
 		//System under Test
 		var oHashChanger = HashChanger.getInstance();
+		var iStateHistoryLength = History._aStateHistory.length;
 
 		// eslint-disable-next-line no-new
 		new History(oHashChanger);
 
 		if (!History._bUsePushState) {
-			assert.strictEqual(History._aStateHistory[History._aStateHistory.length - 1], undefined, "The push state isn't supported therefore no hash is stored");
+			assert.strictEqual(History._aStateHistory.length, iStateHistoryLength, "The push state isn't supported therefore no hash is stored");
 		} else {
 			assert.ok(History._aStateHistory[History._aStateHistory.length - 1].charAt(0) !== "#", "The hash with no leading # is inserted");
 		}
