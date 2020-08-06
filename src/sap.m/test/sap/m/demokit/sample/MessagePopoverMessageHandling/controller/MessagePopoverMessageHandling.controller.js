@@ -20,6 +20,8 @@ sap.ui.define([
 
 			this.oView = this.getView();
 			this._MessageManager = Core.getMessageManager();
+			// Clear the old messages
+			this._MessageManager.removeAllMessages();
 			this.oView.setModel(oModel);
 
 			this._MessageManager.registerObject(this.oView.byId("formContainer"), true);
@@ -236,7 +238,7 @@ sap.ui.define([
 				iWeeklyHours = this.oView.byId("formContainerEmployment").getItems()[0].getContent()[13];
 
 			oButton.setVisible(true);
-			oRequiredNameInput.setValue(undefined);
+			oRequiredNameInput.setValue("");
 			oNumericZipInput.setValue("AAA");
 			oEmailInput.setValue("MariaFontes.com");
 			iWeeklyHours.setValue(400);
