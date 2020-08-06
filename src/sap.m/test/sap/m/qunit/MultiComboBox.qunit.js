@@ -8479,7 +8479,7 @@ sap.ui.define([
 
 		// Act
 		qutils.triggerKeydown(this.oMultiComboBox, KeyCodes.I, false, false, true); // trigger Control key + I
-		this.clock.tick(nPopoverAnimationTick);
+		this.clock.tick(500);
 
 		// Assert
 		assert.ok(oTokenizer.getTokensPopup().isOpen(), "Suggestion read only popover should be opened");
