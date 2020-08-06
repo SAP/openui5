@@ -294,6 +294,7 @@ sap.ui.define([
 				EventProvider.apply(this);
 
 				this._mTargets = {};
+				this._oLastTitleTarget = {};
 				this._oConfig = oOptions.config;
 				this._oCache = oOptions.cache || oOptions.views;
 
@@ -607,13 +608,14 @@ sap.ui.define([
 			},
 
 			fireTitleChanged : function(oParameters) {
-				// if the new title is different as the previous one, fire a titleChanged event
-				if (oParameters.title !== this._sPreviousTitle) {
-					// save the current title
-					this._sPreviousTitle = oParameters.title;
+				// if the new target is different as the last target that changed the title or the title changed, fire a titleChanged event
+				if (this._oLastTitleTarget.name !== oParameters.name || this._oLastTitleTarget.title !== oParameters.title) {
+					// save the current target name
+					this._oLastTitleTarget.name = oParameters.name;
+					// save the current title name
+					this._oLastTitleTarget.title = oParameters.title;
 					this.fireEvent(this.M_EVENTS.TITLE_CHANGED, oParameters);
 				}
-
 				return this;
 			},
 
@@ -808,14 +810,14 @@ sap.ui.define([
 					oTitleTarget = this.getTarget(sCalculatedTargetName);
 				}
 
-				if (this._oLastTitleTarget) {
-					this._oLastTitleTarget.detachTitleChanged(this._forwardTitleChanged, this);
-					this._oLastTitleTarget._bIsDisplayed = false;
+				if (this._oLastDisplayedTitleTarget) {
+					this._oLastDisplayedTitleTarget.detachTitleChanged(this._forwardTitleChanged, this);
+					this._oLastDisplayedTitleTarget._bIsDisplayed = false;
 				}
 
 				if (oTitleTarget) {
 					oTitleTarget.attachTitleChanged({name:oTitleTarget._oOptions._name}, this._forwardTitleChanged, this);
-					this._oLastTitleTarget = oTitleTarget;
+					this._oLastDisplayedTitleTarget = oTitleTarget;
 				} else if (sTitleTarget) {
 					Log.error("The target with the name \"" + sTitleTarget + "\" where the titleChanged event should be fired does not exist!", this);
 				}

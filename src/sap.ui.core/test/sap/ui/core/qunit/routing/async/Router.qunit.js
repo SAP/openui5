@@ -4766,7 +4766,7 @@ sap.ui.define([
 				});
 			});
 
-			this._createParentComponent = function(iIndexNamespace, bPropagateTitleGlobal, bPropagateTitleOfRoute1, bPropagateTitleOfRoute2, iIndexNamespaceChild1, iIndexNamespaceChild2) {
+			this._createParentComponent = function(iIndexNamespace, bPropagateTitleGlobal, bPropagateTitleOfRoute1, bPropagateTitleOfRoute2, iIndexNamespaceChild1, iIndexNamespaceChild2, iTargetTitleChild1, iTargetTitleChild2) {
 				return UIComponent.extend("namespace." + iIndexNamespace + ".ParentComponent", {
 					metadata : {
 						rootView: { viewName: "parentRootView", type: "JS",	async: true	},
@@ -4784,8 +4784,8 @@ sap.ui.define([
 								{ pattern: "view1", name: "parentView1", target: "parentView1" }
 							],
 							targets: {
-								home: { name: "namespace." + iIndexNamespaceChild1 + ".ChildComponent", type: "Component", id: "component" + iIndexNamespaceChild1, title: "TitleComponent" + iIndexNamespaceChild1, options: { manifest: false } },
-								second: { name: "namespace." + iIndexNamespaceChild2 + ".ChildComponent", type: "Component", id: "component" + iIndexNamespaceChild2, title: "TitleComponent" + iIndexNamespaceChild2, options: { manifest: false } },
+								home: { name: "namespace." + iIndexNamespaceChild1 + ".ChildComponent", type: "Component", id: "component" + iIndexNamespaceChild1, title: iTargetTitleChild1 ? iTargetTitleChild1 : "TitleComponent" + iIndexNamespaceChild1, options: { manifest: false } },
+								second: { name: "namespace." + iIndexNamespaceChild2 + ".ChildComponent", type: "Component", id: "component" + iIndexNamespaceChild2, title: iTargetTitleChild2 ? iTargetTitleChild2 : "TitleComponent" + iIndexNamespaceChild2, options: { manifest: false } },
 								parentView1: { name: "parentView1", title: "TitleParentView1", type: "View", viewType: "JS" }
 							}
 						}
@@ -4870,7 +4870,7 @@ sap.ui.define([
 		var done = assert.async(),
 			oLevel0TitleChangedStub = sinon.stub(),
 			ParentComponent = this._createParentComponent(
-				/*iIndexNamespace=*/1,
+				/*iIndexNamespace=*/4,
 				/*bGlobal=*/undefined,
 				/*bPropagateTitleOfRoute1=*/undefined,
 				/*bPropagateTitleOfRoute2=*/true,
@@ -5262,6 +5262,82 @@ sap.ui.define([
 
 				});
 			});
+		});
+	});
+
+	QUnit.test("Configuration of title propagation - Scenario 4: multiple targets with the same title", function(assert) {
+		var done = assert.async(),
+		oLevel0TitleChangedStub = sinon.stub(),
+		ParentComponent = this._createParentComponent(
+			/*iIndexNamespace=*/4,
+			/*bGlobal=*/true,
+			/*bPropagateTitleOfRoute1=*/undefined,
+			/*bPropagateTitleOfRoute2=*/undefined,
+			/*iIndexNamespaceChild1=*/6,
+			/*iIndexNamespaceChild2=*/7,
+			/*iTargetTitleChild1*/"MyTargetTitle",
+			/*iTargetTitleChild2*/"MyTargetTitle");
+
+		this._createChildWithGlobalTitlePropagation(6);
+		this._createChildWithGlobalTitlePropagation(7);
+
+		var oLevel0Component = new ParentComponent("parent");
+		var oLevel0Router = oLevel0Component.getRouter();
+
+		oLevel0Router.attachTitleChanged(oLevel0TitleChangedStub);
+
+		var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
+		var oLevel0SecondRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("second"), "_routeMatched");
+
+		oLevel0Router.initialize();
+
+		oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
+			assert.equal(oLevel0TitleChangedStub.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
+			var oTitleChangedEvent = oLevel0TitleChangedStub.getCall(0).args[0];
+			assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): title 'TitleNestedView1' should be correct");
+			assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
+			assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event is propagated from nested router");
+			assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "initialize(): The nested history should be available");
+			assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "initialize(): The nested history should have two entries");
+			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "initialize(): The first nested history entry should be correct");
+			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
+			assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0], {
+				title: "MyTargetTitle",
+				hash: ""
+			}, "initialize(): The nested history entries should be correct");
+			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component6", "initialize(): The first nested history entry should be correct");
+			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
+			assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
+				title: "TitleNestedView1",
+				hash: ""
+			}, "initialize(): The nested history entries should be correct");
+
+			oLevel0Router.navTo("second");
+			oLevel0SecondRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
+				assert.equal(oLevel0TitleChangedStub.callCount, 2, "navTo('second'): fireTitleChange should be called the second time - Component title");
+				try {
+					oTitleChangedEvent = oLevel0TitleChangedStub.getCall(1).args[0];
+					assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('second'): title 'TitleNestedView1' should be correct");
+					assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('second'): The history should have one entry");
+					assert.strictEqual(oTitleChangedEvent.getParameter("history")[0].title, "MyTargetTitle", "navTo('second'): The title of the first history entry should be 'MyTargetTitle'");
+					assert.strictEqual(oTitleChangedEvent.getParameter("history")[0].hash, "", "navTo('second'): The hash of the first history entry should be empty");
+					assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('second'): titleChanged event is propagated from nested router");
+					assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('second'): The nested history should be available");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('second'): The nested history should have two entries");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('second'): The first nested history entry should be correct");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 2, "navTo('second'): The history of the nested history entry should have one entry");
+					assert.strictEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0].title, "MyTargetTitle", "navTo('second'): The title of the first history entry of the first nested history entry should be 'MyTargetTitle'");
+					assert.strictEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0].hash, "", "navTo('second'): The hash of the first history entry of the first nested history entry should be empty");
+					assert.strictEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[1].title, "MyTargetTitle", "navTo('second'): The title of the second history entry of the first nested history entry should be 'MyTargetTitle'");
+					assert.strictEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[1].hash, "second", "navTo('second'): The hash of the second history entry of the first nested history entry should be empty");
+				} finally {
+					oLevel0Component.destroy();
+					oLevel0HomeRouteMatchedSpy.restore();
+					oLevel0TitleChangedStub.reset();
+					done();
+				}
+			});
+
 		});
 	});
 });
