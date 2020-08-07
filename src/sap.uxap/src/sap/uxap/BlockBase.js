@@ -195,6 +195,7 @@ sap.ui.define([
 			this._bConnected = false;   //indicates connectToModels function has been called
 			this._oUpdatedModels = {};
 			this._oParentObjectPageSubSection = null; // the parent ObjectPageSubSection
+			this._oPromisedViews = {};
 		};
 
 		BlockBase.prototype.onBeforeRendering = function () {
@@ -354,7 +355,7 @@ sap.ui.define([
 				//if Lazy loading is enabled, and if the block is not connected
 				//delay the view creation (will be done in connectToModels function)
 				if (!this._shouldLazyLoad()) {
-					this._initView(sMode);
+					this._selectView(sMode);
 				}
 			}
 
@@ -452,56 +453,66 @@ sap.ui.define([
 			return oView;
 		};
 
-		/***
+		/**
 		 * Create view
-		 * @param {*} mParameter parameter
+		 * @param {*} mParameter, the view metadata
+		 * @param {string} sMode, the mode associated with the view
 		 * @returns {*} Promise
 		 * @protected
 		 */
 		BlockBase.prototype.createView = function (mParameter, sMode) {
-			var oOwnerComponent,
-				fnCreateView;
 
-			fnCreateView = function () {
-				mParameter.id = this.getId() + "-" + sMode;
-				return CoreView.create(mParameter);
-			}.bind(this);
+			if (!this._oPromisedViews[mParameter.id]){
+				this._oPromisedViews[mParameter.id] = new Promise(function(resolve, reject) {
 
-			oOwnerComponent = Component.getOwnerComponentFor(this);
-			if (oOwnerComponent) {
-				return oOwnerComponent.runAsOwner(fnCreateView);
-			} else {
-				return fnCreateView();
+					var oOwnerComponent = Component.getOwnerComponentFor(this),
+						fnCreateView = function () {
+							var fnCoreCreateView = function() {
+								return CoreView.create(mParameter);
+							};
+							if (oOwnerComponent) {
+								return oOwnerComponent.runAsOwner(fnCoreCreateView);
+							} else {
+								return fnCoreCreateView();
+							}
+						};
+
+					fnCreateView().then(function(oView) {
+						this._afterViewInstantiated(oView, sMode);
+						resolve(oView);
+					}.bind(this));
+
+				}.bind(this));
 			}
+
+			return this._oPromisedViews[mParameter.id];
 		};
 
 		/**
-		 * Sets the currently selected View as Association, adds it in _views aggregation
-		 * and assigns oParentBlock to the Controller of the view
-		 * @param {*} oViewInner the selected View
-		 * @param {*} sMode the valid mode corresponding to the View to initialize
+		 * Finalizes view creation:
+		 * adds the created view to the <code>_views</code> aggregation
+		 * and assigns <code>oParentBlock</code> to the <code>controller</code> of the view
+		 * @param {*} oView the created view
+		 * @param {string} sMode the valid mode corresponding to the created view
 		 * @private
 		 */
-		BlockBase.prototype._afterViewInstantiated = function (oViewInner, sMode) {
-			var oController = oViewInner.getController();
+		BlockBase.prototype._afterViewInstantiated = function (oView, sMode) {
+			var oController = oView.getController();
 
 			//link to the controller defined in the Block
-			if (oViewInner) {
+			if (oView) {
 				//inject a reference to this
 				if (oController) {
 					oController.oParentBlock = this;
 				}
 
-				oViewInner.addCustomData(new CustomData({
+				oView.addCustomData(new CustomData({
 					"key": "layoutMode",
 					"value": sMode
 				}));
 
-				this.addAggregation("_views", oViewInner);
-				this.fireEvent("viewInit", {view: oViewInner});
-
-				this.setAssociation("selectedView", oViewInner);
-				this._notifyForLoadingInMode(oController, oViewInner, sMode);
+				this.addAggregation("_views", oView);
+				this.fireEvent("viewInit", {view: oView});
 			} else {
 				throw new Error("BlockBase :: no view defined in metadata.views for mode " + sMode);
 			}
@@ -523,49 +534,74 @@ sap.ui.define([
 			}
 		};
 
+
 		/**
-		 * Initialize a view and returns it if it has not been defined already.
-		 * @param {*} sMode the valid mode corresponding to the view to initialize
+		 * Updates the <code>selectedView</code> association to match the view of the given <code>sMode</code>
+		 * (and creates the view if it was not created already)
+		 * @param {string} sMode the valid mode corresponding to the view to select
 		 * @private
 		 */
-		BlockBase.prototype._initView = function (sMode) {
+		BlockBase.prototype._selectView = function (sMode) {
 			var oView,
-				aViews = this.getAggregation("_views") || [];
+				sViewId = this.getId() + "-" + sMode,
+				sViewMetadata,
+				fnSelect;
 
-			// look for the views if it was already instantiated
-			aViews.forEach(function (oCurrentView) {
-				if (oCurrentView.data("layoutMode") === sMode) {
-					oView = oCurrentView;
+			fnSelect = function(oView) {
+				if (oView && this.getAssociation("selectedView") !== sViewId) {
+					this.setAssociation("selectedView", oView);
+					this._notifyForLoadingInMode(oView.getController(), oView, sMode);
 				}
-			});
+			}.bind(this);
 
+
+			// check if the view is already instantiated
+			oView = this._findView(sMode);
 			if (oView) {
-				this.setAssociation("selectedView", oView);
-				this._notifyForLoadingInMode(oView.getController(), oView, sMode);
-
+				fnSelect(oView);
 				return;
 			}
 
+
 			//the view is not instantiated yet, handle a new view scenario
-			this._initNewView(sMode);
+			sViewMetadata = this.getMetadata().getView(sMode);
+			sViewMetadata.id = sViewId;
+			this.createView(sViewMetadata, sMode).then(function (oView) {
+				fnSelect(oView);
+			});
 		};
+
 
 		/**
-		 * Initialize new BlockBase view
-		 * @param {*} sMode the valid mode corresponding to the view to initialize
+		 * Searches the <code>_views</code> aggregation for an existing view
+		 * that corresponds to the given <code>sMode</code>
+		 * @param {string} sMode the valid mode corresponding to the searched view
 		 * @private
 		 */
-		BlockBase.prototype._initNewView = function (sMode) {
-			var oView = this._getSelectedViewContent(),
-				mParameter = this.getMetadata().getView(sMode);
+		BlockBase.prototype._findView = function (sMode) {
+			var aViews = this.getAggregation("_views") || [],
+				sViewMetadata,
+				oFilteredViews;
 
-			//check if the new view is not the current one (we may want to have the same view for several modes)
-			if (!oView || mParameter.viewName != oView.getViewName()) {
-				oView = this.createView(mParameter, sMode).then(function (oViewInner) {
-					this._afterViewInstantiated(oViewInner, sMode);
-				}.bind(this));
+			oFilteredViews = aViews.filter(function(oView) {
+				return oView.data("layoutMode") === sMode;
+			});
+
+			if (oFilteredViews.length) {
+				return oFilteredViews[0];
+			}
+
+			//check the view name (we may want to have the same view for several modes)
+			sViewMetadata = this.getMetadata().getView(sMode);
+			oFilteredViews = aViews.filter(function(oView) {
+				return sViewMetadata.viewName === oView.getViewName();
+			});
+
+			if (oFilteredViews.length) {
+				return oFilteredViews[0];
 			}
 		};
+
 
 		// This offset is needed so the breakpoints of the ColumnLayout match those of the GridLayout (offset = Grid container width - ColumnLayout container width)
 		BlockBase.FORM_ADUSTMENT_OFFSET = 16;
@@ -720,7 +756,7 @@ sap.ui.define([
 					//if lazy loading is enabled, the view has not been created during the setMode
 					//so create it now
 					var sMode = this.getMode();
-					sMode && this._initView(sMode);
+					sMode && this._selectView(sMode);
 				}
 
 				this.invalidate();
