@@ -1189,13 +1189,11 @@ function (
 		// Simulating going to another page and resize handler triggered
 		oDynamicPageTitle.$().css("display", "none");
 
-		oToolbar.addEventDelegate({
-				onAfterRendering: function () {
+		setTimeout(function () {
 				// Assert
 				assert.strictEqual(oSpy.callCount, 0, "_cacheControlsInfo is not called");
 				fnDone();
-			}
-		});
+			}, 250); // waiting for resize handler to be triggered (once in every 200ms)
 	});
 
 	/* --------------------------- DynamicPage Title Aggregations ---------------------------------- */
