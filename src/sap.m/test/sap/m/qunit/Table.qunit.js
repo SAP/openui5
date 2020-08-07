@@ -1971,4 +1971,18 @@ sap.ui.define([
 			assert.strictEqual(fnPopinChangedEvent.getCalls().length, 3, "Event popinChange has been fired 3 times: 1 onInit, 1 after setContextualWidth(\"Tablet\") and 1 after setColumnImportanceToHide([\"None\", \"Low\", \"Medium\"])");
 		}, 0);
 	});
+
+	QUnit.test("Added Scope attribute to TH elements", function(assert) {
+		var oTableHeader = oTable.getDomRef("tblHeader").children;
+		var iScopeCount = 0;
+		assert.ok(oTableHeader, "Table contains th element");
+
+		Array.from(oTableHeader).forEach(function(item) {
+			assert.strictEqual(item.getAttribute("scope"), "col", "scope attribute present with value 'col' ");
+			if (item.getAttribute("scope") === "col") {
+				iScopeCount++;
+			}
+		});
+		assert.strictEqual(iScopeCount, oTableHeader.length, "Scope attribute is present in every TableHeader th element and has the value 'col'");
+	});
 });

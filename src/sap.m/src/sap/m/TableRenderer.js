@@ -55,6 +55,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 				if (cellTag === "th") {
 					rm.class("sapMTableTH");
 					rm.attr("role", bAriaHidden ? "presentation" : "columnheader");
+					rm.attr("scope", "col");
 				} else if (bAriaHidden) { // hidden td
 					rm.attr("role", "presentation");
 				}
@@ -113,6 +114,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			if (mode == "MultiSelect" && type == "Head" && !bHeaderHidden) {
 				rm.openStart("th");
 				rm.class("sapMTableTH");
+				rm.attr("scope", "col");
 				rm.attr("aria-hidden", "true");
 				rm.class(clsPrefix + "SelCol");
 				rm.attr("role", "presentation");
@@ -147,6 +149,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 				rm.openStart(cellTag, oColumn);
 				rm.class("sapMTableTH");
 				rm.attr("role", "columnheader");
+				rm.attr("scope", "col");
 				var sSortIndicator = oColumn.getSortIndicator().toLowerCase();
 				sSortIndicator !== "none" && rm.attr("aria-sort", sSortIndicator);
 			} else {
