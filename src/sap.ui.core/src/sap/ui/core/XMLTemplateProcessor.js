@@ -113,9 +113,6 @@ function(
 				vChild,
 				aChildren = [];
 
-			// unwrap SyncPromise to handle potential errors so they will be reported
-			pRequireContext.unwrap();
-
 			for (childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
 				vChild = fnCallback(node, oAggregation, mAggregations, childNode, false, pRequireContext);
 				if (vChild) {
