@@ -242,18 +242,17 @@ sap.ui.define([
 	};
 
 	ActionSheet.prototype.onBeforeRendering = function() {
+		var sTitle, sPlacement;
 		// The item navigation instance has to be destroyed and created again once the control is rerendered
 		// because the intital tabindex setting is only done once inside the item navigation but we need it here
 		// every time after the control is rerendered
 		this._clearItemNavigation();
 
-		var sTitle = this.getTitle();
-		if (this._parent) {
+		sTitle = this.getTitle();
+		if (this._parent && !this.isPropertyInitial("title") && this._parent.getTitle() !== sTitle) {
 			if (Device.system.phone) {
 				this._parent.setTitle(sTitle);
-				this._parent.toggleStyleClass("sapMDialog-NoHeader", !sTitle);
-			} else {
-				this._parent.setPlacement(this.getPlacement());
+				this._parent.setShowHeader(!!sTitle);
 			}
 
 			if (sTitle) {
@@ -261,6 +260,11 @@ sap.ui.define([
 			} else {
 				this._parent.removeStyleClass("sapMActionSheetDialogWithTitle");
 			}
+		}
+
+		sPlacement = this.getPlacement();
+		if (this._parent && !Device.system.phone && !this.isPropertyInitial("placement") && this._parent.setPlacement() !== sPlacement) {
+			this._parent.setPlacement(sPlacement);
 		}
 	};
 
