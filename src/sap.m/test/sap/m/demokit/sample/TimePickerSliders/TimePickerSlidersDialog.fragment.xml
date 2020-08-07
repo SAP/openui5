@@ -5,7 +5,7 @@
 		title="Select New Time">
 		<TimePickerSliders
 			id="TPS2"
-			valueFormat="hh:mm:ss a"
+			valueFormat="hh:mm a"
 			displayFormat="hh:mm a"
 			change="handleChange"
 			height="400px"/>
