@@ -574,15 +574,25 @@ function (
 		}
 	};
 
+	function checkPopupAncestorsAdaptation(oPopupElement) {
+		if (!oPopupElement || oPopupElement instanceof Component) {
+			return true;
+		}
+		if (!oPopupElement.isPopupAdaptationAllowed || oPopupElement.isPopupAdaptationAllowed()) {
+			return checkPopupAncestorsAdaptation(oPopupElement.getParent());
+		}
+		return false;
+	}
+
 	PopupManager.prototype._isPopupAdaptable = function(oPopupElement) {
-		//For variantManagement manage dialog
 		if (oPopupElement.isPopupAdaptationAllowed && !oPopupElement.isPopupAdaptationAllowed()) {
 			return false;
 		}
-
 		var oPopupAppComponent = this._getAppComponentForControl(oPopupElement);
-
-		return this.oRtaRootAppComponent === oPopupAppComponent || this._isComponentInsidePopup(oPopupElement);
+		if (this.oRtaRootAppComponent === oPopupAppComponent || this._isComponentInsidePopup(oPopupElement)) {
+			return checkPopupAncestorsAdaptation(oPopupElement.getParent());
+		}
+		return false;
 	};
 
 	/**

@@ -165,6 +165,9 @@
 								<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout" />
 							</sap.ui.layout:HorizontalLayout>
 						</smartForm:GroupElement>
+						<smartForm:GroupElement label="With custom settings action" id="Dates.customSetting" sap.ui.dt:designtime="sap/ui/rta/test/SubDialogSetting.designtime">
+							<Text text="settings action dialog includes another dialog can be opened by selection control. Both dialogs shouldn't be adaptable" id="customSetting.Test" />
+						</smartForm:GroupElement>
 					</smartForm:Group>
 					<smartForm:Group label="Reversal" id="MainFormExpandable.Reversal">
 						<smartForm:GroupElement label="Storniert mit" id="Reversal.ReversalDocument">
