@@ -731,6 +731,18 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 
 	});
 
+	QUnit.test("float with big numbers and maxIntegerDigits", function (assert) {
+		var oLocale = new Locale("de-DE");
+		var oFloatFormat = NumberFormat.getFloatInstance({
+			maxIntegerDigits: 148
+		}, oLocale);
+		var sExpectedInRange = "1.234.567.890" + ".000".repeat(46);
+		assert.equal(oFloatFormat.format(1.23456789e+147).toString(), sExpectedInRange, "big number in range");
+
+		var sExpectedOutOfRange = "?.???.???.???" + ".???".repeat(46);
+		assert.equal(oFloatFormat.format(1.23456789e+150).toString(), sExpectedOutOfRange, "big number out of range");
+	});
+
 	QUnit.test("float format for a specific locale", function (assert) {
 		var oLocale = new Locale("de-DE");
 		var oFloatFormat = NumberFormat.getFloatInstance(oLocale);
