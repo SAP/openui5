@@ -1,0 +1,32 @@
+<mvc:View displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutColumnResize.controller.Master" height="100%"
+		  xmlns="sap.uxap"
+		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:m="sap.m"
+		  xmlns:form="sap.ui.layout.form">
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false" sections="{ path: 'products>/sections'}">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<heading>
+					<m:Title text="Sections"/>
+				</heading>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+		<sections>
+			<ObjectPageSection title="{products>sectionName}">
+				<subSections>
+					<ObjectPageSubSection>
+						<actions>
+							<m:Button text="To Detail" press="toDetail"/>
+						</actions>
+						<blocks>
+							<form:SimpleForm editable="false">
+								<m:Label text="Content"/>
+								<m:Text text="some content goes here..."/>
+							</form:SimpleForm>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

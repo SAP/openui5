@@ -50,6 +50,7 @@
 			"sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
 			"sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart",
 			"sap.f.sample.FlexibleColumnLayoutWithFullscreenPage",
+			"sap.f.sample.FlexibleColumnLayoutColumnResize",
 			"sap.f.sample.FlexibleColumnLayoutSimple",
 			"sap.f.sample.ShellBarWithFlexibleColumnLayout"
 		  ]
@@ -179,6 +180,11 @@
 		  "id": "sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart",
 		  "name": "Flexible Column Layout with Routing and Two Initial Columns",
 		  "description": "Flexible Column Layout as an app with routing that starts with two initial columns."
+		},
+		{
+		  "id": "sap.f.sample.FlexibleColumnLayoutColumnResize",
+		  "name": "Flexible Column Layout with programmatic scrolling to an item",
+		  "description": "FlexibleColumnLayout where the app programmatically scrolls to some item within the newly navigated column, once the column is fully resized"
 		},
 		{
 		  "id": "sap.f.sample.FlexibleColumnLayoutSimple",
