@@ -1067,6 +1067,27 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Named Data Section',
+								key: 'namedDataSection',
+								files: [
+									{
+										url: '/samples/extension/namedDataSection/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/extension/namedDataSection/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/extension/namedDataSection/DataExtension.js',
+										name: 'DataExtension.js',
+										key: 'DataExtension.js'
+									}
+								]
+							},
+							{
 								title: 'Northwind Image Conversion',
 								key: 'northwindImage',
 								files: [

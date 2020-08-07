@@ -24,7 +24,8 @@
         "1.11.0",
         "1.13.0",
         "1.14.0",
-        "1.15.0"
+        "1.15.0",
+        "1.16.0"
       ]
     },
     "designtime": {
@@ -1596,6 +1597,10 @@
         "extension": {
           "description": "[Experimental] Provides a way to request data via extension.",
           "$ref": "#/definitions/extension"
+        },
+        "name": {
+          "description": "[Experimental] Gives a name to the data section. A model with the same name will be assigned to the card.",
+          "type": "string"
         }
       }
     },

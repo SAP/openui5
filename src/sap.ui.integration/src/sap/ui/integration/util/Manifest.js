@@ -557,5 +557,36 @@ sap.ui.define([
 		return oClonedManifestParams;
 	};
 
+	/**
+	 * Finds all data sections (in depth) in the given manifest section.
+	 * @ui5-restricted
+	 * @param {Object} [oSection] The root section to check. Defaults to the main section ('sap.card' for cards).
+	 * @returns {Array} A list of all found data sections.
+	 */
+	Manifest.prototype.findDataSections = function (oSection) {
+		var aResult = [],
+			sKey;
+
+		if (!oSection) {
+			oSection = this.get(this.CONFIGURATION);
+		}
+
+		if (!isPlainObject(oSection)) {
+			return [];
+		}
+
+		if (oSection.data) {
+			aResult.push(oSection.data);
+		}
+
+		for (sKey in oSection) {
+			if (oSection[sKey]) {
+				aResult = aResult.concat(this.findDataSections(oSection[sKey]));
+			}
+		}
+
+		return aResult;
+	};
+
 	return Manifest;
 }, true);

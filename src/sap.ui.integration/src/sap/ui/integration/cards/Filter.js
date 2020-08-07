@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/ui/core/ListItem",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/integration/model/ObservableModel",
 	"sap/ui/integration/util/LoadingProvider"
 ], function (
 	Control,
@@ -22,6 +23,7 @@ sap.ui.define([
 	Select,
 	ListItem,
 	JSONModel,
+	ObservableModel,
 	LoadingProvider
 ) {
 	"use strict";
@@ -173,11 +175,8 @@ sap.ui.define([
 		this._oLoadingProvider.createLoadingState(this._oDataProvider);
 	};
 
-	Filter.prototype._updateModel = function (oData) {
-		var oSelect = this._getSelect(),
-			oModel = this.getModel();
-
-		oModel.setData(oData);
+	Filter.prototype._onDataChanged = function () {
+		var oSelect = this._getSelect();
 
 		oSelect.setSelectedKey(this.getValue());
 		this._updateSelected(oSelect.getSelectedItem());
@@ -189,6 +188,8 @@ sap.ui.define([
 	 * @param {object} oDataConfig Data configuration
 	 */
 	Filter.prototype._setDataConfiguration = function (oDataConfig) {
+		var oModel;
+
 		if (!oDataConfig) {
 			this.fireEvent("_dataReady");
 			return;
@@ -201,15 +202,23 @@ sap.ui.define([
 		var oCard = Core.byId(this.getCard());
 		this._oDataProvider = oCard._oDataProviderFactory.create(oDataConfig, null, true);
 
-		// If a data provider is created: use own model.
-		this.setModel(new JSONModel());
+		if (oDataConfig.name) {
+			oModel = this.getModel(oDataConfig.name);
+		} else if (this._oDataProvider) {
+			oModel = new ObservableModel();
+			this.setModel(oModel);
+		}
+
+		oModel.attachEvent("change", function () {
+			this._onDataChanged();
+		}.bind(this));
 
 		this._oDataProvider.attachDataRequested(function () {
 			this._onDataRequested();
 		}.bind(this));
 
 		this._oDataProvider.attachDataChanged(function (oEvent) {
-			this._updateModel(oEvent.getParameter("data"));
+			oModel.setData(oEvent.getParameter("data"));
 			this._onDataRequestComplete();
 		}.bind(this));
 

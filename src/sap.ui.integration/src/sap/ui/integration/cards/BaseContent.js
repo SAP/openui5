@@ -6,14 +6,14 @@ sap.ui.define([
 	"./BaseContentRenderer",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
-	"sap/ui/model/json/JSONModel",
+	"sap/ui/integration/model/ObservableModel",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/integration/util/LoadingProvider"
 ], function (
 	BaseContentRenderer,
 	Core,
 	Control,
-	JSONModel,
+	ObservableModel,
 	ManagedObjectObserver,
 	LoadingProvider
 ) {
@@ -133,6 +133,8 @@ sap.ui.define([
 			this._oLoadingPlaceholder.destroy();
 			this._oLoadingPlaceholder = null;
 		}
+
+		this._sContentBindingPath = null;
 	};
 
 	/**
@@ -197,12 +199,16 @@ sap.ui.define([
 	 * @param {Object} oDataSettings The data part of the configuration object
 	 */
 	BaseContent.prototype._setDataConfiguration = function (oDataSettings) {
+		var oModel;
+
 		if (!oDataSettings) {
+			this._sContentBindingPath = null;
 			this.fireEvent("_dataReady");
 			return;
 		}
 
-		this.bindObject(oDataSettings.path || "/");
+		this._sContentBindingPath = oDataSettings.path || "/";
+		this.bindObject(this._sContentBindingPath);
 
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
@@ -211,20 +217,32 @@ sap.ui.define([
 			this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 		}
 
+		if (oDataSettings.name) {
+			oModel = this.getModel(oDataSettings.name);
+		} else if (this._oDataProvider) {
+			oModel = new ObservableModel();
+			this.setModel(oModel);
+		}
+
+		if (!oModel) {
+			this.fireEvent("_dataReady");
+			return;
+		}
+
+		oModel.attachEvent("change", function () {
+			this.onDataChanged();
+
+			this.onDataRequestComplete();
+		}.bind(this));
+
 		if (this._oDataProvider) {
-
-			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
-			this.setModel(new JSONModel());
-
 			this._oDataProvider.attachDataRequested(function () {
 				this.onDataRequested();
 			}.bind(this));
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
-				this._updateModel(oEvent.getParameter("data"));
-				this.onDataChanged();
-				this.onDataRequestComplete();
-			}.bind(this));
+				oModel.setData(oEvent.getParameter("data"));
+			});
 
 			this._oDataProvider.attachError(function (oEvent) {
 				this._handleError(oEvent.getParameter("message"));
@@ -269,7 +287,8 @@ sap.ui.define([
 			oAggregation = oControl.getAggregation(sAggregation);
 
 		if (oBindingContext) {
-			oBindingInfo.path = oBindingInfo.path || oBindingContext.getPath();
+			oBindingInfo.path = oBindingInfo.path || this._sContentBindingPath || oBindingContext.getPath();
+
 			oControl.bindAggregation(sAggregation, oBindingInfo);
 
 			if (this.getModel("parameters") && oAggregation) {
@@ -326,16 +345,6 @@ sap.ui.define([
 	 */
 	BaseContent.prototype.isReady = function () {
 		return this._bReady;
-	};
-
-	/**
-	 * Updates the model and binds the data to the list.
-	 *
-	 * @private
-	 * @param {Object} oData The data to set.
-	 */
-	BaseContent.prototype._updateModel = function (oData) {
-		this.getModel().setData(oData);
 	};
 
 	BaseContent.prototype._handleError = function (sLogMessage) {
@@ -422,6 +431,8 @@ sap.ui.define([
 		if (this._oLoadingProvider) {
 			this._oLoadingProvider.setLoading(false);
 		}
+
+		this.invalidate();
 	};
 
 	BaseContent.prototype.getCardInstance = function () {

@@ -86,7 +86,7 @@ sap.ui.define(function () {
 					'./util/BindingResolver.qunit',
 					'./util/DataProvider.qunit',
 					'./util/CardActions.qunit',
-					'./util/ContextModel.qunit',
+					'./model/ContextModel.qunit',
 					'./cardbundle/CardStaticResources.qunit',
 					'./cards/BaseContent.qunit',
 					'./bindingFeatures/DateRange.qunit',
@@ -267,10 +267,10 @@ sap.ui.define(function () {
 				sinon: false
 			},
 			"util/ContentFactory": {},
-			"util/ContextModel": {
+			"model/ContextModel": {
 				coverage: {
 					only: [
-						"sap/ui/integration/util/ContextModel"
+						"sap/ui/integration/model/ContextModel"
 					]
 				}
 			},

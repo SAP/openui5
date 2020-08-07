@@ -106,8 +106,13 @@ sap.ui.define([
 			return;
 		}
 
-		var oModel = this.getModel(),
-			sPath = this.getBindingContext().getPath(),
+		if (!this.getInnerList()) {
+			return;
+		}
+
+		var oBindingInfo = this.getInnerList().getBinding("items"),
+			oModel = oBindingInfo.getModel(),
+			sPath = oBindingInfo.getPath(),
 			aItems = oModel.getProperty(sPath),
 			oAction = mItemConfig.actions[0],
 			sBasePath = sPath.trim().replace(/\/$/, ""),
@@ -137,7 +142,6 @@ sap.ui.define([
 
 			aPromises.push(this._oServiceManager.getService(sActionName)
 				.then(function (oNavigationService) {
-					var oModel = this.getModel();
 					if (!oNavigationService.hidden) {
 						return Promise.resolve();
 					}
@@ -150,7 +154,7 @@ sap.ui.define([
 							oItem._card_item_hidden = bHidden;
 							oModel.checkUpdate(true);
 						});
-				}.bind(this))
+				})
 				.catch(function (sMessage) {
 					Log.error(sMessage);
 				})

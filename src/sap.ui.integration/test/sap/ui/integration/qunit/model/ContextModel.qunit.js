@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/integration/util/ContextModel",
+	"sap/ui/integration/model/ContextModel",
 	"sap/ui/integration/Host",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/widgets/Card"
