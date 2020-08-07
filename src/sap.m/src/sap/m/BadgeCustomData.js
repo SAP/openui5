@@ -61,16 +61,16 @@ sap.ui.define([
 		return this;
 	};
 
-	BadgeCustomData.prototype.setVisible =  function (sVisible) {
-		if (this.getVisible() === sVisible) { return this; }
+	BadgeCustomData.prototype.setVisible =  function (bVisible) {
+		if (this.getVisible() === bVisible) { return this; }
 
 		var oParent = this.getParent();
 
 		if (oParent) {
-			oParent.updateBadgeVisibility(sVisible);
+			oParent.updateBadgeVisibility(bVisible);
 		}
 
-		this.setProperty("visible", sVisible, true);
+		this.setProperty("visible", bVisible, true);
 		return this;
 	};
 

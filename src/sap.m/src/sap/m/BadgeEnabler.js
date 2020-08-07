@@ -88,14 +88,6 @@ sap.ui.define([
 					return this;
 				}
 
-				if (this._oBadgeConfig.position) {
-					this._oBadgeContainer.addClass(IBADGE_POSITION_CLASSES[this._oBadgeConfig.position]);
-				}
-
-				if (this._oBadgeConfig.accentColor) {
-					this._oBadgeContainer.addClass(IBADGE_CSS_CLASS + this._oBadgeConfig.accentColor);
-				}
-
 				return this;
 			}
 
@@ -103,6 +95,7 @@ sap.ui.define([
 			function _removeBadgeDom() {
 				var oBadgeElement = _getBadgeElement.call(this);
 
+				oBadgeElement.removeClass("sapMBadgeAnimationUpdate");
 				oBadgeElement.removeClass("sapMBadgeAnimationAdd");
 				oBadgeElement.width();
 				oBadgeElement.addClass("sapMBadgeAnimationRemove");
@@ -146,6 +139,14 @@ sap.ui.define([
 
 				this._isBadgeAttached = true;
 				this._oBadgeContainer.addClass(IBADGE_CSS_CLASS);
+
+				if (this._oBadgeConfig.position) {
+					this._oBadgeContainer.addClass(IBADGE_POSITION_CLASSES[this._oBadgeConfig.position]);
+				}
+
+				if (this._oBadgeConfig.accentColor) {
+					this._oBadgeContainer.addClass(IBADGE_CSS_CLASS + this._oBadgeConfig.accentColor);
+				}
 
 				callHandler.call(this, sValue, IBADGE_STATE["Appear"]);
 			}
@@ -246,8 +247,8 @@ sap.ui.define([
 				this._oBadgeConfig.position = sValue;
 			};
 
-			this.updateBadgeVisibility = function (sVisible) {
-				return sVisible ? _createBadgeDom.call(this) : _removeBadgeDom.call(this);
+			this.updateBadgeVisibility = function (bVisible) {
+				return bVisible ? _createBadgeDom.call(this) : _removeBadgeDom.call(this);
 			};
 		};
 	return BadgeEnabler;
