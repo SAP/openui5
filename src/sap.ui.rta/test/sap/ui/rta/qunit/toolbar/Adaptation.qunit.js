@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/Device",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/MessageType",
 	"sap/ui/core/Core",
@@ -13,6 +14,7 @@ function(
 	Adaptation,
 	Device,
 	Fragment,
+	Control,
 	JSONModel,
 	MessageType,
 	Core,
@@ -360,6 +362,63 @@ function(
 					});
 				})
 				.then(this.oToolbar.showVersionHistory.bind(this.oToolbar, oEvent));
+		});
+	});
+
+	function createControlWithStubbedBindingContextFireSwitchAndAssert(assert, oToolbar, nVersionNumber) {
+		var done = assert.async();
+
+		oToolbar.attachSwitchVersion(function (oEvent) {
+			if (nVersionNumber !== undefined) {
+				assert.equal(oEvent.getParameter("versionNumber"), nVersionNumber, "the event was fired with the bound version number");
+			} else {
+				assert.equal(oEvent.getParameter("versionNumber"), sap.ui.fl.Versions.Original, "the event was fired with the original app number");
+			}
+			done();
+		});
+
+		var oEvent = {
+			getSource: function () {
+				return {
+					getBindingContext: function () {
+						if (nVersionNumber === undefined) {
+							return;
+						}
+
+						return {
+							getProperty: function () {
+								return nVersionNumber;
+							}
+						};
+					}
+				};
+			}
+		};
+
+		oToolbar.versionSelected(oEvent);
+	}
+
+	QUnit.module("Version selection", {
+		beforeEach: function () {
+			this.oToolbar = new Adaptation({
+				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+			});
+		},
+		afterEach: function() {
+			this.oToolbar.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Given a version entry of the original version was selected", function(assert) {
+			createControlWithStubbedBindingContextFireSwitchAndAssert(assert, this.oToolbar);
+		});
+
+		QUnit.test("Given a version entry of the draft was selected", function(assert) {
+			createControlWithStubbedBindingContextFireSwitchAndAssert(assert, this.oToolbar, sap.ui.fl.Versions.Draft);
+		});
+
+		QUnit.test("Given a version entry of an created version was selected", function(assert) {
+			createControlWithStubbedBindingContextFireSwitchAndAssert(assert, this.oToolbar, 5);
 		});
 	});
 
