@@ -126,7 +126,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When an element is removed", function (assert) {
-			var fnDone = assert.async();
+			var fnDone = assert.async(2);
 			this.oMapEditor.attachValueChange(function (oEvent) {
 				assert.notOk(oEvent.getParameter("value").hasOwnProperty("foo"), "Then the property is removed");
 				assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 0, "Then editor contains no more keys");
@@ -135,6 +135,10 @@ sap.ui.define([
 					{},
 					"Then the base editor JSON is updated"
 				);
+				fnDone();
+			}, this);
+			this.oMapEditor.attachDesigntimeMetadataChange(function (oEvent) {
+				assert.notOk(oEvent.getParameter("value").hasOwnProperty("foo"), "Then the property is removed from the designtime metadata");
 				fnDone();
 			}, this);
 			QUnitUtils.triggerEvent("tap", this.aItems[0].deleteButton.getDomRef());
@@ -169,8 +173,15 @@ sap.ui.define([
 						},
 						"Then the key is updated"
 					);
-					fnDone();
-				});
+
+					// Check the designtime change event which is fired after value change
+					// and ignore previous events to ignore additional position changes
+					this.oMapEditor.attachDesigntimeMetadataChange(function (oEvent) {
+						assert.notOk(oEvent.getParameter("value").hasOwnProperty("foo"), "Then the old property is removed from the designtime metadata");
+						assert.ok(oEvent.getParameter("value").hasOwnProperty("foo2"), "Then the new property is added to the designtime metadata");
+						fnDone();
+					});
+				}, this);
 				EditorQunitUtils.setInputValue(this.aItems[0].key.getContent(), "foo2");
 			}, this);
 			QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());

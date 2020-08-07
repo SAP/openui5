@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/base/util/values",
 	"sap/base/util/each",
 	"sap/ui/integration/designtime/baseEditor/validator/ValidatorRegistry",
-	"sap/ui/integration/designtime/baseEditor/util/BaseDefaultValidatorModules"
+	"sap/ui/integration/designtime/baseEditor/util/BaseDefaultValidatorModules",
+	"sap/ui/integration/designtime/baseEditor/util/cleanupDesigntimeMetadata"
 ], function(
 	Control,
 	isTemplate,
@@ -34,7 +35,8 @@ sap.ui.define([
 	values,
 	each,
 	ValidatorRegistry,
-	BaseDefaultValidatorModules
+	BaseDefaultValidatorModules,
+	cleanupDesigntimeMetadata
 ) {
 	"use strict";
 
@@ -334,6 +336,7 @@ sap.ui.define([
 	BasePropertyEditor.prototype.setDesigntimeMetadata = function (oValue) {
 		var oCurrentMetadata = this.getDesigntimeMetadata();
 		var oNextMetadata = oValue;
+		cleanupDesigntimeMetadata(oNextMetadata);
 		var oConfig = this.getConfig();
 
 		if (!deepEqual(oCurrentMetadata, oNextMetadata)) {
