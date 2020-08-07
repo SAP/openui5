@@ -7,6 +7,7 @@ sap.ui.define([
 	"./ActionToolbar",
 	"./table/TableSettings",
 	"./table/GridTableType",
+	"./table/V4AnalyticsTableType",
 	"./table/ResponsiveTableType",
 	"./library",
 	"sap/m/Text",
@@ -30,6 +31,7 @@ sap.ui.define([
 	ActionToolbar,
 	TableSettings,
 	GridTableType,
+	V4AnalyticsTableType,
 	ResponsiveTableType,
 	library,
 	Text,
@@ -556,7 +558,13 @@ sap.ui.define([
 		if (!oType) {
 			sType = TableType.Table; // back to the default behaviour
 		} else if (typeof oType === "object") {
-			sType = oType.isA("sap.ui.mdc.table.ResponsiveTableType") ? TableType.ResponsiveTable : TableType.Table;
+			if (oType.isA("sap.ui.mdc.table.ResponsiveTableType")) {
+				sType = TableType.ResponsiveTable;
+			} else if (oType.isA("sap.ui.mdc.table.V4AnalyticsTableType")) {
+				sType =  "V4AnalyticsTable"; //TableType.V4AnalyticsTable;
+			} else {
+				sType = TableType.Table;
+			}
 		}
 		return sType;
 	};
@@ -566,7 +574,13 @@ sap.ui.define([
 		if (oType && typeof oType === "object") {
 			oType.updateTableSettings();
 		} else {
-			oType = oType === "ResponsiveTable" ? ResponsiveTableType : GridTableType;
+			if (oType === "ResponsiveTable") {
+				oType = ResponsiveTableType;
+			} else if (oType === "V4AnalyticsTable") {
+				oType = V4AnalyticsTableType;
+			} else {
+				oType = GridTableType;
+			}
 			// Use defaults from Type
 			oType.updateDefault(this._oTable);
 		}
@@ -958,8 +972,16 @@ sap.ui.define([
 	};
 
 	Table.prototype._initializeContent = function() {
-		var sType = this._getStringType();
-		var oType = sType === "ResponsiveTable" ? ResponsiveTableType : GridTableType;
+		var oType, sType = this._getStringType();
+		// We also can use here static map instead of if else in the future
+		if (sType === "ResponsiveTable") {
+			oType = ResponsiveTableType;
+		} else if (sType === "V4AnalyticsTable") {
+			oType = V4AnalyticsTableType;
+		} else {
+			oType = GridTableType;
+		}
+
 		// Load the necessary modules via the corresponding TableType
 		Promise.all([
 			this.awaitControlDelegate(), oType.loadTableModules(), this.retrieveAdaptationController()

@@ -50,6 +50,7 @@ sap.ui.define([
 			"sap.ui.mdc.table.CreationRow",
 			"sap.ui.mdc.table.TableTypeBase",
 			"sap.ui.mdc.table.GridTableType",
+			"sap.ui.mdc.table.V4AnalyticsTableType",
 			"sap.ui.mdc.table.ResponsiveTableType",
 			"sap.ui.mdc.table.RowSettings",
 			"sap.ui.mdc.chart.DimensionItem",
@@ -194,6 +195,13 @@ sap.ui.define([
 		 * @public
 		 */
 		ResponsiveTable: "ResponsiveTable"
+		/**
+		 * Analytical table with V4 OData ({@link sap.ui.table.AnalyticalTable} control) is used.
+		 *
+		 * @private
+		 * @experimental Since 1.xx. Behavior might change.
+		 */
+		//V4AnalyticsTable: "V4AnalyticsTable"
 	};
 
 	/**

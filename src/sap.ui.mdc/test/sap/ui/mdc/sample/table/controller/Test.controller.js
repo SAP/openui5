@@ -94,6 +94,11 @@ sap.ui.define([
 			}));
 		},
 
+		setV4AnalyticsTable: function() {
+			sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType(new sap.ui.mdc.table.V4AnalyticsTableType({
+			}));
+		},
+
 		onRetrieveTableState: function(oEvent) {
 			var oTable = this.getView().byId("mdcTable");
 			if (oTable) {
