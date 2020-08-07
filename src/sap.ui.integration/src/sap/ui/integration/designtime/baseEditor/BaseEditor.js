@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
 	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
 	"sap/ui/integration/designtime/baseEditor/util/hasTag",
+	"sap/ui/integration/designtime/baseEditor/util/cleanupDesigntimeMetadata",
 	"sap/ui/core/Control",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/base/util/ObjectPath",
@@ -37,6 +38,7 @@ sap.ui.define([
 	resolveBinding,
 	ObjectBinding,
 	hasTag,
+	cleanupDesigntimeMetadata,
 	Control,
 	ResourceModel,
 	ObjectPath,
@@ -1087,22 +1089,6 @@ sap.ui.define([
 
 		this.setDesigntimeMetadata(oDesigntimeMetadata);
 	};
-
-	function cleanupDesigntimeMetadata (oObjectToMutate) {
-		each(oObjectToMutate, function (sKey, vValue) {
-			if (isPlainObject(vValue)) {
-				cleanupDesigntimeMetadata(vValue);
-			}
-
-			if (
-				_isNil(vValue)
-				|| Array.isArray(vValue) && vValue.length === 0
-				|| isPlainObject(vValue) && isEmptyObject(vValue)
-			) {
-				delete oObjectToMutate[sKey];
-			}
-		});
-	}
 
 	return BaseEditor;
 });

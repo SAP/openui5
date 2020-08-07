@@ -118,12 +118,12 @@ sap.ui.define([
 				}
 			});
 
+			this.setValue(oNextValue);
 			this.setDesigntimeMetadata(_merge(
 				{},
 				this.getConfig().designtime,
 				oNewDesigntimeMetadata
 			));
-			this.setValue(oNextValue);
 		}, this);
 	};
 

@@ -317,6 +317,9 @@ sap.ui.define([
 			var sKeyToDelete = oEvent.getSource().getBindingContext("itemsModel").getObject().key;
 			var mValue = this.getValue();
 			this.setValue(_omit(mValue, sKeyToDelete));
+			var oNewDesigntimeMetadata = deepClone(this.getDesigntimeMetadata());
+			delete oNewDesigntimeMetadata[sKeyToDelete];
+			this.setDesigntimeMetadata(oNewDesigntimeMetadata);
 		},
 
 		_onAddElement: function() {
@@ -439,14 +442,14 @@ sap.ui.define([
 				this._mTypes[sNewKey] = this._mTypes[sOldKey];
 				delete this._mTypes[sOldKey];
 
+				this.setValue(oNewValue);
+
 				var oDesigntime = _merge({}, this.getConfig().designtime);
 				if (oDesigntime.hasOwnProperty(sOldKey)) {
 					oDesigntime[sNewKey] = oDesigntime[sOldKey];
 					delete oDesigntime[sOldKey];
 					this.setDesigntimeMetadata(oDesigntime);
 				}
-
-				this.setValue(oNewValue);
 			}
 		},
 
