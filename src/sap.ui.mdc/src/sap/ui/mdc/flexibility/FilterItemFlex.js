@@ -15,14 +15,6 @@ sap.ui.define(['./ItemBaseFlex'], function(ItemBaseFlex) {
 
 	var oFilterItemFlex = Object.assign({}, ItemBaseFlex);
 
-	oFilterItemFlex.beforeAddItem = function(Delegate, sName, oControl, mPropertyBag) {
-		return Delegate.beforeAddFilterFlex(sName, oControl, mPropertyBag);
-	};
-
-	oFilterItemFlex.afterRemoveItem = function(Delegate, oFilterField, oControl, mPropertyBag) {
-		return Delegate.afterRemoveFilterFlex(oFilterField, oControl, mPropertyBag);
-	};
-
 	oFilterItemFlex.findItem = function(oModifier, aFilters, sName) {
 		return aFilters.find(function(oFilter) {
 

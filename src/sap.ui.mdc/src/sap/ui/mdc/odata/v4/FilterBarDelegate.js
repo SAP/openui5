@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	'./ODataMetaModelUtil', 'sap/ui/mdc/enum/FieldDisplay', "sap/ui/fl/Utils", "sap/ui/mdc/FilterBarDelegate", 'sap/base/util/ObjectPath', 'sap/base/util/merge', 'sap/ui/mdc/odata/v4/BaseDelegate', 'sap/ui/mdc/condition/FilterOperatorUtil', "sap/ui/model/FilterOperator", "sap/ui/model/Filter", 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/core/util/reflection/JsControlTreeModifier'
-	], function (ODataMetaModelUtil, FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, BaseDelegate, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier) {
+	'./ODataMetaModelUtil', 'sap/ui/mdc/enum/FieldDisplay', "sap/ui/fl/Utils", "sap/ui/mdc/FilterBarDelegate", 'sap/base/util/ObjectPath', 'sap/base/util/merge', 'sap/ui/mdc/odata/v4/TypeUtil', 'sap/ui/mdc/condition/FilterOperatorUtil', "sap/ui/model/FilterOperator", "sap/ui/model/Filter", 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/core/util/reflection/JsControlTreeModifier'
+	], function (ODataMetaModelUtil, FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, TypeUtil, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier) {
 	"use strict";
 
 	/**
@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @since 1.60
 	 * @alias sap.ui.mdc.odata.v4.FilterBarDelegate
 	 */
-	var ODataFilterBarDelegate = Object.assign({}, FilterBarDelegate, BaseDelegate);
+	var ODataFilterBarDelegate = Object.assign({}, FilterBarDelegate);
 
 	// TO DO
 	var mDefaultTypeForEdmType = {
@@ -226,7 +226,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	ODataFilterBarDelegate.beforeAddFilterFlex = function(sPropertyName, oFilterBar, mPropertyBag) {
+	ODataFilterBarDelegate.addItem = function(sPropertyName, oFilterBar, mPropertyBag) {
 		return Promise.resolve(this._createFilter(sPropertyName, oFilterBar, mPropertyBag));
 	};
 
@@ -239,7 +239,7 @@ sap.ui.define([
 	 * @param {Object} mPropertyBag Instance of property bag from Flex change API
 	 * @returns {Promise} Promise that resolves with true/false to allow/prevent default behavour of the change
 	 */
-	ODataFilterBarDelegate.afterRemoveFilterFlex =  function(oFilterField, oFilterBar, mPropertyBag) {
+	ODataFilterBarDelegate.removeItem =  function(oFilterField, oFilterBar, mPropertyBag) {
 		// return true within the Promise for default behaviour
 		return Promise.resolve(true);
 	};
@@ -358,7 +358,7 @@ sap.ui.define([
 		//and PropertyInfo, the usage of a complex 'name' (e.g. containing '/') might be reconsidered.
 		oProperty.name = sNavigationPropertyName ? sNavigationPropertyName + "/" + sKey : sKey;
 
-		oProperty.typeConfig = this.getTypeUtil().getTypeConfig(oObj.$Type, oProperty.formatOptions, oProperty.constraints);
+		oProperty.typeConfig = TypeUtil.getTypeConfig(oObj.$Type, oProperty.formatOptions, oProperty.constraints);
 
 		return oProperty;
 	};
@@ -610,6 +610,9 @@ sap.ui.define([
 		});
 	};
 
+	ODataFilterBarDelegate.getTypeUtil = function (oPayload) {
+		return TypeUtil;
+	};
 
 	return ODataFilterBarDelegate;
 });

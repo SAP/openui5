@@ -93,7 +93,7 @@ sap.ui.define([
 		]);
 	}
 
-	function beforeAddFilterFlex(sPropertyName, oFilterBar, mPropertyBag) {
+	function addItem(sPropertyName, oFilterBar, mPropertyBag) {
 		return Promise.resolve(new FilterField("comp---view--myFilterBar--" + sPropertyName, {
 			conditions:"{$filters>/conditions/" + sPropertyName + "}"
 		}));
@@ -104,9 +104,9 @@ sap.ui.define([
 		before: function() {
 			// Implement required Delgate APIs
 			this._fnFetchPropertiers = FilterBarDelegate.fetchProperties;
-			this._fnBeforeAddFilterFlex = FilterBarDelegate.beforeAddFilterFlex;
+			this._fnAddItem = FilterBarDelegate.addItem;
 			FilterBarDelegate.fetchProperties = fetchProperties;
-			FilterBarDelegate.beforeAddFilterFlex = beforeAddFilterFlex;
+			FilterBarDelegate.addItem = addItem;
 		},
 		beforeEach: function() {
 			this.oUiComponent = new UIComp("comp");
@@ -128,9 +128,9 @@ sap.ui.define([
 		},
 		after: function() {
 			FilterBarFlexHandler.fetchProperties = this._fnFetchPropertiers;
-			FilterBarFlexHandler.beforeAddFilterFlex = this._fnBeforeAddFilterFlex;
+			FilterBarFlexHandler.addItem = this._fnAddItem;
 			this.fetchProperties = null;
-			this._fnBeforeAddFilterFlex = null;
+			this._fnAddItem = null;
 		}
 	});
 

@@ -66,7 +66,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	UnitTestFilterBarDelegate.beforeAddFilterFlex = function(sPropertyName, oFilterBar, mPropertyBag) {
+	UnitTestFilterBarDelegate.addItem = function(sPropertyName, oFilterBar, mPropertyBag) {
 		return Promise.resolve(this._createFilter(sPropertyName, oFilterBar, mPropertyBag));
 	};
 

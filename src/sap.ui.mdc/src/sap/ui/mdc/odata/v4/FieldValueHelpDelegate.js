@@ -8,12 +8,13 @@
 
 sap.ui.define([
 	'sap/ui/mdc/field/FieldValueHelpDelegate',
-	"sap/ui/mdc/odata/v4/BaseDelegate",
-	'sap/ui/model/FilterType'
+	'sap/ui/model/FilterType',
+	'sap/ui/mdc/odata/v4/TypeUtil'
+
 ], function(
 		FieldValueHelpDelegate,
-		BaseDelegate,
-		FilterType
+		FilterType,
+		TypeUtil
 ) {
 	"use strict";
 
@@ -28,7 +29,7 @@ sap.ui.define([
 	 * @since 1.77.0
 	 * @alias sap.ui.mdc.odata.v4.FieldValueHelpDelegate
 	 */
-	var ODataFieldValueHelpDelegate = Object.assign({}, FieldValueHelpDelegate, BaseDelegate);
+	var ODataFieldValueHelpDelegate = Object.assign({}, FieldValueHelpDelegate);
 
 	ODataFieldValueHelpDelegate.isSearchSupported = function(oPayload, oListBinding) {
 
@@ -80,6 +81,10 @@ sap.ui.define([
 
 		return null;
 
+	};
+
+	ODataFieldValueHelpDelegate.getTypeUtil = function (oPayload) {
+		return TypeUtil;
 	};
 
 	return ODataFieldValueHelpDelegate;

@@ -3,14 +3,14 @@
  */
 
 sap.ui.define([
-	"sap/ui/mdc/BaseDelegate",
+	"sap/ui/mdc/AggregationBaseDelegate",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/mdc/chart/MeasureItem",
 	"sap/ui/mdc/chart/DimensionItem",
 	"sap/ui/core/Core",
 	"sap/ui/mdc/util/FilterUtil"
 ], function(
-	BaseDelegate,
+	AggregationBaseDelegate,
 	SyncPromise,
 	MeasureItem,
 	DimensionItem,
@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @since 1.62
 	 * @author SAP SE
 	 */
-	var ChartDelegate = Object.assign({}, BaseDelegate);
+	var ChartDelegate = Object.assign({}, AggregationBaseDelegate);
 
 	/**
 	 * Delegates metadata structure.
@@ -258,7 +258,20 @@ sap.ui.define([
 		return new MeasureItem(sID, oSettings);
 	};
 
+	ChartDelegate.addItem = function(sPropertyName, oChart, mPropertyBag, sRole) {
+		return this.beforeAddItem.apply(this, arguments);
+	};
+
+	ChartDelegate.removeItem = function(sPropertyName, oChart, mPropertyBag) {
+		return this.afterRemoveItem.apply(this, arguments);
+	};
+
 	/**
+	 *
+	 * @deprecated
+	 * <b>Note:</b> once all dependencies to the beforeAdd* and afterRemove* hooks have been changed,
+	 * this method should be removed. Please see: {@link  sap.ui.mdc.AggregationBaseDelegate AggregationBaseDelegate}
+	 *
 	 * Hook method invoked before a chart item is added.
 	 *
 	 * <b>Note:</b> This method is invoked by the flex handler.
@@ -279,6 +292,11 @@ sap.ui.define([
 	};
 
 	/**
+	 *
+	 * @deprecated
+	 * <b>Note:</b> once all dependencies to the beforeAdd* and afterRemove* hooks have been changed,
+	 * this method should be removed. Please see: {@link  sap.ui.mdc.AggregationBaseDelegate AggregationBaseDelegate}
+	 *
 	 * Hook method invoked after a chart item is removed.
 	 *
 	 * <b>Note:</b> This method is invoked by the flex handler.
