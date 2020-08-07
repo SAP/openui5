@@ -71,54 +71,56 @@ sap.ui.define([
 		 * @alias sap.m.Menu
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var Menu = Control.extend("sap.m.Menu", /** @lends sap.m.Menu.prototype */ { metadata : {
-			interfaces: [
-				"sap.ui.core.IContextMenu"
-			],
-			library : "sap.m",
-			properties : {
-				/**
-				 * Defines the <code>Menu</code> title.
-				 */
-				title : { type : "string", group : "Misc", defaultValue : null }
-			},
-			defaultAggregation: "items",
-			aggregations: {
-				/**
-				 * Defines the items contained within this control.
-				 */
-				items: { type: "sap.m.MenuItem", multiple: true, singularName: "item", bindable: "bindable" },
-
-				/**
-				 * Internal aggregation that contains the inner <code>sap.m.Dialog</code> for mobile.
-				 */
-				_dialog: { type: "sap.m.Dialog", multiple: false, visibility: "hidden" },
-
-				/**
-				 * Internal aggregation that contains the inner <code>sap.ui.unified.Menu</code> for desktop and tablet.
-				 */
-				_menu: { type: "sap.ui.unified.Menu", multiple: false, visibility: "hidden" }
-			},
-			events: {
-				/**
-				 * Fired when a <code>MenuItem</code> is selected.
-				 */
-				itemSelected: {
-					parameters: {
-						/**
-						 * The <code>MenuItem</code> which was selected.
-						 */
-						item : {type : "sap.m.MenuItem" }
-					}
+		var Menu = Control.extend("sap.m.Menu", /** @lends sap.m.Menu.prototype */ {
+			metadata : {
+				interfaces: [
+					"sap.ui.core.IContextMenu"
+				],
+				library : "sap.m",
+				properties : {
+					/**
+					 * Defines the <code>Menu</code> title.
+					 */
+					title : { type : "string", group : "Misc", defaultValue : null }
 				},
+				defaultAggregation: "items",
+				aggregations: {
+					/**
+					 * Defines the items contained within this control.
+					 */
+					items: { type: "sap.m.MenuItem", multiple: true, singularName: "item", bindable: "bindable" },
 
-				/**
-				 * Fired when the menu is closed.
-				 */
-				closed: {}
+					/**
+					 * Internal aggregation that contains the inner <code>sap.m.Dialog</code> for mobile.
+					 */
+					_dialog: { type: "sap.m.Dialog", multiple: false, visibility: "hidden" },
+
+					/**
+					 * Internal aggregation that contains the inner <code>sap.ui.unified.Menu</code> for desktop and tablet.
+					 */
+					_menu: { type: "sap.ui.unified.Menu", multiple: false, visibility: "hidden" }
+				},
+				events: {
+					/**
+					 * Fired when a <code>MenuItem</code> is selected.
+					 */
+					itemSelected: {
+						parameters: {
+							/**
+							 * The <code>MenuItem</code> which was selected.
+							 */
+							item : {type : "sap.m.MenuItem" }
+						}
+					},
+
+					/**
+					 * Fired when the menu is closed.
+					 */
+					closed: {}
+				}
 			},
 			renderer: null // this is a popup control without a renderer
-		}});
+		});
 
 		EnabledPropagator.call(Menu.prototype);
 

@@ -35,68 +35,69 @@ sap.ui.define([
 	 * @alias sap.ui.core.TooltipBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TooltipBase = Control.extend("sap.ui.core.TooltipBase", /** @lends sap.ui.core.TooltipBase.prototype */ { metadata : {
+	var TooltipBase = Control.extend("sap.ui.core.TooltipBase", /** @lends sap.ui.core.TooltipBase.prototype */ {
+		metadata : {
+			"abstract" : true,
+			library : "sap.ui.core",
+			properties : {
 
-		"abstract" : true,
-		library : "sap.ui.core",
-		properties : {
+				/**
+				 * The text that is shown in the tooltip that extends the TooltipBase class, for example in RichTooltip.
+				 */
+				text : {type : "string", group : "Misc", defaultValue : ""},
 
-			/**
-			 * The text that is shown in the tooltip that extends the TooltipBase class, for example in RichTooltip.
-			 */
-			text : {type : "string", group : "Misc", defaultValue : ""},
+				/**
+				 * Optional. Open Duration in milliseconds.
+				 */
+				openDuration : {type : "int", group : "Behavior", defaultValue : 200},
 
-			/**
-			 * Optional. Open Duration in milliseconds.
-			 */
-			openDuration : {type : "int", group : "Behavior", defaultValue : 200},
+				/**
+				 * Optional. Close Duration in milliseconds.
+				 */
+				closeDuration : {type : "int", group : "Behavior", defaultValue : 200},
 
-			/**
-			 * Optional. Close Duration in milliseconds.
-			 */
-			closeDuration : {type : "int", group : "Behavior", defaultValue : 200},
+				/**
+				 * Optional. My position defines which position on the extended tooltip being positioned to align with the target control.
+				 */
+				myPosition : {type : "sap.ui.core.Dock", group : "Behavior", defaultValue : 'begin top'},
 
-			/**
-			 * Optional. My position defines which position on the extended tooltip being positioned to align with the target control.
-			 */
-			myPosition : {type : "sap.ui.core.Dock", group : "Behavior", defaultValue : 'begin top'},
+				/**
+				 * Optional. At position defines which position on the target control to align the positioned tooltip.
+				 */
+				atPosition : {type : "sap.ui.core.Dock", group : "Behavior", defaultValue : 'begin bottom'},
 
-			/**
-			 * Optional. At position defines which position on the target control to align the positioned tooltip.
-			 */
-			atPosition : {type : "sap.ui.core.Dock", group : "Behavior", defaultValue : 'begin bottom'},
+				/**
+				 * Optional. Offset adds these left-top values to the calculated position.
+				 * Example: "10 3".
+				 */
+				offset : {type : "string", group : "Behavior", defaultValue : '10 3'},
 
-			/**
-			 * Optional. Offset adds these left-top values to the calculated position.
-			 * Example: "10 3".
-			 */
-			offset : {type : "string", group : "Behavior", defaultValue : '10 3'},
+				/**
+				 * Optional. Collision - when the positioned element overflows the window in some direction, move it to an alternative position.
+				 */
+				collision : {type : "sap.ui.core.Collision", group : "Behavior", defaultValue : 'flip'},
 
-			/**
-			 * Optional. Collision - when the positioned element overflows the window in some direction, move it to an alternative position.
-			 */
-			collision : {type : "sap.ui.core.Collision", group : "Behavior", defaultValue : 'flip'},
+				/**
+				 * Opening delay of the tooltip in milliseconds
+				 */
+				openDelay : {type : "int", group : "Misc", defaultValue : 500},
 
-			/**
-			 * Opening delay of the tooltip in milliseconds
-			 */
-			openDelay : {type : "int", group : "Misc", defaultValue : 500},
+				/**
+				 * Closing delay of the tooltip in milliseconds
+				 */
+				closeDelay : {type : "int", group : "Misc", defaultValue : 100}
+			},
+			events : {
 
-			/**
-			 * Closing delay of the tooltip in milliseconds
-			 */
-			closeDelay : {type : "int", group : "Misc", defaultValue : 100}
-		},
-		events : {
-
-			/**
-			 * This event is fired when the Tooltip has been closed
-			 * @since 1.11.0
-			 */
-			closed : {}
+				/**
+				 * This event is fired when the Tooltip has been closed
+				 * @since 1.11.0
+				 */
+				closed : {}
+			}
 		},
 		renderer: null // this control has no renderer (it is abstract)
-	}});
+	});
 
 
 	/**

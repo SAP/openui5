@@ -1071,9 +1071,12 @@ sap.ui.define([
 
 	QUnit.test("No renderer", function (oAssert) {
 		try {
-			this.oMenu.getMetadata().getRenderer();
+			var oRenderer = this.oMenu.getMetadata().getRenderer();
+			oAssert.notOk(oRenderer, "The menu has no renderer. If this changes, you can remove this test only if you change " +
+				"the way the synchronization of CustomStyleClassSupport is handled between " +
+				"the sap.m.Menu and the sap.ui.unified.Menu");
 		} catch (e) {
-			oAssert.ok(true, "The menu has no renderer. If this changes you can remove this test only if you change " +
+			oAssert.ok(true, "The menu has no renderer. If this changes, you can remove this test only if you change " +
 				"the way the synchronization of CustomStyleClassSupport is handled between " +
 				"the sap.m.Menu and the sap.ui.unified.Menu");
 		}

@@ -164,9 +164,9 @@ sap.ui.define([
 					close: {}
 
 					// 'tap' and 'press' events are inherited from ListItemBase.
-				},
-				renderer: null // this class has no renderer (it is abstract)
-			}
+				}
+			},
+			renderer: null // this class has no renderer (it is abstract)
 		});
 
 		// overrides ListItemBase method

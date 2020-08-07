@@ -33,35 +33,37 @@ sap.ui.define(['./Panel', './library', 'sap/ui/core/library'],
 	 * @alias sap.ui.commons.Tab
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Tab = Panel.extend("sap.ui.commons.Tab", /** @lends sap.ui.commons.Tab.prototype */ { metadata : {
+	var Tab = Panel.extend("sap.ui.commons.Tab", /** @lends sap.ui.commons.Tab.prototype */ {
+		metadata : {
 
-		library : "sap.ui.commons",
-		properties : {
+			library : "sap.ui.commons",
+			properties : {
 
-			/**
-			 * Specifies the vertical scrolling.
-			 */
-			verticalScrolling : {type : "sap.ui.core.Scrolling", group : "Behavior", defaultValue : Scrolling.None},
+				/**
+				 * Specifies the vertical scrolling.
+				 */
+				verticalScrolling : {type : "sap.ui.core.Scrolling", group : "Behavior", defaultValue : Scrolling.None},
 
-			/**
-			 * Specifies the horizontal scrolling.
-			 */
-			horizontalScrolling : {type : "sap.ui.core.Scrolling", group : "Behavior", defaultValue : Scrolling.None},
+				/**
+				 * Specifies the horizontal scrolling.
+				 */
+				horizontalScrolling : {type : "sap.ui.core.Scrolling", group : "Behavior", defaultValue : Scrolling.None},
 
-			/**
-			 * Specifies whether the tab contains a close button.
-			 */
-			closable : {type : "boolean", group : "Misc", defaultValue : false},
+				/**
+				 * Specifies whether the tab contains a close button.
+				 */
+				closable : {type : "boolean", group : "Misc", defaultValue : false},
 
-			/**
-			 * Defines whether the tab is the active one.
-			 * @deprecated AS of 0.17.0.
-			 * This property is not used. To identify the selected tab in a TabStrip selectedIndex is used.
-			 */
-			selected : {type : "boolean", group : "Behavior", defaultValue : false, deprecated: true}
+				/**
+				 * Defines whether the tab is the active one.
+				 * @deprecated AS of 0.17.0.
+				 * This property is not used. To identify the selected tab in a TabStrip selectedIndex is used.
+				 */
+				selected : {type : "boolean", group : "Behavior", defaultValue : false, deprecated: true}
+			}
 		},
 		renderer: null // this control has no own renderer, it is rendered by the TabStripRenderer
-	}});
+	});
 
 	/*
 	 * Initializes the Tab.

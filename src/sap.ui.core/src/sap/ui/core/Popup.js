@@ -709,7 +709,7 @@ sap.ui.define([
 			var oArea = this.oContent.getUIArea();
 
 			if (oArea === null) {
-				Log.error("The Popup content with id " + this.oContent.getId() + "is NOT connected with any UIArea and further invalidation may not work properly");
+				Log.error("The Popup content with id '" + this.oContent.getId() + "' is NOT connected with any UIArea and further invalidation may not work properly");
 			} else if (Popup._bEnableUIAreaCheck && oArea.getRootNode().id !== oStatic.getRootNode().id) {
 				// the variable 'sap.ui.core.Popup._bEnableUIAreaCheck' isn't defined anywhere. To enable this check this variable
 				// has to be defined within the console or somehow else.
