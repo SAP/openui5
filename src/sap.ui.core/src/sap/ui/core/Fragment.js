@@ -413,11 +413,7 @@ function(
 		delete mParameters.definition;
 		delete mParameters.controller;
 
-		try {
-			return Promise.resolve(fragmentFactory(mParameters));
-		} catch (err) {
-			return Promise.reject(err);
-		}
+		return Promise.resolve(fragmentFactory(mParameters));
 	};
 
 	/**
