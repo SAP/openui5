@@ -285,7 +285,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * The delay in milliseconds, after which the busy indicator will show up.
+				 * The delay in milliseconds after which the busy indicator is shown.
 				 */
 				busyIndicatorDelay : {
 					type: "int",
