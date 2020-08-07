@@ -870,5 +870,17 @@ sap.ui.define([
 				"Display format should equal 'YYYY-MM-DD'.");
 		});
 
+		QUnit.test("testing getFormatedConditionText", function (assert) {
+			// Arrange
+			var oP13nConditionPanel = new P13nConditionPanel();
+
+			// Assert
+			assert.strictEqual(oP13nConditionPanel._getFormatedConditionText("EQ","", "", false,"CreationDate",true), "");
+			assert.strictEqual(oP13nConditionPanel._getFormatedConditionText("EQ",null, null, false,"CreationDate",true), "");
+			assert.strictEqual(oP13nConditionPanel._getFormatedConditionText("EQ","08/03/2020", null, false,"CreationDate",true), "=08/03/2020");
+			assert.strictEqual(oP13nConditionPanel._getFormatedConditionText("BT","09/24/2020", "08/26/2020", false,"CreationDate",true), "09/24/2020...08/26/2020");
+			assert.strictEqual(oP13nConditionPanel._getFormatedConditionText("Empty",null, null, false,"CreationDate",true), "<empty>");
+		});
+
 	}());
 });
