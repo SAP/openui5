@@ -9495,6 +9495,44 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("Picker aria-labelledby attribute", function (assert) {
+			// arrange
+			var oSelect = new Select(),
+				sPickerValueStateId = oSelect.getPickerValueStateContentId(),
+				oPicker = oSelect.getPicker();
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// assert
+			assert.equal(oPicker.getAriaLabelledBy().indexOf(sPickerValueStateId), -1, "Value state content ID is not added");
+
+			// arrange
+			oSelect.setValueState(ValueState.Success);
+			Core.applyChanges();
+
+			// assert
+			assert.notEqual(oPicker.getAriaLabelledBy().indexOf(sPickerValueStateId), -1, "Value state content ID is added ");
+
+			// clean
+			oSelect.destroy();
+		});
+
+
+		QUnit.test("Picker aria-labelledby attribute initial", function (assert) {
+			// arrange
+			var oSelect = new Select({valueState: ValueState.Success}),
+				sPickerValueStateId = oSelect.getPickerValueStateContentId(),
+				oPicker = oSelect.getPicker();
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// assert
+			assert.notEqual(oPicker.getAriaLabelledBy().indexOf(sPickerValueStateId), -1, "Value state content ID is added ");
+
+			// clean
+			oSelect.destroy();
+		});
+
 		QUnit.module("value state");
 
 		QUnit.test("it should open the value state message popup on focusin", function (assert) {
