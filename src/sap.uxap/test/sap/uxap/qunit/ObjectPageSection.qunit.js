@@ -487,13 +487,26 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 	});
 
 	QUnit.test("Test aria-labelledby attribute", function (assert) {
-		var oFirstSection = this.ObjectPageSectionView.byId("SectionWithSubSection"),
+		assert.expect(5);
+
+		var done = assert.async(),
+			oFirstSection = this.ObjectPageSectionView.byId("SectionWithSubSection"),
 			sFirstSectionAriaLabelledBy = oFirstSection.$().attr("aria-labelledby"),
 			oSectionWithoutTitle = this.ObjectPageSectionView.byId("SectionWithNoTitleAndTwoSubSections"),
 			sSectionWithoutTitleAriaLabel = oSectionWithoutTitle.$().attr("aria-labelledby"),
 			oLastSection = this.ObjectPageSectionView.byId("SectionWithNoTitleAndOneSubSection"),
 			sLastSectionAriaLabelledBy = oLastSection.$().attr("aria-labelledby"),
-			sSectionText = ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME");
+			sSectionText = ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME"),
+			oLastSectionFirstSubsection = oLastSection.getSubSections()[0],
+			oRenderingAfterTitleUpdate = {
+				onAfterRendering: function () {
+					// assert
+					oLastSection.removeEventDelegate(oRenderingAfterTitleUpdate);
+					assert.strictEqual(Core.byId(sLastSectionAriaLabelledBy).getText(),
+						oLastSection._getTitle() + " " + sSectionText, "aria-labelledby is updated properly");
+					done();
+				}
+			};
 
 		// assert
 		assert.strictEqual(Core.byId(sFirstSectionAriaLabelledBy).getText(),
@@ -509,6 +522,16 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 		// assert
 		assert.strictEqual(Core.byId(sFirstSectionAriaLabelledBy).getText(),
 			oFirstSection._getTitle() + " " + sSectionText, "aria-labelledby is updated properly");
+
+		// arrange
+		oLastSection.addEventDelegate(oRenderingAfterTitleUpdate);
+
+		// act
+		// in this case the subsection title get propagated to the
+		// section title property through _setInternalTitle function
+		oLastSectionFirstSubsection.setTitle("My new title");
+		Core.applyChanges();
+
 	});
 
 	QUnit.module("Invalidation", {

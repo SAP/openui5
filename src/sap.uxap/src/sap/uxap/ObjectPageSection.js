@@ -132,13 +132,23 @@ sap.ui.define([
 	ObjectPageSection.prototype.setTitle = function (sValue) {
 		ObjectPageSectionBase.prototype.setTitle.call(this, sValue);
 
+		this._setInvisibleTextLabelValue(sValue);
+
+		return this;
+	};
+
+	ObjectPageSection.prototype._setInvisibleTextLabelValue = function (sValue) {
 		var oAriaLabelledBy = this.getAggregation("ariaLabelledBy"),
-			sSectionText = ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME");
+			sSectionText = ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME"),
+			sLabel = "";
+
+		if (sValue) {
+			sLabel = sValue + " ";
+		}
 
 		if (oAriaLabelledBy) {
-			sap.ui.getCore().byId(oAriaLabelledBy.getId()).setText(sValue + " " + sSectionText);
+			sap.ui.getCore().byId(oAriaLabelledBy.getId()).setText(sLabel + sSectionText);
 		}
-		return this;
 	};
 
 	ObjectPageSection.prototype._getImportanceLevelToHide = function (oCurrentMedia) {
@@ -190,6 +200,8 @@ sap.ui.define([
 
 	ObjectPageSection.prototype.onBeforeRendering = function () {
 		var sAriaLabeledBy = "ariaLabelledBy";
+
+		this._setInvisibleTextLabelValue(this._getTitle());
 
 		if (!this.getAggregation(sAriaLabeledBy)) {
 			this.setAggregation(sAriaLabeledBy, this._getAriaLabelledBy(), true); // this is called onBeforeRendering, so suppress invalidate
