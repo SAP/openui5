@@ -1,5 +1,5 @@
-<Dialog id="xmlDialog" xmlns="sap.ui.commons" title="XML Fragment Dialog">
-	<TextView id="xmlDialogTxt" text="{/dialogText}" />
+<Dialog id="xmlDialog" xmlns="sap.m" title="XML Fragment Dialog">
+	<Text id="xmlDialogTxt" text="{/dialogText}" />
 	<buttons>
 		<Button id="xmlDialogBtn" text="Close" press="closeDialog"/>
 	</buttons>

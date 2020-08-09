@@ -2,8 +2,8 @@
 sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/commons/Button',
-	'sap/ui/commons/Panel',
+	'sap/m/Button',
+	'sap/m/Panel',
 	'./AnyView.qunit'
 ], function(coreLibrary, Controller, Button, Panel, testsuite) {
 	"use strict";

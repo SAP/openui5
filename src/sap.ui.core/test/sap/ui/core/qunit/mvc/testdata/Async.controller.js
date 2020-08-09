@@ -10,7 +10,6 @@
 			this.showDetailsLink = this.getView().byId("showMore");
 			this.hideDetailsLink = this.getView().byId("hideMore");
 
-			this.myLayout.setWidths(["100px","150px"]);
 			this.hideMore();
 		},
 

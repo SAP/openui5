@@ -12,10 +12,10 @@
 		 * @returns {sap.ui.cre.Control}
 		 */
 		createContent: function(oController) {
-			var oPanel = new sap.ui.commons.Panel();
-			var oLabel = new sap.ui.commons.Label(this.createId("Label1"), {text:"Label", labelFor:this.createId("Button1")});
+			var oPanel = new sap.m.Panel();
+			var oLabel = new sap.m.Label(this.createId("Label1"), {text:"Label", labelFor:this.createId("Button1")});
 			oPanel.addContent(oLabel);
-			var oButton = new sap.ui.commons.Button(this.createId("Button1"),{text:"Hello JS View2"});
+			var oButton = new sap.m.Button(this.createId("Button1"),{text:"Hello JS View2"});
 			oButton.attachPress(oController.doIt,oController);
 			oPanel.addContent(oButton);
 			return oButton;

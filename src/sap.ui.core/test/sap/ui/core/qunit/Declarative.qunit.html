@@ -14,25 +14,25 @@
 <body class="sapUiBody">
 
 	<div id="simple-button">
-		<div data-sap-ui-type="sap.ui.commons.Button" id="simpleButton" data-text="My Button" data-custom-data:custom-data1="customvalue"
+		<div data-sap-ui-type="sap.m.Button" id="simpleButton" data-text="My Button" data-custom-data:custom-data1="customvalue"
 		  data-custom-data:-custom-data2="customvalue"></div>
 	</div>
 
 	<div id="button-with-tooltip">
-		<div data-sap-ui-type="sap.ui.commons.Button" id="buttonWithTooltip" data-tooltip="aNiceTooltip"></div>
+		<div data-sap-ui-type="sap.m.Button" id="buttonWithTooltip" data-tooltip="aNiceTooltip"></div>
 	</div>
 
 
 	<div id="button-with-style-and-class">
-		<div data-sap-ui-type="sap.ui.commons.Button" id="buttonStyleClass" style="border-color:red;" class="mybutton"></div>
+		<div data-sap-ui-type="sap.m.Button" id="buttonStyleClass" style="border-color:red;" class="mybutton"></div>
 	</div>
 
 
 	<div id="html-content">
-		<div data-sap-ui-type="sap.ui.commons.Panel">
-
-			<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="HTML Content in Panel"></div>
-
+		<div data-sap-ui-type="sap.m.Panel">
+			<div data-sap-ui-aggregation="headerToolbar" data-sap-ui-type="sap.m.Toolbar">
+				<div data-sap-ui-type="sap.m.Text" data-text="HTML Content in Panel"></div>
+			</div>
 			<table>
 				<tr>
 					<td>1</td>
@@ -53,14 +53,16 @@
 				</tr>
 				<tr>
 					<td>
-						<div data-sap-ui-type="sap.ui.commons.Button" id="htmlContentButton" data-text="Click me!"></div>
+						<div data-sap-ui-type="sap.m.Button" id="htmlContentButton" data-text="Click me!"></div>
 					</td>
 				</tr>
 				<tr>
 					<td>
 
-						<div data-sap-ui-type="sap.ui.commons.Panel" id="htmlContentPanel">
-							<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="SAPUI5 Content in HTML Table in SAPUI5 Panel"></div>
+						<div data-sap-ui-type="sap.m.Panel" id="htmlContentPanel">
+							<div data-sap-ui-aggregation="headerToolbar" data-sap-ui-type="sap.m.Toolbar">
+								<div data-sap-ui-type="sap.m.Text" data-text="SAPUI5 Content in HTML Table in SAPUI5 Panel"></div>
+							</div>
 							<a href="http://www.sap.com" target="_blank">www.sap.com</a>
 						</div>
 
@@ -72,44 +74,45 @@
 
 
 	<div id="panel-aggregation">
-		<div data-sap-ui-type="sap.ui.commons.Panel" id="panelAggregation">
-			<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="Panel Aggregation"></div>
-			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
-			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
-			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
-			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
-			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
-			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+		<div data-sap-ui-type="sap.m.Panel" id="panelAggregation">
+			<div data-sap-ui-aggregation="headerToolbar" data-sap-ui-type="sap.m.Toolbar">
+				<div data-sap-ui-type="sap.m.Text" data-text="Panel Aggregation"></div>
+			</div>
+			<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
 		</div>
 	</div>
 
 
 	<div id="panel-with-default-aggregation">
-		<div data-sap-ui-type="sap.ui.commons.Panel" id="panelWithDefaultAggregation" data-sap-ui-default-aggregation="title">
-			<div data-sap-ui-type="sap.ui.core.Title" data-text="Panel With Default Aggregation"></div>
+		<div data-sap-ui-type="sap.m.Panel" id="panelWithDefaultAggregation" data-sap-ui-default-aggregation="headerToolbar">
+			<div data-sap-ui-type="sap.m.Toolbar">
+				<div data-sap-ui-type="sap.m.Text" data-text="Panel Aggregation"></div>
+			</div>
 			<div data-sap-ui-aggregation="content">
-				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
-				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
-				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
-				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
-				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
-				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+				<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+				<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+				<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+				<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+				<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+				<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
 			</div>
 		</div>
 	</div>
 
 
 	<div id="panel-with-association">
-		<div data-sap-ui-type="sap.ui.ux3.NavigationItem" id="navitem1" data-text="navitem1"></div>
-		<div data-sap-ui-type="sap.ui.ux3.NavigationItem" id="navitem2" data-text="navitem2"></div>
-		<div data-sap-ui-type="sap.ui.ux3.NavigationItem" id="navitem3" data-text="navitem3"></div>
-
-		<div data-sap-ui-type="sap.ui.commons.Panel" id="panelWithAssociation" data-sap-ui-default-aggregation="title">
-			<div data-sap-ui-type="sap.ui.core.Title" data-text="Panel With Default Aggregation"></div>
-			<div data-sap-ui-aggregation="content">
-				<div data-sap-ui-type="sap.ui.commons.Label" data-text="Message:" data-label-for="message"></div>
-				<div data-sap-ui-type="sap.ui.commons.TextField" id="message"></div>
-				<div data-sap-ui-type="sap.ui.ux3.NavigationBar" id="navbar" data-associated-items="navitem1 ,  navitem2       navitem3"></div>
+		<div data-sap-ui-type="sap.m.Panel" id="panelWithAssociation" >
+			<div data-sap-ui-type="sap.m.Label" data-text="Message:" data-label-for="message"></div>
+			<div data-sap-ui-type="sap.m.Input" id="message"></div>
+			<div data-sap-ui-type="sap.m.MultiComboBox" id="MyComboBox" data-selected-items="item1, item2 item3">
+				<div data-sap-ui-type="sap.ui.core.Item" id="item1" data-text="Item 1" ></div>
+				<div data-sap-ui-type="sap.ui.core.Item" id="item2" data-text="Item 2" ></div>
+				<div data-sap-ui-type="sap.ui.core.Item" id="item3" data-text="Item 3" ></div>
 			</div>
 		</div>
 	</div>
@@ -117,21 +120,21 @@
 
 	<div id="ui-area-simple">
 		<div id="uiAreaSimple" data-sap-ui-type="sap.ui.core.UIArea">
-			<div data-sap-ui-type="sap.ui.commons.Button" id="uiAreaSimpleButton1" data-text="My Button"></div>
-			<div data-sap-ui-type="sap.ui.commons.Button" id="uiAreaSimpleButton2" data-text="My Button"></div>
+			<div data-sap-ui-type="sap.m.Button" id="uiAreaSimpleButton1" data-text="My Button"></div>
+			<div data-sap-ui-type="sap.m.Button" id="uiAreaSimpleButton2" data-text="My Button"></div>
 		</div>
 	</div>
 
 
 	<div id="complex-declaration">
 		<div id="complexDeclarationUIArea" data-sap-ui-type="sap.ui.core.UIArea">
-			<div id="complexDeclarationPanel1" data-sap-ui-type="sap.ui.commons.Panel">
+			<div id="complexDeclarationPanel1" data-sap-ui-type="sap.m.Panel">
 				<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="My Panel"></div>
-				<div data-sap-ui-type="sap.ui.commons.Button" data-text="Test" data-enabled="true" data-press="handlePress"></div>
-				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+				<div data-sap-ui-type="sap.m.Button" data-text="Test" data-enabled="true" data-press="handlePress"></div>
+				<div data-sap-ui-type="sap.m.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
 			</div>
 
-			<div id="complexDeclarationPanel2" data-sap-ui-type="sap.ui.commons.Panel">
+			<div id="complexDeclarationPanel2" data-sap-ui-type="sap.m.Panel">
 
 				<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="HTML Content in Panel"></div>
 
@@ -155,13 +158,13 @@
 					</tr>
 					<tr>
 						<td>
-							<div data-sap-ui-type="sap.ui.commons.Button" data-text="Click me!"></div>
+							<div data-sap-ui-type="sap.m.Button" data-text="Click me!"></div>
 						</td>
 					</tr>
 					<tr>
 						<td>
 
-							<div id="complexDeclarationPanel3" data-sap-ui-type="sap.ui.commons.Panel">
+							<div id="complexDeclarationPanel3" data-sap-ui-type="sap.m.Panel">
 								<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="SAPUI5 Content in HTML Table in SAPUI5 Panel"></div>
 								<a href="http://www.sap.com" target="_blank">www.sap.com</a>
 							</div>
@@ -175,15 +178,15 @@
 
 
 	<div id="altType">
-		<div id="form" data-sap-ui-type="sap.ui.commons.form.Form" data-title="Alt type works"></div>
+		<div id="form" data-sap-ui-type="sap.ui.layout.form.Form" data-title="Alt type works"></div>
 	</div>
 
 	<div id="events">
-		<div id="buttonWithEvent" data-sap-ui-type="sap.ui.commons.Button" data-text="Test" data-enabled="true" data-press="handlePress"></div>
+		<div id="buttonWithEvent" data-sap-ui-type="sap.m.Button" data-text="Test" data-enabled="true" data-press="handlePress"></div>
 	</div>
 
 	<div id="events-error">
-		<div id="buttonWithUndefinedEvent" data-sap-ui-type="sap.ui.commons.Button" data-text="Test" data-enabled="true" data-press="notDefinedHandler"></div>
+		<div id="buttonWithUndefinedEvent" data-sap-ui-type="sap.m.Button" data-text="Test" data-enabled="true" data-press="notDefinedHandler"></div>
 	</div>
 
 	<!--
@@ -199,10 +202,10 @@
 	</div>
 
 	<div id="databinding">
-		<div id="buttonDataBinding" data-sap-ui-type="sap.ui.commons.Button" data-text="{model2>/stringValue}" data-enabled="{/booleanValue}"></div>
+		<div id="buttonDataBinding" data-sap-ui-type="sap.m.Button" data-text="{model2>/stringValue}" data-enabled="{/booleanValue}"></div>
 
-		<div id="aggregationDataBinding" data-sap-ui-type="sap.ui.commons.Carousel" data-content="{/buttons}">
-			<div data-sap-ui-type="sap.ui.commons.Button" data-text="{title}"></div>
+		<div id="aggregationDataBinding" data-sap-ui-type="sap.m.Carousel" data-pages="{/buttons}">
+			<div data-sap-ui-type="sap.m.Button" data-text="{title}"></div>
 		</div>
 	</div>
 

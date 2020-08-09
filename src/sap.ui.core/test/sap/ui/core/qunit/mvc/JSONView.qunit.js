@@ -17,7 +17,56 @@ sap.ui.define([
 	});
 
 	testsuite(oConfig, "JSONView creation via JSON string", function() {
-		var json = '{	"Type": "sap.ui.core.JSONView",	"controllerName":"example.mvc.test",	"content": [{		"Type":"sap.ui.commons.Panel",		"id":"myPanel",		"content":[{			"Type":"sap.ui.commons.Button",			"id":"Button1",			"text":"Hello World!",			"press": "doIt"		},		{			"Type":"sap.ui.commons.Button",			"id":"Button2",			"text":"Hello"		},		{			"Type":"sap.ui.commons.Button",			"id":"ButtonX",			"text":"Another Hello",			"press": ".sap.doIt"		},		{			"Type":"sap.ui.core.mvc.JSONView",			"viewName":"example.mvc.test2",			"id":"MyJSONView"		},				{			"Type":"sap.ui.core.mvc.JSView",			"viewName":"example.mvc.test2",			"id":"MyJSView"		},				{			"Type":"sap.ui.core.mvc.XMLView",			"viewName":"example.mvc.test2",			"id":"MyXMLView"		},		{			"Type":"sap.ui.core.mvc.HTMLView",			"viewName":"example.mvc.test2",			"controllerName":"example.mvc.test",			"id":"MyHTMLView"		}]	}]}';
+		var json = JSON.stringify({
+			"Type": "sap.ui.core.JSONView",
+			"controllerName": "example.mvc.test",
+			"content": [
+				{
+					"Type": "sap.m.Panel",
+					"id": "myPanel",
+					"content": [
+						{
+							"Type": "sap.m.Button",
+							"id": "Button1",
+							"text": "Hello World!",
+							"press": "doIt"
+						},
+						{
+							"Type": "sap.m.Button",
+							"id": "Button2",
+							"text": "Hello"
+						},
+						{
+							"Type": "sap.m.Button",
+							"id": "ButtonX",
+							"text": "Another Hello",
+							"press": ".sap.doIt"
+						},
+						{
+							"Type": "sap.ui.core.mvc.JSONView",
+							"viewName": "example.mvc.test2",
+							"id": "MyJSONView"
+						},
+						{
+							"Type": "sap.ui.core.mvc.JSView",
+							"viewName": "example.mvc.test2",
+							"id": "MyJSView"
+						},
+						{
+							"Type": "sap.ui.core.mvc.XMLView",
+							"viewName": "example.mvc.test2",
+							"id": "MyXMLView"
+						},
+						{
+							"Type": "sap.ui.core.mvc.HTMLView",
+							"viewName": "example.mvc.test2",
+							"controllerName": "example.mvc.test",
+							"id": "MyHTMLView"
+						}
+					]
+				}
+			]
+		});
 		return sap.ui.jsonview({viewContent:json});
 	});
 
