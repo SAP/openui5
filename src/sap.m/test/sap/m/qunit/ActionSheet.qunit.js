@@ -305,6 +305,67 @@ sap.ui.define([
 		}, 500);
 	});
 
+	QUnit.test("setTitle property test", function (assert) {
+		// Arrange
+		var oClock = sinon.useFakeTimers(),
+			oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+		this.stub(Device, "system", oSystem);
+
+		var oActionSheet = new ActionSheet({
+			buttons: [
+				new Button({text: "Test"})
+			]
+		}),
+		oButton = new Button({
+			text: "Open ActionSheet",
+			press: function () {
+				oActionSheet.openBy(this);
+			}
+		}), oSpy;
+
+		page.addContent(oButton);
+		sap.ui.getCore().applyChanges();
+		oButton.firePress();
+		oClock.tick(300);
+
+		oSpy = sinon.spy(oActionSheet._parent, "setTitle");
+
+		// Act
+		oActionSheet.addButton(new Button({text: "Test1"}));
+		oClock.tick(300);
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0,'setTitle is not called');
+
+		// Act
+		oActionSheet.setTitle("");
+		oClock.tick(300);
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0,'setTitle is not called');
+
+		// Act
+		oActionSheet.setTitle("test");
+		oClock.tick(300);
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1,'setTitle is called');
+
+		// Act
+		oActionSheet.setTitle("");
+		oClock.tick(300);
+		// Assert
+		assert.strictEqual(oSpy.callCount, 2,'setTitle is called');
+
+		// clean
+		oActionSheet.close();
+		oButton.destroy();
+		oClock.restore();
+		oActionSheet.destroy();
+	});
+
 	QUnit.module("keyboard handling");
 
 	QUnit.test('PageUp keyboard handling', function (assert) {
