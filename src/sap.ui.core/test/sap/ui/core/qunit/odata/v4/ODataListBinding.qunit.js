@@ -6285,12 +6285,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchDownloadUrl: empty meta path", function (assert) {
+	QUnit.test("fetchDownloadUrl", function (assert) {
 		var oBinding = this.bindList("n/a"),
 			oCache = {
-				sMetaPath : "meta/path",
-				mQueryOptions : {},
-				sResourcePath : "resource/path"
+				getDownloadUrl : function () {}
 			},
 			oExpectation,
 			oPromise = {};
@@ -6301,57 +6299,12 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oBinding.fetchDownloadUrl(), oPromise);
 
-		this.mock(_Helper).expects("getMetaPath")
-			.withExactArgs("").returns("");
-		this.mock(this.oModel.oRequestor).expects("buildQueryString")
-			.withExactArgs(oCache.sMetaPath, sinon.match.same(oCache.mQueryOptions))
-			.returns("?query");
+		this.mock(oCache).expects("getDownloadUrl")
+			.withExactArgs("~path~", sinon.match.same(this.oModel.mUriParameters))
+			.returns("~url~");
 
 		// code under test - callback function
-		assert.strictEqual(oExpectation.args[0][0](oCache, ""),
-			"/service/resource/path?query");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchDownloadUrl: non-empty meta path", function (assert) {
-		var oBinding = this.bindList("n/a"),
-			oCache = {
-				sMetaPath : "meta/path",
-				mQueryOptions : {},
-				sResourcePath : "resource/path"
-			},
-			oExpectation,
-			oHelperMock = this.mock(_Helper),
-			oPromise = {},
-			mQueryOptions = {},
-			mQueryOptionsForPath = {};
-
-		this.mock(oBinding).expects("isResolved").returns(true);
-		oExpectation = this.mock(oBinding).expects("withCache").returns(oPromise);
-
-		// code under test
-		assert.strictEqual(oBinding.fetchDownloadUrl(), oPromise);
-
-		oHelperMock.expects("getMetaPath")
-			.withExactArgs("relative/path").returns("relative/metapath");
-		oHelperMock.expects("getQueryOptionsForPath")
-			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "relative/path")
-			.returns(mQueryOptionsForPath);
-		oHelperMock.expects("merge")
-			.withExactArgs({}, sinon.match.same(this.oModel.mUriParameters),
-				sinon.match.same(mQueryOptionsForPath))
-			.returns(mQueryOptions);
-		oHelperMock.expects("buildPath").withExactArgs(oCache.sResourcePath, "relative/path")
-			.returns("resource/path/relative/path");
-		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath, "relative/metapath")
-			.returns("meta/path/relative/metapath");
-		this.mock(this.oModel.oRequestor).expects("buildQueryString")
-			.withExactArgs("meta/path/relative/metapath", sinon.match.same(mQueryOptions))
-			.returns("?query");
-
-		// code under test - callback function
-		assert.strictEqual(oExpectation.args[0][0](oCache, "relative/path"),
-			"/service/resource/path/relative/path?query");
+		assert.strictEqual(oExpectation.args[0][0](oCache, "~path~"), "~url~");
 	});
 
 	//*********************************************************************************************

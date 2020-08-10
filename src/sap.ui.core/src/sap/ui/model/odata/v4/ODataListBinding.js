@@ -1178,25 +1178,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.fetchDownloadUrl = function () {
-		var oModel = this.oModel;
+		var mUriParameters = this.oModel.mUriParameters;
 
 		if (!this.isResolved()) {
 			throw new Error("Binding is unresolved");
 		}
 		return this.withCache(function (oCache, sPath) {
-			var mQueryOptions = oCache.mQueryOptions,
-				sMetaPath = _Helper.getMetaPath(sPath); // the binding's meta path rel. to the cache
-
-			if (sPath) {
-				// reduce the query options to the child path
-				mQueryOptions = _Helper.getQueryOptionsForPath(mQueryOptions, sPath);
-				// add the custom query options again
-				mQueryOptions = _Helper.merge({}, oModel.mUriParameters, mQueryOptions);
-			}
-			return oModel.sServiceUrl
-				+ _Helper.buildPath(oCache.sResourcePath, sPath)
-				+ oModel.oRequestor.buildQueryString(_Helper.buildPath(oCache.sMetaPath, sMetaPath),
-					mQueryOptions);
+			return oCache.getDownloadUrl(sPath, mUriParameters);
 		});
 	};
 

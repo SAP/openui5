@@ -3905,6 +3905,72 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Cache#getDownloadUrl: empty path", function (assert) {
+		var mQueryOptions = {},
+			oCache = new _Cache(this.oRequestor, "Employees", mQueryOptions, false),
+			oHelperMock = this.mock(_Helper);
+
+		oCache.sMetaPath = "/cache/meta/path";
+		oHelperMock.expects("buildPath").withExactArgs("Employees", "").returns("resource/path");
+		oHelperMock.expects("getMetaPath").withExactArgs("").returns("meta/path");
+		oHelperMock.expects("buildPath").withExactArgs("/cache/meta/path", "meta/path")
+			.returns("~");
+		this.mock(this.oRequestor).expects("buildQueryString")
+			.withExactArgs("~", sinon.match.same(mQueryOptions)).returns("?~query~");
+
+		// code under test
+		assert.strictEqual(oCache.getDownloadUrl("", {/*unused*/}), "/~/resource/path?~query~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#getDownloadUrl: non-empty path", function (assert) {
+		var mCustomQueryOptions = {},
+			mQueryOptions = {},
+			oCache = new _Cache(this.oRequestor, "Employees", mQueryOptions, false),
+			oHelperMock = this.mock(_Helper),
+			mQueryOptionsForPath = {},
+			mResultingQueryOptions = {};
+
+		oCache.sMetaPath = "/cache/meta/path";
+		oHelperMock.expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(mQueryOptions), "cache/path")
+			.returns(mQueryOptionsForPath);
+		oHelperMock.expects("merge")
+		   .withExactArgs({}, sinon.match.same(mCustomQueryOptions),
+			   sinon.match.same(mQueryOptionsForPath))
+		   .returns(mResultingQueryOptions);
+		oHelperMock.expects("buildPath").withExactArgs("Employees", "cache/path")
+			.returns("resource/path");
+		oHelperMock.expects("getMetaPath").withExactArgs("cache/path").returns("meta/path");
+		oHelperMock.expects("buildPath").withExactArgs("/cache/meta/path", "meta/path")
+			.returns("~");
+		this.mock(this.oRequestor).expects("buildQueryString")
+			.withExactArgs("~", sinon.match.same(mResultingQueryOptions)).returns("?~query~");
+
+		// code under test
+		assert.strictEqual(oCache.getDownloadUrl("cache/path", mCustomQueryOptions),
+			"/~/resource/path?~query~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#getResourcePath", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees");
+
+		// code under test
+		assert.strictEqual(oCache.getResourcePath(), "Employees");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#hasSentRequest", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees");
+
+		oCache.bSentRequest = "bSentRequest";
+
+		// code under test
+		assert.strictEqual(oCache.hasSentRequest(), "bSentRequest");
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bSharedRequest) {
 	QUnit.test("CollectionCache: bSharedRequest = " + bSharedRequest, function (assert) {
 		var oCache,
@@ -4756,13 +4822,13 @@ sap.ui.define([
 		iStart : 42,
 		sResourcePath : "Employees?$skip=42"
 	}].forEach(function (oFixture, i) {
-		QUnit.test("CollectionCache#getResourcePath: " + i , function (assert) {
+		QUnit.test("CollectionCache#getResourcePathWithQuery: " + i , function (assert) {
 			var oCache = this.createCache("Employees");
 
 			oCache.sQueryString = oFixture.sQueryString;
 
 			// code under test
-			assert.strictEqual(oCache.getResourcePath(oFixture.iStart, oFixture.iEnd),
+			assert.strictEqual(oCache.getResourcePathWithQuery(oFixture.iStart, oFixture.iEnd),
 				oFixture.sResourcePath);
 		});
 	});
@@ -4799,7 +4865,9 @@ sap.ui.define([
 		iStart : 43,
 		sResourcePath : "Employees?$skip=41"
 	}].forEach(function (oFixture, i) {
-		QUnit.test("CollectionCache#getResourcePath: with create, " + i, function (assert) {
+		var sTitle = "CollectionCache#getResourcePathWithQuery: with create #" + i;
+
+		QUnit.test(sTitle, function (assert) {
 			var oCache = this.createCache("Employees"),
 				oCreateGroupLock0 = {getGroupId : function () {}},
 				oCreateGroupLock1 = {getGroupId : function () {}};
@@ -4821,13 +4889,13 @@ sap.ui.define([
 				{}, null, function fnSubmitCallback() {});
 
 			// code under test
-			assert.strictEqual(oCache.getResourcePath(oFixture.iStart, oFixture.iEnd),
+			assert.strictEqual(oCache.getResourcePathWithQuery(oFixture.iStart, oFixture.iEnd),
 				oFixture.sResourcePath);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#getResourcePath: not for created!" , function (assert) {
+	QUnit.test("CollectionCache#getResourcePathWithQuery: not for created!" , function (assert) {
 		var oCache = this.createCache("Employees"),
 			oCreateGroupLock0 = {getGroupId : function () {}},
 			oCreateGroupLock1 = {getGroupId : function () {}};
@@ -4850,12 +4918,12 @@ sap.ui.define([
 		// Note: we forbid ranges which contain created entities
 		assert.throws(function () {
 			// code under test
-			oCache.getResourcePath(0, 2);
+			oCache.getResourcePathWithQuery(0, 2);
 		}, new Error("Must not request created element"));
 
 		assert.throws(function () {
 			// code under test
-			oCache.getResourcePath(1, 2);
+			oCache.getResourcePathWithQuery(1, 2);
 		}, new Error("Must not request created element"));
 	});
 
@@ -5172,7 +5240,7 @@ sap.ui.define([
 			oCache.bSentRequest = false;
 			oCache.aElements.$tail = undefined;
 
-			oCacheMock.expects("getResourcePath").withExactArgs(iStart, iEnd)
+			oCacheMock.expects("getResourcePathWithQuery").withExactArgs(iStart, iEnd)
 				.returns(sResourcePath);
 			this.oRequestorMock.expects("request")
 				.withExactArgs("GET", sinon.match.same(sResourcePath), sinon.match.same(oGroupLock),
@@ -5220,7 +5288,8 @@ sap.ui.define([
 
 		oCache.bSentRequest = false;
 
-		oCacheMock.expects("getResourcePath").withExactArgs(iStart, iEnd).returns(sResourcePath);
+		oCacheMock.expects("getResourcePathWithQuery").withExactArgs(iStart, iEnd)
+			.returns(sResourcePath);
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", sinon.match.same(sResourcePath), sinon.match.same(oGroupLock),
 				/*mHeaders*/undefined, /*oPayload*/undefined, sinon.match.same(fnDataRequested))
