@@ -665,29 +665,40 @@ sap.ui.define([
 
 
 	QUnit.test("Open with keyboard", function(assert) {
-		var fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
-		this.sut.onsapup();
+		var fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress"),
+			oEvent = {
+				stopPropagation: function() {}
+			},
+			fnStopPropagationSpy = sinon.spy(oEvent, "stopPropagation");
+
+		this.sut.onsapup(oEvent);
+
 		assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapup' event.");
 
 		fnHandleButtonPress.restore();
 		fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
-		this.sut.onsapdown();
+		this.sut.onsapdown(oEvent);
 		assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapdown' event.");
 
 		fnHandleButtonPress.restore();
 		fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
-		this.sut.onsapupmodifiers();
+		this.sut.onsapupmodifiers(oEvent);
 		assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapupmodifiers' event.");
 
 		fnHandleButtonPress.restore();
 		fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
-		this.sut.onsapdownmodifiers();
+		this.sut.onsapdownmodifiers(oEvent);
 		assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapdownmodifiers' event.");
 
 		fnHandleButtonPress.restore();
 		fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
+
+		assert.equal(fnStopPropagationSpy.callCount, 4, "'stopPropagation' called for each keyboard arrow interaction event");
+
 		this.sut.onsapshow();
 		assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapshow' event.");
+
+		fnStopPropagationSpy.restore();
 	});
 
 	QUnit.test("Open and close if the menu contains only disabled items", function(assert) {

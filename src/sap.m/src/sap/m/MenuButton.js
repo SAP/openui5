@@ -480,6 +480,8 @@ sap.ui.define([
 			var oButtonControl = this._getButtonControl(),
 				bOpeningMenuButton = oButtonControl;
 
+			this._bPopupOpen = false;
+
 			if (this._isSplitButton()) {
 				oButtonControl.setArrowState(false);
 				bOpeningMenuButton = oButtonControl._getArrowButton();
@@ -690,18 +692,25 @@ sap.ui.define([
 
 		MenuButton.prototype.onsapup = function(oEvent) {
 			this.openMenuByKeyboard();
+			// If there is a different behavior defined in the parent container for the same event,
+			// then use only the defined behavior in the MenuButton.
+			// The same applies for 'sapdown', 'sapupmodifiers' and 'sapdownmodifiers' events as well.
+			oEvent.stopPropagation();
 		};
 
 		MenuButton.prototype.onsapdown = function(oEvent) {
 			this.openMenuByKeyboard();
+			oEvent.stopPropagation();
 		};
 
 		MenuButton.prototype.onsapupmodifiers = function(oEvent) {
 			this.openMenuByKeyboard();
+			oEvent.stopPropagation();
 		};
 
 		MenuButton.prototype.onsapdownmodifiers = function(oEvent) {
 			this.openMenuByKeyboard();
+			oEvent.stopPropagation();
 		};
 
 		//F4
