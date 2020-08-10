@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/mdc/mixin/DelegateMixin",
+	"sap/ui/mdc/util/PropertyHelper",
 	"sap/ui/base/ManagedObject",
 	"jquery.sap.global"
 ], function(
 	DelegateMixin,
+	PropertyHelper,
 	ManagedObject,
 	jQuery
 ) {
@@ -15,6 +17,20 @@ sap.ui.define([
 
 	var	TestClass;
 	var oSomeInstance;
+	var TestClassWithFetchProperties = TestClass = ManagedObject.extend("sap.ui.mdc.mixin.test.TestClassWithFetchProperties", {
+		metadata: {
+			properties: {
+				delegate: {
+					type: "object",
+					group: "Data",
+					defaultValue: {
+						name: "sap/ui/mdc/AggregationBaseDelegate"
+					}
+				}
+			}
+		}
+	});
+	DelegateMixin.call(TestClassWithFetchProperties.prototype);
 
 	QUnit.module("DelegateMixin", {
 		beforeEach: function() {
@@ -56,8 +72,11 @@ sap.ui.define([
 		assert.ok(TestClass.prototype.init.calledOnce, "Original init called");
 		assert.ok(oSomeInstance.awaitControlDelegate(), "Delegate promise successfully set");
 		assert.ok(oSomeInstance.initControlDelegate, "initControlDelegate method successfully set");
+		assert.ok(oSomeInstance.awaitPropertyHelper(), "Property helper promise successfully set");
+		assert.ok(oSomeInstance.initPropertyHelper(), "initPropertyHelper method successfully set");
 		oSomeInstance.destroy();
-		assert.notOk(oSomeInstance.awaitControlDelegate(), "awaitControlDelegate() successfully removed");
+		assert.notOk(oSomeInstance.awaitControlDelegate(), "Delegate promise successfully removed");
+		assert.notOk(oSomeInstance.awaitPropertyHelper(), "Property helper promise successfully removed");
 		assert.ok(TestClass.prototype.exit.calledOnce, "Original exit called");
 
 		TestClass.prototype.init.restore();
@@ -142,6 +161,127 @@ sap.ui.define([
 		oSomeInstance.awaitControlDelegate().then(function () {
 			assert.ok(oSomeInstance.getControlDelegate() === oSomeInstance._oDelegate, "delegate returned");
 			done();
+		});
+	});
+
+	QUnit.test("PropertyHelper initialization with default class", function(assert) {
+		var pInitPropertyHelper;
+
+		oSomeInstance = new TestClassWithFetchProperties();
+
+		return Promise.race([
+			pInitPropertyHelper = oSomeInstance.initPropertyHelper(),
+			new Promise(function(resolve) {
+				setTimeout(resolve, 200);
+			})
+		]).then(function(oPropertyHelper) {
+			assert.notOk(oPropertyHelper, "Property helper not yet initialized");
+			return Promise.all([pInitPropertyHelper, oSomeInstance.initControlDelegate()]);
+		}).then(function(aValues) {
+			var oPropertyHelper = aValues[0];
+			assert.ok(oPropertyHelper, "PropertyHelper initialized");
+			assert.ok(oPropertyHelper && oPropertyHelper.isA("sap.ui.mdc.util.PropertyHelper"),
+				"Property helper is an instance of sap.ui.mdc.util.PropertyHelper");
+		});
+	});
+
+	QUnit.test("PropertyHelper initialization with subclass of sap.ui.mdc.util.PropertyHelper", function(assert) {
+		oSomeInstance = new TestClassWithFetchProperties();
+		oSomeInstance.initControlDelegate();
+
+		return oSomeInstance.initPropertyHelper(PropertyHelper.extend("sap.ui.mdc.mixin.test.PropertyHelper")).then(function (oPropertyHelper) {
+			assert.ok(oPropertyHelper, "PropertyHelper initialized");
+			assert.ok(oPropertyHelper && oPropertyHelper.isA("sap.ui.mdc.mixin.test.PropertyHelper"),
+				"Property helper is an instance of the subclass");
+		});
+	});
+
+	QUnit.test("PropertyHelper initialization with invalid class", function(assert) {
+		oSomeInstance = new TestClassWithFetchProperties();
+		assert.throws(function() {
+			oSomeInstance.initPropertyHelper(ManagedObject);
+		}, "Error thrown");
+	});
+
+	QUnit.test("Destroy during PropertyHelper initialization", function(assert) {
+		var done = assert.async();
+
+		oSomeInstance = new TestClassWithFetchProperties();
+		oSomeInstance.initControlDelegate().then(function() {
+			var oErrorSpy = sinon.spy();
+			var fnOldOnError = window.onerror;
+
+			window.onerror = null; // Deactivate qunit global error handler.
+			window.addEventListener("error", oErrorSpy);
+			window.addEventListener("unhandledrejection", oErrorSpy);
+
+			oSomeInstance.initPropertyHelper();
+			oSomeInstance.destroy();
+
+			setTimeout(function() {
+				window.removeEventListener("error", oErrorSpy);
+				window.removeEventListener("unhandledrejection", oErrorSpy);
+				window.onerror = fnOldOnError;
+				assert.equal(oErrorSpy.callCount, 0, "Destroying the control during initialization of the property helper does not cause errors");
+				done();
+			}, 0);
+		});
+	});
+
+	QUnit.test("subsequent initPropertyHelper calls", function(assert) {
+		oSomeInstance = new TestClassWithFetchProperties();
+
+		var pFirstPromise = oSomeInstance.initPropertyHelper();
+		var pSecondPromise = oSomeInstance.initPropertyHelper(PropertyHelper.extend("sap.ui.mdc.mixin.test.PropertyHelper"));
+		var oFirstPropertyHelper;
+
+		assert.ok(pFirstPromise instanceof Promise, "First call to initControlDelegate returns a promise");
+		assert.strictEqual(pFirstPromise, pSecondPromise, "Second call returns the same promise instance as the first call");
+
+		oSomeInstance.initControlDelegate();
+
+		return Promise.all([pFirstPromise, pSecondPromise]).then(function(aPropertyHelpers) {
+			oFirstPropertyHelper = aPropertyHelpers[0];
+			assert.strictEqual(oFirstPropertyHelper, aPropertyHelpers[1], "First and second promise resolve with the same property helper instance");
+			assert.ok(oFirstPropertyHelper && oFirstPropertyHelper.isA("sap.ui.mdc.util.PropertyHelper"),
+				"Property helper is an instance of sap.ui.mdc.util.PropertyHelper");
+
+			var pThirdPromise = oSomeInstance.initPropertyHelper();
+			assert.strictEqual(pFirstPromise, pThirdPromise,
+				"After the promise has already resolved, calls to initControlDelegate return the same promise");
+
+			return pThirdPromise;
+		}).then(function(oPropertyHelper) {
+			assert.strictEqual(oFirstPropertyHelper, oPropertyHelper, "First and third promise resolve with the same property helper instance");
+		});
+	});
+
+	QUnit.test("awaitPropertyHelper", function(assert) {
+		oSomeInstance = new TestClassWithFetchProperties();
+
+		var pAwaitPropertyHelper = oSomeInstance.awaitPropertyHelper();
+		var pInitPropertyHelper = oSomeInstance.initPropertyHelper();
+		oSomeInstance.initControlDelegate();
+
+		assert.strictEqual(pAwaitPropertyHelper, pInitPropertyHelper, "initPropertyHelper and awaitPropertyHelper return the same promise");
+
+		return Promise.all([pAwaitPropertyHelper, pInitPropertyHelper]).then(function(aPropertyHelpers) {
+			assert.strictEqual(aPropertyHelpers[0], aPropertyHelpers[1], "Init and await resolve with the same property helper instance");
+		});
+	});
+
+	QUnit.test("getPropertyHelper", function(assert) {
+		oSomeInstance = new TestClassWithFetchProperties();
+
+		assert.throws(function () {
+			oSomeInstance.getPropertyHelper();
+		}, "Throws error if called before the property helper is initialized");
+
+		oSomeInstance.initControlDelegate();
+		oSomeInstance.initPropertyHelper();
+
+		return oSomeInstance.awaitControlDelegate().then(function (oPropertyHelper) {
+			assert.strictEqual(oSomeInstance.getControlDelegate(), oPropertyHelper, "Returns the correct property helper instance");
 		});
 	});
 

@@ -49,49 +49,44 @@ sap.ui.define([
 	function stubFetchProperties(aPropertyInfos, oTable) {
 		var oTarget = oTable || Table.prototype;
 		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
-		var oOriginalDelegate;
+		var oDelegate;
 		var fnOriginalFetchProperties;
 
 		unstubFetchProperties();
 
-		sinon.stub(oTarget, "getControlDelegate").callsFake(function() {
-			var oDelegate = fnOriginalGetControlDelegate.apply(this, arguments);
-
-			if (oDelegate.fetchProperties.__whenResolved) {
+		function getDelegate() {
+			if (oDelegate) {
 				return oDelegate;
 			}
 
-			var fnResolveFetchProperties;
-			var pFetchPropertiesResolved = new Promise(function(resolve) {
-				fnResolveFetchProperties = resolve;
-			});
-
-			oOriginalDelegate = oDelegate;
+			oDelegate = fnOriginalGetControlDelegate.apply(this, arguments);
 			fnOriginalFetchProperties = oDelegate.fetchProperties;
 
 			oDelegate.fetchProperties = function() {
 				fnOriginalFetchProperties.apply(this, arguments);
-				var pReturn = Promise.resolve(aPropertyInfos);
-				pReturn.then(function() {
-					fnResolveFetchProperties();
-					pFetchPropertiesResolved = new Promise(function(resolve) {
-						fnResolveFetchProperties = resolve;
-					});
-				});
-				return pReturn;
-			};
-
-			oDelegate.fetchProperties.__whenResolved = function() {
-				return pFetchPropertiesResolved;
+				return Promise.resolve(aPropertyInfos);
 			};
 
 			return oDelegate;
+		}
+
+		sinon.stub(oTarget, "getControlDelegate").callsFake(function() {
+			return getDelegate.call(this);
+		});
+
+		sinon.stub(oTarget, "awaitControlDelegate").callsFake(function() {
+			return Promise.resolve(getDelegate.call(this));
 		});
 
 		oTarget.__unstubFetchProperties = function() {
 			delete oTarget.__unstubFetchProperties;
-			oTarget.getControlDelegate.restore();
-			oOriginalDelegate.fetchProperties = fnOriginalFetchProperties;
+			if (oTarget.awaitControlDelegate.restore) {
+				oTarget.awaitControlDelegate.restore();
+			}
+			if (oTarget.getControlDelegate.restore) {
+				oTarget.getControlDelegate.restore();
+			}
+			oDelegate.fetchProperties = fnOriginalFetchProperties;
 		};
 	}
 
@@ -101,29 +96,6 @@ sap.ui.define([
 		if (oTarget.__unstubFetchProperties) {
 			oTarget.__unstubFetchProperties();
 		}
-	}
-
-	function whenFetchPropertiesResolved(oTable, fnFetchPropertiesTrigger) {
-		return new Promise(function(resolve) {
-			oTable.awaitControlDelegate().then(function() {
-				var oDelegate = oTable.getControlDelegate();
-
-				if (oDelegate.fetchProperties.__whenResolved) {
-					oDelegate.fetchProperties.__whenResolved().then(resolve);
-				} else {
-					var fnFetchProperties = oDelegate.fetchProperties;
-
-					oDelegate.fetchProperties = function() {
-						var pFetchProperties = fnFetchProperties.apply(this, arguments);
-						pFetchProperties.then(resolve);
-						oDelegate.fetchProperties = fnFetchProperties;
-						return pFetchProperties;
-					};
-				}
-
-				fnFetchPropertiesTrigger(oTable);
-			});
-		});
 	}
 
 	function wait(iMilliseconds) {
@@ -1998,14 +1970,14 @@ sap.ui.define([
 					}
 				]);
 
-				whenFetchPropertiesResolved(this.oTable, function(oTable) {
-					oTable._oTable.fireEvent("columnPress", {
-						column: oInnerColumn
-					});
+				this.oTable._oTable.fireEvent("columnPress", {
+					column: oInnerColumn
+				});
 
-					// Event triggered and the ColumnHeaderPopover is created
-					assert.ok(fColumnPressSpy.calledTwice);
-				}).then(function() {
+				// Event triggered and the ColumnHeaderPopover is created
+				assert.ok(fColumnPressSpy.calledTwice);
+
+				this.oTable.awaitPropertyHelper().then(function() {
 					assert.ok(this.oTable._oPopover);
 					assert.ok(this.oTable._oPopover.isA("sap.m.ColumnHeaderPopover"));
 
@@ -2088,14 +2060,14 @@ sap.ui.define([
 					}
 				]);
 
-				whenFetchPropertiesResolved(this.oTable, function(oTable) {
-					// Simulate click on sortable column
-					oTable._oTable.fireEvent("columnSelect", {
-						column: oInnerColumn
-					});
-					// Event triggered and the ColumnHeaderPopover is created
-					assert.ok(fColumnPressSpy.calledTwice);
-				}).then(function() {
+				// Simulate click on sortable column
+				this.oTable._oTable.fireEvent("columnSelect", {
+					column: oInnerColumn
+				});
+				// Event triggered and the ColumnHeaderPopover is created
+				assert.ok(fColumnPressSpy.calledTwice);
+
+				this.oTable.awaitPropertyHelper().then(function() {
 					assert.ok(this.oTable._oPopover);
 					assert.ok(this.oTable._oPopover.isA("sap.m.ColumnHeaderPopover"));
 
@@ -2166,12 +2138,12 @@ sap.ui.define([
 					}
 				]);
 
-				whenFetchPropertiesResolved(this.oTable, function(oTable) {
-					// Simulate click on sortable column
-					oTable._oTable.fireEvent("columnSelect", {
-						column: oInnerColumn
-					});
-				}).then(function() {
+				// Simulate click on sortable column
+				this.oTable._oTable.fireEvent("columnSelect", {
+					column: oInnerColumn
+				});
+
+				this.oTable.awaitPropertyHelper().then(function() {
 					assert.ok(!this.oTable._oPopover, "No ColumnHeaderPopover as for NonSortable Property");
 					fColumnPressSpy.restore();
 					done();
@@ -2211,12 +2183,12 @@ sap.ui.define([
 					}
 				]);
 
-				whenFetchPropertiesResolved(this.oTable, function(oTable) {
-					// Simulate click on sortable column
-					oTable._oTable.fireEvent("columnSelect", {
-						column: oInnerColumn
-					});
-				}).then(function() {
+				// Simulate click on sortable column
+				this.oTable._oTable.fireEvent("columnSelect", {
+					column: oInnerColumn
+				});
+
+				this.oTable.awaitPropertyHelper().then(function() {
 					assert.ok(this.oTable._oPopover);
 					assert.strictEqual(this.oTable._oPopover.getItems().length, 1, "Sort item button created");
 					var aSortItem = this.oTable._oPopover.getItems()[0].getItems();
@@ -3124,7 +3096,7 @@ sap.ui.define([
 				width: 19
 			},
 			{
-				columnId: "fullName",
+				columnId: "fullName-additionalProperty1",
 				label: "Last name",
 				property: "lastName",
 				textAlign: "Begin",
@@ -3133,7 +3105,7 @@ sap.ui.define([
 			},
 			{
 				columnId: "fullNameExportSettings",
-				label: "Full name 2",
+				label: "Name",
 				property: ["firstName", "lastName"],
 				template: "{0}, {1}",
 				textAlign: "Begin",
@@ -3190,9 +3162,11 @@ sap.ui.define([
 					label: "Last name"
 				}, {
 					name: "fullName", // complex PropertyInfo without exportSettings => 2 spreadsheet column configs will be created
+					label: "Full name",
 					propertyInfos: ["firstName", "lastName"]
 				}, {
 					name: "fullName2", // complex PropertyInfo withexportSettings => 1 spreadsheet column config will be created
+					label: "Name",
 					propertyInfos: ["firstName", "lastName"],
 					exportSettings: {
 						template: "{0}, {1}"
@@ -3316,7 +3290,7 @@ sap.ui.define([
 			},
 			{
 				columnId: "price-additionalProperty",
-				label: "Price (2)",
+				label: "Currency Code",
 				property: "currencyCode",
 				type: "String",
 				width: 4,
@@ -3331,7 +3305,7 @@ sap.ui.define([
 				width: 15
 			},
 			{
-				columnId: "company",
+				columnId: "company-additionalProperty1",
 				label: "Company Code",
 				property: "companyCode",
 				textAlign: "Begin",
@@ -3351,6 +3325,7 @@ sap.ui.define([
 				}, {
 					name: "price",
 					path: "price",
+					label: "Price",
 					exportSettings: {
 						label: "Price",
 						displayUnit: true,
@@ -3360,12 +3335,14 @@ sap.ui.define([
 				}, {
 					name: "currencyCode",
 					path: "currencyCode",
+					label: "Currency Code",
 					exportSettings: {
 						width: 4,
 						textAlign: "Left"
 					}
 				}, {
 					name: "company",
+					label: "Company Name",
 					propertyInfos: ["companyName", "companyCode"]
 				}, {
 					name: "companyName",
@@ -3741,9 +3718,11 @@ sap.ui.define([
 					name: "name",
 					label: "NameLabel"
 				}, {
-					name: "age"
+					name: "age",
+					label: "AgeLabel"
 				}, {
-					name: "gender"
+					name: "gender",
+					label: "GenderLabel"
 				}
 			]);
 
@@ -3784,7 +3763,7 @@ sap.ui.define([
 				});
 				that.oTable.placeAt("qunit-fixture");
 				Core.applyChanges();
-				return that.oTable.initialized();
+				return Promise.all([that.oTable.initialized(), that.oTable.awaitPropertyHelper()]);
 			}).then(function() {
 				assert.ok(that.hasFilterInfoBar(), "Initial filter conditions: Filter info bar exists");
 				assert.ok(that.getFilterInfoBar().getVisible(), "Initial filter conditions: Filter info bar is visible");
@@ -3795,33 +3774,33 @@ sap.ui.define([
 					return sId === that.getFilterInfoText().getId();
 				}).length, 1, "The filter info bar text is in the \"ariaLabelledBy\" association of the table");
 
-				return whenFetchPropertiesResolved(that.oTable, function() {
-					that.oTable.setFilterConditions({
-						name: [
-							{
-								isEmpty: null,
-								operator: "EQ",
-								validated: "NotValidated",
-								values: ["test"]
-							}
-						],
-						age: [
-							{
-								isEmpty: null,
-								operator: "EQ",
-								validated: "NotValidated",
-								values: ["test"]
-							}
-						]
-					});
+				that.oTable.setFilterConditions({
+					name: [
+						{
+							isEmpty: null,
+							operator: "EQ",
+							validated: "NotValidated",
+							values: ["test"]
+						}
+					],
+					age: [
+						{
+							isEmpty: null,
+							operator: "EQ",
+							validated: "NotValidated",
+							values: ["test"]
+						}
+					]
 				});
+
+				return that.oTable.awaitPropertyHelper();
 			}).then(function() {
 				return that.waitForFilterInfoBarRendered();
 			}).then(function() {
 				var oFilterInfoBar = that.getFilterInfoBar();
 
 				assert.strictEqual(that.getFilterInfoText().getText(),
-					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabelColumnHeader"])),
+					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabel"])),
 					"Change filter conditions: The filter info bar text is correct (2 filters)");
 
 				oFilterInfoBar.focus();
@@ -3834,38 +3813,38 @@ sap.ui.define([
 				assert.ok(!that.getFilterInfoBar().getVisible(), "Filter conditions removed: Filter info bar is invisible");
 				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 
-				return whenFetchPropertiesResolved(that.oTable, function() {
-					that.oTable.setFilterConditions({
-						name: [
-							{
-								isEmpty: null,
-								operator: "EQ",
-								validated: "NotValidated",
-								values: ["test"]
-							}
-						],
-						age: [
-							{
-								isEmpty: null,
-								operator: "EQ",
-								validated: "NotValidated",
-								values: ["test"]
-							}
-						],
-						gender: [
-							{
-								isEmpty: null,
-								operator: "EQ",
-								validated: "NotValidated",
-								values: ["test"]
-							}
-						]
-					});
+				that.oTable.setFilterConditions({
+					name: [
+						{
+							isEmpty: null,
+							operator: "EQ",
+							validated: "NotValidated",
+							values: ["test"]
+						}
+					],
+					age: [
+						{
+							isEmpty: null,
+							operator: "EQ",
+							validated: "NotValidated",
+							values: ["test"]
+						}
+					],
+					gender: [
+						{
+							isEmpty: null,
+							operator: "EQ",
+							validated: "NotValidated",
+							values: ["test"]
+						}
+					]
 				});
+
+				return that.oTable.awaitPropertyHelper();
 			}).then(function() {
 				assert.ok(that.getFilterInfoBar().getVisible(), "Set filter conditions: Filter info bar is visible");
 				assert.strictEqual(that.getFilterInfoText().getText(),
-					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabelColumnHeader", "gender"])),
+					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabel", "GenderLabel"])),
 					"Set filter conditions: The filter info bar text is correct (3 filters)");
 				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
 					return sId === that.getFilterInfoText().getId();
@@ -3939,18 +3918,18 @@ sap.ui.define([
 				}
 			]);
 
-			return whenFetchPropertiesResolved(that.oTable, function() {
-				that.oTable.setFilterConditions({
-					age: [
-						{
-							isEmpty: null,
-							operator: "EQ",
-							validated: "NotValidated",
-							values: ["test"]
-						}
-					]
-				});
+			that.oTable.setFilterConditions({
+				age: [
+					{
+						isEmpty: null,
+						operator: "EQ",
+						validated: "NotValidated",
+						values: ["test"]
+					}
+				]
 			});
+
+			return that.oTable.awaitPropertyHelper();
 		}).then(function() {
 			return that.waitForFilterInfoBarRendered();
 		}).then(function() {

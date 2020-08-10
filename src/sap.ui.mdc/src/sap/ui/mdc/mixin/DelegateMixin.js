@@ -45,6 +45,9 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 	 * <li><code>getPayload</code> - Returns the payload object set for the delegate property.</li>
 	 * <li><code>getTypeUtil</code> - Returns the <code>typeUtil</code> made available by the delegate module</li>
 	 * <li><code>initControlDelegate</code> - Loads and initializes the delegate module related to the enhanced control.</li>
+	 * <li><code>initPropertyHelper</code> - Loads and initializes the property helper related to the enhanced control.</li>
+	 * <li><code>awaitPropertyHelper</code> - Provides access to the property helper initialization <code>Promise</code>.</li>
+	 * <li><code>getPropertyHelper</code> - Returns the property helper instance, if available.</li>
 	 * </ul>
 	 *
 	 * Additionally, the following methods are wrapped:
@@ -84,6 +87,14 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 				this.fnResolveDelegate = resolve;
 				this.fnRejectDelegate = reject;
 			}.bind(this));
+
+			this._oPropertyHelper = null;
+			this._bPropertyHelperIsBeingInitialized = false;
+			this._pInitPropertyHelper = new Promise(function(resolve, reject) {
+				this._fnResolveInitPropertyHelper = resolve;
+				this._fnRejectInitPropertyHelper = reject;
+			}.bind(this));
+
 			if (fnInit) {
 				fnInit.apply(this, arguments);
 			}
@@ -197,6 +208,50 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 		return this._oDelegateInitialized;
 	};
 
+	DelegateMixin.initPropertyHelper = function(CustomPropertyHelper) {
+		if (CustomPropertyHelper && (!CustomPropertyHelper.getMetadata || !CustomPropertyHelper.getMetadata().isA("sap.ui.mdc.util.PropertyHelper"))) {
+			throw new Error("The custom property helper must be sap.ui.mdc.util.PropertyHelper or a subclass of it.");
+		}
+
+		if (!this.bIsDestroyed && !this._oPropertyHelper && !this._bPropertyHelperIsBeingInitialized) {
+			this._bPropertyHelperIsBeingInitialized = true;
+			this.awaitControlDelegate().then(function(oDelegate) {
+				if (this.bIsDestroyed) {
+					return;
+				}
+				return Promise.all([
+					CustomPropertyHelper || loadModules("sap/ui/mdc/util/PropertyHelper"),
+					oDelegate.fetchProperties(this)
+				]);
+			}.bind(this)).then(function(aResult) {
+				if (this.bIsDestroyed) {
+					return;
+				}
+				var PropertyHelper = aResult[0][0] ? aResult[0][0]/* default class */ : aResult[0]/* custom class */;
+				var aProperties = aResult[1];
+				this._oPropertyHelper = new PropertyHelper(aProperties, this);
+				this._bPropertyHelperIsBeingInitialized = false;
+				this._fnResolveInitPropertyHelper(this._oPropertyHelper);
+			}.bind(this)).catch(function(oError) {
+				this._fnRejectInitPropertyHelper(oError);
+			}.bind(this));
+		}
+
+		return this._pInitPropertyHelper;
+	};
+
+	DelegateMixin.awaitPropertyHelper = function() {
+		return this._pInitPropertyHelper;
+	};
+
+	DelegateMixin.getPropertyHelper = function() {
+		if (!this._oPropertyHelper) {
+			throw new Error("A property helper is not (yet) available. You must first initialize the delegate and the property helper.");
+		}
+
+		return this._oPropertyHelper;
+	};
+
 	DelegateMixin.exit = function (fnExit) {
 		return function () {
 			this.fnResolveDelegate = null;
@@ -209,6 +264,15 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 			this._oDelegate = null;
 			this._oPayload = null;
 			this._oTypeUtil = null;
+
+			if (this._oPropertyHelper) {
+				this._oPropertyHelper.destroy();
+			}
+			this._oPropertyHelper = null;
+			this._fnResolveInitPropertyHelper = null;
+			this._fnRejectInitPropertyHelper = null;
+			this._bPropertyHelperIsBeingInitialized = false;
+			this._pInitPropertyHelper = null;
 
 			if (fnExit) {
 				fnExit.apply(this, arguments);
@@ -229,6 +293,9 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 		this.getPayload = DelegateMixin.getPayload;
 		this.getTypeUtil = DelegateMixin.getTypeUtil;
 		this.initControlDelegate = DelegateMixin.initControlDelegate;
+		this.initPropertyHelper = DelegateMixin.initPropertyHelper;
+		this.awaitPropertyHelper = DelegateMixin.awaitPropertyHelper;
+		this.getPropertyHelper = DelegateMixin.getPropertyHelper;
 	};
 
 }, /* bExport= */ true);
