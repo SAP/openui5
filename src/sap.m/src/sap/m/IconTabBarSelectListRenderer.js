@@ -94,10 +94,16 @@ sap.ui.define([
 				iSetSize = aItems.length;
 			}
 
-			var iLevel = oItem._getNestedLevel() - 1;
+			var iLevel = oItem._getNestedLevel() - 2;
+
 			if (bExtraIndent) {
 				iLevel++;
 			}
+
+			if (oSelectList._bIsOverflow) {
+				iLevel++;
+			}
+
 			oItem.renderInSelectList(oRM, oSelectList, iIndexInSet, iSetSize, fPadding * iLevel);
 		}
 

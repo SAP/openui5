@@ -750,6 +750,7 @@ sap.ui.define([
 			});
 			this._oSelectList._oIconTabHeader = this.getParent();
 			this._oSelectList._oTabFilter = this;
+			this._oSelectList._bIsOverflow = this._bIsOverflow;
 		}
 		return this._oSelectList;
 	};
