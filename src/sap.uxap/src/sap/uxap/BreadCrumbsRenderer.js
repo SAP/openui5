@@ -9,7 +9,9 @@ sap.ui.define(function () {
 	 * @class BreadCrumbs renderer.
 	 * @static
 	 */
-	var BreadCrumbsRenderer = {};
+	var BreadCrumbsRenderer = {
+		apiVersion: 2
+	};
 
 	BreadCrumbsRenderer.render = function (oRm, oControl) {
 		oRm.openStart("div", oControl)
