@@ -959,7 +959,7 @@ function(
 			bFocusIsInSelectedItemPopup,
 			bNewFocusIsInReadOnlyPopover;
 
-		if (oPopup instanceof sap.m.Popover) {
+		if (oPopup.isA("sap.m.Popover")) {
 			if (oEvent.relatedControlId) {
 				oRelatedControlDomRef = sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef();
 				bNewFocusIsInSuggestionPopup = containsOrEquals(oPopup.getFocusDomRef(), oRelatedControlDomRef);
@@ -1175,7 +1175,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._getIsSuggestionPopupOpen = function () {
-		return this._oSuggPopover && this._oSuggPopover._oPopover.isOpen();
+		return this._oSuggPopover && this._oSuggPopover._oPopover && this._oSuggPopover._oPopover.isOpen();
 	};
 
 	MultiInput.prototype.setEditable = function (bEditable) {
