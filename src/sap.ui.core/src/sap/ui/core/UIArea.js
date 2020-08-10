@@ -227,6 +227,27 @@ sap.ui.define([
 				 */
 				dependents : {name : "dependents", type : "sap.ui.core.Control", multiple : true}
 			}
+		},
+
+		// make 'dependents' a non-invalidating aggregation
+		insertDependent: function(oElement, iIndex) {
+			return this.insertAggregation("dependents", oElement, iIndex, true);
+		},
+
+		addDependent: function(oElement) {
+			return this.addAggregation("dependents", oElement, true);
+		},
+
+		removeDependent: function(vElement) {
+			return this.removeAggregation("dependents", vElement, true);
+		},
+
+		removeAllDependents: function() {
+			return this.removeAllAggregation("dependents", true);
+		},
+
+		destroyDependents: function() {
+			return this.destroyAggregation("dependents", true);
 		}
 	});
 
