@@ -456,7 +456,25 @@ sap.ui.define([
 				/**
 				 * This event is fired if the inner control has a </code>press</code> event and this is fired.
 				 */
-				press: {}
+				press: {},
+				/**
+				 * This event is fired when the user presses <kbd>Enter</kbd>.
+				 * It allows the application to implement some submit logic.
+				 *
+				 * <b>Note</b> This event is only triggered if the field is editable.
+				 *
+				 * @since 1.82.0
+				 */
+				submit : {
+					parameters : {
+						/**
+						 * Returns a <code>Promise</code> for the change. The <code>Promise</code> returns the value if it is resolved.
+						 * If the last <code>change</code> event is synchronous, the <code>Promise</code> has already been resolved. If it is asynchronous,
+						 * it will be resolved after the value has been updated.
+						 */
+						promise: { type: "Promise" }
+					}
+				}
 			},
 			publicMethods: [],
 			defaultAggregation: "content"
@@ -477,7 +495,8 @@ sap.ui.define([
 				createEditMulti: _createMultiInputControl,
 				createEditMultiLine: _createTextAreaControl,
 				createDisplay: _createTextControl,
-				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: false} // if no FieldHelp and multiple operators use default FieldHelp
+				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: false}, // if no FieldHelp and multiple operators use default FieldHelp
+				defaultEnterHandler: true
 			},
 			Search: {
 				edit: "sap/m/SearchField",
@@ -486,7 +505,8 @@ sap.ui.define([
 				createEdit: _createSearchField,
 				//createEditMulti: _createSearchField, // not used
 				createDisplay: _createTextControl,
-				useDefaultFieldHelp: false // no default field help
+				useDefaultFieldHelp: false, // no default field help
+				defaultEnterHandler: false
 			},
 			Date: {
 				edit: "sap/ui/mdc/field/FieldInput",
@@ -499,7 +519,8 @@ sap.ui.define([
 				createEdit: _createInputControl,
 				createEditMulti: _createMultiInputControl, // FieldHelp needed to enter date
 				createDisplay: _createTextControl,
-				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true} // if no FieldHelp and multiple operators use default FieldHelp
+				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true}, // if no FieldHelp and multiple operators use default FieldHelp
+				defaultEnterHandler: true
 			},
 			Time: {
 				edit: "sap/ui/mdc/field/FieldInput",
@@ -511,7 +532,8 @@ sap.ui.define([
 				createEdit: _createInputControl,
 				createEditMulti: _createMultiInputControl, // FieldHelp needed to enter date
 				createDisplay: _createTextControl,
-				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true} // if no FieldHelp and multiple operators use default FieldHelp
+				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true}, // if no FieldHelp and multiple operators use default FieldHelp
+				defaultEnterHandler: true
 			},
 			DateTime: {
 				edit: "sap/ui/mdc/field/FieldInput",
@@ -523,7 +545,8 @@ sap.ui.define([
 				createEdit: _createInputControl,
 				createEditMulti: _createMultiInputControl, // FieldHelp needed to enter date
 				createDisplay: _createTextControl,
-				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true} // if no FieldHelp and multiple operators use default FieldHelp
+				useDefaultFieldHelp: {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true}, // if no FieldHelp and multiple operators use default FieldHelp
+				defaultEnterHandler: true
 			},
 			Link: {
 				edit: "sap/ui/mdc/field/FieldInput",
@@ -534,14 +557,16 @@ sap.ui.define([
 				createEditMulti: _createMultiInputControl,
 				createEditMultiLine: _createTextAreaControl,
 				createDisplay: _createLinkControl,
-				useDefaultFieldHelp: false // no default field help
+				useDefaultFieldHelp: false, // no default field help
+				defaultEnterHandler: true
 			},
 			Boolean: {
 				edit: "sap/ui/mdc/field/FieldInput",
 				display: "sap/m/Text",
 				createEdit: _createBoolInputControl,
 				createDisplay: _createTextControl,
-				useDefaultFieldHelp: {name: "bool", oneOperatorSingle: true, oneOperatorMulti: true} // if no FieldHelp and multiple operators use default FieldHelp
+				useDefaultFieldHelp: {name: "bool", oneOperatorSingle: true, oneOperatorMulti: true}, // if no FieldHelp and multiple operators use default FieldHelp
+				defaultEnterHandler: true
 			},
 			Unit: {
 				edit: "sap/ui/mdc/field/FieldInput",
@@ -550,16 +575,21 @@ sap.ui.define([
 				createEdit: _createUnitInputControls,
 				createEditMulti: _createUnitMultiInputControls,
 				createDisplay: _createTextControl,
-				useDefaultFieldHelp: false // no default field help
+				useDefaultFieldHelp: false, // no default field help
+				defaultEnterHandler: true
 			}
 	};
 
-	var oContentEventDelegate = {
+	var oContentEventDelegateBefore = {
 			onsapprevious: _handleKeybordEvent,
 			onsapnext: _handleKeybordEvent,
 			onsapup: _handleKeybordEvent,
 			onsapdown: _handleKeybordEvent,
 			onsapbackspace: _handleKeybordEvent
+	};
+
+	var oContentEventDelegateAfter = {
+			onsapenter: _handleEnter
 	};
 
 	var mControls;
@@ -860,6 +890,34 @@ sap.ui.define([
 	FieldBase.prototype._fireChange = function(aConditions, bValid, vWrongValue, oPromise) {
 		// to be implemented by Filed and FilterField
 	};
+
+	function _handleEnter(oEvent) {
+
+		var sEditMode = this.getEditMode();
+
+		if (_getEditable(sEditMode) && this.hasListeners("submit")) {
+			// collect all pending promises for ENTER, only if all resolved it's not pending. (Normally there should be only one.)
+			var aPromises = [];
+			var oPromise;
+
+			for (var i = 0; i < this._aAsyncChanges.length; i++) {
+				aPromises.push(this._aAsyncChanges[i].promise);
+			}
+
+			if (aPromises.length > 0) {
+				oPromise = Promise.all(aPromises).then(function() {
+					return this._getResultForPromise(this.getConditions());
+				}.bind(this));
+			} else if (this._bParseError) {
+				oPromise = Promise.reject();
+			} else {
+				oPromise = Promise.resolve(this._getResultForPromise(this.getConditions()));
+			}
+
+			this.fireSubmit({promise: oPromise});
+		}
+
+	}
 
 	function _getDataType() {
 
@@ -1460,7 +1518,7 @@ sap.ui.define([
 //				// TODO: allow different content than allowed in Form?
 //				throw new Error(oContent + " is not a valid content! Only use valid content in " + this);
 //			}
-			_modifyKeyboardHandler.call(this, oContent);
+			_modifyKeyboardHandler.call(this, oContent, true);
 			_attachContentHandlers.call(this, oContent);
 			// bind to ManagedObjectModel at rendering to prevent unneded updates
 
@@ -1763,7 +1821,7 @@ sap.ui.define([
 				var oControl = aControls[i];
 				oControl.attachEvent("parseError", _handleParseError, this);
 				oControl.attachEvent("validationError", _handleValidationError, this);
-				_modifyKeyboardHandler.call(this, oControl);
+				_modifyKeyboardHandler.call(this, oControl, oControlType.defaultEnterHandler);
 				_setModelOnContent.call(this, oControl);
 				if (this._bConnected && ((i === 0 && !this._bIsMeasure) || (i === 1 && this._bIsMeasure))) {
 					_setFocusHandlingForFieldHelp.call(this, oControl);
@@ -1855,15 +1913,15 @@ sap.ui.define([
 	function _createSearchField(SearchField, sId) {
 
 		this._bHideOperator = true;
-		var oConditionsType = _getConditionsType.call(this); // can not bind to conditions directly as SearchField updates "value" while typing
+		var oConditionsType = _getConditionsType.call(this);
 		_updateConditionType.call(this); // to update HideOperator
 
 		var oControl = new SearchField(sId, {
-			value: {path: "$field>/conditions", type: oConditionsType, mode: BindingMode.OneWay},
+			value: {path: "$field>/conditions", type: oConditionsType, mode: BindingMode.OneWay}, // oneWay as SearchField updates "value" while typing
 			placeholder: "{$field>/placeholder}",
 			width: "100%",
 			tooltip: "{$field>/tooltip}",
-			search:  _handleContentChange.bind(this),
+			search:  _handleEnter.bind(this), // submit event should be fired on Enter and Search-button
 			change: _handleContentChange.bind(this),
 			liveChange: _handleContentLiveChange.bind(this)
 		});
@@ -2236,15 +2294,20 @@ sap.ui.define([
 
 	}
 
-	function _modifyKeyboardHandler(oControl) {
+	function _modifyKeyboardHandler(oControl, bUseEnterDelegate) {
 
-		oControl.addDelegate(oContentEventDelegate, true, this);
+		oControl.addDelegate(oContentEventDelegateBefore, true, this);
+
+		if (bUseEnterDelegate) {
+			oControl.addDelegate(oContentEventDelegateAfter, false, this);
+		}
 
 	}
 
 	function _restoreKeyboardHandler(oControl) {
 
-		oControl.removeDelegate(oContentEventDelegate);
+		oControl.removeDelegate(oContentEventDelegateBefore);
+		oControl.removeDelegate(oContentEventDelegateAfter);
 
 	}
 
@@ -2383,7 +2446,7 @@ sap.ui.define([
 		var iLength = this._aAsyncChanges.length;
 
 		if (iLength > 0 && !this._aAsyncChanges[iLength - 1].changeFired) {
-			// as change event in Input is diretly fired after setValue this must be the change event corresponding to the last async change.
+			// as change event in Input is directly fired after setValue this must be the change event corresponding to the last async change.
 			// as there might be a sync change after it, do not handle it twice.
 			this._aAsyncChanges[iLength - 1].changeFired = true;
 			this._aAsyncChanges[iLength - 1].changeEvent = oChangeEvent;
@@ -2427,10 +2490,6 @@ sap.ui.define([
 			if (bValid) {
 				bUpdateConditions = true;
 			}
-		} else if (oChange.changeEvent.parameters.hasOwnProperty("query")) {
-			vValue = oChange.changeEvent.parameters["query"];
-			bUpdateConditions = true;
-			bChangeIfNotChanged = true;
 		} else {
 			oCondition = aConditions[0];
 			vValue = aConditions[0] && aConditions[0].values[0];

@@ -28,6 +28,7 @@
 								placeholder="{/#Product/ProductId/@sap:label}"
 								tooltip="{/#Product/ProductId/@sap:label}"
 								liveChange="handleLiveChange"
+								submit="handleSubmit"
 								fieldHelp="FVH1">
 								<mdcField:dependents>
 									<mdcField:FieldValueHelp id="FVH1"
@@ -90,7 +91,8 @@
 								display="ValueDescription"
 								placeholder="Placeholder"
 								fieldHelp="FVH1"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -99,7 +101,8 @@
 								conditions="{cm>/conditions/Description}"
 								maxConditions="1"
 								placeholder="{/#Product/Description/@sap:label}"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -109,7 +112,8 @@
 								maxConditions="1"
 								editMode="Display"
 								placeholder="Placeholder"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -119,6 +123,7 @@
 								maxConditions="5"
 								placeholder="{/#Product/Name/@sap:label}"
 								liveChange="handleLiveChange"
+								submit="handleSubmit"
 								fieldHelp="FVH2">
 								<mdcField:dependents>
 									<mdcField:FieldValueHelp id="FVH2"
@@ -177,7 +182,8 @@
 								maxConditions="5"
 								editMode="Display"
 								placeholder="Placeholder"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -189,7 +195,8 @@
 								dataTypeConstraints="{displayFormat: 'Date'}"
 								maxConditions="1"
 								placeholder="{/#Product/Date/@sap:label}"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -202,7 +209,8 @@
 								maxConditions="1"
 								editMode="Display"
 								placeholder="Placeholder"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -213,7 +221,8 @@
 								maxConditions="1"
 								placeholder="{/#Product/Quantity/@sap:label}"
 								tooltip="{/#Product/Quantity/@sap:label}"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 								<m:Slider value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"/>
 								<mdcField:layoutData>
 									<form:ColumnElementData cellsLarge="12" />
@@ -225,7 +234,8 @@
 								maxConditions="1"
 								placeholder="{/#Product/Quantity/@sap:label}"
 								tooltip="{/#Product/Quantity/@sap:label}"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 								<mdcField:contentEdit>
 									<m:Slider value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"/>
 								</mdcField:contentEdit>
@@ -240,7 +250,8 @@
 								conditions="{cm>/conditions/Quantity}"
 								dataType="Edm.Decimal"
 								maxConditions="1"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 								<mdcField:contentEdit>
 									<m:Slider value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"/>
 								</mdcField:contentEdit>
@@ -252,7 +263,8 @@
 								conditions="{cm>/conditions/Quantity}"
 								dataType="Edm.Decimal"
 								maxConditions="-1"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 								<mdcField:contentDisplay>
 									<m:SegmentedButton items="{path: '$field>/conditions'}">
 										<m:items>
@@ -281,6 +293,7 @@
 								maxConditions="1"
 								editMode="Display"
 								liveChange="handleLiveChange"
+								submit="handleSubmit"
 								press="handlePress">
 								<mdcField:fieldInfo>
 									<mdcField:CustomFieldInfo id="F8-I" >
@@ -307,6 +320,7 @@
 								maxConditions="-1"
 								placeholder="{/#Product/Quantity/@sap:label}"
 								liveChange="handleLiveChange"
+								submit="handleSubmit"
 								fieldHelp="FVH3">
 								<mdcField:dependents>
 									<mdcField:FieldValueHelp id="FVH3" 
@@ -326,7 +340,8 @@
 								maxConditions="-1"
 								editMode="Display"
 								placeholder="Placeholder"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -337,7 +352,8 @@
 								display="DescriptionValue"
 								placeholder="{/#Product/Status/@sap:label}"
 								liveChange="handleLiveChange"
-								fieldHelp="FVH-Status">
+								fieldHelp="FVH-Status"
+								submit="handleSubmit">
 								<mdcField:dependents>
 									<mdcField:FieldValueHelp id="FVH-Status" 
 										title="{/#Product/Status/@sap:label}"
@@ -362,6 +378,7 @@
 								display="DescriptionValue"
 								placeholder="Placeholder"
 								liveChange="handleLiveChange"
+								submit="handleSubmit"
 								fieldHelp="FVH-Status">
 							</mdcField:FieldBase>
 						</form:FormElement>
@@ -372,7 +389,8 @@
 								maxConditions="-1"
 								display="Value"
 								placeholder="Placeholder"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -384,7 +402,8 @@
 								maxConditions="1"
 								display="Value"
 								placeholder="{/#Product/Important/@sap:label}"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 							<mdcField:FieldBase id="FB16b"
 								conditions="{cm>/conditions/Important}"
@@ -392,7 +411,8 @@
 								maxConditions="1"
 								display="Description"
 								placeholder="{/#Product/Important/@sap:label}"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -404,7 +424,8 @@
 								display="Description"
 								editMode="Display"
 								placeholder="{/#Product/Important/@sap:label}"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -418,6 +439,7 @@
 								editMode="Editable"
 								placeholder="{/#Product/WeightMeasure/@sap:label}"
 								liveChange="handleLiveChange"
+								submit="handleSubmit"
 								fieldHelp="FVH-WeightUnit">
 								<mdcField:dependents>
 									<mdcField:ListFieldHelp id="FVH-WeightUnit"
@@ -436,7 +458,8 @@
 								display="Value"
 								editMode="Display"
 								placeholder="{/#Product/WeightMeasure/@sap:label}"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -445,7 +468,8 @@
 								conditions="{cm>/conditions/*Name,Description*}"
 								maxConditions="1"
 								placeholder="Search"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -455,7 +479,8 @@
 								maxConditions="1"
 								editMode="Display"
 								placeholder="Search"
-								liveChange="handleLiveChange">
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -468,6 +493,7 @@
 								display="ValueDescription"
 								placeholder="{/#Product/CountryId/@sap:label}"
 								liveChange="handleLiveChange"
+								submit="handleSubmit"
 								fieldHelp="FH-Country">
 								<mdcField:dependents>
 										<mdcField:FieldValueHelp id="FH-Country"
