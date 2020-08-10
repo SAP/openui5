@@ -3,21 +3,22 @@
  */
 
 sap.ui.define([
-    "sap/ui/thirdparty/jquery",
-    "sap/ui/core/UIComponent",
-    "sap/ui/Device",
-    "sap/ui/documentation/sdk/model/models",
-    "sap/ui/documentation/sdk/controller/ErrorHandler",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/documentation/sdk/controller/util/ConfigUtil",
-    "sap/base/util/Version",
-    "sap/ui/VersionInfo",
-    // used via manifest.json
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/UIComponent",
+	"sap/ui/Device",
+	"sap/ui/documentation/sdk/model/models",
+	"sap/ui/documentation/sdk/controller/ErrorHandler",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/documentation/sdk/controller/util/ConfigUtil",
+	"sap/base/util/Version",
+	"sap/ui/documentation/sdk/util/Resources",
+	"sap/base/Log",
+	// used via manifest.json
 	"sap/ui/documentation/sdk/util/DocumentationRouter",
-    // implements sap.m.TablePopin
+	// implements sap.m.TablePopin
 	"sap/m/ColumnListItem"
 ], function(
-    jQuery,
+	jQuery,
 	UIComponent,
 	Device,
 	models,
@@ -25,7 +26,8 @@ sap.ui.define([
 	JSONModel,
 	ConfigUtil,
 	Version,
-	VersionInfo /*, DocumentationRouter, ColumnListItem*/
+	ResourcesUtil,
+	Log /*, DocumentationRouter, ColumnListItem*/
 ) {
 		"use strict";
 
@@ -110,7 +112,27 @@ sap.ui.define([
 
 			loadVersionInfo: function () {
 				if (!this._oVersionInfoPromise) {
-					this._oVersionInfoPromise = VersionInfo.load().then(this._bindVersionModel.bind(this));
+					var that = this;
+					this._oVersionInfoPromise = new Promise(function (resolve, reject) {
+						// The URL that we need to version JSON should be
+						// relative to the resource origin - see ResourceUtil.
+						// This way we ensure understanding about distribution
+						// is in sync with data files.
+						var sUrl = ResourcesUtil.getResourceOriginPath('./resources/sap-ui-version.json');
+						jQuery.ajax({
+							// async: false,
+							url : sUrl,
+							dataType : "json",
+							error : function(xhr, status, e) {
+								Log.error("failed to load '" + sUrl + "': " + status + ", " + e);
+								reject(e);
+							},
+							success : function(oData) {
+								that._bindVersionModel(oData);
+								resolve(oData);
+							}
+						});
+					});
 				}
 
 				return this._oVersionInfoPromise;
@@ -134,8 +156,8 @@ sap.ui.define([
 				bSnapshot = /-SNAPSHOT$/i.test(sVersionSuffix);
 				bOpenUI5 = oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav);
 
-				// We show restricted members for internal versions and if the documentation is in preview mode
-				if (/internal/i.test(oVersionInfo.name) || !!window['sap-ui-documentation-preview']) {
+				// We show restricted members for internal versions
+				if (/internal/i.test(oVersionInfo.name)) {
 					bIsInternal = true;
 					this.aAllowedMembers.push("restricted");
 				}
