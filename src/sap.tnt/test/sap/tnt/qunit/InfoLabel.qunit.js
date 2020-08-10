@@ -3,11 +3,15 @@
 sap.ui.define([
 	'sap/base/Log',
 	'sap/tnt/InfoLabel',
-	'sap/tnt/library'
+	'sap/tnt/library',
+	"sap/ui/core/Core",
+	"sap/ui/core/IconPool"
 ], function(
 	log,
 	InfoLabel,
-	tntLibrary) {
+	tntLibrary,
+	Core,
+	IconPool) {
 	'use strict';
 
 	QUnit.module("Properties", {
@@ -256,6 +260,8 @@ sap.ui.define([
 
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
+			this.oRB = Core.getLibraryResourceBundle("sap.tnt");
+
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
 			this.InfoLabelNotEmpty = new InfoLabel({text: "Available"}).placeAt("qunit-fixture");
 			this.InfoLabelWithIcon = new InfoLabel({icon: "sap-icon://hide"}).placeAt("qunit-fixture");
@@ -278,15 +284,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("testing if the invisible text is added", function (assert) {
-		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Empty info label", "InfoLabel initially should have invisible text \"Empty info label\"");
+		var sEmptyText = this.oRB.getText("INFOLABEL_EMPTY"),
+			sDefaultText = this.oRB.getText("INFOLABEL_DEFAULT");
+
+		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sEmptyText, "InfoLabel initially should have invisible text \"Empty info label\"");
 
 		this.InfoLabel.setText("available");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Info label", "InfoLabel should have invisible text \"Info label\"");
+		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sDefaultText, "InfoLabel should have invisible text \"Info label\"");
 
 		this.InfoLabel.setText("");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Empty info label", "InfoLabel should have invisible text \"Empty info label\"");
+		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sEmptyText, "InfoLabel should have invisible text \"Empty info label\"");
 	});
 
 	QUnit.test("testing if the invisible text class is added", function (assert) {
@@ -295,32 +304,39 @@ sap.ui.define([
 	});
 
 	QUnit.test("testing initially not empty InfoLabel", function (assert) {
-		assert.strictEqual(this.InfoLabelNotEmpty.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Info label", "InfoLabel initially should have invisible text \"Info label\"");
+		var sDefaultText = this.oRB.getText("INFOLABEL_DEFAULT");
+
+		assert.strictEqual(this.InfoLabelNotEmpty.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sDefaultText, "InfoLabel initially should have invisible text \"Info label\"");
 	});
 
 	QUnit.test("testing InfoLabel with icon", function (assert) {
+		var sEmptyText = this.oRB.getText("INFOLABEL_EMPTY"),
+			sDefaultText = this.oRB.getText("INFOLABEL_DEFAULT"),
+			sIconHideText = IconPool.getIconInfo("sap-icon://hide").text,
+			sIconShowText = IconPool.getIconInfo("sap-icon://show").text;
+
 		// initially icon only
-		assert.strictEqual(this.InfoLabelWithIcon.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Hide Info label", "InfoLabel icon only should have invisible text \"Hide Info label\"");
+		assert.strictEqual(this.InfoLabelWithIcon.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sIconHideText + " " + sDefaultText, "InfoLabel icon only should have invisible text \"Hide Info label\"");
 
 		// icon only
 		this.InfoLabel.setIcon("sap-icon://show");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Show Info label", "InfoLabel with icon only should have invisible text \"Show Info label\"");
+		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sIconShowText + " " + sDefaultText, "InfoLabel with icon only should have invisible text \"Show Info label\"");
 
 		// text and icon
 		this.InfoLabelNotEmpty.setIcon("sap-icon://show");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(this.InfoLabelNotEmpty.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Info label", "InfoLabel with text and icon should have invisible text \"Info label\"");
+		assert.strictEqual(this.InfoLabelNotEmpty.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sDefaultText, "InfoLabel with text and icon should have invisible text \"Info label\"");
 
 		// no text no icon
 		this.InfoLabel.setIcon("");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Empty info label", "InfoLabel with no icon and no text should have invisible text \"Empty info label\"");
+		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sEmptyText, "InfoLabel with no icon and no text should have invisible text \"Empty info label\"");
 
 		// icon only
 		this.InfoLabelNotEmpty.setText("");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(this.InfoLabelNotEmpty.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Show Info label", "InfoLabel with icon only should have invisible text \"Show Info label\"");
+		assert.strictEqual(this.InfoLabelNotEmpty.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sIconShowText + " " + sDefaultText, "InfoLabel with icon only should have invisible text \"Show Info label\"");
 
 	});
 });
