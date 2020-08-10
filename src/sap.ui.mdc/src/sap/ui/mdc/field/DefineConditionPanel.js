@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/XMLComposite',
 	'sap/ui/model/Filter',
 	'sap/ui/model/type/String',
 	'sap/ui/base/ManagedObjectObserver',
@@ -16,9 +15,19 @@ sap.ui.define([
 	'sap/ui/mdc/enum/FieldDisplay',
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/ui/mdc/Field'
+	'sap/ui/model/base/ManagedObjectModel',
+	'sap/ui/core/Control',
+	'sap/ui/mdc/Field',
+	'sap/ui/mdc/field/ListFieldHelp',
+	'sap/ui/core/ListItem',
+	'sap/m/ScrollContainer',
+	'sap/ui/layout/VerticalLayout',
+	'sap/ui/layout/Grid',
+	'sap/ui/layout/GridData',
+	'sap/m/Button',
+	'sap/m/HBox',
+	'sap/ui/core/InvisibleText'
 ], function(
-		XMLComposite,
 		Filter,
 		StringType,
 		ManagedObjectObserver,
@@ -32,7 +41,18 @@ sap.ui.define([
 		FieldDisplay,
 		BaseType,
 		ConditionValidated,
-		Field
+		ManagedObjectModel,
+		Control,
+		Field,
+		ListFieldHelp,
+		ListItem,
+		ScrollContainer,
+		VerticalLayout,
+		Grid,
+		GridData,
+		Button,
+		HBox,
+		InvisibleText
 		) {
 	"use strict";
 
@@ -67,7 +87,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.ValueHelpPanel
 	 */
-	var DefineConditionPanel = XMLComposite.extend("sap.ui.mdc.field.DefineConditionPanel", {
+	var DefineConditionPanel = Control.extend("sap.ui.mdc.field.DefineConditionPanel", {
 		metadata: {
 			properties: {
 				/**
@@ -93,18 +113,59 @@ sap.ui.define([
 					defaultValue: {}
 				}
 			},
+			aggregations: {
+				/**
+				 * Optional content that can be rendered.
+				 *
+				 * <b>Note:</b> Bind the value-holding property of the control to <code>'$field>/conditions'</code>
+				 * using <code>sap.ui.mdc.field.ConditionsType</code> as type.
+				 *
+				 * If the control needs to show multiple conditions, bind its aggregation to </code>'$field>/conditions'</code>.
+				 * Bind the item controls value-holding property using <code>sap.ui.mdc.field.ConditionType</code> as type.
+				 *
+				 * <b>Warning:</b> Only controls allowed in a </code>Form</code> are allowed to be used for this optional content.
+				 * Other controls might break the layout.
+				 * This means the <code>sap.ui.core.IFormContent</code> interface needs to be implemented by these controls.
+				 */
+				_content: {
+					type: "sap.ui.core.Control",
+					multiple: false
+				}
+			},
 			events: {}
-
 		},
-		fragment: "sap.ui.mdc.field.DefineConditionPanel",
+		_oManagedObjectModel: null,
+
+		renderer:{
+			apiVersion: 2,
+			render: function(oRm, oControl){
+				oRm.openStart("section", oControl);
+				oRm.class("sapUiMdcDefineConditionPanel");
+				oRm.openEnd();
+				oRm.openStart("div");
+				oRm.openEnd();
+				oRm.renderControl(oControl.getAggregation("_content"));
+				oRm.close("div");
+				oRm.close("section");
+			}
+		},
 
 		init: function() {
 			sap.ui.getCore().getMessageManager().registerObject(this, true);
+
+			Control.prototype.init.apply(this, arguments);
+
+			this._oManagedObjectModel = new ManagedObjectModel(this);
+
 			this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
 
 			this._oObserver.observe(this, {
 				properties: ["conditions", "formatOptions"]
 			});
+
+			this._createInnerControls.call(this);
+			this.setModel(this._oManagedObjectModel, "$this");
+
 			var oVLayout = this.byId("defineCondition");
 			this._oObserver.observe(oVLayout, {
 				aggregations: ["content"]
@@ -121,6 +182,103 @@ sap.ui.define([
 				delete this._oDefaultType;
 			}
 
+			this._oManagedObjectModel.destroy();
+			delete this._oManagedObjectModel;
+
+			// this.getAggregation("_content").destroy();
+		},
+
+		_createInnerControls: function() {
+			var oInvisibleOperatorText = new InvisibleText(this.getId() + "--ivtOperator", {text: "{$i18n>valuehelp.DEFINECONDITIONS_OPERATORLABEL}"});
+
+			var oScrollContainer = new ScrollContainer({
+				height: "100%",
+				horizontal: false,
+				vertical: true
+			});
+
+			oScrollContainer.addDependent(
+				new ListFieldHelp(this.getId() + "--rowSelect-help", {
+					items: { path:'om>/', templateShareable:false, template: new ListItem({key: "{om>key}", text: "{om>additionalText}", additionalText: "{om>info}"})},
+					filterList: false,
+					useFirstMatch: true
+				})
+			);
+
+			var oGridTemplate = new Grid(this.getId() + "--conditionRow", {
+				width: "100%",
+				hSpacing: 0,
+				vSpacing: 0,
+				containerQuery: true}
+			).addStyleClass("sapUiMdcDefineConditionGrid");
+
+			oGridTemplate.addContent(new Field(this.getId() + "--rowSelect", {
+				dataType: "sap.ui.model.type.String",
+				value: "{$this>operator}",
+				width: "100%",
+				display: "Description",
+				fieldHelp: this.getId() + "--rowSelect-help",
+				change: this.onSelectChange.bind(this),
+				ariaLabelledBy: oInvisibleOperatorText
+			})
+				.addStyleClass("sapUiSmallPaddingBegin")
+				.setLayoutData(new GridData({span: "XL3 L3 M3 S10"}))
+			);
+
+
+			oGridTemplate.addContent(new Button(this.getId() + "--removeBtn2", {
+				press: this.removeCondition.bind(this),
+				type: "Transparent",
+				icon: "sap-icon://decline",
+				tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
+			})
+				.addStyleClass("sapUiSmallPaddingBegin")
+				.setLayoutData(new GridData({span: "XL1 L1 M1 S2", visibleXL: false, visibleL: false, visibleM: false, visibleS: true}))
+			);
+
+			oGridTemplate.addContent(new HBox(this.getId() + "--rowFields", {
+				items: { path: '$this>values', factory: this.valueCtrlFactory.bind(this)}
+			})
+				.setLayoutData(new GridData({span: "XL8 L8 M8 S10"}))
+			);
+
+			oGridTemplate.addContent(new Button(this.getId() + "--removeBtn", {
+				press: this.removeCondition.bind(this),
+				type: "Transparent",
+				icon: "sap-icon://decline",
+				tooltip: "{$i18n>valuehelp.DEFINECONDITIONS_REMOVECONDITION}"
+			})
+				.addStyleClass("sapUiSmallPaddingBegin")
+				.setLayoutData(new GridData({span: "XL1 L1 M1 S1", visibleXL: true, visibleL: true, visibleM: true, visibleS: false}))
+			);
+
+
+			var oVerticalLayout = new VerticalLayout(this.getId() + "--defineCondition", {
+				width: "100%",
+				content: {
+					path: '$this>/conditions',
+					filters: new Filter({path: 'validated', operator:'NE', value1:'Validated'}),
+					template: oGridTemplate,
+					templateShareable:false}
+			});
+			oScrollContainer.addContent(oInvisibleOperatorText);
+			oScrollContainer.addContent(oVerticalLayout);
+
+
+			var oAddBtn = new Button(this.getId() + "--addBtn", {
+				press: this.addCondition.bind(this),
+				type: "Emphasized",
+				text: "{$i18n>valuehelp.DEFINECONDITIONS_ADDCONDITION}"}
+			).addStyleClass("sapUiSmallPaddingBegin");
+
+			oScrollContainer.addContent(oAddBtn);
+
+
+			this.setAggregation("_content", oScrollContainer);
+		},
+
+		byId: function(sId) {
+			return sap.ui.getCore().byId(this.getId() + "--" + sId);
 		},
 
 		onBeforeRendering: function() {
@@ -150,14 +308,8 @@ sap.ui.define([
 			var aRows = oVLayout.getContent();
 			var oFormatOptions = this.getFormatOptions();
 			var iMaxConditions = oFormatOptions.maxConditions;
-
-			for (var i = 0; i < aRows.length; i++) {
-				var oRow = aRows[i];
-				var oHBox = oRow.getContent()[2];
-				var oButton = oHBox.getItems()[1];
-				oButton.setVisible((i === aRows.length - 1) && (iMaxConditions == -1 || i < iMaxConditions - 1));
-			}
-
+			var oButton = this.byId("addBtn");
+			oButton.setVisible( iMaxConditions == -1 || aRows.length < iMaxConditions);
 		},
 
 		removeCondition: function(oEvent) {
@@ -175,18 +327,14 @@ sap.ui.define([
 		},
 
 		addCondition: function(oEvent) {
-			var oSource = oEvent.oSource;
-			var oCondition = oSource.getBindingContext("$this").getObject();
 			var aConditions = this.getConditions();
-
-			var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 			var oFormatOptions = this.getFormatOptions();
 			var iMaxConditions = oFormatOptions.maxConditions;
 
 			if (iMaxConditions == -1 || aConditions.length < iMaxConditions) {
 				// create a new dummy condition for a new condition on the UI - must be removed later if not used or filled correct
 				this._bUpdateConditionsInternal = true;
-				this.addDummyCondition(iIndex + 1);
+				this.addDummyCondition(aConditions.length + 1);
 			}
 		},
 
@@ -409,7 +557,7 @@ sap.ui.define([
 		// suspend the listBinding of field HBoxes to avoid recreation of controls if not needed
 		var aContent = oGrid.getContent();
 		var oField = aContent[0];
-		var oHBox = aContent[1];
+		var oHBox = _getRowFieldHBox.call(this, oGrid);
 		var oListBinding = oHBox.getBinding("items");
 		oListBinding.suspend();
 
@@ -428,8 +576,7 @@ sap.ui.define([
 
 		for (var i = 0; i < aGrids.length; i++) {
 			var oGrid = aGrids[i];
-			var aContent = oGrid.getContent();
-			var oHBox = aContent[1];
+			var oHBox = _getRowFieldHBox.call(this, oGrid);
 			var oListBinding = oHBox.getBinding("items");
 			oListBinding.resume();
 		}
@@ -439,8 +586,7 @@ sap.ui.define([
 	function _operatorChanged(oField, sKey, sOldKey) {
 
 		var oGrid = oField.getParent();
-		var aContent = oGrid.getContent();
-		var oHBox = aContent[1];
+		var oHBox = _getRowFieldHBox.call(this, oGrid);
 		var oListBinding = oHBox.getBinding("items");
 
 		oField._sOldKey = sOldKey; // to know in change event
@@ -682,14 +828,22 @@ sap.ui.define([
 
 				for (i = 0; i < aUpdate.length; i++) {
 					var oGrid = aGrids[aUpdate[i]];
-					var aContent = oGrid.getContent();
-					var oHBox = aContent[1];
+					var oHBox = _getRowFieldHBox.call(this, oGrid);
 					var oListBinding = oHBox.getBinding("items");
 					oListBinding.checkUpdate(true); // force update
 				}
 			}
 		}
 
+	}
+
+	function _getRowFieldHBox(oGrid) {
+		var aContent = oGrid.getContent();
+		var oHBox = aContent[1];
+		if (oHBox.isA("sap.m.HBox")) {
+			return oHBox;
+		}
+		return aContent[2];
 	}
 
 	return DefineConditionPanel;
