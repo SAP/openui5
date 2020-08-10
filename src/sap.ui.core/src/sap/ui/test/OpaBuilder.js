@@ -1227,6 +1227,9 @@ sap.ui.define(
              */
             filter: function (vMatchers) {
                 return function (aItems) {
+                    if (aItems === null || aItems === undefined) {
+                        return [];
+                    }
                     // ensure that we only operate on arrays
                     if (!_isOfType(aItems, Array)) {
                         aItems = [aItems];
@@ -1245,6 +1248,9 @@ sap.ui.define(
              */
             match: function (vMatchers) {
                 return function (vItem) {
+                    if (vItem === null || vItem === undefined) {
+                        return false;
+                    }
                     // ensure that arrays are treated as a single element!
                     var vResult = _executeMatchers(vMatchers, [vItem]);
                     return vResult.length ? vResult[0] : false;
