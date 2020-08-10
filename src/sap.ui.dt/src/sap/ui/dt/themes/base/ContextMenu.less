@@ -13,7 +13,7 @@
 	.sapMBtnInner {
 		text-align: left;
 		text-shadow: none;
-		display: flex;
+		display: block;
 	}
 	.sapMBtn {
 		padding-left: 0.0625rem; //1px
@@ -90,4 +90,8 @@
 html[data-sap-ui-browser^="ie"] .sapUiDtContextMenu .sapMBtn:focus .sapMBtnFocusDiv,
 html[data-sap-ui-browser^="ed"] .sapUiDtContextMenu .sapMBtn:focus .sapMBtnFocusDiv {
 	border: none;
+}
+// because the Button-Control sets a specific rule for IE, we have to define the display here again
+html[data-sap-ui-browser*='ie'] .sapUiDtContextMenu .sapMBtnInner {
+	display: block;
 }
