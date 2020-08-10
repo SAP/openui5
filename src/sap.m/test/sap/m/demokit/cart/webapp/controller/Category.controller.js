@@ -43,7 +43,9 @@ sap.ui.define([
 				sRouteName = oEvent.getParameter("name");
 
 			// switch to first column in full screen mode for category route on small devices
-			this._setLayout(bSmallScreen && sRouteName === "category" ? "One" : "Two");
+			if (sRouteName === "category") {
+				this._setLayout(bSmallScreen ? "One" : "Two");
+			}
 
 			var oModel = this.getModel();
 			this._loadSuppliers();
