@@ -459,6 +459,34 @@ function(
 			}
 		}
 
+		Select.prototype._attachHiddenSelectHandlers = function () {
+			var oSelect = this._getHiddenSelect();
+
+			oSelect.on("focusin", this._addFocusClass.bind(this));
+			oSelect.on("focusout", this._removeFocusClass.bind(this));
+		};
+
+		Select.prototype._addFocusClass = function () {
+			this.$().addClass("sapMSltFocused");
+		};
+
+		Select.prototype._removeFocusClass = function () {
+			this.$().removeClass("sapMSltFocused");
+		};
+
+		Select.prototype._detachHiddenSelectHandlers = function () {
+			var oSelect = this._getHiddenSelect();
+
+			if (oSelect) {
+				oSelect.off("focusin");
+				oSelect.off("focusout");
+			}
+		};
+
+		Select.prototype._getHiddenSelect = function () {
+			return this.$("hiddenSelect");
+		};
+
 		Select.prototype._handleFocusout = function(oEvent) {
 			this._bFocusoutDueRendering = this.bRenderingPhase;
 
@@ -672,9 +700,21 @@ function(
 				oTextPlaceholder.textContent = sValue;
 			}
 
+			this._setHiddenSelectValue();
 			this._getValueIcon();
 		};
 
+		Select.prototype._setHiddenSelectValue = function () {
+			var oSelect = this._getHiddenSelect(),
+				oSelectedItem = this.getSelectedItem(),
+				sSelectedItemText;
+
+			if (oSelectedItem) {
+				sSelectedItemText = oSelectedItem.getText();
+				oSelect.attr("value", this.getSelectedKey());
+				oSelect.val(sSelectedItemText);
+			}
+		};
 
 		Select.prototype._getValueIcon = function() {
 			if (this.bIsDestroyed) {
@@ -728,7 +768,7 @@ function(
 		 * @since 1.30
 		 */
 		Select.prototype._handleAriaActiveDescendant = function(vItem) {
-			var oDomRef = this.getDomRef(),
+			var oDomRef = this.getFocusDomRef(),
 				oItemDomRef = vItem && vItem.getDomRef(),
 				sActivedescendant = "aria-activedescendant";
 
@@ -798,8 +838,7 @@ function(
 		 */
 		Select.prototype.onAfterOpen = function(oControlEvent) {
 			var oDomRef = this.getFocusDomRef(),
-				oItem = null,
-				$oLabel = this.$("label");
+				oItem = null;
 
 			if (!oDomRef) {
 				return;
@@ -808,9 +847,6 @@ function(
 			oItem = this.getSelectedItem();
 			oDomRef.setAttribute("aria-expanded", "true");
 
-			// Needs to be removed while popover is opened. Otherwise when going through the items, the currently
-			// selected item would be read out for a second time due to this label's update.
-			$oLabel.attr("aria-live", null);
 
 			// expose a parent/child contextual relationship to assistive technologies
 			// note: the "aria-controls" attribute is set when the list is visible and in view
@@ -859,15 +895,11 @@ function(
 		Select.prototype.onAfterClose = function(oControlEvent) {
 			var oDomRef = this.getFocusDomRef(),
 				CSS_CLASS = this.getRenderer().CSS_CLASS,
-				sPressedCSSClass = CSS_CLASS + "Pressed",
-				$oLabel = this.$("label");
+				sPressedCSSClass = CSS_CLASS + "Pressed";
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "false");
 				oDomRef.removeAttribute("aria-activedescendant");
-
-				// Add it back, because we want to hear updates when going through the items, while the popover is closed
-				$oLabel.attr("aria-live", "polite");
 			}
 
 			// Remove the active state
@@ -1260,12 +1292,17 @@ function(
 
 			this._updatePickerValueStateContentText();
 			this._updatePickerValueStateContentStyles();
+			this._detachHiddenSelectHandlers();
+
 		};
 
 		Select.prototype.onAfterRendering = function() {
 
 			// rendering phase is finished
 			this.bRenderingPhase = false;
+
+			this._setHiddenSelectValue();
+			this._attachHiddenSelectHandlers();
 		};
 
 		Select.prototype.exit = function() {
@@ -1351,7 +1388,7 @@ function(
 				}
 
 				if (Device.system.phone) {
-					this.focus();
+					this._getHiddenSelect().focus();
 				}
 
 				this.open();
@@ -1509,9 +1546,13 @@ function(
 		 */
 		Select.prototype.onkeydown = function(oEvent) {
 			if (oEvent.which === KeyCodes.SPACE) {
-				// note: prevent document scrolling when the spacebar key is pressed
-				oEvent.preventDefault();
 				this._bSpaceDown = true;
+			}
+
+			if ([KeyCodes.ARROW_DOWN, KeyCodes.ARROW_UP, KeyCodes.SPACE].indexOf(oEvent.which) > -1) {
+				// note: [KeyCodes.ARROW_DOWN, KeyCodes.ARROW_UP] prevent native dropdown to open when ALT/CMD and ARROW DOWN/UP keys are pressed
+				// note: [KeyCodes.SPACE] prevent document scrolling when the spacebar key is pressed
+				oEvent.preventDefault();
 			}
 
 			if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
@@ -1771,7 +1812,7 @@ function(
 			if (Device.browser.msie && (oEvent.target !== this.getFocusDomRef())) {	// whether an inner element is receiving the focus
 
 				// force the focus to leave the inner element and set it back to the control's root element
-				this.focus();
+				this._getHiddenSelect().focus();
 			}
 		};
 
@@ -1811,7 +1852,7 @@ function(
 			if (Device.system.desktop && containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
 
 				// force the focus to stay in the input field
-				this.focus();
+				this._getHiddenSelect().focus();
 			}
 		};
 
@@ -1820,8 +1861,32 @@ function(
 		/* =========================================================== */
 
 		/* ----------------------------------------------------------- */
+		/* overrides                                                   */
+		/* ----------------------------------------------------------- */
+
+		/**
+		 * Returns the DOM Element that should get the focus.
+		 *
+		 * @return {Element} Returns the DOM Element that should get the focus
+		 * @protected
+		 * @override
+		 */
+		Select.prototype.getFocusDomRef = function () {
+			return this._getHiddenSelect()[0];
+		};
+
+		/* ----------------------------------------------------------- */
 		/* protected methods                                           */
 		/* ----------------------------------------------------------- */
+
+		/**
+		 * Gets the DOM reference the popup should be docked to.
+		 *
+		 * @return {Element} The DOM reference
+		 */
+		Select.prototype.getPopupAnchorDomRef = function() {
+			return this.getDomRef();
+		};
 
 		/**
 		 * Updates and synchronizes <code>selectedItem</code> association, <code>selectedItemId</code> and <code>selectedKey</code> properties.
@@ -2334,13 +2399,15 @@ function(
 		};
 
 		Select.prototype.updateAriaLabelledBy = function(sValueState, sOldValueState) {
-			var $this = this.$(),
+			var $this = this._getHiddenSelect(),
 				sAttr = $this.attr("aria-labelledby"),
 				aIDs = sAttr ? sAttr.split(" ") : [],
+				iIndex,
 				sNewIDs;
 
 			if (sOldValueState !== ValueState.None && sOldValueState !== ValueState.Error) {
-				aIDs.pop();
+				iIndex = aIDs.indexOf(InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_" + sOldValueState.toUpperCase()));
+				aIDs.splice(iIndex, 1);
 			}
 
 			if (sValueState !== ValueState.None && sValueState !== ValueState.Error) {
@@ -2925,7 +2992,7 @@ function(
 		 * @public
 		 */
 		Select.prototype.getIdForLabel = function () {
-			return this.getId() + "-hiddenInput";
+			return this.getId() + "-hiddenSelect";
 		};
 
 		return Select;

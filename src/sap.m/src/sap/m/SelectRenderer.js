@@ -52,10 +52,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			oRm.class(CSS_CLASS);
 			oRm.class(CSS_CLASS + oSelect.getType());
 
-			if (oSelect.getRequired()) {
-				oRm.attr("required", "required");
-			}
-
 			if (!bEnabled) {
 				oRm.class(CSS_CLASS + "Disabled");
 			} else if (!bEditable) {
@@ -87,7 +83,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			}
 
 			oRm.style("max-width", oSelect.getMaxWidth());
-			this.writeAccessibilityState(oRm, oSelect);
 
 			if (sTooltip) {
 				oRm.attr("title", sTooltip);
@@ -99,12 +94,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				}
 			}
 
-			if (bEnabled) {
-				oRm.attr("tabindex", "0");
-			}
-
 			oRm.openEnd();
-			this.renderHiddenInput(oRm, oSelect);
+			this.renderHiddenSelect(oRm, oSelect);
 			this.renderLabel(oRm, oSelect);
 
 			switch (sType) {
@@ -125,25 +116,44 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				this.renderShadowList(oRm, oList);
 			}
 
-			if (oSelect.getName()) {
-				this.renderInput(oRm, oSelect);
-			}
-
 			oRm.close("div");
 		};
 
-		SelectRenderer.renderHiddenInput = function (oRm, oSelect) {
-			oRm.voidStart("input", oSelect.getId() + "-hiddenInput");
+		SelectRenderer.renderHiddenSelect = function (oRm, oSelect) {
+			var oList = oSelect.getList(),
+				aItems,
+				i;
 
-			// Attributes
-			oRm.attr("aria-readonly", "true");
-			oRm.attr("tabindex", "-1");
-			oRm.attr("aria-hidden", "true");
+			oRm.openStart("select", oSelect.getId() + "-hiddenSelect");
+
+			this.writeAccessibilityState(oRm, oSelect);
+
+			if (oSelect.getRequired()) {
+				oRm.attr("required", "required");
+			}
+
+			if (!oSelect.getEnabled()) {
+				oRm.attr("disabled", "disabled");
+			}
+
+			oRm.attr("name", oSelect.getName());
+			oRm.attr("value", oSelect.getSelectedKey());
 
 			// Classes
 			oRm.class("sapUiPseudoInvisibleText");
 
-			oRm.voidEnd();
+			oRm.openEnd();
+
+			for (i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
+				oRm.openStart("option");
+				oRm.attr("value", aItems[i].getText());
+				oRm.openEnd();
+				oRm.text(aItems[i].getText());
+				oRm.close("option");
+			}
+
+			oRm.close('select');
+
 		};
 
 		/**
@@ -160,7 +170,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				CSS_CLASS = SelectRenderer.CSS_CLASS;
 
 			oRm.openStart("span", oSelect.getId() + "-label");
-			oRm.attr("aria-live", "polite");
 			oRm.class(CSS_CLASS + "Label");
 
 			if (oSelect.getValueState() !== ValueState.None) {
@@ -230,22 +239,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				id: oSelect.getId() + "-icon",
 				title: sTooltip || null
 			});
-		};
-
-		SelectRenderer.renderInput = function(oRm, oSelect) {
-			oRm.voidStart("input", oSelect.getId() + "-input");
-			oRm.attr("type", "hidden");
-			oRm.class(SelectRenderer.CSS_CLASS + "Input");
-			oRm.attr("aria-hidden", "true");
-			oRm.attr("tabindex", "-1");
-
-			if (!oSelect.getEnabled()) {
-				oRm.attr("disabled", "disabled");
-			}
-
-			oRm.attr("name", oSelect.getName());
-			oRm.attr("value", oSelect.getSelectedKey());
-			oRm.voidEnd();
 		};
 
 		/**
@@ -357,13 +350,17 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				oSelectedItem = oSelect.getSelectedItem(),
 				bIconOnly = oSelect.getType() === SelectType.IconOnly,
 				oValueIcon = oSelect._getValueIcon(),
+				aLabels = [],
+				aAriaLabelledBy = [],
 				oAriaLabelledBy,
 				sActiveDescendant,
 				sDesc;
 
-			if (sValueState) {
-				sValueState = " " + sValueState;
-			}
+			oSelect.getLabels().forEach(function (oLabel) {
+				if (oLabel && oLabel.getId) {
+					aLabels.push(oLabel.getId());
+				}
+			});
 
 			if (oSelect.isOpen() && oSelectedItem && oSelectedItem.getDomRef()) {
 				sActiveDescendant = oSelectedItem.getId();
@@ -376,19 +373,31 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				}
 			}
 
+			if (sDesc && oValueIcon) {
+				sValueState = oValueIcon.getId();
+			}
+
+			if (sValueState) {
+				aAriaLabelledBy.push(sValueState);
+			}
+
+			if (aLabels.length) {
+				aAriaLabelledBy = aAriaLabelledBy.concat(aLabels);
+			}
+
 			oAriaLabelledBy = {
-				value: (sDesc && oValueIcon) ? oValueIcon.getId() : oSelect.getId() + "-label" + sValueState,
+				value: aAriaLabelledBy.join(" "),
 				append: true
 			};
 
-			oRm.accessibilityState(oSelect, {
+			oRm.accessibilityState(null, {
 				role: this.getAriaRole(oSelect),
 				roledescription: oSelect._sAriaRoleDescription,
 				disabled: !oSelect.getEnabled(),
 				readonly: bIconOnly ? undefined : oSelect.getEnabled() && !oSelect.getEditable(),
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
-				labelledby: bIconOnly ? undefined : oAriaLabelledBy,
+				labelledby: (bIconOnly || oAriaLabelledBy.value === "") ? undefined : oAriaLabelledBy,
 				activedescendant: sActiveDescendant,
 				haspopup: "listbox"
 			});
