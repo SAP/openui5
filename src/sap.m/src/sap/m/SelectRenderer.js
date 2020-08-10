@@ -141,6 +141,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 
 			// Classes
 			oRm.class("sapUiPseudoInvisibleText");
+			oRm.class(SelectRenderer.CSS_CLASS + "HiddenSelect");
 
 			oRm.openEnd();
 

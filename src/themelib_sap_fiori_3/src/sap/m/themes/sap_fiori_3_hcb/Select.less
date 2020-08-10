@@ -13,12 +13,12 @@
 
 /* hover and focus */
 
-.sapMSlt.sapMSltDefault:not(.sapMSltIconOnly):focus:not(.sapMSltPressed) {
+.sapMSlt.sapMSltDefault.sapMSltFocused:not(.sapMSltIconOnly):not(.sapMSltPressed) {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.25rem;
 }
 
-html.sap-desktop .sapMSlt:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltInformation):focus,
+html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltInformation),
 .sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltInformation):hover {
 	border-color: @sapUiFieldHoverBorderColor;
 }
@@ -27,12 +27,12 @@ html.sap-desktop .sapMSlt:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMS
 /* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMSlt.sapMSltDefault:focus:not(.sapMSltPressed) {
+	.sapMSlt.sapMSltDefault.sapMSltFocused:not(.sapMSltPressed) {
 		outline: none;
 		position: relative;
 	}
 
-	.sapMSlt.sapMSltDefault:focus:not(.sapMSltDisabled):not(.sapMSltPressed)::before {
+	.sapMSlt.sapMSltDefault.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltPressed)::before {
 		content: "";
 		box-sizing: border-box;
 		position: absolute;
@@ -46,7 +46,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 /* FIX: In FF bottom outline-offset is not working as expected when Select is in sap.m.Bar and is left-aligned */
 
-html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
+html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt.sapMSltFocused {
 	line-height: 0;
 }
 
@@ -55,7 +55,7 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 .sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover {
 	background: @sapUiButtonLiteHoverBackground;
 
-	&:not(.sapMSltPressed):focus {
+	&.sapMSltFocused:not(.sapMSltPressed) {
 		border-color: transparent;
 	}
 }
@@ -64,7 +64,7 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 /* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMSlt.sapMSltIconOnly:not(.sapMSltExpanded):focus {
+	.sapMSlt.sapMSltIconOnly.sapMSltFocused:not(.sapMSltExpanded) {
 		outline: none;
 		position: relative;
 		border-color: transparent;
@@ -193,7 +193,7 @@ div.sapMSltPicker {
 
 /* focus: Select IconOnly in all contexts get dotted outline */
 
-html.sap-desktop .sapMSltIconOnly:not(.sapMSltExpanded):focus {
+html.sap-desktop .sapMSltIconOnly.sapMSltFocused:not(.sapMSltExpanded) {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
 	border-color: transparent;
