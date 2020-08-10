@@ -9,6 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
+	"sap/m/App",
+	"sap/m/Dialog",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
@@ -25,6 +27,8 @@ sap.ui.define([
 	ChangeHandlerRegistration,
 	VariantModel,
 	ControlPersonalizationWriteAPI,
+	App,
+	Dialog,
 	ManagedObject,
 	ComponentContainer,
 	Control,
@@ -189,7 +193,7 @@ sap.ui.define([
 						}
 					},
 					createContent : function() {
-						var oApp = new sap.m.App(this.createId("mockapp"));
+						var oApp = new App(this.createId("mockapp"));
 						var oView = sap.ui.xmlview({
 							id: this.createId("mockview"),
 							viewContent: viewContent
@@ -426,6 +430,148 @@ sap.ui.define([
 					assert.strictEqual(aSuccessfulChanges.length, 2, "then all passed change contents were applied successfully");
 					assert.notOk(aSuccessfulChanges[0].getVariantReference(), "then variantReference property is deleted for the change, where it was preset");
 				}.bind(this));
+		});
+	});
+
+	QUnit.module("Given an instance of VariantModel on a dialog", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+
+			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null,
+			function(viewContent) {
+				var MockComponent = UIComponent.extend("MockController", {
+					metadata: {
+						manifest: {
+							"sap.app" : {
+								applicationVersion : {
+									version : "1.2.3"
+								}
+							}
+						}
+					},
+					createContent : function() {
+						var oApp = new App(this.createId("mockapp"));
+						var oRootView = sap.ui.xmlview({
+							id: this.createId("root-mockview"),
+							viewContent: '<mvc:View id="mockview" xmlns:mvc="sap.ui.core.mvc"/>'
+						});
+						var oView = sap.ui.xmlview({
+							id: this.createId("mockview"),
+							viewContent: viewContent
+						});
+						var oDialog = new Dialog("dialog", {
+							content: oView
+						});
+						oApp.addPage(oRootView);
+						oRootView.addDependent(oDialog);
+						oDialog.open();
+						return oApp;
+					}
+				});
+				this.oComp = new MockComponent("testComponent");
+				this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
+				var oVariantModel = new VariantModel({
+					variantManagement: {
+						variants: []
+					}
+				}, this.oFlexController, this.oComp);
+				sandbox.stub(oVariantModel, "addChange");
+				this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
+				this.oCompContainer = new ComponentContainer({
+					component: this.oComp
+				}).placeAt("qunit-fixture");
+
+				this.mMoveChangeData1 = {
+					selectorElement : sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
+					changeSpecificData: {
+						changeType: "moveControls",
+						movedElements: [{
+							id: "testComponent---mockview--ObjectPageSection1",
+							sourceIndex: 0,
+							targetIndex: 1
+						}],
+						source: {
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
+						},
+						target: {
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
+						}
+					}
+				};
+				this.mMoveChangeData2 = {
+					selectorElement : sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
+					changeSpecificData: {
+						changeType: "moveControls",
+						movedElements: [{
+							id: "testComponent---mockview--ObjectPageSection3",
+							sourceIndex: 2,
+							targetIndex: 1
+						}],
+						source: {
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
+						},
+						target: {
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
+						}
+					}
+				};
+
+				this.fnLogErrorSpy = sandbox.spy(Log, "error");
+				this.fnCreateAndApplyChangeSpy = sandbox.spy(this.oFlexController, "createAndApplyChange");
+
+				//registration is triggered by instantiation of XML View above
+				ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(done);
+			}.bind(this));
+		},
+		afterEach: function() {
+			sandbox.restore();
+			this.oCompContainer.destroy();
+			this.oComp.destroy();
+		}
+	}, function() {
+		QUnit.test("when calling 'add' with two valid variant changes", function(assert) {
+			return ControlPersonalizationWriteAPI.add({
+				changes: [this.mMoveChangeData1, this.mMoveChangeData2]
+			})
+			.then(function (aSuccessfulChanges) {
+				assert.equal(this.fnLogErrorSpy.callCount, 0, "no errors occurred");
+				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 2, "FlexController.createAndApplyChange has been called twice");
+				assert.deepEqual(aSuccessfulChanges[0].getSelector(), {
+					id: "mockview--ObjectPageLayout",
+					idIsLocal: true
+				}, "then first successfully applied change was returned");
+				assert.equal(aSuccessfulChanges[0].getDefinition().variantReference, "mockview--VariantManagement1", "the variant reference is correct");
+				assert.deepEqual(aSuccessfulChanges[1].getSelector(), {
+					id: "mockview--ObjectPageLayout",
+					idIsLocal: true
+				}, "then second successfully applied change was returned");
+				assert.equal(aSuccessfulChanges[1].getDefinition().variantReference, "mockview--VariantManagement1", "the variant reference is correct");
+			}.bind(this));
+		});
+
+		QUnit.test("when calling 'add' with 'useStaticArea' and two valid variant changes", function(assert) {
+			return ControlPersonalizationWriteAPI.add({
+				changes: [this.mMoveChangeData1, this.mMoveChangeData2],
+				useStaticArea: true
+			})
+			.then(function (aSuccessfulChanges) {
+				assert.equal(this.fnLogErrorSpy.callCount, 0, "no errors occurred");
+				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 2, "FlexController.createAndApplyChange has been called twice");
+				assert.deepEqual(aSuccessfulChanges[0].getSelector(), {
+					id: "mockview--ObjectPageLayout",
+					idIsLocal: true
+				}, "then first successfully applied change was returned");
+				assert.equal(aSuccessfulChanges[0].getDefinition().variantReference, "mockview--VariantManagement1", "the variant reference is correct");
+				assert.deepEqual(aSuccessfulChanges[1].getSelector(), {
+					id: "mockview--ObjectPageLayout",
+					idIsLocal: true
+				}, "then second successfully applied change was returned");
+				assert.equal(aSuccessfulChanges[0].getDefinition().variantReference, "mockview--VariantManagement1", "the variant reference is correct");
+			}.bind(this));
 		});
 	});
 
