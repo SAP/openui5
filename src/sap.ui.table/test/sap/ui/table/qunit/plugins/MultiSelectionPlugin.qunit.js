@@ -905,7 +905,7 @@ sap.ui.define([
 		var oSelectionPlugin = oTable._getSelectionPlugin();
 		var fnGetContexts = sinon.spy(oTable.getBinding("rows"), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
-		var iSelectableCount = oSelectionPlugin.getSelectableCount();
+		var iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
 
 		assert.equal(oSelectionPlugin.getRenderConfig().headerSelector.type, "clear", "The headerSelector type is clear");
 
@@ -922,15 +922,26 @@ sap.ui.define([
 			assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
 		});
 		return oSelectionPlugin.selectAll().then(function() {
-			assert.ok(fnGetContexts.calledWithExactly(0, iSelectableCount), "getContexts was called with the correct parameters");
+			assert.ok(fnGetContexts.calledWithExactly(0, iHighestSelectableIndex + 1), "getContexts was called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
-			assert.deepEqual(oSelectionPlugin.getSelectedIndices().length, iSelectableCount, "The correct indices are selected");
+			assert.deepEqual(oSelectionPlugin.getSelectedIndices().length, iHighestSelectableIndex + 1, "The correct indices are selected");
 			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 
 		}).then(function() {
+			var oSelectionSpy = sinon.spy(oSelectionPlugin, "addSelectionInterval");
+
+			sinon.stub(oSelectionPlugin, "_getHighestSelectableIndex").returns(15);
+			sinon.stub(oSelectionPlugin, "getSelectableCount").returns(10);
+
+			oSelectionPlugin.clearSelection();
+			return oSelectionPlugin.selectAll().then(function() {
+				assert.ok(oSelectionSpy.calledWithExactly(0, iHighestSelectableIndex, undefined),
+					"addSelectionInterval was called with the correct parameters");
+			});
+		}).then(function() {
 			oSelectionPlugin.setLimit(5);
 			return oSelectionPlugin.selectAll().catch(function() {
-				assert.deepEqual(oSelectionPlugin.getSelectedIndices().length, iSelectableCount, "The selection did not change");
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices().length, iHighestSelectableIndex + 1, "The selection did not change");
 			});
 		});
 	});
