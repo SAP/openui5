@@ -2907,14 +2907,14 @@ sap.ui.define([
 			case P13nConditionOperation.Contains:
 			case P13nConditionOperation.StartsWith:
 			case P13nConditionOperation.EndsWith:
-				if (sValue1 !== "" && sValue1 !== undefined) {
+				if (sValue1 !== "" && sValue1 !== undefined && sValue1 !== null) {
 					sConditionText = P13nConditionPanel._templateReplace(P13nConditionPanel._oConditionMap[sOperation], [sValue1]);
 				}
 				break;
 
 			case P13nConditionOperation.BT:
-				if (sValue1 !== "" && sValue1 !== undefined) {
-					if (sValue2 !== "" && sValue2 !== undefined) {
+				if (sValue1 !== "" && sValue1 !== undefined && sValue1 !== null) {
+					if (sValue2 !== "" && sValue2 !== undefined && sValue2 !== null) {
 						sConditionText = P13nConditionPanel._templateReplace(P13nConditionPanel._oConditionMap[sOperation], [sValue1, sValue2]);
 					}
 				}
