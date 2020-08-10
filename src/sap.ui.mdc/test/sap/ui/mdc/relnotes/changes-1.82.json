@@ -12,6 +12,17 @@
             "reference": "2080249537"
           }
         ]
+      },
+      {
+        "id": "4e74ca121513b763dc2b23e6e35659dd5ba14137",
+        "type": "FIX",
+        "text": " Field: error for wrong input remains after BindingContext change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080233654"
+          }
+        ]
       }
     ]
   }

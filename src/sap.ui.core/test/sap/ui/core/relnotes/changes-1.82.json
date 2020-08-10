@@ -1,0 +1,83 @@
+{
+  "1.82.0": {
+    "date": "August 2020",
+    "notes": [
+      {
+        "id": "b06771862af6fe115d13d1effab151ccfb7b7449",
+        "type": "FIX",
+        "text": " Revert: core.Fragment: fix error handling",
+        "references": []
+      },
+      {
+        "id": "16bdc08584c9d30ebee6746c2a2884270d692133",
+        "type": "FIX",
+        "text": " core.Fragment: fix error handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080321485"
+          }
+        ]
+      },
+      {
+        "id": "4eddeb973b8e57d74282b39d5d205076aa3ea2d3",
+        "type": "FIX",
+        "text": " core.IconFont: update icon name \"S/4HANA\" to \"s4hana\"",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "8fff86ca85f7c4c74c8e5b6178b385731c27df4e",
+        "type": "FIX",
+        "text": " core.routing.History: make test robust for Safari",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "92e0ab7a03b7d72adb6337b6ba533016401a9b0c",
+        "type": "FIX",
+        "text": " core/Element: Focus shouldn\u0027t be called with empty object",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080335699"
+          }
+        ]
+      },
+      {
+        "id": "0b68ef3ce8505e66611b68d53306a8b69e02b16b",
+        "type": "FIX",
+        "text": " core/Element: preventScrolling Test failed in Firefox",
+        "references": []
+      },
+      {
+        "id": "f2161d716e7cc45ebf48f1bf6b8678c6bdb70ceb",
+        "type": "FIX",
+        "text": " sap.ui.core.Router: support of multiple targets with the same title and titlechanged event propagation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080321371"
+          }
+        ]
+      },
+      {
+        "id": "d0706217a799eb88c97a73b02c4b78e0abaee1db",
+        "type": "FIX",
+        "text": " sap/ui/thirdparty/jquery-mobile-custom: enable swipe event on internet explorer and edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080241660"
+          }
+        ]
+      }
+    ]
+  }
+}

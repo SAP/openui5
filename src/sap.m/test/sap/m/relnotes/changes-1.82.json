@@ -89,6 +89,71 @@
             "reference": "0020751295 0000471395 2020"
           }
         ]
+      },
+      {
+        "id": "4eddeb973b8e57d74282b39d5d205076aa3ea2d3",
+        "type": "FIX",
+        "text": " core.IconFont: update icon name \"S/4HANA\" to \"s4hana\"",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "5769bdcf0ba668289ab141efdd5da8e569f6e5a0",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: More button is read out once now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080166121"
+          }
+        ]
+      },
+      {
+        "id": "650f42fece21e3bdf10c89263b8d1cb9cf712125",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Removed custom setter for selected property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080296975"
+          }
+        ]
+      },
+      {
+        "id": "e19dfd4b44754c29c4b25742fb20b7386adf939b",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: Sample formats fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080332835"
+          }
+        ]
+      },
+      {
+        "id": "008a3b3ad0481e580e2459fd7fe103b0f99869dd",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Accessibility NoDataText does not match with aria-label.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070021282"
+          }
+        ]
+      },
+      {
+        "id": "a999c3f5e637b1f6fcda68b2ef891aa37aa3fcc0",
+        "type": "FIX",
+        "text": " sap.m.upload.UploadSet : UploadSet control issue while renaming file delete button does not remove selected filename.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004799612020"
+          }
+        ]
       }
     ]
   }
