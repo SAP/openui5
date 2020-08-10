@@ -261,6 +261,16 @@ sap.ui.define([
 				 * Sets the conditions that represent the values of the field.
 				 *
 				 * This should be bound to a <code>ConditionModel</code> using the corresponding fieldPath
+				 *
+				 * <b>Note</b> In case of the FilterField the conditions property must be used to bind the FilterFields to a ConditionModel.
+				 * e.g. for FilterFields inside a Filterbar the binding is like:
+				 * 		conditions="{$filters>/conditions/name}"
+				 * where '$filters' is the name of the conditionmodel
+				 * 		'/conditions/' is a required static part of thr binding
+				 * 		'name' the property name of the model
+				 * For Any/All FilterFields the binding is like:
+				 * 		conditions='{$filters>/conditions/navPath* /propertyPath}'
+				 * 		conditions="{$filters>/conditions/navPath+/propertyPath}"
 				 */
 				conditions: {
 					type: "object[]",

@@ -65,14 +65,51 @@ function(
 			 */
 			createFilters: function (oConditions, oConditionTypes, fConvert2FilterCallback) {
 				var i, aLocalIncludeFilters, aLocalExcludeFilters, aOverallFilters = [],
-				oOperator, oFilter, oCondition,
-				oToAnyFilterParam, aSections, sNavPath, sPropertyPath;
+					oOperator, oFilter, oNewFilter, oCondition,	oAnyOrAllFilterParam;
+
+				var convertAnyAllFilter = function(oFilter, sOperator, sPattern) {
+					// var sOperator = sap.ui.model.FilterOperator.Any;
+					// var sPattern = "*/";
+					var sVariable = "L1";
+					var aSections, sNavPath, sPropertyPath;
+
+					if (oFilter.sPath && oFilter.sPath.indexOf(sPattern) > -1) {
+						aSections = oFilter.sPath.split(sPattern);
+
+						if (aSections.length === 2) {
+							sNavPath = aSections[0];
+							sPropertyPath = aSections[1];
+							oFilter.sPath = sVariable + "/" + sPropertyPath;
+
+							return {
+								path: sNavPath,
+								operator: sOperator,
+								variable: sVariable
+							};
+						} else {
+							throw new Error("FilterConverter: not supported binding " + oFilter.sPath);
+						}
+					}
+					return false;
+				};
+
+				var convertToAnyOrAllFilter = function(oFilter) {
+					// ANY condition handling e.g. fieldPath "navPath*/propertyPath"
+					var oFilterParam = convertAnyAllFilter(oFilter, sap.ui.model.FilterOperator.Any, "*/");
+					if (oFilterParam) {
+						return oFilterParam;
+					} else {
+						// ALL condition handling e.g. fieldPath "navPath+/propertyPath"
+						return convertAnyAllFilter(oFilter, sap.ui.model.FilterOperator.All, "+/");
+					}
+				};
+
 
 				// OR-combine filters for each property
 				for (var sFieldPath in oConditions) {
 					aLocalIncludeFilters = [];
 					aLocalExcludeFilters = [];
-					oToAnyFilterParam = null;
+					oAnyOrAllFilterParam = null;
 					var aConditions = oConditions[sFieldPath];
 
 					for (i = 0; i < aConditions.length; i++) {
@@ -129,43 +166,17 @@ function(
 								continue;
 							}
 
-							// support for ToAny filters - currently not used and only experimental
-							// ANY condition handling e.g. fieldPath "navPath*/propertyPath"
-							if (oFilter.sPath && oFilter.sPath.indexOf('*/') > -1) {
-								aSections = oFilter.sPath.split('*/');
-								if (aSections.length === 2) {
-									sNavPath = aSections[0];
-									sPropertyPath = aSections[1];
-									oFilter.sPath = 'L1/' + sPropertyPath;
-
-									if (!oToAnyFilterParam) {
-										oToAnyFilterParam = {
-												path: sNavPath,
-												operator: 'Any',
-												variable: 'L1'
-										};
-									}
-									aLocalIncludeFilters.push(oFilter);
-								} else {
-									throw new Error("Not Implemented");
-								}
-							} else {
-								aLocalIncludeFilters.push(oFilter);
-							}
+							// support for Any/all filters for include operations
+							// Any/All condition handling e.g. fieldPath "navPath*/propertyPath" or "navPath+/propertyPath"
+							oAnyOrAllFilterParam = convertToAnyOrAllFilter(oFilter);
+							aLocalIncludeFilters.push(oFilter);
 						} else {
-							//collect all exclude (NE) conditions as AND fieldPath != "value"
+
+							// support for Any/All filters for exclude operations
+							// Any/All condition handling e.g. fieldPath "navPath*/propertyPath" or "navPath+/propertyPath"
+							oAnyOrAllFilterParam = convertToAnyOrAllFilter(oFilter);
 							aLocalExcludeFilters.push(oFilter);
 						}
-					}
-
-					// support for ToAny filters - currently not used and only experimental
-					if (oToAnyFilterParam) {
-						if (aLocalIncludeFilters.length === 1) {
-							oToAnyFilterParam.condition = aLocalIncludeFilters[0];
-						} else if (aLocalIncludeFilters.length > 1) {
-							oToAnyFilterParam.condition = new Filter({ filters: aLocalIncludeFilters, and: false });
-						}
-						aLocalIncludeFilters = [new Filter(oToAnyFilterParam)];
 					}
 
 					// if (fHandleFiltersOfSameFieldPathCallback) {
@@ -187,11 +198,26 @@ function(
 						aLocalExcludeFilters.unshift(oFilter); // add in-filters to the beginning (better to read)
 					}
 
+					oNewFilter = undefined;
 					if (aLocalExcludeFilters.length === 1) {
-						aOverallFilters.push(aLocalExcludeFilters[0]);
+						oNewFilter = aLocalExcludeFilters[0];
 					} else if (aLocalExcludeFilters.length > 1) {
-						aOverallFilters.push(new Filter({ filters: aLocalExcludeFilters, and: true })); // to have all filters for one path grouped
+						oNewFilter = new Filter({ filters: aLocalExcludeFilters, and: true }); // to have all filters for differents path AND grouped
 					}
+
+					// support for Any or All filters - update the Any/ALl Filter in the OverAllFilters array
+					if (oAnyOrAllFilterParam) {
+						// oAnyOrAllFilterParam.path = NavPath,
+						// oAnyOrAllFilterParam.operator = "Any/All",
+						// oAnyOrAllFilterParam.variable = "L1"
+						oAnyOrAllFilterParam.condition = oNewFilter;
+						oNewFilter = new Filter(oAnyOrAllFilterParam);
+					}
+
+					if (oNewFilter) {
+						aOverallFilters.push(oNewFilter);
+					}
+
 				}
 
 				// if (fHandleAllFiltersCallback) {
@@ -231,9 +257,13 @@ function(
 					}, this);
 					return "(" + sRes + ")";
 				} else {
-					sRes = oFilter.sPath + " " + oFilter.sOperator + " '" + oFilter.oValue1 + "'";
-					if (oFilter.sOperator === "BT") {
-						sRes += "...'" + oFilter.oValue2 + "'";
+					if ( oFilter.sOperator === sap.ui.model.FilterOperator.Any || oFilter.sOperator === sap.ui.model.FilterOperator.All ) {
+						sRes = oFilter.sPath + " " + oFilter.sOperator + " " + FilterConverter.prettyPrintFilters(oFilter.oCondition);
+					} else {
+						sRes = oFilter.sPath + " " + oFilter.sOperator + " '" + oFilter.oValue1 + "'";
+						if (oFilter.sOperator === "BT") {
+							sRes += "...'" + oFilter.oValue2 + "'";
+						}
 					}
 					return sRes;
 				}
