@@ -12,27 +12,16 @@ sap.ui.define([
 	"use strict";
 
 	// TODO: unify this with waitForP13nDialog
-	return function waitForAdaptFiltersPopover(oSettings) {
+	return function waitForAdaptFiltersDialog(oSettings) {
 		oSettings = oSettings || {};
 
 		return this.waitFor({
 			searchOpenDialogs: true, // search only visible controls inside the static area
-			controlType: "sap.m.Popover",
+			controlType: "sap.m.Dialog",
 			properties: {
 
 				// title: "Adapt Filters"
 				title: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE")
-			},
-			matchers: {
-				ancestor: {
-					controlType: "sap.ui.mdc.FilterBar",
-					properties: {
-						showAdaptFiltersButton: true
-					}
-				},
-				descendant: {
-					controlType: "sap.ui.mdc.p13n.panels.AdaptFiltersPanel"
-				}
 			},
 			success: function(aAdaptFiltersPopovers) {
 				Opa5.assert.ok(true, 'The adapt filters personalization popover was found');

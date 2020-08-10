@@ -5,11 +5,11 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/Ancestor",
-	"./waitForAdaptFiltersPopover"
+	"./waitForAdaptFiltersDialog"
 ], function(
 	Opa5,
 	Ancestor,
-	waitForAdaptFiltersPopover
+	waitForAdaptFiltersDialog
 ) {
 	"use strict";
 
@@ -22,7 +22,7 @@ sap.ui.define([
 
 		oSettings = Object.assign(oDefaultSettings, oSettings);
 
-		return waitForAdaptFiltersPopover.call(this, {
+		return waitForAdaptFiltersDialog.call(this, {
 			success: function(oAdaptFilterPopover) {
 				this.waitFor({
 					controlType: oSettings.controlType,

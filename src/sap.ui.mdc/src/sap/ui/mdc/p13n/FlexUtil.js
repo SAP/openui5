@@ -16,13 +16,17 @@ sap.ui.define([
 		* @param {array} aExistingArray The array after changes have been done
 		* @param {function} fnSymBol A function which is being used to distinct which attributes within the object are relevant to diff
 		* @param {object} oControl Control instance which is being used to generate the changes
-		* @param {string} sRemoveOperation Name of the control specific 'remove' changehandler
-		* @param {string} sInsertOperation Name of the control specific 'add' changehandler
-		* @param {string} sMoveOperation Name of the control specific 'move' changehandler
+		* @param {object} mChangeOperations map Containg the changeTypes for add/remove/move changeTypes
+		* @param {boolean} bIgnoreIndex Determines whether the change should include the index (false by default)
 		*
 		* @returns {array} Array containing the delta based created changes
 		*/
-		getArrayDeltaChanges: function (aExistingArray, aChangedArray, fnSymBol, oControl, sRemoveOperation, sInsertOperation, sMoveOperation) {
+		getArrayDeltaChanges: function (aExistingArray, aChangedArray, fnSymBol, oControl, mChangeOperations, bIgnoreIndex) {
+
+			var sInsertOperation = mChangeOperations["add"];
+			var sRemoveOperation = mChangeOperations["remove"];
+			var sMoveOperation = mChangeOperations["move"];
+
 			var aResults = diff(aExistingArray, aChangedArray, fnSymBol);
 			// Function to match field with exising field in the given array
 			var fMatch = function (oField, aArray) {
@@ -37,7 +41,7 @@ sap.ui.define([
 					name: oProperty.name
 				};
 				// Index
-				if (oProperty.index >= 0) {
+				if (oProperty.index >= 0 && !bIgnoreIndex) {
 					oChangeContent.index = oProperty.index;
 				}
 				// Role

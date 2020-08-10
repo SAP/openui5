@@ -79,6 +79,11 @@ sap.ui.define([
 					return this.mdcTestLibrary.iPressOnTheAdaptFiltersP13nItem(sText);
 				},
 
+				// p13n
+				iToggleFilterPanel: function(sGroupName) {
+					return this.mdcTestLibrary.iToggleFilterPanel(sGroupName, true);
+				},
+
 				iSelectTheAdaptFiltersP13nItem: function(sText) {
 					return this.mdcTestLibrary.iSelectTheAdaptFiltersP13nItem(sText);
 				},
@@ -113,6 +118,10 @@ sap.ui.define([
 
 				iPressSortDialogOk: function(){
 					return this.mdcTestLibrary.iPressDialogOk("Sort");
+				},
+
+				iPressAdaptFiltersOk: function(){
+					return this.mdcTestLibrary.iPressDialogOk("Adapt Filters");
 				},
 
 				// variant
@@ -219,8 +228,8 @@ sap.ui.define([
 				},
 
 				// p13n
-				iShouldSeeTheAdaptFiltersP13nPopover: function() {
-					return this.mdcTestLibrary.iShouldSeeTheAdaptFiltersP13nPopover();
+				iShouldSeeTheAdaptFiltersP13nDialog: function() {
+					return this.mdcTestLibrary.iShouldSeeTheAdaptFiltersP13nDialog();
 				},
 
 				// variant

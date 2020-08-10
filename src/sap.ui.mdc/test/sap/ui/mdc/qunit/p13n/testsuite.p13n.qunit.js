@@ -29,7 +29,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			loader: {
 				paths: {
-					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/",
+					"sap/ui/mdc/integration": "test-resources/sap/ui/mdc/integration"
 				}
 			},
 			page: "test-resources/sap/ui/mdc/qunit/teststarter.qunit.html?testsuite={suite}&test={name}",
@@ -178,6 +179,16 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			"PersonalizationFilterBar": {
 				group: "FilterBar UI Test",
+				autostart: false,
+				module: "./OpaTests/P13nOpa.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			},
+			"PersonalizationFilterBarVariants": {
+				group: "FilterBar UI Test - variant based",
 				autostart: false,
 				module: "./OpaTests/P13nOpa.qunit",
 				ui5: {

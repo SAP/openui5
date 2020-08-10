@@ -162,6 +162,41 @@ sap.ui.define(
             return this;
         };
 
+        /**
+         * Enhances the adaptationConfig property and keeps <code>_oAdaptationController</code> properties in sync.
+         * @private
+         * @returns {object} Returns the enhanced control instance
+         */
+        AdaptationMixin.retrieveInbuiltFilter = function (fnRegister, bAdvancedMode) {
+            return new Promise(function(resolve, reject) {
+                sap.ui.require(["sap/ui/mdc/filterbar/p13n/AdaptationFilterBar"], function(AdaptationFilterBar) {
+                    if (!this._oP13nFilter) {
+                        //create instance of 'AdaptationFilterBar'
+                        this._oP13nFilter = new AdaptationFilterBar(this.getId() + "-p13nFilter",{
+                            adaptationControl: this,
+                            advancedMode: bAdvancedMode,
+                            filterConditions: this.getFilterConditions()
+                        });
+
+                        if (fnRegister instanceof Function){
+                            fnRegister.call(this, this._oP13nFilter);
+                        }
+
+                        this.enhanceAdaptationConfig({
+                            filterConfig: {
+                                initializeControl: this._oP13nFilter.createFilterFields
+                            }
+                        });
+
+                        this.addDependent(this._oP13nFilter);
+                        resolve(this._oP13nFilter);
+                    } else {
+                        resolve(this._oP13nFilter);
+                    }
+                }.bind(this));
+            }.bind(this));
+        };
+
 
         /**
          * Provides designTime configuration for the runtime adaptation settings action on the given control
@@ -241,6 +276,7 @@ sap.ui.define(
             this.enhanceAdaptationConfig = AdaptationMixin.enhanceAdaptationConfig;
             this.getAdaptationConfigAttribute = AdaptationMixin.getAdaptationConfigAttribute;
             this.getRTASettingsActionHandler = AdaptationMixin.getRTASettingsActionHandler;
+            this.retrieveInbuiltFilter = AdaptationMixin.retrieveInbuiltFilter;
             this.exit = AdaptationMixin.exit(this.exit);
         };
     },

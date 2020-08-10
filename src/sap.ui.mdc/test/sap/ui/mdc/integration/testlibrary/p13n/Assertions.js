@@ -3,16 +3,16 @@
  */
 
 sap.ui.define([
-	"./waitForAdaptFiltersPopover"
+	"./waitForAdaptFiltersDialog"
 ], function(
-	waitForAdaptFiltersPopover
+	waitForAdaptFiltersDialog
 ) {
 	"use strict";
 
 	return {
 
-		iShouldSeeTheAdaptFiltersP13nPopover: function() {
-			return waitForAdaptFiltersPopover.call(this);
+		iShouldSeeTheAdaptFiltersP13nDialog: function() {
+			return waitForAdaptFiltersDialog.call(this);
 		}
     };
 });

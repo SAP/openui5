@@ -628,7 +628,7 @@ sap.ui.define([
 			this.oTable = this.oView.byId('mdcTable');
 			this.oTable.removeAllColumns();
 
-			return this.oTable.retrieveP13nFilter().then(function(){
+			return this.oTable.retrieveInbuiltFilter().then(function(){
 				sinon.stub(this.oTable._oP13nFilter, "_toInternal").callsFake(function(oProperty, oXCondition) {
 					return oXCondition;
 				});

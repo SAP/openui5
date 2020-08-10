@@ -27,9 +27,9 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 
 			var t = DataType.getType("sap.ui.core.ID");
 			if (!t.isValid(sName)) {
-				sName = sName.replace(/[^A-Za-z0-9_.:]+/g, "_");
+				sName = sName.replace(/[^A-Za-z0-9_.:]+/g, "__mdc__");
 				if (!t.isValid(sName)) {
-					sName = "_" + sName;
+					sName = "__mdc__" + sName;
 				}
 			}
 			return sName;

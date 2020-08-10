@@ -13,7 +13,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	// TODO: unify this with waitForColumnListItemInDialogWithLabel
+	// TODO: unify this with waitForListItemInDialogWithLabel
 	return function waitForColumnListItem(sItemText, oSettings) {
 		oSettings = oSettings || {};
 

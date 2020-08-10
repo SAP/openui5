@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/actions/EnterText",
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util",
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals) {
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/mdc/integration/testlibrary/p13n/Actions"
+], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, TestLibActions) {
 	"use strict";
 
 	/**
@@ -29,17 +30,38 @@ sap.ui.define([
 			return this;
 		},
 
+		iTogglePanelInDialog: function(sGroupName) {
+			return TestLibActions.iToggleFilterPanel.call(this, sGroupName, true);
+		},
+
+		iSetP13nMode: function(sControl, aValue) {
+			return this.waitFor({
+				controlType: sControl,
+				success: function(aControl) {
+					aControl[0].setP13nMode(aValue);
+				}
+			});
+		},
+
 		waitForP13nItem: function(oSettings){
-			var bModal = oSettings.modal;
+			var bModal = oSettings.hasOwnProperty("modal") ? oSettings.modal : true;
+			var sItemNameSpace = oSettings.itemNameSpace || "sap.m.ColumnListItem";
 			var sPopoverTitle = oSettings.title;
 			var sColumnName = oSettings.columnName;
 			var fSuccess = oSettings.success;
-			return this.waitFor({
-				controlType: bModal ? "sap.m.ResponsivePopover" : "sap.m.Dialog" ,
-				matchers: new PropertyStrictEquals({
+
+			var aMatchers = [];
+
+			if (sPopoverTitle){
+				aMatchers.push(new PropertyStrictEquals({
 					name: "title",
 					value: sPopoverTitle
-				}),
+				}));
+			}
+
+			return this.waitFor({
+				controlType: bModal ? "sap.m.Dialog" : "sap.m.ResponsivePopover",
+				matchers: aMatchers,
 				success: function () {
 					this.waitFor({
 						searchOpenDialogs: true,
@@ -51,7 +73,7 @@ sap.ui.define([
 						success: function (aLabels) {
 							this.waitFor({
 								searchOpenDialogs: true,
-								controlType: "sap.m.ColumnListItem",
+								controlType: sItemNameSpace,
 								matchers: new Descendant(aLabels[0]),
 								success: function (aColumnListItems) {
 									fSuccess(aColumnListItems);
@@ -63,17 +85,19 @@ sap.ui.define([
 			});
 		},
 
-		iEnterTextInFilterDialog: function(sFilterName, sText) {
+		iEnterTextInFilterDialog: function(sFilterName, sText, bLive) {
 			return this.waitForP13nItem({
+				itemNameSpace: "sap.m.ListItemBase",
 				columnName: sFilterName,
-				title:  TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filter.PERSONALIZATION_DIALOG_TITLE"),
-				modal: false,
-				success: function(aColumnListItems) {
-					var oFilterField = aColumnListItems[0].getCells()[1];
+				modal: typeof bLive == "boolean" ? !bLive : true,
+				success: function(aItems) {
+					var oFilterField = aItems[0].getContent ? aItems[1].getContent()[1] : aItems[0].getCells()[1];
 					Opa5.assert.ok(oFilterField,"FilterField found");
-					new EnterText({
-						text: sText
-					}).executeOn(oFilterField);
+					setTimeout(function(){
+						new EnterText({
+							text: sText
+						}).executeOn(oFilterField);
+					});
 				}
 			});
 		},
@@ -89,15 +113,16 @@ sap.ui.define([
 			});
 		},
 
-		iSelectColumn: function (sColumnName, sPopoverTitle, aP13nItems, bModal) {
+		iSelectColumn: function (sColumnName, sPopoverTitle, aP13nItems, bModal, bFilter) {
 			return this.waitForP13nItem({
 				columnName: sColumnName,
 				title: sPopoverTitle,
 				items: aP13nItems,
-				modal: bModal,
+				modal: typeof bModal === "boolean" ? bModal : true,
+				itemNameSpace: bFilter ? "sap.ui.mdc.filterbar.p13n.FilterGroupLayout" : undefined,
 				success: function(aColumnListItems) {
 					var oCheckBox = aColumnListItems[0].getMultiSelectControl();
-					oCheckBox.$().trigger("tap");
+					new Press().executeOn(oCheckBox);
 
 					//optional array update
 					if (aP13nItems){

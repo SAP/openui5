@@ -16,11 +16,11 @@ sap.ui.define(
                 addOperation: "addFilter",
                 removeOperation: "removeFilter",
                 moveOperation: "moveFilter",
-                panelPath: "sap/ui/mdc/p13n/panels/AdaptFiltersPanel",
+                adaptationUI: "sap/ui/mdc/p13n/panels/AdaptFiltersPanel",
                 title: "Some title"
             },
             filterConfig: {
-                filterControl: this
+                adaptationUI: this
             }
         };
 
@@ -178,7 +178,7 @@ sap.ui.define(
 
             var oFilterConfig = {
                 title: "MyAdaptationConfigEnhancement",
-                filterControl: undefined
+                adaptationUI: undefined
             };
 
             var oFullConfig = Object.assign(oExampleAdaptationConfig, {filterConfig: oFilterConfig});

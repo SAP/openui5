@@ -8,10 +8,9 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/FlexUtil",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/merge",
-	"sap/m/Button",
 	"sap/base/Log",
 	"./P13nBuilder"
-], function (SAPUriParameters, ManagedObject, FlexUtil, JSONModel, merge, Button, Log, P13nBuilder) {
+], function (SAPUriParameters, ManagedObject, FlexUtil, JSONModel, merge, Log, P13nBuilder) {
 	"use strict";
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -48,10 +47,12 @@ sap.ui.define([
 				sortConfig: {
 					type: "object",
 					defaultValue: {
-						addOperation: "addSort",
-						removeOperation: "removeSort",
-						moveOperation: "moveSort",
-						panelPath: "sap/ui/mdc/p13n/panels/SortPanel",
+						changeOperations: {
+							add: "addSort",
+							remove: "removeSort",
+							move: "moveSort"
+						},
+						adaptationUI: "sap/ui/mdc/p13n/panels/SortPanel",
 						title: oResourceBundle.getText("sort.PERSONALIZATION_DIALOG_TITLE")
 					}
 				},
@@ -61,7 +62,8 @@ sap.ui.define([
 			   filterConfig: {
 				   type: "object",
 				   defaultValue: {
-					   filterControl: undefined,
+					   adaptationUI: null,
+					   initializeControl: null, //Will be called after the personalization model structure has been bound to the UI
 					   title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
 				   }
 			   },
@@ -98,6 +100,9 @@ sap.ui.define([
 				 * This event is being fired after the p13n container has been closed, this can be used to implement custom logic after p13n
 				 */
 				afterP13nContainerCloses: {
+					container: {
+						type: "object"
+					},
 					reason: {
 						type: "string"
 					}
@@ -161,23 +166,26 @@ sap.ui.define([
 				}
 
 				this.oAdaptationControlDelegate = oDelegate;
-				this._setP13nTypeSpecificInfo(sP13nType);
-				var oP13nData = this._prepareAdaptationData(aPropertyInfo);
-				this._setP13nModelData(oP13nData);
+				this.sP13nType = sP13nType;
 
-				this._retrieveP13nContainer(this.sTitle).then(function(oP13nControl){
-					var oAdaptationUI = oP13nControl.getContent()[0];
-					if (this.sP13nType == "Filter") {
-						oAdaptationUI.createFilterFields(this.oAdaptationModel).then(function(){
-							this.getAdaptationControl().addDependent(oP13nControl);
-							oAdaptationUI.setLiveMode(this.getLiveMode());
-							resolve(oP13nControl);
-						}.bind(this));
-					} else {
-						oAdaptationUI.setP13nModel(this.oAdaptationModel);
-						this.getAdaptationControl().addDependent(oP13nControl);
-						resolve(oP13nControl);
+				this._retrieveP13nContainer(this.getTypeConfig(sP13nType).title).then(function(oContainer){
+					var oP13nUI = oContainer.getContent()[0];
+
+					var oP13nData = this._prepareAdaptationData(aPropertyInfo);
+					this._setP13nModelData(oP13nData);
+
+					oP13nUI.setP13nModel(this.oAdaptationModel);
+
+					if (oP13nUI.setLiveMode){
+						oP13nUI.setLiveMode(this.getLiveMode());
 					}
+
+					var oFnInitPromise = this.getTypeConfig(sP13nType).initializeControl;
+					oFnInitPromise.call(oP13nUI).then(function(){
+						this.getAdaptationControl().addDependent(oContainer);
+						resolve(oContainer);
+					}.bind(this));
+
 				}.bind(this));
 			}.bind(this), reject);
 		}.bind(this));
@@ -214,7 +222,7 @@ sap.ui.define([
 
 			var aNewSortersPrepared = bApplyAbsolute ? aNewSorters : this._getFilledArray(aPreviousSorters, aNewSorters, "sorted").filter(fFilter);
 
-			var aSortChanges = FlexUtil.getArrayDeltaChanges(aPreviousSorters, aNewSortersPrepared, fnSymbol, this.getAdaptationControl(), oSortConfig.removeOperation, oSortConfig.addOperation, oSortConfig.moveOperation);
+			var aSortChanges = FlexUtil.getArrayDeltaChanges(aPreviousSorters, aNewSortersPrepared, fnSymbol, this.getAdaptationControl(), oSortConfig.changeOperations);
 			if (this.getAfterChangesCreated()){
 				this.getAfterChangesCreated()(this, aSortChanges);
 			}
@@ -265,7 +273,7 @@ sap.ui.define([
 			};
 
 			var aNewItemsPrepared = this._getFilledArray(aPreviousItems, aNewItems, "visible").filter(fFilter);
-			var aItemChanges = FlexUtil.getArrayDeltaChanges(aPreviousItems, aNewItemsPrepared, fnSymbol, this.getAdaptationControl(), oItemConfig.removeOperation, oItemConfig.addOperation, oItemConfig.moveOperation);
+			var aItemChanges = FlexUtil.getArrayDeltaChanges(aPreviousItems, aNewItemsPrepared, fnSymbol, this.getAdaptationControl(), oItemConfig.changeOperations);
 			if (this.getAfterChangesCreated()) {
 				this.getAfterChangesCreated()(this, aItemChanges);
 			}
@@ -350,14 +358,17 @@ sap.ui.define([
 
 	/************************************************ P13n related *************************************************/
 
-	AdaptationController.prototype._setP13nTypeSpecificInfo = function(sP13nType) {
-		this.sP13nType = sP13nType;
+	AdaptationController.prototype.getTypeConfig = function(sP13nType) {
+
 		var oP13nConfig = this["get" + sP13nType + "Config"] ? this["get" + sP13nType + "Config"]() : undefined;
-		this.sAddOperation =  oP13nConfig ? oP13nConfig.addOperation : undefined;
-		this.sRemoveOperation = oP13nConfig ? oP13nConfig.removeOperation : undefined;
-		this.sMoveOperation = oP13nConfig ? oP13nConfig.moveOperation : undefined;
-		this.sPanelPath = oP13nConfig ? oP13nConfig.panelPath : undefined;
-		this.sTitle = oP13nConfig ? oP13nConfig.title : undefined;
+
+		return {
+			changeOperations:  oP13nConfig ? oP13nConfig.changeOperations : {},
+			ignoreIndex: oP13nConfig ? oP13nConfig.ignoreIndex : false,
+			adaptationUI: oP13nConfig ? oP13nConfig.adaptationUI : undefined,
+			initializeControl: oP13nConfig && oP13nConfig.initializeControl ? oP13nConfig.initializeControl : function(){ return Promise.resolve();},
+			title: oP13nConfig ? oP13nConfig.title : undefined
+		};
 	};
 
 	AdaptationController.prototype._openP13nControl = function(oP13nControl, oSource){
@@ -405,19 +416,36 @@ sap.ui.define([
 		var oAdaptationControl = this.getAdaptationControl();
 		var oControlState = merge({}, this.getStateRetriever().call(oAdaptationControl, this.oAdaptationControlDelegate));
 
-		var aIgnoreValues = this.sP13nType == "Sort" ? [{
-			ignoreKey: "sortable",
-			ignoreValue: false
-		}] : null;
+		var aIgnoreValues = this._getTypeIgnoreValues(this.sP13nType);
 
 		return P13nBuilder.prepareP13nData(oControlState, aPropertyInfo, aIgnoreValues, this.sP13nType);
 
 	};
 
+	AdaptationController.prototype._getTypeIgnoreValues = function(sP13nType) {
+		var aIgnoreValues;
+
+		if (this.sP13nType == "Sort") {
+			aIgnoreValues = [{
+				ignoreKey: "sortable",
+				ignoreValue: false
+			}];
+		}
+
+		if (this.sP13nType == "Filter") {
+			aIgnoreValues = [{
+				ignoreKey: "filterable",
+				ignoreValue: false
+			}];
+		}
+
+		return aIgnoreValues;
+	};
+
 	AdaptationController.prototype._setP13nModelData = function(oP13nData){
-		this._sortP13nData(oP13nData);
-		this.oAdaptationModel.setData(oP13nData);
-		//condition model will keep the conditions up to date itself
+		this.oAdaptationModel.setProperty("/items", oP13nData.items);
+		this.oAdaptationModel.setProperty("/itemsGrouped", oP13nData.itemsGrouped);
+
 		this.oState = merge({}, oP13nData);
 	};
 
@@ -425,30 +453,45 @@ sap.ui.define([
 		return new Promise(function (resolve, reject) {
 
 			var bLiveMode = this.getLiveMode();
+			var vAdaptationUI = this.getTypeConfig(this.sP13nType).adaptationUI;
 
-			if (this.sP13nType != "Filter") {
-				//Returns a BasePanel derivation
-				this._retrieveControl(this.sPanelPath).then(function(Panel){
-
-					var oPanel = new Panel();
-
-					oPanel.attachEvent("change", function(){
-						if (bLiveMode){
-							this._handleChange();
-						}
+			var fnPrepareP13nUI = function(oP13nUI) {
+				if (bLiveMode && !this.bInitialized && oP13nUI.attachChange) {
+					oP13nUI.attachChange(function(){
+						this._handleChange();
 					}.bind(this));
+				}
 
-					this._createP13nContainer(oPanel, sTitle).then(function(oDialog){
-						resolve(oDialog);
-					});
-
-				}.bind(this));
-			} else {
-				var oFilterControl = this.getFilterConfig().filterControl;
-				this._createP13nContainer(oFilterControl, sTitle).then(function(oDialog){
+				this._createP13nContainer(oP13nUI, sTitle).then(function(oDialog){
 					resolve(oDialog);
 				});
+			}.bind(this);
+
+			if (typeof vAdaptationUI === "string") {
+				var sPath = vAdaptationUI;
+				this._retrieveControl(sPath).then(function(Panel){
+					var oPanel = new Panel();
+					fnPrepareP13nUI(oPanel);
+				});
+			} else if (vAdaptationUI instanceof Function) {
+
+				var oCreatedUI = vAdaptationUI.call(this.getAdaptationControl());
+
+				if (oCreatedUI instanceof Promise) {
+					oCreatedUI.then(function(oP13nUI){
+						fnPrepareP13nUI(oP13nUI);
+					});
+				} else {
+					fnPrepareP13nUI(oCreatedUI);
+				}
+
+			}else if (vAdaptationUI.isA("sap.ui.core.Control")) {
+				var oP13nUI = vAdaptationUI;
+				fnPrepareP13nUI(oP13nUI);
+			} else {
+				reject(new Error("Please provide either a BasePanel derivation or a custom Control as personalization UI for AdaptationController"));
 			}
+
 		}.bind(this));
 	};
 
@@ -486,12 +529,11 @@ sap.ui.define([
 
 		var fnAfterDialogClose = function (oEvt) {
 			var oPopover = oEvt.getSource();
-			// In case of 'Filter' we want to keep the FilterBar and not destroy it
-			this._checkAndKeepFilter(oPopover);
-			oPopover.destroy();
 			this.fireAfterP13nContainerCloses({
-				reason: "autoclose"
+				reason: "autoclose",
+				container: oPopover
 			});
+			oPopover.destroy();
 			this.bIsDialogOpen = false;
 		}.bind(this);
 
@@ -509,32 +551,31 @@ sap.ui.define([
 
 		var fnDialogOk = function (oEvt) {
 			var oDialog = oEvt.getSource().getParent();
-			// In case of 'Filter' we want to keep the FilterBar and not destroy it
-			this._checkAndKeepFilter(oDialog);
 			// Apply a diff to create changes for flex
 			this._handleChange();
 			oDialog.close();
-			oDialog.destroy();
 			this.bIsDialogOpen = false;
 			this.fireAfterP13nContainerCloses({
-				reason: "Ok"
+				reason: "Ok",
+				container: oDialog
 			});
+			oDialog.destroy();
 		}.bind(this);
 
 		var fnDialogCancel = function(oEvt) {
 			var oDialog = oEvt.getSource().getParent();
-			// In case of 'Filter' we want to keep the FilterBar and not destroy it
-			this._checkAndKeepFilter(oDialog);
 			// Discard the collected changes
 			oDialog.close();
-			oDialog.destroy();
 			this.bIsDialogOpen = false;
 			this.fireAfterP13nContainerCloses({
-				reason: "Cancel"
+				reason: "Cancel",
+				container: oDialog
 			});
+			oDialog.destroy();
 		}.bind(this);
 
 		var mSettings = {
+			verticalScrolling: false,
 			title: sTitle,
 			confirm: {
 				handler: fnDialogOk
@@ -543,37 +584,6 @@ sap.ui.define([
 		};
 
 		return P13nBuilder.createP13nDialog(oPanel, mSettings);
-	};
-
-	AdaptationController.prototype._checkAndKeepFilter = function(oContainer) {
-		if (this.sP13nType == "Filter") {
-			oContainer.getContent()[0].getFilterItems().forEach(function(oFilterField){oFilterField.destroy();});
-			oContainer.removeAllContent();
-		}
-	};
-
-	AdaptationController.prototype._sortP13nData = function (oData) {
-
-		var sPositionAttribute = this.sP13nType == "Item" ? "position" : "sortPosition";
-		var sSelectedAttribute = this.sP13nType == "Item" ? "selected" : "isSorted";
-
-		var sLocale = sap.ui.getCore().getConfiguration().getLocale().toString();
-
-		var oCollator = window.Intl.Collator(sLocale, {});
-
-		// group selected / unselected --> sort alphabetically in each group
-		oData.items.sort(function (mField1, mField2) {
-			if (mField1[sSelectedAttribute] && mField2[sSelectedAttribute]) {
-				return (mField1[sPositionAttribute] || 0) - (mField2[sPositionAttribute] || 0);
-			} else if (mField1[sSelectedAttribute]) {
-				return -1;
-			} else if (mField2[sSelectedAttribute]) {
-				return 1;
-			} else if (!mField1[sSelectedAttribute] && !mField2[sSelectedAttribute]) {
-				return oCollator.compare(mField1.label, mField2.label);
-			}
-		});
-
 	};
 
 	/************************************************ delta calculation *************************************************/
@@ -601,7 +611,14 @@ sap.ui.define([
 			return sDiff;
 		};
 
-		aChanges = FlexUtil.getArrayDeltaChanges(aInitialState, aCurrentState, fnSymbol, this.getAdaptationControl(), this.sRemoveOperation, this.sAddOperation, this.sMoveOperation);
+		var mChangeOperations = this.getTypeConfig(this.sP13nType).changeOperations;
+		var bIgnoreIndex = this.getTypeConfig(this.sP13nType).ignoreIndex;
+
+		if (mChangeOperations) {
+			aChanges = FlexUtil.getArrayDeltaChanges(aInitialState, aCurrentState, fnSymbol, this.getAdaptationControl(), mChangeOperations, bIgnoreIndex);
+		} else {
+			aChanges = [];
+		}
 
 		this.oState = merge({}, this.oAdaptationModel.getData());
 
@@ -644,9 +661,7 @@ sap.ui.define([
 		this.bIsDialogOpen = null;
 		this.sP13nType = null;
 		this.oAdaptationControlDelegate = null;
-		this.sAddOperation = null;
-		this.sRemoveOperation = null;
-		this.sMoveOperation = null;
+		this.mChangeOperations = null;
 	};
 
 	return AdaptationController;

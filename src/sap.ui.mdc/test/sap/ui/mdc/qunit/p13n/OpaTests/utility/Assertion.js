@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/Ancestor",
-	"sap/ui/test/matchers/Descendant"
-], function (Opa5, PropertyStrictEquals, Properties, Ancestor, Descendant) {
+	"sap/ui/test/matchers/Descendant",
+	"sap/ui/mdc/integration/testlibrary/p13n/waitForPanelInP13n"
+], function (Opa5, PropertyStrictEquals, Properties, Ancestor, Descendant, waitForPanelInP13n) {
 	"use strict";
 
 	/**
@@ -233,37 +234,42 @@ sap.ui.define([
 		 * @param {object} sItemText - a string representing an item within a mdc BasePanel derived panel
 		 * @param {object} iIndex - the position of the item in the inner table of the panel
 		 * @param {object} aValues - the optional FilterField condition values for the provided item
+		 * @param {object} oPanel - to identify the group of the affected item
 		 * @private
 		 */
-		iShouldSeeP13nFilterItem: function(sItemText, iIndex, aValues) {
+		iShouldSeeP13nFilterItem: function(sItemText, iIndex, aValues, oPanel, bSelected) {
+
+			var aMatchers = [
+				new Properties({
+					text: sItemText
+				})
+			];
+
+			if (oPanel) {
+				aMatchers.push(oPanel);
+			}
+
 			aValues = aValues ? aValues : [];
+
 			return this.waitFor({
+				controlType: "sap.m.Label",
 				searchOpenDialogs: true,
-				controlType: "sap.ui.mdc.filterbar.p13n.AdaptationFilterBar",
-				success: function(aAdaptationFilterBar) {
-					Opa5.assert.equal(aAdaptationFilterBar.length, 1);
-					return this.waitFor({
-						controlType: "sap.ui.mdc.FilterField",
-						matchers: [
-							new Ancestor(aAdaptationFilterBar[0]),
-							new PropertyStrictEquals({
-							name: "label",
-							value: sItemText
-						})],
-						success: function(aFilterFields) {
-							var oFilterField = aFilterFields[0];
-							if (aValues.length > 0){
-								aValues.forEach(function(sValue, iIndex){
-									var oValue = oFilterField.getConditions()[iIndex];
-									Opa5.assert.deepEqual(oValue ? oValue.values[0] : undefined, sValue, "Correct conditions in FF");
-								});
-							}
-							Opa5.assert.equal(oFilterField.getLabel(), sItemText, "Item with label:' " + sItemText + "' has been found." );
-							var aFilterItems = oFilterField.getParent().getFilterItems();
-							var iFieldIndex = aFilterItems.indexOf(oFilterField);
-							Opa5.assert.equal(iFieldIndex, iIndex, "Item is on correct index");
-						}
-					});
+				matchers: aMatchers,
+				success: function(aLabels) {
+					var oListItem = aLabels[0].getParent();
+					var oFilterField = oListItem.getContent ? oListItem.getContent()[1] : oListItem.getCells()[1];
+					if (aValues.length > 0){
+						aValues.forEach(function(sValue, iIndex){
+							var oValue = oFilterField.getConditions()[iIndex];
+							Opa5.assert.deepEqual(oValue ? oValue.values[0] : undefined, sValue, "Correct conditions in FF");
+						});
+					}
+					if (bSelected === false || bSelected === true){
+						Opa5.assert.equal(oListItem.getSelected(), bSelected, "Selection state correct");
+					}
+					Opa5.assert.equal(oFilterField.getLabel(), sItemText, "Item with label:' " + sItemText + "' has been found." );
+					var iFieldIndex = oListItem.getParent().indexOfItem(oListItem);
+					Opa5.assert.equal(iFieldIndex, iIndex, "Item is on correct index");
 				}
 			});
 		},
@@ -289,6 +295,19 @@ sap.ui.define([
 			aP13nFilterItems.forEach(function(oP13nFilterItem, iIndex){
 				return this.iShouldSeeP13nFilterItem(oP13nFilterItem.p13nItem, iIndex, oP13nFilterItem.value);
 			}.bind(this));
+		},
+
+		iShouldSeeP13nFilterItemsInPanel: function(aP13nFilterItems, sGroupName){
+
+			return waitForPanelInP13n.call(this, sGroupName, {
+				modal: true,
+				success: function(oPanel){
+					aP13nFilterItems.forEach(function(oP13nFilterItem, iIndex){
+						return this.iShouldSeeP13nFilterItem(oP13nFilterItem.p13nItem, iIndex, oP13nFilterItem.value, oPanel, oP13nFilterItem.selected);
+					}.bind(this));
+				}
+			});
+
 		},
 
 		iShouldSeeItemOnPosition: function (sItemText, iIndex) {

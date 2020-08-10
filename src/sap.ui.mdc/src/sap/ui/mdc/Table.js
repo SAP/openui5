@@ -515,10 +515,12 @@ sap.ui.define([
 
 		this.setProperty("adaptationConfig", {
 			itemConfig: {
-				addOperation: "addColumn",
-				removeOperation: "removeColumn",
-				moveOperation: "moveColumn",
-				panelPath: "sap/ui/mdc/p13n/panels/SelectionPanel",
+				changeOperations: {
+					add: "addColumn",
+					remove: "removeColumn",
+					move: "moveColumn"
+				},
+				adaptationUI: "sap/ui/mdc/p13n/panels/SelectionPanel",
 				title: oResourceBundle.getText("table.SETTINGS_COLUMN")
 			}
 		});
@@ -2327,34 +2329,6 @@ sap.ui.define([
 
 	Table.prototype._showFilter = function(oEvt) {
 		TableSettings.showPanel(this, "Filter", oEvt.getSource());
-	};
-
-	/**
-	 * Getter for the inner IFilter Control
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
-	 */
-	Table.prototype.retrieveP13nFilter = function() {
-		return new Promise(function(resolve, reject) {
-			if (!this._oP13nFilter) {
-				sap.ui.require(["sap/ui/mdc/filterbar/p13n/AdaptationFilterBar"], function(AdaptationFilterBar) {
-					//create instance of 'AdaptationFilterBar'
-					this._oP13nFilter = new AdaptationFilterBar(this.getId() + "-p13nFilter", {
-						liveMode: true,
-						adaptationControl: this,
-						filterConditions: this.getFilterConditions()
-					});
-
-					//link 'AdaptationFilterBar' with Table and propagate the model
-					this._registerInnerFilter(this._oP13nFilter);
-					this.addDependent(this._oP13nFilter);
-					resolve(this._oP13nFilter);
-				}.bind(this));
-			} else {
-				resolve(this._oP13nFilter);
-			}
-		}.bind(this));
 	};
 
 	// TODO: move to a base util that can be used by most aggregations

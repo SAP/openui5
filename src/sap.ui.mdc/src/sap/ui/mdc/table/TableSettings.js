@@ -124,9 +124,11 @@ sap.ui.define([
 
 		retrieveConfiguredFilter: function(oControl) {
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-			return oControl.retrieveP13nFilter().then(function(oAdaptationFilterBar){
+			return oControl.retrieveInbuiltFilter(oControl._registerInnerFilter, false).then(function(oAdaptationFilterBar){
 				var oFilterConfig = {
-					filterControl: oAdaptationFilterBar,
+					adaptationUI: oAdaptationFilterBar,
+					applyFilterChangeOn: oAdaptationFilterBar,
+					initializeControl: oAdaptationFilterBar.createFilterFields,
 					title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
 				};
 				oControl.enhanceAdaptationConfig({filterConfig: oFilterConfig});

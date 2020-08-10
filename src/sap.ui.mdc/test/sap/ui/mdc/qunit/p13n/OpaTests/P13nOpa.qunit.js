@@ -7,10 +7,12 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/test/Opa5",
-	"test-resources/sap/ui/mdc/qunit/util/V4ServerHelper"
+	"test-resources/sap/ui/mdc/qunit/util/V4ServerHelper",
+	"sap/ui/mdc/integration/testlibrary/MdcTestLibrary"
 ], function(
 	Opa5,
-	ODataV4ServerHelper
+	ODataV4ServerHelper,
+	MdcTestLibrary
 ) {
 	"use strict";
 

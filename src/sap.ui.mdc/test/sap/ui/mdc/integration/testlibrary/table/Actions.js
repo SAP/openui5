@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/integration/testlibrary/p13n/waitForP13nDialog",
 	"./waitForColumnHeader",
 	"sap/ui/mdc/integration/testlibrary/p13n/waitForP13nButtonWithParentAndIcon",
-	"sap/ui/mdc/integration/testlibrary/p13n/waitForColumnListItemInDialogWithLabel"
+	"sap/ui/mdc/integration/testlibrary/p13n/waitForListItemInDialogWithLabel"
 ], function(
 	Ancestor,
 	Properties,
@@ -23,7 +23,7 @@ sap.ui.define([
 	waitForP13nDialog,
 	waitForColumnHeader,
 	waitForP13nButtonWithParentAndIcon,
-	waitForColumnListItemInDialogWithLabel
+	waitForListItemInDialogWithLabel
 ) {
 	"use strict";
 
@@ -52,7 +52,7 @@ sap.ui.define([
 		waitForP13nDialog.call(this, sDialogTitle, {
 			liveMode: false,
 			success: function(oColumnDialog) {
-				waitForColumnListItemInDialogWithLabel.call(this, oColumnDialog, sColumnName, {
+				waitForListItemInDialogWithLabel.call(this, oColumnDialog, sColumnName, {
 					success: function(oColumnListItem) {
 						oColumnListItem.$().trigger("tap");
 						this.waitFor({
@@ -77,7 +77,7 @@ sap.ui.define([
 		waitForP13nDialog.call(this, sDialogTitle, {
 			liveMode: false,
 			success: function(oSortDialog) {
-				waitForColumnListItemInDialogWithLabel.call(this, oSortDialog, sColumnName, {
+				waitForListItemInDialogWithLabel.call(this, oSortDialog, sColumnName, {
 					success: function(oColumnListItem) {
 						var oCheckBox = oColumnListItem.getMultiSelectControl();
 						if (oCheckBox.getSelected() !== bSelected) {
@@ -110,7 +110,7 @@ sap.ui.define([
 			waitForP13nDialog.call(this, TableUtil.SortDialogTitle, {
 				liveMode: false,
 				success: function(oSortDialog) {
-					waitForColumnListItemInDialogWithLabel.call(this, oSortDialog, sColumnName, {
+					waitForListItemInDialogWithLabel.call(this, oSortDialog, sColumnName, {
 						success: function(oColumnListItem) {
 							this.waitFor({
 								controlType: "sap.m.Select",

@@ -339,11 +339,13 @@ sap.ui.define([
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 			this.setProperty("adaptationConfig", {
 				itemConfig: {
-					addOperation: "addItem",
-					removeOperation: "removeItem",
-					moveOperation: "moveItem",
+					changeOperations: {
+						add: "addItem",
+						remove: "removeItem",
+						move: "moveItem"
+					},
 					title: oResourceBundle.getText("chart.PERSONALIZATION_DIALOG_TITLE"),
-					panelPath: "sap/ui/mdc/p13n/panels/ChartItemPanel",
+					adaptationUI: "sap/ui/mdc/p13n/panels/ChartItemPanel",
 					additionalDeltaAttributes: ["role"]
 				}
 			});

@@ -10,9 +10,9 @@ sap.ui.define([
 	"./waitForAdaptFiltersButton",
 	"sap/base/assert",
 	"sap/ui/mdc/integration/testlibrary/Util",
-	"sap/ui/mdc/integration/testlibrary/filterbar/waitForFilterBar",
 	"./waitForP13nDialog",
-	"./waitForColumnListItemInDialogWithLabel",
+	"./waitForPanelInP13n",
+	"./waitForListItemInDialogWithLabel",
 	"./waitForButtonInDialog"
 ], function(
 	Opa5,
@@ -22,51 +22,48 @@ sap.ui.define([
 	waitForAdaptFiltersButton,
 	assert,
 	TestUtil,
-	waitForFilterBar,
 	waitForP13nDialog,
-	waitForColumnListItemInDialogWithLabel,
+	waitForPanelInP13n,
+	waitForListItemInDialogWithLabel,
 	waitForButtonInDialog
 ) {
 	"use strict";
 
 	function toggleSelect(sText, bSelectionAction, bLiveMode) {
-		return waitForFilterBar.call(this, {
-			success: function(oFilterBar) {
-				waitForP13nDialog.call(this, TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"), {
-					liveMode: bLiveMode,
-					success: function(oDialog) {
-						waitForColumnListItemInDialogWithLabel.call(this, oDialog, sText, {
-							success: function(oColumnListItem) {
-								var bColumnListItemSelected = oColumnListItem.isSelected();
+		return waitForP13nDialog.call(this, TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"), {
+			liveMode: bLiveMode,
+			success: function(oDialog) {
+				waitForListItemInDialogWithLabel.call(this, oDialog, sText, {
+					listItemType: "sap.ui.mdc.filterbar.p13n.FilterGroupLayout",
+					success: function(oColumnListItem) {
+						var bColumnListItemSelected = oColumnListItem.isSelected();
 
-								// do only select/deselect an item if it not selected/deselected
-								if (bColumnListItemSelected === bSelectionAction) {
-									return;
+						// do only select/deselect an item if it not selected/deselected
+						if (bColumnListItemSelected === bSelectionAction) {
+							return;
+						}
+
+						var oTable = oColumnListItem.getParent();
+
+						if ((oTable.getMode() === "MultiSelect") && (oTable.getIncludeItemInSelection() === false)) {
+
+							assert(oColumnListItem.isSelectable(), "The table item must be selectable. -");
+
+							this.waitFor({
+								controlType: "sap.m.CheckBox",
+								matchers: [
+									new Ancestor(oColumnListItem)
+								],
+								actions: new Press(),
+								success: function() {
+									Opa5.assert.ok(true, 'The "' + sText + '" column list item was selected');
 								}
+							});
 
-								var oTable = oColumnListItem.getParent();
+							return;
+						}
 
-								if ((oTable.getMode() === "MultiSelect") && (oTable.getIncludeItemInSelection() === false)) {
-
-									assert(oColumnListItem.isSelectable(), "The table item must be selectable. -");
-
-									this.waitFor({
-										controlType: "sap.m.CheckBox",
-										matchers: [
-											new Ancestor(oColumnListItem)
-										],
-										actions: new Press(),
-										success: function() {
-											Opa5.assert.ok(true, 'The "' + sText + '" column list item was selected');
-										}
-									});
-
-									return;
-								}
-
-								Opa5.assert.ok(true, 'The "' + sText + '" column list item was selected');
-							}
-						});
+						Opa5.assert.ok(true, 'The "' + sText + '" column list item was selected');
 					}
 				});
 			}
@@ -87,10 +84,11 @@ sap.ui.define([
 		},
 
 		iPressOnTheAdaptFiltersP13nItem: function(sText) {
-			waitForP13nDialog.call(this, TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"), {
+			return waitForP13nDialog.call(this, TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"), {
 				liveMode: true,
 				success: function(oDialog) {
-					waitForColumnListItemInDialogWithLabel.call(this, oDialog, sText, {
+					waitForListItemInDialogWithLabel.call(this, oDialog, sText, {
+						listItemType: "sap.ui.mdc.filterbar.p13n.FilterGroupLayout",
 						actions: new Press(),
 						success: function onColumnListItemPressed(oColumnListItem) {
 							Opa5.assert.ok(true, 'The "' + sText + '" column list item was pressed');
@@ -100,12 +98,30 @@ sap.ui.define([
 			});
 		},
 
+		iToggleFilterPanel: function(sGroupName, bModal) {
+			return waitForPanelInP13n.call(this, sGroupName, {
+				modal: !!bModal,
+				success: function(oPanel) {
+					Opa5.assert.ok(oPanel, "Groupable Panel found in p13n Dialog");
+					this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: [
+							new Ancestor(oPanel)
+						],
+						success: function(aButtons) {
+							new Press().executeOn(aButtons[0]);
+						}
+					});
+				}
+			});
+		},
+
 		iSelectTheAdaptFiltersP13nItem: function(sText) {
-			return toggleSelect.call(this, sText, true, true);
+			return toggleSelect.call(this, sText, true, false);
 		},
 
 		iDeselectTheAdaptFiltersP13nItem: function(sText) {
-			return toggleSelect.call(this, sText, false, true);
+			return toggleSelect.call(this, sText, false, false);
 		},
 
 		iPressOnTheAdaptFiltersP13nReorderButton: function() {

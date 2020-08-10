@@ -68,8 +68,8 @@ sap.ui.define([
 	// open Personalization dialog
 	// ----------------------------------------------------------------
 	opaTest("When I select rows in the personalization dialog, the changes are reflected after confirmation", function (Given, When, Then) {
-		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.adaptFilter, undefined, false);
-		When.iSelectColumn("cityOfOrigin_city", Arrangement.P13nDialog.Titles.adaptFilter, undefined, false);
+		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.adaptFilter, undefined);
+		When.iSelectColumn("cityOfOrigin_city", Arrangement.P13nDialog.Titles.adaptFilter, undefined);
 		When.iPressButtonWithText("OK");
 		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year", "cityOfOrigin_city", "Country"]);
 	});

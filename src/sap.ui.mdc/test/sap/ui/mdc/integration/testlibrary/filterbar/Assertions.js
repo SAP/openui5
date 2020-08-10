@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"./waitForFilterBar",
+	"sap/ui/test/matchers/Ancestor",
 	"./waitForAdaptFiltersButton"
 ], function(
 	Opa5,
 	waitForFilterBar,
+	Ancestor,
 	waitForAdaptFiltersButton
 ) {
 	"use strict";
@@ -36,13 +38,23 @@ sap.ui.define([
 			}
 
 			return this.waitFor({
-				controlType: "sap.ui.mdc.FilterField",
+				searchOpenDialogs: false,
+				controlType: "sap.ui.mdc.FilterBar",
 				matchers: {
-					ancestor: {
-						controlType: "sap.ui.mdc.FilterBar"
+					properties: {
+						showAdaptFiltersButton: true
 					}
 				},
-				success: onFilterFieldsFound,
+				success: function(aFilterBar){
+					Opa5.assert.strictEqual(aFilterBar.length, 1, "Only one FilterBar is present");
+					this.waitFor({
+						controlType: "sap.ui.mdc.FilterField",
+						matchers: new Ancestor(aFilterBar[0], true),
+						success: function(aFilterFields) {
+							onFilterFieldsFound(aFilterFields);
+						}
+					});
+				},
 				errorMessage: "The filter fields could not be found"
 			});
 		},

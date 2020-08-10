@@ -13,7 +13,7 @@ sap.ui.define([
 	Properties
 ) {
 	"use strict";
-	return function waitForColumnListItemInDialogWithLabel(oDialog, sLabel, oSettings) {
+	return function waitForListItemInDialogWithLabel(oDialog, sLabel, oSettings) {
 		this.waitFor({
 			controlType: "sap.m.Label",
 			matchers: [
@@ -27,7 +27,7 @@ sap.ui.define([
 				var oLabel = aLabels[0];
 				this.waitFor({
 					searchOpenDialogs: true,
-					controlType: "sap.m.ColumnListItem",
+					controlType: oSettings.listItemType || "sap.m.ColumnListItem",
 					matchers: new Descendant(oLabel, false),
 					success: function(aColumnListItems) {
 						//Opa5.assert.strictEqual(aColumnListItems.length, 1, 'The ColumnListItem was found');
