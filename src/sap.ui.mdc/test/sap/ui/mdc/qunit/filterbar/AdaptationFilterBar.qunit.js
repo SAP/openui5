@@ -317,7 +317,7 @@ sap.ui.define([
 			}));
 		};
 
-		BaseDelegate.afterRemoveFilterFlex = function(sKey, oFilterBar) {
+		BaseDelegate.removeItem = function(sKey, oFilterBar) {
 			assert.ok(true, "remove hook called");
 			done(2);
 		};
@@ -370,7 +370,7 @@ sap.ui.define([
 			}));
 		};
 
-		BaseDelegate.afterRemoveFilterFlex = function(sKey, oFilterBar) {
+		BaseDelegate.removeItem = function(sKey, oFilterBar) {
 			assert.ok(true, "remove hook called");
 			done(1);
 		};

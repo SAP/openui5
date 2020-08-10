@@ -23,11 +23,16 @@ sap.ui.define([
 	var TableDelegate = Object.assign(AggregationBaseDelegate, {
 
 		addItem: function(sPropertyName, oTable, mPropertyBag) {
-			return this.beforeAddColumnFlex.apply(this, arguments);
+			// TODO: Separate OData specific part to OData delegate
+			if (oTable.getModel) {
+				return this._createColumn(sPropertyName, oTable);
+			}
+			return Promise.resolve(null);
 		},
 
 		removeItem: function(sPropertyName, oTable, mPropertyBag) {
-			return this.afterRemoveColumnFlex.apply(this, arguments);
+			// return true within the Promise for default behaviour (e.g. continue to destroy the column)
+			return Promise.resolve(true);
 		},
 
 		/**
@@ -133,46 +138,6 @@ sap.ui.define([
 					return Promise.resolve(null);
 				}
 			};
-		},
-
-		/**
-		 *
-		 * @deprecated
-		 * <b>Note:</b> once all dependencies to the beforeAdd* and afterRemove* hooks have been changed,
-		 * this method should be removed. Please see: {@link  sap.ui.mdc.AggregationBaseDelegate AggregationBaseDelegate}
-		 *
-		 * Can be used to create and returns the column (with a template) for the specified property info name.
-		 *
-		 * @param {Object} sPropertyInfoName The name of the property info object/json
-		 * @param {Object} oTable Instance of the table
-		 * @param {Object} mPropertyBag Instance of property bag from Flex change API
-		 * @returns {Promise} Promise that resolves with an instance of mdc.table.Column
-		 */
-		beforeAddColumnFlex: function(sPropertyInfoName, oTable, mPropertyBag) {
-			// TODO: Separate OData specific part to OData delegate
-			if (oTable.getModel) {
-				return this._createColumn(sPropertyInfoName, oTable);
-			}
-			return Promise.resolve(null);
-		},
-
-		/**
-		 *
-		 * @deprecated
-		 * <b>Note:</b> once all dependencies to the beforeAdd* and afterRemove* hooks have been changed,
-		 * this method should be removed. Please see: {@link  sap.ui.mdc.AggregationBaseDelegate AggregationBaseDelegate}
-		 *
-		 * Can be used to trigger any necessary follow-up steps on removal of column. The returned boolean value inside the Promise can be used to
-		 * prevent default follow-up behaviour of Flex (which is to insert column to a dependent aggregation) *
-		 *
-		 * @param {Object} oMDCColumn The mdc.table.Column that was removed
-		 * @param {Object} oTable Instance of the table
-		 * @param {Object} mPropertyBag Instance of property bag from Flex change API
-		 * @returns {Promise} Promise that resolves with true/false to allow/prevent default behaviour of the change
-		 */
-		afterRemoveColumnFlex: function(oMDCColumn, oTable, mPropertyBag) {
-			// return true within the Promise for default behaviour (e.g. continue to destroy the column)
-			return Promise.resolve(true);
 		},
 
 		/**
