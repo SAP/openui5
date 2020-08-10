@@ -824,8 +824,8 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[{name : "~functionName"}, {name : "~deepPath"}].forEach(function (oFunctionMetadata, i) {
-	QUnit.test("_createTarget: function call, " + i, function (assert) {
+[undefined, "/~deepPath"].forEach(function (sDeepPath) {
+	QUnit.test("_createTarget: function call; deepPath = " + sDeepPath, function (assert) {
 		var oODataMessageParser = {
 				_metadata : {
 					_getReducedPath : function () {},
@@ -838,8 +838,8 @@ sap.ui.define([
 			},
 			mRequestInfo = {
 				request : {
-					deepPath : "/~deepPath",
-					functionMetadata : oFunctionMetadata,
+					deepPath : sDeepPath,
+					functionMetadata : "~functionMetadata",
 					functionTarget : "/~functionTarget",
 					headers : {},
 					method : "~method"
@@ -859,10 +859,7 @@ sap.ui.define([
 		this.mock(oODataMessageParser._processor).expects("resolve")
 			.withExactArgs("/~functionTarget/~target", undefined, true).returns("~canonicalTarget");
 		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
-			.withExactArgs(mRequestInfo.request.deepPath === "/" + oFunctionMetadata.name
-				? "/~functionTarget/~target"
-				:  "/~deepPath/~target")
-			.returns("~reducedPath");
+			.withExactArgs(sDeepPath ? "/~deepPath/~target" : "/~target").returns("~reducedPath");
 		this.mock(ODataUtils).expects("_normalizeKey").withExactArgs("~canonicalTarget")
 			.returns("~normalizedTarget");
 

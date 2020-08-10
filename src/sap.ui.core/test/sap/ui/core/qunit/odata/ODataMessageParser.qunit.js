@@ -1699,7 +1699,9 @@ sap.ui.define([
 			//SETUP
 			var oRequest = {
 				created: true,
-				deepPath : "/EditProduct",
+				// deepPath is calculated in ODataModel#_processSuccess instead of
+				// ODataMessageParser#createTarget; deepPath is taken from oRequest.functionTarget
+				deepPath : "/Products(1)",
 				functionMetadata : {name : "EditProduct"},
 				functionTarget : "/Products(1)", // calculated in ODataModel#_processSuccess
 				headers : {},

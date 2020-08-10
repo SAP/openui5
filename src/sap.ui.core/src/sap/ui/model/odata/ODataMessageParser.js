@@ -419,9 +419,8 @@ ODataMessageParser._isResponseForCreate = function (mRequestInfo) {
  */
 ODataMessageParser.prototype._createTarget = function (sODataTarget, mRequestInfo, bIsTechnical,
 		bODataTransition) {
-	var sCanonicalTarget, bCreate, iPos, sPreviousCanonicalTarget, sRequestTarget, sUrl, mUrlData,
-		sUrlForTargetCalculation,
-		sDeepPath = "",
+	var sCanonicalTarget, bCreate, sDeepPath, iPos, sPreviousCanonicalTarget, sRequestTarget, sUrl,
+		mUrlData, sUrlForTargetCalculation,
 		oRequest = mRequestInfo.request,
 		oResponse = mRequestInfo.response;
 
@@ -435,6 +434,7 @@ ODataMessageParser.prototype._createTarget = function (sODataTarget, mRequestInf
 
 	if (sODataTarget[0] !== "/") {
 		bCreate = ODataMessageParser._isResponseForCreate(mRequestInfo);
+		sDeepPath = oRequest.deepPath || "";
 
 		if (bCreate === true) { // successful create
 			// special case for 201 POST requests which create a resource;
@@ -458,12 +458,6 @@ ODataMessageParser.prototype._createTarget = function (sODataTarget, mRequestInf
 		// bCreate === false might be a failed function import
 		if (!bCreate && oRequest.functionMetadata) {
 			sRequestTarget = oRequest.functionTarget;
-			sDeepPath = oRequest.deepPath === "/" + oRequest.functionMetadata.name
-				? sRequestTarget
-				: oRequest.deepPath;
-		}
-		if (!sDeepPath && oRequest.deepPath){
-			sDeepPath = oRequest.deepPath;
 		}
 		// If sRequestTarget is a collection, we have to add the target without a "/". In this case
 		// a target would start with the specific product (like "(23)"), but the request itself
