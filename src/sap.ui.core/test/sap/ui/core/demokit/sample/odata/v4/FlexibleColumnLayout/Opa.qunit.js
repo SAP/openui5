@@ -114,6 +114,7 @@ sap.ui.getCore().attachInit(function () {
 				When.onTheObjectPage.deleteSalesOrder();
 				When.onTheApplication.closeDialog("Success"); // close the success dialog
 				Then.onTheApplication.checkMessagesButtonCount(0);
+				Then.iTeardownMyUIComponent();
 			});
 
 			QUnit.start();

@@ -43,7 +43,7 @@ sap.ui.define([
 			oButton.getBindingContext().delete("$auto").then(function () {
 				MessageBox.success("Sales order deleted");
 				that.oUIModel.setProperty("/sLayout", LayoutType.OneColumn);
-				this.oUIModel.setProperty("/bSalesOrderSelected", false);
+				that.oUIModel.setProperty("/bSalesOrderSelected", false);
 			});
 		},
 
@@ -54,7 +54,7 @@ sap.ui.define([
 			oButton.getBindingContext().delete("$auto").then(function () {
 				MessageBox.success("Sales order line item deleted");
 				that.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
-				this.oUIModel.setProperty("/bSalesOrderItemSelected", false);
+				that.oUIModel.setProperty("/bSalesOrderItemSelected", false);
 			});
 		},
 
