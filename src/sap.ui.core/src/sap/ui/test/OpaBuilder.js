@@ -185,6 +185,13 @@ sap.ui.define(
             return {model: sModel, path: sPath};
         }
 
+        function _createConditionsMatcher(vConditions) {
+            if (_isOfType(vConditions, Boolean)) {
+                return vConditions ? OpaBuilder.Matchers.TRUE : OpaBuilder.Matchers.FALSE;
+            }
+            return OpaBuilder.Matchers.match(vConditions);
+        }
+
         var _oDefaultOptions = {
                 autoWait: true,
                 visible: true
@@ -483,7 +490,7 @@ sap.ui.define(
         /**
          * Adds a matcher that checks states for given conditions. It is internally using {@link OpaBuilder.Matchers.conditional}.
          *
-         * @param {sap.ui.test.matchers.Matcher | function | Array | Object} vConditions conditions to pre-check
+         * @param {sap.ui.test.matchers.Matcher | function | Array | Object | boolean} vConditions conditions to pre-check
          * @param {sap.ui.test.matchers.Matcher | function | Array | Object} vSuccessMatcher actual matcher that is executed if conditions are met
          * @param {sap.ui.test.matchers.Matcher | function | Array | Object} [vElseMatcher] actual matcher that is executed if conditions are not met
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
@@ -599,7 +606,7 @@ sap.ui.define(
         /**
          * Add an action that is only performed if target control fulfills the conditions. It is internally using {@link sap.ui.test.OpaBuilder.Actions.conditional}.
          *
-         * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
+         * @param {sap.ui.test.matchers.Matcher | function | Array | Object | boolean}
          *            vConditions target control is checked against these given conditions
          * @param {sap.ui.test.actions.Action | function | Array}
          *            vSuccessActions the actions to be performed when conditions are fulfilled
@@ -1156,7 +1163,7 @@ sap.ui.define(
             /**
              * Creates a matcher that checks states for given conditions.
              *
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object} vConditions conditions to pre-check
+             * @param {sap.ui.test.matchers.Matcher | function | Array | Object | boolean} vConditions conditions to pre-check
              * @param {sap.ui.test.matchers.Matcher | function | Array | Object} vSuccessMatcher actual matcher that is executed if conditions are met
              * @param {sap.ui.test.matchers.Matcher | function | Array | Object} [vElseMatcher] actual matcher that is executed if conditions are not met
              * @returns {function} a matcher function
@@ -1164,8 +1171,9 @@ sap.ui.define(
              * @static
              */
             conditional: function (vConditions, vSuccessMatcher, vElseMatcher) {
+                var fnConditionsMatcher = _createConditionsMatcher(vConditions);
                 return function (oControl) {
-                    if (_executeMatchers(vConditions, oControl)) {
+                    if (fnConditionsMatcher(oControl)) {
                         return _executeMatchers(vSuccessMatcher, oControl);
                     }
                     return vElseMatcher ? _executeMatchers(vElseMatcher, oControl) : true;
@@ -1291,7 +1299,7 @@ sap.ui.define(
             /**
              * Creates an action that is only performed if target control fulfills the conditions.
              *
-             * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
+             * @param {sap.ui.test.matchers.Matcher | function | Array | Object | boolean}
              *            vConditions target control is checked against these given conditions
              * @param {sap.ui.test.actions.Action | function | Array | sap.ui.test.OpaBuilder}
              *            vSuccessBuilderOrOptions the actions to be performed when conditions are fulfilled
@@ -1302,7 +1310,7 @@ sap.ui.define(
              * @static
              */
             conditional: function (vConditions, vSuccessBuilderOrOptions, vElseBuilderOptions) {
-                var fnMatcher = OpaBuilder.Matchers.match(vConditions),
+                var fnMatcher = _createConditionsMatcher(vConditions),
                     fnSuccess = vSuccessBuilderOrOptions,
                     fnElse = vElseBuilderOptions;
                 if (_isOfType(vSuccessBuilderOrOptions, OpaBuilder)) {
