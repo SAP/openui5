@@ -1617,6 +1617,22 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Note: This happens for a list binding below another list binding during autoExpandSelect
+	QUnit.test("getContexts: below a virtual context", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/},
+				"/TEAMS('1')/" + Context.VIRTUAL, Context.VIRTUAL),
+			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext);
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding).expects("fetchContexts").never();
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		assert.deepEqual(oBinding.getContexts(0, 10, 100), []);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getContexts: RemoveVirtualContext", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
@@ -1639,25 +1655,30 @@ sap.ui.define([
 [
 	{bCanceled : true, bDataRequested : true},
 	{bCanceled : false, bDataRequested : false},
-	{bCanceled : false, bDataRequested : true}
+	{bCanceled : false, bDataRequested : true},
+	{bCanceled : false, bDataRequested : true, bDestroyed : true}
 ].forEach(function (oFixture) {
-	var sTitle = "getContexts: error in fetchContexts, dataRequested=" + oFixture.bDataRequested
-			+ ", canceled=" + oFixture.bCanceled;
+	var sTitle = "getContexts: error in fetchContexts, " + JSON.stringify(oFixture);
 
 	QUnit.test(sTitle, function (assert) {
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 			oError = {canceled : oFixture.bCanceled},
 			oFetchContextsCall,
-			oFetchContextsPromise = SyncPromise.resolve(Promise.reject(oError));
+			oFetchContextsPromise = SyncPromise.resolve(Promise.resolve().then(function () {
+				if (oFixture.bDestroyed) {
+					oBinding.destroy();
+				}
+				throw oError;
+			}));
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, sinon.match.same(oContext)).returns("/~");
 		oFetchContextsCall = this.mock(oBinding).expects("fetchContexts")
 			.withExactArgs(0, 10, 100, undefined, false, sinon.match.func)
 			.returns(oFetchContextsPromise);
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, sinon.match.same(oContext)).returns("/~");
 		this.mock(oBinding.oModel).expects("reportError")
 			.withExactArgs("Failed to get contexts for /service/~ with start index 0 and length 10",
 				sClassName, sinon.match.same(oError));

@@ -1504,6 +1504,7 @@ sap.ui.define([
 			oGroupLock,
 			oPromise,
 			bRefreshEvent = !!this.sChangeReason, // ignored for "*VirtualContext"
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			oVirtualContext,
 			that = this;
 
@@ -1561,12 +1562,13 @@ sap.ui.define([
 				});
 			}, true);
 			oVirtualContext = Context.create(this.oModel, this,
-				this.oModel.resolve(this.sPath, this.oContext) + "/" + Context.VIRTUAL,
+				sResolvedPath + "/" + Context.VIRTUAL,
 				Context.VIRTUAL);
 			return [oVirtualContext];
 		}
 
-		if (sChangeReason === "RemoveVirtualContext") {
+		if (sChangeReason === "RemoveVirtualContext"
+				|| (this.oContext && this.oContext.iIndex === Context.VIRTUAL)) {
 			return [];
 		}
 
@@ -1611,8 +1613,7 @@ sap.ui.define([
 				throw oError;
 			}).catch(function (oError) {
 				that.oModel.reportError("Failed to get contexts for "
-						+ that.oModel.sServiceUrl
-						+ that.oModel.resolve(that.sPath, that.oContext).slice(1)
+						+ that.oModel.sServiceUrl + sResolvedPath.slice(1)
 						+ " with start index " + iStart + " and length " + iLength,
 					sClassName, oError);
 			});
